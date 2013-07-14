@@ -3,6 +3,7 @@
 
 package com.turbointernational.metadata.domain;
 
+import com.turbointernational.metadata.domain.Interchange;
 import com.turbointernational.metadata.domain.Manufacturer;
 import com.turbointernational.metadata.domain.Part;
 import com.turbointernational.metadata.domain.PartType;
@@ -65,6 +66,14 @@ privileged aspect Part_Roo_JavaBean {
     
     public void Part.setTurboTypes(List<TurboType> turboTypes) {
         this.turboTypes = turboTypes;
+    }
+    
+    public List<Interchange> Part.getInterchanges() {
+        return this.interchanges;
+    }
+    
+    public void Part.setInterchanges(List<Interchange> interchanges) {
+        this.interchanges = interchanges;
     }
     
     public Long Part.getImportPk() {

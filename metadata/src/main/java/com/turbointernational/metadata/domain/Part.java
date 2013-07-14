@@ -5,6 +5,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import org.springframework.roo.addon.tostring.RooToString;
@@ -33,10 +34,17 @@ public class Part {
     @Column(nullable = false)
     private Boolean inactive;
 
-    @ManyToMany
-    @JoinTable(name="PART_TURBO_TYPE")
-    @JoinColumn(name="turbo_type_id")
+    @OneToMany
+    @JoinTable(name="PART_TURBO_TYPE",
+               joinColumns=@JoinColumn(name="part_id"),
+               inverseJoinColumns=@JoinColumn(name="turbo_type_id"))
     private List<TurboType> turboTypes;
+
+    @ManyToMany
+    @JoinTable(name="INTERCHANGE_ITEM",
+               joinColumns=@JoinColumn(name="part_id"),
+               inverseJoinColumns=@JoinColumn(name="turbo_type_id"))
+    private List<Interchange> interchanges;
 
     private Long importPk;
 

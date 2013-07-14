@@ -29,3 +29,8 @@ ent j --class  PartTurboType
 ent j --class  TurboModel
 exit
 // Spring Roo 1.2.4.RELEASE [rev 75337cf] log closed at 2013-07-13 20:29:40
+// Spring Roo 1.2.4.RELEASE [rev 75337cf] log opened at 2013-07-13 21:35:25
+ent j --class InterchangeHeader
+ent j --class InterchangeItem
+exit
+// Spring Roo 1.2.4.RELEASE [rev 75337cf] log closed at 2013-07-13 22:14:56
