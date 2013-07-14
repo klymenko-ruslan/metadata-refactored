@@ -205,8 +205,6 @@ CREATE TABLE `BOM_HIERARCHY` (
   `child_part_type_id` INT(10) NOT NULL,
   `parent_part_type_id` INT(10) NOT NULL,
   UNIQUE INDEX (`parent_part_type_id`, `child_part_type_id`),
-  INDEX (`child_part_type_id`),
-  INDEX (`parent_part_type_id`),
   FOREIGN KEY (`child_part_type_id`) REFERENCES `PART_TYPE` (`ID`),
   FOREIGN KEY (`parent_part_type_id`) REFERENCES `PART_TYPE` (`ID`)
 ) ENGINE = INNODB;
