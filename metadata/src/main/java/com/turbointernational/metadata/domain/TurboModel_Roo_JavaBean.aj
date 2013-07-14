@@ -4,7 +4,7 @@
 package com.turbointernational.metadata.domain;
 
 import com.turbointernational.metadata.domain.TurboModel;
-import com.turbointernational.metadata.domain.TurboType;
+import com.turbointernational.metadata.domain.type.TurboType;
 
 privileged aspect TurboModel_Roo_JavaBean {
     

@@ -4,7 +4,7 @@
 package com.turbointernational.metadata.domain;
 
 import com.turbointernational.metadata.domain.Manufacturer;
-import com.turbointernational.metadata.domain.ManufacturerType;
+import com.turbointernational.metadata.domain.type.ManufacturerType;
 
 privileged aspect Manufacturer_Roo_JavaBean {
     

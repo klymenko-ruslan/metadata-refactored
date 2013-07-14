@@ -4,7 +4,7 @@
 package com.turbointernational.metadata.domain;
 
 import com.turbointernational.metadata.domain.Interchange;
-import com.turbointernational.metadata.domain.Part;
+import com.turbointernational.metadata.domain.part.Part;
 import java.util.List;
 
 privileged aspect Interchange_Roo_JavaBean {

@@ -1,4 +1,5 @@
 package com.turbointernational.metadata.domain;
+import com.turbointernational.metadata.domain.part.Part;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.JoinColumn;
