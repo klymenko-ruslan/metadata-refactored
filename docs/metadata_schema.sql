@@ -134,7 +134,7 @@ CREATE TABLE `TURBO_MODEL` (
 
 
 --
--- Part-Turbo join table
+-- Part-Turbo Type join table
 --
 CREATE TABLE `PART_TURBO_TYPE` (
   `ID` INT(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
