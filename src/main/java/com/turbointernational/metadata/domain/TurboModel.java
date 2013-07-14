@@ -1,4 +1,5 @@
 package com.turbointernational.metadata.domain;
+import com.turbointernational.metadata.domain.type.TurboType;
 import javax.persistence.Column;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;

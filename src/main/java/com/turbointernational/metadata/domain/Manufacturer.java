@@ -1,4 +1,5 @@
 package com.turbointernational.metadata.domain;
+import com.turbointernational.metadata.domain.type.ManufacturerType;
 import javax.persistence.Column;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
