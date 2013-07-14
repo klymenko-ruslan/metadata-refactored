@@ -40,7 +40,7 @@ CREATE TABLE `PART` (
   `part_type_id` INT(10) NOT NULL,
   `Name` VARCHAR(255) NULL,
   `description` VARCHAR(255) NULL,
-  `inactive` TINYINT NOT NULL DEFAULT 0,
+  `inactive` BIT NOT NULL DEFAULT 0,
   `import_pk` INT(10) NULL,
   `temp1_char` VARCHAR(255) NULL,
   `temp2_int` INT(10) NULL,
