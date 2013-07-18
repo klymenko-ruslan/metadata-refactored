@@ -19,7 +19,7 @@ public class PartType {
 
     // TODO: Is this a duplicate of parentTypes?
     @ManyToOne
-    @Column(name="parent_part_type_id")
+    @JoinColumn(name="parent_part_type_id")
     private PartType parent;
 
     @Column(name="import_pk")

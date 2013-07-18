@@ -23,14 +23,13 @@ public class Part {
     private String manufacturerPartNumber;
 
     @ManyToOne
-    @Column(name = "manfr_id", nullable = false)
+    @JoinColumn(name = "manfr_id", nullable = false)
     private Manufacturer manufacturer;
 
     @ManyToOne
-    @Column(name = "part_type_id", nullable = false)
+    @JoinColumn(name = "part_type_id", nullable = false)
     private PartType type;
 
-    @Column(name = "Name")
     private String name;
 
     private String description;
@@ -52,6 +51,8 @@ public class Part {
                inverseJoinColumns=@JoinColumn(name="turbo_type_id"))
     private List<Interchange> interchanges;
 
+
+    Probably deleting this relationship.
     // ???: ManyToMany?
     // https://github.com/zero-one/TurboInternational/issues/29
     @ManyToMany

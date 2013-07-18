@@ -1,6 +1,7 @@
 package com.turbointernational.metadata.domain;
 import com.turbointernational.metadata.domain.type.ManufacturerType;
 import javax.persistence.Column;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -19,11 +20,11 @@ public class Manufacturer {
     private String name;
 
     @ManyToOne
-    @Column(name="manfr_type_id", nullable=false)
+    @JoinColumn(name="manfr_type_id", nullable=false)
     private ManufacturerType type;
 
     @ManyToOne
-    @Column(name="parent_manfr_id")
+    @JoinColumn(name="parent_manfr_id")
     private Manufacturer parent;
 
     @Column(name="import_pk")
