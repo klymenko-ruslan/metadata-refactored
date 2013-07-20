@@ -4,23 +4,22 @@
 package com.turbointernational.metadata.domain.part;
 
 import com.turbointernational.metadata.domain.part.BearingSpacer;
-import com.turbointernational.metadata.domain.part.Part;
 
 privileged aspect BearingSpacer_Roo_JavaBean {
     
-    public Part BearingSpacer.getStandardSize() {
+    public BearingSpacer BearingSpacer.getStandardSize() {
         return this.standardSize;
     }
     
-    public void BearingSpacer.setStandardSize(Part standardSize) {
+    public void BearingSpacer.setStandardSize(BearingSpacer standardSize) {
         this.standardSize = standardSize;
     }
     
-    public Part BearingSpacer.getOversize() {
+    public BearingSpacer BearingSpacer.getOversize() {
         return this.oversize;
     }
     
-    public void BearingSpacer.setOversize(Part oversize) {
+    public void BearingSpacer.setOversize(BearingSpacer oversize) {
         this.oversize = oversize;
     }
     

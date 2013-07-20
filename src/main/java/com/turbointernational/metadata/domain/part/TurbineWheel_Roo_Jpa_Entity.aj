@@ -4,10 +4,40 @@
 package com.turbointernational.metadata.domain.part;
 
 import com.turbointernational.metadata.domain.part.TurbineWheel;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Version;
 
 privileged aspect TurbineWheel_Roo_Jpa_Entity {
     
     declare @type: TurbineWheel: @Entity;
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id")
+    private Long TurbineWheel.id;
+    
+    @Version
+    @Column(name = "version")
+    private Integer TurbineWheel.version;
+    
+    public Long TurbineWheel.getId() {
+        return this.id;
+    }
+    
+    public void TurbineWheel.setId(Long id) {
+        this.id = id;
+    }
+    
+    public Integer TurbineWheel.getVersion() {
+        return this.version;
+    }
+    
+    public void TurbineWheel.setVersion(Integer version) {
+        this.version = version;
+    }
     
 }

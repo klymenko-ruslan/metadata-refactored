@@ -4,23 +4,22 @@
 package com.turbointernational.metadata.domain.part;
 
 import com.turbointernational.metadata.domain.part.JournalBearing;
-import com.turbointernational.metadata.domain.part.Part;
 
 privileged aspect JournalBearing_Roo_JavaBean {
     
-    public Part JournalBearing.getStandardSize() {
+    public JournalBearing JournalBearing.getStandardSize() {
         return this.standardSize;
     }
     
-    public void JournalBearing.setStandardSize(Part standardSize) {
+    public void JournalBearing.setStandardSize(JournalBearing standardSize) {
         this.standardSize = standardSize;
     }
     
-    public Part JournalBearing.getOversize() {
+    public JournalBearing JournalBearing.getOversize() {
         return this.oversize;
     }
     
-    public void JournalBearing.setOversize(Part oversize) {
+    public void JournalBearing.setOversize(JournalBearing oversize) {
         this.oversize = oversize;
     }
     
