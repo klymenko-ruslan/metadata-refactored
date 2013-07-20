@@ -1,0 +1,40 @@
+// Spring Roo 1.2.4.RELEASE [rev 75337cf] log opened at 2013-07-13 17:59:48
+project --topLevelPackage com.turbointernational --packaging WAR --java 6 --projectName "metadata"
+jpa setup --provider HIBERNATE --database MYSQL --databaseName ti --userName ti --password ti --hostName  localhost
+ent j --class Manufacturer
+ent j --class ManufacturerType
+ent j --class PartType
+ent j --class Part
+ent j --class AttributeType
+ent j --class PartAttribute
+ent j --class CoolType
+ent j --class GasketType
+ent j --class KitType
+ent j --class SealType
+ent j --class TurboType
+ent j --class PartTurboType
+ent j --class TurboModel
+ent j --class InterchangeHeader
+ent j --class InterchangeItem
+ent j --class Backplate
+ent j --class BearingHousing
+ent j --class BearingSpacer
+ent j --class Cartridge
+ent j --class CompressorWheel
+ent j --class Gasket
+ent j --class Heatshield
+ent j --class JournalBearing
+ent j --class Kit
+ent j --class NozzleRing
+ent j --class PistonRing
+ent j --class StandardBearingSpacer
+ent j --class StandardJournalBearing
+ent j --class TurbineWheel
+ent j --class Turbo
+perform tests
+exit
+// Spring Roo 1.2.4.RELEASE [rev 75337cf] log closed at 2013-07-14 16:36:06
+// Spring Roo 1.2.4.RELEASE [rev 75337cf] log opened at 2013-07-20 14:29:16
+exit
+// Spring Roo 1.2.4.RELEASE [rev 75337cf] log closed at 2013-07-20 14:29:56
+// Spring Roo 1.2.4.RELEASE [rev 75337cf] log opened at 2013-07-20 14:30:07
