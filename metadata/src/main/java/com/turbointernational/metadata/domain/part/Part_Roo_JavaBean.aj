@@ -7,7 +7,6 @@ import com.turbointernational.metadata.domain.Interchange;
 import com.turbointernational.metadata.domain.Manufacturer;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.type.PartType;
-import com.turbointernational.metadata.domain.type.TurboType;
 import java.util.List;
 
 privileged aspect Part_Roo_JavaBean {
@@ -66,14 +65,6 @@ privileged aspect Part_Roo_JavaBean {
     
     public void Part.setImportPk(Long importPk) {
         this.importPk = importPk;
-    }
-    
-    public List<TurboType> Part.getTurboTypes() {
-        return this.turboTypes;
-    }
-    
-    public void Part.setTurboTypes(List<TurboType> turboTypes) {
-        this.turboTypes = turboTypes;
     }
     
     public List<Interchange> Part.getInterchanges() {
