@@ -55,12 +55,12 @@ privileged aspect TurbineWheel_Roo_JavaBean {
         this.shaftThreadF = shaftThreadF;
     }
     
-    public String TurbineWheel.getTrimNumberOfBlades() {
-        return this.trimNumberOfBlades;
+    public String TurbineWheel.getTrimNoBlades() {
+        return this.trimNoBlades;
     }
     
-    public void TurbineWheel.setTrimNumberOfBlades(String trimNumberOfBlades) {
-        this.trimNumberOfBlades = trimNumberOfBlades;
+    public void TurbineWheel.setTrimNoBlades(String trimNoBlades) {
+        this.trimNoBlades = trimNoBlades;
     }
     
 }

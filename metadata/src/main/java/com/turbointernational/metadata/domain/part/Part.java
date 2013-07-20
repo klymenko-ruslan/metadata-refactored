@@ -17,7 +17,7 @@ import javax.persistence.OneToMany;
 @RooJavaBean
 @RooToString
 @RooJpaActiveRecord
-public class Part {
+public abstract class Part {
 
     @Column(name = "manfr_part_num")
     private String manufacturerPartNumber;
@@ -28,8 +28,9 @@ public class Part {
 
     @ManyToOne
     @JoinColumn(name = "part_type_id", nullable = false)
-    private PartType type;
+    private PartType partType;
 
+    @Column(name = "Name")
     private String name;
 
     private String description;

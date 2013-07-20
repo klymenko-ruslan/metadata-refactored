@@ -5,20 +5,9 @@ package com.turbointernational.metadata.domain.part;
 
 import com.turbointernational.metadata.domain.part.TurbineWheel;
 import java.util.List;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import org.springframework.transaction.annotation.Transactional;
 
 privileged aspect TurbineWheel_Roo_Jpa_ActiveRecord {
-    
-    @PersistenceContext
-    transient EntityManager TurbineWheel.entityManager;
-    
-    public static final EntityManager TurbineWheel.entityManager() {
-        EntityManager em = new TurbineWheel().entityManager;
-        if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
-        return em;
-    }
     
     public static long TurbineWheel.countTurbineWheels() {
         return entityManager().createQuery("SELECT COUNT(o) FROM TurbineWheel o", Long.class).getSingleResult();
@@ -35,35 +24,6 @@ privileged aspect TurbineWheel_Roo_Jpa_ActiveRecord {
     
     public static List<TurbineWheel> TurbineWheel.findTurbineWheelEntries(int firstResult, int maxResults) {
         return entityManager().createQuery("SELECT o FROM TurbineWheel o", TurbineWheel.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
-    }
-    
-    @Transactional
-    public void TurbineWheel.persist() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.persist(this);
-    }
-    
-    @Transactional
-    public void TurbineWheel.remove() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        if (this.entityManager.contains(this)) {
-            this.entityManager.remove(this);
-        } else {
-            TurbineWheel attached = TurbineWheel.findTurbineWheel(this.id);
-            this.entityManager.remove(attached);
-        }
-    }
-    
-    @Transactional
-    public void TurbineWheel.flush() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.flush();
-    }
-    
-    @Transactional
-    public void TurbineWheel.clear() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.clear();
     }
     
     @Transactional
