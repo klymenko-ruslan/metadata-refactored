@@ -43,47 +43,9 @@ CREATE TABLE `PART` (
   `description` VARCHAR(255) NULL,
   `inactive` BIT NOT NULL DEFAULT 0,
   `import_pk` INT(10) NULL,
-  `temp1_char` VARCHAR(255) NULL,
-  `temp2_char` VARCHAR(255) NULL,
-  `temp3_char` VARCHAR(255) NULL,
-  `temp4_char` VARCHAR(255) NULL,
-  `temp5_char` VARCHAR(255) NULL,
-  `temp6_char` VARCHAR(255) NULL,
-  `temp7_char` VARCHAR(255) NULL,
-  `temp8_char` VARCHAR(255) NULL,
-  `temp2_int` INT(10) NULL,
-  `temp3_int` INT(10) NULL,
-  `temp1_dec` DECIMAL(18, 6) NULL,
-  `temp2_dec` DECIMAL(18, 6) NULL,
-  `temp3_dec` DECIMAL(18, 6) NULL,
-  `temp4_dec` DECIMAL(18, 6) NULL,
-  `temp5_dec` DECIMAL(18, 6) NULL,
-  `temp6_dec` DECIMAL(18, 6) NULL,
   INDEX (`manfr_part_num`, `manfr_id`),
   FOREIGN KEY (`manfr_id`) REFERENCES `MANFR` (`ID`),
   FOREIGN KEY (`part_type_id`) REFERENCES `PART_TYPE` (`ID`)
-) ENGINE = INNODB;
-
-
---
--- Part Attributes
---
-CREATE TABLE `ATTRIBUTE_TYPE` (
-  `ID` INT(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  `part_types_id` INT(10) NULL,
-  `name` VARCHAR(255) NOT NULL,
-  UNIQUE INDEX (`part_types_id`, `name`),
-  FOREIGN KEY (`part_types_id`) REFERENCES `PART_TYPE` (`ID`)
-) ENGINE = INNODB;
-
-CREATE TABLE `PART_ATTRIBUTE` (
-  `ID` INT(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  `part_id` INT(10) NULL,
-  `attribute_type_id` INT(10) NULL,
-  `value` VARCHAR(255) NULL,
-  UNIQUE INDEX (`part_id`, `attribute_type_id`),
-  FOREIGN KEY (`attribute_type_id`) REFERENCES `ATTRIBUTE_TYPE` (`ID`),
-  FOREIGN KEY (`part_id`) REFERENCES `PART` (`ID`)
 ) ENGINE = INNODB;
 
 
@@ -122,6 +84,7 @@ CREATE TABLE `TURBO_TYPE` (
   `name` VARCHAR(255) NOT NULL,
   `manfr_id` INT(10) NOT NULL,
   `import_pk` INT(10) NULL,
+  UNIQUE INDEX (`name`),
   FOREIGN KEY (`manfr_id`) REFERENCES `MANFR` (`ID`)
 ) ENGINE = INNODB;
 
@@ -135,23 +98,11 @@ CREATE TABLE `TURBO_MODEL` (
 
 
 --
--- Part-Turbo Type join table
---
-CREATE TABLE `PART_TURBO_TYPE` (
-  `ID` INT(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  `part_id` INT(10) NOT NULL,
-  `turbo_type_id` INT(10) NOT NULL,
-  FOREIGN KEY (`part_id`) REFERENCES `PART` (`ID`),
-  FOREIGN KEY (`turbo_type_id`) REFERENCES `TURBO_TYPE` (`ID`)
-) ENGINE = INNODB;
-
-
---
 -- Interchanges
 --
 CREATE TABLE `INTERCHANGE_HEADER` (
   `ID` INT(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  `name` VARCHAR(255) NULL,
+  `name` VARCHAR(255) NOT NULL,
   `description` VARCHAR(255) NULL
 ) ENGINE = INNODB;
 
