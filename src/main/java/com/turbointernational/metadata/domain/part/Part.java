@@ -40,12 +40,6 @@ public abstract class Part {
 
     private Long importPk;
 
-    @OneToMany
-    @JoinTable(name="PART_TURBO_TYPE",
-               joinColumns=@JoinColumn(name="part_id"),
-               inverseJoinColumns=@JoinColumn(name="turbo_type_id"))
-    private List<TurboType> turboTypes;
-
     @ManyToMany
     @JoinTable(name="INTERCHANGE_ITEM",
                joinColumns=@JoinColumn(name="part_id"),
