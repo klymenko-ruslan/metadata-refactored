@@ -14,8 +14,8 @@ import org.springframework.roo.addon.tostring.RooToString;
 @RooJavaBean
 @RooToString
 @RooJpaActiveRecord
-//@Inheritance(strategy=InheritanceType.JOINED)
-public class TurbineWheel { //extends Part {
+@Inheritance(strategy=InheritanceType.JOINED)
+public class TurbineWheel extends Part {
 
     @Column(name="exduce_oa")
     private Float exducerDiameterA;
@@ -34,6 +34,5 @@ public class TurbineWheel { //extends Part {
     @Column(name="shaft_thread_f")
     private String shaftThreadF;
     
-    @Column(name="trim_no_blades")
-    private String trimNumberOfBlades;
+    private String trimNoBlades;
 }

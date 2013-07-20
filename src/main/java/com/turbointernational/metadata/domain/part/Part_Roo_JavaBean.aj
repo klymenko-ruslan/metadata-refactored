@@ -28,12 +28,12 @@ privileged aspect Part_Roo_JavaBean {
         this.manufacturer = manufacturer;
     }
     
-    public PartType Part.getType() {
-        return this.type;
+    public PartType Part.getPartType() {
+        return this.partType;
     }
     
-    public void Part.setType(PartType type) {
-        this.type = type;
+    public void Part.setPartType(PartType partType) {
+        this.partType = partType;
     }
     
     public String Part.getName() {
