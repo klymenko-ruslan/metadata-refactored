@@ -2,6 +2,8 @@ package com.turbointernational.metadata.domain.part;
 import com.turbointernational.metadata.domain.type.SealType;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import org.springframework.roo.addon.tostring.RooToString;
@@ -12,6 +14,8 @@ import org.springframework.roo.addon.tostring.RooToString;
 @Inheritance(strategy=InheritanceType.JOINED)
 public class Backplate extends Part {
 
+    @ManyToOne
+    @JoinColumn(name="seal_type_id")
     private SealType sealType;
     
     private String styleCompressorWheel;

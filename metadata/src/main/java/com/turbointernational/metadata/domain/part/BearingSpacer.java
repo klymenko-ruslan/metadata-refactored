@@ -19,13 +19,13 @@ public class BearingSpacer extends Part {
     @JoinTable(name="STANDARD_BEARING_SPACER",
                joinColumns=@JoinColumn(name="oversized_part_id"),
                inverseJoinColumns=@JoinColumn(name="standard_part_id"))
-    private Part standardSize;
+    private BearingSpacer standardSize;
 
     @OneToOne
     @JoinTable(name="STANDARD_BEARING_SPACER",
                joinColumns=@JoinColumn(name="standard_part_id"),
                inverseJoinColumns=@JoinColumn(name="oversized_part_id"))
-    private Part oversize;
+    private BearingSpacer oversize;
     
     @Column(name="outside_dim_min")
     private Float outsideDiameterMin;

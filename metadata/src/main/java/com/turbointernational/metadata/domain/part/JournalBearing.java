@@ -19,21 +19,21 @@ public class JournalBearing extends Part {
     @JoinTable(name="STANDARD_JOURNAL_BEARING",
                joinColumns=@JoinColumn(name="oversized_part_id"),
                inverseJoinColumns=@JoinColumn(name="standard_part_id"))
-    private Part standardSize;
+    private JournalBearing standardSize;
 
     @OneToOne
     @JoinTable(name="STANDARD_JOURNAL_BEARING",
                joinColumns=@JoinColumn(name="standard_part_id"),
                inverseJoinColumns=@JoinColumn(name="oversized_part_id"))
-    private Part oversize;
+    private JournalBearing oversize;
 
-    @Column(name="outside_dim_max")
+    @Column(name="outside_dim_min")
     private Float outsideDiameterMin;
 
     @Column(name="outside_dim_max")
     private Float outsideDiameterMax;
 
-    @Column(name="inside_dim_max")
+    @Column(name="inside_dim_min")
     private Float insideDiameterMin;
 
     @Column(name="inside_dim_max")

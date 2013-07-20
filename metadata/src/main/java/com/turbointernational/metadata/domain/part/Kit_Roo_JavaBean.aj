@@ -8,14 +8,6 @@ import com.turbointernational.metadata.domain.type.KitType;
 
 privileged aspect Kit_Roo_JavaBean {
     
-    public String Kit.getName() {
-        return this.name;
-    }
-    
-    public void Kit.setName(String name) {
-        this.name = name;
-    }
-    
     public KitType Kit.getType() {
         return this.type;
     }
