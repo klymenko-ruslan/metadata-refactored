@@ -43,12 +43,4 @@ privileged aspect BOMItem_Roo_JavaBean {
         this.alternatives = alternatives;
     }
     
-    public Map<Part, Integer> BOMItem.getParts() {
-        return this.parts;
-    }
-    
-    public void BOMItem.setParts(Map<Part, Integer> parts) {
-        this.parts = parts;
-    }
-    
 }
