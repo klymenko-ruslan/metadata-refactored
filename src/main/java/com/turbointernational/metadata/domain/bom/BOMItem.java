@@ -28,13 +28,8 @@ public class BOMItem {
     @Column(nullable=false)
     private Integer quantity;
 
-    @OneToMany(mappedBy="bomItem")
+    @OneToMany
     @MapKeyJoinColumn(name="bom_id", table="BOM_ALT_ITEM")
     private Map<BOMAlternative, BOMAlternativeHeader> alternatives;
-
-    @OneToMany
-    @MapKeyJoinColumn(name="child_part_id")
-    @MapKeyColumn(name="quantity", nullable=false)
-    private Map<Part, Integer> parts;
     
 }
