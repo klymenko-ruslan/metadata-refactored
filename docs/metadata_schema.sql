@@ -152,15 +152,6 @@ CREATE TABLE `BOM_ALT_ITEM` (
   FOREIGN KEY (`part_id`)  REFERENCES `PART` (`ID`)
 ) ENGINE = INNODB;
 
-CREATE TABLE `BOM_HIERARCHY` (
-  `ID` INT(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  `child_part_type_id` INT(10) NOT NULL,
-  `parent_part_type_id` INT(10) NOT NULL,
-  UNIQUE INDEX (`parent_part_type_id`, `child_part_type_id`),
-  FOREIGN KEY (`child_part_type_id`) REFERENCES `PART_TYPE` (`ID`),
-  FOREIGN KEY (`parent_part_type_id`) REFERENCES `PART_TYPE` (`ID`)
-) ENGINE = INNODB;
-
 
 --
 -- Parts

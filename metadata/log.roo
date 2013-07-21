@@ -31,14 +31,8 @@ ent j --class StandardBearingSpacer
 ent j --class StandardJournalBearing
 ent j --class TurbineWheel
 ent j --class Turbo
+ent j --class ~.metadata.domain.BOMAlternativeHeader
 perform tests
-exit
-// Spring Roo 1.2.4.RELEASE [rev 75337cf] log closed at 2013-07-14 16:36:06
-// Spring Roo 1.2.4.RELEASE [rev 75337cf] log opened at 2013-07-20 14:29:16
-exit
-// Spring Roo 1.2.4.RELEASE [rev 75337cf] log closed at 2013-07-20 14:29:56
-// Spring Roo 1.2.4.RELEASE [rev 75337cf] log opened at 2013-07-20 14:30:07
-// Spring Roo 1.2.4.RELEASE [rev 75337cf] log opened at 2013-07-20 14:54:25
 web mvc setup
 web mvc json all
 help
@@ -46,4 +40,4 @@ hint
 perform tests
 perform package
 exit
-// Spring Roo 1.2.4.RELEASE [rev 75337cf] log closed at 2013-07-20 15:13:18
+// Spring Roo 1.2.4.RELEASE [rev 75337cf] log opened at 2013-07-20 23:29:12
