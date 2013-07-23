@@ -295,3 +295,82 @@ CREATE TABLE `TURBO` (
   FOREIGN KEY (`cool_type_id`) REFERENCES `COOL_TYPE` (`ID`),
   FOREIGN KEY (`turbo_model_id`) REFERENCES `TURBO_MODEL` (`ID`)
 ) ENGINE = INNODB;
+
+
+--
+-- Metadata Security
+--
+CREATE TABLE `USER` (
+  `id` INT(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `name` VARCHAR(100) NOT NULL,
+  `email` VARCHAR(255) NOT NULL,
+  `password` VARCHAR(100) NOT NULL,
+  `enabled` BIT NOT NULL DEFAULT 1,
+  UNIQUE INDEX (`email`)
+) ENGINE = INNODB;
+
+CREATE TABLE `GROUP` (
+  `id` INT(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `name` VARCHAR(100) NOT NULL,
+  UNIQUE INDEX (`name`)
+) ENGINE = INNODB;
+
+CREATE TABLE `USER_GROUP` (
+  `user_id` INT(10) NOT NULL,
+  `group_id` INT(10) NOT NULL,
+  PRIMARY KEY (`user_id`, `group_id`),
+  FOREIGN KEY (`user_id`) REFERENCES `USER` (`id`),
+  FOREIGN KEY (`group_id`) REFERENCES `GROUP` (`id`)
+) ENGINE = INNODB;
+
+CREATE TABLE `ROLE` (
+  `id` INT(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `name` VARCHAR(100) NOT NULL,
+  `display` VARCHAR(100) NOT NULL,
+  UNIQUE INDEX (`name`)
+);
+
+CREATE TABLE `GROUP_ROLE` (
+  `group_id` INT(10) NOT NULL,
+  `role_id` INT(10) NOT NULL,
+  PRIMARY KEY (`group_id`, `role_id`),
+  FOREIGN KEY (`group_id`) REFERENCES `GROUP` (`id`),
+  FOREIGN KEY (`role_id`) REFERENCES `ROLE` (`id`)
+) ENGINE = INNODB;
+
+--
+-- Admin User
+--
+INSERT INTO `USER` (
+  `name`, `email`, `password`
+) VALUES (
+  "Admin", "", ""
+);
+SET @ADMINUSERID = last_insert_id();
+
+INSERT INTO `GROUP` (
+  `name`
+) VALUES (
+  "Administrators"
+);
+SET @ADMINGROUPID = last_insert_id();
+
+INSERT INTO `USER_GROUP` (
+  `user_id`, `group_id`
+) VALUES (
+  @ADMINUSERID, @ADMINGROUPID
+);
+
+INSERT INTO `ROLE` (
+  `name`, `display`
+) VALUES (
+  "ADMIN", "Administrator"
+);
+SET @ADMINROLEID = last_insert_id();
+
+
+INSERT INTO `GROUP_ROLE` (
+  `group_id`, `role_id`
+) VALUES (
+  @ADMINGROUPID, @ADMINROLEID
+);

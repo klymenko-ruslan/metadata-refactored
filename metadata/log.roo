@@ -35,9 +35,6 @@ ent j --class ~.metadata.domain.BOMAlternativeHeader
 perform tests
 web mvc setup
 web mvc json all
-help
-hint
-perform tests
-perform package
-exit
-// Spring Roo 1.2.4.RELEASE [rev 75337cf] log opened at 2013-07-20 23:29:12
+ent j --class ~.metadata.domain.web.User --permitReservedWords
+ent j --class ~.metadata.domain.web.Group --permitReservedWords
+ent j --class ~.metadata.domain.web.Role --permitReservedWords
