@@ -15,12 +15,4 @@ privileged aspect GasketType_Roo_JavaBean {
         this.name = name;
     }
     
-    public Long GasketType.getImportPk() {
-        return this.importPk;
-    }
-    
-    public void GasketType.setImportPk(Long importPk) {
-        this.importPk = importPk;
-    }
-    
 }

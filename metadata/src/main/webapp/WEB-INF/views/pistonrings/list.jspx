@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" xmlns:table="urn:jsptagdir:/WEB-INF/tags/form/fields" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <page:list id="pl_com_turbointernational_metadata_domain_part_PistonRing" items="${pistonrings}" z="41GfKREudO3xUgNqkIzaXzz6FdM=">
+        <table:table data="${pistonrings}" id="l_com_turbointernational_metadata_domain_part_PistonRing" path="/pistonrings" z="fPzox24EeDmH6MaIV6vJ8pp0u2g=">
+            <table:column id="c_com_turbointernational_metadata_domain_part_PistonRing_manufacturerPartNumber" property="manufacturerPartNumber" z="MsipkE4gUlC2jsG0dkfdbp6xK5Q="/>
+            <table:column id="c_com_turbointernational_metadata_domain_part_PistonRing_manufacturer" property="manufacturer" z="PInWP51LugfHySBM4AhRdlcl6lM="/>
+            <table:column id="c_com_turbointernational_metadata_domain_part_PistonRing_partType" property="partType" z="N5GmFHqfsNmhc4/n8amQrvFnEFo="/>
+            <table:column id="c_com_turbointernational_metadata_domain_part_PistonRing_name" property="name" z="ZbXBw61a266DkQqtHke2/87C55o="/>
+            <table:column id="c_com_turbointernational_metadata_domain_part_PistonRing_description" property="description" z="QlSP2ijL2DZCCdVdmEqCmz/qtsE="/>
+            <table:column id="c_com_turbointernational_metadata_domain_part_PistonRing_inactive" property="inactive" z="rYfIeMaYJfSS9Q+qlW1dqfe+Bu8="/>
+        </table:table>
+    </page:list>
+</div>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <page:show id="ps_com_turbointernational_metadata_domain_bom_BOMItem" object="${bomitem_}" path="/bomitems" z="c74iNbIVRrfI84GJgOIG+Xgwm7c=">
+        <field:display field="parent" id="s_com_turbointernational_metadata_domain_bom_BOMItem_parent" object="${bomitem_}" z="fr3Tuz8QC5PKq+0pKO0QwGeA5ZY="/>
+        <field:display field="child" id="s_com_turbointernational_metadata_domain_bom_BOMItem_child" object="${bomitem_}" z="/7pLMUBEK1m+A3IC2eseaQWD49M="/>
+        <field:display field="quantity" id="s_com_turbointernational_metadata_domain_bom_BOMItem_quantity" object="${bomitem_}" z="ptJZt8gI9iCjcmK1YTXC9pDCIgg="/>
+    </page:show>
+</div>

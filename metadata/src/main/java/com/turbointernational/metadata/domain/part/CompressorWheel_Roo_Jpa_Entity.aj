@@ -5,9 +5,16 @@ package com.turbointernational.metadata.domain.part;
 
 import com.turbointernational.metadata.domain.part.CompressorWheel;
 import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.Table;
 
 privileged aspect CompressorWheel_Roo_Jpa_Entity {
     
     declare @type: CompressorWheel: @Entity;
+    
+    declare @type: CompressorWheel: @Table(name = "COMPRESSOR_WHEEL");
+    
+    declare @type: CompressorWheel: @Inheritance(strategy = InheritanceType.JOINED);
     
 }

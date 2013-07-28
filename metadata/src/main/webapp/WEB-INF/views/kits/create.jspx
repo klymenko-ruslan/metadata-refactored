@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:form="urn:jsptagdir:/WEB-INF/tags/form" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:spring="http://www.springframework.org/tags" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <form:create id="fc_com_turbointernational_metadata_domain_part_Kit" modelAttribute="kit" path="/kits" render="${empty dependencies}" z="ylXzNwrYQXVzbG7NZabPfck2wLE=">
+        <field:input field="manufacturerPartNumber" id="c_com_turbointernational_metadata_domain_part_Kit_manufacturerPartNumber" z="KAsbsaRhSyFFIowKqXFr4+F7dSo="/>
+        <field:select field="manufacturer" id="c_com_turbointernational_metadata_domain_part_Kit_manufacturer" itemValue="id" items="${manufacturers}" path="/manufacturers" z="6tLFuIQ08S84fMXamvEWtMWys2o="/>
+        <field:select field="partType" id="c_com_turbointernational_metadata_domain_part_Kit_partType" itemValue="id" items="${parttypes}" path="/parttypes" z="jtaN+zeof8SoC4Bo9pRAwltdgY0="/>
+        <field:input field="name" id="c_com_turbointernational_metadata_domain_part_Kit_name" z="R+i745c/tonYpBMQhxkF2IdoKO4="/>
+        <field:input field="description" id="c_com_turbointernational_metadata_domain_part_Kit_description" z="+xROpvmpGkJ94PCGgELto7ndBI8="/>
+        <field:checkbox field="inactive" id="c_com_turbointernational_metadata_domain_part_Kit_inactive" required="true" z="6+HHQNEqwz3xmpmg30rRhesmKPw="/>
+        <field:simple field="interchanges" id="c_com_turbointernational_metadata_domain_part_Kit_interchanges" messageCode="entity_reference_not_managed" messageCodeAttribute="Interchange" z="Pq8OosdYYakVa6eU187ropQtLIc="/>
+        <field:select field="type" id="c_com_turbointernational_metadata_domain_part_Kit_type" itemValue="id" items="${kittypes}" path="/kittypes" z="ZFE+r8qkudYb0tm0TQe86OVt3TQ="/>
+    </form:create>
+    <form:dependency dependencies="${dependencies}" id="d_com_turbointernational_metadata_domain_part_Kit" render="${not empty dependencies}" z="GYqt4u/DMGE98vApZmHmzGpcj3M="/>
+</div>

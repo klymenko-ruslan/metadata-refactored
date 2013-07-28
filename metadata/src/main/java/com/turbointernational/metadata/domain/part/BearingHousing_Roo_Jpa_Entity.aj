@@ -5,9 +5,16 @@ package com.turbointernational.metadata.domain.part;
 
 import com.turbointernational.metadata.domain.part.BearingHousing;
 import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.Table;
 
 privileged aspect BearingHousing_Roo_Jpa_Entity {
     
     declare @type: BearingHousing: @Entity;
+    
+    declare @type: BearingHousing: @Table(name = "BEARING_HOUSING");
+    
+    declare @type: BearingHousing: @Inheritance(strategy = InheritanceType.JOINED);
     
 }

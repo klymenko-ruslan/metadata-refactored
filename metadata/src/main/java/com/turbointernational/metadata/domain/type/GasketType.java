@@ -9,11 +9,9 @@ import org.springframework.roo.addon.tostring.RooToString;
 @RooJavaBean
 @RooToString
 @RooJpaActiveRecord
-@Table(uniqueConstraints=@UniqueConstraint(columnNames={"name"}))
+@Table(name="GASKET_TYPE", uniqueConstraints=@UniqueConstraint(columnNames={"name"}))
 public class GasketType {
 
     @Column(nullable=false)
     private String name;
-
-    private Long importPk;
 }

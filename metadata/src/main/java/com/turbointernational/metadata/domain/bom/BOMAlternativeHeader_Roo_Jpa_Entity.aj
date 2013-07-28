@@ -9,11 +9,14 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.persistence.Version;
 
 privileged aspect BOMAlternativeHeader_Roo_Jpa_Entity {
     
     declare @type: BOMAlternativeHeader: @Entity;
+    
+    declare @type: BOMAlternativeHeader: @Table(name = "BOM_ALT_HEADER");
     
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

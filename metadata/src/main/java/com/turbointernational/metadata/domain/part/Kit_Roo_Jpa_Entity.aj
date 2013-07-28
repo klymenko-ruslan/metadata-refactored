@@ -5,9 +5,16 @@ package com.turbointernational.metadata.domain.part;
 
 import com.turbointernational.metadata.domain.part.Kit;
 import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.Table;
 
 privileged aspect Kit_Roo_Jpa_Entity {
     
     declare @type: Kit: @Entity;
+    
+    declare @type: Kit: @Table(name = "KIT");
+    
+    declare @type: Kit: @Inheritance(strategy = InheritanceType.JOINED);
     
 }

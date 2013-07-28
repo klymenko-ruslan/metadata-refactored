@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <page:show id="ps_com_turbointernational_metadata_domain_bom_BOMAlternativeHeader" object="${bomalternativeheader_}" path="/bomalternativeheaders" z="xuYsVTcNkk69uPV3du8ptlOpGQM=">
+        <field:display field="name" id="s_com_turbointernational_metadata_domain_bom_BOMAlternativeHeader_name" object="${bomalternativeheader_}" z="3wc/Uh72erT2ac3WWOU6rMRV3xQ="/>
+        <field:display field="description" id="s_com_turbointernational_metadata_domain_bom_BOMAlternativeHeader_description" object="${bomalternativeheader_}" z="GX25vZkRz4MRe7q4D5rsyOLb4AQ="/>
+    </page:show>
+</div>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" xmlns:table="urn:jsptagdir:/WEB-INF/tags/form/fields" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <page:list id="pl_com_turbointernational_metadata_domain_type_ManufacturerType" items="${manufacturertypes}" z="Qhkm0TW1rBkpuyfcySG5en5+wlo=">
+        <table:table data="${manufacturertypes}" id="l_com_turbointernational_metadata_domain_type_ManufacturerType" path="/manufacturertypes" z="zQFON5Iggs0Aqyath7fCDNxjh74=">
+            <table:column id="c_com_turbointernational_metadata_domain_type_ManufacturerType_name" property="name" z="8YzVxPXRgLta8ZRAiMpkvuHfBlc="/>
+        </table:table>
+    </page:list>
+</div>

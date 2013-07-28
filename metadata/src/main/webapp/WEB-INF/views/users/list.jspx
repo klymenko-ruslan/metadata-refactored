@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" xmlns:table="urn:jsptagdir:/WEB-INF/tags/form/fields" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <page:list id="pl_com_turbointernational_metadata_domain_security_User" items="${users}" z="4oZnRWIO18xiTYGvvETLQSMj3rQ=">
+        <table:table data="${users}" id="l_com_turbointernational_metadata_domain_security_User" path="/users" z="V1C1K1INyUixBXVbZ7QPSiXqqA4=">
+            <table:column id="c_com_turbointernational_metadata_domain_security_User_name" property="name" z="EkTmun+3LdjHqq6wKmxy+a+scZE="/>
+            <table:column id="c_com_turbointernational_metadata_domain_security_User_email" property="email" z="c69SOGLuyS8r23C7NT5+ntm2I3M="/>
+            <table:column id="c_com_turbointernational_metadata_domain_security_User_password" property="password" z="4s7LGyl+0K34ct+nA669/Ga3OSM="/>
+            <table:column id="c_com_turbointernational_metadata_domain_security_User_enabled" property="enabled" z="zPGqu5vH2eoaqV/f0CJL6n2dxbE="/>
+            <table:column id="c_com_turbointernational_metadata_domain_security_User_groups" property="groups" z="chYbuYDip9GZSccka5QrFhtHwHM="/>
+        </table:table>
+    </page:list>
+</div>

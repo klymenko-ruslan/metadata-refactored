@@ -1,7 +1,5 @@
 package com.turbointernational.metadata.domain.part;
 import javax.persistence.Column;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.OneToOne;
@@ -11,8 +9,7 @@ import org.springframework.roo.addon.tostring.RooToString;
 
 @RooJavaBean
 @RooToString
-@RooJpaActiveRecord
-@Inheritance(strategy=InheritanceType.JOINED)
+@RooJpaActiveRecord(table="JOURNAL_BEARING", inheritanceType = "JOINED")
 public class JournalBearing extends Part {
 
     @OneToOne

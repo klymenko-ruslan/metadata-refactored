@@ -294,6 +294,14 @@
                 <version>2.3</version>
                 <configuration>
                     <!--<webXml>target/web.xml</webXml>-->
+                    <webResources>
+                        <resource>
+                            <excludes>
+                                <exclude>dbre.xml</exclude>
+                            </excludes>
+                            <directory>src/main/resources</directory>
+                        </resource>
+                    </webResources>
                 </configuration>
             </plugin>
             <plugin>

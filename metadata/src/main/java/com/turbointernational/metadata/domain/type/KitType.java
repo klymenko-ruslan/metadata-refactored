@@ -9,11 +9,9 @@ import org.springframework.roo.addon.tostring.RooToString;
 @RooJavaBean
 @RooToString
 @RooJpaActiveRecord
-@Table(uniqueConstraints=@UniqueConstraint(columnNames={"name"}))
+@Table(name="KIT_TYPE", uniqueConstraints=@UniqueConstraint(columnNames={"name"}))
 public class KitType {
 
     @Column(nullable=false)
     private String name;
-
-    private Long importPk;
 }

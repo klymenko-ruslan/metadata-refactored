@@ -15,12 +15,4 @@ privileged aspect KitType_Roo_JavaBean {
         this.name = name;
     }
     
-    public Long KitType.getImportPk() {
-        return this.importPk;
-    }
-    
-    public void KitType.setImportPk(Long importPk) {
-        this.importPk = importPk;
-    }
-    
 }

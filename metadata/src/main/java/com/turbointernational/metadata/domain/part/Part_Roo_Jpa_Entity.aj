@@ -9,11 +9,14 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.persistence.Version;
 
 privileged aspect Part_Roo_Jpa_Entity {
     
     declare @type: Part: @Entity;
+    
+    declare @type: Part: @Table(name = "PART_ORM_VIEW");
     
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

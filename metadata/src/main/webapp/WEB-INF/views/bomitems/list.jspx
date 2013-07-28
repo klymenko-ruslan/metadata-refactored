@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" xmlns:table="urn:jsptagdir:/WEB-INF/tags/form/fields" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <page:list id="pl_com_turbointernational_metadata_domain_bom_BOMItem" items="${bomitems}" z="ddfakEd9LxVQIW8bm356Wgcm9DI=">
+        <table:table data="${bomitems}" id="l_com_turbointernational_metadata_domain_bom_BOMItem" path="/bomitems" z="FeZMETpudgann8bOvg7Ro+D3Bn4=">
+            <table:column id="c_com_turbointernational_metadata_domain_bom_BOMItem_parent" property="parent" z="LVohin2lsDrZrMSmmqX6OVBv6JM="/>
+            <table:column id="c_com_turbointernational_metadata_domain_bom_BOMItem_child" property="child" z="iHSu1gNMKqh2EQbvQQh/ku3/2Ac="/>
+            <table:column id="c_com_turbointernational_metadata_domain_bom_BOMItem_quantity" property="quantity" z="87BWujCQEqIJncJbxGjzL7j5AW4="/>
+        </table:table>
+    </page:list>
+</div>
