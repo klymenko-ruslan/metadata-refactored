@@ -39,20 +39,20 @@ privileged aspect PistonRing_Roo_JavaBean {
         this.widthMax = widthMax;
     }
     
-    public Float PistonRing.getIGapMin() {
-        return this.iGapMin;
+    public Float PistonRing.getInstalledGapMin() {
+        return this.installedGapMin;
     }
     
-    public void PistonRing.setIGapMin(Float iGapMin) {
-        this.iGapMin = iGapMin;
+    public void PistonRing.setInstalledGapMin(Float installedGapMin) {
+        this.installedGapMin = installedGapMin;
     }
     
-    public Float PistonRing.getIGapMax() {
-        return this.iGapMax;
+    public Float PistonRing.getInstalledGapMax() {
+        return this.installedGapMax;
     }
     
-    public void PistonRing.setIGapMax(Float iGapMax) {
-        this.iGapMax = iGapMax;
+    public void PistonRing.setInstalledGapMax(Float installedGapMax) {
+        this.installedGapMax = installedGapMax;
     }
     
 }
