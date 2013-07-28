@@ -5,9 +5,16 @@ package com.turbointernational.metadata.domain.part;
 
 import com.turbointernational.metadata.domain.part.PistonRing;
 import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.Table;
 
 privileged aspect PistonRing_Roo_Jpa_Entity {
     
     declare @type: PistonRing: @Entity;
+    
+    declare @type: PistonRing: @Table(name = "PISTON_RING");
+    
+    declare @type: PistonRing: @Inheritance(strategy = InheritanceType.JOINED);
     
 }

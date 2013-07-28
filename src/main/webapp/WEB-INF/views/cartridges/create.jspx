@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:form="urn:jsptagdir:/WEB-INF/tags/form" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:spring="http://www.springframework.org/tags" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <form:create id="fc_com_turbointernational_metadata_domain_part_Cartridge" modelAttribute="cartridge" path="/cartridges" render="${empty dependencies}" z="ok/DIxWGFIcx3z+V7rsm/wdjegI=">
+        <field:input field="manufacturerPartNumber" id="c_com_turbointernational_metadata_domain_part_Cartridge_manufacturerPartNumber" z="yd1grHVV6wOmitEoxACvUJux49Q="/>
+        <field:select field="manufacturer" id="c_com_turbointernational_metadata_domain_part_Cartridge_manufacturer" itemValue="id" items="${manufacturers}" path="/manufacturers" z="pDa/nsF1RTv5T2SRP2hcr0GxVtY="/>
+        <field:select field="partType" id="c_com_turbointernational_metadata_domain_part_Cartridge_partType" itemValue="id" items="${parttypes}" path="/parttypes" z="BJBz6Wzh8bzauotr/oRUdwrhq3A="/>
+        <field:input field="name" id="c_com_turbointernational_metadata_domain_part_Cartridge_name" z="gRc9TI8m7nGHqDfQr0gIPi96OVs="/>
+        <field:input field="description" id="c_com_turbointernational_metadata_domain_part_Cartridge_description" z="5qvwaCXnNnqqhkOsiHJQKRaQoBw="/>
+        <field:checkbox field="inactive" id="c_com_turbointernational_metadata_domain_part_Cartridge_inactive" required="true" z="YavyV62WKPLTtZ8jO2g2djABA2g="/>
+        <field:simple field="interchanges" id="c_com_turbointernational_metadata_domain_part_Cartridge_interchanges" messageCode="entity_reference_not_managed" messageCodeAttribute="Interchange" z="Q2bnonPOZObZSmJAQK2HDePOaxI="/>
+    </form:create>
+    <form:dependency dependencies="${dependencies}" id="d_com_turbointernational_metadata_domain_part_Cartridge" render="${not empty dependencies}" z="SWRC75oc2XwhUPOj4+BWv9nRhno="/>
+</div>

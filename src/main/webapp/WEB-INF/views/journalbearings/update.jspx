@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:form="urn:jsptagdir:/WEB-INF/tags/form" xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <form:update id="fu_com_turbointernational_metadata_domain_part_JournalBearing" modelAttribute="journalBearing" path="/journalbearings" versionField="Version" z="vdJNqH4gQcQl5Jf0R84SWxNHVAA=">
+        <field:input field="manufacturerPartNumber" id="c_com_turbointernational_metadata_domain_part_JournalBearing_manufacturerPartNumber" z="+IAPBXO3Bmh/S9qxXpiBwhI3FLw="/>
+        <field:select field="manufacturer" id="c_com_turbointernational_metadata_domain_part_JournalBearing_manufacturer" itemValue="id" items="${manufacturers}" path="/manufacturers" z="gCvQqQjBHtSedjB5ymmIhEClC+Y="/>
+        <field:select field="partType" id="c_com_turbointernational_metadata_domain_part_JournalBearing_partType" itemValue="id" items="${parttypes}" path="/parttypes" z="/DYlHTwaOhPjnQZ73jhB3VamL3o="/>
+        <field:input field="name" id="c_com_turbointernational_metadata_domain_part_JournalBearing_name" z="zHQu3MSS9K5kH4YgpxvWKGFzHqc="/>
+        <field:input field="description" id="c_com_turbointernational_metadata_domain_part_JournalBearing_description" z="NojDZF4xzL8YP+z++uvr4gRTDlQ="/>
+        <field:checkbox field="inactive" id="c_com_turbointernational_metadata_domain_part_JournalBearing_inactive" required="true" z="FeRF5IJKla5FmKuMf6M2yAxwj0g="/>
+        <field:simple field="interchanges" id="c_com_turbointernational_metadata_domain_part_JournalBearing_interchanges" messageCode="entity_reference_not_managed" messageCodeAttribute="Interchange" z="tlMEKXQLwmGvOFq/3HhYHqgZFz4="/>
+        <field:select field="standardSize" id="c_com_turbointernational_metadata_domain_part_JournalBearing_standardSize" itemValue="id" items="${journalbearings}" path="/journalbearings" z="Woq2A8FfdWzOvBM7kJMQshXQIPY="/>
+        <field:select field="oversize" id="c_com_turbointernational_metadata_domain_part_JournalBearing_oversize" itemValue="id" items="${journalbearings}" path="/journalbearings" z="v6NwmpuJASyOqzb3XbPpEqRbVUE="/>
+        <field:input field="outsideDiameterMin" id="c_com_turbointernational_metadata_domain_part_JournalBearing_outsideDiameterMin" validationMessageCode="field_invalid_number" z="OM/AQ410ctZq67bcwBhpclunb9o="/>
+        <field:input field="outsideDiameterMax" id="c_com_turbointernational_metadata_domain_part_JournalBearing_outsideDiameterMax" validationMessageCode="field_invalid_number" z="YalNBCOpjNgmLTNr+yrTNzc7WxA="/>
+        <field:input field="insideDiameterMin" id="c_com_turbointernational_metadata_domain_part_JournalBearing_insideDiameterMin" validationMessageCode="field_invalid_number" z="WHL6TGQeE/jMYJ9ud4ic7My64WQ="/>
+        <field:input field="insideDiameterMax" id="c_com_turbointernational_metadata_domain_part_JournalBearing_insideDiameterMax" validationMessageCode="field_invalid_number" z="qSofhlGie0DrHpmzVoWIOtvuAag="/>
+    </form:update>
+</div>

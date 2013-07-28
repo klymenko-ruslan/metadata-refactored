@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:form="urn:jsptagdir:/WEB-INF/tags/form" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:spring="http://www.springframework.org/tags" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <form:create id="fc_com_turbointernational_metadata_domain_security_Role" modelAttribute="role" path="/roles" render="${empty dependencies}" z="CamR6dzEQJQsH6MeFOS+bBJ/FV8=">
+        <field:input field="name" id="c_com_turbointernational_metadata_domain_security_Role_name" z="G3XKB/weTqTPVhbHG85DsGWsO7k="/>
+        <field:input field="display" id="c_com_turbointernational_metadata_domain_security_Role_display" z="e5U9QtjhSIW+QCu8ZUiDL/7pfhY="/>
+    </form:create>
+    <form:dependency dependencies="${dependencies}" id="d_com_turbointernational_metadata_domain_security_Role" render="${not empty dependencies}" z="iR5RBFkiFQZBY1slsDNaX24J48w="/>
+</div>

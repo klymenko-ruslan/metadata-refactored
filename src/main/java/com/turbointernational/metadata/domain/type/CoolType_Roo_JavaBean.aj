@@ -15,12 +15,4 @@ privileged aspect CoolType_Roo_JavaBean {
         this.name = name;
     }
     
-    public Long CoolType.getImportPk() {
-        return this.importPk;
-    }
-    
-    public void CoolType.setImportPk(Long importPk) {
-        this.importPk = importPk;
-    }
-    
 }

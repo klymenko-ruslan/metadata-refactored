@@ -6,7 +6,7 @@ import org.springframework.roo.addon.tostring.RooToString;
 
 @RooJavaBean
 @RooToString
-@RooJpaActiveRecord
+@RooJpaActiveRecord(table="BOM_ALT_HEADER")
 public class BOMAlternativeHeader {
 
     @Column(nullable=false)

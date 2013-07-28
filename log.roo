@@ -38,3 +38,61 @@ web mvc json all
 ent j --class ~.metadata.domain.web.User --permitReservedWords
 ent j --class ~.metadata.domain.web.Group --permitReservedWords
 ent j --class ~.metadata.domain.web.Role --permitReservedWords
+// Spring Roo 1.2.4.RELEASE [rev 75337cf] log opened at 2013-07-27 17:56:42
+help
+hint
+web mvc all --package com.turbointernational.metadata.domain
+web mvc all --package com.turbointernational.metadata.domain.bom
+web mvc all --package com.turbointernational.metadata.domain.part
+web mvc all --package com.turbointernational.metadata.domain.type
+web mvc all --package com.turbointernational.metadata.domain.web
+hint
+help
+// [failed] database reverse engineer --schema ti
+database properties list
+// [failed] database reverse engineer --schema ti --package com.turbointernational.metadata.domain2
+// [failed] database reverse engineer --schema unable-to-obtain-connection 
+osgi obr url add --url http://spring-roo-repository.springsource.org/repository.xml
+osgi obr start --bundleSymbolicName org.springframework.roo.wrapping.mysql-connector-java
+osgi obr url remove --url http://spring-roo-repository.springsource.org/repository.xml
+addon install id --searchResultId 01
+database reverse engineer --schema ti --package com.turbointernational.metadata.domain2
+exit
+// Spring Roo 1.2.4.RELEASE [rev 75337cf] log closed at 2013-07-27 20:00:44
+// Spring Roo 1.2.4.RELEASE [rev 75337cf] log opened at 2013-07-27 20:00:51
+database reverse engineer --schema ti --testAutomatically --package com.turbointernational.metadata.domain2
+exit
+// Spring Roo 1.2.4.RELEASE [rev 75337cf] log closed at 2013-07-27 20:44:29
+// Spring Roo 1.2.4.RELEASE [rev 75337cf] log opened at 2013-07-28 09:02:31
+exit
+// Spring Roo 1.2.4.RELEASE [rev 75337cf] log closed at 2013-07-28 09:06:15
+// Spring Roo 1.2.4.RELEASE [rev 75337cf] log opened at 2013-07-28 09:07:06
+exit
+// Spring Roo 1.2.4.RELEASE [rev 75337cf] log closed at 2013-07-28 09:37:48
+// Spring Roo 1.2.4.RELEASE [rev 75337cf] log opened at 2013-07-28 09:37:51
+help
+poll now
+poll now
+poll now
+exit
+// Spring Roo 1.2.4.RELEASE [rev 75337cf] log closed at 2013-07-28 11:27:17
+// Spring Roo 1.2.4.RELEASE [rev 75337cf] log opened at 2013-07-28 11:33:33
+poll now
+exit
+// Spring Roo 1.2.4.RELEASE [rev 75337cf] log closed at 2013-07-28 12:37:55
+// Spring Roo 1.2.4.RELEASE [rev 75337cf] log opened at 2013-07-28 12:38:03
+poll now
+poll now
+help
+poll now
+exit
+// Spring Roo 1.2.4.RELEASE [rev 75337cf] log closed at 2013-07-28 15:01:33
+// Spring Roo 1.2.4.RELEASE [rev 75337cf] log opened at 2013-07-28 15:01:38
+exit
+// Spring Roo 1.2.4.RELEASE [rev 75337cf] log closed at 2013-07-28 15:34:47
+// Spring Roo 1.2.4.RELEASE [rev 75337cf] log opened at 2013-07-28 15:34:54
+exit
+// Spring Roo 1.2.4.RELEASE [rev 75337cf] log closed at 2013-07-28 15:53:38
+// Spring Roo 1.2.4.RELEASE [rev 75337cf] log opened at 2013-07-28 15:53:44
+exit
+// Spring Roo 1.2.4.RELEASE [rev 75337cf] log closed at 2013-07-28 16:17:53

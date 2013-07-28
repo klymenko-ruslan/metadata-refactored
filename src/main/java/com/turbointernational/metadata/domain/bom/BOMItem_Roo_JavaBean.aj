@@ -3,11 +3,8 @@
 
 package com.turbointernational.metadata.domain.bom;
 
-import com.turbointernational.metadata.domain.bom.BOMAlternative;
-import com.turbointernational.metadata.domain.bom.BOMAlternativeHeader;
 import com.turbointernational.metadata.domain.bom.BOMItem;
 import com.turbointernational.metadata.domain.part.Part;
-import java.util.Map;
 
 privileged aspect BOMItem_Roo_JavaBean {
     
@@ -33,14 +30,6 @@ privileged aspect BOMItem_Roo_JavaBean {
     
     public void BOMItem.setQuantity(Integer quantity) {
         this.quantity = quantity;
-    }
-    
-    public Map<BOMAlternative, BOMAlternativeHeader> BOMItem.getAlternatives() {
-        return this.alternatives;
-    }
-    
-    public void BOMItem.setAlternatives(Map<BOMAlternative, BOMAlternativeHeader> alternatives) {
-        this.alternatives = alternatives;
     }
     
 }

@@ -1,7 +1,5 @@
 package com.turbointernational.metadata.domain.part;
 import com.turbointernational.metadata.domain.type.KitType;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import org.springframework.roo.addon.javabean.RooJavaBean;
@@ -10,8 +8,7 @@ import org.springframework.roo.addon.tostring.RooToString;
 
 @RooJavaBean
 @RooToString
-@RooJpaActiveRecord
-@Inheritance(strategy= InheritanceType.JOINED)
+@RooJpaActiveRecord(table="KIT", inheritanceType = "JOINED")
 public class Kit extends Part {
     @ManyToOne
     @JoinColumn(name="kit_type_id")

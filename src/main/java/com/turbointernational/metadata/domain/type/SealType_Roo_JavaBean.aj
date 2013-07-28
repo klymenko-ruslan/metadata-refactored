@@ -15,12 +15,4 @@ privileged aspect SealType_Roo_JavaBean {
         this.name = name;
     }
     
-    public Long SealType.getImportPk() {
-        return this.importPk;
-    }
-    
-    public void SealType.setImportPk(Long importPk) {
-        this.importPk = importPk;
-    }
-    
 }

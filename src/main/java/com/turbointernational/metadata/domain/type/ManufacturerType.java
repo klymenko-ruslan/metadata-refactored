@@ -9,7 +9,7 @@ import javax.persistence.UniqueConstraint;
 @RooJavaBean
 @RooToString
 @RooJpaActiveRecord
-@Table(name = "MANFR_TYPE",
+@Table(name="MANFR_TYPE",
        uniqueConstraints=@UniqueConstraint(columnNames={"name"}))
 public class ManufacturerType {
 

@@ -1,5 +1,5 @@
 package com.turbointernational.metadata.domain.type;
-import com.turbointernational.metadata.domain.Manufacturer;
+import com.turbointernational.metadata.domain.other.Manufacturer;
 import javax.persistence.Column;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -12,7 +12,7 @@ import org.springframework.roo.addon.tostring.RooToString;
 @RooJavaBean
 @RooToString
 @RooJpaActiveRecord
-@Table(uniqueConstraints=@UniqueConstraint(columnNames={"name"}))
+@Table(name="TURBO_TYPE", uniqueConstraints=@UniqueConstraint(columnNames={"name"}))
 public class TurboType {
 
     @ManyToOne
@@ -21,6 +21,4 @@ public class TurboType {
 
     @Column(nullable=false)
     private String name;
-
-    private Long importPk;
 }

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <page:show id="ps_com_turbointernational_metadata_domain_interchange_Interchange" object="${interchange}" path="/interchanges" z="J/AkkFw2nnG94qqGiSUSlhgwsrA=">
+        <field:display field="name" id="s_com_turbointernational_metadata_domain_interchange_Interchange_name" object="${interchange}" z="0vacRRJc8+6NHGFfUiVJ5cbFuI4="/>
+        <field:display field="description" id="s_com_turbointernational_metadata_domain_interchange_Interchange_description" object="${interchange}" z="k+g34ODBPgC1GgJXVVV74TuCwo4="/>
+        <field:display field="parts" id="s_com_turbointernational_metadata_domain_interchange_Interchange_parts" object="${interchange}" z="wejvcuuf+lP659/simdshmF0LCw="/>
+    </page:show>
+</div>
