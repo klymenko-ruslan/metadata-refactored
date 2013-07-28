@@ -21,10 +21,9 @@ public class PistonRing extends Part {
 
     private Float widthMax;
 
-    // ???: Better names for these?
     @Column(name="i_gap_min")
-    private Float iGapMin;
+    private Float installedGapMin;
 
     @Column(name="i_gap_max")
-    private Float iGapMax;
+    private Float installedGapMax;
 }
