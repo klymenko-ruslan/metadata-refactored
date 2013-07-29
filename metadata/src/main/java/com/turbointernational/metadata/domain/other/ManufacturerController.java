@@ -3,8 +3,8 @@ import org.springframework.roo.addon.web.mvc.controller.scaffold.RooWebScaffold;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-@RequestMapping("/manufacturers")
+@RequestMapping("/manufacturer")
 @Controller
-@RooWebScaffold(path = "manufacturers", formBackingObject = Manufacturer.class)
+@RooWebScaffold(path = "manufacturer", formBackingObject = Manufacturer.class)
 public class ManufacturerController {
 }

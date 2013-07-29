@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" xmlns:table="urn:jsptagdir:/WEB-INF/tags/form/fields" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <page:list id="pl_ti_metadata_domain_bom_Bom" items="${boms}" z="Ql3SJL/3GzIIxRqoljAZLaf61Sc=">
+        <table:table data="${boms}" id="l_ti_metadata_domain_bom_Bom" path="/boms" z="A5aJwc6V1hp+BKGkMF3w4u9a6CI=">
+            <table:column id="c_ti_metadata_domain_bom_Bom_parentPartId" property="parentPartId" z="JWEGXRN4CGn7VxnoJLcwDlJ+RDc="/>
+            <table:column id="c_ti_metadata_domain_bom_Bom_childPartId" property="childPartId" z="/9BHk4ypqbJasY8RXVgoFT5a9NE="/>
+            <table:column id="c_ti_metadata_domain_bom_Bom_quantity" property="quantity" z="cyj1eyI7mK3w0CBEoZEpLnEcerg="/>
+        </table:table>
+    </page:list>
+</div>

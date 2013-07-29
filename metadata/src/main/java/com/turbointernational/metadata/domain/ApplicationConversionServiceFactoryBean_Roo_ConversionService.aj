@@ -4,10 +4,6 @@
 package com.turbointernational.metadata.domain;
 
 import com.turbointernational.metadata.domain.ApplicationConversionServiceFactoryBean;
-import com.turbointernational.metadata.domain.bom.BOMAlternative;
-import com.turbointernational.metadata.domain.bom.BOMAlternativeHeader;
-import com.turbointernational.metadata.domain.bom.BOMItem;
-import com.turbointernational.metadata.domain.interchange.Interchange;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.other.TurboModel;
 import com.turbointernational.metadata.domain.part.Backplate;
@@ -24,15 +20,7 @@ import com.turbointernational.metadata.domain.part.PistonRing;
 import com.turbointernational.metadata.domain.part.TurbineWheel;
 import com.turbointernational.metadata.domain.part.Turbo;
 import com.turbointernational.metadata.domain.security.Group;
-import com.turbointernational.metadata.domain.security.Role;
 import com.turbointernational.metadata.domain.security.User;
-import com.turbointernational.metadata.domain.type.CoolType;
-import com.turbointernational.metadata.domain.type.GasketType;
-import com.turbointernational.metadata.domain.type.KitType;
-import com.turbointernational.metadata.domain.type.ManufacturerType;
-import com.turbointernational.metadata.domain.type.PartType;
-import com.turbointernational.metadata.domain.type.SealType;
-import com.turbointernational.metadata.domain.type.TurboType;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.format.FormatterRegistry;
@@ -40,102 +28,6 @@ import org.springframework.format.FormatterRegistry;
 privileged aspect ApplicationConversionServiceFactoryBean_Roo_ConversionService {
     
     declare @type: ApplicationConversionServiceFactoryBean: @Configurable;
-    
-    public Converter<BOMAlternative, String> ApplicationConversionServiceFactoryBean.getBOMAlternativeToStringConverter() {
-        return new org.springframework.core.convert.converter.Converter<com.turbointernational.metadata.domain.bom.BOMAlternative, java.lang.String>() {
-            public String convert(BOMAlternative bOMAlternative) {
-                return "(no displayable fields)";
-            }
-        };
-    }
-    
-    public Converter<Long, BOMAlternative> ApplicationConversionServiceFactoryBean.getIdToBOMAlternativeConverter() {
-        return new org.springframework.core.convert.converter.Converter<java.lang.Long, com.turbointernational.metadata.domain.bom.BOMAlternative>() {
-            public com.turbointernational.metadata.domain.bom.BOMAlternative convert(java.lang.Long id) {
-                return BOMAlternative.findBOMAlternative(id);
-            }
-        };
-    }
-    
-    public Converter<String, BOMAlternative> ApplicationConversionServiceFactoryBean.getStringToBOMAlternativeConverter() {
-        return new org.springframework.core.convert.converter.Converter<java.lang.String, com.turbointernational.metadata.domain.bom.BOMAlternative>() {
-            public com.turbointernational.metadata.domain.bom.BOMAlternative convert(String id) {
-                return getObject().convert(getObject().convert(id, Long.class), BOMAlternative.class);
-            }
-        };
-    }
-    
-    public Converter<BOMAlternativeHeader, String> ApplicationConversionServiceFactoryBean.getBOMAlternativeHeaderToStringConverter() {
-        return new org.springframework.core.convert.converter.Converter<com.turbointernational.metadata.domain.bom.BOMAlternativeHeader, java.lang.String>() {
-            public String convert(BOMAlternativeHeader bOMAlternativeHeader) {
-                return new StringBuilder().append(bOMAlternativeHeader.getName()).append(' ').append(bOMAlternativeHeader.getDescription()).toString();
-            }
-        };
-    }
-    
-    public Converter<Long, BOMAlternativeHeader> ApplicationConversionServiceFactoryBean.getIdToBOMAlternativeHeaderConverter() {
-        return new org.springframework.core.convert.converter.Converter<java.lang.Long, com.turbointernational.metadata.domain.bom.BOMAlternativeHeader>() {
-            public com.turbointernational.metadata.domain.bom.BOMAlternativeHeader convert(java.lang.Long id) {
-                return BOMAlternativeHeader.findBOMAlternativeHeader(id);
-            }
-        };
-    }
-    
-    public Converter<String, BOMAlternativeHeader> ApplicationConversionServiceFactoryBean.getStringToBOMAlternativeHeaderConverter() {
-        return new org.springframework.core.convert.converter.Converter<java.lang.String, com.turbointernational.metadata.domain.bom.BOMAlternativeHeader>() {
-            public com.turbointernational.metadata.domain.bom.BOMAlternativeHeader convert(String id) {
-                return getObject().convert(getObject().convert(id, Long.class), BOMAlternativeHeader.class);
-            }
-        };
-    }
-    
-    public Converter<BOMItem, String> ApplicationConversionServiceFactoryBean.getBOMItemToStringConverter() {
-        return new org.springframework.core.convert.converter.Converter<com.turbointernational.metadata.domain.bom.BOMItem, java.lang.String>() {
-            public String convert(BOMItem bOMItem) {
-                return new StringBuilder().append(bOMItem.getQuantity()).toString();
-            }
-        };
-    }
-    
-    public Converter<Long, BOMItem> ApplicationConversionServiceFactoryBean.getIdToBOMItemConverter() {
-        return new org.springframework.core.convert.converter.Converter<java.lang.Long, com.turbointernational.metadata.domain.bom.BOMItem>() {
-            public com.turbointernational.metadata.domain.bom.BOMItem convert(java.lang.Long id) {
-                return BOMItem.findBOMItem(id);
-            }
-        };
-    }
-    
-    public Converter<String, BOMItem> ApplicationConversionServiceFactoryBean.getStringToBOMItemConverter() {
-        return new org.springframework.core.convert.converter.Converter<java.lang.String, com.turbointernational.metadata.domain.bom.BOMItem>() {
-            public com.turbointernational.metadata.domain.bom.BOMItem convert(String id) {
-                return getObject().convert(getObject().convert(id, Long.class), BOMItem.class);
-            }
-        };
-    }
-    
-    public Converter<Interchange, String> ApplicationConversionServiceFactoryBean.getInterchangeToStringConverter() {
-        return new org.springframework.core.convert.converter.Converter<com.turbointernational.metadata.domain.interchange.Interchange, java.lang.String>() {
-            public String convert(Interchange interchange) {
-                return new StringBuilder().append(interchange.getName()).append(' ').append(interchange.getDescription()).toString();
-            }
-        };
-    }
-    
-    public Converter<Long, Interchange> ApplicationConversionServiceFactoryBean.getIdToInterchangeConverter() {
-        return new org.springframework.core.convert.converter.Converter<java.lang.Long, com.turbointernational.metadata.domain.interchange.Interchange>() {
-            public com.turbointernational.metadata.domain.interchange.Interchange convert(java.lang.Long id) {
-                return Interchange.findInterchange(id);
-            }
-        };
-    }
-    
-    public Converter<String, Interchange> ApplicationConversionServiceFactoryBean.getStringToInterchangeConverter() {
-        return new org.springframework.core.convert.converter.Converter<java.lang.String, com.turbointernational.metadata.domain.interchange.Interchange>() {
-            public com.turbointernational.metadata.domain.interchange.Interchange convert(String id) {
-                return getObject().convert(getObject().convert(id, Long.class), Interchange.class);
-            }
-        };
-    }
     
     public Converter<Manufacturer, String> ApplicationConversionServiceFactoryBean.getManufacturerToStringConverter() {
         return new org.springframework.core.convert.converter.Converter<com.turbointernational.metadata.domain.other.Manufacturer, java.lang.String>() {
@@ -521,30 +413,6 @@ privileged aspect ApplicationConversionServiceFactoryBean_Roo_ConversionService 
         };
     }
     
-    public Converter<Role, String> ApplicationConversionServiceFactoryBean.getRoleToStringConverter() {
-        return new org.springframework.core.convert.converter.Converter<com.turbointernational.metadata.domain.security.Role, java.lang.String>() {
-            public String convert(Role role) {
-                return new StringBuilder().append(role.getName()).append(' ').append(role.getDisplay()).toString();
-            }
-        };
-    }
-    
-    public Converter<Long, Role> ApplicationConversionServiceFactoryBean.getIdToRoleConverter() {
-        return new org.springframework.core.convert.converter.Converter<java.lang.Long, com.turbointernational.metadata.domain.security.Role>() {
-            public com.turbointernational.metadata.domain.security.Role convert(java.lang.Long id) {
-                return Role.findRole(id);
-            }
-        };
-    }
-    
-    public Converter<String, Role> ApplicationConversionServiceFactoryBean.getStringToRoleConverter() {
-        return new org.springframework.core.convert.converter.Converter<java.lang.String, com.turbointernational.metadata.domain.security.Role>() {
-            public com.turbointernational.metadata.domain.security.Role convert(String id) {
-                return getObject().convert(getObject().convert(id, Long.class), Role.class);
-            }
-        };
-    }
-    
     public Converter<User, String> ApplicationConversionServiceFactoryBean.getUserToStringConverter() {
         return new org.springframework.core.convert.converter.Converter<com.turbointernational.metadata.domain.security.User, java.lang.String>() {
             public String convert(User user) {
@@ -569,187 +437,7 @@ privileged aspect ApplicationConversionServiceFactoryBean_Roo_ConversionService 
         };
     }
     
-    public Converter<CoolType, String> ApplicationConversionServiceFactoryBean.getCoolTypeToStringConverter() {
-        return new org.springframework.core.convert.converter.Converter<com.turbointernational.metadata.domain.type.CoolType, java.lang.String>() {
-            public String convert(CoolType coolType) {
-                return new StringBuilder().append(coolType.getName()).toString();
-            }
-        };
-    }
-    
-    public Converter<Long, CoolType> ApplicationConversionServiceFactoryBean.getIdToCoolTypeConverter() {
-        return new org.springframework.core.convert.converter.Converter<java.lang.Long, com.turbointernational.metadata.domain.type.CoolType>() {
-            public com.turbointernational.metadata.domain.type.CoolType convert(java.lang.Long id) {
-                return CoolType.findCoolType(id);
-            }
-        };
-    }
-    
-    public Converter<String, CoolType> ApplicationConversionServiceFactoryBean.getStringToCoolTypeConverter() {
-        return new org.springframework.core.convert.converter.Converter<java.lang.String, com.turbointernational.metadata.domain.type.CoolType>() {
-            public com.turbointernational.metadata.domain.type.CoolType convert(String id) {
-                return getObject().convert(getObject().convert(id, Long.class), CoolType.class);
-            }
-        };
-    }
-    
-    public Converter<GasketType, String> ApplicationConversionServiceFactoryBean.getGasketTypeToStringConverter() {
-        return new org.springframework.core.convert.converter.Converter<com.turbointernational.metadata.domain.type.GasketType, java.lang.String>() {
-            public String convert(GasketType gasketType) {
-                return new StringBuilder().append(gasketType.getName()).toString();
-            }
-        };
-    }
-    
-    public Converter<Long, GasketType> ApplicationConversionServiceFactoryBean.getIdToGasketTypeConverter() {
-        return new org.springframework.core.convert.converter.Converter<java.lang.Long, com.turbointernational.metadata.domain.type.GasketType>() {
-            public com.turbointernational.metadata.domain.type.GasketType convert(java.lang.Long id) {
-                return GasketType.findGasketType(id);
-            }
-        };
-    }
-    
-    public Converter<String, GasketType> ApplicationConversionServiceFactoryBean.getStringToGasketTypeConverter() {
-        return new org.springframework.core.convert.converter.Converter<java.lang.String, com.turbointernational.metadata.domain.type.GasketType>() {
-            public com.turbointernational.metadata.domain.type.GasketType convert(String id) {
-                return getObject().convert(getObject().convert(id, Long.class), GasketType.class);
-            }
-        };
-    }
-    
-    public Converter<KitType, String> ApplicationConversionServiceFactoryBean.getKitTypeToStringConverter() {
-        return new org.springframework.core.convert.converter.Converter<com.turbointernational.metadata.domain.type.KitType, java.lang.String>() {
-            public String convert(KitType kitType) {
-                return new StringBuilder().append(kitType.getName()).toString();
-            }
-        };
-    }
-    
-    public Converter<Long, KitType> ApplicationConversionServiceFactoryBean.getIdToKitTypeConverter() {
-        return new org.springframework.core.convert.converter.Converter<java.lang.Long, com.turbointernational.metadata.domain.type.KitType>() {
-            public com.turbointernational.metadata.domain.type.KitType convert(java.lang.Long id) {
-                return KitType.findKitType(id);
-            }
-        };
-    }
-    
-    public Converter<String, KitType> ApplicationConversionServiceFactoryBean.getStringToKitTypeConverter() {
-        return new org.springframework.core.convert.converter.Converter<java.lang.String, com.turbointernational.metadata.domain.type.KitType>() {
-            public com.turbointernational.metadata.domain.type.KitType convert(String id) {
-                return getObject().convert(getObject().convert(id, Long.class), KitType.class);
-            }
-        };
-    }
-    
-    public Converter<ManufacturerType, String> ApplicationConversionServiceFactoryBean.getManufacturerTypeToStringConverter() {
-        return new org.springframework.core.convert.converter.Converter<com.turbointernational.metadata.domain.type.ManufacturerType, java.lang.String>() {
-            public String convert(ManufacturerType manufacturerType) {
-                return new StringBuilder().append(manufacturerType.getName()).toString();
-            }
-        };
-    }
-    
-    public Converter<Long, ManufacturerType> ApplicationConversionServiceFactoryBean.getIdToManufacturerTypeConverter() {
-        return new org.springframework.core.convert.converter.Converter<java.lang.Long, com.turbointernational.metadata.domain.type.ManufacturerType>() {
-            public com.turbointernational.metadata.domain.type.ManufacturerType convert(java.lang.Long id) {
-                return ManufacturerType.findManufacturerType(id);
-            }
-        };
-    }
-    
-    public Converter<String, ManufacturerType> ApplicationConversionServiceFactoryBean.getStringToManufacturerTypeConverter() {
-        return new org.springframework.core.convert.converter.Converter<java.lang.String, com.turbointernational.metadata.domain.type.ManufacturerType>() {
-            public com.turbointernational.metadata.domain.type.ManufacturerType convert(String id) {
-                return getObject().convert(getObject().convert(id, Long.class), ManufacturerType.class);
-            }
-        };
-    }
-    
-    public Converter<PartType, String> ApplicationConversionServiceFactoryBean.getPartTypeToStringConverter() {
-        return new org.springframework.core.convert.converter.Converter<com.turbointernational.metadata.domain.type.PartType, java.lang.String>() {
-            public String convert(PartType partType) {
-                return new StringBuilder().append(partType.getName()).toString();
-            }
-        };
-    }
-    
-    public Converter<Long, PartType> ApplicationConversionServiceFactoryBean.getIdToPartTypeConverter() {
-        return new org.springframework.core.convert.converter.Converter<java.lang.Long, com.turbointernational.metadata.domain.type.PartType>() {
-            public com.turbointernational.metadata.domain.type.PartType convert(java.lang.Long id) {
-                return PartType.findPartType(id);
-            }
-        };
-    }
-    
-    public Converter<String, PartType> ApplicationConversionServiceFactoryBean.getStringToPartTypeConverter() {
-        return new org.springframework.core.convert.converter.Converter<java.lang.String, com.turbointernational.metadata.domain.type.PartType>() {
-            public com.turbointernational.metadata.domain.type.PartType convert(String id) {
-                return getObject().convert(getObject().convert(id, Long.class), PartType.class);
-            }
-        };
-    }
-    
-    public Converter<SealType, String> ApplicationConversionServiceFactoryBean.getSealTypeToStringConverter() {
-        return new org.springframework.core.convert.converter.Converter<com.turbointernational.metadata.domain.type.SealType, java.lang.String>() {
-            public String convert(SealType sealType) {
-                return new StringBuilder().append(sealType.getName()).toString();
-            }
-        };
-    }
-    
-    public Converter<Long, SealType> ApplicationConversionServiceFactoryBean.getIdToSealTypeConverter() {
-        return new org.springframework.core.convert.converter.Converter<java.lang.Long, com.turbointernational.metadata.domain.type.SealType>() {
-            public com.turbointernational.metadata.domain.type.SealType convert(java.lang.Long id) {
-                return SealType.findSealType(id);
-            }
-        };
-    }
-    
-    public Converter<String, SealType> ApplicationConversionServiceFactoryBean.getStringToSealTypeConverter() {
-        return new org.springframework.core.convert.converter.Converter<java.lang.String, com.turbointernational.metadata.domain.type.SealType>() {
-            public com.turbointernational.metadata.domain.type.SealType convert(String id) {
-                return getObject().convert(getObject().convert(id, Long.class), SealType.class);
-            }
-        };
-    }
-    
-    public Converter<TurboType, String> ApplicationConversionServiceFactoryBean.getTurboTypeToStringConverter() {
-        return new org.springframework.core.convert.converter.Converter<com.turbointernational.metadata.domain.type.TurboType, java.lang.String>() {
-            public String convert(TurboType turboType) {
-                return new StringBuilder().append(turboType.getName()).toString();
-            }
-        };
-    }
-    
-    public Converter<Long, TurboType> ApplicationConversionServiceFactoryBean.getIdToTurboTypeConverter() {
-        return new org.springframework.core.convert.converter.Converter<java.lang.Long, com.turbointernational.metadata.domain.type.TurboType>() {
-            public com.turbointernational.metadata.domain.type.TurboType convert(java.lang.Long id) {
-                return TurboType.findTurboType(id);
-            }
-        };
-    }
-    
-    public Converter<String, TurboType> ApplicationConversionServiceFactoryBean.getStringToTurboTypeConverter() {
-        return new org.springframework.core.convert.converter.Converter<java.lang.String, com.turbointernational.metadata.domain.type.TurboType>() {
-            public com.turbointernational.metadata.domain.type.TurboType convert(String id) {
-                return getObject().convert(getObject().convert(id, Long.class), TurboType.class);
-            }
-        };
-    }
-    
     public void ApplicationConversionServiceFactoryBean.installLabelConverters(FormatterRegistry registry) {
-        registry.addConverter(getBOMAlternativeToStringConverter());
-        registry.addConverter(getIdToBOMAlternativeConverter());
-        registry.addConverter(getStringToBOMAlternativeConverter());
-        registry.addConverter(getBOMAlternativeHeaderToStringConverter());
-        registry.addConverter(getIdToBOMAlternativeHeaderConverter());
-        registry.addConverter(getStringToBOMAlternativeHeaderConverter());
-        registry.addConverter(getBOMItemToStringConverter());
-        registry.addConverter(getIdToBOMItemConverter());
-        registry.addConverter(getStringToBOMItemConverter());
-        registry.addConverter(getInterchangeToStringConverter());
-        registry.addConverter(getIdToInterchangeConverter());
-        registry.addConverter(getStringToInterchangeConverter());
         registry.addConverter(getManufacturerToStringConverter());
         registry.addConverter(getIdToManufacturerConverter());
         registry.addConverter(getStringToManufacturerConverter());
@@ -798,33 +486,9 @@ privileged aspect ApplicationConversionServiceFactoryBean_Roo_ConversionService 
         registry.addConverter(getGroupToStringConverter());
         registry.addConverter(getIdToGroupConverter());
         registry.addConverter(getStringToGroupConverter());
-        registry.addConverter(getRoleToStringConverter());
-        registry.addConverter(getIdToRoleConverter());
-        registry.addConverter(getStringToRoleConverter());
         registry.addConverter(getUserToStringConverter());
         registry.addConverter(getIdToUserConverter());
         registry.addConverter(getStringToUserConverter());
-        registry.addConverter(getCoolTypeToStringConverter());
-        registry.addConverter(getIdToCoolTypeConverter());
-        registry.addConverter(getStringToCoolTypeConverter());
-        registry.addConverter(getGasketTypeToStringConverter());
-        registry.addConverter(getIdToGasketTypeConverter());
-        registry.addConverter(getStringToGasketTypeConverter());
-        registry.addConverter(getKitTypeToStringConverter());
-        registry.addConverter(getIdToKitTypeConverter());
-        registry.addConverter(getStringToKitTypeConverter());
-        registry.addConverter(getManufacturerTypeToStringConverter());
-        registry.addConverter(getIdToManufacturerTypeConverter());
-        registry.addConverter(getStringToManufacturerTypeConverter());
-        registry.addConverter(getPartTypeToStringConverter());
-        registry.addConverter(getIdToPartTypeConverter());
-        registry.addConverter(getStringToPartTypeConverter());
-        registry.addConverter(getSealTypeToStringConverter());
-        registry.addConverter(getIdToSealTypeConverter());
-        registry.addConverter(getStringToSealTypeConverter());
-        registry.addConverter(getTurboTypeToStringConverter());
-        registry.addConverter(getIdToTurboTypeConverter());
-        registry.addConverter(getStringToTurboTypeConverter());
     }
     
     public void ApplicationConversionServiceFactoryBean.afterPropertiesSet() {

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:form="urn:jsptagdir:/WEB-INF/tags/form" xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <form:update id="fu_ti_metadata_domain_part_PistonRing" idField="partId" modelAttribute="pistonRing" path="/pistonrings" versionField="Version" z="2qlm+a9k0Nw40d0uEuORffq3qfM=">
+        <field:select field="part" id="c_ti_metadata_domain_part_PistonRing_part" itemValue="id" items="${parts}" path="/parts" z="Nw7RGHo3HNtv8FcOUGbUjQEtrIo="/>
+        <field:input field="outsideDimMin" id="c_ti_metadata_domain_part_PistonRing_outsideDimMin" validationMessageCode="field_invalid_number" z="I8r5nyV+wwdvF8pjdcVIJqESxCY="/>
+        <field:input field="outsideDimMax" id="c_ti_metadata_domain_part_PistonRing_outsideDimMax" validationMessageCode="field_invalid_number" z="s5/qOYyOYsKg2QNL5DXPFJ0SSr0="/>
+        <field:input field="widthMin" id="c_ti_metadata_domain_part_PistonRing_widthMin" validationMessageCode="field_invalid_number" z="16Tfb2I1ieW6HQHJKZeMnpMH6U8="/>
+        <field:input field="widthMax" id="c_ti_metadata_domain_part_PistonRing_widthMax" validationMessageCode="field_invalid_number" z="UiBcRAVqKFkUTq+sSkcyWarV2Fs="/>
+        <field:input field="iGapMin" id="c_ti_metadata_domain_part_PistonRing_iGapMin" validationMessageCode="field_invalid_number" z="yYEsdbNzztj7rDIkmkHPzyyc+Kk="/>
+        <field:input field="iGapMax" id="c_ti_metadata_domain_part_PistonRing_iGapMax" validationMessageCode="field_invalid_number" z="CAU5g7Km/RSFdfvsn7AwY6Rfqvw="/>
+    </form:update>
+</div>

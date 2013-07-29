@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <page:show id="ps_ti_metadata_domain_part_Part" object="${part}" path="/parts" z="EH96R1NkEF2zFeE3Ec6oy2yS1U8=">
+        <field:display field="backplate" id="s_ti_metadata_domain_part_Part_backplate" object="${part}" z="8RujFyUhhHhTOi0rLXh5VEWpNWE="/>
+        <field:display field="bearingHousing" id="s_ti_metadata_domain_part_Part_bearingHousing" object="${part}" z="+RnWHUBLb+GEPqHCRZrzRwxbVXc="/>
+        <field:display field="bearingSpacer" id="s_ti_metadata_domain_part_Part_bearingSpacer" object="${part}" z="Uzh98nK1/udWfE5PZPt03HitwbQ="/>
+        <field:display field="cartridge" id="s_ti_metadata_domain_part_Part_cartridge" object="${part}" z="F0rU3w6q7g45S0GmaUFsE8YflNY="/>
+        <field:display field="compressorWheel" id="s_ti_metadata_domain_part_Part_compressorWheel" object="${part}" z="ot8sTFC7N6ztGV35xFsS//XO5c4="/>
+        <field:display field="gasket" id="s_ti_metadata_domain_part_Part_gasket" object="${part}" z="GCI5yPgA0DGxaiYA9iORw6SWP1U="/>
+        <field:display field="heatshield" id="s_ti_metadata_domain_part_Part_heatshield" object="${part}" z="npBgrMLdpIlneegzcsBr8BsjBok="/>
+        <field:display field="interchangeItem" id="s_ti_metadata_domain_part_Part_interchangeItem" object="${part}" z="EB9bYKgY+Wjf/KOpZHPqfErFQh0="/>
+        <field:display field="journalBearing" id="s_ti_metadata_domain_part_Part_journalBearing" object="${part}" z="JilSt355YZVm5Si2SaAGBNhMi00="/>
+        <field:display field="kit" id="s_ti_metadata_domain_part_Part_kit" object="${part}" z="5scaPcROHdM4ZjQP8bFAsT3qkQE="/>
+        <field:display field="nozzleRing" id="s_ti_metadata_domain_part_Part_nozzleRing" object="${part}" z="fbdY1W7Jmkiy5C0VW1sccMZo4FY="/>
+        <field:display field="pistonRing" id="s_ti_metadata_domain_part_Part_pistonRing" object="${part}" z="2DSZY31jgE2MbimiBLFTwvtAJ/Q="/>
+        <field:display field="turbineWheel" id="s_ti_metadata_domain_part_Part_turbineWheel" object="${part}" z="+VB0vF7KSn/Rmx7YvuxdupOuxqY="/>
+        <field:display field="turbo" id="s_ti_metadata_domain_part_Part_turbo" object="${part}" z="g/SF4WGrNVp1WLI0C4uE+RsAOdI="/>
+        <field:display field="manfrId" id="s_ti_metadata_domain_part_Part_manfrId" object="${part}" z="g5m7Mulwkl9irvoACIwxEBaXwRw="/>
+        <field:display field="partTypeId" id="s_ti_metadata_domain_part_Part_partTypeId" object="${part}" z="ZM1jpo6Ko+Q6+zTffIlRGEmr0+g="/>
+        <field:display field="manfrPartNum" id="s_ti_metadata_domain_part_Part_manfrPartNum" object="${part}" z="oQ0l93lHwwxbUnMKFI9WM0spjqw="/>
+        <field:display field="name" id="s_ti_metadata_domain_part_Part_name" object="${part}" z="KFHVp7iPIrzRy/DeGML0EYGWPtY="/>
+        <field:display field="description" id="s_ti_metadata_domain_part_Part_description" object="${part}" z="jp459YL4Uq5mWx4qFSxTyt3lp+Y="/>
+        <field:display field="importPk" id="s_ti_metadata_domain_part_Part_importPk" object="${part}" z="5rn0wJYNF1yCaAZ7jN+di0ehATo="/>
+        <field:display field="inactive" id="s_ti_metadata_domain_part_Part_inactive" object="${part}" z="6O6jCrhqoqmp8glCpq5ZEGZaMOY="/>
+    </page:show>
+</div>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" xmlns:table="urn:jsptagdir:/WEB-INF/tags/form/fields" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <page:list id="pl_ti_metadata_domain_part_BearingSpacer" items="${bearingspacers}" z="xznUKOifd3fg8xV0YawKgDZKqFw=">
+        <table:table data="${bearingspacers}" id="l_ti_metadata_domain_part_BearingSpacer" path="/bearingspacers" typeIdFieldName="partId" z="6v/RD8lRJwMd42kDmvq3zvVU+dY=">
+            <table:column id="c_ti_metadata_domain_part_BearingSpacer_part" property="part" z="/VtGkFQTPhQWreodMyNlMcdUDYQ="/>
+            <table:column id="c_ti_metadata_domain_part_BearingSpacer_outsideDimMin" property="outsideDimMin" z="/Hwb68t/mmRJ2MjuoAPt9hbcxo4="/>
+            <table:column id="c_ti_metadata_domain_part_BearingSpacer_outsideDimMax" property="outsideDimMax" z="eElGwZWUUGBfyHV92SNn41f2eEQ="/>
+            <table:column id="c_ti_metadata_domain_part_BearingSpacer_insideDimMin" property="insideDimMin" z="ZyXuHijgEq1Tr36fiubOZw9IKrY="/>
+        </table:table>
+    </page:list>
+</div>

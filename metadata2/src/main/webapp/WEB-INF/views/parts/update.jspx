@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:form="urn:jsptagdir:/WEB-INF/tags/form" xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <form:update id="fu_ti_metadata_domain_part_Part" modelAttribute="part" path="/parts" versionField="Version" z="qtLhjl1rG9+z8987h451Yr0iq3U=">
+        <field:select field="backplate" id="c_ti_metadata_domain_part_Part_backplate" itemValue="partId" items="${backplates}" path="/backplates" z="diq6HGXlj0YD66PWxqNnZIGbROU="/>
+        <field:select field="bearingHousing" id="c_ti_metadata_domain_part_Part_bearingHousing" itemValue="partId" items="${bearinghousings}" path="/bearinghousings" z="QuBOrTzBFNLZ8Bni4++Pf9jEVd0="/>
+        <field:select field="bearingSpacer" id="c_ti_metadata_domain_part_Part_bearingSpacer" itemValue="partId" items="${bearingspacers}" path="/bearingspacers" z="cRv1cfEVTOXY3uWvDWgzp9lmVvA="/>
+        <field:select field="cartridge" id="c_ti_metadata_domain_part_Part_cartridge" itemValue="partId" items="${cartridges}" path="/cartridges" z="Yqye50nxV7CqLwtdLGF/m0TFKaM="/>
+        <field:select field="compressorWheel" id="c_ti_metadata_domain_part_Part_compressorWheel" itemValue="partId" items="${compressorwheels}" path="/compressorwheels" z="mP5Tlq1qvMGh1L5CAumDyxzLqJE="/>
+        <field:select field="gasket" id="c_ti_metadata_domain_part_Part_gasket" itemValue="partId" items="${gaskets}" path="/gaskets" z="oY4O3J/BqLoJaHYrbQFZo460rGk="/>
+        <field:select field="heatshield" id="c_ti_metadata_domain_part_Part_heatshield" itemValue="partId" items="${heatshields}" path="/heatshields" z="xCruvVySkdh0/DWUZuxAo0M3j4Q="/>
+        <field:select field="interchangeItem" id="c_ti_metadata_domain_part_Part_interchangeItem" itemValue="partId" items="${interchangeitems}" path="/interchangeitems" z="RC8ohpOcKdnHgstgeAw88sOo8bs="/>
+        <field:select field="journalBearing" id="c_ti_metadata_domain_part_Part_journalBearing" itemValue="partId" items="${journalbearings}" path="/journalbearings" z="whJATW/RHCaDjHoUZ5bv3e3qXYU="/>
+        <field:select field="kit" id="c_ti_metadata_domain_part_Part_kit" itemValue="partId" items="${kits}" path="/kits" z="0YZzv5IPNWgRA4+LgCQRAfPDuJI="/>
+        <field:select field="nozzleRing" id="c_ti_metadata_domain_part_Part_nozzleRing" itemValue="partId" items="${nozzlerings}" path="/nozzlerings" z="7oHBHmAz8SvKr3hRBXXDUB3Kpro="/>
+        <field:select field="pistonRing" id="c_ti_metadata_domain_part_Part_pistonRing" itemValue="partId" items="${pistonrings}" path="/pistonrings" z="OR0H2w5YXahFOC0dtrG0XAEeCr0="/>
+        <field:select field="turbineWheel" id="c_ti_metadata_domain_part_Part_turbineWheel" itemValue="partId" items="${turbinewheels}" path="/turbinewheels" z="h6qftYZuDCmJsCYRhosmuIu+V6M="/>
+        <field:select field="turbo" id="c_ti_metadata_domain_part_Part_turbo" itemValue="partId" items="${turboes}" path="/turboes" z="KpzT86qEssIqSBCCWWEfFRqpuXc="/>
+        <field:simple field="boms" id="c_ti_metadata_domain_part_Part_boms" messageCode="entity_reference_not_managed" messageCodeAttribute="Bom" z="tcHqd6cjyT4z6I8q4QGODKlannA="/>
+        <field:simple field="boms1" id="c_ti_metadata_domain_part_Part_boms1" messageCode="entity_reference_not_managed" messageCodeAttribute="Bom" z="NfAvfhBUOsNqadkL2Yox4fDx3gI="/>
+        <field:simple field="bomAltItems" id="c_ti_metadata_domain_part_Part_bomAltItems" messageCode="entity_reference_not_managed" messageCodeAttribute="Bom Alt Item" z="yFNVxsoYZAIr9I42tb1TcQcCk5o="/>
+        <field:select field="manfrId" id="c_ti_metadata_domain_part_Part_manfrId" itemValue="id" items="${manfrs}" path="/manfrs" z="1UGJDv2QWDYbcvJfuU2TFPthom0="/>
+        <field:select field="partTypeId" id="c_ti_metadata_domain_part_Part_partTypeId" itemValue="id" items="${parttypes}" path="/parttypes" z="Ln9l2iLM0DNt/xEa/XESOZ8/pkU="/>
+        <field:input field="manfrPartNum" id="c_ti_metadata_domain_part_Part_manfrPartNum" z="hheV//lCBbOT8fCmEKx6wN1deYU="/>
+        <field:input field="name" id="c_ti_metadata_domain_part_Part_name" z="4dI/J902/LNSySVzLWX7Kto+aOE="/>
+        <field:input field="description" id="c_ti_metadata_domain_part_Part_description" z="VO7nLhAVy7/N3cyLHg+s9vixRhM="/>
+        <field:input field="importPk" id="c_ti_metadata_domain_part_Part_importPk" validationMessageCode="field_invalid_integer" z="vSWKm2Uh+juIrkAHfcaEMas6euA="/>
+        <field:checkbox field="inactive" id="c_ti_metadata_domain_part_Part_inactive" z="n6okjtUuOviHohFSdwWXkdd7ZQw="/>
+    </form:update>
+</div>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:form="urn:jsptagdir:/WEB-INF/tags/form" xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <form:update id="fu_ti_metadata_domain_part_Cartridge" idField="partId" modelAttribute="cartridge" path="/cartridges" versionField="Version" z="NcOVjBjHVpHJLEHSVAQNV1RTqoc=">
+        <field:select field="part" id="c_ti_metadata_domain_part_Cartridge_part" itemValue="id" items="${parts}" path="/parts" z="DvBu4v8blptF8UDetjnKiixPDiM="/>
+    </form:update>
+</div>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:form="urn:jsptagdir:/WEB-INF/tags/form" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:spring="http://www.springframework.org/tags" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <form:create id="fc_ti_metadata_domain_bom_BomAltHeader" modelAttribute="bomAltHeader" path="/bomaltheaders" render="${empty dependencies}" z="fTiHHPOoFKxGsxUtZsvujxOKjjg=">
+        <field:simple field="bomAltItems" id="c_ti_metadata_domain_bom_BomAltHeader_bomAltItems" messageCode="entity_reference_not_managed" messageCodeAttribute="Bom Alt Item" z="tzD/JGDfVL48iwTMzg7OjuueOys="/>
+        <field:input field="name" id="c_ti_metadata_domain_bom_BomAltHeader_name" z="1D387DT3BdmsV+eRlQsUxKPlHoo="/>
+        <field:input field="description" id="c_ti_metadata_domain_bom_BomAltHeader_description" z="kV5Q2Eb/uJUULPyMeuzctGYtjFw="/>
+    </form:create>
+    <form:dependency dependencies="${dependencies}" id="d_ti_metadata_domain_bom_BomAltHeader" render="${not empty dependencies}" z="IHhFOT6kZNyU07c1r7diA0etvro="/>
+</div>

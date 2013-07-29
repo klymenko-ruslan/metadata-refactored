@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" xmlns:table="urn:jsptagdir:/WEB-INF/tags/form/fields" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <page:list id="pl_ti_metadata_domain_part_TurbineWheel" items="${turbinewheels}" z="gDJB+zRozYa37/hEq29WLStZX+g=">
+        <table:table data="${turbinewheels}" id="l_ti_metadata_domain_part_TurbineWheel" path="/turbinewheels" typeIdFieldName="partId" z="GSJZXyzz3G9AavT/G62JEZ2POXw=">
+            <table:column id="c_ti_metadata_domain_part_TurbineWheel_part" property="part" z="8IyfxA3GgvREwacHWX2ozkGbYjo="/>
+            <table:column id="c_ti_metadata_domain_part_TurbineWheel_exduceOa" property="exduceOa" z="Wf2ma3l5XveFINyWqVk09xa5OTg="/>
+            <table:column id="c_ti_metadata_domain_part_TurbineWheel_tipHeightB" property="tipHeightB" z="b6wk4akwc6o5OPD8+SraF5o3hK8="/>
+            <table:column id="c_ti_metadata_domain_part_TurbineWheel_inducerOc" property="inducerOc" z="XIyjUi5WEA/M1VE2X+Q79YlPxE8="/>
+            <table:column id="c_ti_metadata_domain_part_TurbineWheel_journalOd" property="journalOd" z="V6shaErekqDr01azONQ7WjSGfaA="/>
+            <table:column id="c_ti_metadata_domain_part_TurbineWheel_stemOe" property="stemOe" z="jkv1QSZ5fs0IyAuSNGKMCcvJHDY="/>
+        </table:table>
+    </page:list>
+</div>

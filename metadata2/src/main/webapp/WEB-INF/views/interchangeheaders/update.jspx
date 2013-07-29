@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:form="urn:jsptagdir:/WEB-INF/tags/form" xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <form:update id="fu_ti_metadata_domain_interchange_InterchangeHeader" modelAttribute="interchangeHeader" path="/interchangeheaders" versionField="Version" z="eUmmccnvyA4zcjuBMwwLkY1Zwt8=">
+        <field:simple field="interchangeItems" id="c_ti_metadata_domain_interchange_InterchangeHeader_interchangeItems" messageCode="entity_reference_not_managed" messageCodeAttribute="Interchange Item" z="Ycf/UErHZ2QygfD/L7WGPwh0kNE="/>
+        <field:input field="name" id="c_ti_metadata_domain_interchange_InterchangeHeader_name" required="true" z="/B0KzUl8rdt54wW4yYfUBTZIvqQ="/>
+        <field:input field="description" id="c_ti_metadata_domain_interchange_InterchangeHeader_description" z="zTk7nAF3jKTcx00jUFTVF5EXwZU="/>
+    </form:update>
+</div>

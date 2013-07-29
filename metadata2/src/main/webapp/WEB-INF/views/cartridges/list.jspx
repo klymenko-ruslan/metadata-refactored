@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" xmlns:table="urn:jsptagdir:/WEB-INF/tags/form/fields" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <page:list id="pl_ti_metadata_domain_part_Cartridge" items="${cartridges}" z="hX5onHmlrC3iczAjHxjifMjhG5Q=">
+        <table:table data="${cartridges}" id="l_ti_metadata_domain_part_Cartridge" path="/cartridges" typeIdFieldName="partId" z="l1lOJlhtTUTE5efz8sN9Ht/TMPU=">
+            <table:column id="c_ti_metadata_domain_part_Cartridge_part" property="part" z="3aHzd7+bC5ZdjdO695SLyk7YvlI="/>
+        </table:table>
+    </page:list>
+</div>

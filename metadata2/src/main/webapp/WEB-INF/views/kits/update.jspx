@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:form="urn:jsptagdir:/WEB-INF/tags/form" xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <form:update id="fu_ti_metadata_domain_part_Kit" idField="partId" modelAttribute="kit" path="/kits" versionField="Version" z="UeIb14h+nSn4WTWUkY7FotIrqeY=">
+        <field:select field="part" id="c_ti_metadata_domain_part_Kit_part" itemValue="id" items="${parts}" path="/parts" z="RhZh0o0AwW1y4hM1RzsJJjZL93o="/>
+        <field:select field="kitTypeId" id="c_ti_metadata_domain_part_Kit_kitTypeId" itemValue="id" items="${kittypes}" path="/kittypes" z="m4AOotZY6/LDjnfymZHx+Dd6jtg="/>
+    </form:update>
+</div>

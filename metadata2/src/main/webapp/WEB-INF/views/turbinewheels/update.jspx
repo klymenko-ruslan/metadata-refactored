@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:form="urn:jsptagdir:/WEB-INF/tags/form" xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <form:update id="fu_ti_metadata_domain_part_TurbineWheel" idField="partId" modelAttribute="turbineWheel" path="/turbinewheels" versionField="Version" z="/OpTJ8AQa17kX3Wc6WsT4nYQhao=">
+        <field:select field="part" id="c_ti_metadata_domain_part_TurbineWheel_part" itemValue="id" items="${parts}" path="/parts" z="vbatwmwSTxfDlLfUmuWr0QR+RFY="/>
+        <field:input field="exduceOa" id="c_ti_metadata_domain_part_TurbineWheel_exduceOa" validationMessageCode="field_invalid_number" z="O13wFYqUVEp6cYdLPkgCDzRprB4="/>
+        <field:input field="tipHeightB" id="c_ti_metadata_domain_part_TurbineWheel_tipHeightB" validationMessageCode="field_invalid_number" z="L2ahjKUTyxH1TlO3bJqF/hHHso0="/>
+        <field:input field="inducerOc" id="c_ti_metadata_domain_part_TurbineWheel_inducerOc" validationMessageCode="field_invalid_number" z="B8P2X0yD4joXHSdAWorkEJJZd+M="/>
+        <field:input field="journalOd" id="c_ti_metadata_domain_part_TurbineWheel_journalOd" validationMessageCode="field_invalid_number" z="F9BOGUEzSCcsUaTOC1dyK1jXdS8="/>
+        <field:input field="stemOe" id="c_ti_metadata_domain_part_TurbineWheel_stemOe" validationMessageCode="field_invalid_number" z="4mktVKmA73oQrCrCgPXshUmz/QA="/>
+        <field:input field="trimNoBlades" id="c_ti_metadata_domain_part_TurbineWheel_trimNoBlades" z="0ZzOxpPSmENfK/RGdgbp/MWfO6k="/>
+        <field:input field="shaftThreadF" id="c_ti_metadata_domain_part_TurbineWheel_shaftThreadF" z="LGtE0i+Y/iJYS5/BzcE22/oESxk="/>
+    </form:update>
+</div>

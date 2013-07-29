@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" xmlns:table="urn:jsptagdir:/WEB-INF/tags/form/fields" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <page:list id="pl_ti_metadata_domain_part_Part" items="${parts}" z="haDewIc2gwbTujifyzz3ZDqfidU=">
+        <table:table data="${parts}" id="l_ti_metadata_domain_part_Part" path="/parts" z="qUjqZptzGIPVgwljB/YDlymQU24=">
+            <table:column id="c_ti_metadata_domain_part_Part_backplate" property="backplate" z="OZ8s+rc4tlscAg+nxA4oOqU3W/0="/>
+            <table:column id="c_ti_metadata_domain_part_Part_bearingHousing" property="bearingHousing" z="gYmeBoVIEAwiZuSh9HTUJLmdtRY="/>
+            <table:column id="c_ti_metadata_domain_part_Part_bearingSpacer" property="bearingSpacer" z="y3RmgHQVB80ufvkyp4DGdbyPBY0="/>
+            <table:column id="c_ti_metadata_domain_part_Part_cartridge" property="cartridge" z="yP/maaidbb9IP4IO2kqHUIh11WQ="/>
+            <table:column id="c_ti_metadata_domain_part_Part_compressorWheel" property="compressorWheel" z="CWAxdlHqXHzZY0121N77c+8oGN4="/>
+            <table:column id="c_ti_metadata_domain_part_Part_gasket" property="gasket" z="5N2NoiK1/Y6oH1ZaqsDT9ADb4nc="/>
+        </table:table>
+    </page:list>
+</div>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" xmlns:table="urn:jsptagdir:/WEB-INF/tags/form/fields" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <page:list id="pl_ti_metadata_domain_part_CompressorWheel" items="${compressorwheels}" z="duQuMxeIDztewnkcD5hWm3rAKnI=">
+        <table:table data="${compressorwheels}" id="l_ti_metadata_domain_part_CompressorWheel" path="/compressorwheels" typeIdFieldName="partId" z="FNowlly1Xk3+c940dSSkM+SqPeA=">
+            <table:column id="c_ti_metadata_domain_part_CompressorWheel_part" property="part" z="NLsjaE2NlcWGoVKyzFky4LSmzQk="/>
+            <table:column id="c_ti_metadata_domain_part_CompressorWheel_inducerOa" property="inducerOa" z="VOjBc4pcrFPXsc7VAdstFkbsgm0="/>
+            <table:column id="c_ti_metadata_domain_part_CompressorWheel_tipHeightB" property="tipHeightB" z="m5urkRYCdQcDQL7CdMGVJOAuNmU="/>
+            <table:column id="c_ti_metadata_domain_part_CompressorWheel_exducerOc" property="exducerOc" z="Uox5woOugT63lPaIBYmHXiy6R0U="/>
+            <table:column id="c_ti_metadata_domain_part_CompressorWheel_hubLengthD" property="hubLengthD" z="ylITDSZ12+rxmmQrbzZZ7FQZdGQ="/>
+            <table:column id="c_ti_metadata_domain_part_CompressorWheel_boreOe" property="boreOe" z="eYKSy0jWVk+jfZQdwUnVpotsxJw="/>
+        </table:table>
+    </page:list>
+</div>

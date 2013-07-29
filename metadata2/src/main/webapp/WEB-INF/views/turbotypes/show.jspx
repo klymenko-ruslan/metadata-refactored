@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <page:show id="ps_ti_metadata_domain_type_TurboType" object="${turbotype}" path="/turbotypes" z="zuE61FNagVpcsgBysbyo1NzL+Ww=">
+        <field:display field="manfrId" id="s_ti_metadata_domain_type_TurboType_manfrId" object="${turbotype}" z="j4ipbQQR63Mj2L7fwjAX6/BfeHk="/>
+        <field:display field="name" id="s_ti_metadata_domain_type_TurboType_name" object="${turbotype}" z="nk/lH74cMBYc/FypU4+l4AlA/RA="/>
+        <field:display field="importPk" id="s_ti_metadata_domain_type_TurboType_importPk" object="${turbotype}" z="sQo2uxNtol6BWaLM25wVxjpyXbM="/>
+    </page:show>
+</div>

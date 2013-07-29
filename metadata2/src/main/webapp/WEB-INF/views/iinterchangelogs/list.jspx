@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" xmlns:table="urn:jsptagdir:/WEB-INF/tags/form/fields" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <page:list id="pl_ti_metadata_domain_interchange_IInterchangeLog" items="${iinterchangelogs}" z="vFQDF1EwAsJmHJlNmWkcv2ZD/ac=">
+        <table:table data="${iinterchangelogs}" id="l_ti_metadata_domain_interchange_IInterchangeLog" path="/iinterchangelogs" z="S6UpZM1dH2BoNY6iuC1zwgW2xmc=">
+            <table:column id="c_ti_metadata_domain_interchange_IInterchangeLog_description" property="description" z="TXm+pZlP6T6oeqrL5tqWuVWfpUA="/>
+            <table:column id="c_ti_metadata_domain_interchange_IInterchangeLog_partNumId" property="partNumId" z="RuxFCA2UY/weVc0uFHnF551nDwk="/>
+            <table:column id="c_ti_metadata_domain_interchange_IInterchangeLog_interchangeHeaderId" property="interchangeHeaderId" z="1PAGH524ev6y5Rax4hGwkDnoFMs="/>
+            <table:column id="c_ti_metadata_domain_interchange_IInterchangeLog_interchangeCntUniq" property="interchangeCntUniq" z="ZBmc9LJ3It/Fxe09PttERdCakP0="/>
+            <table:column calendar="true" dateTimePattern="${IInterchangeLog__date_date_format}" id="c_ti_metadata_domain_interchange_IInterchangeLog_date" property="date" z="i9HnWFA48b7BiiCUIQ3Ckde2Nww="/>
+        </table:table>
+    </page:list>
+</div>

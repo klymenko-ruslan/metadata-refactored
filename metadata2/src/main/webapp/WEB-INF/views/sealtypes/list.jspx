@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" xmlns:table="urn:jsptagdir:/WEB-INF/tags/form/fields" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <page:list id="pl_ti_metadata_domain_type_SealType" items="${sealtypes}" z="AKBb9r6Hebdjdcgve/ST56cPp6A=">
+        <table:table data="${sealtypes}" id="l_ti_metadata_domain_type_SealType" path="/sealtypes" z="Jkd30YOXXHJFfSKJRBLUrNdvoPI=">
+            <table:column id="c_ti_metadata_domain_type_SealType_name" property="name" z="tbJcJfF7X5ucDavjX12Zb7tMWR0="/>
+            <table:column id="c_ti_metadata_domain_type_SealType_importPk" property="importPk" z="8OlJJXEIDV+rh/3yf7ypzHi5rco="/>
+        </table:table>
+    </page:list>
+</div>
