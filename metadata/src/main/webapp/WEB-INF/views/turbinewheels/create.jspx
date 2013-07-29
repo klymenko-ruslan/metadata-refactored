@@ -15,7 +15,7 @@
         <field:input field="journalDiameterD" id="c_com_turbointernational_metadata_domain_part_TurbineWheel_journalDiameterD" validationMessageCode="field_invalid_number" z="x8ygd8hhZrbyZr8J/2WZ9+/njhI="/>
         <field:input field="stemDiameterE" id="c_com_turbointernational_metadata_domain_part_TurbineWheel_stemDiameterE" validationMessageCode="field_invalid_number" z="GQKfOnSanIAWB7hnAIYieC1gJSg="/>
         <field:input field="shaftThreadF" id="c_com_turbointernational_metadata_domain_part_TurbineWheel_shaftThreadF" z="wMNPcTQelqdf9IGPS5tUivUdr/c="/>
-        <field:input field="trimNoBlades" id="c_com_turbointernational_metadata_domain_part_TurbineWheel_trimNoBlades" z="MlPcVbiZB8N65X4WPYTE1ZiwsoE="/>
+        <field:input field="numberOfBlades" id="c_com_turbointernational_metadata_domain_part_TurbineWheel_numberOfBlades" z="F3XqcU26fZZ0Fzsm/ALtoq6spRE="/>
     </form:create>
     <form:dependency dependencies="${dependencies}" id="d_com_turbointernational_metadata_domain_part_TurbineWheel" render="${not empty dependencies}" z="WHWa01/bbLohY5zdkAs6YslyPKI="/>
 </div>

@@ -1,5 +1,6 @@
 package com.turbointernational.metadata.domain.part;
 import com.turbointernational.metadata.domain.type.CoolType;
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -19,17 +20,24 @@ public class BearingHousing extends Part {
     @JoinColumn(name="cool_type_id")
     private CoolType coolType;
 
+    @Column(name="oil_inlet")
     private String oilInlet;
 
+    @Column(name="oil_outlet")
     private String oilOutlet;
 
+    @Column(name="oil")
     private String oil;
 
+    @Column(name="outlet_flange_holes")
     private String outletFlangeHoles;
 
+    @Column(name="water_ports")
     private String waterPorts;
 
+    @Column(name="design_features")
     private String designFeatures;
 
+    @Column(name="bearing_type")
     private String bearingType;
 }

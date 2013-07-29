@@ -7,7 +7,7 @@
         <field:select field="manufacturer" id="c_com_turbointernational_metadata_domain_part_TurbineWheel_manufacturer" itemValue="id" items="${manufacturers}" path="/manufacturer" z="DjTNCqzjX+nMmvwdyVm2owrTZPQ="/>
         <field:input field="name" id="c_com_turbointernational_metadata_domain_part_TurbineWheel_name" z="jXXEKHlybF2bTltR5pUVEI+ZlTM="/>
         <field:input field="description" id="c_com_turbointernational_metadata_domain_part_TurbineWheel_description" z="jmmVDvsCZ8eVSkLrh5wKbOV8yxU="/>
-        <field:checkbox field="inactive" id="c_com_turbointernational_metadata_domain_part_TurbineWheel_inactive" z="kgN39Pp3cphqUQGXdV4c7fFv+xI="/>
+        <field:checkbox field="inactive" id="c_com_turbointernational_metadata_domain_part_TurbineWheel_inactive" z="user-managed"/>
         <field:simple field="interchanges" id="c_com_turbointernational_metadata_domain_part_TurbineWheel_interchanges" messageCode="entity_reference_not_managed" messageCodeAttribute="Interchange" z="08Cmof/Hi/Bs0fRHOtygC+UKloA="/>
         <field:input field="exducerDiameterA" id="c_com_turbointernational_metadata_domain_part_TurbineWheel_exducerDiameterA" validationMessageCode="field_invalid_number" z="mVgx54V85g+O56JtDQtK2+qfvKU="/>
         <field:input field="tipHeightB" id="c_com_turbointernational_metadata_domain_part_TurbineWheel_tipHeightB" validationMessageCode="field_invalid_number" z="129MFeiAQo+LpN4+L1J10UbtzH4="/>
@@ -15,6 +15,6 @@
         <field:input field="journalDiameterD" id="c_com_turbointernational_metadata_domain_part_TurbineWheel_journalDiameterD" validationMessageCode="field_invalid_number" z="x8ygd8hhZrbyZr8J/2WZ9+/njhI="/>
         <field:input field="stemDiameterE" id="c_com_turbointernational_metadata_domain_part_TurbineWheel_stemDiameterE" validationMessageCode="field_invalid_number" z="GQKfOnSanIAWB7hnAIYieC1gJSg="/>
         <field:input field="shaftThreadF" id="c_com_turbointernational_metadata_domain_part_TurbineWheel_shaftThreadF" z="wMNPcTQelqdf9IGPS5tUivUdr/c="/>
-        <field:input field="trimNoBlades" id="c_com_turbointernational_metadata_domain_part_TurbineWheel_trimNoBlades" z="MlPcVbiZB8N65X4WPYTE1ZiwsoE="/>
+        <field:input field="numberOfBlades" id="c_com_turbointernational_metadata_domain_part_TurbineWheel_numberOfBlades" z="F3XqcU26fZZ0Fzsm/ALtoq6spRE="/>
     </form:update>
 </div>

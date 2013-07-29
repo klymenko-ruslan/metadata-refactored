@@ -33,9 +33,10 @@ public abstract class Part {
     @JoinColumn(name = "manfr_id", nullable = false)
     private Manufacturer manufacturer;
 
-    @Column(name = "Name")
+    @Column(name = "name")
     private String name;
 
+    @Column(name="description")
     private String description;
 
     @Column(nullable = false, columnDefinition = "BIT", length = 1)
