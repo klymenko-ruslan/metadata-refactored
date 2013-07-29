@@ -4,11 +4,10 @@
     <jsp:output omit-xml-declaration="yes"/>
     <form:update id="fu_com_turbointernational_metadata_domain_part_NozzleRing" modelAttribute="nozzleRing" path="/nozzlerings" versionField="Version" z="hYXqnnLOm7hFgxE9BVb1GVU/TiY=">
         <field:input field="manufacturerPartNumber" id="c_com_turbointernational_metadata_domain_part_NozzleRing_manufacturerPartNumber" z="zFMy1LA2fkhRiGMcRLSjhtV5y6s="/>
-        <field:select field="manufacturer" id="c_com_turbointernational_metadata_domain_part_NozzleRing_manufacturer" itemValue="id" items="${manufacturers}" path="/manufacturers" z="R2+sVSMeuWBAW0Hw0dQKLXNDh5Q="/>
-        <field:select field="partType" id="c_com_turbointernational_metadata_domain_part_NozzleRing_partType" itemValue="id" items="${parttypes}" path="/parttypes" z="JMB9zS4JFo1jMzz5rZmwZUZEU38="/>
+        <field:select field="manufacturer" id="c_com_turbointernational_metadata_domain_part_NozzleRing_manufacturer" itemValue="id" items="${manufacturers}" path="/manufacturer" z="7GrjudGnc3ZC87x6RGSOCErblf4="/>
         <field:input field="name" id="c_com_turbointernational_metadata_domain_part_NozzleRing_name" z="Wtc5lvjh7+wSQi8QFMdoWrj8WOA="/>
         <field:input field="description" id="c_com_turbointernational_metadata_domain_part_NozzleRing_description" z="xsUaLXTWua/ts15p4wXhAvauoZQ="/>
-        <field:checkbox field="inactive" id="c_com_turbointernational_metadata_domain_part_NozzleRing_inactive" required="true" z="G6Z143+efoukBVuKsNpevba/fgA="/>
+        <field:checkbox field="inactive" id="c_com_turbointernational_metadata_domain_part_NozzleRing_inactive" z="G6Z143+efoukBVuKsNpevba/fgA="/>
         <field:simple field="interchanges" id="c_com_turbointernational_metadata_domain_part_NozzleRing_interchanges" messageCode="entity_reference_not_managed" messageCodeAttribute="Interchange" z="6sG2JtHxaRb1nIQ2xmc4UEouE38="/>
     </form:update>
 </div>

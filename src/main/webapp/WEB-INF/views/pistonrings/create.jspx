@@ -4,8 +4,7 @@
     <jsp:output omit-xml-declaration="yes"/>
     <form:create id="fc_com_turbointernational_metadata_domain_part_PistonRing" modelAttribute="pistonRing" path="/pistonrings" render="${empty dependencies}" z="H7jycHdO1ccm1CTfAM+xIo6UO8Y=">
         <field:input field="manufacturerPartNumber" id="c_com_turbointernational_metadata_domain_part_PistonRing_manufacturerPartNumber" z="IbDlWRA+4yCsYX4RkFMwP+uS8CM="/>
-        <field:select field="manufacturer" id="c_com_turbointernational_metadata_domain_part_PistonRing_manufacturer" itemValue="id" items="${manufacturers}" path="/manufacturers" z="a4q5uGGU6Hu6EtiltIPDzkvhmKE="/>
-        <field:select field="partType" id="c_com_turbointernational_metadata_domain_part_PistonRing_partType" itemValue="id" items="${parttypes}" path="/parttypes" z="P7h/hnzVNVh7to8gsx4KCZ2f5CA="/>
+        <field:select field="manufacturer" id="c_com_turbointernational_metadata_domain_part_PistonRing_manufacturer" itemValue="id" items="${manufacturers}" path="/manufacturer" z="RGKDOuqxtSzhM8oLavg9vbin534="/>
         <field:input field="name" id="c_com_turbointernational_metadata_domain_part_PistonRing_name" z="wN74K3XV5oAOY3525z5CRkccJLc="/>
         <field:input field="description" id="c_com_turbointernational_metadata_domain_part_PistonRing_description" z="U2QYwKEihu/pv6Mq5NSO3O18QUc="/>
         <field:checkbox field="inactive" id="c_com_turbointernational_metadata_domain_part_PistonRing_inactive" z="user-managed"/>

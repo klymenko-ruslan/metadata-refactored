@@ -4,8 +4,7 @@
     <jsp:output omit-xml-declaration="yes"/>
     <form:create id="fc_com_turbointernational_metadata_domain_part_TurbineWheel" modelAttribute="turbineWheel" path="/turbinewheels" render="${empty dependencies}" z="/N3lwarPmMT2DZkmIgWuRkeLIWI=">
         <field:input field="manufacturerPartNumber" id="c_com_turbointernational_metadata_domain_part_TurbineWheel_manufacturerPartNumber" z="hV5ogoRNJW/LZwYKmxoUzqN9m8w="/>
-        <field:select field="manufacturer" id="c_com_turbointernational_metadata_domain_part_TurbineWheel_manufacturer" itemValue="id" items="${manufacturers}" path="/manufacturers" z="igI/Heq4NuBVecufUqvTEKCUpLM="/>
-        <field:select field="partType" id="c_com_turbointernational_metadata_domain_part_TurbineWheel_partType" itemValue="id" items="${parttypes}" path="/parttypes" z="dBgRVF5z8FY4yz0CR4T7xXH4hvQ="/>
+        <field:select field="manufacturer" id="c_com_turbointernational_metadata_domain_part_TurbineWheel_manufacturer" itemValue="id" items="${manufacturers}" path="/manufacturer" z="DjTNCqzjX+nMmvwdyVm2owrTZPQ="/>
         <field:input field="name" id="c_com_turbointernational_metadata_domain_part_TurbineWheel_name" z="jXXEKHlybF2bTltR5pUVEI+ZlTM="/>
         <field:input field="description" id="c_com_turbointernational_metadata_domain_part_TurbineWheel_description" z="jmmVDvsCZ8eVSkLrh5wKbOV8yxU="/>
         <field:checkbox field="inactive" id="c_com_turbointernational_metadata_domain_part_TurbineWheel_inactive" z="user-managed"/>

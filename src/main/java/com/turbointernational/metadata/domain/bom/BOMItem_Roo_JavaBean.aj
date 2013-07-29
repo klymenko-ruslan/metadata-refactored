@@ -8,6 +8,14 @@ import com.turbointernational.metadata.domain.part.Part;
 
 privileged aspect BOMItem_Roo_JavaBean {
     
+    public Long BOMItem.getId() {
+        return this.id;
+    }
+    
+    public void BOMItem.setId(Long id) {
+        this.id = id;
+    }
+    
     public Part BOMItem.getParent() {
         return this.parent;
     }

@@ -6,7 +6,6 @@
         <table:table data="${compressorwheels}" id="l_com_turbointernational_metadata_domain_part_CompressorWheel" path="/compressorwheels" z="2uBGJEQSFudcxc6DTgANISe4TIk=">
             <table:column id="c_com_turbointernational_metadata_domain_part_CompressorWheel_manufacturerPartNumber" property="manufacturerPartNumber" z="1M/2upCWIWIJDKur9BCjL4dj/Jk="/>
             <table:column id="c_com_turbointernational_metadata_domain_part_CompressorWheel_manufacturer" property="manufacturer" z="f167ItGzOfDZ3g/1uY7KOrCzaFY="/>
-            <table:column id="c_com_turbointernational_metadata_domain_part_CompressorWheel_partType" property="partType" z="J3qQQHfK0Uy09D7WBG/dCcS21H4="/>
             <table:column id="c_com_turbointernational_metadata_domain_part_CompressorWheel_name" property="name" z="VFHiWAEb4yrvztv95i8mOUsaxjc="/>
             <table:column id="c_com_turbointernational_metadata_domain_part_CompressorWheel_description" property="description" z="vRkfXWdmH+lufUWEDEWyU+LMMPA="/>
             <table:column id="c_com_turbointernational_metadata_domain_part_CompressorWheel_inactive" property="inactive" z="X7wNzZDagO353Y3QdNKIxzfNor8="/>

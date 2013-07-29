@@ -5,7 +5,6 @@
     <page:show id="ps_com_turbointernational_metadata_domain_part_NozzleRing" object="${nozzlering}" path="/nozzlerings" z="xCS7eQcr1KUHxKTUZjpkncJbH+4=">
         <field:display field="manufacturerPartNumber" id="s_com_turbointernational_metadata_domain_part_NozzleRing_manufacturerPartNumber" object="${nozzlering}" z="oKRF9YB/EYitVG83ZTDKMdQNtGU="/>
         <field:display field="manufacturer" id="s_com_turbointernational_metadata_domain_part_NozzleRing_manufacturer" object="${nozzlering}" z="v7CsYmKvDpeCO+0/nchDv0f8fX8="/>
-        <field:display field="partType" id="s_com_turbointernational_metadata_domain_part_NozzleRing_partType" object="${nozzlering}" z="BPhjrue7CDz5ThC34hXCFH6ZxY8="/>
         <field:display field="name" id="s_com_turbointernational_metadata_domain_part_NozzleRing_name" object="${nozzlering}" z="94+sc3QLxSXXlbQTw1plt23NDFM="/>
         <field:display field="description" id="s_com_turbointernational_metadata_domain_part_NozzleRing_description" object="${nozzlering}" z="U4+wfT8zW2XJneYBLSGEHwBzh88="/>
         <field:display field="inactive" id="s_com_turbointernational_metadata_domain_part_NozzleRing_inactive" object="${nozzlering}" z="wDW9RVZlXNGSJKInwU3HGckmjxo="/>

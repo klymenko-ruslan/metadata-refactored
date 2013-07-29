@@ -5,7 +5,6 @@
     <page:show id="ps_com_turbointernational_metadata_domain_part_Gasket" object="${gasket}" path="/gaskets" z="KGKQPsnPhKWI7/W7s8d5evmavo0=">
         <field:display field="manufacturerPartNumber" id="s_com_turbointernational_metadata_domain_part_Gasket_manufacturerPartNumber" object="${gasket}" z="rufYILf23gr4s7Z7Yl9Djv/tYEs="/>
         <field:display field="manufacturer" id="s_com_turbointernational_metadata_domain_part_Gasket_manufacturer" object="${gasket}" z="YzWIbx+QeGUJZIXH+DTfZMdPJiE="/>
-        <field:display field="partType" id="s_com_turbointernational_metadata_domain_part_Gasket_partType" object="${gasket}" z="Z/LGBPfBe81Gth/dRtKmspzwrjo="/>
         <field:display field="name" id="s_com_turbointernational_metadata_domain_part_Gasket_name" object="${gasket}" z="aLyHLTU8MkHl92eqTyvb0gpJo2s="/>
         <field:display field="description" id="s_com_turbointernational_metadata_domain_part_Gasket_description" object="${gasket}" z="OlV9HsBiVPMtP7NTY+wzD1enmsA="/>
         <field:display field="inactive" id="s_com_turbointernational_metadata_domain_part_Gasket_inactive" object="${gasket}" z="Ef5AfYAY1HcAGZ+/e4NLDgy4peo="/>

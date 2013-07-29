@@ -5,7 +5,6 @@
     <page:show id="ps_com_turbointernational_metadata_domain_part_BearingHousing" object="${bearinghousing}" path="/bearinghousings" z="1mFgpNeWNWhjbdFNrzbjoGJd0RU=">
         <field:display field="manufacturerPartNumber" id="s_com_turbointernational_metadata_domain_part_BearingHousing_manufacturerPartNumber" object="${bearinghousing}" z="JOapCDKR4ZgOl225ciheYPwd9c8="/>
         <field:display field="manufacturer" id="s_com_turbointernational_metadata_domain_part_BearingHousing_manufacturer" object="${bearinghousing}" z="UVzE6Uo1A3I8lkT0uBvLduJXumg="/>
-        <field:display field="partType" id="s_com_turbointernational_metadata_domain_part_BearingHousing_partType" object="${bearinghousing}" z="C6iRKJYXdMS0VYyzQYCYBebRPBE="/>
         <field:display field="name" id="s_com_turbointernational_metadata_domain_part_BearingHousing_name" object="${bearinghousing}" z="qbkDy9hKkzxlDlqC8uJgucNxXrQ="/>
         <field:display field="description" id="s_com_turbointernational_metadata_domain_part_BearingHousing_description" object="${bearinghousing}" z="fwSXxJSzUWUwzJisKu9dUXN0lbg="/>
         <field:display field="inactive" id="s_com_turbointernational_metadata_domain_part_BearingHousing_inactive" object="${bearinghousing}" z="CbPyhOidq6/lvKPYoevhh1DZjVM="/>

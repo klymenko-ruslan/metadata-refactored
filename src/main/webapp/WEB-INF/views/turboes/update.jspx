@@ -4,11 +4,10 @@
     <jsp:output omit-xml-declaration="yes"/>
     <form:update id="fu_com_turbointernational_metadata_domain_part_Turbo" modelAttribute="turbo" path="/turboes" versionField="Version" z="IcQ7W9fIhgm9HAHFlyo2IrAGon0=">
         <field:input field="manufacturerPartNumber" id="c_com_turbointernational_metadata_domain_part_Turbo_manufacturerPartNumber" z="3NdXJ4+tp32KnEj16Oo3Q/5qC4o="/>
-        <field:select field="manufacturer" id="c_com_turbointernational_metadata_domain_part_Turbo_manufacturer" itemValue="id" items="${manufacturers}" path="/manufacturers" z="R1+lvByv+m8MHc5Welvz2zQCbOg="/>
-        <field:select field="partType" id="c_com_turbointernational_metadata_domain_part_Turbo_partType" itemValue="id" items="${parttypes}" path="/parttypes" z="63BjdrBOLGOCAijkujSJ0QM4Kms="/>
+        <field:select field="manufacturer" id="c_com_turbointernational_metadata_domain_part_Turbo_manufacturer" itemValue="id" items="${manufacturers}" path="/manufacturer" z="yEbf5CxJv0BkbJbGxlU+UFP7zlw="/>
         <field:input field="name" id="c_com_turbointernational_metadata_domain_part_Turbo_name" z="EDrVWolcVY+147yrzYkW+hnuBuY="/>
         <field:input field="description" id="c_com_turbointernational_metadata_domain_part_Turbo_description" z="xGRMct/jqK0L1nrTB0FosVgedwc="/>
-        <field:checkbox field="inactive" id="c_com_turbointernational_metadata_domain_part_Turbo_inactive" required="true" z="F/1eRnmeaIPTHg3MZsW7SODR48E="/>
+        <field:checkbox field="inactive" id="c_com_turbointernational_metadata_domain_part_Turbo_inactive" z="F/1eRnmeaIPTHg3MZsW7SODR48E="/>
         <field:simple field="interchanges" id="c_com_turbointernational_metadata_domain_part_Turbo_interchanges" messageCode="entity_reference_not_managed" messageCodeAttribute="Interchange" z="dwxxuFnPAOtXNEWAxkMpVAPDxNs="/>
         <field:select field="model" id="c_com_turbointernational_metadata_domain_part_Turbo_model" itemValue="id" items="${turbomodels}" path="/turbomodels" z="qb81YTXwTyAlJSO0oUGXjwBN1PI="/>
         <field:select field="coolType" id="c_com_turbointernational_metadata_domain_part_Turbo_coolType" itemValue="id" items="${cooltypes}" path="/cooltypes" z="PM/kwtpsKoI3N+rvt79wmTyoin8="/>

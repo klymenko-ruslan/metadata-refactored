@@ -4,11 +4,10 @@
     <jsp:output omit-xml-declaration="yes"/>
     <form:update id="fu_com_turbointernational_metadata_domain_part_Heatshield" modelAttribute="heatshield" path="/heatshields" versionField="Version" z="KqNxzfLhtXGa+Ctruamk+bpTh9c=">
         <field:input field="manufacturerPartNumber" id="c_com_turbointernational_metadata_domain_part_Heatshield_manufacturerPartNumber" z="N3n7aMSBmk8qn/i5bZG10d0Eh2g="/>
-        <field:select field="manufacturer" id="c_com_turbointernational_metadata_domain_part_Heatshield_manufacturer" itemValue="id" items="${manufacturers}" path="/manufacturers" z="vFMHMC2LjPOzlZfS+F4OhnB1Jlk="/>
-        <field:select field="partType" id="c_com_turbointernational_metadata_domain_part_Heatshield_partType" itemValue="id" items="${parttypes}" path="/parttypes" z="e9bD/JWD80bV6KaYsvvt2Jcyezs="/>
+        <field:select field="manufacturer" id="c_com_turbointernational_metadata_domain_part_Heatshield_manufacturer" itemValue="id" items="${manufacturers}" path="/manufacturer" z="VGam1X9MClZh17gWbrVf2zRXkZo="/>
         <field:input field="name" id="c_com_turbointernational_metadata_domain_part_Heatshield_name" z="VgzVy06NTBTnDrZjfB8KNzhDsa0="/>
         <field:input field="description" id="c_com_turbointernational_metadata_domain_part_Heatshield_description" z="78cOVLF1CCwzjrPpbflpAl1aYQs="/>
-        <field:checkbox field="inactive" id="c_com_turbointernational_metadata_domain_part_Heatshield_inactive" required="true" z="U1DQXKI0C6M76Hd3WxxDV2h8nco="/>
+        <field:checkbox field="inactive" id="c_com_turbointernational_metadata_domain_part_Heatshield_inactive" z="U1DQXKI0C6M76Hd3WxxDV2h8nco="/>
         <field:simple field="interchanges" id="c_com_turbointernational_metadata_domain_part_Heatshield_interchanges" messageCode="entity_reference_not_managed" messageCodeAttribute="Interchange" z="WM6kVybiX3uNb8cmTQW/8Qc716U="/>
         <field:input field="overallDiameter" id="c_com_turbointernational_metadata_domain_part_Heatshield_overallDiameter" validationMessageCode="field_invalid_number" z="gLbz6eDV0jYgN3mYDYqpEfmYd6I="/>
         <field:input field="insideDimater" id="c_com_turbointernational_metadata_domain_part_Heatshield_insideDimater" validationMessageCode="field_invalid_number" z="qubxBm7LtaPMbSFHrfPmsgpmuDY="/>

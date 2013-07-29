@@ -10,6 +10,14 @@ import java.util.Set;
 
 privileged aspect Group_Roo_JavaBean {
     
+    public Long Group.getId() {
+        return this.id;
+    }
+    
+    public void Group.setId(Long id) {
+        this.id = id;
+    }
+    
     public String Group.getName() {
         return this.name;
     }

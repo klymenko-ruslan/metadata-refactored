@@ -9,6 +9,14 @@ import java.util.Set;
 
 privileged aspect User_Roo_JavaBean {
     
+    public Long User.getId() {
+        return this.id;
+    }
+    
+    public void User.setId(Long id) {
+        this.id = id;
+    }
+    
     public String User.getName() {
         return this.name;
     }

@@ -6,31 +6,18 @@ package com.turbointernational.metadata.domain.security;
 import com.turbointernational.metadata.domain.security.Group;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.persistence.Version;
 
 privileged aspect Group_Roo_Jpa_Entity {
     
     declare @type: Group: @Entity;
     
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id")
-    private Long Group.id;
+    declare @type: Group: @Table(name = "GROUP");
     
     @Version
     @Column(name = "version")
     private Integer Group.version;
-    
-    public Long Group.getId() {
-        return this.id;
-    }
-    
-    public void Group.setId(Long id) {
-        this.id = id;
-    }
     
     public Integer Group.getVersion() {
         return this.version;

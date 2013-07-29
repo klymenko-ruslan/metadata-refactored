@@ -6,31 +6,15 @@ package com.turbointernational.metadata.domain.type;
 import com.turbointernational.metadata.domain.type.GasketType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Version;
 
 privileged aspect GasketType_Roo_Jpa_Entity {
     
     declare @type: GasketType: @Entity;
     
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id")
-    private Long GasketType.id;
-    
     @Version
     @Column(name = "version")
     private Integer GasketType.version;
-    
-    public Long GasketType.getId() {
-        return this.id;
-    }
-    
-    public void GasketType.setId(Long id) {
-        this.id = id;
-    }
     
     public Integer GasketType.getVersion() {
         return this.version;

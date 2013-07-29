@@ -8,7 +8,6 @@ import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.Kit;
 import com.turbointernational.metadata.domain.part.KitController;
 import com.turbointernational.metadata.domain.type.KitType;
-import com.turbointernational.metadata.domain.type.PartType;
 import java.io.UnsupportedEncodingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -93,7 +92,6 @@ privileged aspect KitController_Roo_Controller {
         uiModel.addAttribute("interchanges", Interchange.findAllInterchanges());
         uiModel.addAttribute("manufacturers", Manufacturer.findAllManufacturers());
         uiModel.addAttribute("kittypes", KitType.findAllKitTypes());
-        uiModel.addAttribute("parttypes", PartType.findAllPartTypes());
     }
     
     String KitController.encodeUrlPathSegment(String pathSegment, HttpServletRequest httpServletRequest) {

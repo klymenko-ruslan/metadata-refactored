@@ -4,11 +4,10 @@
     <jsp:output omit-xml-declaration="yes"/>
     <form:update id="fu_com_turbointernational_metadata_domain_part_CompressorWheel" modelAttribute="compressorWheel" path="/compressorwheels" versionField="Version" z="RejBy6HteSH0/KacJFbdaeKzz2A=">
         <field:input field="manufacturerPartNumber" id="c_com_turbointernational_metadata_domain_part_CompressorWheel_manufacturerPartNumber" z="Z27sCDk0qc+c8D7fRyCri/NklEs="/>
-        <field:select field="manufacturer" id="c_com_turbointernational_metadata_domain_part_CompressorWheel_manufacturer" itemValue="id" items="${manufacturers}" path="/manufacturers" z="sQM6RsDAkk21ybblEI6WdXK2Spw="/>
-        <field:select field="partType" id="c_com_turbointernational_metadata_domain_part_CompressorWheel_partType" itemValue="id" items="${parttypes}" path="/parttypes" z="e42MqBL+3Z3se7ADL0cnilffwWI="/>
+        <field:select field="manufacturer" id="c_com_turbointernational_metadata_domain_part_CompressorWheel_manufacturer" itemValue="id" items="${manufacturers}" path="/manufacturer" z="kgWPIbS6kFVVoTRGgSqnH4hf3ik="/>
         <field:input field="name" id="c_com_turbointernational_metadata_domain_part_CompressorWheel_name" z="FrXEVgbZMvNMXvTvvpp/A8myv7Y="/>
         <field:input field="description" id="c_com_turbointernational_metadata_domain_part_CompressorWheel_description" z="Pi1NIX1mSiqXPlwcajKU4JjXW40="/>
-        <field:checkbox field="inactive" id="c_com_turbointernational_metadata_domain_part_CompressorWheel_inactive" required="true" z="vK/t6ixJCQTtoH1iN0HUXIx9Zu4="/>
+        <field:checkbox field="inactive" id="c_com_turbointernational_metadata_domain_part_CompressorWheel_inactive" z="vK/t6ixJCQTtoH1iN0HUXIx9Zu4="/>
         <field:simple field="interchanges" id="c_com_turbointernational_metadata_domain_part_CompressorWheel_interchanges" messageCode="entity_reference_not_managed" messageCodeAttribute="Interchange" z="ck1BFpI84EA4ELKIkh6eu6lqzB8="/>
         <field:input field="inducerOa" id="c_com_turbointernational_metadata_domain_part_CompressorWheel_inducerOa" validationMessageCode="field_invalid_number" z="7YmT6NcPRqlLMi4I9qEJ/X0aquY="/>
         <field:input field="tipHeightB" id="c_com_turbointernational_metadata_domain_part_CompressorWheel_tipHeightB" validationMessageCode="field_invalid_number" z="5rPLT0cxwnZ5tujJhd7lOSFbzYU="/>

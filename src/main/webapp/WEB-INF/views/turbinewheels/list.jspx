@@ -6,7 +6,6 @@
         <table:table data="${turbinewheels}" id="l_com_turbointernational_metadata_domain_part_TurbineWheel" path="/turbinewheels" z="8Qu9tj1Dir4ojfQ/kFgAqq/WGXE=">
             <table:column id="c_com_turbointernational_metadata_domain_part_TurbineWheel_manufacturerPartNumber" property="manufacturerPartNumber" z="Lb5jh0StKKlbJPCy/PdSrc9ZdfY="/>
             <table:column id="c_com_turbointernational_metadata_domain_part_TurbineWheel_manufacturer" property="manufacturer" z="LTVLHoAWFoQQevu3++qS9BsY9G4="/>
-            <table:column id="c_com_turbointernational_metadata_domain_part_TurbineWheel_partType" property="partType" z="FBg1+KJLO5VwWjB4yg7jsSDZj0w="/>
             <table:column id="c_com_turbointernational_metadata_domain_part_TurbineWheel_name" property="name" z="QLGIOLRp2ik8IZNSRAuhKLA1Z/U="/>
             <table:column id="c_com_turbointernational_metadata_domain_part_TurbineWheel_description" property="description" z="xCuCWz18vfAvKvESmfZ58xI1VZE="/>
             <table:column id="c_com_turbointernational_metadata_domain_part_TurbineWheel_inactive" property="inactive" z="AI1QmMiIqpVBHhSnmyA/NogJud0="/>

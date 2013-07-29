@@ -6,7 +6,6 @@
         <table:table data="${gaskets}" id="l_com_turbointernational_metadata_domain_part_Gasket" path="/gaskets" z="g+7KomBhSB2sJ7cQBpdvv+L6HVc=">
             <table:column id="c_com_turbointernational_metadata_domain_part_Gasket_manufacturerPartNumber" property="manufacturerPartNumber" z="yRPMK5JD0NCFgQSOSRg2Y1icggU="/>
             <table:column id="c_com_turbointernational_metadata_domain_part_Gasket_manufacturer" property="manufacturer" z="6bpbK06bD3SfFle0egy0CgqLL6w="/>
-            <table:column id="c_com_turbointernational_metadata_domain_part_Gasket_partType" property="partType" z="FifIx5i42GVs4ADHR6krHae+aJM="/>
             <table:column id="c_com_turbointernational_metadata_domain_part_Gasket_name" property="name" z="2Yfu3OtFm9UNosPB7wIpR6Fylxg="/>
             <table:column id="c_com_turbointernational_metadata_domain_part_Gasket_description" property="description" z="6GiZ3WG/xiVClH0GUBCdv/gvu2g="/>
             <table:column id="c_com_turbointernational_metadata_domain_part_Gasket_inactive" property="inactive" z="tTbBTlK/VhPA/+3Cq8EOe++/p8Q="/>

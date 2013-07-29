@@ -4,8 +4,7 @@
     <jsp:output omit-xml-declaration="yes"/>
     <form:create id="fc_com_turbointernational_metadata_domain_part_Turbo" modelAttribute="turbo" path="/turboes" render="${empty dependencies}" z="Bz5Tyf2GW53Z8Nc6RZGSg+N48Qo=">
         <field:input field="manufacturerPartNumber" id="c_com_turbointernational_metadata_domain_part_Turbo_manufacturerPartNumber" z="3NdXJ4+tp32KnEj16Oo3Q/5qC4o="/>
-        <field:select field="manufacturer" id="c_com_turbointernational_metadata_domain_part_Turbo_manufacturer" itemValue="id" items="${manufacturers}" path="/manufacturers" z="R1+lvByv+m8MHc5Welvz2zQCbOg="/>
-        <field:select field="partType" id="c_com_turbointernational_metadata_domain_part_Turbo_partType" itemValue="id" items="${parttypes}" path="/parttypes" z="63BjdrBOLGOCAijkujSJ0QM4Kms="/>
+        <field:select field="manufacturer" id="c_com_turbointernational_metadata_domain_part_Turbo_manufacturer" itemValue="id" items="${manufacturers}" path="/manufacturer" z="yEbf5CxJv0BkbJbGxlU+UFP7zlw="/>
         <field:input field="name" id="c_com_turbointernational_metadata_domain_part_Turbo_name" z="EDrVWolcVY+147yrzYkW+hnuBuY="/>
         <field:input field="description" id="c_com_turbointernational_metadata_domain_part_Turbo_description" z="xGRMct/jqK0L1nrTB0FosVgedwc="/>
         <field:checkbox field="inactive" id="c_com_turbointernational_metadata_domain_part_Turbo_inactive" z="user-managed"/>

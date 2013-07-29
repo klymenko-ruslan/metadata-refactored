@@ -6,7 +6,6 @@
         <table:table data="${bearingspacers}" id="l_com_turbointernational_metadata_domain_part_BearingSpacer" path="/bearingspacers" z="c/ILp1M0BvUegvh+HDrdMyn4xoY=">
             <table:column id="c_com_turbointernational_metadata_domain_part_BearingSpacer_manufacturerPartNumber" property="manufacturerPartNumber" z="wLBgE/M/YtOyknboQtp8Y6E/cf8="/>
             <table:column id="c_com_turbointernational_metadata_domain_part_BearingSpacer_manufacturer" property="manufacturer" z="x/5f6+hPD5PTnBoecj9ba9Pk15E="/>
-            <table:column id="c_com_turbointernational_metadata_domain_part_BearingSpacer_partType" property="partType" z="+K8ib3D48U4eQDgRthgHePm4ui0="/>
             <table:column id="c_com_turbointernational_metadata_domain_part_BearingSpacer_name" property="name" z="xDsrOJkVx1fNgcaFxVHQVWETYPk="/>
             <table:column id="c_com_turbointernational_metadata_domain_part_BearingSpacer_description" property="description" z="IGwbwclX1tn9pkMs2WZACjHQiHU="/>
             <table:column id="c_com_turbointernational_metadata_domain_part_BearingSpacer_inactive" property="inactive" z="Fj62UopOEjM999xL8A0QfpETHt8="/>

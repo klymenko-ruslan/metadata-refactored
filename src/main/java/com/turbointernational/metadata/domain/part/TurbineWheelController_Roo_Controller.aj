@@ -7,7 +7,6 @@ import com.turbointernational.metadata.domain.interchange.Interchange;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.TurbineWheel;
 import com.turbointernational.metadata.domain.part.TurbineWheelController;
-import com.turbointernational.metadata.domain.type.PartType;
 import java.io.UnsupportedEncodingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -91,7 +90,6 @@ privileged aspect TurbineWheelController_Roo_Controller {
         uiModel.addAttribute("turbineWheel", turbineWheel);
         uiModel.addAttribute("interchanges", Interchange.findAllInterchanges());
         uiModel.addAttribute("manufacturers", Manufacturer.findAllManufacturers());
-        uiModel.addAttribute("parttypes", PartType.findAllPartTypes());
     }
     
     String TurbineWheelController.encodeUrlPathSegment(String pathSegment, HttpServletRequest httpServletRequest) {

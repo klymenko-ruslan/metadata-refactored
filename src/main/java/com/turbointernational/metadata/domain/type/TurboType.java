@@ -1,6 +1,9 @@
 package com.turbointernational.metadata.domain.type;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -14,6 +17,10 @@ import org.springframework.roo.addon.tostring.RooToString;
 @RooJpaActiveRecord
 @Table(name="TURBO_TYPE", uniqueConstraints=@UniqueConstraint(columnNames={"name"}))
 public class TurboType {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name="manfr_id", nullable=false)

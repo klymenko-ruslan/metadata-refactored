@@ -7,6 +7,14 @@ import com.turbointernational.metadata.domain.security.Role;
 
 privileged aspect Role_Roo_JavaBean {
     
+    public Long Role.getId() {
+        return this.id;
+    }
+    
+    public void Role.setId(Long id) {
+        this.id = id;
+    }
+    
     public String Role.getName() {
         return this.name;
     }

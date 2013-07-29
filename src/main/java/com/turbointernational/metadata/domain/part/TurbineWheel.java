@@ -1,5 +1,7 @@
 package com.turbointernational.metadata.domain.part;
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.PrimaryKeyJoinColumn;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import org.springframework.roo.addon.tostring.RooToString;
@@ -12,6 +14,8 @@ import org.springframework.roo.addon.tostring.RooToString;
 @RooJavaBean
 @RooToString
 @RooJpaActiveRecord(table="TURBINE_WHEEL", inheritanceType = "JOINED")
+@DiscriminatorValue(value = "12")
+@PrimaryKeyJoinColumn(name = "part_id")
 public class TurbineWheel extends Part {
 
     @Column(name="exduce_oa")

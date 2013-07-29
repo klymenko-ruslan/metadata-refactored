@@ -7,6 +7,14 @@ import com.turbointernational.metadata.domain.bom.BOMAlternativeHeader;
 
 privileged aspect BOMAlternativeHeader_Roo_JavaBean {
     
+    public Long BOMAlternativeHeader.getId() {
+        return this.id;
+    }
+    
+    public void BOMAlternativeHeader.setId(Long id) {
+        this.id = id;
+    }
+    
     public String BOMAlternativeHeader.getName() {
         return this.name;
     }

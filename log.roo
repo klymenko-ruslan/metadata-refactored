@@ -114,3 +114,22 @@ exit
 // Spring Roo 1.2.4.RELEASE [rev 75337cf] log opened at 2013-07-28 18:05:25
 web mvc controller --class ~.metadata.domain.other.ManufacturerController
 web mvc scaffold --backingType ~.metadata.domain.other.TurboModel --class ~.metadata.domain.other.TurboModelController
+// Spring Roo 1.2.4.RELEASE [rev 75337cf] log opened at 2013-07-28 20:01:09
+exit
+// Spring Roo 1.2.4.RELEASE [rev 75337cf] log closed at 2013-07-28 20:04:24
+// Spring Roo 1.2.4.RELEASE [rev 75337cf] log opened at 2013-07-28 20:04:28
+hint
+// Spring Roo 1.2.4.RELEASE [rev 75337cf] log opened at 2013-07-28 20:06:31
+ent j --class ~.metadata.domain.Foo --extends ~.metadata.domain.part.Part
+jpa setup --provider OPENJPA --database MYSQL --hostName localhost --userName ti --password ti --databaseName ti
+jpa setup --provider ECLIPSELINK --database MYSQL --hostName localhost --userName ti --password ti --databaseName ti
+web mvc scaffold --class ~.metadata.domain.type.TurboTypeController --backingType  ~.metadata.domain.type.TurboType
+exit
+// Spring Roo 1.2.4.RELEASE [rev 75337cf] log closed at 2013-07-28 23:29:58
+// Spring Roo 1.2.4.RELEASE [rev 75337cf] log opened at 2013-07-28 23:30:42
+exit
+// Spring Roo 1.2.4.RELEASE [rev 75337cf] log closed at 2013-07-28 23:31:24
+// Spring Roo 1.2.4.RELEASE [rev 75337cf] log opened at 2013-07-28 23:31:30
+exit
+// Spring Roo 1.2.4.RELEASE [rev 75337cf] log closed at 2013-07-28 23:45:57
+// Spring Roo 1.2.4.RELEASE [rev 75337cf] log opened at 2013-07-28 23:46:01

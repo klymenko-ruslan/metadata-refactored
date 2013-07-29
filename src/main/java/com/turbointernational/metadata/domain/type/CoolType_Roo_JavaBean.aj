@@ -7,6 +7,14 @@ import com.turbointernational.metadata.domain.type.CoolType;
 
 privileged aspect CoolType_Roo_JavaBean {
     
+    public Long CoolType.getId() {
+        return this.id;
+    }
+    
+    public void CoolType.setId(Long id) {
+        this.id = id;
+    }
+    
     public String CoolType.getName() {
         return this.name;
     }

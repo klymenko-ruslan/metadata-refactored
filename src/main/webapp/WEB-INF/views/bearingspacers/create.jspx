@@ -4,18 +4,17 @@
     <jsp:output omit-xml-declaration="yes"/>
     <form:create id="fc_com_turbointernational_metadata_domain_part_BearingSpacer" modelAttribute="bearingSpacer" path="/bearingspacers" render="${empty dependencies}" z="8xm2CCdh92ZSwJfWJQ7XJdNZhdM=">
         <field:input field="manufacturerPartNumber" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_manufacturerPartNumber" z="Ts0QqgsTMTWDh0Kwg5dYDdvauZs="/>
-        <field:select field="manufacturer" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_manufacturer" itemValue="id" items="${manufacturers}" path="/manufacturers" z="2dJASe43xy9kPGjq1PZ8bH9wQVU="/>
-        <field:select field="partType" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_partType" itemValue="id" items="${parttypes}" path="/parttypes" z="8UuVj+/gDgtab8/lvGRS6YjFpzU="/>
+        <field:select field="manufacturer" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_manufacturer" itemValue="id" items="${manufacturers}" path="/manufacturer" z="5EaWcBDiAtsOoc4eXakDWH3R5kw="/>
         <field:input field="name" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_name" z="zKdicWM/anoJ65ztJm1jZ9ZyMcE="/>
         <field:input field="description" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_description" z="ekUWc8ncaTcI/V/Azkk2sc655ro="/>
         <field:checkbox field="inactive" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_inactive" z="user-managed"/>
         <field:simple field="interchanges" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_interchanges" messageCode="entity_reference_not_managed" messageCodeAttribute="Interchange" z="bme+PZZkKKZk3G2twHAcTOjdWWQ="/>
-        <field:select field="standardSize" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_standardSize" itemValue="id" items="${bearingspacers}" path="/bearingspacers" z="jIIJYab5gznWOeVGM6vZAz0JlNk="/>
-        <field:select field="oversize" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_oversize" itemValue="id" items="${bearingspacers}" path="/bearingspacers" z="/fxM4c4nP2ePFJloMNt2lwaiiqw="/>
         <field:input field="outsideDiameterMin" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_outsideDiameterMin" validationMessageCode="field_invalid_number" z="hBAkGYNkjsR+W7a3t9vsWVVB/+k="/>
         <field:input field="outsideDiameterMax" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_outsideDiameterMax" validationMessageCode="field_invalid_number" z="sIqrkLrPAgK8vutgd6tkDznPqxY="/>
         <field:input field="insideDiameterMin" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_insideDiameterMin" validationMessageCode="field_invalid_number" z="OL9hJ/EyNpNrpqufDKHBcQBejNU="/>
         <field:input field="insideDiameterMax" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_insideDiameterMax" validationMessageCode="field_invalid_number" z="x2uFuJ2BMvQgYTApQpb/v9pJf7I="/>
+        <field:select field="standardSize" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_standardSize" itemValue="id" items="${bearingspacers}" path="/bearingspacers" z="jIIJYab5gznWOeVGM6vZAz0JlNk="/>
+        <field:select field="oversize" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_oversize" itemValue="id" items="${bearingspacers}" path="/bearingspacers" z="/fxM4c4nP2ePFJloMNt2lwaiiqw="/>
     </form:create>
     <form:dependency dependencies="${dependencies}" id="d_com_turbointernational_metadata_domain_part_BearingSpacer" render="${not empty dependencies}" z="M7CTdp1gqCGmlq4vXTaPWnQDjwA="/>
 </div>

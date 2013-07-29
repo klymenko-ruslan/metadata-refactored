@@ -4,8 +4,7 @@
     <jsp:output omit-xml-declaration="yes"/>
     <form:create id="fc_com_turbointernational_metadata_domain_part_BearingHousing" modelAttribute="bearingHousing" path="/bearinghousings" render="${empty dependencies}" z="QI8dqFjtOYeNpTvBqV3mSFLvaRY=">
         <field:input field="manufacturerPartNumber" id="c_com_turbointernational_metadata_domain_part_BearingHousing_manufacturerPartNumber" z="dzqJu7LabyLNWKOENAryocKr68Y="/>
-        <field:select field="manufacturer" id="c_com_turbointernational_metadata_domain_part_BearingHousing_manufacturer" itemValue="id" items="${manufacturers}" path="/manufacturers" z="4r+1PBA7+mpAFsk/yIJAsRxVu6U="/>
-        <field:select field="partType" id="c_com_turbointernational_metadata_domain_part_BearingHousing_partType" itemValue="id" items="${parttypes}" path="/parttypes" z="UnJn95XWfFFXPeONLgs/QbKhCRA="/>
+        <field:select field="manufacturer" id="c_com_turbointernational_metadata_domain_part_BearingHousing_manufacturer" itemValue="id" items="${manufacturers}" path="/manufacturer" z="fD+fSn+jNF+FCjlT2yxQCW9h26g="/>
         <field:input field="name" id="c_com_turbointernational_metadata_domain_part_BearingHousing_name" z="RTA9xlHixQvwTOIkNBnIiYt/QiQ="/>
         <field:input field="description" id="c_com_turbointernational_metadata_domain_part_BearingHousing_description" z="CQSPEx87s2XFiKP/3hYwzVSpX5k="/>
         <field:checkbox field="inactive" id="c_com_turbointernational_metadata_domain_part_BearingHousing_inactive" z="user-managed"/>
