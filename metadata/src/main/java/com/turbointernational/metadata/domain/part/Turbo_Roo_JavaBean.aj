@@ -3,7 +3,7 @@
 
 package com.turbointernational.metadata.domain.part;
 
-import com.turbointernational.metadata.domain.TurboModel;
+import com.turbointernational.metadata.domain.other.TurboModel;
 import com.turbointernational.metadata.domain.part.Turbo;
 import com.turbointernational.metadata.domain.type.CoolType;
 

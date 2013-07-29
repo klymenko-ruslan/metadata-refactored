@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" xmlns:table="urn:jsptagdir:/WEB-INF/tags/form/fields" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <page:list id="pl_ti_metadata_domain_part_StandardBearingSpacer" items="${standardbearingspacers}" z="JUtKAWk2PZ06QcXjR4rjS+KDIrk=">
+        <table:table data="${standardbearingspacers}" id="l_ti_metadata_domain_part_StandardBearingSpacer" path="/standardbearingspacers" z="Kvx9jT4FFLkAD9paznr/EQIokds=">
+            <table:column id="c_ti_metadata_domain_part_StandardBearingSpacer_standardPartId" property="standardPartId" z="RXALAHCpDZZ/Ldhl4KaidWJ97Ic="/>
+            <table:column id="c_ti_metadata_domain_part_StandardBearingSpacer_oversizedPartId" property="oversizedPartId" z="15HinehX+zvcHAiNhwp3KIeCdyc="/>
+        </table:table>
+    </page:list>
+</div>

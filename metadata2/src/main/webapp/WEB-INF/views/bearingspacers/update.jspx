@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:form="urn:jsptagdir:/WEB-INF/tags/form" xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <form:update id="fu_ti_metadata_domain_part_BearingSpacer" idField="partId" modelAttribute="bearingSpacer" path="/bearingspacers" versionField="Version" z="zB8mlH+jKeujeoAmOl4tg6E4oE4=">
+        <field:select field="part" id="c_ti_metadata_domain_part_BearingSpacer_part" itemValue="id" items="${parts}" path="/parts" z="1BD1KsleVn3LSgONzH1QKFAyFnk="/>
+        <field:simple field="standardBearingSpacers" id="c_ti_metadata_domain_part_BearingSpacer_standardBearingSpacers" messageCode="entity_reference_not_managed" messageCodeAttribute="Standard Bearing Spacer" z="IAhmee0BOEcsTK70ydfl4F4u/k0="/>
+        <field:simple field="standardBearingSpacers1" id="c_ti_metadata_domain_part_BearingSpacer_standardBearingSpacers1" messageCode="entity_reference_not_managed" messageCodeAttribute="Standard Bearing Spacer" z="8sU4uwMD6gLW8uWNQqhMD1xaxKE="/>
+        <field:input field="outsideDimMin" id="c_ti_metadata_domain_part_BearingSpacer_outsideDimMin" validationMessageCode="field_invalid_number" z="LwhCMre9v3XpoKoeXUiyLQkzGfI="/>
+        <field:input field="outsideDimMax" id="c_ti_metadata_domain_part_BearingSpacer_outsideDimMax" validationMessageCode="field_invalid_number" z="t/6Hmtml/BHN8Zql6u2Pr+f9GJc="/>
+        <field:input field="insideDimMin" id="c_ti_metadata_domain_part_BearingSpacer_insideDimMin" validationMessageCode="field_invalid_number" z="myHKoeP6NlHznQgrsxb8WQhzUho="/>
+        <field:input field="insideDimMax" id="c_ti_metadata_domain_part_BearingSpacer_insideDimMax" validationMessageCode="field_invalid_number" z="ZVXl2TP9FVdSwakqUyfcGHuOWCc="/>
+    </form:update>
+</div>

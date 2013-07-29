@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" xmlns:table="urn:jsptagdir:/WEB-INF/tags/form/fields" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <page:list id="pl_ti_metadata_domain_security_User" items="${users}" z="pIRf7MYocRUMEj483VKBuKLxEgY=">
+        <table:table data="${users}" id="l_ti_metadata_domain_security_User" path="/users" z="DbmxpNgspSCuwXqrFwSzL7ab7v4=">
+            <table:column id="c_ti_metadata_domain_security_User_name" property="name" z="1PDiLxWdNRU4aecxbuI4P8AkiPw="/>
+            <table:column id="c_ti_metadata_domain_security_User_email" property="email" z="GdKgj/REONQyYkbR90j+jN4fAWo="/>
+            <table:column id="c_ti_metadata_domain_security_User_password" property="password" z="131Tr7HJRNdbF8ox1m4z2/2YYzA="/>
+            <table:column id="c_ti_metadata_domain_security_User_enabled" property="enabled" z="67kgxMLuPHJ+KAETpXp0j3fAZbg="/>
+        </table:table>
+    </page:list>
+</div>

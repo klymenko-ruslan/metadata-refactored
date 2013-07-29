@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 2.1//EN" "http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
+<tiles-definitions>
+    <definition extends="default" name="heatshields/list">
+        <put-attribute name="body" value="/WEB-INF/views/heatshields/list.jspx"/>
+    </definition>
+<definition extends="default" name="heatshields/show">
+        <put-attribute name="body" value="/WEB-INF/views/heatshields/show.jspx"/>
+    </definition>
+<definition extends="default" name="heatshields/create">
+        <put-attribute name="body" value="/WEB-INF/views/heatshields/create.jspx"/>
+    </definition>
+<definition extends="default" name="heatshields/update">
+        <put-attribute name="body" value="/WEB-INF/views/heatshields/update.jspx"/>
+    </definition>
+</tiles-definitions>

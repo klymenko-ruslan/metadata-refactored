@@ -5,9 +5,16 @@ package com.turbointernational.metadata.domain.part;
 
 import com.turbointernational.metadata.domain.part.BearingSpacer;
 import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.Table;
 
 privileged aspect BearingSpacer_Roo_Jpa_Entity {
     
     declare @type: BearingSpacer: @Entity;
+    
+    declare @type: BearingSpacer: @Table(name = "BEARING_SPACER");
+    
+    declare @type: BearingSpacer: @Inheritance(strategy = InheritanceType.JOINED);
     
 }

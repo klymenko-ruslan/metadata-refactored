@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <page:show id="ps_ti_metadata_domain_part_JournalBearing" object="${journalbearing}" path="/journalbearings" z="ZnSbQ3LFm5i5m27+EjnosCyp0oc=">
+        <field:display field="part" id="s_ti_metadata_domain_part_JournalBearing_part" object="${journalbearing}" z="tqHZnwUauLyd44y5h2gWJKswzL4="/>
+        <field:display field="outsideDimMin" id="s_ti_metadata_domain_part_JournalBearing_outsideDimMin" object="${journalbearing}" z="FOestSLXVPRKpX9sVXa7s9c93ZU="/>
+        <field:display field="outsideDimMax" id="s_ti_metadata_domain_part_JournalBearing_outsideDimMax" object="${journalbearing}" z="Oroq4vaGg34e2J4NkkrIXuCHx8E="/>
+        <field:display field="insideDimMin" id="s_ti_metadata_domain_part_JournalBearing_insideDimMin" object="${journalbearing}" z="FCpePjlchzOcdC1/zpEp5/GA8P4="/>
+        <field:display field="insideDimMax" id="s_ti_metadata_domain_part_JournalBearing_insideDimMax" object="${journalbearing}" z="debmoxhPHLWlvHU59EW3hRrVjF4="/>
+        <field:display field="width" id="s_ti_metadata_domain_part_JournalBearing_width" object="${journalbearing}" z="2Jei8XQaPL3mwwrPNNF2RuQdLHA="/>
+    </page:show>
+</div>

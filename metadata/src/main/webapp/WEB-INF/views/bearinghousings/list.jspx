@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" xmlns:table="urn:jsptagdir:/WEB-INF/tags/form/fields" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <page:list id="pl_com_turbointernational_metadata_domain_part_BearingHousing" items="${bearinghousings}" z="SxqGH7m3stv22H695Q9sY3KeDZc=">
+        <table:table data="${bearinghousings}" id="l_com_turbointernational_metadata_domain_part_BearingHousing" path="/bearinghousings" z="CA1ck8Rc7h+pPWCxyQm9ExF75QY=">
+            <table:column id="c_com_turbointernational_metadata_domain_part_BearingHousing_manufacturerPartNumber" property="manufacturerPartNumber" z="e1Sy03+n2dhonO/9BCU1u9Job7o="/>
+            <table:column id="c_com_turbointernational_metadata_domain_part_BearingHousing_manufacturer" property="manufacturer" z="CBCf0BtTICoWAu+hiEkxj/eTshw="/>
+            <table:column id="c_com_turbointernational_metadata_domain_part_BearingHousing_name" property="name" z="tKQj/t+hzfKTA1OulXjfrhnzEk0="/>
+            <table:column id="c_com_turbointernational_metadata_domain_part_BearingHousing_description" property="description" z="sd90DOYzFb8kuKOPyavph6wVSDo="/>
+            <table:column id="c_com_turbointernational_metadata_domain_part_BearingHousing_inactive" property="inactive" z="AGo5qkbJNewVVJD/vy/sR2Zykqo="/>
+        </table:table>
+    </page:list>
+</div>

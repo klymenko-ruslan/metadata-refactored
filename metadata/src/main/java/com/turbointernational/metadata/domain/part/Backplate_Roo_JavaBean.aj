@@ -56,12 +56,12 @@ privileged aspect Backplate_Roo_JavaBean {
         this.pistonRingDiameter = pistonRingDiameter;
     }
     
-    public Float Backplate.getCompressorHousingDIameter() {
-        return this.compressorHousingDIameter;
+    public Float Backplate.getCompressorHousingDiameter() {
+        return this.compressorHousingDiameter;
     }
     
-    public void Backplate.setCompressorHousingDIameter(Float compressorHousingDIameter) {
-        this.compressorHousingDIameter = compressorHousingDIameter;
+    public void Backplate.setCompressorHousingDiameter(Float compressorHousingDiameter) {
+        this.compressorHousingDiameter = compressorHousingDiameter;
     }
     
     public String Backplate.getNotes() {

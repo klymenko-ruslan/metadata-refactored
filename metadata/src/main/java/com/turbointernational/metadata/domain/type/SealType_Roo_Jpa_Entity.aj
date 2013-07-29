@@ -6,31 +6,15 @@ package com.turbointernational.metadata.domain.type;
 import com.turbointernational.metadata.domain.type.SealType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Version;
 
 privileged aspect SealType_Roo_Jpa_Entity {
     
     declare @type: SealType: @Entity;
     
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id")
-    private Long SealType.id;
-    
     @Version
     @Column(name = "version")
     private Integer SealType.version;
-    
-    public Long SealType.getId() {
-        return this.id;
-    }
-    
-    public void SealType.setId(Long id) {
-        this.id = id;
-    }
     
     public Integer SealType.getVersion() {
         return this.version;

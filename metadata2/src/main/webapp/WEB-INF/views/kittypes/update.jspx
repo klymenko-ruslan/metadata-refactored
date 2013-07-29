@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:form="urn:jsptagdir:/WEB-INF/tags/form" xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <form:update id="fu_ti_metadata_domain_type_KitType" modelAttribute="kitType" path="/kittypes" versionField="Version" z="mMYN7oiqc+qBlrKDY9AE9nsgyyk=">
+        <field:simple field="kits" id="c_ti_metadata_domain_type_KitType_kits" messageCode="entity_reference_not_managed" messageCodeAttribute="Kit" z="gP29bKHLFVDoqaHoL24S9GpYWUk="/>
+        <field:input field="name" id="c_ti_metadata_domain_type_KitType_name" required="true" z="WO65yXPr3JZLu/aTkuPnnH939tU="/>
+        <field:input field="importPk" id="c_ti_metadata_domain_type_KitType_importPk" validationMessageCode="field_invalid_integer" z="GGC4vTttMBHkTm/FPqJTyHKOE6I="/>
+    </form:update>
+</div>

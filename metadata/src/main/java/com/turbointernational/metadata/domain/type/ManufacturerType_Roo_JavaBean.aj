@@ -7,6 +7,14 @@ import com.turbointernational.metadata.domain.type.ManufacturerType;
 
 privileged aspect ManufacturerType_Roo_JavaBean {
     
+    public Long ManufacturerType.getId() {
+        return this.id;
+    }
+    
+    public void ManufacturerType.setId(Long id) {
+        this.id = id;
+    }
+    
     public String ManufacturerType.getName() {
         return this.name;
     }

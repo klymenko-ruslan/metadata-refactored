@@ -6,31 +6,18 @@ package com.turbointernational.metadata.domain.bom;
 import com.turbointernational.metadata.domain.bom.BOMAlternativeHeader;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.persistence.Version;
 
 privileged aspect BOMAlternativeHeader_Roo_Jpa_Entity {
     
     declare @type: BOMAlternativeHeader: @Entity;
     
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id")
-    private Long BOMAlternativeHeader.id;
+    declare @type: BOMAlternativeHeader: @Table(name = "BOM_ALT_HEADER");
     
     @Version
     @Column(name = "version")
     private Integer BOMAlternativeHeader.version;
-    
-    public Long BOMAlternativeHeader.getId() {
-        return this.id;
-    }
-    
-    public void BOMAlternativeHeader.setId(Long id) {
-        this.id = id;
-    }
     
     public Integer BOMAlternativeHeader.getVersion() {
         return this.version;

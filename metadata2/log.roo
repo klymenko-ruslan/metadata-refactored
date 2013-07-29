@@ -1,0 +1,19 @@
+// Spring Roo 1.2.4.RELEASE [rev 75337cf] log opened at 2013-07-27 21:49:08
+database reverse engineer --schema no-schema-required 
+hint
+exit
+// Spring Roo 1.2.4.RELEASE [rev 75337cf] log closed at 2013-07-27 21:50:25
+// Spring Roo 1.2.4.RELEASE [rev 75337cf] log opened at 2013-07-27 21:50:31
+hint
+database reverse engineer --schema no-schema-required --package  ti.metadata.domain
+web mvc all --package ti.metadata.domain
+security setup
+hint
+web mvc all --package ti.metadata.domain
+web mvc json all --package ti.metadata.domain
+web mvc all --package ti.metadata.domain
+exit
+// Spring Roo 1.2.4.RELEASE [rev 75337cf] log closed at 2013-07-28 08:51:35
+// Spring Roo 1.2.4.RELEASE [rev 75337cf] log opened at 2013-07-28 08:53:36
+exit
+// Spring Roo 1.2.4.RELEASE [rev 75337cf] log closed at 2013-07-28 09:02:22

@@ -3,10 +3,18 @@
 
 package com.turbointernational.metadata.domain.type;
 
-import com.turbointernational.metadata.domain.Manufacturer;
+import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.type.TurboType;
 
 privileged aspect TurboType_Roo_JavaBean {
+    
+    public Long TurboType.getId() {
+        return this.id;
+    }
+    
+    public void TurboType.setId(Long id) {
+        this.id = id;
+    }
     
     public Manufacturer TurboType.getManufacturer() {
         return this.manufacturer;
@@ -22,14 +30,6 @@ privileged aspect TurboType_Roo_JavaBean {
     
     public void TurboType.setName(String name) {
         this.name = name;
-    }
-    
-    public Long TurboType.getImportPk() {
-        return this.importPk;
-    }
-    
-    public void TurboType.setImportPk(Long importPk) {
-        this.importPk = importPk;
     }
     
 }

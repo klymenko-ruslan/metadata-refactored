@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <page:show id="ps_ti_metadata_domain_part_Backplate" object="${backplate}" path="/backplates" z="NOhbjlQroufl0ziOIPf6mab2SPg=">
+        <field:display field="part" id="s_ti_metadata_domain_part_Backplate_part" object="${backplate}" z="oUZ42kwIwZ6KVNbQhxuypKBTHqw="/>
+        <field:display field="sealTypeId" id="s_ti_metadata_domain_part_Backplate_sealTypeId" object="${backplate}" z="MkrZZ67Q7JkW4kousF1ffTqWQRU="/>
+        <field:display field="styleCompressorWheel" id="s_ti_metadata_domain_part_Backplate_styleCompressorWheel" object="${backplate}" z="ZKCLWpKybPnZRndvGGFvJz6BRk4="/>
+        <field:display field="sealType" id="s_ti_metadata_domain_part_Backplate_sealType" object="${backplate}" z="IZjjdYqySJamaPA00WV2IInly00="/>
+        <field:display field="overallDiameter" id="s_ti_metadata_domain_part_Backplate_overallDiameter" object="${backplate}" z="aVwSqqXuyOu+wjNwlf9wg+Oq2Xo="/>
+        <field:display field="compressorWheelDiameter" id="s_ti_metadata_domain_part_Backplate_compressorWheelDiameter" object="${backplate}" z="ulmUGMpfmzl88aKD9fco7tSy7u8="/>
+        <field:display field="pistonRingDiameter" id="s_ti_metadata_domain_part_Backplate_pistonRingDiameter" object="${backplate}" z="PjPzjUgccxGaLRjZP+WVvwNzwBI="/>
+        <field:display field="compressorHousingDiameter" id="s_ti_metadata_domain_part_Backplate_compressorHousingDiameter" object="${backplate}" z="+y4E9KXdiU+tzl+aEyge8nzEz2o="/>
+        <field:display field="notes" id="s_ti_metadata_domain_part_Backplate_notes" object="${backplate}" z="yF1hVFn9ihxNX/9NoxPn8qSfsDg="/>
+        <field:display field="secondaryDiameter" id="s_ti_metadata_domain_part_Backplate_secondaryDiameter" object="${backplate}" z="RllECTYwUlb7g7Lp1M/ZwqzoW3Y="/>
+        <field:display field="overallHeight" id="s_ti_metadata_domain_part_Backplate_overallHeight" object="${backplate}" z="VFoYEa7jOUgtwh1IPyDQjhaAaRQ="/>
+    </page:show>
+</div>

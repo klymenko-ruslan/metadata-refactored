@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" xmlns:table="urn:jsptagdir:/WEB-INF/tags/form/fields" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <page:list id="pl_com_turbointernational_metadata_domain_part_Backplate" items="${backplates}" z="2tPGR+SaJGQK0njU13qmiaGRkCY=">
+        <table:table data="${backplates}" id="l_com_turbointernational_metadata_domain_part_Backplate" path="/backplates" z="bwf/rDESPcV942+pxx0jlIVuB10=">
+            <table:column id="c_com_turbointernational_metadata_domain_part_Backplate_manufacturerPartNumber" property="manufacturerPartNumber" z="Wo/54t9ytcOcqwOaAyfd7xBxPgc="/>
+            <table:column id="c_com_turbointernational_metadata_domain_part_Backplate_manufacturer" property="manufacturer" z="MeGgVkIHcaqBIqi5Bbd/j6t9zNc="/>
+            <table:column id="c_com_turbointernational_metadata_domain_part_Backplate_name" property="name" z="k7T6qRrdWjOMAH/u8u9/EIab3Dk="/>
+            <table:column id="c_com_turbointernational_metadata_domain_part_Backplate_description" property="description" z="IvfdO2trBSykN0TvtZx7yQM3amg="/>
+            <table:column id="c_com_turbointernational_metadata_domain_part_Backplate_inactive" property="inactive" z="CL3beQO7eSacDvrI+MN1/t2GmTI="/>
+        </table:table>
+    </page:list>
+</div>

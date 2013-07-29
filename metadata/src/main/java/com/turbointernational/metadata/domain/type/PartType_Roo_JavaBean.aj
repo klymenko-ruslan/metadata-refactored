@@ -4,9 +4,16 @@
 package com.turbointernational.metadata.domain.type;
 
 import com.turbointernational.metadata.domain.type.PartType;
-import java.util.List;
 
 privileged aspect PartType_Roo_JavaBean {
+    
+    public Long PartType.getId() {
+        return this.id;
+    }
+    
+    public void PartType.setId(Long id) {
+        this.id = id;
+    }
     
     public String PartType.getName() {
         return this.name;
@@ -22,30 +29,6 @@ privileged aspect PartType_Roo_JavaBean {
     
     public void PartType.setParent(PartType parent) {
         this.parent = parent;
-    }
-    
-    public Long PartType.getImportPk() {
-        return this.importPk;
-    }
-    
-    public void PartType.setImportPk(Long importPk) {
-        this.importPk = importPk;
-    }
-    
-    public List<PartType> PartType.getParentTypes() {
-        return this.parentTypes;
-    }
-    
-    public void PartType.setParentTypes(List<PartType> parentTypes) {
-        this.parentTypes = parentTypes;
-    }
-    
-    public List<PartType> PartType.getChildTypes() {
-        return this.childTypes;
-    }
-    
-    public void PartType.setChildTypes(List<PartType> childTypes) {
-        this.childTypes = childTypes;
     }
     
 }

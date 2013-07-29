@@ -47,12 +47,12 @@ privileged aspect CompressorWheel_Roo_JavaBean {
         this.boreOe = boreOe;
     }
     
-    public String CompressorWheel.getTrimNoBlades() {
-        return this.trimNoBlades;
+    public String CompressorWheel.getNumberOfBlades() {
+        return this.numberOfBlades;
     }
     
-    public void CompressorWheel.setTrimNoBlades(String trimNoBlades) {
-        this.trimNoBlades = trimNoBlades;
+    public void CompressorWheel.setNumberOfBlades(String numberOfBlades) {
+        this.numberOfBlades = numberOfBlades;
     }
     
     public String CompressorWheel.getApplication() {

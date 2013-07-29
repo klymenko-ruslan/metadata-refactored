@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <page:show id="ps_ti_metadata_domain_part_Heatshield" object="${heatshield}" path="/heatshields" z="N5GEUpjC65JvPnqT3Ae5Mt6LY0E=">
+        <field:display field="part" id="s_ti_metadata_domain_part_Heatshield_part" object="${heatshield}" z="tPk+Qb7E9q5VagEI1QyNoi19dEY="/>
+        <field:display field="overallDiameter" id="s_ti_metadata_domain_part_Heatshield_overallDiameter" object="${heatshield}" z="UT+IUpjKwV0qmkyAZWqJsrBRlf8="/>
+        <field:display field="insideDiameter" id="s_ti_metadata_domain_part_Heatshield_insideDiameter" object="${heatshield}" z="Y3tjg+dnhSHNgT3WMHu38K67vW8="/>
+        <field:display field="inducerDiameter" id="s_ti_metadata_domain_part_Heatshield_inducerDiameter" object="${heatshield}" z="k2hT7T8sI+lcYVkBTdcRk8NSdp8="/>
+        <field:display field="notes" id="s_ti_metadata_domain_part_Heatshield_notes" object="${heatshield}" z="WzQ1TUiY9Gl8A8CxaC/UieTj1SM="/>
+    </page:show>
+</div>

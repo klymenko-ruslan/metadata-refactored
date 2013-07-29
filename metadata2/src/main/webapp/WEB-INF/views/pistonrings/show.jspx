@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <page:show id="ps_ti_metadata_domain_part_PistonRing" object="${pistonring}" path="/pistonrings" z="NRLyy/Mr1CE7KEHpOh4v9Yk6M8w=">
+        <field:display field="part" id="s_ti_metadata_domain_part_PistonRing_part" object="${pistonring}" z="omwXWcueFsK3cP0Q1Na1cOn+aeE="/>
+        <field:display field="outsideDimMin" id="s_ti_metadata_domain_part_PistonRing_outsideDimMin" object="${pistonring}" z="2XThWTc8gl5NbpY969sA4+XCJOA="/>
+        <field:display field="outsideDimMax" id="s_ti_metadata_domain_part_PistonRing_outsideDimMax" object="${pistonring}" z="ceW/FokxKE4FSuAr4nz7eNvaJws="/>
+        <field:display field="widthMin" id="s_ti_metadata_domain_part_PistonRing_widthMin" object="${pistonring}" z="VFol7pGv1vVQkhgxhiapjpVDcCk="/>
+        <field:display field="widthMax" id="s_ti_metadata_domain_part_PistonRing_widthMax" object="${pistonring}" z="dfCzcCrQyqciAQoY+6cfn2d0G6k="/>
+        <field:display field="IGapMin" id="s_ti_metadata_domain_part_PistonRing_iGapMin" object="${pistonring}" z="uIzRUS05+9Po3yoM3QginmWX6sU="/>
+        <field:display field="IGapMax" id="s_ti_metadata_domain_part_PistonRing_iGapMax" object="${pistonring}" z="UOdOakbafNT7eQmsDNnz5O2m1cY="/>
+    </page:show>
+</div>

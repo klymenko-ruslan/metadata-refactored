@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <page:show id="ps_ti_metadata_domain_type_PartType" object="${parttype}" path="/parttypes" z="cYFIolZPmdLVfcqsGYoM/z7y4rs=">
+        <field:display field="parentPartTypeId" id="s_ti_metadata_domain_type_PartType_parentPartTypeId" object="${parttype}" z="kyu4I1vObG1wPO4C5gOuiQe2x6I="/>
+        <field:display field="name" id="s_ti_metadata_domain_type_PartType_name" object="${parttype}" z="LarZqOHgM6/yJnAAu97hbaBuxt0="/>
+        <field:display field="importPk" id="s_ti_metadata_domain_type_PartType_importPk" object="${parttype}" z="8Igw1w1jb/dnljyZac/wad72o+Y="/>
+    </page:show>
+</div>

@@ -7,20 +7,20 @@ import com.turbointernational.metadata.domain.type.SealType;
 
 privileged aspect SealType_Roo_JavaBean {
     
+    public Long SealType.getId() {
+        return this.id;
+    }
+    
+    public void SealType.setId(Long id) {
+        this.id = id;
+    }
+    
     public String SealType.getName() {
         return this.name;
     }
     
     public void SealType.setName(String name) {
         this.name = name;
-    }
-    
-    public Long SealType.getImportPk() {
-        return this.importPk;
-    }
-    
-    public void SealType.setImportPk(Long importPk) {
-        this.importPk = importPk;
     }
     
 }

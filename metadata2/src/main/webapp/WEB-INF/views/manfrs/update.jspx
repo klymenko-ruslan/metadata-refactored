@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:form="urn:jsptagdir:/WEB-INF/tags/form" xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <form:update id="fu_ti_metadata_domain_other_Manfr" modelAttribute="manfr" path="/manfrs" versionField="Version" z="BcYy9GmHckqdveLKZuhKQ2x79Wo=">
+        <field:simple field="manfrs" id="c_ti_metadata_domain_other_Manfr_manfrs" messageCode="entity_reference_not_managed" messageCodeAttribute="Manfr" z="hKvkzcdgWO1Kz6Ldpo+MZmef4/0="/>
+        <field:simple field="parts" id="c_ti_metadata_domain_other_Manfr_parts" messageCode="entity_reference_not_managed" messageCodeAttribute="Part" z="+Dxux+S92QkN8wDEWES8ol/Zmfw="/>
+        <field:simple field="turboTypes" id="c_ti_metadata_domain_other_Manfr_turboTypes" messageCode="entity_reference_not_managed" messageCodeAttribute="Turbo Type" z="4ZA98HCnOy/QVq0UIHb+aF9aJQc="/>
+        <field:select field="manfrTypeId" id="c_ti_metadata_domain_other_Manfr_manfrTypeId" itemValue="id" items="${manfrtypes}" path="/manfrtypes" z="quOsyAToxFhRR/vlWWFOCyfVCn0="/>
+        <field:select field="parentManfrId" id="c_ti_metadata_domain_other_Manfr_parentManfrId" itemValue="id" items="${manfrs}" path="/manfrs" z="9qUYta97rcFfaM/5KBVhNUDAIO8="/>
+        <field:input field="name" id="c_ti_metadata_domain_other_Manfr_name" required="true" z="mL4pnvv6ucw6HWGC6e34HVLkSyQ="/>
+        <field:input field="importPk" id="c_ti_metadata_domain_other_Manfr_importPk" validationMessageCode="field_invalid_integer" z="bPSB9ss1m9ZdeiGd6XMpYe7GGZk="/>
+    </form:update>
+</div>

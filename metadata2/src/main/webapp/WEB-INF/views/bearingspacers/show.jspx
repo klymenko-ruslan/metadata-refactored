@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <page:show id="ps_ti_metadata_domain_part_BearingSpacer" object="${bearingspacer}" path="/bearingspacers" z="eJjfuJI7nE28U7FQKeAWYeAF0Co=">
+        <field:display field="part" id="s_ti_metadata_domain_part_BearingSpacer_part" object="${bearingspacer}" z="4J7yFkGRV4PgSDzsXabAOZKO6Sw="/>
+        <field:display field="outsideDimMin" id="s_ti_metadata_domain_part_BearingSpacer_outsideDimMin" object="${bearingspacer}" z="xH5cFJahMh8vXmODe0cT7GtYn6M="/>
+        <field:display field="outsideDimMax" id="s_ti_metadata_domain_part_BearingSpacer_outsideDimMax" object="${bearingspacer}" z="/GBmqOoDrx9oQxzkjRHnS170EmM="/>
+        <field:display field="insideDimMin" id="s_ti_metadata_domain_part_BearingSpacer_insideDimMin" object="${bearingspacer}" z="r/m1PmYpdi1r8JcypoH7yZNxUoA="/>
+        <field:display field="insideDimMax" id="s_ti_metadata_domain_part_BearingSpacer_insideDimMax" object="${bearingspacer}" z="4XObSPAs074HL3doeQyCyq4vf8c="/>
+    </page:show>
+</div>

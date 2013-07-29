@@ -7,20 +7,20 @@ import com.turbointernational.metadata.domain.type.KitType;
 
 privileged aspect KitType_Roo_JavaBean {
     
+    public Long KitType.getId() {
+        return this.id;
+    }
+    
+    public void KitType.setId(Long id) {
+        this.id = id;
+    }
+    
     public String KitType.getName() {
         return this.name;
     }
     
     public void KitType.setName(String name) {
         this.name = name;
-    }
-    
-    public Long KitType.getImportPk() {
-        return this.importPk;
-    }
-    
-    public void KitType.setImportPk(Long importPk) {
-        this.importPk = importPk;
     }
     
 }

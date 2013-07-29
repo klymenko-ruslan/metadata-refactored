@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" xmlns:table="urn:jsptagdir:/WEB-INF/tags/form/fields" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <page:list id="pl_ti_metadata_domain_part_Kit" items="${kits}" z="Y++rn8BByQaJoB4zgcOLb7V3DWo=">
+        <table:table data="${kits}" id="l_ti_metadata_domain_part_Kit" path="/kits" typeIdFieldName="partId" z="4EgU9pUbdb3PdExPmcqvhMYVke0=">
+            <table:column id="c_ti_metadata_domain_part_Kit_part" property="part" z="a3TpZV+Gb/YogGro72YIroKszhg="/>
+            <table:column id="c_ti_metadata_domain_part_Kit_kitTypeId" property="kitTypeId" z="2laQ9s8a1XESpSqFPZW325CEKsU="/>
+        </table:table>
+    </page:list>
+</div>

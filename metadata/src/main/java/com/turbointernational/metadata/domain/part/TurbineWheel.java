@@ -1,7 +1,7 @@
 package com.turbointernational.metadata.domain.part;
 import javax.persistence.Column;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.PrimaryKeyJoinColumn;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import org.springframework.roo.addon.tostring.RooToString;
@@ -13,13 +13,15 @@ import org.springframework.roo.addon.tostring.RooToString;
  */
 @RooJavaBean
 @RooToString
-@RooJpaActiveRecord
-@Inheritance(strategy=InheritanceType.JOINED)
+@RooJpaActiveRecord(table="TURBINE_WHEEL", inheritanceType = "JOINED")
+@DiscriminatorValue(value = "12")
+@PrimaryKeyJoinColumn(name = "part_id")
 public class TurbineWheel extends Part {
 
     @Column(name="exduce_oa")
     private Float exducerDiameterA;
 
+    @Column(name="tip_height_b")
     private Float tipHeightB;
 
     @Column(name="inducer_oc")
@@ -33,6 +35,7 @@ public class TurbineWheel extends Part {
 
     @Column(name="shaft_thread_f")
     private String shaftThreadF;
-    
-    private String trimNoBlades;
+
+    @Column(name="trim_no_blades")
+    private String numberOfBlades;
 }
