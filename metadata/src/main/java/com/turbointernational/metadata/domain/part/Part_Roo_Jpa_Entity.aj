@@ -6,9 +6,6 @@ package com.turbointernational.metadata.domain.part;
 import com.turbointernational.metadata.domain.part.Part;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
@@ -16,24 +13,11 @@ privileged aspect Part_Roo_Jpa_Entity {
     
     declare @type: Part: @Entity;
     
-    declare @type: Part: @Table(name = "PART_ORM_VIEW");
-    
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id")
-    private Long Part.id;
+    declare @type: Part: @Table(name = "PART");
     
     @Version
     @Column(name = "version")
     private Integer Part.version;
-    
-    public Long Part.getId() {
-        return this.id;
-    }
-    
-    public void Part.setId(Long id) {
-        this.id = id;
-    }
     
     public Integer Part.getVersion() {
         return this.version;

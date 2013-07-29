@@ -6,9 +6,6 @@ package com.turbointernational.metadata.domain.interchange;
 import com.turbointernational.metadata.domain.interchange.Interchange;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
@@ -18,22 +15,9 @@ privileged aspect Interchange_Roo_Jpa_Entity {
     
     declare @type: Interchange: @Table(name = "INTERCHANGE_HEADER");
     
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id")
-    private Long Interchange.id;
-    
     @Version
     @Column(name = "version")
     private Integer Interchange.version;
-    
-    public Long Interchange.getId() {
-        return this.id;
-    }
-    
-    public void Interchange.setId(Long id) {
-        this.id = id;
-    }
     
     public Integer Interchange.getVersion() {
         return this.version;

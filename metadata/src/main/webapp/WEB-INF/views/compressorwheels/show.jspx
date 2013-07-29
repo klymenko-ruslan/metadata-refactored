@@ -5,7 +5,6 @@
     <page:show id="ps_com_turbointernational_metadata_domain_part_CompressorWheel" object="${compressorwheel}" path="/compressorwheels" z="7gao6RjBjkzn2TqnhFz7g0MmXhY=">
         <field:display field="manufacturerPartNumber" id="s_com_turbointernational_metadata_domain_part_CompressorWheel_manufacturerPartNumber" object="${compressorwheel}" z="ZsOVpdlBJ/XhHnMlfz8frtyujVk="/>
         <field:display field="manufacturer" id="s_com_turbointernational_metadata_domain_part_CompressorWheel_manufacturer" object="${compressorwheel}" z="xR7qeK0fOsPeLZJCMJ8XN44JE5o="/>
-        <field:display field="partType" id="s_com_turbointernational_metadata_domain_part_CompressorWheel_partType" object="${compressorwheel}" z="DtZoHagY2pC4ImHJMJeLHZd776w="/>
         <field:display field="name" id="s_com_turbointernational_metadata_domain_part_CompressorWheel_name" object="${compressorwheel}" z="yWHBoRvKQLEZieYWEZkD0NsbGE4="/>
         <field:display field="description" id="s_com_turbointernational_metadata_domain_part_CompressorWheel_description" object="${compressorwheel}" z="/tLC1/wgQNrbD0Md79X17xOduAY="/>
         <field:display field="inactive" id="s_com_turbointernational_metadata_domain_part_CompressorWheel_inactive" object="${compressorwheel}" z="pX06UdMkV+A4H/Tp1QgcwYbDn0o="/>

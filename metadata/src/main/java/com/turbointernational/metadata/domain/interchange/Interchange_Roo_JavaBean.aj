@@ -9,6 +9,14 @@ import java.util.List;
 
 privileged aspect Interchange_Roo_JavaBean {
     
+    public Long Interchange.getId() {
+        return this.id;
+    }
+    
+    public void Interchange.setId(Long id) {
+        this.id = id;
+    }
+    
     public String Interchange.getName() {
         return this.name;
     }

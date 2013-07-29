@@ -6,31 +6,18 @@ package com.turbointernational.metadata.domain.security;
 import com.turbointernational.metadata.domain.security.User;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.persistence.Version;
 
 privileged aspect User_Roo_Jpa_Entity {
     
     declare @type: User: @Entity;
     
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id")
-    private Long User.id;
+    declare @type: User: @Table(name = "USER");
     
     @Version
     @Column(name = "version")
     private Integer User.version;
-    
-    public Long User.getId() {
-        return this.id;
-    }
-    
-    public void User.setId(Long id) {
-        this.id = id;
-    }
     
     public Integer User.getVersion() {
         return this.version;

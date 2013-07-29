@@ -6,10 +6,17 @@ package com.turbointernational.metadata.domain.part;
 import com.turbointernational.metadata.domain.interchange.Interchange;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.Part;
-import com.turbointernational.metadata.domain.type.PartType;
 import java.util.List;
 
 privileged aspect Part_Roo_JavaBean {
+    
+    public Long Part.getId() {
+        return this.id;
+    }
+    
+    public void Part.setId(Long id) {
+        this.id = id;
+    }
     
     public String Part.getManufacturerPartNumber() {
         return this.manufacturerPartNumber;
@@ -25,14 +32,6 @@ privileged aspect Part_Roo_JavaBean {
     
     public void Part.setManufacturer(Manufacturer manufacturer) {
         this.manufacturer = manufacturer;
-    }
-    
-    public PartType Part.getPartType() {
-        return this.partType;
-    }
-    
-    public void Part.setPartType(PartType partType) {
-        this.partType = partType;
     }
     
     public String Part.getName() {

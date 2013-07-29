@@ -7,6 +7,14 @@ import com.turbointernational.metadata.domain.type.GasketType;
 
 privileged aspect GasketType_Roo_JavaBean {
     
+    public Long GasketType.getId() {
+        return this.id;
+    }
+    
+    public void GasketType.setId(Long id) {
+        this.id = id;
+    }
+    
     public String GasketType.getName() {
         return this.name;
     }

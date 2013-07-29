@@ -5,7 +5,6 @@
     <page:show id="ps_com_turbointernational_metadata_domain_part_Kit" object="${kit}" path="/kits" z="9AIn9Pdm+og+wu1wJUspQE/jpS4=">
         <field:display field="manufacturerPartNumber" id="s_com_turbointernational_metadata_domain_part_Kit_manufacturerPartNumber" object="${kit}" z="sj0UwM9kzmqyOSr6QfT5CnribFw="/>
         <field:display field="manufacturer" id="s_com_turbointernational_metadata_domain_part_Kit_manufacturer" object="${kit}" z="vsQk7HLzyAWyKJlzuDpbkjH3AT4="/>
-        <field:display field="partType" id="s_com_turbointernational_metadata_domain_part_Kit_partType" object="${kit}" z="3sic81N3RWT4dqTkibHoeIlZVlc="/>
         <field:display field="name" id="s_com_turbointernational_metadata_domain_part_Kit_name" object="${kit}" z="7zdEvR5FEPh4wYmTs87lZt+M05M="/>
         <field:display field="description" id="s_com_turbointernational_metadata_domain_part_Kit_description" object="${kit}" z="XbS/pSBA5IiKB4nMb1kobzMv7aQ="/>
         <field:display field="inactive" id="s_com_turbointernational_metadata_domain_part_Kit_inactive" object="${kit}" z="yOsXI8kSzEFGeTOCMi/hIXaWMOE="/>

@@ -9,7 +9,6 @@ import com.turbointernational.metadata.domain.other.TurboModel;
 import com.turbointernational.metadata.domain.part.Turbo;
 import com.turbointernational.metadata.domain.part.TurboController;
 import com.turbointernational.metadata.domain.type.CoolType;
-import com.turbointernational.metadata.domain.type.PartType;
 import java.io.UnsupportedEncodingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -95,7 +94,6 @@ privileged aspect TurboController_Roo_Controller {
         uiModel.addAttribute("manufacturers", Manufacturer.findAllManufacturers());
         uiModel.addAttribute("turbomodels", TurboModel.findAllTurboModels());
         uiModel.addAttribute("cooltypes", CoolType.findAllCoolTypes());
-        uiModel.addAttribute("parttypes", PartType.findAllPartTypes());
     }
     
     String TurboController.encodeUrlPathSegment(String pathSegment, HttpServletRequest httpServletRequest) {

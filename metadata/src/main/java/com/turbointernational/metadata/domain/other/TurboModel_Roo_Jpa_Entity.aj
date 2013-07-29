@@ -6,9 +6,6 @@ package com.turbointernational.metadata.domain.other;
 import com.turbointernational.metadata.domain.other.TurboModel;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
@@ -18,22 +15,9 @@ privileged aspect TurboModel_Roo_Jpa_Entity {
     
     declare @type: TurboModel: @Table(name = "TURBO_MODEL");
     
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id")
-    private Long TurboModel.id;
-    
     @Version
     @Column(name = "version")
     private Integer TurboModel.version;
-    
-    public Long TurboModel.getId() {
-        return this.id;
-    }
-    
-    public void TurboModel.setId(Long id) {
-        this.id = id;
-    }
     
     public Integer TurboModel.getVersion() {
         return this.version;

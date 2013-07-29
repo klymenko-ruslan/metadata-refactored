@@ -6,7 +6,6 @@
         <table:table data="${kits}" id="l_com_turbointernational_metadata_domain_part_Kit" path="/kits" z="NRHKMqdpa2/MZClvHolJMdaY/wg=">
             <table:column id="c_com_turbointernational_metadata_domain_part_Kit_manufacturerPartNumber" property="manufacturerPartNumber" z="AxCXv27TW9KRnbmUpwi8/CKKbJM="/>
             <table:column id="c_com_turbointernational_metadata_domain_part_Kit_manufacturer" property="manufacturer" z="Xep3sLqoyHpqGW2tIGJSgFhK+Kc="/>
-            <table:column id="c_com_turbointernational_metadata_domain_part_Kit_partType" property="partType" z="A6jPnxxgZV9TmSt5i4u3MvUHU0I="/>
             <table:column id="c_com_turbointernational_metadata_domain_part_Kit_name" property="name" z="esn+QXCQ0WLgjKGZpKg04fQi2y8="/>
             <table:column id="c_com_turbointernational_metadata_domain_part_Kit_description" property="description" z="rNKThbYLf0fgvhQjKEwJ55/xx00="/>
             <table:column id="c_com_turbointernational_metadata_domain_part_Kit_inactive" property="inactive" z="aeMkfg6W8uFXyrLpX2Fz45DHKZY="/>

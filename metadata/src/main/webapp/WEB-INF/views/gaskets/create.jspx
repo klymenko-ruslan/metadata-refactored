@@ -4,8 +4,7 @@
     <jsp:output omit-xml-declaration="yes"/>
     <form:create id="fc_com_turbointernational_metadata_domain_part_Gasket" modelAttribute="gasket" path="/gaskets" render="${empty dependencies}" z="z8TWAOgIQHIC/kTiYzPf5M1HUtk=">
         <field:input field="manufacturerPartNumber" id="c_com_turbointernational_metadata_domain_part_Gasket_manufacturerPartNumber" z="T7d58Mb3oQ8HpfUvr5cAZIAR7A8="/>
-        <field:select field="manufacturer" id="c_com_turbointernational_metadata_domain_part_Gasket_manufacturer" itemValue="id" items="${manufacturers}" path="/manufacturers" z="v8yOszwvMo/Tw2hFetQDiEVk/dc="/>
-        <field:select field="partType" id="c_com_turbointernational_metadata_domain_part_Gasket_partType" itemValue="id" items="${parttypes}" path="/parttypes" z="7AkXKVrihE5b9x822MlHm3+NZ/A="/>
+        <field:select field="manufacturer" id="c_com_turbointernational_metadata_domain_part_Gasket_manufacturer" itemValue="id" items="${manufacturers}" path="/manufacturer" z="IyRcZ531UGV8lH8D1CJSCeT7rSI="/>
         <field:input field="name" id="c_com_turbointernational_metadata_domain_part_Gasket_name" z="doj+xTKsf1z9YMKcZjvyZHwZ1Js="/>
         <field:input field="description" id="c_com_turbointernational_metadata_domain_part_Gasket_description" z="JDYjUPG6w3ocnlOKlB9hSLfGrTw="/>
         <field:checkbox field="inactive" id="c_com_turbointernational_metadata_domain_part_Gasket_inactive" z="user-managed"/>

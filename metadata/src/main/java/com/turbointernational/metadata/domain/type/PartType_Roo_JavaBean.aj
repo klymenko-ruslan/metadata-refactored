@@ -7,6 +7,14 @@ import com.turbointernational.metadata.domain.type.PartType;
 
 privileged aspect PartType_Roo_JavaBean {
     
+    public Long PartType.getId() {
+        return this.id;
+    }
+    
+    public void PartType.setId(Long id) {
+        this.id = id;
+    }
+    
     public String PartType.getName() {
         return this.name;
     }

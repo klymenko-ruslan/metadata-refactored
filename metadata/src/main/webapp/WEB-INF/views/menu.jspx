@@ -59,6 +59,10 @@
             <menu:item id="i_turbomodel_new" messageCode="global_menu_new" url="/turbomodels?form" z="m/FEITCoViNWKVKcppV++j8H6u0="/>
             <menu:item id="i_turbomodel_list" messageCode="global_menu_list" url="/turbomodels?page=1&amp;size=${empty param.size ? 10 : param.size}" z="Tq4HGzk7KCa2rYfip4ZD6MEzzC0="/>
         </menu:category>
+        <menu:category id="c_turbotype" z="AHHT5mslutPQrXvVDE82JLG117w=">
+            <menu:item id="i_turbotype_new" messageCode="global_menu_new" url="/turbotypes?form" z="BiD0CGtYIRkZde3p5KY0pif/CoM="/>
+            <menu:item id="i_turbotype_list" messageCode="global_menu_list" url="/turbotypes?page=1&amp;size=${empty param.size ? 10 : param.size}" z="1Z3EgZpY6LZm4VpxXvuv9rFunpY="/>
+        </menu:category>
         <menu:category id="c_turbinewheel" z="o5xUt9CjGVDnmx925xe5rytY3so=">
             <menu:item id="i_turbinewheel_new" messageCode="global_menu_new" url="/turbinewheels?form" z="+NX9l8D9t28jwNOaqEqoGWde8ik="/>
             <menu:item id="i_turbinewheel_list" messageCode="global_menu_list" url="/turbinewheels?page=1&amp;size=${empty param.size ? 10 : param.size}" z="MDvVAUswuWYRfS6iavkiMvYvikE="/>

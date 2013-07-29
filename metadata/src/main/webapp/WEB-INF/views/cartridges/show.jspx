@@ -5,7 +5,6 @@
     <page:show id="ps_com_turbointernational_metadata_domain_part_Cartridge" object="${cartridge}" path="/cartridges" z="F3u6VGhZiJlM/zQ0fQ7zgUPo2uQ=">
         <field:display field="manufacturerPartNumber" id="s_com_turbointernational_metadata_domain_part_Cartridge_manufacturerPartNumber" object="${cartridge}" z="IwdqkyH+4E41Mp9Na1O/8UItjqA="/>
         <field:display field="manufacturer" id="s_com_turbointernational_metadata_domain_part_Cartridge_manufacturer" object="${cartridge}" z="uGVPd5fWSxgJrGXvZl3Y1rIXpew="/>
-        <field:display field="partType" id="s_com_turbointernational_metadata_domain_part_Cartridge_partType" object="${cartridge}" z="Jr0ArqpBU+8InqtnZtAhkR0k/9k="/>
         <field:display field="name" id="s_com_turbointernational_metadata_domain_part_Cartridge_name" object="${cartridge}" z="HVnUbXFbnUV/5mXVGANhaHtWlVc="/>
         <field:display field="description" id="s_com_turbointernational_metadata_domain_part_Cartridge_description" object="${cartridge}" z="yl7Pe341dQNrm3mpgTKXw14ciLU="/>
         <field:display field="inactive" id="s_com_turbointernational_metadata_domain_part_Cartridge_inactive" object="${cartridge}" z="aM2//wjbHIy2AAHl7dZav4569Zs="/>

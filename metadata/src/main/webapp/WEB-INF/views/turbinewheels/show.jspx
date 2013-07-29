@@ -5,7 +5,6 @@
     <page:show id="ps_com_turbointernational_metadata_domain_part_TurbineWheel" object="${turbinewheel}" path="/turbinewheels" z="MBUtAxrT2O+as4TNzAyn9QJuBKI=">
         <field:display field="manufacturerPartNumber" id="s_com_turbointernational_metadata_domain_part_TurbineWheel_manufacturerPartNumber" object="${turbinewheel}" z="AICxR6siTsHDDLkwUfp16PEFfkk="/>
         <field:display field="manufacturer" id="s_com_turbointernational_metadata_domain_part_TurbineWheel_manufacturer" object="${turbinewheel}" z="r0eeO+JRE/LD4BASQ/kX7Eg0t7s="/>
-        <field:display field="partType" id="s_com_turbointernational_metadata_domain_part_TurbineWheel_partType" object="${turbinewheel}" z="2JQ7508i0+vWzKQ/r6hL84NhcWE="/>
         <field:display field="name" id="s_com_turbointernational_metadata_domain_part_TurbineWheel_name" object="${turbinewheel}" z="kbXqMFmjSbe1T5Vi/djG6c3jAoQ="/>
         <field:display field="description" id="s_com_turbointernational_metadata_domain_part_TurbineWheel_description" object="${turbinewheel}" z="MrivUc2mjvMWkFBGOm7uh9zPLX0="/>
         <field:display field="inactive" id="s_com_turbointernational_metadata_domain_part_TurbineWheel_inactive" object="${turbinewheel}" z="7jL3gYdratroVR0jyUUCK6uNmL8="/>

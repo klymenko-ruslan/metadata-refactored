@@ -5,7 +5,6 @@
     <page:show id="ps_com_turbointernational_metadata_domain_part_BearingSpacer" object="${bearingspacer}" path="/bearingspacers" z="gc6EG8Vehluc58LUGim4MPhEe7g=">
         <field:display field="manufacturerPartNumber" id="s_com_turbointernational_metadata_domain_part_BearingSpacer_manufacturerPartNumber" object="${bearingspacer}" z="RUcrLtoWc3zuPLHiuyj1uxiX6D8="/>
         <field:display field="manufacturer" id="s_com_turbointernational_metadata_domain_part_BearingSpacer_manufacturer" object="${bearingspacer}" z="YyRWacrynfo9dxcf4yMsa3VCpGQ="/>
-        <field:display field="partType" id="s_com_turbointernational_metadata_domain_part_BearingSpacer_partType" object="${bearingspacer}" z="pqXAcqGrblEXMOoa/r/6Co2C+z4="/>
         <field:display field="name" id="s_com_turbointernational_metadata_domain_part_BearingSpacer_name" object="${bearingspacer}" z="sT42s/EWOIbexW8jd32RlysCjn4="/>
         <field:display field="description" id="s_com_turbointernational_metadata_domain_part_BearingSpacer_description" object="${bearingspacer}" z="Mj7eaf0a+CqiUua1Inoiddi+1co="/>
         <field:display field="inactive" id="s_com_turbointernational_metadata_domain_part_BearingSpacer_inactive" object="${bearingspacer}" z="XaIZseakFDg3NWEpTo7vz9qLQ/I="/>

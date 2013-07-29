@@ -8,7 +8,6 @@ import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.Gasket;
 import com.turbointernational.metadata.domain.part.GasketController;
 import com.turbointernational.metadata.domain.type.GasketType;
-import com.turbointernational.metadata.domain.type.PartType;
 import java.io.UnsupportedEncodingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -93,7 +92,6 @@ privileged aspect GasketController_Roo_Controller {
         uiModel.addAttribute("interchanges", Interchange.findAllInterchanges());
         uiModel.addAttribute("manufacturers", Manufacturer.findAllManufacturers());
         uiModel.addAttribute("gaskettypes", GasketType.findAllGasketTypes());
-        uiModel.addAttribute("parttypes", PartType.findAllPartTypes());
     }
     
     String GasketController.encodeUrlPathSegment(String pathSegment, HttpServletRequest httpServletRequest) {

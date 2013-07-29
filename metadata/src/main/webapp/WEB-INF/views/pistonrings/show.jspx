@@ -5,7 +5,6 @@
     <page:show id="ps_com_turbointernational_metadata_domain_part_PistonRing" object="${pistonring}" path="/pistonrings" z="ipP1haIbfgWvIwkdC+QviLhifXc=">
         <field:display field="manufacturerPartNumber" id="s_com_turbointernational_metadata_domain_part_PistonRing_manufacturerPartNumber" object="${pistonring}" z="sKrLqSS30w6VY59+m40GUW2guGw="/>
         <field:display field="manufacturer" id="s_com_turbointernational_metadata_domain_part_PistonRing_manufacturer" object="${pistonring}" z="NMRiCLsBYcp6jLeCOFHP+QW8yUo="/>
-        <field:display field="partType" id="s_com_turbointernational_metadata_domain_part_PistonRing_partType" object="${pistonring}" z="0H+jeJmI7bsi7A4QAbzMPSHAZGA="/>
         <field:display field="name" id="s_com_turbointernational_metadata_domain_part_PistonRing_name" object="${pistonring}" z="vX94jk+xnsyK6bO1LP5soxQJmDw="/>
         <field:display field="description" id="s_com_turbointernational_metadata_domain_part_PistonRing_description" object="${pistonring}" z="iNTYHnyv4GLiUw9GN/MDqAn8c+g="/>
         <field:display field="inactive" id="s_com_turbointernational_metadata_domain_part_PistonRing_inactive" object="${pistonring}" z="dHExrmjC8Do4XnyE5eksfe+CRaM="/>

@@ -5,7 +5,6 @@
     <page:show id="ps_com_turbointernational_metadata_domain_part_Backplate" object="${backplate}" path="/backplates" z="IhZqMM/5/8wr6X5oqUfP49do0VU=">
         <field:display field="manufacturerPartNumber" id="s_com_turbointernational_metadata_domain_part_Backplate_manufacturerPartNumber" object="${backplate}" z="lxR47XhXUc8gp7HdksrRzgWlK+w="/>
         <field:display field="manufacturer" id="s_com_turbointernational_metadata_domain_part_Backplate_manufacturer" object="${backplate}" z="ORu9PkEHusdszsx1wIYJL6o/7WQ="/>
-        <field:display field="partType" id="s_com_turbointernational_metadata_domain_part_Backplate_partType" object="${backplate}" z="0pXP4CJ0iYF15dE5+9kM61DEF0s="/>
         <field:display field="name" id="s_com_turbointernational_metadata_domain_part_Backplate_name" object="${backplate}" z="Blol9zO2vde+KdqLUugQ76hVAFg="/>
         <field:display field="description" id="s_com_turbointernational_metadata_domain_part_Backplate_description" object="${backplate}" z="PMIEPG92ggu8/47mRuOfA+D+C8k="/>
         <field:display field="inactive" id="s_com_turbointernational_metadata_domain_part_Backplate_inactive" object="${backplate}" z="GTq5ZtFqD6F/j+wurHtdpNPHrSw="/>

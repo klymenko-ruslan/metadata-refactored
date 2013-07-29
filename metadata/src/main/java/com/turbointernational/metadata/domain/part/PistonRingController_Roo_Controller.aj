@@ -7,7 +7,6 @@ import com.turbointernational.metadata.domain.interchange.Interchange;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.PistonRing;
 import com.turbointernational.metadata.domain.part.PistonRingController;
-import com.turbointernational.metadata.domain.type.PartType;
 import java.io.UnsupportedEncodingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -91,7 +90,6 @@ privileged aspect PistonRingController_Roo_Controller {
         uiModel.addAttribute("pistonRing", pistonRing);
         uiModel.addAttribute("interchanges", Interchange.findAllInterchanges());
         uiModel.addAttribute("manufacturers", Manufacturer.findAllManufacturers());
-        uiModel.addAttribute("parttypes", PartType.findAllPartTypes());
     }
     
     String PistonRingController.encodeUrlPathSegment(String pathSegment, HttpServletRequest httpServletRequest) {

@@ -7,7 +7,6 @@ import com.turbointernational.metadata.domain.interchange.Interchange;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.Backplate;
 import com.turbointernational.metadata.domain.part.BackplateController;
-import com.turbointernational.metadata.domain.type.PartType;
 import com.turbointernational.metadata.domain.type.SealType;
 import java.io.UnsupportedEncodingException;
 import javax.servlet.http.HttpServletRequest;
@@ -92,7 +91,6 @@ privileged aspect BackplateController_Roo_Controller {
         uiModel.addAttribute("backplate", backplate);
         uiModel.addAttribute("interchanges", Interchange.findAllInterchanges());
         uiModel.addAttribute("manufacturers", Manufacturer.findAllManufacturers());
-        uiModel.addAttribute("parttypes", PartType.findAllPartTypes());
         uiModel.addAttribute("sealtypes", SealType.findAllSealTypes());
     }
     

@@ -10,6 +10,14 @@ import com.turbointernational.metadata.domain.part.Part;
 
 privileged aspect BOMAlternative_Roo_JavaBean {
     
+    public Long BOMAlternative.getId() {
+        return this.id;
+    }
+    
+    public void BOMAlternative.setId(Long id) {
+        this.id = id;
+    }
+    
     public BOMItem BOMAlternative.getBomItem() {
         return this.bomItem;
     }

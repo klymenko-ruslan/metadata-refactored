@@ -1,5 +1,8 @@
 package com.turbointernational.metadata.domain.bom;
 import com.turbointernational.metadata.domain.part.Part;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import org.springframework.roo.addon.javabean.RooJavaBean;
@@ -10,6 +13,10 @@ import org.springframework.roo.addon.tostring.RooToString;
 @RooToString
 @RooJpaActiveRecord(table="BOM_ALT_ITEM")
 public class BOMAlternative {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @OneToOne
     @JoinColumn(name="bom_id")

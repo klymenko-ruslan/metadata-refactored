@@ -21,6 +21,7 @@ import com.turbointernational.metadata.domain.part.TurbineWheel;
 import com.turbointernational.metadata.domain.part.Turbo;
 import com.turbointernational.metadata.domain.security.Group;
 import com.turbointernational.metadata.domain.security.User;
+import com.turbointernational.metadata.domain.type.TurboType;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.format.FormatterRegistry;
@@ -437,6 +438,30 @@ privileged aspect ApplicationConversionServiceFactoryBean_Roo_ConversionService 
         };
     }
     
+    public Converter<TurboType, String> ApplicationConversionServiceFactoryBean.getTurboTypeToStringConverter() {
+        return new org.springframework.core.convert.converter.Converter<com.turbointernational.metadata.domain.type.TurboType, java.lang.String>() {
+            public String convert(TurboType turboType) {
+                return new StringBuilder().append(turboType.getName()).toString();
+            }
+        };
+    }
+    
+    public Converter<Long, TurboType> ApplicationConversionServiceFactoryBean.getIdToTurboTypeConverter() {
+        return new org.springframework.core.convert.converter.Converter<java.lang.Long, com.turbointernational.metadata.domain.type.TurboType>() {
+            public com.turbointernational.metadata.domain.type.TurboType convert(java.lang.Long id) {
+                return TurboType.findTurboType(id);
+            }
+        };
+    }
+    
+    public Converter<String, TurboType> ApplicationConversionServiceFactoryBean.getStringToTurboTypeConverter() {
+        return new org.springframework.core.convert.converter.Converter<java.lang.String, com.turbointernational.metadata.domain.type.TurboType>() {
+            public com.turbointernational.metadata.domain.type.TurboType convert(String id) {
+                return getObject().convert(getObject().convert(id, Long.class), TurboType.class);
+            }
+        };
+    }
+    
     public void ApplicationConversionServiceFactoryBean.installLabelConverters(FormatterRegistry registry) {
         registry.addConverter(getManufacturerToStringConverter());
         registry.addConverter(getIdToManufacturerConverter());
@@ -489,6 +514,9 @@ privileged aspect ApplicationConversionServiceFactoryBean_Roo_ConversionService 
         registry.addConverter(getUserToStringConverter());
         registry.addConverter(getIdToUserConverter());
         registry.addConverter(getStringToUserConverter());
+        registry.addConverter(getTurboTypeToStringConverter());
+        registry.addConverter(getIdToTurboTypeConverter());
+        registry.addConverter(getStringToTurboTypeConverter());
     }
     
     public void ApplicationConversionServiceFactoryBean.afterPropertiesSet() {

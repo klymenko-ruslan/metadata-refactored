@@ -8,6 +8,14 @@ import com.turbointernational.metadata.domain.type.TurboType;
 
 privileged aspect TurboModel_Roo_JavaBean {
     
+    public Long TurboModel.getId() {
+        return this.id;
+    }
+    
+    public void TurboModel.setId(Long id) {
+        this.id = id;
+    }
+    
     public String TurboModel.getName() {
         return this.name;
     }
