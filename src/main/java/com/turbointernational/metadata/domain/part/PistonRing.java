@@ -19,8 +19,10 @@ public class PistonRing extends Part {
     @Column(name="outside_dim_max")
     private Float outsideDiameterMax;
 
+    @Column(name="width_min")
     private Float widthMin;
 
+    @Column(name="width_max")
     private Float widthMax;
 
     @Column(name="i_gap_min")

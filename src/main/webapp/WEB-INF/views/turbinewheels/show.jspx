@@ -14,6 +14,6 @@
         <field:display field="journalDiameterD" id="s_com_turbointernational_metadata_domain_part_TurbineWheel_journalDiameterD" object="${turbinewheel}" z="Q+RGEEvi2r6MPTpE1T6Rv6vIqtQ="/>
         <field:display field="stemDiameterE" id="s_com_turbointernational_metadata_domain_part_TurbineWheel_stemDiameterE" object="${turbinewheel}" z="yzUZe9dOi2N+Snngedh1WYY/NY8="/>
         <field:display field="shaftThreadF" id="s_com_turbointernational_metadata_domain_part_TurbineWheel_shaftThreadF" object="${turbinewheel}" z="2njJl4CXwpSM/YQrWm4o8Xf8/lE="/>
-        <field:display field="trimNoBlades" id="s_com_turbointernational_metadata_domain_part_TurbineWheel_trimNoBlades" object="${turbinewheel}" z="aKaW+TdlmkGW+y8zL6vXrN2BsnY="/>
+        <field:display field="numberOfBlades" id="s_com_turbointernational_metadata_domain_part_TurbineWheel_numberOfBlades" object="${turbinewheel}" z="gyJMvfYCkt5BUDpirFP4d8/qDAc="/>
     </page:show>
 </div>

@@ -21,6 +21,7 @@ public class TurbineWheel extends Part {
     @Column(name="exduce_oa")
     private Float exducerDiameterA;
 
+    @Column(name="tip_height_b")
     private Float tipHeightB;
 
     @Column(name="inducer_oc")
@@ -36,5 +37,5 @@ public class TurbineWheel extends Part {
     private String shaftThreadF;
 
     @Column(name="trim_no_blades")
-    private String trimNoBlades;
+    private String numberOfBlades;
 }
