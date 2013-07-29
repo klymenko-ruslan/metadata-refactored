@@ -7,7 +7,7 @@
         <field:select field="manufacturer" id="c_com_turbointernational_metadata_domain_part_PistonRing_manufacturer" itemValue="id" items="${manufacturers}" path="/manufacturer" z="RGKDOuqxtSzhM8oLavg9vbin534="/>
         <field:input field="name" id="c_com_turbointernational_metadata_domain_part_PistonRing_name" z="wN74K3XV5oAOY3525z5CRkccJLc="/>
         <field:input field="description" id="c_com_turbointernational_metadata_domain_part_PistonRing_description" z="U2QYwKEihu/pv6Mq5NSO3O18QUc="/>
-        <field:checkbox field="inactive" id="c_com_turbointernational_metadata_domain_part_PistonRing_inactive" z="2DK26l/NrlNhAkv/AKhkmaXSq78="/>
+        <field:checkbox field="inactive" id="c_com_turbointernational_metadata_domain_part_PistonRing_inactive" z="user-managed"/>
         <field:simple field="interchanges" id="c_com_turbointernational_metadata_domain_part_PistonRing_interchanges" messageCode="entity_reference_not_managed" messageCodeAttribute="Interchange" z="gRpB6s5xnA+AJFLPedVUtzXVWRc="/>
         <field:input field="outsideDiameterMin" id="c_com_turbointernational_metadata_domain_part_PistonRing_outsideDiameterMin" validationMessageCode="field_invalid_number" z="qZHlPTaRw4agFGD60lcsaEHmjG8="/>
         <field:input field="outsideDiameterMax" id="c_com_turbointernational_metadata_domain_part_PistonRing_outsideDiameterMax" validationMessageCode="field_invalid_number" z="In7+OPqiAQl7uPrFUSS+4M/hEBs="/>

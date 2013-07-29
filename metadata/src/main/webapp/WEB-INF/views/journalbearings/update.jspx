@@ -7,7 +7,7 @@
         <field:select field="manufacturer" id="c_com_turbointernational_metadata_domain_part_JournalBearing_manufacturer" itemValue="id" items="${manufacturers}" path="/manufacturer" z="cXEiQhQa91lEkYfBLc5d8EcUo8M="/>
         <field:input field="name" id="c_com_turbointernational_metadata_domain_part_JournalBearing_name" z="zHQu3MSS9K5kH4YgpxvWKGFzHqc="/>
         <field:input field="description" id="c_com_turbointernational_metadata_domain_part_JournalBearing_description" z="NojDZF4xzL8YP+z++uvr4gRTDlQ="/>
-        <field:checkbox field="inactive" id="c_com_turbointernational_metadata_domain_part_JournalBearing_inactive" z="FeRF5IJKla5FmKuMf6M2yAxwj0g="/>
+        <field:checkbox field="inactive" id="c_com_turbointernational_metadata_domain_part_JournalBearing_inactive" z="user-managed"/>
         <field:simple field="interchanges" id="c_com_turbointernational_metadata_domain_part_JournalBearing_interchanges" messageCode="entity_reference_not_managed" messageCodeAttribute="Interchange" z="tlMEKXQLwmGvOFq/3HhYHqgZFz4="/>
         <field:input field="outsideDiameterMin" id="c_com_turbointernational_metadata_domain_part_JournalBearing_outsideDiameterMin" validationMessageCode="field_invalid_number" z="OM/AQ410ctZq67bcwBhpclunb9o="/>
         <field:input field="outsideDiameterMax" id="c_com_turbointernational_metadata_domain_part_JournalBearing_outsideDiameterMax" validationMessageCode="field_invalid_number" z="YalNBCOpjNgmLTNr+yrTNzc7WxA="/>
