@@ -12,7 +12,7 @@ import org.springframework.roo.addon.tostring.RooToString;
 @RooJavaBean
 @RooToString
 @RooJpaActiveRecord(table="BEARING_HOUSING", inheritanceType = "JOINED")
-@DiscriminatorValue(value = "2")
+@DiscriminatorValue(value = "13")
 @PrimaryKeyJoinColumn(name = "part_id")
 public class BearingHousing extends Part {
     
