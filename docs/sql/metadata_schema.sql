@@ -354,7 +354,7 @@ CREATE TABLE `USER` (
   UNIQUE INDEX (`email`)
 ) ENGINE = INNODB;
 
-CREATE TABLE `GROUP` (
+CREATE TABLE `GROUPS` (
   `id` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `name` VARCHAR(100) NOT NULL,
   `version` INTEGER,
@@ -367,7 +367,7 @@ CREATE TABLE `USER_GROUP` (
   `version` INTEGER,
   PRIMARY KEY (`user_id`, `group_id`),
   FOREIGN KEY (`user_id`) REFERENCES `USER` (`id`),
-  FOREIGN KEY (`group_id`) REFERENCES `GROUP` (`id`)
+  FOREIGN KEY (`group_id`) REFERENCES `GROUPS` (`id`)
 ) ENGINE = INNODB;
 
 CREATE TABLE `ROLE` (
@@ -383,6 +383,6 @@ CREATE TABLE `GROUP_ROLE` (
   `role_id` BIGINT NOT NULL,
   `version` INTEGER,
   PRIMARY KEY (`group_id`, `role_id`),
-  FOREIGN KEY (`group_id`) REFERENCES `GROUP` (`id`),
+  FOREIGN KEY (`group_id`) REFERENCES `GROUPS` (`id`),
   FOREIGN KEY (`role_id`) REFERENCES `ROLE` (`id`)
 ) ENGINE = INNODB;

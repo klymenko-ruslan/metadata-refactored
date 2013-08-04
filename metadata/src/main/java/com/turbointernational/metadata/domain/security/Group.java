@@ -12,7 +12,7 @@ import org.springframework.roo.addon.tostring.RooToString;
 
 @RooJavaBean
 @RooToString
-@RooJpaActiveRecord(table="GROUP")
+@RooJpaActiveRecord(table="GROUPS") // GROUP is a reserved word
 public class Group {
 
     @Id
