@@ -75,8 +75,5 @@
             <menu:item id="i_group_new" messageCode="global_menu_new" url="/groups?form" z="NplgVuxbIfib+TWeBYdtVVPJyuU="/>
             <menu:item id="i_group_list" messageCode="global_menu_list" url="/groups?page=1&amp;size=${empty param.size ? 10 : param.size}" z="+yB7q/lCvKVAK6joKjX6uJqct/A="/>
         </menu:category>
-        <menu:category id="c_controller" z="nj8Dm3hojIyIEyPkwE1UMDIs+K8=">
-            <menu:item id="i_controller__manufacturerindex_id" messageCode="global_generic" url="/manufacturer/index" z="LewPUgRwqnAIULHv4JtErmCY/iw="/>
-        </menu:category>
     </menu:menu>
 </div>
