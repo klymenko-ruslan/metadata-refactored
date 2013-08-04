@@ -13,7 +13,7 @@ privileged aspect Group_Roo_Jpa_Entity {
     
     declare @type: Group: @Entity;
     
-    declare @type: Group: @Table(name = "GROUP");
+    declare @type: Group: @Table(name = "GROUPS");
     
     @Version
     @Column(name = "version")
