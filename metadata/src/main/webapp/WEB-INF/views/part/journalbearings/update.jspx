@@ -7,7 +7,7 @@
         <field:select field="manufacturer" id="c_com_turbointernational_metadata_domain_part_JournalBearing_manufacturer" itemValue="id" items="${manufacturers}" path="/other/manufacturer" z="KbyN+Yx/GCqWUr4ynR5GfL9MI98="/>
         <field:input field="name" id="c_com_turbointernational_metadata_domain_part_JournalBearing_name" z="zHQu3MSS9K5kH4YgpxvWKGFzHqc="/>
         <field:input field="description" id="c_com_turbointernational_metadata_domain_part_JournalBearing_description" z="NojDZF4xzL8YP+z++uvr4gRTDlQ="/>
-        <field:checkbox field="inactive" id="c_com_turbointernational_metadata_domain_part_JournalBearing_inactive"  z="FeRF5IJKla5FmKuMf6M2yAxwj0g="/>
+        <field:checkbox field="inactive" id="c_com_turbointernational_metadata_domain_part_JournalBearing_inactive" z="user-managed"/>
         <field:simple field="interchanges" id="c_com_turbointernational_metadata_domain_part_JournalBearing_interchanges" messageCode="entity_reference_not_managed" messageCodeAttribute="Interchange" z="tlMEKXQLwmGvOFq/3HhYHqgZFz4="/>
         <field:select field="standardSize" id="c_com_turbointernational_metadata_domain_part_JournalBearing_standardSize" itemValue="id" items="${journalbearings}" path="/part/journalbearings" z="+4dtP4YljZVIfqLZGqTU5BQkMEU="/>
         <field:select field="oversize" id="c_com_turbointernational_metadata_domain_part_JournalBearing_oversize" itemValue="id" items="${journalbearings}" path="/part/journalbearings" z="1/jb6DVuOkvi3uWsg/pCnVNBYcA="/>

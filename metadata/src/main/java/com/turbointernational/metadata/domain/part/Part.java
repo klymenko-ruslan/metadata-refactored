@@ -1,4 +1,5 @@
 package com.turbointernational.metadata.domain.part;
+import com.turbointernational.metadata.domain.bom.BOMItem;
 import com.turbointernational.metadata.domain.interchange.Interchange;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import java.util.List;
@@ -20,7 +21,7 @@ import javax.persistence.OneToMany;
 @RooToString
 @RooJpaActiveRecord(table="PART")
 @DiscriminatorColumn(discriminatorType = DiscriminatorType.INTEGER, name = "part_type_id")
-public abstract class Part {
+public class Part {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,5 +48,8 @@ public abstract class Part {
                joinColumns=@JoinColumn(name="part_id"),
                inverseJoinColumns=@JoinColumn(name="interchange_header_id"))
     private List<Interchange> interchanges;
+
+    @OneToMany(mappedBy="parent")
+    private List<BOMItem> bom;
 
 }

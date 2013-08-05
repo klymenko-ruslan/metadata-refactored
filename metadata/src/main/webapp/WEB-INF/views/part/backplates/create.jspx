@@ -7,7 +7,7 @@
         <field:select field="manufacturer" id="c_com_turbointernational_metadata_domain_part_Backplate_manufacturer" itemValue="id" items="${manufacturers}" path="/other/manufacturer" z="TesQQy+rB+i6Bn1/m4AtKYEpLH4="/>
         <field:input field="name" id="c_com_turbointernational_metadata_domain_part_Backplate_name" z="I4TCwJBt3+ylEDmRd2tNy9aOtwY="/>
         <field:input field="description" id="c_com_turbointernational_metadata_domain_part_Backplate_description" z="7h58isWixv/uNYjm97yK8CYUvvA="/>
-        <field:checkbox field="inactive" id="c_com_turbointernational_metadata_domain_part_Backplate_inactive"  z="7w9ahrOUHFydc7DLw2w7ra3fVTs="/>
+        <field:checkbox field="inactive" id="c_com_turbointernational_metadata_domain_part_Backplate_inactive" z="user-managed"/>
         <field:simple field="interchanges" id="c_com_turbointernational_metadata_domain_part_Backplate_interchanges" messageCode="entity_reference_not_managed" messageCodeAttribute="Interchange" z="mxcOUDPymdOIKV3q+4I8FhD2rLg="/>
         <field:select field="sealType" id="c_com_turbointernational_metadata_domain_part_Backplate_sealType" itemValue="id" items="${sealtypes}" path="/sealtypes" z="vgC8HkOuwVVw14B666xJ7Om/ICA="/>
         <field:input field="styleCompressorWheel" id="c_com_turbointernational_metadata_domain_part_Backplate_styleCompressorWheel" z="iQtG8+G4toaovVtXDVGHRo0a5lI="/>

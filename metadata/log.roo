@@ -141,3 +141,15 @@ exit
 // Spring Roo 1.2.4.RELEASE [rev 75337cf] log opened at 2013-07-29 00:20:03
 exit
 // Spring Roo 1.2.4.RELEASE [rev 75337cf] log closed at 2013-07-29 00:26:25
+// Spring Roo 1.2.4.RELEASE [rev 75337cf] log opened at 2013-08-04 14:26:27
+poll now
+exit
+// Spring Roo 1.2.4.RELEASE [rev 75337cf] log closed at 2013-08-04 14:33:05
+// Spring Roo 1.2.4.RELEASE [rev 75337cf] log opened at 2013-08-04 14:33:10
+poll now
+jpa setup --provider HIBERNATE --database MYSQL
+poll now
+help web
+web mvc scaffold --backingType ~.metadata.domain.part.Part --class ~.metadata.domain.part.PartController
+exit
+// Spring Roo 1.2.4.RELEASE [rev 75337cf] log closed at 2013-08-04 19:54:28

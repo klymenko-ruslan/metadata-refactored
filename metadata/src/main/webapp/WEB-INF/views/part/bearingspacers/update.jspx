@@ -7,7 +7,7 @@
         <field:select field="manufacturer" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_manufacturer" itemValue="id" items="${manufacturers}" path="/other/manufacturer" z="d6cljX8+MLgxVH5VZ8qxzxT1BUM="/>
         <field:input field="name" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_name" z="zKdicWM/anoJ65ztJm1jZ9ZyMcE="/>
         <field:input field="description" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_description" z="ekUWc8ncaTcI/V/Azkk2sc655ro="/>
-        <field:checkbox field="inactive" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_inactive"  z="XQ5JvxVhobRFgh5xeulS+ICJ8l0="/>
+        <field:checkbox field="inactive" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_inactive" z="user-managed"/>
         <field:simple field="interchanges" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_interchanges" messageCode="entity_reference_not_managed" messageCodeAttribute="Interchange" z="bme+PZZkKKZk3G2twHAcTOjdWWQ="/>
         <field:select field="standardSize" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_standardSize" itemValue="id" items="${bearingspacers}" path="/part/bearingspacers" z="GBYrPDIE3VC3V3la4CsypuJNN2k="/>
         <field:select field="oversize" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_oversize" itemValue="id" items="${bearingspacers}" path="/part/bearingspacers" z="onRy72VVP4CH2wpEi2bAeMO5hks="/>

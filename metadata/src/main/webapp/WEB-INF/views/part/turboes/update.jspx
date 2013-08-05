@@ -7,7 +7,7 @@
         <field:select field="manufacturer" id="c_com_turbointernational_metadata_domain_part_Turbo_manufacturer" itemValue="id" items="${manufacturers}" path="/other/manufacturer" z="VGdkrVlNv1bn4h/204UPxVpz3q0="/>
         <field:input field="name" id="c_com_turbointernational_metadata_domain_part_Turbo_name" z="EDrVWolcVY+147yrzYkW+hnuBuY="/>
         <field:input field="description" id="c_com_turbointernational_metadata_domain_part_Turbo_description" z="xGRMct/jqK0L1nrTB0FosVgedwc="/>
-        <field:checkbox field="inactive" id="c_com_turbointernational_metadata_domain_part_Turbo_inactive"  z="F/1eRnmeaIPTHg3MZsW7SODR48E="/>
+        <field:checkbox field="inactive" id="c_com_turbointernational_metadata_domain_part_Turbo_inactive" z="user-managed"/>
         <field:simple field="interchanges" id="c_com_turbointernational_metadata_domain_part_Turbo_interchanges" messageCode="entity_reference_not_managed" messageCodeAttribute="Interchange" z="dwxxuFnPAOtXNEWAxkMpVAPDxNs="/>
         <field:select field="model" id="c_com_turbointernational_metadata_domain_part_Turbo_model" itemValue="id" items="${turbomodels}" path="/other/turbomodels" z="h7JW/QqZIX5QV4rjAGzASmXiGQY="/>
         <field:select field="coolType" id="c_com_turbointernational_metadata_domain_part_Turbo_coolType" itemValue="id" items="${cooltypes}" path="/cooltypes" z="PM/kwtpsKoI3N+rvt79wmTyoin8="/>

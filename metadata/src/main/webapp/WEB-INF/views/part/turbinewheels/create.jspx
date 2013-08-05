@@ -7,7 +7,7 @@
         <field:select field="manufacturer" id="c_com_turbointernational_metadata_domain_part_TurbineWheel_manufacturer" itemValue="id" items="${manufacturers}" path="/other/manufacturer" z="jD4fgl/P3w7hlNmEXOqrqSewv3k="/>
         <field:input field="name" id="c_com_turbointernational_metadata_domain_part_TurbineWheel_name" z="jXXEKHlybF2bTltR5pUVEI+ZlTM="/>
         <field:input field="description" id="c_com_turbointernational_metadata_domain_part_TurbineWheel_description" z="jmmVDvsCZ8eVSkLrh5wKbOV8yxU="/>
-        <field:checkbox field="inactive" id="c_com_turbointernational_metadata_domain_part_TurbineWheel_inactive"  z="kgN39Pp3cphqUQGXdV4c7fFv+xI="/>
+        <field:checkbox field="inactive" id="c_com_turbointernational_metadata_domain_part_TurbineWheel_inactive" z="user-managed"/>
         <field:simple field="interchanges" id="c_com_turbointernational_metadata_domain_part_TurbineWheel_interchanges" messageCode="entity_reference_not_managed" messageCodeAttribute="Interchange" z="08Cmof/Hi/Bs0fRHOtygC+UKloA="/>
         <field:input field="exducerDiameterA" id="c_com_turbointernational_metadata_domain_part_TurbineWheel_exducerDiameterA" validationMessageCode="field_invalid_number" z="mVgx54V85g+O56JtDQtK2+qfvKU="/>
         <field:input field="tipHeightB" id="c_com_turbointernational_metadata_domain_part_TurbineWheel_tipHeightB" validationMessageCode="field_invalid_number" z="129MFeiAQo+LpN4+L1J10UbtzH4="/>

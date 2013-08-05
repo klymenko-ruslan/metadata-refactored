@@ -7,7 +7,7 @@
         <field:select field="manufacturer" id="c_com_turbointernational_metadata_domain_part_NozzleRing_manufacturer" itemValue="id" items="${manufacturers}" path="/other/manufacturer" z="1/oOZXhK5GZR/1UhP1StMLwn/So="/>
         <field:input field="name" id="c_com_turbointernational_metadata_domain_part_NozzleRing_name" z="Wtc5lvjh7+wSQi8QFMdoWrj8WOA="/>
         <field:input field="description" id="c_com_turbointernational_metadata_domain_part_NozzleRing_description" z="xsUaLXTWua/ts15p4wXhAvauoZQ="/>
-        <field:checkbox field="inactive" id="c_com_turbointernational_metadata_domain_part_NozzleRing_inactive"  z="G6Z143+efoukBVuKsNpevba/fgA="/>
+        <field:checkbox field="inactive" id="c_com_turbointernational_metadata_domain_part_NozzleRing_inactive" z="user-managed"/>
         <field:simple field="interchanges" id="c_com_turbointernational_metadata_domain_part_NozzleRing_interchanges" messageCode="entity_reference_not_managed" messageCodeAttribute="Interchange" z="6sG2JtHxaRb1nIQ2xmc4UEouE38="/>
     </form:create>
     <form:dependency dependencies="${dependencies}" id="d_com_turbointernational_metadata_domain_part_NozzleRing" render="${not empty dependencies}" z="5gXARGTUQr2HwOOphg+9vsMT0ME="/>

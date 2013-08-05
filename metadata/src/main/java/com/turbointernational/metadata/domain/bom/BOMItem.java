@@ -1,10 +1,12 @@
 package com.turbointernational.metadata.domain.bom;
 import com.turbointernational.metadata.domain.part.Part;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
@@ -29,9 +31,8 @@ public class BOMItem {
 
     @Column(nullable=false)
     private Integer quantity;
-//
-//    @OneToMany
-//    @MapKeyJoinColumn(name="bom_id", table="BOM_ALT_ITEM")
-//    private Map<BOMAlternative, BOMAlternativeHeader> alternatives;
+
+    @OneToMany(mappedBy="bomItem")
+    private List<BOMAlternative> alternatives;
     
 }

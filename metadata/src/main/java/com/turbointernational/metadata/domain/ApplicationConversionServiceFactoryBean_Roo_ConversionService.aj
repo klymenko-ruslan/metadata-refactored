@@ -16,6 +16,7 @@ import com.turbointernational.metadata.domain.part.Heatshield;
 import com.turbointernational.metadata.domain.part.JournalBearing;
 import com.turbointernational.metadata.domain.part.Kit;
 import com.turbointernational.metadata.domain.part.NozzleRing;
+import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.part.PistonRing;
 import com.turbointernational.metadata.domain.part.TurbineWheel;
 import com.turbointernational.metadata.domain.part.Turbo;
@@ -318,6 +319,30 @@ privileged aspect ApplicationConversionServiceFactoryBean_Roo_ConversionService 
         };
     }
     
+    public Converter<Part, String> ApplicationConversionServiceFactoryBean.getPartToStringConverter() {
+        return new org.springframework.core.convert.converter.Converter<com.turbointernational.metadata.domain.part.Part, java.lang.String>() {
+            public String convert(Part part) {
+                return new StringBuilder().append(part.getManufacturerPartNumber()).append(' ').append(part.getName()).append(' ').append(part.getDescription()).toString();
+            }
+        };
+    }
+    
+    public Converter<Long, Part> ApplicationConversionServiceFactoryBean.getIdToPartConverter() {
+        return new org.springframework.core.convert.converter.Converter<java.lang.Long, com.turbointernational.metadata.domain.part.Part>() {
+            public com.turbointernational.metadata.domain.part.Part convert(java.lang.Long id) {
+                return Part.findPart(id);
+            }
+        };
+    }
+    
+    public Converter<String, Part> ApplicationConversionServiceFactoryBean.getStringToPartConverter() {
+        return new org.springframework.core.convert.converter.Converter<java.lang.String, com.turbointernational.metadata.domain.part.Part>() {
+            public com.turbointernational.metadata.domain.part.Part convert(String id) {
+                return getObject().convert(getObject().convert(id, Long.class), Part.class);
+            }
+        };
+    }
+    
     public Converter<PistonRing, String> ApplicationConversionServiceFactoryBean.getPistonRingToStringConverter() {
         return new org.springframework.core.convert.converter.Converter<com.turbointernational.metadata.domain.part.PistonRing, java.lang.String>() {
             public String convert(PistonRing pistonRing) {
@@ -499,6 +524,9 @@ privileged aspect ApplicationConversionServiceFactoryBean_Roo_ConversionService 
         registry.addConverter(getNozzleRingToStringConverter());
         registry.addConverter(getIdToNozzleRingConverter());
         registry.addConverter(getStringToNozzleRingConverter());
+        registry.addConverter(getPartToStringConverter());
+        registry.addConverter(getIdToPartConverter());
+        registry.addConverter(getStringToPartConverter());
         registry.addConverter(getPistonRingToStringConverter());
         registry.addConverter(getIdToPistonRingConverter());
         registry.addConverter(getStringToPistonRingConverter());
