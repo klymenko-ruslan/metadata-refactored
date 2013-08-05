@@ -8,6 +8,11 @@
             <property name="eclipselink.ddl-generation" value="none"/>
             <property name="eclipselink.ddl-generation.output-mode" value="sql-script"/>
             <property name="eclipselink.weaving" value="static"/>
+            
+            <!-- Logging
+            <property name="eclipselink.logging.level" value="FINE"/>
+            <property name="eclipselink.logging.parameters" value="true"/>
+            -->
         </properties>
     </persistence-unit>
 </persistence>
