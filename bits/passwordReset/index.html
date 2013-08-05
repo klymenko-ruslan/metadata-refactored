@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Email Submission Page</title>
+</head>
+<body>
+    <form action="" method="post" id="email-submission">
+        <label>Enter your email: <input type="text" placeholder="Email&hellip;" name="email"></label>
+        <br>
+        <input type="submit" name="submit" value="Submit" />
+    </form>
+
+    <div id="result"></div>
+
+    <script src="js/jquery-1.10.2.min.js" type="text/javascript"></script>
+    <script src="js/gen_validatorv4.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        var frmvalidator = new Validator("email-submission");
+        frmvalidator.addValidation("email", "req", "Please enter your email address");
+        frmvalidator.addValidation("email", "email", "Please enter a valid email address");
+    </script>
+    <script type="text/javascript">
+        $.fn.serializeObject = function()
+        {
+            var o = {};
+            var a = this.serializeArray();
+            $.each(a, function() {
+                if (o[this.name] !== undefined) {
+                    if (!o[this.name].push) {
+                        o[this.name] = [o[this.name]];
+                    }
+                    o[this.name].push(this.value || '');
+                } else {
+                    o[this.name] = this.value || '';
+                }
+            });
+            return o;
+        };
+
+        $(function() {
+            $('form').submit(function() {
+                $('#result').text(JSON.stringify($('form').serializeObject()));
+                return false;
+            });
+        });
+    </script>
+</body>
+</html>
