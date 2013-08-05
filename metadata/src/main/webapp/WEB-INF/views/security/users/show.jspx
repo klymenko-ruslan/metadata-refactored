@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <page:show id="ps_com_turbointernational_metadata_domain_security_User" object="${user}" path="/security/users" z="d2lUXi6KzdcpLOJFlEZzBC71ApE=">
+        <field:display field="name" id="s_com_turbointernational_metadata_domain_security_User_name" object="${user}" z="r+iDUe8UnT4vWusqvdWxaZ/7TsU="/>
+        <field:display field="email" id="s_com_turbointernational_metadata_domain_security_User_email" object="${user}" z="30Vdh9Wpi3/9Sj6BX6BRohE6ScY="/>
+        <field:display field="password" id="s_com_turbointernational_metadata_domain_security_User_password" object="${user}" z="b7pYbfp6OxD6M7XMISke+iXMdxY="/>
+        <field:display field="enabled" id="s_com_turbointernational_metadata_domain_security_User_enabled" object="${user}" z="qW1h0GMhechCVuA9skt5B1tFYK4="/>
+        <field:display field="groups" id="s_com_turbointernational_metadata_domain_security_User_groups" object="${user}" z="XXKUnP7+0nf1bDWNUW5xbj6F8w8="/>
+    </page:show>
+</div>

@@ -26,24 +26,24 @@ privileged aspect KitController_Roo_Controller {
     public String KitController.create(@Valid Kit kit, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, kit);
-            return "kits/create";
+            return "part/kits/create";
         }
         uiModel.asMap().clear();
         kit.persist();
-        return "redirect:/kits/" + encodeUrlPathSegment(kit.getId().toString(), httpServletRequest);
+        return "redirect:/part/kits/" + encodeUrlPathSegment(kit.getId().toString(), httpServletRequest);
     }
     
     @RequestMapping(params = "form", produces = "text/html")
     public String KitController.createForm(Model uiModel) {
         populateEditForm(uiModel, new Kit());
-        return "kits/create";
+        return "part/kits/create";
     }
     
     @RequestMapping(value = "/{id}", produces = "text/html")
     public String KitController.show(@PathVariable("id") Long id, Model uiModel) {
         uiModel.addAttribute("kit", Kit.findKit(id));
         uiModel.addAttribute("itemId", id);
-        return "kits/show";
+        return "part/kits/show";
     }
     
     @RequestMapping(produces = "text/html")
@@ -57,24 +57,24 @@ privileged aspect KitController_Roo_Controller {
         } else {
             uiModel.addAttribute("kits", Kit.findAllKits());
         }
-        return "kits/list";
+        return "part/kits/list";
     }
     
     @RequestMapping(method = RequestMethod.PUT, produces = "text/html")
     public String KitController.update(@Valid Kit kit, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, kit);
-            return "kits/update";
+            return "part/kits/update";
         }
         uiModel.asMap().clear();
         kit.merge();
-        return "redirect:/kits/" + encodeUrlPathSegment(kit.getId().toString(), httpServletRequest);
+        return "redirect:/part/kits/" + encodeUrlPathSegment(kit.getId().toString(), httpServletRequest);
     }
     
     @RequestMapping(value = "/{id}", params = "form", produces = "text/html")
     public String KitController.updateForm(@PathVariable("id") Long id, Model uiModel) {
         populateEditForm(uiModel, Kit.findKit(id));
-        return "kits/update";
+        return "part/kits/update";
     }
     
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "text/html")
@@ -84,7 +84,7 @@ privileged aspect KitController_Roo_Controller {
         uiModel.asMap().clear();
         uiModel.addAttribute("page", (page == null) ? "1" : page.toString());
         uiModel.addAttribute("size", (size == null) ? "10" : size.toString());
-        return "redirect:/kits";
+        return "redirect:/part/kits";
     }
     
     void KitController.populateEditForm(Model uiModel, Kit kit) {

@@ -3,8 +3,8 @@ import org.springframework.roo.addon.web.mvc.controller.scaffold.RooWebScaffold;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-@RequestMapping("/turbomodels")
+@RequestMapping("/other/turbomodels")
 @Controller
-@RooWebScaffold(path = "turbomodels", formBackingObject = TurboModel.class)
+@RooWebScaffold(path = "other/turbomodels", formBackingObject = TurboModel.class)
 public class TurboModelController {
 }

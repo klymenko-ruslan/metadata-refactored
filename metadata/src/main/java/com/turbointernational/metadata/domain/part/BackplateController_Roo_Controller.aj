@@ -26,24 +26,24 @@ privileged aspect BackplateController_Roo_Controller {
     public String BackplateController.create(@Valid Backplate backplate, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, backplate);
-            return "backplates/create";
+            return "part/backplates/create";
         }
         uiModel.asMap().clear();
         backplate.persist();
-        return "redirect:/backplates/" + encodeUrlPathSegment(backplate.getId().toString(), httpServletRequest);
+        return "redirect:/part/backplates/" + encodeUrlPathSegment(backplate.getId().toString(), httpServletRequest);
     }
     
     @RequestMapping(params = "form", produces = "text/html")
     public String BackplateController.createForm(Model uiModel) {
         populateEditForm(uiModel, new Backplate());
-        return "backplates/create";
+        return "part/backplates/create";
     }
     
     @RequestMapping(value = "/{id}", produces = "text/html")
     public String BackplateController.show(@PathVariable("id") Long id, Model uiModel) {
         uiModel.addAttribute("backplate", Backplate.findBackplate(id));
         uiModel.addAttribute("itemId", id);
-        return "backplates/show";
+        return "part/backplates/show";
     }
     
     @RequestMapping(produces = "text/html")
@@ -57,24 +57,24 @@ privileged aspect BackplateController_Roo_Controller {
         } else {
             uiModel.addAttribute("backplates", Backplate.findAllBackplates());
         }
-        return "backplates/list";
+        return "part/backplates/list";
     }
     
     @RequestMapping(method = RequestMethod.PUT, produces = "text/html")
     public String BackplateController.update(@Valid Backplate backplate, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, backplate);
-            return "backplates/update";
+            return "part/backplates/update";
         }
         uiModel.asMap().clear();
         backplate.merge();
-        return "redirect:/backplates/" + encodeUrlPathSegment(backplate.getId().toString(), httpServletRequest);
+        return "redirect:/part/backplates/" + encodeUrlPathSegment(backplate.getId().toString(), httpServletRequest);
     }
     
     @RequestMapping(value = "/{id}", params = "form", produces = "text/html")
     public String BackplateController.updateForm(@PathVariable("id") Long id, Model uiModel) {
         populateEditForm(uiModel, Backplate.findBackplate(id));
-        return "backplates/update";
+        return "part/backplates/update";
     }
     
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "text/html")
@@ -84,7 +84,7 @@ privileged aspect BackplateController_Roo_Controller {
         uiModel.asMap().clear();
         uiModel.addAttribute("page", (page == null) ? "1" : page.toString());
         uiModel.addAttribute("size", (size == null) ? "10" : size.toString());
-        return "redirect:/backplates";
+        return "redirect:/part/backplates";
     }
     
     void BackplateController.populateEditForm(Model uiModel, Backplate backplate) {

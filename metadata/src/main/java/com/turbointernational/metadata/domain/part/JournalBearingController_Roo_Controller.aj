@@ -25,24 +25,24 @@ privileged aspect JournalBearingController_Roo_Controller {
     public String JournalBearingController.create(@Valid JournalBearing journalBearing, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, journalBearing);
-            return "journalbearings/create";
+            return "part/journalbearings/create";
         }
         uiModel.asMap().clear();
         journalBearing.persist();
-        return "redirect:/journalbearings/" + encodeUrlPathSegment(journalBearing.getId().toString(), httpServletRequest);
+        return "redirect:/part/journalbearings/" + encodeUrlPathSegment(journalBearing.getId().toString(), httpServletRequest);
     }
     
     @RequestMapping(params = "form", produces = "text/html")
     public String JournalBearingController.createForm(Model uiModel) {
         populateEditForm(uiModel, new JournalBearing());
-        return "journalbearings/create";
+        return "part/journalbearings/create";
     }
     
     @RequestMapping(value = "/{id}", produces = "text/html")
     public String JournalBearingController.show(@PathVariable("id") Long id, Model uiModel) {
         uiModel.addAttribute("journalbearing", JournalBearing.findJournalBearing(id));
         uiModel.addAttribute("itemId", id);
-        return "journalbearings/show";
+        return "part/journalbearings/show";
     }
     
     @RequestMapping(produces = "text/html")
@@ -56,24 +56,24 @@ privileged aspect JournalBearingController_Roo_Controller {
         } else {
             uiModel.addAttribute("journalbearings", JournalBearing.findAllJournalBearings());
         }
-        return "journalbearings/list";
+        return "part/journalbearings/list";
     }
     
     @RequestMapping(method = RequestMethod.PUT, produces = "text/html")
     public String JournalBearingController.update(@Valid JournalBearing journalBearing, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, journalBearing);
-            return "journalbearings/update";
+            return "part/journalbearings/update";
         }
         uiModel.asMap().clear();
         journalBearing.merge();
-        return "redirect:/journalbearings/" + encodeUrlPathSegment(journalBearing.getId().toString(), httpServletRequest);
+        return "redirect:/part/journalbearings/" + encodeUrlPathSegment(journalBearing.getId().toString(), httpServletRequest);
     }
     
     @RequestMapping(value = "/{id}", params = "form", produces = "text/html")
     public String JournalBearingController.updateForm(@PathVariable("id") Long id, Model uiModel) {
         populateEditForm(uiModel, JournalBearing.findJournalBearing(id));
-        return "journalbearings/update";
+        return "part/journalbearings/update";
     }
     
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "text/html")
@@ -83,7 +83,7 @@ privileged aspect JournalBearingController_Roo_Controller {
         uiModel.asMap().clear();
         uiModel.addAttribute("page", (page == null) ? "1" : page.toString());
         uiModel.addAttribute("size", (size == null) ? "10" : size.toString());
-        return "redirect:/journalbearings";
+        return "redirect:/part/journalbearings";
     }
     
     void JournalBearingController.populateEditForm(Model uiModel, JournalBearing journalBearing) {

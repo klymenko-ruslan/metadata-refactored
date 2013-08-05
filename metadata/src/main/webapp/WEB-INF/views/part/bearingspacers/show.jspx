@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <page:show id="ps_com_turbointernational_metadata_domain_part_BearingSpacer" object="${bearingspacer}" path="/part/bearingspacers" z="O8yj/ZUY1NtNs59EXocxI3OBl3g=">
+        <field:display field="manufacturerPartNumber" id="s_com_turbointernational_metadata_domain_part_BearingSpacer_manufacturerPartNumber" object="${bearingspacer}" z="RUcrLtoWc3zuPLHiuyj1uxiX6D8="/>
+        <field:display field="manufacturer" id="s_com_turbointernational_metadata_domain_part_BearingSpacer_manufacturer" object="${bearingspacer}" z="YyRWacrynfo9dxcf4yMsa3VCpGQ="/>
+        <field:display field="name" id="s_com_turbointernational_metadata_domain_part_BearingSpacer_name" object="${bearingspacer}" z="sT42s/EWOIbexW8jd32RlysCjn4="/>
+        <field:display field="description" id="s_com_turbointernational_metadata_domain_part_BearingSpacer_description" object="${bearingspacer}" z="Mj7eaf0a+CqiUua1Inoiddi+1co="/>
+        <field:display field="inactive" id="s_com_turbointernational_metadata_domain_part_BearingSpacer_inactive" object="${bearingspacer}" z="XaIZseakFDg3NWEpTo7vz9qLQ/I="/>
+        <field:display field="standardSize" id="s_com_turbointernational_metadata_domain_part_BearingSpacer_standardSize" object="${bearingspacer}" z="vUoVPVsxGG34R1csQfIn9f8LHYI="/>
+        <field:display field="oversize" id="s_com_turbointernational_metadata_domain_part_BearingSpacer_oversize" object="${bearingspacer}" z="Tdev0i3Brf48on+zt/g+UjzPjTI="/>
+        <field:display field="outsideDiameterMin" id="s_com_turbointernational_metadata_domain_part_BearingSpacer_outsideDiameterMin" object="${bearingspacer}" z="ZCsvteA2bb7VRA73d5yzXp1Tsp4="/>
+        <field:display field="outsideDiameterMax" id="s_com_turbointernational_metadata_domain_part_BearingSpacer_outsideDiameterMax" object="${bearingspacer}" z="oVQfQlLOfC+FY8yzQLrBBYHXrfU="/>
+        <field:display field="insideDiameterMin" id="s_com_turbointernational_metadata_domain_part_BearingSpacer_insideDiameterMin" object="${bearingspacer}" z="ObfoHm9d7r6DRo2deknhwfn61LY="/>
+        <field:display field="insideDiameterMax" id="s_com_turbointernational_metadata_domain_part_BearingSpacer_insideDiameterMax" object="${bearingspacer}" z="nawVrCCN4mIknqBctvK8jajAL4U="/>
+    </page:show>
+</div>

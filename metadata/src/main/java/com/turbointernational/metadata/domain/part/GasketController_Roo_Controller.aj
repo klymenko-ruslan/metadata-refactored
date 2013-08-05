@@ -26,24 +26,24 @@ privileged aspect GasketController_Roo_Controller {
     public String GasketController.create(@Valid Gasket gasket, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, gasket);
-            return "gaskets/create";
+            return "part/gaskets/create";
         }
         uiModel.asMap().clear();
         gasket.persist();
-        return "redirect:/gaskets/" + encodeUrlPathSegment(gasket.getId().toString(), httpServletRequest);
+        return "redirect:/part/gaskets/" + encodeUrlPathSegment(gasket.getId().toString(), httpServletRequest);
     }
     
     @RequestMapping(params = "form", produces = "text/html")
     public String GasketController.createForm(Model uiModel) {
         populateEditForm(uiModel, new Gasket());
-        return "gaskets/create";
+        return "part/gaskets/create";
     }
     
     @RequestMapping(value = "/{id}", produces = "text/html")
     public String GasketController.show(@PathVariable("id") Long id, Model uiModel) {
         uiModel.addAttribute("gasket", Gasket.findGasket(id));
         uiModel.addAttribute("itemId", id);
-        return "gaskets/show";
+        return "part/gaskets/show";
     }
     
     @RequestMapping(produces = "text/html")
@@ -57,24 +57,24 @@ privileged aspect GasketController_Roo_Controller {
         } else {
             uiModel.addAttribute("gaskets", Gasket.findAllGaskets());
         }
-        return "gaskets/list";
+        return "part/gaskets/list";
     }
     
     @RequestMapping(method = RequestMethod.PUT, produces = "text/html")
     public String GasketController.update(@Valid Gasket gasket, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, gasket);
-            return "gaskets/update";
+            return "part/gaskets/update";
         }
         uiModel.asMap().clear();
         gasket.merge();
-        return "redirect:/gaskets/" + encodeUrlPathSegment(gasket.getId().toString(), httpServletRequest);
+        return "redirect:/part/gaskets/" + encodeUrlPathSegment(gasket.getId().toString(), httpServletRequest);
     }
     
     @RequestMapping(value = "/{id}", params = "form", produces = "text/html")
     public String GasketController.updateForm(@PathVariable("id") Long id, Model uiModel) {
         populateEditForm(uiModel, Gasket.findGasket(id));
-        return "gaskets/update";
+        return "part/gaskets/update";
     }
     
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "text/html")
@@ -84,7 +84,7 @@ privileged aspect GasketController_Roo_Controller {
         uiModel.asMap().clear();
         uiModel.addAttribute("page", (page == null) ? "1" : page.toString());
         uiModel.addAttribute("size", (size == null) ? "10" : size.toString());
-        return "redirect:/gaskets";
+        return "redirect:/part/gaskets";
     }
     
     void GasketController.populateEditForm(Model uiModel, Gasket gasket) {

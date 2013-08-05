@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" xmlns:table="urn:jsptagdir:/WEB-INF/tags/form/fields" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <page:list id="pl_com_turbointernational_metadata_domain_part_Kit" items="${kits}" z="LSD4SfX67I39CcboV/+peeSNF8w=">
+        <table:table data="${kits}" id="l_com_turbointernational_metadata_domain_part_Kit" path="/part/kits" z="VggOHsznb4aXvLptPHkFJCtFzw8=">
+            <table:column id="c_com_turbointernational_metadata_domain_part_Kit_manufacturerPartNumber" property="manufacturerPartNumber" z="AxCXv27TW9KRnbmUpwi8/CKKbJM="/>
+            <table:column id="c_com_turbointernational_metadata_domain_part_Kit_manufacturer" property="manufacturer" z="Xep3sLqoyHpqGW2tIGJSgFhK+Kc="/>
+            <table:column id="c_com_turbointernational_metadata_domain_part_Kit_name" property="name" z="esn+QXCQ0WLgjKGZpKg04fQi2y8="/>
+            <table:column id="c_com_turbointernational_metadata_domain_part_Kit_description" property="description" z="rNKThbYLf0fgvhQjKEwJ55/xx00="/>
+            <table:column id="c_com_turbointernational_metadata_domain_part_Kit_inactive" property="inactive" z="aeMkfg6W8uFXyrLpX2Fz45DHKZY="/>
+        </table:table>
+    </page:list>
+</div>

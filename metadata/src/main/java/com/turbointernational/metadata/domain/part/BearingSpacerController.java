@@ -3,8 +3,8 @@ import org.springframework.roo.addon.web.mvc.controller.scaffold.RooWebScaffold;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-@RequestMapping("/bearingspacers")
+@RequestMapping("/part/bearingspacers")
 @Controller
-@RooWebScaffold(path = "bearingspacers", formBackingObject = BearingSpacer.class)
+@RooWebScaffold(path = "part/bearingspacers", formBackingObject = BearingSpacer.class)
 public class BearingSpacerController {
 }
