@@ -3,7 +3,6 @@
 
 package com.turbointernational.metadata.domain.part;
 
-import com.turbointernational.metadata.domain.bom.BOMItem;
 import com.turbointernational.metadata.domain.interchange.Interchange;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.Part;
@@ -65,14 +64,6 @@ privileged aspect Part_Roo_JavaBean {
     
     public void Part.setInterchanges(List<Interchange> interchanges) {
         this.interchanges = interchanges;
-    }
-    
-    public List<BOMItem> Part.getBom() {
-        return this.bom;
-    }
-    
-    public void Part.setBom(List<BOMItem> bom) {
-        this.bom = bom;
     }
     
 }

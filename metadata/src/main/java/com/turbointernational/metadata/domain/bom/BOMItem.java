@@ -1,6 +1,7 @@
 package com.turbointernational.metadata.domain.bom;
 import com.turbointernational.metadata.domain.part.Part;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -32,7 +33,7 @@ public class BOMItem {
     @Column(nullable=false)
     private Integer quantity;
 
-    @OneToMany(mappedBy="bomItem")
+    @OneToMany(mappedBy="bomItem", cascade = CascadeType.ALL)
     private List<BOMAlternative> alternatives;
     
 }

@@ -3,7 +3,6 @@
 
 package com.turbointernational.metadata.domain.part;
 
-import com.turbointernational.metadata.domain.bom.BOMItem;
 import com.turbointernational.metadata.domain.interchange.Interchange;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.BearingHousing;
@@ -90,7 +89,6 @@ privileged aspect BearingHousingController_Roo_Controller {
     
     void BearingHousingController.populateEditForm(Model uiModel, BearingHousing bearingHousing) {
         uiModel.addAttribute("bearingHousing", bearingHousing);
-        uiModel.addAttribute("bomitems", BOMItem.findAllBOMItems());
         uiModel.addAttribute("interchanges", Interchange.findAllInterchanges());
         uiModel.addAttribute("manufacturers", Manufacturer.findAllManufacturers());
         uiModel.addAttribute("cooltypes", CoolType.findAllCoolTypes());

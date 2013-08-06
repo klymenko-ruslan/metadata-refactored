@@ -5,16 +5,9 @@ package com.turbointernational.metadata.domain.part;
 
 import com.turbointernational.metadata.domain.part.Backplate;
 import javax.persistence.Entity;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.Table;
 
 privileged aspect Backplate_Roo_Jpa_Entity {
     
     declare @type: Backplate: @Entity;
-    
-    declare @type: Backplate: @Table(name = "BACKPLATE");
-    
-    declare @type: Backplate: @Inheritance(strategy = InheritanceType.JOINED);
     
 }

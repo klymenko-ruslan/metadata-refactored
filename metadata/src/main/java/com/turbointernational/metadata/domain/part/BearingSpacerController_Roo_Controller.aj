@@ -3,7 +3,6 @@
 
 package com.turbointernational.metadata.domain.part;
 
-import com.turbointernational.metadata.domain.bom.BOMItem;
 import com.turbointernational.metadata.domain.interchange.Interchange;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.BearingSpacer;
@@ -89,7 +88,6 @@ privileged aspect BearingSpacerController_Roo_Controller {
     
     void BearingSpacerController.populateEditForm(Model uiModel, BearingSpacer bearingSpacer) {
         uiModel.addAttribute("bearingSpacer", bearingSpacer);
-        uiModel.addAttribute("bomitems", BOMItem.findAllBOMItems());
         uiModel.addAttribute("interchanges", Interchange.findAllInterchanges());
         uiModel.addAttribute("manufacturers", Manufacturer.findAllManufacturers());
         uiModel.addAttribute("bearingspacers", BearingSpacer.findAllBearingSpacers());

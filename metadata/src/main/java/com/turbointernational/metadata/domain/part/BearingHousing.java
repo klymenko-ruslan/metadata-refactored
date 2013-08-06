@@ -1,43 +1,42 @@
 package com.turbointernational.metadata.domain.part;
 import com.turbointernational.metadata.domain.type.CoolType;
 import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.SecondaryTable;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import org.springframework.roo.addon.tostring.RooToString;
 
 @RooJavaBean
 @RooToString
-@RooJpaActiveRecord(table="BEARING_HOUSING", inheritanceType = "JOINED")
-@DiscriminatorValue(value = "13")
-@PrimaryKeyJoinColumn(name = "part_id")
+@RooJpaActiveRecord
+@SecondaryTable(name="BEARING_HOUSING", pkJoinColumns=@PrimaryKeyJoinColumn(name = "part_id"))
 public class BearingHousing extends Part {
     
     @ManyToOne
-    @JoinColumn(name="cool_type_id")
+    @JoinColumn(name="cool_type_id", table = "BEARING_HOUSING")
     private CoolType coolType;
 
-    @Column(name="oil_inlet")
+    @Column(name="oil_inlet", table = "BEARING_HOUSING")
     private String oilInlet;
 
-    @Column(name="oil_outlet")
+    @Column(name="oil_outlet", table = "BEARING_HOUSING")
     private String oilOutlet;
 
-    @Column(name="oil")
+    @Column(name="oil", table = "BEARING_HOUSING")
     private String oil;
 
-    @Column(name="outlet_flange_holes")
+    @Column(name="outlet_flange_holes", table = "BEARING_HOUSING")
     private String outletFlangeHoles;
 
-    @Column(name="water_ports")
+    @Column(name="water_ports", table = "BEARING_HOUSING")
     private String waterPorts;
 
-    @Column(name="design_features")
+    @Column(name="design_features", table = "BEARING_HOUSING")
     private String designFeatures;
 
-    @Column(name="bearing_type")
+    @Column(name="bearing_type", table = "BEARING_HOUSING")
     private String bearingType;
 }

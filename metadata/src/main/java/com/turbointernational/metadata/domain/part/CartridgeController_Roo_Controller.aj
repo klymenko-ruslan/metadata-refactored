@@ -3,7 +3,6 @@
 
 package com.turbointernational.metadata.domain.part;
 
-import com.turbointernational.metadata.domain.bom.BOMItem;
 import com.turbointernational.metadata.domain.interchange.Interchange;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.Cartridge;
@@ -89,7 +88,6 @@ privileged aspect CartridgeController_Roo_Controller {
     
     void CartridgeController.populateEditForm(Model uiModel, Cartridge cartridge) {
         uiModel.addAttribute("cartridge", cartridge);
-        uiModel.addAttribute("bomitems", BOMItem.findAllBOMItems());
         uiModel.addAttribute("interchanges", Interchange.findAllInterchanges());
         uiModel.addAttribute("manufacturers", Manufacturer.findAllManufacturers());
     }
