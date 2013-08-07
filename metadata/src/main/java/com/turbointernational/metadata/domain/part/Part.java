@@ -1,9 +1,7 @@
 package com.turbointernational.metadata.domain.part;
-import com.turbointernational.metadata.domain.bom.BOMItem;
 import com.turbointernational.metadata.domain.interchange.Interchange;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import java.util.List;
-import javax.persistence.CascadeType;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import org.springframework.roo.addon.tostring.RooToString;
@@ -18,7 +16,7 @@ import javax.persistence.OneToMany;
 
 @RooJavaBean
 @RooToString
-@RooJpaActiveRecord(table="PART_ORM_VIEW", inheritanceType = "SINGLE_TABLE")
+@RooJpaActiveRecord(table="PART", inheritanceType = "SINGLE_TABLE")
 public class Part {
 
     @Id

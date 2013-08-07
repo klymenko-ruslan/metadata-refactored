@@ -3,7 +3,6 @@
 
 package com.turbointernational.metadata.domain.part;
 
-import com.turbointernational.metadata.domain.bom.BOMItem;
 import com.turbointernational.metadata.domain.interchange.Interchange;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.other.TurboModel;
@@ -91,7 +90,6 @@ privileged aspect TurboController_Roo_Controller {
     
     void TurboController.populateEditForm(Model uiModel, Turbo turbo) {
         uiModel.addAttribute("turbo", turbo);
-        uiModel.addAttribute("bomitems", BOMItem.findAllBOMItems());
         uiModel.addAttribute("interchanges", Interchange.findAllInterchanges());
         uiModel.addAttribute("manufacturers", Manufacturer.findAllManufacturers());
         uiModel.addAttribute("turbomodels", TurboModel.findAllTurboModels());

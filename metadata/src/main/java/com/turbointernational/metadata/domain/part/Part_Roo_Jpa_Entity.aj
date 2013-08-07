@@ -16,7 +16,7 @@ privileged aspect Part_Roo_Jpa_Entity {
     
     declare @type: Part: @Entity;
     
-    declare @type: Part: @Table(name = "PART_ORM_VIEW");
+    declare @type: Part: @Table(name = "PART");
     
     declare @type: Part: @Inheritance(strategy = InheritanceType.SINGLE_TABLE);
     
