@@ -8,7 +8,8 @@
         <field:input field="name" id="c_com_turbointernational_metadata_domain_part_Kit_name" z="R+i745c/tonYpBMQhxkF2IdoKO4="/>
         <field:input field="description" id="c_com_turbointernational_metadata_domain_part_Kit_description" z="+xROpvmpGkJ94PCGgELto7ndBI8="/>
         <field:checkbox field="inactive" id="c_com_turbointernational_metadata_domain_part_Kit_inactive" z="user-managed"/>
-        <field:simple field="interchanges" id="c_com_turbointernational_metadata_domain_part_Kit_interchanges" messageCode="entity_reference_not_managed" messageCodeAttribute="Interchange" z="Pq8OosdYYakVa6eU187ropQtLIc="/>
         <field:select field="type" id="c_com_turbointernational_metadata_domain_part_Kit_type" itemValue="id" items="${kittypes}" path="/kittypes" z="ZFE+r8qkudYb0tm0TQe86OVt3TQ="/>
+        <field:select field="interchanges" id="c_com_turbointernational_metadata_domain_part_Kit_interchanges" itemValue="id" items="${interchanges}" multiple="true" path="/interchanges" z="RxwP57xDjFvD+X9u8Jx5H+h0+t0="/>
+        <field:simple field="bom" id="c_com_turbointernational_metadata_domain_part_Kit_bom" messageCode="entity_reference_not_managed" messageCodeAttribute="B O M Item" z="w1TSMIgmt60axVD5z7i2TD86/HU="/>
     </form:update>
 </div>

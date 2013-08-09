@@ -9,5 +9,6 @@
         <field:display field="description" id="s_com_turbointernational_metadata_domain_part_Gasket_description" object="${gasket}" z="OlV9HsBiVPMtP7NTY+wzD1enmsA="/>
         <field:display field="inactive" id="s_com_turbointernational_metadata_domain_part_Gasket_inactive" object="${gasket}" z="Ef5AfYAY1HcAGZ+/e4NLDgy4peo="/>
         <field:display field="type" id="s_com_turbointernational_metadata_domain_part_Gasket_type" object="${gasket}" z="7mHnBdjKcihcxK6960ZmsMrLg6k="/>
+        <field:display field="interchanges" id="s_com_turbointernational_metadata_domain_part_Gasket_interchanges" object="${gasket}" z="pQTSjsA68+Ax7/47vwthmiAUuSs="/>
     </page:show>
 </div>

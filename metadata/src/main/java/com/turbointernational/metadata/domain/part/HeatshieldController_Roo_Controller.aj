@@ -3,6 +3,7 @@
 
 package com.turbointernational.metadata.domain.part;
 
+import com.turbointernational.metadata.domain.bom.BOMItem;
 import com.turbointernational.metadata.domain.interchange.Interchange;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.Heatshield;
@@ -88,6 +89,7 @@ privileged aspect HeatshieldController_Roo_Controller {
     
     void HeatshieldController.populateEditForm(Model uiModel, Heatshield heatshield) {
         uiModel.addAttribute("heatshield", heatshield);
+        uiModel.addAttribute("bomitems", BOMItem.findAllBOMItems());
         uiModel.addAttribute("interchanges", Interchange.findAllInterchanges());
         uiModel.addAttribute("manufacturers", Manufacturer.findAllManufacturers());
     }

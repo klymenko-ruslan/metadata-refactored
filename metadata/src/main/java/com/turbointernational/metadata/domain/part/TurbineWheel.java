@@ -4,7 +4,6 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.SecondaryTable;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
-import org.springframework.roo.addon.tostring.RooToString;
 
 
 /**
@@ -12,7 +11,6 @@ import org.springframework.roo.addon.tostring.RooToString;
  * @author Jeff
  */
 @RooJavaBean
-@RooToString
 @RooJpaActiveRecord
 @SecondaryTable(name="TURBINE_WHEEL", pkJoinColumns=@PrimaryKeyJoinColumn(name = "part_id"))
 public class TurbineWheel extends Part {

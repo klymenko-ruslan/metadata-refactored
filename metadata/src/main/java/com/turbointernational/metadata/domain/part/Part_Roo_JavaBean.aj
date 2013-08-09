@@ -3,10 +3,11 @@
 
 package com.turbointernational.metadata.domain.part;
 
+import com.turbointernational.metadata.domain.bom.BOMItem;
 import com.turbointernational.metadata.domain.interchange.Interchange;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.Part;
-import java.util.List;
+import java.util.Set;
 
 privileged aspect Part_Roo_JavaBean {
     
@@ -18,20 +19,20 @@ privileged aspect Part_Roo_JavaBean {
         this.id = id;
     }
     
-    public String Part.getManufacturerPartNumber() {
-        return this.manufacturerPartNumber;
-    }
-    
-    public void Part.setManufacturerPartNumber(String manufacturerPartNumber) {
-        this.manufacturerPartNumber = manufacturerPartNumber;
-    }
-    
     public Manufacturer Part.getManufacturer() {
         return this.manufacturer;
     }
     
     public void Part.setManufacturer(Manufacturer manufacturer) {
         this.manufacturer = manufacturer;
+    }
+    
+    public String Part.getManufacturerPartNumber() {
+        return this.manufacturerPartNumber;
+    }
+    
+    public void Part.setManufacturerPartNumber(String manufacturerPartNumber) {
+        this.manufacturerPartNumber = manufacturerPartNumber;
     }
     
     public String Part.getName() {
@@ -58,12 +59,20 @@ privileged aspect Part_Roo_JavaBean {
         this.inactive = inactive;
     }
     
-    public List<Interchange> Part.getInterchanges() {
+    public Set<Interchange> Part.getInterchanges() {
         return this.interchanges;
     }
     
-    public void Part.setInterchanges(List<Interchange> interchanges) {
+    public void Part.setInterchanges(Set<Interchange> interchanges) {
         this.interchanges = interchanges;
+    }
+    
+    public Set<BOMItem> Part.getBom() {
+        return this.bom;
+    }
+    
+    public void Part.setBom(Set<BOMItem> bom) {
+        this.bom = bom;
     }
     
 }

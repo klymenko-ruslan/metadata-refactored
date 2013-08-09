@@ -1,5 +1,6 @@
 package com.turbointernational.metadata.domain;
 
+import com.turbointernational.metadata.domain.interchange.Interchange;
 import com.turbointernational.metadata.domain.security.Group;
 import com.turbointernational.metadata.domain.security.Role;
 import com.turbointernational.metadata.domain.security.User;
@@ -82,6 +83,12 @@ public class ApplicationConversionServiceFactoryBean extends FormattingConversio
 
         registry.addConverter(new Converter<User, String>() {
             public String convert(User source) {
+                return source.getName();
+            }
+        });
+
+        registry.addConverter(new Converter<Interchange, String>() {
+            public String convert(Interchange source) {
                 return source.getName();
             }
         });

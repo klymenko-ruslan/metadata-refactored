@@ -8,13 +8,14 @@
         <field:input field="name" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_name" z="zKdicWM/anoJ65ztJm1jZ9ZyMcE="/>
         <field:input field="description" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_description" z="ekUWc8ncaTcI/V/Azkk2sc655ro="/>
         <field:checkbox field="inactive" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_inactive" z="user-managed"/>
-        <field:simple field="interchanges" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_interchanges" messageCode="entity_reference_not_managed" messageCodeAttribute="Interchange" z="bme+PZZkKKZk3G2twHAcTOjdWWQ="/>
         <field:select field="standardSize" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_standardSize" itemValue="id" items="${bearingspacers}" path="/part/bearingspacers" z="GBYrPDIE3VC3V3la4CsypuJNN2k="/>
         <field:select field="oversize" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_oversize" itemValue="id" items="${bearingspacers}" path="/part/bearingspacers" z="onRy72VVP4CH2wpEi2bAeMO5hks="/>
         <field:input field="outsideDiameterMin" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_outsideDiameterMin" validationMessageCode="field_invalid_number" z="hBAkGYNkjsR+W7a3t9vsWVVB/+k="/>
         <field:input field="outsideDiameterMax" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_outsideDiameterMax" validationMessageCode="field_invalid_number" z="sIqrkLrPAgK8vutgd6tkDznPqxY="/>
         <field:input field="insideDiameterMin" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_insideDiameterMin" validationMessageCode="field_invalid_number" z="OL9hJ/EyNpNrpqufDKHBcQBejNU="/>
         <field:input field="insideDiameterMax" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_insideDiameterMax" validationMessageCode="field_invalid_number" z="x2uFuJ2BMvQgYTApQpb/v9pJf7I="/>
+        <field:select field="interchanges" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_interchanges" itemValue="id" items="${interchanges}" multiple="true" path="/interchanges" z="cEXQvME9F92jFZrvvmoAypD9Pbo="/>
+        <field:simple field="bom" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_bom" messageCode="entity_reference_not_managed" messageCodeAttribute="B O M Item" z="ohDxXaOn0zfr/SkgfSDLugQages="/>
     </form:create>
     <form:dependency dependencies="${dependencies}" id="d_com_turbointernational_metadata_domain_part_BearingSpacer" render="${not empty dependencies}" z="M7CTdp1gqCGmlq4vXTaPWnQDjwA="/>
 </div>

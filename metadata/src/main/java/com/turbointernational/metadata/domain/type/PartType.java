@@ -1,16 +1,16 @@
 package com.turbointernational.metadata.domain.type;
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
-import org.springframework.roo.addon.tostring.RooToString;
 
+@Cacheable
 @RooJavaBean
-@RooToString
 @RooJpaActiveRecord(table = "PART_TYPE")
 public class PartType {
 
@@ -22,7 +22,7 @@ public class PartType {
     private String name;
 
     // TODO: Is this a duplicate of parentTypes?
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name="parent_part_type_id")
     private PartType parent;
 

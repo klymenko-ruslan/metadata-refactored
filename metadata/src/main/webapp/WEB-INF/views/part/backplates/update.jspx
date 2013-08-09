@@ -8,8 +8,8 @@
         <field:input field="name" id="c_com_turbointernational_metadata_domain_part_Backplate_name" z="I4TCwJBt3+ylEDmRd2tNy9aOtwY="/>
         <field:input field="description" id="c_com_turbointernational_metadata_domain_part_Backplate_description" z="7h58isWixv/uNYjm97yK8CYUvvA="/>
         <field:checkbox field="inactive" id="c_com_turbointernational_metadata_domain_part_Backplate_inactive" z="user-managed"/>
-        <field:simple field="interchanges" id="c_com_turbointernational_metadata_domain_part_Backplate_interchanges" messageCode="entity_reference_not_managed" messageCodeAttribute="Interchange" z="mxcOUDPymdOIKV3q+4I8FhD2rLg="/>
         <field:select field="sealType" id="c_com_turbointernational_metadata_domain_part_Backplate_sealType" itemValue="id" items="${sealtypes}" path="/sealtypes" z="vgC8HkOuwVVw14B666xJ7Om/ICA="/>
+        <field:smart-select field="sealType" id="" itemValue="id" items="${sealtypes}" path="/sealtypes"/>
         <field:input field="styleCompressorWheel" id="c_com_turbointernational_metadata_domain_part_Backplate_styleCompressorWheel" z="iQtG8+G4toaovVtXDVGHRo0a5lI="/>
         <field:input field="sealTypeString" id="c_com_turbointernational_metadata_domain_part_Backplate_sealTypeString" z="K00/mnm/KPCtzIVDmF/FqxrPdjA="/>
         <field:input field="overallDiameter" id="c_com_turbointernational_metadata_domain_part_Backplate_overallDiameter" validationMessageCode="field_invalid_number" z="WByL17rFznqu1/VPfOCom3n/fLM="/>
@@ -19,5 +19,7 @@
         <field:input field="notes" id="c_com_turbointernational_metadata_domain_part_Backplate_notes" z="/SSzfb2AoqxRjDMm9SJ+DjGVvCs="/>
         <field:input field="secondaryDiameter" id="c_com_turbointernational_metadata_domain_part_Backplate_secondaryDiameter" validationMessageCode="field_invalid_number" z="/lztVhBB5hzgtPr9mdQasVDcx48="/>
         <field:input field="overallHeight" id="c_com_turbointernational_metadata_domain_part_Backplate_overallHeight" validationMessageCode="field_invalid_number" z="pv4OZKOqwyZbeX3uArNryf8TdsU="/>
+        <field:select field="interchanges" id="c_com_turbointernational_metadata_domain_part_Backplate_interchanges" itemValue="id" items="${interchanges}" multiple="true" path="/interchanges" z="/7ENmC84jc0CPIb2Z9goufmgxg8="/>
+        <field:simple field="bom" id="c_com_turbointernational_metadata_domain_part_Backplate_bom" messageCode="entity_reference_not_managed" messageCodeAttribute="B O M Item" z="/4czOkMNJu7SylBYCv3OpefQEXE="/>
     </form:update>
 </div>

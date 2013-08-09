@@ -8,7 +8,6 @@
         <field:input field="name" id="c_com_turbointernational_metadata_domain_part_CompressorWheel_name" z="FrXEVgbZMvNMXvTvvpp/A8myv7Y="/>
         <field:input field="description" id="c_com_turbointernational_metadata_domain_part_CompressorWheel_description" z="Pi1NIX1mSiqXPlwcajKU4JjXW40="/>
         <field:checkbox field="inactive" id="c_com_turbointernational_metadata_domain_part_CompressorWheel_inactive" z="user-managed"/>
-        <field:simple field="interchanges" id="c_com_turbointernational_metadata_domain_part_CompressorWheel_interchanges" messageCode="entity_reference_not_managed" messageCodeAttribute="Interchange" z="ck1BFpI84EA4ELKIkh6eu6lqzB8="/>
         <field:input field="inducerOa" id="c_com_turbointernational_metadata_domain_part_CompressorWheel_inducerOa" validationMessageCode="field_invalid_number" z="7YmT6NcPRqlLMi4I9qEJ/X0aquY="/>
         <field:input field="tipHeightB" id="c_com_turbointernational_metadata_domain_part_CompressorWheel_tipHeightB" validationMessageCode="field_invalid_number" z="5rPLT0cxwnZ5tujJhd7lOSFbzYU="/>
         <field:input field="exducerOc" id="c_com_turbointernational_metadata_domain_part_CompressorWheel_exducerOc" validationMessageCode="field_invalid_number" z="Z4Rku09SQe6tOWMoxOVu2Iww2h0="/>
@@ -16,5 +15,7 @@
         <field:input field="boreOe" id="c_com_turbointernational_metadata_domain_part_CompressorWheel_boreOe" validationMessageCode="field_invalid_number" z="fdh9dt299leC+hYqlVhzra82AXs="/>
         <field:input field="numberOfBlades" id="c_com_turbointernational_metadata_domain_part_CompressorWheel_numberOfBlades" z="M+uKwnXjn+GphaScu5/Xin5ZdIM="/>
         <field:input field="application" id="c_com_turbointernational_metadata_domain_part_CompressorWheel_application" z="hVw8fJz/nVbWr51hx+eNfX5+loE="/>
+        <field:select field="interchanges" id="c_com_turbointernational_metadata_domain_part_CompressorWheel_interchanges" itemValue="id" items="${interchanges}" multiple="true" path="/interchanges" z="CuxRrXLlUbrS2frL8vWweqe1Qh4="/>
+        <field:simple field="bom" id="c_com_turbointernational_metadata_domain_part_CompressorWheel_bom" messageCode="entity_reference_not_managed" messageCodeAttribute="B O M Item" z="lz2FKqpMAZe5vVYNi8C8Zf5K9Mc="/>
     </form:update>
 </div>

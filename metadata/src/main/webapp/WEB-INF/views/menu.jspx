@@ -3,6 +3,11 @@
     <jsp:directive.page contentType="text/html;charset=UTF-8"/>
     <jsp:output omit-xml-declaration="yes"/>
     <menu:menu id="_menu" z="nZaf43BjUg1iM0v70HJVEsXDopc=">
+        <menu:category id="c_part" z="8jvU/3DBcnT/p+skH1XLNhcU870=">
+            <menu:item id="i_part_new" messageCode="global_menu_new" url="/part/parts?form" z="user-managed"/>
+            <menu:item id="i_part_list" messageCode="global_menu_list" url="/part/parts?page=1&amp;size=${empty param.size ? 10 : param.size}" z="user-managed"/>
+        </menu:category>
+        <hr/>
         <menu:category id="c_backplate" z="piiUQGo5Sjy646IBH7538JH0KLM=">
             <menu:item id="i_backplate_new" messageCode="global_menu_new" url="/part/backplates?form" z="user-managed"/>
             <menu:item id="i_backplate_list" messageCode="global_menu_list" url="/part/backplates?page=1&amp;size=${empty param.size ? 10 : param.size}" z="user-managed"/>
@@ -74,10 +79,6 @@
         <menu:category id="c_group" z="IzsiYJAVMvw1MYB2rS012W6p/sQ=">
             <menu:item id="i_group_new" messageCode="global_menu_new" url="/security/groups?form" z="user-managed"/>
             <menu:item id="i_group_list" messageCode="global_menu_list" url="/security/groups?page=1&amp;size=${empty param.size ? 10 : param.size}" z="user-managed"/>
-        </menu:category>
-        <menu:category id="c_part" z="8jvU/3DBcnT/p+skH1XLNhcU870=">
-            <menu:item id="i_part_new" messageCode="global_menu_new" url="/parts?form" z="HZcft31eNNxlmMYOxk2YNfSmERA="/>
-            <menu:item id="i_part_list" messageCode="global_menu_list" url="/parts?page=1&amp;size=${empty param.size ? 10 : param.size}" z="uvBltolq5wNO0PurcUEg4uKRXwc="/>
         </menu:category>
     </menu:menu>
 </div>

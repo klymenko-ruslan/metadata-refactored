@@ -8,8 +8,9 @@
         <field:input field="name" id="c_com_turbointernational_metadata_domain_part_Gasket_name" z="doj+xTKsf1z9YMKcZjvyZHwZ1Js="/>
         <field:input field="description" id="c_com_turbointernational_metadata_domain_part_Gasket_description" z="JDYjUPG6w3ocnlOKlB9hSLfGrTw="/>
         <field:checkbox field="inactive" id="c_com_turbointernational_metadata_domain_part_Gasket_inactive" z="user-managed"/>
-        <field:simple field="interchanges" id="c_com_turbointernational_metadata_domain_part_Gasket_interchanges" messageCode="entity_reference_not_managed" messageCodeAttribute="Interchange" z="gd28Th4FlNB3WIlQWTJf9GPV0sU="/>
         <field:select field="type" id="c_com_turbointernational_metadata_domain_part_Gasket_type" itemValue="id" items="${gaskettypes}" path="/gaskettypes" z="kCk9OELCqK8zkUm+RGJNNW5H7WI="/>
+        <field:select field="interchanges" id="c_com_turbointernational_metadata_domain_part_Gasket_interchanges" itemValue="id" items="${interchanges}" multiple="true" path="/interchanges" z="WQ+Wcw7AgNEC5XffEeI7vDsa1hs="/>
+        <field:simple field="bom" id="c_com_turbointernational_metadata_domain_part_Gasket_bom" messageCode="entity_reference_not_managed" messageCodeAttribute="B O M Item" z="k/9fV0CkGzYXmF13ZkbTKTfGorc="/>
     </form:create>
     <form:dependency dependencies="${dependencies}" id="d_com_turbointernational_metadata_domain_part_Gasket" render="${not empty dependencies}" z="FFKCPli8mGjVQyx+yZyqYJLD/0U="/>
 </div>

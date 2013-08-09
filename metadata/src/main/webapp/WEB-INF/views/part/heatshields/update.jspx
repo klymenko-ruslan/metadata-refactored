@@ -8,9 +8,10 @@
         <field:input field="name" id="c_com_turbointernational_metadata_domain_part_Heatshield_name" z="VgzVy06NTBTnDrZjfB8KNzhDsa0="/>
         <field:input field="description" id="c_com_turbointernational_metadata_domain_part_Heatshield_description" z="78cOVLF1CCwzjrPpbflpAl1aYQs="/>
         <field:checkbox field="inactive" id="c_com_turbointernational_metadata_domain_part_Heatshield_inactive" z="user-managed"/>
-        <field:simple field="interchanges" id="c_com_turbointernational_metadata_domain_part_Heatshield_interchanges" messageCode="entity_reference_not_managed" messageCodeAttribute="Interchange" z="WM6kVybiX3uNb8cmTQW/8Qc716U="/>
         <field:input field="overallDiameter" id="c_com_turbointernational_metadata_domain_part_Heatshield_overallDiameter" validationMessageCode="field_invalid_number" z="gLbz6eDV0jYgN3mYDYqpEfmYd6I="/>
         <field:input field="insideDimater" id="c_com_turbointernational_metadata_domain_part_Heatshield_insideDimater" validationMessageCode="field_invalid_number" z="qubxBm7LtaPMbSFHrfPmsgpmuDY="/>
         <field:input field="inducerDiameter" id="c_com_turbointernational_metadata_domain_part_Heatshield_inducerDiameter" validationMessageCode="field_invalid_number" z="ONGQTh69JA4mebY0hLc2yGG5YT0="/>
+        <field:select field="interchanges" id="c_com_turbointernational_metadata_domain_part_Heatshield_interchanges" itemValue="id" items="${interchanges}" multiple="true" path="/interchanges" z="CT2X8jRjqX5lNKiZ7VrPrOredtg="/>
+        <field:simple field="bom" id="c_com_turbointernational_metadata_domain_part_Heatshield_bom" messageCode="entity_reference_not_managed" messageCodeAttribute="B O M Item" z="NCZfHH+7fq9kgls6eGkYnuTU93g="/>
     </form:update>
 </div>

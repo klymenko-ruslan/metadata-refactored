@@ -2,41 +2,39 @@ package com.turbointernational.metadata.domain.part;
 import com.turbointernational.metadata.domain.type.CoolType;
 import javax.persistence.Column;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.SecondaryTable;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
-import org.springframework.roo.addon.tostring.RooToString;
 
 @RooJavaBean
-@RooToString
 @RooJpaActiveRecord
-@SecondaryTable(name="BEARING_HOUSING", pkJoinColumns=@PrimaryKeyJoinColumn(name = "part_id"))
+@SecondaryTable(name="bearing_housing", pkJoinColumns=@PrimaryKeyJoinColumn(name = "part_id"))
 public class BearingHousing extends Part {
     
-    @ManyToOne
-    @JoinColumn(name="cool_type_id", table = "BEARING_HOUSING")
+    @OneToOne
+    @JoinColumn(name="cool_type_id", table = "bearing_housing")
     private CoolType coolType;
 
-    @Column(name="oil_inlet", table = "BEARING_HOUSING")
+    @Column(name="oil_inlet", table = "bearing_housing")
     private String oilInlet;
 
-    @Column(name="oil_outlet", table = "BEARING_HOUSING")
+    @Column(name="oil_outlet", table = "bearing_housing")
     private String oilOutlet;
 
-    @Column(name="oil", table = "BEARING_HOUSING")
+    @Column(name="oil", table = "bearing_housing")
     private String oil;
 
-    @Column(name="outlet_flange_holes", table = "BEARING_HOUSING")
+    @Column(name="outlet_flange_holes", table = "bearing_housing")
     private String outletFlangeHoles;
 
-    @Column(name="water_ports", table = "BEARING_HOUSING")
+    @Column(name="water_ports", table = "bearing_housing")
     private String waterPorts;
 
-    @Column(name="design_features", table = "BEARING_HOUSING")
+    @Column(name="design_features", table = "bearing_housing")
     private String designFeatures;
 
-    @Column(name="bearing_type", table = "BEARING_HOUSING")
+    @Column(name="bearing_type", table = "bearing_housing")
     private String bearingType;
 }

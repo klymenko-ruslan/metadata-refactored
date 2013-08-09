@@ -16,5 +16,6 @@
         <field:display field="waterPorts" id="s_com_turbointernational_metadata_domain_part_BearingHousing_waterPorts" object="${bearinghousing}" z="XwHR6W2xi0XzuPXPuW3HsdbRiMY="/>
         <field:display field="designFeatures" id="s_com_turbointernational_metadata_domain_part_BearingHousing_designFeatures" object="${bearinghousing}" z="p3GloHmGhLx4rauS0yOXz3CtyLk="/>
         <field:display field="bearingType" id="s_com_turbointernational_metadata_domain_part_BearingHousing_bearingType" object="${bearinghousing}" z="tLVUYHTnpPa9Yjarm8tQoX/oEBE="/>
+        <field:display field="interchanges" id="s_com_turbointernational_metadata_domain_part_BearingHousing_interchanges" object="${bearinghousing}" z="oQaTqcqxUi1r128nCSueiGlY/eM="/>
     </page:show>
 </div>

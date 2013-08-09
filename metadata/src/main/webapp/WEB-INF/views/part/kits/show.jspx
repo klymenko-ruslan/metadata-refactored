@@ -9,5 +9,6 @@
         <field:display field="description" id="s_com_turbointernational_metadata_domain_part_Kit_description" object="${kit}" z="XbS/pSBA5IiKB4nMb1kobzMv7aQ="/>
         <field:display field="inactive" id="s_com_turbointernational_metadata_domain_part_Kit_inactive" object="${kit}" z="yOsXI8kSzEFGeTOCMi/hIXaWMOE="/>
         <field:display field="type" id="s_com_turbointernational_metadata_domain_part_Kit_type" object="${kit}" z="uiDiZkq6nXig3lz4Dghd4p2mx4A="/>
+        <field:display field="interchanges" id="s_com_turbointernational_metadata_domain_part_Kit_interchanges" object="${kit}" z="rtZBFSQumepiRrrOos73zRRt3g0="/>
     </page:show>
 </div>

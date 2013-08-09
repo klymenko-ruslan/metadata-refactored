@@ -4,7 +4,7 @@
     <jsp:output omit-xml-declaration="yes"/>
     <form:update id="fu_com_turbointernational_metadata_domain_security_Group" modelAttribute="group" path="/security/groups" versionField="Version" z="93lgGXhFUq3PjmwDQVR82YvuqFI=">
         <field:input field="name" id="c_com_turbointernational_metadata_domain_security_Group_name" z="QvNiJ1wQ8klL34dakMUgsih1YxI="/>
-        <field:select field="users" id="c_com_turbointernational_metadata_domain_security_Group_users" itemValue="id" items="${users}" multiple="true" path="/users" z="IEvPCdXZ1pfKDsD2ZQu0zs1pRJ8="/>
+        <field:select field="users" id="c_com_turbointernational_metadata_domain_security_Group_users" itemValue="id" items="${users}" multiple="true" path="/security/users" z="+TThn3CKuMP4nqXZmD7n6Gj6fBo="/>
         <field:select field="roles" id="c_com_turbointernational_metadata_domain_security_Group_roles" itemValue="id" items="${roles}" multiple="true" path="/roles" z="zeUXx5PFNkLxXBZmHtRykw68XJU="/>
     </form:update>
 </div>

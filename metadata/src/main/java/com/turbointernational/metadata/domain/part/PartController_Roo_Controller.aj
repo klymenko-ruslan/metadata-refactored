@@ -3,6 +3,7 @@
 
 package com.turbointernational.metadata.domain.part;
 
+import com.turbointernational.metadata.domain.bom.BOMItem;
 import com.turbointernational.metadata.domain.interchange.Interchange;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.Part;
@@ -25,24 +26,24 @@ privileged aspect PartController_Roo_Controller {
     public String PartController.create(@Valid Part part, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, part);
-            return "parts/create";
+            return "part/parts/create";
         }
         uiModel.asMap().clear();
         part.persist();
-        return "redirect:/parts/" + encodeUrlPathSegment(part.getId().toString(), httpServletRequest);
+        return "redirect:/part/parts/" + encodeUrlPathSegment(part.getId().toString(), httpServletRequest);
     }
     
     @RequestMapping(params = "form", produces = "text/html")
     public String PartController.createForm(Model uiModel) {
         populateEditForm(uiModel, new Part());
-        return "parts/create";
+        return "part/parts/create";
     }
     
     @RequestMapping(value = "/{id}", produces = "text/html")
     public String PartController.show(@PathVariable("id") Long id, Model uiModel) {
         uiModel.addAttribute("part", Part.findPart(id));
         uiModel.addAttribute("itemId", id);
-        return "parts/show";
+        return "part/parts/show";
     }
     
     @RequestMapping(produces = "text/html")
@@ -56,24 +57,24 @@ privileged aspect PartController_Roo_Controller {
         } else {
             uiModel.addAttribute("parts", Part.findAllParts());
         }
-        return "parts/list";
+        return "part/parts/list";
     }
     
     @RequestMapping(method = RequestMethod.PUT, produces = "text/html")
     public String PartController.update(@Valid Part part, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, part);
-            return "parts/update";
+            return "part/parts/update";
         }
         uiModel.asMap().clear();
         part.merge();
-        return "redirect:/parts/" + encodeUrlPathSegment(part.getId().toString(), httpServletRequest);
+        return "redirect:/part/parts/" + encodeUrlPathSegment(part.getId().toString(), httpServletRequest);
     }
     
     @RequestMapping(value = "/{id}", params = "form", produces = "text/html")
     public String PartController.updateForm(@PathVariable("id") Long id, Model uiModel) {
         populateEditForm(uiModel, Part.findPart(id));
-        return "parts/update";
+        return "part/parts/update";
     }
     
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "text/html")
@@ -83,11 +84,12 @@ privileged aspect PartController_Roo_Controller {
         uiModel.asMap().clear();
         uiModel.addAttribute("page", (page == null) ? "1" : page.toString());
         uiModel.addAttribute("size", (size == null) ? "10" : size.toString());
-        return "redirect:/parts";
+        return "redirect:/part/parts";
     }
     
     void PartController.populateEditForm(Model uiModel, Part part) {
         uiModel.addAttribute("part", part);
+        uiModel.addAttribute("bomitems", BOMItem.findAllBOMItems());
         uiModel.addAttribute("interchanges", Interchange.findAllInterchanges());
         uiModel.addAttribute("manufacturers", Manufacturer.findAllManufacturers());
     }

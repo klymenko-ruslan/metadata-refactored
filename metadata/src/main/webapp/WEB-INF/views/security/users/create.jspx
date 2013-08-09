@@ -5,9 +5,9 @@
     <form:create id="fc_com_turbointernational_metadata_domain_security_User" modelAttribute="user" path="/security/users" render="${empty dependencies}" z="Ck/IgtInLsXCy9OABXhsSZuuYsU=">
         <field:input field="name" id="c_com_turbointernational_metadata_domain_security_User_name" z="jN4Sc4xkuJvYGnY4kRmrA0+IN60="/>
         <field:input field="email" id="c_com_turbointernational_metadata_domain_security_User_email" validationMessageCode="field_invalid_email" z="BiL7jDQNt4sidpIvSUFk13d/xlc="/>
-        <field:input field="password" id="c_com_turbointernational_metadata_domain_security_User_password" z="4lyo6UVKguCfUz5jXyicfcbHFMM="/>
         <field:checkbox field="enabled" id="c_com_turbointernational_metadata_domain_security_User_enabled" z="dl14lBcEf44Q8kW3EN/jp79QsZo="/>
         <field:select field="groups" id="c_com_turbointernational_metadata_domain_security_User_groups" itemValue="id" items="${groups}" multiple="true" path="/security/groups" z="ikJOSen3rOjr8UW0m4blu7PSTmg="/>
+        <field:input field="password" id="c_com_turbointernational_metadata_domain_security_User_password" z="4lyo6UVKguCfUz5jXyicfcbHFMM="/>
     </form:create>
     <form:dependency dependencies="${dependencies}" id="d_com_turbointernational_metadata_domain_security_User" render="${not empty dependencies}" z="e6BgV4D3u+IQRWnfZO2ZKX8VSNE="/>
 </div>

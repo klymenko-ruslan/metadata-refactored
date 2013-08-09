@@ -9,6 +9,7 @@
             <table:column id="c_com_turbointernational_metadata_domain_part_Heatshield_name" property="name" z="1jetEyP2V80pDiahGQ5LS7Z3qVk="/>
             <table:column id="c_com_turbointernational_metadata_domain_part_Heatshield_description" property="description" z="D2Goh7/q9+QCsjZvGqXFULB4tPs="/>
             <table:column id="c_com_turbointernational_metadata_domain_part_Heatshield_inactive" property="inactive" z="gdeedhT4UKa5TOArlQq8F2ygDnY="/>
+            <table:column id="c_com_turbointernational_metadata_domain_part_Heatshield_interchanges" property="interchanges" z="JDRRwgpJda3QuPvPtCeaYZV0LUg="/>
         </table:table>
     </page:list>
 </div>

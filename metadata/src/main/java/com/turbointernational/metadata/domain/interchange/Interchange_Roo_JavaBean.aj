@@ -5,7 +5,7 @@ package com.turbointernational.metadata.domain.interchange;
 
 import com.turbointernational.metadata.domain.interchange.Interchange;
 import com.turbointernational.metadata.domain.part.Part;
-import java.util.List;
+import java.util.Set;
 
 privileged aspect Interchange_Roo_JavaBean {
     
@@ -33,11 +33,11 @@ privileged aspect Interchange_Roo_JavaBean {
         this.description = description;
     }
     
-    public List<Part> Interchange.getParts() {
+    public Set<Part> Interchange.getParts() {
         return this.parts;
     }
     
-    public void Interchange.setParts(List<Part> parts) {
+    public void Interchange.setParts(Set<Part> parts) {
         this.parts = parts;
     }
     

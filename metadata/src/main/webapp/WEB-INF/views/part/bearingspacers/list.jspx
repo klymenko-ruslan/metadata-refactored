@@ -9,6 +9,7 @@
             <table:column id="c_com_turbointernational_metadata_domain_part_BearingSpacer_name" property="name" z="xDsrOJkVx1fNgcaFxVHQVWETYPk="/>
             <table:column id="c_com_turbointernational_metadata_domain_part_BearingSpacer_description" property="description" z="IGwbwclX1tn9pkMs2WZACjHQiHU="/>
             <table:column id="c_com_turbointernational_metadata_domain_part_BearingSpacer_inactive" property="inactive" z="Fj62UopOEjM999xL8A0QfpETHt8="/>
+            <table:column id="c_com_turbointernational_metadata_domain_part_BearingSpacer_interchanges" property="interchanges" z="tWm0ZCGllleDqfkeQiXrzdydrmY="/>
         </table:table>
     </page:list>
 </div>

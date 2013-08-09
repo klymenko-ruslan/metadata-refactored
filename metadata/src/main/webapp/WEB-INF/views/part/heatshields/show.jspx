@@ -11,5 +11,6 @@
         <field:display field="overallDiameter" id="s_com_turbointernational_metadata_domain_part_Heatshield_overallDiameter" object="${heatshield}" z="NZW+90GgnMcX2KiysTQBdmIzImY="/>
         <field:display field="insideDimater" id="s_com_turbointernational_metadata_domain_part_Heatshield_insideDimater" object="${heatshield}" z="kW/arNFZFov0+6+3nUfFEugulc0="/>
         <field:display field="inducerDiameter" id="s_com_turbointernational_metadata_domain_part_Heatshield_inducerDiameter" object="${heatshield}" z="oBJW4cWDKnQRCcDgk7HCInb29Yw="/>
+        <field:display field="interchanges" id="s_com_turbointernational_metadata_domain_part_Heatshield_interchanges" object="${heatshield}" z="7EPpS9O4tp8XloA3TI1lXy7Iw7A="/>
     </page:show>
 </div>
