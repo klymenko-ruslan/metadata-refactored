@@ -9,7 +9,6 @@
         <field:input field="description" id="c_com_turbointernational_metadata_domain_part_Backplate_description" z="7h58isWixv/uNYjm97yK8CYUvvA="/>
         <field:checkbox field="inactive" id="c_com_turbointernational_metadata_domain_part_Backplate_inactive" z="user-managed"/>
         <field:select field="sealType" id="c_com_turbointernational_metadata_domain_part_Backplate_sealType" itemValue="id" items="${sealtypes}" path="/sealtypes" z="vgC8HkOuwVVw14B666xJ7Om/ICA="/>
-        <field:smart-select field="sealType" id="" itemValue="id" items="${sealtypes}" path="/sealtypes"/>
         <field:input field="styleCompressorWheel" id="c_com_turbointernational_metadata_domain_part_Backplate_styleCompressorWheel" z="iQtG8+G4toaovVtXDVGHRo0a5lI="/>
         <field:input field="sealTypeString" id="c_com_turbointernational_metadata_domain_part_Backplate_sealTypeString" z="K00/mnm/KPCtzIVDmF/FqxrPdjA="/>
         <field:input field="overallDiameter" id="c_com_turbointernational_metadata_domain_part_Backplate_overallDiameter" validationMessageCode="field_invalid_number" z="WByL17rFznqu1/VPfOCom3n/fLM="/>
