@@ -1,10 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="57201f47-63f6-4e8a-8d7c-9dc8510ea208" name="Default" comment="" />
+    <list default="true" id="57201f47-63f6-4e8a-8d7c-9dc8510ea208" name="Default" comment="">
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../passwordReset/.idea/.name" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../passwordReset/.idea/codeStyleSettings.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../passwordReset/.idea/encodings.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../passwordReset/.idea/jsLibraryMappings.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../passwordReset/.idea/misc.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../passwordReset/.idea/modules.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../passwordReset/.idea/passwordReset.iml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../passwordReset/.idea/scopes/scope_settings.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../passwordReset/.idea/vcs.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../passwordReset/.idea/workspace.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../passwordReset/_notes.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../passwordReset/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../passwordReset/js/gen_validatorv4.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../passwordReset/js/jquery-1.10.2.min.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../passwordReset/js/localhost.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../passwordReset/js/localhost_files/AboutCrtl.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../passwordReset/js/localhost_files/about.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../passwordReset/js/localhost_files/angular-cookies.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../passwordReset/js/localhost_files/angular-resource.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../passwordReset/js/localhost_files/angular-sanitize.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../passwordReset/js/localhost_files/angular.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../passwordReset/js/localhost_files/app.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../passwordReset/js/localhost_files/bootstrap-affix.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../passwordReset/js/localhost_files/bootstrap-alert.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../passwordReset/js/localhost_files/bootstrap-button.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../passwordReset/js/localhost_files/bootstrap-carousel.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../passwordReset/js/localhost_files/bootstrap-collapse.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../passwordReset/js/localhost_files/bootstrap-dropdown.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../passwordReset/js/localhost_files/bootstrap-modal.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../passwordReset/js/localhost_files/bootstrap-popover.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../passwordReset/js/localhost_files/bootstrap-scrollspy.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../passwordReset/js/localhost_files/bootstrap-tab.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../passwordReset/js/localhost_files/bootstrap-tooltip.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../passwordReset/js/localhost_files/bootstrap-transition.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../passwordReset/js/localhost_files/bootstrap-typeahead.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../passwordReset/js/localhost_files/ga.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../passwordReset/js/localhost_files/jeff-profile.jpg" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../passwordReset/js/localhost_files/jquery.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../passwordReset/js/localhost_files/livereload.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../passwordReset/js/localhost_files/resume.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../passwordReset/js/localhost_files/twitter-bird-light-bgs.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../passwordReset/password-page.html" afterPath="" />
+    </list>
     <ignored path="ngPasswordReset.iws" />
     <ignored path=".idea/workspace.xml" />
-    <file path="/Dummy.txt" changelist="57201f47-63f6-4e8a-8d7c-9dc8510ea208" time="1375660460596" ignored="false" />
+    <file path="/Dummy.txt" changelist="57201f47-63f6-4e8a-8d7c-9dc8510ea208" time="1375750483632" ignored="false" />
     <file path="$PROJECT_DIR$/../passwordReset/password-page.html" changelist="57201f47-63f6-4e8a-8d7c-9dc8510ea208" time="1375078917644" ignored="false" />
     <file path="/password-page.html" changelist="57201f47-63f6-4e8a-8d7c-9dc8510ea208" time="1375078917644" ignored="false" />
     <file path="/passwordReset.html" changelist="57201f47-63f6-4e8a-8d7c-9dc8510ea208" time="1375357938203" ignored="false" />
@@ -109,7 +152,6 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -180,6 +222,7 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -189,8 +232,8 @@
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="FullScreen" value="false" />
     <property name="DefaultHtmlFileTemplate" value="Html5" />
-    <property name="options.splitter.details.proportions" value="0.2" />
     <property name="options.searchVisible" value="true" />
+    <property name="options.splitter.details.proportions" value="0.2" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -333,44 +376,32 @@
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/app/views/user-verification.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/scripts/controllers/user-verification.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="1" column="144" selection-start="14" selection-end="14" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="1" column="144" selection-start="14" selection-end="14" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/scripts/app.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="9" column="41" selection-start="321" selection-end="321" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="9" column="41" selection-start="321" selection-end="321" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/views/user-verification.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/scripts/controllers/user-verification.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="18" column="125" selection-start="608" selection-end="608" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="18" column="125" selection-start="608" selection-end="608" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/scripts/app.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="9" column="41" selection-start="321" selection-end="321" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="9" column="41" selection-start="321" selection-end="321" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/test/spec/controllers/user-verification.js">
@@ -380,40 +411,27 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/views/password-reset.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="11" column="112" selection-start="993" selection-end="993" vertical-scroll-proportion="0.23305085">
-          <folding />
-        </state>
+        <state line="11" column="112" selection-start="993" selection-end="993" vertical-scroll-proportion="0.23305085" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/scripts/app.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="17" column="15" selection-start="527" selection-end="527" vertical-scroll-proportion="0.34836066">
-          <folding />
-        </state>
+        <state line="17" column="15" selection-start="527" selection-end="527" vertical-scroll-proportion="0.34836066" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/scripts/controllers/user-verification.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="15" column="8" selection-start="549" selection-end="549" vertical-scroll-proportion="0.30737704">
-          <folding />
-        </state>
+        <state line="15" column="8" selection-start="549" selection-end="549" vertical-scroll-proportion="0.30737704" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/views/user-verification.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="9" column="7" selection-start="584" selection-end="584" vertical-scroll-proportion="0.19067797">
-          <folding />
-        </state>
+        <state line="9" column="7" selection-start="584" selection-end="584" vertical-scroll-proportion="0.19067797" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/index.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="76" column="17" selection-start="3363" selection-end="3363" vertical-scroll-proportion="0.80932206">
-          <folding>
-            <marker date="1375671415000" expanded="true" signature="-1:-1" placeholder="..." />
-            <marker date="1375671415000" expanded="true" signature="-1:-1" placeholder="..." />
-          </folding>
-        </state>
+        <state line="76" column="17" selection-start="3363" selection-end="3363" vertical-scroll-proportion="0.80932206" />
       </provider>
     </entry>
   </component>
