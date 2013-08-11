@@ -5,11 +5,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.SecondaryTable;
+import net.sf.jsog.JSOG;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
+import org.springframework.roo.addon.json.RooJson;
 
 @RooJavaBean
 @RooJpaActiveRecord
+@RooJson
 @SecondaryTable(name="bearing_housing", pkJoinColumns=@PrimaryKeyJoinColumn(name = "part_id"))
 public class BearingHousing extends Part {
     
@@ -37,4 +40,9 @@ public class BearingHousing extends Part {
 
     @Column(name="bearing_type", table = "bearing_housing")
     private String bearingType;
+
+    @Override
+    public void addIndexFields(JSOG partObject) {
+        partObject.put("cool_type_name", coolType.getName());
+    }
 }

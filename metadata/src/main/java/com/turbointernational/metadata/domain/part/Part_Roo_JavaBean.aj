@@ -3,11 +3,10 @@
 
 package com.turbointernational.metadata.domain.part;
 
-import com.turbointernational.metadata.domain.bom.BOMItem;
-import com.turbointernational.metadata.domain.interchange.Interchange;
+import com.turbointernational.metadata.domain.other.Interchange;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.Part;
-import java.util.Set;
+import com.turbointernational.metadata.util.ElasticSearch;
 
 privileged aspect Part_Roo_JavaBean {
     
@@ -59,20 +58,20 @@ privileged aspect Part_Roo_JavaBean {
         this.inactive = inactive;
     }
     
-    public Set<Interchange> Part.getInterchanges() {
-        return this.interchanges;
+    public Interchange Part.getInterchange() {
+        return this.interchange;
     }
     
-    public void Part.setInterchanges(Set<Interchange> interchanges) {
-        this.interchanges = interchanges;
+    public void Part.setInterchange(Interchange interchange) {
+        this.interchange = interchange;
     }
     
-    public Set<BOMItem> Part.getBom() {
-        return this.bom;
+    public ElasticSearch Part.getElasticSearch() {
+        return this.elasticSearch;
     }
     
-    public void Part.setBom(Set<BOMItem> bom) {
-        this.bom = bom;
+    public void Part.setElasticSearch(ElasticSearch elasticSearch) {
+        this.elasticSearch = elasticSearch;
     }
     
 }

@@ -6,7 +6,7 @@ package com.turbointernational.metadata.domain.bom;
 import com.turbointernational.metadata.domain.bom.BOMAlternative;
 import com.turbointernational.metadata.domain.bom.BOMItem;
 import com.turbointernational.metadata.domain.part.Part;
-import java.util.List;
+import java.util.Set;
 
 privileged aspect BOMItem_Roo_JavaBean {
     
@@ -16,14 +16,6 @@ privileged aspect BOMItem_Roo_JavaBean {
     
     public void BOMItem.setId(Long id) {
         this.id = id;
-    }
-    
-    public Part BOMItem.getParent() {
-        return this.parent;
-    }
-    
-    public void BOMItem.setParent(Part parent) {
-        this.parent = parent;
     }
     
     public Part BOMItem.getChild() {
@@ -42,11 +34,11 @@ privileged aspect BOMItem_Roo_JavaBean {
         this.quantity = quantity;
     }
     
-    public List<BOMAlternative> BOMItem.getAlternatives() {
+    public Set<BOMAlternative> BOMItem.getAlternatives() {
         return this.alternatives;
     }
     
-    public void BOMItem.setAlternatives(List<BOMAlternative> alternatives) {
+    public void BOMItem.setAlternatives(Set<BOMAlternative> alternatives) {
         this.alternatives = alternatives;
     }
     

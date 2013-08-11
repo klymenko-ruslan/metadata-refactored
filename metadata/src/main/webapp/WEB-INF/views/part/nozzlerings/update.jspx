@@ -8,7 +8,7 @@
         <field:input field="name" id="c_com_turbointernational_metadata_domain_part_NozzleRing_name" z="Wtc5lvjh7+wSQi8QFMdoWrj8WOA="/>
         <field:input field="description" id="c_com_turbointernational_metadata_domain_part_NozzleRing_description" z="xsUaLXTWua/ts15p4wXhAvauoZQ="/>
         <field:checkbox field="inactive" id="c_com_turbointernational_metadata_domain_part_NozzleRing_inactive" z="user-managed"/>
-        <field:select field="interchanges" id="c_com_turbointernational_metadata_domain_part_NozzleRing_interchanges" itemValue="id" items="${interchanges}" multiple="true" path="/interchanges" z="EJha2OPJi8xJhsHfJENdV5GOdbQ="/>
-        <field:simple field="bom" id="c_com_turbointernational_metadata_domain_part_NozzleRing_bom" messageCode="entity_reference_not_managed" messageCodeAttribute="B O M Item" z="YztMO/SHU3MbvMhpF63aQ9GJu3g="/>
+        <field:select field="interchange" id="c_com_turbointernational_metadata_domain_part_NozzleRing_interchange" itemValue="id" items="${interchanges}" path="/other/interchange" z="xAB5HY++mZHdxAJ7VggTysqS28c="/>
+        <field:input field="elasticSearch" id="c_com_turbointernational_metadata_domain_part_NozzleRing_elasticSearch" z="0VVwooQmXQJ2s4E7bUNUXLwJUhs="/>
     </form:update>
 </div>

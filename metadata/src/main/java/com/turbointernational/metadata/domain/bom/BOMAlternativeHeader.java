@@ -5,9 +5,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
+import org.springframework.roo.addon.json.RooJson;
 
 @RooJavaBean
 @RooJpaActiveRecord(table="BOM_ALT_HEADER")
+@RooJson
 public class BOMAlternativeHeader {
 
     @Id

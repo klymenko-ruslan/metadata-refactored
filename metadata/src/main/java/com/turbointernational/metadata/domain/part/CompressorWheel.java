@@ -4,9 +4,11 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.SecondaryTable;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
+import org.springframework.roo.addon.json.RooJson;
 
 @RooJavaBean
 @RooJpaActiveRecord
+@RooJson
 @SecondaryTable(name="COMPRESSOR_WHEEL", pkJoinColumns=@PrimaryKeyJoinColumn(name = "part_id"))
 public class CompressorWheel extends Part {
     @Column(name="inducer_oa", table = "COMPRESSOR_WHEEL")

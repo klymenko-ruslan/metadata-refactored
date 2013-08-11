@@ -15,6 +15,7 @@
         <field:display field="stemDiameterE" id="s_com_turbointernational_metadata_domain_part_TurbineWheel_stemDiameterE" object="${turbinewheel}" z="yzUZe9dOi2N+Snngedh1WYY/NY8="/>
         <field:display field="shaftThreadF" id="s_com_turbointernational_metadata_domain_part_TurbineWheel_shaftThreadF" object="${turbinewheel}" z="2njJl4CXwpSM/YQrWm4o8Xf8/lE="/>
         <field:display field="numberOfBlades" id="s_com_turbointernational_metadata_domain_part_TurbineWheel_numberOfBlades" object="${turbinewheel}" z="gyJMvfYCkt5BUDpirFP4d8/qDAc="/>
-        <field:display field="interchanges" id="s_com_turbointernational_metadata_domain_part_TurbineWheel_interchanges" object="${turbinewheel}" z="4u/3LCW63r8Oc0FTbYnvLSbUFIo="/>
+        <field:display field="interchange" id="s_com_turbointernational_metadata_domain_part_TurbineWheel_interchange" object="${turbinewheel}" z="pwocmWLgd3DUkgh/au/y3d4bIZA="/>
+        <field:display field="elasticSearch" id="s_com_turbointernational_metadata_domain_part_TurbineWheel_elasticSearch" object="${turbinewheel}" z="Qbj+p3gZay4KiMaGF7fyDXCJ3T0="/>
     </page:show>
 </div>

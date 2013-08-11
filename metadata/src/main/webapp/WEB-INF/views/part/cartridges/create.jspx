@@ -8,8 +8,8 @@
         <field:input field="name" id="c_com_turbointernational_metadata_domain_part_Cartridge_name" z="gRc9TI8m7nGHqDfQr0gIPi96OVs="/>
         <field:input field="description" id="c_com_turbointernational_metadata_domain_part_Cartridge_description" z="5qvwaCXnNnqqhkOsiHJQKRaQoBw="/>
         <field:checkbox field="inactive" id="c_com_turbointernational_metadata_domain_part_Cartridge_inactive" z="user-managed"/>
-        <field:select field="interchanges" id="c_com_turbointernational_metadata_domain_part_Cartridge_interchanges" itemValue="id" items="${interchanges}" multiple="true" path="/interchanges" z="eaaw/xJjgrvRRdZNl1ppMTgRpHw="/>
-        <field:simple field="bom" id="c_com_turbointernational_metadata_domain_part_Cartridge_bom" messageCode="entity_reference_not_managed" messageCodeAttribute="B O M Item" z="UMSlKGL9U4SgNprDVtS8VqBOi4c="/>
+        <field:select field="interchange" id="c_com_turbointernational_metadata_domain_part_Cartridge_interchange" itemValue="id" items="${interchanges}" path="/other/interchange" z="NreFvfRJLySipRl4Xi0ovTYk7Eg="/>
+        <field:input field="elasticSearch" id="c_com_turbointernational_metadata_domain_part_Cartridge_elasticSearch" z="c8ATJ5ezqZB5eiApBlVYuNVIEIk="/>
     </form:create>
     <form:dependency dependencies="${dependencies}" id="d_com_turbointernational_metadata_domain_part_Cartridge" render="${not empty dependencies}" z="SWRC75oc2XwhUPOj4+BWv9nRhno="/>
 </div>

@@ -10,9 +10,11 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
+import org.springframework.roo.addon.json.RooJson;
 
 @RooJavaBean
 @RooJpaActiveRecord
+@RooJson
 @Table(name="TURBO_TYPE", uniqueConstraints=@UniqueConstraint(columnNames={"name"}))
 public class TurboType {
 

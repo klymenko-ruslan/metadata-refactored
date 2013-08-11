@@ -14,7 +14,7 @@
         <field:input field="outsideDiameterMax" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_outsideDiameterMax" validationMessageCode="field_invalid_number" z="sIqrkLrPAgK8vutgd6tkDznPqxY="/>
         <field:input field="insideDiameterMin" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_insideDiameterMin" validationMessageCode="field_invalid_number" z="OL9hJ/EyNpNrpqufDKHBcQBejNU="/>
         <field:input field="insideDiameterMax" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_insideDiameterMax" validationMessageCode="field_invalid_number" z="x2uFuJ2BMvQgYTApQpb/v9pJf7I="/>
-        <field:select field="interchanges" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_interchanges" itemValue="id" items="${interchanges}" multiple="true" path="/interchanges" z="cEXQvME9F92jFZrvvmoAypD9Pbo="/>
-        <field:simple field="bom" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_bom" messageCode="entity_reference_not_managed" messageCodeAttribute="B O M Item" z="ohDxXaOn0zfr/SkgfSDLugQages="/>
+        <field:select field="interchange" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_interchange" itemValue="id" items="${interchanges}" path="/other/interchange" z="vI7ouSIL/qPVZzvS4nNrFSxgM14="/>
+        <field:input field="elasticSearch" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_elasticSearch" z="uAB4xRQDJ9NtpisXpcOuQh6YDac="/>
     </form:update>
 </div>

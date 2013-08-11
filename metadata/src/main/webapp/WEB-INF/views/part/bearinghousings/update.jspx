@@ -16,7 +16,7 @@
         <field:input field="waterPorts" id="c_com_turbointernational_metadata_domain_part_BearingHousing_waterPorts" z="8oN2i6GqBEICNmXF5KrJlsD6CTo="/>
         <field:input field="designFeatures" id="c_com_turbointernational_metadata_domain_part_BearingHousing_designFeatures" z="m8OmE6p6AjimaraXGWNdkoaSRYY="/>
         <field:input field="bearingType" id="c_com_turbointernational_metadata_domain_part_BearingHousing_bearingType" z="5fUueF+jN8G0PuKhHOM2dYo8MR8="/>
-        <field:select field="interchanges" id="c_com_turbointernational_metadata_domain_part_BearingHousing_interchanges" itemValue="id" items="${interchanges}" multiple="true" path="/interchanges" z="I9aSEBcJjmVbylUOZhZUDNaoZaA="/>
-        <field:simple field="bom" id="c_com_turbointernational_metadata_domain_part_BearingHousing_bom" messageCode="entity_reference_not_managed" messageCodeAttribute="B O M Item" z="5LFct5ziSkIY4/BOx2OZn6j20m0="/>
+        <field:select field="interchange" id="c_com_turbointernational_metadata_domain_part_BearingHousing_interchange" itemValue="id" items="${interchanges}" path="/other/interchange" z="fh0NZ3sAkE0gV6OEK0R0GRO6Jt8="/>
+        <field:input field="elasticSearch" id="c_com_turbointernational_metadata_domain_part_BearingHousing_elasticSearch" z="KOsSaKyFNliWuXrMer73GnOcIlM="/>
     </form:update>
 </div>

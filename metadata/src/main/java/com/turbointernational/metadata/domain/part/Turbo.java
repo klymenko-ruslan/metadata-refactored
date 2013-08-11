@@ -5,6 +5,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.SecondaryTable;
+import net.sf.jsog.JSOG;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 
@@ -20,5 +21,11 @@ public class Turbo extends Part {
     @OneToOne
     @JoinColumn(name="cool_type_id", table = "turbo")
     private CoolType coolType;
+
+    @Override
+    public void addIndexFields(JSOG partObject) {
+        partObject.put("turbo_model_name", model.getName());
+        partObject.put("cool_type_name", coolType.getName());
+    }
     
 }

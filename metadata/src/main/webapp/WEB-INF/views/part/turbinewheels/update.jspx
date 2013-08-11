@@ -15,7 +15,7 @@
         <field:input field="stemDiameterE" id="c_com_turbointernational_metadata_domain_part_TurbineWheel_stemDiameterE" validationMessageCode="field_invalid_number" z="GQKfOnSanIAWB7hnAIYieC1gJSg="/>
         <field:input field="shaftThreadF" id="c_com_turbointernational_metadata_domain_part_TurbineWheel_shaftThreadF" z="wMNPcTQelqdf9IGPS5tUivUdr/c="/>
         <field:input field="numberOfBlades" id="c_com_turbointernational_metadata_domain_part_TurbineWheel_numberOfBlades" z="F3XqcU26fZZ0Fzsm/ALtoq6spRE="/>
-        <field:select field="interchanges" id="c_com_turbointernational_metadata_domain_part_TurbineWheel_interchanges" itemValue="id" items="${interchanges}" multiple="true" path="/interchanges" z="iClV4+dbl1jNzpGQo+XX6YGhhf0="/>
-        <field:simple field="bom" id="c_com_turbointernational_metadata_domain_part_TurbineWheel_bom" messageCode="entity_reference_not_managed" messageCodeAttribute="B O M Item" z="L9oHYV5D31kukGbwFsyVy9yVvcY="/>
+        <field:select field="interchange" id="c_com_turbointernational_metadata_domain_part_TurbineWheel_interchange" itemValue="id" items="${interchanges}" path="/other/interchange" z="T4w3AaYbE531ni7VKjBuvChFYVk="/>
+        <field:input field="elasticSearch" id="c_com_turbointernational_metadata_domain_part_TurbineWheel_elasticSearch" z="RTAPmnBZ93v2Nyt97WnrsL4tY6w="/>
     </form:update>
 </div>

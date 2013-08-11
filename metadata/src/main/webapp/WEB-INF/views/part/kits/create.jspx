@@ -9,8 +9,8 @@
         <field:input field="description" id="c_com_turbointernational_metadata_domain_part_Kit_description" z="+xROpvmpGkJ94PCGgELto7ndBI8="/>
         <field:checkbox field="inactive" id="c_com_turbointernational_metadata_domain_part_Kit_inactive" z="user-managed"/>
         <field:select field="type" id="c_com_turbointernational_metadata_domain_part_Kit_type" itemValue="id" items="${kittypes}" path="/kittypes" z="ZFE+r8qkudYb0tm0TQe86OVt3TQ="/>
-        <field:select field="interchanges" id="c_com_turbointernational_metadata_domain_part_Kit_interchanges" itemValue="id" items="${interchanges}" multiple="true" path="/interchanges" z="RxwP57xDjFvD+X9u8Jx5H+h0+t0="/>
-        <field:simple field="bom" id="c_com_turbointernational_metadata_domain_part_Kit_bom" messageCode="entity_reference_not_managed" messageCodeAttribute="B O M Item" z="w1TSMIgmt60axVD5z7i2TD86/HU="/>
+        <field:select field="interchange" id="c_com_turbointernational_metadata_domain_part_Kit_interchange" itemValue="id" items="${interchanges}" path="/other/interchange" z="HxzUopnvI+ePD4ojKU3IPQbm4a4="/>
+        <field:input field="elasticSearch" id="c_com_turbointernational_metadata_domain_part_Kit_elasticSearch" z="za6y9l+t18MnaZhQl6ioYI55PQs="/>
     </form:create>
     <form:dependency dependencies="${dependencies}" id="d_com_turbointernational_metadata_domain_part_Kit" render="${not empty dependencies}" z="GYqt4u/DMGE98vApZmHmzGpcj3M="/>
 </div>

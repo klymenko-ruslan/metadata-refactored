@@ -7,9 +7,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
+import org.springframework.roo.addon.json.RooJson;
 
 @RooJavaBean
 @RooJpaActiveRecord(table="BOM_ALT_ITEM")
+@RooJson
 public class BOMAlternative {
 
     @Id

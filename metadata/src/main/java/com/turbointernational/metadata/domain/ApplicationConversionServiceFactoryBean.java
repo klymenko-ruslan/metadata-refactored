@@ -1,6 +1,6 @@
 package com.turbointernational.metadata.domain;
 
-import com.turbointernational.metadata.domain.interchange.Interchange;
+import com.turbointernational.metadata.domain.other.Interchange;
 import com.turbointernational.metadata.domain.security.Group;
 import com.turbointernational.metadata.domain.security.Role;
 import com.turbointernational.metadata.domain.security.User;
@@ -11,6 +11,7 @@ import com.turbointernational.metadata.domain.type.ManufacturerType;
 import com.turbointernational.metadata.domain.type.PartType;
 import com.turbointernational.metadata.domain.type.SealType;
 import com.turbointernational.metadata.domain.type.TurboType;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.format.support.FormattingConversionServiceFactoryBean;

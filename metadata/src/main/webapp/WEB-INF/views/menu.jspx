@@ -80,5 +80,9 @@
             <menu:item id="i_group_new" messageCode="global_menu_new" url="/security/groups?form" z="user-managed"/>
             <menu:item id="i_group_list" messageCode="global_menu_list" url="/security/groups?page=1&amp;size=${empty param.size ? 10 : param.size}" z="user-managed"/>
         </menu:category>
+        <menu:category id="c_interchange" z="7DRv8awrF0BnNEqELn4ETy2ONaI=">
+            <menu:item id="i_interchange_new" messageCode="global_menu_new" url="/other/interchange?form" z="/t0Cd8q3mvsankN0kGmhKSV8bSQ="/>
+            <menu:item id="i_interchange_list" messageCode="global_menu_list" url="/other/interchange?page=1&amp;size=${empty param.size ? 10 : param.size}" z="hAWYdva/WTGOXjJdqA7t2ovd6Ds="/>
+        </menu:category>
     </menu:menu>
 </div>

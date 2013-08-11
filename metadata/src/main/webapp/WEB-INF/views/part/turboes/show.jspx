@@ -10,6 +10,7 @@
         <field:display field="inactive" id="s_com_turbointernational_metadata_domain_part_Turbo_inactive" object="${turbo}" z="Lg6IX3i5f9mltmN9N0k7i4jYxjg="/>
         <field:display field="model" id="s_com_turbointernational_metadata_domain_part_Turbo_model" object="${turbo}" z="lI1cw3T0jNWqdV9P3HocqHKLxHM="/>
         <field:display field="coolType" id="s_com_turbointernational_metadata_domain_part_Turbo_coolType" object="${turbo}" z="OYvGTOa7UMg6b2AbNtAIZUs7Vik="/>
-        <field:display field="interchanges" id="s_com_turbointernational_metadata_domain_part_Turbo_interchanges" object="${turbo}" z="MKm9nYYdMsqkApkty/0piwWyths="/>
+        <field:display field="interchange" id="s_com_turbointernational_metadata_domain_part_Turbo_interchange" object="${turbo}" z="M6QHlzb7lmSlEAAf6n/pdZ7dfxY="/>
+        <field:display field="elasticSearch" id="s_com_turbointernational_metadata_domain_part_Turbo_elasticSearch" object="${turbo}" z="AOEX/7e7Lbx514TFhI4tpdchC9w="/>
     </page:show>
 </div>

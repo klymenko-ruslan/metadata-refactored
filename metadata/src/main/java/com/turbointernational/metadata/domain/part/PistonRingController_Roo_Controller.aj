@@ -3,8 +3,7 @@
 
 package com.turbointernational.metadata.domain.part;
 
-import com.turbointernational.metadata.domain.bom.BOMItem;
-import com.turbointernational.metadata.domain.interchange.Interchange;
+import com.turbointernational.metadata.domain.other.Interchange;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.PistonRing;
 import com.turbointernational.metadata.domain.part.PistonRingController;
@@ -89,7 +88,6 @@ privileged aspect PistonRingController_Roo_Controller {
     
     void PistonRingController.populateEditForm(Model uiModel, PistonRing pistonRing) {
         uiModel.addAttribute("pistonRing", pistonRing);
-        uiModel.addAttribute("bomitems", BOMItem.findAllBOMItems());
         uiModel.addAttribute("interchanges", Interchange.findAllInterchanges());
         uiModel.addAttribute("manufacturers", Manufacturer.findAllManufacturers());
     }

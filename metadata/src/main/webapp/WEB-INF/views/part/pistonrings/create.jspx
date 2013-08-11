@@ -14,8 +14,8 @@
         <field:input field="widthMax" id="c_com_turbointernational_metadata_domain_part_PistonRing_widthMax" validationMessageCode="field_invalid_number" z="kAwVbE8qEMfLLt+BHq47FWUXcXg="/>
         <field:input field="installedGapMin" id="c_com_turbointernational_metadata_domain_part_PistonRing_installedGapMin" validationMessageCode="field_invalid_number" z="tpkonv/aYS9jIC4jz04nFRJ1SZE="/>
         <field:input field="installedGapMax" id="c_com_turbointernational_metadata_domain_part_PistonRing_installedGapMax" validationMessageCode="field_invalid_number" z="pZPWbP6PipZn6Cm0QPcyY/6XmXc="/>
-        <field:select field="interchanges" id="c_com_turbointernational_metadata_domain_part_PistonRing_interchanges" itemValue="id" items="${interchanges}" multiple="true" path="/interchanges" z="xe9sENjm2XBmhARWUNaxAXOq0tw="/>
-        <field:simple field="bom" id="c_com_turbointernational_metadata_domain_part_PistonRing_bom" messageCode="entity_reference_not_managed" messageCodeAttribute="B O M Item" z="q3u09b2z2OjCIZiAnHxkJveFud4="/>
+        <field:select field="interchange" id="c_com_turbointernational_metadata_domain_part_PistonRing_interchange" itemValue="id" items="${interchanges}" path="/other/interchange" z="RzFjbqlHI+noomzCu4nHGMJXFiI="/>
+        <field:input field="elasticSearch" id="c_com_turbointernational_metadata_domain_part_PistonRing_elasticSearch" z="jjU5y3N6SL8u5od/970h8Ag8DGU="/>
     </form:create>
     <form:dependency dependencies="${dependencies}" id="d_com_turbointernational_metadata_domain_part_PistonRing" render="${not empty dependencies}" z="hBgYr2h3SKVTnsmF3eGFWR203fY="/>
 </div>

@@ -14,6 +14,7 @@
         <field:display field="outsideDiameterMax" id="s_com_turbointernational_metadata_domain_part_JournalBearing_outsideDiameterMax" object="${journalbearing}" z="B7WWl97Ge4QVlbxQd8XIzbd+P/Q="/>
         <field:display field="insideDiameterMin" id="s_com_turbointernational_metadata_domain_part_JournalBearing_insideDiameterMin" object="${journalbearing}" z="nV303esrCgy7egKi0jkYWuW75h4="/>
         <field:display field="insideDiameterMax" id="s_com_turbointernational_metadata_domain_part_JournalBearing_insideDiameterMax" object="${journalbearing}" z="xfJg1mWpqJgITSQ92NtTn+pj8Do="/>
-        <field:display field="interchanges" id="s_com_turbointernational_metadata_domain_part_JournalBearing_interchanges" object="${journalbearing}" z="vlctL8M4utf8SRrSC445ZFsLXpY="/>
+        <field:display field="interchange" id="s_com_turbointernational_metadata_domain_part_JournalBearing_interchange" object="${journalbearing}" z="ov6M/yVhvWHu1j4bjnosnewvjtc="/>
+        <field:display field="elasticSearch" id="s_com_turbointernational_metadata_domain_part_JournalBearing_elasticSearch" object="${journalbearing}" z="4Alv2xyziNUX/rAkYDygrlLoQmQ="/>
     </page:show>
 </div>

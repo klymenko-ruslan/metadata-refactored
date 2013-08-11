@@ -8,6 +8,7 @@
         <field:display field="name" id="s_com_turbointernational_metadata_domain_part_NozzleRing_name" object="${nozzlering}" z="94+sc3QLxSXXlbQTw1plt23NDFM="/>
         <field:display field="description" id="s_com_turbointernational_metadata_domain_part_NozzleRing_description" object="${nozzlering}" z="U4+wfT8zW2XJneYBLSGEHwBzh88="/>
         <field:display field="inactive" id="s_com_turbointernational_metadata_domain_part_NozzleRing_inactive" object="${nozzlering}" z="wDW9RVZlXNGSJKInwU3HGckmjxo="/>
-        <field:display field="interchanges" id="s_com_turbointernational_metadata_domain_part_NozzleRing_interchanges" object="${nozzlering}" z="7gq8bcSMqP9WwnCvMF+L4acZLws="/>
+        <field:display field="interchange" id="s_com_turbointernational_metadata_domain_part_NozzleRing_interchange" object="${nozzlering}" z="M3srKrrlzx3Hf+LtJWBRi7BtmcI="/>
+        <field:display field="elasticSearch" id="s_com_turbointernational_metadata_domain_part_NozzleRing_elasticSearch" object="${nozzlering}" z="F04JInT5Um5s7qLLT15fLrKvw5Q="/>
     </page:show>
 </div>

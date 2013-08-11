@@ -3,9 +3,6 @@
 
 package com.turbointernational.metadata.domain.part;
 
-import com.turbointernational.metadata.domain.bom.BOMItem;
-import com.turbointernational.metadata.domain.interchange.Interchange;
-import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.part.PartController;
 import java.io.UnsupportedEncodingException;
@@ -85,13 +82,6 @@ privileged aspect PartController_Roo_Controller {
         uiModel.addAttribute("page", (page == null) ? "1" : page.toString());
         uiModel.addAttribute("size", (size == null) ? "10" : size.toString());
         return "redirect:/part/parts";
-    }
-    
-    void PartController.populateEditForm(Model uiModel, Part part) {
-        uiModel.addAttribute("part", part);
-        uiModel.addAttribute("bomitems", BOMItem.findAllBOMItems());
-        uiModel.addAttribute("interchanges", Interchange.findAllInterchanges());
-        uiModel.addAttribute("manufacturers", Manufacturer.findAllManufacturers());
     }
     
     String PartController.encodeUrlPathSegment(String pathSegment, HttpServletRequest httpServletRequest) {

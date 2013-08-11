@@ -11,8 +11,8 @@
         <field:input field="overallDiameter" id="c_com_turbointernational_metadata_domain_part_Heatshield_overallDiameter" validationMessageCode="field_invalid_number" z="gLbz6eDV0jYgN3mYDYqpEfmYd6I="/>
         <field:input field="insideDimater" id="c_com_turbointernational_metadata_domain_part_Heatshield_insideDimater" validationMessageCode="field_invalid_number" z="qubxBm7LtaPMbSFHrfPmsgpmuDY="/>
         <field:input field="inducerDiameter" id="c_com_turbointernational_metadata_domain_part_Heatshield_inducerDiameter" validationMessageCode="field_invalid_number" z="ONGQTh69JA4mebY0hLc2yGG5YT0="/>
-        <field:select field="interchanges" id="c_com_turbointernational_metadata_domain_part_Heatshield_interchanges" itemValue="id" items="${interchanges}" multiple="true" path="/interchanges" z="CT2X8jRjqX5lNKiZ7VrPrOredtg="/>
-        <field:simple field="bom" id="c_com_turbointernational_metadata_domain_part_Heatshield_bom" messageCode="entity_reference_not_managed" messageCodeAttribute="B O M Item" z="NCZfHH+7fq9kgls6eGkYnuTU93g="/>
+        <field:select field="interchange" id="c_com_turbointernational_metadata_domain_part_Heatshield_interchange" itemValue="id" items="${interchanges}" path="/other/interchange" z="W519DDmywoBcyNDEqncYeWxu8zw="/>
+        <field:input field="elasticSearch" id="c_com_turbointernational_metadata_domain_part_Heatshield_elasticSearch" z="l32gyouWTsHhAkL07ohUCcisf2s="/>
     </form:create>
     <form:dependency dependencies="${dependencies}" id="d_com_turbointernational_metadata_domain_part_Heatshield" render="${not empty dependencies}" z="+Y+/pHLNAvd6vLCfumPWqBpX1Dc="/>
 </div>

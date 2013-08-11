@@ -8,8 +8,8 @@
         <field:input field="name" id="c_com_turbointernational_metadata_domain_part_Part_name" z="IOWYaeB1nhCkxn7SVE5CtftnJBg="/>
         <field:input field="description" id="c_com_turbointernational_metadata_domain_part_Part_description" z="XlC0aM5Wiy11vyxyI7smhlXizh8="/>
         <field:checkbox field="inactive" id="c_com_turbointernational_metadata_domain_part_Part_inactive" z="user-managed"/>
-        <field:select field="interchanges" id="c_com_turbointernational_metadata_domain_part_Part_interchanges" itemValue="id" items="${interchanges}" multiple="true" path="/interchanges" z="Q8iIuANR2DW6a+KaWmg5Bmowy68="/>
-        <field:simple field="bom" id="c_com_turbointernational_metadata_domain_part_Part_bom" messageCode="entity_reference_not_managed" messageCodeAttribute="B O M Item" z="8IVPBKhUn5njfSzAgjsGVUSq2v0="/>
+        <field:select field="interchange" id="c_com_turbointernational_metadata_domain_part_Part_interchange" itemValue="id" items="${interchanges}" path="/other/interchange" z="8AbCAtiCaOei7zMsx66zfL4x1fI="/>
+        <field:input field="elasticSearch" id="c_com_turbointernational_metadata_domain_part_Part_elasticSearch" z="g+bVRMP5HzP7RbYBD006tppnxO4="/>
     </form:create>
     <form:dependency dependencies="${dependencies}" id="d_com_turbointernational_metadata_domain_part_Part" render="${not empty dependencies}" z="c223m8b7IU6g/WgCu0IDzPkJvFc="/>
 </div>

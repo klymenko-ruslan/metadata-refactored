@@ -9,10 +9,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
+import org.springframework.roo.addon.json.RooJson;
 
 @Cacheable
 @RooJavaBean
 @RooJpaActiveRecord(table="TURBO_MODEL")
+@RooJson
 public class TurboModel {
 
     @Id

@@ -8,6 +8,7 @@
         <field:display field="name" id="s_com_turbointernational_metadata_domain_part_Part_name" object="${part}" z="0qdfJW8ojzg06+ZYxAw0cOtfUxA="/>
         <field:display field="description" id="s_com_turbointernational_metadata_domain_part_Part_description" object="${part}" z="u5BHTPd8pgTATJz1uOPivEbZZ4Y="/>
         <field:display field="inactive" id="s_com_turbointernational_metadata_domain_part_Part_inactive" object="${part}" z="w+oXE302FXN0yefHo8rNA/KsVes="/>
-        <field:display field="interchanges" id="s_com_turbointernational_metadata_domain_part_Part_interchanges" object="${part}" z="vVT0ST3WEvwK3z3iDzyq16pOG7A="/>
+        <field:display field="interchange" id="s_com_turbointernational_metadata_domain_part_Part_interchange" object="${part}" z="2kXUcNBLUtgpu+4nuIXwSPsCJQU="/>
+        <field:display field="elasticSearch" id="s_com_turbointernational_metadata_domain_part_Part_elasticSearch" object="${part}" z="user-managed" render="false"/>
     </page:show>
 </div>

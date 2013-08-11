@@ -15,8 +15,8 @@
         <field:input field="boreOe" id="c_com_turbointernational_metadata_domain_part_CompressorWheel_boreOe" validationMessageCode="field_invalid_number" z="fdh9dt299leC+hYqlVhzra82AXs="/>
         <field:input field="numberOfBlades" id="c_com_turbointernational_metadata_domain_part_CompressorWheel_numberOfBlades" z="M+uKwnXjn+GphaScu5/Xin5ZdIM="/>
         <field:input field="application" id="c_com_turbointernational_metadata_domain_part_CompressorWheel_application" z="hVw8fJz/nVbWr51hx+eNfX5+loE="/>
-        <field:select field="interchanges" id="c_com_turbointernational_metadata_domain_part_CompressorWheel_interchanges" itemValue="id" items="${interchanges}" multiple="true" path="/interchanges" z="CuxRrXLlUbrS2frL8vWweqe1Qh4="/>
-        <field:simple field="bom" id="c_com_turbointernational_metadata_domain_part_CompressorWheel_bom" messageCode="entity_reference_not_managed" messageCodeAttribute="B O M Item" z="lz2FKqpMAZe5vVYNi8C8Zf5K9Mc="/>
+        <field:select field="interchange" id="c_com_turbointernational_metadata_domain_part_CompressorWheel_interchange" itemValue="id" items="${interchanges}" path="/other/interchange" z="olAzycR56wgd7wP4srXDeBND5Fc="/>
+        <field:input field="elasticSearch" id="c_com_turbointernational_metadata_domain_part_CompressorWheel_elasticSearch" z="tMSsJLU13OCo1sI9kasKAEn3v14="/>
     </form:create>
     <form:dependency dependencies="${dependencies}" id="d_com_turbointernational_metadata_domain_part_CompressorWheel" render="${not empty dependencies}" z="gJRgwG4SPls4pY02HWTAEjOPyWU="/>
 </div>

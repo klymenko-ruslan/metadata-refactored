@@ -3,8 +3,7 @@
 
 package com.turbointernational.metadata.domain.part;
 
-import com.turbointernational.metadata.domain.bom.BOMItem;
-import com.turbointernational.metadata.domain.interchange.Interchange;
+import com.turbointernational.metadata.domain.other.Interchange;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.NozzleRing;
 import com.turbointernational.metadata.domain.part.NozzleRingController;
@@ -89,7 +88,6 @@ privileged aspect NozzleRingController_Roo_Controller {
     
     void NozzleRingController.populateEditForm(Model uiModel, NozzleRing nozzleRing) {
         uiModel.addAttribute("nozzleRing", nozzleRing);
-        uiModel.addAttribute("bomitems", BOMItem.findAllBOMItems());
         uiModel.addAttribute("interchanges", Interchange.findAllInterchanges());
         uiModel.addAttribute("manufacturers", Manufacturer.findAllManufacturers());
     }

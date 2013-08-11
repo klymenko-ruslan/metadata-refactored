@@ -1,9 +1,7 @@
 package com.turbointernational.metadata.domain.part;
-import com.turbointernational.metadata.domain.bom.BOMItem;
-import com.turbointernational.metadata.domain.interchange.Interchange;
+import com.turbointernational.metadata.domain.other.Interchange;
 import com.turbointernational.metadata.domain.other.Manufacturer;
-import java.util.Set;
-import javax.persistence.CascadeType;
+import com.turbointernational.metadata.util.ElasticSearch;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import javax.persistence.Column;
@@ -12,12 +10,19 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
+import javax.persistence.JoinTable;
 import javax.persistence.OneToOne;
+import javax.persistence.PostPersist;
+import javax.persistence.PostUpdate;
+import javax.persistence.PreRemove;
+import javax.persistence.Transient;
+import net.sf.jsog.JSOG;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.roo.addon.json.RooJson;
 
 @RooJavaBean
 @RooJpaActiveRecord(table="PART", inheritanceType = "SINGLE_TABLE")
+@RooJson
 public class Part {
 
     @Id
@@ -40,10 +45,33 @@ public class Part {
     @Column(nullable = false, columnDefinition = "BIT", length = 1)
     private Boolean inactive;
 
-    @ManyToMany(mappedBy = "parts", fetch = FetchType.LAZY)
-    private Set<Interchange> interchanges;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinTable(name="interchange_item",
+               joinColumns=@JoinColumn(name="part_id"),
+               inverseJoinColumns=@JoinColumn(name="interchange_header_id"))
+    private Interchange interchange;
 
-    @OneToMany(mappedBy="parent", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<BOMItem> bom;
+    public void addIndexFields(JSOG partObject) {
+    }
 
+//    @OneToMany(mappedBy="parent", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    @JoinColumn(name="parent_part_id", table="bom")
+//    private Collection<BOMItem> bom;
+
+
+    // ElasticSearch
+    @Autowired(required=true)
+    @Transient
+    private ElasticSearch elasticSearch;
+
+    @PostUpdate
+    @PostPersist
+    private void postPersistOrUpdate() throws Exception {
+        elasticSearch.indexPart(this);
+    }
+
+    @PreRemove
+    private void preRemove() throws Exception {
+        elasticSearch.deleteIndex(this);
+    }
 }

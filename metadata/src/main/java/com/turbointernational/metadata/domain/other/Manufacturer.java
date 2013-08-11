@@ -12,10 +12,12 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
+import org.springframework.roo.addon.json.RooJson;
 
 @Cacheable
 @RooJavaBean
 @RooJpaActiveRecord
+@RooJson
 @Table(name="MANFR", uniqueConstraints=@UniqueConstraint(columnNames={"name"}))
 public class Manufacturer {
 
@@ -33,6 +35,4 @@ public class Manufacturer {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="parent_manfr_id")
     private Manufacturer parent;
-
-
 }

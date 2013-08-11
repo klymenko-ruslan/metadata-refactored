@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:form="urn:jsptagdir:/WEB-INF/tags/form" xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0">
+<div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:form="urn:jsptagdir:/WEB-INF/tags/form" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:my="urn:jsptagdir:/WEB-INF/tags/my" version="2.0">
     <jsp:directive.page contentType="text/html;charset=UTF-8"/>
     <jsp:output omit-xml-declaration="yes"/>
     <form:update id="fu_com_turbointernational_metadata_domain_part_Part" modelAttribute="part" path="/part/parts" versionField="Version" z="Q79NV0IeWv9sxpWXbzY0XbnInbI=">
@@ -8,7 +8,10 @@
         <field:input field="name" id="c_com_turbointernational_metadata_domain_part_Part_name" z="IOWYaeB1nhCkxn7SVE5CtftnJBg="/>
         <field:input field="description" id="c_com_turbointernational_metadata_domain_part_Part_description" z="XlC0aM5Wiy11vyxyI7smhlXizh8="/>
         <field:checkbox field="inactive" id="c_com_turbointernational_metadata_domain_part_Part_inactive" z="user-managed"/>
-        <field:select field="interchanges" id="c_com_turbointernational_metadata_domain_part_Part_interchanges" itemValue="id" items="${interchanges}" multiple="true" path="/interchanges" z="Q8iIuANR2DW6a+KaWmg5Bmowy68="/>
-        <field:simple field="bom" id="c_com_turbointernational_metadata_domain_part_Part_bom" messageCode="entity_reference_not_managed" messageCodeAttribute="B O M Item" z="8IVPBKhUn5njfSzAgjsGVUSq2v0="/>
+        <my:interchanges id="c_com_turbointernational_metadata_domain_part_Part_interchanges" part="${part}" path="/part/parts/search" size="20" z="user-managed"/>
+        <field:select field="interchange" id="c_com_turbointernational_metadata_domain_part_Part_interchange" itemValue="id" items="${interchanges}" path="/other/interchange" z="8AbCAtiCaOei7zMsx66zfL4x1fI="/>
+
+        
+        <field:input field="elasticSearch" id="c_com_turbointernational_metadata_domain_part_Part_elasticSearch" render="false" z="user-managed"/>
     </form:update>
 </div>

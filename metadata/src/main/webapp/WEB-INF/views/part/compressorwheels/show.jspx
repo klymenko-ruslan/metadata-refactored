@@ -15,6 +15,7 @@
         <field:display field="boreOe" id="s_com_turbointernational_metadata_domain_part_CompressorWheel_boreOe" object="${compressorwheel}" z="wlGT882yoZ8slDpvNNUPt5oyg/o="/>
         <field:display field="numberOfBlades" id="s_com_turbointernational_metadata_domain_part_CompressorWheel_numberOfBlades" object="${compressorwheel}" z="PmDejqeDDtGDMzNU19K7y8/rcGs="/>
         <field:display field="application" id="s_com_turbointernational_metadata_domain_part_CompressorWheel_application" object="${compressorwheel}" z="6N08QmOCBxBQYZ+birj6Nq7PRi0="/>
-        <field:display field="interchanges" id="s_com_turbointernational_metadata_domain_part_CompressorWheel_interchanges" object="${compressorwheel}" z="gEd5Gs+4Ocm3S42JD4I3AvjOj1g="/>
+        <field:display field="interchange" id="s_com_turbointernational_metadata_domain_part_CompressorWheel_interchange" object="${compressorwheel}" z="CWEuFvc6g2ZYpT2dMzmM6vO8R0g="/>
+        <field:display field="elasticSearch" id="s_com_turbointernational_metadata_domain_part_CompressorWheel_elasticSearch" object="${compressorwheel}" z="zj4a9csD7gjdbXQ9VZBOKKxBlF8="/>
     </page:show>
 </div>

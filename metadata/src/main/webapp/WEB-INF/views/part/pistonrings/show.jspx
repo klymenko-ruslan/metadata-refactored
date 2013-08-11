@@ -14,6 +14,7 @@
         <field:display field="widthMax" id="s_com_turbointernational_metadata_domain_part_PistonRing_widthMax" object="${pistonring}" z="pDRb4HbuZWoigZzLhiE0PwOKps4="/>
         <field:display field="installedGapMin" id="s_com_turbointernational_metadata_domain_part_PistonRing_installedGapMin" object="${pistonring}" z="tQcpi85/Iy95hGrgyn0f7e5jD28="/>
         <field:display field="installedGapMax" id="s_com_turbointernational_metadata_domain_part_PistonRing_installedGapMax" object="${pistonring}" z="TeS2yyU3HX8MtTc1781h6laTf/I="/>
-        <field:display field="interchanges" id="s_com_turbointernational_metadata_domain_part_PistonRing_interchanges" object="${pistonring}" z="GBPEjmELfU3QVrZU0QCA19RnGOg="/>
+        <field:display field="interchange" id="s_com_turbointernational_metadata_domain_part_PistonRing_interchange" object="${pistonring}" z="Nx1X6hIxk3PmDtySgkcFGq7HTaU="/>
+        <field:display field="elasticSearch" id="s_com_turbointernational_metadata_domain_part_PistonRing_elasticSearch" object="${pistonring}" z="IX3ypGA6XuCOOLKozIMRi9FQkEw="/>
     </page:show>
 </div>

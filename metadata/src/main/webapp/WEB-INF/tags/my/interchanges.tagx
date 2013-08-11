@@ -1,0 +1,77 @@
+<jsp:root xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:fn="http://java.sun.com/jsp/jstl/functions" xmlns:util="urn:jsptagdir:/WEB-INF/tags/util" xmlns:form="http://www.springframework.org/tags/form" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:spring="http://www.springframework.org/tags" xmlns:myform="urn:jsptagdir:/WEB-INF/tags/form" xmlns:fields="urn:jsptagdir:/WEB-INF/tags/form/fields" version="2.0">
+  <jsp:output omit-xml-declaration="yes" />
+
+  <jsp:directive.attribute name="id" type="java.lang.String" required="true" rtexprvalue="true" description="The identifier for this tag (do not change!)" />
+  <jsp:directive.attribute name="part" type="com.turbointernational.metadata.domain.part.Part" required="true" rtexprvalue="true" description="The part." />
+  <jsp:directive.attribute name="path" type="java.lang.String" required="true" rtexprvalue="true" description="Path to the Interchanges resource." />
+  <jsp:directive.attribute name="size" type="java.lang.Integer" required="true" rtexprvalue="true" description="Number of interchange headers to show per page." />
+  <jsp:directive.attribute name="render" type="java.lang.Boolean" required="false" rtexprvalue="true" description="Indicate if the contents of this tag and all enclosed tags should be rendered (default 'true')" />
+  <jsp:directive.attribute name="openPane" type="java.lang.Boolean" required="false" rtexprvalue="true" description="Control if the title pane is opened or closed by default (default: true)" />
+  <jsp:directive.attribute name="z" type="java.lang.String" required="false" description="Used for checking if element has been modified (to recalculate simply provide empty string value)" />
+
+  <c:if test="${empty render or render}">
+    
+    <div id="${id}">
+        <table ng-controller="InterchangesCtrl" ng-table="tableParams">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Manufacturer</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td><input type="text" ng-model="name" placeholder="Search by name..."/></td>
+                    <td></td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="interchange in interchanges">
+                    <td>{{interchange.id}}</td>
+                    <td>{{interchange.manufacturer.name}}</td>
+                    <td>{{interchange.name}}</td>
+                    <td>{{interchange.description}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+        
+    <script src="/js/jquery.min.js"><!-- HTML --></script>
+    <script src="/js/angular/angular.js"><!-- HTML --></script>
+    <script src="/js/angular/angular-resource.js"><!-- HTML --></script>
+    <script src="/js/angular/ng-table.js"><!-- HTML --></script>
+    <link rel="stylesheet" type="text/css" href="/styles/ng-table.css" />
+    <script type="text/javascript">
+    var InterchangesApp = angular.module('InterchangesApp', ['ngResource', 'ngTable']);
+        InterchangesApp.controller('InterchangesCtrl', function($scope, $resource, ngTableParams) {
+             var Interchange = $resource('${path}', {partId:${part.id}}, {
+                 search: {
+                     method:'GET',
+                     params: {
+                         query:'@query'
+                     }
+                 }
+             });
+
+             $scope.tableParams = new ngTableParams({
+                  page:1,
+                  size:${size},
+             });
+
+             $scope.$watch('search', function(params) {
+                 Interchange.search({
+                     search:$scope.search,
+                     page:$scope.tableParams.page,
+                     size:$scope.tableParams.size
+                   }, function(data) {
+                     $scope.tableParams.total = data.total;
+                     $scope.interchanges = data.result;
+                 });
+             });
+        });
+
+    varinjector = angular.bootstrap($('#${id}'), ['InterchangesApp']);
+    </script>
+  </c:if>
+</jsp:root>

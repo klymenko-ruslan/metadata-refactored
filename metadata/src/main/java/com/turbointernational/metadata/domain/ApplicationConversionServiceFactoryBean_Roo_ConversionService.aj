@@ -4,6 +4,7 @@
 package com.turbointernational.metadata.domain;
 
 import com.turbointernational.metadata.domain.ApplicationConversionServiceFactoryBean;
+import com.turbointernational.metadata.domain.other.Interchange;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.other.TurboModel;
 import com.turbointernational.metadata.domain.part.Backplate;
@@ -30,6 +31,30 @@ import org.springframework.format.FormatterRegistry;
 privileged aspect ApplicationConversionServiceFactoryBean_Roo_ConversionService {
     
     declare @type: ApplicationConversionServiceFactoryBean: @Configurable;
+    
+    public Converter<Interchange, String> ApplicationConversionServiceFactoryBean.getInterchangeToStringConverter() {
+        return new org.springframework.core.convert.converter.Converter<com.turbointernational.metadata.domain.other.Interchange, java.lang.String>() {
+            public String convert(Interchange interchange) {
+                return new StringBuilder().append(interchange.getName()).append(' ').append(interchange.getDescription()).toString();
+            }
+        };
+    }
+    
+    public Converter<Long, Interchange> ApplicationConversionServiceFactoryBean.getIdToInterchangeConverter() {
+        return new org.springframework.core.convert.converter.Converter<java.lang.Long, com.turbointernational.metadata.domain.other.Interchange>() {
+            public com.turbointernational.metadata.domain.other.Interchange convert(java.lang.Long id) {
+                return Interchange.findInterchange(id);
+            }
+        };
+    }
+    
+    public Converter<String, Interchange> ApplicationConversionServiceFactoryBean.getStringToInterchangeConverter() {
+        return new org.springframework.core.convert.converter.Converter<java.lang.String, com.turbointernational.metadata.domain.other.Interchange>() {
+            public com.turbointernational.metadata.domain.other.Interchange convert(String id) {
+                return getObject().convert(getObject().convert(id, Long.class), Interchange.class);
+            }
+        };
+    }
     
     public Converter<Manufacturer, String> ApplicationConversionServiceFactoryBean.getManufacturerToStringConverter() {
         return new org.springframework.core.convert.converter.Converter<com.turbointernational.metadata.domain.other.Manufacturer, java.lang.String>() {
@@ -488,6 +513,9 @@ privileged aspect ApplicationConversionServiceFactoryBean_Roo_ConversionService 
     }
     
     public void ApplicationConversionServiceFactoryBean.installLabelConverters(FormatterRegistry registry) {
+        registry.addConverter(getInterchangeToStringConverter());
+        registry.addConverter(getIdToInterchangeConverter());
+        registry.addConverter(getStringToInterchangeConverter());
         registry.addConverter(getManufacturerToStringConverter());
         registry.addConverter(getIdToManufacturerConverter());
         registry.addConverter(getStringToManufacturerConverter());
