@@ -41,14 +41,21 @@ public class ElasticSearch {
     }
 
     public String partSearch(String queryString, String partType) throws Exception {
-        return search(new Search.Builder(queryString)
+        JSOG query = JSOG.object();
+        query.get("query").get("match").put("_all", queryString);
+        query.put("fields", "_all");
+
+        return search(new Search.Builder(query.toString())
                                 .addIndex(metadataIndex)
                                 .addType(StringUtils.defaultIfBlank(partType, this.partType))
                                 .build());
     }
 
     public String search(Search search) throws Exception {
-        return client.execute(search).getJsonString();
+        String result = client.execute(search).getJsonString();
+
+        System.out.println(result);
+        return result;
     }
 
     public void indexPart(Part part) throws Exception {
