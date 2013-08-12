@@ -11,3 +11,5 @@ cat data.sql >> "script.sql" &&
 cat post_import.sql >> "script.sql" &&
 
 dos2unix "script.sql"
+
+sed -ri 's/`([A-Z0-9_]+)`/`\L\1`/g' metadata_schema.sql
