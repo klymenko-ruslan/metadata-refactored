@@ -40,9 +40,10 @@ public class ElasticSearch {
         client = factory.getObject();
     }
 
-    public String partSearch(String queryString, String partType) throws Exception {
+    public String partSearch(String queryString, String partType, int from, int size) throws Exception {
         JSOG query = JSOG.object();
-        query.get("query").get("query_string").put("query", queryString);
+        query.put("from", from).put("size", size);
+        query.get("query").get("match").put("_all", queryString);
 
         return search(new Search.Builder(query.toString())
                                 .addIndex(metadataIndex)
@@ -81,6 +82,7 @@ public class ElasticSearch {
 
             // Add the part fields
             JSOG partObject = JSOG.object()
+                .put("_id", part.getId())
                 .put("part_type", part.getPartType() != null ? part.getPartType().getTypeName() : "Part")
                 .put("name", part.getName())
                 .put("description", part.getDescription())
