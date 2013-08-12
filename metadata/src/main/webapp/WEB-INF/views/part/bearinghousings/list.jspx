@@ -9,7 +9,7 @@
             <table:column id="c_com_turbointernational_metadata_domain_part_BearingHousing_name" property="name" z="tKQj/t+hzfKTA1OulXjfrhnzEk0="/>
             <table:column id="c_com_turbointernational_metadata_domain_part_BearingHousing_description" property="description" z="sd90DOYzFb8kuKOPyavph6wVSDo="/>
             <table:column id="c_com_turbointernational_metadata_domain_part_BearingHousing_inactive" property="inactive" z="AGo5qkbJNewVVJD/vy/sR2Zykqo="/>
-            <table:column id="c_com_turbointernational_metadata_domain_part_BearingHousing_interchange" property="interchange" z="WflgM9F+1CkMONdsfA0so+KjysU="/>
+            <table:column id="c_com_turbointernational_metadata_domain_part_BearingHousing_partType" property="partType" z="WkZjHx0puMntMj/nJDDGguQFD+E="/>
         </table:table>
     </page:list>
 </div>

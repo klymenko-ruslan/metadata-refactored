@@ -10,5 +10,6 @@
         <field:display field="inactive" id="s_com_turbointernational_metadata_domain_part_NozzleRing_inactive" object="${nozzlering}" z="wDW9RVZlXNGSJKInwU3HGckmjxo="/>
         <field:display field="interchange" id="s_com_turbointernational_metadata_domain_part_NozzleRing_interchange" object="${nozzlering}" z="M3srKrrlzx3Hf+LtJWBRi7BtmcI="/>
         <field:display field="elasticSearch" id="s_com_turbointernational_metadata_domain_part_NozzleRing_elasticSearch" object="${nozzlering}" z="F04JInT5Um5s7qLLT15fLrKvw5Q="/>
+        <field:display field="partType" id="s_com_turbointernational_metadata_domain_part_NozzleRing_partType" object="${nozzlering}" z="BPhjrue7CDz5ThC34hXCFH6ZxY8="/>
     </page:show>
 </div>

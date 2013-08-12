@@ -7,6 +7,7 @@ import com.turbointernational.metadata.domain.other.Interchange;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.Heatshield;
 import com.turbointernational.metadata.domain.part.HeatshieldController;
+import com.turbointernational.metadata.domain.type.PartType;
 import java.io.UnsupportedEncodingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -90,6 +91,7 @@ privileged aspect HeatshieldController_Roo_Controller {
         uiModel.addAttribute("heatshield", heatshield);
         uiModel.addAttribute("interchanges", Interchange.findAllInterchanges());
         uiModel.addAttribute("manufacturers", Manufacturer.findAllManufacturers());
+        uiModel.addAttribute("parttypes", PartType.findAllPartTypes());
     }
     
     String HeatshieldController.encodeUrlPathSegment(String pathSegment, HttpServletRequest httpServletRequest) {

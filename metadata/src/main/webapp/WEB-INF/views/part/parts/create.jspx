@@ -10,6 +10,7 @@
         <field:checkbox field="inactive" id="c_com_turbointernational_metadata_domain_part_Part_inactive" z="user-managed"/>
         <field:select field="interchange" id="c_com_turbointernational_metadata_domain_part_Part_interchange" itemValue="id" items="${interchanges}" path="/other/interchange" z="8AbCAtiCaOei7zMsx66zfL4x1fI="/>
         <field:input field="elasticSearch" id="c_com_turbointernational_metadata_domain_part_Part_elasticSearch" z="g+bVRMP5HzP7RbYBD006tppnxO4="/>
+        <field:select field="partType" id="c_com_turbointernational_metadata_domain_part_Part_partType" itemValue="id" items="${parttypes}" path="/parttypes" z="gTcgb3eA2Pf/v2+1BEhsUjCRRQ4="/>
     </form:create>
     <form:dependency dependencies="${dependencies}" id="d_com_turbointernational_metadata_domain_part_Part" render="${not empty dependencies}" z="c223m8b7IU6g/WgCu0IDzPkJvFc="/>
 </div>

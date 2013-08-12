@@ -17,5 +17,6 @@
         <field:input field="numberOfBlades" id="c_com_turbointernational_metadata_domain_part_TurbineWheel_numberOfBlades" z="F3XqcU26fZZ0Fzsm/ALtoq6spRE="/>
         <field:select field="interchange" id="c_com_turbointernational_metadata_domain_part_TurbineWheel_interchange" itemValue="id" items="${interchanges}" path="/other/interchange" z="T4w3AaYbE531ni7VKjBuvChFYVk="/>
         <field:input field="elasticSearch" id="c_com_turbointernational_metadata_domain_part_TurbineWheel_elasticSearch" z="RTAPmnBZ93v2Nyt97WnrsL4tY6w="/>
+        <field:select field="partType" id="c_com_turbointernational_metadata_domain_part_TurbineWheel_partType" itemValue="id" items="${parttypes}" path="/parttypes" z="dBgRVF5z8FY4yz0CR4T7xXH4hvQ="/>
     </form:update>
 </div>

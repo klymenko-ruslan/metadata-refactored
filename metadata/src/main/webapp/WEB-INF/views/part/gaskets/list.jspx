@@ -9,7 +9,7 @@
             <table:column id="c_com_turbointernational_metadata_domain_part_Gasket_name" property="name" z="2Yfu3OtFm9UNosPB7wIpR6Fylxg="/>
             <table:column id="c_com_turbointernational_metadata_domain_part_Gasket_description" property="description" z="6GiZ3WG/xiVClH0GUBCdv/gvu2g="/>
             <table:column id="c_com_turbointernational_metadata_domain_part_Gasket_inactive" property="inactive" z="tTbBTlK/VhPA/+3Cq8EOe++/p8Q="/>
-            <table:column id="c_com_turbointernational_metadata_domain_part_Gasket_interchange" property="interchange" z="76vhDKaSbGG00qq0ERNsuSHVSTs="/>
+            <table:column id="c_com_turbointernational_metadata_domain_part_Gasket_partType" property="partType" z="FifIx5i42GVs4ADHR6krHae+aJM="/>
         </table:table>
     </page:list>
 </div>

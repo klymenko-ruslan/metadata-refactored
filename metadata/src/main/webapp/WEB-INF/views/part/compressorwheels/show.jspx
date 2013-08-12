@@ -17,5 +17,6 @@
         <field:display field="application" id="s_com_turbointernational_metadata_domain_part_CompressorWheel_application" object="${compressorwheel}" z="6N08QmOCBxBQYZ+birj6Nq7PRi0="/>
         <field:display field="interchange" id="s_com_turbointernational_metadata_domain_part_CompressorWheel_interchange" object="${compressorwheel}" z="CWEuFvc6g2ZYpT2dMzmM6vO8R0g="/>
         <field:display field="elasticSearch" id="s_com_turbointernational_metadata_domain_part_CompressorWheel_elasticSearch" object="${compressorwheel}" z="zj4a9csD7gjdbXQ9VZBOKKxBlF8="/>
+        <field:display field="partType" id="s_com_turbointernational_metadata_domain_part_CompressorWheel_partType" object="${compressorwheel}" z="DtZoHagY2pC4ImHJMJeLHZd776w="/>
     </page:show>
 </div>

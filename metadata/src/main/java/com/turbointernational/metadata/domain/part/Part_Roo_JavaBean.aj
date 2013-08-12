@@ -6,6 +6,7 @@ package com.turbointernational.metadata.domain.part;
 import com.turbointernational.metadata.domain.other.Interchange;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.Part;
+import com.turbointernational.metadata.domain.type.PartType;
 import com.turbointernational.metadata.util.ElasticSearch;
 
 privileged aspect Part_Roo_JavaBean {
@@ -48,6 +49,14 @@ privileged aspect Part_Roo_JavaBean {
     
     public void Part.setDescription(String description) {
         this.description = description;
+    }
+    
+    public PartType Part.getPartType() {
+        return this.partType;
+    }
+    
+    public void Part.setPartType(PartType partType) {
+        this.partType = partType;
     }
     
     public Boolean Part.getInactive() {

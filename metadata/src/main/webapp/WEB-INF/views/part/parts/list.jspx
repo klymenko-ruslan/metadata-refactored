@@ -9,7 +9,7 @@
             <table:column id="c_com_turbointernational_metadata_domain_part_Part_name" property="name" z="1iMqMHGDyqDcAGEsy4aPRJ5MwOU="/>
             <table:column id="c_com_turbointernational_metadata_domain_part_Part_description" property="description" z="1S8bNEGXte+dwUWPW+B+GtQ850I="/>
             <table:column id="c_com_turbointernational_metadata_domain_part_Part_inactive" property="inactive" z="m8S7FHSA0e/rTc6t/CRm8faoi3I="/>
-            <table:column id="c_com_turbointernational_metadata_domain_part_Part_interchange" property="interchange" z="ny/0M+6Awja6uhGbGloYSQhkAWA="/>
+            <table:column id="c_com_turbointernational_metadata_domain_part_Part_partType" property="partType" z="djJUXKIT08snU3s+rQ6WdaJ2VgY="/>
         </table:table>
     </page:list>
 </div>

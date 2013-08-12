@@ -4,6 +4,9 @@ import javax.persistence.Column;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.persistence.PostPersist;
+import javax.persistence.PostUpdate;
+import javax.persistence.PreRemove;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.SecondaryTable;
 import net.sf.jsog.JSOG;
@@ -52,6 +55,17 @@ public class Backplate extends Part {
     @Override
     public void addIndexFields(JSOG partObject) {
         partObject.put("seal_type_name", sealType.getName());
+    }
+
+    @PostUpdate
+    @PostPersist
+    private void postPersistOrUpdate() throws Exception {
+        elasticSearch.indexPart(this);
+    }
+
+    @PreRemove
+    private void preRemove() throws Exception {
+        elasticSearch.deleteIndex(this);
     }
 
 }

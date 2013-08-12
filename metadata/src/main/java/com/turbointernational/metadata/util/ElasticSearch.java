@@ -42,8 +42,7 @@ public class ElasticSearch {
 
     public String partSearch(String queryString, String partType) throws Exception {
         JSOG query = JSOG.object();
-        query.get("query").get("match").put("_all", queryString);
-        query.put("fields", "_all");
+        query.get("query").get("query_string").put("query", queryString);
 
         return search(new Search.Builder(query.toString())
                                 .addIndex(metadataIndex)
@@ -52,10 +51,16 @@ public class ElasticSearch {
     }
 
     public String search(Search search) throws Exception {
-        String result = client.execute(search).getJsonString();
+        String searchResultString = client.execute(search).getJsonString();
+        JSOG searchResult = JSOG.parse(searchResultString);
 
-        System.out.println(result);
-        return result;
+        JSOG result = JSOG.object("total", searchResult.get("hits").get("total"));
+
+        for (JSOG resultItem : searchResult.get("hits").get("hits").arrayIterable()) {
+            result.get("items").add(resultItem.get("_source"));
+        }
+
+        return result.toString();
     }
 
     public void indexPart(Part part) throws Exception {
@@ -67,23 +72,26 @@ public class ElasticSearch {
     @Async
     public void indexParts(Collection<Part> parts) throws Exception {
         Bulk.Builder bulkBuilder = new Bulk.Builder();
+        bulkBuilder.defaultIndex(metadataIndex);
+        bulkBuilder.defaultType(partType);
         for (Part part : parts) {
             if (part == null) {
                 continue;
             }
 
+            // Add the part fields
             JSOG partObject = JSOG.object()
-                .put("id", part.getId())
-                .put("part_type", part.getClass().getName())
+                .put("part_type", part.getPartType() != null ? part.getPartType().getTypeName() : "Part")
                 .put("name", part.getName())
                 .put("description", part.getDescription())
                 .put("manufacturer_name", part.getManufacturer().getName())
-                .put("manufacturer_type_name", part.getManufacturer().getType())
+                .put("manufacturer_type_name", part.getManufacturer().getType().getName())
                 .put("manufacturer_part_number", part.getManufacturerPartNumber());
 
-            Index.Builder indexBuilder = new Index.Builder(part.toString()).index(metadataIndex).type(part.getClass().getName());
-
+            // Let part subclasses add their fields to the indexed data
             part.addIndexFields(partObject);
+
+            Index.Builder indexBuilder = new Index.Builder(partObject.toString()).id(part.getId().toString());
 
             bulkBuilder.addAction(indexBuilder.build());
         }

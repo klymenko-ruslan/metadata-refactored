@@ -10,5 +10,6 @@
         <field:display field="inactive" id="s_com_turbointernational_metadata_domain_part_Cartridge_inactive" object="${cartridge}" z="aM2//wjbHIy2AAHl7dZav4569Zs="/>
         <field:display field="interchange" id="s_com_turbointernational_metadata_domain_part_Cartridge_interchange" object="${cartridge}" z="lDK08eAcbgdvk5HYdYkGbdR1gCE="/>
         <field:display field="elasticSearch" id="s_com_turbointernational_metadata_domain_part_Cartridge_elasticSearch" object="${cartridge}" z="MZVsNGo5d3A9cK2HP3BIPDDDVMg="/>
+        <field:display field="partType" id="s_com_turbointernational_metadata_domain_part_Cartridge_partType" object="${cartridge}" z="Jr0ArqpBU+8InqtnZtAhkR0k/9k="/>
     </page:show>
 </div>

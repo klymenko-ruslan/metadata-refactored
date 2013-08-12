@@ -10,5 +10,6 @@
         <field:checkbox field="inactive" id="c_com_turbointernational_metadata_domain_part_NozzleRing_inactive" z="user-managed"/>
         <field:select field="interchange" id="c_com_turbointernational_metadata_domain_part_NozzleRing_interchange" itemValue="id" items="${interchanges}" path="/other/interchange" z="xAB5HY++mZHdxAJ7VggTysqS28c="/>
         <field:input field="elasticSearch" id="c_com_turbointernational_metadata_domain_part_NozzleRing_elasticSearch" z="0VVwooQmXQJ2s4E7bUNUXLwJUhs="/>
+        <field:select field="partType" id="c_com_turbointernational_metadata_domain_part_NozzleRing_partType" itemValue="id" items="${parttypes}" path="/parttypes" z="JMB9zS4JFo1jMzz5rZmwZUZEU38="/>
     </form:update>
 </div>

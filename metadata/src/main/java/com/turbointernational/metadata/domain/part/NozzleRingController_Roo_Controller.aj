@@ -7,6 +7,7 @@ import com.turbointernational.metadata.domain.other.Interchange;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.NozzleRing;
 import com.turbointernational.metadata.domain.part.NozzleRingController;
+import com.turbointernational.metadata.domain.type.PartType;
 import java.io.UnsupportedEncodingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -90,6 +91,7 @@ privileged aspect NozzleRingController_Roo_Controller {
         uiModel.addAttribute("nozzleRing", nozzleRing);
         uiModel.addAttribute("interchanges", Interchange.findAllInterchanges());
         uiModel.addAttribute("manufacturers", Manufacturer.findAllManufacturers());
+        uiModel.addAttribute("parttypes", PartType.findAllPartTypes());
     }
     
     String NozzleRingController.encodeUrlPathSegment(String pathSegment, HttpServletRequest httpServletRequest) {

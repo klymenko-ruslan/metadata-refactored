@@ -11,5 +11,6 @@
         <field:display field="type" id="s_com_turbointernational_metadata_domain_part_Kit_type" object="${kit}" z="uiDiZkq6nXig3lz4Dghd4p2mx4A="/>
         <field:display field="interchange" id="s_com_turbointernational_metadata_domain_part_Kit_interchange" object="${kit}" z="Qsk85YXYMChGIU0bubioPp8G1cw="/>
         <field:display field="elasticSearch" id="s_com_turbointernational_metadata_domain_part_Kit_elasticSearch" object="${kit}" z="DXxDrThu4tmEnnYcZbAj+EoBwqg="/>
+        <field:display field="partType" id="s_com_turbointernational_metadata_domain_part_Kit_partType" object="${kit}" z="3sic81N3RWT4dqTkibHoeIlZVlc="/>
     </page:show>
 </div>

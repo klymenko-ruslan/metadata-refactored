@@ -9,7 +9,7 @@
             <table:column id="c_com_turbointernational_metadata_domain_part_NozzleRing_name" property="name" z="CxizMgET+dBkWCKU1PdOQUrNUZs="/>
             <table:column id="c_com_turbointernational_metadata_domain_part_NozzleRing_description" property="description" z="Uj4hdGBQM9yW1KHHPj4BCwECqkg="/>
             <table:column id="c_com_turbointernational_metadata_domain_part_NozzleRing_inactive" property="inactive" z="glcljaElosjEGkREv8HpEL2fkm4="/>
-            <table:column id="c_com_turbointernational_metadata_domain_part_NozzleRing_interchange" property="interchange" z="viulc4zp6f2/4NP+UO/LdRC7UPc="/>
+            <table:column id="c_com_turbointernational_metadata_domain_part_NozzleRing_partType" property="partType" z="9Sj+yRTs2d9tEj/+CqkPiiGL8Zk="/>
         </table:table>
     </page:list>
 </div>

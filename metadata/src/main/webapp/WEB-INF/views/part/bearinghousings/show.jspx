@@ -18,5 +18,6 @@
         <field:display field="bearingType" id="s_com_turbointernational_metadata_domain_part_BearingHousing_bearingType" object="${bearinghousing}" z="tLVUYHTnpPa9Yjarm8tQoX/oEBE="/>
         <field:display field="interchange" id="s_com_turbointernational_metadata_domain_part_BearingHousing_interchange" object="${bearinghousing}" z="5ehuuuc2mzikBz+fCah7KU2Ug6U="/>
         <field:display field="elasticSearch" id="s_com_turbointernational_metadata_domain_part_BearingHousing_elasticSearch" object="${bearinghousing}" z="O/B6aZgBrNN3/Ve8eXOse4Mg3ik="/>
+        <field:display field="partType" id="s_com_turbointernational_metadata_domain_part_BearingHousing_partType" object="${bearinghousing}" z="C6iRKJYXdMS0VYyzQYCYBebRPBE="/>
     </page:show>
 </div>

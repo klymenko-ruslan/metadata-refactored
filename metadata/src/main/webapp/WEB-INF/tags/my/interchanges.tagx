@@ -12,28 +12,15 @@
   <c:if test="${empty render or render}">
     
     <div id="${id}">
+        <span>Search:</span> <input type="text" ng-model="search" placeholder="Search..."/>
         <table ng-controller="InterchangesCtrl" ng-table="tableParams">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Manufacturer</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td><input type="text" ng-model="search" placeholder="Search..."/></td>
-                    <td></td>
-                </tr>
-            </thead>
-            <tbody>
-                <tr ng-repeat="interchange in interchanges">
-                    <td>{{interchange.id}}</td>
-                    <td>{{interchange.manufacturer.name}}</td>
-                    <td>{{interchange.name}}</td>
-                    <td>{{interchange.description}}</td>
-                </tr>
-            </tbody>
+            <tr ng-repeat="interchange in interchanges">
+                <td data-title="'ID'">{{interchange._id}}</td>
+                <td data-title="'Manufacturer'">{{interchange.manufacturer_name}}</td>
+                <td data-title="'Mfr Part #'">{{interchange.manufacturer_part_number}}</td>
+                <td data-title="'Name'">{{interchange.name}}</td>
+                <td data-title="'Part Type'">{{interchange.part_type}}</td>
+            </tr>
         </table>
     </div>
         
@@ -62,11 +49,11 @@
              $scope.$watch('search', function(params) {
                  Interchange.search({
                      search:$scope.search,
-                     page:$scope.tableParams.page,
+                     from:$scope.tableParams.page * $scope.tableParams.size,
                      size:$scope.tableParams.size
                    }, function(data) {
                      $scope.tableParams.total = data.total;
-                     $scope.interchanges = data.result;
+                     $scope.interchanges = data.items;
                  });
              });
         });

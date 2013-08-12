@@ -11,5 +11,6 @@
         <field:display field="type" id="s_com_turbointernational_metadata_domain_part_Gasket_type" object="${gasket}" z="7mHnBdjKcihcxK6960ZmsMrLg6k="/>
         <field:display field="interchange" id="s_com_turbointernational_metadata_domain_part_Gasket_interchange" object="${gasket}" z="BuKkiRqjxqGi+HtmzUwxaE0YA5c="/>
         <field:display field="elasticSearch" id="s_com_turbointernational_metadata_domain_part_Gasket_elasticSearch" object="${gasket}" z="vz2zODhkwzyxvczIwpeb1FqdJbs="/>
+        <field:display field="partType" id="s_com_turbointernational_metadata_domain_part_Gasket_partType" object="${gasket}" z="Z/LGBPfBe81Gth/dRtKmspzwrjo="/>
     </page:show>
 </div>

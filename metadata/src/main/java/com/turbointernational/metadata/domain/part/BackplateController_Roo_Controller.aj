@@ -3,11 +3,8 @@
 
 package com.turbointernational.metadata.domain.part;
 
-import com.turbointernational.metadata.domain.other.Interchange;
-import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.Backplate;
 import com.turbointernational.metadata.domain.part.BackplateController;
-import com.turbointernational.metadata.domain.type.SealType;
 import java.io.UnsupportedEncodingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -85,13 +82,6 @@ privileged aspect BackplateController_Roo_Controller {
         uiModel.addAttribute("page", (page == null) ? "1" : page.toString());
         uiModel.addAttribute("size", (size == null) ? "10" : size.toString());
         return "redirect:/part/backplates";
-    }
-    
-    void BackplateController.populateEditForm(Model uiModel, Backplate backplate) {
-        uiModel.addAttribute("backplate", backplate);
-        uiModel.addAttribute("interchanges", Interchange.findAllInterchanges());
-        uiModel.addAttribute("manufacturers", Manufacturer.findAllManufacturers());
-        uiModel.addAttribute("sealtypes", SealType.findAllSealTypes());
     }
     
     String BackplateController.encodeUrlPathSegment(String pathSegment, HttpServletRequest httpServletRequest) {

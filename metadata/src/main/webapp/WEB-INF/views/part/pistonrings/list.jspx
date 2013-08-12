@@ -9,7 +9,7 @@
             <table:column id="c_com_turbointernational_metadata_domain_part_PistonRing_name" property="name" z="ZbXBw61a266DkQqtHke2/87C55o="/>
             <table:column id="c_com_turbointernational_metadata_domain_part_PistonRing_description" property="description" z="QlSP2ijL2DZCCdVdmEqCmz/qtsE="/>
             <table:column id="c_com_turbointernational_metadata_domain_part_PistonRing_inactive" property="inactive" z="rYfIeMaYJfSS9Q+qlW1dqfe+Bu8="/>
-            <table:column id="c_com_turbointernational_metadata_domain_part_PistonRing_interchange" property="interchange" z="bps/PMiNUCUuuut3ugYATLCCiq0="/>
+            <table:column id="c_com_turbointernational_metadata_domain_part_PistonRing_partType" property="partType" z="N5GmFHqfsNmhc4/n8amQrvFnEFo="/>
         </table:table>
     </page:list>
 </div>

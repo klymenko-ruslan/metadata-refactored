@@ -16,5 +16,6 @@
         <field:input field="insideDiameterMax" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_insideDiameterMax" validationMessageCode="field_invalid_number" z="x2uFuJ2BMvQgYTApQpb/v9pJf7I="/>
         <field:select field="interchange" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_interchange" itemValue="id" items="${interchanges}" path="/other/interchange" z="vI7ouSIL/qPVZzvS4nNrFSxgM14="/>
         <field:input field="elasticSearch" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_elasticSearch" z="uAB4xRQDJ9NtpisXpcOuQh6YDac="/>
+        <field:select field="partType" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_partType" itemValue="id" items="${parttypes}" path="/parttypes" z="8UuVj+/gDgtab8/lvGRS6YjFpzU="/>
     </form:update>
 </div>

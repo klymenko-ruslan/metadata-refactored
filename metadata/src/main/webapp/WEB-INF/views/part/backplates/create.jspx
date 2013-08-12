@@ -20,6 +20,7 @@
         <field:input field="overallHeight" id="c_com_turbointernational_metadata_domain_part_Backplate_overallHeight" validationMessageCode="field_invalid_number" z="pv4OZKOqwyZbeX3uArNryf8TdsU="/>
         <field:select field="interchange" id="c_com_turbointernational_metadata_domain_part_Backplate_interchange" itemValue="id" items="${interchanges}" path="/other/interchange" z="F8Hc545VsyjKvEfVg2HkskMql+s="/>
         <field:input field="elasticSearch" id="c_com_turbointernational_metadata_domain_part_Backplate_elasticSearch" z="6EUjzLxT2PWbbrKDrqgk40wJklQ="/>
+        <field:select field="partType" id="c_com_turbointernational_metadata_domain_part_Backplate_partType" itemValue="id" items="${parttypes}" path="/parttypes" z="+d35nt11MxK7aIZcaxeF4S7IIMY="/>
     </form:create>
     <form:dependency dependencies="${dependencies}" id="d_com_turbointernational_metadata_domain_part_Backplate" render="${not empty dependencies}" z="NfaZhQfY8yJ3dP8R7KjeVk24Otw="/>
 </div>

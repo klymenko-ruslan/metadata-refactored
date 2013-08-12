@@ -13,5 +13,6 @@
         <field:display field="inducerDiameter" id="s_com_turbointernational_metadata_domain_part_Heatshield_inducerDiameter" object="${heatshield}" z="oBJW4cWDKnQRCcDgk7HCInb29Yw="/>
         <field:display field="interchange" id="s_com_turbointernational_metadata_domain_part_Heatshield_interchange" object="${heatshield}" z="g0lKlSG3eIYxKlw+v4XCaLKy/T8="/>
         <field:display field="elasticSearch" id="s_com_turbointernational_metadata_domain_part_Heatshield_elasticSearch" object="${heatshield}" z="bbo4ZE1bYcTsfnpnMkTVIHxDlKU="/>
+        <field:display field="partType" id="s_com_turbointernational_metadata_domain_part_Heatshield_partType" object="${heatshield}" z="3fouwR21hv9mWBtOsDHnO2+96RE="/>
     </page:show>
 </div>

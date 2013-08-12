@@ -17,6 +17,7 @@
         <field:input field="application" id="c_com_turbointernational_metadata_domain_part_CompressorWheel_application" z="hVw8fJz/nVbWr51hx+eNfX5+loE="/>
         <field:select field="interchange" id="c_com_turbointernational_metadata_domain_part_CompressorWheel_interchange" itemValue="id" items="${interchanges}" path="/other/interchange" z="olAzycR56wgd7wP4srXDeBND5Fc="/>
         <field:input field="elasticSearch" id="c_com_turbointernational_metadata_domain_part_CompressorWheel_elasticSearch" z="tMSsJLU13OCo1sI9kasKAEn3v14="/>
+        <field:select field="partType" id="c_com_turbointernational_metadata_domain_part_CompressorWheel_partType" itemValue="id" items="${parttypes}" path="/parttypes" z="e42MqBL+3Z3se7ADL0cnilffwWI="/>
     </form:create>
     <form:dependency dependencies="${dependencies}" id="d_com_turbointernational_metadata_domain_part_CompressorWheel" render="${not empty dependencies}" z="gJRgwG4SPls4pY02HWTAEjOPyWU="/>
 </div>

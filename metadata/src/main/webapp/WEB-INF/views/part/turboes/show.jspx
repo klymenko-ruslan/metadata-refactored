@@ -12,5 +12,6 @@
         <field:display field="coolType" id="s_com_turbointernational_metadata_domain_part_Turbo_coolType" object="${turbo}" z="OYvGTOa7UMg6b2AbNtAIZUs7Vik="/>
         <field:display field="interchange" id="s_com_turbointernational_metadata_domain_part_Turbo_interchange" object="${turbo}" z="M6QHlzb7lmSlEAAf6n/pdZ7dfxY="/>
         <field:display field="elasticSearch" id="s_com_turbointernational_metadata_domain_part_Turbo_elasticSearch" object="${turbo}" z="AOEX/7e7Lbx514TFhI4tpdchC9w="/>
+        <field:display field="partType" id="s_com_turbointernational_metadata_domain_part_Turbo_partType" object="${turbo}" z="0Cl8muf1YbHCwUa9HEHDetmtgb4="/>
     </page:show>
 </div>

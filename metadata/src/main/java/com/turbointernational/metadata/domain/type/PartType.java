@@ -23,6 +23,9 @@ public class PartType {
     @Column(nullable=false)
     private String name;
 
+    @Column(name="DTYPE", nullable=false)
+    private String typeName;
+
     // TODO: Is this a duplicate of parentTypes?
     @OneToOne
     @JoinColumn(name="parent_part_type_id")

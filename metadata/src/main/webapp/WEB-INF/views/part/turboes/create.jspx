@@ -12,6 +12,7 @@
         <field:select field="coolType" id="c_com_turbointernational_metadata_domain_part_Turbo_coolType" itemValue="id" items="${cooltypes}" path="/cooltypes" z="PM/kwtpsKoI3N+rvt79wmTyoin8="/>
         <field:select field="interchange" id="c_com_turbointernational_metadata_domain_part_Turbo_interchange" itemValue="id" items="${interchanges}" path="/other/interchange" z="hw7XJ5LxU9P3RU0IgjuA46FFIb4="/>
         <field:input field="elasticSearch" id="c_com_turbointernational_metadata_domain_part_Turbo_elasticSearch" z="qL2rqQXLjHCIm4GGgr2RYxGmkNM="/>
+        <field:select field="partType" id="c_com_turbointernational_metadata_domain_part_Turbo_partType" itemValue="id" items="${parttypes}" path="/parttypes" z="63BjdrBOLGOCAijkujSJ0QM4Kms="/>
     </form:create>
     <form:dependency dependencies="${dependencies}" id="d_com_turbointernational_metadata_domain_part_Turbo" render="${not empty dependencies}" z="UgkRI4/UFSVBvzrfeaWHL08+j5c="/>
 </div>

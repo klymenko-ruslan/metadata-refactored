@@ -1,6 +1,7 @@
 package com.turbointernational.metadata.domain.part;
 import com.turbointernational.metadata.domain.other.Interchange;
 import com.turbointernational.metadata.domain.other.Manufacturer;
+import com.turbointernational.metadata.domain.type.PartType;
 import com.turbointernational.metadata.util.ElasticSearch;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
@@ -42,6 +43,10 @@ public class Part {
     @Column(name="description")
     private String description;
 
+    @OneToOne
+    @JoinColumn(name="part_type_id")
+    private transient PartType partType;
+
     @Column(nullable = false, columnDefinition = "BIT", length = 1)
     private Boolean inactive;
 
@@ -51,18 +56,16 @@ public class Part {
                inverseJoinColumns=@JoinColumn(name="interchange_header_id"))
     private Interchange interchange;
 
-    public void addIndexFields(JSOG partObject) {
-    }
-
 //    @OneToMany(mappedBy="parent", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 //    @JoinColumn(name="parent_part_id", table="bom")
 //    private Collection<BOMItem> bom;
 
+    public void addIndexFields(JSOG partObject) {}
 
     // ElasticSearch
     @Autowired(required=true)
     @Transient
-    private ElasticSearch elasticSearch;
+    protected ElasticSearch elasticSearch;
 
     @PostUpdate
     @PostPersist

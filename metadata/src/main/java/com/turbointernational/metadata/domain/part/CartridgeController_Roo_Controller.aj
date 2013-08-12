@@ -7,6 +7,7 @@ import com.turbointernational.metadata.domain.other.Interchange;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.Cartridge;
 import com.turbointernational.metadata.domain.part.CartridgeController;
+import com.turbointernational.metadata.domain.type.PartType;
 import java.io.UnsupportedEncodingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -90,6 +91,7 @@ privileged aspect CartridgeController_Roo_Controller {
         uiModel.addAttribute("cartridge", cartridge);
         uiModel.addAttribute("interchanges", Interchange.findAllInterchanges());
         uiModel.addAttribute("manufacturers", Manufacturer.findAllManufacturers());
+        uiModel.addAttribute("parttypes", PartType.findAllPartTypes());
     }
     
     String CartridgeController.encodeUrlPathSegment(String pathSegment, HttpServletRequest httpServletRequest) {
