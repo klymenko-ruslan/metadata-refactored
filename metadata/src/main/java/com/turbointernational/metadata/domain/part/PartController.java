@@ -46,7 +46,11 @@ public class PartController {
 
     @RequestMapping(value="/indexAll", headers = "Accept=application/json")
     @ResponseBody
-    public ResponseEntity<Void> jsonIndexAll() throws Exception {
+    public ResponseEntity<Void> jsonIndexAll(@RequestParam(required=false) Integer maxPages) throws Exception {
+        if (maxPages == null ) {
+            maxPages = Integer.MAX_VALUE;
+        }
+        
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json; charset=utf-8");
 
@@ -60,7 +64,7 @@ public class PartController {
             page++;
             
             elasticSearch.indexParts(result);
-        } while (result.size() >= pageSize);
+        } while (result.size() >= pageSize && page < maxPages);
 
         return new ResponseEntity<Void>((Void) null, headers, HttpStatus.OK);
     }
