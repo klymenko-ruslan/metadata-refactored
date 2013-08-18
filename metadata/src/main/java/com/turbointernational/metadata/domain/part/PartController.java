@@ -34,13 +34,12 @@ public class PartController {
     @RequestMapping(value="/search", headers = "Accept=application/json")
     @ResponseBody
     public ResponseEntity<String> jsonSearch(
-            @RequestParam(defaultValue="*", required = false) String search,
-            @RequestParam(defaultValue = "*", required=false) String partType,
+            @RequestParam(required=true) String query,
             @RequestParam(defaultValue = "0", required=false) int from,
             @RequestParam(defaultValue = "20", required=false) int size) throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json; charset=utf-8");
-        String result = elasticSearch.partSearch(search, partType, from, size);
+        String result = elasticSearch.partSearch(query, from, size);
         return new ResponseEntity<String>(result, headers, HttpStatus.OK);
     }
 

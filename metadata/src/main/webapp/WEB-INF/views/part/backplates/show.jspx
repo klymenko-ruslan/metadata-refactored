@@ -18,8 +18,5 @@
         <field:display field="notes" id="s_com_turbointernational_metadata_domain_part_Backplate_notes" object="${backplate}" z="mhAF4+35Uk8SW/X0gnZ4yKuU57Q="/>
         <field:display field="secondaryDiameter" id="s_com_turbointernational_metadata_domain_part_Backplate_secondaryDiameter" object="${backplate}" z="YoKEuTq7Ki8x44V0xPJGdNjMw+U="/>
         <field:display field="overallHeight" id="s_com_turbointernational_metadata_domain_part_Backplate_overallHeight" object="${backplate}" z="7uxlL3YsW3yjQNQlEjlYF1tcI1E="/>
-        <field:display field="interchange" id="s_com_turbointernational_metadata_domain_part_Backplate_interchange" object="${backplate}" z="xBXsVjalochXGpfTsnS13SODWqw="/>
-        <field:display field="elasticSearch" id="s_com_turbointernational_metadata_domain_part_Backplate_elasticSearch" object="${backplate}" z="g28cLJNjwr9I3at5iYFycRB153A="/>
-        <field:display field="partType" id="s_com_turbointernational_metadata_domain_part_Backplate_partType" object="${backplate}" z="0pXP4CJ0iYF15dE5+9kM61DEF0s="/>
     </page:show>
 </div>

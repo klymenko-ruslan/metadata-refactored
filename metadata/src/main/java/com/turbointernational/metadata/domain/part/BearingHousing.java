@@ -43,6 +43,8 @@ public class BearingHousing extends Part {
 
     @Override
     public void addIndexFields(JSOG partObject) {
-        partObject.put("cool_type_name", coolType.getName());
+        if (coolType != null) {
+            partObject.put("cool_type_name", coolType.getName());
+        }
     }
 }

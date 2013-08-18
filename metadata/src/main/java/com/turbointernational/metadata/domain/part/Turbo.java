@@ -24,8 +24,13 @@ public class Turbo extends Part {
 
     @Override
     public void addIndexFields(JSOG partObject) {
-        partObject.put("turbo_model_name", model.getName());
-        partObject.put("cool_type_name", coolType.getName());
+        if (model != null) {
+            partObject.put("turbo_model_name", model.getName());
+        }
+
+        if (coolType != null) {
+            partObject.put("cool_type_name", coolType.getName());
+        }
     }
     
 }

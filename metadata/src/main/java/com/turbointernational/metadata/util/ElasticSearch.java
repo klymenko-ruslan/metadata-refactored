@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import net.sf.jsog.JSOG;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Scope;
 import org.springframework.scheduling.annotation.Async;
 
@@ -40,14 +39,49 @@ public class ElasticSearch {
         client = factory.getObject();
     }
 
-    public String partSearch(String queryString, String partType, int from, int size) throws Exception {
+    public String partSearch(String queryString, int from, int size) throws Exception {
         JSOG query = JSOG.object();
-        query.put("from", from).put("size", size);
-        query.get("query").get("match").put("_all", queryString);
+        query.put("from", from)
+             .put("size", size);
+
+        query.get("query")
+                .get("query_string")
+                    .put("query", queryString)
+                    .get("fields")
+                        .add("manufacturer_part_number.autocomplete")
+                        .add("manufacturer_part_number.text")
+
+                        .add("manufacturer_name.autocomplete")
+                        .add("manufacturer_name.text");
+
+//        // Disjunction
+//        JSOG queries = query.get("query")
+//             .get("dis_max")
+//                 .put("boost", 1.5)
+//                 .get("queries");
+//
+//        // Query String
+//        JSOG queryStringQuery = JSOG.object();
+//        queries.add(queryStringQuery);
+//        queryStringQuery.get("query_string")
+//            .put("query", queryString)
+//            .put("phrase_slop", 5);
+//
+//        // Manufacturer Name
+//        JSOG manufacturerNameQuery = JSOG.object();
+//        queries.add(manufacturerNameQuery);
+//        manufacturerNameQuery.get("prefix")
+//            .put("manufacturer_name", queryString);
+//
+//        // Manufacturer Part Number
+//        JSOG manufacturerPartNumberQuery = JSOG.object();
+//        queries.add(manufacturerPartNumberQuery);
+//        manufacturerPartNumberQuery.get("prefix")
+//                .put("manufacturer_part_number", queryString);
 
         return search(new Search.Builder(query.toString())
                                 .addIndex(metadataIndex)
-                                .addType(StringUtils.defaultIfBlank(partType, this.partType))
+                                .addType(partType)
                                 .build());
     }
 
@@ -70,7 +104,7 @@ public class ElasticSearch {
         indexParts(parts);
     }
 
-    @Async
+//    @Async
     public void indexParts(Collection<Part> parts) throws Exception {
         Bulk.Builder bulkBuilder = new Bulk.Builder();
         bulkBuilder.defaultIndex(metadataIndex);
@@ -83,12 +117,19 @@ public class ElasticSearch {
             // Add the part fields
             JSOG partObject = JSOG.object()
                 .put("_id", part.getId())
-                .put("part_type", part.getPartType() != null ? part.getPartType().getTypeName() : "Part")
                 .put("name", part.getName())
                 .put("description", part.getDescription())
                 .put("manufacturer_name", part.getManufacturer().getName())
                 .put("manufacturer_type_name", part.getManufacturer().getType().getName())
                 .put("manufacturer_part_number", part.getManufacturerPartNumber());
+
+            if (part.getPartType() != null) {
+                partObject.put("part_type", part.getPartType().getTypeName());
+            }
+
+            if (part.getInterchange() != null) {
+                partObject.put("interchange_id", part.getInterchange().getId());
+            }
 
             // Let part subclasses add their fields to the indexed data
             part.addIndexFields(partObject);
@@ -101,8 +142,8 @@ public class ElasticSearch {
         JestResult result = client.execute(bulkBuilder.build());
 
         if (!result.isSucceeded()) {
-            StringBuilder error = new StringBuilder();
-
+//            StringBuilder error = new StringBuilder();
+//
 //            Iterator<BulkItemResponse> it = result.getJsonString();
 //            while (it.hasNext()) {
 //                BulkItemResponse itemResponse = it.next();
@@ -116,7 +157,12 @@ public class ElasticSearch {
 
     @Async
     public void deleteIndex(Part part) throws Exception {
-        client.execute(new Delete.Builder().index(metadataIndex).type(partType).id(part.getId().toString()).build());
+        client.execute(
+                new Delete.Builder()
+                    .index(metadataIndex)
+                    .type(partType)
+                    .id(part.getId().toString())
+                    .build());
     }
 
 }

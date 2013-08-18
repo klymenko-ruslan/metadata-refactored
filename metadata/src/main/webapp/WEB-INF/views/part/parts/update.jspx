@@ -8,10 +8,6 @@
         <field:input field="name" id="c_com_turbointernational_metadata_domain_part_Part_name" z="IOWYaeB1nhCkxn7SVE5CtftnJBg="/>
         <field:input field="description" id="c_com_turbointernational_metadata_domain_part_Part_description" z="XlC0aM5Wiy11vyxyI7smhlXizh8="/>
         <field:checkbox field="inactive" id="c_com_turbointernational_metadata_domain_part_Part_inactive" z="user-managed"/>
-        <my:interchanges id="c_com_turbointernational_metadata_domain_part_Part_interchanges" part="${part}" path="/part/parts/search" size="20" z="user-managed"/>
-        <field:select field="interchange" id="c_com_turbointernational_metadata_domain_part_Part_interchange" itemValue="id" items="${interchanges}" path="/other/interchange" z="8AbCAtiCaOei7zMsx66zfL4x1fI="/>
-        <field:input field="elasticSearch" id="c_com_turbointernational_metadata_domain_part_Part_elasticSearch" render="false" z="user-managed"/>
-        <field:input field="type" id="c_com_turbointernational_metadata_domain_part_Part_type" render="false" z="user-managed"/>
-        <field:select field="partType" id="c_com_turbointernational_metadata_domain_part_Part_partType" itemValue="id" items="${parttypes}" path="/parttypes" z="gTcgb3eA2Pf/v2+1BEhsUjCRRQ4="/>
+        <my:interchanges id="c_com_turbointernational_metadata_domain_part_Part_interchanges" part="${part}" path="/part/parts/search" pageSize="20" z="user-managed"/>
     </form:update>
 </div>

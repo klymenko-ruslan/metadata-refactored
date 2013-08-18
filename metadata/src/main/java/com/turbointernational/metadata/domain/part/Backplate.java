@@ -54,7 +54,9 @@ public class Backplate extends Part {
 
     @Override
     public void addIndexFields(JSOG partObject) {
-        partObject.put("seal_type_name", sealType.getName());
+        if (sealType != null) {
+            partObject.put("seal_type_name", sealType.getName());
+        }
     }
 
     @PostUpdate
