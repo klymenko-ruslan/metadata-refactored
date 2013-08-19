@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:form="urn:jsptagdir:/WEB-INF/tags/form" xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0">
+<div xmlns:my="urn:jsptagdir:/WEB-INF/tags/my" xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:form="urn:jsptagdir:/WEB-INF/tags/form" xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0">
     <jsp:directive.page contentType="text/html;charset=UTF-8"/>
     <jsp:output omit-xml-declaration="yes"/>
     <form:update id="fu_com_turbointernational_metadata_domain_part_NozzleRing" modelAttribute="nozzleRing" path="/part/nozzlerings" versionField="Version" z="G+u6+W4lzow7RAINYC5D0gLXvfA=">
@@ -8,9 +8,10 @@
         <field:input field="name" id="c_com_turbointernational_metadata_domain_part_NozzleRing_name" z="Wtc5lvjh7+wSQi8QFMdoWrj8WOA="/>
         <field:input field="description" id="c_com_turbointernational_metadata_domain_part_NozzleRing_description" z="xsUaLXTWua/ts15p4wXhAvauoZQ="/>
         <field:checkbox field="inactive" id="c_com_turbointernational_metadata_domain_part_NozzleRing_inactive" z="user-managed"/>
+        <my:interchanges id="c_com_turbointernational_metadata_domain_part_NozzleRing_interchanges" pageSize="20" part="${nozzleRing}" path="/part/parts/search" z="user-managed"/>
         <field:select field="interchange" id="c_com_turbointernational_metadata_domain_part_NozzleRing_interchange" itemValue="id" items="${interchanges}" path="/other/interchange" render="false" z="user-managed"/>
         <field:input field="elasticSearch" id="c_com_turbointernational_metadata_domain_part_NozzleRing_elasticSearch" render="false" z="user-managed"/>
         <field:select field="partType" id="c_com_turbointernational_metadata_domain_part_NozzleRing_partType" itemValue="id" items="${parttypes}" path="/parttypes" render="false" z="user-managed"/>
-        <field:input field="interchangePart" id="c_com_turbointernational_metadata_domain_part_NozzleRing_interchangePart" z="T+/wZFdEUvA/qvwgaYY7KWMn4jc="/>
+        <field:input field="interchangePart" id="c_com_turbointernational_metadata_domain_part_NozzleRing_interchangePart" render="false" z="user-managed"/>
     </form:update>
 </div>

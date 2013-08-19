@@ -17,6 +17,6 @@
         <field:display field="interchange" id="s_com_turbointernational_metadata_domain_part_PistonRing_interchange" object="${pistonring}" render="false" z="user-managed"/>
         <field:display field="elasticSearch" id="s_com_turbointernational_metadata_domain_part_PistonRing_elasticSearch" object="${pistonring}" render="false" z="user-managed"/>
         <field:display field="partType" id="s_com_turbointernational_metadata_domain_part_PistonRing_partType" object="${pistonring}" render="false" z="user-managed"/>
-        <field:display field="interchangePart" id="s_com_turbointernational_metadata_domain_part_PistonRing_interchangePart" object="${pistonring}" z="2vmnwd+O7G5/dczJCanFyQEiD+w="/>
+        <field:display field="interchangePart" id="s_com_turbointernational_metadata_domain_part_PistonRing_interchangePart" object="${pistonring}" render="false" z="user-managed"/>
     </page:show>
 </div>

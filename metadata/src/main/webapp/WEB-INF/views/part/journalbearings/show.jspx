@@ -17,6 +17,6 @@
         <field:display field="interchange" id="s_com_turbointernational_metadata_domain_part_JournalBearing_interchange" object="${journalbearing}" render="false" z="user-managed"/>
         <field:display field="elasticSearch" id="s_com_turbointernational_metadata_domain_part_JournalBearing_elasticSearch" object="${journalbearing}" render="false" z="user-managed"/>
         <field:display field="partType" id="s_com_turbointernational_metadata_domain_part_JournalBearing_partType" object="${journalbearing}" render="false" z="user-managed"/>
-        <field:display field="interchangePart" id="s_com_turbointernational_metadata_domain_part_JournalBearing_interchangePart" object="${journalbearing}" z="cama6VlPrIx2MXepnGtJZd3OD8s="/>
+        <field:display field="interchangePart" id="s_com_turbointernational_metadata_domain_part_JournalBearing_interchangePart" object="${journalbearing}" render="false" z="user-managed"/>
     </page:show>
 </div>

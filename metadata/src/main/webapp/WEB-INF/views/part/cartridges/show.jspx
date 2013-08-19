@@ -11,6 +11,6 @@
         <field:display field="interchange" id="s_com_turbointernational_metadata_domain_part_Cartridge_interchange" object="${cartridge}" render="false" z="user-managed"/>
         <field:display field="elasticSearch" id="s_com_turbointernational_metadata_domain_part_Cartridge_elasticSearch" object="${cartridge}" render="false" z="user-managed"/>
         <field:display field="partType" id="s_com_turbointernational_metadata_domain_part_Cartridge_partType" object="${cartridge}" render="false" z="user-managed"/>
-        <field:display field="interchangePart" id="s_com_turbointernational_metadata_domain_part_Cartridge_interchangePart" object="${cartridge}" z="f8WlaWE1xsCR8NZJ+oeYt/mhvrI="/>
+        <field:display field="interchangePart" id="s_com_turbointernational_metadata_domain_part_Cartridge_interchangePart" object="${cartridge}" render="false" z="user-managed"/>
     </page:show>
 </div>

@@ -17,10 +17,10 @@
         <field:display field="compressorHousingDiameter" id="s_com_turbointernational_metadata_domain_part_Backplate_compressorHousingDiameter" object="${backplate}" z="/hKPg9Tx/SMKs3mWtA3ljJQg+is="/>
         <field:display field="notes" id="s_com_turbointernational_metadata_domain_part_Backplate_notes" object="${backplate}" z="mhAF4+35Uk8SW/X0gnZ4yKuU57Q="/>
         <field:display field="secondaryDiameter" id="s_com_turbointernational_metadata_domain_part_Backplate_secondaryDiameter" object="${backplate}" z="YoKEuTq7Ki8x44V0xPJGdNjMw+U="/>
-        <field:display field="overallHeight" id="s_com_turbointernational_metadata_domain_part_Backplate_overallHeight" object="${backplate}" render="false" z="user-managed"/>
+        <field:display field="overallHeight" id="s_com_turbointernational_metadata_domain_part_Backplate_overallHeight" object="${backplate}" render="true" z="user-managed"/>
         <field:display field="partType" id="s_com_turbointernational_metadata_domain_part_Backplate_partType" object="${backplate}" render="false" z="user-managed"/>
         <field:display field="interchange" id="s_com_turbointernational_metadata_domain_part_Backplate_interchange" object="${backplate}" label="Interchangeable Parts Group #" z="user-managed"/>
         <field:display field="elasticSearch" id="s_com_turbointernational_metadata_domain_part_Backplate_elasticSearch" object="${backplate}" render="false" z="user-managed"/>
-        <field:display field="interchangePart" id="s_com_turbointernational_metadata_domain_part_Backplate_interchangePart" object="${backplate}" z="Rj7ui64OB7KlZssDUkAMbYuKXU0="/>
+        <field:display field="interchangePart" id="s_com_turbointernational_metadata_domain_part_Backplate_interchangePart" object="${backplate}" render="false" z="user-managed"/>
     </page:show>
 </div>

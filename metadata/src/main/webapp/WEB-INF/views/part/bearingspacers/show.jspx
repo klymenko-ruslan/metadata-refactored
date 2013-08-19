@@ -17,6 +17,6 @@
         <field:display field="interchange" id="s_com_turbointernational_metadata_domain_part_BearingSpacer_interchange" object="${bearingspacer}" render="false" z="user-managed"/>
         <field:display field="elasticSearch" id="s_com_turbointernational_metadata_domain_part_BearingSpacer_elasticSearch" object="${bearingspacer}" render="false" z="user-managed"/>
         <field:display field="partType" id="s_com_turbointernational_metadata_domain_part_BearingSpacer_partType" object="${bearingspacer}" render="false" z="user-managed"/>
-        <field:display field="interchangePart" id="s_com_turbointernational_metadata_domain_part_BearingSpacer_interchangePart" object="${bearingspacer}" z="ibnPocmX7qsPIaLBo8GGJIv9fF8="/>
+        <field:display field="interchangePart" id="s_com_turbointernational_metadata_domain_part_BearingSpacer_interchangePart" object="${bearingspacer}" render="false" z="user-managed"/>
     </page:show>
 </div>

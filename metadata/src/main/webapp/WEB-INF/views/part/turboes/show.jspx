@@ -13,6 +13,6 @@
         <field:display field="interchange" id="s_com_turbointernational_metadata_domain_part_Turbo_interchange" object="${turbo}" render="false" z="user-managed"/>
         <field:display field="elasticSearch" id="s_com_turbointernational_metadata_domain_part_Turbo_elasticSearch" object="${turbo}" render="false" z="user-managed"/>
         <field:display field="partType" id="s_com_turbointernational_metadata_domain_part_Turbo_partType" object="${turbo}" render="false" z="user-managed"/>
-        <field:display field="interchangePart" id="s_com_turbointernational_metadata_domain_part_Turbo_interchangePart" object="${turbo}" z="0zMv+cisxgyh6y5wmr/X5HeX7Kw="/>
+        <field:display field="interchangePart" id="s_com_turbointernational_metadata_domain_part_Turbo_interchangePart" object="${turbo}" render="false" z="user-managed"/>
     </page:show>
 </div>

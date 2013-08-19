@@ -18,10 +18,10 @@
         <field:input field="compressorHousingDiameter" id="c_com_turbointernational_metadata_domain_part_Backplate_compressorHousingDiameter" validationMessageCode="field_invalid_number" z="/w4UdA7q+Wi+gDEs8mvu6g84wSg="/>
         <field:input field="notes" id="c_com_turbointernational_metadata_domain_part_Backplate_notes" z="/SSzfb2AoqxRjDMm9SJ+DjGVvCs="/>
         <field:input field="secondaryDiameter" id="c_com_turbointernational_metadata_domain_part_Backplate_secondaryDiameter" validationMessageCode="field_invalid_number" z="/lztVhBB5hzgtPr9mdQasVDcx48="/>
+        <field:input field="overallHeight" id="c_com_turbointernational_metadata_domain_part_Backplate_overallHeight" render="true" validationMessageCode="field_invalid_number" z="user-managed"/>
         <field:select field="partType" id="c_com_turbointernational_metadata_domain_part_Backplate_partType" itemValue="id" items="${parttypes}" path="/parttypes" z="+d35nt11MxK7aIZcaxeF4S7IIMY="/>
-        <field:select field="interchange" id="c_com_turbointernational_metadata_domain_part_Backplate_interchange" itemValue="id" items="${interchanges}" path="/other/interchange" render="false" z="user-managed"/>
+        <field:select field="interchange" id="c_com_turbointernational_metadata_domain_part_Backplate_interchange" itemValue="id" items="${interchanges}" path="/other/interchange"  render="false" z="user-managed"/>
         <field:input field="elasticSearch" id="c_com_turbointernational_metadata_domain_part_Backplate_elasticSearch" render="false" z="user-managed"/>
-        <field:input field="overallHeight" id="c_com_turbointernational_metadata_domain_part_Backplate_overallHeight" render="false" validationMessageCode="field_invalid_number" z="user-managed"/>
         <field:input field="interchangePart" id="c_com_turbointernational_metadata_domain_part_Backplate_interchangePart" render="false" z="user-managed"/>
     </form:update>
 </div>
