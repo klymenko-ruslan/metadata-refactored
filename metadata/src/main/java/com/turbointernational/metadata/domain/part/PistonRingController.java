@@ -30,6 +30,7 @@ public class PistonRingController {
             return "part/pistonrings/create";
         }
         uiModel.asMap().clear();
+        pistonRing.updateInterchanges();
         pistonRing.persist();
         return "redirect:/part/pistonrings/" + encodeUrlPathSegment(pistonRing.getId().toString(), httpServletRequest);
     }
@@ -41,6 +42,7 @@ public class PistonRingController {
             return "part/pistonrings/update";
         }
         uiModel.asMap().clear();
+        pistonRing.updateInterchanges();
         pistonRing.merge();
         return "redirect:/part/pistonrings/" + encodeUrlPathSegment(pistonRing.getId().toString(), httpServletRequest);
     }

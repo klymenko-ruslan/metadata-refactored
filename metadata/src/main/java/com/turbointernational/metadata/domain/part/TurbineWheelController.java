@@ -30,6 +30,7 @@ public class TurbineWheelController {
             return "part/turbinewheels/create";
         }
         uiModel.asMap().clear();
+        turbineWheel.updateInterchanges();
         turbineWheel.persist();
         return "redirect:/part/turbinewheels/" + encodeUrlPathSegment(turbineWheel.getId().toString(), httpServletRequest);
     }
@@ -41,6 +42,7 @@ public class TurbineWheelController {
             return "part/turbinewheels/update";
         }
         uiModel.asMap().clear();
+        turbineWheel.updateInterchanges();
         turbineWheel.merge();
         return "redirect:/part/turbinewheels/" + encodeUrlPathSegment(turbineWheel.getId().toString(), httpServletRequest);
     }

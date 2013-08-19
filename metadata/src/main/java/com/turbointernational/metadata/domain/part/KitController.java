@@ -34,6 +34,7 @@ public class KitController {
             return "part/kits/create";
         }
         uiModel.asMap().clear();
+        kit.updateInterchanges();
         kit.persist();
         return "redirect:/part/kits/" + encodeUrlPathSegment(kit.getId().toString(), httpServletRequest);
     }
@@ -45,6 +46,7 @@ public class KitController {
             return "part/kits/update";
         }
         uiModel.asMap().clear();
+        kit.updateInterchanges();
         kit.merge();
         return "redirect:/part/kits/" + encodeUrlPathSegment(kit.getId().toString(), httpServletRequest);
     }

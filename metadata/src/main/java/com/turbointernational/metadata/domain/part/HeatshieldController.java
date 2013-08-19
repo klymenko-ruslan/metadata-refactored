@@ -32,6 +32,7 @@ public class HeatshieldController {
             return "part/heatshields/create";
         }
         uiModel.asMap().clear();
+        heatshield.updateInterchanges();
         heatshield.persist();
         return "redirect:/part/heatshields/" + encodeUrlPathSegment(heatshield.getId().toString(), httpServletRequest);
     }
@@ -43,6 +44,7 @@ public class HeatshieldController {
             return "part/heatshields/update";
         }
         uiModel.asMap().clear();
+        heatshield.updateInterchanges();
         heatshield.merge();
         return "redirect:/part/heatshields/" + encodeUrlPathSegment(heatshield.getId().toString(), httpServletRequest);
     }

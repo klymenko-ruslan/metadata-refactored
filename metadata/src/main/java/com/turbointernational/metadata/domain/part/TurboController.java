@@ -34,6 +34,7 @@ public class TurboController {
             return "part/turboes/create";
         }
         uiModel.asMap().clear();
+        turbo.updateInterchanges();
         turbo.persist();
         return "redirect:/part/turboes/" + encodeUrlPathSegment(turbo.getId().toString(), httpServletRequest);
     }
@@ -45,6 +46,7 @@ public class TurboController {
             return "part/turboes/update";
         }
         uiModel.asMap().clear();
+        turbo.updateInterchanges();
         turbo.merge();
         return "redirect:/part/turboes/" + encodeUrlPathSegment(turbo.getId().toString(), httpServletRequest);
     }

@@ -32,6 +32,7 @@ public class CompressorWheelController {
             return "part/compressorwheels/create";
         }
         uiModel.asMap().clear();
+        compressorWheel.updateInterchanges();
         compressorWheel.persist();
         return "redirect:/part/compressorwheels/" + encodeUrlPathSegment(compressorWheel.getId().toString(), httpServletRequest);
     }
@@ -43,6 +44,7 @@ public class CompressorWheelController {
             return "part/compressorwheels/update";
         }
         uiModel.asMap().clear();
+        compressorWheel.updateInterchanges();
         compressorWheel.merge();
         return "redirect:/part/compressorwheels/" + encodeUrlPathSegment(compressorWheel.getId().toString(), httpServletRequest);
     }

@@ -32,6 +32,7 @@ public class NozzleRingController {
             return "part/nozzlerings/create";
         }
         uiModel.asMap().clear();
+        nozzleRing.updateInterchanges();
         nozzleRing.persist();
         return "redirect:/part/nozzlerings/" + encodeUrlPathSegment(nozzleRing.getId().toString(), httpServletRequest);
     }
@@ -43,6 +44,7 @@ public class NozzleRingController {
             return "part/nozzlerings/update";
         }
         uiModel.asMap().clear();
+        nozzleRing.updateInterchanges();
         nozzleRing.merge();
         return "redirect:/part/nozzlerings/" + encodeUrlPathSegment(nozzleRing.getId().toString(), httpServletRequest);
     }

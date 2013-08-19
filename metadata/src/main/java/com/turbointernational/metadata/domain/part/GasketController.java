@@ -34,6 +34,7 @@ public class GasketController {
             return "part/gaskets/create";
         }
         uiModel.asMap().clear();
+        gasket.updateInterchanges();
         gasket.persist();
         return "redirect:/part/gaskets/" + encodeUrlPathSegment(gasket.getId().toString(), httpServletRequest);
     }
@@ -45,6 +46,7 @@ public class GasketController {
             return "part/gaskets/update";
         }
         uiModel.asMap().clear();
+        gasket.updateInterchanges();
         gasket.merge();
         return "redirect:/part/gaskets/" + encodeUrlPathSegment(gasket.getId().toString(), httpServletRequest);
     }

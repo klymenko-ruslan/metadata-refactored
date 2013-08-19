@@ -33,6 +33,7 @@ public class JournalBearingController {
             return "part/journalbearings/create";
         }
         uiModel.asMap().clear();
+        journalBearing.updateInterchanges();
         journalBearing.persist();
         return "redirect:/part/journalbearings/" + encodeUrlPathSegment(journalBearing.getId().toString(), httpServletRequest);
     }
@@ -44,6 +45,7 @@ public class JournalBearingController {
             return "part/journalbearings/update";
         }
         uiModel.asMap().clear();
+        journalBearing.updateInterchanges();
         journalBearing.merge();
         return "redirect:/part/journalbearings/" + encodeUrlPathSegment(journalBearing.getId().toString(), httpServletRequest);
     }

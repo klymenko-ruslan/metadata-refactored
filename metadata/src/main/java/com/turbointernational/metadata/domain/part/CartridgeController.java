@@ -33,6 +33,7 @@ public class CartridgeController {
             return "part/cartridges/create";
         }
         uiModel.asMap().clear();
+        cartridge.updateInterchanges();
         cartridge.persist();
         return "redirect:/part/cartridges/" + encodeUrlPathSegment(cartridge.getId().toString(), httpServletRequest);
     }
@@ -44,6 +45,7 @@ public class CartridgeController {
             return "part/cartridges/update";
         }
         uiModel.asMap().clear();
+        cartridge.updateInterchanges();
         cartridge.merge();
         return "redirect:/part/cartridges/" + encodeUrlPathSegment(cartridge.getId().toString(), httpServletRequest);
     }

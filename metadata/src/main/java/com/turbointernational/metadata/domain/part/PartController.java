@@ -38,6 +38,7 @@ public class PartController {
             return "part/parts/create";
         }
         uiModel.asMap().clear();
+        part.updateInterchanges();
         part.persist();
         return "redirect:/part/parts/" + encodeUrlPathSegment(part.getId().toString(), httpServletRequest);
     }
@@ -49,6 +50,7 @@ public class PartController {
             return "part/parts/update";
         }
         uiModel.asMap().clear();
+        part.updateInterchanges();
         part.merge();
         return "redirect:/part/parts/" + encodeUrlPathSegment(part.getId().toString(), httpServletRequest);
     }

@@ -34,6 +34,7 @@ public class BearingSpacerController {
             return "part/bearingspacers/create";
         }
         uiModel.asMap().clear();
+        bearingSpacer.updateInterchanges();
         bearingSpacer.persist();
         return "redirect:/part/bearingspacers/" + encodeUrlPathSegment(bearingSpacer.getId().toString(), httpServletRequest);
         
@@ -46,6 +47,7 @@ public class BearingSpacerController {
             return "part/bearingspacers/update";
         }
         uiModel.asMap().clear();
+        bearingSpacer.updateInterchanges();
         bearingSpacer.merge();
         return "redirect:/part/bearingspacers/" + encodeUrlPathSegment(bearingSpacer.getId().toString(), httpServletRequest);
     }

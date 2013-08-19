@@ -12,7 +12,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 @RequestMapping("/part/backplates")
-@Controller
+
 @RooWebScaffold(path = "part/backplates", formBackingObject = Backplate.class)
 @RooWebJson(jsonObject = Backplate.class)
 public class BackplateController {
