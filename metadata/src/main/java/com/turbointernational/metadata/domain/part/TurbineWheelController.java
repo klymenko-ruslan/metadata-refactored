@@ -24,7 +24,7 @@ public class TurbineWheelController {
     }
     
     @RequestMapping(method = RequestMethod.POST, produces = "text/html")
-    public String create(@Valid TurbineWheel turbineWheel, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
+    public String create(@Valid TurbineWheel turbineWheel, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) throws Exception {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, turbineWheel);
             return "part/turbinewheels/create";
@@ -36,7 +36,7 @@ public class TurbineWheelController {
     }
     
     @RequestMapping(method = RequestMethod.PUT, produces = "text/html")
-    public String update(@Valid TurbineWheel turbineWheel, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
+    public String update(@Valid TurbineWheel turbineWheel, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) throws Exception {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, turbineWheel);
             return "part/turbinewheels/update";

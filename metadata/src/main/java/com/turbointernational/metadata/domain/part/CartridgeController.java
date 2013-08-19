@@ -27,7 +27,7 @@ public class CartridgeController {
     }
      
      @RequestMapping(method = RequestMethod.POST, produces = "text/html")
-    public String create(@Valid Cartridge cartridge, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
+    public String create(@Valid Cartridge cartridge, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) throws Exception {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, cartridge);
             return "part/cartridges/create";
@@ -39,7 +39,7 @@ public class CartridgeController {
     }
     
      @RequestMapping(method = RequestMethod.PUT, produces = "text/html")
-    public String update(@Valid Cartridge cartridge, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
+    public String update(@Valid Cartridge cartridge, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) throws Exception {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, cartridge);
             return "part/cartridges/update";
