@@ -6,6 +6,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.SecondaryTable;
+import net.sf.jsog.JSOG;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import org.springframework.roo.addon.json.RooJson;
@@ -39,4 +40,19 @@ public class JournalBearing extends Part {
 
     @Column(name="inside_dim_max", table = "JOURNAL_BEARING")
     private Float insideDiameterMax;
+
+    @Override
+    public void addIndexFields(JSOG partObject) {
+        if (standardSize != null) {
+            partObject.put("standard_size_id", standardSize.getId());
+        }
+        if (oversize != null) {
+            partObject.put("oversize_id", oversize.getId());
+        }
+
+        partObject.put("outside_diameter_min", outsideDiameterMin);
+        partObject.put("outside_diameter_max", outsideDiameterMax);
+        partObject.put("inside_diameter_min", insideDiameterMin);
+        partObject.put("inside_diameter_max", insideDiameterMax);
+    }
 }

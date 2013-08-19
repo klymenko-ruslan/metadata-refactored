@@ -54,6 +54,14 @@ public class Backplate extends Part {
         if (sealType != null) {
             partObject.put("seal_type_name", sealType.getName());
         }
+
+        partObject.put("overall_diameter", overallDiameter);
+        partObject.put("compressor_wheel_diameter", compressorWheelDiameter);
+        partObject.put("piston_ring_diameter", pistonRingDiameter);
+        partObject.put("compressor_housing_diameter", compressorHousingDiameter);
+        partObject.put("secondary_diameter", secondaryDiameter);
+        partObject.put("overall_height", overallHeight);
+        partObject.put("style_compressor_wheel", styleCompressorWheel);
     }
 
 }

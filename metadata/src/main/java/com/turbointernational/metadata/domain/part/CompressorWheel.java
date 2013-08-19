@@ -2,6 +2,7 @@ package com.turbointernational.metadata.domain.part;
 import javax.persistence.Column;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.SecondaryTable;
+import net.sf.jsog.JSOG;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import org.springframework.roo.addon.json.RooJson;
@@ -31,4 +32,15 @@ public class CompressorWheel extends Part {
 
     @Column(name="application", table = "COMPRESSOR_WHEEL")
     private String application;
+
+    @Override
+    public void addIndexFields(JSOG partObject) {
+        partObject.put("inducer_oa", inducerOa);
+        partObject.put("tip_height_b", tipHeightB);
+        partObject.put("exducer_oc", exducerOc);
+        partObject.put("hub_length_d", hubLengthD);
+        partObject.put("bore_oe", boreOe);
+        partObject.put("number_of_blades", numberOfBlades);
+        partObject.put("application", application);
+    }
 }
