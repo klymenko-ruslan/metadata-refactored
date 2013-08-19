@@ -5,16 +5,9 @@ package com.turbointernational.metadata.domain.part;
 
 import com.turbointernational.metadata.domain.part.Gasket;
 import javax.persistence.Entity;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.Table;
 
 privileged aspect Gasket_Roo_Jpa_Entity {
     
     declare @type: Gasket: @Entity;
-    
-    declare @type: Gasket: @Table(name = "GASKET");
-    
-    declare @type: Gasket: @Inheritance(strategy = InheritanceType.JOINED);
     
 }

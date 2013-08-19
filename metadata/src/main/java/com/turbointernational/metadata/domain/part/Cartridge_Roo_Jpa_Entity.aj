@@ -5,16 +5,9 @@ package com.turbointernational.metadata.domain.part;
 
 import com.turbointernational.metadata.domain.part.Cartridge;
 import javax.persistence.Entity;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.Table;
 
 privileged aspect Cartridge_Roo_Jpa_Entity {
     
     declare @type: Cartridge: @Entity;
-    
-    declare @type: Cartridge: @Table(name = "CARTRIDGE");
-    
-    declare @type: Cartridge: @Inheritance(strategy = InheritanceType.JOINED);
     
 }

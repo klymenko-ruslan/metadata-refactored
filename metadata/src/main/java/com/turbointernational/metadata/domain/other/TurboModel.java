@@ -1,18 +1,20 @@
 package com.turbointernational.metadata.domain.other;
 import com.turbointernational.metadata.domain.type.TurboType;
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
-import org.springframework.roo.addon.tostring.RooToString;
+import org.springframework.roo.addon.json.RooJson;
 
+@Cacheable
 @RooJavaBean
-@RooToString
 @RooJpaActiveRecord(table="TURBO_MODEL")
+@RooJson
 public class TurboModel {
 
     @Id
@@ -22,7 +24,7 @@ public class TurboModel {
     @Column(nullable=false)
     private String name;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name="turbo_type_id")
     private TurboType type;
 }

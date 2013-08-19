@@ -1,11 +1,12 @@
 package com.turbointernational.metadata.domain.part;
-import com.turbointernational.metadata.domain.part.JournalBearing;
 import org.springframework.roo.addon.web.mvc.controller.scaffold.RooWebScaffold;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.roo.addon.web.mvc.controller.json.RooWebJson;
 
-@RequestMapping("/journalbearings")
+@RequestMapping("/part/journalbearings")
 @Controller
-@RooWebScaffold(path = "journalbearings", formBackingObject = JournalBearing.class)
+@RooWebScaffold(path = "part/journalbearings", formBackingObject = JournalBearing.class)
+@RooWebJson(jsonObject = JournalBearing.class)
 public class JournalBearingController {
 }

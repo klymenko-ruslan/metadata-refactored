@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" xmlns:table="urn:jsptagdir:/WEB-INF/tags/form/fields" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <page:list id="pl_com_turbointernational_metadata_domain_part_TurbineWheel" items="${turbinewheels}" z="CmEyk7XrytzktRz1NtBh7V8orLM=">
+        <table:table data="${turbinewheels}" id="l_com_turbointernational_metadata_domain_part_TurbineWheel" path="/part/turbinewheels" z="UsXnRVp7zrD097sSj0uBN+0XsdI=">
+            <table:column id="c_com_turbointernational_metadata_domain_part_TurbineWheel_manufacturerPartNumber" property="manufacturerPartNumber" z="Lb5jh0StKKlbJPCy/PdSrc9ZdfY="/>
+            <table:column id="c_com_turbointernational_metadata_domain_part_TurbineWheel_manufacturer" property="manufacturer" z="LTVLHoAWFoQQevu3++qS9BsY9G4="/>
+            <table:column id="c_com_turbointernational_metadata_domain_part_TurbineWheel_name" property="name" z="QLGIOLRp2ik8IZNSRAuhKLA1Z/U="/>
+            <table:column id="c_com_turbointernational_metadata_domain_part_TurbineWheel_description" property="description" z="xCuCWz18vfAvKvESmfZ58xI1VZE="/>
+            <table:column id="c_com_turbointernational_metadata_domain_part_TurbineWheel_inactive" property="inactive" z="AI1QmMiIqpVBHhSnmyA/NogJud0="/>
+            <table:column id="c_com_turbointernational_metadata_domain_part_TurbineWheel_partType" property="partType" render="false" z="user-managed"/>
+        </table:table>
+    </page:list>
+</div>

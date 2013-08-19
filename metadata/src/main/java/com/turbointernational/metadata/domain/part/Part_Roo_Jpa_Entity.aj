@@ -5,7 +5,10 @@ package com.turbointernational.metadata.domain.part;
 
 import com.turbointernational.metadata.domain.part.Part;
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
@@ -14,6 +17,10 @@ privileged aspect Part_Roo_Jpa_Entity {
     declare @type: Part: @Entity;
     
     declare @type: Part: @Table(name = "PART");
+    
+    declare @type: Part: @Inheritance(strategy = InheritanceType.SINGLE_TABLE);
+    
+    declare @type: Part: @DiscriminatorColumn;
     
     @Version
     @Column(name = "version")

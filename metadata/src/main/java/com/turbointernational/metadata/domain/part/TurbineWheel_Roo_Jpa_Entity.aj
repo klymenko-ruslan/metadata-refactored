@@ -5,16 +5,9 @@ package com.turbointernational.metadata.domain.part;
 
 import com.turbointernational.metadata.domain.part.TurbineWheel;
 import javax.persistence.Entity;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.Table;
 
 privileged aspect TurbineWheel_Roo_Jpa_Entity {
     
     declare @type: TurbineWheel: @Entity;
-    
-    declare @type: TurbineWheel: @Table(name = "TURBINE_WHEEL");
-    
-    declare @type: TurbineWheel: @Inheritance(strategy = InheritanceType.JOINED);
     
 }

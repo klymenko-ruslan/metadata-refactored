@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" xmlns:table="urn:jsptagdir:/WEB-INF/tags/form/fields" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <page:list id="pl_com_turbointernational_metadata_domain_part_JournalBearing" items="${journalbearings}" z="gBYnC1lPLr3WLRmNvcmgSeAciAQ=">
+        <table:table data="${journalbearings}" id="l_com_turbointernational_metadata_domain_part_JournalBearing" path="/part/journalbearings" z="p0q5ihiR1NtQBgs7wD5qCGxzFq0=">
+            <table:column id="c_com_turbointernational_metadata_domain_part_JournalBearing_manufacturerPartNumber" property="manufacturerPartNumber" z="pztee2kR3FW4VBkdr+LrhdiHKBo="/>
+            <table:column id="c_com_turbointernational_metadata_domain_part_JournalBearing_manufacturer" property="manufacturer" z="mW5Ql19ioGqGBjX0LIJ2CuX4wZ4="/>
+            <table:column id="c_com_turbointernational_metadata_domain_part_JournalBearing_name" property="name" z="TpYL8vb5zhnB0hLjqW71K56Thd4="/>
+            <table:column id="c_com_turbointernational_metadata_domain_part_JournalBearing_description" property="description" z="vGRRzbhZ3TqvXxhkr2nRqAuBR9E="/>
+            <table:column id="c_com_turbointernational_metadata_domain_part_JournalBearing_inactive" property="inactive" z="DtNsnu6MEfJ/Rke7+arcVEhrKJI="/>
+            <table:column id="c_com_turbointernational_metadata_domain_part_JournalBearing_partType" property="partType" render="false" z="user-managed"/>
+        </table:table>
+    </page:list>
+</div>

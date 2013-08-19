@@ -1,11 +1,12 @@
 package com.turbointernational.metadata.domain.part;
-import com.turbointernational.metadata.domain.part.Cartridge;
 import org.springframework.roo.addon.web.mvc.controller.scaffold.RooWebScaffold;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.roo.addon.web.mvc.controller.json.RooWebJson;
 
-@RequestMapping("/cartridges")
+@RequestMapping("/part/cartridges")
 @Controller
-@RooWebScaffold(path = "cartridges", formBackingObject = Cartridge.class)
+@RooWebScaffold(path = "part/cartridges", formBackingObject = Cartridge.class)
+@RooWebJson(jsonObject = Cartridge.class)
 public class CartridgeController {
 }

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <page:show id="ps_com_turbointernational_metadata_domain_part_Cartridge" object="${cartridge}" path="/part/cartridges" z="GjPOlFyIkmPoyn30Q5SIWhFZe1k=">
+        <field:display field="manufacturerPartNumber" id="s_com_turbointernational_metadata_domain_part_Cartridge_manufacturerPartNumber" object="${cartridge}" z="IwdqkyH+4E41Mp9Na1O/8UItjqA="/>
+        <field:display field="manufacturer" id="s_com_turbointernational_metadata_domain_part_Cartridge_manufacturer" object="${cartridge}" z="uGVPd5fWSxgJrGXvZl3Y1rIXpew="/>
+        <field:display field="name" id="s_com_turbointernational_metadata_domain_part_Cartridge_name" object="${cartridge}" z="HVnUbXFbnUV/5mXVGANhaHtWlVc="/>
+        <field:display field="description" id="s_com_turbointernational_metadata_domain_part_Cartridge_description" object="${cartridge}" z="yl7Pe341dQNrm3mpgTKXw14ciLU="/>
+        <field:display field="inactive" id="s_com_turbointernational_metadata_domain_part_Cartridge_inactive" object="${cartridge}" z="aM2//wjbHIy2AAHl7dZav4569Zs="/>
+        <field:display field="interchange" id="s_com_turbointernational_metadata_domain_part_Cartridge_interchange" object="${cartridge}" render="false" z="user-managed"/>
+        <field:display field="elasticSearch" id="s_com_turbointernational_metadata_domain_part_Cartridge_elasticSearch" object="${cartridge}" render="false" z="user-managed"/>
+        <field:display field="partType" id="s_com_turbointernational_metadata_domain_part_Cartridge_partType" object="${cartridge}" render="false" z="user-managed"/>
+        <field:display field="interchangePart" id="s_com_turbointernational_metadata_domain_part_Cartridge_interchangePart" object="${cartridge}" z="f8WlaWE1xsCR8NZJ+oeYt/mhvrI="/>
+    </page:show>
+</div>

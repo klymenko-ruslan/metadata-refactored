@@ -1,21 +1,28 @@
 package com.turbointernational.metadata.domain.part;
 import com.turbointernational.metadata.domain.type.GasketType;
-import javax.persistence.DiscriminatorValue;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.SecondaryTable;
+import net.sf.jsog.JSOG;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
-import org.springframework.roo.addon.tostring.RooToString;
+import org.springframework.roo.addon.json.RooJson;
 
 @RooJavaBean
-@RooToString
-@RooJpaActiveRecord(table="GASKET", inheritanceType = "JOINED")
-@DiscriminatorValue(value = "6")
-@PrimaryKeyJoinColumn(name = "part_id")
+@RooJpaActiveRecord
+@RooJson
+@SecondaryTable(name="gasket", pkJoinColumns=@PrimaryKeyJoinColumn(name = "part_id"))
 public class Gasket extends Part {
 
-    @ManyToOne
-    @JoinColumn(name="gasket_type_id")
+    @OneToOne
+    @JoinColumn(name="gasket_type_id", table = "gasket")
     private GasketType type;
+
+    @Override
+    public void addIndexFields(JSOG partObject) {
+        if (type != null) {
+            partObject.put("gasket_type_name", type.getName());
+        }
+    }
 }

@@ -1,20 +1,23 @@
 package com.turbointernational.metadata.domain.other;
 import com.turbointernational.metadata.domain.type.ManufacturerType;
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
-import org.springframework.roo.addon.tostring.RooToString;
+import org.springframework.roo.addon.json.RooJson;
 
+@Cacheable
 @RooJavaBean
-@RooToString
 @RooJpaActiveRecord
+@RooJson
 @Table(name="MANFR", uniqueConstraints=@UniqueConstraint(columnNames={"name"}))
 public class Manufacturer {
 
@@ -25,13 +28,11 @@ public class Manufacturer {
     @Column(nullable=false)
     private String name;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name="manfr_type_id", nullable=false)
     private ManufacturerType type;
 
-    @ManyToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="parent_manfr_id")
     private Manufacturer parent;
-
-
 }

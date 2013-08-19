@@ -5,16 +5,9 @@ package com.turbointernational.metadata.domain.part;
 
 import com.turbointernational.metadata.domain.part.JournalBearing;
 import javax.persistence.Entity;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.Table;
 
 privileged aspect JournalBearing_Roo_Jpa_Entity {
     
     declare @type: JournalBearing: @Entity;
-    
-    declare @type: JournalBearing: @Table(name = "JOURNAL_BEARING");
-    
-    declare @type: JournalBearing: @Inheritance(strategy = InheritanceType.JOINED);
     
 }

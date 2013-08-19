@@ -1,33 +1,30 @@
 package com.turbointernational.metadata.domain.part;
 import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
 import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.SecondaryTable;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
-import org.springframework.roo.addon.tostring.RooToString;
 
 @RooJavaBean
-@RooToString
-@RooJpaActiveRecord(table="PISTON_RING", inheritanceType = "JOINED")
-@DiscriminatorValue(value = "4")
-@PrimaryKeyJoinColumn(name = "part_id")
+@RooJpaActiveRecord
+@SecondaryTable(name="PISTON_RING", pkJoinColumns=@PrimaryKeyJoinColumn(name = "part_id"))
 public class PistonRing extends Part {
     
-    @Column(name="outside_dim_min")
+    @Column(name="outside_dim_min", table = "PISTON_RING")
     private Float outsideDiameterMin;
 
-    @Column(name="outside_dim_max")
+    @Column(name="outside_dim_max", table = "PISTON_RING")
     private Float outsideDiameterMax;
 
-    @Column(name="width_min")
+    @Column(name="width_min", table = "PISTON_RING")
     private Float widthMin;
 
-    @Column(name="width_max")
+    @Column(name="width_max", table = "PISTON_RING")
     private Float widthMax;
 
-    @Column(name="i_gap_min")
+    @Column(name="i_gap_min", table = "PISTON_RING")
     private Float installedGapMin;
 
-    @Column(name="i_gap_max")
+    @Column(name="i_gap_max", table = "PISTON_RING")
     private Float installedGapMax;
 }

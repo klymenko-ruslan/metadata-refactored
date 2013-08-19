@@ -3,10 +3,11 @@
 
 package com.turbointernational.metadata.domain.part;
 
-import com.turbointernational.metadata.domain.interchange.Interchange;
+import com.turbointernational.metadata.domain.other.Interchange;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.Part;
-import java.util.List;
+import com.turbointernational.metadata.domain.type.PartType;
+import com.turbointernational.metadata.util.ElasticSearch;
 
 privileged aspect Part_Roo_JavaBean {
     
@@ -18,20 +19,20 @@ privileged aspect Part_Roo_JavaBean {
         this.id = id;
     }
     
-    public String Part.getManufacturerPartNumber() {
-        return this.manufacturerPartNumber;
-    }
-    
-    public void Part.setManufacturerPartNumber(String manufacturerPartNumber) {
-        this.manufacturerPartNumber = manufacturerPartNumber;
-    }
-    
     public Manufacturer Part.getManufacturer() {
         return this.manufacturer;
     }
     
     public void Part.setManufacturer(Manufacturer manufacturer) {
         this.manufacturer = manufacturer;
+    }
+    
+    public String Part.getManufacturerPartNumber() {
+        return this.manufacturerPartNumber;
+    }
+    
+    public void Part.setManufacturerPartNumber(String manufacturerPartNumber) {
+        this.manufacturerPartNumber = manufacturerPartNumber;
     }
     
     public String Part.getName() {
@@ -50,6 +51,14 @@ privileged aspect Part_Roo_JavaBean {
         this.description = description;
     }
     
+    public PartType Part.getPartType() {
+        return this.partType;
+    }
+    
+    public void Part.setPartType(PartType partType) {
+        this.partType = partType;
+    }
+    
     public Boolean Part.getInactive() {
         return this.inactive;
     }
@@ -58,12 +67,28 @@ privileged aspect Part_Roo_JavaBean {
         this.inactive = inactive;
     }
     
-    public List<Interchange> Part.getInterchanges() {
-        return this.interchanges;
+    public Interchange Part.getInterchange() {
+        return this.interchange;
     }
     
-    public void Part.setInterchanges(List<Interchange> interchanges) {
-        this.interchanges = interchanges;
+    public void Part.setInterchange(Interchange interchange) {
+        this.interchange = interchange;
+    }
+    
+    public Part Part.getInterchangePart() {
+        return this.interchangePart;
+    }
+    
+    public void Part.setInterchangePart(Part interchangePart) {
+        this.interchangePart = interchangePart;
+    }
+    
+    public ElasticSearch Part.getElasticSearch() {
+        return this.elasticSearch;
+    }
+    
+    public void Part.setElasticSearch(ElasticSearch elasticSearch) {
+        this.elasticSearch = elasticSearch;
     }
     
 }

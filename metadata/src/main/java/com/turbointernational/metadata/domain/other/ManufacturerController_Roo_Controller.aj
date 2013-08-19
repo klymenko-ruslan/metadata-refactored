@@ -24,24 +24,24 @@ privileged aspect ManufacturerController_Roo_Controller {
     public String ManufacturerController.create(@Valid Manufacturer manufacturer, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, manufacturer);
-            return "manufacturer/create";
+            return "other/manufacturer/create";
         }
         uiModel.asMap().clear();
         manufacturer.persist();
-        return "redirect:/manufacturer/" + encodeUrlPathSegment(manufacturer.getId().toString(), httpServletRequest);
+        return "redirect:/other/manufacturer/" + encodeUrlPathSegment(manufacturer.getId().toString(), httpServletRequest);
     }
     
     @RequestMapping(params = "form", produces = "text/html")
     public String ManufacturerController.createForm(Model uiModel) {
         populateEditForm(uiModel, new Manufacturer());
-        return "manufacturer/create";
+        return "other/manufacturer/create";
     }
     
     @RequestMapping(value = "/{id}", produces = "text/html")
     public String ManufacturerController.show(@PathVariable("id") Long id, Model uiModel) {
         uiModel.addAttribute("manufacturer", Manufacturer.findManufacturer(id));
         uiModel.addAttribute("itemId", id);
-        return "manufacturer/show";
+        return "other/manufacturer/show";
     }
     
     @RequestMapping(produces = "text/html")
@@ -55,24 +55,24 @@ privileged aspect ManufacturerController_Roo_Controller {
         } else {
             uiModel.addAttribute("manufacturers", Manufacturer.findAllManufacturers());
         }
-        return "manufacturer/list";
+        return "other/manufacturer/list";
     }
     
     @RequestMapping(method = RequestMethod.PUT, produces = "text/html")
     public String ManufacturerController.update(@Valid Manufacturer manufacturer, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, manufacturer);
-            return "manufacturer/update";
+            return "other/manufacturer/update";
         }
         uiModel.asMap().clear();
         manufacturer.merge();
-        return "redirect:/manufacturer/" + encodeUrlPathSegment(manufacturer.getId().toString(), httpServletRequest);
+        return "redirect:/other/manufacturer/" + encodeUrlPathSegment(manufacturer.getId().toString(), httpServletRequest);
     }
     
     @RequestMapping(value = "/{id}", params = "form", produces = "text/html")
     public String ManufacturerController.updateForm(@PathVariable("id") Long id, Model uiModel) {
         populateEditForm(uiModel, Manufacturer.findManufacturer(id));
-        return "manufacturer/update";
+        return "other/manufacturer/update";
     }
     
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "text/html")
@@ -82,7 +82,7 @@ privileged aspect ManufacturerController_Roo_Controller {
         uiModel.asMap().clear();
         uiModel.addAttribute("page", (page == null) ? "1" : page.toString());
         uiModel.addAttribute("size", (size == null) ? "10" : size.toString());
-        return "redirect:/manufacturer";
+        return "redirect:/other/manufacturer";
     }
     
     void ManufacturerController.populateEditForm(Model uiModel, Manufacturer manufacturer) {

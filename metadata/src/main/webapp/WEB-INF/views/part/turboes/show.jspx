@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <page:show id="ps_com_turbointernational_metadata_domain_part_Turbo" object="${turbo}" path="/part/turboes" z="jsE5pIV5S/cocnoXk90EhqPmITg=">
+        <field:display field="manufacturerPartNumber" id="s_com_turbointernational_metadata_domain_part_Turbo_manufacturerPartNumber" object="${turbo}" z="n1eu63fKI98F7TztnTiRp5bvYKM="/>
+        <field:display field="manufacturer" id="s_com_turbointernational_metadata_domain_part_Turbo_manufacturer" object="${turbo}" z="OEJrNCpUA/VHVXXuT6Hybi3pgTc="/>
+        <field:display field="name" id="s_com_turbointernational_metadata_domain_part_Turbo_name" object="${turbo}" z="NDnsGCSEKeuO+uKHcsbD2Ssvyeg="/>
+        <field:display field="description" id="s_com_turbointernational_metadata_domain_part_Turbo_description" object="${turbo}" z="mjqrPA89N6l/2DT76HvUO4yMUsU="/>
+        <field:display field="inactive" id="s_com_turbointernational_metadata_domain_part_Turbo_inactive" object="${turbo}" z="Lg6IX3i5f9mltmN9N0k7i4jYxjg="/>
+        <field:display field="model" id="s_com_turbointernational_metadata_domain_part_Turbo_model" object="${turbo}" z="lI1cw3T0jNWqdV9P3HocqHKLxHM="/>
+        <field:display field="coolType" id="s_com_turbointernational_metadata_domain_part_Turbo_coolType" object="${turbo}" z="OYvGTOa7UMg6b2AbNtAIZUs7Vik="/>
+        <field:display field="interchange" id="s_com_turbointernational_metadata_domain_part_Turbo_interchange" object="${turbo}" render="false" z="user-managed"/>
+        <field:display field="elasticSearch" id="s_com_turbointernational_metadata_domain_part_Turbo_elasticSearch" object="${turbo}" render="false" z="user-managed"/>
+        <field:display field="partType" id="s_com_turbointernational_metadata_domain_part_Turbo_partType" object="${turbo}" render="false" z="user-managed"/>
+        <field:display field="interchangePart" id="s_com_turbointernational_metadata_domain_part_Turbo_interchangePart" object="${turbo}" z="0zMv+cisxgyh6y5wmr/X5HeX7Kw="/>
+    </page:show>
+</div>

@@ -25,24 +25,24 @@ privileged aspect GroupController_Roo_Controller {
     public String GroupController.create(@Valid Group group, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, group);
-            return "groups/create";
+            return "security/groups/create";
         }
         uiModel.asMap().clear();
         group.persist();
-        return "redirect:/groups/" + encodeUrlPathSegment(group.getId().toString(), httpServletRequest);
+        return "redirect:/security/groups/" + encodeUrlPathSegment(group.getId().toString(), httpServletRequest);
     }
     
     @RequestMapping(params = "form", produces = "text/html")
     public String GroupController.createForm(Model uiModel) {
         populateEditForm(uiModel, new Group());
-        return "groups/create";
+        return "security/groups/create";
     }
     
     @RequestMapping(value = "/{id}", produces = "text/html")
     public String GroupController.show(@PathVariable("id") Long id, Model uiModel) {
         uiModel.addAttribute("group", Group.findGroup(id));
         uiModel.addAttribute("itemId", id);
-        return "groups/show";
+        return "security/groups/show";
     }
     
     @RequestMapping(produces = "text/html")
@@ -56,24 +56,24 @@ privileged aspect GroupController_Roo_Controller {
         } else {
             uiModel.addAttribute("groups", Group.findAllGroups());
         }
-        return "groups/list";
+        return "security/groups/list";
     }
     
     @RequestMapping(method = RequestMethod.PUT, produces = "text/html")
     public String GroupController.update(@Valid Group group, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, group);
-            return "groups/update";
+            return "security/groups/update";
         }
         uiModel.asMap().clear();
         group.merge();
-        return "redirect:/groups/" + encodeUrlPathSegment(group.getId().toString(), httpServletRequest);
+        return "redirect:/security/groups/" + encodeUrlPathSegment(group.getId().toString(), httpServletRequest);
     }
     
     @RequestMapping(value = "/{id}", params = "form", produces = "text/html")
     public String GroupController.updateForm(@PathVariable("id") Long id, Model uiModel) {
         populateEditForm(uiModel, Group.findGroup(id));
-        return "groups/update";
+        return "security/groups/update";
     }
     
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "text/html")
@@ -83,7 +83,7 @@ privileged aspect GroupController_Roo_Controller {
         uiModel.asMap().clear();
         uiModel.addAttribute("page", (page == null) ? "1" : page.toString());
         uiModel.addAttribute("size", (size == null) ? "10" : size.toString());
-        return "redirect:/groups";
+        return "redirect:/security/groups";
     }
     
     void GroupController.populateEditForm(Model uiModel, Group group) {

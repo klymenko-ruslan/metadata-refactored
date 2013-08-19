@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 2.1//EN" "http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
+<tiles-definitions>
+    <definition extends="default" name="type/turbotypes/list">
+        <put-attribute name="body" value="/WEB-INF/views/type/turbotypes/list.jspx"/>
+    </definition>
+<definition extends="default" name="type/turbotypes/show">
+        <put-attribute name="body" value="/WEB-INF/views/type/turbotypes/show.jspx"/>
+    </definition>
+<definition extends="default" name="type/turbotypes/create">
+        <put-attribute name="body" value="/WEB-INF/views/type/turbotypes/create.jspx"/>
+    </definition>
+<definition extends="default" name="type/turbotypes/update">
+        <put-attribute name="body" value="/WEB-INF/views/type/turbotypes/update.jspx"/>
+    </definition>
+</tiles-definitions>

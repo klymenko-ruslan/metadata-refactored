@@ -3,10 +3,11 @@
 
 package com.turbointernational.metadata.domain.part;
 
-import com.turbointernational.metadata.domain.interchange.Interchange;
+import com.turbointernational.metadata.domain.other.Interchange;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.PistonRing;
 import com.turbointernational.metadata.domain.part.PistonRingController;
+import com.turbointernational.metadata.domain.type.PartType;
 import java.io.UnsupportedEncodingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -25,24 +26,24 @@ privileged aspect PistonRingController_Roo_Controller {
     public String PistonRingController.create(@Valid PistonRing pistonRing, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, pistonRing);
-            return "pistonrings/create";
+            return "part/pistonrings/create";
         }
         uiModel.asMap().clear();
         pistonRing.persist();
-        return "redirect:/pistonrings/" + encodeUrlPathSegment(pistonRing.getId().toString(), httpServletRequest);
+        return "redirect:/part/pistonrings/" + encodeUrlPathSegment(pistonRing.getId().toString(), httpServletRequest);
     }
     
     @RequestMapping(params = "form", produces = "text/html")
     public String PistonRingController.createForm(Model uiModel) {
         populateEditForm(uiModel, new PistonRing());
-        return "pistonrings/create";
+        return "part/pistonrings/create";
     }
     
     @RequestMapping(value = "/{id}", produces = "text/html")
     public String PistonRingController.show(@PathVariable("id") Long id, Model uiModel) {
         uiModel.addAttribute("pistonring", PistonRing.findPistonRing(id));
         uiModel.addAttribute("itemId", id);
-        return "pistonrings/show";
+        return "part/pistonrings/show";
     }
     
     @RequestMapping(produces = "text/html")
@@ -56,24 +57,24 @@ privileged aspect PistonRingController_Roo_Controller {
         } else {
             uiModel.addAttribute("pistonrings", PistonRing.findAllPistonRings());
         }
-        return "pistonrings/list";
+        return "part/pistonrings/list";
     }
     
     @RequestMapping(method = RequestMethod.PUT, produces = "text/html")
     public String PistonRingController.update(@Valid PistonRing pistonRing, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, pistonRing);
-            return "pistonrings/update";
+            return "part/pistonrings/update";
         }
         uiModel.asMap().clear();
         pistonRing.merge();
-        return "redirect:/pistonrings/" + encodeUrlPathSegment(pistonRing.getId().toString(), httpServletRequest);
+        return "redirect:/part/pistonrings/" + encodeUrlPathSegment(pistonRing.getId().toString(), httpServletRequest);
     }
     
     @RequestMapping(value = "/{id}", params = "form", produces = "text/html")
     public String PistonRingController.updateForm(@PathVariable("id") Long id, Model uiModel) {
         populateEditForm(uiModel, PistonRing.findPistonRing(id));
-        return "pistonrings/update";
+        return "part/pistonrings/update";
     }
     
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "text/html")
@@ -83,13 +84,14 @@ privileged aspect PistonRingController_Roo_Controller {
         uiModel.asMap().clear();
         uiModel.addAttribute("page", (page == null) ? "1" : page.toString());
         uiModel.addAttribute("size", (size == null) ? "10" : size.toString());
-        return "redirect:/pistonrings";
+        return "redirect:/part/pistonrings";
     }
     
     void PistonRingController.populateEditForm(Model uiModel, PistonRing pistonRing) {
         uiModel.addAttribute("pistonRing", pistonRing);
         uiModel.addAttribute("interchanges", Interchange.findAllInterchanges());
         uiModel.addAttribute("manufacturers", Manufacturer.findAllManufacturers());
+        uiModel.addAttribute("parttypes", PartType.findAllPartTypes());
     }
     
     String PistonRingController.encodeUrlPathSegment(String pathSegment, HttpServletRequest httpServletRequest) {

@@ -3,12 +3,13 @@
 
 package com.turbointernational.metadata.domain.part;
 
-import com.turbointernational.metadata.domain.interchange.Interchange;
+import com.turbointernational.metadata.domain.other.Interchange;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.other.TurboModel;
 import com.turbointernational.metadata.domain.part.Turbo;
 import com.turbointernational.metadata.domain.part.TurboController;
 import com.turbointernational.metadata.domain.type.CoolType;
+import com.turbointernational.metadata.domain.type.PartType;
 import java.io.UnsupportedEncodingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -27,24 +28,24 @@ privileged aspect TurboController_Roo_Controller {
     public String TurboController.create(@Valid Turbo turbo, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, turbo);
-            return "turboes/create";
+            return "part/turboes/create";
         }
         uiModel.asMap().clear();
         turbo.persist();
-        return "redirect:/turboes/" + encodeUrlPathSegment(turbo.getId().toString(), httpServletRequest);
+        return "redirect:/part/turboes/" + encodeUrlPathSegment(turbo.getId().toString(), httpServletRequest);
     }
     
     @RequestMapping(params = "form", produces = "text/html")
     public String TurboController.createForm(Model uiModel) {
         populateEditForm(uiModel, new Turbo());
-        return "turboes/create";
+        return "part/turboes/create";
     }
     
     @RequestMapping(value = "/{id}", produces = "text/html")
     public String TurboController.show(@PathVariable("id") Long id, Model uiModel) {
         uiModel.addAttribute("turbo", Turbo.findTurbo(id));
         uiModel.addAttribute("itemId", id);
-        return "turboes/show";
+        return "part/turboes/show";
     }
     
     @RequestMapping(produces = "text/html")
@@ -58,24 +59,24 @@ privileged aspect TurboController_Roo_Controller {
         } else {
             uiModel.addAttribute("turboes", Turbo.findAllTurboes());
         }
-        return "turboes/list";
+        return "part/turboes/list";
     }
     
     @RequestMapping(method = RequestMethod.PUT, produces = "text/html")
     public String TurboController.update(@Valid Turbo turbo, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, turbo);
-            return "turboes/update";
+            return "part/turboes/update";
         }
         uiModel.asMap().clear();
         turbo.merge();
-        return "redirect:/turboes/" + encodeUrlPathSegment(turbo.getId().toString(), httpServletRequest);
+        return "redirect:/part/turboes/" + encodeUrlPathSegment(turbo.getId().toString(), httpServletRequest);
     }
     
     @RequestMapping(value = "/{id}", params = "form", produces = "text/html")
     public String TurboController.updateForm(@PathVariable("id") Long id, Model uiModel) {
         populateEditForm(uiModel, Turbo.findTurbo(id));
-        return "turboes/update";
+        return "part/turboes/update";
     }
     
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "text/html")
@@ -85,7 +86,7 @@ privileged aspect TurboController_Roo_Controller {
         uiModel.asMap().clear();
         uiModel.addAttribute("page", (page == null) ? "1" : page.toString());
         uiModel.addAttribute("size", (size == null) ? "10" : size.toString());
-        return "redirect:/turboes";
+        return "redirect:/part/turboes";
     }
     
     void TurboController.populateEditForm(Model uiModel, Turbo turbo) {
@@ -94,6 +95,7 @@ privileged aspect TurboController_Roo_Controller {
         uiModel.addAttribute("manufacturers", Manufacturer.findAllManufacturers());
         uiModel.addAttribute("turbomodels", TurboModel.findAllTurboModels());
         uiModel.addAttribute("cooltypes", CoolType.findAllCoolTypes());
+        uiModel.addAttribute("parttypes", PartType.findAllPartTypes());
     }
     
     String TurboController.encodeUrlPathSegment(String pathSegment, HttpServletRequest httpServletRequest) {

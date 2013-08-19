@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <page:show id="ps_com_turbointernational_metadata_domain_part_CompressorWheel" object="${compressorwheel}" path="/part/compressorwheels" z="V3D9bDAlybzIiQ4M9r3CaLG4oHw=">
+        <field:display field="manufacturerPartNumber" id="s_com_turbointernational_metadata_domain_part_CompressorWheel_manufacturerPartNumber" object="${compressorwheel}" z="ZsOVpdlBJ/XhHnMlfz8frtyujVk="/>
+        <field:display field="manufacturer" id="s_com_turbointernational_metadata_domain_part_CompressorWheel_manufacturer" object="${compressorwheel}" z="xR7qeK0fOsPeLZJCMJ8XN44JE5o="/>
+        <field:display field="name" id="s_com_turbointernational_metadata_domain_part_CompressorWheel_name" object="${compressorwheel}" z="yWHBoRvKQLEZieYWEZkD0NsbGE4="/>
+        <field:display field="description" id="s_com_turbointernational_metadata_domain_part_CompressorWheel_description" object="${compressorwheel}" z="/tLC1/wgQNrbD0Md79X17xOduAY="/>
+        <field:display field="inactive" id="s_com_turbointernational_metadata_domain_part_CompressorWheel_inactive" object="${compressorwheel}" z="pX06UdMkV+A4H/Tp1QgcwYbDn0o="/>
+        <field:display field="inducerOa" id="s_com_turbointernational_metadata_domain_part_CompressorWheel_inducerOa" object="${compressorwheel}" z="QKRZhd3Tnw24QTNacyt2u6YaRWY="/>
+        <field:display field="tipHeightB" id="s_com_turbointernational_metadata_domain_part_CompressorWheel_tipHeightB" object="${compressorwheel}" z="TjiuCv65NFBaTDRdF8W/ZxhLqFw="/>
+        <field:display field="exducerOc" id="s_com_turbointernational_metadata_domain_part_CompressorWheel_exducerOc" object="${compressorwheel}" z="Vv6XaRwHUTHxv+UTR/ZKontNkLc="/>
+        <field:display field="hubLengthD" id="s_com_turbointernational_metadata_domain_part_CompressorWheel_hubLengthD" object="${compressorwheel}" z="ryyhG56E+ZxhaoWe42t7PazNimY="/>
+        <field:display field="boreOe" id="s_com_turbointernational_metadata_domain_part_CompressorWheel_boreOe" object="${compressorwheel}" z="wlGT882yoZ8slDpvNNUPt5oyg/o="/>
+        <field:display field="numberOfBlades" id="s_com_turbointernational_metadata_domain_part_CompressorWheel_numberOfBlades" object="${compressorwheel}" z="PmDejqeDDtGDMzNU19K7y8/rcGs="/>
+        <field:display field="application" id="s_com_turbointernational_metadata_domain_part_CompressorWheel_application" object="${compressorwheel}" z="6N08QmOCBxBQYZ+birj6Nq7PRi0="/>
+        <field:display field="interchange" id="s_com_turbointernational_metadata_domain_part_CompressorWheel_interchange" object="${compressorwheel}" render="false" z="user-managed"/>
+        <field:display field="elasticSearch" id="s_com_turbointernational_metadata_domain_part_CompressorWheel_elasticSearch" object="${compressorwheel}" render="false" z="user-managed"/>
+        <field:display field="partType" id="s_com_turbointernational_metadata_domain_part_CompressorWheel_partType" object="${compressorwheel}" render="false" z="user-managed"/>
+        <field:display field="interchangePart" id="s_com_turbointernational_metadata_domain_part_CompressorWheel_interchangePart" object="${compressorwheel}" z="KZraAXH0dmvVJwDjA9vpgFrtiCI="/>
+    </page:show>
+</div>

@@ -1,11 +1,12 @@
 package com.turbointernational.metadata.domain.part;
-import com.turbointernational.metadata.domain.part.NozzleRing;
 import org.springframework.roo.addon.web.mvc.controller.scaffold.RooWebScaffold;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.roo.addon.web.mvc.controller.json.RooWebJson;
 
-@RequestMapping("/nozzlerings")
+@RequestMapping("/part/nozzlerings")
 @Controller
-@RooWebScaffold(path = "nozzlerings", formBackingObject = NozzleRing.class)
+@RooWebScaffold(path = "part/nozzlerings", formBackingObject = NozzleRing.class)
+@RooWebJson(jsonObject = NozzleRing.class)
 public class NozzleRingController {
 }

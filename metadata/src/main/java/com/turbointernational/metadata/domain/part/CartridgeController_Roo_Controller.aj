@@ -3,10 +3,11 @@
 
 package com.turbointernational.metadata.domain.part;
 
-import com.turbointernational.metadata.domain.interchange.Interchange;
+import com.turbointernational.metadata.domain.other.Interchange;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.Cartridge;
 import com.turbointernational.metadata.domain.part.CartridgeController;
+import com.turbointernational.metadata.domain.type.PartType;
 import java.io.UnsupportedEncodingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -25,24 +26,24 @@ privileged aspect CartridgeController_Roo_Controller {
     public String CartridgeController.create(@Valid Cartridge cartridge, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, cartridge);
-            return "cartridges/create";
+            return "part/cartridges/create";
         }
         uiModel.asMap().clear();
         cartridge.persist();
-        return "redirect:/cartridges/" + encodeUrlPathSegment(cartridge.getId().toString(), httpServletRequest);
+        return "redirect:/part/cartridges/" + encodeUrlPathSegment(cartridge.getId().toString(), httpServletRequest);
     }
     
     @RequestMapping(params = "form", produces = "text/html")
     public String CartridgeController.createForm(Model uiModel) {
         populateEditForm(uiModel, new Cartridge());
-        return "cartridges/create";
+        return "part/cartridges/create";
     }
     
     @RequestMapping(value = "/{id}", produces = "text/html")
     public String CartridgeController.show(@PathVariable("id") Long id, Model uiModel) {
         uiModel.addAttribute("cartridge", Cartridge.findCartridge(id));
         uiModel.addAttribute("itemId", id);
-        return "cartridges/show";
+        return "part/cartridges/show";
     }
     
     @RequestMapping(produces = "text/html")
@@ -56,24 +57,24 @@ privileged aspect CartridgeController_Roo_Controller {
         } else {
             uiModel.addAttribute("cartridges", Cartridge.findAllCartridges());
         }
-        return "cartridges/list";
+        return "part/cartridges/list";
     }
     
     @RequestMapping(method = RequestMethod.PUT, produces = "text/html")
     public String CartridgeController.update(@Valid Cartridge cartridge, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, cartridge);
-            return "cartridges/update";
+            return "part/cartridges/update";
         }
         uiModel.asMap().clear();
         cartridge.merge();
-        return "redirect:/cartridges/" + encodeUrlPathSegment(cartridge.getId().toString(), httpServletRequest);
+        return "redirect:/part/cartridges/" + encodeUrlPathSegment(cartridge.getId().toString(), httpServletRequest);
     }
     
     @RequestMapping(value = "/{id}", params = "form", produces = "text/html")
     public String CartridgeController.updateForm(@PathVariable("id") Long id, Model uiModel) {
         populateEditForm(uiModel, Cartridge.findCartridge(id));
-        return "cartridges/update";
+        return "part/cartridges/update";
     }
     
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "text/html")
@@ -83,13 +84,14 @@ privileged aspect CartridgeController_Roo_Controller {
         uiModel.asMap().clear();
         uiModel.addAttribute("page", (page == null) ? "1" : page.toString());
         uiModel.addAttribute("size", (size == null) ? "10" : size.toString());
-        return "redirect:/cartridges";
+        return "redirect:/part/cartridges";
     }
     
     void CartridgeController.populateEditForm(Model uiModel, Cartridge cartridge) {
         uiModel.addAttribute("cartridge", cartridge);
         uiModel.addAttribute("interchanges", Interchange.findAllInterchanges());
         uiModel.addAttribute("manufacturers", Manufacturer.findAllManufacturers());
+        uiModel.addAttribute("parttypes", PartType.findAllPartTypes());
     }
     
     String CartridgeController.encodeUrlPathSegment(String pathSegment, HttpServletRequest httpServletRequest) {

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <page:show id="ps_com_turbointernational_metadata_domain_part_Gasket" object="${gasket}" path="/part/gaskets" z="PsU/1WCoUE4p+X0Px249PaKAqYs=">
+        <field:display field="manufacturerPartNumber" id="s_com_turbointernational_metadata_domain_part_Gasket_manufacturerPartNumber" object="${gasket}" z="rufYILf23gr4s7Z7Yl9Djv/tYEs="/>
+        <field:display field="manufacturer" id="s_com_turbointernational_metadata_domain_part_Gasket_manufacturer" object="${gasket}" z="YzWIbx+QeGUJZIXH+DTfZMdPJiE="/>
+        <field:display field="name" id="s_com_turbointernational_metadata_domain_part_Gasket_name" object="${gasket}" z="aLyHLTU8MkHl92eqTyvb0gpJo2s="/>
+        <field:display field="description" id="s_com_turbointernational_metadata_domain_part_Gasket_description" object="${gasket}" z="OlV9HsBiVPMtP7NTY+wzD1enmsA="/>
+        <field:display field="inactive" id="s_com_turbointernational_metadata_domain_part_Gasket_inactive" object="${gasket}" z="Ef5AfYAY1HcAGZ+/e4NLDgy4peo="/>
+        <field:display field="type" id="s_com_turbointernational_metadata_domain_part_Gasket_type" object="${gasket}" z="7mHnBdjKcihcxK6960ZmsMrLg6k="/>
+        <field:display field="interchange" id="s_com_turbointernational_metadata_domain_part_Gasket_interchange" object="${gasket}" render="false" z="user-managed"/>
+        <field:display field="elasticSearch" id="s_com_turbointernational_metadata_domain_part_Gasket_elasticSearch" object="${gasket}" render="false" z="user-managed"/>
+        <field:display field="partType" id="s_com_turbointernational_metadata_domain_part_Gasket_partType" object="${gasket}" render="false" z="user-managed"/>
+        <field:display field="interchangePart" id="s_com_turbointernational_metadata_domain_part_Gasket_interchangePart" object="${gasket}" z="OpBUJ6AlnQBFrbv3t1jks3KQCWY="/>
+    </page:show>
+</div>

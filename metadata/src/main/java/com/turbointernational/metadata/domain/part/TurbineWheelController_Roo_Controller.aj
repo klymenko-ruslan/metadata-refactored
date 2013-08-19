@@ -3,10 +3,11 @@
 
 package com.turbointernational.metadata.domain.part;
 
-import com.turbointernational.metadata.domain.interchange.Interchange;
+import com.turbointernational.metadata.domain.other.Interchange;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.TurbineWheel;
 import com.turbointernational.metadata.domain.part.TurbineWheelController;
+import com.turbointernational.metadata.domain.type.PartType;
 import java.io.UnsupportedEncodingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -25,24 +26,24 @@ privileged aspect TurbineWheelController_Roo_Controller {
     public String TurbineWheelController.create(@Valid TurbineWheel turbineWheel, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, turbineWheel);
-            return "turbinewheels/create";
+            return "part/turbinewheels/create";
         }
         uiModel.asMap().clear();
         turbineWheel.persist();
-        return "redirect:/turbinewheels/" + encodeUrlPathSegment(turbineWheel.getId().toString(), httpServletRequest);
+        return "redirect:/part/turbinewheels/" + encodeUrlPathSegment(turbineWheel.getId().toString(), httpServletRequest);
     }
     
     @RequestMapping(params = "form", produces = "text/html")
     public String TurbineWheelController.createForm(Model uiModel) {
         populateEditForm(uiModel, new TurbineWheel());
-        return "turbinewheels/create";
+        return "part/turbinewheels/create";
     }
     
     @RequestMapping(value = "/{id}", produces = "text/html")
     public String TurbineWheelController.show(@PathVariable("id") Long id, Model uiModel) {
         uiModel.addAttribute("turbinewheel", TurbineWheel.findTurbineWheel(id));
         uiModel.addAttribute("itemId", id);
-        return "turbinewheels/show";
+        return "part/turbinewheels/show";
     }
     
     @RequestMapping(produces = "text/html")
@@ -56,24 +57,24 @@ privileged aspect TurbineWheelController_Roo_Controller {
         } else {
             uiModel.addAttribute("turbinewheels", TurbineWheel.findAllTurbineWheels());
         }
-        return "turbinewheels/list";
+        return "part/turbinewheels/list";
     }
     
     @RequestMapping(method = RequestMethod.PUT, produces = "text/html")
     public String TurbineWheelController.update(@Valid TurbineWheel turbineWheel, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, turbineWheel);
-            return "turbinewheels/update";
+            return "part/turbinewheels/update";
         }
         uiModel.asMap().clear();
         turbineWheel.merge();
-        return "redirect:/turbinewheels/" + encodeUrlPathSegment(turbineWheel.getId().toString(), httpServletRequest);
+        return "redirect:/part/turbinewheels/" + encodeUrlPathSegment(turbineWheel.getId().toString(), httpServletRequest);
     }
     
     @RequestMapping(value = "/{id}", params = "form", produces = "text/html")
     public String TurbineWheelController.updateForm(@PathVariable("id") Long id, Model uiModel) {
         populateEditForm(uiModel, TurbineWheel.findTurbineWheel(id));
-        return "turbinewheels/update";
+        return "part/turbinewheels/update";
     }
     
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "text/html")
@@ -83,13 +84,14 @@ privileged aspect TurbineWheelController_Roo_Controller {
         uiModel.asMap().clear();
         uiModel.addAttribute("page", (page == null) ? "1" : page.toString());
         uiModel.addAttribute("size", (size == null) ? "10" : size.toString());
-        return "redirect:/turbinewheels";
+        return "redirect:/part/turbinewheels";
     }
     
     void TurbineWheelController.populateEditForm(Model uiModel, TurbineWheel turbineWheel) {
         uiModel.addAttribute("turbineWheel", turbineWheel);
         uiModel.addAttribute("interchanges", Interchange.findAllInterchanges());
         uiModel.addAttribute("manufacturers", Manufacturer.findAllManufacturers());
+        uiModel.addAttribute("parttypes", PartType.findAllPartTypes());
     }
     
     String TurbineWheelController.encodeUrlPathSegment(String pathSegment, HttpServletRequest httpServletRequest) {

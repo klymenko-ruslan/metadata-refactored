@@ -1,43 +1,50 @@
 package com.turbointernational.metadata.domain.part;
 import com.turbointernational.metadata.domain.type.CoolType;
 import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.SecondaryTable;
+import net.sf.jsog.JSOG;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
-import org.springframework.roo.addon.tostring.RooToString;
+import org.springframework.roo.addon.json.RooJson;
 
 @RooJavaBean
-@RooToString
-@RooJpaActiveRecord(table="BEARING_HOUSING", inheritanceType = "JOINED")
-@DiscriminatorValue(value = "13")
-@PrimaryKeyJoinColumn(name = "part_id")
+@RooJpaActiveRecord
+@RooJson
+@SecondaryTable(name="bearing_housing", pkJoinColumns=@PrimaryKeyJoinColumn(name = "part_id"))
 public class BearingHousing extends Part {
     
-    @ManyToOne
-    @JoinColumn(name="cool_type_id")
+    @OneToOne
+    @JoinColumn(name="cool_type_id", table = "bearing_housing")
     private CoolType coolType;
 
-    @Column(name="oil_inlet")
+    @Column(name="oil_inlet", table = "bearing_housing")
     private String oilInlet;
 
-    @Column(name="oil_outlet")
+    @Column(name="oil_outlet", table = "bearing_housing")
     private String oilOutlet;
 
-    @Column(name="oil")
+    @Column(name="oil", table = "bearing_housing")
     private String oil;
 
-    @Column(name="outlet_flange_holes")
+    @Column(name="outlet_flange_holes", table = "bearing_housing")
     private String outletFlangeHoles;
 
-    @Column(name="water_ports")
+    @Column(name="water_ports", table = "bearing_housing")
     private String waterPorts;
 
-    @Column(name="design_features")
+    @Column(name="design_features", table = "bearing_housing")
     private String designFeatures;
 
-    @Column(name="bearing_type")
+    @Column(name="bearing_type", table = "bearing_housing")
     private String bearingType;
+
+    @Override
+    public void addIndexFields(JSOG partObject) {
+        if (coolType != null) {
+            partObject.put("cool_type_name", coolType.getName());
+        }
+    }
 }
