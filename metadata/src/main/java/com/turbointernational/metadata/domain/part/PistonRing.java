@@ -2,6 +2,7 @@ package com.turbointernational.metadata.domain.part;
 import javax.persistence.Column;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.SecondaryTable;
+import net.sf.jsog.JSOG;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 
@@ -27,4 +28,14 @@ public class PistonRing extends Part {
 
     @Column(name="i_gap_max", table = "PISTON_RING")
     private Float installedGapMax;
+
+    @Override
+    public void addIndexFields(JSOG partObject) {
+        partObject.put("outside_dim_min", outsideDiameterMin);
+        partObject.put("outside_dim_max", outsideDiameterMax);
+        partObject.put("width_min", widthMin);
+        partObject.put("width_max", widthMax);
+        partObject.put("i_gap_min", installedGapMin);
+        partObject.put("i_gap_max", installedGapMax);
+    }
 }
