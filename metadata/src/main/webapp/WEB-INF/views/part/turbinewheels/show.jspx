@@ -18,6 +18,6 @@
         <field:display field="interchange" id="s_com_turbointernational_metadata_domain_part_TurbineWheel_interchange" object="${turbinewheel}" render="false" z="user-managed"/>
         <field:display field="elasticSearch" id="s_com_turbointernational_metadata_domain_part_TurbineWheel_elasticSearch" object="${turbinewheel}" render="false" z="user-managed"/>
         <field:display field="partType" id="s_com_turbointernational_metadata_domain_part_TurbineWheel_partType" object="${turbinewheel}" render="false" z="user-managed"/>
-        <field:display field="interchangePart" id="s_com_turbointernational_metadata_domain_part_TurbineWheel_interchangePart" object="${turbinewheel}" z="Utkmv7HI2+36we+HCZBttWJVhNg="/>
+        <field:display field="interchangePart" id="s_com_turbointernational_metadata_domain_part_TurbineWheel_interchangePart" object="${turbinewheel}" render="false" z="user-managed"/>
     </page:show>
 </div>

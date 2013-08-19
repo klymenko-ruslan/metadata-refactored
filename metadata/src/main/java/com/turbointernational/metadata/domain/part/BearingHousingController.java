@@ -25,7 +25,7 @@ public class BearingHousingController {
         uiModel.addAttribute("manufacturers", Manufacturer.findAllManufacturers());
         uiModel.addAttribute("cooltypes", CoolType.findAllCoolTypes());
         uiModel.addAttribute("parttypes", PartType.findAllPartTypes());
-    } 
+    }
     
     @RequestMapping(method = RequestMethod.POST, produces = "text/html")
     public String create(@Valid BearingHousing bearingHousing, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
@@ -48,5 +48,4 @@ public class BearingHousingController {
         bearingHousing.merge();
         return "redirect:/part/bearinghousings/" + encodeUrlPathSegment(bearingHousing.getId().toString(), httpServletRequest);
     }
-    
 }

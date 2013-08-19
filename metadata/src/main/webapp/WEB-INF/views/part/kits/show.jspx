@@ -12,6 +12,6 @@
         <field:display field="interchange" id="s_com_turbointernational_metadata_domain_part_Kit_interchange" object="${kit}" render="false" z="user-managed"/>
         <field:display field="elasticSearch" id="s_com_turbointernational_metadata_domain_part_Kit_elasticSearch" object="${kit}" render="false" z="user-managed"/>
         <field:display field="partType" id="s_com_turbointernational_metadata_domain_part_Kit_partType" object="${kit}" render="false" z="user-managed"/>
-        <field:display field="interchangePart" id="s_com_turbointernational_metadata_domain_part_Kit_interchangePart" object="${kit}" z="5WgIhtRpTHTJUsV8oiJJqScF43I="/>
+        <field:display field="interchangePart" id="s_com_turbointernational_metadata_domain_part_Kit_interchangePart" object="${kit}" render="false" z="user-managed"/>
     </page:show>
 </div>

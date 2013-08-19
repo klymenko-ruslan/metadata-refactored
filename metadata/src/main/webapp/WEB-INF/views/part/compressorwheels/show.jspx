@@ -18,6 +18,6 @@
         <field:display field="interchange" id="s_com_turbointernational_metadata_domain_part_CompressorWheel_interchange" object="${compressorwheel}" render="false" z="user-managed"/>
         <field:display field="elasticSearch" id="s_com_turbointernational_metadata_domain_part_CompressorWheel_elasticSearch" object="${compressorwheel}" render="false" z="user-managed"/>
         <field:display field="partType" id="s_com_turbointernational_metadata_domain_part_CompressorWheel_partType" object="${compressorwheel}" render="false" z="user-managed"/>
-        <field:display field="interchangePart" id="s_com_turbointernational_metadata_domain_part_CompressorWheel_interchangePart" object="${compressorwheel}" z="KZraAXH0dmvVJwDjA9vpgFrtiCI="/>
+        <field:display field="interchangePart" id="s_com_turbointernational_metadata_domain_part_CompressorWheel_interchangePart" object="${compressorwheel}" render="false" z="user-managed"/>
     </page:show>
 </div>

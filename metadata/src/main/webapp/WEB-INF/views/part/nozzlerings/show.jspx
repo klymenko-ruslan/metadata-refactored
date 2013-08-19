@@ -11,6 +11,6 @@
         <field:display field="interchange" id="s_com_turbointernational_metadata_domain_part_NozzleRing_interchange" object="${nozzlering}" render="false" z="user-managed"/>
         <field:display field="elasticSearch" id="s_com_turbointernational_metadata_domain_part_NozzleRing_elasticSearch" object="${nozzlering}" render="false" z="user-managed"/>
         <field:display field="partType" id="s_com_turbointernational_metadata_domain_part_NozzleRing_partType" object="${nozzlering}" render="false" z="user-managed"/>
-        <field:display field="interchangePart" id="s_com_turbointernational_metadata_domain_part_NozzleRing_interchangePart" object="${nozzlering}" z="PT2xs9eiHvDwiS+6QFE3OqGh6P4="/>
+        <field:display field="interchangePart" id="s_com_turbointernational_metadata_domain_part_NozzleRing_interchangePart" object="${nozzlering}" render="false" z="user-managed"/>
     </page:show>
 </div>
