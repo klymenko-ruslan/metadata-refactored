@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @RooWebScaffold(path = "part/bearinghousings", formBackingObject = BearingHousing.class)
 @RooWebJson(jsonObject = BearingHousing.class)
 public class BearingHousingController {
+    
     void populateEditForm(Model uiModel, BearingHousing bearingHousing) {
         uiModel.addAttribute("bearingHousing", bearingHousing);
         uiModel.addAttribute("interchanges", Interchange.findAllInterchanges());
@@ -27,7 +28,7 @@ public class BearingHousingController {
     }
     
     @RequestMapping(method = RequestMethod.POST, produces = "text/html")
-    public String create(@Valid BearingHousing bearingHousing, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
+    public String create(@Valid BearingHousing bearingHousing, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) throws Exception {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, bearingHousing);
             return "part/bearinghousings/create";
@@ -39,7 +40,7 @@ public class BearingHousingController {
     } 
     
     @RequestMapping(method = RequestMethod.PUT, produces = "text/html")
-    public String update(@Valid BearingHousing bearingHousing, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
+    public String update(@Valid BearingHousing bearingHousing, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) throws Exception {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, bearingHousing);
             return "part/bearinghousings/update";

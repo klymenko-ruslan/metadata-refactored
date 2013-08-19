@@ -3,16 +3,11 @@
 
 package com.turbointernational.metadata.domain.part;
 
-import com.turbointernational.metadata.domain.other.Interchange;
-import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.JournalBearing;
 import com.turbointernational.metadata.domain.part.JournalBearingController;
-import com.turbointernational.metadata.domain.type.PartType;
 import java.io.UnsupportedEncodingException;
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -21,17 +16,6 @@ import org.springframework.web.util.UriUtils;
 import org.springframework.web.util.WebUtils;
 
 privileged aspect JournalBearingController_Roo_Controller {
-    
-    @RequestMapping(method = RequestMethod.POST, produces = "text/html")
-    public String JournalBearingController.create(@Valid JournalBearing journalBearing, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
-        if (bindingResult.hasErrors()) {
-            populateEditForm(uiModel, journalBearing);
-            return "part/journalbearings/create";
-        }
-        uiModel.asMap().clear();
-        journalBearing.persist();
-        return "redirect:/part/journalbearings/" + encodeUrlPathSegment(journalBearing.getId().toString(), httpServletRequest);
-    }
     
     @RequestMapping(params = "form", produces = "text/html")
     public String JournalBearingController.createForm(Model uiModel) {
@@ -60,17 +44,6 @@ privileged aspect JournalBearingController_Roo_Controller {
         return "part/journalbearings/list";
     }
     
-    @RequestMapping(method = RequestMethod.PUT, produces = "text/html")
-    public String JournalBearingController.update(@Valid JournalBearing journalBearing, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
-        if (bindingResult.hasErrors()) {
-            populateEditForm(uiModel, journalBearing);
-            return "part/journalbearings/update";
-        }
-        uiModel.asMap().clear();
-        journalBearing.merge();
-        return "redirect:/part/journalbearings/" + encodeUrlPathSegment(journalBearing.getId().toString(), httpServletRequest);
-    }
-    
     @RequestMapping(value = "/{id}", params = "form", produces = "text/html")
     public String JournalBearingController.updateForm(@PathVariable("id") Long id, Model uiModel) {
         populateEditForm(uiModel, JournalBearing.findJournalBearing(id));
@@ -85,14 +58,6 @@ privileged aspect JournalBearingController_Roo_Controller {
         uiModel.addAttribute("page", (page == null) ? "1" : page.toString());
         uiModel.addAttribute("size", (size == null) ? "10" : size.toString());
         return "redirect:/part/journalbearings";
-    }
-    
-    void JournalBearingController.populateEditForm(Model uiModel, JournalBearing journalBearing) {
-        uiModel.addAttribute("journalBearing", journalBearing);
-        uiModel.addAttribute("interchanges", Interchange.findAllInterchanges());
-        uiModel.addAttribute("manufacturers", Manufacturer.findAllManufacturers());
-        uiModel.addAttribute("journalbearings", JournalBearing.findAllJournalBearings());
-        uiModel.addAttribute("parttypes", PartType.findAllPartTypes());
     }
     
     String JournalBearingController.encodeUrlPathSegment(String pathSegment, HttpServletRequest httpServletRequest) {

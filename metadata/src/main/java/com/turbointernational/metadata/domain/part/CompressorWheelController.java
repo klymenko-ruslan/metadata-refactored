@@ -26,7 +26,7 @@ public class CompressorWheelController {
     }
     
     @RequestMapping(method = RequestMethod.POST, produces = "text/html")
-    public String create(@Valid CompressorWheel compressorWheel, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
+    public String create(@Valid CompressorWheel compressorWheel, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) throws Exception {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, compressorWheel);
             return "part/compressorwheels/create";
@@ -38,7 +38,7 @@ public class CompressorWheelController {
     }
     
      @RequestMapping(method = RequestMethod.PUT, produces = "text/html")
-    public String update(@Valid CompressorWheel compressorWheel, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
+    public String update(@Valid CompressorWheel compressorWheel, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) throws Exception {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, compressorWheel);
             return "part/compressorwheels/update";
