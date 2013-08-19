@@ -1,6 +1,4 @@
 package com.turbointernational.metadata.domain.part;
-import com.google.common.collect.Sets;
-import com.turbointernational.metadata.domain.other.Interchange;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.type.SealType;
 import javax.servlet.http.HttpServletRequest;
@@ -14,7 +12,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 @RequestMapping("/part/backplates")
-@Controller
+
 @RooWebScaffold(path = "part/backplates", formBackingObject = Backplate.class)
 @RooWebJson(jsonObject = Backplate.class)
 public class BackplateController {
