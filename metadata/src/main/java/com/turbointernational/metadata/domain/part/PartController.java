@@ -3,6 +3,8 @@ import com.turbointernational.metadata.util.ElasticSearch;
 import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -12,6 +14,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.roo.addon.web.mvc.controller.json.RooWebJson;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -25,6 +29,28 @@ public class PartController {
 
     void populateEditForm(Model uiModel, Part part) {
         uiModel.addAttribute("part", part);
+    }
+    
+    @RequestMapping(method = RequestMethod.POST, produces = "text/html")
+    public String create(@Valid Part part, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
+        if (bindingResult.hasErrors()) {
+            populateEditForm(uiModel, part);
+            return "part/parts/create";
+        }
+        uiModel.asMap().clear();
+        part.persist();
+        return "redirect:/part/parts/" + encodeUrlPathSegment(part.getId().toString(), httpServletRequest);
+    }
+    
+    @RequestMapping(method = RequestMethod.PUT, produces = "text/html")
+    public String update(@Valid Part part, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
+        if (bindingResult.hasErrors()) {
+            populateEditForm(uiModel, part);
+            return "part/parts/update";
+        }
+        uiModel.asMap().clear();
+        part.merge();
+        return "redirect:/part/parts/" + encodeUrlPathSegment(part.getId().toString(), httpServletRequest);
     }
 
     // ElasticSearch
