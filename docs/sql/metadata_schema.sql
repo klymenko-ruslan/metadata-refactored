@@ -151,7 +151,7 @@ CREATE TABLE `interchange_header` (
 ) ENGINE = INNODB;
 
 CREATE TABLE `interchange_item` (
-  `part_id` BIGINT NOT NULL PRIMARY KEY,
+  `part_id` BIGINT NOT NULL,
   `interchange_header_id` BIGINT NOT NULL,
   `version` INTEGER NOT NULL DEFAULT 1,
   FOREIGN KEY (`interchange_header_id`) REFERENCES `interchange_header` (`id`),
