@@ -1,5 +1,6 @@
 package com.turbointernational.metadata.domain.security;
 import java.util.Set;
+import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -8,10 +9,8 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
-import org.springframework.roo.addon.tostring.RooToString;
 
 @RooJavaBean
-@RooToString
 @RooJpaActiveRecord(table="USER")
 public class User {
 
@@ -25,6 +24,7 @@ public class User {
 
     private String password;
 
+    @Column(columnDefinition = "BIT")
     private Boolean enabled;
 
     @ManyToMany

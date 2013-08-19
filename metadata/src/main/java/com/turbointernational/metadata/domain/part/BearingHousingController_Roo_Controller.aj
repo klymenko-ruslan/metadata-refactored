@@ -3,11 +3,12 @@
 
 package com.turbointernational.metadata.domain.part;
 
-import com.turbointernational.metadata.domain.interchange.Interchange;
+import com.turbointernational.metadata.domain.other.Interchange;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.BearingHousing;
 import com.turbointernational.metadata.domain.part.BearingHousingController;
 import com.turbointernational.metadata.domain.type.CoolType;
+import com.turbointernational.metadata.domain.type.PartType;
 import java.io.UnsupportedEncodingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -26,24 +27,24 @@ privileged aspect BearingHousingController_Roo_Controller {
     public String BearingHousingController.create(@Valid BearingHousing bearingHousing, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, bearingHousing);
-            return "bearinghousings/create";
+            return "part/bearinghousings/create";
         }
         uiModel.asMap().clear();
         bearingHousing.persist();
-        return "redirect:/bearinghousings/" + encodeUrlPathSegment(bearingHousing.getId().toString(), httpServletRequest);
+        return "redirect:/part/bearinghousings/" + encodeUrlPathSegment(bearingHousing.getId().toString(), httpServletRequest);
     }
     
     @RequestMapping(params = "form", produces = "text/html")
     public String BearingHousingController.createForm(Model uiModel) {
         populateEditForm(uiModel, new BearingHousing());
-        return "bearinghousings/create";
+        return "part/bearinghousings/create";
     }
     
     @RequestMapping(value = "/{id}", produces = "text/html")
     public String BearingHousingController.show(@PathVariable("id") Long id, Model uiModel) {
         uiModel.addAttribute("bearinghousing", BearingHousing.findBearingHousing(id));
         uiModel.addAttribute("itemId", id);
-        return "bearinghousings/show";
+        return "part/bearinghousings/show";
     }
     
     @RequestMapping(produces = "text/html")
@@ -57,24 +58,24 @@ privileged aspect BearingHousingController_Roo_Controller {
         } else {
             uiModel.addAttribute("bearinghousings", BearingHousing.findAllBearingHousings());
         }
-        return "bearinghousings/list";
+        return "part/bearinghousings/list";
     }
     
     @RequestMapping(method = RequestMethod.PUT, produces = "text/html")
     public String BearingHousingController.update(@Valid BearingHousing bearingHousing, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, bearingHousing);
-            return "bearinghousings/update";
+            return "part/bearinghousings/update";
         }
         uiModel.asMap().clear();
         bearingHousing.merge();
-        return "redirect:/bearinghousings/" + encodeUrlPathSegment(bearingHousing.getId().toString(), httpServletRequest);
+        return "redirect:/part/bearinghousings/" + encodeUrlPathSegment(bearingHousing.getId().toString(), httpServletRequest);
     }
     
     @RequestMapping(value = "/{id}", params = "form", produces = "text/html")
     public String BearingHousingController.updateForm(@PathVariable("id") Long id, Model uiModel) {
         populateEditForm(uiModel, BearingHousing.findBearingHousing(id));
-        return "bearinghousings/update";
+        return "part/bearinghousings/update";
     }
     
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "text/html")
@@ -84,7 +85,7 @@ privileged aspect BearingHousingController_Roo_Controller {
         uiModel.asMap().clear();
         uiModel.addAttribute("page", (page == null) ? "1" : page.toString());
         uiModel.addAttribute("size", (size == null) ? "10" : size.toString());
-        return "redirect:/bearinghousings";
+        return "redirect:/part/bearinghousings";
     }
     
     void BearingHousingController.populateEditForm(Model uiModel, BearingHousing bearingHousing) {
@@ -92,6 +93,7 @@ privileged aspect BearingHousingController_Roo_Controller {
         uiModel.addAttribute("interchanges", Interchange.findAllInterchanges());
         uiModel.addAttribute("manufacturers", Manufacturer.findAllManufacturers());
         uiModel.addAttribute("cooltypes", CoolType.findAllCoolTypes());
+        uiModel.addAttribute("parttypes", PartType.findAllPartTypes());
     }
     
     String BearingHousingController.encodeUrlPathSegment(String pathSegment, HttpServletRequest httpServletRequest) {

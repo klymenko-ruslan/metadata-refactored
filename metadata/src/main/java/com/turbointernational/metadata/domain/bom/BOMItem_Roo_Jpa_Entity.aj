@@ -13,7 +13,7 @@ privileged aspect BOMItem_Roo_Jpa_Entity {
     
     declare @type: BOMItem: @Entity;
     
-    declare @type: BOMItem: @Table(name = "BOM");
+    declare @type: BOMItem: @Table(name = "bom");
     
     @Version
     @Column(name = "version")

@@ -1,15 +1,17 @@
 package com.turbointernational.metadata.domain.type;
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
-import org.springframework.roo.addon.tostring.RooToString;
+import org.springframework.roo.addon.json.RooJson;
 
+@Cacheable
 @RooJavaBean
-@RooToString
 @RooJpaActiveRecord(table = "COOL_TYPE")
+@RooJson
 public class CoolType {
 
     @Id

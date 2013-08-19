@@ -3,10 +3,11 @@
 
 package com.turbointernational.metadata.domain.part;
 
-import com.turbointernational.metadata.domain.interchange.Interchange;
+import com.turbointernational.metadata.domain.other.Interchange;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.Heatshield;
 import com.turbointernational.metadata.domain.part.HeatshieldController;
+import com.turbointernational.metadata.domain.type.PartType;
 import java.io.UnsupportedEncodingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -25,24 +26,24 @@ privileged aspect HeatshieldController_Roo_Controller {
     public String HeatshieldController.create(@Valid Heatshield heatshield, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, heatshield);
-            return "heatshields/create";
+            return "part/heatshields/create";
         }
         uiModel.asMap().clear();
         heatshield.persist();
-        return "redirect:/heatshields/" + encodeUrlPathSegment(heatshield.getId().toString(), httpServletRequest);
+        return "redirect:/part/heatshields/" + encodeUrlPathSegment(heatshield.getId().toString(), httpServletRequest);
     }
     
     @RequestMapping(params = "form", produces = "text/html")
     public String HeatshieldController.createForm(Model uiModel) {
         populateEditForm(uiModel, new Heatshield());
-        return "heatshields/create";
+        return "part/heatshields/create";
     }
     
     @RequestMapping(value = "/{id}", produces = "text/html")
     public String HeatshieldController.show(@PathVariable("id") Long id, Model uiModel) {
         uiModel.addAttribute("heatshield", Heatshield.findHeatshield(id));
         uiModel.addAttribute("itemId", id);
-        return "heatshields/show";
+        return "part/heatshields/show";
     }
     
     @RequestMapping(produces = "text/html")
@@ -56,24 +57,24 @@ privileged aspect HeatshieldController_Roo_Controller {
         } else {
             uiModel.addAttribute("heatshields", Heatshield.findAllHeatshields());
         }
-        return "heatshields/list";
+        return "part/heatshields/list";
     }
     
     @RequestMapping(method = RequestMethod.PUT, produces = "text/html")
     public String HeatshieldController.update(@Valid Heatshield heatshield, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, heatshield);
-            return "heatshields/update";
+            return "part/heatshields/update";
         }
         uiModel.asMap().clear();
         heatshield.merge();
-        return "redirect:/heatshields/" + encodeUrlPathSegment(heatshield.getId().toString(), httpServletRequest);
+        return "redirect:/part/heatshields/" + encodeUrlPathSegment(heatshield.getId().toString(), httpServletRequest);
     }
     
     @RequestMapping(value = "/{id}", params = "form", produces = "text/html")
     public String HeatshieldController.updateForm(@PathVariable("id") Long id, Model uiModel) {
         populateEditForm(uiModel, Heatshield.findHeatshield(id));
-        return "heatshields/update";
+        return "part/heatshields/update";
     }
     
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "text/html")
@@ -83,13 +84,14 @@ privileged aspect HeatshieldController_Roo_Controller {
         uiModel.asMap().clear();
         uiModel.addAttribute("page", (page == null) ? "1" : page.toString());
         uiModel.addAttribute("size", (size == null) ? "10" : size.toString());
-        return "redirect:/heatshields";
+        return "redirect:/part/heatshields";
     }
     
     void HeatshieldController.populateEditForm(Model uiModel, Heatshield heatshield) {
         uiModel.addAttribute("heatshield", heatshield);
         uiModel.addAttribute("interchanges", Interchange.findAllInterchanges());
         uiModel.addAttribute("manufacturers", Manufacturer.findAllManufacturers());
+        uiModel.addAttribute("parttypes", PartType.findAllPartTypes());
     }
     
     String HeatshieldController.encodeUrlPathSegment(String pathSegment, HttpServletRequest httpServletRequest) {

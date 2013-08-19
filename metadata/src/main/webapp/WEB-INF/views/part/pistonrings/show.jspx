@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <page:show id="ps_com_turbointernational_metadata_domain_part_PistonRing" object="${pistonring}" path="/part/pistonrings" z="tuevuBG3xDMuiIx3RCrstHFssYE=">
+        <field:display field="manufacturerPartNumber" id="s_com_turbointernational_metadata_domain_part_PistonRing_manufacturerPartNumber" object="${pistonring}" z="sKrLqSS30w6VY59+m40GUW2guGw="/>
+        <field:display field="manufacturer" id="s_com_turbointernational_metadata_domain_part_PistonRing_manufacturer" object="${pistonring}" z="NMRiCLsBYcp6jLeCOFHP+QW8yUo="/>
+        <field:display field="name" id="s_com_turbointernational_metadata_domain_part_PistonRing_name" object="${pistonring}" z="vX94jk+xnsyK6bO1LP5soxQJmDw="/>
+        <field:display field="description" id="s_com_turbointernational_metadata_domain_part_PistonRing_description" object="${pistonring}" z="iNTYHnyv4GLiUw9GN/MDqAn8c+g="/>
+        <field:display field="inactive" id="s_com_turbointernational_metadata_domain_part_PistonRing_inactive" object="${pistonring}" z="dHExrmjC8Do4XnyE5eksfe+CRaM="/>
+        <field:display field="outsideDiameterMin" id="s_com_turbointernational_metadata_domain_part_PistonRing_outsideDiameterMin" object="${pistonring}" z="PyFC2leXRZKp2b9ijxRb3arxuEU="/>
+        <field:display field="outsideDiameterMax" id="s_com_turbointernational_metadata_domain_part_PistonRing_outsideDiameterMax" object="${pistonring}" z="VT7L2lMhOa8YvZ1De7qs+06dnJI="/>
+        <field:display field="widthMin" id="s_com_turbointernational_metadata_domain_part_PistonRing_widthMin" object="${pistonring}" z="N4U6BhsQXxwkWxpiPzUECUbzmAI="/>
+        <field:display field="widthMax" id="s_com_turbointernational_metadata_domain_part_PistonRing_widthMax" object="${pistonring}" z="pDRb4HbuZWoigZzLhiE0PwOKps4="/>
+        <field:display field="installedGapMin" id="s_com_turbointernational_metadata_domain_part_PistonRing_installedGapMin" object="${pistonring}" z="tQcpi85/Iy95hGrgyn0f7e5jD28="/>
+        <field:display field="installedGapMax" id="s_com_turbointernational_metadata_domain_part_PistonRing_installedGapMax" object="${pistonring}" z="TeS2yyU3HX8MtTc1781h6laTf/I="/>
+        <field:display field="interchange" id="s_com_turbointernational_metadata_domain_part_PistonRing_interchange" object="${pistonring}" render="false" z="user-managed"/>
+        <field:display field="elasticSearch" id="s_com_turbointernational_metadata_domain_part_PistonRing_elasticSearch" object="${pistonring}" render="false" z="user-managed"/>
+        <field:display field="partType" id="s_com_turbointernational_metadata_domain_part_PistonRing_partType" object="${pistonring}" render="false" z="user-managed"/>
+        <field:display field="interchangePart" id="s_com_turbointernational_metadata_domain_part_PistonRing_interchangePart" object="${pistonring}" render="false" z="user-managed"/>
+    </page:show>
+</div>

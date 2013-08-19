@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" xmlns:table="urn:jsptagdir:/WEB-INF/tags/form/fields" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <page:list id="pl_com_turbointernational_metadata_domain_part_Gasket" items="${gaskets}" z="Hn9BNpbanDDHpVTEZPDxfpIZ+ys=">
+        <table:table data="${gaskets}" id="l_com_turbointernational_metadata_domain_part_Gasket" path="/part/gaskets" z="bIDaS+JBnf52UKxead6n3IqJmZw=">
+            <table:column id="c_com_turbointernational_metadata_domain_part_Gasket_manufacturerPartNumber" property="manufacturerPartNumber" z="yRPMK5JD0NCFgQSOSRg2Y1icggU="/>
+            <table:column id="c_com_turbointernational_metadata_domain_part_Gasket_manufacturer" property="manufacturer" z="6bpbK06bD3SfFle0egy0CgqLL6w="/>
+            <table:column id="c_com_turbointernational_metadata_domain_part_Gasket_name" property="name" z="2Yfu3OtFm9UNosPB7wIpR6Fylxg="/>
+            <table:column id="c_com_turbointernational_metadata_domain_part_Gasket_description" property="description" z="6GiZ3WG/xiVClH0GUBCdv/gvu2g="/>
+            <table:column id="c_com_turbointernational_metadata_domain_part_Gasket_inactive" property="inactive" z="tTbBTlK/VhPA/+3Cq8EOe++/p8Q="/>
+            <table:column id="c_com_turbointernational_metadata_domain_part_Gasket_partType" property="partType" render="false" z="user-managed"/>
+        </table:table>
+    </page:list>
+</div>

@@ -3,16 +3,11 @@
 
 package com.turbointernational.metadata.domain.part;
 
-import com.turbointernational.metadata.domain.interchange.Interchange;
-import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.Backplate;
 import com.turbointernational.metadata.domain.part.BackplateController;
-import com.turbointernational.metadata.domain.type.SealType;
 import java.io.UnsupportedEncodingException;
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -22,28 +17,17 @@ import org.springframework.web.util.WebUtils;
 
 privileged aspect BackplateController_Roo_Controller {
     
-    @RequestMapping(method = RequestMethod.POST, produces = "text/html")
-    public String BackplateController.create(@Valid Backplate backplate, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
-        if (bindingResult.hasErrors()) {
-            populateEditForm(uiModel, backplate);
-            return "backplates/create";
-        }
-        uiModel.asMap().clear();
-        backplate.persist();
-        return "redirect:/backplates/" + encodeUrlPathSegment(backplate.getId().toString(), httpServletRequest);
-    }
-    
     @RequestMapping(params = "form", produces = "text/html")
     public String BackplateController.createForm(Model uiModel) {
         populateEditForm(uiModel, new Backplate());
-        return "backplates/create";
+        return "part/backplates/create";
     }
     
     @RequestMapping(value = "/{id}", produces = "text/html")
     public String BackplateController.show(@PathVariable("id") Long id, Model uiModel) {
         uiModel.addAttribute("backplate", Backplate.findBackplate(id));
         uiModel.addAttribute("itemId", id);
-        return "backplates/show";
+        return "part/backplates/show";
     }
     
     @RequestMapping(produces = "text/html")
@@ -57,24 +41,13 @@ privileged aspect BackplateController_Roo_Controller {
         } else {
             uiModel.addAttribute("backplates", Backplate.findAllBackplates());
         }
-        return "backplates/list";
-    }
-    
-    @RequestMapping(method = RequestMethod.PUT, produces = "text/html")
-    public String BackplateController.update(@Valid Backplate backplate, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
-        if (bindingResult.hasErrors()) {
-            populateEditForm(uiModel, backplate);
-            return "backplates/update";
-        }
-        uiModel.asMap().clear();
-        backplate.merge();
-        return "redirect:/backplates/" + encodeUrlPathSegment(backplate.getId().toString(), httpServletRequest);
+        return "part/backplates/list";
     }
     
     @RequestMapping(value = "/{id}", params = "form", produces = "text/html")
     public String BackplateController.updateForm(@PathVariable("id") Long id, Model uiModel) {
         populateEditForm(uiModel, Backplate.findBackplate(id));
-        return "backplates/update";
+        return "part/backplates/update";
     }
     
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "text/html")
@@ -84,14 +57,7 @@ privileged aspect BackplateController_Roo_Controller {
         uiModel.asMap().clear();
         uiModel.addAttribute("page", (page == null) ? "1" : page.toString());
         uiModel.addAttribute("size", (size == null) ? "10" : size.toString());
-        return "redirect:/backplates";
-    }
-    
-    void BackplateController.populateEditForm(Model uiModel, Backplate backplate) {
-        uiModel.addAttribute("backplate", backplate);
-        uiModel.addAttribute("interchanges", Interchange.findAllInterchanges());
-        uiModel.addAttribute("manufacturers", Manufacturer.findAllManufacturers());
-        uiModel.addAttribute("sealtypes", SealType.findAllSealTypes());
+        return "redirect:/part/backplates";
     }
     
     String BackplateController.encodeUrlPathSegment(String pathSegment, HttpServletRequest httpServletRequest) {

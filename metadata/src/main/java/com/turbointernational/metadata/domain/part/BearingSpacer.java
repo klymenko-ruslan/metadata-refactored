@@ -1,19 +1,18 @@
 package com.turbointernational.metadata.domain.part;
 import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.SecondaryTable;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
-import org.springframework.roo.addon.tostring.RooToString;
+import org.springframework.roo.addon.json.RooJson;
 
 @RooJavaBean
-@RooToString
-@RooJpaActiveRecord(table="BEARING_SPACER", inheritanceType = "JOINED")
-@DiscriminatorValue(value = "7")
-@PrimaryKeyJoinColumn(name = "part_id")
+@RooJpaActiveRecord
+@RooJson
+@SecondaryTable(name="BEARING_SPACER", pkJoinColumns=@PrimaryKeyJoinColumn(name = "part_id"))
 public class BearingSpacer extends Part {
 
     @OneToOne
@@ -28,16 +27,16 @@ public class BearingSpacer extends Part {
                inverseJoinColumns=@JoinColumn(name="oversized_part_id"))
     private BearingSpacer oversize;
     
-    @Column(name="outside_dim_min")
+    @Column(name="outside_dim_min", table = "BEARING_SPACER")
     private Float outsideDiameterMin;
 
-    @Column(name="outside_dim_max")
+    @Column(name="outside_dim_max", table = "BEARING_SPACER")
     private Float outsideDiameterMax;
     
-    @Column(name="inside_dim_min")
+    @Column(name="inside_dim_min", table = "BEARING_SPACER")
     private Float insideDiameterMin;
     
-    @Column(name="inside_dim_max")
+    @Column(name="inside_dim_max", table = "BEARING_SPACER")
     private Float insideDiameterMax;
 
 }

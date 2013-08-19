@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:my="urn:jsptagdir:/WEB-INF/tags/my" xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:form="urn:jsptagdir:/WEB-INF/tags/form" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:spring="http://www.springframework.org/tags" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <form:create id="fc_com_turbointernational_metadata_domain_part_Kit" modelAttribute="kit" path="/part/kits" render="${empty dependencies}" z="PxgBx/24arysfcI5gZCDTQj0N3I=">
+        <field:input field="manufacturerPartNumber" id="c_com_turbointernational_metadata_domain_part_Kit_manufacturerPartNumber" z="KAsbsaRhSyFFIowKqXFr4+F7dSo="/>
+        <field:select field="manufacturer" id="c_com_turbointernational_metadata_domain_part_Kit_manufacturer" itemValue="id" items="${manufacturers}" path="/other/manufacturer" z="Q2YsZwgdZ/yjTqxrHIc5XBeWP2M="/>
+        <field:input field="name" id="c_com_turbointernational_metadata_domain_part_Kit_name" z="R+i745c/tonYpBMQhxkF2IdoKO4="/>
+        <field:input field="description" id="c_com_turbointernational_metadata_domain_part_Kit_description" z="+xROpvmpGkJ94PCGgELto7ndBI8="/>
+        <field:checkbox field="inactive" id="c_com_turbointernational_metadata_domain_part_Kit_inactive" z="user-managed"/>
+        <my:interchanges id="c_com_turbointernational_metadata_domain_part_Kit_interchanges" pageSize="20" part="${kit}" path="/part/parts/search" z="user-managed"/>
+        <field:select field="type" id="c_com_turbointernational_metadata_domain_part_Kit_type" itemValue="id" items="${kittypes}" path="/kittypes" z="ZFE+r8qkudYb0tm0TQe86OVt3TQ="/>
+        <field:select field="interchange" id="c_com_turbointernational_metadata_domain_part_Kit_interchange" itemValue="id" items="${interchanges}" path="/other/interchange" render="false" z="user-managed"/>
+        <field:input field="elasticSearch" id="c_com_turbointernational_metadata_domain_part_Kit_elasticSearch" render="false" z="user-managed"/>
+        <field:select field="partType" id="c_com_turbointernational_metadata_domain_part_Kit_partType" itemValue="id" items="${parttypes}" path="/parttypes" render="false" z="user-managed"/>
+        <field:input field="interchangePart" id="c_com_turbointernational_metadata_domain_part_Kit_interchangePart" render="false" z="user-managed"/>
+    </form:create>
+    <form:dependency dependencies="${dependencies}" id="d_com_turbointernational_metadata_domain_part_Kit" render="${not empty dependencies}" z="GYqt4u/DMGE98vApZmHmzGpcj3M="/>
+</div>

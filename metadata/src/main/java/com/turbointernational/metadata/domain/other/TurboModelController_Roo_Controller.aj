@@ -24,24 +24,24 @@ privileged aspect TurboModelController_Roo_Controller {
     public String TurboModelController.create(@Valid TurboModel turboModel, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, turboModel);
-            return "turbomodels/create";
+            return "other/turbomodels/create";
         }
         uiModel.asMap().clear();
         turboModel.persist();
-        return "redirect:/turbomodels/" + encodeUrlPathSegment(turboModel.getId().toString(), httpServletRequest);
+        return "redirect:/other/turbomodels/" + encodeUrlPathSegment(turboModel.getId().toString(), httpServletRequest);
     }
     
     @RequestMapping(params = "form", produces = "text/html")
     public String TurboModelController.createForm(Model uiModel) {
         populateEditForm(uiModel, new TurboModel());
-        return "turbomodels/create";
+        return "other/turbomodels/create";
     }
     
     @RequestMapping(value = "/{id}", produces = "text/html")
     public String TurboModelController.show(@PathVariable("id") Long id, Model uiModel) {
         uiModel.addAttribute("turbomodel", TurboModel.findTurboModel(id));
         uiModel.addAttribute("itemId", id);
-        return "turbomodels/show";
+        return "other/turbomodels/show";
     }
     
     @RequestMapping(produces = "text/html")
@@ -55,24 +55,24 @@ privileged aspect TurboModelController_Roo_Controller {
         } else {
             uiModel.addAttribute("turbomodels", TurboModel.findAllTurboModels());
         }
-        return "turbomodels/list";
+        return "other/turbomodels/list";
     }
     
     @RequestMapping(method = RequestMethod.PUT, produces = "text/html")
     public String TurboModelController.update(@Valid TurboModel turboModel, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, turboModel);
-            return "turbomodels/update";
+            return "other/turbomodels/update";
         }
         uiModel.asMap().clear();
         turboModel.merge();
-        return "redirect:/turbomodels/" + encodeUrlPathSegment(turboModel.getId().toString(), httpServletRequest);
+        return "redirect:/other/turbomodels/" + encodeUrlPathSegment(turboModel.getId().toString(), httpServletRequest);
     }
     
     @RequestMapping(value = "/{id}", params = "form", produces = "text/html")
     public String TurboModelController.updateForm(@PathVariable("id") Long id, Model uiModel) {
         populateEditForm(uiModel, TurboModel.findTurboModel(id));
-        return "turbomodels/update";
+        return "other/turbomodels/update";
     }
     
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "text/html")
@@ -82,7 +82,7 @@ privileged aspect TurboModelController_Roo_Controller {
         uiModel.asMap().clear();
         uiModel.addAttribute("page", (page == null) ? "1" : page.toString());
         uiModel.addAttribute("size", (size == null) ? "10" : size.toString());
-        return "redirect:/turbomodels";
+        return "redirect:/other/turbomodels";
     }
     
     void TurboModelController.populateEditForm(Model uiModel, TurboModel turboModel) {

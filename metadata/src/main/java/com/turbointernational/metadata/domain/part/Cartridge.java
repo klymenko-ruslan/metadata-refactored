@@ -1,15 +1,14 @@
 package com.turbointernational.metadata.domain.part;
-import javax.persistence.DiscriminatorValue;
 import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.SecondaryTable;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
-import org.springframework.roo.addon.tostring.RooToString;
+import org.springframework.roo.addon.json.RooJson;
 
 @RooJavaBean
-@RooToString
-@RooJpaActiveRecord(table="CARTRIDGE", inheritanceType = "JOINED")
-@DiscriminatorValue(value = "2")
-@PrimaryKeyJoinColumn(name = "part_id")
+@RooJpaActiveRecord
+@RooJson
+@SecondaryTable(name="CARTRIDGE", pkJoinColumns=@PrimaryKeyJoinColumn(name = "part_id"))
 public class Cartridge extends Part {
 
 }

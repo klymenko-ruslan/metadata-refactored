@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <page:show id="ps_com_turbointernational_metadata_domain_part_JournalBearing" object="${journalbearing}" path="/part/journalbearings" z="0fk/t+trnyswhlaHOHueGQhn6fY=">
+        <field:display field="manufacturerPartNumber" id="s_com_turbointernational_metadata_domain_part_JournalBearing_manufacturerPartNumber" object="${journalbearing}" z="azsZdsoQTmrk+RwR+BvcMP0nZlc="/>
+        <field:display field="manufacturer" id="s_com_turbointernational_metadata_domain_part_JournalBearing_manufacturer" object="${journalbearing}" z="53IsHe4E8Dhh0YGJO/YfMt4ZHXs="/>
+        <field:display field="name" id="s_com_turbointernational_metadata_domain_part_JournalBearing_name" object="${journalbearing}" z="WSNr0LAgmv8RKNISvAt4KnpD+Ug="/>
+        <field:display field="description" id="s_com_turbointernational_metadata_domain_part_JournalBearing_description" object="${journalbearing}" z="j8SCVGj/y43y0ptdenYt7GEFxJI="/>
+        <field:display field="inactive" id="s_com_turbointernational_metadata_domain_part_JournalBearing_inactive" object="${journalbearing}" z="BbaNVdfveEQjISJpvGPsSbXHGHM="/>
+        <field:display field="standardSize" id="s_com_turbointernational_metadata_domain_part_JournalBearing_standardSize" object="${journalbearing}" z="Cy9FyZeh1SLEjrHvDG5GTto56Qo="/>
+        <field:display field="oversize" id="s_com_turbointernational_metadata_domain_part_JournalBearing_oversize" object="${journalbearing}" z="ovivl5rQJr5ZUDT/xdKWDohe5cM="/>
+        <field:display field="outsideDiameterMin" id="s_com_turbointernational_metadata_domain_part_JournalBearing_outsideDiameterMin" object="${journalbearing}" z="LJL8ItLTZR0OzL59ZZYRlQD+U7Y="/>
+        <field:display field="outsideDiameterMax" id="s_com_turbointernational_metadata_domain_part_JournalBearing_outsideDiameterMax" object="${journalbearing}" z="B7WWl97Ge4QVlbxQd8XIzbd+P/Q="/>
+        <field:display field="insideDiameterMin" id="s_com_turbointernational_metadata_domain_part_JournalBearing_insideDiameterMin" object="${journalbearing}" z="nV303esrCgy7egKi0jkYWuW75h4="/>
+        <field:display field="insideDiameterMax" id="s_com_turbointernational_metadata_domain_part_JournalBearing_insideDiameterMax" object="${journalbearing}" z="xfJg1mWpqJgITSQ92NtTn+pj8Do="/>
+        <field:display field="interchange" id="s_com_turbointernational_metadata_domain_part_JournalBearing_interchange" object="${journalbearing}" render="false" z="user-managed"/>
+        <field:display field="elasticSearch" id="s_com_turbointernational_metadata_domain_part_JournalBearing_elasticSearch" object="${journalbearing}" render="false" z="user-managed"/>
+        <field:display field="partType" id="s_com_turbointernational_metadata_domain_part_JournalBearing_partType" object="${journalbearing}" render="false" z="user-managed"/>
+        <field:display field="interchangePart" id="s_com_turbointernational_metadata_domain_part_JournalBearing_interchangePart" object="${journalbearing}" render="false" z="user-managed"/>
+    </page:show>
+</div>

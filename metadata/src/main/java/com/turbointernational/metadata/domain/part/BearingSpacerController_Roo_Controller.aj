@@ -3,10 +3,11 @@
 
 package com.turbointernational.metadata.domain.part;
 
-import com.turbointernational.metadata.domain.interchange.Interchange;
+import com.turbointernational.metadata.domain.other.Interchange;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.BearingSpacer;
 import com.turbointernational.metadata.domain.part.BearingSpacerController;
+import com.turbointernational.metadata.domain.type.PartType;
 import java.io.UnsupportedEncodingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -25,24 +26,24 @@ privileged aspect BearingSpacerController_Roo_Controller {
     public String BearingSpacerController.create(@Valid BearingSpacer bearingSpacer, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, bearingSpacer);
-            return "bearingspacers/create";
+            return "part/bearingspacers/create";
         }
         uiModel.asMap().clear();
         bearingSpacer.persist();
-        return "redirect:/bearingspacers/" + encodeUrlPathSegment(bearingSpacer.getId().toString(), httpServletRequest);
+        return "redirect:/part/bearingspacers/" + encodeUrlPathSegment(bearingSpacer.getId().toString(), httpServletRequest);
     }
     
     @RequestMapping(params = "form", produces = "text/html")
     public String BearingSpacerController.createForm(Model uiModel) {
         populateEditForm(uiModel, new BearingSpacer());
-        return "bearingspacers/create";
+        return "part/bearingspacers/create";
     }
     
     @RequestMapping(value = "/{id}", produces = "text/html")
     public String BearingSpacerController.show(@PathVariable("id") Long id, Model uiModel) {
         uiModel.addAttribute("bearingspacer", BearingSpacer.findBearingSpacer(id));
         uiModel.addAttribute("itemId", id);
-        return "bearingspacers/show";
+        return "part/bearingspacers/show";
     }
     
     @RequestMapping(produces = "text/html")
@@ -56,24 +57,24 @@ privileged aspect BearingSpacerController_Roo_Controller {
         } else {
             uiModel.addAttribute("bearingspacers", BearingSpacer.findAllBearingSpacers());
         }
-        return "bearingspacers/list";
+        return "part/bearingspacers/list";
     }
     
     @RequestMapping(method = RequestMethod.PUT, produces = "text/html")
     public String BearingSpacerController.update(@Valid BearingSpacer bearingSpacer, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, bearingSpacer);
-            return "bearingspacers/update";
+            return "part/bearingspacers/update";
         }
         uiModel.asMap().clear();
         bearingSpacer.merge();
-        return "redirect:/bearingspacers/" + encodeUrlPathSegment(bearingSpacer.getId().toString(), httpServletRequest);
+        return "redirect:/part/bearingspacers/" + encodeUrlPathSegment(bearingSpacer.getId().toString(), httpServletRequest);
     }
     
     @RequestMapping(value = "/{id}", params = "form", produces = "text/html")
     public String BearingSpacerController.updateForm(@PathVariable("id") Long id, Model uiModel) {
         populateEditForm(uiModel, BearingSpacer.findBearingSpacer(id));
-        return "bearingspacers/update";
+        return "part/bearingspacers/update";
     }
     
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "text/html")
@@ -83,7 +84,7 @@ privileged aspect BearingSpacerController_Roo_Controller {
         uiModel.asMap().clear();
         uiModel.addAttribute("page", (page == null) ? "1" : page.toString());
         uiModel.addAttribute("size", (size == null) ? "10" : size.toString());
-        return "redirect:/bearingspacers";
+        return "redirect:/part/bearingspacers";
     }
     
     void BearingSpacerController.populateEditForm(Model uiModel, BearingSpacer bearingSpacer) {
@@ -91,6 +92,7 @@ privileged aspect BearingSpacerController_Roo_Controller {
         uiModel.addAttribute("interchanges", Interchange.findAllInterchanges());
         uiModel.addAttribute("manufacturers", Manufacturer.findAllManufacturers());
         uiModel.addAttribute("bearingspacers", BearingSpacer.findAllBearingSpacers());
+        uiModel.addAttribute("parttypes", PartType.findAllPartTypes());
     }
     
     String BearingSpacerController.encodeUrlPathSegment(String pathSegment, HttpServletRequest httpServletRequest) {

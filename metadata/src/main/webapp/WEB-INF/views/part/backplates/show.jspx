@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <page:show id="ps_com_turbointernational_metadata_domain_part_Backplate" object="${backplate}" path="/part/backplates" z="SeylfycN1ualprDQDlVxAL8ZKuc=">
+        <field:display field="manufacturerPartNumber" id="s_com_turbointernational_metadata_domain_part_Backplate_manufacturerPartNumber" object="${backplate}" z="lxR47XhXUc8gp7HdksrRzgWlK+w="/>
+        <field:display field="manufacturer" id="s_com_turbointernational_metadata_domain_part_Backplate_manufacturer" object="${backplate}" z="ORu9PkEHusdszsx1wIYJL6o/7WQ="/>
+        <field:display field="name" id="s_com_turbointernational_metadata_domain_part_Backplate_name" object="${backplate}" z="Blol9zO2vde+KdqLUugQ76hVAFg="/>
+        <field:display field="description" id="s_com_turbointernational_metadata_domain_part_Backplate_description" object="${backplate}" z="PMIEPG92ggu8/47mRuOfA+D+C8k="/>
+        <field:display field="inactive" id="s_com_turbointernational_metadata_domain_part_Backplate_inactive" object="${backplate}" z="GTq5ZtFqD6F/j+wurHtdpNPHrSw="/>
+        <field:display field="sealType" id="s_com_turbointernational_metadata_domain_part_Backplate_sealType" object="${backplate}" z="U9617iylEwCpHDAnbEM3dQi6lxE="/>
+        <field:display field="styleCompressorWheel" id="s_com_turbointernational_metadata_domain_part_Backplate_styleCompressorWheel" object="${backplate}" z="6P9HNWbudozCtwwIwxTR56roSoE="/>
+        <field:display field="sealTypeString" id="s_com_turbointernational_metadata_domain_part_Backplate_sealTypeString" object="${backplate}" z="rY0cHr1KEgLS9ipRSy1BfWBl3ek="/>
+        <field:display field="overallDiameter" id="s_com_turbointernational_metadata_domain_part_Backplate_overallDiameter" object="${backplate}" z="9QwXxJPcvjKkW6+jKZUA6MwXymA="/>
+        <field:display field="compressorWheelDiameter" id="s_com_turbointernational_metadata_domain_part_Backplate_compressorWheelDiameter" object="${backplate}" z="kBuVqvJnWjFNLR1wmcU4Kcv70/g="/>
+        <field:display field="pistonRingDiameter" id="s_com_turbointernational_metadata_domain_part_Backplate_pistonRingDiameter" object="${backplate}" z="GwLiTTLV/gfdTsYut0mLbdY+Dio="/>
+        <field:display field="compressorHousingDiameter" id="s_com_turbointernational_metadata_domain_part_Backplate_compressorHousingDiameter" object="${backplate}" z="/hKPg9Tx/SMKs3mWtA3ljJQg+is="/>
+        <field:display field="notes" id="s_com_turbointernational_metadata_domain_part_Backplate_notes" object="${backplate}" z="mhAF4+35Uk8SW/X0gnZ4yKuU57Q="/>
+        <field:display field="secondaryDiameter" id="s_com_turbointernational_metadata_domain_part_Backplate_secondaryDiameter" object="${backplate}" z="YoKEuTq7Ki8x44V0xPJGdNjMw+U="/>
+        <field:display field="overallHeight" id="s_com_turbointernational_metadata_domain_part_Backplate_overallHeight" object="${backplate}" render="true" z="user-managed"/>
+        <field:display field="partType" id="s_com_turbointernational_metadata_domain_part_Backplate_partType" object="${backplate}" render="false" z="user-managed"/>
+        <field:display field="interchange" id="s_com_turbointernational_metadata_domain_part_Backplate_interchange" object="${backplate}" label="Interchangeable Parts Group #" z="user-managed"/>
+        <field:display field="elasticSearch" id="s_com_turbointernational_metadata_domain_part_Backplate_elasticSearch" object="${backplate}" render="false" z="user-managed"/>
+        <field:display field="interchangePart" id="s_com_turbointernational_metadata_domain_part_Backplate_interchangePart" object="${backplate}" render="false" z="user-managed"/>
+    </page:show>
+</div>

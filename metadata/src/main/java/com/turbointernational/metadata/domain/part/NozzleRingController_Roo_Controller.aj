@@ -3,10 +3,11 @@
 
 package com.turbointernational.metadata.domain.part;
 
-import com.turbointernational.metadata.domain.interchange.Interchange;
+import com.turbointernational.metadata.domain.other.Interchange;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.NozzleRing;
 import com.turbointernational.metadata.domain.part.NozzleRingController;
+import com.turbointernational.metadata.domain.type.PartType;
 import java.io.UnsupportedEncodingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -25,24 +26,24 @@ privileged aspect NozzleRingController_Roo_Controller {
     public String NozzleRingController.create(@Valid NozzleRing nozzleRing, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, nozzleRing);
-            return "nozzlerings/create";
+            return "part/nozzlerings/create";
         }
         uiModel.asMap().clear();
         nozzleRing.persist();
-        return "redirect:/nozzlerings/" + encodeUrlPathSegment(nozzleRing.getId().toString(), httpServletRequest);
+        return "redirect:/part/nozzlerings/" + encodeUrlPathSegment(nozzleRing.getId().toString(), httpServletRequest);
     }
     
     @RequestMapping(params = "form", produces = "text/html")
     public String NozzleRingController.createForm(Model uiModel) {
         populateEditForm(uiModel, new NozzleRing());
-        return "nozzlerings/create";
+        return "part/nozzlerings/create";
     }
     
     @RequestMapping(value = "/{id}", produces = "text/html")
     public String NozzleRingController.show(@PathVariable("id") Long id, Model uiModel) {
         uiModel.addAttribute("nozzlering", NozzleRing.findNozzleRing(id));
         uiModel.addAttribute("itemId", id);
-        return "nozzlerings/show";
+        return "part/nozzlerings/show";
     }
     
     @RequestMapping(produces = "text/html")
@@ -56,24 +57,24 @@ privileged aspect NozzleRingController_Roo_Controller {
         } else {
             uiModel.addAttribute("nozzlerings", NozzleRing.findAllNozzleRings());
         }
-        return "nozzlerings/list";
+        return "part/nozzlerings/list";
     }
     
     @RequestMapping(method = RequestMethod.PUT, produces = "text/html")
     public String NozzleRingController.update(@Valid NozzleRing nozzleRing, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, nozzleRing);
-            return "nozzlerings/update";
+            return "part/nozzlerings/update";
         }
         uiModel.asMap().clear();
         nozzleRing.merge();
-        return "redirect:/nozzlerings/" + encodeUrlPathSegment(nozzleRing.getId().toString(), httpServletRequest);
+        return "redirect:/part/nozzlerings/" + encodeUrlPathSegment(nozzleRing.getId().toString(), httpServletRequest);
     }
     
     @RequestMapping(value = "/{id}", params = "form", produces = "text/html")
     public String NozzleRingController.updateForm(@PathVariable("id") Long id, Model uiModel) {
         populateEditForm(uiModel, NozzleRing.findNozzleRing(id));
-        return "nozzlerings/update";
+        return "part/nozzlerings/update";
     }
     
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "text/html")
@@ -83,13 +84,14 @@ privileged aspect NozzleRingController_Roo_Controller {
         uiModel.asMap().clear();
         uiModel.addAttribute("page", (page == null) ? "1" : page.toString());
         uiModel.addAttribute("size", (size == null) ? "10" : size.toString());
-        return "redirect:/nozzlerings";
+        return "redirect:/part/nozzlerings";
     }
     
     void NozzleRingController.populateEditForm(Model uiModel, NozzleRing nozzleRing) {
         uiModel.addAttribute("nozzleRing", nozzleRing);
         uiModel.addAttribute("interchanges", Interchange.findAllInterchanges());
         uiModel.addAttribute("manufacturers", Manufacturer.findAllManufacturers());
+        uiModel.addAttribute("parttypes", PartType.findAllPartTypes());
     }
     
     String NozzleRingController.encodeUrlPathSegment(String pathSegment, HttpServletRequest httpServletRequest) {

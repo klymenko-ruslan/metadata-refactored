@@ -23,6 +23,14 @@ privileged aspect PartType_Roo_JavaBean {
         this.name = name;
     }
     
+    public String PartType.getTypeName() {
+        return this.typeName;
+    }
+    
+    public void PartType.setTypeName(String typeName) {
+        this.typeName = typeName;
+    }
+    
     public PartType PartType.getParent() {
         return this.parent;
     }
