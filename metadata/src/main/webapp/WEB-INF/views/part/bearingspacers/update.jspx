@@ -8,14 +8,16 @@
         <field:input field="name" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_name" z="zKdicWM/anoJ65ztJm1jZ9ZyMcE="/>
         <field:input field="description" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_description" z="ekUWc8ncaTcI/V/Azkk2sc655ro="/>
         <field:checkbox field="inactive" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_inactive" z="user-managed"/>
+        <my:interchanges id="c_com_turbointernational_metadata_domain_part_BearingSpacer_interchanges" pageSize="20" part="${backplate}" path="/part/parts/search" z="user-managed"/>
         <field:select field="standardSize" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_standardSize" itemValue="id" items="${bearingspacers}" path="/part/bearingspacers" z="GBYrPDIE3VC3V3la4CsypuJNN2k="/>
         <field:select field="oversize" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_oversize" itemValue="id" items="${bearingspacers}" path="/part/bearingspacers" z="onRy72VVP4CH2wpEi2bAeMO5hks="/>
         <field:input field="outsideDiameterMin" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_outsideDiameterMin" validationMessageCode="field_invalid_number" z="hBAkGYNkjsR+W7a3t9vsWVVB/+k="/>
         <field:input field="outsideDiameterMax" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_outsideDiameterMax" validationMessageCode="field_invalid_number" z="sIqrkLrPAgK8vutgd6tkDznPqxY="/>
         <field:input field="insideDiameterMin" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_insideDiameterMin" validationMessageCode="field_invalid_number" z="OL9hJ/EyNpNrpqufDKHBcQBejNU="/>
         <field:input field="insideDiameterMax" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_insideDiameterMax" validationMessageCode="field_invalid_number" z="x2uFuJ2BMvQgYTApQpb/v9pJf7I="/>
-        <field:select field="interchange" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_interchange" itemValue="id" items="${interchanges}" path="/other/interchange" z="vI7ouSIL/qPVZzvS4nNrFSxgM14="/>
-        <field:input field="elasticSearch" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_elasticSearch" z="uAB4xRQDJ9NtpisXpcOuQh6YDac="/>
-        <field:select field="partType" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_partType" itemValue="id" items="${parttypes}" path="/parttypes" z="8UuVj+/gDgtab8/lvGRS6YjFpzU="/>
+        <field:select field="interchange" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_interchange" itemValue="id" items="${interchanges}" path="/other/interchange" render="false" z="user-managed"/>
+        <field:input field="elasticSearch" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_elasticSearch" render="false" z="user-managed"/>
+        <field:select field="partType" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_partType" itemValue="id" items="${parttypes}" path="/parttypes" render="false" z="user-managed"/>
+        <field:input field="interchangePart" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_interchangePart" z="1G3IsDzhdIw/Jx13V/YfVUfT5s8="/>
     </form:update>
 </div>

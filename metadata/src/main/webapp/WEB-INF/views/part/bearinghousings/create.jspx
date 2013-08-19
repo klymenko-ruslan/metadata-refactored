@@ -8,6 +8,7 @@
         <field:input field="name" id="c_com_turbointernational_metadata_domain_part_BearingHousing_name" z="RTA9xlHixQvwTOIkNBnIiYt/QiQ="/>
         <field:input field="description" id="c_com_turbointernational_metadata_domain_part_BearingHousing_description" z="CQSPEx87s2XFiKP/3hYwzVSpX5k="/>
         <field:checkbox field="inactive" id="c_com_turbointernational_metadata_domain_part_BearingHousing_inactive" z="user-managed"/>
+        <my:interchanges id="c_com_turbointernational_metadata_domain_part_Backplate_interchanges" pageSize="20" part="${backplate}" path="/part/parts/search" z="user-managed"/>
         <field:select field="coolType" id="c_com_turbointernational_metadata_domain_part_BearingHousing_coolType" itemValue="id" items="${cooltypes}" path="/cooltypes" z="e5lW8sT+dSFOJBD4NOaAKMVhYHU="/>
         <field:input field="oilInlet" id="c_com_turbointernational_metadata_domain_part_BearingHousing_oilInlet" z="204k7v2WTleF6oAsCKhfSwgImkI="/>
         <field:input field="oilOutlet" id="c_com_turbointernational_metadata_domain_part_BearingHousing_oilOutlet" z="MCEc4OiBnqoBlEBkyr9A30HepRw="/>
@@ -16,9 +17,10 @@
         <field:input field="waterPorts" id="c_com_turbointernational_metadata_domain_part_BearingHousing_waterPorts" z="8oN2i6GqBEICNmXF5KrJlsD6CTo="/>
         <field:input field="designFeatures" id="c_com_turbointernational_metadata_domain_part_BearingHousing_designFeatures" z="m8OmE6p6AjimaraXGWNdkoaSRYY="/>
         <field:input field="bearingType" id="c_com_turbointernational_metadata_domain_part_BearingHousing_bearingType" z="5fUueF+jN8G0PuKhHOM2dYo8MR8="/>
-        <field:select field="interchange" id="c_com_turbointernational_metadata_domain_part_BearingHousing_interchange" itemValue="id" items="${interchanges}" path="/other/interchange" z="fh0NZ3sAkE0gV6OEK0R0GRO6Jt8="/>
-        <field:input field="elasticSearch" id="c_com_turbointernational_metadata_domain_part_BearingHousing_elasticSearch" z="KOsSaKyFNliWuXrMer73GnOcIlM="/>
-        <field:select field="partType" id="c_com_turbointernational_metadata_domain_part_BearingHousing_partType" itemValue="id" items="${parttypes}" path="/parttypes" z="UnJn95XWfFFXPeONLgs/QbKhCRA="/>
+        <field:select field="interchange" id="c_com_turbointernational_metadata_domain_part_BearingHousing_interchange" itemValue="id" items="${interchanges}" path="/other/interchange" render="false" z="user-managed"/>
+        <field:input field="elasticSearch" id="c_com_turbointernational_metadata_domain_part_BearingHousing_elasticSearch" render="false" z="user-managed"/>
+        <field:select field="partType" id="c_com_turbointernational_metadata_domain_part_BearingHousing_partType" itemValue="id" items="${parttypes}" path="/parttypes" render="false" z="user-managed"/>
+        <field:input field="interchangePart" id="c_com_turbointernational_metadata_domain_part_BearingHousing_interchangePart" z="6xrPromPmZyRkzvvQKdUPIX92a8="/>
     </form:create>
     <form:dependency dependencies="${dependencies}" id="d_com_turbointernational_metadata_domain_part_BearingHousing" render="${not empty dependencies}" z="qnoJKVNQGwYsJt0PMvqnVy9dEWk="/>
 </div>

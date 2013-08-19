@@ -16,8 +16,9 @@
         <field:display field="waterPorts" id="s_com_turbointernational_metadata_domain_part_BearingHousing_waterPorts" object="${bearinghousing}" z="XwHR6W2xi0XzuPXPuW3HsdbRiMY="/>
         <field:display field="designFeatures" id="s_com_turbointernational_metadata_domain_part_BearingHousing_designFeatures" object="${bearinghousing}" z="p3GloHmGhLx4rauS0yOXz3CtyLk="/>
         <field:display field="bearingType" id="s_com_turbointernational_metadata_domain_part_BearingHousing_bearingType" object="${bearinghousing}" z="tLVUYHTnpPa9Yjarm8tQoX/oEBE="/>
-        <field:display field="interchange" id="s_com_turbointernational_metadata_domain_part_BearingHousing_interchange" object="${bearinghousing}" z="5ehuuuc2mzikBz+fCah7KU2Ug6U="/>
-        <field:display field="elasticSearch" id="s_com_turbointernational_metadata_domain_part_BearingHousing_elasticSearch" object="${bearinghousing}" z="O/B6aZgBrNN3/Ve8eXOse4Mg3ik="/>
-        <field:display field="partType" id="s_com_turbointernational_metadata_domain_part_BearingHousing_partType" object="${bearinghousing}" z="C6iRKJYXdMS0VYyzQYCYBebRPBE="/>
+        <field:display field="interchange" id="s_com_turbointernational_metadata_domain_part_BearingHousing_interchange" object="${bearinghousing}" render="false" z="user-managed"/>
+        <field:display field="elasticSearch" id="s_com_turbointernational_metadata_domain_part_BearingHousing_elasticSearch" object="${bearinghousing}" render="false" z="user-managed"/>
+        <field:display field="partType" id="s_com_turbointernational_metadata_domain_part_BearingHousing_partType" object="${bearinghousing}" render="false" z="user-managed"/>
+        <field:display field="interchangePart" id="s_com_turbointernational_metadata_domain_part_BearingHousing_interchangePart" object="${bearinghousing}" z="ijk/kyu0QPQFd628Vn2XZl6R9Ps="/>
     </page:show>
 </div>

@@ -9,7 +9,7 @@
             <table:column id="c_com_turbointernational_metadata_domain_part_CompressorWheel_name" property="name" z="VFHiWAEb4yrvztv95i8mOUsaxjc="/>
             <table:column id="c_com_turbointernational_metadata_domain_part_CompressorWheel_description" property="description" z="vRkfXWdmH+lufUWEDEWyU+LMMPA="/>
             <table:column id="c_com_turbointernational_metadata_domain_part_CompressorWheel_inactive" property="inactive" z="X7wNzZDagO353Y3QdNKIxzfNor8="/>
-            <table:column id="c_com_turbointernational_metadata_domain_part_CompressorWheel_partType" property="partType" z="J3qQQHfK0Uy09D7WBG/dCcS21H4="/>
+            <table:column id="c_com_turbointernational_metadata_domain_part_CompressorWheel_partType" property="partType" render="false" z="user-managed"/>
         </table:table>
     </page:list>
 </div>

@@ -5,6 +5,5 @@
     <page:show id="ps_com_turbointernational_metadata_domain_other_Interchange" object="${interchange}" path="/other/interchange" z="3rOtXCM5iPAIKGiOXDc+duKbXqQ=">
         <field:display field="name" id="s_com_turbointernational_metadata_domain_other_Interchange_name" object="${interchange}" z="G0qpcYKsiQgPdtjXKnoV0gr7LiU="/>
         <field:display field="description" id="s_com_turbointernational_metadata_domain_other_Interchange_description" object="${interchange}" z="DXAqS5NbGVzkrg7JlbOBmwUeDIA="/>
-        <field:display field="parts" id="s_com_turbointernational_metadata_domain_other_Interchange_parts" object="${interchange}" z="pTXg5pwX2DFXDbf2MxXi+5M9RW4="/>
     </page:show>
 </div>

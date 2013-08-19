@@ -14,8 +14,9 @@
         <field:display field="outsideDiameterMax" id="s_com_turbointernational_metadata_domain_part_BearingSpacer_outsideDiameterMax" object="${bearingspacer}" z="oVQfQlLOfC+FY8yzQLrBBYHXrfU="/>
         <field:display field="insideDiameterMin" id="s_com_turbointernational_metadata_domain_part_BearingSpacer_insideDiameterMin" object="${bearingspacer}" z="ObfoHm9d7r6DRo2deknhwfn61LY="/>
         <field:display field="insideDiameterMax" id="s_com_turbointernational_metadata_domain_part_BearingSpacer_insideDiameterMax" object="${bearingspacer}" z="nawVrCCN4mIknqBctvK8jajAL4U="/>
-        <field:display field="interchange" id="s_com_turbointernational_metadata_domain_part_BearingSpacer_interchange" object="${bearingspacer}" z="0u/VDfFZThYKfOPGZr3eu7XLI5c="/>
-        <field:display field="elasticSearch" id="s_com_turbointernational_metadata_domain_part_BearingSpacer_elasticSearch" object="${bearingspacer}" z="2LiqMyF3exMDeO37ZkTwNBT4tc4="/>
-        <field:display field="partType" id="s_com_turbointernational_metadata_domain_part_BearingSpacer_partType" object="${bearingspacer}" z="pqXAcqGrblEXMOoa/r/6Co2C+z4="/>
+        <field:display field="interchange" id="s_com_turbointernational_metadata_domain_part_BearingSpacer_interchange" object="${bearingspacer}" render="false" z="user-managed"/>
+        <field:display field="elasticSearch" id="s_com_turbointernational_metadata_domain_part_BearingSpacer_elasticSearch" object="${bearingspacer}" render="false" z="user-managed"/>
+        <field:display field="partType" id="s_com_turbointernational_metadata_domain_part_BearingSpacer_partType" object="${bearingspacer}" render="false" z="user-managed"/>
+        <field:display field="interchangePart" id="s_com_turbointernational_metadata_domain_part_BearingSpacer_interchangePart" object="${bearingspacer}" z="ibnPocmX7qsPIaLBo8GGJIv9fF8="/>
     </page:show>
 </div>

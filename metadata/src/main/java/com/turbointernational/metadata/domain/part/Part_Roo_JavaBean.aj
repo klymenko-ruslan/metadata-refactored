@@ -75,6 +75,14 @@ privileged aspect Part_Roo_JavaBean {
         this.interchange = interchange;
     }
     
+    public Part Part.getInterchangePart() {
+        return this.interchangePart;
+    }
+    
+    public void Part.setInterchangePart(Part interchangePart) {
+        this.interchangePart = interchangePart;
+    }
+    
     public ElasticSearch Part.getElasticSearch() {
         return this.elasticSearch;
     }

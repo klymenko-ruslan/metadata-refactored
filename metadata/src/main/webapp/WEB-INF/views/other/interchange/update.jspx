@@ -5,6 +5,6 @@
     <form:update id="fu_com_turbointernational_metadata_domain_other_Interchange" modelAttribute="interchange" path="/other/interchange" versionField="Version" z="66m1rmgQQUNEJfnUar4QzkdCxnw=">
         <field:input field="name" id="c_com_turbointernational_metadata_domain_other_Interchange_name" required="true" z="ET8bQDVc0v+RHVwwZ1ivX7SoVWU="/>
         <field:input field="description" id="c_com_turbointernational_metadata_domain_other_Interchange_description" z="o2ZQh+E2324yOiCvFWy3iOtwSCw="/>
-        <field:select field="parts" id="c_com_turbointernational_metadata_domain_other_Interchange_parts" itemValue="id" items="${parts}" multiple="true" path="/part/parts" z="DBVvWqMQHXizglPez9VOJ76KSDk="/>
+        <field:simple field="parts" id="c_com_turbointernational_metadata_domain_other_Interchange_parts" messageCode="entity_reference_not_managed" messageCodeAttribute="Part" z="zNj/RLBZjjISKBYk8Bwe73cXae4="/>
     </form:update>
 </div>

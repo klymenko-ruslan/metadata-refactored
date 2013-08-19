@@ -14,8 +14,9 @@
         <field:input field="widthMax" id="c_com_turbointernational_metadata_domain_part_PistonRing_widthMax" validationMessageCode="field_invalid_number" z="kAwVbE8qEMfLLt+BHq47FWUXcXg="/>
         <field:input field="installedGapMin" id="c_com_turbointernational_metadata_domain_part_PistonRing_installedGapMin" validationMessageCode="field_invalid_number" z="tpkonv/aYS9jIC4jz04nFRJ1SZE="/>
         <field:input field="installedGapMax" id="c_com_turbointernational_metadata_domain_part_PistonRing_installedGapMax" validationMessageCode="field_invalid_number" z="pZPWbP6PipZn6Cm0QPcyY/6XmXc="/>
-        <field:select field="interchange" id="c_com_turbointernational_metadata_domain_part_PistonRing_interchange" itemValue="id" items="${interchanges}" path="/other/interchange" z="RzFjbqlHI+noomzCu4nHGMJXFiI="/>
-        <field:input field="elasticSearch" id="c_com_turbointernational_metadata_domain_part_PistonRing_elasticSearch" z="jjU5y3N6SL8u5od/970h8Ag8DGU="/>
-        <field:select field="partType" id="c_com_turbointernational_metadata_domain_part_PistonRing_partType" itemValue="id" items="${parttypes}" path="/parttypes" z="P7h/hnzVNVh7to8gsx4KCZ2f5CA="/>
+        <field:select field="interchange" id="c_com_turbointernational_metadata_domain_part_PistonRing_interchange" itemValue="id" items="${interchanges}" path="/other/interchange" render="false" z="user-managed"/>
+        <field:input field="elasticSearch" id="c_com_turbointernational_metadata_domain_part_PistonRing_elasticSearch" render="false" z="user-managed"/>
+        <field:select field="partType" id="c_com_turbointernational_metadata_domain_part_PistonRing_partType" itemValue="id" items="${parttypes}" path="/parttypes" render="false" z="user-managed"/>
+        <field:input field="interchangePart" id="c_com_turbointernational_metadata_domain_part_PistonRing_interchangePart" z="dNF/vcBnXSBjsZeYufKH7/BdE3o="/>
     </form:update>
 </div>

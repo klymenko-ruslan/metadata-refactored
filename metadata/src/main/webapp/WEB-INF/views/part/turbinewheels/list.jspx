@@ -9,7 +9,7 @@
             <table:column id="c_com_turbointernational_metadata_domain_part_TurbineWheel_name" property="name" z="QLGIOLRp2ik8IZNSRAuhKLA1Z/U="/>
             <table:column id="c_com_turbointernational_metadata_domain_part_TurbineWheel_description" property="description" z="xCuCWz18vfAvKvESmfZ58xI1VZE="/>
             <table:column id="c_com_turbointernational_metadata_domain_part_TurbineWheel_inactive" property="inactive" z="AI1QmMiIqpVBHhSnmyA/NogJud0="/>
-            <table:column id="c_com_turbointernational_metadata_domain_part_TurbineWheel_partType" property="partType" z="FBg1+KJLO5VwWjB4yg7jsSDZj0w="/>
+            <table:column id="c_com_turbointernational_metadata_domain_part_TurbineWheel_partType" property="partType" render="false" z="user-managed"/>
         </table:table>
     </page:list>
 </div>

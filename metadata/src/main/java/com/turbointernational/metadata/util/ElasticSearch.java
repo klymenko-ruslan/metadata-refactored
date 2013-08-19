@@ -156,7 +156,7 @@ public class ElasticSearch {
     }
 
     @Async
-    public void deleteIndex(Part part) throws Exception {
+    public void deletePart(Part part) throws Exception {
         client.execute(
                 new Delete.Builder()
                     .index(metadataIndex)

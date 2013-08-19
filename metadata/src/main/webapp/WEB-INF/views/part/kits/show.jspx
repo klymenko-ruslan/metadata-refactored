@@ -9,8 +9,9 @@
         <field:display field="description" id="s_com_turbointernational_metadata_domain_part_Kit_description" object="${kit}" z="XbS/pSBA5IiKB4nMb1kobzMv7aQ="/>
         <field:display field="inactive" id="s_com_turbointernational_metadata_domain_part_Kit_inactive" object="${kit}" z="yOsXI8kSzEFGeTOCMi/hIXaWMOE="/>
         <field:display field="type" id="s_com_turbointernational_metadata_domain_part_Kit_type" object="${kit}" z="uiDiZkq6nXig3lz4Dghd4p2mx4A="/>
-        <field:display field="interchange" id="s_com_turbointernational_metadata_domain_part_Kit_interchange" object="${kit}" z="Qsk85YXYMChGIU0bubioPp8G1cw="/>
-        <field:display field="elasticSearch" id="s_com_turbointernational_metadata_domain_part_Kit_elasticSearch" object="${kit}" z="DXxDrThu4tmEnnYcZbAj+EoBwqg="/>
-        <field:display field="partType" id="s_com_turbointernational_metadata_domain_part_Kit_partType" object="${kit}" z="3sic81N3RWT4dqTkibHoeIlZVlc="/>
+        <field:display field="interchange" id="s_com_turbointernational_metadata_domain_part_Kit_interchange" object="${kit}" render="false" z="user-managed"/>
+        <field:display field="elasticSearch" id="s_com_turbointernational_metadata_domain_part_Kit_elasticSearch" object="${kit}" render="false" z="user-managed"/>
+        <field:display field="partType" id="s_com_turbointernational_metadata_domain_part_Kit_partType" object="${kit}" render="false" z="user-managed"/>
+        <field:display field="interchangePart" id="s_com_turbointernational_metadata_domain_part_Kit_interchangePart" object="${kit}" z="5WgIhtRpTHTJUsV8oiJJqScF43I="/>
     </page:show>
 </div>

@@ -88,10 +88,14 @@ public class ApplicationConversionServiceFactoryBean extends FormattingConversio
             }
         });
 
-        registry.addConverter(new Converter<Interchange, String>() {
-            public String convert(Interchange source) {
-                return source.getName();
-            }
-        });
+        registry.addConverter(getInterchangeToStringConverter());
 	}
+
+    public Converter<Interchange, String> getInterchangeToStringConverter() {
+        return new org.springframework.core.convert.converter.Converter<com.turbointernational.metadata.domain.other.Interchange, java.lang.String>() {
+            public String convert(Interchange interchange) {
+                return interchange.getId().toString() + " (" + interchange.getParts().size() + " compatible parts)";
+            }
+        };
+    }
 }

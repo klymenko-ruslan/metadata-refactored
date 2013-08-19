@@ -32,14 +32,6 @@ privileged aspect ApplicationConversionServiceFactoryBean_Roo_ConversionService 
     
     declare @type: ApplicationConversionServiceFactoryBean: @Configurable;
     
-    public Converter<Interchange, String> ApplicationConversionServiceFactoryBean.getInterchangeToStringConverter() {
-        return new org.springframework.core.convert.converter.Converter<com.turbointernational.metadata.domain.other.Interchange, java.lang.String>() {
-            public String convert(Interchange interchange) {
-                return new StringBuilder().append(interchange.getName()).append(' ').append(interchange.getDescription()).toString();
-            }
-        };
-    }
-    
     public Converter<Long, Interchange> ApplicationConversionServiceFactoryBean.getIdToInterchangeConverter() {
         return new org.springframework.core.convert.converter.Converter<java.lang.Long, com.turbointernational.metadata.domain.other.Interchange>() {
             public com.turbointernational.metadata.domain.other.Interchange convert(java.lang.Long id) {

@@ -9,8 +9,9 @@
         <field:display field="description" id="s_com_turbointernational_metadata_domain_part_Gasket_description" object="${gasket}" z="OlV9HsBiVPMtP7NTY+wzD1enmsA="/>
         <field:display field="inactive" id="s_com_turbointernational_metadata_domain_part_Gasket_inactive" object="${gasket}" z="Ef5AfYAY1HcAGZ+/e4NLDgy4peo="/>
         <field:display field="type" id="s_com_turbointernational_metadata_domain_part_Gasket_type" object="${gasket}" z="7mHnBdjKcihcxK6960ZmsMrLg6k="/>
-        <field:display field="interchange" id="s_com_turbointernational_metadata_domain_part_Gasket_interchange" object="${gasket}" z="BuKkiRqjxqGi+HtmzUwxaE0YA5c="/>
-        <field:display field="elasticSearch" id="s_com_turbointernational_metadata_domain_part_Gasket_elasticSearch" object="${gasket}" z="vz2zODhkwzyxvczIwpeb1FqdJbs="/>
-        <field:display field="partType" id="s_com_turbointernational_metadata_domain_part_Gasket_partType" object="${gasket}" z="Z/LGBPfBe81Gth/dRtKmspzwrjo="/>
+        <field:display field="interchange" id="s_com_turbointernational_metadata_domain_part_Gasket_interchange" object="${gasket}" render="false" z="user-managed"/>
+        <field:display field="elasticSearch" id="s_com_turbointernational_metadata_domain_part_Gasket_elasticSearch" object="${gasket}" render="false" z="user-managed"/>
+        <field:display field="partType" id="s_com_turbointernational_metadata_domain_part_Gasket_partType" object="${gasket}" render="false" z="user-managed"/>
+        <field:display field="interchangePart" id="s_com_turbointernational_metadata_domain_part_Gasket_interchangePart" object="${gasket}" z="OpBUJ6AlnQBFrbv3t1jks3KQCWY="/>
     </page:show>
 </div>

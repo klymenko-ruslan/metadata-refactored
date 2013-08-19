@@ -9,6 +9,7 @@
             <table:column id="c_com_turbointernational_metadata_domain_part_Backplate_name" property="name" z="k7T6qRrdWjOMAH/u8u9/EIab3Dk="/>
             <table:column id="c_com_turbointernational_metadata_domain_part_Backplate_description" property="description" z="IvfdO2trBSykN0TvtZx7yQM3amg="/>
             <table:column id="c_com_turbointernational_metadata_domain_part_Backplate_inactive" property="inactive" z="CL3beQO7eSacDvrI+MN1/t2GmTI="/>
+            <table:column id="c_com_turbointernational_metadata_domain_part_Backplate_partType" property="partType" render="false" z="user-managed"/>
         </table:table>
     </page:list>
 </div>

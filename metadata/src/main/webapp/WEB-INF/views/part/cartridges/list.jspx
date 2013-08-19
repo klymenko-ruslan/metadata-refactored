@@ -9,7 +9,7 @@
             <table:column id="c_com_turbointernational_metadata_domain_part_Cartridge_name" property="name" z="aHjTmk+99SULKUMo5wREYGmBmWY="/>
             <table:column id="c_com_turbointernational_metadata_domain_part_Cartridge_description" property="description" z="tfsIdeJCdT97N5x4+5VDxzt4cVs="/>
             <table:column id="c_com_turbointernational_metadata_domain_part_Cartridge_inactive" property="inactive" z="yJAyqBa1WulPq+RgdLJ7Cte9pCE="/>
-            <table:column id="c_com_turbointernational_metadata_domain_part_Cartridge_partType" property="partType" z="wVjeCkltfGo8mipNT9XCD4Lhczo="/>
+            <table:column id="c_com_turbointernational_metadata_domain_part_Cartridge_partType" property="partType" render="false" z="user-managed"/>
         </table:table>
     </page:list>
 </div>

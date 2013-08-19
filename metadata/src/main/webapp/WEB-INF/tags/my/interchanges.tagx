@@ -12,12 +12,15 @@
   <c:if test="${empty render or render}">
     
     <div id="${id}"  ng-controller="InterchangesCtrl">
-        <input id="${id}_interchangeId" type="hidden" name="interchangeId" ng-model="interchangeId"/>
-        <input id="${id}_interchangePartId" type="hidden" name="interchangePartId" ng-model="interchangePartId"/>
+        <input id="${id}_interchangeId" type="hidden" name="interchange" value="{{interchangeId}}"/>
+        <input id="${id}_interchangePartId" type="hidden" name="interchangePart" value="{{interchangePartId}}"/>
         <h3>Interchangeable Parts Group #: 
-            <span ng-hide="interchangeId == null">{{interchangeId}}</span>
-            <span ng-show="interchangeId == null">NEW</span>
-            <span ng-show="!isChanged()"> (<a href="javascript:;" ng-click="undo()">undo</a>)</span>
+            <span ng-show="interchangeId != null">{{interchangeId}}</span>
+            <span ng-show="interchangeId == null &amp;&amp; interchangePartId == null">[none]</span>
+            <span ng-show="interchangeId == null &amp;&amp; interchangePartId != null">[new]</span>
+
+            <span ng-show="interchangeId != null || interchangePartId != null"> (<a href="javascript:;" ng-click="clear()">clear</a>)</span>
+            <span ng-show="isChanged()"> (<a href="javascript:;" ng-click="undo()">undo</a>)</span>
         </h3>
         <div style="text-align: right;">
             <input type="text" ng-model="query" placeholder="Search..." style="width: 200px;"/>
@@ -64,10 +67,10 @@
 
         // Values
         $scope.isSearching = false;
-        $scope.interchangeId = '${part.interchange.id}';
-        $scope.interchangeOldId = '${part.interchange.id}';
+        $scope.interchangeId = ${part.interchange.id != null ? part.interchange.id : "null"};
+        $scope.interchangeOldId = ${part.interchange.id != null ? part.interchange.id : "null"};
         $scope.interchangePartId = null;
-        $scope.query = "700177-0001";
+        $scope.query = "465354-0002";
 
         $scope.tableParams = new ngTableParams({
              size:${pageSize},
@@ -78,7 +81,7 @@
 
         // Methods
         $scope.isChanged = function() {
-            return parseInt($scope.interchangeId) === parseInt($scope.interchangeOldId);
+            return $scope.interchangeId !== $scope.interchangeOldId;
         };
 
         $scope.undo = function() {
@@ -95,6 +98,7 @@
            $scope.isSearching = true;
 
             if ($scope.query &amp;&amp; $scope.query.length >=2) {
+               //alert($scope.tableParams.page);
                Interchange.search({
                    query:$scope.query,
                    from:($scope.tableParams.page-1) * $scope.tableParams.size,
@@ -105,6 +109,11 @@
                    $scope.searchResults = data.items;
                });
             }
+        };
+
+        $scope.clear = function() {
+            $scope.interchangeId = null;
+            $scope.interchangePartId = null;
         };
 
         $scope.pick = function(params) {

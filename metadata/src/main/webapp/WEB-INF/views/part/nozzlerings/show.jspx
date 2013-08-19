@@ -8,8 +8,9 @@
         <field:display field="name" id="s_com_turbointernational_metadata_domain_part_NozzleRing_name" object="${nozzlering}" z="94+sc3QLxSXXlbQTw1plt23NDFM="/>
         <field:display field="description" id="s_com_turbointernational_metadata_domain_part_NozzleRing_description" object="${nozzlering}" z="U4+wfT8zW2XJneYBLSGEHwBzh88="/>
         <field:display field="inactive" id="s_com_turbointernational_metadata_domain_part_NozzleRing_inactive" object="${nozzlering}" z="wDW9RVZlXNGSJKInwU3HGckmjxo="/>
-        <field:display field="interchange" id="s_com_turbointernational_metadata_domain_part_NozzleRing_interchange" object="${nozzlering}" z="M3srKrrlzx3Hf+LtJWBRi7BtmcI="/>
-        <field:display field="elasticSearch" id="s_com_turbointernational_metadata_domain_part_NozzleRing_elasticSearch" object="${nozzlering}" z="F04JInT5Um5s7qLLT15fLrKvw5Q="/>
-        <field:display field="partType" id="s_com_turbointernational_metadata_domain_part_NozzleRing_partType" object="${nozzlering}" z="BPhjrue7CDz5ThC34hXCFH6ZxY8="/>
+        <field:display field="interchange" id="s_com_turbointernational_metadata_domain_part_NozzleRing_interchange" object="${nozzlering}" render="false" z="user-managed"/>
+        <field:display field="elasticSearch" id="s_com_turbointernational_metadata_domain_part_NozzleRing_elasticSearch" object="${nozzlering}" render="false" z="user-managed"/>
+        <field:display field="partType" id="s_com_turbointernational_metadata_domain_part_NozzleRing_partType" object="${nozzlering}" render="false" z="user-managed"/>
+        <field:display field="interchangePart" id="s_com_turbointernational_metadata_domain_part_NozzleRing_interchangePart" object="${nozzlering}" z="PT2xs9eiHvDwiS+6QFE3OqGh6P4="/>
     </page:show>
 </div>

@@ -11,8 +11,9 @@
         <field:display field="overallDiameter" id="s_com_turbointernational_metadata_domain_part_Heatshield_overallDiameter" object="${heatshield}" z="NZW+90GgnMcX2KiysTQBdmIzImY="/>
         <field:display field="insideDimater" id="s_com_turbointernational_metadata_domain_part_Heatshield_insideDimater" object="${heatshield}" z="kW/arNFZFov0+6+3nUfFEugulc0="/>
         <field:display field="inducerDiameter" id="s_com_turbointernational_metadata_domain_part_Heatshield_inducerDiameter" object="${heatshield}" z="oBJW4cWDKnQRCcDgk7HCInb29Yw="/>
-        <field:display field="interchange" id="s_com_turbointernational_metadata_domain_part_Heatshield_interchange" object="${heatshield}" z="g0lKlSG3eIYxKlw+v4XCaLKy/T8="/>
-        <field:display field="elasticSearch" id="s_com_turbointernational_metadata_domain_part_Heatshield_elasticSearch" object="${heatshield}" z="bbo4ZE1bYcTsfnpnMkTVIHxDlKU="/>
-        <field:display field="partType" id="s_com_turbointernational_metadata_domain_part_Heatshield_partType" object="${heatshield}" z="3fouwR21hv9mWBtOsDHnO2+96RE="/>
+        <field:display field="interchange" id="s_com_turbointernational_metadata_domain_part_Heatshield_interchange" object="${heatshield}" render="false" z="user-managed"/>
+        <field:display field="elasticSearch" id="s_com_turbointernational_metadata_domain_part_Heatshield_elasticSearch" object="${heatshield}" render="false" z="user-managed"/>
+        <field:display field="partType" id="s_com_turbointernational_metadata_domain_part_Heatshield_partType" object="${heatshield}" render="false" z="user-managed"/>
+        <field:display field="interchangePart" id="s_com_turbointernational_metadata_domain_part_Heatshield_interchangePart" object="${heatshield}" z="BlCBHejFFHkx+eI8fAME9l3XfjA="/>
     </page:show>
 </div>

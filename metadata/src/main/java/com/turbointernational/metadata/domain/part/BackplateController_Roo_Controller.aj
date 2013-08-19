@@ -7,9 +7,7 @@ import com.turbointernational.metadata.domain.part.Backplate;
 import com.turbointernational.metadata.domain.part.BackplateController;
 import java.io.UnsupportedEncodingException;
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -18,17 +16,6 @@ import org.springframework.web.util.UriUtils;
 import org.springframework.web.util.WebUtils;
 
 privileged aspect BackplateController_Roo_Controller {
-    
-    @RequestMapping(method = RequestMethod.POST, produces = "text/html")
-    public String BackplateController.create(@Valid Backplate backplate, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
-        if (bindingResult.hasErrors()) {
-            populateEditForm(uiModel, backplate);
-            return "part/backplates/create";
-        }
-        uiModel.asMap().clear();
-        backplate.persist();
-        return "redirect:/part/backplates/" + encodeUrlPathSegment(backplate.getId().toString(), httpServletRequest);
-    }
     
     @RequestMapping(params = "form", produces = "text/html")
     public String BackplateController.createForm(Model uiModel) {
@@ -55,17 +42,6 @@ privileged aspect BackplateController_Roo_Controller {
             uiModel.addAttribute("backplates", Backplate.findAllBackplates());
         }
         return "part/backplates/list";
-    }
-    
-    @RequestMapping(method = RequestMethod.PUT, produces = "text/html")
-    public String BackplateController.update(@Valid Backplate backplate, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
-        if (bindingResult.hasErrors()) {
-            populateEditForm(uiModel, backplate);
-            return "part/backplates/update";
-        }
-        uiModel.asMap().clear();
-        backplate.merge();
-        return "redirect:/part/backplates/" + encodeUrlPathSegment(backplate.getId().toString(), httpServletRequest);
     }
     
     @RequestMapping(value = "/{id}", params = "form", produces = "text/html")

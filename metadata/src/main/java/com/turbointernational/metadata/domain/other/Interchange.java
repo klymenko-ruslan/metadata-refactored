@@ -6,7 +6,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import org.springframework.roo.addon.json.RooJson;
@@ -25,6 +25,6 @@ public class Interchange {
 
     private String description;
 
-    @ManyToMany(mappedBy = "interchange", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "interchange", fetch = FetchType.LAZY)
     private Set<Part> parts;
 }

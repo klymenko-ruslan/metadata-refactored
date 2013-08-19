@@ -8,9 +8,11 @@
         <field:input field="name" id="c_com_turbointernational_metadata_domain_part_Cartridge_name" z="gRc9TI8m7nGHqDfQr0gIPi96OVs="/>
         <field:input field="description" id="c_com_turbointernational_metadata_domain_part_Cartridge_description" z="5qvwaCXnNnqqhkOsiHJQKRaQoBw="/>
         <field:checkbox field="inactive" id="c_com_turbointernational_metadata_domain_part_Cartridge_inactive" z="user-managed"/>
-        <field:select field="interchange" id="c_com_turbointernational_metadata_domain_part_Cartridge_interchange" itemValue="id" items="${interchanges}" path="/other/interchange" z="NreFvfRJLySipRl4Xi0ovTYk7Eg="/>
-        <field:input field="elasticSearch" id="c_com_turbointernational_metadata_domain_part_Cartridge_elasticSearch" z="c8ATJ5ezqZB5eiApBlVYuNVIEIk="/>
-        <field:select field="partType" id="c_com_turbointernational_metadata_domain_part_Cartridge_partType" itemValue="id" items="${parttypes}" path="/parttypes" z="BJBz6Wzh8bzauotr/oRUdwrhq3A="/>
+        <my:interchanges id="c_com_turbointernational_metadata_domain_part_Cartridge_interchanges" pageSize="20" part="${cartridge}" path="/part/parts/search" z="user-managed"/>
+        <field:select field="interchange" id="c_com_turbointernational_metadata_domain_part_Cartridge_interchange" itemValue="id" items="${interchanges}" path="/other/interchange" render="false" z="user-managed"/>
+        <field:input field="elasticSearch" id="c_com_turbointernational_metadata_domain_part_Cartridge_elasticSearch" render="false" z="user-managed"/>
+        <field:select field="partType" id="c_com_turbointernational_metadata_domain_part_Cartridge_partType" itemValue="id" items="${parttypes}" path="/parttypes" render="false" z="user-managed"/>
+        <field:input field="interchangePart" id="c_com_turbointernational_metadata_domain_part_Cartridge_interchangePart" z="DPwFQJy7xsCH9pOJMGeulh1fGWU="/>
     </form:create>
     <form:dependency dependencies="${dependencies}" id="d_com_turbointernational_metadata_domain_part_Cartridge" render="${not empty dependencies}" z="SWRC75oc2XwhUPOj4+BWv9nRhno="/>
 </div>

@@ -7,9 +7,9 @@
             <table:column id="c_com_turbointernational_metadata_domain_part_Turbo_manufacturerPartNumber" property="manufacturerPartNumber" z="YVlwDjK4WyGgNXX2iQsUt95ay+s="/>
             <table:column id="c_com_turbointernational_metadata_domain_part_Turbo_manufacturer" property="manufacturer" z="NuJNhALYW3ePo+3PKe+m9pWabC8="/>
             <table:column id="c_com_turbointernational_metadata_domain_part_Turbo_name" property="name" z="v325VYTGNZk77XOXubke8YJ1wVs="/>
-            <table:column id="c_com_turbointernational_metadata_domain_part_Turbo_description" property="description" z="h5qXh4aD+BAGmzUbauXUWWh+8n0="/>
-            <table:column id="c_com_turbointernational_metadata_domain_part_Turbo_inactive" property="inactive" z="84cN08Kski10Tlg6f9Aer07LKZI="/>
-            <table:column id="c_com_turbointernational_metadata_domain_part_Turbo_partType" property="partType" z="kqxUC3d7zV+tdtNkGYpQfjWDt9E="/>
+            <table:column id="c_com_turbointernational_metadata_domain_part_Turbo_description" property="description" render="false" z="user-managed"/>
+            <table:column id="c_com_turbointernational_metadata_domain_part_Turbo_inactive" property="inactive" render="false" z="user-managed"/>
+            <table:column id="c_com_turbointernational_metadata_domain_part_Turbo_partType" property="partType" render="false" z="user-managed"/>
         </table:table>
     </page:list>
 </div>
