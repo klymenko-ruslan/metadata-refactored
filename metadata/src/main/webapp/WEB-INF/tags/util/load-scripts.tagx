@@ -25,5 +25,13 @@
   <script src="${spring_url}" type="text/javascript"><!-- /required for FF3 and Opera --></script>
   <script src="${spring_dojo_url}" type="text/javascript"><!-- required for FF3 and Opera --></script>
   <script language="JavaScript" type="text/javascript">dojo.require("dojo.parser");</script>
+        
+    <!-- Angular -->
+    <script src="/js/jquery.min.js"><!-- HTML --></script>
+    <script src="/js/angular/angular.js"><!-- HTML --></script>
+    <script src="/js/angular/angular-resource.js"><!-- HTML --></script>
+    <script src="/js/angular/ng-table.js"><!-- HTML --></script>
+    <script src="/js/angular/app.js"><!-- HTML --></script>
+    <link rel="stylesheet" type="text/css" href="/styles/ng-table.css" />
 
 </jsp:root>

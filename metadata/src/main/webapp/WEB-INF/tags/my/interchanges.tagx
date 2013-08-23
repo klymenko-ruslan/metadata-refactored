@@ -45,11 +45,6 @@
         </table>
     </div>
         
-    <script src="/js/jquery.min.js"><!-- HTML --></script>
-    <script src="/js/angular/angular.js"><!-- HTML --></script>
-    <script src="/js/angular/angular-resource.js"><!-- HTML --></script>
-    <script src="/js/angular/ng-table.js"><!-- HTML --></script>
-    <link rel="stylesheet" type="text/css" href="/styles/ng-table.css" />
     <script type="text/javascript">
     var InterchangesApp = angular.module('InterchangesApp', ['ngResource', 'ngTable']);
     InterchangesApp.controller('InterchangesCtrl', function($scope, $resource, ngTableParams) {
