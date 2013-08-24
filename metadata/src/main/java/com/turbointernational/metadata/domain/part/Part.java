@@ -113,5 +113,13 @@ public class Part {
 //    @JoinColumn(name="parent_part_id", table="bom")
 //    private Collection<BOMItem> bom;
 
-    public void toJson(JSOG partObject) {}
+    public void toJson(JSOG partObject) {
+        partObject
+        .put("_id", id)
+        .put("name", name)
+        .put("description", description)
+        .put("manufacturer_name", manufacturer.getManufacturer().getName())
+        .put("manufacturer_type_name", manufacturer.getManufacturer().getType().getName())
+        .put("manufacturer_part_number", manufacturerPartNumber);
+    }
 }

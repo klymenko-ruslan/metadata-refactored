@@ -115,13 +115,7 @@ public class ElasticSearch {
             }
 
             // Add the part fields
-            JSOG partObject = JSOG.object()
-                .put("_id", part.getId())
-                .put("name", part.getName())
-                .put("description", part.getDescription())
-                .put("manufacturer_name", part.getManufacturer().getName())
-                .put("manufacturer_type_name", part.getManufacturer().getType().getName())
-                .put("manufacturer_part_number", part.getManufacturerPartNumber());
+            JSOG partObject = JSOG.object() // GET IT FROM THE PART, ADD SUPER() TO ALL PARTS
 
             if (part.getPartType() != null) {
                 partObject.put("part_type", part.getPartType().getTypeName());
