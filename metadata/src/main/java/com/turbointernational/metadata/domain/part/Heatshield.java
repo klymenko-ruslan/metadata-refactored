@@ -23,7 +23,7 @@ public class Heatshield extends Part {
     private Float inducerDiameter;
 
     @Override
-    public void addIndexFields(JSOG partObject) {
+    public void toJson(JSOG partObject) {
         partObject.put("overall_diameter", overallDiameter);
         partObject.put("inside_diameter", insideDimater);
         partObject.put("inducer_diameter", inducerDiameter);

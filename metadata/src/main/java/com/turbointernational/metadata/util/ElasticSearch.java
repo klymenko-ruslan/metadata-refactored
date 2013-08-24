@@ -132,7 +132,7 @@ public class ElasticSearch {
             }
 
             // Let part subclasses add their fields to the indexed data
-            part.addIndexFields(partObject);
+            part.toJson(partObject);
 
             Index.Builder indexBuilder = new Index.Builder(partObject.toString()).id(part.getId().toString());
 

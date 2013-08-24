@@ -50,7 +50,7 @@ public class Backplate extends Part {
     private Float overallHeight;
 
     @Override
-    public void addIndexFields(JSOG partObject) {
+    public void toJson(JSOG partObject) {
         if (sealType != null) {
             partObject.put("seal_type_name", sealType.getName());
         }

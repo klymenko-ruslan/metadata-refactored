@@ -23,7 +23,7 @@ public class Turbo extends Part {
     private CoolType coolType;
 
     @Override
-    public void addIndexFields(JSOG partObject) {
+    public void toJson(JSOG partObject) {
         if (model != null) {
             partObject.put("turbo_model_name", model.getName());
         }

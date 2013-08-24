@@ -19,7 +19,7 @@ public class Kit extends Part {
     private KitType type;
 
     @Override
-    public void addIndexFields(JSOG partObject) {
+    public void toJson(JSOG partObject) {
         if (type != null) {
             partObject.put("kit_type_name", type.getName());
         }

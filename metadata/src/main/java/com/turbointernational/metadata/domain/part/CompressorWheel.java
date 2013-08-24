@@ -34,7 +34,7 @@ public class CompressorWheel extends Part {
     private String application;
 
     @Override
-    public void addIndexFields(JSOG partObject) {
+    public void toJson(JSOG partObject) {
         partObject.put("inducer_oa", inducerOa);
         partObject.put("tip_height_b", tipHeightB);
         partObject.put("exducer_oc", exducerOc);

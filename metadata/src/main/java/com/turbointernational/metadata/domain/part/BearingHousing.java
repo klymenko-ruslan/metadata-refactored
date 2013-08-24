@@ -42,7 +42,7 @@ public class BearingHousing extends Part {
     private String bearingType;
 
     @Override
-    public void addIndexFields(JSOG partObject) {
+    public void toJson(JSOG partObject) {
         if (coolType != null) {
             partObject.put("cool_type_name", coolType.getName());
         }

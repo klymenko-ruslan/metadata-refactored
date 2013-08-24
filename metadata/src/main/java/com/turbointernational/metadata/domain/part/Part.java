@@ -113,5 +113,5 @@ public class Part {
 //    @JoinColumn(name="parent_part_id", table="bom")
 //    private Collection<BOMItem> bom;
 
-    public void addIndexFields(JSOG partObject) {}
+    public void toJson(JSOG partObject) {}
 }

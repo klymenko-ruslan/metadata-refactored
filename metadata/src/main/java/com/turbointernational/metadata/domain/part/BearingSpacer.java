@@ -41,7 +41,7 @@ public class BearingSpacer extends Part {
     private Float insideDiameterMax;
 
     @Override
-    public void addIndexFields(JSOG partObject) {
+    public void toJson(JSOG partObject) {
         if (standardSize != null) {
             partObject.put("standard_size_id", standardSize.getId());
         }
