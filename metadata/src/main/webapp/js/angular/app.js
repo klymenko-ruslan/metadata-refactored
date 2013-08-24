@@ -1,46 +1,73 @@
 var MetadataEditApp = angular.module('MetadataEditApp', ['ngResource', 'ngTable']);
 
+MetadataEditApp.factory('partSearchService', function($http) {
+    return function(path, data, successCallback, errorCallback) {
+        return $http({method: 'POST', url: path, params: data})
+            .success(successCallback)
+            .error(errorCallback);
+    }
+});
+
 MetadataEditApp.directive('myInterchanges', function () {
     return {
         scope: {
-            interchangeId: '='
+            interchangeId: '@'
         },
         restrict: 'E',
         transclude: true,
         templateUrl:'/partials/Interchanges.html',
-        controller: 'InterchangesCtrl'
+        controller: 'InterchangesCtrl',
+        link: function(scope, element, attrs, controller) {
+            scope.interchangeId = attrs.interchangeId;
+            scope.interchangeNewId = attrs.interchangeId;
+        }
     };
 });
 
 MetadataEditApp.directive('myPartSearch', function () {
     return {
         scope: {
-            path: '='
+            path: '@',
+            pick: '&'
         },
         restrict: 'E',
-        replace: true,
-        transclude: true,
         templateUrl:'/partials/PartSearch.html',
         controller: 'PartSearchCtrl'
     };
 });
 
-MetadataEditApp.controller('PartSearchCtrl', function($scope, $resource, ngTableParams) {
+MetadataEditApp.controller('InterchangesCtrl', function($scope, $resource) {
 
-    // Resources
-    var Part = $resource($scope.path, {}, {
-        search: {
-            method:'GET',
-            params: {
-                query:'@query'
-            }
-        }
-    });
+    // Values (set in the linker)
+    $scope.interchangeId;
+    $scope.interchangeNewId;
 
+    // Methods
+    $scope.isChanged = function() {
+        return $scope.interchangeId !== $scope.interchangeNewId;
+    };
+
+    $scope.undo = function() {
+        $scope.interchangeNewId = $scope.interchangeId;
+        $scope.interchangePartId = null;
+    };
+
+    $scope.clear = function() {
+        $scope.interchangeNewId = null;
+        $scope.interchangePartId = null;
+    };
+
+    $scope.pick = function(part) {
+        $scope.interchangeNewId = part.interchange_id;
+        $scope.interchangePartId = part._id;
+    };
+});
+
+MetadataEditApp.controller('PartSearchCtrl', function($scope, ngTableParams, partSearchService) {
+    
     // Values
-    $scope.isSearching = false;
+    $scope.isSearching = false; 
     $scope.query = "";
-    $scope.callback = null;
 
     $scope.tableParams = new ngTableParams({
          size:20,
@@ -49,7 +76,7 @@ MetadataEditApp.controller('PartSearchCtrl', function($scope, $resource, ngTable
          counts: []
     });
 
-    $scope.search = function (params) {
+    $scope.search = function () {
 
        // Clear the results
        $scope.tableParams.page = 1;
@@ -59,7 +86,7 @@ MetadataEditApp.controller('PartSearchCtrl', function($scope, $resource, ngTable
         if ($scope.query && $scope.query.length >=2) {
            $scope.isSearching = true;
 
-           Part.search({
+           partSearchService($scope.path, {
                query:$scope.query,
                from:($scope.tableParams.page-1) * $scope.tableParams.size,
                size:$scope.tableParams.size
@@ -67,38 +94,16 @@ MetadataEditApp.controller('PartSearchCtrl', function($scope, $resource, ngTable
                $scope.isSearching = false;
                $scope.tableParams.total = data.total;
                $scope.searchResults = data.items;
-           });
+             }, function(data) {
+               $scope.isSearching = false;
+               alert("error:" + data);
+             });
+        } else {
+            $scope.isSearching = false;
         }
     };
 
     // Watchers
     $scope.$watch('query', $scope.search, true);
     $scope.$watch('tableParams.page', $scope.search, true);
-});
-
-
-MetadataEditApp.controller('InterchangesCtrl', function($scope, $resource, ngTableParams) {
-
-    // Values
-    $scope.interchangeOldId = $scope.interchangeId;
-
-    // Methods
-    $scope.isChanged = function() {
-        return $scope.interchangeId !== $scope.interchangeOldId;
-    };
-
-    $scope.undo = function() {
-        $scope.interchangeId = $scope.interchangeOldId;
-        $scope.interchangePartId = null;
-    };
-
-    $scope.clear = function() {
-        $scope.interchangeId = null;
-        $scope.interchangePartId = null;
-    };
-
-    $scope.pick = function(part) {
-        $scope.interchangeId = part.interchange_id;
-        $scope.interchangePartId = part._id;
-    };
 });

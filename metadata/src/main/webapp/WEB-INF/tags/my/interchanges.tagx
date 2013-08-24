@@ -11,9 +11,11 @@
 
   <c:if test="${empty render or render}">
     
-    <div id="${id}">
-        <my-interchanges interchangeId="${part.interchange.id}"></my-interchanges>
-        <my-part-search path="${path}"></my-part-search>
+    <div>
+        <my-interchanges interchange-id="${part.interchange.id}"/>
+    </div>
+    <div>
+        <my-part-search path="${path}"/>
     </div>
   </c:if>
 </jsp:root>
