@@ -1,22 +1,38 @@
-var MetadataApp = angular.module('MetadataApp', ['ngResource', 'ngTable']);
+var MetadataEditApp = angular.module('MetadataEditApp', ['ngResource', 'ngTable']);
 
-MetadataApp.directive('myPartSearch', function () {
+MetadataEditApp.directive('myInterchanges', function () {
     return {
         scope: {
+            interchangeId: '='
         },
-        templateUrl:'/partials/PartSearch.html'
+        restrict: 'E',
+        transclude: true,
+        templateUrl:'/partials/Interchanges.html',
+        controller: 'InterchangesCtrl'
     };
 });
 
-MetadataApp.controller('PartSearchCtrl', function($scope, $resource, ngTableParams) {
+MetadataEditApp.directive('myPartSearch', function () {
+    return {
+        scope: {
+            path: '='
+        },
+        restrict: 'E',
+        replace: true,
+        transclude: true,
+        templateUrl:'/partials/PartSearch.html',
+        controller: 'PartSearchCtrl'
+    };
+});
+
+MetadataEditApp.controller('PartSearchCtrl', function($scope, $resource, ngTableParams) {
 
     // Resources
-    var Part = $resource('${path}', {}, {
+    var Part = $resource($scope.path, {}, {
         search: {
             method:'GET',
             params: {
-                query:'@query',
-
+                query:'@query'
             }
         }
     });
@@ -27,7 +43,7 @@ MetadataApp.controller('PartSearchCtrl', function($scope, $resource, ngTablePara
     $scope.callback = null;
 
     $scope.tableParams = new ngTableParams({
-         size:${pageSize},
+         size:20,
          page:1,
          total:0,
          counts: []
@@ -40,7 +56,7 @@ MetadataApp.controller('PartSearchCtrl', function($scope, $resource, ngTablePara
        $scope.tableParams.total = 0;
        $scope.searchResults = [];
 
-        if ($scope.query ${'&amp;&amp;'} $scope.query.length >=2) {
+        if ($scope.query && $scope.query.length >=2) {
            $scope.isSearching = true;
 
            Part.search({
@@ -61,12 +77,10 @@ MetadataApp.controller('PartSearchCtrl', function($scope, $resource, ngTablePara
 });
 
 
-MetadataApp.controller('InterchangesCtrl', function($scope, $resource, ngTableParams) {
+MetadataEditApp.controller('InterchangesCtrl', function($scope, $resource, ngTableParams) {
 
     // Values
-    $scope.interchangeId = ${part.interchange.id != null ? part.interchange.id : "null"};
-    $scope.interchangeOldId = ${part.interchange.id != null ? part.interchange.id : "null"};
-    $scope.interchangePartId = null;
+    $scope.interchangeOldId = $scope.interchangeId;
 
     // Methods
     $scope.isChanged = function() {
@@ -83,8 +97,8 @@ MetadataApp.controller('InterchangesCtrl', function($scope, $resource, ngTablePa
         $scope.interchangePartId = null;
     };
 
-    $scope.pick = function(params) {
-        $scope.interchangeId = params.interchange_id;
-        $scope.interchangePartId = params._id;
+    $scope.pick = function(part) {
+        $scope.interchangeId = part.interchange_id;
+        $scope.interchangePartId = part._id;
     };
 });

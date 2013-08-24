@@ -1,0 +1,16 @@
+<div>
+    <input type="hidden" name="interchange" value="{{interchangeId}}"/>
+    <input type="hidden" name="interchangePart" value="{{interchangePartId}}"/>
+    <h3>Interchangeable Parts Group #: 
+        <span ng-show="interchangeId != null">{{interchangeId}}</span>
+        <span ng-show="interchangeId == null && interchangePartId == null">[none]</span>
+        <span ng-show="interchangeId == null && interchangePartId != null">[new]</span>
+
+        <!-- Buttons -->
+        <span ng-show="interchangeId != null || interchangePartId != null"> (<a href="javascript:;" ng-click="clear()">clear</a>)</span>
+        <span ng-show="isChanged()"> (<a href="javascript:;" ng-click="undo()">undo</a>)</span>
+    </h3>
+    START SEARCH
+    <my-part-search path={{path}}"></my-part-search>
+    END SEARCH
+</div>
