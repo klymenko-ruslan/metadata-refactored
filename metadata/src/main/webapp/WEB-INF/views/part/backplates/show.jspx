@@ -19,7 +19,7 @@
         <field:display field="secondaryDiameter" id="s_com_turbointernational_metadata_domain_part_Backplate_secondaryDiameter" object="${backplate}" z="YoKEuTq7Ki8x44V0xPJGdNjMw+U="/>
         <field:display field="overallHeight" id="s_com_turbointernational_metadata_domain_part_Backplate_overallHeight" object="${backplate}" render="true" z="user-managed"/>
         <field:display field="partType" id="s_com_turbointernational_metadata_domain_part_Backplate_partType" object="${backplate}" render="false" z="user-managed"/>
-        <field:display field="interchange" id="s_com_turbointernational_metadata_domain_part_Backplate_interchange" object="${backplate}" label="Interchangeable Parts Group #" z="user-managed"/>
+        <field:display field="interchange" id="s_com_turbointernational_metadata_domain_part_Backplate_interchange" label="Interchangeable Parts Group #" object="${backplate}" z="user-managed"/>
         <field:display field="elasticSearch" id="s_com_turbointernational_metadata_domain_part_Backplate_elasticSearch" object="${backplate}" render="false" z="user-managed"/>
         <field:display field="interchangePart" id="s_com_turbointernational_metadata_domain_part_Backplate_interchangePart" object="${backplate}" render="false" z="user-managed"/>
     </page:show>

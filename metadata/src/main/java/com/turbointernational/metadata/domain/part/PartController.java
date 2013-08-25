@@ -1,4 +1,5 @@
 package com.turbointernational.metadata.domain.part;
+import com.turbointernational.metadata.domain.type.PartType;
 import com.turbointernational.metadata.util.ElasticSearch;
 import java.util.Collection;
 import java.util.logging.Level;
@@ -73,7 +74,9 @@ public class PartController {
 
     @RequestMapping(value="/indexAll", headers = "Accept=application/json")
     @ResponseBody
-    public ResponseEntity<Void> jsonIndexAll(@RequestParam(required=false) Integer maxPages) throws Exception {
+    public ResponseEntity<Void> jsonIndexAll(@RequestParam(required=false) Integer maxPages,
+                                             @RequestParam(required=false) String type) throws Exception {
+        
         if (maxPages == null ) {
             maxPages = Integer.MAX_VALUE;
         }
@@ -86,7 +89,11 @@ public class PartController {
         Collection<Part> result;
         
         do {
-            result = Part.findPartEntries(page * pageSize, pageSize);
+            if (type == null) {
+                result = Part.findPartEntries(page * pageSize, pageSize);
+            } else {
+                result = Part.findPartEntries(page * pageSize, pageSize, type);
+            }
             log.log(Level.INFO, "Indexing parts {0}-{1}", new Object[]{page * pageSize, (page * pageSize) + pageSize});
             page++;
             
