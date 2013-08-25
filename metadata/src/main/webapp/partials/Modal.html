@@ -1,8 +1,6 @@
-<div>
+<div id="modal-window">
     <h1>Modal Window</h1>
     <ul>
-        <li data-ng-click=""><a href="">Pick</a></li>
-        <li data-ng-click=""><a href="">Switch</a></li>
-        <li data-ng-click=""><a href="">Go Back</a></li>
+        <li data-ng-repeat="item in items" data-ng-click="">{{item.name}}</li>
     </ul>
 </div>

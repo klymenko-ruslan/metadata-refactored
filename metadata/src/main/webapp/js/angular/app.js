@@ -60,7 +60,7 @@ MetadataEditApp.controller('InterchangesCtrl', function($scope, $resource) {
     };
 
     $scope.pick = function(part) {
-        alert("PICK");
+//        alert("PICK");
         $scope.interchangeNewId = part.interchange_id;
         $scope.interchangePartId = part._id;
     };
@@ -106,7 +106,7 @@ MetadataEditApp.controller('PartSearchCtrl', function($scope, ngTableParams, par
                $scope.searchResults = data.items;
              }, function(data) {
                $scope.isSearching = false;
-               alert("error:" + data);
+//               alert("error:" + data);
              });
         } else {
             $scope.isSearching = false;
@@ -123,14 +123,23 @@ MetadataEditApp.controller('PartSearchCtrl', function($scope, ngTableParams, par
 });
 
 MetadataEditApp.controller('ModalCtrl', function($scope, createDialog) {
-    createDialog('/partials/Modal.html', { 
-        id : 'modal-window', 
-        title: 'Modal Window',
-        backdrop: true, 
-        success: {label: '[label_of_button]', fn: '[function_on_click]'},
-        controller: 'ModalCtrl', 
-        backdropClass: 'modal-backdrop', 
-        /* footerTemplate: [modal_footer_template], */ 
-        modalClass: 'modal' 
-    }, {key1: 'value1', key2: 'value2'});
+    $scope.items = [
+        {name: 'value1'},
+        {name: 'value2'},
+        {name: 'value3'}
+    ];
+    $scope.launchModal = function() {
+        createDialog('/partials/Modal.html', { 
+            id : 'modal-window', 
+            title: 'Modal Window',
+            backdrop: true, 
+            success: {label: 'Search', fn: function() {
+                console.log("Can you see me?");
+            }},
+            controller: 'ModalCtrl', 
+            backdropClass: 'modal-backdrop', 
+            /* footerTemplate: [modal_footer_template], */ 
+            modalClass: 'modal' 
+        }, {name: 'value4'});
+    }
 });

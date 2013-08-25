@@ -377,3 +377,14 @@ my-part-search > table > tbody > tr:hover {
     background-color: #FFFFCC;
     cursor: pointer;
 }
+
+/* Modal Window settings */
+#modal-window {
+    width: 80%;
+}
+.modal {
+    background-color: #efefef;
+}
+.modal-backdrop {
+    background-color: #202020;
+}
