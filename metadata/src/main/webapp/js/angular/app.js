@@ -1,10 +1,10 @@
-var MetadataEditApp = angular.module('MetadataEditApp', ['ngResource', 'ngTable']);
+var MetadataEditApp = angular.module('MetadataEditApp', ['ngResource', 'ngTable', 'fundoo.services']);
 
 MetadataEditApp.factory('partSearchService', function($http) {
     return function(path, data, successCallback, errorCallback) {
         return $http({method: 'POST', url: path, params: data})
             .success(successCallback)
-            .error(errorCallback);
+            .error(errorCallback);  
     }
 });
 
@@ -62,8 +62,8 @@ MetadataEditApp.controller('InterchangesCtrl', function($scope, $resource) {
     
     $scope.$watch('result', function() {
         if (typeof $scope.result !== 'undefined') {
-            $scope.interchangeNewId = $scope.result.interchange_id
-            $scope.interchangePartId = $scope.result._id
+            $scope.interchangeNewId = $scope.result.interchange_id;
+            $scope.interchangePartId = $scope.result._id;
         }
     })
 });
@@ -101,7 +101,7 @@ MetadataEditApp.controller('PartSearchCtrl', function($scope, ngTableParams, par
                $scope.searchResults = data.items;
              }, function(data) {
                $scope.isSearching = false;
-               alert("error:" + data);
+//               alert("error:" + data);
              });
         } else {
             $scope.isSearching = false;
@@ -115,4 +115,26 @@ MetadataEditApp.controller('PartSearchCtrl', function($scope, ngTableParams, par
     // Watchers
     $scope.$watch('query', $scope.search, true);
     $scope.$watch('tableParams.page', $scope.search, true);
+});
+
+MetadataEditApp.controller('ModalCtrl', function($scope, createDialog) {
+    $scope.items = [
+        {name: 'value1'},
+        {name: 'value2'},
+        {name: 'value3'}
+    ];
+    $scope.launchModal = function() {
+        createDialog('/partials/Modal.html', { 
+            id : 'modal-window', 
+            title: 'Modal Window',
+            backdrop: true, 
+            success: {label: 'Search', fn: function() {
+                console.log("Can you see me?");
+            }},
+            controller: 'ModalCtrl', 
+            backdropClass: 'modal-backdrop', 
+            /* footerTemplate: [modal_footer_template], */ 
+            modalClass: 'modal' 
+        }, {name: 'value4'});
+    }
 });
