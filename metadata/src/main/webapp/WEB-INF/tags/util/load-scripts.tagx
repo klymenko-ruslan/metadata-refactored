@@ -32,6 +32,7 @@
     <script src="/js/angular/angular-resource.js"><!-- HTML --></script>
     <script src="/js/angular/ng-table.js"><!-- HTML --></script>
     <script src="/js/angular/app.js"><!-- HTML --></script>
+    <script src="/js/angular/createDialog.js"><!-- HTML --></script>
     <link rel="stylesheet" type="text/css" href="/styles/ng-table.css" />
 
 </jsp:root>
