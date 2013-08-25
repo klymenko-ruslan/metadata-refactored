@@ -57,12 +57,7 @@ MetadataEditApp.controller('InterchangesCtrl', function($scope, $resource) {
     $scope.clear = function() {
         $scope.interchangeNewId = null;
         $scope.interchangePartId = null;
-    };
-
-    $scope.pick = function(part) {
-        alert("PICK");
-        $scope.interchangeNewId = part.interchange_id;
-        $scope.interchangePartId = part._id;
+        $scope.result = null;
     };
     
     $scope.$watch('result', function() {
