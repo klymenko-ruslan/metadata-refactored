@@ -1,4 +1,5 @@
 .DS_Store
+/metadata/nbactions.xml
 /metadata/target/
 /metadata2/target/
 /docs/sql/script.sql
