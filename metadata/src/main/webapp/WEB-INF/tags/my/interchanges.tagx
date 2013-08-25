@@ -14,5 +14,8 @@
     <div>
         <my-interchanges interchange-id="${part.interchange.id}" path="${path}"/>
     </div>
+    <div data-ng-controller="ModalCtrl">
+        <button data-ng-click="launchModal()" class="btn btn-primary">Launch Modal</button>
+    </div>
   </c:if>
 </jsp:root>
