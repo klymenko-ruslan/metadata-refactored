@@ -19,8 +19,14 @@ MetadataEditApp.directive('myInterchanges', function () {
         templateUrl:'/partials/Interchanges.html',
         controller: 'InterchangesCtrl',
         link: function(scope, element, attrs, controller) {
-            scope.interchangeId = attrs.interchangeId;
-            scope.interchangeNewId = attrs.interchangeId;
+            var interchangeId = attrs.interchangeId;
+            
+            if (interchangeId == null || interchangeId.length < 1) {
+                interchangeId = null;
+            }
+            
+            scope.interchangeId = interchangeId;
+            scope.interchangeNewId = interchangeId;
         }
     };
 });
@@ -40,18 +46,15 @@ MetadataEditApp.directive('myPartSearch', function () {
 
 MetadataEditApp.controller('InterchangesCtrl', function($scope, $resource) {
 
-    // Values (set in the linker)
-    $scope.interchangeId;
-    $scope.interchangeNewId;
-
     // Methods
     $scope.isChanged = function() {
-        return $scope.interchangeId !== $scope.interchangeNewId;
+        return $scope.interchangeId != $scope.interchangeNewId;
     };
 
     $scope.undo = function() {
         $scope.interchangeNewId = $scope.interchangeId;
         $scope.interchangePartId = null;
+        $scope.result = null;   
     };
 
     $scope.clear = function() {
@@ -61,8 +64,8 @@ MetadataEditApp.controller('InterchangesCtrl', function($scope, $resource) {
     };
     
     $scope.$watch('result', function() {
-        if (typeof $scope.result !== 'undefined') {
-            $scope.interchangeNewId = $scope.result.interchange_id;
+        if ($scope.result != null) {
+            $scope.interchangeNewId = $scope.result != null ? $scope.result.interchange_id : null;
             $scope.interchangePartId = $scope.result._id;
         }
     })
