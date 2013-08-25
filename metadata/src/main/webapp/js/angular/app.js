@@ -124,6 +124,7 @@ MetadataEditApp.controller('ModalCtrl', function($scope, createDialog) {
         {name: 'value3'}
     ];
     $scope.launchModal = function() {
+        console.log("Hello");
         createDialog('/partials/Modal.html', { 
             id : 'modal-window', 
             title: 'Modal Window',

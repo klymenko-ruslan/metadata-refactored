@@ -34,5 +34,7 @@
     <script src="/js/angular/app.js"><!-- HTML --></script>
     <script src="/js/angular/createDialog.js"><!-- HTML --></script>
     <link rel="stylesheet" type="text/css" href="/styles/ng-table.css" />
+    <link rel="stylesheet" type="text/css" href="/styles/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="/styles/bootstrap-responsive.min.css" />
 
 </jsp:root>
