@@ -1,10 +1,10 @@
-var MetadataEditApp = angular.module('MetadataEditApp', ['ngResource', 'ngTable']);
+var MetadataEditApp = angular.module('MetadataEditApp', ['ngResource', 'ngTable', 'fundoo.services']);
 
 MetadataEditApp.factory('partSearchService', function($http) {
     return function(path, data, successCallback, errorCallback) {
         return $http({method: 'POST', url: path, params: data})
             .success(successCallback)
-            .error(errorCallback);
+            .error(errorCallback);  
     }
 });
 
@@ -67,8 +67,8 @@ MetadataEditApp.controller('InterchangesCtrl', function($scope, $resource) {
     
     $scope.$watch('result', function() {
         if (typeof $scope.result !== 'undefined') {
-            $scope.interchangeNewId = $scope.result.interchange_id
-            $scope.interchangePartId = $scope.result._id
+            $scope.interchangeNewId = $scope.result.interchange_id;
+            $scope.interchangePartId = $scope.result._id;
         }
     })
 });
@@ -120,4 +120,17 @@ MetadataEditApp.controller('PartSearchCtrl', function($scope, ngTableParams, par
     // Watchers
     $scope.$watch('query', $scope.search, true);
     $scope.$watch('tableParams.page', $scope.search, true);
+});
+
+MetadataEditApp.controller('ModalCtrl', function($scope, createDialog) {
+    createDialog('/partials/Modal.html', { 
+        id : 'modal-window', 
+        title: 'Modal Window',
+        backdrop: true, 
+        success: {label: '[label_of_button]', fn: '[function_on_click]'},
+        controller: 'ModalCtrl', 
+        backdropClass: 'modal-backdrop', 
+        /* footerTemplate: [modal_footer_template], */ 
+        modalClass: 'modal' 
+    }, {key1: 'value1', key2: 'value2'});
 });
