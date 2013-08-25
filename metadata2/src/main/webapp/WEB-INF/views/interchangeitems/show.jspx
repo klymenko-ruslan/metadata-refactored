@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" version="2.0">
-    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
-    <jsp:output omit-xml-declaration="yes"/>
-    <page:show id="ps_ti_metadata_domain_interchange_InterchangeItem" object="${interchangeitem}" path="/interchangeitems" z="hACm+VuxTrrESy3d3U86EJ/fjp0=">
-        <field:display field="part" id="s_ti_metadata_domain_interchange_InterchangeItem_part" object="${interchangeitem}" z="7W3yNc0BOLliRM92GEmy0rtADNw="/>
-        <field:display field="interchangeHeaderId" id="s_ti_metadata_domain_interchange_InterchangeItem_interchangeHeaderId" object="${interchangeitem}" z="5r8WTBw37q+OwY9fM2ZfcyeUTuI="/>
-    </page:show>
-</div>
