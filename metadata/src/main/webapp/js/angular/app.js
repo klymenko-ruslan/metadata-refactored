@@ -11,7 +11,8 @@ MetadataEditApp.factory('partSearchService', function($http) {
 MetadataEditApp.directive('myInterchanges', function () {
     return {
         scope: {
-            interchangeId: '@'
+            interchangeId: '@',
+            path: '@'
         },
         restrict: 'E',
         transclude: true,
@@ -28,9 +29,10 @@ MetadataEditApp.directive('myPartSearch', function () {
     return {
         scope: {
             path: '@',
-            pick: '&'
+            ngModel: '='
         },
         restrict: 'E',
+        require: "ngModel",
         templateUrl:'/partials/PartSearch.html',
         controller: 'PartSearchCtrl'
     };
@@ -58,16 +60,24 @@ MetadataEditApp.controller('InterchangesCtrl', function($scope, $resource) {
     };
 
     $scope.pick = function(part) {
+        alert("PICK");
         $scope.interchangeNewId = part.interchange_id;
         $scope.interchangePartId = part._id;
     };
+    
+    $scope.$watch('result', function() {
+        if (typeof $scope.result !== 'undefined') {
+            $scope.interchangeNewId = $scope.result.interchange_id
+            $scope.interchangePartId = $scope.result._id
+        }
+    })
 });
 
 MetadataEditApp.controller('PartSearchCtrl', function($scope, ngTableParams, partSearchService) {
     
     // Values
     $scope.isSearching = false; 
-    $scope.query = "";
+    $scope.query = "43";
 
     $scope.tableParams = new ngTableParams({
          size:20,
@@ -102,6 +112,10 @@ MetadataEditApp.controller('PartSearchCtrl', function($scope, ngTableParams, par
             $scope.isSearching = false;
         }
     };
+    
+    $scope.pick = function(result) {
+        $scope.ngModel = result;
+    }
 
     // Watchers
     $scope.$watch('query', $scope.search, true);

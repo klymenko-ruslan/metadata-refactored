@@ -372,8 +372,8 @@ fieldset th {
 	width: 16px;
 }
 
-/* Interchange Selector Table Row Mouseover Highlight */
-div[ng-controller="InterchangesCtrl"] > table > tbody > tr:hover {
+/* Part Search Table Row Mouseover Highlight */
+my-part-search > table > tbody > tr:hover {
     background-color: #FFFFCC;
     cursor: pointer;
 }
