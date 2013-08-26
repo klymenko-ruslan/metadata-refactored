@@ -43,6 +43,9 @@ public class Part {
 
     @Column(name="description")
     private String description;
+    
+    @Column(name="ti_part_num")
+    private String tiPartNumber;
 
     @OneToOne
     @JoinColumn(name="part_type_id")
