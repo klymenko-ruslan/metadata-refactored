@@ -17,7 +17,8 @@
         <field:input field="installedGapMax" id="c_com_turbointernational_metadata_domain_part_PistonRing_installedGapMax" validationMessageCode="field_invalid_number" z="pZPWbP6PipZn6Cm0QPcyY/6XmXc="/>
         <field:select field="interchange" id="c_com_turbointernational_metadata_domain_part_PistonRing_interchange" itemValue="id" items="${interchanges}" path="/other/interchange" render="false" z="user-managed"/>
         <field:input field="elasticSearch" id="c_com_turbointernational_metadata_domain_part_PistonRing_elasticSearch" render="false" z="user-managed"/>
-        <field:select field="partType" id="c_com_turbointernational_metadata_domain_part_PistonRing_partType" itemValue="id" items="${parttypes}" path="/parttypes" render="false" z="user-managed"/>
+       <input name="partType" type="hidden" value="${pistonRing.partType.id}"/>
+         <field:select field="partType" id="c_com_turbointernational_metadata_domain_part_PistonRing_partType" itemValue="id" items="${parttypes}" path="/parttypes" render="false" z="user-managed"/>
         <field:input field="interchangePart" id="c_com_turbointernational_metadata_domain_part_PistonRing_interchangePart" render="false" z="user-managed"/>
     </form:update>
 </div>
