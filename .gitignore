@@ -1,5 +1,6 @@
 .DS_Store
 .idea
+log.roo
 /metadata/target/
 /docs/sql/script.sql
 /docs/sql/data.sql
