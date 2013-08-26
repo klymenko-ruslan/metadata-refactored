@@ -396,6 +396,9 @@ my-part-search > table > tbody > tr:hover {
 }
 
 /* Modal Window settings */
+#modal-window {
+    width: 80%;
+}
 .modal {
     background-color: #efefef;
 }

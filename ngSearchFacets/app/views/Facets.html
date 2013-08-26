@@ -1,0 +1,16 @@
+<div>
+    <div ng-repeat="(facetName, facet) in filterFacets(ngModel.facets)">
+        <h2 facet-friendly-name="facetName"></h2>
+
+        <ul>
+            <li ng-repeat="term in filterTerms(facetName, facet)">
+                <span ng-show="isTermSelected(facetName, term)">
+                    {{term.term}} <a href="javascript:;" ng-click="removeFacetFilter(facetName)">(Remove)</a>
+                </span>
+                <span ng-hide="isTermSelected(facetName, term)">
+                    <a href="javascript:;" ng-click="setFacetFilter(facetName, term.term)">{{term.term}}</a> ({{term.count}})
+                </span>
+            </li>
+        </ul>
+    </div>
+</div>
