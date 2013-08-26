@@ -386,7 +386,7 @@ my-part-search > table > tbody > tr:hover {
 .pagination ul li {
     list-style: none;
     display: inline-block;
-    padding: 0 5px;\
+    padding: 0 5px;
 }
 .pagination ul li:first-of-type {
     padding-left: 0;
@@ -396,9 +396,6 @@ my-part-search > table > tbody > tr:hover {
 }
 
 /* Modal Window settings */
-#modal-window {
-    width: 80%;
-}
 .modal {
     background-color: #efefef;
 }
