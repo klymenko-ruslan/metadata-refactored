@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" version="2.0">
-    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
-    <jsp:output omit-xml-declaration="yes"/>
-    <page:show id="ps_ti_metadata_domain_part_Gasket" object="${gasket}" path="/gaskets" z="1IAVxu47rncB2QMzZLM/w6GUHHU=">
-        <field:display field="part" id="s_ti_metadata_domain_part_Gasket_part" object="${gasket}" z="Xl9WoqNaFbnP1uzBUCanT/YmnUE="/>
-        <field:display field="gasketTypeId" id="s_ti_metadata_domain_part_Gasket_gasketTypeId" object="${gasket}" z="DZg1xBokpkUCRLsQCK95h+J7M4U="/>
-    </page:show>
-</div>
