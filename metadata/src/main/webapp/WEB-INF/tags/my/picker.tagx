@@ -3,9 +3,7 @@
 
   <jsp:directive.attribute name="id" type="java.lang.String" required="true" rtexprvalue="true" description="The identifier for this tag (do not change!)" />
   <jsp:directive.attribute name="field" type="java.lang.String" required="true" rtexprvalue="true" description="The field exposed from the form backing object" />
-  <jsp:directive.attribute name="fields" type="java.lang.String" required="true" rtexprvalue="true" description="The fields to show in the picker table. Comma separated." />
-  <jsp:directive.attribute name="text" type="java.lang.String" required="false" rtexprvalue="true" description="The text to be presented" />
-  <jsp:directive.attribute name="label" type="java.lang.String" required="false" rtexprvalue="true" description="The label used for this field, will default to a message bundle if not supplied" />
+  <jsp:directive.attribute name="label" type="java.lang.String" required="true" rtexprvalue="true" description="The label used for this field, will default to a message bundle if not supplied" />
   <jsp:directive.attribute name="render" type="java.lang.Boolean" required="false" rtexprvalue="true" description="Indicate if the contents of this tag and all enclosed tags should be rendered (default 'true')" />
   <jsp:directive.attribute name="z" type="java.lang.String" required="false" description="Used for checking if element has been modified (to recalculate simply provide empty string value)" />
 
@@ -24,6 +22,85 @@
       <spring:eval expression="text" />
       <button value="Search" onclick="Picker.pick('${fields}', )"/>
     </div>
+        
+    <script type="text/javascript">
+    var InterchangesApp = angular.module('InterchangesApp', ['ngResource', 'ngTable']);
+    InterchangesApp.controller('InterchangesCtrl', function($scope, $resource, ngTableParams) {
+
+        // Resources
+        var Interchange = $resource('${path}', {}, {
+            search: {
+                method:'GET',
+                params: {
+                    query:'@query',
+
+                }
+            }
+        });
+
+        // Values
+        $scope.isSearching = false;
+        $scope.interchangeId = ${part.interchange.id != null ? part.interchange.id : "null"};
+        $scope.interchangeOldId = ${part.interchange.id != null ? part.interchange.id : "null"};
+        $scope.interchangePartId = null;
+        $scope.query = "465354-0002";
+
+        $scope.tableParams = new ngTableParams({
+             size:${pageSize},
+             page:1,
+             total:0,
+             counts: []
+        });
+
+        // Methods
+        $scope.isChanged = function() {
+            return $scope.interchangeId !== $scope.interchangeOldId;
+        };
+
+        $scope.undo = function() {
+            $scope.interchangeId = $scope.interchangeOldId;
+            $scope.interchangePartId = null;
+        };
+
+        $scope.search = function (params) {
+
+           // Clear the results
+           $scope.tableParams.page = 1;
+           $scope.tableParams.total = 0;
+           $scope.searchResults = [];
+           $scope.isSearching = true;
+
+            if ($scope.query &amp;&amp; $scope.query.length >=2) {
+               //alert($scope.tableParams.page);
+               Interchange.search({
+                   query:$scope.query,
+                   from:($scope.tableParams.page-1) * $scope.tableParams.size,
+                   size:$scope.tableParams.size
+                 }, function(data) {
+                   $scope.isSearching = false;
+                   $scope.tableParams.total = data.total;
+                   $scope.searchResults = data.items;
+               });
+            }
+        };
+
+        $scope.clear = function() {
+            $scope.interchangeId = null;
+            $scope.interchangePartId = null;
+        };
+
+        $scope.pick = function(params) {
+            $scope.interchangeId = params.interchange_id;
+            $scope.interchangePartId = params._id;
+        };
+
+        // Watchers
+        $scope.$watch('query', $scope.search, true);
+        $scope.$watch('tableParams.page', $scope.search, true);
+    });
+
+    var injector = angular.bootstrap($('#${id}'), ['InterchangesApp']);
+    </script>
     <br />
   </c:if>
 </jsp:root>

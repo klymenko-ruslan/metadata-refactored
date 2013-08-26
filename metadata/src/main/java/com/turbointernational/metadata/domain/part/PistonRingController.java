@@ -24,7 +24,7 @@ public class PistonRingController {
     }
     
     @RequestMapping(method = RequestMethod.POST, produces = "text/html")
-    public String create(@Valid PistonRing pistonRing, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
+    public String create(@Valid PistonRing pistonRing, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) throws Exception {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, pistonRing);
             return "part/pistonrings/create";
@@ -36,7 +36,7 @@ public class PistonRingController {
     }
     
     @RequestMapping(method = RequestMethod.PUT, produces = "text/html")
-    public String update(@Valid PistonRing pistonRing, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
+    public String update(@Valid PistonRing pistonRing, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) throws Exception {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, pistonRing);
             return "part/pistonrings/update";

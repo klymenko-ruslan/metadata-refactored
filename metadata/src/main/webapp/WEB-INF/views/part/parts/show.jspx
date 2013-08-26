@@ -8,7 +8,7 @@
         <field:display field="name" id="s_com_turbointernational_metadata_domain_part_Part_name" object="${part}" z="0qdfJW8ojzg06+ZYxAw0cOtfUxA="/>
         <field:display field="description" id="s_com_turbointernational_metadata_domain_part_Part_description" object="${part}" z="u5BHTPd8pgTATJz1uOPivEbZZ4Y="/>
         <field:display field="inactive" id="s_com_turbointernational_metadata_domain_part_Part_inactive" object="${part}" z="w+oXE302FXN0yefHo8rNA/KsVes="/>
-        <field:display field="interchange" id="s_com_turbointernational_metadata_domain_part_Part_interchange" object="${part}" render="false" z="user-managed"/>
+        <field:display field="interchange" id="s_com_turbointernational_metadata_domain_part_Part_interchange" object="${part}" render="true" z="user-managed"/>
         <field:display field="elasticSearch" id="s_com_turbointernational_metadata_domain_part_Part_elasticSearch" object="${part}" render="false" z="user-managed"/>
         <field:display field="partType" id="s_com_turbointernational_metadata_domain_part_Part_partType" object="${part}" render="false" z="user-managed"/>
         <field:display field="interchangePart" id="s_com_turbointernational_metadata_domain_part_Part_interchangePart" object="${part}" render="false" z="user-managed"/>

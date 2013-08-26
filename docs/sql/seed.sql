@@ -1,27 +1,27 @@
 --
 -- Admin User
 --
-INSERT INTO `USER` (
+INSERT INTO `user` (
   `name`, `email`, `password`
 ) VALUES (
   "Admin", "", ""
 );
 SET @ADMINUSERID = last_insert_id();
 
-INSERT INTO `GROUP` (
+INSERT INTO `group` (
   `name`
 ) VALUES (
   "Administrators"
 );
 SET @ADMINGROUPID = last_insert_id();
 
-INSERT INTO `USER_GROUP` (
+INSERT INTO `user_group` (
   `user_id`, `group_id`
 ) VALUES (
   @ADMINUSERID, @ADMINGROUPID
 );
 
-INSERT INTO `ROLE` (
+INSERT INTO `role` (
   `name`, `display`
 ) VALUES (
   "ADMIN", "Administrator"
@@ -29,7 +29,7 @@ INSERT INTO `ROLE` (
 SET @ADMINROLEID = last_insert_id();
 
 
-INSERT INTO `GROUP_ROLE` (
+INSERT INTO `group_role` (
   `group_id`, `role_id`
 ) VALUES (
   @ADMINGROUPID, @ADMINROLEID
@@ -45,7 +45,7 @@ UPDATE `part_type` SET DTYPE = "BearingSpacer" WHERE ID = 7;
 UPDATE `part_type` SET DTYPE = "Turbo" WHERE ID = 1;
 UPDATE `part_type` SET DTYPE = "Turbo" WHERE ID = 1;
 
-REPLACE INTO `part_type` (`ID`,`name`,`parent_part_type_id`,`import_pk`) VALUES 
+REPLACE INTO `part_type` (`id`,`name`,`parent_part_type_id`,`import_pk`) VALUES 
  (6,'gasket',NULL,NULL),
  (7,'bearing spacer',NULL,NULL),
  (8,'fast wearing component',NULL,NULL),

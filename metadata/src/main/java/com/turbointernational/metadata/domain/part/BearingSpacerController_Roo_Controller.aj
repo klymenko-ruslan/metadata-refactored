@@ -3,16 +3,11 @@
 
 package com.turbointernational.metadata.domain.part;
 
-import com.turbointernational.metadata.domain.other.Interchange;
-import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.BearingSpacer;
 import com.turbointernational.metadata.domain.part.BearingSpacerController;
-import com.turbointernational.metadata.domain.type.PartType;
 import java.io.UnsupportedEncodingException;
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -21,17 +16,6 @@ import org.springframework.web.util.UriUtils;
 import org.springframework.web.util.WebUtils;
 
 privileged aspect BearingSpacerController_Roo_Controller {
-    
-    @RequestMapping(method = RequestMethod.POST, produces = "text/html")
-    public String BearingSpacerController.create(@Valid BearingSpacer bearingSpacer, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
-        if (bindingResult.hasErrors()) {
-            populateEditForm(uiModel, bearingSpacer);
-            return "part/bearingspacers/create";
-        }
-        uiModel.asMap().clear();
-        bearingSpacer.persist();
-        return "redirect:/part/bearingspacers/" + encodeUrlPathSegment(bearingSpacer.getId().toString(), httpServletRequest);
-    }
     
     @RequestMapping(params = "form", produces = "text/html")
     public String BearingSpacerController.createForm(Model uiModel) {
@@ -60,17 +44,6 @@ privileged aspect BearingSpacerController_Roo_Controller {
         return "part/bearingspacers/list";
     }
     
-    @RequestMapping(method = RequestMethod.PUT, produces = "text/html")
-    public String BearingSpacerController.update(@Valid BearingSpacer bearingSpacer, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
-        if (bindingResult.hasErrors()) {
-            populateEditForm(uiModel, bearingSpacer);
-            return "part/bearingspacers/update";
-        }
-        uiModel.asMap().clear();
-        bearingSpacer.merge();
-        return "redirect:/part/bearingspacers/" + encodeUrlPathSegment(bearingSpacer.getId().toString(), httpServletRequest);
-    }
-    
     @RequestMapping(value = "/{id}", params = "form", produces = "text/html")
     public String BearingSpacerController.updateForm(@PathVariable("id") Long id, Model uiModel) {
         populateEditForm(uiModel, BearingSpacer.findBearingSpacer(id));
@@ -85,14 +58,6 @@ privileged aspect BearingSpacerController_Roo_Controller {
         uiModel.addAttribute("page", (page == null) ? "1" : page.toString());
         uiModel.addAttribute("size", (size == null) ? "10" : size.toString());
         return "redirect:/part/bearingspacers";
-    }
-    
-    void BearingSpacerController.populateEditForm(Model uiModel, BearingSpacer bearingSpacer) {
-        uiModel.addAttribute("bearingSpacer", bearingSpacer);
-        uiModel.addAttribute("interchanges", Interchange.findAllInterchanges());
-        uiModel.addAttribute("manufacturers", Manufacturer.findAllManufacturers());
-        uiModel.addAttribute("bearingspacers", BearingSpacer.findAllBearingSpacers());
-        uiModel.addAttribute("parttypes", PartType.findAllPartTypes());
     }
     
     String BearingSpacerController.encodeUrlPathSegment(String pathSegment, HttpServletRequest httpServletRequest) {

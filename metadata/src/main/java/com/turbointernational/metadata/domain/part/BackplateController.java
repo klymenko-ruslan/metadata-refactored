@@ -4,15 +4,15 @@ import com.turbointernational.metadata.domain.type.SealType;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import org.springframework.roo.addon.web.mvc.controller.scaffold.RooWebScaffold;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.roo.addon.web.mvc.controller.json.RooWebJson;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 @RequestMapping("/part/backplates")
-
+@Controller
 @RooWebScaffold(path = "part/backplates", formBackingObject = Backplate.class)
 @RooWebJson(jsonObject = Backplate.class)
 public class BackplateController {

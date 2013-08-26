@@ -46,5 +46,12 @@ public class BearingHousing extends Part {
         if (coolType != null) {
             partObject.put("cool_type_name", coolType.getName());
         }
+        partObject.put("oil_inlet", oilInlet);
+        partObject.put("oil_outlet", oilOutlet);
+        partObject.put("oil", oil);
+        partObject.put("outlet_flange_holes", outletFlangeHoles);
+        partObject.put("water_ports", waterPorts);
+        partObject.put("design_features", designFeatures);
+        partObject.put("bearing_type", bearingType);
     }
 }

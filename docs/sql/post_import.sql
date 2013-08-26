@@ -1,7 +1,7 @@
-ALTER TABLE `KIT` DROP COLUMN `name`;
+ALTER TABLE `kit` DROP COLUMN `name`;
 
 
-ALTER TABLE `PART`
+ALTER TABLE `part`
   DROP COLUMN `temp1_char`,
   DROP COLUMN `temp2_int`,
   DROP COLUMN `temp3_int`,
@@ -20,10 +20,10 @@ ALTER TABLE `PART`
   DROP COLUMN `temp8_char`;
 
 
-DROP TABLE IF EXISTS `PART_TURBO_TYPE`;
-DROP TABLE IF EXISTS `PART_ATTRIBUTE`;
-DROP TABLE IF EXISTS `ATTRIBUTE_TYPE`;
-DROP TABLE IF EXISTS `BOM_HIERARCHY`;
+DROP TABLE IF EXISTS `part_turbo_type`;
+DROP TABLE IF EXISTS `part_attribute`;
+DROP TABLE IF EXISTS `attribute_type`;
+DROP TABLE IF EXISTS `bom_hierarchy`;
 DROP TABLE IF EXISTS `sql server destination`;
 
 
@@ -42,4 +42,4 @@ UPDATE `part_type` SET DTYPE = "Heatshield" WHERE ID = 15;
 UPDATE `part_type` SET DTYPE = "NozzleRing" WHERE ID = 16;
 
 
-UPDATE `PART` SET `PART`.`DTYPE` = (SELECT COALESCE(`PART_TYPE`.`DTYPE`, 'Part') FROM `PART_TYPE` WHERE `ID` = `PART`.`part_type_id`);
+UPDATE `part` SET `part`.`dtype` = (SELECT COALESCE(`part_type`.`dtype`, 'Part') FROM `part_type` WHERE `id` = `part`.`part_type_id`);

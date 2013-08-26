@@ -28,7 +28,7 @@ public class BearingSpacerController {
     }
     
     @RequestMapping(method = RequestMethod.POST, produces = "text/html")
-    public String create(@Valid BearingSpacer bearingSpacer, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
+    public String create(@Valid BearingSpacer bearingSpacer, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) throws Exception {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, bearingSpacer);
             return "part/bearingspacers/create";
@@ -41,7 +41,7 @@ public class BearingSpacerController {
     }
     
     @RequestMapping(method = RequestMethod.PUT, produces = "text/html")
-    public String update(@Valid BearingSpacer bearingSpacer, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
+    public String update(@Valid BearingSpacer bearingSpacer, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) throws Exception {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, bearingSpacer);
             return "part/bearingspacers/update";

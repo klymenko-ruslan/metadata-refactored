@@ -3,16 +3,11 @@
 
 package com.turbointernational.metadata.domain.part;
 
-import com.turbointernational.metadata.domain.other.Interchange;
-import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.CompressorWheel;
 import com.turbointernational.metadata.domain.part.CompressorWheelController;
-import com.turbointernational.metadata.domain.type.PartType;
 import java.io.UnsupportedEncodingException;
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -21,17 +16,6 @@ import org.springframework.web.util.UriUtils;
 import org.springframework.web.util.WebUtils;
 
 privileged aspect CompressorWheelController_Roo_Controller {
-    
-    @RequestMapping(method = RequestMethod.POST, produces = "text/html")
-    public String CompressorWheelController.create(@Valid CompressorWheel compressorWheel, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
-        if (bindingResult.hasErrors()) {
-            populateEditForm(uiModel, compressorWheel);
-            return "part/compressorwheels/create";
-        }
-        uiModel.asMap().clear();
-        compressorWheel.persist();
-        return "redirect:/part/compressorwheels/" + encodeUrlPathSegment(compressorWheel.getId().toString(), httpServletRequest);
-    }
     
     @RequestMapping(params = "form", produces = "text/html")
     public String CompressorWheelController.createForm(Model uiModel) {
@@ -60,17 +44,6 @@ privileged aspect CompressorWheelController_Roo_Controller {
         return "part/compressorwheels/list";
     }
     
-    @RequestMapping(method = RequestMethod.PUT, produces = "text/html")
-    public String CompressorWheelController.update(@Valid CompressorWheel compressorWheel, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
-        if (bindingResult.hasErrors()) {
-            populateEditForm(uiModel, compressorWheel);
-            return "part/compressorwheels/update";
-        }
-        uiModel.asMap().clear();
-        compressorWheel.merge();
-        return "redirect:/part/compressorwheels/" + encodeUrlPathSegment(compressorWheel.getId().toString(), httpServletRequest);
-    }
-    
     @RequestMapping(value = "/{id}", params = "form", produces = "text/html")
     public String CompressorWheelController.updateForm(@PathVariable("id") Long id, Model uiModel) {
         populateEditForm(uiModel, CompressorWheel.findCompressorWheel(id));
@@ -85,13 +58,6 @@ privileged aspect CompressorWheelController_Roo_Controller {
         uiModel.addAttribute("page", (page == null) ? "1" : page.toString());
         uiModel.addAttribute("size", (size == null) ? "10" : size.toString());
         return "redirect:/part/compressorwheels";
-    }
-    
-    void CompressorWheelController.populateEditForm(Model uiModel, CompressorWheel compressorWheel) {
-        uiModel.addAttribute("compressorWheel", compressorWheel);
-        uiModel.addAttribute("interchanges", Interchange.findAllInterchanges());
-        uiModel.addAttribute("manufacturers", Manufacturer.findAllManufacturers());
-        uiModel.addAttribute("parttypes", PartType.findAllPartTypes());
     }
     
     String CompressorWheelController.encodeUrlPathSegment(String pathSegment, HttpServletRequest httpServletRequest) {

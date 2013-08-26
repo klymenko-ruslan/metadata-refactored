@@ -28,7 +28,7 @@ public class GasketController {
     }
      
      @RequestMapping(method = RequestMethod.POST, produces = "text/html")
-    public String create(@Valid Gasket gasket, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
+    public String create(@Valid Gasket gasket, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) throws Exception {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, gasket);
             return "part/gaskets/create";
@@ -40,7 +40,7 @@ public class GasketController {
     }
     
      @RequestMapping(method = RequestMethod.PUT, produces = "text/html")
-    public String update(@Valid Gasket gasket, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
+    public String update(@Valid Gasket gasket, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) throws Exception {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, gasket);
             return "part/gaskets/update";

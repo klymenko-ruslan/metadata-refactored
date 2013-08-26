@@ -28,7 +28,7 @@ public class TurboController {
     }
     
     @RequestMapping(method = RequestMethod.POST, produces = "text/html")
-    public String create(@Valid Turbo turbo, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
+    public String create(@Valid Turbo turbo, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) throws Exception {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, turbo);
             return "part/turboes/create";
@@ -40,7 +40,7 @@ public class TurboController {
     }
     
     @RequestMapping(method = RequestMethod.PUT, produces = "text/html")
-    public String update(@Valid Turbo turbo, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
+    public String update(@Valid Turbo turbo, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) throws Exception {
         if (bindingResult.hasErrors()) {
             populateEditForm(uiModel, turbo);
             return "part/turboes/update";

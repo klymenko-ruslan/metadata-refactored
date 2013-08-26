@@ -3,17 +3,11 @@
 
 package com.turbointernational.metadata.domain.part;
 
-import com.turbointernational.metadata.domain.other.Interchange;
-import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.BearingHousing;
 import com.turbointernational.metadata.domain.part.BearingHousingController;
-import com.turbointernational.metadata.domain.type.CoolType;
-import com.turbointernational.metadata.domain.type.PartType;
 import java.io.UnsupportedEncodingException;
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -22,17 +16,6 @@ import org.springframework.web.util.UriUtils;
 import org.springframework.web.util.WebUtils;
 
 privileged aspect BearingHousingController_Roo_Controller {
-    
-    @RequestMapping(method = RequestMethod.POST, produces = "text/html")
-    public String BearingHousingController.create(@Valid BearingHousing bearingHousing, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
-        if (bindingResult.hasErrors()) {
-            populateEditForm(uiModel, bearingHousing);
-            return "part/bearinghousings/create";
-        }
-        uiModel.asMap().clear();
-        bearingHousing.persist();
-        return "redirect:/part/bearinghousings/" + encodeUrlPathSegment(bearingHousing.getId().toString(), httpServletRequest);
-    }
     
     @RequestMapping(params = "form", produces = "text/html")
     public String BearingHousingController.createForm(Model uiModel) {
@@ -61,17 +44,6 @@ privileged aspect BearingHousingController_Roo_Controller {
         return "part/bearinghousings/list";
     }
     
-    @RequestMapping(method = RequestMethod.PUT, produces = "text/html")
-    public String BearingHousingController.update(@Valid BearingHousing bearingHousing, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
-        if (bindingResult.hasErrors()) {
-            populateEditForm(uiModel, bearingHousing);
-            return "part/bearinghousings/update";
-        }
-        uiModel.asMap().clear();
-        bearingHousing.merge();
-        return "redirect:/part/bearinghousings/" + encodeUrlPathSegment(bearingHousing.getId().toString(), httpServletRequest);
-    }
-    
     @RequestMapping(value = "/{id}", params = "form", produces = "text/html")
     public String BearingHousingController.updateForm(@PathVariable("id") Long id, Model uiModel) {
         populateEditForm(uiModel, BearingHousing.findBearingHousing(id));
@@ -86,14 +58,6 @@ privileged aspect BearingHousingController_Roo_Controller {
         uiModel.addAttribute("page", (page == null) ? "1" : page.toString());
         uiModel.addAttribute("size", (size == null) ? "10" : size.toString());
         return "redirect:/part/bearinghousings";
-    }
-    
-    void BearingHousingController.populateEditForm(Model uiModel, BearingHousing bearingHousing) {
-        uiModel.addAttribute("bearingHousing", bearingHousing);
-        uiModel.addAttribute("interchanges", Interchange.findAllInterchanges());
-        uiModel.addAttribute("manufacturers", Manufacturer.findAllManufacturers());
-        uiModel.addAttribute("cooltypes", CoolType.findAllCoolTypes());
-        uiModel.addAttribute("parttypes", PartType.findAllPartTypes());
     }
     
     String BearingHousingController.encodeUrlPathSegment(String pathSegment, HttpServletRequest httpServletRequest) {

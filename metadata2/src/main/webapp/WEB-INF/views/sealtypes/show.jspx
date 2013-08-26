@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" version="2.0">
-    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
-    <jsp:output omit-xml-declaration="yes"/>
-    <page:show id="ps_ti_metadata_domain_type_SealType" object="${sealtype}" path="/sealtypes" z="jH4u2cSCiwPtk4i0PYkeEOwF5Zg=">
-        <field:display field="name" id="s_ti_metadata_domain_type_SealType_name" object="${sealtype}" z="KJUKdiB2nJblskAE4PjUwGx1mFU="/>
-        <field:display field="importPk" id="s_ti_metadata_domain_type_SealType_importPk" object="${sealtype}" z="2GeI/DhcIQx8zS9nqSNlyV1tpSs="/>
-    </page:show>
-</div>

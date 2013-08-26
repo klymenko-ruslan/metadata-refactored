@@ -3,17 +3,11 @@
 
 package com.turbointernational.metadata.domain.part;
 
-import com.turbointernational.metadata.domain.other.Interchange;
-import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.Gasket;
 import com.turbointernational.metadata.domain.part.GasketController;
-import com.turbointernational.metadata.domain.type.GasketType;
-import com.turbointernational.metadata.domain.type.PartType;
 import java.io.UnsupportedEncodingException;
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -22,17 +16,6 @@ import org.springframework.web.util.UriUtils;
 import org.springframework.web.util.WebUtils;
 
 privileged aspect GasketController_Roo_Controller {
-    
-    @RequestMapping(method = RequestMethod.POST, produces = "text/html")
-    public String GasketController.create(@Valid Gasket gasket, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
-        if (bindingResult.hasErrors()) {
-            populateEditForm(uiModel, gasket);
-            return "part/gaskets/create";
-        }
-        uiModel.asMap().clear();
-        gasket.persist();
-        return "redirect:/part/gaskets/" + encodeUrlPathSegment(gasket.getId().toString(), httpServletRequest);
-    }
     
     @RequestMapping(params = "form", produces = "text/html")
     public String GasketController.createForm(Model uiModel) {
@@ -61,17 +44,6 @@ privileged aspect GasketController_Roo_Controller {
         return "part/gaskets/list";
     }
     
-    @RequestMapping(method = RequestMethod.PUT, produces = "text/html")
-    public String GasketController.update(@Valid Gasket gasket, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
-        if (bindingResult.hasErrors()) {
-            populateEditForm(uiModel, gasket);
-            return "part/gaskets/update";
-        }
-        uiModel.asMap().clear();
-        gasket.merge();
-        return "redirect:/part/gaskets/" + encodeUrlPathSegment(gasket.getId().toString(), httpServletRequest);
-    }
-    
     @RequestMapping(value = "/{id}", params = "form", produces = "text/html")
     public String GasketController.updateForm(@PathVariable("id") Long id, Model uiModel) {
         populateEditForm(uiModel, Gasket.findGasket(id));
@@ -86,14 +58,6 @@ privileged aspect GasketController_Roo_Controller {
         uiModel.addAttribute("page", (page == null) ? "1" : page.toString());
         uiModel.addAttribute("size", (size == null) ? "10" : size.toString());
         return "redirect:/part/gaskets";
-    }
-    
-    void GasketController.populateEditForm(Model uiModel, Gasket gasket) {
-        uiModel.addAttribute("gasket", gasket);
-        uiModel.addAttribute("interchanges", Interchange.findAllInterchanges());
-        uiModel.addAttribute("manufacturers", Manufacturer.findAllManufacturers());
-        uiModel.addAttribute("gaskettypes", GasketType.findAllGasketTypes());
-        uiModel.addAttribute("parttypes", PartType.findAllPartTypes());
     }
     
     String GasketController.encodeUrlPathSegment(String pathSegment, HttpServletRequest httpServletRequest) {
