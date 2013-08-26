@@ -119,7 +119,6 @@ public class ElasticSearch {
                 .put("_id", part.getId())
                 .put("name", part.getName())
                 .put("description", part.getDescription())
-                .put("part_type_name", part.getPartType().getName())
                 .put("manufacturer_name", part.getManufacturer().getName())
                 .put("manufacturer_type_name", part.getManufacturer().getType().getName())
                 .put("manufacturer_part_number", part.getManufacturerPartNumber());

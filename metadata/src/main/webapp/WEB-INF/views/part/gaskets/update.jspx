@@ -12,6 +12,7 @@
         <field:select field="type" id="c_com_turbointernational_metadata_domain_part_Gasket_type" itemValue="id" items="${gaskettypes}" path="/gaskettypes" z="kCk9OELCqK8zkUm+RGJNNW5H7WI="/>
         <field:select field="interchange" id="c_com_turbointernational_metadata_domain_part_Gasket_interchange" itemValue="id" items="${interchanges}" path="/other/interchange" render="false" z="user-managed"/>
         <field:input field="elasticSearch" id="c_com_turbointernational_metadata_domain_part_Gasket_elasticSearch" render="false" z="user-managed"/>
+        <input name="partType" type="hidden" value="${gasket.partType.id}"/>
         <field:select field="partType" id="c_com_turbointernational_metadata_domain_part_Gasket_partType" itemValue="id" items="${parttypes}" path="/parttypes" render="false" z="user-managed"/>
         <field:input field="interchangePart" id="c_com_turbointernational_metadata_domain_part_Gasket_interchangePart" render="false" z="user-managed"/>
     </form:update>
