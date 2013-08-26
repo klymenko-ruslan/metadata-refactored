@@ -4,6 +4,10 @@ angular.module('ngSearchFacetsApp')
   .factory('facetNameService', function () {
       return function (facetName) {
           switch (facetName) {
+              case 'part_type':
+                  return "Part Type";
+              case 'kit_type_name.text':
+                  return "Kit Type";
               case 'manufacturer_name.text':
                   return "Manufacturer";
               case 'manufacturer_type_name.text':

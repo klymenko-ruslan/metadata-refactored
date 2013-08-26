@@ -13,6 +13,7 @@
 
         <!-- build:css({.tmp,app}) styles/main.css -->
         <link rel="stylesheet" href="styles/main.css">
+        <link rel="stylesheet" href="bower_components/ng-table/ng-table.css">
         <!-- endbuild -->
 </head>
   <body ng-app="ngSearchFacetsApp">
@@ -27,21 +28,18 @@
 
     <!-- Add your site or application content here -->
     <div class="container">
-        <div ng-controller="FacetCtrl">
-            <div ng-repeat="(facetName, facet) in filterFacets(searchResults.facets)">
-                <h2>{{facet.friendlyName}}</h2>
-
-                <ul>
-                    <li ng-show="isFacetSelected(facetName)">
-                        <a href="javascript:;" ng-click="removeFacetFilter(facetName)">Remove: {{facetFilters[facetName]}}</a>
-                    </li>
-                    <li ng-repeat="term in filterTerms(facetName, facet)">
-                        <a href="javascript:;" ng-click="setFacetFilter(facetName, term.term)">{{term.term}} ({{term.count}})</a>
-                    </li>
-
-                </ul>
-            </div>
-        </div>
+        <table border="1">
+            <tr valign="top">
+                <td>
+                    Facets:
+                    <search-facets ng-model="searchResponse"></search-facets>
+                </td>
+                <td>
+                    Part List:
+                    <part-list ng-model="searchResponse"></part-list>
+                </td>
+            </tr>
+        </table>
     </div>
 
     <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
@@ -75,11 +73,16 @@
         <script src="bower_components/angular-resource/angular-resource.js"></script>
         <script src="bower_components/angular-cookies/angular-cookies.js"></script>
         <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
+        <script src="bower_components/ng-table/ng-table.js"></script>
         <!-- endbuild -->
 
         <!-- build:js({.tmp,app}) scripts/scripts.js -->
         <script src="scripts/app.js"></script>
-        <script src="scripts/controllers/Facet.js"></script>
+        <script src="scripts/controllers/Facets.js"></script>
+        <script src="scripts/controllers/PartList.js"></script>
+        <script src="scripts/directives/facetFriendlyName.js"></script>
+        <script src="scripts/directives/searchFacets.js"></script>
+        <script src="scripts/directives/partList.js"></script>
         <script src="scripts/services/facetNameService.js"></script>
         <script src="scripts/services/searchService.js"></script>
         <!-- endbuild -->

@@ -1,4 +1,4 @@
-var MetadataEditApp = angular.module('MetadataEditApp', ['ngResource', 'ngTable', 'fundoo.services']);
+var MetadataEditApp = angular.module('MetadataEditApp', ['ngResource', 'ngTable']);
 
 MetadataEditApp.factory('partSearchService', function($http) {
     return function(path, data, successCallback, errorCallback) {
@@ -21,7 +21,7 @@ MetadataEditApp.directive('myInterchanges', function () {
         link: function(scope, element, attrs, controller) {
             var interchangeId = attrs.interchangeId;
             
-            if (interchangeId == null || interchangeId.length < 1) {
+            if (interchangeId === null || interchangeId.length < 1) {
                 interchangeId = null;
             }
             
@@ -48,7 +48,7 @@ MetadataEditApp.controller('InterchangesCtrl', function($scope, $resource) {
 
     // Methods
     $scope.isChanged = function() {
-        return $scope.interchangeId != $scope.interchangeNewId;
+        return $scope.interchangeId !== $scope.interchangeNewId;
     };
 
     $scope.undo = function() {
@@ -78,7 +78,7 @@ MetadataEditApp.controller('PartSearchCtrl', function($scope, ngTableParams, par
     $scope.query = "43";
 
     $scope.tableParams = new ngTableParams({
-         size:20,
+         count:20,
          page:1,
          total:0,
          counts: []
@@ -104,7 +104,6 @@ MetadataEditApp.controller('PartSearchCtrl', function($scope, ngTableParams, par
                $scope.searchResults = data.items;
              }, function(data) {
                $scope.isSearching = false;
-//               alert("error:" + data);
              });
         } else {
             $scope.isSearching = false;

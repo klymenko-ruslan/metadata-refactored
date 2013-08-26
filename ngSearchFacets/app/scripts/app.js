@@ -1,5 +1,5 @@
 'use strict';
 
-angular.module('ngSearchFacetsApp', [])
+angular.module('ngSearchFacetsApp', ['ngTable'])
   .config(function () {
   });
