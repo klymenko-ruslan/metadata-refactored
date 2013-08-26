@@ -16,6 +16,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.OneToOne;
+import javax.persistence.PrePersist;
+import javax.persistence.PreRemove;
+import javax.persistence.PreUpdate;
 import javax.persistence.Transient;
 import javax.persistence.TypedQuery;
 import net.sf.jsog.JSOG;
@@ -107,12 +110,23 @@ public class Part {
 
     }
 
+    @PreUpdate
+    @PrePersist
     public void indexPart() throws Exception {
-        elasticSearch.indexPart(this);
+        try {
+            elasticSearch.indexPart(this);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
+    @PreRemove
     public void removeIndex() throws Exception {
-        elasticSearch.deletePart(this);
+        try {
+            elasticSearch.deletePart(this);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 //    @OneToMany(mappedBy="parent", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
