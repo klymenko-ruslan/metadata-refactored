@@ -1,8 +1,7 @@
 'use strict';
 
 angular.module('ngSearchFacetsApp')
-  .controller('FacetsCtrl', function ($scope, searchService) {
-      $scope.facetFilters = {};
+  .controller('SearchFacetsCtrl', function ($scope) {
 
       // Filter down to facets with totals greater than zero
       $scope.filterFacets = function(facets) {
@@ -22,8 +21,6 @@ angular.module('ngSearchFacetsApp')
           var results = [];
 
           angular.forEach(facet.terms, function(term) {
-              if ($scope.isFacetSelected(facetName)) {}
-
               if (term.count > 0) {
                   term.facetName = facetName;
                   results.push(term);
@@ -45,18 +42,11 @@ angular.module('ngSearchFacetsApp')
       };
 
       $scope.setFacetFilter = function(facetName, term) {
+          console.log("Filtering on " + facetName + ": " + term);
           $scope.facetFilters[facetName] = term;
       };
 
       $scope.removeFacetFilter = function(facetName) {
           delete $scope.facetFilters[facetName];
       }
-
-      $scope.search = function() {
-          searchService(null, $scope.facetFilters).then(function(searchResults) {
-              $scope.ngModel = searchResults.data;
-          });
-      };
-
-      $scope.$watch('facetFilters', $scope.search, true);
   });

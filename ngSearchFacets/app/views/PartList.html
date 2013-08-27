@@ -1,5 +1,5 @@
-<table ng-table="tableParams" border="1">
-    <tr ng-repeat="part in ngModel.hits.hits" ng-click="pick(part)">
+<table ng-controller="PartListCtrl" ng-table="partListTableParams" border="1">
+    <tr ng-repeat="part in searchResults.hits.hits" ng-click="clicked(part)">
         <td title="'ID'">{{part._source._id}}</td>
         <td title="'Part Type'">{{part._source.part_type}}</td>
         <td title="'Manufacturer'">{{part._source.manufacturer_name}}</td>

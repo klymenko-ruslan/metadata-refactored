@@ -3,7 +3,8 @@
 angular.module('ngSearchFacetsApp')
   .factory('searchService', function ($http) {
      return function (queryString, facetFilters) {
-         var queryString = null;
+         console.log("Searching for `" + queryString + "`, facets: " + JSON.stringify(facetFilters));
+
          var searchRequest = {
              from: 0,
              size: 50,
@@ -55,14 +56,17 @@ angular.module('ngSearchFacetsApp')
          // Query string
          if (angular.isString(queryString) && queryString.length > 0) {
              searchRequest.query.bool.must.push({
-                 query: queryString,
-                 fields: [
-                     "manufacturer_part_number.autocomplete",
-                     "manufacturer_part_number.text",
-                     "manufacturer_name.autocomplete",
-                     "manufacturer_name.text",
-                     "part_type"
-                 ]
+                 query_string: {
+                     query: queryString,
+                     fields: [
+                         "manufacturer_part_number.autocomplete",
+                         "manufacturer_part_number.text",
+                         "manufacturer_name.autocomplete",
+                         "manufacturer_name.text",
+                         "part_type",
+                         "name"
+                     ]
+                 }
              });
          }
 
@@ -70,6 +74,8 @@ angular.module('ngSearchFacetsApp')
          if (searchRequest.query.bool.must.length == 0) {
              searchRequest.query = {match_all: {}};
          }
+
+         // Call to ElasticSearch
          return $http({
              method: 'POST',
              url: "http://127.0.0.1:9200/metadata/_search",
