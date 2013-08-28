@@ -1,5 +1,5 @@
-<div>
-    <div ng-repeat="(facetName, facet) in filterFacets(ngModel.facets)">
+<div ng-controller="SearchFacetsCtrl">
+    <div ng-repeat="(facetName, facet) in filterFacets(searchResults.facets)">
         <h2 facet-friendly-name="facetName"></h2>
 
         <ul>

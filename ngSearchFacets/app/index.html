@@ -27,20 +27,21 @@
     <![endif]-->
 
     <!-- Add your site or application content here -->
-    <div class="container">
+    <ti-search class="container">
+        Search: <input type="text" ng-model="queryString"/>
         <table border="1">
             <tr valign="top">
                 <td>
                     Facets:
-                    <search-facets ng-model="searchResponse"></search-facets>
+                    <search-facets></search-facets>
                 </td>
                 <td>
                     Part List:
-                    <part-list ng-model="searchResponse"></part-list>
+                    <part-list></part-list>
                 </td>
             </tr>
         </table>
-    </div>
+    </ti-search>
 
     <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
     <script>
@@ -78,11 +79,13 @@
 
         <!-- build:js({.tmp,app}) scripts/scripts.js -->
         <script src="scripts/app.js"></script>
-        <script src="scripts/controllers/Facets.js"></script>
+        <script src="scripts/controllers/SearchFacets.js"></script>
         <script src="scripts/controllers/PartList.js"></script>
+        <script src="scripts/controllers/Search.js"></script>
         <script src="scripts/directives/facetFriendlyName.js"></script>
         <script src="scripts/directives/searchFacets.js"></script>
         <script src="scripts/directives/partList.js"></script>
+        <script src="scripts/directives/tiSearch.js"></script>
         <script src="scripts/services/facetNameService.js"></script>
         <script src="scripts/services/searchService.js"></script>
         <!-- endbuild -->
