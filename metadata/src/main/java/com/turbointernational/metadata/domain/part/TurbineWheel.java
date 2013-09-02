@@ -39,7 +39,7 @@ public class TurbineWheel extends Part {
 
     @Override
     public void toJson(JSOG partObject) {
-        partObject.put("exduce_oa", exducerDiameterA);
+        partObject.put("exducer_oa", exducerDiameterA);
         partObject.put("tip_height_b", tipHeightB);
         partObject.put("inducer_oc", inducerDiameterC);
         partObject.put("journal_od", journalDiameterD);
