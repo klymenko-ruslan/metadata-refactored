@@ -5,13 +5,10 @@ package com.turbointernational.metadata.domain.other;
 
 import com.turbointernational.metadata.domain.other.Interchange;
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
 privileged aspect Interchange_Roo_Jpa_Entity {
-    
-    declare @type: Interchange: @Entity;
     
     declare @type: Interchange: @Table(name = "interchange_header");
     

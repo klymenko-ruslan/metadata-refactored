@@ -20,41 +20,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-@RequestMapping("/part/parts")
+@RequestMapping("/part")
 @Controller
-@RooWebScaffold(path = "part/parts", formBackingObject = Part.class)
 @RooWebJson(jsonObject = Part.class)
 public class PartController {
 
     private static final Logger log = Logger.getLogger(PartController.class.toString());
-
-    void populateEditForm(Model uiModel, Part part) {
-        uiModel.addAttribute("part", part);
-    }
-    
-    @RequestMapping(method = RequestMethod.POST, produces = "text/html")
-    public String create(@Valid Part part, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) throws Exception {
-        if (bindingResult.hasErrors()) {
-            populateEditForm(uiModel, part);
-            return "part/parts/create";
-        }
-        uiModel.asMap().clear();
-        part.updateInterchanges();
-        part.persist();
-        return "redirect:/part/parts/" + encodeUrlPathSegment(part.getId().toString(), httpServletRequest);
-    }
-    
-    @RequestMapping(method = RequestMethod.PUT, produces = "text/html")
-    public String update(@Valid Part part, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) throws Exception {
-        if (bindingResult.hasErrors()) {
-            populateEditForm(uiModel, part);
-            return "part/parts/update";
-        }
-        uiModel.asMap().clear();
-        part.updateInterchanges();
-        part.merge();
-        return "redirect:/part/parts/" + encodeUrlPathSegment(part.getId().toString(), httpServletRequest);
-    }
 
     // ElasticSearch
     @Autowired(required=true)
@@ -62,7 +33,7 @@ public class PartController {
 
     @RequestMapping(value="/search", headers = "Accept=application/json")
     @ResponseBody
-    public ResponseEntity<String> jsonSearch(
+    public ResponseEntity<String> search(
             @RequestParam(required=true) String query,
             @RequestParam(defaultValue = "0", required=false) int from,
             @RequestParam(defaultValue = "20", required=false) int size) throws Exception {
@@ -74,7 +45,7 @@ public class PartController {
 
     @RequestMapping(value="/indexAll", headers = "Accept=application/json")
     @ResponseBody
-    public ResponseEntity<Void> jsonIndexAll(@RequestParam(required=false) Integer maxPages,
+    public ResponseEntity<Void> indexAll(@RequestParam(required=false) Integer maxPages,
                                              @RequestParam(required=false) String type) throws Exception {
         
         if (maxPages == null ) {

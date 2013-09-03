@@ -5,6 +5,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @RooWebJson(jsonObject = CoolType.class)
 @Controller
-@RequestMapping("/cooltypes")
+@RequestMapping("/type/cool")
 public class CoolTypeController {
 }

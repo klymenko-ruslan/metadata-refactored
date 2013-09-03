@@ -5,13 +5,10 @@ package com.turbointernational.metadata.domain.other;
 
 import com.turbointernational.metadata.domain.other.TurboModel;
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
 privileged aspect TurboModel_Roo_Jpa_Entity {
-    
-    declare @type: TurboModel: @Entity;
     
     declare @type: TurboModel: @Table(name = "TURBO_MODEL");
     

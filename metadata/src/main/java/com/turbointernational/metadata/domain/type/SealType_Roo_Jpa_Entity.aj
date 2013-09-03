@@ -5,12 +5,9 @@ package com.turbointernational.metadata.domain.type;
 
 import com.turbointernational.metadata.domain.type.SealType;
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.Version;
 
 privileged aspect SealType_Roo_Jpa_Entity {
-    
-    declare @type: SealType: @Entity;
     
     @Version
     @Column(name = "version")

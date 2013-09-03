@@ -5,13 +5,10 @@ package com.turbointernational.metadata.domain.bom;
 
 import com.turbointernational.metadata.domain.bom.BOMAlternative;
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
 privileged aspect BOMAlternative_Roo_Jpa_Entity {
-    
-    declare @type: BOMAlternative: @Entity;
     
     declare @type: BOMAlternative: @Table(name = "BOM_ALT_ITEM");
     

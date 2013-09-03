@@ -5,12 +5,9 @@ package com.turbointernational.metadata.domain.other;
 
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.Version;
 
 privileged aspect Manufacturer_Roo_Jpa_Entity {
-    
-    declare @type: Manufacturer: @Entity;
     
     @Version
     @Column(name = "version")

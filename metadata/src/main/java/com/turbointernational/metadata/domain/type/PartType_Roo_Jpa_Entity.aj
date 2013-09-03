@@ -5,13 +5,10 @@ package com.turbointernational.metadata.domain.type;
 
 import com.turbointernational.metadata.domain.type.PartType;
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
 privileged aspect PartType_Roo_Jpa_Entity {
-    
-    declare @type: PartType: @Entity;
     
     declare @type: PartType: @Table(name = "PART_TYPE");
     
