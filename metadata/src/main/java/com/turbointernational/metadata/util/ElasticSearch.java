@@ -115,18 +115,11 @@ public class ElasticSearch {
             }
 
             // Add the part fields
-            JSOG partObject = JSOG.object() // GET IT FROM THE PART, ADD SUPER() TO ALL PARTS
-
-            if (part.getPartType() != null) {
-                partObject.put("part_type", part.getPartType().getTypeName());
-            }
-
-            if (part.getInterchange() != null) {
-                partObject.put("interchange_id", part.getInterchange().getId());
-            }
+            JSOG partObject = part.toJsog();
+            partObject.put("_id", part.getId());
 
             // Let part subclasses add their fields to the indexed data
-            part.toJson(partObject);
+            part.toJsog();
 
             Index.Builder indexBuilder = new Index.Builder(partObject.toString()).id(part.getId().toString());
 

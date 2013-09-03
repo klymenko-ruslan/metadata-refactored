@@ -23,7 +23,9 @@ public class Turbo extends Part {
     private CoolType coolType;
 
     @Override
-    public void toJson(JSOG partObject) {
+    public JSOG toJsog() {
+        JSOG partObject = super.toJsog();
+        
         if (model != null) {
             partObject.put("turbo_model_name", model.getName());
         }
@@ -31,6 +33,8 @@ public class Turbo extends Part {
         if (coolType != null) {
             partObject.put("cool_type_name", coolType.getName());
         }
+        
+        return partObject;
     }
     
 }

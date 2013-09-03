@@ -50,7 +50,9 @@ public class Backplate extends Part {
     private Float overallHeight;
 
     @Override
-    public void toJson(JSOG partObject) {
+    public JSOG toJsog() {
+        JSOG partObject = super.toJsog();
+        
         if (sealType != null) {
             partObject.put("seal_type_name", sealType.getName());
         }
@@ -62,6 +64,8 @@ public class Backplate extends Part {
         partObject.put("secondary_diameter", secondaryDiameter);
         partObject.put("overall_height", overallHeight);
         partObject.put("style_compressor_wheel", styleCompressorWheel);
+        
+        return partObject;
     }
 
 }

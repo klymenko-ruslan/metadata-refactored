@@ -1,10 +1,5 @@
 package com.turbointernational.metadata.magento.rest;
 
-import com.google.code.magja.model.product.Product;
-import com.google.code.magja.model.product.ProductLink;
-import com.google.code.magja.service.RemoteServiceFactory;
-import com.google.code.magja.soap.MagentoSoapClient;
-import com.google.code.magja.soap.SoapConfig;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
@@ -82,7 +77,6 @@ public class MagentoRest {
         
         // Delete
 //        magento.deleteProductById(7);
-//        magento.deleteProductBySku("126");
         
         // Read
         System.out.println(magento.getProducts());
@@ -93,7 +87,6 @@ public class MagentoRest {
     private UrlBuilder baseUrl;
     private OAuthService oauth;
     private Token accessToken;
-    private Map<String, Integer> attributeSetMapping = Collections.emptyMap();
     
     public MagentoRest(final UrlBuilder baseUrl, Token accessToken, String apiKey, String apiSecret) {
         
@@ -167,19 +160,8 @@ public class MagentoRest {
         return getFirstObjectValue(call(request));
     }
 
-    public void deleteProductBySku(String sku) throws MagentoRestException {
-        MagentoRequest request = new MagentoRequest(Verb.GET, baseUrl, "products");
-        
-        request.addFilter("sku", FilterType.in)
-               .addParameter(sku);
-        
-        call(request);
-    }
-    
-
-    public void deleteProductById(int id) throws MagentoRestException {
-        MagentoRequest request = new MagentoRequest(Verb.GET, baseUrl, "products/" + id);
-        
+    public void deleteProduct(int id) throws MagentoRestException {
+        MagentoRequest request = new MagentoRequest(Verb.DELETE, baseUrl, "products/" + id);
         call(request);
     }
     

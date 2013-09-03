@@ -38,7 +38,9 @@ public class TurbineWheel extends Part {
     private String numberOfBlades;
 
     @Override
-    public void toJson(JSOG partObject) {
+    public JSOG toJsog() {
+        JSOG partObject = super.toJsog();
+        
         partObject.put("exducer_oa", exducerDiameterA);
         partObject.put("tip_height_b", tipHeightB);
         partObject.put("inducer_oc", inducerDiameterC);
@@ -46,5 +48,7 @@ public class TurbineWheel extends Part {
         partObject.put("stem_oe", stemDiameterE);
         partObject.put("shaft_thread_f", shaftThreadF);
         partObject.put("number_of_blades", numberOfBlades);
+        
+        return partObject;
     }
 }

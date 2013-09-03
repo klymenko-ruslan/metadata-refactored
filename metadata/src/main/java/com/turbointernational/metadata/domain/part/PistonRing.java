@@ -30,12 +30,16 @@ public class PistonRing extends Part {
     private Float installedGapMax;
 
     @Override
-    public void toJson(JSOG partObject) {
+    public JSOG toJsog() {
+        JSOG partObject = super.toJsog();
+        
         partObject.put("outside_dim_min", outsideDiameterMin);
         partObject.put("outside_dim_max", outsideDiameterMax);
         partObject.put("width_min", widthMin);
         partObject.put("width_max", widthMax);
         partObject.put("i_gap_min", installedGapMin);
         partObject.put("i_gap_max", installedGapMax);
+        
+        return partObject;
     }
 }

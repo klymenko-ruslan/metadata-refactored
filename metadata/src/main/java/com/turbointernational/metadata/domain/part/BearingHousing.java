@@ -42,7 +42,9 @@ public class BearingHousing extends Part {
     private String bearingType;
 
     @Override
-    public void toJson(JSOG partObject) {
+    public JSOG toJsog() {
+        JSOG partObject = super.toJsog();
+        
         if (coolType != null) {
             partObject.put("cool_type_name", coolType.getName());
         }
@@ -53,5 +55,7 @@ public class BearingHousing extends Part {
         partObject.put("water_ports", waterPorts);
         partObject.put("design_features", designFeatures);
         partObject.put("bearing_type", bearingType);
+        
+        return partObject;
     }
 }

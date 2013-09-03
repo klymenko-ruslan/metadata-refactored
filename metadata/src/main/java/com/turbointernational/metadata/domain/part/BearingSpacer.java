@@ -41,7 +41,9 @@ public class BearingSpacer extends Part {
     private Float insideDiameterMax;
 
     @Override
-    public void toJson(JSOG partObject) {
+    public JSOG toJsog() {
+        JSOG partObject = super.toJsog();
+        
         if (standardSize != null) {
             partObject.put("standard_size_id", standardSize.getId());
         }
@@ -53,6 +55,8 @@ public class BearingSpacer extends Part {
         partObject.put("outside_diameter_max", outsideDiameterMax);
         partObject.put("inside_diameter_min", insideDiameterMin);
         partObject.put("inside_diameter_max", insideDiameterMax);
+        
+        return partObject;
     }
 
 }

@@ -1,7 +1,6 @@
 package com.turbointernational.metadata.sync;
 
 import com.turbointernational.metadata.domain.part.Part;
-import com.turbointernational.metadata.domain.part.PistonRing;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -12,11 +11,8 @@ import org.apache.commons.lang3.ObjectUtils;
 
 /**
  *
- * @author Akouvi
  */
-public class BigCommerceSync {
-    
-    JsogClient client;
+public class MagentoSync {
     
     public void synchronize(Date lastUpdated) {
         int pageSize = 1000;

@@ -34,7 +34,9 @@ public class CompressorWheel extends Part {
     private String application;
 
     @Override
-    public void toJson(JSOG partObject) {
+    public JSOG toJsog() {
+        JSOG partObject = super.toJsog();
+        
         partObject.put("inducer_oa", inducerOa);
         partObject.put("tip_height_b", tipHeightB);
         partObject.put("exducer_oc", exducerOc);
@@ -42,5 +44,7 @@ public class CompressorWheel extends Part {
         partObject.put("bore_oe", boreOe);
         partObject.put("number_of_blades", numberOfBlades);
         partObject.put("application", application);
+        
+        return partObject;
     }
 }
