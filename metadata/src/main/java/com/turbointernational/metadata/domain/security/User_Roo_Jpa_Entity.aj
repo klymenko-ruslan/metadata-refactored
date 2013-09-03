@@ -5,13 +5,10 @@ package com.turbointernational.metadata.domain.security;
 
 import com.turbointernational.metadata.domain.security.User;
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
 privileged aspect User_Roo_Jpa_Entity {
-    
-    declare @type: User: @Entity;
     
     declare @type: User: @Table(name = "USER");
     

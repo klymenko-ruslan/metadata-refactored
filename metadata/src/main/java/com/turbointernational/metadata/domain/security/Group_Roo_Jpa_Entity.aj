@@ -5,13 +5,10 @@ package com.turbointernational.metadata.domain.security;
 
 import com.turbointernational.metadata.domain.security.Group;
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
 privileged aspect Group_Roo_Jpa_Entity {
-    
-    declare @type: Group: @Entity;
     
     declare @type: Group: @Table(name = "GROUPS");
     

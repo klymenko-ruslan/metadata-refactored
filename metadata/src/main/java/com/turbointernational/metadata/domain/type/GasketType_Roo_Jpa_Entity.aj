@@ -5,12 +5,9 @@ package com.turbointernational.metadata.domain.type;
 
 import com.turbointernational.metadata.domain.type.GasketType;
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.Version;
 
 privileged aspect GasketType_Roo_Jpa_Entity {
-    
-    declare @type: GasketType: @Entity;
     
     @Version
     @Column(name = "version")

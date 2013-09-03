@@ -5,12 +5,9 @@ package com.turbointernational.metadata.domain.security;
 
 import com.turbointernational.metadata.domain.security.Role;
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.Version;
 
 privileged aspect Role_Roo_Jpa_Entity {
-    
-    declare @type: Role: @Entity;
     
     @Version
     @Column(name = "version")
