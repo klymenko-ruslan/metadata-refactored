@@ -3,6 +3,7 @@ import com.turbointernational.metadata.domain.part.Part;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -10,11 +11,12 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-import org.springframework.roo.addon.javabean.RooJavaBean;
+import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import org.springframework.roo.addon.json.RooJson;
 
-@RooJavaBean
+@Configurable
+@Entity
 @RooJpaActiveRecord(table="bom")
 @RooJson
 public class BOMItem {
@@ -35,5 +37,37 @@ public class BOMItem {
 
     @OneToMany(mappedBy="bomItem", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<BOMAlternative> alternatives;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Part getChild() {
+        return child;
+    }
+
+    public void setChild(Part child) {
+        this.child = child;
+    }
+
+    public Integer getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
+    }
+
+    public Set<BOMAlternative> getAlternatives() {
+        return alternatives;
+    }
+
+    public void setAlternatives(Set<BOMAlternative> alternatives) {
+        this.alternatives = alternatives;
+    }
     
 }

@@ -1,15 +1,17 @@
 package com.turbointernational.metadata.domain.bom;
 import com.turbointernational.metadata.domain.part.Part;
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
-import org.springframework.roo.addon.javabean.RooJavaBean;
+import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import org.springframework.roo.addon.json.RooJson;
 
-@RooJavaBean
+@Configurable
+@Entity
 @RooJpaActiveRecord(table="BOM_ALT_ITEM")
 @RooJson
 public class BOMAlternative {
@@ -29,5 +31,37 @@ public class BOMAlternative {
     @OneToOne
     @JoinColumn(name="part_id")
     private Part part;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public BOMItem getBomItem() {
+        return bomItem;
+    }
+
+    public void setBomItem(BOMItem bomItem) {
+        this.bomItem = bomItem;
+    }
+
+    public BOMAlternativeHeader getHeader() {
+        return header;
+    }
+
+    public void setHeader(BOMAlternativeHeader header) {
+        this.header = header;
+    }
+
+    public Part getPart() {
+        return part;
+    }
+
+    public void setPart(Part part) {
+        this.part = part;
+    }
 
 }
