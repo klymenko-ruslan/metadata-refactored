@@ -1,9 +1,10 @@
 package com.turbointernational.metadata.domain.part;
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.SecondaryTable;
 import net.sf.jsog.JSOG;
-import org.springframework.roo.addon.javabean.RooJavaBean;
+import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 
 
@@ -11,7 +12,8 @@ import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
  * http://www.turbointernational.com/products/majorCmptDetails.asp?mcid=454&turbotype=35
  * @author Jeff
  */
-@RooJavaBean
+@Configurable
+@Entity
 @RooJpaActiveRecord
 @SecondaryTable(name="TURBINE_WHEEL", pkJoinColumns=@PrimaryKeyJoinColumn(name = "part_id"))
 public class TurbineWheel extends Part {
@@ -39,12 +41,68 @@ public class TurbineWheel extends Part {
 
     @Override
     public void addIndexFields(JSOG partObject) {
-        partObject.put("exduce_oa", exducerDiameterA);
-        partObject.put("tip_height_b", tipHeightB);
-        partObject.put("inducer_oc", inducerDiameterC);
-        partObject.put("journal_od", journalDiameterD);
-        partObject.put("stem_oe", stemDiameterE);
-        partObject.put("shaft_thread_f", shaftThreadF);
-        partObject.put("number_of_blades", numberOfBlades);
+        partObject.put("exduce_oa", getExducerDiameterA());
+        partObject.put("tip_height_b", getTipHeightB());
+        partObject.put("inducer_oc", getInducerDiameterC());
+        partObject.put("journal_od", getJournalDiameterD());
+        partObject.put("stem_oe", getStemDiameterE());
+        partObject.put("shaft_thread_f", getShaftThreadF());
+        partObject.put("number_of_blades", getNumberOfBlades());
+    }
+
+    public Float getExducerDiameterA() {
+        return exducerDiameterA;
+    }
+
+    public void setExducerDiameterA(Float exducerDiameterA) {
+        this.exducerDiameterA = exducerDiameterA;
+    }
+
+    public Float getTipHeightB() {
+        return tipHeightB;
+    }
+
+    public void setTipHeightB(Float tipHeightB) {
+        this.tipHeightB = tipHeightB;
+    }
+
+    public Float getInducerDiameterC() {
+        return inducerDiameterC;
+    }
+
+    public void setInducerDiameterC(Float inducerDiameterC) {
+        this.inducerDiameterC = inducerDiameterC;
+    }
+
+    public Float getJournalDiameterD() {
+        return journalDiameterD;
+    }
+
+    public void setJournalDiameterD(Float journalDiameterD) {
+        this.journalDiameterD = journalDiameterD;
+    }
+
+    public Float getStemDiameterE() {
+        return stemDiameterE;
+    }
+
+    public void setStemDiameterE(Float stemDiameterE) {
+        this.stemDiameterE = stemDiameterE;
+    }
+
+    public String getShaftThreadF() {
+        return shaftThreadF;
+    }
+
+    public void setShaftThreadF(String shaftThreadF) {
+        this.shaftThreadF = shaftThreadF;
+    }
+
+    public String getNumberOfBlades() {
+        return numberOfBlades;
+    }
+
+    public void setNumberOfBlades(String numberOfBlades) {
+        this.numberOfBlades = numberOfBlades;
     }
 }

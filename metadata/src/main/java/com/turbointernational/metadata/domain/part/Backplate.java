@@ -1,16 +1,18 @@
 package com.turbointernational.metadata.domain.part;
 import com.turbointernational.metadata.domain.type.SealType;
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.SecondaryTable;
 import net.sf.jsog.JSOG;
-import org.springframework.roo.addon.javabean.RooJavaBean;
+import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 
-@RooJavaBean
+@Configurable
+@Entity
 @RooJpaActiveRecord
 @SecondaryTable(name="backplate", pkJoinColumns=@PrimaryKeyJoinColumn(name = "part_id"))
 public class Backplate extends Part {
@@ -49,17 +51,97 @@ public class Backplate extends Part {
 
     @Override
     public void addIndexFields(JSOG partObject) {
-        if (sealType != null) {
-            partObject.put("seal_type_name", sealType.getName());
+        if (getSealType() != null) {
+            partObject.put("seal_type_name", getSealType().getName());
         }
 
-        partObject.put("overall_diameter", overallDiameter);
-        partObject.put("compressor_wheel_diameter", compressorWheelDiameter);
-        partObject.put("piston_ring_diameter", pistonRingDiameter);
-        partObject.put("compressor_housing_diameter", compressorHousingDiameter);
-        partObject.put("secondary_diameter", secondaryDiameter);
-        partObject.put("overall_height", overallHeight);
-        partObject.put("style_compressor_wheel", styleCompressorWheel);
+        partObject.put("overall_diameter", getOverallDiameter());
+        partObject.put("compressor_wheel_diameter", getCompressorWheelDiameter());
+        partObject.put("piston_ring_diameter", getPistonRingDiameter());
+        partObject.put("compressor_housing_diameter", getCompressorHousingDiameter());
+        partObject.put("secondary_diameter", getSecondaryDiameter());
+        partObject.put("overall_height", getOverallHeight());
+        partObject.put("style_compressor_wheel", getStyleCompressorWheel());
+    }
+
+    public SealType getSealType() {
+        return sealType;
+    }
+
+    public void setSealType(SealType sealType) {
+        this.sealType = sealType;
+    }
+
+    public String getStyleCompressorWheel() {
+        return styleCompressorWheel;
+    }
+
+    public void setStyleCompressorWheel(String styleCompressorWheel) {
+        this.styleCompressorWheel = styleCompressorWheel;
+    }
+
+    public String getSealTypeString() {
+        return sealTypeString;
+    }
+
+    public void setSealTypeString(String sealTypeString) {
+        this.sealTypeString = sealTypeString;
+    }
+
+    public Float getOverallDiameter() {
+        return overallDiameter;
+    }
+
+    public void setOverallDiameter(Float overallDiameter) {
+        this.overallDiameter = overallDiameter;
+    }
+
+    public Float getCompressorWheelDiameter() {
+        return compressorWheelDiameter;
+    }
+
+    public void setCompressorWheelDiameter(Float compressorWheelDiameter) {
+        this.compressorWheelDiameter = compressorWheelDiameter;
+    }
+
+    public Float getPistonRingDiameter() {
+        return pistonRingDiameter;
+    }
+
+    public void setPistonRingDiameter(Float pistonRingDiameter) {
+        this.pistonRingDiameter = pistonRingDiameter;
+    }
+
+    public Float getCompressorHousingDiameter() {
+        return compressorHousingDiameter;
+    }
+
+    public void setCompressorHousingDiameter(Float compressorHousingDiameter) {
+        this.compressorHousingDiameter = compressorHousingDiameter;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
+
+    public Float getSecondaryDiameter() {
+        return secondaryDiameter;
+    }
+
+    public void setSecondaryDiameter(Float secondaryDiameter) {
+        this.secondaryDiameter = secondaryDiameter;
+    }
+
+    public Float getOverallHeight() {
+        return overallHeight;
+    }
+
+    public void setOverallHeight(Float overallHeight) {
+        this.overallHeight = overallHeight;
     }
 
 }
