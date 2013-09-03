@@ -5,6 +5,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @RooWebJson(jsonObject = SealType.class)
 @Controller
-@RequestMapping("/sealtypes")
+@RequestMapping("/type/seal")
 public class SealTypeController {
 }

@@ -5,6 +5,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @RooWebJson(jsonObject = GasketType.class)
 @Controller
-@RequestMapping("/gaskettypes")
+@RequestMapping("/type/gasket")
 public class GasketTypeController {
 }

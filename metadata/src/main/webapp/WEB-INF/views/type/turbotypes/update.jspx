@@ -3,7 +3,7 @@
     <jsp:directive.page contentType="text/html;charset=UTF-8"/>
     <jsp:output omit-xml-declaration="yes"/>
     <form:update id="fu_com_turbointernational_metadata_domain_type_TurboType" modelAttribute="turboType" path="/type/turbotypes" versionField="Version" z="sOV/qRy6suILDU1VB92j+L4/hBQ=">
-        <field:select field="manufacturer" id="c_com_turbointernational_metadata_domain_type_TurboType_manufacturer" itemValue="id" items="${manufacturers}" path="/other/manufacturer" z="FwBrh34reXsVzCj72wG6ts6H+9Y="/>
+        <field:select field="manufacturer" id="c_com_turbointernational_metadata_domain_type_TurboType_manufacturer" itemValue="id" items="${manufacturers}" path="/manufacturers" z="ojPVdIYcJm48hYTHP26UeiSYLT8="/>
         <field:input field="name" id="c_com_turbointernational_metadata_domain_type_TurboType_name" required="true" z="o2U0es3+hij6N8S7DuGFeDBaSSA="/>
     </form:update>
 </div>

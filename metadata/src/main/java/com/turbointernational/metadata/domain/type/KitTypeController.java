@@ -5,6 +5,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @RooWebJson(jsonObject = KitType.class)
 @Controller
-@RequestMapping("/kittypes")
+@RequestMapping("/type/kit")
 public class KitTypeController {
 }

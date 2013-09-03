@@ -73,6 +73,13 @@ public class Part {
         return q.setParameter(1, partType).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 
+    @PrePersist
+    @PreUpdate
+    public void preUpdatePersist() throws Exception {
+        indexPart();
+        updateInterchanges();
+    }
+
     public void updateInterchanges() throws Exception {
 
         // Create the interchange if no interchange and a part were specified
@@ -110,8 +117,6 @@ public class Part {
 
     }
 
-    @PreUpdate
-    @PrePersist
     public void indexPart() throws Exception {
         try {
             elasticSearch.indexPart(this);
