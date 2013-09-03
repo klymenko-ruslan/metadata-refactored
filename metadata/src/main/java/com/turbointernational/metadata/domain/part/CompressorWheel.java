@@ -1,13 +1,15 @@
 package com.turbointernational.metadata.domain.part;
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.SecondaryTable;
 import net.sf.jsog.JSOG;
-import org.springframework.roo.addon.javabean.RooJavaBean;
+import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import org.springframework.roo.addon.json.RooJson;
 
-@RooJavaBean
+@Configurable
+@Entity
 @RooJpaActiveRecord
 @RooJson
 @SecondaryTable(name="COMPRESSOR_WHEEL", pkJoinColumns=@PrimaryKeyJoinColumn(name = "part_id"))
@@ -35,12 +37,68 @@ public class CompressorWheel extends Part {
 
     @Override
     public void addIndexFields(JSOG partObject) {
-        partObject.put("inducer_oa", inducerOa);
-        partObject.put("tip_height_b", tipHeightB);
-        partObject.put("exducer_oc", exducerOc);
-        partObject.put("hub_length_d", hubLengthD);
-        partObject.put("bore_oe", boreOe);
-        partObject.put("number_of_blades", numberOfBlades);
-        partObject.put("application", application);
+        partObject.put("inducer_oa", getInducerOa());
+        partObject.put("tip_height_b", getTipHeightB());
+        partObject.put("exducer_oc", getExducerOc());
+        partObject.put("hub_length_d", getHubLengthD());
+        partObject.put("bore_oe", getBoreOe());
+        partObject.put("number_of_blades", getNumberOfBlades());
+        partObject.put("application", getApplication());
+    }
+
+    public Float getInducerOa() {
+        return inducerOa;
+    }
+
+    public void setInducerOa(Float inducerOa) {
+        this.inducerOa = inducerOa;
+    }
+
+    public Float getTipHeightB() {
+        return tipHeightB;
+    }
+
+    public void setTipHeightB(Float tipHeightB) {
+        this.tipHeightB = tipHeightB;
+    }
+
+    public Float getExducerOc() {
+        return exducerOc;
+    }
+
+    public void setExducerOc(Float exducerOc) {
+        this.exducerOc = exducerOc;
+    }
+
+    public Float getHubLengthD() {
+        return hubLengthD;
+    }
+
+    public void setHubLengthD(Float hubLengthD) {
+        this.hubLengthD = hubLengthD;
+    }
+
+    public Float getBoreOe() {
+        return boreOe;
+    }
+
+    public void setBoreOe(Float boreOe) {
+        this.boreOe = boreOe;
+    }
+
+    public String getNumberOfBlades() {
+        return numberOfBlades;
+    }
+
+    public void setNumberOfBlades(String numberOfBlades) {
+        this.numberOfBlades = numberOfBlades;
+    }
+
+    public String getApplication() {
+        return application;
+    }
+
+    public void setApplication(String application) {
+        this.application = application;
     }
 }

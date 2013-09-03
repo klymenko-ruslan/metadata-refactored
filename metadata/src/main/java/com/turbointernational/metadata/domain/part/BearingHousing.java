@@ -1,16 +1,18 @@
 package com.turbointernational.metadata.domain.part;
 import com.turbointernational.metadata.domain.type.CoolType;
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.SecondaryTable;
 import net.sf.jsog.JSOG;
-import org.springframework.roo.addon.javabean.RooJavaBean;
+import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import org.springframework.roo.addon.json.RooJson;
 
-@RooJavaBean
+@Configurable
+@Entity
 @RooJpaActiveRecord
 @RooJson
 @SecondaryTable(name="bearing_housing", pkJoinColumns=@PrimaryKeyJoinColumn(name = "part_id"))
@@ -43,15 +45,79 @@ public class BearingHousing extends Part {
 
     @Override
     public void addIndexFields(JSOG partObject) {
-        if (coolType != null) {
-            partObject.put("cool_type_name", coolType.getName());
+        if (getCoolType() != null) {
+            partObject.put("cool_type_name", getCoolType().getName());
         }
-        partObject.put("oil_inlet", oilInlet);
-        partObject.put("oil_outlet", oilOutlet);
-        partObject.put("oil", oil);
-        partObject.put("outlet_flange_holes", outletFlangeHoles);
-        partObject.put("water_ports", waterPorts);
-        partObject.put("design_features", designFeatures);
-        partObject.put("bearing_type", bearingType);
+        partObject.put("oil_inlet", getOilInlet());
+        partObject.put("oil_outlet", getOilOutlet());
+        partObject.put("oil", getOil());
+        partObject.put("outlet_flange_holes", getOutletFlangeHoles());
+        partObject.put("water_ports", getWaterPorts());
+        partObject.put("design_features", getDesignFeatures());
+        partObject.put("bearing_type", getBearingType());
+    }
+
+    public CoolType getCoolType() {
+        return coolType;
+    }
+
+    public void setCoolType(CoolType coolType) {
+        this.coolType = coolType;
+    }
+
+    public String getOilInlet() {
+        return oilInlet;
+    }
+
+    public void setOilInlet(String oilInlet) {
+        this.oilInlet = oilInlet;
+    }
+
+    public String getOilOutlet() {
+        return oilOutlet;
+    }
+
+    public void setOilOutlet(String oilOutlet) {
+        this.oilOutlet = oilOutlet;
+    }
+
+    public String getOil() {
+        return oil;
+    }
+
+    public void setOil(String oil) {
+        this.oil = oil;
+    }
+
+    public String getOutletFlangeHoles() {
+        return outletFlangeHoles;
+    }
+
+    public void setOutletFlangeHoles(String outletFlangeHoles) {
+        this.outletFlangeHoles = outletFlangeHoles;
+    }
+
+    public String getWaterPorts() {
+        return waterPorts;
+    }
+
+    public void setWaterPorts(String waterPorts) {
+        this.waterPorts = waterPorts;
+    }
+
+    public String getDesignFeatures() {
+        return designFeatures;
+    }
+
+    public void setDesignFeatures(String designFeatures) {
+        this.designFeatures = designFeatures;
+    }
+
+    public String getBearingType() {
+        return bearingType;
+    }
+
+    public void setBearingType(String bearingType) {
+        this.bearingType = bearingType;
     }
 }

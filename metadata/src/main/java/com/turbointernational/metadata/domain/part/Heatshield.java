@@ -1,13 +1,15 @@
 package com.turbointernational.metadata.domain.part;
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.SecondaryTable;
 import net.sf.jsog.JSOG;
-import org.springframework.roo.addon.javabean.RooJavaBean;
+import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import org.springframework.roo.addon.json.RooJson;
 
-@RooJavaBean
+@Configurable
+@Entity
 @RooJpaActiveRecord
 @RooJson
 @SecondaryTable(name="HEATSHIELD", pkJoinColumns=@PrimaryKeyJoinColumn(name = "part_id"))
@@ -24,9 +26,33 @@ public class Heatshield extends Part {
 
     @Override
     public void addIndexFields(JSOG partObject) {
-        partObject.put("overall_diameter", overallDiameter);
-        partObject.put("inside_diameter", insideDimater);
-        partObject.put("inducer_diameter", inducerDiameter);
+        partObject.put("overall_diameter", getOverallDiameter());
+        partObject.put("inside_diameter", getInsideDimater());
+        partObject.put("inducer_diameter", getInducerDiameter());
+    }
+
+    public Float getOverallDiameter() {
+        return overallDiameter;
+    }
+
+    public void setOverallDiameter(Float overallDiameter) {
+        this.overallDiameter = overallDiameter;
+    }
+
+    public Float getInsideDimater() {
+        return insideDimater;
+    }
+
+    public void setInsideDimater(Float insideDimater) {
+        this.insideDimater = insideDimater;
+    }
+
+    public Float getInducerDiameter() {
+        return inducerDiameter;
+    }
+
+    public void setInducerDiameter(Float inducerDiameter) {
+        this.inducerDiameter = inducerDiameter;
     }
 
 }
