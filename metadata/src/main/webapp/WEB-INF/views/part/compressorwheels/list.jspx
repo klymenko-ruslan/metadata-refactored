@@ -8,8 +8,9 @@
             <table:column id="c_com_turbointernational_metadata_domain_part_CompressorWheel_manufacturer" property="manufacturer" z="f167ItGzOfDZ3g/1uY7KOrCzaFY="/>
             <table:column id="c_com_turbointernational_metadata_domain_part_CompressorWheel_name" property="name" z="VFHiWAEb4yrvztv95i8mOUsaxjc="/>
             <table:column id="c_com_turbointernational_metadata_domain_part_CompressorWheel_description" property="description" z="vRkfXWdmH+lufUWEDEWyU+LMMPA="/>
-            <table:column id="c_com_turbointernational_metadata_domain_part_CompressorWheel_inactive" property="inactive" z="X7wNzZDagO353Y3QdNKIxzfNor8="/>
             <table:column id="c_com_turbointernational_metadata_domain_part_CompressorWheel_partType" property="partType" render="false" z="user-managed"/>
+            <table:column id="c_com_turbointernational_metadata_domain_part_CompressorWheel_tiPartNumber" property="tiPartNumber" z="A+q6SXFiiuINM6WcIlJUejXYdqA="/>
+            <table:column id="c_com_turbointernational_metadata_domain_part_CompressorWheel_magentoProductId" property="magentoProductId" z="xhAE0MVFT1uglIUD/v+Aws1RPrI="/>
         </table:table>
     </page:list>
 </div>

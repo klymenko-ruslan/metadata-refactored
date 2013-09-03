@@ -19,5 +19,7 @@
         <field:display field="elasticSearch" id="s_com_turbointernational_metadata_domain_part_CompressorWheel_elasticSearch" object="${compressorwheel}" render="false" z="user-managed"/>
         <field:display field="partType" id="s_com_turbointernational_metadata_domain_part_CompressorWheel_partType" object="${compressorwheel}" render="false" z="user-managed"/>
         <field:display field="interchangePart" id="s_com_turbointernational_metadata_domain_part_CompressorWheel_interchangePart" object="${compressorwheel}" render="false" z="user-managed"/>
+        <field:display field="tiPartNumber" id="s_com_turbointernational_metadata_domain_part_CompressorWheel_tiPartNumber" object="${compressorwheel}" z="SuiwbXr627CsrbrRuraZyvAJcIg="/>
+        <field:display field="magentoProductId" id="s_com_turbointernational_metadata_domain_part_CompressorWheel_magentoProductId" object="${compressorwheel}" z="+h4m5mrU3wINPr4Hb6Gt8B1aJNg="/>
     </page:show>
 </div>

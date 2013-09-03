@@ -11,9 +11,11 @@
         <my:interchanges id="c_com_turbointernational_metadata_domain_part_Part_interchanges" pageSize="20" part="${part}" path="/part/parts/search" z="user-managed"/>
         <field:select field="interchange" id="c_com_turbointernational_metadata_domain_part_Part_interchange" itemValue="id" items="${interchanges}" path="/other/interchange" render="false" z="user-managed"/>
         <field:input field="elasticSearch" id="c_com_turbointernational_metadata_domain_part_Part_elasticSearch" render="false" z="user-managed"/>
-          <input name="partType" type="hidden" value="${part.partType.id}"/>
-         <field:select field="partType" id="c_com_turbointernational_metadata_domain_part_Part_partType" itemValue="id" items="${parttypes}" path="/parttypes" render="false" z="user-managed"/>
+        <input name="partType" type="hidden" value="${part.partType.id}"/>
+        <field:select field="partType" id="c_com_turbointernational_metadata_domain_part_Part_partType" itemValue="id" items="${parttypes}" path="/parttypes" render="false" z="user-managed"/>
         <field:input field="interchangePart" id="c_com_turbointernational_metadata_domain_part_Part_interchangePart" render="false" z="user-managed"/>
+        <field:input field="tiPartNumber" id="c_com_turbointernational_metadata_domain_part_Part_tiPartNumber" z="btRnUO63kz82lMA7Kryu2G+JbIE="/>
+        <field:input field="magentoProductId" id="c_com_turbointernational_metadata_domain_part_Part_magentoProductId" validationMessageCode="field_invalid_integer" z="2CDZZPqtABFXS1IG9UDv7Y83r48="/>
     </form:create>
     <form:dependency dependencies="${dependencies}" id="d_com_turbointernational_metadata_domain_part_Part" render="${not empty dependencies}" z="c223m8b7IU6g/WgCu0IDzPkJvFc="/>
 </div>

@@ -17,8 +17,10 @@
         <field:input field="insideDiameterMax" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_insideDiameterMax" validationMessageCode="field_invalid_number" z="x2uFuJ2BMvQgYTApQpb/v9pJf7I="/>
         <field:select field="interchange" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_interchange" itemValue="id" items="${interchanges}" path="/other/interchange" render="false" z="user-managed"/>
         <field:input field="elasticSearch" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_elasticSearch" render="false" z="user-managed"/>
-       <input name="partType" type="hidden" value="${bearingSpacer.partType.id}"/>
-         <field:select field="partType" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_partType" itemValue="id" items="${parttypes}" path="/parttypes" render="false" z="user-managed"/>
+        <input name="partType" type="hidden" value="${bearingSpacer.partType.id}"/>
+        <field:select field="partType" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_partType" itemValue="id" items="${parttypes}" path="/parttypes" render="false" z="user-managed"/>
         <field:input field="interchangePart" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_interchangePart" render="false" z="user-managed"/>
+        <field:input field="tiPartNumber" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_tiPartNumber" z="6jqsM1MSRXv0V1FsKSw0/V4/WBM="/>
+        <field:input field="magentoProductId" id="c_com_turbointernational_metadata_domain_part_BearingSpacer_magentoProductId" validationMessageCode="field_invalid_integer" z="RWTuZ8ac/mbJoHPFmDF87ee6Hns="/>
     </form:update>
 </div>

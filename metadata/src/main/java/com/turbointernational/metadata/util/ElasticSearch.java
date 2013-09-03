@@ -114,12 +114,9 @@ public class ElasticSearch {
                 continue;
             }
 
-            // Add the part fields
+            // Get the part JSOG
             JSOG partObject = part.toJsog();
-            partObject.put("_id", part.getId());
-
-            // Let part subclasses add their fields to the indexed data
-            part.toJsog();
+            partObject.put("_id", partObject.remove("id")); // Rename id to _id
 
             Index.Builder indexBuilder = new Index.Builder(partObject.toString()).id(part.getId().toString());
 

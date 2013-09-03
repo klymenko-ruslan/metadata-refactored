@@ -8,8 +8,9 @@
             <table:column id="c_com_turbointernational_metadata_domain_part_PistonRing_manufacturer" property="manufacturer" z="PInWP51LugfHySBM4AhRdlcl6lM="/>
             <table:column id="c_com_turbointernational_metadata_domain_part_PistonRing_name" property="name" z="ZbXBw61a266DkQqtHke2/87C55o="/>
             <table:column id="c_com_turbointernational_metadata_domain_part_PistonRing_description" property="description" z="QlSP2ijL2DZCCdVdmEqCmz/qtsE="/>
-            <table:column id="c_com_turbointernational_metadata_domain_part_PistonRing_inactive" property="inactive" z="rYfIeMaYJfSS9Q+qlW1dqfe+Bu8="/>
             <table:column id="c_com_turbointernational_metadata_domain_part_PistonRing_partType" property="partType" render="false" z="user-managed"/>
+            <table:column id="c_com_turbointernational_metadata_domain_part_PistonRing_tiPartNumber" property="tiPartNumber" z="Lj9hDx3t4NLVIBuR/fJCeR7dv4I="/>
+            <table:column id="c_com_turbointernational_metadata_domain_part_PistonRing_magentoProductId" property="magentoProductId" z="iEWLKJGWk3tIU/LNnDfDZy4l2F4="/>
         </table:table>
     </page:list>
 </div>

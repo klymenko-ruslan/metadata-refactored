@@ -10,6 +10,8 @@
             <table:column id="c_com_turbointernational_metadata_domain_part_Turbo_description" property="description" render="false" z="user-managed"/>
             <table:column id="c_com_turbointernational_metadata_domain_part_Turbo_inactive" property="inactive" render="false" z="user-managed"/>
             <table:column id="c_com_turbointernational_metadata_domain_part_Turbo_partType" property="partType" render="false" z="user-managed"/>
+            <table:column id="c_com_turbointernational_metadata_domain_part_Turbo_tiPartNumber" property="tiPartNumber" z="ZNNM6wAcHKMtEczoG2VZc5YbKPU="/>
+            <table:column id="c_com_turbointernational_metadata_domain_part_Turbo_magentoProductId" property="magentoProductId" z="XqKLppKT+wdQu1D7PvSGLozvsfY="/>
         </table:table>
     </page:list>
 </div>

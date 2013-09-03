@@ -19,5 +19,7 @@
         <field:display field="elasticSearch" id="s_com_turbointernational_metadata_domain_part_TurbineWheel_elasticSearch" object="${turbinewheel}" render="false" z="user-managed"/>
         <field:display field="partType" id="s_com_turbointernational_metadata_domain_part_TurbineWheel_partType" object="${turbinewheel}" render="false" z="user-managed"/>
         <field:display field="interchangePart" id="s_com_turbointernational_metadata_domain_part_TurbineWheel_interchangePart" object="${turbinewheel}" render="false" z="user-managed"/>
+        <field:display field="tiPartNumber" id="s_com_turbointernational_metadata_domain_part_TurbineWheel_tiPartNumber" object="${turbinewheel}" z="i4YstwD5i29fTL9g7JxsYjvhTgo="/>
+        <field:display field="magentoProductId" id="s_com_turbointernational_metadata_domain_part_TurbineWheel_magentoProductId" object="${turbinewheel}" z="mcRsP/lXQ9LP4QvqLhc5Qs1WYQU="/>
     </page:show>
 </div>

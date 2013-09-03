@@ -51,6 +51,22 @@ privileged aspect Part_Roo_JavaBean {
         this.description = description;
     }
     
+    public String Part.getTiPartNumber() {
+        return this.tiPartNumber;
+    }
+    
+    public void Part.setTiPartNumber(String tiPartNumber) {
+        this.tiPartNumber = tiPartNumber;
+    }
+    
+    public Integer Part.getMagentoProductId() {
+        return this.magentoProductId;
+    }
+    
+    public void Part.setMagentoProductId(Integer magentoProductId) {
+        this.magentoProductId = magentoProductId;
+    }
+    
     public PartType Part.getPartType() {
         return this.partType;
     }

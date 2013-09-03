@@ -14,5 +14,7 @@
         <field:display field="elasticSearch" id="s_com_turbointernational_metadata_domain_part_Turbo_elasticSearch" object="${turbo}" render="false" z="user-managed"/>
         <field:display field="partType" id="s_com_turbointernational_metadata_domain_part_Turbo_partType" object="${turbo}" render="false" z="user-managed"/>
         <field:display field="interchangePart" id="s_com_turbointernational_metadata_domain_part_Turbo_interchangePart" object="${turbo}" render="false" z="user-managed"/>
+        <field:display field="tiPartNumber" id="s_com_turbointernational_metadata_domain_part_Turbo_tiPartNumber" object="${turbo}" z="toYVuickPOmLtZ4VeSaOh7Zf/CQ="/>
+        <field:display field="magentoProductId" id="s_com_turbointernational_metadata_domain_part_Turbo_magentoProductId" object="${turbo}" z="zfQvkX0qPA67biXbvKlpRfaK28s="/>
     </page:show>
 </div>

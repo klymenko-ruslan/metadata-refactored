@@ -3,6 +3,7 @@ import com.turbointernational.metadata.domain.other.Interchange;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.type.PartType;
 import com.turbointernational.metadata.util.ElasticSearch;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import org.springframework.roo.addon.javabean.RooJavaBean;
@@ -30,6 +31,10 @@ import org.springframework.roo.addon.json.RooJson;
 @RooJson
 public class Part {
 
+    public static List<Part> getPartsUpdatedAfter(Date lastUpdated, int i, int pageSize) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -49,6 +54,9 @@ public class Part {
     
     @Column(name="ti_part_num")
     private String tiPartNumber;
+    
+    @Column(name="magento_product_id")
+    private Integer magentoProductId;
 
     @OneToOne
     @JoinColumn(name="part_type_id")

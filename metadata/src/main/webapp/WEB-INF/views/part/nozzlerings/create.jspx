@@ -11,9 +11,11 @@
         <my:interchanges id="c_com_turbointernational_metadata_domain_part_NozzleRing_interchanges" pageSize="20" part="${nozzleRing}" path="/part/parts/search" z="user-managed"/>
         <field:select field="interchange" id="c_com_turbointernational_metadata_domain_part_NozzleRing_interchange" itemValue="id" items="${interchanges}" path="/other/interchange" render="false" z="user-managed"/>
         <field:input field="elasticSearch" id="c_com_turbointernational_metadata_domain_part_NozzleRing_elasticSearch" render="false" z="user-managed"/>
-          <input name="partType" type="hidden" value="${nozzleRing.partType.id}"/>
-         <field:select field="partType" id="c_com_turbointernational_metadata_domain_part_NozzleRing_partType" itemValue="id" items="${parttypes}" path="/parttypes" render="false" z="user-managed"/>
+        <input name="partType" type="hidden" value="${nozzleRing.partType.id}"/>
+        <field:select field="partType" id="c_com_turbointernational_metadata_domain_part_NozzleRing_partType" itemValue="id" items="${parttypes}" path="/parttypes" render="false" z="user-managed"/>
         <field:input field="interchangePart" id="c_com_turbointernational_metadata_domain_part_NozzleRing_interchangePart" render="false" z="user-managed"/>
+        <field:input field="tiPartNumber" id="c_com_turbointernational_metadata_domain_part_NozzleRing_tiPartNumber" z="0mfOM+InDz2oicfUtNqm3Svl7zk="/>
+        <field:input field="magentoProductId" id="c_com_turbointernational_metadata_domain_part_NozzleRing_magentoProductId" validationMessageCode="field_invalid_integer" z="ZOu8qGphb0eP7jlNl0w+Hw/Ank0="/>
     </form:create>
     <form:dependency dependencies="${dependencies}" id="d_com_turbointernational_metadata_domain_part_NozzleRing" render="${not empty dependencies}" z="5gXARGTUQr2HwOOphg+9vsMT0ME="/>
 </div>

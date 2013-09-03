@@ -20,5 +20,7 @@
         <field:display field="elasticSearch" id="s_com_turbointernational_metadata_domain_part_BearingHousing_elasticSearch" object="${bearinghousing}" render="false" z="user-managed"/>
         <field:display field="partType" id="s_com_turbointernational_metadata_domain_part_BearingHousing_partType" object="${bearinghousing}" render="false" z="user-managed"/>
         <field:display field="interchangePart" id="s_com_turbointernational_metadata_domain_part_BearingHousing_interchangePart" object="${bearinghousing}" render="false" z="user-managed"/>
+        <field:display field="tiPartNumber" id="s_com_turbointernational_metadata_domain_part_BearingHousing_tiPartNumber" object="${bearinghousing}" z="Mo2Tjwej7yzf55uRaiKjjTxjAIc="/>
+        <field:display field="magentoProductId" id="s_com_turbointernational_metadata_domain_part_BearingHousing_magentoProductId" object="${bearinghousing}" z="OC7bCLiQZRfC3mL8rehnIOI7Z/U="/>
     </page:show>
 </div>

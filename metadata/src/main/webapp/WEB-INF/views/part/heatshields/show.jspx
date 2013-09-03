@@ -15,5 +15,7 @@
         <field:display field="elasticSearch" id="s_com_turbointernational_metadata_domain_part_Heatshield_elasticSearch" object="${heatshield}" render="false" z="user-managed"/>
         <field:display field="partType" id="s_com_turbointernational_metadata_domain_part_Heatshield_partType" object="${heatshield}" render="false" z="user-managed"/>
         <field:display field="interchangePart" id="s_com_turbointernational_metadata_domain_part_Heatshield_interchangePart" object="${heatshield}" render="false" z="user-managed"/>
+        <field:display field="tiPartNumber" id="s_com_turbointernational_metadata_domain_part_Heatshield_tiPartNumber" object="${heatshield}" z="VeGi2HfXaHT8AxfRl00cFQiOH0Y="/>
+        <field:display field="magentoProductId" id="s_com_turbointernational_metadata_domain_part_Heatshield_magentoProductId" object="${heatshield}" z="ke6m2DsBa9Ft8ykd7U20pn8FeVI="/>
     </page:show>
 </div>

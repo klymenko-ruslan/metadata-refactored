@@ -12,5 +12,7 @@
         <field:display field="elasticSearch" id="s_com_turbointernational_metadata_domain_part_Cartridge_elasticSearch" object="${cartridge}" render="false" z="user-managed"/>
         <field:display field="partType" id="s_com_turbointernational_metadata_domain_part_Cartridge_partType" object="${cartridge}" render="false" z="user-managed"/>
         <field:display field="interchangePart" id="s_com_turbointernational_metadata_domain_part_Cartridge_interchangePart" object="${cartridge}" render="false" z="user-managed"/>
+        <field:display field="tiPartNumber" id="s_com_turbointernational_metadata_domain_part_Cartridge_tiPartNumber" object="${cartridge}" z="gu76c/8ushimtWhpWDA1P2NWh0M="/>
+        <field:display field="magentoProductId" id="s_com_turbointernational_metadata_domain_part_Cartridge_magentoProductId" object="${cartridge}" z="FlMpt2BmUsXFk5ViEVtKGnq7zm0="/>
     </page:show>
 </div>

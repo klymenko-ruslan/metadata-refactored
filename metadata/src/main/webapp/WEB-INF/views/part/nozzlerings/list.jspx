@@ -8,8 +8,9 @@
             <table:column id="c_com_turbointernational_metadata_domain_part_NozzleRing_manufacturer" property="manufacturer" z="iPLnfEMlGgPl/l9dpu0th49hegY="/>
             <table:column id="c_com_turbointernational_metadata_domain_part_NozzleRing_name" property="name" z="CxizMgET+dBkWCKU1PdOQUrNUZs="/>
             <table:column id="c_com_turbointernational_metadata_domain_part_NozzleRing_description" property="description" z="Uj4hdGBQM9yW1KHHPj4BCwECqkg="/>
-            <table:column id="c_com_turbointernational_metadata_domain_part_NozzleRing_inactive" property="inactive" z="glcljaElosjEGkREv8HpEL2fkm4="/>
             <table:column id="c_com_turbointernational_metadata_domain_part_NozzleRing_partType" property="partType" render="false" z="user-managed"/>
+            <table:column id="c_com_turbointernational_metadata_domain_part_NozzleRing_tiPartNumber" property="tiPartNumber" z="48l2AIofISaWJNI71MfoZbBMfo0="/>
+            <table:column id="c_com_turbointernational_metadata_domain_part_NozzleRing_magentoProductId" property="magentoProductId" z="SZ2XCCroq3USUup3WQZpBOdIwlg="/>
         </table:table>
     </page:list>
 </div>

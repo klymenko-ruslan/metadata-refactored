@@ -18,5 +18,7 @@
         <field:display field="elasticSearch" id="s_com_turbointernational_metadata_domain_part_JournalBearing_elasticSearch" object="${journalbearing}" render="false" z="user-managed"/>
         <field:display field="partType" id="s_com_turbointernational_metadata_domain_part_JournalBearing_partType" object="${journalbearing}" render="false" z="user-managed"/>
         <field:display field="interchangePart" id="s_com_turbointernational_metadata_domain_part_JournalBearing_interchangePart" object="${journalbearing}" render="false" z="user-managed"/>
+        <field:display field="tiPartNumber" id="s_com_turbointernational_metadata_domain_part_JournalBearing_tiPartNumber" object="${journalbearing}" z="bi6r7vnT+Iu6UI3BLuJzYr3C7Qs="/>
+        <field:display field="magentoProductId" id="s_com_turbointernational_metadata_domain_part_JournalBearing_magentoProductId" object="${journalbearing}" z="wa1P3AyTvUD8mfvO8fuEAso4ziQ="/>
     </page:show>
 </div>

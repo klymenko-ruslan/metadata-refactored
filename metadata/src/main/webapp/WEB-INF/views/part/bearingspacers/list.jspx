@@ -8,8 +8,9 @@
             <table:column id="c_com_turbointernational_metadata_domain_part_BearingSpacer_manufacturer" property="manufacturer" z="x/5f6+hPD5PTnBoecj9ba9Pk15E="/>
             <table:column id="c_com_turbointernational_metadata_domain_part_BearingSpacer_name" property="name" z="xDsrOJkVx1fNgcaFxVHQVWETYPk="/>
             <table:column id="c_com_turbointernational_metadata_domain_part_BearingSpacer_description" property="description" z="IGwbwclX1tn9pkMs2WZACjHQiHU="/>
-            <table:column id="c_com_turbointernational_metadata_domain_part_BearingSpacer_inactive" property="inactive" z="Fj62UopOEjM999xL8A0QfpETHt8="/>
             <table:column id="c_com_turbointernational_metadata_domain_part_BearingSpacer_partType" property="partType" render="false" z="user-managed"/>
+            <table:column id="c_com_turbointernational_metadata_domain_part_BearingSpacer_tiPartNumber" property="tiPartNumber" z="4kLfAUMf0bONnakiRQJocbR2y48="/>
+            <table:column id="c_com_turbointernational_metadata_domain_part_BearingSpacer_magentoProductId" property="magentoProductId" z="dSc2RZBwM8SECMy8396uK8sRgWw="/>
         </table:table>
     </page:list>
 </div>

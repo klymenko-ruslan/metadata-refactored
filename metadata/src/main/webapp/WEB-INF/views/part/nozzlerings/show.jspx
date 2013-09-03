@@ -12,5 +12,7 @@
         <field:display field="elasticSearch" id="s_com_turbointernational_metadata_domain_part_NozzleRing_elasticSearch" object="${nozzlering}" render="false" z="user-managed"/>
         <field:display field="partType" id="s_com_turbointernational_metadata_domain_part_NozzleRing_partType" object="${nozzlering}" render="false" z="user-managed"/>
         <field:display field="interchangePart" id="s_com_turbointernational_metadata_domain_part_NozzleRing_interchangePart" object="${nozzlering}" render="false" z="user-managed"/>
+        <field:display field="tiPartNumber" id="s_com_turbointernational_metadata_domain_part_NozzleRing_tiPartNumber" object="${nozzlering}" z="DJxcPBJtT00VVIo27eTigDxdDQA="/>
+        <field:display field="magentoProductId" id="s_com_turbointernational_metadata_domain_part_NozzleRing_magentoProductId" object="${nozzlering}" z="HmqU224oNO20HSAISCCWipaSm5c="/>
     </page:show>
 </div>

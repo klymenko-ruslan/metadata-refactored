@@ -24,5 +24,7 @@
         <field:select field="interchange" id="c_com_turbointernational_metadata_domain_part_Backplate_interchange" itemValue="id" items="${interchanges}" path="/other/interchange" render="false" z="user-managed"/>
         <field:input field="elasticSearch" id="c_com_turbointernational_metadata_domain_part_Backplate_elasticSearch" render="false" z="user-managed"/>
         <field:input field="interchangePart" id="c_com_turbointernational_metadata_domain_part_Backplate_interchangePart" render="false" z="user-managed"/>
+        <field:input field="tiPartNumber" id="c_com_turbointernational_metadata_domain_part_Backplate_tiPartNumber" z="s+qC9tSDtmhOHhy31YcJM07ygso="/>
+        <field:input field="magentoProductId" id="c_com_turbointernational_metadata_domain_part_Backplate_magentoProductId" validationMessageCode="field_invalid_integer" z="pR1SXKk5nDqLze7GyNDB7+++eZI="/>
     </form:update>
 </div>

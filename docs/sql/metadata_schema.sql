@@ -51,9 +51,11 @@ CREATE TABLE `part` (
   `description` VARCHAR(255) NULL,
   `inactive` BOOLEAN NOT NULL DEFAULT 0,
   `import_pk` BIGINT NULL,
+  `magento_product_id` INT NULL,
   `version` INTEGER NOT NULL DEFAULT 1,
   `dtype` VARCHAR(50) DEFAULT 'Part',
   PRIMARY KEY(`id`, `version`),
+  INDEX (`magento_product_id`),
   INDEX (`manfr_part_num`, `manfr_id`),
   FOREIGN KEY (`manfr_id`) REFERENCES `manfr` (`id`),
   FOREIGN KEY (`part_type_id`) REFERENCES `part_type` (`id`)

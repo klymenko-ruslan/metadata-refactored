@@ -18,5 +18,7 @@
         <field:display field="elasticSearch" id="s_com_turbointernational_metadata_domain_part_BearingSpacer_elasticSearch" object="${bearingspacer}" render="false" z="user-managed"/>
         <field:display field="partType" id="s_com_turbointernational_metadata_domain_part_BearingSpacer_partType" object="${bearingspacer}" render="false" z="user-managed"/>
         <field:display field="interchangePart" id="s_com_turbointernational_metadata_domain_part_BearingSpacer_interchangePart" object="${bearingspacer}" render="false" z="user-managed"/>
+        <field:display field="tiPartNumber" id="s_com_turbointernational_metadata_domain_part_BearingSpacer_tiPartNumber" object="${bearingspacer}" z="9T2gF2iV2d9mIq8sOProEievpKA="/>
+        <field:display field="magentoProductId" id="s_com_turbointernational_metadata_domain_part_BearingSpacer_magentoProductId" object="${bearingspacer}" z="VDpgBKs+sad4FYEcTiYGQuvwpVg="/>
     </page:show>
 </div>

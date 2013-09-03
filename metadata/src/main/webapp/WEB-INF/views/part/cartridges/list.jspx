@@ -8,8 +8,9 @@
             <table:column id="c_com_turbointernational_metadata_domain_part_Cartridge_manufacturer" property="manufacturer" z="s1HF8zbYj7Z1+pHdwilP88azqYM="/>
             <table:column id="c_com_turbointernational_metadata_domain_part_Cartridge_name" property="name" z="aHjTmk+99SULKUMo5wREYGmBmWY="/>
             <table:column id="c_com_turbointernational_metadata_domain_part_Cartridge_description" property="description" z="tfsIdeJCdT97N5x4+5VDxzt4cVs="/>
-            <table:column id="c_com_turbointernational_metadata_domain_part_Cartridge_inactive" property="inactive" z="yJAyqBa1WulPq+RgdLJ7Cte9pCE="/>
             <table:column id="c_com_turbointernational_metadata_domain_part_Cartridge_partType" property="partType" render="false" z="user-managed"/>
+            <table:column id="c_com_turbointernational_metadata_domain_part_Cartridge_tiPartNumber" property="tiPartNumber" z="8XS2bA2dv3KsHYnhtlg2njgGb6c="/>
+            <table:column id="c_com_turbointernational_metadata_domain_part_Cartridge_magentoProductId" property="magentoProductId" z="6VsI5KqRGB1m++KCp7aJg8wbY/c="/>
         </table:table>
     </page:list>
 </div>

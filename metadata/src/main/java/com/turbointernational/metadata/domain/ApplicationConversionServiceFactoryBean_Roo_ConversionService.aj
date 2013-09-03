@@ -99,7 +99,7 @@ privileged aspect ApplicationConversionServiceFactoryBean_Roo_ConversionService 
     public Converter<Backplate, String> ApplicationConversionServiceFactoryBean.getBackplateToStringConverter() {
         return new org.springframework.core.convert.converter.Converter<com.turbointernational.metadata.domain.part.Backplate, java.lang.String>() {
             public String convert(Backplate backplate) {
-                return new StringBuilder().append(backplate.getManufacturerPartNumber()).append(' ').append(backplate.getName()).append(' ').append(backplate.getDescription()).append(' ').append(backplate.getStyleCompressorWheel()).toString();
+                return new StringBuilder().append(backplate.getManufacturerPartNumber()).append(' ').append(backplate.getName()).append(' ').append(backplate.getDescription()).append(' ').append(backplate.getTiPartNumber()).toString();
             }
         };
     }
@@ -123,7 +123,7 @@ privileged aspect ApplicationConversionServiceFactoryBean_Roo_ConversionService 
     public Converter<BearingHousing, String> ApplicationConversionServiceFactoryBean.getBearingHousingToStringConverter() {
         return new org.springframework.core.convert.converter.Converter<com.turbointernational.metadata.domain.part.BearingHousing, java.lang.String>() {
             public String convert(BearingHousing bearingHousing) {
-                return new StringBuilder().append(bearingHousing.getManufacturerPartNumber()).append(' ').append(bearingHousing.getName()).append(' ').append(bearingHousing.getDescription()).append(' ').append(bearingHousing.getOilInlet()).toString();
+                return new StringBuilder().append(bearingHousing.getManufacturerPartNumber()).append(' ').append(bearingHousing.getName()).append(' ').append(bearingHousing.getDescription()).append(' ').append(bearingHousing.getTiPartNumber()).toString();
             }
         };
     }
@@ -147,7 +147,7 @@ privileged aspect ApplicationConversionServiceFactoryBean_Roo_ConversionService 
     public Converter<BearingSpacer, String> ApplicationConversionServiceFactoryBean.getBearingSpacerToStringConverter() {
         return new org.springframework.core.convert.converter.Converter<com.turbointernational.metadata.domain.part.BearingSpacer, java.lang.String>() {
             public String convert(BearingSpacer bearingSpacer) {
-                return new StringBuilder().append(bearingSpacer.getManufacturerPartNumber()).append(' ').append(bearingSpacer.getName()).append(' ').append(bearingSpacer.getDescription()).append(' ').append(bearingSpacer.getOutsideDiameterMin()).toString();
+                return new StringBuilder().append(bearingSpacer.getManufacturerPartNumber()).append(' ').append(bearingSpacer.getName()).append(' ').append(bearingSpacer.getDescription()).append(' ').append(bearingSpacer.getTiPartNumber()).toString();
             }
         };
     }
@@ -171,7 +171,7 @@ privileged aspect ApplicationConversionServiceFactoryBean_Roo_ConversionService 
     public Converter<Cartridge, String> ApplicationConversionServiceFactoryBean.getCartridgeToStringConverter() {
         return new org.springframework.core.convert.converter.Converter<com.turbointernational.metadata.domain.part.Cartridge, java.lang.String>() {
             public String convert(Cartridge cartridge) {
-                return new StringBuilder().append(cartridge.getManufacturerPartNumber()).append(' ').append(cartridge.getName()).append(' ').append(cartridge.getDescription()).toString();
+                return new StringBuilder().append(cartridge.getManufacturerPartNumber()).append(' ').append(cartridge.getName()).append(' ').append(cartridge.getDescription()).append(' ').append(cartridge.getTiPartNumber()).toString();
             }
         };
     }
@@ -195,7 +195,7 @@ privileged aspect ApplicationConversionServiceFactoryBean_Roo_ConversionService 
     public Converter<CompressorWheel, String> ApplicationConversionServiceFactoryBean.getCompressorWheelToStringConverter() {
         return new org.springframework.core.convert.converter.Converter<com.turbointernational.metadata.domain.part.CompressorWheel, java.lang.String>() {
             public String convert(CompressorWheel compressorWheel) {
-                return new StringBuilder().append(compressorWheel.getManufacturerPartNumber()).append(' ').append(compressorWheel.getName()).append(' ').append(compressorWheel.getDescription()).append(' ').append(compressorWheel.getInducerOa()).toString();
+                return new StringBuilder().append(compressorWheel.getManufacturerPartNumber()).append(' ').append(compressorWheel.getName()).append(' ').append(compressorWheel.getDescription()).append(' ').append(compressorWheel.getTiPartNumber()).toString();
             }
         };
     }
@@ -219,7 +219,7 @@ privileged aspect ApplicationConversionServiceFactoryBean_Roo_ConversionService 
     public Converter<Gasket, String> ApplicationConversionServiceFactoryBean.getGasketToStringConverter() {
         return new org.springframework.core.convert.converter.Converter<com.turbointernational.metadata.domain.part.Gasket, java.lang.String>() {
             public String convert(Gasket gasket) {
-                return new StringBuilder().append(gasket.getManufacturerPartNumber()).append(' ').append(gasket.getName()).append(' ').append(gasket.getDescription()).toString();
+                return new StringBuilder().append(gasket.getManufacturerPartNumber()).append(' ').append(gasket.getName()).append(' ').append(gasket.getDescription()).append(' ').append(gasket.getTiPartNumber()).toString();
             }
         };
     }
@@ -243,7 +243,7 @@ privileged aspect ApplicationConversionServiceFactoryBean_Roo_ConversionService 
     public Converter<Heatshield, String> ApplicationConversionServiceFactoryBean.getHeatshieldToStringConverter() {
         return new org.springframework.core.convert.converter.Converter<com.turbointernational.metadata.domain.part.Heatshield, java.lang.String>() {
             public String convert(Heatshield heatshield) {
-                return new StringBuilder().append(heatshield.getManufacturerPartNumber()).append(' ').append(heatshield.getName()).append(' ').append(heatshield.getDescription()).append(' ').append(heatshield.getOverallDiameter()).toString();
+                return new StringBuilder().append(heatshield.getManufacturerPartNumber()).append(' ').append(heatshield.getName()).append(' ').append(heatshield.getDescription()).append(' ').append(heatshield.getTiPartNumber()).toString();
             }
         };
     }
@@ -267,7 +267,7 @@ privileged aspect ApplicationConversionServiceFactoryBean_Roo_ConversionService 
     public Converter<JournalBearing, String> ApplicationConversionServiceFactoryBean.getJournalBearingToStringConverter() {
         return new org.springframework.core.convert.converter.Converter<com.turbointernational.metadata.domain.part.JournalBearing, java.lang.String>() {
             public String convert(JournalBearing journalBearing) {
-                return new StringBuilder().append(journalBearing.getManufacturerPartNumber()).append(' ').append(journalBearing.getName()).append(' ').append(journalBearing.getDescription()).append(' ').append(journalBearing.getOutsideDiameterMin()).toString();
+                return new StringBuilder().append(journalBearing.getManufacturerPartNumber()).append(' ').append(journalBearing.getName()).append(' ').append(journalBearing.getDescription()).append(' ').append(journalBearing.getTiPartNumber()).toString();
             }
         };
     }
@@ -291,7 +291,7 @@ privileged aspect ApplicationConversionServiceFactoryBean_Roo_ConversionService 
     public Converter<Kit, String> ApplicationConversionServiceFactoryBean.getKitToStringConverter() {
         return new org.springframework.core.convert.converter.Converter<com.turbointernational.metadata.domain.part.Kit, java.lang.String>() {
             public String convert(Kit kit) {
-                return new StringBuilder().append(kit.getManufacturerPartNumber()).append(' ').append(kit.getName()).append(' ').append(kit.getDescription()).toString();
+                return new StringBuilder().append(kit.getManufacturerPartNumber()).append(' ').append(kit.getName()).append(' ').append(kit.getDescription()).append(' ').append(kit.getTiPartNumber()).toString();
             }
         };
     }
@@ -315,7 +315,7 @@ privileged aspect ApplicationConversionServiceFactoryBean_Roo_ConversionService 
     public Converter<NozzleRing, String> ApplicationConversionServiceFactoryBean.getNozzleRingToStringConverter() {
         return new org.springframework.core.convert.converter.Converter<com.turbointernational.metadata.domain.part.NozzleRing, java.lang.String>() {
             public String convert(NozzleRing nozzleRing) {
-                return new StringBuilder().append(nozzleRing.getManufacturerPartNumber()).append(' ').append(nozzleRing.getName()).append(' ').append(nozzleRing.getDescription()).toString();
+                return new StringBuilder().append(nozzleRing.getManufacturerPartNumber()).append(' ').append(nozzleRing.getName()).append(' ').append(nozzleRing.getDescription()).append(' ').append(nozzleRing.getTiPartNumber()).toString();
             }
         };
     }
@@ -339,7 +339,7 @@ privileged aspect ApplicationConversionServiceFactoryBean_Roo_ConversionService 
     public Converter<Part, String> ApplicationConversionServiceFactoryBean.getPartToStringConverter() {
         return new org.springframework.core.convert.converter.Converter<com.turbointernational.metadata.domain.part.Part, java.lang.String>() {
             public String convert(Part part) {
-                return new StringBuilder().append(part.getManufacturerPartNumber()).append(' ').append(part.getName()).append(' ').append(part.getDescription()).toString();
+                return new StringBuilder().append(part.getManufacturerPartNumber()).append(' ').append(part.getName()).append(' ').append(part.getDescription()).append(' ').append(part.getTiPartNumber()).toString();
             }
         };
     }
@@ -363,7 +363,7 @@ privileged aspect ApplicationConversionServiceFactoryBean_Roo_ConversionService 
     public Converter<PistonRing, String> ApplicationConversionServiceFactoryBean.getPistonRingToStringConverter() {
         return new org.springframework.core.convert.converter.Converter<com.turbointernational.metadata.domain.part.PistonRing, java.lang.String>() {
             public String convert(PistonRing pistonRing) {
-                return new StringBuilder().append(pistonRing.getManufacturerPartNumber()).append(' ').append(pistonRing.getName()).append(' ').append(pistonRing.getDescription()).append(' ').append(pistonRing.getOutsideDiameterMin()).toString();
+                return new StringBuilder().append(pistonRing.getManufacturerPartNumber()).append(' ').append(pistonRing.getName()).append(' ').append(pistonRing.getDescription()).append(' ').append(pistonRing.getTiPartNumber()).toString();
             }
         };
     }
@@ -387,7 +387,7 @@ privileged aspect ApplicationConversionServiceFactoryBean_Roo_ConversionService 
     public Converter<TurbineWheel, String> ApplicationConversionServiceFactoryBean.getTurbineWheelToStringConverter() {
         return new org.springframework.core.convert.converter.Converter<com.turbointernational.metadata.domain.part.TurbineWheel, java.lang.String>() {
             public String convert(TurbineWheel turbineWheel) {
-                return new StringBuilder().append(turbineWheel.getManufacturerPartNumber()).append(' ').append(turbineWheel.getName()).append(' ').append(turbineWheel.getDescription()).append(' ').append(turbineWheel.getExducerDiameterA()).toString();
+                return new StringBuilder().append(turbineWheel.getManufacturerPartNumber()).append(' ').append(turbineWheel.getName()).append(' ').append(turbineWheel.getDescription()).append(' ').append(turbineWheel.getTiPartNumber()).toString();
             }
         };
     }
@@ -411,7 +411,7 @@ privileged aspect ApplicationConversionServiceFactoryBean_Roo_ConversionService 
     public Converter<Turbo, String> ApplicationConversionServiceFactoryBean.getTurboToStringConverter() {
         return new org.springframework.core.convert.converter.Converter<com.turbointernational.metadata.domain.part.Turbo, java.lang.String>() {
             public String convert(Turbo turbo) {
-                return new StringBuilder().append(turbo.getManufacturerPartNumber()).append(' ').append(turbo.getName()).append(' ').append(turbo.getDescription()).toString();
+                return new StringBuilder().append(turbo.getManufacturerPartNumber()).append(' ').append(turbo.getName()).append(' ').append(turbo.getDescription()).append(' ').append(turbo.getTiPartNumber()).toString();
             }
         };
     }

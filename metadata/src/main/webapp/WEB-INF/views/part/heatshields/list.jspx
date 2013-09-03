@@ -8,8 +8,9 @@
             <table:column id="c_com_turbointernational_metadata_domain_part_Heatshield_manufacturer" property="manufacturer" z="jbpLZ6csMRkp4bvHtVrtQoGZJwQ="/>
             <table:column id="c_com_turbointernational_metadata_domain_part_Heatshield_name" property="name" z="1jetEyP2V80pDiahGQ5LS7Z3qVk="/>
             <table:column id="c_com_turbointernational_metadata_domain_part_Heatshield_description" property="description" z="D2Goh7/q9+QCsjZvGqXFULB4tPs="/>
-            <table:column id="c_com_turbointernational_metadata_domain_part_Heatshield_inactive" property="inactive" z="gdeedhT4UKa5TOArlQq8F2ygDnY="/>
             <table:column id="c_com_turbointernational_metadata_domain_part_Heatshield_partType" property="partType" render="false" z="user-managed"/>
+            <table:column id="c_com_turbointernational_metadata_domain_part_Heatshield_tiPartNumber" property="tiPartNumber" z="US4HVNW4NOML0v3II3O0Va5LGZU="/>
+            <table:column id="c_com_turbointernational_metadata_domain_part_Heatshield_magentoProductId" property="magentoProductId" z="l5m3eYwcBdSUpnUZ/wQi0cpq6P8="/>
         </table:table>
     </page:list>
 </div>

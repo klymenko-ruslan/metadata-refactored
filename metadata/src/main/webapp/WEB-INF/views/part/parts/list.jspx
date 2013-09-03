@@ -8,8 +8,9 @@
             <table:column id="c_com_turbointernational_metadata_domain_part_Part_manufacturerPartNumber" property="manufacturerPartNumber" z="tmxDxgxlXgj1vXvBElM42rzdafQ="/>
             <table:column id="c_com_turbointernational_metadata_domain_part_Part_name" property="name" z="1iMqMHGDyqDcAGEsy4aPRJ5MwOU="/>
             <table:column id="c_com_turbointernational_metadata_domain_part_Part_description" property="description" z="1S8bNEGXte+dwUWPW+B+GtQ850I="/>
-            <table:column id="c_com_turbointernational_metadata_domain_part_Part_inactive" property="inactive" z="m8S7FHSA0e/rTc6t/CRm8faoi3I="/>
             <table:column id="c_com_turbointernational_metadata_domain_part_Part_partType" property="partType" render="false" z="user-managed"/>
+            <table:column id="c_com_turbointernational_metadata_domain_part_Part_tiPartNumber" property="tiPartNumber" z="rg4z8JEoTZcI36oFVV0vFedDFTc="/>
+            <table:column id="c_com_turbointernational_metadata_domain_part_Part_magentoProductId" property="magentoProductId" z="P/J+08eSNlhNvHiUkju2kILLekI="/>
         </table:table>
     </page:list>
 </div>

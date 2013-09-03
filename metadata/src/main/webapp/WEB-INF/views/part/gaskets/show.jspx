@@ -13,5 +13,7 @@
         <field:display field="elasticSearch" id="s_com_turbointernational_metadata_domain_part_Gasket_elasticSearch" object="${gasket}" render="false" z="user-managed"/>
         <field:display field="partType" id="s_com_turbointernational_metadata_domain_part_Gasket_partType" object="${gasket}" render="false" z="user-managed"/>
         <field:display field="interchangePart" id="s_com_turbointernational_metadata_domain_part_Gasket_interchangePart" object="${gasket}" render="false" z="user-managed"/>
+        <field:display field="tiPartNumber" id="s_com_turbointernational_metadata_domain_part_Gasket_tiPartNumber" object="${gasket}" z="2CeSGV631lPGnuhSLNkfKR3Rba4="/>
+        <field:display field="magentoProductId" id="s_com_turbointernational_metadata_domain_part_Gasket_magentoProductId" object="${gasket}" z="opyVgCJbJYdS642PDgpP4eSTHC4="/>
     </page:show>
 </div>
