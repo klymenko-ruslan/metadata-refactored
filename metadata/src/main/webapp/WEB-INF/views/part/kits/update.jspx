@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<div xmlns:my="urn:jsptagdir:/WEB-INF/tags/my" xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:form="urn:jsptagdir:/WEB-INF/tags/form" xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0">
+<div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:form="urn:jsptagdir:/WEB-INF/tags/form" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:my="urn:jsptagdir:/WEB-INF/tags/my" version="2.0">
     <jsp:directive.page contentType="text/html;charset=UTF-8"/>
     <jsp:output omit-xml-declaration="yes"/>
     <form:update id="fu_com_turbointernational_metadata_domain_part_Kit" modelAttribute="kit" path="/part/kits" versionField="Version" z="td5ak8Y+TVR2HDjStZQRiwT99iU=">
@@ -12,6 +12,7 @@
         <field:select field="type" id="c_com_turbointernational_metadata_domain_part_Kit_type" itemValue="id" items="${kittypes}" path="/kittypes" z="ZFE+r8qkudYb0tm0TQe86OVt3TQ="/>
         <field:select field="interchange" id="c_com_turbointernational_metadata_domain_part_Kit_interchange" itemValue="id" items="${interchanges}" path="/other/interchange" render="false" z="user-managed"/>
         <field:input field="elasticSearch" id="c_com_turbointernational_metadata_domain_part_Kit_elasticSearch" render="false" z="user-managed"/>
+        <input name="partType" type="hidden" value="${kit.partType.id}"/>
         <field:select field="partType" id="c_com_turbointernational_metadata_domain_part_Kit_partType" itemValue="id" items="${parttypes}" path="/parttypes" render="false" z="user-managed"/>
         <field:input field="interchangePart" id="c_com_turbointernational_metadata_domain_part_Kit_interchangePart" render="false" z="user-managed"/>
     </form:update>

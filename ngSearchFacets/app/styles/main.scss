@@ -30,3 +30,8 @@ body {
     line-height: 1;
     letter-spacing: -1px;
 }
+/* Part Search Table Row Mouseover Highlight */
+part-list > table > tbody > tr:hover {
+  background-color: #FFFFCC;
+  cursor: pointer;
+}

@@ -86,11 +86,11 @@
     <bean class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" id="entityManagerFactory">
         <property name="persistenceUnitName" value="persistenceUnit"/>
         <property name="dataSource" ref="dataSource"/>
-<!--        <property name="jpaPropertyMap">
+        <property name="jpaPropertyMap">
             <map>
                 <entry key="hibernate.ejb.interceptor" value="com.turbointernational.metadata.MyInterceptor"/>
             </map>
-        </property>-->
+        </property>
     </bean>
     <task:annotation-driven executor="asyncExecutor" mode="aspectj"/>
     <task:executor id="asyncExecutor" pool-size="10"/>

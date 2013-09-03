@@ -1,0 +1,9 @@
+<table ng-controller="PartListCtrl" ng-table="partListTableParams" border="1">
+    <tr ng-repeat="part in searchResults.hits.hits" ng-click="clicked(part)">
+        <td title="'ID'">{{part._source._id}}</td>
+        <td title="'Part Type'">{{part._source.part_type}}</td>
+        <td title="'Manufacturer'">{{part._source.manufacturer_name}}</td>
+        <td title="'Mfr Part #'">{{part._source.manufacturer_part_number}}</td>
+        <td title="'Name'">{{part._source.name}}</td>
+    </tr>
+</table>

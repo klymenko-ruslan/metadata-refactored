@@ -43,5 +43,8 @@
         </c:if>
       </form:form>
     </util:panel>
+    <script type="text/javascript">
+    var injector = angular.bootstrap(angular.element('#_title_${id}_id'), ['MetadataEditApp']);
+    </script>
   </c:if>
 </jsp:root>

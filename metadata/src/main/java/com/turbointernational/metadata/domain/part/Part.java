@@ -4,9 +4,11 @@ import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.type.PartType;
 import com.turbointernational.metadata.util.ElasticSearch;
 import java.util.HashSet;
+import java.util.List;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import javax.persistence.Column;
+import javax.persistence.EntityManager;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -18,6 +20,7 @@ import javax.persistence.PrePersist;
 import javax.persistence.PreRemove;
 import javax.persistence.PreUpdate;
 import javax.persistence.Transient;
+import javax.persistence.TypedQuery;
 import net.sf.jsog.JSOG;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.roo.addon.json.RooJson;
@@ -49,7 +52,7 @@ public class Part {
 
     @OneToOne
     @JoinColumn(name="part_type_id")
-    private transient PartType partType;
+    private PartType partType;
 
     @Column(nullable = false, columnDefinition = "BIT", length = 1)
     private Boolean inactive;
@@ -66,6 +69,12 @@ public class Part {
     @Autowired(required=true)
     @Transient
     private ElasticSearch elasticSearch;
+    
+    public static List<Part> findPartEntries(int firstResult, int maxResults, String partType) {
+        EntityManager em = entityManager();
+        TypedQuery<Part> q = em.createQuery("SELECT o FROM Part o WHERE o.partType.typeName = ?", Part.class);
+        return q.setParameter(1, partType).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    }
 
     public void updateInterchanges() throws Exception {
 
@@ -104,12 +113,23 @@ public class Part {
 
     }
 
+    @PreUpdate
+    @PrePersist
     public void indexPart() throws Exception {
-        elasticSearch.indexPart(this);
+        try {
+            elasticSearch.indexPart(this);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
+    @PreRemove
     public void removeIndex() throws Exception {
-        elasticSearch.deletePart(this);
+        try {
+            elasticSearch.deletePart(this);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 //    @OneToMany(mappedBy="parent", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

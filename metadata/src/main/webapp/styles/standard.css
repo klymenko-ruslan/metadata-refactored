@@ -372,8 +372,36 @@ fieldset th {
 	width: 16px;
 }
 
-/* Interchange Selector Table Row Mouseover Highlight */
-div[ng-controller="InterchangesCtrl"] > table > tbody > tr:hover {
+/* Part Search Table Row Mouseover Highlight */
+my-part-search > table > tbody > tr:hover {
     background-color: #FFFFCC;
     cursor: pointer;
+}
+
+/* Pagination */
+.pagination ul {
+    padding-left: 0;
+    text-align: center !important;
+}
+.pagination ul li {
+    list-style: none;
+    display: inline-block;
+    padding: 0 5px;
+}
+.pagination ul li:first-of-type {
+    padding-left: 0;
+}
+.pagination ul li:last-of-type {
+    padding-right: 0;
+}
+
+/* Modal Window settings */
+#modal-window {
+    width: 80%;
+}
+.modal {
+    background-color: #efefef;
+}
+.modal-backdrop {
+    background-color: #202020;
 }

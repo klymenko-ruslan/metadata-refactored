@@ -1,5 +1,7 @@
-.DS_Store
-/metadata/target/
-/metadata2/target/
+**/log.roo
+**/.DS_Store
+**/.idea
+**/nbactions.xml
+/metadata/target
 /docs/sql/script.sql
 /docs/sql/data.sql

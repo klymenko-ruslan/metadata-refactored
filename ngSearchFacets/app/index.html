@@ -13,6 +13,7 @@
 
         <!-- build:css({.tmp,app}) styles/main.css -->
         <link rel="stylesheet" href="styles/main.css">
+        <link rel="stylesheet" href="bower_components/ng-table/ng-table.css">
         <!-- endbuild -->
 </head>
   <body ng-app="ngSearchFacetsApp">
@@ -26,7 +27,21 @@
     <![endif]-->
 
     <!-- Add your site or application content here -->
-    <div class="container" ng-view=""></div>
+    <ti-search class="container">
+        Search: <input type="text" ng-model="queryString"/>
+        <table border="1">
+            <tr valign="top">
+                <td>
+                    Facets:
+                    <search-facets></search-facets>
+                </td>
+                <td>
+                    Part List:
+                    <part-list></part-list>
+                </td>
+            </tr>
+        </table>
+    </ti-search>
 
     <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
     <script>
@@ -59,12 +74,20 @@
         <script src="bower_components/angular-resource/angular-resource.js"></script>
         <script src="bower_components/angular-cookies/angular-cookies.js"></script>
         <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
+        <script src="bower_components/ng-table/ng-table.js"></script>
         <!-- endbuild -->
 
         <!-- build:js({.tmp,app}) scripts/scripts.js -->
         <script src="scripts/app.js"></script>
-        <script src="scripts/controllers/main.js"></script>
-        <script src="scripts/controllers/Facet.js"></script>
+        <script src="scripts/controllers/SearchFacets.js"></script>
+        <script src="scripts/controllers/PartList.js"></script>
+        <script src="scripts/controllers/Search.js"></script>
+        <script src="scripts/directives/facetFriendlyName.js"></script>
+        <script src="scripts/directives/searchFacets.js"></script>
+        <script src="scripts/directives/partList.js"></script>
+        <script src="scripts/directives/tiSearch.js"></script>
+        <script src="scripts/services/facetNameService.js"></script>
+        <script src="scripts/services/searchService.js"></script>
         <!-- endbuild -->
 </body>
 </html>
