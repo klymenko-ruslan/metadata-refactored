@@ -1,0 +1,29 @@
+<div id="detailsView" class="row-fluid">
+    <div class="span3 offset2" id="partImage">
+        <img src="{{part.image}}" alt="Image of {{part.name}}"/>
+    </div>
+    <div class="span5" id="partDetails">
+        <hgroup>
+            <h1>{{part.name}}</h1>
+
+            <h2 class="pull-right"><span>Part Number</span>{{part.id}}</h2>
+        </hgroup>
+        <ul>
+            <li>Manufacturer: {{part.mfr}}</li>
+            <li>Manufacturer Part Number: {{part.mfrpn}}</li>
+            <li>Height: {{part.height}}"</li>
+            <li>Width: {{part.width}}"</li>
+            <li>Weight: {{part.weight}} lbs.</li>
+        </ul>
+        <div class="pull-right">
+            <button data-ng-click="go('/')" class="btn"><i class="icon-list icon-large"> Back</i></button>
+        </div>
+        <div data-ng-show="updateDetails.editAuth" id="updateDetails">
+            <button data-ng-click="launchUpdater()" class="btn">
+                <i class="icon-wrench icon-large"> Edit</i></button>
+            <button
+                    data-ng-show="updateDetails.deleteAuth" data-ng-click="deletePart()" class="btn">
+                <i class="icon-remove icon-large"> Delete</i></button>
+        </div>
+    </div>
+</div>

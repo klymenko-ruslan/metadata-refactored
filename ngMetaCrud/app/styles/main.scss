@@ -3,8 +3,19 @@ $iconWhiteSpritePath: "../images/glyphicons-halflings-white.png";
 
 @import "bootstrap-sass/lib/bootstrap";
 
-/* Put your CSS here */
+/* Mixins */
+@mixin rounded {
+  -moz-border-radius: 6px;
+  -webkit-border-radius: 6px;
+  border-radius: 6px; /* future proofing */
+  -khtml-border-radius: 6px; /* for old Konqueror browsers */
+}
 
+@mixin border-1 {
+  border: 1px solid black;
+}
+
+/* General */
 body {
   background: #fafafa;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -12,23 +23,18 @@ body {
   margin: 20px;
 }
 
+/* Main read view */
 table {
   font-size: 18px;
+  background: #ffffff;
   thead {
     tr {
       font-weight: bold;
-      td {
-        text-align: center !important;
-      }
     }
   }
   tbody {
     tr {
       td {
-        &:last-of-type {
-          font-size: 40px;
-          text-align: center;
-        }
         a {
           text-decoration: none;
           &:hover {
@@ -39,3 +45,40 @@ table {
     }
   }
 }
+
+/* Details read view */
+#detailsView {
+  div {
+    background: #ffffff;
+    overflow: hidden;
+    padding: 4px;
+  }
+  #partImage {
+    // Part image CSS rules
+  }
+  #partDetails {
+    hgroup {
+      h1, h2 {
+        display: inline-block;
+        vertical-align: text-bottom;
+        padding: 0 inherit;
+        margin: 4px inherit;
+        line-height: normal;
+        span {
+          font-size: 50%;
+          display: block;
+          }
+        }
+      }
+    }
+    button {
+      line-height: 30px;
+      span {
+        font-size: 35px;
+        vertical-align: text-bottom;
+        padding: 0 20px;
+      }
+    }
+  }
+
+/* Updater window */

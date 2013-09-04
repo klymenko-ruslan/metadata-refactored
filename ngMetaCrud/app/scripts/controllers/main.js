@@ -1,7 +1,8 @@
 'use strict';
 
-angular.module('ngMetaCrud')
-    .controller('MainCtrl', function ($scope, Restangular) {
+angular.module('ngMetaCrudApp')
+    .controller('MainCtrl', function ($scope, $location, Restangular) {
+
         // Example JSON Part data
         $scope.bom = [
             {
@@ -9,37 +10,47 @@ angular.module('ngMetaCrud')
                 name: "Gasket, oil inlet",
                 mfr: "Turbo International",
                 mfrpn: "8-A-0062",
-                quantity: 1
+                quantity: 1,
+                image: "images/parts/turbo.jpg"
             },
             {
                 id: 45409,
                 name: "Gasket",
                 mfr: "Turbo International",
                 mfrpn: "8-A-0070",
-                quantity: 1
+                quantity: 1,
+                image: "images/parts/turbo.jpg"
             },
             {
                 id: 45410,
                 name: "Gasket, Narrow",
                 mfr: "Turbo International",
                 mfrpn: "8-A-0071",
-                quantity: 1
+                quantity: 1,
+                image: "images/parts/turbo.jpg"
             },
             {
                 id: 45415,
                 name: "Gasket",
                 mfr: "Turbo International",
                 mfrpn: "8-A-0710",
-                quantity: 1
+                quantity: 1,
+                image: "images/parts/turbo.jpg"
             },
             {
                 id: 45433,
                 name: "Gasket, Wide",
                 mfr: "Turbo International",
                 mfrpn: "8-A-9999",
-                quantity: 1
+                quantity: 1,
+                image: "images/parts/turbo.jpg"
             }
         ];
+
+        // Routing function with destination as its variable in angular app/string format
+        $scope.go = function (path) {
+            $location.path(path);
+        };
 
         // First way of creating a Restangular object. Just saying the base URL
         var baseParts = Restangular.all('parts');
