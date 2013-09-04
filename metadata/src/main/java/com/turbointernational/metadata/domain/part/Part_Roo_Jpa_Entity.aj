@@ -4,13 +4,11 @@
 package com.turbointernational.metadata.domain.part;
 
 import com.turbointernational.metadata.domain.part.Part;
-import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
-import javax.persistence.Version;
 
 privileged aspect Part_Roo_Jpa_Entity {
     
@@ -21,17 +19,5 @@ privileged aspect Part_Roo_Jpa_Entity {
     declare @type: Part: @Inheritance(strategy = InheritanceType.SINGLE_TABLE);
     
     declare @type: Part: @DiscriminatorColumn;
-    
-    @Version
-    @Column(name = "version")
-    private Integer Part.version;
-    
-    public Integer Part.getVersion() {
-        return this.version;
-    }
-    
-    public void Part.setVersion(Integer version) {
-        this.version = version;
-    }
     
 }

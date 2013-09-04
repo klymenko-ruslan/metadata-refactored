@@ -5,7 +5,6 @@ import com.turbointernational.metadata.domain.type.PartType;
 import com.turbointernational.metadata.util.ElasticSearch;
 import java.util.HashSet;
 import java.util.List;
-import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import javax.persistence.Column;
 import javax.persistence.EntityManager;
@@ -21,11 +20,11 @@ import javax.persistence.PreRemove;
 import javax.persistence.PreUpdate;
 import javax.persistence.Transient;
 import javax.persistence.TypedQuery;
+import javax.persistence.Version;
 import net.sf.jsog.JSOG;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.roo.addon.json.RooJson;
 
-@RooJavaBean
 @RooJpaActiveRecord(table="PART", inheritanceType = "SINGLE_TABLE")
 @RooJson
 public class Part {
@@ -62,14 +61,160 @@ public class Part {
 
     @Transient
     private Part interchangePart;
+    
+    @Version
+    @Column(name = "version")
+    private Integer version;
+    
+    /**
+     * @return the id
+     */
+    public Long getId() {
+        return id;
+    }
+
+    /**
+     * @param id the id to set
+     */
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    /**
+     * @return the manufacturer
+     */
+    public Manufacturer getManufacturer() {
+        return manufacturer;
+    }
+
+    /**
+     * @param manufacturer the manufacturer to set
+     */
+    public void setManufacturer(Manufacturer manufacturer) {
+        this.manufacturer = manufacturer;
+    }
+
+    /**
+     * @return the manufacturerPartNumber
+     */
+    public String getManufacturerPartNumber() {
+        return manufacturerPartNumber;
+    }
+
+    /**
+     * @param manufacturerPartNumber the manufacturerPartNumber to set
+     */
+    public void setManufacturerPartNumber(String manufacturerPartNumber) {
+        this.manufacturerPartNumber = manufacturerPartNumber;
+    }
+
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * @param name the name to set
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * @return the description
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * @param description the description to set
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    /**
+     * @return the partType
+     */
+    public PartType getPartType() {
+        return partType;
+    }
+
+    /**
+     * @param partType the partType to set
+     */
+    public void setPartType(PartType partType) {
+        this.partType = partType;
+    }
+
+    /**
+     * @return the inactive
+     */
+    public Boolean getInactive() {
+        return inactive;
+    }
+
+    /**
+     * @param inactive the inactive to set
+     */
+    public void setInactive(Boolean inactive) {
+        this.inactive = inactive;
+    }
+
+    /**
+     * @return the interchange
+     */
+    public Interchange getInterchange() {
+        return interchange;
+    }
+
+    /**
+     * @param interchange the interchange to set
+     */
+    public void setInterchange(Interchange interchange) {
+        this.interchange = interchange;
+    }
+
+    /**
+     * @return the interchangePart
+     */
+    public Part getInterchangePart() {
+        return interchangePart;
+    }
+
+    /**
+     * @param interchangePart the interchangePart to set
+     */
+    public void setInterchangePart(Part interchangePart) {
+        this.interchangePart = interchangePart;
+    }
+
+    public Integer getVersion() {
+        return version;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
+    }
+    
 
     @Autowired(required=true)
     @Transient
     private ElasticSearch elasticSearch;
     
-    public static List<Part> findPartEntries(int firstResult, int maxResults, String partType) {
+    public static List<Part> findPartEntries(int firstResult, int maxResults, PartType partType) {
         EntityManager em = entityManager();
-        TypedQuery<Part> q = em.createQuery("SELECT o FROM Part o WHERE o.partType.typeName = ?", Part.class);
+        TypedQuery<Part> q;
+        
+        if (partType == null) {
+            q = em.createQuery("SELECT o FROM Part o", Part.class);
+        } else {
+            q = em.createQuery("SELECT o FROM Part o WHERE o.partType = ?", Part.class);
+        }
+        
         return q.setParameter(1, partType).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 
@@ -83,36 +228,36 @@ public class Part {
     public void updateInterchanges() throws Exception {
 
         // Create the interchange if no interchange and a part were specified
-        if (interchange == null && interchangePart != null) {
+        if (getInterchange() == null && getInterchangePart() != null) {
 
             // Check the other part to make sure it's blank
-            if (interchangePart.getInterchange() != null) {
-                this.setInterchange(interchangePart.getInterchange());
+            if (getInterchangePart().getInterchange() != null) {
+                this.setInterchange(getInterchangePart().getInterchange());
             } else {
-                interchange = new Interchange();
-                this.setInterchange(interchange);
-                interchange.setName("");
-                interchange.persist();
+                setInterchange(new Interchange());
+                this.setInterchange(getInterchange());
+                getInterchange().setName("");
+                getInterchange().persist();
             }
         }
 
-        if (interchange != null) {
+        if (getInterchange() != null) {
 
             // Create the set if necessary
-            if (interchange.getParts() == null) {
-                interchange.setParts(new HashSet());
+            if (getInterchange().getParts() == null) {
+                getInterchange().setParts(new HashSet());
             }
 
             // Set the bidirectional relationship
-            interchange.getParts().add(this);
+            getInterchange().getParts().add(this);
 
-            if (interchangePart != null && interchange != interchangePart.getInterchange()) {
-                interchange.getParts().add(interchangePart);
-                interchangePart.setInterchange(interchange);
-                interchangePart.merge();
+            if (getInterchangePart() != null && getInterchange() != getInterchangePart().getInterchange()) {
+                getInterchange().getParts().add(getInterchangePart());
+                getInterchangePart().setInterchange(getInterchange());
+                getInterchangePart().merge();
             }
 
-            interchange.merge();
+            getInterchange().merge();
         }
 
     }
@@ -139,4 +284,5 @@ public class Part {
 //    private Collection<BOMItem> bom;
 
     public void addIndexFields(JSOG partObject) {}
+
 }

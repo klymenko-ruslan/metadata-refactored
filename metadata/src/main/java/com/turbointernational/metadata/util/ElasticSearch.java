@@ -98,13 +98,14 @@ public class ElasticSearch {
         return result.toString();
     }
 
+    @Async
     public void indexPart(Part part) throws Exception {
         List<Part> parts = new ArrayList<Part>();
         parts.add(part);
         indexParts(parts);
     }
 
-//    @Async
+    @Async
     public void indexParts(Collection<Part> parts) throws Exception {
         Bulk.Builder bulkBuilder = new Bulk.Builder();
         bulkBuilder.defaultIndex(metadataIndex);

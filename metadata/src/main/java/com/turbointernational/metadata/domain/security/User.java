@@ -1,4 +1,5 @@
 package com.turbointernational.metadata.domain.security;
+import java.security.Principal;
 import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -81,5 +82,10 @@ public class User {
 
     public void setGroups(Set<Group> groups) {
         this.groups = groups;
+    }
+    
+    public static User getByPrincipal(Principal principal) {
+        // Get the user
+        throw new UnsupportedOperationException();
     }
 }
