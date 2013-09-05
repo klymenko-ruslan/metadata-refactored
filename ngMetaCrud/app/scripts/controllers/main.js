@@ -47,6 +47,21 @@ angular.module('ngMetaCrudApp')
             }
         ];
 
+        $scope.partTypes = [
+            {
+                type: "Turbines"
+            },
+            {
+                type: "Turbo Kits"
+            },
+            {
+                type: "Backplates"
+            },
+            {
+                type: "Gaskets"
+            }
+        ];
+
         // Routing function with destination as its variable in angular app/string format
         $scope.go = function (path) {
             $location.path(path);

@@ -23,6 +23,22 @@ body {
   margin: 20px;
 }
 
+/* Sidebar listing types/parts */
+#sidebar {
+  div {
+    border-right: 1px solid #efefef;
+    border-bottom: 1px solid #efefef;
+  }
+  h2 {
+    line-height: normal;
+    margin: inherit 0;
+    border-left: 5px solid darkgrey;
+    font-size: 20px;
+    text-align: center;
+    background: #efefef;
+  }
+}
+
 /* Main read view */
 table {
   font-size: 18px;
