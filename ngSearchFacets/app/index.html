@@ -28,6 +28,21 @@
 
     <!-- Add your site or application content here -->
     <ti-search class="container">
+        <div>
+            <table ng-controller="BillOfMaterialsCtrl" ng-table="bomTableParams" border="1">
+                <tr ng-repeat="part in bom | filter:part.delete" ng-click="clicked(part)">
+                    <td title="'ID'">{{part.id}}</td>
+                    <td title="'Name'">{{part.name}}</td>
+                    <td title="'Manufacturer'">{{part.mfr}}</td>
+                    <td title="'Mfr Part #'">{{part.mfrpn}}</td>
+                    <td title="'Quantity'">
+                        <input type="text" ng-model="part.quantity" style="width: 3em"/>
+                    </td>
+                    <td title="'Delete'"><input type="checkbox" ng-model="part.delete"/></td>
+                </tr>
+            </table>
+        </div>
+        <hr/>
         Search: <input type="text" ng-model="queryString"/>
         <table border="1">
             <tr valign="top">
@@ -79,6 +94,7 @@
 
         <!-- build:js({.tmp,app}) scripts/scripts.js -->
         <script src="scripts/app.js"></script>
+    <script src="scripts/controllers/BillOfMaterials.js"></script>
         <script src="scripts/controllers/SearchFacets.js"></script>
         <script src="scripts/controllers/PartList.js"></script>
         <script src="scripts/controllers/Search.js"></script>

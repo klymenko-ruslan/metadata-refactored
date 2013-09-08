@@ -10,6 +10,7 @@ angular.module('ngSearchFacetsApp')
         });
 
         $scope.clicked = function(part) {
-            console.log("Clicked part: " + JSON.stringify(part));
+            console.log("Clicked part: ", JSON.stringify(part));
+            $scope.$broadcast("PartList.click", part);
         }
   });
