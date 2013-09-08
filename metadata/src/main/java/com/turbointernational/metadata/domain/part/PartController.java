@@ -48,11 +48,11 @@ public class PartController {
     public ResponseEntity<String> listJson(
             @RequestParam(required = false, defaultValue = "1") Integer first,
             @RequestParam(required = false, defaultValue = "20") Integer count,
-            @RequestParam(required = false) PartType partType) {
+            @RequestParam(required = false) String type) {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json; charset=utf-8");
         
-        List<Part> result = Part.findPartEntries(first, count, partType);
+        List<Part> result = Part.findPartEntries(first, count, type);
         
         return new ResponseEntity<String>(Part.toJsonArray(result), headers, HttpStatus.OK);
     }
@@ -118,7 +118,7 @@ public class PartController {
     @RequestMapping(value="/indexAll", headers = "Accept=application/json")
     @ResponseBody
     public ResponseEntity<Void> indexAll(@RequestParam(required=false) Integer maxPages,
-                                             @RequestParam(required=false) PartType type) throws Exception {
+                                         @RequestParam(required=false) String type) throws Exception {
         
         if (maxPages == null ) {
             maxPages = Integer.MAX_VALUE;

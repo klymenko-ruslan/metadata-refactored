@@ -413,3 +413,15 @@ CREATE TABLE `group_role` (
   FOREIGN KEY (`group_id`) REFERENCES `groups` (`id`),
   FOREIGN KEY (`role_id`) REFERENCES `role` (`id`)
 ) ENGINE = INNODB;
+
+CREATE TABLE `changelog` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `change_date` DATETIME NOT NULL,
+  `user_id` BIGINT NOT NULL,
+  `description` VARCHAR(255) NOT NULL,
+  `data` LONGTEXT NULL,
+  `version` INTEGER NOT NULL DEFAULT 1,
+  PRIMARY KEY(`id`, `version`),
+  KEY(`change_date`),
+  FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
+) ENGINE = INNODB;

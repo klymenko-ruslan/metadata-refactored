@@ -12,6 +12,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 
@@ -30,14 +32,15 @@ public class Changelog {
     @Column(name = "id")
     private Long id;
     
-    @Column(name="change_date")
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="change_date", nullable = false)
     private Date changeDate;
     
     @OneToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
     
-    @Column(name="description")
+    @Column(name="description", nullable = false)
     private String description;
 
     @Lob
@@ -56,6 +59,7 @@ public class Changelog {
         Changelog changelog = new Changelog();
         
         changelog.description = description;
+        changelog.changeDate = new Date();
         changelog.data = data.toString();
         changelog.user = User.getByPrincipal(principal);
         

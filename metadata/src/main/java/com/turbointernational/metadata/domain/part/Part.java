@@ -1,10 +1,13 @@
 package com.turbointernational.metadata.domain.part;
+import com.turbointernational.metadata.domain.bom.BOMItem;
 import com.turbointernational.metadata.domain.other.Interchange;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.type.PartType;
 import com.turbointernational.metadata.util.ElasticSearch;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import javax.persistence.CascadeType;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import javax.persistence.Column;
 import javax.persistence.EntityManager;
@@ -14,6 +17,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.PreRemove;
@@ -205,17 +209,18 @@ public class Part {
     @Transient
     private ElasticSearch elasticSearch;
     
-    public static List<Part> findPartEntries(int firstResult, int maxResults, PartType partType) {
-        EntityManager em = entityManager();
+    public static List<Part> findPartEntries(int firstResult, int maxResults, String type) {
+        EntityManager em = Part.entityManager();
         TypedQuery<Part> q;
         
-        if (partType == null) {
+        if (type == null) {
             q = em.createQuery("SELECT o FROM Part o", Part.class);
         } else {
-            q = em.createQuery("SELECT o FROM Part o WHERE o.partType = ?", Part.class);
+            q = em.createQuery("SELECT o FROM Part o WHERE o.partType.name = ?", Part.class);
+            q.setParameter(1, type);
         }
         
-        return q.setParameter(1, partType).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+        return q.setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 
     @PrePersist
