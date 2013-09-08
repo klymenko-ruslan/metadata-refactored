@@ -59,9 +59,14 @@ public class PartController {
     
     @Transactional
     @RequestMapping(method = RequestMethod.POST, headers = "Accept=application/json")
-    public ResponseEntity<String> createFromJson(Principal principal, @RequestBody String json) {
+    public ResponseEntity<String> createFromJson(Principal principal, @RequestBody String partJson) throws Exception {
+        JSOG partJsog = JSOG.parse(partJson);
         
-        Part part = Part.fromJsonToPart(json);
+        Part part = Part.fromJsonToPart(partJson);
+        
+        // Update the interchange group
+        part.setInterchangeByPartId(partJsog.get("interchangePartId").getLongValue());
+        
         part.persist();
         
         // Update the changelog
@@ -74,7 +79,9 @@ public class PartController {
     
     @Transactional
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, headers = "Accept=application/json")
-    public ResponseEntity<String> updateFromJson(Principal principal, @RequestBody String json, @PathVariable("id") Long id) {
+    public ResponseEntity<String> updateFromJson(Principal principal, @RequestBody String partJson, @PathVariable("id") Long id) throws Exception {
+        JSOG partJsog = JSOG.parse(partJson);
+        
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json");
         
@@ -82,10 +89,13 @@ public class PartController {
         String originalPartJson = Part.findPart(id).toJson();
         
         // Update the part
-        Part part = Part.fromJsonToPart(json);
+        Part part = Part.fromJsonToPart(partJson);
         if (part.merge() == null) {
             return new ResponseEntity<String>(headers, HttpStatus.NOT_FOUND);
         }
+        
+        // Update the interchange group
+        part.setInterchangeByPartId(partJsog.get("interchangePartId").getLongValue());
         
         // Update the changelog
         JSOG dataJsog = JSOG.object("originalPart", originalPartJson)

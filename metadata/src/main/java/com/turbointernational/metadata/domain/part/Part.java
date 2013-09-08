@@ -32,6 +32,20 @@ import org.springframework.roo.addon.json.RooJson;
 @RooJpaActiveRecord(table="PART", inheritanceType = "SINGLE_TABLE")
 @RooJson
 public class Part {
+    
+    public static List<Part> findPartEntries(int firstResult, int maxResults, String type) {
+        EntityManager em = Part.entityManager();
+        TypedQuery<Part> q;
+        
+        if (type == null) {
+            q = em.createQuery("SELECT o FROM Part o", Part.class);
+        } else {
+            q = em.createQuery("SELECT o FROM Part o WHERE o.partType.name = ?", Part.class);
+            q.setParameter(1, type);
+        }
+        
+        return q.setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -63,8 +77,9 @@ public class Part {
                inverseJoinColumns=@JoinColumn(name="interchange_header_id"))
     private Interchange interchange;
 
-    @Transient
-    private Part interchangePart;
+    @OneToMany(mappedBy="parent", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name="parent_part_id", table="bom")
+    private Collection<BOMItem> bom;
     
     @Version
     @Column(name = "version")
@@ -182,18 +197,42 @@ public class Part {
         this.interchange = interchange;
     }
 
-    /**
-     * @return the interchangePart
-     */
-    public Part getInterchangePart() {
-        return interchangePart;
-    }
+    public void setInterchangeByPartId(Long interchangePartId) throws Exception {
+        Part interchangePart = Part.findPart(interchangePartId);
 
-    /**
-     * @param interchangePart the interchangePart to set
-     */
-    public void setInterchangePart(Part interchangePart) {
-        this.interchangePart = interchangePart;
+        // Create the interchange if no interchange and a part were specified
+        if (interchange == null && interchangePart != null) {
+
+            // Check the other part to make sure it's blank
+            if (interchangePart.interchange != null) {
+                this.setInterchange(interchangePart.interchange);
+            } else {
+                setInterchange(new Interchange());
+                this.setInterchange(interchange);
+                interchange.setName("");
+                interchange.persist();
+            }
+        }
+
+        if (interchange != null) {
+
+            // Create the set if necessary
+            if (interchange.getParts() == null) {
+                interchange.setParts(new HashSet());
+            }
+
+            // Set the bidirectional relationship
+            interchange.getParts().add(this);
+
+            if (interchangePart != null && interchange != interchangePart.interchange) {
+                interchange.getParts().add(interchangePart);
+                interchangePart.setInterchange(interchange);
+                interchangePart.merge();
+            }
+
+            interchange.merge();
+        }
+
     }
 
     public Integer getVersion() {
@@ -204,76 +243,9 @@ public class Part {
         this.version = version;
     }
     
-
     @Autowired(required=true)
     @Transient
     private ElasticSearch elasticSearch;
-    
-    public static List<Part> findPartEntries(int firstResult, int maxResults, String type) {
-        EntityManager em = Part.entityManager();
-        TypedQuery<Part> q;
-        
-        if (type == null) {
-            q = em.createQuery("SELECT o FROM Part o", Part.class);
-        } else {
-            q = em.createQuery("SELECT o FROM Part o WHERE o.partType.name = ?", Part.class);
-            q.setParameter(1, type);
-        }
-        
-        return q.setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
-    }
-
-    @PrePersist
-    @PreUpdate
-    public void preUpdatePersist() throws Exception {
-        indexPart();
-        updateInterchanges();
-    }
-
-    public void updateInterchanges() throws Exception {
-
-        // Create the interchange if no interchange and a part were specified
-        if (getInterchange() == null && getInterchangePart() != null) {
-
-            // Check the other part to make sure it's blank
-            if (getInterchangePart().getInterchange() != null) {
-                this.setInterchange(getInterchangePart().getInterchange());
-            } else {
-                setInterchange(new Interchange());
-                this.setInterchange(getInterchange());
-                getInterchange().setName("");
-                getInterchange().persist();
-            }
-        }
-
-        if (getInterchange() != null) {
-
-            // Create the set if necessary
-            if (getInterchange().getParts() == null) {
-                getInterchange().setParts(new HashSet());
-            }
-
-            // Set the bidirectional relationship
-            getInterchange().getParts().add(this);
-
-            if (getInterchangePart() != null && getInterchange() != getInterchangePart().getInterchange()) {
-                getInterchange().getParts().add(getInterchangePart());
-                getInterchangePart().setInterchange(getInterchange());
-                getInterchangePart().merge();
-            }
-
-            getInterchange().merge();
-        }
-
-    }
-
-    public void indexPart() throws Exception {
-        try {
-            elasticSearch.indexPart(this);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     @PreRemove
     public void removeIndex() throws Exception {
@@ -284,9 +256,19 @@ public class Part {
         }
     }
 
-//    @OneToMany(mappedBy="parent", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-//    @JoinColumn(name="parent_part_id", table="bom")
-//    private Collection<BOMItem> bom;
+    @PrePersist
+    @PreUpdate
+    public void preUpdatePersist() throws Exception {
+        indexPart();
+    }
+
+    public void indexPart() throws Exception {
+        try {
+            elasticSearch.indexPart(this);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     public void addIndexFields(JSOG partObject) {}
 
