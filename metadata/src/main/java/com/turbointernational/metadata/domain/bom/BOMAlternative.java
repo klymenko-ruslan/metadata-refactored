@@ -12,7 +12,7 @@ import org.springframework.roo.addon.json.RooJson;
 
 @Configurable
 @Entity
-@RooJpaActiveRecord(table="BOM_ALT_ITEM")
+@RooJpaActiveRecord(table="bom_alt_item")
 @RooJson
 public class BOMAlternative {
 

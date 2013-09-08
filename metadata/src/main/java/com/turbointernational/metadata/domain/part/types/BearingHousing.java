@@ -42,20 +42,6 @@ public class BearingHousing extends Part {
     @Column(name="bearing_type", table = "bearing_housing")
     private String bearingType;
 
-    @Override
-    public void addIndexFields(JSOG partObject) {
-        if (getCoolType() != null) {
-            partObject.put("cool_type_name", getCoolType().getName());
-        }
-        partObject.put("oil_inlet", getOilInlet());
-        partObject.put("oil_outlet", getOilOutlet());
-        partObject.put("oil", getOil());
-        partObject.put("outlet_flange_holes", getOutletFlangeHoles());
-        partObject.put("water_ports", getWaterPorts());
-        partObject.put("design_features", getDesignFeatures());
-        partObject.put("bearing_type", getBearingType());
-    }
-
     public CoolType getCoolType() {
         return coolType;
     }
@@ -118,5 +104,24 @@ public class BearingHousing extends Part {
 
     public void setBearingType(String bearingType) {
         this.bearingType = bearingType;
+    }
+
+    @Override
+    public JSOG toJsog() {
+        JSOG partObject = super.toJsog();
+        
+        partObject.put("oil_inlet", getOilInlet());
+        partObject.put("oil_outlet", getOilOutlet());
+        partObject.put("oil", getOil());
+        partObject.put("outlet_flange_holes", getOutletFlangeHoles());
+        partObject.put("water_ports", getWaterPorts());
+        partObject.put("design_features", getDesignFeatures());
+        partObject.put("bearing_type", getBearingType());
+        
+        if (getCoolType() != null) {
+            partObject.put("cool_type_name", getCoolType().getName());
+        }
+        
+        return partObject;
     }
 }

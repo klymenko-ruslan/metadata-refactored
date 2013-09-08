@@ -16,40 +16,29 @@ import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 @Configurable
 @Entity
 @RooJpaActiveRecord
-@SecondaryTable(name="TURBINE_WHEEL", pkJoinColumns=@PrimaryKeyJoinColumn(name = "part_id"))
+@SecondaryTable(name="turbine_wheel", pkJoinColumns=@PrimaryKeyJoinColumn(name = "part_id"))
 public class TurbineWheel extends Part {
 
-    @Column(name="exduce_oa", table = "TURBINE_WHEEL")
+    @Column(name="exduce_oa", table = "turbine_wheel")
     private Float exducerDiameterA;
 
-    @Column(name="tip_height_b", table = "TURBINE_WHEEL")
+    @Column(name="tip_height_b", table = "turbine_wheel")
     private Float tipHeightB;
 
-    @Column(name="inducer_oc", table = "TURBINE_WHEEL")
+    @Column(name="inducer_oc", table = "turbine_wheel")
     private Float inducerDiameterC;
 
-    @Column(name="journal_od", table = "TURBINE_WHEEL")
+    @Column(name="journal_od", table = "turbine_wheel")
     private Float journalDiameterD;
 
-    @Column(name="stem_oe", table = "TURBINE_WHEEL")
+    @Column(name="stem_oe", table = "turbine_wheel")
     private Float stemDiameterE;
 
-    @Column(name="shaft_thread_f", table = "TURBINE_WHEEL")
+    @Column(name="shaft_thread_f", table = "turbine_wheel")
     private String shaftThreadF;
 
-    @Column(name="trim_no_blades", table = "TURBINE_WHEEL")
+    @Column(name="trim_no_blades", table = "turbine_wheel")
     private String numberOfBlades;
-
-    @Override
-    public void addIndexFields(JSOG partObject) {
-        partObject.put("exduce_oa", getExducerDiameterA());
-        partObject.put("tip_height_b", getTipHeightB());
-        partObject.put("inducer_oc", getInducerDiameterC());
-        partObject.put("journal_od", getJournalDiameterD());
-        partObject.put("stem_oe", getStemDiameterE());
-        partObject.put("shaft_thread_f", getShaftThreadF());
-        partObject.put("number_of_blades", getNumberOfBlades());
-    }
 
     public Float getExducerDiameterA() {
         return exducerDiameterA;
@@ -105,5 +94,20 @@ public class TurbineWheel extends Part {
 
     public void setNumberOfBlades(String numberOfBlades) {
         this.numberOfBlades = numberOfBlades;
+    }
+
+    @Override
+    public JSOG toJsog() {
+        JSOG partObject = super.toJsog();
+        
+        partObject.put("exduce_oa", getExducerDiameterA());
+        partObject.put("tip_height_b", getTipHeightB());
+        partObject.put("inducer_oc", getInducerDiameterC());
+        partObject.put("journal_od", getJournalDiameterD());
+        partObject.put("stem_oe", getStemDiameterE());
+        partObject.put("shaft_thread_f", getShaftThreadF());
+        partObject.put("number_of_blades", getNumberOfBlades());
+        
+        return partObject;
     }
 }

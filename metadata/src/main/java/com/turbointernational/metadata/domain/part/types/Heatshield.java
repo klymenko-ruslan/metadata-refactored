@@ -11,24 +11,17 @@ import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 @Configurable
 @Entity
 @RooJpaActiveRecord
-@SecondaryTable(name="HEATSHIELD", pkJoinColumns=@PrimaryKeyJoinColumn(name = "part_id"))
+@SecondaryTable(name="heatshield", pkJoinColumns=@PrimaryKeyJoinColumn(name = "part_id"))
 public class Heatshield extends Part {
 
-    @Column(name="overall_diameter", table = "HEATSHIELD")
+    @Column(name="overall_diameter", table = "heatshield")
     private Float overallDiameter;
 
-    @Column(name="inside_diameter", table = "HEATSHIELD")
+    @Column(name="inside_diameter", table = "heatshield")
     private Float insideDimater;
 
-    @Column(name="inducer_diameter", table = "HEATSHIELD")
+    @Column(name="inducer_diameter", table = "heatshield")
     private Float inducerDiameter;
-
-    @Override
-    public void addIndexFields(JSOG partObject) {
-        partObject.put("overall_diameter", getOverallDiameter());
-        partObject.put("inside_diameter", getInsideDimater());
-        partObject.put("inducer_diameter", getInducerDiameter());
-    }
 
     public Float getOverallDiameter() {
         return overallDiameter;
@@ -52,6 +45,17 @@ public class Heatshield extends Part {
 
     public void setInducerDiameter(Float inducerDiameter) {
         this.inducerDiameter = inducerDiameter;
+    }
+
+    @Override
+    public JSOG toJsog() {
+        JSOG partObject = super.toJsog();
+        
+        partObject.put("overall_diameter", getOverallDiameter());
+        partObject.put("inside_diameter", getInsideDimater());
+        partObject.put("inducer_diameter", getInducerDiameter());
+        
+        return partObject;
     }
 
 }

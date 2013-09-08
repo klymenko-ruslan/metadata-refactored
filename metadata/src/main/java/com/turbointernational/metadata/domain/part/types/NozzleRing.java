@@ -9,6 +9,6 @@ import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 @Configurable
 @Entity
 @RooJpaActiveRecord
-@SecondaryTable(name="NOZZLE_RING", pkJoinColumns=@PrimaryKeyJoinColumn(name = "part_id"))
+@SecondaryTable(name="nozzle_ring", pkJoinColumns=@PrimaryKeyJoinColumn(name = "part_id"))
 public class NozzleRing extends Part {
 }

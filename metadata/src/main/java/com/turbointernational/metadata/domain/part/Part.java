@@ -4,6 +4,10 @@ import com.turbointernational.metadata.domain.other.Interchange;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.type.PartType;
 import com.turbointernational.metadata.util.ElasticSearch;
+import flexjson.JSONDeserializer;
+import flexjson.JSONSerializer;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -29,8 +33,7 @@ import net.sf.jsog.JSOG;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.roo.addon.json.RooJson;
 
-@RooJpaActiveRecord(table="PART", inheritanceType = "SINGLE_TABLE")
-@RooJson
+@RooJpaActiveRecord(table="part", inheritanceType = "SINGLE_TABLE")
 public class Part {
     
     public static List<Part> findPartEntries(int firstResult, int maxResults, String type) {
@@ -68,8 +71,8 @@ public class Part {
     @Column(name="description")
     private String description;
     
-    @Column(name="ti_part_num")
-    private String tiPartNumber;
+//    @Column(name="ti_part_num")
+//    private String tiPartNumber;
     
     @Column(name="magento_product_id")
     private Integer magentoProductId;
@@ -88,121 +91,88 @@ public class Part {
     private Interchange interchange;
 
     @OneToMany(mappedBy="parent", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name="parent_part_id", table="bom")
     private Collection<BOMItem> bom;
     
     @Version
     @Column(name = "version")
     private Integer version;
     
-    /**
-     * @return the id
-     */
     public Long getId() {
         return id;
     }
 
-    /**
-     * @param id the id to set
-     */
     public void setId(Long id) {
         this.id = id;
     }
 
-    /**
-     * @return the manufacturer
-     */
     public Manufacturer getManufacturer() {
         return manufacturer;
     }
 
-    /**
-     * @param manufacturer the manufacturer to set
-     */
     public void setManufacturer(Manufacturer manufacturer) {
         this.manufacturer = manufacturer;
     }
 
-    /**
-     * @return the manufacturerPartNumber
-     */
     public String getManufacturerPartNumber() {
         return manufacturerPartNumber;
     }
 
-    /**
-     * @param manufacturerPartNumber the manufacturerPartNumber to set
-     */
     public void setManufacturerPartNumber(String manufacturerPartNumber) {
         this.manufacturerPartNumber = manufacturerPartNumber;
     }
 
-    /**
-     * @return the name
-     */
     public String getName() {
         return name;
     }
 
-    /**
-     * @param name the name to set
-     */
     public void setName(String name) {
         this.name = name;
     }
 
-    /**
-     * @return the description
-     */
     public String getDescription() {
         return description;
     }
 
-    /**
-     * @param description the description to set
-     */
     public void setDescription(String description) {
         this.description = description;
     }
 
-    /**
-     * @return the partType
-     */
+//    public String getTiPartNumber() {
+//        return tiPartNumber;
+//    }
+//
+//    public void setTiPartNumber(String tiPartNumber) {
+//        this.tiPartNumber = tiPartNumber;
+//    }
+
+    public Integer getMagentoProductId() {
+        return magentoProductId;
+    }
+
+    public void setMagentoProductId(Integer magentoProductId) {
+        this.magentoProductId = magentoProductId;
+    }
+    
     public PartType getPartType() {
         return partType;
     }
 
-    /**
-     * @param partType the partType to set
-     */
     public void setPartType(PartType partType) {
         this.partType = partType;
     }
 
-    /**
-     * @return the inactive
-     */
     public Boolean getInactive() {
         return inactive;
     }
 
-    /**
-     * @param inactive the inactive to set
-     */
     public void setInactive(Boolean inactive) {
         this.inactive = inactive;
     }
 
-    /**
-     * @return the interchange
-     */
     public Interchange getInterchange() {
         return interchange;
     }
 
-    /**
-     * @param interchange the interchange to set
-     */
     public void setInterchange(Interchange interchange) {
         this.interchange = interchange;
     }
@@ -245,6 +215,14 @@ public class Part {
 
     }
 
+    public Collection<BOMItem> getBom() {
+        return bom;
+    }
+
+    public void setBom(Collection<BOMItem> bom) {
+        this.bom = bom;
+    }
+    
     public Integer getVersion() {
         return version;
     }
@@ -298,5 +276,46 @@ public class Part {
         }
         
         return partObject;
+    }
+    
+    public String toJson() {
+        return new JSONSerializer()
+                .include("bom")
+                .exclude("*.class")
+                .serialize(this);
+    }
+    
+    public String toJson(String[] fields) {
+        return new JSONSerializer()
+                .include(fields)
+                .exclude("*.class")
+                .serialize(this);
+    }
+    
+    public static Part fromJsonToPart(String json) {
+        return new JSONDeserializer<Part>()
+                .use(null, Part.class)
+                .deserialize(json);
+    }
+    
+    public static String toJsonArray(Collection<Part> collection) {
+        return new JSONSerializer()
+                .include("bom")
+                .exclude("*.class")
+                .serialize(collection);
+    }
+    
+    public static String toJsonArray(Collection<Part> collection, String[] fields) {
+        return new JSONSerializer()
+                .include(fields)
+                .exclude("*")
+                .serialize(collection);
+    }
+    
+    public static Collection<Part> fromJsonArrayToParts(String json) {
+        return new JSONDeserializer<List<Part>>()
+                .use(null, ArrayList.class)
+                .use("values", Part.class)
+                .deserialize(json);
     }
 }

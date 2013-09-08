@@ -50,21 +50,6 @@ public class Backplate extends Part {
     @Column(name="overall_height", table = "backplate")
     private Float overallHeight;
 
-    @Override
-    public void addIndexFields(JSOG partObject) {
-        if (getSealType() != null) {
-            partObject.put("seal_type_name", getSealType().getName());
-        }
-
-        partObject.put("overall_diameter", getOverallDiameter());
-        partObject.put("compressor_wheel_diameter", getCompressorWheelDiameter());
-        partObject.put("piston_ring_diameter", getPistonRingDiameter());
-        partObject.put("compressor_housing_diameter", getCompressorHousingDiameter());
-        partObject.put("secondary_diameter", getSecondaryDiameter());
-        partObject.put("overall_height", getOverallHeight());
-        partObject.put("style_compressor_wheel", getStyleCompressorWheel());
-    }
-
     public SealType getSealType() {
         return sealType;
     }
@@ -143,6 +128,25 @@ public class Backplate extends Part {
 
     public void setOverallHeight(Float overallHeight) {
         this.overallHeight = overallHeight;
+    }
+
+    @Override
+    public JSOG toJsog() {
+        JSOG partObject = super.toJsog();
+        
+        if (getSealType() != null) {
+            partObject.put("seal_type_name", getSealType().getName());
+        }
+
+        partObject.put("overall_diameter", getOverallDiameter());
+        partObject.put("compressor_wheel_diameter", getCompressorWheelDiameter());
+        partObject.put("piston_ring_diameter", getPistonRingDiameter());
+        partObject.put("compressor_housing_diameter", getCompressorHousingDiameter());
+        partObject.put("secondary_diameter", getSecondaryDiameter());
+        partObject.put("overall_height", getOverallHeight());
+        partObject.put("style_compressor_wheel", getStyleCompressorWheel());
+        
+        return partObject;
     }
 
 }

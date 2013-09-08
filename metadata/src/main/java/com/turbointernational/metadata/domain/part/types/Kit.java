@@ -19,6 +19,14 @@ public class Kit extends Part {
     @JoinColumn(name="kit_type_id", table = "kit")
     private KitType type;
 
+    public KitType getType() {
+        return type;
+    }
+
+    public void setType(KitType type) {
+        this.type = type;
+    }
+
     @Override
     public JSOG toJsog() {
         JSOG partObject = super.toJsog();
@@ -28,13 +36,5 @@ public class Kit extends Part {
         }
         
         return partObject;
-    }
-
-    public KitType getType() {
-        return type;
-    }
-
-    public void setType(KitType type) {
-        this.type = type;
     }
 }

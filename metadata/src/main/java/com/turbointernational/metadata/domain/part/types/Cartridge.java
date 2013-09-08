@@ -9,7 +9,7 @@ import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 @Configurable
 @Entity
 @RooJpaActiveRecord
-@SecondaryTable(name="CARTRIDGE", pkJoinColumns=@PrimaryKeyJoinColumn(name = "part_id"))
+@SecondaryTable(name="cartridge", pkJoinColumns=@PrimaryKeyJoinColumn(name = "part_id"))
 public class Cartridge extends Part {
 
 }

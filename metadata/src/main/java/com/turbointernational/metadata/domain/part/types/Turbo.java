@@ -25,21 +25,6 @@ public class Turbo extends Part {
     @JoinColumn(name="cool_type_id", table = "turbo")
     private CoolType coolType;
 
-    @Override
-    public JSOG toJsog() {
-        JSOG partObject = super.toJsog();
-        
-        if (model != null) {
-            partObject.put("turbo_model_name", model.getName());
-        }
-
-        if (getCoolType() != null) {
-            partObject.put("cool_type_name", getCoolType().getName());
-        }
-        
-        return partObject;
-    }
-
     public TurboModel getModel() {
         return model;
     }
@@ -54,6 +39,21 @@ public class Turbo extends Part {
 
     public void setCoolType(CoolType coolType) {
         this.coolType = coolType;
+    }
+
+    @Override
+    public JSOG toJsog() {
+        JSOG partObject = super.toJsog();
+        
+        if (model != null) {
+            partObject.put("turbo_model_name", model.getName());
+        }
+
+        if (getCoolType() != null) {
+            partObject.put("cool_type_name", getCoolType().getName());
+        }
+        
+        return partObject;
     }
     
 }

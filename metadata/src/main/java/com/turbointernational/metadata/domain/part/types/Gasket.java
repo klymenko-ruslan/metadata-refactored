@@ -20,6 +20,14 @@ public class Gasket extends Part {
     @JoinColumn(name="gasket_type_id", table = "gasket")
     private GasketType type;
 
+    public GasketType getType() {
+        return type;
+    }
+
+    public void setType(GasketType type) {
+        this.type = type;
+    }
+
     @Override
     public JSOG toJsog() {
         JSOG partObject = super.toJsog();
@@ -29,13 +37,5 @@ public class Gasket extends Part {
         }
         
         return partObject;
-    }
-
-    public GasketType getType() {
-        return type;
-    }
-
-    public void setType(GasketType type) {
-        this.type = type;
     }
 }

@@ -14,47 +14,32 @@ import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 @Configurable
 @Entity
 @RooJpaActiveRecord
-@SecondaryTable(name="BEARING_SPACER", pkJoinColumns=@PrimaryKeyJoinColumn(name = "part_id"))
+@SecondaryTable(name="bearing_spacer", pkJoinColumns=@PrimaryKeyJoinColumn(name = "part_id"))
 public class BearingSpacer extends Part {
 
     @OneToOne
-    @JoinTable(name="STANDARD_BEARING_SPACER",
+    @JoinTable(name="standard_bearing_spacer",
                joinColumns=@JoinColumn(name="oversized_part_id"),
                inverseJoinColumns=@JoinColumn(name="standard_part_id"))
     private BearingSpacer standardSize;
 
     @OneToOne
-    @JoinTable(name="STANDARD_BEARING_SPACER",
+    @JoinTable(name="standard_bearing_spacer",
                joinColumns=@JoinColumn(name="standard_part_id"),
                inverseJoinColumns=@JoinColumn(name="oversized_part_id"))
     private BearingSpacer oversize;
     
-    @Column(name="outside_dim_min", table = "BEARING_SPACER")
+    @Column(name="outside_dim_min", table = "bearing_spacer")
     private Float outsideDiameterMin;
 
-    @Column(name="outside_dim_max", table = "BEARING_SPACER")
+    @Column(name="outside_dim_max", table = "bearing_spacer")
     private Float outsideDiameterMax;
     
-    @Column(name="inside_dim_min", table = "BEARING_SPACER")
+    @Column(name="inside_dim_min", table = "bearing_spacer")
     private Float insideDiameterMin;
     
-    @Column(name="inside_dim_max", table = "BEARING_SPACER")
+    @Column(name="inside_dim_max", table = "bearing_spacer")
     private Float insideDiameterMax;
-
-    @Override
-    public void addIndexFields(JSOG partObject) {
-        if (getStandardSize() != null) {
-            partObject.put("standard_size_id", getStandardSize().getId());
-        }
-        if (getOversize() != null) {
-            partObject.put("oversize_id", getOversize().getId());
-        }
-
-        partObject.put("outside_diameter_min", getOutsideDiameterMin());
-        partObject.put("outside_diameter_max", getOutsideDiameterMax());
-        partObject.put("inside_diameter_min", getInsideDiameterMin());
-        partObject.put("inside_diameter_max", getInsideDiameterMax());
-    }
 
     public BearingSpacer getStandardSize() {
         return standardSize;
@@ -102,6 +87,26 @@ public class BearingSpacer extends Part {
 
     public void setInsideDiameterMax(Float insideDiameterMax) {
         this.insideDiameterMax = insideDiameterMax;
+    }
+
+    @Override
+    public JSOG toJsog() {
+        JSOG partObject = super.toJsog();
+
+        partObject.put("outside_diameter_min", getOutsideDiameterMin());
+        partObject.put("outside_diameter_max", getOutsideDiameterMax());
+        partObject.put("inside_diameter_min", getInsideDiameterMin());
+        partObject.put("inside_diameter_max", getInsideDiameterMax());
+        
+        if (getStandardSize() != null) {
+            partObject.put("standard_size_id", getStandardSize().getId());
+        }
+        
+        if (getOversize() != null) {
+            partObject.put("oversize_id", getOversize().getId());
+        }
+        
+        return partObject;
     }
 
 }

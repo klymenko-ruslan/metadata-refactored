@@ -54,7 +54,17 @@ public class PartController {
         
         List<Part> result = Part.findPartEntries(first, count, type);
         
-        return new ResponseEntity<String>(Part.toJsonArray(result), headers, HttpStatus.OK);
+        String[] fields = new String[] {
+            "id",
+            "manufacturer.id",
+            "manufacturer.name",
+            "manufacturer.name",
+            "manufacturerPartNumber",
+            "partType.id",
+            "partType.name"
+        };
+        
+        return new ResponseEntity<String>(Part.toJsonArray(result, fields), headers, HttpStatus.OK);
     }
     
     @Transactional

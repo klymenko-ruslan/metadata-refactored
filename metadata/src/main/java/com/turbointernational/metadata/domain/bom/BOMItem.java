@@ -25,8 +25,9 @@ public class BOMItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-//    @OneToOne(mappedBy="bom", fetch = FetchType.LAZY)
-//    private Part parent;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="parent_part_id")
+    private Part parent;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="child_part_id")
@@ -46,6 +47,14 @@ public class BOMItem {
         this.id = id;
     }
 
+    public Part getParent() {
+        return parent;
+    }
+
+    public void setParent(Part parent) {
+        this.parent = parent;
+    }
+    
     public Part getChild() {
         return child;
     }
