@@ -4,7 +4,7 @@ import com.turbointernational.metadata.domain.other.Interchange;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.type.PartType;
 import com.turbointernational.metadata.util.ElasticSearch;
-import java.util.Collection;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import javax.persistence.CascadeType;
@@ -47,6 +47,10 @@ public class Part {
         return q.setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 
+    public static List<Part> getPartsUpdatedAfter(Date lastUpdated, int i, int pageSize) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -63,6 +67,12 @@ public class Part {
 
     @Column(name="description")
     private String description;
+    
+    @Column(name="ti_part_num")
+    private String tiPartNumber;
+    
+    @Column(name="magento_product_id")
+    private Integer magentoProductId;
 
     @OneToOne
     @JoinColumn(name="part_type_id")
@@ -270,6 +280,23 @@ public class Part {
         }
     }
 
-    public void addIndexFields(JSOG partObject) {}
+    public JSOG toJsog() {
+        JSOG partObject = JSOG.object()
+            .put("id", id)
+            .put("name", name)
+            .put("description", description)
+            .put("manufacturer_name", manufacturer.getName())
+            .put("manufacturer_type_name", manufacturer.getType().getName())
+            .put("manufacturer_part_number", manufacturerPartNumber);
 
+        if (partType != null) {
+            partObject.put("part_type", partType.getTypeName());
+        }
+
+        if (interchange != null) {
+            partObject.put("interchange_id", interchange.getId());
+        }
+        
+        return partObject;
+    }
 }

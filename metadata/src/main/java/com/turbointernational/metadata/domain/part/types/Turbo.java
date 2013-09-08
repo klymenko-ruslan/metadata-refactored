@@ -26,14 +26,18 @@ public class Turbo extends Part {
     private CoolType coolType;
 
     @Override
-    public void addIndexFields(JSOG partObject) {
-        if (getModel() != null) {
-            partObject.put("turbo_model_name", getModel().getName());
+    public JSOG toJsog() {
+        JSOG partObject = super.toJsog();
+        
+        if (model != null) {
+            partObject.put("turbo_model_name", model.getName());
         }
 
         if (getCoolType() != null) {
             partObject.put("cool_type_name", getCoolType().getName());
         }
+        
+        return partObject;
     }
 
     public TurboModel getModel() {

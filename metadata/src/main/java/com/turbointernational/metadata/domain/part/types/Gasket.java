@@ -21,10 +21,14 @@ public class Gasket extends Part {
     private GasketType type;
 
     @Override
-    public void addIndexFields(JSOG partObject) {
-        if (getType() != null) {
-            partObject.put("gasket_type_name", getType().getName());
+    public JSOG toJsog() {
+        JSOG partObject = super.toJsog();
+        
+        if (type != null) {
+            partObject.put("gasket_type_name", type.getName());
         }
+        
+        return partObject;
     }
 
     public GasketType getType() {

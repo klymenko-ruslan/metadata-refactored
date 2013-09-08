@@ -115,25 +115,9 @@ public class ElasticSearch {
                 continue;
             }
 
-            // Add the part fields
-            JSOG partObject = JSOG.object()
-                .put("_id", part.getId())
-                .put("name", part.getName())
-                .put("description", part.getDescription())
-                .put("manufacturer_name", part.getManufacturer().getName())
-                .put("manufacturer_type_name", part.getManufacturer().getType().getName())
-                .put("manufacturer_part_number", part.getManufacturerPartNumber());
-
-            if (part.getPartType() != null) {
-                partObject.put("part_type", part.getPartType().getTypeName());
-            }
-
-            if (part.getInterchange() != null) {
-                partObject.put("interchange_id", part.getInterchange().getId());
-            }
-
-            // Let part subclasses add their fields to the indexed data
-            part.addIndexFields(partObject);
+            // Get the part JSOG
+            JSOG partObject = part.toJsog();
+            partObject.put("_id", partObject.remove("id")); // Rename id to _id
 
             Index.Builder indexBuilder = new Index.Builder(partObject.toString()).id(part.getId().toString());
 
