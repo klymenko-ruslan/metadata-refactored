@@ -1,7 +1,10 @@
 <!doctype html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if lt IE 7]>
+<html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>
+<html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>
+<html class="no-js lt-ie9"> <![endif]-->
 <!--[if gt IE 8]><!-->
 <html class="no-js"> <!--<![endif]-->
 <head>
@@ -21,7 +24,8 @@
 </head>
 <body data-ng-app="ngMetaCrudApp">
 <!--[if lt IE 7]>
-<p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+<p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your
+    browser</a> to improve your experience.</p>
 <![endif]-->
 
 <!--[if lt IE 9]>
@@ -30,20 +34,22 @@
 <![endif]-->
 
 <!-- Add your site or application content here -->
-<ti-search class="container">
-    <div>
-        <table data-ng-controller="BillOfMaterialsCtrl" data-ng-table="bomTableParams" border="1">
-            <tr data-ng-repeat="part in bom | filter:part.delete" data-ng-click="clicked(part)">
-                <td title="'ID'">{{part.id}}</td>
-                <td title="'Name'">{{part.name}}</td>
-                <td title="'Manufacturer'">{{part.mfr}}</td>
-                <td title="'Mfr Part #'">{{part.mfrpn}}</td>
-                <td title="'Quantity'">
-                    <input type="text" data-ng-model="part.quantity" style="width: 3em"/>
-                </td>
-                <td title="'Delete'"><input type="checkbox" data-ng-model="part.delete"/></td>
-            </tr>
-        </table>
+<ti-search class="container-fluid">
+    <div class="row-fluid">
+        <div class="span7">
+            <table data-ng-controller="BillOfMaterialsCtrl" data-ng-table="bomTableParams" class="table table-bordered table-striped">
+                <tr data-ng-repeat="part in bom | filter:part.delete" data-ng-click="clicked(part)">
+                    <td title="'ID'">{{part.id}}</td>
+                    <td title="'Name'">{{part.name}}</td>
+                    <td title="'Manufacturer'">{{part.mfr}}</td>
+                    <td title="'Mfr Part #'">{{part.mfrpn}}</td>
+                    <td title="'Quantity'">
+                        <input type="text" data-ng-model="part.quantity"/>
+                    </td>
+                    <td title="'Delete'"><input type="checkbox" data-ng-model="part.delete"/></td>
+                </tr>
+            </table>
+        </div>
     </div>
     <hr/>
     Search: <input type="text" data-ng-model="queryString"/>
