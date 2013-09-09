@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('ngMetaCrudApp', ['ui.bootstrap','restangular'])
+angular.module('ngMetaCrudApp', ['ui.bootstrap','restangular', 'ngTable'])
     .config(function ($routeProvider) {
         $routeProvider
             .when('/', {
