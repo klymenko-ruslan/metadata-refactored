@@ -18,22 +18,22 @@ public class Gasket extends Part {
 
     @OneToOne
     @JoinColumn(name="gasket_type_id", table = "gasket")
-    private GasketType type;
+    private GasketType gasketType;
 
-    public GasketType getType() {
-        return type;
+    public GasketType getGasketType() {
+        return gasketType;
     }
 
-    public void setType(GasketType type) {
-        this.type = type;
+    public void setGasketType(GasketType type) {
+        this.gasketType = type;
     }
 
     @Override
     public JSOG toJsog() {
         JSOG partObject = super.toJsog();
         
-        if (type != null) {
-            partObject.put("gasket_type_name", type.getName());
+        if (gasketType != null) {
+            partObject.put("gasket_type_name", gasketType.getName());
         }
         
         return partObject;

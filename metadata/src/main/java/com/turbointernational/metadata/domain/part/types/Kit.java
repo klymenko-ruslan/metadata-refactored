@@ -17,22 +17,22 @@ import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 public class Kit extends Part {
     @OneToOne
     @JoinColumn(name="kit_type_id", table = "kit")
-    private KitType type;
+    private KitType kitType;
 
-    public KitType getType() {
-        return type;
+    public KitType getKitType() {
+        return kitType;
     }
 
-    public void setType(KitType type) {
-        this.type = type;
+    public void setKitType(KitType type) {
+        this.kitType = type;
     }
 
     @Override
     public JSOG toJsog() {
         JSOG partObject = super.toJsog();
         
-        if (type != null) {
-            partObject.put("kit_type_name", type.getName());
+        if (kitType != null) {
+            partObject.put("kit_type_name", kitType.getName());
         }
         
         return partObject;
