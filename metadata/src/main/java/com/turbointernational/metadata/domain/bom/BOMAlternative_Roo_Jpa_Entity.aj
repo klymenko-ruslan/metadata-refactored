@@ -10,7 +10,7 @@ import javax.persistence.Version;
 
 privileged aspect BOMAlternative_Roo_Jpa_Entity {
     
-    declare @type: BOMAlternative: @Table(name = "BOM_ALT_ITEM");
+    declare @type: BOMAlternative: @Table(name = "bom_alt_item");
     
     @Version
     @Column(name = "version")

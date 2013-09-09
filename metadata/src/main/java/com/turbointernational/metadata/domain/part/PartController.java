@@ -1,6 +1,5 @@
 package com.turbointernational.metadata.domain.part;
 import com.turbointernational.metadata.domain.changelog.Changelog;
-import com.turbointernational.metadata.domain.type.PartType;
 import com.turbointernational.metadata.util.ElasticSearch;
 import java.security.Principal;
 import java.util.Collection;
@@ -80,11 +79,11 @@ public class PartController {
         part.persist();
         
         // Update the changelog
-        Changelog.log(principal, "Created part", part.toJson());
+//        Changelog.log(principal, "Created part", part.toJson());
         
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json");
-        return new ResponseEntity<String>(headers, HttpStatus.CREATED);
+        return new ResponseEntity<String>(part.getId().toString(), headers, HttpStatus.CREATED);
     }
     
     @Transactional
@@ -96,7 +95,8 @@ public class PartController {
         headers.add("Content-Type", "application/json");
         
         // Get the original part so we can log the update
-        String originalPartJson = Part.findPart(id).toJson();
+        Part originalPart = Part.findPart(id);
+        String originalPartJson = originalPart.toJson();
         
         // Update the part
         Part part = Part.fromJsonToPart(partJson);
@@ -111,7 +111,7 @@ public class PartController {
         JSOG dataJsog = JSOG.object("originalPart", originalPartJson)
                             .put("updatedPart", part.toJson());
         
-        Changelog.log(principal, "Updated part", dataJsog.toString());
+//        Changelog.log(principal, "Updated part", dataJsog.toString());
         
         return new ResponseEntity<String>(headers, HttpStatus.OK);
     }
@@ -130,7 +130,7 @@ public class PartController {
         part.remove();
         
         // Update the changelog
-        Changelog.log(principal, "Deleted part", partJson);
+//        Changelog.log(principal, "Deleted part", partJson);
         
         return new ResponseEntity<String>(headers, HttpStatus.OK);
     }

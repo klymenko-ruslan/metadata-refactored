@@ -1,5 +1,6 @@
 package com.turbointernational.metadata.domain.bom;
 import com.turbointernational.metadata.domain.part.Part;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -20,15 +21,15 @@ public class BOMAlternative {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
+    @OneToOne(cascade = {CascadeType.DETACH, CascadeType.REFRESH})
     @JoinColumn(name="bom_id")
     private BOMItem bomItem;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="bom_alt_header_id")
     private BOMAlternativeHeader header;
 
-    @OneToOne
+    @OneToOne(cascade = {CascadeType.DETACH, CascadeType.REFRESH})
     @JoinColumn(name="part_id")
     private Part part;
 
