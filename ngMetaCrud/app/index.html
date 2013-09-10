@@ -34,38 +34,6 @@
 <![endif]-->
 
 <!-- Add your site or application content here -->
-<ti-search class="container-fluid">
-    <div class="row-fluid">
-        <div class="span7">
-            <table data-ng-controller="BillOfMaterialsCtrl" data-ng-table="bomTableParams" class="table table-bordered table-striped">
-                <tr data-ng-repeat="part in bom | filter:part.delete" data-ng-click="clicked(part)">
-                    <td title="'ID'">{{part.id}}</td>
-                    <td title="'Name'">{{part.name}}</td>
-                    <td title="'Manufacturer'">{{part.mfr}}</td>
-                    <td title="'Mfr Part #'">{{part.mfrpn}}</td>
-                    <td title="'Quantity'">
-                        <input type="text" data-ng-model="part.quantity"/>
-                    </td>
-                    <td title="'Delete'"><input type="checkbox" data-ng-model="part.delete"/></td>
-                </tr>
-            </table>
-        </div>
-    </div>
-    <hr/>
-    Search: <input type="text" data-ng-model="queryString"/>
-    <table border="1">
-        <tr valign="top">
-            <td>
-                Facets:
-                <search-facets></search-facets>
-            </td>
-            <td>
-                Part List:
-                <part-list></part-list>
-            </td>
-        </tr>
-    </table>
-</ti-search>
 <div class="container-fluid" data-ng-view=""></div>
 
 <!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
@@ -115,28 +83,29 @@
 
 <!-- build:js({.tmp,app}) scripts/scripts.js -->
 <script src="scripts/app.js"></script>
-<script src="scripts/controllers/Main.js"></script>
-<script src="scripts/controllers/Details.js"></script>
-<script src="scripts/controllers/part/form/BillOfMaterials.js"></script>
-<script src="scripts/controllers/part/PartList.js"></script>
-<script src="scripts/controllers/part/Search.js"></script>
-<script src="scripts/controllers/SearchFacets.js"></script>
-<script src="scripts/directives/facetFriendlyName.js"></script>
-<script src="scripts/directives/partList.js"></script>
-<script src="scripts/directives/searchFacets.js"></script>
-<script src="scripts/directives/tiSearch.js"></script>
 <script src="scripts/services/facetNameService.js"></script>
 <script src="scripts/services/searchService.js"></script>
+<script src="scripts/services/partService.js"></script>
+<script src="scripts/controllers/main.js"></script>
 <script src="scripts/controllers/Login.js"></script>
 <script src="scripts/controllers/MyAccount.js"></script>
 <script src="scripts/controllers/Users.js"></script>
 <script src="scripts/controllers/Groups.js"></script>
-<script src="scripts/controllers/part/PartEdit.js"></script>
-<script src="scripts/controllers/part/form/PartForm.js"></script>
+<script src="scripts/controllers/part/PartDetail.js"></script>
+<script src="scripts/controllers/part/PartTable.js"></script>
 <script src="scripts/controllers/part/PartCreate.js"></script>
+<script src="scripts/controllers/part/PartEdit.js"></script>
+<script src="scripts/controllers/part/PartList.js"></script>
+<script src="scripts/controllers/part/PartSearch.js"></script>
+<script src="scripts/controllers/part/form/PartForm.js"></script>
 <script src="scripts/controllers/part/form/Interchanges.js"></script>
+<script src="scripts/controllers/part/form/BillOfMaterials.js"></script>
+<script src="scripts/controllers/SearchFacets.js"></script>
 <script src="scripts/directives/interchanges.js"></script>
-<script src="scripts/services/partService.js"></script>
+<script src="scripts/directives/facetFriendlyName.js"></script>
+<script src="scripts/directives/partTable.js"></script>
+<script src="scripts/directives/searchFacets.js"></script>
+<script src="scripts/directives/tiSearch.js"></script>
 <!-- endbuild -->
 
 <!-- additional bower components -->

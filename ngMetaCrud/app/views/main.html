@@ -1,29 +1,17 @@
 <div class="row-fluid">
-    <div id="sidebar" class="span2">
-        <div data-ng-repeat="partType in partTypes">
-            <h2>{{partType.type}}</h2>
-        </div>
-    </div>
-
-    <div class="span8">
-        <h1>Parts CRUD App</h1>
-        <table id="main" class="table table-bordered table-hover table-striped">
-            <thead>
-            <tr>
-                <td>Part Name</td>
-                <td>Part ID</td>
-                <td>Manufacturer</td>
-                <td>Manufacturer Part Number</td>
+    <ti-search class="container-fluid">
+        Search: <input type="text" data-ng-model="queryString"/>
+        <table border="1">
+            <tr valign="top">
+                <td>
+                    Facets:
+                    <search-facets></search-facets>
+                </td>
+                <td>
+                    Part List:
+                    <part-list></part-list>
+                </td>
             </tr>
-            </thead>
-            <tbody>
-            <tr data-ng-repeat="item in bom" data-ng-click="go('/details')">
-                <td>{{item.name}}</td>
-                <td>{{item.id}}</td>
-                <td>{{item.mfr}}</td>
-                <td>{{item.mfrpn}}</td>
-            </tr>
-            </tbody>
         </table>
-    </div>
+    </ti-search>
 </div>

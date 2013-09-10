@@ -5,6 +5,6 @@ angular.module('ngMetaCrudApp')
         return {
             restrict: 'E',
             templateUrl: '/views/SearchFacets.html',
-            controller: 'SearchCtrl'
+            controller: 'PartSearchCtrl'
         };
     });

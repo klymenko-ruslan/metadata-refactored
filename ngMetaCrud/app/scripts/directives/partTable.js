@@ -4,7 +4,7 @@ angular.module('ngMetaCrudApp')
     .directive('partList', function () {
         return {
             restrict: 'E',
-            templateUrl: '/views/PartList.html',
-            controller: 'SearchCtrl'
+            templateUrl: '/views/part/PartTable.html',
+            controller: 'PartSearchCtrl'
         };
     });

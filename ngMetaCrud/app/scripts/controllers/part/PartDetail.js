@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-    .controller('PartDetailCtrl', function ($scope, $dialog, $location) {
+    .controller('PartDetailCtrl', function ($scope, $location, $routeParams, partService) {
 
         // Static object that should instead be created when a user clicks go('/details') based on that item in bom
         $scope.part = {
@@ -15,6 +15,9 @@ angular.module('ngMetaCrudApp')
             quantity: 1,
             image: "images/parts/turbo.jpg"
         };
+
+
+        $scope.part = partService.findPart($routeParams.partId).get();
 
         // Settings controlling ability to edit or edit/delete
         $scope.updateDetails = {
@@ -36,11 +39,11 @@ angular.module('ngMetaCrudApp')
                 {result: 'canceled', label: 'Cancel'}
             ];
 
-            $dialog.messageBox(title, msg, btns)
-                .open()
-                .then(function (result) {
-                    console.log('Dialog closed with result: ' + result);
-                });
+//            $dialog.messageBox(title, msg, btns)
+//                .open()
+//                .then(function (result) {
+//                    console.log('Dialog closed with result: ' + result);
+//                });
         };
 
         // Deletes a part, more specifically an item in bom

@@ -1,189 +1,239 @@
 <div id="detailsView" class="row-fluid">
 
+    <dl>
+        <dt>Id</dt>
+        <dd>{{part.id}}</dd>
+    </dl>
+
+    <dl>
+        <dt>Name</dt>
+        <dd>{{part.named}}</dd>
+    </dl>
+
+    <dl>
+        <dt>Description</dt>
+        <dd>{{part.description}}</dd>
+    </dl>
+
+    <dl>
+        <dt>Inactive</dt>
+        <dd>{{part.inactive}}</dd>
+    </dl>
+
+    <dl>
+        <dt>Manufacturer</dt>
+        <dd>{{part.manufacturer.name}}</dd>
+    </dl>
+
+    <dl>
+        <dt>Manufacturer P/N</dt>
+        <dd>
+
+    <!-- Interchanges -->
+    <dl>
+        <dt>Interchangeable Part Group</dt>
+        <dd>
+            <span ng-show="interchangeId != null">{{part.interchangeId}}</span>
+            <span ng-show="interchangeId == null">[none]</span>
+        </dd>
+    </dl>
+
+    <label>Bill of Materials</label>
+    <table data-ng-controller="BillOfMaterialsCtrl" data-ng-table="bomTableParams" class="table table-bordered table-striped">
+        <tr data-ng-repeat="part in part.bom | filter:part.delete" data-ng-click="clicked(part)">
+            <td title="'ID'">{{part.id}}</td>
+            <td title="'Name'">{{part.name}}</td>
+            <td title="'Manufacturer'">{{part.mfr}}</td>
+            <td title="'Mfr Part #'">{{part.mfrpn}}</td>
+            <td title="'Quantity'">{{part.quantity}}
+            </td>
+        </tr>
+    </table>
+
     <!-- Backplate -->
     <label>Seal Type</label>
-    <span>{{sealType}}</span>
+    <span>{{part.sealType}}</span>
 
     <label>Seal Type</label>
-    <span>{{sealTypeString}}</span>
+    <span>{{part.sealTypeString}}</span>
 
     <label>Compressor Wheel Style</label>
-    <span>{{styleCompressorWheel}}</span>
+    <span>{{part.styleCompressorWheel}}</span>
 
     <label>Overall Diameter</label>
-    <span>{{overallDiameter}}</span>
+    <span>{{part.overallDiameter}}</span>
 
     <label>Compressor Wheel Diameter</label>
-    <span>{{compressorWheelDiameter}}</span>
+    <span>{{part.compressorWheelDiameter}}</span>
 
     <label>Piston Ring Diameter</label>
-    <span>{{pistonRingDiameter}}</span>
+    <span>{{part.pistonRingDiameter}}</span>
 
     <label>Compressor Housing Diameter</label>
-    <span>{{compressorHousingDiameter}}</span>
+    <span>{{part.compressorHousingDiameter}}</span>
 
     <label>Secondary Diameter</label>
-    <span>{{secondaryDiameter}}</span>
+    <span>{{part.secondaryDiameter}}</span>
 
     <label>Overall Height</label>
-    <span>{{overallHeight}}</span>
+    <span>{{part.overallHeight}}</span>
 
     <label>Notes</label>
     <pre>
-        {{ notes }}
+        {{part.notes }}
     </pre>
 
     <!-- Bearing Housing -->
     <label>Coolant</label>
-    <span>{{coolType}}</span>
+    <span>{{part.coolType}}</span>
 
     <label>Oil Inlet</label>
-    <span>{{oilInlet}}</span>
+    <span>{{part.oilInlet}}</span>
 
     <label>Oil Outlet</label>
-    <span>{{oilOutlet}}</span>
+    <span>{{part.oilOutlet}}</span>
 
     <label>Oil</label>
-    <span>{{oil}}</span>
+    <span>{{part.oil}}</span>
 
     <label>Outlet Flange Holes</label>
-    <span>{{outletFlangeHoles}}</span>
+    <span>{{part.outletFlangeHoles}}</span>
 
     <label>Water Ports</label>
-    <span>{{waterPorts}}</span>
+    <span>{{part.waterPorts}}</span>
 
     <label>Design Features</label>
-    <span>{{designFeatures}}</span>
+    <span>{{part.designFeatures}}</span>
 
     <label>Bearing Type</label>
-    <span>{{bearingType}}</span>
+    <span>{{part.bearingType}}</span>
 
     <!-- Bearing Spacer -->
     <label>Standard Size</label>
-    <span>{{standardSize}}</span>
+    <span>{{part.standardSize}}</span>
 
     <label>Oversize</label>
-    <span>{{oversize}}</span>
+    <span>{{part.oversize}}</span>
 
     <label>Outside Diameter (min - max)</label>
-    <span>{{outsideDiameterMin}}</span> - <span>{{outsideDiameterMax}}</span>
-    private Float insideDiameterMin;
+    <span>{{part.outsideDiameterMin}}</span> - <span>{{part.outsideDiameterMax}}</span>
 
     <label>Inside Diameter (min - max)</label>
-    <span>{{insideDiameterMin}}</span> - <span>{{insideDiameterMax}}</span>
+    <span>{{part.insideDiameterMin}}</span> - <span>{{part.insideDiameterMax}}</span>
 
     <!-- Cartridge -->
 
     <!-- Compressor Wheel -->
     <label>Inducer Diameter A</label>
-    <span>{{inducerOa}}</span>
+    <span>{{part.inducerOa}}</span>
 
     <label>Tip Height B</label>
-    <span>{{tipHeightB}}</span>
+    <span>{{part.tipHeightB}}</span>
 
     <label>Exducer Diameter C</label>
-    <span>{{exducerOc}}</span>
+    <span>{{part.exducerOc}}</span>
 
     <label>Hub Length D</label>
-    <span>{{hubLengthD}}</span>
+    <span>{{part.hubLengthD}}</span>
 
     <label>Bore Diameter E</label>
-    <span>{{boreOe}}</span>
+    <span>{{part.boreOe}}</span>
 
     <label>Number of Blades</label>
-    <span>{{numberOfBlades}}</span>
+    <span>{{part.numberOfBlades}}</span>
 
     <label>Application</label>
-    <span>{{application}}</span>
+    <span>{{part.application}}</span>
 
     <!-- Gasket -->
     <label>Type</label>
-    <span>{{gasketType}}</span>
+    <span>{{part.gasketType}}</span>
 
     <!-- Heatshield -->
     <label>Overall Diameter</label>
-    <span>{{overallDiameter}}</span>
+    <span>{{part.overallDiameter}}</span>
 
     <label>Inside Diameter</label>
-    <span>{{insideDiameter}}</span>
+    <span>{{part.insideDiameter}}</span>
 
     <label>Inducer Diameter</label>
-    <span>{{inducerDiameter}}</span>
+    <span>{{part.inducerDiameter}}</span>
 
     <!-- Journal Bearing -->
     <label>Standard Size</label>
-    <span>{{standardSize}}</span>
+    <span>{{part.standardSize}}</span>
 
     <label>Oversize</label>
-    <span>{{oversize}}</span>
+    <span>{{part.oversize}}</span>
 
     <label>Outside Diameter (min - max)</label>
-    <span>{{outsideDiameterMin}}</span> - <span>{{outsideDiameterMax}}</span>
+    <span>{{part.outsideDiameterMin}}</span> - <span>{{part.outsideDiameterMax}}</span>
 
     <label>Inside Diameter (min - max)</label>
-    <span>{{insideDiameterMin}}</span> - <span>{{insideDiameterMax}}</span>
+    <span>{{part.insideDiameterMin}}</span> - <span>{{part.insideDiameterMax}}</span>
 
     <!-- Kit -->
     <label>Kit Type</label>
-    <span>{{kitType}}</span>
+    <span>{{part.kitType}}</span>
 
     <!-- Nozzle Ring -->
 
     <!-- Piston Ring -->
     <label>Outside Diameter (min - max)</label>
-    <span>{{outsideDiameterMin}}</span> - <span>{{outsideDiameterMax}}</span>
+    <span>{{part.outsideDiameterMin}}</span> - <span>{{part.outsideDiameterMax}}</span>
 
     <label>Width (min - max)</label>
-    <span>{{widthMin}}</span> - <span>{{widthMax}}</span>
+    <span>{{part.widthMin}}</span> - <span>{{part.widthMax}}</span>
 
     <label>Installed Gap (min - max)</label>
-    <span>{{installedGapMin}}</span> - <span>{{installedGapMax}}</span>
+    <span>{{part.installedGapMin}}</span> - <span>{{part.installedGapMax}}</span>
 
     <!-- Turbine Wheel -->
     <label>Exducer Diameter A</label>
-    <span>{{exducerDiameterA}}</span>
+    <span>{{part.exducerDiameterA}}</span>
 
     <label>Tip Height B</label>
-    <span>{{tipHeightB}}</span>
+    <span>{{part.tipHeightB}}</span>
 
     <label>Inducer Diameter C</label>
-    <span>{{inducerDiameterC}}</span>
+    <span>{{part.inducerDiameterC}}</span>
 
     <label>Journal Diameter D</label>
-    <span>{{journalDiameterD}}</span>
+    <span>{{part.journalDiameterD}}</span>
 
     <label>Stem Diameter E</label>
-    <span>{{stemDiameterE}}</span>
+    <span>{{part.stemDiameterE}}</span>
 
     <label>Shaft Thread F</label>
-    <span>{{shaftThreadF}}</span>
+    <span>{{part.shaftThreadF}}</span>
 
     <label>Number of Blades</label>
-    <span>{{numberOfBlades}}</span>
+    <span>{{part.numberOfBlades}}</span>
 
     <!-- Turbo -->
     <label>Turbo Model</label>
-    <span>{{turboModel}}</span>
+    <span>{{part.turboModel}}</span>
 
     <label>Coolant</label>
-    <span>{{coolType}}</span>
+    <span>{{part.coolType}}</span>
 
 
+    <!--
     <div class="span3 offset2" id="partImage">
-        <img src="{{part.image}}" alt="Image of {{part.name}}"/>
+        <img src="{{part.part.image}}" alt="Image of {{part.part.name}}"/>
     </div>
     <div class="span5" id="partDetails">
         <hgroup>
-            <h1>{{part.name}}</h1>
+            <h1>{{part.part.name}}</h1>
 
-            <h2 class="pull-right"><span>Part Number</span>{{part.id}}</h2>
+            <h2 class="pull-right"><span>Part Number</span>{{part.part.id}}</h2>
         </hgroup>
         <ul>
-            <li>Manufacturer: {{part.mfr}}</li>
-            <li>Manufacturer Part Number: {{part.mfrpn}}</li>
-            <li>Height: {{part.height}}"</li>
-            <li>Width: {{part.width}}"</li>
-            <li>Weight: {{part.weight}} lbs.</li>
+            <li>Manufacturer: {{part.part.mfr}}</li>
+            <li>Manufacturer Part Number: {{part.part.mfrpn}}</li>
+            <li>Height: {{part.part.height}}"</li>
+            <li>Width: {{part.part.width}}"</li>
+            <li>Weight: {{part.part.weight}} lbs.</li>
         </ul>
         <div class="pull-right">
             <button data-ng-click="go('/')" class="btn"><i class="icon-list icon-large"> Back</i></button>
@@ -196,4 +246,5 @@
                 <i class="icon-remove icon-large"> Delete</i></button>
         </div>
     </div>
+    -->
 </div>

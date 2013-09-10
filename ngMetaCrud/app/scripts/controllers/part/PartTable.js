@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-    .controller('PartListCtrl', function ($scope, ngTableParams) {
+    .controller('PartTableCtrl', function ($scope, ngTableParams) {
         $scope.partListTableParams = new ngTableParams({
             count: 20,
             page: 1,
@@ -11,7 +11,7 @@ angular.module('ngMetaCrudApp')
 
         $scope.clicked = function (part) {
             console.log("Clicked part: ", JSON.stringify(part));
-            $scope.$broadcast("PartList.click", part);
+            $scope.$broadcast("PartTable.click", part);
+            $scope.go("/part/1");
         }
-
     });

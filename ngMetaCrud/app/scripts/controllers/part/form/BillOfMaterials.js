@@ -37,7 +37,7 @@ angular.module('ngMetaCrudApp')
             },
         ];
 
-        $scope.$on("PartList.click", function (part) {
+        $scope.$on("PartTable.click", function (part) {
             console.log("Broadcast: " + JSON.stringify(part));
             bom.push({
                 id: part._id,

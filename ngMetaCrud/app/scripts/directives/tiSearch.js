@@ -4,7 +4,7 @@ angular.module('ngMetaCrudApp')
     .directive('search', function () {
         return {
             restrict: 'E',
-            controller: 'SearchCtrl',
+            controller: 'PartSearchCtrl',
             link: function () {
             }
         };
