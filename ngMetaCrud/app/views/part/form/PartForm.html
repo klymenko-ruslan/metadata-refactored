@@ -1,0 +1,212 @@
+<div>
+    <label>Id</label>
+    <input type="text" value="{{ id }}" disabled="disabled"/>
+
+    <label>Name</label>
+    <input type="text" ng-model="name"/>
+
+    <label>Description</label>
+    <textarea ng-model="description"></textarea>
+
+    <label>Inactive</label>
+    <input type="checkbox" ng-model="inactive"/>
+
+    <label>Manufacturer</label>
+    <picker path="/other/manufacturer" ng-model="manufacturer"></picker>
+
+    <label>Manufacturer P/N</label>
+    <input type="text" ng-model="manufacturerPartNumber"/>
+
+    <!-- Interchanges -->
+    <label>Interchangeable Part Group</label>
+    <input type="hidden" name="interchange" value="{{interchangeNewId}}"/>
+    <input type="hidden" name="interchangePart" value="{{interchangePartId}}"/>
+
+    <span ng-show="interchangeNewId != null">{{interchangeNewId}}</span>
+    <span ng-show="interchangeNewId == null && interchangePartId == null">[none]</span>
+    <span ng-show="interchangeNewId == null && interchangePartId != null">[new]</span>
+
+    <button type="button" ng-show="interchangeNewId != null || interchangePartId != null" ng-click="clear()">Clear</button>
+    <button type="button" ng-show="isChanged()" ng-click="undo()">Undo</button>
+
+    <label>Bill of Materials</label>
+    <table data-ng-controller="BillOfMaterialsCtrl" data-ng-table="bomTableParams" class="table table-bordered table-striped">
+        <tr data-ng-repeat="part in bom | filter:part.delete" data-ng-click="clicked(part)">
+            <td title="'ID'">{{part.id}}</td>
+            <td title="'Name'">{{part.name}}</td>
+            <td title="'Manufacturer'">{{part.mfr}}</td>
+            <td title="'Mfr Part #'">{{part.mfrpn}}</td>
+            <td title="'Quantity'">
+                <input type="text" data-ng-model="part.quantity"/>
+            </td>
+            <td title="'Delete'"><input type="checkbox" data-ng-model="part.delete"/></td>
+        </tr>
+    </table>
+
+    <!-- Backplate -->
+    <label>Seal Type</label>
+    <picker path="/type/seal" ng-model="sealType"></picker>
+
+    <label>Seal Type</label>
+    <input type="text" ng-model="sealTypeString"/>
+
+    <label>Compressor Wheel Style</label>
+    <input type="text" ng-model="styleCompressorWheel"/>
+
+    <label>Overall Diameter</label>
+    <input type="text" ng-model="overallDiameter"/>
+
+    <label>Compressor Wheel Diameter</label>
+    <input type="text" ng-model="compressorWheelDiameter"/>
+
+    <label>Piston Ring Diameter</label>
+    <input type="text" ng-model="pistonRingDiameter"/>
+
+    <label>Compressor Housing Diameter</label>
+    <input type="text" ng-model="compressorHousingDiameter"/>
+
+    <label>Secondary Diameter</label>
+    <input type="text" ng-model="secondaryDiameter"/>
+
+    <label>Overall Height</label>
+    <input type="text" ng-model="overallHeight"/>
+
+    <label>Notes</label>
+    <textarea ng-model="notes"></textarea>
+
+    <!-- Bearing Housing -->
+    <label>Coolant</label>
+    <picker path="/type/cool" ng-model="coolType"></picker>
+
+    <label>Oil Inlet</label>
+    <input type="text" ng-model="oilInlet"/>
+
+    <label>Oil Outlet</label>
+    <input type="text" ng-model="oilOutlet"/>
+
+    <label>Oil</label>
+    <input type="text" ng-model="oil"/>
+
+    <label>Outlet Flange Holes</label>
+    <input type="text" ng-model="outletFlangeHoles"/>
+
+    <label>Water Ports</label>
+    <input type="text" ng-model="waterPorts"/>
+
+    <label>Design Features</label>
+    <input type="text" ng-model="designFeatures"/>
+
+    <label>Bearing Type</label>
+    <input type="text" ng-model="bearingType"/>
+
+    <!-- Bearing Spacer -->
+    <label>Standard Size</label>
+    <picker path="/part?type=BearingSpacer" ng-model="standardSize"></picker>
+
+    <label>Oversize</label>
+    <picker path="/part?type=BearingSpacer" ng-model="oversize"></picker>
+
+    <label>Outside Diameter (min - max)</label>
+    <input type="text" ng-model="outsideDiameterMin"/> - <input type="text" ng-model="outsideDiameterMax"/>
+    private Float insideDiameterMin;
+
+    <label>Inside Diameter (min - max)</label>
+    <input type="text" ng-model="insideDiameterMin"/> - <input type="text" ng-model="insideDiameterMax"/>
+
+    <!-- Cartridge -->
+
+    <!-- Compressor Wheel -->
+    <label>Inducer Diameter A</label>
+    <input type="text" ng-model="inducerOa"/>
+
+    <label>Tip Height B</label>
+    <input type="text" ng-model="tipHeightB"/>
+
+    <label>Exducer Diameter C</label>
+    <input type="text" ng-model="exducerOc"/>
+
+    <label>Hub Length D</label>
+    <input type="text" ng-model="hubLengthD"/>
+
+    <label>Bore Diameter E</label>
+    <input type="text" ng-model="boreOe"/>
+
+    <label>Number of Blades</label>
+    <input type="text" ng-model="numberOfBlades"/>
+
+    <label>Application</label>
+    <input type="text" ng-model="application"/>
+
+    <!-- Gasket -->
+    <label>Type</label>
+    <picker path="/type/gasket" ng-model="gasketType"></picker>
+
+    <!-- Heatshield -->
+    <label>Overall Diameter</label>
+    <input type="text" ng-model="overallDiameter"/>
+
+    <label>Inside Diameter</label>
+    <input type="text" ng-model="insideDiameter"/>
+
+    <label>Inducer Diameter</label>
+    <input type="text" ng-model="inducerDiameter"/>
+
+    <!-- Journal Bearing -->
+    <label>Standard Size</label>
+    <picker path="/part?type=JournalBearing" ng-model="standardSize"></picker>
+
+    <label>Oversize</label>
+    <picker path="/part?type=JournalBearing" ng-model="oversize"></picker>
+
+    <label>Outside Diameter (min - max)</label>
+    <input type="text" ng-model="outsideDiameterMin"/> - <input type="text" ng-model="outsideDiameterMax"/>
+
+    <label>Inside Diameter (min - max)</label>
+    <input type="text" ng-model="insideDiameterMin"/> - <input type="text" ng-model="insideDiameterMax"/>
+
+    <!-- Kit -->
+    <label>Kit Type</label>
+    <picker path="/type/kit" ng-model="kitType"></picker>
+
+    <!-- Nozzle Ring -->
+
+    <!-- Piston Ring -->
+    <label>Outside Diameter (min - max)</label>
+    <input type="text" ng-model="outsideDiameterMin"/> - <input type="text" ng-model="outsideDiameterMax"/>
+
+    <label>Width (min - max)</label>
+    <input type="text" ng-model="widthMin"/> - <input type="text" ng-model="widthMax"/>
+
+    <label>Installed Gap (min - max)</label>
+    <input type="text" ng-model="installedGapMin"/> - <input type="text" ng-model="installedGapMax"/>
+
+    <!-- Turbine Wheel -->
+    <label>Exducer Diameter A</label>
+    <input type="text" ng-model="exducerDiameterA"/>
+
+    <label>Tip Height B</label>
+    <input type="text" ng-model="tipHeightB"/>
+
+    <label>Inducer Diameter C</label>
+    <input type="text" ng-model="inducerDiameterC"/>
+
+    <label>Journal Diameter D</label>
+    <input type="text" ng-model="journalDiameterD"/>
+
+    <label>Stem Diameter E</label>
+    <input type="text" ng-model="stemDiameterE"/>
+
+    <label>Shaft Thread F</label>
+    <input type="text" ng-model="shaftThreadF"/>
+
+    <label>Number of Blades</label>
+    <input type="text" ng-model="numberOfBlades"/>
+
+    <!-- Turbo -->
+    <label>Turbo Model</label>
+    <picker path="/other/turboModel" ng-model="turboModel"></picker>
+
+    <label>Coolant</label>
+    <picker path="/type/cool" ng-model="coolType"></picker>
+
+</div>

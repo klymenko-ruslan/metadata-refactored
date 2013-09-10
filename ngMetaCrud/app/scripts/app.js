@@ -7,8 +7,8 @@ angular.module('ngMetaCrudApp', ['ui.bootstrap','restangular', 'ngTable'])
                 templateUrl: 'views/main.html',
                 controller: 'MainCtrl'
             })
-            .when('/details', {
-                templateUrl: 'views/details.html',
+            .when('/part/:partId', {
+                templateUrl: 'views/part/PartDetail.html',
                 controller: 'DetailsCtrl'
             })
             .otherwise({

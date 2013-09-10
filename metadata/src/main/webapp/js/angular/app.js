@@ -8,28 +8,6 @@ MetadataEditApp.factory('partSearchService', function($http) {
     }
 });
 
-MetadataEditApp.directive('myInterchanges', function () {
-    return {
-        scope: {
-            interchangeId: '@',
-            path: '@'
-        },
-        restrict: 'E',
-        transclude: true,
-        templateUrl:'/partials/Interchanges.html',
-        controller: 'InterchangesCtrl',
-        link: function(scope, element, attrs, controller) {
-            var interchangeId = attrs.interchangeId;
-            
-            if (interchangeId === null || interchangeId.length < 1) {
-                interchangeId = null;
-            }
-            
-            scope.interchangeId = interchangeId;
-            scope.interchangeNewId = interchangeId;
-        }
-    };
-});
 
 MetadataEditApp.directive('myPartSearch', function () {
     return {
@@ -42,33 +20,6 @@ MetadataEditApp.directive('myPartSearch', function () {
         templateUrl:'/partials/PartSearch.html',
         controller: 'PartSearchCtrl'
     };
-});
-
-MetadataEditApp.controller('InterchangesCtrl', function($scope, $resource) {
-
-    // Methods
-    $scope.isChanged = function() {
-        return $scope.interchangeId !== $scope.interchangeNewId;
-    };
-
-    $scope.undo = function() {
-        $scope.interchangeNewId = $scope.interchangeId;
-        $scope.interchangePartId = null;
-        $scope.result = null;   
-    };
-
-    $scope.clear = function() {
-        $scope.interchangeNewId = null;
-        $scope.interchangePartId = null;
-        $scope.result = null;
-    };
-    
-    $scope.$watch('result', function() {
-        if ($scope.result != null) {
-            $scope.interchangeNewId = $scope.result != null ? $scope.result.interchange_id : null;
-            $scope.interchangePartId = $scope.result._id;
-        }
-    })
 });
 
 MetadataEditApp.controller('PartSearchCtrl', function($scope, ngTableParams, partSearchService) {

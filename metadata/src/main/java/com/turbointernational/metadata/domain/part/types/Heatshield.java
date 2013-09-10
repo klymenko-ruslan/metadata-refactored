@@ -18,7 +18,7 @@ public class Heatshield extends Part {
     private Float overallDiameter;
 
     @Column(name="inside_diameter", table = "heatshield")
-    private Float insideDimater;
+    private Float insideDiameter;
 
     @Column(name="inducer_diameter", table = "heatshield")
     private Float inducerDiameter;
@@ -31,12 +31,12 @@ public class Heatshield extends Part {
         this.overallDiameter = overallDiameter;
     }
 
-    public Float getInsideDimater() {
-        return insideDimater;
+    public Float getInsideDiameter() {
+        return insideDiameter;
     }
 
-    public void setInsideDimater(Float insideDimater) {
-        this.insideDimater = insideDimater;
+    public void setInsideDiameter(Float insideDiameter) {
+        this.insideDiameter = insideDiameter;
     }
 
     public Float getInducerDiameter() {
@@ -52,7 +52,7 @@ public class Heatshield extends Part {
         JSOG partObject = super.toJsog();
         
         partObject.put("overall_diameter", getOverallDiameter());
-        partObject.put("inside_diameter", getInsideDimater());
+        partObject.put("inside_diameter", getInsideDiameter());
         partObject.put("inducer_diameter", getInducerDiameter());
         
         return partObject;

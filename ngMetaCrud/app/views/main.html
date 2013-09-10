@@ -2,11 +2,9 @@
     <div id="sidebar" class="span2">
         <div data-ng-repeat="partType in partTypes">
             <h2>{{partType.type}}</h2>
-            <ul class="icons-ul">
-                <li data-ng-repeat="item in bom" ><i class="icon-li icon-angle-right"></i>{{item.name}} - {{item.id}}</li>
-            </ul>
         </div>
     </div>
+
     <div class="span8">
         <h1>Parts CRUD App</h1>
         <table id="main" class="table table-bordered table-hover table-striped">
