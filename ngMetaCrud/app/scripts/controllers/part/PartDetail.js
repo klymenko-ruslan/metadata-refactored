@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-    .controller('DetailsCtrl', function ($scope, $dialog, $location) {
+    .controller('PartDetailCtrl', function ($scope, $dialog, $location) {
 
         // Static object that should instead be created when a user clicks go('/details') based on that item in bom
         $scope.part = {

@@ -1,6 +1,12 @@
 'use strict';
 
 angular.module('ngMetaCrudApp', ['ui.bootstrap','restangular', 'ngTable'])
+    .config(function(RestangularProvider) {
+        RestangularProvider.setBaseUrl('http://timetadata.herokuapp.com/');
+        RestangularProvider.setExtraFields(['name']);
+        RestangularProvider.setResponseExtractor(function(response, operation) {
+            return response.data;
+        })
     .config(function ($routeProvider) {
         $routeProvider
             .when('/', {
@@ -9,7 +15,7 @@ angular.module('ngMetaCrudApp', ['ui.bootstrap','restangular', 'ngTable'])
             })
             .when('/part/:partId', {
                 templateUrl: 'views/part/PartDetail.html',
-                controller: 'DetailsCtrl'
+                controller: 'PartDetailCtrl'
             })
             .otherwise({
                 redirectTo: '/'
