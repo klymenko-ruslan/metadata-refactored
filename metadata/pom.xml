@@ -113,6 +113,12 @@
             <artifactId>commons-lang3</artifactId>
             <version>3.1</version>
         </dependency>
+        <!-- bcrypt for password hashes -->
+        <dependency>
+            <groupId>org.mindrot</groupId>
+            <artifactId>jbcrypt</artifactId>
+            <version>0.3m</version>
+        </dependency>
         <!-- ROO dependencies -->
         <dependency>
             <groupId>org.springframework.roo</groupId>
@@ -121,6 +127,11 @@
             <scope>provided</scope>
         </dependency>
         <!-- Spring dependencies -->
+        <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-core</artifactId>
+                <version>3.2.0.RC1</version>
+        </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
