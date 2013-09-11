@@ -1,28 +1,28 @@
 <div>
-    <label>Id</label>
-    <input type="text" value="{{ id }}" disabled="disabled"/>
+<h2>{{ part.partType.name }} #{{ part.id }}</h2>
 
-    <label>Name</label>
-    <input type="text" ng-model="name"/>
+<label>Name</label>
+<input type="text" ng-model="part.name"/>
 
-    <label>Description</label>
-    <textarea ng-model="description"></textarea>
+<label>Description</label>
+<input type="text" ng-model="part.description"></input>
 
-    <label>Inactive</label>
-    <input type="checkbox" ng-model="inactive"/>
+<label>Inactive</label>
+<input type="checkbox" ng-model="part.inactive"/>
 
-    <label>Manufacturer</label>
-    <picker path="/other/manufacturer" ng-model="manufacturer"></picker>
+<label>Manufacturer</label>
+<picker path="/other/manufacturer" ng-model="part.manufacturer"></picker>
 
-    <label>Manufacturer P/N</label>
-    <input type="text" ng-model="manufacturerPartNumber"/>
+<label>Manufacturer P/N</label>
+<input type="text" ng-model="part.manufacturerPartNumber"/>
 
-    <!-- Interchanges -->
-    <label>Interchangeable Part Group</label>
-    <input type="hidden" name="interchange" value="{{interchangeNewId}}"/>
-    <input type="hidden" name="interchangePart" value="{{interchangePartId}}"/>
+<!-- Interchanges -->
+<label>Interchangeable Part Group</label>
+<input type="hidden" value="{{part.interchangeNewId}}"/>
+<input type="hidden" value="{{part.interchangePartId}}"/>
 
-    <span ng-show="interchangeNewId != null">{{interchangeNewId}}</span>
+
+<span ng-show="interchangeNewId != null">{{interchangeNewId}}</span>
     <span ng-show="interchangeNewId == null && interchangePartId == null">[none]</span>
     <span ng-show="interchangeNewId == null && interchangePartId != null">[new]</span>
 

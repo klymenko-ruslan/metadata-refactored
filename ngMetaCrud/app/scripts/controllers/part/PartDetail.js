@@ -4,23 +4,13 @@ angular.module('ngMetaCrudApp')
     .controller('PartDetailCtrl', function ($scope, $location, $routeParams, partService) {
 
         // Static object that should instead be created when a user clicks go('/details') based on that item in bom
-        $scope.part = {
-            id: 45408,
-            name: "Turbo Charger",
-            mfr: "Turbo International",
-            mfrpn: "9-Z-9999",
-            height: 25,
-            width: 30,
-            weight: 20,
-            quantity: 1,
-            image: "images/parts/turbo.jpg"
-        };
+        $scope.part = null;
 
 
-        $scope.part = partService.findPart($routeParams.partId).get();
-//        .then(function(part) {
-//            $scope.part = part;
-//        });
+        partService.findPart($routeParams.partId).get()
+        .then(function(part) {
+            $scope.part = part;
+        });
 
         // Settings controlling ability to edit or edit/delete
         $scope.updateDetails = {

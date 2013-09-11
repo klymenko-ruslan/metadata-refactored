@@ -1,9 +1,6 @@
 <div id="detailsView" class="row-fluid">
 
-    <dl>
-        <dt>Id</dt>
-        <dd>{{part.id}}</dd>
-    </dl>
+    <h2>{{ part.partType.name }} #{{ part.id }}</h2>
 
     <dl>
         <dt>Name</dt>
@@ -27,7 +24,8 @@
 
     <dl>
         <dt>Manufacturer P/N</dt>
-        <dd>
+        <dd>{{part.manufacturer.name}}</dd>
+    </dl>
 
     <!-- Interchanges -->
     <dl>
@@ -40,48 +38,48 @@
 
     <label>Bill of Materials</label>
     <table data-ng-controller="BillOfMaterialsCtrl" data-ng-table="bomTableParams" class="table table-bordered table-striped">
-        <tr data-ng-repeat="part in part.bom | filter:part.delete" data-ng-click="clicked(part)">
-            <td title="'ID'">{{part.id}}</td>
-            <td title="'Name'">{{part.name}}</td>
-            <td title="'Manufacturer'">{{part.mfr}}</td>
-            <td title="'Mfr Part #'">{{part.mfrpn}}</td>
-            <td title="'Quantity'">{{part.quantity}}
+        <tr data-ng-repeat="bomItem in part.bom | filter:part.delete" data-ng-click="clicked(part)">
+            <td title="'ID'">{{bomItem.id}}</td>
+            <td title="'Name'">{{bomItem.name}}</td>
+            <td title="'Quantity'">{{bomItem.quantity}}
             </td>
         </tr>
     </table>
 
     <!-- Backplate -->
-    <label>Seal Type</label>
-    <span>{{part.sealType}}</span>
+    <div ng-show="part.partType.typeName == 'Backplate'">
+        <label>Seal Type</label>
+        <span>{{part.sealType}}</span>
 
-    <label>Seal Type</label>
-    <span>{{part.sealTypeString}}</span>
+        <label>Seal Type</label>
+        <span>{{part.sealTypeString}}</span>
 
-    <label>Compressor Wheel Style</label>
-    <span>{{part.styleCompressorWheel}}</span>
+        <label>Compressor Wheel Style</label>
+        <span>{{part.styleCompressorWheel}}</span>
 
-    <label>Overall Diameter</label>
-    <span>{{part.overallDiameter}}</span>
+        <label>Overall Diameter</label>
+        <span>{{part.overallDiameter}}</span>
 
-    <label>Compressor Wheel Diameter</label>
-    <span>{{part.compressorWheelDiameter}}</span>
+        <label>Compressor Wheel Diameter</label>
+        <span>{{part.compressorWheelDiameter}}</span>
 
-    <label>Piston Ring Diameter</label>
-    <span>{{part.pistonRingDiameter}}</span>
+        <label>Piston Ring Diameter</label>
+        <span>{{part.pistonRingDiameter}}</span>
 
-    <label>Compressor Housing Diameter</label>
-    <span>{{part.compressorHousingDiameter}}</span>
+        <label>Compressor Housing Diameter</label>
+        <span>{{part.compressorHousingDiameter}}</span>
 
-    <label>Secondary Diameter</label>
-    <span>{{part.secondaryDiameter}}</span>
+        <label>Secondary Diameter</label>
+        <span>{{part.secondaryDiameter}}</span>
 
-    <label>Overall Height</label>
-    <span>{{part.overallHeight}}</span>
+        <label>Overall Height</label>
+        <span>{{part.overallHeight}}</span>
 
-    <label>Notes</label>
-    <pre>
-        {{part.notes }}
-    </pre>
+        <label>Notes</label>
+        <pre>
+            {{part.notes }}
+        </pre>
+    </div>
 
     <!-- Bearing Housing -->
     <label>Coolant</label>

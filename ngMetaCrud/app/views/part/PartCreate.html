@@ -1,26 +1,25 @@
 <div>
-<label>Id</label>
-<input type="text" value="{{ id }}" disabled="disabled"/>
+  <h2>{{ part.partType.name }} #{{ part.id }}</h2>
 
 <label>Name</label>
-<input type="text" ng-model="name"/>
+<input type="text" ng-model="part.name"/>
 
 <label>Description</label>
-<textarea ng-model="description"></textarea>
+<input type="text" ng-model="part.description"></input>
 
 <label>Inactive</label>
-<input type="checkbox" ng-model="inactive"/>
+<input type="checkbox" ng-model="part.inactive"/>
 
 <label>Manufacturer</label>
-<picker path="/other/manufacturer" ng-model="manufacturer"></picker>
+<picker path="/other/manufacturer" ng-model="part.manufacturer"></picker>
 
 <label>Manufacturer P/N</label>
-<input type="text" ng-model="manufacturerPartNumber"/>
+<input type="text" ng-model="part.manufacturerPartNumber"/>
 
 <!-- Interchanges -->
 <label>Interchangeable Part Group</label>
-<input type="hidden" name="interchange" value="{{interchangeNewId}}"/>
-<input type="hidden" name="interchangePart" value="{{interchangePartId}}"/>
+<input type="hidden" value="{{part.interchangeNewId}}"/>
+<input type="hidden" value="{{part.interchangePartId}}"/>
 
 <span ng-show="interchangeNewId != null">{{interchangeNewId}}</span>
 <span ng-show="interchangeNewId == null && interchangePartId == null">[none]</span>
@@ -44,36 +43,37 @@
 </table>
 
 <!-- Backplate -->
-<div ng-show="part.partType = "
-<label>Seal Type</label>
-<picker path="/type/seal" ng-model="sealType"></picker>
+<div ng-show="part.partType == 'Backplate'">
+    <label>Seal Type</label>
+    <picker path="/type/seal" ng-model="sealType"></picker>
 
-<label>Seal Type</label>
-<input type="text" ng-model="sealTypeString"/>
+    <label>Seal Type</label>
+    <input type="text" ng-model="sealTypeString"/>
 
-<label>Compressor Wheel Style</label>
-<input type="text" ng-model="styleCompressorWheel"/>
+    <label>Compressor Wheel Style</label>
+    <input type="text" ng-model="styleCompressorWheel"/>
 
-<label>Overall Diameter</label>
-<input type="text" ng-model="overallDiameter"/>
+    <label>Overall Diameter</label>
+    <input type="text" ng-model="overallDiameter"/>
 
-<label>Compressor Wheel Diameter</label>
-<input type="text" ng-model="compressorWheelDiameter"/>
+    <label>Compressor Wheel Diameter</label>
+    <input type="text" ng-model="compressorWheelDiameter"/>
 
-<label>Piston Ring Diameter</label>
-<input type="text" ng-model="pistonRingDiameter"/>
+    <label>Piston Ring Diameter</label>
+    <input type="text" ng-model="pistonRingDiameter"/>
 
-<label>Compressor Housing Diameter</label>
-<input type="text" ng-model="compressorHousingDiameter"/>
+    <label>Compressor Housing Diameter</label>
+    <input type="text" ng-model="compressorHousingDiameter"/>
 
-<label>Secondary Diameter</label>
-<input type="text" ng-model="secondaryDiameter"/>
+    <label>Secondary Diameter</label>
+    <input type="text" ng-model="secondaryDiameter"/>
 
-<label>Overall Height</label>
-<input type="text" ng-model="overallHeight"/>
+    <label>Overall Height</label>
+    <input type="text" ng-model="overallHeight"/>
 
-<label>Notes</label>
-<textarea ng-model="notes"></textarea>
+    <label>Notes</label>
+    <textarea ng-model="notes"></textarea>
+</div>
 
 <!-- Bearing Housing -->
 <label>Coolant</label>
