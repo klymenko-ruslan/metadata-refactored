@@ -18,6 +18,9 @@ angular.module('ngMetaCrudApp')
 
 
         $scope.part = partService.findPart($routeParams.partId).get();
+//        .then(function(part) {
+//            $scope.part = part;
+//        });
 
         // Settings controlling ability to edit or edit/delete
         $scope.updateDetails = {
