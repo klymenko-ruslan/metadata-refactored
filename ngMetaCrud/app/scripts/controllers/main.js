@@ -3,50 +3,6 @@
 angular.module('ngMetaCrudApp')
     .controller('MainCtrl', function ($scope, $location, Restangular) {
 
-        // Example JSON Part data
-        $scope.bom = [
-            {
-                id: 45408,
-                name: "Gasket, oil inlet",
-                mfr: "Turbo International",
-                mfrpn: "8-A-0062",
-                quantity: 1,
-                image: "images/parts/turbo.jpg"
-            },
-            {
-                id: 45409,
-                name: "Gasket",
-                mfr: "Turbo International",
-                mfrpn: "8-A-0070",
-                quantity: 1,
-                image: "images/parts/turbo.jpg"
-            },
-            {
-                id: 45410,
-                name: "Gasket, Narrow",
-                mfr: "Turbo International",
-                mfrpn: "8-A-0071",
-                quantity: 1,
-                image: "images/parts/turbo.jpg"
-            },
-            {
-                id: 45415,
-                name: "Gasket",
-                mfr: "Turbo International",
-                mfrpn: "8-A-0710",
-                quantity: 1,
-                image: "images/parts/turbo.jpg"
-            },
-            {
-                id: 45433,
-                name: "Gasket, Wide",
-                mfr: "Turbo International",
-                mfrpn: "8-A-9999",
-                quantity: 1,
-                image: "images/parts/turbo.jpg"
-            }
-        ];
-
         $scope.partTypes = [
             {
                 type: "Turbines"

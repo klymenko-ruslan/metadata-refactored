@@ -1,6 +1,5 @@
 package com.turbointernational.metadata.domain.part;
-import com.turbointernational.metadata.domain.bom.BOMItem;
-import com.turbointernational.metadata.domain.other.Interchange;
+import com.turbointernational.metadata.domain.part.bom.BOMItem;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.types.Backplate;
 import com.turbointernational.metadata.domain.part.types.BearingHousing;

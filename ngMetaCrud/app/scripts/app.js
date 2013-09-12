@@ -2,32 +2,32 @@
 
 angular.module('ngMetaCrudApp', ['ui.bootstrap','restangular', 'ngTable'])
     .config(function(RestangularProvider) {
-        RestangularProvider.setBaseUrl('http://localhost:8084/');
+        RestangularProvider.setBaseUrl('http://localhost:8080/');
         RestangularProvider.setDefaultHttpFields({accept:"application/json"})
         RestangularProvider.setExtraFields(['name']);
         RestangularProvider.setResponseExtractor(function(response, operation) {
-            return response.data;
+            return response;
         })
     })
     .config(function ($routeProvider) {
         $routeProvider
-            .when('/', {
-                templateUrl: 'views/part/PartSearch.html',
-                controller: 'PartSearchCtrl'
+            .when(['/part/:partType'], {
+                templateUrl: 'views/part/PartList.html',
+                controller: 'PartListCtrl'
             })
-            .when('/part/new', {
-                templateUrl: 'views/part/PartCreate.html',
-                controller: 'PartCreateCtrl'
+            .when('/part/:partType/new', {
+                templateUrl: 'views/part/PartForm.html',
+                controller: 'PartFormCtrl'
             })
-            .when('/part/:partId/edit', {
-                templateUrl: 'views/part/PartEdit.html',
-                controller: 'PartEditCtrl'
+            .when('/part/:partType/:partId/edit', {
+                templateUrl: 'views/part/PartForm.html',
+                controller: 'PartFormCtrl'
             })
-            .when('/part/:partId', {
+            .when('/part/:partType/:partId', {
                 templateUrl: 'views/part/PartDetail.html',
                 controller: 'PartDetailCtrl'
             })
             .otherwise({
-                redirectTo: '/'
+                redirectTo: '/part/'
             });
     });

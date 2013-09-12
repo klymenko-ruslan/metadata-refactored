@@ -1,17 +1,17 @@
 'use strict';
 
-describe('Controller: PartListCtrl', function () {
+describe('Controller: PartlistCtrl', function () {
 
   // load the controller's module
   beforeEach(module('ngMetaCrudApp'));
 
-  var PartListCtrl,
+  var PartlistCtrl,
     scope;
 
   // Initialize the controller and a mock scope
   beforeEach(inject(function ($controller, $rootScope) {
     scope = $rootScope.$new();
-    PartListCtrl = $controller('PartListCtrl', {
+    PartlistCtrl = $controller('PartlistCtrl', {
       $scope: scope
     });
   }));
