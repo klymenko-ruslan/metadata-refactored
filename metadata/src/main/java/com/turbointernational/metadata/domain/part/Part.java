@@ -339,14 +339,14 @@ public class Part {
     
     public String toJson() {
         return new JSONSerializer()
-//                .include("bom")
-//                .include("bom.parent")
-//                .include("bom.child")
-//                .include("bom.parent.id")
-//                .include("bom.child.id")
-//                .include("bom.alternatives")
-//                .include("bom.alternatives.header")
-//                .include("bom.alternatives.part.id")
+                .include("bom")
+                .include("bom.parent")
+                .include("bom.child")
+                .include("bom.parent.id")
+                .include("bom.child.id")
+                .include("bom.alternatives")
+                .include("bom.alternatives.header")
+                .include("bom.alternatives.part.id")
                 .exclude("*.class")
                 .serialize(this);
     }
