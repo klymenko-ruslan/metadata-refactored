@@ -2,7 +2,7 @@
 
 angular.module('ngMetaCrudApp', ['ui.bootstrap','restangular', 'ngTable'])
     .config(function(RestangularProvider) {
-        RestangularProvider.setBaseUrl('http://localhost:8080/');
+        RestangularProvider.setBaseUrl('http://timetadata.herokuapp.com/');
         RestangularProvider.setDefaultHttpFields({accept:"application/json"})
         RestangularProvider.setExtraFields(['name']);
         RestangularProvider.setResponseExtractor(function(response, operation) {
@@ -11,19 +11,19 @@ angular.module('ngMetaCrudApp', ['ui.bootstrap','restangular', 'ngTable'])
     })
     .config(function ($routeProvider) {
         $routeProvider
-            .when(['/part/:partType'], {
+            .when(['/part/:type'], {
                 templateUrl: 'views/part/PartList.html',
                 controller: 'PartListCtrl'
             })
-            .when('/part/:partType/new', {
+            .when('/part/:type/edit', {
                 templateUrl: 'views/part/PartForm.html',
                 controller: 'PartFormCtrl'
             })
-            .when('/part/:partType/:partId/edit', {
+            .when('/part/:type/:id/edit', {
                 templateUrl: 'views/part/PartForm.html',
                 controller: 'PartFormCtrl'
             })
-            .when('/part/:partType/:partId', {
+            .when('/part/:type/:id', {
                 templateUrl: 'views/part/PartDetail.html',
                 controller: 'PartDetailCtrl'
             })

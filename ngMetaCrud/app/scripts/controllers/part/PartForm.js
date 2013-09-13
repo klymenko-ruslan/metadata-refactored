@@ -2,11 +2,27 @@
 
 angular.module('ngMetaCrudApp')
   .controller('PartFormCtrl', function ($scope, partService, $routeParams) {
-        if (angular.isDefined($routeParams.partId)) {
-            console.log("Editing part # " + $routeParams.partId);
-            $scope.part = partService.findPart($routeParams.partId).get();
+        $scope.partId   = $routeParams.id;
+        $scope.partType = $routeParams.type;
+        
+        if (angular.isDefined($scope.partId)) {
+            console.log("Editing part # " + $scope.partId);
+
+            $scope.part = partService.findPart($scope.partId);
+
+            $scope.part.then(function(part) {
+
+                console.log("Loaded part: " + $scope.partId);
+
+                // Make sure we're using the correct part type
+                $scope.partType = part.partType.typeName;
+            }, function(response) {
+                alert("Could not get part data from the server.");
+            });
         } else {
             console.log("Creating new part");
             $scope.part = {};
         }
+
+
   });

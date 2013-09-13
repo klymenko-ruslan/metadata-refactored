@@ -1,10 +1,12 @@
 <div id="detailsView" class="row-fluid">
 
-    <h2>{{ part.partType.typeName }} #{{ part.id }}</h2>
+    <a ng-href="#/part/">&lt; Back to Part List</a>
+
+    <h2>{{ partType }} #{{ partId }} <a ng-href="#/part/{{ partType }}/{{ partId }}/edit">Edit</a></h2>
 
     <dl>
         <dt>Name</dt>
-        <dd>{{part.named}}</dd>
+        <dd>{{part.name}}</dd>
     </dl>
 
     <dl>
@@ -12,10 +14,8 @@
         <dd>{{part.description}}</dd>
     </dl>
 
-    <dl>
-        <dt>Inactive</dt>
-        <dd>{{part.inactive}}</dd>
-    </dl>
+    <strong ng-show="part.inactive == false">Active</strong>
+    <strong ng-show="part.inactive == true">Inactive</strong>
 
     <dl>
         <dt>Manufacturer</dt>
@@ -24,8 +24,276 @@
 
     <dl>
         <dt>Manufacturer P/N</dt>
-        <dd>{{part.manufacturer.name}}</dd>
+        <dd>{{part.manufacturerPartNumber}}</dd>
     </dl>
+
+    <!-- Type-specific fields -->
+    <div ng-switch="partType">
+
+        <!-- Backplate -->
+        <div ng-switch-when="Backplate">
+            <dl>
+                <dt>Seal Type</dt>
+                <dd>{{part.sealType.name}}</dd>
+    
+                <dl>
+                    <dt>Seal Type (freeform)</dt>
+                    <dd>{{part.sealTypeString}}</dd>
+    
+                </dl>
+                <dl>
+                    <dt>Compressor Wheel Style</dt>
+                    <dd>{{part.styleCompressorWheel}}</dd>
+    
+                </dl>
+                <dl>
+                    <dt>Overall Diameter</dt>
+                    <dd>{{part.overallDiameter}}</dd>
+    
+                </dl>
+                <dl>
+                    <dt>Compressor Wheel Diameter</dt>
+                    <dd>{{part.compressorWheelDiameter}}</dd>
+    
+                </dl>
+                <dl>
+                    <dt>Piston Ring Diameter</dt>
+                    <dd>{{part.pistonRingDiameter}}</dd>
+    
+                </dl>
+                <dl>
+                    <dt>Compressor Housing Diameter</dt>
+                    <dd>{{part.compressorHousingDiameter}}</dd>
+    
+                </dl>
+                <dl>
+                    <dt>Secondary Diameter</dt>
+                    <dd>{{part.secondaryDiameter}}</dd>
+    
+                </dl>
+                <dl>
+                    <dt>Overall Height</dt>
+                    <dd>{{part.overallHeight}}</dd>
+    
+                </dl>
+                <dl>
+                    <dt>Notes</dt>
+                <pre>
+                    {{part.notes }}
+                </pre>
+        </div>
+    
+        <!-- Bearing Housing -->
+        <div ng-switch-when="Bearing Housing">
+            <dl>
+                <dt>Coolant</dt>
+                <dd>{{part.coolType.name}}</dd>
+            </dl>
+            <dl>
+                <dt>Oil Inlet</dt>
+                <dd>{{part.oilInlet}}</dd>
+            </dl>
+            <dl>
+                <dt>Oil Outlet</dt>
+                <dd>{{part.oilOutlet}}</dd>
+            </dl>
+            <dl>
+                <dt>Oil</dt>
+                <dd>{{part.oil}}</dd>
+            </dl>
+            <dl>
+                <dt>Outlet Flange Holes</dt>
+                <dd>{{part.outletFlangeHoles}}</dd>
+            </dl>
+            <dl>
+                <dt>Water Ports</dt>
+                <dd>{{part.waterPorts}}</dd>
+            </dl>
+            <dl>
+                <dt>Design Features</dt>
+                <dd>{{part.designFeatures}}</dd>
+            </dl>
+            <dl>
+                <dt>Bearing Type</dt>
+                <dd>{{part.bearingType.name}}</dd>
+            </dl>
+        </div>
+    
+        <!-- Bearing Spacer -->
+        <div ng-switch-when="Bearing Spacer">
+            <dl>
+                <dt>Standard Size</dt>
+                <dd>{{part.standardSize}}</dd>
+            </dl>
+            <dl>
+                <dt>Oversize</dt>
+                <dd>{{part.oversize}}</dd>
+            </dl>
+            <dl>
+                <dt>Outside Diameter (min - max)</dt>
+                <dd>{{part.outsideDiameterMin}}</dd> </dl>
+            - <dd>{{part.outsideDiameterMax}}</dd>
+            </dl>
+            <dl>
+                <dt>Inside Diameter (min - max)</dt>
+                <dd>{{part.insideDiameterMin}}</dd> </dl>
+            - <dd>{{part.insideDiameterMax}}</dd>
+            </dl>
+        </div>
+    
+        <!-- Cartridge -->
+    
+        <!-- Compressor Wheel -->
+        <div ng-switch-when="Compressor Wheel">
+            <dl>
+                <dt>Inducer Diameter A</dt>
+                <dd>{{part.inducerOa}}</dd>
+            </dl>
+            <dl>
+                <dt>Tip Height B</dt>
+                <dd>{{part.tipHeightB}}</dd>
+            </dl>
+            <dl>
+                <dt>Exducer Diameter C</dt>
+                <dd>{{part.exducerOc}}</dd>
+            </dl>
+            <dl>
+                <dt>Hub Length D</dt>
+                <dd>{{part.hubLengthD}}</dd>
+            </dl>
+            <dl>
+                <dt>Bore Diameter E</dt>
+                <dd>{{part.boreOe}}</dd>
+            </dl>
+            <dl>
+                <dt>Number of Blades</dt>
+                <dd>{{part.numberOfBlades}}</dd>
+            </dl>
+            <dl>
+                <dt>Application</dt>
+                <dd>{{part.application}}</dd>
+            </dl>
+        </div>
+    
+        <!-- Gasket -->
+        <div ng-switch-when="Gasket">
+            <dl>
+                <dt>Type</dt>
+                <dd>{{part.gasketType.name}}</dd>
+            </dl>
+        </div>
+    
+        <!-- Heatshield -->
+        <div ng-switch-when="Heatshield">
+            <dl>
+                <dt>Overall Diameter</dt>
+                <dd>{{part.overallDiameter}}</dd>
+            </dl>
+            <dl>
+                <dt>Inside Diameter</dt>
+                <dd>{{part.insideDiameter}}</dd>
+            </dl>
+            <dl>
+                <dt>Inducer Diameter</dt>
+                <dd>{{part.inducerDiameter}}</dd>
+            </dl>
+        </div>
+    
+        <!-- Journal Bearing -->
+        <div ng-switch-when="Journal Bearing">
+            <dl>
+                <dt>Standard Size</dt>
+                <dd>{{part.standardSize}}</dd>
+            </dl>
+            <dl>
+                <dt>Oversize</dt>
+                <dd>{{part.oversize}}</dd>
+            </dl>
+            <dl>
+                <dt>Outside Diameter (min - max)</dt>
+                <dd>{{part.outsideDiameterMin}}</dd> </dl>
+            - <dd>{{part.outsideDiameterMax}}</dd>
+            </dl>
+            <dl>
+                <dt>Inside Diameter (min - max)</dt>
+                <dd>{{part.insideDiameterMin}}</dd> </dl>
+            - <dd>{{part.insideDiameterMax}}</dd>
+            </dl>
+        </div>
+    
+        <!-- Kit -->
+        <div ng-switch-when="Kit">
+            <dl>
+                <dt>Kit Type</dt>
+                <dd>{{part.kitType.name}}</dd>
+            </dl>
+        </div>
+    
+        <!-- Nozzle Ring -->
+    
+        <!-- Piston Ring -->
+        <div ng-switch-when="Piston Ring">
+            <dl>
+                <dt>Outside Diameter (min - max)</dt>
+                <dd>{{part.outsideDiameterMin}}</dd> </dl>
+            - <dd>{{part.outsideDiameterMax}}</dd>
+            </dl>
+            <dl>
+                <dt>Width (min - max)</dt>
+                <dd>{{part.widthMin}}</dd> </dl>
+            - <dd>{{part.widthMax}}</dd>
+            </dl>
+            <dl>
+                <dt>Installed Gap (min - max)</dt>
+                <dd>{{part.installedGapMin}}</dd> </dl>
+            - <dd>{{part.installedGapMax}}</dd>
+            </dl>
+        </div>
+    
+        <!-- Turbine Wheel -->
+        <div ng-switch-when="Turbine Wheel">
+            <dl>
+                <dt>Exducer Diameter A</dt>
+                <dd>{{part.exducerDiameterA}}</dd>
+            </dl>
+            <dl>
+                <dt>Tip Height B</dt>
+                <dd>{{part.tipHeightB}}</dd>
+            </dl>
+            <dl>
+                <dt>Inducer Diameter C</dt>
+                <dd>{{part.inducerDiameterC}}</dd>
+            </dl>
+            <dl>
+                <dt>Journal Diameter D</dt>
+                <dd>{{part.journalDiameterD}}</dd>
+            </dl>
+            <dl>
+                <dt>Stem Diameter E</dt>
+                <dd>{{part.stemDiameterE}}</dd>
+            </dl>
+            <dl>
+                <dt>Shaft Thread F</dt>
+                <dd>{{part.shaftThreadF}}</dd>
+            </dl>
+            <dl>
+                <dt>Number of Blades</dt>
+                <dd>{{part.numberOfBlades}}</dd>
+            </dl>
+        </div>
+    
+        <!-- Turbo -->
+        <div ng-switch-when="Turbo">
+            <dl>
+                <dt>Turbo Model</dt>
+                <dd>{{part.turboModel}}</dd>
+            </dl>
+            <dl>
+                <dt>Coolant</dt>
+                <dd>{{part.coolType.name}}</dd>
+            </dl>
+        </div>
+    </div>
 
     <!-- Interchanges -->
     <dl>
@@ -36,207 +304,17 @@
         </dd>
     </dl>
 
-    <!--<label>Bill of Materials</label>-->
-    <!--<table data-ng-controller="BillOfMaterialsCtrl" data-ng-table="bomTableParams" class="table table-bordered table-striped">-->
-        <!--<tr data-ng-repeat="bomItem in part.bom | filter:part.delete" data-ng-click="clicked(part)">-->
-            <!--<td title="'ID'">{{bomItem.id}}</td>-->
-            <!--<td title="'Name'">{{bomItem.name}}</td>-->
-            <!--<td title="'Quantity'">{{bomItem.quantity}}-->
-            <!--</td>-->
-        <!--</tr>-->
-    <!--</table>-->
+    <dt>Bill of Materials</dt>
 
-    <!-- Type-specific fields -->
-    <div ng-switch="partType">
-
-        <!-- Backplate -->
-        <div ng-switch-when="Backplate">
-            <label>Seal Type</label>
-            <span>{{part.sealType}}</span>
-
-            <label>Seal Type</label>
-            <span>{{part.sealTypeString}}</span>
-
-            <label>Compressor Wheel Style</label>
-            <span>{{part.styleCompressorWheel}}</span>
-
-            <label>Overall Diameter</label>
-            <span>{{part.overallDiameter}}</span>
-
-            <label>Compressor Wheel Diameter</label>
-            <span>{{part.compressorWheelDiameter}}</span>
-
-            <label>Piston Ring Diameter</label>
-            <span>{{part.pistonRingDiameter}}</span>
-
-            <label>Compressor Housing Diameter</label>
-            <span>{{part.compressorHousingDiameter}}</span>
-
-            <label>Secondary Diameter</label>
-            <span>{{part.secondaryDiameter}}</span>
-
-            <label>Overall Height</label>
-            <span>{{part.overallHeight}}</span>
-
-            <label>Notes</label>
-            <pre>
-                {{part.notes }}
-            </pre>
-        </div>
-
-        <!-- Bearing Housing -->
-        <div ng-switch-when="Bearing Housing">
-            <label>Coolant</label>
-            <span>{{part.coolType}}</span>
-
-            <label>Oil Inlet</label>
-            <span>{{part.oilInlet}}</span>
-
-            <label>Oil Outlet</label>
-            <span>{{part.oilOutlet}}</span>
-
-            <label>Oil</label>
-            <span>{{part.oil}}</span>
-
-            <label>Outlet Flange Holes</label>
-            <span>{{part.outletFlangeHoles}}</span>
-
-            <label>Water Ports</label>
-            <span>{{part.waterPorts}}</span>
-
-            <label>Design Features</label>
-            <span>{{part.designFeatures}}</span>
-
-            <label>Bearing Type</label>
-            <span>{{part.bearingType}}</span>
-        </div>
-
-        <!-- Bearing Spacer -->
-        <div ng-switch-when="Bearing Spacer">
-            <label>Standard Size</label>
-            <span>{{part.standardSize}}</span>
-
-            <label>Oversize</label>
-            <span>{{part.oversize}}</span>
-
-            <label>Outside Diameter (min - max)</label>
-            <span>{{part.outsideDiameterMin}}</span> - <span>{{part.outsideDiameterMax}}</span>
-
-            <label>Inside Diameter (min - max)</label>
-            <span>{{part.insideDiameterMin}}</span> - <span>{{part.insideDiameterMax}}</span>
-        </div>
-
-        <!-- Cartridge -->
-
-        <!-- Compressor Wheel -->
-        <div ng-switch-when="Compressor Wheel">
-            <label>Inducer Diameter A</label>
-            <span>{{part.inducerOa}}</span>
-
-            <label>Tip Height B</label>
-            <span>{{part.tipHeightB}}</span>
-
-            <label>Exducer Diameter C</label>
-            <span>{{part.exducerOc}}</span>
-
-            <label>Hub Length D</label>
-            <span>{{part.hubLengthD}}</span>
-
-            <label>Bore Diameter E</label>
-            <span>{{part.boreOe}}</span>
-
-            <label>Number of Blades</label>
-            <span>{{part.numberOfBlades}}</span>
-
-            <label>Application</label>
-            <span>{{part.application}}</span>
-        </div>
-
-        <!-- Gasket -->
-        <div ng-switch-when="Gasket">
-            <label>Type</label>
-            <span>{{part.gasketType}}</span>
-        </div>
-
-        <!-- Heatshield -->
-        <div ng-switch-when="Heatshield">
-            <label>Overall Diameter</label>
-            <span>{{part.overallDiameter}}</span>
-
-            <label>Inside Diameter</label>
-            <span>{{part.insideDiameter}}</span>
-
-            <label>Inducer Diameter</label>
-            <span>{{part.inducerDiameter}}</span>
-        </div>
-
-        <!-- Journal Bearing -->
-        <div ng-switch-when="Journal Bearing">
-            <label>Standard Size</label>
-            <span>{{part.standardSize}}</span>
-
-            <label>Oversize</label>
-            <span>{{part.oversize}}</span>
-
-            <label>Outside Diameter (min - max)</label>
-            <span>{{part.outsideDiameterMin}}</span> - <span>{{part.outsideDiameterMax}}</span>
-
-            <label>Inside Diameter (min - max)</label>
-            <span>{{part.insideDiameterMin}}</span> - <span>{{part.insideDiameterMax}}</span>
-        </div>
-
-        <!-- Kit -->
-        <div ng-switch-when="Kit">
-            <label>Kit Type</label>
-            <span>{{part.kitType}}</span>
-        </div>
-
-        <!-- Nozzle Ring -->
-
-        <!-- Piston Ring -->
-        <div ng-switch-when="Piston Ring">
-            <label>Outside Diameter (min - max)</label>
-            <span>{{part.outsideDiameterMin}}</span> - <span>{{part.outsideDiameterMax}}</span>
-
-            <label>Width (min - max)</label>
-            <span>{{part.widthMin}}</span> - <span>{{part.widthMax}}</span>
-
-            <label>Installed Gap (min - max)</label>
-            <span>{{part.installedGapMin}}</span> - <span>{{part.installedGapMax}}</span>
-        </div>
-
-        <!-- Turbine Wheel -->
-        <div ng-switch-when="Turbine Wheel">
-            <label>Exducer Diameter A</label>
-            <span>{{part.exducerDiameterA}}</span>
-
-            <label>Tip Height B</label>
-            <span>{{part.tipHeightB}}</span>
-
-            <label>Inducer Diameter C</label>
-            <span>{{part.inducerDiameterC}}</span>
-
-            <label>Journal Diameter D</label>
-            <span>{{part.journalDiameterD}}</span>
-
-            <label>Stem Diameter E</label>
-            <span>{{part.stemDiameterE}}</span>
-
-            <label>Shaft Thread F</label>
-            <span>{{part.shaftThreadF}}</span>
-
-            <label>Number of Blades</label>
-            <span>{{part.numberOfBlades}}</span>
-        </div>
-
-        <!-- Turbo -->
-        <div ng-switch-when="Turbo">
-            <label>Turbo Model</label>
-            <span>{{part.turboModel}}</span>
-
-            <label>Coolant</label>
-            <span>{{part.coolType}}</span>
-        </div>
-
-    </div>
+    <table data-ng-controller="BillOfMaterialsCtrl" data-ng-table="bomTableParams" class="table table-bordered table-striped">
+        <tr data-ng-repeat="bomItem in part.bom" data-ng-click="$emit('BillOfMaterials.click', {'part': part, 'bomItem': bomItem})">
+            <td title="'Type'">{{bomItem.child.partType.name}}</td>
+            <td title="'Manufacturer'">{{bomItem.child.manufacturer.name}}</td>
+            <td title="'OEM Part #'">{{bomItem.child.manufacturerPartNumber}}</td>
+            <td title="'Name'">{{bomItem.child.name}}</td>
+            <td title="'Manufacturer Part Number'"></td>
+            <td title="'Quantity'">{{bomItem.quantity}}
+            </td>
+        </tr>
+    </table>
 </div>

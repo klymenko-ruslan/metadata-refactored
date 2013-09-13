@@ -1,5 +1,5 @@
 <table data-ng-controller="PartTableCtrl" data-ng-table="partListTableParams" class="table table-bordered table-striped">
-    <tr data-ng-repeat="part in searchResults.hits.hits" data-ng-click="$emit('PartTable.click', part)">
+    <tr data-ng-repeat="part in searchResults.hits.hits" data-ng-click="$emit('PartTable.click', {id: part._source._id, type: part._source.part_type})">
         <td title="'ID'">{{part._source._id}}</td>
         <td title="'Part Type'">{{part._source.part_type}}</td>
         <td title="'Manufacturer'">{{part._source.manufacturer_name}}</td>
