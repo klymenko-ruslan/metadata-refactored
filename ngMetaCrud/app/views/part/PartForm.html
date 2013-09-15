@@ -3,6 +3,9 @@
 <a ng-href="#/part/">&lt; Back to Part List</a><br/>
 <a ng-href="#/part/{{ partType }}/{{ partId }}">&lt; Back to Part Details</a>
 
+<button type="button" ng-click="save()">Save Changes</button>
+<button type="button" ng-hide="oldPart == null" ng-click="revert()">Revert to Original</button>
+
 <h2>
     <span ng-hide="partId">Create </span>
     {{ partType }}
@@ -224,28 +227,15 @@
 <button type="button" ng-show="interchangeNewId != null || interchangePartId != null" ng-click="clear()">Clear</button>
 <button type="button" ng-show="isChanged()" ng-click="undo()">Undo</button>
 
-<dt>Bill of Materials</dt>
-<table data-ng-controller="BillOfMaterialsCtrl" data-ng-table="bomTableParams" class="table table-bordered table-striped">
-    <tr data-ng-repeat="bomItem in part.bom" data-ng-click="$emit('BillOfMaterials.click', {'part': part, 'bomItem': bomItem})">
-        <td title="'Type'">{{bomItem.child.partType.name}}</td>
-        <td title="'Name'">{{bomItem.child.name}}</td>
-        <td title="'Manufacturer'">{{bomItem.child.manufacturer.name}}</td>
-        <td title="'Manufacturer Part Number'">{{bomItem.child.manufacturerPartNumber}}</td>
-        <td title="'Quantity'">{{bomItem.quantity}}
-        </td>
-    </tr>
-</table>
-<!--<label>Bill of Materials</label>-->
+<!--<dt>Bill of Materials</dt>-->
 <!--<table data-ng-controller="BillOfMaterialsCtrl" data-ng-table="bomTableParams" class="table table-bordered table-striped">-->
-    <!--<tr data-ng-repeat="part in bom | filter:part.delete" data-ng-click="clicked(part)">-->
-        <!--<td title="'ID'">{{part.id}}</td>-->
-        <!--<td title="'Name'">{{part.name}}</td>-->
-        <!--<td title="'Manufacturer'">{{part.mfr}}</td>-->
-        <!--<td title="'Mfr Part #'">{{part.mfrpn}}</td>-->
-        <!--<td title="'Quantity'">-->
-            <!--<input type="text" data-ng-model="part.quantity"/>-->
+    <!--<tr data-ng-repeat="bomItem in part.bom" data-ng-click="$emit('BillOfMaterials.click', {'part': part, 'bomItem': bomItem})">-->
+        <!--<td title="'Type'">{{bomItem.child.partType.name}}</td>-->
+        <!--<td title="'Name'">{{bomItem.child.name}}</td>-->
+        <!--<td title="'Manufacturer'">{{bomItem.child.manufacturer.name}}</td>-->
+        <!--<td title="'Manufacturer Part Number'">{{bomItem.child.manufacturerPartNumber}}</td>-->
+        <!--<td title="'Quantity'">{{bomItem.quantity}}-->
         <!--</td>-->
-        <!--<td title="'Delete'"><input type="checkbox" data-ng-model="part.delete"/></td>-->
     <!--</tr>-->
 <!--</table>-->
 

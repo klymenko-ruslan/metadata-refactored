@@ -14,7 +14,7 @@ angular.module('ngMetaCrudApp')
             // Make sure we're using the correct part type
             $scope.partType = part.partType.typeName;
         }, function(response) {
-            alert("Could not get part data from the server.");
+            console.error("Could not get part data from server.");
         });
 
     });

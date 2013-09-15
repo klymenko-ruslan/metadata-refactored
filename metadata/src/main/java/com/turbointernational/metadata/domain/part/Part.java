@@ -1,6 +1,6 @@
 package com.turbointernational.metadata.domain.part;
-import com.turbointernational.metadata.domain.part.bom.BOMItem;
 import com.turbointernational.metadata.domain.other.Manufacturer;
+import com.turbointernational.metadata.domain.part.bom.BOMItem;
 import com.turbointernational.metadata.domain.part.types.Backplate;
 import com.turbointernational.metadata.domain.part.types.BearingHousing;
 import com.turbointernational.metadata.domain.part.types.BearingSpacer;
@@ -21,7 +21,6 @@ import flexjson.JSONSerializer;
 import flexjson.ObjectBinder;
 import flexjson.ObjectFactory;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
@@ -46,6 +45,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.PrePersist;
 import javax.persistence.PreRemove;
 import javax.persistence.PreUpdate;
+import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.TypedQuery;
@@ -144,7 +144,7 @@ public class Part {
             inverseJoinColumns=@JoinColumn(name="interchange_header_id"))
     private Interchange interchange;
     
-    @OneToMany(mappedBy="parent", cascade = {CascadeType.DETACH, CascadeType.REFRESH}, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy="parent", fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.REFRESH}, orphanRemoval = true)
     private Collection<BOMItem> bom;
     
     @Version
@@ -191,13 +191,13 @@ public class Part {
         this.description = description;
     }
     
-    //    public String getTiPartNumber() {
-    //        return tiPartNumber;
-    //    }
-    //
-    //    public void setTiPartNumber(String tiPartNumber) {
-    //        this.tiPartNumber = tiPartNumber;
-    //    }
+//    public String getTiPartNumber() {
+//        return tiPartNumber;
+//    }
+//
+//    public void setTiPartNumber(String tiPartNumber) {
+//        this.tiPartNumber = tiPartNumber;
+//    }
     
     public Integer getMagentoProductId() {
         return magentoProductId;
@@ -269,13 +269,13 @@ public class Part {
         
     }
     
-    public Collection<BOMItem> getBom() {
-        return bom;
-    }
-    
-    public void setBom(Collection<BOMItem> bom) {
-        this.bom = bom;
-    }
+//    public Collection<BOMItem> getBom() {
+//        return bom;
+//    }
+//    
+//    public void setBom(Collection<BOMItem> bom) {
+//        this.bom = bom;
+//    }
     
     public Integer getVersion() {
         return version;
@@ -339,10 +339,9 @@ public class Part {
     
     public String toJson() {
         return new JSONSerializer()
+                .include("interchange")
                 .include("bom")
-                .include("bom.parent")
                 .include("bom.child")
-                .include("bom.parent.id")
                 .include("bom.child.id")
                 .include("bom.alternatives")
                 .include("bom.alternatives.header")
@@ -418,7 +417,9 @@ public class Part {
     
     public static Part findPart(Long id) {
         if (id == null) return null;
-        return entityManager().find(Part.class, id);
+        Query q = entityManager().createQuery("SELECT DISTINCT p FROM Part p WHERE p.id = :id");
+        q.setParameter("id", id);
+        return (Part) q.getSingleResult();
     }
     
     public static List<Part> findPartEntries(int firstResult, int maxResults) {

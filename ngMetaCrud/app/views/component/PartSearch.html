@@ -8,9 +8,19 @@
                 </search-facets>
             </td>
             <td>
-                <part-table>
-
-                </part-table>
+                <table data-ng-table="partTableParams" class="table table-bordered table-striped">
+                    <tr data-ng-repeat="part in searchResults.hits.hits">
+                        <td title="'ID'">{{part._source._id}}</td>
+                        <td title="'Part Type'">{{part._source.part_type}}</td>
+                        <td title="'Manufacturer'">{{part._source.manufacturer_name}}</td>
+                        <td title="'Mfr Part #'">{{part._source.manufacturer_part_number}}</td>
+                        <td title="'Name'">{{part._source.name}}</td>
+                        <td title="'Actions'">
+                            <a data-ng-href="#/part/{{ part._source.part_type }}/{{ part._source._id}}">View Details</a>
+                            <a data-ng-href="#/part/{{ part._source.part_type }}/{{ part._source._id}}/form">Edit</a>
+                        </td>
+                    </tr>
+                </table>
             </td>
         </tr>
     </table>
