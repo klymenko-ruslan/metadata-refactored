@@ -4,7 +4,7 @@ angular.module('ngMetaCrudApp')
     .controller('SearchFacetsCtrl', function ($scope) {
 
         // Filter down to facets with totals greater than zero
-        $scope.filterFacets = function (facets) {
+        $scope.search.filterFacets = function (facets) {
             var results = {};
 
             angular.forEach(facets, function (facet, facetName) {
@@ -31,22 +31,22 @@ angular.module('ngMetaCrudApp')
         };
 
         $scope.isFacetSelected = function (facetName) {
-            return facetName in $scope.facetFilters
-                && angular.isDefined($scope.facetFilters[facetName])
-                && $scope.facetFilters[facetName] != null;
+            return facetName in $scope.search.facetFilters
+                && angular.isDefined($scope.search.facetFilters[facetName])
+                && $scope.search.facetFilters[facetName] != null;
         };
 
         $scope.isTermSelected = function (facetName, term) {
             return $scope.isFacetSelected(facetName)
-                && $scope.facetFilters[facetName] == term.term;
+                && $scope.search.facetFilters[facetName] == term.term;
         };
 
         $scope.setFacetFilter = function (facetName, term) {
             console.log("Filtering on " + facetName + ": " + term);
-            $scope.facetFilters[facetName] = term;
+            $scope.search.facetFilters[facetName] = term;
         };
 
         $scope.removeFacetFilter = function (facetName) {
-            delete $scope.facetFilters[facetName];
+            delete $scope.search.facetFilters[facetName];
         }
     });

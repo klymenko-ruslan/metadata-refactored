@@ -3,29 +3,43 @@
 angular.module('ngMetaCrudApp')
     .controller('PartSearchCtrl', function ($scope, searchService, $location, $routeParams, ngTableParams) {
         $scope.partTableParams = new ngTableParams({
-            count: 25,
+            count: 10,
             page: 1,
-            total: 0,
             counts: [10, 25, 50, 100]
         });
 
         // Query Parameters
-        $scope.queryString = "";
-        $scope.facetFilters = {};
+        $scope.search = {
+            queryString: "",
+            facetFilters: {}
+        }
 
         // Latest Results
         $scope.isSearching = false;
         $scope.searchResults = null;
 
-        // Handle updating search results
-        $scope.$watch('[queryString,facetFilters]', $scope.search, true);
-
-        $scope.search = function () {
+        $scope.doSearch= function () {
             $scope.isSearching = true;
 
-            searchService($scope.queryString, $scope.facetFilters).then(function (searchResults) {
+            searchService($scope.search).then(function (searchResults) {
                 $scope.isSearching = false;
                 $scope.searchResults = searchResults.data;
             });
         };
+
+        $scope.$watch("searchResults.hits.total", function(total) {
+            $scope.partTableParams.total = total;
+        });
+
+        $scope.$watch("partTableParams.count", function() {
+            $scope.search.count = $scope.partTableParams.count;
+        });
+
+        $scope.$watch("partTableParams.page", function() {
+            $scope.search.page = $scope.partTableParams.page;
+        });
+
+        // Handle updating search results
+        $scope.$watch('search', $scope.doSearch, true);
+
     });

@@ -223,13 +223,14 @@
 </div>
 
 <!-- Interchanges -->
-<label>Interchangeable Part Group</label>
-<span ng-show="part.interchange.id != null">{{part.interchange.id}}</span>
-<span ng-show="part.interchange.id == null && part.interchangePartId == null">[none]</span>
-<span ng-show="part.interchange.id == null && part.interchangePartId != null">[new]</span>
+<label>Interchangeable Part Group
+    <span ng-hide="part.interchange.id == null">#{{part.interchange.id}}</span>
+    <span ng-show="part.interchange.id == null">[none]</span>
+    <span ng-show="part.interchange.id == null && part.interchangePartId != null">[new]</span>
+</label>
 
-<button type="button" ng-show="part.interchange.id != null || part.interchangePartId != null" ng-click="clear()">Clear</button>
-<button type="button" ng-hide="part.interchange == oldPart.interchange" ng-click="undo()">Undo</button>
+<button class="btn btn-large" ng-show="part.interchange.id != null || part.interchangePartId != null" ng-click="clearInterchange()">Clear</button>
+<button class="btn btn-large" ng-hide="part.interchange.id == oldPart.interchange.id" ng-click="revertInterchange()">Undo</button>
 
 <dt>Bill of Materials</dt>
 <table data-ng-controller="BillOfMaterialsCtrl" data-ng-table="bomTableParams" class="table table-bordered table-striped">

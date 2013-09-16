@@ -34,6 +34,15 @@ angular.module('ngMetaCrudApp')
             $scope.part = {};
         }
 
+        $scope.clearInterchange = function() {
+            $scope.part.interchange = null;
+        }
+
+        $scope.revertInterchange = function() {
+            $scope.part.interchange = {};
+            angular.copy($scope.oldPart.interchange, $scope.part.interchange);
+        };
+
         $scope.revert = function() {
             angular.copy($scope.oldPart, $scope.part);
         }
