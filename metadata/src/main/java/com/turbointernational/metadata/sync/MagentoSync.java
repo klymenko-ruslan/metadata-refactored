@@ -59,6 +59,13 @@ public class MagentoSync {
         }
 
     }
+    
+    private void deletePart(Part part) {
+        // Get the part ID
+        int partId = part.getMagentoProductId();
+        // Send DELETE request for the part
+        rest.deleteProduct(partId);
+    }
 
     private void addPart(Part part) {
         // Serialize to JSOG as in part update
