@@ -20,13 +20,18 @@ public class MagentoSync {
             parts = Part.getPartsUpdatedAfter(lastUpdated, page * pageSize, pageSize);
 
             for (Part part : parts) {
-                updatePart(part);
+                // Remove part if non-existent or inactive
+                if (part.getInactive() || part == null) {
+                    deletePart(part);
+                // Otherwise update part
+                } else {
+                    updatePart(part);
+                }
             }
 
             page++;
 
         } while (parts.size() >= pageSize);
-
     }
 
     private void updatePart(Part part) {
@@ -46,6 +51,13 @@ public class MagentoSync {
             rest.updateProduct(originalProduct.get("id").getIntegerValue(), partJsog);
         }
 
+    }
+    
+    private void deletePart(Part part) {
+        // Get the part ID
+        int partId = part.getMagentoProductId();
+        // Send DELETE request for the part
+        rest.deleteProduct(partId);
     }
 
     public JSOG getProduct(Part part) {
