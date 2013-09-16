@@ -31,13 +31,11 @@ angular.module('ngMetaCrudApp')
             $scope.partTableParams.total = total;
         });
 
-        $scope.$watch("partTableParams.count", function() {
+        $scope.$watch("partTableParams", function() {
             $scope.search.count = $scope.partTableParams.count;
-        });
-
-        $scope.$watch("partTableParams.page", function() {
             $scope.search.page = $scope.partTableParams.page;
-        });
+            $scope.search.sorting = $scope.partTableParams.sorting;
+        }, true);
 
         // Handle updating search results
         $scope.$watch('search', $scope.doSearch, true);
