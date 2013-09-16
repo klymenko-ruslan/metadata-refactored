@@ -2,12 +2,12 @@
 
 angular.module('ngMetaCrudApp')
     .factory('searchService', function ($http) {
-        return function (queryString, facetFilters) {
-            console.log("Searching for `" + queryString + "`, facets: " + JSON.stringify(facetFilters));
+        return function (search) {
+            console.log("Searching for `" + search.queryString + "`, facets: " + JSON.stringify(search.facetFilters));
 
             var searchRequest = {
-                from: 0,
-                size: 50,
+                from: search.count * (search.page - 1),
+                size: search.count,
                 facets: {
                     "part_type": {
                         terms: {
@@ -44,8 +44,8 @@ angular.module('ngMetaCrudApp')
             };
 
             // Facet Terms
-            if (angular.isObject(facetFilters) && !jQuery.isEmptyObject(facetFilters)) {
-                angular.forEach(facetFilters, function (facetValue, facetName) {
+            if (angular.isObject(search.facetFilters) && !jQuery.isEmptyObject(search.facetFilters)) {
+                angular.forEach(search.facetFilters, function (facetValue, facetName) {
                     var term = {};
                     term[facetName] = facetValue;
 
@@ -54,16 +54,17 @@ angular.module('ngMetaCrudApp')
             }
 
             // Query string
-            if (angular.isString(queryString) && queryString.length > 0) {
+            if (angular.isString(search.queryString) && search.queryString.length > 0) {
                 searchRequest.query.bool.must.push({
                     query_string: {
-                        query: queryString,
+                        query: search.queryString,
                         fields: [
+                            "_id^1000",
+                            "part_type^1000",
                             "manufacturer_part_number.autocomplete",
                             "manufacturer_part_number.text",
                             "manufacturer_name.autocomplete",
                             "manufacturer_name.text",
-                            "part_type",
                             "name"
                         ]
                     }

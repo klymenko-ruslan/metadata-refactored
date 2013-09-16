@@ -1,5 +1,5 @@
 <div data-ng-controller="SearchFacetsCtrl">
-    <div data-ng-repeat="(facetName, facet) in filterFacets(searchResults.facets)">
+    <div data-ng-repeat="(facetName, facet) in search.filterFacets(searchResults.facets)">
         <h2 facet-friendly-name="facetName"></h2>
 
         <ul>
