@@ -23,8 +23,8 @@ public class Kit extends Part {
         return kitType;
     }
 
-    public void setKitType(KitType type) {
-        this.kitType = type;
+    public void setKitType(KitType kitType) {
+        this.kitType = kitType;
     }
 
     @Override

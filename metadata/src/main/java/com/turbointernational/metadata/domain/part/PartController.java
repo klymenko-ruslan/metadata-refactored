@@ -1,5 +1,4 @@
 package com.turbointernational.metadata.domain.part;
-import com.turbointernational.metadata.domain.changelog.Changelog;
 import com.turbointernational.metadata.util.ElasticSearch;
 import java.security.Principal;
 import java.util.Collection;

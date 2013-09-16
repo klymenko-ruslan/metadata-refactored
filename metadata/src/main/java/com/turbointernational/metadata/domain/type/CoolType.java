@@ -12,7 +12,7 @@ import org.springframework.roo.addon.json.RooJson;
 @Cacheable
 @Configurable
 @Entity
-@RooJpaActiveRecord(table = "COOL_TYPE")
+@RooJpaActiveRecord(table = "cool_type")
 @RooJson
 public class CoolType {
 

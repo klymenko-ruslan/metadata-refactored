@@ -1,7 +1,10 @@
 <!doctype html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if lt IE 7]>
+<html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>
+<html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>
+<html class="no-js lt-ie9"> <![endif]-->
 <!--[if gt IE 8]><!-->
 <html class="no-js"> <!--<![endif]-->
 <head>
@@ -14,13 +17,17 @@
 
     <!-- build:css(.tmp) styles/main.css -->
     <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="bower_components/ng-table/ng-table.css">
+    <link rel="stylesheet" href="bower_components/select2/select2.css">
+    <link rel="stylesheet" href="bower_components/angular-macgyver/lib/macgyver.css">
     <!-- endbuild -->
     <!-- Font Awesome CDN -->
     <link href="http://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
 </head>
 <body data-ng-app="ngMetaCrudApp">
 <!--[if lt IE 7]>
-<p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+<p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your
+    browser</a> to improve your experience.</p>
 <![endif]-->
 
 <!--[if lt IE 9]>
@@ -66,6 +73,8 @@
 <script src="bower_components/bootstrap-sass/js/bootstrap-scrollspy.js"></script>
 <script src="bower_components/bootstrap-sass/js/bootstrap-collapse.js"></script>
 <script src="bower_components/bootstrap-sass/js/bootstrap-tab.js"></script>
+<script src="bower_components/angular-ui-select2/src/select2.js"></script>
+<script src="bower_components/select2/select2.js"></script>
 <!-- endbuild -->
 
 <!-- build:js scripts/modules.js -->
@@ -73,12 +82,35 @@
 <script src="bower_components/angular-cookies/angular-cookies.js"></script>
 <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
 <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+<script src="bower_components/ng-table/ng-table.js"></script>
+<script src="bower_components/angular-macgyver/lib/macgyver.js"></script>
 <!-- endbuild -->
 
 <!-- build:js({.tmp,app}) scripts/scripts.js -->
 <script src="scripts/app.js"></script>
+<script src="scripts/services/facetNameService.js"></script>
+<script src="scripts/services/searchService.js"></script>
+<script src="scripts/services/restService.js"></script>
 <script src="scripts/controllers/main.js"></script>
-<script src="scripts/controllers/details.js"></script>
+<script src="scripts/controllers/admin/Login.js"></script>
+<script src="scripts/controllers/admin/MyAccount.js"></script>
+<script src="scripts/controllers/admin/Users.js"></script>
+<script src="scripts/controllers/admin/Groups.js"></script>
+<script src="scripts/controllers/component/Picker.js"></script>
+<script src="scripts/controllers/component/PartTable.js"></script>
+<script src="scripts/controllers/component/PartSearch.js"></script>
+<script src="scripts/controllers/component/SearchFacets.js"></script>
+<script src="scripts/controllers/part/form/Interchanges.js"></script>
+<script src="scripts/controllers/part/form/BillOfMaterials.js"></script>
+<script src="scripts/controllers/part/PartDetail.js"></script>
+<script src="scripts/controllers/part/PartForm.js"></script>
+<script src="scripts/controllers/part/PartList.js"></script>
+<script src="scripts/directives/facetFriendlyName.js"></script>
+<script src="scripts/directives/component/partSearch.js"></script>
+<script src="scripts/directives/component/partTable.js"></script>
+<script src="scripts/directives/component/searchFacets.js"></script>
+<script src="scripts/directives/component/interchanges.js"></script>
+<script src="scripts/directives/component/picker.js"></script>
 <!-- endbuild -->
 
 <!-- additional bower components -->

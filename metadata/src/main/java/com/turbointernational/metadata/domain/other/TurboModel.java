@@ -1,5 +1,4 @@
 package com.turbointernational.metadata.domain.other;
-import com.turbointernational.metadata.domain.type.TurboType;
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;

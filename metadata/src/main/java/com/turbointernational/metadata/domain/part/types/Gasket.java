@@ -24,8 +24,8 @@ public class Gasket extends Part {
         return gasketType;
     }
 
-    public void setGasketType(GasketType type) {
-        this.gasketType = type;
+    public void setGasketType(GasketType gasketType) {
+        this.gasketType = gasketType;
     }
 
     @Override
