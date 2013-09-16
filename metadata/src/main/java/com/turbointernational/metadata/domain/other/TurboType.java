@@ -1,5 +1,4 @@
 package com.turbointernational.metadata.domain.other;
-import com.turbointernational.metadata.domain.other.Manufacturer;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

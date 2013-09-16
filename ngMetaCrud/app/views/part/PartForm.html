@@ -1,10 +1,11 @@
 <div>
 
-<a ng-href="#/part/">&lt; Back to Part List</a><br/>
-<a ng-href="#/part/{{ partType }}/{{ partId }}">&lt; Back to Part Details</a>
-
-<button type="button" ng-click="save()">Save Changes</button>
-<button type="button" ng-hide="oldPart == null" ng-click="revert()">Revert to Original</button>
+<ul class="btn-group">
+    <li><a class="btn btn-large" ng-href="#/part">Go to Part List</a></li>
+    <li><a class="btn btn-large" ng-href="#/part/{{ partType }}/{{ partId }}">Go to Part Detail</a></li>
+    <li><a ng-click="save()" class="btn btn-large btn-success">Save Changes</a></li>
+    <li><a ng-click="revert()" class="btn btn-large btn-danger" ng-disabled="angular.equals(part != oldPart)">Revert to Original</a></li>
+</div>
 
 <h2>
     <span ng-hide="partId">Create </span>
@@ -17,13 +18,14 @@
 <label>Description</label>
 <input type="text" ng-model="part.description"/>
 
-<label>Inactive</label>
-<input type="checkbox" ng-model="part.inactive"/>
+<label>Status</label>
+<button ng-model="part.inactive" class="btn btn-primary ng-pristine" btn-checkbox>
+    <span ng-show="part.inactive">Inactive</span>
+    <span ng-hide="part.inactive">Active</span>
+</button>
 
 <label>Manufacturer</label>
-<picker ng-model="part.manufacturer" items="manufacturers"></picker>
-
-<!--<picker items="manufacturers" selected="part.manufacturer"></picker>-->
+<picker ng-model="part.manufacturer" path="other/manufacturer"></picker>
 
 <label>Manufacturer P/N</label>
 <input type="text" ng-model="part.manufacturerPartNumber"/>
@@ -34,7 +36,7 @@
     <!-- Backplate -->
     <div ng-switch-when="Backplate">
         <label>Seal Type</label>
-        <picker path="/type/seal" ng-model="part.sealType"></picker>
+        <picker path="type/seal" ng-model="part.sealType"></picker>
 
         <label>Seal Type</label>
         <input type="text" ng-model="part.sealTypeString"/>
@@ -67,7 +69,7 @@
     <!-- Bearing Housing -->
     <div ng-switch-when="Bearing Housing">
         <label>Coolant</label>
-        <picker path="/type/cool" ng-model="part.coolType"></picker>
+        <picker path="type/cool" ng-model="part.coolType"></picker>
 
         <label>Oil Inlet</label>
         <input type="text" ng-model="part.oilInlet"/>
@@ -94,10 +96,10 @@
     <!-- Bearing Spacer -->
     <div ng-switch-when="Bearing Spacer">
         <label>Standard Size</label>
-        <picker path="/part?type=BearingSpacer" ng-model="part.standardSize"></picker>
+        <picker path="part?type=BearingSpacer" ng-model="part.standardSize"></picker>
 
         <label>Oversize</label>
-        <picker path="/part?type=BearingSpacer" ng-model="part.oversize"></picker>
+        <picker path="part?type=BearingSpacer" ng-model="part.oversize"></picker>
 
         <label>Outside Diameter (min - max)</label>
         <input type="text" ng-model="part.outsideDiameterMin"/> - <input type="text" ng-model="part.outsideDiameterMax"/>
@@ -136,7 +138,7 @@
     <!-- Gasket -->
     <div ng-switch-when="Gasket">
         <label>Type</label>
-        <picker path="/type/gasket" ng-model="part.gasketType"></picker>
+        <picker path="type/gasket" ng-model="part.gasketType"></picker>
     </div>
 
     <!-- Heatshield -->
@@ -154,10 +156,10 @@
     <!-- Journal Bearing -->
     <div ng-switch-when="Journal Bearing">
         <label>Standard Size</label>
-        <picker path="/part?type=JournalBearing" ng-model="part.standardSize"></picker>
+        <picker path="part?type=JournalBearing" ng-model="part.standardSize"></picker>
 
         <label>Oversize</label>
-        <picker path="/part?type=JournalBearing" ng-model="part.oversize"></picker>
+        <picker path="part?type=JournalBearing" ng-model="part.oversize"></picker>
 
         <label>Outside Diameter (min - max)</label>
         <input type="text" ng-model="part.outsideDiameterMin"/> - <input type="text" ng-model="part.outsideDiameterMax"/>
@@ -169,7 +171,7 @@
     <!-- Kit -->
     <div ng-switch-when="Kit">
         <label>Kit Type</label>
-        <picker path="/type/kit" ng-model="part.kitType"></picker>
+        <picker path="type/kit" ng-model="part.kitType"></picker>
     </div>
 
     <!-- Nozzle Ring -->
@@ -212,33 +214,33 @@
 
     <!-- Turbo -->
     <div ng-switch-when="Turbo">
-        <label>Turbo Model</label>
-        <picker path="/other/turboModel" ng-model="part.turboModel"></picker>
+        <!--<label>Turbo Model</label>-->
+        <!--<picker path="other/turbo-model" ng-model="part.turboModel"></picker>-->
 
         <label>Coolant</label>
-        <picker path="/type/cool" ng-model="part.coolType"></picker>
+        <picker path="type/cool" ng-model="part.coolType"></picker>
     </div>
 </div>
 
 <!-- Interchanges -->
 <label>Interchangeable Part Group</label>
-<span ng-show="interchangeNewId != null">{{interchangeNewId}}</span>
-<span ng-show="interchangeNewId == null && interchangePartId == null">[none]</span>
-<span ng-show="interchangeNewId == null && interchangePartId != null">[new]</span>
+<span ng-show="part.interchange.id != null">{{part.interchange.id}}</span>
+<span ng-show="part.interchange.id == null && part.interchangePartId == null">[none]</span>
+<span ng-show="part.interchange.id == null && part.interchangePartId != null">[new]</span>
 
-<button type="button" ng-show="interchangeNewId != null || interchangePartId != null" ng-click="clear()">Clear</button>
-<button type="button" ng-show="isChanged()" ng-click="undo()">Undo</button>
+<button type="button" ng-show="part.interchange.id != null || part.interchangePartId != null" ng-click="clear()">Clear</button>
+<button type="button" ng-hide="part.interchange == oldPart.interchange" ng-click="undo()">Undo</button>
 
-<!--<dt>Bill of Materials</dt>-->
-<!--<table data-ng-controller="BillOfMaterialsCtrl" data-ng-table="bomTableParams" class="table table-bordered table-striped">-->
-    <!--<tr data-ng-repeat="bomItem in part.bom" data-ng-click="$emit('BillOfMaterials.click', {'part': part, 'bomItem': bomItem})">-->
-        <!--<td title="'Type'">{{bomItem.child.partType.name}}</td>-->
-        <!--<td title="'Name'">{{bomItem.child.name}}</td>-->
-        <!--<td title="'Manufacturer'">{{bomItem.child.manufacturer.name}}</td>-->
-        <!--<td title="'Manufacturer Part Number'">{{bomItem.child.manufacturerPartNumber}}</td>-->
-        <!--<td title="'Quantity'">{{bomItem.quantity}}-->
-        <!--</td>-->
-    <!--</tr>-->
-<!--</table>-->
+<dt>Bill of Materials</dt>
+<table data-ng-controller="BillOfMaterialsCtrl" data-ng-table="bomTableParams" class="table table-bordered table-striped">
+    <tr data-ng-repeat="bomItem in part.bom" data-ng-click="$emit('BillOfMaterials.click', {'part': part, 'bomItem': bomItem})">
+        <td title="'Type'">{{bomItem.child.partType.name}}</td>
+        <td title="'Name'">{{bomItem.child.name}}</td>
+        <td title="'Manufacturer'">{{bomItem.child.manufacturer.name}}</td>
+        <td title="'Manufacturer Part Number'">{{bomItem.child.manufacturerPartNumber}}</td>
+        <td title="'Quantity'">{{bomItem.quantity}}
+        </td>
+    </tr>
+</table>
 
 </div>

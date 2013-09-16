@@ -1,6 +1,5 @@
 package com.turbointernational.metadata.domain.part;
 import com.turbointernational.metadata.domain.other.Manufacturer;
-import com.turbointernational.metadata.domain.part.bom.BOMItem;
 import com.turbointernational.metadata.domain.part.types.Backplate;
 import com.turbointernational.metadata.domain.part.types.BearingHousing;
 import com.turbointernational.metadata.domain.part.types.BearingSpacer;
@@ -26,7 +25,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import javax.persistence.CascadeType;
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
@@ -39,7 +38,6 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PrePersist;
@@ -55,6 +53,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.transaction.annotation.Transactional;
 
+@Cacheable
 @Configurable
 @Entity
 @Table(name = "PART")
@@ -62,6 +61,38 @@ import org.springframework.transaction.annotation.Transactional;
 @DiscriminatorColumn
 public class Part {
     public static final ObjectFactory OBJECT_FACTORY = new ObjectFactory() {
+//        private Gson gson = new Gson();
+//        
+//        Part part = null;
+//        if ("Backplate".equals(partType)) {
+//            gson.fromJson(json, Backplate.class);
+//        } else if ("BearingHousing".equals(partType)) {
+//            gson.fromJson(json, BearingHousing.class);
+//        } else if ("BearingSpacer".equals(partType)) {
+//            gson.fromJson(json, BearingSpacer.class);
+//        } else if ("Cartridge".equals(partType)) {
+//            gson.fromJson(json, Cartridge.class);
+//        } else if ("CompressorWheel".equals(partType)) {
+//            gson.fromJson(json, CompressorWheel.class);
+//        } else if ("Gasket".equals(partType)) {
+//            gson.fromJson(json, Gasket.class);
+//        } else if ("Heatshield".equals(partType)) {
+//            gson.fromJson(json, Heatshield.class);
+//        } else if ("JournalBearing".equals(partType)) {
+//            gson.fromJson(json, JournalBearing.class);
+//        } else if ("Kit".equals(partType)) {
+//            gson.fromJson(json, Kit.class);
+//        } else if ("NozzleRing".equals(partType)) {
+//            gson.fromJson(json, NozzleRing.class);
+//        } else if ("PistonRing".equals(partType)) {
+//            gson.fromJson(json, PistonRing.class);
+//        } else if ("TurbineWheel".equals(partType)) {
+//            gson.fromJson(json, TurbineWheel.class);
+//        } else if ("Turbo".equals(partType)) {
+//            gson.fromJson(json, Turbo.class);
+//        } else {
+//            gson.fromJson(json, Part.class);
+//        }
         
         @Override
         public Object instantiate(ObjectBinder context, Object value, Type targetType, Class targetClass) {
@@ -72,7 +103,7 @@ public class Part {
             // Create the appropriate part type
             Part part = null;
             if ("Backplate".equals(partType)) {
-                return new Backplate();
+                part = new Backplate();
             } else if ("BearingHousing".equals(partType)) {
                 part = new BearingHousing();
             } else if ("BearingSpacer".equals(partType)) {
@@ -131,21 +162,21 @@ public class Part {
     @Column(name="magento_product_id")
     private Integer magentoProductId;
     
-    @OneToOne
+    @OneToOne(fetch=FetchType.EAGER)
     @JoinColumn(name="part_type_id")
     private PartType partType;
     
     @Column(nullable = false, columnDefinition = "BIT", length = 1)
     private Boolean inactive;
     
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinTable(name="interchange_item",
             joinColumns=@JoinColumn(name="part_id"),
             inverseJoinColumns=@JoinColumn(name="interchange_header_id"))
     private Interchange interchange;
     
-    @OneToMany(mappedBy="parent", fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.REFRESH}, orphanRemoval = true)
-    private Collection<BOMItem> bom;
+//    @OneToMany(mappedBy="parent", fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.REFRESH}, orphanRemoval = true)
+//    private Collection<BOMItem> bom;
     
     @Version
     @Column(name = "version")
@@ -340,12 +371,12 @@ public class Part {
     public String toJson() {
         return new JSONSerializer()
                 .include("interchange")
-                .include("bom")
-                .include("bom.child")
-                .include("bom.child.id")
-                .include("bom.alternatives")
-                .include("bom.alternatives.header")
-                .include("bom.alternatives.part.id")
+//                .include("bom")
+//                .include("bom.child")
+//                .include("bom.child.id")
+//                .include("bom.alternatives")
+//                .include("bom.alternatives.header")
+//                .include("bom.alternatives.part.id")
                 .exclude("*.class")
                 .serialize(this);
     }
@@ -365,7 +396,7 @@ public class Part {
     
     public static String toJsonArray(Collection<Part> collection) {
         return new JSONSerializer()
-                .include("bom")
+//                .include("bom")
                 .exclude("*.class")
                 .serialize(collection);
     }
