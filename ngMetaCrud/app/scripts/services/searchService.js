@@ -59,11 +59,12 @@ angular.module('ngMetaCrudApp')
                     query_string: {
                         query: queryString,
                         fields: [
+                            "_id^1000",
+                            "part_type^1000",
                             "manufacturer_part_number.autocomplete",
                             "manufacturer_part_number.text",
                             "manufacturer_name.autocomplete",
                             "manufacturer_name.text",
-                            "part_type",
                             "name"
                         ]
                     }
