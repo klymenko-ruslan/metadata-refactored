@@ -1,11 +1,11 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-    .controller('PartDetailCtrl', function ($scope, $location, $routeParams, partService) {
+    .controller('PartDetailCtrl', function ($scope, $location, $routeParams, restService) {
         $scope.partId = $routeParams.id;
         $scope.partType = $routeParams.type;
 
-        $scope.part = partService.findPart($scope.partId);
+        $scope.part = restService.findPart($scope.partId);
 
         $scope.part.then(function(part) {
 

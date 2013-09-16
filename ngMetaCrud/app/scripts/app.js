@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('ngMetaCrudApp', ['ui.bootstrap','restangular', 'ngTable'])
+angular.module('ngMetaCrudApp', ['ui.bootstrap','restangular', 'ngTable', 'Mac', 'ui.select2'])
     .config(function(RestangularProvider) {
         RestangularProvider.setBaseUrl('http://localhost:8080/');
         RestangularProvider.setDefaultHttpFields({accept:"application/json"})

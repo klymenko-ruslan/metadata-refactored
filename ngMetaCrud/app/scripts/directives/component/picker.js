@@ -1,10 +1,13 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-  .directive('picker', function () {
-    return {
-      templateUrl: '/views/component/Picker.html',
-      restrict: 'E',
-      controller: 'PickerCtrl'
-    };
-  });
+    .directive('picker', function ($parse) {
+        return {
+            scope: {
+                "items": '=',
+                "ngModel": "="
+            },
+            templateUrl: '/views/component/Picker.html',
+            restrict: 'E'
+        }
+    });

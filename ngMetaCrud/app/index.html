@@ -18,6 +18,8 @@
     <!-- build:css(.tmp) styles/main.css -->
     <link rel="stylesheet" href="styles/main.css">
     <link rel="stylesheet" href="bower_components/ng-table/ng-table.css">
+    <link rel="stylesheet" href="bower_components/select2/select2.css">
+    <link rel="stylesheet" href="bower_components/angular-macgyver/lib/macgyver.css">
     <!-- endbuild -->
     <!-- Font Awesome CDN -->
     <link href="http://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
@@ -71,6 +73,8 @@
 <script src="bower_components/bootstrap-sass/js/bootstrap-scrollspy.js"></script>
 <script src="bower_components/bootstrap-sass/js/bootstrap-collapse.js"></script>
 <script src="bower_components/bootstrap-sass/js/bootstrap-tab.js"></script>
+<script src="bower_components/angular-ui-select2/src/select2.js"></script>
+<script src="bower_components/select2/select2.js"></script>
 <!-- endbuild -->
 
 <!-- build:js scripts/modules.js -->
@@ -79,13 +83,14 @@
 <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
 <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
 <script src="bower_components/ng-table/ng-table.js"></script>
+<script src="bower_components/angular-macgyver/lib/macgyver.js"></script>
 <!-- endbuild -->
 
 <!-- build:js({.tmp,app}) scripts/scripts.js -->
 <script src="scripts/app.js"></script>
 <script src="scripts/services/facetNameService.js"></script>
 <script src="scripts/services/searchService.js"></script>
-<script src="scripts/services/partService.js"></script>
+<script src="scripts/services/restService.js"></script>
 <script src="scripts/controllers/main.js"></script>
 <script src="scripts/controllers/admin/Login.js"></script>
 <script src="scripts/controllers/admin/MyAccount.js"></script>
@@ -105,7 +110,6 @@
 <script src="scripts/directives/component/searchFacets.js"></script>
 <script src="scripts/directives/component/interchanges.js"></script>
 <script src="scripts/directives/component/picker.js"></script>
-<script src="scripts/controllers/component/Picker.js"></script>
 <!-- endbuild -->
 
 <!-- additional bower components -->

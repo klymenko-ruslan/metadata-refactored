@@ -1,18 +1,18 @@
 'use strict';
 
-describe('Service: partService', function () {
+describe('Service: restService', function () {
 
   // load the service's module
   beforeEach(module('ngMetaCrudApp'));
 
   // instantiate service
   var partsService;
-  beforeEach(inject(function (_partService_) {
-    partsService = _partService_;
+  beforeEach(inject(function (_restService_) {
+    partsService = _restService_;
   }));
 
   it('should do something', function () {
-    expect(!!partService).toBe(true);
+    expect(!!restService).toBe(true);
   });
 
 });
