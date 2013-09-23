@@ -1,10 +1,10 @@
-<div>
+<div class="container">
 
 <div class="btn-group">
-    <a ng-href="#/part" class="btn btn-large">Go to Part List</a>
-    <a ng-href="#/part/{{ partType }}/{{ partId }}" class="btn btn-large">View Part Detail</a>
-    <a ng-click="save()" class="btn btn-large btn-success">Save Changes</a>
-    <a ng-click="revert()" ng-disabled="angular.equals(part != oldPart)" class="btn btn-large btn-warning">Revert to Original</a>
+    <a ng-href="#/part" class="btn btn-large">Part List</a>
+    <a ng-href="#/part/{{ partType }}/{{ partId }}" class="btn btn-large">View Part</a>
+    <a ng-click="save()" ng-disabled="isChanged()" class="btn btn-large btn-success">Save</a>
+    <a ng-click="revert()" ng-disabled="isChanged()" class="btn btn-large btn-warning">Revert</a>
 </div>
 
 <h2>
@@ -229,7 +229,7 @@
     <span ng-show="part.interchange.id == null && part.interchangePartId != null">[new]</span>
 </label>
 
-<a ng-click="pick()" class="btn btn-large btn-info" ng-href="#/part/{{ partType }}/{{ partId }}/interchange/search">Pick</a>
+<a ng-click="pick()" class="btn btn-large btn-info" ng-href="#/part/{{ partType }}/{{ partId }}/interchange/search">Pick...</a>
 <a ng-click="clearInterchange()" ng-disabled="part.interchange.id == null && part.interchangePartId == null" class="btn btn-large btn-warning">Clear</a>
 <a ng-click="revertInterchange()" ng-disabled="part.interchange.id == oldPart.interchange.id" class="btn btn-large">Undo</a>
 
