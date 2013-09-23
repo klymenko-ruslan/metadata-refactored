@@ -1,8 +1,11 @@
-<div id="detailsView" class="row-fluid">
+<div class="container">
 
-    <a ng-href="#/part/">&lt; Back to Part List</a>
+    <div class="btn-group">
+        <a ng-href="#/part" class="btn btn-large">Part List</a>
+        <a ng-href="#/part/{{ partType }}/{{ partId }}/form" class="btn btn-large">Edit Part</a>
+    </div>
 
-    <h2>{{ partType }} #{{ partId }} <a ng-href="#/part/{{ partType }}/{{ partId }}/form">Edit</a></h2>
+    <h2>{{ partType }} #{{ partId }}</h2>
 
     <dl>
         <dt>Name</dt>
@@ -301,10 +304,15 @@
             <span ng-hide="part.interchange.id == null">#{{part.interchange.id}}</span>
             <span ng-show="part.interchange.id == null">[none]</span>
         </dt>
-        <dd>
+        <dd ng-hide="part.interchange == null">
             Name:
-            <span ng-hide="part.interchange.name == null">{{part.interchange.name}}</span>
-            <span ng-show="part.interchange.id == null">[blank]</span>
+            <span ng-hide="part.interchange.name == null || part.interchange.name == ''">{{part.interchange.name}}</span>
+            <span ng-show="part.interchange.name == null || part.interchange.name == ''">[blank]</span>
+        </dd>
+        <dd ng-hide="part.interchange == null">
+            Description:
+            <span ng-hide="part.interchange.description == null || part.interchange.description == ''">{{part.interchange.description}}</span>
+            <span ng-show="part.interchange.description == null || part.interchange.description == ''">[blank]</span>
         </dd>
     </dl>
 

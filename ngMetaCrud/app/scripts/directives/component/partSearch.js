@@ -3,9 +3,13 @@
 angular.module('ngMetaCrudApp')
     .directive('partSearch', function () {
         return {
-            scope: true,
+            scope: {
+                actions: '@',
+                onAction: '&',
+                partType: '@'
+            },
             restrict: 'E',
-            controller: 'PartSearchCtrl',
-            templateUrl: '/views/component/PartSearch.html'
+            templateUrl: '/views/component/PartSearch.html',
+            controller: 'PartSearchCtrl'
         };
     });

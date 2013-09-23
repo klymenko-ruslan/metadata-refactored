@@ -9,15 +9,13 @@ angular.module('ngMetaCrudApp')
 
         // Lookup the part or setup the create workflow
         if (angular.isDefined($scope.partId)) {
-            console.log("Editing part #" + $scope.partId);
 
-            restService.findPart($scope.partId)
-                .then(function(part) {
+            $scope.part = restService.findPart($scope.partId);
+            $scope.part.then(function(part) {
                     console.log("Part data loaded.");
 
                     // Save the part
                     $scope.part = part;
-//                    $scope.manufacturer.id = part.manufacturer.id;
 
                     // Save a copy for reverting
                     $scope.oldPart = {};
@@ -27,21 +25,14 @@ angular.module('ngMetaCrudApp')
                     $scope.partType = part.partType.typeName;
                 }, function(response) {
                     console.error("Could not get manufacturer list from the server.");
-                    // TODO: Display error
                 });
         } else {
-            console.log("Creating new part");
             $scope.part = {};
         }
 
-        $scope.clearInterchange = function() {
-            $scope.part.interchange = null;
+        $scope.isChanged = function() {
+            return !angular.equals($scope.part, $scope.oldPart);
         }
-
-        $scope.revertInterchange = function() {
-            $scope.part.interchange = {};
-            angular.copy($scope.oldPart.interchange, $scope.part.interchange);
-        };
 
         $scope.revert = function() {
             angular.copy($scope.oldPart, $scope.part);
@@ -49,14 +40,6 @@ angular.module('ngMetaCrudApp')
 
         $scope.save = function() {
             $scope.part.put();
-        }
-
-        $scope.disable = function() {
-
-        }
-
-        $scope.enable = function() {
-
         }
 
   });
