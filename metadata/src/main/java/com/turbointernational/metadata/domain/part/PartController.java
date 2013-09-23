@@ -31,14 +31,19 @@ public class PartController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, headers = "Accept=application/json")
     @ResponseBody
-    public ResponseEntity<String> showJson(@PathVariable("id") Long id) {
+    public ResponseEntity<String> showJson(
+            @PathVariable("id") Long id,
+            @RequestParam(value="fields", required=false, defaultValue = "") String fields) {
+        
+        String[] fieldsArray = fields.split(",");
+        
         Part part = Part.findPart(id);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json; charset=utf-8");
         if (part == null) {
             return new ResponseEntity<String>(headers, HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<String>(part.toJson(), headers, HttpStatus.OK);
+        return new ResponseEntity<String>(part.toJson(fieldsArray), headers, HttpStatus.OK);
     }
     
     @RequestMapping(headers = "Accept=application/json")

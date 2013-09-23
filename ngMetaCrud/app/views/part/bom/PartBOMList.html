@@ -1,4 +1,4 @@
-<div class="container" ng-controller="PartInterchangeSearchCtrl">
+<div class="container" ng-controller="PartBOMListCtrl">
     <div class="btn-group">
         <a ng-href="#/part" class="btn btn-large">Part List</a>
         <a ng-href="#/part/{{ partType }}/{{ partId }}" class="btn btn-large">View Part</a>
@@ -10,7 +10,7 @@
 
 
     <!-- Part Summary -->
-    <h1>Interchangeable {{ partType }} #{{ partId }}</h1>
+    <h1>{{ partType }} #{{ partId }}</h1>
     <dl>
         <dt>Name</dt>
         <dd>

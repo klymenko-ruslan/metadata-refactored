@@ -1,5 +1,6 @@
 package com.turbointernational.metadata.domain.part;
 import com.turbointernational.metadata.domain.other.Manufacturer;
+import com.turbointernational.metadata.domain.part.bom.BOMItem;
 import com.turbointernational.metadata.domain.part.types.Backplate;
 import com.turbointernational.metadata.domain.part.types.BearingHousing;
 import com.turbointernational.metadata.domain.part.types.BearingSpacer;
@@ -26,6 +27,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import javax.persistence.Cacheable;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
@@ -38,6 +40,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PrePersist;
@@ -175,8 +178,8 @@ public class Part {
             inverseJoinColumns=@JoinColumn(name="interchange_header_id"))
     private Interchange interchange;
     
-//    @OneToMany(mappedBy="parent", fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.REFRESH}, orphanRemoval = true)
-//    private Collection<BOMItem> bom;
+    @OneToMany(mappedBy="parent", fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
+    private Collection<BOMItem> bom;
     
     @Version
     @Column(name = "version")
@@ -300,13 +303,13 @@ public class Part {
         
     }
     
-//    public Collection<BOMItem> getBom() {
-//        return bom;
-//    }
-//    
-//    public void setBom(Collection<BOMItem> bom) {
-//        this.bom = bom;
-//    }
+    public Collection<BOMItem> getBom() {
+        return bom;
+    }
+    
+    public void setBom(Collection<BOMItem> bom) {
+        this.bom = bom;
+    }
     
     public Integer getVersion() {
         return version;
@@ -383,15 +386,23 @@ public class Part {
     
     public String toJson(String[] fields) {
         return new JSONSerializer()
+                .include("interchange")
                 .include(fields)
                 .exclude("*.class")
                 .serialize(this);
     }
     
     public static Part fromJsonToPart(String json) {
-        return new JSONDeserializer<Part>()
+        Part part = new JSONDeserializer<Part>()
                 .use((String) null, OBJECT_FACTORY)
                 .deserialize(json);
+        
+        // Set the BOM parents (this doesn't deserialize automatically)
+        for (BOMItem bomItem : part.getBom()) {
+            bomItem.setParent(part);
+        }
+        
+        return part;
     }
     
     public static String toJsonArray(Collection<Part> collection) {

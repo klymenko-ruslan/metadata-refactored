@@ -316,16 +316,15 @@
         </dd>
     </dl>
 
-    <!--<dt>Bill of Materials</dt>-->
-    <!--<table data-ng-controller="BillOfMaterialsCtrl" data-ng-table="bomTableParams" class="table table-bordered table-striped">-->
-        <!--<tr data-ng-repeat="bomItem in part.bom" data-ng-click="$emit('BillOfMaterials.click', {'part': part, 'bomItem': bomItem})">-->
-            <!--<td title="'Type'">{{bomItem.child.partType.name}}</td>-->
-            <!--<td title="'Manufacturer'">{{bomItem.child.manufacturer.name}}</td>-->
-            <!--<td title="'OEM Part #'">{{bomItem.child.manufacturerPartNumber}}</td>-->
-            <!--<td title="'Name'">{{bomItem.child.name}}</td>-->
-            <!--<td title="'Manufacturer Part Number'"></td>-->
-            <!--<td title="'Quantity'">{{bomItem.quantity}}-->
-            <!--</td>-->
-        <!--</tr>-->
-    <!--</table>-->
+    <dt>Bill of Materials</dt>
+    <table data-ng-table="bomTableParams" class="table table-bordered table-striped">
+        <tr data-ng-repeat="bomItem in part.bom">
+            <td title="'Type'">{{bomItem.child.partType.typeName}}</td>
+            <td title="'Name'">{{bomItem.child.name}}</td>
+            <td title="'Manufacturer'">{{bomItem.child.manufacturer.name}}</td>
+            <td title="'Manufacturer Part Number'">{{bomItem.child.manufacturerPartNumber}}</td>
+            <td title="'Quantity'">{{bomItem.quantity}}
+            </td>
+        </tr>
+    </table>
 </div>

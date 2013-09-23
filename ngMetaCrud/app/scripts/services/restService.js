@@ -3,8 +3,8 @@
 angular.module('ngMetaCrudApp')
   .service('restService', function RestService(Restangular) {
         return new function() {
-            this.findPart = function(id) {
-                return Restangular.one("part", id).get();
+            this.findPart = function(id, params) {
+                return Restangular.one("part", id).get(params);
             }
 
             this.createPart = function(part) {

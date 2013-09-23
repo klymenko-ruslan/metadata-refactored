@@ -1,11 +1,18 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-    .controller('PartDetailCtrl', function ($scope, $location, $routeParams, restService) {
+    .controller('PartDetailCtrl', function ($scope, $location, $routeParams, ngTableParams, restService) {
         $scope.partId = $routeParams.id;
         $scope.partType = $routeParams.type;
 
-        $scope.part = restService.findPart($scope.partId);
+        $scope.part = restService.findPart($scope.partId, {fields: 'bom'});
+
+
+        $scope.bomTableParams = new ngTableParams({
+            count: 5,
+            page: 1,
+            total: 0
+        });
 
         $scope.part.then(function(part) {
 

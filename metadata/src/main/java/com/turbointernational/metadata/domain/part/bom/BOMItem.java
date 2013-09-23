@@ -36,7 +36,7 @@ public class BOMItem {
     @Column(nullable=false)
     private Integer quantity;
 
-    @OneToMany(mappedBy="bomItem", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy="bomItem", cascade = {CascadeType.DETACH, CascadeType.REFRESH}, fetch = FetchType.LAZY)
     private Set<BOMAlternative> alternatives;
 
     public Long getId() {
