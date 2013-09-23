@@ -16,7 +16,6 @@ angular.module('ngMetaCrudApp')
 
                     // Save the part
                     $scope.part = part;
-//                    $scope.manufacturer.id = part.manufacturer.id;
 
                     // Save a copy for reverting
                     $scope.oldPart = {};
@@ -41,14 +40,6 @@ angular.module('ngMetaCrudApp')
 
         $scope.save = function() {
             $scope.part.put();
-        }
-
-        $scope.disable = function() {
-
-        }
-
-        $scope.enable = function() {
-
         }
 
   });
