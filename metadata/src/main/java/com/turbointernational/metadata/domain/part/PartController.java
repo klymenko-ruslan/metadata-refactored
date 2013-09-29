@@ -1,4 +1,5 @@
 package com.turbointernational.metadata.domain.part;
+import com.turbointernational.metadata.domain.part.bom.BOMItem;
 import com.turbointernational.metadata.util.ElasticSearch;
 import java.security.Principal;
 import java.util.Collection;
@@ -103,7 +104,17 @@ public class PartController {
         String originalPartJson = originalPart.toJson();
         
         // Update the part
-        Part part = Part.fromJsonToPart(partJson);
+        final Part part = Part.fromJsonToPart(partJson);
+        
+        // Handle BOM updates
+        if (part.getBom() != null) {
+            for (BOMItem item : part.getBom()) {
+                Long childId = item.getChild().getId();
+                item.setChild(Part.findPart(childId));
+                
+                item.setParent(part);
+            }
+        }
         if (part.merge() == null) {
             return new ResponseEntity<String>(headers, HttpStatus.NOT_FOUND);
         }

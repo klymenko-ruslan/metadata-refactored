@@ -24,6 +24,7 @@ import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import javax.persistence.Cacheable;
@@ -140,7 +141,7 @@ public class Part {
             return part;
         }
     };
-
+    
     //<editor-fold defaultstate="collapsed" desc="Properties">
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -395,6 +396,8 @@ public class Part {
     public static Part fromJsonToPart(String json) {
         Part part = new JSONDeserializer<Part>()
                 .use((String) null, OBJECT_FACTORY)
+                .use("bom", LinkedList.class)
+                .use("bom.values", BOMItem.class)
                 .deserialize(json);
         
         // Set the BOM parents (this doesn't deserialize automatically)
