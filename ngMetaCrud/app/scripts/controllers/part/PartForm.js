@@ -36,10 +36,6 @@ angular.module('ngMetaCrudApp')
             $scope.part = {};
         }
 
-        $scope.isChanged = function() {
-            return !angular.equals($scope.part, $scope.oldPart);
-        }
-
         $scope.revert = function() {
             angular.copy($scope.oldPart, $scope.part);
         }

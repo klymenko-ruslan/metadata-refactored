@@ -31,6 +31,10 @@ angular.module('ngMetaCrudApp', ['ui.bootstrap','restangular', 'ngTable', 'Mac',
                 templateUrl: 'views/part/interchange/PartInterchangeSearch.html',
                 controller: 'PartInterchangeSearchCtrl'
             })
+            .when('/part/:type/:id/bom/search', {
+                templateUrl: 'views/part/bom/PartBomSearch.html',
+                controller: 'PartBomSearchCtrl'
+            })
             .otherwise({
                 redirectTo: '/part/'
             });

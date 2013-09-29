@@ -4,9 +4,11 @@
     <a ng-href="#/part" class="btn btn-large">Part List</a>
     <a ng-href="#/part/{{ partType }}/{{ partId }}" class="btn btn-large">View Part</a>
     <a ng-href="#/part/{{ partType }}/{{ partId }}/interchange/search" class="btn btn-large btn-info">Interchange...</a>
-    <a ng-click="save()" ng-disabled="isChanged()" class="btn btn-large btn-success">Save</a>
-    <a ng-click="revert()" ng-disabled="isChanged()" class="btn btn-large btn-warning">Revert</a>
+    <a ng-click="save()" ng-disabled="!isChanged()" class="btn btn-large btn-success">Save</a>
+    <a ng-click="revert()" ng-disabled="!isChanged()" class="btn btn-large btn-warning">Revert</a>
 </div>
+
+<ng-form>
 
 <h2>
     <span ng-hide="partId">Create </span>
@@ -256,5 +258,11 @@
         </td>
     </tr>
 </table>
+
+<p>
+    <a ng-href="#/part/{{ partType }}/{{ partId }}/bom/search" class="btn btn-large btn-info">Add Item</a>
+</p>
+
+</ng-form>
 
 </div>

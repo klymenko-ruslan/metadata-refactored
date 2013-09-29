@@ -1,0 +1,103 @@
+<div class="container" ng-controller="PartBomSearchCtrl">
+    <div class="btn-group">
+        <a ng-href="#/part" class="btn btn-large">Part List</a>
+        <a ng-href="#/part/{{ partType }}/{{ partId }}" class="btn btn-large">View Part</a>
+        <a ng-href="#/part/{{ partType }}/{{ partId }}/form" class="btn btn-large">Edit Part</a>
+        <a ng-click="save()" ng-disabled="pickedPart == null" class="btn btn-large btn-success">Add BOM Item</a>
+    </div>
+
+
+    <!-- Part Summary -->
+    <h1>Add BOM item to {{ partType }} #{{ partId }}</h1>
+    <dl>
+        <dt>Name</dt>
+        <dd>
+            {{part.name}}
+            <span ng-show="part.name == null || part.name == ''">[blank]</span>
+        </dd>
+
+        <dt>Description</dt>
+        <dd>
+            {{part.description}}
+            <span ng-show="part.description == null || part.description == ''">[blank]</span>
+        </dd>
+
+        <dt>Manufacturer</dt>
+        <dd>
+            {{part.manufacturer.name}}
+            <span ng-show="part.manufacturer.name == null || part.manufacturer.name == ''">[blank]</span>
+        </dd>
+
+        <dt>Manufacturer Part Number</dt>
+        <dd>
+            {{part.manufacturerPartNumber}}
+            <span ng-show="part.manufacturerPartNumber == null || part.manufacturerPartNumber == ''">[blank]</span>
+        </dd>
+
+        <!-- Interchanges -->
+        <dt>Interchangeable Part Group
+            <span ng-hide="part.interchange.id == null">#{{part.interchange.id}}</span>
+            <span ng-show="part.interchange.id == null">[none]</span>
+        </dt>
+        <dd ng-hide="part.interchange == null">
+            <dl>
+                <dd ng-hide="part.interchange == null">
+                    Name:
+                    <span ng-hide="part.interchange.name == null || part.interchange.name == ''">{{part.interchange.name}}</span>
+                    <span ng-show="part.interchange.name == null || part.interchange.name == ''">[blank]</span>
+                </dd>
+                <dd ng-hide="part.interchange == null">
+                    Description:
+                    <span ng-hide="part.interchange.description == null || part.interchange.description == ''">{{part.interchange.description}}</span>
+                    <span ng-show="part.interchange.description == null || part.interchange.description == ''">[blank]</span>
+                </dd>
+            </dl>
+        </dd>
+    </dl>
+
+    <hr/>
+
+
+
+    <h3 ng-show="pickedPart == null">No Part Picked</h3>
+
+    <div ng-show="pickedPart != null">
+        <h3 ng-show="pickedPart != null">
+            Picked {{ pickedPart.partType.typeName }} #{{ pickedPart.id }}
+            <a ng-click="showPickedPart = !showPickedPart" ng-show="showPickedPart == false" class="btn">Show</a>
+            <a ng-click="showPickedPart = !showPickedPart" ng-show="showPickedPart == true" class="btn">Hide</a>
+        </h3>
+        <dl>
+            <dt>Quantity</dt>
+            <dd><input ng-model="bomItem.quantity" type="text" class="input-small"/></dd>
+        </dl>
+        <dl collapse="!showPickedPart">
+            <dt>Name</dt>
+            <dd>
+                {{pickedPart.name}}
+                <span ng-show="pickedPart.name == null || pickedPart.name == ''">[blank]</span>
+            </dd>
+
+            <dt>Description</dt>
+            <dd>
+                {{pickedPart.description}}
+                <span ng-show="pickedPart.description == null || pickedPart.description == ''">[blank]</span>
+            </dd>
+
+            <dt>Manufacturer</dt>
+            <dd>
+                {{pickedPart.manufacturer.name}}
+                <span ng-show="pickedPart.manufacturer.name == null || pickedPart.manufacturer.name == ''">[blank]</span>
+            </dd>
+
+            <dt>Manufacturer Part Number</dt>
+            <dd>
+                {{pickedPart.manufacturerPartNumber}}
+                <span ng-show="pickedPart.manufacturerPartNumber == null || pickedPart.manufacturerPartNumber == ''">[blank]</span>
+            </dd>
+        </dl>
+    </div>
+
+    <p>Find and pick an part below to add a new item to the bill of materials for this part.</p>
+    <part-search actions="Pick" on-action="onPick(action, partId, partType)"></part-search>
+</div>
