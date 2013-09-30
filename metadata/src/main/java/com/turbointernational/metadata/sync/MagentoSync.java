@@ -8,6 +8,8 @@ import java.util.List;
 import net.sf.jsog.JSOG;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping("/other/sync")
@@ -39,6 +41,12 @@ public class MagentoSync {
 
         } while (parts.size() >= pageSize);
     }
+    
+    @RequestMapping(value="/part", headers = "Accept=application/json")
+    @ResponseBody
+    private void addPart(@RequestParam long partId) {
+        addProduct(Part.findPart(partId));
+    }
 
     
     private void updateProduct(Part part) {
@@ -60,9 +68,11 @@ public class MagentoSync {
 
     }
 
-    private void addPart(Part part) {
+    private void addProduct(Part part) {
+        
         // Serialize to JSOG as in part update
         JSOG partJsog = part.toJsog();
+        
         // POST request to create product
         rest.createProduct(partJsog);
     }
