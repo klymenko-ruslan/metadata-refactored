@@ -6,7 +6,13 @@ import com.turbointernational.metadata.magento.soap.MagentoSoap;
 import java.util.Date;
 import java.util.List;
 import net.sf.jsog.JSOG;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+@Controller
+@RequestMapping("/other/sync")
 public class MagentoSync {
 
     MagentoRest rest;
@@ -20,12 +26,14 @@ public class MagentoSync {
             parts = Part.getPartsUpdatedAfter(lastUpdated, page * pageSize, pageSize);
 
             for (Part part : parts) {
+                
                 // Remove part if non-existent or inactive
                 if (part.getInactive() || part == null) {
                     deletePart(part);
-                // Otherwise update part
+                
+                    // Otherwise update part
                 } else {
-                    updatePart(part);
+                    updateProduct(part);
                 }
             }
 
@@ -33,8 +41,15 @@ public class MagentoSync {
 
         } while (parts.size() >= pageSize);
     }
+    
+    @RequestMapping(value="/part", headers = "Accept=application/json")
+    @ResponseBody
+    private void addPart(@RequestParam long partId) {
+        addProduct(Part.findPart(partId));
+    }
 
-    private void updatePart(Part part) {
+    
+    private void updateProduct(Part part) {
 
         // Get the part as JSOG, delete/transform the values for Magento
         JSOG partJsog = part.toJsog();
@@ -53,9 +68,11 @@ public class MagentoSync {
 
     }
 
-    private void addPart(Part part) {
+    private void addProduct(Part part) {
+        
         // Serialize to JSOG as in part update
         JSOG partJsog = part.toJsog();
+        
         // POST request to create product
         rest.createProduct(partJsog);
     }
