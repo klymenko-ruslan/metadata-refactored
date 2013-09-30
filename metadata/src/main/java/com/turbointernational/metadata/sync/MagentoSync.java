@@ -44,7 +44,7 @@ public class MagentoSync {
     
     @RequestMapping(value="/part", headers = "Accept=application/json")
     @ResponseBody
-    private void addPart(@RequestParam long partId) {
+    public void addPart(@RequestParam long partId) {
         addProduct(Part.findPart(partId));
     }
 
