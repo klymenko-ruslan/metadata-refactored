@@ -91,43 +91,6 @@ public class MagentoSync {
         rest.createProduct(partJsog);
     }
 
-    private void deletePart(Part part) {
-        // Get the part ID
-        int partId = part.getMagentoProductId();
-        // Send DELETE request for the part
-        rest.deleteProduct(partId);
-    }
-
-    private void addProduct(Part part) {
-        
-        // Serialize to JSOG as in part update
-        JSOG partJsog = part.toJsog();
-        
-        // POST request to create product
-        rest.createProduct(partJsog);
-    }
-
-    private void deletePart(Part part) {
-        // Get the part ID
-        int partId = part.getMagentoProductId();
-        // Send DELETE request for the part
-        rest.deleteProduct(partId);
-    }
-
-    private void addPart(Part part) {
-        // Serialize to JSOG as in part update
-        JSOG partJsog = part.toJsog();
-        // POST request to create product
-        rest.createProduct(partJsog);
-    }
-
-    private void deletePart(Part part) {
-        // Get the part ID
-        int partId = part.getMagentoProductId();
-        // Send DELETE request for the part
-        rest.deleteProduct(partId);
-    }
-
     public JSOG getProduct(Part part) {
         return rest.getProductById(part.getMagentoProductId());
     }
