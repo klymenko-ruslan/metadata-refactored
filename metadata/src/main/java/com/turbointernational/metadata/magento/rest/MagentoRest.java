@@ -60,8 +60,8 @@ public class MagentoRest {
 //        // Create
 //        JSOG product = JSOG.object()
 //            .put("sku", "127")
-//            .put("attribute_set_id", "12")
-//            .put("type_id","simple")
+//            .put("attribute_set_id", "12") // Attribute set
+//            .put("type_id","simple") // Required
 //            .put("name", "my name") // Required
 //            .put("short_description", "my short description") // Required
 //            .put("description","my desc") // Required

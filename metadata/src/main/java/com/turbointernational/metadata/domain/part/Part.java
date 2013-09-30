@@ -359,11 +359,10 @@ public class Part {
                 .put("description", description)
                 .put("manufacturer_name", manufacturer.getName())
                 .put("manufacturer_type_name", manufacturer.getType().getName())
-                .put("manufacturer_part_number", manufacturerPartNumber);
+                .put("manufacturer_part_number", manufacturerPartNumber)
+                .put("part_type", partType.getTypeName())
+                .put("attribute_set_id", partType.getMagentoAttributeSetId());
         
-        if (partType != null) {
-            partObject.put("part_type", partType.getTypeName());
-        }
         
         if (interchange != null) {
             partObject.put("interchange_id", interchange.getId());
