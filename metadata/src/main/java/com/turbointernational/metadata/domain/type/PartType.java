@@ -27,6 +27,9 @@ public class PartType {
 
     @Column(name="DTYPE", nullable=false)
     private String typeName;
+    
+    @Column(name="magento_attribute_set_id")
+    private Integer magentoAttributeSetId;
 
     // TODO: Is this a duplicate of parentTypes?
     @OneToOne
@@ -57,6 +60,14 @@ public class PartType {
         this.typeName = typeName;
     }
 
+    public Integer getMagentoAttributeSetId() {
+        return magentoAttributeSetId;
+    }
+
+    public void setMagentoAttributeSetId(Integer magentoAttributeSetId) {
+        this.magentoAttributeSetId = magentoAttributeSetId;
+    }
+    
     public PartType getParent() {
         return parent;
     }
