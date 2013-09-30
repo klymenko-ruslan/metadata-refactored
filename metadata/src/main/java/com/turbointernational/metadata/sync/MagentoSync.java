@@ -84,7 +84,6 @@ public class MagentoSync {
         rest.deleteProduct(partId);
     }
 
-<<<<<<< HEAD
     private void addPart(Part part) {
         // Serialize to JSOG as in part update
         JSOG partJsog = part.toJsog();
@@ -92,15 +91,6 @@ public class MagentoSync {
         rest.createProduct(partJsog);
     }
 
-    private void deletePart(Part part) {
-        // Get the part ID
-        int partId = part.getMagentoProductId();
-        // Send DELETE request for the part
-        rest.deleteProduct(partId);
-    }
-
-=======
->>>>>>> 7b91f4b6ca008fe65699fbe99cc99d71f51ef6ea
     public JSOG getProduct(Part part) {
         return rest.getProductById(part.getMagentoProductId());
     }
