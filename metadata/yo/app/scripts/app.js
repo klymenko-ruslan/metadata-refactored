@@ -10,12 +10,10 @@ angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap','restangul
         })
     })
     .config(function ($routeProvider) {
-
         $routeProvider.when('/part/:type', {
             templateUrl: 'views/part/PartList.html',
             controller: 'PartListCtrl'
         });
-
         $routeProvider.when('/part/:type/form', {
             templateUrl: 'views/part/PartForm.html',
             controller: 'PartFormCtrl'

@@ -15,6 +15,11 @@
     {{ partType }}
     <span ng-show="partId">#{{ partId }} </span></h2>
 
+<label>Turbo Model</label>
+<div style="display: table-row" data-ng-controller="TurboModelPicker">
+    <select data-ng-model="part.model.type.manufacturer.id" data-ng-options="item.id as item.name for item in manufacturers" class="select-large" style="display: table-cell;"/>
+</div>
+
 <label>Name</label>
 <input type="text" ng-model="part.name"/>
 
@@ -28,7 +33,7 @@
 </button>
 
 <label>Manufacturer</label>
-<picker ng-model="part.manufacturer" path="other/manufacturer"></picker>
+<picker ng-model="part.manufacturer" items="manufacturers"></picker>
 
 <label>Manufacturer P/N</label>
 <input type="text" ng-model="part.manufacturerPartNumber"/>
