@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-  .controller('PartFormCtrl', function ($scope, restService, $routeParams, ngTableParams, $location) {
+  .controller('PartFormCtrl', function ($scope, $location, $routeParams, ngTableParams, restService) {
         $scope.partId   = $routeParams.id;
         $scope.partType = $routeParams.type;
         $scope.part     = null;
@@ -12,6 +12,9 @@ angular.module('ngMetaCrudApp')
             page: 1,
             total: 0
         });
+
+
+        $scope.manufacturers = restService.listManufacturers();
 
         // Lookup the part or setup the create workflow
         if (angular.isDefined($scope.partId)) {
