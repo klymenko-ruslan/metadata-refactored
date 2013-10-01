@@ -3,7 +3,7 @@
   <persistence-unit name="persistenceUnit" transaction-type="RESOURCE_LOCAL">
     <provider>org.hibernate.ejb.HibernatePersistence</provider>
     <!--<provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>-->
-    <shared-cache-mode>ENABLE_SELECTIVE</shared-cache-mode>
+    <shared-cache-mode>ALL</shared-cache-mode>
     <properties>
             <property name="hibernate.show_sql" value="true"/>
             <property name="hibernate.format_sql" value="true"/>
@@ -12,7 +12,6 @@
             <property name="hibernate.hbm2ddl.auto" value=""/>
             <property name="hibernate.ejb.naming_strategy" value="org.hibernate.cfg.ImprovedNamingStrategy"/>
             <property name="hibernate.connection.charSet" value="UTF-8"/>
-        
 
       <!--
     <property name="eclipselink.logging.level" value="ALL"/>
