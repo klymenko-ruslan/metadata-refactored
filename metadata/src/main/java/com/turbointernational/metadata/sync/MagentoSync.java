@@ -5,7 +5,6 @@ import com.turbointernational.metadata.magento.rest.MagentoRest;
 import com.turbointernational.metadata.magento.soap.MagentoSoap;
 import java.util.Date;
 import java.util.List;
-import javax.annotation.PostConstruct;
 import net.sf.jsog.JSOG;
 import net.sf.jsog.client.UrlBuilder;
 import org.apache.commons.lang3.StringUtils;
@@ -19,21 +18,40 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping("/other/sync")
 public class MagentoSync {
     
+    //
+    // REST
+    //
     public static final String BASE_URL = "http://ec2-184-73-132-150.compute-1.amazonaws.com/";
+    
+    String restApiKey = "4wy124nq41hquo0z3hm8mm3uzaqrmte2";
+    
+    String restApiSecret = "m41dv0jtygqrl3cne1731pe5pglh5pel";
+    
+    String restToken = "8zp75lkc8zrm04jscylo0s3nbojae057";
+    
+    String restTokenSecret = "4y791olryopwe8cfebxn6jij8apoerck";
+    
+    UrlBuilder restApiUrl = new UrlBuilder(BASE_URL + "api/rest/{0}").set("type", "rest");
+    
+    //
+    // SOAP
+    //
+    
+    String soapApiUrl = BASE_URL + "index.php/api/soap";
+    
+    String soapApiUsername = "metadata";
+    
+    String soapApiPassword = "9l8t6QCihtX4";
+    
+    protected MagentoRest rest() {
+        return new MagentoRest(
+                restApiUrl,
+                new Token(restToken, restTokenSecret),
+                restApiKey, restApiSecret);
+    }
 
-    MagentoRest rest;
-    
-    MagentoSoap soap;
-    
-    @PostConstruct
-    public void init() {
-        rest = new MagentoRest(
-                new UrlBuilder(BASE_URL + "api/rest/{0}").set("type", "rest"),
-                new Token("8zp75lkc8zrm04jscylo0s3nbojae057", "4y791olryopwe8cfebxn6jij8apoerck"),
-                "4wy124nq41hquo0z3hm8mm3uzaqrmte2", "m41dv0jtygqrl3cne1731pe5pglh5pel");
-        
-        soap = new MagentoSoap("metadata", "9l8t6QCihtX4", BASE_URL + "index.php/api/soap");
-        
+    protected MagentoSoap soap() {
+        return new MagentoSoap(soapApiUsername, soapApiPassword, soapApiUrl);
     }
 
     public void synchronize(Date lastUpdated) {
@@ -62,8 +80,16 @@ public class MagentoSync {
     
     @RequestMapping(value="/part", headers = "Accept=application/json")
     @ResponseBody
-    public void addPart(@RequestParam long id) {
-        addProduct(Part.findPart(id));
+    public String addPart(@RequestParam long id) {
+        return addProduct(Part.findPart(id));
+    }
+    
+    @RequestMapping(value="/parts", headers = "Accept=application/json")
+    @ResponseBody
+    public void addAllParts() {
+        for (Part part : Part.findAll()) {
+            addProduct(part);
+        }
     }
 
     
@@ -81,12 +107,12 @@ public class MagentoSync {
 
         // If they're different, update the part
         if (!originalProduct.equals(updatedProduct)) {
-            rest.updateProduct(originalProduct.get("id").getIntegerValue(), partJsog);
+            rest().updateProduct(originalProduct.get("id").getIntegerValue(), partJsog);
         }
 
     }
 
-    private void addProduct(Part part) {
+    private String addProduct(Part part) {
         
         // Serialize to JSOG as in part update
         JSOG partJsog = part.toJsog()
@@ -116,17 +142,17 @@ public class MagentoSync {
 
         
         // POST request to create product
-        rest.createProduct(partJsog);
+        return rest().createProduct(partJsog).toString();
     }
 
     private void deleteProduct(Part part) {
         // Get the part ID
         int partId = part.getMagentoProductId();
         // Send DELETE request for the part
-        rest.deleteProduct(partId);
+        rest().deleteProduct(partId);
     }
 
     public JSOG getProduct(Part part) {
-        return rest.getProductById(part.getMagentoProductId());
+        return rest().getProductById(part.getMagentoProductId());
     }
 }
