@@ -79,6 +79,9 @@ angular.module('ngMetaCrudApp')
             // Call to ElasticSearch
             return $http({
                 method: 'POST',
+                headers: {
+                    "Content-type": "text/plain"
+                },
                 url: "https://api.searchbox.io/api-key/xmqnaud6grtokcswjvna7nzvwukk6ont/metadata/_search",
                 data: searchRequest
             });
