@@ -47,61 +47,55 @@ angular.module('ngMetaCrudApp')
         };
 
         $scope.setPartTurboModel = function() {
-            if ($scope.turboModelId == null) {
-                $scope.part.turboModel = null;
-            } else {
-                $scope.part.turboModel = {
-                    id: $scope.turboModelId,
-                    turboType: {
-                        id: $scope.turboTypeId,
-                        manufacturer: {
-                            id: $scope.part.manufacturer.id
-                        }
+            $scope.part.turboModel = {
+                id: $scope.turboModelId,
+                turboType: {
+                    id: $scope.turboTypeId,
+                    manufacturer: {
+                        id: $scope.part.manufacturer.id
                     }
-                };
-            }
+                }
+            };
         };
 
+        $scope.$on("revert", function() {
+            $scope.turboTypeId = $scope.getPartTurboTypeId();
+            $scope.turboModelId = $scope.getPartTurboModelId();
+
+            if (angular.isDefined($scope.part.manufacturer))
+                restService.listTurboTypesForManufacturerId($scope.part.manufacturer.id)
+                    .then(function(turboTypes) {
+                        $scope.turboTypes = turboTypes;
+                    });
+        });
 
         $scope.$watch('part.manufacturer.id', function (manufacturerId) {
-            if (!angular.isNumber(manufacturerId)) return;
+            if (angular.isUndefined($scope.part)) return;
 
             // Clear the current turbo model if the manufacturer changes
             if (manufacturerId != $scope.getPartModelManufacturer()) {
                 $scope.part.turboModel = null;
             }
 
-            // Turbo Types
             $scope.turboTypeId = $scope.getPartTurboTypeId();
-            console.log("turboTypeId", $scope.turboTypeId);
-
+            $scope.turboModelId =$scope.getPartTurboModelId();
             $scope.turboTypes = [];
-
-            restService.listTurboTypesForManufacturerId(manufacturerId)
-                .then(function(turboTypes) {
-                    $scope.turboTypes = turboTypes;
-                });
-
-            // Turbo Models
-            $scope.turboModelId = $scope.getPartTurboModelId();
-            console.log("turboModelId", $scope.turboModelId);
-
             $scope.turboModels = [];
 
-            if (angular.isNumber($scope.turboModelId))
-                restService.listTurboModelsForTurboTypeId($scope.turboModelId)
-                    .then(function(turboModels) {
-                        $scope.turboModels = turboModels;
+            if (angular.isNumber(manufacturerId))
+                restService.listTurboTypesForManufacturerId(manufacturerId)
+                    .then(function(turboTypes) {
+                        $scope.turboTypes = turboTypes;
                     });
         });
 
-        $scope.$watch('turboTypeId', function(turboTypeId) {
-            if (!angular.isNumber(turboTypeId)) return;
+        $scope.$watch('turboTypeId', function(newTurboTypeId, oldTurboTypeId) {
+            if (!angular.isNumber(newTurboTypeId)) return;
 
             $scope.turboModels = [];
 
-            if (angular.isNumber(turboTypeId))
-                restService.listTurboModelsForTurboTypeId(turboTypeId)
+            if (angular.isNumber(newTurboTypeId))
+                restService.listTurboModelsForTurboTypeId(newTurboTypeId)
                     .then(function(turboModels) {
                         $scope.turboModels = turboModels;
                     });

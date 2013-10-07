@@ -1,7 +1,9 @@
 package com.turbointernational.metadata.domain.part.types;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.type.GasketType;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
@@ -16,7 +18,7 @@ import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 @SecondaryTable(name="gasket", pkJoinColumns=@PrimaryKeyJoinColumn(name = "part_id"))
 public class Gasket extends Part {
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH, CascadeType.MERGE})
     @JoinColumn(name="gasket_type_id", table = "gasket")
     private GasketType gasketType;
 

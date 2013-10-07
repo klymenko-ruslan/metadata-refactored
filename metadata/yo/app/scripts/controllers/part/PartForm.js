@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-  .controller('PartFormCtrl', function ($scope, $location, $routeParams, ngTableParams, restService) {
+  .controller('PartFormCtrl', function ($scope, $location, $routeParams, ngTableParams, restService, Restangular) {
         $scope.partId   = $routeParams.id;
         $scope.partType = $routeParams.type;
         $scope.part     = {};
@@ -31,16 +31,16 @@ angular.module('ngMetaCrudApp')
                     console.log("Part data loaded.");
 
                     // Save the part
-                    $scope.oldPart = part;
-                    $scope.revert();
+                    $scope.part = part;
+                    $scope.oldPart = Restangular.copy(part);
                 }, function(response) {
                     console.error("Could not get part list from the server.");
                 });
         }
 
         $scope.revert = function() {
-            $scope.part = {};
-            angular.copy($scope.oldPart, $scope.part);
+            $scope.part = Restangular.copy($scope.oldPart);
+            $scope.$broadcast("revert");
         }
 
         $scope.save = function() {

@@ -1,10 +1,9 @@
 'use strict';
 
-angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap','restangular', 'Mac', 'localytics.directives'])
+angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap', 'restangular', 'Mac', 'localytics.directives'])
     .config(function(RestangularProvider) {
         RestangularProvider.setBaseUrl('http://localhost:8080/');
-        RestangularProvider.setDefaultHttpFields({accept:"application/json"})
-        RestangularProvider.setExtraFields(['name']);
+        RestangularProvider.setDefaultHeaders({"Content-Type": "text/plain"});
         RestangularProvider.setResponseExtractor(function(response, operation) {
             return response;
         })

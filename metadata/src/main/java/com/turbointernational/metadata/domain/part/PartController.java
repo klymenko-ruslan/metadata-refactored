@@ -1,5 +1,7 @@
 package com.turbointernational.metadata.domain.part;
+import com.turbointernational.metadata.domain.other.TurboModel;
 import com.turbointernational.metadata.domain.part.bom.BOMItem;
+import com.turbointernational.metadata.domain.part.types.Turbo;
 import com.turbointernational.metadata.util.ElasticSearch;
 import java.security.Principal;
 import java.util.Collection;
@@ -30,7 +32,7 @@ public class PartController {
     @Autowired(required=true)
     private ElasticSearch elasticSearch;
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET, headers = "Accept=application/json")
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<String> showJson(
             @PathVariable("id") Long id,
@@ -47,7 +49,7 @@ public class PartController {
         return new ResponseEntity<String>(part.toJson(fieldsArray), headers, HttpStatus.OK);
     }
     
-    @RequestMapping(headers = "Accept=application/json")
+    @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<String> listJson(
             @RequestParam(required = false, defaultValue = "1") Integer first,
@@ -72,7 +74,7 @@ public class PartController {
     }
     
     @Transactional
-    @RequestMapping(method = RequestMethod.POST, headers = "Accept=application/json")
+    @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<String> createFromJson(Principal principal, @RequestBody String partJson) throws Exception {
         JSOG partJsog = JSOG.parse(partJson);
         
@@ -92,7 +94,7 @@ public class PartController {
     }
     
     @Transactional
-    @RequestMapping(value = "/{id}", method = RequestMethod.PUT, headers = "Accept=application/json")
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     public ResponseEntity<String> updateFromJson(Principal principal, @RequestBody String partJson, @PathVariable("id") Long id) throws Exception {
         JSOG partJsog = JSOG.parse(partJson);
         
@@ -115,6 +117,13 @@ public class PartController {
                 item.setParent(part);
             }
         }
+        
+        // Special part type handling
+        if (part instanceof Turbo) {
+            Turbo turbo = (Turbo) part;
+            turbo.setTurboModel(TurboModel.findTurboModel(turbo.getTurboModel().getId()));
+        }
+        
         if (part.merge() == null) {
             return new ResponseEntity<String>(headers, HttpStatus.NOT_FOUND);
         }
@@ -132,7 +141,7 @@ public class PartController {
     }
     
     @Transactional
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, headers = "Accept=application/json")
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<String> deleteFromJson(Principal principal, @PathVariable("id") Long id) {
         Part part = Part.findPart(id);
         String partJson = part.toJson();
@@ -150,7 +159,7 @@ public class PartController {
         return new ResponseEntity<String>(headers, HttpStatus.OK);
     }
 
-    @RequestMapping(value="/indexAll", headers = "Accept=application/json")
+    @RequestMapping(value="/indexAll")
     @ResponseBody
     public ResponseEntity<Void> indexAll(@RequestParam(required=false) Integer maxPages,
                                          @RequestParam(required=false) String type) throws Exception {

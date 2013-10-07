@@ -1,6 +1,7 @@
 package com.turbointernational.metadata.domain.part.types;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.type.SealType;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -18,7 +19,7 @@ import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 @SecondaryTable(name="backplate", pkJoinColumns=@PrimaryKeyJoinColumn(name = "part_id"))
 public class Backplate extends Part {
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH, CascadeType.MERGE})
     @JoinColumn(name="seal_type_id", table = "backplate")
     private SealType sealType;
 
