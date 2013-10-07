@@ -288,8 +288,19 @@
         <!-- Turbo -->
         <div ng-switch-when="Turbo">
             <dl>
-                <dt>Turbo Model</dt>
-                <dd>{{part.turboModel}}</dd>
+                <dt>Model</dt>
+                <dd data-ng-show="part.turboModel != null">
+                    <dl>
+                        <dt>Type</dt>
+                        <dd>{{part.turboModel.turboType.name}}</dd>
+
+                        <dt>Model Number</dt>
+                        <dd>{{part.turboModel.name}}</dd>
+                    </dl>
+                </dd>
+                <dd data-ng-show="part.turboModel == null">
+                    [none]
+                </dd>
             </dl>
             <dl>
                 <dt>Coolant</dt>

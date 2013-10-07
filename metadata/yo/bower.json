@@ -14,8 +14,8 @@
     "angular-bootstrap": "~0.6.0",
     "restangular": "~1.1.3",
     "ng-table": "https://github.com/esvit/ng-table.git#~0.2.0",
-    "angular-ui-select2": "0.0.2",
-    "angular-macgyver": "0.1.12"
+    "angular-macgyver": "0.1.12",
+    "angular-chosen": "https://github.com/localytics/angular-chosen.git"
   },
   "devDependencies": {
     "angular-mocks": "~1.0.7",
