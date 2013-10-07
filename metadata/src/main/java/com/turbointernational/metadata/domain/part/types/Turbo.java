@@ -21,11 +21,11 @@ import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 @SecondaryTable(name="turbo", pkJoinColumns=@PrimaryKeyJoinColumn(name = "part_id"))
 public class Turbo extends Part {
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH})
+    @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH, CascadeType.MERGE})
     @JoinColumn(name="turbo_model_id", table = "turbo")
     private TurboModel turboModel;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH})
+    @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH, CascadeType.MERGE})
     @JoinColumn(name="cool_type_id", table = "turbo")
     private CoolType coolType;
 

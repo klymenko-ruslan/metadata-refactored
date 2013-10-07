@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-    .controller('PickerCtrl', function ($scope) {
+    .controller('PickerCtrl', function ($scope, Restangular) {
         $scope.$watch("ngModel.id", function() {
             if (!angular.isObject($scope.ngModel)) {
                 return;
@@ -13,7 +13,7 @@ angular.module('ngMetaCrudApp')
 
                 // If we've found the item, copy over it's details and stop
                 if (angular.isObject(item) &&  item.id == $scope.ngModel.id) {
-                    angular.copy(item, $scope.ngModel);
+                    Restangular.copy(item, $scope.ngModel);
                     return;
                 }
             }

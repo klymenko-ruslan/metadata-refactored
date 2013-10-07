@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping("/other/turboType")
 public class TurboTypeController {
     
-    @RequestMapping(headers = "Accept=application/json")
+    @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<String> listByManufacturerIdJson(@RequestParam Long manufacturerId) {
         HttpHeaders headers = new HttpHeaders();
@@ -24,7 +24,7 @@ public class TurboTypeController {
         return new ResponseEntity<String>(TurboType.toJsonArray(result), headers, HttpStatus.OK);
     }
     
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET, headers = "Accept=application/json")
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<String> showJson(@PathVariable("id") Long id) {
         TurboType turboType = TurboType.findTurboType(id);
@@ -36,7 +36,7 @@ public class TurboTypeController {
         return new ResponseEntity<String>(turboType.toJson(), headers, HttpStatus.OK);
     }
     
-    @RequestMapping(method = RequestMethod.POST, headers = "Accept=application/json")
+    @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<String> createFromJson(@RequestBody String json) {
         TurboType turboType = TurboType.fromJsonToTurboType(json);
         turboType.persist();
@@ -45,7 +45,7 @@ public class TurboTypeController {
         return new ResponseEntity<String>(headers, HttpStatus.CREATED);
     }
     
-    @RequestMapping(value = "/jsonArray", method = RequestMethod.POST, headers = "Accept=application/json")
+    @RequestMapping(value = "/jsonArray", method = RequestMethod.POST)
     public ResponseEntity<String> createFromJsonArray(@RequestBody String json) {
         for (TurboType turboType: TurboType.fromJsonArrayToTurboTypes(json)) {
             turboType.persist();
@@ -55,7 +55,7 @@ public class TurboTypeController {
         return new ResponseEntity<String>(headers, HttpStatus.CREATED);
     }
     
-    @RequestMapping(value = "/{id}", method = RequestMethod.PUT, headers = "Accept=application/json")
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     public ResponseEntity<String> updateFromJson(@RequestBody String json, @PathVariable("id") Long id) {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json");
@@ -66,7 +66,7 @@ public class TurboTypeController {
         return new ResponseEntity<String>(headers, HttpStatus.OK);
     }
     
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, headers = "Accept=application/json")
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<String> deleteFromJson(@PathVariable("id") Long id) {
         TurboType turboType = TurboType.findTurboType(id);
         HttpHeaders headers = new HttpHeaders();
