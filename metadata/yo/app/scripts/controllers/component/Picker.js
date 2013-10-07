@@ -13,7 +13,6 @@ angular.module('ngMetaCrudApp')
 
                 // If we've found the item, copy over it's details and stop
                 if (angular.isObject(item) &&  item.id == $scope.ngModel.id) {
-                    console.log("Item set to " + $scope.ngModel.id + ": " + JSON.stringify(item));
                     angular.copy(item, $scope.ngModel);
                     return;
                 }

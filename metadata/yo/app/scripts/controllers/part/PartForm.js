@@ -4,7 +4,7 @@ angular.module('ngMetaCrudApp')
   .controller('PartFormCtrl', function ($scope, $location, $routeParams, ngTableParams, restService) {
         $scope.partId   = $routeParams.id;
         $scope.partType = $routeParams.type;
-        $scope.part     = null;
+        $scope.part     = {};
         $scope.oldPart  = null;
 
         $scope.bomTableParams = new ngTableParams({
@@ -13,33 +13,33 @@ angular.module('ngMetaCrudApp')
             total: 0
         });
 
-
         $scope.manufacturers = restService.listManufacturers();
+
+        $scope.$watch('part.partType.typeName', function(name) {
+
+            // Make sure we're using the correct part type
+            if (name != null) {
+                $scope.partType = name;
+            }
+        });
 
         // Lookup the part or setup the create workflow
         if (angular.isDefined($scope.partId)) {
 
-            $scope.part = restService.findPart($scope.partId, {fields: 'bom'});
-            $scope.part.then(function(part) {
+            $scope.oldPart = restService.findPart($scope.partId, {fields: 'bom'});
+            $scope.oldPart.then(function(part) {
                     console.log("Part data loaded.");
 
                     // Save the part
-                    $scope.part = part;
-
-                    // Save a copy for reverting
-                    $scope.oldPart = {};
-                    angular.copy($scope.part, $scope.oldPart);
-
-                    // Make sure we're using the correct part type
-                    $scope.partType = part.partType.typeName;
+                    $scope.oldPart = part;
+                    $scope.revert();
                 }, function(response) {
-                    console.error("Could not get manufacturer list from the server.");
+                    console.error("Could not get part list from the server.");
                 });
-        } else {
-            $scope.part = {};
         }
 
         $scope.revert = function() {
+            $scope.part = {};
             angular.copy($scope.oldPart, $scope.part);
         }
 

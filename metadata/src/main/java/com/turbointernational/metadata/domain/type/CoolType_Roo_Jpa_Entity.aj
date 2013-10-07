@@ -10,7 +10,7 @@ import javax.persistence.Version;
 
 privileged aspect CoolType_Roo_Jpa_Entity {
     
-    declare @type: CoolType: @Table(name = "COOL_TYPE");
+    declare @type: CoolType: @Table(name = "cool_type");
     
     @Version
     @Column(name = "version")

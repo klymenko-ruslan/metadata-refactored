@@ -23,18 +23,18 @@ public class Turbo extends Part {
 
     @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH})
     @JoinColumn(name="turbo_model_id", table = "turbo")
-    private TurboModel model;
+    private TurboModel turboModel;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH})
     @JoinColumn(name="cool_type_id", table = "turbo")
     private CoolType coolType;
 
-    public TurboModel getModel() {
-        return model;
+    public TurboModel getTurboModel() {
+        return turboModel;
     }
 
-    public void setModel(TurboModel model) {
-        this.model = model;
+    public void setTurboModel(TurboModel turboModel) {
+        this.turboModel = turboModel;
     }
 
     public CoolType getCoolType() {
@@ -49,8 +49,8 @@ public class Turbo extends Part {
     public JSOG toJsog() {
         JSOG partObject = super.toJsog();
         
-        if (model != null) {
-            partObject.put("turbo_model_name", model.getName());
+        if (turboModel != null) {
+            partObject.put("turbo_model_name", turboModel.getName());
         }
 
         if (getCoolType() != null) {

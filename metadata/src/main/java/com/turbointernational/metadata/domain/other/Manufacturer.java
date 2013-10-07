@@ -34,7 +34,7 @@ public class Manufacturer {
     @JoinColumn(name="manfr_type_id", nullable=false)
     private ManufacturerType type;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="parent_manfr_id")
     private Manufacturer parent;
 
