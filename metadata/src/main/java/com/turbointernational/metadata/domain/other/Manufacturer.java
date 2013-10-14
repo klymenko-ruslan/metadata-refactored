@@ -39,11 +39,7 @@ public class Manufacturer {
     @OneToOne
     @JoinColumn(name="manfr_type_id", nullable=false)
     private ManufacturerType type;
-<<<<<<< HEAD
 
-=======
-    
->>>>>>> Using lazy loading where possible.
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="parent_manfr_id")
     private Manufacturer parent;
