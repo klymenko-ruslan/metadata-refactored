@@ -38,6 +38,10 @@ angular.module('ngMetaCrudApp')
                 });
         }
 
+        $scope.sync = function() {
+          restService.sync($scope.partId);
+        }
+
         $scope.revert = function() {
             $scope.part = Restangular.copy($scope.oldPart);
             $scope.$broadcast("revert");

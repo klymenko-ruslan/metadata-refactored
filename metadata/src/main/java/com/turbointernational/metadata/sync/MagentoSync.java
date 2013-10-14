@@ -13,14 +13,11 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.scribe.model.Token;
-import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import static com.google.code.magja.model.product.ProductLink.LinkType.*;
-@Controller
-@RequestMapping("/other/sync")
+import org.springframework.stereotype.Component;
+
+@Component
 public class MagentoSync {
     
     private static JSOG partToProduct(Part part) {
@@ -91,9 +88,7 @@ public class MagentoSync {
     }
     
     @Transactional
-    @RequestMapping(value="/part")
-    @ResponseBody
-    public String syncPart(@RequestParam long id) {
+    public int syncPart(long id) {
         Part part = Part.findPart(id);
         
         // Get the existing product if it exists
@@ -138,7 +133,7 @@ public class MagentoSync {
         // Update interchange parts
         updateProductLinks(part);
         
-        return part.getMagentoProductId().toString();
+        return part.getMagentoProductId();
     }
 
     public JSOG getProduct(Part part) {

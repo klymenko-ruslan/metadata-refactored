@@ -4,8 +4,11 @@
     <a ng-href="#/part" class="btn btn-large">Part List</a>
     <a ng-href="#/part/{{ partType }}/{{ partId }}" class="btn btn-large">View Part</a>
     <a ng-href="#/part/{{ partType }}/{{ partId }}/interchange/search" class="btn btn-large btn-info">Interchange...</a>
-    <a ng-click="save()" ng-disabled="!isChanged()" class="btn btn-large btn-success">Save</a>
-    <a ng-click="revert()" ng-disabled="!isChanged()" class="btn btn-large btn-warning">Revert</a>
+    <a ng-click="save()" class="btn btn-large btn-success">Save</a>
+  <!--ng-disabled="!isChanged()"-->
+  <a ng-click="revert()" class="btn btn-large btn-warning">Revert</a>
+  <!--ng-disabled="!isChanged()"-->
+  <a ng-click="sync()" class="btn btn-large btn-info">Sync</a>
 </div>
 
 <ng-form>

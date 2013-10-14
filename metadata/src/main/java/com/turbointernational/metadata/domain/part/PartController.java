@@ -2,6 +2,7 @@ package com.turbointernational.metadata.domain.part;
 import com.turbointernational.metadata.domain.other.TurboModel;
 import com.turbointernational.metadata.domain.part.bom.BOMItem;
 import com.turbointernational.metadata.domain.part.types.Turbo;
+import com.turbointernational.metadata.sync.MagentoSync;
 import com.turbointernational.metadata.util.ElasticSearch;
 import java.security.Principal;
 import java.util.Collection;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +33,9 @@ public class PartController {
     // ElasticSearch
     @Autowired(required=true)
     private ElasticSearch elasticSearch;
+    
+    @Autowired(required=true)
+    private MagentoSync magento;
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ResponseBody
@@ -192,6 +197,14 @@ public class PartController {
         } while (result.size() >= pageSize && page < maxPages);
 
         return new ResponseEntity<Void>((Void) null, headers, HttpStatus.OK);
+    }
+    
+    
+    @Async
+    @RequestMapping(value="/sync")
+    @ResponseBody
+    public void syncPart(@RequestParam long id) {
+        magento.syncPart(id);
     }
 
 }

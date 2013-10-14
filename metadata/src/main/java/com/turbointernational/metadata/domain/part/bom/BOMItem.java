@@ -32,7 +32,7 @@ public class BOMItem {
     @JoinColumn(name="parent_part_id")
     private Part parent;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.REFRESH})
+    @OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.REFRESH})
     @JoinColumn(name="child_part_id")
     private Part child;
 
