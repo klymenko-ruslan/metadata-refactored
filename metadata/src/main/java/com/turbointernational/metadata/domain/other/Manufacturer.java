@@ -1,4 +1,5 @@
 package com.turbointernational.metadata.domain.other;
+import com.googlecode.ehcache.annotations.TriggersRemove;
 import com.turbointernational.metadata.domain.type.ManufacturerType;
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
@@ -103,10 +104,12 @@ public class Manufacturer {
         return entityManager().createQuery("SELECT COUNT(o) FROM Manufacturer o", Long.class).getSingleResult();
     }
     
+    @com.googlecode.ehcache.annotations.Cacheable(cacheName = "manufacturers")
     public static List<Manufacturer> findAllManufacturers() {
         return entityManager().createQuery("SELECT o FROM Manufacturer o", Manufacturer.class).getResultList();
     }
     
+    @com.googlecode.ehcache.annotations.Cacheable(cacheName = "manufacturers")
     public static Manufacturer findManufacturer(Long id) {
         if (id == null) return null;
         return entityManager().find(Manufacturer.class, id);
@@ -116,6 +119,7 @@ public class Manufacturer {
         return entityManager().createQuery("SELECT o FROM Manufacturer o", Manufacturer.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 
+    @com.googlecode.ehcache.annotations.Cacheable(cacheName = "manufacturers")
     public static Manufacturer findByName(String name) {
         return entityManager()
             .createQuery("SELECT m FROM Manufacturer m WHERE m.name = :name", Manufacturer.class)
@@ -123,12 +127,14 @@ public class Manufacturer {
             .getSingleResult();
     }
     
+    @TriggersRemove(cacheName = "manufacturers")
     @Transactional
     public void persist() {
         if (this.entityManager == null) this.entityManager = entityManager();
         this.entityManager.persist(this);
     }
     
+    @TriggersRemove(cacheName = "manufacturers")
     @Transactional
     public void remove() {
         if (this.entityManager == null) this.entityManager = entityManager();
@@ -140,6 +146,7 @@ public class Manufacturer {
         }
     }
     
+    @TriggersRemove(cacheName = "manufacturers")
     @Transactional
     public void flush() {
         if (this.entityManager == null) this.entityManager = entityManager();
@@ -152,6 +159,7 @@ public class Manufacturer {
         this.entityManager.clear();
     }
     
+    @TriggersRemove(cacheName = "manufacturers")
     @Transactional
     public Manufacturer merge() {
         if (this.entityManager == null) this.entityManager = entityManager();

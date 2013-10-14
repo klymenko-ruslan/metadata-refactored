@@ -16,6 +16,9 @@ module.exports = function (grunt) {
   require('load-grunt-tasks')(grunt);
   require('time-grunt')(grunt);
 
+  // API proxy and html5 rewrites
+  var modRewrite = require('connect-modrewrite');
+
   // configurable paths
   var yeomanConfig = {
     app: 'app',
@@ -58,6 +61,9 @@ module.exports = function (grunt) {
                 res.setHeader('Access-Control-Allow-Methods', '*');
                 next();
               }
+//              modRewrite([
+//                '^/metadata/(.*)$     http://localhost:8080/$1 [PL]' // API
+//              ])
             ];
           },
         },
