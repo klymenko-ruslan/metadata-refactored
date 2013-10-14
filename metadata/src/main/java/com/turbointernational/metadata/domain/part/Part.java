@@ -27,6 +27,8 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -53,6 +55,7 @@ import javax.persistence.Transient;
 import javax.persistence.TypedQuery;
 import javax.persistence.Version;
 import net.sf.jsog.JSOG;
+import org.apache.commons.lang.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.transaction.annotation.Transactional;
@@ -507,4 +510,17 @@ public class Part {
         return merged;
     }
     //</editor-fold>
+    
+    public Set<Part> getInterchangePartsForManufacturer(Manufacturer manufacturer) {
+        Set<Part> interchangeParts = new TreeSet<Part>();
+        
+        for (Part interchangePart : interchange.getParts()) {
+            if (ObjectUtils.equals(manufacturer, interchangePart.getManufacturer())) {
+                interchangeParts.add(interchangePart);
+            }
+        }
+        
+        return interchangeParts;
+    }
+    
 }

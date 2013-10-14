@@ -9,6 +9,7 @@ import com.google.code.magja.soap.MagentoSoapClient;
 import com.google.code.magja.soap.SoapConfig;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
+import java.util.Set;
 
 /**
  *
@@ -21,13 +22,15 @@ public class MagentoSoap {
     public static void main(String[] args) throws Exception {
         
         MagentoSoap magento = new MagentoSoap("metadata", "9l8t6QCihtX4", BASE_URL + "index.php/api/soap");
-        System.out.println("Pre-delete: " + magento.getProductLinks(6));
+        System.out.println("Pre-delete: " + magento.getProductLinks(125));
         
-        magento.deleteProductLink(6, 7, LinkType.RELATED);
+        magento.deleteProductLink(6, 7, LinkType.CROSS_SELL);
+        magento.deleteProductLink(6, 8, LinkType.CROSS_SELL);
         
         System.out.println("Post-delete, pre-add: " + magento.getProductLinks(6));
         
-        magento.addProductLink(6, 7, LinkType.RELATED);
+        magento.addProductLink(6, 7, LinkType.CROSS_SELL);
+        magento.addProductLink(6, 8, LinkType.CROSS_SELL);
         
         System.out.println("Post-add: " + magento.getProductLinks(6));
     }
@@ -55,22 +58,15 @@ public class MagentoSoap {
         }
     }
     
-    public Multimap<LinkType, Integer> getProductLinks(int productId) {
+    public Set<ProductLink> getProductLinks(int productId) {
         Product product = new Product();
         product.setId(productId);
         
-        
-        Multimap<LinkType, Integer> linkedProducts = LinkedListMultimap.create();
         try {
-            for (ProductLink link : rsf.getProductLinkRemoteService().list(product)) {
-                linkedProducts.put(link.getLinkType(), link.getId());
-            
-            }
+            return rsf.getProductLinkRemoteService().list(product);
         } catch (ServiceException e) {
             throw new MagentoSoapException("Failed to fetch product links.", e);
         }
-        
-        return linkedProducts;
     }
     
     public void deleteProductLink(int productId, int linkedProductId, LinkType type) throws MagentoSoapException {
@@ -87,4 +83,22 @@ public class MagentoSoap {
             throw new MagentoSoapException("Could not link products.", e);
         }
     }
+    
+//    public Multimap<LinkType, Integer> getProductLinks(int productId) {
+//        Product product = new Product();
+//        product.setId(productId);
+//        
+//        
+//        Multimap<LinkType, Integer> linkedProducts = LinkedListMultimap.create();
+//        try {
+//            for (ProductLink link : rsf.getProductLinkRemoteService().list(product)) {
+//                linkedProducts.put(link.getLinkType(), link.;
+//            
+//            }
+//        } catch (ServiceException e) {
+//            throw new MagentoSoapException("Failed to fetch product links.", e);
+//        }
+//        
+//        return linkedProducts;
+//    }
 }

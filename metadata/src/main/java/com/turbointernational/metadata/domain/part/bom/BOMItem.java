@@ -1,6 +1,5 @@
 package com.turbointernational.metadata.domain.part.bom;
 import com.turbointernational.metadata.domain.part.Part;
-import flexjson.JSON;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -12,6 +11,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import org.springframework.roo.addon.json.RooJson;
@@ -78,6 +80,14 @@ public class BOMItem {
 
     public void setAlternatives(Set<BOMAlternative> alternatives) {
         this.alternatives = alternatives;
+    }
+    
+    @PrePersist
+    @PreUpdate
+    public void validate() {
+        if (ObjectUtils.equals(child.getId(), parent.getId())) {
+            throw new IllegalStateException("Child cannot be it's own parent.");
+        }
     }
     
 }
