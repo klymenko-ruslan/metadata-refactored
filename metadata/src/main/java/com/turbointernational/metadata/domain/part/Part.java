@@ -150,7 +150,7 @@ public class Part {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "manfr_id", nullable = false)
     private Manufacturer manufacturer;
     
@@ -169,14 +169,14 @@ public class Part {
     @Column(name="magento_product_id")
     private Integer magentoProductId;
     
-    @OneToOne(fetch=FetchType.EAGER)
+    @OneToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="part_type_id")
     private PartType partType;
     
     @Column(nullable = false, columnDefinition = "BIT", length = 1)
     private Boolean inactive;
     
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinTable(name="interchange_item",
             joinColumns=@JoinColumn(name="part_id"),
             inverseJoinColumns=@JoinColumn(name="interchange_header_id"))
