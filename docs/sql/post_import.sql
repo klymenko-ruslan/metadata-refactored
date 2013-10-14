@@ -19,6 +19,7 @@ ALTER TABLE `part`
   DROP COLUMN `temp7_char`,
   DROP COLUMN `temp8_char`;
 
+ALTER TABLE `part_type` ADD COLUMN `magento_category_id` INTEGER;
 
 DROP TABLE IF EXISTS `part_turbo_type`;
 DROP TABLE IF EXISTS `part_attribute`;
@@ -41,21 +42,76 @@ UPDATE `part_type` SET DTYPE = "Backplate" WHERE ID = 14;
 UPDATE `part_type` SET DTYPE = "Heatshield" WHERE ID = 15;
 UPDATE `part_type` SET DTYPE = "NozzleRing" WHERE ID = 16;
 
+-- Magento part type stuff
+UPDATE `part_type` SET
+    `magento_attribute_set_id`= 10,
+    `magento_category_id` =  13
+WHERE `DTYPE`='Part';
 
-UPDATE `part_type` SET `magento_attribute_set_id`= 10 WHERE `DTYPE`='Part';
-UPDATE `part_type` SET `magento_attribute_set_id`= 13 WHERE `DTYPE`='Cartridge';
-UPDATE `part_type` SET `magento_attribute_set_id`= 26 WHERE `DTYPE`='Turbo';
-UPDATE `part_type` SET `magento_attribute_set_id`= 22 WHERE `DTYPE`='Kit';
-UPDATE `part_type` SET `magento_attribute_set_id`= 24 WHERE `DTYPE`='PistonRing';
-UPDATE `part_type` SET `magento_attribute_set_id`= 20 WHERE `DTYPE`='JournalBearing';
-UPDATE `part_type` SET `magento_attribute_set_id`= 17 WHERE `DTYPE`='Gasket';
-UPDATE `part_type` SET `magento_attribute_set_id`= 15 WHERE `DTYPE`='BearingSpacer';
-UPDATE `part_type` SET `magento_attribute_set_id`= 16 WHERE `DTYPE`='CompressorWheel';
-UPDATE `part_type` SET `magento_attribute_set_id`= 25 WHERE `DTYPE`='TurbineWheel';
-UPDATE `part_type` SET `magento_attribute_set_id`= 14 WHERE `DTYPE`='BearingHousing';
-UPDATE `part_type` SET `magento_attribute_set_id`= 12 WHERE `DTYPE`='Backplate';
-UPDATE `part_type` SET `magento_attribute_set_id`= 19 WHERE `DTYPE`='Heatshield';
-UPDATE `part_type` SET `magento_attribute_set_id`= 23 WHERE `DTYPE`='NozzleRing';
+UPDATE `part_type` SET
+    `magento_attribute_set_id`= 13,
+    `magento_category_id` = 6
+WHERE `DTYPE`='Cartridge';
+
+UPDATE `part_type` SET
+    `magento_attribute_set_id`= 26,
+    `magento_category_id` = 16
+WHERE `DTYPE`='Turbo';
+
+UPDATE `part_type` SET 
+    `magento_attribute_set_id`= 22,
+    `magento_category_id` = 11
+WHERE `DTYPE`='Kit';
+
+UPDATE `part_type` SET
+    `magento_attribute_set_id`= 24,
+    `magento_category_id` = 14
+WHERE `DTYPE`='PistonRing';
+
+UPDATE `part_type` SET
+    `magento_attribute_set_id`= 20,
+    `magento_category_id` = 10
+WHERE `DTYPE`='JournalBearing';
+
+UPDATE `part_type` SET
+    `magento_attribute_set_id`= 17,
+    `magento_category_id` = 8
+WHERE `DTYPE`='Gasket';
+
+UPDATE `part_type` SET
+    `magento_attribute_set_id`= 15,
+    `magento_category_id` = 5
+WHERE `DTYPE`='BearingSpacer';
+
+UPDATE `part_type` SET
+    `magento_attribute_set_id`= 16,
+    `magento_category_id` = 7
+WHERE `DTYPE`='CompressorWheel';
+
+UPDATE `part_type` SET
+    `magento_attribute_set_id`= 25,
+    `magento_category_id` = 15
+WHERE `DTYPE`='TurbineWheel';
+
+UPDATE `part_type` SET
+    `magento_attribute_set_id`= 14,
+    `magento_category_id` = 4
+WHERE `DTYPE`='BearingHousing';
+
+UPDATE `part_type` SET
+    `magento_attribute_set_id`= 12,
+    `magento_category_id` = 2
+WHERE `DTYPE`='Backplate';
+
+UPDATE `part_type` SET
+    `magento_attribute_set_id`= 19,
+    `magento_category_id` = 9
+WHERE `DTYPE`='Heatshield';
+
+UPDATE `part_type` SET
+    `magento_attribute_set_id`= 23,
+    `magento_category_id` = 12
+WHERE `DTYPE`='NozzleRing';
 
 
 UPDATE `part` SET `part`.`dtype` = (SELECT COALESCE(`part_type`.`dtype`, 'Part') FROM `part_type` WHERE `id` = `part`.`part_type_id`);
