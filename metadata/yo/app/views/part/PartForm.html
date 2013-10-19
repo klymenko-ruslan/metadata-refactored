@@ -73,7 +73,7 @@
     </div>
 
     <!-- Bearing Housing -->
-    <div ng-switch-when="Bearing Housing">
+    <div ng-switch-when="BearingHousing">
         <label>Coolant</label>
         <picker path="type/cool" ng-model="part.coolType"></picker>
 
@@ -100,7 +100,7 @@
     </div>
 
     <!-- Bearing Spacer -->
-    <div ng-switch-when="Bearing Spacer">
+    <div ng-switch-when="BearingSpacer">
         <label>Standard Size</label>
         <picker path="part?type=BearingSpacer" ng-model="part.standardSize"></picker>
 
@@ -118,7 +118,7 @@
     <!-- Cartridge -->
 
     <!-- Compressor Wheel -->
-    <div ng-switch-when="Compressor Wheel">
+    <div ng-switch-when="CompressorWheel">
         <label>Inducer Diameter A</label>
         <input type="text" ng-model="part.inducerOa"/>
 
@@ -160,7 +160,7 @@
     </div>
 
     <!-- Journal Bearing -->
-    <div ng-switch-when="Journal Bearing">
+    <div ng-switch-when="JournalBearing">
         <label>Standard Size</label>
         <picker path="part?type=JournalBearing" ng-model="part.standardSize"></picker>
 
@@ -183,7 +183,7 @@
     <!-- Nozzle Ring -->
 
     <!-- Piston Ring -->
-    <div ng-switch-when="Piston Ring">
+    <div ng-switch-when="PistonRing">
         <label>Outside Diameter (min - max)</label>
         <input type="text" ng-model="part.outsideDiameterMin"/> - <input type="text" ng-model="part.outsideDiameterMax"/>
 
@@ -195,7 +195,7 @@
     </div>
 
     <!-- Turbine Wheel -->
-    <div ng-switch-when="Turbine Wheel">
+    <div ng-switch-when="TurbineWheel">
         <label>Exducer Diameter A</label>
         <input type="text" ng-model="part.exducerDiameterA"/>
 
