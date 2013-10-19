@@ -55,6 +55,7 @@
         </pluginRepository>
     </pluginRepositories>
     <dependencies>
+        
         <!-- General dependencies for standard applications -->
         <dependency>
             <groupId>junit</groupId>
@@ -158,10 +159,21 @@
             <artifactId>mysql-connector-java</artifactId>
             <version>5.1.18</version>
         </dependency>
+        <!-- Ehcache -->
+        <dependency>
+	    <groupId>net.sf.ehcache</groupId>
+	    <artifactId>ehcache-core</artifactId>
+	    <version>2.6.6</version>
+	</dependency>
         <dependency>
             <groupId>com.googlecode.ehcache-spring-annotations</groupId>
             <artifactId>ehcache-spring-annotations</artifactId>
             <version>1.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-ehcache</artifactId>
+            <version>4.2.2.Final</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>

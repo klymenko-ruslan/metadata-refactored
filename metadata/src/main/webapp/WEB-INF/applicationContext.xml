@@ -17,8 +17,8 @@
                            http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring
                            http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring/ehcache-spring-1.1.xsd">
     
-    <ehcache:annotation-driven cache-manager="ehCacheManager" />
-    <bean id="ehCacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean"/>
+<!--    <ehcache:annotation-driven cache-manager="ehCacheManager" />
+    <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean"/>-->
 
     <!--
         This will automatically locate any and all property files you have
@@ -81,18 +81,23 @@
           p:useCompression="true"
           p:autoReconnectForPools="true"/>
     
-    <bean class="org.springframework.orm.hibernate4.HibernateTransactionManager" id="transactionManager">
+    <bean class="org.springframework.orm.jpa.JpaTransactionManager" id="transactionManager">
         <property name="entityManagerFactory" ref="entityManagerFactory"/>
     </bean>
     
-    <bean class="org.springframework.orm.hibernate4.LocalSessionFactoryBean" id="entityManagerFactory">
-        <!--<property name="persistenceUnitName" value="persistenceUnit"/>-->
+    <bean class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" id="entityManagerFactory">
+        <property name="persistenceUnitName" value="persistenceUnit"/>
         <property name="dataSource" ref="dataSource"/>
-<!--        <property name="jpaPropertyMap">
+        <property name="jpaVendorAdapter">
+            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+                
+            </bean>
+        </property>
+        <property name="jpaPropertyMap">
             <map>
                 <entry key="hibernate.ejb.interceptor" value="com.turbointernational.metadata.MyInterceptor"/>
             </map>
-        </property>-->
+        </property>
     </bean>
     
     <task:annotation-driven executor="asyncExecutor" mode="aspectj"/>
