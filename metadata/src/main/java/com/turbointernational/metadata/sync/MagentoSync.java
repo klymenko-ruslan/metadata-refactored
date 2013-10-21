@@ -21,10 +21,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.springframework.stereotype.Component;
 
 @Component
 public class MagentoSync {
+    
+    private static final Logger logger = Logger.getLogger(MagentoSync.class.toString());
     
     private static JSOG partToProduct(Part part) {
         
@@ -60,8 +64,6 @@ public class MagentoSync {
     //
     // REST
     //
-    public static final String BASE_URL = "http://ec2-184-73-132-150.compute-1.amazonaws.com/";
-    
     String restApiKey = "4wy124nq41hquo0z3hm8mm3uzaqrmte2";
     
     String restApiSecret = "m41dv0jtygqrl3cne1731pe5pglh5pel";
@@ -70,13 +72,12 @@ public class MagentoSync {
     
     String restTokenSecret = "4y791olryopwe8cfebxn6jij8apoerck";
     
-    UrlBuilder restApiUrl = new UrlBuilder(BASE_URL + "api/rest/{0}").set("type", "rest");
+    UrlBuilder restApiUrl = new UrlBuilder("http://ec2-184-73-132-150.compute-1.amazonaws.com/api/rest/{0}").set("type", "rest");
     
     //
     // SOAP
     //
-    
-    String soapApiUrl = BASE_URL + "index.php/api/soap";
+    String soapApiUrl = "http://ec2-184-73-132-150.compute-1.amazonaws.com/index.php/api/soap";
     
     String soapApiUsername = "metadata";
     
@@ -90,36 +91,38 @@ public class MagentoSync {
     }
 
     protected MagentoSoap soap() {
+        logger.log(Level.INFO, "Creating soap client.");
         return new MagentoSoap(soapApiUsername, soapApiPassword, soapApiUrl);
     }
     
-    @Transactional
+    @Transactional(readOnly = true)
     public int syncPart(long id) {
+        logger.log(Level.INFO, "Synchronizing part #{0}", id);
+        
         MagentoRest rest = rest();
         try {
             Part part = Part.findPart(id);
 
-            // Get the existing product if it exists
+            // Get the existing product
             JSOG productJsog = rest.getProductBySku(part.getId().toString());
 
             // Create or update the product
             if (productJsog == null) {
+                logger.log(Level.INFO, "Creating magento product for part #{0}", id);
 
                 // Create the product
                 productJsog = partToProduct(part);
                 int productId = rest.createProduct(productJsog);
-                part.setMagentoProductId(productId);
-                part.merge();
-                part.flush();
-
+                part.updateMagentoProductId(productId);
+                
+                logger.log(Level.INFO, "Created magento product #{0}", productId);
             } else {
+                logger.log(Level.INFO, "Updating magento product for part #{0}", id);
 
                 // Set the magento product ID it hasn't been
                 if (part.getMagentoProductId() == null) {
                     int productId = productJsog.get("entity_id").getIntegerValue();
-                    part.setMagentoProductId(productId);
-                    part.merge();
-                    part.flush();
+                    part.updateMagentoProductId(productId);
                 }
 
                 // Get the current product version
@@ -132,7 +135,10 @@ public class MagentoSync {
                 if (!ObjectUtils.equals(part.getVersion(), productVersion)) {
                     productJsog.merge(partToProduct(part));
                     rest.updateProduct(part.getMagentoProductId(), productJsog);
+                    logger.log(Level.INFO, "Updating magento product #{0} for part #{1}", new Object[] {part.getMagentoProductId(), id});
                 }
+                
+                logger.log(Level.INFO, "Updated magento product for part #{0}", id);
             }
 
             // Update the product category
@@ -140,10 +146,13 @@ public class MagentoSync {
 
             // Update interchange parts
             updateProductLinks(part);
+            
+            
+            logger.log(Level.INFO, "Synchronized part #{0}", id);
 
             return part.getMagentoProductId();
         } catch (Throwable t) {
-            t.printStackTrace();
+            logger.log(Level.SEVERE, "Failed to synchronize", t);
             throw new RuntimeException(t);
         }
     }
@@ -153,6 +162,7 @@ public class MagentoSync {
     }
     
     private void setProductCategory(Part part) {
+        logger.log(Level.INFO, "Checking product category for part #{0}", part.getId());
         Integer partMagentoCategoryId = part.getPartType().getMagentoCategoryId();
         
         // Handle null category ID
@@ -180,21 +190,6 @@ public class MagentoSync {
         }
     }
     
-    /**
-     * Return the links for a product
-     * @param magentoProductId
-     * @return 
-     */
-    public Multimap<ProductLink.LinkType, ProductLink> getProductLinks(Integer magentoProductId) {
-        Multimap<ProductLink.LinkType, ProductLink> links = ArrayListMultimap.create();
-        
-        for (ProductLink link : soap().getProductLinks(magentoProductId)) {
-            links.put(link.getLinkType(), link);
-        }
-        
-        return links;
-    }
-    
     public static ProductLink getLinkBySku(Collection<ProductLink> links, String sku) {
         for (ProductLink link : links) {
             if (ObjectUtils.equals(sku, link.getSku())) {
@@ -205,8 +200,8 @@ public class MagentoSync {
         return null;
     }
     
-    public void updateInterchanges(Part part, Collection<ProductLink> links) {
-        MagentoSoap soap = soap();
+    public void updateInterchanges(MagentoSoap soap, Part part, Collection<ProductLink> links) {
+        logger.log(Level.INFO, "Updating interchanges for part #{0}", part.getId());
         
         // Clone the list of links so we can use it for updating
         links = new ArrayList<ProductLink>(links);
@@ -219,11 +214,12 @@ public class MagentoSync {
             if (link == null) {
                 
                 if (interchangePart.getMagentoProductId() != null) {
+                logger.log(Level.INFO, "Adding interchange link for part #{0}", part.getId());
 
                     // Add missing links
                     soap.addProductLink(
-                            part.getMagentoProductId(), interchangePart.getMagentoProductId(),
-                            CROSS_SELL, null, null);
+                            part.getMagentoProductId(), interchangePart.getId(),
+                            RELATED, null, null);
                 }
             } else {
                 
@@ -234,20 +230,26 @@ public class MagentoSync {
         
         // Delete the links that weren't removed 
         for (ProductLink link : links) {
-            soap.deleteProductLink(part.getMagentoProductId(), link.getId(), ProductLink.LinkType.CROSS_SELL);
+            logger.log(Level.INFO, "Deleting interchange link for part #{0}", part.getId());
+            soap.deleteProductLink(part.getMagentoProductId(), link.getSku(), link.getLinkType());
         }
     }
     
-    
-    
-    public void updateBOM(Part part, Collection<ProductLink> links) {
-        MagentoSoap soap = soap();
+    public void updateBOM(MagentoSoap soap, Part part, Collection<ProductLink> links) {
+        logger.log(Level.INFO, "Updating BOM links for part #{0}", part.getId());
         
         // Clone the list of links so we can use it for updating
         links = new ArrayList<ProductLink>(links);
         
         // Add missing links and prepare links for removal
         for (BOMItem item : part.getBom()) {
+            logger.log(Level.INFO, "Updating BOM item #{0} for part #{1}", new Object[] {item.getId(), part.getId()});
+            
+            // If the child doesn't have a magento product ID, skip the link for now
+            if (item.getChild().getMagentoProductId() == null) {
+                continue;
+            }
+        
             ProductLink link = getLinkBySku(links, item.getChild().getId().toString());
             
             // Create the link or remove it from the links list so we don't remove it later
@@ -271,7 +273,6 @@ public class MagentoSync {
                     }
                 }
                 
-                
                 // Add the TI alternate attributes
                 Map<String, String> attributes = Maps.newHashMap();
                 
@@ -281,8 +282,9 @@ public class MagentoSync {
                 }
 
                 // Add missing link
+                logger.log(Level.INFO, "Adding BOM item link for part #{0}", part.getId());
                 soap.addProductLink(    
-                        part.getMagentoProductId(), item.getChild().getMagentoProductId(),
+                        part.getMagentoProductId(), item.getChild().getId(),
                         GROUPED, item.getQuantity().doubleValue(), attributes);
             } else {
                 
@@ -293,16 +295,19 @@ public class MagentoSync {
         
         // Delete the links that weren't removed 
         for (ProductLink link : links) {
-            soap.deleteProductLink(part.getMagentoProductId(), link.getId(), ProductLink.LinkType.CROSS_SELL);
+            soap.deleteProductLink(part.getMagentoProductId(), link.getSku(), link.getLinkType());
         }
     }
     
     private void updateProductLinks(Part part) {
-        Multimap<ProductLink.LinkType, ProductLink> links = getProductLinks(part.getMagentoProductId());
+        logger.log(Level.INFO, "Updating product links for part #{0}", part.getId());
+        MagentoSoap soap = soap();
         
-        updateInterchanges(part, links.get(CROSS_SELL));
+        Multimap<ProductLink.LinkType, ProductLink> links = soap.getProductLinks(part.getMagentoProductId());
         
-        updateBOM(part, links.get(GROUPED));
+        updateInterchanges(soap, part, links.get(RELATED));
+        
+        updateBOM(soap, part, links.get(GROUPED));
     }
     
 //    @RequestMapping(value="/parts", headers = "Accept=application/json")

@@ -515,6 +515,12 @@ public class Part {
         this.entityManager.flush();
         return merged;
     }
+    
+    @Transactional
+    public void updateMagentoProductId(int id) {
+        this.magentoProductId = id;
+        merge();
+    }
     //</editor-fold>
     
     public List<Part> getTIInterchanges() {

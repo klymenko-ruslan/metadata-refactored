@@ -7,14 +7,18 @@ import com.google.code.magja.service.RemoteServiceFactory;
 import com.google.code.magja.service.ServiceException;
 import com.google.code.magja.soap.MagentoSoapClient;
 import com.google.code.magja.soap.SoapConfig;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 
 /**
  *
  * @author jrodriguez
  */
 public class MagentoSoap {
+    private static final Logger logger = Logger.getLogger(MagentoSoap.class.toString());
     
     public static final String BASE_URL = "http://ec2-184-73-132-150.compute-1.amazonaws.com/";
     
@@ -23,8 +27,8 @@ public class MagentoSoap {
         MagentoSoap magento = new MagentoSoap("metadata", "9l8t6QCihtX4", BASE_URL + "index.php/api/soap");
         System.out.println("Pre-delete: " + magento.getProductLinks(125));
         
-        magento.deleteProductLink(6, 7, LinkType.CROSS_SELL);
-        magento.deleteProductLink(6, 8, LinkType.CROSS_SELL);
+        magento.deleteProductLink(6, "7", LinkType.CROSS_SELL);
+        magento.deleteProductLink(6, "8", LinkType.CROSS_SELL);
         
         System.out.println("Post-delete, pre-add: " + magento.getProductLinks(6));
         
@@ -42,13 +46,13 @@ public class MagentoSoap {
         rsf = new RemoteServiceFactory(client);
     }
     
-    public void addProductLink(int productId, int linkedProductId, LinkType type, Double quantity, Map<String, String> attributes) throws MagentoSoapException {
+    public void addProductLink(int productId, long linkedPartId, LinkType type, Double quantity, Map<String, String> attributes) throws MagentoSoapException {
         Product parent = new Product();
         parent.setId(productId);
         
         // Create the link
         ProductLink productLink = new ProductLink();
-        productLink.setId(linkedProductId);
+        productLink.setSku(Long.toString(linkedPartId));
         productLink.setLinkType(type);
         productLink.setQty(quantity);
         
@@ -66,29 +70,39 @@ public class MagentoSoap {
         }
     }
     
-    public Set<ProductLink> getProductLinks(int productId) {
+    public Multimap<ProductLink.LinkType, ProductLink> getProductLinks(int productId) {
+        
         Product product = new Product();
         product.setId(productId);
         
         try {
-            return rsf.getProductLinkRemoteService().list(product);
+            Set<ProductLink> linkSet = rsf.getProductLinkRemoteService().list(product);
+            
+            // Transform to a multimap
+            Multimap<ProductLink.LinkType, ProductLink> links = ArrayListMultimap.create();
+
+            for (ProductLink link : linkSet) {
+                links.put(link.getLinkType(), link);
+            }
+
+            return links;
         } catch (ServiceException e) {
             throw new MagentoSoapException("Failed to fetch product links.", e);
         }
     }
     
-    public void deleteProductLink(int productId, int linkedProductId, LinkType type) throws MagentoSoapException {
+    public void deleteProductLink(int productId, String sku, LinkType type) throws MagentoSoapException {
         Product parent = new Product();
         parent.setId(productId);
         
         ProductLink productLink = new ProductLink();
-        productLink.setId(linkedProductId);
+        productLink.setSku(sku);
         productLink.setLinkType(type);
         
         try {
             rsf.getProductLinkRemoteService().remove(parent, productLink);
         } catch (ServiceException e) {
-            throw new MagentoSoapException("Could not link products.", e);
+            throw new MagentoSoapException("Could not delete product link.", e);
         }
     }
     
