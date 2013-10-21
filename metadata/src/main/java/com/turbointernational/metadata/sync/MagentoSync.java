@@ -1,7 +1,6 @@
 package com.turbointernational.metadata.sync;
 
 import com.google.code.magja.model.product.ProductLink;
-import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.magento.rest.MagentoRest;
 import com.turbointernational.metadata.magento.soap.MagentoSoap;
@@ -11,10 +10,17 @@ import net.sf.jsog.JSOG;
 import net.sf.jsog.client.UrlBuilder;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.scribe.model.Token;
 import org.springframework.transaction.annotation.Transactional;
 import static com.google.code.magja.model.product.ProductLink.LinkType.*;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
+import com.turbointernational.metadata.domain.part.bom.BOMItem;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -89,51 +95,56 @@ public class MagentoSync {
     
     @Transactional
     public int syncPart(long id) {
-        Part part = Part.findPart(id);
-        
-        // Get the existing product if it exists
-        JSOG productJsog = rest().getProductBySku(part.getId().toString());
-        
-        // Create or update the product
-        if (productJsog == null) {
-            
-            // Create the product
-            productJsog = partToProduct(part);
-            int productId = rest().createProduct(productJsog);
-            part.setMagentoProductId(productId);
-            part.merge();
-            part.flush();
-            
-        } else {
-        
-            // Set the magento product ID it hasn't been
-            if (part.getMagentoProductId() == null) {
-                int productId = productJsog.get("entity_id").getIntegerValue();
+        try {
+            Part part = Part.findPart(id);
+
+            // Get the existing product if it exists
+            JSOG productJsog = rest().getProductBySku(part.getId().toString());
+
+            // Create or update the product
+            if (productJsog == null) {
+
+                // Create the product
+                productJsog = partToProduct(part);
+                int productId = rest().createProduct(productJsog);
                 part.setMagentoProductId(productId);
                 part.merge();
                 part.flush();
-            }
-            
-            // Get the current product version
-            Integer productVersion = null;
-            if (productJsog.hasKey("version")) {
-                productJsog.get("version").getIntegerValue();
+
+            } else {
+
+                // Set the magento product ID it hasn't been
+                if (part.getMagentoProductId() == null) {
+                    int productId = productJsog.get("entity_id").getIntegerValue();
+                    part.setMagentoProductId(productId);
+                    part.merge();
+                    part.flush();
+                }
+
+                // Get the current product version
+                Integer productVersion = null;
+                if (productJsog.hasKey("version")) {
+                    productJsog.get("version").getIntegerValue();
+                }
+
+                // Update if it's different from the current part version
+                if (!ObjectUtils.equals(part.getVersion(), productVersion)) {
+                    productJsog.merge(partToProduct(part));
+                    rest().updateProduct(part.getMagentoProductId(), productJsog);
+                }
             }
 
-            // Update if it's different from the current part version
-            if (!ObjectUtils.equals(part.getVersion(), productVersion)) {
-                productJsog.merge(partToProduct(part));
-                rest().updateProduct(part.getMagentoProductId(), productJsog);
-            }
+            // Update the product category
+            setProductCategory(part);
+
+            // Update interchange parts
+            updateProductLinks(part);
+
+            return part.getMagentoProductId();
+        } catch (Throwable t) {
+            t.printStackTrace();
+            throw new RuntimeException(t);
         }
-        
-        // Update the product category
-        setProductCategory(part);
-        
-        // Update interchange parts
-        updateProductLinks(part);
-        
-        return part.getMagentoProductId();
     }
 
     public JSOG getProduct(Part part) {
@@ -168,40 +179,132 @@ public class MagentoSync {
         }
     }
     
-    private void updateProductLinks(Part part) {
-        Manufacturer mfrTi = Manufacturer.findByName("Turbo International");
+    /**
+     * Return the links for a product
+     * @param magentoProductId
+     * @return 
+     */
+    public Multimap<ProductLink.LinkType, ProductLink> getProductLinks(Integer magentoProductId) {
+        Multimap<ProductLink.LinkType, ProductLink> links = ArrayListMultimap.create();
         
-        Set<Part> interchangeParts = part.getInterchangePartsForManufacturer(mfrTi);
+        for (ProductLink link : soap().getProductLinks(magentoProductId)) {
+            links.put(link.getLinkType(), link);
+        }
         
-        // Get the existing product links
-        linkLoop: for (ProductLink link : soap().getProductLinks(part.getMagentoProductId())) {
-            System.out.println(ToStringBuilder.reflectionToString(link));
-            switch (link.getLinkType()) {
-                
-                // Cross-sells are used for interchangeable parts
-                case CROSS_SELL: {
-                    
-                    // Remove parts from interchangeParts if a link already exists
-                    Iterator<Part> interchangeIt = interchangeParts.iterator();
-                    while (interchangeIt.hasNext()) {
-                        Part interchangePart = interchangeIt.next();
-                        
-                        if (ObjectUtils.equals(interchangePart.getId().toString(), link.getSku())) {
-                            interchangeIt.remove();
-                            break linkLoop;
-                        }
-                    }
-                    
-                    // The link is no longer valid
-                    soap().deleteProductLink(part.getMagentoProductId(), link.getId(), ProductLink.LinkType.CROSS_SELL);
-                }
+        return links;
+    }
+    
+    public static ProductLink getLinkBySku(Collection<ProductLink> links, String sku) {
+        for (ProductLink link : links) {
+            if (ObjectUtils.equals(sku, link.getSku())) {
+                return link;
             }
         }
         
-        // Create any missing interchange links
-        for (Part interchangePart : interchangeParts) {
-            soap().addProductLink(part.getMagentoProductId(), interchangePart.getMagentoProductId(), CROSS_SELL);
+        return null;
+    }
+    
+    public void updateInterchanges(Part part, Collection<ProductLink> links) {
+        
+        // Clone the list of links so we can use it for updating
+        links = new ArrayList<ProductLink>(links);
+        
+        // Add missing links and prepare links for removal
+        for (Part interchangePart : part.getTIInterchanges()) {
+            ProductLink link = getLinkBySku(links, interchangePart.getId().toString());
+            
+            // Create the link or remove it from the links list so we don't remove it later
+            if (link == null) {
+                
+                // Get the interchangeable part and add it's attributes
+                List<Part> tiInterchanges = part.getTIInterchanges();
+                Map<String, String> attributes = Maps.newHashMap();
+                
+                if (!tiInterchanges.isEmpty()) {
+                    Part tiPart = tiInterchanges.get(0);
+                    attributes.put("ti_product_id", ObjectUtils.toString(tiPart.getMagentoProductId().toString(), null));
+                    attributes.put("ti_product_sku", tiPart.getId().toString());
+                }
+                
+                // Add missing links
+                soap().addProductLink(
+                        part.getMagentoProductId(), interchangePart.getMagentoProductId(),
+                        CROSS_SELL, null, attributes);
+            } else {
+                
+                // Active link, don't remove
+                links.remove(link);
+            }
         }
+        
+        // Delete the links that weren't removed 
+        for (ProductLink link : links) {
+            soap().deleteProductLink(part.getMagentoProductId(), link.getId(), ProductLink.LinkType.CROSS_SELL);
+        }
+    }
+    
+    public void updateBOM(Part part, Collection<ProductLink> links) {
+        
+        // Clone the list of links so we can use it for updating
+        links = new ArrayList<ProductLink>(links);
+        
+        // Add missing links and prepare links for removal
+        for (BOMItem item : part.getBom()) {
+            ProductLink link = getLinkBySku(links, item.getChild().getId().toString());
+            
+            // Create the link or remove it from the links list so we don't remove it later
+            if (link == null) {
+                
+                // Get the BOM atlernate part if there is one
+                Part tiPart = null;
+                List<Part> tiAlternates = item.getTIAlternates();
+                
+                if (!tiAlternates.isEmpty()) {
+                    
+                    // Get the TI alternate
+                    tiPart = tiAlternates.get(0);
+                } else {
+                    
+                    // No BOM alternates, get the TI interchange
+                    List<Part> tiInterchanges = item.getChild().getTIInterchanges();
+                    
+                    if (!tiInterchanges.isEmpty()) {
+                        tiPart = tiInterchanges.get(0);
+                    }
+                }
+                
+                
+                // Add the TI alternate attributes
+                Map<String, String> attributes = Maps.newHashMap();
+                
+                if (tiPart != null) {    
+                    attributes.put("ti_product_id", ObjectUtils.toString(tiPart.getMagentoProductId().toString(), null));
+                    attributes.put("ti_product_sku", tiPart.getId().toString());
+                }
+
+                // Add missing link
+                soap().addProductLink(
+                        part.getMagentoProductId(), item.getChild().getMagentoProductId(),
+                        GROUPED, item.getQuantity().doubleValue(), attributes);
+            } else {
+                
+                // Active link, don't remove
+                links.remove(link);
+            }
+        }
+        
+        // Delete the links that weren't removed 
+        for (ProductLink link : links) {
+            soap().deleteProductLink(part.getMagentoProductId(), link.getId(), ProductLink.LinkType.CROSS_SELL);
+        }
+    }
+    
+    private void updateProductLinks(Part part) {
+        Multimap<ProductLink.LinkType, ProductLink> links = getProductLinks(part.getMagentoProductId());
+        
+        updateInterchanges(part, links.get(CROSS_SELL));
+        
+        updateBOM(part, links.get(GROUPED));
     }
     
 //    @RequestMapping(value="/parts", headers = "Accept=application/json")

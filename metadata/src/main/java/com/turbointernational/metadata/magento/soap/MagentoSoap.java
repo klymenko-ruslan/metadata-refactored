@@ -7,8 +7,7 @@ import com.google.code.magja.service.RemoteServiceFactory;
 import com.google.code.magja.service.ServiceException;
 import com.google.code.magja.soap.MagentoSoapClient;
 import com.google.code.magja.soap.SoapConfig;
-import com.google.common.collect.LinkedListMultimap;
-import com.google.common.collect.Multimap;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -29,8 +28,8 @@ public class MagentoSoap {
         
         System.out.println("Post-delete, pre-add: " + magento.getProductLinks(6));
         
-        magento.addProductLink(6, 7, LinkType.CROSS_SELL);
-        magento.addProductLink(6, 8, LinkType.CROSS_SELL);
+        magento.addProductLink(6, 7, LinkType.CROSS_SELL, null, null);
+        magento.addProductLink(6, 8, LinkType.CROSS_SELL, null, null);
         
         System.out.println("Post-add: " + magento.getProductLinks(6));
     }
@@ -43,13 +42,22 @@ public class MagentoSoap {
         rsf = new RemoteServiceFactory(client);
     }
     
-    public void addProductLink(int productId, int linkedProductId, LinkType type) throws MagentoSoapException {
+    public void addProductLink(int productId, int linkedProductId, LinkType type, Double quantity, Map<String, String> attributes) throws MagentoSoapException {
         Product parent = new Product();
         parent.setId(productId);
         
+        // Create the link
         ProductLink productLink = new ProductLink();
         productLink.setId(linkedProductId);
         productLink.setLinkType(type);
+        productLink.setQty(quantity);
+        
+        // Set any extra attributes
+        if (attributes != null) {
+            for (String name : attributes.keySet()) {
+                productLink.set(name, attributes.get(name));
+            }
+        }
         
         try {
             rsf.getProductLinkRemoteService().assign(parent, productLink);
