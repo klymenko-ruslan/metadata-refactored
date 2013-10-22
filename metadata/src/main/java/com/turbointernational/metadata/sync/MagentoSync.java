@@ -13,10 +13,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.scribe.model.Token;
 import org.springframework.transaction.annotation.Transactional;
 import static com.google.code.magja.model.product.ProductLink.LinkType.*;
-import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.turbointernational.metadata.domain.part.bom.BOMItem;
+import com.turbointernational.metadata.domain.part.types.Gasket;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -119,11 +119,9 @@ public class MagentoSync {
             } else {
                 logger.log(Level.INFO, "Updating magento product for part #{0}", id);
 
-                // Set the magento product ID it hasn't been
-                if (part.getMagentoProductId() == null) {
-                    int productId = productJsog.get("entity_id").getIntegerValue();
-                    part.updateMagentoProductId(productId);
-                }
+                // Make sure the magento product ID is up to date
+                int productId = productJsog.get("entity_id").getIntegerValue();
+                part.updateMagentoProductId(productId);
 
                 // Get the current product version
                 Integer productVersion = null;
