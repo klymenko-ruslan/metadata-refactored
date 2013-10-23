@@ -1,15 +1,19 @@
 package com.turbointernational.metadata.magento.soap;
 
 import com.google.code.magja.model.product.Product;
+import com.google.code.magja.model.product.ProductAttribute;
+import com.google.code.magja.model.product.ProductAttributeSet;
 import com.google.code.magja.model.product.ProductLink;
 import com.google.code.magja.model.product.ProductLink.LinkType;
 import com.google.code.magja.service.RemoteServiceFactory;
 import com.google.code.magja.service.ServiceException;
+import com.google.code.magja.service.product.ProductAttributeRemoteService;
 import com.google.code.magja.soap.MagentoSoapClient;
 import com.google.code.magja.soap.SoapConfig;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -25,6 +29,7 @@ public class MagentoSoap {
     public static void main(String[] args) throws Exception {
         
         MagentoSoap magento = new MagentoSoap("metadata", "9l8t6QCihtX4", BASE_URL + "index.php/api/soap");
+//        magento.dumpProductAttributes();
         System.out.println("Pre-delete: " + magento.getProductLinks(125));
         
         magento.deleteProductLink(6, "7", LinkType.CROSS_SELL);
@@ -103,6 +108,35 @@ public class MagentoSoap {
             rsf.getProductLinkRemoteService().remove(parent, productLink);
         } catch (ServiceException e) {
             throw new MagentoSoapException("Could not delete product link.", e);
+        }
+    }
+    
+    public void dumpProductAttributes() throws Exception {
+        ProductAttributeRemoteService svc = rsf.getProductAttributeRemoteService();
+        
+        for (ProductAttributeSet attrSet : svc.listAllProductAttributeSet()) {
+            String attrSetName = attrSet.getName();
+            System.out.println("Attribute set: " + attrSetName);
+            
+            for (ProductAttribute attr : svc.listByAttributeSet(attrSet)) {
+                if (Boolean.TRUE.equals(attr.getRequired())) {
+                    System.out.println("\t" + attr.getCode() + "*");
+                } else {
+                    System.out.println("\t" + attr.getCode());
+                }
+                
+                if ("select".equals(attr.getInput())) {
+                    svc.getOptions(attr);
+                    
+                    if (attr.getOptions() == null) {
+                        continue;
+                    }
+                    
+                    for (Entry<Integer, String> option : attr.getOptions().entrySet()) {
+                        System.out.println("\t\t" + option.getKey() + ": " + option.getValue());
+                    }
+                }
+            }
         }
     }
     
