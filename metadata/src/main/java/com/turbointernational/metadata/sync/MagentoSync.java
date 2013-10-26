@@ -40,7 +40,41 @@ public class MagentoSync {
         .put("type_id","simple") // Required
         .put("status", "1") // Required
         .put("visibility","4") // Required
+                
+        // Won't show up in the store without it
+        .put("msrp_enabled", "2")
+        .put("msrp_display_actual_price_type", "4")
+        .put("meta_title", null)
+        .put("meta_description", null)
+        .put("country_of_manufacture", null)
+        .put("custom_design", null)
+        .put("page_layout", null)
+        .put("gift_message_available", null)
+        .put("manufacturer", null)
+        .put("tax_class_id", null)
+        .put("price", null)
+        .put("special_price", null)
+        .put("msrp", null)
+        .put("weight", null)
+        .put("special_from_date", null)
+        .put("special_to_date", null)
+        .put("news_from_date", null)
+        .put("news_to_date", null)
+        .put("custom_design_from", null)
+        .put("custom_design_to", null)
+        .put("short_description", null)
+        .put("meta_keyword", null)
+        .put("custom_layout_update", null)
         ;
+        
+        // Part types
+        if (part instanceof Gasket) {
+            Gasket gasket = (Gasket) part;
+            
+            if (gasket.getGasketType() != null) {
+                partJsog.put("gasket_type_name", gasket.getGasketType().getName());
+            }
+        }
         
         if (StringUtils.isBlank(part.getName())) {
             partJsog.put("name", part.getManufacturer().getName() + " " + part.getManufacturerPartNumber());
