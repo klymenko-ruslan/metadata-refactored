@@ -49,7 +49,7 @@ angular.module('ngMetaCrudApp')
             }
 
             this.sync = function(partId) {
-              return Restangular.one("part/sync").get({"id": partId});
+              return Restangular.one("part/async").get({"id": partId});
             }
         };
   });

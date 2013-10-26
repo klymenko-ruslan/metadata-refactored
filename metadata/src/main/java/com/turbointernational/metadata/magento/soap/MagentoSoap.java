@@ -1,36 +1,44 @@
 package com.turbointernational.metadata.magento.soap;
 
 import com.google.code.magja.model.product.Product;
+import com.google.code.magja.model.product.ProductAttribute;
+import com.google.code.magja.model.product.ProductAttributeSet;
 import com.google.code.magja.model.product.ProductLink;
 import com.google.code.magja.model.product.ProductLink.LinkType;
 import com.google.code.magja.service.RemoteServiceFactory;
 import com.google.code.magja.service.ServiceException;
+import com.google.code.magja.service.product.ProductAttributeRemoteService;
 import com.google.code.magja.soap.MagentoSoapClient;
 import com.google.code.magja.soap.SoapConfig;
-import com.google.common.collect.LinkedListMultimap;
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.logging.Logger;
 
 /**
  *
  * @author jrodriguez
  */
 public class MagentoSoap {
+    private static final Logger logger = Logger.getLogger(MagentoSoap.class.toString());
     
     public static final String BASE_URL = "http://ec2-184-73-132-150.compute-1.amazonaws.com/";
     
     public static void main(String[] args) throws Exception {
         
         MagentoSoap magento = new MagentoSoap("metadata", "9l8t6QCihtX4", BASE_URL + "index.php/api/soap");
+//        magento.dumpProductAttributes();
         System.out.println("Pre-delete: " + magento.getProductLinks(125));
         
-        magento.deleteProductLink(6, 7, LinkType.CROSS_SELL);
-        magento.deleteProductLink(6, 8, LinkType.CROSS_SELL);
+        magento.deleteProductLink(6, "7", LinkType.CROSS_SELL);
+        magento.deleteProductLink(6, "8", LinkType.CROSS_SELL);
         
         System.out.println("Post-delete, pre-add: " + magento.getProductLinks(6));
         
-        magento.addProductLink(6, 7, LinkType.CROSS_SELL);
-        magento.addProductLink(6, 8, LinkType.CROSS_SELL);
+        magento.addProductLink(6, 7, LinkType.CROSS_SELL, null, null);
+        magento.addProductLink(6, 8, LinkType.CROSS_SELL, null, null);
         
         System.out.println("Post-add: " + magento.getProductLinks(6));
     }
@@ -43,13 +51,22 @@ public class MagentoSoap {
         rsf = new RemoteServiceFactory(client);
     }
     
-    public void addProductLink(int productId, int linkedProductId, LinkType type) throws MagentoSoapException {
+    public void addProductLink(int productId, long linkedPartId, LinkType type, Double quantity, Map<String, String> attributes) throws MagentoSoapException {
         Product parent = new Product();
         parent.setId(productId);
         
+        // Create the link
         ProductLink productLink = new ProductLink();
-        productLink.setId(linkedProductId);
+        productLink.setSku(Long.toString(linkedPartId));
         productLink.setLinkType(type);
+        productLink.setQty(quantity);
+        
+        // Set any extra attributes
+        if (attributes != null) {
+            for (String name : attributes.keySet()) {
+                productLink.set(name, attributes.get(name));
+            }
+        }
         
         try {
             rsf.getProductLinkRemoteService().assign(parent, productLink);
@@ -58,29 +75,68 @@ public class MagentoSoap {
         }
     }
     
-    public Set<ProductLink> getProductLinks(int productId) {
+    public Multimap<ProductLink.LinkType, ProductLink> getProductLinks(int productId) {
+        
         Product product = new Product();
         product.setId(productId);
         
         try {
-            return rsf.getProductLinkRemoteService().list(product);
+            Set<ProductLink> linkSet = rsf.getProductLinkRemoteService().list(product);
+            
+            // Transform to a multimap
+            Multimap<ProductLink.LinkType, ProductLink> links = ArrayListMultimap.create();
+
+            for (ProductLink link : linkSet) {
+                links.put(link.getLinkType(), link);
+            }
+
+            return links;
         } catch (ServiceException e) {
             throw new MagentoSoapException("Failed to fetch product links.", e);
         }
     }
     
-    public void deleteProductLink(int productId, int linkedProductId, LinkType type) throws MagentoSoapException {
+    public void deleteProductLink(int productId, String sku, LinkType type) throws MagentoSoapException {
         Product parent = new Product();
         parent.setId(productId);
         
         ProductLink productLink = new ProductLink();
-        productLink.setId(linkedProductId);
+        productLink.setSku(sku);
         productLink.setLinkType(type);
         
         try {
             rsf.getProductLinkRemoteService().remove(parent, productLink);
         } catch (ServiceException e) {
-            throw new MagentoSoapException("Could not link products.", e);
+            throw new MagentoSoapException("Could not delete product link.", e);
+        }
+    }
+    
+    public void dumpProductAttributes() throws Exception {
+        ProductAttributeRemoteService svc = rsf.getProductAttributeRemoteService();
+        
+        for (ProductAttributeSet attrSet : svc.listAllProductAttributeSet()) {
+            String attrSetName = attrSet.getName();
+            System.out.println("Attribute set: " + attrSetName);
+            
+            for (ProductAttribute attr : svc.listByAttributeSet(attrSet)) {
+                if (Boolean.TRUE.equals(attr.getRequired())) {
+                    System.out.println("\t" + attr.getCode() + "*");
+                } else {
+                    System.out.println("\t" + attr.getCode());
+                }
+                
+                if ("select".equals(attr.getInput())) {
+                    svc.getOptions(attr);
+                    
+                    if (attr.getOptions() == null) {
+                        continue;
+                    }
+                    
+                    for (Entry<Integer, String> option : attr.getOptions().entrySet()) {
+                        System.out.println("\t\t" + option.getKey() + ": " + option.getValue());
+                    }
+                }
+            }
         }
     }
     

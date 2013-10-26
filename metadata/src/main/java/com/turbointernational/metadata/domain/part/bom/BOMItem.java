@@ -1,5 +1,8 @@
 package com.turbointernational.metadata.domain.part.bom;
+import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.Part;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -80,6 +83,18 @@ public class BOMItem {
 
     public void setAlternatives(Set<BOMAlternative> alternatives) {
         this.alternatives = alternatives;
+    }
+    
+    public List<Part> getTIAlternates() {
+        List<Part> tiAlts = new ArrayList<Part>();
+        
+        for (BOMAlternative alt : alternatives) {
+            if (Manufacturer.TI_ID.equals(alt.getPart().getManufacturer().getId())) {
+                tiAlts.add(alt.getPart());
+            }
+        }
+        
+        return tiAlts;
     }
     
     @PrePersist
