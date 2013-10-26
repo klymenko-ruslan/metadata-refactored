@@ -199,8 +199,14 @@ public class PartController {
         return new ResponseEntity<Void>((Void) null, headers, HttpStatus.OK);
     }
     
-    
     @Async
+    @RequestMapping(value="/async")
+    @ResponseBody
+    public void asyncPart(@RequestParam long id) {
+        magento.syncPart(id);
+    }
+
+    
     @RequestMapping(value="/sync")
     @ResponseBody
     public void syncPart(@RequestParam long id) {

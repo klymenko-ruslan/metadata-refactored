@@ -20,8 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Entity
 @Table(name="BOM_ALT_HEADER")
 public class BOMAlternativeHeader {
-
-    //<editor-fold defaultstate="collapsed" desc="properties">
+    
+    //<editor-fold defaultstate="collapsed" desc="Properties">
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -35,12 +35,47 @@ public class BOMAlternativeHeader {
     @Column(name = "version")
     private Integer version;
     
+    
+    /**
+     * @return the id
+     */
     public Long getId() {
-        return this.id;
+        return id;
     }
     
+    /**
+     * @param id the id to set
+     */
     public void setId(Long id) {
         this.id = id;
+    }
+    
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
+    
+    /**
+     * @param name the name to set
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+    
+    /**
+     * @return the description
+     */
+    public String getDescription() {
+        return description;
+    }
+    
+    /**
+     * @param description the description to set
+     */
+    public void setDescription(String description) {
+        this.description = description;
     }
     
     public Integer getVersion() {
@@ -52,7 +87,9 @@ public class BOMAlternativeHeader {
     }
     //</editor-fold>
     
-    //<editor-fold defaultstate="collapsed" desc="activerecord">
+    //<editor-fold defaultstate="collapsed" desc="ActiveRecord">
+    
+    
     @PersistenceContext
     transient EntityManager entityManager;
     
@@ -115,9 +152,11 @@ public class BOMAlternativeHeader {
         this.entityManager.flush();
         return merged;
     }
+    
     //</editor-fold>
     
-    //<editor-fold defaultstate="collapsed" desc="json">
+    //<editor-fold defaultstate="collapsed" desc="Serialization">
+    
     public String toJson() {
         return new JSONSerializer().exclude("*.class").serialize(this);
     }

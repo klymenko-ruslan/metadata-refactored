@@ -29,6 +29,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Table(name="MANFR", uniqueConstraints=@UniqueConstraint(columnNames={"name"}))
 public class Manufacturer {
     
+    public static final Long TI_ID = 11L;
+    
     //<editor-fold defaultstate="collapsed" desc="Properties">
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -125,6 +127,11 @@ public class Manufacturer {
             .createQuery("SELECT m FROM Manufacturer m WHERE m.name = :name", Manufacturer.class)
             .setParameter("name", name)
             .getSingleResult();
+    }
+    
+    @com.googlecode.ehcache.annotations.Cacheable(cacheName = "manufacturers")
+    public static Manufacturer TI() {
+        return findManufacturer(TI_ID);
     }
     
     @TriggersRemove(cacheName = "manufacturers")

@@ -21,14 +21,13 @@ import flexjson.JSONSerializer;
 import flexjson.ObjectBinder;
 import flexjson.ObjectFactory;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -55,7 +54,6 @@ import javax.persistence.Transient;
 import javax.persistence.TypedQuery;
 import javax.persistence.Version;
 import net.sf.jsog.JSOG;
-import org.apache.commons.lang.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.transaction.annotation.Transactional;
@@ -383,7 +381,11 @@ public class Part {
 //                .include("bom.alternatives")
 //                .include("bom.alternatives.header")
 //                .include("bom.alternatives.part.id")
+                .exclude("turboModel.turboType.manufacturer")
                 .exclude("*.class")
+//                .exclude("tiinterchanges")
+//                .exclude("interchangeByPartId")
+//                .exclude("magentoProductId")
                 .serialize(this);
     }
     
@@ -403,6 +405,10 @@ public class Part {
                 .deserialize(json);
         
         // Set the BOM parents (this doesn't deserialize automatically)
+        if (part.getBom() == null) {
+            part.setBom(new LinkedList());
+        }
+        
         for (BOMItem bomItem : part.getBom()) {
             bomItem.setParent(part);
         }
@@ -509,18 +515,58 @@ public class Part {
         this.entityManager.flush();
         return merged;
     }
+    
+    @Transactional
+    public void updateMagentoProductId(int id) {
+        this.magentoProductId = id;
+        merge();
+    }
     //</editor-fold>
     
-    public Set<Part> getInterchangePartsForManufacturer(Manufacturer manufacturer) {
-        Set<Part> interchangeParts = new TreeSet<Part>();
+    public List<Part> getTIInterchanges() {
+        List<Part> interchangeParts = new ArrayList<Part>();
+        
+        // Stop now if there is no interchange assigned
+        if (interchange == null) {
+            return interchangeParts;
+        }
         
         for (Part interchangePart : interchange.getParts()) {
-            if (ObjectUtils.equals(manufacturer, interchangePart.getManufacturer())) {
+            if (Manufacturer.TI_ID.equals(interchangePart.getManufacturer().getId())) {
                 interchangeParts.add(interchangePart);
             }
         }
         
         return interchangeParts;
     }
+    
+//    public Set<Part> getBomAltPartsForManufacturer(BOMAlternativeHeader bomAltHeader, Manufacturer manufacturer) {
+//        Set<Part> altParts = new TreeSet<Part>();
+//        
+//        for (BOMItem item : bom) {
+//            for (BOMAlternative alt : item.getAlternatives()) {
+//                if (ObjectUtils.equals(alt.getHeader().getId(), bomAltHeader.getId())
+//                    && ObjectUtils.equals(alt.getPart().getManufacturer().getId(), manufacturer.getId())) {
+//                    altParts.add(alt.getPart());
+//                }
+//            }
+//        }
+//        
+//        return altParts;
+//        
+////        JPA style
+////        return entityManager.createQuery(
+////                                  "SELECT DISTINCT bap\n"
+////                                + "FROM\n"
+////                                + "  BOMAlternative ba\n"
+////                                + "  JOIN ba.part bap\n"
+////                                + "  JOIN bap.manufacturer bapm\n"
+////                                + "WHERE\n"
+////                                + "  bapm = :manufacturer\n"
+////                                + "  ba = :bomAltHeader")
+////                .setParameter("bomAltHeader", bomAltHeader)
+////                .setParameter("manufacturer", manufacturer)
+////                .getResultList();
+//    }
     
 }

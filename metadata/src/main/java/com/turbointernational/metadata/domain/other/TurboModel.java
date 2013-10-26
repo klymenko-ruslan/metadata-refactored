@@ -18,14 +18,12 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.roo.addon.json.RooJson;
 import org.springframework.transaction.annotation.Transactional;
 
 @Cacheable
 @Configurable
 @Entity
 @Table(name = "TURBO_MODEL")
-@RooJson
 public class TurboModel {
     
     //<editor-fold defaultstate="collapsed" desc="Properties">
@@ -37,7 +35,7 @@ public class TurboModel {
     @Column(nullable=false)
     private String name;
     
-    @OneToOne(cascade = CascadeType.MERGE)
+    @OneToOne(cascade = CascadeType.REFRESH)
     @JoinColumn(name="turbo_type_id")
     private TurboType turboType;
     

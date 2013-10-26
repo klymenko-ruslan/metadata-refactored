@@ -21,11 +21,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Configurable
 @Entity
-@Table(name = "interchange_header")
+@Table(name="interchange_header")
 public class Interchange {
-    
-    //<editor-fold defaultstate="collapsed" desc="properties">
-    
+
+    //<editor-fold defaultstate="collapsed" desc="Properties">
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -82,9 +81,11 @@ public class Interchange {
     public void setVersion(Integer version) {
         this.version = version;
     }
+    
     //</editor-fold>
     
-    //<editor-fold defaultstate="collapsed" desc="activeRecord">
+    //<editor-fold defaultstate="collapsed" desc="ActiveRecord">
+    
     @PersistenceContext
     transient EntityManager entityManager;
     
@@ -147,9 +148,10 @@ public class Interchange {
         this.entityManager.flush();
         return merged;
     }
+    
     //</editor-fold>
     
-    //<editor-fold defaultstate="collapsed" desc="json">
+    //<editor-fold defaultstate="collapsed" desc="Serialization">
     public String toJson() {
         return new JSONSerializer().exclude("*.class").serialize(this);
     }
@@ -174,4 +176,5 @@ public class Interchange {
         return new JSONDeserializer<List<Interchange>>().use(null, ArrayList.class).use("values", Interchange.class).deserialize(json);
     }
     //</editor-fold>
+    
 }
