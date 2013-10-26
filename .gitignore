@@ -1,6 +1,7 @@
 **/log.roo
 **/.DS_Store
 **/.idea
+metadata/yo/.idea/
 **/nbactions.xml
 /metadata/target
 /docs/sql/script.sql
