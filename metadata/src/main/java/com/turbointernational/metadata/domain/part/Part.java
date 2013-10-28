@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -362,7 +363,7 @@ public class Part {
                 .put("manufacturer_type_name", manufacturer.getType().getName())
                 .put("manufacturer_part_number", manufacturerPartNumber)
                 .put("part_type", partType.getTypeName())
-                .put("attribute_set_id", partType.getMagentoAttributeSetId());
+                .put("attribute_set_id", partType.getMagentoAttributeSet());
         
         
         if (interchange != null) {
@@ -453,7 +454,7 @@ public class Part {
         if (type == null) {
             q = em.createQuery("SELECT o FROM Part o", Part.class);
         } else {
-            q = em.createQuery("SELECT o FROM o WHERE o.PartType.name = ?", Part.class);
+            q = em.createQuery("SELECT o FROM Part o JOIN o.partType WHERE o.partType.name = ?", Part.class);
             q.setParameter(1, type);
         }
         
@@ -465,7 +466,7 @@ public class Part {
     }
     
     public static List<Part> findAll() {
-        return entityManager().createQuery("SELECT o FROM Part o", Part.class).getResultList();
+        return entityManager().createQuery("SELECT o FROM Part o ORDER BY o.id", Part.class).getResultList();
     }
     
     public static Part findPart(Long id) {
@@ -475,8 +476,30 @@ public class Part {
         return (Part) q.getSingleResult();
     }
     
+    public static List<Part> findPartEntriesByBom(int firstResult, int maxResults, boolean hasBom) {
+        return entityManager()
+                .createQuery("SELECT DISTINCT o\n"
+                           + "FROM Part o\n"
+                           + "JOIN o.partType\n"
+                           + "WHERE o.hasBom = :hasBom\n"
+                           + "ORDER BY o.id", Part.class)
+                .setParameter("hasBom", hasBom)
+                .setFirstResult(firstResult)
+                .setMaxResults(maxResults).getResultList();
+    }
+    
+    public static List<Part> findPartsWithBom(int firstResult, int maxResults) {
+        return entityManager()
+                .createQuery("SELECT DISTINCT o FROM Part o JOIN o.partType ORDER BY o.id", Part.class)
+                .setFirstResult(firstResult)
+                .setMaxResults(maxResults).getResultList();
+    }
+    
     public static List<Part> findPartEntries(int firstResult, int maxResults) {
-        return entityManager().createQuery("SELECT o FROM Part o", Part.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+        return entityManager()
+                .createQuery("SELECT DISTINCT o FROM Part o ORDER BY o.id", Part.class)
+                .setFirstResult(firstResult)
+                .setMaxResults(maxResults).getResultList();
     }
     
     @Transactional

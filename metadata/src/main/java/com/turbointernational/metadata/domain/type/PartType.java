@@ -36,11 +36,14 @@ public class PartType {
     @Column(name="DTYPE", nullable=false)
     private String typeName;
     
-    @Column(name="magento_attribute_set_id")
-    private Integer magentoAttributeSetId;
+    @Column(name="magento_attribute_set")
+    private String magentoAttributeSet;
     
-    @Column(name="magento_category_id")
-    private Integer magentoCategoryId;
+    @Column(name="magento_category")
+    private String magentoCategory;
+    
+    @Column(name="has_bom")
+    private Boolean hasBom;
     
     @Version
     @Column(name = "version")
@@ -75,20 +78,20 @@ public class PartType {
         this.typeName = typeName;
     }
     
-    public Integer getMagentoAttributeSetId() {
-        return magentoAttributeSetId;
+    public String getMagentoAttributeSet() {
+        return magentoAttributeSet;
     }
     
-    public void setMagentoAttributeSetId(Integer magentoAttributeSetId) {
-        this.magentoAttributeSetId = magentoAttributeSetId;
+    public void setMagentoAttributeSet(String magentoName) {
+        this.magentoAttributeSet = magentoName;
     }
     
-    public Integer getMagentoCategoryId() {
-        return magentoCategoryId;
+    public String getMagentoCategory() {
+        return magentoCategory;
     }
     
-    public void setMagentoCategoryId(Integer magentoCategoryId) {
-        this.magentoCategoryId = magentoCategoryId;
+    public void setMagentoCategory(String magentoCategory) {
+        this.magentoCategory = magentoCategory;
     }
     
     public PartType getParent() {
@@ -97,6 +100,14 @@ public class PartType {
     
     public void setParent(PartType parent) {
         this.parent = parent;
+    }
+
+    public Boolean getHasBom() {
+        return hasBom;
+    }
+
+    public void setHasBom(Boolean hasBom) {
+        this.hasBom = hasBom;
     }
     
     public Integer getVersion() {

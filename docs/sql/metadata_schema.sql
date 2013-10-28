@@ -37,7 +37,8 @@ CREATE TABLE `part_type` (
   `parent_part_type_id` BIGINT NULL,
   `import_pk` BIGINT NULL,
   `dtype` VARCHAR(50),
-  `magento_attribute_set_id` INTEGER,
+  `magento_attribute_set` VARCHAR(50),
+  `magento_category` VARCHAR(50),
   `version` INTEGER NOT NULL DEFAULT 1,
   FOREIGN KEY (`parent_part_type_id`) REFERENCES `part_type` (`id`),
   PRIMARY KEY(`id`, `version`)

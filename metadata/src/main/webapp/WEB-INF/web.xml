@@ -74,6 +74,8 @@
         <url-pattern>/type/*</url-pattern>
         <url-pattern>/other</url-pattern>
         <url-pattern>/other/*</url-pattern>
+        <url-pattern>/magmi</url-pattern>
+        <url-pattern>/magmi/*</url-pattern>
     </servlet-mapping>
     
     <session-config>
