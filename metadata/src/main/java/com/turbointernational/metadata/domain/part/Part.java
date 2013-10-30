@@ -481,7 +481,7 @@ public class Part {
                 .createQuery("SELECT DISTINCT o\n"
                            + "FROM Part o\n"
                            + "JOIN o.partType\n"
-                           + "WHERE o.hasBom = :hasBom\n"
+                           + "WHERE o.partType.hasBom = :hasBom\n"
                            + "ORDER BY o.id", Part.class)
                 .setParameter("hasBom", hasBom)
                 .setFirstResult(firstResult)
