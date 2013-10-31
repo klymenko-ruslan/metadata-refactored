@@ -21,7 +21,6 @@ ALTER TABLE `part`
 
 ALTER TABLE `part_type` ADD COLUMN `magento_attribute_set` INTEGER;
 ALTER TABLE `part_type` ADD COLUMN `magento_category` INTEGER;
-ALTER TABLE `part_type` ADD COLUMN `has_bom` BIT NOT NULL DEFAULT 0;
 
 DROP TABLE IF EXISTS `part_turbo_type`;
 DROP TABLE IF EXISTS `part_attribute`;
@@ -41,7 +40,6 @@ UPDATE `part_type` SET
 -- Kit and Cartridge have BOM
 SET @partType = 'Cartridge';
 UPDATE `part_type` SET
-    `has_bom` = 1,
     `DTYPE` = @partType,
     `magento_attribute_set`= @partType,
     `magento_category`= @partType
@@ -49,7 +47,6 @@ WHERE ID = 2;
 
 SET @partType = 'Kit';
 UPDATE `part_type` SET
-    `has_bom` = 1,
     `DTYPE` = @partType,
     `magento_attribute_set`= @partType,
     `magento_category`= @partType

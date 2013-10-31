@@ -42,9 +42,6 @@ public class PartType {
     @Column(name="magento_category")
     private String magentoCategory;
     
-    @Column(name="has_bom")
-    private Boolean hasBom;
-    
     @Version
     @Column(name = "version")
     private Integer version;
@@ -100,14 +97,6 @@ public class PartType {
     
     public void setParent(PartType parent) {
         this.parent = parent;
-    }
-
-    public Boolean getHasBom() {
-        return hasBom;
-    }
-
-    public void setHasBom(Boolean hasBom) {
-        this.hasBom = hasBom;
     }
     
     public Integer getVersion() {

@@ -476,25 +476,6 @@ public class Part {
         return (Part) q.getSingleResult();
     }
     
-    public static List<Part> findPartEntriesByBom(int firstResult, int maxResults, boolean hasBom) {
-        return entityManager()
-                .createQuery("SELECT DISTINCT o\n"
-                           + "FROM Part o\n"
-                           + "JOIN o.partType\n"
-                           + "WHERE o.partType.hasBom = :hasBom\n"
-                           + "ORDER BY o.id", Part.class)
-                .setParameter("hasBom", hasBom)
-                .setFirstResult(firstResult)
-                .setMaxResults(maxResults).getResultList();
-    }
-    
-    public static List<Part> findPartsWithBom(int firstResult, int maxResults) {
-        return entityManager()
-                .createQuery("SELECT DISTINCT o FROM Part o JOIN o.partType ORDER BY o.id", Part.class)
-                .setFirstResult(firstResult)
-                .setMaxResults(maxResults).getResultList();
-    }
-    
     public static List<Part> findPartEntries(int firstResult, int maxResults) {
         return entityManager()
                 .createQuery("SELECT DISTINCT o FROM Part o ORDER BY o.id", Part.class)

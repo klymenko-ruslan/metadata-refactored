@@ -24,11 +24,11 @@ import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletResponse;
+import net.sf.jsog.JSOG;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -56,7 +56,7 @@ public class Magmi {
         "manufacturer_part_number",
         "ti_part_sku",
         "categories",
-        "grouped_skus", // BOM
+        "bill_of_materials", // BOM
         //</editor-fold>
         
         //<editor-fold defaultstate="collapsed" desc="Part Type Specifics">
@@ -151,8 +151,7 @@ public class Magmi {
         if (id == null) {
             
             // Write the non-bom parts, then bom parts
-            int count = writeParts(writer, false);
-            count += writeParts(writer, true);
+            int count = writeParts(writer);
             
             logger.log(Level.INFO, "Magmi products exported, {0} parts in {1}ms",
                 new Object[] {count, System.currentTimeMillis() - runtimeStart});
@@ -175,15 +174,7 @@ public class Magmi {
         columns.put("attribute_set", part.getPartType().getMagentoAttributeSet());
         
         // type
-        if (Boolean.TRUE.equals(part.getPartType().getHasBom())) {
-            
-            // BOM, grouped product
-            columns.put("type", "grouped");
-        } else {
-            
-            // No BOM, simple product
-            columns.put("type", "simple");
-        }
+        columns.put("type", "simple");
         
         // visibility
         columns.put("visibility", "Catalog, Search"); // See magmi genericmapper visibility.csv
@@ -212,16 +203,29 @@ public class Magmi {
         // categories
         columns.put("categories", part.getPartType().getMagentoCategory());
         
-        // grouped_skus (The BOM)
-        if (part.getPartType().getHasBom()) {
-            Set<Long> skus = new TreeSet<Long>();
+        // bill_of_materials
+        if (!part.getBom().isEmpty()) {
+            JSOG bom = JSOG.array();
             
-            for (BOMItem bomItem : part.getBom()) {
-                skus.add(bomItem.getChild().getId());
+            for (BOMItem item : part.getBom()) {
+                
+                JSOG jsogItem = JSOG.object();
+                jsogItem.put("sku", item.getChild().getId());
+                jsogItem.put("quantity", item.getQuantity());
+                
+                JSOG tiParts = JSOG.array();
+                jsogItem.put("ti_part_sku", tiParts);
+                
+                for (Part tiAlt : item.getTIAlternates()) {
+                    tiParts.add(tiAlt.getId());
+                }
+                
+                for (Part tiInterchange : item.getChild().getTIInterchanges()) {
+                    tiParts.add(tiInterchange.getId());
+                }
             }
-            
-            
-            columns.put("grouped_skus", StringUtils.join(skus, ','));
+
+            columns.put("bill_of_materials", bom.toString());
         }
     }
     
@@ -366,7 +370,7 @@ public class Magmi {
         }
     }
 
-    private int writeParts(CSVWriter writer, boolean hasBom) throws Exception {
+    private int writeParts(CSVWriter writer) throws Exception {
         
         // Write a CSV for each part
         List<Part> parts;
@@ -376,7 +380,7 @@ public class Magmi {
         do {
             
             // Get the next batch of parts
-            parts = Part.findPartEntriesByBom(start, count, hasBom);
+            parts = Part.findPartEntries(start, count);
             start += parts.size();
             
             // Write each part
