@@ -70,6 +70,10 @@
     
     <tx:annotation-driven mode="aspectj" transaction-manager="transactionManager"/>
     
+    <bean class="org.springframework.jdbc.core.JdbcTemplate">
+        <constructor-arg ref="dataSource"/>
+    </bean>
+    
     <bean id="dataSource" class="com.mysql.jdbc.jdbc2.optional.MysqlConnectionPoolDataSource"
           p:databaseName="${database.schema}"
           p:serverName="${database.host}"

@@ -19,14 +19,14 @@ import java.io.OutputStreamWriter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletResponse;
 import net.sf.jsog.JSOG;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -57,6 +57,7 @@ public class Magmi {
         "ti_part_sku",
         "categories",
         "bill_of_materials", // BOM
+        "price",
         //</editor-fold>
         
         //<editor-fold defaultstate="collapsed" desc="Part Type Specifics">
@@ -111,6 +112,10 @@ public class Magmi {
 //        "meta_description",
 
     };
+    
+    @Autowired(required=true)
+    private JdbcTemplate metadataDb;
+    
     String[] partCsv(Part part) {
         
         // Get the part's column values
@@ -223,9 +228,24 @@ public class Magmi {
                 for (Part tiInterchange : item.getChild().getTIInterchanges()) {
                     tiParts.add(tiInterchange.getId());
                 }
+                
+                if (tiParts.size() > 0) {
+                    bom.add(jsogItem);
+                }
             }
 
-            columns.put("bill_of_materials", bom.toString());
+            if (bom.size() > 0) {
+                columns.put("bill_of_materials", bom.toString());
+            }
+        }
+        
+        // HACK: We should be getting this through hibernate. It's giving me grief ATM, so moving on...
+        List<String> priceList = metadataDb.queryForList(
+                "SELECT StdPrice FROM mas90_std_price WHERE ItemNumber = ?",
+                String.class, part.getManufacturerPartNumber());
+        
+        if (!priceList.isEmpty()) {
+            columns.put("price", priceList.get(0));
         }
     }
     

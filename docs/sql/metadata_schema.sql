@@ -429,3 +429,8 @@ CREATE TABLE `changelog` (
   KEY(`change_date`),
   FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
 ) ENGINE = INNODB;
+
+CREATE TABLE `mas90_std_price` (
+  `ItemNumber` VARCHAR(50) NOT NULL,
+  `StdPrice` DECIMAL(10,2) NOT NULL DEFAULT 0
+) ENGINE = INNODB;
