@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 2.1//EN" "http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
+<tiles-definitions>
+    <definition extends="default" name="compressorwheels/list">
+        <put-attribute name="body" value="/WEB-INF/views/compressorwheels/list.jspx"/>
+    </definition>
+<definition extends="default" name="compressorwheels/show">
+        <put-attribute name="body" value="/WEB-INF/views/compressorwheels/show.jspx"/>
+    </definition>
+<definition extends="default" name="compressorwheels/create">
+        <put-attribute name="body" value="/WEB-INF/views/compressorwheels/create.jspx"/>
+    </definition>
+<definition extends="default" name="compressorwheels/update">
+        <put-attribute name="body" value="/WEB-INF/views/compressorwheels/update.jspx"/>
+    </definition>
+</tiles-definitions>

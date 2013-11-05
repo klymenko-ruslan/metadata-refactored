@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 2.1//EN" "http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
+<tiles-definitions>
+    <definition extends="default" name="bearingspacers/list">
+        <put-attribute name="body" value="/WEB-INF/views/bearingspacers/list.jspx"/>
+    </definition>
+<definition extends="default" name="bearingspacers/show">
+        <put-attribute name="body" value="/WEB-INF/views/bearingspacers/show.jspx"/>
+    </definition>
+<definition extends="default" name="bearingspacers/create">
+        <put-attribute name="body" value="/WEB-INF/views/bearingspacers/create.jspx"/>
+    </definition>
+<definition extends="default" name="bearingspacers/update">
+        <put-attribute name="body" value="/WEB-INF/views/bearingspacers/update.jspx"/>
+    </definition>
+</tiles-definitions>

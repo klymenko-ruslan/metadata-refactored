@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" xmlns:table="urn:jsptagdir:/WEB-INF/tags/form/fields" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <page:list id="pl_com_turbointernational_metadata_domain_part_Heatshield" items="${heatshields}" z="fzrX3LQ3j7eLwMCf1njUy52MSnc=">
+        <table:table data="${heatshields}" id="l_com_turbointernational_metadata_domain_part_Heatshield" path="/heatshields" z="QZeFU3Ec29BGU6ghzaqRa6Dbvno=">
+            <table:column id="c_com_turbointernational_metadata_domain_part_Heatshield_manufacturerPartNumber" property="manufacturerPartNumber" z="evmR6U7h8nc8QrmDMepqXKraafk="/>
+            <table:column id="c_com_turbointernational_metadata_domain_part_Heatshield_manufacturer" property="manufacturer" z="jbpLZ6csMRkp4bvHtVrtQoGZJwQ="/>
+            <table:column id="c_com_turbointernational_metadata_domain_part_Heatshield_name" property="name" z="1jetEyP2V80pDiahGQ5LS7Z3qVk="/>
+            <table:column id="c_com_turbointernational_metadata_domain_part_Heatshield_description" property="description" z="D2Goh7/q9+QCsjZvGqXFULB4tPs="/>
+            <table:column id="c_com_turbointernational_metadata_domain_part_Heatshield_inactive" property="inactive" z="gdeedhT4UKa5TOArlQq8F2ygDnY="/>
+        </table:table>
+    </page:list>
+</div>

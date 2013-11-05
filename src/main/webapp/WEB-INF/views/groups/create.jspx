@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:form="urn:jsptagdir:/WEB-INF/tags/form" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:spring="http://www.springframework.org/tags" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <form:create id="fc_com_turbointernational_metadata_domain_security_Group" modelAttribute="group" path="/groups" render="${empty dependencies}" z="TuWc6cqnRUQ1qSBr8UZjSDl5SIM=">
+        <field:input field="name" id="c_com_turbointernational_metadata_domain_security_Group_name" z="QvNiJ1wQ8klL34dakMUgsih1YxI="/>
+        <field:select field="users" id="c_com_turbointernational_metadata_domain_security_Group_users" itemValue="id" items="${users}" multiple="true" path="/users" z="IEvPCdXZ1pfKDsD2ZQu0zs1pRJ8="/>
+        <field:select field="roles" id="c_com_turbointernational_metadata_domain_security_Group_roles" itemValue="id" items="${roles}" multiple="true" path="/roles" z="zeUXx5PFNkLxXBZmHtRykw68XJU="/>
+    </form:create>
+    <form:dependency dependencies="${dependencies}" id="d_com_turbointernational_metadata_domain_security_Group" render="${not empty dependencies}" z="FPxl7gO9tSyJXkQhGuIiUREqmig="/>
+</div>

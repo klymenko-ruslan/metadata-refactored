@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <page:show id="ps_com_turbointernational_metadata_domain_part_BearingHousing" object="${bearinghousing}" path="/bearinghousings" z="1mFgpNeWNWhjbdFNrzbjoGJd0RU=">
+        <field:display field="manufacturerPartNumber" id="s_com_turbointernational_metadata_domain_part_BearingHousing_manufacturerPartNumber" object="${bearinghousing}" z="JOapCDKR4ZgOl225ciheYPwd9c8="/>
+        <field:display field="manufacturer" id="s_com_turbointernational_metadata_domain_part_BearingHousing_manufacturer" object="${bearinghousing}" z="UVzE6Uo1A3I8lkT0uBvLduJXumg="/>
+        <field:display field="name" id="s_com_turbointernational_metadata_domain_part_BearingHousing_name" object="${bearinghousing}" z="qbkDy9hKkzxlDlqC8uJgucNxXrQ="/>
+        <field:display field="description" id="s_com_turbointernational_metadata_domain_part_BearingHousing_description" object="${bearinghousing}" z="fwSXxJSzUWUwzJisKu9dUXN0lbg="/>
+        <field:display field="inactive" id="s_com_turbointernational_metadata_domain_part_BearingHousing_inactive" object="${bearinghousing}" z="CbPyhOidq6/lvKPYoevhh1DZjVM="/>
+        <field:display field="coolType" id="s_com_turbointernational_metadata_domain_part_BearingHousing_coolType" object="${bearinghousing}" z="xhSC0hgyQWkRNnXbFkNfXcDnUfo="/>
+        <field:display field="oilInlet" id="s_com_turbointernational_metadata_domain_part_BearingHousing_oilInlet" object="${bearinghousing}" z="dxLTH+Y+q4joSe9Vz5yBPsx6bIE="/>
+        <field:display field="oilOutlet" id="s_com_turbointernational_metadata_domain_part_BearingHousing_oilOutlet" object="${bearinghousing}" z="fFQD1AI6fAtp1GH3jLsxcj0ltI8="/>
+        <field:display field="oil" id="s_com_turbointernational_metadata_domain_part_BearingHousing_oil" object="${bearinghousing}" z="MELhMNO5VIBzLMd50U9xYTiK2hE="/>
+        <field:display field="outletFlangeHoles" id="s_com_turbointernational_metadata_domain_part_BearingHousing_outletFlangeHoles" object="${bearinghousing}" z="WJWvBVnZiZTODpnUKGydtZe+H8A="/>
+        <field:display field="waterPorts" id="s_com_turbointernational_metadata_domain_part_BearingHousing_waterPorts" object="${bearinghousing}" z="XwHR6W2xi0XzuPXPuW3HsdbRiMY="/>
+        <field:display field="designFeatures" id="s_com_turbointernational_metadata_domain_part_BearingHousing_designFeatures" object="${bearinghousing}" z="p3GloHmGhLx4rauS0yOXz3CtyLk="/>
+        <field:display field="bearingType" id="s_com_turbointernational_metadata_domain_part_BearingHousing_bearingType" object="${bearinghousing}" z="tLVUYHTnpPa9Yjarm8tQoX/oEBE="/>
+    </page:show>
+</div>
