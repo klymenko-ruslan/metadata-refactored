@@ -1,5 +1,6 @@
 package com.turbointernational.metadata.domain.part.types;
 import com.turbointernational.metadata.domain.part.Part;
+import java.util.Map;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -9,6 +10,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.SecondaryTable;
 import net.sf.jsog.JSOG;
+import org.apache.commons.lang.ObjectUtils;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 
@@ -108,5 +110,23 @@ public class JournalBearing extends Part {
         }
         
         return partObject;
+    }
+    
+    @Override
+    public void csvColumns(Map<String, String> columns) {
+        super.csvColumns(columns);
+        
+        columns.put("outside_diameter_min", ObjectUtils.toString(getOutsideDiameterMin()));
+        columns.put("outside_diameter_max", ObjectUtils.toString(getOutsideDiameterMax()));
+        columns.put("inside_diameter_min", ObjectUtils.toString(getInsideDiameterMin()));
+        columns.put("inside_diameter_max", ObjectUtils.toString(getInsideDiameterMax()));
+
+        if (getStandardSize() != null) {
+            columns.put("standard_size_id", ObjectUtils.toString(getStandardSize().getId()));
+        }
+
+        if (getOversize() != null) {
+            columns.put("oversize_id", ObjectUtils.toString(getOversize().getId()));
+        }
     }
 }

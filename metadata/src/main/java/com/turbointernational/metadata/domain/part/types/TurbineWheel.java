@@ -1,10 +1,12 @@
 package com.turbointernational.metadata.domain.part.types;
 import com.turbointernational.metadata.domain.part.Part;
+import java.util.Map;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.SecondaryTable;
 import net.sf.jsog.JSOG;
+import org.apache.commons.lang.ObjectUtils;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 
@@ -109,5 +111,18 @@ public class TurbineWheel extends Part {
         partObject.put("number_of_blades", getNumberOfBlades());
         
         return partObject;
+    }
+    
+    @Override
+    public void csvColumns(Map<String, String> columns) {
+        super.csvColumns(columns);
+        
+        columns.put("exduce_oa", ObjectUtils.toString(getExducerDiameterA()));
+        columns.put("tip_height_b", ObjectUtils.toString(getTipHeightB()));
+        columns.put("inducer_oc", ObjectUtils.toString(getInducerDiameterC()));
+        columns.put("journal_od", ObjectUtils.toString(getJournalDiameterD()));
+        columns.put("stem_oe", ObjectUtils.toString(getStemDiameterE()));
+        columns.put("shaft_thread_f", ObjectUtils.toString(getShaftThreadF()));
+        columns.put("number_of_blades", ObjectUtils.toString(getNumberOfBlades()));
     }
 }
