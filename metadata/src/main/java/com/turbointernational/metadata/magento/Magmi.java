@@ -1,6 +1,7 @@
 package com.turbointernational.metadata.magento;
 
 import au.com.bytecode.opencsv.CSVWriter;
+import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.part.bom.BOMItem;
 import com.turbointernational.metadata.domain.part.types.Backplate;
@@ -14,6 +15,7 @@ import com.turbointernational.metadata.domain.part.types.Kit;
 import com.turbointernational.metadata.domain.part.types.PistonRing;
 import com.turbointernational.metadata.domain.part.types.TurbineWheel;
 import com.turbointernational.metadata.domain.part.types.Turbo;
+import com.turbointernational.metadata.domain.type.PartType;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.HashMap;
@@ -58,6 +60,7 @@ public class Magmi {
         "categories",
         "bill_of_materials", // BOM
         "price",
+        "quantity",
         //</editor-fold>
         
         //<editor-fold defaultstate="collapsed" desc="Part Type Specifics">
@@ -66,7 +69,7 @@ public class Magmi {
         "bore_oe",
         "compressor_housing_diameter",
         "compressor_wheel_diameter",
-        "cool_type_name",
+        "cool_type",
         "design_features",
         "exduce_oa",
         "exducer_oc",
@@ -81,7 +84,7 @@ public class Magmi {
         "inside_diameter_max",
         "inside_diameter_min",
         "journal_od",
-        "kit_type_name",
+        "kit_type",
         "number_of_blades",
         "oil",
         "oil_inlet",
@@ -108,33 +111,10 @@ public class Magmi {
         "width_min",
         //</editor-fold>
             
-//        "meta_title",
-//        "meta_description",
-
     };
     
     @Autowired(required=true)
     private JdbcTemplate metadataDb;
-    
-    String[] partCsv(Part part) {
-        
-        // Get the part's column values
-        Map<String, String> columns = new HashMap<String, String>();
-        csvColumnsBasic(columns, part);
-        
-        csvColumnsPartType(columns, part);
-
-        // Map the column into a value array for the CSV writer
-        String[] valueArray = new String[HEADERS.length];
-        for (int i = 0; i < HEADERS.length; i++) {
-            
-            String header = HEADERS[i];
-            
-            valueArray[i] = StringUtils.defaultIfEmpty(columns.get(header), "");
-        }
-        
-        return valueArray;
-    }
     
     @RequestMapping("/products")
     @ResponseBody
@@ -156,12 +136,12 @@ public class Magmi {
         if (id == null) {
             
             // Write the non-bom parts, then bom parts
-            int count = writeParts(writer);
+            int count = writeAllParts(writer);
             
             logger.log(Level.INFO, "Magmi products exported, {0} parts in {1}ms",
                 new Object[] {count, System.currentTimeMillis() - runtimeStart});
         } else {
-            writer.writeNext(partCsv(Part.findPart(id)));
+            writer.writeNext(partToProductCsvRow(Part.findPart(id)));
         }
         
         writer.flush();
@@ -169,6 +149,52 @@ public class Magmi {
         
     }
 
+    private int writeAllParts(CSVWriter writer) throws Exception {
+        
+        // Write a CSV for each part
+        List<Part> parts;
+        int start = 0;
+        int count = 100;
+        
+        do {
+            
+            // Get the next batch of parts
+            parts = Part.findPartEntries(start, count);
+            start += parts.size();
+            
+            // Write each part
+            for (Part part : parts) {
+                try {
+                    writer.writeNext(partToProductCsvRow(part));
+                } catch (Exception e) {
+                    logger.log(Level.INFO, "Failed to synchronize part " + part.getId(), e);
+                    throw e;
+                }
+            }
+        } while (parts.size() > 0);
+        
+        return start;
+    }
+    
+    private String[] partToProductCsvRow(Part part) {
+        
+        // Get the part's column values
+        Map<String, String> columns = new HashMap<String, String>();
+        csvColumnsBasic(columns, part);
+        
+        csvColumnsPartType(columns, part);
+
+        // Map the column into a value array for the CSV writer
+        String[] valueArray = new String[HEADERS.length];
+        for (int i = 0; i < HEADERS.length; i++) {
+            
+            String header = HEADERS[i];
+            
+            valueArray[i] = StringUtils.defaultIfEmpty(columns.get(header), "");
+        }
+        
+        return valueArray;
+    }
      
     void csvColumnsBasic(Map<String, String> columns, Part part) {
         
@@ -206,7 +232,11 @@ public class Magmi {
         }
         
         // categories
-        columns.put("categories", part.getPartType().getMagentoCategory());
+        String categories = partTypeToCategories(part);
+        
+        if (StringUtils.isNotBlank(categories)) {
+            columns.put("categories", categories);
+        }
         
         // bill_of_materials
         if (!part.getBom().isEmpty()) {
@@ -246,6 +276,10 @@ public class Magmi {
         
         if (!priceList.isEmpty()) {
             columns.put("price", priceList.get(0));
+        }
+        
+        if (part.getManufacturer().getId() == Manufacturer.TI_ID) {
+            columns.put("quantity", "1");
         }
     }
     
@@ -299,7 +333,7 @@ public class Magmi {
         columns.put("bearing_type", ObjectUtils.toString(castPart.getBearingType()));
 
         if (castPart.getCoolType() != null) {
-            columns.put("cool_type_name", ObjectUtils.toString(castPart.getCoolType().getName()));
+            columns.put("cool_type", ObjectUtils.toString(castPart.getCoolType().getName()));
         }
     }
 
@@ -330,7 +364,7 @@ public class Magmi {
 
     private void csvColumns(Gasket castPart, Map<String, String> columns) {
         if (castPart.getGasketType() != null) {
-            columns.put("gasket_type_name", ObjectUtils.toString(castPart.getGasketType().getName()));
+            columns.put("gasket_type", ObjectUtils.toString(castPart.getGasketType().getName()));
         }
     }
 
@@ -357,7 +391,7 @@ public class Magmi {
 
     private void csvColumns(Kit castPart, Map<String, String> columns) {
         if (castPart.getKitType() != null) {
-            columns.put("kit_type_name", ObjectUtils.toString(castPart.getKitType().getName()));
+            columns.put("kit_type", ObjectUtils.toString(castPart.getKitType().getName()));
         }
     }
 
@@ -386,35 +420,32 @@ public class Magmi {
         }
 
         if (castPart.getCoolType() != null) {
-            columns.put("cool_type_name", ObjectUtils.toString(castPart.getCoolType().getName()));
+            columns.put("cool_type", ObjectUtils.toString(castPart.getCoolType().getName()));
         }
     }
 
-    private int writeParts(CSVWriter writer) throws Exception {
+    /**
+     * Create a category of part types:
+     * parent/child/grandchild
+     */
+    private String partTypeToCategories(Part part) {
         
-        // Write a CSV for each part
-        List<Part> parts;
-        int start = 0;
-        int count = 100;
+        StringBuilder categoriesSB = new StringBuilder("Part Type");
         
-        do {
+        // Get the first part type
+        PartType partType = part.getPartType();
+        
+        while (partType != null) {
+            categoriesSB.append('/');
             
-            // Get the next batch of parts
-            parts = Part.findPartEntries(start, count);
-            start += parts.size();
-            
-            // Write each part
-            for (Part part : parts) {
-                try {
-                    writer.writeNext(partCsv(part));
-                } catch (Exception e) {
-                    logger.log(Level.INFO, "Failed to synchronize part " + part.getId(), e);
-                    throw e;
-                }
-            }
-        } while (parts.size() > 0);
-        
-        return start;
+            // Append the category name
+            categoriesSB.append(partType.getName());
+
+            // Setup next iteration
+            partType = partType.getParent();
+        }
+
+        return categoriesSB.toString();
     }
     
 }
