@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -55,8 +54,11 @@ import javax.persistence.Transient;
 import javax.persistence.TypedQuery;
 import javax.persistence.Version;
 import net.sf.jsog.JSOG;
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
 @Cacheable
@@ -66,6 +68,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn
 public class Part {
+
+    @Transient
+    @Autowired(required=true)
+    private transient JdbcTemplate metadataDb;
+
     public static final ObjectFactory OBJECT_FACTORY = new ObjectFactory() {
 //        private Gson gson = new Gson();
 //        
@@ -543,6 +550,94 @@ public class Part {
         
         return interchangeParts;
     }
+    
+    public void csvColumns(Map<String, String> columns) {
+        
+        // sku
+        columns.put("sku", getId().toString());
+        
+        // attribute_set
+        columns.put("attribute_set", getPartType().getMagentoAttributeSet());
+        
+        // type
+        columns.put("type", "simple");
+        
+        // visibility
+        columns.put("visibility", "Catalog, Search"); // See magmi genericmapper visibility.csv
+        
+        // type
+        columns.put("status", "Enabled"); // See magmi genericmapper status.csv
+        
+        // name
+        columns.put("name", ObjectUtils.toString(getName()));
+        
+        // description
+        columns.put("description", ObjectUtils.toString(getDescription()));
+        
+        // manufacturer
+        columns.put("manufacturer", ObjectUtils.toString(getManufacturer().getName()));
+        
+        // manufacturer_part_number
+        columns.put("manufacturer_part_number", ObjectUtils.toString(getManufacturerPartNumber()));
+        
+        // ti_part_sku
+        List<Part> tiInterchanges = getTIInterchanges();
+        if (!tiInterchanges.isEmpty()) {
+            columns.put("ti_part_sku", tiInterchanges.get(0).getId().toString());
+        }
+        
+        // categories
+        String categories = partType.toMagentoCategories();
+        
+        if (StringUtils.isNotBlank(categories)) {
+            columns.put("categories", categories);
+        }
+        
+        // bill_of_materials
+        if (!getBom().isEmpty()) {
+            JSOG bom = JSOG.array();
+            
+            for (BOMItem item : getBom()) {
+                
+                JSOG jsogItem = JSOG.object();
+                jsogItem.put("sku", item.getChild().getId());
+                jsogItem.put("quantity", item.getQuantity());
+                
+                JSOG tiParts = JSOG.array();
+                jsogItem.put("ti_part_sku", tiParts);
+                
+                for (Part tiAlt : item.getTIAlternates()) {
+                    tiParts.add(tiAlt.getId());
+                }
+                
+                for (Part tiInterchange : item.getChild().getTIInterchanges()) {
+                    tiParts.add(tiInterchange.getId());
+                }
+                
+                if (tiParts.size() > 0) {
+                    bom.add(jsogItem);
+                }
+            }
+
+            if (bom.size() > 0) {
+                columns.put("bill_of_materials", bom.toString());
+            }
+        }
+        
+        // HACK: We should be getting this through hibernate. It's giving me grief ATM, so moving on...
+        List<String> priceList = metadataDb.queryForList(
+                "SELECT StdPrice FROM mas90_std_price WHERE ItemNumber = ?",
+                String.class, getManufacturerPartNumber());
+        
+        if (!priceList.isEmpty()) {
+            columns.put("price", priceList.get(0));
+        }
+        
+        if (getManufacturer().getId() == Manufacturer.TI_ID) {
+            columns.put("quantity", "1");
+        }
+    }
+
     
 //    public Set<Part> getBomAltPartsForManufacturer(BOMAlternativeHeader bomAltHeader, Manufacturer manufacturer) {
 //        Set<Part> altParts = new TreeSet<Part>();

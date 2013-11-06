@@ -1,4 +1,5 @@
 package com.turbointernational.metadata.domain.type;
+import com.turbointernational.metadata.domain.part.Part;
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
 import java.util.ArrayList;
@@ -198,4 +199,30 @@ public class PartType {
         return new JSONDeserializer<List<PartType>>().use(null, ArrayList.class).use("values", PartType.class).deserialize(json);
     }
     //</editor-fold>
+    
+    /**
+     * Create a category of part types:
+     * parent/child/grandchild
+     */
+    public String toMagentoCategories() {
+        
+        StringBuilder categoriesSB = new StringBuilder("Part Type");
+        
+        // Get the first part type
+        PartType partType = this;
+        
+        while (partType != null) {
+            categoriesSB.append('/');
+            
+            // Append the category name
+            categoriesSB.append(partType.getName());
+
+            // Setup next iteration
+            partType = partType.getParent();
+        }
+
+        return categoriesSB.toString();
+    }
+    
+
 }
