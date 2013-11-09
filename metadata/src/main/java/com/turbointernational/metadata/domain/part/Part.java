@@ -587,11 +587,12 @@ public class Part {
         }
         
         // categories
-        String categories = partType.toMagentoCategories();
+        StringBuilder categories = new StringBuilder("Manufacturer/")
+                .append(getManufacturer().getName())
+                .append(";;")
+                .append(partType.toMagentoCategories());
         
-        if (StringUtils.isNotBlank(categories)) {
-            columns.put("categories", categories);
-        }
+        columns.put("categories", categories.toString());
         
         // bill_of_materials
         if (!getBom().isEmpty()) {
