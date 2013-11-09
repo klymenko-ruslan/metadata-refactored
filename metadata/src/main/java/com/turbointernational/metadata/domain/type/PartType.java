@@ -1,9 +1,10 @@
 package com.turbointernational.metadata.domain.type;
-import com.turbointernational.metadata.domain.part.Part;
+import com.google.common.collect.Lists;
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
@@ -17,6 +18,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Table;
 import javax.persistence.Version;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -206,23 +208,25 @@ public class PartType {
      */
     public String toMagentoCategories() {
         
-        StringBuilder categoriesSB = new StringBuilder("Part Type");
+        // Walk up the parent tree and build the hierarchy using "Part Type" as the root
+        List<String> stack = Lists.newArrayList();
         
         // Get the first part type
         PartType partType = this;
         
         while (partType != null) {
-            categoriesSB.append('/');
-            
-            // Append the category name
-            categoriesSB.append(partType.getName());
+            stack.add(partType.getName());
 
             // Setup next iteration
             partType = partType.getParent();
         }
-
-        return categoriesSB.toString();
+        
+        stack.add("Part Type");
+        
+        // The stack is upside down; reverse it.
+        Collections.reverse(stack);
+        
+        return StringUtils.join(stack, '/');
     }
-    
 
 }
