@@ -136,3 +136,6 @@ SET `part`.`dtype` = (
     FROM `part_type`
     WHERE `id` = `part`.`part_type_id`
 );
+
+-- Reset BOM items with quantity 999 to 1
+UPDATE `bom` SET quantity = 1 WHERE quantity = 999;
