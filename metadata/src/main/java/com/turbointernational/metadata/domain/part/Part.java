@@ -28,6 +28,8 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -55,7 +57,6 @@ import javax.persistence.TypedQuery;
 import javax.persistence.Version;
 import net.sf.jsog.JSOG;
 import org.apache.commons.lang.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -172,9 +173,6 @@ public class Part {
     //    @Column(name="ti_part_num")
     //    private String tiPartNumber;
     
-    @Column(name="magento_product_id")
-    private Integer magentoProductId;
-    
     @OneToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="part_type_id")
     private PartType partType;
@@ -189,7 +187,7 @@ public class Part {
     private Interchange interchange;
     
     @OneToMany(mappedBy="parent", fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
-    private Collection<BOMItem> bom;
+    private Set<BOMItem> bom;
     
     @Version
     @Column(name = "version")
@@ -242,14 +240,6 @@ public class Part {
 //    public void setTiPartNumber(String tiPartNumber) {
 //        this.tiPartNumber = tiPartNumber;
 //    }
-    
-    public Integer getMagentoProductId() {
-        return magentoProductId;
-    }
-    
-    public void setMagentoProductId(Integer magentoProductId) {
-        this.magentoProductId = magentoProductId;
-    }
     
     public PartType getPartType() {
         return partType;
@@ -313,11 +303,11 @@ public class Part {
         
     }
     
-    public Collection<BOMItem> getBom() {
+    public Set<BOMItem> getBom() {
         return bom;
     }
     
-    public void setBom(Collection<BOMItem> bom) {
+    public void setBom(Set<BOMItem> bom) {
         this.bom = bom;
     }
     
@@ -414,7 +404,7 @@ public class Part {
         
         // Set the BOM parents (this doesn't deserialize automatically)
         if (part.getBom() == null) {
-            part.setBom(new LinkedList());
+            part.setBom(new TreeSet());
         }
         
         for (BOMItem bomItem : part.getBom()) {
@@ -526,12 +516,6 @@ public class Part {
         this.entityManager.flush();
         return merged;
     }
-    
-    @Transactional
-    public void updateMagentoProductId(int id) {
-        this.magentoProductId = id;
-        merge();
-    }
     //</editor-fold>
     
     public List<Part> getTIInterchanges() {
@@ -625,17 +609,21 @@ public class Part {
             }
         }
         
-        // HACK: We should be getting this through hibernate. It's giving me grief ATM, so moving on...
-        List<String> priceList = metadataDb.queryForList(
-                "SELECT StdPrice FROM mas90_std_price WHERE ItemNumber = ?",
-                String.class, getManufacturerPartNumber());
-        
-        if (!priceList.isEmpty()) {
-            columns.put("price", priceList.get(0));
-        }
-        
+        // Only TI parts get this info
         if (getManufacturer().getId() == Manufacturer.TI_ID) {
+            
+            // Default to quantity 1
             columns.put("quantity", "1");
+            
+            
+            // HACK: We should be getting this through hibernate. It's giving me grief ATM, so moving on...
+            List<String> priceList = metadataDb.queryForList(
+                    "SELECT StdPrice FROM mas90_std_price WHERE ItemNumber = ?",
+                    String.class, getManufacturerPartNumber());
+
+            if (!priceList.isEmpty()) {
+                columns.put("price", priceList.get(0));
+            }
         }
     }
 
