@@ -5,14 +5,21 @@ angular.module('ngMetaCrudApp')
         $scope.partId = $routeParams.id;
         $scope.partType = $routeParams.type;
 
-        $scope.part = restService.findPart($scope.partId, {fields: 'bom'});
+        $scope.part = restService.findPart($scope.partId, {fields: 'bom,interchange.parts'});
 
 
-        $scope.bomTableParams = new ngTableParams({
-            count: 5,
-            page: 1,
-            total: 0
-        });
+      $scope.interchangeTableParams = new ngTableParams({
+        count: 5,
+        page: 1,
+        total: 0
+      });
+
+
+      $scope.bomTableParams = new ngTableParams({
+        count: 5,
+        page: 1,
+        total: 0
+      });
 
         $scope.part.then(function(part) {
 
