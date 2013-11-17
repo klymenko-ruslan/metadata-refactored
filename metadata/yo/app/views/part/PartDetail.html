@@ -312,29 +312,25 @@
     <!-- Interchanges -->
     <dl>
         <dt>Interchangeable Parts</dt>
-        <table data-ng-table="interchangeTableParams" class="table table-bordered table-striped">
-          <tr data-ng-repeat="interchangePart in part.interchange.parts">
+        <table data-ng-table="interchangeTableParams" class="table table-bordered table-striped table-hover">
+          <tr data-ng-repeat="interchangePart in part.interchange.parts" class="clickable"
+              ng-click="rowClick(interchangePart.partType.typeName, interchangePart.id)">
             <td title="'Manufacturer'">{{interchangePart.manufacturer.name}}</td>
             <td title="'Manufacturer Part Number'">{{interchangePart.manufacturerPartNumber}}</td>
             <td title="'Name'">{{interchangePart.name}}</td>
-            <td title="'Actions'">
-              <a ng-href="#/part/{{ partType }}/{{ partId }}" class="btn">View Part</a>
-            </td>
           </tr>
         </table>
     </dl>
 
     <dt>Bill of Materials</dt>
-    <table data-ng-table="bomTableParams" class="table table-bordered table-striped">
-        <tr data-ng-repeat="bomItem in part.bom">
+    <table data-ng-table="bomTableParams" class="table table-bordered table-striped table-hover">
+        <tr data-ng-repeat="bomItem in part.bom" class="clickable"
+            ng-click="rowClick(bomItem.child.partType.typeName, bomItem.child.id)">
             <td title="'Type'">{{bomItem.child.partType.typeName}}</td>
             <td title="'Name'">{{bomItem.child.name}}</td>
             <td title="'Manufacturer'">{{bomItem.child.manufacturer.name}}</td>
             <td title="'Manufacturer Part Number'">{{bomItem.child.manufacturerPartNumber}}</td>
             <td title="'Quantity'">{{bomItem.quantity}}</td>
-            <td title="'Actions'">
-              <a ng-href="#/part/{{ partType }}/{{ partId }}" class="btn">View Part</a>
-            </td>
         </tr>
     </table>
 </div>
