@@ -24,6 +24,10 @@ angular.module('ngMetaCrudApp')
                 return Restangular.all("other/manufacturer", {first: first, count: count}).getList();
             }
 
+            this.listPartTypes = function() {
+              return Restangular.all("type/part").getList();
+            }
+
             this.findManufacturer = function(id) {
                 return Restangular.one("manufacturer", id).get();
             }
