@@ -6,10 +6,12 @@ describe('Service: PartTypes', function () {
   beforeEach(module('ngMetaCrudApp'));
 
   // instantiate service
+  var $rootScope;
   var PartTypes;
-  var $httpBackend
-  var partTypes
+  var $httpBackend;
+  var partTypes;
   beforeEach(inject(function ($injector) {
+    $rootScope = $injector.get('$rootScope');
     PartTypes = $injector.get('PartTypes');
     $httpBackend = $injector.get('$httpBackend');
     partTypes = [
@@ -31,21 +33,27 @@ describe('Service: PartTypes', function () {
     ];
   }));
 
+  it('should not have a value in PartTypes.refreshPromise', function() {
+    expect(PartTypes.refreshPromise).toBeNull();
+  });
+
   describe('PartTypes.refresh', function() {
     var refreshPromise;
 
     it('should issue a request to the server and return a promise', function() {
 
-      // Prepare for the call
-      $httpBackend.when('GET', '/type/part').respond(function (method, url, data) {
-        return [200, partTypes, {}]
-      });
+      describe('PartTypes.refresh success', function() {
+        beforeEach(function(){
+          // Prepare for the call
+          $httpBackend.when('GET', '/type/part').respond(function (method, url, data) {
+            return [200, partTypes, {}]
+          });
 
-      // Issue the call to the service
-      refreshPromise = PartTypes.refresh();
-      expect(refreshPromise).not.toBeNull();
-
-      describe('PartTypes.refresh details', function() {
+          // Issue the call to the service
+          $rootScope.$apply(function() {
+            refreshPromise = PartTypes.refresh();
+          });
+        });
 
         it('should put the returned promise in PartTypes.refreshPromise', function() {
           expect(PartTypes.refreshPromise).toBe(refreshPromise);
@@ -68,7 +76,15 @@ describe('Service: PartTypes', function () {
 
   describe('PartTypes.getById', function() {
 
-    it('should return the ')
+    it('should return the part type with the same id', function() {
+      PartTypes.list = partTypes;
+      expect(PartTypes.getById(2)).toBe(partTypes[0]);
+    });
+
+    it('should return null if no such part type exists', function() {
+      PartTypes.list = partTypes;
+      expect(PartTypes.getById(0)).not.toBeDefined();
+    });
   });
 
 });

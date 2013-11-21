@@ -58,7 +58,7 @@ angular.module('ngMetaCrudApp')
       };
 
       // Load the part types
-      this.refresh();
+//      this.refresh();
 
       return this;
   });
