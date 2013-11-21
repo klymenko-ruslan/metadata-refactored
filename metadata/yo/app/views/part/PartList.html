@@ -1,3 +1,9 @@
 <div class="container">
-    <part-search actions="Details,Edit" on-action="onAction(action, partId, partType)"></part-search>
+  <div class="btn-group">
+    <button ng-click="createPart()" class="btn btn-large">Create Part</button>
+  </div>
+
+  <h2>Part List</h2>
+
+    <part-search actions="View,Edit" on-action="onAction(action, partId, partType)"></part-search>
 </div>
