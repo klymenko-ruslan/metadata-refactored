@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-  .controller('PartListCtrl', function ($scope, $location, $log, $rootScope, $modal, PartCreateModal) {
+  .controller('PartListCtrl', function ($scope, $location, $log, $rootScope, $modal) {
         $scope.onAction = function(action, partId, partType) {
             switch (action) {
                 case "Details":
@@ -16,7 +16,7 @@ angular.module('ngMetaCrudApp')
       $scope.createPart = function() {
         var modalInstance = $modal.open({
           templateUrl: '/views/part/PartCreateModal.html',
-          controller: PartCreateModal
+          controller: 'PartCreateModalCtrl'
         });
       };
   });
