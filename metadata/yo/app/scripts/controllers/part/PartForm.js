@@ -1,11 +1,21 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-  .controller('PartFormCtrl', function ($scope, $location, $routeParams, ngTableParams, restService, Restangular) {
-        $scope.partId   = $routeParams.id;
-        $scope.partType = $routeParams.type;
-        $scope.part     = {};
-        $scope.oldPart  = null;
+  .controller('PartFormCtrl', function ($q, $scope, $location, $log, $routeParams, ngTableParams, restService, Restangular, PartTypes) {
+        $scope.partId     = $routeParams.id;
+
+        // Set the part type
+        if ($routeParams.typeId) {
+          $q.when(PartTypes.getById($routeParams.typeId)).then(function(partType) {
+            $scope.part.partType = partType;
+            $log.log('Got part type by ID', $routeParams.typeId, $scope.partType);
+          });
+        }
+
+        $scope.part       = {};
+        $scope.oldPart    = null;
+
+        $log.log("$routeParams", $routeParams);
 
         $scope.bomTableParams = new ngTableParams({
             count: 5,
@@ -14,14 +24,6 @@ angular.module('ngMetaCrudApp')
         });
 
         $scope.manufacturers = restService.listManufacturers();
-
-        $scope.$watch('part.partType.typeName', function(name) {
-
-            // Make sure we're using the correct part type
-            if (name != null) {
-                $scope.partType = name;
-            }
-        });
 
         // Lookup the part or setup the create workflow
         if (angular.isDefined($scope.partId)) {
@@ -48,7 +50,17 @@ angular.module('ngMetaCrudApp')
         }
 
         $scope.save = function() {
+          if ($scope.oldPart == null) {
+            Restangular.all('part').post($scope.part).then(
+                function(id) {
+                  $location.path('/part/' + $scope.part.partType.typeName + '/' + id + '/form');
+                },
+                function() {
+                  alert("Could not save part.");
+                })
+          } else {
             $scope.part.put();
+          }
         }
 
         $scope.bomDelete = function(index, bomItem) {
