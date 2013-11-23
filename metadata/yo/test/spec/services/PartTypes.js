@@ -45,7 +45,7 @@ describe('Service: PartTypes', function () {
       describe('PartTypes.refresh success', function() {
         beforeEach(function(){
           // Prepare for the call
-          $httpBackend.when('GET', '/type/part').respond(function (method, url, data) {
+          $httpBackend.when('GET', 'http://localhost:8080/type/part').respond(function (method, url, data) {
             return [200, partTypes, {}]
           });
 

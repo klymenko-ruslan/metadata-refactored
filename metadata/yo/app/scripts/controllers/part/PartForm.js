@@ -1,16 +1,19 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-  .controller('PartFormCtrl', function ($scope, $location, $log, $routeParams, ngTableParams, restService, Restangular, PartTypes) {
+  .controller('PartFormCtrl', function ($q, $scope, $location, $log, $routeParams, ngTableParams, restService, Restangular, PartTypes) {
         $scope.partId     = $routeParams.id;
 
+        // Set the part type
         if ($routeParams.type) {
           $scope.partType = PartTypes.getByClassName($routeParams.type);
         } else {
-          $scope.partType = PartTypes.getById($routeParams.typeId);
+          $q.when(PartTypes.getById($routeParams.typeId)).then(function(partType) {
+            $scope.partType = partType;
+            $log.log('Got part type by ID', $routeParams.typeId, $scope.partType);
+          });
         }
 
-        $scope.partType   = $routeParams.type;
         $scope.part       = {};
         $scope.oldPart    = null;
 

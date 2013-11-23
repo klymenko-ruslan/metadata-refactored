@@ -2,8 +2,8 @@
 
 <div class="btn-group">
     <a ng-href="#/part" class="btn btn-large">Part List</a>
-    <a ng-href="#/part/{{ partType }}/{{ partId }}" class="btn btn-large">View Part</a>
-    <a ng-href="#/part/{{ partType }}/{{ partId }}/interchange/search" class="btn btn-large btn-info">Interchange...</a>
+    <a ng-href="#/part/{{ partType.typeName }}/{{ partId }}" class="btn btn-large">View Part</a>
+    <a ng-href="#/part/{{ partType.typeName }}/{{ partId }}/interchange/search" class="btn btn-large btn-info">Interchange...</a>
     <a ng-click="save()" class="btn btn-large btn-success">Save</a>
   <!--ng-disabled="!isChanged()"-->
   <a ng-click="revert()" class="btn btn-large btn-warning">Revert</a>
@@ -15,8 +15,10 @@
 
 <h2>
     <span ng-hide="partId">Create </span>
-    {{ partType }}
+    {{ partType.name }}
     <span ng-show="partId">#{{ partId }} </span></h2>
+
+{{part}}
 
 <label>Name</label>
 <input type="text" ng-model="part.name"/>
@@ -37,7 +39,7 @@
 <input type="text" ng-model="part.manufacturerPartNumber"/>
 
 <!-- Type-specific fields -->
-<div ng-switch="partType">
+<div ng-switch="partType.typeName">
 
     <!-- Backplate -->
     <div ng-switch-when="Backplate">
@@ -264,7 +266,7 @@
 </table>
 
 <p>
-    <a ng-href="#/part/{{ partType }}/{{ partId }}/bom/search" class="btn btn-large btn-info">Add Item</a>
+    <a ng-href="#/part/{{ partType.typeName }}/{{ partId }}/bom/search" class="btn btn-large btn-info">Add Item</a>
 </p>
 
 </ng-form>

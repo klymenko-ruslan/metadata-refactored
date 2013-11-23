@@ -1,26 +1,18 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-    .directive('picker', function (Restangular) {
+    .directive('picker', function ($log, Restangular) {
         return {
             scope: {
                 "path": '@?',
                 "items": '=?',
-                "ngModel": '=',
+                "ngModel": '@',
                 "required": '@'
             },
             templateUrl: '/views/component/Picker.html',
             restrict: 'E',
             link: function(scope, element, attrs) {
-                scope.ngModel = attrs.ngModel;
-                if (scope.path != null) {
-                    scope.items = Restangular.all(attrs.path).getList().then(function (items) {
-                        console.log("Loaded " + items.length + " items from " + attrs.path);
-                        scope.items = items;
-                    }, function(response) {
-                        console.error("Failed to load items from " + scope.path);
-                    });
-                }
+//              scope.ngModelAttr = attrs.ngModel;
             }
         }
     });

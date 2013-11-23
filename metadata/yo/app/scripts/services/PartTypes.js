@@ -38,12 +38,16 @@ angular.module('ngMetaCrudApp')
       /**
        * Gets a part type by it's ID.
        * @param partTypeId the part type ID.
-       * @returns {Object} the part type object
+       * @returns {Object|promise} the part type object
        */
       this.getById = function(partTypeId) {
-        return _.find(this.list, function(partType) {
+        var partType = _.find(this.list, function(partType) {
           return partTypeId == partType.id;
         });
+
+        if (!angular.isObject(partType)) {
+          return Restangular.all("type/part").one(partTypeId).get();
+        }
       };
 
       /**
