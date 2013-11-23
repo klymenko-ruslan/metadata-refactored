@@ -5,11 +5,9 @@ angular.module('ngMetaCrudApp')
         $scope.partId     = $routeParams.id;
 
         // Set the part type
-        if ($routeParams.type) {
-          $scope.partType = PartTypes.getByClassName($routeParams.type);
-        } else {
+        if ($routeParams.typeId) {
           $q.when(PartTypes.getById($routeParams.typeId)).then(function(partType) {
-            $scope.partType = partType;
+            $scope.part.partType = partType;
             $log.log('Got part type by ID', $routeParams.typeId, $scope.partType);
           });
         }
@@ -26,14 +24,6 @@ angular.module('ngMetaCrudApp')
         });
 
         $scope.manufacturers = restService.listManufacturers();
-
-        $scope.$watch('part.partType.typeName', function(name) {
-
-            // Make sure we're using the correct part type
-            if (name != null) {
-                $scope.partType = name;
-            }
-        });
 
         // Lookup the part or setup the create workflow
         if (angular.isDefined($scope.partId)) {
@@ -60,7 +50,17 @@ angular.module('ngMetaCrudApp')
         }
 
         $scope.save = function() {
+          if ($scope.oldPart == null) {
+            Restangular.all('part').post($scope.part).then(
+                function(id) {
+                  $location.path('/part/' + $scope.part.partType.typeName + '/' + id + '/form');
+                },
+                function() {
+                  alert("Could not save part.");
+                })
+          } else {
             $scope.part.put();
+          }
         }
 
         $scope.bomDelete = function(index, bomItem) {
