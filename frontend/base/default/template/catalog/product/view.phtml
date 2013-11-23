@@ -86,13 +86,13 @@
                 <div class="box-collateral">
                     <h2><?php echo $this->__('Compatible TI Part') ?></h2>
                     <?php
-                    $orgProduct = Mage::getModel('catalog/product');
-                    $orgProduct->load($orgProduct->getIdBySku($orgSku));
+                    $bomItemProduct = Mage::getModel('catalog/product');
+                    $bomItemProduct->load($bomItemProduct->getIdBySku($orgSku));
                     ?>
-                    <strong>Name:</strong> <a href="<?php echo $orgProduct->getProductUrl() ?>"
-                                              target="_blank"><?php echo $orgProduct->getName(); ?></a> <br/>
-                    <strong>Part #:</strong> <?php echo $orgProduct->getPartNumber(); ?> <br/>
-                    <strong>Price:</strong> <?php echo Mage::helper('core')->currency($orgProduct->getFinalPrice()); ?> <br/>
+                    <strong>Name:</strong> <a href="<?php echo $bomItemProduct->getProductUrl() ?>"
+                                              target="_blank"><?php echo $bomItemProduct->getName(); ?></a> <br/>
+                    <strong>Part #:</strong> <?php echo $bomItemProduct->getPartNumber(); ?> <br/>
+                    <strong>Price:</strong> <?php echo Mage::helper('core')->currency($bomItemProduct->getFinalPrice()); ?> <br/>
                     <br/>
                 </div>
 
@@ -200,31 +200,30 @@
                 <th><strong>Price</strong></th>
             </tr>
             <?php
-            foreach ($billMaterials as $prods) {
-                $orgProduct = Mage::getModel('catalog/product');
-                $orgProduct->load($orgProduct->getIdBySku($prods['sku']));
+            foreach ($billMaterials as $bomItem) {
+                $bomItemProduct = Mage::getModel('catalog/product');
+                $bomItemProduct->load($bomItemProduct->getIdBySku($bomItem['sku']));
                 ?>
                 <tr>
-                    <td><?php if ($orgProduct->getId()) {
-                            echo '<a href="' . $orgProduct->getProductUrl() . '" target="_blank">' . $orgProduct->getName() . '</a>';
-                        } else echo $prods['sku']; ?></td>
-
-                    <td>OE Part #</td>
-                    <td><?php echo $orgProduct->getPartNumber(); ?></td>
+                    <td><?php echo $bomItemProduct->getSku(); ?></td>
+                    <td><?php echo $bomItemProduct->getPartNumber(); ?></td>
                     <td><?php $a = 1;
-                        foreach ($prods['ti_part_sku'] as $pro) {
-                            $orgProduct = Mage::getModel('catalog/product');
-                            $orgProduct->load($orgProduct->getIdBySku($pro));
-                            if ($orgProduct->getId()) {
-                                echo '<a href="' . $orgProduct->getProductUrl() . '" target="_blank">' . $orgProduct->getName() . '</a>';
-                            } else echo $pro;
-                            if ($a < count($prods['ti_part_sku'])) {
+                        foreach ($bomItem['ti_part_sku'] as $tiPart) {
+                            $bomItemInterchangeProduct = Mage::getModel('catalog/product');
+                            $bomItemInterchangeProduct->load($bomItemInterchangeProduct->getIdBySku($tiPart));
+                            if ($bomItemInterchangeProduct->getId()) {
+                                echo '<a href="' . $bomItemInterchangeProduct->getProductUrl() . '" target="_blank">' . $bomItemInterchangeProduct->getPartNumber() . '</a>';
+                            } else echo $tiPart;
+                            if ($a < count($bomItem['ti_part_sku'])) {
                                 echo ", ";
                             }
                             $a++;
                         } ?></td>
-                    <td><?php echo $prods['quantity']; ?></td>
-                    <td><?php echo Mage::helper('core')->currency($orgProduct->getFinalPrice()); ?></td>
+                    <td><?php if ($bomItemProduct->getId()) {
+                            echo '<a href="' . $bomItemProduct->getProductUrl() . '" target="_blank">' . $bomItemProduct->getName() . '</a>';
+                        } else echo $bomItem['sku']; ?></td>
+                    <td><?php echo $bomItem['quantity']; ?></td>
+                    <td><?php echo Mage::helper('core')->currency($bomItemProduct->getFinalPrice()); ?></td>
 
                 </tr>
             <?php
