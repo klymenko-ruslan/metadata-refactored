@@ -19,16 +19,10 @@ angular.module('ngMetaCrudApp')
       $scope.onSelect = function() {
         if (angular.isDefined($scope.selection.id)) {
           var selectedItem = _.find($scope.items, function(item) {
-            return $scope.selection.id = item.id;
+            return $scope.selection.id == item.id;
           });
 
-          $log.log("$scope.$parent.$parent.part", $scope.$parent.$parent.part);
-
-          $parse($scope.ngModel).assign($scope.$parent.$parent, selectedItem);
-
-          $log.log("$scope.$parent.$parent.part", $scope.$parent.$parent.part);
-
-//          angular.copy(selectedItem, $scope.ngModel);
+          $parse($scope.ngModel).assign($scope.$parent, selectedItem);
         }
       }
     });

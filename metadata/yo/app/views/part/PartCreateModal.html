@@ -7,30 +7,18 @@
 
 <div class="modal-body">
 
-  <!-- Messages -->
-  <div ng-show="PartTypes.list == null">
-    <span ng-hide="PartTypes.refreshPromise === null" class="alert alert-info">Loading part types...</span>
-    <span ng-show="PartTypes.refreshPromise === null" class="alert alert-warning">No part types loaded.</span>
-  </div>
-
   <!-- Part Types DDL -->
-  <div ng-hide="PartTypes.list == null" class="form-group">
+  <div class="form-group">
     <label for="PartCreateModal.PartType" class="control-label">Part Type</label>
-    <select ng-disabled="PartTypes.list == null"
-            ng-model="selection.partType"
-            ng-options="item as item.name for item in PartTypes.list"
-            required
-            class="form-control"
-            id="PartCreateModal.PartType"></select>
+    <picker ng-model="selection.partType" path="/type/part"
+            class="form-control" required
+            id="PartCreateModal.PartType"/>
   </div>
 </div>
 
 <div class="modal-footer">
-  <button ng-click="refresh()"
-          data-ng-disabled="PartTypes.refreshPromise !== null"
-          class="btn pull-left" type="button">Refresh Part Types</button>
 
-  <button class="btn btn-primary" ng-click="create()" ng-disabled="form.$invalid">Create...</button>
+  <button class="btn btn-primary" ng-click="create()">Create...</button>
 
   <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
 </div>
