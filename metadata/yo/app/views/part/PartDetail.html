@@ -38,46 +38,46 @@
             <dl>
                 <dt>Seal Type</dt>
                 <dd>{{part.sealType.name}}</dd>
-    
+
                 <dl>
                     <dt>Seal Type (freeform)</dt>
                     <dd>{{part.sealTypeString}}</dd>
-    
+
                 </dl>
                 <dl>
                     <dt>Compressor Wheel Style</dt>
                     <dd>{{part.styleCompressorWheel}}</dd>
-    
+
                 </dl>
                 <dl>
                     <dt>Overall Diameter</dt>
                     <dd>{{part.overallDiameter}}</dd>
-    
+
                 </dl>
                 <dl>
                     <dt>Compressor Wheel Diameter</dt>
                     <dd>{{part.compressorWheelDiameter}}</dd>
-    
+
                 </dl>
                 <dl>
                     <dt>Piston Ring Diameter</dt>
                     <dd>{{part.pistonRingDiameter}}</dd>
-    
+
                 </dl>
                 <dl>
                     <dt>Compressor Housing Diameter</dt>
                     <dd>{{part.compressorHousingDiameter}}</dd>
-    
+
                 </dl>
                 <dl>
                     <dt>Secondary Diameter</dt>
                     <dd>{{part.secondaryDiameter}}</dd>
-    
+
                 </dl>
                 <dl>
                     <dt>Overall Height</dt>
                     <dd>{{part.overallHeight}}</dd>
-    
+
                 </dl>
                 <dl>
                     <dt>Notes</dt>
@@ -85,7 +85,7 @@
                     {{part.notes }}
                 </pre>
         </div>
-    
+
         <!-- Bearing Housing -->
         <div ng-switch-when="Bearing Housing">
             <dl>
@@ -121,7 +121,7 @@
                 <dd>{{part.bearingType.name}}</dd>
             </dl>
         </div>
-    
+
         <!-- Bearing Spacer -->
         <div ng-switch-when="Bearing Spacer">
             <dl>
@@ -143,9 +143,9 @@
             - <dd>{{part.insideDiameterMax}}</dd>
             </dl>
         </div>
-    
+
         <!-- Cartridge -->
-    
+
         <!-- Compressor Wheel -->
         <div ng-switch-when="Compressor Wheel">
             <dl>
@@ -177,7 +177,7 @@
                 <dd>{{part.application}}</dd>
             </dl>
         </div>
-    
+
         <!-- Gasket -->
         <div ng-switch-when="Gasket">
             <dl>
@@ -185,7 +185,7 @@
                 <dd>{{part.gasketType.name}}</dd>
             </dl>
         </div>
-    
+
         <!-- Heatshield -->
         <div ng-switch-when="Heatshield">
             <dl>
@@ -201,7 +201,7 @@
                 <dd>{{part.inducerDiameter}}</dd>
             </dl>
         </div>
-    
+
         <!-- Journal Bearing -->
         <div ng-switch-when="Journal Bearing">
             <dl>
@@ -223,7 +223,7 @@
             - <dd>{{part.insideDiameterMax}}</dd>
             </dl>
         </div>
-    
+
         <!-- Kit -->
         <div ng-switch-when="Kit">
             <dl>
@@ -231,9 +231,9 @@
                 <dd>{{part.kitType.name}}</dd>
             </dl>
         </div>
-    
+
         <!-- Nozzle Ring -->
-    
+
         <!-- Piston Ring -->
         <div ng-switch-when="Piston Ring">
             <dl>
@@ -252,7 +252,7 @@
             - <dd>{{part.installedGapMax}}</dd>
             </dl>
         </div>
-    
+
         <!-- Turbine Wheel -->
         <div ng-switch-when="Turbine Wheel">
             <dl>
@@ -284,7 +284,7 @@
                 <dd>{{part.numberOfBlades}}</dd>
             </dl>
         </div>
-    
+
         <!-- Turbo -->
         <div ng-switch-when="Turbo">
             <dl>
@@ -311,31 +311,26 @@
 
     <!-- Interchanges -->
     <dl>
-        <dt>Interchangeable Part Group
-            <span ng-hide="part.interchange.id == null">#{{part.interchange.id}}</span>
-            <span ng-show="part.interchange.id == null">[none]</span>
-        </dt>
-        <dd ng-hide="part.interchange == null">
-            Name:
-            <span ng-hide="part.interchange.name == null || part.interchange.name == ''">{{part.interchange.name}}</span>
-            <span ng-show="part.interchange.name == null || part.interchange.name == ''">[blank]</span>
-        </dd>
-        <dd ng-hide="part.interchange == null">
-            Description:
-            <span ng-hide="part.interchange.description == null || part.interchange.description == ''">{{part.interchange.description}}</span>
-            <span ng-show="part.interchange.description == null || part.interchange.description == ''">[blank]</span>
-        </dd>
+        <dt>Interchangeable Parts</dt>
+        <table data-ng-table="interchangeTableParams" class="table table-bordered table-striped table-hover">
+          <tr data-ng-repeat="interchangePart in part.interchange.parts" class="clickable"
+              ng-click="rowClick(interchangePart.partType.typeName, interchangePart.id)">
+            <td title="'Manufacturer'">{{interchangePart.manufacturer.name}}</td>
+            <td title="'Manufacturer Part Number'">{{interchangePart.manufacturerPartNumber}}</td>
+            <td title="'Name'">{{interchangePart.name}}</td>
+          </tr>
+        </table>
     </dl>
 
     <dt>Bill of Materials</dt>
-    <table data-ng-table="bomTableParams" class="table table-bordered table-striped">
-        <tr data-ng-repeat="bomItem in part.bom">
+    <table data-ng-table="bomTableParams" class="table table-bordered table-striped table-hover">
+        <tr data-ng-repeat="bomItem in part.bom" class="clickable"
+            ng-click="rowClick(bomItem.child.partType.typeName, bomItem.child.id)">
             <td title="'Type'">{{bomItem.child.partType.typeName}}</td>
             <td title="'Name'">{{bomItem.child.name}}</td>
             <td title="'Manufacturer'">{{bomItem.child.manufacturer.name}}</td>
             <td title="'Manufacturer Part Number'">{{bomItem.child.manufacturerPartNumber}}</td>
-            <td title="'Quantity'">{{bomItem.quantity}}
-            </td>
+            <td title="'Quantity'">{{bomItem.quantity}}</td>
         </tr>
     </table>
 </div>

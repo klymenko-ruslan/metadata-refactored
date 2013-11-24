@@ -1,5 +1,4 @@
 package com.turbointernational.metadata.domain.type;
-
 import java.util.List;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
