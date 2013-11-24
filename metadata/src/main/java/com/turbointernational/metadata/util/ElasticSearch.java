@@ -13,30 +13,30 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import net.sf.jsog.JSOG;
-import org.springframework.context.annotation.Scope;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
 
 /**
  *
  * @author jrodriguez
  */
-@Scope(value = "singleton")
+@Service
 public class ElasticSearch {
 
     private String metadataIndex = "metadata";
     
     public  String partType = "part";
 
-    private final ClientConfig clientConfig;
+    @Value("elasticsearch.serverUrl")
+    public String searchboxUrl;
 
-    private final JestClientFactory factory = new JestClientFactory();
-
-    private final JestClient client;
-
-    public ElasticSearch(String searchboxUrl) {
-        clientConfig = new ClientConfig.Builder(searchboxUrl).multiThreaded(true).build();
+    public JestClient client() {
+        ClientConfig clientConfig = new ClientConfig.Builder(searchboxUrl).multiThreaded(false).build();
+        JestClientFactory factory = new JestClientFactory();
         factory.setClientConfig(clientConfig);
-        client = factory.getObject();
+        return factory.getObject();
+        
     }
 
     public String partSearch(String queryString, int from, int size) throws Exception {
@@ -86,7 +86,7 @@ public class ElasticSearch {
     }
 
     public String search(Search search) throws Exception {
-        String searchResultString = client.execute(search).getJsonString();
+        String searchResultString = client().execute(search).getJsonString();
         JSOG searchResult = JSOG.parse(searchResultString);
 
         JSOG result = JSOG.object("total", searchResult.get("hits").get("total"));
@@ -124,7 +124,7 @@ public class ElasticSearch {
             bulkBuilder.addAction(indexBuilder.build());
         }
 
-        JestResult result = client.execute(bulkBuilder.build());
+        JestResult result = client().execute(bulkBuilder.build());
 
         if (!result.isSucceeded()) {
 //            StringBuilder error = new StringBuilder();
@@ -142,7 +142,7 @@ public class ElasticSearch {
 
     @Async
     public void deletePart(Part part) throws Exception {
-        client.execute(
+        client().execute(
                 new Delete.Builder()
                     .index(metadataIndex)
                     .type(partType)

@@ -64,7 +64,6 @@
         dependency inject an object into your class.
     -->
     <context:component-scan base-package="com.turbointernational">
-        <context:exclude-filter expression=".*_Roo_.*" type="regex"/>
         <context:exclude-filter expression="org.springframework.stereotype.Controller" type="annotation"/>
     </context:component-scan>
     
@@ -106,8 +105,4 @@
     
     <task:annotation-driven executor="asyncExecutor" mode="aspectj"/>
     <task:executor id="asyncExecutor" pool-size="10"/>
-
-    <bean class="com.turbointernational.metadata.util.ElasticSearch" id="elasticSearch">
-        <constructor-arg value="${elasticsearch.serverUrl}"/>
-    </bean>
 </beans>

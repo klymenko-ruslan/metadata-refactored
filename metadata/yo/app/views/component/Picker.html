@@ -1,4 +1,4 @@
 <select ng-model="selection.id"
         ng-options="item.id as item.name for item in items"
-        data-ng-change="onSelect()"
+        ng-disabled="items == null"
         placeholder="Choose..." class="input-large"></select>

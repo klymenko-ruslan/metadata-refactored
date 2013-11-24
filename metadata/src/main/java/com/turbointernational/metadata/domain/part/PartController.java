@@ -32,6 +32,7 @@ public class PartController {
     @Autowired(required=true)
     private ElasticSearch elasticSearch;
 
+    @Transactional
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<String> showJson(
@@ -49,6 +50,7 @@ public class PartController {
         return new ResponseEntity<String>(part.toJson(fieldsArray), headers, HttpStatus.OK);
     }
     
+    @Transactional
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<String> listJson(
@@ -80,8 +82,8 @@ public class PartController {
         
         Part part = Part.fromJsonToPart(partJson);
         
-        // Update the interchange group
-        part.setInterchangeByPartId(partJsog.get("interchangePartId").getLongValue());
+//        // Update the interchange group
+//        part.setInterchangeByPartId(partJsog.get("interchangePartId").getLongValue());
         
         part.persist();
         
@@ -93,7 +95,7 @@ public class PartController {
         return new ResponseEntity<String>(part.getId().toString(), headers, HttpStatus.CREATED);
     }
     
-    @Transactional
+//    @Transactional
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     public ResponseEntity<String> updateFromJson(Principal principal, @RequestBody String partJson, @PathVariable("id") Long id) throws Exception {
         JSOG partJsog = JSOG.parse(partJson);
@@ -102,38 +104,38 @@ public class PartController {
         headers.add("Content-Type", "application/json");
         
         // Get the original part so we can log the update
-        Part originalPart = Part.findPart(id);
-        String originalPartJson = originalPart.toJson();
+//        Part originalPart = Part.findPart(id);
+//        String originalPartJson = originalPart.toJson();
         
         // Update the part
         final Part part = Part.fromJsonToPart(partJson);
-        
-        // Handle BOM updates
-        if (part.getBom() != null) {
-            for (BOMItem item : part.getBom()) {
-                Long childId = item.getChild().getId();
-                item.setChild(Part.findPart(childId));
-                
-                item.setParent(part);
-            }
-        }
-        
-        // Special part type handling
-        if (part instanceof Turbo) {
-            Turbo turbo = (Turbo) part;
-            turbo.setTurboModel(TurboModel.findTurboModel(turbo.getTurboModel().getId()));
-        }
-        
+//        
+//        // Handle BOM updates
+//        if (part.getBom() != null) {
+//            for (BOMItem item : part.getBom()) {
+//                Long childId = item.getChild().getId();
+//                item.setChild(Part.findPart(childId));
+//                
+//                item.setParent(part);
+//            }
+//        }
+//        
+//        // Special part type handling
+//        if (part instanceof Turbo) {
+//            Turbo turbo = (Turbo) part;
+//            turbo.setTurboModel(TurboModel.findTurboModel(turbo.getTurboModel().getId()));
+//        }
+//        
         if (part.merge() == null) {
             return new ResponseEntity<String>(headers, HttpStatus.NOT_FOUND);
         }
-        
-        // Update the interchange group
-        part.setInterchangeByPartId(partJsog.get("interchangePartId").getLongValue());
+//        
+//        // Update the interchange group
+//        part.setInterchangeByPartId(partJsog.get("interchangePartId").getLongValue());
         
         // Update the changelog
-        JSOG dataJsog = JSOG.object("originalPart", originalPartJson)
-                            .put("updatedPart", part.toJson());
+//        JSOG dataJsog = JSOG.object("originalPart", originalPartJson)
+//                            .put("updatedPart", part.toJson());
         
 //        Changelog.log(principal, "Updated part", dataJsog.toString());
         

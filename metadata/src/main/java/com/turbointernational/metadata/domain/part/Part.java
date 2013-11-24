@@ -20,6 +20,7 @@ import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
 import flexjson.ObjectBinder;
 import flexjson.ObjectFactory;
+import flexjson.transformer.HibernateTransformer;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -55,7 +56,6 @@ import javax.persistence.TypedQuery;
 import javax.persistence.Version;
 import net.sf.jsog.JSOG;
 import org.apache.commons.lang.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -74,38 +74,6 @@ public class Part {
     private transient JdbcTemplate metadataDb;
 
     public static final ObjectFactory OBJECT_FACTORY = new ObjectFactory() {
-//        private Gson gson = new Gson();
-//        
-//        Part part = null;
-//        if ("Backplate".equals(partType)) {
-//            gson.fromJson(json, Backplate.class);
-//        } else if ("BearingHousing".equals(partType)) {
-//            gson.fromJson(json, BearingHousing.class);
-//        } else if ("BearingSpacer".equals(partType)) {
-//            gson.fromJson(json, BearingSpacer.class);
-//        } else if ("Cartridge".equals(partType)) {
-//            gson.fromJson(json, Cartridge.class);
-//        } else if ("CompressorWheel".equals(partType)) {
-//            gson.fromJson(json, CompressorWheel.class);
-//        } else if ("Gasket".equals(partType)) {
-//            gson.fromJson(json, Gasket.class);
-//        } else if ("Heatshield".equals(partType)) {
-//            gson.fromJson(json, Heatshield.class);
-//        } else if ("JournalBearing".equals(partType)) {
-//            gson.fromJson(json, JournalBearing.class);
-//        } else if ("Kit".equals(partType)) {
-//            gson.fromJson(json, Kit.class);
-//        } else if ("NozzleRing".equals(partType)) {
-//            gson.fromJson(json, NozzleRing.class);
-//        } else if ("PistonRing".equals(partType)) {
-//            gson.fromJson(json, PistonRing.class);
-//        } else if ("TurbineWheel".equals(partType)) {
-//            gson.fromJson(json, TurbineWheel.class);
-//        } else if ("Turbo".equals(partType)) {
-//            gson.fromJson(json, Turbo.class);
-//        } else {
-//            gson.fromJson(json, Part.class);
-//        }
         
         @Override
         public Object instantiate(ObjectBinder context, Object value, Type targetType, Class targetClass) {
@@ -382,6 +350,7 @@ public class Part {
     
     public String toJson() {
         return new JSONSerializer()
+                .transform(new HibernateTransformer(), this.getClass())
                 .include("interchange")
 //                .include("bom")
 //                .include("bom.child")
@@ -399,8 +368,8 @@ public class Part {
     
     public String toJson(String[] fields) {
         return new JSONSerializer()
+                .transform(new HibernateTransformer(), this.getClass())
                 .include("interchange")
-                .include(fields)
                 .exclude("*.class")
                 .serialize(this);
     }
@@ -412,20 +381,12 @@ public class Part {
                 .use("bom.values", BOMItem.class)
                 .deserialize(json);
         
-        // Set the BOM parents (this doesn't deserialize automatically)
-        if (part.getBom() == null) {
-            part.setBom(new LinkedList());
-        }
-        
-        for (BOMItem bomItem : part.getBom()) {
-            bomItem.setParent(part);
-        }
-        
         return part;
     }
     
     public static String toJsonArray(Collection<Part> collection) {
         return new JSONSerializer()
+                .transform(new HibernateTransformer(), Part.class)
 //                .include("bom")
                 .exclude("*.class")
                 .serialize(collection);
@@ -433,6 +394,7 @@ public class Part {
     
     public static String toJsonArray(Collection<Part> collection, String[] fields) {
         return new JSONSerializer()
+                .transform(new HibernateTransformer(), Part.class)
                 .include(fields)
                 .exclude("*")
                 .serialize(collection);
@@ -454,6 +416,7 @@ public class Part {
         return entityManager().createQuery("SELECT COUNT(o) FROM Part o", Long.class).getSingleResult();
     }
     
+    @Transactional
     public static List<Part> findPartEntries(int firstResult, int maxResults, String type) {
         EntityManager em = Part.entityManager();
         TypedQuery<Part> q;
