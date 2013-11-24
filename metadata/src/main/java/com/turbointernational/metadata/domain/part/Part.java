@@ -156,7 +156,7 @@ public class Part {
     private Interchange interchange;
     
     @OneToMany(mappedBy="parent", fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
-    private Set<BOMItem> bom;
+    private Set<BOMItem> bom = new TreeSet<BOMItem>();
     
     @Version
     @Column(name = "version")
@@ -277,7 +277,8 @@ public class Part {
     }
     
     public void setBom(Set<BOMItem> bom) {
-        this.bom = bom;
+        this.bom.clear();
+        this.bom.addAll(bom);
     }
     
     public Integer getVersion() {
@@ -368,7 +369,7 @@ public class Part {
     public static Part fromJsonToPart(String json) {
         Part part = new JSONDeserializer<Part>()
                 .use((String) null, OBJECT_FACTORY)
-                .use("bom", LinkedList.class)
+//                .use("bom", TreeSet.class)
                 .use("bom.values", BOMItem.class)
                 .deserialize(json);
         
@@ -482,23 +483,6 @@ public class Part {
     }
     //</editor-fold>
     
-    public List<Part> getTIInterchanges() {
-        List<Part> interchangeParts = new ArrayList<Part>();
-        
-        // Stop now if there is no interchange assigned
-        if (interchange == null) {
-            return interchangeParts;
-        }
-        
-        for (Part interchangePart : interchange.getParts()) {
-            if (Manufacturer.TI_ID.equals(interchangePart.getManufacturer().getId())) {
-                interchangeParts.add(interchangePart);
-            }
-        }
-        
-        return interchangeParts;
-    }
-    
     public void csvColumns(Map<String, String> columns) {
         
         // sku
@@ -591,6 +575,22 @@ public class Part {
         }
     }
 
+    public List<Part> getTIInterchanges() {
+        List<Part> interchangeParts = new ArrayList<Part>();
+        
+        // Stop now if there is no interchange assigned
+        if (interchange == null) {
+            return interchangeParts;
+        }
+        
+        for (Part interchangePart : interchange.getParts()) {
+            if (Manufacturer.TI_ID.equals(interchangePart.getManufacturer().getId())) {
+                interchangeParts.add(interchangePart);
+            }
+        }
+        
+        return interchangeParts;
+    }
     
 //    public Set<Part> getBomAltPartsForManufacturer(BOMAlternativeHeader bomAltHeader, Manufacturer manufacturer) {
 //        Set<Part> altParts = new TreeSet<Part>();

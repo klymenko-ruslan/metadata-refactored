@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -48,8 +49,8 @@ public class BOMItem {
     @Column(nullable=false)
     private Integer quantity;
     
-    @OneToMany(mappedBy="bomItem", cascade = {CascadeType.DETACH, CascadeType.REFRESH}, fetch = FetchType.LAZY)
-    private Set<BOMAlternative> alternatives;
+    @OneToMany(mappedBy="bomItem", fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
+    private Set<BOMAlternative> alternatives = new TreeSet<BOMAlternative>();
     
     @Version
     @Column(name = "version")
@@ -92,7 +93,8 @@ public class BOMItem {
     }
     
     public void setAlternatives(Set<BOMAlternative> alternatives) {
-        this.alternatives = alternatives;
+        this.alternatives.clear();
+        this.alternatives.addAll(alternatives);
     }
     
     public List<Part> getTIAlternates() {
