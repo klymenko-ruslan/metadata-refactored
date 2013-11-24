@@ -1,7 +1,4 @@
 package com.turbointernational.metadata.domain.part;
-import com.turbointernational.metadata.domain.other.TurboModel;
-import com.turbointernational.metadata.domain.part.bom.BOMItem;
-import com.turbointernational.metadata.domain.part.types.Turbo;
 import com.turbointernational.metadata.util.ElasticSearch;
 import java.security.Principal;
 import java.util.Collection;
@@ -35,11 +32,7 @@ public class PartController {
     @Transactional
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<String> showJson(
-            @PathVariable("id") Long id,
-            @RequestParam(value="fields", required=false, defaultValue = "") String fields) {
-        
-        String[] fieldsArray = fields.split(",");
+    public ResponseEntity<String> showJson(@PathVariable("id") Long id) {
         
         Part part = Part.findPart(id);
         HttpHeaders headers = new HttpHeaders();
@@ -47,7 +40,7 @@ public class PartController {
         if (part == null) {
             return new ResponseEntity<String>(headers, HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<String>(part.toJson(fieldsArray), headers, HttpStatus.OK);
+        return new ResponseEntity<String>(part.toJson(), headers, HttpStatus.OK);
     }
     
     @Transactional
@@ -95,7 +88,7 @@ public class PartController {
         return new ResponseEntity<String>(part.getId().toString(), headers, HttpStatus.CREATED);
     }
     
-//    @Transactional
+    @Transactional
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     public ResponseEntity<String> updateFromJson(Principal principal, @RequestBody String partJson, @PathVariable("id") Long id) throws Exception {
         JSOG partJsog = JSOG.parse(partJson);
@@ -108,7 +101,7 @@ public class PartController {
 //        String originalPartJson = originalPart.toJson();
         
         // Update the part
-        final Part part = Part.fromJsonToPart(partJson);
+        Part part = Part.fromJsonToPart(partJson);
 //        
 //        // Handle BOM updates
 //        if (part.getBom() != null) {
@@ -129,6 +122,9 @@ public class PartController {
         if (part.merge() == null) {
             return new ResponseEntity<String>(headers, HttpStatus.NOT_FOUND);
         }
+        
+        part = Part.findPart(part.getId());
+        Part.entityManager().refresh(part);
 //        
 //        // Update the interchange group
 //        part.setInterchangeByPartId(partJsog.get("interchangePartId").getLongValue());
@@ -139,7 +135,7 @@ public class PartController {
         
 //        Changelog.log(principal, "Updated part", dataJsog.toString());
         
-        return new ResponseEntity<String>(headers, HttpStatus.OK);
+        return new ResponseEntity<String>(part.toJson(), headers, HttpStatus.OK);
     }
     
     @Transactional

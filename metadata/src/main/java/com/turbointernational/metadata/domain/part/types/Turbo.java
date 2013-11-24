@@ -2,9 +2,9 @@ package com.turbointernational.metadata.domain.part.types;
 import com.turbointernational.metadata.domain.type.CoolType;
 import com.turbointernational.metadata.domain.other.TurboModel;
 import com.turbointernational.metadata.domain.part.Part;
+import flexjson.JSONSerializer;
 import java.util.Map;
 import javax.persistence.Cacheable;
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -23,11 +23,11 @@ import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 @SecondaryTable(name="turbo", pkJoinColumns=@PrimaryKeyJoinColumn(name = "part_id"))
 public class Turbo extends Part {
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH, CascadeType.MERGE})
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="turbo_model_id", table = "turbo")
     private TurboModel turboModel;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH, CascadeType.MERGE})
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="cool_type_id", table = "turbo")
     private CoolType coolType;
 
@@ -45,6 +45,16 @@ public class Turbo extends Part {
 
     public void setCoolType(CoolType coolType) {
         this.coolType = coolType;
+    }
+
+    @Override
+    protected void addSerializationFields(JSONSerializer serializer) {
+        serializer
+        .include("turboModel.id")
+        .include("turboModel.name")
+        .include("turboModel.turboType.id")
+        .include("turboModel.turboType.name")
+        .include("turboModel.turboType.manufacturer.id");
     }
 
     @Override

@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -341,29 +340,29 @@ public class Part {
     }
     
     public String toJson() {
-        return new JSONSerializer()
+        JSONSerializer serializer =  new JSONSerializer()
                 .transform(new HibernateTransformer(), this.getClass())
                 .include("interchange")
-//                .include("bom")
-//                .include("bom.child")
-//                .include("bom.child.id")
-//                .include("bom.alternatives")
-//                .include("bom.alternatives.header")
-//                .include("bom.alternatives.part.id")
-                .exclude("turboModel.turboType.manufacturer")
-                .exclude("*.class")
+                .include("interchange.parts.id")
+                .include("interchange.parts.partType.id")
+                .include("interchange.parts.partType.name")
+                .include("interchange.parts.manufacturerPartNumber")
+                .include("interchange.parts.manufacturer.id")
+                .include("interchange.parts.manufacturer.name")
+                .include("bom")
+                .include("bom.child")
+                .include("bom.child.id")
+                .include("bom.alternatives")
+                .include("bom.alternatives.header")
+                .include("bom.alternatives.part.id")
+                .exclude("interchange.parts.*")
+                .exclude("*.class");
+        
+        addSerializationFields(serializer);
 //                .exclude("tiinterchanges")
 //                .exclude("interchangeByPartId")
 //                .exclude("magentoProductId")
-                .serialize(this);
-    }
-    
-    public String toJson(String[] fields) {
-        return new JSONSerializer()
-                .transform(new HibernateTransformer(), this.getClass())
-                .include("interchange")
-                .exclude("*.class")
-                .serialize(this);
+        return serializer.serialize(this);
     }
     
     public static Part fromJsonToPart(String json) {
@@ -620,5 +619,7 @@ public class Part {
 ////                .setParameter("manufacturer", manufacturer)
 ////                .getResultList();
 //    }
+
+    protected void addSerializationFields(JSONSerializer serializer) {}
     
 }

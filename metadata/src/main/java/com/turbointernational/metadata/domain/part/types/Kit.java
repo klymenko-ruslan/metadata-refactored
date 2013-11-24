@@ -2,7 +2,6 @@ package com.turbointernational.metadata.domain.part.types;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.type.KitType;
 import java.util.Map;
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
@@ -19,7 +18,7 @@ import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 @SecondaryTable(name="kit", pkJoinColumns=@PrimaryKeyJoinColumn(name = "part_id"))
 public class Kit extends Part {
     
-    @OneToOne(cascade = {CascadeType.REFRESH, CascadeType.MERGE})
+    @OneToOne
     @JoinColumn(name="kit_type_id", table = "kit")
     private KitType kitType;
 

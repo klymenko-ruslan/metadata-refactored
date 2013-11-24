@@ -15,15 +15,11 @@ angular.module('ngMetaCrudApp')
         $scope.part       = {};
         $scope.oldPart    = null;
 
-        $log.log("$routeParams", $routeParams);
-
         $scope.bomTableParams = new ngTableParams({
             count: 5,
             page: 1,
             total: 0
         });
-
-        $scope.manufacturers = restService.listManufacturers();
 
         // Lookup the part or setup the create workflow
         if (angular.isDefined($scope.partId)) {
@@ -59,7 +55,16 @@ angular.module('ngMetaCrudApp')
                   alert("Could not save part.");
                 })
           } else {
-            $scope.part.put();
+            $scope.part.put().then(
+                function(part) {
+                  $log.log("Part ", part);
+                  $scope.part = part;
+                  $scope.oldPart = Restangular.copy(part);
+                },
+                function() {
+                  alert("Could not update part");
+                }
+            );
           }
         }
 

@@ -11,10 +11,9 @@ angular.module('ngMetaCrudApp')
         Restangular.all($scope.path).getList().then(function (items) {
           $scope.items = items;
         }, function(response) {
-          console.error("Failed to load items from " + scope.path);
+          console.error("Failed to load items from " + $scope.path);
         });
       }
-
 
       /**
        * Current selection
@@ -25,7 +24,7 @@ angular.module('ngMetaCrudApp')
       // Setup the initial selection
       var initialValue = getter($scope.$parent);
       if (angular.isObject(initialValue)) {
-        $log.log($scope.ngModel, "Picker Initial Value", initialValue);
+//        $log.log($scope.ngModel, "Picker Initial Value", initialValue);
         $scope.selection.id = initialValue.id;
       }
 
@@ -43,7 +42,7 @@ angular.module('ngMetaCrudApp')
           function(newExternalValue, oldExternalValue) {
             if (newExternalValue === oldExternalValue) return;
 
-            $log.log("getter", $scope.ngModel, newExternalValue, oldExternalValue);
+//            $log.log("Picker getter", $scope.ngModel, newExternalValue, oldExternalValue);
 
             if (angular.isObject(newExternalValue)) {
               $scope.selection.id = newExternalValue.id;
@@ -58,7 +57,9 @@ angular.module('ngMetaCrudApp')
       $scope.$watch('selection.id', function(newSelectedValue, oldSelectedValue) {
         if (newSelectedValue === oldSelectedValue) return;
 
-        $log.log("selection.id", $scope.ngModel,  newSelectedValue, oldSelectedValue);
+        if ($scope.items == null) return;
+
+//        $log.log("Picker selection.id", $scope.ngModel,  newSelectedValue, oldSelectedValue);
 
         if (newSelectedValue == null) {
           setter($scope.$parent, null);
@@ -71,8 +72,4 @@ angular.module('ngMetaCrudApp')
         }
       });
 
-
-      // Set the value
-      $scope.onSelect = function() {
-      }
     });
