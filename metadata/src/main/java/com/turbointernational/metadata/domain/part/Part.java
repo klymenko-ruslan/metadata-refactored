@@ -146,7 +146,7 @@ public class Part {
     private PartType partType;
     
     @Column(nullable = false, columnDefinition = "BIT", length = 1)
-    private Boolean inactive;
+    private Boolean inactive = false;
     
     @OneToOne(fetch = FetchType.LAZY)
     @JoinTable(name="interchange_item",
