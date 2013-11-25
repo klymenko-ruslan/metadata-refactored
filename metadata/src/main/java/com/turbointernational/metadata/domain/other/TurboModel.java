@@ -93,12 +93,13 @@ public class TurboModel {
     
     public static String toJsonArray(Collection<TurboModel> collection) {
         return new JSONSerializer()
+                .include("id")
+                .include("name")
+                .include("version")
                 .include("turboType.id")
-                .include("turboType.manufacturer.id")
-                .exclude("turboType.*")
-                .exclude("turboType.manufacturer.*")
-                .exclude("version")
-                .exclude("*.class").serialize(collection);
+                .include("turboType.version")
+                .exclude("*")
+                .serialize(collection);
     }
     
     public static String toJsonArray(Collection<TurboModel> collection, String[] fields) {
