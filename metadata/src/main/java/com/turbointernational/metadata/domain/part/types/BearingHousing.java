@@ -1,6 +1,7 @@
 package com.turbointernational.metadata.domain.part.types;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.type.CoolType;
+import flexjson.JSONSerializer;
 import java.util.Map;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -107,6 +108,14 @@ public class BearingHousing extends Part {
 
     public void setBearingType(String bearingType) {
         this.bearingType = bearingType;
+    }
+
+    @Override
+    protected JSONSerializer buildJSONSerializer() {
+        return super.buildJSONSerializer()
+            .include("coolType.id")
+            .include("coolType.name")
+            .include("coolType.version");
     }
 
     @Override

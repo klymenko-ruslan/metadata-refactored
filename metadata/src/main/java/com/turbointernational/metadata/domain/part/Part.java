@@ -319,6 +319,45 @@ public class Part {
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Serialization">
+
+    protected JSONSerializer buildJSONSerializer() {
+        return new JSONSerializer()
+                .transform(new HibernateTransformer(), this.getClass())
+                .include("partType.id")
+                .include("partType.version")
+                .include("partType.name")
+                .include("manufacturer.id")
+                .include("manufacturer.version")
+                .include("manufacturer.name")
+                .include("interchange.id")
+                .include("interchange.version")
+                .include("interchange.parts.id")
+                .include("interchange.parts.name")
+                .include("interchange.parts.version")
+                .include("interchange.parts.partType.id")
+                .include("interchange.parts.partType.name")
+                .include("interchange.parts.manufacturerPartNumber")
+                .include("interchange.parts.manufacturer.id")
+                .include("interchange.parts.manufacturer.name")
+                .exclude("interchange.parts.*")
+                .include("bom.id")
+                .include("bom.version")
+                .include("bom.child.id")
+                .include("bom.child.name")
+                .include("bom.child.version")
+                .include("bom.child.manufacturer.id")
+                .include("bom.child.manufacturer.name")
+                .include("bom.child.manufacturerPartNumber")
+                .exclude("bom.child.*")
+                .include("bom.alternatives")
+                .include("bom.alternatives.header")
+                .include("bom.alternatives.part.id")
+                .include("bom.alternatives.part.version")
+                .include("bom.alternatives.part.manufacturer.id")
+                .include("bom.alternatives.part.manufacturer.name")
+                .include("bom.alternatives.part.manufacturerPartNumber")
+                .exclude("bom.alternatives.part.*");
+    }
     
     public JSOG toJsog() {
         JSOG partObject = JSOG.object()
@@ -340,29 +379,9 @@ public class Part {
     }
     
     public String toJson() {
-        JSONSerializer serializer =  new JSONSerializer()
-                .transform(new HibernateTransformer(), this.getClass())
-                .include("interchange")
-                .include("interchange.parts.id")
-                .include("interchange.parts.partType.id")
-                .include("interchange.parts.partType.name")
-                .include("interchange.parts.manufacturerPartNumber")
-                .include("interchange.parts.manufacturer.id")
-                .include("interchange.parts.manufacturer.name")
-                .include("bom")
-                .include("bom.child")
-                .include("bom.child.id")
-                .include("bom.alternatives")
-                .include("bom.alternatives.header")
-                .include("bom.alternatives.part.id")
-                .exclude("interchange.parts.*")
-                .exclude("*.class");
-        
-        addSerializationFields(serializer);
-//                .exclude("tiinterchanges")
-//                .exclude("interchangeByPartId")
-//                .exclude("magentoProductId")
-        return serializer.serialize(this);
+        return buildJSONSerializer()
+            .exclude("*.class")
+            .serialize(this);
     }
     
     public static Part fromJsonToPart(String json) {
@@ -390,6 +409,7 @@ public class Part {
                 .exclude("*")
                 .serialize(collection);
     }
+    
     //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="ActiveRecord">
@@ -482,6 +502,8 @@ public class Part {
     }
     //</editor-fold>
     
+    //<editor-fold defaultstate="collapsed" desc="Magmi">
+    
     public void csvColumns(Map<String, String> columns) {
         
         // sku
@@ -512,7 +534,7 @@ public class Part {
         columns.put("manufacturer_part_number", ObjectUtils.toString(getManufacturerPartNumber()));
         
         // ti_part_sku
-        List<Part> tiInterchanges = getTIInterchanges();
+        List<Part> tiInterchanges = collectTIInterchanges();
         if (!tiInterchanges.isEmpty()) {
             columns.put("ti_part_sku", tiInterchanges.get(0).getId().toString());
         }
@@ -542,7 +564,7 @@ public class Part {
                     tiParts.add(tiAlt.getId());
                 }
                 
-                for (Part tiInterchange : item.getChild().getTIInterchanges()) {
+                for (Part tiInterchange : item.getChild().collectTIInterchanges()) {
                     tiParts.add(tiInterchange.getId());
                 }
                 
@@ -550,7 +572,7 @@ public class Part {
                     bom.add(jsogItem);
                 }
             }
-
+            
             if (bom.size() > 0) {
                 columns.put("bill_of_materials", bom.toString());
             }
@@ -567,14 +589,14 @@ public class Part {
             List<String> priceList = metadataDb.queryForList(
                     "SELECT StdPrice FROM mas90_std_price WHERE ItemNumber = ?",
                     String.class, getManufacturerPartNumber());
-
+            
             if (!priceList.isEmpty()) {
                 columns.put("price", priceList.get(0));
             }
         }
     }
-
-    public List<Part> getTIInterchanges() {
+    
+    public List<Part> collectTIInterchanges() {
         List<Part> interchangeParts = new ArrayList<Part>();
         
         // Stop now if there is no interchange assigned
@@ -591,35 +613,5 @@ public class Part {
         return interchangeParts;
     }
     
-//    public Set<Part> getBomAltPartsForManufacturer(BOMAlternativeHeader bomAltHeader, Manufacturer manufacturer) {
-//        Set<Part> altParts = new TreeSet<Part>();
-//        
-//        for (BOMItem item : bom) {
-//            for (BOMAlternative alt : item.getAlternatives()) {
-//                if (ObjectUtils.equals(alt.getHeader().getId(), bomAltHeader.getId())
-//                    && ObjectUtils.equals(alt.getPart().getManufacturer().getId(), manufacturer.getId())) {
-//                    altParts.add(alt.getPart());
-//                }
-//            }
-//        }
-//        
-//        return altParts;
-//        
-////        JPA style
-////        return entityManager.createQuery(
-////                                  "SELECT DISTINCT bap\n"
-////                                + "FROM\n"
-////                                + "  BOMAlternative ba\n"
-////                                + "  JOIN ba.part bap\n"
-////                                + "  JOIN bap.manufacturer bapm\n"
-////                                + "WHERE\n"
-////                                + "  bapm = :manufacturer\n"
-////                                + "  ba = :bomAltHeader")
-////                .setParameter("bomAltHeader", bomAltHeader)
-////                .setParameter("manufacturer", manufacturer)
-////                .getResultList();
-//    }
-
-    protected void addSerializationFields(JSONSerializer serializer) {}
-    
+    //</editor-fold>
 }

@@ -1,5 +1,6 @@
 package com.turbointernational.metadata.domain.part.types;
 import com.turbointernational.metadata.domain.part.Part;
+import flexjson.JSONSerializer;
 import java.util.Map;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -89,6 +90,21 @@ public class BearingSpacer extends Part {
 
     public void setInsideDiameterMax(Float insideDiameterMax) {
         this.insideDiameterMax = insideDiameterMax;
+    }
+
+    @Override
+    protected JSONSerializer buildJSONSerializer() {
+        return super.buildJSONSerializer()
+            .include("standardSize.id")
+            .include("standardSize.manufacturer.id")
+            .include("standardSize.manufacturer.name")
+            .include("standardSize.manufacturerPartNumber")
+            .include("standardSize.version")
+            .include("oversize.id")
+            .include("oversize.manufacturer.id")
+            .include("oversize.manufacturer.name")
+            .include("oversize.manufacturerPartNumber")
+            .include("oversize.version");
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.turbointernational.metadata.domain.part.types;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.type.KitType;
+import flexjson.JSONSerializer;
 import java.util.Map;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -28,6 +29,13 @@ public class Kit extends Part {
 
     public void setKitType(KitType kitType) {
         this.kitType = kitType;
+    }
+    @Override
+    protected JSONSerializer buildJSONSerializer() {
+        return super.buildJSONSerializer()
+            .include("kitType.id")
+            .include("kitType.name")
+            .include("kitType.version");
     }
 
     @Override

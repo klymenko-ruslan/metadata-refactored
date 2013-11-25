@@ -48,13 +48,18 @@ public class Turbo extends Part {
     }
 
     @Override
-    protected void addSerializationFields(JSONSerializer serializer) {
-        serializer
-        .include("turboModel.id")
-        .include("turboModel.name")
-        .include("turboModel.turboType.id")
-        .include("turboModel.turboType.name")
-        .include("turboModel.turboType.manufacturer.id");
+    protected JSONSerializer buildJSONSerializer() {
+        return super.buildJSONSerializer()
+            .include("coolType.id")
+            .include("coolType.name")
+            .include("coolType.version")
+            .include("turboModel.id")
+            .include("turboModel.name")
+            .include("turboModel.version")
+            .include("turboModel.turboType.id")
+            .include("turboModel.turboType.name")
+            .include("turboModel.turboType.manufacturer.id")
+            .include("turboModel.turboType.manufacturer.name");
     }
 
     @Override

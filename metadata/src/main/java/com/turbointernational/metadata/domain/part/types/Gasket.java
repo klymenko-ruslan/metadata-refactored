@@ -1,6 +1,7 @@
 package com.turbointernational.metadata.domain.part.types;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.type.GasketType;
+import flexjson.JSONSerializer;
 import java.util.Map;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -29,6 +30,14 @@ public class Gasket extends Part {
 
     public void setGasketType(GasketType gasketType) {
         this.gasketType = gasketType;
+    }
+
+    @Override
+    protected JSONSerializer buildJSONSerializer() {
+        return super.buildJSONSerializer()
+            .include("gasketType.id")
+            .include("gasketType.name")
+            .include("gasketType.version");
     }
 
     @Override
