@@ -5,7 +5,7 @@ angular.module('ngMetaCrudApp')
       $scope.partId = $routeParams.id;
       $scope.partType = $routeParams.type;
 
-        $scope.part = restService.findPart($scope.partId, {fields: 'bom'});
+      $scope.part = restService.findPart($scope.partId);
 
 
       $scope.interchangeTableParams = new ngTableParams({

@@ -24,7 +24,7 @@ angular.module('ngMetaCrudApp')
         // Lookup the part or setup the create workflow
         if (angular.isDefined($scope.partId)) {
 
-            $scope.oldPart = restService.findPart($scope.partId, {fields: 'bom'});
+            $scope.oldPart = restService.findPart($scope.partId);
             $scope.oldPart.then(function(part) {
                     console.log("Part data loaded.");
 
@@ -57,7 +57,6 @@ angular.module('ngMetaCrudApp')
           } else {
             $scope.part.put().then(
                 function(part) {
-                  $log.log("Part ", part);
                   $scope.part = part;
                   $scope.oldPart = Restangular.copy(part);
                 },
@@ -69,9 +68,8 @@ angular.module('ngMetaCrudApp')
         }
 
         $scope.bomDelete = function(index, bomItem) {
-            console.log("Deleting BOM Item", index, bomItem);
+            $log.log("Deleting BOM Item", index, bomItem);
             $scope.part.bom.splice(index, 1)
-            console.log($scope.part.bom);
 
         }
 

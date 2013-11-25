@@ -12,7 +12,7 @@ angular.module('ngMetaCrudApp')
        */
       var turboTypesPromise = null;
       $scope.$watch('part.manufacturer.id', function (newMfrId, oldMfrId) {
-        $log.log("TurboModelPicker.$watch part.manufacturer.id", newMfrId, oldMfrId);
+//        $log.log("TurboModelPicker.$watch part.manufacturer.id", newMfrId, oldMfrId);
 
         if (!angular.isObject($scope.part)) return;    // NOP if the part is null
         if ($scope.manufacturerId == newMfrId) return; // NOP if we're already displaying this manufacturer's turbo types
@@ -33,12 +33,12 @@ angular.module('ngMetaCrudApp')
         if ($scope.manufacturerId == partTurboTypeMfrId) {
           $scope.turboTypeId = $scope.$eval('part.turboModel.turboType.id');
           $scope.turboModelId = $scope.$eval('part.turboModel.id');
-          $log.log("TurboModelPicker using part values type/model", $scope.turboTypeId, $scope.turboModelId);
+//          $log.log("TurboModelPicker using part values type/model", $scope.turboTypeId, $scope.turboModelId);
         } else {
           $scope.turboTypeId = null;
           $scope.turboModelId = null;
         }
-        $log.log("TurboModelPicker.turboTypeId", $scope.turboTypeId);
+//        $log.log("TurboModelPicker.turboTypeId", $scope.turboTypeId);
 
         // Clear and fetch the turbo types
         $scope.turboTypes = null;
@@ -57,7 +57,7 @@ angular.module('ngMetaCrudApp')
       // Fetch the new turbo models when the turbo type changes
       var turboModelsPromise = null;
       $scope.$watch('turboTypeId', function(newTurboTypeId, oldTurboTypeId) {
-        $log.log("TurboModelPicker.$watch turboTypeId", newTurboTypeId, oldTurboTypeId);
+//        $log.log("TurboModelPicker.$watch turboTypeId", newTurboTypeId, oldTurboTypeId);
 
         // Clear and fetch the turbo models
         $scope.turboModels = null;
@@ -78,7 +78,7 @@ angular.module('ngMetaCrudApp')
 
       // Watch for changes in the part's model/type (i.e. reverting) and propagate them to the picker
       $scope.$watch('{modelId:part.turboModel.id, typeId: part.turboModel.turboType.id}', function(newValue, oldValue) {
-        $log.log("Watching revert", newValue);
+//        $log.log("TurboModelPicker.$watch (part.turboModel.id, part.turboModel.turboType.id}", newValue);
         $scope.turboModelId = newValue.modelId;
         $scope.turboTypeId = newValue.typeId;
       }, true);
@@ -99,16 +99,10 @@ angular.module('ngMetaCrudApp')
 
       $scope.setPartTurboModel = function() {
         var turboModel = _.find($scope.turboModels, function(turboModel) {
-          return $scope.turboModelId = turboModel.id;
+          return $scope.turboModelId == turboModel.id;
         });
 
         $scope.part.turboModel = Restangular.copy(turboModel)
-        $log.log('setPartTurboModel', $scope.part.turboModel);
+//        $log.log('setPartTurboModel', $scope.part.turboModel);
       };
-
-//      $scope.$on("revert", function() {
-//        $scope.manufacturerId = $scope.$eval('part.manufacturer.id');
-//        $scope.turboTypeId    = $scope.$eval('part.turboModel.turboType.id');
-//        $scope.turboModelId   = $scope.$eval('part.turboModel.id');
-//      });
     });
