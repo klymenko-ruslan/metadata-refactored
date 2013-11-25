@@ -112,13 +112,7 @@ public class PartController {
 //                item.setParent(part);
 //            }
 //        }
-//        
-//        // Special part type handling
-//        if (part instanceof Turbo) {
-//            Turbo turbo = (Turbo) part;
-//            turbo.setTurboModel(TurboModel.findTurboModel(turbo.getTurboModel().getId()));
-//        }
-//        
+        
         if (part.merge() == null) {
             return new ResponseEntity<String>(headers, HttpStatus.NOT_FOUND);
         }
