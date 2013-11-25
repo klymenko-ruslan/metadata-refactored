@@ -253,7 +253,7 @@
   <h3>Bill of Materials</h3>
   <table data-ng-table="bomTableParams" class="table table-bordered table-striped">
       <tr data-ng-repeat="(index, bomItem) in part.bom">
-          <td title="'Type'">{{bomItem.child.partType.typeName}}</td>
+          <td title="'Type'">{{bomItem.child.partType.name}}</td>
           <td title="'Name'">{{bomItem.child.name}}</td>
           <td title="'Manufacturer'">{{bomItem.child.manufacturer.name}}</td>
           <td title="'Manufacturer Part Number'">{{bomItem.child.manufacturerPartNumber}}</td>

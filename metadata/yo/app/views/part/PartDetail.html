@@ -326,7 +326,7 @@
     <table data-ng-table="bomTableParams" class="table table-bordered table-striped table-hover">
         <tr data-ng-repeat="bomItem in part.bom" class="clickable"
             ng-click="rowClick(bomItem.child.partType.typeName, bomItem.child.id)">
-            <td title="'Type'">{{bomItem.child.partType.typeName}}</td>
+            <td title="'Type'">{{bomItem.child.partType.name}}</td>
             <td title="'Name'">{{bomItem.child.name}}</td>
             <td title="'Manufacturer'">{{bomItem.child.manufacturer.name}}</td>
             <td title="'Manufacturer Part Number'">{{bomItem.child.manufacturerPartNumber}}</td>

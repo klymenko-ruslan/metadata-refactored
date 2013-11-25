@@ -31,7 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Configurable
 @Entity
 @Table(name="bom")
-public class BOMItem {
+public class BOMItem implements Comparable<BOMItem> {
 
     //<editor-fold defaultstate="collapsed" desc="properties">
     @Id
@@ -216,5 +216,10 @@ public class BOMItem {
         return new JSONDeserializer<List<BOMItem>>().use(null, ArrayList.class).use("values", BOMItem.class).deserialize(json);
     }
     //</editor-fold>
+
+    @Override
+    public int compareTo(BOMItem o) {
+        return ObjectUtils.compare(this.id, o.id);
+    }
     
 }

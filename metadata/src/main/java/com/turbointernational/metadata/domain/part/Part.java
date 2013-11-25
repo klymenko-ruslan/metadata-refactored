@@ -56,7 +56,7 @@ import javax.persistence.Transient;
 import javax.persistence.TypedQuery;
 import javax.persistence.Version;
 import net.sf.jsog.JSOG;
-import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -68,7 +68,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Table(name = "PART")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn
-public class Part {
+public class Part implements Comparable<Part> {
 
     @Transient
     @Autowired(required=true)
@@ -344,6 +344,7 @@ public class Part {
                 .include("bom.version")
                 .include("bom.child.id")
                 .include("bom.child.name")
+                .include("bom.child.partType.name")
                 .include("bom.child.version")
                 .include("bom.child.manufacturer.id")
                 .include("bom.child.manufacturer.name")
@@ -614,4 +615,9 @@ public class Part {
     }
     
     //</editor-fold>
+
+    @Override
+    public int compareTo(Part o) {
+        return ObjectUtils.compare(this.id, o.id);
+    }
 }

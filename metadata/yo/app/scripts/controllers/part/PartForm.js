@@ -32,12 +32,8 @@ angular.module('ngMetaCrudApp')
                     $scope.part = part;
                     $scope.oldPart = Restangular.copy(part);
                 }, function(response) {
-                    console.error("Could not get part list from the server.");
+                    alert("Could not get part data from the server.");
                 });
-        }
-
-        $scope.sync = function() {
-          restService.sync($scope.partId);
         }
 
         $scope.revert = function() {

@@ -51,9 +51,5 @@ angular.module('ngMetaCrudApp')
             this.listTurboModelsForTurboTypeId = function(turboTypeId) {
                 return Restangular.all("other/turboModel").getList({"turboTypeId": turboTypeId});
             }
-
-            this.sync = function(partId) {
-              return Restangular.one("part/async").get({"id": partId});
-            }
         };
   });

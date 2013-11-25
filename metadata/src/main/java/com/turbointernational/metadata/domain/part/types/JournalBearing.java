@@ -13,11 +13,9 @@ import javax.persistence.SecondaryTable;
 import net.sf.jsog.JSOG;
 import org.apache.commons.lang.ObjectUtils;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 
 @Configurable
 @Entity
-@RooJpaActiveRecord
 @SecondaryTable(name="journal_bearing", pkJoinColumns=@PrimaryKeyJoinColumn(name = "part_id"))
 public class JournalBearing extends Part {
 
