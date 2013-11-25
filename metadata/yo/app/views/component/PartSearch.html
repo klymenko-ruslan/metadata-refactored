@@ -9,7 +9,7 @@
             </td>
             <td>
                 <table data-ng-table="partTableParams" class="table table-bordered table-striped">
-                    <tr data-ng-repeat="part in searchResults.hits.hits">
+                    <tr data-ng-repeat="part in $data">
                         <td title="'ID'">{{part._source._id}}</td>
                         <td title="'Part Type'">{{part._source.part_type}}</td>
                         <td title="'Manufacturer'">{{part._source.manufacturer_name}}</td>
