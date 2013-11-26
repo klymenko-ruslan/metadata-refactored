@@ -2,7 +2,6 @@ package com.turbointernational.metadata.domain.part;
 import com.turbointernational.metadata.domain.part.bom.BOMItem;
 import com.turbointernational.metadata.util.ElasticSearch;
 import java.security.Principal;
-import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -166,23 +165,13 @@ public class PartController {
 
         int pageSize = 100;
         int page = 0;
-        Collection<Part> result;
-        
+        int result;
         do {
-            if (type == null) {
-                result = Part.findPartEntries(page * pageSize, pageSize);
-            } else {
-                result = Part.findPartEntries(page * pageSize, pageSize, type);
-            }
+            result = elasticSearch.indexParts(page * pageSize, pageSize, type);
             log.log(Level.INFO, "Indexing parts {0}-{1}", new Object[]{page * pageSize, (page * pageSize) + pageSize});
             page++;
             
-            for (Part part : result) {
-                part.indexPart();
-            }
-            
-            elasticSearch.indexParts(result);
-        } while (result.size() >= pageSize && page < maxPages);
+        } while (result >= pageSize && page < maxPages);
 
         return new ResponseEntity<Void>((Void) null, headers, HttpStatus.OK);
     }

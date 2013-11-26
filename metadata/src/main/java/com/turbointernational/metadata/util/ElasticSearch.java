@@ -9,13 +9,12 @@ import io.searchbox.core.Bulk;
 import io.searchbox.core.Delete;
 import io.searchbox.core.Index;
 import io.searchbox.core.Search;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import net.sf.jsog.JSOG;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
@@ -28,7 +27,7 @@ public class ElasticSearch {
     
     public  String partType = "part";
 
-    @Value("elasticsearch.serverUrl")
+    @Value("${elasticsearch.serverUrl}")
     public String searchboxUrl;
 
     public JestClient client() {
@@ -97,29 +96,32 @@ public class ElasticSearch {
 
         return result.toString();
     }
-
-    @Async
+    
+    @Transactional
     public void indexPart(Part part) throws Exception {
-        List<Part> parts = new ArrayList<Part>();
-        parts.add(part);
-        indexParts(parts);
+        Index.Builder indexBuilder = new Index.Builder(part.toJson()).id(part.getId().toString());
+        JestResult result = client().execute(indexBuilder.build());
+        
+        if (!result.isSucceeded()) {
+            throw new Error(result.getJsonString());
+        }
     }
 
-    @Async
-    public void indexParts(Collection<Part> parts) throws Exception {
+    @Transactional(readOnly = true)
+    public int indexParts(int firstResult, int maxResults, String type) throws Exception {
+        
+        
         Bulk.Builder bulkBuilder = new Bulk.Builder();
         bulkBuilder.defaultIndex(metadataIndex);
         bulkBuilder.defaultType(partType);
+        
+        List<Part> parts = Part.findPartEntries(firstResult, maxResults, type);
+        
         for (Part part : parts) {
-            if (part == null) {
-                continue;
-            }
 
-            // Get the part JSOG
-            JSOG partObject = part.toJsog();
-            partObject.put("_id", partObject.remove("id")); // Rename id to _id
-
-            Index.Builder indexBuilder = new Index.Builder(partObject.toString()).id(part.getId().toString());
+            // TODO: ??? partObject.put("_id", partObject.remove("id")); // Rename id to _id
+//            Index.Builder indexBuilder = new Index.Builder(JSOG.object("properties", part.toJson()).toString()).id(part.getId().toString());
+            Index.Builder indexBuilder = new Index.Builder(part.toJson()).id(part.getId().toString());
 
             bulkBuilder.addAction(indexBuilder.build());
         }
@@ -138,6 +140,8 @@ public class ElasticSearch {
 
             throw new Error(result.getJsonString());
         }
+        
+        return parts.size();
     }
 
     @Async

@@ -3,6 +3,16 @@
     <table border="1">
         <tr valign="top">
             <td>
+
+              <div>
+                <h2>Part Type</h2>
+                <picker ng-model="search.partType" path="type/part"/>
+              </div>
+
+              <div>
+                <h2>Manufacturer</h2>
+                <picker ng-model="search.manufacturer" path="other/manufacturer"/>
+              </div>
                 <search-facets>
 
                 </search-facets>
@@ -10,14 +20,13 @@
             <td>
                 <table data-ng-table="partTableParams" class="table table-bordered table-striped">
                     <tr data-ng-repeat="part in $data">
-                        <td title="'ID'">{{part._source._id}}</td>
-                        <td title="'Part Type'">{{part._source.part_type}}</td>
-                        <td title="'Manufacturer'">{{part._source.manufacturer_name}}</td>
-                        <td title="'Mfr Part #'">{{part._source.manufacturer_part_number}}</td>
+                        <td title="'Part Type'">{{part._source.partType.name}}</td>
+                        <td title="'Manufacturer'">{{part._source.manufacturer.name}}</td>
+                        <td title="'Mfr Part #'">{{part._source.manufacturerPartNumber}}</td>
                         <td title="'Name'">{{part._source.name}}</td>
                         <td title="'Actions'">
                             <span ng-repeat="action in actionList">
-                                <button data-ng-click="onAction({action: action, partId: part._source._id, partType: part._source.part_type})" class="button">{{action}}</button>
+                                <button data-ng-click="onAction({action: action, partId: part._source.id, partType: part._source.partType.typeName})" class="button">{{action}}</button>
                             </span>
                         </td>
                     </tr>

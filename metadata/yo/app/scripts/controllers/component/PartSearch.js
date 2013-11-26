@@ -6,7 +6,6 @@ angular.module('ngMetaCrudApp')
       // Query Parameters
       $scope.search = {
         queryString: "",
-        partType: null,
         facetFilters: {}
       };
 
@@ -18,6 +17,13 @@ angular.module('ngMetaCrudApp')
         count: 10
       }, {
         getData: function($defer, params) {
+          // Update the pagination info
+          $scope.search.count = params.count();
+          $scope.search.page = params.page();
+          $scope.search.sorting = params.sorting();
+
+          $log.log("Searching", $scope.search);
+
           searchService($scope.search).then(
               function(searchResults) {
                 $scope.searchResults = searchResults.data;
@@ -33,12 +39,6 @@ angular.module('ngMetaCrudApp')
         }
       });
 
-      $scope.$watch("partTableParams", function() {
-        $scope.search.count = $scope.partTableParams.count();
-        $scope.search.page = $scope.partTableParams.page();
-        $scope.search.sorting = $scope.partTableParams.sorting();
-      }, true);
-
       // Handle updating search results
       $scope.$watch('search', function() {
         $log.log("Searching", $scope.search);
@@ -50,9 +50,5 @@ angular.module('ngMetaCrudApp')
           $scope.actionList = $scope.actions.split(',');
         }
       }, true);
-
-      $scope.$watch('partType', function(partType) {
-        $scope.search.partType = partType;
-      });
 
     });
