@@ -14,7 +14,10 @@ angular.module('ngMetaCrudApp')
 
       $scope.partTableParams = new ngTableParams({
         page: 1,
-        count: 10
+        count: 10,
+        sorting: {
+          manufacturerPartNumber: 'asc'
+        }
       }, {
         getData: function($defer, params) {
           // Update the pagination info

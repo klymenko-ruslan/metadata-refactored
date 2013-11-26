@@ -20,10 +20,18 @@
             <td>
                 <table data-ng-table="partTableParams" class="table table-bordered table-striped">
                     <tr data-ng-repeat="part in $data">
-                        <td title="'Part Type'">{{part._source.partType.name}}</td>
-                        <td title="'Manufacturer'">{{part._source.manufacturer.name}}</td>
-                        <td title="'Mfr Part #'">{{part._source.manufacturerPartNumber}}</td>
-                        <td title="'Name'">{{part._source.name}}</td>
+                        <td title="'Part Type'" sortable="partType.name">
+                          {{part._source.partType.name}}
+                        </td>
+                        <td title="'Manufacturer'" sortable="manufacturer.name">
+                          {{part._source.manufacturer.name}}
+                        </td>
+                        <td title="'Mfr Part #'" sortable="manufacturerPartNumber">
+                          {{part._source.manufacturerPartNumber}}
+                        </td>
+                        <td title="'Name'" sortable="name">
+                          {{part._source.name}}
+                        </td>
                         <td title="'Actions'">
                             <span ng-repeat="action in actionList">
                                 <button data-ng-click="onAction({action: action, partId: part._source.id, partType: part._source.partType.typeName})" class="button">{{action}}</button>

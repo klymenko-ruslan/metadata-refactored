@@ -93,6 +93,23 @@ angular.module('ngMetaCrudApp')
           searchRequest.query = {match_all: {}};
         }
 
+        // Sorting
+        searchRequest.sort = [];
+        if (search.sorting) {
+          angular.forEach(search.sorting, function(order, field) {
+
+            // Build the sort field
+            var sortField = {};
+            sortField[field] = {
+              "missing": "_last",
+              "ignore_unmapped": true,
+              "order": order
+            }
+
+            searchRequest.sort.push(sortField);
+          });
+        }
+
         // Call to ElasticSearch
         return $http({
           method: 'POST',
