@@ -38,6 +38,7 @@ angular.module('ngMetaCrudApp')
               function(errorResponse) {
                 alert("Could not complete search");
                 $log.log("Could not complete search", errorResponse);
+                $defer.reject();
               });
         }
       });

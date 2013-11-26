@@ -39,7 +39,10 @@ angular.module('ngMetaCrudApp')
         count: 10
       }, {
         getData: function($defer, params) {
-          if (!angular.isObject($scope.part)) return;
+          if (!angular.isObject($scope.part)) {
+            $defer.reject();
+            return;
+          };;
 
           // Update the total and slice the result
           $defer.resolve($scope.part.bom.slice((params.page() - 1) * params.count(), params.page() * params.count()));
