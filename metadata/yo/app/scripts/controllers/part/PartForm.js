@@ -14,6 +14,9 @@ angular.module('ngMetaCrudApp')
               // Save the part
               $scope.part = part;
               $scope.oldPart = Restangular.copy(part);
+
+              // Reload the table
+              $scope.bomTableParams.reload();
             },
             function(response) {
               alert("Could not get part data from the server.");
