@@ -25,15 +25,20 @@
  */
 ?>
 <?php /* @var $this Mage_Catalog_Block_Product_View_Abstract */ ?>
-<?php $_product = $this->getProduct() ?>
+<?php
+$_product = $this->getProduct();
+$orgSku = $_product->getTiPartSku();
+$_tiProduct = Mage::getModel('catalog/product');
+$_tiProduct->load($_tiProduct->getIdBySku($orgSku));
+?>
 
 <!-- Product Attributes -->
 <ul>
     <li><strong>Part Type:</strong> <?php echo $_product->getPartType(); ?></li>
-    <li><strong>Manufacturer:</strong> <?php echo $_product->getManufacturer(); ?></li>
+    <li><strong>Manufacturer:</strong> <?php echo $_product->getAttributeText('manufacturer'); ?></li>
     <li><strong>Part Number:</strong> <?php echo $_product->getPartNumber(); ?></li>
     <li><strong>Name:</strong> <?php echo $_product->getName(); ?></li>
-    <li><strong>Compatible TI Part:</strong> <?php echo $_product->getTiPartSku(); ?></li>
+    <li><strong>Compatible TI Part:</strong> <?php echo $_tiProduct->getPartNumber(); ?></li>
 </ul>
 
 <?php if ($_product->isAvailable()): ?>
