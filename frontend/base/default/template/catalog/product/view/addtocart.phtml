@@ -24,10 +24,13 @@
  * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 ?>
-<?php $_product = $this->getProduct(); ?>
-<?php $orgSku = $_product->getTiPartSku(); ?>
 <?php
-if ($orgSku && strlen($orgSku) > 1) {
+$_product = $this->getProduct();
+$orgSku = $_product->getTiPartSku();
+$_productManufacturer = $_product->getManufacturer();
+?>
+<?php
+if ($orgSku && strlen($orgSku) > 1 && $_productManufacturer != 44) {
     $buttonTitle = $this->__('Add TI Part to Cart');
 } else {
     $buttonTitle = $this->__('Add to Cart');

@@ -35,6 +35,7 @@
 $_helper = $this->helper('catalog/output');
 $_product = $this->getProduct();
 $orgSku = $_product->getTiPartSku();
+$_productManufacturer = $_product->getManufacturer();
 $_description = $_product->getDescription();
 $_ad = $this->getAdditionalData();
 ?>
@@ -80,9 +81,26 @@ $_ad = $this->getAdditionalData();
             <?php endif; ?>
 
             <!-- Section for showing compatible TI part details: conditional on ti_part_sku being set and valid -->
-            <?php if ($orgSku && strlen($orgSku) > 1): ?>
+            <?php if ($orgSku && strlen($orgSku) > 1 && $_productManufacturer != 44): ?>
                 <div class="box-collateral">
                     <h2><?php echo $this->__('Compatible TI Part') ?></h2>
+                    <?php
+                    $bomItemProduct = Mage::getModel('catalog/product');
+                    $bomItemProduct->load($bomItemProduct->getIdBySku($orgSku));
+                    ?>
+                    <strong>Name:</strong> <a href="<?php echo $bomItemProduct->getProductUrl() ?>"
+                                              target="_blank"><?php echo $bomItemProduct->getName(); ?></a> <br/>
+                    <strong>Part Number:</strong> <?php echo $bomItemProduct->getPartNumber(); ?> <br/>
+                    <strong>Price:</strong> <?php echo Mage::helper('core')->currency($bomItemProduct->getFinalPrice()); ?> <br/>
+                    <br/>
+                </div>
+
+            <? endif; ?>
+
+            <!-- Section for showing interchangeable TI part details: conditional on ti_part_sku being set, valid, and not having the manufacturer ID of 44 -->
+            <?php if ($orgSku && strlen($orgSku) > 1 && $_productManufacturer == 44): ?>
+                <div class="box-collateral">
+                    <h2><?php echo $this->__('Interchangeable TI Part') ?></h2>
                     <?php
                     $bomItemProduct = Mage::getModel('catalog/product');
                     $bomItemProduct->load($bomItemProduct->getIdBySku($orgSku));
