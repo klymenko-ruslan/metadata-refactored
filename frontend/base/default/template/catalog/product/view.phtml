@@ -101,6 +101,7 @@ $_ad = $this->getAdditionalData();
             <?php if ($orgSku && strlen($orgSku) > 1 && $_productManufacturer == 44): ?>
                 <div class="box-collateral">
                     <h2><?php echo $this->__('Interchangeable TI Part') ?></h2>
+                    <p>This div is only here to differentiate TI parts having TI Part SKUs from non TI parts with compatible TI parts. See issue #110. Issue #109 is in progress and will absorb this functionality.</p>
                     <?php
                     $bomItemProduct = Mage::getModel('catalog/product');
                     $bomItemProduct->load($bomItemProduct->getIdBySku($orgSku));

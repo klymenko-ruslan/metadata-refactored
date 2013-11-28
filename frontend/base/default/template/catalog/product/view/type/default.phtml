@@ -39,7 +39,6 @@ $_productManufacturer = $_product->getManufacturer();
     <li><strong>Manufacturer:</strong> <?php echo $_product->getAttributeText('manufacturer'); ?></li>
     <li><strong>Part Number:</strong> <?php echo $_product->getPartNumber(); ?></li>
     <li><strong>Name:</strong> <?php echo $_product->getName(); ?></li>
-    <li><strong>Test:</strong> <?php echo $_productManufacturer; ?></li>
     <?php if ($orgSku && strlen($orgSku) > 1 && $_productManufacturer != 44): ?>
         <li><strong>Compatible TI Part:</strong> <?php echo $_tiProduct->getPartNumber(); ?></li>
     <?php endif; ?>
