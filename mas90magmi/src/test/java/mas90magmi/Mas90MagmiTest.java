@@ -1,15 +1,11 @@
 package mas90magmi;
 
-import mas90magmi.Pricing;
-import mas90magmi.DiscountType;
-import mas90magmi.MagmiMas90;
-import mas90magmi.Customer;
-import mas90magmi.ItemPricing;
 import mas90magmi.Pricing.PriceBreak;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,20 +17,18 @@ import static org.junit.Assert.*;
  *
  * @author jrodriguez
  */
-public class MagmiMas90Test {
+public class Mas90MagmiTest {
     
-    MagmiMas90 instance;
+    Mas90Magmi instance;
     
     @Before
     public void setUp() throws IOException {
-        instance = new MagmiMas90("/home/jrodriguez/Downloads/MAS90_pricing_model.accdb");
+        instance = new Mas90Magmi("/home/jrodriguez/Downloads/MAS90_pricing_model.accdb");
     }
 
     @Test
     public void testGetStandardPrice() throws Exception {
         String itemNumber = "015T-030";
-        
-        ItemPricing itemPricing = instance.getItemPricing(itemNumber);
         
         BigDecimal standardPrice = instance.getStandardPrice(itemNumber);
         assertEquals(new BigDecimal("0.0800"), standardPrice);
@@ -143,6 +137,22 @@ public class MagmiMas90Test {
         Set<String> priceLevels = instance.getPriceLevels();
         
         assertEquals(expectedPriceLevels, priceLevels);
+    }
+    
+    @Test
+    public void testGetPriceLevelPricings() throws Exception {
+        Map<String, Pricing> priceLevelPricings = instance.getPriceLevelPricings();
+
+        assertTrue(instance.getPriceLevels().containsAll(priceLevelPricings.keySet()));
+        assertEquals(new BigDecimal("10.0000"),  priceLevelPricings.get("0").getPriceBreak(0).getRate());
+        assertEquals(new BigDecimal("5.0000"),   priceLevelPricings.get("1").getPriceBreak(0).getRate());
+        assertEquals(new BigDecimal("0.0000"),   priceLevelPricings.get("2").getPriceBreak(0).getRate());
+        assertEquals(new BigDecimal("-5.0000"),  priceLevelPricings.get("3").getPriceBreak(0).getRate());
+        assertEquals(new BigDecimal("-10.0000"), priceLevelPricings.get("4").getPriceBreak(0).getRate());
+        assertEquals(new BigDecimal("-25.0000"), priceLevelPricings.get("5").getPriceBreak(0).getRate());
+        assertEquals(new BigDecimal("20.0000"),  priceLevelPricings.get("E").getPriceBreak(0).getRate());
+        assertEquals(new BigDecimal("0.0000"),   priceLevelPricings.get("R").getPriceBreak(0).getRate());
+        assertEquals(new BigDecimal("27.5000"),  priceLevelPricings.get("W").getPriceBreak(0).getRate());
     }
     
 }

@@ -9,7 +9,9 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import org.apache.commons.lang.StringUtils;
 
@@ -17,13 +19,13 @@ import org.apache.commons.lang.StringUtils;
  *
  * @author jrodriguez
  */
-public class MagmiMas90 {
+public class Mas90Magmi {
     
     static final String PRICE_LEVEL_CODE = "0";
     
     private Database db;
 
-    public MagmiMas90(String path) throws IOException {
+    public Mas90Magmi(String path) throws IOException {
         db = DatabaseBuilder.open(new File(path));
     }
 
@@ -90,4 +92,33 @@ public class MagmiMas90 {
         return priceLevels;
     }
     
+    public Map<String, Pricing> getPriceLevelPricings() throws IOException {
+        Table table = db.getTable("IMB_PriceCode");
+        
+        Map<String, Pricing> priceLevelPricings = new TreeMap();
+        
+        // TODO: Ugly hack iteration again
+        for (Row row : table) {
+            
+            // Only price levels
+            if (!PRICE_LEVEL_CODE.equals(row.get("PriceCodeRecord"))) {
+                continue;
+            }
+            
+            
+            // Get the price level
+            String priceLevel = (String) row.get("CustomerPriceLevel");
+            
+            // BUG: https://github.com/zero-one/TurboInternational/issues/5#issuecomment-29331951
+            if (priceLevel == null || priceLevel.isEmpty() || " ".equals(priceLevel)) {
+                priceLevel = "2";
+            }
+            
+            Pricing pricing = Pricing.fromRow(row, "Method");
+            
+            priceLevelPricings.put(priceLevel, pricing);
+        }
+        
+        return priceLevelPricings;
+    }    
 }
