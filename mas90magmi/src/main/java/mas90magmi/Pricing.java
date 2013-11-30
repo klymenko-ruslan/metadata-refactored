@@ -3,6 +3,9 @@ package mas90magmi;
 import com.healthmarketscience.jackcess.Row;
 import mas90magmi.Pricing.PriceBreak;
 import java.math.BigDecimal;
+import static mas90magmi.DiscountType.Amount;
+import static mas90magmi.DiscountType.Override;
+import static mas90magmi.DiscountType.Percentage;
 
 /**
  *
@@ -74,6 +77,23 @@ public class Pricing {
 
     public DiscountType getDiscountType() {
         return discountType;
+    }
+    
+    public BigDecimal applyPriceBreak(int level, BigDecimal standardPrice) {
+        PriceBreak priceBreak = getPriceBreak(level);
+        
+        switch (discountType) {
+            case Amount:
+                return standardPrice.subtract(priceBreak.getRate());
+            case Override:
+                return priceBreak.getRate();
+            case Percentage:
+                BigDecimal pctMultiplier = priceBreak.getRate().movePointLeft(2);
+                
+                return standardPrice.multiply(pctMultiplier);
+            default:
+                throw new IllegalStateException("Unknown discount type.");
+        }
     }
     
 }

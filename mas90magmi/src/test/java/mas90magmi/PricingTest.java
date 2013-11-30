@@ -28,16 +28,16 @@ public class PricingTest {
         // Setup the default case: Price override with no additional bulk discount
         when(mockRow.get("ItemMethod")).thenReturn(DiscountType.Override.CODE);
         
-        addMockRow(0, new BigDecimal("999999"), new BigDecimal("5000.0000")); 
+        addMockPriceBreak(0, new BigDecimal("999999"), new BigDecimal("5000.0000")); 
         
         for (int i = 1; i < 5; i++) { // Skip the first row
-            addMockRow(i, new BigDecimal("0"), new BigDecimal("0"));
+            addMockPriceBreak(i, new BigDecimal("0"), new BigDecimal("0"));
         }
         
         instance = Pricing.fromRow(mockRow, "ItemMethod");
     }
     
-    public void addMockRow(int level, BigDecimal breakColumn, BigDecimal rateColumn) {
+    public void addMockPriceBreak(int level, BigDecimal breakColumn, BigDecimal rateColumn) {
         String breakColumnName = "BreakQty" + (level+1);
         String rateColumnName  = "DiscountMarkupPriceRate" + (level+1);
 
@@ -83,7 +83,7 @@ public class PricingTest {
             BigDecimal quantity = new BigDecimal((i+1) * 100); // 100 qty increments
             BigDecimal price = new BigDecimal((Pricing.BREAK_COUNT - i) * 1000);
             
-            addMockRow(i, quantity, price);
+            addMockPriceBreak(i, quantity, price);
             
             expectedList.add(new PriceBreak(i, quantity, price));
         }
@@ -135,5 +135,44 @@ public class PricingTest {
         instance = Pricing.fromRow(mockRow, "ItemMethod");
         
         assertEquals(discountType, instance.getDiscountType());
+    }
+
+    @Test
+    public void testApplyPriceBreak_Override() {
+        DiscountType discountType = DiscountType.Override;
+        
+        reset(mockRow);
+        when(mockRow.get("ItemMethod")).thenReturn(discountType.CODE);
+        addMockPriceBreak(0, new BigDecimal("999999"), new BigDecimal("50"));
+        
+        instance = Pricing.fromRow(mockRow, "ItemMethod");
+        
+        assertEquals(new BigDecimal("50"), instance.applyPriceBreak(0, new BigDecimal("75")));
+    }
+
+    @Test
+    public void testApplyPriceBreak_Amount() {
+        DiscountType discountType = DiscountType.Amount;
+        
+        reset(mockRow);
+        when(mockRow.get("ItemMethod")).thenReturn(discountType.CODE);
+        addMockPriceBreak(0, new BigDecimal("999999"), new BigDecimal("25"));
+        
+        instance = Pricing.fromRow(mockRow, "ItemMethod");
+        
+        assertEquals(new BigDecimal("50"), instance.applyPriceBreak(0, new BigDecimal("75")));
+    }
+
+    @Test
+    public void testApplyPriceBreak_Percentage() {
+        DiscountType discountType = DiscountType.Percentage;
+        
+        reset(mockRow);
+        when(mockRow.get("ItemMethod")).thenReturn(discountType.CODE);
+        addMockPriceBreak(0, new BigDecimal("999999"), new BigDecimal("25"));
+        
+        instance = Pricing.fromRow(mockRow, "ItemMethod");
+        
+        assertEquals(new BigDecimal("50.00"), instance.applyPriceBreak(0, new BigDecimal("200"))); // $200, 25% discount
     }
 }

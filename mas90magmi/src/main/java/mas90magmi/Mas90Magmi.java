@@ -120,5 +120,5 @@ public class Mas90Magmi {
         }
         
         return priceLevelPricings;
-    }    
+    }
 }
