@@ -1,8 +1,8 @@
 'use strict';
 
-angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap', 'restangular', 'Mac', 'localytics.directives'])
+angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap', 'restangular'])
     .config(function(RestangularProvider) {
-        RestangularProvider.setBaseUrl('http://localhost:8080/');
+//        RestangularProvider.setBaseUrl('http://localhost:8080/');
         RestangularProvider.setDefaultHeaders({"Content-Type": "text/plain"});
         RestangularProvider.setResponseExtractor(function(response, operation) {
             return response;
@@ -13,7 +13,7 @@ angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap', 'restangu
             templateUrl: 'views/part/PartList.html',
             controller: 'PartListCtrl'
         });
-        $routeProvider.when('/part/:type/form', {
+        $routeProvider.when('/part/createByPartTypeId/:typeId', {
             templateUrl: 'views/part/PartForm.html',
             controller: 'PartFormCtrl'
         });

@@ -24,6 +24,10 @@ angular.module('ngMetaCrudApp')
                 return Restangular.all("other/manufacturer", {first: first, count: count}).getList();
             }
 
+            this.listPartTypes = function() {
+              return Restangular.all("type/part").getList();
+            }
+
             this.findManufacturer = function(id) {
                 return Restangular.one("manufacturer", id).get();
             }
@@ -46,10 +50,6 @@ angular.module('ngMetaCrudApp')
 
             this.listTurboModelsForTurboTypeId = function(turboTypeId) {
                 return Restangular.all("other/turboModel").getList({"turboTypeId": turboTypeId});
-            }
-
-            this.sync = function(partId) {
-              return Restangular.one("part/async").get({"id": partId});
             }
         };
   });

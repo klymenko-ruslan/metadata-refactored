@@ -15,7 +15,8 @@
         <label>Turbo Model</label>
         <input ng-model="turboModelFilter" ng-init="turboModelFilter = ''" placeholder="Turbo model filter..."/>
         <br/>
-        <select data-ng-model="turboModelId"
+        <select required
+                data-ng-model="turboModelId"
                 data-ng-options="turboModel.id as turboModel.name for turboModel in turboModels | filter:{name:turboModelFilter}"
                 data-ng-disabled="turboModels.length == 0"
                 data-ng-change="setPartTurboModel()"

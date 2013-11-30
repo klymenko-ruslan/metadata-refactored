@@ -1,10 +1,7 @@
 package com.turbointernational.metadata.domain.part;
-import com.turbointernational.metadata.domain.other.TurboModel;
 import com.turbointernational.metadata.domain.part.bom.BOMItem;
-import com.turbointernational.metadata.domain.part.types.Turbo;
 import com.turbointernational.metadata.util.ElasticSearch;
 import java.security.Principal;
-import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -32,13 +29,10 @@ public class PartController {
     @Autowired(required=true)
     private ElasticSearch elasticSearch;
 
+    @Transactional
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<String> showJson(
-            @PathVariable("id") Long id,
-            @RequestParam(value="fields", required=false, defaultValue = "") String fields) {
-        
-        String[] fieldsArray = fields.split(",");
+    public ResponseEntity<String> showJson(@PathVariable("id") Long id) {
         
         Part part = Part.findPart(id);
         HttpHeaders headers = new HttpHeaders();
@@ -46,9 +40,10 @@ public class PartController {
         if (part == null) {
             return new ResponseEntity<String>(headers, HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<String>(part.toJson(fieldsArray), headers, HttpStatus.OK);
+        return new ResponseEntity<String>(part.toJson(), headers, HttpStatus.OK);
     }
     
+    @Transactional
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<String> listJson(
@@ -80,8 +75,8 @@ public class PartController {
         
         Part part = Part.fromJsonToPart(partJson);
         
-        // Update the interchange group
-        part.setInterchangeByPartId(partJsog.get("interchangePartId").getLongValue());
+//        // Update the interchange group
+//        part.setInterchangeByPartId(partJsog.get("interchangePartId").getLongValue());
         
         part.persist();
         
@@ -102,12 +97,12 @@ public class PartController {
         headers.add("Content-Type", "application/json");
         
         // Get the original part so we can log the update
-        Part originalPart = Part.findPart(id);
-        String originalPartJson = originalPart.toJson();
+//        Part originalPart = Part.findPart(id);
+//        String originalPartJson = originalPart.toJson();
         
         // Update the part
-        final Part part = Part.fromJsonToPart(partJson);
-        
+        Part part = Part.fromJsonToPart(partJson);
+//        
         // Handle BOM updates
         if (part.getBom() != null) {
             for (BOMItem item : part.getBom()) {
@@ -118,26 +113,23 @@ public class PartController {
             }
         }
         
-        // Special part type handling
-        if (part instanceof Turbo) {
-            Turbo turbo = (Turbo) part;
-            turbo.setTurboModel(TurboModel.findTurboModel(turbo.getTurboModel().getId()));
-        }
-        
         if (part.merge() == null) {
             return new ResponseEntity<String>(headers, HttpStatus.NOT_FOUND);
         }
         
-        // Update the interchange group
-        part.setInterchangeByPartId(partJsog.get("interchangePartId").getLongValue());
+        part = Part.findPart(part.getId());
+        Part.entityManager().refresh(part);
+//        
+//        // Update the interchange group
+//        part.setInterchangeByPartId(partJsog.get("interchangePartId").getLongValue());
         
         // Update the changelog
-        JSOG dataJsog = JSOG.object("originalPart", originalPartJson)
-                            .put("updatedPart", part.toJson());
+//        JSOG dataJsog = JSOG.object("originalPart", originalPartJson)
+//                            .put("updatedPart", part.toJson());
         
 //        Changelog.log(principal, "Updated part", dataJsog.toString());
         
-        return new ResponseEntity<String>(headers, HttpStatus.OK);
+        return new ResponseEntity<String>(part.toJson(), headers, HttpStatus.OK);
     }
     
     @Transactional
@@ -173,23 +165,13 @@ public class PartController {
 
         int pageSize = 100;
         int page = 0;
-        Collection<Part> result;
-        
+        int result;
         do {
-            if (type == null) {
-                result = Part.findPartEntries(page * pageSize, pageSize);
-            } else {
-                result = Part.findPartEntries(page * pageSize, pageSize, type);
-            }
+            result = elasticSearch.indexParts(page * pageSize, pageSize, type);
             log.log(Level.INFO, "Indexing parts {0}-{1}", new Object[]{page * pageSize, (page * pageSize) + pageSize});
             page++;
             
-            for (Part part : result) {
-                part.indexPart();
-            }
-            
-            elasticSearch.indexParts(result);
-        } while (result.size() >= pageSize && page < maxPages);
+        } while (result >= pageSize && page < maxPages);
 
         return new ResponseEntity<Void>((Void) null, headers, HttpStatus.OK);
     }

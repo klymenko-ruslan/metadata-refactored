@@ -5,8 +5,7 @@ angular.module('ngMetaCrudApp')
         return {
             scope: {
                 actions: '@',
-                onAction: '&',
-                partType: '@'
+                onAction: '&'
             },
             restrict: 'E',
             templateUrl: '/views/component/PartSearch.html',

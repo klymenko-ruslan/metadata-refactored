@@ -2,20 +2,21 @@
 
 <div class="btn-group">
     <a ng-href="#/part" class="btn btn-large">Part List</a>
-    <a ng-href="#/part/{{ partType }}/{{ partId }}" class="btn btn-large">View Part</a>
-    <a ng-href="#/part/{{ partType }}/{{ partId }}/interchange/search" class="btn btn-large btn-info">Interchange...</a>
+    <a ng-href="#/part/{{ part.partType.typeName }}/{{ partId }}" class="btn btn-large" data-ng-hide="oldPart == null">View Part</a>
+    <a ng-href="#/part/{{ part.partType.typeName }}/{{ partId }}/interchange/search" class="btn btn-large btn-info" data-ng-hide="oldPart == null">Interchange...</a>
     <a ng-click="save()" class="btn btn-large btn-success">Save</a>
   <!--ng-disabled="!isChanged()"-->
-  <a ng-click="revert()" class="btn btn-large btn-warning">Revert</a>
+  <a ng-click="revert()" class="btn btn-large btn-warning" data-ng-hide="oldPart == null">Revert</a>
   <!--ng-disabled="!isChanged()"-->
-  <a ng-click="sync()" class="btn btn-large btn-info">Sync</a>
+  <a ng-click="sync()" class="btn btn-large btn-info" data-ng-hide="oldPart == null">Sync</a>
 </div>
 
 <ng-form>
 
 <h2>
     <span ng-hide="partId">Create </span>
-    {{ partType }}
+    <span ng-show="partId">Edit </span>
+    {{ part.partType.name }}
     <span ng-show="partId">#{{ partId }} </span></h2>
 
 <label>Name</label>
@@ -31,13 +32,13 @@
 </button>
 
 <label>Manufacturer</label>
-<picker ng-model="part.manufacturer" items="manufacturers"></picker>
+<picker ng-model="part.manufacturer" path="other/manufacturer"></picker>
 
 <label>Manufacturer P/N</label>
 <input type="text" ng-model="part.manufacturerPartNumber"/>
 
 <!-- Type-specific fields -->
-<div ng-switch="partType">
+<div ng-switch="part.partType.typeName">
 
     <!-- Backplate -->
     <div ng-switch-when="Backplate">
@@ -102,10 +103,10 @@
     <!-- Bearing Spacer -->
     <div ng-switch-when="BearingSpacer">
         <label>Standard Size</label>
-        <picker path="part?type=BearingSpacer" ng-model="part.standardSize"></picker>
+        <!--<picker path="part?type=BearingSpacer" ng-model="part.standardSize"></picker>-->
 
         <label>Oversize</label>
-        <picker path="part?type=BearingSpacer" ng-model="part.oversize"></picker>
+        <!--<picker path="part?type=BearingSpacer" ng-model="part.oversize"></picker>-->
 
         <label>Outside Diameter (min - max)</label>
         <input type="text" ng-model="part.outsideDiameterMin"/> - <input type="text" ng-model="part.outsideDiameterMax"/>
@@ -162,10 +163,10 @@
     <!-- Journal Bearing -->
     <div ng-switch-when="JournalBearing">
         <label>Standard Size</label>
-        <picker path="part?type=JournalBearing" ng-model="part.standardSize"></picker>
+        <!--<picker path="part?type=JournalBearing" ng-model="part.standardSize"></picker>-->
 
         <label>Oversize</label>
-        <picker path="part?type=JournalBearing" ng-model="part.oversize"></picker>
+        <!--<picker path="part?type=JournalBearing" ng-model="part.oversize"></picker>-->
 
         <label>Outside Diameter (min - max)</label>
         <input type="text" ng-model="part.outsideDiameterMin"/> - <input type="text" ng-model="part.outsideDiameterMax"/>
@@ -229,43 +230,47 @@
     </div>
 </div>
 
-<!-- Interchanges -->
-<dl>
-    <dt>Interchangeable Part Group
-        <span ng-hide="part.interchange.id == null">#{{part.interchange.id}}</span>
-        <span ng-show="part.interchange.id == null">[none]</span>
-    </dt>
-    <dd ng-hide="part.interchange == null">
-        Name:
-        <span ng-hide="part.interchange.name == null || part.interchange.name == ''">{{part.interchange.name}}</span>
-        <span ng-show="part.interchange.name == null || part.interchange.name == ''">[blank]</span>
-    </dd>
-    <dd ng-hide="part.interchange == null">
-        Description:
-        <span ng-hide="part.interchange.description == null || part.interchange.description == ''">{{part.interchange.description}}</span>
-        <span ng-show="part.interchange.description == null || part.interchange.description == ''">[blank]</span>
-    </dd>
-</dl>
+<div data-ng-hide="oldPart == null">
 
-<h3>Bill of Materials</h3>
-<table data-ng-table="bomTableParams" class="table table-bordered table-striped">
-    <tr data-ng-repeat="(index, bomItem) in part.bom">
-        <td title="'Type'">{{bomItem.child.partType.typeName}}</td>
-        <td title="'Name'">{{bomItem.child.name}}</td>
-        <td title="'Manufacturer'">{{bomItem.child.manufacturer.name}}</td>
-        <td title="'Manufacturer Part Number'">{{bomItem.child.manufacturerPartNumber}}</td>
-        <td title="'Quantity'">
-            <input type="text" ng-model="bomItem.quantity"/>
-        </td>
-        <td title="'Actions'">
-            <a ng-click="bomDelete(index, bomItem)" class="btn btn-large btn-danger">Delete</a>
-        </td>
-    </tr>
-</table>
+  <!-- Interchanges -->
+  <dl>
+      <dt>Interchangeable Part Group
+          <span ng-hide="part.interchange.id == null">#{{part.interchange.id}}</span>
+          <span ng-show="part.interchange.id == null">[none]</span>
+      </dt>
+      <dd ng-hide="part.interchange == null">
+          Name:
+          <span ng-hide="part.interchange.name == null || part.interchange.name == ''">{{part.interchange.name}}</span>
+          <span ng-show="part.interchange.name == null || part.interchange.name == ''">[blank]</span>
+      </dd>
+      <dd ng-hide="part.interchange == null">
+          Description:
+          <span ng-hide="part.interchange.description == null || part.interchange.description == ''">{{part.interchange.description}}</span>
+          <span ng-show="part.interchange.description == null || part.interchange.description == ''">[blank]</span>
+      </dd>
+  </dl>
 
-<p>
-    <a ng-href="#/part/{{ partType }}/{{ partId }}/bom/search" class="btn btn-large btn-info">Add Item</a>
-</p>
+  <h3>Bill of Materials</h3>
+  <table ng-table="bomTableParams" class="table table-bordered table-striped">
+      <tr ng-repeat="(index, bomItem) in $data">
+          <td title="'Type'">{{bomItem.child.partType.name}}</td>
+          <td title="'Name'">{{bomItem.child.name}}</td>
+          <td title="'Manufacturer'">{{bomItem.child.manufacturer.name}}</td>
+          <td title="'Manufacturer Part Number'">{{bomItem.child.manufacturerPartNumber}}</td>
+          <td title="'Quantity'">
+              <input type="text" ng-model="bomItem.quantity"/>
+          </td>
+          <td title="'Actions'">
+              <a ng-click="bomDelete(index, bomItem)" class="btn btn-large btn-danger">Delete</a>
+          </td>
+      </tr>
+  </table>
+
+  <p>
+    <a ng-href="#/part/{{ part.partType.typeName }}/{{ partId }}/bom/search" class="btn btn-large btn-info">Add Item</a>
+  </p>
+
+</div>
 
 </ng-form>
 

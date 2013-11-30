@@ -1,8 +1,8 @@
 package com.turbointernational.metadata.domain.part.types;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.type.CoolType;
+import flexjson.JSONSerializer;
 import java.util.Map;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -13,15 +13,13 @@ import javax.persistence.SecondaryTable;
 import net.sf.jsog.JSOG;
 import org.apache.commons.lang.ObjectUtils;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 
 @Configurable
 @Entity
-@RooJpaActiveRecord
 @SecondaryTable(name="bearing_housing", pkJoinColumns=@PrimaryKeyJoinColumn(name = "part_id"))
 public class BearingHousing extends Part {
     
-    @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH, CascadeType.MERGE})
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="cool_type_id", table = "bearing_housing")
     private CoolType coolType;
 
@@ -108,6 +106,14 @@ public class BearingHousing extends Part {
 
     public void setBearingType(String bearingType) {
         this.bearingType = bearingType;
+    }
+
+    @Override
+    protected JSONSerializer buildJSONSerializer() {
+        return super.buildJSONSerializer()
+            .include("coolType.id")
+            .include("coolType.name")
+            .include("coolType.version");
     }
 
     @Override

@@ -1,2 +1,4 @@
-<select ng-controller="PickerCtrl" ng-model="ngModel.id" ng-options="item.id as item.name for item in items" placeholder="Choose..." class="input-large">
-</select>
+<select ng-model="selection.id"
+        ng-options="item.id as item.name for item in items"
+        ng-disabled="items == null"
+        placeholder="Choose..." class="input-large"></select>

@@ -19,9 +19,6 @@ ALTER TABLE `part`
   DROP COLUMN `temp7_char`,
   DROP COLUMN `temp8_char`;
 
-ALTER TABLE `part_type` ADD COLUMN `magento_attribute_set` INTEGER;
-ALTER TABLE `part_type` ADD COLUMN `magento_category` INTEGER;
-
 DROP TABLE IF EXISTS `part_turbo_type`;
 DROP TABLE IF EXISTS `part_attribute`;
 DROP TABLE IF EXISTS `attribute_type`;
@@ -136,3 +133,7 @@ SET `part`.`dtype` = (
     FROM `part_type`
     WHERE `id` = `part`.`part_type_id`
 );
+
+-- Reset BOM items with quantity 999 to 1
+UPDATE `bom` SET quantity = 1 WHERE quantity = 999;
+

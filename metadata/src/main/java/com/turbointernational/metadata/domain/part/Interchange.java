@@ -1,4 +1,5 @@
 package com.turbointernational.metadata.domain.part;
+import com.google.common.collect.Sets;
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
 import java.util.ArrayList;
@@ -36,7 +37,7 @@ public class Interchange {
     private String description;
     
     @OneToMany(mappedBy = "interchange", fetch = FetchType.LAZY)
-    private Set<Part> parts;
+    private Set<Part> parts = Sets.newTreeSet();
     
     @Version
     @Column(name = "version")

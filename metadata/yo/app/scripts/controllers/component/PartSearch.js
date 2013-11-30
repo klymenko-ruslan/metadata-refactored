@@ -1,67 +1,58 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-    .controller('PartSearchCtrl', function ($scope, searchService, ngTableParams) {
-        $scope.partTableParams = new ngTableParams({
-            count: 10,
-            page: 1,
-            counts: [10, 25, 50, 100]
-        });
+    .controller('PartSearchCtrl', function ($log, $q, $scope, searchService, ngTableParams) {
 
-        // Query Parameters
-        $scope.search = {
-            queryString: "",
-            partType: null,
-            facetFilters: {}
-        };
+      // Query Parameters
+      $scope.search = {
+        queryString: "",
+        facetFilters: {}
+      };
 
-        // Latest Results
-        $scope.isSearching = false;
-        $scope.searchResults = null;
+      // Latest Results
+      $scope.searchResults = null;
 
-        $scope.doSearch = function () {
+      $scope.partTableParams = new ngTableParams({
+        page: 1,
+        count: 10,
+        sorting: {
+          manufacturerPartNumber: 'asc'
+        }
+      }, {
+        getData: function($defer, params) {
+          // Update the pagination info
+          $scope.search.count = params.count();
+          $scope.search.page = params.page();
+          $scope.search.sorting = params.sorting();
 
-            // Don't search if we already are
-            if ($scope.isSearching) {
-                return;
-            }
+          $log.log("Searching", $scope.search);
 
-            // Search
-            $scope.isSearching = true;
-
-            searchService($scope.search).then(function (searchResults) {
-                $scope.isSearching = false;
+          searchService($scope.search).then(
+              function(searchResults) {
                 $scope.searchResults = searchResults.data;
-            }, function(result) {
-                $scope.isSearching = false;
-                alert("Could not get search results.");
-            });
-        };
 
-        $scope.$watch("searchResults.hits.total", function(total) {
-            $scope.partTableParams.total = total;
-        });
+                // Update the total and slice the result
+                $defer.resolve($scope.searchResults.hits.hits);
+                params.total($scope.searchResults.hits.total);
+              },
+              function(errorResponse) {
+                alert("Could not complete search");
+                $log.log("Could not complete search", errorResponse);
+                $defer.reject();
+              });
+        }
+      });
 
-        $scope.$watch("partTableParams", function() {
-            $scope.search.count = $scope.partTableParams.count;
-            $scope.search.page = $scope.partTableParams.page;
-            $scope.search.sorting = $scope.partTableParams.sorting;
-        }, true);
+      // Handle updating search results
+      $scope.$watch('search', function() {
+        $log.log("Searching", $scope.search);
+        $scope.partTableParams.reload();
+      }, true);
 
-        // Handle updating search results
-        $scope.$watch('search', function(search) {
-            console.log("Search: " + JSON.stringify(search));
-            $scope.doSearch();
-        }, true);
-
-        $scope.$watch('actions', function(actions) {
-            if (angular.isString(actions)) {
-                $scope.actionList = $scope.actions.split(',');
-            }
-        }, true);
-
-        $scope.$watch('partType', function(partType) {
-            $scope.search.partType = partType;
-        });
+      $scope.$watch('actions', function(actions) {
+        if (angular.isString(actions)) {
+          $scope.actionList = $scope.actions.split(',');
+        }
+      }, true);
 
     });

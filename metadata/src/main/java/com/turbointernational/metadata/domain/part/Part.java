@@ -20,14 +20,16 @@ import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
 import flexjson.ObjectBinder;
 import flexjson.ObjectFactory;
+import flexjson.transformer.HibernateTransformer;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -54,8 +56,7 @@ import javax.persistence.Transient;
 import javax.persistence.TypedQuery;
 import javax.persistence.Version;
 import net.sf.jsog.JSOG;
-import org.apache.commons.lang.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -67,45 +68,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Table(name = "PART")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn
-public class Part {
+public class Part implements Comparable<Part> {
 
     @Transient
     @Autowired(required=true)
     private transient JdbcTemplate metadataDb;
 
     public static final ObjectFactory OBJECT_FACTORY = new ObjectFactory() {
-//        private Gson gson = new Gson();
-//        
-//        Part part = null;
-//        if ("Backplate".equals(partType)) {
-//            gson.fromJson(json, Backplate.class);
-//        } else if ("BearingHousing".equals(partType)) {
-//            gson.fromJson(json, BearingHousing.class);
-//        } else if ("BearingSpacer".equals(partType)) {
-//            gson.fromJson(json, BearingSpacer.class);
-//        } else if ("Cartridge".equals(partType)) {
-//            gson.fromJson(json, Cartridge.class);
-//        } else if ("CompressorWheel".equals(partType)) {
-//            gson.fromJson(json, CompressorWheel.class);
-//        } else if ("Gasket".equals(partType)) {
-//            gson.fromJson(json, Gasket.class);
-//        } else if ("Heatshield".equals(partType)) {
-//            gson.fromJson(json, Heatshield.class);
-//        } else if ("JournalBearing".equals(partType)) {
-//            gson.fromJson(json, JournalBearing.class);
-//        } else if ("Kit".equals(partType)) {
-//            gson.fromJson(json, Kit.class);
-//        } else if ("NozzleRing".equals(partType)) {
-//            gson.fromJson(json, NozzleRing.class);
-//        } else if ("PistonRing".equals(partType)) {
-//            gson.fromJson(json, PistonRing.class);
-//        } else if ("TurbineWheel".equals(partType)) {
-//            gson.fromJson(json, TurbineWheel.class);
-//        } else if ("Turbo".equals(partType)) {
-//            gson.fromJson(json, Turbo.class);
-//        } else {
-//            gson.fromJson(json, Part.class);
-//        }
         
         @Override
         public Object instantiate(ObjectBinder context, Object value, Type targetType, Class targetClass) {
@@ -172,15 +141,12 @@ public class Part {
     //    @Column(name="ti_part_num")
     //    private String tiPartNumber;
     
-    @Column(name="magento_product_id")
-    private Integer magentoProductId;
-    
     @OneToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="part_type_id")
     private PartType partType;
     
     @Column(nullable = false, columnDefinition = "BIT", length = 1)
-    private Boolean inactive;
+    private Boolean inactive = false;
     
     @OneToOne(fetch = FetchType.LAZY)
     @JoinTable(name="interchange_item",
@@ -189,7 +155,7 @@ public class Part {
     private Interchange interchange;
     
     @OneToMany(mappedBy="parent", fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
-    private Collection<BOMItem> bom;
+    private Set<BOMItem> bom = new TreeSet<BOMItem>();
     
     @Version
     @Column(name = "version")
@@ -242,14 +208,6 @@ public class Part {
 //    public void setTiPartNumber(String tiPartNumber) {
 //        this.tiPartNumber = tiPartNumber;
 //    }
-    
-    public Integer getMagentoProductId() {
-        return magentoProductId;
-    }
-    
-    public void setMagentoProductId(Integer magentoProductId) {
-        this.magentoProductId = magentoProductId;
-    }
     
     public PartType getPartType() {
         return partType;
@@ -313,12 +271,13 @@ public class Part {
         
     }
     
-    public Collection<BOMItem> getBom() {
+    public Set<BOMItem> getBom() {
         return bom;
     }
     
-    public void setBom(Collection<BOMItem> bom) {
-        this.bom = bom;
+    public void setBom(Set<BOMItem> bom) {
+        this.bom.clear();
+        this.bom.addAll(bom);
     }
     
     public Integer getVersion() {
@@ -360,6 +319,49 @@ public class Part {
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Serialization">
+
+    protected JSONSerializer buildJSONSerializer() {
+        return new JSONSerializer()
+                .transform(new HibernateTransformer(), this.getClass())
+                .include("partType.id")
+                .include("partType.version")
+                .include("partType.name")
+                .include("partType.typeName")
+                .include("manufacturer.id")
+                .include("manufacturer.version")
+                .include("manufacturer.name")
+                .include("interchange.id")
+                .include("interchange.version")
+                .include("interchange.parts.id")
+                .include("interchange.parts.name")
+                .include("interchange.parts.version")
+                .include("interchange.parts.partType.id")
+                .include("interchange.parts.partType.name")
+                .include("interchange.parts.partType.typeName")
+                .include("interchange.parts.manufacturerPartNumber")
+                .include("interchange.parts.manufacturer.id")
+                .include("interchange.parts.manufacturer.name")
+                .exclude("interchange.parts.*")
+                .include("bom.id")
+                .include("bom.version")
+                .include("bom.child.id")
+                .include("bom.child.version")
+                .include("bom.child.name")
+                .include("bom.child.partType.name")
+                .include("bom.child.partType.typeName")
+                .include("bom.child.manufacturer.id")
+                .include("bom.child.manufacturer.name")
+                .include("bom.child.manufacturerPartNumber")
+                .exclude("bom.child.*")
+                .include("bom.alternatives")
+                .include("bom.alternatives.header")
+                .include("bom.alternatives.part.id")
+                .include("bom.alternatives.part.version")
+                .include("bom.alternatives.part.manufacturer.id")
+                .include("bom.alternatives.part.manufacturer.name")
+                .include("bom.alternatives.part.manufacturerPartNumber")
+                .exclude("bom.alternatives.part.*");
+    }
     
     public JSOG toJsog() {
         JSOG partObject = JSOG.object()
@@ -381,51 +383,24 @@ public class Part {
     }
     
     public String toJson() {
-        return new JSONSerializer()
-                .include("interchange")
-//                .include("bom")
-//                .include("bom.child")
-//                .include("bom.child.id")
-//                .include("bom.alternatives")
-//                .include("bom.alternatives.header")
-//                .include("bom.alternatives.part.id")
-                .exclude("turboModel.turboType.manufacturer")
-                .exclude("*.class")
-//                .exclude("tiinterchanges")
-//                .exclude("interchangeByPartId")
-//                .exclude("magentoProductId")
-                .serialize(this);
-    }
-    
-    public String toJson(String[] fields) {
-        return new JSONSerializer()
-                .include("interchange")
-                .include(fields)
-                .exclude("*.class")
-                .serialize(this);
+        return buildJSONSerializer()
+            .exclude("*.class")
+            .serialize(this);
     }
     
     public static Part fromJsonToPart(String json) {
         Part part = new JSONDeserializer<Part>()
                 .use((String) null, OBJECT_FACTORY)
-                .use("bom", LinkedList.class)
+//                .use("bom", TreeSet.class)
                 .use("bom.values", BOMItem.class)
                 .deserialize(json);
-        
-        // Set the BOM parents (this doesn't deserialize automatically)
-        if (part.getBom() == null) {
-            part.setBom(new LinkedList());
-        }
-        
-        for (BOMItem bomItem : part.getBom()) {
-            bomItem.setParent(part);
-        }
         
         return part;
     }
     
     public static String toJsonArray(Collection<Part> collection) {
         return new JSONSerializer()
+                .transform(new HibernateTransformer(), Part.class)
 //                .include("bom")
                 .exclude("*.class")
                 .serialize(collection);
@@ -433,10 +408,12 @@ public class Part {
     
     public static String toJsonArray(Collection<Part> collection, String[] fields) {
         return new JSONSerializer()
+                .transform(new HibernateTransformer(), Part.class)
                 .include(fields)
                 .exclude("*")
                 .serialize(collection);
     }
+    
     //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="ActiveRecord">
@@ -454,6 +431,7 @@ public class Part {
         return entityManager().createQuery("SELECT COUNT(o) FROM Part o", Long.class).getSingleResult();
     }
     
+    @Transactional
     public static List<Part> findPartEntries(int firstResult, int maxResults, String type) {
         EntityManager em = Part.entityManager();
         TypedQuery<Part> q;
@@ -526,30 +504,9 @@ public class Part {
         this.entityManager.flush();
         return merged;
     }
-    
-    @Transactional
-    public void updateMagentoProductId(int id) {
-        this.magentoProductId = id;
-        merge();
-    }
     //</editor-fold>
     
-    public List<Part> getTIInterchanges() {
-        List<Part> interchangeParts = new ArrayList<Part>();
-        
-        // Stop now if there is no interchange assigned
-        if (interchange == null) {
-            return interchangeParts;
-        }
-        
-        for (Part interchangePart : interchange.getParts()) {
-            if (Manufacturer.TI_ID.equals(interchangePart.getManufacturer().getId())) {
-                interchangeParts.add(interchangePart);
-            }
-        }
-        
-        return interchangeParts;
-    }
+    //<editor-fold defaultstate="collapsed" desc="Magmi">
     
     public void csvColumns(Map<String, String> columns) {
         
@@ -581,7 +538,7 @@ public class Part {
         columns.put("manufacturer_part_number", ObjectUtils.toString(getManufacturerPartNumber()));
         
         // ti_part_sku
-        List<Part> tiInterchanges = getTIInterchanges();
+        List<Part> tiInterchanges = collectTIInterchanges();
         if (!tiInterchanges.isEmpty()) {
             columns.put("ti_part_sku", tiInterchanges.get(0).getId().toString());
         }
@@ -611,7 +568,7 @@ public class Part {
                     tiParts.add(tiAlt.getId());
                 }
                 
-                for (Part tiInterchange : item.getChild().getTIInterchanges()) {
+                for (Part tiInterchange : item.getChild().collectTIInterchanges()) {
                     tiParts.add(tiInterchange.getId());
                 }
                 
@@ -619,54 +576,51 @@ public class Part {
                     bom.add(jsogItem);
                 }
             }
-
+            
             if (bom.size() > 0) {
                 columns.put("bill_of_materials", bom.toString());
             }
         }
         
-        // HACK: We should be getting this through hibernate. It's giving me grief ATM, so moving on...
-        List<String> priceList = metadataDb.queryForList(
-                "SELECT StdPrice FROM mas90_std_price WHERE ItemNumber = ?",
-                String.class, getManufacturerPartNumber());
-        
-        if (!priceList.isEmpty()) {
-            columns.put("price", priceList.get(0));
-        }
-        
+        // Only TI parts get this info
         if (getManufacturer().getId() == Manufacturer.TI_ID) {
+            
+            // Default to quantity 1
             columns.put("quantity", "1");
+            
+            
+            // HACK: We should be getting this through hibernate. It's giving me grief ATM, so moving on...
+            List<String> priceList = metadataDb.queryForList(
+                    "SELECT StdPrice FROM mas90_std_price WHERE ItemNumber = ?",
+                    String.class, getManufacturerPartNumber());
+            
+            if (!priceList.isEmpty()) {
+                columns.put("price", priceList.get(0));
+            }
         }
     }
+    
+    public List<Part> collectTIInterchanges() {
+        List<Part> interchangeParts = new ArrayList<Part>();
+        
+        // Stop now if there is no interchange assigned
+        if (interchange == null) {
+            return interchangeParts;
+        }
+        
+        for (Part interchangePart : interchange.getParts()) {
+            if (Manufacturer.TI_ID.equals(interchangePart.getManufacturer().getId())) {
+                interchangeParts.add(interchangePart);
+            }
+        }
+        
+        return interchangeParts;
+    }
+    
+    //</editor-fold>
 
-    
-//    public Set<Part> getBomAltPartsForManufacturer(BOMAlternativeHeader bomAltHeader, Manufacturer manufacturer) {
-//        Set<Part> altParts = new TreeSet<Part>();
-//        
-//        for (BOMItem item : bom) {
-//            for (BOMAlternative alt : item.getAlternatives()) {
-//                if (ObjectUtils.equals(alt.getHeader().getId(), bomAltHeader.getId())
-//                    && ObjectUtils.equals(alt.getPart().getManufacturer().getId(), manufacturer.getId())) {
-//                    altParts.add(alt.getPart());
-//                }
-//            }
-//        }
-//        
-//        return altParts;
-//        
-////        JPA style
-////        return entityManager.createQuery(
-////                                  "SELECT DISTINCT bap\n"
-////                                + "FROM\n"
-////                                + "  BOMAlternative ba\n"
-////                                + "  JOIN ba.part bap\n"
-////                                + "  JOIN bap.manufacturer bapm\n"
-////                                + "WHERE\n"
-////                                + "  bapm = :manufacturer\n"
-////                                + "  ba = :bomAltHeader")
-////                .setParameter("bomAltHeader", bomAltHeader)
-////                .setParameter("manufacturer", manufacturer)
-////                .getResultList();
-//    }
-    
+    @Override
+    public int compareTo(Part o) {
+        return ObjectUtils.compare(this.id, o.id);
+    }
 }

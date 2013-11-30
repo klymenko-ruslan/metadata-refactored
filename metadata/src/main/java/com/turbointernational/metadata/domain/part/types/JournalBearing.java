@@ -1,5 +1,6 @@
 package com.turbointernational.metadata.domain.part.types;
 import com.turbointernational.metadata.domain.part.Part;
+import flexjson.JSONSerializer;
 import java.util.Map;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,11 +13,9 @@ import javax.persistence.SecondaryTable;
 import net.sf.jsog.JSOG;
 import org.apache.commons.lang.ObjectUtils;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 
 @Configurable
 @Entity
-@RooJpaActiveRecord
 @SecondaryTable(name="journal_bearing", pkJoinColumns=@PrimaryKeyJoinColumn(name = "part_id"))
 public class JournalBearing extends Part {
 
@@ -90,6 +89,21 @@ public class JournalBearing extends Part {
 
     public void setInsideDiameterMax(Float insideDiameterMax) {
         this.insideDiameterMax = insideDiameterMax;
+    }
+    
+    @Override
+    protected JSONSerializer buildJSONSerializer() {
+        return super.buildJSONSerializer()
+            .include("standardSize.id")
+            .include("standardSize.manufacturer.id")
+            .include("standardSize.manufacturer.name")
+            .include("standardSize.manufacturerPartNumber")
+            .include("standardSize.version")
+            .include("oversize.id")
+            .include("oversize.manufacturer.id")
+            .include("oversize.manufacturer.name")
+            .include("oversize.manufacturerPartNumber")
+            .include("oversize.version");
     }
 
     @Override
