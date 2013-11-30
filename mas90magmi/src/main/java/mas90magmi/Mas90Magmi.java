@@ -11,6 +11,7 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import org.apache.commons.lang.StringUtils;
@@ -23,7 +24,31 @@ public class Mas90Magmi {
     
     static final String PRICE_LEVEL_CODE = "0";
     
+    private static SortedSet<String> priceLevels = new TreeSet();
+    
+    static {
+        
+        TreeSet<String> tempPriceLevels = new TreeSet();
+        tempPriceLevels.add("0");
+        tempPriceLevels.add("1");
+        tempPriceLevels.add("2");
+        tempPriceLevels.add("3");
+        tempPriceLevels.add("4");
+        tempPriceLevels.add("5");
+        tempPriceLevels.add("E");
+        tempPriceLevels.add("R");
+        tempPriceLevels.add("W");
+        
+        Mas90Magmi.priceLevels = Collections.unmodifiableSortedSet(tempPriceLevels);
+    }
+
+    public static SortedSet<String> getPriceLevels() {
+        return priceLevels;
+    }
+    
     private Database db;
+    
+    private volatile PriceCalculator priceCalculator;
 
     public Mas90Magmi(String path) throws IOException {
         db = DatabaseBuilder.open(new File(path));
@@ -75,23 +100,6 @@ public class Mas90Magmi {
         return StringUtils.rightPad(itemNumber, 15);
     }
 
-    public Set<String> getPriceLevels() throws IOException {
-        Table table = db.getTable("AR_Customer");
-        
-        Set<String> priceLevels = new TreeSet<String>();
-        
-        // TODO: Ugly hack alert
-        for (Row row : table) {
-            String priceLevel = (String) row.get("PriceLevel");
-            
-            if (priceLevel != null) {
-                priceLevels.add(priceLevel);
-            }
-        }
-        
-        return priceLevels;
-    }
-    
     public Map<String, Pricing> getPriceLevelPricings() throws IOException {
         Table table = db.getTable("IMB_PriceCode");
         
@@ -120,5 +128,17 @@ public class Mas90Magmi {
         }
         
         return priceLevelPricings;
+    }
+    
+    public PriceCalculator getCalculator() throws IOException {
+        if (priceCalculator == null) {
+            synchronized (this) {
+                if (priceCalculator == null) {
+                    priceCalculator = new PriceCalculator(getPriceLevelPricings());
+                }
+            }
+        }
+        
+        return priceCalculator;
     }
 }

@@ -123,7 +123,6 @@ public class Mas90MagmiTest {
     @Test
     public void testGetPriceLevels() throws Exception {
         Set<String> expectedPriceLevels = new HashSet<String>();
-        expectedPriceLevels.add("#");
         expectedPriceLevels.add("0");
         expectedPriceLevels.add("1");
         expectedPriceLevels.add("2");
@@ -134,7 +133,7 @@ public class Mas90MagmiTest {
         expectedPriceLevels.add("R");
         expectedPriceLevels.add("W");
         
-        Set<String> priceLevels = instance.getPriceLevels();
+        Set<String> priceLevels = Mas90Magmi.getPriceLevels();
         
         assertEquals(expectedPriceLevels, priceLevels);
     }
