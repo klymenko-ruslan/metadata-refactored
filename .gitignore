@@ -4,5 +4,6 @@
 metadata/yo/.idea/
 **/nbactions.xml
 /metadata/target
+/mas90magmi/target
 /docs/sql/script.sql
 /docs/sql/data.sql
