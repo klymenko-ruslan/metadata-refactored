@@ -8,8 +8,16 @@ import static mas90magmi.DiscountType.Override;
 import static mas90magmi.DiscountType.Percentage;
 
 /**
- *
- * @author jrodriguez
+ * Quantity-based tiered pricing.
+ * 
+ * MAS90 supports 5 levels of price breaks. See: {@link #BREAK_COUNT}
+ * 
+ * Each level has a quantity and 'rate' used to calculate the final price.
+ * 
+ * The meaning of the price break 'rate' depends on the pricing discount type.
+ * See {@link #applyPriceBreak(int, java.math.BigDecimal)}
+ * 
+ * A price break with quantity 999999 is the last price break.
  */
 public class Pricing {
     
