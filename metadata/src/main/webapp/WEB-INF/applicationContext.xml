@@ -103,6 +103,10 @@
         </property>
     </bean>
     
+    <bean class="mas90magmi.Mas90Magmi">
+        <constructor-arg value="${mas90.db.path}"/>
+    </bean>
+    
     <task:annotation-driven executor="asyncExecutor" mode="aspectj"/>
     <task:executor id="asyncExecutor" pool-size="10"/>
 </beans>

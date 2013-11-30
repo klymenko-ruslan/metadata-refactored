@@ -587,16 +587,6 @@ public class Part implements Comparable<Part> {
             
             // Default to quantity 1
             columns.put("quantity", "1");
-            
-            
-            // HACK: We should be getting this through hibernate. It's giving me grief ATM, so moving on...
-            List<String> priceList = metadataDb.queryForList(
-                    "SELECT StdPrice FROM mas90_std_price WHERE ItemNumber = ?",
-                    String.class, getManufacturerPartNumber());
-            
-            if (!priceList.isEmpty()) {
-                columns.put("price", priceList.get(0));
-            }
         }
     }
     

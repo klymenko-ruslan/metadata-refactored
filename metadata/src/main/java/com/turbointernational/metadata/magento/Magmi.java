@@ -1,16 +1,24 @@
 package com.turbointernational.metadata.magento;
 
 import au.com.bytecode.opencsv.CSVWriter;
+import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.Part;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletResponse;
+import mas90magmi.ItemPricing;
+import mas90magmi.Mas90Magmi;
+import mas90magmi.PriceCalculator;
+import mas90magmi.PriceCalculator.CalculatedPrice;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -92,8 +100,23 @@ public class Magmi {
         "width_max",
         "width_min",
         //</editor-fold>
+        
+        //<editor-fold defaultstate="collapsed" desc="MAS90 Price Levels">
+        "tier_price:ERP_PL_0",
+        "tier_price:ERP_PL_1",
+        "tier_price:ERP_PL_2",
+        "tier_price:ERP_PL_3",
+        "tier_price:ERP_PL_4",
+        "tier_price:ERP_PL_5",
+        "tier_price:ERP_PL_E",
+        "tier_price:ERP_PL_R",
+        "tier_price:ERP_PL_W"
+        //</editor-fold>
             
     };
+    
+    @Autowired(required=true)
+    Mas90Magmi mas90;
     
     @RequestMapping("/products")
     @ResponseBody
@@ -136,6 +159,7 @@ public class Magmi {
         int count = 100;
         
         do {
+            logger.log(Level.INFO, "Writing parts {0}-{1}", new Object[]{start, start+count});
             
             // Get the next batch of parts
             parts = Part.findPartEntries(start, count);
@@ -147,7 +171,7 @@ public class Magmi {
                     writer.writeNext(partToProductCsvRow(part));
                 } catch (Exception e) {
                     logger.log(Level.INFO, "Failed to synchronize part " + part.getId(), e);
-                    throw e;
+                    continue;
                 }
             }
         } while (parts.size() > 0);
@@ -155,11 +179,16 @@ public class Magmi {
         return start;
     }
     
-    private String[] partToProductCsvRow(Part part) {
+    private String[] partToProductCsvRow(Part part) throws IOException {
         
         // Get the part's column values
         Map<String, String> columns = new HashMap<String, String>();
         part.csvColumns(columns);
+        
+        // Add ERP pricing details if this is a TI part
+        if (Manufacturer.TI_ID.equals(part.getManufacturer().getId())) {
+            addErpPricing(columns, part.getManufacturerPartNumber());
+        }
 
         // Map the column into a value array for the CSV writer
         String[] valueArray = new String[HEADERS.length];
@@ -171,5 +200,45 @@ public class Magmi {
         }
         
         return valueArray;
+    }
+    
+    private void addErpPricing(Map<String, String> columns, String partNumber) throws IOException {
+        ItemPricing itemPricing = mas90.getItemPricing(partNumber);
+        PriceCalculator calculator = mas90.getCalculator();
+        
+        // Nothing to do!
+        if (itemPricing.getStandardPrice() == null) {
+            logger.log(Level.INFO, "No pricing info for TI part number: `{0}'", partNumber);
+            return;
+        }
+        columns.put("price", itemPricing.getStandardPrice().toString());
+        
+        // Add column data for each price level
+        for (String priceLevel : Mas90Magmi.getPriceLevels()) {
+            String columnName = "tier_price:ERP_PL_" + priceLevel;
+            
+            // Get the price level pricing
+            StringBuilder priceString = new StringBuilder();
+            Iterator<CalculatedPrice> prices = calculator.calculatePriceBreaks(priceLevel, itemPricing);
+            
+            // Build the value string "quantity1:price1;quantityN:priceN"
+            while (prices.hasNext()) {
+                CalculatedPrice price = prices.next();
+                
+                if (price.getBreakLevel() > 0) {
+                    priceString.append(";");
+                }
+                
+                priceString.append(price.getQuantity());
+                priceString.append(":");
+                priceString.append(price.getPrice());
+            }
+            
+            if (priceString.length() > 0) {
+                columns.put(columnName, priceString.toString());
+            }
+            
+            mas90.getCalculator().calculateLevelPrices(itemPricing);
+        }
     }
 }
