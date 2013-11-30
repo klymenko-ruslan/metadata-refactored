@@ -173,6 +173,6 @@ public class PricingTest {
         
         instance = Pricing.fromRow(mockRow, "ItemMethod");
         
-        assertEquals(new BigDecimal("50.00"), instance.applyPriceBreak(0, new BigDecimal("200"))); // $200, 25% discount
+        assertEquals(new BigDecimal("150.00"), instance.applyPriceBreak(0, new BigDecimal("200"))); // $200 @ 25% discount
     }
 }

@@ -97,8 +97,9 @@ public class Pricing {
                 return priceBreak.getRate();
             case Percentage:
                 BigDecimal pctMultiplier = priceBreak.getRate().movePointLeft(2);
+                BigDecimal discountAmount = standardPrice.multiply(pctMultiplier);
                 
-                return standardPrice.multiply(pctMultiplier);
+                return standardPrice.subtract(discountAmount);
             default:
                 throw new IllegalStateException("Unknown discount type.");
         }
