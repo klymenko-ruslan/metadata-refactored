@@ -1,5 +1,5 @@
 package com.turbointernational.metadata.domain.part;
-import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.bom.BOMItem;
 import com.turbointernational.metadata.domain.part.types.Backplate;
@@ -540,8 +540,8 @@ public class Part implements Comparable<Part> {
         
         // ti_part_sku / interchanges
         if (interchange != null) {
-            List<String> interchanges = Lists.newArrayList();
-            List<String> tiInterchanges = Lists.newArrayList();
+            Set<String> interchanges = Sets.newTreeSet();
+            Set<String> tiInterchanges = Sets.newTreeSet();
             
             for (Part part : getInterchange().getParts()) {
                 
