@@ -51,8 +51,8 @@ public class Kit extends Part {
     public void csvColumns(Map<String, String> columns) {
         super.csvColumns(columns);
         
-        if (getKitType() != null) {
-            columns.put("kit_type", ObjectUtils.toString(getKitType().getName()));
+        if (kitType != null) {
+            columns.put("kit_type", kitType.getName());
         }
     }
 }

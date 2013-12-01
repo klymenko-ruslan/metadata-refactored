@@ -1,4 +1,5 @@
 package com.turbointernational.metadata.domain.part;
+import com.google.common.collect.Lists;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.bom.BOMItem;
 import com.turbointernational.metadata.domain.part.types.Backplate;
@@ -70,11 +71,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn
 public class Part implements Comparable<Part> {
-
-    @Transient
-    @Autowired(required=true)
-    private transient JdbcTemplate metadataDb;
-
+    
     public static final ObjectFactory OBJECT_FACTORY = new ObjectFactory() {
         
         @Override
@@ -541,11 +538,25 @@ public class Part implements Comparable<Part> {
         // manufacturer_part_number
         columns.put("manufacturer_part_number", ObjectUtils.toString(getManufacturerPartNumber()));
         
-        // ti_part_sku
-        columns.put("ti_part_sku", StringUtils.join(collectTIInterchanges(), ","));
-        
-        // interchanges
-        columns.put("interchanges", StringUtils.join(getInterchange().getParts(), ","));
+        // ti_part_sku / interchanges
+        if (interchange != null) {
+            List<String> interchanges = Lists.newArrayList();
+            List<String> tiInterchanges = Lists.newArrayList();
+            
+            for (Part part : getInterchange().getParts()) {
+                
+                // all interchangeable parts
+                interchanges.add(part.getId().toString());
+                
+                // TI interchangeable parts
+                if (Manufacturer.TI_ID == part.getManufacturer().getId()) {
+                    tiInterchanges.add(part.getId().toString());
+                }
+            }
+            
+            columns.put("interchanges", StringUtils.join(interchanges, ","));
+            columns.put("ti_part_sku", StringUtils.join(tiInterchanges, ","));
+        }
         
         // categories
         StringBuilder categories = new StringBuilder("Manufacturer/")

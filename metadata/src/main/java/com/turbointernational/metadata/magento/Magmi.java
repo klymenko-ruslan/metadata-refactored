@@ -47,11 +47,20 @@ public class Magmi {
         "description",
         "manufacturer",
         "manufacturer_part_number",
-        "ti_part_sku",
         "categories",
+        "ti_part_sku",       // Interchangeable parts by TI
+        "interchanges",      // Interchangeable parts
         "bill_of_materials", // BOM
         "price",
         "quantity",
+        //</editor-fold>
+        
+        //<editor-fold defaultstate="collapsed" desc="Types">
+        "kit_type",
+        "gasket_type",
+        "seal_type",
+        "cool_type",
+        "turbo_model_name",
         //</editor-fold>
         
         //<editor-fold defaultstate="collapsed" desc="Part Type Specifics">
@@ -60,11 +69,9 @@ public class Magmi {
         "bore_oe",
         "compressor_housing_diameter",
         "compressor_wheel_diameter",
-        "cool_type",
         "design_features",
         "exduce_oa",
         "exducer_oc",
-        "gasket_type",
         "hub_length_d",
         "i_gap_max",
         "i_gap_min",
@@ -75,7 +82,6 @@ public class Magmi {
         "inside_diameter_max",
         "inside_diameter_min",
         "journal_od",
-        "kit_type",
         "number_of_blades",
         "oil",
         "oil_inlet",
@@ -89,14 +95,12 @@ public class Magmi {
         "overall_height",
         "oversize_id",
         "piston_ring_diameter",
-        "seal_type",
         "secondary_diameter",
         "shaft_thread_f",
         "standard_size_id",
         "stem_oe",
         "style_compressor_wheel",
         "tip_height_b",
-        "turbo_model_name",
         "water_ports",
         "width_max",
         "width_min",
@@ -172,7 +176,7 @@ public class Magmi {
                     writer.writeNext(partToProductCsvRow(part));
                 } catch (Exception e) {
                     logger.log(Level.INFO, "Failed to synchronize part " + part.getId(), e);
-                    continue;
+                    throw e;
                 }
             }
         } while (parts.size() > 0);
