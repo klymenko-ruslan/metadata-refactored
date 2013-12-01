@@ -48,9 +48,9 @@ import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PersistenceContext;
-import javax.persistence.PrePersist;
+import javax.persistence.PostPersist;
+import javax.persistence.PostUpdate;
 import javax.persistence.PreRemove;
-import javax.persistence.PreUpdate;
 import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -61,7 +61,6 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
 @Cacheable
@@ -301,9 +300,9 @@ public class Part implements Comparable<Part> {
         }
     }
     
-    @PrePersist
-    @PreUpdate
-    public void preUpdatePersist() throws Exception {
+    @PostPersist
+    @PostUpdate
+    public void updateIndex() throws Exception {
         indexPart();
     }
     
@@ -364,6 +363,7 @@ public class Part implements Comparable<Part> {
     public JSOG toJsog() {
         JSOG partObject = JSOG.object()
                 .put("id", id)
+                .put("_id", id)
                 .put("name", name)
                 .put("description", description)
                 .put("manufacturer_name", manufacturer.getName())

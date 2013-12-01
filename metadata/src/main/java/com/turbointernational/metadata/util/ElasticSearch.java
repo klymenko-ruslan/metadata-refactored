@@ -99,8 +99,14 @@ public class ElasticSearch {
     
     @Transactional
     public void indexPart(Part part) throws Exception {
-        Index.Builder indexBuilder = new Index.Builder(part.toJson()).id(part.getId().toString());
-        JestResult result = client().execute(indexBuilder.build());
+        Index index = new Index
+                .Builder(part.toJson())
+                .index(metadataIndex)
+                .type(partType)
+                .id(part.getId().toString())
+                .build();
+        
+        JestResult result = client().execute(index);
         
         if (!result.isSucceeded()) {
             throw new Error(result.getJsonString());
@@ -146,12 +152,10 @@ public class ElasticSearch {
 
     @Async
     public void deletePart(Part part) throws Exception {
-        client().execute(
-                new Delete.Builder()
-                    .index(metadataIndex)
-                    .type(partType)
-                    .id(part.getId().toString())
-                    .build());
+        Delete delete = new Delete
+                .Builder(metadataIndex, partType, part.getId().toString())
+                .build();
+        client().execute(delete);
     }
 
 }

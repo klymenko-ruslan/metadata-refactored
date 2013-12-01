@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -176,7 +175,7 @@ public class Magmi {
                     writer.writeNext(partToProductCsvRow(part));
                 } catch (Exception e) {
                     logger.log(Level.INFO, "Failed to synchronize part " + part.getId(), e);
-                    throw e;
+                    continue;
                 }
             }
         } while (parts.size() > 0);
