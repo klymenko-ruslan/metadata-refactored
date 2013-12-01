@@ -45,18 +45,32 @@ public class Mas90Magmi {
         return priceLevels;
     }
     
-    private Database db;
+    private File path;
+    
+    private volatile Database db;
     
     private volatile PriceCalculator priceCalculator;
 
     public Mas90Magmi(String path) throws IOException {
-        db = DatabaseBuilder.open(new File(path));
+        this.path = new File(path);
+    }
+    
+    private Database db() throws IOException {
+        if (db == null) {
+            synchronized(this) {
+                if (db == null) {
+                    db = DatabaseBuilder.open(path);
+                }
+            }
+        }
+        
+        return db;
     }
 
     public BigDecimal getStandardPrice(String itemNumber) throws IOException {
         itemNumber = padItemNumber(itemNumber);
         
-        Table table = db.getTable("IM1_InventoryMasterFile");
+        Table table =  db().getTable("IM1_InventoryMasterFile");
         
         Row row = CursorBuilder.findRow(table, Collections.singletonMap("ItemNumber", itemNumber));
         
@@ -75,7 +89,7 @@ public class Mas90Magmi {
         ItemPricing itemPricing = new ItemPricing(itemNumber, getStandardPrice(itemNumber));
         
         // TODO: Iterating every row in this table is awfully hacky; import into SQL first?
-        Table table = db.getTable("IMB_PriceCode");
+        Table table = db().getTable("IMB_PriceCode");
         for (Row row : table) {
             
             // Check for our item number
@@ -100,7 +114,7 @@ public class Mas90Magmi {
     }
 
     public Map<String, Pricing> getPriceLevelPricings() throws IOException {
-        Table table = db.getTable("IMB_PriceCode");
+        Table table = db().getTable("IMB_PriceCode");
         
         Map<String, Pricing> priceLevelPricings = new TreeMap();
         
