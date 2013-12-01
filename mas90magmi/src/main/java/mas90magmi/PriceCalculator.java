@@ -92,12 +92,17 @@ public class PriceCalculator {
     List<CalculatedPrice> calculate(BigDecimal standardPrice, Pricing pricing) {
         List<CalculatedPrice> prices = new ArrayList();
 
-        // Add price breaks as long as their quantity is > 0
-        int breakLevel = 0;
-        PriceBreak priceBreak = pricing.getPriceBreak(breakLevel);
-        while (priceBreak.getQuantity() > 0) {
+        // Calculate prices for each price break
+        for (int i = 0; i < Pricing.BREAK_COUNT; i++) {
+            PriceBreak priceBreak = pricing.getPriceBreak(i);
+            
+            // Add price breaks until their quantity == 0
+            if (priceBreak.getQuantity() == 0) {
+                break;
+            }
+        
             BigDecimal price = priceBreak.apply(standardPrice);
-            prices.add(new CalculatedPrice(breakLevel, priceBreak.getQuantity(), price));
+            prices.add(new CalculatedPrice(i, priceBreak.getQuantity(), price));
         }
         
         return prices;

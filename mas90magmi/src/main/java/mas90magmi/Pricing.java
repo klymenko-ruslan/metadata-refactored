@@ -80,11 +80,19 @@ public class Pricing {
     }
     
     private final DiscountType discountType;
-    private final BigDecimal[] breaks = new BigDecimal[BREAK_COUNT];
-    private final BigDecimal[] rates  = new BigDecimal[BREAK_COUNT];
+    private final BigDecimal[] breaks;
+    private final BigDecimal[] rates;
+    
+    public Pricing(DiscountType discountType, BigDecimal[] breaks, BigDecimal[] rates) {
+        this.discountType = discountType;
+        this.breaks = breaks;
+        this.rates = rates;
+    }
     
     private Pricing(DiscountType discountType) {
         this.discountType = discountType;
+        this.breaks = new BigDecimal[BREAK_COUNT];
+        this.rates = new BigDecimal[BREAK_COUNT];
     }
 
     public PriceBreak getPriceBreak(int level) {
