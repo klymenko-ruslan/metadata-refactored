@@ -1,7 +1,5 @@
 package mas90magmi;
 
-import mas90magmi.Pricing;
-import mas90magmi.DiscountType;
 import com.healthmarketscience.jackcess.Row;
 import mas90magmi.Pricing.PriceBreak;
 import java.math.BigDecimal;

@@ -2,12 +2,10 @@ package mas90magmi;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
-import java.util.concurrent.atomic.AtomicInteger;
 import mas90magmi.Pricing.PriceBreak;
 
 /**
