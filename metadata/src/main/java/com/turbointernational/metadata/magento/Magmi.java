@@ -38,6 +38,7 @@ public class Magmi {
         
         //<editor-fold defaultstate="collapsed" desc="Basic">
         "sku",
+        "part_type",
         "attribute_set",
         "type",
         "visibility",
@@ -63,7 +64,7 @@ public class Magmi {
         "design_features",
         "exduce_oa",
         "exducer_oc",
-        "gasket_type_name",
+        "gasket_type",
         "hub_length_d",
         "i_gap_max",
         "i_gap_min",

@@ -510,6 +510,9 @@ public class Part implements Comparable<Part> {
     
     public void csvColumns(Map<String, String> columns) {
         
+        // part_type
+        columns.put("part_type", getPartType().getName());
+        
         // sku
         columns.put("sku", getId().toString());
         

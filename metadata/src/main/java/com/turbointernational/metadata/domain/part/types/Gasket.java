@@ -43,7 +43,7 @@ public class Gasket extends Part {
         JSOG partObject = super.toJsog();
         
         if (gasketType != null) {
-            partObject.put("gasket_type_name", gasketType.getName());
+            partObject.put("gasket_type", gasketType.getName());
         }
         
         return partObject;
