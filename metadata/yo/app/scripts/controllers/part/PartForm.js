@@ -23,7 +23,9 @@ angular.module('ngMetaCrudApp')
             });
       } else {
         $scope.partId = null;
-        $scope.part = {};
+        $scope.part = {
+          bom: []
+        };
       }
 
       // Set the part type
