@@ -188,7 +188,7 @@ public class Magmi {
         
         // Add ERP pricing details if this is a TI part
         if (Manufacturer.TI_ID.equals(part.getManufacturer().getId())) {
-            addErpPricing(columns, part.getManufacturerPartNumber());
+            addErpGroupPrices(columns, part.getManufacturerPartNumber());
         }
 
         // Map the column into a value array for the CSV writer
@@ -203,13 +203,13 @@ public class Magmi {
         return valueArray;
     }
     
-    private void addErpPricing(Map<String, String> columns, String partNumber) throws IOException {
+    private void addErpGroupPrices(Map<String, String> columns, String partNumber) throws IOException {
         ItemPricing itemPricing = mas90.getItemPricing(partNumber);
         PriceCalculator calculator = mas90.getCalculator();
         
         // Nothing to do!
         if (itemPricing.getStandardPrice() == null) {
-            logger.log(Level.INFO, "No pricing info for TI part number: `{0}'", partNumber);
+            logger.log(Level.INFO, "No pricing info for TI part number: {0}", partNumber);
             return;
         }
         columns.put("price", itemPricing.getStandardPrice().toString());
@@ -220,26 +220,30 @@ public class Magmi {
             
             // Get the price level pricing
             StringBuilder priceString = new StringBuilder();
-            Iterator<CalculatedPrice> prices = calculator.calculatePriceBreaks(priceLevel, itemPricing);
+            List<CalculatedPrice> prices = calculator.getPriceLevelPrices(priceLevel, itemPricing);
+            
+            // MAS90's uses "up to this quantity", Magento is "this quantity and up"
+            // Keep track of the previous quantity so we can use the proper quantity in Magento
+            int previousQuantity = 0;
             
             // Build the value string "quantity1:price1;quantityN:priceN"
-            while (prices.hasNext()) {
-                CalculatedPrice price = prices.next();
-                
+            for (CalculatedPrice price : prices) {
                 if (price.getBreakLevel() > 0) {
                     priceString.append(";");
                 }
                 
-                priceString.append(price.getQuantity());
+                priceString.append(previousQuantity + 1);
                 priceString.append(":");
                 priceString.append(price.getPrice());
+                
+                // Update the previous quantity
+                previousQuantity = price.getQuantity();
             }
             
+            // Add the column
             if (priceString.length() > 0) {
                 columns.put(columnName, priceString.toString());
             }
-            
-            mas90.getCalculator().calculateLevelPrices(itemPricing);
         }
     }
 }

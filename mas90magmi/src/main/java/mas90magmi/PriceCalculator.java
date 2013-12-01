@@ -1,8 +1,11 @@
 package mas90magmi;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import mas90magmi.Pricing.PriceBreak;
@@ -14,23 +17,14 @@ import mas90magmi.Pricing.PriceBreak;
 public class PriceCalculator {
     
     public static class CalculatedPrice {
-        private String priceLevel;
         private int breakLevel;
         private int quantity;
         private BigDecimal price;
 
-        public CalculatedPrice(String priceLevel, int breakLevel, int quantity, BigDecimal price) {
-            this.priceLevel = priceLevel;
+        public CalculatedPrice(int breakLevel, int quantity, BigDecimal price) {
             this.breakLevel = breakLevel;
             this.quantity = quantity;
             this.price = price;
-        }
-
-        /**
-         * @return the priceLevel
-         */
-        public String getPriceLevel() {
-            return priceLevel;
         }
 
         /**
@@ -61,62 +55,53 @@ public class PriceCalculator {
         this.priceLevelPricings = priceLevelPricings;
     }
     
-    public Map<String, BigDecimal> calculateLevelPrices(ItemPricing item) {
-        Map<String, BigDecimal> prices = new TreeMap();
-        Map<String, Pricing> itemPriceLevelPricings = item.getPriceLevelPricings();
+    public Map<Customer, List<CalculatedPrice>> calculateCustomerSpecificPrices(ItemPricing item) {
+        Map<Customer, List<CalculatedPrice>> prices = new TreeMap();
         
-        for (String priceLevel : Mas90Magmi.getPriceLevels()) {
+        // Calculate customer-specific prices
+        for (Entry<Customer, Pricing> pricing : item.getCustomerPricings().entrySet()) {
             
-            // Get the item-level pricing if there is one
-            Pricing itemPriceLevelPricing = itemPriceLevelPricings.get(priceLevel);
-            if (itemPriceLevelPricing != null) {
-                BigDecimal price = itemPriceLevelPricing.applyPriceBreak(0, item.getStandardPrice());
-                prices.put(priceLevel, price);
-                continue;
-            }
+            List<CalculatedPrice> customerPrices = calculate(
+                    item.getStandardPrice(),
+                    pricing.getValue());
             
-            // Fall back to price-level pricing
-            Pricing priceLevelPricing = priceLevelPricings.get(priceLevel);
-            BigDecimal price = priceLevelPricing.applyPriceBreak(0, item.getStandardPrice());
-            prices.put(priceLevel, price);
+            
+            prices.put(pricing.getKey(), customerPrices);
         }
         
         return prices;
     }
     
-    public Pricing getPriceLevelPricing(String priceLevel, ItemPricing item) {
+    public List<CalculatedPrice> getPriceLevelPrices(final String priceLevel, final ItemPricing item) {
         
-        // Get the item-level pricing if there is one
-        Pricing itemPriceLevelPricing = item.getPriceLevelPricings().get(priceLevel);
-        if (itemPriceLevelPricing != null) {
-            return itemPriceLevelPricing;
-        }
-
+        // Get the item-price-level pricing, if any
+        Pricing pricing = item.getPriceLevelPricings().get(priceLevel);
+        
         // Fall back to price-level pricing
-        return priceLevelPricings.get(priceLevel);
+        if (pricing == null) {
+            pricing = priceLevelPricings.get(priceLevel);
+        }
+        
+        return calculate(item.getStandardPrice(), pricing);
     }
     
-    public Iterator<CalculatedPrice> calculatePriceBreaks(final String priceLevel, final ItemPricing item) {
-        final AtomicInteger nextBreakLevel = new AtomicInteger(0);
-        
-        final Pricing priceLevelPricing = getPriceLevelPricing(priceLevel, item);
-        
-        return new Iterator<CalculatedPrice>() {
-            public boolean hasNext() {
-                PriceBreak priceBreak = priceLevelPricing.getPriceBreak(nextBreakLevel.get());
-                return priceBreak.getQuantity() > 0;
-            }
+    /**
+     * Calculates the price quantity breaks for a given pricing.
+     * @param standardPrice the standard price.
+     * @param pricing the pricing to calculate based on the standard price.
+     * @return a list of quantity break prices.
+     */
+    List<CalculatedPrice> calculate(BigDecimal standardPrice, Pricing pricing) {
+        List<CalculatedPrice> prices = new ArrayList();
 
-            public CalculatedPrice next() {
-                PriceBreak priceBreak = priceLevelPricing.getPriceBreak(nextBreakLevel.get());
-                BigDecimal price = priceLevelPricing.applyPriceBreak(nextBreakLevel.get(), item.getStandardPrice());
-                
-                return new CalculatedPrice(priceLevel, nextBreakLevel.getAndIncrement(), priceBreak.getQuantity(), price);
-            }
-
-            public void remove() {
-                throw new UnsupportedOperationException("Not supported.");
-            }
-        };
+        // Add price breaks as long as their quantity is > 0
+        int breakLevel = 0;
+        PriceBreak priceBreak = pricing.getPriceBreak(breakLevel);
+        while (priceBreak.getQuantity() > 0) {
+            BigDecimal price = priceBreak.apply(standardPrice);
+            prices.add(new CalculatedPrice(breakLevel, priceBreak.getQuantity(), price));
+        }
+        
+        return prices;
     }
 }

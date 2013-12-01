@@ -50,16 +50,11 @@ public class PricingTest {
         
         assertEquals(DiscountType.Override, instance.getDiscountType());
         
-        // Using the default pricing instance
-        PriceBreak expected = new Pricing.PriceBreak(0, new BigDecimal("999999"), new BigDecimal("5000.0000"));
-        
-        
         PriceBreak actual = instance.getPriceBreak(0);
         
-        
-        assertEquals(expected.getPosition(), actual.getPosition());
-        assertEquals(expected.getQuantity(), actual.getQuantity());
-        assertEquals(expected.getRate(), actual.getRate());
+        assertEquals(0, actual.getPosition());
+        assertEquals(999999, actual.getQuantity());
+        assertEquals(new BigDecimal("5000.0000"), actual.getRate());
                 
         
         // Check the other values
@@ -84,8 +79,6 @@ public class PricingTest {
             BigDecimal price = new BigDecimal((Pricing.BREAK_COUNT - i) * 1000);
             
             addMockPriceBreak(i, quantity, price);
-            
-            expectedList.add(new PriceBreak(i, quantity, price));
         }
         
         
@@ -94,13 +87,11 @@ public class PricingTest {
         assertEquals(DiscountType.Override, instance.getDiscountType());
                 
         for (int i = 0; i < Pricing.BREAK_COUNT; i++) {
-            PriceBreak expected = expectedList.get(i);
-
             PriceBreak actual = instance.getPriceBreak(i);
         
-            assertEquals(expected.getPosition(), actual.getPosition());
-            assertEquals(expected.getQuantity(), actual.getQuantity());
-            assertEquals(expected.getRate(), actual.getRate());
+            assertEquals(i, actual.getPosition());
+            assertEquals((i+1) * 100, actual.getQuantity()); // 100 qty increments
+            assertEquals(new BigDecimal((Pricing.BREAK_COUNT - i) * 1000), actual.getRate());
         }
     }
 
@@ -147,7 +138,7 @@ public class PricingTest {
         
         instance = Pricing.fromRow(mockRow, "ItemMethod");
         
-        assertEquals(new BigDecimal("50"), instance.applyPriceBreak(0, new BigDecimal("75")));
+        assertEquals(new BigDecimal("50"), instance.getPriceBreak(0).apply(new BigDecimal("75")));
     }
 
     @Test
@@ -160,7 +151,7 @@ public class PricingTest {
         
         instance = Pricing.fromRow(mockRow, "ItemMethod");
         
-        assertEquals(new BigDecimal("50"), instance.applyPriceBreak(0, new BigDecimal("75")));
+        assertEquals(new BigDecimal("50"), instance.getPriceBreak(0).apply(new BigDecimal("75")));
     }
 
     @Test
@@ -173,6 +164,6 @@ public class PricingTest {
         
         instance = Pricing.fromRow(mockRow, "ItemMethod");
         
-        assertEquals(new BigDecimal("150.00"), instance.applyPriceBreak(0, new BigDecimal("200"))); // $200 @ 25% discount
+        assertEquals(new BigDecimal("150.00"), instance.getPriceBreak(0).apply(new BigDecimal("200"))); // $200 @ 25% discount
     }
 }

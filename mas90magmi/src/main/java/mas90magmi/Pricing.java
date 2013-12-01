@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import static mas90magmi.DiscountType.Amount;
 import static mas90magmi.DiscountType.Override;
 import static mas90magmi.DiscountType.Percentage;
+import org.apache.commons.lang.ObjectUtils;
 
 /**
  * Quantity-based tiered pricing.
@@ -21,15 +22,15 @@ import static mas90magmi.DiscountType.Percentage;
  */
 public class Pricing {
     
-    public static class PriceBreak {
+    public class PriceBreak {
         private final int position;
         private final BigDecimal quantity;
         private final BigDecimal rate;
 
         public PriceBreak(int position, BigDecimal quantity, BigDecimal rate) {
             this.position = position;
-            this.quantity = quantity;
-            this.rate = rate;
+            this.quantity = (BigDecimal) ObjectUtils.defaultIfNull(quantity, BigDecimal.ZERO);
+            this.rate = (BigDecimal) ObjectUtils.defaultIfNull(rate, BigDecimal.ZERO);
         }
 
         public int getPosition() {
@@ -42,6 +43,22 @@ public class Pricing {
 
         public BigDecimal getRate() {
             return rate;
+        }
+    
+        public BigDecimal apply(BigDecimal standardPrice) {
+            switch (discountType) {
+                case Amount:
+                    return standardPrice.subtract(rate);
+                case Override:
+                    return rate;
+                case Percentage:
+                    BigDecimal pctMultiplier = rate.movePointLeft(2);
+                    BigDecimal discountAmount = standardPrice.multiply(pctMultiplier);
+
+                    return standardPrice.subtract(discountAmount);
+                default:
+                    throw new IllegalStateException("Unknown discount type.");
+            }
         }
     }
     
@@ -81,24 +98,6 @@ public class Pricing {
 
     public DiscountType getDiscountType() {
         return discountType;
-    }
-    
-    public BigDecimal applyPriceBreak(int level, BigDecimal standardPrice) {
-        PriceBreak priceBreak = getPriceBreak(level);
-        
-        switch (discountType) {
-            case Amount:
-                return standardPrice.subtract(priceBreak.getRate());
-            case Override:
-                return priceBreak.getRate();
-            case Percentage:
-                BigDecimal pctMultiplier = priceBreak.getRate().movePointLeft(2);
-                BigDecimal discountAmount = standardPrice.multiply(pctMultiplier);
-                
-                return standardPrice.subtract(discountAmount);
-            default:
-                throw new IllegalStateException("Unknown discount type.");
-        }
     }
     
 }
