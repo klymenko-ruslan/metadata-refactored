@@ -76,11 +76,7 @@ public class Pricing {
             throw new IllegalArgumentException("Level must be between 0 and " + (BREAK_COUNT - 1));
         }
         
-        if (breaks[level] != null && rates[level] != null) {
-            return new PriceBreak(level, breaks[level], rates[level]);
-        }
-        
-        return null;
+        return new PriceBreak(level, breaks[level], rates[level]);
     }
 
     public DiscountType getDiscountType() {
