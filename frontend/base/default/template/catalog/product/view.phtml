@@ -101,7 +101,9 @@ $_ad = $this->getAdditionalData();
             <?php if ($orgSku && strlen($orgSku) > 1 && $_productManufacturer == 44): ?>
                 <div class="box-collateral">
                     <h2><?php echo $this->__('Interchangeable TI Part') ?></h2>
-                    <p>This div is only here to differentiate TI parts having TI Part SKUs from non TI parts with compatible TI parts. See issue #110. Issue #109 is in progress and will absorb this functionality.</p>
+
+                    <p>This div is only here to differentiate TI parts having TI Part SKUs from non TI parts with compatible TI parts.
+                        See issue #110. Issue #109 is in progress and will absorb this functionality.</p>
                     <?php
                     $bomItemProduct = Mage::getModel('catalog/product');
                     $bomItemProduct->load($bomItemProduct->getIdBySku($orgSku));
@@ -212,7 +214,7 @@ $_ad = $this->getAdditionalData();
             <tbody>
             <tr>
                 <th class="label">Part Type</th>
-                <td class="data"><?php echo $_product->getPartType(); ?></td>
+                <td class="data"><?php echo $_product->getAttributeText('part_type'); ?></td>
             </tr>
             <tr>
                 <th class="label">Manufacturer</th>
@@ -232,66 +234,88 @@ $_ad = $this->getAdditionalData();
             </tr>
             </tbody>
         </table>
-
-        <?php foreach ($this->getChildGroup('detailed_info', 'getChildHtml') as $alias => $html): ?>
+    </div>
+    <?php foreach ($this->getChildGroup('detailed_info', 'getChildHtml') as $alias => $html): ?>
+        <?php if ($alias != 'description'): ?>
             <div class="box-collateral <?php echo "box-{$alias}" ?>">
                 <?php if ($title = $this->getChildData($alias, 'title')): ?>
                     <h2><?php echo $this->escapeHtml($title); ?></h2>
                 <?php endif; ?>
                 <?php echo $html; ?>
             </div>
-        <?php endforeach; ?>
+        <?php endif; ?>
+    <?php endforeach; ?>
 
-        <div class="box-collateral" id="bill-of-materials">
-            <h2><?php echo $this->__('Bill of Materials') ?></h2>
-            <?php //echo $_product->getBillOfMaterials();
+    <!-- Table row foreach still needs to be set once the metadata has interchangeable parts -->
+    <div class="box-collateral">
+        <h2><?php echo $this->__('Interchangeable Parts') ?></h2>
+        <table class="data-table" id="interchangeable-parts-specs-table">
+            <col width="25%"/>
+            <col/>
+            <tbody>
+            <tr>
+                <th class="label">Part Number</th>
+                <th class="label">Manufacturer</th>
+            </tr>
+            <tr>
+<!--                --><?php //foreach ($a as $b): ?>
+                    <td class="data"><?php echo $_product->getPartNumber(); ?></td>
+                    <td class="data"><?php echo $_product->getAttributeText('manufacturer'); ?></td>
+<!--                --><?php //endforeach; ?>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 
-            $billMaterials = json_decode($_product->getBillOfMaterials(), true);
-            //echo "<pre>";
-            //print_r($billMaterials);
-            //echo "</pre>";
-            ?>
-            <table class="data-table">
-                <tr>
-                    <th><strong>Part Type</strong></th>
-                    <th><strong>OE Part #</strong></th>
-                    <th><strong>TI Part #</strong></th>
-                    <th><strong>Name</strong></th>
-                    <th><strong>Qty Per Set</strong></th>
-                    <th><strong>Price</strong></th>
-                </tr>
-                <?php
-                foreach ($billMaterials as $bomItem) {
-                    $bomItemProduct = Mage::getModel('catalog/product');
-                    $bomItemProduct->load($bomItemProduct->getIdBySku($bomItem['sku']));
-                    ?>
-                    <tr>
-                        <td><?php echo $bomItemProduct->getSku(); ?></td>
-                        <td><?php echo $bomItemProduct->getPartNumber(); ?></td>
-                        <td><?php $a = 1;
-                            foreach ($bomItem['ti_part_sku'] as $tiPart) {
-                                $bomItemInterchangeProduct = Mage::getModel('catalog/product');
-                                $bomItemInterchangeProduct->load($bomItemInterchangeProduct->getIdBySku($tiPart));
-                                if ($bomItemInterchangeProduct->getId()) {
-                                    echo '<a href="' . $bomItemInterchangeProduct->getProductUrl() . '" target="_blank">' . $bomItemInterchangeProduct->getPartNumber() . '</a>';
-                                } else echo $tiPart;
-                                if ($a < count($bomItem['ti_part_sku'])) {
-                                    echo ", ";
-                                }
-                                $a++;
-                            } ?></td>
-                        <td><?php if ($bomItemProduct->getId()) {
-                                echo '<a href="' . $bomItemProduct->getProductUrl() . '" target="_blank">' . $bomItemProduct->getName() . '</a>';
-                            } else echo $bomItem['sku']; ?></td>
-                        <td><?php echo $bomItem['quantity']; ?></td>
-                        <td><?php echo Mage::helper('core')->currency($bomItemProduct->getFinalPrice()); ?></td>
+    <div class="box-collateral">
+        <h2><?php echo $this->__('Bill of Materials') ?></h2>
+        <?php //echo $_product->getBillOfMaterials();
 
-                    </tr>
-                <?php
-                }
+        $billMaterials = json_decode($_product->getBillOfMaterials(), true);
+        //echo "<pre>";
+        //print_r($billMaterials);
+        //echo "</pre>";
+        ?>
+        <table class="data-table" id="bill-of-materials">
+            <tr>
+                <th><strong>Part Type</strong></th>
+                <th><strong>OE Part #</strong></th>
+                <th><strong>TI Part #</strong></th>
+                <th><strong>Name</strong></th>
+                <th><strong>Qty Per Set</strong></th>
+                <th><strong>Price</strong></th>
+            </tr>
+            <?php
+            foreach ($billMaterials as $bomItem) {
+                $bomItemProduct = Mage::getModel('catalog/product');
+                $bomItemProduct->load($bomItemProduct->getIdBySku($bomItem['sku']));
                 ?>
-            </table>
-        </div>
+                <tr>
+                    <td><?php echo $bomItemProduct->getSku(); ?></td>
+                    <td><?php echo $bomItemProduct->getPartNumber(); ?></td>
+                    <td><?php $a = 1;
+                        foreach ($bomItem['ti_part_sku'] as $tiPart) {
+                            $bomItemInterchangeProduct = Mage::getModel('catalog/product');
+                            $bomItemInterchangeProduct->load($bomItemInterchangeProduct->getIdBySku($tiPart));
+                            if ($bomItemInterchangeProduct->getId()) {
+                                echo '<a href="' . $bomItemInterchangeProduct->getProductUrl() . '" target="_blank">' . $bomItemInterchangeProduct->getPartNumber() . '</a>';
+                            } else echo $tiPart;
+                            if ($a < count($bomItem['ti_part_sku'])) {
+                                echo ", ";
+                            }
+                            $a++;
+                        } ?></td>
+                    <td><?php if ($bomItemProduct->getId()) {
+                            echo '<a href="' . $bomItemProduct->getProductUrl() . '" target="_blank">' . $bomItemProduct->getName() . '</a>';
+                        } else echo $bomItem['sku']; ?></td>
+                    <td><?php echo $bomItem['quantity']; ?></td>
+                    <td><?php echo Mage::helper('core')->currency($bomItemProduct->getFinalPrice()); ?></td>
+
+                </tr>
+            <?php
+            }
+            ?>
+        </table>
     </div>
 
     <?php echo $this->getLayout()->createBlock('cms/block')->setBlockId('product_custom_options')->toHtml() ?>
@@ -301,4 +325,5 @@ $_ad = $this->getAdditionalData();
 </div>
 
 <script type="text/javascript">decorateTable('product-information-specs-table')</script>
+<script type="text/javascript">decorateTable('interchangeable-parts-specs-table')</script>
 <script type="text/javascript">decorateTable('bill-of-materials')</script>

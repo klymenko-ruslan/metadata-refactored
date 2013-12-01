@@ -30,17 +30,19 @@ $_product = $this->getProduct();
 $orgSku = $_product->getTiPartSku();
 $_tiProduct = Mage::getModel('catalog/product');
 $_tiProduct->load($_tiProduct->getIdBySku($orgSku));
+$_tiPartSkuString = $_tiProduct->getPartNumber();
+$_tiProductPartNumbers = explode(",", $_tiPartSkuString);
 $_productManufacturer = $_product->getManufacturer();
 ?>
 
 <!-- Product Attributes -->
 <ul>
-    <li><strong>Part Type:</strong> <?php echo $_product->getPartType(); ?></li>
+    <li><strong>Part Type:</strong> <?php echo $_product->getAttributeText('part_type'); ?></li>
     <li><strong>Manufacturer:</strong> <?php echo $_product->getAttributeText('manufacturer'); ?></li>
     <li><strong>Part Number:</strong> <?php echo $_product->getPartNumber(); ?></li>
     <li><strong>Name:</strong> <?php echo $_product->getName(); ?></li>
     <?php if ($orgSku && strlen($orgSku) > 1 && $_productManufacturer != 44): ?>
-        <li><strong>Compatible TI Part:</strong> <?php echo $_tiProduct->getPartNumber(); ?></li>
+        <li><strong>Compatible TI Part:</strong> <?php echo $_tiPartSkuString; ?></li>
     <?php endif; ?>
 </ul>
 
