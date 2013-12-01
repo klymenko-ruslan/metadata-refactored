@@ -57,6 +57,7 @@ import javax.persistence.TypedQuery;
 import javax.persistence.Version;
 import net.sf.jsog.JSOG;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -541,10 +542,10 @@ public class Part implements Comparable<Part> {
         columns.put("manufacturer_part_number", ObjectUtils.toString(getManufacturerPartNumber()));
         
         // ti_part_sku
-        List<Part> tiInterchanges = collectTIInterchanges();
-        if (!tiInterchanges.isEmpty()) {
-            columns.put("ti_part_sku", tiInterchanges.get(0).getId().toString());
-        }
+        columns.put("ti_part_sku", StringUtils.join(collectTIInterchanges(), ","));
+        
+        // interchanges
+        columns.put("interchanges", StringUtils.join(getInterchange().getParts(), ","));
         
         // categories
         StringBuilder categories = new StringBuilder("Manufacturer/")
