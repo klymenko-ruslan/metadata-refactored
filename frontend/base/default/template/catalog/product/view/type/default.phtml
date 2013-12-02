@@ -27,11 +27,19 @@
 <?php /* @var $this Mage_Catalog_Block_Product_View_Abstract */ ?>
 <?php
 $_product = $this->getProduct();
-$orgSku = $_product->getTiPartSku();
+$orgSkuString = $_product->getTiPartSku();
+array($tiProductPartNumbers);
+$tiPartSkuArray = false;
+if (strpos($orgSkuString, ',') !== false) {
+    $tiProductPartNumbers = explode(',', $orgSkuString);
+    $orgSku = $tiProductPartNumbers[0];
+    $tiPartSkuArray = true;
+} else {
+    $orgSku = $orgSkuString;
+}
 $_tiProduct = Mage::getModel('catalog/product');
 $_tiProduct->load($_tiProduct->getIdBySku($orgSku));
-$_tiPartSkuString = $_tiProduct->getPartNumber();
-$_tiProductPartNumbers = explode(",", $_tiPartSkuString);
+$_tiPartSku = $_tiProduct->getPartNumber();
 $_productManufacturer = $_product->getManufacturer();
 ?>
 
@@ -42,7 +50,24 @@ $_productManufacturer = $_product->getManufacturer();
     <li><strong>Part Number:</strong> <?php echo $_product->getPartNumber(); ?></li>
     <li><strong>Name:</strong> <?php echo $_product->getName(); ?></li>
     <?php if ($orgSku && strlen($orgSku) > 1 && $_productManufacturer != 44): ?>
-        <li><strong>Compatible TI Part:</strong> <?php echo $_tiPartSkuString; ?></li>
+        <?php if ($tiPartSkuArray) { ?>
+            <li><strong>Compatible TI Parts:</strong> <?php
+                $i = 1;
+                foreach ($tiProductPartNumbers as $tiProductPartNumber) {
+                    $_tiProductBySku = Mage::getModel('catalog/product');
+                    $_tiProductBySku->load($_tiProductBySku->getIdBySku($tiProductPartNumber));
+                    $_tiProductPartSku = $_tiProductBySku->getPartNumber();
+                    echo '<a href="' . $_tiProductBySku->getProductUrl() . '" target="_blank">';
+                    echo $_tiProductPartSku;
+                    echo '</a>';
+                    if ($i < count($tiProductPartNumbers)) {
+                        echo ", ";
+                    }
+                    $i++;
+                } ?></li>
+        <?php } else { ?>
+            <li><strong>Compatible TI Part:</strong> <?php echo '<a href="' . $_tiProduct->getProductUrl() . '" target="_blank">' . $_tiPartSku . '</a>'; ?></li>
+        <?php } ?>
     <?php endif; ?>
 </ul>
 

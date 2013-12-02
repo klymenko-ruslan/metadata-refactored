@@ -34,7 +34,13 @@
 <?php
 $_helper = $this->helper('catalog/output');
 $_product = $this->getProduct();
-$orgSku = $_product->getTiPartSku();
+$orgSkuString = $_product->getTiPartSku();
+if (strpos($orgSkuString, ',') !== false) {
+    $tiProductPartNumbers = explode(',', $orgSkuString);
+    $orgSku = $tiProductPartNumbers[0];
+} else {
+    $orgSku = $orgSkuString;
+}
 $_productManufacturer = $_product->getManufacturer();
 $_description = $_product->getDescription();
 $_ad = $this->getAdditionalData();
