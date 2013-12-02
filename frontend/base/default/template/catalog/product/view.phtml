@@ -41,6 +41,15 @@ if (strpos($orgSkuString, ',') !== false) {
 } else {
     $orgSku = $orgSkuString;
 }
+$interchangesString = $_product->getInterchanges();
+array($tiProductInterchanges);
+$tiInterchangesArray = false;
+if (strpos($interchangesString, ',') !== false) {
+    $tiProductInterchanges = explode(',', $interchangesString);
+    $tiInterchangesArray = true;
+} else {
+    $tiProductInterchanges = $interchangesString;
+}
 $_productManufacturer = $_product->getManufacturer();
 $_description = $_product->getDescription();
 $_ad = $this->getAdditionalData();
@@ -263,12 +272,20 @@ $_ad = $this->getAdditionalData();
                 <th class="label">Part Number</th>
                 <th class="label">Manufacturer</th>
             </tr>
-            <tr>
-<!--                --><?php //foreach ($a as $b): ?>
-                    <td class="data"><?php echo $_product->getPartNumber(); ?></td>
-                    <td class="data"><?php echo $_product->getAttributeText('manufacturer'); ?></td>
-<!--                --><?php //endforeach; ?>
-            </tr>
+            <?php foreach ($tiProductInterchanges as $tiProductInterchange): ?>
+                <?php
+                $_tiProductByInterchanges = Mage::getModel('catalog/product');
+                $_tiProductByInterchanges->load($_tiProductByInterchanges->getIdBySku($tiProductInterchange));
+                $_tiProductInterchangePartNumber = $_tiProductByInterchanges->getPartNumber();
+                $_tiProductInterchangeManufacturer = $_tiProductByInterchanges->getAttributeText('manufacturer');
+                ?>
+                <tr>
+                    <td class="data"><?php echo '<a href="' . $_tiProductByInterchanges->getProductUrl() . '" target="_blank">';
+                        echo $_tiProductInterchangePartNumber;
+                        echo '</a>'; ?></td>
+                    <td class="data"><?php echo $_tiProductInterchangeManufacturer; ?></td>
+                </tr>
+            <?php endforeach; ?>
             </tbody>
         </table>
     </div>
