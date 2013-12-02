@@ -24,13 +24,58 @@
  * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 ?>
-<?php /* @var $this Mage_Catalog_Block_Product_View_Abstract */?>
-<?php $_product = $this->getProduct() ?>
+<?php /* @var $this Mage_Catalog_Block_Product_View_Abstract */ ?>
+<?php
+$_product = $this->getProduct();
+$orgSkuString = $_product->getTiPartSku();
+array($tiProductPartNumbers);
+$tiPartSkuArray = false;
+if (strpos($orgSkuString, ',') !== false) {
+    $tiProductPartNumbers = explode(',', $orgSkuString);
+    $orgSku = $tiProductPartNumbers[0];
+    $tiPartSkuArray = true;
+} else {
+    $orgSku = $orgSkuString;
+}
+$_tiProduct = Mage::getModel('catalog/product');
+$_tiProduct->load($_tiProduct->getIdBySku($orgSku));
+$_tiPartSku = $_tiProduct->getPartNumber();
+$_productManufacturer = $_product->getManufacturer();
+?>
+
+<!-- Product Attributes -->
+<ul>
+    <li><strong>Part Type:</strong> <?php echo $_product->getAttributeText('part_type'); ?></li>
+    <li><strong>Manufacturer:</strong> <?php echo $_product->getAttributeText('manufacturer'); ?></li>
+    <li><strong>Part Number:</strong> <?php echo $_product->getPartNumber(); ?></li>
+    <li><strong>Name:</strong> <?php echo $_product->getName(); ?></li>
+    <?php if ($orgSku && strlen($orgSku) > 1 && $_productManufacturer != 44): ?>
+        <?php if ($tiPartSkuArray) { ?>
+            <li><strong>Compatible TI Parts:</strong> <?php
+                $i = 1;
+                foreach ($tiProductPartNumbers as $tiProductPartNumber) {
+                    $_tiProductBySku = Mage::getModel('catalog/product');
+                    $_tiProductBySku->load($_tiProductBySku->getIdBySku($tiProductPartNumber));
+                    $_tiProductPartSku = $_tiProductBySku->getPartNumber();
+                    echo '<a href="' . $_tiProductBySku->getProductUrl() . '" target="_blank">';
+                    echo $_tiProductPartSku;
+                    echo '</a>';
+                    if ($i < count($tiProductPartNumbers)) {
+                        echo ", ";
+                    }
+                    $i++;
+                } ?></li>
+        <?php } else { ?>
+            <li><strong>Compatible TI Part:</strong> <?php echo '<a href="' . $_tiProduct->getProductUrl() . '" target="_blank">' . $_tiPartSku . '</a>'; ?></li>
+        <?php } ?>
+    <?php endif; ?>
+</ul>
 
 <?php if ($_product->isAvailable()): ?>
     <p class="availability in-stock"><?php echo $this->__('Availability:') ?> <span><?php echo $this->__('In stock') ?></span></p>
 <?php else: ?>
-    <p class="availability out-of-stock"><?php echo $this->__('Availability:') ?> <span><?php echo $this->__('Out of stock') ?></span></p>
+    <p class="availability out-of-stock"><?php echo $this->__('Availability:') ?> <span><?php echo $this->__('Out of stock') ?></span>
+    </p>
 <?php endif; ?>
 <?php echo $this->getChildHtml('product_type_data_extra') ?>
 <?php echo $this->getPriceHtml($_product) ?>
