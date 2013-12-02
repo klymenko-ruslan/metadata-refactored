@@ -297,7 +297,7 @@ $_ad = $this->getAdditionalData();
                 $bomItemProduct->load($bomItemProduct->getIdBySku($bomItem['sku']));
                 ?>
                 <tr>
-                    <td><?php echo $bomItemProduct->getSku(); ?></td>
+                    <td><?php echo $bomItemProduct->getAttributeText('part_type'); ?></td>
                     <td><?php echo $bomItemProduct->getPartNumber(); ?></td>
                     <td><?php $a = 1;
                         foreach ($bomItem['ti_part_sku'] as $tiPart) {

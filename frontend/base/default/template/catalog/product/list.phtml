@@ -97,16 +97,18 @@
     <?php $i=0; foreach ($_productCollection as $_product): ?>
         <?php if ($i++%$_columnCount==0): ?>
         <?php endif ?>
-        <?php $orgSku = $_product->getTiPartSku(); 
-			$orgProduct = Mage::getModel('catalog/product');
-			$orgProduct->load($orgProduct->getIdBySku($orgSku)); 
-		?>
         <tr>
-            <!-- <td><?php echo $_product->getAttributeText('part_type') ?></td> -->
-            <td><?php echo $_helper->productAttribute($_product, null , 'part_type') ?></td>
+            <td><?php echo $_product->getAttributeText('part_type') ?></td>
             <td><a href="<?php echo $_product->getProductUrl() ?>" title="<?php echo $this->stripTags($_product->getName(), null, true) ?>"><?php echo $_product->getName() ?></a></td>
             <td><a href="<?php echo $_product->getProductUrl() ?>"><?php echo $_product->getPartNumber() ?></a></td>
-            <td><?php echo $_product->getTiPartSku() ?></td>
+            <td><?php $tiPartSkus = explode(",", $_product->getTiPartSku()) ?>
+              <?php foreach ($tiPartSkus as $tiPartSku): ?>
+                  <?php $tiPart = Mage::getModel('catalog/product');
+                        $tiPart->load($tiPart->getIdBySku($tiSku)); ?>
+
+                  <a href="<?php echo $tiPart->getProductUrl() ?>"><?php echo $tiPart->getPartNumber(); echo $tiPartSku ?></a>
+              <?php endforeach ?>
+            </td>
             <td><?php if(Mage::getSingleton('customer/session')->isLoggedIn()) { echo Mage::helper('core')->currency($_product->getFinalPrice()); } else { ?><a href="<?php echo $this->getUrl('customer/account/login'); ?>">Login to view prices</a><?php } ?></td>
         </tr>
         <?php if ($i%$_columnCount==0 || $i==$_collectionSize): ?>
