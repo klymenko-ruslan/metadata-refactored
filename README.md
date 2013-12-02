@@ -15,3 +15,16 @@ Prod Servers
 Metadata: metadata.turbointernational.com
 
 Magento: 54.204.39.114
+
+
+Architecture
+============
+
+* TI Metadata Server
+ * Spring MVC Backend
+ * AngularJS Frontend
+ * ElasticSearch
+
+* Magento
+
+* Magmi
