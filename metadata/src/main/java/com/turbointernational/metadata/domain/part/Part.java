@@ -135,9 +135,6 @@ public class Part implements Comparable<Part> {
     @Column(name="description")
     private String description;
     
-    //    @Column(name="ti_part_num")
-    //    private String tiPartNumber;
-    
     @OneToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="part_type_id")
     private PartType partType;
@@ -197,14 +194,6 @@ public class Part implements Comparable<Part> {
     public void setDescription(String description) {
         this.description = description;
     }
-    
-//    public String getTiPartNumber() {
-//        return tiPartNumber;
-//    }
-//
-//    public void setTiPartNumber(String tiPartNumber) {
-//        this.tiPartNumber = tiPartNumber;
-//    }
     
     public PartType getPartType() {
         return partType;
@@ -553,6 +542,10 @@ public class Part implements Comparable<Part> {
                     tiInterchanges.add(part.getId().toString());
                 }
             }
+            
+            // Remove this part from the sets
+            interchanges.remove(this.getId().toString());
+            tiInterchanges.remove(this.getId().toString());
             
             columns.put("interchanges", StringUtils.join(interchanges, ","));
             columns.put("ti_part_sku", StringUtils.join(tiInterchanges, ","));
