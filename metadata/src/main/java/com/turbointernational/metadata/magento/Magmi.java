@@ -106,6 +106,16 @@ public class Magmi {
         //</editor-fold>
         
         //<editor-fold defaultstate="collapsed" desc="MAS90 Price Levels">
+        "group_price:ERP_PL_0",
+        "group_price:ERP_PL_1",
+        "group_price:ERP_PL_2",
+        "group_price:ERP_PL_3",
+        "group_price:ERP_PL_4",
+        "group_price:ERP_PL_5",
+        "group_price:ERP_PL_E",
+        "group_price:ERP_PL_R",
+        "group_price:ERP_PL_W",
+        
         "tier_price:ERP_PL_0",
         "tier_price:ERP_PL_1",
         "tier_price:ERP_PL_2",
@@ -217,9 +227,8 @@ public class Magmi {
         }
         columns.put("price", itemPricing.getStandardPrice().toString());
         
-        // Add column data for each price level
+        // Add column data for each price level, group and tier prices
         for (String priceLevel : Mas90Magmi.getPriceLevels()) {
-            String columnName = "tier_price:ERP_PL_" + priceLevel;
             
             // Get the price level pricing
             StringBuilder priceString = new StringBuilder();
@@ -243,9 +252,14 @@ public class Magmi {
                 previousQuantity = price.getQuantity();
             }
             
-            // Add the column
+            // Add the tier price column
             if (priceString.length() > 0) {
-                columns.put(columnName, priceString.toString());
+                columns.put("tier_price:ERP_PL_" + priceLevel, priceString.toString());
+            }
+            
+            // Add the group price column
+            if (!prices.isEmpty()) {
+                columns.put("group_price:ERP_PL_" + priceLevel, prices.get(0).getPrice().toString());
             }
         }
     }
