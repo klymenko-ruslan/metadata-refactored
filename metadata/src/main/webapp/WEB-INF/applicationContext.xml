@@ -80,7 +80,7 @@
           p:user="${database.username}"
           p:password="${database.password}"
           p:connectTimeout="10000"
-          p:socketTimeout="10000"
+          p:socketTimeout="60000"
           p:useCompression="true"
           p:autoReconnectForPools="true"/>
     
