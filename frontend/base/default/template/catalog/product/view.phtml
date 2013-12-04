@@ -31,9 +31,29 @@
  * @see Mage_Review_Block_Product_View
  */
 ?>
-<?php $_helper = $this->helper('catalog/output'); ?>
-<?php $_product = $this->getProduct(); ?>
-<?php $orgSku = $_product->getTiPartSku(); ?>
+<?php
+$_helper = $this->helper('catalog/output');
+$_product = $this->getProduct();
+$orgSkuString = $_product->getTiPartSku();
+if (strpos($orgSkuString, ',') !== false) {
+    $tiProductPartNumbers = explode(',', $orgSkuString);
+    $orgSku = $tiProductPartNumbers[0];
+} else {
+    $orgSku = $orgSkuString;
+}
+$interchangesString = $_product->getInterchanges();
+array($tiProductInterchanges);
+$tiInterchangesArray = false;
+if (strpos($interchangesString, ',') !== false) {
+    $tiProductInterchanges = explode(',', $interchangesString);
+    $tiInterchangesArray = true;
+} else {
+    $tiProductInterchanges = $interchangesString;
+}
+$_productManufacturer = $_product->getManufacturer();
+$_description = $_product->getDescription();
+$_ad = $this->getAdditionalData();
+?>
 <script type="text/javascript">
     var optionsPrice = new Product.OptionsPrice(<?php echo $this->getJsonConfig() ?>);
 </script>
@@ -51,12 +71,6 @@
             <div class="product-name">
                 <h1><?php echo $_helper->productAttribute($_product, $_product->getName(), 'name') ?></h1>
             </div>
-
-            <?php if ($this->canEmailToFriend()): ?>
-                <p class="email-friend"><a
-                        href="<?php echo $this->helper('catalog/product')->getEmailToFriendUrl($_product) ?>"><?php echo $this->__('Email to a Friend') ?></a>
-                </p>
-            <?php endif; ?>
 
             <?php echo $this->getReviewsSummaryHtml($_product, false, true) ?>
             <?php echo $this->getChildHtml('alert_urls') ?>
@@ -82,22 +96,28 @@
             <?php endif; ?>
 
             <!-- Section for showing compatible TI part details: conditional on ti_part_sku being set and valid -->
-            <?php if ($orgSku && strlen($orgSku) > 1) : ?>
+            <?php if ($orgSku && strlen($orgSku) > 1 && $_productManufacturer != 44): ?>
                 <div class="box-collateral">
                     <h2><?php echo $this->__('Compatible TI Part') ?></h2>
                     <?php
-                    $orgProduct = Mage::getModel('catalog/product');
-                    $orgProduct->load($orgProduct->getIdBySku($orgSku));
+                    $bomItemProduct = Mage::getModel('catalog/product');
+                    $bomItemProduct->load($bomItemProduct->getIdBySku($orgSku));
                     ?>
-                    <strong>Name:</strong> <a href="<?php echo $orgProduct->getProductUrl() ?>"
-                                              target="_blank"><?php echo $orgProduct->getName(); ?></a> <br/>
-                    <strong>Part #:</strong> <?php echo $orgProduct->getPartNumber(); ?> <br/>
-                    <strong>Price:</strong> <?php echo Mage::helper('core')->currency($orgProduct->getFinalPrice()); ?> <br/>
+                    <strong>Name:</strong> <a href="<?php echo $bomItemProduct->getProductUrl() ?>"
+                                              target="_blank"><?php echo $bomItemProduct->getName(); ?></a> <br/>
+                    <strong>Part Number:</strong> <?php echo $bomItemProduct->getPartNumber(); ?> <br/>
+                    <strong>Price:</strong> <?php echo Mage::helper('core')->currency($bomItemProduct->getFinalPrice()); ?> <br/>
                     <br/>
                 </div>
 
             <? endif; ?>
-            <!-- Added for showing original product details -->
+
+            <!-- Email a friend -->
+            <?php if ($this->canEmailToFriend()): ?>
+                <p class="email-friend"><a
+                        href="<?php echo $this->helper('catalog/product')->getEmailToFriendUrl($_product) ?>"><?php echo $this->__('Email to a Friend') ?></a>
+                </p>
+            <?php endif; ?>
 
             <?php if ($_product->getShortDescription()): ?>
                 <div class="short-description">
@@ -182,6 +202,74 @@
 
 <div class="product-collateral">
     <div class="box-collateral">
+        <h2><?php echo $this->__('Product Information') ?></h2>
+        <table class="data-table" id="product-information-specs-table">
+            <col width="25%"/>
+            <col/>
+            <tbody>
+            <tr>
+                <th class="label">Part Type</th>
+                <td class="data"><?php echo $_product->getAttributeText('part_type'); ?></td>
+            </tr>
+            <tr>
+                <th class="label">Manufacturer</th>
+                <td class="data"><?php echo $_product->getAttributeText('manufacturer'); ?></td>
+            </tr>
+            <tr>
+                <th class="label">Part Number</th>
+                <td class="data"><?php echo $_product->getPartNumber(); ?></td>
+            </tr>
+            <tr>
+                <th class="label">Name</th>
+                <td class="data"><?php echo $_product->getName(); ?></td>
+            </tr>
+            <tr>
+                <th class="label">Description</th>
+                <td class="data"><?php echo $this->helper('catalog/output')->productAttribute($this->getProduct(), $_description, 'description') ?></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <?php foreach ($this->getChildGroup('detailed_info', 'getChildHtml') as $alias => $html): ?>
+        <?php if ($alias != 'description'): ?>
+            <div class="box-collateral <?php echo "box-{$alias}" ?>">
+                <?php if ($title = $this->getChildData($alias, 'title')): ?>
+                    <h2><?php echo $this->escapeHtml($title); ?></h2>
+                <?php endif; ?>
+                <?php echo $html; ?>
+            </div>
+        <?php endif; ?>
+    <?php endforeach; ?>
+
+    <div class="box-collateral">
+        <h2><?php echo $this->__('Interchangeable Parts') ?></h2>
+        <table class="data-table" id="interchangeable-parts-specs-table">
+            <col width="25%"/>
+            <col/>
+            <tbody>
+            <tr>
+                <th class="label">Part Number</th>
+                <th class="label">Manufacturer</th>
+            </tr>
+            <?php foreach ($tiProductInterchanges as $tiProductInterchange): ?>
+                <?php
+                $_tiProductByInterchanges = Mage::getModel('catalog/product');
+                $_tiProductByInterchanges->load($_tiProductByInterchanges->getIdBySku($tiProductInterchange));
+                $_tiProductInterchangePartNumber = $_tiProductByInterchanges->getPartNumber();
+                $_tiProductInterchangeManufacturer = $_tiProductByInterchanges->getAttributeText('manufacturer');
+                ?>
+                <tr>
+                    <td class="data"><?php echo '<a href="' . $_tiProductByInterchanges->getProductUrl() . '" target="_blank">';
+                        echo $_tiProductInterchangePartNumber;
+                        echo '</a>'; ?></td>
+                    <td class="data"><?php echo $_tiProductInterchangeManufacturer; ?></td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="box-collateral">
         <h2><?php echo $this->__('Bill of Materials') ?></h2>
         <?php //echo $_product->getBillOfMaterials();
 
@@ -190,7 +278,7 @@
         //print_r($billMaterials);
         //echo "</pre>";
         ?>
-        <table class="data-table">
+        <table class="data-table" id="bill-of-materials">
             <tr>
                 <th><strong>Part Type</strong></th>
                 <th><strong>OE Part #</strong></th>
@@ -200,31 +288,30 @@
                 <th><strong>Price</strong></th>
             </tr>
             <?php
-            foreach ($billMaterials as $prods) {
-                $orgProduct = Mage::getModel('catalog/product');
-                $orgProduct->load($orgProduct->getIdBySku($prods['sku']));
+            foreach ($billMaterials as $bomItem) {
+                $bomItemProduct = Mage::getModel('catalog/product');
+                $bomItemProduct->load($bomItemProduct->getIdBySku($bomItem['sku']));
                 ?>
                 <tr>
-                    <td><?php if ($orgProduct->getId()) {
-                            echo '<a href="' . $orgProduct->getProductUrl() . '" target="_blank">' . $orgProduct->getName() . '</a>';
-                        } else echo $prods['sku']; ?></td>
-
-                    <td>OE Part #</td>
-                    <td><?php echo $orgProduct->getPartNumber(); ?></td>
+                    <td><?php echo $bomItemProduct->getAttributeText('part_type'); ?></td>
+                    <td><?php echo $bomItemProduct->getPartNumber(); ?></td>
                     <td><?php $a = 1;
-                        foreach ($prods['ti_part_sku'] as $pro) {
-                            $orgProduct = Mage::getModel('catalog/product');
-                            $orgProduct->load($orgProduct->getIdBySku($pro));
-                            if ($orgProduct->getId()) {
-                                echo '<a href="' . $orgProduct->getProductUrl() . '" target="_blank">' . $orgProduct->getName() . '</a>';
-                            } else echo $pro;
-                            if ($a < count($prods['ti_part_sku'])) {
+                        foreach ($bomItem['ti_part_sku'] as $tiPart) {
+                            $bomItemInterchangeProduct = Mage::getModel('catalog/product');
+                            $bomItemInterchangeProduct->load($bomItemInterchangeProduct->getIdBySku($tiPart));
+                            if ($bomItemInterchangeProduct->getId()) {
+                                echo '<a href="' . $bomItemInterchangeProduct->getProductUrl() . '" target="_blank">' . $bomItemInterchangeProduct->getPartNumber() . '</a>';
+                            } else echo $tiPart;
+                            if ($a < count($bomItem['ti_part_sku'])) {
                                 echo ", ";
                             }
                             $a++;
                         } ?></td>
-                    <td><?php echo $prods['quantity']; ?></td>
-                    <td><?php echo Mage::helper('core')->currency($orgProduct->getFinalPrice()); ?></td>
+                    <td><?php if ($bomItemProduct->getId()) {
+                            echo '<a href="' . $bomItemProduct->getProductUrl() . '" target="_blank">' . $bomItemProduct->getName() . '</a>';
+                        } else echo $bomItem['sku']; ?></td>
+                    <td><?php echo $bomItem['quantity']; ?></td>
+                    <td><?php echo Mage::helper('core')->currency($bomItemProduct->getFinalPrice()); ?></td>
 
                 </tr>
             <?php
@@ -233,16 +320,12 @@
         </table>
     </div>
 
-    <?php foreach ($this->getChildGroup('detailed_info', 'getChildHtml') as $alias => $html): ?>
-        <div class="box-collateral <?php echo "box-{$alias}" ?>">
-            <?php if ($title = $this->getChildData($alias, 'title')): ?>
-                <h2><?php echo $this->escapeHtml($title); ?></h2>
-            <?php endif; ?>
-            <?php echo $html; ?>
-        </div>
-    <?php endforeach; ?>
     <?php echo $this->getLayout()->createBlock('cms/block')->setBlockId('product_custom_options')->toHtml() ?>
     <?php echo $this->getChildHtml('upsell_products') ?>
     <?php echo $this->getChildHtml('product_additional_data') ?>
 </div>
 </div>
+
+<script type="text/javascript">decorateTable('product-information-specs-table')</script>
+<script type="text/javascript">decorateTable('interchangeable-parts-specs-table')</script>
+<script type="text/javascript">decorateTable('bill-of-materials')</script>
