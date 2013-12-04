@@ -97,7 +97,7 @@ public class ElasticSearch {
         return result.toString();
     }
     
-    @Transactional
+    @Transactional(readOnly = true)
     public void indexPart(Part part) throws Exception {
         Index index = new Index
                 .Builder(part.toJson())
