@@ -252,8 +252,8 @@ public class Magmi {
                 previousQuantity = price.getQuantity();
             }
             
-            // Add the tier price column
-            if (priceString.length() > 0) {
+            // Add the tier price column if we have more than a base price
+            if (prices.size() > 1) {
                 columns.put("tier_price:ERP_PL_" + priceLevel, priceString.toString());
             }
             
