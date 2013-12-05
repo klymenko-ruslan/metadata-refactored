@@ -80,8 +80,8 @@ angular.module('ngMetaCrudApp')
                 "part_type^1000",
                 "manufacturer_part_number.autocomplete",
                 "manufacturer_part_number.text",
-                "manufacturer_name.autocomplete",
-                "manufacturer_name.text",
+                "manufacturer.name.autocomplete",
+                "manufacturer.name.text",
                 "name"
               ]
             }
@@ -116,9 +116,8 @@ angular.module('ngMetaCrudApp')
           headers: {
             "Content-type": "text/plain"
           },
-          url: "http://localhost:9200/metadata/_search",
-//          url: "http://metadata.turbointernational.com:9200/metadata/_search",
-//          url: "https://api.searchbox.io/api-key/xmqnaud6grtokcswjvna7nzvwukk6ont/metadata/_search",
+//          url: "http://localhost:9200/metadata/_search",
+          url: "http://metadata.turbointernational.com:9200/metadata/_search",
           data: searchRequest
         });
       };
