@@ -248,16 +248,16 @@
             <artifactId>commons-codec</artifactId>
             <version>1.5</version>
         </dependency>
-        <dependency>
+<!--        <dependency>
             <groupId>io.searchbox</groupId>
             <artifactId>jest</artifactId>
             <version>0.0.5</version>
-        </dependency>
-<!--        <dependency>
+        </dependency>-->
+        <dependency>
             <groupId>org.elasticsearch</groupId>
             <artifactId>elasticsearch</artifactId>
-            <version>0.90.2</version>
-        </dependency>-->
+            <version>0.90.7</version>
+        </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
