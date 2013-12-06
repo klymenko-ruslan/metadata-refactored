@@ -25,9 +25,9 @@ Magento: ubuntu@ec2-54-204-208-6.compute-1.amazonaws.com
 
 Prod Servers
 ============
-Metadata: metadata.turbointernational.com
+Metadata: http://metadata.turbointernational.com
 
-Magento: 54.204.39.114
+Magento: http://54.204.39.114
 
 
 Architecture
