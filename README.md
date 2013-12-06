@@ -14,6 +14,10 @@ Developer IPs
     <td>Jeff HUB</td>
     <td>199.231.242.26</td>
   </tr>
+  <tr>
+    <td>Wesson Home</td>
+    <td>50.152.248.117</td>
+  </tr>
 </table>
 
 Dev Servers
