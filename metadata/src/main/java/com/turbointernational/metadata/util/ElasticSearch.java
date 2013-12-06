@@ -8,7 +8,6 @@ import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
-import org.elasticsearch.index.Index;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -20,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 public class ElasticSearch {
-
+    
     @Value("${elasticsearch.index}")
     String elasticSearchIndex = "metadata";
     
@@ -104,7 +103,13 @@ public class ElasticSearch {
 
         IndexRequest index = new IndexRequest(elasticSearchIndex, elasticSearchType, part.getId().toString());
         index.source(part.toJson());
-        client().index(index).actionGet(timeout);
+        
+        Client client = client();
+        try {
+            client.index(index).actionGet(timeout);
+        } finally {
+            client.close();
+        }
     }
 
     @Transactional(readOnly = true)
@@ -120,7 +125,12 @@ public class ElasticSearch {
             bulk.add(index);
         }
         
-        client().bulk(bulk).actionGet();
+        Client client = client();
+        try {
+            client.bulk(bulk).actionGet();
+        } finally {
+            client.close();
+        }
         
         return parts.size();
     }
@@ -128,7 +138,13 @@ public class ElasticSearch {
     @Async
     public void deletePart(Part part) throws Exception {
         DeleteRequest delete = new DeleteRequest(elasticSearchIndex, elasticSearchType, part.getId().toString());
-        client().delete(delete).actionGet(timeout);
+        
+        Client client = client();
+        try {
+            client.delete(delete).actionGet(timeout);
+        } finally {
+            client.close();
+        }
     }
 
 }
