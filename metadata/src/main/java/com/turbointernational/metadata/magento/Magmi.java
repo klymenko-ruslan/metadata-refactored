@@ -9,13 +9,16 @@ import java.io.OutputStreamWriter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletResponse;
+import mas90magmi.Customer;
 import mas90magmi.ItemPricing;
 import mas90magmi.Mas90Magmi;
 import mas90magmi.PriceCalculator;
 import mas90magmi.PriceCalculator.CalculatedPrice;
+import mas90magmi.Pricing;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -105,7 +108,9 @@ public class Magmi {
         "width_min",
         //</editor-fold>
         
-        //<editor-fold defaultstate="collapsed" desc="MAS90 Price Levels">
+        //<editor-fold defaultstate="collapsed" desc="MAS90 Prices">
+        "customer_tier_price",
+        
         "group_price:ERP_PL_0",
         "group_price:ERP_PL_1",
         "group_price:ERP_PL_2",
@@ -201,7 +206,7 @@ public class Magmi {
         
         // Add ERP pricing details if this is a TI part
         if (Manufacturer.TI_ID.equals(part.getManufacturer().getId())) {
-            addErpGroupPrices(columns, part.getManufacturerPartNumber());
+            addErpPrices(columns, part.getManufacturerPartNumber());
         }
 
         // Map the column into a value array for the CSV writer
@@ -216,7 +221,7 @@ public class Magmi {
         return valueArray;
     }
     
-    private void addErpGroupPrices(Map<String, String> columns, String partNumber) throws IOException {
+    private void addErpPrices(Map<String, String> columns, String partNumber) throws IOException {
         ItemPricing itemPricing = mas90.getItemPricing(partNumber);
         PriceCalculator calculator = mas90.getCalculator();
         
@@ -226,6 +231,56 @@ public class Magmi {
             return;
         }
         columns.put("price", itemPricing.getStandardPrice().toString());
+        
+        addErpCustomerPrices(itemPricing, calculator, columns);
+        addErpGroupPrices(itemPricing, calculator, columns);
+    }
+    
+    // bob@example.com;0:$1.00;10:$0.95;20:$0.90|jim@example.com....
+    private void addErpCustomerPrices(ItemPricing itemPricing, PriceCalculator calculator, Map<String, String> columns) throws IOException {
+        
+        // Build the customer price string
+        StringBuilder priceString = new StringBuilder();
+        for (Entry<Customer, List<CalculatedPrice>> entry : calculator.calculateCustomerSpecificPrices(itemPricing).entrySet()) {
+            
+            // Get the entry info
+            Customer customer = entry.getKey();
+            String customerEmail = mas90.getCustomerEmail(customer);
+            List<CalculatedPrice> prices = entry.getValue();
+            
+            if (StringUtils.isBlank(customerEmail)) {
+                logger.log(Level.WARNING, "No email for customer {0} {1}", new Object[]{customer.getDivision(), customer.getCustomerNumber()});
+                continue;
+            }
+            
+            // Add a separator is this isn't the first customer
+            if (priceString.length() > 0) {
+                priceString.append('|');
+            }
+            
+            priceString.append(customerEmail);
+            
+            // MAS90's uses "up to this quantity", Magento is "this quantity and up"
+            // Keep track of the previous quantity so we can use the proper quantity in Magento
+            int previousQuantity = 0;
+            
+            // Build the value string "quantity1:price1;quantityN:priceN"
+            for (CalculatedPrice price : prices) {
+                priceString.append(";");
+                
+                priceString.append(previousQuantity + 1);
+                priceString.append(":");
+                priceString.append(price.getPrice());
+                
+                // Update the previous quantity
+                previousQuantity = price.getQuantity();
+            }
+        }
+        
+        columns.put("customer_tier_price", priceString.toString());
+    }
+    
+    private void addErpGroupPrices(ItemPricing itemPricing, PriceCalculator calculator, Map<String, String> columns) throws IOException {
         
         // Add column data for each price level, group and tier prices
         for (String priceLevel : Mas90Magmi.getPriceLevels()) {
