@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeMap;
@@ -153,5 +154,21 @@ public class Mas90Magmi {
         }
         
         return priceCalculator;
+    }
+
+    public String getCustomerEmail(Customer customer) throws IOException {
+        Table table =  db().getTable("AR_Customer");
+        
+        Map<String, String> filter = new HashMap<String, String>();
+        filter.put("ARDivisionNo", customer.getDivision());
+        filter.put("CustomerNo", customer.getCustomerNumber());
+        
+        Row row = CursorBuilder.findRow(table, filter);
+        
+        if (row != null) {
+            return (String) row.get("EmailAddress");
+        }
+        
+        return null;
     }
 }
