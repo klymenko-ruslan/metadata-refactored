@@ -3,13 +3,14 @@
 angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap', 'restangular'])
     .config(function(RestangularProvider) {
 //        RestangularProvider.setBaseUrl('http://localhost:8080/');
+//        RestangularProvider.setBaseUrl('http://metadata.turbointernational.com:8080/');
         RestangularProvider.setDefaultHeaders({"Content-Type": "text/plain"});
         RestangularProvider.setResponseExtractor(function(response, operation) {
             return response;
         })
     })
     .config(function ($routeProvider) {
-        $routeProvider.when('/part/:type', {
+        $routeProvider.when('/', {
             templateUrl: 'views/part/PartList.html',
             controller: 'PartListCtrl'
         });
@@ -34,6 +35,6 @@ angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap', 'restangu
             controller: 'PartBomSearchCtrl'
         });
         $routeProvider.otherwise({
-            redirectTo: '/part/'
+            redirectTo: '/'
         });
     });
