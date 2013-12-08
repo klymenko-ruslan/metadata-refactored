@@ -1,6 +1,7 @@
 package com.turbointernational.metadata.domain.part;
 import com.google.common.collect.Sets;
 import com.turbointernational.metadata.domain.other.Manufacturer;
+import com.turbointernational.metadata.domain.other.TurboModel;
 import com.turbointernational.metadata.domain.part.bom.BOMItem;
 import com.turbointernational.metadata.domain.part.types.Backplate;
 import com.turbointernational.metadata.domain.part.types.BearingHousing;
@@ -596,6 +597,10 @@ public class Part implements Comparable<Part> {
             // Default to quantity 1
             columns.put("quantity", "1");
         }
+        
+        // Turbo Models
+        Set<TurboModel> turboModels = collectTurboModels(new HashSet<Long>());
+        columns.put("turbo_model", StringUtils.join(turboModels, ","));
     }
     
     public List<Part> collectTIInterchanges() {
@@ -613,6 +618,74 @@ public class Part implements Comparable<Part> {
         }
         
         return interchangeParts;
+    }
+    
+    public Set<TurboModel> collectTurboModels(Set<Long> visitedPartIds) {
+                
+        // Add this part to the visited set
+        visitedPartIds.add(id);
+            
+        Set<TurboModel> turboModels = Sets.newHashSet();
+        
+        // Get the parent parts
+        Set<Part> parentParts = Sets.newHashSet();
+        parentParts.addAll(collectBomParents());
+        parentParts.addAll(collectBomAltParents());
+        
+        // Add their turbo models to the list
+        for (Part parent : parentParts) {
+            
+            // If the parent part is a turbo, add it's model to the list
+            if (parent instanceof Turbo) {
+                TurboModel model = ((Turbo) parent).getTurboModel();
+                turboModels.add(model);
+                
+                // Turbos are top-level as far as we're concerned
+                continue;
+            }
+            
+            // Walk up the next level of the hierarchy if we haven't visited it yet
+            if (!visitedPartIds.contains(parent.getId())) {
+                turboModels.addAll(parent.collectTurboModels(visitedPartIds));
+            }
+        }
+        
+        return turboModels;
+    }
+    
+    /**
+     * Get the BOM items that have this part as a child or alternate.
+     */
+    public List<Part> collectBomParents() {
+        return entityManager.createQuery(
+                  "SELECT DISTINCT p\n"
+                + "FROM\n"
+                + "  Part p\n"
+                + "  JOIN p.bom b"
+                + "  JOIN b.child child\n"
+                + "WHERE\n"
+                + "  child.id = :partId\n"
+                , Part.class)
+                .setParameter("partId", this.id)
+                .getResultList();
+    }
+    
+    /**
+     * Get the BOM items that have this part as an alternate.
+     */
+    public List<Part> collectBomAltParents() {
+        return entityManager.createQuery(
+                  "SELECT DISTINCT p\n"
+                + "FROM\n"
+                + "  Part p\n"
+                + "  JOIN p.bom b"
+                + "  JOIN b.alternatives alt\n"
+                + "  JOIN alt.part altPart\n"
+                + "WHERE\n"
+                + "  altPart.id = :partId"
+                , Part.class)
+                .setParameter("partId", this.id)
+                .getResultList();
     }
     
     //</editor-fold>
