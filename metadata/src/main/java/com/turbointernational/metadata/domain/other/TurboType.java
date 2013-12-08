@@ -23,7 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Configurable
 @Entity
 @Table(name="TURBO_TYPE", uniqueConstraints=@UniqueConstraint(columnNames={"name"}))
-public class TurboType {
+public class TurboType implements Comparable<TurboType>{
     
     //<editor-fold defaultstate="collapsed" desc="Properties">
     @Id
@@ -192,5 +192,10 @@ public class TurboType {
         this.entityManager.flush();
         return merged;
     }
+
     //</editor-fold>
+    @Override
+    public int compareTo(TurboType o) {
+        return this.name.compareTo(o.getName());
+    }
 }

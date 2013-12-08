@@ -2,6 +2,7 @@ package com.turbointernational.metadata.domain.part;
 import com.google.common.collect.Sets;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.other.TurboModel;
+import com.turbointernational.metadata.domain.other.TurboType;
 import com.turbointernational.metadata.domain.part.bom.BOMItem;
 import com.turbointernational.metadata.domain.part.types.Backplate;
 import com.turbointernational.metadata.domain.part.types.BearingHousing;
@@ -152,6 +153,10 @@ public class Part implements Comparable<Part> {
     @OneToMany(mappedBy="parent", fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
     private Set<BOMItem> bom = new TreeSet<BOMItem>();
     
+    @OneToMany(cascade = CascadeType.REFRESH)
+    @JoinTable(name="part_turbo_type", joinColumns=@JoinColumn(name="part_id"), inverseJoinColumns=@JoinColumn(name="turbo_type_id"))
+    private Set<TurboType> turboTypes = new TreeSet<TurboType>();
+    
     @Version
     @Column(name = "version")
     private Integer version;
@@ -265,6 +270,10 @@ public class Part implements Comparable<Part> {
     public void setBom(Set<BOMItem> bom) {
         this.bom.clear();
         this.bom.addAll(bom);
+    }
+
+    public Set<TurboType> getTurboTypes() {
+        return turboTypes;
     }
     
     public Integer getVersion() {
@@ -599,8 +608,30 @@ public class Part implements Comparable<Part> {
         }
         
         // Turbo Models
-        Set<TurboModel> turboModels = collectTurboModels(new HashSet<Long>());
-        columns.put("turbo_model", StringUtils.join(turboModels, ","));
+        StringBuilder turboModelString = new StringBuilder();
+        for (TurboModel turboModel : collectTurboModels(new HashSet<Long>())) {
+            
+            // Separator
+            if (turboModelString.length() > 0) {
+                turboModelString.append(",");
+            }
+            
+            turboModelString.append(turboModel.getName());
+        }
+        columns.put("turbo_model", turboModelString.toString());
+        
+        // Turbo Types
+        StringBuilder turboTypeString = new StringBuilder();
+        for (TurboType turboType : getTurboTypes()) {
+            
+            // Separator
+            if (turboTypeString.length() > 0) {
+                turboTypeString.append(",");
+            }
+            
+            turboTypeString.append(turboType.getName());
+        }
+        columns.put("turbo_type", turboTypeString.toString());
     }
     
     public List<Part> collectTIInterchanges() {

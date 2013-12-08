@@ -56,6 +56,7 @@ public class Magmi {
         "price",
         "quantity",
         "turbo_model",       // Turbo Models
+        "turbo_type",       // Turbo Types
         //</editor-fold>
         
         //<editor-fold defaultstate="collapsed" desc="Types">

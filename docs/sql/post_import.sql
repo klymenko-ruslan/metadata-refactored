@@ -19,7 +19,6 @@ ALTER TABLE `part`
   DROP COLUMN `temp7_char`,
   DROP COLUMN `temp8_char`;
 
-DROP TABLE IF EXISTS `part_turbo_type`;
 DROP TABLE IF EXISTS `part_attribute`;
 DROP TABLE IF EXISTS `attribute_type`;
 DROP TABLE IF EXISTS `bom_hierarchy`;
