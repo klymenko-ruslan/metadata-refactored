@@ -46,7 +46,7 @@
             <dl id="narrow-by-list">
                 <?php $_filters = $this->getFilters() ?>
                 <?php foreach ($_filters as $_filter): ?>
-                <?php if($_filter->getItemsCount() && $_filter->getName() != 'Category'): ?>
+                <?php if($_filter->getItemsCount()): ?>
                     <dt><?php echo $this->__($_filter->getName()) ?></dt>
                     <dd><?php echo $_filter->getHtml() ?></dd>
                 <?php endif; ?>
@@ -57,3 +57,6 @@
     </div>
 </div>
 <?php endif; ?>
+
+
+<!--&& $_filter->getName() != 'Category'-->
