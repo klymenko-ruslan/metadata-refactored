@@ -36,11 +36,16 @@ class CustomerpriceProcessor extends Magmi_ItemProcessor
         
         // Explode on pipes - email1;qty1:price1;qty2:price2|email2...
         foreach(explode("|", $item[$this->_columnName]) as $customer_price) {
+            if (strlen($customer_price) == 0) {
+                continue;
+            }
             
             // Explode into a quantity:price array - email1;qty1:price1...
             // Strip the email off the quantity:price array, it's the first value
             $quantityPrices = explode(";", $customer_price);
             $customerEmail = array_shift($quantityPrices);
+            
+            if ($customerEmail)
             $customerId = $this->selectone(
                     'SELECT entity_id FROM ' . $customer_table_name . ' WHERE email=?',
                     $customerEmail, "entity_id");
