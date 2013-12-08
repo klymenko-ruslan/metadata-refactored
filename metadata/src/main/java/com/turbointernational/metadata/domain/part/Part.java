@@ -524,8 +524,8 @@ public class Part implements Comparable<Part> {
         // manufacturer
         columns.put("manufacturer", ObjectUtils.toString(getManufacturer().getName()));
         
-        // manufacturer_part_number
-        columns.put("manufacturer_part_number", ObjectUtils.toString(getManufacturerPartNumber()));
+        // part_number
+        columns.put("part_number", ObjectUtils.toString(getManufacturerPartNumber()));
         
         // ti_part_sku / interchanges
         if (interchange != null) {
