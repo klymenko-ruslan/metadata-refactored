@@ -109,7 +109,7 @@ public class Magmi {
         //</editor-fold>
         
         //<editor-fold defaultstate="collapsed" desc="MAS90 Prices">
-        "customer_tier_price",
+        "customerprice",
         
         "group_price:ERP_PL_0",
         "group_price:ERP_PL_1",
@@ -277,7 +277,7 @@ public class Magmi {
             }
         }
         
-        columns.put("customer_tier_price", priceString.toString());
+        columns.put("customerprice", priceString.toString());
     }
     
     private void addErpGroupPrices(ItemPricing itemPricing, PriceCalculator calculator, Map<String, String> columns) throws IOException {
