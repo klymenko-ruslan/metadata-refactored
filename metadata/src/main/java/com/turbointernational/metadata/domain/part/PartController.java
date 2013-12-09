@@ -151,6 +151,21 @@ public class PartController {
         return new ResponseEntity<String>(headers, HttpStatus.OK);
     }
 
+    @RequestMapping(value="/{id}/indexTurboModel")
+    @ResponseBody
+    public ResponseEntity<Void> indexTurboModel(@PathVariable("id") Long id) throws Exception {
+        Part part = Part.findPart(id);
+        
+        long start = System.currentTimeMillis();
+        part.indexTurboModels();
+        log.log(Level.INFO,
+                "Turbo models indexed in {0}ms: {1}",
+                new Object[] {System.currentTimeMillis() - start, part.getTurboModels()});
+        
+        
+        return new ResponseEntity<Void>((Void) null, HttpStatus.OK);
+    }
+    
     @RequestMapping(value="/indexAll")
     @ResponseBody
     public ResponseEntity<Void> indexAll(@RequestParam(required=false) Integer maxPages,

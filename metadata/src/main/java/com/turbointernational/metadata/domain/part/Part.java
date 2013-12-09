@@ -29,10 +29,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.logging.Logger;
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -72,6 +74,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn
 public class Part implements Comparable<Part> {
+    private static final Logger log = Logger.getLogger(Part.class.toString());
     
     public static final ObjectFactory OBJECT_FACTORY = new ObjectFactory() {
         
@@ -156,6 +159,10 @@ public class Part implements Comparable<Part> {
     @OneToMany(cascade = CascadeType.REFRESH)
     @JoinTable(name="part_turbo_type", joinColumns=@JoinColumn(name="part_id"), inverseJoinColumns=@JoinColumn(name="turbo_type_id"))
     private Set<TurboType> turboTypes = new TreeSet<TurboType>();
+    
+    @OneToMany(cascade = CascadeType.REFRESH)
+    @JoinTable(name="part_turbo_model", joinColumns=@JoinColumn(name="part_id"), inverseJoinColumns=@JoinColumn(name="turbo_model_id"))
+    private Set<TurboModel> turboModels = new TreeSet<TurboModel>();
     
     @Version
     @Column(name = "version")
@@ -276,6 +283,10 @@ public class Part implements Comparable<Part> {
         return turboTypes;
     }
 
+    public Set<TurboModel> getTurboModels() {
+        return turboModels;
+    }
+
     public Integer getVersion() {
         return version;
     }
@@ -302,6 +313,7 @@ public class Part implements Comparable<Part> {
     @PostPersist
     @PostUpdate
     public void updateIndex() throws Exception {
+        log.info("Updating index.");
         indexPart();
     }
     
@@ -609,7 +621,7 @@ public class Part implements Comparable<Part> {
         
         // Turbo Models
         StringBuilder turboModelString = new StringBuilder();
-        for (TurboModel turboModel : collectTurboModels(new HashSet<Long>())) {
+        for (TurboModel turboModel : getTurboModels()) {
             
             // Separator
             if (turboModelString.length() > 0) {
@@ -651,62 +663,70 @@ public class Part implements Comparable<Part> {
         return interchangeParts;
     }
     
-    public Set<TurboModel> collectTurboModels(Set<Long> visitedPartIds) {
-                
-        // Add this part to the visited set
-        visitedPartIds.add(id);
-            
-        Set<TurboModel> turboModels = Sets.newHashSet();
+    //</editor-fold>
+    
+    
+    //<editor-fold defaultstate="collapsed" desc="Turbo Model Indexing">
+    @Transactional
+    public void indexTurboModels() {
+        Set<TurboModel> newTurboModels = collectTurboModels();
         
-        // Get the parent parts
-        Set<Part> parentParts = Sets.newHashSet();
-        parentParts.addAll(collectBomParents());
-        parentParts.addAll(collectBomAltParents());
+        // Build the turbo type index
+        Set<TurboType> newTurboTypes = Sets.newHashSet();
+        for (TurboModel newTurboModel : newTurboModels) {
+            newTurboTypes.add(newTurboModel.getTurboType());
+        }
         
-        // Add their turbo models to the list
-        for (Part parent : parentParts) {
+        // Remove any old associations, and create any new ones
+        turboModels.retainAll(newTurboModels);
+        turboModels.addAll(newTurboModels);
+        
+        turboTypes.retainAll(newTurboTypes);
+        turboTypes.addAll(newTurboTypes);
+        
+        // Save the new values
+        this.merge();
+    }
+    
+    public Set<TurboModel> collectTurboModels() {
+        
+        Set<Long> visitedPartIds = new HashSet<Long>();
+        Set<TurboModel> collectedTurboModels = new HashSet<TurboModel>();
+        Set<Long> partsToVisit = new HashSet<Long>();
+        
+        while (!partsToVisit.isEmpty()) {
             
-            // If the parent part is a turbo, add it's model to the list
-            if (parent instanceof Turbo) {
-                TurboModel model = ((Turbo) parent).getTurboModel();
-                turboModels.add(model);
-                
-                // Turbos are top-level as far as we're concerned
+            // Get the next part to visit
+            Iterator<Long> it = partsToVisit.iterator();
+            Long partId = it.next();
+            it.remove();
+            
+            if (visitedPartIds.contains(partId)) {
                 continue;
             }
             
-            // Walk up the next level of the hierarchy if we haven't visited it yet
-            if (!visitedPartIds.contains(parent.getId())) {
-                turboModels.addAll(parent.collectTurboModels(visitedPartIds));
+            Part part = Part.findPart(partId);
+            
+            if (part instanceof Turbo) {
+                collectedTurboModels.add(((Turbo) part).getTurboModel());
             }
-        }
-        
-        return turboModels;
-    }
-    
-    /**
-     * Get the BOM items that have this part as a child or alternate.
-     */
-    public List<Part> collectBomParents() {
-        return entityManager.createQuery(
-                  "SELECT DISTINCT p\n"
+            
+            // BOM Parents
+            List<Long> parents = entityManager.createQuery(
+                "SELECT DISTINCT p.id\n"
                 + "FROM\n"
                 + "  Part p\n"
                 + "  JOIN p.bom b"
                 + "  JOIN b.child child\n"
                 + "WHERE\n"
                 + "  child.id = :partId\n"
-                , Part.class)
-                .setParameter("partId", this.id)
+                , Long.class)
+                .setParameter("partId", part.id)
                 .getResultList();
-    }
-    
-    /**
-     * Get the BOM items that have this part as an alternate.
-     */
-    public List<Part> collectBomAltParents() {
-        return entityManager.createQuery(
-                  "SELECT DISTINCT p\n"
+            
+            // BOM Alt Parents
+            parents.addAll(entityManager.createQuery(
+                  "SELECT DISTINCT p.id\n"
                 + "FROM\n"
                 + "  Part p\n"
                 + "  JOIN p.bom b"
@@ -714,12 +734,25 @@ public class Part implements Comparable<Part> {
                 + "  JOIN alt.part altPart\n"
                 + "WHERE\n"
                 + "  altPart.id = :partId"
-                , Part.class)
+                , Long.class)
                 .setParameter("partId", this.id)
-                .getResultList();
+                .getResultList());
+            
+            // Add the part to the visited list
+            visitedPartIds.add(partId);
+            
+            // Add any new parts to the visited list
+            for (Long parentPartId : parents) {
+                partsToVisit.add(parentPartId);
+            }
+        }
+        
+        return collectedTurboModels;
     }
     
     //</editor-fold>
+    
+    
 
     @Override
     public int compareTo(Part o) {
