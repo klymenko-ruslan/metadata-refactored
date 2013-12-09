@@ -45,7 +45,33 @@ Architecture
  * Spring MVC Backend
  * AngularJS Frontend
  * ElasticSearch
+ * MAS90 Price Sync
 
 * Magento
 
 * Magmi
+
+
+Metadata Server Configuration
+=============================
+The Metadata server uses java properties files for configuration. In the source, these are stored under `/metadata/src/main/java/resources/spring`. The webapp also looks in the [tomcat] user's home directory for `ti_metadata.properties` which can be used to override the default values. Here's a sample:
+
+```
+mas90.db.path=/var/local/mas90.accdb
+elasticsearch.timeout=10000
+elasticsearch.port=9300
+elasticsearch.type=part
+elasticsearch.index=metadata
+elasticsearch.host=localhost
+database.host=localhost
+database.port=3306
+database.schema=metadata_db
+database.username=metadata_user
+database.password=metadata_pass
+```
+
+MAS90 Price Sync
+================
+The metadata server will use the MAS90 access database in `/var/local/mas90.accdb`, this can be overridden with the `mas90.db.path` config property.
+
+Prices are exported as part of the Magmi sync. Upload the latest file before sync and the new prices will be automatically exported.
