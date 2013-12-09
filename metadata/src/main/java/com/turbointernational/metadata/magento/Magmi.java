@@ -3,6 +3,7 @@ package com.turbointernational.metadata.magento;
 import au.com.bytecode.opencsv.CSVWriter;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.Part;
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -17,7 +18,7 @@ import mas90magmi.ItemPricing;
 import mas90magmi.CalculatedPrice;
 import mas90magmi.Mas90Prices;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -132,9 +133,9 @@ public class Magmi {
         //</editor-fold>
             
     };
-    
-    @Autowired(required=true)
-    Mas90Prices mas90;
+
+    @Value("${mas90.db.path}")
+    String mas90DbPath;
     
     @RequestMapping("/products")
     @ResponseBody
@@ -148,6 +149,7 @@ public class Magmi {
         response.setHeader("Content-Type", "text/csv");
         response.setHeader("Content-Disposition: attachment; filename=products.csv", null);
         
+        Mas90Prices mas90 = new Mas90Prices(new File(mas90DbPath));
         CSVWriter writer = new CSVWriter(new OutputStreamWriter(out), ',', '"');
         
         // Write the header row
@@ -156,12 +158,12 @@ public class Magmi {
         if (id == null) {
             
             // Write the non-bom parts, then bom parts
-            int count = writeAllParts(writer);
+            int count = writeAllParts(mas90, writer);
             
             logger.log(Level.INFO, "Magmi products exported, {0} parts in {1}ms",
                 new Object[] {count, System.currentTimeMillis() - runtimeStart});
         } else {
-            writer.writeNext(partToProductCsvRow(Part.findPart(id)));
+            writer.writeNext(partToProductCsvRow(mas90, Part.findPart(id)));
         }
         
         writer.flush();
@@ -169,8 +171,8 @@ public class Magmi {
         
     }
 
-    private int writeAllParts(CSVWriter writer) throws Exception {
-        
+    private int writeAllParts(Mas90Prices mas90, CSVWriter writer) throws Exception {
+
         // Write a CSV for each part
         List<Part> parts;
         int start = 0;
@@ -186,7 +188,7 @@ public class Magmi {
             // Write each part
             for (Part part : parts) {
                 try {
-                    writer.writeNext(partToProductCsvRow(part));
+                    writer.writeNext(partToProductCsvRow(mas90, part));
                 } catch (Exception e) {
                     logger.log(Level.INFO, "Failed to synchronize part " + part.getId(), e);
                     continue;
@@ -197,7 +199,7 @@ public class Magmi {
         return start;
     }
     
-    private String[] partToProductCsvRow(Part part) throws IOException {
+    private String[] partToProductCsvRow(Mas90Prices mas90, Part part) throws IOException {
         
         // Get the part's column values
         Map<String, String> columns = new HashMap<String, String>();
@@ -205,7 +207,7 @@ public class Magmi {
         
         // Add ERP pricing details if this is a TI part
         if (Manufacturer.TI_ID.equals(part.getManufacturer().getId())) {
-            addErpPrices(columns, part.getManufacturerPartNumber());
+            addErpPrices(mas90, columns, part.getManufacturerPartNumber());
         }
 
         // Map the column into a value array for the CSV writer
@@ -220,7 +222,7 @@ public class Magmi {
         return valueArray;
     }
     
-    private void addErpPrices(Map<String, String> columns, String partNumber) throws IOException {
+    private void addErpPrices(Mas90Prices mas90, Map<String, String> columns, String partNumber) throws IOException {
         ItemPricing itemPricing = mas90.getItemPricing(partNumber);
         
         // Nothing to do!
@@ -230,12 +232,12 @@ public class Magmi {
         }
         columns.put("price", itemPricing.getStandardPrice().toString());
         
-        addErpCustomerPrices(itemPricing, columns);
-        addErpGroupPrices(itemPricing, columns);
+        addErpCustomerPrices(mas90, itemPricing, columns);
+        addErpGroupPrices(mas90, itemPricing, columns);
     }
     
     // bob@example.com;0:$1.00;10:$0.95;20:$0.90|jim@example.com....
-    private void addErpCustomerPrices(ItemPricing itemPricing, Map<String, String> columns) throws IOException {
+    private void addErpCustomerPrices(Mas90Prices mas90, ItemPricing itemPricing, Map<String, String> columns) throws IOException {
         
         // Build the customer price string
         StringBuilder priceString = new StringBuilder();
@@ -276,7 +278,7 @@ public class Magmi {
         columns.put("customerprice", priceString.toString());
     }
     
-    private void addErpGroupPrices(ItemPricing itemPricing, Map<String, String> columns) throws IOException {
+    private void addErpGroupPrices(Mas90Prices mas90, ItemPricing itemPricing, Map<String, String> columns) throws IOException {
         
         // Add column data for each price level, group and tier prices
         for (String priceLevel : Mas90Prices.getPriceLevels()) {

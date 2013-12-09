@@ -275,7 +275,7 @@ public class Part implements Comparable<Part> {
     public Set<TurboType> getTurboTypes() {
         return turboTypes;
     }
-    
+
     public Integer getVersion() {
         return version;
     }

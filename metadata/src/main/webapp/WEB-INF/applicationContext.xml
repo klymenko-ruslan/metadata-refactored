@@ -27,7 +27,7 @@
         then be used within application context files in the form of
         ${propertyKey}.
     -->
-    <context:property-placeholder location="classpath*:META-INF/spring/*.properties"/>
+    <context:property-placeholder ignore-resource-not-found="true" location="classpath*:META-INF/spring/*.properties,file:${user.home}/ti_metadata.properties"/>
     <!--
         Turn on AspectJ @Configurable support. As a result, any time you
         instantiate an object, Spring will attempt to perform dependency
@@ -94,10 +94,6 @@
         <property name="jpaVendorAdapter">
             <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
         </property>
-    </bean>
-    
-    <bean class="mas90magmi.Mas90Magmi">
-        <constructor-arg value="${mas90.db.path}"/>
     </bean>
     
     <task:annotation-driven executor="asyncExecutor" mode="aspectj"/>
