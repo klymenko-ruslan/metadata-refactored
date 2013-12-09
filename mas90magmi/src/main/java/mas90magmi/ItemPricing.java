@@ -62,13 +62,13 @@ public class ItemPricing {
         return priceLevelPricings;
     }
     
-    public Map<String, List<CalculatedPrice>> calculateCustomerSpecificPrices(ItemPricing item) {
+    public Map<String, List<CalculatedPrice>> calculateCustomerSpecificPrices() {
         Map<String, List<CalculatedPrice>> prices = new TreeMap();
         
         // Calculate customer-specific prices
-        for (Map.Entry<String, Pricing> pricing : item.getCustomerPricings().entrySet()) {
+        for (Map.Entry<String, Pricing> pricing : customerPricings.entrySet()) {
             
-            List<CalculatedPrice> customerPrices = pricing.getValue().calculate(item.getStandardPrice());
+            List<CalculatedPrice> customerPrices = pricing.getValue().calculate(standardPrice);
             
             prices.put(pricing.getKey(), customerPrices);
         }

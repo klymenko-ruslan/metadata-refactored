@@ -13,12 +13,9 @@ import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletResponse;
-import mas90magmi.Customer;
 import mas90magmi.ItemPricing;
-import mas90magmi.Mas90Magmi;
-import mas90magmi.PriceCalculator;
 import mas90magmi.CalculatedPrice;
-import mas90magmi.Pricing;
+import mas90magmi.Mas90Prices;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -137,7 +134,7 @@ public class Magmi {
     };
     
     @Autowired(required=true)
-    Mas90Magmi mas90;
+    Mas90Prices mas90;
     
     @RequestMapping("/products")
     @ResponseBody
@@ -225,7 +222,6 @@ public class Magmi {
     
     private void addErpPrices(Map<String, String> columns, String partNumber) throws IOException {
         ItemPricing itemPricing = mas90.getItemPricing(partNumber);
-        PriceCalculator calculator = mas90.getCalculator();
         
         // Nothing to do!
         if (itemPricing.getStandardPrice() == null) {
@@ -234,24 +230,22 @@ public class Magmi {
         }
         columns.put("price", itemPricing.getStandardPrice().toString());
         
-        addErpCustomerPrices(itemPricing, calculator, columns);
-        addErpGroupPrices(itemPricing, calculator, columns);
+        addErpCustomerPrices(itemPricing, columns);
+        addErpGroupPrices(itemPricing, columns);
     }
     
     // bob@example.com;0:$1.00;10:$0.95;20:$0.90|jim@example.com....
-    private void addErpCustomerPrices(ItemPricing itemPricing, PriceCalculator calculator, Map<String, String> columns) throws IOException {
+    private void addErpCustomerPrices(ItemPricing itemPricing, Map<String, String> columns) throws IOException {
         
         // Build the customer price string
         StringBuilder priceString = new StringBuilder();
-        for (Entry<Customer, List<CalculatedPrice>> entry : calculator.calculateCustomerSpecificPrices(itemPricing).entrySet()) {
+        for (Entry<String, List<CalculatedPrice>> entry : itemPricing.calculateCustomerSpecificPrices().entrySet()) {
             
             // Get the entry info
-            Customer customer = entry.getKey();
-            String customerEmail = mas90.getCustomerEmail(customer);
+            String customerEmail = entry.getKey();
             List<CalculatedPrice> prices = entry.getValue();
             
             if (StringUtils.isBlank(customerEmail)) {
-                logger.log(Level.WARNING, "No email for customer {0} {1}", new Object[]{customer.getDivision(), customer.getCustomerNumber()});
                 continue;
             }
             
@@ -282,14 +276,14 @@ public class Magmi {
         columns.put("customerprice", priceString.toString());
     }
     
-    private void addErpGroupPrices(ItemPricing itemPricing, PriceCalculator calculator, Map<String, String> columns) throws IOException {
+    private void addErpGroupPrices(ItemPricing itemPricing, Map<String, String> columns) throws IOException {
         
         // Add column data for each price level, group and tier prices
-        for (String priceLevel : Mas90Magmi.getPriceLevels()) {
+        for (String priceLevel : Mas90Prices.getPriceLevels()) {
             
             // Get the price level pricing
             StringBuilder priceString = new StringBuilder();
-            List<CalculatedPrice> prices = calculator.getPriceLevelPrices(priceLevel, itemPricing);
+            List<CalculatedPrice> prices = mas90.calculatePriceLevelPrices(priceLevel, itemPricing);
             
             // MAS90's uses "up to this quantity", Magento is "this quantity and up"
             // Keep track of the previous quantity so we can use the proper quantity in Magento

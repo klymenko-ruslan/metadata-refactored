@@ -18,46 +18,10 @@ import org.junit.Before;
 public class Mas90PricesTest {
     
     Mas90Prices instance;
-    Pricing testPricing1;
-    Pricing testPricing2;
     
     @Before
     public void setUp() throws IOException {
         instance = new Mas90Prices(new File("/home/jrodriguez/Downloads/MAS90_pricing_model.accdb"));
-        
-        
-        testPricing1 = new Pricing(DiscountType.Override,
-                new BigDecimal[] {
-                    new BigDecimal("100"),
-                    new BigDecimal("200"),
-                    new BigDecimal("300"),
-                    new BigDecimal("400"),
-                    new BigDecimal("500")
-                },
-                new BigDecimal[] {
-                    new BigDecimal("5000"),
-                    new BigDecimal("4000"),
-                    new BigDecimal("3000"),
-                    new BigDecimal("2000"),
-                    new BigDecimal("1000")
-                });
-        
-        
-        testPricing2 = new Pricing(DiscountType.Override,
-                new BigDecimal[] {
-                    new BigDecimal("999999"),
-                    BigDecimal.ZERO,
-                    BigDecimal.ZERO,
-                    BigDecimal.ZERO,
-                    BigDecimal.ZERO
-                },
-                new BigDecimal[] {
-                    new BigDecimal("10"),
-                    BigDecimal.ZERO,
-                    BigDecimal.ZERO,
-                    BigDecimal.ZERO,
-                    BigDecimal.ZERO
-                });
     }
 
     @Test
@@ -188,38 +152,4 @@ public class Mas90PricesTest {
         assertEquals(new BigDecimal("0.0000"),   priceLevelPricings.get("R").getPriceBreak(0).getRate());
         assertEquals(new BigDecimal("27.5000"),  priceLevelPricings.get("W").getPriceBreak(0).getRate());
     }
-
-//    @Test
-//    public void testGetPriceLevelPrices_ItemSpecific() {
-//        String priceLevel = "W";
-//        instance.calculatePriceLevelPrices(priceLevel, testPricing1);
-//        
-//        priceLevelPricings.put(priceLevel, testPricing1);
-//        itemPricing.getPriceLevelPricings().put(priceLevel, testPricing2);
-//        
-//        List<CalculatedPrice> prices = instance.getPriceLevelPrices(priceLevel, itemPricing);
-//        assertEquals(1, prices.size());
-//        
-//        CalculatedPrice price = prices.get(0);
-//        
-//        assertEquals(0, price.getBreakLevel());
-//        assertEquals(999999, price.getQuantity());
-//        assertEquals(new BigDecimal("10"), price.getPrice());
-//    }
-//
-//    @Test
-//    public void testGetPriceLevelPrices_Default() {
-//        priceLevelPricings.put(priceLevel, testPricing1);
-//        
-//        List<CalculatedPrice> prices = instance.getPriceLevelPrices(priceLevel, itemPricing);
-//        
-//        assertEquals(5, prices.size());
-//        
-//        for (int i = 0; i < Pricing.BREAK_COUNT; i++) {
-//            CalculatedPrice price = prices.get(i);
-//            assertEquals(i, price.getBreakLevel());
-//            assertEquals((i+1) * 100, price.getQuantity());
-//            assertEquals(new BigDecimal((5 - i) * 1000), price.getPrice());
-//        }
-//    }
 }
