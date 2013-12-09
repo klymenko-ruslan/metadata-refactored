@@ -1,11 +1,11 @@
 package mas90magmi;
 
-import com.healthmarketscience.jackcess.Row;
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
 import org.junit.Before;
 
 /**
@@ -29,7 +29,30 @@ public class ItemPricingTest {
     
     @Test
     public void testCalculateCustomerSpecificPrices() {
-        fail("TODO");
+        instance.getCustomerPricings().put("me@me.com", new Pricing(
+                DiscountType.Override,
+                new BigDecimal[] {
+                    new BigDecimal("999999"),
+                    BigDecimal.ZERO,
+                    BigDecimal.ZERO,
+                    BigDecimal.ZERO,
+                    BigDecimal.ZERO
+                },
+                new BigDecimal[] {
+                    new BigDecimal("10"),
+                    BigDecimal.ZERO,
+                    BigDecimal.ZERO,
+                    BigDecimal.ZERO,
+                    BigDecimal.ZERO
+                }));
+        
+        Map<String, List<CalculatedPrice>> prices = instance.calculateCustomerSpecificPrices();
+        
+        assertEquals(1, prices.size());
+        assertEquals(1, prices.get("me@me.com").size());
+        assertEquals(0, prices.get("me@me.com").get(0).getBreakLevel());
+        assertEquals(999999, prices.get("me@me.com").get(0).getQuantity());
+        assertEquals(new BigDecimal("10"), prices.get("me@me.com").get(0).getPrice());
     }
 
 }
