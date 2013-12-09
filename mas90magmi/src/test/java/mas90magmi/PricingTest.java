@@ -1,10 +1,11 @@
 package mas90magmi;
 
-import com.healthmarketscience.jackcess.Row;
-import mas90magmi.Pricing.PriceBreak;
 import java.math.BigDecimal;
-import java.util.ArrayList;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -17,14 +18,16 @@ import static org.mockito.Mockito.*;
 public class PricingTest {
     
     Pricing instance;
-    Row mockRow;
+    ResultSet mockResultSet;
+    Map<String, Pricing> priceLevelPricings = new HashMap();
+    ItemPricing itemPricing;
     
     @Before
-    public void setUp() {
-        mockRow = mock(Row.class);
+    public void setUp() throws SQLException {
+        mockResultSet = mock(ResultSet.class);
         
         // Setup the default case: Price override with no additional bulk discount
-        when(mockRow.get("ItemMethod")).thenReturn(DiscountType.Override.CODE);
+        when(mockResultSet.getString("discount_type")).thenReturn(DiscountType.Override.CODE);
         
         addMockPriceBreak(0, new BigDecimal("999999"), new BigDecimal("5000.0000")); 
         
@@ -32,136 +35,152 @@ public class PricingTest {
             addMockPriceBreak(i, new BigDecimal("0"), new BigDecimal("0"));
         }
         
-        instance = Pricing.fromRow(mockRow, "ItemMethod");
+        instance = Pricing.fromResultSet(mockResultSet);
+        
+        itemPricing = new ItemPricing("FOOBAR", new BigDecimal("10000"));
     }
     
-    public void addMockPriceBreak(int level, BigDecimal breakColumn, BigDecimal rateColumn) {
+    public void addMockPriceBreak(int level, BigDecimal breakColumn, BigDecimal rateColumn) throws SQLException {
         String breakColumnName = "BreakQty" + (level+1);
         String rateColumnName  = "DiscountMarkupPriceRate" + (level+1);
 
-        when(mockRow.get(breakColumnName)).thenReturn(breakColumn);
-        when(mockRow.get(rateColumnName)).thenReturn(rateColumn);
+        when(mockResultSet.getBigDecimal(breakColumnName)).thenReturn(breakColumn);
+        when(mockResultSet.getBigDecimal(rateColumnName)).thenReturn(rateColumn);
     }
     
     @Test
-    public void testFromRow_CommonCase() {
-        
-        assertEquals(DiscountType.Override, instance.getDiscountType());
-        
-        PriceBreak actual = instance.getPriceBreak(0);
-        
-        assertEquals(0, actual.getPosition());
-        assertEquals(999999, actual.getQuantity());
-        assertEquals(new BigDecimal("5000.0000"), actual.getRate());
-                
-        
-        // Check the other values
-        for (int i = 1; i < Pricing.BREAK_COUNT; i++) {
-            actual = instance.getPriceBreak(i);
-        
-            assertEquals(i, actual.getPosition());
-            assertEquals(0, actual.getQuantity());
-            assertEquals(0, actual.getRate().intValueExact());
-        }
-    }
-    
-    @Test
-    public void testFromRow_AllPriceBreaks() {
-        reset(mockRow);
-        when(mockRow.get("ItemMethod")).thenReturn(DiscountType.Override.CODE);
-        
-        List<PriceBreak> expectedList = new ArrayList<PriceBreak>(Pricing.BREAK_COUNT);
-        
-        for (int i = 0; i < Pricing.BREAK_COUNT; i++) {
-            BigDecimal quantity = new BigDecimal((i+1) * 100); // 100 qty increments
-            BigDecimal price = new BigDecimal((Pricing.BREAK_COUNT - i) * 1000);
-            
-            addMockPriceBreak(i, quantity, price);
-        }
-        
-        
-        instance = Pricing.fromRow(mockRow, "ItemMethod");
-        
-        assertEquals(DiscountType.Override, instance.getDiscountType());
-                
-        for (int i = 0; i < Pricing.BREAK_COUNT; i++) {
-            PriceBreak actual = instance.getPriceBreak(i);
-        
-            assertEquals(i, actual.getPosition());
-            assertEquals((i+1) * 100, actual.getQuantity()); // 100 qty increments
-            assertEquals(new BigDecimal((Pricing.BREAK_COUNT - i) * 1000), actual.getRate());
-        }
-    }
-
-    @Test
-    public void testGetDiscountType_Override() {
+    public void testGetDiscountType_Override() throws SQLException {
         DiscountType discountType = DiscountType.Override;
         
-        when(mockRow.get("ItemMethod")).thenReturn(discountType.CODE);
+        when(mockResultSet.getString("discount_type")).thenReturn(discountType.CODE);
         
-        instance = Pricing.fromRow(mockRow, "ItemMethod");
+        instance = Pricing.fromResultSet(mockResultSet);
         
         assertEquals(discountType, instance.getDiscountType());
     }
 
     @Test
-    public void testGetDiscountType_Amount() {
+    public void testGetDiscountType_Amount() throws SQLException {
         DiscountType discountType = DiscountType.Amount;
         
-        when(mockRow.get("ItemMethod")).thenReturn(discountType.CODE);
+        when(mockResultSet.getString("discount_type")).thenReturn(discountType.CODE);
         
-        instance = Pricing.fromRow(mockRow, "ItemMethod");
+        instance = Pricing.fromResultSet(mockResultSet);
         
         assertEquals(discountType, instance.getDiscountType());
     }
 
     @Test
-    public void testGetDiscountType_Percentage() {
+    public void testGetDiscountType_Percentage() throws SQLException {
         DiscountType discountType = DiscountType.Percentage;
         
-        when(mockRow.get("ItemMethod")).thenReturn(discountType.CODE);
+        when(mockResultSet.getString("discount_type")).thenReturn(discountType.CODE);
         
-        instance = Pricing.fromRow(mockRow, "ItemMethod");
+        instance = Pricing.fromResultSet(mockResultSet);
         
         assertEquals(discountType, instance.getDiscountType());
     }
 
     @Test
-    public void testApplyPriceBreak_Override() {
+    public void testApplyPriceBreak_Override() throws SQLException {
         DiscountType discountType = DiscountType.Override;
         
-        reset(mockRow);
-        when(mockRow.get("ItemMethod")).thenReturn(discountType.CODE);
+        reset(mockResultSet);
+        when(mockResultSet.getString("discount_type")).thenReturn(discountType.CODE);
         addMockPriceBreak(0, new BigDecimal("999999"), new BigDecimal("50"));
         
-        instance = Pricing.fromRow(mockRow, "ItemMethod");
+        instance = Pricing.fromResultSet(mockResultSet);
         
         assertEquals(new BigDecimal("50"), instance.getPriceBreak(0).apply(new BigDecimal("75")));
     }
 
     @Test
-    public void testApplyPriceBreak_Amount() {
+    public void testApplyPriceBreak_Amount() throws SQLException {
         DiscountType discountType = DiscountType.Amount;
         
-        reset(mockRow);
-        when(mockRow.get("ItemMethod")).thenReturn(discountType.CODE);
+        reset(mockResultSet);
+        when(mockResultSet.getString("discount_type")).thenReturn(discountType.CODE);
         addMockPriceBreak(0, new BigDecimal("999999"), new BigDecimal("25"));
         
-        instance = Pricing.fromRow(mockRow, "ItemMethod");
+        instance = Pricing.fromResultSet(mockResultSet);
         
         assertEquals(new BigDecimal("50"), instance.getPriceBreak(0).apply(new BigDecimal("75")));
     }
 
     @Test
-    public void testApplyPriceBreak_Percentage() {
+    public void testApplyPriceBreak_Percentage() throws SQLException {
         DiscountType discountType = DiscountType.Percentage;
         
-        reset(mockRow);
-        when(mockRow.get("ItemMethod")).thenReturn(discountType.CODE);
+        reset(mockResultSet);
+        when(mockResultSet.getString("discount_type")).thenReturn(discountType.CODE);
         addMockPriceBreak(0, new BigDecimal("999999"), new BigDecimal("25"));
         
-        instance = Pricing.fromRow(mockRow, "ItemMethod");
+        instance = Pricing.fromResultSet(mockResultSet);
         
         assertEquals(new BigDecimal("150.00"), instance.getPriceBreak(0).apply(new BigDecimal("200"))); // $200 @ 25% discount
+    }
+    
+
+    @Test
+    public void testCalculate_OneBreak() {
+        instance = new Pricing(DiscountType.Override,
+                new BigDecimal[] {
+                    new BigDecimal("999999"),
+                    BigDecimal.ZERO,
+                    BigDecimal.ZERO,
+                    BigDecimal.ZERO,
+                    BigDecimal.ZERO
+                },
+                new BigDecimal[] {
+                    new BigDecimal("10"),
+                    BigDecimal.ZERO,
+                    BigDecimal.ZERO,
+                    BigDecimal.ZERO,
+                    BigDecimal.ZERO
+                });
+        
+        List<CalculatedPrice> prices = instance.calculate(BigDecimal.ZERO);
+        
+        assertEquals(1, prices.size());
+        
+        CalculatedPrice price = prices.get(0);
+        assertEquals(0, price.getBreakLevel());
+        assertEquals(999999, price.getQuantity());
+        assertEquals(new BigDecimal("10"), price.getPrice());
+    }
+
+    @Test
+    public void testCalculate_AllBreaks() {
+        instance = new Pricing(DiscountType.Override,
+                new BigDecimal[] {
+                    new BigDecimal("100"),
+                    new BigDecimal("200"),
+                    new BigDecimal("300"),
+                    new BigDecimal("400"),
+                    new BigDecimal("500")
+                },
+                new BigDecimal[] {
+                    new BigDecimal("5000"),
+                    new BigDecimal("4000"),
+                    new BigDecimal("3000"),
+                    new BigDecimal("2000"),
+                    new BigDecimal("1000")
+                });
+        
+        List<CalculatedPrice> prices = instance.calculate(BigDecimal.ZERO);
+        
+        assertEquals(5, prices.size());
+        
+        for (int i = 0; i < Pricing.BREAK_COUNT; i++) {
+            CalculatedPrice price = prices.get(i);
+            assertEquals(i, price.getBreakLevel());
+            assertEquals((i+1) * 100, price.getQuantity());
+            assertEquals(new BigDecimal((5 - i) * 1000), price.getPrice());
+        }
+    }
+
+    @Test
+    public void testCalculateCustomerSpecificPrices() {
+        fail("TODO");
     }
 }

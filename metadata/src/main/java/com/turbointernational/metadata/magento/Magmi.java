@@ -17,7 +17,7 @@ import mas90magmi.Customer;
 import mas90magmi.ItemPricing;
 import mas90magmi.Mas90Magmi;
 import mas90magmi.PriceCalculator;
-import mas90magmi.PriceCalculator.CalculatedPrice;
+import mas90magmi.CalculatedPrice;
 import mas90magmi.Pricing;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;

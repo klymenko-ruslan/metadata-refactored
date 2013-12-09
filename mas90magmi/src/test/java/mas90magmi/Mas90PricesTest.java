@@ -1,29 +1,63 @@
 package mas90magmi;
 
-import mas90magmi.Pricing.PriceBreak;
+import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
-
-
+import org.junit.Before;
 
 /**
  *
  * @author jrodriguez
  */
-public class Mas90MagmiTest {
+public class Mas90PricesTest {
     
-    Mas90Magmi instance;
+    Mas90Prices instance;
+    Pricing testPricing1;
+    Pricing testPricing2;
     
     @Before
     public void setUp() throws IOException {
-        instance = new Mas90Magmi("/home/jrodriguez/Downloads/MAS90_pricing_model.accdb");
+        instance = new Mas90Prices(new File("/home/jrodriguez/Downloads/MAS90_pricing_model.accdb"));
+        
+        
+        testPricing1 = new Pricing(DiscountType.Override,
+                new BigDecimal[] {
+                    new BigDecimal("100"),
+                    new BigDecimal("200"),
+                    new BigDecimal("300"),
+                    new BigDecimal("400"),
+                    new BigDecimal("500")
+                },
+                new BigDecimal[] {
+                    new BigDecimal("5000"),
+                    new BigDecimal("4000"),
+                    new BigDecimal("3000"),
+                    new BigDecimal("2000"),
+                    new BigDecimal("1000")
+                });
+        
+        
+        testPricing2 = new Pricing(DiscountType.Override,
+                new BigDecimal[] {
+                    new BigDecimal("999999"),
+                    BigDecimal.ZERO,
+                    BigDecimal.ZERO,
+                    BigDecimal.ZERO,
+                    BigDecimal.ZERO
+                },
+                new BigDecimal[] {
+                    new BigDecimal("10"),
+                    BigDecimal.ZERO,
+                    BigDecimal.ZERO,
+                    BigDecimal.ZERO,
+                    BigDecimal.ZERO
+                });
     }
 
     @Test
@@ -51,17 +85,16 @@ public class Mas90MagmiTest {
         
         assertEquals(1, itemPricing.getCustomerPricings().size());
         
-        Iterator<Customer> customerIt = itemPricing.getCustomerPricings().keySet().iterator();
+        Iterator<String> customerIt = itemPricing.getCustomerPricings().keySet().iterator();
         assertTrue(customerIt.hasNext());
         
-        Customer customer = customerIt.next();
-        assertEquals("00", customer.getDivision());
-        assertEquals("TURBOPA", customer.getCustomerNumber());
+        String customer = customerIt.next();
+        assertEquals("turboparts1@gmail.com", customer);
         
         Pricing pricing = itemPricing.getCustomerPricings().get(customer);
         assertEquals(DiscountType.Override, pricing.getDiscountType());
         
-        PriceBreak discountLevel = pricing.getPriceBreak(0);
+        Pricing.PriceBreak discountLevel = pricing.getPriceBreak(0);
         assertEquals(999999, discountLevel.getQuantity());
         assertEquals(new BigDecimal("140.2000"), discountLevel.getRate());
     }
@@ -74,16 +107,14 @@ public class Mas90MagmiTest {
         
         assertEquals(2, itemPricing.getCustomerPricings().size());
         
-        Iterator<Customer> customerIt = itemPricing.getCustomerPricings().keySet().iterator();
+        Iterator<String> customerIt = itemPricing.getCustomerPricings().keySet().iterator();
         assertTrue(customerIt.hasNext());
         
-        Customer customer = customerIt.next();
-        assertEquals("00", customer.getDivision());
-        assertEquals("REPB541", customer.getCustomerNumber());
+        String customer = customerIt.next();
+        assertEquals("turbosbaez1@yahoo.com.mx", customer);
         
         customer = customerIt.next();
-        assertEquals("00", customer.getDivision());
-        assertEquals("RTS0061", customer.getCustomerNumber());
+        assertEquals("race-tech@hotmail.com", customer);
     }
     
     @Test
@@ -94,18 +125,17 @@ public class Mas90MagmiTest {
         
         assertEquals(1, itemPricing.getCustomerPricings().size());
         
-        Iterator<Customer> customerIt = itemPricing.getCustomerPricings().keySet().iterator();
+        Iterator<String> customerIt = itemPricing.getCustomerPricings().keySet().iterator();
         assertTrue(customerIt.hasNext());
         
-        Customer customer = customerIt.next();
-        assertEquals("00", customer.getDivision());
-        assertEquals("CARD191", customer.getCustomerNumber());
+        String customer = customerIt.next();
+        assertEquals("abethomas@cardone.com", customer);
         
         Pricing pricing = itemPricing.getCustomerPricings().get(customer);
         assertEquals(DiscountType.Override, pricing.getDiscountType());
         
         // Level 1
-        PriceBreak discountLevel = pricing.getPriceBreak(0);
+        Pricing.PriceBreak discountLevel = pricing.getPriceBreak(0);
         assertEquals(99, discountLevel.getQuantity());
         assertEquals(new BigDecimal("1.1500"), discountLevel.getRate());
         
@@ -119,6 +149,11 @@ public class Mas90MagmiTest {
         assertEquals(999999, discountLevel.getQuantity());
         assertEquals(new BigDecimal("0.8000"), discountLevel.getRate());
     }
+
+    @Test
+    public void testCalculatePriceLevelPrices() {
+    }
+
     
     @Test
     public void testGetPriceLevels() throws Exception {
@@ -133,16 +168,16 @@ public class Mas90MagmiTest {
         expectedPriceLevels.add("R");
         expectedPriceLevels.add("W");
         
-        Set<String> priceLevels = Mas90Magmi.getPriceLevels();
+        Set<String> priceLevels = Mas90Prices.getPriceLevels();
         
         assertEquals(expectedPriceLevels, priceLevels);
     }
     
     @Test
-    public void testGetPriceLevelPricings() throws Exception {
-        Map<String, Pricing> priceLevelPricings = instance.getPriceLevelPricings();
+    public void testGetDefaultPriceLevelPricing() throws Exception {
+        Map<String, Pricing> priceLevelPricings = instance.getDefaultPriceLevelPricing();
 
-        assertTrue(instance.getPriceLevels().containsAll(priceLevelPricings.keySet()));
+        assertTrue(Mas90Prices.getPriceLevels().containsAll(priceLevelPricings.keySet()));
         assertEquals(new BigDecimal("10.0000"),  priceLevelPricings.get("0").getPriceBreak(0).getRate());
         assertEquals(new BigDecimal("5.0000"),   priceLevelPricings.get("1").getPriceBreak(0).getRate());
         assertEquals(new BigDecimal("0.0000"),   priceLevelPricings.get("2").getPriceBreak(0).getRate());
@@ -154,4 +189,39 @@ public class Mas90MagmiTest {
         assertEquals(new BigDecimal("27.5000"),  priceLevelPricings.get("W").getPriceBreak(0).getRate());
     }
     
+    
+
+//    @Test
+//    public void testGetPriceLevelPrices_ItemSpecific() {
+//        String priceLevel = "W";
+//        instance.calculatePriceLevelPrices(priceLevel, testPricing1);
+//        
+//        priceLevelPricings.put(priceLevel, testPricing1);
+//        itemPricing.getPriceLevelPricings().put(priceLevel, testPricing2);
+//        
+//        List<CalculatedPrice> prices = instance.getPriceLevelPrices(priceLevel, itemPricing);
+//        assertEquals(1, prices.size());
+//        
+//        CalculatedPrice price = prices.get(0);
+//        
+//        assertEquals(0, price.getBreakLevel());
+//        assertEquals(999999, price.getQuantity());
+//        assertEquals(new BigDecimal("10"), price.getPrice());
+//    }
+//
+//    @Test
+//    public void testGetPriceLevelPrices_Default() {
+//        priceLevelPricings.put(priceLevel, testPricing1);
+//        
+//        List<CalculatedPrice> prices = instance.getPriceLevelPrices(priceLevel, itemPricing);
+//        
+//        assertEquals(5, prices.size());
+//        
+//        for (int i = 0; i < Pricing.BREAK_COUNT; i++) {
+//            CalculatedPrice price = prices.get(i);
+//            assertEquals(i, price.getBreakLevel());
+//            assertEquals((i+1) * 100, price.getQuantity());
+//            assertEquals(new BigDecimal((5 - i) * 1000), price.getPrice());
+//        }
+//    }
 }

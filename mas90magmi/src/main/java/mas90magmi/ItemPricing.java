@@ -1,7 +1,8 @@
 package mas90magmi;
 
-import com.healthmarketscience.jackcess.Row;
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -10,10 +11,6 @@ import java.util.TreeMap;
  * @author jrodriguez
  */
 public class ItemPricing {
-    
-    static final String ITEM_PRICE_LEVEL_CODE = "1";
-    
-    static final String ITEM_CUSTOMER_CODE = "2";
     
     private final String itemNumber;
     
@@ -25,7 +22,7 @@ public class ItemPricing {
     /**
      * Customer-specific item pricing.
      */
-    private final TreeMap<Customer, Pricing> customerPricings = new TreeMap();
+    private final TreeMap<String, Pricing> customerPricings = new TreeMap();
     
     /**
      * Price-level-specific item pricing.
@@ -54,7 +51,7 @@ public class ItemPricing {
     /**
      * @return the customerPricings
      */
-    public SortedMap<Customer, Pricing> getCustomerPricings() {
+    public SortedMap<String, Pricing> getCustomerPricings() {
         return customerPricings;
     }
 
@@ -65,24 +62,18 @@ public class ItemPricing {
         return priceLevelPricings;
     }
     
-    /**
-     * Adds a pricing 
-     * @param row 
-     */
-    void addPricing(Row row) {
-        String priceCodeRecord = (String) row.get("PriceCodeRecord");
+    public Map<String, List<CalculatedPrice>> calculateCustomerSpecificPrices(ItemPricing item) {
+        Map<String, List<CalculatedPrice>> prices = new TreeMap();
         
-        if (ITEM_CUSTOMER_CODE.equals(priceCodeRecord)) {
+        // Calculate customer-specific prices
+        for (Map.Entry<String, Pricing> pricing : item.getCustomerPricings().entrySet()) {
             
-            // Customer-specific item price
-            getCustomerPricings().put(Customer.fromRow(row), Pricing.fromRow(row, "ItemCustomerRecordMethod"));
+            List<CalculatedPrice> customerPrices = pricing.getValue().calculate(item.getStandardPrice());
             
-        } else if (ITEM_PRICE_LEVEL_CODE.equals(priceCodeRecord)) {
-            
-            // Price-level specific item price
-            String priceLevel = (String) row.get("ItemCustomerPriceLevel");
-            getPriceLevelPricings().put(priceLevel, Pricing.fromRow(row, "ItemMethod"));
+            prices.put(pricing.getKey(), customerPrices);
         }
+        
+        return prices;
     }
     
 }

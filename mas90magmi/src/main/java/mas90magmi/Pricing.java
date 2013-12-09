@@ -3,6 +3,10 @@ package mas90magmi;
 import com.healthmarketscience.jackcess.Row;
 import mas90magmi.Pricing.PriceBreak;
 import java.math.BigDecimal;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import static mas90magmi.DiscountType.Amount;
 import static mas90magmi.DiscountType.Override;
 import static mas90magmi.DiscountType.Percentage;
@@ -64,18 +68,19 @@ public class Pricing {
     
     public static final int BREAK_COUNT = 5;
     
-    public static Pricing fromRow(Row row, String discountMethodColumnName) {
-        String discountTypeCode = (String) row.get(discountMethodColumnName);
+    public static Pricing fromResultSet(ResultSet rs) throws SQLException {
+        String discountTypeCode = (String) rs.getString("discount_type");
+
         Pricing pricing = new Pricing(DiscountType.getDiscountType(discountTypeCode));
-        
+
         for (int i = 0; i < BREAK_COUNT; i++) {
             String breakColumnName = "BreakQty" + (i+1);
             String rateColumnName  = "DiscountMarkupPriceRate" + (i+1);
-            
-            pricing.breaks[i] = (BigDecimal) row.get(breakColumnName); // Quantity
-            pricing.rates[i] = (BigDecimal) row.get(rateColumnName);   // Discount/Markup/Price/Rate
+
+            pricing.breaks[i] = rs.getBigDecimal(breakColumnName); // Quantity
+            pricing.rates[i] = rs.getBigDecimal(rateColumnName);   // Discount/Markup/Price/Rate
         }
-        
+
         return pricing;
     }
     
@@ -106,6 +111,25 @@ public class Pricing {
 
     public DiscountType getDiscountType() {
         return discountType;
+    }
+    
+    public List<CalculatedPrice> calculate(BigDecimal standardPrice) {
+        List<CalculatedPrice> prices = new ArrayList();
+
+        // Calculate prices for each price break
+        for (int i = 0; i < Pricing.BREAK_COUNT; i++) {
+            PriceBreak priceBreak = getPriceBreak(i);
+            
+            // Add price breaks until their quantity == 0
+            if (priceBreak.getQuantity() == 0) {
+                break;
+            }
+        
+            BigDecimal price = priceBreak.apply(standardPrice);
+            prices.add(new CalculatedPrice(i, priceBreak.getQuantity(), price));
+        }
+        
+        return prices;
     }
     
 }
