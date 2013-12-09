@@ -356,7 +356,7 @@ CREATE TABLE `turbo` (
 
 
 --
--- Part-Turbo Type join table
+-- Part-Turbo Type/Model Indexes
 --
 CREATE TABLE `part_turbo_type` (
   `id` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -366,6 +366,13 @@ CREATE TABLE `part_turbo_type` (
   FOREIGN KEY (`turbo_type_id`) REFERENCES `turbo_type` (`id`)
 ) ENGINE = INNODB;
 
+CREATE TABLE `part_turbo_model` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `part_id` BIGINT NOT NULL,
+  `turbo_model_id` BIGINT NOT NULL,
+  FOREIGN KEY (`part_id`) REFERENCES `part` (`id`),
+  FOREIGN KEY (`turbo_model_id`) REFERENCES `turbo_model` (`id`)
+) ENGINE = INNODB;
 
 --
 -- Metadata Security
