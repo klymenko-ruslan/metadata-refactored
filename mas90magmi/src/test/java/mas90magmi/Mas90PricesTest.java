@@ -89,7 +89,7 @@ public class Mas90PricesTest {
         assertTrue(customerIt.hasNext());
         
         String customer = customerIt.next();
-        assertEquals("turboparts1@gmail.com", customer);
+        assertEquals("INFO@TURBOPARTS.ES", customer);
         
         Pricing pricing = itemPricing.getCustomerPricings().get(customer);
         assertEquals(DiscountType.Override, pricing.getDiscountType());
@@ -111,10 +111,10 @@ public class Mas90PricesTest {
         assertTrue(customerIt.hasNext());
         
         String customer = customerIt.next();
-        assertEquals("turbosbaez1@yahoo.com.mx", customer);
+        assertEquals("race-tech@hotmail.com", customer);
         
         customer = customerIt.next();
-        assertEquals("race-tech@hotmail.com", customer);
+        assertEquals("turbosbaez1@yahoo.com.mx", customer);
     }
     
     @Test
@@ -188,8 +188,6 @@ public class Mas90PricesTest {
         assertEquals(new BigDecimal("0.0000"),   priceLevelPricings.get("R").getPriceBreak(0).getRate());
         assertEquals(new BigDecimal("27.5000"),  priceLevelPricings.get("W").getPriceBreak(0).getRate());
     }
-    
-    
 
 //    @Test
 //    public void testGetPriceLevelPrices_ItemSpecific() {

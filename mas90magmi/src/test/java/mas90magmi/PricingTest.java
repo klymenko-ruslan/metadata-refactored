@@ -178,9 +178,4 @@ public class PricingTest {
             assertEquals(new BigDecimal((5 - i) * 1000), price.getPrice());
         }
     }
-
-    @Test
-    public void testCalculateCustomerSpecificPrices() {
-        fail("TODO");
-    }
 }

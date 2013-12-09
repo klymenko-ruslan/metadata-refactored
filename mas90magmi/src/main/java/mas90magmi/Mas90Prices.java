@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
 import org.h2.jdbcx.JdbcDataSource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
@@ -161,13 +162,13 @@ public class Mas90Prices {
         // Load customer data
         for (Row row : mas90Db.getTable("AR_Customer")) {
             h2db.update("INSERT INTO customer (id, email) VALUES(?, ?)",
-                    row.get("CustomerNo"), row.get("EmailAddress"));
+                    StringUtils.trim((String) row.get("CustomerNo")), row.get("EmailAddress"));
         }
         
         // Load product data
         for (Row row : mas90Db.getTable("IM1_InventoryMasterfile")) {
-            h2db.update("INSERT INTO product (id, price) VALUES(?, ?)",
-                    row.get("ItemNumber"), row.get("StdPrice"));
+            h2db.update("MERGE INTO product (id, price) VALUES(?, ?)",
+                    StringUtils.trim((String) row.get("ItemNumber")), row.get("StdPrice"));
         }
         
         // Load pricing data
@@ -206,7 +207,7 @@ public class Mas90Prices {
                         + "  BreakQty4, DiscountMarkupPriceRate4,"
                         + "  BreakQty5, DiscountMarkupPriceRate5"
                         + ") VALUES(?, ?, ?,  ?, ?,  ?, ?,  ?, ?,  ?, ?,  ?, ?)",
-                        row.get("ItemNumber"),
+                        StringUtils.trim((String) row.get("ItemNumber")),
                         row.get("ItemCustomerPriceLevel"),
                         row.get("ItemMethod"),
                         row.get("BreakQty1"), row.get("DiscountMarkupPriceRate1"),
@@ -227,8 +228,8 @@ public class Mas90Prices {
                         + "  BreakQty4, DiscountMarkupPriceRate4,"
                         + "  BreakQty5, DiscountMarkupPriceRate5"
                         + ") VALUES(?, ?, ?,  ?, ?,  ?, ?,  ?, ?,  ?, ?,  ?, ?)",
-                        row.get("ItemNumber"),
-                        row.get("CustomerNumber"),
+                        StringUtils.trim((String) row.get("ItemNumber")),
+                        StringUtils.trim((String) row.get("CustomerNumber")),
                         row.get("ItemCustomerRecordMethod"),
                         row.get("BreakQty1"), row.get("DiscountMarkupPriceRate1"),
                         row.get("BreakQty2"), row.get("DiscountMarkupPriceRate2"),
@@ -240,7 +241,7 @@ public class Mas90Prices {
             }
             
             // Mas90 bug handling
-            h2db.update("UPDATE price_level_prices SET price_level = 2 WHERE price_level = ''");
+            h2db.update("UPDATE price_level_prices SET price_level = 2 WHERE price_level = ' '");
         }
     }
     
@@ -258,7 +259,7 @@ public class Mas90Prices {
                 + "  c.email,\n"
                 + "  p.*\n"
                 + "FROM\n"
-                + "  product_price_level_prices p\n"
+                + "  product_customer_prices p\n"
                 + "  JOIN customer c ON c.id = p.customer_id\n"
                 + "WHERE p.product_id = ?",
             new RowCallbackHandler() {
@@ -272,7 +273,7 @@ public class Mas90Prices {
             itemNumber);
         
         // Get the Product-PriceLevel pricing
-        h2db.query("SELECT * FROM product_customer_prices WHERE product_id = ?",
+        h2db.query("SELECT * FROM product_price_level_prices WHERE product_id = ?",
             new RowCallbackHandler() {
                 @Override
                 public void processRow(ResultSet rs) throws SQLException {
@@ -302,7 +303,21 @@ public class Mas90Prices {
     
     public static void main(String[] args) throws Exception {
         Mas90Prices instance = new Mas90Prices(new File("/home/jrodriguez/Downloads/MAS90_pricing_model.accdb"));
+        for (Map<String, Object> row : instance.h2db.queryForList("SELECT * FROM customer")) {
+            System.out.println("Customer: " + row);
+        }
         
-        System.out.println(instance.h2db.queryForList("SELECT * FROM price_level_prices"));
+        for (Map<String, Object> row : instance.h2db.queryForList(
+                  "SELECT\n"
+                + "  c.email,\n"
+                + "  p.*\n"
+                + "FROM\n"
+                + "  product_customer_prices p\n"
+                + "  JOIN customer c ON c.id = p.customer_id\n")) {
+            System.out.println("Row: " + row);
+        }
+        
+        ItemPricing itemPricing = instance.getItemPricing("1-F-5066");
+        System.out.println(itemPricing);
     }
 }
