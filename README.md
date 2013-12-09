@@ -57,7 +57,7 @@ Metadata Server Configuration
 The Metadata server uses java properties files for configuration. In the source, these are stored under `/metadata/src/main/java/resources/spring`. The webapp also looks in the [tomcat] user's home directory for `ti_metadata.properties` which can be used to override the default values. Here's a sample:
 
 ```
-mas90.db.path=/var/local/mas90.accdb
+mas90.db.path=/var/mas90.accdb
 elasticsearch.timeout=10000
 elasticsearch.port=9300
 elasticsearch.type=part
