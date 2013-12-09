@@ -72,6 +72,6 @@ database.password=metadata_pass
 
 MAS90 Price Sync
 ================
-The metadata server will use the MAS90 access database in `/var/local/mas90.accdb`, this can be overridden with the `mas90.db.path` config property.
+The metadata server will use the MAS90 access database in `/var/mas90.accdb`, this can be overridden with the `mas90.db.path` config property.
 
 Prices are exported as part of the Magmi sync. Upload the latest file before sync and the new prices will be automatically exported.
