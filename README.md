@@ -1,4 +1,4 @@
-[Launch Ticket](#153)
+[Launch Ticket](https://github.com/zero-one/TurboInternational/issues/153)
 =====================
 
 Developer IPs
