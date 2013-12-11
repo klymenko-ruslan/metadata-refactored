@@ -1,4 +1,4 @@
-[Launch Ticket](issues/153)
+[Launch Ticket](#153)
 =====================
 
 Developer IPs
