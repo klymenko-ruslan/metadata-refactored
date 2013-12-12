@@ -26,8 +26,19 @@
 ?>
 <?php
 $_product = $this->getProduct();
-$orgSku = $_product->getTiPartSku();
 $_productManufacturer = $_product->getManufacturer();
+$orgSkuString = $_product->getTiPartSku();
+array($tiProductPartNumbers);
+$tiPartSkuArray = false;
+if (strpos($orgSkuString, ',') !== false) {
+    $tiProductPartNumbers = explode(',', $orgSkuString);
+    $orgSku = $tiProductPartNumbers[0];
+    $tiPartSkuArray = true;
+} else {
+    $orgSku = $orgSkuString;
+}
+$_tiProduct = Mage::getModel('catalog/product');
+$_tiProduct->load($_tiProduct->getIdBySku($orgSku));
 ?>
 <?php
 if ($orgSku && strlen($orgSku) > 1 && $_productManufacturer != 44) {
@@ -44,7 +55,9 @@ if ($orgSku && strlen($orgSku) > 1 && $_productManufacturer != 44) {
                    title="<?php echo $this->__('Qty') ?>" class="input-text qty"/>
         <?php endif; ?>
         <button type="button" title="<?php echo $buttonTitle ?>" class="button btn-cart" onclick="productAddToCartForm.submit(this)">
-            <span><span><?php echo $buttonTitle ?></span></span></button>
+            <span><span><?php echo $buttonTitle ?></span></span>
+        </button>
+        <p><strong>dev: <?php echo $_tiProduct->getManufacturer() ?></strong></p>
         <?php echo $this->getChildHtml('', true, true) ?>
     </div>
 <?php endif; ?>
