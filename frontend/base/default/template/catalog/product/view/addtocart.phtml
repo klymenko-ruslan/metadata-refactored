@@ -40,13 +40,6 @@ if (strpos($orgSkuString, ',') !== false) {
 $_tiProduct = Mage::getModel('catalog/product');
 $_tiProduct->load($_tiProduct->getIdBySku($orgSku));
 ?>
-<?php
-if ($orgSku && strlen($orgSku) > 1 && $_productManufacturer != 44) {
-    $buttonTitle = $this->__('Add TI Part to Cart');
-} else {
-    $buttonTitle = $this->__('Add to Cart');
-}
-?>
 <?php if ($_product->isSaleable()): ?>
     <div class="add-to-cart">
         <?php if (!$_product->isGrouped()): ?>
@@ -54,10 +47,17 @@ if ($orgSku && strlen($orgSku) > 1 && $_productManufacturer != 44) {
             <input type="text" name="qty" id="qty" maxlength="12" value="<?php echo $this->getProductDefaultQty() * 1 ?>"
                    title="<?php echo $this->__('Qty') ?>" class="input-text qty"/>
         <?php endif; ?>
-        <button type="button" title="<?php echo $buttonTitle ?>" class="button btn-cart" onclick="productAddToCartForm.submit(this)">
-            <span><span><?php echo $buttonTitle ?></span></span>
-        </button>
-        <div><p><strong>dev: <?php echo $this->getAddToCartUrl($_tiProduct) ?></strong></p></div>
+        <?php if ($orgSku && strlen($orgSku) > 1 && $_productManufacturer != 44): ?>
+            <button type="button" title="<?php echo $this->__('Add TI Part to Cart') ?>" class="button btn-cart"
+                    onclick="setLocation('<?php echo $this->getAddToCartUrl($_tiProduct) ?>')">
+                <span><span><?php echo $this->__('Add TI Part to Cart') ?></span></span>
+            </button>
+        <?php else: ?>
+            <button type="button" title="<?php echo $this->__('Add to Cart') ?>" class="button btn-cart"
+                    onclick="productAddToCartForm.submit(this)">
+                <span><span><?php echo $this->__('Add to Cart') ?></span></span>
+            </button>
+        <?php endif; ?>
         <?php echo $this->getChildHtml('', true, true) ?>
     </div>
 <?php endif; ?>
