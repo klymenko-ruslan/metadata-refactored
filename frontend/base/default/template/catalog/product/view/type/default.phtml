@@ -56,7 +56,7 @@ $_productManufacturer = $_product->getManufacturer();
                     $_tiProductBySku = Mage::getModel('catalog/product');
                     $_tiProductBySku->load($_tiProductBySku->getIdBySku($tiProductPartNumber));
                     $_tiProductPartSku = $_tiProductBySku->getPartNumber();
-                    echo '<a href="' . $_tiProductBySku->getProductUrl() . '" target="_blank">';
+                    echo '<a href="' . $_tiProductBySku->getProductUrl() . '">';
                     echo $_tiProductPartSku;
                     echo '</a>';
                     if ($i < count($tiProductPartNumbers)) {
@@ -65,7 +65,7 @@ $_productManufacturer = $_product->getManufacturer();
                     $i++;
                 } ?></li>
         <?php } else { ?>
-            <li><strong>Compatible TI Part:</strong> <?php echo '<a href="' . $_tiProduct->getProductUrl() . '" target="_blank">' . $_tiPartSku . '</a>'; ?></li>
+            <li><strong>Compatible TI Part:</strong> <?php echo '<a href="' . $_tiProduct->getProductUrl() . '">' . $_tiPartSku . '</a>'; ?></li>
         <?php } ?>
     <?php endif; ?>
 </ul>

@@ -246,7 +246,7 @@ $_ad = $this->getAdditionalData();
                     $_tiProductInterchangeManufacturer = $_tiProductByInterchanges->getAttributeText('manufacturer');
                     ?>
                     <tr>
-                        <td class="data"><?php echo '<a href="' . $_tiProductByInterchanges->getProductUrl() . '" target="_blank">';
+                        <td class="data"><?php echo '<a href="' . $_tiProductByInterchanges->getProductUrl() . '">';
                             echo $_tiProductInterchangePartNumber;
                             echo '</a>'; ?></td>
                         <td class="data"><?php echo $_tiProductInterchangeManufacturer; ?></td>
@@ -287,7 +287,7 @@ $_ad = $this->getAdditionalData();
                                 $bomItemInterchangeProduct = Mage::getModel('catalog/product');
                                 $bomItemInterchangeProduct->load($bomItemInterchangeProduct->getIdBySku($tiPart));
                                 if ($bomItemInterchangeProduct->getId()) {
-                                    echo '<a href="' . $bomItemInterchangeProduct->getProductUrl() . '" target="_blank">' . $bomItemInterchangeProduct->getPartNumber() . '</a>';
+                                    echo '<a href="' . $bomItemInterchangeProduct->getProductUrl() . '">' . $bomItemInterchangeProduct->getPartNumber() . '</a>';
                                 } else echo $tiPart;
                                 if ($a < count($bomItem['ti_part_sku'])) {
                                     echo ", ";
@@ -295,7 +295,7 @@ $_ad = $this->getAdditionalData();
                                 $a++;
                             } ?></td>
                         <td><?php if ($bomItemProduct->getId()) {
-                                echo '<a href="' . $bomItemProduct->getProductUrl() . '" target="_blank">' . $bomItemProduct->getName() . '</a>';
+                                echo '<a href="' . $bomItemProduct->getProductUrl() . '">' . $bomItemProduct->getName() . '</a>';
                             } else echo $bomItem['sku']; ?></td>
                         <td><?php echo $bomItem['quantity']; ?></td>
                         <td><?php echo Mage::helper('core')->currency($bomItemProduct->getFinalPrice()); ?></td>
@@ -326,8 +326,7 @@ $_ad = $this->getAdditionalData();
 //        $bomItemProduct->load($bomItemProduct->getIdBySku($orgSku));
 //
 ?>
-    <strong>Name:</strong> <a href="<?php echo $bomItemProduct->getProductUrl() ?>"
-                              target="_blank"><?php echo $bomItemProduct->getName(); ?></a> <br/>
+    <strong>Name:</strong> <a href="<?php echo $bomItemProduct->getProductUrl() ?>"><?php echo $bomItemProduct->getName(); ?></a> <br/>
     <strong>Part Number:</strong> <?php echo $bomItemProduct->getPartNumber(); ?> <br/>
     <strong>Price:</strong> <?php echo Mage::helper('core')->currency($bomItemProduct->getFinalPrice()); ?> <br/>
     <!--        <br/>-->
