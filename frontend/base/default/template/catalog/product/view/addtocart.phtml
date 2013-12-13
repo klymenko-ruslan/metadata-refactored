@@ -57,7 +57,7 @@ if ($orgSku && strlen($orgSku) > 1 && $_productManufacturer != 44) {
         <button type="button" title="<?php echo $buttonTitle ?>" class="button btn-cart" onclick="productAddToCartForm.submit(this)">
             <span><span><?php echo $buttonTitle ?></span></span>
         </button>
-        <p><strong>dev: <?php echo $_tiProduct->getManufacturer() ?></strong></p>
+        <div><p><strong>dev: <?php echo $this->getAddToCartUrl($_tiProduct) ?></strong></p></div>
         <?php echo $this->getChildHtml('', true, true) ?>
     </div>
 <?php endif; ?>
