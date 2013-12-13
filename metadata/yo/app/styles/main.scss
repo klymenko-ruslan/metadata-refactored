@@ -26,3 +26,17 @@ body {
 .table-hover tbody tr:hover > td {
   cursor: pointer
 }
+
+.pagination {
+  list-style-type: none;
+  text-align: center;
+  li {
+    display: inline-block;
+    padding: 0 10px;
+  }
+}
+
+.list-bottom-border {
+  padding-bottom: 10px;
+  border-bottom: 1px #DDDDDD solid;
+}

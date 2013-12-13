@@ -1,45 +1,36 @@
-<div>
-    <input type="text" ng-model="search.queryString" placeholder="Search..."/>
-    <table border="1">
-        <tr valign="top">
-            <td>
+<div class="row">
+    <div class="span3">
+        <input type="text" ng-model="search.queryString" placeholder="Search..."/>
 
-              <div>
-                <h2>Part Type</h2>
-                <picker ng-model="search.partType" path="type/part"/>
-              </div>
-
-              <div>
-                <h2>Manufacturer</h2>
-                <picker ng-model="search.manufacturer" path="other/manufacturer"/>
-              </div>
-                <search-facets>
-
-                </search-facets>
-            </td>
-            <td>
-                <table data-ng-table="partTableParams" class="table table-bordered table-striped">
-                    <tr data-ng-repeat="part in $data">
-                        <td title="'Part Type'" sortable="partType.name">
-                          {{part._source.partType.name}}
-                        </td>
-                        <td title="'Manufacturer'" sortable="manufacturer.name">
-                          {{part._source.manufacturer.name}}
-                        </td>
-                        <td title="'Mfr Part #'" sortable="manufacturerPartNumber">
-                          {{part._source.manufacturerPartNumber}}
-                        </td>
-                        <td title="'Name'" sortable="name">
-                          {{part._source.name}}
-                        </td>
-                        <td title="'Actions'">
+        <h2>Part Type</h2>
+        <picker ng-model="search.partType" path="type/part"/>
+        <h2>Manufacturer</h2>
+        <picker ng-model="search.manufacturer" path="other/manufacturer"/>
+        <search-facets></search-facets>
+    </div>
+    <div class="span9">
+        <table data-ng-table="partTableParams" class="table table-bordered table-striped table-hover table-responsive">
+            <tr data-ng-repeat="part in $data">
+                <td title="'Part Type'" sortable="partType.name">
+                    {{part._source.partType.name}}
+                </td>
+                <td title="'Manufacturer'" sortable="manufacturer.name">
+                    {{part._source.manufacturer.name}}
+                </td>
+                <td title="'Mfr Part #'" sortable="manufacturerPartNumber">
+                    {{part._source.manufacturerPartNumber}}
+                </td>
+                <td title="'Name'" sortable="name">
+                    {{part._source.name}}
+                </td>
+                <td title="'Actions'">
                             <span ng-repeat="action in actionList">
-                                <button data-ng-click="onAction({action: action, partId: part._source.id, partType: part._source.partType.typeName})" class="button">{{action}}</button>
+                                <button data-ng-click="onAction({action: action, partId: part._source.id, partType: part._source.partType.typeName})"
+                                        class="btn">{{action}}
+                                </button>
                             </span>
-                        </td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
-    </table>
+                </td>
+            </tr>
+        </table>
+    </div>
 </div>
