@@ -46,6 +46,7 @@ array($tiProductInterchanges);
 $tiInterchangesArray = false;
 if (strpos($interchangesString, ',') !== false) {
     $tiProductInterchanges = explode(',', $interchangesString);
+    sort($tiProductInterchanges, SORT_REGULAR);
     $tiInterchangesArray = true;
 } else {
     $tiProductInterchanges = $interchangesString;
