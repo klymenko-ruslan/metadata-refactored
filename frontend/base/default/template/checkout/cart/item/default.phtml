@@ -27,6 +27,8 @@
 <?php
 $_item = $this->getItem();
 $isVisibleProduct = $_item->getProduct()->isVisibleInSiteVisibility();
+$productDetail = Mage::getModel('catalog/product');
+$productDetail->load($_item->getProduct()->getId());
 $canApplyMsrp = Mage::helper('catalog')->canApplyMsrp($_item->getProduct(), Mage_Catalog_Model_Product_Attribute_Source_Msrp_Type::TYPE_BEFORE_ORDER_CONFIRM);
 ?>
 <tr>
@@ -39,11 +41,11 @@ $canApplyMsrp = Mage::helper('catalog')->canApplyMsrp($_item->getProduct(), Mage
 </td>
 <!-- Part Type -->
 <td>
-    <h2 class="product-name">
+    <h2>
         <?php if ($this->hasProductUrl()): ?>
-            <a href="<?php echo $this->getProductUrl() ?>"><?php echo $this->htmlEscape($this->getAttributeText('part_type')) ?></a>
+            <a href="<?php echo $this->getProductUrl() ?>"><?php echo $this->htmlEscape($productDetail->getAttributeText('part_type')) ?></a>
         <?php else: ?>
-            <?php echo $this->htmlEscape($this->getAttributeText('part_type')) ?>
+            <?php echo $this->htmlEscape($productDetail->getAttributeText('part_type')) ?>
         <?php endif; ?>
     </h2>
     <?php if ($_options = $this->getOptionList()): ?>
@@ -77,9 +79,9 @@ $canApplyMsrp = Mage::helper('catalog')->canApplyMsrp($_item->getProduct(), Mage
 <!-- TI Part Number -->
 <td>
     <?php if ($this->hasProductUrl()): ?>
-        <a href="<?php echo $this->getProductUrl() ?>"><?php echo $this->htmlEscape($this->getAttributeText('part_number')) ?></a>
+        <a href="<?php echo $this->getProductUrl() ?>"><?php echo $this->htmlEscape($productDetail->getPartNumber()) ?></a>
     <?php else: ?>
-        <?php echo $this->htmlEscape($this->getAttributeText('part_number')) ?>
+        <?php echo $this->htmlEscape($productDetail->getPartNumber()) ?>
     <?php endif; ?>
 </td>
 <!-- OE Manufacturer/OE Part Number -->
