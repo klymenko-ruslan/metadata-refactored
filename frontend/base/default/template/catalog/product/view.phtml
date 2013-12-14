@@ -46,6 +46,7 @@ array($tiProductInterchanges);
 $tiInterchangesArray = false;
 if (strpos($interchangesString, ',') !== false) {
     $tiProductInterchanges = explode(',', $interchangesString);
+    sort($tiProductInterchanges, SORT_REGULAR);
     $tiInterchangesArray = true;
 } else {
     $tiProductInterchanges = $interchangesString;
@@ -246,7 +247,7 @@ $_ad = $this->getAdditionalData();
                     $_tiProductInterchangeManufacturer = $_tiProductByInterchanges->getAttributeText('manufacturer');
                     ?>
                     <tr>
-                        <td class="data"><?php echo '<a href="' . $_tiProductByInterchanges->getProductUrl() . '" target="_blank">';
+                        <td class="data"><?php echo '<a href="' . $_tiProductByInterchanges->getProductUrl() . '">';
                             echo $_tiProductInterchangePartNumber;
                             echo '</a>'; ?></td>
                         <td class="data"><?php echo $_tiProductInterchangeManufacturer; ?></td>
@@ -261,9 +262,6 @@ $_ad = $this->getAdditionalData();
             <?php //echo $_product->getBillOfMaterials();
 
             $billMaterials = json_decode($_product->getBillOfMaterials(), true);
-            //echo "<pre>";
-            //print_r($billMaterials);
-            //echo "</pre>";
             ?>
             <table class="data-table" id="bill-of-materials">
                 <tr>
@@ -287,7 +285,7 @@ $_ad = $this->getAdditionalData();
                                 $bomItemInterchangeProduct = Mage::getModel('catalog/product');
                                 $bomItemInterchangeProduct->load($bomItemInterchangeProduct->getIdBySku($tiPart));
                                 if ($bomItemInterchangeProduct->getId()) {
-                                    echo '<a href="' . $bomItemInterchangeProduct->getProductUrl() . '" target="_blank">' . $bomItemInterchangeProduct->getPartNumber() . '</a>';
+                                    echo '<a href="' . $bomItemInterchangeProduct->getProductUrl() . '">' . $bomItemInterchangeProduct->getPartNumber() . '</a>';
                                 } else echo $tiPart;
                                 if ($a < count($bomItem['ti_part_sku'])) {
                                     echo ", ";
@@ -295,7 +293,7 @@ $_ad = $this->getAdditionalData();
                                 $a++;
                             } ?></td>
                         <td><?php if ($bomItemProduct->getId()) {
-                                echo '<a href="' . $bomItemProduct->getProductUrl() . '" target="_blank">' . $bomItemProduct->getName() . '</a>';
+                                echo '<a href="' . $bomItemProduct->getProductUrl() . '">' . $bomItemProduct->getName() . '</a>';
                             } else echo $bomItem['sku']; ?></td>
                         <td><?php echo $bomItem['quantity']; ?></td>
                         <td><?php echo Mage::helper('core')->currency($bomItemProduct->getFinalPrice()); ?></td>
@@ -316,20 +314,3 @@ $_ad = $this->getAdditionalData();
     <script type="text/javascript">decorateTable('product-information-specs-table')</script>
     <script type="text/javascript">decorateTable('interchangeable-parts-specs-table')</script>
     <script type="text/javascript">decorateTable('bill-of-materials')</script>
-
-    <!--    <!-- Section for showing compatible TI part details: conditional on ti_part_sku being set and valid -->-->
-<?php //if ($orgSku && strlen($orgSku) > 1 && $_productManufacturer != 44): ?>
-    <!--    <div class="box-collateral">-->
-    <!--        <h2>--><?php //echo $this->__('Compatible TI Part') ?><!--</h2>-->
-<?php
-//        $bomItemProduct = Mage::getModel('catalog/product');
-//        $bomItemProduct->load($bomItemProduct->getIdBySku($orgSku));
-//
-?>
-    <strong>Name:</strong> <a href="<?php echo $bomItemProduct->getProductUrl() ?>"
-                              target="_blank"><?php echo $bomItemProduct->getName(); ?></a> <br/>
-    <strong>Part Number:</strong> <?php echo $bomItemProduct->getPartNumber(); ?> <br/>
-    <strong>Price:</strong> <?php echo Mage::helper('core')->currency($bomItemProduct->getFinalPrice()); ?> <br/>
-    <!--        <br/>-->
-    <!--    </div>-->
-<? // endif; ?>
