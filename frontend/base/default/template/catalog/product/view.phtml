@@ -261,9 +261,6 @@ $_ad = $this->getAdditionalData();
             <?php //echo $_product->getBillOfMaterials();
 
             $billMaterials = json_decode($_product->getBillOfMaterials(), true);
-            //echo "<pre>";
-            //print_r($billMaterials);
-            //echo "</pre>";
             ?>
             <table class="data-table" id="bill-of-materials">
                 <tr>
@@ -316,19 +313,3 @@ $_ad = $this->getAdditionalData();
     <script type="text/javascript">decorateTable('product-information-specs-table')</script>
     <script type="text/javascript">decorateTable('interchangeable-parts-specs-table')</script>
     <script type="text/javascript">decorateTable('bill-of-materials')</script>
-
-    <!--    <!-- Section for showing compatible TI part details: conditional on ti_part_sku being set and valid -->-->
-<?php //if ($orgSku && strlen($orgSku) > 1 && $_productManufacturer != 44): ?>
-    <!--    <div class="box-collateral">-->
-    <!--        <h2>--><?php //echo $this->__('Compatible TI Part') ?><!--</h2>-->
-<?php
-//        $bomItemProduct = Mage::getModel('catalog/product');
-//        $bomItemProduct->load($bomItemProduct->getIdBySku($orgSku));
-//
-?>
-    <strong>Name:</strong> <a href="<?php echo $bomItemProduct->getProductUrl() ?>"><?php echo $bomItemProduct->getName(); ?></a> <br/>
-    <strong>Part Number:</strong> <?php echo $bomItemProduct->getPartNumber(); ?> <br/>
-    <strong>Price:</strong> <?php echo Mage::helper('core')->currency($bomItemProduct->getFinalPrice()); ?> <br/>
-    <!--        <br/>-->
-    <!--    </div>-->
-<? // endif; ?>
