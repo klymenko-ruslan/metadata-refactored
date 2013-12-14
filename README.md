@@ -21,6 +21,10 @@ Developer IPs
     <td>Wesson Home</td>
     <td>50.152.248.117</td>
   </tr>
+  <tr>
+    <td>Salman Home</td>
+    <td>72.208.81.82</td>
+  </tr>
 </table>
 
 Dev Servers
