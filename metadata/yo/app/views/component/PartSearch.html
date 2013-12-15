@@ -6,6 +6,7 @@
         <picker ng-model="search.partType" path="type/part"/>
         <h2>Manufacturer</h2>
         <picker ng-model="search.manufacturer" path="other/manufacturer"/>
+
         <search-facets></search-facets>
     </div>
     <div class="col-lg-9 col-md-9 col-sm-9 col-xs-12">
@@ -23,10 +24,10 @@
                 <td title="'Name'" sortable="name">
                     {{part._source.name}}
                 </td>
-                <td title="'Actions'">
+                <td class="text-center" title="'Actions'">
                             <span ng-repeat="action in actionList">
                                 <button data-ng-click="onAction({action: action, partId: part._source.id, partType: part._source.partType.typeName})"
-                                        class="btn btn-primary">{{action}}
+                                        class="btn btn-primary btn-sm">{{action}}
                                 </button>
                             </span>
                 </td>
