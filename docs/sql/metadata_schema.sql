@@ -66,6 +66,7 @@ CREATE TABLE `product_image` (
   `part_id` BIGINT NOT NULL,
   `filename` VARCHAR(255) NULL,
   PRIMARY KEY(`id`),
+  UNIQUE KEY(`filename`),
   FOREIGN KEY (`part_id`) REFERENCES `part` (`id`)
 ) ENGINE = INNODB;
 
