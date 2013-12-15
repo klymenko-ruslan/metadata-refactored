@@ -53,8 +53,10 @@ public class Magmi {
         "bill_of_materials", // BOM
         "price",
         "quantity",
-        "turbo_model",       // Turbo Models
+        "turbo_model",      // Turbo Models
         "turbo_type",       // Turbo Types
+        "image",            // Product image
+        "media_gallery",    // Extra images
         //</editor-fold>
         
         //<editor-fold defaultstate="collapsed" desc="Types">
