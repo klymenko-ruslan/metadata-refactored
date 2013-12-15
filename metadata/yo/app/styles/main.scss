@@ -28,6 +28,11 @@ h1:first-of-type {
   line-height: 36px;
 }
 
+h2 {
+  font-size: 20px;
+  line-height: 20px;
+}
+
 .table-hover tbody tr:hover > td {
   cursor: pointer
 }
@@ -35,4 +40,27 @@ h1:first-of-type {
 .list-bottom-border {
   padding-bottom: 10px;
   border-bottom: 1px #DDDDDD solid;
+}
+
+.table {
+  thead {
+    font-size: 14px;
+    tr {
+      th {
+        padding: 2px 8px;
+        line-height: 14px;
+        vertical-align: middle;
+      }
+    }
+  }
+  tbody {
+    font-size: 12px;
+    tr {
+      td {
+        padding: 2px 8px;
+        line-height: 12px;
+        vertical-align: middle;
+      }
+    }
+  }
 }
