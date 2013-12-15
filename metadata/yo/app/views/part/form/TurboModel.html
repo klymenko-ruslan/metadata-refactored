@@ -1,6 +1,6 @@
-<div data-ng-controller="TurboModelPickerCtrl">
+<div data-ng-controller="TurboModelPickerCtrl" class="row">
 
-    <div style="display: table-cell;" ng-disabled="turboTypes.length == 0">
+    <div ng-disabled="turboTypes.length == 0" class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
         <label>Turbo Type</label>
         <input ng-model="turboTypeFilter" ng-init="turboTypeFilter = ''" placeholder="Turbo type filter..."/>
         <br/>
@@ -11,7 +11,7 @@
         </select>
     </div>
 
-    <div style="display: table-cell;">
+    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
         <label>Turbo Model</label>
         <input ng-model="turboModelFilter" ng-init="turboModelFilter = ''" placeholder="Turbo model filter..."/>
         <br/>

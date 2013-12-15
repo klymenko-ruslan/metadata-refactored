@@ -1,5 +1,5 @@
 <div class="row">
-    <div class="span3">
+    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
         <input type="text" ng-model="search.queryString" placeholder="Search..."/>
 
         <h2>Part Type</h2>
@@ -8,7 +8,7 @@
         <picker ng-model="search.manufacturer" path="other/manufacturer"/>
         <search-facets></search-facets>
     </div>
-    <div class="span9">
+    <div class="col-lg-9 col-md-9 col-sm-9 col-xs-12">
         <table data-ng-table="partTableParams" class="table table-bordered table-striped table-hover table-responsive">
             <tr data-ng-repeat="part in $data">
                 <td title="'Part Type'" sortable="partType.name">
@@ -26,7 +26,7 @@
                 <td title="'Actions'">
                             <span ng-repeat="action in actionList">
                                 <button data-ng-click="onAction({action: action, partId: part._source.id, partType: part._source.partType.typeName})"
-                                        class="btn">{{action}}
+                                        class="btn btn-primary">{{action}}
                                 </button>
                             </span>
                 </td>
