@@ -1,19 +1,28 @@
 <div class="row">
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 btn-group">
-        <a ng-href="#/part" class="btn btn-default">Part List</a>
-        <a ng-href="#/part/{{ part.partType.typeName }}/{{ partId }}" class="btn btn-default" data-ng-hide="oldPart == null">View
-            Part</a>
+        <a ng-href="#/part" class="btn btn-default"><i class="fa fa-bars"></i> Part List</a>
+        <a ng-href="#/part/{{ part.partType.typeName }}/{{ partId }}" class="btn btn-primary" data-ng-hide="oldPart == null"><i
+                class="fa fa-eye"></i> View Part</a>
         <a ng-href="#/part/{{ part.partType.typeName }}/{{ partId }}/interchange/search" class="btn btn-info"
-           data-ng-hide="oldPart == null">Interchange...</a>
-        <a ng-click="save()" class="btn btn-success">Save</a>
+           data-ng-hide="oldPart == null"><i class="fa fa-random"></i> Interchange&hellip;</a>
+        <a ng-click="save()" class="btn btn-success"><i class="fa fa-save"></i> Save</a>
         <!--ng-disabled="!isChanged()"-->
-        <a ng-click="revert()" class="btn btn-warning" data-ng-hide="oldPart == null">Revert</a>
+        <a ng-click="revert()" class="btn btn-warning" data-ng-hide="oldPart == null"><i class="fa fa-undo"></i> Revert</a>
         <!--ng-disabled="!isChanged()"-->
-        <a ng-click="sync()" class="btn btn-info" data-ng-hide="oldPart == null">Sync</a>
+        <a ng-click="sync()" class="btn btn-success" data-ng-hide="oldPart == null"><i class="fa fa-exchange"></i> Sync</a>
     </div>
 </div>
 <div class="row">
-<div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
+<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+
+<div class="pull-right padding-top">
+    <label>Status</label>
+    <button ng-model="part.inactive" class="btn btn-sm btn-info" btn-checkbox>
+        <span ng-show="part.inactive"><i class="fa fa-warning"></i> Inactive</span>
+        <span ng-hide="part.inactive"><i class="fa fa-info-circle"></i> Active</span>
+    </button>
+</div>
+
 <h2><span ng-hide="partId">Create </span>
     <span ng-show="partId">Edit </span>
     {{ part.partType.name }}
@@ -21,23 +30,18 @@
 
 
 <ng-form>
+
 <label>Name</label>
-<input type="text" ng-model="part.name"/>
+<input class="form-control" type="text" ng-model="part.name"/>
 
 <label>Description</label>
-<input type="text" ng-model="part.description"/>
-
-<label>Status</label>
-<button ng-model="part.inactive" class="btn" btn-checkbox>
-    <span ng-show="part.inactive">Inactive</span>
-    <span ng-hide="part.inactive">Active</span>
-</button>
+<textarea class="form-control" rows="4" ng-model="part.description"></textarea>
 
 <label>Manufacturer</label>
 <picker ng-model="part.manufacturer" path="other/manufacturer"></picker>
 
 <label>Manufacturer P/N</label>
-<input type="text" ng-model="part.manufacturerPartNumber"/>
+<input class="form-control" type="text" ng-model="part.manufacturerPartNumber"/>
 
 <!-- Type-specific fields -->
 <div ng-switch="part.partType.typeName">
@@ -48,31 +52,31 @@
         <picker path="type/seal" ng-model="part.sealType"></picker>
 
         <label>Seal Type</label>
-        <input type="text" ng-model="part.sealTypeString"/>
+        <input class="form-control" type="text" ng-model="part.sealTypeString"/>
 
         <label>Compressor Wheel Style</label>
-        <input type="text" ng-model="part.styleCompressorWheel"/>
+        <input class="form-control" type="text" ng-model="part.styleCompressorWheel"/>
 
         <label>Overall Diameter</label>
-        <input type="text" ng-model="part.overallDiameter"/>
+        <input class="form-control" type="text" ng-model="part.overallDiameter"/>
 
         <label>Compressor Wheel Diameter</label>
-        <input type="text" ng-model="part.compressorWheelDiameter"/>
+        <input class="form-control" type="text" ng-model="part.compressorWheelDiameter"/>
 
         <label>Piston Ring Diameter</label>
-        <input type="text" ng-model="part.pistonRingDiameter"/>
+        <input class="form-control" type="text" ng-model="part.pistonRingDiameter"/>
 
         <label>Compressor Housing Diameter</label>
-        <input type="text" ng-model="part.compressorHousingDiameter"/>
+        <input class="form-control" type="text" ng-model="part.compressorHousingDiameter"/>
 
         <label>Secondary Diameter</label>
-        <input type="text" ng-model="part.secondaryDiameter"/>
+        <input class="form-control" type="text" ng-model="part.secondaryDiameter"/>
 
         <label>Overall Height</label>
-        <input type="text" ng-model="part.overallHeight"/>
+        <input class="form-control" type="text" ng-model="part.overallHeight"/>
 
         <label>Notes</label>
-        <textarea ng-model="part.notes"></textarea>
+        <textarea class="form-control" rows="3" ng-model="part.notes"></textarea>
     </div>
 
     <!-- Bearing Housing -->
@@ -81,25 +85,25 @@
         <picker path="type/cool" ng-model="part.coolType"></picker>
 
         <label>Oil Inlet</label>
-        <input type="text" ng-model="part.oilInlet"/>
+        <input class="form-control" type="text" ng-model="part.oilInlet"/>
 
         <label>Oil Outlet</label>
-        <input type="text" ng-model="part.oilOutlet"/>
+        <input class="form-control" type="text" ng-model="part.oilOutlet"/>
 
         <label>Oil</label>
-        <input type="text" ng-model="part.oil"/>
+        <input class="form-control" type="text" ng-model="part.oil"/>
 
         <label>Outlet Flange Holes</label>
-        <input type="text" ng-model="part.outletFlangeHoles"/>
+        <input class="form-control" type="text" ng-model="part.outletFlangeHoles"/>
 
         <label>Water Ports</label>
-        <input type="text" ng-model="part.waterPorts"/>
+        <input class="form-control" type="text" ng-model="part.waterPorts"/>
 
         <label>Design Features</label>
-        <input type="text" ng-model="part.designFeatures"/>
+        <input class="form-control" type="text" ng-model="part.designFeatures"/>
 
         <label>Bearing Type</label>
-        <input type="text" ng-model="part.bearingType"/>
+        <input class="form-control" type="text" ng-model="part.bearingType"/>
     </div>
 
     <!-- Bearing Spacer -->
@@ -111,11 +115,13 @@
         <!--<picker path="part?type=BearingSpacer" ng-model="part.oversize"></picker>-->
 
         <label>Outside Diameter (min - max)</label>
-        <input type="text" ng-model="part.outsideDiameterMin"/> - <input type="text" ng-model="part.outsideDiameterMax"/>
+        <input class="form-control" type="text" ng-model="part.outsideDiameterMin"/> - <input type="text"
+                                                                                              ng-model="part.outsideDiameterMax"/>
         private Float insideDiameterMin;
 
         <label>Inside Diameter (min - max)</label>
-        <input type="text" ng-model="part.insideDiameterMin"/> - <input type="text" ng-model="part.insideDiameterMax"/>
+        <input class="form-control" type="text" ng-model="part.insideDiameterMin"/> - <input type="text"
+                                                                                             ng-model="part.insideDiameterMax"/>
     </div>
 
     <!-- Cartridge -->
@@ -123,25 +129,25 @@
     <!-- Compressor Wheel -->
     <div ng-switch-when="CompressorWheel">
         <label>Inducer Diameter A</label>
-        <input type="text" ng-model="part.inducerOa"/>
+        <input class="form-control" type="text" ng-model="part.inducerOa"/>
 
         <label>Tip Height B</label>
-        <input type="text" ng-model="part.tipHeightB"/>
+        <input class="form-control" type="text" ng-model="part.tipHeightB"/>
 
         <label>Exducer Diameter C</label>
-        <input type="text" ng-model="part.exducerOc"/>
+        <input class="form-control" type="text" ng-model="part.exducerOc"/>
 
         <label>Hub Length D</label>
-        <input type="text" ng-model="part.hubLengthD"/>
+        <input class="form-control" type="text" ng-model="part.hubLengthD"/>
 
         <label>Bore Diameter E</label>
-        <input type="text" ng-model="part.boreOe"/>
+        <input class="form-control" type="text" ng-model="part.boreOe"/>
 
         <label>Number of Blades</label>
-        <input type="text" ng-model="part.numberOfBlades"/>
+        <input class="form-control" type="text" ng-model="part.numberOfBlades"/>
 
         <label>Application</label>
-        <input type="text" ng-model="part.application"/>
+        <input class="form-control" type="text" ng-model="part.application"/>
     </div>
 
     <!-- Gasket -->
@@ -153,13 +159,13 @@
     <!-- Heatshield -->
     <div ng-switch-when="Heatshield">
         <label>Overall Diameter</label>
-        <input type="text" ng-model="part.overallDiameter"/>
+        <input class="form-control" type="text" ng-model="part.overallDiameter"/>
 
         <label>Inside Diameter</label>
-        <input type="text" ng-model="part.insideDiameter"/>
+        <input class="form-control" type="text" ng-model="part.insideDiameter"/>
 
         <label>Inducer Diameter</label>
-        <input type="text" ng-model="part.inducerDiameter"/>
+        <input class="form-control" type="text" ng-model="part.inducerDiameter"/>
     </div>
 
     <!-- Journal Bearing -->
@@ -171,10 +177,12 @@
         <!--<picker path="part?type=JournalBearing" ng-model="part.oversize"></picker>-->
 
         <label>Outside Diameter (min - max)</label>
-        <input type="text" ng-model="part.outsideDiameterMin"/> - <input type="text" ng-model="part.outsideDiameterMax"/>
+        <input class="form-control" type="text" ng-model="part.outsideDiameterMin"/> - <input type="text"
+                                                                                              ng-model="part.outsideDiameterMax"/>
 
         <label>Inside Diameter (min - max)</label>
-        <input type="text" ng-model="part.insideDiameterMin"/> - <input type="text" ng-model="part.insideDiameterMax"/>
+        <input class="form-control" type="text" ng-model="part.insideDiameterMin"/> - <input type="text"
+                                                                                             ng-model="part.insideDiameterMax"/>
     </div>
 
     <!-- Kit -->
@@ -188,37 +196,39 @@
     <!-- Piston Ring -->
     <div ng-switch-when="PistonRing">
         <label>Outside Diameter (min - max)</label>
-        <input type="text" ng-model="part.outsideDiameterMin"/> - <input type="text" ng-model="part.outsideDiameterMax"/>
+        <input class="form-control" type="text" ng-model="part.outsideDiameterMin"/> - <input type="text"
+                                                                                              ng-model="part.outsideDiameterMax"/>
 
         <label>Width (min - max)</label>
-        <input type="text" ng-model="part.widthMin"/> - <input type="text" ng-model="part.widthMax"/>
+        <input class="form-control" type="text" ng-model="part.widthMin"/> - <input type="text" ng-model="part.widthMax"/>
 
         <label>Installed Gap (min - max)</label>
-        <input type="text" ng-model="part.installedGapMin"/> - <input type="text" ng-model="part.installedGapMax"/>
+        <input class="form-control" type="text" ng-model="part.installedGapMin"/> - <input type="text"
+                                                                                           ng-model="part.installedGapMax"/>
     </div>
 
     <!-- Turbine Wheel -->
     <div ng-switch-when="TurbineWheel">
         <label>Exducer Diameter A</label>
-        <input type="text" ng-model="part.exducerDiameterA"/>
+        <input class="form-control" type="text" ng-model="part.exducerDiameterA"/>
 
         <label>Tip Height B</label>
-        <input type="text" ng-model="part.tipHeightB"/>
+        <input class="form-control" type="text" ng-model="part.tipHeightB"/>
 
         <label>Inducer Diameter C</label>
-        <input type="text" ng-model="part.inducerDiameterC"/>
+        <input class="form-control" type="text" ng-model="part.inducerDiameterC"/>
 
         <label>Journal Diameter D</label>
-        <input type="text" ng-model="part.journalDiameterD"/>
+        <input class="form-control" type="text" ng-model="part.journalDiameterD"/>
 
         <label>Stem Diameter E</label>
-        <input type="text" ng-model="part.stemDiameterE"/>
+        <input class="form-control" type="text" ng-model="part.stemDiameterE"/>
 
         <label>Shaft Thread F</label>
-        <input type="text" ng-model="part.shaftThreadF"/>
+        <input class="form-control" type="text" ng-model="part.shaftThreadF"/>
 
         <label>Number of Blades</label>
-        <input type="text" ng-model="part.numberOfBlades"/>
+        <input class="form-control" type="text" ng-model="part.numberOfBlades"/>
     </div>
 
     <!-- Turbo -->
@@ -231,7 +241,7 @@
 </div>
 </ng-form>
 </div>
-<div data-ng-hide="oldPart == null" class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+<div data-ng-hide="oldPart == null" class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
     <!-- Interchanges -->
     <dl>
         <dt>Interchangeable Part Group
@@ -252,11 +262,12 @@
 </div>
 </div>
 <div class="row">
-    <div class="col-lg-5 col-md-5 col-sm-5 col-xs-12">
+    <div class="col-lg-5 col-md-5 col-sm-12 col-xs-12">
         <h3>Turbo Model</h3>
+
         <div ng-include="'/views/part/form/TurboModel.html'"></div>
     </div>
-    <div data-ng-hide="oldPart == null" class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+    <div data-ng-hide="oldPart == null" class="col-lg-7 col-md-7 col-sm-12 col-xs-12">
         <h3>Bill of Materials</h3>
         <table ng-table="bomTableParams" class="table table-bordered table-striped table-hover table-responsive">
             <tr ng-repeat="(index, bomItem) in $data">
@@ -268,13 +279,14 @@
                     <input type="text" ng-model="bomItem.quantity"/>
                 </td>
                 <td title="'Actions'">
-                    <a ng-click="bomDelete(index, bomItem)" class="btn btn btn-danger">Delete</a>
+                    <a ng-click="bomDelete(index, bomItem)" class="btn btn btn-danger"><i class="fa fa-trash-o"></i> Delete</a>
                 </td>
             </tr>
         </table>
 
-        <p>
-            <a ng-href="#/part/{{ part.partType.typeName }}/{{ partId }}/bom/search" class="btn btn-info">Add Item</a>
-        </p>
+        <div>
+            <a ng-href="#/part/{{ part.partType.typeName }}/{{ partId }}/bom/search" class="btn btn-info"><i class="fa fa-cogs"></i>
+                Add BOM Item</a>
+        </div>
     </div>
 </div>

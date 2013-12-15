@@ -1,19 +1,20 @@
 <div class="row">
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 btn-group">
-        <a ng-href="#/part" class="btn btn-large">Part List</a>
-        <a ng-href="#/part/{{ partType }}/{{ partId }}" class="btn btn-large">View Part</a>
-        <a ng-href="#/part/{{ partType }}/{{ partId }}/form" class="btn btn-large">Edit Part</a>
-        <a ng-click="clear()" ng-disabled="!canClear()" class="btn btn-large">Clear</a>
-        <a ng-click="undo()" ng-disabled="!isChanged()" class="btn btn-large btn-warning">Undo</a>
-        <a ng-click="save()" ng-disabled="!isChanged()" class="btn btn-large btn-success">Save</a>
+        <a ng-href="#/part" class="btn btn-default"><i class="fa fa-bars"></i> Part List</a>
+        <a ng-href="#/part/{{ partType }}/{{ partId }}" class="btn btn-primary"><i
+                class="fa fa-eye"></i> View Part</a>
+        <a ng-href="#/part/{{ partType }}/{{ partId }}/form" class="btn btn-success"><i class="fa fa-cog"></i> Edit Part</a>
+        <a ng-click="clear()" ng-disabled="!canClear()" class="btn btn-danger"><i class="fa fa-trash-o"></i> Clear</a>
+        <a ng-click="undo()" ng-disabled="!isChanged()" class="btn btn-warning"><i class="fa fa-undo"></i> Undo</a>
+        <a ng-click="save()" ng-disabled="!isChanged()" class="btn btn-success"><i class="fa fa-save"></i> Save</a>
     </div>
 </div>
 
 <div class="row">
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <!-- Part Summary -->
-        <h1>Interchangeable {{ partType }} #{{ partId }}</h1>
-        <dl class="list-bottom-border">
+        <h1 class="padding-top">Interchangeable {{ partType }} #{{ partId }}</h1>
+        <dl class="dl-horizontal">
             <dt>Name</dt>
             <dd>
                 {{part.name}}
@@ -32,13 +33,13 @@
                 <span ng-show="part.manufacturer.name == null || part.manufacturer.name == ''">[blank]</span>
             </dd>
 
-            <dt>Manufacturer Part Number</dt>
+            <dt>Mfr. Part #</dt>
             <dd>
                 {{part.manufacturerPartNumber}}
                 <span ng-show="part.manufacturerPartNumber == null || part.manufacturerPartNumber == ''">[blank]</span>
             </dd>
 
-            <dt>Interchangeable Parts Group</dt>
+            <dt>Interchange Parts Grp.</dt>
             <dd ng-show="newInterchange == null && pickedPart == null">
                 [none]
             </dd>
@@ -51,14 +52,14 @@
             </dd>
         </dl>
 
-        <h3 ng-show="pickedPart != null">
+        <h2 ng-show="pickedPart != null">
             Picked Interchangeable {{ pickedPart.partType.typeName }} #{{ pickedPart.id }}
             <a ng-click="showPickedPart = !showPickedPart" ng-show="showPickedPart == false" class="btn">Show</a>
             <a ng-click="showPickedPart = !showPickedPart" ng-show="showPickedPart == true" class="btn">Hide</a>
-        </h3>
+        </h2>
 
-        <h3 ng-show="pickedPart == null">No Interchangeable Part Picked</h3>
-        <dl collapse="!showPickedPart">
+        <h2 ng-show="pickedPart == null">No Interchangeable Part Picked</h2>
+        <dl class="list-bottom-border dl-horizontal" collapse="!showPickedPart">
             <dt>Name</dt>
             <dd>
                 {{pickedPart.name}}

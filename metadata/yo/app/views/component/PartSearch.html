@@ -2,9 +2,9 @@
     <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
         <input type="text" ng-model="search.queryString" placeholder="Search..."/>
 
-        <h2>Part Type</h2>
+        <h2 class="facet-header">Part Type</h2>
         <picker ng-model="search.partType" path="type/part"/>
-        <h2>Manufacturer</h2>
+        <h2 class="facet-header">Manufacturer</h2>
         <picker ng-model="search.manufacturer" path="other/manufacturer"/>
 
         <search-facets></search-facets>
