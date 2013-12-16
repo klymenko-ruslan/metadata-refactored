@@ -556,6 +556,9 @@ public class Part implements Comparable<Part> {
         // part_number
         columns.put("part_number", ObjectUtils.toString(getManufacturerPartNumber()));
         
+        // part_number
+        columns.put("part_number_short", ObjectUtils.toString(getManufacturerPartNumber()).replace("-", ""));
+        
         // ti_part_sku / interchanges
         if (interchange != null) {
             Set<String> interchanges = Sets.newTreeSet();

@@ -47,6 +47,7 @@ public class Magmi {
         "description",
         "manufacturer",
         "part_number",
+        "part_number_short",
         "categories",
         "ti_part_sku",       // Interchangeable parts by TI
         "interchanges",      // Interchangeable parts
