@@ -116,8 +116,7 @@ angular.module('ngMetaCrudApp')
           headers: {
             "Content-type": "text/plain"
           },
-//          url: "http://localhost:9200/metadata/_search",
-          url: "http://metadata.turbointernational.com:9200/metadata/_search",
+          url: "/search/metadata/_search",
           data: searchRequest
         });
       };
