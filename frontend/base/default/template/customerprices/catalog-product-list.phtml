@@ -77,8 +77,23 @@ $_helper = $this->helper('catalog/output');
                                 <a href="<?php echo $tiPart->getProductUrl() ?>"><?php echo $tiPart->getPartNumber(); ?></a>
                             <?php endforeach ?>
                         </td>
-                        <td><?php if (Mage::getSingleton('customer/session')->isLoggedIn()) {
-                                echo Mage::helper('core')->currency($_product->getFinalPrice());
+                        <td><?php
+                            $_productManufacturer = $_product->getManufacturer();
+                            $orgSkuString = $_product->getTiPartSku();
+                            if (strpos($orgSkuString, ',') !== false) {
+                                $tiProductPartNumbers = explode(',', $orgSkuString);
+                                $orgSku = $tiProductPartNumbers[0];
+                            } else {
+                                $orgSku = $orgSkuString;
+                            }
+                            if (Mage::getSingleton('customer/session')->isLoggedIn()) {
+                                if ($orgSku && strlen($orgSku) > 1 && $_productManufacturer != 44) {
+                                    $_tiProduct = Mage::getModel('catalog/product');
+                                    $_tiProduct->load($_tiProduct->getIdBySku($orgSku));
+                                    echo Mage::helper('core')->currency($_tiProduct->getFinalPrice());
+                                } else if ($_productManufacturer != 44) {
+                                    echo '';
+                                }
                             } else {
                                 ?><a href="<?php echo $this->getUrl('customer/account/login'); ?>">Login to view prices</a><?php } ?>
                         </td>
@@ -108,19 +123,24 @@ $_helper = $this->helper('catalog/output');
                     <h2 class="product-name"><a href="<?php echo $_product->getProductUrl() ?>"
                                                 title="<?php echo $this->stripTags($_product->getName(), null, true) ?>"><?php echo $_helper->productAttribute($_product, $_product->getName(), 'name') ?></a>
                     </h2>
+
                     <p><strong>Part Type: <?php echo $_product->getAttributeText('part_type') ?></strong></p>
                     <?php if ($_product->getRatingSummary()): ?>
                         <?php echo $this->getReviewsSummaryHtml($_product, 'short') ?>
                     <?php endif; ?>
                     <?php echo $this->getPriceHtml($_product, true) ?>
                     <div class="actions">
-<!--                        --><?php //if ($_product->isSaleable()): ?>
-<!--                            <button type="button" title="--><?php //echo $this->__('Add to Cart') ?><!--" class="button btn-cart"-->
-<!--                                    onclick="setLocation('--><?php //echo $this->getAddToCartUrl($_product) ?><!--')">-->
-<!--                                <span><span>--><?php //echo $this->__('Add to Cart') ?><!--</span></span></button>-->
-<!--                        --><?php //else: ?>
-<!--                            <p class="availability out-of-stock"><span>--><?php //echo $this->__('Out of stock') ?><!--</span></p>-->
-<!--                        --><?php //endif; ?>
+                        <!--                        --><?php //if ($_product->isSaleable()): ?>
+                        <!--                            <button type="button" title="-->
+                        <?php //echo $this->__('Add to Cart') ?><!--" class="button btn-cart"-->
+                        <!--                                    onclick="setLocation('-->
+                        <?php //echo $this->getAddToCartUrl($_product) ?><!--')">-->
+                        <!--                                <span><span>-->
+                        <?php //echo $this->__('Add to Cart') ?><!--</span></span></button>-->
+                        <!--                        --><?php //else: ?>
+                        <!--                            <p class="availability out-of-stock"><span>-->
+                        <?php //echo $this->__('Out of stock') ?><!--</span></p>-->
+                        <!--                        --><?php //endif; ?>
                         <ul class="add-to-links">
                             <?php if ($this->helper('wishlist')->isAllow()) : ?>
                                 <li><a href="<?php echo $this->helper('wishlist')->getAddUrl($_product) ?>"
