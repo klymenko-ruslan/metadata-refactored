@@ -53,11 +53,6 @@ module.exports = function (grunt) {
           livereload: LIVERELOAD_PORT,
           middleware: function (connect) {
             return [
-              modRewrite([
-                '^/metadata/(.*)$   http://localhost:8080/$1 [PL]', // Metadata Tomcat
-                '^/search/(.*)$     http://localhost:9200/$1 [PL]', // ElasticSearch
-                '^/(\\w|/)+$   /index.html             [L]'
-              ]),
               lrSnippet,
               mountFolder(connect, '.tmp'),
               mountFolder(connect, yeomanConfig.app),
