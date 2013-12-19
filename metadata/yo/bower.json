@@ -22,7 +22,6 @@
   },
   "resolutions": {
     "angular": ">=1.2.0-rc.2",
-    "jquery": ">= 1.7.1",
-    "bootstrap-sass": "~3.0.2"
+    "jquery": ">= 1.7.1"
   }
 }
