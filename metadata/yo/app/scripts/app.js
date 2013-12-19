@@ -1,11 +1,11 @@
 'use strict';
 
 angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap', 'restangular'])
-    .config(function(RestangularProvider) {
+    .config(function (RestangularProvider) {
 //        RestangularProvider.setBaseUrl('http://localhost:8080/');
         RestangularProvider.setBaseUrl('https://metadata.turbointernational.com/');
         RestangularProvider.setDefaultHeaders({"Content-Type": "text/plain"});
-        RestangularProvider.setResponseExtractor(function(response, operation) {
+        RestangularProvider.setResponseExtractor(function (response, operation) {
             return response;
         })
     })
