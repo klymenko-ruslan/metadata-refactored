@@ -111,8 +111,6 @@ angular.module('ngMetaCrudApp')
             }
 
             searchRequest.sort.push(sortField);
-          });
-        }
 
         // Call to ElasticSearch
         return $http({
