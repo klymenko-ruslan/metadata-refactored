@@ -65,6 +65,7 @@
                         <?php echo $this->getChildHtml('form.additional.info'); ?>
                         <?php echo $this->getChildHtml('persistent.remember.me'); ?>
                     </ul>
+                    <a href="<?php echo $this->getForgotPasswordUrl() ?>" class="f-left"><?php echo $this->__('Forgot Your Password?') ?></a>
                     <?php echo $this->getChildHtml('persistent.remember.me.tooltip'); ?>
                     <p class="required"><?php echo $this->__('* Required Fields') ?></p>
                 </div>
@@ -78,7 +79,6 @@
             </div>
             <div class="col-2 registered-users">
                 <div class="buttons-set">
-                    <a href="<?php echo $this->getForgotPasswordUrl() ?>" class="f-left"><?php echo $this->__('Forgot Your Password?') ?></a>
                     <button type="submit" class="button" title="<?php echo $this->__('Login') ?>" name="send" id="send2"><span><span><?php echo $this->__('Login') ?></span></span></button>
                 </div>
             </div>

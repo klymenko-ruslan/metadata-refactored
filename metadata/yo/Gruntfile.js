@@ -61,11 +61,8 @@ module.exports = function (grunt) {
                 res.setHeader('Access-Control-Allow-Methods', '*');
                 next();
               }
-//              modRewrite([
-//                '^/metadata/(.*)$     http://localhost:8080/$1 [PL]' // API
-//              ])
             ];
-          },
+          }
         },
         files: [
           '<%= yeoman.app %>/{,*/}*.html',
@@ -96,6 +93,11 @@ module.exports = function (grunt) {
         options: {
           middleware: function (connect) {
             return [
+              modRewrite([
+                '^/metadata/(.*)$   http://metadata.turbointernational.com:8080/$1 [PL]', // Metadata Tomcat
+                '^/search/(.*)$     http://metadata.turbointernational.com:9200/$1 [PL]', // ElasticSearch
+                '^/(\\w|/)+$        /index.html             [L]'
+              ]),
               lrSnippet,
               mountFolder(connect, '.tmp'),
               mountFolder(connect, yeomanConfig.app)

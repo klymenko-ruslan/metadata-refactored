@@ -16,5 +16,8 @@
     </bean> 
     <bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
         <property name="alwaysUseFullPath" value="true"/> 
-    </bean> 
+    </bean>
+    
+    <!-- Product Image Serving -->
+    <mvc:resources mapping="/product_images/**" location="${product.images.location}"/>
 </beans>

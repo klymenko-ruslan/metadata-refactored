@@ -110,15 +110,18 @@ angular.module('ngMetaCrudApp')
                 });
             }
 
-            // Call to ElasticSearch
-            return $http({
-                method: 'POST',
-                headers: {
-                    "Content-type": "text/plain"
-                },
-//          url: "http://localhost:9200/metadata/_search",
-                url: "http://metadata.turbointernational.com:9200/metadata/_search",
-                data: searchRequest
-            });
-        };
+            searchRequest.sort.push(sortField);
+          });
+        }
+
+        // Call to ElasticSearch
+        return $http({
+          method: 'POST',
+          headers: {
+            "Content-type": "text/plain"
+          },
+          url: "/search/metadata/_search",
+          data: searchRequest
+        });
+      };
     });

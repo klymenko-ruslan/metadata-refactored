@@ -61,6 +61,15 @@ CREATE TABLE `part` (
   FOREIGN KEY (`part_type_id`) REFERENCES `part_type` (`id`)
 ) ENGINE = INNODB;
 
+CREATE TABLE `product_image` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `part_id` BIGINT NOT NULL,
+  `filename` VARCHAR(255) NULL,
+  PRIMARY KEY(`id`),
+  UNIQUE KEY(`filename`),
+  FOREIGN KEY (`part_id`) REFERENCES `part` (`id`)
+) ENGINE = INNODB;
+
 
 -- BEGIN TRIGGERS
 DELIMITER $$

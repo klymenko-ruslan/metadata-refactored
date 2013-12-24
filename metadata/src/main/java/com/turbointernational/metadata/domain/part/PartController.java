@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.sf.jsog.JSOG;
+import org.apache.commons.fileupload.FileUpload;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -190,5 +191,16 @@ public class PartController {
 
         return new ResponseEntity<Void>((Void) null, headers, HttpStatus.OK);
     }
+    
+    @RequestMapping(value="/{id}addProductImage", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity<Void> addProductImage(@PathVariable Long id,
+                                                FileUpload upload) throws Exception {
+//        TODO
+
+        return new ResponseEntity<Void>((Void) null, HttpStatus.OK);
+    }
+    
+    
 
 }

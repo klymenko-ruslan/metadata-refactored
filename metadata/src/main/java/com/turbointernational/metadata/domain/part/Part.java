@@ -164,6 +164,9 @@ public class Part implements Comparable<Part> {
     @JoinTable(name="part_turbo_model", joinColumns=@JoinColumn(name="part_id"), inverseJoinColumns=@JoinColumn(name="turbo_model_id"))
     private Set<TurboModel> turboModels = new TreeSet<TurboModel>();
     
+    @OneToMany(cascade = CascadeType.REFRESH, mappedBy = "part")
+    private Set<ProductImage> productImages = new HashSet<ProductImage>();
+    
     @Version
     @Column(name = "version")
     private Integer version;
@@ -287,6 +290,10 @@ public class Part implements Comparable<Part> {
         return turboModels;
     }
 
+    public Set<ProductImage> getProductImages() {
+        return productImages;
+    }
+    
     public Integer getVersion() {
         return version;
     }
@@ -549,6 +556,9 @@ public class Part implements Comparable<Part> {
         // part_number
         columns.put("part_number", ObjectUtils.toString(getManufacturerPartNumber()));
         
+        // part_number
+        columns.put("part_number_short", ObjectUtils.toString(getManufacturerPartNumber()).replaceAll("\\W", ""));
+        
         // ti_part_sku / interchanges
         if (interchange != null) {
             Set<String> interchanges = Sets.newTreeSet();
@@ -644,6 +654,33 @@ public class Part implements Comparable<Part> {
             turboTypeString.append(turboType.getName());
         }
         columns.put("turbo_type", turboTypeString.toString());
+        
+        // Images
+        if (!getProductImages().isEmpty()) {
+            
+            // Get the first image
+            Iterator<ProductImage> it = getProductImages().iterator();
+            ProductImage firstImage = it.next();
+            
+            columns.put("image", firstImage.getFilename());
+            
+            // Additional images
+            StringBuilder galleryString = new StringBuilder();
+            while (it.hasNext()) {
+                ProductImage additionalImage = it.next();
+                
+                // Add a separator if this isn't the first additional image
+                if (galleryString.length() > 0) {
+                    galleryString.append(';');
+                }
+                
+                // Add the filename
+                galleryString.append(additionalImage.getFilename());
+            }
+            
+            // Add the column
+            columns.put("media_gallery", galleryString.toString());
+        }
     }
     
     public List<Part> collectTIInterchanges() {

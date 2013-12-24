@@ -7,3 +7,5 @@ metadata/yo/.idea/
 /mas90magmi/target
 /docs/sql/script.sql
 /docs/sql/data.sql
+/magento/custom_magmi_plugins/customerprices.magmi/nbproject/private/
+/magento/custom_magmi_plugins/customerprice/nbproject/private/

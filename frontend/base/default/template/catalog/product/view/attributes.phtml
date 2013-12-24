@@ -43,7 +43,7 @@ $_description = $_product->getDescription();
         <tbody>
         <?php foreach ($_additional as $_data): ?>
             <!-- Table rows are only instantiated when additional data is not Manufacturer or Part Number, as they are displayed above in the Product Information div -->
-            <?php if ($_data['label'] !== "Manufacturer" && $_data['label'] !== "Part Number"): ?>
+            <?php if ($_data['label'] !== "Manufacturer" && $_data['label'] !== "Part Number" && $_data['label'] !== "Part Type"): ?>
                 <tr>
                     <th class="label"><?php echo $this->htmlEscape($this->__($_data['label'])) ?></th>
                     <td class="data"><?php echo $_helper->productAttribute($_product, $_data['value'], $_data['code']) ?></td>

@@ -18,6 +18,7 @@ cat metadata_schema.sql > "script.sql" &&
 cat pre_import.sql >> "script.sql" &&
 cat data.sql >> "script.sql" &&
 cat post_import.sql >> "script.sql" &&
+cat images.sql >> "script.sql" &&
 
 # Fix newlines
 dos2unix "script.sql"

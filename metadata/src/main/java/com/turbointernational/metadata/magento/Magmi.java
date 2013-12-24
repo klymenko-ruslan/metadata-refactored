@@ -46,15 +46,18 @@ public class Magmi {
         "name",
         "description",
         "manufacturer",
-        "manufacturer_part_number",
+        "part_number",
+        "part_number_short",
         "categories",
         "ti_part_sku",       // Interchangeable parts by TI
         "interchanges",      // Interchangeable parts
         "bill_of_materials", // BOM
         "price",
         "quantity",
-        "turbo_model",       // Turbo Models
+        "turbo_model",      // Turbo Models
         "turbo_type",       // Turbo Types
+        "image",            // Product image
+        "media_gallery",    // Extra images
         //</editor-fold>
         
         //<editor-fold defaultstate="collapsed" desc="Types">
