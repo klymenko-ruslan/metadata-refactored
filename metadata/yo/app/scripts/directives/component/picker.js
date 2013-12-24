@@ -12,7 +12,7 @@ angular.module('ngMetaCrudApp')
             templateUrl: '/views/component/Picker.html',
             restrict: 'E',
             controller: 'PickerCtrl',
-            link: function(scope, element, attrs) {
+            link: function (scope, element, attrs) {
 //              scope.ngModelAttr = attrs.ngModel;
             }
         }

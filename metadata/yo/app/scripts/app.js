@@ -4,7 +4,7 @@ angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap', 'restangu
     .config(function(RestangularProvider) {
         RestangularProvider.setBaseUrl('/metadata/');
         RestangularProvider.setDefaultHeaders({"Content-Type": "text/plain"});
-        RestangularProvider.setResponseExtractor(function(response, operation) {
+        RestangularProvider.setResponseExtractor(function (response, operation) {
             return response;
         })
     })
