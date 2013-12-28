@@ -41,15 +41,9 @@ if (strpos($orgSkuString, ',') !== false) {
 } else {
     $orgSku = $orgSkuString;
 }
-$interchangesString = $_product->getInterchanges();
-array($tiProductInterchanges);
-$tiInterchangesArray = false;
-if (strpos($interchangesString, ',') !== false) {
-    $tiProductInterchanges = explode(',', $interchangesString);
-    $tiInterchangesArray = true;
-} else {
-    $tiProductInterchanges = $interchangesString;
-}
+
+$tiProductInterchanges = explode(',', $_product->getInterchanges());
+
 $_productManufacturer = $_product->getManufacturer();
 $_description = $_product->getDescription();
 $_ad = $this->getAdditionalData();
@@ -329,3 +323,4 @@ $_ad = $this->getAdditionalData();
 <script type="text/javascript">decorateTable('product-information-specs-table')</script>
 <script type="text/javascript">decorateTable('interchangeable-parts-specs-table')</script>
 <script type="text/javascript">decorateTable('bill-of-materials')</script>
+
