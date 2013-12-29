@@ -1,5 +1,6 @@
 package com.turbointernational.metadata.domain.part;
 import com.google.common.collect.Sets;
+import com.turbointernational.metadata.domain.car.CarMake;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.bom.BOMItem;
 import com.turbointernational.metadata.domain.part.types.Backplate;
@@ -299,29 +300,6 @@ public class Part implements Comparable<Part> {
     
     public Set<Turbo> getTurbos() {
         return turbos;
-    }
-
-    public List<String> getTurboTypeNames() {
-        return entityManager.createQuery(
-                  "SELECT DISTINCT tt.name\n"
-                + "FROM Part p\n"
-                + "  JOIN p.turbos t\n"
-                + "  JOIN t.turboModel tm\n"
-                + "  JOIN tm.turboType tt\n"
-                + "WHERE p.id = ?", String.class)
-                .setParameter(1, id)
-                .getResultList();
-    }
-
-    public List<String> getTurboModelNames() {
-        return entityManager.createQuery(
-                  "SELECT DISTINCT tm.name\n"
-                + "FROM Part p\n"
-                + "  JOIN p.turbos t\n"
-                + "  JOIN t.turboModel tm\n"
-                + "WHERE p.id = ?", String.class)
-                .setParameter(1, id)
-                .getResultList();
     }
 
     public Set<ProductImage> getProductImages() {
@@ -664,30 +642,10 @@ public class Part implements Comparable<Part> {
         }
         
         // Turbo Models
-        StringBuilder turboModelString = new StringBuilder();
-        for (String turboModelName : getTurboModelNames()) {
-            
-            // Separator
-            if (turboModelString.length() > 0) {
-                turboModelString.append(",");
-            }
-            
-            turboModelString.append(turboModelName);
-        }
-        columns.put("turbo_model", turboModelString.toString());
+        columns.put("turbo_model", StringUtils.join(collectTurboModelNames(), ','));
         
         // Turbo Types
-        StringBuilder turboTypeString = new StringBuilder();
-        for (String turboTypeName : getTurboTypeNames()) {
-            
-            // Separator
-            if (turboTypeString.length() > 0) {
-                turboTypeString.append(",");
-            }
-            
-            turboTypeString.append(turboTypeName);
-        }
-        columns.put("turbo_type", turboTypeString.toString());
+        columns.put("turbo_type", StringUtils.join(collectTurboTypeNames(), ','));
         
         // Images
         if (!getProductImages().isEmpty()) {
@@ -778,6 +736,29 @@ public class Part implements Comparable<Part> {
         }
         
         return collectedTurbos;
+    }
+
+    public List<String> collectTurboTypeNames() {
+        return entityManager.createQuery(
+                  "SELECT DISTINCT tt.name\n"
+                + "FROM Part p\n"
+                + "  JOIN p.turbos t\n"
+                + "  JOIN t.turboModel tm\n"
+                + "  JOIN tm.turboType tt\n"
+                + "WHERE p.id = ?", String.class)
+                .setParameter(1, id)
+                .getResultList();
+    }
+
+    public List<String> collectTurboModelNames() {
+        return entityManager.createQuery(
+                  "SELECT DISTINCT tm.name\n"
+                + "FROM Part p\n"
+                + "  JOIN p.turbos t\n"
+                + "  JOIN t.turboModel tm\n"
+                + "WHERE p.id = ?", String.class)
+                .setParameter(1, id)
+                .getResultList();
     }
     
     /**
