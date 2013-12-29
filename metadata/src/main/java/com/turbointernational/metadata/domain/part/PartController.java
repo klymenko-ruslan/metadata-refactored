@@ -159,10 +159,6 @@ public class PartController {
         
         long start = System.currentTimeMillis();
         part.indexTurbos();
-        log.log(Level.INFO,
-                "Turbo models indexed in {0}ms: {1}",
-                new Object[] {System.currentTimeMillis() - start, part.getTurboModels()});
-        
         
         return new ResponseEntity<Void>((Void) null, HttpStatus.OK);
     }

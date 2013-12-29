@@ -1,8 +1,6 @@
 package com.turbointernational.metadata.domain.part;
 import com.google.common.collect.Sets;
 import com.turbointernational.metadata.domain.other.Manufacturer;
-import com.turbointernational.metadata.domain.other.TurboModel;
-import com.turbointernational.metadata.domain.other.TurboType;
 import com.turbointernational.metadata.domain.part.bom.BOMItem;
 import com.turbointernational.metadata.domain.part.types.Backplate;
 import com.turbointernational.metadata.domain.part.types.BearingHousing;
@@ -33,6 +31,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.logging.Logger;
 import javax.persistence.Cacheable;
@@ -49,6 +48,8 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PersistenceContext;
@@ -73,6 +74,24 @@ import org.springframework.transaction.annotation.Transactional;
 @Table(name = "PART")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn
+@NamedQueries({
+    @NamedQuery(name="bom_parent_ids", query=
+          "SELECT DISTINCT p.id\n"
+        + "FROM\n"
+        + "  Part p\n"
+        + "  JOIN p.bom b"
+        + "  JOIN b.child child\n"
+        + "WHERE\n"
+        + "  child.id = :partId"),
+    @NamedQuery(name="bom_alt_parent_ids", query=
+          "SELECT DISTINCT p.id\n"
+        + "FROM\n"
+        + "  Part p\n"
+        + "  JOIN p.bom b"
+        + "  JOIN b.alternatives alt\n"
+        + "  JOIN alt.part altPart\n"
+        + "WHERE\n"
+        + "  altPart.id = :partId")})
 public class Part implements Comparable<Part> {
     private static final Logger log = Logger.getLogger(Part.class.toString());
     
@@ -157,12 +176,8 @@ public class Part implements Comparable<Part> {
     private Set<BOMItem> bom = new TreeSet<BOMItem>();
     
     @OneToMany(cascade = CascadeType.REFRESH)
-    @JoinTable(name="part_turbo_type", joinColumns=@JoinColumn(name="part_id"), inverseJoinColumns=@JoinColumn(name="turbo_type_id"))
-    private Set<TurboType> turboTypes = new TreeSet<TurboType>();
-    
-    @OneToMany(cascade = CascadeType.REFRESH)
-    @JoinTable(name="part_turbo_model", joinColumns=@JoinColumn(name="part_id"), inverseJoinColumns=@JoinColumn(name="turbo_model_id"))
-    private Set<TurboModel> turboModels = new TreeSet<TurboModel>();
+    @JoinTable(name="part_turbo", joinColumns=@JoinColumn(name="part_id"), inverseJoinColumns=@JoinColumn(name="turbo_id"))
+    private Set<Turbo> turbos = new TreeSet<Turbo>();
     
     @OneToMany(cascade = CascadeType.REFRESH, mappedBy = "part")
     private Set<ProductImage> productImages = new HashSet<ProductImage>();
@@ -281,13 +296,32 @@ public class Part implements Comparable<Part> {
         this.bom.clear();
         this.bom.addAll(bom);
     }
-
-    public Set<TurboType> getTurboTypes() {
-        return turboTypes;
+    
+    public Set<Turbo> getTurbos() {
+        return turbos;
     }
 
-    public Set<TurboModel> getTurboModels() {
-        return turboModels;
+    public List<String> getTurboTypeNames() {
+        return entityManager.createQuery(
+                  "SELECT DISTINCT tt.name\n"
+                + "FROM Part p\n"
+                + "  JOIN p.turbos t\n"
+                + "  JOIN t.turboModel tm\n"
+                + "  JOIN tm.turboType tt\n"
+                + "WHERE p.id = ?", String.class)
+                .setParameter(1, id)
+                .getResultList();
+    }
+
+    public List<String> getTurboModelNames() {
+        return entityManager.createQuery(
+                  "SELECT DISTINCT tm.name\n"
+                + "FROM Part p\n"
+                + "  JOIN p.turbos t\n"
+                + "  JOIN t.turboModel tm\n"
+                + "WHERE p.id = ?", String.class)
+                .setParameter(1, id)
+                .getResultList();
     }
 
     public Set<ProductImage> getProductImages() {
@@ -631,27 +665,27 @@ public class Part implements Comparable<Part> {
         
         // Turbo Models
         StringBuilder turboModelString = new StringBuilder();
-        for (TurboModel turboModel : getTurboModels()) {
+        for (String turboModelName : getTurboModelNames()) {
             
             // Separator
             if (turboModelString.length() > 0) {
                 turboModelString.append(",");
             }
             
-            turboModelString.append(turboModel.getName());
+            turboModelString.append(turboModelName);
         }
         columns.put("turbo_model", turboModelString.toString());
         
         // Turbo Types
         StringBuilder turboTypeString = new StringBuilder();
-        for (TurboType turboType : getTurboTypes()) {
+        for (String turboTypeName : getTurboTypeNames()) {
             
             // Separator
             if (turboTypeString.length() > 0) {
                 turboTypeString.append(",");
             }
             
-            turboTypeString.append(turboType.getName());
+            turboTypeString.append(turboTypeName);
         }
         columns.put("turbo_type", turboTypeString.toString());
         
@@ -702,28 +736,13 @@ public class Part implements Comparable<Part> {
     
     //</editor-fold>
     
-    
     //<editor-fold defaultstate="collapsed" desc="Turbo Indexing">
     @Transactional
     public void indexTurbos() {
         Set<Turbo> newTurbos = collectTurbos();
+        
         turbos.retainAll(newTurbos);
-        turbos.addAll(newTurboTypes);
-        
-        // Build the turbo type and model index
-        Set<TurboType> newTurboTypes = Sets.newHashSet();
-        Set<TurboModel> newTurboModels = Sets.newHashSet();
-        
-        for (TurboModel newTurboModel : newTurboModels) {
-            newTurboTypes.add(newTurboModel.getTurboType());
-        }
-        
-        // Remove any old associations, and create any new ones
-        turboModels.retainAll(newTurboModels);
-        turboModels.addAll(newTurboModels);
-        
-        turboTypes.retainAll(newTurboTypes);
-        turboTypes.addAll(newTurboTypes);
+        turbos.addAll(newTurbos);
         
         // Save the new values
         this.merge();
@@ -733,68 +752,55 @@ public class Part implements Comparable<Part> {
         
         Set<Long> visitedPartIds = new HashSet<Long>();
         Set<Turbo> collectedTurbos = new HashSet<Turbo>();
-        Set<Long> partsToVisit = new HashSet<Long>();
+        SortedSet<Long> partsToVisit = new TreeSet<Long>(getBomParentPartIds());
         
         while (!partsToVisit.isEmpty()) {
             
             // Get the next part to visit
-            Iterator<Long> it = partsToVisit.iterator();
-            Long partId = it.next();
-            it.remove();
+            Long partId = partsToVisit.first();
+            partsToVisit.remove(partId);
             
+            // Prevent recursion
             if (visitedPartIds.contains(partId)) {
                 continue;
+            } else {
+                visitedPartIds.add(partId);
             }
             
+            // Collect turbos and add BOM parents for non-turbo parts
             Part part = Part.findPart(partId);
             
             if (part instanceof Turbo) {
                 collectedTurbos.add((Turbo) part);
             } else {
-            
-                // BOM Parents
-                List<Long> parents = entityManager.createQuery(
-                    "SELECT DISTINCT p.id\n"
-                    + "FROM\n"
-                    + "  Part p\n"
-                    + "  JOIN p.bom b"
-                    + "  JOIN b.child child\n"
-                    + "WHERE\n"
-                    + "  child.id = :partId\n"
-                    , Long.class)
-                    .setParameter("partId", part.id)
-                    .getResultList();
-
-                // BOM Alt Parents
-                parents.addAll(entityManager.createQuery(
-                      "SELECT DISTINCT p.id\n"
-                    + "FROM\n"
-                    + "  Part p\n"
-                    + "  JOIN p.bom b"
-                    + "  JOIN b.alternatives alt\n"
-                    + "  JOIN alt.part altPart\n"
-                    + "WHERE\n"
-                    + "  altPart.id = :partId"
-                    , Long.class)
-                    .setParameter("partId", this.id)
-                    .getResultList());
-            
-                // Add any new parts to the "to visit" list
-                for (Long parentPartId : parents) {
-                    partsToVisit.add(parentPartId);
-                }
+                partsToVisit.addAll(part.getBomParentPartIds());
             }
-            
-            // Add the part to the visited list
-            visitedPartIds.add(partId);
         }
         
         return collectedTurbos;
     }
+    
+    /**
+     * Gets the Part IDs of this part's BOM parents
+     * @return 
+     */
+    public SortedSet<Long> getBomParentPartIds() {
+        SortedSet<Long> parents = new TreeSet<Long>();
+            
+        // BOM Parents
+        parents.addAll(entityManager.createNamedQuery("bom_parent_ids", Long.class)
+            .setParameter("partId", this.id)
+            .getResultList());
+
+        // BOM Alt Parents
+        parents.addAll(entityManager.createNamedQuery("bom_alt_parent_ids", Long.class)
+            .setParameter("partId", this.id)
+            .getResultList());
+        
+        return parents;
+    }
     //</editor-fold>
     
-    
-
     @Override
     public int compareTo(Part o) {
         return ObjectUtils.compare(this.id, o.id);
