@@ -28,7 +28,7 @@
  */
 
 /**
- * Customer Prics extension
+ * Customer Prices extension
  *
  * @category   Webtex
  * @package    Webtex_CustomerPrices
