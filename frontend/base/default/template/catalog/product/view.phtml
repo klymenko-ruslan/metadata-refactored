@@ -42,7 +42,7 @@ if (strpos($orgSkuString, ',') !== false) {
     $orgSku = $orgSkuString;
 }
 $interchangesString = $_product->getInterchanges();
-array($tiProductInterchanges);
+$tiProductInterchanges = array();
 $tiInterchangesArray = false;
 if (strpos($interchangesString, ',') !== false) {
     $tiProductInterchanges = explode(',', $interchangesString);
@@ -239,6 +239,7 @@ $_ad = $this->getAdditionalData();
                     <th class="label">Part Number</th>
                     <th class="label">Manufacturer</th>
                 </tr>
+                <?php if(is_array($tiProductInterchanges)): ?>
                 <?php foreach ($tiProductInterchanges as $tiProductInterchange): ?>
                     <?php
                     $_tiProductByInterchanges = Mage::getModel('catalog/product');
@@ -253,6 +254,7 @@ $_ad = $this->getAdditionalData();
                         <td class="data"><?php echo $_tiProductInterchangeManufacturer; ?></td>
                     </tr>
                 <?php endforeach; ?>
+                <?php endif; ?>
                 </tbody>
             </table>
         </div>
@@ -272,6 +274,7 @@ $_ad = $this->getAdditionalData();
                     <th><strong>Qty Per Set</strong></th>
                     <th><strong>Price</strong></th>
                 </tr>
+                <?php if(is_array($billMaterials)): ?>
                 <?php
                 foreach ($billMaterials as $bomItem) {
                     $bomItemProduct = Mage::getModel('catalog/product');
@@ -302,6 +305,7 @@ $_ad = $this->getAdditionalData();
                 <?php
                 }
                 ?>
+                <?php endif; ?>
             </table>
         </div>
 
