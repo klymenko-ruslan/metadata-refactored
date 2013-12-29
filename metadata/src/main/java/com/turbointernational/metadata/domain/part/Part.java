@@ -703,13 +703,17 @@ public class Part implements Comparable<Part> {
     //</editor-fold>
     
     
-    //<editor-fold defaultstate="collapsed" desc="Turbo Model Indexing">
+    //<editor-fold defaultstate="collapsed" desc="Turbo Indexing">
     @Transactional
-    public void indexTurboModels() {
-        Set<TurboModel> newTurboModels = collectTurboModels();
+    public void indexTurbos() {
+        Set<Turbo> newTurbos = collectTurbos();
+        turbos.retainAll(newTurbos);
+        turbos.addAll(newTurboTypes);
         
-        // Build the turbo type index
+        // Build the turbo type and model index
         Set<TurboType> newTurboTypes = Sets.newHashSet();
+        Set<TurboModel> newTurboModels = Sets.newHashSet();
+        
         for (TurboModel newTurboModel : newTurboModels) {
             newTurboTypes.add(newTurboModel.getTurboType());
         }
@@ -725,10 +729,10 @@ public class Part implements Comparable<Part> {
         this.merge();
     }
     
-    public Set<TurboModel> collectTurboModels() {
+    public Set<Turbo> collectTurbos() {
         
         Set<Long> visitedPartIds = new HashSet<Long>();
-        Set<TurboModel> collectedTurboModels = new HashSet<TurboModel>();
+        Set<Turbo> collectedTurbos = new HashSet<Turbo>();
         Set<Long> partsToVisit = new HashSet<Long>();
         
         while (!partsToVisit.isEmpty()) {
@@ -745,48 +749,48 @@ public class Part implements Comparable<Part> {
             Part part = Part.findPart(partId);
             
             if (part instanceof Turbo) {
-                collectedTurboModels.add(((Turbo) part).getTurboModel());
+                collectedTurbos.add((Turbo) part);
+            } else {
+            
+                // BOM Parents
+                List<Long> parents = entityManager.createQuery(
+                    "SELECT DISTINCT p.id\n"
+                    + "FROM\n"
+                    + "  Part p\n"
+                    + "  JOIN p.bom b"
+                    + "  JOIN b.child child\n"
+                    + "WHERE\n"
+                    + "  child.id = :partId\n"
+                    , Long.class)
+                    .setParameter("partId", part.id)
+                    .getResultList();
+
+                // BOM Alt Parents
+                parents.addAll(entityManager.createQuery(
+                      "SELECT DISTINCT p.id\n"
+                    + "FROM\n"
+                    + "  Part p\n"
+                    + "  JOIN p.bom b"
+                    + "  JOIN b.alternatives alt\n"
+                    + "  JOIN alt.part altPart\n"
+                    + "WHERE\n"
+                    + "  altPart.id = :partId"
+                    , Long.class)
+                    .setParameter("partId", this.id)
+                    .getResultList());
+            
+                // Add any new parts to the "to visit" list
+                for (Long parentPartId : parents) {
+                    partsToVisit.add(parentPartId);
+                }
             }
-            
-            // BOM Parents
-            List<Long> parents = entityManager.createQuery(
-                "SELECT DISTINCT p.id\n"
-                + "FROM\n"
-                + "  Part p\n"
-                + "  JOIN p.bom b"
-                + "  JOIN b.child child\n"
-                + "WHERE\n"
-                + "  child.id = :partId\n"
-                , Long.class)
-                .setParameter("partId", part.id)
-                .getResultList();
-            
-            // BOM Alt Parents
-            parents.addAll(entityManager.createQuery(
-                  "SELECT DISTINCT p.id\n"
-                + "FROM\n"
-                + "  Part p\n"
-                + "  JOIN p.bom b"
-                + "  JOIN b.alternatives alt\n"
-                + "  JOIN alt.part altPart\n"
-                + "WHERE\n"
-                + "  altPart.id = :partId"
-                , Long.class)
-                .setParameter("partId", this.id)
-                .getResultList());
             
             // Add the part to the visited list
             visitedPartIds.add(partId);
-            
-            // Add any new parts to the visited list
-            for (Long parentPartId : parents) {
-                partsToVisit.add(parentPartId);
-            }
         }
         
-        return collectedTurboModels;
+        return collectedTurbos;
     }
-    
     //</editor-fold>
     
     
