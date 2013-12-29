@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * @author jrodriguez
  */
 @Controller
-@RequestMapping("/magmi")
+@RequestMapping(value={"/magmi", "/metadata/magmi"})
 public class Magmi {
     private static final Logger logger = Logger.getLogger(Magmi.class.toString());
     

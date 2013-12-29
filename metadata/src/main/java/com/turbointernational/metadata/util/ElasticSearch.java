@@ -5,6 +5,7 @@ import java.util.List;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
  *
@@ -85,18 +87,15 @@ public class ElasticSearch {
 //                                .build());
 //    }
 //
-//    public String search(Search search) throws Exception {
-//        String searchResultString = client().execute(search).getJsonString();
-//        JSOG searchResult = JSOG.parse(searchResultString);
-//
-//        JSOG result = JSOG.object("total", searchResult.get("hits").get("total"));
-//
-//        for (JSOG resultItem : searchResult.get("hits").get("hits").arrayIterable()) {
-//            result.get("items").add(resultItem.get("_source"));
-//        }
-//
-//        return result.toString();
-//    }
+    public String search(String searchJson) throws Exception {
+        Client client = client();
+        try {
+            SearchRequest request = new SearchRequest(elasticSearchIndex).source(searchJson);
+            return client.search(request).actionGet(timeout).toString();
+        } finally {
+            client.close();
+        }
+    }
     
     @Transactional(readOnly = true)
     public void indexPart(Part part) throws Exception {

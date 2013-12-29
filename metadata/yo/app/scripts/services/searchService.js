@@ -110,15 +110,13 @@ angular.module('ngMetaCrudApp')
                 });
             }
 
-            searchRequest.sort.push(sortField);
-
         // Call to ElasticSearch
         return $http({
           method: 'POST',
           headers: {
             "Content-type": "text/plain"
           },
-          url: "/search/metadata/_search",
+          url: "/search",
           data: searchRequest
         });
       };

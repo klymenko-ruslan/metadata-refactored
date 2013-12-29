@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-@RequestMapping("/type/part")
+@RequestMapping("/metadata/type/part")
 public class PartTypeController {
     
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)

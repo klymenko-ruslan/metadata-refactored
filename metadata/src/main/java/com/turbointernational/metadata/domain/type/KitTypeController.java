@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-@RequestMapping("/type/kit")
+@RequestMapping("/metadata/type/kit")
 public class KitTypeController {
     
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)

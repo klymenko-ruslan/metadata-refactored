@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * @author jrodriguez
  */
 
-@RequestMapping("/other/manufacturer")
+@RequestMapping("/metadata/other/manufacturer")
 @Controller
 public class ManufacturerController {
     

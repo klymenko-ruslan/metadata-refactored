@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-@RequestMapping("/type/seal")
+@RequestMapping("/metadata/type/seal")
 public class SealTypeController {
     
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)

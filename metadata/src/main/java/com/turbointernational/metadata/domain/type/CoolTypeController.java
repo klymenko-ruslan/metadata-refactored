@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-@RequestMapping("/type/cool")
+@RequestMapping("/metadata/type/cool")
 public class CoolTypeController {
     
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)

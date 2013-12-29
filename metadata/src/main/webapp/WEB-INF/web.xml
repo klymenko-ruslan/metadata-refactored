@@ -68,12 +68,9 @@
     
     <servlet-mapping>
         <servlet-name>metadata</servlet-name>
-        <url-pattern>/part</url-pattern>
-        <url-pattern>/part/*</url-pattern>
-        <url-pattern>/type</url-pattern>
-        <url-pattern>/type/*</url-pattern>
-        <url-pattern>/other</url-pattern>
-        <url-pattern>/other/*</url-pattern>
+        <url-pattern>/metadata/*</url-pattern>
+        <url-pattern>/search</url-pattern>
+        <url-pattern>/search/*</url-pattern>
         <url-pattern>/magmi</url-pattern>
         <url-pattern>/magmi/*</url-pattern>
     </servlet-mapping>

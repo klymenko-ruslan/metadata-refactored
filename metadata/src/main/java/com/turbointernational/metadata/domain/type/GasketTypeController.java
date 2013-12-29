@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-@RequestMapping("/type/gasket")
+@RequestMapping("/metadata/type/gasket")
 public class GasketTypeController {
     
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)

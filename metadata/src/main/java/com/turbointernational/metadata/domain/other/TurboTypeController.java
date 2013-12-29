@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-@RequestMapping("/other/turboType")
+@RequestMapping("/metadata/other/turboType")
 public class TurboTypeController {
     
     @RequestMapping(method = RequestMethod.GET)
