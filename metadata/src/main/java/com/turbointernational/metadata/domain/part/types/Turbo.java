@@ -1,13 +1,18 @@
 package com.turbointernational.metadata.domain.part.types;
+import com.turbointernational.metadata.domain.car.CarModelEngineYear;
 import com.turbointernational.metadata.domain.type.CoolType;
 import com.turbointernational.metadata.domain.other.TurboModel;
 import com.turbointernational.metadata.domain.part.Part;
 import flexjson.JSONSerializer;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import javax.persistence.Cacheable;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.SecondaryTable;
@@ -28,6 +33,12 @@ public class Turbo extends Part {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="cool_type_id", table = "turbo")
     private CoolType coolType;
+    
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinTable(name="turbo_car_model_engine_year",
+            joinColumns=@JoinColumn(name="part_id"),
+            inverseJoinColumns=@JoinColumn(name="car_model_engine_year_id"))
+    private Set<CarModelEngineYear> cars = new HashSet<CarModelEngineYear>();
 
     public TurboModel getTurboModel() {
         return turboModel;

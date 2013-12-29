@@ -4,6 +4,60 @@ GRANT ALL PRIVILEGES ON ti.* to ti@'localhost' IDENTIFIED BY 'ti';
 USE `ti`;
 
 --
+-- Cars
+--
+CREATE TABLE `car_year` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(255) NOT NULL,
+  UNIQUE INDEX (`name`),
+  PRIMARY KEY(`id`)
+) ENGINE = INNODB;
+
+CREATE TABLE `car_make` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(50) NOT NULL,
+  UNIQUE INDEX (`name`),
+  PRIMARY KEY(`id`)
+) ENGINE = INNODB;
+
+CREATE TABLE `car_fuel_type` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(255) NOT NULL,
+  UNIQUE INDEX (`name`),
+  PRIMARY KEY(`id`)
+) ENGINE = INNODB;
+
+CREATE TABLE `car_model` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(50) NOT NULL,
+  `car_make_id` BIGINT NOT NULL,
+  UNIQUE INDEX (`name`, `car_make_id`),
+  FOREIGN KEY (`car_make_id`) REFERENCES `car_make` (`id`),
+  PRIMARY KEY(`id`)
+) ENGINE = INNODB;
+
+CREATE TABLE `car_engine` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `engine_size` VARCHAR(50) NOT NULL,
+  `car_fuel_type_id` BIGINT NULL,
+  UNIQUE INDEX (`engine_size`, `car_fuel_type_id`),
+  FOREIGN KEY (`car_fuel_type_id`) REFERENCES `car_fuel_type` (`id`),
+  PRIMARY KEY(`id`)
+) ENGINE = INNODB;
+
+CREATE TABLE `car_model_engine_year` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `car_model_id` BIGINT NOT NULL,
+  `car_engine_id` BIGINT NOT NULL,
+  `car_year_id` BIGINT NOT NULL,
+  UNIQUE INDEX (`car_model_id`, `car_engine_id`, `car_year_id`),
+  FOREIGN KEY (`car_model_id`) REFERENCES `car_model` (`id`),
+  FOREIGN KEY (`car_engine_id`) REFERENCES `car_engine` (`id`),
+  FOREIGN KEY (`car_year_id`) REFERENCES `car_year` (`id`),
+  PRIMARY KEY(`id`)
+) ENGINE = INNODB;
+
+--
 -- Manufacturer
 --
 CREATE TABLE `manfr_type` (
@@ -363,6 +417,15 @@ CREATE TABLE `turbo` (
   FOREIGN KEY (`turbo_model_id`) REFERENCES `turbo_model` (`id`)
 ) ENGINE = INNODB;
 
+--
+-- Turbo-Car Relationship
+CREATE TABLE `turbo_car_model_engine_year` (
+  `part_id` BIGINT NOT NULL,
+  `car_model_engine_year_id` BIGINT NOT NULL,
+  FOREIGN KEY (`car_model_engine_year_id`) REFERENCES `car_model_engine_year` (`id`),
+  FOREIGN KEY (`part_id`) REFERENCES `turbo` (`part_id`),
+  PRIMARY KEY(`part_id`)
+) ENGINE = INNODB;
 
 --
 -- Part-Turbo Type/Model Indexes
