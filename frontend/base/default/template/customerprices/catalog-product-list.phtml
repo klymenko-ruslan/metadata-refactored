@@ -60,18 +60,21 @@ $_helper = $this->helper('catalog/output');
                     <?php if ($i++ % $_columnCount == 0): ?>
                     <?php endif ?>
                     <tr>
+                        <?php $_tiProduct = false ?>
                         <td><?php echo $_product->getAttributeText('part_type') ?></td>
                         <td><a href="<?php echo $_product->getProductUrl() ?>"
                                title="<?php echo $this->stripTags($_product->getName(), null, true) ?>"><?php echo $_product->getName() ?></a>
                         </td>
                         <td><a href="<?php echo $_product->getProductUrl() ?>"><?php echo $_product->getPartNumber() ?></a></td>
-                        <td><?php $tiPartSkus = explode(",", $_product->getTiPartSku()) ?>
+                        <td><?php $tiPartSkus = array_filter(explode(",", $_product->getTiPartSku()), 'strlen') ?>
                             <?php foreach ($tiPartSkus as $idx => $tiPartSku): ?>
                                 <?php $tiPart = Mage::getModel('catalog/product');
                                 $tiPart->load($tiPart->getIdBySku($tiPartSku));
 
                                 if ($idx > 0) {
                                     echo ",";
+                                } else {
+                                    $_tiProduct = $tiPart; // If this is the first element, keep a copy
                                 }?>
 
                                 <a href="<?php echo $tiPart->getProductUrl() ?>"><?php echo $tiPart->getPartNumber(); ?></a>
@@ -79,20 +82,11 @@ $_helper = $this->helper('catalog/output');
                         </td>
                         <td><?php
                             $_productManufacturer = $_product->getManufacturer();
-                            $orgSkuString = $_product->getTiPartSku();
-                            if (strpos($orgSkuString, ',') !== false) {
-                                $tiProductPartNumbers = explode(',', $orgSkuString);
-                                $orgSku = $tiProductPartNumbers[0];
-                            } else {
-                                $orgSku = $orgSkuString;
-                            }
                             if (Mage::getSingleton('customer/session')->isLoggedIn()) {
-                                if ($orgSku && strlen($orgSku) > 1 && $_productManufacturer != 44) {
-                                    $_tiProduct = Mage::getModel('catalog/product');
-                                    $_tiProduct->load($_tiProduct->getIdBySku($orgSku));
+                                if ($_productManufacturer == 44) {
+                                    echo Mage::helper('core')->currency($_product->getFinalPrice());
+                                } else if ($_tiProduct) {
                                     echo Mage::helper('core')->currency($_tiProduct->getFinalPrice());
-                                } else if ($_productManufacturer != 44) {
-                                    echo '';
                                 }
                             } else {
                                 ?><a href="<?php echo $this->getUrl('customer/account/login'); ?>">Login to view prices</a><?php } ?>
