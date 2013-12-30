@@ -16,6 +16,7 @@ CREATE TABLE `car_year` (
 CREATE TABLE `car_make` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(50) NOT NULL,
+  `import_pk` BIGINT NULL,
   UNIQUE INDEX (`name`),
   PRIMARY KEY(`id`)
 ) ENGINE = INNODB;
@@ -31,6 +32,7 @@ CREATE TABLE `car_model` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(50) NOT NULL,
   `car_make_id` BIGINT NOT NULL,
+  `import_pk` BIGINT NULL,
   UNIQUE INDEX (`name`, `car_make_id`),
   FOREIGN KEY (`car_make_id`) REFERENCES `car_make` (`id`),
   PRIMARY KEY(`id`)
@@ -50,6 +52,7 @@ CREATE TABLE `car_model_engine_year` (
   `car_model_id` BIGINT NOT NULL,
   `car_engine_id` BIGINT NOT NULL,
   `car_year_id` BIGINT NOT NULL,
+  `import_pk` BIGINT NULL,
   UNIQUE INDEX (`car_model_id`, `car_engine_id`, `car_year_id`),
   FOREIGN KEY (`car_model_id`) REFERENCES `car_model` (`id`),
   FOREIGN KEY (`car_engine_id`) REFERENCES `car_engine` (`id`),
@@ -422,9 +425,10 @@ CREATE TABLE `turbo` (
 CREATE TABLE `turbo_car_model_engine_year` (
   `part_id` BIGINT NOT NULL,
   `car_model_engine_year_id` BIGINT NOT NULL,
+  `import_pk` BIGINT NULL,
   FOREIGN KEY (`car_model_engine_year_id`) REFERENCES `car_model_engine_year` (`id`),
   FOREIGN KEY (`part_id`) REFERENCES `turbo` (`part_id`),
-  PRIMARY KEY(`part_id`)
+  PRIMARY KEY(`part_id`, `car_model_engine_year_id`)
 ) ENGINE = INNODB;
 
 --
@@ -503,3 +507,13 @@ CREATE TABLE `mas90_std_price` (
   `ItemNumber` VARCHAR(50) NOT NULL,
   `StdPrice` DECIMAL(10,2) NOT NULL DEFAULT 0
 ) ENGINE = INNODB;
+
+-- Legacy Tables
+CREATE TABLE `part_turbo_type` (
+  `part_id` BIGINT NOT NULL,
+  `turbo_type_id` BIGINT NOT NULL,
+  FOREIGN KEY (`part_id`) REFERENCES `part` (`id`),
+  FOREIGN KEY (`turbo_type_id`) REFERENCES `turbo_type` (`id`),
+  PRIMARY KEY (`part_id`, `turbo_type_id`)
+)
+ENGINE = INNODB;
