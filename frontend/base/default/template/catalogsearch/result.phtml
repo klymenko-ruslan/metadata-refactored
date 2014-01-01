@@ -51,7 +51,7 @@ $alphaNumeric = str_replace(array('.', '-', ' '), '', $catSearchHelper->getQuery
     </div>
     <p class="note-msg">
         <?php echo ($this->getNoResultText()) ? $this->getNoResultText() : $this->__('Your search returns no results. ') ?><?php echo $this->__("Did you mean ") ?><a
-            href="<?php $catSearchHelper->getResultUrl($alphaNumeric) ?>"><?php echo $alphaNumeric ?></a><?php echo $this->__("?") ?>
+            href="/catalogsearch/result/?q=<?php echo $alphaNumeric ?>"><?php echo $alphaNumeric ?></a><?php echo $this->__("?") ?>
         <?php if ($messages = $this->getNoteMessages()): ?>
             <?php foreach ($messages as $message): ?>
                 <br/><?php echo $message ?>
