@@ -24,6 +24,10 @@
  * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 ?>
+<?php
+$catSearchHelper = $this->helper('catalogsearch');
+$alphaNumeric = str_replace(array('.', '-', ' '), '', $catSearchHelper->getQueryText());
+?>
 <?php if ($this->getResultCount()): ?>
     <?php echo $this->getMessagesBlock()->getGroupedHtml() ?>
     <div class="page-title">
@@ -31,7 +35,7 @@
             <a href="<?php echo $this->helper('rss/catalog')->getTagFeedUrl() ?>"
                class="nobr link-rss"><?php echo $this->__('Subscribe to Feed') ?></a>
         <?php endif; ?>
-        <h1><?php echo ($this->getHeaderText() || $this->getHeaderText() === false) ? $this->getHeaderText() : $this->__("Search results for '%s'", $this->helper('catalogsearch')->getEscapedQueryText()) ?></h1>
+        <h1><?php echo ($this->getHeaderText() || $this->getHeaderText() === false) ? $this->getHeaderText() : $this->__("Search results for '%s'", $catSearchHelper->getEscapedQueryText()) ?></h1>
     </div>
     <?php if ($messages = $this->getNoteMessages()): ?>
         <p class="note-msg">
@@ -43,17 +47,15 @@
     <?php echo $this->getProductListHtml() ?>
 <?php else: ?>
     <div class="page-title">
-        <h1><?php echo ($this->getHeaderText() || $this->getHeaderText() === false) ? $this->getHeaderText() : $this->__("Search results for '%s'", $this->helper('catalogsearch')->getEscapedQueryText()) ?></h1>
+        <h1><?php echo ($this->getHeaderText() || $this->getHeaderText() === false) ? $this->getHeaderText() : $this->__("Search results for '%s'", $catSearchHelper->getEscapedQueryText()) ?></h1>
     </div>
     <p class="note-msg">
-        <?php echo ($this->getNoResultText()) ? $this->getNoResultText() : $this->__('Your search returns no results.') ?>
+        <?php echo ($this->getNoResultText()) ? $this->getNoResultText() : $this->__('Your search returns no results. ') ?><?php echo $this->__("Did you mean ") ?><a
+            href="/catalogsearch/result/?q=<?php echo $alphaNumeric ?>"><?php echo $alphaNumeric ?></a><?php echo $this->__("?") ?>
         <?php if ($messages = $this->getNoteMessages()): ?>
             <?php foreach ($messages as $message): ?>
                 <br/><?php echo $message ?>
             <?php endforeach; ?>
         <?php endif; ?>
-    </p>
-    <p class="note-msg">
-        <?php echo $this->__("Did you mean " . str_replace(array('.', '-', ' '), '', $this->helper('catalogsearch')->getQueryText()) . "?") ?>
     </p>
 <?php endif; ?>
