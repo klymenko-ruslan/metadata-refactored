@@ -647,10 +647,6 @@ public class Part implements Comparable<Part> {
         // Turbo Types
         columns.put("turbo_type", StringUtils.join(collectTurboTypeNames(), ','));
         
-        // Application
-        columns.put("finder_vehicle", )
-        
-        
         // Images
         if (!getProductImages().isEmpty()) {
             
