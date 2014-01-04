@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-    .controller('PartTableCtrl', function ($scope, ngTableParams) {
+    .controller('ParttableCtrl', function ($scope, ngTableParams) {
         $scope.partListTableParams = new ngTableParams({
             count: 25,
             page: 1,
