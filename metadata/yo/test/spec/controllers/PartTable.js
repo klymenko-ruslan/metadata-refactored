@@ -1,17 +1,17 @@
 'use strict';
 
-describe('Controller: LoginCtrl', function () {
+describe('Controller: PartTableCtrl', function () {
 
     // load the controller's module
     beforeEach(module('ngMetaCrudApp'));
 
-    var LoginCtrl,
+    var PartTableCtrl,
         scope;
 
     // Initialize the controller and a mock scope
     beforeEach(inject(function ($controller, $rootScope) {
         scope = $rootScope.$new();
-        LoginCtrl = $controller('LoginCtrl', {
+        PartTableCtrl = $controller('PartTableCtrl', {
             $scope: scope
         });
     }));
