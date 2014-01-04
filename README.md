@@ -77,6 +77,11 @@ database.username=metadata_user
 database.password=metadata_pass
 ```
 
+ElasticSearch Metadata Search Engine
+====================================
+`bits/ElasticSearch` contains [Postman](https://chrome.google.com/webstore/detail/postman-rest-client/fdmmgilgnpjigdojojpjoooidkmcomcm) actions and environment settings. It also contains wget scripts for common scenarios.
+
+
 MAS90 Price Sync
 ================
 The metadata server will use the MAS90 access database in `/var/mas90.accdb`, this can be overridden with the `mas90.db.path` config property.
