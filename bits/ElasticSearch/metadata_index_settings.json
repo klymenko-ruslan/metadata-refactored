@@ -1,0 +1,20 @@
+{
+  "settings":{
+    "analysis":{
+      "analyzer":{
+        "autocomplete":{
+          "type":"custom",
+          "tokenizer":"keyword",
+          "filter":["lowercase", "autocomplete"]
+        }
+      },
+    filter: {
+      autocomplete: {
+        type:"edgeNGram",
+        min_gram: 2,
+        max_gram: 20
+      }
+    }
+    }
+  }
+}

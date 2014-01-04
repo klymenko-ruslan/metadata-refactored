@@ -1,0 +1,1 @@
+{"id":"6db59ea0-0760-c17b-b4d8-29f91d1bef54","name":"TI@Local","values":[{"key":"elasticsearchUrl","value":"http://127.0.0.1:9200/","type":"text"},{"key":"metadataUrl","value":"http://127.0.0.1:8080/","type":"text"}],"timestamp":1385435625026}
