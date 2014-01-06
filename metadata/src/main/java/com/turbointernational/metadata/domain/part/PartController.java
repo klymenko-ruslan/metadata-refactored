@@ -80,6 +80,7 @@ public class PartController {
 //        part.setInterchangeByPartId(partJsog.get("interchangePartId").getLongValue());
         
         part.persist();
+        part.updateIndex();
         
         // Update the changelog
 //        Changelog.log(principal, "Created part", part.toJson());
@@ -120,6 +121,8 @@ public class PartController {
         
         part = Part.findPart(part.getId());
         Part.entityManager().refresh(part);
+        
+        part.updateIndex();
 //        
 //        // Update the interchange group
 //        part.setInterchangeByPartId(partJsog.get("interchangePartId").getLongValue());
@@ -157,8 +160,27 @@ public class PartController {
     public ResponseEntity<Void> indexTurbos(@PathVariable("id") Long id) throws Exception {
         Part part = Part.findPart(id);
         
-        long start = System.currentTimeMillis();
         part.indexTurbos();
+        
+        return new ResponseEntity<Void>((Void) null, HttpStatus.OK);
+    }
+    
+    @RequestMapping(value="/all/indexTurbos")
+    @ResponseBody
+    public ResponseEntity<Void> indexTurbos(@RequestParam(required=false) Integer maxPages) throws Exception {
+        int pageSize = 100;
+        int page = 0;
+        
+        List<Part> parts = Part.findPartEntries(page * pageSize, page);
+        do {
+            log.log(Level.INFO, "Indexing part turbos {0}-{1}", new Object[]{page * pageSize, (page * pageSize) + pageSize});
+            
+            for (Part part : parts) {
+                part.indexTurbos();
+            }
+            page++;
+            
+        } while (parts.size() < pageSize);
         
         return new ResponseEntity<Void>((Void) null, HttpStatus.OK);
     }

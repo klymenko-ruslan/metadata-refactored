@@ -13,7 +13,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Table;
-import javax.persistence.Version;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,10 +26,6 @@ public class CoolType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
-    @Version
-    @Column(name = "version")
-    private Integer version;
     
     @Column(nullable=false)
     private String name;
@@ -49,14 +44,6 @@ public class CoolType {
     
     public void setName(String name) {
         this.name = name;
-    }
-    
-    public Integer getVersion() {
-        return this.version;
-    }
-    
-    public void setVersion(Integer version) {
-        this.version = version;
     }
     //</editor-fold>
     

@@ -17,7 +17,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Table;
-import javax.persistence.Version;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,10 +43,6 @@ public class PartType {
     
     @Column(name="magento_category")
     private String magentoCategory;
-    
-    @Version
-    @Column(name = "version")
-    private Integer version;
     
     // TODO: Is this a duplicate of parentTypes?
     @OneToOne
@@ -100,14 +95,6 @@ public class PartType {
     
     public void setParent(PartType parent) {
         this.parent = parent;
-    }
-    
-    public Integer getVersion() {
-        return this.version;
-    }
-    
-    public void setVersion(Integer version) {
-        this.version = version;
     }
     //</editor-fold>
     

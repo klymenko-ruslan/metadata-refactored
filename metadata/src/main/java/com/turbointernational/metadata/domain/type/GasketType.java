@@ -14,7 +14,6 @@ import javax.persistence.Id;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-import javax.persistence.Version;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,10 +31,6 @@ public class GasketType {
     @Column(nullable=false)
     private String name;
     
-    @Version
-    @Column(name = "version")
-    private Integer version;
-    
     public Long getId() {
         return id;
     }
@@ -50,14 +45,6 @@ public class GasketType {
     
     public void setName(String name) {
         this.name = name;
-    }
-    
-    public Integer getVersion() {
-        return this.version;
-    }
-    
-    public void setVersion(Integer version) {
-        this.version = version;
     }
     //</editor-fold>
     

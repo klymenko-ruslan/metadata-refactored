@@ -16,7 +16,6 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Table;
-import javax.persistence.Version;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,10 +37,6 @@ public class Interchange {
     
     @OneToMany(mappedBy = "interchange", fetch = FetchType.LAZY)
     private Set<Part> parts = Sets.newTreeSet();
-    
-    @Version
-    @Column(name = "version")
-    private Integer version;
     
     public Long getId() {
         return id;
@@ -74,15 +69,6 @@ public class Interchange {
     public void setParts(Set<Part> parts) {
         this.parts = parts;
     }
-    
-    public Integer getVersion() {
-        return this.version;
-    }
-    
-    public void setVersion(Integer version) {
-        this.version = version;
-    }
-    
     //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="ActiveRecord">

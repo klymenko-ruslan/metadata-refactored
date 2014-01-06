@@ -16,7 +16,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Table;
-import javax.persistence.Version;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,10 +37,6 @@ public class TurboModel {
     @OneToOne(cascade = CascadeType.REFRESH)
     @JoinColumn(name="turbo_type_id")
     private TurboType turboType;
-    
-    @Version
-    @Column(name = "version")
-    private Integer version;
     
     public Long getId() {
         return id;
@@ -66,15 +61,6 @@ public class TurboModel {
     public void setTurboType(TurboType turboType) {
         this.turboType = turboType;
     }
-    
-    public Integer getVersion() {
-        return version;
-    }
-    
-    public void setVersion(Integer version) {
-        this.version = version;
-    }
-    
     //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="Serialization">

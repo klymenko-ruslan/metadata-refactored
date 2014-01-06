@@ -1,5 +1,3 @@
-ALTER TABLE `kit` ADD COLUMN `name` VARCHAR(255);
-
 ALTER TABLE `part`
   ADD COLUMN `temp1_char` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL,
   ADD COLUMN `temp2_int` BIGINT NULL,

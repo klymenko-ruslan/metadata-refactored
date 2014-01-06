@@ -56,6 +56,7 @@ public class Magmi {
         "quantity",
         "turbo_model",      // Turbo Models
         "turbo_type",       // Turbo Types
+        "application",      // Application (Make,Year,Model)
         "image",            // Product image
         "media_gallery",    // Extra images
         //</editor-fold>
