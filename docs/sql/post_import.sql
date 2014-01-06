@@ -1,6 +1,17 @@
+-- Add version columns and update PK
+ALTER TABLE `interchange_header` ADD COLUMN `version` INTEGER NOT NULL DEFAULT 1;
+ALTER TABLE `interchange_header` ADD UNIQUE KEY (`id`, `version`);
+
+ALTER TABLE `part` ADD COLUMN `version` INTEGER NOT NULL DEFAULT 1;
+ALTER TABLE `part` ADD UNIQUE KEY (`id`, `version`);
+
+ALTER TABLE `bom_alt_item` ADD COLUMN `id` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY;
+
+
+-- Remove duplicate of part.name
 ALTER TABLE `kit` DROP COLUMN `name`;
 
-
+-- Remove temporary fields
 ALTER TABLE `part`
   DROP COLUMN `temp1_char`,
   DROP COLUMN `temp2_int`,
@@ -19,12 +30,21 @@ ALTER TABLE `part`
   DROP COLUMN `temp7_char`,
   DROP COLUMN `temp8_char`;
 
+-- Unused tables
+DROP TABLE IF EXISTS `bom_hierarchy`;
 DROP TABLE IF EXISTS `part_attribute`;
 DROP TABLE IF EXISTS `attribute_type`;
-DROP TABLE IF EXISTS `bom_hierarchy`;
 DROP TABLE IF EXISTS `part_turbo_type`;
 DROP TABLE IF EXISTS `sql server destination`;
 
+--
+-- Part types
+--
+ALTER TABLE `part` ADD COLUMN `dtype` VARCHAR(50) DEFAULT 'Part';
+
+ALTER TABLE `part_type` ADD COLUMN `dtype` VARCHAR(50);
+ALTER TABLE `part_type` ADD COLUMN `magento_attribute_set` VARCHAR(50);
+ALTER TABLE `part_type` ADD COLUMN `magento_category` VARCHAR(50);
 
 -- Default
 SET @partType = 'Part';
@@ -134,6 +154,74 @@ SET `part`.`dtype` = (
     WHERE `id` = `part`.`part_type_id`
 );
 
+-- Add part type triggers
+DELIMITER $$
+CREATE TRIGGER dtype_BI
+  BEFORE INSERT ON `part`
+  FOR EACH ROW
+    BEGIN
+      SET NEW.`dtype` = (SELECT COALESCE(`part_type`.`dtype`, 'Part') FROM `part_type` WHERE `id` = NEW.`part_type_id`);
+    END$$
+    
+CREATE TRIGGER dtype_BU
+  BEFORE UPDATE ON `part`
+  FOR EACH ROW
+    BEGIN
+      SET NEW.`dtype` = (SELECT COALESCE(`part_type`.`dtype`, 'Part') FROM `part_type` WHERE `id` = NEW.`part_type_id`);
+    END$$
+    
+DELIMITER ;
+
 -- Reset BOM items with quantity 999 to 1
 UPDATE `bom` SET quantity = 1 WHERE quantity = 999;
+
+-- People-friendly views
+DROP VIEW IF EXISTS vparts;
+CREATE VIEW vparts AS
+  SELECT
+    p.id AS part_id,
+    p.dtype AS part_type,
+    p.manfr_part_num AS part_number,
+    m.name AS manufacturer
+  FROM part p
+    JOIN manfr m ON m.id = p.manfr_id;
+
+
+DROP VIEW IF EXISTS vbom;
+CREATE VIEW vbom AS
+  SELECT
+    b.id AS bom_id,
+
+    pp.id AS p_part_id,
+    pp.dtype AS p_part_type,
+    pp.manfr_part_num AS p_part_number,
+    ppm.name AS p_manufacturer,
+
+    cp.id AS c_part_id,
+    cp.dtype AS c_part_type,
+    cp.manfr_part_num AS c_part_number,
+    cpm.name AS c_manufacturer
+  FROM bom b
+    JOIN part pp ON pp.id = b.parent_part_id
+    JOIN manfr ppm ON ppm.id = pp.manfr_id
+
+    JOIN part cp ON cp.id = b.child_part_id
+    JOIN manfr cpm ON cpm.id = cp.manfr_id;
+
+    
+DROP VIEW IF EXISTS vbalt;
+CREATE VIEW vbalt AS
+  SELECT
+    bai.bom_id,
+    bah.name AS alt_header_name,
+    bah.description AS alt_header_desc,
+    bai.part_id AS alt_part_id,
+    p.dtype AS alt_part_type,
+    p.manfr_part_num AS alt_part_number,
+    m.name AS alt_manufacturer
+  FROM
+    bom_alt_item bai
+    JOIN bom_alt_header bah ON bah.id = bai.bom_alt_header_id
+    JOIN part p ON p.id = bai.part_id
+    JOIN manfr m ON m.id = p.manfr_id;
 

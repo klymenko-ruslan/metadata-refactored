@@ -16,7 +16,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-import javax.persistence.Version;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,10 +35,6 @@ public class TurboType implements Comparable<TurboType>{
     
     @Column(nullable=false)
     private String name;
-    
-    @Version
-    @Column(name = "version")
-    private Integer version;
     
     public Long getId() {
         return id;
@@ -65,28 +60,18 @@ public class TurboType implements Comparable<TurboType>{
         this.name = name;
     }
     
-    public Integer getVersion() {
-        return version;
-    }
-    
-    public void setVersion(Integer version) {
-        this.version = version;
-    }
-    
     //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="Serialization">
     
     public String toJson() {
         return new JSONSerializer()
-                .exclude("version")
                 .exclude("*.class").serialize(this);
     }
     
     public String toJson(String[] fields) {
         return new JSONSerializer()
                 .include(fields)
-                .exclude("version")
                 .exclude("*.class").serialize(this);
     }
     
@@ -98,7 +83,6 @@ public class TurboType implements Comparable<TurboType>{
         return new JSONSerializer()
                 .include("manufacturer.id")
                 .exclude("manufacturer.*")
-                .exclude("version")
                 .exclude("*.class")
                 .serialize(collection);
     }
@@ -106,7 +90,6 @@ public class TurboType implements Comparable<TurboType>{
     public static String toJsonArray(Collection<TurboType> collection, String[] fields) {
         return new JSONSerializer()
                 .include(fields)
-                .exclude("version")
                 .exclude("*.class")
                 .serialize(collection);
     }

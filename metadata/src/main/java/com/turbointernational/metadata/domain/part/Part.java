@@ -1,6 +1,5 @@
 package com.turbointernational.metadata.domain.part;
 import com.google.common.collect.Sets;
-import com.turbointernational.metadata.domain.car.CarMake;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.bom.BOMItem;
 import com.turbointernational.metadata.domain.part.types.Backplate;
@@ -647,6 +646,9 @@ public class Part implements Comparable<Part> {
         // Turbo Types
         columns.put("turbo_type", StringUtils.join(collectTurboTypeNames(), ','));
         
+        // Application (Make, Year, Model)
+        columns.put("application", StringUtils.join(collectApplicationMappings(), '|'));
+        
         // Images
         if (!getProductImages().isEmpty()) {
             
@@ -756,6 +758,22 @@ public class Part implements Comparable<Part> {
                 + "FROM Part p\n"
                 + "  JOIN p.turbos t\n"
                 + "  JOIN t.turboModel tm\n"
+                + "WHERE p.id = ?", String.class)
+                .setParameter(1, id)
+                .getResultList();
+    }
+
+    private List<String> collectApplicationMappings() {
+        return entityManager.createQuery(
+                  "SELECT DISTINCT\n"
+                + "  CONCAT(cmake.name, ',', cyear.name, ',', cmodel.name)\n"
+                + "FROM Part p\n"
+                + "  JOIN p.turbos t\n"
+                + "  JOIN t.cars c\n"
+                + "  JOIN c.carModel cmodel\n"
+                + "  JOIN cmodel.carMake cmake\n"
+                + "  JOIN c.carYear  cyear\n"
+                + "  JOIN c.carModel cmodel\n"
                 + "WHERE p.id = ?", String.class)
                 .setParameter(1, id)
                 .getResultList();

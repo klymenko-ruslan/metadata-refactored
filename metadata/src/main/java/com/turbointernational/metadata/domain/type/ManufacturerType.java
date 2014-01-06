@@ -33,10 +33,6 @@ public class ManufacturerType {
     @Column(nullable=false)
     private String name;
     
-    @Version
-    @Column(name = "version")
-    private Integer version;
-    
     public Long getId() {
         return id;
     }
@@ -51,14 +47,6 @@ public class ManufacturerType {
     
     public void setName(String name) {
         this.name = name;
-    }
-    
-    public Integer getVersion() {
-        return this.version;
-    }
-    
-    public void setVersion(Integer version) {
-        this.version = version;
     }
     //</editor-fold>
     

@@ -19,7 +19,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-import javax.persistence.Version;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,10 +45,6 @@ public class Manufacturer {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="parent_manfr_id")
     private Manufacturer parent;
-    
-    @Version
-    @Column(name = "version")
-    private Integer version;
     
     public Long getId() {
         return id;
@@ -81,14 +76,6 @@ public class Manufacturer {
     
     public void setParent(Manufacturer parent) {
         this.parent = parent;
-    }
-    
-    public Integer getVersion() {
-        return this.version;
-    }
-    
-    public void setVersion(Integer version) {
-        this.version = version;
     }
     //</editor-fold>
     

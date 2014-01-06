@@ -12,7 +12,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Table;
-import javax.persistence.Version;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,10 +29,6 @@ public class BOMAlternativeHeader {
     private String name;
     
     private String description;
-    
-    @Version
-    @Column(name = "version")
-    private Integer version;
     
     
     /**
@@ -76,14 +71,6 @@ public class BOMAlternativeHeader {
      */
     public void setDescription(String description) {
         this.description = description;
-    }
-    
-    public Integer getVersion() {
-        return this.version;
-    }
-    
-    public void setVersion(Integer version) {
-        this.version = version;
     }
     //</editor-fold>
     
