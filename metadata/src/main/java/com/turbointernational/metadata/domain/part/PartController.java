@@ -80,6 +80,7 @@ public class PartController {
 //        part.setInterchangeByPartId(partJsog.get("interchangePartId").getLongValue());
         
         part.persist();
+        part.indexTurbos();
         part.updateIndex();
         
         // Update the changelog
@@ -122,6 +123,7 @@ public class PartController {
         part = Part.findPart(part.getId());
         Part.entityManager().refresh(part);
         
+        part.indexTurbos();
         part.updateIndex();
 //        
 //        // Update the interchange group
@@ -182,7 +184,7 @@ public class PartController {
             // Get the next part list
             page++;
             parts = Part.findPartEntries(page * pageSize, pageSize);
-        } while (parts.size() == pageSize && page < maxPages);
+        } while (parts.size() == pageSize && (maxPages != null && page < maxPages));
         
         return new ResponseEntity<Void>((Void) null, HttpStatus.OK);
     }
