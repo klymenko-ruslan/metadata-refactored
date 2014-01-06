@@ -770,10 +770,9 @@ public class Part implements Comparable<Part> {
                 + "FROM Part p\n"
                 + "  JOIN p.turbos t\n"
                 + "  JOIN t.cars c\n"
-                + "  JOIN c.carModel cmodel\n"
-                + "  JOIN cmodel.carMake cmake\n"
-                + "  JOIN c.carYear  cyear\n"
-                + "  JOIN c.carModel cmodel\n"
+                + "  JOIN c.model cmodel\n"
+                + "  JOIN cmodel.make cmake\n"
+                + "  JOIN c.year cyear\n"
                 + "WHERE p.id = ?", String.class)
                 .setParameter(1, id)
                 .getResultList();

@@ -247,3 +247,19 @@ CREATE VIEW vint AS
     JOIN part ip ON ip.id = ii2.part_id
     JOIN manfr ipm ON ipm.id = ip.manfr_id
   WHERE p.id != ii2.part_id;
+
+    
+DROP VIEW IF EXISTS vapp;
+CREATE VIEW vapp AS
+  SELECT DISTINCT
+    p.id AS part_id,
+    cmake.name AS car_make,
+    cyear.name AS car_year,
+    cmodel.name AS car_model
+    FROM part p
+    JOIN part_turbo pt ON pt.part_id = p.id
+    JOIN turbo_car_model_engine_year c ON c.part_id = pt.turbo_id
+    JOIN car_model_engine_year cmey ON cmey.id = c.car_model_engine_year_id
+    JOIN car_model cmodel ON cmodel.id = cmey.car_model_id
+    JOIN car_year cyear ON cyear.id = cmey.car_year_id
+    JOIN car_make cmake ON cmake.id = cmodel.car_make_id;

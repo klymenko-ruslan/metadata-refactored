@@ -56,7 +56,6 @@ public class Magmi {
         "quantity",
         "turbo_model",      // Turbo Models
         "turbo_type",       // Turbo Types
-        "application",      // Application (Make,Year,Model)
         "image",            // Product image
         "media_gallery",    // Extra images
         //</editor-fold>
@@ -133,9 +132,11 @@ public class Magmi {
         "tier_price:ERP_PL_5",
         "tier_price:ERP_PL_E",
         "tier_price:ERP_PL_R",
-        "tier_price:ERP_PL_W"
+        "tier_price:ERP_PL_W",
         //</editor-fold>
-            
+        
+        // Make,Year,Model
+        "application"
     };
 
     @Value("${mas90.db.path}")

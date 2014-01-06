@@ -31,6 +31,7 @@ h1:first-of-type {
 .facet-header {
   font-size: 20px;
   line-height: 20px;
+  margin: 0;
 }
 
 .table-hover tbody tr:hover > td {
@@ -73,4 +74,14 @@ h1:first-of-type {
   display: block;
   height: 0;
   overflow: visible;
+}
+
+.picker {
+  div[class*='col-'] {
+    padding-left: 0;
+    padding-right: 0;
+  }
+//  div[class*='-11'] {
+//    padding-right: 15px;
+//  }
 }
