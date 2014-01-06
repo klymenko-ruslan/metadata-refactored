@@ -171,16 +171,18 @@ public class PartController {
         int pageSize = 100;
         int page = 0;
         
-        List<Part> parts = Part.findPartEntries(page * pageSize, page);
+        List<Part> parts = Part.findPartEntries(page * pageSize, pageSize);
         do {
             log.log(Level.INFO, "Indexing part turbos {0}-{1}", new Object[]{page * pageSize, (page * pageSize) + pageSize});
             
             for (Part part : parts) {
                 part.indexTurbos();
             }
-            page++;
             
-        } while (parts.size() < pageSize);
+            // Get the next part list
+            page++;
+            parts = Part.findPartEntries(page * pageSize, pageSize);
+        } while (parts.size() == pageSize && page < maxPages);
         
         return new ResponseEntity<Void>((Void) null, HttpStatus.OK);
     }
