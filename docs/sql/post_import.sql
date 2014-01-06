@@ -213,6 +213,7 @@ DROP VIEW IF EXISTS vbalt;
 CREATE VIEW vbalt AS
   SELECT
     bai.bom_id,
+    bai.bom_alt_header_id,
     bah.name AS alt_header_name,
     bah.description AS alt_header_desc,
     bai.part_id AS alt_part_id,
@@ -225,3 +226,27 @@ CREATE VIEW vbalt AS
     JOIN part p ON p.id = bai.part_id
     JOIN manfr m ON m.id = p.manfr_id;
 
+    
+DROP VIEW IF EXISTS vint;
+CREATE VIEW vint AS
+  SELECT DISTINCT
+    ii1.interchange_header_id AS interchange_header_id,
+
+    p.id AS part_id,
+    p.dtype AS part_type,
+    p.manfr_part_num AS part_number,
+    pm.name AS manufacturer,
+
+    ip.id AS i_part_id,
+    ip.dtype AS i_part_type,
+    ip.manfr_part_num AS i_part_number,
+    ipm.name AS i_manufacturer
+  FROM part p
+    JOIN manfr pm ON pm.id = p.manfr_id
+
+    JOIN interchange_item ii1 ON ii1.part_id = p.id
+    JOIN interchange_item ii2 ON ii2.interchange_header_id = ii1.interchange_header_id
+
+    JOIN part ip ON ip.id = ii2.part_id
+    JOIN manfr ipm ON ipm.id = ip.manfr_id
+  WHERE p.id != ii2.part_id;
