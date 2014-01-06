@@ -23,7 +23,6 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
-import javax.persistence.Version;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,10 +50,6 @@ public class BOMItem implements Comparable<BOMItem> {
     
     @OneToMany(mappedBy="bomItem", fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
     private Set<BOMAlternative> alternatives = new TreeSet<BOMAlternative>();
-    
-    @Version
-    @Column(name = "version")
-    private Integer version;
     
     public Long getId() {
         return id;
@@ -115,14 +110,6 @@ public class BOMItem implements Comparable<BOMItem> {
         if (ObjectUtils.equals(child.getId(), parent.getId())) {
             throw new IllegalStateException("Child cannot be it's own parent.");
         }
-    }
-    
-    public Integer getVersion() {
-        return this.version;
-    }
-    
-    public void setVersion(Integer version) {
-        this.version = version;
     }
     //</editor-fold>
     

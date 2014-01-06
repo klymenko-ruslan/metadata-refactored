@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
@@ -328,8 +329,6 @@ public class Part implements Comparable<Part> {
         }
     }
     
-    @PostPersist
-    @PostUpdate
     public void updateIndex() throws Exception {
         log.info("Updating index.");
         indexPart();
@@ -706,6 +705,7 @@ public class Part implements Comparable<Part> {
         
         // Save the new values
         this.merge();
+        log.log(Level.INFO, "Indexing turbos for part {0}", id);
     }
     
     public Set<Turbo> collectTurbos() {

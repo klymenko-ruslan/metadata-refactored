@@ -319,6 +319,7 @@ CREATE TABLE `journal_bearing` (
 
 CREATE TABLE `kit` (
   `part_id` BIGINT NOT NULL,
+  `name` VARCHAR(50) NULL,
   `kit_type_id` BIGINT NOT NULL,
   FOREIGN KEY (`kit_type_id`) REFERENCES `kit_type` (`id`),
   FOREIGN KEY (`part_id`) REFERENCES `part` (`id`)

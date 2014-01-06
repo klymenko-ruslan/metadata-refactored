@@ -1,7 +1,4 @@
 -- Add version columns and update PK
-ALTER TABLE `interchange_header` ADD COLUMN `version` INTEGER NOT NULL DEFAULT 1;
-ALTER TABLE `interchange_header` ADD UNIQUE KEY (`id`, `version`);
-
 ALTER TABLE `part` ADD COLUMN `version` INTEGER NOT NULL DEFAULT 1;
 ALTER TABLE `part` ADD UNIQUE KEY (`id`, `version`);
 
