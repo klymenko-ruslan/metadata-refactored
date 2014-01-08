@@ -7,6 +7,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.sf.jsog.JSOG;
 import org.apache.commons.fileupload.FileUpload;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -169,9 +170,9 @@ public class PartController {
     
     @RequestMapping(value="/all/indexTurbos")
     @ResponseBody
-    public ResponseEntity<Void> indexTurbos(@RequestParam(required=false) Integer maxPages) throws Exception {
+    public ResponseEntity<Void> indexTurbos(@RequestParam(required=false) Integer startPage, @RequestParam(required=false) Integer maxPages) throws Exception {
         int pageSize = 100;
-        int page = 0;
+        int page = ObjectUtils.defaultIfNull(startPage, 0);
         
         List<Part> parts = Part.findPartEntries(page * pageSize, pageSize);
         do {
