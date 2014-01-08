@@ -1,13 +1,23 @@
 <div class="row">
     <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
-        <label for="search">Search</label>
-        <input id="search" type="text" ng-model="search.queryString" placeholder="Search..."/>
-        <label class="facet-header">Part Type</label>
-        <picker ng-model="search.partType" path="type/part"/>
-        <label class="facet-header">Manufacturer</label>
-        <picker ng-model="search.manufacturer" path="other/manufacturer"/>
-        <label class="facet-header">Kit Type</label>
-        <picker ng-model="search.kitType" path="type/kit"/>
+        <form class="" role="form" id="facet-pickers">
+            <div class="form-group">
+                <label for="search" class="sr-only control-label">Search</label>
+                <input id="search" type="text" ng-model="search.queryString" placeholder="Search..."/>
+            </div>
+            <div class="form-group">
+                <label for="part-type-picker" class="facet-header control-label">Part Type</label>
+                <picker ng-model="search.partType" path="type/part" id="part-type-picker"/>
+            </div>
+            <div class="form-group">
+                <label for="manufacturer-picker" class="facet-header control-label">Manufacturer</label>
+                <picker ng-model="search.manufacturer" path="other/manufacturer" id="manufacturer-picker"/>
+            </div>
+            <div class="form-group">
+                <label for="kit-type-picker" class="facet-header control-label">Kit Type</label>
+                <picker ng-model="search.kitType" path="type/kit" id="kit-type-picker"/>
+            </div>
+        </form>
 
         <search-facets></search-facets>
     </div>
