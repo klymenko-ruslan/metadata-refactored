@@ -66,6 +66,8 @@ class FinderProcessor extends Magmi_ItemProcessor {
             // Update the value mappings for the product
             if (!empty($valueIds)) {
                 $this->mapValues($params['product_id'], $item['sku'], $valueIds);
+            
+                error_log("Mapped " . count($valueIds) . " values for finder $finderId");
             }
 	}
 
@@ -105,7 +107,7 @@ class FinderProcessor extends Magmi_ItemProcessor {
         }
 
         if (count($dropdowns) != count($values)) {
-            throw new Exception("Skipping null dropdown value; values: " . print_r($values, true));
+            throw new Exception("Expected " . count($dropdowns) . " values, got: " . join(',', $values));
         }
 
         // Create the values if they don't exist
