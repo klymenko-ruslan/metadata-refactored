@@ -31,7 +31,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -54,8 +53,6 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PersistenceContext;
-import javax.persistence.PostPersist;
-import javax.persistence.PostUpdate;
 import javax.persistence.PreRemove;
 import javax.persistence.Query;
 import javax.persistence.Table;
@@ -77,10 +74,11 @@ import org.springframework.transaction.annotation.Transactional;
 @DiscriminatorColumn
 @NamedQueries({
     @NamedQuery(name="bom_parent_ids", query=
-          "SELECT DISTINCT p.id\n"
+          "SELECT DISTINCT p\n"
         + "FROM\n"
         + "  Part p\n"
         + "  JOIN p.bom b"
+        + "  JOIN b.parent parent\n"
         + "  JOIN b.child child\n"
         + "WHERE\n"
         + "  child.id = :partId"),
@@ -696,8 +694,9 @@ public class Part implements Comparable<Part> {
     //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="Turbo Indexing">
-    @Transactional
+    @Transactional()
     public void indexTurbos() {
+        
         Set<Turbo> newTurbos = collectTurbos();
         
         turbos.retainAll(newTurbos);
@@ -705,37 +704,42 @@ public class Part implements Comparable<Part> {
         
         // Save the new values
         this.merge();
-        log.log(Level.INFO, "Indexing turbos for part {0}", id);
     }
     
     public Set<Turbo> collectTurbos() {
+        long start = System.currentTimeMillis();
         
-        Set<Long> visitedPartIds = new HashSet<Long>();
-        Set<Turbo> collectedTurbos = new HashSet<Turbo>();
-        SortedSet<Long> partsToVisit = new TreeSet<Long>(getBomParentPartIds());
+        TreeSet<Part> visitedParts = new TreeSet<Part>();
+        TreeSet<Turbo> collectedTurbos = new TreeSet<Turbo>();
+        TreeSet<Part> partsToVisit = new TreeSet<Part>(getBomParentParts());
         
         while (!partsToVisit.isEmpty()) {
             
             // Get the next part to visit
-            Long partId = partsToVisit.first();
-            partsToVisit.remove(partId);
+            Part part = partsToVisit.first();
+            partsToVisit.remove(part);
             
             // Prevent recursion
-            if (visitedPartIds.contains(partId)) {
+            if (visitedParts.contains(part)) {
                 continue;
             } else {
-                visitedPartIds.add(partId);
+                visitedParts.add(part);
             }
             
             // Collect turbos and add BOM parents for non-turbo parts
-            Part part = Part.findPart(partId);
-            
             if (part instanceof Turbo) {
                 collectedTurbos.add((Turbo) part);
             } else {
-                partsToVisit.addAll(part.getBomParentPartIds());
+                partsToVisit.addAll(part.getBomParentParts());
             }
         }
+        
+        long end = System.currentTimeMillis();
+        log.log(Level.INFO, "Visited {0} parts and found {1} turbos for part id {2} in {3}ms.", new Object[]{
+            visitedParts.size(),
+            collectedTurbos.size(),
+            id,
+            end - start});
         
         return collectedTurbos;
     }
@@ -782,20 +786,10 @@ public class Part implements Comparable<Part> {
      * Gets the Part IDs of this part's BOM parents
      * @return 
      */
-    public SortedSet<Long> getBomParentPartIds() {
-        SortedSet<Long> parents = new TreeSet<Long>();
-            
-        // BOM Parents
-        parents.addAll(entityManager.createNamedQuery("bom_parent_ids", Long.class)
+    public List<Part> getBomParentParts() {
+        return entityManager.createNamedQuery("bom_parent_ids", Part.class)
             .setParameter("partId", this.id)
-            .getResultList());
-
-        // BOM Alt Parents
-        parents.addAll(entityManager.createNamedQuery("bom_alt_parent_ids", Long.class)
-            .setParameter("partId", this.id)
-            .getResultList());
-        
-        return parents;
+            .getResultList();
     }
     //</editor-fold>
     
