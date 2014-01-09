@@ -176,15 +176,23 @@ public class PartController {
         
         List<Part> parts = Part.findPartEntriesForTurboIndexing(page * pageSize, pageSize);
         do {
-            log.log(Level.INFO, "Indexing part turbos {0}-{1}", new Object[]{page * pageSize, (page * pageSize) + pageSize});
+            long start = System.currentTimeMillis();
             
             for (Part part : parts) {
                 part.indexTurbos();
             }
             
+            // Give Hibernate a breather or it'll slow WAY down
+            new Part().clear();
+            
             // Get the next part list
             page++;
             parts = Part.findPartEntriesForTurboIndexing(page * pageSize, pageSize);
+            
+            log.log(Level.INFO, "Indexed turbos for {0} parts, page {1} in {2}ms", new Object[]{
+                pageSize,
+                page,
+                System.currentTimeMillis() - start});
         } while (parts.size() == pageSize && (maxPages != null && page < maxPages));
         
         return new ResponseEntity<Void>((Void) null, HttpStatus.OK);
