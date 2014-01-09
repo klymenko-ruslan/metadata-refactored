@@ -174,7 +174,7 @@ public class PartController {
         int pageSize = 100;
         int page = ObjectUtils.defaultIfNull(startPage, 0);
         
-        List<Part> parts = Part.findPartEntries(page * pageSize, pageSize);
+        List<Part> parts = Part.findPartEntriesForTurboIndexing(page * pageSize, pageSize);
         do {
             log.log(Level.INFO, "Indexing part turbos {0}-{1}", new Object[]{page * pageSize, (page * pageSize) + pageSize});
             
@@ -184,7 +184,7 @@ public class PartController {
             
             // Get the next part list
             page++;
-            parts = Part.findPartEntries(page * pageSize, pageSize);
+            parts = Part.findPartEntriesForTurboIndexing(page * pageSize, pageSize);
         } while (parts.size() == pageSize && (maxPages != null && page < maxPages));
         
         return new ResponseEntity<Void>((Void) null, HttpStatus.OK);

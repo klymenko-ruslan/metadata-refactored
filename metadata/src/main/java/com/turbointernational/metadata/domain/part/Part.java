@@ -77,11 +77,10 @@ import org.springframework.transaction.annotation.Transactional;
           "SELECT DISTINCT p\n"
         + "FROM\n"
         + "  Part p\n"
-        + "  JOIN p.bom b"
+        + "  JOIN p.bom b\n"
         + "  JOIN b.parent parent\n"
-        + "  JOIN b.child child\n"
         + "WHERE\n"
-        + "  child.id = :partId"),
+        + "  b.child.id = :partId"),
     @NamedQuery(name="bom_alt_parent_ids", query=
           "SELECT DISTINCT p.id\n"
         + "FROM\n"
@@ -492,6 +491,16 @@ public class Part implements Comparable<Part> {
                 .setMaxResults(maxResults).getResultList();
     }
     
+    public static List<Part> findPartEntriesForTurboIndexing(int firstResult, int maxResults) {
+        return entityManager().createQuery(
+                "SELECT DISTINCT p\n"
+              + "FROM Part p\n"
+              + "LEFT JOIN p.turbos t\n"
+              + "ORDER BY p.id", Part.class)
+        .setFirstResult(firstResult)
+        .setMaxResults(maxResults).getResultList();
+    }
+    
     @Transactional
     public void persist() {
         if (this.entityManager == null) this.entityManager = entityManager();
@@ -694,7 +703,7 @@ public class Part implements Comparable<Part> {
     //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="Turbo Indexing">
-    @Transactional()
+    @Transactional
     public void indexTurbos() {
         
         Set<Turbo> newTurbos = collectTurbos();
@@ -704,6 +713,7 @@ public class Part implements Comparable<Part> {
         
         // Save the new values
         this.merge();
+        this.flush();
     }
     
     public Set<Turbo> collectTurbos() {
@@ -716,21 +726,22 @@ public class Part implements Comparable<Part> {
         while (!partsToVisit.isEmpty()) {
             
             // Get the next part to visit
-            Part part = partsToVisit.first();
-            partsToVisit.remove(part);
+            Part bomAncestor = partsToVisit.first();
+            partsToVisit.remove(bomAncestor);
             
             // Prevent recursion
-            if (visitedParts.contains(part)) {
+            if (visitedParts.contains(bomAncestor)) {
                 continue;
             } else {
-                visitedParts.add(part);
+                visitedParts.add(bomAncestor);
             }
             
             // Collect turbos and add BOM parents for non-turbo parts
-            if (part instanceof Turbo) {
-                collectedTurbos.add((Turbo) part);
+            if (bomAncestor instanceof Turbo) {
+                collectedTurbos.add((Turbo) bomAncestor);
             } else {
-                partsToVisit.addAll(part.getBomParentParts());
+                // TODO: It would be more efficient to fetch the BOM parents of ALL pending parts at once rather than one at a time.
+                partsToVisit.addAll(bomAncestor.getBomParentParts());
             }
         }
         
