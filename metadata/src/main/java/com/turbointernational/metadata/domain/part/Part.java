@@ -23,7 +23,6 @@ import flexjson.ObjectBinder;
 import flexjson.ObjectFactory;
 import flexjson.transformer.HibernateTransformer;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
@@ -62,6 +61,7 @@ import javax.persistence.Version;
 import net.sf.jsog.JSOG;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.transaction.annotation.Transactional;
@@ -684,20 +684,16 @@ public class Part implements Comparable<Part> {
     }
     
     public List<Part> collectTIInterchanges() {
-        List<Part> interchangeParts = new ArrayList<Part>();
-        
-        // Stop now if there is no interchange assigned
-        if (interchange == null) {
-            return interchangeParts;
-        }
-        
-        for (Part interchangePart : interchange.getParts()) {
-            if (Manufacturer.TI_ID.equals(interchangePart.getManufacturer().getId())) {
-                interchangeParts.add(interchangePart);
-            }
-        }
-        
-        return interchangeParts;
+        return entityManager.createQuery("SELECT DISTINCT p\n"
+                + "FROM Part p\n"
+                + "JOIN p.interchange i\n"
+                + "WHERE p.manufacturer.id = :tiManufacturerId\n"
+                + "AND p.interchange.id = :interchangeId\n"
+                + "AND p.id != :partId", Part.class)
+                .setParameter("tiManufacturerId", Manufacturer.TI_ID)
+                .setParameter("interchangeId", interchange.getId())
+                .setParameter("partId", id)
+                .getResultList();
     }
     
     //</editor-fold>
@@ -765,7 +761,7 @@ public class Part implements Comparable<Part> {
                 + "WHERE p.id = ?", String.class)
                 .setParameter(1, id)
                 .getResultList();
-    }
+        }
 
     public List<String> collectTurboModelNames() {
         return entityManager.createQuery(
