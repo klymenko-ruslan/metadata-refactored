@@ -95,10 +95,8 @@ class FinderProcessor extends Magmi_ItemProcessor {
         return $valueIds;
     }
 
-    // TODO: Make this A LOT smarter, it's extremely inefficient right now
-    // An optimistic dynamic select query with fallback logic would be much faster.
+    // Gets the ID of the final dropdown value, we'll be mapping to this value
     private function getFinalDropdownValueId($finderId, $values) {
-	$valueTable = $this->tablename('am_finder_value');
 
         // Get the finder's dropdowns
         $dropdowns = $this->_finders[$finderId];
@@ -109,6 +107,48 @@ class FinderProcessor extends Magmi_ItemProcessor {
         if (count($dropdowns) != count($values)) {
             throw new Exception("Expected " . count($dropdowns) . " values, got: " . join(',', $values));
         }
+        
+        // The easy way
+        $finalValueId = $this->selectFinalDropdownValueId($finderId, $values, $dropdowns);
+        
+        // The hard way
+        if (!$finalValueId) {
+            $finalValueId = $this->createDropdownValues($finderId, $values, $dropdowns);
+            error_log("Created finder $finderId mapping " . join(',', $values) . "$finalValueId");
+        } else {
+            error_log("Found finder $finderId mapping " . join(',', $values) . "$finalValueId");
+        }
+        
+        return $finalValueId;
+    }
+
+    public function mapValues($productId, $sku, $valueIds) {
+	$mapTable = $this->tablename('am_finder_map');
+
+        // Create any missing mappings
+        $mappingInsertPlaceholders = array();
+        $mappingInsertData = array();
+        
+        foreach ($valueIds as $valueId) {
+            $mappingInsertPlaceholders[] = "(?, ?, ?)";
+            $mappingInsertData[] = $valueId;
+            $mappingInsertData[] = $productId;
+            $mappingInsertData[] = $sku;
+//            error_log("Mapping valueId: $valueId, productId: $productId, sku: $sku");
+        }
+
+        $this->insert(
+                "INSERT IGNORE INTO $mapTable (value_id, pid, sku) VALUES " . join(',', $mappingInsertPlaceholders),
+                $mappingInsertData);
+
+        // Delete old mappings
+        $this->delete(
+                "DELETE FROM $mapTable WHERE pid = ? AND value_id NOT IN (" . join(',', $valueIds) . ")",
+                $productId);
+    }
+    
+    public function createDropdownValues($finderId, $values, $dropdowns) {
+	$valueTable = $this->tablename('am_finder_value');
 
         // Create the values if they don't exist
         $parentId = 0;
@@ -140,29 +180,34 @@ class FinderProcessor extends Magmi_ItemProcessor {
         return $parentId;
     }
 
-    public function mapValues($productId, $sku, $valueIds) {
-	$mapTable = $this->tablename('am_finder_map');
-
-        // Create any missing mappings
-        $mappingInsertPlaceholders = array();
-        $mappingInsertData = array();
+    // Builds a dynamic query for the final value
+    public function selectFinalDropdownValueId($finderId, $values, $dropdowns) {
+        $count = count($dropdowns);
+	$valueTable = $this->tablename('am_finder_value');
         
-        foreach ($valueIds as $valueId) {
-            $mappingInsertPlaceholders[] = "(?, ?, ?)";
-            $mappingInsertData[] = $valueId;
-            $mappingInsertData[] = $productId;
-            $mappingInsertData[] = $sku;
-//            error_log("Mapping valueId: $valueId, productId: $productId, sku: $sku");
+        $query = "SELECT v" . ($count-1) . ".value_id AS finalValueId ";
+        
+        // Build the FROM/JOIN and WHERE clauses
+        for ($i = 0; $i < $count; $i++) {
+            $tableName = "v$i";
+            
+            if ($i == 0) {
+                $query .= " FROM $valueTable AS $tableName ";
+            } else {
+                $parentTableName = "v" . ($i - 1);
+                $query .= " JOIN $valueTable AS $tableName ON $tableName.parent_id = $parentTableName.value_id ";
+            }
+            
+            // Add the where clauses for the dropdown ID and value
+            $where[] = " $tableName.dropdown_id = {$dropdowns[$i]} AND $tableName.name = ? ";
         }
-
-        $this->insert(
-                "INSERT IGNORE INTO $mapTable (value_id, pid, sku) VALUES " . join(',', $mappingInsertPlaceholders),
-                $mappingInsertData);
-
-        // Delete old mappings
-        $this->delete(
-                "DELETE FROM $mapTable WHERE pid = ? AND value_id NOT IN (" . join(',', $valueIds) . ")",
-                $productId);
+        
+        $query .= " WHERE " . join(" AND ", $where);
+        
+//        error_log("optimistic select: " . $query . " values: " . print_r($values, true));
+        
+        return $this->selectone($query, $values, "finalValueId");
     }
+
 }
 ?>
