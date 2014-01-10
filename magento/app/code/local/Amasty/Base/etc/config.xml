@@ -45,7 +45,15 @@
 	</global>
 	
 	<adminhtml>
-		<acl>
+        <layout>
+            <updates>
+                <awall module="Amasty_Base">
+                    <file>amasty/ambase/ambase.xml</file>
+                </awall>
+            </updates>
+        </layout>
+
+        <acl>
         <resources>
             <all>
                 <title>Allow Everything</title>
@@ -59,6 +67,9 @@
                                     <ambase>
                                         <title>Amasty - Extensions Information</title>
                                     </ambase>
+                                    <amstore>
+                                        <title>Amasty - Extensions Store</title>
+                                    </amstore>
                                 </children>
                             </config>
                         </children>
