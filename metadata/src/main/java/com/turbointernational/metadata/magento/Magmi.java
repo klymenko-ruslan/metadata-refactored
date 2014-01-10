@@ -186,6 +186,9 @@ public class Magmi {
         do {
             logger.log(Level.INFO, "Writing parts {0}-{1}", new Object[]{start, start+count});
             
+            // Give Hibernate a breather
+            new Part().clear();
+            
             // Get the next batch of parts
             parts = Part.findPartEntries(start, count);
             start += parts.size();
