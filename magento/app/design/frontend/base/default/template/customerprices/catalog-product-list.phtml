@@ -42,6 +42,7 @@ $_helper = $this->helper('catalog/output');
     <p class="note-msg"><?php echo $this->__('There are no products matching the selection.') ?></p>
 <?php else: ?>
     <div class="category-products">
+        <?php echo $this->getLayout()->createBlock('cms/block')->setBlockId('product_finder')->toHtml(); ?>
         <?php echo $this->getToolbarHtml() ?>
         <?php if ($this->getMode() != 'grid'): ?>
             <?php // List Mode ?>
