@@ -1,4 +1,6 @@
 package com.turbointernational.metadata.domain.part;
+import com.turbointernational.metadata.util.dto.TurboModelMap;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.bom.BOMItem;
@@ -16,6 +18,7 @@ import com.turbointernational.metadata.domain.part.types.PistonRing;
 import com.turbointernational.metadata.domain.part.types.TurbineWheel;
 import com.turbointernational.metadata.domain.part.types.Turbo;
 import com.turbointernational.metadata.domain.type.PartType;
+import com.turbointernational.metadata.magento.Magmi;
 import com.turbointernational.metadata.util.ElasticSearch;
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
@@ -23,6 +26,7 @@ import flexjson.ObjectBinder;
 import flexjson.ObjectFactory;
 import flexjson.transformer.HibernateTransformer;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
@@ -61,7 +65,7 @@ import javax.persistence.Version;
 import net.sf.jsog.JSOG;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
+import org.elasticsearch.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.transaction.annotation.Transactional;
@@ -144,7 +148,7 @@ public class Part implements Comparable<Part> {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "manfr_id", nullable = false)
     private Manufacturer manufacturer;
     
@@ -157,14 +161,14 @@ public class Part implements Comparable<Part> {
     @Column(name="description")
     private String description;
     
-    @OneToOne(fetch=FetchType.LAZY)
+    @OneToOne(fetch=FetchType.EAGER)
     @JoinColumn(name="part_type_id")
     private PartType partType;
     
     @Column(nullable = false, columnDefinition = "BIT", length = 1)
     private Boolean inactive = false;
     
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinTable(name="interchange_item",
             joinColumns=@JoinColumn(name="part_id"),
             inverseJoinColumns=@JoinColumn(name="interchange_header_id"))
@@ -625,9 +629,8 @@ public class Part implements Comparable<Part> {
                     tiParts.add(tiAlt.getId());
                 }
                 
-                for (Part tiInterchange : item.getChild().collectTIInterchanges()) {
-                    tiParts.add(tiInterchange.getId());
-                }
+                // Wonky casting issues... TI Interchange IDs
+                tiParts.addAll(new ArrayList<Object>(item.getChild().collectTIInterchangeIds()));
                 
                 if (tiParts.size() > 0) {
                     bom.add(jsogItem);
@@ -646,14 +649,13 @@ public class Part implements Comparable<Part> {
             columns.put("quantity", "1");
         }
         
-        // Turbo Models
-        columns.put("turbo_model", StringUtils.join(collectTurboModelNames(), ','));
-        
-        // Turbo Types
-        columns.put("turbo_type", StringUtils.join(collectTurboTypeNames(), ','));
+        // Turbo Models and types
+        Map<String, String> modelTypeMap = collectTurboModelTypeNames();
+        columns.put("turbo_model", StringUtils.join(modelTypeMap.keySet(), ','));
+        columns.put("turbo_type", StringUtils.join(Sets.newTreeSet(modelTypeMap.values()), ','));
         
         // Application (Make, Year, Model)
-        columns.put("application", StringUtils.join(collectApplicationMappings(), '|'));
+        columns.put("finder:" + Magmi.APPLICATION_FINDER_ID, StringUtils.join(collectApplicationMappings(), '|'));
         
         // Images
         if (!getProductImages().isEmpty()) {
@@ -683,13 +685,13 @@ public class Part implements Comparable<Part> {
         }
     }
     
-    public List<Part> collectTIInterchanges() {
-        return entityManager.createQuery("SELECT DISTINCT p\n"
+    public List<Long> collectTIInterchangeIds() {
+        return entityManager.createQuery("SELECT DISTINCT p.id\n"
                 + "FROM Part p\n"
                 + "JOIN p.interchange i\n"
                 + "WHERE p.manufacturer.id = :tiManufacturerId\n"
                 + "AND p.interchange.id = :interchangeId\n"
-                + "AND p.id != :partId", Part.class)
+                + "AND p.id != :partId", Long.class)
                 .setParameter("tiManufacturerId", Manufacturer.TI_ID)
                 .setParameter("interchangeId", interchange.getId())
                 .setParameter("partId", id)
@@ -751,27 +753,29 @@ public class Part implements Comparable<Part> {
         return collectedTurbos;
     }
 
-    public List<String> collectTurboTypeNames() {
-        return entityManager.createQuery(
-                  "SELECT DISTINCT tt.name\n"
+    public Map<String, String> collectTurboModelTypeNames() {
+        
+        // Query for names (model, type)
+        
+        List<TurboModelMap> names = entityManager.createQuery(
+                  "SELECT DISTINCT\n"
+                + "  new com.turbointernational.metadata.util.dto.TurboModelMap(tm.name, tt.name)\n"
                 + "FROM Part p\n"
                 + "  JOIN p.turbos t\n"
                 + "  JOIN t.turboModel tm\n"
                 + "  JOIN tm.turboType tt\n"
-                + "WHERE p.id = ?", String.class)
+                + "WHERE p.id = ?", TurboModelMap.class)
                 .setParameter(1, id)
                 .getResultList();
+        
+        // Map the names
+        Map<String, String> modelTypeMap = Maps.newTreeMap();
+        
+        for (TurboModelMap modelType : names) {
+            modelTypeMap.put(modelType.getModel(), modelType.getType());
         }
-
-    public List<String> collectTurboModelNames() {
-        return entityManager.createQuery(
-                  "SELECT DISTINCT tm.name\n"
-                + "FROM Part p\n"
-                + "  JOIN p.turbos t\n"
-                + "  JOIN t.turboModel tm\n"
-                + "WHERE p.id = ?", String.class)
-                .setParameter(1, id)
-                .getResultList();
+        
+        return modelTypeMap;
     }
 
     private List<String> collectApplicationMappings() {
