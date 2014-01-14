@@ -605,9 +605,11 @@ public class Part implements Comparable<Part> {
         }
         
         // categories
-        StringBuilder categories = new StringBuilder("Manufacturer/")
-                .append(getManufacturer().getName())
-                .append(";;")
+        StringBuilder categories = new StringBuilder()
+//                Disabled
+//                .append("Manufacturer/")
+//                .append(getManufacturer().getName())
+//                .append(";;")
                 .append(partType.toMagentoCategories());
         
         columns.put("categories", categories.toString());
