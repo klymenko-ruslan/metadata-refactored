@@ -656,7 +656,8 @@ public class Part implements Comparable<Part> {
               + "  JOIN p.manufacturer m\n"
               + "  JOIN i.parts p2\n"
               + "WHERE\n"
-              + "  p2.id = :partId", MagmiInterchangePart.class)
+              + "  p2.id != p.id\n"
+              + "  AND p2.id = :partId", MagmiInterchangePart.class)
                 .setParameter("partId", id)
                 .getResultList();
         
@@ -668,7 +669,7 @@ public class Part implements Comparable<Part> {
             interchangePartIds.add(interchangePart.getId());
             
             if (interchangePart.getManufacturerId() == Manufacturer.TI_ID) {
-                tiInterchangePartIds.add(interchangePart.getManufacturerId());
+                tiInterchangePartIds.add(interchangePart.getId());
             }
         }
         
