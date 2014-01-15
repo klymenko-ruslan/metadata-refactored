@@ -10,6 +10,7 @@ import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -45,7 +46,7 @@ public class PartType {
     private String magentoCategory;
     
     // TODO: Is this a duplicate of parentTypes?
-    @OneToOne
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="parent_part_type_id")
     private PartType parent;
     

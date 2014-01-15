@@ -33,6 +33,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping(value={"/magmi", "/metadata/magmi"})
 public class Magmi {
     private static final Logger logger = Logger.getLogger(Magmi.class.toString());
+
+    public static final String APPLICATION_FINDER_ID = "1";
     
     public static final String[] HEADERS = {
         
@@ -69,7 +71,6 @@ public class Magmi {
         //</editor-fold>
         
         //<editor-fold defaultstate="collapsed" desc="Part Type Specifics">
-        "application",
         "bearing_type",
         "bore_oe",
         "compressor_housing_diameter",
@@ -136,7 +137,7 @@ public class Magmi {
         //</editor-fold>
         
         // Make,Year,Model
-        "application"
+        "finder:" + APPLICATION_FINDER_ID
     };
 
     @Value("${mas90.db.path}")

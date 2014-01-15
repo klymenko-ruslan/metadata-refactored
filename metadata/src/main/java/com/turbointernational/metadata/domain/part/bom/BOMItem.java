@@ -23,13 +23,14 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.transaction.annotation.Transactional;
 
 @Configurable
 @Entity
-@Table(name="bom")
+@Table(name="bom", uniqueConstraints=@UniqueConstraint(columnNames={"parent_part_id", "child_part_id"}))
 public class BOMItem implements Comparable<BOMItem> {
 
     //<editor-fold defaultstate="collapsed" desc="properties">
