@@ -20,13 +20,14 @@ import com.turbointernational.metadata.domain.part.types.Turbo;
 import com.turbointernational.metadata.domain.type.PartType;
 import com.turbointernational.metadata.magento.Magmi;
 import com.turbointernational.metadata.util.ElasticSearch;
+import com.turbointernational.metadata.util.dto.MagmiBomItem;
+import com.turbointernational.metadata.util.dto.MagmiInterchangePart;
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
 import flexjson.ObjectBinder;
 import flexjson.ObjectFactory;
 import flexjson.transformer.HibernateTransformer;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
@@ -65,7 +66,6 @@ import javax.persistence.Version;
 import net.sf.jsog.JSOG;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.elasticsearch.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.transaction.annotation.Transactional;
@@ -168,7 +168,7 @@ public class Part implements Comparable<Part> {
     @Column(nullable = false, columnDefinition = "BIT", length = 1)
     private Boolean inactive = false;
     
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinTable(name="interchange_item",
             joinColumns=@JoinColumn(name="part_id"),
             inverseJoinColumns=@JoinColumn(name="interchange_header_id"))
@@ -544,9 +544,139 @@ public class Part implements Comparable<Part> {
     //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="Magmi">
-    
     public void csvColumns(Map<String, String> columns) {
+        csvColumnsBasic(columns);
+        csvColumnsInterchanges(columns);
+        csvColumnsCategories(columns);
+        csvColumnsBom(columns);
+        csvColumnsTurboModel(columns);
+        csvColumnsApplication(columns);        
+        csvColumnsImages(columns);        
+    }
+
+    // Application (Make, Year, Model)
+    private void csvColumnsApplication(Map<String, String> columns) {
+        columns.put("finder:" + Magmi.APPLICATION_FINDER_ID, StringUtils.join(collectApplicationMappings(), '|'));
+    }
+
+    private void csvColumnsTurboModel(Map<String, String> columns) {
+        Map<String, String> modelTypeMap = collectTurboModelTypeNames();
+        columns.put("turbo_model", StringUtils.join(modelTypeMap.keySet(), ','));
+        columns.put("turbo_type", StringUtils.join(Sets.newTreeSet(modelTypeMap.values()), ','));
+    }
+
+    private void csvColumnsImages(Map<String, String> columns) {
+        // Images
+        if (!getProductImages().isEmpty()) {
+            
+            // Get the first image
+            Iterator<ProductImage> it = getProductImages().iterator();
+            ProductImage firstImage = it.next();
+            
+            columns.put("image", firstImage.getFilename());
+            
+            // Additional images
+            StringBuilder galleryString = new StringBuilder();
+            while (it.hasNext()) {
+                ProductImage additionalImage = it.next();
+                
+                // Add a separator if this isn't the first additional image
+                if (galleryString.length() > 0) {
+                    galleryString.append(';');
+                }
+                
+                // Add the filename
+                galleryString.append(additionalImage.getFilename());
+            }
+            
+            // Add the column
+            columns.put("media_gallery", galleryString.toString());
+        }
+    }
+
+    private void csvColumnsBom(Map<String, String> columns) {
+        JSOG bom = JSOG.array();
         
+        List<MagmiBomItem> items = entityManager.createQuery(
+                "SELECT DISTINCT new com.turbointernational.metadata.util.dto.MagmiBomItem(\n"
+              + "  b.child.id as sku,\n"
+              + "  b.quantity,\n"
+              + "  alt.id AS alt_ti_part_sku,\n" // Alternates
+              + "  int.id AS int_ti_part_sku\n" // Interchanges
+              + ")\n"
+              + "FROM BOMItem b\n"
+              + "  JOIN b.child bc\n"
+              + "  LEFT JOIN bc.interchange bci\n"
+              + "  LEFT JOIN bci.parts int\n"
+              + "  LEFT JOIN b.alternatives balt\n"
+              + "  LEFT JOIN balt.part alt\n"
+              + "WHERE\n"
+              + "  b.parent.id = :parentPartId\n"
+              + "  AND (int.manufacturer.id IS NULL OR int.manufacturer.id = :tiManufacturerId)\n"
+              + "  AND (alt.manufacturer.id IS NULL OR alt.manufacturer.id = :tiManufacturerId)\n")
+                .setParameter("parentPartId", id)
+                .setParameter("tiManufacturerId", Manufacturer.TI_ID)
+                .getResultList();
+        
+        // bill_of_materials
+        if (!items.isEmpty()) {
+            for (MagmiBomItem item : items) {
+                JSOG jsogItem = JSOG.object();
+                bom.add(jsogItem);
+                
+                jsogItem.put("sku", item.getSku());
+                jsogItem.put("quantity", item.getQuantity());
+                jsogItem.get("ti_part_sku").add(item.getTiPartSku());
+            }
+            
+            columns.put("bill_of_materials", bom.toString());
+        }
+    }
+
+    private void csvColumnsCategories(Map<String, String> columns) {
+        // categories
+        StringBuilder categories = new StringBuilder()
+                .append("Manufacturer/")
+                .append(getManufacturer().getName())
+                .append(";;")
+                .append(partType.toMagentoCategories());
+        
+        columns.put("categories", categories.toString());
+    }
+
+    private void csvColumnsInterchanges(Map<String, String> columns) {
+        List<MagmiInterchangePart> interchangePartList = entityManager.createQuery(
+                "SELECT DISTINCT NEW"
+              + "  com.turbointernational.metadata.util.dto.MagmiInterchangePart("
+              + "    p.id,"
+              + "    m.id\n"
+              + ")\n"
+              + "FROM Interchange i\n"
+              + "  JOIN i.parts p\n"
+              + "  JOIN p.manufacturer m\n"
+              + "  JOIN i.parts p2\n"
+              + "WHERE\n"
+              + "  p2.id = :partId", MagmiInterchangePart.class)
+                .setParameter("partId", id)
+                .getResultList();
+        
+        // Build the ID sets
+        Set<Long> interchangePartIds = Sets.newTreeSet();
+        Set<Long> tiInterchangePartIds = Sets.newTreeSet();
+        
+        for (MagmiInterchangePart interchangePart : interchangePartList) {
+            interchangePartIds.add(interchangePart.getId());
+            
+            if (interchangePart.getManufacturerId() == Manufacturer.TI_ID) {
+                tiInterchangePartIds.add(interchangePart.getManufacturerId());
+            }
+        }
+        
+        columns.put("interchanges", StringUtils.join(interchangePartIds, ","));
+        columns.put("ti_part_sku", StringUtils.join(tiInterchangePartIds, ","));
+    }
+
+    private void csvColumnsBasic(Map<String, String> columns) {
         // part_type
         columns.put("part_type", getPartType().getName());
         
@@ -580,124 +710,12 @@ public class Part implements Comparable<Part> {
         // part_number
         columns.put("part_number_short", ObjectUtils.toString(getManufacturerPartNumber()).replaceAll("\\W", ""));
         
-        // ti_part_sku / interchanges
-        if (interchange != null) {
-            Set<String> interchanges = Sets.newTreeSet();
-            Set<String> tiInterchanges = Sets.newTreeSet();
-            
-            for (Part part : getInterchange().getParts()) {
-                
-                // all interchangeable parts
-                interchanges.add(part.getId().toString());
-                
-                // TI interchangeable parts
-                if (Manufacturer.TI_ID == part.getManufacturer().getId()) {
-                    tiInterchanges.add(part.getId().toString());
-                }
-            }
-            
-            // Remove this part from the sets
-            interchanges.remove(this.getId().toString());
-            tiInterchanges.remove(this.getId().toString());
-            
-            columns.put("interchanges", StringUtils.join(interchanges, ","));
-            columns.put("ti_part_sku", StringUtils.join(tiInterchanges, ","));
-        }
-        
-        // categories
-        StringBuilder categories = new StringBuilder()
-//                Disabled
-//                .append("Manufacturer/")
-//                .append(getManufacturer().getName())
-//                .append(";;")
-                .append(partType.toMagentoCategories());
-        
-        columns.put("categories", categories.toString());
-        
-        // bill_of_materials
-        if (!getBom().isEmpty()) {
-            JSOG bom = JSOG.array();
-            
-            for (BOMItem item : getBom()) {
-                
-                JSOG jsogItem = JSOG.object();
-                jsogItem.put("sku", item.getChild().getId());
-                jsogItem.put("quantity", item.getQuantity());
-                
-                JSOG tiParts = JSOG.array();
-                jsogItem.put("ti_part_sku", tiParts);
-                
-                for (Part tiAlt : item.getTIAlternates()) {
-                    tiParts.add(tiAlt.getId());
-                }
-                
-                // Wonky casting issues... TI Interchange IDs
-                tiParts.addAll(new ArrayList<Object>(item.getChild().collectTIInterchangeIds()));
-                
-                if (tiParts.size() > 0) {
-                    bom.add(jsogItem);
-                }
-            }
-            
-            if (bom.size() > 0) {
-                columns.put("bill_of_materials", bom.toString());
-            }
-        }
-        
         // Only TI parts get this info
         if (getManufacturer().getId() == Manufacturer.TI_ID) {
             
             // Default to quantity 1
             columns.put("quantity", "1");
         }
-        
-        // Turbo Models and types
-        Map<String, String> modelTypeMap = collectTurboModelTypeNames();
-        columns.put("turbo_model", StringUtils.join(modelTypeMap.keySet(), ','));
-        columns.put("turbo_type", StringUtils.join(Sets.newTreeSet(modelTypeMap.values()), ','));
-        
-        // Application (Make, Year, Model)
-        columns.put("finder:" + Magmi.APPLICATION_FINDER_ID, StringUtils.join(collectApplicationMappings(), '|'));
-        
-        // Images
-        if (!getProductImages().isEmpty()) {
-            
-            // Get the first image
-            Iterator<ProductImage> it = getProductImages().iterator();
-            ProductImage firstImage = it.next();
-            
-            columns.put("image", firstImage.getFilename());
-            
-            // Additional images
-            StringBuilder galleryString = new StringBuilder();
-            while (it.hasNext()) {
-                ProductImage additionalImage = it.next();
-                
-                // Add a separator if this isn't the first additional image
-                if (galleryString.length() > 0) {
-                    galleryString.append(';');
-                }
-                
-                // Add the filename
-                galleryString.append(additionalImage.getFilename());
-            }
-            
-            // Add the column
-            columns.put("media_gallery", galleryString.toString());
-        }
-    }
-    
-    public List<Long> collectTIInterchangeIds() {
-        return entityManager.createQuery("SELECT DISTINCT p.id\n"
-                + "FROM Part p\n"
-                + "JOIN p.interchange i\n"
-                + "WHERE p.manufacturer.id = :tiManufacturerId\n"
-                + "AND p.interchange.id = :interchangeId\n"
-                + "AND p.id != :partId", Long.class)
-                .setParameter("tiManufacturerId", Manufacturer.TI_ID)
-                .setParameter("interchangeId", interchange.getId())
-                .setParameter("partId", id)
-                .getResultList();
     }
     
     //</editor-fold>
