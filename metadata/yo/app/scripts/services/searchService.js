@@ -65,7 +65,6 @@ angular.module('ngMetaCrudApp')
                 angular.forEach(search.facetFilters, function (facetValue, facetName) {
                     var term = {};
                     term[facetName] = facetValue;
-
                     searchRequest.query.bool.must.push({"term": term});
                 });
             }
@@ -76,13 +75,8 @@ angular.module('ngMetaCrudApp')
                     query_string: {
                         query: search.queryString,
                         fields: [
-                            "_id^1000",
-                            "part_type^1000",
-                            "manufacturer_part_number.autocomplete",
-                            "manufacturer_part_number.text",
-                            "manufacturer.name.autocomplete",
-                            "manufacturer.name.text",
-                            "name"
+                            "manufacturerPartNumber.autocomplete",
+                            "manufacturerPartNumber.text"
                         ]
                     }
                 });
@@ -106,7 +100,7 @@ angular.module('ngMetaCrudApp')
                         "order": order
                     }
 
-                    searchRequest.sort.push(sortField);
+//                    searchRequest.sort.push(sortField);
                 });
             }
 
