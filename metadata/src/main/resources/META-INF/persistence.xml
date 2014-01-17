@@ -4,7 +4,7 @@
     <provider>org.hibernate.ejb.HibernatePersistence</provider>
     <shared-cache-mode>ALL</shared-cache-mode>
     <properties>
-        <property name="hibernate.show_sql" value="false"/>
+        <property name="hibernate.show_sql" value="true"/>
         <property name="hibernate.format_sql" value="true"/>
         <property name="hibernate.log.level" value="INFO"/>
         <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5InnoDBDialect"/>

@@ -19,6 +19,7 @@ import mas90magmi.CalculatedPrice;
 import mas90magmi.Mas90Prices;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -198,6 +199,9 @@ public class Magmi {
             for (Part part : parts) {
                 try {
                     writer.writeNext(partToProductCsvRow(mas90, part));
+                } catch (NoPriceException e) {
+                    logger.log(Level.INFO, "No prices for part {0}", e.getId());
+                    continue;
                 } catch (Exception e) {
                     logger.log(Level.INFO, "Failed to synchronize part " + part.getId(), e);
                     continue;
@@ -208,7 +212,7 @@ public class Magmi {
         return start;
     }
     
-    private String[] partToProductCsvRow(Mas90Prices mas90, Part part) throws IOException {
+    private String[] partToProductCsvRow(Mas90Prices mas90, Part part) throws IOException, NoPriceException {
         
         // Get the part's column values
         Map<String, String> columns = new HashMap<String, String>();
@@ -216,7 +220,12 @@ public class Magmi {
         
         // Add ERP pricing details if this is a TI part
         if (Manufacturer.TI_ID.equals(part.getManufacturer().getId())) {
-            addErpPrices(mas90, columns, part.getManufacturerPartNumber());
+            try {
+                addErpPrices(mas90, columns, part.getManufacturerPartNumber());
+            } catch (EmptyResultDataAccessException e) {
+                throw new NoPriceException(part.getId());
+                
+            }
         }
 
         // Map the column into a value array for the CSV writer

@@ -472,6 +472,35 @@ public class Part implements Comparable<Part> {
         
         return q.setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
+    
+    public static List<Part> findPartEntriesForMagmi(int firstResult, int maxResults) {
+        return entityManager.createQuery(
+              "SELECT DISTINCT"
+                      + "  'simple' AS type,\n"
+                      + "  'Catalog, Search' AS visibility,\n"
+                      + "  'Enabled' AS status,\n"
+                      + "  p.id AS sku,\n"
+                      + "  p.name AS name,\n"
+                      + "  p.description AS description,\n"
+                      + "  pt.magentoAttributeSet AS attribute_set,\n"
+                      + "  pt.name AS part_type,\n"
+                      + "  m.name AS manufacturer,\n"
+                      + "  p.manufacturerPartNumber AS part_number,\n"
+                      + "")
+            .setFirstResult(firstResult)
+            .setMaxResults(maxResults)
+            .getResultList();
+        
+        // part_number
+        columns.put("part_number_short", ObjectUtils.toString(getManufacturerPartNumber()).replaceAll("\\W", ""));
+        
+        // Only TI parts get this info
+        if (getManufacturer().getId() == Manufacturer.TI_ID) {
+            
+            // Default to quantity 1
+            columns.put("quantity", "1");
+        }
+    }
 
     public static List<Part> getPartsUpdatedAfter(Date lastUpdated, int i, int pageSize) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -601,21 +630,23 @@ public class Part implements Comparable<Part> {
                 "SELECT DISTINCT new com.turbointernational.metadata.util.dto.MagmiBomItem(\n"
               + "  b.child.id as sku,\n"
               + "  b.quantity,\n"
-              + "  alt.id AS alt_ti_part_sku,\n" // Alternates
-              + "  int.id AS int_ti_part_sku\n" // Interchanges
+                        
+                // Alternates
+              + "  alt.id AS alt_sku,\n"
+              + "  alt.manufacturer.id AS alt_mfr_id,\n"
+                        
+                // Interchanges
+              + "  int.id AS int_sku,\n"
+              + "  int.manufacturer.id AS int_mfr_id\n"
               + ")\n"
-              + "FROM BOMItem b\n"
-              + "  JOIN b.child bc\n"
+              + "FROM BOMItem b\n" 
+             + "  JOIN b.child bc\n"
               + "  LEFT JOIN bc.interchange bci\n"
               + "  LEFT JOIN bci.parts int\n"
               + "  LEFT JOIN b.alternatives balt\n"
               + "  LEFT JOIN balt.part alt\n"
-              + "WHERE\n"
-              + "  b.parent.id = :parentPartId\n"
-              + "  AND (int.manufacturer.id IS NULL OR int.manufacturer.id = :tiManufacturerId)\n"
-              + "  AND (alt.manufacturer.id IS NULL OR alt.manufacturer.id = :tiManufacturerId)\n")
+              + "WHERE b.parent.id = :parentPartId")
                 .setParameter("parentPartId", id)
-                .setParameter("tiManufacturerId", Manufacturer.TI_ID)
                 .getResultList();
         
         // bill_of_materials
@@ -626,7 +657,19 @@ public class Part implements Comparable<Part> {
                 
                 jsogItem.put("sku", item.getSku());
                 jsogItem.put("quantity", item.getQuantity());
-                jsogItem.get("ti_part_sku").add(item.getTiPartSku());
+                
+                // Add the alternate and interchange TI skus
+                if (item.getAltSkuMfrId() == Manufacturer.TI_ID) {
+                    if (!jsogItem.get("ti_part_sku").contains(item.getAltSku())) {
+                        jsogItem.get("ti_part_sku").add(item.getAltSku());
+                    }
+                }
+                
+                if (item.getIntSkuMfrId() == Manufacturer.TI_ID) {
+                    if (!jsogItem.get("ti_part_sku").contains(item.getIntSku())) {
+                        jsogItem.get("ti_part_sku").add(item.getIntSku());
+                    }
+                }
             }
             
             columns.put("bill_of_materials", bom.toString());
