@@ -28,7 +28,7 @@
 <?php
 $_product = $this->getProduct();
 $orgSkuString = $_product->getTiPartSku();
-array($tiProductPartNumbers);
+$tiProductPartNumbers = array();
 $tiPartSkuArray = false;
 if (strpos($orgSkuString, ',') !== false) {
     $tiProductPartNumbers = explode(',', $orgSkuString);

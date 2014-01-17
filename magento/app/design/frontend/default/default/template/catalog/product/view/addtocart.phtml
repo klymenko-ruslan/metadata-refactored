@@ -27,18 +27,10 @@
 <?php
 $_product = $this->getProduct();
 $_productManufacturer = $_product->getManufacturer();
-$orgSkuString = $_product->getTiPartSku();
-array($tiProductPartNumbers);
-$tiPartSkuArray = false;
-if (strpos($orgSkuString, ',') !== false) {
-    $tiProductPartNumbers = explode(',', $orgSkuString);
-    $orgSku = $tiProductPartNumbers[0];
-    $tiPartSkuArray = true;
-} else {
-    $orgSku = $orgSkuString;
-}
+$tiProductPartNumbers = explode(',', $_product->getTiPartSku());
+$tiPartSku = $tiProductPartNumbers[0];
 $_tiProduct = Mage::getModel('catalog/product');
-$_tiProduct->load($_tiProduct->getIdBySku($orgSku));
+$_tiProduct->load($_tiProduct->getIdBySku($tiPartSku));
 ?>
 <?php if ($_product->isSaleable()): ?>
     <div class="add-to-cart">
@@ -47,7 +39,7 @@ $_tiProduct->load($_tiProduct->getIdBySku($orgSku));
             <input type="text" name="qty" id="qty" maxlength="12" value="<?php echo $this->getProductDefaultQty() * 1 ?>"
                    title="<?php echo $this->__('Qty') ?>" class="input-text qty"/>
         <?php endif; ?>
-        <?php if ($orgSku && strlen($orgSku) > 1 && $_productManufacturer != 44): ?>
+        <?php if ($tiPartSku && strlen($tiPartSku) > 1 && $_productManufacturer != 44): ?>
             <button type="button" title="<?php echo $this->__('Add TI Part to Cart') ?>" class="button btn-cart"
                     onclick="setLocation('<?php echo $this->getAddToCartUrl($_tiProduct) ?>')">
                 <span><span><?php echo $this->__('Add TI Part to Cart') ?></span></span>
