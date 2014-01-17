@@ -53,7 +53,7 @@ Supported layout update handles (special):
             <!--</block>-->
         </reference>
         <reference name="right">
-            <block type="catalog/product_compare_sidebar" before="cart_sidebar" name="catalog.compare.sidebar"
+            <block type="catalog/product_compare_sidebar" after="cart_sidebar" name="catalog.compare.sidebar"
                    template="catalog/product/compare/sidebar.phtml"/>
             <!--<block type="core/template" name="right.permanent.callout" template="callouts/right_col.phtml">-->
             <!--<action method="setImgSrc"><src>images/media/col_right_callout.jpg</src></action>-->
