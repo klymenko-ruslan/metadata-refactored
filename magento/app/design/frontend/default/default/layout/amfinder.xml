@@ -13,12 +13,11 @@
         </reference>
         <reference name="content">
             <block type="catalog/category_view" name="category.products" template="catalog/category/view.phtml">
-  <!--              
+<!--                
                 <block type ="amfinder/form" name="amfinder89">
                     <action method="setId"><id>1</id></action>    
                     <action method="apply" />
-                </block>    
--->        
+                </block>-->
             
                 <block type="catalog/product_list" name="product_list" template="catalog/product/list.phtml">
                     <block type="catalog/product_list_toolbar" name="product_list_toolbar" template="catalog/product/list/toolbar.phtml">
