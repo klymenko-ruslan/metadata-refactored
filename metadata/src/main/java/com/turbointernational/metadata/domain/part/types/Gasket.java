@@ -48,13 +48,4 @@ public class Gasket extends Part {
         
         return partObject;
     }
-    
-    @Override
-    public void csvColumns(Map<String, String> columns) {
-        super.csvColumns(columns);
-        
-        if (getGasketType() != null) {
-            columns.put("gasket_type", ObjectUtils.toString(getGasketType().getName()));
-        }
-    }
 }

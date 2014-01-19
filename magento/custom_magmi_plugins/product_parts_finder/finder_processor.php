@@ -5,6 +5,8 @@
  */
 
 class FinderProcessor extends Magmi_ItemProcessor {
+    protected $_VALUE_SEPARATOR = "||";
+    protected $_DROPDOWN_SEPARATOR = "!!";
     protected $_columnPrefix = 'finder:';
     protected $_finders = array(); // Finder ID -> array of Dropdown IDs
 

@@ -93,16 +93,4 @@ public class PistonRing extends Part {
         
         return partObject;
     }
-    
-    @Override
-    public void csvColumns(Map<String, String> columns) {
-        super.csvColumns(columns);
-        
-        columns.put("outside_dim_min", ObjectUtils.toString(getOutsideDiameterMin()));
-        columns.put("outside_dim_max", ObjectUtils.toString(getOutsideDiameterMax()));
-        columns.put("width_min", ObjectUtils.toString(getWidthMin()));
-        columns.put("width_max", ObjectUtils.toString(getWidthMax()));
-        columns.put("i_gap_min", ObjectUtils.toString(getInstalledGapMin()));
-        columns.put("i_gap_max", ObjectUtils.toString(getInstalledGapMax()));
-    }
 }

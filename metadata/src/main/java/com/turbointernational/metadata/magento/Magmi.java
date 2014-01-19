@@ -3,6 +3,10 @@ package com.turbointernational.metadata.magento;
 import au.com.bytecode.opencsv.CSVWriter;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.Part;
+import com.turbointernational.metadata.util.dto.MagmiBasicProduct;
+import com.turbointernational.metadata.util.dto.MagmiBomItem;
+import com.turbointernational.metadata.util.dto.MagmiInterchange;
+import com.turbointernational.metadata.util.dto.MagmiProduct;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -11,13 +15,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletResponse;
 import mas90magmi.ItemPricing;
 import mas90magmi.CalculatedPrice;
 import mas90magmi.Mas90Prices;
+import net.sf.jsog.JSOG;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Controller;
@@ -34,8 +41,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping(value={"/magmi", "/metadata/magmi"})
 public class Magmi {
     private static final Logger logger = Logger.getLogger(Magmi.class.toString());
-
-    public static final String APPLICATION_FINDER_ID = "1";
     
     public static final String[] HEADERS = {
         
@@ -138,21 +143,21 @@ public class Magmi {
         //</editor-fold>
         
         // Make,Year,Model
-        "finder:" + APPLICATION_FINDER_ID
+        "finder:" + MagmiProduct.FINDER_ID_APPLICATION,
+        
+        // Manufacturer,TurboType,TurboModel
+        "finder:" + MagmiProduct.FINDER_ID_TURBO
     };
 
     @Value("${mas90.db.path}")
     String mas90DbPath;
     
     @RequestMapping("/products")
-    @ResponseBody
+    @ResponseBody   
     @Transactional
     public void products(
             @RequestParam(required = false) Long id,
             HttpServletResponse response, OutputStream out) throws Exception {
-        
-        long runtimeStart = System.currentTimeMillis();
-        
         response.setHeader("Content-Type", "text/csv");
         response.setHeader("Content-Disposition: attachment; filename=products.csv", null);
         
@@ -162,69 +167,52 @@ public class Magmi {
         // Write the header row
         writer.writeNext(HEADERS);
         
-        if (id == null) {
+        // Get the product IDs to retrieve
+        int position = 0;
+        int pageSize = 100;
+        List<Long> productIds;
+        do {
             
-            // Write the non-bom parts, then bom parts
-            int count = writeAllParts(mas90, writer);
+            // Get the next batch of part IDs
+            productIds = Part.findPartIds(position, pageSize);
+
+            // Process each product
+            for (MagmiProduct product : findMagmiProducts(productIds).values()) {
+                try {
+                    writer.writeNext(magmiProductToCsvRow(mas90, product));
+                } catch (NoPriceException e) {
+                    logger.log(Level.WARNING, e.getMessage());
+                } catch (Exception e) {
+                    logger.log(Level.WARNING, "Could not write magmi part.", e);
+                }
+            }
             
-            logger.log(Level.INFO, "Magmi products exported, {0} parts in {1}ms",
-                new Object[] {count, System.currentTimeMillis() - runtimeStart});
-        } else {
-            writer.writeNext(partToProductCsvRow(mas90, Part.findPart(id)));
-        }
+            // Update the position
+            position += productIds.size();
+        } while (productIds.size() >= pageSize);
+        
         
         writer.flush();
         writer.close();
         
     }
-
-    private int writeAllParts(Mas90Prices mas90, CSVWriter writer) throws Exception {
-
-        // Write a CSV for each part
-        List<Part> parts;
-        int start = 0;
-        int count = 100;
-        
-        do {
-            logger.log(Level.INFO, "Writing parts {0}-{1}", new Object[]{start, start+count});
-            
-            // Give Hibernate a breather
-            new Part().clear();
-            
-            // Get the next batch of parts
-            parts = Part.findPartEntries(start, count);
-            start += parts.size();
-            
-            // Write each part
-            for (Part part : parts) {
-                try {
-                    writer.writeNext(partToProductCsvRow(mas90, part));
-                } catch (NoPriceException e) {
-                    logger.log(Level.INFO, "No prices for part {0}", e.getId());
-                    continue;
-                } catch (Exception e) {
-                    logger.log(Level.INFO, "Failed to synchronize part " + part.getId(), e);
-                    continue;
-                }
-            }
-        } while (parts.size() > 0);
-        
-        return start;
-    }
     
-    private String[] partToProductCsvRow(Mas90Prices mas90, Part part) throws IOException, NoPriceException {
+    private String[] magmiProductToCsvRow(Mas90Prices mas90, MagmiProduct product) throws IOException, NoPriceException {
+        Map<String, String> columns = product.getCsvColumns();
         
-        // Get the part's column values
-        Map<String, String> columns = new HashMap<String, String>();
-        part.csvColumns(columns);
-        
-        // Add ERP pricing details if this is a TI part
-        if (Manufacturer.TI_ID.equals(part.getManufacturer().getId())) {
+        // Only TI parts get this info
+        if (product.getManufacturerId() == Manufacturer.TI_ID) {
+
+            // Default to quantity 1
+            columns.put("quantity", "1");
+            
+            // ERP Prices
             try {
-                addErpPrices(mas90, columns, part.getManufacturerPartNumber());
+                if (StringUtils.isNotBlank(product.getPartNumber())) {
+                    addErpPrices(mas90, columns, product.getPartNumber());
+                }
             } catch (EmptyResultDataAccessException e) {
-                throw new NoPriceException(part.getId());
-                
+                throw new NoPriceException(product.getPartNumber());
             }
         }
 
@@ -333,5 +321,130 @@ public class Magmi {
                 columns.put("group_price:ERP_PL_" + priceLevel, prices.get(0).getPrice().toString());
             }
         }
+    }
+    
+    public static TreeMap<Long, MagmiProduct> findMagmiProducts(List<Long> productIds) {
+        long startTime = System.currentTimeMillis();
+        
+        TreeMap<Long, MagmiProduct> productMap = new TreeMap<Long, MagmiProduct>();
+        
+        List<MagmiBasicProduct> basicProducts = findMagmiBasicProducts(productIds);
+        
+        List<MagmiInterchange> interchanges = findMagmiInterchanges(productIds);
+        
+        List<MagmiBomItem> bom = findMagmiBom(productIds);
+        
+        // Transform the basic product rows in the aggregated product data
+        for (MagmiBasicProduct basicProduct : basicProducts) {
+            Long sku = basicProduct.getSku();
+            
+            // Get the product
+            MagmiProduct magmiProduct = productMap.get(sku);
+            
+            // Create it or update it
+            if (magmiProduct == null) {
+                magmiProduct = new MagmiProduct(basicProduct);
+                productMap.put(sku, magmiProduct);
+            } else {
+                magmiProduct.addBasicProductCollections(basicProduct);
+            }
+        }
+        
+        // Add the interchanges
+        for (MagmiInterchange interchange : interchanges) {
+            MagmiProduct magmiProduct = productMap.get(interchange.getSku());
+            magmiProduct.addInterchange(interchange);
+        }
+        
+        // Add the bom items
+        for (MagmiBomItem bomItem : bom) {
+            MagmiProduct magmiProduct = productMap.get(bomItem.getParentSku());
+            magmiProduct.addBomItem(bomItem);
+        }
+        
+        logger.log(Level.INFO, "Got {0} basic, {1} interchange, {2} bom records for {3} product ids in {4}ms",
+                new Object[] {basicProducts.size(), interchanges.size(), bom.size(), productIds.size(), System.currentTimeMillis() - startTime});
+        
+        return productMap;
+    }
+    
+    public static List<MagmiBasicProduct> findMagmiBasicProducts(List<Long> productIds) {
+        return Part.entityManager().createQuery(
+              "SELECT DISTINCT new com.turbointernational.metadata.util.dto.MagmiBasicProduct("
+                + "  p.id AS sku,\n"
+                + "  p.name AS name,\n"
+                + "  p.description AS description,\n"
+                + "  pt.magentoAttributeSet AS attribute_set,\n"
+                + "  pt.name AS part_type,\n"
+                + "  ptp.name AS part_type_parent,\n"
+                + "  m.id AS manufacturerId,\n"
+                + "  m.name AS manufacturer,\n"
+                + "  p.manufacturerPartNumber AS part_number,\n"
+                + "  i.filename AS imageFile,\n" // Collection
+                + "  tt.name AS turbo_type,\n" // Collection
+                + "  tm.name AS turbo_model,\n" // Collection
+                + "  CONCAT(tman.name, '!!', tt.name, '!!', tm.name, '!!', t.manufacturerPartNumber) AS finder_turbo,\n" // Collection
+                + "  CONCAT(cmake.name, '!!', cyear.name, '!!', cmodel.name) AS finder_application\n" // Collection
+                + ")\n"
+                + "FROM Part p\n"
+                + "  JOIN p.partType pt\n"
+                + "  JOIN p.manufacturer m\n"
+                + "  LEFT JOIN pt.parent ptp\n"
+                + "  LEFT JOIN p.productImages i\n"
+                + "  LEFT JOIN p.turbos t\n"
+                + "  LEFT JOIN t.manufacturer tman\n"
+                + "  LEFT JOIN t.turboModel tm\n"
+                + "  LEFT JOIN tm.turboType tt\n"
+                + "  LEFT JOIN t.cars c\n"
+                + "  LEFT JOIN c.model cmodel\n"
+                + "  LEFT JOIN cmodel.make cmake\n"
+                + "  LEFT JOIN c.year cyear\n"
+                + "WHERE\n"
+                + "  p.id IN (" + StringUtils.join(productIds, ',') + ") \n"
+                + "ORDER BY p.id", MagmiBasicProduct.class)
+            .getResultList();
+    }
+    
+    private static List<MagmiInterchange> findMagmiInterchanges(List<Long> productIds) {
+        return Part.entityManager().createQuery(
+                "SELECT DISTINCT NEW"
+              + "  com.turbointernational.metadata.util.dto.MagmiInterchange("
+              + "    p.id AS sku,"
+              + "    ip.id AS interchangePartSku,"
+              + "    ipm.id AS interchangePartManufacturerId\n"
+              + ")\n"
+              + "FROM Part p\n"
+              + "  JOIN p.interchange i\n"
+              + "  JOIN i.parts ip\n"
+              + "  JOIN ip.manufacturer ipm\n"
+              + "WHERE\n"
+              + "  ip.id != p.id\n"
+              + "  AND p.id IN (" + StringUtils.join(productIds, ',') + ")", MagmiInterchange.class)
+                .getResultList();
+    }
+
+    private static List<MagmiBomItem> findMagmiBom(List<Long> productIds) {
+        return Part.entityManager().createQuery(
+                "SELECT DISTINCT NEW com.turbointernational.metadata.util.dto.MagmiBomItem(\n"
+              + "  b.parent.id as parent_sku,\n"
+              + "  b.child.id as child_sku,\n"
+              + "  b.quantity,\n"
+                        
+                // Alternates
+              + "  alt.id AS alt_sku,\n"
+              + "  alt.manufacturer.id AS alt_mfr_id,\n"
+                        
+                // Interchanges
+              + "  int.id AS int_sku,\n"
+              + "  int.manufacturer.id AS int_mfr_id\n"
+              + ")\n"
+              + "FROM BOMItem b\n" 
+             + "  JOIN b.child bc\n"
+              + "  LEFT JOIN bc.interchange bci\n"
+              + "  LEFT JOIN bci.parts int\n"
+              + "  LEFT JOIN b.alternatives balt\n"
+              + "  LEFT JOIN balt.part alt\n"
+              + "WHERE b.parent.id IN (" + StringUtils.join(productIds, ',') + ")", MagmiBomItem.class)
+                .getResultList();
     }
 }

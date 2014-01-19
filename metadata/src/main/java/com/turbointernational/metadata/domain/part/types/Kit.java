@@ -46,13 +46,4 @@ public class Kit extends Part {
         
         return partObject;
     }
-    
-    @Override
-    public void csvColumns(Map<String, String> columns) {
-        super.csvColumns(columns);
-        
-        if (kitType != null) {
-            columns.put("kit_type", kitType.getName());
-        }
-    }
 }

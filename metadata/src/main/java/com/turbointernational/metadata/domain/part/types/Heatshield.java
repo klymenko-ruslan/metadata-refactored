@@ -57,13 +57,4 @@ public class Heatshield extends Part {
         
         return partObject;
     }
-
-    @Override
-    public void csvColumns(Map<String, String> columns) {
-        super.csvColumns(columns);
-        
-        columns.put("overall_diameter", ObjectUtils.toString(getOverallDiameter()));
-        columns.put("inside_diameter", ObjectUtils.toString(getInsideDiameter()));
-        columns.put("inducer_diameter", ObjectUtils.toString(getInducerDiameter()));
-    }
 }

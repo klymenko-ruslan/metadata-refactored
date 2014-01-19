@@ -9,10 +9,16 @@ import org.apache.commons.lang3.ObjectUtils;
  */
 public class MagmiBomItem {
     
-    private final Long sku;
+    private final Long parentSku;
 
-    public Long getSku() {
-        return sku;
+    public Long getParentSku() {
+        return parentSku;
+    }
+    
+    private final Long childSku;
+
+    public Long getChildSku() {
+        return childSku;
     }
     
     private final Integer quantity;
@@ -45,12 +51,14 @@ public class MagmiBomItem {
         return intSkuMfrId;
     }
 
-    public MagmiBomItem(Long sku, Integer quantity, Long altSku, Long altSkuMfrId, Long intSku, Long intSkuMfrId) {
-        this.sku = sku;
+    public MagmiBomItem(Long parentSku, Long childSku, Integer quantity, Long altSku, Long altSkuMfrId, Long intSku, Long intSkuMfrId) {
+        this.parentSku = parentSku;
+        this.childSku = childSku;
         this.quantity = quantity;
         this.altSku = altSku;
         this.altSkuMfrId = altSkuMfrId;
         this.intSku = intSku;
         this.intSkuMfrId = intSkuMfrId;
     }
+    
 }

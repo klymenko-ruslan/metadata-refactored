@@ -104,17 +104,4 @@ public class CompressorWheel extends Part {
         
         return partObject;
     }
-    
-    @Override
-    public void csvColumns(Map<String, String> columns) {
-        super.csvColumns(columns);
-        
-        columns.put("inducer_oa", ObjectUtils.toString(getInducerOa()));
-        columns.put("tip_height_b", ObjectUtils.toString(getTipHeightB()));
-        columns.put("exducer_oc", ObjectUtils.toString(getExducerOc()));
-        columns.put("hub_length_d", ObjectUtils.toString(getHubLengthD()));
-        columns.put("bore_oe", ObjectUtils.toString(getBoreOe()));
-        columns.put("number_of_blades", ObjectUtils.toString(getNumberOfBlades()));
-        columns.put("application", ObjectUtils.toString(getApplication()));
-    }
 }

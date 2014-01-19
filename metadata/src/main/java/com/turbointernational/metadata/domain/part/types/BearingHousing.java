@@ -134,22 +134,4 @@ public class BearingHousing extends Part {
         
         return partObject;
     }
-    
-    @Override
-    public void csvColumns(Map<String, String> columns) {
-        super.csvColumns(columns);
-        
-        columns.put("oil_inlet", ObjectUtils.toString(getOilInlet()));
-        columns.put("oil_outlet", ObjectUtils.toString(getOilOutlet()));
-        columns.put("oil", ObjectUtils.toString(getOil()));
-        columns.put("outlet_flange_holes", ObjectUtils.toString(getOutletFlangeHoles()));
-        columns.put("water_ports", ObjectUtils.toString(getWaterPorts()));
-        columns.put("design_features", ObjectUtils.toString(getDesignFeatures()));
-        columns.put("bearing_type", ObjectUtils.toString(getBearingType()));
-
-        if (getCoolType() != null) {
-            columns.put("cool_type", ObjectUtils.toString(getCoolType().getName()));
-        }
-    }
-
 }
