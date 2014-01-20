@@ -210,6 +210,7 @@ DROP VIEW IF EXISTS vbalt;
 CREATE VIEW vbalt AS
   SELECT
     bai.bom_id,
+    bai.part_id,
     bai.bom_alt_header_id,
     bah.name AS alt_header_name,
     bah.description AS alt_header_desc,
@@ -219,6 +220,7 @@ CREATE VIEW vbalt AS
     m.name AS alt_manufacturer
   FROM
     bom_alt_item bai
+    JOIN bom b ON b.id = bai.bom_id
     JOIN bom_alt_header bah ON bah.id = bai.bom_alt_header_id
     JOIN part p ON p.id = bai.part_id
     JOIN manfr m ON m.id = p.manfr_id;
