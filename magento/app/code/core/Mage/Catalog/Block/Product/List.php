@@ -96,6 +96,19 @@ class Mage_Catalog_Block_Product_List extends Mage_Catalog_Block_Product_Abstrac
     }
 
     /**
+     * @return Amasty_Finder_Model_Finder
+     */
+    public function getFinder()
+    {
+        if (is_null($this->_finderModel)){
+            $this->_finderModel = Mage::getModel('amfinder/finder')
+                ->load(1); // HACKY
+
+        }
+        return $this->_finderModel;
+    }
+
+    /**
      * Get catalog layer model
      *
      * @return Mage_Catalog_Model_Layer
@@ -162,6 +175,7 @@ class Mage_Catalog_Block_Product_List extends Mage_Catalog_Block_Product_Abstrac
             'collection' => $this->_getProductCollection()
         ));
 
+        $this->getFinder()->applyFilter();
         $this->_getProductCollection()->load();
 
         return parent::_beforeToHtml();

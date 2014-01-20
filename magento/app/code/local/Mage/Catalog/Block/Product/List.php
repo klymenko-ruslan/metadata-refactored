@@ -177,9 +177,6 @@ class Mage_Catalog_Block_Product_List extends Mage_Catalog_Block_Product_Abstrac
 
         $this->getFinder()->applyFilter();
         $this->_getProductCollection()->load();
-        
-        error_log("Query: " . $this->_getProductCollection()->getSelect()->__toString());
-        error_log("Loaded IDs: " . join(',', $this->_getProductCollection()->getLoadedIds()));
 
         return parent::_beforeToHtml();
     }
