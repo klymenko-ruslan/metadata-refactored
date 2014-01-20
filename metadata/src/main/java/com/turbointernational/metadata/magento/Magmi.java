@@ -11,11 +11,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -160,6 +160,8 @@ public class Magmi {
         response.setHeader("Content-Type", "text/csv");
         response.setHeader("Content-Disposition: attachment; filename=products.csv", null);
         
+        long startTime = System.currentTimeMillis();
+        
         Mas90Prices mas90 = new Mas90Prices(new File(mas90DbPath));
         CSVWriter writer = new CSVWriter(new OutputStreamWriter(out), ',', '"');
         
@@ -197,6 +199,8 @@ public class Magmi {
         writer.flush();
         writer.close();
         
+        logger.log(Level.INFO, "Exported {0} products in {1}ms",
+                new Object[] {position, System.currentTimeMillis() - startTime});
     }
     
     private String[] magmiProductToCsvRow(Mas90Prices mas90, MagmiProduct product) throws IOException, NoPriceException {
@@ -334,11 +338,12 @@ public class Magmi {
             productMap.put(part.getId(), new MagmiProduct(part));
         }
         
-        Set<Long> productIds = productMap.keySet();
+        List<Long> productIds = new ArrayList<Long>(productMap.keySet());
         
         
         // Aggregate basic product data
         List<MagmiBasicProduct> basicProducts = findMagmiBasicProducts(productIds);
+        
         for (MagmiBasicProduct basicProduct : basicProducts) {
             productMap.get(basicProduct.getSku())
                     .addBasicProductCollections(basicProduct);
@@ -346,6 +351,7 @@ public class Magmi {
         
         // Add the interchanges
         List<MagmiInterchange> interchanges = findMagmiInterchanges(productIds);
+        
         for (MagmiInterchange interchange : interchanges) {
             productMap.get(interchange.getSku())
                     .addInterchange(interchange);
@@ -353,13 +359,14 @@ public class Magmi {
         
         // Add the bom items
         List<MagmiBomItem> bom = findMagmiBom(productIds);
+        
         for (MagmiBomItem bomItem : bom) {
             productMap.get(bomItem.getParentSku())
                     .addBomItem(bomItem);
         }
         
-        logger.log(Level.INFO, "Got {0} basic, {1} interchange, {2} bom records for {3} parts in {4}ms",
-                new Object[] {basicProducts.size(), interchanges.size(), bom.size(), parts.size(), System.currentTimeMillis() - startTime});
+        logger.log(Level.INFO, "Got {0} basic, {1} interchange, {2} bom records for {3} parts in {4}ms; first/last id {5}/{6}",
+                new Object[] {basicProducts.size(), interchanges.size(), bom.size(), parts.size(), System.currentTimeMillis() - startTime, productIds.get(0), productIds.get(productIds.size() - 1)});
         
         return productMap;
     }
