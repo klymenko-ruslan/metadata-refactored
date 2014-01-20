@@ -502,7 +502,7 @@ public class Part implements Comparable<Part> {
     public static List<Part> findPartEntries(int firstResult, int maxResults) {
         return entityManager()
                 .createQuery(
-                  "SELECT p\n"
+                  "SELECT DISTINCT p\n"
                 + "FROM Part p\n"
                 + "  JOIN FETCH p.partType pt\n"
                 + "  LEFT JOIN FETCH pt.parent ptp\n"
