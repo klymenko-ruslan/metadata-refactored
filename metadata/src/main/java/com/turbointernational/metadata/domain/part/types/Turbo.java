@@ -26,11 +26,11 @@ import org.springframework.beans.factory.annotation.Configurable;
 @SecondaryTable(name="turbo", pkJoinColumns=@PrimaryKeyJoinColumn(name = "part_id"))
 public class Turbo extends Part {
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="turbo_model_id", table = "turbo")
     private TurboModel turboModel;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="cool_type_id", table = "turbo")
     private CoolType coolType;
     
@@ -56,6 +56,14 @@ public class Turbo extends Part {
         this.coolType = coolType;
     }
 
+    public Set<CarModelEngineYear> getCars() {
+        return cars;
+    }
+
+    public void setCars(Set<CarModelEngineYear> cars) {
+        this.cars = cars;
+    }
+    
     @Override
     protected JSONSerializer buildJSONSerializer() {
         return super.buildJSONSerializer()
@@ -84,5 +92,18 @@ public class Turbo extends Part {
         }
         
         return partObject;
+    }
+    
+    @Override
+    public void csvColumns(Map<String, String> columns) {
+        super.csvColumns(columns);
+        
+        if (getTurboModel() != null) {
+            columns.put("turbo_model_name", ObjectUtils.toString(getTurboModel().getName()));
+        }
+
+        if (getCoolType() != null) {
+            columns.put("cool_type", ObjectUtils.toString(getCoolType().getName()));
+        }
     }
 }

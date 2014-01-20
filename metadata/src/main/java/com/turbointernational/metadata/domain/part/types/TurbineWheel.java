@@ -110,4 +110,17 @@ public class TurbineWheel extends Part {
         
         return partObject;
     }
+    
+    @Override
+    public void csvColumns(Map<String, String> columns) {
+        super.csvColumns(columns);
+        
+        columns.put("exduce_oa", ObjectUtils.toString(getExducerDiameterA()));
+        columns.put("tip_height_b", ObjectUtils.toString(getTipHeightB()));
+        columns.put("inducer_oc", ObjectUtils.toString(getInducerDiameterC()));
+        columns.put("journal_od", ObjectUtils.toString(getJournalDiameterD()));
+        columns.put("stem_oe", ObjectUtils.toString(getStemDiameterE()));
+        columns.put("shaft_thread_f", ObjectUtils.toString(getShaftThreadF()));
+        columns.put("number_of_blades", ObjectUtils.toString(getNumberOfBlades()));
+    }
 }

@@ -4,12 +4,12 @@ import com.turbointernational.metadata.domain.type.KitType;
 import flexjson.JSONSerializer;
 import java.util.Map;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.SecondaryTable;
 import net.sf.jsog.JSOG;
-import org.apache.commons.lang.ObjectUtils;
 import org.springframework.beans.factory.annotation.Configurable;
 
 @Configurable
@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Configurable;
 @SecondaryTable(name="kit", pkJoinColumns=@PrimaryKeyJoinColumn(name = "part_id"))
 public class Kit extends Part {
     
-    @OneToOne
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="kit_type_id", table = "kit")
     private KitType kitType;
 
@@ -45,5 +45,14 @@ public class Kit extends Part {
         }
         
         return partObject;
+    }
+    
+    @Override
+    public void csvColumns(Map<String, String> columns) {
+        super.csvColumns(columns);
+        
+        if (kitType != null) {
+            columns.put("kit_type", kitType.getName());
+        }
     }
 }

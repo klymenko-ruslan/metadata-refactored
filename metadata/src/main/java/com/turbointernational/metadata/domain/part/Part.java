@@ -1,6 +1,4 @@
 package com.turbointernational.metadata.domain.part;
-import com.turbointernational.metadata.util.dto.TurboModelMap;
-import com.google.common.collect.Maps;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.bom.BOMItem;
 import com.turbointernational.metadata.domain.part.types.Backplate;
@@ -18,7 +16,6 @@ import com.turbointernational.metadata.domain.part.types.TurbineWheel;
 import com.turbointernational.metadata.domain.part.types.Turbo;
 import com.turbointernational.metadata.domain.type.PartType;
 import com.turbointernational.metadata.util.ElasticSearch;
-import com.turbointernational.metadata.util.dto.MagmiBomItem;
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
 import flexjson.ObjectBinder;
@@ -48,6 +45,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -57,7 +55,6 @@ import javax.persistence.PreRemove;
 import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.persistence.TypedQuery;
 import javax.persistence.Version;
 import net.sf.jsog.JSOG;
 import org.apache.commons.lang3.ObjectUtils;
@@ -163,7 +160,7 @@ public class Part implements Comparable<Part> {
     @Column(nullable = false, columnDefinition = "BIT", length = 1)
     private Boolean inactive = false;
     
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinTable(name="interchange_item",
             joinColumns=@JoinColumn(name="part_id"),
             inverseJoinColumns=@JoinColumn(name="interchange_header_id"))
@@ -435,7 +432,41 @@ public class Part implements Comparable<Part> {
                 .exclude("*")
                 .serialize(collection);
     }
-    
+
+    public void csvColumns(Map<String, String> columns) {
+        // part_type
+        columns.put("part_type", getPartType().getName());
+        
+        // sku
+        columns.put("sku", getId().toString());
+        
+        // attribute_set
+        columns.put("attribute_set", getPartType().getMagentoAttributeSet());
+        
+        // type
+        columns.put("type", "simple");
+        
+        // visibility
+        columns.put("visibility", "Catalog, Search"); // See magmi genericmapper visibility.csv
+        
+        // type
+        columns.put("status", "Enabled"); // See magmi genericmapper status.csv
+        
+        // name
+        columns.put("name", ObjectUtils.toString(getName()));
+        
+        // description
+        columns.put("description", ObjectUtils.toString(getDescription()));
+        
+        // manufacturer
+        columns.put("manufacturer", ObjectUtils.toString(getManufacturer().getName()));
+        
+        // part_number
+        columns.put("part_number", ObjectUtils.toString(getManufacturerPartNumber()));
+        
+        // part_number
+        columns.put("part_number_short", ObjectUtils.toString(getManufacturerPartNumber()).replaceAll("\\W", ""));
+    }
     //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="ActiveRecord">
@@ -451,30 +482,6 @@ public class Part implements Comparable<Part> {
     
     public static long count() {
         return entityManager().createQuery("SELECT COUNT(o) FROM Part o", Long.class).getSingleResult();
-    }
-    
-    @Transactional
-    public static List<Long> findPartIds(int firstResult, int maxResults) {
-        return Part.entityManager()
-            .createQuery("SELECT o.id FROM Part o ORDER BY o.id", Long.class)
-            .setFirstResult(firstResult)
-            .setMaxResults(maxResults)
-            .getResultList();
-    }
-    
-    @Transactional
-    public static List<Part> findPartEntries(int firstResult, int maxResults, String type) {
-        EntityManager em = Part.entityManager();
-        TypedQuery<Part> q;
-        
-        if (type == null) {
-            q = em.createQuery("SELECT o FROM Part o", Part.class);
-        } else {
-            q = em.createQuery("SELECT o FROM Part o JOIN o.partType WHERE o.partType.name = ?", Part.class);
-            q.setParameter(1, type);
-        }
-        
-        return q.setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 
     public static List<Part> getPartsUpdatedAfter(Date lastUpdated, int i, int pageSize) {
@@ -494,7 +501,7 @@ public class Part implements Comparable<Part> {
     
     public static List<Part> findPartEntries(int firstResult, int maxResults) {
         return entityManager()
-                .createQuery("SELECT DISTINCT o FROM Part o ORDER BY o.id", Part.class)
+                .createQuery("SELECT p FROM Part p JOIN FETCH p.partType pt JOIN FETCH pt.parent ptp JOIN FETCH p.manufacturer m", Part.class)
                 .setFirstResult(firstResult)
                 .setMaxResults(maxResults).getResultList();
     }

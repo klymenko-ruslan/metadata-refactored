@@ -11,10 +11,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -22,9 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 import mas90magmi.ItemPricing;
 import mas90magmi.CalculatedPrice;
 import mas90magmi.Mas90Prices;
-import net.sf.jsog.JSOG;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Controller;
@@ -170,14 +169,17 @@ public class Magmi {
         // Get the product IDs to retrieve
         int position = 0;
         int pageSize = 100;
-        List<Long> productIds;
+        List<Part> parts;
         do {
             
+            // Clear Hibernate
+            Part.entityManager().clear();
+            
             // Get the next batch of part IDs
-            productIds = Part.findPartIds(position, pageSize);
+            parts = Part.findPartEntries(position, pageSize);
 
             // Process each product
-            for (MagmiProduct product : findMagmiProducts(productIds).values()) {
+            for (MagmiProduct product : findMagmiProducts(parts).values()) {
                 try {
                     writer.writeNext(magmiProductToCsvRow(mas90, product));
                 } catch (NoPriceException e) {
@@ -188,8 +190,8 @@ public class Magmi {
             }
             
             // Update the position
-            position += productIds.size();
-        } while (productIds.size() >= pageSize);
+            position += parts.size();
+        } while (parts.size() >= pageSize);
         
         
         writer.flush();
@@ -323,68 +325,54 @@ public class Magmi {
         }
     }
     
-    public static TreeMap<Long, MagmiProduct> findMagmiProducts(List<Long> productIds) {
+    public static TreeMap<Long, MagmiProduct> findMagmiProducts(List<Part> parts) {
         long startTime = System.currentTimeMillis();
         
+        // Build a product map from the parts
         TreeMap<Long, MagmiProduct> productMap = new TreeMap<Long, MagmiProduct>();
+        for (Part part : parts) {
+            productMap.put(part.getId(), new MagmiProduct(part));
+        }
         
+        Set<Long> productIds = productMap.keySet();
+        
+        
+        // Aggregate basic product data
         List<MagmiBasicProduct> basicProducts = findMagmiBasicProducts(productIds);
-        
-        List<MagmiInterchange> interchanges = findMagmiInterchanges(productIds);
-        
-        List<MagmiBomItem> bom = findMagmiBom(productIds);
-        
-        // Transform the basic product rows in the aggregated product data
         for (MagmiBasicProduct basicProduct : basicProducts) {
-            Long sku = basicProduct.getSku();
-            
-            // Get the product
-            MagmiProduct magmiProduct = productMap.get(sku);
-            
-            // Create it or update it
-            if (magmiProduct == null) {
-                magmiProduct = new MagmiProduct(basicProduct);
-                productMap.put(sku, magmiProduct);
-            } else {
-                magmiProduct.addBasicProductCollections(basicProduct);
-            }
+            productMap.get(basicProduct.getSku())
+                    .addBasicProductCollections(basicProduct);
         }
         
         // Add the interchanges
+        List<MagmiInterchange> interchanges = findMagmiInterchanges(productIds);
         for (MagmiInterchange interchange : interchanges) {
-            MagmiProduct magmiProduct = productMap.get(interchange.getSku());
-            magmiProduct.addInterchange(interchange);
+            productMap.get(interchange.getSku())
+                    .addInterchange(interchange);
         }
         
         // Add the bom items
+        List<MagmiBomItem> bom = findMagmiBom(productIds);
         for (MagmiBomItem bomItem : bom) {
-            MagmiProduct magmiProduct = productMap.get(bomItem.getParentSku());
-            magmiProduct.addBomItem(bomItem);
+            productMap.get(bomItem.getParentSku())
+                    .addBomItem(bomItem);
         }
         
-        logger.log(Level.INFO, "Got {0} basic, {1} interchange, {2} bom records for {3} product ids in {4}ms",
-                new Object[] {basicProducts.size(), interchanges.size(), bom.size(), productIds.size(), System.currentTimeMillis() - startTime});
+        logger.log(Level.INFO, "Got {0} basic, {1} interchange, {2} bom records for {3} parts in {4}ms",
+                new Object[] {basicProducts.size(), interchanges.size(), bom.size(), parts.size(), System.currentTimeMillis() - startTime});
         
         return productMap;
     }
     
-    public static List<MagmiBasicProduct> findMagmiBasicProducts(List<Long> productIds) {
+    public static List<MagmiBasicProduct> findMagmiBasicProducts(Collection<Long> productIds) {
         return Part.entityManager().createQuery(
               "SELECT DISTINCT new com.turbointernational.metadata.util.dto.MagmiBasicProduct("
                 + "  p.id AS sku,\n"
-                + "  p.name AS name,\n"
-                + "  p.description AS description,\n"
-                + "  pt.magentoAttributeSet AS attribute_set,\n"
-                + "  pt.name AS part_type,\n"
-                + "  ptp.name AS part_type_parent,\n"
-                + "  m.id AS manufacturerId,\n"
-                + "  m.name AS manufacturer,\n"
-                + "  p.manufacturerPartNumber AS part_number,\n"
-                + "  i.filename AS imageFile,\n" // Collection
-                + "  tt.name AS turbo_type,\n" // Collection
-                + "  tm.name AS turbo_model,\n" // Collection
-                + "  CONCAT(tman.name, '!!', tt.name, '!!', tm.name, '!!', t.manufacturerPartNumber) AS finder_turbo,\n" // Collection
-                + "  CONCAT(cmake.name, '!!', cyear.name, '!!', cmodel.name) AS finder_application\n" // Collection
+                + "  i.filename AS imageFile,\n"
+                + "  tt.name AS turbo_type,\n"
+                + "  tm.name AS turbo_model,\n"
+                + "  CONCAT(tman.name, '!!', tt.name, '!!', tm.name, '!!', t.manufacturerPartNumber) AS finder_turbo,\n"
+                + "  CONCAT(cmake.name, '!!', cyear.name, '!!', cmodel.name) AS finder_application\n"
                 + ")\n"
                 + "FROM Part p\n"
                 + "  JOIN p.partType pt\n"
@@ -405,7 +393,7 @@ public class Magmi {
             .getResultList();
     }
     
-    private static List<MagmiInterchange> findMagmiInterchanges(List<Long> productIds) {
+    private static List<MagmiInterchange> findMagmiInterchanges(Collection<Long> productIds) {
         return Part.entityManager().createQuery(
                 "SELECT DISTINCT NEW"
               + "  com.turbointernational.metadata.util.dto.MagmiInterchange("
@@ -423,7 +411,7 @@ public class Magmi {
                 .getResultList();
     }
 
-    private static List<MagmiBomItem> findMagmiBom(List<Long> productIds) {
+    private static List<MagmiBomItem> findMagmiBom(Collection<Long> productIds) {
         return Part.entityManager().createQuery(
                 "SELECT DISTINCT NEW com.turbointernational.metadata.util.dto.MagmiBomItem(\n"
               + "  b.parent.id as parent_sku,\n"

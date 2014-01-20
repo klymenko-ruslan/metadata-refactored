@@ -1,6 +1,7 @@
 package com.turbointernational.metadata.util.dto;
 
 import com.turbointernational.metadata.domain.other.Manufacturer;
+import com.turbointernational.metadata.domain.part.Part;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -19,10 +20,9 @@ public class MagmiProduct {
     public static final String FINDER_ID_APPLICATION = "1";
 
     public static final String FINDER_ID_TURBO = "1";
-
-//    + "  'simple' AS type,\n"
-//    + "  'Catalog, Search' AS visibility,\n"
-//    + "  'Enabled' AS status,\n";
+    
+    private Part part;
+    
     private TreeSet<String> imageFiles = new TreeSet<String>();
 
     private Set<String> turboType = new TreeSet<String>();
@@ -39,27 +39,22 @@ public class MagmiProduct {
     
     private JSOG bom = JSOG.array();
 
-    // No need to duplicate the basics
-    private MagmiBasicProduct basicProduct;
-
     private int rowCount = 0;
 
-    public MagmiProduct(MagmiBasicProduct basicProduct) {
-        this.basicProduct = basicProduct;
-
-        addBasicProductCollections(basicProduct);
+    public MagmiProduct(Part part) {
+        this.part = part;
     }
     
     public Long getSku() {
-        return basicProduct.getSku();
+        return part.getId();
     }
 
     public Long getManufacturerId() {
-        return basicProduct.getManufacturerId();
+        return part.getManufacturer().getId();
     }
 
     public String getPartNumber() {
-        return basicProduct.getPartNumber();
+        return part.getManufacturerPartNumber();
     }
 
     public final void addBasicProductCollections(MagmiBasicProduct basicProduct) {
@@ -151,16 +146,9 @@ public class MagmiProduct {
 
         // CSV column map
         Map<String, String> columns = new HashMap<String, String>();
-
-
-        // part_type
-        columns.put("part_type", basicProduct.getPartType());
-
-        // sku
-        columns.put("sku", ObjectUtils.toString(basicProduct.getSku()));
-
-        // attribute_set
-        columns.put("attribute_set", basicProduct.getAttributeSet());
+        
+        // Part data
+        part.csvColumns(columns);
 
         // type
         columns.put("type", "simple");
@@ -171,38 +159,21 @@ public class MagmiProduct {
         // type
         columns.put("status", "Enabled"); // See magmi genericmapper status.csv
 
-        // name
-        columns.put("name", ObjectUtils.toString(basicProduct.getName()));
-
-        // description
-        columns.put("description", ObjectUtils.toString(basicProduct.getDescription()));
-
-        // manufacturer
-        columns.put("manufacturer", ObjectUtils.toString(basicProduct.getManufacturer()));
-
-        // part_number
-        columns.put("part_number", ObjectUtils.toString(basicProduct.getPartNumber()));
-
-        // part_number
-        columns.put("part_number_short", ObjectUtils.toString(basicProduct.getPartNumber()).replaceAll("\\W", ""));
-
         // categories
         StringBuilder categories = new StringBuilder()
                 .append("Manufacturer/")
-                .append(basicProduct.getManufacturer())
+                .append(part.getManufacturer().getName())
                 .append(";;Part Type/");
         
-        // Part type parent
-        if (StringUtils.isNotEmpty(basicProduct.getPartTypeParent())) {
-            categories.append(basicProduct.getPartTypeParent()).append("/");
+        if (part.getPartType().getParent() != null) {
+            categories.append(part.getPartType().getParent().getName()).append("/");
         }
         
-        // part type
-        categories.append(basicProduct.getPartType());
+        categories.append(part.getPartType().getName());
 
         columns.put("categories", categories.toString());
         
-        
+        // Interchanges / TI Interchanges
         columns.put("interchanges", StringUtils.join(interchanges, ','));
         columns.put("ti_part_sku", StringUtils.join(tiInterchanges, ','));
 

@@ -112,11 +112,11 @@ public class ElasticSearch {
     }
 
     @Transactional(readOnly = true)
-    public int indexParts(int firstResult, int maxResults, String type) throws Exception {
+    public int indexParts(int firstResult, int maxResults) throws Exception {
         
         BulkRequest bulk = new BulkRequest();
         
-        List<Part> parts = Part.findPartEntries(firstResult, maxResults, type);
+        List<Part> parts = Part.findPartEntries(firstResult, maxResults);
         
         for (Part part : parts) {
             IndexRequest index = new IndexRequest(elasticSearchIndex, elasticSearchType, part.getId().toString());

@@ -50,12 +50,11 @@ public class PartController {
     @ResponseBody
     public ResponseEntity<String> listJson(
             @RequestParam(required = false, defaultValue = "1") Integer first,
-            @RequestParam(required = false, defaultValue = "20") Integer count,
-            @RequestParam(required = false) String type) {
+            @RequestParam(required = false, defaultValue = "20") Integer count) {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json; charset=utf-8");
         
-        List<Part> result = Part.findPartEntries(first, count, type);
+        List<Part> result = Part.findPartEntries(first, count);
         
         String[] fields = new String[] {
             "id",
@@ -200,8 +199,7 @@ public class PartController {
     
     @RequestMapping(value="/indexAll")
     @ResponseBody
-    public ResponseEntity<Void> indexAll(@RequestParam(required=false) Integer maxPages,
-                                         @RequestParam(required=false) String type) throws Exception {
+    public ResponseEntity<Void> indexAll(@RequestParam(required=false) Integer maxPages) throws Exception {
         
         if (maxPages == null ) {
             maxPages = Integer.MAX_VALUE;
@@ -214,7 +212,7 @@ public class PartController {
         int page = 0;
         int result;
         do {
-            result = elasticSearch.indexParts(page * pageSize, pageSize, type);
+            result = elasticSearch.indexParts(page * pageSize, pageSize);
             log.log(Level.INFO, "Indexing parts {0}-{1}", new Object[]{page * pageSize, (page * pageSize) + pageSize});
             page++;
             

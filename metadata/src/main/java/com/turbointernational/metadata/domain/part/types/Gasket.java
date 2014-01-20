@@ -18,7 +18,7 @@ import org.springframework.beans.factory.annotation.Configurable;
 @SecondaryTable(name="gasket", pkJoinColumns=@PrimaryKeyJoinColumn(name = "part_id"))
 public class Gasket extends Part {
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="gasket_type_id", table = "gasket")
     private GasketType gasketType;
 
@@ -47,5 +47,14 @@ public class Gasket extends Part {
         }
         
         return partObject;
+    }
+    
+    @Override
+    public void csvColumns(Map<String, String> columns) {
+        super.csvColumns(columns);
+        
+        if (getGasketType() != null) {
+            columns.put("gasket_type", ObjectUtils.toString(getGasketType().getName()));
+        }
     }
 }

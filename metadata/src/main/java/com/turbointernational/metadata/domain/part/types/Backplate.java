@@ -18,7 +18,7 @@ import org.springframework.beans.factory.annotation.Configurable;
 @SecondaryTable(name="backplate", pkJoinColumns=@PrimaryKeyJoinColumn(name = "part_id"))
 public class Backplate extends Part {
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="seal_type_id", table = "backplate")
     private SealType sealType;
 
@@ -147,6 +147,23 @@ public class Backplate extends Part {
         partObject.put("style_compressor_wheel", getStyleCompressorWheel());
         
         return partObject;
+    }
+    
+    @Override
+    public void csvColumns(Map<String, String> columns) {
+        super.csvColumns(columns);
+        
+        if (getSealType() != null) {
+            columns.put("seal_type", ObjectUtils.toString(getSealType().getName()));
+        }
+
+        columns.put("overall_diameter", ObjectUtils.toString(getOverallDiameter()));
+        columns.put("compressor_wheel_diameter", ObjectUtils.toString(getCompressorWheelDiameter()));
+        columns.put("piston_ring_diameter", ObjectUtils.toString(getPistonRingDiameter()));
+        columns.put("compressor_housing_diameter", ObjectUtils.toString(getCompressorHousingDiameter()));
+        columns.put("secondary_diameter", ObjectUtils.toString(getSecondaryDiameter()));
+        columns.put("overall_height", ObjectUtils.toString(getOverallHeight()));
+        columns.put("style_compressor_wheel", ObjectUtils.toString(getStyleCompressorWheel()));
     }
 
 }
