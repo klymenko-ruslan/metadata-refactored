@@ -9,7 +9,6 @@ import java.util.Set;
 import java.util.TreeSet;
 import net.sf.jsog.JSOG;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang3.ObjectUtils;
 
 /**
  *
@@ -19,7 +18,7 @@ public class MagmiProduct {
 
     public static final String FINDER_ID_APPLICATION = "1";
 
-    public static final String FINDER_ID_TURBO = "1";
+    public static final String FINDER_ID_TURBO = "2";
     
     private Part part;
     
