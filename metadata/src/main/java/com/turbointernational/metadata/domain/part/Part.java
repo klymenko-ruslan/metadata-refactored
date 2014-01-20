@@ -501,7 +501,13 @@ public class Part implements Comparable<Part> {
     
     public static List<Part> findPartEntries(int firstResult, int maxResults) {
         return entityManager()
-                .createQuery("SELECT p FROM Part p JOIN FETCH p.partType pt JOIN FETCH pt.parent ptp JOIN FETCH p.manufacturer m", Part.class)
+                .createQuery(
+                  "SELECT p\n"
+                + "FROM Part p\n"
+                + "  JOIN FETCH p.partType pt\n"
+                + "  LEFT JOIN FETCH pt.parent ptp\n"
+                + "  JOIN FETCH p.manufacturer m\n"
+                + "ORDER BY p.id ASC", Part.class)
                 .setFirstResult(firstResult)
                 .setMaxResults(maxResults).getResultList();
     }
