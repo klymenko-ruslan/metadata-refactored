@@ -170,7 +170,7 @@ public class Magmi {
         
         // Get the product IDs to retrieve
         int position = 0;
-        int pageSize = 100;
+        int pageSize = 1000;
         List<Part> parts;
         do {
             
