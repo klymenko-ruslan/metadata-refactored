@@ -378,7 +378,7 @@ public class Magmi {
                 + "  i.filename AS imageFile,\n"
                 + "  tt.name AS turbo_type,\n"
                 + "  tm.name AS turbo_model,\n"
-                + "  CONCAT(tman.name, '!!', tt.name, '!!', tm.name, '!!', t.manufacturerPartNumber) AS finder_turbo,\n"
+                + "  CONCAT(tman.name, '!!', tt.name, '!!', tm.name) AS finder_turbo,\n"
                 + "  CONCAT(cmake.name, '!!', cyear.name, '!!', cmodel.name) AS finder_application\n"
                 + ")\n"
                 + "FROM Part p\n"
