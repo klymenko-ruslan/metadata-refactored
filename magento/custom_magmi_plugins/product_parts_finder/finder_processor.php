@@ -63,7 +63,7 @@ class FinderProcessor extends Magmi_ItemProcessor {
             $finderId = substr($columnName, strlen($this->_columnPrefix));
             
             // Get the pipe-delimited mappings from the CSV column and lookup the corresponding value IDs
-            $valueIds = $this->getValueIdsForMappings($finderId, explode('|', $columnValue));
+            $valueIds = $this->getValueIdsForMappings($finderId, explode('||', $columnValue));
             
             // Update the value mappings for the product
             if (!empty($valueIds)) {
@@ -86,7 +86,7 @@ class FinderProcessor extends Magmi_ItemProcessor {
 
             // Get the values of the mapping, it's comma delimited
             // Toyota,2004,Matrix
-            $values = explode(',', $mapping);
+            $values = explode('!!', $mapping);
             
             // Get the IDs of the final dropdown values
             if (count($values) > 0 && !empty($values[0])) {
