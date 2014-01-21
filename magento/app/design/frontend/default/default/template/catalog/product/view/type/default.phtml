@@ -85,9 +85,39 @@ $_productManufacturer = $_product->getManufacturer();
 <?php echo $this->getChildHtml('product_type_data_extra') ?>
 <?php echo $this->getPriceHtml($_product) ?>
 
-<div style="margin-top:30px;">
-    <!-- Turbo cartridge upper section details -->
+<!-- Turbo cartridge upper section details -->
+<div style="margin-top:40px;">
     <?php if ($_product->getAttributeText('part_type') == 'turbo'): ?>
-        <h5>Cartridges go here&hellip;</h5>
+        <ul>
+            <?php
+            $billMaterials = json_decode($_product->getBillOfMaterials(), true);
+            //
+            ?>
+            <?php if (is_array($billMaterials)): ?>
+                <?php
+                foreach ($billMaterials as $bomItem) {
+                    $bomItemProduct = Mage::getModel('catalog/product');
+                    $bomItemProduct->load($bomItemProduct->getIdBySku($bomItem['sku']));
+                    ?>
+                    <li><strong>Cartridge:</strong> <?php
+                        echo '<a href="' . $bomItemProduct->getProductUrl() . '">' . $bomItemProduct->getPartNumber() . '</a>'; ?></li>
+                    <li><strong>Compatible TI Part:</strong> <?php
+                        $a = 1;
+                        foreach ($bomItem['ti_part_sku'] as $tiPart) {
+                            $bomItemInterchangeProduct = Mage::getModel('catalog/product');
+                            $bomItemInterchangeProduct->load($bomItemInterchangeProduct->getIdBySku($tiPart));
+                            if ($bomItemInterchangeProduct->getId()) {
+                                echo '<a href="' . $bomItemInterchangeProduct->getProductUrl() . '">' . $bomItemInterchangeProduct->getPartNumber() . '</a>';
+                            } else echo $tiPart;
+                            if ($a < count($bomItem['ti_part_sku'])) {
+                                echo ", ";
+                            }
+                            $a++;
+                        } ?></li>
+                <?php
+                }
+                ?>
+            <?php endif; ?>
+        </ul>
     <?php endif; ?>
 </div>
