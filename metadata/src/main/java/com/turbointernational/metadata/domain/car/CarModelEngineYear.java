@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.List;
 import javax.persistence.Cacheable;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -26,16 +27,16 @@ public class CarModelEngineYear {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @OneToOne
-    @JoinColumn(name="car_model_id")
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="car_model_id", nullable = true)
     private CarModel model;
     
-    @OneToOne
-    @JoinColumn(name="car_engine_id")
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="car_engine_id", nullable = true)
     private CarEngine engine;
     
-    @OneToOne
-    @JoinColumn(name="car_year_id")
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="car_year_id", nullable = true)
     private CarYear year;
     
     public Long getId() {

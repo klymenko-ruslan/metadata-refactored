@@ -8,6 +8,7 @@ import java.util.List;
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -31,8 +32,8 @@ public class CarModel {
     @Column(nullable=false)
     private String name;
     
-    @OneToOne
-    @JoinColumn(name="car_make_id")
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="car_make_id", nullable = true)
     private CarMake make;
     
     public Long getId() {

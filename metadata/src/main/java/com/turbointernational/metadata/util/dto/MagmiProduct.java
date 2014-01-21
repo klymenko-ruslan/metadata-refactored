@@ -1,7 +1,9 @@
 package com.turbointernational.metadata.util.dto;
 
+import com.turbointernational.metadata.domain.car.CarModelEngineYear;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.Part;
+import com.turbointernational.metadata.domain.part.types.Turbo;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -204,123 +206,43 @@ public class MagmiProduct {
             columns.put("media_gallery", galleryString.toString());
         }
         
-        columns.put("turbo_model", org.apache.commons.lang3.StringUtils.join(turboModel, ','));
-        columns.put("turbo_type", org.apache.commons.lang3.StringUtils.join(turboType, ','));
+        // Turbo-specifics
+        if (StringUtils.equals("Turbo", part.getPartType().getTypeName())) {
+            Turbo turbo = (Turbo) part;
+            
+            // Turbo type/model
+            turboModel.add(turbo.getTurboModel().getName());
+            turboType.add(turbo.getTurboModel().getTurboType().getName());
+            
+            // Turbo finder
+            finderTurbo.add(
+                    turbo.getManufacturer().getName()
+                    + "!!" + turbo.getTurboModel().getName()
+                    + "!!" + turbo.getTurboModel().getTurboType().getName());
+            
+            // Application finder
+            for (CarModelEngineYear application : turbo.getCars()) {
+                
+                // Make sure each component exists
+                if (application.getModel() != null
+                        && application.getModel().getMake() != null
+                        && application.getYear() != null) {
+                    finderApplication.add(
+                        application.getModel().getMake().getName()
+                        + "!!" + application.getYear().getName()
+                        + "!!" + application.getModel().getName());
+                }
+            }
+        }
+        
+        columns.put("turbo_model", StringUtils.join(turboModel, ','));
+        columns.put("turbo_type", StringUtils.join(turboType, ','));
 
         columns.put("finder:" + FINDER_ID_TURBO, StringUtils.join(finderTurbo, "||"));
 
         columns.put("finder:" + FINDER_ID_APPLICATION, StringUtils.join(finderApplication, "||"));
 
         columns.put("bill_of_materials", bom.toString());
-        
-        
-        
-//        // Backplate
-//        if (getSealType() != null) {
-//            columns.put("seal_type", org.apache.commons.lang.ObjectUtils.toString(getSealType().getName()));
-//        }
-//
-//        columns.put("overall_diameter", org.apache.commons.lang.ObjectUtils.toString(getOverallDiameter()));
-//        columns.put("compressor_wheel_diameter", org.apache.commons.lang.ObjectUtils.toString(getCompressorWheelDiameter()));
-//        columns.put("piston_ring_diameter", org.apache.commons.lang.ObjectUtils.toString(getPistonRingDiameter()));
-//        columns.put("compressor_housing_diameter", org.apache.commons.lang.ObjectUtils.toString(getCompressorHousingDiameter()));
-//        columns.put("secondary_diameter", org.apache.commons.lang.ObjectUtils.toString(getSecondaryDiameter()));
-//        columns.put("overall_height", org.apache.commons.lang.ObjectUtils.toString(getOverallHeight()));
-//        columns.put("style_compressor_wheel", org.apache.commons.lang.ObjectUtils.toString(getStyleCompressorWheel()));
-//        
-//        // Bearing Housing
-//        columns.put("oil_inlet", org.apache.commons.lang.ObjectUtils.toString(getOilInlet()));
-//        columns.put("oil_outlet", org.apache.commons.lang.ObjectUtils.toString(getOilOutlet()));
-//        columns.put("oil", org.apache.commons.lang.ObjectUtils.toString(getOil()));
-//        columns.put("outlet_flange_holes", org.apache.commons.lang.ObjectUtils.toString(getOutletFlangeHoles()));
-//        columns.put("water_ports", org.apache.commons.lang.ObjectUtils.toString(getWaterPorts()));
-//        columns.put("design_features", org.apache.commons.lang.ObjectUtils.toString(getDesignFeatures()));
-//        columns.put("bearing_type", org.apache.commons.lang.ObjectUtils.toString(getBearingType()));
-//
-//        if (getCoolType() != null) {
-//            columns.put("cool_type", org.apache.commons.lang.ObjectUtils.toString(getCoolType().getName()));
-//        }
-//        
-//        
-//        // Bearing Spacer
-//        columns.put("outside_diameter_min", org.apache.commons.lang.ObjectUtils.toString(getOutsideDiameterMin()));
-//        columns.put("outside_diameter_max", org.apache.commons.lang.ObjectUtils.toString(getOutsideDiameterMax()));
-//        columns.put("inside_diameter_min", org.apache.commons.lang.ObjectUtils.toString(getInsideDiameterMin()));
-//        columns.put("inside_diameter_max", org.apache.commons.lang.ObjectUtils.toString(getInsideDiameterMax()));
-//
-//        if (getStandardSize() != null) {
-//            columns.put("standard_size_id", org.apache.commons.lang.ObjectUtils.toString(getStandardSize().getId()));
-//        }
-//
-//        if (getOversize() != null) {
-//            columns.put("oversize_id", org.apache.commons.lang.ObjectUtils.toString(getOversize().getId()));
-//        }
-//        
-//        // Compressor Wheel
-//        
-//        columns.put("inducer_oa", ObjectUtils.toString(getInducerOa()));
-//        columns.put("tip_height_b", org.apache.commons.lang.ObjectUtils.toString(getTipHeightB()));
-//        columns.put("exducer_oc", org.apache.commons.lang.ObjectUtils.toString(getExducerOc()));
-//        columns.put("hub_length_d", org.apache.commons.lang.ObjectUtils.toString(getHubLengthD()));
-//        columns.put("bore_oe", org.apache.commons.lang.ObjectUtils.toString(getBoreOe()));
-//        columns.put("number_of_blades", org.apache.commons.lang.ObjectUtils.toString(getNumberOfBlades()));
-//        columns.put("application", org.apache.commons.lang.ObjectUtils.toString(getApplication()));
-//        
-//        // Gasket
-//        if (getGasketType() != null) {
-//            columns.put("gasket_type", org.apache.commons.lang.ObjectUtils.toString(getGasketType().getName()));
-//        }
-//        
-//        // Heatshield
-//        columns.put("overall_diameter", org.apache.commons.lang.ObjectUtils.toString(getOverallDiameter()));
-//        columns.put("inside_diameter", org.apache.commons.lang.ObjectUtils.toString(getInsideDiameter()));
-//        columns.put("inducer_diameter", org.apache.commons.lang.ObjectUtils.toString(getInducerDiameter()));
-//        
-//        // Journal Bearing
-//        columns.put("outside_diameter_min", org.apache.commons.lang.ObjectUtils.toString(getOutsideDiameterMin()));
-//        columns.put("outside_diameter_max", org.apache.commons.lang.ObjectUtils.toString(getOutsideDiameterMax()));
-//        columns.put("inside_diameter_min", org.apache.commons.lang.ObjectUtils.toString(getInsideDiameterMin()));
-//        columns.put("inside_diameter_max", org.apache.commons.lang.ObjectUtils.toString(getInsideDiameterMax()));
-//
-//        if (getStandardSize() != null) {
-//            columns.put("standard_size_id", org.apache.commons.lang.ObjectUtils.toString(getStandardSize().getId()));
-//        }
-//
-//        if (getOversize() != null) {
-//            columns.put("oversize_id", org.apache.commons.lang.ObjectUtils.toString(getOversize().getId()));
-//        }
-//        
-//        // Kit
-//        if (kitType != null) {
-//            columns.put("kit_type", kitType.getName());
-//        }
-//        
-//        // Piston Ring
-//        columns.put("outside_dim_min", org.apache.commons.lang.ObjectUtils.toString(getOutsideDiameterMin()));
-//        columns.put("outside_dim_max", org.apache.commons.lang.ObjectUtils.toString(getOutsideDiameterMax()));
-//        columns.put("width_min", org.apache.commons.lang.ObjectUtils.toString(getWidthMin()));
-//        columns.put("width_max", org.apache.commons.lang.ObjectUtils.toString(getWidthMax()));
-//        columns.put("i_gap_min", org.apache.commons.lang.ObjectUtils.toString(getInstalledGapMin()));
-//        columns.put("i_gap_max", org.apache.commons.lang.ObjectUtils.toString(getInstalledGapMax()));
-//        
-//        // Turbine Wheel
-//        columns.put("exduce_oa", org.apache.commons.lang.ObjectUtils.toString(getExducerDiameterA()));
-//        columns.put("tip_height_b", org.apache.commons.lang.ObjectUtils.toString(getTipHeightB()));
-//        columns.put("inducer_oc", org.apache.commons.lang.ObjectUtils.toString(getInducerDiameterC()));
-//        columns.put("journal_od", org.apache.commons.lang.ObjectUtils.toString(getJournalDiameterD()));
-//        columns.put("stem_oe", org.apache.commons.lang.ObjectUtils.toString(getStemDiameterE()));
-//        columns.put("shaft_thread_f", org.apache.commons.lang.ObjectUtils.toString(getShaftThreadF()));
-//        columns.put("number_of_blades", org.apache.commons.lang.ObjectUtils.toString(getNumberOfBlades()));
-//        
-//        // Turbo
-//        if (getTurboModel() != null) {
-//            columns.put("turbo_model_name", org.apache.commons.lang.ObjectUtils.toString(getTurboModel().getName()));
-//        }
-//
-//        if (getCoolType() != null) {
-//            columns.put("cool_type", org.apache.commons.lang.ObjectUtils.toString(getCoolType().getName()));
-//        }
-        
         
         return columns;
     }

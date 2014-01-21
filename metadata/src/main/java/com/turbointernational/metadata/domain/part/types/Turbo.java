@@ -98,9 +98,7 @@ public class Turbo extends Part {
     public void csvColumns(Map<String, String> columns) {
         super.csvColumns(columns);
         
-        if (getTurboModel() != null) {
-            columns.put("turbo_model_name", ObjectUtils.toString(getTurboModel().getName()));
-        }
+        // turbo model is handled specially.
 
         if (getCoolType() != null) {
             columns.put("cool_type", ObjectUtils.toString(getCoolType().getName()));

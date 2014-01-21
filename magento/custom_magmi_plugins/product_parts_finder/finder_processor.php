@@ -174,7 +174,7 @@ class FinderProcessor extends Magmi_ItemProcessor {
                 array($parentId, $dropdown, $dropdownValue), "value_id");
             
             if ($parentId == null) {
-                throw new Exception("Could not lookup value chain for finder $finderId mapping: " . join (',', $values));
+                throw new Exception("Could not lookup value chain for finder $finderId mapping: " . join (',', array_slice($values, 0, $count)));
             }
         }
 
@@ -206,9 +206,9 @@ class FinderProcessor extends Magmi_ItemProcessor {
         
         $query .= " WHERE " . join(" AND ", $where);
         
-//        error_log("optimistic select: " . $query . " values: " . print_r($values, true));
+        error_log("optimistic select: " . $query . " values: " . print_r(array_slice($values, 0, $count), true));
         
-        return $this->selectone($query, $values, "finalValueId");
+        return $this->selectone($query, array_slice($values, 0, $count), "finalValueId");
     }
 
 }

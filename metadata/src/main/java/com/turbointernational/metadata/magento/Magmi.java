@@ -72,7 +72,6 @@ public class Magmi {
         "gasket_type",
         "seal_type",
         "cool_type",
-        "turbo_model_name",
         //</editor-fold>
         
         //<editor-fold defaultstate="collapsed" desc="Part Type Specifics">
@@ -382,9 +381,6 @@ public class Magmi {
                 + "  CONCAT(cmake.name, '!!', cyear.name, '!!', cmodel.name) AS finder_application\n"
                 + ")\n"
                 + "FROM Part p\n"
-                + "  JOIN p.partType pt\n"
-                + "  JOIN p.manufacturer m\n"
-                + "  LEFT JOIN pt.parent ptp\n"
                 + "  LEFT JOIN p.productImages i\n"
                 + "  LEFT JOIN p.turbos t\n"
                 + "  LEFT JOIN t.manufacturer tman\n"
