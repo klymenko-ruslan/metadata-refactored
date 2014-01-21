@@ -1,3 +1,19 @@
+-- There are zero-valued car_model_engine_year entries
+ALTER TABLE car_model_engine_year CHANGE COLUMN car_model_id `car_model_id` BIGINT NULL;
+UPDATE car_model_engine_year
+SET car_model_id = null
+WHERE car_model_id = 0;
+
+ALTER TABLE car_model_engine_year CHANGE COLUMN car_engine_id `car_engine_id` BIGINT NULL;
+UPDATE car_model_engine_year
+SET car_year_id = null
+WHERE car_year_id = 0;
+
+ALTER TABLE car_model_engine_year CHANGE COLUMN car_year_id `car_year_id` BIGINT NULL;
+UPDATE car_model_engine_year
+SET car_engine_id = null
+WHERE car_engine_id= 0;
+
 -- Add version columns and update PK
 ALTER TABLE `part` ADD COLUMN `version` INTEGER NOT NULL DEFAULT 1;
 ALTER TABLE `part` ADD UNIQUE KEY (`id`, `version`);
@@ -261,7 +277,21 @@ CREATE VIEW vapp AS
     FROM part p
     JOIN part_turbo pt ON pt.part_id = p.id
     JOIN turbo_car_model_engine_year c ON c.part_id = pt.turbo_id
-    JOIN car_model_engine_year cmey ON cmey.id = c.car_model_engine_year_id
-    JOIN car_model cmodel ON cmodel.id = cmey.car_model_id
-    JOIN car_year cyear ON cyear.id = cmey.car_year_id
-    JOIN car_make cmake ON cmake.id = cmodel.car_make_id;
+    LEFT JOIN car_model_engine_year cmey ON cmey.id = c.car_model_engine_year_id
+    LEFT JOIN car_model cmodel ON cmodel.id = cmey.car_model_id
+    LEFT JOIN car_make cmake ON cmake.id = cmodel.car_make_id
+    LEFT JOIN car_year cyear ON cyear.id = cmey.car_year_id;
+
+DROP VIEW IF EXISTS vtapp;
+CREATE VIEW vtapp AS
+  SELECT DISTINCT
+    t.part_id,
+    cmake.name AS car_make,
+    cyear.name AS car_year,
+    cmodel.name AS car_model
+    FROM turbo t
+    JOIN turbo_car_model_engine_year c ON c.part_id = t.part_id
+    LEFT JOIN car_model_engine_year cmey ON cmey.id = c.car_model_engine_year_id
+    LEFT JOIN car_model cmodel ON cmodel.id = cmey.car_model_id
+    LEFT JOIN car_make cmake ON cmake.id = cmodel.car_make_id
+    LEFT JOIN car_year cyear ON cyear.id = cmey.car_year_id;
