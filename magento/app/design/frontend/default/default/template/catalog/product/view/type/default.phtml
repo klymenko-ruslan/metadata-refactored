@@ -67,6 +67,19 @@ $_productManufacturer = $_product->getManufacturer();
             <li><strong>Compatible TI Part:</strong> <?php echo '<a href="' . $_tiProduct->getProductUrl() . '">' . $_tiPartSku . '</a>'; ?></li>
         <?php } ?>
     <?php endif; ?>
+    <?php if (is_array($_product->getAttributeText('turbo_type'))): ?>
+        <li><strong>Turbo Types:</strong> <?php $x = 1;
+            $turboTypes = $_product->getAttributeText('turbo_type');
+            foreach ($turboTypes as $turboType) {
+                echo $turboType;
+                if ($x < count($turboTypes)) {
+                    echo ", ";
+                }
+                $x++;
+            } ?></li>
+    <?php else: ?>
+        <li><strong>Turbo Type:</strong> <?php echo $_product->getAttributeText('turbo_type') ?></li>
+    <?php endif; ?>
 </ul>
 
 <?php echo $this->getChildHtml('product_type_data_extra') ?>
