@@ -6,13 +6,13 @@ WHERE car_model_id = 0;
 
 ALTER TABLE car_model_engine_year CHANGE COLUMN car_engine_id `car_engine_id` BIGINT NULL;
 UPDATE car_model_engine_year
-SET car_year_id = null
-WHERE car_year_id = 0;
+SET car_engine_id = null
+WHERE car_engine_id= 0;
 
 ALTER TABLE car_model_engine_year CHANGE COLUMN car_year_id `car_year_id` BIGINT NULL;
 UPDATE car_model_engine_year
-SET car_engine_id = null
-WHERE car_engine_id= 0;
+SET car_year_id = null
+WHERE car_year_id = 0;
 
 -- Add version columns and update PK
 ALTER TABLE `part` ADD COLUMN `version` INTEGER NOT NULL DEFAULT 1;
