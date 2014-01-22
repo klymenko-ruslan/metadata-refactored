@@ -378,7 +378,7 @@ public class Magmi {
                 + "  tt.name AS turbo_type,\n"
                 + "  tm.name AS turbo_model,\n"
                 + "  CONCAT(tman.name, '!!', tt.name, '!!', tm.name) AS finder_turbo,\n"
-                + "  CONCAT(cmake.name, '!!', cyear.name, '!!', cmodel.name) AS finder_application\n"
+                + "  CONCAT(cmake.name, '!!', COALESCE(cyear.name, 'not specified'), '!!', cmodel.name) AS finder_application\n"
                 + ")\n"
                 + "FROM Part p\n"
                 + "  LEFT JOIN p.productImages i\n"
@@ -391,7 +391,9 @@ public class Magmi {
                 + "  LEFT JOIN cmodel.make cmake\n"
                 + "  LEFT JOIN c.year cyear\n"
                 + "WHERE\n"
-                + "  p.id IN (" + StringUtils.join(productIds, ',') + ") \n"
+                + "  cmake.name IS NOT NULL\n"
+                + "  AND cmodel.name IS NOT NULL\n"
+                + "  AND p.id IN (" + StringUtils.join(productIds, ',') + ")\n"
                 + "ORDER BY p.id", MagmiBasicProduct.class)
             .getResultList();
     }
