@@ -44,6 +44,12 @@ $_tiProduct->load($_tiProduct->getIdBySku($tiPartSku));
                     onclick="setLocation('<?php echo $this->getAddToCartUrl($_tiProduct) ?>')">
                 <span><span><?php echo $this->__('Add TI Part to Cart') ?></span></span>
             </button>
+            <?php elseif (0): ?>
+            <!-- Adding compatible TI cartridge to cart button -->
+            <button type="button" title="<?php echo $this->__('Add TI Cartridge to Cart') ?>" class="button btn-cart"
+                    onclick="setLocation('<?php echo $this->getAddToCartUrl($_tiProduct) ?>')">
+                <span><span><?php echo $this->__('Add TI Cartridge to Cart') ?></span></span>
+            </button>
         <?php else: ?>
             <button type="button" title="<?php echo $this->__('Add to Cart') ?>" class="button btn-cart"
                     onclick="productAddToCartForm.submit(this)">
