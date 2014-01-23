@@ -299,7 +299,11 @@ $_ad = $this->getAdditionalData();
                                 echo '<a href="' . $bomItemProduct->getProductUrl() . '">' . $bomItemProduct->getName() . '</a>';
                             } else echo $bomItem['sku']; ?></td>
                         <td><?php echo $bomItem['quantity']; ?></td>
-                        <td><?php echo Mage::helper('core')->currency($bomItemInterchangeProduct->getFinalPrice()); ?></td>
+                        <td><?php if ($bomItemProduct->getTiPartSku()) {
+                                echo Mage::helper('core')->currency($bomItemInterchangeProduct->getFinalPrice());
+                            } else {
+                                echo '';
+                            } ?></td>
 
                     </tr>
                 <?php
