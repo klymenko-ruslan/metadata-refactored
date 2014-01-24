@@ -39,8 +39,8 @@ $_description = $_product->getDescription();
 $_ad = $this->getAdditionalData();
 
 // Get the interchanges and TI part SKUs
-$interchangeSkuArray = explode(',', $_product->getInterchanges());
-$tiPartSkuArray = explode(',', $_product->getTiPartSku());
+$interchangeSkuArray = $_product->getInterchanges() ? explode(',', $_product->getInterchanges()) : null;
+$tiPartSkuArray = $_product->getTiPartSku() ? explode(',', $_product->getTiPartSku()) : null;
 
 // Load TI part based on interchanges
 $_tiProductByInterchanges = Mage::getModel('catalog/product');
@@ -63,7 +63,8 @@ foreach ($interchangeSkuArray as $interchangeSku) {
 }
 
 // Sort the interchanges by part number
-function tiInterchangeUsortPredicate($a, $b) {
+function tiInterchangeUsortPredicate($a, $b)
+{
     return strcmp($a->getPartNumber(), $b->getPartNumber());
 }
 
@@ -254,7 +255,7 @@ uasort($interchangeSkuProductMap, 'tiInterchangeUsortPredicate');
                 <th class="label">Part Number</th>
                 <th class="label">Manufacturer</th>
             </tr>
-            <?php if (count($tiPartSkuArray)): ?>
+            <?php if (count($interchangeSkuArray)): ?>
                 <?php foreach ($interchangeSkuProductMap as $interchangeSku => $interchangeProduct): ?>
                     <tr>
                         <td class="data">
@@ -263,7 +264,9 @@ uasort($interchangeSkuProductMap, 'tiInterchangeUsortPredicate');
                     </tr>
                 <?php endforeach; ?>
             <?php else: ?>
-                <tr><td colspan="2">No Interchangeable Parts</td></tr>
+                <tr>
+                    <td colspan="2"><?php echo $this->__('No Interchangeable Parts') ?></td>
+                </tr>
             <?php endif; ?>
             </tbody>
         </table>
@@ -325,7 +328,7 @@ uasort($interchangeSkuProductMap, 'tiInterchangeUsortPredicate');
         <h2><?php echo $this->__('Make / Model / Year') ?></h2>
         <?php //echo $_product->getBillOfMaterials();
 
-        $apps = explode("||",$_product->getApplication());
+        $apps = explode("||", $_product->getApplication());
         ?>
         <table class="data-table" id="make-model-year">
             <tr>
@@ -335,17 +338,19 @@ uasort($interchangeSkuProductMap, 'tiInterchangeUsortPredicate');
                 <th><strong>Engine Size</strong></th>
                 <th><strong>Fuel</strong></th>
             </tr>
-            <?php if(is_array($apps)): ?>
+            <?php if (is_array($apps)): ?>
                 <?php
                 foreach ($apps as $app) {
-                    $appl = explode("!!",$app);
+                    $appl = explode("!!", $app);
                     //$bomItemProduct->load($bomItemProduct->getIdBySku($bomItem['sku']));
                     ?>
                     <tr>
-                        <?php if(is_array($appl)) {
-                            foreach($appl as $ap) {?>
+                        <?php if (is_array($appl)) {
+                            foreach ($appl as $ap) {
+                                ?>
                                 <td class="data"><?php echo $ap; ?></td>
-                            <?php 	}
+                            <?php
+                            }
                         } ?>
                     </tr>
                 <?php
