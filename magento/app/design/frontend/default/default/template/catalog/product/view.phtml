@@ -34,26 +34,42 @@
 <?php
 $_helper = $this->helper('catalog/output');
 $_product = $this->getProduct();
-$orgSkuString = $_product->getTiPartSku();
-if (strpos($orgSkuString, ',') !== false) {
-    $tiProductPartNumbers = explode(',', $orgSkuString);
-    $orgSku = $tiProductPartNumbers[0];
-} else {
-    $orgSku = $orgSkuString;
-}
-$interchangesString = $_product->getInterchanges();
-$tiProductInterchanges = array();
-$tiInterchangesArray = false;
-if (strpos($interchangesString, ',') !== false) {
-    $tiProductInterchanges = explode(',', $interchangesString);
-    sort($tiProductInterchanges, SORT_REGULAR);
-    $tiInterchangesArray = true;
-} else {
-    $tiProductInterchanges = $interchangesString;
-}
 $_productManufacturer = $_product->getManufacturer();
 $_description = $_product->getDescription();
 $_ad = $this->getAdditionalData();
+
+// Get the interchanges and TI part SKUs
+$interchangeSkuArray = $_product->getInterchanges() ? explode(',', $_product->getInterchanges()) : null;
+$tiPartSkuArray = $_product->getTiPartSku() ? explode(',', $_product->getTiPartSku()) : null;
+
+// Load TI part based on interchanges
+$_tiProductByInterchanges = Mage::getModel('catalog/product');
+$_tiProductByInterchanges->load($_tiProductByInterchanges->getIdBySku($tiPartSkuArray));
+
+// For reference
+$_tiProductInterchangePartNumber = $_tiProductByInterchanges->getPartNumber();
+$_tiProductInterchangeManufacturer = $_tiProductByInterchanges->getAttributeText('manufacturer');
+
+// Load the interchange product into the sku map
+$interchangeSkuProductMap = array();
+foreach ($interchangeSkuArray as $interchangeSku) {
+    $interchangeProduct = Mage::getModel('catalog/product');
+    $interchangeProduct->load($interchangeProduct->getIdBySku($interchangeSku));
+
+    // Make sure interchange product exists
+    if ($interchangeProduct) {
+        $interchangeSkuProductMap[$interchangeSku] = $interchangeProduct;
+    }
+}
+
+// Sort the interchanges by part number
+function tiInterchangeUsortPredicate($a, $b)
+{
+    return strcmp($a->getPartNumber(), $b->getPartNumber());
+}
+
+uasort($interchangeSkuProductMap, 'tiInterchangeUsortPredicate');
+
 ?>
 <script type="text/javascript">
     var optionsPrice = new Product.OptionsPrice(<?php echo $this->getJsonConfig() ?>);
@@ -82,12 +98,12 @@ $_ad = $this->getAdditionalData();
             <?php if (!$this->hasOptions()): ?>
                 <div class="add-to-box">
                     <?php if ($_product->isSaleable()): ?>
-                        <?php if ($orgSku && strlen($orgSku) > 1 || $_productManufacturer == 44) {
+                        <?php if ($tiPartSkuArray && strlen($tiPartSkuArray) > 1 || $_productManufacturer == 44) {
                             echo $this->getChildHtml('addtocart');
                         }
                         ?>
                         <?php if ($this->helper('wishlist')->isAllow() || $_compareUrl = $this->helper('catalog/product_compare')->getAddUrl($_product)): ?>
-                            <?php if ($orgSku && strlen($orgSku) > 1 || $_productManufacturer == 44): ?>
+                            <?php if ($tiPartSkuArray && strlen($tiPartSkuArray) > 1 || $_productManufacturer == 44): ?>
                                 <span class="or"><?php echo $this->__('OR') ?></span>
                             <?php endif; ?>
                         <?php endif; ?>
@@ -239,87 +255,22 @@ $_ad = $this->getAdditionalData();
                 <th class="label">Part Number</th>
                 <th class="label">Manufacturer</th>
             </tr>
-            <?php if (is_array($tiProductInterchanges)): ?>
-                <?php
-                $arr = array();
-                foreach ($tiProductInterchanges as $tiProductInterchange): ?>
-                    <?php
-                    $_tiProductByInterchanges = Mage::getModel('catalog/product');
-                    $_tiProductByInterchanges->load($_tiProductByInterchanges->getIdBySku($tiProductInterchange));
-                    $_tiProductInterchangePartNumber = $_tiProductByInterchanges->getPartNumber();
-                    $_tiProductInterchangeManufacturer = $_tiProductByInterchanges->getAttributeText('manufacturer');
-
-                    $arr[] = array("_tiProductInterchangePartNumber" => $_tiProductInterchangePartNumber, "_tiProductInterchangeManufacturer" => $_tiProductInterchangeManufacturer, "sku" => $tiProductInterchange);
-                    ?>
-                <?php endforeach; ?>
-
-                <?php
-
-                function array_sort($array, $on, $order = SORT_ASC)
-                {
-                    $new_array = array();
-                    $sortable_array = array();
-
-                    if (count($array) > 0) {
-                        foreach ($array as $k => $v) {
-                            if (is_array($v)) {
-                                foreach ($v as $k2 => $v2) {
-                                    if ($k2 == $on) {
-                                        $sortable_array[$k] = $v2;
-                                    }
-                                }
-                            } else {
-                                $sortable_array[$k] = $v;
-                            }
-                        }
-
-                        switch ($order) {
-                            case SORT_ASC:
-                                asort($sortable_array);
-                                break;
-                            case SORT_DESC:
-                                arsort($sortable_array);
-                                break;
-                        }
-
-                        foreach ($sortable_array as $k => $v) {
-                            $new_array[$k] = $array[$k];
-                        }
-                    }
-
-                    return $new_array;
-                }
-
-                //asort($arr);
-                //echo "<pre>";
-                //print_r($arr);
-                //print_r(array_sort($arr, '_tiProductInterchangePartNumber', SORT_ASC));
-                //echo "</pre>";
-                $arr = array_sort($arr, '_tiProductInterchangePartNumber', SORT_ASC);
-                ?>
-                <?php foreach ($arr as $v): ?>
-                    <?php
-                    $_tiProductByInterchanges = Mage::getModel('catalog/product');
-                    $_tiProductByInterchanges->load($_tiProductByInterchanges->getIdBySku($v['sku']));
-                    $_tiProductInterchangePartNumber = $_tiProductByInterchanges->getPartNumber();
-                    $_tiProductInterchangeManufacturer = $_tiProductByInterchanges->getAttributeText('manufacturer');
-                    //foreach($arr as $v) {
-                    //if($v['_tiProductInterchangePartNumber'] == $_tiProductInterchangePartNumber && $v['_tiProductInterchangeManufacturer'] == $_tiProductInterchangeManufacturer) {
-                    ?>
+            <?php if (count($interchangeSkuArray)): ?>
+                <?php foreach ($interchangeSkuProductMap as $interchangeSku => $interchangeProduct): ?>
                     <tr>
-                        <td class="data"><?php echo '<a href="' . $_tiProductByInterchanges->getProductUrl() . '">';
-                            echo $_tiProductInterchangePartNumber;
-                            echo '</a>'; ?></td>
-                        <td class="data"><?php echo $_tiProductInterchangeManufacturer; ?></td>
+                        <td class="data">
+                            <a href="<?php echo $interchangeProduct->getProductUrl(); ?>"><?php echo $interchangeProduct->getPartNumber() ?></a>
+                        <td class="data"><?php echo $interchangeProduct->getAttributeText('manufacturer'); ?></td>
                     </tr>
-                <?php //}
-                    //}
-                endforeach; ?>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <tr>
+                    <td colspan="2"><?php echo $this->__('No Interchangeable Parts') ?></td>
+                </tr>
             <?php endif; ?>
             </tbody>
         </table>
     </div>
-
     <div class="box-collateral">
         <h2><?php echo $this->__('Bill of Materials') ?></h2>
         <?php //echo $_product->getBillOfMaterials();
@@ -377,7 +328,7 @@ $_ad = $this->getAdditionalData();
         <h2><?php echo $this->__('Make / Model / Year') ?></h2>
         <?php //echo $_product->getBillOfMaterials();
 
-        $apps = explode("||",$_product->getApplication());
+        $apps = explode("||", $_product->getApplication());
         ?>
         <table class="data-table" id="make-model-year">
             <tr>
@@ -387,17 +338,19 @@ $_ad = $this->getAdditionalData();
                 <th><strong>Engine Size</strong></th>
                 <th><strong>Fuel</strong></th>
             </tr>
-            <?php if(is_array($apps)): ?>
+            <?php if (is_array($apps)): ?>
                 <?php
                 foreach ($apps as $app) {
-                    $appl = explode("!!",$app);
+                    $appl = explode("!!", $app);
                     //$bomItemProduct->load($bomItemProduct->getIdBySku($bomItem['sku']));
                     ?>
                     <tr>
-                        <?php if(is_array($appl)) {
-                            foreach($appl as $ap) {?>
+                        <?php if (is_array($appl)) {
+                            foreach ($appl as $ap) {
+                                ?>
                                 <td class="data"><?php echo $ap; ?></td>
-                            <?php 	}
+                            <?php
+                            }
                         } ?>
                     </tr>
                 <?php
