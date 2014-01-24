@@ -240,12 +240,71 @@ $_ad = $this->getAdditionalData();
                 <th class="label">Manufacturer</th>
             </tr>
             <?php if (is_array($tiProductInterchanges)): ?>
-                <?php foreach ($tiProductInterchanges as $tiProductInterchange): ?>
+                <?php
+                $arr = array();
+                foreach ($tiProductInterchanges as $tiProductInterchange): ?>
                     <?php
                     $_tiProductByInterchanges = Mage::getModel('catalog/product');
                     $_tiProductByInterchanges->load($_tiProductByInterchanges->getIdBySku($tiProductInterchange));
                     $_tiProductInterchangePartNumber = $_tiProductByInterchanges->getPartNumber();
                     $_tiProductInterchangeManufacturer = $_tiProductByInterchanges->getAttributeText('manufacturer');
+
+                    $arr[] = array("_tiProductInterchangePartNumber" => $_tiProductInterchangePartNumber, "_tiProductInterchangeManufacturer" => $_tiProductInterchangeManufacturer, "sku" => $tiProductInterchange);
+                    ?>
+                <?php endforeach; ?>
+
+                <?php
+
+                function array_sort($array, $on, $order = SORT_ASC)
+                {
+                    $new_array = array();
+                    $sortable_array = array();
+
+                    if (count($array) > 0) {
+                        foreach ($array as $k => $v) {
+                            if (is_array($v)) {
+                                foreach ($v as $k2 => $v2) {
+                                    if ($k2 == $on) {
+                                        $sortable_array[$k] = $v2;
+                                    }
+                                }
+                            } else {
+                                $sortable_array[$k] = $v;
+                            }
+                        }
+
+                        switch ($order) {
+                            case SORT_ASC:
+                                asort($sortable_array);
+                                break;
+                            case SORT_DESC:
+                                arsort($sortable_array);
+                                break;
+                        }
+
+                        foreach ($sortable_array as $k => $v) {
+                            $new_array[$k] = $array[$k];
+                        }
+                    }
+
+                    return $new_array;
+                }
+
+                //asort($arr);
+                //echo "<pre>";
+                //print_r($arr);
+                //print_r(array_sort($arr, '_tiProductInterchangePartNumber', SORT_ASC));
+                //echo "</pre>";
+                $arr = array_sort($arr, '_tiProductInterchangePartNumber', SORT_ASC);
+                ?>
+                <?php foreach ($arr as $v): ?>
+                    <?php
+                    $_tiProductByInterchanges = Mage::getModel('catalog/product');
+                    $_tiProductByInterchanges->load($_tiProductByInterchanges->getIdBySku($v['sku']));
+                    $_tiProductInterchangePartNumber = $_tiProductByInterchanges->getPartNumber();
+                    $_tiProductInterchangeManufacturer = $_tiProductByInterchanges->getAttributeText('manufacturer');
+                    //foreach($arr as $v) {
+                    //if($v['_tiProductInterchangePartNumber'] == $_tiProductInterchangePartNumber && $v['_tiProductInterchangeManufacturer'] == $_tiProductInterchangeManufacturer) {
                     ?>
                     <tr>
                         <td class="data"><?php echo '<a href="' . $_tiProductByInterchanges->getProductUrl() . '">';
@@ -253,7 +312,9 @@ $_ad = $this->getAdditionalData();
                             echo '</a>'; ?></td>
                         <td class="data"><?php echo $_tiProductInterchangeManufacturer; ?></td>
                     </tr>
-                <?php endforeach; ?>
+                <?php //}
+                    //}
+                endforeach; ?>
             <?php endif; ?>
             </tbody>
         </table>
@@ -312,6 +373,40 @@ $_ad = $this->getAdditionalData();
             <?php endif; ?>
         </table>
     </div>
+    <div class="box-collateral">
+        <h2><?php echo $this->__('Make / Model / Year') ?></h2>
+        <?php //echo $_product->getBillOfMaterials();
+
+        $apps = explode("||",$_product->getApplication());
+        ?>
+        <table class="data-table" id="make-model-year">
+            <tr>
+                <th><strong>Make</strong></th>
+                <th><strong>Model</strong></th>
+                <th><strong>Year</strong></th>
+                <th><strong>Engine Size</strong></th>
+                <th><strong>Fuel</strong></th>
+            </tr>
+            <?php if(is_array($apps)): ?>
+                <?php
+                foreach ($apps as $app) {
+                    $appl = explode("!!",$app);
+                    //$bomItemProduct->load($bomItemProduct->getIdBySku($bomItem['sku']));
+                    ?>
+                    <tr>
+                        <?php if(is_array($appl)) {
+                            foreach($appl as $ap) {?>
+                                <td class="data"><?php echo $ap; ?></td>
+                            <?php 	}
+                        } ?>
+                    </tr>
+                <?php
+                }
+                ?>
+            <?php endif; ?>
+        </table>
+        <?php //echo $_product->getApplication(); ?>
+    </div>
 
     <?php echo $this->getLayout()->createBlock('cms/block')->setBlockId('product_custom_options')->toHtml() ?>
     <?php echo $this->getChildHtml('upsell_products') ?>
@@ -322,3 +417,4 @@ $_ad = $this->getAdditionalData();
 <script type="text/javascript">decorateTable('product-information-specs-table')</script>
 <script type="text/javascript">decorateTable('interchangeable-parts-specs-table')</script>
 <script type="text/javascript">decorateTable('bill-of-materials')</script>
+<script type="text/javascript">decorateTable('make-model-year')</script>
