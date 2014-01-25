@@ -324,13 +324,11 @@ uasort($interchangeSkuProductMap, 'tiInterchangeUsortPredicate');
             <?php endif; ?>
         </table>
     </div>
+    
+    
     <div class="box-collateral">
-        <h2><?php echo $this->__('Make / Model / Year') ?></h2>
-        <?php //echo $_product->getBillOfMaterials();
-
-        $apps = explode("||", $_product->getApplication());
-        ?>
-        <table class="data-table" id="make-model-year">
+        <h2><?php echo $this->__('Application Detail') ?></h2>
+        <table class="data-table" id="application_detail">
             <tr>
                 <th><strong>Make</strong></th>
                 <th><strong>Model</strong></th>
@@ -338,27 +336,20 @@ uasort($interchangeSkuProductMap, 'tiInterchangeUsortPredicate');
                 <th><strong>Engine Size</strong></th>
                 <th><strong>Fuel</strong></th>
             </tr>
-            <?php if (is_array($apps)): ?>
-                <?php
-                foreach ($apps as $app) {
-                    $appl = explode("!!", $app);
-                    //$bomItemProduct->load($bomItemProduct->getIdBySku($bomItem['sku']));
-                    ?>
+            
+            <?php $appDetailRows = explode("||", $_product->getApplicationDetail()); ?>
+            
+            <?php foreach ($appDetailRows as $appDetailRowString): ?>
+                <?php $appRow = explode("!!", $appDetailRowString); ?>
+                <?php if (count($appRow) == 5): ?>
                     <tr>
-                        <?php if (is_array($appl)) {
-                            foreach ($appl as $ap) {
-                                ?>
-                                <td class="data"><?php echo $ap; ?></td>
-                            <?php
-                            }
-                        } ?>
+                        <?php foreach ($appRow as $ap): ?>
+                            <td class="data"><?php echo $ap; ?></td>
+                        <?php endif; ?>
                     </tr>
-                <?php
-                }
-                ?>
-            <?php endif; ?>
+                <?php endif; ?>
+            <?php endforeach; ?>
         </table>
-        <?php //echo $_product->getApplication(); ?>
     </div>
 
     <?php echo $this->getLayout()->createBlock('cms/block')->setBlockId('product_custom_options')->toHtml() ?>

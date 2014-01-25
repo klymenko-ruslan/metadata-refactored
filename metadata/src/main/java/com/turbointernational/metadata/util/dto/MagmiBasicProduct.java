@@ -7,25 +7,28 @@ package com.turbointernational.metadata.util.dto;
  */
 public class MagmiBasicProduct {
     
-    private Long sku;
+    private final Long sku;
     
-    private String imageFile;
+    private final String imageFile;
     
-    private String turboType;
+    private final String turboType;
     
-    private String turboModel;
+    private final String turboModel;
     
-    private String finderTurbo;
+    private final String finderTurbo;
     
-    private String finderApplication;
+    private final String finderApplication;
+    
+    private final String applicationDetail;
 
-    public MagmiBasicProduct(Long sku, String imageFile, String turboType, String turboModel, String finderTurbo, String finderApplication) {
+    public MagmiBasicProduct(Long sku, String imageFile, String turboType, String turboModel, String finderTurbo, String finderApplication, String applicationDetail) {
         this.sku = sku;
         this.imageFile = imageFile;
         this.turboType = turboType;
         this.turboModel = turboModel;
         this.finderTurbo = finderTurbo;
         this.finderApplication = finderApplication;
+        this.applicationDetail = applicationDetail;
     }
 
     public Long getSku() {
@@ -62,6 +65,13 @@ public class MagmiBasicProduct {
      */
     public String getFinderApplication() {
         return finderApplication;
+    }
+
+    /**
+     * @return the applicationDetal
+     */
+    public String getApplicationDetail() {
+        return applicationDetail;
     }
     
 }

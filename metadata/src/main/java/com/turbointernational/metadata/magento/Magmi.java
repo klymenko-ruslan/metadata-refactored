@@ -29,7 +29,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
@@ -144,7 +143,10 @@ public class Magmi {
         "finder:" + MagmiProduct.FINDER_ID_APPLICATION,
         
         // Manufacturer,TurboType,TurboModel
-        "finder:" + MagmiProduct.FINDER_ID_TURBO
+        "finder:" + MagmiProduct.FINDER_ID_TURBO,
+        
+        // Make!!Model!!Year!!Displacement!!Fuel||...
+        "applicationDetail"
     };
 
     @Value("${mas90.db.path}")
@@ -153,9 +155,7 @@ public class Magmi {
     @RequestMapping("/products")
     @ResponseBody   
     @Transactional
-    public void products(
-            @RequestParam(required = false) Long id,
-            HttpServletResponse response, OutputStream out) throws Exception {
+    public void products(HttpServletResponse response, OutputStream out) throws Exception {
         response.setHeader("Content-Type", "text/csv");
         response.setHeader("Content-Disposition: attachment; filename=products.csv", null);
         
@@ -186,7 +186,7 @@ public class Magmi {
                 } catch (NoPriceException e) {
                     logger.log(Level.WARNING, e.getMessage());
                 } catch (Exception e) {
-                    logger.log(Level.WARNING, "Could not write magmi part.", e);
+                    logger.log(Level.SEVERE, "Could not write magmi part " + product.getSku(), e);
                 }
             }
             
@@ -378,7 +378,14 @@ public class Magmi {
                 + "  tt.name AS turbo_type,\n"
                 + "  tm.name AS turbo_model,\n"
                 + "  CONCAT(tman.name, '!!', tt.name, '!!', tm.name) AS finder_turbo,\n"
-                + "  CONCAT(cmake.name, '!!', COALESCE(cyear.name, 'not specified'), '!!', cmodel.name) AS finder_application\n"
+                + "  CONCAT(cmake.name, '!!', COALESCE(cyear.name, 'not specified'), '!!', cmodel.name) AS finder_application,\n"
+                + "  CONCAT("
+                + "   cmake.name, '!!',"
+                + "   cmodel.name, '!!',"
+                + "   COALESCE(cyear.name, 'not specified'), '!!',"
+                + "   COALESCE(cengine.engineSize, ''), '!!',"
+                + "   COALESCE(cfuel.name, '')"
+                + "  ) AS application_detail\n"
                 + ")\n"
                 + "FROM Part p\n"
                 + "  LEFT JOIN p.productImages i\n"
@@ -388,8 +395,10 @@ public class Magmi {
                 + "  LEFT JOIN tm.turboType tt\n"
                 + "  LEFT JOIN t.cars c\n"
                 + "  LEFT JOIN c.model cmodel\n"
-                + "  LEFT JOIN cmodel.make cmake\n"
+                + "  LEFT JOIN c.engine cengine\n"
                 + "  LEFT JOIN c.year cyear\n"
+                + "  LEFT JOIN cmodel.make cmake\n"
+                + "  LEFT JOIN cengine.fuelType cfuel\n"
                 + "WHERE\n"
                 + "  cmake.name IS NOT NULL\n"
                 + "  AND cmodel.name IS NOT NULL\n"

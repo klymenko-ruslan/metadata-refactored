@@ -22,23 +22,31 @@ public class MagmiProduct {
 
     public static final String FINDER_ID_TURBO = "2";
     
-    private Part part;
+    private final Part part;
     
-    private TreeSet<String> imageFiles = new TreeSet<String>();
+    private final TreeSet<String> imageFiles = new TreeSet<String>();
 
-    private Set<String> turboType = new TreeSet<String>();
+    private final Set<String> turboType = new TreeSet<String>();
 
-    private Set<String> turboModel = new TreeSet<String>();
+    private final Set<String> turboModel = new TreeSet<String>();
 
-    private Set<String> finderTurbo = new TreeSet<String>();
+    private final Set<String> finderTurbo = new TreeSet<String>();
 
-    private Set<String> finderApplication = new TreeSet<String>();
+    /**
+     * make!!year!!model
+     */
+    private final Set<String> finderApplication = new TreeSet<String>();
 
-    private Set<Long> interchanges = new TreeSet<Long>();
+    /**
+     * make!!model!!year!!engine!!fuel
+     */
+    private final Set<String> applicationDetail = new TreeSet<String>();
 
-    private Set<Long> tiInterchanges = new TreeSet<Long>();
+    private final Set<Long> interchanges = new TreeSet<Long>();
+
+    private final Set<Long> tiInterchanges = new TreeSet<Long>();
     
-    private JSOG bom = JSOG.array();
+    private final JSOG bom = JSOG.array();
 
     private int rowCount = 0;
 
@@ -79,6 +87,10 @@ public class MagmiProduct {
 
         if (StringUtils.isNotEmpty(basicProduct.getFinderApplication())) {
             finderApplication.add(basicProduct.getFinderApplication());
+        }
+
+        if (StringUtils.isNotEmpty(basicProduct.getApplicationDetail())) {
+            applicationDetail.add(basicProduct.getApplicationDetail());
         }
     }
 
@@ -208,31 +220,7 @@ public class MagmiProduct {
         
         // Turbo-specifics
         if (StringUtils.equals("Turbo", part.getPartType().getTypeName())) {
-            Turbo turbo = (Turbo) part;
-            
-            // Turbo type/model
-            turboModel.add(turbo.getTurboModel().getName());
-            turboType.add(turbo.getTurboModel().getTurboType().getName());
-            
-            // Turbo finder
-            finderTurbo.add(
-                    turbo.getManufacturer().getName()
-                    + "!!" + turbo.getTurboModel().getName()
-                    + "!!" + turbo.getTurboModel().getTurboType().getName());
-            
-            // Application finder
-            for (CarModelEngineYear application : turbo.getCars()) {
-                
-                // Make sure each component exists
-                if (application.getModel() != null
-                        && application.getModel().getMake() != null
-                        && application.getYear() != null) {
-                    finderApplication.add(
-                        application.getModel().getMake().getName()
-                        + "!!" + application.getYear().getName()
-                        + "!!" + application.getModel().getName());
-                }
-            }
+            addTurboCsvColumns();
         }
         
         columns.put("turbo_model", StringUtils.join(turboModel, ','));
@@ -241,9 +229,60 @@ public class MagmiProduct {
         columns.put("finder:" + FINDER_ID_TURBO, StringUtils.join(finderTurbo, "||"));
 
         columns.put("finder:" + FINDER_ID_APPLICATION, StringUtils.join(finderApplication, "||"));
+        
+        columns.put("applicationDetail", StringUtils.join(applicationDetail, "||"));
 
         columns.put("bill_of_materials", bom.toString());
         
         return columns;
+    }
+
+    private void addTurboCsvColumns() {
+        Turbo turbo = (Turbo) part;
+        
+        // Turbo type/model
+        turboModel.add(turbo.getTurboModel().getName());
+        turboType.add(turbo.getTurboModel().getTurboType().getName());
+        
+        // Turbo finder
+        finderTurbo.add(
+                turbo.getManufacturer().getName()
+                        + "!!" + turbo.getTurboModel().getName()
+                        + "!!" + turbo.getTurboModel().getTurboType().getName());
+        
+        // Application detail and application finder
+        for (CarModelEngineYear cmey : turbo.getCars()) {
+            
+            // Skip this application if make or model is null
+            if (cmey.getModel() == null || cmey.getModel().getMake() == null) {
+                continue;
+            }
+            
+            // Check for a year, default to 'not specified'
+            String year = "not specified";
+            if (cmey.getYear() != null) {
+                year = cmey.getYear().getName();
+            }
+            
+            // Check for an engine, default to an empty string
+            String engine = "";
+            String fuel = "";
+            
+            if (cmey.getEngine() != null) {
+                engine = cmey.getEngine().getEngineSize();
+                
+                if (cmey.getEngine().getFuelType() != null) {
+                    fuel = cmey.getEngine().getFuelType().getName();
+                }
+            }
+            
+            // Get the make and model
+            String make = cmey.getModel().getMake().getName();
+            String model = cmey.getModel().getName();
+            
+            // Add the values
+            finderApplication.add(make + "!!" + year + "!!" + model);
+            applicationDetail.add(make + "!!" + year + "!!" + model + "!!" + engine + "!!" + fuel);
+        }
     }
 }
