@@ -27,19 +27,10 @@
 <?php /* @var $this Mage_Catalog_Block_Product_View_Abstract */ ?>
 <?php
 $_product = $this->getProduct();
-$orgSkuString = $_product->getTiPartSku();
-$tiPartSkuArray = false;
-if (strpos($orgSkuString, ',') !== false) {
-    $tiProductPartNumbers = explode(',', $orgSkuString);
-    $orgSku = $tiProductPartNumbers[0];
-    $tiPartSkuArray = true;
-} else {
-    $orgSku = $orgSkuString;
-}
-$_tiProduct = Mage::getModel('catalog/product');
-$_tiProduct->load($_tiProduct->getIdBySku($orgSku));
-$_tiPartSku = $_tiProduct->getPartNumber();
-$_productManufacturer = $_product->getManufacturer();
+
+// Get TI part SKUs and turbo types
+$tiPartSkuArray = $_product->getTiPartSku() ? explode(',', $_product->getTiPartSku()) : null;
+$turboTypes = $_product->getAttributeText('turbo_type');
 ?>
 
     <!-- Product Attributes -->
@@ -47,68 +38,64 @@ $_productManufacturer = $_product->getManufacturer();
         <li><strong>Part Type:</strong> <?php echo $_product->getAttributeText('part_type'); ?></li>
         <li><strong>Manufacturer:</strong> <?php echo $_product->getAttributeText('manufacturer'); ?></li>
         <li><strong>Part Number:</strong> <?php echo $_product->getPartNumber(); ?></li>
-        <?php if ($orgSku && strlen($orgSku) > 1 && $_productManufacturer != 44): ?>
-            <?php if ($tiPartSkuArray) { ?>
-                <li><strong>Compatible TI Parts:</strong> <?php
-                    $i = 1;
-                    foreach ($tiProductPartNumbers as $tiProductPartNumber) {
-                        $_tiProductBySku = Mage::getModel('catalog/product');
-                        $_tiProductBySku->load($_tiProductBySku->getIdBySku($tiProductPartNumber));
-                        $_tiProductPartSku = $_tiProductBySku->getPartNumber();
-                        echo '<a href="' . $_tiProductBySku->getProductUrl() . '">';
-                        echo $_tiProductPartSku;
-                        echo '</a>';
-                        if ($i < count($tiProductPartNumbers)) {
-                            echo ", ";
-                        }
-                        $i++;
-                    } ?></li>
-            <?php } else { ?>
-                <li><strong>Compatible TI Part:</strong> <?php echo '<a href="' . $_tiProduct->getProductUrl() . '">' . $_tiPartSku . '</a>'; ?></li>
-            <?php } ?>
-        <?php endif; ?>
-        <?php if (is_array($_product->getAttributeText('turbo_type'))): ?>
-            <li><strong>Turbo Types:</strong> <?php $x = 1;
-                $turboTypes = $_product->getAttributeText('turbo_type');
-                foreach ($turboTypes as $turboType) {
-                    echo $turboType;
-                    if ($x < count($turboTypes)) {
+        <?php if ($tiPartSkuArray !== null): ?>
+            <li><strong>Compatible TI Part<?php if (count($tiPartSkuArray) > 1) { // English pluralization
+                        echo 's';
+                    } ?>:</strong> <?php
+                $i = 1;
+                foreach ($tiPartSkuArray as $tiPartSku) {
+                    $_tiProductBySku = Mage::getModel('catalog/product');
+                    $_tiProductBySku->load($_tiProductBySku->getIdBySku($tiPartSku));
+                    $_tiProductPartNumber = $_tiProductBySku->getPartNumber();
+                    echo '<a href="' . $_tiProductBySku->getProductUrl() . '">';
+                    echo $_tiProductPartNumber;
+                    echo '</a>';
+                    if ($i < count($tiPartSkuArray)) {
                         echo ", ";
                     }
-                    $x++;
+                    $i++;
                 } ?></li>
-        <?php else: ?>
-            <li><strong>Turbo Type:</strong> <?php echo $_product->getAttributeText('turbo_type') ?></li>
+        <?php endif; ?>
+        <?php if ($turboTypes): ?>
+            <li><strong>Turbo Type<?php if (count($turboTypes) > 1) { // English pluralization
+                        echo 's';
+                    } ?>:</strong> <?php
+                if (is_array($turboTypes)) {
+                    $x = 1;
+                    foreach ($turboTypes as $turboType) {
+                        echo $turboType;
+                        if ($x < count($turboTypes)) {
+                            echo ", ";
+                        }
+                        $x++;
+                    }
+                } else {
+                    echo $turboTypes;
+                } ?></li>
         <?php endif; ?>
     </ul>
 
-<?php echo $this->getChildHtml('product_type_data_extra') ?>
-<?php echo $this->getPriceHtml($_product) ?>
-
-<!-- Turbo cartridge upper section details -->
-<div style="margin-top:40px;">
-    <?php if ($_product->getAttributeText('part_type') == 'turbo'): ?>
-        <ul>
-            <?php
-            $billMaterials = json_decode($_product->getBillOfMaterials(), true);
-            //
-            ?>
-            <?php if (is_array($billMaterials)): ?>
+    <!-- Turbo cartridge upper section details -->
+    <div style="margin-top:40px;">
+        <?php if ($_product->getAttributeText('part_type') == 'turbo'): ?>
+            <ul>
+                <?php $billMaterials = json_decode($_product->getBillOfMaterials(), true) ?>
                 <?php
                 foreach ($billMaterials as $bomItem) {
                     $bomItemProduct = Mage::getModel('catalog/product');
                     $bomItemProduct->load($bomItemProduct->getIdBySku($bomItem['sku']));
                     ?>
                     <li><strong>Cartridge:</strong> <?php
-                        echo '<a href="' . $bomItemProduct->getProductUrl() . '">' . $bomItemProduct->getPartNumber() . '</a>'; ?></li>
+                        echo '<a href="' . $bomItemProduct->getProductUrl() . '">' . $bomItemProduct->getPartNumber() . '</a>'; ?>
+                    </li>
                     <li><strong>Compatible TI Part:</strong> <?php
                         $a = 1;
-                        foreach ($bomItem['ti_part_sku'] as $tiPart) {
+                        foreach ($bomItem['ti_part_sku'] as $bomTiProduct) {
                             $bomItemInterchangeProduct = Mage::getModel('catalog/product');
-                            $bomItemInterchangeProduct->load($bomItemInterchangeProduct->getIdBySku($tiPart));
+                            $bomItemInterchangeProduct->load($bomItemInterchangeProduct->getIdBySku($bomTiProduct));
                             if ($bomItemInterchangeProduct->getId()) {
                                 echo '<a href="' . $bomItemInterchangeProduct->getProductUrl() . '">' . $bomItemInterchangeProduct->getPartNumber() . '</a>';
-                            } else echo $tiPart;
+                            } else echo $bomTiProduct;
                             if ($a < count($bomItem['ti_part_sku'])) {
                                 echo ", ";
                             }
@@ -117,7 +104,9 @@ $_productManufacturer = $_product->getManufacturer();
                 <?php
                 }
                 ?>
-            <?php endif; ?>
-        </ul>
-    <?php endif; ?>
-</div>
+            </ul>
+        <?php endif; ?>
+    </div>
+
+<?php echo $this->getChildHtml('product_type_data_extra') ?>
+<?php echo $this->getPriceHtml($_product) ?>
