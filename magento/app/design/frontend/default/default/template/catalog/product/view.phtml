@@ -98,12 +98,12 @@ uasort($interchangeSkuProductMap, 'tiInterchangeUsortPredicate');
             <?php if (!$this->hasOptions()): ?>
                 <div class="add-to-box">
                     <?php if ($_product->isSaleable()): ?>
-                        <?php if ($tiPartSkuArray && strlen($tiPartSkuArray) > 1 || $_productManufacturer == 44) {
+                        <?php if ($_tiProductBySku || $_productManufacturer == 44) {
                             echo $this->getChildHtml('addtocart');
                         }
                         ?>
                         <?php if ($this->helper('wishlist')->isAllow() || $_compareUrl = $this->helper('catalog/product_compare')->getAddUrl($_product)): ?>
-                            <?php if ($tiPartSkuArray && strlen($tiPartSkuArray) > 1 || $_productManufacturer == 44): ?>
+                            <?php if ($_tiProductBySku || $_productManufacturer == 44): ?>
                                 <span class="or"><?php echo $this->__('OR') ?></span>
                             <?php endif; ?>
                         <?php endif; ?>
