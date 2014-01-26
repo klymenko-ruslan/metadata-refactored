@@ -151,6 +151,9 @@ public class Magmi {
 
     @Value("${mas90.db.path}")
     String mas90DbPath;
+
+    @Value("${magmi.batch.size}")
+    int magmiBatchSize = 1000;
     
     @RequestMapping("/products")
     @ResponseBody   
@@ -169,9 +172,11 @@ public class Magmi {
         
         // Get the product IDs to retrieve
         int position = 0;
-        int pageSize = 1000;
-        List<Part> parts;
+        int pageSize = magmiBatchSize;
+        Long lastSuccessfulSku = null;
+        List<Part> parts = null;
         do {
+            try {
             
                 // Clear Hibernate
                 Part.entityManager().clear();
@@ -183,13 +188,23 @@ public class Magmi {
                 for (MagmiProduct product : findMagmiProducts(parts).values()) {
                     try {
                         writer.writeNext(magmiProductToCsvRow(mas90, product));
+                        
+                        // Debugging variable
+                        lastSuccessfulSku = product.getSku();
                     } catch (Exception e) {
-                        logger.log(Level.SEVERE, "Could not write magmi part " + product.getSku(), e);
+                        logger.log(Level.WARNING, "Could not write magmi part " + product.getSku(), e);
                     }
                 }
 
                 // Update the position
                 position += parts.size();
+            } catch (Exception e) {
+                logger.log(Level.SEVERE,
+                    "Batch failed! position: " + position
+                            + ", page size: " + pageSize
+                            + ", lastSuccessfulSku: " + lastSuccessfulSku,
+                    e);
+            }
         } while (parts.size() >= pageSize);
         
         
