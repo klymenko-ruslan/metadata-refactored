@@ -60,7 +60,7 @@ $_tiProductBySku->load($_tiProductBySku->getIdBySku($tiPartSkuArray[0]));
 
 // Load compatible TI cartridge based on BoM cartridges on turbo detail page
 $compatibleCartridgeProduct = Mage::getModel('catalog/product');
-$compatibleCartridgeProduct->load($compatibleCartridgeProduct->getIdBySku($billMaterials[0]['sku']));
+$compatibleCartridgeProduct->load($compatibleCartridgeProduct->getIdBySku($billMaterials[0]['sku'])); // <-- need to get at compatible ti cartridge
 
 $_storeId = $_product->getStoreId();
 $_id = $_product->getId();
