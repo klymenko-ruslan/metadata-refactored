@@ -173,25 +173,23 @@ public class Magmi {
         List<Part> parts;
         do {
             
-            // Clear Hibernate
-            Part.entityManager().clear();
-            
-            // Get the next batch of part IDs
-            parts = Part.findPartEntries(position, pageSize);
+                // Clear Hibernate
+                Part.entityManager().clear();
 
-            // Process each product
-            for (MagmiProduct product : findMagmiProducts(parts).values()) {
-                try {
-                    writer.writeNext(magmiProductToCsvRow(mas90, product));
-                } catch (NoPriceException e) {
-                    logger.log(Level.WARNING, e.getMessage());
-                } catch (Exception e) {
-                    logger.log(Level.SEVERE, "Could not write magmi part " + product.getSku(), e);
+                // Get the next batch of part IDs
+                parts = Part.findPartEntries(position, pageSize);
+
+                // Process each product
+                for (MagmiProduct product : findMagmiProducts(parts).values()) {
+                    try {
+                        writer.writeNext(magmiProductToCsvRow(mas90, product));
+                    } catch (Exception e) {
+                        logger.log(Level.SEVERE, "Could not write magmi part " + product.getSku(), e);
+                    }
                 }
-            }
-            
-            // Update the position
-            position += parts.size();
+
+                // Update the position
+                position += parts.size();
         } while (parts.size() >= pageSize);
         
         
@@ -202,7 +200,7 @@ public class Magmi {
                 new Object[] {position, System.currentTimeMillis() - startTime});
     }
     
-    private String[] magmiProductToCsvRow(Mas90Prices mas90, MagmiProduct product) throws IOException, NoPriceException {
+    private String[] magmiProductToCsvRow(Mas90Prices mas90, MagmiProduct product) {
         Map<String, String> columns = product.getCsvColumns();
         
         // Only TI parts get this info
@@ -212,13 +210,7 @@ public class Magmi {
             columns.put("quantity", "1");
             
             // ERP Prices
-            try {
-                if (StringUtils.isNotBlank(product.getPartNumber())) {
-                    addErpPrices(mas90, columns, product.getPartNumber());
-                }
-            } catch (EmptyResultDataAccessException e) {
-                throw new NoPriceException(product.getPartNumber());
-            }
+            addErpPrices(mas90, columns, product);
         }
 
         // Map the column into a value array for the CSV writer
@@ -233,18 +225,33 @@ public class Magmi {
         return valueArray;
     }
     
-    private void addErpPrices(Mas90Prices mas90, Map<String, String> columns, String partNumber) throws IOException {
-        ItemPricing itemPricing = mas90.getItemPricing(partNumber);
-        
-        // Nothing to do!
-        if (itemPricing.getStandardPrice() == null) {
-            logger.log(Level.INFO, "No pricing info for TI part number: {0}", partNumber);
-            return;
+    private void addErpPrices(Mas90Prices mas90, Map<String, String> columns, MagmiProduct product) {
+        try {
+            
+            // Stop now if there's no part number
+            if (StringUtils.isBlank(product.getPartNumber())) {
+                return;
+            }
+            
+            // Get the pricing info
+            ItemPricing itemPricing = mas90.getItemPricing(product.getPartNumber());
+
+            // Stop if there's no standard price
+            if (itemPricing.getStandardPrice() == null) {
+                logger.log(Level.INFO, "Missing standard price product: {0}", product.getPartNumber());
+                return;
+            }
+            
+            columns.put("price", itemPricing.getStandardPrice().toString());
+
+            addErpCustomerPrices(mas90, itemPricing, columns);
+            addErpGroupPrices(mas90, itemPricing, columns);
+            
+        } catch (EmptyResultDataAccessException e) {
+            logger.log(Level.WARNING, "Missing prices for product: {0}", product.getPartNumber());
+        } catch (IOException e) {
+            logger.log(Level.SEVERE, "Error getting prices from MAS90 db {0}", e);
         }
-        columns.put("price", itemPricing.getStandardPrice().toString());
-        
-        addErpCustomerPrices(mas90, itemPricing, columns);
-        addErpGroupPrices(mas90, itemPricing, columns);
     }
     
     // bob@example.com;0:$1.00;10:$0.95;20:$0.90|jim@example.com....
