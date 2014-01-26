@@ -81,26 +81,28 @@ $turboTypes = $_product->getAttributeText('turbo_type');
             <ul>
                 <?php $billMaterials = json_decode($_product->getBillOfMaterials(), true) ?>
                 <?php
-                foreach ($billMaterials as $bomItem) {
+                foreach ($billMaterials as $bomItem) { // <-- need to setup handler to make sure bomItemProduct is a cartridge
                     $bomItemProduct = Mage::getModel('catalog/product');
                     $bomItemProduct->load($bomItemProduct->getIdBySku($bomItem['sku']));
                     ?>
-                    <li><strong>Cartridge:</strong> <?php
-                        echo '<a href="' . $bomItemProduct->getProductUrl() . '">' . $bomItemProduct->getPartNumber() . '</a>'; ?>
-                    </li>
-                    <li><strong>Compatible TI Part:</strong> <?php
-                        $a = 1;
-                        foreach ($bomItem['ti_part_sku'] as $bomTiProduct) {
-                            $bomItemInterchangeProduct = Mage::getModel('catalog/product');
-                            $bomItemInterchangeProduct->load($bomItemInterchangeProduct->getIdBySku($bomTiProduct));
-                            if ($bomItemInterchangeProduct->getId()) {
-                                echo '<a href="' . $bomItemInterchangeProduct->getProductUrl() . '">' . $bomItemInterchangeProduct->getPartNumber() . '</a>';
-                            } else echo $bomTiProduct;
-                            if ($a < count($bomItem['ti_part_sku'])) {
-                                echo ", ";
-                            }
-                            $a++;
-                        } ?></li>
+                    <?php if ($bomItemProduct->getAttributeText('part_type') == 'cartridge'): ?>
+                        <li><strong>Cartridge:</strong> <?php
+                            echo '<a href="' . $bomItemProduct->getProductUrl() . '">' . $bomItemProduct->getPartNumber() . '</a>'; ?>
+                        </li>
+                        <li><strong>Compatible TI Part:</strong> <?php
+                            $a = 1;
+                            foreach ($bomItem['ti_part_sku'] as $bomTiProduct) {
+                                $bomItemInterchangeProduct = Mage::getModel('catalog/product');
+                                $bomItemInterchangeProduct->load($bomItemInterchangeProduct->getIdBySku($bomTiProduct));
+                                if ($bomItemInterchangeProduct->getId()) {
+                                    echo '<a href="' . $bomItemInterchangeProduct->getProductUrl() . '">' . $bomItemInterchangeProduct->getPartNumber() . '</a>';
+                                } else echo $bomTiProduct;
+                                if ($a < count($bomItem['ti_part_sku'])) {
+                                    echo ", ";
+                                }
+                                $a++;
+                            } ?></li>
+                    <?php endif; ?>
                 <?php
                 }
                 ?>

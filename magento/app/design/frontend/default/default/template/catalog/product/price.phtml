@@ -58,9 +58,13 @@ $_tiProductByInterchanges->load($_tiProductByInterchanges->getIdBySku($interchan
 $_tiProductBySku = Mage::getModel('catalog/product');
 $_tiProductBySku->load($_tiProductBySku->getIdBySku($tiPartSkuArray[0]));
 
-// Load compatible TI cartridge based on BoM cartridges on turbo detail page
-$compatibleCartridgeProduct = Mage::getModel('catalog/product');
-$compatibleCartridgeProduct->load($compatibleCartridgeProduct->getIdBySku($billMaterials[0]['sku']));
+// Load the compatible cartridge into the sku map
+$compatibleCartridgeSkuProductMap = array();
+foreach ($billMaterials as $compatibleCartridgeSku) {
+    // Load compatible TI cartridge based on BoM cartridges
+    $compatibleCartridgeProduct = Mage::getModel('catalog/product');
+    $compatibleCartridgeProduct->load($compatibleCartridgeProduct->getIdBySku($compatibleCartridgeSku["ti_part_sku"][0]));
+}
 
 $_storeId = $_product->getStoreId();
 $_id = $_product->getId();
