@@ -38,13 +38,24 @@ $_productManufacturer = $_product->getManufacturer();
 $_description = $_product->getDescription();
 $_ad = $this->getAdditionalData();
 
+// Get the Bill of Materials
+$billMaterials = json_decode($_product->getBillOfMaterials(), true);
+
 // Get the interchanges and TI part SKUs
 $interchangeSkuArray = $_product->getInterchanges() ? explode(',', $_product->getInterchanges()) : null;
 $tiPartSkuArray = $_product->getTiPartSku() ? explode(',', $_product->getTiPartSku()) : null;
 
+// Load TI part based on TI part SKU
+$_tiProductBySku = Mage::getModel('catalog/product');
+$_tiProductBySku->load($_tiProductBySku->getIdBySku($tiPartSkuArray[0]));
+
+// Load compatible TI cartridge based on BoM cartridges on turbo detail page
+$compatibleCartridgeProduct = Mage::getModel('catalog/product');
+$compatibleCartridgeProduct->load($compatibleCartridgeProduct->getIdBySku($billMaterials[0]['sku']));
+
 // Load TI part based on interchanges
 $_tiProductByInterchanges = Mage::getModel('catalog/product');
-$_tiProductByInterchanges->load($_tiProductByInterchanges->getIdBySku($tiPartSkuArray));
+$_tiProductByInterchanges->load($_tiProductByInterchanges->getIdBySku($interchangeSkuArray[0]));
 
 // For reference
 $_tiProductInterchangePartNumber = $_tiProductByInterchanges->getPartNumber();
@@ -98,12 +109,12 @@ uasort($interchangeSkuProductMap, 'tiInterchangeUsortPredicate');
             <?php if (!$this->hasOptions()): ?>
                 <div class="add-to-box">
                     <?php if ($_product->isSaleable()): ?>
-                        <?php if ($_tiProductBySku || $_productManufacturer == 44) {
+                        <?php if ($_tiProductBySku->isSaleable() || $compatibleCartridgeProduct->isSaleable() || $_productManufacturer == 44) {
                             echo $this->getChildHtml('addtocart');
                         }
                         ?>
                         <?php if ($this->helper('wishlist')->isAllow() || $_compareUrl = $this->helper('catalog/product_compare')->getAddUrl($_product)): ?>
-                            <?php if ($_tiProductBySku || $_productManufacturer == 44): ?>
+                            <?php if ($_tiProductBySku->isSaleable() || $compatibleCartridgeProduct->isSaleable() || $_productManufacturer == 44): ?>
                                 <span class="or"><?php echo $this->__('OR') ?></span>
                             <?php endif; ?>
                         <?php endif; ?>
@@ -273,10 +284,6 @@ uasort($interchangeSkuProductMap, 'tiInterchangeUsortPredicate');
     </div>
     <div class="box-collateral">
         <h2><?php echo $this->__('Bill of Materials') ?></h2>
-        <?php //echo $_product->getBillOfMaterials();
-
-        $billMaterials = json_decode($_product->getBillOfMaterials(), true);
-        ?>
         <table class="data-table" id="bill-of-materials">
             <tr>
                 <th><strong>Part Type</strong></th>
@@ -286,46 +293,44 @@ uasort($interchangeSkuProductMap, 'tiInterchangeUsortPredicate');
                 <th><strong>Qty Per Set</strong></th>
                 <th><strong>Price</strong></th>
             </tr>
-            <?php if (is_array($billMaterials)): ?>
-                <?php
-                foreach ($billMaterials as $bomItem) {
-                    $bomItemProduct = Mage::getModel('catalog/product');
-                    $bomItemProduct->load($bomItemProduct->getIdBySku($bomItem['sku']));
-                    ?>
-                    <tr>
-                        <td><?php echo $bomItemProduct->getAttributeText('part_type'); ?></td>
-                        <td><?php echo '<a href="' . $bomItemProduct->getProductUrl() . '">' . $bomItemProduct->getPartNumber() . '</a>'; ?></td>
-                        <td><?php $a = 1;
-                            foreach ($bomItem['ti_part_sku'] as $tiPart) {
-                                $bomItemInterchangeProduct = Mage::getModel('catalog/product');
-                                $bomItemInterchangeProduct->load($bomItemInterchangeProduct->getIdBySku($tiPart));
-                                if ($bomItemInterchangeProduct->getId()) {
-                                    echo '<a href="' . $bomItemInterchangeProduct->getProductUrl() . '">' . $bomItemInterchangeProduct->getPartNumber() . '</a>';
-                                } else echo $tiPart;
-                                if ($a < count($bomItem['ti_part_sku'])) {
-                                    echo ", ";
-                                }
-                                $a++;
-                            } ?></td>
-                        <td><?php if ($bomItemProduct->getId()) {
-                                echo '<a href="' . $bomItemProduct->getProductUrl() . '">' . $bomItemProduct->getName() . '</a>';
-                            } else echo $bomItem['sku']; ?></td>
-                        <td><?php echo $bomItem['quantity']; ?></td>
-                        <td><?php if ($bomItemProduct->getTiPartSku()) {
-                                echo Mage::helper('core')->currency($bomItemInterchangeProduct->getFinalPrice());
-                            } else {
-                                echo '';
-                            } ?></td>
-
-                    </tr>
-                <?php
-                }
+            <?php
+            foreach ($billMaterials as $bomItem) {
+                $bomItemProduct = Mage::getModel('catalog/product');
+                $bomItemProduct->load($bomItemProduct->getIdBySku($bomItem['sku']));
                 ?>
-            <?php endif; ?>
+                <tr>
+                    <td><?php echo $bomItemProduct->getAttributeText('part_type'); ?></td>
+                    <td><?php echo '<a href="' . $bomItemProduct->getProductUrl() . '">' . $bomItemProduct->getPartNumber() . '</a>'; ?></td>
+                    <td><?php $a = 1;
+                        foreach ($bomItem['ti_part_sku'] as $tiPart) {
+                            $bomItemInterchangeProduct = Mage::getModel('catalog/product');
+                            $bomItemInterchangeProduct->load($bomItemInterchangeProduct->getIdBySku($tiPart));
+                            if ($bomItemInterchangeProduct->getId()) {
+                                echo '<a href="' . $bomItemInterchangeProduct->getProductUrl() . '">' . $bomItemInterchangeProduct->getPartNumber() . '</a>';
+                            } else echo $tiPart;
+                            if ($a < count($bomItem['ti_part_sku'])) {
+                                echo ", ";
+                            }
+                            $a++;
+                        } ?></td>
+                    <td><?php if ($bomItemProduct->getId()) {
+                            echo '<a href="' . $bomItemProduct->getProductUrl() . '">' . $bomItemProduct->getName() . '</a>';
+                        } else echo $bomItem['sku']; ?></td>
+                    <td><?php echo $bomItem['quantity']; ?></td>
+                    <td><?php if ($bomItemProduct->getTiPartSku()) {
+                            echo Mage::helper('core')->currency($bomItemInterchangeProduct->getFinalPrice());
+                        } else {
+                            echo '';
+                        } ?></td>
+
+                </tr>
+            <?php
+            }
+            ?>
         </table>
     </div>
-    
-    
+
+
     <div class="box-collateral">
         <h2><?php echo $this->__('Application Detail') ?></h2>
         <table class="data-table" id="application_detail">
@@ -336,9 +341,9 @@ uasort($interchangeSkuProductMap, 'tiInterchangeUsortPredicate');
                 <th><strong>Engine Size</strong></th>
                 <th><strong>Fuel</strong></th>
             </tr>
-            
+
             <?php $appDetailRows = explode("||", $_product->getApplicationDetail()); ?>
-            
+
             <?php foreach ($appDetailRows as $appDetailRowString): ?>
                 <?php $appRow = explode("!!", $appDetailRowString); ?>
                 <?php if (count($appRow) == 5): ?>
