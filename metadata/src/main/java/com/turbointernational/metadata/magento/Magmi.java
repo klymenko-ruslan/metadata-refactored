@@ -146,7 +146,7 @@ public class Magmi {
         "finder:" + MagmiProduct.FINDER_ID_TURBO,
         
         // Make!!Model!!Year!!Displacement!!Fuel||...
-        "applicationDetail"
+        "application_detail"
     };
 
     @Value("${mas90.db.path}")
