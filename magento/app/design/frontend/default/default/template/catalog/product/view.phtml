@@ -345,7 +345,7 @@ uasort($interchangeSkuProductMap, 'tiInterchangeUsortPredicate');
                     <tr>
                         <?php foreach ($appRow as $ap): ?>
                             <td class="data"><?php echo $ap; ?></td>
-                        <?php endif; ?>
+                        <?php endforeach; ?>
                     </tr>
                 <?php endif; ?>
             <?php endforeach; ?>
@@ -361,4 +361,4 @@ uasort($interchangeSkuProductMap, 'tiInterchangeUsortPredicate');
 <script type="text/javascript">decorateTable('product-information-specs-table')</script>
 <script type="text/javascript">decorateTable('interchangeable-parts-specs-table')</script>
 <script type="text/javascript">decorateTable('bill-of-materials')</script>
-<script type="text/javascript">decorateTable('make-model-year')</script>
+<script type="text/javascript">decorateTable('application_detail')</script>
