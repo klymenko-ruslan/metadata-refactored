@@ -27,10 +27,25 @@
 <?php
 $_product = $this->getProduct();
 $_productManufacturer = $_product->getManufacturer();
-$tiProductPartNumbers = explode(',', $_product->getTiPartSku());
-$tiPartSku = $tiProductPartNumbers[0];
-$_tiProduct = Mage::getModel('catalog/product');
-$_tiProduct->load($_tiProduct->getIdBySku($tiPartSku));
+
+// Get the Bill of Materials
+$billMaterials = json_decode($_product->getBillOfMaterials(), true);
+
+// Get the interchanges and TI part SKUs
+$interchangeSkuArray = $_product->getInterchanges() ? explode(',', $_product->getInterchanges()) : null;
+$tiPartSkuArray = $_product->getTiPartSku() ? explode(',', $_product->getTiPartSku()) : null;
+
+// Load TI part based on TI part SKU
+$_tiProductBySku = Mage::getModel('catalog/product');
+$_tiProductBySku->load($_tiProductBySku->getIdBySku($tiPartSkuArray[0]));
+
+// Load the compatible cartridge into the sku map
+$compatibleCartridgeSkuProductMap = array();
+foreach ($billMaterials as $compatibleCartridgeSku) {
+    // Load compatible TI cartridge based on BoM cartridges
+    $compatibleCartridgeProduct = Mage::getModel('catalog/product');
+    $compatibleCartridgeProduct->load($compatibleCartridgeProduct->getIdBySku($compatibleCartridgeSku["ti_part_sku"][0]));
+}
 ?>
 <?php if ($_product->isSaleable()): ?>
     <div class="add-to-cart">
@@ -39,15 +54,15 @@ $_tiProduct->load($_tiProduct->getIdBySku($tiPartSku));
             <input type="text" name="qty" id="qty" maxlength="12" value="<?php echo $this->getProductDefaultQty() * 1 ?>"
                    title="<?php echo $this->__('Qty') ?>" class="input-text qty"/>
         <?php endif; ?>
-        <?php if ($tiPartSku && strlen($tiPartSku) > 1 && $_productManufacturer != 44): ?>
+        <?php if ($_tiProductBySku->isSaleable() && $_productManufacturer != 44): ?>
             <button type="button" title="<?php echo $this->__('Add TI Part to Cart') ?>" class="button btn-cart"
-                    onclick="setLocation('<?php echo $this->getAddToCartUrl($_tiProduct) ?>')">
+                    onclick="setLocation('<?php echo $this->getAddToCartUrl($_tiProductBySku) ?>')">
                 <span><span><?php echo $this->__('Add TI Part to Cart') ?></span></span>
             </button>
-            <?php elseif (0): ?>
+        <?php elseif ($compatibleCartridgeProduct->isSaleable() && $_productManufacturer != 44): ?>
             <!-- Adding compatible TI cartridge to cart button -->
             <button type="button" title="<?php echo $this->__('Add TI Cartridge to Cart') ?>" class="button btn-cart"
-                    onclick="setLocation('<?php echo $this->getAddToCartUrl($_tiProduct) ?>')">
+                    onclick="setLocation('<?php echo $this->getAddToCartUrl($compatibleCartridgeProduct) ?>')">
                 <span><span><?php echo $this->__('Add TI Cartridge to Cart') ?></span></span>
             </button>
         <?php else: ?>
