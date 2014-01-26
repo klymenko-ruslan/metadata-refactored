@@ -41,9 +41,9 @@ $_taxHelper = $this->helper('tax');
 /* @var $_taxHelper Mage_Tax_Helper_Data */
 
 $_product = $this->getProduct();
-$_tiProduct = Mage::getModel('catalog/product');
+$_tiProductBySku = Mage::getModel('catalog/product');
 $orgSku = $_product->getTiPartSku();
-$_tiProduct->load($_tiProduct->getIdBySku($orgSku));
+$_tiProductBySku->load($_tiProductBySku->getIdBySku($orgSku));
 $_productManufacturer = $_product->getManufacturer();
 $_storeId = $_product->getStoreId();
 $_id = $_product->getId();
@@ -71,8 +71,8 @@ $_minimalPrice = $_taxHelper->getPrice($_product, $_minimalPriceValue, $_simpleP
         <?php $_regularPrice = $_taxHelper->getPrice($_product, $_product->getPrice(), $_simplePricesTax) ?>
         <!-- getFinalPrice() changes if there is a compatible TI part -->
         <?php
-        if ($orgSku && strlen($orgSku) > 1 && $_tiProduct && $_productManufacturer != 44) {
-            $_finalPrice = $_taxHelper->getPrice($_tiProduct, $_tiProduct->getFinalPrice());
+        if ($orgSku && strlen($orgSku) > 1 && $_tiProductBySku && $_productManufacturer != 44) {
+            $_finalPrice = $_taxHelper->getPrice($_tiProductBySku, $_tiProductBySku->getFinalPrice());
         } else {
             $_finalPrice = $_taxHelper->getPrice($_product, $_product->getFinalPrice());
         }
