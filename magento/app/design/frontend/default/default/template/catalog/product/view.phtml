@@ -131,6 +131,7 @@ uasort($interchangeSkuProductMap, 'tiInterchangeUsortPredicate');
                         <?php echo $this->getChildHtml('addto') ?>
                     </div>
                 <?php endif; ?>
+                
                 <!-- Email a friend -->
                 <?php if ($this->canEmailToFriend()): ?>
                     <p class="email-friend"><a
@@ -317,20 +318,26 @@ uasort($interchangeSkuProductMap, 'tiInterchangeUsortPredicate');
                                     echo $tiPart;
                                 }
                                 
+                                // Add commas between items
                                 if ($a < count($bomItem['ti_part_sku'])) {
                                     echo ", ";
                                 }
                                 $a++;
-                            } ?></td>
-                        <td><?php if ($bomItemProduct->getId()) {
-                                echo '<a href="' . $bomItemProduct->getProductUrl() . '">' . $bomItemProduct->getName() . '</a>';
-                            } else echo $bomItem['sku']; ?></td>
+                            }?>
+                        </td>
+                        <td>
+                            <?php if ($bomItemProduct->getId()): ?>
+                                <a href="<?php echo $bomItemProduct->getProductUrl()?>"><?php echo $bomItemProduct->getName() ?></a>
+                            <?php else: ?>
+                                <?php echo $bomItem['sku']?>
+                            <?php endif; ?>
+                        </td>
                         <td><?php echo $bomItem['quantity']; ?></td>
-                <td><?php if ($bomItemProduct->getTiPartSku()) {
-                        echo Mage::helper('core')->currency($bomItemInterchangeProduct->getFinalPrice());
-                    } else {
-                        echo '';
-                    } ?></td>
+                        <td>
+                            <?php if ($bomItemProduct->getTiPartSku()) {
+                                echo Mage::helper('core')->currency($bomItemInterchangeProduct->getFinalPrice());
+                            }?>
+                        </td>
 
                     </tr>
                 <?php endforeach; ?>
