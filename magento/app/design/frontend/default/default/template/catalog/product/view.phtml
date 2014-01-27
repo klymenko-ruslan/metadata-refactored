@@ -68,16 +68,6 @@ uasort($interchangeSkuProductMap, 'usortByPartNumberPredicate');
 
 // Should be a subset of interchanges
 $tiPartSkuArray = $_product->getTiPartSku() ? explode(',', $_product->getTiPartSku()) : array();
-
-// Get the first TI product from the interchange map
-$tiProduct = null;
-if (!empty($tiPartSkuArray)) {
-    if (!empty($interchangeSkuProductMap[$tiPartSkuArray[0]])) {
-        $tiProduct = $interchangeSkuProductMap[$tiPartSkuArray[0]];
-    } else {
-        $tiProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $tiPartSkuArray[0]);
-    }
-}
 ?>
     <script type="text/javascript">
         var optionsPrice = new Product.OptionsPrice(<?php echo $this->getJsonConfig() ?>);
