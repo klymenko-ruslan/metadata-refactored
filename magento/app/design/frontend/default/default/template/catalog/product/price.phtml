@@ -43,27 +43,30 @@ $_taxHelper = $this->helper('tax');
 $_product = $this->getProduct();
 $_productManufacturer = $_product->getManufacturer();
 
-// Get the Bill of Materials
-$billMaterials = json_decode($_product->getBillOfMaterials(), true);
+// Determine which product we're using
+$billOfMaterials = json_decode($_product->getBillOfMaterials(), true);
+if ($_productManufacturer == 44) {
+    
+    // This is a TI product, use it directly
+    $tiProduct = $_product;
+    
+} elseif ($_product->getAttributeText("part_type") == "turbo"
+            && !empty($billOfMaterials)
+            && !empty($billOfMaterials[0]['ti_part_sku'])) {
+    
+    // This is a turbo, get the TI part from the first BOM item (should be a cartridge) TI part SKU array.
+    $bomCartridgeTiSku = $billOfMaterials[0]['ti_part_sku'][0];
+    
+    $tiProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $bomCartridgeTiSku);
+    
+} elseif (strlen($_product->getTiPartSku()) > 0) {
+    
+    // It's not a TI part and it's not a turbo, get the first ti_part_sku
+    $tiPartSkuArray = explode(',', $_product->getTiPartSku());
 
-// Get the interchanges and TI part SKUs
-$interchangeSkuArray = $_product->getInterchanges() ? explode(',', $_product->getInterchanges()) : null;
-$tiPartSkuArray = $_product->getTiPartSku() ? explode(',', $_product->getTiPartSku()) : null;
-
-// Load TI product based on interchanges
-$_tiProductByInterchanges = Mage::getModel('catalog/product');
-$_tiProductByInterchanges->load($_tiProductByInterchanges->getIdBySku($interchangeSkuArray[0]));
-
-// Load TI product based on products TI part SKU
-$_tiProductBySku = Mage::getModel('catalog/product');
-$_tiProductBySku->load($_tiProductBySku->getIdBySku($tiPartSkuArray[0]));
-
-// Load the compatible cartridge into the sku map
-$compatibleCartridgeSkuProductMap = array();
-foreach ($billMaterials as $compatibleCartridgeSku) {
-    // Load compatible TI cartridge based on BoM cartridges
-    $compatibleCartridgeProduct = Mage::getModel('catalog/product');
-    $compatibleCartridgeProduct->load($compatibleCartridgeProduct->getIdBySku($compatibleCartridgeSku["ti_part_sku"][0]));
+    $tiProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $tiPartSkuArray[0]);
+} else {
+    $tiProduct = null;
 }
 
 $_storeId = $_product->getStoreId();
@@ -86,22 +89,12 @@ $_minimalPrice = $_taxHelper->getPrice($_product, $_minimalPriceValue, $_simpleP
         <?php $_weeeTaxAmountInclTaxes = $_weeeHelper->getAmountInclTaxes($_attributes); ?>
     <?php endif; ?>
 
-    <?php if ($_tiProductBySku->isSaleable() || $compatibleCartridgeProduct->isSaleable() || $_productManufacturer == 44): ?>
+    <?php if ($tiProduct && $tiProduct->isSaleable()): ?>
         <div class="price-box">
         <?php $_price = $_taxHelper->getPrice($_product, $_product->getPrice()) ?>
         <?php $_regularPrice = $_taxHelper->getPrice($_product, $_product->getPrice(), $_simplePricesTax) ?>
 
-        <?php
-        if ($_tiProductBySku->isSaleable() && $_productManufacturer != 44) {
-            // Compatible TI part changes getFinalPrice()
-            $_finalPrice = $_taxHelper->getPrice($_tiProductBySku, $_tiProductBySku->getFinalPrice());
-        } else if ($compatibleCartridgeProduct->isSaleable() && $_productManufacturer != 44) {
-            // Compatible TI cartridge changes getFinalPrice()
-            $_finalPrice = $_taxHelper->getPrice($compatibleCartridgeProduct, $compatibleCartridgeProduct->getFinalPrice());
-        } else {
-            $_finalPrice = $_taxHelper->getPrice($_product, $_product->getFinalPrice());
-        }
-        ?>
+        <?php $_finalPrice = $_taxHelper->getPrice($tiProduct, $tiProduct->getFinalPrice()); ?>
         <?php $_finalPriceInclTax = $_taxHelper->getPrice($_product, $_product->getFinalPrice(), true) ?>
         <?php $_weeeDisplayType = $_weeeHelper->getPriceDisplayType(); ?>
         <?php if ($_finalPrice >= $_price): ?>
@@ -451,7 +444,7 @@ $_minimalPrice = $_taxHelper->getPrice($_product, $_minimalPriceValue, $_simpleP
     $_inclTax = $_taxHelper->getPrice($_product, $_minimalPriceValue, true);
     ?>
     <?php if ($this->getDisplayMinimalPrice() && $_minimalPriceValue): ?>
-        <?php if ($_tiProductBySku->isSaleable() || $compatibleCartridgeProduct->isSaleable() || $_productManufacturer == 44): ?>
+        <?php if ($tiProduct && $tiProduct->isSaleable()): ?>
             <div class="price-box">
                 <p class="minimal-price">
                     <span class="price-label"><?php echo $this->__('Starting at:') ?></span>

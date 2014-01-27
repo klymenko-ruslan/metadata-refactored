@@ -63,9 +63,9 @@ $_helper = $this->helper('catalog/output');
                         </td>
                         <td><a href="<?php echo $_product->getProductUrl() ?>"><?php echo $_product->getPartNumber() ?></a></td>
                         <td><?php $tiPartSkus = explode(",", $_product->getTiPartSku()) ?>
-                            <?php foreach ($tiPartSkus as $idx => $tiPartSku): ?>
+                            <?php foreach ($tiPartSkus as $idx => $tiPartSkus): ?>
                                 <?php $tiPart = Mage::getModel('catalog/product');
-                                $tiPart->load($tiPart->getIdBySku($tiPartSku));
+                                $tiPart->load($tiPart->getIdBySku($tiPartSkus));
 
                                 if ($idx > 0) {
                                     echo ",";

@@ -43,11 +43,11 @@ $turboTypes = $_product->getAttributeText('turbo_type');
                         echo 's';
                     } ?>:</strong> <?php
                 $i = 1;
-                foreach ($tiPartSkuArray as $tiPartSku) {
-                    $_tiProductBySku = Mage::getModel('catalog/product');
-                    $_tiProductBySku->load($_tiProductBySku->getIdBySku($tiPartSku));
-                    $_tiProductPartNumber = $_tiProductBySku->getPartNumber();
-                    echo '<a href="' . $_tiProductBySku->getProductUrl() . '">';
+                foreach ($tiPartSkuArray as $tiPartSkus) {
+                    $tiProduct = Mage::getModel('catalog/product');
+                    $tiProduct->load($tiProduct->getIdBySku($tiPartSkus));
+                    $_tiProductPartNumber = $tiProduct->getPartNumber();
+                    echo '<a href="' . $tiProduct->getProductUrl() . '">';
                     echo $_tiProductPartNumber;
                     echo '</a>';
                     if ($i < count($tiPartSkuArray)) {
@@ -79,9 +79,9 @@ $turboTypes = $_product->getAttributeText('turbo_type');
     <div style="margin-top:40px;">
         <?php if ($_product->getAttributeText('part_type') == 'turbo'): ?>
             <ul>
-                <?php $billMaterials = json_decode($_product->getBillOfMaterials(), true) ?>
+                <?php $billOfMaterials = json_decode($_product->getBillOfMaterials(), true) ?>
                 <?php
-                foreach ($billMaterials as $bomItem) { // <-- need to setup handler to make sure bomItemProduct is a cartridge
+                foreach ($billOfMaterials as $bomItem) { // <-- need to setup handler to make sure bomItemProduct is a cartridge
                     $bomItemProduct = Mage::getModel('catalog/product');
                     $bomItemProduct->load($bomItemProduct->getIdBySku($bomItem['sku']));
                     ?>

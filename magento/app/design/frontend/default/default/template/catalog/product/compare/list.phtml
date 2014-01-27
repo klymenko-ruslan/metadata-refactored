@@ -136,16 +136,16 @@
                     <th>&nbsp;</th>
                 <?php endif; ?>
                 <?php
-                $tiPartSku = $_item->getTiPartSku();
+                $tiPartSkus = $_item->getTiPartSku();
                 $productManufacturer = $_item->getManufacturer();
                 $_tiProduct = Mage::getModel('catalog/product');
-                $_tiProduct->load($_tiProduct->getIdBySku($tiPartSku));
+                $_tiProduct->load($_tiProduct->getIdBySku($tiPartSkus));
                 ?>
                 <td>
                     <?php echo $this->getPriceHtml($_item, true, '-compare-list-bottom') ?>
                     <?php if ($_item->isSaleable()): ?>
                         <p>
-                            <?php if ($tiPartSku && strlen($tiPartSku) > 1 && $productManufacturer != 44): ?>
+                            <?php if ($tiPartSkus && strlen($tiPartSkus) > 1 && $productManufacturer != 44): ?>
                                 <button type="button" title="<?php echo $this->__('Add TI Part to Cart') ?>" class="button btn-cart"
                                         onclick="setPLocation('<?php echo $this->helper('catalog/product_compare')->getAddToCartUrl($_tiProduct) ?>', true)">
                                     <span><span><?php echo $this->__('Add TI Part to Cart') ?></span></span>

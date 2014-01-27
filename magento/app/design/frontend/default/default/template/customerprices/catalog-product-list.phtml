@@ -66,9 +66,9 @@ $_helper = $this->helper('catalog/output');
                         </td>
                         <td><a href="<?php echo $_product->getProductUrl() ?>"><?php echo $_product->getPartNumber() ?></a></td>
                         <td><?php $tiPartSkus = explode(",", $_product->getTiPartSku()) ?>
-                            <?php foreach ($tiPartSkus as $idx => $tiPartSku): ?>
+                            <?php foreach ($tiPartSkus as $idx => $tiPartSkus): ?>
                                 <?php $tiPart = Mage::getModel('catalog/product');
-                                $tiPart->load($tiPart->getIdBySku($tiPartSku));
+                                $tiPart->load($tiPart->getIdBySku($tiPartSkus));
 
                                 if ($idx > 0) {
                                     echo ",";
@@ -79,12 +79,12 @@ $_helper = $this->helper('catalog/output');
                         </td>
                         <td><?php
                             $_productManufacturer = $_product->getManufacturer();
-                            $orgSkuString = $_product->getTiPartSku();
-                            if (strpos($orgSkuString, ',') !== false) {
-                                $tiProductPartNumbers = explode(',', $orgSkuString);
+                            $tiPartSkus = $_product->getTiPartSku();
+                            if (strpos($tiPartSkus, ',') !== false) {
+                                $tiProductPartNumbers = explode(',', $tiPartSkus);
                                 $orgSku = $tiProductPartNumbers[0];
                             } else {
-                                $orgSku = $orgSkuString;
+                                $orgSku = $tiPartSkus;
                             }
                             if (Mage::getSingleton('customer/session')->isLoggedIn()) {
                                 if ($orgSku && strlen($orgSku) > 1 && $_productManufacturer != 44) {
