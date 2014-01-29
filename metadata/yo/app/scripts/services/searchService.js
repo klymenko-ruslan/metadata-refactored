@@ -59,6 +59,60 @@ angular.module('ngMetaCrudApp')
                     }
                 });
             }
+            // Kit type
+            if (search.kitType) {
+//          $log.log("Manufacturer: " + search.manufacturer.name);
+                searchRequest.query.bool.must.push({
+                    term: {
+                        'part.kitType.id': search.kitType.id
+                    }
+                });
+            }
+            // Gasket Type
+            if (search.gasketType) {
+//          $log.log("Manufacturer: " + search.manufacturer.name);
+                searchRequest.query.bool.must.push({
+                    term: {
+                        'part.gasketType.id': search.gasketType.id
+                    }
+                });
+            }
+            // Seal Type
+            if (search.sealType) {
+//          $log.log("Manufacturer: " + search.manufacturer.name);
+                searchRequest.query.bool.must.push({
+                    term: {
+                        'part.sealType.id': search.sealType.id
+                    }
+                });
+            }
+//            // Turbo type
+//            if (search.turboType) {
+////          $log.log("Manufacturer: " + search.manufacturer.name);
+//                searchRequest.query.bool.must.push({
+//                    term: {
+//                        'part.turboType.id': search.turboType.id
+//                    }
+//                });
+//            }
+//            // Turbo model
+//            if (search.turboModel) {
+////          $log.log("Manufacturer: " + search.manufacturer.name);
+//                searchRequest.query.bool.must.push({
+//                    term: {
+//                        'part.turboModel.id': search.turboModel.id
+//                    }
+//                });
+//            }
+//            // Coolant Type
+//            if (search.coolantType) {
+////          $log.log("Manufacturer: " + search.manufacturer.name);
+//                searchRequest.query.bool.must.push({
+//                    term: {
+//                        'part.coolantType.id': search.coolantType.id
+//                    }
+//                });
+//            }
 
             // Facet Terms
             if (angular.isObject(search.facetFilters) && !jQuery.isEmptyObject(search.facetFilters)) {
