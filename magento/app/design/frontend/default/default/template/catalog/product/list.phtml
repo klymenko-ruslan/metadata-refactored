@@ -80,8 +80,11 @@ $_helper = $this->helper('catalog/output');
                             <?php endforeach ?>
                         </td>
                         <td>
-                            <?php if (Mage::getSingleton('customer/session')->isLoggedIn() && !empty($firstTiProduct)): ?>
-                                <?php echo Mage::helper('core')->currency($firstTiProduct->getFinalPrice()); ?>
+                            <?php if (Mage::getSingleton('customer/session')->isLoggedIn()): ?>
+                                <?php
+                                if (!empty($firstTiProduct)) {
+                                    echo Mage::helper('core')->currency($firstTiProduct->getFinalPrice());
+                                }?>
                             <?php else: ?>
                               <a href="<?php echo $this->getUrl('customer/account/login'); ?>">Login to view prices</a>
                             <?php endif; ?>
