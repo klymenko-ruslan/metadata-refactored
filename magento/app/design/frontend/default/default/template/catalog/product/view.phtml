@@ -285,10 +285,14 @@ $tiPartSkuArray = $_product->getTiPartSku() ? explode(',', $_product->getTiPartS
                     <tr>
                         <td><?php echo $bomItemProduct->getAttributeText('part_type'); ?></td>
                         <td><?php echo '<a href="' . $bomItemProduct->getProductUrl() . '">' . $bomItemProduct->getPartNumber() . '</a>'; ?></td>
-                        <td><?php $a = 1;
+                        <td><?php
+                            $a = 1;
+                            $firstInterchangeProduct;
+                            
                             foreach ($bomItem['ti_part_sku'] as $tiPart) {
                                 $bomItemInterchangeProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $tiPart);
                                 if ($bomItemInterchangeProduct) {
+                                    $firstInterchangeProduct = $bomItemInterchangeProduct;
                                     echo '<a href="' . $bomItemInterchangeProduct->getProductUrl() . '">' . $bomItemInterchangeProduct->getPartNumber() . '</a>';
                                 } else {
                                     echo $tiPart;
@@ -310,7 +314,7 @@ $tiPartSkuArray = $_product->getTiPartSku() ? explode(',', $_product->getTiPartS
                         </td>
                         <td><?php echo $bomItem['quantity']; ?></td>
                         <td>
-                            <?php if ($bomItemProduct->getTiPartSku()) {
+                            <?php if ($firstInterchangeProduct) {
                                 echo Mage::helper('core')->currency($bomItemInterchangeProduct->getFinalPrice());
                             }?>
                         </td>
