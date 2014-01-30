@@ -1,11 +1,11 @@
-<div class="picker">
-    <div class="col-lg-11 col-md-11 col-sm-11 col-xs-11">
+<div class="picker row">
+    <div class="col-xs-11">
         <select ng-model="selection.id"
-                ng-options="item.id as item.name for item in items"
+                ng-options="item.id as item.name for item in items | orderBy:'name'"
                 ng-disabled="items == null"
                 placeholder="Choose..." class="form-control input-sm"></select>
     </div>
-    <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1">
+    <div class="col-xs-1">
         <button ng-click="selection.id='0'" ng-disabled="!selection.id"
                 class="btn btn-link btn-sm">
             <i class="fa fa-times"></i>
