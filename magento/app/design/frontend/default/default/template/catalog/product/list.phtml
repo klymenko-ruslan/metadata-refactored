@@ -63,9 +63,14 @@ $_helper = $this->helper('catalog/output');
                         </td>
                         <td><a href="<?php echo $_product->getProductUrl() ?>"><?php echo $_product->getPartNumber() ?></a></td>
                         <td><?php $tiPartSkus = explode(",", $_product->getTiPartSku()) ?>
-                            <?php foreach ($tiPartSkus as $idx => $tiPartSkus): ?>
-                                <?php $tiPart = Mage::getModel('catalog/product');
-                                $tiPart->load($tiPart->getIdBySku($tiPartSkus));
+                            <?php $firstTiProduct = null; ?>
+                            <?php foreach ($tiPartSkus as $idx => $tiPartSku): ?>
+                                <?php
+                                $tiPart = Mage::getModel('catalog/product')->loadByAttribute('sku', $tiPartSku);
+                                
+                                if ($firstTiProduct == null) {
+                                    $firstTiProduct = $tiPart;
+                                }
 
                                 if ($idx > 0) {
                                     echo ",";
@@ -74,10 +79,12 @@ $_helper = $this->helper('catalog/output');
                                 <a href="<?php echo $tiPart->getProductUrl() ?>"><?php echo $tiPart->getPartNumber(); ?></a>
                             <?php endforeach ?>
                         </td>
-                        <td><?php if (Mage::getSingleton('customer/session')->isLoggedIn()) {
-                                echo Mage::helper('core')->currency($_product->getFinalPrice());
-                            } else {
-                                ?><a href="<?php echo $this->getUrl('customer/account/login'); ?>">Login to view prices</a><?php } ?>
+                        <td>
+                            <?php if (Mage::getSingleton('customer/session')->isLoggedIn() && !empty($firstTiProduct)): ?>
+                                <?php echo Mage::helper('core')->currency($firstTiProduct->getFinalPrice()); ?>
+                            <?php else: ?>
+                              <a href="<?php echo $this->getUrl('customer/account/login'); ?>">Login to view prices</a>
+                            <?php endif; ?>
                         </td>
                     </tr>
                     <?php if ($i % $_columnCount == 0 || $i == $_collectionSize): ?>
