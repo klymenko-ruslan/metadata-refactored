@@ -1,5 +1,5 @@
 <div class="row">
-    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 btn-group">
+    <div class="col-xs-12 btn-group">
         <a ng-href="#/part" class="btn btn-default"><i class="fa fa-bars"></i> Part List</a>
         <a ng-href="#/part/{{ part.partType.typeName }}/{{ partId }}" class="btn btn-primary" data-ng-hide="oldPart == null"><i
                 class="fa fa-eye"></i> View Part</a>
@@ -13,7 +13,7 @@
     </div>
 </div>
 <div class="row">
-<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+<div class="col-xs-12 col-sm-6">
 
 <div class="pull-right padding-top">
     <label>Status</label>
@@ -241,7 +241,7 @@
 </div>
 </ng-form>
 </div>
-<div data-ng-hide="oldPart == null" class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+<div data-ng-hide="oldPart == null" class="col-xs-12 col-sm-6">
     <!-- Interchanges -->
     <dl>
         <dt>Interchangeable Part Group
@@ -262,12 +262,12 @@
 </div>
 </div>
 <div class="row">
-    <div class="col-lg-5 col-md-5 col-sm-12 col-xs-12">
+    <div class="col-xs-12 col-md-5">
         <h3>Turbo Model</h3>
 
         <div ng-include="'/views/part/form/TurboModel.html'"></div>
     </div>
-    <div data-ng-hide="oldPart == null" class="col-lg-7 col-md-7 col-sm-12 col-xs-12">
+    <div data-ng-hide="oldPart == null" class="col-xs-12 col-md-7">
         <h3>Bill of Materials</h3>
         <table ng-table="bomTableParams" class="table table-bordered table-striped table-hover table-responsive">
             <tr ng-repeat="(index, bomItem) in $data">

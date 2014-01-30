@@ -1,26 +1,26 @@
 <div data-ng-controller="TurboModelPickerCtrl" class="row">
 
-    <div ng-disabled="turboTypes.length == 0" class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-        <label>Turbo Type</label>
-        <input ng-model="turboTypeFilter" ng-init="turboTypeFilter = ''" placeholder="Turbo type filter..."/>
+    <div ng-disabled="turboTypes.length == 0" class="col-xs-6 form-group">
+        <label class="control-label">Turbo Type</label>
+        <input ng-model="turboTypeFilter" ng-init="turboTypeFilter = ''" class="form-control input-sm" placeholder="Turbo type filter..."/>
         <br/>
         <select data-ng-model="turboTypeId"
                 data-ng-options="turboType.id as turboType.name for turboType in turboTypes | filter:{name:turboTypeFilter}"
                 data-ng-disabled="turboTypes.length == 0"
-                size="15" class="select-large required">
+                size="15" class="select-large required form-control">
         </select>
     </div>
 
-    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-        <label>Turbo Model</label>
-        <input ng-model="turboModelFilter" ng-init="turboModelFilter = ''" placeholder="Turbo model filter..."/>
+    <div class="col-xs-6">
+        <label class="control-label">Turbo Model</label>
+        <input ng-model="turboModelFilter" ng-init="turboModelFilter = ''" class="form-control input-sm" placeholder="Turbo model filter..."/>
         <br/>
         <select required
                 data-ng-model="turboModelId"
                 data-ng-options="turboModel.id as turboModel.name for turboModel in turboModels | filter:{name:turboModelFilter}"
                 data-ng-disabled="turboModels.length == 0"
                 data-ng-change="setPartTurboModel()"
-                size="15" class="select-large required">
+                size="15" class="select-large required form-control">
         </select>
     </div>
 </div>
