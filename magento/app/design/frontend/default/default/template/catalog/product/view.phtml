@@ -288,7 +288,7 @@ $tiPartSkuArray = $_product->getTiPartSku() ? explode(',', $_product->getTiPartS
                         <td><?php
                         
                             // Keep a reference to the first interchangeable TI product
-                            $firstInterchangeProduct;
+                            $firstInterchangeProduct = null;
                             
                             foreach ($bomItem['ti_part_sku'] as $tiPart) {
                                 $bomItemInterchangeProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $tiPart);
