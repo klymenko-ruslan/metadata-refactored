@@ -65,37 +65,41 @@ $_helper = $this->helper('catalog/output');
                                title="<?php echo $this->stripTags($_product->getName(), null, true) ?>"><?php echo $_product->getName() ?></a>
                         </td>
                         <td><a href="<?php echo $_product->getProductUrl() ?>"><?php echo $_product->getPartNumber() ?></a></td>
-                        <td><?php $tiPartSkus = explode(",", $_product->getTiPartSku()) ?>
-                            <?php foreach ($tiPartSkus as $idx => $tiPartSkus): ?>
-                                <?php $tiPart = Mage::getModel('catalog/product');
-                                $tiPart->load($tiPart->getIdBySku($tiPartSkus));
+                        <td>
+                            <?php if (strlen($_product->getTiPartSku()) > 0): ?>
+                                <?php $firstTiProduct = null; ?>
+                                <?php foreach (explode(",", $_product->getTiPartSku()) as $idx => $tiPartSku): ?>
+                                    <?php
+                                        $tiPart = Mage::getModel('catalog/product')->loadByAttribute('sku', $tiPartSku);
 
-                                if ($idx > 0) {
-                                    echo ",";
-                                }?>
+                                        if ($firstTiProduct == null) {
+                                            $firstTiProduct = $tiPart;
+                                        }
 
-                                <a href="<?php echo $tiPart->getProductUrl() ?>"><?php echo $tiPart->getPartNumber(); ?></a>
-                            <?php endforeach ?>
+                                        if ($idx > 0) {
+                                            echo ",";
+                                        }
+                                    ?>
+                            
+                                    <?php if ($tiPart): ?>
+                                        <a href="<?php echo $tiPart->getProductUrl() ?>"><?php echo $tiPart->getPartNumber(); ?></a>
+                                    <?php endif; ?>
+                                <?php endforeach ?>
+                            <?php else: ?>
+                                <a href="<?php echo $_product->getProductUrl() ?>"><?php echo $_product->getPartNumber(); ?></a>
+                            <?php endif; ?>
                         </td>
-                        <td><?php
-                            $_productManufacturer = $_product->getManufacturer();
-                            $tiPartSkus = $_product->getTiPartSku();
-                            if (strpos($tiPartSkus, ',') !== false) {
-                                $tiProductPartNumbers = explode(',', $tiPartSkus);
-                                $orgSku = $tiProductPartNumbers[0];
-                            } else {
-                                $orgSku = $tiPartSkus;
-                            }
-                            if (Mage::getSingleton('customer/session')->isLoggedIn()) {
-                                if ($orgSku && strlen($orgSku) > 1 && $_productManufacturer != 44) {
-                                    $_tiProduct = Mage::getModel('catalog/product');
-                                    $_tiProduct->load($_tiProduct->getIdBySku($orgSku));
-                                    echo Mage::helper('core')->currency($_tiProduct->getFinalPrice());
-                                } else if ($_productManufacturer != 44) {
-                                    echo '';
-                                }
-                            } else {
-                                ?><a href="<?php echo $this->getUrl('customer/account/login'); ?>">Login to view prices</a><?php } ?>
+                        <td>
+                            <?php if (Mage::getSingleton('customer/session')->isLoggedIn()): ?>
+                                <?php
+                                if ($_product->getManufacturer() == 44) {
+                                    echo Mage::helper('core')->currency($_product->getFinalPrice());
+                                } elseif (!empty($firstTiProduct)) {
+                                    echo Mage::helper('core')->currency($firstTiProduct->getFinalPrice());
+                                }?>
+                            <?php else: ?>
+                              <a href="<?php echo $this->getUrl('customer/account/login'); ?>">Login to view prices</a>
+                            <?php endif; ?>
                         </td>
                     </tr>
                     <?php if ($i % $_columnCount == 0 || $i == $_collectionSize): ?>
