@@ -286,23 +286,22 @@ $tiPartSkuArray = $_product->getTiPartSku() ? explode(',', $_product->getTiPartS
                         <td><?php echo $bomItemProduct->getAttributeText('part_type'); ?></td>
                         <td><?php echo '<a href="' . $bomItemProduct->getProductUrl() . '">' . $bomItemProduct->getPartNumber() . '</a>'; ?></td>
                         <td><?php
-                            $a = 1;
+                        
+                            // Keep a reference to the first interchangeable TI product
                             $firstInterchangeProduct;
                             
                             foreach ($bomItem['ti_part_sku'] as $tiPart) {
                                 $bomItemInterchangeProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $tiPart);
                                 if ($bomItemInterchangeProduct) {
-                                    $firstInterchangeProduct = $bomItemInterchangeProduct;
+                                    if ($firstInterchangeProduct == null) {
+                                        $firstInterchangeProduct = $bomItemInterchangeProduct;
+                                    } else {
+                                        echo ", ";
+                                    }
                                     echo '<a href="' . $bomItemInterchangeProduct->getProductUrl() . '">' . $bomItemInterchangeProduct->getPartNumber() . '</a>';
                                 } else {
                                     echo $tiPart;
                                 }
-                                
-                                // Add commas between items
-                                if ($a < count($bomItem['ti_part_sku'])) {
-                                    echo ", ";
-                                }
-                                $a++;
                             }?>
                         </td>
                         <td>
@@ -315,7 +314,7 @@ $tiPartSkuArray = $_product->getTiPartSku() ? explode(',', $_product->getTiPartS
                         <td><?php echo $bomItem['quantity']; ?></td>
                         <td>
                             <?php if ($firstInterchangeProduct) {
-                                echo Mage::helper('core')->currency($bomItemInterchangeProduct->getFinalPrice());
+                                echo Mage::helper('core')->currency($firstInterchangeProduct->getFinalPrice());
                             }?>
                         </td>
 
