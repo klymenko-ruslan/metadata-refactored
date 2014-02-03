@@ -3,6 +3,7 @@ package com.turbointernational.metadata.magento;
 import au.com.bytecode.opencsv.CSVWriter;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.Part;
+import com.turbointernational.metadata.images.ImageResizer;
 import com.turbointernational.metadata.util.dto.MagmiBasicProduct;
 import com.turbointernational.metadata.util.dto.MagmiBomItem;
 import com.turbointernational.metadata.util.dto.MagmiInterchange;
@@ -24,6 +25,7 @@ import mas90magmi.ItemPricing;
 import mas90magmi.CalculatedPrice;
 import mas90magmi.Mas90Prices;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Controller;
@@ -63,8 +65,12 @@ public class Magmi {
         "quantity",
         "turbo_model",      // Turbo Models
         "turbo_type",       // Turbo Types
-        "image",            // Product image
-        "media_gallery",    // Extra images
+        
+        // Product images
+        "image",
+        "small_image",
+        "thumbnail",
+        "media_gallery",
         //</editor-fold>
         
         //<editor-fold defaultstate="collapsed" desc="Types">
@@ -150,6 +156,9 @@ public class Magmi {
     @Value("${mas90.db.path}")
     String mas90DbPath;
     
+    @Autowired(required=true)
+    ImageResizer imageResizer;
+    
     @RequestMapping("/products")
     @ResponseBody   
     @Transactional
@@ -203,7 +212,7 @@ public class Magmi {
     }
     
     private String[] magmiProductToCsvRow(Mas90Prices mas90, MagmiProduct product) throws IOException, NoPriceException {
-        Map<String, String> columns = product.getCsvColumns();
+        Map<String, String> columns = product.getCsvColumns(imageResizer);
         
         // Only TI parts get this info
         if (product.getManufacturerId() == Manufacturer.TI_ID) {
@@ -374,7 +383,7 @@ public class Magmi {
         return Part.entityManager().createQuery(
               "SELECT DISTINCT new com.turbointernational.metadata.util.dto.MagmiBasicProduct("
                 + "  p.id AS sku,\n"
-                + "  i.filename AS imageFile,\n"
+                + "  i.id AS imageId,\n"
                 + "  tt.name AS turbo_type,\n"
                 + "  tm.name AS turbo_model,\n"
                 + "  CONCAT(tman.name, '!!', tt.name, '!!', tm.name) AS finder_turbo,\n"

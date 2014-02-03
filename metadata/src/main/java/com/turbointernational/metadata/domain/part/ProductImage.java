@@ -18,6 +18,10 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "PRODUCT_IMAGE")
 public class ProductImage {
+
+    public static String getResizedFilename(Long partId, Long imageId, int size) {
+        return partId + "_" + imageId + "_"+ size + ".jpg";
+    }
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,7 +33,28 @@ public class ProductImage {
     
     private String filename;
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+    
+    public Part getPart() {
+        return part;
+    }
+
+    public void setPart(Part part) {
+        this.part = part;
+    }
+    
     public String getFilename() {
         return filename;
     }
+
+    public void setFilename(String filename) {
+        this.filename = filename;
+    }
+    
 }

@@ -3,7 +3,9 @@ package com.turbointernational.metadata.util.dto;
 import com.turbointernational.metadata.domain.car.CarModelEngineYear;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.Part;
+import com.turbointernational.metadata.domain.part.ProductImage;
 import com.turbointernational.metadata.domain.part.types.Turbo;
+import com.turbointernational.metadata.images.ImageResizer;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -24,7 +26,7 @@ public class MagmiProduct {
     
     private Part part;
     
-    private TreeSet<String> imageFiles = new TreeSet<String>();
+    private TreeSet<Long> imageIds = new TreeSet<Long>();
 
     private Set<String> turboType = new TreeSet<String>();
 
@@ -61,8 +63,8 @@ public class MagmiProduct {
     public final void addBasicProductCollections(MagmiBasicProduct basicProduct) {
         rowCount++;
 
-        if (StringUtils.isNotEmpty(basicProduct.getImageFile())) {
-            imageFiles.add(basicProduct.getImageFile());
+        if (basicProduct.getImageId() != null) {
+            imageIds.add(basicProduct.getImageId());
         }
 
         if (StringUtils.isNotEmpty(basicProduct.getTurboType())) {
@@ -143,13 +145,19 @@ public class MagmiProduct {
         }
     }
 
-    public final Map<String, String> getCsvColumns() {
+    public final Map<String, String> getCsvColumns(ImageResizer imageResizer) {
 
         // CSV column map
         Map<String, String> columns = new HashMap<String, String>();
         
         // Part data
         part.csvColumns(columns);
+        
+        // Images
+        csvImages(columns, imageResizer);
+        
+        // Turbo-specific columns
+        csvTurboSpecific();
 
         // type
         columns.put("type", "simple");
@@ -177,63 +185,6 @@ public class MagmiProduct {
         // Interchanges / TI Interchanges
         columns.put("interchanges", StringUtils.join(interchanges, ','));
         columns.put("ti_part_sku", StringUtils.join(tiInterchanges, ','));
-
-
-        // Images
-        if (!imageFiles.isEmpty()) {
-
-            // Get the first image
-            Iterator<String> it = imageFiles.iterator();
-            String firstImage = it.next();
-
-            columns.put("image", firstImage);
-
-            // Additional images
-            StringBuilder galleryString = new StringBuilder();
-            while (it.hasNext()) {
-                String additionalImage = it.next();
-
-                // Add a separator if this isn't the first additional image
-                if (galleryString.length() > 0) {
-                    galleryString.append(';');
-                }
-
-                // Add the filename
-                galleryString.append(additionalImage);
-            }
-
-            // Add the column
-            columns.put("media_gallery", galleryString.toString());
-        }
-        
-        // Turbo-specifics
-        if (StringUtils.equals("Turbo", part.getPartType().getTypeName())) {
-            Turbo turbo = (Turbo) part;
-            
-            // Turbo type/model
-            turboModel.add(turbo.getTurboModel().getName());
-            turboType.add(turbo.getTurboModel().getTurboType().getName());
-            
-            // Turbo finder
-            finderTurbo.add(
-                    turbo.getManufacturer().getName()
-                    + "!!" + turbo.getTurboModel().getName()
-                    + "!!" + turbo.getTurboModel().getTurboType().getName());
-            
-            // Application finder
-            for (CarModelEngineYear application : turbo.getCars()) {
-                
-                // Make sure each component exists
-                if (application.getModel() != null
-                        && application.getModel().getMake() != null
-                        && application.getYear() != null) {
-                    finderApplication.add(
-                        application.getModel().getMake().getName()
-                        + "!!" + application.getYear().getName()
-                        + "!!" + application.getModel().getName());
-                }
-            }
-        }
         
         columns.put("turbo_model", StringUtils.join(turboModel, ','));
         columns.put("turbo_type", StringUtils.join(turboType, ','));
@@ -245,5 +196,69 @@ public class MagmiProduct {
         columns.put("bill_of_materials", bom.toString());
         
         return columns;
+    }
+
+    private void csvTurboSpecific() {
+        if (StringUtils.equals("Turbo", part.getPartType().getTypeName())) {
+            Turbo turbo = (Turbo) part;
+            
+            // Turbo type/model
+            turboModel.add(turbo.getTurboModel().getName());
+            turboType.add(turbo.getTurboModel().getTurboType().getName());
+            
+            // Turbo finder
+            finderTurbo.add(
+                    turbo.getManufacturer().getName()
+                            + "!!" + turbo.getTurboModel().getName()
+                            + "!!" + turbo.getTurboModel().getTurboType().getName());
+            
+            // Application finder
+            for (CarModelEngineYear application : turbo.getCars()) {
+                
+                // Make sure each component exists
+                if (application.getModel() != null
+                        && application.getModel().getMake() != null
+                        && application.getYear() != null) {
+                    finderApplication.add(
+                            application.getModel().getMake().getName()
+                                    + "!!" + application.getYear().getName()
+                                    + "!!" + application.getModel().getName());
+                }
+            }
+        }
+    }
+
+    private void csvImages(Map<String, String> columns, ImageResizer resizer) {
+        
+        // Stop now if there aren't any images
+        if (imageIds.isEmpty()) {
+            return;
+        }
+            
+        // Get the first image
+        Iterator<Long> it = imageIds.iterator();
+        Long firstImage = it.next();
+
+        columns.put("image", ProductImage.getResizedFilename(part.getId(), firstImage, 1000));
+        columns.put("small_image", ProductImage.getResizedFilename(part.getId(), firstImage, 135));
+        columns.put("thumbnail", ProductImage.getResizedFilename(part.getId(), firstImage, 50));
+
+        // Additional images
+        StringBuilder galleryString = new StringBuilder();
+        while (it.hasNext()) {
+            Long additionalImage = it.next();
+            
+
+            // Add a separator if this isn't the first additional image
+            if (galleryString.length() > 0) {
+                galleryString.append(';');
+            }
+
+            // Add the filename
+            galleryString.append(ProductImage.getResizedFilename(part.getId(), additionalImage, 1000));
+        }
+
+        // Add the column
+        columns.put("media_gallery", galleryString.toString());
     }
 }
