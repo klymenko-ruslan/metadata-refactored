@@ -78,10 +78,9 @@ h1:first-of-type {
 
 .picker {
   div[class*='col-'] {
-    padding-left: 0;
     padding-right: 0;
   }
-//  div[class*='-11'] {
-//    padding-right: 15px;
-//  }
+  button {
+    margin-left: -15px;
+  }
 }

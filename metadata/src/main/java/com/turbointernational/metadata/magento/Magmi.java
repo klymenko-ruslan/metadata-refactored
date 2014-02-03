@@ -31,7 +31,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
@@ -150,11 +149,17 @@ public class Magmi {
         "finder:" + MagmiProduct.FINDER_ID_APPLICATION,
         
         // Manufacturer,TurboType,TurboModel
-        "finder:" + MagmiProduct.FINDER_ID_TURBO
+        "finder:" + MagmiProduct.FINDER_ID_TURBO,
+        
+        // Make!!Model!!Year!!Displacement!!Fuel||...
+        "application_detail"
     };
 
     @Value("${mas90.db.path}")
     String mas90DbPath;
+
+    @Value("${magmi.batch.size}")
+    int magmiBatchSize = 1000;
     
     @Autowired(required=true)
     ImageResizer imageResizer;
@@ -162,9 +167,7 @@ public class Magmi {
     @RequestMapping("/products")
     @ResponseBody   
     @Transactional
-    public void products(
-            @RequestParam(required = false) Long id,
-            HttpServletResponse response, OutputStream out) throws Exception {
+    public void products(HttpServletResponse response, OutputStream out) throws Exception {
         response.setHeader("Content-Type", "text/csv");
         response.setHeader("Content-Disposition: attachment; filename=products.csv", null);
         
@@ -178,29 +181,39 @@ public class Magmi {
         
         // Get the product IDs to retrieve
         int position = 0;
-        int pageSize = 1000;
-        List<Part> parts;
+        int pageSize = magmiBatchSize;
+        Long lastSuccessfulSku = null;
+        List<Part> parts = null;
         do {
+            try {
             
-            // Clear Hibernate
-            Part.entityManager().clear();
-            
-            // Get the next batch of part IDs
-            parts = Part.findPartEntries(position, pageSize);
+                // Clear Hibernate
+                Part.entityManager().clear();
 
-            // Process each product
-            for (MagmiProduct product : findMagmiProducts(parts).values()) {
-                try {
-                    writer.writeNext(magmiProductToCsvRow(mas90, product));
-                } catch (NoPriceException e) {
-                    logger.log(Level.WARNING, e.getMessage());
-                } catch (Exception e) {
-                    logger.log(Level.WARNING, "Could not write magmi part.", e);
+                // Get the next batch of part IDs
+                parts = Part.findPartEntries(position, pageSize);
+
+                // Process each product
+                for (MagmiProduct product : findMagmiProducts(parts).values()) {
+                    try {
+                        writer.writeNext(magmiProductToCsvRow(mas90, product));
+                        
+                        // Debugging variable
+                        lastSuccessfulSku = product.getSku();
+                    } catch (Exception e) {
+                        logger.log(Level.WARNING, "Could not write magmi part " + product.getSku(), e);
+                    }
                 }
+
+                // Update the position
+                position += parts.size();
+            } catch (Exception e) {
+                logger.log(Level.SEVERE,
+                    "Batch failed! position: " + position
+                            + ", page size: " + pageSize
+                            + ", lastSuccessfulSku: " + lastSuccessfulSku,
+                    e);
             }
-            
-            // Update the position
-            position += parts.size();
         } while (parts.size() >= pageSize);
         
         
@@ -211,7 +224,7 @@ public class Magmi {
                 new Object[] {position, System.currentTimeMillis() - startTime});
     }
     
-    private String[] magmiProductToCsvRow(Mas90Prices mas90, MagmiProduct product) throws IOException, NoPriceException {
+    private String[] magmiProductToCsvRow(Mas90Prices mas90, MagmiProduct product) {
         Map<String, String> columns = product.getCsvColumns(imageResizer);
         
         // Only TI parts get this info
@@ -221,13 +234,7 @@ public class Magmi {
             columns.put("quantity", "1");
             
             // ERP Prices
-            try {
-                if (StringUtils.isNotBlank(product.getPartNumber())) {
-                    addErpPrices(mas90, columns, product.getPartNumber());
-                }
-            } catch (EmptyResultDataAccessException e) {
-                throw new NoPriceException(product.getPartNumber());
-            }
+            addErpPrices(mas90, columns, product);
         }
 
         // Map the column into a value array for the CSV writer
@@ -242,18 +249,33 @@ public class Magmi {
         return valueArray;
     }
     
-    private void addErpPrices(Mas90Prices mas90, Map<String, String> columns, String partNumber) throws IOException {
-        ItemPricing itemPricing = mas90.getItemPricing(partNumber);
-        
-        // Nothing to do!
-        if (itemPricing.getStandardPrice() == null) {
-            logger.log(Level.INFO, "No pricing info for TI part number: {0}", partNumber);
-            return;
+    private void addErpPrices(Mas90Prices mas90, Map<String, String> columns, MagmiProduct product) {
+        try {
+            
+            // Stop now if there's no part number
+            if (StringUtils.isBlank(product.getPartNumber())) {
+                return;
+            }
+            
+            // Get the pricing info
+            ItemPricing itemPricing = mas90.getItemPricing(product.getPartNumber());
+
+            // Stop if there's no standard price
+            if (itemPricing.getStandardPrice() == null) {
+                logger.log(Level.INFO, "Missing standard price product: {0}", product.getPartNumber());
+                return;
+            }
+            
+            columns.put("price", itemPricing.getStandardPrice().toString());
+
+            addErpCustomerPrices(mas90, itemPricing, columns);
+            addErpGroupPrices(mas90, itemPricing, columns);
+            
+        } catch (EmptyResultDataAccessException e) {
+            logger.log(Level.WARNING, "Missing prices for product: {0}", product.getPartNumber());
+        } catch (IOException e) {
+            logger.log(Level.SEVERE, "Error getting prices from MAS90 db {0}", e);
         }
-        columns.put("price", itemPricing.getStandardPrice().toString());
-        
-        addErpCustomerPrices(mas90, itemPricing, columns);
-        addErpGroupPrices(mas90, itemPricing, columns);
     }
     
     // bob@example.com;0:$1.00;10:$0.95;20:$0.90|jim@example.com....
@@ -387,7 +409,14 @@ public class Magmi {
                 + "  tt.name AS turbo_type,\n"
                 + "  tm.name AS turbo_model,\n"
                 + "  CONCAT(tman.name, '!!', tt.name, '!!', tm.name) AS finder_turbo,\n"
-                + "  CONCAT(cmake.name, '!!', COALESCE(cyear.name, 'not specified'), '!!', cmodel.name) AS finder_application\n"
+                + "  CONCAT(cmake.name, '!!', COALESCE(cyear.name, 'not specified'), '!!', cmodel.name) AS finder_application,\n"
+                + "  CONCAT("
+                + "   cmake.name, '!!',"
+                + "   cmodel.name, '!!',"
+                + "   COALESCE(cyear.name, 'not specified'), '!!',"
+                + "   COALESCE(cengine.engineSize, ''), '!!',"
+                + "   COALESCE(cfuel.name, '')"
+                + "  ) AS application_detail\n"
                 + ")\n"
                 + "FROM Part p\n"
                 + "  LEFT JOIN p.productImages i\n"
@@ -397,8 +426,10 @@ public class Magmi {
                 + "  LEFT JOIN tm.turboType tt\n"
                 + "  LEFT JOIN t.cars c\n"
                 + "  LEFT JOIN c.model cmodel\n"
-                + "  LEFT JOIN cmodel.make cmake\n"
+                + "  LEFT JOIN c.engine cengine\n"
                 + "  LEFT JOIN c.year cyear\n"
+                + "  LEFT JOIN cmodel.make cmake\n"
+                + "  LEFT JOIN cengine.fuelType cfuel\n"
                 + "WHERE\n"
                 + "  cmake.name IS NOT NULL\n"
                 + "  AND cmodel.name IS NOT NULL\n"

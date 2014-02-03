@@ -1,9 +1,11 @@
 <div class="row">
-    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+
+    <!-- Search by input or facet select options -->
+    <div class="col-xs-12 col-sm-3">
         <form class="" role="form" id="facet-pickers">
             <div class="form-group">
                 <label for="search" class="sr-only control-label">Search</label>
-                <input id="search" type="text" ng-model="search.queryString" placeholder="Search..."/>
+                <input class="form-control" id="search" type="text" ng-model="search.queryString" placeholder="Search..."/>
             </div>
             <div class="form-group">
                 <label for="part-type-picker" class="facet-header control-label">Part Type</label>
@@ -17,11 +19,31 @@
                 <label for="kit-type-picker" class="facet-header control-label">Kit Type</label>
                 <picker ng-model="search.kitType" path="type/kit" id="kit-type-picker"/>
             </div>
+            <div class="form-group">
+                <label for="gasket-type-picker" class="facet-header control-label">Gasket Type</label>
+                <picker ng-model="search.gasketType" path="type/gasket" id="gasket-type-picker"/>
+            </div>
+            <div class="form-group">
+                <label for="seal-type-picker" class="facet-header control-label">Seal Type</label>
+                <picker ng-model="search.sealType" path="type/seal" id="seal-type-picker"/>
+            </div>
+            <!--<div class="form-group">-->
+                <!--<label for="turbo-type-picker" class="facet-header control-label">Turbo Type</label>-->
+                <!--<picker ng-model="search.turboType" path="type/turbo" id="turbo-type-picker"/>-->
+            <!--</div>-->
+            <!--<div class="form-group">-->
+                <!--<label for="turbo-model-picker" class="facet-header control-label">Turbo Model</label>-->
+                <!--<picker ng-model="search.turboModel" path="type/turbo" id="turbo-model-picker"/>-->
+            <!--</div>-->
+            <!--<div class="form-group">-->
+                <!--<label for="coolant-type-picker" class="facet-header control-label">Coolant Type</label>-->
+                <!--<picker ng-model="search.coolantType" path="type/turbo" id="coolant-type-picker"/>-->
+            <!--</div>-->
         </form>
-
-        <!--<search-facets></search-facets>-->
     </div>
-    <div class="col-lg-9 col-md-9 col-sm-9 col-xs-12">
+
+    <!-- Tabular search results -->
+    <div class="col-xs-12 col-sm-9">
         <table data-ng-table="partTableParams" class="table table-bordered table-striped table-hover table-responsive">
             <tr data-ng-repeat="part in $data">
                 <td title="'Part Type'" sortable="partType.name">

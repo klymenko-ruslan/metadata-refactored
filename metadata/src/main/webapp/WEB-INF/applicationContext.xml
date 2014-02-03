@@ -73,16 +73,18 @@
         <constructor-arg ref="dataSource"/>
     </bean>
     
-    <bean id="dataSource" class="com.mysql.jdbc.jdbc2.optional.MysqlConnectionPoolDataSource"
-          p:databaseName="${database.schema}"
-          p:serverName="${database.host}"
-          p:port="${database.port}"
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close"
+          p:driverClass="com.mysql.jdbc.Driver"
           p:user="${database.username}"
           p:password="${database.password}"
-          p:connectTimeout="10000"
-          p:socketTimeout="60000"
-          p:useCompression="true"
-          p:autoReconnectForPools="true"/>
+          p:jdbcUrl="jdbc:mysql://${database.host}:${database.port}/${database.schema}?autoReconnect=true&amp;connectTimeout=10000&amp;socketTimeout=60000"
+          p:maxIdleTime="3600"
+          p:idleConnectionTestPeriod="300"
+          p:minPoolSize="2"
+          p:maxPoolSize="20"
+          p:testConnectionOnCheckin="true"
+          p:preferredTestQuery="SELECT 1">
+    </bean>
     
     <bean class="org.springframework.orm.jpa.JpaTransactionManager" id="transactionManager">
         <property name="entityManagerFactory" ref="entityManagerFactory"/>

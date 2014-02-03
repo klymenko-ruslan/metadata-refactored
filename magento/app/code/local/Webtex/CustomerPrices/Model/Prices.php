@@ -68,27 +68,9 @@ class Webtex_CustomerPrices_Model_Prices extends Mage_Core_Model_Abstract {
         $connection->delete($tablePrefix . 'customerprices_prices', 'product_id = ' . $productId);
     }
 
-    public function getProductPrice($product, $qty = 1)
-    {
+    public function getProductPrice($product, $qty = 1) {
         if (!Mage::helper('customer')->isLoggedIn() || !($product->getId())) {
-            /*if($product->getGroupPrice() > 0) {
-				$groupPrices = $product->getData('group_price');
-				$customerGroup = Mage::getSingleton('customer/session')->getCustomerGroupId();
-				//$matchedPrice = $product->getPrice();
-				foreach ($groupPrices as $groupPrice) {
-					if ($groupPrice['cust_group'] == $customerGroup) {
-						$matchedPrice = $groupPrice['website_price'];
-						break;
-					}
-				}
-				
-				return $matchedPrice; //min($product->getPrice(), $product->getGroupPrice());	
-			}
-			else {
-				return $product->getPrice(); //min($product->getPrice(), $product->getGroupPrice());	
-			}*/
-			return min($product->getPrice(), $product->getGroupPrice());
-			
+            return min($product->getPrice(), $product->getGroupPrice());
         }
 
         if(is_null($qty)) {
@@ -107,23 +89,20 @@ class Webtex_CustomerPrices_Model_Prices extends Mage_Core_Model_Abstract {
         if(isset($row['price']) && $row['price'] > 0){
 		return $row['price'];
 	}
-        //return min($product->getPrice(), $product->getGroupPrice());
-		if($product->getGroupPrice() > 0) {
-				$groupPrices = $product->getData('group_price');
-				$customerGroup = Mage::getSingleton('customer/session')->getCustomerGroupId();
-				//$matchedPrice = $product->getPrice();
-				foreach ($groupPrices as $groupPrice) {
-					if ($groupPrice['cust_group'] == $customerGroup) {
-						$matchedPrice = $groupPrice['website_price'];
-						break;
-					}
-				}
-				
-				return $matchedPrice; //min($product->getPrice(), $product->getGroupPrice());	
-		}
-		else {
-			return $product->getPrice(); //min($product->getPrice(), $product->getGroupPrice());	
-		}
+                
+        if ($product->getGroupPrice() > 0) {
+            $groupPrices = $product->getData('group_price');
+            $customerGroup = Mage::getSingleton('customer/session')->getCustomerGroupId();
+            
+            foreach ($groupPrices as $groupPrice) {
+                if ($groupPrice['cust_group'] == $customerGroup) {
+                    return $groupPrice['website_price'];
+                }
+            }
+        }
+        
+        // Fall through to standard price
+        return $product->getPrice();
     }
 
     public function getProductSpecialPrice($product, $qty = 1)

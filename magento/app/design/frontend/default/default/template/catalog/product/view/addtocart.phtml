@@ -27,10 +27,38 @@
 <?php
 $_product = $this->getProduct();
 $_productManufacturer = $_product->getManufacturer();
-$tiProductPartNumbers = explode(',', $_product->getTiPartSku());
-$tiPartSku = $tiProductPartNumbers[0];
-$_tiProduct = Mage::getModel('catalog/product');
-$_tiProduct->load($_tiProduct->getIdBySku($tiPartSku));
+
+
+// Determine which product we're using
+$billOfMaterials = json_decode($_product->getBillOfMaterials(), true);
+if ($_productManufacturer == 44) {
+
+    // This is a TI product, use it directly
+    $tiProduct = $_product;
+    $addToCartString = $this->__('Add to Cart');
+
+    
+} elseif ($_product->getAttributeText("part_type") == "turbo"
+            && !empty($billOfMaterials)
+            && !empty($billOfMaterials[0]['ti_part_sku'])) {
+    
+    // This is a turbo, get the TI part from the first BOM item (should be a cartridge) TI part SKU array.
+    $bomCartridgeTiSku = $billOfMaterials[0]['ti_part_sku'][0];
+    
+    $tiProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $bomCartridgeTiSku);
+    $addToCartString = $this->__('Add TI Part to Cart');
+    
+} elseif (strlen($_product->getTiPartSku()) > 0) {
+    
+    // It's not a TI part and it's not a turbo, get the first ti_part_sku
+    $tiPartSkuArray = explode(',', $_product->getTiPartSku());
+
+    $tiProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $tiPartSkuArray[0]);
+    $addToCartString = $this->__('Add TI Part to Cart');
+} else {
+    $tiProduct = null;
+}
+
 ?>
 <?php if ($_product->isSaleable()): ?>
     <div class="add-to-cart">
@@ -39,21 +67,10 @@ $_tiProduct->load($_tiProduct->getIdBySku($tiPartSku));
             <input type="text" name="qty" id="qty" maxlength="12" value="<?php echo $this->getProductDefaultQty() * 1 ?>"
                    title="<?php echo $this->__('Qty') ?>" class="input-text qty"/>
         <?php endif; ?>
-        <?php if ($tiPartSku && strlen($tiPartSku) > 1 && $_productManufacturer != 44): ?>
-            <button type="button" title="<?php echo $this->__('Add TI Part to Cart') ?>" class="button btn-cart"
-                    onclick="setLocation('<?php echo $this->getAddToCartUrl($_tiProduct) ?>')">
-                <span><span><?php echo $this->__('Add TI Part to Cart') ?></span></span>
-            </button>
-            <?php elseif (0): ?>
-            <!-- Adding compatible TI cartridge to cart button -->
-            <button type="button" title="<?php echo $this->__('Add TI Cartridge to Cart') ?>" class="button btn-cart"
-                    onclick="setLocation('<?php echo $this->getAddToCartUrl($_tiProduct) ?>')">
-                <span><span><?php echo $this->__('Add TI Cartridge to Cart') ?></span></span>
-            </button>
-        <?php else: ?>
-            <button type="button" title="<?php echo $this->__('Add to Cart') ?>" class="button btn-cart"
-                    onclick="productAddToCartForm.submit(this)">
-                <span><span><?php echo $this->__('Add to Cart') ?></span></span>
+        <?php if ($tiProduct && $tiProduct->isSaleable()): ?>
+            <button type="button" title="<?php echo $addToCartString ?>" class="button btn-cart"
+                    onclick="setLocation('<?php echo $this->getAddToCartUrl($tiProduct) ?>')">
+                <span><span><?php echo $addToCartString ?></span></span>
             </button>
         <?php endif; ?>
         <?php echo $this->getChildHtml('', true, true) ?>
