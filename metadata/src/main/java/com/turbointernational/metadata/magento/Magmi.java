@@ -431,9 +431,7 @@ public class Magmi {
                 + "  LEFT JOIN cmodel.make cmake\n"
                 + "  LEFT JOIN cengine.fuelType cfuel\n"
                 + "WHERE\n"
-                + "  cmake.name IS NOT NULL\n"
-                + "  AND cmodel.name IS NOT NULL\n"
-                + "  AND p.id IN (" + StringUtils.join(productIds, ',') + ")\n"
+                + "  p.id IN (" + StringUtils.join(productIds, ',') + ")\n"
                 + "ORDER BY p.id", MagmiBasicProduct.class)
             .getResultList();
     }
