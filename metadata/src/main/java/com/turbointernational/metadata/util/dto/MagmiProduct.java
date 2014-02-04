@@ -169,7 +169,9 @@ public class MagmiProduct {
         csvImages(columns, imageResizer);
         
         // Turbo-specific columns
-        csvTurboSpecific();
+        if (StringUtils.equals("Turbo", part.getPartType().getTypeName())) {
+            addTurboCsvColumns();
+        }
 
         // type
         columns.put("type", "simple");
@@ -210,12 +212,6 @@ public class MagmiProduct {
         columns.put("bill_of_materials", bom.toString());
         
         return columns;
-    }
-
-    private void csvTurboSpecific() {
-        if (StringUtils.equals("Turbo", part.getPartType().getTypeName())) {
-            addTurboCsvColumns();
-        }
     }
 
     private void csvImages(Map<String, String> columns, ImageResizer resizer) {
