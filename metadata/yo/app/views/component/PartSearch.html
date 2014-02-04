@@ -46,24 +46,24 @@
     <div class="col-xs-12 col-sm-9">
         <table data-ng-table="partTableParams" class="table table-bordered table-striped table-hover table-responsive">
             <tr data-ng-repeat="part in $data">
-                <td title="'Part Type'" sortable="partType.name">
+                <td title="'Part Type'" sortable="'partType.name'">
                     {{part._source.partType.name}}
                 </td>
-                <td title="'Manufacturer'" sortable="manufacturer.name">
+                <td title="'Manufacturer'" sortable="'manufacturer.name'">
                     {{part._source.manufacturer.name}}
                 </td>
-                <td title="'Mfr Part #'" sortable="manufacturerPartNumber">
+                <td title="'Mfr Part #'" sortable="'manufacturerPartNumber'">
                     {{part._source.manufacturerPartNumber}}
                 </td>
-                <td title="'Name'" sortable="name">
+                <td title="'Name'" sortable="'name'">
                     {{part._source.name}}
                 </td>
                 <td class="text-center" title="'Actions'">
-                            <span ng-repeat="action in actionList">
-                                <button data-ng-click="onAction({action: action, partId: part._source.id, partType: part._source.partType.typeName})"
-                                        class="btn btn-primary btn-xs">{{action}}
-                                </button>
-                            </span>
+                    <span ng-repeat="action in actionList">
+                        <button data-ng-click="onAction({action: action, partId: part._source.id, partType: part._source.partType.typeName})"
+                                class="btn btn-primary btn-xs">{{action}}
+                        </button>
+                    </span>
                 </td>
             </tr>
         </table>
