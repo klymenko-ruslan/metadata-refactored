@@ -19,5 +19,5 @@
     </bean>
     
     <!-- Product Image Serving -->
-    <mvc:resources mapping="/product_images/**" location="${product.images.location}"/>
+    <mvc:resources mapping="/product_images/**" location="${images.resized}"/>
 </beans>
