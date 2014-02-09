@@ -57,6 +57,7 @@ public class Magmi {
         "part_number",
         "part_number_short",
         "categories",
+        "ti_part_number",    // First interchangeable TI part number
         "ti_part_sku",       // Interchangeable parts by TI
         "interchanges",      // Interchangeable parts
         "bill_of_materials", // BOM
@@ -442,6 +443,7 @@ public class Magmi {
               + "  com.turbointernational.metadata.util.dto.MagmiInterchange("
               + "    p.id AS sku,"
               + "    ip.id AS interchangePartSku,"
+              + "    ip.manufacturerPartNumber AS interchangePartNumber,"
               + "    ipm.id AS interchangePartManufacturerId\n"
               + ")\n"
               + "FROM Part p\n"

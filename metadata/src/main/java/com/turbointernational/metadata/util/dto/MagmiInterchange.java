@@ -11,11 +11,14 @@ public class MagmiInterchange {
     
     private final Long interchangePartSku;
     
+    private final String interchangePartNumber;
+    
     private final Long interchangePartManufacturerId;
 
-    public MagmiInterchange(Long sku, Long interchangePartSku, Long interchangePartManufacturerId) {
+    public MagmiInterchange(Long sku, Long interchangePartSku, String interchangePartNumber, Long interchangePartManufacturerId) {
         this.sku = sku;
         this.interchangePartSku = interchangePartSku;
+        this.interchangePartNumber = interchangePartNumber;
         this.interchangePartManufacturerId = interchangePartManufacturerId;
     }
 
@@ -33,6 +36,10 @@ public class MagmiInterchange {
         return interchangePartSku;
     }
 
+    public String getInterchangePartNumber() {
+        return interchangePartNumber;
+    }
+    
     /**
      * @return the interchangePartManufacturerId
      */

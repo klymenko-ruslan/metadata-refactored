@@ -48,6 +48,8 @@ public class MagmiProduct {
 
     private final Set<Long> tiInterchanges = new TreeSet<Long>();
     
+    private String tiPartNumber = "";
+    
     private final JSOG bom = JSOG.array();
 
     private int rowCount = 0;
@@ -102,6 +104,11 @@ public class MagmiProduct {
         // TI interchanges
         if (interchange.getInterchangePartManufacturerId() == Manufacturer.TI_ID) {
             tiInterchanges.add(interchange.getInterchangePartSku());
+            
+            // Save the part number if this is the first interchange part
+            if (tiInterchanges.size() == 1) {
+                tiPartNumber = interchange.getInterchangePartNumber();
+            }
         }
     }
     
@@ -199,6 +206,7 @@ public class MagmiProduct {
         // Interchanges / TI Interchanges
         columns.put("interchanges", StringUtils.join(interchanges, ','));
         columns.put("ti_part_sku", StringUtils.join(tiInterchanges, ','));
+        columns.put("ti_part_number", tiPartNumber);
         
         columns.put("turbo_model", StringUtils.join(turboModel, ','));
         columns.put("turbo_type", StringUtils.join(turboType, ','));
