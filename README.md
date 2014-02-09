@@ -1,6 +1,3 @@
-[Launch Ticket](https://github.com/zero-one/TurboInternational/issues/153)
-=====================
-
 Developer IPs
 =============
 [What's My IP?](http://www.whatismyip.com/)
