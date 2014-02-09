@@ -20,7 +20,7 @@ import javax.persistence.Table;
 public class ProductImage {
 
     public static String getResizedFilename(Long partId, Long imageId, int size) {
-        return partId + "_" + imageId + "_"+ size + ".jpg";
+        return size + "/" + partId + "_" + imageId + ".jpg";
     }
     
     @Id
