@@ -1,0 +1,23 @@
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">Create a Part</h3>
+        </div>
+
+        <div class="modal-body">
+            <form name="form" class="form-horizontal" role="form">
+                <!-- Part Types DDL -->
+                <div class="form-group">
+                    <label for="PartCreateModal.PartType" class="control-label col-lg-2 col-md-2 col-sm-2 col-xs-12">Part Type</label>
+                    <picker ng-model="selection.partType" path="type/part" required
+                            id="PartCreateModal.PartType" class="col-lg-10 col-md-10 col-sm-10 col-xs-12"/>
+                </div>
+            </form>
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn btn-primary" ng-click="create()">Create&hellip;</button>
+            <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,88 @@
+<div class="container" ng-controller="PartBOMListCtrl">
+    <div class="btn-group">
+        <a ng-href="#/part" class="btn btn-large">Part List</a>
+        <a ng-href="#/part/{{ partType }}/{{ partId }}" class="btn btn-large">View Part</a>
+        <a ng-href="#/part/{{ partType }}/{{ partId }}/form" class="btn btn-large">Edit Part</a>
+        <a ng-click="clear()" ng-disabled="!canClear()" class="btn btn-large">Clear</a>
+        <a ng-click="undo()" ng-disabled="!isChanged()" class="btn btn-large btn-warning">Undo</a>
+        <a ng-click="save()" ng-disabled="!isChanged()" class="btn btn-large btn-success">Save</a>
+    </div>
+
+
+    <!-- Part Summary -->
+    <h1>{{ partType }} #{{ partId }}</h1>
+    <dl>
+        <dt>Name</dt>
+        <dd>
+            {{part.name}}
+            <span ng-show="part.name == null || part.name == ''">[blank]</span>
+        </dd>
+
+        <dt>Description</dt>
+        <dd>
+            {{part.description}}
+            <span ng-show="part.description == null || part.description == ''">[blank]</span>
+        </dd>
+
+        <dt>Manufacturer</dt>
+        <dd>
+            {{part.manufacturer.name}}
+            <span ng-show="part.manufacturer.name == null || part.manufacturer.name == ''">[blank]</span>
+        </dd>
+
+        <dt>Manufacturer Part Number</dt>
+        <dd>
+            {{part.manufacturerPartNumber}}
+            <span ng-show="part.manufacturerPartNumber == null || part.manufacturerPartNumber == ''">[blank]</span>
+        </dd>
+
+        <dt>Interchangeable Parts Group</dt>
+        <dd ng-show="newInterchange == null && pickedPart == null">
+            [none]
+        </dd>
+        <dd ng-show="newInterchange == null && pickedPart != null">
+            [new]
+        </dd>
+        <dd ng-show="newInterchange != null">
+            #{{newInterchange.id}} - {{newInterchange.name}}
+            <span ng-show="newInterchange.name == null || newInterchange.name == ''">[no name]</span>
+        </dd>
+    </dl>
+
+    <hr/>
+
+    <h3 ng-show="pickedPart != null">
+        Picked Interchangeable {{ pickedPart.partType.typeName }} #{{ pickedPart.id }}
+        <a ng-click="showPickedPart = !showPickedPart" ng-show="showPickedPart == false" class="btn">Show</a>
+        <a ng-click="showPickedPart = !showPickedPart" ng-show="showPickedPart == true" class="btn">Hide</a>
+    </h3>
+    <h3 ng-show="pickedPart == null">No Interchangeable Part Picked</h3>
+    <dl collapse="!showPickedPart">
+        <dt>Name</dt>
+        <dd>
+            {{pickedPart.name}}
+            <span ng-show="pickedPart.name == null || pickedPart.name == ''">[blank]</span>
+        </dd>
+
+        <dt>Description</dt>
+        <dd>
+            {{pickedPart.description}}
+            <span ng-show="pickedPart.description == null || pickedPart.description == ''">[blank]</span>
+        </dd>
+
+        <dt>Manufacturer</dt>
+        <dd>
+            {{pickedPart.manufacturer.name}}
+            <span ng-show="pickedPart.manufacturer.name == null || pickedPart.manufacturer.name == ''">[blank]</span>
+        </dd>
+
+        <dt>Manufacturer Part Number</dt>
+        <dd>
+            {{pickedPart.manufacturerPartNumber}}
+            <span ng-show="pickedPart.manufacturerPartNumber == null || pickedPart.manufacturerPartNumber == ''">[blank]</span>
+        </dd>
+    </dl>
+
+    <p>Find and pick an part below to set the interchangeable part group.</p>
+    <part-search partType="{{partType}}" actions="Pick" on-action="onPick(action, partId, partType)"></part-search>
+</div>

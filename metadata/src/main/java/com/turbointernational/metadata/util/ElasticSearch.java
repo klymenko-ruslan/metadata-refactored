@@ -1,153 +1,148 @@
 package com.turbointernational.metadata.util;
 
 import com.turbointernational.metadata.domain.part.Part;
-import io.searchbox.client.JestClient;
-import io.searchbox.client.JestClientFactory;
-import io.searchbox.client.JestResult;
-import io.searchbox.client.config.ClientConfig;
-import io.searchbox.core.Bulk;
-import io.searchbox.core.Delete;
-import io.searchbox.core.Index;
-import io.searchbox.core.Search;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import net.sf.jsog.JSOG;
-import org.springframework.context.annotation.Scope;
+import org.elasticsearch.action.bulk.BulkRequest;
+import org.elasticsearch.action.delete.DeleteRequest;
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.client.Client;
+import org.elasticsearch.client.transport.TransportClient;
+import org.elasticsearch.common.transport.InetSocketTransportAddress;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
  * @author jrodriguez
  */
-@Scope(value = "singleton")
+@Service
 public class ElasticSearch {
-
-    private String metadataIndex = "metadata";
     
-    public  String partType = "part";
+    @Value("${elasticsearch.index}")
+    String elasticSearchIndex = "metadata";
+    
+    @Value("${elasticsearch.type}")
+    String elasticSearchType = "part";
 
-    private final ClientConfig clientConfig;
+    @Value("${elasticsearch.host}")
+    String elasticSearchHost;
 
-    private final JestClientFactory factory = new JestClientFactory();
+    @Value("${elasticsearch.port}")
+    int elasticSearchPort = 9300;
+    
+    @Value("${elasticsearch.timeout}")
+    int timeout = 10000;
 
-    private final JestClient client;
-
-    public ElasticSearch(String searchboxUrl) {
-        clientConfig = new ClientConfig.Builder(searchboxUrl).multiThreaded(true).build();
-        factory.setClientConfig(clientConfig);
-        client = factory.getObject();
+    public Client client() {
+        return new TransportClient().addTransportAddress(new InetSocketTransportAddress(elasticSearchHost, elasticSearchPort));
     }
-
-    public String partSearch(String queryString, int from, int size) throws Exception {
-        JSOG query = JSOG.object();
-        query.put("from", from)
-             .put("size", size);
-
-        query.get("query")
-                .get("query_string")
-                    .put("query", queryString)
-                    .get("fields")
-                        .add("manufacturer_part_number.autocomplete")
-                        .add("manufacturer_part_number.text")
-
-                        .add("manufacturer_name.autocomplete")
-                        .add("manufacturer_name.text");
-
-//        // Disjunction
-//        JSOG queries = query.get("query")
-//             .get("dis_max")
-//                 .put("boost", 1.5)
-//                 .get("queries");
 //
-//        // Query String
-//        JSOG queryStringQuery = JSOG.object();
-//        queries.add(queryStringQuery);
-//        queryStringQuery.get("query_string")
-//            .put("query", queryString)
-//            .put("phrase_slop", 5);
+//    public String partSearch(String queryString, int from, int size) throws Exception {
+//        JSOG query = JSOG.object();
+//        query.put("from", from)
+//             .put("size", size);
 //
-//        // Manufacturer Name
-//        JSOG manufacturerNameQuery = JSOG.object();
-//        queries.add(manufacturerNameQuery);
-//        manufacturerNameQuery.get("prefix")
-//            .put("manufacturer_name", queryString);
+//        query.get("query")
+//                .get("query_string")
+//                    .put("query", queryString)
+//                    .get("fields")
+//                        .add("manufacturer_part_number.autocomplete")
+//                        .add("manufacturer_part_number.text")
 //
-//        // Manufacturer Part Number
-//        JSOG manufacturerPartNumberQuery = JSOG.object();
-//        queries.add(manufacturerPartNumberQuery);
-//        manufacturerPartNumberQuery.get("prefix")
-//                .put("manufacturer_part_number", queryString);
-
-        return search(new Search.Builder(query.toString())
-                                .addIndex(metadataIndex)
-                                .addType(partType)
-                                .build());
-    }
-
-    public String search(Search search) throws Exception {
-        String searchResultString = client.execute(search).getJsonString();
-        JSOG searchResult = JSOG.parse(searchResultString);
-
-        JSOG result = JSOG.object("total", searchResult.get("hits").get("total"));
-
-        for (JSOG resultItem : searchResult.get("hits").get("hits").arrayIterable()) {
-            result.get("items").add(resultItem.get("_source"));
+//                        .add("manufacturer_name.autocomplete")
+//                        .add("manufacturer_name.text");
+//
+////        // Disjunction
+////        JSOG queries = query.get("query")
+////             .get("dis_max")
+////                 .put("boost", 1.5)
+////                 .get("queries");
+////
+////        // Query String
+////        JSOG queryStringQuery = JSOG.object();
+////        queries.add(queryStringQuery);
+////        queryStringQuery.get("query_string")
+////            .put("query", queryString)
+////            .put("phrase_slop", 5);
+////
+////        // Manufacturer Name
+////        JSOG manufacturerNameQuery = JSOG.object();
+////        queries.add(manufacturerNameQuery);
+////        manufacturerNameQuery.get("prefix")
+////            .put("manufacturer_name", queryString);
+////
+////        // Manufacturer Part Number
+////        JSOG manufacturerPartNumberQuery = JSOG.object();
+////        queries.add(manufacturerPartNumberQuery);
+////        manufacturerPartNumberQuery.get("prefix")
+////                .put("manufacturer_part_number", queryString);
+//
+//        return search(new Search.Builder(query.toString())
+//                                .addIndex(elasticSearchIndex)
+//                                .addType(elasticSearchType)
+//                                .build());
+//    }
+//
+    public String search(String searchJson) throws Exception {
+        Client client = client();
+        try {
+            SearchRequest request = new SearchRequest(elasticSearchIndex).source(searchJson);
+            return client.search(request).actionGet(timeout).toString();
+        } finally {
+            client.close();
         }
-
-        return result.toString();
     }
-
-    @Async
+    
+    @Transactional(readOnly = true)
     public void indexPart(Part part) throws Exception {
-        List<Part> parts = new ArrayList<Part>();
-        parts.add(part);
-        indexParts(parts);
+
+        IndexRequest index = new IndexRequest(elasticSearchIndex, elasticSearchType, part.getId().toString());
+        index.source(part.toJson());
+        
+        Client client = client();
+        try {
+            client.index(index).actionGet(timeout);
+        } finally {
+            client.close();
+        }
     }
 
-    @Async
-    public void indexParts(Collection<Part> parts) throws Exception {
-        Bulk.Builder bulkBuilder = new Bulk.Builder();
-        bulkBuilder.defaultIndex(metadataIndex);
-        bulkBuilder.defaultType(partType);
+    @Transactional(readOnly = true)
+    public int indexParts(int firstResult, int maxResults) throws Exception {
+        
+        BulkRequest bulk = new BulkRequest();
+        
+        List<Part> parts = Part.findPartEntries(firstResult, maxResults);
+        
         for (Part part : parts) {
-            if (part == null) {
-                continue;
-            }
-
-            // Get the part JSOG
-            JSOG partObject = part.toJsog();
-            partObject.put("_id", partObject.remove("id")); // Rename id to _id
-
-            Index.Builder indexBuilder = new Index.Builder(partObject.toString()).id(part.getId().toString());
-
-            bulkBuilder.addAction(indexBuilder.build());
+            IndexRequest index = new IndexRequest(elasticSearchIndex, elasticSearchType, part.getId().toString());
+            index.source(part.toJson());
+            bulk.add(index);
         }
-
-        JestResult result = client.execute(bulkBuilder.build());
-
-        if (!result.isSucceeded()) {
-//            StringBuilder error = new StringBuilder();
-//
-//            Iterator<BulkItemResponse> it = result.getJsonString();
-//            while (it.hasNext()) {
-//                BulkItemResponse itemResponse = it.next();
-//                error.append(itemResponse.getFailureMessage());
-//                error.append("\n");
-//            }
-
-            throw new Error(result.getJsonString());
+        
+        Client client = client();
+        try {
+            client.bulk(bulk).actionGet();
+        } finally {
+            client.close();
         }
+        
+        return parts.size();
     }
 
     @Async
     public void deletePart(Part part) throws Exception {
-        client.execute(
-                new Delete.Builder()
-                    .index(metadataIndex)
-                    .type(partType)
-                    .id(part.getId().toString())
-                    .build());
+        DeleteRequest delete = new DeleteRequest(elasticSearchIndex, elasticSearchType, part.getId().toString());
+        
+        Client client = client();
+        try {
+            client.delete(delete).actionGet(timeout);
+        } finally {
+            client.close();
+        }
     }
 
 }

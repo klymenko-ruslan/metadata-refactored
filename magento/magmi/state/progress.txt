@@ -1,0 +1,1028 @@
+title:MAGMI by dweeves - version:0.7.18
+startup:Running Magmi Product Import Engine v1.7.1 by dweeves
+startup:Import Profile:default
+startup:Import Mode:update
+step:step:0.5%
+plugin;Magmi_CSVDataSource;pluginhello:CSV Datasource-1.3-Dweeves- 
+plugin;Magmi_OptimizerPlugin;pluginhello:Magmi Optimizer-1.0.5-Dweeves-http://sourceforge.net/apps/mediawiki/magmi/index.php?title=Magmi_Optimizer 
+plugin;CategoryImporter;pluginhello:On the fly category creator/importer-0.2.3-Dweeves-http://sourceforge.net/apps/mediawiki/magmi/index.php?title=On_the_fly_category_creator/importer 
+plugin;CustomerpriceProcessor;pluginhello:Customer Price Importer-0.0.1-Jeff Rodriguez- 
+plugin;FinderProcessor;pluginhello:Amasty Product Parts Finder-0.0.1-Jeff Rodriguez- 
+plugin;GrouppriceProcessor;pluginhello:Group Price Importer-0.0.1-Tim Bezhashvyly- 
+plugin;ImageAttributeItemProcessor;pluginhello:Image attributes processor-1.0.25-Dweeves-http://sourceforge.net/apps/mediawiki/magmi/index.php?title=Image_attributes_processor 
+plugin;ItemIndexer;pluginhello:On the fly indexer-0.1.5-Dweeves-http://sourceforge.net/apps/mediawiki/magmi/index.php?title=On_the_fly_indexer 
+plugin;CustomOptionsItemProcessor;pluginhello:Custom Options-0.0.7-Pablo & Dweeves-http://sourceforge.net/apps/mediawiki/magmi/index.php?title=Custom_Options 
+plugin;ProductDeleter;pluginhello:Product Deleter-0.0.2-Dweeves-http://sourceforge.net/apps/mediawiki/magmi/index.php?title=Product_Deleter 
+plugin;TierpriceProcessor;pluginhello:Tier price importer-0.0.9a-Dweeves,bepixeld-http://sourceforge.net/apps/mediawiki/magmi/index.php?title=Tier_price_importer 
+plugin;DefaultValuesItemProcessor;pluginhello:Default Values setter-0.0.5-Dweeves-http://sourceforge.net/apps/mediawiki/magmi/index.php?title=Default_Values_setter 
+plugin;GenericMapperProcessor;pluginhello:Generic mapper-0.0.6a-Dweeves-http://sourceforge.net/apps/mediawiki/magmi/index.php?title=Generic_mapper 
+plugin;GenericMapperProcessor;startup:Generic mapper v0.0.6a - No custom mapping found
+plugin;ValueTrimItemProcessor;pluginhello:Value Trimmer for select/multiselect-0.0.3-Dweeves-http://sourceforge.net/apps/mediawiki/magmi/index.php?title=Value_Trimmer_for_select/multiselect 
+plugin;CrossUpsellProducts;pluginhello:Cross/Upsell Importer-1.0.3-Dweeves-http://sourceforge.net/apps/mediawiki/magmi/index.php?title=Cross/Upsell_Importer 
+plugin;RelatedProducts;pluginhello:Product relater-1.0.3-Dweeves,jwtechniek-http://sourceforge.net/apps/mediawiki/magmi/index.php?title=Product_relater 
+plugin;Magmi_DefaultAttributeItemProcessor;pluginhello:Standard Attribute Import-1.0.5-Dweeves- 
+plugin;Magmi_CSVDataSource;startup:CSV Datasource v1.3 - Importing CSV : /var/www/magmi/import/products.csv using separator [ , ] enclosing [ " ]
+plugin;Magmi_OptimizerPlugin;info:Magmi Optimizer v1.0.5 - Optimizing magmi
+plugin;Magmi_OptimizerPlugin;info:Magmi Optimizer v1.0.5 - Adding index MAGMI_EAOV_OPTIMIZATION_IDX on eav_attribute_option_value
+plugin;Magmi_OptimizerPlugin;info:Magmi Optimizer v1.0.5 - Already optmized!
+plugin;Magmi_OptimizerPlugin;info:Magmi Optimizer v1.0.5 - Adding index MAGMI_CPEM_OPTIMIZATION_IDX on catalog_product_entity_media_gallery
+plugin;Magmi_OptimizerPlugin;info:Magmi Optimizer v1.0.5 - Already optmized!
+plugin;Magmi_OptimizerPlugin;info:Magmi Optimizer v1.0.5 - Adding index MAGMI_CCEV_OPTIMIZATION_IDX on catalog_category_entity_varchar
+plugin;Magmi_OptimizerPlugin;info:Magmi Optimizer v1.0.5 - Already optmized!
+plugin;Magmi_OptimizerPlugin;info:Magmi Optimizer v1.0.5 - Adding index MAGMI_EA_CODE_OPTIMIZATION_IDX on eav_attribute
+plugin;Magmi_OptimizerPlugin;info:Magmi Optimizer v1.0.5 - Already optmized!
+startup:Performing Datasouce Lookup...
+lookup:48090:6.2325439453125
+startup:Found 48090 records, took 6.2325439453125 sec
+plugin;Magmi_CSVDataSource;startup:CSV Datasource v1.3 - No BOM detected, assuming File is UTF8 without BOM...
+plugin;Magmi_CSVDataSource;startup:CSV Datasource v1.3 - 86 CSV headers columns found
+columns:86
+plugin;DefaultValuesItemProcessor;startup:Default Values setter v0.0.5 - Adding Columns 
+startup:Ajusted processed columns:88
+itime:241 - 39.362823963165 - 39.362823963165
+dbtime:6227 - 29.197347164154 - 29.197347164154 - 6227
+error:1:Expected 3 values, got: Fiat,1993,Tempra, Tipo - DELETE FROM customerprices_prices WHERE product_id=?
+error:2:Expected 3 values, got: Fiat,1993,Tempra, Tipo - ERROR ON RECORD #413
+itime:482 - 66.684538841248 - 27.32156085968
+dbtime:12363 - 48.746953487396 - 19.549606323242 - 6136
+itime:723 - 95.516881942749 - 28.828016042709
+dbtime:18608 - 68.834758281708 - 20.087804794312 - 6245
+error:3:Expected 3 values, got: Land Rover,1987,Falcon,90/110 Turbo D - DELETE FROM customerprices_prices WHERE product_id=?
+error:4:Expected 3 values, got: Land Rover,1987,Falcon,90/110 Turbo D - ERROR ON RECORD #899
+error:5:Expected 3 values, got: Cummins Inc.,1996,Off Highway, 6BTA - DELETE FROM customerprices_prices WHERE product_id=?
+error:6:Expected 3 values, got: Cummins Inc.,1996,Off Highway, 6BTA - ERROR ON RECORD #902
+itime:964 - 123.70559096336 - 28.188477993011
+dbtime:24774 - 88.534487009048 - 19.699728727341 - 6166
+error:7:Expected 3 values, got: Lancia,1995,Delta,Tipo,155 - SELECT value_id FROM am_finder_value WHERE parent_id = ? AND dropdown_id = ? and name = ?
+error:8:Expected 3 values, got: Lancia,1995,Delta,Tipo,155 - ERROR ON RECORD #980
+itime:1205 - 150.07871198654 - 26.372956037521
+dbtime:31009 - 107.92826318741 - 19.39377617836 - 6235
+itime:1446 - 176.43999195099 - 26.361119031906
+dbtime:37192 - 127.23568844795 - 19.307425260544 - 6183
+itime:1687 - 201.95260095596 - 25.512434959412
+dbtime:43433 - 145.91149020195 - 18.675801753998 - 6241
+itime:1928 - 228.819439888 - 26.866616010666
+dbtime:49648 - 165.66927504539 - 19.757784843445 - 6215
+itime:2169 - 264.57259488106 - 35.753000974655
+dbtime:55816 - 192.34949469566 - 26.680219650269 - 6168
+error:9:Expected 3 values, got: Chrysler,1996,Chrysler, 6BTAA - DELETE FROM customerprices_prices WHERE product_id=?
+error:10:Expected 3 values, got: Chrysler,1996,Chrysler, 6BTAA - ERROR ON RECORD #2393
+itime:2410 - 299.20003080368 - 34.627264976501
+dbtime:61981 - 218.24940037727 - 25.89990568161 - 6165
+itime:2651 - 342.05510497093 - 42.854877948761
+dbtime:68153 - 250.62142181396 - 32.372021436691 - 6172
+error:11:Expected 3 values, got: Vauxhall,2003,Astra, Vectra,Zafira - SELECT value_id FROM am_finder_value WHERE parent_id = ? AND dropdown_id = ? and name = ?
+error:12:Expected 3 values, got: Vauxhall,2003,Astra, Vectra,Zafira - ERROR ON RECORD #2654
+error:13:Expected 3 values, got: Volkswagen,1984,Passat,Quantum - DELETE FROM customerprices_prices WHERE product_id=?
+error:14:Expected 3 values, got: Volkswagen,1984,Passat,Quantum - ERROR ON RECORD #2682
+error:15:Expected 3 values, got: Toyota,1993,Landcruiser TD (KZ170,71) - DELETE FROM customerprices_prices WHERE product_id=?
+error:16:Expected 3 values, got: Toyota,1993,Landcruiser TD (KZ170,71) - ERROR ON RECORD #2743
+itime:2892 - 369.35793685913 - 27.302604913712
+dbtime:74375 - 270.52523517609 - 19.903813362122 - 6222
+itime:3133 - 399.63678598404 - 30.278648138046
+dbtime:80993 - 292.3679420948 - 21.842706918716 - 6618
+itime:3374 - 430.1448059082 - 30.507840871811
+dbtime:87619 - 314.09827232361 - 21.730330228806 - 6626
+error:17:Expected 3 values, got: Vauxhall,2003,Astra, Vectra,Zafira - SELECT v2.value_id AS finalValueId  FROM am_finder_value AS v0  JOIN am_finder_value AS v1 ON v1.parent_id = v0.value_id  JOIN am_finder_value AS v2 ON v2.parent_id = v1.value_id  WHERE  v0.dropdown_id = 1 AND v0.name = ?  AND  v1.dropdown_id = 2 AND v1.name = ?  AND  v2.dropdown_id = 3 AND v2.name = ? 
+error:18:Expected 3 values, got: Vauxhall,2003,Astra, Vectra,Zafira - ERROR ON RECORD #3598
+itime:3615 - 458.31215286255 - 28.167181968689
+dbtime:94127 - 333.2769742012 - 19.178701877594 - 6508
+itime:3856 - 487.1061398983 - 28.793782949448
+dbtime:100573 - 353.2587556839 - 19.981781482697 - 6446
+error:19:Expected 3 values, got: ISUZU,1985,Trooper,Pick-up - DELETE FROM customerprices_prices WHERE product_id=?
+error:20:Expected 3 values, got: ISUZU,1985,Trooper,Pick-up - ERROR ON RECORD #3953
+error:21:Expected 3 values, got: Cummins Inc.,1996,Off Highway, 6BTA - DELETE FROM customerprices_prices WHERE product_id=?
+error:22:Expected 3 values, got: Cummins Inc.,1996,Off Highway, 6BTA - ERROR ON RECORD #3954
+error:23:Expected 3 values, got: Saab,1979,900,99 EMS - DELETE FROM customerprices_prices WHERE product_id=?
+error:24:Expected 3 values, got: Saab,1979,900,99 EMS - ERROR ON RECORD #3977
+itime:4097 - 514.66403985023 - 27.557729959488
+dbtime:106969 - 372.98532509804 - 19.726569414139 - 6396
+itime:4338 - 545.50052785873 - 30.836310863495
+dbtime:113940 - 395.43322396278 - 22.447898864746 - 6971
+itime:4579 - 574.17603588104 - 28.675298929214
+dbtime:120446 - 415.80216956139 - 20.368945598602 - 6506
+itime:4820 - 603.81071996689 - 29.634525060654
+dbtime:126825 - 436.75120401382 - 20.949034452438 - 6379
+error:25:Expected 3 values, got: Cummins Inc.,1996,Off Highway, 6BTA - DELETE FROM customerprices_prices WHERE product_id=?
+error:26:Expected 3 values, got: Cummins Inc.,1996,Off Highway, 6BTA - ERROR ON RECORD #4827
+itime:5061 - 633.39089989662 - 29.580028057098
+dbtime:133187 - 458.18517017365 - 21.433966159821 - 6362
+itime:5302 - 669.62745594978 - 36.236381053925
+dbtime:139969 - 484.54822897911 - 26.363058805466 - 6782
+itime:5543 - 719.4261879921 - 49.798494100571
+dbtime:146537 - 520.21888756752 - 35.670658588409 - 6568
+itime:5784 - 747.34207892418 - 27.915719985962
+dbtime:152994 - 539.68510150909 - 19.466213941574 - 6457
+itime:6025 - 779.86254692078 - 32.520297050476
+dbtime:159614 - 563.13899159431 - 23.45389008522 - 6620
+itime:6266 - 824.06214380264 - 44.19944691658
+dbtime:166548 - 594.68201994896 - 31.543028354645 - 6934
+itime:6507 - 858.06193780899 - 33.999602794647
+dbtime:174867 - 618.38780903816 - 23.705789089203 - 8319
+itime:6748 - 886.3266119957 - 28.264502048492
+dbtime:181923 - 637.25751018524 - 18.869701147079 - 7056
+itime:6989 - 906.4285929203 - 20.10179901123
+dbtime:187475 - 649.52531075478 - 12.267800569534 - 5552
+itime:7230 - 925.99845981598 - 19.569687843323
+dbtime:193042 - 661.27901959419 - 11.753708839417 - 5567
+itime:7471 - 960.2756228447 - 34.277005910873
+dbtime:198593 - 683.51074934006 - 22.231729745865 - 5551
+itime:7712 - 982.13211798668 - 21.856273174286
+dbtime:204150 - 696.87406396866 - 13.363314628601 - 5557
+itime:7953 - 1004.8545849323 - 22.722243070602
+dbtime:209705 - 710.86298751831 - 13.988923549652 - 5555
+itime:8194 - 1035.0328989029 - 30.177983999252
+dbtime:215265 - 730.76509308815 - 19.902105569839 - 5560
+itime:8435 - 1063.2181088924 - 28.185049057007
+dbtime:220816 - 748.19498991966 - 17.429896831512 - 5551
+itime:8676 - 1084.2859249115 - 21.067534923553
+dbtime:226369 - 760.93562936783 - 12.740639448166 - 5553
+itime:8917 - 1109.0764708519 - 24.790366888046
+dbtime:231920 - 776.6885368824 - 15.752907514572 - 5551
+itime:9158 - 1133.5331590176 - 24.456526041031
+dbtime:237475 - 792.07202005386 - 15.383483171463 - 5555
+itime:9399 - 1154.4128899574 - 20.879559993744
+dbtime:243035 - 804.48056316376 - 12.408543109894 - 5560
+itime:9640 - 1176.3961679935 - 21.983055114746
+dbtime:248590 - 816.49994969368 - 12.019386529922 - 5555
+itime:9881 - 1200.822357893 - 24.426007032394
+dbtime:254144 - 830.83003878593 - 14.330089092255 - 5554
+itime:10122 - 1224.2435278893 - 23.42102098465
+dbtime:259695 - 845.51238512993 - 14.682346343994 - 5551
+itime:10363 - 1255.2183749676 - 30.974669933319
+dbtime:265246 - 864.79003429413 - 19.2776491642 - 5551
+itime:10604 - 1285.1073629856 - 29.888777971268
+dbtime:270804 - 883.92677593231 - 19.136741638184 - 5558
+itime:10845 - 1313.348377943 - 28.240849018097
+dbtime:276355 - 901.47098231316 - 17.544206380844 - 5551
+itime:11086 - 1335.1924898624 - 21.84391283989
+dbtime:281907 - 914.78596520424 - 13.314982891083 - 5552
+itime:11327 - 1355.2541849613 - 20.061522006989
+dbtime:287460 - 927.07287359238 - 12.286908388138 - 5553
+itime:11568 - 1385.5093009472 - 30.254925012589
+dbtime:293015 - 946.58766841888 - 19.514794826508 - 5555
+itime:11809 - 1419.4401860237 - 33.930652141571
+dbtime:298570 - 968.74741792679 - 22.159749507904 - 5555
+itime:12050 - 1441.8547699451 - 22.414408922195
+dbtime:304121 - 982.91568851471 - 14.168270587921 - 5551
+itime:12291 - 1465.4464538097 - 23.591487884521
+dbtime:309676 - 997.56008934975 - 14.644400835037 - 5555
+itime:12532 - 1495.9976968765 - 30.551065921783
+dbtime:315224 - 1017.3394093513 - 19.779320001602 - 5548
+itime:12773 - 1518.9582059383 - 22.960249900818
+dbtime:320772 - 1030.4691026211 - 13.12969326973 - 5548
+itime:13014 - 1545.3682420254 - 26.409884214401
+dbtime:326322 - 1044.6561489105 - 14.187046289444 - 5550
+itime:13255 - 1565.7137298584 - 20.345243930817
+dbtime:331874 - 1057.1156244278 - 12.459475517273 - 5552
+itime:13496 - 1585.9121699333 - 20.198205947876
+dbtime:337433 - 1069.4436118603 - 12.32798743248 - 5559
+itime:13737 - 1607.6137788296 - 21.699594974518
+dbtime:342983 - 1082.7425017357 - 13.298889875412 - 5550
+itime:13978 - 1627.7251088619 - 20.111091852188
+dbtime:348535 - 1094.9698591232 - 12.227357387543 - 5552
+itime:14219 - 1647.1187069416 - 19.39341711998
+dbtime:354095 - 1106.7507398129 - 11.780880689621 - 5560
+itime:14460 - 1668.2283849716 - 21.109518051147
+dbtime:359649 - 1118.8238501549 - 12.073110342026 - 5554
+itime:14701 - 1688.6760799885 - 20.447515010834
+dbtime:365203 - 1130.9749495983 - 12.151099443436 - 5554
+itime:14942 - 1708.764688015 - 20.088430166245
+dbtime:370757 - 1143.0081393719 - 12.03318977356 - 5554
+itime:15183 - 1730.0583128929 - 21.293431997299
+dbtime:376310 - 1156.0968644619 - 13.088725090027 - 5553
+itime:15424 - 1754.7536168098 - 24.690195798874
+dbtime:381869 - 1172.0311701298 - 15.934305667877 - 5559
+itime:15665 - 1782.3646090031 - 27.610812187195
+dbtime:387423 - 1189.7922592163 - 17.761089086533 - 5554
+itime:15906 - 1803.3220829964 - 20.957244157791
+dbtime:392980 - 1202.5632202625 - 12.770961046219 - 5557
+itime:16147 - 1823.6175518036 - 20.295279979706
+dbtime:398528 - 1214.6929795742 - 12.129759311676 - 5548
+itime:16388 - 1845.8306248188 - 22.212889909744
+dbtime:404081 - 1228.6779499054 - 13.984970331192 - 5553
+itime:16629 - 1866.5397930145 - 20.70897102356
+dbtime:409638 - 1240.9316153526 - 12.253665447235 - 5557
+itime:16870 - 1888.3749170303 - 21.834940195084
+dbtime:415195 - 1253.2346527576 - 12.303037405014 - 5557
+itime:17111 - 1910.4960398674 - 22.120893001556
+dbtime:420752 - 1265.8079006672 - 12.573247909546 - 5557
+itime:17352 - 1931.2025339603 - 20.706257104874
+dbtime:426306 - 1278.4831557274 - 12.675255060196 - 5554
+itime:17593 - 1951.7254199982 - 20.522677183151
+dbtime:431862 - 1290.8660964966 - 12.382940769196 - 5556
+itime:17834 - 1971.8543729782 - 20.128741979599
+dbtime:437413 - 1303.0896487236 - 12.22355222702 - 5551
+itime:18075 - 1993.970831871 - 22.116232872009
+dbtime:442965 - 1316.8646085262 - 13.774959802628 - 5552
+itime:18316 - 2013.7698628902 - 19.796522855759
+dbtime:448525 - 1328.7552680969 - 11.890659570694 - 5560
+itime:18557 - 2042.1244888306 - 28.354425907135
+dbtime:454073 - 1347.5040328503 - 18.748764753342 - 5548
+itime:18798 - 2062.960367918 - 20.835711956024
+dbtime:459626 - 1360.2950706482 - 12.791037797928 - 5553
+itime:19039 - 2084.9210479259 - 21.960513114929
+dbtime:465178 - 1374.399004221 - 14.103933572769 - 5552
+itime:19280 - 2107.8791549206 - 22.957803010941
+dbtime:470733 - 1388.8354518414 - 14.436447620392 - 5555
+itime:19521 - 2136.9465739727 - 29.064869165421
+dbtime:476282 - 1407.9163627625 - 19.080910921097 - 5549
+itime:19762 - 2162.5336918831 - 25.586957931519
+dbtime:481838 - 1424.3765308857 - 16.460168123245 - 5556
+itime:20003 - 2182.9713540077 - 20.437463998795
+dbtime:487387 - 1437.0355689526 - 12.659038066864 - 5549
+itime:20244 - 2203.0826249123 - 20.111121892929
+dbtime:492940 - 1449.3757014275 - 12.340132474899 - 5553
+itime:20485 - 2223.5113580227 - 20.42849612236
+dbtime:498490 - 1461.7898783684 - 12.414176940918 - 5550
+itime:20726 - 2244.9803528786 - 21.468775987625
+dbtime:504051 - 1474.009645462 - 12.219767093658 - 5561
+itime:20967 - 2268.1751298904 - 23.194576025009
+dbtime:509602 - 1486.4878036976 - 12.47815823555 - 5551
+itime:21208 - 2288.6527519226 - 20.477402925491
+dbtime:515157 - 1498.6869921684 - 12.19918847084 - 5555
+itime:21449 - 2309.4836778641 - 20.83071398735
+dbtime:520713 - 1510.6802463531 - 11.993254184723 - 5556
+itime:21690 - 2329.9330039024 - 20.44909286499
+dbtime:526271 - 1523.2958590984 - 12.615612745285 - 5558
+itime:21931 - 2351.032255888 - 21.096539974213
+dbtime:531826 - 1536.5253102779 - 13.229451179504 - 5555
+itime:22172 - 2371.0007388592 - 19.968281984329
+dbtime:537381 - 1548.5877900124 - 12.062479734421 - 5555
+itime:22413 - 2391.4916160107 - 20.490665197372
+dbtime:542934 - 1561.0872044563 - 12.49941444397 - 5553
+itime:22654 - 2411.5510518551 - 20.059186935425
+dbtime:548487 - 1573.1736097336 - 12.086405277252 - 5553
+itime:22895 - 2433.910243988 - 22.358993053436
+dbtime:554042 - 1586.9063005447 - 13.732690811157 - 5555
+itime:23136 - 2454.3748888969 - 20.464454889297
+dbtime:559592 - 1599.1849296093 - 12.27862906456 - 5550
+itime:23377 - 2477.7335708141 - 23.358445882797
+dbtime:565142 - 1613.7382488251 - 14.553319215775 - 5550
+itime:23618 - 2504.0867438316 - 26.352949857712
+dbtime:570693 - 1630.4399793148 - 16.701730489731 - 5551
+itime:23859 - 2527.6250529289 - 23.53809094429
+dbtime:576247 - 1645.2744266987 - 14.834447383881 - 5554
+itime:24100 - 2548.7055819035 - 21.080353975296
+dbtime:581805 - 1658.0656125546 - 12.791185855865 - 5558
+itime:24341 - 2569.2036879063 - 20.497840881348
+dbtime:587358 - 1670.5427722931 - 12.477159738541 - 5553
+itime:24582 - 2589.1479318142 - 19.944013834
+dbtime:592911 - 1682.4284255505 - 11.88565325737 - 5553
+itime:24823 - 2609.1062269211 - 19.958091974258
+dbtime:598465 - 1694.3413877487 - 11.912962198257 - 5554
+itime:25064 - 2630.4257910252 - 21.319394111633
+dbtime:604024 - 1707.3861634731 - 13.044775724411 - 5559
+itime:25305 - 2650.6975588799 - 20.271571874619
+dbtime:609578 - 1719.6971225739 - 12.310959100723 - 5554
+itime:25546 - 2674.7714908123 - 24.073751926422
+dbtime:615130 - 1735.14934659 - 15.45222401619 - 5552
+itime:25787 - 2699.1946718693 - 24.422971010208
+dbtime:620685 - 1750.5386347771 - 15.389288187027 - 5555
+itime:26028 - 2718.5647628307 - 19.369911909103
+dbtime:626237 - 1762.2790315151 - 11.740396738052 - 5552
+itime:26269 - 2738.5022208691 - 19.937231063843
+dbtime:631795 - 1774.4704809189 - 12.191449403763 - 5558
+itime:26510 - 2762.2958068848 - 23.79341006279
+dbtime:637347 - 1789.1651453972 - 14.694664478302 - 5552
+itime:26751 - 2783.0132880211 - 20.717249155045
+dbtime:642899 - 1801.6716775894 - 12.50653219223 - 5552
+itime:26992 - 2803.5760300159 - 20.562523126602
+dbtime:648453 - 1814.0550153255 - 12.38333773613 - 5554
+itime:27233 - 2823.8657109737 - 20.289463996887
+dbtime:654005 - 1826.465875864 - 12.410860538483 - 5552
+itime:27474 - 2848.8556518555 - 24.989774942398
+dbtime:659557 - 1842.0324776173 - 15.566601753235 - 5552
+itime:27715 - 2876.5748798847 - 27.719048976898
+dbtime:665111 - 1859.6921105385 - 17.659632921219 - 5554
+itime:27956 - 2897.4508569241 - 20.87579202652
+dbtime:670663 - 1871.7974967957 - 12.105386257172 - 5552
+itime:28197 - 2919.6482198238 - 22.197194814682
+dbtime:676216 - 1884.0415725708 - 12.244075775146 - 5553
+itime:28438 - 2943.0841469765 - 23.435708045959
+dbtime:681765 - 1897.542747736 - 13.501175165176 - 5549
+itime:28679 - 2963.303071022 - 20.218741178513
+dbtime:687322 - 1909.816785574 - 12.274037837982 - 5557
+itime:28920 - 2983.2998449802 - 19.996601104736
+dbtime:692874 - 1922.01405406 - 12.197268486023 - 5552
+itime:29161 - 3004.7413058281 - 21.441247940063
+dbtime:698432 - 1935.3431670666 - 13.329113006592 - 5558
+itime:29402 - 3032.3328390121 - 27.591332197189
+dbtime:703982 - 1953.9701018333 - 18.626934766769 - 5550
+itime:29643 - 3052.7052979469 - 20.372276067734
+dbtime:709534 - 1966.2722532749 - 12.302151441574 - 5552
+itime:29884 - 3072.6509850025 - 19.945461988449
+dbtime:715084 - 1978.684697628 - 12.412444353104 - 5550
+itime:30125 - 3092.7087259293 - 20.057569980621
+dbtime:720636 - 1990.8969609737 - 12.212263345718 - 5552
+itime:30366 - 3113.2134749889 - 20.504534006119
+dbtime:726190 - 2003.4400033951 - 12.543042421341 - 5554
+itime:30607 - 3133.0931408405 - 19.879451990128
+dbtime:731742 - 2015.6642489433 - 12.224245548248 - 5552
+itime:30848 - 3153.2426958084 - 20.149390935898
+dbtime:737295 - 2027.6746001244 - 12.01035118103 - 5553
+itime:31089 - 3175.0687789917 - 21.825869083405
+dbtime:742850 - 2040.9806625843 - 13.306062459946 - 5555
+itime:31330 - 3197.9251189232 - 22.856148958206
+dbtime:748407 - 2055.1889932156 - 14.208330631256 - 5557
+itime:31571 - 3224.7142980099 - 26.787014007568
+dbtime:753962 - 2072.2732036114 - 17.084210395813 - 5555
+itime:31812 - 3248.6496968269 - 23.935168981552
+dbtime:759510 - 2087.4103710651 - 15.137167453766 - 5548
+itime:32053 - 3271.2786288261 - 22.628729820251
+dbtime:765065 - 2101.4267117977 - 14.016340732574 - 5555
+itime:32294 - 3292.0350840092 - 20.756249189377
+dbtime:770622 - 2113.7091684341 - 12.282456636429 - 5557
+itime:32535 - 3311.9100699425 - 19.872601985931
+dbtime:776175 - 2125.6045227051 - 11.895354270935 - 5553
+itime:32776 - 3331.7798030376 - 19.869544029236
+dbtime:781731 - 2137.3157608509 - 11.711238145828 - 5556
+itime:33017 - 3356.4112210274 - 24.631240129471
+dbtime:787279 - 2152.8725864887 - 15.556825637817 - 5548
+itime:33258 - 3383.1600799561 - 26.748652935028
+dbtime:792837 - 2169.7381105423 - 16.865524053574 - 5558
+itime:33499 - 3403.4694440365 - 20.309108018875
+dbtime:798392 - 2181.9310939312 - 12.192983388901 - 5555
+itime:33740 - 3424.1875908375 - 20.717948913574
+dbtime:803949 - 2194.4942290783 - 12.563135147095 - 5557
+itime:33981 - 3444.1406168938 - 19.952826023102
+dbtime:809505 - 2206.3674299717 - 11.873200893402 - 5556
+itime:34222 - 3464.3182039261 - 20.177405118942
+dbtime:815056 - 2218.5713415146 - 12.203911542892 - 5551
+itime:34463 - 3484.3747768402 - 20.056339979172
+dbtime:820605 - 2230.8321697712 - 12.260828256607 - 5549
+itime:34704 - 3504.2545559406 - 19.879575967789
+dbtime:826159 - 2242.9330284595 - 12.100858688354 - 5554
+itime:34945 - 3524.6095409393 - 20.354764938354
+dbtime:831717 - 2255.1715402603 - 12.238511800766 - 5558
+itime:35186 - 3546.0457530022 - 21.43598818779
+dbtime:837272 - 2267.8016488552 - 12.630108594894 - 5555
+itime:35427 - 3574.9845240116 - 28.938544988632
+dbtime:842824 - 2285.0856773853 - 17.284028530121 - 5552
+itime:35668 - 3602.2069568634 - 27.222278833389
+dbtime:848378 - 2300.4767508507 - 15.391073465347 - 5554
+itime:35909 - 3622.2815759182 - 20.074443101883
+dbtime:853929 - 2312.7572715282 - 12.280520677567 - 5551
+itime:36150 - 3643.7728168964 - 21.49106502533
+dbtime:859480 - 2326.2933223248 - 13.536050796509 - 5551
+itime:36391 - 3664.2508850098 - 20.477849006653
+dbtime:865037 - 2338.9336791039 - 12.640356779099 - 5557
+itime:36632 - 3686.7243168354 - 22.473213911057
+dbtime:870592 - 2352.6623740196 - 13.728694915771 - 5555
+itime:36873 - 3712.5258238316 - 25.801265954971
+dbtime:876147 - 2369.0071966648 - 16.344822645187 - 5555
+itime:37114 - 3732.6190860271 - 20.093042135239
+dbtime:881699 - 2380.9689638615 - 11.961767196655 - 5552
+itime:37355 - 3752.5906169415 - 19.971342086792
+dbtime:887256 - 2393.1900475025 - 12.221083641052 - 5557
+itime:37596 - 3773.1018779278 - 20.511084079742
+dbtime:892809 - 2405.523878336 - 12.333830833435 - 5553
+itime:37837 - 3793.8666968346 - 20.764611959457
+dbtime:898364 - 2418.2270822525 - 12.70320391655 - 5555
+itime:38078 - 3813.6695199013 - 19.802650928497
+dbtime:903918 - 2430.0465834141 - 11.819501161575 - 5554
+itime:38319 - 3835.1044130325 - 21.434720039368
+dbtime:909470 - 2443.1440777779 - 13.097494363785 - 5552
+itime:38560 - 3855.5996859074 - 20.495089054108
+dbtime:915020 - 2455.5883169174 - 12.444239139557 - 5550
+itime:38801 - 3877.9720230103 - 22.372135162354
+dbtime:920573 - 2469.6691429615 - 14.080826044083 - 5553
+itime:39042 - 3898.5705499649 - 20.598340034485
+dbtime:926127 - 2481.9615263939 - 12.292383432388 - 5554
+itime:39283 - 3923.1608028412 - 24.590021848679
+dbtime:931675 - 2497.8921787739 - 15.93065237999 - 5548
+itime:39524 - 3950.5285668373 - 27.367556810379
+dbtime:937235 - 2515.3501601219 - 17.457981348038 - 5560
+itime:39765 - 3970.9933919907 - 20.464615106583
+dbtime:942796 - 2527.7315633297 - 12.381403207779 - 5561
+itime:40006 - 3993.3008430004 - 22.307162046432
+dbtime:948347 - 2541.2981190681 - 13.566555738449 - 5551
+itime:40247 - 4016.096462965 - 22.795397996902
+dbtime:953925 - 2555.0620312691 - 13.763912200928 - 5578
+itime:40488 - 4045.2625389099 - 29.165857076645
+dbtime:960159 - 2573.8600955009 - 18.798064231873 - 6234
+itime:40729 - 4067.3459379673 - 22.083183050156
+dbtime:966417 - 2587.6214785576 - 13.761383056641 - 6258
+itime:40970 - 4089.5330770016 - 22.186918020248
+dbtime:972675 - 2601.6321611404 - 14.010682582855 - 6258
+itime:41211 - 4111.7370388508 - 22.203785896301
+dbtime:978935 - 2615.5009479523 - 13.868786811829 - 6260
+itime:41452 - 4136.6554789543 - 24.918231010437
+dbtime:985960 - 2632.2607243061 - 16.759776353836 - 7025
+itime:41693 - 4165.1854228973 - 28.529706954956
+dbtime:994577 - 2651.8060986996 - 19.545374393463 - 8617
+error:27:Expected 3 values, got: Saab,1979,900,99 EMS - SELECT v2.value_id AS finalValueId  FROM am_finder_value AS v0  JOIN am_finder_value AS v1 ON v1.parent_id = v0.value_id  JOIN am_finder_value AS v2 ON v2.parent_id = v1.value_id  WHERE  v0.dropdown_id = 1 AND v0.name = ?  AND  v1.dropdown_id = 2 AND v1.name = ?  AND  v2.dropdown_id = 3 AND v2.name = ? 
+error:28:Expected 3 values, got: Saab,1979,900,99 EMS - ERROR ON RECORD #41880
+error:29:Expected 3 values, got: Vauxhall,2003,Astra, Vectra,Zafira - SELECT v2.value_id AS finalValueId  FROM am_finder_value AS v0  JOIN am_finder_value AS v1 ON v1.parent_id = v0.value_id  JOIN am_finder_value AS v2 ON v2.parent_id = v1.value_id  WHERE  v0.dropdown_id = 1 AND v0.name = ?  AND  v1.dropdown_id = 2 AND v1.name = ?  AND  v2.dropdown_id = 3 AND v2.name = ? 
+error:30:Expected 3 values, got: Vauxhall,2003,Astra, Vectra,Zafira - ERROR ON RECORD #41881
+error:31:Expected 3 values, got: ISUZU,1985,Trooper,Pick-up - SELECT v2.value_id AS finalValueId  FROM am_finder_value AS v0  JOIN am_finder_value AS v1 ON v1.parent_id = v0.value_id  JOIN am_finder_value AS v2 ON v2.parent_id = v1.value_id  WHERE  v0.dropdown_id = 1 AND v0.name = ?  AND  v1.dropdown_id = 2 AND v1.name = ?  AND  v2.dropdown_id = 3 AND v2.name = ? 
+error:32:Expected 3 values, got: ISUZU,1985,Trooper,Pick-up - ERROR ON RECORD #41884
+error:33:Expected 3 values, got: ISUZU,1985,Trooper,Pick-up - SELECT v2.value_id AS finalValueId  FROM am_finder_value AS v0  JOIN am_finder_value AS v1 ON v1.parent_id = v0.value_id  JOIN am_finder_value AS v2 ON v2.parent_id = v1.value_id  WHERE  v0.dropdown_id = 1 AND v0.name = ?  AND  v1.dropdown_id = 2 AND v1.name = ?  AND  v2.dropdown_id = 3 AND v2.name = ? 
+error:34:Expected 3 values, got: ISUZU,1985,Trooper,Pick-up - ERROR ON RECORD #41893
+error:35:Expected 3 values, got: Lancia,1995,Delta,Tipo,155 - SELECT v2.value_id AS finalValueId  FROM am_finder_value AS v0  JOIN am_finder_value AS v1 ON v1.parent_id = v0.value_id  JOIN am_finder_value AS v2 ON v2.parent_id = v1.value_id  WHERE  v0.dropdown_id = 1 AND v0.name = ?  AND  v1.dropdown_id = 2 AND v1.name = ?  AND  v2.dropdown_id = 3 AND v2.name = ? 
+error:36:Expected 3 values, got: Lancia,1995,Delta,Tipo,155 - ERROR ON RECORD #41905
+error:37:Expected 3 values, got: Vauxhall,2003,Astra, Vectra,Zafira - SELECT v2.value_id AS finalValueId  FROM am_finder_value AS v0  JOIN am_finder_value AS v1 ON v1.parent_id = v0.value_id  JOIN am_finder_value AS v2 ON v2.parent_id = v1.value_id  WHERE  v0.dropdown_id = 1 AND v0.name = ?  AND  v1.dropdown_id = 2 AND v1.name = ?  AND  v2.dropdown_id = 3 AND v2.name = ? 
+error:38:Expected 3 values, got: Vauxhall,2003,Astra, Vectra,Zafira - ERROR ON RECORD #41927
+itime:41934 - 4197.8636329174 - 32.678004980087
+dbtime:1003649 - 2674.5229604244 - 22.716861724854 - 9072
+error:39:Expected 3 values, got: Cummins Inc.,1996,Off Highway, 6BTA - DELETE FROM customerprices_prices WHERE product_id=?
+error:40:Expected 3 values, got: Cummins Inc.,1996,Off Highway, 6BTA - ERROR ON RECORD #41982
+itime:42175 - 4234.3355658054 - 36.471760988235
+dbtime:1011784 - 2701.2555136681 - 26.732553243637 - 8135
+error:41:Expected 3 values, got: Land Rover,1987,Falcon,90/110 Turbo D - DELETE FROM customerprices_prices WHERE product_id=?
+error:42:Expected 3 values, got: Land Rover,1987,Falcon,90/110 Turbo D - ERROR ON RECORD #42185
+error:43:Expected 3 values, got: Saab,1979,900,99 EMS - SELECT v2.value_id AS finalValueId  FROM am_finder_value AS v0  JOIN am_finder_value AS v1 ON v1.parent_id = v0.value_id  JOIN am_finder_value AS v2 ON v2.parent_id = v1.value_id  WHERE  v0.dropdown_id = 1 AND v0.name = ?  AND  v1.dropdown_id = 2 AND v1.name = ?  AND  v2.dropdown_id = 3 AND v2.name = ? 
+error:44:Expected 3 values, got: Saab,1979,900,99 EMS - ERROR ON RECORD #42264
+error:45:Expected 3 values, got: Volkswagen,1984,Passat,Quantum - SELECT value_id FROM am_finder_value WHERE parent_id = ? AND dropdown_id = ? and name = ?
+error:46:Expected 3 values, got: Volkswagen,1984,Passat,Quantum - ERROR ON RECORD #42265
+error:47:Expected 3 values, got: Toyota,1993,Landcruiser TD (KZ170,71) - DELETE FROM customerprices_prices WHERE product_id=?
+error:48:Expected 3 values, got: Toyota,1993,Landcruiser TD (KZ170,71) - ERROR ON RECORD #42388
+itime:42416 - 4268.5168719292 - 34.18113899231
+dbtime:1018643 - 2724.9931099415 - 23.737596273422 - 6859
+error:49:Expected 3 values, got: Flatback - DELETE FROM customerprices_prices WHERE product_id=?
+error:50:Expected 3 values, got: Flatback - ERROR ON RECORD #42593
+error:51:Expected 3 values, got: Flatback - DELETE FROM customerprices_prices WHERE product_id=?
+error:52:Expected 3 values, got: Flatback - ERROR ON RECORD #42594
+error:53:Expected 3 values, got: Flatback - DELETE FROM customerprices_prices WHERE product_id=?
+error:54:Expected 3 values, got: Flatback - ERROR ON RECORD #42595
+error:55:Expected 3 values, got: Flatback - DELETE FROM customerprices_prices WHERE product_id=?
+error:56:Expected 3 values, got: Flatback - ERROR ON RECORD #42596
+error:57:Expected 3 values, got: Flatback - DELETE FROM customerprices_prices WHERE product_id=?
+error:58:Expected 3 values, got: Flatback - ERROR ON RECORD #42597
+error:59:Expected 3 values, got: Flatback - DELETE FROM customerprices_prices WHERE product_id=?
+error:60:Expected 3 values, got: Flatback - ERROR ON RECORD #42598
+error:61:Expected 3 values, got: Flatback - DELETE FROM customerprices_prices WHERE product_id=?
+error:62:Expected 3 values, got: Flatback - ERROR ON RECORD #42599
+error:63:Expected 3 values, got: Flatback - DELETE FROM customerprices_prices WHERE product_id=?
+error:64:Expected 3 values, got: Flatback - ERROR ON RECORD #42600
+error:65:Expected 3 values, got: Flatback - DELETE FROM customerprices_prices WHERE product_id=?
+error:66:Expected 3 values, got: Flatback - ERROR ON RECORD #42601
+error:67:Expected 3 values, got: Flatback - DELETE FROM customerprices_prices WHERE product_id=?
+error:68:Expected 3 values, got: Flatback - ERROR ON RECORD #42602
+error:69:Expected 3 values, got: Flatback - DELETE FROM customerprices_prices WHERE product_id=?
+error:70:Expected 3 values, got: Flatback - ERROR ON RECORD #42603
+error:71:Expected 3 values, got: Flatback - DELETE FROM customerprices_prices WHERE product_id=?
+error:72:Expected 3 values, got: Flatback - ERROR ON RECORD #42604
+error:73:Expected 3 values, got: Flatback - DELETE FROM customerprices_prices WHERE product_id=?
+error:74:Expected 3 values, got: Flatback - ERROR ON RECORD #42605
+error:75:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:76:Expected 3 values, got: Superback - ERROR ON RECORD #42606
+error:77:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:78:Expected 3 values, got: Superback - ERROR ON RECORD #42607
+error:79:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:80:Expected 3 values, got: Superback - ERROR ON RECORD #42608
+error:81:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:82:Expected 3 values, got: Superback - ERROR ON RECORD #42609
+error:83:Expected 3 values, got: Flatback - DELETE FROM customerprices_prices WHERE product_id=?
+error:84:Expected 3 values, got: Flatback - ERROR ON RECORD #42610
+error:85:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:86:Expected 3 values, got: Superback - ERROR ON RECORD #42611
+error:87:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:88:Expected 3 values, got: Superback - ERROR ON RECORD #42612
+error:89:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:90:Expected 3 values, got: Superback - ERROR ON RECORD #42613
+error:91:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:92:Expected 3 values, got: Superback - ERROR ON RECORD #42614
+error:93:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:94:Expected 3 values, got: Superback - ERROR ON RECORD #42615
+error:95:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:96:Expected 3 values, got: Superback - ERROR ON RECORD #42616
+error:97:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:98:Expected 3 values, got: Superback - ERROR ON RECORD #42617
+error:99:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:100:Expected 3 values, got: Superback - ERROR ON RECORD #42618
+error:101:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:102:Expected 3 values, got: Superback - ERROR ON RECORD #42619
+error:103:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:104:Expected 3 values, got: Superback - ERROR ON RECORD #42620
+error:105:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:106:Expected 3 values, got: Superback - ERROR ON RECORD #42621
+error:107:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:108:Expected 3 values, got: Superback - ERROR ON RECORD #42623
+error:109:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:110:Expected 3 values, got: Superback - ERROR ON RECORD #42624
+error:111:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:112:Expected 3 values, got: Superback - ERROR ON RECORD #42625
+error:113:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:114:Expected 3 values, got: Superback - ERROR ON RECORD #42626
+error:115:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:116:Expected 3 values, got: Superback - ERROR ON RECORD #42627
+error:117:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:118:Expected 3 values, got: Superback - ERROR ON RECORD #42628
+error:119:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:120:Expected 3 values, got: Superback - ERROR ON RECORD #42629
+error:121:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:122:Expected 3 values, got: Superback - ERROR ON RECORD #42630
+error:123:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:124:Expected 3 values, got: Superback - ERROR ON RECORD #42631
+error:125:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:126:Expected 3 values, got: Superback - ERROR ON RECORD #42632
+error:127:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:128:Expected 3 values, got: Superback - ERROR ON RECORD #42633
+error:129:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:130:Expected 3 values, got: Superback - ERROR ON RECORD #42634
+error:131:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:132:Expected 3 values, got: Superback - ERROR ON RECORD #42635
+error:133:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:134:Expected 3 values, got: Superback - ERROR ON RECORD #42637
+error:135:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:136:Expected 3 values, got: Superback - ERROR ON RECORD #42638
+error:137:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:138:Expected 3 values, got: Superback - ERROR ON RECORD #42639
+error:139:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:140:Expected 3 values, got: Superback - ERROR ON RECORD #42640
+error:141:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:142:Expected 3 values, got: Superback - ERROR ON RECORD #42641
+error:143:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:144:Expected 3 values, got: Superback - ERROR ON RECORD #42642
+error:145:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:146:Expected 3 values, got: Superback - ERROR ON RECORD #42643
+error:147:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:148:Expected 3 values, got: Superback - ERROR ON RECORD #42644
+error:149:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:150:Expected 3 values, got: Superback - ERROR ON RECORD #42645
+error:151:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:152:Expected 3 values, got: Superback - ERROR ON RECORD #42646
+error:153:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:154:Expected 3 values, got: Superback - ERROR ON RECORD #42647
+error:155:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:156:Expected 3 values, got: Superback - ERROR ON RECORD #42648
+error:157:Expected 3 values, got: Flatback - DELETE FROM customerprices_prices WHERE product_id=?
+error:158:Expected 3 values, got: Flatback - ERROR ON RECORD #42649
+error:159:Expected 3 values, got: Flatback - DELETE FROM customerprices_prices WHERE product_id=?
+error:160:Expected 3 values, got: Flatback - ERROR ON RECORD #42650
+error:161:Expected 3 values, got: Flatback - DELETE FROM customerprices_prices WHERE product_id=?
+error:162:Expected 3 values, got: Flatback - ERROR ON RECORD #42651
+error:163:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:164:Expected 3 values, got: Superback - ERROR ON RECORD #42652
+error:165:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:166:Expected 3 values, got: Superback - ERROR ON RECORD #42653
+error:167:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:168:Expected 3 values, got: Superback - ERROR ON RECORD #42654
+error:169:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:170:Expected 3 values, got: Superback - ERROR ON RECORD #42655
+error:171:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:172:Expected 3 values, got: Superback - ERROR ON RECORD #42656
+itime:42657 - 4298.6952319145 - 30.178164958954
+dbtime:1025334 - 2746.8782646656 - 21.885154724121 - 6691
+error:173:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:174:Expected 3 values, got: Superback - ERROR ON RECORD #42657
+error:175:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:176:Expected 3 values, got: Superback - ERROR ON RECORD #42658
+error:177:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:178:Expected 3 values, got: Superback - ERROR ON RECORD #42659
+error:179:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:180:Expected 3 values, got: Superback - ERROR ON RECORD #42660
+error:181:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:182:Expected 3 values, got: Superback - ERROR ON RECORD #42661
+error:183:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:184:Expected 3 values, got: Superback - ERROR ON RECORD #42662
+error:185:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:186:Expected 3 values, got: Superback - ERROR ON RECORD #42663
+error:187:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:188:Expected 3 values, got: Superback - ERROR ON RECORD #42664
+error:189:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:190:Expected 3 values, got: Superback - ERROR ON RECORD #42665
+error:191:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:192:Expected 3 values, got: Superback - ERROR ON RECORD #42666
+error:193:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:194:Expected 3 values, got: Superback - ERROR ON RECORD #42667
+error:195:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:196:Expected 3 values, got: Superback - ERROR ON RECORD #42668
+error:197:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:198:Expected 3 values, got: Superback - ERROR ON RECORD #42669
+error:199:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:200:Expected 3 values, got: Superback - ERROR ON RECORD #42670
+error:201:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:202:Expected 3 values, got: Superback - ERROR ON RECORD #42671
+error:203:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:204:Expected 3 values, got: Superback - ERROR ON RECORD #42672
+error:205:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:206:Expected 3 values, got: Superback - ERROR ON RECORD #42673
+error:207:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:208:Expected 3 values, got: Superback - ERROR ON RECORD #42674
+error:209:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:210:Expected 3 values, got: Superback - ERROR ON RECORD #42675
+error:211:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:212:Expected 3 values, got: Superback - ERROR ON RECORD #42676
+error:213:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:214:Expected 3 values, got: Superback - ERROR ON RECORD #42677
+error:215:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:216:Expected 3 values, got: Superback - ERROR ON RECORD #42678
+error:217:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:218:Expected 3 values, got: Superback - ERROR ON RECORD #42679
+error:219:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:220:Expected 3 values, got: Superback - ERROR ON RECORD #42680
+error:221:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:222:Expected 3 values, got: Superback - ERROR ON RECORD #42681
+error:223:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:224:Expected 3 values, got: Superback - ERROR ON RECORD #42682
+error:225:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:226:Expected 3 values, got: Superback - ERROR ON RECORD #42683
+error:227:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:228:Expected 3 values, got: Superback - ERROR ON RECORD #42684
+error:229:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:230:Expected 3 values, got: Superback - ERROR ON RECORD #42685
+error:231:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:232:Expected 3 values, got: Superback - ERROR ON RECORD #42686
+error:233:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:234:Expected 3 values, got: Superback - ERROR ON RECORD #42687
+error:235:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:236:Expected 3 values, got: Superback - ERROR ON RECORD #42692
+error:237:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:238:Expected 3 values, got: Superback - ERROR ON RECORD #42696
+error:239:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:240:Expected 3 values, got: Superback - ERROR ON RECORD #42708
+error:241:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:242:Expected 3 values, got: Superback - ERROR ON RECORD #42709
+error:243:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:244:Expected 3 values, got: Superback - ERROR ON RECORD #42710
+error:245:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:246:Expected 3 values, got: Superback - ERROR ON RECORD #42711
+error:247:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:248:Expected 3 values, got: Superback - ERROR ON RECORD #42712
+error:249:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:250:Expected 3 values, got: Superback - ERROR ON RECORD #42713
+error:251:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:252:Expected 3 values, got: Superback - ERROR ON RECORD #42714
+error:253:Expected 3 values, got: Flatback - DELETE FROM customerprices_prices WHERE product_id=?
+error:254:Expected 3 values, got: Flatback - ERROR ON RECORD #42715
+error:255:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:256:Expected 3 values, got: Superback - ERROR ON RECORD #42717
+error:257:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:258:Expected 3 values, got: Superback - ERROR ON RECORD #42719
+error:259:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:260:Expected 3 values, got: Superback - ERROR ON RECORD #42728
+error:261:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:262:Expected 3 values, got: Superback - ERROR ON RECORD #42729
+error:263:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:264:Expected 3 values, got: Superback - ERROR ON RECORD #42736
+error:265:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:266:Expected 3 values, got: Superback - ERROR ON RECORD #42739
+error:267:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:268:Expected 3 values, got: Superback - ERROR ON RECORD #42740
+error:269:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:270:Expected 3 values, got: Superback - ERROR ON RECORD #42742
+error:271:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:272:Expected 3 values, got: Superback - ERROR ON RECORD #42743
+error:273:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:274:Expected 3 values, got: Superback - ERROR ON RECORD #42744
+error:275:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:276:Expected 3 values, got: Superback - ERROR ON RECORD #42745
+error:277:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:278:Expected 3 values, got: Superback - ERROR ON RECORD #42746
+error:279:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:280:Expected 3 values, got: Superback - ERROR ON RECORD #42747
+error:281:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:282:Expected 3 values, got: Superback - ERROR ON RECORD #42748
+error:283:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:284:Expected 3 values, got: Superback - ERROR ON RECORD #42749
+error:285:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:286:Expected 3 values, got: Superback - ERROR ON RECORD #42750
+error:287:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:288:Expected 3 values, got: Superback - ERROR ON RECORD #42751
+error:289:Expected 3 values, got: Flatback - DELETE FROM customerprices_prices WHERE product_id=?
+error:290:Expected 3 values, got: Flatback - ERROR ON RECORD #42752
+error:291:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:292:Expected 3 values, got: Superback - ERROR ON RECORD #42753
+error:293:Expected 3 values, got: Flatback - DELETE FROM customerprices_prices WHERE product_id=?
+error:294:Expected 3 values, got: Flatback - ERROR ON RECORD #42754
+error:295:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:296:Expected 3 values, got: Superback - ERROR ON RECORD #42758
+error:297:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:298:Expected 3 values, got: Superback - ERROR ON RECORD #42759
+error:299:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:300:Expected 3 values, got: Superback - ERROR ON RECORD #42764
+itime:42898 - 4326.5112588406 - 27.815908908844
+dbtime:1030257 - 2766.2388978004 - 19.360633134842 - 4923
+itime:43139 - 4363.0262570381 - 36.5147960186
+dbtime:1036760 - 2793.3754487038 - 27.13655090332 - 6503
+itime:43380 - 4403.9191830158 - 40.892686128616
+dbtime:1043207 - 2823.6201024055 - 30.244653701782 - 6447
+error:301:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:302:Expected 3 values, got: Superback - ERROR ON RECORD #43485
+error:303:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:304:Expected 3 values, got: Superback - ERROR ON RECORD #43486
+error:305:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:306:Expected 3 values, got: Superback - ERROR ON RECORD #43487
+error:307:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:308:Expected 3 values, got: Superback - ERROR ON RECORD #43488
+error:309:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:310:Expected 3 values, got: Superback - ERROR ON RECORD #43489
+error:311:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:312:Expected 3 values, got: Superback - ERROR ON RECORD #43490
+error:313:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:314:Expected 3 values, got: Superback - ERROR ON RECORD #43491
+error:315:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:316:Expected 3 values, got: Superback - ERROR ON RECORD #43492
+error:317:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:318:Expected 3 values, got: Superback - ERROR ON RECORD #43493
+error:319:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:320:Expected 3 values, got: Superback - ERROR ON RECORD #43494
+error:321:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:322:Expected 3 values, got: Superback - ERROR ON RECORD #43495
+error:323:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:324:Expected 3 values, got: Superback - ERROR ON RECORD #43497
+error:325:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:326:Expected 3 values, got: Superback - ERROR ON RECORD #43498
+error:327:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:328:Expected 3 values, got: Superback - ERROR ON RECORD #43499
+error:329:Expected 3 values, got: Flatback - DELETE FROM customerprices_prices WHERE product_id=?
+error:330:Expected 3 values, got: Flatback - ERROR ON RECORD #43500
+error:331:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:332:Expected 3 values, got: Superback - ERROR ON RECORD #43501
+error:333:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:334:Expected 3 values, got: Superback - ERROR ON RECORD #43502
+error:335:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:336:Expected 3 values, got: Superback - ERROR ON RECORD #43503
+error:337:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:338:Expected 3 values, got: Superback - ERROR ON RECORD #43504
+error:339:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:340:Expected 3 values, got: Superback - ERROR ON RECORD #43506
+error:341:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:342:Expected 3 values, got: Superback - ERROR ON RECORD #43507
+error:343:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:344:Expected 3 values, got: Superback - ERROR ON RECORD #43508
+error:345:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:346:Expected 3 values, got: Superback - ERROR ON RECORD #43509
+error:347:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:348:Expected 3 values, got: Superback - ERROR ON RECORD #43510
+error:349:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:350:Expected 3 values, got: Superback - ERROR ON RECORD #43511
+error:351:Expected 3 values, got: Flatback - DELETE FROM customerprices_prices WHERE product_id=?
+error:352:Expected 3 values, got: Flatback - ERROR ON RECORD #43512
+error:353:Expected 3 values, got: Flatback - DELETE FROM customerprices_prices WHERE product_id=?
+error:354:Expected 3 values, got: Flatback - ERROR ON RECORD #43513
+error:355:Expected 3 values, got: Flatback - DELETE FROM customerprices_prices WHERE product_id=?
+error:356:Expected 3 values, got: Flatback - ERROR ON RECORD #43514
+error:357:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:358:Expected 3 values, got: Superback - ERROR ON RECORD #43515
+error:359:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:360:Expected 3 values, got: Superback - ERROR ON RECORD #43516
+error:361:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:362:Expected 3 values, got: Superback - ERROR ON RECORD #43517
+error:363:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:364:Expected 3 values, got: Superback - ERROR ON RECORD #43518
+error:365:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:366:Expected 3 values, got: Superback - ERROR ON RECORD #43519
+error:367:Expected 3 values, got: Superback - SELECT entity_id FROM customer_entity WHERE email=?
+error:368:Expected 3 values, got: Superback - ERROR ON RECORD #43520
+error:369:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:370:Expected 3 values, got: Superback - ERROR ON RECORD #43521
+error:371:Expected 3 values, got: Superback - SELECT entity_id FROM customer_entity WHERE email=?
+error:372:Expected 3 values, got: Superback - ERROR ON RECORD #43522
+error:373:Expected 3 values, got: Superback - SELECT entity_id FROM customer_entity WHERE email=?
+error:374:Expected 3 values, got: Superback - ERROR ON RECORD #43523
+error:375:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:376:Expected 3 values, got: Superback - ERROR ON RECORD #43524
+error:377:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:378:Expected 3 values, got: Superback - ERROR ON RECORD #43525
+error:379:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:380:Expected 3 values, got: Superback - ERROR ON RECORD #43526
+error:381:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:382:Expected 3 values, got: Superback - ERROR ON RECORD #43527
+error:383:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:384:Expected 3 values, got: Superback - ERROR ON RECORD #43528
+error:385:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:386:Expected 3 values, got: Superback - ERROR ON RECORD #43529
+error:387:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:388:Expected 3 values, got: Superback - ERROR ON RECORD #43530
+error:389:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:390:Expected 3 values, got: Superback - ERROR ON RECORD #43531
+error:391:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:392:Expected 3 values, got: Superback - ERROR ON RECORD #43532
+error:393:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:394:Expected 3 values, got: Superback - ERROR ON RECORD #43533
+error:395:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:396:Expected 3 values, got: Superback - ERROR ON RECORD #43534
+error:397:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:398:Expected 3 values, got: Superback - ERROR ON RECORD #43535
+error:399:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:400:Expected 3 values, got: Superback - ERROR ON RECORD #43536
+error:401:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:402:Expected 3 values, got: Superback - ERROR ON RECORD #43537
+error:403:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:404:Expected 3 values, got: Superback - ERROR ON RECORD #43538
+error:405:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:406:Expected 3 values, got: Superback - ERROR ON RECORD #43539
+error:407:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:408:Expected 3 values, got: Superback - ERROR ON RECORD #43541
+error:409:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:410:Expected 3 values, got: Superback - ERROR ON RECORD #43542
+error:411:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:412:Expected 3 values, got: Superback - ERROR ON RECORD #43545
+error:413:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:414:Expected 3 values, got: Superback - ERROR ON RECORD #43546
+error:415:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:416:Expected 3 values, got: Superback - ERROR ON RECORD #43547
+error:417:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:418:Expected 3 values, got: Superback - ERROR ON RECORD #43548
+error:419:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:420:Expected 3 values, got: Superback - ERROR ON RECORD #43549
+error:421:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:422:Expected 3 values, got: Superback - ERROR ON RECORD #43550
+error:423:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:424:Expected 3 values, got: Superback - ERROR ON RECORD #43559
+error:425:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:426:Expected 3 values, got: Superback - ERROR ON RECORD #43560
+error:427:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:428:Expected 3 values, got: Superback - ERROR ON RECORD #43561
+error:429:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:430:Expected 3 values, got: Superback - ERROR ON RECORD #43562
+error:431:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:432:Expected 3 values, got: Superback - ERROR ON RECORD #43563
+error:433:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:434:Expected 3 values, got: Superback - ERROR ON RECORD #43564
+error:435:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:436:Expected 3 values, got: Superback - ERROR ON RECORD #43569
+error:437:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:438:Expected 3 values, got: Superback - ERROR ON RECORD #43570
+error:439:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:440:Expected 3 values, got: Superback - ERROR ON RECORD #43571
+error:441:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:442:Expected 3 values, got: Superback - ERROR ON RECORD #43572
+error:443:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:444:Expected 3 values, got: Superback - ERROR ON RECORD #43573
+error:445:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:446:Expected 3 values, got: Superback - ERROR ON RECORD #43574
+error:447:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:448:Expected 3 values, got: Superback - ERROR ON RECORD #43587
+error:449:Expected 3 values, got: Superback - SELECT entity_id FROM customer_entity WHERE email=?
+error:450:Expected 3 values, got: Superback - ERROR ON RECORD #43588
+error:451:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:452:Expected 3 values, got: Superback - ERROR ON RECORD #43589
+error:453:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:454:Expected 3 values, got: Superback - ERROR ON RECORD #43590
+error:455:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:456:Expected 3 values, got: Superback - ERROR ON RECORD #43591
+error:457:Expected 3 values, got: Superback - SELECT entity_id FROM customer_entity WHERE email=?
+error:458:Expected 3 values, got: Superback - ERROR ON RECORD #43592
+error:459:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:460:Expected 3 values, got: Superback - ERROR ON RECORD #43593
+error:461:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:462:Expected 3 values, got: Superback - ERROR ON RECORD #43594
+error:463:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:464:Expected 3 values, got: Superback - ERROR ON RECORD #43595
+error:465:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:466:Expected 3 values, got: Superback - ERROR ON RECORD #43596
+error:467:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:468:Expected 3 values, got: Superback - ERROR ON RECORD #43597
+error:469:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:470:Expected 3 values, got: Superback - ERROR ON RECORD #43598
+error:471:Expected 3 values, got: Flatback - DELETE FROM customerprices_prices WHERE product_id=?
+error:472:Expected 3 values, got: Flatback - ERROR ON RECORD #43599
+error:473:Expected 3 values, got: Flatback - DELETE FROM customerprices_prices WHERE product_id=?
+error:474:Expected 3 values, got: Flatback - ERROR ON RECORD #43600
+error:475:Expected 3 values, got: Flatback - DELETE FROM customerprices_prices WHERE product_id=?
+error:476:Expected 3 values, got: Flatback - ERROR ON RECORD #43601
+error:477:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:478:Expected 3 values, got: Superback - ERROR ON RECORD #43602
+error:479:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:480:Expected 3 values, got: Superback - ERROR ON RECORD #43603
+error:481:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:482:Expected 3 values, got: Superback - ERROR ON RECORD #43604
+error:483:Expected 3 values, got: Superback - DELETE FROM customerprices_prices WHERE product_id=?
+error:484:Expected 3 values, got: Superback - ERROR ON RECORD #43607
+error:485:Expected 3 values, got: Flatback - DELETE FROM customerprices_prices WHERE product_id=?
+error:486:Expected 3 values, got: Flatback - ERROR ON RECORD #43611
+error:487:Expected 3 values, got: Flatback - DELETE FROM customerprices_prices WHERE product_id=?
+error:488:Expected 3 values, got: Flatback - ERROR ON RECORD #43612
+error:489:Expected 3 values, got: Flatback - DELETE FROM customerprices_prices WHERE product_id=?
+error:490:Expected 3 values, got: Flatback - ERROR ON RECORD #43613
+error:491:Expected 3 values, got: Flatback - DELETE FROM customerprices_prices WHERE product_id=?
+error:492:Expected 3 values, got: Flatback - ERROR ON RECORD #43614
+error:493:Expected 3 values, got: Flatback - DELETE FROM customerprices_prices WHERE product_id=?
+error:494:Expected 3 values, got: Flatback - ERROR ON RECORD #43615
+error:495:Expected 3 values, got: Flatback - DELETE FROM customerprices_prices WHERE product_id=?
+error:496:Expected 3 values, got: Flatback - ERROR ON RECORD #43616
+error:497:Expected 3 values, got: Flatback - DELETE FROM customerprices_prices WHERE product_id=?
+error:498:Expected 3 values, got: Flatback - ERROR ON RECORD #43617
+error:499:Expected 3 values, got: Flatback - DELETE FROM customerprices_prices WHERE product_id=?
+error:500:Expected 3 values, got: Flatback - ERROR ON RECORD #43618
+itime:43621 - 4427.3096148968 - 23.390253067017
+dbtime:1048047 - 2840.281491518 - 16.661389112473 - 4840
+error:501:Expected 3 values, got: Flatback - DELETE FROM customerprices_prices WHERE product_id=?
+error:502:Expected 3 values, got: Flatback - ERROR ON RECORD #43622
+error:503:Expected 3 values, got: Flatback - DELETE FROM customerprices_prices WHERE product_id=?
+error:504:Expected 3 values, got: Flatback - ERROR ON RECORD #43623
+error:505:Expected 3 values, got: Flatback - DELETE FROM customerprices_prices WHERE product_id=?
+error:506:Expected 3 values, got: Flatback - ERROR ON RECORD #43624
+error:507:Expected 3 values, got: Flatback - DELETE FROM customerprices_prices WHERE product_id=?
+error:508:Expected 3 values, got: Flatback - ERROR ON RECORD #43625
+error:509:Expected 3 values, got: Flatback - DELETE FROM customerprices_prices WHERE product_id=?
+error:510:Expected 3 values, got: Flatback - ERROR ON RECORD #43626
+error:511:Expected 3 values, got: Saab,1979,900,99 EMS - SELECT v2.value_id AS finalValueId  FROM am_finder_value AS v0  JOIN am_finder_value AS v1 ON v1.parent_id = v0.value_id  JOIN am_finder_value AS v2 ON v2.parent_id = v1.value_id  WHERE  v0.dropdown_id = 1 AND v0.name = ?  AND  v1.dropdown_id = 2 AND v1.name = ?  AND  v2.dropdown_id = 3 AND v2.name = ? 
+error:512:Expected 3 values, got: Saab,1979,900,99 EMS - ERROR ON RECORD #43630
+error:513:Expected 3 values, got: Lancia,1995,Delta,Tipo,155 - SELECT v2.value_id AS finalValueId  FROM am_finder_value AS v0  JOIN am_finder_value AS v1 ON v1.parent_id = v0.value_id  JOIN am_finder_value AS v2 ON v2.parent_id = v1.value_id  WHERE  v0.dropdown_id = 1 AND v0.name = ?  AND  v1.dropdown_id = 2 AND v1.name = ?  AND  v2.dropdown_id = 3 AND v2.name = ? 
+error:514:Expected 3 values, got: Lancia,1995,Delta,Tipo,155 - ERROR ON RECORD #43632
+error:515:Expected 3 values, got: Lancia,1995,Delta,Tipo,155 - SELECT v2.value_id AS finalValueId  FROM am_finder_value AS v0  JOIN am_finder_value AS v1 ON v1.parent_id = v0.value_id  JOIN am_finder_value AS v2 ON v2.parent_id = v1.value_id  WHERE  v0.dropdown_id = 1 AND v0.name = ?  AND  v1.dropdown_id = 2 AND v1.name = ?  AND  v2.dropdown_id = 3 AND v2.name = ? 
+error:516:Expected 3 values, got: Lancia,1995,Delta,Tipo,155 - ERROR ON RECORD #43639
+error:517:Expected 3 values, got: ISUZU,1985,Trooper,Pick-up - SELECT v2.value_id AS finalValueId  FROM am_finder_value AS v0  JOIN am_finder_value AS v1 ON v1.parent_id = v0.value_id  JOIN am_finder_value AS v2 ON v2.parent_id = v1.value_id  WHERE  v0.dropdown_id = 1 AND v0.name = ?  AND  v1.dropdown_id = 2 AND v1.name = ?  AND  v2.dropdown_id = 3 AND v2.name = ? 
+error:518:Expected 3 values, got: ISUZU,1985,Trooper,Pick-up - ERROR ON RECORD #43641
+error:519:Expected 3 values, got: ISUZU,1985,Trooper,Pick-up - SELECT v2.value_id AS finalValueId  FROM am_finder_value AS v0  JOIN am_finder_value AS v1 ON v1.parent_id = v0.value_id  JOIN am_finder_value AS v2 ON v2.parent_id = v1.value_id  WHERE  v0.dropdown_id = 1 AND v0.name = ?  AND  v1.dropdown_id = 2 AND v1.name = ?  AND  v2.dropdown_id = 3 AND v2.name = ? 
+error:520:Expected 3 values, got: ISUZU,1985,Trooper,Pick-up - ERROR ON RECORD #43644
+error:521:Expected 3 values, got: Vauxhall,2003,Astra, Vectra,Zafira - SELECT v2.value_id AS finalValueId  FROM am_finder_value AS v0  JOIN am_finder_value AS v1 ON v1.parent_id = v0.value_id  JOIN am_finder_value AS v2 ON v2.parent_id = v1.value_id  WHERE  v0.dropdown_id = 1 AND v0.name = ?  AND  v1.dropdown_id = 2 AND v1.name = ?  AND  v2.dropdown_id = 3 AND v2.name = ? 
+error:522:Expected 3 values, got: Vauxhall,2003,Astra, Vectra,Zafira - ERROR ON RECORD #43648
+error:523:Expected 3 values, got: Fiat,1993,Tempra, Tipo - SELECT v2.value_id AS finalValueId  FROM am_finder_value AS v0  JOIN am_finder_value AS v1 ON v1.parent_id = v0.value_id  JOIN am_finder_value AS v2 ON v2.parent_id = v1.value_id  WHERE  v0.dropdown_id = 1 AND v0.name = ?  AND  v1.dropdown_id = 2 AND v1.name = ?  AND  v2.dropdown_id = 3 AND v2.name = ? 
+error:524:Expected 3 values, got: Fiat,1993,Tempra, Tipo - ERROR ON RECORD #43654
+error:525:Expected 3 values, got: Vauxhall,2003,Astra, Vectra,Zafira - SELECT v2.value_id AS finalValueId  FROM am_finder_value AS v0  JOIN am_finder_value AS v1 ON v1.parent_id = v0.value_id  JOIN am_finder_value AS v2 ON v2.parent_id = v1.value_id  WHERE  v0.dropdown_id = 1 AND v0.name = ?  AND  v1.dropdown_id = 2 AND v1.name = ?  AND  v2.dropdown_id = 3 AND v2.name = ? 
+error:526:Expected 3 values, got: Vauxhall,2003,Astra, Vectra,Zafira - ERROR ON RECORD #43710
+error:527:Expected 3 values, got: Cummins Inc.,1996,Off Highway, 6BTA - DELETE FROM customerprices_prices WHERE product_id=?
+error:528:Expected 3 values, got: Cummins Inc.,1996,Off Highway, 6BTA - ERROR ON RECORD #43756
+error:529:Expected 3 values, got: Vauxhall,2003,Astra, Vectra,Zafira - SELECT v2.value_id AS finalValueId  FROM am_finder_value AS v0  JOIN am_finder_value AS v1 ON v1.parent_id = v0.value_id  JOIN am_finder_value AS v2 ON v2.parent_id = v1.value_id  WHERE  v0.dropdown_id = 1 AND v0.name = ?  AND  v1.dropdown_id = 2 AND v1.name = ?  AND  v2.dropdown_id = 3 AND v2.name = ? 
+error:530:Expected 3 values, got: Vauxhall,2003,Astra, Vectra,Zafira - ERROR ON RECORD #43790
+itime:43862 - 4461.2182779312 - 33.908476114273
+dbtime:1056354 - 2865.6716763973 - 25.390184879303 - 8307
+error:531:Expected 3 values, got: Volkswagen,1984,Passat,Quantum - SELECT value_id FROM am_finder_value WHERE parent_id = ? AND dropdown_id = ? and name = ?
+error:532:Expected 3 values, got: Volkswagen,1984,Passat,Quantum - ERROR ON RECORD #44014
+itime:44103 - 4493.2674329281 - 32.048998117447
+dbtime:1063528 - 2888.8940937519 - 23.222417354584 - 7174
+itime:44344 - 4522.0448958874 - 28.777240037918
+dbtime:1070352 - 2909.549728632 - 20.655634880066 - 6824
+error:533:Expected 3 values, got: Fiat,1993,Tempra, Tipo - SELECT v2.value_id AS finalValueId  FROM am_finder_value AS v0  JOIN am_finder_value AS v1 ON v1.parent_id = v0.value_id  JOIN am_finder_value AS v2 ON v2.parent_id = v1.value_id  WHERE  v0.dropdown_id = 1 AND v0.name = ?  AND  v1.dropdown_id = 2 AND v1.name = ?  AND  v2.dropdown_id = 3 AND v2.name = ? 
+error:534:Expected 3 values, got: Fiat,1993,Tempra, Tipo - ERROR ON RECORD #44482
+error:535:Expected 3 values, got: Saab,1979,900,99 EMS - SELECT v2.value_id AS finalValueId  FROM am_finder_value AS v0  JOIN am_finder_value AS v1 ON v1.parent_id = v0.value_id  JOIN am_finder_value AS v2 ON v2.parent_id = v1.value_id  WHERE  v0.dropdown_id = 1 AND v0.name = ?  AND  v1.dropdown_id = 2 AND v1.name = ?  AND  v2.dropdown_id = 3 AND v2.name = ? 
+error:536:Expected 3 values, got: Saab,1979,900,99 EMS - ERROR ON RECORD #44483
+error:537:Expected 3 values, got: Volkswagen,1984,Passat,Quantum - SELECT v2.value_id AS finalValueId  FROM am_finder_value AS v0  JOIN am_finder_value AS v1 ON v1.parent_id = v0.value_id  JOIN am_finder_value AS v2 ON v2.parent_id = v1.value_id  WHERE  v0.dropdown_id = 1 AND v0.name = ?  AND  v1.dropdown_id = 2 AND v1.name = ?  AND  v2.dropdown_id = 3 AND v2.name = ? 
+error:538:Expected 3 values, got: Volkswagen,1984,Passat,Quantum - ERROR ON RECORD #44484
+error:539:Expected 3 values, got: Saab,1979,900,99 EMS - SELECT v2.value_id AS finalValueId  FROM am_finder_value AS v0  JOIN am_finder_value AS v1 ON v1.parent_id = v0.value_id  JOIN am_finder_value AS v2 ON v2.parent_id = v1.value_id  WHERE  v0.dropdown_id = 1 AND v0.name = ?  AND  v1.dropdown_id = 2 AND v1.name = ?  AND  v2.dropdown_id = 3 AND v2.name = ? 
+error:540:Expected 3 values, got: Saab,1979,900,99 EMS - ERROR ON RECORD #44485
+error:541:Expected 3 values, got: Vauxhall,2003,Astra, Vectra,Zafira - SELECT v2.value_id AS finalValueId  FROM am_finder_value AS v0  JOIN am_finder_value AS v1 ON v1.parent_id = v0.value_id  JOIN am_finder_value AS v2 ON v2.parent_id = v1.value_id  WHERE  v0.dropdown_id = 1 AND v0.name = ?  AND  v1.dropdown_id = 2 AND v1.name = ?  AND  v2.dropdown_id = 3 AND v2.name = ? 
+error:542:Expected 3 values, got: Vauxhall,2003,Astra, Vectra,Zafira - ERROR ON RECORD #44495
+error:543:Expected 3 values, got: Vauxhall,2003,Astra, Vectra,Zafira - SELECT v2.value_id AS finalValueId  FROM am_finder_value AS v0  JOIN am_finder_value AS v1 ON v1.parent_id = v0.value_id  JOIN am_finder_value AS v2 ON v2.parent_id = v1.value_id  WHERE  v0.dropdown_id = 1 AND v0.name = ?  AND  v1.dropdown_id = 2 AND v1.name = ?  AND  v2.dropdown_id = 3 AND v2.name = ? 
+error:544:Expected 3 values, got: Vauxhall,2003,Astra, Vectra,Zafira - ERROR ON RECORD #44503
+itime:44585 - 4553.8674068451 - 31.822326898575
+dbtime:1078867 - 2932.4150927067 - 22.865364074707 - 8515
+error:545:Expected 3 values, got: Cummins Inc.,1996,Off Highway, 6BTA - SELECT v2.value_id AS finalValueId  FROM am_finder_value AS v0  JOIN am_finder_value AS v1 ON v1.parent_id = v0.value_id  JOIN am_finder_value AS v2 ON v2.parent_id = v1.value_id  WHERE  v0.dropdown_id = 1 AND v0.name = ?  AND  v1.dropdown_id = 2 AND v1.name = ?  AND  v2.dropdown_id = 3 AND v2.name = ? 
+error:546:Expected 3 values, got: Cummins Inc.,1996,Off Highway, 6BTA - ERROR ON RECORD #44785
+itime:44826 - 4585.2415909767 - 31.373908996582
+dbtime:1086542 - 2955.6014287472 - 23.186336040497 - 7675
+error:547:Expected 3 values, got: Land Rover,1987,Falcon,90/110 Turbo D - SELECT v2.value_id AS finalValueId  FROM am_finder_value AS v0  JOIN am_finder_value AS v1 ON v1.parent_id = v0.value_id  JOIN am_finder_value AS v2 ON v2.parent_id = v1.value_id  WHERE  v0.dropdown_id = 1 AND v0.name = ?  AND  v1.dropdown_id = 2 AND v1.name = ?  AND  v2.dropdown_id = 3 AND v2.name = ? 
+error:548:Expected 3 values, got: Land Rover,1987,Falcon,90/110 Turbo D - ERROR ON RECORD #44887
+error:549:Expected 3 values, got: Fiat,1993,Tempra, Tipo - DELETE FROM customerprices_prices WHERE product_id=?
+error:550:Expected 3 values, got: Fiat,1993,Tempra, Tipo - ERROR ON RECORD #44888
+error:551:Expected 3 values, got: Saab,1979,900,99 EMS - SELECT v2.value_id AS finalValueId  FROM am_finder_value AS v0  JOIN am_finder_value AS v1 ON v1.parent_id = v0.value_id  JOIN am_finder_value AS v2 ON v2.parent_id = v1.value_id  WHERE  v0.dropdown_id = 1 AND v0.name = ?  AND  v1.dropdown_id = 2 AND v1.name = ?  AND  v2.dropdown_id = 3 AND v2.name = ? 
+error:552:Expected 3 values, got: Saab,1979,900,99 EMS - ERROR ON RECORD #44893
+error:553:Expected 3 values, got: Lancia,1995,Delta,Tipo,155 - SELECT v2.value_id AS finalValueId  FROM am_finder_value AS v0  JOIN am_finder_value AS v1 ON v1.parent_id = v0.value_id  JOIN am_finder_value AS v2 ON v2.parent_id = v1.value_id  WHERE  v0.dropdown_id = 1 AND v0.name = ?  AND  v1.dropdown_id = 2 AND v1.name = ?  AND  v2.dropdown_id = 3 AND v2.name = ? 
+error:554:Expected 3 values, got: Lancia,1995,Delta,Tipo,155 - ERROR ON RECORD #44894
+error:555:Expected 3 values, got: Vauxhall,2003,Astra, Vectra,Zafira - SELECT v2.value_id AS finalValueId  FROM am_finder_value AS v0  JOIN am_finder_value AS v1 ON v1.parent_id = v0.value_id  JOIN am_finder_value AS v2 ON v2.parent_id = v1.value_id  WHERE  v0.dropdown_id = 1 AND v0.name = ?  AND  v1.dropdown_id = 2 AND v1.name = ?  AND  v2.dropdown_id = 3 AND v2.name = ? 
+error:556:Expected 3 values, got: Vauxhall,2003,Astra, Vectra,Zafira - ERROR ON RECORD #44897
+error:557:Expected 3 values, got: Vauxhall,2003,Astra, Vectra,Zafira - SELECT v2.value_id AS finalValueId  FROM am_finder_value AS v0  JOIN am_finder_value AS v1 ON v1.parent_id = v0.value_id  JOIN am_finder_value AS v2 ON v2.parent_id = v1.value_id  WHERE  v0.dropdown_id = 1 AND v0.name = ?  AND  v1.dropdown_id = 2 AND v1.name = ?  AND  v2.dropdown_id = 3 AND v2.name = ? 
+error:558:Expected 3 values, got: Vauxhall,2003,Astra, Vectra,Zafira - ERROR ON RECORD #44901
+error:559:Expected 3 values, got: Cummins Inc.,1996,Off Highway, 6BTA - SELECT v2.value_id AS finalValueId  FROM am_finder_value AS v0  JOIN am_finder_value AS v1 ON v1.parent_id = v0.value_id  JOIN am_finder_value AS v2 ON v2.parent_id = v1.value_id  WHERE  v0.dropdown_id = 1 AND v0.name = ?  AND  v1.dropdown_id = 2 AND v1.name = ?  AND  v2.dropdown_id = 3 AND v2.name = ? 
+error:560:Expected 3 values, got: Cummins Inc.,1996,Off Highway, 6BTA - ERROR ON RECORD #45036
+itime:45067 - 4619.3406229019 - 34.098859071732
+dbtime:1095023 - 2981.1113336086 - 25.50990486145 - 8481
+error:561:Expected 3 values, got: Vauxhall,2003,Astra, Vectra,Zafira - SELECT v2.value_id AS finalValueId  FROM am_finder_value AS v0  JOIN am_finder_value AS v1 ON v1.parent_id = v0.value_id  JOIN am_finder_value AS v2 ON v2.parent_id = v1.value_id  WHERE  v0.dropdown_id = 1 AND v0.name = ?  AND  v1.dropdown_id = 2 AND v1.name = ?  AND  v2.dropdown_id = 3 AND v2.name = ? 
+error:562:Expected 3 values, got: Vauxhall,2003,Astra, Vectra,Zafira - ERROR ON RECORD #45119
+itime:45308 - 4647.2315518856 - 27.890768051147
+dbtime:1102900 - 3000.7334423065 - 19.622108697891 - 7877
+itime:45549 - 4674.3064188957 - 27.074707984924
+dbtime:1111094 - 3019.3177087307 - 18.584266424179 - 8194
+itime:45790 - 4703.2208788395 - 28.914218902588
+dbtime:1119288 - 3039.4739508629 - 20.156242132187 - 8194
+itime:46031 - 4733.0592029095 - 29.838123083115
+dbtime:1126438 - 3059.7477545738 - 20.273803710938 - 7150
+itime:46272 - 4761.9691638947 - 28.909728050232
+dbtime:1132464 - 3079.0629067421 - 19.315152168274 - 6026
+itime:46513 - 4791.3726279736 - 29.403283119202
+dbtime:1139163 - 3098.6769309044 - 19.614024162292 - 6699
+itime:46754 - 4816.7350258827 - 25.362159013748
+dbtime:1146105 - 3114.3462905884 - 15.66935968399 - 6942
+itime:46995 - 4839.8134279251 - 23.0782289505
+dbtime:1152131 - 3129.1551918983 - 14.808901309967 - 6026
+itime:47236 - 4861.9387710094 - 22.125163078308
+dbtime:1158156 - 3143.2323288918 - 14.077136993408 - 6025
+itime:47477 - 4883.6166148186 - 21.67765879631
+dbtime:1164325 - 3156.9023497105 - 13.67002081871 - 6169
+itime:47718 - 4912.090310812 - 28.473518848419
+dbtime:1172483 - 3175.5412499905 - 18.638900279999 - 8158
+itime:47959 - 4939.3002488613 - 27.209735870361
+dbtime:1180618 - 3193.6448464394 - 18.103596448898 - 8135
+skip:skipping unknown sku:48322 - update mode set
+skip:skipping unknown sku:48325 - update mode set
+skip:skipping unknown sku:48326 - update mode set
+skip:skipping unknown sku:48327 - update mode set
+skip:skipping unknown sku:48328 - update mode set
+skip:skipping unknown sku:48329 - update mode set
+skip:skipping unknown sku:48330 - update mode set
+skip:skipping unknown sku:48331 - update mode set
+skip:skipping unknown sku:48332 - update mode set
+skip:skipping unknown sku:48333 - update mode set
+skip:skipping unknown sku:48334 - update mode set
+skip:skipping unknown sku:48335 - update mode set
+skip:skipping unknown sku:48336 - update mode set
+skip:skipping unknown sku:48337 - update mode set
+skip:skipping unknown sku:48338 - update mode set
+skip:skipping unknown sku:48339 - update mode set
+skip:skipping unknown sku:48340 - update mode set
+skip:skipping unknown sku:48341 - update mode set
+skip:skipping unknown sku:48342 - update mode set
+skip:skipping unknown sku:48343 - update mode set
+skip:skipping unknown sku:48344 - update mode set
+skip:skipping unknown sku:48345 - update mode set
+itime:48090 - 4951.5561769009 - 12.255740880966
+dbtime:1184375 - 3202.2359604836 - 8.5911140441895 - 3757
+info:Skus imported OK:47787/48090
+warning:Skus imported KO:303/48090
+end:Import Ended

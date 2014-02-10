@@ -35,15 +35,6 @@ INSERT INTO `group_role` (
   @ADMINGROUPID, @ADMINROLEID
 );
 
-UPDATE `part_type` SET DTYPE = "Turbo" WHERE ID = 1;
-UPDATE `part_type` SET DTYPE = "Cartridge" WHERE ID = 2;
-UPDATE `part_type` SET DTYPE = "Kit" WHERE ID = 3;
-UPDATE `part_type` SET DTYPE = "PistonRing" WHERE ID = 4;
-UPDATE `part_type` SET DTYPE = "JournalBearing" WHERE ID = 5;
-UPDATE `part_type` SET DTYPE = "Gasket" WHERE ID = 6;
-UPDATE `part_type` SET DTYPE = "BearingSpacer" WHERE ID = 7;
-UPDATE `part_type` SET DTYPE = "Turbo" WHERE ID = 1;
-UPDATE `part_type` SET DTYPE = "Turbo" WHERE ID = 1;
 
 REPLACE INTO `part_type` (`id`,`name`,`parent_part_type_id`,`import_pk`) VALUES 
  (6,'gasket',NULL,NULL),

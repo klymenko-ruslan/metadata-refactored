@@ -1,0 +1,78 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     base_default
+ * @copyright   Copyright (c) 2012 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+?>
+<?php
+$_product = $this->getProduct();
+$_productManufacturer = $_product->getManufacturer();
+
+
+// Determine which product we're using
+$billOfMaterials = json_decode($_product->getBillOfMaterials(), true);
+if ($_productManufacturer == 44) {
+
+    // This is a TI product, use it directly
+    $tiProduct = $_product;
+    $addToCartString = $this->__('Add to Cart');
+
+    
+} elseif ($_product->getAttributeText("part_type") == "turbo"
+            && !empty($billOfMaterials)
+            && !empty($billOfMaterials[0]['ti_part_sku'])) {
+    
+    // This is a turbo, get the TI part from the first BOM item (should be a cartridge) TI part SKU array.
+    $bomCartridgeTiSku = $billOfMaterials[0]['ti_part_sku'][0];
+    
+    $tiProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $bomCartridgeTiSku);
+    $addToCartString = $this->__('Add TI Part to Cart');
+    
+} elseif (strlen($_product->getTiPartSku()) > 0) {
+    
+    // It's not a TI part and it's not a turbo, get the first ti_part_sku
+    $tiPartSkuArray = explode(',', $_product->getTiPartSku());
+
+    $tiProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $tiPartSkuArray[0]);
+    $addToCartString = $this->__('Add TI Part to Cart');
+} else {
+    $tiProduct = null;
+}
+
+?>
+<?php if ($_product->isSaleable()): ?>
+    <div class="add-to-cart">
+        <?php if (!$_product->isGrouped()): ?>
+            <label for="qty"><?php echo $this->__('Qty:') ?></label>
+            <input type="text" name="qty" id="qty" maxlength="12" value="<?php echo $this->getProductDefaultQty() * 1 ?>"
+                   title="<?php echo $this->__('Qty') ?>" class="input-text qty"/>
+        <?php endif; ?>
+        <?php if ($tiProduct && $tiProduct->isSaleable()): ?>
+            <button type="button" title="<?php echo $addToCartString ?>" class="button btn-cart"
+                    onclick="setLocation('<?php echo $this->getAddToCartUrl($tiProduct) ?>')">
+                <span><span><?php echo $addToCartString ?></span></span>
+            </button>
+        <?php endif; ?>
+        <?php echo $this->getChildHtml('', true, true) ?>
+    </div>
+<?php endif; ?>

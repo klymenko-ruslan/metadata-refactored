@@ -1,11 +1,13 @@
 package com.turbointernational.metadata.domain.part;
+import com.turbointernational.metadata.domain.part.bom.BOMItem;
 import com.turbointernational.metadata.util.ElasticSearch;
 import java.security.Principal;
-import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.sf.jsog.JSOG;
+import org.apache.commons.fileupload.FileUpload;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -19,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-@RequestMapping("/part")
+@RequestMapping("/metadata/part")
 @Controller
 public class PartController {
 
@@ -29,9 +31,11 @@ public class PartController {
     @Autowired(required=true)
     private ElasticSearch elasticSearch;
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET, headers = "Accept=application/json")
+    @Transactional
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<String> showJson(@PathVariable("id") Long id) {
+        
         Part part = Part.findPart(id);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json; charset=utf-8");
@@ -41,16 +45,16 @@ public class PartController {
         return new ResponseEntity<String>(part.toJson(), headers, HttpStatus.OK);
     }
     
-    @RequestMapping(headers = "Accept=application/json")
+    @Transactional
+    @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<String> listJson(
             @RequestParam(required = false, defaultValue = "1") Integer first,
-            @RequestParam(required = false, defaultValue = "20") Integer count,
-            @RequestParam(required = false) String type) {
+            @RequestParam(required = false, defaultValue = "20") Integer count) {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json; charset=utf-8");
         
-        List<Part> result = Part.findPartEntries(first, count, type);
+        List<Part> result = Part.findPartEntries(first, count);
         
         String[] fields = new String[] {
             "id",
@@ -66,16 +70,18 @@ public class PartController {
     }
     
     @Transactional
-    @RequestMapping(method = RequestMethod.POST, headers = "Accept=application/json")
+    @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<String> createFromJson(Principal principal, @RequestBody String partJson) throws Exception {
         JSOG partJsog = JSOG.parse(partJson);
         
         Part part = Part.fromJsonToPart(partJson);
         
-        // Update the interchange group
-        part.setInterchangeByPartId(partJsog.get("interchangePartId").getLongValue());
+//        // Update the interchange group
+//        part.setInterchangeByPartId(partJsog.get("interchangePartId").getLongValue());
         
         part.persist();
+        part.indexTurbos();
+        part.updateIndex();
         
         // Update the changelog
 //        Changelog.log(principal, "Created part", part.toJson());
@@ -86,7 +92,7 @@ public class PartController {
     }
     
     @Transactional
-    @RequestMapping(value = "/{id}", method = RequestMethod.PUT, headers = "Accept=application/json")
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     public ResponseEntity<String> updateFromJson(Principal principal, @RequestBody String partJson, @PathVariable("id") Long id) throws Exception {
         JSOG partJsog = JSOG.parse(partJson);
         
@@ -94,29 +100,46 @@ public class PartController {
         headers.add("Content-Type", "application/json");
         
         // Get the original part so we can log the update
-        Part originalPart = Part.findPart(id);
-        String originalPartJson = originalPart.toJson();
+//        Part originalPart = Part.findPart(id);
+//        String originalPartJson = originalPart.toJson();
         
         // Update the part
         Part part = Part.fromJsonToPart(partJson);
+//        
+        // Handle BOM updates
+        if (part.getBom() != null) {
+            for (BOMItem item : part.getBom()) {
+                Long childId = item.getChild().getId();
+                item.setChild(Part.findPart(childId));
+                
+                item.setParent(part);
+            }
+        }
+        
         if (part.merge() == null) {
             return new ResponseEntity<String>(headers, HttpStatus.NOT_FOUND);
         }
         
-        // Update the interchange group
-        part.setInterchangeByPartId(partJsog.get("interchangePartId").getLongValue());
+        part = Part.findPart(part.getId());
+        Part.entityManager().refresh(part);
+        
+        part.indexTurbos();
+        part.updateIndex();
+//        
+//        // Update the interchange group
+//        part.setInterchangeByPartId(partJsog.get("interchangePartId").getLongValue());
         
         // Update the changelog
-        JSOG dataJsog = JSOG.object("originalPart", originalPartJson)
-                            .put("updatedPart", part.toJson());
+//        JSOG dataJsog = JSOG.object("originalPart", originalPartJson)
+//                            .put("updatedPart", part.toJson());
         
 //        Changelog.log(principal, "Updated part", dataJsog.toString());
         
-        return new ResponseEntity<String>(headers, HttpStatus.OK);
+        return new ResponseEntity<String>(part.toJson(), headers, HttpStatus.OK);
     }
     
     @Transactional
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, headers = "Accept=application/json")
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<String> deleteFromJson(Principal principal, @PathVariable("id") Long id) {
         Part part = Part.findPart(id);
         String partJson = part.toJson();
@@ -134,10 +157,49 @@ public class PartController {
         return new ResponseEntity<String>(headers, HttpStatus.OK);
     }
 
-    @RequestMapping(value="/indexAll", headers = "Accept=application/json")
+    @RequestMapping(value="/{id}/indexTurbos")
     @ResponseBody
-    public ResponseEntity<Void> indexAll(@RequestParam(required=false) Integer maxPages,
-                                         @RequestParam(required=false) String type) throws Exception {
+    public ResponseEntity<Void> indexTurbos(@PathVariable("id") Long id) throws Exception {
+        Part part = Part.findPart(id);
+        
+        part.indexTurbos();
+        
+        return new ResponseEntity<Void>((Void) null, HttpStatus.OK);
+    }
+    
+    @RequestMapping(value="/all/indexTurbos")
+    @ResponseBody
+    public ResponseEntity<Void> indexTurbos(@RequestParam(required=false) Integer startPage, @RequestParam(required=false) Integer maxPages) throws Exception {
+        int pageSize = 100;
+        int page = ObjectUtils.defaultIfNull(startPage, 0);
+        
+        List<Part> parts = Part.findPartEntriesForTurboIndexing(page * pageSize, pageSize);
+        do {
+            long start = System.currentTimeMillis();
+            
+            for (Part part : parts) {
+                part.indexTurbos();
+            }
+            
+            // Give Hibernate a breather or it'll slow WAY down
+            new Part().clear();
+            
+            // Get the next part list
+            page++;
+            parts = Part.findPartEntriesForTurboIndexing(page * pageSize, pageSize);
+            
+            log.log(Level.INFO, "Indexed turbos for {0} parts, page {1} in {2}ms", new Object[]{
+                pageSize,
+                page,
+                System.currentTimeMillis() - start});
+        } while (parts.size() == pageSize && (maxPages != null && page < maxPages));
+        
+        return new ResponseEntity<Void>((Void) null, HttpStatus.OK);
+    }
+    
+    @RequestMapping(value="/indexAll")
+    @ResponseBody
+    public ResponseEntity<Void> indexAll(@RequestParam(required=false) Integer maxPages) throws Exception {
         
         if (maxPages == null ) {
             maxPages = Integer.MAX_VALUE;
@@ -148,25 +210,26 @@ public class PartController {
 
         int pageSize = 100;
         int page = 0;
-        Collection<Part> result;
-        
+        int result;
         do {
-            if (type == null) {
-                result = Part.findPartEntries(page * pageSize, pageSize);
-            } else {
-                result = Part.findPartEntries(page * pageSize, pageSize, type);
-            }
+            result = elasticSearch.indexParts(page * pageSize, pageSize);
             log.log(Level.INFO, "Indexing parts {0}-{1}", new Object[]{page * pageSize, (page * pageSize) + pageSize});
             page++;
             
-            for (Part part : result) {
-                part.indexPart();
-            }
-            
-            elasticSearch.indexParts(result);
-        } while (result.size() >= pageSize && page < maxPages);
+        } while (result >= pageSize && page < maxPages);
 
         return new ResponseEntity<Void>((Void) null, headers, HttpStatus.OK);
     }
+    
+    @RequestMapping(value="/{id}addProductImage", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity<Void> addProductImage(@PathVariable Long id,
+                                                FileUpload upload) throws Exception {
+//        TODO
+
+        return new ResponseEntity<Void>((Void) null, HttpStatus.OK);
+    }
+    
+    
 
 }

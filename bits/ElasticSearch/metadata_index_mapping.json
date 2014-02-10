@@ -1,0 +1,101 @@
+{
+  part:{
+    properties:{
+      id:{
+        type:"string",
+        store: "yes"
+      },
+      name:{
+        type:"string",
+        store: "yes"
+      },
+      manufacturerPartNumber:{
+        type:"multi_field",
+        store:"yes",
+        fields:{
+          text:{
+            type:"string",
+            analyzer:"whitespace"
+          },
+          autocomplete:{
+            type:"string",
+            index:"analyzed",
+            analyzer:"autocomplete"
+          }
+        }
+      },
+      "partType.id": {
+        type: "long",
+        store: "yes",
+        analyzer: "keyword"
+      },
+      "partType.name": {
+        type:"multi_field",
+        store:"yes",
+        type:"string",
+        analyzer:"whitespace"
+      },
+      "partType.typeName": {
+        type:"string",
+        analyzer:"keyword",
+        store:"yes"
+      },
+      "manufacturer.id": {
+        type: "long",
+        store: "yes",
+        analyzer: "keyword"
+      },
+      "manufacturer.name": {
+        type:"multi_field",
+        store:"yes",
+        type:"string",
+        analyzer:"whitespace"
+      },
+      "coolType.id": {
+        type: "long",
+        store: "yes",
+        analyzer: "keyword"
+      },
+      "coolType.name": {
+        type:"multi_field",
+        store:"yes",
+        type:"string",
+        analyzer:"whitespace"
+      },
+      "gasketType.id": {
+        type: "long",
+        store: "yes",
+        analyzer: "keyword"
+      },
+      "gasketType.name": {
+        type:"multi_field",
+        store:"yes",
+        type:"string",
+        analyzer:"whitespace"
+      },
+      "kitType.id": {
+        type: "long",
+        store: "yes",
+        analyzer: "keyword"
+      },
+      "kitType.name": {
+        type:"multi_field",
+        store:"yes",
+        type:"string",
+        analyzer:"whitespace"
+      },
+      "sealType.id": {
+        type: "long",
+        store: "yes",
+        analyzer: "keyword"
+      },
+      "sealType.name": {
+        type:"multi_field",
+        store:"yes",
+        type:"string",
+        analyzer:"whitespace"
+      }
+    }
+  }
+}
+

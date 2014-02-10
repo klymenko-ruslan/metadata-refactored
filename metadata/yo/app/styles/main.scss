@@ -1,0 +1,86 @@
+$iconSpritePath: "../images/glyphicons-halflings.png";
+$iconWhiteSpritePath: "../images/glyphicons-halflings-white.png";
+
+@import "bootstrap-sass/lib/bootstrap";
+
+/* Mixins */
+@mixin rounded {
+  -moz-border-radius: 6px;
+  -webkit-border-radius: 6px;
+  border-radius: 6px; /* future proofing */
+  -khtml-border-radius: 6px; /* for old Konqueror browsers */
+}
+
+@mixin border-1 {
+  border: 1px solid black;
+}
+
+/* General */
+body {
+  background: #fafafa;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: #333;
+  margin: 20px;
+}
+
+h1:first-of-type {
+  margin-top: 0;
+  line-height: 36px;
+}
+
+.facet-header {
+  font-size: 20px;
+  line-height: 20px;
+  margin: 0;
+}
+
+.table-hover tbody tr:hover > td {
+  cursor: pointer
+}
+
+.list-bottom-border {
+  padding-bottom: 10px;
+  border-bottom: 1px #DDDDDD solid;
+}
+
+.table {
+  thead {
+    font-size: 14px;
+    tr {
+      th {
+        padding: 2px 8px;
+        line-height: 14px;
+        vertical-align: middle;
+      }
+    }
+  }
+  tbody {
+    font-size: 12px;
+    tr {
+      td {
+        padding: 2px 8px;
+        line-height: 12px;
+        vertical-align: middle;
+      }
+    }
+  }
+}
+
+.padding-top {
+  padding-top: 20px;
+}
+
+.modal {
+  display: block;
+  height: 0;
+  overflow: visible;
+}
+
+.picker {
+  div[class*='col-'] {
+    padding-right: 0;
+  }
+  button {
+    margin-left: -15px;
+  }
+}

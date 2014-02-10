@@ -2,26 +2,20 @@
 <persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
   <persistence-unit name="persistenceUnit" transaction-type="RESOURCE_LOCAL">
     <provider>org.hibernate.ejb.HibernatePersistence</provider>
-    <!--<provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>-->
     <shared-cache-mode>ENABLE_SELECTIVE</shared-cache-mode>
     <properties>
-            <property name="hibernate.show_sql" value="true"/>
-            <property name="hibernate.format_sql" value="true"/>
-            <property name="hibernate.log.level" value="ALL"/>
-            <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5InnoDBDialect"/>
-            <property name="hibernate.hbm2ddl.auto" value=""/>
-            <property name="hibernate.ejb.naming_strategy" value="org.hibernate.cfg.ImprovedNamingStrategy"/>
-            <property name="hibernate.connection.charSet" value="UTF-8"/>
-        
-
-      <!--
-    <property name="eclipselink.logging.level" value="ALL"/>
-    <property name="eclipselink.logging.parameters" value="true"/>
-    <property name="eclipselink.target-database" value="org.eclipse.persistence.platform.database.MySQLPlatform"/>
-    <property name="eclipselink.jdbc.read-connections.shared" value="true"/>
-    <property name="eclipselink.ddl-generation" value="none"/>
-    <property name="eclipselink.weaving" value="true"/>
-      -->
+      <property name="hibernate.show_sql" value="false"/>
+      <property name="hibernate.format_sql" value="true"/>
+      <property name="hibernate.log.level" value="INFO"/>
+      <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5InnoDBDialect"/>
+      <property name="hibernate.hbm2ddl.auto" value=""/>
+      <property name="hibernate.ejb.naming_strategy" value="org.hibernate.cfg.ImprovedNamingStrategy"/>
+      <property name="hibernate.connection.charSet" value="UTF-8"/>
+      <property name="hibernate.cache.region.factory_class" value="org.hibernate.cache.ehcache.EhCacheRegionFactory"/>
+      <property name="net.sf.Ehcache.configurationResourceName" value="/ehcache.xml"/>
+      <property name="hibernate.cache.use_query_cache" value="true"/>
+      <property name="hibernate.cache.use_second_level_cache" value="true"/>
+      <property name="hibernate.generate_statistics" value="true"/>
     </properties>
   </persistence-unit>
 </persistence>

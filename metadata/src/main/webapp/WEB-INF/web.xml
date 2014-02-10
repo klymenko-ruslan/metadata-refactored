@@ -83,7 +83,11 @@
     
     <servlet-mapping>
         <servlet-name>metadata</servlet-name>
-        <url-pattern>/</url-pattern>
+        <url-pattern>/metadata/*</url-pattern>
+        <url-pattern>/search</url-pattern>
+        <url-pattern>/search/*</url-pattern>
+        <url-pattern>/magmi</url-pattern>
+        <url-pattern>/magmi/*</url-pattern>
     </servlet-mapping>
     
     <session-config>

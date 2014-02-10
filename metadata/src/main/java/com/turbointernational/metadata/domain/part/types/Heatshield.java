@@ -1,16 +1,16 @@
 package com.turbointernational.metadata.domain.part.types;
 import com.turbointernational.metadata.domain.part.Part;
+import java.util.Map;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.SecondaryTable;
 import net.sf.jsog.JSOG;
+import org.apache.commons.lang.ObjectUtils;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 
 @Configurable
 @Entity
-@RooJpaActiveRecord
 @SecondaryTable(name="heatshield", pkJoinColumns=@PrimaryKeyJoinColumn(name = "part_id"))
 public class Heatshield extends Part {
 
@@ -58,4 +58,12 @@ public class Heatshield extends Part {
         return partObject;
     }
 
+    @Override
+    public void csvColumns(Map<String, String> columns) {
+        super.csvColumns(columns);
+        
+        columns.put("overall_diameter", ObjectUtils.toString(getOverallDiameter()));
+        columns.put("inside_diameter", ObjectUtils.toString(getInsideDiameter()));
+        columns.put("inducer_diameter", ObjectUtils.toString(getInducerDiameter()));
+    }
 }

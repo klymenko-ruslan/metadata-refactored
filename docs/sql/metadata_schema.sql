@@ -4,14 +4,70 @@ GRANT ALL PRIVILEGES ON ti.* to ti@'localhost' IDENTIFIED BY 'ti';
 USE `ti`;
 
 --
+-- Cars
+--
+CREATE TABLE `car_year` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(255) NOT NULL,
+  UNIQUE INDEX (`name`),
+  PRIMARY KEY(`id`)
+) ENGINE = INNODB;
+
+CREATE TABLE `car_make` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(50) NOT NULL,
+  `import_pk` BIGINT NULL,
+  UNIQUE INDEX (`name`),
+  PRIMARY KEY(`id`)
+) ENGINE = INNODB;
+
+CREATE TABLE `car_fuel_type` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(255) NOT NULL,
+  UNIQUE INDEX (`name`),
+  PRIMARY KEY(`id`)
+) ENGINE = INNODB;
+
+CREATE TABLE `car_model` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(50) NOT NULL,
+  `car_make_id` BIGINT NOT NULL,
+  `import_pk` BIGINT NULL,
+  UNIQUE INDEX (`name`, `car_make_id`),
+  FOREIGN KEY (`car_make_id`) REFERENCES `car_make` (`id`),
+  PRIMARY KEY(`id`)
+) ENGINE = INNODB;
+
+CREATE TABLE `car_engine` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `engine_size` VARCHAR(50) NOT NULL,
+  `car_fuel_type_id` BIGINT NULL,
+  UNIQUE INDEX (`engine_size`, `car_fuel_type_id`),
+  FOREIGN KEY (`car_fuel_type_id`) REFERENCES `car_fuel_type` (`id`),
+  PRIMARY KEY(`id`)
+) ENGINE = INNODB;
+
+CREATE TABLE `car_model_engine_year` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `car_model_id` BIGINT NOT NULL,
+  `car_engine_id` BIGINT NOT NULL,
+  `car_year_id` BIGINT NOT NULL,
+  `import_pk` BIGINT NULL,
+  UNIQUE INDEX (`car_model_id`, `car_engine_id`, `car_year_id`),
+  FOREIGN KEY (`car_model_id`) REFERENCES `car_model` (`id`),
+  FOREIGN KEY (`car_engine_id`) REFERENCES `car_engine` (`id`),
+  FOREIGN KEY (`car_year_id`) REFERENCES `car_year` (`id`),
+  PRIMARY KEY(`id`)
+) ENGINE = INNODB;
+
+--
 -- Manufacturer
 --
 CREATE TABLE `manfr_type` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(255) NOT NULL,
-  `version` INTEGER NOT NULL DEFAULT 1,
   UNIQUE INDEX (`name`),
-  PRIMARY KEY(`id`, `version`)
+  PRIMARY KEY(`id`)
 ) ENGINE = INNODB;
 
 CREATE TABLE `manfr` (
@@ -20,11 +76,10 @@ CREATE TABLE `manfr` (
   `manfr_type_id` BIGINT NOT NULL,
   `parent_manfr_id` BIGINT NULL,
   `import_pk` BIGINT NULL,
-  `version` INTEGER NOT NULL DEFAULT 1,
   UNIQUE INDEX (`name`),
   FOREIGN KEY (`manfr_type_id`) REFERENCES `manfr_type` (`id`),
   FOREIGN KEY (`parent_manfr_id`) REFERENCES `manfr` (`id`),
-  PRIMARY KEY(`id`, `version`)
+  PRIMARY KEY(`id`)
 ) ENGINE = INNODB;
 
 
@@ -36,10 +91,8 @@ CREATE TABLE `part_type` (
   `name` VARCHAR(255) NOT NULL,
   `parent_part_type_id` BIGINT NULL,
   `import_pk` BIGINT NULL,
-  `dtype` VARCHAR(50),
-  `version` INTEGER NOT NULL DEFAULT 1,
   FOREIGN KEY (`parent_part_type_id`) REFERENCES `part_type` (`id`),
-  PRIMARY KEY(`id`, `version`)
+  PRIMARY KEY(`id`)
 ) ENGINE = INNODB;
 
 CREATE TABLE `part` (
@@ -51,35 +104,20 @@ CREATE TABLE `part` (
   `description` VARCHAR(255) NULL,
   `inactive` BOOLEAN NOT NULL DEFAULT 0,
   `import_pk` BIGINT NULL,
-  `magento_product_id` INT NULL,
-  `version` INTEGER NOT NULL DEFAULT 1,
-  `dtype` VARCHAR(50) DEFAULT 'Part',
-  PRIMARY KEY(`id`, `version`),
-  INDEX (`magento_product_id`),
+  PRIMARY KEY(`id`),
   INDEX (`manfr_part_num`, `manfr_id`),
   FOREIGN KEY (`manfr_id`) REFERENCES `manfr` (`id`),
   FOREIGN KEY (`part_type_id`) REFERENCES `part_type` (`id`)
 ) ENGINE = INNODB;
 
-
--- BEGIN TRIGGERS
-DELIMITER $$
-CREATE TRIGGER dtype_BI
-  BEFORE INSERT ON `part`
-  FOR EACH ROW
-    BEGIN
-      SET NEW.`dtype` = (SELECT COALESCE(`part_type`.`dtype`, 'Part') FROM `part_type` WHERE `id` = NEW.`part_type_id`);
-    END$$
-    
-CREATE TRIGGER dtype_BU
-  BEFORE UPDATE ON `part`
-  FOR EACH ROW
-    BEGIN
-      SET NEW.`dtype` = (SELECT COALESCE(`part_type`.`dtype`, 'Part') FROM `part_type` WHERE `id` = NEW.`part_type_id`);
-    END$$
-    
-DELIMITER ;
--- END TRIGGERS
+CREATE TABLE `product_image` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `part_id` BIGINT NOT NULL,
+  `filename` VARCHAR(255) NULL,
+  PRIMARY KEY(`id`),
+  UNIQUE KEY(`filename`),
+  FOREIGN KEY (`part_id`) REFERENCES `part` (`id`)
+) ENGINE = INNODB;
 
 --
 -- Part Types
@@ -88,35 +126,31 @@ CREATE TABLE `cool_type` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(255) NOT NULL,
   `import_pk` BIGINT NULL,
-  `version` INTEGER NOT NULL DEFAULT 1,
   UNIQUE INDEX (`name`),
-  PRIMARY KEY(`id`, `version`)
+  PRIMARY KEY(`id`)
 ) ENGINE = INNODB;
 
 CREATE TABLE `gasket_type` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(255) NOT NULL,
   `import_pk` BIGINT NULL,
-  `version` INTEGER NOT NULL DEFAULT 1,
   UNIQUE INDEX (`name`),
-  PRIMARY KEY(`id`, `version`)
+  PRIMARY KEY(`id`)
 ) ENGINE = INNODB;
 
 CREATE TABLE `kit_type` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(1000) NOT NULL,
   `import_pk` BIGINT NULL,
-  `version` INTEGER NOT NULL DEFAULT 1,
-  PRIMARY KEY(`id`, `version`)
+  PRIMARY KEY(`id`)
 ) ENGINE = INNODB;
 
 CREATE TABLE `seal_type` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(255) NOT NULL,
   `import_pk` BIGINT NOT NULL,
-  `version` INTEGER NOT NULL DEFAULT 1,
   UNIQUE INDEX (`name`),
-  PRIMARY KEY(`id`, `version`)
+  PRIMARY KEY(`id`)
 ) ENGINE = INNODB;
 
 CREATE TABLE `turbo_type` (
@@ -124,10 +158,9 @@ CREATE TABLE `turbo_type` (
   `name` VARCHAR(255) NOT NULL,
   `manfr_id` BIGINT NOT NULL,
   `import_pk` BIGINT NULL,
-  `version` INTEGER NOT NULL DEFAULT 1,
   UNIQUE INDEX (`name`, `manfr_id`),
   FOREIGN KEY (`manfr_id`) REFERENCES `manfr` (`id`),
-  PRIMARY KEY(`id`, `version`)
+  PRIMARY KEY(`id`)
 ) ENGINE = INNODB;
 
 CREATE TABLE `turbo_model` (
@@ -135,9 +168,8 @@ CREATE TABLE `turbo_model` (
   `name` VARCHAR(255) NULL,
   `turbo_type_id` BIGINT NULL,
   `import_pk` BIGINT NULL,
-  `version` INTEGER NOT NULL DEFAULT 1,
   FOREIGN KEY (`turbo_type_id`) REFERENCES `turbo_type` (`id`),
-  PRIMARY KEY(`id`, `version`)
+  PRIMARY KEY(`id`)
 ) ENGINE = INNODB;
 
 
@@ -145,20 +177,18 @@ CREATE TABLE `turbo_model` (
 -- Interchanges
 --
 CREATE TABLE `interchange_header` (
-  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `id` BIGINT NOT NULL,
   `name` VARCHAR(255) NOT NULL,
   `description` VARCHAR(255) NULL,
-  `version` INTEGER NOT NULL DEFAULT 1,
-  PRIMARY KEY(`id`, `version`)
+  PRIMARY KEY(`id`)
 ) ENGINE = INNODB;
 
 CREATE TABLE `interchange_item` (
   `part_id` BIGINT NOT NULL,
   `interchange_header_id` BIGINT NOT NULL,
-  `version` INTEGER NOT NULL DEFAULT 1,
   FOREIGN KEY (`interchange_header_id`) REFERENCES `interchange_header` (`id`),
   FOREIGN KEY (`part_id`) REFERENCES `part` (`id`),
-  PRIMARY KEY(`part_id`, `version`)
+  PRIMARY KEY(`part_id`)
 ) ENGINE = INNODB;
 
 CREATE TABLE `i_interchange_log` (
@@ -168,8 +198,7 @@ CREATE TABLE `i_interchange_log` (
   `interchange_header_id` BIGINT NULL,
   `interchange_cnt_uniq` BIGINT NULL,
   `date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `version` INTEGER NOT NULL DEFAULT 1,
-  PRIMARY KEY(`id`, `version`)
+  PRIMARY KEY(`id`)
 ) ENGINE = INNODB;
 
 
@@ -181,32 +210,27 @@ CREATE TABLE `bom` (
   `parent_part_id` BIGINT NOT NULL,
   `child_part_id` BIGINT NOT NULL,
   `quantity` INTEGER NOT NULL,
-  `version` INTEGER NOT NULL DEFAULT 1,
   UNIQUE INDEX (`parent_part_id`, `child_part_id`),
   FOREIGN KEY (`parent_part_id`) REFERENCES `part` (`id`),
   FOREIGN KEY (`child_part_id`) REFERENCES `part` (`id`),
-  PRIMARY KEY(`id`, `version`)
+  PRIMARY KEY(`id`)
 ) ENGINE = INNODB;
 
 CREATE TABLE `bom_alt_header` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(255) NULL,
   `description` VARCHAR(255) NULL,
-  `version` INTEGER NOT NULL DEFAULT 1,
-  PRIMARY KEY(`id`, `version`)
+  PRIMARY KEY(`id`)
 ) ENGINE = INNODB;
 
 CREATE TABLE `bom_alt_item` (
-  `id` BIGINT NOT NULL AUTO_INCREMENT,
   `bom_alt_header_id` BIGINT NOT NULL,
   `bom_id` BIGINT NOT NULL,
   `part_id` BIGINT NOT NULL,
-  `version` INTEGER NOT NULL DEFAULT 1,
   UNIQUE KEY (`bom_alt_header_id`, `bom_id`),
   FOREIGN KEY (`bom_alt_header_id`) REFERENCES `bom_alt_header` (`id`),
   FOREIGN KEY (`bom_id`) REFERENCES `bom` (`id`),
-  FOREIGN KEY (`part_id`)  REFERENCES `part` (`id`),
-  PRIMARY KEY(`id`, `version`)
+  FOREIGN KEY (`part_id`)  REFERENCES `part` (`id`)
 ) ENGINE = INNODB;
 
 
@@ -295,6 +319,7 @@ CREATE TABLE `journal_bearing` (
 
 CREATE TABLE `kit` (
   `part_id` BIGINT NOT NULL,
+  `name` VARCHAR(50) NULL,
   `kit_type_id` BIGINT NOT NULL,
   FOREIGN KEY (`kit_type_id`) REFERENCES `kit_type` (`id`),
   FOREIGN KEY (`part_id`) REFERENCES `part` (`id`)
@@ -302,7 +327,6 @@ CREATE TABLE `kit` (
 
 CREATE TABLE `nozzle_ring` (
   `part_id` BIGINT NOT NULL,
-  `version` INTEGER NOT NULL DEFAULT 1,
   FOREIGN KEY (`part_id`) REFERENCES `part` (`id`)
 ) ENGINE = INNODB;
 
@@ -354,18 +378,27 @@ CREATE TABLE `turbo` (
   FOREIGN KEY (`turbo_model_id`) REFERENCES `turbo_model` (`id`)
 ) ENGINE = INNODB;
 
-
 --
--- Part-Turbo Type join table
---
-CREATE TABLE `part_turbo_type` (
-  `id` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+-- Turbo-Car Relationship
+CREATE TABLE `turbo_car_model_engine_year` (
   `part_id` BIGINT NOT NULL,
-  `turbo_type_id` BIGINT NOT NULL,
-  FOREIGN KEY (`part_id`) REFERENCES `part` (`id`),
-  FOREIGN KEY (`turbo_type_id`) REFERENCES `turbo_type` (`id`)
+  `car_model_engine_year_id` BIGINT NOT NULL,
+  `import_pk` BIGINT NULL,
+  FOREIGN KEY (`car_model_engine_year_id`) REFERENCES `car_model_engine_year` (`id`),
+  FOREIGN KEY (`part_id`) REFERENCES `turbo` (`part_id`),
+  PRIMARY KEY(`part_id`, `car_model_engine_year_id`)
 ) ENGINE = INNODB;
 
+--
+-- Part-Turbo Index
+--
+CREATE TABLE `part_turbo` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `part_id` BIGINT NOT NULL,
+  `turbo_id` BIGINT NOT NULL,
+  FOREIGN KEY (`part_id`) REFERENCES `part` (`id`),
+  FOREIGN KEY (`turbo_id`) REFERENCES `turbo` (`part_id`)
+) ENGINE = INNODB;
 
 --
 -- Metadata Security
@@ -427,3 +460,18 @@ CREATE TABLE `changelog` (
   KEY(`change_date`),
   FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
 ) ENGINE = INNODB;
+
+CREATE TABLE `mas90_std_price` (
+  `ItemNumber` VARCHAR(50) NOT NULL,
+  `StdPrice` DECIMAL(10,2) NOT NULL DEFAULT 0
+) ENGINE = INNODB;
+
+-- Legacy Tables
+CREATE TABLE `part_turbo_type` (
+  `part_id` BIGINT NOT NULL,
+  `turbo_type_id` BIGINT NOT NULL,
+  FOREIGN KEY (`part_id`) REFERENCES `part` (`id`),
+  FOREIGN KEY (`turbo_type_id`) REFERENCES `turbo_type` (`id`),
+  PRIMARY KEY (`part_id`, `turbo_type_id`)
+)
+ENGINE = INNODB;

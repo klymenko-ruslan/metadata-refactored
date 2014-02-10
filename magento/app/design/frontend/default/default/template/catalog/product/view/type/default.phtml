@@ -1,0 +1,114 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     base_default
+ * @copyright   Copyright (c) 2012 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+?>
+<?php /* @var $this Mage_Catalog_Block_Product_View_Abstract */ ?>
+<?php
+$_product = $this->getProduct();
+
+// Get TI part SKUs and turbo types
+$tiPartSkuArray = $_product->getTiPartSku() ? explode(',', $_product->getTiPartSku()) : null;
+$turboTypes = $_product->getAttributeText('turbo_type');
+?>
+
+    <!-- Product Attributes -->
+    <ul>
+        <li><strong>Part Type:</strong> <?php echo $_product->getAttributeText('part_type'); ?></li>
+        <li><strong>Manufacturer:</strong> <?php echo $_product->getAttributeText('manufacturer'); ?></li>
+        <li><strong>Part Number:</strong> <?php echo $_product->getPartNumber(); ?></li>
+        <?php if ($tiPartSkuArray !== null): ?>
+            <li><strong>Compatible TI Part<?php if (count($tiPartSkuArray) > 1) { // English pluralization
+                        echo 's';
+                    } ?>:</strong> <?php
+                $i = 1;
+                foreach ($tiPartSkuArray as $tiPartSkus) {
+                    $tiProduct = Mage::getModel('catalog/product');
+                    $tiProduct->load($tiProduct->getIdBySku($tiPartSkus));
+                    $_tiProductPartNumber = $tiProduct->getPartNumber();
+                    echo '<a href="' . $tiProduct->getProductUrl() . '">';
+                    echo $_tiProductPartNumber;
+                    echo '</a>';
+                    if ($i < count($tiPartSkuArray)) {
+                        echo ", ";
+                    }
+                    $i++;
+                } ?></li>
+        <?php endif; ?>
+        <?php if ($turboTypes): ?>
+            <li><strong>Turbo Type<?php if (count($turboTypes) > 1) { // English pluralization
+                        echo 's';
+                    } ?>:</strong> <?php
+                if (is_array($turboTypes)) {
+                    $x = 1;
+                    foreach ($turboTypes as $turboType) {
+                        echo $turboType;
+                        if ($x < count($turboTypes)) {
+                            echo ", ";
+                        }
+                        $x++;
+                    }
+                } else {
+                    echo $turboTypes;
+                } ?></li>
+        <?php endif; ?>
+    </ul>
+
+    <!-- Turbo cartridge upper section details -->
+    <div style="margin-top:40px;">
+        <?php if ($_product->getAttributeText('part_type') == 'turbo'): ?>
+            <ul>
+                <?php $billOfMaterials = json_decode($_product->getBillOfMaterials(), true) ?>
+                <?php
+                foreach ($billOfMaterials as $bomItem) { // <-- need to setup handler to make sure bomItemProduct is a cartridge
+                    $bomItemProduct = Mage::getModel('catalog/product');
+                    $bomItemProduct->load($bomItemProduct->getIdBySku($bomItem['sku']));
+                    ?>
+                    <?php if ($bomItemProduct->getAttributeText('part_type') == 'cartridge'): ?>
+                        <li><strong>Cartridge:</strong> <?php
+                            echo '<a href="' . $bomItemProduct->getProductUrl() . '">' . $bomItemProduct->getPartNumber() . '</a>'; ?>
+                        </li>
+                        <li><strong>Compatible TI Part:</strong> <?php
+                            $a = 1;
+                            foreach ($bomItem['ti_part_sku'] as $bomTiProduct) {
+                                $bomItemInterchangeProduct = Mage::getModel('catalog/product');
+                                $bomItemInterchangeProduct->load($bomItemInterchangeProduct->getIdBySku($bomTiProduct));
+                                if ($bomItemInterchangeProduct->getId()) {
+                                    echo '<a href="' . $bomItemInterchangeProduct->getProductUrl() . '">' . $bomItemInterchangeProduct->getPartNumber() . '</a>';
+                                } else echo $bomTiProduct;
+                                if ($a < count($bomItem['ti_part_sku'])) {
+                                    echo ", ";
+                                }
+                                $a++;
+                            } ?></li>
+                    <?php endif; ?>
+                <?php
+                }
+                ?>
+            </ul>
+        <?php endif; ?>
+    </div>
+
+<?php echo $this->getChildHtml('product_type_data_extra') ?>
+<?php echo $this->getPriceHtml($_product) ?>

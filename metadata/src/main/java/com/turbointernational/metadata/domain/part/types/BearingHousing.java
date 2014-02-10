@@ -1,23 +1,25 @@
 package com.turbointernational.metadata.domain.part.types;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.type.CoolType;
+import flexjson.JSONSerializer;
+import java.util.Map;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.SecondaryTable;
 import net.sf.jsog.JSOG;
+import org.apache.commons.lang.ObjectUtils;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 
 @Configurable
 @Entity
-@RooJpaActiveRecord
 @SecondaryTable(name="bearing_housing", pkJoinColumns=@PrimaryKeyJoinColumn(name = "part_id"))
 public class BearingHousing extends Part {
     
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="cool_type_id", table = "bearing_housing")
     private CoolType coolType;
 
@@ -107,6 +109,14 @@ public class BearingHousing extends Part {
     }
 
     @Override
+    protected JSONSerializer buildJSONSerializer() {
+        return super.buildJSONSerializer()
+            .include("coolType.id")
+            .include("coolType.name")
+            .include("coolType.version");
+    }
+
+    @Override
     public JSOG toJsog() {
         JSOG partObject = super.toJsog();
         
@@ -123,5 +133,22 @@ public class BearingHousing extends Part {
         }
         
         return partObject;
+    }
+    
+    @Override
+    public void csvColumns(Map<String, String> columns) {
+        super.csvColumns(columns);
+        
+        columns.put("oil_inlet", ObjectUtils.toString(getOilInlet()));
+        columns.put("oil_outlet", ObjectUtils.toString(getOilOutlet()));
+        columns.put("oil", ObjectUtils.toString(getOil()));
+        columns.put("outlet_flange_holes", ObjectUtils.toString(getOutletFlangeHoles()));
+        columns.put("water_ports", ObjectUtils.toString(getWaterPorts()));
+        columns.put("design_features", ObjectUtils.toString(getDesignFeatures()));
+        columns.put("bearing_type", ObjectUtils.toString(getBearingType()));
+
+        if (getCoolType() != null) {
+            columns.put("cool_type", ObjectUtils.toString(getCoolType().getName()));
+        }
     }
 }

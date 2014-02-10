@@ -1,16 +1,16 @@
 package com.turbointernational.metadata.domain.part.types;
 import com.turbointernational.metadata.domain.part.Part;
+import java.util.Map;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.SecondaryTable;
 import net.sf.jsog.JSOG;
+import org.apache.commons.lang.ObjectUtils;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 
 @Configurable
 @Entity
-@RooJpaActiveRecord
 @SecondaryTable(name="compressor_wheel", pkJoinColumns=@PrimaryKeyJoinColumn(name = "part_id"))
 public class CompressorWheel extends Part {
     @Column(name="inducer_oa", table = "compressor_wheel")
@@ -103,5 +103,18 @@ public class CompressorWheel extends Part {
         partObject.put("application", getApplication());
         
         return partObject;
+    }
+    
+    @Override
+    public void csvColumns(Map<String, String> columns) {
+        super.csvColumns(columns);
+        
+        columns.put("inducer_oa", ObjectUtils.toString(getInducerOa()));
+        columns.put("tip_height_b", ObjectUtils.toString(getTipHeightB()));
+        columns.put("exducer_oc", ObjectUtils.toString(getExducerOc()));
+        columns.put("hub_length_d", ObjectUtils.toString(getHubLengthD()));
+        columns.put("bore_oe", ObjectUtils.toString(getBoreOe()));
+        columns.put("number_of_blades", ObjectUtils.toString(getNumberOfBlades()));
+        columns.put("application", ObjectUtils.toString(getApplication()));
     }
 }

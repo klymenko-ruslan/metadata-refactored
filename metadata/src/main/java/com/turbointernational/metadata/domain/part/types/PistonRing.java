@@ -1,16 +1,16 @@
 package com.turbointernational.metadata.domain.part.types;
 import com.turbointernational.metadata.domain.part.Part;
+import java.util.Map;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.SecondaryTable;
 import net.sf.jsog.JSOG;
+import org.apache.commons.lang.ObjectUtils;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 
 @Configurable
 @Entity
-@RooJpaActiveRecord
 @SecondaryTable(name="piston_ring", pkJoinColumns=@PrimaryKeyJoinColumn(name = "part_id"))
 public class PistonRing extends Part {
     
@@ -92,5 +92,17 @@ public class PistonRing extends Part {
         partObject.put("i_gap_max", getInstalledGapMax());
         
         return partObject;
+    }
+    
+    @Override
+    public void csvColumns(Map<String, String> columns) {
+        super.csvColumns(columns);
+        
+        columns.put("outside_dim_min", ObjectUtils.toString(getOutsideDiameterMin()));
+        columns.put("outside_dim_max", ObjectUtils.toString(getOutsideDiameterMax()));
+        columns.put("width_min", ObjectUtils.toString(getWidthMin()));
+        columns.put("width_max", ObjectUtils.toString(getWidthMax()));
+        columns.put("i_gap_min", ObjectUtils.toString(getInstalledGapMin()));
+        columns.put("i_gap_max", ObjectUtils.toString(getInstalledGapMax()));
     }
 }
