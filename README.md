@@ -121,6 +121,6 @@ Installing Magento from Scratch
 4. Set the new URL in the magento db: `update core_config_data set value = "http://ec2-54-197-140-225.compute-1.amazonaws.com/" where path like 'web/%/base_url';`
 5. Copy `./magento/` from git to `/var/www` on the server, don't miss `.htaccess`!
 6. Fix permissions: `sudo chown -R www-data:www-data /var/www`
-6. Update `/var/www/app/etc/local.xml` with the MySQL server's info
-7. Purge the cache: `rm -rf /var/www/var/cache/mage-*`
-8. Restart Apache: `sudo /etc/init.d/apache2 restart`
+7. Update `/var/www/app/etc/local.xml` with the MySQL server's info
+8. Purge the cache: `rm -rf /var/www/var/cache/mage-*`
+9. Enable mod_rewrite and restart apache: `sudo a2enmod rewrite && sudo /etc/init.d/apache2 restart`
