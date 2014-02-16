@@ -57,7 +57,7 @@
     </div>
 
     <!-- Bearing Housing -->
-    <div data-ng-switch-when="Bearing Housing">
+    <div data-ng-switch-when="BearingHousing">
         <dl class="dl-horizontal">
             <dt>Coolant</dt>
             <dd>{{part.coolType.name}}</dd>
@@ -79,7 +79,7 @@
     </div>
 
     <!-- Bearing Spacer -->
-    <div data-ng-switch-when="Bearing Spacer">
+    <div data-ng-switch-when="BearingSpacer">
         <dl class="dl-horizontal">
             <dt>Standard Size</dt>
             <dd>{{part.standardSize}}</dd>
@@ -100,9 +100,10 @@
     </div>
 
     <!-- Cartridge -->
+    <!-- TODO: Still need to map additional Cartridge <dl> -->
 
     <!-- Compressor Wheel -->
-    <div data-ng-switch-when="Compressor Wheel">
+    <div data-ng-switch-when="CompressorWheel">
         <dl class="dl-horizontal">
             <dt>Inducer Diameter A</dt>
             <dd>{{part.inducerOa}}</dd>
@@ -142,7 +143,7 @@
     </div>
 
     <!-- Journal Bearing -->
-    <div data-ng-switch-when="Journal Bearing">
+    <div data-ng-switch-when="JournalBearing">
         <dl class="dl-horizontal">
             <dt>Standard Size</dt>
             <dd>{{part.standardSize}}</dd>
@@ -168,27 +169,22 @@
     </div>
 
     <!-- Nozzle Ring -->
+    <!-- TODO: Still need to map additional NozzleRing <dl> -->
 
     <!-- Piston Ring -->
-    <div data-ng-switch-when="Piston Ring">
+    <div data-ng-switch-when="PistonRing">
         <dl class="dl-horizontal">
             <dt>Outside Diameter (min - max)</dt>
-            <dd>{{part.outsideDiameterMin}}</dd>
-            <dt></dt>
-            <dd>{{part.outsideDiameterMax}}</dd>
+            <dd>{{part.outsideDiameterMin}} - {{part.outsideDiameterMax}}</dd>
             <dt>Width (min - max)</dt>
-            <dd>{{part.widthMin}}</dd>
-            <dt></dt>
-            <dd>{{part.widthMax}}</dd>
+            <dd>{{part.widthMin}} - {{part.widthMax}}</dd>
             <dt>Installed Gap (min - max)</dt>
-            <dd>{{part.installedGapMin}}</dd>
-            <dt></dt>
-            <dd>{{part.installedGapMax}}</dd>
+            <dd>{{part.installedGapMin}} - {{part.installedGapMax}}</dd>
         </dl>
     </div>
 
     <!-- Turbine Wheel -->
-    <div data-ng-switch-when="Turbine Wheel">
+    <div data-ng-switch-when="TurbineWheel">
         <dl class="dl-horizontal">
             <dt>Exducer Diameter A</dt>
             <dd>{{part.exducerDiameterA}}</dd>
