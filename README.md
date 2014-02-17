@@ -115,7 +115,7 @@ When Indexing URL rewrites failed, I truncated the core_url_rewrite table and wa
 
 Installing Magento from Scratch
 ===============================
-1. Install MySQL, Apache, and PHP. You'll be asked to specify a mysql root password. `sudo apt-get install -y mysql-server apache2 php5 php5-mysqlnd`
+1. Install MySQL, Apache, and PHP. You'll be asked to specify a mysql root password. `sudo apt-get install -y mysql-server apache2 php5 php5-mysqlnd php5-json php5-curl`
 2. Setup MySQL to run off the 'ephemeral' SSD by changing the SSD's mount point from `/mnt` to `/var/lib/mysql`. You should move the MySQL data files before hiding the `/var/lib/mysql` directory behind a mount point.
 3. Create the schema and load the latest MySQL dump (something like this): `mysql -p -u USER SCHEMA < dump.sql`
 4. Set the new URL in the magento db: `update core_config_data set value = "http://ec2-54-197-140-225.compute-1.amazonaws.com/" where path like 'web/%/base_url';`
