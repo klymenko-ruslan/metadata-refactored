@@ -15,6 +15,7 @@
                            http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.2.xsd         
                            http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
                            http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.0.xsd
+                           http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.2.xsd
                            http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring
                            http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring/ehcache-spring-1.1.xsd">
     
@@ -101,25 +102,18 @@
     
     <task:annotation-driven executor="asyncExecutor" mode="aspectj"/>
     <task:executor id="asyncExecutor" pool-size="10"/>
-
-    <!-- Security -->
-    <bean id="filterChainProxy" class="org.springframework.security.util.FilterChainProxy">
-        <property name="filterInvocationDefinitionSource">
-            <value>
-                PATTERN_TYPE_APACHE_ANT
-                /**=httpSessionContextIntegrationFilter
-            </value>
-        </property>
-    </bean>
-
-    <bean id="httpSessionContextIntegrationFilter" class="org.springframework.security.context.HttpSessionContextIntegrationFilter"
-          p:allowSessionCreation="false"/>
     
-    <bean id="passwordEncoder" class="com.turbointernational.metadata.security.BCryptPasswordEncoder"/>
+    <security:http auto-config="true">
+        <security:intercept-url pattern="/**" access="ROLE_READ"/>
+        <security:http-basic />
+        <security:logout/>
+    </security:http>
     
-    <security:authentication-provider user-service-ref="loginService">
-        <security:password-encoder ref="passwordEncoder">
-            <security:salt-source user-property="passwordSalt" />
-        </security:password-encoder>
-    </security:authentication-provider>
+    <security:authentication-manager>
+        <security:authentication-provider user-service-ref="loginService">
+            <security:password-encoder ref="passwordEncoder">
+                <security:salt-source user-property="passwordSalt" />
+            </security:password-encoder>
+        </security:authentication-provider>
+    </security:authentication-manager>
 </beans>

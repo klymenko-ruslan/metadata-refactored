@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +35,7 @@ public class PartController {
     @Transactional
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ResponseBody
+    @Secured("ROLE_READ")
     public ResponseEntity<String> showJson(@PathVariable("id") Long id) {
         
         Part part = Part.findPart(id);
@@ -48,6 +50,7 @@ public class PartController {
     @Transactional
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
+    @Secured("ROLE_READ")
     public ResponseEntity<String> listJson(
             @RequestParam(required = false, defaultValue = "1") Integer first,
             @RequestParam(required = false, defaultValue = "20") Integer count) {
@@ -71,6 +74,7 @@ public class PartController {
     
     @Transactional
     @RequestMapping(method = RequestMethod.POST)
+    @Secured("ROLE_CREATE")
     public ResponseEntity<String> createFromJson(Principal principal, @RequestBody String partJson) throws Exception {
         JSOG partJsog = JSOG.parse(partJson);
         
@@ -93,6 +97,7 @@ public class PartController {
     
     @Transactional
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    @Secured("ROLE_MODIFY")
     public ResponseEntity<String> updateFromJson(Principal principal, @RequestBody String partJson, @PathVariable("id") Long id) throws Exception {
         JSOG partJsog = JSOG.parse(partJson);
         
@@ -140,6 +145,7 @@ public class PartController {
     
     @Transactional
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    @Secured("ROLE_DELETE")
     public ResponseEntity<String> deleteFromJson(Principal principal, @PathVariable("id") Long id) {
         Part part = Part.findPart(id);
         String partJson = part.toJson();
@@ -159,6 +165,7 @@ public class PartController {
 
     @RequestMapping(value="/{id}/indexTurbos")
     @ResponseBody
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<Void> indexTurbos(@PathVariable("id") Long id) throws Exception {
         Part part = Part.findPart(id);
         
@@ -169,6 +176,7 @@ public class PartController {
     
     @RequestMapping(value="/all/indexTurbos")
     @ResponseBody
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<Void> indexTurbos(@RequestParam(required=false) Integer startPage, @RequestParam(required=false) Integer maxPages) throws Exception {
         int pageSize = 100;
         int page = ObjectUtils.defaultIfNull(startPage, 0);
@@ -199,6 +207,7 @@ public class PartController {
     
     @RequestMapping(value="/indexAll")
     @ResponseBody
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<Void> indexAll(@RequestParam(required=false) Integer maxPages) throws Exception {
         
         if (maxPages == null ) {
@@ -223,6 +232,7 @@ public class PartController {
     
     @RequestMapping(value="/{id}addProductImage", method = RequestMethod.POST)
     @ResponseBody
+    @Secured("ROLE_ADD_IMAGE")
     public ResponseEntity<Void> addProductImage(@PathVariable Long id,
                                                 FileUpload upload) throws Exception {
 //        TODO
