@@ -408,6 +408,7 @@ CREATE TABLE `user` (
   `name` VARCHAR(100) NOT NULL,
   `email` VARCHAR(255) NOT NULL,
   `password` VARCHAR(100) NOT NULL,
+  `password_salt` VARCHAR(25) NOT NULL,
   `enabled` BOOLEAN NOT NULL DEFAULT 1,
   `version` INTEGER NOT NULL DEFAULT 1,
   UNIQUE INDEX (`email`),

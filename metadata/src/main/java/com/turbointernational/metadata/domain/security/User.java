@@ -1,4 +1,5 @@
 package com.turbointernational.metadata.domain.security;
+import static com.turbointernational.metadata.domain.part.Part.entityManager;
 import java.security.Principal;
 import java.util.Collection;
 import java.util.List;
@@ -114,14 +115,20 @@ public class User implements UserDetails {
     }
     
     public static User findUserByEmail(String email) {
-        if (StringUtils.isBlank(email))
-            return null;
+        if (StringUtils.isNotBlank(email)) {
+            List<User> users = User.entityManager()
+                    .createQuery("SELECT u FROM User u WHERE u.email = ?")
+                    .setParameter(1, email)
+                    .getResultList();
+            
+            if (!users.isEmpty()) {
+                return users.get(0);
+            }
+        }
         
-        return (User) User.entityManager()
-                .createQuery("SELECT u FROM User u WHERE u.email = ?")
-                .setParameter(0, email)
-                .getSingleResult();
+        return null;
     }
+    
     //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="Spring Security">

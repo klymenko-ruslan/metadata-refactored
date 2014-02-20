@@ -11,6 +11,10 @@ import org.springframework.stereotype.Component;
  */
 @Component("passwordEncoder")
 public class BCryptPasswordEncoder extends PlaintextPasswordEncoder {
+    
+    public String genSalt() {
+        return BCrypt.gensalt();
+    }
 
     @Override
     public String encodePassword(String rawPass, Object salt) {

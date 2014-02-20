@@ -1,6 +1,8 @@
 package com.turbointernational.metadata.security;
 
+import com.turbointernational.metadata.domain.security.Group;
 import com.turbointernational.metadata.domain.security.User;
+import javax.persistence.NoResultException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.dao.DataAccessException;
@@ -26,25 +28,19 @@ public class LoginService implements UserDetailsService, AuthenticationProvider 
     
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException, DataAccessException {
-        User user = User.findUserByEmail(email);
-        if (user != null) {
-            return user;
-        }
-
-        return null;
+        return User.findUserByEmail(email);
     }
     
     @Override
-    public Authentication authenticate(Authentication authentication) 
-      throws AuthenticationException {
+    public Authentication authenticate(Authentication authentication)  throws AuthenticationException {
         User user = (User) authentication.getPrincipal();
         String username = authentication.getName();
-        String password = authentication.getCredentials().toString();
- 
-        if (bcrypt.isPasswordValid(user.getPassword(), password, user.getPasswordSalt())) {
-            return new UsernamePasswordAuthenticationToken(username, password, user.getAuthorities());
+        String rawPass = authentication.getCredentials().toString();
+
+        if (bcrypt.isPasswordValid(user.getPassword(), rawPass, user.getPasswordSalt())) {
+            return new UsernamePasswordAuthenticationToken(username, rawPass, user.getAuthorities());
         } else {
-            throw new AuthenticationException("Unable to auth against third party systems") {};
+            return null;
         }
     }
  

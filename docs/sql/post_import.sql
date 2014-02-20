@@ -1,3 +1,7 @@
+INSERT INTO role (name, display) VALUES ('ROLE_ADMIN', 'Superpowers.');
+INSERT INTO groups (name) VALUES ('Admin');
+INSERT INTO group_role (group_id, role_id) VALUES((select id from groups), (select id from role));
+
 -- There are zero-valued car_model_engine_year entries
 ALTER TABLE car_model_engine_year CHANGE COLUMN car_model_id `car_model_id` BIGINT NULL;
 UPDATE car_model_engine_year
