@@ -2,17 +2,12 @@ package com.turbointernational.metadata.security;
 
 import com.turbointernational.metadata.domain.security.Group;
 import com.turbointernational.metadata.domain.security.User;
-import javax.persistence.NoResultException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.dao.DataAccessException;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
 /**
@@ -21,38 +16,42 @@ import org.springframework.stereotype.Service;
  */
 @Service("loginService")
 @Configuration
-public class LoginService implements UserDetailsService, AuthenticationProvider {
-    
-    @Autowired(required=true)
-    BCryptPasswordEncoder bcrypt;
+public class LoginService implements UserDetailsService {
     
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException, DataAccessException {
-        return User.findUserByEmail(email);
-    }
-    
-    @Override
-    public Authentication authenticate(Authentication authentication)  throws AuthenticationException {
-        User user = (User) authentication.getPrincipal();
-        String username = authentication.getName();
-        String rawPass = authentication.getCredentials().toString();
-
-        if (bcrypt.isPasswordValid(user.getPassword(), rawPass, user.getPasswordSalt())) {
-            return new UsernamePasswordAuthenticationToken(username, rawPass, user.getAuthorities());
-        } else {
-            return null;
+        User user =  User.findUserByEmail(email);
+        
+        if (user == null) {
+            
+            // If we don't have any users, create the admin account
+            if (User.countUsers() == 0) {
+                return createFirstUser();
+            }
+            
+            // Nope, just a failed login
+            throw new UsernameNotFoundException("No users with email address: " + email);
         }
+        
+        return user;
     }
- 
-    @Override
-    public boolean supports(Class<?> authentication) {
-        return authentication.equals(UsernamePasswordAuthenticationToken.class);
+            
+    public User createFirstUser() {
+        User newUser = new User();
+        newUser.setName("Administrator");
+        newUser.setEmail("admin");
+        newUser.setEnabled(true);
+        newUser.setPassword(BCrypt.hashpw("admin", BCrypt.gensalt()));
+
+        // No other users, create the first user
+        Group adminGroup = Group.findGroupEntries(0, 1).get(0);
+        newUser.getGroups().add(adminGroup);
+        adminGroup.getUsers().add(newUser);
+
+        // Save the new user
+        newUser.persist();
+        adminGroup.merge();
+        
+        return newUser;
     }
-    
-//    @Autowired
-//    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-//        auth.authenticationProvider(this)
-//            .userDetailsService(this)
-//            .passwordEncoder(bcrypt);
-//    }
 }

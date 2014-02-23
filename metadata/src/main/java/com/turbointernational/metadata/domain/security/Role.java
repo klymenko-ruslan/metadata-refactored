@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Configurable
 @Entity
-public class Role {
+public class Role implements Comparable<Role> {
 
     //<editor-fold defaultstate="collapsed" desc="properties">
     @Id
@@ -124,4 +124,9 @@ public class Role {
         return merged;
     }
     //</editor-fold>
+    
+    @Override
+    public int compareTo(Role t) {
+        return this.getName().compareTo(t.getName());
+    }
 }

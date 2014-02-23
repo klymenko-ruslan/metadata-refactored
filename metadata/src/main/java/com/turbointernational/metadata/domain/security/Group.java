@@ -1,6 +1,7 @@
 package com.turbointernational.metadata.domain.security;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -19,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Configurable
 @Entity
 @Table(name="GROUPS") // GROUP is a reserved word
-public class Group {
+public class Group implements Comparable<Group> {
 
     //<editor-fold defaultstate="collapsed" desc="properties">
     @Id
@@ -36,13 +37,13 @@ public class Group {
     @JoinTable(name="USER_GROUP",
             joinColumns=@JoinColumn(name="group_id"),
             inverseJoinColumns=@JoinColumn(name="user_id"))
-    private Set<User> users;
+    private Set<User> users = new TreeSet<User>();
     
     @ManyToMany
     @JoinTable(name="GROUP_ROLE",
             joinColumns=@JoinColumn(name="group_id"),
             inverseJoinColumns=@JoinColumn(name="role_id"))
-    private Set<Role> roles;
+    private Set<Role> roles = new TreeSet<Role>();
     
     public Long getId() {
         return id;
@@ -148,5 +149,12 @@ public class Group {
         this.entityManager.flush();
         return merged;
     }
+
     //</editor-fold>
+    
+    @Override
+    public int compareTo(Group t) {
+        return this.getName().compareTo(t.getName());
+    }
+    
 }

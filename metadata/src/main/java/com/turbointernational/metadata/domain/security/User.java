@@ -1,4 +1,5 @@
 package com.turbointernational.metadata.domain.security;
+import com.google.common.collect.Sets;
 import static com.turbointernational.metadata.domain.part.Part.entityManager;
 import java.security.Principal;
 import java.util.Collection;
@@ -11,8 +12,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Table;
@@ -27,7 +26,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Configurable
 @Entity
 @Table(name="USER")
-public class User implements UserDetails {
+public class User implements Comparable<User>, UserDetails {
 
     //<editor-fold defaultstate="collapsed" desc="Properties">
     @Id
@@ -40,16 +39,11 @@ public class User implements UserDetails {
     
     private String password;
     
-    private String passwordSalt;
-    
     @Column(columnDefinition = "BIT")
     private Boolean enabled;
     
-    @ManyToMany
-    @JoinTable(name="USER_GROUP",
-            joinColumns=@JoinColumn(name="user_id"),
-            inverseJoinColumns=@JoinColumn(name="group_id"))
-    private Set<Group> groups;
+    @ManyToMany(mappedBy="users")
+    private Set<Group> groups = new TreeSet<Group>();
     
     public Long getId() {
         return id;
@@ -75,6 +69,7 @@ public class User implements UserDetails {
         this.email = email;
     }
     
+    @Override
     public String getPassword() {
         return password;
     }
@@ -83,12 +78,8 @@ public class User implements UserDetails {
         this.password = password;
     }
     
-    public String getPasswordSalt() {
-        return passwordSalt;
-    }
-    
     public void setPasswordSalt(String passwordSalt) {
-        this.passwordSalt = passwordSalt;
+        
     }
     
     public Boolean getEnabled() {
@@ -134,7 +125,7 @@ public class User implements UserDetails {
     //<editor-fold defaultstate="collapsed" desc="Spring Security">
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        Set<GrantedAuthority> authorities = new TreeSet();
+        Set<GrantedAuthority> authorities = Sets.newHashSet();
         
         for (Group group : groups) {
             for (Role role : group.getRoles()) {
@@ -234,4 +225,9 @@ public class User implements UserDetails {
         return merged;
     }
     //</editor-fold>
+    
+    @Override
+    public int compareTo(User t) {
+        return this.getName().compareTo(t.getName());
+    }
 }

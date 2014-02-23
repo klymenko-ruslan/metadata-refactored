@@ -111,9 +111,7 @@
     
     <security:authentication-manager>
         <security:authentication-provider user-service-ref="loginService">
-            <security:password-encoder ref="passwordEncoder">
-                <security:salt-source user-property="passwordSalt" />
-            </security:password-encoder>
+            <security:password-encoder hash="bcrypt"/>
         </security:authentication-provider>
     </security:authentication-manager>
 </beans>
