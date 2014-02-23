@@ -1,6 +1,13 @@
+Roles: <pre>{{User.roles | json}}</pre>
+
 <div class="row">
     <div class="col-xs-12 col-sm-3 btn-group">
-        <button ng-click="createPart()" class="btn btn-success"><i class="fa fa-wrench"></i> Create Part</button>
+        <button authorize="ROLE_CREATE_PART"
+                ng-click="createPart()" class="btn btn-success">
+          <i class="fa fa-wrench"></i>
+
+          Create Part
+        </button>
     </div>
     <h1 class="col-xs-12 col-sm-9">Part List</h1>
 </div>

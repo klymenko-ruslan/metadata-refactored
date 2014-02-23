@@ -1,8 +1,6 @@
 package com.turbointernational.metadata.domain.security;
 import com.google.common.collect.Sets;
 import flexjson.JSONSerializer;
-import flexjson.transformer.IterableTransformer;
-import flexjson.transformer.StringTransformer;
 import java.security.Principal;
 import java.util.Set;
 import org.springframework.http.HttpHeaders;

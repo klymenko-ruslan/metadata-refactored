@@ -36,4 +36,9 @@ angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap', 'restangu
         $routeProvider.otherwise({
             redirectTo: '/'
         });
+    })
+    .run(function(User) {
+
+      // Initialize the user
+      User.init();
     });
