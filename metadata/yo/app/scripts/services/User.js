@@ -2,12 +2,12 @@
 
 angular.module('ngMetaCrudApp')
   .service('User', function User($log, Restangular) {
-      User = this;
+      var User = this;
 
       User.roles = [];
 
       // Fetch the user's roles
-      this.init = function() {
+      User.init = function() {
         $log.log("User.init");
 
         var rolesPromise = Restangular.all('security/users/roles').getList().then(

@@ -445,27 +445,36 @@ CREATE TABLE `group_role` (
   FOREIGN KEY (`role_id`) REFERENCES `role` (`id`)
 ) ENGINE = INNODB;
 
-INSERT INTO `role` (name, display) VALUES ('ROLE_READ', 'Search and view part information.');
-INSERT INTO `role` (name, display) VALUES ('ROLE_CREATE_PART', 'Create parts.');
-INSERT INTO `role` (name, display) VALUES ('ROLE_INTERCHANGE', 'Alter interchangeability.');
-INSERT INTO `role` (name, display) VALUES ('ROLE_BOM', 'Modify part interchangeability.');
-INSERT INTO `role` (name, display) VALUES ('ROLE_ADMIN', 'Superpowers.');
+INSERT IGNORE INTO `role` (name, display) VALUES ('ROLE_READ', 'Search and view part information.');
+INSERT IGNORE INTO `role` (name, display) VALUES ('ROLE_ADD_PART_IMAGE', 'Add images to parts.');
+INSERT IGNORE INTO `role` (name, display) VALUES ('ROLE_CREATE_PART', 'Create parts.');
+INSERT IGNORE INTO `role` (name, display) VALUES ('ROLE_ALTER_PART', 'Alter existing parts.');
+INSERT IGNORE INTO `role` (name, display) VALUES ('ROLE_DELETE_PART', 'Delete existing parts.');
+INSERT IGNORE INTO `role` (name, display) VALUES ('ROLE_INTERCHANGE', 'Alter interchangeability.');
+INSERT IGNORE INTO `role` (name, display) VALUES ('ROLE_BOM', 'Alter BOM.');
+INSERT IGNORE INTO `role` (name, display) VALUES ('ROLE_ADMIN', 'Superpowers.');
 
-INSERT INTO `groups` (name) VALUES ('Reader');
-INSERT INTO `groups` (name) VALUES ('Writer');
-INSERT INTO `groups` (name) VALUES ('Admin');
+INSERT IGNORE INTO `groups` (name) VALUES ('Reader');
+INSERT IGNORE INTO `groups` (name) VALUES ('Writer');
+INSERT IGNORE INTO `groups` (name) VALUES ('Admin');
 
-INSERT INTO `group_role` (group_id, role_id) VALUES
+INSERT IGNORE INTO `group_role` (group_id, role_id) VALUES
   ((SELECT id FROM groups WHERE `name` = 'Reader'), (SELECT id FROM role WHERE `name` = 'ROLE_READ')),
   ((SELECT id FROM groups WHERE `name` = 'Writer'), (SELECT id FROM role WHERE `name` = 'ROLE_BOM')),
   ((SELECT id FROM groups WHERE `name` = 'Writer'), (SELECT id FROM role WHERE `name` = 'ROLE_CREATE_PART')),
+  ((SELECT id FROM groups WHERE `name` = 'Writer'), (SELECT id FROM role WHERE `name` = 'ROLE_ALTER_PART')),
+  ((SELECT id FROM groups WHERE `name` = 'Writer'), (SELECT id FROM role WHERE `name` = 'ROLE_DELETE_PART')),
   ((SELECT id FROM groups WHERE `name` = 'Writer'), (SELECT id FROM role WHERE `name` = 'ROLE_INTERCHANGE')),
+  ((SELECT id FROM groups WHERE `name` = 'Writer'), (SELECT id FROM role WHERE `name` = 'ROLE_ADD_PART_IMAGE')),
   ((SELECT id FROM groups WHERE `name` = 'Writer'), (SELECT id FROM role WHERE `name` = 'ROLE_READ')),
-  ((SELECT id FROM groups WHERE `name` = 'Admin'), (SELECT id FROM role WHERE `name` = 'ROLE_ADMIN')),
-  ((SELECT id FROM groups WHERE `name` = 'Admin'), (SELECT id FROM role WHERE `name` = 'ROLE_BOM')),
-  ((SELECT id FROM groups WHERE `name` = 'Admin'), (SELECT id FROM role WHERE `name` = 'ROLE_CREATE_PART')),
-  ((SELECT id FROM groups WHERE `name` = 'Admin'), (SELECT id FROM role WHERE `name` = 'ROLE_INTERCHANGE')),
-  ((SELECT id FROM groups WHERE `name` = 'Admin'), (SELECT id FROM role WHERE `name` = 'ROLE_READ'));
+  ((SELECT id FROM groups WHERE `name` = 'Admin'),  (SELECT id FROM role WHERE `name` = 'ROLE_ADMIN')),
+  ((SELECT id FROM groups WHERE `name` = 'Admin'),  (SELECT id FROM role WHERE `name` = 'ROLE_BOM')),
+  ((SELECT id FROM groups WHERE `name` = 'Admin'),  (SELECT id FROM role WHERE `name` = 'ROLE_CREATE_PART')),
+  ((SELECT id FROM groups WHERE `name` = 'Admin'),  (SELECT id FROM role WHERE `name` = 'ROLE_ALTER_PART')),
+  ((SELECT id FROM groups WHERE `name` = 'Admin'),  (SELECT id FROM role WHERE `name` = 'ROLE_DELETE_PART')),
+  ((SELECT id FROM groups WHERE `name` = 'Admin'),  (SELECT id FROM role WHERE `name` = 'ROLE_INTERCHANGE')),
+  ((SELECT id FROM groups WHERE `name` = 'Admin'), (SELECT id FROM role WHERE `name` = 'ROLE_ADD_PART_IMAGE')),
+  ((SELECT id FROM groups WHERE `name` = 'Admin'),  (SELECT id FROM role WHERE `name` = 'ROLE_READ'));
 
 CREATE TABLE `changelog` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,

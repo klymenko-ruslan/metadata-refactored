@@ -74,7 +74,7 @@ public class PartController {
     
     @Transactional
     @RequestMapping(method = RequestMethod.POST)
-    @Secured("ROLE_CREATE")
+    @Secured("ROLE_CREATE_PART")
     public ResponseEntity<String> createFromJson(Principal principal, @RequestBody String partJson) throws Exception {
         JSOG partJsog = JSOG.parse(partJson);
         
@@ -97,7 +97,7 @@ public class PartController {
     
     @Transactional
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-    @Secured("ROLE_MODIFY")
+    @Secured("ROLE_ALTER_PART")
     public ResponseEntity<String> updateFromJson(Principal principal, @RequestBody String partJson, @PathVariable("id") Long id) throws Exception {
         JSOG partJsog = JSOG.parse(partJson);
         
@@ -145,7 +145,7 @@ public class PartController {
     
     @Transactional
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    @Secured("ROLE_DELETE")
+    @Secured("ROLE_DELETE_PART")
     public ResponseEntity<String> deleteFromJson(Principal principal, @PathVariable("id") Long id) {
         Part part = Part.findPart(id);
         String partJson = part.toJson();

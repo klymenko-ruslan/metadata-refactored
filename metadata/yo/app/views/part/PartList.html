@@ -1,15 +1,27 @@
-Roles: <pre>{{User.roles | json}}</pre>
-
 <div class="row">
     <div class="col-xs-12 col-sm-3 btn-group">
+
         <button authorize="ROLE_CREATE_PART"
                 ng-click="createPart()" class="btn btn-success">
           <i class="fa fa-wrench"></i>
-
           Create Part
         </button>
+
     </div>
     <h1 class="col-xs-12 col-sm-9">Part List</h1>
 </div>
 
-<part-search actions="View,Edit" on-action="onAction(action, partId, partType)"></part-search>
+<part-search>
+  <a authorize="ROLE_READ"
+     ng-href="#/part/{{partType}}/{{partId}}"
+     class="btn btn-primary btn-xs">
+    View
+  </a>
+
+  <a authorize="ROLE_ALTER_PART"
+     ng-href="#/part/{{partType}}/{{partId}}/form"
+     class="btn btn-primary btn-xs">
+    Edit
+  </a >
+
+</part-search>

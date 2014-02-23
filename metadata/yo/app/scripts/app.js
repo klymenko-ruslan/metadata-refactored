@@ -8,7 +8,9 @@ angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap', 'restangu
             return response;
         })
     })
-    .config(function ($routeProvider) {
+    .config(function ($locationProvider, $routeProvider) {
+//        $locationProvider.html5Mode(true);
+
         $routeProvider.when('/', {
             templateUrl: 'views/part/PartList.html',
             controller: 'PartListCtrl'
