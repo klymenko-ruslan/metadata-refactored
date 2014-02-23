@@ -111,3 +111,16 @@ While indexing product prices, I encountered an error in the Magento exception l
 * catalog_product_index_group_price
 
 When Indexing URL rewrites failed, I truncated the core_url_rewrite table and was able to rebuild it. Sidenote: Doing this to a production server can break links for users - you're deleting all the rewrites that point to products. Magento will use generated URLs until it can reindex and rebuild the rewrites.
+
+
+Installing Magento from Scratch
+===============================
+1. Install MySQL, Apache, and PHP. You'll be asked to specify a mysql root password. `sudo apt-get install -y mysql-server apache2 php5 php5-mysqlnd php5-json php5-curl`
+2. Setup MySQL to run off the 'ephemeral' SSD by changing the SSD's mount point from `/mnt` to `/var/lib/mysql`. You should move the MySQL data files before hiding the `/var/lib/mysql` directory behind a mount point.
+3. Create the schema and load the latest MySQL dump (something like this): `mysql -p -u USER SCHEMA < dump.sql`
+4. Set the new URL in the magento db: `update core_config_data set value = "http://ec2-54-197-140-225.compute-1.amazonaws.com/" where path like 'web/%/base_url';`
+5. Copy `./magento/` from git to `/var/www` on the server, don't miss `.htaccess`!
+6. Fix permissions: `sudo chown -R www-data:www-data /var/www`
+7. Update `/var/www/app/etc/local.xml` with the MySQL server's info
+8. Purge the cache: `rm -rf /var/www/var/cache/mage-*`
+9. Enable mod_rewrite and restart apache: `sudo a2enmod rewrite && sudo /etc/init.d/apache2 restart`

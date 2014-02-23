@@ -70,15 +70,15 @@ $_helper = $this->helper('catalog/output');
                                 <?php $firstTiProduct = null; ?>
                                 <?php foreach (explode(",", $_product->getTiPartSku()) as $tiPartSku): ?>
                                     <?php
-                                        $tiPart = Mage::getModel('catalog/product')->loadByAttribute('sku', $tiPartSku);
+                                    $tiPart = Mage::getModel('catalog/product')->loadByAttribute('sku', $tiPartSku);
 
-                                        if ($firstTiProduct == null) {
-                                            $firstTiProduct = $tiPart;
-                                        } else {
-                                            echo ",";
-                                        }
+                                    if ($firstTiProduct == null) {
+                                        $firstTiProduct = $tiPart;
+                                    } else {
+                                        echo ",";
+                                    }
                                     ?>
-                            
+
                                     <?php if ($tiPart): ?>
                                         <a href="<?php echo $tiPart->getProductUrl() ?>"><?php echo $tiPart->getPartNumber(); ?></a>
                                     <?php endif; ?>
@@ -96,7 +96,7 @@ $_helper = $this->helper('catalog/output');
                                     echo Mage::helper('core')->currency($firstTiProduct->getFinalPrice());
                                 }?>
                             <?php else: ?>
-                              <a href="<?php echo $this->getUrl('customer/account/login'); ?>">Login to view prices</a>
+                                <a href="<?php echo $this->getUrl('customer/account/login'); ?>">Login to view prices</a>
                             <?php endif; ?>
                         </td>
                     </tr>
@@ -127,6 +127,28 @@ $_helper = $this->helper('catalog/output');
                     </h2>
 
                     <p><strong>Part Type: <?php echo $_product->getAttributeText('part_type') ?></strong></p>
+                    <?php if ($_product->getPartNumber()): ?>
+                        <p><strong>OE Part #: <?php echo $_product->getPartNumber() ?></strong></p>
+                    <?php endif; ?>
+                    <?php if (strlen($_product->getTiPartSku()) > 0): ?>
+                        <?php $firstTiProduct = null; ?>
+                        <?php foreach (explode(",", $_product->getTiPartSku()) as $tiPartSku): ?>
+                            <?php
+                            $tiPart = Mage::getModel('catalog/product')->loadByAttribute('sku', $tiPartSku);
+
+                            if ($firstTiProduct == null) {
+                                $firstTiProduct = $tiPart;
+                            } else {
+                                echo ",";
+                            }
+                            ?>
+
+                            <?php if ($tiPart): ?>
+                                <p><strong>TI Part #: <a href="<?php echo $tiPart->getProductUrl() ?>"><?php echo $tiPart->getPartNumber(); ?></a></strong>
+                                </p>
+                            <?php endif; ?>
+                        <?php endforeach ?>
+                    <?php endif; ?>
                     <?php if ($_product->getRatingSummary()): ?>
                         <?php echo $this->getReviewsSummaryHtml($_product, 'short') ?>
                     <?php endif; ?>

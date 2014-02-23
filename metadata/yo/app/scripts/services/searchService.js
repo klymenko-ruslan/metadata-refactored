@@ -86,6 +86,15 @@ angular.module('ngMetaCrudApp')
                     }
                 });
             }
+            // Coolant Type
+            if (search.coolantType) {
+//          $log.log("Manufacturer: " + search.manufacturer.name);
+                searchRequest.query.bool.must.push({
+                    term: {
+                        'part.coolantType.id': search.coolantType.id
+                    }
+                });
+            }
 //            // Turbo type
 //            if (search.turboType) {
 ////          $log.log("Manufacturer: " + search.manufacturer.name);
@@ -101,15 +110,6 @@ angular.module('ngMetaCrudApp')
 //                searchRequest.query.bool.must.push({
 //                    term: {
 //                        'part.turboModel.id': search.turboModel.id
-//                    }
-//                });
-//            }
-//            // Coolant Type
-//            if (search.coolantType) {
-////          $log.log("Manufacturer: " + search.manufacturer.name);
-//                searchRequest.query.bool.must.push({
-//                    term: {
-//                        'part.coolantType.id': search.coolantType.id
 //                    }
 //                });
 //            }
