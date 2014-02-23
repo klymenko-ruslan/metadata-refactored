@@ -1,6 +1,9 @@
 package com.turbointernational.metadata.domain.security;
 import com.google.common.collect.Sets;
 import static com.turbointernational.metadata.domain.part.Part.entityManager;
+import flexjson.JSONSerializer;
+import flexjson.transformer.ArrayTransformer;
+import flexjson.transformer.HibernateTransformer;
 import java.security.Principal;
 import java.util.Collection;
 import java.util.List;
