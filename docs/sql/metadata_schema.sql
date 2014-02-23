@@ -408,11 +408,9 @@ CREATE TABLE `user` (
   `name` VARCHAR(100) NOT NULL,
   `email` VARCHAR(255) NOT NULL,
   `password` VARCHAR(100) NOT NULL,
-  `password_salt` VARCHAR(25) NOT NULL,
   `enabled` BOOLEAN NOT NULL DEFAULT 1,
-  `version` INTEGER NOT NULL DEFAULT 1,
   UNIQUE INDEX (`email`),
-  PRIMARY KEY(`id`, `version`)
+  PRIMARY KEY(`id`)
 ) ENGINE = INNODB;
 
 CREATE TABLE `groups` (
@@ -420,14 +418,13 @@ CREATE TABLE `groups` (
   `name` VARCHAR(100) NOT NULL,
   `version` INTEGER NOT NULL DEFAULT 1,
   UNIQUE INDEX (`name`),
-  PRIMARY KEY(`id`, `version`)
+  PRIMARY KEY(`id`)
 ) ENGINE = INNODB;
 
 CREATE TABLE `user_group` (
   `user_id` BIGINT NOT NULL,
   `group_id` BIGINT NOT NULL,
-  `version` INTEGER NOT NULL DEFAULT 1,
-  PRIMARY KEY (`user_id`, `group_id`, `version`),
+  PRIMARY KEY (`user_id`, `group_id`),
   FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
   FOREIGN KEY (`group_id`) REFERENCES `groups` (`id`)
 ) ENGINE = INNODB;
@@ -436,19 +433,36 @@ CREATE TABLE `role` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(100) NOT NULL,
   `display` VARCHAR(100) NOT NULL,
-  `version` INTEGER NOT NULL DEFAULT 1,
   UNIQUE INDEX (`name`),
-  PRIMARY KEY(`id`, `version`)
+  PRIMARY KEY(`id`)
 );
 
 CREATE TABLE `group_role` (
   `group_id` BIGINT NOT NULL,
   `role_id` BIGINT NOT NULL,
-  `version` INTEGER NOT NULL DEFAULT 1,
-  PRIMARY KEY (`group_id`, `role_id`, `version`),
+  PRIMARY KEY (`group_id`, `role_id`),
   FOREIGN KEY (`group_id`) REFERENCES `groups` (`id`),
   FOREIGN KEY (`role_id`) REFERENCES `role` (`id`)
 ) ENGINE = INNODB;
+
+INSERT INTO `role` (name, display) VALUES ('ROLE_READ', 'Search and view part information.');
+INSERT INTO `role` (name, display) VALUES ('ROLE_CREATE_PART', 'Create parts.');
+INSERT INTO `role` (name, display) VALUES ('ROLE_INTERCHANGE', 'Alter interchangeability.');
+INSERT INTO `role` (name, display) VALUES ('ROLE_BOM', 'Modify part interchangeability.');
+INSERT INTO `role` (name, display) VALUES ('ROLE_ADMIN', 'Superpowers.');
+
+INSERT INTO `groups` (name) VALUES ('Reader');
+INSERT INTO `groups` (name) VALUES ('Writer');
+INSERT INTO `groups` (name) VALUES ('Admin');
+
+INSERT INTO `group_role` (group_id, role_id) VALUES
+  ((SELECT id FROM groups WHERE `name` = 'Admin'), (SELECT id FROM role WHERE `name` = 'ROLE_ADMIN')),
+  ((SELECT id FROM groups WHERE `name` = 'Admin'), (SELECT id FROM role WHERE `name` = 'ROLE_READ')),
+  ((SELECT id FROM groups WHERE `name` = 'Reader'), (SELECT id FROM role WHERE `name` = 'ROLE_READ')),
+  ((SELECT id FROM groups WHERE `name` = 'Writer'), (SELECT id FROM role WHERE `name` = 'ROLE_BOM')),
+  ((SELECT id FROM groups WHERE `name` = 'Writer'), (SELECT id FROM role WHERE `name` = 'ROLE_CREATE_PART')),
+  ((SELECT id FROM groups WHERE `name` = 'Writer'), (SELECT id FROM role WHERE `name` = 'ROLE_INTERCHANGE')),
+  ((SELECT id FROM groups WHERE `name` = 'Writer'), (SELECT id FROM role WHERE `name` = 'ROLE_READ'));
 
 CREATE TABLE `changelog` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
@@ -456,8 +470,7 @@ CREATE TABLE `changelog` (
   `user_id` BIGINT NOT NULL,
   `description` VARCHAR(255) NOT NULL,
   `data` LONGTEXT NULL,
-  `version` INTEGER NOT NULL DEFAULT 1,
-  PRIMARY KEY(`id`, `version`),
+  PRIMARY KEY(`id`),
   KEY(`change_date`),
   FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
 ) ENGINE = INNODB;

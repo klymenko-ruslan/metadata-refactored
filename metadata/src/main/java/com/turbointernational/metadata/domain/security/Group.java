@@ -2,7 +2,6 @@ package com.turbointernational.metadata.domain.security;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
@@ -13,7 +12,6 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Table;
-import javax.persistence.Version;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,10 +26,6 @@ public class Group implements Comparable<Group> {
     private Long id;
     
     private String name;
-    
-    @Version
-    @Column(name = "version")
-    private Integer version;
     
     @ManyToMany
     @JoinTable(name="USER_GROUP",
@@ -75,14 +69,6 @@ public class Group implements Comparable<Group> {
     
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
-    }
-    
-    public Integer getVersion() {
-        return this.version;
-    }
-    
-    public void setVersion(Integer version) {
-        this.version = version;
     }
     //</editor-fold>
     

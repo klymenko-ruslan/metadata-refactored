@@ -1,13 +1,11 @@
 package com.turbointernational.metadata.domain.security;
 import java.util.List;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Version;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,10 +19,6 @@ public class Role implements Comparable<Role> {
     private Long id;
     private String name;
     private String display;
-    
-    @Version
-    @Column(name = "version")
-    private Integer version;
     
     public Long getId() {
         return id;
@@ -48,14 +42,6 @@ public class Role implements Comparable<Role> {
     
     public void setDisplay(String display) {
         this.display = display;
-    }
-    
-    public Integer getVersion() {
-        return this.version;
-    }
-    
-    public void setVersion(Integer version) {
-        this.version = version;
     }
     //</editor-fold>
     
