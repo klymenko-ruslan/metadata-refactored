@@ -307,9 +307,9 @@
             <version>2.3</version>
         </dependency>
         <dependency>
-            <groupId>c3p0</groupId>
+            <groupId>com.mchange</groupId>
             <artifactId>c3p0</artifactId>
-            <version>0.9.2-pre7</version>
+            <version>0.9.2.1</version>
         </dependency>
         <dependency>
             <groupId>mas90magmi</groupId>
