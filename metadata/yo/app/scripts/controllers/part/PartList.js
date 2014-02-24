@@ -21,7 +21,7 @@ angular.module('ngMetaCrudApp')
                     // Success
                     gToast.open("Indexing started, check the server log for progress.");
                   },
-                  function() {
+                  function(response) {
                     // Error
                     $dialogs.error(
                         "Could not index search engine data.",
@@ -44,7 +44,7 @@ angular.module('ngMetaCrudApp')
                     // Success
                     gToast.open("Indexing started, check the server log for progress.");
                   },
-                  function() {
+                  function(response) {
                     // Error
                     $dialogs.error(
                         "Could not index search engine data.",
