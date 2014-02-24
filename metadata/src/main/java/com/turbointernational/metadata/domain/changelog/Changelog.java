@@ -17,7 +17,6 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Version;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,24 +50,12 @@ public class Changelog {
     @Column(name="data")
     private String data;
     
-    @Version
-    @Column(name = "version")
-    private Integer version;
-    
     public Long getId() {
         return this.id;
     }
     
     public void setId(Long id) {
         this.id = id;
-    }
-    
-    public Integer getVersion() {
-        return this.version;
-    }
-    
-    public void setVersion(Integer version) {
-        this.version = version;
     }
     
     public static Changelog log(Principal principal, String description, String data) {
