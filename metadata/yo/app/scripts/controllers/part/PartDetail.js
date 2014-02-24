@@ -65,7 +65,7 @@ angular.module('ngMetaCrudApp')
 
           $dialogs.confirm(
                   "Reindex part turbos?",
-                  "You should only need to run this if changes have been made directly to the database. Proceed?").result.then(
+                  "You need to run this if changes have been made directly to the database. Proceed?").result.then(
               function() {
                 // Yes
                 Restangular.one("part", $scope.partId).one('indexTurbos').get().then(
