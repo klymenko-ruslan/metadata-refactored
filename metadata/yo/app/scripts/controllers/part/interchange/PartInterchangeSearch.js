@@ -55,7 +55,7 @@ angular.module('ngMetaCrudApp')
             $scope.newInterchange = null;
         }
 
-        $scope.onPick = function (action, pickedPartId, pickedPartType) {
+        $scope.pick = function (pickedPartId) {
             $scope.pickedPart = restService.findPart(pickedPartId);
             $scope.pickedPart.then(function (pickedPart) {
                 $scope.pickedPart = pickedPart;

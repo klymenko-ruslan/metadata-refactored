@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-    .controller('PartBomSearchCtrl', function ($log, $scope, $location, $routeParams, restService) {
+    .controller('PartBomSearchCtrl', function ($log, $scope, $location, $routeParams, restService, Restangular, $dialogs, gToast) {
         $scope.partId = $routeParams.id;
         $scope.partType = $routeParams.type;
 
@@ -31,27 +31,19 @@ angular.module('ngMetaCrudApp')
         };
 
         $scope.save = function () {
-            $log.log("BOM Item: " + JSON.stringify($scope.bomItem));
-
-            // Add the new BOM item to the part and save it
-            if (!angular.isArray($scope.part.bom)) {
-                $scope.part.bom = [];
-            }
-            $scope.part.bom.push($scope.bomItem);
-
-            console.log("BOM: ", $scope.part.bom);
-
-
-            $scope.part.put().then(function () {
-                console.log("Saved.");
-                $location.path("/part/" + $scope.partType + "/" + $scope.partId + "/form");
-            }, function (errorResponse) {
-                alert("Could not save part", errorResponse);
+          Restangular.all('bom').post($scope.bomItem).then(
+            function () {
+              // Success
+              gToast.open("BOM Item Added.");
+              $location.path("/part/" + $scope.partType + "/" + $scope.partId + "/form");
+            },
+              function (response) {
+                $dialogs.error("Could not Add BOM Item", "Server said: <pre>" + JSON.stringify(response.data) + "</pre>");
             });
         }
 
-        $scope.onPick = function (action, pickedPartId, pickedPartType) {
-            $scope.pickedPart = restService.findPart(pickedPartId).then(
+        $scope.pickBomItemPart = function (bomItemPartId) {
+            $scope.pickedPart = restService.findPart(bomItemPartId).then(
                 function (pickedPart) {
                     $scope.pickedPart = pickedPart;
                     $scope.bomItem.child = {

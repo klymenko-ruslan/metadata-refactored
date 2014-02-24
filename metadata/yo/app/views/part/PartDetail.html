@@ -1,10 +1,10 @@
 <div class="row">
     <div class="btn-group">
-        <a data-ng-href="#/part"
-           class="btn btn-default">
-          <i class="fa fa-bars"></i>
-          Part List
-        </a>
+      <a data-ng-href="#/part"
+         class="btn btn-default">
+        <i class="fa fa-bars"></i>
+        Part List
+      </a>
 
       <a authorize="ROLE_ALTER_PART"
          data-ng-href="#/part/{{ partType }}/{{ partId }}/form"
@@ -13,9 +13,16 @@
         Edit Part
       </a>
 
+      <a authorize="ROLE_INTERCHANGE"
+         ng-href="#/part/{{ part.partType.typeName }}/{{ partId }}/interchange/search"
+         class="btn btn-info">
+        <i class="fa fa-random"></i>
+        Interchange &hellip;
+      </a>
+
       <a authorize="ROLE_ADMIN"
          ng-click="reindexTurbos()"
-         class="btn btn-info">
+         class="btn btn-warning">
         <i class="fa fa-cogs"></i>
         Reindex Turbos
       </a>

@@ -1,13 +1,48 @@
 <div class="row">
-    <div class="col-xs-12 btn-group">
-        <a ng-href="#/part" class="btn btn-default"><i class="fa fa-bars"></i> Part List</a>
-        <a ng-href="#/part/{{ partType }}/{{ partId }}" class="btn btn-primary"><i
-                class="fa fa-eye"></i> View Part</a>
-        <a ng-href="#/part/{{ partType }}/{{ partId }}/form" class="btn btn-success"><i class="fa fa-cog"></i> Edit Part</a>
-        <a ng-click="clear()" ng-disabled="!canClear()" class="btn btn-danger"><i class="fa fa-trash-o"></i> Clear</a>
-        <a ng-click="undo()" ng-disabled="!isChanged()" class="btn btn-warning"><i class="fa fa-undo"></i> Undo</a>
-        <a ng-click="save()" ng-disabled="!isChanged()" class="btn btn-success"><i class="fa fa-save"></i> Save</a>
-    </div>
+  <div class="btn-group">
+    <a data-ng-href="#/part"
+       class="btn btn-default">
+      <i class="fa fa-bars"></i>
+      Part List
+    </a>
+
+    <a authorize="ROLE_READ"
+       ng-href="#/part/{{ part.partType.typeName }}/{{ partId }}"
+       class="btn btn-primary">
+      <i class="fa fa-eye"></i>
+      View Part
+    </a>
+
+
+    <a authorize="ROLE_ALTER_PART"
+       data-ng-href="#/part/{{ partType }}/{{ partId }}/form"
+       class="btn btn-primary">
+      <i class="fa fa-cog"></i>
+      Edit Part
+    </a>
+
+    <a ng-click="clear()"
+       ng-disabled="!canClear()"
+       class="btn btn-danger">
+      <i class="fa fa-trash-o"></i>
+      Remove Interchange
+    </a>
+
+    <a ng-click="undo()"
+       ng-disabled="!isChanged()"
+       class="btn btn-warning">
+      <i class="fa fa-undo"></i>
+      Undo
+    </a>
+
+    <a ng-click="save()"
+       ng-disabled="!isChanged()"
+       class="btn btn-success">
+      <i class="fa fa-save"></i>
+      Save
+    </a>
+
+  </div>
 </div>
 
 <div class="row">
@@ -88,4 +123,12 @@
         <p>Find and pick an part below to set the interchangeable part group.</p>
     </div>
 </div>
-<part-search actions="Pick" on-action="onPick(action, partId, partType)"></part-search>
+<part-search>
+
+  <a authorize="ROLE_INTERCHANGE"
+     ng-click="pick(partId)"
+     class="btn btn-primary btn-xs">
+    Pick
+  </a>
+
+</part-search>

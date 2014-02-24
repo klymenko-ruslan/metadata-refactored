@@ -22,7 +22,7 @@ public class BOMController {
     private static final Logger log = Logger.getLogger(BOMController.class.toString());
     
     @Transactional
-    @RequestMapping(value = "/", method = RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.POST)
     @Secured("ROLE_BOM")
     public ResponseEntity<String> create(Principal principal, @RequestBody String json) throws Exception {
         
@@ -57,7 +57,7 @@ public class BOMController {
     }
     
     @Transactional
-    @RequestMapping(value = "/", method = RequestMethod.PUT)
+    @RequestMapping(method = RequestMethod.PUT)
     @Secured("ROLE_BOM")
     public ResponseEntity<String> update(Principal principal, @RequestBody String json) throws Exception {
         

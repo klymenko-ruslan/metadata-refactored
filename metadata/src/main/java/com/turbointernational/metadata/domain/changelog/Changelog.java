@@ -77,7 +77,7 @@ public class Changelog {
         changelog.description = description;
         changelog.changeDate = new Date();
         changelog.data = data.toString();
-        changelog.user = User.getByPrincipal(principal);
+        changelog.user = User.getCurrentUser();
         
         changelog.persist();
         

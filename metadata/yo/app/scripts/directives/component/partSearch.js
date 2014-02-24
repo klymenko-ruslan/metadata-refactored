@@ -3,7 +3,6 @@
 angular.module('ngMetaCrudApp')
     .directive('partSearch', function ($log) {
         return {
-            scope: {},
             restrict: 'E',
             replace: true,
             templateUrl: '/views/component/PartSearch.html',
@@ -61,14 +60,11 @@ angular.module('ngMetaCrudApp')
     })
     .directive('partSearchActions', function($log) {
       return {
-        scope: {
-          partSearchActions: '='
-        },
         restrict: 'A',
         require: '^partSearch',
         link: function postLink(scope, element, attrs, controller) {
-          scope.partId = scope.partSearchActions.partId;
-          scope.partType = scope.partSearchActions.partType;
+          scope.partId = scope.part._id;
+          scope.partType = scope.part._source.partType.typeName;
           controller.transcludeActionsFn(scope, function(clone) {
             element.append(clone);
           });

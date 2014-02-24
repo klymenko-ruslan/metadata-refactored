@@ -21,9 +21,11 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
 @Configurable
@@ -103,9 +105,8 @@ public class User implements Comparable<User>, UserDetails {
     //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="Active Record">
-    public static User getByPrincipal(Principal principal) {
-        // Get the user
-        throw new UnsupportedOperationException();
+    public static User getCurrentUser() {
+        return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
     
     public static User findUserByEmail(String email) {
