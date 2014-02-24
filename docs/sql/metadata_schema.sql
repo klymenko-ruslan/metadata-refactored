@@ -452,6 +452,7 @@ INSERT IGNORE INTO `role` (name, display) VALUES ('ROLE_ALTER_PART', 'Alter exis
 INSERT IGNORE INTO `role` (name, display) VALUES ('ROLE_DELETE_PART', 'Delete existing parts.');
 INSERT IGNORE INTO `role` (name, display) VALUES ('ROLE_INTERCHANGE', 'Alter interchangeability.');
 INSERT IGNORE INTO `role` (name, display) VALUES ('ROLE_BOM', 'Alter BOM.');
+INSERT IGNORE INTO `role` (name, display) VALUES ('ROLE_BOM_ALT', 'Alter BOM alternates.');
 INSERT IGNORE INTO `role` (name, display) VALUES ('ROLE_ADMIN', 'Superpowers.');
 
 INSERT IGNORE INTO `groups` (name) VALUES ('Reader');
@@ -460,6 +461,7 @@ INSERT IGNORE INTO `groups` (name) VALUES ('Admin');
 
 INSERT IGNORE INTO `group_role` (group_id, role_id) VALUES
   ((SELECT id FROM groups WHERE `name` = 'Reader'), (SELECT id FROM role WHERE `name` = 'ROLE_READ')),
+  ((SELECT id FROM groups WHERE `name` = 'Writer'), (SELECT id FROM role WHERE `name` = 'ROLE_BOM_ALT')),
   ((SELECT id FROM groups WHERE `name` = 'Writer'), (SELECT id FROM role WHERE `name` = 'ROLE_BOM')),
   ((SELECT id FROM groups WHERE `name` = 'Writer'), (SELECT id FROM role WHERE `name` = 'ROLE_CREATE_PART')),
   ((SELECT id FROM groups WHERE `name` = 'Writer'), (SELECT id FROM role WHERE `name` = 'ROLE_ALTER_PART')),
@@ -469,6 +471,7 @@ INSERT IGNORE INTO `group_role` (group_id, role_id) VALUES
   ((SELECT id FROM groups WHERE `name` = 'Writer'), (SELECT id FROM role WHERE `name` = 'ROLE_READ')),
   ((SELECT id FROM groups WHERE `name` = 'Admin'),  (SELECT id FROM role WHERE `name` = 'ROLE_ADMIN')),
   ((SELECT id FROM groups WHERE `name` = 'Admin'),  (SELECT id FROM role WHERE `name` = 'ROLE_BOM')),
+  ((SELECT id FROM groups WHERE `name` = 'Admin'), (SELECT id FROM role WHERE `name` = 'ROLE_BOM_ALT')),
   ((SELECT id FROM groups WHERE `name` = 'Admin'),  (SELECT id FROM role WHERE `name` = 'ROLE_CREATE_PART')),
   ((SELECT id FROM groups WHERE `name` = 'Admin'),  (SELECT id FROM role WHERE `name` = 'ROLE_ALTER_PART')),
   ((SELECT id FROM groups WHERE `name` = 'Admin'),  (SELECT id FROM role WHERE `name` = 'ROLE_DELETE_PART')),

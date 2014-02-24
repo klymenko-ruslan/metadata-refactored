@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap', 'restangular'])
+angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap', 'restangular', 'dialogs', 'gToast'])
     .config(function(RestangularProvider) {
         RestangularProvider.setBaseUrl('/metadata/');
         RestangularProvider.setDefaultHeaders({"Content-Type": "text/plain"});

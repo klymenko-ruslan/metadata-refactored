@@ -56,6 +56,7 @@ angular.module('ngMetaCrudApp')
 
         $scope.revert = function () {
             $scope.part = Restangular.copy($scope.oldPart);
+            $scope.partForm.$setPristine(true);
             $scope.$broadcast("revert");
         }
 
@@ -63,7 +64,7 @@ angular.module('ngMetaCrudApp')
             if ($scope.oldPart == null) {
                 Restangular.all('part').post($scope.part).then(
                     function (id) {
-                        $location.path('/part/' + $scope.part.partType.typeName + '/' + id + '/form');
+                        $location.path('/part/' + $scope.part.partType.typeName + '/' + id);
                     },
                     function () {
                         alert("Could not save part.");
@@ -71,8 +72,7 @@ angular.module('ngMetaCrudApp')
             } else {
                 $scope.part.put().then(
                     function (part) {
-                        $scope.part = part;
-                        $scope.oldPart = Restangular.copy(part);
+                        $location.path('/part/' + $scope.part.partType.typeName + '/' + $scope.part.id);
                     },
                     function () {
                         alert("Could not update part");

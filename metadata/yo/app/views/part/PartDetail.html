@@ -1,11 +1,31 @@
 <div class="row">
-    <div class="col-xs-6 col-md-3 btn-group">
-        <a data-ng-href="#/part" class="btn btn-default"><i class="fa fa-bars"></i> Part List</a>
-        <a data-ng-href="#/part/{{ partType }}/{{ partId }}/form" class="btn btn-primary"><i class="fa fa-cog"></i> Edit Part</a>
+    <div class="btn-group">
+        <a data-ng-href="#/part"
+           class="btn btn-default">
+          <i class="fa fa-bars"></i>
+          Part List
+        </a>
+
+      <a authorize="ROLE_ALTER_PART"
+         data-ng-href="#/part/{{ partType }}/{{ partId }}/form"
+         class="btn btn-primary">
+        <i class="fa fa-cog"></i>
+        Edit Part
+      </a>
+
+      <a authorize="ROLE_ADMIN"
+         ng-click="indexTurbos()"
+         class="btn btn-info">
+        <i class="fa fa-cogs"></i>
+        Index Turbos
+      </a>
     </div>
-    <div class="col-xs-6 col-md-3">
-        <h1 class="pull-right">{{ partType }} #{{ partId }}</h1>
-    </div>
+</div>
+
+<div class="row">
+  <div class="col-xs-6 col-md-3">
+    <h1>{{ partType }} #{{ partId }}</h1>
+  </div>
 </div>
 
 <div class="row">

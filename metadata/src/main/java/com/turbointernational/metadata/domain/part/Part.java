@@ -166,7 +166,7 @@ public class Part implements Comparable<Part> {
             inverseJoinColumns=@JoinColumn(name="interchange_header_id"))
     private Interchange interchange;
     
-    @OneToMany(mappedBy="parent", fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
+    @OneToMany(mappedBy="parent", fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<BOMItem> bom = new TreeSet<BOMItem>();
     
     @OneToMany(cascade = CascadeType.REFRESH)

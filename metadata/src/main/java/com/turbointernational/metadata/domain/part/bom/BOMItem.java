@@ -49,7 +49,7 @@ public class BOMItem implements Comparable<BOMItem> {
     @Column(nullable=false)
     private Integer quantity;
     
-    @OneToMany(mappedBy="bomItem", fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
+    @OneToMany(mappedBy="bomItem", fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<BOMAlternative> alternatives = new TreeSet<BOMAlternative>();
     
     public Long getId() {

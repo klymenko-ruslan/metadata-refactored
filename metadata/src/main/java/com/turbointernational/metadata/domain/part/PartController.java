@@ -110,16 +110,6 @@ public class PartController {
         
         // Update the part
         Part part = Part.fromJsonToPart(partJson);
-//        
-        // Handle BOM updates
-        if (part.getBom() != null) {
-            for (BOMItem item : part.getBom()) {
-                Long childId = item.getChild().getId();
-                item.setChild(Part.findPart(childId));
-                
-                item.setParent(part);
-            }
-        }
         
         if (part.merge() == null) {
             return new ResponseEntity<String>(headers, HttpStatus.NOT_FOUND);
@@ -205,10 +195,10 @@ public class PartController {
         return new ResponseEntity<Void>((Void) null, HttpStatus.OK);
     }
     
-    @RequestMapping(value="/indexAll")
+    @RequestMapping(value="/all/indexSearch")
     @ResponseBody
     @Secured("ROLE_ADMIN")
-    public ResponseEntity<Void> indexAll(@RequestParam(required=false) Integer maxPages) throws Exception {
+    public ResponseEntity<Void> indexSearch(@RequestParam(required=false) Integer maxPages) throws Exception {
         
         if (maxPages == null ) {
             maxPages = Integer.MAX_VALUE;

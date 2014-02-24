@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-    .controller('PartDetailCtrl', function ($scope, $log, $q, $location, $routeParams, ngTableParams, restService) {
+    .controller('PartDetailCtrl', function ($scope, $log, $q, $location, $routeParams, ngTableParams, restService, Restangular) {
         $scope.partId = $routeParams.id;
         $scope.partType = $routeParams.type;
 
@@ -60,5 +60,9 @@ angular.module('ngMetaCrudApp')
         $scope.rowClick = function (partType, partId) {
             $location.path("/part/" + partType + "/" + partId);
         };
+
+        $scope.indexTurbos = function() {
+          return Restangular.one("part", $scope.partId).get();
+        }
 
     });
