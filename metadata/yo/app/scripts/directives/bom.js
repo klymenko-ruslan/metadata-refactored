@@ -47,7 +47,7 @@ angular.module('ngMetaCrudApp')
                 '          <i class="fa fa-eye"></i> View Part' +
                 '        </a>' +
 
-                '        <button ng-click="remove($index, bomItem.id)"' +
+                '        <button ng-click="remove($index, bomItem)"' +
                 '                authorize="ROLE_BOM" class="btn btn-danger btn-xs"' +
                 '                ng-hide="isModifying($index, bomItem)">' +
                 '          <i class="fa fa-trash-o"></i> Remove' +
