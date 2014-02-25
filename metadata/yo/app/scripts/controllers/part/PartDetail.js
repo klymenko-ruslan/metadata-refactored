@@ -40,27 +40,6 @@ angular.module('ngMetaCrudApp')
             }
         });
 
-        $scope.bomTableParams = new ngTableParams({
-            page: 1,
-            count: 10
-        }, {
-            getData: function ($defer, params) {
-                if (!angular.isObject($scope.part)) {
-                    $defer.reject();
-                    return;
-                }
-                ;
-
-                // Update the total and slice the result
-                $defer.resolve($scope.part.bom.slice((params.page() - 1) * params.count(), params.page() * params.count()));
-                params.total($scope.part.bom.length);
-            }
-        });
-
-        $scope.rowClick = function (partType, partId) {
-            $location.path("/part/" + partType + "/" + partId);
-        };
-
         $scope.reindexTurbos = function() {
 
           $dialogs.confirm(

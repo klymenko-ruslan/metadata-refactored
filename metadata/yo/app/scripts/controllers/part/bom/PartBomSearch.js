@@ -34,11 +34,11 @@ angular.module('ngMetaCrudApp')
           Restangular.all('bom').post($scope.bomItem).then(
             function () {
               // Success
-              gToast.open("BOM Item Added.");
-              $location.path("/part/" + $scope.partType + "/" + $scope.partId + "/form");
+              gToast.open("BOM item added.");
+              $location.path("/part/" + $scope.partType + "/" + $scope.partId);
             },
               function (response) {
-                $dialogs.error("Could not Add BOM Item", "Server said: <pre>" + JSON.stringify(response.data) + "</pre>");
+                $dialogs.error("Could not add BOM Item", "Server said: <pre>" + JSON.stringify(response.data) + "</pre>");
             });
         }
 

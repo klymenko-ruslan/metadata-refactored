@@ -81,10 +81,4 @@ angular.module('ngMetaCrudApp')
             }
         }
 
-        $scope.bomDelete = function (index, bomItem) {
-            $log.log("Deleting BOM Item", index, bomItem);
-            $scope.part.bom.splice(index, 1)
-
-        }
-
     });

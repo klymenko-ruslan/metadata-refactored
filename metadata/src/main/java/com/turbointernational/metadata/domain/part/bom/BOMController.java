@@ -14,6 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @RequestMapping("/metadata/bom")
 @Controller
@@ -57,28 +59,29 @@ public class BOMController {
     }
     
     @Transactional
-    @RequestMapping(method = RequestMethod.PUT)
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    @ResponseBody
     @Secured("ROLE_BOM")
-    public ResponseEntity<String> update(Principal principal, @RequestBody String json) throws Exception {
+    public void update(Principal principal,  @PathVariable("id") Long id, @RequestParam(required=true) int quantity) throws Exception {
         
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json");
         
         // Parse the new item
-        BOMItem item = BOMItem.fromJsonToBOMItem(json);
+        BOMItem item = BOMItem.findBOMItem(id);
+        item.setQuantity(quantity);
         
         item.merge();
         
         // Update the changelog
-        Changelog.log(principal, "Changed BOM item.", json);
-        
-        return new ResponseEntity<String>("ok", headers, HttpStatus.OK);
+        Changelog.log(principal, "Changed BOM item quantity", Integer.toString(quantity));
     }
     
     @Transactional
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    @ResponseBody
     @Secured("ROLE_BOM")
-    public ResponseEntity<String> delete(Principal principal, @PathVariable("id") Long id) throws Exception {
+    public void delete(Principal principal, @PathVariable("id") Long id) throws Exception {
         
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json");
@@ -93,28 +96,8 @@ public class BOMController {
         // Delete it
         item.remove();
         
-        // Link it with the Hibernate parts
-        try {
-            Part child = Part.findPart(item.getChild().getId());
-            Part parent = Part.findPart(item.getParent().getId());
-            
-            item.setChild(child);
-            item.setParent(parent);
-
-            item.persist();
-            parent.getBom().add(item);
-            parent.merge();
-
-            parent.indexTurbos();
-            parent.updateIndex();
-        } catch (NoResultException e) {
-            return new ResponseEntity<String>(headers, HttpStatus.NOT_FOUND);
-        }
-        
         // Update the changelog
         Changelog.log(principal, "Deleted BOM item: ", item.toJson());
-        
-        return new ResponseEntity<String>("ok", headers, HttpStatus.OK);
     }
     
     
