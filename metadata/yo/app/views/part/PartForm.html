@@ -267,25 +267,6 @@
     </div>
 </div>
 </div>
-<div data-ng-hide="oldPart == null" class="col-xs-12 col-sm-6">
-    <!-- Interchanges -->
-    <dl>
-        <dt>Interchangeable Part Group
-            <span ng-hide="part.interchange.id == null">#{{part.interchange.id}}</span>
-            <span ng-show="part.interchange.id == null">[none]</span>
-        </dt>
-        <dd ng-hide="part.interchange == null">
-            Name:
-            <span ng-hide="part.interchange.name == null || part.interchange.name == ''">{{part.interchange.name}}</span>
-            <span ng-show="part.interchange.name == null || part.interchange.name == ''">[blank]</span>
-        </dd>
-        <dd ng-hide="part.interchange == null">
-            Description:
-            <span ng-hide="part.interchange.description == null || part.interchange.description == ''">{{part.interchange.description}}</span>
-            <span ng-show="part.interchange.description == null || part.interchange.description == ''">[blank]</span>
-        </dd>
-    </dl>
-</div>
 </div>
 <div class="row">
     <div class="col-xs-12 col-md-5">
@@ -293,27 +274,6 @@
 
         <div ng-include="'/views/part/form/TurboModel.html'"></div>
     </div>
-    <div data-ng-hide="oldPart == null" class="col-xs-12 col-md-7">
-        <h3>Bill of Materials</h3>
-        <table ng-table="bomTableParams" class="table table-bordered table-striped table-hover table-responsive">
-            <tr ng-repeat="(index, bomItem) in $data">
-                <td title="'Type'">{{bomItem.child.partType.name}}</td>
-                <td title="'Name'">{{bomItem.child.name}}</td>
-                <td title="'Manufacturer'">{{bomItem.child.manufacturer.name}}</td>
-                <td title="'Manufacturer Part Number'">{{bomItem.child.manufacturerPartNumber}}</td>
-                <td title="'Quantity'">
-                    <input type="text" ng-model="bomItem.quantity"/>
-                </td>
-                <td title="'Actions'">
-                    <a ng-click="bomDelete(index, bomItem)" class="btn btn btn-danger"><i class="fa fa-trash-o"></i> Delete</a>
-                </td>
-            </tr>
-        </table>
-
-        <div>
-            <a ng-href="#/part/{{ part.partType.typeName }}/{{ partId }}/bom/search" class="btn btn-info"><i class="fa fa-cogs"></i>
-                Add BOM Item</a>
-        </div>
     </div>
 </div>
 

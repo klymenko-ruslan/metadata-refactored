@@ -46,7 +46,8 @@ angular.module('ngMetaCrudApp')
             });
 
             if (!angular.isObject(partType)) {
-                return Restangular.all("type/part").one(partTypeId).get();
+              Restangular.setParentless(false);
+              return Restangular.all("type").one("part", partTypeId).get();
             }
         };
 

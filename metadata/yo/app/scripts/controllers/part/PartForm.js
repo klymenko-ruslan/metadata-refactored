@@ -14,18 +14,13 @@ angular.module('ngMetaCrudApp')
                     // Save the part
                     $scope.part = part;
                     $scope.oldPart = Restangular.copy(part);
-
-                    // Reload the table
-                    $scope.bomTableParams.reload();
                 },
                 function (response) {
                     alert("Could not get part data from the server.");
                 });
         } else {
             $scope.partId = null;
-            $scope.part = {
-                bom: []
-            };
+            $scope.part = {};
         }
 
         // Set the part type
@@ -35,24 +30,6 @@ angular.module('ngMetaCrudApp')
                 $log.log('Got part type by ID', $routeParams.typeId, $scope.partType);
             });
         }
-
-        $scope.bomTableParams = new ngTableParams({
-            page: 1,
-            count: 10
-        }, {
-            getData: function ($defer, params) {
-                if (!angular.isObject($scope.part)) {
-                    $defer.reject();
-                    return;
-                }
-                ;
-                ;
-
-                // Update the total and slice the result
-                $defer.resolve($scope.part.bom.slice((params.page() - 1) * params.count(), params.page() * params.count()));
-                params.total($scope.part.bom.length);
-            }
-        });
 
         $scope.revert = function () {
             $scope.part = Restangular.copy($scope.oldPart);
