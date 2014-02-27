@@ -1,10 +1,6 @@
 package com.turbointernational.metadata.domain.security;
 import com.google.common.collect.Sets;
 import static com.turbointernational.metadata.domain.part.Part.entityManager;
-import flexjson.JSONSerializer;
-import flexjson.transformer.ArrayTransformer;
-import flexjson.transformer.HibernateTransformer;
-import java.security.Principal;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -21,7 +17,6 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -81,10 +76,6 @@ public class User implements Comparable<User>, UserDetails {
     
     public void setPassword(String password) {
         this.password = password;
-    }
-    
-    public void setPasswordSalt(String passwordSalt) {
-        
     }
     
     public Boolean getEnabled() {
