@@ -177,8 +177,8 @@ CREATE TABLE `turbo_model` (
 -- Interchanges
 --
 CREATE TABLE `interchange_header` (
-  `id` BIGINT NOT NULL,
-  `name` VARCHAR(255) NOT NULL,
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(255) NULL,
   `description` VARCHAR(255) NULL,
   PRIMARY KEY(`id`)
 ) ENGINE = INNODB;

@@ -48,7 +48,7 @@ angular.module('ngMetaCrudApp')
                     // Error
                     $dialogs.error(
                         "Could not index search engine data.",
-                        "Here's the error: <pre>" + response.status +"</pre>");
+                        "Server said: <pre>" + JSON.stringify(response.data) + "</pre>");
                   });
             },
             function() {

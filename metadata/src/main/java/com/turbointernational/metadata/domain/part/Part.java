@@ -244,44 +244,6 @@ public class Part implements Comparable<Part> {
         this.interchange = interchange;
     }
     
-    public void setInterchangeByPartId(Long interchangePartId) throws Exception {
-        Part interchangePart = Part.findPart(interchangePartId);
-        
-        // Create the interchange if no interchange and a part were specified
-        if (interchange == null && interchangePart != null) {
-            
-            // Check the other part to make sure it's blank
-            if (interchangePart.interchange != null) {
-                this.setInterchange(interchangePart.interchange);
-            } else {
-                setInterchange(new Interchange());
-                this.setInterchange(interchange);
-                interchange.setName("");
-                interchange.persist();
-            }
-        }
-        
-        if (interchange != null) {
-            
-            // Create the set if necessary
-            if (interchange.getParts() == null) {
-                interchange.setParts(new HashSet());
-            }
-            
-            // Set the bidirectional relationship
-            interchange.getParts().add(this);
-            
-            if (interchangePart != null && interchange != interchangePart.interchange) {
-                interchange.getParts().add(interchangePart);
-                interchangePart.setInterchange(interchange);
-                interchangePart.merge();
-            }
-            
-            interchange.merge();
-        }
-        
-    }
-    
     public Set<BOMItem> getBom() {
         return bom;
     }
@@ -494,7 +456,7 @@ public class Part implements Comparable<Part> {
     
     public static Part findPart(Long id) {
         if (id == null) return null;
-        Query q = entityManager().createQuery("SELECT DISTINCT p FROM Part p WHERE p.id = :id");
+        Query q = entityManager().createQuery("SELECT DISTINCT p FROM Part p LEFT JOIN p.interchange i WHERE p.id = :id");
         q.setParameter("id", id);
         return (Part) q.getSingleResult();
     }
@@ -557,6 +519,12 @@ public class Part implements Comparable<Part> {
         Part merged = this.entityManager.merge(this);
         this.entityManager.flush();
         return merged;
+    }
+    
+    @Transactional
+    public void refresh() {
+        if (this.entityManager == null) this.entityManager = entityManager();
+        this.entityManager.refresh(this);
     }
     //</editor-fold>
     

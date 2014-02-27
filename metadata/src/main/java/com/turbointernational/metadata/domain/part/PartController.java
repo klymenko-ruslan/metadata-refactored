@@ -80,9 +80,6 @@ public class PartController {
         
         Part part = Part.fromJsonToPart(partJson);
         
-//        // Update the interchange group
-//        part.setInterchangeByPartId(partJsog.get("interchangePartId").getLongValue());
-        
         part.persist();
         part.indexTurbos();
         part.updateIndex();
@@ -120,9 +117,6 @@ public class PartController {
         
         part.indexTurbos();
         part.updateIndex();
-//        
-//        // Update the interchange group
-//        part.setInterchangeByPartId(partJsog.get("interchangePartId").getLongValue());
         
         // Update the changelog
 //        JSOG dataJsog = JSOG.object("originalPart", originalPartJson)

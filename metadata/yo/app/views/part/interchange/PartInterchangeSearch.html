@@ -21,25 +21,12 @@
       Edit Part
     </a>
 
-    <a ng-click="clear()"
+    <a authorize="ROLE_INTERCHANGE"
+       ng-click="clear()"
        ng-disabled="!canClear()"
        class="btn btn-danger">
       <i class="fa fa-trash-o"></i>
-      Remove Interchange
-    </a>
-
-    <a ng-click="undo()"
-       ng-disabled="!isChanged()"
-       class="btn btn-warning">
-      <i class="fa fa-undo"></i>
-      Undo
-    </a>
-
-    <a ng-click="save()"
-       ng-disabled="!isChanged()"
-       class="btn btn-success">
-      <i class="fa fa-save"></i>
-      Save
+      Remove From Interchange
     </a>
 
   </div>
@@ -48,20 +35,9 @@
 <div class="row">
     <div class="col-xs-12">
         <!-- Part Summary -->
-        <h1 class="padding-top">Interchangeable {{ partType }} #{{ partId }}</h1>
+
+        <h1 class="padding-top">Pick Interchangeable Part for {{ partType }} #{{ partId }}</h1>
         <dl class="dl-horizontal">
-            <dt>Name</dt>
-            <dd>
-                {{part.name}}
-                <span ng-show="part.name == null || part.name == ''">[blank]</span>
-            </dd>
-
-            <dt>Description</dt>
-            <dd>
-                {{part.description}}
-                <span ng-show="part.description == null || part.description == ''">[blank]</span>
-            </dd>
-
             <dt>Manufacturer</dt>
             <dd>
                 {{part.manufacturer.name}}
@@ -73,62 +49,24 @@
                 {{part.manufacturerPartNumber}}
                 <span ng-show="part.manufacturerPartNumber == null || part.manufacturerPartNumber == ''">[blank]</span>
             </dd>
-
-            <dt>Interchange Parts Grp.</dt>
-            <dd ng-show="newInterchange == null && pickedPart == null">
-                [none]
-            </dd>
-            <dd ng-show="newInterchange == null && pickedPart != null">
-                [new]
-            </dd>
-            <dd ng-show="newInterchange != null">
-                #{{newInterchange.id}} - {{newInterchange.name}}
-                <span ng-show="newInterchange.name == null || newInterchange.name == ''">[no name]</span>
-            </dd>
         </dl>
-
-        <h2 ng-show="pickedPart != null">
-            Picked Interchangeable {{ pickedPart.partType.typeName }} #{{ pickedPart.id }}
-            <a ng-click="showPickedPart = !showPickedPart" ng-show="showPickedPart == false" class="btn">Show</a>
-            <a ng-click="showPickedPart = !showPickedPart" ng-show="showPickedPart == true" class="btn">Hide</a>
-        </h2>
-
-        <h2 ng-show="pickedPart == null">No Interchangeable Part Picked</h2>
-        <dl class="list-bottom-border dl-horizontal" collapse="!showPickedPart">
-            <dt>Name</dt>
-            <dd>
-                {{pickedPart.name}}
-                <span ng-show="pickedPart.name == null || pickedPart.name == ''">[blank]</span>
-            </dd>
-
-            <dt>Description</dt>
-            <dd>
-                {{pickedPart.description}}
-                <span ng-show="pickedPart.description == null || pickedPart.description == ''">[blank]</span>
-            </dd>
-
-            <dt>Manufacturer</dt>
-            <dd>
-                {{pickedPart.manufacturer.name}}
-                <span ng-show="pickedPart.manufacturer.name == null || pickedPart.manufacturer.name == ''">[blank]</span>
-            </dd>
-
-            <dt>Manufacturer Part Number</dt>
-            <dd>
-                {{pickedPart.manufacturerPartNumber}}
-                <span ng-show="pickedPart.manufacturerPartNumber == null || pickedPart.manufacturerPartNumber == ''">[blank]</span>
-            </dd>
-        </dl>
-
         <p>Find and pick an part below to set the interchangeable part group.</p>
     </div>
 </div>
 <part-search>
 
+  <a authorize="ROLE_READ"
+     ng-href="#/part/{{partType}}/{{partId}}"
+     class="btn btn-primary btn-xs">
+    <i class="fa fa-eye"></i>
+    View Part
+  </a>
+
   <a authorize="ROLE_INTERCHANGE"
      ng-click="pick(partId)"
-     class="btn btn-primary btn-xs">
-    Pick
+     class="btn btn-success btn-xs">
+    <i class="fa fa-bullseye"></i>
+    Pick Part
   </a>
 
 </part-search>

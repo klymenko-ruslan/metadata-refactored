@@ -95,7 +95,7 @@ module.exports = function (grunt) {
             return [
               modRewrite([
                 '^/(metadata/.*)$   http://localhost:8080/$1 [PL]', // Metadata Tomcat
-                '^/search$          http://metadata.turbointernational.com:9200/metadata/_search [PL]', // ElasticSearch
+                '^/search$          http://localhost:9200/metadata/_search [PL]', // ElasticSearch
                 '^/(\\w|/)+$        /index.html             [L]'
               ]),
               lrSnippet,

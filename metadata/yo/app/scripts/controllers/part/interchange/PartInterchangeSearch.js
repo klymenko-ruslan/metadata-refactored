@@ -1,66 +1,74 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-    .controller('PartInterchangeSearchCtrl', function ($scope, $location, $routeParams, restService) {
+    .controller('PartInterchangeSearchCtrl', function ($log, $scope, $location, $routeParams, restService, Restangular, gToast, $dialogs) {
         $scope.partId = $routeParams.id;
         $scope.partType = $routeParams.type;
 
-        $scope.showPickedPart = false;
-
         // The part whose interchange we're editing
-        $scope.part = restService.findPart($scope.partId).then(function (part) {
+        $scope.promise = restService.findPart($scope.partId).then(function (part) {
             $scope.part = part;
-            $scope.newInterchange = part.interchange;
         });
 
-        // The part the user picked
-        $scope.pickedPart = null;
+        $scope.pick = function (pickedPartId) {
+          $log.log("Picked part", pickedPartId);
 
-        $scope.isChanged = function () {
-            return $scope.part.interchange != $scope.newInterchange;
-        };
+          // Lookup the picked part
+          $scope.iPartPromise = restService.findPart(pickedPartId).then(
+              function (pickedPart) {
+                $log.log("Loaded picked part", pickedPart);
+                if (pickedPart.interchange && pickedPart.interchange.id) {
 
-        $scope.undo = function () {
-            $scope.newInterchange = $scope.part.interchange;
-            $scope.pickedPart = null;
-        }
+                  // Update
+                  Restangular.setParentless(false);
+                  var promise = Restangular.one('interchange', pickedPart.interchange.id).one('part', $scope.partId).put();
 
-        $scope.save = function () {
+                } else {
 
-            // Copy over the new interchange information
-            if ($scope.newInterchange == null) {
-                $scope.part.interchange = null;
-            } else {
-                $scope.part.interchange = {};
-                angular.copy($scope.newInterchange, $scope.part.interchange);
-            }
+                  var interchange = {
+                    parts: [
+                      {
+                        id: $scope.partId
+                      },
+                      {
+                        id: pickedPartId
+                      }
+                    ]
+                  };
 
-            // Save the part
-            if (angular.isObject($scope.pickedPart)) {
-                $scope.part.interchangePartId = $scope.pickedPart.id;
-            }
+                  // Create
+                  var promise = Restangular.all('interchange').post(interchange);
+                }
 
-            $scope.part.put().then(function () {
-                $scope.newInterchange = $scope.part.interchange;
-                console.log("Saved.");
-            });
+                promise.then(
+                    function() {
+                      gToast.open("Interchangeable part added.");
+                      $location.path("/part/" + $scope.partType + "/" + $scope.partId);
+                    },
+                    function(response) {
+                      $dialogs.error("Could not add interchangeable part.", "Server said: <pre>" + JSON.stringify(response.data) + "</pre>");
+                    }
+                )
+              },
+              function(response) {
+                $dialogs.error("Could not load part details.", "Server said: <pre>" + JSON.stringify(response.data) + "</pre>");
+              });
         }
 
         $scope.canClear = function () {
-            return $scope.newInterchange != null || $scope.pickedPart != null;
+            return $scope.part && $scope.part.interchange;
         }
 
         $scope.clear = function () {
-            $scope.pickedPart = null;
-            $scope.newInterchange = null;
-        }
-
-        $scope.pick = function (pickedPartId) {
-            $scope.pickedPart = restService.findPart(pickedPartId);
-            $scope.pickedPart.then(function (pickedPart) {
-                $scope.pickedPart = pickedPart;
-                $scope.newInterchange = {};
-                angular.copy(pickedPart.interchange, $scope.newInterchange);
-            });
+          Restangular.setParentless(false);
+          Restangular.one('interchange', $scope.part.interchangeId).one('part', $scope.partId).remove().then(
+              function () {
+                // Success
+                gToast.open("Part removed from interchange.");
+                $location.path("/part/" + $scope.partType + "/" + $scope.partId);
+              },
+              function (response) {
+                $dialogs.error("Could not remove part from interchange", "Server said: <pre>" + JSON.stringify(response.data) + "</pre>");
+              });
         }
     });

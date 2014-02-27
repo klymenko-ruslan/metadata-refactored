@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -30,12 +31,12 @@ public class Interchange {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @Column(nullable = false)
+    @Column
     private String name;
     
     private String description;
     
-    @OneToMany(mappedBy = "interchange", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "interchange", fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.MERGE})
     private Set<Part> parts = Sets.newTreeSet();
     
     public Long getId() {
