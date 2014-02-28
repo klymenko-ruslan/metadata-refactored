@@ -1,4 +1,7 @@
 package com.turbointernational.metadata.domain.security;
+import com.turbointernational.metadata.domain.part.Interchange;
+import flexjson.JSONDeserializer;
+import flexjson.JSONSerializer;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -136,6 +139,20 @@ public class Group implements Comparable<Group> {
         return merged;
     }
 
+    //</editor-fold>
+    
+    //<editor-fold defaultstate="collapsed" desc="Serialization">
+    public String toJson() {
+        return new JSONSerializer().exclude("*.class").serialize(this);
+    }
+    
+    public String toJson(String[] fields) {
+        return new JSONSerializer().include(fields).exclude("*.class").serialize(this);
+    }
+    
+    public static Group fromJson(String json) {
+        return new JSONDeserializer<Group>().use(null, Group.class).deserialize(json);
+    }
     //</editor-fold>
     
     @Override

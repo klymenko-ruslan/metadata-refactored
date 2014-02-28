@@ -1,6 +1,8 @@
 package com.turbointernational.metadata.domain.security;
 import com.google.common.collect.Sets;
 import static com.turbointernational.metadata.domain.part.Part.entityManager;
+import flexjson.JSONDeserializer;
+import flexjson.JSONSerializer;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -115,6 +117,20 @@ public class User implements Comparable<User>, UserDetails {
         return null;
     }
     
+    //</editor-fold>
+    
+    //<editor-fold defaultstate="collapsed" desc="Serialization">
+    public String toJson() {
+        return new JSONSerializer().exclude("*.class").serialize(this);
+    }
+    
+    public String toJson(String[] fields) {
+        return new JSONSerializer().include(fields).exclude("*.class").serialize(this);
+    }
+    
+    public static User fromJson(String json) {
+        return new JSONDeserializer<User>().use(null, User.class).deserialize(json);
+    }
     //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="Spring Security">
