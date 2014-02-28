@@ -1,7 +1,7 @@
 package com.turbointernational.metadata.domain.security;
 import com.google.common.collect.Sets;
 import flexjson.JSONSerializer;
-import java.security.Principal;
+import java.util.List;
 import java.util.Set;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -25,7 +25,7 @@ public class UserController {
     @RequestMapping(value = "/myroles", method = RequestMethod.GET)
     @ResponseBody
     @Secured("ROLE_AUTHENTICATED")
-    public ResponseEntity<String> roles(Principal principal) {
+    public ResponseEntity<String> myroles() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Set<String> authoritySet = Sets.newTreeSet();
         
@@ -38,10 +38,21 @@ public class UserController {
                 new HttpHeaders(), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/{id}/groups", method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
     @Secured("ROLE_AUTHENTICATED")
-    public ResponseEntity<String> groups(@PathVariable("id") Long id) {
+    public ResponseEntity<String> list() {
+        List<User> users = User.findAllUsers();
+        
+        return new ResponseEntity<String>(
+                User.JSON.serialize(users),
+                new HttpHeaders(), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @ResponseBody
+    @Secured("ROLE_AUTHENTICATED")
+    public ResponseEntity<String> get(@PathVariable("id") Long id) {
         User user = User.findUser(id);
         
         return new ResponseEntity<String>(

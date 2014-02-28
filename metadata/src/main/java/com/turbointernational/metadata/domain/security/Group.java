@@ -22,6 +22,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Entity
 @Table(name="GROUPS") // GROUP is a reserved word
 public class Group implements Comparable<Group> {
+    public static JSONSerializer JSON = new JSONSerializer()
+                .include("roles.id")
+                .include("roles.name")
+                .include("roles.display")
+                .include("users.id")
+                .include("users.name")
+                .include("users.email")
+                .exclude("*.class");
 
     //<editor-fold defaultstate="collapsed" desc="properties">
     @Id
@@ -143,7 +151,7 @@ public class Group implements Comparable<Group> {
     
     //<editor-fold defaultstate="collapsed" desc="Serialization">
     public String toJson() {
-        return new JSONSerializer().exclude("*.class").serialize(this);
+        return JSON.serialize(this);
     }
     
     public String toJson(String[] fields) {

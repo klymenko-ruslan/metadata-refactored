@@ -35,25 +35,29 @@ public class GroupController {
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
     @Secured("ROLE_AUTHENTICATED")
-    public ResponseEntity<String> groups() {
+    public ResponseEntity<String> list() {
         List<Group> groups = Group.findAllGroups();
         
         return new ResponseEntity<String>(
-                new JSONSerializer().serialize(groups),
+            new JSONSerializer()
+                .include("id")
+                .include("name")
+                .include("roles.id")
+                .include("users.id")
+                .exclude("*")
+                .serialize(groups),
                 new HttpHeaders(), HttpStatus.OK);
     }
     
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ResponseBody
     @Secured("ROLE_AUTHENTICATED")
-    public ResponseEntity<String> group(@PathVariable("id") Long id) {
+    public ResponseEntity<String> get(@PathVariable("id") Long id) {
         Group group = Group.findGroup(id);
         group.getUsers().size();
         
         
-        return new ResponseEntity<String>(
-                new JSONSerializer().serialize(group),
-                new HttpHeaders(), HttpStatus.OK);
+        return new ResponseEntity<String>(group.toJson(), new HttpHeaders(), HttpStatus.OK);
     }
     
     @Transactional

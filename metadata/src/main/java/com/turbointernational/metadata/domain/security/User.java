@@ -29,6 +29,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Entity
 @Table(name="USER")
 public class User implements Comparable<User>, UserDetails {
+    public static final JSONSerializer JSON = new JSONSerializer()
+                .include("groups.id")
+                .include("groups.name")
+                .exclude("*.class");
 
     //<editor-fold defaultstate="collapsed" desc="Properties">
     @Id
@@ -121,7 +125,7 @@ public class User implements Comparable<User>, UserDetails {
     
     //<editor-fold defaultstate="collapsed" desc="Serialization">
     public String toJson() {
-        return new JSONSerializer().exclude("*.class").serialize(this);
+        return JSON.serialize(this);
     }
     
     public String toJson(String[] fields) {
