@@ -40,7 +40,7 @@ public class UserController {
 
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
-    @Secured("ROLE_AUTHENTICATED")
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<String> list() {
         List<User> users = User.findAllUsers();
         
@@ -51,12 +51,20 @@ public class UserController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ResponseBody
-    @Secured("ROLE_AUTHENTICATED")
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<String> get(@PathVariable("id") Long id) {
         User user = User.findUser(id);
         
         return new ResponseEntity<String>(
-                new JSONSerializer().serialize(user.getGroups()),
+                new JSONSerializer()
+                        .include("id")
+                        .include("name")
+                        .include("email")
+                        .include("enabled")
+                        .include("groups.id")
+                        .include("groups.name")
+                        .exclude("*")
+                        .serialize(user),
                 new HttpHeaders(), HttpStatus.OK);
     }
     
@@ -102,7 +110,7 @@ public class UserController {
     @ResponseBody
     @Secured("ROLE_ADMIN")
     public void delete(@PathVariable("id") Long id) throws Exception {
-        Group group = Group.findGroup(id);
-        group.remove();
+        User user = User.findUser(id);
+        user.remove();
     }
 }

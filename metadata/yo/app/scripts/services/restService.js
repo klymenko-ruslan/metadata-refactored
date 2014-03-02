@@ -1,8 +1,13 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-    .service('restService', function RestService(Restangular) {
+    .service('restService', function RestService(Restangular, $dialogs) {
         return new function () {
+
+            this.error = function(title, response) {
+              $dialogs.error(
+                  title, "Server said: <pre>" + JSON.stringify(response.data) + "</pre>");
+            }
 
             this.findPart = function (id, params) {
                 return Restangular.one("part", id).get(params);

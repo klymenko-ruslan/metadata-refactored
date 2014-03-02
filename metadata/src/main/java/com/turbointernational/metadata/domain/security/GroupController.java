@@ -32,6 +32,21 @@ public class GroupController {
         return new ResponseEntity<String>(group.toJson(), headers, HttpStatus.OK);
     }
     
+    @Transactional
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    @Secured("ROLE_ADMIN")
+    public ResponseEntity<String> update(@RequestBody String json) throws Exception {
+        
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "application/json");
+        
+        // Create the object
+        Group group = Group.fromJson(json);
+        group.merge();
+        
+        return new ResponseEntity<String>(group.toJson(), headers, HttpStatus.OK);
+    }
+    
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
     @Secured("ROLE_AUTHENTICATED")
@@ -46,6 +61,21 @@ public class GroupController {
                 .include("users.id")
                 .exclude("*")
                 .serialize(groups),
+                new HttpHeaders(), HttpStatus.OK);
+    }
+    
+    @RequestMapping(value = "/roles", method = RequestMethod.GET)
+    @ResponseBody
+    @Secured("ROLE_AUTHENTICATED")
+    public ResponseEntity<String> listRoles() {
+        List<Role> roles = Role.findAllRoles();
+        
+        return new ResponseEntity<String>(
+            new JSONSerializer()
+                .include("id")
+                .include("display")
+                .exclude("*")
+                .serialize(roles),
                 new HttpHeaders(), HttpStatus.OK);
     }
     

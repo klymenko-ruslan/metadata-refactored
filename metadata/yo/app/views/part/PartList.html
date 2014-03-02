@@ -1,35 +1,67 @@
-<div class="row">
-    <div class="btn-group">
+<nav class="navbar navbar-collapse">
+  <ul class="nav navbar-nav">
 
-        <button authorize="ROLE_CREATE_PART"
-                ng-click="createPart()" class="btn btn-success">
-          <i class="fa fa-wrench"></i>
-          Create Part
+  <!-- Parts -->
+    <li class="btn-group" authorize="ROLE_CREATE_PART">
+      <button ng-click="createPart()" class="btn btn-success">
+        <i class="fa fa-wrench"></i>
+        Create Part
+      </button>
+    </li>
+
+    <!-- Admin -->
+    <li class="btn-group" authorize="ROLE_ADMIN">
+      <li>
+        <button ng-click="reindexTurbos()"
+                class="btn btn-warning">
+          <i class="fa fa-cogs"></i>
+          Reindex Turbos
         </button>
+      </li>
 
-      <button authorize="ROLE_ADMIN"
-              ng-click="reindexTurbos()"
-              class="btn btn-warning">
-        <i class="fa fa-cogs"></i>
-        Reindex Turbos
-      </button>
+      <li>
+        <button ng-click="reindexSearch()"
+                class="btn btn-warning">
+          <i class="fa fa-cogs"></i>
+          Reindex Search
+        </button>
+      </li>
 
-      <button authorize="ROLE_ADMIN"
-              ng-click="reindexSearch()"
-              class="btn btn-warning">
-        <i class="fa fa-cogs"></i>
-        Reindex Search
-      </button>
+      <li>
+        <button ng-click="clearHibernate()"
+                class="btn btn-warning">
+          <i class="fa fa-cogs"></i>
+          Clear Hibernate Cache
+        </button>
+      </li>
+  </li>
 
-      <button authorize="ROLE_ADMIN"
-              ng-click="clearHibernate()"
-              class="btn btn-warning">
-        <i class="fa fa-cogs"></i>
-        Clear Hibernate Cache
-      </button>
 
-    </div>
-</div>
+  <!-- Security -->
+  <li class="btn-group" authorize="ROLE_ADMIN">
+    <a ng-href="#/security/groups/"
+       class="btn btn-info">
+      <i class="fa fa-group"></i>
+      Groups
+    </a>
+
+    <a ng-href="#/security/users/"
+       class="btn btn-info">
+      <i class="fa fa-user"></i>
+      Users
+    </a>
+  </li>
+
+  <!-- My Account -->
+  <li class="btn-group">
+    <a ng-href="#/security/me"
+            class="btn btn-primary">
+      <i class="fa fa-smile-o"></i>
+      My Account
+    </a>
+  </li>
+  </ul>
+</nav>
 
 <div class="row">
   <h1 class="col-xs-12 col-sm-9">Part List</h1>

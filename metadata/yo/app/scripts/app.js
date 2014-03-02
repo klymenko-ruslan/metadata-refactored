@@ -12,6 +12,7 @@ angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap', 'restangu
     .config(function ($locationProvider, $routeProvider) {
 //        $locationProvider.html5Mode(true);
 
+        // Parts
         $routeProvider.when('/', {
             templateUrl: 'views/part/PartList.html',
             controller: 'PartListCtrl'
@@ -36,11 +37,36 @@ angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap', 'restangu
             templateUrl: 'views/part/bom/PartBomSearch.html',
             controller: 'PartBomSearchCtrl'
         });
+
+
+        // Users and groups
+        $routeProvider.when('/security/groups', {
+          templateUrl: 'views/security/groups.html',
+          controller: 'GroupsCtrl'
+        });
+        $routeProvider.when('/security/group/:id', {
+          templateUrl: 'views/security/group.html',
+          controller: 'GroupCtrl'
+        });
+
+        $routeProvider.when('/security/users', {
+          templateUrl: 'views/security/users.html',
+          controller: 'UsersCtrl'
+        });
+        $routeProvider.when('/security/user/:id', {
+          templateUrl: 'views/security/user.html',
+          controller: 'UserCtrl'
+        });
+
+
+        // Default
         $routeProvider.otherwise({
             redirectTo: '/'
         });
     })
-    .run(function(User) {
+    .run(function($rootScope, $location, User) {
+
+      $rootScope.$location = $location;
 
       // Initialize the user
       User.init();

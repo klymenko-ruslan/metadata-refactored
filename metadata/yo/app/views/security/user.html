@@ -1,0 +1,83 @@
+<form name="form" class="form-horizontal">
+  <ul class="row">
+    <li class="btn-group" authorize="ROLE_ADMIN">
+      <a ng-href="#/security/groups/"
+         class="btn btn-info">
+        <i class="fa fa-group"></i>
+        Groups
+      </a>
+
+      <a ng-href="#/security/users/"
+         class="btn btn-info">
+        <i class="fa fa-user"></i>
+        Users
+      </a>
+    </li>
+    <li class="btn-group">
+      <button ng-click="save()"
+              ng-disabled="form.$pristine"
+              class="btn btn-success">
+        <i class="fa fa-save"></i>
+        Save
+      </button>
+
+      <button ng-click="undo()"
+              ng-disabled="form.$pristine"
+              ng-show="user.id"
+              class="btn btn-warning">
+        <i class="fa fa-undo"></i>
+        Undo
+      </button>
+    </li>
+
+    <li class="btn-group" ng-show="user.id">
+      <button ng-click="toggleResetPassword()"
+              class="btn btn-default"
+              ng-class="{active:showResetPassword}">
+        <i class="fa fa-key"></i>
+        Set Password
+      </button>
+
+      <button ng-click="delete()"
+              class="btn btn-danger">
+        <i class="fa fa-trash-o"></i>
+        Delete
+      </button>
+    </li>
+  </ul>
+
+  <div class="row">
+    <h1 ng-hide="user.id">Create User</h1>
+    <h1 ng-show="user.id">User: {{user.name}}</h1>
+  </div>
+
+  <div class="input-group">
+    <span class="input-group-addon">Name</span>
+    <input type="text" ng-model="user.name" class="form-control" placeholder="First and last name"/>
+  </div>
+
+  <div class="input-group">
+    <span class="input-group-addon">Email</span>
+    <input type="text" ng-model="user.email" class="form-control" placeholder="Email address"/>
+  </div>
+
+  <div class="input-group" ng-show="user.id == null || showResetPassword">
+    <span class="input-group-addon">Password</span>
+    <input type="password" ng-model="user.password" class="form-control"/>
+  </div>
+
+  <button ng-model="user.enabled" class="btn btn-sm" ng-class="{'btn-success': user.enabled, 'btn-danger': !user.enabled}" btn-checkbox>
+    <span ng-hide="user.enabled"><i class="fa fa-warning"></i> Inactive</span>
+    <span ng-show="user.enabled"><i class="fa fa-info-circle"></i> Active</span>
+  </button>
+
+  <div class="row">
+    <h2>Groups</h2>
+    <ul class="list-group">
+      <li ng-repeat="group in user.groups" class="list-group-item">
+        <a ng-href="#/security/group/{{group.id}}">{{group.name}}</a>
+      </li>
+      <li ng-hide="user.groups" class="list-group-item">No groups assigned</li>
+    </ul>
+  </div>
+</form>
