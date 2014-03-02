@@ -28,6 +28,7 @@ public class SearchController {
     
     @RequestMapping("/search")
     @ResponseBody
+    @Secured("ROLE_READ")
     public ResponseEntity<String> search(@RequestBody String request) throws Exception {
         String response = elasticSearch.search(request);
 
@@ -38,7 +39,7 @@ public class SearchController {
     
     @RequestMapping(value="/search/indexAll")
     @ResponseBody
-    @Secured("ADMIN")
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<Void> indexAll(@RequestParam(required=false) Integer maxPages) throws Exception {
         
         if (maxPages == null ) {
