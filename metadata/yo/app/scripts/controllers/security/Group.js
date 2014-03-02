@@ -5,14 +5,21 @@ angular.module('ngMetaCrudApp')
 
       $scope.newName,
       $scope.roleSelections,
+      $scope.userSelections,
       $scope.group,
+      $scope.users,
       $scope.roles = null;
 
-      function setRoleSelections() {
+      function setSelections() {
         $scope.roleSelections = {};
+        $scope.userSelections = {};
 
         angular.forEach($scope.group.roles, function(role) {
           $scope.roleSelections[role.id] = true;
+        });
+
+        angular.forEach($scope.group.users, function(user) {
+          $scope.userSelections[user.id] = true;
         });
       }
 
@@ -22,7 +29,16 @@ angular.module('ngMetaCrudApp')
             $scope.roles = _.indexBy(roles, 'id');
           },
           function(response) {
-            restService.error(response);
+            restService.error("Could not list roles.", response);
+          });
+
+      // Fetch the users
+      var userPromise = Restangular.all('security/user').getList().then(
+          function(users) {
+            $scope.users = _.indexBy(users, 'id');
+          },
+          function(response) {
+            restService.error("Could not list users.", response);
           });
 
       // Setup the group object for create/edit
@@ -33,17 +49,17 @@ angular.module('ngMetaCrudApp')
           users: []
         }
 
-        // Setup the roles model
-        setRoleSelections();
+        // Setup the selection  models
+        setSelections();
       } else {
         var groupPromise = Restangular.one('security/group', $routeParams.id).get().then(
             function(group) {
               $scope.group = group;
               $scope.newName = group.name;
-              setRoleSelections();
+              setSelections();
             },
             function(response) {
-              restService.error(response);
+              restService.error("Could not load group.", response);
             });
       }
 
@@ -54,6 +70,12 @@ angular.module('ngMetaCrudApp')
           }
         }).compact().value();
 
+        $scope.group.users = _.chain($scope.userSelections).map(function(isSelected, userId) {
+          if (isSelected) {
+            return $scope.users[userId];
+          }
+        }).compact().value();
+
         if ($routeParams.id == 'create') {
           Restangular.all('security/group').post($scope.group).then(
               function() {
@@ -61,7 +83,7 @@ angular.module('ngMetaCrudApp')
                 $location.path('/security/groups');
               },
               function(response) {
-                restService.error(response);
+                restService.error("Could not create group.", response);
               });
         } else {
           $scope.group.put().then(
@@ -70,7 +92,7 @@ angular.module('ngMetaCrudApp')
                 $location.path('/security/groups');
               },
               function(response) {
-                restService.error(response);
+                restService.error("Could not update group.", response);
               });
         }
       };
@@ -100,7 +122,7 @@ angular.module('ngMetaCrudApp')
       $scope.undo = function() {
         $scope.form.$setPristine(true);
         $scope.newName = $scope.group.name;
-        setRoleSelections();
+        setSelections();
       };
 
     });

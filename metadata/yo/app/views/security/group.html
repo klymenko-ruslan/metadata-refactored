@@ -57,10 +57,9 @@
   <div class="row">
     <h2>Users</h2>
     <ul class="list-group">
-      <li ng-repeat="user in group.users" class="list-group-item">
-        <a ng-href="#/security/user/{{user.id}}">{{user.name}}</a>
+      <li ng-repeat="user in users" class="list-group-item">
+        <input type="checkbox" ng-model="userSelections[user.id]"/> {{user.name}}
       </li>
-      <li ng-hide="group.users" class="list-group-item">No users assigned</li>
     </ul>
   </div>
 </form>

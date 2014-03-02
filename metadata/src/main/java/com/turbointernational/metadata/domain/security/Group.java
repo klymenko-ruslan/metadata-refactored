@@ -1,5 +1,4 @@
 package com.turbointernational.metadata.domain.security;
-import com.turbointernational.metadata.domain.part.Interchange;
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
 import java.util.List;

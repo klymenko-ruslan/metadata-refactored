@@ -20,7 +20,7 @@ angular.module('ngMetaCrudApp')
               $scope.user = Restangular.copy(user);
             },
             function(response) {
-              restService.error(response);
+              restService.error("Could not get user.", response);
             });
       }
 
@@ -34,7 +34,7 @@ angular.module('ngMetaCrudApp')
                 $location.path('/security/users/');
               },
               function(response) {
-                restService.error(response);
+                restService.error("Could not create user.", response);
               }
           );
         } else {
@@ -46,7 +46,7 @@ angular.module('ngMetaCrudApp')
                 $location.path('/security/user/');
               },
               function(response) {
-                restService.error(response);
+                restService.error("Could not update user.", response);
               }
           );
         }

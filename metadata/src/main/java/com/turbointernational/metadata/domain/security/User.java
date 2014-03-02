@@ -190,6 +190,10 @@ public class User implements Comparable<User>, UserDetails {
         return entityManager().createQuery("SELECT COUNT(o) FROM User o", Long.class).getSingleResult();
     }
     
+    public static List<User> findActiveUsers() {
+        return entityManager().createQuery("SELECT o FROM User o WHERE o.enabled = true", User.class).getResultList();
+    }
+    
     public static List<User> findAllUsers() {
         return entityManager().createQuery("SELECT o FROM User o", User.class).getResultList();
     }

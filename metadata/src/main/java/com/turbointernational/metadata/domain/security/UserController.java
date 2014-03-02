@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-@RequestMapping("/metadata/security/user/")
+@RequestMapping("/metadata/security/user")
 @Controller
 public class UserController {
 
@@ -42,7 +42,7 @@ public class UserController {
     @ResponseBody
     @Secured("ROLE_ADMIN")
     public ResponseEntity<String> list() {
-        List<User> users = User.findAllUsers();
+        List<User> users = User.findActiveUsers();
         
         return new ResponseEntity<String>(
                 User.JSON.serialize(users),
@@ -112,6 +112,7 @@ public class UserController {
     public void delete(@PathVariable("id") Long id) throws Exception {
         User user = User.findUser(id);
         user.setEnabled(false);
+        user.setEmail(null);
         user.merge();
     }
 }
