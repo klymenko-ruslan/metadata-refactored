@@ -8,20 +8,20 @@ angular.module('ngMetaCrudApp')
           '<div class="row">' +
 
            // Transcluded
-          '<ul class="nav nav-pills" ng-transclude>' +
+          '<ul class="nav nav-pills" ng-transclude  style="display: inline-block;">' +
           '</ul>' +
 
-          '<ul class="nav nav-pills">' +
+          '<ul class="nav nav-pills" style="display: inline-block;">' +
 
-//              // Parts
-//
-//              <li>
-//                <a authorize="ROLE_READ"
-//                ng-href="#/part" class="btn btn-default">
-//                  <i class="fa fa-bars"></i>
-//                Part List
-//                </a>
-//              </li>
+           // Parts
+          '  <li>' +
+          '    <a authorize="ROLE_READ"' +
+          '       ng-href="#/"' +
+          '       class="btn btn-default">' +
+          '      <i class="fa fa-bars"></i>' +
+          '    Part List' +
+          '    </a>' +
+          '  </li>' +
 
            // Indexing and Cache
           '  <li class="dropdown" authorize="ROLE_ADMIN">' +
