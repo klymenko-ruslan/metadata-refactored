@@ -42,7 +42,7 @@ angular.module('ngMetaCrudApp')
           // Update
           $scope.user.put().then(
               function() {
-                gToast("Updated user.")
+                gToast.open("Updated user.")
                 $location.path('/security/user/');
               },
               function(response) {
