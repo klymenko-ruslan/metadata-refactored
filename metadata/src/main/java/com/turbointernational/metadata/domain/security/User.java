@@ -30,9 +30,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Table(name="USER")
 public class User implements Comparable<User>, UserDetails {
     public static final JSONSerializer JSON = new JSONSerializer()
+                .include("id")
+                .include("name")
+                .include("email")
+                .include("enabled")
                 .include("groups.id")
                 .include("groups.name")
-                .exclude("*.class");
+                .exclude("*");
 
     //<editor-fold defaultstate="collapsed" desc="Properties">
     @Id

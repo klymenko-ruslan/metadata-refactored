@@ -58,6 +58,12 @@ angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap', 'restangu
           controller: 'UserCtrl'
         });
 
+        // My Account
+        $routeProvider.when('/security/me', {
+          templateUrl: 'views/security/my-account.html',
+          controller: 'MyAccountCtrl'
+        });
+
 
         // Default
         $routeProvider.otherwise({

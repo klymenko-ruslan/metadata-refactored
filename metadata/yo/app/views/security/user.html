@@ -20,6 +20,15 @@
     </li>
 
     <li ng-show="user.id">
+      <a ng-click="toggleResetPassword()"
+         class="btn btn-primary"
+         ng-class="{active: showResetPassword}">
+        <i class="fa fa-key"></i>
+        Reset Password
+      </a>
+    </li>
+
+    <li ng-show="user.id">
       <a ng-click="delete()"
               class="btn btn-danger">
         <i class="fa fa-trash-o"></i>
