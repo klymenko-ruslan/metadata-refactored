@@ -1,53 +1,21 @@
+<metanav>
+  <li>
+    <a ng-href="#/security/group/create"
+       class="btn btn-success">
+      <i class="fa fa-plus"></i>
+      Create User
+    </a>
+  </li>
+</metanav>
+
 <div class="row">
-    <div class="btn-group">
-
-        <button authorize="ROLE_READ"
-                ng-href="#/" class="btn btn-success">
-          <i class="fa fa-wrench"></i>
-          Create Part
-        </button>
-
-      <button authorize="ROLE_ADMIN"
-              ng-click="reindexTurbos()"
-              class="btn btn-warning">
-        <i class="fa fa-cogs"></i>
-        Reindex Turbos
-      </button>
-
-      <button authorize="ROLE_ADMIN"
-              ng-click="reindexSearch()"
-              class="btn btn-warning">
-        <i class="fa fa-cogs"></i>
-        Reindex Search
-      </button>
-
-      <button authorize="ROLE_ADMIN"
-              ng-click="clearHibernate()"
-              class="btn btn-warning">
-        <i class="fa fa-cogs"></i>
-        Clear Hibernate Cache
-      </button>
-
-    </div>
+  <h1 class="col-xs-12 col-sm-9">Groups</h1>
 </div>
 
 <div class="row">
-  <h1 class="col-xs-12 col-sm-9">Part List</h1>
+  <ul>
+    <li ng-repeat="group in groups">
+      <a ng-href="#/security/group/{{group.id}}"><h3>{{group.name}}</h3></a>
+    </li>
+  </ul>
 </div>
-
-<part-search>
-  <a authorize="ROLE_READ"
-     ng-href="#/part/{{partType}}/{{partId}}"
-     class="btn btn-primary btn-xs">
-    <i class="fa fa-eye"></i>
-    View
-  </a>
-
-  <a authorize="ROLE_ALTER_PART"
-     ng-href="#/part/{{partType}}/{{partId}}/form"
-     class="btn btn-primary btn-xs">
-    <i class="fa fa-cog"></i>
-    Edit
-  </a >
-
-</part-search>

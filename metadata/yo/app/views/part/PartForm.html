@@ -1,45 +1,44 @@
 <form name="partForm">
 
-<metanav>
+  <metanav>
+    <li>
+      <a authorize="ROLE_READ"
+         ng-href="#/part/{{ part.partType.typeName }}/{{ partId }}"
+         class="btn btn-primary" data-ng-hide="oldPart == null">
+        <i class="fa fa-eye"></i>
+        View Part
+      </a>
+    </li>
 
-  <li>
-    <a authorize="ROLE_READ"
-       ng-href="#/part/{{ part.partType.typeName }}/{{ partId }}"
-       class="btn btn-primary" data-ng-hide="oldPart == null">
-      <i class="fa fa-eye"></i>
-      View Part
-    </a>
-  </li>
+    <li>
+      <a authorize="ROLE_INTERCHANGE"
+         ng-href="#/part/{{ part.partType.typeName }}/{{ partId }}/interchange/search"
+         class="btn btn-info"
+         data-ng-hide="oldPart == null">
+        <i class="fa fa-random"></i>
+        Interchange &hellip;
+      </a>
+    </li>
 
-  <li>
-    <a authorize="ROLE_INTERCHANGE"
-       ng-href="#/part/{{ part.partType.typeName }}/{{ partId }}/interchange/search"
-       class="btn btn-info"
-       data-ng-hide="oldPart == null">
-      <i class="fa fa-random"></i>
-      Interchange &hellip;
-    </a>
-  </li>
+    <li>
+      <a authorize="ROLE_ALTER_PART"
+         ng-disabled="partForm.$pristine"
+         ng-click="save()" class="btn btn-success">
+        <i class="fa fa-save"></i>
+        Save
+      </a>
+    </li>
 
-  <li>
-    <a authorize="ROLE_ALTER_PART"
-       ng-disabled="partForm.$pristine"
-       ng-click="save()" class="btn btn-success">
-      <i class="fa fa-save"></i>
-      Save
-    </a>
-  </li>
-
-  <li>
-    <a ng-click="revert()"
-       ng-disabled="partForm.$pristine"
-       class="btn btn-warning"
-       data-ng-hide="oldPart == null">
-      <i class="fa fa-undo"></i>
-      Revert
-    </a>
-  </li>
-</metanav>
+    <li>
+      <a ng-click="revert()"
+         ng-disabled="partForm.$pristine"
+         class="btn btn-warning"
+         data-ng-hide="oldPart == null">
+        <i class="fa fa-undo"></i>
+        Revert
+      </a>
+    </li>
+  </metanav>
 
 <div class="row">
 <div class="col-xs-12 col-sm-6">

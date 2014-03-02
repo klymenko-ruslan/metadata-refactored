@@ -1,50 +1,32 @@
 <form name="form" class="form-horizontal">
-  <ul class="row">
-    <li class="btn-group" authorize="ROLE_ADMIN">
-      <a ng-href="#/security/groups/"
-         class="btn btn-info">
-        <i class="fa fa-group"></i>
-        Groups
-      </a>
-
-      <a ng-href="#/security/users/"
-         class="btn btn-info">
-        <i class="fa fa-user"></i>
-        Users
-      </a>
-    </li>
-    <li class="btn-group">
-      <button ng-click="save()"
+<metanav>
+    <li>
+      <a ng-click="save()"
               ng-disabled="form.$pristine"
               class="btn btn-success">
         <i class="fa fa-save"></i>
         Save
-      </button>
+      </a>
+    </li>
 
-      <button ng-click="undo()"
+    <li>
+      <a ng-click="undo()"
               ng-disabled="form.$pristine"
               ng-show="user.id"
               class="btn btn-warning">
         <i class="fa fa-undo"></i>
         Undo
-      </button>
+      </a>
     </li>
 
-    <li class="btn-group" ng-show="user.id">
-      <button ng-click="toggleResetPassword()"
-              class="btn btn-default"
-              ng-class="{active:showResetPassword}">
-        <i class="fa fa-key"></i>
-        Set Password
-      </button>
-
-      <button ng-click="delete()"
+    <li ng-show="user.id">
+      <a ng-click="delete()"
               class="btn btn-danger">
         <i class="fa fa-trash-o"></i>
         Delete
-      </button>
+      </a>
     </li>
-  </ul>
+</metanav>
 
   <div class="row">
     <h1 ng-hide="user.id">Create User</h1>

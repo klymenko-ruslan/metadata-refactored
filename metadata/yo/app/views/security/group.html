@@ -1,38 +1,48 @@
 <form name="form">
-  <div class="row">
-      <div class="btn-group">
-        <a ng-href="#/security/groups/"
-           class="btn btn-info">
-          <i class="fa fa-group"></i>
-          Groups
-        </a>
+  <metanav>
+    <li>
+      <a ng-href="#/security/groups/"
+         class="btn btn-info">
+        <i class="fa fa-angle-double-left"></i>
+        Groups List
+      </a>
+    </li>
 
-        <button ng-click="save()"
-                ng-disabled="form.$pristine"
-                class="btn btn-success">
-          <i class="fa fa-save"></i>
-          Save
-        </button>
+    <li>
+      <a ng-click="save()"
+              ng-disabled="form.$pristine"
+              class="btn btn-success">
+        <i class="fa fa-save"></i>
+        Save
+      </a>
+    </li>
 
-        <button ng-click="undo()"
-                ng-disabled="form.$pristine"
-                ng-show="group.id"
-                class="btn btn-warning">
-          <i class="fa fa-undo"></i>
-          Undo
-        </button>
+    <li>
+      <a ng-click="undo()"
+              ng-disabled="form.$pristine"
+              ng-show="group.id"
+              class="btn btn-warning">
+        <i class="fa fa-undo"></i>
+        Undo
+      </a>
+    </li>
 
-        <button ng-click="delete()"
-                class="btn btn-danger">
-          <i class="fa fa-trash-o"></i>
-          Delete
-        </button>
-      </div>
-  </div>
+    <li>
+      <a ng-click="delete()"
+              class="btn btn-danger">
+        <i class="fa fa-trash-o"></i>
+        Delete
+      </a>
+    </li>
+  </metanav>
 
   <div class="row">
     <h1 ng-hide="group.id">Create Group</h1>
     <h1 ng-show="group.id">Group: {{group.name}}</h1>
+  </div>
+
+  <div class="row">
+    <input type="text" ng-model="group.name"/>
   </div>
 
   <div class="row">

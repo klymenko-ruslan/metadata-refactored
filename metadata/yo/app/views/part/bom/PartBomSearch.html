@@ -1,41 +1,47 @@
-<div class="row">
-    <div class="btn-group">
-        <a ng-href="#/part"
-           class="btn btn-default">
-          <i class="fa fa-bars"></i>
-          Part List
-        </a>
+<metanav>
+  <li>
+    <a ng-href="#/part"
+       class="btn btn-default">
+      <i class="fa fa-bars"></i>
+      Part List
+    </a>
+  </li>
 
-        <a ng-href="#/part/{{ partType }}/{{ partId }}"
-           class="btn btn-primary">
-          <i class="fa fa-eye"></i>
-          View Part
-        </a>
+  <li>
+    <a ng-href="#/part/{{ partType }}/{{ partId }}"
+       class="btn btn-primary">
+      <i class="fa fa-eye"></i>
+      View Part
+    </a>
+  </li>
 
-      <a authorize="ROLE_ALTER_PART"
-         data-ng-href="#/part/{{ partType }}/{{ partId }}/form"
-         class="btn btn-primary">
-        <i class="fa fa-cog"></i>
-        Edit Part
-      </a>
+  <li>
+    <a authorize="ROLE_ALTER_PART"
+       data-ng-href="#/part/{{ partType }}/{{ partId }}/form"
+       class="btn btn-primary">
+      <i class="fa fa-cog"></i>
+      Edit Part
+    </a>
+  </li>
 
-      <a authorize="ROLE_INTERCHANGE"
-         ng-href="#/part/{{ part.partType.typeName }}/{{ partId }}/interchange/search"
-         class="btn btn-info">
-        <i class="fa fa-random"></i>
-        Interchange &hellip;
-      </a>
+  <li>
+    <a authorize="ROLE_INTERCHANGE"
+       ng-href="#/part/{{ part.partType.typeName }}/{{ partId }}/interchange/search"
+       class="btn btn-info">
+      <i class="fa fa-random"></i>
+      Interchange &hellip;
+    </a>
+  </li>
 
-      <a ng-click="save()"
-         ng-disabled="pickedPart == null"
-         class="btn btn-success">
-        <i class="fa fa-save"></i>
-        Add BOM Item
-      </a>
-
-    </div>
-</div>
-
+  <li>
+    <a ng-click="save()"
+       ng-disabled="pickedPart == null"
+       class="btn btn-success">
+      <i class="fa fa-save"></i>
+      Add BOM Item
+    </a>
+  </li>
+</metanav>
 
 <div class="row">
     <div class="col-xs-12">

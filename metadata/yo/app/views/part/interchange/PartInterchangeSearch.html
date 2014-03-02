@@ -1,26 +1,22 @@
-<div class="row">
-  <div class="btn-group">
-    <a data-ng-href="#/part"
-       class="btn btn-default">
-      <i class="fa fa-bars"></i>
-      Part List
-    </a>
-
-    <a authorize="ROLE_READ"
-       ng-href="#/part/{{ part.partType.typeName }}/{{ partId }}"
+<metanav>
+  <li authorize="ROLE_READ">
+    <a ng-href="#/part/{{ part.partType.typeName }}/{{ partId }}"
        class="btn btn-primary">
       <i class="fa fa-eye"></i>
       View Part
     </a>
+  </li>
 
-
+  <li>
     <a authorize="ROLE_ALTER_PART"
        data-ng-href="#/part/{{ partType }}/{{ partId }}/form"
        class="btn btn-primary">
       <i class="fa fa-cog"></i>
       Edit Part
     </a>
+  </li>
 
+  <li>
     <a authorize="ROLE_INTERCHANGE"
        ng-click="clear()"
        ng-disabled="!canClear()"
@@ -28,9 +24,8 @@
       <i class="fa fa-trash-o"></i>
       Remove From Interchange
     </a>
-
-  </div>
-</div>
+  </li>
+</metanav>
 
 <div class="row">
     <div class="col-xs-12">
@@ -53,6 +48,7 @@
         <p>Find and pick an part below to set the interchangeable part group.</p>
     </div>
 </div>
+
 <part-search>
 
   <a authorize="ROLE_READ"

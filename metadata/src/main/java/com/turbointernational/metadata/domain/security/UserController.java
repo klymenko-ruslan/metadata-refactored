@@ -111,6 +111,7 @@ public class UserController {
     @Secured("ROLE_ADMIN")
     public void delete(@PathVariable("id") Long id) throws Exception {
         User user = User.findUser(id);
-        user.remove();
+        user.setEnabled(false);
+        user.merge();
     }
 }
