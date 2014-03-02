@@ -33,6 +33,8 @@ angular.module('ngMetaCrudApp')
           users: []
         }
 
+        // Setup the roles model
+        setRoleSelections();
       } else {
         var groupPromise = Restangular.one('security/group', $routeParams.id).get().then(
             function(group) {
@@ -52,14 +54,25 @@ angular.module('ngMetaCrudApp')
           }
         }).compact().value();
 
-        $scope.group.put().then(
-            function() {
-              gToast.open("Group updated.");
-              $location.path('/security/groups');
-            },
-            function(response) {
-              restService.error(response);
-            });
+        if ($routeParams.id == 'create') {
+          Restangular.all('security/group').post($scope.group).then(
+              function() {
+                gToast.open("Group created.");
+                $location.path('/security/groups');
+              },
+              function(response) {
+                restService.error(response);
+              });
+        } else {
+          $scope.group.put().then(
+              function() {
+                gToast.open("Group updated.");
+                $location.path('/security/groups');
+              },
+              function(response) {
+                restService.error(response);
+              });
+        }
       };
 
       $scope.delete = function() {
