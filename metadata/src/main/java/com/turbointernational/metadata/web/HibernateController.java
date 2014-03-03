@@ -21,7 +21,7 @@ public class HibernateController {
     
     @RequestMapping("/clear")
     @ResponseBody
-    @Secured("ADMIN")
+    @Secured("ROLE_ADMIN")
     public void clear() throws Exception {
         EntityManager em = Part.entityManager();
 

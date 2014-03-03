@@ -112,7 +112,6 @@ public class UserController {
         
         user.merge();
     }
-
     
     @Transactional
     @RequestMapping(method = RequestMethod.POST)

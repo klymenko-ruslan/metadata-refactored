@@ -4,6 +4,7 @@ import java.util.List;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -42,6 +43,7 @@ public class ManufacturerController {
     }
     
     @RequestMapping(method = RequestMethod.POST, headers = "Accept=application/json")
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<String> createFromJson(@RequestBody String json) {
         Manufacturer manufacturer = Manufacturer.fromJsonToManufacturer(json);
         manufacturer.persist();
@@ -51,6 +53,7 @@ public class ManufacturerController {
     }
     
     @RequestMapping(value = "/jsonArray", method = RequestMethod.POST, headers = "Accept=application/json")
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<String> createFromJsonArray(@RequestBody String json) {
         for (Manufacturer manufacturer: Manufacturer.fromJsonArrayToManufacturers(json)) {
             manufacturer.persist();
@@ -61,6 +64,7 @@ public class ManufacturerController {
     }
     
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, headers = "Accept=application/json")
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<String> updateFromJson(@RequestBody String json, @PathVariable("id") Long id) {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json");
@@ -72,6 +76,7 @@ public class ManufacturerController {
     }
     
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, headers = "Accept=application/json")
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<String> deleteFromJson(@PathVariable("id") Long id) {
         Manufacturer manufacturer = Manufacturer.findManufacturer(id);
         HttpHeaders headers = new HttpHeaders();

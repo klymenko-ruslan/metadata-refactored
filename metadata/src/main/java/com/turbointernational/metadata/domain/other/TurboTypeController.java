@@ -3,6 +3,7 @@ import java.util.List;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,6 +38,7 @@ public class TurboTypeController {
     }
     
     @RequestMapping(method = RequestMethod.POST)
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<String> createFromJson(@RequestBody String json) {
         TurboType turboType = TurboType.fromJsonToTurboType(json);
         turboType.persist();
@@ -46,6 +48,7 @@ public class TurboTypeController {
     }
     
     @RequestMapping(value = "/jsonArray", method = RequestMethod.POST)
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<String> createFromJsonArray(@RequestBody String json) {
         for (TurboType turboType: TurboType.fromJsonArrayToTurboTypes(json)) {
             turboType.persist();
@@ -56,6 +59,7 @@ public class TurboTypeController {
     }
     
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<String> updateFromJson(@RequestBody String json, @PathVariable("id") Long id) {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json");
@@ -67,6 +71,7 @@ public class TurboTypeController {
     }
     
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<String> deleteFromJson(@PathVariable("id") Long id) {
         TurboType turboType = TurboType.findTurboType(id);
         HttpHeaders headers = new HttpHeaders();

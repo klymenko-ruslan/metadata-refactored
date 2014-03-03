@@ -3,6 +3,7 @@ import java.util.List;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -36,6 +37,7 @@ public class GasketTypeController {
     }
     
     @RequestMapping(method = RequestMethod.POST)
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<String> createFromJson(@RequestBody String json) {
         GasketType gasketType = GasketType.fromJsonToGasketType(json);
         gasketType.persist();
@@ -45,6 +47,7 @@ public class GasketTypeController {
     }
     
     @RequestMapping(value = "/jsonArray", method = RequestMethod.POST)
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<String> createFromJsonArray(@RequestBody String json) {
         for (GasketType gasketType: GasketType.fromJsonArrayToGasketTypes(json)) {
             gasketType.persist();
@@ -55,6 +58,7 @@ public class GasketTypeController {
     }
     
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<String> updateFromJson(@RequestBody String json, @PathVariable("id") Long id) {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json");
@@ -66,6 +70,7 @@ public class GasketTypeController {
     }
     
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<String> deleteFromJson(@PathVariable("id") Long id) {
         GasketType gasketType = GasketType.findGasketType(id);
         HttpHeaders headers = new HttpHeaders();
