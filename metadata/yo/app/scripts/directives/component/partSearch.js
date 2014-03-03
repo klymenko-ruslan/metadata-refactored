@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-    .directive('partSearch', function ($log) {
+    .directive('partSearch', function ($log, restService) {
         return {
             restrict: 'E',
             replace: true,
@@ -14,18 +14,22 @@ angular.module('ngMetaCrudApp')
 
               // Query Parameters
               $scope.search = {
-                queryString: "",
-                facetFilters: {}
+                partNumber: "",
+                facets: {},
+                sort: {}
               };
 
               // Latest Results
               $scope.searchResults = null;
 
+
+              // Part Table
               $scope.partTableParams = new ngTableParams({
                 page: 1,
                 count: 10,
                 sorting: {
-                  manufacturerPartNumber: 'asc'
+                  'manufacturer.name': 'asc',
+                  'manufacturerPartNumber': 'asc'
                 }
               }, {
                 getData: function ($defer, params) {
@@ -44,8 +48,7 @@ angular.module('ngMetaCrudApp')
                         params.total($scope.searchResults.hits.total);
                       },
                       function (errorResponse) {
-                        alert("Could not complete search");
-                        $log.log("Could not complete search", errorResponse);
+                        restService.error("Couldn't search for parts.");
                         $defer.reject();
                       });
                 }
