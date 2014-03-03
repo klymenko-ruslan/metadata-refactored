@@ -27,10 +27,7 @@ angular.module('ngMetaCrudApp')
               $scope.partTableParams = new ngTableParams({
                 page: 1,
                 count: 10,
-                sorting: {
-                  'manufacturer.name': 'asc',
-                  'manufacturerPartNumber': 'asc'
-                }
+                sorting: {}
               }, {
                 getData: function ($defer, params) {
 
@@ -55,7 +52,13 @@ angular.module('ngMetaCrudApp')
               });
 
               // Handle updating search results
-              $scope.$watch('search', function () {
+              $scope.$watch('[search.partNumber, search.facets]', function (newVal, oldVal) {
+
+                // Debounce
+                if (angular.equals(newVal, oldVal, true)) {
+                  return;
+                }
+
                 $scope.partTableParams.reload();
               }, true);
             }
