@@ -29,6 +29,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Entity
 @Table(name="USER")
 public class User implements Comparable<User>, UserDetails {
+    public static final long serialVersionUID = 1L;
+    
     public static final JSONSerializer JSON = new JSONSerializer()
                 .include("id")
                 .include("name")

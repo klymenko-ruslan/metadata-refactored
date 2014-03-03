@@ -1,4 +1,5 @@
 package com.turbointernational.metadata.domain.security;
+import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -11,8 +12,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Configurable
 @Entity
-public class Role implements Comparable<Role> {
-
+public class Role implements Comparable<Role>, Serializable {
+    public static final long serialVersionUID = 1L;
+    
     //<editor-fold defaultstate="collapsed" desc="properties">
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

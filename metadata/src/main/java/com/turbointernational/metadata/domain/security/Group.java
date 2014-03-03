@@ -1,6 +1,7 @@
 package com.turbointernational.metadata.domain.security;
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -20,7 +21,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Configurable
 @Entity
 @Table(name="GROUPS") // GROUP is a reserved word
-public class Group implements Comparable<Group> {
+public class Group implements Comparable<Group>, Serializable {
+    public static final long serialVersionUID = 1L;
+    
     public static JSONSerializer JSON = new JSONSerializer()
                 .include("roles.id")
                 .include("roles.name")
