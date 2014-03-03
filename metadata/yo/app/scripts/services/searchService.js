@@ -46,8 +46,8 @@ angular.module('ngMetaCrudApp')
               query_string: {
                 query: partSearchParams.partNumber,
                 fields: [
-                  "manufacturerPartNumber.autocomplete",
-                  "manufacturerPartNumber.text"
+                  "manufacturerPartNumber.text",
+                  "manufacturerPartNumber.autocomplete"
                 ]
               }
             });
