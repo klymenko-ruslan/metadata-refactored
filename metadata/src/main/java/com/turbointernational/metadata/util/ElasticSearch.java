@@ -39,53 +39,7 @@ public class ElasticSearch {
     public Client client() {
         return new TransportClient().addTransportAddress(new InetSocketTransportAddress(elasticSearchHost, elasticSearchPort));
     }
-//
-//    public String partSearch(String queryString, int from, int size) throws Exception {
-//        JSOG query = JSOG.object();
-//        query.put("from", from)
-//             .put("size", size);
-//
-//        query.get("query")
-//                .get("query_string")
-//                    .put("query", queryString)
-//                    .get("fields")
-//                        .add("manufacturer_part_number.autocomplete")
-//                        .add("manufacturer_part_number.text")
-//
-//                        .add("manufacturer_name.autocomplete")
-//                        .add("manufacturer_name.text");
-//
-////        // Disjunction
-////        JSOG queries = query.get("query")
-////             .get("dis_max")
-////                 .put("boost", 1.5)
-////                 .get("queries");
-////
-////        // Query String
-////        JSOG queryStringQuery = JSOG.object();
-////        queries.add(queryStringQuery);
-////        queryStringQuery.get("query_string")
-////            .put("query", queryString)
-////            .put("phrase_slop", 5);
-////
-////        // Manufacturer Name
-////        JSOG manufacturerNameQuery = JSOG.object();
-////        queries.add(manufacturerNameQuery);
-////        manufacturerNameQuery.get("prefix")
-////            .put("manufacturer_name", queryString);
-////
-////        // Manufacturer Part Number
-////        JSOG manufacturerPartNumberQuery = JSOG.object();
-////        queries.add(manufacturerPartNumberQuery);
-////        manufacturerPartNumberQuery.get("prefix")
-////                .put("manufacturer_part_number", queryString);
-//
-//        return search(new Search.Builder(query.toString())
-//                                .addIndex(elasticSearchIndex)
-//                                .addType(elasticSearchType)
-//                                .build());
-//    }
-//
+    
     public String search(String searchJson) throws Exception {
         Client client = client();
         try {
