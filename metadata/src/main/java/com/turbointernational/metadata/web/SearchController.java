@@ -49,12 +49,12 @@ public class SearchController {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json; charset=utf-8");
 
-        int pageSize = 100;
+        int pageSize = 25;
         int page = 0;
         int result;
         do {
-            result = elasticSearch.indexParts(page * pageSize, pageSize);
-            log.log(Level.INFO, "Indexing parts {0}-{1}", new Object[]{page * pageSize, (page * pageSize) + pageSize});
+                result = elasticSearch.indexParts(page * pageSize, pageSize);
+                log.log(Level.INFO, "Indexing parts {0}-{1}", new Object[]{page * pageSize, (page * pageSize) + pageSize});
             page++;
             
         } while (result >= pageSize && page < maxPages);
