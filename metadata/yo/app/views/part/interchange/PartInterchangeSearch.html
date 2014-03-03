@@ -8,15 +8,6 @@
   </li>
 
   <li>
-    <a authorize="ROLE_ALTER_PART"
-       data-ng-href="#/part/{{ partType }}/{{ partId }}/form"
-       class="btn btn-primary">
-      <i class="fa fa-cog"></i>
-      Edit Part
-    </a>
-  </li>
-
-  <li>
     <a authorize="ROLE_INTERCHANGE"
        ng-click="clear()"
        ng-disabled="!canClear()"
