@@ -365,8 +365,27 @@ public class Part implements Comparable<Part> {
     
     public String toJson() {
         return buildJSONSerializer()
-            .exclude("*.class")
-            .serialize(this);
+                .exclude("*.class")
+                .serialize(this);
+    }
+    
+    public String toSearchJson() {
+        return new JSONSerializer()
+                .include("partType.id")
+                .include("partType.name")
+                .include("partType.typeName")
+                .exclude("partType.*")
+                .include("manufacturer.id")
+                .include("manufacturer.name")
+                .exclude("manufacturer.*")
+                .exclude("bomParentParts")
+                .exclude("bom")
+                .exclude("interchange")
+                .exclude("turbos")
+                .exclude("productImages")
+                .exclude("*.class")
+                .include("*")
+                .serialize(this);
     }
     
     public static Part fromJsonToPart(String json) {

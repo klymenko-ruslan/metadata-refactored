@@ -54,7 +54,7 @@ public class ElasticSearch {
     public void indexPart(Part part) throws Exception {
 
         IndexRequest index = new IndexRequest(elasticSearchIndex, elasticSearchType, part.getId().toString());
-        index.source(part.toJson());
+        index.source(part.toSearchJson());
         
         Client client = client();
         try {
@@ -73,7 +73,9 @@ public class ElasticSearch {
         
         for (Part part : parts) {
             IndexRequest index = new IndexRequest(elasticSearchIndex, elasticSearchType, part.getId().toString());
-            index.source(part.toJson());
+            
+            
+            index.source(part.toSearchJson());
             bulk.add(index);
         }
         
