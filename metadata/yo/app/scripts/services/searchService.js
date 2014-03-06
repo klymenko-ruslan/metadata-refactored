@@ -43,13 +43,7 @@ angular.module('ngMetaCrudApp')
           // Part Number
           if (partSearchParams.partNumber) {
             searchRequest.query.bool.must.push({
-              query_string: {
-                query: partSearchParams.partNumber,
-                fields: [
-                  "manufacturerPartNumber.text",
-                  "manufacturerPartNumber.autocomplete"
-                ]
-              }
+              prefix: {'manufacturerPartnumber.text': partSearchParams.partNumber}
             });
           }
 

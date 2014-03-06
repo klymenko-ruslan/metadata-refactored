@@ -1,5 +1,4 @@
 package com.turbointernational.metadata.domain.part;
-import com.turbointernational.metadata.domain.part.bom.BOMItem;
 import com.turbointernational.metadata.util.ElasticSearch;
 import java.security.Principal;
 import java.util.List;
@@ -12,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -147,21 +147,21 @@ public class PartController {
         return new ResponseEntity<String>(headers, HttpStatus.OK);
     }
 
+    @Async
     @RequestMapping(value="/{id}/indexTurbos")
     @ResponseBody
     @Secured("ROLE_ADMIN")
-    public ResponseEntity<Void> indexTurbos(@PathVariable("id") Long id) throws Exception {
+    public void indexTurbos(@PathVariable("id") Long id) throws Exception {
         Part part = Part.findPart(id);
         
         part.indexTurbos();
-        
-        return new ResponseEntity<Void>((Void) null, HttpStatus.OK);
     }
     
+    @Async
     @RequestMapping(value="/all/indexTurbos")
     @ResponseBody
     @Secured("ROLE_ADMIN")
-    public ResponseEntity<Void> indexTurbos(@RequestParam(required=false) Integer startPage, @RequestParam(required=false) Integer maxPages) throws Exception {
+    public void indexTurbos(@RequestParam(required=false) Integer startPage, @RequestParam(required=false) Integer maxPages) throws Exception {
         int pageSize = 100;
         int page = ObjectUtils.defaultIfNull(startPage, 0);
         
@@ -185,33 +185,6 @@ public class PartController {
                 page,
                 System.currentTimeMillis() - start});
         } while (parts.size() == pageSize && (maxPages != null && page < maxPages));
-        
-        return new ResponseEntity<Void>((Void) null, HttpStatus.OK);
-    }
-    
-    @RequestMapping(value="/all/indexSearch")
-    @ResponseBody
-    @Secured("ROLE_ADMIN")
-    public ResponseEntity<Void> indexSearch(@RequestParam(required=false) Integer maxPages) throws Exception {
-        
-        if (maxPages == null ) {
-            maxPages = Integer.MAX_VALUE;
-        }
-        
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/json; charset=utf-8");
-
-        int pageSize = 100;
-        int page = 0;
-        int result;
-        do {
-            result = elasticSearch.indexParts(page * pageSize, pageSize);
-            log.log(Level.INFO, "Indexing parts {0}-{1}", new Object[]{page * pageSize, (page * pageSize) + pageSize});
-            page++;
-            
-        } while (result >= pageSize && page < maxPages);
-
-        return new ResponseEntity<Void>((Void) null, headers, HttpStatus.OK);
     }
     
     @RequestMapping(value="/{id}addProductImage", method = RequestMethod.POST)

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,20 +38,25 @@ public class SearchController {
         return new ResponseEntity<String>(response, headers, HttpStatus.OK);
     }
     
+    @Async
     @RequestMapping(value="/search/indexAll")
     @ResponseBody
     @Secured("ROLE_ADMIN")
-    public ResponseEntity<Void> indexAll(@RequestParam(required=false) Integer maxPages) throws Exception {
+    public void indexAll(
+            @RequestParam(required=false) Integer page,
+            @RequestParam(required=false) Integer maxPages,
+            @RequestParam(required=false) Integer pageSize) throws Exception {
         
         if (maxPages == null ) {
             maxPages = Integer.MAX_VALUE;
         }
-        
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/json; charset=utf-8");
+        if (page == null ) {
+            page = 0;
+        }
+        if (pageSize == null ) {
+            pageSize = 250;
+        }
 
-        int pageSize = 25;
-        int page = 0;
         int result;
         do {
                 result = elasticSearch.indexParts(page * pageSize, pageSize);
@@ -58,8 +64,6 @@ public class SearchController {
             page++;
             
         } while (result >= pageSize && page < maxPages);
-
-        return new ResponseEntity<Void>((Void) null, headers, HttpStatus.OK);
     }
     
 }
