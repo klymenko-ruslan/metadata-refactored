@@ -2,7 +2,7 @@
   part:{
     properties:{
       id:{
-        type:"string",
+        type:"long",
         store: "yes"
       },
       name:{
@@ -90,7 +90,7 @@
         analyzer:"keyword"
       },
       "turboModel.id": {
-        type: "string",
+        type: "long",
         store: "yes",
         analyzer: "keyword"
       },
