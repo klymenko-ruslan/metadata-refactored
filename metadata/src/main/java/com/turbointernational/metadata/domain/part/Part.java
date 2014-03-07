@@ -373,6 +373,7 @@ public class Part implements Comparable<Part> {
         return new JSONSerializer()
                 .include("id")
                 .include("name")
+                .include("manufacturerPartNumber")
                 .include("description")
                 .include("partType.id")
                 .include("partType.name")
