@@ -37,6 +37,13 @@ public class Gasket extends Part {
             .include("gasketType.name")
             .include("gasketType.version");
     }
+    
+    @Override
+    protected JSONSerializer getSearchSerializer() {
+        return super.getSearchSerializer()
+                    .include("gasketType.id")
+                    .include("gasketType.name");
+    }
 
     @Override
     public JSOG toJsog() {

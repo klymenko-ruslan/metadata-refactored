@@ -369,8 +369,11 @@ public class Part implements Comparable<Part> {
                 .serialize(this);
     }
     
-    public String toSearchJson() {
+    protected JSONSerializer getSearchSerializer() {
         return new JSONSerializer()
+                .include("id")
+                .include("name")
+                .include("description")
                 .include("partType.id")
                 .include("partType.name")
                 .include("partType.typeName")
@@ -383,9 +386,11 @@ public class Part implements Comparable<Part> {
                 .exclude("interchange")
                 .exclude("turbos")
                 .exclude("productImages")
-                .exclude("*.class")
-                .include("*")
-                .serialize(this);
+                .exclude("*.class");
+    }
+    
+    public String toSearchJson() {
+        return getSearchSerializer().exclude("*").serialize(this);
     }
     
     public static Part fromJsonToPart(String json) {
@@ -483,12 +488,10 @@ public class Part implements Comparable<Part> {
     public static List<Part> findPartEntries(int firstResult, int maxResults) {
         return entityManager()
                 .createQuery(
-                  "SELECT DISTINCT p\n"
+                  "SELECT p\n"
                 + "FROM Part p\n"
                 + "  JOIN FETCH p.partType pt\n"
-                + "  LEFT JOIN FETCH pt.parent ptp\n"
-                + "  JOIN FETCH p.manufacturer m\n"
-                + "ORDER BY p.id ASC", Part.class)
+                + "  JOIN FETCH p.manufacturer m", Part.class)
                 .setFirstResult(firstResult)
                 .setMaxResults(maxResults).getResultList();
     }

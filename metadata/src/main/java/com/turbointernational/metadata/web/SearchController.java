@@ -1,5 +1,6 @@
 package com.turbointernational.metadata.web;
 
+import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.util.ElasticSearch;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -39,6 +41,18 @@ public class SearchController {
     }
     
     @Async
+    @RequestMapping(value="/search/index/{partId}")
+    @ResponseBody
+    @Secured("ROLE_ADMIN")
+    public void indexAll(
+            @PathVariable("partId") Long partId) throws Exception {
+        
+        Part part = Part.findPart(partId);
+        
+        elasticSearch.indexPart(part);
+    }
+    
+    @Async
     @RequestMapping(value="/search/indexAll")
     @ResponseBody
     @Secured("ROLE_ADMIN")
@@ -59,8 +73,8 @@ public class SearchController {
 
         int result;
         do {
-                result = elasticSearch.indexParts(page * pageSize, pageSize);
-                log.log(Level.INFO, "Indexing parts {0}-{1}", new Object[]{page * pageSize, (page * pageSize) + pageSize});
+            result = elasticSearch.indexParts(page * pageSize, pageSize);
+            log.log(Level.INFO, "Indexed parts {0}-{1}: {2}", new Object[]{page * pageSize, (page * pageSize) + pageSize, result});
             page++;
             
         } while (result >= pageSize && page < maxPages);

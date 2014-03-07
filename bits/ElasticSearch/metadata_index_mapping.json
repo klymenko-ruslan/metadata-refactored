@@ -13,14 +13,14 @@
         type:"multi_field",
         store:"yes",
         fields:{
-          text:{
+          full:{
             type:"string",
+            tokenizer:"lowercase",
             analyzer:"keyword"
           },
-          autocomplete:{
+          short: {
             type:"string",
-            index:"analyzed",
-            analyzer:"autocomplete"
+	    analyzer: "part_number_short"
           }
         }
       },
@@ -30,7 +30,6 @@
         analyzer: "keyword"
       },
       "partType.name": {
-        type:"multi_field",
         store:"yes",
         type:"string",
         analyzer:"keyword"
@@ -46,7 +45,6 @@
         analyzer: "keyword"
       },
       "manufacturer.name": {
-        type:"multi_field",
         store:"yes",
         type:"string",
         analyzer:"keyword"
@@ -57,7 +55,6 @@
         analyzer: "keyword"
       },
       "coolType.name": {
-        type:"multi_field",
         store:"yes",
         type:"string",
         analyzer:"keyword"
@@ -68,7 +65,6 @@
         analyzer: "keyword"
       },
       "gasketType.name": {
-        type:"multi_field",
         store:"yes",
         type:"string",
         analyzer:"keyword"
@@ -79,7 +75,6 @@
         analyzer: "keyword"
       },
       "kitType.name": {
-        type:"multi_field",
         store:"yes",
         type:"string",
         analyzer:"keyword"
@@ -90,7 +85,6 @@
         analyzer: "keyword"
       },
       "sealType.name": {
-        type:"multi_field",
         store:"yes",
         type:"string",
         analyzer:"keyword"
@@ -101,7 +95,6 @@
         analyzer: "keyword"
       },
       "turboModel.name": {
-        type:"multi_field",
         store:"yes",
         type:"string",
         analyzer:"keyword"
@@ -112,7 +105,6 @@
         analyzer: "keyword"
       },
       "turboModel.turboType.name": {
-        type:"multi_field",
         store:"yes",
         type:"string",
         analyzer:"keyword"

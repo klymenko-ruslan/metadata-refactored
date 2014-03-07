@@ -35,6 +35,13 @@ public class Kit extends Part {
             .include("kitType.name")
             .include("kitType.version");
     }
+    
+    @Override
+    protected JSONSerializer getSearchSerializer() {
+        return super.getSearchSerializer()
+                    .include("kitType.id")
+                    .include("kitType.name");
+    }
 
     @Override
     public JSOG toJsog() {

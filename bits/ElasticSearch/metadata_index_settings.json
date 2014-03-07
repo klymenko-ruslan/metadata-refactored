@@ -1,20 +1,36 @@
 {
-  "settings":{
-    "analysis":{
-      "analyzer":{
-        "autocomplete":{
-          "type":"custom",
-          "tokenizer":"keyword",
-          "filter":["lowercase", "autocomplete"]
+  "settings": {
+    "analysis": {
+      "char_filter": {
+        "nonword": {
+          "type": "pattern_replace",
+          "pattern": "\\W+",
+          "replacement": ""
         }
       },
-    filter: {
-      autocomplete: {
-        type:"edgeNGram",
-        min_gram: 2,
-        max_gram: 20
+      "analyzer": {
+        "part_number_short": {
+          "type": "custom",
+          "tokenizer": "keyword",
+          "filter": ["lowercase"],
+          "char_filter": ["nonword"]
+        },
+        "autocomplete": {
+          "type": "custom",
+          "tokenizer": "keyword",
+          "filter": [
+            "lowercase",
+            "autocomplete"
+          ]
+        }
+      },
+      "filter": {
+        "autocomplete": {
+          "type": "edgeNGram",
+          "min_gram": 2,
+          "max_gram": 20
+        }
       }
-    }
     }
   }
 }

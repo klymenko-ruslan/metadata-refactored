@@ -117,6 +117,15 @@ public class BearingHousing extends Part {
     }
 
     @Override
+    protected JSONSerializer getSearchSerializer() {
+        return super.getSearchSerializer()
+                    .include("coolType.id")
+                    .include("coolType.name");
+    }
+    
+    
+
+    @Override
     public JSOG toJsog() {
         JSOG partObject = super.toJsog();
         

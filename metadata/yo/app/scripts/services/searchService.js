@@ -12,7 +12,8 @@ angular.module('ngMetaCrudApp')
             facets: {},
             query: {
               bool: {
-                must: []
+                must: [],
+                should: []
               }
             },
             sort: []
@@ -42,13 +43,19 @@ angular.module('ngMetaCrudApp')
 
           // Part Number
           if (partSearchParams.partNumber) {
-            searchRequest.query.bool.must.push({
-              prefix: {'manufacturerPartNumber': partSearchParams.partNumber}
-            });
+              var partNumber = partSearchParams.partNumber.toLowerCase();
+              var partNumberShort = partNumber.replace(/\W+/g, '');
+              searchRequest.query.bool.must.push({
+                prefix: {"manufacturerPartNumber.short": partNumberShort}
+              });
+              
+//              searchRequest.query.bool.should.push({
+//                prefix: {"manufacturerPartNumber.full": partNumber.toLowerCase()}
+//              });
           }
 
           // Default query
-          if (searchRequest.query.bool.must.length == 0) {
+          if (searchRequest.query.bool.must.length == 0 && searchRequest.query.bool.should.length == 0) {
               searchRequest.query = {match_all: {}};
           }
 

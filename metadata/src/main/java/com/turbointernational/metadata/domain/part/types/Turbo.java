@@ -78,6 +78,17 @@ public class Turbo extends Part {
             .include("turboModel.turboType.manufacturer.id")
             .include("turboModel.turboType.manufacturer.name");
     }
+    
+    @Override
+    protected JSONSerializer getSearchSerializer() {
+        return super.getSearchSerializer()
+                    .include("coolType.id")
+                    .include("coolType.name")
+                    .include("turboModel.id")
+                    .include("turboModel.name")
+                    .include("turboModel.turboType.id")
+                    .include("turboModel.turboType.name");
+    }
 
     @Override
     public JSOG toJsog() {

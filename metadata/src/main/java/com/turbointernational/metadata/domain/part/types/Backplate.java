@@ -1,6 +1,7 @@
 package com.turbointernational.metadata.domain.part.types;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.type.SealType;
+import flexjson.JSONSerializer;
 import java.util.Map;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -147,6 +148,13 @@ public class Backplate extends Part {
         partObject.put("style_compressor_wheel", getStyleCompressorWheel());
         
         return partObject;
+    }
+
+    @Override
+    protected JSONSerializer getSearchSerializer() {
+        return super.getSearchSerializer()
+                    .include("sealType.id")
+                    .include("sealType.name");
     }
     
     @Override
