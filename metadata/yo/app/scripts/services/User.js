@@ -15,7 +15,7 @@ angular.module('ngMetaCrudApp')
               User.roles = roles;
             },
             function() {
-              alert("Could not fetch your account info.");
+//              alert("Could not fetch your account info.");
             });
 
         var userPromise = Restangular.one('security/user/me').get().then(
@@ -23,7 +23,7 @@ angular.module('ngMetaCrudApp')
               User.user = user;
             },
             function() {
-              alert("Could not fetch your account info.");
+//              alert("Could not fetch your account info.");
             });
 
         return $q.all([rolesPromise, userPromise]);
