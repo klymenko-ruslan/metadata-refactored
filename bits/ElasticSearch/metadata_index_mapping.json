@@ -20,7 +20,7 @@
           },
           short: {
             type:"string",
-	    analyzer: "part_number_short"
+            analyzer: "part_number_short"
           }
         }
       },
