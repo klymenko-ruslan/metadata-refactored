@@ -23,7 +23,7 @@ angular.module('ngMetaCrudApp')
                 '<div>' +
                 '  <div ng-repeat="facet in Facets" ng-show="results.facets[facet.name].terms">' +
                 '    <h2>{{facet.name}}</h2>' +
-                '    <select ng-model="search.facets[facet.name]" ng-options="t.term as t.term + \' (\' + t.count + \')\' for t in results.facets[facet.name].terms">' +
+                '    <select ng-model="search.facets[facet.name]" ng-options="t.term as t.term + \' (\' + t.count + \')\' for t in results.facets[facet.name].terms | orderBy: \'term\'">' +
                 '      <option value=""></option>' +
                 '    </select>' +
                 '  </div>' +
