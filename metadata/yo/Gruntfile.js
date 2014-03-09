@@ -127,7 +127,7 @@ module.exports = function (grunt) {
     },
     open: {
       server: {
-        url: 'http://localhost:<%= connect.options.port %>/spring_security_login'
+        url: 'http://localhost:<%= connect.options.port %>'
       }
     },
     clean: {
