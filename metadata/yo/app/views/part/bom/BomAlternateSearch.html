@@ -6,116 +6,60 @@
       View Part
     </a>
   </li>
+
   <li>
     <a ng-click="save()"
        ng-disabled="pickedPart == null"
        class="btn btn-success">
       <i class="fa fa-save"></i>
-      Add BOM Alternate
+      Add Alternate
     </a>
   </li>
 </metanav>
 
+<h1 class="padding-top" part-name="part"></h1>
+
 <div class="row">
-    <div class="col-xs-12">
-        <!-- Part Summary -->
-        <h1 class="padding-top">Add BOM Alternate {{ partType }} #{{ partId }}</h1>
-        <dl class="dl-horizontal">
-            <dt>Name</dt>
-            <dd>
-                {{part.name}}
-                <span ng-show="part.name == null || part.name == ''">[blank]</span>
-            </dd>
 
-            <dt>Description</dt>
-            <dd>
-                {{part.description}}
-                <span ng-show="part.description == null || part.description == ''">[blank]</span>
-            </dd>
+  <!-- Bill of Materials -->
+  <div class="col-xs-6">
+    <h3>Part BOM</h3>
+    <part-table parts="part.bom" key="child"></part-table>
+  </div>
 
-            <dt>Manufacturer</dt>
-            <dd>
-                {{part.manufacturer.name}}
-                <span ng-show="part.manufacturer.name == null || part.manufacturer.name == ''">[blank]</span>
-            </dd>
+  <!-- BOM Item -->
+  <div class="col-xs-6">
+    <h3>BOM Item</h3>
+    <part-summary part="bomItem.child"></part-summary>
+  </div>
 
-            <dt>Manufacturer Part Number</dt>
-            <dd>
-                {{part.manufacturerPartNumber}}
-                <span ng-show="part.manufacturerPartNumber == null || part.manufacturerPartNumber == ''">[blank]</span>
-            </dd>
-
-            <!-- Interchanges -->
-            <dt>Interchangeable Part Group
-                <span ng-hide="part.interchange.id == null">#{{part.interchange.id}}</span>
-                <span ng-show="part.interchange.id == null">[none]</span>
-            </dt>
-            <dd ng-hide="part.interchange == null">
-                <dl>
-                    <dd ng-hide="part.interchange == null">
-                        Name:
-                        <span ng-hide="part.interchange.name == null || part.interchange.name == ''">{{part.interchange.name}}</span>
-                        <span ng-show="part.interchange.name == null || part.interchange.name == ''">[blank]</span>
-                    </dd>
-                    <dd ng-hide="part.interchange == null">
-                        Description:
-                        <span ng-hide="part.interchange.description == null || part.interchange.description == ''">{{part.interchange.description}}</span>
-                        <span ng-show="part.interchange.description == null || part.interchange.description == ''">[blank]</span>
-                    </dd>
-                </dl>
-            </dd>
-        </dl>
+  <!-- Picked Alternate -->
+  <div class="col-xs-6">
+    <h3>Picked Alternate</h3>
+    <part-summary part="pickedPart" ng-show="pickedPart"></part-summary>
+    <div ng-hide="pickedPart" class="well well-sm">
+      Pick an alternate part to add.
     </div>
+  </div>
 </div>
-<div class="row">
-    <div class="col-xs-12">
-        <h2 ng-show="pickedPart == null">No Part Picked</h2>
 
-        <div ng-show="pickedPart != null">
-            <h2 ng-show="pickedPart != null">
-                Picked {{ pickedPart.partType.typeName }} #{{ pickedPart.id }}
-                <a ng-click="showPickedPart = !showPickedPart" ng-show="showPickedPart == false" class="btn">Show</a>
-                <a ng-click="showPickedPart = !showPickedPart" ng-show="showPickedPart == true" class="btn">Hide</a>
-            </h2>
-            <dl class="list-bottom-border dl-horizontal">
-                <dt>Quantity</dt>
-                <dd><input ng-model="bomItem.quantity" type="text" class="input-small"/></dd>
-            </dl>
-            <dl class="list-bottom-border dl-horizontal" collapse="!showPickedPart">
-                <dt>Name</dt>
-                <dd>
-                    {{pickedPart.name}}
-                    <span ng-show="pickedPart.name == null || pickedPart.name == ''">[blank]</span>
-                </dd>
+<hr/>
 
-                <dt>Description</dt>
-                <dd>
-                    {{pickedPart.description}}
-                    <span ng-show="pickedPart.description == null || pickedPart.description == ''">[blank]</span>
-                </dd>
-
-                <dt>Manufacturer</dt>
-                <dd>
-                    {{pickedPart.manufacturer.name}}
-                    <span ng-show="pickedPart.manufacturer.name == null || pickedPart.manufacturer.name == ''">[blank]</span>
-                </dd>
-
-                <dt>Manufacturer Part Number</dt>
-                <dd>
-                    {{pickedPart.manufacturerPartNumber}}
-                    <span ng-show="pickedPart.manufacturerPartNumber == null || pickedPart.manufacturerPartNumber == ''">[blank]</span>
-                </dd>
-            </dl>
-        </div>
-        <p>Find and pick an part below to add a new item to the bill of materials for this part.</p>
-    </div>
-</div>
+<h1>Pick a New BOM Alternate</h1>
 <part-search>
 
-  <a authorize="ROLE_BOM"
-     ng-click="pickBomItemPart(partId)"
+  <a authorize="ROLE_READ"
+     ng-href="#/part/{{partType}}/{{partId}}"
      class="btn btn-primary btn-xs">
-    Pick BOM Item
+    <i class="fa fa-eye"></i>
+    View
+  </a>
+
+  <a authorize="ROLE_BOM"
+     ng-click="pickPart(partId)"
+     class="btn btn-primary btn-xs">
+    <i class="fa fa-bullseye"></i>
+    Pick
   </a>
 
 </part-search>

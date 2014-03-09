@@ -37,6 +37,10 @@ angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap', 'restangu
             templateUrl: 'views/part/bom/PartBomSearch.html',
             controller: 'PartBomSearchCtrl'
         });
+        $routeProvider.when('/part/:type/:id/bom/:bomId/search', {
+          templateUrl: 'views/part/bom/BomAlternateSearch.html',
+          controller: 'BomAlternateSearchCtrl'
+        });
 
 
         // Users and groups
