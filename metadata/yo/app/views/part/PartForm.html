@@ -1,13 +1,13 @@
 <form name="partForm">
 
-  <metanav>
+<metanav>
     <li>
-      <a authorize="ROLE_READ"
-         ng-href="#/part/{{ part.partType.typeName }}/{{ partId }}"
-         class="btn btn-primary" data-ng-hide="oldPart == null">
-        <i class="fa fa-eye"></i>
-        View Part
-      </a>
+        <a authorize="ROLE_READ"
+           ng-href="#/part/{{ part.partType.typeName }}/{{ partId }}"
+           class="btn btn-primary" data-ng-hide="oldPart == null">
+            <i class="fa fa-eye"></i>
+            View Part
+        </a>
     </li>
 
     <li>
@@ -20,15 +20,15 @@
     </li>
 
     <li>
-      <a ng-click="revert()"
-         ng-disabled="partForm.$pristine"
-         class="btn btn-warning"
-         data-ng-hide="oldPart == null">
-        <i class="fa fa-undo"></i>
-        Revert
-      </a>
+        <a ng-click="revert()"
+           ng-disabled="partForm.$pristine"
+           class="btn btn-warning"
+           data-ng-hide="oldPart == null">
+            <i class="fa fa-undo"></i>
+            Revert
+        </a>
     </li>
-  </metanav>
+</metanav>
 
 <div class="row">
 <div class="col-xs-12 col-sm-6">
@@ -42,10 +42,10 @@
 </div>
 
 <h2>
-  <span ng-hide="partId">Create </span>
-  <span ng-show="partId">Edit </span>
-  {{ part.partType.name }}
-  <span ng-show="partId">#{{ partId }} </span>
+    <span ng-hide="partId">Create </span>
+    <span ng-show="partId">Edit </span>
+    {{ part.partType.name }}
+    <span ng-show="partId">#{{ partId }} </span>
 </h2>
 
 <label>Name</label>
@@ -263,7 +263,6 @@
         <h3>Turbo Model</h3>
 
         <div ng-include="'/views/part/form/TurboModel.html'"></div>
-    </div>
     </div>
 </div>
 

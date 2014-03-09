@@ -1,0 +1,31 @@
+<div class="row">
+    <div class="col-xs-12">
+        <ul class="list-inline" ng-transclude style="display: inline-block;">
+            <!-- Transcluded li -->
+        </ul>
+        <ul class="list-inline" style="margin-left: 5px;display: inline-block;">
+            <li><a authorize="ROLE_READ" ng-href="#/" class="btn btn-default"><i class="fa fa-home"></i> Part List</a></li>
+
+            <li class="btn-group">
+                <button type="button" authorize="ROLE_ADMIN" class="btn btn-warning dropdown-toggle" data-toggle="dropdown"><i class="fa fa-th"></i> Indexing and Cache <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                    <li><a ng-href="#" ng-click="reindexTurbos()"><i class="fa fa-refresh"></i> Reindex Turbos</a></li>
+                    <li><a ng-href="#" ng-click="reindexSearch()"><i class="fa fa-refresh"></i> Reindex Search</a></li>
+                    <li class="divider"></li>
+                    <li><a ng-href="#"  ng-click="clearHibernate()"><i class="fa fa-trash-o"></i> Clear Hibernate Cache</a></li>
+                </ul>
+            </li>
+
+            <li class="btn-group">
+                <button type="button" authorize="ROLE_ADMIN" class="btn btn-info dropdown-toggle" data-toggle="dropdown"><i class="fa fa-lock"></i> Security <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                    <li><a ng-href="#/security/users/"><i class="fa fa-user"></i> Users</a></li>
+                    <li><a ng-href="#/security/groups/"><i class="fa fa-group"></i> Groups</a></li>
+                </ul>
+            </li>
+            <li><a ng-href="#/security/me" class="btn btn-primary"><i class="fa fa-smile-o"></i> My Account</a></li>
+        </ul>
+    </div>
+</div>
