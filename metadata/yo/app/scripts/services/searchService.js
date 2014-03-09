@@ -26,7 +26,6 @@ angular.module('ngMetaCrudApp')
             searchRequest.facets[facet.name] = {
               terms: {
                 field: facet.field,
-                order: 'term',
                 size: 100
               }
             }
