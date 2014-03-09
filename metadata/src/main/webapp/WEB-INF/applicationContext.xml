@@ -103,9 +103,6 @@
     <task:annotation-driven executor="asyncExecutor" mode="aspectj"/>
     <task:executor id="asyncExecutor" pool-size="10"/>
     
-    <bean id="tiAccessDeniedHandler"
-          class="com.turbointernational.metadata.security.TIAccessDeniedHandler"/>
-    
     <security:http auto-config="false" realm="TI Metadata Login">
         <security:intercept-url pattern="/metadata/**" access="ROLE_READ"/>
         <security:remember-me/>
