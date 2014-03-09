@@ -12,16 +12,8 @@ angular.module('ngMetaCrudApp')
             },
             controller: function ($log, $q, $scope, searchService, ngTableParams) {
 
-              // Query Parameters
-              $scope.search = {
-                partNumber: "",
-                facets: {},
-                sort: {}
-              };
-
               // Latest Results
               $scope.searchResults = null;
-
 
               // Part Table
               $scope.partTableParams = new ngTableParams({
@@ -50,6 +42,22 @@ angular.module('ngMetaCrudApp')
                       });
                 }
               });
+
+
+              // Query Parameters
+              $scope.search = {
+                partNumber: "",
+                facets: {},
+                sort: {}
+              };
+
+              $scope.clear = function() {
+                $scope.search = {
+                  partNumber: "",
+                  facets: {},
+                  sort: {}
+                }
+              }
 
               // Handle updating search results
               $scope.$watch('[search.partNumber, search.facets]', function (newVal, oldVal) {

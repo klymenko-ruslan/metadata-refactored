@@ -3,11 +3,14 @@
     <!-- Search by input or facet select options -->
     <div class="col-xs-12 col-sm-3">
         <form class="" role="form" id="facet-pickers">
-            <div class="form-group">
-                <label for="search" class="sr-only control-label">Part Number</label>
-                <input class="form-control" id="search" type="text" ng-model="search.partNumber" placeholder="Part number..."/>
-            </div>
-            <search-facets search="search" results="searchResults"></search-facets>
+          <button class="btn btn-default" ng-click="clear()">Clear</button>
+
+          <div class="form-group">
+            <label for="partNumber" class="sr-only control-label">Part Number</label>
+            <input class="form-control" id="partNumber" type="text" ng-model="search.partNumber" placeholder="Part number..."/>
+          </div>
+
+          <search-facets search="search" results="searchResults"></search-facets>
         </form>
     </div>
 
