@@ -18,11 +18,7 @@
     </li>
 </metanav>
 
-<div class="row">
-  <div class="col-xs-6 col-md-3">
-    <h1>{{ partType }} #{{ partId }}</h1>
-  </div>
-</div>
+<h1 class="padding-top">[{{part.id}}] {{part.manufacturer.name}} {{part.partType.name}} <span style="white-space: nowrap;">{{part.manufacturerPartNumber}}</span></h1>
 
 <div class="row">
 <div class="col-xs-12 col-md-6">
@@ -230,15 +226,39 @@
 </div>
 <!-- Interchanges -->
 <div class="col-xs-12 col-md-6">
-    <h3>Interchangeable Parts</h3>
-    <table data-ng-table="interchangeTableParams" class="table table-bordered table-striped table-hover table-responsive">
-        <tr data-ng-repeat="interchangePart in $data" class="clickable"
-            data-ng-click="rowClick(interchangePart.partType.typeName, interchangePart.id)">
-            <td title="'Manufacturer'">{{interchangePart.manufacturer.name}}</td>
-            <td title="'Manufacturer Part Number'">{{interchangePart.manufacturerPartNumber}}</td>
-            <td title="'Name'">{{interchangePart.name}}</td>
-        </tr>
-    </table>
+  <h3>Interchangeable Parts</h3>
+  <table class="table table-bordered table-striped table-hover table-responsive" ng-show="part.interchange.parts">
+    <thead>
+    <tr>
+      <th>Manufacturer</th>
+      <th>Type</th>
+      <th>Part #</th>
+      <th>Actions</th>
+    </tr>
+    </thead>
+    <tr ng-repeat="iPart in part.interchange.parts">
+      <td>
+        {{iPart.manufacturer.name}}
+      </td>
+      <td>
+        {{iPart.partType.name}}
+      </td>
+      <td style="white-space: nowrap;">
+        {{iPart.manufacturerPartNumber}}
+      </td>
+      <td>
+        <a authorize="ROLE_READ"
+           ng-href="#/part/{{iPart.partType.typeName}}/{{iPart.id}}"
+           class="btn btn-primary btn-xs">
+          <i class="fa fa-eye"></i>
+          View
+        </a>
+      </td>
+    </tr>
+  </table>
+  <div ng-hide="part.interchange.parts">
+    No interchangeable parts.
+  </div>
 </div>
 </div>
 

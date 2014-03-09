@@ -44,8 +44,7 @@ public class SearchController {
     @RequestMapping(value="/search/index/{partId}")
     @ResponseBody
     @Secured("ROLE_ADMIN")
-    public void indexAll(
-            @PathVariable("partId") Long partId) throws Exception {
+    public void indexAll(@PathVariable("partId") Long partId) throws Exception {
         
         Part part = Part.findPart(partId);
         
@@ -73,6 +72,10 @@ public class SearchController {
 
         int result;
         do {
+            
+            // Clear Hibernate
+            Part.entityManager().clear();
+            
             result = elasticSearch.indexParts(page * pageSize, pageSize);
             log.log(Level.INFO, "Indexed parts {0}-{1}: {2}", new Object[]{page * pageSize, (page * pageSize) + pageSize, result});
             page++;

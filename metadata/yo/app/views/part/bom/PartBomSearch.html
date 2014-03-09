@@ -17,13 +17,13 @@
   </li>
 </metanav>
 
-<h1 class="padding-top">{{part.manufacturer.name}} {{part.partType.name}} {{part.manufacturerPartNumber}}</h1>
+<h1 class="padding-top">[{{part.id}}] {{part.manufacturer.name}} {{part.partType.name}} <span style="white-space: nowrap;">{{part.manufacturerPartNumber}}</span></h1>
 
 <div class="row">
 
-  <!-- Add BOM Item -->
+  <!-- Picked BOM Item -->
   <div class="col-xs-6">
-    <h2>Add BOM Item</h2>
+    <h2>Picked BOM Item</h2>
     <dl class="dl-horizontal" ng-show="bomItem.child">
       <dt>Manufacturer</dt>
       <dd>
@@ -100,13 +100,21 @@
 
 <hr/>
 
-<h1>Pick a New BOM Part</h1>
+<h1>Pick a New BOM Item</h1>
 <part-search>
+
+  <a authorize="ROLE_READ"
+     ng-href="#/part/{{partType}}/{{partId}}"
+     class="btn btn-primary btn-xs">
+    <i class="fa fa-eye"></i>
+    View
+  </a>
 
   <a authorize="ROLE_BOM"
      ng-click="pickBomItemPart(partId)"
-     class="btn btn-primary btn-xs">
-    Pick BOM Part
+     class="btn btn-success btn-xs">
+    <i class="fa fa-bullseye"></i>
+    Pick
   </a>
 
 </part-search>

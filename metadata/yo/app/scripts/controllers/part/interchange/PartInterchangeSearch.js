@@ -2,73 +2,122 @@
 
 angular.module('ngMetaCrudApp')
     .controller('PartInterchangeSearchCtrl', function ($log, $scope, $location, $routeParams, restService, Restangular, gToast, $dialogs) {
-        $scope.partId = $routeParams.id;
-        $scope.partType = $routeParams.type;
+      $scope.partId = $routeParams.id;
+      $scope.partType = $routeParams.type;
 
-        // The part whose interchange we're editing
-        $scope.promise = restService.findPart($scope.partId).then(function (part) {
-            $scope.part = part;
-        });
+      // The part whose interchange we're editing
+      $scope.promise = restService.findPart($scope.partId).then(function (part) {
+        $scope.part = part;
+      });
 
-        $scope.pick = function (pickedPartId) {
-          $log.log("Picked part", pickedPartId);
+      $scope.pick = function (pickedPartId) {
+        $log.log("Picked part", pickedPartId);
 
-          // Lookup the picked part
-          $scope.iPartPromise = restService.findPart(pickedPartId).then(
-              function (pickedPart) {
-                $log.log("Loaded picked part", pickedPart);
-                if (pickedPart.interchange && pickedPart.interchange.id) {
+        // Lookup the picked part
+        $scope.pickedPartPromise = restService.findPart(pickedPartId).then(
+            function (pickedPart) {
+              $log.log("Loaded picked part", pickedPart);
+              $scope.pickedPart = pickedPart;
+            },
+            function(response) {
+              $dialogs.error("Could not load part details.", "Server said: <pre>" + JSON.stringify(response.data) + "</pre>");
+            });
+      }
 
-                  // Update
+      $scope.save = function() {
+
+        if ($scope.part.interchange) {
+
+          // Update
+          if ($scope.pickedPart.interchange && $scope.pickedPart.interchange.parts) {
+
+            // Join the other part's interchange group
+            $dialogs.confirm(
+                    "Change interchangeable part group?",
+                    "The part will no longer be interchangeable with it's current interchange parts.")
+                .result.then(function() {
                   Restangular.setParentless(false);
-                  var promise = Restangular.one('interchange', pickedPart.interchange.id).one('part', $scope.partId).put();
-
-                } else {
-
-                  var interchange = {
-                    parts: [
-                      {
-                        id: $scope.partId
+                  Restangular.one('interchange', $scope.pickedPart.interchange.id).one('part', $scope.partId).put().then(
+                      function() {
+                        gToast.open("Interchangeable part group changed.");
+                        $location.path("/part/" + $scope.partType + "/" + $scope.partId);
                       },
-                      {
-                        id: pickedPartId
-                      }
-                    ]
-                  };
-
-                  // Create
-                  var promise = Restangular.all('interchange').post(interchange);
-                }
-
-                promise.then(
-                    function() {
-                      gToast.open("Interchangeable part added.");
-                      $location.path("/part/" + $scope.partType + "/" + $scope.partId);
-                    },
-                    function(response) {
-                      $dialogs.error("Could not add interchangeable part.", "Server said: <pre>" + JSON.stringify(response.data) + "</pre>");
-                    }
-                )
-              },
-              function(response) {
-                $dialogs.error("Could not load part details.", "Server said: <pre>" + JSON.stringify(response.data) + "</pre>");
+                      function(response) {
+                        $dialogs.error("Could not change interchangeable part group.", "Server said: <pre>" + JSON.stringify(response.data) + "</pre>");
+                      });
               });
-        }
+          } else {
 
-        $scope.canClear = function () {
-            return $scope.part && $scope.part.interchange;
-        }
+            // Add part to this interchange group
+            Restangular.setParentless(false);
+            Restangular.one('interchange', $scope.part.interchange.id).one('part', $scope.pickedPart.id).put().then(
+                function() {
+                  gToast.open("Picked part added to interchangeable part group..");
+                  $location.path("/part/" + $scope.partType + "/" + $scope.partId);
+                },
+                function(response) {
+                  $dialogs.error("Could not add part to interchangeable part group.", "Server said: <pre>" + JSON.stringify(response.data) + "</pre>");
+                });
+          }
+        } else {
 
-        $scope.clear = function () {
-          Restangular.setParentless(false);
-          Restangular.one('interchange', $scope.part.interchangeId).one('part', $scope.partId).remove().then(
-              function () {
-                // Success
-                gToast.open("Part removed from interchange.");
+          // Create
+          var interchange = {
+            parts: [
+              {id: $scope.part.id},
+              {id: $scope.pickedPart.id}
+            ]
+          };
+
+          Restangular.all('interchange').post(interchange).then(
+              function() {
+                gToast.open("Interchangeable part group changed added.");
                 $location.path("/part/" + $scope.partType + "/" + $scope.partId);
               },
-              function (response) {
-                $dialogs.error("Could not remove part from interchange", "Server said: <pre>" + JSON.stringify(response.data) + "</pre>");
-              });
+              function(response) {
+                $dialogs.error("Could not add interchangeable part.", "Server said: <pre>" + JSON.stringify(response.data) + "</pre>");
+              });;
         }
+      }
+
+      $scope.canSave = function() {
+
+        // No Picked Part
+        if ($scope.pickedPart == null) {
+          return false;
+        }
+
+        if ($scope.part.id === $scope.pickedPart.id) {
+          return false;
+        }
+
+        // Same interchange
+        if ($scope.part.interchange && $scope.pickedPart.interchange
+            && $scope.part.interchange.id === $scope.pickedPart.interchange.id) {
+          return false;
+        }
+
+        return true;
+      }
+
+      $scope.canClear = function () {
+        return $scope.part && $scope.part.interchange;
+      }
+
+      $scope.clear = function () {
+        $dialogs.confirm("Remove from interchangeable part group?", "Other parts in the group will not be modified.").result
+            .then(
+                function() {
+                  Restangular.setParentless(false);
+                  Restangular.one('interchange', $scope.part.interchangeId).one('part', $scope.partId).remove().then(
+                      function () {
+                        // Success
+                        gToast.open("Part removed from interchange.");
+                        $location.path("/part/" + $scope.partType + "/" + $scope.partId);
+                      },
+                      function (response) {
+                        $dialogs.error("Could not remove part from interchange", "Server said: <pre>" + JSON.stringify(response.data) + "</pre>");
+                      });
+                });
+      }
     });

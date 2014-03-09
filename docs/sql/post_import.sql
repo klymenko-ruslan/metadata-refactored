@@ -241,7 +241,7 @@ CREATE VIEW vbalt AS
     JOIN part p ON p.id = bai.part_id
     JOIN manfr m ON m.id = p.manfr_id;
 
-    
+
 DROP VIEW IF EXISTS vint;
 CREATE VIEW vint AS
   SELECT DISTINCT
@@ -260,10 +260,10 @@ CREATE VIEW vint AS
     JOIN manfr pm ON pm.id = p.manfr_id
 
     JOIN interchange_item ii1 ON ii1.part_id = p.id
-    JOIN interchange_item ii2 ON ii2.interchange_header_id = ii1.interchange_header_id
+    LEFT JOIN interchange_item ii2 ON ii2.interchange_header_id = ii1.interchange_header_id
 
-    JOIN part ip ON ip.id = ii2.part_id
-    JOIN manfr ipm ON ipm.id = ip.manfr_id
+    LEFT JOIN part ip ON ip.id = ii2.part_id
+    LEFT JOIN manfr ipm ON ipm.id = ip.manfr_id
   WHERE p.id != ii2.part_id;
 
     
@@ -295,3 +295,5 @@ CREATE VIEW vtapp AS
     LEFT JOIN car_model cmodel ON cmodel.id = cmey.car_model_id
     LEFT JOIN car_make cmake ON cmake.id = cmodel.car_make_id
     LEFT JOIN car_year cyear ON cyear.id = cmey.car_year_id;
+
+
