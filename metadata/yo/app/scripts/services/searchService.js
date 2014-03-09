@@ -76,7 +76,7 @@ angular.module('ngMetaCrudApp')
           headers: {
             "Content-type": "text/plain"
           },
-          url: "/search",
+          url: "/metadata/search",
           data: searchRequest
         });
       };

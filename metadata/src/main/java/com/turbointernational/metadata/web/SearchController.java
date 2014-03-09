@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * @author jrodriguez
  */
 @Controller
+@RequestMapping("/metadata/search")
 public class SearchController {
     private static final Logger log = Logger.getLogger(SearchController.class.toString());
     
@@ -29,7 +30,7 @@ public class SearchController {
     @Autowired(required=true)
     ElasticSearch elasticSearch;
     
-    @RequestMapping("/search")
+    @RequestMapping()
     @ResponseBody
     @Secured("ROLE_READ")
     public ResponseEntity<String> search(@RequestBody String request) throws Exception {
@@ -41,7 +42,7 @@ public class SearchController {
     }
     
     @Async
-    @RequestMapping(value="/search/index/{partId}")
+    @RequestMapping(value="/index/{partId}")
     @ResponseBody
     @Secured("ROLE_ADMIN")
     public void indexAll(@PathVariable("partId") Long partId) throws Exception {
@@ -52,7 +53,7 @@ public class SearchController {
     }
     
     @Async
-    @RequestMapping(value="/search/indexAll")
+    @RequestMapping(value="/indexAll")
     @ResponseBody
     @Secured("ROLE_ADMIN")
     public void indexAll(

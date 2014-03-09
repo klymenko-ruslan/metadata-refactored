@@ -103,10 +103,16 @@
     <task:annotation-driven executor="asyncExecutor" mode="aspectj"/>
     <task:executor id="asyncExecutor" pool-size="10"/>
     
-    <security:http auto-config="true">
-        <security:intercept-url pattern="/**" access="ROLE_READ"/>
-        <security:http-basic />
-        <security:logout/>
+    <bean id="tiAccessDeniedHandler"
+          class="com.turbointernational.metadata.security.TIAccessDeniedHandler"/>
+    
+    <security:http auto-config="false" realm="TI Metadata Login">
+        <security:intercept-url pattern="/metadata/**" access="ROLE_READ"/>
+        <security:remember-me/>
+        
+        <security:form-login always-use-default-target="true" default-target-url="/#/part/list"/>
+        
+        <security:logout logout-success-url="/#/"/>
     </security:http>
     
     <security:authentication-manager>

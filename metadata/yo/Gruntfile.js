@@ -94,9 +94,9 @@ module.exports = function (grunt) {
           middleware: function (connect) {
             return [
               modRewrite([
-                '^/(metadata/.*)$   http://metadata.turbointernational.com:8080/$1 [PL]', // Metadata Tomcat
-                '^/search$          http://metadata.turbointernational.com:9200/metadata/_search [PL]', // ElasticSearch
-                '^/(\\w|/)+$        /index.html             [L]'
+                '^/(metadata/.*)$             http://localhost:8080/$1 [PL]',
+                '^/(.*?spring_security.*?)$   http://localhost:8080/$1 [PL]',
+                '^/(\\w|/)+$                  /index.html             [L]'
               ]),
               lrSnippet,
               mountFolder(connect, '.tmp'),
@@ -127,7 +127,7 @@ module.exports = function (grunt) {
     },
     open: {
       server: {
-        url: 'http://localhost:<%= connect.options.port %>'
+        url: 'http://localhost:<%= connect.options.port %>/spring_security_login'
       }
     },
     clean: {

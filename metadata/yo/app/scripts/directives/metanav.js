@@ -1,12 +1,14 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-    .directive('metanav', function () {
+    .directive('metanav', function (User, Restangular) {
       return {
         transclude: true,
         templateUrl: '/views/component/Metanav.html',
         restrict: 'E',
         controller: function($scope) {
+          $scope.User = User;
+
           $scope.reindexTurbos = function() {
             $dialogs.confirm(
                     "Reindex all part turbos?",
@@ -36,7 +38,7 @@ angular.module('ngMetaCrudApp')
                     "You need to run this if changes have been made directly to the database. Proceed?").result.then(
                 function() {
                   // Yes
-                  Restangular.all('part/all/indexSearch').post().then(
+                  Restangular.all('search/indexAll').post().then(
                       function() {
                         // Success
                         gToast.open("Indexing started, check the server log for progress.");

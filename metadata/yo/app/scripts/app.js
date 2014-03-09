@@ -13,7 +13,7 @@ angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap', 'restangu
 //        $locationProvider.html5Mode(true);
 
         // Parts
-        $routeProvider.when('/', {
+        $routeProvider.when('/part/list', {
             templateUrl: 'views/part/PartList.html',
             controller: 'PartListCtrl'
         });
@@ -66,14 +66,24 @@ angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap', 'restangu
 
 
         // Default
+      $routeProvider.when('/', {
+        templateUrl: '/spring_security_login' // From Spring Security in the Java app
+      });
         $routeProvider.otherwise({
             redirectTo: '/'
         });
     })
-    .run(function($rootScope, $location, User) {
+    .run(function($location, $log, $rootScope, User) {
 
       $rootScope.$location = $location;
 
       // Initialize the user
-      User.init();
+      User.init().then(
+          function(response) {
+            $log.log("User initialized.");
+          },
+          function() {
+            $log.log("User init failed.");
+            $location.path("/spring_security_login");
+          });
     });
