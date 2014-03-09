@@ -1,65 +1,75 @@
 <form name="form">
-  <metanav>
-    <li>
-      <a ng-href="#/security/groups/"
-         class="btn btn-info">
-        <i class="fa fa-angle-double-left"></i>
-        Groups List
-      </a>
-    </li>
+    <metanav>
+        <li>
+            <a ng-href="#/security/groups/"
+               class="btn btn-info">
+                <i class="fa fa-angle-double-left"></i>
+                Groups List
+            </a>
+        </li>
 
-    <li>
-      <a ng-click="save()"
-              ng-disabled="form.$pristine"
-              class="btn btn-success">
-        <i class="fa fa-save"></i>
-        Save
-      </a>
-    </li>
+        <li>
+            <a ng-click="save()"
+               ng-disabled="form.$pristine"
+               class="btn btn-success">
+                <i class="fa fa-save"></i>
+                Save
+            </a>
+        </li>
 
-    <li>
-      <a ng-click="undo()"
-              ng-disabled="form.$pristine"
-              ng-show="group.id"
-              class="btn btn-warning">
-        <i class="fa fa-undo"></i>
-        Undo
-      </a>
-    </li>
+        <li>
+            <a ng-click="undo()"
+               ng-disabled="form.$pristine"
+               ng-show="group.id"
+               class="btn btn-warning">
+                <i class="fa fa-undo"></i>
+                Undo
+            </a>
+        </li>
 
-    <li>
-      <a ng-click="delete()"
-              class="btn btn-danger">
-        <i class="fa fa-trash-o"></i>
-        Delete
-      </a>
-    </li>
-  </metanav>
+        <li>
+            <a ng-click="delete()"
+               class="btn btn-danger">
+                <i class="fa fa-trash-o"></i>
+                Delete
+            </a>
+        </li>
+    </metanav>
 
-  <div class="row">
-    <h1 ng-hide="group.id">Create Group</h1>
-    <h1 ng-show="group.id">Group: {{group.name}}</h1>
-  </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <h1 ng-hide="group.id">Create Group</h1>
 
-  <div class="row">
-    <input type="text" ng-model="group.name"/>
-  </div>
+            <h1 ng-show="group.id">Group: {{group.name}}</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <form role="group naming" class="form-inline">
+                <div class="input-group">
+                    <span class="input-group-addon">Group Name</span>
+                    <input type="text" class="form-control" ng-model="group.name" id="group-name-input" placeholder="Group Name"/>
+                </div>
+            </form>
+        </div>
+    </div>
 
-  <div class="row">
-    <h2>Roles</h2>
-    <ul class="list-group">
-      <li ng-repeat="role in roles" class="list-group-item">
-        <input type="checkbox" ng-model="roleSelections[role.id]"/> {{role.display}}
-      </li>
-    </ul>
-  </div>
-
-  <div class="row">
-    <h2>Users</h2>
-    <ul class="list-group">
-      <li ng-repeat="user in users" class="list-group-item">
-        <input type="checkbox" ng-model="userSelections[user.id]"/> {{user.name}}
-      </li>
-    </ul>
-  </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <h2>Roles</h2>
+            <ul class="list-group">
+                <li ng-repeat="role in roles" class="list-group-item">
+                    <input type="checkbox" ng-model="roleSelections[role.id]"/> {{role.display}}
+                </li>
+            </ul>
+        </div>
+        <div class="col-sm-6">
+            <h2>Users</h2>
+            <ul class="list-group">
+                <li ng-repeat="user in users" class="list-group-item">
+                    <input type="checkbox" ng-model="userSelections[user.id]"/> {{user.name}}
+                </li>
+            </ul>
+        </div>
+    </div>
 </form>
