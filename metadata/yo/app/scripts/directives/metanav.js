@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-    .directive('metanav', function (User, Restangular) {
+    .directive('metanav', function ($dialogs, gToast, User, Restangular) {
       return {
         transclude: true,
         templateUrl: '/views/component/Metanav.html',
