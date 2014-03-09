@@ -30,9 +30,9 @@ Metadata: http://timetadata.herokuapp.com
 
 Magento: ubuntu@ec2-54-204-208-6.compute-1.amazonaws.com
 
-Magento Storefront: http://ec2-54-204-208-6.compute-1.amazonaws.com/
+Magento Storefront: http://ec2-54-197-60-94.compute-1.amazonaws.com/
 
-Magento Admin: http://ec2-54-204-208-6.compute-1.amazonaws.com/admin
+Magento Admin: http://ec2-54-197-60-94.compute-1.amazonaws.com/admin
 
 
 Prod Servers
