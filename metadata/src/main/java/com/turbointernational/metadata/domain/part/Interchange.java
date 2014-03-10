@@ -15,6 +15,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Table;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -37,6 +38,7 @@ public class Interchange {
     private String description;
     
     @OneToMany(mappedBy = "interchange", fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.MERGE})
+    @OrderBy("id")
     private Set<Part> parts = Sets.newTreeSet();
     
     public Long getId() {

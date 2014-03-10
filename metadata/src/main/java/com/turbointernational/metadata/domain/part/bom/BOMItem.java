@@ -19,6 +19,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
@@ -50,6 +51,7 @@ public class BOMItem implements Comparable<BOMItem> {
     private Integer quantity;
     
     @OneToMany(mappedBy="bomItem", fetch = FetchType.LAZY, orphanRemoval = true)
+    @OrderBy("id")
     private Set<BOMAlternative> alternatives = new TreeSet<BOMAlternative>();
     
     public Long getId() {
