@@ -64,7 +64,7 @@ public class BOMAlternativeController {
         item.merge();
         
         // Update the changelog
-        Changelog.log("Added bom alternative.", json);
+        Changelog.log("Added bom alternative.", bomAlt.toJson());
         
         return new ResponseEntity<String>("ok", headers, HttpStatus.OK);
     }
@@ -79,15 +79,15 @@ public class BOMAlternativeController {
         BOMItem item = BOMItem.findBOMItem(bomId);
         BOMAlternative alt = BOMAlternative.findBOMAlternative(altId);
         
+        // Update the changelog
+        Changelog.log("Deleted BOM alternative.", alt.toJson());
+        
         // Remove the alternate item
         item.getAlternatives().remove(alt);
         item.getParent().merge();
         
         // Delete it
         alt.remove();
-        
-        // Update the changelog
-        Changelog.log("Deleted BOM alternate: ", alt.toJson());
     }
     
 }

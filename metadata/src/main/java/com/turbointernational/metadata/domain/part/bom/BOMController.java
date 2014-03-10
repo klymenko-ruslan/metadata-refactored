@@ -26,7 +26,7 @@ public class BOMController {
     @Transactional
     @RequestMapping(method = RequestMethod.POST)
     @Secured("ROLE_BOM")
-    public ResponseEntity<String> create(Principal principal, @RequestBody String json) throws Exception {
+    public ResponseEntity<String> create(@RequestBody String json) throws Exception {
         
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json");
@@ -45,15 +45,15 @@ public class BOMController {
             item.persist();
             parent.getBom().add(item);
             parent.merge();
+        
+            // Update the changelog
+            Changelog.log("Added bom item.", item.toJson());
 
             parent.indexTurbos();
             parent.updateIndex();
         } catch (NoResultException e) {
             return new ResponseEntity<String>(headers, HttpStatus.NOT_FOUND);
         }
-        
-        // Update the changelog
-        Changelog.log(principal, "Added bom item: ", json);
         
         return new ResponseEntity<String>("ok", headers, HttpStatus.OK);
     }
@@ -62,32 +62,36 @@ public class BOMController {
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     @ResponseBody
     @Secured("ROLE_BOM")
-    public void update(Principal principal,  @PathVariable("id") Long id, @RequestParam(required=true) int quantity) throws Exception {
+    public void update(@PathVariable("id") Long id, @RequestParam(required=true) int quantity) throws Exception {
         
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json");
         
-        // Parse the new item
+        // Get the item
         BOMItem item = BOMItem.findBOMItem(id);
-        item.setQuantity(quantity);
-        
-        item.merge();
         
         // Update the changelog
-        Changelog.log(principal, "Changed BOM item quantity", Integer.toString(quantity));
+        Changelog.log("Changed BOM item quantity to " + quantity, item.toJson());
+        
+        // Update
+        item.setQuantity(quantity);
+        item.merge();
     }
     
     @Transactional
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     @ResponseBody
     @Secured("ROLE_BOM")
-    public void delete(Principal principal, @PathVariable("id") Long id) throws Exception {
+    public void delete(@PathVariable("id") Long id) throws Exception {
         
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json");
         
-        // Create the object
+        // Get the object
         BOMItem item = BOMItem.findBOMItem(id);
+        
+        // Update the changelog
+        Changelog.log("Deleted BOM item.", item.toJson());
         
         // Remove the BOM Item from the parent
         item.getParent().getBom().remove(item);
@@ -95,9 +99,6 @@ public class BOMController {
         
         // Delete it
         item.remove();
-        
-        // Update the changelog
-        Changelog.log(principal, "Deleted BOM item: ", item.toJson());
     }
     
     

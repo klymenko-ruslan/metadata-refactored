@@ -41,42 +41,7 @@
   <!-- Bill of Materials -->
   <div class="col-xs-6">
     <h3>Bill of Materials</h3>
-    <table class="table table-bordered table-striped table-hover table-responsive" ng-show="part.bom">
-      <thead>
-      <tr>
-        <th>Manufacturer</th>
-        <th>Type</th>
-        <th>Part #</th>
-        <th>Qty</th>
-        <th>Actions</th>
-      </tr>
-      </thead>
-      <tr ng-repeat="bomItem in part.bom">
-        <td>
-          {{bomItem.child.manufacturer.name}}
-        </td>
-        <td>
-          {{bomItem.child.partType.name}}
-        </td>
-        <td style="white-space: nowrap;">
-          {{bomItem.child.manufacturerPartNumber}}
-        </td>
-        <td>
-          {{bomItem.quantity}}
-        </td>
-        <td>
-          <a authorize="ROLE_READ"
-             ng-href="#/part/{{bomItem.child.partType.typeName}}/{{bomItem.child.id}}"
-             class="btn btn-primary btn-xs">
-            <i class="fa fa-eye"></i>
-            View
-          </a>
-        </td>
-      </tr>
-    </table>
-    <div ng-hide="part.bom">
-      No parts in the BOM.
-    </div>
+      <part-table parts="part.bom" key="child" extra-columns="{&quot;Qty&quot;:&quot;item.quantity&quot;}"></part-table>
   </div>
 </div>
 

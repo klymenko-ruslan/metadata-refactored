@@ -39,13 +39,15 @@
   <!-- Current Alternates -->
   <div class="col-xs-6">
     <h3>Current Alternates</h3>
-    <part-table parts="bomItem.alternatives | orderBy: header.id" key="part" extra-columns="{&quot;Alt Group&quot;: &quot;item.header.id&quot;}"></part-table>
+    <part-table parts="bomItem.alternatives | orderBy: header.id" key="part" extra-columns="{&quot;Alt Group #&quot;: &quot;item.header.id&quot;}"></part-table>
   </div>
 
   <!-- Picked Alternate -->
   <div class="col-xs-6">
     <h3>Picked Alternate</h3>
     <part-summary part="pickedPart" ng-show="pickedPart"></part-summary>
+    <div ng-show="pickedPart" class="input-group">
+    </div>
     <div ng-hide="pickedPart" class="well well-sm">
       Pick an alternate part to add.
     </div>
