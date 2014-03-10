@@ -63,7 +63,9 @@
   <div ng-show="altBomItem">
     <h4 part-name="altBomItem.child" part-name-suffix="Alternates"></h4>
 
-      <a authorize="ROLE_BOM" class="btn btn-info pull-right" style="vertical-align: middle;" ng-href="#/part/{{part.partType.typeName}}/{{partId}}/bom/{{altBomItem.id}}/search">
+      <a authorize="ROLE_BOM"
+         class="btn btn-info pull-right" style="vertical-align: middle;"
+         ng-href="#/part/{{part.partType.typeName}}/{{partId}}/bom/{{altBomItem.id}}/search">
         <i class="fa fa-cogs"></i>
         Add Alternate
       </a>
