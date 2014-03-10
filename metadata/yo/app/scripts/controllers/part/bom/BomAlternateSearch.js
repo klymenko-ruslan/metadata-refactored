@@ -9,22 +9,15 @@ angular.module('ngMetaCrudApp')
         $scope.showPickedPart = false;
 
         // The part whose bom we're editing
-        $scope.part = restService.findPart($scope.partId)
-            .then(function (parentPart) {
+        $scope.part = restService.findPart($scope.partId).then(
+            function (parentPart) {
                 $scope.part = parentPart;
 
                 $scope.bomItem = _.find(parentPart.bom, function(bomItem) {
-                  return bomItem;
+                  return bomItem.id == $routeParams.bomId;
                 });
 
-//                $scope.bomItem.parent = {
-//                    id: parentPart.id,
-//                    version: parentPart.version
-//                };
-
-            }, function (errorResponse) {
-                alert("Could not get part details", errorResponse);
-            });
+            }, restService.error);
 
         $scope.save = function () {
 
