@@ -17,91 +17,37 @@
   </li>
 </metanav>
 
-<h1 class="padding-top">[{{part.id}}] {{part.manufacturer.name}} {{part.partType.name}} <span style="white-space: nowrap;">{{part.manufacturerPartNumber}}</span></h1>
+<h1 class="padding-top" part-name="part" part-name-suffix="Add BOM Item"></h1>
 
 <div class="row">
 
-  <!-- Picked BOM Item -->
-  <div class="col-xs-6">
-    <h2>Picked BOM Item</h2>
-    <dl class="dl-horizontal" ng-show="bomItem.child">
-      <dt>Manufacturer</dt>
-      <dd>
-        {{pickedPart.manufacturer.name}}
-        <span ng-show="pickedPart.manufacturer.name == null || pickedPart.manufacturer.name == ''">[blank]</span>
-      </dd>
-
-      <dt>Part Type</dt>
-      <dd>
-        {{pickedPart.partType.name}}
-      </dd>
-
-      <dt>Manufacturer Part Number</dt>
-      <dd>
-        {{pickedPart.manufacturerPartNumber}}
-        <span ng-show="pickedPart.manufacturerPartNumber == null || pickedPart.manufacturerPartNumber == ''">[blank]</span>
-      </dd>
-
-      <dt>Name</dt>
-      <dd>
-        {{pickedPart.name}}
-        <span ng-show="pickedPart.name == null || pickedPart.name == ''">[blank]</span>
-      </dd>
-
-      <dt>Quantity</dt>
-      <dd><input ng-model="bomItem.quantity" type="text" class="form-control input-sm"/></dd>
-    </dl>
-    <div ng-hide="bomItem.child" class="well well-sm">
-      Pick a part to add to the bill of materials.
-    </div>
-  </div>
-
   <!-- Bill of Materials -->
   <div class="col-xs-6">
-    <h2>Bill of Materials</h2>
-    <table class="table table-bordered table-striped table-hover table-responsive" ng-show="part.bom">
-      <thead>
-      <tr>
-        <th>Manufacturer</th>
-        <th>Type</th>
-        <th>Part #</th>
-        <th>Qty</th>
-        <th>Actions</th>
-      </tr>
-      </thead>
-      <tr ng-repeat="bomItem in part.bom">
-        <td>
-          {{bomItem.child.manufacturer.name}}
-        </td>
-        <td>
-          {{bomItem.child.partType.name}}
-        </td>
-        <td style="white-space: nowrap;">
-          {{bomItem.child.manufacturerPartNumber}}
-        </td>
-        <td>
-          {{bomItem.quantity}}
-        </td>
-        <td>
-          <a authorize="ROLE_READ"
-             ng-href="#/part/{{bomItem.child.partType.typeName}}/{{bomItem.child.id}}"
-             class="btn btn-primary btn-xs">
-            <i class="fa fa-eye"></i>
-            View
-          </a>
-        </td>
-      </tr>
-    </table>
-    <div ng-hide="part.bom">
-      No parts in the BOM.
+    <h3>Part BOM</h3>
+    <part-table parts="part.bom" key="child" extra-columns="{&quot;Qty&quot;:&quot;item.quantity&quot;}"></part-table>
+  </div>
+
+  <!-- Picked BOM Item -->
+  <div class="col-xs-6">
+    <h3>Picked Part</h3>
+    <part-summary part="pickedPart" ng-show="bomItem.child"></part-summary>
+
+    <div class="form-group" ng-show="bomItem.child">
+      <label for="quantity-input" class="col-sm-2 control-label">Qty</label>
+
+      <div>
+        <input type="text" ng-model="bomItem.quantity" class="form-control" id="quantity-input" placeholder="Quantity">
+      </div>
+    </div>
+    <div ng-hide="bomItem.child" class="well well-sm">
+      Pick a part to add to the bill of materials.
     </div>
   </div>
 </div>
 
 <hr/>
 
-<h1>Pick a New BOM Item</h1>
-<part-search>
+<part-search class="well well-lg">
 
   <a authorize="ROLE_READ"
      ng-href="#/part/{{partType}}/{{partId}}"
@@ -112,8 +58,8 @@
 
   <a authorize="ROLE_BOM"
      ng-click="pickBomItemPart(partId)"
-     class="btn btn-primary btn-xs">
-      <i class="fa fa-target"></i>
+     class="btn btn-success btn-xs">
+      <i class="fa fa-bullseye"></i>
     Pick
   </a>
 

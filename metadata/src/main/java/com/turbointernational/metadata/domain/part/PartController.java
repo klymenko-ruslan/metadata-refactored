@@ -63,10 +63,10 @@ public class PartController {
             "id",
             "manufacturer.id",
             "manufacturer.name",
-            "manufacturer.name",
             "manufacturerPartNumber",
             "partType.id",
-            "partType.name"
+            "partType.name",
+            "partType.typeName"
         };
         
         return new ResponseEntity<String>(Part.toJsonArray(result, fields), headers, HttpStatus.OK);

@@ -3,66 +3,12 @@
 angular.module('ngMetaCrudApp')
   .directive('bom', function ($log) {
     return {
-      template: '<div class="well">' +
-                '  <div class="row">' +
-                '  <h3 style="display: inline-block;">Bill of Materials</h3>' +
-                '  <a authorize="ROLE_BOM" class="btn btn-info pull-right" style="vertical-align: middle;" ng-href="#/part/{{part.partType.typeName}}/{{partId}}/bom/search">' +
-                '    <i class="fa fa-cogs"></i>' +
-                '    Add BOM Item' +
-                '  </a>' +
-                '  </div>' +
-                '  <table data-ng-table="bomTableParams" class="table table-bordered table-striped table-hover table-responsive">' +
-                '    <tr data-ng-repeat="bomItem in $data">' +
-                '      <td title="\'Type\'">{{bomItem.child.partType.name}}</td>' +
-                '      <td title="\'Name\'">{{bomItem.child.name}}</td>' +
-                '      <td title="\'Manufacturer\'">{{bomItem.child.manufacturer.name}}</td>' +
-                '      <td title="\'Manufacturer Part Number\'">{{bomItem.child.manufacturerPartNumber}}</td>' +
-                '      <td title="\'Quantity\'">' +
-                '        <span ng-hide="isModifying($index, bomItem)">{{bomItem.quantity}}</span>' +
-                '        <input ng-model="modifyValues[bomItem.id]" type="text" ng-show="isModifying($index, bomItem)"/>' +
-                '      </td>' +
-                '      <td title="\'Actions\'">' +
-
-                '        <button ng-click="modifyStart($index, bomItem)"' +
-                '                authorize="ROLE_BOM" class="btn btn-warning btn-xs"' +
-                '                ng-hide="isModifying($index, bomItem)">' +
-                '          <i class="fa fa-cog"></i> Modify' +
-                '        </button>' +
-
-                '        <button ng-click="modifySave($index, bomItem)"' +
-                '                authorize="ROLE_BOM" class="btn btn-success btn-xs"' +
-                '                ng-show="isModifying($index, bomItem)">' +
-                '          <i class="fa fa-save"></i> Save' +
-                '        </button>' +
-
-                '        <button ng-click="modifyCancel($index, bomItem)"' +
-                '                authorize="ROLE_BOM" class="btn btn-warning btn-xs"' +
-                '                ng-show="isModifying($index, bomItem)">' +
-                '          <i class="fa fa-minus-circle"></i> Cancel' +
-                '        </button>' +
-
-                '        <a ng-href="#/part/{{bomItem.child.partType.typeName}}/{{bomItem.child.id}}"' +
-                '           authorize="ROLE_READ" class="btn btn-primary btn-xs"' +
-                '           ng-hide="isModifying($index, bomItem)">' +
-                '          <i class="fa fa-eye"></i> View Part' +
-                '        </a>' +
-
-                '        <button ng-click="remove($index, bomItem)"' +
-                '                authorize="ROLE_BOM" class="btn btn-danger btn-xs"' +
-                '                ng-hide="isModifying($index, bomItem)">' +
-                '          <i class="fa fa-trash-o"></i> Remove' +
-                '        </button>' +
-
-                '      </td>' +
-                '    </tr>' +
-                '  </table>' +
-
-                '</div>',
+      templateUrl: '/views/component/bom.html',
       restrict: 'E',
       link: function postLink(/*$scope, element, attrs */) {
 //        element.text('this is the bom directive');
       },
-      controller: function($scope, ngTableParams, gToast, Restangular, $dialogs) {
+      controller: function($dialogs, $scope, ngTableParams, gToast, Restangular, restService) {
 
 
         $scope.bomTableParams = new ngTableParams(
@@ -76,6 +22,8 @@ angular.module('ngMetaCrudApp')
                   $defer.reject();
                   return;
                 }
+
+                $scope.part.bom = _.sortBy($scope.part.bom, 'id');
 
                 // Update the total and slice the result
                 $defer.resolve($scope.part.bom.slice((params.page() - 1) * params.count(), params.page() * params.count()));
@@ -126,19 +74,42 @@ angular.module('ngMetaCrudApp')
                       $scope.part.bom.splice(index, 1);
                       $scope.bomTableParams.reload();
 
-                      gToast.open('Child part removed from BOM.');
+                      // Clear the alt bom item
+                      $scope.altBomItem = null;
+
+                      gToast.open("Child part removed from BOM.");
                     },
-                    function(response) {
-                      // Error
-                      $dialogs.error(
-                          'Could not remove BOM Item',
-                          'Here\'s the error: <pre>' + response.status + '</pre>');
-                    });
-              },
-              function() {
-                // No
-          });
+                    restService.error);
+              });
         };
+
+        $scope.removeAlternate = function(index, altItem) {
+          $dialogs.confirm(
+              "Remove alternate item?",
+              "This will remove the alternate part from this BOM item.").result.then(
+                  function() {
+                    Restangular.setParentless(false);
+                    Restangular.one('bom', $scope.altBomItem.id).one('alt', altItem.id).remove().then(
+                        function() {
+                          $scope.altBomItem.alternatives.splice(index, 1);
+                          gToast.open("BOM alternate removed.");
+                        },
+                        restService.error
+                    );
+                  });
+        };
+
+
+        // The BOM item whose alternates we're showing
+        $scope.altBomItem = null;
+
+        $scope.showAlternates = function(bomItem) {
+          $scope.altBomItem = bomItem;
+        };
+
+        $scope.hideAlternates = function() {
+          $scope.altBomItem = null;
+        }
 
       }
     };

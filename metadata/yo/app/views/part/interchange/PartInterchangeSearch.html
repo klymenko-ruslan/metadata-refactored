@@ -9,7 +9,7 @@
 
   <li>
     <a authorize="ROLE_INTERCHANGE"
-       ng-click="clear()"
+       ng-click="removeInterchange()"
        ng-disabled="!canClear()"
        class="btn btn-danger">
       <i class="fa fa-trash-o"></i>
@@ -28,80 +28,20 @@
   </li>
 </metanav>
 
-<h1 class="padding-top">[{{part.id}}] {{part.manufacturer.name}} {{part.partType.name}} <span style="white-space: nowrap;">{{part.manufacturerPartNumber}}</span></h1>
+<h1 class="padding-top" part-name="part" part-name-suffix="Interchanges"></h1>
 
 <div class="row">
 
-  <div class="col-xs-12">
-    <h2>Current Interchangeable Parts</h2>
-    <table class="table table-bordered table-striped table-hover table-responsive" ng-show="part.interchange.parts">
-      <thead>
-      <tr>
-        <th>Manufacturer</th>
-        <th>Type</th>
-        <th>Part #</th>
-        <th>Actions</th>
-      </tr>
-      </thead>
-      <tr ng-repeat="iPart in part.interchange.parts">
-        <td>
-          {{iPart.manufacturer.name}}
-        </td>
-        <td>
-          {{iPart.partType.name}}
-        </td>
-        <td style="white-space: nowrap;">
-          {{iPart.manufacturerPartNumber}}
-        </td>
-        <td>
-          <a authorize="ROLE_READ"
-             ng-href="#/part/{{iPart.partType.typeName}}/{{iPart.id}}"
-             class="btn btn-primary btn-xs">
-            <i class="fa fa-eye"></i>
-            View
-          </a>
-        </td>
-      </tr>
-    </table>
-    <div ng-hide="part.interchange.parts">
-      No interchangeable parts.
-    </div>
+  <!-- Current Interchanges -->
+  <div class="col-xs-6">
+    <h3>Current Interchanges</h3>
+    <part-table parts="part.interchange.parts"></part-table>
   </div>
-
-</div>
-
-<hr/>
-
-<div class="row">
 
   <!-- Picked Part -->
   <div class="col-xs-6">
-    <h2>Picked Part</h2>
-    <dl class="dl-horizontal" ng-show="pickedPart">
-      <dt>Manufacturer</dt>
-      <dd>
-        {{pickedPart.manufacturer.name}}
-        <span ng-show="pickedPart.manufacturer.name == null || pickedPart.manufacturer.name == ''">[blank]</span>
-      </dd>
-
-      <dt>Part Type</dt>
-      <dd>
-        {{pickedPart.partType.name}}
-      </dd>
-
-      <dt>Manufacturer Part Number</dt>
-      <dd>
-        {{pickedPart.manufacturerPartNumber}}
-        <span ng-show="pickedPart.manufacturerPartNumber == null || pickedPart.manufacturerPartNumber == ''">[blank]</span>
-      </dd>
-
-      <dt>Name</dt>
-      <dd>
-        {{pickedPart.name}}
-        <span ng-show="pickedPart.name == null || pickedPart.name == ''">[blank]</span>
-      </dd>
-    </dl>
-
+    <h3>Picked Part</h3>
+    <part-summary part="picked" ng-show="pickedPart"></part-summary>
     <div class="alert alert-success" ng-hide="pickedPart">
       Pick an interchangeable part.
     </div>
@@ -116,51 +56,16 @@
   </div>
 
   <!-- Picked Part Interchanges -->
-  <div class="row">
-
-    <div class="col-xs-6">
-      <h2>Picked Interchangeable Parts</h2>
-      <table class="table table-bordered table-striped table-hover table-responsive" ng-show="pickedPart.interchange.parts">
-        <thead>
-        <tr>
-          <th>Manufacturer</th>
-          <th>Type</th>
-          <th>Part #</th>
-          <th>Actions</th>
-        </tr>
-        </thead>
-        <tr ng-repeat="iPart in pickedPart.interchange.parts">
-          <td>
-            {{iPart.manufacturer.name}}
-          </td>
-          <td>
-            {{iPart.partType.name}}
-          </td>
-          <td style="white-space: nowrap;">
-            {{iPart.manufacturerPartNumber}}
-          </td>
-          <td>
-            <a authorize="ROLE_READ"
-               ng-href="#/part/{{iPart.partType.typeName}}/{{iPart.id}}"
-               class="btn btn-primary btn-xs">
-              <i class="fa fa-eye"></i>
-              View
-            </a>
-          </td>
-        </tr>
-      </table>
-      <div ng-hide="pickedPart.interchange.parts">
-        No interchangeable parts
-      </div>
-    </div>
+  <div class="col-xs-6" ng-show="pickedPart">
+    <h3>Picked Part Interchanges</h3>
+    <part-table parts="pickedPart.interchange.parts"></part-table>
   </div>
 </div>
 
 <hr/>
 
 
-<h1>Pick Interchangeable Part</h1>
-<part-search>
+<part-search class="well well-lg">
 
   <a authorize="ROLE_READ"
      ng-href="#/part/{{partType}}/{{partId}}"

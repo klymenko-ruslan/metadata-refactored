@@ -16,13 +16,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Table;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.transaction.annotation.Transactional;
 
 @Configurable
 @Entity
 @Table(name="bom_alt_item")
-public class BOMAlternative {
+public class BOMAlternative implements Comparable<BOMAlternative> {
 
     //<editor-fold defaultstate="collapsed" desc="properties">
     @Id
@@ -33,7 +34,7 @@ public class BOMAlternative {
     @JoinColumn(name="bom_id")
     private BOMItem bomItem;
     
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name="bom_alt_header_id")
     private BOMAlternativeHeader header;
     
@@ -163,5 +164,11 @@ public class BOMAlternative {
     public static Collection<BOMAlternative> fromJsonArrayToBOMAlternatives(String json) {
         return new JSONDeserializer<List<BOMAlternative>>().use(null, ArrayList.class).use("values", BOMAlternative.class).deserialize(json);
     }
+
     //</editor-fold>
+    @Override
+    public int compareTo(BOMAlternative t) {
+        return ObjectUtils.compare(this.getHeader().getId(), t.getHeader().getId());
+    }
+    
 }
