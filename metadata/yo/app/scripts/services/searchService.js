@@ -3,7 +3,7 @@
 angular.module('ngMetaCrudApp')
     .factory('searchService', function ($http, $log, Facets) {
         return function (partSearchParams) {
-//        console.log("Searching for `" + search.partNumber + "`, facets: " + JSON.stringify(search.facets));
+//        console.log('Searching for `' + search.partNumber + '`, facets: ' + JSON.stringify(search.facets));
 
           // Basic search request body
           var searchRequest = {
@@ -28,7 +28,7 @@ angular.module('ngMetaCrudApp')
                 field: facet.field,
                 size: 100
               }
-            }
+            };
 
             // Facet terms
             var facetValue = partSearchParams.facets[facet.name];
@@ -36,16 +36,16 @@ angular.module('ngMetaCrudApp')
               var term = {};
               term[facet.field] = facetValue;
 
-              searchRequest.query.bool.must.push({"term": term});
+              searchRequest.query.bool.must.push({'term': term});
             }
           });
 
           // Part Number
           if (partSearchParams.partNumber) {
-              var partNumber = partSearchParams.partNumber.toLowerCase();
-              var partNumberShort = partNumber.replace(/\W+/g, '');
-              searchRequest.query.bool.must.push({
-                prefix: {"manufacturerPartNumber.short": partNumberShort}
+            var partNumber = partSearchParams.partNumber.toLowerCase();
+            var partNumberShort = partNumber.replace(/\W+/g, '');
+            searchRequest.query.bool.must.push({
+                prefix: {'manufacturerPartNumber.short': partNumberShort}
               });
               
 //              searchRequest.query.bool.should.push({
@@ -54,30 +54,30 @@ angular.module('ngMetaCrudApp')
           }
 
           // Default query
-          if (searchRequest.query.bool.must.length == 0 && searchRequest.query.bool.should.length == 0) {
-              searchRequest.query = {match_all: {}};
+          if (searchRequest.query.bool.must.length === 0 && searchRequest.query.bool.should.length === 0) {
+            searchRequest.query = {match_all: {}}; // jshint ignore:line
           }
 
           // Sorting
           angular.forEach(partSearchParams.sorting, function (order, fieldName) {
               var sortField = {};
               sortField[fieldName] = {
-                  "missing": "_last",
-                  "ignore_unmapped": true,
-                  "order": order
-              }
+                  'missing': '_last',
+                  'ignore_unmapped': true,
+                  'order': order
+                };
 
               searchRequest.sort.push(sortField);
-          });
+            });
 
         // Call to ElasticSearch
-        return $http({
-          method: 'POST',
-          headers: {
-            "Content-type": "text/plain"
-          },
-          url: "/metadata/search",
-          data: searchRequest
-        });
-      };
-    });
+          return $http({
+            method: 'POST',
+            headers: {
+              'Content-type': 'text/plain'
+            },
+            url: '/metadata/search',
+            data: searchRequest
+          });
+        };
+      });

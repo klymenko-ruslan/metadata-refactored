@@ -4,11 +4,11 @@ angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap', 'restangu
     .config(function(RestangularProvider) {
         RestangularProvider.setBaseUrl('/metadata/');
         RestangularProvider.setParentless(true);
-        RestangularProvider.setDefaultHeaders({"Content-Type": "text/plain"});
-        RestangularProvider.setResponseExtractor(function (response, operation) {
+        RestangularProvider.setDefaultHeaders({'Content-Type': 'text/plain'});
+        RestangularProvider.setResponseExtractor(function (response) {
             return response;
-        })
-    })
+          });
+      })
     .config(function ($locationProvider, $routeProvider) {
 //        $locationProvider.html5Mode(true);
 
@@ -16,23 +16,23 @@ angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap', 'restangu
         $routeProvider.when('/part/list', {
             templateUrl: 'views/part/PartList.html',
             controller: 'PartListCtrl'
-        });
+          });
         $routeProvider.when('/part/createByPartTypeId/:typeId', {
             templateUrl: 'views/part/PartForm.html',
             controller: 'PartFormCtrl'
-        });
+          });
         $routeProvider.when('/part/:type/:id/form', {
             templateUrl: 'views/part/PartForm.html',
             controller: 'PartFormCtrl'
-        });
+          });
         $routeProvider.when('/part/:type/:id', {
             templateUrl: 'views/part/PartDetail.html',
             controller: 'PartDetailCtrl'
-        });
+          });
         $routeProvider.when('/part/:type/:id/interchange/search', {
             templateUrl: 'views/part/interchange/PartInterchangeSearch.html',
             controller: 'PartInterchangeSearchCtrl'
-        });
+          });
         $routeProvider.when('/part/:type/:id/bom/search', {
             templateUrl: 'views/part/bom/PartBomSearch.html',
             controller: 'PartBomSearchCtrl'
@@ -70,24 +70,24 @@ angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap', 'restangu
 
 
         // Default
-      $routeProvider.when('/', {
-        templateUrl: '/spring_security_login' // From Spring Security in the Java app
-      });
-        $routeProvider.otherwise({
-            redirectTo: '/'
+        $routeProvider.when('/', {
+          templateUrl: '/spring_security_login' // From Spring Security in the Java app
         });
-    })
+        $routeProvider.otherwise({
+          redirectTo: '/'
+        });
+      })
     .run(function($location, $log, $rootScope, User) {
 
       $rootScope.$location = $location;
 
       // Initialize the user
       User.init().then(
-          function(response) {
-            $log.log("User initialized.");
+          function() {
+            $log.log('User initialized.');
           },
           function() {
-            $log.log("User init failed.");
-            $location.path("/spring_security_login");
+            $log.log('User init failed.');
+            $location.path('/spring_security_login');
           });
     });

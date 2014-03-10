@@ -5,7 +5,7 @@ angular.module('ngMetaCrudApp')
     return {
       templateUrl: '/views/component/bom.html',
       restrict: 'E',
-      link: function postLink(scope, element, attrs) {
+      link: function postLink(/*$scope, element, attrs */) {
 //        element.text('this is the bom directive');
       },
       controller: function($dialogs, $scope, ngTableParams, gToast, Restangular, restService) {
@@ -13,15 +13,15 @@ angular.module('ngMetaCrudApp')
 
         $scope.bomTableParams = new ngTableParams(
             {
-              page: 1,
-              count: 10
-            },
+          page: 1,
+          count: 10
+        },
             {
-              getData: function ($defer, params) {
+          getData: function ($defer, params) {
                 if (!angular.isObject($scope.part)) {
                   $defer.reject();
                   return;
-                };
+                }
 
                 $scope.part.bom = _.sortBy($scope.part.bom, 'id');
 
@@ -29,14 +29,14 @@ angular.module('ngMetaCrudApp')
                 $defer.resolve($scope.part.bom.slice((params.page() - 1) * params.count(), params.page() * params.count()));
                 params.total($scope.part.bom.length);
               }
-            });
+        });
 
         // Temp storage for quantities
         $scope.modifyValues = {};
 
         $scope.isModifying = function(index, bomItem) {
           return angular.isDefined($scope.modifyValues[bomItem.id]);
-        }
+        };
 
         $scope.modifyStart = function(index, bomItem) {
           $scope.modifyValues[bomItem.id] = bomItem.quantity;
@@ -54,16 +54,16 @@ angular.module('ngMetaCrudApp')
                 delete $scope.modifyValues[bomItem.id];
               },
               function() {
-              }
+          }
           );
         };
 
         $scope.remove = function(index, bomItem) {
-          $log.log("Remove bom item, part: ", $scope.part);
+          $log.log('Remove bom item, part: ', $scope.part);
 
           $dialogs.confirm(
-                  "Remove BOM Item?",
-                  "Remove child part from this bill of materials?").result.then(
+                  'Remove BOM Item?',
+                  'Remove child part from this bill of materials?').result.then(
               function() {
                 // Yes
                 Restangular.one('bom', bomItem.id).remove().then(
@@ -80,9 +80,6 @@ angular.module('ngMetaCrudApp')
                       gToast.open("Child part removed from BOM.");
                     },
                     restService.error);
-              },
-              function() {
-                // No
               });
         };
 

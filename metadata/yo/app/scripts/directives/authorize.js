@@ -7,7 +7,7 @@ angular.module('ngMetaCrudApp')
       link: function postLink(scope, element, attrs) {
         var role = attrs.authorize;
 
-        scope.$watch(function() {return User.roles}, function() {
+        scope.$watch(function() {return User.roles;}, function() {
           if (_.contains(User.roles, role)) {
             element.show();
           } else {
