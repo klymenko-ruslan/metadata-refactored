@@ -74,6 +74,9 @@ angular.module('ngMetaCrudApp')
                       $scope.part.bom.splice(index, 1);
                       $scope.bomTableParams.reload();
 
+                      // Clear the alt bom item
+                      $scope.altBomItem = null;
+
                       gToast.open("Child part removed from BOM.");
                     },
                     restService.error);

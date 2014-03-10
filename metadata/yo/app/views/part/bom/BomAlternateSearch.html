@@ -44,7 +44,7 @@
 
   <!-- Picked Alternate -->
   <div class="col-xs-6">
-    <h3>Picked Alternate</h3>
+    <h3>Picked Part</h3>
     <part-summary part="pickedPart" ng-show="pickedPart"></part-summary>
     <div ng-show="pickedPart" class="input-group">
     </div>
@@ -56,8 +56,7 @@
 
 <hr/>
 
-<h1>Pick a New BOM Alternate</h1>
-<part-search>
+<part-search class="well well-lg">
 
   <a authorize="ROLE_READ"
      ng-href="#/part/{{partType}}/{{partId}}"
@@ -68,7 +67,7 @@
 
   <a authorize="ROLE_BOM"
      ng-click="pickPart(partId)"
-     class="btn btn-primary btn-xs">
+     class="btn btn-success btn-xs">
     <i class="fa fa-bullseye"></i>
     Pick
   </a>

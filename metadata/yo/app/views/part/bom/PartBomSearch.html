@@ -17,13 +17,19 @@
   </li>
 </metanav>
 
-<h1 class="padding-top">[{{part.id}}] {{part.manufacturer.name}} {{part.partType.name}} <span style="white-space: nowrap;">{{part.manufacturerPartNumber}}</span></h1>
+<h1 class="padding-top" part-name="part" part-name-suffix="Add BOM Item"></h1>
 
 <div class="row">
 
+  <!-- Bill of Materials -->
+  <div class="col-xs-6">
+    <h3>Part BOM</h3>
+    <part-table parts="part.bom" key="child" extra-columns="{&quot;Qty&quot;:&quot;item.quantity&quot;}"></part-table>
+  </div>
+
   <!-- Picked BOM Item -->
   <div class="col-xs-6">
-    <h3>Picked BOM Item</h3>
+    <h3>Picked Part</h3>
     <part-summary part="pickedPart" ng-show="bomItem.child"></part-summary>
 
     <div class="form-group" ng-show="bomItem.child">
@@ -37,18 +43,11 @@
       Pick a part to add to the bill of materials.
     </div>
   </div>
-
-  <!-- Bill of Materials -->
-  <div class="col-xs-6">
-    <h3>Bill of Materials</h3>
-      <part-table parts="part.bom" key="child" extra-columns="{&quot;Qty&quot;:&quot;item.quantity&quot;}"></part-table>
-  </div>
 </div>
 
 <hr/>
 
-<h1>Pick a New BOM Item</h1>
-<part-search>
+<part-search class="well well-lg">
 
   <a authorize="ROLE_READ"
      ng-href="#/part/{{partType}}/{{partId}}"
@@ -59,7 +58,7 @@
 
   <a authorize="ROLE_BOM"
      ng-click="pickBomItemPart(partId)"
-     class="btn btn-primary btn-xs">
+     class="btn btn-success btn-xs">
       <i class="fa fa-bullseye"></i>
     Pick
   </a>

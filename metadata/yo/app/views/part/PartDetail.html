@@ -6,16 +6,16 @@
       <i class="fa fa-cog"></i>
       Edit Part
     </a>
-    </li>
+  </li>
 
-    <li>
-      <a authorize="ROLE_INTERCHANGE"
-         ng-href="#/part/{{ part.partType.typeName }}/{{ partId }}/interchange/search"
-         class="btn btn-info">
-        <i class="fa fa-random"></i>
-        Interchange &hellip;
-      </a>
-    </li>
+  <li>
+    <a authorize="ROLE_INTERCHANGE"
+       ng-href="#/part/{{ part.partType.typeName }}/{{ partId }}/interchange/search"
+       class="btn btn-info">
+      <i class="fa fa-random"></i>
+      Interchange &hellip;
+    </a>
+  </li>
 </metanav>
 
 <h1 class="padding-top">[{{part.id}}] {{part.manufacturer.name}} {{part.partType.name}} <span style="white-space: nowrap;">{{part.manufacturerPartNumber}}</span></h1>

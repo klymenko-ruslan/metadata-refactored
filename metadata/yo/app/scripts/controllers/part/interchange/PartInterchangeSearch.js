@@ -29,7 +29,7 @@ angular.module('ngMetaCrudApp')
         if ($scope.part.interchange) {
 
           // Update
-          if ($scope.pickedPart.interchange && $scope.pickedPart.interchange.parts) {
+          if ($scope.pickedPart.interchange) {
 
             // Join the other part's interchange group
             $dialogs.confirm(
@@ -52,31 +52,41 @@ angular.module('ngMetaCrudApp')
             Restangular.setParentless(false);
             Restangular.one('interchange', $scope.part.interchange.id).one('part', $scope.pickedPart.id).put().then(
                 function() {
-                  gToast.open("Picked part added to interchangeable part group..");
+                  gToast.open("Added picked part to interchange.");
+                  $location.path("/part/" + $scope.partType + "/" + $scope.partId);
+                },
+                restService.error);
+          }
+        } else {
+          if ($scope.pickedPart.interchange) {
+
+            // Add this part to the picked part's interchange
+            Restangular.setParentless(false);
+            Restangular.one('interchange', $scope.pickedPart.interchange.id).one('part', $scope.part.id).put().then(
+                function() {
+                  gToast.open("Added part to picked part's interchanges.");
+                  $location.path("/part/" + $scope.partType + "/" + $scope.partId);
+                },
+                restService.error);
+          } else {
+
+            // Create
+            var interchange = {
+              parts: [
+                {id: $scope.part.id},
+                {id: $scope.pickedPart.id}
+              ]
+            };
+
+            Restangular.all('interchange').post(interchange).then(
+                function() {
+                  gToast.open("Interchangeable part group changed added.");
                   $location.path("/part/" + $scope.partType + "/" + $scope.partId);
                 },
                 function(response) {
-                  $dialogs.error("Could not add part to interchangeable part group.", "Server said: <pre>" + JSON.stringify(response.data) + "</pre>");
+                  $dialogs.error("Could not add interchangeable part.", "Server said: <pre>" + JSON.stringify(response.data) + "</pre>");
                 });
           }
-        } else {
-
-          // Create
-          var interchange = {
-            parts: [
-              {id: $scope.part.id},
-              {id: $scope.pickedPart.id}
-            ]
-          };
-
-          Restangular.all('interchange').post(interchange).then(
-              function() {
-                gToast.open("Interchangeable part group changed added.");
-                $location.path("/part/" + $scope.partType + "/" + $scope.partId);
-              },
-              function(response) {
-                $dialogs.error("Could not add interchangeable part.", "Server said: <pre>" + JSON.stringify(response.data) + "</pre>");
-              });;
         }
       }
 
@@ -104,9 +114,12 @@ angular.module('ngMetaCrudApp')
         return $scope.part && $scope.part.interchange;
       }
 
-      $scope.clear = function () {
-        $dialogs.confirm("Remove from interchangeable part group?", "Other parts in the group will not be modified.").result
-            .then(
+      $scope.removeInterchange = function () {
+        $log.log("clear");
+        $dialogs.confirm(
+                "Remove from interchangeable part group?",
+                "Other parts in the group will not be modified.")
+            .result.then(
                 function() {
                   Restangular.setParentless(false);
                   Restangular.one('interchange', $scope.part.interchangeId).one('part', $scope.partId).remove().then(
