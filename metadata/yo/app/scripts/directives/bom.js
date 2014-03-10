@@ -23,6 +23,8 @@ angular.module('ngMetaCrudApp')
                   return;
                 };
 
+                $scope.part.bom = _.sortBy($scope.part.bom, 'id');
+
                 // Update the total and slice the result
                 $defer.resolve($scope.part.bom.slice((params.page() - 1) * params.count(), params.page() * params.count()));
                 params.total($scope.part.bom.length);
