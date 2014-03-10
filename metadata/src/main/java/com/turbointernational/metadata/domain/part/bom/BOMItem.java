@@ -134,7 +134,11 @@ public class BOMItem implements Comparable<BOMItem> {
     
     public static BOMItem findBOMItem(Long id) {
         if (id == null) return null;
-        return entityManager().find(BOMItem.class, id);
+        
+        return entityManager()
+                .createQuery("SELECT DISTINCT b FROM BOMItem WHERE id = ?", BOMItem.class)
+                .setParameter(1, id)
+                .getSingleResult();
     }
     
     public static List<BOMItem> findBOMItemEntries(int firstResult, int maxResults) {
