@@ -136,7 +136,7 @@ public class BOMItem implements Comparable<BOMItem> {
         if (id == null) return null;
         
         return entityManager()
-                .createQuery("SELECT DISTINCT b FROM BOMItem WHERE id = ?", BOMItem.class)
+                .createQuery("SELECT DISTINCT i FROM BOMItem i WHERE id = ?", BOMItem.class)
                 .setParameter(1, id)
                 .getSingleResult();
     }
