@@ -27,18 +27,21 @@ angular.module('ngMetaCrudApp')
             });
 
         $scope.save = function () {
-          $scope.bomItem.alternatives.push({
-            id: $scope.pickedPart.id,
-            version: $scope.pickedPart.version
-          })
-          Restangular.all('bom').post($scope.bomItem).then(
+
+          var altItem = {
+            header: $scope.header,
+            part: $scope.pickedPart
+          };
+
+          Restangular.setParentless(false);
+          Restangular.one('bom', $scope.bomItem.id).all('alt').post(altItem).then(
             function () {
               // Success
-              gToast.open("BOM item added.");
+              gToast.open("BOM alternate added.");
               $location.path("/part/" + $scope.partType + "/" + $scope.partId);
             },
               function (response) {
-                $dialogs.error("Could not add BOM Item", "Server said: <pre>" + JSON.stringify(response.data) + "</pre>");
+                $dialogs.error("Could not add BOM alternate", "Server said: <pre>" + JSON.stringify(response.data) + "</pre>");
             });
         }
 

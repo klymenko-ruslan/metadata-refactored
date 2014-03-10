@@ -59,55 +59,24 @@
   </table>
 
   <div ng-show="altBomItem">
-    <h3>
-      {{
-        altBomItem.child.manufacturer.name
-        + ' '
-        + altBomItem.child.partType.name
-        + ' '
-        + altBomItem.child.manufacturerPartNumber
-      }}
-      Alternates</h3>
+    <h4 part-name="altBomItem.child" part-name-suffix="Alternates"></h4>
 
       <a authorize="ROLE_BOM" class="btn btn-info pull-right" style="vertical-align: middle;" ng-href="#/part/{{part.partType.typeName}}/{{partId}}/bom/{{altBomItem.id}}/search">
         <i class="fa fa-cogs"></i>
         Add Alternate
       </a>
 
-      <div ng-repeat="altItem in altBomItem.alternatives | orderBy: altItem.header.id">
-        <table class="table table-bordered table-striped table-hover table-responsive">
-          <thead>
-            <tr>
-              <th>Group</th>
-              <th>Type</th>
-              <th>Manufacturer</th>
-              <th>Part #</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>{{altItem.header.id}}</td>
-              <td>{{altItem.part.partType.name}}</td>
-              <td>{{altItem.part.manufacturer.name}}</td>
-              <td>{{altItem.part.manufacturerPartNumber}}</td>
-              <td>
-                <a ng-href="#/part/{{bomItem.child.partType.typeName}}/{{bomItem.child.id}}"
-                   authorize="ROLE_READ" class="btn btn-primary btn-xs">
-                  <i class="fa fa-eye"></i> View Part
-                </a>
+      <div class="row">
+        <part-table parts="altBomItem.alternatives | orderBy: header.id" key="part"
+                    extra-columns="{&quot;Alt Group&quot;: &quot;item.header.id&quot;}">
 
-                <a ng-click="remove($index, bomItem)"
-                   authorize="ROLE_BOM" class="btn btn-danger btn-xs">
-                  <i class="fa fa-trash-o"></i> Remove
-                </a>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div ng-hide="altBomItem.alternatives">
-        No alternate specified.
+          <button ng-click="removeAlternate(index, item)"
+             authorize="ROLE_BOM_ALT" class="btn btn-danger btn-xs">
+            <i class="fa fa-trash-o"></i> Remove
+          </button>
+
+        </part-table>
+
       </div>
   </div>
 

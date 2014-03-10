@@ -8,19 +8,19 @@
     </tr>
   </thead>
   <tbody>
-    <tr ng-repeat="part in getParts()">
+    <tr ng-repeat="item in parts">
       <td>
-        {{part.manufacturer.name}}
+        {{getPart(item).manufacturer.name}}
       </td>
       <td>
-        {{part.partType.name}}
+        {{getPart(item).partType.name}}
       </td>
       <td style="white-space: nowrap;">
-        {{part.manufacturerPartNumber}}
+        {{getPart(item).manufacturerPartNumber}}
       </td>
-      <td>
+      <td part-table-actions>
         <a authorize="ROLE_READ"
-           ng-href="#/part/{{part.partType.typeName}}/{{part.id}}"
+           ng-href="#/part/{{getPart(item).partType.typeName}}/{{getPart(item).id}}"
            class="btn btn-primary btn-xs">
           <i class="fa fa-eye"></i>
           View

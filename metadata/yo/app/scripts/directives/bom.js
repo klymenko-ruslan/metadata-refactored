@@ -8,7 +8,7 @@ angular.module('ngMetaCrudApp')
       link: function postLink(scope, element, attrs) {
 //        element.text('this is the bom directive');
       },
-      controller: function($scope, ngTableParams, gToast, Restangular, $dialogs) {
+      controller: function($dialogs, $scope, ngTableParams, gToast, Restangular, restService) {
 
 
         $scope.bomTableParams = new ngTableParams(
@@ -74,16 +74,27 @@ angular.module('ngMetaCrudApp')
 
                       gToast.open("Child part removed from BOM.");
                     },
-                    function(response) {
-                      // Error
-                      $dialogs.error(
-                          "Could not remove BOM Item",
-                          "Here's the error: <pre>" + response.status +"</pre>");
-                    });
+                    restService.error);
               },
               function() {
                 // No
               });
+        };
+
+        $scope.removeAlternate = function(index, altItem) {
+          $dialogs.confirm(
+              "Remove alternate item?",
+              "This will remove the alternate part from this BOM item.").result.then(
+                  function() {
+                    Restangular.setParentless(false);
+                    Restangular.one('bom', $scope.altBomItem.id).one('alt', altItem.id).remove().then(
+                        function() {
+                          $scope.altBomItem.alternatives.splice(index, 1);
+                          gToast.open("BOM alternate removed.");
+                        },
+                        restService.error
+                    );
+                  });
         };
 
 

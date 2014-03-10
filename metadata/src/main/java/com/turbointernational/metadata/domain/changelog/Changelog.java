@@ -58,7 +58,7 @@ public class Changelog {
         this.id = id;
     }
     
-    public static Changelog log(Principal principal, String description, String data) {
+    public static Changelog log(String description, String data) {
         Changelog changelog = new Changelog();
         
         changelog.description = description;
@@ -69,6 +69,11 @@ public class Changelog {
         changelog.persist();
         
         return changelog;
+    }
+    
+    @Deprecated
+    public static Changelog log(Principal principal, String description, String data) {
+        return log(description, data);
     }
     //</editor-fold>
     
