@@ -56,7 +56,7 @@ module.exports = function (grunt) {
               lrSnippet,
               mountFolder(connect, '.tmp'),
               mountFolder(connect, yeomanConfig.app),
-                function(req, res, next) {
+              function(req, res, next) {
                 res.setHeader('Access-Control-Allow-Origin', '*');
                 res.setHeader('Access-Control-Allow-Methods', '*');
                 next();
@@ -397,7 +397,7 @@ module.exports = function (grunt) {
   ]);
 
   grunt.registerTask('default', [
-//    'jshint',
+    'jshint',
 //    'test',
     'build'
   ]);

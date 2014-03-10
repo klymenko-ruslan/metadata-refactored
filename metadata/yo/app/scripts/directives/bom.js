@@ -59,7 +59,7 @@ angular.module('ngMetaCrudApp')
 
                 '</div>',
       restrict: 'E',
-      link: function postLink(scope, element, attrs) {
+      link: function postLink(/*$scope, element, attrs */) {
 //        element.text('this is the bom directive');
       },
       controller: function($scope, ngTableParams, gToast, Restangular, $dialogs) {
@@ -67,28 +67,28 @@ angular.module('ngMetaCrudApp')
 
         $scope.bomTableParams = new ngTableParams(
             {
-              page: 1,
-              count: 10
-            },
+          page: 1,
+          count: 10
+        },
             {
-              getData: function ($defer, params) {
+          getData: function ($defer, params) {
                 if (!angular.isObject($scope.part)) {
                   $defer.reject();
                   return;
-                };
+                }
 
                 // Update the total and slice the result
                 $defer.resolve($scope.part.bom.slice((params.page() - 1) * params.count(), params.page() * params.count()));
                 params.total($scope.part.bom.length);
               }
-            });
+        });
 
         // Temp storage for quantities
         $scope.modifyValues = {};
 
         $scope.isModifying = function(index, bomItem) {
           return angular.isDefined($scope.modifyValues[bomItem.id]);
-        }
+        };
 
         $scope.modifyStart = function(index, bomItem) {
           $scope.modifyValues[bomItem.id] = bomItem.quantity;
@@ -106,16 +106,16 @@ angular.module('ngMetaCrudApp')
                 delete $scope.modifyValues[bomItem.id];
               },
               function() {
-              }
+          }
           );
         };
 
         $scope.remove = function(index, bomItem) {
-          $log.log("Remove bom item, part: ", $scope.part);
+          $log.log('Remove bom item, part: ', $scope.part);
 
           $dialogs.confirm(
-                  "Remove BOM Item?",
-                  "Remove child part from this bill of materials?").result.then(
+                  'Remove BOM Item?',
+                  'Remove child part from this bill of materials?').result.then(
               function() {
                 // Yes
                 Restangular.one('bom', bomItem.id).remove().then(
@@ -126,18 +126,18 @@ angular.module('ngMetaCrudApp')
                       $scope.part.bom.splice(index, 1);
                       $scope.bomTableParams.reload();
 
-                      gToast.open("Child part removed from BOM.");
+                      gToast.open('Child part removed from BOM.');
                     },
                     function(response) {
                       // Error
                       $dialogs.error(
-                          "Could not remove BOM Item",
-                          "Here's the error: <pre>" + response.status +"</pre>");
+                          'Could not remove BOM Item',
+                          'Here\'s the error: <pre>' + response.status + '</pre>');
                     });
               },
               function() {
                 // No
-              });
+          });
         };
 
       }
