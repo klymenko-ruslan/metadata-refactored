@@ -31,6 +31,7 @@ angular.module('ngMetaCrudApp')
         };
 
         $scope.save = function () {
+          Restangular.setParentless(true);
           Restangular.all('bom').post($scope.bomItem).then(
             function () {
               // Success
