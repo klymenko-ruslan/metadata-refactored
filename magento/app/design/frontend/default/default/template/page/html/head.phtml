@@ -31,6 +31,8 @@
 <meta name="robots" content="<?php echo htmlspecialchars($this->getRobots()) ?>" />
 <link rel="icon" href="<?php echo $this->getFaviconFile(); ?>" type="image/x-icon" />
 <link rel="shortcut icon" href="<?php echo $this->getFaviconFile(); ?>" type="image/x-icon" />
+<!-- jQueryUI CSS -->
+<link rel="stylesheet" href="//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
 <!--[if lt IE 7]>
 <script type="text/javascript">
 //<![CDATA[
@@ -43,3 +45,5 @@
 <?php echo $this->getChildHtml() ?>
 <?php echo $this->helper('core/js')->getTranslatorScript() ?>
 <?php echo $this->getIncludes() ?>
+<!-- jQuery script to avoid conflicts with PrototypeJS which comes with Magento -->
+<script type="text/javascript">jQuery.noConflict();</script>
