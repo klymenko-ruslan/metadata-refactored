@@ -59,7 +59,8 @@ foreach ($interchangeSkuArray as $interchangeSku) {
 }
 
 // Sorts products by part number
-function usortByPartNumberPredicate($a, $b) {
+function usortByPartNumberPredicate($a, $b)
+{
     return strcmp($a->getPartNumber(), $b->getPartNumber());
 }
 
@@ -69,177 +70,191 @@ uasort($interchangeSkuProductMap, 'usortByPartNumberPredicate');
 // Should be a subset of interchanges
 $tiPartSkuArray = $_product->getTiPartSku() ? explode(',', $_product->getTiPartSku()) : array();
 ?>
-    <script type="text/javascript">
-        var optionsPrice = new Product.OptionsPrice(<?php echo $this->getJsonConfig() ?>);
-    </script>
-    <div id="messages_product_view"><?php echo $this->getMessagesBlock()->getGroupedHtml() ?></div>
-    <div class="product-view">
-    <div class="product-essential">
-        <form action="<?php echo $this->getSubmitUrl($_product) ?>" method="post"
-              id="product_addtocart_form"<?php if ($_product->getOptions()): ?> enctype="multipart/form-data"<?php endif; ?>>
-            <div class="no-display">
-                <input type="hidden" name="product" value="<?php echo $_product->getId() ?>"/>
-                <input type="hidden" name="related_product" id="related-products-field" value=""/>
+<script type="text/javascript">
+    var optionsPrice = new Product.OptionsPrice(<?php echo $this->getJsonConfig() ?>);
+</script>
+<div id="messages_product_view"><?php echo $this->getMessagesBlock()->getGroupedHtml() ?></div>
+<div class="product-view">
+<div class="product-essential">
+    <form action="<?php echo $this->getSubmitUrl($_product) ?>" method="post"
+          id="product_addtocart_form"<?php if ($_product->getOptions()): ?> enctype="multipart/form-data"<?php endif; ?>>
+        <div class="no-display">
+            <input type="hidden" name="product" value="<?php echo $_product->getId() ?>"/>
+            <input type="hidden" name="related_product" id="related-products-field" value=""/>
+        </div>
+
+        <div class="product-shop">
+            <div class="product-name">
+                <h1><?php echo($_product->getName() ? $_helper->productAttribute($_product, $_product->getName(), 'name') : 'No Name') ?></h1>
             </div>
 
-            <div class="product-shop">
-                <div class="product-name">
-                    <h1><?php echo($_product->getName() ? $_helper->productAttribute($_product, $_product->getName(), 'name') : 'No Name') ?></h1>
-                </div>
+            <?php echo $this->getReviewsSummaryHtml($_product, false, true) ?>
+            <?php echo $this->getChildHtml('alert_urls') ?>
+            <?php echo $this->getChildHtml('product_type_data') ?>
+            <?php echo $this->getTierPriceHtml() ?>
+            <?php echo $this->getChildHtml('extrahint') ?>
 
-                <?php echo $this->getReviewsSummaryHtml($_product, false, true) ?>
-                <?php echo $this->getChildHtml('alert_urls') ?>
-                <?php echo $this->getChildHtml('product_type_data') ?>
-                <?php echo $this->getTierPriceHtml() ?>
-                <?php echo $this->getChildHtml('extrahint') ?>
-
-                <?php if (!$this->hasOptions()): ?>
-                    <div class="add-to-box">
-                        <?php if ($_product->isSaleable()): ?>
-                            <?php echo $this->getChildHtml('addtocart'); ?>
-                            <?php if ($this->helper('wishlist')->isAllow() || $_compareUrl = $this->helper('catalog/product_compare')->getAddUrl($_product)): ?>
-                                <span class="or"><?php echo $this->__('OR') ?></span>
-                            <?php endif; ?>
+            <?php if (!$this->hasOptions()): ?>
+                <div class="add-to-box">
+                    <?php if ($_product->isSaleable()): ?>
+                        <?php echo $this->getChildHtml('addtocart'); ?>
+                        <?php if ($this->helper('wishlist')->isAllow() || $_compareUrl = $this->helper('catalog/product_compare')->getAddUrl($_product)): ?>
+                            <span class="or"><?php echo $this->__('OR') ?></span>
                         <?php endif; ?>
-                        <?php echo $this->getChildHtml('addto') ?>
-                    </div>
-                    <?php echo $this->getChildHtml('extra_buttons') ?>
-                <?php elseif (!$_product->isSaleable()): ?>
-                    <div class="add-to-box">
-                        <?php echo $this->getChildHtml('addto') ?>
-                    </div>
-                <?php endif; ?>
-                
-                <!-- Email a friend -->
-                <?php if ($this->canEmailToFriend()): ?>
-                    <p class="email-friend"><a
-                            href="<?php echo $this->helper('catalog/product')->getEmailToFriendUrl($_product) ?>"><?php echo $this->__('Email to a Friend') ?></a>
-                    </p>
-                <?php endif; ?>
+                    <?php endif; ?>
+                    <?php echo $this->getChildHtml('addto') ?>
+                </div>
+                <?php echo $this->getChildHtml('extra_buttons') ?>
+            <?php elseif (!$_product->isSaleable()): ?>
+                <div class="add-to-box">
+                    <?php echo $this->getChildHtml('addto') ?>
+                </div>
+            <?php endif; ?>
 
-                <?php if ($_product->getShortDescription()): ?>
-                    <div class="short-description">
-                        <h2><?php echo $this->__('Quick Overview') ?></h2>
+            <!-- Email a friend -->
+            <?php if ($this->canEmailToFriend()): ?>
+                <p class="email-friend"><a
+                        href="<?php echo $this->helper('catalog/product')->getEmailToFriendUrl($_product) ?>"><?php echo $this->__('Email to a Friend') ?></a>
+                </p>
+            <?php endif; ?>
 
-                        <div
-                            class="std"><?php echo $_helper->productAttribute($_product, nl2br($_product->getShortDescription()), 'short_description') ?></div>
-                    </div>
-                <?php endif; ?>
+            <?php if ($_product->getShortDescription()): ?>
+                <div class="short-description">
+                    <h2><?php echo $this->__('Quick Overview') ?></h2>
 
-                <?php echo $this->getChildHtml('other'); ?>
+                    <div
+                        class="std"><?php echo $_helper->productAttribute($_product, nl2br($_product->getShortDescription()), 'short_description') ?></div>
+                </div>
+            <?php endif; ?>
 
-                <?php if ($_product->isSaleable() && $this->hasOptions()): ?>
-                    <?php echo $this->getChildChildHtml('container1', '', true, true) ?>
-                <?php endif; ?>
-
-            </div>
-
-            <div class="product-img-box">
-                <?php echo $this->getChildHtml('media') ?>
-            </div>
-
-            <div class="clearer"></div>
+            <?php echo $this->getChildHtml('other'); ?>
 
             <?php if ($_product->isSaleable() && $this->hasOptions()): ?>
-                <?php echo $this->getChildChildHtml('container2', '', true, true) ?>
+                <?php echo $this->getChildChildHtml('container1', '', true, true) ?>
             <?php endif; ?>
 
-        </form>
-        <script type="text/javascript">
-            //<![CDATA[
-            var productAddToCartForm = new VarienForm('product_addtocart_form');
-            productAddToCartForm.submit = function (button, url) {
-                if (this.validator.validate()) {
-                    var form = this.form;
-                    var oldUrl = form.action;
-
-                    if (url) {
-                        form.action = url;
-                    }
-                    var e = null;
-                    try {
-                        this.form.submit();
-                    } catch (e) {
-                    }
-                    this.form.action = oldUrl;
-                    if (e) {
-                        throw e;
-                    }
-
-                    if (button && button != 'undefined') {
-                        button.disabled = true;
-                    }
-                }
-            }.bind(productAddToCartForm);
-
-            productAddToCartForm.submitLight = function (button, url) {
-                if (this.validator) {
-                    var nv = Validation.methods;
-                    delete Validation.methods['required-entry'];
-                    delete Validation.methods['validate-one-required'];
-                    delete Validation.methods['validate-one-required-by-name'];
-                    // Remove custom datetime validators
-                    for (var methodName in Validation.methods) {
-                        if (methodName.match(/^validate-datetime-.*/i)) {
-                            delete Validation.methods[methodName];
-                        }
-                    }
-
-                    if (this.validator.validate()) {
-                        if (url) {
-                            this.form.action = url;
-                        }
-                        this.form.submit();
-                    }
-                    Object.extend(Validation.methods, nv);
-                }
-            }.bind(productAddToCartForm);
-            //]]>
-        </script>
-    </div>
-
-    <div class="product-collateral">
-        <div class="box-collateral">
-            <h2><?php echo $this->__('Product Information') ?></h2>
-            <table class="data-table" id="product-information-specs-table">
-                <col width="25%"/>
-                <col/>
-                <tbody>
-                <tr>
-                    <th class="label">Part Type</th>
-                    <td class="data"><?php echo $_product->getAttributeText('part_type'); ?></td>
-                </tr>
-                <tr>
-                    <th class="label">Manufacturer</th>
-                    <td class="data"><?php echo $_product->getAttributeText('manufacturer'); ?></td>
-                </tr>
-                <tr>
-                    <th class="label">Part Number</th>
-                    <td class="data"><?php echo $_product->getPartNumber(); ?></td>
-                </tr>
-                <tr>
-                    <th class="label">Name</th>
-                    <td class="data"><?php echo $_product->getName(); ?></td>
-                </tr>
-                <tr>
-                    <th class="label">Description</th>
-                    <td class="data"><?php echo $this->helper('catalog/output')->productAttribute($this->getProduct(), $_description, 'description') ?></td>
-                </tr>
-                </tbody>
-            </table>
         </div>
-        <?php foreach ($this->getChildGroup('detailed_info', 'getChildHtml') as $alias => $html): ?>
-            <?php if ($alias != 'description'): ?>
-                <div class="box-collateral <?php echo "box-{$alias}" ?>">
-                    <?php if ($title = $this->getChildData($alias, 'title')): ?>
-                        <h2><?php echo $this->escapeHtml($title); ?></h2>
-                    <?php endif; ?>
-                    <?php echo $html; ?>
-                </div>
-            <?php endif; ?>
-        <?php endforeach; ?>
 
-        <div class="box-collateral">
+        <div class="product-img-box">
+            <?php echo $this->getChildHtml('media') ?>
+        </div>
+
+        <div class="clearer"></div>
+
+        <?php if ($_product->isSaleable() && $this->hasOptions()): ?>
+            <?php echo $this->getChildChildHtml('container2', '', true, true) ?>
+        <?php endif; ?>
+
+    </form>
+    <script type="text/javascript">
+        //<![CDATA[
+        var productAddToCartForm = new VarienForm('product_addtocart_form');
+        productAddToCartForm.submit = function (button, url) {
+            if (this.validator.validate()) {
+                var form = this.form;
+                var oldUrl = form.action;
+
+                if (url) {
+                    form.action = url;
+                }
+                var e = null;
+                try {
+                    this.form.submit();
+                } catch (e) {
+                }
+                this.form.action = oldUrl;
+                if (e) {
+                    throw e;
+                }
+
+                if (button && button != 'undefined') {
+                    button.disabled = true;
+                }
+            }
+        }.bind(productAddToCartForm);
+
+        productAddToCartForm.submitLight = function (button, url) {
+            if (this.validator) {
+                var nv = Validation.methods;
+                delete Validation.methods['required-entry'];
+                delete Validation.methods['validate-one-required'];
+                delete Validation.methods['validate-one-required-by-name'];
+                // Remove custom datetime validators
+                for (var methodName in Validation.methods) {
+                    if (methodName.match(/^validate-datetime-.*/i)) {
+                        delete Validation.methods[methodName];
+                    }
+                }
+
+                if (this.validator.validate()) {
+                    if (url) {
+                        this.form.action = url;
+                    }
+                    this.form.submit();
+                }
+                Object.extend(Validation.methods, nv);
+            }
+        }.bind(productAddToCartForm);
+        //]]>
+    </script>
+</div>
+<!-- Necessary jQueryUI Tabs script -->
+<script type="text/javascript">
+    jQuery(function () {
+        jQuery("#tabs").tabs();
+    });
+</script>
+<div class="product-collateral">
+    <div id="tabs" style="font-size: 97%;">
+        <ul>
+            <li><a href="#tabs-product-information">Product Information</a></li>
+            <li><a href="#tabs-interchangeable-parts">Interchangeable Parts</a></li>
+            <li><a href="#tabs-bill-of-materials">Bill of Materials</a></li>
+            <li><a href="#tabs-application-detail">Application Detail</a></li>
+        </ul>
+        <div id="tabs-product-information">
+            <div class="box-collateral">
+                <h2><?php echo $this->__('Product Information') ?></h2>
+                <table class="data-table" id="product-information-specs-table">
+                    <col width="25%"/>
+                    <col/>
+                    <tbody>
+                    <tr>
+                        <th class="label">Part Type</th>
+                        <td class="data"><?php echo $_product->getAttributeText('part_type'); ?></td>
+                    </tr>
+                    <tr>
+                        <th class="label">Manufacturer</th>
+                        <td class="data"><?php echo $_product->getAttributeText('manufacturer'); ?></td>
+                    </tr>
+                    <tr>
+                        <th class="label">Part Number</th>
+                        <td class="data"><?php echo $_product->getPartNumber(); ?></td>
+                    </tr>
+                    <tr>
+                        <th class="label">Name</th>
+                        <td class="data"><?php echo $_product->getName(); ?></td>
+                    </tr>
+                    <tr>
+                        <th class="label">Description</th>
+                        <td class="data"><?php echo $this->helper('catalog/output')->productAttribute($this->getProduct(), $_description, 'description') ?></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <?php foreach ($this->getChildGroup('detailed_info', 'getChildHtml') as $alias => $html): ?>
+                <?php if ($alias != 'description'): ?>
+                    <div id="tabs-additional-information" class="box-collateral <?php echo "box-{$alias}" ?>">
+                        <?php if ($title = $this->getChildData($alias, 'title')): ?>
+                            <h2><?php echo $this->escapeHtml($title); ?></h2>
+                        <?php endif; ?>
+                        <?php echo $html; ?>
+                    </div>
+                <?php endif; ?>
+            <?php endforeach; ?>
+        </div>
+
+        <div id="tabs-interchangeable-parts" class="box-collateral">
             <h2><?php echo $this->__('Interchangeable Parts') ?></h2>
             <table class="data-table" id="interchangeable-parts-specs-table">
                 <col width="25%"/>
@@ -249,23 +264,23 @@ $tiPartSkuArray = $_product->getTiPartSku() ? explode(',', $_product->getTiPartS
                     <th class="label">Part Number</th>
                     <th class="label">Manufacturer</th>
                 </tr>
-            <?php if (count($interchangeSkuArray)): ?>
-                <?php foreach ($interchangeSkuProductMap as $interchangeSku => $interchangeProduct): ?>
+                <?php if (count($interchangeSkuArray)): ?>
+                    <?php foreach ($interchangeSkuProductMap as $interchangeSku => $interchangeProduct): ?>
+                        <tr>
+                            <td class="data">
+                                <a href="<?php echo $interchangeProduct->getProductUrl(); ?>"><?php echo $interchangeProduct->getPartNumber() ?></a>
+                            <td class="data"><?php echo $interchangeProduct->getAttributeText('manufacturer'); ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php else: ?>
                     <tr>
-                        <td class="data">
-                            <a href="<?php echo $interchangeProduct->getProductUrl(); ?>"><?php echo $interchangeProduct->getPartNumber() ?></a>
-                        <td class="data"><?php echo $interchangeProduct->getAttributeText('manufacturer'); ?></td>
-                    </tr>
-                <?php endforeach; ?>
-            <?php else: ?>
-                    <tr>
-                    <td colspan="2"><?php echo $this->__('No Interchangeable Parts') ?></td>
+                        <td colspan="2"><?php echo $this->__('No Interchangeable Parts') ?></td>
                     </tr>
                 <?php endif; ?>
                 </tbody>
             </table>
         </div>
-        <div class="box-collateral">
+        <div id="tabs-bill-of-materials" class="box-collateral">
             <h2><?php echo $this->__('Bill of Materials') ?></h2>
             <table class="data-table" id="bill-of-materials">
                 <tr>
@@ -276,45 +291,42 @@ $tiPartSkuArray = $_product->getTiPartSku() ? explode(',', $_product->getTiPartS
                     <th><strong>Qty Per Set</strong></th>
                     <th><strong>Price</strong></th>
                 </tr>
-                
+
                 <?php foreach ($billOfMaterials as $bomItem): ?>
                     <?php
-                        $bomItemProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $bomItem['sku']);
+                    $bomItemProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $bomItem['sku']);
                     ?>
 
                     <tr>
                         <td><?php echo $bomItemProduct->getAttributeText('part_type'); ?></td>
                         <td><?php echo '<a href="' . $bomItemProduct->getProductUrl() . '">' . $bomItemProduct->getPartNumber() . '</a>'; ?></td>
-                        <td><?php
-                        
-                            // Keep a reference to the first interchangeable TI product
-                            $firstInterchangeProduct = null;
-                            
+                        <td><?php $a = 1;
                             foreach ($bomItem['ti_part_sku'] as $tiPart) {
                                 $bomItemInterchangeProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $tiPart);
                                 if ($bomItemInterchangeProduct) {
-                                    if ($firstInterchangeProduct == null) {
-                                        $firstInterchangeProduct = $bomItemInterchangeProduct;
-                                    } else {
-                                        echo ", ";
-                                    }
                                     echo '<a href="' . $bomItemInterchangeProduct->getProductUrl() . '">' . $bomItemInterchangeProduct->getPartNumber() . '</a>';
                                 } else {
                                     echo $tiPart;
                                 }
+
+                                // Add commas between items
+                                if ($a < count($bomItem['ti_part_sku'])) {
+                                    echo ", ";
+                                }
+                                $a++;
                             }?>
                         </td>
                         <td>
                             <?php if ($bomItemProduct->getId()): ?>
-                                <a href="<?php echo $bomItemProduct->getProductUrl()?>"><?php echo $bomItemProduct->getName() ?></a>
+                                <a href="<?php echo $bomItemProduct->getProductUrl() ?>"><?php echo $bomItemProduct->getName() ?></a>
                             <?php else: ?>
-                                <?php echo $bomItem['sku']?>
+                                <?php echo $bomItem['sku'] ?>
                             <?php endif; ?>
                         </td>
                         <td><?php echo $bomItem['quantity']; ?></td>
                         <td>
-                            <?php if ($firstInterchangeProduct) {
-                                echo Mage::helper('core')->currency($firstInterchangeProduct->getFinalPrice());
+                            <?php if ($bomItemProduct->getTiPartSku()) {
+                                echo Mage::helper('core')->currency($bomItemInterchangeProduct->getFinalPrice());
                             }?>
                         </td>
 
@@ -322,9 +334,9 @@ $tiPartSkuArray = $_product->getTiPartSku() ? explode(',', $_product->getTiPartS
                 <?php endforeach; ?>
             </table>
         </div>
-        
-    
-        <div class="box-collateral">
+
+
+        <div id="tabs-application-detail" class="box-collateral">
             <h2><?php echo $this->__('Application Detail') ?></h2>
             <table class="data-table" id="application_detail">
                 <tr>
@@ -349,12 +361,15 @@ $tiPartSkuArray = $_product->getTiPartSku() ? explode(',', $_product->getTiPartS
                 <?php endforeach; ?>
             </table>
         </div>
+    </div>
 
+    <div style="margin-top: 5px;">
         <?php echo $this->getLayout()->createBlock('cms/block')->setBlockId('product_custom_options')->toHtml() ?>
         <?php echo $this->getChildHtml('upsell_products') ?>
         <?php echo $this->getChildHtml('product_additional_data') ?>
     </div>
-    </div>
+</div>
+</div>
 
 <script type="text/javascript">decorateTable('product-information-specs-table')</script>
 <script type="text/javascript">decorateTable('interchangeable-parts-specs-table')</script>
