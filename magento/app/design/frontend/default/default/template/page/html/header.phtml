@@ -28,41 +28,23 @@
  */
 ?>
 <div class="header-container">
+    <div class="meta-header">
+        <strong>US &amp; International Sales: +1.760.476.4111</strong>
+        <a href="mailto:sales@turbointernational.com">sales@turbointernational.com</a>
+        <?php echo $this->getChildHtml('topLinks') ?>
+    </div>
     <div class="header">
-        <?php if ($this->getIsHomePage()): ?>
-            <h1 class="logo"><strong><?php echo $this->getLogoAlt() ?></strong><a href="<?php echo $this->getUrl('') ?>"
-                                                                                  title="<?php echo $this->getLogoAlt() ?>"
-                                                                                  class="logo"><img
-                        src="<?php echo $this->getLogoSrc() ?>" alt="<?php echo $this->getLogoAlt() ?>"/></a></h1>
-        <?php else: ?>
-            <a href="<?php echo $this->getUrl('') ?>" title="<?php echo $this->getLogoAlt() ?>"
-               class="logo"><strong><?php echo $this->getLogoAlt() ?></strong><img src="<?php echo $this->getLogoSrc() ?>"
-                                                                                   alt="<?php echo $this->getLogoAlt() ?>"/></a>
-        <?php endif ?>
+        <h1 class="logo">
+            <strong><?php echo $this->getLogoAlt() ?></strong><a href="<?php echo $this->getUrl('') ?>" title="<?php echo $this->getLogoAlt() ?>" class="logo"><img src="<?php echo $this->getLogoSrc() ?>" alt="<?php echo $this->getLogoAlt() ?>"/></a>
+        </h1>
 
-        <!-- BEGIN: Constant Contact Stylish Email Newsletter Form -->
-        <div style="width: 160px; position: absolute; left: 30%; top: 10px; text-align: left; color: #fff;">
-            <form style="margin-bottom: 3;" action="http://visitor.r20.constantcontact.com/d.jsp" method="post" name="ccoptin"
-                  target="_blank"><em class="icon-envelope" style="font-size: 16px;"></em> <span
-                    style="font-weight: normal; font-family: Verdana; font-size: 13px;">Sign up for our Email Newsletter</span><br/>
-                <input
-                    style="font-family: Verdana,Geneva,Arial,Helvetica,sans-serif; font-size: 10px; margin-top: 5px; border: 1px solid #999999;"
-                    type="text" name="ea" value=""/> <input class="submit"
-                                                            style="font-family: Verdana,Arial,Helvetica,sans-serif; font-size: 10px; margin-top: 5px;"
-                                                            type="submit" name="go" value="GO"/> <input type="hidden"
-                                                                                                        name="llr"
-                                                                                                        value="99pi6ojab"/>
-                <input type="hidden" name="m" value="1109675753306"/> <input type="hidden" name="p" value="oi"/></form>
-        </div>
-        <!-- END: Constant Contact Stylish Email Newsletter Form -->
+        <h2 class="logo">Quality Replacement<br>
+            Turbo Charger Parts</h2>
 
-        <div class="quick-access">
-            <?php echo $this->getChildHtml('topSearch') ?>
-            <p class="welcome-msg"><?php echo $this->getWelcome() ?> <?php echo $this->getAdditionalHtml() ?></p>
-            <?php echo $this->getChildHtml('topLinks') ?>
-            <?php echo $this->getChildHtml('store_language') ?>
-        </div>
+        <p class="welcome-msg"><?php echo $this->getWelcome() ?> <?php echo $this->getAdditionalHtml() ?></p>
+        <?php echo $this->getChildHtml('store_language') ?>
         <?php echo $this->getChildHtml('topContainer'); ?>
+        <?php echo $this->getChildHtml('topSearch') ?>
     </div>
 </div>
 <?php echo $this->getChildHtml('topMenu') ?>
