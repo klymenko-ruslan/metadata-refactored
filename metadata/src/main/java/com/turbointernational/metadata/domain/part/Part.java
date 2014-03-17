@@ -354,7 +354,10 @@ public class Part implements Comparable<Part> {
                 .include("bom.alternatives.part.manufacturerPartNumber")
                 .include("bom.alternatives.part.manufacturer.id")
                 .include("bom.alternatives.part.manufacturer.name")
-                .exclude("bom.alternatives.part.*");
+                .exclude("bom.alternatives.part.*")
+                .include("productImages.id")
+                .include("productImages.filename")
+                .exclude("productImages.*");
     }
     
     public JSOG toJsog() {
