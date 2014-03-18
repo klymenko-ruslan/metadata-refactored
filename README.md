@@ -58,7 +58,7 @@ Architecture
 
 Metadata Server Configuration
 =============================
-The Metadata server uses java properties files for configuration. In the source, these are stored under `/metadata/src/main/java/resources/spring`. The webapp also looks in the [tomcat] user's home directory for `ti_metadata.properties` which can be used to override the default values. Here's a sample:
+The Metadata server uses java properties files for configuration. In the source, these are stored under `/metadata/src/main/java/resources/spring` (or try `metadata/src/main/resources/META-INF/spring`). The webapp also looks in the [tomcat] user's home directory for `ti_metadata.properties` which can be used to override the default values. Here's a sample:
 
 ```
 mas90.db.path=/var/mas90.accdb
