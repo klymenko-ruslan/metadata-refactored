@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.io.FileUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -15,9 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
 
 @RequestMapping("/metadata/image")
 @Controller
@@ -31,7 +30,8 @@ public class ProductImageController {
     @Value("${images.resized}")
     private File resizedImagesDir;
     
-    private static final int[] sizes = {50, 135, 1000};
+    @Autowired(required=true)
+    ImageResizer resizer;
     
     @RequestMapping(value = "/{id}.jpg", method = RequestMethod.GET)
     @ResponseBody
@@ -51,7 +51,7 @@ public class ProductImageController {
 
             byte[] bytes = FileUtils.readFileToByteArray(imageFile);
 
-            return new ResponseEntity(bytes, headers, HttpStatus.NOT_FOUND);
+            return new ResponseEntity(bytes, headers, HttpStatus.OK);
         } catch (IOException e) {
             log.log(Level.INFO, "Couldn't load image file: " + imageFile.getAbsolutePath(), e);
             throw e;
@@ -76,7 +76,7 @@ public class ProductImageController {
 
             byte[] bytes = FileUtils.readFileToByteArray(imageFile);
 
-            return new ResponseEntity(bytes, headers, HttpStatus.NOT_FOUND);
+            return new ResponseEntity(bytes, headers, HttpStatus.OK);
         } catch (IOException e) {
             log.log(Level.INFO, "Couldn't load image file: " + imageFile.getAbsolutePath(), e);
             throw e;
@@ -84,40 +84,30 @@ public class ProductImageController {
     }
     
     @Transactional
-    @RequestMapping(value="/{id}/addProductImage", method = RequestMethod.POST)
+    @RequestMapping(value="/{id}", method = RequestMethod.DELETE)
     @ResponseBody
-    @Secured("ROLE_ADD_IMAGE")
-    public ResponseEntity<Void> addProductImage(@PathVariable Long id,
-                                                @RequestParam("file") MultipartFile upload) throws Exception {
+    @Secured("ROLE_PART_IMAGES")
+    public ResponseEntity<Void> remove(@PathVariable Long id) throws Exception {
         
-        // Look up the part
-        Part part = Part.findPart(id);
+        // Look up the image
+        ProductImage image = ProductImage.find(id);
+        Part part = image.getPart();
         
-        // Save the file into the originals directory
-        File originalFile = new File(originalImagesDir, upload.getOriginalFilename());
-        
-        if (originalFile.exists()) {
-            throw new IOException("Image already exists: " + upload.getOriginalFilename());
-        }
-        
-        FileUtils.writeByteArrayToFile(originalFile, upload.getBytes());
-        
-        // Create the product image
-        ProductImage productImage = new ProductImage();
-        productImage.setFilename(upload.getOriginalFilename());
-        productImage.setPart(part);
-        
-        part.getProductImages().add(productImage);
-
-        // Generate the resized images
-        ImageResizer resizer = new ImageResizer();
-        for (int size : sizes) {
-            resizer.generateResizedImage(productImage, size);
-        }
-        
-        // Save it
-        productImage.persist();
+        // Remove the image from the part
+        part.getProductImages().remove(image);
         part.merge();
+        
+        // Remove the image
+        image.remove();
+        
+        // Delete the files
+        File original = new File(originalImagesDir, image.getFilename());
+        FileUtils.deleteQuietly(original);
+        
+        for (int size : ImageResizer.SIZES) {
+            File resized = new File(resizedImagesDir, image.getFilename(size));
+            FileUtils.deleteQuietly(resized);
+        }
         
         return new ResponseEntity<Void>((Void) null, HttpStatus.OK);
     }

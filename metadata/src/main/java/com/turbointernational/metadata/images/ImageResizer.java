@@ -1,6 +1,7 @@
 package com.turbointernational.metadata.images;
 
 import com.turbointernational.metadata.domain.part.ProductImage;
+import java.io.File;
 import java.io.IOException;
 import org.im4java.core.ConvertCmd;
 import org.im4java.core.IM4JavaException;
@@ -14,18 +15,24 @@ import org.springframework.stereotype.Service;
 @Service
 public class ImageResizer {
     
+    public static final int[] SIZES = {50, 135, 1000};
+    
     @Value("${images.originals}")
-    private String originalsPath;
+    private File originalsDir;
     
     @Value("${images.resized}")
-    private String resizedPath;
+    private File resizedDir;
     
     public void generateResizedImage(ProductImage image, int size) throws IOException, InterruptedException, IM4JavaException {
         ConvertCmd cmd = new ConvertCmd();
         IMOperation op = new IMOperation();
-        op.addImage(originalsPath + image.getFilename());
+        
+        File original = new File(originalsDir, image.getFilename());
+        File resized = new File(resizedDir, image.getFilename(size));
+        
+        op.addImage(original.getAbsolutePath());
         op.resize(size, size);
-        op.addImage(resizedPath + ProductImage.getResizedFilename(image.getPart().getId(), image.getId(), size));
+        op.addImage(resized.getAbsolutePath());
         cmd.run(op);
     }
     

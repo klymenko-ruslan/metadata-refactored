@@ -1,5 +1,7 @@
 package com.turbointernational.metadata.domain.part;
 
+import flexjson.JSONSerializer;
+import flexjson.transformer.HibernateTransformer;
 import java.util.List;
 import javax.persistence.Cacheable;
 import javax.persistence.Entity;
@@ -25,7 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Cacheable
 @Entity
 @Table(name = "PRODUCT_IMAGE")
-public class ProductImage {
+public class ProductImage implements Comparable<ProductImage> {
 
     public static String getResizedFilename(Long partId, Long imageId, int size) {
         return size + "/" + partId + "_" + imageId + ".jpg";
@@ -134,5 +136,20 @@ public class ProductImage {
         this.entityManager.refresh(this);
     }
     //</editor-fold>
+    
+    
+    public String toJson() {
+        return new JSONSerializer()
+                .transform(new HibernateTransformer(), this.getClass())
+                .include("id")
+                .include("filename")
+                .exclude("*")
+                .serialize(this);
+    }
+
+    @Override
+    public int compareTo(ProductImage t) {
+        return id.compareTo(t.id);
+    }
     
 }

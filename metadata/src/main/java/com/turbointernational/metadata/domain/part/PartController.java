@@ -1,13 +1,16 @@
 package com.turbointernational.metadata.domain.part;
+import com.turbointernational.metadata.images.ImageResizer;
 import com.turbointernational.metadata.util.ElasticSearch;
+import java.io.File;
 import java.security.Principal;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.sf.jsog.JSOG;
-import org.apache.commons.fileupload.FileUpload;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,12 +24,19 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 @RequestMapping("/metadata/part")
 @Controller
 public class PartController {
 
     private static final Logger log = Logger.getLogger(PartController.class.toString());
+    
+    @Value("${images.originals}")
+    private File originalImagesDir;
+    
+    @Autowired(required=true)
+    ImageResizer resizer;
     
     // ElasticSearch
     @Autowired(required=true)
@@ -187,14 +197,38 @@ public class PartController {
         } while (parts.size() == pageSize && (maxPages != null && page < maxPages));
     }
     
-    @RequestMapping(value="/{id}addProductImage", method = RequestMethod.POST)
+    @Transactional
+    @RequestMapping(value="/{id}/image", method = RequestMethod.POST)
     @ResponseBody
-    @Secured("ROLE_ADD_IMAGE")
-    public ResponseEntity<Void> addProductImage(@PathVariable Long id,
-                                                FileUpload upload) throws Exception {
-//        TODO
+    @Secured("ROLE_PART_IMAGES")
+    public ResponseEntity<ProductImage> addProductImage(@PathVariable Long id, @RequestBody byte[] imageData) throws Exception {
+        
+        // Look up the part
+        Part part = Part.findPart(id);
+        
+        // Save the file into the originals directory
+        String filename = part.getId().toString() + "_" + System.currentTimeMillis() + ".jpg"; // Good enough
+        File originalFile = new File(originalImagesDir, filename);
+        FileUtils.writeByteArrayToFile(originalFile, imageData);
+        
+        // Create the product image
+        ProductImage productImage = new ProductImage();
+        productImage.setFilename(filename);
+        productImage.setPart(part);
+        
+        // Save it
+        productImage.persist();
+        
+        // Update the part
+        part.getProductImages().add(productImage);
+        part.merge();
 
-        return new ResponseEntity<Void>((Void) null, HttpStatus.OK);
+        // Generate the resized images
+        for (int size : ImageResizer.SIZES) {
+            resizer.generateResizedImage(productImage, size);
+        }
+        
+        return new ResponseEntity(productImage.toJson(), HttpStatus.OK);
     }
     
     

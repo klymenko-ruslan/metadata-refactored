@@ -175,8 +175,9 @@ public class Part implements Comparable<Part> {
     @JoinTable(name="part_turbo", joinColumns=@JoinColumn(name="part_id"), inverseJoinColumns=@JoinColumn(name="turbo_id"))
     private Set<Turbo> turbos = new TreeSet<Turbo>();
     
+    @OrderBy("id")
     @OneToMany(cascade = CascadeType.REFRESH, mappedBy = "part")
-    private Set<ProductImage> productImages = new HashSet<ProductImage>();
+    private Set<ProductImage> productImages = new TreeSet<ProductImage>();
     
     @Version
     @Column(name = "version")

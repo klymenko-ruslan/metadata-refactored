@@ -45,4 +45,38 @@ angular.module('ngMetaCrudApp')
               });
         }
 
+        $scope.deleteImage = function(image) {
+
+          $dialogs.confirm(
+                  "Delete image?",
+                  "Do you want to remove this image from the part?").result.then(
+              function() {
+                // Yes
+                Restangular.one('image', image.id).remove().then(
+                    function() {
+                      // Success
+                      gToast.open("Image removed.");
+
+                      var idx = _.indexOf($scope.part.productImages, image);
+                      $scope.part.productImages.splice(idx, 1);
+                    },
+                    function(response) {
+                      // Error
+                      restService.error("Could not delete image.", response);
+                    });
+              },
+              function() {
+                // No
+              });
+
+        }
+
+        $scope.addImage = function() {
+          $dialogs.create('/views/part/AddImage.html', 'AddPartImageCtrl',
+              {part: $scope.part, callback: $scope.imageAddedCallback});
+        }
+
+        $scope.imageAddedCallback = function(image) {
+          $scope.part.productImages.push(image);
+        }
     });
