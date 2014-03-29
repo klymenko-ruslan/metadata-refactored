@@ -36,7 +36,7 @@ a:hover       { text-decoration:none; }
 
 /* Headings */
 h1,h2,h3,
-h4,h5,h6      { margin:0 0 5px; line-height:1.35; color:rgb(152,20,16); }
+h4,h5,h6      { margin:0 0 5px; line-height:1.35; color:rgb(228,30,0); }
 h1            { font-size:20px; font-weight:normal; }
 h2            { font-size:18px; font-weight:normal; }
 h3            { font-size:16px; font-weight:bold; }
@@ -172,7 +172,7 @@ input.qty { width:2.5em !important; }
 button.button::-moz-focus-inner { padding:0; border:0; } /* FF Fix */
 button.button { -webkit-border-fit:lines; } /* <- Safari & Google Chrome Fix */
 button.button { overflow:visible; width:auto; border:0; padding:0; margin:0; background:transparent; cursor:pointer; }
-button.button span { display:block; height:19px; border:1px solid rgb(152,20,16); background:#FF4136; padding:0 8px; font:bold 12px/19px Arial, Helvetica, sans-serif; text-align:center; white-space:nowrap; color:#fff; }
+button.button span { display:block; height:19px; border:1px solid transparent; background:#0074d9; padding:0 8px; font:12px/19px Arial, Helvetica, sans-serif; text-align:center; white-space:nowrap; color:#fff; }
 button.button span span { border:0; padding:0; }
 button.disabled span { border-color:#bbb !important; background:#bbb !important; }
 
@@ -184,7 +184,7 @@ button.btn-checkout.no-checkout span span { background-position:100% 100%; }
 p.control input.checkbox,
 p.control input.radio { margin-right:6px; }
 /* Form Highlight */
-input.input-text:focus,select:focus,textarea:focus { background-color:#edf7fd; }
+input.input-text:focus,select:focus,textarea:focus { border-color: #66afe9; outline: 0; -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(102,175,233,.6); box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(102,175,233,.6); }
 /*.highlight { background:#efefef; }*/
 
 /* Form lists */
@@ -538,18 +538,19 @@ tr.summary-details-excluded { font-style:italic; }
 .header .logo { float:left; margin:3px 0 10px 12px; text-decoration:none !important; }
 .header .logo strong { position:absolute; top:-999em; left:-999em; width:0; height:0; font-size:0; line-height:0; text-indent:-999em; overflow:hidden; }
 .header h1.logo { margin:0; }
+.header h1.logo img { max-width: 144px; }
 .header h2.logo { margin-top: 8px; font-size: 2.8em; font-weight: 900; }
 .header .quick-access { float:right; width:600px; padding:28px 10px 0 0; }
 .header .welcome-msg { margin:6px 0 0; color:#111111; text-align:right; position: absolute; right: 10px; }
-.header .welcome-msg a { color:#FF4136; }
-.header .form-search { position:absolute; bottom:10px; right:10px; padding: 10px; background: rgb(152,20,16); border-radius: 4px; }
-.header .form-search label { float:left; width:24px; height:31px; text-align:left; text-indent:-999em; overflow:hidden; }
-.header .form-search input.input-text { float:left; border-color:rgb(152,20,16); width:210px; height: 25px; margin-right:4px; }
-.header .form-search button.button { float:left; }
-.header .form-search button.button span { border:0; height:31px; padding:0 0 0 3px; font:bold 11px/21px Tahoma, Verdana, Arial, sans-serif; }
-.header .form-search button.button span span { background-position:100% 0; padding:5px 6px 0 3px; }
+.header .welcome-msg a { color:rgb(228,30,0); }
+.header .form-search { position:absolute; bottom:10px; right:10px; padding: 4px; border: 6px solid rgb(228,30,0); border-radius: 4px; }
+.header .form-search label { float:left; width:24px; text-align:left; text-indent:-999em; overflow:hidden; }
+.header .form-search input.input-text { float:left; width:210px; margin-right:4px; padding: 6px 4px; }
+.header .form-search button.button { float:left; border-top: 1px solid #0074d9; border-right: 1px solid #0074d9; border-left: 1px solid #0074d9; border-bottom: none; }
+.header .form-search button.button span { padding-bottom: 7px; }
+.header .form-search button.button span span { background-position:100% 0; padding:4px 6px 7px; }
 .header .form-search .search-autocomplete { z-index:999; left:40px !important; top:22px !important; }
-.header .form-search .search-autocomplete ul { border:1px solid rgb(152,20,16); background-color:#f9f5f0; }
+.header .form-search .search-autocomplete ul { border:1px solid rgb(228,30,0); background-color:#f9f5f0; }
 .header .form-search .search-autocomplete li { text-align:left; border-bottom:1px solid #f4eee7; padding:2px 8px 1px 8px; cursor:pointer; }
 .header .form-search .search-autocomplete li .amount { float:right; font-weight:bold; }
 .header .form-search .search-autocomplete li.odd { background-color:#fffefb; }
@@ -557,17 +558,17 @@ tr.summary-details-excluded { font-style:italic; }
 .header .form-language { clear:both; padding:5px 0 0; text-align:right; }
 .header .form-language label { font-weight:bold; padding-right:5px; color:#a7c6dd; vertical-align:middle; }
 .header .form-language select { padding:0; }
-.header .form-language select.flags option { background-position:4px 50%; background-repeat:no-repeat; padding-left:25px; }
+.header .form-language select.flags option { background: 4px 50% no-repeat; padding-left:25px; }
 .header-container .links { float:right; margin:0 0 6px; }
 .header-container .links li { float:left; font-size:11px; padding:0 8px 0 7px; }
-.header-container .links a { color:#FF4136; }
+.header-container .links a { color:rgb(228,30,0); }
 .header-container .top-container { clear:both; padding:5px 10px 0 12px; text-align:right; }
-.header-container .top-container a { font-size:11px; color:#FF4136; }
+.header-container .top-container a { font-size:11px; color:rgb(228,30,0); }
 .header-container .meta-header { font-size: 13px; }
 .header-container .meta-header strong { margin-right: 60px }
 
 /********** < Navigation */
-.nav-container { background:rgb(152,20,16); }
+.nav-container { background:rgb(228,30,0); }
 #nav { width:918px; margin:0 auto; padding:0 16px; font-size:13px; }
 
 /* All Levels */ /* Style consistent throughout all nav levels */
@@ -624,7 +625,7 @@ tr.summary-details-excluded { font-style:italic; }
 /* Sidebar =============================================================================== */
 .block { border:1px solid #c4c1bc; margin:0 0 15px; }
 .block .block-title { background:url(../images/bkg_block-title.gif) 0 0 repeat-x; border-bottom:1px solid #ddd; padding:2px 9px; }
-.block .block-title strong { display:block; font:bold 12px/16px Arial, Helvetica, sans-serif; min-height:16px; padding:1px 0 1px; text-transform:uppercase; color:#FF4136; }
+.block .block-title strong { display:block; font:bold 12px/16px Arial, Helvetica, sans-serif; min-height:16px; padding:1px 0 1px; text-transform:uppercase; color:rgb(228,30,0); }
 .block .block-title strong span {}
 .block .block-title a { text-decoration:none !important; }
 .block .block-subtitle { margin:0; padding:5px 9px; font-size:1em; font-weight:bold; color:#0a263c; }
@@ -1723,16 +1724,18 @@ tr.summary-details-excluded { font-style:italic; }
 .footer .store-switcher label { font-weight:bold; vertical-align:middle; }
 .footer .store-switcher select { padding:0; vertical-align:middle; }
 .footer .grid-row .grid-col-3 { color: #111111; text-align: left; }
-.footer .grid-row #constant-contact-form { color: #FF4136; }
-.footer a { color:#FF4136; text-decoration:none; }
+.footer .grid-row #constant-contact-form {}
+.footer a { text-decoration:none; }
 .footer a:hover { text-decoration:underline; }
-.footer .bugs { margin:13px 0 0;
-  column-rule: #ff4136;; }
-.footer .bugs a { color:#FF4136; text-decoration:underline; }
+.footer .bugs { margin:13px 0 0; color: rgb(228,30,0); }
+.footer .social-media { font-size: 3em; padding-left: 6%; }
+.footer .social-media [class*='fa-facebook'] { color: #3B5998; }
+.footer .social-media [class*='fa-twitter'] { color: #4099ff; }
+.footer .bugs a { text-decoration:underline; }
 .footer .bugs a:hover { text-decoration:none; }
-.footer address { margin:0 0 20px; color:#FF4136; }
-.footer address a { color:#FF4136; text-decoration:underline; }
-.footer address a:hover { text-decoration:none; }
+.footer .copyright { margin:0 0 20px; font-weight: 700; }
+.footer .copyright a { text-decoration:underline; }
+.footer .copyright a:hover { text-decoration:none; }
 .footer ul { display:inline; }
 .footer ul.links { display:block; }
 .footer li { display:inline; padding:0 7px 0 4px; }

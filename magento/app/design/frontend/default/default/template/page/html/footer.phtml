@@ -29,25 +29,28 @@
         <?php echo $this->getChildHtml() ?>
         <div class="grid-row">
             <div class="grid-col-3">
-                <strong>Our Location</strong>
+                <h4>Our Location</h4>
                 <address>2151 Las Palmas Drive, Suite E<br>
-                Carlsbad, CA. 920111 USA</address>
+                    Carlsbad, CA. 920111 USA
+                </address>
             </div>
             <div class="grid-col-3">
-                <strong>Contact Us</strong>
+                <h4>Contact Us</h4>
                 <address>+1.760.476.1444<br>
                     800.238.8726<br>
                     <a href="mailto:sales@turbointernational">sales@turbointernational</a></address>
             </div>
             <div class="grid-col-3">
-                <strong>Follow Us On</strong>
-                <p><a href="http://facebook.com/">Facebook</a>
-                <a href="http://twitter.com/">Twitter</a></p>
+                <h4>Follow Us On</h4>
+                <ul class="social-media">
+                    <li><a href="https://www.facebook.com/pages/Turbo-International/420415214663119" target="_blank"><i class="fa fa-facebook"></i></a></li>
+                    <li><a href="https://twitter.com/TurboInternatio" target="_blank"><i class="fa fa-twitter"></i></a></li>
+                </ul>
             </div>
             <div class="grid-col-3" id="constant-contact-form">
                 <!-- BEGIN: Constant Contact Stylish Email Newsletter Form -->
                 <form style="margin-bottom: 3;" action="http://visitor.r20.constantcontact.com/d.jsp" method="post" name="ccoptin" target="_blank">
-                    <span style="font-weight: normal; font-family: Verdana,Geneva,Arial,Helvetica,sans-serif; font-size: 13px;"><i class="fa fa-envelope"></i> Sign up for our<br>Email Newsletter</span>
+                    <h4><i class="fa fa-envelope"></i> Sign up for our<br>Email Newsletter</h4>
                     <input style="font-family: Verdana,Geneva,Arial,Helvetica,sans-serif; font-size: 10px; margin-top: 5px; border: 1px solid #999999;" type="text" name="ea" value=""/>
                     <input class="submit" style="font-family: Verdana,Arial,Helvetica,sans-serif; font-size: 10px; margin-top: 5px;" type="submit" name="go" value="GO"/>
                     <input type="hidden" name="llr" value="99pi6ojab"/>
@@ -55,6 +58,6 @@
                 <!-- END: Constant Contact Stylish Email Newsletter Form -->
             </div>
         </div>
-        <address><?php echo $this->getCopyright() ?></address>
+        <div class="copyright"><?php echo $this->getCopyright() ?></div>
     </div>
 </div>
