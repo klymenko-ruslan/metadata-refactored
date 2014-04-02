@@ -41,7 +41,11 @@
         <h2 class="logo">Quality Replacement<br>
             Turbo Charger Parts</h2>
 
-        <p class="welcome-msg"><?php echo $this->getWelcome() ?> <?php echo $this->getAdditionalHtml() ?></p>
+        <p class="welcome-msg">
+            <?php echo $this->getChildHtml('custom_currency_selector') ?>
+            <?php echo $this->getWelcome() ?>
+            <?php echo $this->getAdditionalHtml() ?>
+        </p>
         <?php echo $this->getChildHtml('store_language') ?>
         <?php echo $this->getChildHtml('topContainer'); ?>
         <?php echo $this->getChildHtml('topSearch') ?>
