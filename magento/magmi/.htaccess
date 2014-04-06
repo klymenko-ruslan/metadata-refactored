@@ -1,6 +1,7 @@
 order deny,allow
 deny from all
 allow from 127.0.0.1
-allow from 67.185.158.56 # Jeff Home
+allow from 71.227.128.226 # Jeff Home
 allow from 199.231.242.26 # Jeff Hub
+allow from 71.185.167.82  # Paul Home
 

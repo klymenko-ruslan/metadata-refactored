@@ -1,11 +1,4 @@
 <?php
-// TI NOTE - See customerprices/catalog-product-list.phtml instead.
-
-
-
-
-
-
 /**
  * Magento
  *
@@ -61,6 +54,7 @@ $_helper = $this->helper('catalog/output');
                 <?php $_columnCount = $this->getColumnCount(); ?>
                 <?php $i = 0;
                 foreach ($_productCollection as $_product): ?>
+<?php error_log("Listing product"); ?>
                     <?php if ($i++ % $_columnCount == 0): ?>
                     <?php endif ?>
                     <tr>
@@ -69,29 +63,22 @@ $_helper = $this->helper('catalog/output');
                                title="<?php echo $this->stripTags($_product->getName(), null, true) ?>"><?php echo $_product->getName() ?></a>
                         </td>
                         <td><a href="<?php echo $_product->getProductUrl() ?>"><?php echo $_product->getPartNumber() ?></a></td>
-                        <td>
-                            <?php if (strlen($_product->getTiPartSku()) > 0): ?>
-                                <?php $firstTiProduct = null; ?>
-                                <?php foreach (explode(",", $_product->getTiPartSku()) as $idx => $tiPartSku): ?>
-                                    <?php
-                                        $tiPart = Mage::getModel('catalog/product')->loadByAttribute('sku', $tiPartSku);
+                        <td><?php $tiPartSkus = explode(",", $_product->getTiPartSku()) ?>
+                            <?php $firstTiProduct = null; ?>
+                            <?php foreach ($tiPartSkus as $idx => $tiPartSku): ?>
+                                <?php
+                                $tiPart = Mage::getModel('catalog/product')->loadByAttribute('sku', $tiPartSku);
+                                
+                                if ($firstTiProduct == null) {
+                                    $firstTiProduct = $tiPart;
+                                }
 
-                                        if ($firstTiProduct == null) {
-                                            $firstTiProduct = $tiPart;
-                                        }
+                                if ($idx > 0) {
+                                    echo ",";
+                                }?>
 
-                                        if ($idx > 0) {
-                                            echo ",";
-                                        }
-                                    ?>
-                            
-                                    <?php if ($tiPart): ?>
-                                        <a href="<?php echo $tiPart->getProductUrl() ?>"><?php echo $tiPart->getPartNumber(); ?></a>
-                                    <?php endif; ?>
-                                <?php endforeach ?>
-                            <?php else: ?>
-                                <a href="<?php echo $_product->getProductUrl() ?>"><?php echo $_product->getPartNumber(); ?></a>
-                            <?php endif; ?>
+                                <a href="<?php echo $tiPart->getProductUrl() ?>"><?php echo $tiPart->getPartNumber(); ?></a>
+                            <?php endforeach ?>
                         </td>
                         <td>
                             <?php if (Mage::getSingleton('customer/session')->isLoggedIn()): ?>
@@ -169,3 +156,4 @@ $_helper = $this->helper('catalog/output');
         </div>
     </div>
 <?php endif; ?>
+

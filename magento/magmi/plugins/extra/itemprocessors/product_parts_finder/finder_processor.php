@@ -5,6 +5,8 @@
  */
 
 class FinderProcessor extends Magmi_ItemProcessor {
+    protected $_VALUE_SEPARATOR = "||";
+    protected $_DROPDOWN_SEPARATOR = "!!";
     protected $_columnPrefix = 'finder:';
     protected $_finders = array(); // Finder ID -> array of Dropdown IDs
 
@@ -61,7 +63,7 @@ class FinderProcessor extends Magmi_ItemProcessor {
             $finderId = substr($columnName, strlen($this->_columnPrefix));
             
             // Get the pipe-delimited mappings from the CSV column and lookup the corresponding value IDs
-            $valueIds = $this->getValueIdsForMappings($finderId, explode('|', $columnValue));
+            $valueIds = $this->getValueIdsForMappings($finderId, explode('||', $columnValue));
             
             // Update the value mappings for the product
             if (!empty($valueIds)) {
@@ -84,7 +86,7 @@ class FinderProcessor extends Magmi_ItemProcessor {
 
             // Get the values of the mapping, it's comma delimited
             // Toyota,2004,Matrix
-            $values = explode(',', $mapping);
+            $values = explode('!!', $mapping);
             
             // Get the IDs of the final dropdown values
             if (count($values) > 0 && !empty($values[0])) {
@@ -172,7 +174,7 @@ class FinderProcessor extends Magmi_ItemProcessor {
                 array($parentId, $dropdown, $dropdownValue), "value_id");
             
             if ($parentId == null) {
-                throw new Exception("Could not lookup value chain for finder $finderId mapping: " . join (',', $values));
+                throw new Exception("Could not lookup value chain for finder $finderId mapping: " . join (',', array_slice($values, 0, $count)));
             }
         }
 
@@ -204,9 +206,9 @@ class FinderProcessor extends Magmi_ItemProcessor {
         
         $query .= " WHERE " . join(" AND ", $where);
         
-//        error_log("optimistic select: " . $query . " values: " . print_r($values, true));
+        error_log("optimistic select: " . $query . " values: " . print_r(array_slice($values, 0, $count), true));
         
-        return $this->selectone($query, $values, "finalValueId");
+        return $this->selectone($query, array_slice($values, 0, $count), "finalValueId");
     }
 
 }
