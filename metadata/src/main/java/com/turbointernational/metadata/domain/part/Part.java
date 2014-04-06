@@ -64,8 +64,11 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
 
 @Cacheable
 @Configurable
@@ -490,6 +493,10 @@ public class Part implements Comparable<Part> {
     @Transient
     private EntityManager entityManager;
     
+    @Autowired(required=true)
+    @Transient
+    private PlatformTransactionManager txManager;
+    
     public static final EntityManager entityManager() {
         EntityManager em = new Part().entityManager;
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
@@ -571,14 +578,22 @@ public class Part implements Comparable<Part> {
     //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="BOM Ancestry">
+    @Async
     public static void rebuildBomAncestry() {
-        log.info("Rebuilding BOM ancestry.");
-        EntityManager em = entityManager();
-        
-        // Delete the old ancestry
-        em.createNativeQuery("CALL RebuildBomAncestry()").executeUpdate();
-        em.clear();
-        log.info("BOM Ancestry rebuild completed.");
+        new TransactionTemplate(new Part().txManager).execute(new TransactionCallback() {
+            @Override
+            public Object doInTransaction(TransactionStatus status) {
+                log.info("Rebuilding BOM ancestry.");
+                EntityManager em = entityManager();
+
+                // Delete the old ancestry
+                em.createNativeQuery("CALL RebuildBomAncestry()").executeUpdate();
+                em.clear();
+                log.info("BOM Ancestry rebuild completed.");
+                
+                return null;
+            }
+        });
     }
     //</editor-fold>
     

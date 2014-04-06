@@ -18,7 +18,7 @@ angular.module('ngMetaCrudApp')
                   Restangular.all('part/all').customGET('rebuildBomAncestry').then(
                       function() {
                         // Success
-                        gToast.open('BOM ancestry successfully rebuilt.');
+                        gToast.open('Rebuilding BOM ancestry.');
                       },
                       function(response) {
                         // Error
