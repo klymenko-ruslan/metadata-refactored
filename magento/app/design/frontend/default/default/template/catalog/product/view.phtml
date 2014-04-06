@@ -96,7 +96,7 @@ $tiPartSkuArray = $_product->getTiPartSku() ? explode(',', $_product->getTiPartS
 
             <?php if (!$this->hasOptions()): ?>
                 <div class="add-to-box">
-                    <?php if ($_product->isSaleable()): ?>
+                    <?php if ($_product->isSaleable() && $_productManufacturer == 44 || $_product->getTiPartSku()): ?>
                         <?php echo $this->getChildHtml('addtocart'); ?>
                         <?php if ($this->helper('wishlist')->isAllow() || $_compareUrl = $this->helper('catalog/product_compare')->getAddUrl($_product)): ?>
                             <span class="or"><?php echo $this->__('OR') ?></span>
