@@ -1,8 +1,6 @@
 package com.turbointernational.metadata.domain.part.bom;
 import com.turbointernational.metadata.domain.changelog.Changelog;
-import com.turbointernational.metadata.domain.part.*;
-import flexjson.JSONSerializer;
-import flexjson.transformer.HibernateTransformer;
+import com.turbointernational.metadata.domain.part.Part;
 import java.util.logging.Logger;
 import javax.persistence.NoResultException;
 import org.springframework.http.HttpHeaders;
