@@ -1,7 +1,8 @@
 package com.turbointernational.metadata.domain.part.bom;
 import com.turbointernational.metadata.domain.changelog.Changelog;
 import com.turbointernational.metadata.domain.part.*;
-import java.security.Principal;
+import flexjson.JSONSerializer;
+import flexjson.transformer.HibernateTransformer;
 import java.util.logging.Logger;
 import javax.persistence.NoResultException;
 import org.springframework.http.HttpHeaders;
@@ -48,9 +49,9 @@ public class BOMController {
         
             // Update the changelog
             Changelog.log("Added bom item.", item.toJson());
-
-            parent.indexTurbos();
-            parent.updateIndex();
+            
+            // Sync the part's BOM
+            child.syncOnChanged();
         } catch (NoResultException e) {
             return new ResponseEntity<String>(headers, HttpStatus.NOT_FOUND);
         }
@@ -98,7 +99,12 @@ public class BOMController {
         item.getParent().merge();
         
         // Delete it
+        Part childPart = item.getChild();
         item.remove();
+        item.flush();
+            
+        // Sync the part's BOM
+        childPart.syncOnChanged();
     }
     
     

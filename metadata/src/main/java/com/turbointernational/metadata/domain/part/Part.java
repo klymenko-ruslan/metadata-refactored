@@ -1,5 +1,6 @@
 package com.turbointernational.metadata.domain.part;
 import com.turbointernational.metadata.domain.other.Manufacturer;
+import com.turbointernational.metadata.domain.part.bom.BOMAncestor;
 import com.turbointernational.metadata.domain.part.bom.BOMItem;
 import com.turbointernational.metadata.domain.part.types.Backplate;
 import com.turbointernational.metadata.domain.part.types.BearingHousing;
@@ -24,12 +25,11 @@ import flexjson.transformer.HibernateTransformer;
 import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
@@ -171,8 +171,14 @@ public class Part implements Comparable<Part> {
     @OrderBy("id")
     private Set<BOMItem> bom = new TreeSet<BOMItem>();
     
+    @Transient
+    @OneToMany(mappedBy = "part", fetch = FetchType.LAZY)
+    @OrderBy("id")
+    private Set<BOMAncestor> bomAncestors = new LinkedHashSet<BOMAncestor>();
+    
+    @Transient
     @OneToMany(cascade = CascadeType.REFRESH)
-    @JoinTable(name="part_turbo", joinColumns=@JoinColumn(name="part_id"), inverseJoinColumns=@JoinColumn(name="turbo_id"))
+    @JoinTable(name="vpart_turbo", joinColumns=@JoinColumn(name="part_id"), inverseJoinColumns=@JoinColumn(name="turbo_id"))
     private Set<Turbo> turbos = new TreeSet<Turbo>();
     
     @OrderBy("id")
@@ -256,6 +262,15 @@ public class Part implements Comparable<Part> {
         this.bom.addAll(bom);
     }
     
+    public Set<BOMAncestor> getBomAncestors() {
+        return bomAncestors;
+    }
+    
+    public void setBomAncestors(Set<BOMAncestor> bomAncestors) {
+        this.bomAncestors.clear();
+        this.bomAncestors.addAll(bomAncestors);
+    }
+    
     public Set<Turbo> getTurbos() {
         return turbos;
     }
@@ -279,7 +294,7 @@ public class Part implements Comparable<Part> {
     private ElasticSearch elasticSearch;
     
     @PreRemove
-    public void removeIndex() throws Exception {
+    public void removeSearchIndex() throws Exception {
         try {
             elasticSearch.deletePart(this);
         } catch (Exception e) {
@@ -287,17 +302,12 @@ public class Part implements Comparable<Part> {
         }
     }
     
-    public void updateIndex() throws Exception {
-        log.info("Updating index.");
-        indexPart();
-    }
-    
-    public void indexPart() throws Exception {
-        try {
-            elasticSearch.indexPart(this);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public void syncOnChanged() throws Exception {
+        log.info("Synchronizing BOM ancestry.");
+        syncBomAncestry();
+        
+        log.info("Updating search index.");
+        elasticSearch.indexPart(this);
     }
     //</editor-fold>
 
@@ -515,11 +525,12 @@ public class Part implements Comparable<Part> {
                 .setMaxResults(maxResults).getResultList();
     }
     
-    public static List<Part> findPartEntriesForTurboIndexing(int firstResult, int maxResults) {
+    public static List<Part> findPartEntriesForBomSyncing(int firstResult, int maxResults) {
         return entityManager().createQuery(
                 "SELECT DISTINCT p\n"
               + "FROM Part p\n"
-              + "LEFT JOIN p.turbos t\n"
+              + "LEFT JOIN p.turbos t\n" // Usually turbos too
+              + "LEFT JOIN p.bomAncestors a\n"
               + "ORDER BY p.id", Part.class)
         .setFirstResult(firstResult)
         .setMaxResults(maxResults).getResultList();
@@ -569,67 +580,19 @@ public class Part implements Comparable<Part> {
     }
     //</editor-fold>
     
-    //<editor-fold defaultstate="collapsed" desc="Turbo Indexing">
+    //<editor-fold defaultstate="collapsed" desc="BOM Ancestry">
+    public static void rebuildBomAncestry() {
+        EntityManager em = entityManager();
+        
+        // Delete the old ancestry
+        em.createNativeQuery("CALL RebuildBomAncestry()").executeUpdate();
+    }
+    
     @Transactional
-    public void indexTurbos() {
-        
-        Set<Turbo> newTurbos = collectTurbos();
-        
-        turbos.retainAll(newTurbos);
-        turbos.addAll(newTurbos);
-        
-        // Save the new values
-        this.merge();
-        this.flush();
-    }
-    
-    public Set<Turbo> collectTurbos() {
-        long start = System.currentTimeMillis();
-        
-        TreeSet<Part> visitedParts = new TreeSet<Part>();
-        TreeSet<Turbo> collectedTurbos = new TreeSet<Turbo>();
-        TreeSet<Part> partsToVisit = new TreeSet<Part>(getBomParentParts());
-        
-        while (!partsToVisit.isEmpty()) {
-            
-            // Get the next part to visit
-            Part bomAncestor = partsToVisit.first();
-            partsToVisit.remove(bomAncestor);
-            
-            // Prevent recursion
-            if (visitedParts.contains(bomAncestor)) {
-                continue;
-            } else {
-                visitedParts.add(bomAncestor);
-            }
-            
-            // Collect turbos and add BOM parents for non-turbo parts
-            if (bomAncestor instanceof Turbo) {
-                collectedTurbos.add((Turbo) bomAncestor);
-            } else {
-                // TODO: It would be more efficient to fetch the BOM parents of ALL pending parts at once rather than one at a time.
-                partsToVisit.addAll(bomAncestor.getBomParentParts());
-            }
-        }
-        
-        long end = System.currentTimeMillis();
-        log.log(Level.INFO, "Visited {0} parts and found {1} turbos for part id {2} in {3}ms.", new Object[]{
-            visitedParts.size(),
-            collectedTurbos.size(),
-            id,
-            end - start});
-        
-        return collectedTurbos;
-    }
-    
-    /**
-     * Gets the Part IDs of this part's BOM parents
-     * @return 
-     */
-    public List<Part> getBomParentParts() {
-        return entityManager.createNamedQuery("bom_parent_ids", Part.class)
-            .setParameter("partId", this.id)
-            .getResultList();
+    public void syncBomAncestry() {
+        // TODO: Let's not wipe and rebuild the whole thing each time, please?
+        Part.rebuildBomAncestry();
+        Part.entityManager().clear();
     }
     //</editor-fold>
     

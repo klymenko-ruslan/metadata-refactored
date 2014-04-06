@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
 
 @RequestMapping("/metadata/part")
 @Controller
@@ -91,8 +89,7 @@ public class PartController {
         Part part = Part.fromJsonToPart(partJson);
         
         part.persist();
-        part.indexTurbos();
-        part.updateIndex();
+        part.syncOnChanged();
         
         // Update the changelog
 //        Changelog.log(principal, "Created part", part.toJson());
@@ -125,8 +122,7 @@ public class PartController {
         part = Part.findPart(part.getId());
         Part.entityManager().refresh(part);
         
-        part.indexTurbos();
-        part.updateIndex();
+        part.syncOnChanged();
         
         // Update the changelog
 //        JSOG dataJsog = JSOG.object("originalPart", originalPartJson)
@@ -157,44 +153,19 @@ public class PartController {
         return new ResponseEntity<String>(headers, HttpStatus.OK);
     }
 
-    @Async
-    @RequestMapping(value="/{id}/indexTurbos")
+    @RequestMapping(value="/{id}/syncBomAncestry")
     @ResponseBody
     @Secured("ROLE_ADMIN")
-    public void indexTurbos(@PathVariable("id") Long id) throws Exception {
+    public void syncBomAncestry(@PathVariable("id") Long id) throws Exception {
         Part part = Part.findPart(id);
-        
-        part.indexTurbos();
+        part.syncBomAncestry();
     }
     
-    @Async
-    @RequestMapping(value="/all/indexTurbos")
+    @RequestMapping(value="/all/rebuildBomAncestry")
     @ResponseBody
     @Secured("ROLE_ADMIN")
-    public void indexTurbos(@RequestParam(required=false) Integer startPage, @RequestParam(required=false) Integer maxPages) throws Exception {
-        int pageSize = 100;
-        int page = ObjectUtils.defaultIfNull(startPage, 0);
-        
-        List<Part> parts = Part.findPartEntriesForTurboIndexing(page * pageSize, pageSize);
-        do {
-            long start = System.currentTimeMillis();
-            
-            for (Part part : parts) {
-                part.indexTurbos();
-            }
-            
-            // Give Hibernate a breather or it'll slow WAY down
-            new Part().clear();
-            
-            // Get the next part list
-            page++;
-            parts = Part.findPartEntriesForTurboIndexing(page * pageSize, pageSize);
-            
-            log.log(Level.INFO, "Indexed turbos for {0} parts, page {1} in {2}ms", new Object[]{
-                pageSize,
-                page,
-                System.currentTimeMillis() - start});
-        } while (parts.size() == pageSize && (maxPages != null && page < maxPages));
+    public void rebuildAllBomAncestry() throws Exception {
+        Part.rebuildBomAncestry();
     }
     
     @Transactional
