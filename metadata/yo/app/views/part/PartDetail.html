@@ -231,11 +231,11 @@
         <!-- Turbo -->
         <div data-ng-switch-when="Turbo">
             <dl class="dl-horizontal">
-                <dt data-ng-show="part.turboModel != null">Model Type</dt>
+                <dt data-ng-show="part.turboModel != null">Turbo Type</dt>
                 <dd data-ng-show="part.turboModel != null">{{part.turboModel.turboType.name}}</dd>
-                <dt data-ng-show="part.turboModel != null">Model Number</dt>
+                <dt data-ng-show="part.turboModel != null">Turbo Model</dt>
                 <dd data-ng-show="part.turboModel != null">{{part.turboModel.name}}</dd>
-                <dt data-ng-show="part.turboModel == null">Model Type</dt>
+                <dt data-ng-show="part.turboModel == null">Turbo Type</dt>
                 <dd data-ng-show="part.turboModel == null">[none]</dd>
                 <dt>Coolant</dt>
                 <dd>{{part.coolType.name}}</dd>
