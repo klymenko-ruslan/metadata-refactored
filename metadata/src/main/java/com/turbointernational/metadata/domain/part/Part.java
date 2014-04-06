@@ -171,12 +171,10 @@ public class Part implements Comparable<Part> {
     @OrderBy("id")
     private Set<BOMItem> bom = new TreeSet<BOMItem>();
     
-    @Transient
     @OneToMany(mappedBy = "part", fetch = FetchType.LAZY)
     @OrderBy("id")
     private Set<BOMAncestor> bomAncestors = new LinkedHashSet<BOMAncestor>();
     
-    @Transient
     @OneToMany(cascade = CascadeType.REFRESH)
     @JoinTable(name="vpart_turbo", joinColumns=@JoinColumn(name="part_id"), inverseJoinColumns=@JoinColumn(name="turbo_id"))
     private Set<Turbo> turbos = new TreeSet<Turbo>();
@@ -525,17 +523,6 @@ public class Part implements Comparable<Part> {
                 .setMaxResults(maxResults).getResultList();
     }
     
-    public static List<Part> findPartEntriesForBomSyncing(int firstResult, int maxResults) {
-        return entityManager().createQuery(
-                "SELECT DISTINCT p\n"
-              + "FROM Part p\n"
-              + "LEFT JOIN p.turbos t\n" // Usually turbos too
-              + "LEFT JOIN p.bomAncestors a\n"
-              + "ORDER BY p.id", Part.class)
-        .setFirstResult(firstResult)
-        .setMaxResults(maxResults).getResultList();
-    }
-    
     @Transactional
     public void persist() {
         if (this.entityManager == null) this.entityManager = entityManager();
@@ -581,6 +568,7 @@ public class Part implements Comparable<Part> {
     //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="BOM Ancestry">
+    @Transactional
     public static void rebuildBomAncestry() {
         EntityManager em = entityManager();
         
