@@ -9,3 +9,6 @@ metadata/yo/.idea/
 /docs/sql/data.sql
 **/nbproject/private/
 magento/.ssh/known_hosts
+magento/.viminfo
+magento/.bash_history
+magento/media
