@@ -1,5 +1,5 @@
 package com.turbointernational.metadata.domain.part;
-import com.turbointernational.metadata.images.ImageResizer;
+import com.turbointernational.metadata.util.ImageResizer;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;

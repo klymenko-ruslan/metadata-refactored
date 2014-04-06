@@ -1,6 +1,6 @@
 package com.turbointernational.metadata.domain.part;
 import com.turbointernational.metadata.domain.part.bom.BOMAncestor;
-import com.turbointernational.metadata.images.ImageResizer;
+import com.turbointernational.metadata.util.ImageResizer;
 import com.turbointernational.metadata.util.ElasticSearch;
 import flexjson.JSONSerializer;
 import flexjson.transformer.HibernateTransformer;

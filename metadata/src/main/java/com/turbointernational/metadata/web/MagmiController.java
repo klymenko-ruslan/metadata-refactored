@@ -1,9 +1,9 @@
-package com.turbointernational.metadata.magento;
+package com.turbointernational.metadata.web;
 
 import au.com.bytecode.opencsv.CSVWriter;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.Part;
-import com.turbointernational.metadata.images.ImageResizer;
+import com.turbointernational.metadata.util.ImageResizer;
 import com.turbointernational.metadata.util.dto.MagmiBasicProduct;
 import com.turbointernational.metadata.util.dto.MagmiBomItem;
 import com.turbointernational.metadata.util.dto.MagmiInterchange;
@@ -40,8 +40,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
  */
 @Controller
 @RequestMapping(value={"/magmi", "/metadata/magmi"})
-public class Magmi {
-    private static final Logger logger = Logger.getLogger(Magmi.class.toString());
+public class MagmiController {
+    private static final Logger logger = Logger.getLogger(MagmiController.class.toString());
     
     public static final String[] HEADERS = {
         

@@ -1,4 +1,4 @@
-package com.turbointernational.metadata.images;
+package com.turbointernational.metadata.util;
 
 import com.turbointernational.metadata.domain.part.ProductImage;
 import java.io.File;

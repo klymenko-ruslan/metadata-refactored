@@ -1,4 +1,4 @@
-package com.turbointernational.metadata.security;
+package com.turbointernational.metadata.util;
 
 import com.turbointernational.metadata.domain.security.Group;
 import com.turbointernational.metadata.domain.security.User;
