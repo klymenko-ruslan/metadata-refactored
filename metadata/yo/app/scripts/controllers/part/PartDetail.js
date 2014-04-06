@@ -21,30 +21,6 @@ angular.module('ngMetaCrudApp')
                 alert("Could not get part details");
             });
 
-        $scope.reindexTurbos = function() {
-
-          $dialogs.confirm(
-                  "Reindex part turbos?",
-                  "You need to run this if changes have been made directly to the database. Proceed?").result.then(
-              function() {
-                // Yes
-                Restangular.one("part", $scope.partId).one('indexTurbos').get().then(
-                    function() {
-                      // Success
-                      gToast.open("Indexing started, check the server log for progress.");
-                    },
-                    function(response) {
-                      // Error
-                      $dialogs.error(
-                          "Could not index part turbos.",
-                          "Here's the error: <pre>" + response.status +"</pre>");
-                    });
-              },
-              function() {
-                // No
-              });
-        }
-
         $scope.deleteImage = function(image) {
 
           $dialogs.confirm(
