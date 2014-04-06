@@ -300,7 +300,7 @@ DROP VIEW IF EXISTS vpart_turbo;
 CREATE VIEW vpart_turbo AS
   SELECT DISTINCT
     ba.part_id,
-    ba.ancestor_part_id AS turbo_part_id
+    ba.ancestor_part_id AS turbo_id
   FROM
     bom_ancestor ba
     JOIN turbo t ON t.part_id = ba.ancestor_part_id;
