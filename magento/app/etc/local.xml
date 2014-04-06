@@ -40,9 +40,9 @@
             </db>
             <default_setup>
                 <connection>
-                    <host><![CDATA[magentodb01.cslctedjmc6k.us-east-1.rds.amazonaws.com]]></host>
-                    <username><![CDATA[magentoserver]]></username>
-                    <password><![CDATA[OI1unqzzO{=.s#?]]></password>
+                    <host><![CDATA[magento.civmrsbx9ajy.us-east-1.rds.amazonaws.com]]></host>
+                    <username><![CDATA[root]]></username>
+                    <password><![CDATA[rootroot]]></password>
                     <dbname><![CDATA[magento]]></dbname>
                     <initStatements><![CDATA[SET NAMES utf8]]></initStatements>
                     <model><![CDATA[mysql4]]></model>

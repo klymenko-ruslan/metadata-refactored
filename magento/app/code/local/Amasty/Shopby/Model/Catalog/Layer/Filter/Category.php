@@ -12,7 +12,7 @@ class Amasty_Shopby_Model_Catalog_Layer_Filter_Category extends Mage_Catalog_Mod
     const DT_WSUBCAT    = 2;
     const DT_STATIC2LVL = 3;
     const DT_ADVANCED   = 4;
-    
+
     /**
      * Get data array for building category filter items
      *
@@ -20,6 +20,7 @@ class Amasty_Shopby_Model_Catalog_Layer_Filter_Category extends Mage_Catalog_Mod
      */
     protected function _getItemsData()
     {
+        return parent::_getItemsData();
         if ('catalogsearch' == Mage::app()->getRequest()->getModuleName())
             return parent::_getItemsData();
 
@@ -27,22 +28,22 @@ class Amasty_Shopby_Model_Catalog_Layer_Filter_Category extends Mage_Catalog_Mod
         $isStatic2LevelTree = (self::DT_STATIC2LVL == $_displayType);
         $isShowSubCats      = (self::DT_WSUBCAT    == $_displayType);
         $isAdvanced         = (self::DT_ADVANCED   == $_displayType);
-        
+
         if ($isAdvanced) {
             return array(
                 0 => 1
-            ); 
+            );
         }
-        
+
         // alwaus use root category
         $currentCategory = $this->getCategory();
-        
+
         $root = Mage::getModel('catalog/category')
                 ->load($this->getLayer()->getCurrentStore()->getRootCategoryId()) ;
 
         $categories = $isStatic2LevelTree ? $root->getChildrenCategories() : $currentCategory->getChildrenCategories();
-        
-                
+
+
         if ($isStatic2LevelTree)
             $this->getLayer()->setCurrentCategory($root);
 
@@ -51,7 +52,7 @@ class Amasty_Shopby_Model_Catalog_Layer_Filter_Category extends Mage_Catalog_Mod
 
 
         $data = array();
-        
+
         $exclude = Mage::getStoreConfig('amshopby/general/exclude_cat');
         if ($exclude){
             $exclude = explode(',', preg_replace('/[^\d,]+/','', $exclude));
@@ -59,19 +60,19 @@ class Amasty_Shopby_Model_Catalog_Layer_Filter_Category extends Mage_Catalog_Mod
         else {
             $exclude = array();
         }
-         
+
         $startLevel = 0;
         if ($isShowSubCats) {
-            
+
             $isNotRoot = ($root->getId() != $currentCategory->getId());
             //Get parent category of the current category
             if ($isNotRoot) {
                 $parent = $currentCategory->getParentCategory();
                 if ($parent->getId() != $root->getId() && !in_array($parent->getId(), $exclude)){
-                    $data[] = $this->_prepareItemData($parent, $parent->getId(), false, 0, false, true);    
-                }    
+                    $data[] = $this->_prepareItemData($parent, $parent->getId(), false, 0, false, true);
+                }
             }
-            
+
             //Add current category 
             if ($isNotRoot) {
                 $startLevel = count($data) > 0 ? 2 : 1;
@@ -83,7 +84,7 @@ class Amasty_Shopby_Model_Catalog_Layer_Filter_Category extends Mage_Catalog_Mod
             if (in_array($id, $exclude)){
                 continue;
             }
-            
+
             $data[] = $this->_prepareItemData($category, $id, $id == $currentCategory->getId(), $startLevel + 1, false);
             if ($isShowSubCats || $isStatic2LevelTree) {
                 $children = $category->getChildrenCategories();
@@ -104,22 +105,22 @@ class Amasty_Shopby_Model_Catalog_Layer_Filter_Category extends Mage_Catalog_Mod
                         if ($isSelected && $data[$last]){
                             $data[$last]['is_child_selected'] = true;
                         }
-                        
+
                         $row = $this->_prepareItemData($child, $id, $isSelected, $startLevel + 2, $isFolded);
                         $data[] = $row;
                     }
                 }
             } //if add sub-categories
         }
-        
-        
+
+
         //restore category
         if ($isStatic2LevelTree)
             $this->getLayer()->setCurrentCategory($currentCategory);
-        
+
         return $data;
     }
-    
+
     protected function _initItems()
     {
         if ('catalogsearch' == Mage::app()->getRequest()->getModuleName())
@@ -153,7 +154,7 @@ class Amasty_Shopby_Model_Catalog_Layer_Filter_Category extends Mage_Catalog_Mod
     protected function _prepareItemData($category, $id, $isSelected, $level = 1, $isFolded = false, $skipCount = false)
     {
         $row = null;
-        
+
         /*
          * Display only active category and having products or being parents 
          */
@@ -161,7 +162,7 @@ class Amasty_Shopby_Model_Catalog_Layer_Filter_Category extends Mage_Catalog_Mod
             $row = array(
                 'label'       => Mage::helper('core')->htmlEscape($category->getName()),
                 'value'       => Mage::helper('amshopby/url')->getCategoryUrl($category),
-                'count'       => ($skipCount ? 0 : $category->getProductCount()), // Display product count only for childs 
+                'count'       => ($skipCount ? 0 : $category->getProductCount()), // Display product count only for childs
                 'level'       => $level,
                 'id'          => $id,
                 'is_folded'   => $isFolded,

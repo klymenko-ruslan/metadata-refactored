@@ -6,6 +6,7 @@ class Amasty_Shopby_Model_CatalogIndex_Indexer extends Mage_CatalogIndex_Model_I
 {
     protected function _getProductCollection($store, $products) 
     {
+        throw new Exception($this);
         $products = parent::_getProductCollection($store, $products);
         
         $showInStockOnly = Mage::getStoreConfig('amshopby/general/show_in_stock', $store);

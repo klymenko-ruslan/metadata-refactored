@@ -394,7 +394,7 @@ class Amasty_Finder_Model_Mysql4_Finder extends Mage_Core_Model_Mysql4_Abstract
                     ->where($alias.'.value_id IN (?)', $ids);            
             }            
         }
-        
+        //echo $select;
         return true;        
     } 
         

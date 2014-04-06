@@ -83,6 +83,7 @@ class Amasty_Finder_Model_Finder extends Mage_Core_Model_Abstract
         $cnt = $this->countEmptyDropdowns();
         $this->getResource()->addConditionToProductCollection($collection, $id, $cnt, $finderId);
 
+        error_log("Finder condition applied. ");
         return true;
     }
     
