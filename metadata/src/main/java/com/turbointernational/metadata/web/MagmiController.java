@@ -63,7 +63,7 @@ public class MagmiController {
         "interchanges",      // Interchangeable parts
         "bill_of_materials", // BOM
         "price",
-        "quantity",
+        "qty",
         "turbo_model",      // Turbo Models
         "turbo_type",       // Turbo Types
         
@@ -233,11 +233,13 @@ public class MagmiController {
         // Only TI parts get this info
         if (product.getManufacturerId() == Manufacturer.TI_ID) {
 
-            // Default to quantity 1
-            columns.put("quantity", "1");
+            // Default to 1
+            columns.put("qty", "1");
             
             // ERP Prices
             addErpPrices(mas90, columns, product);
+        } else {
+            columns.put("qty", "0");
         }
 
         // Map the column into a value array for the CSV writer
