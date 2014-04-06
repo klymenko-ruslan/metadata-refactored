@@ -303,6 +303,6 @@ CREATE VIEW vpart_turbo AS
     ba.ancestor_part_id AS turbo_part_id
   FROM
     bom_ancestor ba
-    JOIN turbo t ON t.part_id = ba.part_id;
+    JOIN turbo t ON t.part_id = ba.ancestor_part_id;
 
 
