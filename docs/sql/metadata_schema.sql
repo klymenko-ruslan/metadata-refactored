@@ -263,12 +263,12 @@ CREATE PROCEDURE RebuildBomAncestry()
       `type`
     )
     SELECT DISTINCT
-      bom.child_part_id  AS part_id,
-      bom.child_part_id  AS ancestor_part_id,
-      0                  AS distance,
-      'Self'             AS `type`
+      id     AS part_id,
+      id     AS ancestor_part_id,
+      0      AS distance,
+      'Self' AS `type`
     FROM
-      bom;
+      part;
 
     REPEAT
         SET @distance = (SELECT MAX(distance) FROM bom_ancestor);

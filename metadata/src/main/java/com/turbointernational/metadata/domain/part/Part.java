@@ -52,6 +52,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PostPersist;
+import javax.persistence.PostUpdate;
 import javax.persistence.PreRemove;
 import javax.persistence.Query;
 import javax.persistence.Table;
@@ -61,6 +63,8 @@ import net.sf.jsog.JSOG;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Cacheable
@@ -300,10 +304,9 @@ public class Part implements Comparable<Part> {
         }
     }
     
-    public void syncOnChanged() throws Exception {
-        log.info("Synchronizing BOM ancestry.");
-        syncBomAncestry();
-        
+    @PostUpdate
+    @PostPersist
+    public void updateSearchIndex() throws Exception {
         log.info("Updating search index.");
         elasticSearch.indexPart(this);
     }
@@ -568,19 +571,14 @@ public class Part implements Comparable<Part> {
     //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="BOM Ancestry">
-    @Transactional
     public static void rebuildBomAncestry() {
+        log.info("Rebuilding BOM ancestry.");
         EntityManager em = entityManager();
         
         // Delete the old ancestry
         em.createNativeQuery("CALL RebuildBomAncestry()").executeUpdate();
-    }
-    
-    @Transactional
-    public void syncBomAncestry() {
-        // TODO: Let's not wipe and rebuild the whole thing each time, please?
-        Part.rebuildBomAncestry();
-        Part.entityManager().clear();
+        em.clear();
+        log.info("BOM Ancestry rebuild completed.");
     }
     //</editor-fold>
     

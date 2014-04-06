@@ -59,9 +59,13 @@ public class InterchangeController {
             canonicalPart.setInterchange(interchange);
             canonicalPart.merge();
         }
+        interchange.flush();
         
         // Update the changelog
         Changelog.log(principal, "Created interchange: ", json);
+            
+        // TODO: Only change what we need to rather than rebuilding everything
+        Part.rebuildBomAncestry();
         
         return new ResponseEntity<String>("ok", headers, HttpStatus.OK);
     }
@@ -98,9 +102,13 @@ public class InterchangeController {
                 oldInterchange.remove();
             }
         }
+        newInterchange.flush();
         
         // Update the changelog
         Changelog.log(principal, "Added part " + partId + " to interchange " + id, "");
+            
+        // TODO: Only change what we need to rather than rebuilding everything
+        Part.rebuildBomAncestry();
     }
     
     @Transactional
@@ -133,9 +141,13 @@ public class InterchangeController {
         // Remove the interchange from the part
         iPart.setInterchange(null);
         iPart.merge();
+        iPart.flush();
         
         // Update the changelog
         Changelog.log(principal, "Deleted " + partId + " from interchange " + interchangeId, "");
+            
+        // TODO: Only change what we need to rather than rebuilding everything
+        Part.rebuildBomAncestry();
     }
     
     

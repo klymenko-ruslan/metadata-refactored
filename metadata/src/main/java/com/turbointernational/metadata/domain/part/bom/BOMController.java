@@ -44,12 +44,14 @@ public class BOMController {
             item.persist();
             parent.getBom().add(item);
             parent.merge();
+            item.flush();
         
             // Update the changelog
             Changelog.log("Added bom item.", item.toJson());
             
-            // Sync the part's BOM
-            child.syncOnChanged();
+            // TODO: Only change what we need to rather than rebuilding everything
+            Part.rebuildBomAncestry();
+            
         } catch (NoResultException e) {
             return new ResponseEntity<String>(headers, HttpStatus.NOT_FOUND);
         }
@@ -75,6 +77,7 @@ public class BOMController {
         // Update
         item.setQuantity(quantity);
         item.merge();
+        item.flush();
     }
     
     @Transactional
@@ -101,8 +104,8 @@ public class BOMController {
         item.remove();
         item.flush();
             
-        // Sync the part's BOM
-        childPart.syncOnChanged();
+        // TODO: Only change what we need to rather than rebuilding everything
+        Part.rebuildBomAncestry();
     }
     
     

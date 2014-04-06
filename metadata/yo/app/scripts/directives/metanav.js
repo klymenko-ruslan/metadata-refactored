@@ -15,7 +15,7 @@ angular.module('ngMetaCrudApp')
                 'You need to run this if changes have been made directly to the database. Proceed?').result.then(
                 function() {
                   // Yes
-                  Restangular.all('part/all/rebuildBomAncestry').getList().then(
+                  Restangular.all('part/all').customGET('rebuildBomAncestry').then(
                       function() {
                         // Success
                         gToast.open('BOM ancestry successfully rebuilt.');

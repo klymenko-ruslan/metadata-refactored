@@ -1,14 +1,16 @@
 package com.turbointernational.metadata.domain.part;
+import com.turbointernational.metadata.domain.part.bom.BOMAncestor;
 import com.turbointernational.metadata.images.ImageResizer;
 import com.turbointernational.metadata.util.ElasticSearch;
+import flexjson.JSONSerializer;
+import flexjson.transformer.HibernateTransformer;
 import java.io.File;
 import java.security.Principal;
 import java.util.List;
-import java.util.logging.Level;
+import java.util.Set;
 import java.util.logging.Logger;
 import net.sf.jsog.JSOG;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -89,7 +91,6 @@ public class PartController {
         Part part = Part.fromJsonToPart(partJson);
         
         part.persist();
-        part.syncOnChanged();
         
         // Update the changelog
 //        Changelog.log(principal, "Created part", part.toJson());
@@ -122,8 +123,6 @@ public class PartController {
         part = Part.findPart(part.getId());
         Part.entityManager().refresh(part);
         
-        part.syncOnChanged();
-        
         // Update the changelog
 //        JSOG dataJsog = JSOG.object("originalPart", originalPartJson)
 //                            .put("updatedPart", part.toJson());
@@ -152,15 +151,34 @@ public class PartController {
         
         return new ResponseEntity<String>(headers, HttpStatus.OK);
     }
-
-    @RequestMapping(value="/{id}/syncBomAncestry")
-    @ResponseBody
-    @Secured("ROLE_ADMIN")
-    public void syncBomAncestry(@PathVariable("id") Long id) throws Exception {
-        Part part = Part.findPart(id);
-        part.syncBomAncestry();
+    
+    @RequestMapping(value="/{id}/ancestors", method = RequestMethod.GET)
+    @Secured("ROLE_READ")
+    public ResponseEntity<String> ancestors(@PathVariable("id") long partId) throws Exception {
+        
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "application/json");
+        Part part = Part.findPart(partId);
+        Set<BOMAncestor> ancestors = part.getBomAncestors();
+        
+        String json = new JSONSerializer()
+                .transform(new HibernateTransformer(), BOMAncestor.class)
+                .include("distance")
+                .include("type")
+                .include("ancestor.id")
+                .include("ancestor.name")
+                .include("ancestor.manufacturerPartNumber")
+                .include("ancestor.description")
+                .include("ancestor.partType.name")
+                .include("ancestor.partType.typeName")
+                .include("ancestor.manufacturer.name")
+                .exclude("*")
+                .serialize(ancestors);
+        
+        return new ResponseEntity<String>(json, headers, HttpStatus.OK);
     }
     
+    @Transactional
     @RequestMapping(value="/all/rebuildBomAncestry")
     @ResponseBody
     @Secured("ROLE_ADMIN")

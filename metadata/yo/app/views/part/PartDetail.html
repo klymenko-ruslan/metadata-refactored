@@ -9,20 +9,29 @@
   </li>
 
   <li>
-    <a authorize="ROLE_INTERCHANGE"
-       ng-href="#/part/{{ part.partType.typeName }}/{{ partId }}/interchange/search"
-       class="btn btn-info">
-      <i class="fa fa-random"></i>
-      Interchange &hellip;
-    </a>
-  </li>
-
-  <li>
     <a authorize="ROLE_PART_IMAGES"
        ng-click="addImage()"
        class="btn btn-info">
       <i class="fa fa-picture-o"></i>
       Add Image &hellip;
+    </a>
+  </li>
+
+  <li>
+    <a authorize="ROLE_READ"
+       ng-href="#/part/{{ part.partType.typeName }}/{{ partId }}/ancestors"
+       class="btn btn-info">
+      <i class="fa fa-sitemap"></i>
+      Ancestors &hellip;
+    </a>
+  </li>
+
+  <li>
+    <a authorize="ROLE_INTERCHANGE"
+       ng-href="#/part/{{ part.partType.typeName }}/{{ partId }}/interchange/search"
+       class="btn btn-info">
+      <i class="fa fa-random"></i>
+      Interchanges &hellip;
     </a>
   </li>
 </metanav>
