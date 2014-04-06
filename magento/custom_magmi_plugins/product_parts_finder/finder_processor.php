@@ -58,9 +58,12 @@ class FinderProcessor extends Magmi_ItemProcessor {
             if (strpos($columnName, $this->_columnPrefix) !== 0) {
                 continue;
             }
-
+            
             // Strip off the column prefix to get the finder's ID
             $finderId = substr($columnName, strlen($this->_columnPrefix));
+            if (!array_key_exists($finderId, $_finders)) {
+              continue;
+            }
             
             // Get the pipe-delimited mappings from the CSV column and lookup the corresponding value IDs
             $valueIds = $this->getValueIdsForMappings($finderId, explode('||', $columnValue));
