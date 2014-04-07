@@ -15,6 +15,23 @@ class FSHelper
 		}
 		return true;
 	}
+	
+	public static function getExecMode() {
+		
+		$is_disabled=array();
+		$disabled = explode(',', ini_get('disable_functions'));
+		foreach ($disabled as $disableFunction) {
+			$is_disabled[] = trim($disableFunction);
+		}
+		foreach(array("popen","shell_exec") as $func)
+		{
+			if(!in_array($func, $is_disabled))
+			{
+				return $func;
+			}
+		}
+		return null;
+	}
 
 }
 
@@ -112,7 +129,7 @@ class CURL_RemoteFileGetter extends RemoteFileGetter
 
 		/* Check for 404 (file not found). */
 		$httpCode = curl_getinfo($context, CURLINFO_HTTP_CODE);
-		$exists = ($httpCode==200);
+		$exists = ($httpCode<400);
 		/* retry on error */
 			
 		if($httpCode==503 or $httpCode==403)
@@ -121,7 +138,7 @@ class CURL_RemoteFileGetter extends RemoteFileGetter
 			usleep(500000);
 			$response = curl_exec($context);
 			$httpCode = curl_getinfo($context, CURLINFO_HTTP_CODE);
-			$exists = ($httpCode==200);
+			$exists = ($httpCode<400);
 		}
 		return $exists;
 	}
@@ -214,21 +231,33 @@ abstract class MagentoDirHandler
 {
 	protected $_magdir;
 	protected $_lasterror;
+	protected $_exec_mode;
 	public function __construct($magurl)
 	{
 		$this->_magdir=$magurl;
 		$this->_lasterror=array();
+		$this->_exec_mode=FSHelper::getExecMode();
 	}
+	
 	public function getMagentoDir()
 	{
 		return $this->_magdir;
 	}
+	public function getexecmode()
+	{
+		return $this->_exec_mode;
+	}
+	
 	public abstract function canhandle($url);
 	public abstract function file_exists($filepath);
 	public abstract function mkdir($path,$mask=null,$rec=false);
 	public abstract function copy($srcpath,$destpath);
 	public abstract function unlink($path);
 	public abstract function chmod($path,$mask);
+	public function isExecEnabled()
+	{
+		return $this->_exec_mode!=null;
+	}
 	public abstract function exec_cmd($cmd,$params,$workingdir = null);
 }
 
@@ -251,6 +280,8 @@ class LocalMagentoDirHandler extends MagentoDirHandler
 
 		return file_exists($mp);
 	}
+	
+	
 
 	public function mkdir($path,$mask=null,$rec=false)
 	{
@@ -351,9 +382,26 @@ class LocalMagentoDirHandler extends MagentoDirHandler
 			}
 		}
 		$full_cmd = $precmd. $full_cmd;
-
-		$out=@shell_exec($full_cmd);
-
+		//Handle Execution
+		$emode=$this->getexecmode();
+		switch($emode)
+		{
+			case "popen":
+				$x=popen($full_cmd,"r");
+				$out="";
+				while(!feof($x))
+				{
+					$data=fread($x, 1024);
+					$out.=$data;
+					usleep(100000);
+				}
+				fclose($x);
+				break;
+			case "shell_exec":
+				$out=shell_exec($full_cmd);
+				break;
+		}
+		 
 		//restore old directory if changed
 		if($curdir)
 		{

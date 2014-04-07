@@ -88,7 +88,7 @@ class CategoryImporter extends Magmi_ItemProcessor
 		return array(
             "name" => "On the fly category creator/importer",
             "author" => "Dweeves",
-            "version" => "0.2.3",
+            "version" => "0.2.4",
 			"url" => "http://sourceforge.net/apps/mediawiki/magmi/index.php?title=On_the_fly_category_creator/importer"
             );
 	}
@@ -209,7 +209,18 @@ class CategoryImporter extends Magmi_ItemProcessor
 		}
 		//remove explicit root 
 		$pcatdef=str_replace($srp.$this->_tsep,"",$pcatdef);
-		$pcatparts=explode($this->_tsep,$pcatdef);
+		$zcatparts=explode($this->_tsep,$pcatdef);
+		//cleaning parts (trimming, removing empty)
+		$pcatparts=array();
+		$czcatparts=count($zcatparts);
+		for($i=0;$i<$czcatparts;$i++)
+		{
+			$cp=trim($zcatparts[$i]);
+			if($cp!="")
+			{
+				$pcatparts[]=$cp;
+			}
+		}
 		$catparts=array();
 		$catpos=array();
 		//build a position table to restore after cat ids will be created
@@ -268,9 +279,10 @@ class CategoryImporter extends Magmi_ItemProcessor
 			$curpath=array_merge($basearr,$catids);
 			//get categories attributes
 			$catattributes=$this->extractCatAttrs($catdef);
-			
+			$ccatids=count($catids);
+			$ccatparts=count($catparts);
 			//iterate on missing levels.
-			for($i=count($catids);$i<count($catparts);$i++)
+			for($i=$ccatids;$i<$ccatparts;$i++)
 			{
 				if($catparts[$i]=="")
 				{
@@ -288,9 +300,9 @@ class CategoryImporter extends Magmi_ItemProcessor
 			
 			}
 		}
-		
+		$ccatparts=count($catparts);
 		//added position handling
-		for($i=0;$i<count($catparts);$i++)
+		for($i=0;$i<$ccatparts;$i++)
 		{
 			$catids[$i].="::".$catpos[$i];
 		}
@@ -328,8 +340,9 @@ class CategoryImporter extends Magmi_ItemProcessor
 		//If using explicit root assignment , identify which root it is
 		if(preg_match_all("|\[(.*?)\]|",$item["categories"],$matches))
 		{
+			$cm1=count($matches[1]);
 			//for each found explicit root
-			for($i=0;$i<count($matches[1]);$i++)
+			for($i=0;$i<$cm1;$i++)
 			{
 				//test store matching
 				foreach($sids as $sid)
@@ -356,7 +369,9 @@ class CategoryImporter extends Magmi_ItemProcessor
 		}
 			if(preg_match_all("|\[(.*?)\]|",$item["categories"],$matches))
 			{
-				for($i=0;$i<count($matches[1]);$i++)
+				$cm1=count($matches[1]);
+				
+				for($i=0;$i<$cm1;$i++)
 				{
 						$rootpaths['__error__']=$matches[1];
 				}	
@@ -385,11 +400,12 @@ class CategoryImporter extends Magmi_ItemProcessor
 			if($root!="")
 			{
 				$catlist=explode(";;",$icats);
-				for($i=0;$i<count($catlist);$i++)
+				$ccatlist=count($catlist);
+				for($i=0;$i<$ccatlist;$i++)
 				{	
 					if(trim($catlist[$i])!="")
 					{
-						$catlist[$i]=$root.$this->_tsep.$icats;
+						$catlist[$i]=$root.$this->_tsep.$catlist[$i];
 					}
 				}
 			//recompose rooted categories
@@ -439,6 +455,7 @@ class CategoryImporter extends Magmi_ItemProcessor
 	
 	public function afterImport()
 	{
+		$this->log("Updating Category children count....","info");
 		//automatically update all children_count for catalog categories
 		$cce=$this->tablename("catalog_category_entity");
 		$sql="UPDATE  $cce as cce

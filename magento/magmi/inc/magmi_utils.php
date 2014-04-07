@@ -1,5 +1,8 @@
 <?php
 //utilities function
+
+
+
 // return null for empty string
 function nullifempty($val)
 {
@@ -17,30 +20,36 @@ function testempty($arr,$val)
 	return !isset($arr[$val]) || strlen(trim($arr[$val]))==0;
 }
 
+//place a DELETE maker for empty values
 function deleteifempty($val)
 {
 	return (isset($val)?(trim($val)==""?"__MAGMI_DELETE__":$val):"__MAGMI_DELETE__");
 }
 
+//convert to array & trims a comma separated list
 function csl2arr($cslarr,$sep=",")
 {
 	$arr=explode($sep,$cslarr);
-	for($i=0;$i<count($arr);$i++)
+	$carr=count($arr);
+	for($i=0;$i<$carr;$i++)
 	{
 		$arr[$i]=trim($arr[$i]);		
 	}
 	return $arr;
 }
 
+//trim a list of array values
 function trimarray(&$arr)
 {
-	for($i=0;$i<count($arr);$i++)
+	$carr=count($arr);
+	for($i=0;$i<$carr;$i++)
 	{
 		$arr[$i]=trim($arr[$i]);		
 	}
 	
 }
 
+//Relative value detection (prepend of + or -)
 function getRelative(&$val)
 {
 	$dir="+";
@@ -57,12 +66,15 @@ function getRelative(&$val)
 	return $dir;
 }
 
+//Check if we have a remote path 
 function is_remote_path($path)
 {
 	$parsed=parse_url($path);
 	return isset($parsed['host']);
 }
 
+//Returns absolute path for a file with a base path
+// if $resolve is set to true,return associated realpath
 function abspath($path,$basepath="",$resolve=true)
 {
 	if($basepath=="")
@@ -76,12 +88,26 @@ function abspath($path,$basepath="",$resolve=true)
 	}
 	else
 	{
-		$abs=preg_replace('|\w+/\.\.\/|', '',$cpath );
-		$abs=preg_replace('|\./|','',$abs);
-	
+		$inparts=explode("/",$cpath);
+		$outparts=array();
+		$cinparts=count($inparts);
+		for($i=0;$i<$cinparts;$i++)
+		{
+			if($inparts[$i]=='..')
+			{
+				array_pop($outparts)	;
+			}
+			else
+			if($inparts[$i]!='.')
+			{
+				$outparts[]=$inparts[$i];
+			}
+		}
+		$abs=implode("/",$outparts);
 	}
 	return $abs;
 }
+
 
 function truepath($path){
 	$opath=$path;
@@ -113,15 +139,18 @@ function truepath($path){
     return $path;
 }
  
-
+//Test for absolute path using OS detection 
 function isabspath($path)
 {
-	 return ($path[0]=="." || (substr(PHP_OS,3)=="WIN" && strlen($path)>1)?$path[1]==":":$path[0]=="/");
+	 return ($path[0]=="." || (substr(PHP_OS,0,3)=="WIN" && strlen($path)>1)?$path[1]==":":$path[0]=="/");
 }
 
-
+/*
+ * Slugger class, for producing valid url from strings
+ */
 class Slugger
 {
+	//Mapping array for intl accented chars
 	static protected $_translit=array(
     'Š'=>'S', 'š'=>'s', 'Ð'=>'Dj','Ž'=>'Z', 'ž'=>'z', 'À'=>'A', 'Á'=>'A', 'Â'=>'A', 'Ã'=>'A', 'Ä'=>'A',
     'Å'=>'A', 'Æ'=>'A', 'Ç'=>'C', 'È'=>'E', 'É'=>'E', 'Ê'=>'E', 'Ë'=>'E', 'Ì'=>'I', 'Í'=>'I', 'Î'=>'I',
@@ -129,14 +158,16 @@ class Slugger
     'Û'=>'U', 'Ü'=>'U', 'Ý'=>'Y', 'Þ'=>'B', 'ß'=>'Ss','à'=>'a', 'á'=>'a', 'â'=>'a', 'ã'=>'a', 'ä'=>'a',
     'å'=>'a', 'æ'=>'a', 'ç'=>'c', 'è'=>'e', 'é'=>'e', 'ê'=>'e', 'ë'=>'e', 'ì'=>'i', 'í'=>'i', 'î'=>'i',
     'ï'=>'i', 'ð'=>'o', 'ñ'=>'n', 'ò'=>'o', 'ó'=>'o', 'ô'=>'o', 'õ'=>'o', 'ö'=>'o', 'ø'=>'o', 'ù'=>'u',
-    'ú'=>'u', 'û'=>'u', 'ý'=>'y', 'ý'=>'y', 'þ'=>'b', 'ÿ'=>'y', 'ƒ'=>'f'
-		);
+    'ú'=>'u', 'û'=>'u', 'ý'=>'y', 'ý'=>'y', 'þ'=>'b', 'ÿ'=>'y', 'ƒ'=>'f',
+	'Č'=>'C', 'č'=>'c', 'Ľ'=>'L', 'ľ'=>'l', 'Ĺ'=>'L', 'Ť'=>'T', 'ť'=>'t', 'Ň'=>'N', 'ň'=>'n', 'Ŕ'=>'R', 'ŕ'=>'r', 'Ř'=>'R', 'ř'=>'r',
+	'Ő'=>'O', 'ő'=>'o', 'Ű'=>'U', 'ű'=>'u', 'ü'=>'u');
 	
+	//Stripping accents
 	public static function stripAccents($text){
 		
 		return strtr($text,self::$_translit);
 	}
-
+	//Slugging function
 	public static function slug($str,$allowslash=false)
 	{
       $str = strtolower(self::stripAccents(trim($str)));
@@ -147,3 +178,4 @@ class Slugger
       return $str;
 	}
 }
+

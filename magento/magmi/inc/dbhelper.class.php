@@ -6,6 +6,8 @@
  * @author dweeves
  *
  */
+include_once("timecounter.php");
+
 class DBHelper
 {
 	protected $_db;
@@ -16,6 +18,17 @@ class DBHelper
 	protected $_indbtime;
 	protected $_intrans=false;
 	protected $prepared=array();
+	protected $_timecounter=null;
+	protected $_tcats;
+	
+	public function __construct()
+	{
+		$this->_timecounter=new TimeCounter(get_class($this));
+		$this->_tcats="db";
+		$this->_timecounter->initTimingCats(array($this->_tcats));
+		$this->_timecounter->addCounter("requests");
+		
+	}
 	/**
 	 * Intializes database connection
 	 * @param string $host : hostname
@@ -183,8 +196,9 @@ class DBHelper
 	public function exec_stmt($sql,$params=null,$close=true)
 	{
 		$this->_nreq++;
+		$this->_timecounter->initTime("indb",null,$this->_tcats);
+		$this->_timecounter->incCounter("requests");
 		$t0=microtime(true);
-		
 		if($this->_use_stmt_cache && strpos($sql,"'")==false)
 		{
 			//if sql not in statement cache
@@ -238,6 +252,7 @@ class DBHelper
 		{
 			$stmt->closeCursor();
 		}
+		$this->_timecounter->exitTime("indb",null,$this->_tcats);
 		$t1=microtime(true);
 		$this->_indbtime+=$t1-$t0;
 		$this->logdebug("$sql\n".print_r($params,true));
@@ -299,11 +314,15 @@ class DBHelper
 	public function selectone($sql,$params,$col)
 	{
 		$stmt=$this->select($sql,$params);
+		$this->_timecounter->initTime("indb",null,$this->_tcats);
 		$t0=microtime(true);
 
 		$r=$stmt->fetch(PDO::FETCH_ASSOC);
 		$stmt->closeCursor();
+		$this->_timecounter->exitTime("indb",null,$this->_tcats);
+		
 		$t1=microtime(true);
+		
 		$this->_indbtime+=$t1-$t0;
 		$v=(is_array($r)?$r[$col]:null);
 		unset($r);
@@ -318,10 +337,14 @@ class DBHelper
 	public function selectAll($sql,$params=null)
 	{
 		$stmt=$this->select($sql,$params);
+		$this->_timecounter->initTime("indb",null,$this->_tcats);
+		
 		$t0=microtime(true);
 
 		$r=$stmt->fetchAll(PDO::FETCH_ASSOC);
 		$stmt->closeCursor();
+		$this->_timecounter->exitTime("indb",null,$this->_tcats);
+		
 		$t1=microtime(true);
 		$this->_indbtime+=$t1-$t0;
 		return $r;
@@ -396,6 +419,20 @@ class DBHelper
 	}
 	
 	/**
+	 * transform associative array into CASE sub statement
+	 */
+	
+	public function arr2case($arr,$casevar)
+	{
+		$sql="(CASE ";
+		foreach($arr as $k=>$v)
+		{
+			$sql.="WHEN $casevar='$k' THEN '$v'\n";
+		}
+		$sql.="END)";
+		return $sql;
+	}
+	/**
 	 * 
 	 * transform a associative array into a list of update prepared placeholders
 	 * @param array $arr associative array to prepare for update , array keys used as column to update
@@ -422,8 +459,8 @@ class DBHelper
 	{
 		$out=array();
 		foreach($keys as $k)
-		{
-			$out[$k]=isset($kvarr[$k])?$kvarr[$k]:null;
+		{                             
+			$out[$k]=(isset($kvarr[$k]) && $kvarr[$k]!='__NULL__')?$kvarr[$k]:null;
 		}
 		return $out;
 	}
@@ -499,7 +536,8 @@ class DBHelper
 			$params=$matches[1];
 			
 		}
-		for($i=0;$i<count($params);$i++)
+		$cparams=count($params);
+		for($i=0;$i<$cparams;$i++)
 		{
 			$param=$params[$i];
 			$pdef=$pdefs[$i];
@@ -515,7 +553,7 @@ class DBHelper
 				$stmt=str_replace($pdef,":$pname",$stmt);
 			}
 		}
-		for($i=0;$i<count($params);$i++)
+		for($i=0;$i<$cparams;$i++)
 		{
 			$param=$params[$i];
 			$pinfo=explode("/",$param);

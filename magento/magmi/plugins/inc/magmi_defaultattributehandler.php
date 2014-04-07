@@ -2,7 +2,7 @@
 class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
 {
 	protected $_basecols=array("store"=>"admin","type"=>"simple");
-	protected $_baseattrs=array("status"=>1,"visibility"=>4,"page_layout"=>"");
+	protected $_baseattrs=array("status"=>1,"visibility"=>4,"page_layout"=>"","tax_class_id"=>"Taxable Goods");
 	protected $_forcedefault=array("store"=>"admin");
 	protected $_missingcols=array();
 	protected $_missingattrs=array();
@@ -17,12 +17,14 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
 		return array(
             "name" => "Standard Attribute Import",
             "author" => "Dweeves",
-            "version" => "1.0.5"
+            "version" => "1.0.6"
             );
 	}
 	
 	public function processColumnList(&$cols)
 	{	
+		//This will not change the column list
+		//this will only log the list of columns that will be added to newly created items
 		$this->_missingcols=array_diff(array_keys($this->_basecols),$cols);
 		$this->_missingattrs=array_diff(array_keys($this->_baseattrs),$cols);
 		$m=$this->getMode();
@@ -98,16 +100,17 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
 	{
 		$ovalue=deleteifempty(trim($ivalue));
 		//Handle european date format or other common separators
-		if(preg_match("|([0-9]){1,2}\D([0-9]){1,2}\D([0-9]){4}|",$ovalue,$matches))
+		if(preg_match("|(\d{1,2})\D(\d{1,2})\D(\d{4})\s*(\d{2}:\d{2}:\d{2})?|",$ovalue,$matches))
 		{
-			$ovalue=sprintf("%4d-%2d-%2d",$matches[3],$matches[2],$matches[1]);
+			$hms=count($matches)>4?$matches[4]:"";
+			$ovalue=trim(sprintf("%4d-%2d-%2d %s",$matches[3],$matches[2],$matches[1],$hms));
 		}
 		return $ovalue;
 	}
 
 	public function handleTextAttribute($pid,&$item,$storeid,$attrcode,$attrdesc,$ivalue)
 	{
-		$ovalue=(empty($ivalue)?'':$ivalue);
+		$ovalue=deleteifempty($ivalue);
 		return $ovalue;	
 	}
 	
@@ -160,7 +163,7 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
 					//get option id for value, create it if does not already exist
 					//do not insert if empty
 				default:
-					if($ivalue=="" && $this->getMode()=="update")
+					if($ivalue=="" && $this->currentItemExists())
 					{
 						return "__MAGMI_DELETE__";
 					}
@@ -173,7 +176,47 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
 		return $ovalue;
 	}
 
-
+	public function handleUrl_keyAttribute($pid,&$item,$storeid,$attrcode,$attrdesc,$ivalue)
+	{
+		
+		$cpev=$this->tablename("catalog_product_entity_varchar");
+		//find conflicting url keys
+		$urlk=trim($ivalue);
+		$exists=$this->currentItemExists();
+		$lst=array();
+		if($urlk=="" && $exists)
+		{
+			return "__MAGMI_DELETE__";
+		}
+		//for existing product, check if we have already a value matching the current pattern
+		if($exists)
+		{
+			$sql="SELECT value FROM $cpev WHERE attribute_id=? AND entity_id=? AND value REGEXP ?";
+			$eurl=$this->selectone($sql,array($attrdesc["attribute_id"],$pid,$urlk."(-\d+)?"),"value");
+			//we match wanted pattern, try finding conflicts with our current one
+			if($eurl)
+			{
+				$urlk=$eurl;
+				$sql="SELECT * FROM $cpev WHERE attribute_id=? AND entity_id!=?  AND value=?";
+				$umatch=$urlk;
+			}
+			//no current value, so try inserting into target pattern list
+			else
+			{
+				
+				$sql="SELECT * FROM $cpev WHERE attribute_id=? AND entity_id!=?  AND value REGEXP ?";
+				$umatch=$urlk."(-\d+)?";
+			}
+			$lst=$this->selectAll($sql,array($attrdesc["attribute_id"],$pid,$umatch));
+		}
+		
+		//all conflicting url keys
+		if(count($lst)>0)
+		{
+			$urlk=$urlk."-".count($lst);
+		}
+		return $urlk;
+	}
 	/**
 	 * attribute handler for varchar based attributes
 	 * @param int $pid : product id
@@ -183,11 +226,12 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
 	public function handleVarcharAttribute($pid,&$item,$storeid,$attrcode,$attrdesc,$ivalue)
 	{
 
-		if($storeid!==0 && empty($ivalue) && $this->getImportMode()=="create")
+		$exists=$this->currentItemExists();
+		if($storeid!==0 && empty($ivalue) && !$exists)
 		{
 			return false;
 		}
-		if($ivalue=="" && $this->getImportMode()=="update")
+		if($ivalue=="" && $exists)
 		{
 			return "__MAGMI_DELETE__";
 		}
@@ -212,6 +256,8 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
 			$ovalue=implode(",",$oids);
 			unset($oids);
 		}
+	
+		
 		return $ovalue;
 	}
 
