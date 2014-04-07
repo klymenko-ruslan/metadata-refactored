@@ -254,16 +254,34 @@
         <label>Coolant</label>
         <picker path="type/cool" ng-model="part.coolType"></picker>
 
-    </div>
-</div>
-</div>
-</div>
-<div class="row">
-    <div class="col-xs-12 col-md-5">
-        <h3>Turbo Model</h3>
+        <div class="col-xs-12 col-md-5">
+          <h3>Turbo Model</h3>
 
-        <div ng-include="'/views/part/form/TurboModel.html'"></div>
+          <div ng-include="'/views/part/form/TurboModel.html'"></div>
+        </div>
+
     </div>
+</div>
+</div>
+
+
+<div class="well">
+  <label>Turbo Manufacturer</label>
+  <picker ng-model="turboTypeManufacturer" path="other/manufacturer"></picker>
+
+
+  <div ng-disabled="turboTypes.length == 0" class="col-xs-6 form-group">
+    <label class="control-label">Turbo Type</label>
+    <input ng-model="turboTypeFilter" ng-init="turboTypeFilter = ''" class="form-control input-sm" placeholder="Turbo type filter..."/>
+    <br/>
+    <select data-ng-model="turboTypeId"
+            data-ng-options="turboType.id as turboType.name for turboType in turboTypes | filter:{name:turboTypeFilter}"
+            data-ng-disabled="turboTypes.length == 0"
+            size="15" class="select-large required form-control">
+    </select>
+  </div>
+
+</div>
 </div>
 
 

@@ -332,6 +332,8 @@ public class Part implements Comparable<Part> {
     protected JSONSerializer buildJSONSerializer() {
         return new JSONSerializer()
                 .transform(new HibernateTransformer(), this.getClass())
+                .include("turboTypes.id")
+                .include("turboTypes.name")
                 .include("partType.id")
                 .include("partType.name")
                 .include("partType.typeName")
