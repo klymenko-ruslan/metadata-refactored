@@ -12,3 +12,4 @@ magento/.ssh/known_hosts
 magento/.viminfo
 magento/.bash_history
 magento/media
+magento/var/log/
