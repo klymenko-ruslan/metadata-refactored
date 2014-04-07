@@ -581,7 +581,6 @@ CREATE TABLE `mas90_std_price` (
   `StdPrice` DECIMAL(10,2) NOT NULL DEFAULT 0
 ) ENGINE = INNODB;
 
--- Legacy Tables
 CREATE TABLE `part_turbo_type` (
   `part_id` BIGINT NOT NULL,
   `turbo_type_id` BIGINT NOT NULL,

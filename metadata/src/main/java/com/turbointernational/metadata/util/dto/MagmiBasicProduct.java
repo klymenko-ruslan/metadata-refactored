@@ -11,6 +11,8 @@ public class MagmiBasicProduct {
     
     private Long imageId;
     
+    private final String partTurboType;
+    
     private final String turboType;
     
     private final String turboModel;
@@ -21,9 +23,10 @@ public class MagmiBasicProduct {
     
     private final String applicationDetail;
 
-    public MagmiBasicProduct(Long sku, Long imageId, String turboType, String turboModel, String finderTurbo, String finderApplication, String applicationDetail) {
+    public MagmiBasicProduct(Long sku, Long imageId, String partTurboType, String turboType, String turboModel, String finderTurbo, String finderApplication, String applicationDetail) {
         this.sku = sku;
         this.imageId = imageId;
+        this.partTurboType = partTurboType;
         this.turboType = turboType;
         this.turboModel = turboModel;
         this.finderTurbo = finderTurbo;
@@ -37,6 +40,10 @@ public class MagmiBasicProduct {
     
     public Long getImageId() {
         return imageId;
+    }
+
+    public String getPartTurboType() {
+        return partTurboType;
     }
     
     /**

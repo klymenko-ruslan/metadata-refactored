@@ -1,5 +1,6 @@
 package com.turbointernational.metadata.domain.part;
 import com.turbointernational.metadata.domain.other.Manufacturer;
+import com.turbointernational.metadata.domain.other.TurboType;
 import com.turbointernational.metadata.domain.part.bom.BOMAncestor;
 import com.turbointernational.metadata.domain.part.bom.BOMItem;
 import com.turbointernational.metadata.domain.part.types.Backplate;
@@ -45,6 +46,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -168,6 +170,12 @@ public class Part implements Comparable<Part> {
     @Column(nullable = false, columnDefinition = "BIT", length = 1)
     private Boolean inactive = false;
     
+    @OneToMany
+    @JoinTable(name="part_turbo_type",
+                joinColumns = @JoinColumn(name="part_id"),
+                inverseJoinColumns = @JoinColumn(name="turbo_type_id"))
+    private Set<TurboType> turboTypes = new TreeSet<TurboType>();
+    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinTable(name="interchange_item",
             joinColumns=@JoinColumn(name="part_id"),
@@ -274,6 +282,10 @@ public class Part implements Comparable<Part> {
     public void setBomAncestors(Set<BOMAncestor> bomAncestors) {
         this.bomAncestors.clear();
         this.bomAncestors.addAll(bomAncestors);
+    }
+    
+    public Set<TurboType> getTurboTypes() {
+        return turboTypes;
     }
     
     public Set<Turbo> getTurbos() {

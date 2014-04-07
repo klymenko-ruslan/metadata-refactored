@@ -81,6 +81,10 @@ public class MagmiProduct {
             turboType.add(basicProduct.getTurboType());
         }
 
+        if (StringUtils.isNotEmpty(basicProduct.getPartTurboType())) {
+            turboType.add(basicProduct.getPartTurboType());
+        }
+
         if (StringUtils.isNotEmpty(basicProduct.getTurboModel())) {
             turboModel.add(basicProduct.getTurboModel());
         }

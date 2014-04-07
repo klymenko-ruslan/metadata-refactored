@@ -47,7 +47,6 @@ ALTER TABLE `part`
 DROP TABLE IF EXISTS `bom_hierarchy`;
 DROP TABLE IF EXISTS `part_attribute`;
 DROP TABLE IF EXISTS `attribute_type`;
-DROP TABLE IF EXISTS `part_turbo_type`;
 DROP TABLE IF EXISTS `sql server destination`;
 
 --
