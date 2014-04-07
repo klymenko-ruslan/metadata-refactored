@@ -21,28 +21,38 @@ angular.module('ngMetaCrudApp')
                 alert("Could not get part details");
             });
 
-        $scope.reindexTurbos = function() {
+        $scope.deleteImage = function(image) {
 
           $dialogs.confirm(
-                  "Reindex part turbos?",
-                  "You need to run this if changes have been made directly to the database. Proceed?").result.then(
+                  "Delete image?",
+                  "Do you want to remove this image from the part?").result.then(
               function() {
                 // Yes
-                Restangular.one("part", $scope.partId).one('indexTurbos').get().then(
+                Restangular.one('image', image.id).remove().then(
                     function() {
                       // Success
-                      gToast.open("Indexing started, check the server log for progress.");
+                      gToast.open("Image removed.");
+
+                      var idx = _.indexOf($scope.part.productImages, image);
+                      $scope.part.productImages.splice(idx, 1);
                     },
                     function(response) {
                       // Error
-                      $dialogs.error(
-                          "Could not index part turbos.",
-                          "Here's the error: <pre>" + response.status +"</pre>");
+                      restService.error("Could not delete image.", response);
                     });
               },
               function() {
                 // No
               });
+
         }
 
+        $scope.addImage = function() {
+          $dialogs.create('/views/part/AddImage.html', 'AddPartImageCtrl',
+              {part: $scope.part, callback: $scope.imageAddedCallback});
+        }
+
+        $scope.imageAddedCallback = function(image) {
+          $scope.part.productImages.push(image);
+        }
     });

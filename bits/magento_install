@@ -1,0 +1,18 @@
+MYSQL_PASSWORD=OI1unqzzO{=.s#?
+
+# Stop MySQL
+/etc/init.d/mysql stop
+
+# Move the mysql data to /mnt (the SSD) and remount it on /var/lib/mysql
+mv /var/lib/mysql/* /mnt
+umount /mnt
+sed -i 's/\s\/mnt\s/ \/var\/lib\/mysql /g' /etc/fstab
+mount -a
+
+# Start MySQL
+/etc/init.d/mysql start
+
+# Load data from mysqldump file (from replica; set SOURCE_PATH)
+mysql -u root "-p$MYSQL_PASSWORD" magento < SOURCE_PATH
+
+

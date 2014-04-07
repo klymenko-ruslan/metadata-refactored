@@ -5,7 +5,7 @@ import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.part.ProductImage;
 import com.turbointernational.metadata.domain.part.types.Turbo;
-import com.turbointernational.metadata.images.ImageResizer;
+import com.turbointernational.metadata.util.ImageResizer;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;

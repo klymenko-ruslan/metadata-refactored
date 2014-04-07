@@ -1,7 +1,6 @@
 package com.turbointernational.metadata.domain.part.bom;
 import com.turbointernational.metadata.domain.changelog.Changelog;
-import com.turbointernational.metadata.domain.part.*;
-import java.security.Principal;
+import com.turbointernational.metadata.domain.part.Part;
 import java.util.logging.Logger;
 import javax.persistence.NoResultException;
 import org.springframework.http.HttpHeaders;
@@ -45,12 +44,14 @@ public class BOMController {
             item.persist();
             parent.getBom().add(item);
             parent.merge();
+            item.flush();
         
             // Update the changelog
             Changelog.log("Added bom item.", item.toJson());
-
-            parent.indexTurbos();
-            parent.updateIndex();
+            
+            // TODO: Only change what we need to rather than rebuilding everything
+            Part.rebuildBomAncestry();
+            
         } catch (NoResultException e) {
             return new ResponseEntity<String>(headers, HttpStatus.NOT_FOUND);
         }
@@ -76,6 +77,7 @@ public class BOMController {
         // Update
         item.setQuantity(quantity);
         item.merge();
+        item.flush();
     }
     
     @Transactional
@@ -98,7 +100,12 @@ public class BOMController {
         item.getParent().merge();
         
         // Delete it
+        Part childPart = item.getChild();
         item.remove();
+        item.flush();
+            
+        // TODO: Only change what we need to rather than rebuilding everything
+        Part.rebuildBomAncestry();
     }
     
     

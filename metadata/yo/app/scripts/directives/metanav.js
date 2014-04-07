@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-    .directive('metanav', function ($dialogs, gToast, User, Restangular) {
+    .directive('metanav', function ($dialogs, gToast, User, restService, Restangular) {
       return {
         transclude: true,
         templateUrl: '/views/component/Metanav.html',
@@ -9,22 +9,20 @@ angular.module('ngMetaCrudApp')
         controller: function($scope) {
           $scope.User = User;
 
-          $scope.reindexTurbos = function() {
+          $scope.rebuildBomAncestry = function() {
             $dialogs.confirm(
-                'Reindex all part turbos?',
+                'Rebuild BOM ancestry for all parts?',
                 'You need to run this if changes have been made directly to the database. Proceed?').result.then(
                 function() {
                   // Yes
-                  Restangular.all('part/all/indexTurbos').get().then(
+                  Restangular.all('part/all').customGET('rebuildBomAncestry').then(
                       function() {
                         // Success
-                        gToast.open('Indexing started, check the server log for progress.');
+                        gToast.open('Rebuilding BOM ancestry.');
                       },
                       function(response) {
                         // Error
-                        $dialogs.error(
-                            'Could not index search engine data.',
-                            'Here\'s the error: <pre>' + response.status +'</pre>');
+                        restService.error("Could not rebuild BOM ancestry", response);
                       });
                 },
                 function() {

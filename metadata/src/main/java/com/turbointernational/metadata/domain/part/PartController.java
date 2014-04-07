@@ -1,17 +1,21 @@
 package com.turbointernational.metadata.domain.part;
+import com.turbointernational.metadata.domain.part.bom.BOMAncestor;
+import com.turbointernational.metadata.util.ImageResizer;
 import com.turbointernational.metadata.util.ElasticSearch;
+import flexjson.JSONSerializer;
+import flexjson.transformer.HibernateTransformer;
+import java.io.File;
 import java.security.Principal;
 import java.util.List;
-import java.util.logging.Level;
+import java.util.Set;
 import java.util.logging.Logger;
 import net.sf.jsog.JSOG;
-import org.apache.commons.fileupload.FileUpload;
-import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,6 +31,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class PartController {
 
     private static final Logger log = Logger.getLogger(PartController.class.toString());
+    
+    @Value("${images.originals}")
+    private File originalImagesDir;
+    
+    @Autowired(required=true)
+    ImageResizer resizer;
     
     // ElasticSearch
     @Autowired(required=true)
@@ -81,8 +91,6 @@ public class PartController {
         Part part = Part.fromJsonToPart(partJson);
         
         part.persist();
-        part.indexTurbos();
-        part.updateIndex();
         
         // Update the changelog
 //        Changelog.log(principal, "Created part", part.toJson());
@@ -115,9 +123,6 @@ public class PartController {
         part = Part.findPart(part.getId());
         Part.entityManager().refresh(part);
         
-        part.indexTurbos();
-        part.updateIndex();
-        
         // Update the changelog
 //        JSOG dataJsog = JSOG.object("originalPart", originalPartJson)
 //                            .put("updatedPart", part.toJson());
@@ -146,55 +151,73 @@ public class PartController {
         
         return new ResponseEntity<String>(headers, HttpStatus.OK);
     }
-
-    @Async
-    @RequestMapping(value="/{id}/indexTurbos")
+    
+    @RequestMapping(value="/{id}/ancestors", method = RequestMethod.GET)
+    @Secured("ROLE_READ")
+    public ResponseEntity<String> ancestors(@PathVariable("id") long partId) throws Exception {
+        
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "application/json");
+        Part part = Part.findPart(partId);
+        Set<BOMAncestor> ancestors = part.getBomAncestors();
+        
+        String json = new JSONSerializer()
+                .transform(new HibernateTransformer(), BOMAncestor.class)
+                .include("distance")
+                .include("type")
+                .include("ancestor.id")
+                .include("ancestor.name")
+                .include("ancestor.manufacturerPartNumber")
+                .include("ancestor.description")
+                .include("ancestor.partType.name")
+                .include("ancestor.partType.typeName")
+                .include("ancestor.manufacturer.name")
+                .exclude("*")
+                .serialize(ancestors);
+        
+        return new ResponseEntity<String>(json, headers, HttpStatus.OK);
+    }
+    
+    @Transactional
+    @RequestMapping(value="/all/rebuildBomAncestry")
     @ResponseBody
     @Secured("ROLE_ADMIN")
-    public void indexTurbos(@PathVariable("id") Long id) throws Exception {
+    public void rebuildAllBomAncestry() throws Exception {
+        Part.rebuildBomAncestry();
+    }
+    
+    @Transactional
+    @RequestMapping(value="/{id}/image", method = RequestMethod.POST)
+    @ResponseBody
+    @Secured("ROLE_PART_IMAGES")
+    public ResponseEntity<ProductImage> addProductImage(@PathVariable Long id, @RequestBody byte[] imageData) throws Exception {
+        
+        // Look up the part
         Part part = Part.findPart(id);
         
-        part.indexTurbos();
-    }
-    
-    @Async
-    @RequestMapping(value="/all/indexTurbos")
-    @ResponseBody
-    @Secured("ROLE_ADMIN")
-    public void indexTurbos(@RequestParam(required=false) Integer startPage, @RequestParam(required=false) Integer maxPages) throws Exception {
-        int pageSize = 100;
-        int page = ObjectUtils.defaultIfNull(startPage, 0);
+        // Save the file into the originals directory
+        String filename = part.getId().toString() + "_" + System.currentTimeMillis() + ".jpg"; // Good enough
+        File originalFile = new File(originalImagesDir, filename);
+        FileUtils.writeByteArrayToFile(originalFile, imageData);
         
-        List<Part> parts = Part.findPartEntriesForTurboIndexing(page * pageSize, pageSize);
-        do {
-            long start = System.currentTimeMillis();
-            
-            for (Part part : parts) {
-                part.indexTurbos();
-            }
-            
-            // Give Hibernate a breather or it'll slow WAY down
-            new Part().clear();
-            
-            // Get the next part list
-            page++;
-            parts = Part.findPartEntriesForTurboIndexing(page * pageSize, pageSize);
-            
-            log.log(Level.INFO, "Indexed turbos for {0} parts, page {1} in {2}ms", new Object[]{
-                pageSize,
-                page,
-                System.currentTimeMillis() - start});
-        } while (parts.size() == pageSize && (maxPages != null && page < maxPages));
-    }
-    
-    @RequestMapping(value="/{id}addProductImage", method = RequestMethod.POST)
-    @ResponseBody
-    @Secured("ROLE_ADD_IMAGE")
-    public ResponseEntity<Void> addProductImage(@PathVariable Long id,
-                                                FileUpload upload) throws Exception {
-//        TODO
+        // Create the product image
+        ProductImage productImage = new ProductImage();
+        productImage.setFilename(filename);
+        productImage.setPart(part);
+        
+        // Save it
+        productImage.persist();
+        
+        // Update the part
+        part.getProductImages().add(productImage);
+        part.merge();
 
-        return new ResponseEntity<Void>((Void) null, HttpStatus.OK);
+        // Generate the resized images
+        for (int size : ImageResizer.SIZES) {
+            resizer.generateResizedImage(productImage, size);
+        }
+        
+        return new ResponseEntity(productImage.toJson(), HttpStatus.OK);
     }
     
     

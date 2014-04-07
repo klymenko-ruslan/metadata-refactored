@@ -233,6 +233,92 @@ CREATE TABLE `bom_alt_item` (
   FOREIGN KEY (`part_id`)  REFERENCES `part` (`id`)
 ) ENGINE = INNODB;
 
+CREATE TABLE `bom_ancestor` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `part_id` BIGINT NOT NULL,
+  `ancestor_part_id` BIGINT NOT NULL,
+  `distance` INTEGER NOT NULL,
+  `type` VARCHAR(20) NOT NULL,
+  INDEX(distance),
+  UNIQUE INDEX(`part_id`, `ancestor_part_id`),
+  INDEX(part_id, `type`, distance, ancestor_part_id)
+) ENGINE = INNODB;
+
+
+DELIMITER $$
+DROP PROCEDURE IF EXISTS RebuildBomAncestry$$
+CREATE PROCEDURE RebuildBomAncestry()
+  BEGIN
+
+    START TRANSACTION;
+
+    -- Empty the table
+    TRUNCATE bom_ancestor;
+
+    -- Create self-references
+    INSERT IGNORE INTO bom_ancestor (
+      `part_id`,
+      `ancestor_part_id`,
+      `distance`,
+      `type`
+    )
+    SELECT DISTINCT
+      id     AS part_id,
+      id     AS ancestor_part_id,
+      0      AS distance,
+      'Self' AS `type`
+    FROM
+      part;
+
+    REPEAT
+        SET @distance = (SELECT MAX(distance) FROM bom_ancestor);
+
+        -- Add interchange parents (metaphor: interchanges are my half-siblings, add all my half-parents)
+        INSERT IGNORE INTO bom_ancestor (
+          `part_id`,
+          `ancestor_part_id`,
+          `distance`,
+          `type`
+        )
+        SELECT DISTINCT
+          ba.part_id          AS part_id,          -- Me
+          bom.parent_part_id  AS ancestor_part_id, -- My half-parent
+          @distance + 1       AS distance,
+          IF (@distance = 0, 'InterchangeDirect', 'InterchangeIndirect') AS `type`
+        FROM
+          bom_ancestor ba
+          JOIN interchange_item ii ON ii.part_id = ba.ancestor_part_id
+          JOIN interchange_item ii2 ON
+            ii2.interchange_header_id = ii.interchange_header_id
+            AND ii2.part_id <> ii.part_id
+          JOIN bom ON bom.child_part_id = ii2.part_id
+        WHERE ba.distance = @distance;
+
+        -- Add the next level of parents
+        INSERT IGNORE INTO bom_ancestor (
+          `part_id`,
+          `ancestor_part_id`,
+          `distance`,
+          `type`
+        )
+        SELECT DISTINCT
+          ba.part_id           AS part_id,
+          bom.parent_part_id   AS ancestor_part_id,
+          @distance + 1      AS distance,
+          IF (@distance = 0, 'Direct', IF(ba.`type` LIKE 'Interchange%', 'InterchangeIndirect', 'Indirect')) AS `type`
+        FROM
+          bom_ancestor ba
+          JOIN bom ON bom.child_part_id = ba.ancestor_part_id
+        WHERE ba.distance = @distance;
+
+    UNTIL ROW_COUNT() = 0
+    END REPEAT;
+
+    COMMIT;
+    
+  END$$
+DELIMITER ;
+
 
 --
 -- Parts
@@ -446,7 +532,7 @@ CREATE TABLE `group_role` (
 ) ENGINE = INNODB;
 
 INSERT IGNORE INTO `role` (name, display) VALUES ('ROLE_READ', 'Search and view part information.');
-INSERT IGNORE INTO `role` (name, display) VALUES ('ROLE_ADD_PART_IMAGE', 'Add images to parts.');
+INSERT IGNORE INTO `role` (name, display) VALUES ('ROLE_PART_IMAGES', 'Add and remove part images.');
 INSERT IGNORE INTO `role` (name, display) VALUES ('ROLE_CREATE_PART', 'Create parts.');
 INSERT IGNORE INTO `role` (name, display) VALUES ('ROLE_ALTER_PART', 'Alter existing parts.');
 INSERT IGNORE INTO `role` (name, display) VALUES ('ROLE_DELETE_PART', 'Delete existing parts.');
@@ -467,7 +553,7 @@ INSERT IGNORE INTO `group_role` (group_id, role_id) VALUES
   ((SELECT id FROM groups WHERE `name` = 'Writer'), (SELECT id FROM role WHERE `name` = 'ROLE_ALTER_PART')),
   ((SELECT id FROM groups WHERE `name` = 'Writer'), (SELECT id FROM role WHERE `name` = 'ROLE_DELETE_PART')),
   ((SELECT id FROM groups WHERE `name` = 'Writer'), (SELECT id FROM role WHERE `name` = 'ROLE_INTERCHANGE')),
-  ((SELECT id FROM groups WHERE `name` = 'Writer'), (SELECT id FROM role WHERE `name` = 'ROLE_ADD_PART_IMAGE')),
+  ((SELECT id FROM groups WHERE `name` = 'Writer'), (SELECT id FROM role WHERE `name` = 'ROLE_PART_IMAGES')),
   ((SELECT id FROM groups WHERE `name` = 'Writer'), (SELECT id FROM role WHERE `name` = 'ROLE_READ')),
   ((SELECT id FROM groups WHERE `name` = 'Admin'),  (SELECT id FROM role WHERE `name` = 'ROLE_ADMIN')),
   ((SELECT id FROM groups WHERE `name` = 'Admin'),  (SELECT id FROM role WHERE `name` = 'ROLE_BOM')),
@@ -476,7 +562,7 @@ INSERT IGNORE INTO `group_role` (group_id, role_id) VALUES
   ((SELECT id FROM groups WHERE `name` = 'Admin'),  (SELECT id FROM role WHERE `name` = 'ROLE_ALTER_PART')),
   ((SELECT id FROM groups WHERE `name` = 'Admin'),  (SELECT id FROM role WHERE `name` = 'ROLE_DELETE_PART')),
   ((SELECT id FROM groups WHERE `name` = 'Admin'),  (SELECT id FROM role WHERE `name` = 'ROLE_INTERCHANGE')),
-  ((SELECT id FROM groups WHERE `name` = 'Admin'),  (SELECT id FROM role WHERE `name` = 'ROLE_ADD_PART_IMAGE')),
+  ((SELECT id FROM groups WHERE `name` = 'Admin'),  (SELECT id FROM role WHERE `name` = 'ROLE_PART_IMAGES')),
   ((SELECT id FROM groups WHERE `name` = 'Admin'),  (SELECT id FROM role WHERE `name` = 'ROLE_READ'));
 
 CREATE TABLE `changelog` (

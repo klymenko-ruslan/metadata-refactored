@@ -1,5 +1,6 @@
 package com.turbointernational.metadata.domain.part;
 import com.turbointernational.metadata.domain.other.Manufacturer;
+import com.turbointernational.metadata.domain.part.bom.BOMAncestor;
 import com.turbointernational.metadata.domain.part.bom.BOMItem;
 import com.turbointernational.metadata.domain.part.types.Backplate;
 import com.turbointernational.metadata.domain.part.types.BearingHousing;
@@ -24,12 +25,11 @@ import flexjson.transformer.HibernateTransformer;
 import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
@@ -52,6 +52,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PostPersist;
+import javax.persistence.PostUpdate;
 import javax.persistence.PreRemove;
 import javax.persistence.Query;
 import javax.persistence.Table;
@@ -61,7 +63,12 @@ import net.sf.jsog.JSOG;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
 
 @Cacheable
 @Configurable
@@ -171,12 +178,17 @@ public class Part implements Comparable<Part> {
     @OrderBy("id")
     private Set<BOMItem> bom = new TreeSet<BOMItem>();
     
+    @OneToMany(mappedBy = "part", fetch = FetchType.LAZY)
+    @OrderBy("id")
+    private Set<BOMAncestor> bomAncestors = new LinkedHashSet<BOMAncestor>();
+    
     @OneToMany(cascade = CascadeType.REFRESH)
-    @JoinTable(name="part_turbo", joinColumns=@JoinColumn(name="part_id"), inverseJoinColumns=@JoinColumn(name="turbo_id"))
+    @JoinTable(name="vpart_turbo", joinColumns=@JoinColumn(name="part_id"), inverseJoinColumns=@JoinColumn(name="turbo_id"))
     private Set<Turbo> turbos = new TreeSet<Turbo>();
     
+    @OrderBy("id")
     @OneToMany(cascade = CascadeType.REFRESH, mappedBy = "part")
-    private Set<ProductImage> productImages = new HashSet<ProductImage>();
+    private Set<ProductImage> productImages = new TreeSet<ProductImage>();
     
     @Version
     @Column(name = "version")
@@ -255,6 +267,15 @@ public class Part implements Comparable<Part> {
         this.bom.addAll(bom);
     }
     
+    public Set<BOMAncestor> getBomAncestors() {
+        return bomAncestors;
+    }
+    
+    public void setBomAncestors(Set<BOMAncestor> bomAncestors) {
+        this.bomAncestors.clear();
+        this.bomAncestors.addAll(bomAncestors);
+    }
+    
     public Set<Turbo> getTurbos() {
         return turbos;
     }
@@ -278,7 +299,7 @@ public class Part implements Comparable<Part> {
     private ElasticSearch elasticSearch;
     
     @PreRemove
-    public void removeIndex() throws Exception {
+    public void removeSearchIndex() throws Exception {
         try {
             elasticSearch.deletePart(this);
         } catch (Exception e) {
@@ -286,17 +307,11 @@ public class Part implements Comparable<Part> {
         }
     }
     
-    public void updateIndex() throws Exception {
-        log.info("Updating index.");
-        indexPart();
-    }
-    
-    public void indexPart() throws Exception {
-        try {
-            elasticSearch.indexPart(this);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    @PostUpdate
+    @PostPersist
+    public void updateSearchIndex() throws Exception {
+        log.info("Updating search index.");
+        elasticSearch.indexPart(this);
     }
     //</editor-fold>
 
@@ -354,7 +369,10 @@ public class Part implements Comparable<Part> {
                 .include("bom.alternatives.part.manufacturerPartNumber")
                 .include("bom.alternatives.part.manufacturer.id")
                 .include("bom.alternatives.part.manufacturer.name")
-                .exclude("bom.alternatives.part.*");
+                .exclude("bom.alternatives.part.*")
+                .include("productImages.id")
+                .include("productImages.filename")
+                .exclude("productImages.*");
     }
     
     public JSOG toJsog() {
@@ -475,6 +493,10 @@ public class Part implements Comparable<Part> {
     @Transient
     private EntityManager entityManager;
     
+    @Autowired(required=true)
+    @Transient
+    private PlatformTransactionManager txManager;
+    
     public static final EntityManager entityManager() {
         EntityManager em = new Part().entityManager;
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
@@ -509,16 +531,6 @@ public class Part implements Comparable<Part> {
                 + "  JOIN FETCH p.manufacturer m", Part.class)
                 .setFirstResult(firstResult)
                 .setMaxResults(maxResults).getResultList();
-    }
-    
-    public static List<Part> findPartEntriesForTurboIndexing(int firstResult, int maxResults) {
-        return entityManager().createQuery(
-                "SELECT DISTINCT p\n"
-              + "FROM Part p\n"
-              + "LEFT JOIN p.turbos t\n"
-              + "ORDER BY p.id", Part.class)
-        .setFirstResult(firstResult)
-        .setMaxResults(maxResults).getResultList();
     }
     
     @Transactional
@@ -565,67 +577,23 @@ public class Part implements Comparable<Part> {
     }
     //</editor-fold>
     
-    //<editor-fold defaultstate="collapsed" desc="Turbo Indexing">
-    @Transactional
-    public void indexTurbos() {
-        
-        Set<Turbo> newTurbos = collectTurbos();
-        
-        turbos.retainAll(newTurbos);
-        turbos.addAll(newTurbos);
-        
-        // Save the new values
-        this.merge();
-        this.flush();
-    }
-    
-    public Set<Turbo> collectTurbos() {
-        long start = System.currentTimeMillis();
-        
-        TreeSet<Part> visitedParts = new TreeSet<Part>();
-        TreeSet<Turbo> collectedTurbos = new TreeSet<Turbo>();
-        TreeSet<Part> partsToVisit = new TreeSet<Part>(getBomParentParts());
-        
-        while (!partsToVisit.isEmpty()) {
-            
-            // Get the next part to visit
-            Part bomAncestor = partsToVisit.first();
-            partsToVisit.remove(bomAncestor);
-            
-            // Prevent recursion
-            if (visitedParts.contains(bomAncestor)) {
-                continue;
-            } else {
-                visitedParts.add(bomAncestor);
+    //<editor-fold defaultstate="collapsed" desc="BOM Ancestry">
+    @Async
+    public static void rebuildBomAncestry() {
+        new TransactionTemplate(new Part().txManager).execute(new TransactionCallback() {
+            @Override
+            public Object doInTransaction(TransactionStatus status) {
+                log.info("Rebuilding BOM ancestry.");
+                EntityManager em = entityManager();
+
+                // Delete the old ancestry
+                em.createNativeQuery("CALL RebuildBomAncestry()").executeUpdate();
+                em.clear();
+                log.info("BOM Ancestry rebuild completed.");
+                
+                return null;
             }
-            
-            // Collect turbos and add BOM parents for non-turbo parts
-            if (bomAncestor instanceof Turbo) {
-                collectedTurbos.add((Turbo) bomAncestor);
-            } else {
-                // TODO: It would be more efficient to fetch the BOM parents of ALL pending parts at once rather than one at a time.
-                partsToVisit.addAll(bomAncestor.getBomParentParts());
-            }
-        }
-        
-        long end = System.currentTimeMillis();
-        log.log(Level.INFO, "Visited {0} parts and found {1} turbos for part id {2} in {3}ms.", new Object[]{
-            visitedParts.size(),
-            collectedTurbos.size(),
-            id,
-            end - start});
-        
-        return collectedTurbos;
-    }
-    
-    /**
-     * Gets the Part IDs of this part's BOM parents
-     * @return 
-     */
-    public List<Part> getBomParentParts() {
-        return entityManager.createNamedQuery("bom_parent_ids", Part.class)
-            .setParameter("partId", this.id)
-            .getResultList();
+        });
     }
     //</editor-fold>
     
