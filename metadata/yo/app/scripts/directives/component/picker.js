@@ -10,21 +10,7 @@ angular.module('ngMetaCrudApp')
                 "required": '@'
             },
             restrict: 'E',
-            template:
-                '<div class="picker row">' +
-                '  <div class="col-xs-11">' +
-                '    <select ng-model="selection.id"' +
-                '    ng-options="item.id as item.name for item in items | orderBy: \'name\'"' +
-                '    ng-disabled="items == null"' +
-                '    placeholder="Choose..." class="form-control input-sm"></select>' +
-                '  </div>' +
-                '  <div class="col-xs-1">' +
-                '    <button ng-click="selection.id=\'0\'" ng-disabled="!selection.id"' +
-                '    class="btn btn-link btn-sm">' +
-                '      <i class="fa fa-times"></i>' +
-                '    </button>' +
-                '  </div>' +
-                '</div>',
+            templateUrl: 'views/component/Picker.html',
             controller: function ($log, $scope, Restangular, $parse) {
 
               var getter = $parse($scope.ngModel);

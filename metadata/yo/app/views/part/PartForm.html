@@ -1,18 +1,16 @@
 <form name="partForm">
 
-<metanav>
-    <li>
-        <a authorize="ROLE_READ"
-           ng-href="#/part/{{ part.partType.typeName }}/{{ partId }}"
-           class="btn btn-primary" data-ng-hide="oldPart == null">
-            <i class="fa fa-eye"></i>
-            View Part
-        </a>
+  <metanav>
+    <li authorize="ROLE_READ">
+      <a ng-href="#/part/{{ part.partType.typeName }}/{{ partId }}"
+         class="btn btn-primary" data-ng-hide="oldPart == null">
+        <i class="fa fa-eye"></i>
+        View Part
+      </a>
     </li>
 
-    <li>
-      <a authorize="ROLE_ALTER_PART"
-         ng-disabled="partForm.$pristine"
+    <li authorize="ROLE_ALTER_PART">
+      <a ng-disabled="partForm.$pristine"
          ng-click="save()" class="btn btn-success">
         <i class="fa fa-save"></i>
         Save
@@ -20,269 +18,250 @@
     </li>
 
     <li>
-        <a ng-click="revert()"
-           ng-disabled="partForm.$pristine"
-           class="btn btn-warning"
-           data-ng-hide="oldPart == null">
-            <i class="fa fa-undo"></i>
-            Revert
-        </a>
+      <a ng-click="revert()"
+         ng-disabled="partForm.$pristine"
+         class="btn btn-warning"
+         data-ng-hide="oldPart == null">
+        <i class="fa fa-undo"></i>
+        Revert
+      </a>
     </li>
-</metanav>
+  </metanav>
 
-<div class="row">
-<div class="col-xs-12 col-sm-6">
+  <div class="row">
+    <div class="col-xs-12 col-sm-6">
 
-<div class="pull-right padding-top">
-    <label>Status</label>
-    <button ng-model="part.inactive" class="btn btn-sm btn-info" btn-checkbox>
-        <span ng-show="part.inactive"><i class="fa fa-warning"></i> Inactive</span>
-        <span ng-hide="part.inactive"><i class="fa fa-info-circle"></i> Active</span>
-    </button>
-</div>
+      <div class="pull-right padding-top">
+        <label>Status</label>
+        <button ng-model="part.inactive" class="btn btn-sm btn-info" btn-checkbox>
+          <span ng-show="part.inactive"><i class="fa fa-warning"></i> Inactive</span>
+          <span ng-hide="part.inactive"><i class="fa fa-info-circle"></i> Active</span>
+        </button>
+      </div>
 
-<h2>
-    <span ng-hide="partId">Create </span>
-    <span ng-show="partId">Edit </span>
-    {{ part.partType.name }}
-    <span ng-show="partId">#{{ partId }} </span>
-</h2>
+      <h2>
+        <span ng-hide="partId">Create </span>
+        <span ng-show="partId">Edit </span>
+        {{ part.partType.name }}
+        <span ng-show="partId">#{{ partId }} </span>
+      </h2>
 
-<label>Name</label>
-<input class="form-control" type="text" ng-model="part.name"/>
+      <label>Name</label>
+      <input class="form-control" type="text" ng-model="part.name"/>
 
-<label>Description</label>
-<textarea class="form-control" rows="4" ng-model="part.description"></textarea>
+      <label>Description</label>
+      <textarea class="form-control" rows="4" ng-model="part.description"></textarea>
 
-<label>Manufacturer</label>
-<picker ng-model="part.manufacturer" path="other/manufacturer"></picker>
+      <label>Manufacturer</label>
+      <picker ng-model="part.manufacturer" path="other/manufacturer"></picker>
 
-<label>Manufacturer P/N</label>
-<input class="form-control" type="text" ng-model="part.manufacturerPartNumber"/>
+      <label>Manufacturer P/N</label>
+      <input class="form-control" type="text" ng-model="part.manufacturerPartNumber"/>
 
-<!-- Type-specific fields -->
-<div ng-switch="part.partType.typeName">
+      <!-- Type-specific fields -->
+      <div ng-switch="part.partType.typeName">
 
-    <!-- Backplate -->
-    <div ng-switch-when="Backplate">
-        <label>Seal Type</label>
-        <picker path="type/seal" ng-model="part.sealType"></picker>
+        <!-- Backplate -->
+        <div ng-switch-when="Backplate">
+          <label>Seal Type</label>
+          <picker path="type/seal" ng-model="part.sealType"></picker>
 
-        <label>Seal Type</label>
-        <input class="form-control" type="text" ng-model="part.sealTypeString"/>
+          <label>Seal Type</label>
+          <input class="form-control" type="text" ng-model="part.sealTypeString"/>
 
-        <label>Compressor Wheel Style</label>
-        <input class="form-control" type="text" ng-model="part.styleCompressorWheel"/>
+          <label>Compressor Wheel Style</label>
+          <input class="form-control" type="text" ng-model="part.styleCompressorWheel"/>
 
-        <label>Overall Diameter</label>
-        <input class="form-control" type="text" ng-model="part.overallDiameter"/>
+          <label>Overall Diameter</label>
+          <input class="form-control" type="text" ng-model="part.overallDiameter"/>
 
-        <label>Compressor Wheel Diameter</label>
-        <input class="form-control" type="text" ng-model="part.compressorWheelDiameter"/>
+          <label>Compressor Wheel Diameter</label>
+          <input class="form-control" type="text" ng-model="part.compressorWheelDiameter"/>
 
-        <label>Piston Ring Diameter</label>
-        <input class="form-control" type="text" ng-model="part.pistonRingDiameter"/>
+          <label>Piston Ring Diameter</label>
+          <input class="form-control" type="text" ng-model="part.pistonRingDiameter"/>
 
-        <label>Compressor Housing Diameter</label>
-        <input class="form-control" type="text" ng-model="part.compressorHousingDiameter"/>
+          <label>Compressor Housing Diameter</label>
+          <input class="form-control" type="text" ng-model="part.compressorHousingDiameter"/>
 
-        <label>Secondary Diameter</label>
-        <input class="form-control" type="text" ng-model="part.secondaryDiameter"/>
+          <label>Secondary Diameter</label>
+          <input class="form-control" type="text" ng-model="part.secondaryDiameter"/>
 
-        <label>Overall Height</label>
-        <input class="form-control" type="text" ng-model="part.overallHeight"/>
+          <label>Overall Height</label>
+          <input class="form-control" type="text" ng-model="part.overallHeight"/>
 
-        <label>Notes</label>
-        <textarea class="form-control" rows="3" ng-model="part.notes"></textarea>
-    </div>
-
-    <!-- Bearing Housing -->
-    <div ng-switch-when="BearingHousing">
-        <label>Coolant</label>
-        <picker path="type/cool" ng-model="part.coolType"></picker>
-
-        <label>Oil Inlet</label>
-        <input class="form-control" type="text" ng-model="part.oilInlet"/>
-
-        <label>Oil Outlet</label>
-        <input class="form-control" type="text" ng-model="part.oilOutlet"/>
-
-        <label>Oil</label>
-        <input class="form-control" type="text" ng-model="part.oil"/>
-
-        <label>Outlet Flange Holes</label>
-        <input class="form-control" type="text" ng-model="part.outletFlangeHoles"/>
-
-        <label>Water Ports</label>
-        <input class="form-control" type="text" ng-model="part.waterPorts"/>
-
-        <label>Design Features</label>
-        <input class="form-control" type="text" ng-model="part.designFeatures"/>
-
-        <label>Bearing Type</label>
-        <input class="form-control" type="text" ng-model="part.bearingType"/>
-    </div>
-
-    <!-- Bearing Spacer -->
-    <div ng-switch-when="BearingSpacer">
-        <label>Standard Size</label>
-        <!--<picker path="part?type=BearingSpacer" ng-model="part.standardSize"></picker>-->
-
-        <label>Oversize</label>
-        <!--<picker path="part?type=BearingSpacer" ng-model="part.oversize"></picker>-->
-
-        <label>Outside Diameter (min - max)</label>
-        <input class="form-control" type="text" ng-model="part.outsideDiameterMin"/> - <input type="text"
-                                                                                              ng-model="part.outsideDiameterMax"/>
-        private Float insideDiameterMin;
-
-        <label>Inside Diameter (min - max)</label>
-        <input class="form-control" type="text" ng-model="part.insideDiameterMin"/> - <input type="text"
-                                                                                             ng-model="part.insideDiameterMax"/>
-    </div>
-
-    <!-- Cartridge -->
-
-    <!-- Compressor Wheel -->
-    <div ng-switch-when="CompressorWheel">
-        <label>Inducer Diameter A</label>
-        <input class="form-control" type="text" ng-model="part.inducerOa"/>
-
-        <label>Tip Height B</label>
-        <input class="form-control" type="text" ng-model="part.tipHeightB"/>
-
-        <label>Exducer Diameter C</label>
-        <input class="form-control" type="text" ng-model="part.exducerOc"/>
-
-        <label>Hub Length D</label>
-        <input class="form-control" type="text" ng-model="part.hubLengthD"/>
-
-        <label>Bore Diameter E</label>
-        <input class="form-control" type="text" ng-model="part.boreOe"/>
-
-        <label>Number of Blades</label>
-        <input class="form-control" type="text" ng-model="part.numberOfBlades"/>
-
-        <label>Application</label>
-        <input class="form-control" type="text" ng-model="part.application"/>
-    </div>
-
-    <!-- Gasket -->
-    <div ng-switch-when="Gasket">
-        <label>Type</label>
-        <picker path="type/gasket" ng-model="part.gasketType"></picker>
-    </div>
-
-    <!-- Heatshield -->
-    <div ng-switch-when="Heatshield">
-        <label>Overall Diameter</label>
-        <input class="form-control" type="text" ng-model="part.overallDiameter"/>
-
-        <label>Inside Diameter</label>
-        <input class="form-control" type="text" ng-model="part.insideDiameter"/>
-
-        <label>Inducer Diameter</label>
-        <input class="form-control" type="text" ng-model="part.inducerDiameter"/>
-    </div>
-
-    <!-- Journal Bearing -->
-    <div ng-switch-when="JournalBearing">
-        <label>Standard Size</label>
-        <!--<picker path="part?type=JournalBearing" ng-model="part.standardSize"></picker>-->
-
-        <label>Oversize</label>
-        <!--<picker path="part?type=JournalBearing" ng-model="part.oversize"></picker>-->
-
-        <label>Outside Diameter (min - max)</label>
-        <input class="form-control" type="text" ng-model="part.outsideDiameterMin"/> - <input type="text"
-                                                                                              ng-model="part.outsideDiameterMax"/>
-
-        <label>Inside Diameter (min - max)</label>
-        <input class="form-control" type="text" ng-model="part.insideDiameterMin"/> - <input type="text"
-                                                                                             ng-model="part.insideDiameterMax"/>
-    </div>
-
-    <!-- Kit -->
-    <div ng-switch-when="Kit">
-        <label>Kit Type</label>
-        <picker path="type/kit" ng-model="part.kitType"></picker>
-    </div>
-
-    <!-- Nozzle Ring -->
-
-    <!-- Piston Ring -->
-    <div ng-switch-when="PistonRing">
-        <label>Outside Diameter (min - max)</label>
-        <input class="form-control" type="text" ng-model="part.outsideDiameterMin"/> - <input type="text"
-                                                                                              ng-model="part.outsideDiameterMax"/>
-
-        <label>Width (min - max)</label>
-        <input class="form-control" type="text" ng-model="part.widthMin"/> - <input type="text" ng-model="part.widthMax"/>
-
-        <label>Installed Gap (min - max)</label>
-        <input class="form-control" type="text" ng-model="part.installedGapMin"/> - <input type="text"
-                                                                                           ng-model="part.installedGapMax"/>
-    </div>
-
-    <!-- Turbine Wheel -->
-    <div ng-switch-when="TurbineWheel">
-        <label>Exducer Diameter A</label>
-        <input class="form-control" type="text" ng-model="part.exducerDiameterA"/>
-
-        <label>Tip Height B</label>
-        <input class="form-control" type="text" ng-model="part.tipHeightB"/>
-
-        <label>Inducer Diameter C</label>
-        <input class="form-control" type="text" ng-model="part.inducerDiameterC"/>
-
-        <label>Journal Diameter D</label>
-        <input class="form-control" type="text" ng-model="part.journalDiameterD"/>
-
-        <label>Stem Diameter E</label>
-        <input class="form-control" type="text" ng-model="part.stemDiameterE"/>
-
-        <label>Shaft Thread F</label>
-        <input class="form-control" type="text" ng-model="part.shaftThreadF"/>
-
-        <label>Number of Blades</label>
-        <input class="form-control" type="text" ng-model="part.numberOfBlades"/>
-    </div>
-
-    <!-- Turbo -->
-    <div ng-switch-when="Turbo">
-
-        <label>Coolant</label>
-        <picker path="type/cool" ng-model="part.coolType"></picker>
-
-        <div class="col-xs-12 col-md-5">
-          <h3>Turbo Model</h3>
-
-          <div ng-include="'/views/part/form/TurboModel.html'"></div>
+          <label>Notes</label>
+          <textarea class="form-control" rows="3" ng-model="part.notes"></textarea>
         </div>
 
+        <!-- Bearing Housing -->
+        <div ng-switch-when="BearingHousing">
+          <label>Coolant</label>
+          <picker path="type/cool" ng-model="part.coolType"></picker>
+
+          <label>Oil Inlet</label>
+          <input class="form-control" type="text" ng-model="part.oilInlet"/>
+
+          <label>Oil Outlet</label>
+          <input class="form-control" type="text" ng-model="part.oilOutlet"/>
+
+          <label>Oil</label>
+          <input class="form-control" type="text" ng-model="part.oil"/>
+
+          <label>Outlet Flange Holes</label>
+          <input class="form-control" type="text" ng-model="part.outletFlangeHoles"/>
+
+          <label>Water Ports</label>
+          <input class="form-control" type="text" ng-model="part.waterPorts"/>
+
+          <label>Design Features</label>
+          <input class="form-control" type="text" ng-model="part.designFeatures"/>
+
+          <label>Bearing Type</label>
+          <input class="form-control" type="text" ng-model="part.bearingType"/>
+        </div>
+
+        <!-- Bearing Spacer -->
+        <div ng-switch-when="BearingSpacer">
+          <label>Standard Size</label>
+          <!--<picker path="part?type=BearingSpacer" ng-model="part.standardSize"></picker>-->
+
+          <label>Oversize</label>
+          <!--<picker path="part?type=BearingSpacer" ng-model="part.oversize"></picker>-->
+
+          <label>Outside Diameter (min - max)</label>
+          <input class="form-control" type="text" ng-model="part.outsideDiameterMin"/> - <input type="text"
+                                                                                                ng-model="part.outsideDiameterMax"/>
+          private Float insideDiameterMin;
+
+          <label>Inside Diameter (min - max)</label>
+          <input class="form-control" type="text" ng-model="part.insideDiameterMin"/> - <input type="text"
+                                                                                               ng-model="part.insideDiameterMax"/>
+        </div>
+
+        <!-- Cartridge -->
+
+        <!-- Compressor Wheel -->
+        <div ng-switch-when="CompressorWheel">
+          <label>Inducer Diameter A</label>
+          <input class="form-control" type="text" ng-model="part.inducerOa"/>
+
+          <label>Tip Height B</label>
+          <input class="form-control" type="text" ng-model="part.tipHeightB"/>
+
+          <label>Exducer Diameter C</label>
+          <input class="form-control" type="text" ng-model="part.exducerOc"/>
+
+          <label>Hub Length D</label>
+          <input class="form-control" type="text" ng-model="part.hubLengthD"/>
+
+          <label>Bore Diameter E</label>
+          <input class="form-control" type="text" ng-model="part.boreOe"/>
+
+          <label>Number of Blades</label>
+          <input class="form-control" type="text" ng-model="part.numberOfBlades"/>
+
+          <label>Application</label>
+          <input class="form-control" type="text" ng-model="part.application"/>
+        </div>
+
+        <!-- Gasket -->
+        <div ng-switch-when="Gasket">
+          <label>Type</label>
+          <picker path="type/gasket" ng-model="part.gasketType"></picker>
+        </div>
+
+        <!-- Heatshield -->
+        <div ng-switch-when="Heatshield">
+          <label>Overall Diameter</label>
+          <input class="form-control" type="text" ng-model="part.overallDiameter"/>
+
+          <label>Inside Diameter</label>
+          <input class="form-control" type="text" ng-model="part.insideDiameter"/>
+
+          <label>Inducer Diameter</label>
+          <input class="form-control" type="text" ng-model="part.inducerDiameter"/>
+        </div>
+
+        <!-- Journal Bearing -->
+        <div ng-switch-when="JournalBearing">
+          <label>Standard Size</label>
+          <!--<picker path="part?type=JournalBearing" ng-model="part.standardSize"></picker>-->
+
+          <label>Oversize</label>
+          <!--<picker path="part?type=JournalBearing" ng-model="part.oversize"></picker>-->
+
+          <label>Outside Diameter (min - max)</label>
+          <input class="form-control" type="text" ng-model="part.outsideDiameterMin"/> - <input type="text"
+                                                                                                ng-model="part.outsideDiameterMax"/>
+
+          <label>Inside Diameter (min - max)</label>
+          <input class="form-control" type="text" ng-model="part.insideDiameterMin"/> - <input type="text"
+                                                                                               ng-model="part.insideDiameterMax"/>
+        </div>
+
+        <!-- Kit -->
+        <div ng-switch-when="Kit">
+          <label>Kit Type</label>
+          <picker path="type/kit" ng-model="part.kitType"></picker>
+        </div>
+
+        <!-- Nozzle Ring -->
+
+        <!-- Piston Ring -->
+        <div ng-switch-when="PistonRing">
+          <label>Outside Diameter (min - max)</label>
+          <input class="form-control" type="text" ng-model="part.outsideDiameterMin"/> - <input type="text"
+                                                                                                ng-model="part.outsideDiameterMax"/>
+
+          <label>Width (min - max)</label>
+          <input class="form-control" type="text" ng-model="part.widthMin"/> - <input type="text" ng-model="part.widthMax"/>
+
+          <label>Installed Gap (min - max)</label>
+          <input class="form-control" type="text" ng-model="part.installedGapMin"/> - <input type="text"
+                                                                                             ng-model="part.installedGapMax"/>
+        </div>
+
+        <!-- Turbine Wheel -->
+        <div ng-switch-when="TurbineWheel">
+          <label>Exducer Diameter A</label>
+          <input class="form-control" type="text" ng-model="part.exducerDiameterA"/>
+
+          <label>Tip Height B</label>
+          <input class="form-control" type="text" ng-model="part.tipHeightB"/>
+
+          <label>Inducer Diameter C</label>
+          <input class="form-control" type="text" ng-model="part.inducerDiameterC"/>
+
+          <label>Journal Diameter D</label>
+          <input class="form-control" type="text" ng-model="part.journalDiameterD"/>
+
+          <label>Stem Diameter E</label>
+          <input class="form-control" type="text" ng-model="part.stemDiameterE"/>
+
+          <label>Shaft Thread F</label>
+          <input class="form-control" type="text" ng-model="part.shaftThreadF"/>
+
+          <label>Number of Blades</label>
+          <input class="form-control" type="text" ng-model="part.numberOfBlades"/>
+        </div>
+
+        <!-- Turbo -->
+        <div ng-switch-when="Turbo">
+
+          <label>Coolant</label>
+          <picker path="type/cool" ng-model="part.coolType"></picker>
+
+          <div class="col-xs-12 col-md-5">
+            <h3>Turbo Model</h3>
+
+            <div ng-include="'/views/part/form/TurboModel.html'"></div>
+          </div>
+
+        </div>
+      </div>
     </div>
-</div>
-</div>
 
-
-<div class="well">
-  <label>Turbo Manufacturer</label>
-  <picker ng-model="turboTypeManufacturer" path="other/manufacturer"></picker>
-
-
-  <div ng-disabled="turboTypes.length == 0" class="col-xs-6 form-group">
-    <label class="control-label">Turbo Type</label>
-    <input ng-model="turboTypeFilter" ng-init="turboTypeFilter = ''" class="form-control input-sm" placeholder="Turbo type filter..."/>
-    <br/>
-    <select data-ng-model="turboTypeId"
-            data-ng-options="turboType.id as turboType.name for turboType in turboTypes | filter:{name:turboTypeFilter}"
-            data-ng-disabled="turboTypes.length == 0"
-            size="15" class="select-large required form-control">
-    </select>
   </div>
-
-</div>
-</div>
-
 
 </form>

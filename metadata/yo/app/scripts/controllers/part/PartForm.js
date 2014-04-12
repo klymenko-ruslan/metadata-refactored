@@ -31,14 +31,6 @@ angular.module('ngMetaCrudApp')
             });
         }
 
-        $scope.addTurboType = function(turboTypeId) {
-
-        };
-
-        $scope.removeTurboType = function(turboTypeId) {
-
-        };
-
         $scope.revert = function () {
             $scope.part = Restangular.copy($scope.oldPart);
             $scope.partForm.$setPristine(true);

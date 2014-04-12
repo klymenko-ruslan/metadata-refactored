@@ -7,9 +7,8 @@
     </a>
   </li>
 
-  <li>
-    <a authorize="ROLE_INTERCHANGE"
-       ng-click="removeInterchange()"
+  <li authorize="ROLE_INTERCHANGE">
+    <a ng-click="removeInterchange()"
        ng-disabled="!canClear()"
        class="btn btn-danger">
       <i class="fa fa-trash-o"></i>
@@ -17,9 +16,8 @@
     </a>
   </li>
 
-  <li>
-    <a authorize="ROLE_INTERCHANGE"
-       ng-click="save(partId)"
+  <li authorize="ROLE_INTERCHANGE">
+    <a ng-click="save(partId)"
        ng-disabled="!canSave()"
        class="btn btn-success">
       <i class="fa fa-save"></i>

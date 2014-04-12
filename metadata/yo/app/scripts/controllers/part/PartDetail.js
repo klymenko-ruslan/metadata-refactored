@@ -21,6 +21,49 @@ angular.module('ngMetaCrudApp')
                 alert("Could not get part details");
             });
 
+
+        // Turbo Types
+        $scope.addTurboType = function() {
+          $dialogs.create(
+            '/views/part/dialog/AddTurboType.html',
+            'AddTurboTypeDialogCtrl',
+            {partId: $scope.partId}
+          ).result.then(function(turboType) {
+            $scope.part.turboTypes.push(turboType);
+          });
+        }
+
+        $scope.removeTurboType = function(turboTypeId) {
+
+          $dialogs.confirm(
+            "Remove Turbo Type?",
+            "Do you want to remove this turbo type from the part?").result.then(
+            function() {
+              // Yes
+              Restangular.setParentless(false);
+              Restangular.one('part', $scope.partId).one('turboType', turboTypeId).remove().then(
+                function() {
+                  // Success
+                  gToast.open("Turbo type removed.");
+
+                  var idx = _.find($scope.part.turboTypes, function(turboType) {
+                    return turboType.id = turboTypeId;
+                  });
+                  $scope.part.turboTypes.splice(idx, 1);
+                },
+                function(response) {
+                  // Error
+                  restService.error("Could not delete image.", response);
+                });
+            },
+            function() {
+              // No
+            });
+        };
+
+
+        // Images
+
         $scope.deleteImage = function(image) {
 
           $dialogs.confirm(
@@ -48,11 +91,12 @@ angular.module('ngMetaCrudApp')
         }
 
         $scope.addImage = function() {
-          $dialogs.create('/views/part/AddImage.html', 'AddPartImageCtrl',
-              {part: $scope.part, callback: $scope.imageAddedCallback});
-        }
-
-        $scope.imageAddedCallback = function(image) {
-          $scope.part.productImages.push(image);
+          $dialogs.create(
+            '/views/part/dialog/AddImage.html',
+            'AddPartImageCtrl',
+            {part: $scope.part}
+          ).result.then(function(image) {
+            $scope.part.productImages.push(image);
+          });
         }
     });

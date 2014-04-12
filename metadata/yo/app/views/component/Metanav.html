@@ -1,38 +1,53 @@
-<div class="row">
-    <div class="col-xs-12">
-        <ul class="list-inline" ng-transclude style="display: inline-block;">
-            <!-- Transcluded li -->
+<div class="navbar navbar-btn" role="navigation">
+  <div class="container-fluid">
+    <ul class="nav nav-pills">
+      <li authorize="ROLE_READ">
+        <a ng-href="#/part/list" class="btn btn-primary">
+          <i class="fa fa-home"></i>
+          Part List
+        </a>
+      </li>
+
+      <li authorize="ROLE_ADMIN" class="dropdown">
+        <a class="dropdown-toggle btn btn-warning" data-toggle="dropdown">
+          <i class="fa fa-th"></i>
+          Admin
+          <i class="fa fa-caret-down"></i>
+        </a>
+
+        <ul class="dropdown-menu">
+          <li><a ng-href="#/security/users/"><i class="fa fa-user"></i> Users</a></li>
+          <li><a ng-href="#/security/groups/"><i class="fa fa-group"></i> Groups</a></li>
+
+          <li class="divider"></li>
+
+          <li><a ng-click="rebuildBomAncestry()"><i class="fa fa-refresh"></i> Rebuild BOM Ancestry</a></li>
+          <li><a ng-click="reindexSearch()"><i class="fa fa-refresh"></i> Reindex Search</a></li>
+
+          <li class="divider"></li>
+
+          <li><a ng-click="clearHibernate()"><i class="fa fa-trash-o"></i> Clear Hibernate Cache</a></li>
         </ul>
-        <ul class="list-inline" style="margin-left: 5px;display: inline-block;">
-            <li><a authorize="ROLE_READ" ng-href="#/part/list" class="btn btn-default"><i class="fa fa-home"></i> Part List</a></li>
+      </li>
+      <li>
+        <a ng-href="#/security/me" class="navbar-right btn btn-default">
+          <i class="fa fa-smile-o"></i>
+          My Account
+        </a>
+      </li>
 
-            <li class="btn-group">
-                <button type="button" authorize="ROLE_ADMIN" class="btn btn-warning dropdown-toggle" data-toggle="dropdown"><i class="fa fa-th"></i> Admin <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu" role="menu">
-                    <li><a ng-href="#/security/users/"><i class="fa fa-user"></i> Users</a></li>
-                    <li><a ng-href="#/security/groups/"><i class="fa fa-group"></i> Groups</a></li>
+      <li>
+        <a href="/j_spring_security_logout" class="navbar-right btn btn-default">
+          <i class="fa fa-sign-out"></i>
+          Logout {{User.user.name}}
+        </a>
+      </li>
+    </ul>
+    <hr/>
 
-                    <li class="divider"></li>
-
-                    <li><a ng-click="rebuildBomAncestry()"><i class="fa fa-refresh"></i> Rebuild BOM Ancestry</a></li>
-                    <li><a ng-click="reindexSearch()"><i class="fa fa-refresh"></i> Reindex Search</a></li>
-
-                    <li class="divider"></li>
-
-                    <li><a ng-click="clearHibernate()"><i class="fa fa-trash-o"></i> Clear Hibernate Cache</a></li>
-                </ul>
-            </li>
-
-          <li class="btn-group">
-            <a ng-href="#/security/me" class="btn btn-primary">
-              <i class="fa fa-smile-o"></i>
-              My Account</a>
-
-            <a href="/j_spring_security_logout" class="btn btn-primary">
-              <i class="fa fa-sign-out"></i>
-              Logout {{User.user.name}}</a>
-          </li>
-        </ul>
-    </div>
+    <ul class="nav nav-pills" ng-transclude>
+      <!-- Transcluded li -->
+    </ul>
+    <hr/>
+  </div>
 </div>

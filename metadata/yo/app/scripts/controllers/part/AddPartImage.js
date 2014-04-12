@@ -21,7 +21,6 @@ angular.module('ngMetaCrudApp')
         Restangular.one('part', data.part.id).all('image').post(file, {}, {'Content-Type': 'application/octet-stream'}).then(
             function(response) {
               // Success
-              data.callback(response);
               gToast.open("Added image.");
               $modalInstance.close('uploaded');
             },

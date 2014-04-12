@@ -1,4 +1,5 @@
 package com.turbointernational.metadata.domain.part;
+import com.turbointernational.metadata.domain.other.TurboType;
 import com.turbointernational.metadata.domain.part.bom.BOMAncestor;
 import com.turbointernational.metadata.util.ImageResizer;
 import com.turbointernational.metadata.util.ElasticSearch;
@@ -6,6 +7,7 @@ import flexjson.JSONSerializer;
 import flexjson.transformer.HibernateTransformer;
 import java.io.File;
 import java.security.Principal;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -220,6 +222,34 @@ public class PartController {
         return new ResponseEntity(productImage.toJson(), HttpStatus.OK);
     }
     
+    @Transactional
+    @RequestMapping(value="/{partId}/turboType/{turboTypeId}", method=RequestMethod.POST)
+    @ResponseBody
+    @Secured("ROLE_ALTER_PART")
+    public void addTurboType(@PathVariable("partId") long partId, @PathVariable("turboTypeId") long turboTypeId) {
+        Part part = Part.findPart(partId);
+        TurboType turboType = TurboType.findTurboType(turboTypeId);
+        part.getTurboTypes().add(turboType);
+        part.merge();
+    }
     
+    @Transactional
+    @RequestMapping(value="/{partId}/turboType/{turboTypeId}", method=RequestMethod.DELETE)
+    @ResponseBody
+    @Secured("ROLE_ALTER_PART")
+    public void deleteTurboType(@PathVariable("partId") long partId, @PathVariable("turboTypeId") long turboTypeId) {
+        Part part = Part.findPart(partId);
+        
+        // Remove any matching turbo types
+        Iterator<TurboType> it = part.getTurboTypes().iterator();
+        while (it.hasNext()) {
+            if (it.next().getId() == turboTypeId) {
+                it.remove();
+                break;
+            }
+        }
+        
+        part.merge();
+    }
 
 }
