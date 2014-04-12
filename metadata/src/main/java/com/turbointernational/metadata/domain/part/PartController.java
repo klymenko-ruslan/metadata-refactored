@@ -160,8 +160,8 @@ public class PartController {
         
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json");
-        Part part = Part.findPart(partId);
-        Set<BOMAncestor> ancestors = part.getBomAncestors();
+        
+        List<BOMAncestor> ancestors = Part.listBOMAncestors(partId);
         
         String json = new JSONSerializer()
                 .transform(new HibernateTransformer(), BOMAncestor.class)

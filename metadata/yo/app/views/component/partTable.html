@@ -1,8 +1,8 @@
 <table class="table table-bordered table-striped table-hover table-responsive">
   <thead>
     <tr>
+      <th>Part Type</th>
       <th>Manufacturer</th>
-      <th>Type</th>
       <th>Part #</th>
       <th>Actions</th>
     </tr>
@@ -10,10 +10,10 @@
   <tbody>
     <tr ng-repeat="item in parts">
       <td>
-        {{getPart(item).manufacturer.name}}
+        {{getPart(item).partType.name}}
       </td>
       <td>
-        {{getPart(item).partType.name}}
+        {{getPart(item).manufacturer.name}}
       </td>
       <td style="white-space: nowrap;">
         {{getPart(item).manufacturerPartNumber}}

@@ -546,6 +546,21 @@ public class Part implements Comparable<Part> {
                 .setMaxResults(maxResults).getResultList();
     }
     
+    public static List<BOMAncestor> listBOMAncestors(long partId) {
+        return entityManager().createQuery(
+            "SELECT ba\n"
+                + "FROM\n"
+                + "  BOMAncestor ba\n"
+                + "  JOIN ba.ancestor ap\n"
+                + "  JOIN ap.manufacturer\n"
+                + "  JOIN ap.partType pt\n"
+                + "WHERE\n"
+                + "  ba.part.id = ?\n"
+                + "  AND ba.distance > 0\n" // Non-self parts
+                + "ORDER BY ba.type, pt.name, ap.manufacturerPartNumber"
+        ).setParameter(1, partId).getResultList();
+    }
+    
     @Transactional
     public void persist() {
         if (this.entityManager == null) this.entityManager = entityManager();
