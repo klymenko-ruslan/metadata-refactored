@@ -541,7 +541,8 @@ public class Part implements Comparable<Part> {
                   "SELECT p\n"
                 + "FROM Part p\n"
                 + "  JOIN FETCH p.partType pt\n"
-                + "  JOIN FETCH p.manufacturer m", Part.class)
+                + "  JOIN FETCH p.manufacturer m\n"
+                + "  LEFT JOIN FETCH p.productImages i", Part.class)
                 .setFirstResult(firstResult)
                 .setMaxResults(maxResults).getResultList();
     }

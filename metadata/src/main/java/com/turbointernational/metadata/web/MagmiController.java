@@ -14,6 +14,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -184,17 +185,16 @@ public class MagmiController {
         
         // Get the product IDs to retrieve
         int position = 0;
-        int pageSize = magmiBatchSize;
         Long lastSuccessfulSku = null;
-        List<Part> parts = null;
+        List<Part> parts = Collections.emptyList();
         do {
             try {
-            
+                
                 // Clear Hibernate
                 Part.entityManager().clear();
 
                 // Get the next batch of part IDs
-                parts = Part.findPartEntries(position, pageSize);
+                parts = Part.findPartEntries(position, magmiBatchSize);
 
                 // Process each product
                 for (MagmiProduct product : findMagmiProducts(parts).values()) {
@@ -213,11 +213,11 @@ public class MagmiController {
             } catch (Exception e) {
                 logger.log(Level.SEVERE,
                     "Batch failed! position: " + position
-                            + ", page size: " + pageSize
+                            + ", batch size: " + magmiBatchSize
                             + ", lastSuccessfulSku: " + lastSuccessfulSku,
                     e);
             }
-        } while (parts.size() >= pageSize);
+        } while (parts.size() >= magmiBatchSize);
         
         
         writer.flush();
@@ -410,7 +410,6 @@ public class MagmiController {
         return Part.entityManager().createQuery(
               "SELECT DISTINCT new com.turbointernational.metadata.util.dto.MagmiBasicProduct("
                 + "  p.id AS sku,\n"
-                + "  i.id AS imageId,\n"
                 + "  ptt.name AS part_turbo_type,\n"
                 + "  tt.name AS turbo_type,\n"
                 + "  tm.name AS turbo_model,\n"
@@ -425,7 +424,6 @@ public class MagmiController {
                 + "  ) AS application_detail\n"
                 + ")\n"
                 + "FROM Part p\n"
-                + "  LEFT JOIN p.productImages i\n"
                 + "  LEFT JOIN p.turbos t\n"
                 + "  LEFT JOIN t.manufacturer tman\n"
                 + "  LEFT JOIN t.turboModel tm\n"

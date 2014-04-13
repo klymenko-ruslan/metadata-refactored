@@ -56,6 +56,11 @@ public class MagmiProduct {
 
     public MagmiProduct(Part part) {
         this.part = part;
+
+        // Add image IDs
+        for (ProductImage image : part.getProductImages()) {
+            imageIds.add(image.getId());
+        }
     }
     
     public Long getSku() {
@@ -72,10 +77,6 @@ public class MagmiProduct {
 
     public final void addBasicProductCollections(MagmiBasicProduct basicProduct) {
         rowCount++;
-
-        if (basicProduct.getImageId() != null) {
-            imageIds.add(basicProduct.getImageId());
-        }
 
         if (StringUtils.isNotEmpty(basicProduct.getTurboType())) {
             turboType.add(basicProduct.getTurboType());
