@@ -9,7 +9,7 @@ public class MagmiBasicProduct {
     
     private final Long sku;
     
-    private Long imageId;
+    private final Long imageId;
     
     private final String partTurboType;
     
