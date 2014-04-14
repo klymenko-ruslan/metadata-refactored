@@ -162,7 +162,7 @@ public class MagmiController {
     String mas90DbPath;
 
     @Value("${magmi.batch.size}")
-    int magmiBatchSize = 1000;
+    int magmiBatchSize = 10000;
     
     @Autowired(required=true)
     ImageResizer imageResizer;
