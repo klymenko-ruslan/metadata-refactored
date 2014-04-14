@@ -83,6 +83,10 @@ public class MagmiController {
         //</editor-fold>
         
         //<editor-fold defaultstate="collapsed" desc="Part Type Specifics">
+         // Cartridge
+        "service_kits",
+        
+        // Other
         "bearing_type",
         "bore_oe",
         "compressor_housing_diameter",

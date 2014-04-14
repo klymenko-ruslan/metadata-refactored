@@ -567,7 +567,7 @@ CREATE VIEW `vkp` AS SELECT DISTINCT
     pii.part_id AS part_id,
     kc.exclude
 FROM
-    -- All the new kit's interchanges
+    -- All the kit's interchanges
     kit_part_common_component kc
     JOIN interchange_item ki ON ki.part_id = kc.kit_id
     JOIN interchange_item kii ON kii.interchange_header_id = ki.interchange_header_id
@@ -576,6 +576,26 @@ FROM
     JOIN interchange_item pi ON pi.part_id = kc.part_id
     JOIN interchange_item pii ON pii.interchange_header_id = pi.interchange_header_id;
 
+CREATE VIEW `vcartridge_kits` AS
+(SELECT
+    kc.part_id AS cartridge_id,
+    kc.kit_id
+FROM
+    kit_part_common_component kc
+WHERE kc.exclude = 0)
+UNION DISTINCT
+(SELECT
+    c.part_id AS cartridge_id,
+    k.part_id
+FROM
+    cartridge c
+    JOIN part_turbo_type cptt ON cptt.part_id = c.part_id
+    JOIN part_turbo_type cptt2 ON cptt2.turbo_type_id = cptt.turbo_type_id
+    JOIN kit k ON k.part_id = cptt2.part_id
+    LEFT JOIN kit_part_common_component kc ON
+        kc.kit_id = k.part_id
+        AND kc.part_id = c.part_id
+WHERE kc.exclude != 1);
 
 -- Verify no interchangable parts have a contradictory setting
 DELIMITER $$

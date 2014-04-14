@@ -149,7 +149,7 @@ public class Part implements Comparable<Part> {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "manfr_id", nullable = false)
     private Manufacturer manufacturer;
     
@@ -544,6 +544,7 @@ public class Part implements Comparable<Part> {
                 + "  JOIN FETCH p.manufacturer m\n"
                 + "  LEFT JOIN FETCH pt.parent\n"
                 + "  LEFT JOIN FETCH p.productImages i\n"
+                + "  LEFT JOIN FETCH p.serviceKits\n"
                 + "  LEFT JOIN FETCH p.coolType ct\n"
                 + "  LEFT JOIN FETCH p.gasketType ct\n"
                 + "  LEFT JOIN FETCH p.kitType kt\n"
