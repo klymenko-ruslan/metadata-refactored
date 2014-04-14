@@ -542,7 +542,20 @@ public class Part implements Comparable<Part> {
                 + "FROM Part p\n"
                 + "  JOIN FETCH p.partType pt\n"
                 + "  JOIN FETCH p.manufacturer m\n"
-                + "  LEFT JOIN FETCH p.productImages i", Part.class)
+                + "  LEFT JOIN FETCH pt.parent\n"
+                + "  LEFT JOIN FETCH p.productImages i\n"
+                + "  LEFT JOIN FETCH p.coolType ct\n"
+                + "  LEFT JOIN FETCH p.gasketType ct\n"
+                + "  LEFT JOIN FETCH p.kitType kt\n"
+                + "  LEFT JOIN FETCH p.sealType st\n"
+                + "  LEFT JOIN FETCH p.turboModel tm\n"
+                + "  LEFT JOIN FETCH tm.turboType\n"
+                + "  LEFT JOIN FETCH p.cars c\n"
+                + "  LEFT JOIN FETCH c.model cmo\n"
+                + "  LEFT JOIN FETCH cmo.make\n"
+                + "  LEFT JOIN FETCH c.engine ce\n"
+                + "  LEFT JOIN FETCH ce.fuelType\n"
+                + "  LEFT JOIN FETCH c.year", Part.class)
                 .setFirstResult(firstResult)
                 .setMaxResults(maxResults).getResultList();
     }
