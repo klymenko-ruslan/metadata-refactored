@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Replace with unix newlines
-dos2unix data.sql
+sed -ri 's/\r$//' data.sql
 
 # Remove drops
 sed -ri 's/DROP.*?;//' "data.sql" &&
@@ -21,7 +21,7 @@ cat post_import.sql >> "script.sql" &&
 cat images.sql >> "script.sql" &&
 
 # Fix newlines
-dos2unix "script.sql"
+sed -ri 's/\r$//' script.sql
 
 # Lowercase identifiers
 sed -ri 's/`([A-Z0-9_]+)`/`\L\1`/g' metadata_schema.sql
