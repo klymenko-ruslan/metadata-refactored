@@ -33,7 +33,7 @@
         <resources>
             <default_setup>
                 <connection>
-                    <!--<host>magentodb01.cslctedjmc6k.us-east-1.rds.amazonaws.com</host>-->
+                    <host>localhost</host>
                     <username>root</username>
                     <password>OI1unqzzO{=.s#?</password>
                     <dbname>magento</dbname>

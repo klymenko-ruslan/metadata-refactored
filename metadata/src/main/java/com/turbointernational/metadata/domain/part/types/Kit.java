@@ -1,8 +1,9 @@
 package com.turbointernational.metadata.domain.part.types;
 import com.turbointernational.metadata.domain.part.Part;
-import com.turbointernational.metadata.domain.part.types.kit.KitServices;
+import com.turbointernational.metadata.domain.part.types.kit.KitComponent;
 import com.turbointernational.metadata.domain.type.KitType;
 import flexjson.JSONSerializer;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import javax.persistence.CascadeType;
@@ -11,6 +12,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.SecondaryTable;
 import net.sf.jsog.JSOG;
@@ -25,8 +27,9 @@ public class Kit extends Part {
     @JoinColumn(name="kit_type_id", table = "kit")
     private KitType kitType;
     
+    @OrderBy("id")
     @OneToMany(mappedBy="kit", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<KitServices> services;
+    private Set<KitComponent> components = new LinkedHashSet();
     
     public KitType getKitType() {
         return kitType;
@@ -36,12 +39,12 @@ public class Kit extends Part {
         this.kitType = kitType;
     }
 
-    public Set<KitServices> getServices() {
-        return services;
+    public Set<KitComponent> getComponents() {
+        return components;
     }
 
-    public void setServices(Set<KitServices> services) {
-        this.services = services;
+    public void setComponents(Set<KitComponent> components) {
+        this.components = components;
     }
     
     @Override
@@ -49,14 +52,16 @@ public class Kit extends Part {
         return super.buildJSONSerializer()
             .include("kitType.id")
             .include("kitType.name")
-            .include("kitType.version")
-            .include("services.exclude")
-            .include("services.part.id")
-            .include("services.part.name")
-            .include("services.part.manufacturerPartNumber")
-            .include("services.part.partType.id")
-            .include("services.part.partType.name")
-            .include("services.part.manufacturer.name");
+            .include("kitType.*")
+            .include("components.id")
+            .include("components.exclude")
+            .include("components.part.id")
+            .include("components.part.name")
+            .include("components.part.manufacturerPartNumber")
+            .include("components.part.partType.id")
+            .include("components.part.partType.name")
+            .include("components.part.manufacturer.name")
+            .exclude("components.*");
     }
     
     @Override
