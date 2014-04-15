@@ -22,7 +22,7 @@ angular.module('ngMetaCrudApp')
             function(response) {
               // Success
               gToast.open("Added image.");
-              $modalInstance.close('uploaded');
+              $modalInstance.close(response);
             },
             function(response) {
               // Error

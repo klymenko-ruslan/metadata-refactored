@@ -33,7 +33,7 @@ angular.module('ngMetaCrudApp')
           });
         }
 
-        $scope.removeTurboType = function(turboTypeId) {
+        $scope.removeTurboType = function(turboTypeToRemove) {
 
           $dialogs.confirm(
             "Remove Turbo Type?",
@@ -41,19 +41,43 @@ angular.module('ngMetaCrudApp')
             function() {
               // Yes
               Restangular.setParentless(false);
-              Restangular.one('part', $scope.partId).one('turboType', turboTypeId).remove().then(
+              Restangular.one('part', $scope.partId).one('turboType', turboTypeToRemove.id).remove().then(
                 function() {
                   // Success
                   gToast.open("Turbo type removed.");
 
-                  var idx = _.find($scope.part.turboTypes, function(turboType) {
-                    return turboType.id = turboTypeId;
-                  });
+                  var idx = _.indexOf($scope.part.turboTypes, turboTypeToRemove);
                   $scope.part.turboTypes.splice(idx, 1);
                 },
                 function(response) {
                   // Error
                   restService.error("Could not delete image.", response);
+                });
+            },
+            function() {
+              // No
+            });
+        };
+
+        $scope.removeComponent = function(componentToRemove) {
+
+          $dialogs.confirm(
+            "Remove Common Component Mapping?",
+            "Do you want to remove this common component mapping from the kit?").result.then(
+            function() {
+              // Yes
+              Restangular.setParentless(false);
+              Restangular.one('kit', $scope.partId).one('component', componentToRemove.id).remove().then(
+                function() {
+                  // Success
+                  gToast.open("Component removed.");
+
+                  var idx = _.indexOf($scope.part.components, componentToRemove);
+                  $scope.part.components.splice(idx, 1);
+                },
+                function(response) {
+                  // Error
+                  restService.error("Could not delete common component mapping.", response);
                 });
             },
             function() {
