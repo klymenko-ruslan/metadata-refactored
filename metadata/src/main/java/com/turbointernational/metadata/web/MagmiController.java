@@ -235,13 +235,15 @@ public class MagmiController {
         Map<String, String> columns = product.getCsvColumns(imageResizer);
         
         // Only TI parts get this info
-        if (product.getManufacturerId() == Manufacturer.TI_ID) {
+        if (product.hasTiPart()) {
 
             // Default to 1
             columns.put("qty", "1");
             
             // ERP Prices
-            addErpPrices(mas90, columns, product);
+            if (product.getManufacturerId() == Manufacturer.TI_ID) {
+                addErpPrices(mas90, columns, product);
+            }
         } else {
             columns.put("qty", "0");
         }
