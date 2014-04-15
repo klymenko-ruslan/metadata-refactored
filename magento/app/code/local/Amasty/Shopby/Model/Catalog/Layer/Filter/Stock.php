@@ -62,7 +62,7 @@ class Amasty_Shopby_Model_Catalog_Layer_Filter_Stock extends Mage_Catalog_Model_
      */
     public function getName()
     {
-        return Mage::helper('amshopby')->__('Stock Filter');
+        return Mage::helper('amshopby')->__('TI Part Filter');
     }
 
     /**
@@ -79,12 +79,12 @@ class Amasty_Shopby_Model_Catalog_Layer_Filter_Stock extends Mage_Catalog_Model_
     	$out_stock = array_values($status);
     	
     	$data[] = array(
-        	'label' => Mage::helper('amshopby')->__('In Stock'),
+        	'label' => Mage::helper('amshopby')->__('TI Parts Only'),
             'value' => self::FILTER_IN_STOCK,
             'count' => $in_stock[0],
 		);
 		$data[] = array(
-        	'label' => Mage::helper('amshopby')->__('Out of Stock'),
+        	'label' => Mage::helper('amshopby')->__('All Parts'),
             'value' => self::FILTER_OUT_OF_STOCK,
             'count' => $out_stock[0],
 		);		
