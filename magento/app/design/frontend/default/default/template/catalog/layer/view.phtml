@@ -31,29 +31,52 @@
  * @see Mage_Catalog_Block_Layer_View
  */
 ?>
-<?php if($this->canShowBlock()): ?>
-<div class="block block-layered-nav">
-    <div class="block-title">
-        <strong><span><?php echo $this->__('Shop By') ?></span></strong>
+<?php if ($this->canShowBlock()): ?>
+    <div class="block block-layered-nav">
+        <div class="block-title">
+            <strong><span><?php echo $this->__('Shop By') ?></span></strong>
+        </div>
+        <div class="block-content">
+            <?php echo $this->getStateHtml() ?>
+            <?php if ($this->getLayer()->getState()->getFilters()): ?>
+                <div class="actions">
+                    <a href="<?php echo $this->getClearUrl() ?>"><?php echo $this->__('Clear All') ?></a>
+                </div>
+            <?php endif; ?>
+            <?php if ($this->canShowOptions()): ?>
+                <p class="block-subtitle"><?php echo $this->__('OEM Number') ?></p>
+                <!-- Search goes here -->
+            <?php
+            $catalogSearchHelper = $this->helper('catalogsearch');
+            $alphaNumeric = str_replace(array('.', '-', ' '), '', $catalogSearchHelper->getQueryText());
+            ?>
+                <form id="search_mini_form" action="<?php echo $catalogSearchHelper->getResultUrl() ?>" method="get">
+                    <div class="form-search" style="margin:12px">
+                        <input id="search" type="text" name="<?php echo $catalogSearchHelper->getQueryParamName() ?>" value="<?php echo $catalogSearchHelper->getEscapedQueryText($alphaNumeric) ?>" class="input-text" style="width: 100px;" maxlength="<?php echo $catalogSearchHelper->getMaxQueryLength(); ?>" placeholder="OEM Part &#35;&hellip;"/>
+                        <button type="submit" title="<?php echo $this->__('Search') ?>" class="button">
+                            <span><span><?php echo $this->__('Search') ?></span></span></button>
+                        <div id="search_autocomplete" class="search-autocomplete"></div>
+                        <script type="text/javascript">
+                            //<![CDATA[
+                            var searchForm = new Varien.searchForm('search_mini_form', 'search', '<?php echo $this->__('OEM Part Number...')
+            ?>');
+                            searchForm.initAutocomplete('<?php echo $catalogSearchHelper->getSuggestUrl() ?>', 'search_autocomplete');
+                            //]]>
+                        </script>
+                    </div>
+                </form>
+                <p class="block-subtitle"><?php echo $this->__('Shopping Options') ?></p>
+                <dl id="narrow-by-list">
+                    <?php $_filters = $this->getFilters() ?>
+                    <?php foreach ($_filters as $_filter): ?>
+                        <?php if ($_filter->getItemsCount() && $_filter->getName() != 'Category'): ?>
+                            <dt><?php echo $this->__($_filter->getName()) ?></dt>
+                            <dd><?php echo $_filter->getHtml() ?></dd>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                </dl>
+                <script type="text/javascript">decorateDataList('narrow-by-list')</script>
+            <?php endif; ?>
+        </div>
     </div>
-    <div class="block-content">
-        <?php echo $this->getStateHtml() ?>
-        <?php if ($this->getLayer()->getState()->getFilters()): ?>
-            <div class="actions"><a href="<?php echo $this->getClearUrl() ?>"><?php echo $this->__('Clear All') ?></a></div>
-        <?php endif; ?>
-        <?php if($this->canShowOptions()): ?>
-            <p class="block-subtitle"><?php echo $this->__('Shopping Options') ?></p>
-            <dl id="narrow-by-list">
-                <?php $_filters = $this->getFilters() ?>
-                <?php foreach ($_filters as $_filter): ?>
-                <?php if($_filter->getItemsCount() && $_filter->getName() != 'Category'): ?>
-                    <dt><?php echo $this->__($_filter->getName()) ?></dt>
-                    <dd><?php echo $_filter->getHtml() ?></dd>
-                <?php endif; ?>
-                <?php endforeach; ?>
-            </dl>
-            <script type="text/javascript">decorateDataList('narrow-by-list')</script>
-        <?php endif; ?>
-    </div>
-</div>
 <?php endif; ?>
