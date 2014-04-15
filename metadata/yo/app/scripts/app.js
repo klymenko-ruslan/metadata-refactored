@@ -30,9 +30,13 @@ angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap', 'restangu
             controller: 'PartDetailCtrl'
           });
         $routeProvider.when('/part/:type/:id/interchange/search', {
-            templateUrl: 'views/part/interchange/PartInterchangeSearch.html',
-            controller: 'PartInterchangeSearchCtrl'
-          });
+          templateUrl: 'views/part/interchange/PartInterchangeSearch.html',
+          controller: 'PartInterchangeSearchCtrl'
+        });
+        $routeProvider.when('/part/Kit/:id/component/search', {
+          templateUrl: '../views/part/KitComponentSearch.html',
+          controller: 'KitComponentSearchCtrl'
+        });
         $routeProvider.when('/part/:type/:id/bom/search', {
             templateUrl: 'views/part/bom/PartBomSearch.html',
             controller: 'PartBomSearchCtrl'

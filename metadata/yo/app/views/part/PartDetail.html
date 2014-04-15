@@ -23,14 +23,6 @@
     </a>
   </li>
 
-  <li authorize="ROLE_READ" ng-hide="part.partType.typeName != 'Kit'">
-    <a ng-href="#/part/{{ part.partType.typeName }}/{{ partId }}/ancestors"
-       class="btn btn-info">
-      <i class="fa fa-sitemap"></i>
-      Ancestors &hellip;
-    </a>
-  </li>
-
   <li authorize="ROLE_INTERCHANGE">
     <a ng-href="#/part/{{ part.partType.typeName }}/{{ partId }}/interchange/search"
        class="btn btn-info">
@@ -200,6 +192,23 @@
                 <dt>Kit Type</dt>
                 <dd>{{part.kitType.name}}</dd>
             </dl>
+
+            <h3>
+              Common Component Mappings
+              <a authorize="ROLE_ALTER_PART" class="btn btn-primary pull-right"
+                 ng-href="#/part/Kit/{{ partId }}/component/search">
+                <i class="fa fa-plus"></i>
+                Add Mapping
+              </a>
+            </h3>
+            <part-table parts="part.components" key="part"
+                        extra-columns="{&quot;Mapping&quot;: &quot;item.exclude ? 'Exclude' : 'Include'&quot;}">
+              <a ng-click="removeComponent(item)"
+                 class="btn btn-xs btn-danger">
+                <i class="fa fa-trash-o"></i>
+                Remove
+              </a>
+            </part-table>
         </div>
 
         <!-- Piston Ring -->
@@ -283,8 +292,8 @@
           <td>{{turboType.manufacturer.name}}</td>
           <td>{{turboType.name}}</td>
           <td>
-            <a ng-click="removeTurboType(turboType.id)"
-               class="btn btn-sm btn-danger">
+            <a ng-click="removeTurboType(turboType)"
+               class="btn btn-xs btn-danger">
               <i class="fa fa-trash-o"></i>
               Remove
             </a>
