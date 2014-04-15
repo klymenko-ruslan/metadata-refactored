@@ -50,8 +50,6 @@ public class MagmiProduct {
     
     private String tiPartNumber = "";
     
-    private boolean tiPartsInBom = false;
-    
     private final JSOG bom = JSOG.array();
 
     private int rowCount = 0;
@@ -163,12 +161,10 @@ public class MagmiProduct {
 
         // Add the alternate and interchange TI skus
         if (bomItem.getAltSkuMfrId() == Manufacturer.TI_ID) {
-            tiPartsInBom = true;
             addSkuToBomItemCollection(jsogItem, "ti_part_sku", bomItem.getAltSku());
         }
         
         if (bomItem.getIntSkuMfrId() == Manufacturer.TI_ID) {
-            tiPartsInBom = true;
             addSkuToBomItemCollection(jsogItem, "ti_part_sku", bomItem.getIntSku());
         }
     }
@@ -316,7 +312,6 @@ public class MagmiProduct {
     
     public boolean hasTiPart() {
         return getManufacturerId() == Manufacturer.TI_ID
-            || StringUtils.isNotBlank(tiPartNumber)
-            || tiPartsInBom;
+            || StringUtils.isNotBlank(tiPartNumber);
     }
 }
