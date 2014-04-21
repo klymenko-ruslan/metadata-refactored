@@ -11,8 +11,13 @@ metadata/yo/.idea/
 magento/.ssh/known_hosts
 magento/.viminfo
 magento/.bash_history
+magento/downloader/.cache
+magento/downloader/cache.cfg
+magento/magmi/import/*
+magento/magmi/state/*
 magento/media
 magento/var/log/
 magento/var/cache/
 magento/var/locks/
+magento/var/report/
 images/
