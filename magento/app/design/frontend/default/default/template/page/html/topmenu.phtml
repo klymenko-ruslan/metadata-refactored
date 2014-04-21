@@ -37,19 +37,75 @@
         <li>
             <a href="#">Manufacturer</a>
             <ul>
-                <li><a href="#">Manufacturer 1</a></li>
-                <li><a href="#">Manufacturer 2</a></li>
-                <li><a href="#">Manufacturer 3</a></li>
-                <li><a href="#">Manufacturer 4</a></li>
+                <?php
+                // specify the attribute code
+                $attrManufacturer = 'manufacturer';
+
+                // get attribute model by attribute code, e.g. 'color'
+                $attributeModel = Mage::getSingleton('eav/config')
+                    ->getAttribute('catalog_product', $attrManufacturer);
+
+                // build select to fetch used attribute value id's
+                $select = Mage::getSingleton('core/resource')
+                    ->getConnection('default_read')->select()
+                    ->from($attributeModel->getBackend()->getTable(), 'value')
+                    ->where('attribute_id=?', $attributeModel->getId())
+                    ->distinct();
+
+                // read used values from the db
+                $usedAttributeValues = Mage::getSingleton('core/resource')
+                    ->getConnection('default_read')
+                    ->fetchCol($select);
+
+                // map used id's to the value labels using the source model
+                if ($attributeModel->usesSource())
+                {
+                    $usedAttributeValues = $attributeModel->getSource()->getOptionText(
+                        implode(',', $usedAttributeValues)
+                    );
+                }
+
+                foreach($usedAttributeValues as $attrValue) {
+                    echo "<li><a href='#' style='padding: 5px 15px;'>" . $attrValue . "</a></li>";
+                }
+                ?>
             </ul>
         </li>
         <li>
             <a href="#">Component</a>
             <ul>
-                <li><a href="#">Part Type 1</a></li>
-                <li><a href="#">Part Type 2</a></li>
-                <li><a href="#">Part Type 3</a></li>
-                <li><a href="#">Part Type 4</a></li>
+                <?php
+                // specify the attribute code
+                $attrPartType = 'part_type';
+
+                // get attribute model by attribute code, e.g. 'color'
+                $attributeModel = Mage::getSingleton('eav/config')
+                    ->getAttribute('catalog_product', $attrPartType);
+
+                // build select to fetch used attribute value id's
+                $select = Mage::getSingleton('core/resource')
+                    ->getConnection('default_read')->select()
+                    ->from($attributeModel->getBackend()->getTable(), 'value')
+                    ->where('attribute_id=?', $attributeModel->getId())
+                    ->distinct();
+
+                // read used values from the db
+                $usedAttributeValues = Mage::getSingleton('core/resource')
+                    ->getConnection('default_read')
+                    ->fetchCol($select);
+
+                // map used id's to the value labels using the source model
+                if ($attributeModel->usesSource())
+                {
+                    $usedAttributeValues = $attributeModel->getSource()->getOptionText(
+                        implode(',', $usedAttributeValues)
+                    );
+                }
+
+                foreach($usedAttributeValues as $attrValue) {
+                    echo "<li><a href='#' style='padding: 5px 15px;'>" . $attrValue . "</a></li>";
+                }
+                ?>
             </ul>
         </li>
         <li><a href="/application-finder">Applications</a></li>
