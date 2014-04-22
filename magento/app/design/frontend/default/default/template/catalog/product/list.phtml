@@ -54,7 +54,6 @@ $_helper = $this->helper('catalog/output');
                 <?php $_columnCount = $this->getColumnCount(); ?>
                 <?php $i = 0;
                 foreach ($_productCollection as $_product): ?>
-<?php error_log("Listing product"); ?>
                     <?php if ($i++ % $_columnCount == 0): ?>
                     <?php endif ?>
                     <tr>
@@ -67,6 +66,12 @@ $_helper = $this->helper('catalog/output');
                             <?php $firstTiProduct = null; ?>
                             <?php foreach ($tiPartSkus as $idx => $tiPartSku): ?>
                                 <?php
+
+                                // Only if there's a sku
+                                if ($tiPartSku == '') {
+                                    continue;
+                                }
+
                                 $tiPart = Mage::getModel('catalog/product')->loadByAttribute('sku', $tiPartSku);
                                 
                                 if ($firstTiProduct == null) {
