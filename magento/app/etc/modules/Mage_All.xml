@@ -106,7 +106,7 @@
         </Mage_Customer>
         <Mage_Catalog>
             <active>true</active>
-            <codePool>local</codePool>
+            <codePool>core</codePool>
             <depends>
                 <Mage_Eav/>
                 <Mage_Dataflow/>
