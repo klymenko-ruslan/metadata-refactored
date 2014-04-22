@@ -594,8 +594,8 @@ tr.summary-details-excluded { font-style:italic; }
 #nav ul li.last { background:#ecf3f6; padding-bottom:0; }
 
 #nav ul a,
-#nav ul a:hover { float:none; padding:0; background:none; }
-#nav ul li a { font-weight:normal !important; }
+#nav ul a:hover { float:none; padding: 3px 15px; background:none; }
+#nav ul li a { font-weight:normal !important; padding: 3px 15px; }
 
 /* 2nd Level */
 #nav ul,

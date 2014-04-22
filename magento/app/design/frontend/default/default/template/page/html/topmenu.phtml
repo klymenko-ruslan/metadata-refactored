@@ -30,82 +30,32 @@
  *
  * @see Mage_Page_Block_Html_Topmenu
  */
+
+$amshopbyAttrHelper = Mage::helper('amshopby/attributes');
+$amshopbyUrlHelper = Mage::helper('amshopby/url');
 ?>
+
 <div class="nav-container">
     <ul id="nav">
         <?php // echo $_menu ?>
         <li>
             <a href="#">Manufacturer</a>
             <ul>
-                <?php
-                // specify the attribute code
-                $attrManufacturer = 'manufacturer';
-
-                // get attribute model by attribute code, e.g. 'color'
-                $attributeModel = Mage::getSingleton('eav/config')
-                    ->getAttribute('catalog_product', $attrManufacturer);
-
-                // build select to fetch used attribute value id's
-                $select = Mage::getSingleton('core/resource')
-                    ->getConnection('default_read')->select()
-                    ->from($attributeModel->getBackend()->getTable(), 'value')
-                    ->where('attribute_id=?', $attributeModel->getId())
-                    ->distinct();
-
-                // read used values from the db
-                $usedAttributeValues = Mage::getSingleton('core/resource')
-                    ->getConnection('default_read')
-                    ->fetchCol($select);
-
-                // map used id's to the value labels using the source model
-                if ($attributeModel->usesSource())
-                {
-                    $usedAttributeValues = $attributeModel->getSource()->getOptionText(
-                        implode(',', $usedAttributeValues)
-                    );
-                }
-
-                foreach($usedAttributeValues as $attrValue) {
-                    echo "<li><a href='#' style='padding: 5px 15px;'>" . $attrValue . "</a></li>";
-                }
-                ?>
+                <?php foreach ($amshopbyAttrHelper->getAttributeOptions('manufacturer') as $item): ?>
+                    <li>
+                        <a href="<?php echo $amshopbyUrlHelper->getOptionUrl('manufacturer', $item['label'], $item['value']) ?>"><?php echo $item['label'] ?></a>
+                    </li>
+                <?php endforeach ?>
             </ul>
         </li>
         <li>
             <a href="#">Component</a>
             <ul>
-                <?php
-                // specify the attribute code
-                $attrPartType = 'part_type';
-
-                // get attribute model by attribute code, e.g. 'color'
-                $attributeModel = Mage::getSingleton('eav/config')
-                    ->getAttribute('catalog_product', $attrPartType);
-
-                // build select to fetch used attribute value id's
-                $select = Mage::getSingleton('core/resource')
-                    ->getConnection('default_read')->select()
-                    ->from($attributeModel->getBackend()->getTable(), 'value')
-                    ->where('attribute_id=?', $attributeModel->getId())
-                    ->distinct();
-
-                // read used values from the db
-                $usedAttributeValues = Mage::getSingleton('core/resource')
-                    ->getConnection('default_read')
-                    ->fetchCol($select);
-
-                // map used id's to the value labels using the source model
-                if ($attributeModel->usesSource())
-                {
-                    $usedAttributeValues = $attributeModel->getSource()->getOptionText(
-                        implode(',', $usedAttributeValues)
-                    );
-                }
-
-                foreach($usedAttributeValues as $attrValue) {
-                    echo "<li><a href='#' style='padding: 5px 15px;'>" . $attrValue . "</a></li>";
-                }
-                ?>
+                <?php foreach ($amshopbyAttrHelper->getAttributeOptions('part_type') as $item): ?>
+                    <li>
+                        <a href="<?php echo $amshopbyUrlHelper->getOptionUrl('part_type', $item['label'], $item['value']) ?>"><?php echo $item['label'] ?></a>
+                    </li>
+                <?php endforeach ?>
             </ul>
         </li>
         <li><a href="/application-finder">Applications</a></li>
