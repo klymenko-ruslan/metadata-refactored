@@ -31,32 +31,20 @@
  * @see Mage_Page_Block_Html_Topmenu
  */
 ?>
+<?php $_menu = $this->getHtml('level-top') ?>
+<?php if($_menu): ?>
 <div class="nav-container">
     <ul id="nav">
         <?php // echo $_menu ?>
-        <li>
-            <a href="#">Manufacturer</a>
-            <ul>
-                <li><a href="#">Manufacturer 1</a></li>
-                <li><a href="#">Manufacturer 2</a></li>
-                <li><a href="#">Manufacturer 3</a></li>
-                <li><a href="#">Manufacturer 4</a></li>
-            </ul>
-        </li>
-        <li>
-            <a href="#">Component</a>
-            <ul>
-                <li><a href="#">Part Type 1</a></li>
-                <li><a href="#">Part Type 2</a></li>
-                <li><a href="#">Part Type 3</a></li>
-                <li><a href="#">Part Type 4</a></li>
-            </ul>
-        </li>
-        <li><a href="/application-finder">Applications</a></li>
+        <li><a href="#">Part Search</a></li>
+        <li><a href="#">Manufacturer</a></li>
+        <li><a href="#">Component</a></li>
+        <li><a href="#">Applications</a></li>
         <li><a href="#">Clearance</a></li>
         <li><a href="#">Catalog</a></li>
-        <li><a href="/about-us">About Us</a></li>
-        <li><a href="/contacts">Contact Us</a></li>
-        <li><a href="/customer/account/login">Login</a></li>
+        <li><a href="#">About Us</a></li>
+        <li><a href="#">Contact Us</a></li>
+        <li><a href="#">Login</a></li>
     </ul>
 </div>
+<?php endif ?>
