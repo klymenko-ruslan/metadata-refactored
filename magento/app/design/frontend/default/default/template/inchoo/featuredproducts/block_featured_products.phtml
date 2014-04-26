@@ -29,12 +29,18 @@
                             <img class="product-img" src="<?php echo $this->helper('catalog/image')->init($_product, 'small_image')->resize($image_size, $image_size) ?>" alt="<?php echo $this->htmlEscape($_product->getName()) ?>" />
                         </a>
                         <div class="product-description">
-                            <p>
-                                <a href="<?php echo $_product->getProductUrl() ?>" title="<?php echo $this->htmlEscape($_product->getName()) ?>)">
-                            <?php echo $this->htmlEscape($_product->getName()) ?>
-                                </a>
-                            </p>
-                            <?php echo $this->getReviewsSummaryHtml($_product, 'short') ?>
+                            <span class="product-name"><a href="<?php echo $_product->getProductUrl() ?>" title="<?php echo $this->htmlEscape($_product->getName()) ?>)"><?php echo $this->htmlEscape($_product->getName()) ?></a></span>
+
+                            <dl class="part-type-oem">
+                                <dt>Part Type:</dt>
+                                <dd><?php echo $_product->getAttributeText('part_type') ?></dd>
+                                <?php if ($_product->getPartNumber()): ?>
+                                    <dt>OE Part #:</dt>
+                                    <dd><?php echo $_product->getPartNumber() ?></dd>
+                                <?php endif; ?>
+                            </dl>
+
+                            <?php // echo $this->getReviewsSummaryHtml($_product, 'short') ?>
 
                             <?php if (Mage::getStoreConfig('featuredproducts/general/price_visible')): ?>
 
