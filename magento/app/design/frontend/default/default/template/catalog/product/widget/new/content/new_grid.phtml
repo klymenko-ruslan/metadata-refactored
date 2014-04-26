@@ -24,62 +24,55 @@
  * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 ?>
-<?php $image_size = (int) Mage::getStoreConfig("featuredproducts/cmspage/max_image_dimension") ?>
-<?php if (($_products = $this->getProductCollection()) && $_products->getSize()): ?>
+<?php $image_size = (int)Mage::getStoreConfig("featuredproducts/cmspage/max_image_dimension");
+if (($_products = $this->getProductCollection()) && $_products->getSize()): ?>
     <h3 style="margin-top:50px;"><?php echo $this->__('New Products') ?></h3>
     <table border="0" cellspacing="0">
-
         <tbody>
-
         <?php
         $i = 0;
         $row = 0;
-        foreach ($_products->getItems() as $_product):
-            ?>
-
+        foreach ($_products->getItems() as $_product): ?>
             <?php if ($i == 0): ?>
-            <?php $row++; ?>
-            <tr class="<?php echo (($row % 2) > 0) ? 'odd' : 'even' ?>">
-        <?php endif; ?>
+                <?php $row++; ?>
+                <tr class="<?php echo (($row % 2) > 0) ? 'odd' : 'even' ?>">
+            <?php endif; ?>
             <td>
-
                 <a href="<?php echo $_product->getProductUrl() ?>" title="<?php echo $this->htmlEscape($_product->getName()) ?>">
                     <img class="product-img" src="<?php echo $this->helper('catalog/image')->init($_product, 'small_image')->resize($image_size, $image_size) ?>" alt="<?php echo $this->htmlEscape($_product->getName()) ?>"/>
                 </a>
 
                 <div class="product-description">
-                    <p>
-                        <a href="<?php echo $_product->getProductUrl() ?>" title="<?php echo $this->htmlEscape($_product->getName()) ?>)">
-                            <?php echo $this->htmlEscape($_product->getName()) ?>
-                        </a>
-                    </p>
-                    <?php echo $this->getReviewsSummaryHtml($_product, 'short') ?>
+                    <span class="product-name"><a href="<?php echo $_product->getProductUrl() ?>" title="<?php echo $this->htmlEscape($_product->getName()) ?>)"><?php echo $this->htmlEscape($_product->getName()) ?></a></span>
 
-                    <?php if (Mage::getStoreConfig('featuredproducts/general/price_visible')): ?>
-
-                        <?php echo $this->getPriceHtml($_product, true, '-new') ?>
-
-                        <?php if ($_product->isSaleable()): ?>
-                            <button type="button" class="button btn-cart" onclick="setLocation('<?php echo $this->getAddToCartUrl($_product) ?>')">
-                                <span><span><?php echo $this->__('Add to Cart') ?></span></span></button>
-                        <?php else: ?>
-                            <div class="out-of-stock"><?php echo $this->__('Out of stock') ?></div>
+                    <dl class="part-type-oem">
+                        <dt>Part Type:</dt>
+                        <dd><?php echo $_product->getAttributeText('part_type') ?></dd>
+                        <?php if ($_product->getPartNumber()): ?>
+                            <dt>OE Part #:</dt>
+                            <dd><?php echo $_product->getPartNumber() ?></dd>
                         <?php endif; ?>
+                    </dl>
 
+                    <?php // echo $this->getReviewsSummaryHtml($_product, 'short') ?>
+
+                    <?php echo $this->getPriceHtml($_product, true, '-new') ?>
+
+                    <?php if ($_product->isSaleable()): ?>
+                        <button type="button" class="button btn-cart" onclick="setLocation('<?php echo $this->getAddToCartUrl($_product) ?>')">
+                            <span><span><?php echo $this->__('Add to Cart') ?></span></span></button>
+                    <?php else: ?>
+                        <div class="out-of-stock"><?php echo $this->__('Out of stock') ?></div>
                     <?php endif; ?>
 
                 </div>
             </td>
-
             <?php $i++;
-            if ($i == $this->getItemsPerRow()):
-                ?>
+            if ($i == $this->getItemsPerRow()): ?>
                 <?php $i = 0; ?>
                 </tr>
             <?php endif; ?>
         <?php endforeach; ?>
-
         </tbody>
-
     </table>
 <?php endif; ?>

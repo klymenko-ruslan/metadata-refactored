@@ -1754,6 +1754,10 @@ tr.summary-details-excluded { font-style:italic; }
 .best-selling td { width:50%; border-bottom:1px solid #ccc; padding:8px 10px 8px 8px; font-size:11px; }
 .best-selling .product-img { float:left; border:2px solid #dcdcdc; }
 .best-selling .product-description { margin-left:107px; line-height:1.3em; }
+.product-description .product-name { display: block; }
+.product-description .part-type-oem dd { text-transform: capitalize; padding-left: 5px; margin-bottom: 3px; }
+.products-grid .product-name { display: block; }
+.products-grid .part-type-oem dd { text-transform: capitalize; padding-left: 5px; margin-bottom: 3px; }
 .best-selling a.product-name,
 .home-spot .best-selling a.product-name:hover { color:#203548; }
 /* ======================================================================================= */
