@@ -92,7 +92,7 @@ public class MagmiController {
         "compressor_housing_diameter",
         "compressor_wheel_diameter",
         "design_features",
-        "exduce_oa",
+        "exducer_oa",
         "exducer_oc",
         "hub_length_d",
         "i_gap_max",

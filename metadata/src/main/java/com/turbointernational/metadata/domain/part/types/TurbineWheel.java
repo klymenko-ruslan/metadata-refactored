@@ -115,7 +115,7 @@ public class TurbineWheel extends Part {
     public void csvColumns(Map<String, String> columns) {
         super.csvColumns(columns);
         
-        columns.put("exduce_oa", ObjectUtils.toString(getExducerDiameterA()));
+        columns.put("exducer_oa", ObjectUtils.toString(getExducerDiameterA()));
         columns.put("tip_height_b", ObjectUtils.toString(getTipHeightB()));
         columns.put("inducer_oc", ObjectUtils.toString(getInducerDiameterC()));
         columns.put("journal_od", ObjectUtils.toString(getJournalDiameterD()));
