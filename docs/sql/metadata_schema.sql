@@ -235,6 +235,21 @@ CREATE VIEW vint AS
     LEFT JOIN manfr ipm ON ipm.id = ip.manfr_id
   WHERE p.id != ii2.part_id;
 
+DROP VIEW IF EXISTS vint_ti;
+CREATE VIEW vint_ti AS
+  SELECT DISTINCT
+    ii1.interchange_header_id AS interchange_header_id,
+
+    p.id AS part_id,
+    ip.id AS ti_part_id
+  FROM
+    part p
+    JOIN interchange_item ii1 ON ii1.part_id = p.id
+    LEFT JOIN interchange_item ii2 ON ii2.interchange_header_id = ii1.interchange_header_id
+
+    LEFT JOIN part ip ON ip.id = ii2.part_id
+    LEFT JOIN manfr ipm ON ipm.id = ip.manfr_id
+  WHERE ip.manfr_id = 11;
 
 
 --
@@ -576,26 +591,55 @@ FROM
     JOIN interchange_item pi ON pi.part_id = kc.part_id
     JOIN interchange_item pii ON pii.interchange_header_id = pi.interchange_header_id;
 
-CREATE VIEW `vcartridge_kits` AS
-(SELECT
-    kc.part_id AS cartridge_id,
-    kc.kit_id
-FROM
-    kit_part_common_component kc
-WHERE kc.exclude = 0)
-UNION DISTINCT
-(SELECT
-    c.part_id AS cartridge_id,
-    k.part_id
-FROM
-    cartridge c
-    JOIN part_turbo_type cptt ON cptt.part_id = c.part_id
-    JOIN part_turbo_type cptt2 ON cptt2.turbo_type_id = cptt.turbo_type_id
-    JOIN kit k ON k.part_id = cptt2.part_id
-    LEFT JOIN kit_part_common_component kc ON
-        kc.kit_id = k.part_id
-        AND kc.part_id = c.part_id
-WHERE kc.exclude != 1);
+CREATE VIEW `vpart_turbotype_kits` AS (
+    SELECT
+        kc.part_id AS part_id,
+        kc.kit_id
+    FROM
+        kit_part_common_component kc
+    WHERE kc.exclude = 0
+) UNION DISTINCT (
+    SELECT
+        p.id AS part_id,
+        k.part_id AS kit_id
+    FROM
+
+        -- Part-Kit by common turbo type
+        part p
+        JOIN part_turbo_type ptt ON ptt.part_id = p.id
+        JOIN part_turbo_type ptt2 ON ptt2.turbo_type_id = ptt.turbo_type_id
+        JOIN kit k ON
+            k.part_id = ptt2.part_id AND p.id != k.part_id
+
+        -- Join exclusion table
+        LEFT JOIN kit_part_common_component kc ON
+            kc.kit_id = k.part_id AND kc.part_id = p.id
+    -- Exclusion
+    WHERE
+        kc.exclude IS NULL
+        OR kc.exclude = 1
+) UNION DISTINCT ( -- Turbo Type from Turbos
+    SELECT
+        t.part_id AS part_id,
+        k.part_id AS kit_id
+    FROM
+
+        -- Turbo-Kit by common turbo type
+        turbo t
+        JOIN turbo_model tm ON tm.id = t.turbo_model_id
+        JOIN part_turbo_type ptt ON
+            ptt.turbo_type_id = tm.turbo_type_id AND ptt.part_id != t.part_id
+        JOIN kit k ON
+            k.part_id = ptt.part_id AND t.part_id != k.part_id
+
+        -- Join exclusion table
+        LEFT JOIN kit_part_common_component kc ON
+            kc.kit_id = k.part_id AND kc.part_id = t.part_id
+    -- Exclusion
+    WHERE
+        kc.exclude IS NULL
+        OR kc.exclude = 1
+);
 
 -- Verify no interchangable parts have a contradictory setting
 DELIMITER $$

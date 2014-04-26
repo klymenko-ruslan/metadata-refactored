@@ -4,23 +4,24 @@ import java.util.Map;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.SecondaryTable;
+import javax.persistence.Table;
 import net.sf.jsog.JSOG;
 import org.apache.commons.lang.ObjectUtils;
 import org.springframework.beans.factory.annotation.Configurable;
 
 @Configurable
 @Entity
-@SecondaryTable(name="heatshield", pkJoinColumns=@PrimaryKeyJoinColumn(name = "part_id"))
+@Table(name="heatshield")
+@PrimaryKeyJoinColumn(name = "part_id")
 public class Heatshield extends Part {
 
-    @Column(name="overall_diameter", table = "heatshield")
+    @Column(name="overall_diameter")
     private Float overallDiameter;
 
-    @Column(name="inside_diameter", table = "heatshield")
+    @Column(name="inside_diameter")
     private Float insideDiameter;
 
-    @Column(name="inducer_diameter", table = "heatshield")
+    @Column(name="inducer_diameter")
     private Float inducerDiameter;
 
     public Float getOverallDiameter() {

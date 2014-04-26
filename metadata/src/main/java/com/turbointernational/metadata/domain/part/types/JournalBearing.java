@@ -9,14 +9,15 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.SecondaryTable;
+import javax.persistence.Table;
 import net.sf.jsog.JSOG;
 import org.apache.commons.lang.ObjectUtils;
 import org.springframework.beans.factory.annotation.Configurable;
 
 @Configurable
 @Entity
-@SecondaryTable(name="journal_bearing", pkJoinColumns=@PrimaryKeyJoinColumn(name = "part_id"))
+@Table(name="journal_bearing")
+@PrimaryKeyJoinColumn(name = "part_id")
 public class JournalBearing extends Part {
 
     @OneToOne(fetch = FetchType.LAZY)
@@ -31,16 +32,16 @@ public class JournalBearing extends Part {
                inverseJoinColumns=@JoinColumn(name="oversized_part_id"))
     private JournalBearing oversize;
 
-    @Column(name="outside_dim_min", table = "journal_bearing")
+    @Column(name="outside_dim_min")
     private Float outsideDiameterMin;
 
-    @Column(name="outside_dim_max", table = "journal_bearing")
+    @Column(name="outside_dim_max")
     private Float outsideDiameterMax;
 
-    @Column(name="inside_dim_min", table = "journal_bearing")
+    @Column(name="inside_dim_min")
     private Float insideDiameterMin;
 
-    @Column(name="inside_dim_max", table = "journal_bearing")
+    @Column(name="inside_dim_max")
     private Float insideDiameterMax;
 
     public JournalBearing getStandardSize() {

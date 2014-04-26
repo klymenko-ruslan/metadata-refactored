@@ -4,32 +4,33 @@ import java.util.Map;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.SecondaryTable;
+import javax.persistence.Table;
 import net.sf.jsog.JSOG;
 import org.apache.commons.lang.ObjectUtils;
 import org.springframework.beans.factory.annotation.Configurable;
 
 @Configurable
 @Entity
-@SecondaryTable(name="piston_ring", pkJoinColumns=@PrimaryKeyJoinColumn(name = "part_id"))
+@Table(name="piston_ring")
+@PrimaryKeyJoinColumn(name = "part_id")
 public class PistonRing extends Part {
     
-    @Column(name="outside_dim_min", table = "piston_ring")
+    @Column(name="outside_dim_min")
     private Float outsideDiameterMin;
 
-    @Column(name="outside_dim_max", table = "piston_ring")
+    @Column(name="outside_dim_max")
     private Float outsideDiameterMax;
 
-    @Column(name="width_min", table = "piston_ring")
+    @Column(name="width_min")
     private Float widthMin;
 
-    @Column(name="width_max", table = "piston_ring")
+    @Column(name="width_max")
     private Float widthMax;
 
-    @Column(name="i_gap_min", table = "piston_ring")
+    @Column(name="i_gap_min")
     private Float installedGapMin;
 
-    @Column(name="i_gap_max", table = "piston_ring")
+    @Column(name="i_gap_max")
     private Float installedGapMax;
 
     public Float getOutsideDiameterMin() {

@@ -75,26 +75,8 @@ import org.springframework.transaction.support.TransactionTemplate;
 @Configurable
 @Entity
 @Table(name = "PART")
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn
-@NamedQueries({
-    @NamedQuery(name="bom_parent_ids", query=
-          "SELECT DISTINCT p\n"
-        + "FROM\n"
-        + "  Part p\n"
-        + "  JOIN p.bom b\n"
-        + "  JOIN b.parent parent\n"
-        + "WHERE\n"
-        + "  b.child.id = :partId"),
-    @NamedQuery(name="bom_alt_parent_ids", query=
-          "SELECT DISTINCT p.id\n"
-        + "FROM\n"
-        + "  Part p\n"
-        + "  JOIN p.bom b"
-        + "  JOIN b.alternatives alt\n"
-        + "  JOIN alt.part altPart\n"
-        + "WHERE\n"
-        + "  altPart.id = :partId")})
 public class Part implements Comparable<Part> {
     private static final Logger log = Logger.getLogger(Part.class.toString());
     
@@ -162,14 +144,14 @@ public class Part implements Comparable<Part> {
     @Column(name="description")
     private String description;
     
-    @OneToOne(fetch=FetchType.EAGER)
+    @OneToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="part_type_id")
     private PartType partType;
     
     @Column(nullable = false, columnDefinition = "BIT", length = 1)
     private Boolean inactive = false;
     
-    @OneToMany
+    @OneToMany(fetch = FetchType.LAZY)
     @JoinTable(name="part_turbo_type",
                 joinColumns = @JoinColumn(name="part_id"),
                 inverseJoinColumns = @JoinColumn(name="turbo_type_id"))
@@ -181,6 +163,13 @@ public class Part implements Comparable<Part> {
             inverseJoinColumns=@JoinColumn(name="interchange_header_id"))
     private Interchange interchange;
     
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinTable(name="vint_ti",
+            joinColumns=@JoinColumn(name="part_id"),
+            inverseJoinColumns=@JoinColumn(name="ti_part_id"))
+    @Column(insertable = false, updatable = false)
+    private Set<Part> tiParts;
+    
     @OneToMany(mappedBy="parent", fetch = FetchType.LAZY, orphanRemoval = true)
     @OrderBy("id")
     private Set<BOMItem> bom = new TreeSet<BOMItem>();
@@ -189,12 +178,11 @@ public class Part implements Comparable<Part> {
     @OrderBy("id")
     private Set<BOMAncestor> bomAncestors = new LinkedHashSet<BOMAncestor>();
     
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
     @JoinTable(name="vpart_turbo", joinColumns=@JoinColumn(name="part_id"), inverseJoinColumns=@JoinColumn(name="turbo_id"))
     private Set<Turbo> turbos = new TreeSet<Turbo>();
     
-    @OrderBy("id")
-    @OneToMany(cascade = CascadeType.REFRESH, mappedBy = "part")
+    @OneToMany(cascade = CascadeType.REFRESH, mappedBy = "part", fetch=FetchType.LAZY)
     private Set<ProductImage> productImages = new TreeSet<ProductImage>();
     
     @Version
@@ -540,23 +528,11 @@ public class Part implements Comparable<Part> {
                 .createQuery(
                   "SELECT p\n"
                 + "FROM Part p\n"
-                + "  JOIN FETCH p.partType pt\n"
-                + "  JOIN FETCH p.manufacturer m\n"
-                + "  LEFT JOIN FETCH pt.parent\n"
-                + "  LEFT JOIN FETCH p.productImages i\n"
-                + "  LEFT JOIN FETCH p.serviceKits\n"
-                + "  LEFT JOIN FETCH p.coolType ct\n"
-                + "  LEFT JOIN FETCH p.gasketType ct\n"
-                + "  LEFT JOIN FETCH p.kitType kt\n"
-                + "  LEFT JOIN FETCH p.sealType st\n"
-                + "  LEFT JOIN FETCH p.turboModel tm\n"
-                + "  LEFT JOIN FETCH tm.turboType\n"
-                + "  LEFT JOIN FETCH p.cars c\n"
-                + "  LEFT JOIN FETCH c.model cmo\n"
-                + "  LEFT JOIN FETCH cmo.make\n"
-                + "  LEFT JOIN FETCH c.engine ce\n"
-                + "  LEFT JOIN FETCH ce.fuelType\n"
-                + "  LEFT JOIN FETCH c.year", Part.class)
+//                + "  LEFT JOIN p.cars\n"
+//                + "  LEFT JOIN p.productImages\n"
+                + "  LEFT JOIN FETCH p.tiParts\n"
+                + "  LEFT JOIN FETCH p.serviceKits sk\n"
+                + "  LEFT JOIN FETCH sk.tiParts", Part.class)
                 .setFirstResult(firstResult)
                 .setMaxResults(maxResults).getResultList();
     }

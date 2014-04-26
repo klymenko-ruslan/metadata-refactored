@@ -26,7 +26,7 @@ public class MagmiProduct {
     
     private final Part part;
     
-    private TreeSet<Long> imageIds = new TreeSet<Long>();
+    private final TreeSet<Long> imageIds = new TreeSet<Long>();
 
     private final Set<String> turboType = new TreeSet<String>();
 
@@ -56,11 +56,6 @@ public class MagmiProduct {
 
     public MagmiProduct(Part part) {
         this.part = part;
-
-        // Add image IDs
-        for (ProductImage image : part.getProductImages()) {
-            imageIds.add(image.getId());
-        }
     }
     
     public Long getSku() {
@@ -102,38 +97,6 @@ public class MagmiProduct {
             applicationDetail.add(basicProduct.getApplicationDetail());
         }
     }
-
-    public void addInterchange(MagmiInterchange interchange) {
-        interchanges.add(interchange.getInterchangePartSku());
-
-        // TI interchanges
-        if (interchange.getInterchangePartManufacturerId() == Manufacturer.TI_ID) {
-            tiInterchanges.add(interchange.getInterchangePartSku());
-            
-            // Save the part number if this is the first interchange part
-            if (tiInterchanges.size() == 1) {
-                tiPartNumber = interchange.getInterchangePartNumber();
-            }
-        }
-    }
-    
-    private JSOG getBomItemBySku(Long sku) {
-        
-        // Find the item, if it exists
-        for (JSOG candidate : bom.arrayIterable()) {
-            if (StringUtils.equals(candidate.get("sku").getStringValue(), sku.toString())) {
-                return candidate;
-            }
-        }
-        
-        // Create the item if it doesn't
-        JSOG bomItem = JSOG.object();
-        bom.add(bomItem);
-        bomItem.put("alt_part_sku", JSOG.array());
-        bomItem.put("ti_part_sku", JSOG.array());
-        
-        return bomItem;
-    }
     
     public static void addSkuToBomItemCollection(JSOG jsogItem, String key, Long sku) {
         if (sku == null) {
@@ -167,6 +130,91 @@ public class MagmiProduct {
         if (bomItem.getIntSkuMfrId() == Manufacturer.TI_ID) {
             addSkuToBomItemCollection(jsogItem, "ti_part_sku", bomItem.getIntSku());
         }
+    }
+    
+    public void addImageId(Long imageId) {
+        imageIds.add(imageId);
+    }
+
+    public void addInterchange(MagmiInterchange interchange) {
+        interchanges.add(interchange.getInterchangePartSku());
+
+        // TI interchanges
+        if (interchange.getInterchangePartManufacturerId() == Manufacturer.TI_ID) {
+            tiInterchanges.add(interchange.getInterchangePartSku());
+            
+            // Save the part number if this is the first interchange part
+            if (tiInterchanges.size() == 1) {
+                tiPartNumber = interchange.getInterchangePartNumber();
+            }
+        }
+    }
+
+    private void addTurboCsvColumns() {
+        Turbo turbo = (Turbo) part;
+        
+        // Turbo type/model
+        turboModel.add(turbo.getTurboModel().getName());
+        turboType.add(turbo.getTurboModel().getTurboType().getName());
+        
+        // Turbo finder
+        finderTurbo.add(
+                turbo.getManufacturer().getName()
+                        + "!!" + turbo.getTurboModel().getName()
+                        + "!!" + turbo.getTurboModel().getTurboType().getName());
+        
+        // Application detail and application finder
+        for (CarModelEngineYear cmey : turbo.getCars()) {
+            
+            // Skip this application if make or model is null
+            if (cmey.getModel() == null || cmey.getModel().getMake() == null) {
+                continue;
+            }
+            
+            // Check for a year, default to 'not specified'
+            String year = "not specified";
+            if (cmey.getYear() != null) {
+                year = cmey.getYear().getName();
+            }
+            
+            // Check for an engine, default to an empty string
+            String engine = "";
+            String fuel = "";
+            
+            if (cmey.getEngine() != null) {
+                engine = cmey.getEngine().getEngineSize();
+                
+                if (cmey.getEngine().getFuelType() != null) {
+                    fuel = cmey.getEngine().getFuelType().getName();
+                }
+            }
+            
+            // Get the make and model
+            String make = cmey.getModel().getMake().getName();
+            String model = cmey.getModel().getName();
+            
+            // Add the values
+            finderApplication.add(make + "!!" + year + "!!" + model);
+            applicationDetail.add(make + "!!" + year + "!!" + model + "!!" + engine + "!!" + fuel);
+        }
+    }
+    
+    private JSOG getBomItemBySku(Long sku) {
+        
+        // Find the item, if it exists
+        for (JSOG candidate : bom.arrayIterable()) {
+            if (StringUtils.equals(candidate.get("sku").getStringValue(), sku.toString())) {
+                return candidate;
+            }
+        }
+        
+        // Create the item if it doesn't
+        JSOG bomItem = JSOG.object();
+        bom.add(bomItem);
+        bomItem.put("alt_part_sku", JSOG.array());
+        bomItem.put("ti_part_sku", JSOG.array());
+        
+        return bomItem;
     }
 
     public final Map<String, String> getCsvColumns(ImageResizer imageResizer) {
@@ -259,55 +307,6 @@ public class MagmiProduct {
 
         // Add the column
         columns.put("media_gallery", galleryString.toString());
-    }
-
-    private void addTurboCsvColumns() {
-        Turbo turbo = (Turbo) part;
-        
-        // Turbo type/model
-        turboModel.add(turbo.getTurboModel().getName());
-        turboType.add(turbo.getTurboModel().getTurboType().getName());
-        
-        // Turbo finder
-        finderTurbo.add(
-                turbo.getManufacturer().getName()
-                        + "!!" + turbo.getTurboModel().getName()
-                        + "!!" + turbo.getTurboModel().getTurboType().getName());
-        
-        // Application detail and application finder
-        for (CarModelEngineYear cmey : turbo.getCars()) {
-            
-            // Skip this application if make or model is null
-            if (cmey.getModel() == null || cmey.getModel().getMake() == null) {
-                continue;
-            }
-            
-            // Check for a year, default to 'not specified'
-            String year = "not specified";
-            if (cmey.getYear() != null) {
-                year = cmey.getYear().getName();
-            }
-            
-            // Check for an engine, default to an empty string
-            String engine = "";
-            String fuel = "";
-            
-            if (cmey.getEngine() != null) {
-                engine = cmey.getEngine().getEngineSize();
-                
-                if (cmey.getEngine().getFuelType() != null) {
-                    fuel = cmey.getEngine().getFuelType().getName();
-                }
-            }
-            
-            // Get the make and model
-            String make = cmey.getModel().getMake().getName();
-            String model = cmey.getModel().getName();
-            
-            // Add the values
-            finderApplication.add(make + "!!" + year + "!!" + model);
-            applicationDetail.add(make + "!!" + year + "!!" + model + "!!" + engine + "!!" + fuel);
-        }
     }
     
     public boolean hasTiPart() {

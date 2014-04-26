@@ -8,18 +8,19 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.SecondaryTable;
+import javax.persistence.Table;
 import net.sf.jsog.JSOG;
 import org.apache.commons.lang.ObjectUtils;
 import org.springframework.beans.factory.annotation.Configurable;
 
 @Configurable
 @Entity
-@SecondaryTable(name="gasket", pkJoinColumns=@PrimaryKeyJoinColumn(name = "part_id"))
+@Table(name="gasket")
+@PrimaryKeyJoinColumn(name = "part_id")
 public class Gasket extends Part {
 
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="gasket_type_id", table = "gasket")
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="gasket_type_id")
     private GasketType gasketType;
 
     public GasketType getGasketType() {

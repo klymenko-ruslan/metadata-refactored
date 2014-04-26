@@ -1,8 +1,19 @@
 package com.turbointernational.metadata.web;
 
 import au.com.bytecode.opencsv.CSVWriter;
+import com.turbointernational.metadata.domain.car.CarFuelType;
+import com.turbointernational.metadata.domain.car.CarMake;
+import com.turbointernational.metadata.domain.car.CarModel;
+import com.turbointernational.metadata.domain.car.CarYear;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.Part;
+import com.turbointernational.metadata.domain.part.ProductImage;
+import com.turbointernational.metadata.domain.type.CoolType;
+import com.turbointernational.metadata.domain.type.GasketType;
+import com.turbointernational.metadata.domain.type.KitType;
+import com.turbointernational.metadata.domain.type.ManufacturerType;
+import com.turbointernational.metadata.domain.type.PartType;
+import com.turbointernational.metadata.domain.type.SealType;
 import com.turbointernational.metadata.util.ImageResizer;
 import com.turbointernational.metadata.util.dto.MagmiBasicProduct;
 import com.turbointernational.metadata.util.dto.MagmiBomItem;
@@ -196,6 +207,19 @@ public class MagmiController {
                 
                 // Clear Hibernate
                 Part.entityManager().clear();
+                
+                // Pre-cache our frequently-used entities
+                ManufacturerType.findAllManufacturerTypes();
+                Manufacturer.findAllManufacturers();
+                PartType.findAllPartTypes();
+                CoolType.findAllCoolTypes();
+                GasketType.findAllGasketTypes();
+                KitType.findAllKitTypes();
+                SealType.findAllSealTypes();
+//                CarFuelType.findAll();
+//                CarYear.findAll();
+//                CarMake.findAll();
+//                CarModel.findAll();
 
                 // Get the next batch of part IDs
                 parts = Part.findPartEntries(position, magmiBatchSize);
@@ -372,7 +396,6 @@ public class MagmiController {
     
     public static TreeMap<Long, MagmiProduct> findMagmiProducts(List<Part> parts) {
         long startTime = System.currentTimeMillis();
-        
         // Build a product map from the parts
         TreeMap<Long, MagmiProduct> productMap = new TreeMap<Long, MagmiProduct>();
         for (Part part : parts) {

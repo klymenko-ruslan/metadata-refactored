@@ -14,17 +14,18 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.SecondaryTable;
+import javax.persistence.Table;
 import net.sf.jsog.JSOG;
 import org.springframework.beans.factory.annotation.Configurable;
 
 @Configurable
 @Entity
-@SecondaryTable(name="kit", pkJoinColumns=@PrimaryKeyJoinColumn(name = "part_id"))
+@Table(name="kit")
+@PrimaryKeyJoinColumn(name = "part_id")
 public class Kit extends Part {
     
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="kit_type_id", table = "kit")
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="kit_type_id")
     private KitType kitType;
     
     @OrderBy("id")

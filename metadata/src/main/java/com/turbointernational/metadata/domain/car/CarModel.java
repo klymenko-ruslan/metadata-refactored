@@ -8,12 +8,14 @@ import java.util.List;
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.persistence.PersistenceContext;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -61,6 +63,21 @@ public class CarModel {
     }
     //</editor-fold>
     
+    //<editor-fold defaultstate="collapsed" desc="activerecord">
+    @PersistenceContext
+    transient EntityManager entityManager;
+    
+    public static final EntityManager entityManager() {
+        EntityManager em = new CarModel().entityManager;
+        if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
+        return em;
+    }
+    
+    public static List<CarModel> findAll() {
+        return entityManager().createQuery("SELECT o FROM CarModel o", CarModel.class).getResultList();
+    }
+    //</editor-fold>
+    
     //<editor-fold defaultstate="collapsed" desc="Serialization">
     public String toJson() {
         return new JSONSerializer().exclude("*.class").serialize(this);
@@ -70,7 +87,7 @@ public class CarModel {
         return new JSONSerializer().include(fields).exclude("*.class").serialize(this);
     }
     
-    public static CarModel fromJsonToCarFuelType(String json) {
+    public static CarModel fromJsonToCarModel(String json) {
         return new JSONDeserializer<CarModel>().use(null, CarModel.class).deserialize(json);
     }
     
@@ -82,7 +99,7 @@ public class CarModel {
         return new JSONSerializer().include(fields).exclude("*.class").serialize(collection);
     }
     
-    public static Collection<CarModel> fromJsonArrayToCarFuelTypes(String json) {
+    public static Collection<CarModel> fromJsonArrayToCarModels(String json) {
         return new JSONDeserializer<List<CarModel>>().use(null, ArrayList.class).use("values", CarModel.class).deserialize(json);
     }
     //</editor-fold>

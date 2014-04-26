@@ -2,6 +2,7 @@ package com.turbointernational.metadata.domain.part;
 
 import flexjson.JSONSerializer;
 import flexjson.transformer.HibernateTransformer;
+import java.util.List;
 import javax.persistence.Cacheable;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -90,6 +91,10 @@ public class ProductImage implements Comparable<ProductImage> {
         Query q = entityManager().createQuery("SELECT DISTINCT p FROM ProductImage p WHERE p.id = :id");
         q.setParameter("id", id);
         return (ProductImage) q.getSingleResult();
+    }
+    
+    public static List<ProductImage> findAll() {
+        return entityManager().createQuery("SELECT o FROM ProductImage o", ProductImage.class).getResultList();
     }
     
     @Transactional
