@@ -83,11 +83,11 @@ class Amasty_Shopby_Model_Catalog_Layer_Filter_Stock extends Mage_Catalog_Model_
             'value' => self::FILTER_IN_STOCK,
             'count' => $in_stock[0],
 		);
-		$data[] = array(
-        	'label' => Mage::helper('amshopby')->__('All Parts'),
-            'value' => self::FILTER_OUT_OF_STOCK,
-            'count' => $out_stock[0],
-		);		
+//		$data[] = array(
+//        	'label' => Mage::helper('amshopby')->__('All Parts'),
+//            'value' => self::FILTER_OUT_OF_STOCK,
+//            'count' => $out_stock[0],
+//		);
         return $data;
     }
     
