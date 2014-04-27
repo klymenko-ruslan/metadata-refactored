@@ -52,137 +52,131 @@ DROP TABLE IF EXISTS `sql server destination`;
 --
 -- Part types
 --
-ALTER TABLE `part` ADD COLUMN `dtype` VARCHAR(50) DEFAULT 'Part';
-
-ALTER TABLE `part_type` ADD COLUMN `dtype` VARCHAR(50);
 ALTER TABLE `part_type` ADD COLUMN `magento_attribute_set` VARCHAR(50);
-ALTER TABLE `part_type` ADD COLUMN `magento_category` VARCHAR(50);
 
 -- Default
 SET @partType = 'Part';
+UPDATE `part_type` SET `magento_attribute_set`= @partType;
+
 UPDATE `part_type` SET
-    `DTYPE` = @partType,
-    `magento_attribute_set`= @partType,
-    `magento_category`= @partType;
-
-
--- Kit and Cartridge have BOM
-SET @partType = 'Cartridge';
-UPDATE `part_type` SET
-    `DTYPE` = @partType,
-    `magento_attribute_set`= @partType,
-    `magento_category`= @partType
-WHERE ID = 2;
-
-SET @partType = 'Kit';
-UPDATE `part_type` SET
-    `DTYPE` = @partType,
-    `magento_attribute_set`= @partType,
-    `magento_category`= @partType
-WHERE ID = 3;
-
-
--- One-word names
-SET @partType = 'Turbo';
-UPDATE `part_type` SET
-    `DTYPE` = @partType,
-    `magento_attribute_set`= @partType,
-    `magento_category`= @partType
+    `name`= 'Turbo',
+    `magento_attribute_set`= 'Turbo'
 WHERE ID = 1;
 
-SET @partType = 'Gasket';
 UPDATE `part_type` SET
-    `DTYPE` = @partType,
-    `magento_attribute_set`= @partType,
-    `magento_category`= @partType
+    `name`= 'Cartridge',
+    `magento_attribute_set`= 'Cartridge'
+WHERE ID = 2;
+
+UPDATE `part_type` SET
+    `name`= 'Kit',
+    `magento_attribute_set`= 'Kit'
+WHERE ID = 3;
+
+UPDATE `part_type` SET
+    `name`= 'Piston Ring',
+    `magento_attribute_set`= 'PistonRing'
+WHERE ID = 4;
+
+UPDATE `part_type` SET
+    `name`= 'Journal Bearing',
+    `magento_attribute_set`= 'JournalBearing'
+WHERE ID = 5;
+
+UPDATE `part_type` SET
+    `name`= 'Gasket',
+    `magento_attribute_set`= 'Gasket'
 WHERE ID = 6;
 
-SET @partType = 'Backplate';
 UPDATE `part_type` SET
-    `DTYPE` = @partType,
-    `magento_attribute_set`= @partType,
-    `magento_category`= @partType
+    `name`= 'Bearing Spacer',
+    `magento_attribute_set`= 'BearingSpacer'
+WHERE ID = 7;
+
+UPDATE `part_type` SET
+    `name`= 'Fast Wearing Component',
+    `magento_attribute_set`= 'Part'
+WHERE ID = 8;
+
+UPDATE `part_type` SET
+    `name`= 'Major Component',
+    `magento_attribute_set`= 'Part'
+WHERE ID = 9;
+
+UPDATE `part_type` SET
+    `name`= 'Minor Component',
+    `magento_attribute_set`= 'Part'
+WHERE ID = 10;
+
+UPDATE `part_type` SET
+    `name`= 'Compressor Wheel',
+    `magento_attribute_set`= 'CompressorWheel'
+WHERE ID = 11;
+
+UPDATE `part_type` SET
+    `name`= 'Turbine Wheel',
+    `magento_attribute_set`= 'TurbineWheel'
+WHERE ID = 12;
+
+UPDATE `part_type` SET
+    `name`= 'Bearing Housing',
+    `magento_attribute_set`= 'BearingHousing'
+WHERE ID = 13;
+
+UPDATE `part_type` SET
+    `name`= 'Backplate / Sealplate',
+    `magento_attribute_set`= 'Backplate'
 WHERE ID = 14;
 
-SET @partType = 'Heatshield';
 UPDATE `part_type` SET
-    `DTYPE` = @partType,
-    `magento_attribute_set`= @partType,
-    `magento_category`= @partType
+    `name`= 'Heatshield / Shroud',
+    `magento_attribute_set`= 'Heatshield'
 WHERE ID = 15;
 
-
--- Multiword names
-UPDATE `part_type` SET DTYPE = "PistonRing" WHERE ID = 4;
-UPDATE `part_type` SET DTYPE = "JournalBearing" WHERE ID = 5;
-UPDATE `part_type` SET DTYPE = "BearingSpacer" WHERE ID = 7;
-UPDATE `part_type` SET DTYPE = "CompressorWheel" WHERE ID = 11;
-UPDATE `part_type` SET DTYPE = "TurbineWheel" WHERE ID = 12;
-UPDATE `part_type` SET DTYPE = "BearingHousing" WHERE ID = 13;
-UPDATE `part_type` SET DTYPE = "NozzleRing" WHERE ID = 16;
+UPDATE `part_type` SET
+    `name`= 'Nozzle Ring',
+    `magento_attribute_set`= 'NozzleRing'
+WHERE ID = 16;
 
 UPDATE `part_type` SET
-    `magento_attribute_set`= 'Piston Ring',
-    `magento_category`= 'Piston Ring'
-WHERE `DTYPE`='PistonRing';
+    `name`= 'O Ring',
+    `magento_attribute_set`= 'Part'
+WHERE ID = 17;
 
 UPDATE `part_type` SET
-    `magento_attribute_set`= 'Journal Bearing',
-    `magento_category`= 'Journal Bearing'
-WHERE `DTYPE`='JournalBearing';
+    `name`= 'Oil Deflector',
+    `magento_attribute_set`= 'Part'
+WHERE ID = 18;
 
 UPDATE `part_type` SET
-    `magento_attribute_set`= 'Bearing Spacer',
-    `magento_category` = 'Bearing Spacer'
-WHERE `DTYPE`='BearingSpacer';
+    `name`= 'Clamp',
+    `magento_attribute_set`= 'Part'
+WHERE ID = 19;
 
 UPDATE `part_type` SET
-    `magento_attribute_set`= 'Compressor Wheel',
-    `magento_category` = 'Compressor Wheel'
-WHERE `DTYPE`='CompressorWheel';
+    `name`= 'Thrust Parts',
+    `magento_attribute_set`= 'Part'
+WHERE ID = 20;
 
 UPDATE `part_type` SET
-    `magento_attribute_set`= 'Turbine Wheel',
-    `magento_category` = 'Turbine Wheel'
-WHERE `DTYPE`='TurbineWheel';
+    `name`= 'Miscellaneous Minor Components',
+    `magento_attribute_set`= 'Part'
+WHERE ID = 21;
 
-UPDATE `part_type` SET
-    `magento_attribute_set`= 'Bearing Housing',
-    `magento_category` = 'Bearing Housing'
-WHERE `DTYPE`='BearingHousing';
-
-UPDATE `part_type` SET
-    `magento_attribute_set`= 'Nozzle Ring',
-    `magento_category` = 'Nozzle Ring'
-WHERE `DTYPE`='NozzleRing';
-
-
--- Update part type discriminators, default part.dtype to 'Part'
-UPDATE `part`
-SET `part`.`dtype` = (
-  SELECT
-    COALESCE(`part_type`.`dtype`, 'Part')
-    FROM `part_type`
-    WHERE `id` = `part`.`part_type_id`
-);
-
--- Add part type triggers
-DELIMITER $$
-CREATE TRIGGER dtype_BI
-  BEFORE INSERT ON `part`
-  FOR EACH ROW
-    BEGIN
-      SET NEW.`dtype` = (SELECT COALESCE(`part_type`.`dtype`, 'Part') FROM `part_type` WHERE `id` = NEW.`part_type_id`);
-    END$$
-    
-CREATE TRIGGER dtype_BU
-  BEFORE UPDATE ON `part`
-  FOR EACH ROW
-    BEGIN
-      SET NEW.`dtype` = (SELECT COALESCE(`part_type`.`dtype`, 'Part') FROM `part_type` WHERE `id` = NEW.`part_type_id`);
-    END$$
-    
-DELIMITER ;
+-- Delete bad part-type data
+DELETE FROM `turbo` WHERE part_id NOT IN (SELECT id FROM part WHERE part_type_id = 1);
+DELETE FROM `cartridge` WHERE part_id NOT IN (SELECT id FROM part WHERE part_type_id = 2);
+DELETE FROM `kit` WHERE part_id NOT IN (SELECT id FROM part WHERE part_type_id = 3);
+DELETE FROM `piston_ring` WHERE part_id NOT IN (SELECT id FROM part WHERE part_type_id = 4);  -- 4837 of these in the import data
+DELETE FROM `journal_bearing` WHERE part_id NOT IN (SELECT id FROM part WHERE part_type_id = 5);
+DELETE FROM `gasket` WHERE part_id NOT IN (SELECT id FROM part WHERE part_type_id = 6);
+DELETE FROM `bearing_spacer` WHERE part_id NOT IN (SELECT id FROM part WHERE part_type_id = 7);
+DELETE FROM `compressor_wheel` WHERE part_id NOT IN (SELECT id FROM part WHERE part_type_id = 11);
+DELETE FROM `turbine_wheel` WHERE part_id NOT IN (SELECT id FROM part WHERE part_type_id = 12);
+DELETE FROM `bearing_housing` WHERE part_id NOT IN (SELECT id FROM part WHERE part_type_id = 13);
+DELETE FROM `backplate` WHERE part_id NOT IN (SELECT id FROM part WHERE part_type_id = 14);
+DELETE FROM `heatshield` WHERE part_id NOT IN (SELECT id FROM part WHERE part_type_id = 15);
+DELETE FROM `nozzle_ring` WHERE part_id NOT IN (SELECT id FROM part WHERE part_type_id = 16);
 
 -- Reset BOM items with quantity 999 to 1
 UPDATE `bom` SET quantity = 1 WHERE quantity = 999;

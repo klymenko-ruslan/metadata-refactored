@@ -76,7 +76,6 @@ import org.springframework.transaction.support.TransactionTemplate;
 @Entity
 @Table(name = "PART")
 @Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn
 public class Part implements Comparable<Part> {
     private static final Logger log = Logger.getLogger(Part.class.toString());
     

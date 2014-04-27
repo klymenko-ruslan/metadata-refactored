@@ -390,6 +390,7 @@ public class MagmiController {
     
     public static TreeMap<Long, MagmiProduct> findMagmiProducts(List<Part> parts) {
         long startTime = System.currentTimeMillis();
+        
         // Build a product map from the parts
         TreeMap<Long, MagmiProduct> productMap = new TreeMap<Long, MagmiProduct>();
         for (Part part : parts) {
@@ -397,6 +398,16 @@ public class MagmiController {
         }
         
         List<Long> productIds = new ArrayList<Long>(productMap.keySet());
+        
+        // Add the applications
+        List<MagmiApplication> applications = findMagmiApplications(productIds);
+        
+        for (MagmiApplication application : applications) {
+            productMap.get(application.sku)
+                      .addApplication(application);
+        }
+        
+        logger.log(Level.INFO, "Found {0} applications", applications.size());
         
         // Add the images
         List<ProductImage> images = findProductImages(productIds);
@@ -406,6 +417,8 @@ public class MagmiController {
                       .addImageId(image.getId());
         }
         
+        logger.log(Level.INFO, "Found {0} images.", images.size());
+        
         // Add the turbos
         List<MagmiTurbo> turbos = findMagmiTurbos(productIds);
         
@@ -413,6 +426,8 @@ public class MagmiController {
             productMap.get(magmiTurbo.sku)
                     .addTurbo(magmiTurbo);
         }
+        
+        logger.log(Level.INFO, "Found {0} turbos.", turbos.size());
         
         // Add the interchanges
         List<MagmiInterchange> interchanges = findMagmiInterchanges(productIds);
@@ -422,6 +437,8 @@ public class MagmiController {
                     .addInterchange(interchange);
         }
         
+        logger.log(Level.INFO, "Found {0} interchanges.", interchanges.size());
+        
         // Add the bom items
         List<MagmiBomItem> bom = findMagmiBom(productIds);
         
@@ -430,7 +447,9 @@ public class MagmiController {
                     .addBomItem(bomItem);
         }
         
-        // Add the service kitse
+        logger.log(Level.INFO, "Found {0} BOM items.", bom.size());
+        
+        // Add the service kits
         List<MagmiServiceKit> serviceKits = findMagmiServiceKits(productIds);
         
         for (MagmiServiceKit sk : serviceKits) {
@@ -440,8 +459,8 @@ public class MagmiController {
         
         logger.log(Level.INFO, "Found {0} service kits.", serviceKits.size());
         
-        logger.log(Level.INFO, "Got {0} basic, {1} interchange, {2} bom records for {3} parts in {4}ms; first/last id {5}/{6}",
-                new Object[] {turbos.size(), interchanges.size(), bom.size(), parts.size(), System.currentTimeMillis() - startTime, productIds.get(0), productIds.get(productIds.size() - 1)});
+        logger.log(Level.INFO, "Got {0} products in {1}ms",
+                new Object[] {productMap.size(), System.currentTimeMillis() - startTime});
         
         return productMap;
     }

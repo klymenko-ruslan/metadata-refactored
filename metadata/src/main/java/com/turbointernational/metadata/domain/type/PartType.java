@@ -42,9 +42,6 @@ public class PartType {
     @Column(name="magento_attribute_set")
     private String magentoAttributeSet;
     
-    @Column(name="magento_category")
-    private String magentoCategory;
-    
     // TODO: Is this a duplicate of parentTypes?
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="parent_part_type_id")
@@ -80,14 +77,6 @@ public class PartType {
     
     public void setMagentoAttributeSet(String magentoName) {
         this.magentoAttributeSet = magentoName;
-    }
-    
-    public String getMagentoCategory() {
-        return magentoCategory;
-    }
-    
-    public void setMagentoCategory(String magentoCategory) {
-        this.magentoCategory = magentoCategory;
     }
     
     public PartType getParent() {
