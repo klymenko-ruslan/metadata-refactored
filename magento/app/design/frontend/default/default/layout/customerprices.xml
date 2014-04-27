@@ -39,7 +39,7 @@
     <catalog_category_default>
         <reference name="product_list">
             <action method="setTemplate">
-                <template>customerprices/catalog-product-list.phtml</template>
+                <template>catalog/product/list.phtml</template>
             </action>
         </reference>
     </catalog_category_default>
@@ -47,7 +47,7 @@
     <catalog_category_layered>
         <reference name="product_list">
             <action method="setTemplate">
-                <template>customerprices/catalog-product-list.phtml</template>
+                <template>catalog/product/list.phtml</template>
             </action>
         </reference>
     </catalog_category_layered>
@@ -55,7 +55,7 @@
     <catalogsearch_result_index>
         <reference name="search_result_list">
             <action method="setTemplate">
-                <template>customerprices/catalog-product-list.phtml</template>
+                <template>catalog/product/list.phtml</template>
             </action>
         </reference>
     </catalogsearch_result_index>
