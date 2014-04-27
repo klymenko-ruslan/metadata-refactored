@@ -20,17 +20,17 @@ import org.springframework.beans.factory.annotation.Configurable;
 @PrimaryKeyJoinColumn(name = "part_id")
 public class JournalBearing extends Part {
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinTable(name="standard_journal_bearing",
-               joinColumns=@JoinColumn(name="oversized_part_id"),
-               inverseJoinColumns=@JoinColumn(name="standard_part_id"))
-    private JournalBearing standardSize;
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinTable(name="standard_journal_bearing",
-               joinColumns=@JoinColumn(name="standard_part_id"),
-               inverseJoinColumns=@JoinColumn(name="oversized_part_id"))
-    private JournalBearing oversize;
+//    @OneToOne(fetch = FetchType.LAZY)
+//    @JoinTable(name="standard_journal_bearing",
+//               joinColumns=@JoinColumn(name="oversized_part_id"),
+//               inverseJoinColumns=@JoinColumn(name="standard_part_id"))
+//    private JournalBearing standardSize;
+//
+//    @OneToOne(fetch = FetchType.LAZY)
+//    @JoinTable(name="standard_journal_bearing",
+//               joinColumns=@JoinColumn(name="standard_part_id"),
+//               inverseJoinColumns=@JoinColumn(name="oversized_part_id"))
+//    private JournalBearing oversize;
 
     @Column(name="outside_dim_min")
     private Float outsideDiameterMin;
@@ -44,21 +44,21 @@ public class JournalBearing extends Part {
     @Column(name="inside_dim_max")
     private Float insideDiameterMax;
 
-    public JournalBearing getStandardSize() {
-        return standardSize;
-    }
-
-    public void setStandardSize(JournalBearing standardSize) {
-        this.standardSize = standardSize;
-    }
-
-    public JournalBearing getOversize() {
-        return oversize;
-    }
-
-    public void setOversize(JournalBearing oversize) {
-        this.oversize = oversize;
-    }
+//    public JournalBearing getStandardSize() {
+//        return standardSize;
+//    }
+//
+//    public void setStandardSize(JournalBearing standardSize) {
+//        this.standardSize = standardSize;
+//    }
+//
+//    public JournalBearing getOversize() {
+//        return oversize;
+//    }
+//
+//    public void setOversize(JournalBearing oversize) {
+//        this.oversize = oversize;
+//    }
 
     public Float getOutsideDiameterMin() {
         return outsideDiameterMin;
@@ -116,13 +116,13 @@ public class JournalBearing extends Part {
         partObject.put("inside_diameter_min", getInsideDiameterMin());
         partObject.put("inside_diameter_max", getInsideDiameterMax());
         
-        if (getStandardSize() != null) {
-            partObject.put("standard_size_id", getStandardSize().getId());
-        }
+//        if (getStandardSize() != null) {
+//            partObject.put("standard_size_id", getStandardSize().getId());
+//        }
         
-        if (getOversize() != null) {
-            partObject.put("oversize_id", getOversize().getId());
-        }
+//        if (getOversize() != null) {
+//            partObject.put("oversize_id", getOversize().getId());
+//        }
         
         return partObject;
     }
@@ -136,12 +136,12 @@ public class JournalBearing extends Part {
         columns.put("inside_diameter_min", ObjectUtils.toString(getInsideDiameterMin()));
         columns.put("inside_diameter_max", ObjectUtils.toString(getInsideDiameterMax()));
 
-        if (getStandardSize() != null) {
-            columns.put("standard_size_id", ObjectUtils.toString(getStandardSize().getId()));
-        }
-
-        if (getOversize() != null) {
-            columns.put("oversize_id", ObjectUtils.toString(getOversize().getId()));
-        }
+//        if (getStandardSize() != null) {
+//            columns.put("standard_size_id", ObjectUtils.toString(getStandardSize().getId()));
+//        }
+//
+//        if (getOversize() != null) {
+//            columns.put("oversize_id", ObjectUtils.toString(getOversize().getId()));
+//        }
     }
 }

@@ -54,8 +54,6 @@ public class MagmiProduct {
     
     private final JSOG serviceKits = JSOG.array();
 
-    private int rowCount = 0;
-
     public MagmiProduct(Part part) {
         this.part = part;
     }
@@ -93,32 +91,33 @@ public class MagmiProduct {
         return getManufacturerId() == Manufacturer.TI_ID
             || StringUtils.isNotBlank(tiPartNumber);
     }
-
-    public final void addBasicProductCollections(MagmiBasicProduct basicProduct) {
-        rowCount++;
-
-        if (StringUtils.isNotEmpty(basicProduct.getTurboType())) {
-            turboType.add(basicProduct.getTurboType());
+    
+    public final void addApplication(MagmiApplication application) {
+        if (StringUtils.isNotEmpty(application.finder)) {
+            finderApplication.add(application.finder);
         }
 
-        if (StringUtils.isNotEmpty(basicProduct.getPartTurboType())) {
-            turboType.add(basicProduct.getPartTurboType());
+        if (StringUtils.isNotEmpty(application.detail)) {
+            applicationDetail.add(application.detail);
+        }
+    }
+
+    public final void addTurbo(MagmiTurbo magmiTurbo) {
+
+        if (StringUtils.isNotEmpty(magmiTurbo.turboType)) {
+            turboType.add(magmiTurbo.turboType);
         }
 
-        if (StringUtils.isNotEmpty(basicProduct.getTurboModel())) {
-            turboModel.add(basicProduct.getTurboModel());
+        if (StringUtils.isNotEmpty(magmiTurbo.partTurboType)) {
+            turboType.add(magmiTurbo.partTurboType);
         }
 
-        if (StringUtils.isNotEmpty(basicProduct.getFinderTurbo())) {
-            finderTurbo.add(basicProduct.getFinderTurbo());
+        if (StringUtils.isNotEmpty(magmiTurbo.turboModel)) {
+            turboModel.add(magmiTurbo.turboModel);
         }
 
-        if (StringUtils.isNotEmpty(basicProduct.getFinderApplication())) {
-            finderApplication.add(basicProduct.getFinderApplication());
-        }
-
-        if (StringUtils.isNotEmpty(basicProduct.getApplicationDetail())) {
-            applicationDetail.add(basicProduct.getApplicationDetail());
+        if (StringUtils.isNotEmpty(magmiTurbo.finder)) {
+            finderTurbo.add(magmiTurbo.finder);
         }
     }
     
@@ -176,64 +175,15 @@ public class MagmiProduct {
     
     public void addServiceKit(MagmiServiceKit sk) {
         JSOG jsog = JSOG.object()
-                        .put("sku", sk.getKitSku())
-                        .put("part_number", sk.getKitPartNumber())
-                        .put("type", sk.getType())
-                        .put("ti_part_sku", sk.getTiKitSku())
-                        .put("ti_part_number", sk.getTiKitPartNumber());
+                        .put("sku", sk.kitSku)
+                        .put("part_number", sk.kitPartNumber)
+                        .put("type", sk.type)
+                        .put("ti_part_sku", sk.tiKitSku)
+                        .put("ti_part_number", sk.tiKitPartNumber);
         
         serviceKits.add(jsog);
     }
 
-    private void addTurboCsvColumns() {
-        Turbo turbo = (Turbo) part;
-        
-        // Turbo type/model
-        turboModel.add(turbo.getTurboModel().getName());
-        turboType.add(turbo.getTurboModel().getTurboType().getName());
-        
-        // Turbo finder
-        finderTurbo.add(
-                turbo.getManufacturer().getName()
-                        + "!!" + turbo.getTurboModel().getName()
-                        + "!!" + turbo.getTurboModel().getTurboType().getName());
-        
-        // Application detail and application finder
-        for (CarModelEngineYear cmey : turbo.getCars()) {
-            
-            // Skip this application if make or model is null
-            if (cmey.getModel() == null || cmey.getModel().getMake() == null) {
-                continue;
-            }
-            
-            // Check for a year, default to 'not specified'
-            String year = "not specified";
-            if (cmey.getYear() != null) {
-                year = cmey.getYear().getName();
-            }
-            
-            // Check for an engine, default to an empty string
-            String engine = "";
-            String fuel = "";
-            
-            if (cmey.getEngine() != null) {
-                engine = cmey.getEngine().getEngineSize();
-                
-                if (cmey.getEngine().getFuelType() != null) {
-                    fuel = cmey.getEngine().getFuelType().getName();
-                }
-            }
-            
-            // Get the make and model
-            String make = cmey.getModel().getMake().getName();
-            String model = cmey.getModel().getName();
-            
-            // Add the values
-            finderApplication.add(make + "!!" + year + "!!" + model);
-            applicationDetail.add(make + "!!" + year + "!!" + model + "!!" + engine + "!!" + fuel);
-        }
-    }
-    
     private JSOG getBomItemBySku(Long sku) {
         
         // Find the item, if it exists
@@ -262,11 +212,6 @@ public class MagmiProduct {
         
         // Images
         csvImages(columns, imageResizer);
-        
-        // Turbo-specific columns
-        if (part instanceof Turbo) {
-            addTurboCsvColumns();
-        }
 
         // type
         columns.put("type", "simple");

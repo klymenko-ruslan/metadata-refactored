@@ -3,6 +3,7 @@ package com.turbointernational.metadata.web;
 import au.com.bytecode.opencsv.CSVWriter;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.Part;
+import com.turbointernational.metadata.domain.part.ProductImage;
 import com.turbointernational.metadata.domain.type.CoolType;
 import com.turbointernational.metadata.domain.type.GasketType;
 import com.turbointernational.metadata.domain.type.KitType;
@@ -10,7 +11,8 @@ import com.turbointernational.metadata.domain.type.ManufacturerType;
 import com.turbointernational.metadata.domain.type.PartType;
 import com.turbointernational.metadata.domain.type.SealType;
 import com.turbointernational.metadata.util.ImageResizer;
-import com.turbointernational.metadata.util.dto.MagmiBasicProduct;
+import com.turbointernational.metadata.util.dto.MagmiApplication;
+import com.turbointernational.metadata.util.dto.MagmiTurbo;
 import com.turbointernational.metadata.util.dto.MagmiBomItem;
 import com.turbointernational.metadata.util.dto.MagmiInterchange;
 import com.turbointernational.metadata.util.dto.MagmiProduct;
@@ -212,10 +214,6 @@ public class MagmiController {
                 GasketType.findAllGasketTypes();
                 KitType.findAllKitTypes();
                 SealType.findAllSealTypes();
-//                CarFuelType.findAll();
-//                CarYear.findAll();
-//                CarMake.findAll();
-//                CarModel.findAll();
 
                 // Get the next batch of part IDs
                 parts = Part.findPartEntries(position, magmiBatchSize);
@@ -400,13 +398,20 @@ public class MagmiController {
         
         List<Long> productIds = new ArrayList<Long>(productMap.keySet());
         
+        // Add the images
+        List<ProductImage> images = findProductImages(productIds);
         
-        // Aggregate basic product data
-        List<MagmiBasicProduct> basicProducts = findMagmiBasicProducts(productIds);
+        for (ProductImage image : images) {
+            productMap.get(image.getPart().getId())
+                      .addImageId(image.getId());
+        }
         
-        for (MagmiBasicProduct basicProduct : basicProducts) {
-            productMap.get(basicProduct.getSku())
-                    .addBasicProductCollections(basicProduct);
+        // Add the turbos
+        List<MagmiTurbo> turbos = findMagmiTurbos(productIds);
+        
+        for (MagmiTurbo magmiTurbo : turbos) {
+            productMap.get(magmiTurbo.sku)
+                    .addTurbo(magmiTurbo);
         }
         
         // Add the interchanges
@@ -425,44 +430,47 @@ public class MagmiController {
                     .addBomItem(bomItem);
         }
         
+        // Add the service kitse
         List<MagmiServiceKit> serviceKits = findMagmiServiceKits(productIds);
         
         for (MagmiServiceKit sk : serviceKits) {
-            productMap.get(sk.getSku())
+            productMap.get(sk.sku)
                     .addServiceKit(sk);
         }
         
         logger.log(Level.INFO, "Found {0} service kits.", serviceKits.size());
         
         logger.log(Level.INFO, "Got {0} basic, {1} interchange, {2} bom records for {3} parts in {4}ms; first/last id {5}/{6}",
-                new Object[] {basicProducts.size(), interchanges.size(), bom.size(), parts.size(), System.currentTimeMillis() - startTime, productIds.get(0), productIds.get(productIds.size() - 1)});
+                new Object[] {turbos.size(), interchanges.size(), bom.size(), parts.size(), System.currentTimeMillis() - startTime, productIds.get(0), productIds.get(productIds.size() - 1)});
         
         return productMap;
     }
     
-    public static List<MagmiBasicProduct> findMagmiBasicProducts(Collection<Long> productIds) {
+    public static List<ProductImage> findProductImages(Collection<Long> productIds) {
         return Part.entityManager().createQuery(
-              "SELECT DISTINCT new com.turbointernational.metadata.util.dto.MagmiBasicProduct("
+                  "SELECT DISTINCT pi\n"
+                + "FROM ProductImage pi\n"
+                + "WHERE\n"
+                + "  pi.part.id IN (" + StringUtils.join(productIds, ',') + ")\n"
+                + "ORDER BY pi.id", ProductImage.class)
+            .getResultList();
+    }
+    
+    public static List<MagmiApplication> findMagmiApplications(Collection<Long> productIds) {
+        return Part.entityManager().createQuery(
+              "SELECT DISTINCT new com.turbointernational.metadata.util.dto.MagmiApplication("
                 + "  p.id AS sku,\n"
-                + "  ptt.name AS part_turbo_type,\n"
-                + "  tt.name AS turbo_type,\n"
-                + "  tm.name AS turbo_model,\n"
-                + "  CONCAT(tman.name, '!!', tt.name, '!!', tm.name) AS finder_turbo,\n"
-                + "  CONCAT(cmake.name, '!!', COALESCE(cyear.name, 'not specified'), '!!', cmodel.name) AS finder_application,\n"
+                + "  CONCAT(cmake.name, '!!', COALESCE(cyear.name, 'not specified'), '!!', cmodel.name) AS finder,\n"
                 + "  CONCAT("
                 + "   cmake.name, '!!',"
                 + "   cmodel.name, '!!',"
                 + "   COALESCE(cyear.name, 'not specified'), '!!',"
                 + "   COALESCE(cengine.engineSize, ''), '!!',"
                 + "   COALESCE(cfuel.name, '')"
-                + "  ) AS application_detail\n"
+                + "  ) AS detail\n"
                 + ")\n"
                 + "FROM Part p\n"
                 + "  LEFT JOIN p.turbos t\n"
-                + "  LEFT JOIN t.manufacturer tman\n"
-                + "  LEFT JOIN t.turboModel tm\n"
-                + "  LEFT JOIN tm.turboType tt\n"
-                + "  LEFT JOIN p.turboTypes ptt\n"
                 + "  LEFT JOIN t.cars c\n"
                 + "  LEFT JOIN c.model cmodel\n"
                 + "  LEFT JOIN c.engine cengine\n"
@@ -471,7 +479,27 @@ public class MagmiController {
                 + "  LEFT JOIN cengine.fuelType cfuel\n"
                 + "WHERE\n"
                 + "  p.id IN (" + StringUtils.join(productIds, ',') + ")\n"
-                + "ORDER BY p.id", MagmiBasicProduct.class)
+                + "ORDER BY p.id", MagmiApplication.class)
+            .getResultList();
+    }
+    
+    public static List<MagmiTurbo> findMagmiTurbos(Collection<Long> productIds) {
+        return Part.entityManager().createQuery(
+              "SELECT DISTINCT new com.turbointernational.metadata.util.dto.MagmiTurbo("
+                + "  p.id AS sku,\n"
+                + "  ptt.name AS part_turbo_type,\n"
+                + "  tt.name AS turbo_type,\n"
+                + "  tm.name AS turbo_model,\n"
+                + "  CONCAT(tman.name, '!!', tt.name, '!!', tm.name) AS finder\n"
+                + ")\n"
+                + "FROM Part p\n"
+                + "  LEFT JOIN p.turbos t\n"
+                + "  LEFT JOIN t.manufacturer tman\n"
+                + "  LEFT JOIN t.turboModel tm\n"
+                + "  LEFT JOIN tm.turboType tt\n"
+                + "  LEFT JOIN p.turboTypes ptt\n"
+                + "WHERE\n"
+                + "  p.id IN (" + StringUtils.join(productIds, ',') + ")", MagmiTurbo.class)
             .getResultList();
     }
     

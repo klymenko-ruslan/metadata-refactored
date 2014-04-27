@@ -335,16 +335,6 @@ CREATE VIEW vbalt AS
     JOIN part p ON p.id = bai.part_id
     JOIN manfr m ON m.id = p.manfr_id;
 
-DROP VIEW IF EXISTS vpart_turbo;
-CREATE VIEW vpart_turbo AS
-  SELECT DISTINCT
-    ba.part_id,
-    ba.ancestor_part_id AS turbo_id
-  FROM
-    bom_ancestor ba
-    JOIN turbo t ON t.part_id = ba.ancestor_part_id;
-    
-
 DELIMITER $$
 DROP PROCEDURE IF EXISTS RebuildBomAncestry$$
 CREATE PROCEDURE RebuildBomAncestry()
@@ -727,6 +717,20 @@ CREATE TABLE `part_turbo` (
   FOREIGN KEY (`turbo_id`) REFERENCES `turbo` (`part_id`)
 ) ENGINE = INNODB;
 
+
+DROP VIEW IF EXISTS vpart_turbo;
+CREATE VIEW vpart_turbo AS (
+  SELECT DISTINCT
+    ba.part_id,
+    ba.ancestor_part_id AS turbo_id
+  FROM
+    bom_ancestor ba
+    JOIN turbo t ON t.part_id = ba.ancestor_part_id
+) UNION DISTINCT (
+  SELECT part_id, turbo_id FROM part_turbo
+);
+
+
 DROP VIEW IF EXISTS vapp;
 CREATE VIEW vapp AS
   SELECT DISTINCT
@@ -735,7 +739,7 @@ CREATE VIEW vapp AS
     cyear.name AS car_year,
     cmodel.name AS car_model
     FROM part p
-    JOIN part_turbo pt ON pt.part_id = p.id
+    JOIN vpart_turbo pt ON pt.part_id = p.id
     JOIN turbo_car_model_engine_year c ON c.part_id = pt.turbo_id
     LEFT JOIN car_model_engine_year cmey ON cmey.id = c.car_model_engine_year_id
     LEFT JOIN car_model cmodel ON cmodel.id = cmey.car_model_id
