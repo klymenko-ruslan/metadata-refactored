@@ -59,7 +59,7 @@ angular.module('ngMetaCrudApp')
           newScope.item = scope.item;
           newScope.part = scope.getPart(scope.item);
           newScope.partId = newScope.part.id;
-          newScope.partType = newScope.part.partType.typeName;
+          newScope.partType = newScope.part.partType.name;
 
           controller.transcludeActionsFn(newScope, function(clone) {
             element.append(clone);

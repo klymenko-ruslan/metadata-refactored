@@ -36,9 +36,6 @@ public class PartType {
     @Column(nullable=false)
     private String name;
     
-    @Column(name="DTYPE", nullable=false)
-    private String typeName;
-    
     @Column(name="magento_attribute_set")
     private String magentoAttributeSet;
     
@@ -61,14 +58,6 @@ public class PartType {
     
     public void setName(String name) {
         this.name = name;
-    }
-    
-    public String getTypeName() {
-        return typeName;
-    }
-    
-    public void setTypeName(String typeName) {
-        this.typeName = typeName;
     }
     
     public String getMagentoAttributeSet() {

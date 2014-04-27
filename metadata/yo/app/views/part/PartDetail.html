@@ -16,7 +16,7 @@
   </li>
 
   <li authorize="ROLE_READ">
-    <a ng-href="#/part/{{ part.partType.typeName }}/{{ partId }}/ancestors"
+    <a ng-href="#/part/{{ part.partType.name }}/{{ partId }}/ancestors"
        class="btn btn-info">
       <i class="fa fa-sitemap"></i>
       Ancestors &hellip;
@@ -24,7 +24,7 @@
   </li>
 
   <li authorize="ROLE_INTERCHANGE">
-    <a ng-href="#/part/{{ part.partType.typeName }}/{{ partId }}/interchange/search"
+    <a ng-href="#/part/{{ part.partType.name }}/{{ partId }}/interchange/search"
        class="btn btn-info">
       <i class="fa fa-random"></i>
       Interchanges &hellip;

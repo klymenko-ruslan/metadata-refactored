@@ -11,7 +11,7 @@ angular.module('ngMetaCrudApp')
         $scope.part = part;
 
         // Make sure we're using the correct part type
-        $scope.partType = part.partType.typeName;
+        $scope.partType = part.partType.name;
       },
       function (errorResponse) {
         $log.log("Could not get part details", errorResponse);

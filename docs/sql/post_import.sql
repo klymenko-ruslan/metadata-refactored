@@ -180,3 +180,6 @@ DELETE FROM `nozzle_ring` WHERE part_id NOT IN (SELECT id FROM part WHERE part_t
 
 -- Reset BOM items with quantity 999 to 1
 UPDATE `bom` SET quantity = 1 WHERE quantity = 999;
+
+-- Rebuild the BOM ancestry
+CALL rebuildBomAncestry();

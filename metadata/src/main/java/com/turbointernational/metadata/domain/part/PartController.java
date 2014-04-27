@@ -77,8 +77,7 @@ public class PartController {
             "manufacturer.name",
             "manufacturerPartNumber",
             "partType.id",
-            "partType.name",
-            "partType.typeName"
+            "partType.name"
         };
         
         return new ResponseEntity<String>(Part.toJsonArray(result, fields), headers, HttpStatus.OK);
@@ -172,7 +171,6 @@ public class PartController {
                 .include("ancestor.manufacturerPartNumber")
                 .include("ancestor.description")
                 .include("ancestor.partType.name")
-                .include("ancestor.partType.typeName")
                 .include("ancestor.manufacturer.name")
                 .exclude("*")
                 .serialize(ancestors);

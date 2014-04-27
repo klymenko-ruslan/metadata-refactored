@@ -17,6 +17,7 @@ import com.turbointernational.metadata.util.dto.MagmiBomItem;
 import com.turbointernational.metadata.util.dto.MagmiInterchange;
 import com.turbointernational.metadata.util.dto.MagmiProduct;
 import com.turbointernational.metadata.util.dto.MagmiServiceKit;
+import com.turbointernational.metadata.util.dto.MagmiUsages;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -53,129 +54,137 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class MagmiController {
     private static final Logger logger = Logger.getLogger(MagmiController.class.toString());
     
-    public static final String[] HEADERS = {
-        
-        //<editor-fold defaultstate="collapsed" desc="Basic">
-        "sku",
-        "part_type",
-        "attribute_set",
-        "type",
-        "visibility",
-        "status",
-        "name",
-        "description",
-        "manufacturer",
-        "part_number",
-        "part_number_short",
-        "categories",
-        "ti_part_number",    // First interchangeable TI part number
-        "ti_part_sku",       // Interchangeable parts by TI
-        "interchanges",      // Interchangeable parts
-        "bill_of_materials", // BOM
-        "price",
-        "qty",
-        "turbo_model",      // Turbo Models
-        "turbo_type",       // Turbo Types
-        
-        // Product images
-        "image",
-        "small_image",
-        "thumbnail",
-        "media_gallery",
-        //</editor-fold>
-        
-        //<editor-fold defaultstate="collapsed" desc="Types">
-        "kit_type",
-        "gasket_type",
-        "seal_type",
-        "cool_type",
-        //</editor-fold>
-        
-        //<editor-fold defaultstate="collapsed" desc="Part Type Specifics">
-         // Cartridge
-        "service_kits",
-        
-        // Other
-        "bearing_type",
-        "bore_oe",
-        "compressor_housing_diameter",
-        "compressor_wheel_diameter",
-        "design_features",
-        "exducer_oa",
-        "exducer_oc",
-        "hub_length_d",
-        "i_gap_max",
-        "i_gap_min",
-        "inducer_diameter",
-        "inducer_oa",
-        "inducer_oc",
-        "inside_diameter",
-        "inside_diameter_max",
-        "inside_diameter_min",
-        "journal_od",
-        "number_of_blades",
-        "oil",
-        "oil_inlet",
-        "oil_outlet",
-        "outlet_flange_holes",
-        "outside_diameter_max",
-        "outside_diameter_min",
-        "outside_dim_max",
-        "outside_dim_min",
-        "overall_diameter",
-        "overall_height",
-        "oversize_id",
-        "piston_ring_diameter",
-        "secondary_diameter",
-        "shaft_thread_f",
-        "standard_size_id",
-        "stem_oe",
-        "style_compressor_wheel",
-        "tip_height_b",
-        "water_ports",
-        "width_max",
-        "width_min",
-        //</editor-fold>
-        
-        //<editor-fold defaultstate="collapsed" desc="MAS90 Prices">
-        "customerprice",
-        
-        "group_price:ERP_PL_0",
-        "group_price:ERP_PL_1",
-        "group_price:ERP_PL_2",
-        "group_price:ERP_PL_3",
-        "group_price:ERP_PL_4",
-        "group_price:ERP_PL_5",
-        "group_price:ERP_PL_E",
-        "group_price:ERP_PL_R",
-        "group_price:ERP_PL_W",
-        
-        "tier_price:ERP_PL_0",
-        "tier_price:ERP_PL_1",
-        "tier_price:ERP_PL_2",
-        "tier_price:ERP_PL_3",
-        "tier_price:ERP_PL_4",
-        "tier_price:ERP_PL_5",
-        "tier_price:ERP_PL_E",
-        "tier_price:ERP_PL_R",
-        "tier_price:ERP_PL_W",
-        //</editor-fold>
-        
-        // Make,Year,Model
-        "finder:" + MagmiProduct.FINDER_ID_APPLICATION,
-        
-        // Manufacturer,TurboType,TurboModel
-        "finder:" + MagmiProduct.FINDER_ID_TURBO,
-        
-        // Make!!Model!!Year!!Displacement!!Fuel||...
-        "application_detail"
-    };
+    public String[] getCsvHeaders() {
+        return new String[] {
+
+            //<editor-fold defaultstate="collapsed" desc="Basic">
+            "sku",
+            "part_type",
+            "attribute_set",
+            "type",
+            "visibility",
+            "status",
+            "name",
+            "description",
+            "manufacturer",
+            "part_number",
+            "part_number_short",
+            "categories",
+            "ti_part_number",    // First interchangeable TI part number
+            "ti_part_sku",       // Interchangeable parts by TI
+            "interchanges",      // Interchangeable parts
+            "bill_of_materials", // BOM
+            "price",
+            "qty",
+            "turbo_model",      // Turbo Models
+            "turbo_type",       // Turbo Types
+
+            // Product images
+            "image",
+            "small_image",
+            "thumbnail",
+            "media_gallery",
+            //</editor-fold>
+
+            //<editor-fold defaultstate="collapsed" desc="Types">
+            "kit_type",
+            "gasket_type",
+            "seal_type",
+            "cool_type",
+            //</editor-fold>
+
+            //<editor-fold defaultstate="collapsed" desc="Part Type Specifics">
+             // Cartridge
+            "service_kits",
+
+            // Other
+            "bearing_type",
+            "bore_oe",
+            "compressor_housing_diameter",
+            "compressor_wheel_diameter",
+            "design_features",
+            "exducer_oa",
+            "exducer_oc",
+            "hub_length_d",
+            "i_gap_max",
+            "i_gap_min",
+            "inducer_diameter",
+            "inducer_oa",
+            "inducer_oc",
+            "inside_diameter",
+            "inside_diameter_max",
+            "inside_diameter_min",
+            "journal_od",
+            "number_of_blades",
+            "oil",
+            "oil_inlet",
+            "oil_outlet",
+            "outlet_flange_holes",
+            "outside_diameter_max",
+            "outside_diameter_min",
+            "outside_dim_max",
+            "outside_dim_min",
+            "overall_diameter",
+            "overall_height",
+            "oversize_id",
+            "piston_ring_diameter",
+            "secondary_diameter",
+            "shaft_thread_f",
+            "standard_size_id",
+            "stem_oe",
+            "style_compressor_wheel",
+            "tip_height_b",
+            "water_ports",
+            "width_max",
+            "width_min",
+            //</editor-fold>
+
+            //<editor-fold defaultstate="collapsed" desc="MAS90 Prices">
+            "customerprice",
+
+            "group_price:ERP_PL_0",
+            "group_price:ERP_PL_1",
+            "group_price:ERP_PL_2",
+            "group_price:ERP_PL_3",
+            "group_price:ERP_PL_4",
+            "group_price:ERP_PL_5",
+            "group_price:ERP_PL_E",
+            "group_price:ERP_PL_R",
+            "group_price:ERP_PL_W",
+
+            "tier_price:ERP_PL_0",
+            "tier_price:ERP_PL_1",
+            "tier_price:ERP_PL_2",
+            "tier_price:ERP_PL_3",
+            "tier_price:ERP_PL_4",
+            "tier_price:ERP_PL_5",
+            "tier_price:ERP_PL_E",
+            "tier_price:ERP_PL_R",
+            "tier_price:ERP_PL_W",
+            //</editor-fold>
+
+            // Make,Year,Model
+            "finder:" + finderIdApplication,
+
+            // Manufacturer,TurboType,TurboModel
+            "finder:" + finderIdTurbo,
+
+            // Make!!Model!!Year!!Displacement!!Fuel||...
+            "application_detail"
+        };
+    }
 
     @Value("${mas90.db.path}")
     String mas90DbPath;
 
     @Value("${magmi.batch.size}")
-    int magmiBatchSize = 10000;
+    int magmiBatchSize = 1000;
+
+    @Value("${magmi.finderId.application}")
+    String finderIdApplication = "1";
+    
+    @Value("${magmi.finderId.turbo}")
+    String finderIdTurbo = "2";
     
     @Autowired(required=true)
     ImageResizer imageResizer;
@@ -194,7 +203,7 @@ public class MagmiController {
         CSVWriter writer = new CSVWriter(new OutputStreamWriter(out), ',', '"');
         
         // Write the header row
-        writer.writeNext(HEADERS);
+        writer.writeNext(getCsvHeaders());
         
         // Get the product IDs to retrieve
         int position = 0;
@@ -250,7 +259,9 @@ public class MagmiController {
     }
     
     private String[] magmiProductToCsvRow(Mas90Prices mas90, MagmiProduct product) {
-        Map<String, String> columns = product.getCsvColumns(imageResizer);
+        Map<String, String> columns = product.getCsvColumns();
+        product.csvFinderColumns(columns, finderIdApplication, finderIdTurbo);
+        product.csvImageColumns(columns, imageResizer);
         
         // Only TI parts get this info
         if (product.hasTiPart()) {
@@ -267,10 +278,11 @@ public class MagmiController {
         }
 
         // Map the column into a value array for the CSV writer
-        String[] valueArray = new String[HEADERS.length];
-        for (int i = 0; i < HEADERS.length; i++) {
+        String[] csvHeaders = getCsvHeaders();
+        String[] valueArray = new String[csvHeaders.length];
+        for (int i = 0; i < csvHeaders.length; i++) {
             
-            String header = HEADERS[i];
+            String header = csvHeaders[i];
             
             valueArray[i] = StringUtils.defaultIfEmpty(columns.get(header), "");
         }
@@ -437,7 +449,15 @@ public class MagmiController {
                     .addInterchange(interchange);
         }
         
-        logger.log(Level.INFO, "Found {0} interchanges.", interchanges.size());
+        // Add where used
+        List<MagmiUsages> usages = findMagmiUsages(productIds);
+        
+        for (MagmiUsages usage : usages) {
+            productMap.get(usage.principalId)
+                    .addUsage(usage);
+        }
+        
+        logger.log(Level.INFO, "Found {0} WhereUseds.", usages.size());
         
         // Add the bom items
         List<MagmiBomItem> bom = findMagmiBom(productIds);
@@ -559,6 +579,25 @@ public class MagmiController {
               + "  ip.id != p.id\n"
               + "  AND p.id IN (" + StringUtils.join(productIds, ',') + ")", MagmiInterchange.class)
                 .getResultList();
+    }
+    
+    private static List<MagmiUsages> findMagmiUsages(Collection<Long> productIds) {
+        return Part.entityManager()
+            .createNativeQuery(
+                "SELECT DISTINCT\n"
+              + "  principal_id,\n"
+              + "  sku,\n"
+              + "  manufacturer,\n"
+              + "  part_number,\n"
+              + "  ti_sku,\n"
+              + "  ti_part_number,\n"
+              + "  part_type,\n"
+              + "  turbo_type,\n"
+              + "  turbo_part_number\n"
+              + "FROM vwhere_used\n"
+              + "WHERE p.id IN (" + StringUtils.join(productIds, ',') + ")",
+            MagmiUsages.class)
+            .getResultList();
     }
 
     private static List<MagmiBomItem> findMagmiBom(Collection<Long> productIds) {

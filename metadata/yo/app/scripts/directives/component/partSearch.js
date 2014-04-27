@@ -78,7 +78,7 @@ angular.module('ngMetaCrudApp')
         require: '^partSearch',
         link: function postLink(scope, element, attrs, controller) {
           scope.partId = scope.part._id;
-          scope.partType = scope.part._source.partType.typeName;
+          scope.partType = scope.part._source.partType.name;
           controller.transcludeActionsFn(scope, function(clone) {
             element.append(clone);
           });

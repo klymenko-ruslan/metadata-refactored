@@ -85,7 +85,7 @@ public class Part implements Comparable<Part> {
         public Object instantiate(ObjectBinder context, Object value, Type targetType, Class targetClass) {
             Map<String, Object> valueHash = (Map) value;
             Map<String, Object> partTypeHash = (Map) valueHash.get("partType");
-            String partType = (String) partTypeHash.get("typeName");
+            String partType = (String) partTypeHash.get("name");
             
             // Create the appropriate part type
             Part part = null;
@@ -322,7 +322,6 @@ public class Part implements Comparable<Part> {
                 .include("turboTypes.name")
                 .include("partType.id")
                 .include("partType.name")
-                .include("partType.typeName")
                 .include("manufacturer.id")
                 .include("manufacturer.name")
                 .include("interchange.id")
@@ -332,7 +331,6 @@ public class Part implements Comparable<Part> {
                 .include("interchange.parts.version")
                 .include("interchange.parts.partType.id")
                 .include("interchange.parts.partType.name")
-                .include("interchange.parts.partType.typeName")
                 .include("interchange.parts.manufacturerPartNumber")
                 .include("interchange.parts.manufacturer.id")
                 .include("interchange.parts.manufacturer.name")
@@ -341,7 +339,6 @@ public class Part implements Comparable<Part> {
                 .include("bomParentParts.name")
                 .include("bomParentParts.partType.id")
                 .include("bomParentParts.partType.name")
-                .include("bomParentParts.partType.typeName")
                 .include("bomParentParts.manufacturerPartNumber")
                 .include("bomParentParts.manufacturer.id")
                 .include("bomParentParts.manufacturer.name")
@@ -353,7 +350,6 @@ public class Part implements Comparable<Part> {
                 .include("bom.child.name")
                 .include("bom.child.partType.id")
                 .include("bom.child.partType.name")
-                .include("bom.child.partType.typeName")
                 .include("bom.child.manufacturer.id")
                 .include("bom.child.manufacturer.name")
                 .include("bom.child.manufacturerPartNumber")
@@ -365,7 +361,6 @@ public class Part implements Comparable<Part> {
                 .include("bom.alternatives.part.version")
                 .include("bom.alternatives.part.partType.id")
                 .include("bom.alternatives.part.partType.name")
-                .include("bom.alternatives.part.partType.typeName")
                 .include("bom.alternatives.part.manufacturerPartNumber")
                 .include("bom.alternatives.part.manufacturer.id")
                 .include("bom.alternatives.part.manufacturer.name")
@@ -384,7 +379,7 @@ public class Part implements Comparable<Part> {
                 .put("manufacturer_name", manufacturer.getName())
                 .put("manufacturer_type_name", manufacturer.getType().getName())
                 .put("manufacturer_part_number", manufacturerPartNumber)
-                .put("part_type", partType.getTypeName())
+                .put("part_type", partType.getName())
                 .put("attribute_set_id", partType.getMagentoAttributeSet());
         
         
@@ -409,7 +404,6 @@ public class Part implements Comparable<Part> {
                 .include("description")
                 .include("partType.id")
                 .include("partType.name")
-                .include("partType.typeName")
                 .exclude("partType.*")
                 .include("manufacturer.id")
                 .include("manufacturer.name")

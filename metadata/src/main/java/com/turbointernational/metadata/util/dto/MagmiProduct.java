@@ -1,10 +1,8 @@
 package com.turbointernational.metadata.util.dto;
 
-import com.turbointernational.metadata.domain.car.CarModelEngineYear;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.part.ProductImage;
-import com.turbointernational.metadata.domain.part.types.Turbo;
 import com.turbointernational.metadata.util.ImageResizer;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -53,6 +51,8 @@ public class MagmiProduct {
     private final JSOG bom = JSOG.array();
     
     private final JSOG serviceKits = JSOG.array();
+    
+    private final JSOG usages = JSOG.object();
 
     public MagmiProduct(Part part) {
         this.part = part;
@@ -183,6 +183,23 @@ public class MagmiProduct {
         
         serviceKits.add(jsog);
     }
+    
+    public void addUsage(MagmiUsages usage) {
+        
+        // Look for a previous usage we need to add to
+        JSOG jsogUsage = usages.get(usage.sku.toString());
+        if (jsogUsage.isNull()) {
+            jsogUsage.put("sku", usage.sku);
+            jsogUsage.put("manufacturer", usage.manufacturer);
+            jsogUsage.put("partNumber", usage.partNumber);
+            jsogUsage.put("tiSku", usage.tiSku);
+            jsogUsage.put("tiPartNumber", usage.tiPartNumber);
+            jsogUsage.put("partType", usage.partType);
+            jsogUsage.put("turboType", usage.turboType);
+        }
+        
+        jsogUsage.get("turboPartNumbers").add(usage.turboPartNumber);
+    }
 
     private JSOG getBomItemBySku(Long sku) {
         
@@ -202,16 +219,13 @@ public class MagmiProduct {
         return bomItem;
     }
 
-    public final Map<String, String> getCsvColumns(ImageResizer imageResizer) {
+    public final Map<String, String> getCsvColumns() {
 
         // CSV column map
         Map<String, String> columns = new HashMap<String, String>();
         
         // Part data
         part.csvColumns(columns);
-        
-        // Images
-        csvImages(columns, imageResizer);
 
         // type
         columns.put("type", "simple");
@@ -231,10 +245,6 @@ public class MagmiProduct {
         
         columns.put("turbo_model", StringUtils.join(turboModel, ','));
         columns.put("turbo_type", StringUtils.join(turboType, ','));
-
-        columns.put("finder:" + FINDER_ID_TURBO, StringUtils.join(finderTurbo, "||"));
-
-        columns.put("finder:" + FINDER_ID_APPLICATION, StringUtils.join(finderApplication, "||"));
         
         columns.put("applicationDetail", StringUtils.join(applicationDetail, "||"));
 
@@ -242,10 +252,19 @@ public class MagmiProduct {
         
         columns.put("service_kits", serviceKits.toString());
         
+        columns.put("where_used", usages.toString());
+        
         return columns;
     }
+    
+    public final void csvFinderColumns(Map<String, String> columns, String applicationId, String turboId) {
 
-    private void csvImages(Map<String, String> columns, ImageResizer resizer) {
+        columns.put("finder:" + applicationId, StringUtils.join(finderApplication, "||"));
+
+        columns.put("finder:" + turboId, StringUtils.join(finderTurbo, "||"));
+    }
+
+    public void csvImageColumns(Map<String, String> columns, ImageResizer resizer) {
         
         // Stop now if there aren't any images
         if (imageIds.isEmpty()) {
@@ -278,4 +297,5 @@ public class MagmiProduct {
         // Add the column
         columns.put("media_gallery", galleryString.toString());
     }
+
 }

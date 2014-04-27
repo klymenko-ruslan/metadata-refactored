@@ -2,7 +2,7 @@
 
   <metanav>
     <li authorize="ROLE_READ">
-      <a ng-href="#/part/{{ part.partType.typeName }}/{{ partId }}"
+      <a ng-href="#/part/{{ part.partType.name }}/{{ partId }}"
          class="btn btn-primary" data-ng-hide="oldPart == null">
         <i class="fa fa-eye"></i>
         View Part
@@ -59,7 +59,7 @@
       <input class="form-control" type="text" ng-model="part.manufacturerPartNumber"/>
 
       <!-- Type-specific fields -->
-      <div ng-switch="part.partType.typeName">
+      <div ng-switch="part.partType.name">
 
         <!-- Backplate -->
         <div ng-switch-when="Backplate">

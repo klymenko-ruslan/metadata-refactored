@@ -673,7 +673,7 @@ CREATE VIEW vint_ti AS
   WHERE ip.manfr_id = 11;
 
 
--- See #270
+-- See #270 magento: add "where used" table to part detail pages
 DROP VIEW IF EXISTS `vwhere_used`;
 CREATE VIEW `vwhere_used` AS
     SELECT DISTINCT
@@ -689,13 +689,13 @@ CREATE VIEW `vwhere_used` AS
         aptiip.manfr_part_num  AS ti_part_number,
 
         -- Ancestor part type, used by turbo principals
-        aptype.`name`             AS partType,
+        aptype.`name`             AS part_type,
 
         -- Ancestor turbo's type, used by cartridge principals
         apt2t.`name`           AS turbo_type,
 
         -- Ancestor cartridge's turbo mfr p/n, used by all other principals
-        apcatp.manfr_part_num  AS turboPartNumber
+        apcatp.manfr_part_num  AS turbo_part_number
     FROM
         -- The principal
         bom_ancestor ba
