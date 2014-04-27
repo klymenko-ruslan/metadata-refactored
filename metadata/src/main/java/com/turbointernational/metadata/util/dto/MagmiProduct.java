@@ -240,6 +240,8 @@ public class MagmiProduct {
 
         columns.put("bill_of_materials", bom.toString());
         
+        columns.put("service_kits", serviceKits.toString());
+        
         return columns;
     }
 
