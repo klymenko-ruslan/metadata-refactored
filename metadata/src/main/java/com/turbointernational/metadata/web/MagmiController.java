@@ -1,13 +1,8 @@
 package com.turbointernational.metadata.web;
 
 import au.com.bytecode.opencsv.CSVWriter;
-import com.turbointernational.metadata.domain.car.CarFuelType;
-import com.turbointernational.metadata.domain.car.CarMake;
-import com.turbointernational.metadata.domain.car.CarModel;
-import com.turbointernational.metadata.domain.car.CarYear;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.Part;
-import com.turbointernational.metadata.domain.part.ProductImage;
 import com.turbointernational.metadata.domain.type.CoolType;
 import com.turbointernational.metadata.domain.type.GasketType;
 import com.turbointernational.metadata.domain.type.KitType;
@@ -19,6 +14,7 @@ import com.turbointernational.metadata.util.dto.MagmiBasicProduct;
 import com.turbointernational.metadata.util.dto.MagmiBomItem;
 import com.turbointernational.metadata.util.dto.MagmiInterchange;
 import com.turbointernational.metadata.util.dto.MagmiProduct;
+import com.turbointernational.metadata.util.dto.MagmiServiceKit;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -429,6 +425,15 @@ public class MagmiController {
                     .addBomItem(bomItem);
         }
         
+        List<MagmiServiceKit> serviceKits = findMagmiServiceKits(productIds);
+        
+        for (MagmiServiceKit sk : serviceKits) {
+            productMap.get(sk.getSku())
+                    .addServiceKit(sk);
+        }
+        
+        logger.log(Level.INFO, "Found {0} service kits.", serviceKits.size());
+        
         logger.log(Level.INFO, "Got {0} basic, {1} interchange, {2} bom records for {3} parts in {4}ms; first/last id {5}/{6}",
                 new Object[] {basicProducts.size(), interchanges.size(), bom.size(), parts.size(), System.currentTimeMillis() - startTime, productIds.get(0), productIds.get(productIds.size() - 1)});
         
@@ -467,6 +472,26 @@ public class MagmiController {
                 + "WHERE\n"
                 + "  p.id IN (" + StringUtils.join(productIds, ',') + ")\n"
                 + "ORDER BY p.id", MagmiBasicProduct.class)
+            .getResultList();
+    }
+    
+    public static List<MagmiServiceKit> findMagmiServiceKits(Collection<Long> productIds) {
+        return Part.entityManager().createQuery(
+              "SELECT DISTINCT new com.turbointernational.metadata.util.dto.MagmiServiceKit("
+                + "  p.id AS sku,\n"
+                + "  k.id AS kitSku,\n"
+                + "  k.manufacturerPartNumber as kitPartNumber,\n"
+                + "  kt.name as type,\n"
+                + "  tp.id AS tiKitSku,\n"
+                + "  tp.manufacturerPartNumber as tiKitPartNumber\n"
+                + ")\n"
+                + "FROM Part p\n"
+                + "  JOIN p.serviceKits k\n"
+                + "  JOIN k.kitType kt\n"
+                + "  LEFT JOIN k.tiParts tp\n"
+                + "WHERE\n"
+                + "  p.id IN (" + StringUtils.join(productIds, ',') + ")\n"
+                + "ORDER BY p.id", MagmiServiceKit.class)
             .getResultList();
     }
     

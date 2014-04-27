@@ -527,14 +527,10 @@ public class Part implements Comparable<Part> {
         return entityManager()
                 .createQuery(
                   "SELECT p\n"
-                + "FROM Part p\n"
-//                + "  LEFT JOIN p.cars\n"
-//                + "  LEFT JOIN p.productImages\n"
-                + "  LEFT JOIN FETCH p.tiParts\n"
-                + "  LEFT JOIN FETCH p.serviceKits sk\n"
-                + "  LEFT JOIN FETCH sk.tiParts", Part.class)
+                + "FROM Part p", Part.class)
                 .setFirstResult(firstResult)
-                .setMaxResults(maxResults).getResultList();
+                .setMaxResults(maxResults)
+                .getResultList();
     }
     
     public static List<BOMAncestor> listBOMAncestors(long partId) {

@@ -51,6 +51,8 @@ public class MagmiProduct {
     private String tiPartNumber = "";
     
     private final JSOG bom = JSOG.array();
+    
+    private final JSOG serviceKits = JSOG.array();
 
     private int rowCount = 0;
 
@@ -68,6 +70,28 @@ public class MagmiProduct {
 
     public String getPartNumber() {
         return part.getManufacturerPartNumber();
+    }
+
+    private String getCategoriesString() {
+        
+        // categories
+        StringBuilder categories = new StringBuilder()
+            .append("Manufacturer/")
+            .append(part.getManufacturer().getName())
+            .append(";;Part Type/");
+        
+        if (part.getPartType().getParent() != null) {
+            categories.append(part.getPartType().getParent().getName()).append("/");
+        }
+        
+        categories.append(part.getPartType().getName());
+        
+        return categories.toString();
+    }
+    
+    public boolean hasTiPart() {
+        return getManufacturerId() == Manufacturer.TI_ID
+            || StringUtils.isNotBlank(tiPartNumber);
     }
 
     public final void addBasicProductCollections(MagmiBasicProduct basicProduct) {
@@ -149,6 +173,17 @@ public class MagmiProduct {
             }
         }
     }
+    
+    public void addServiceKit(MagmiServiceKit sk) {
+        JSOG jsog = JSOG.object()
+                        .put("sku", sk.getKitSku())
+                        .put("part_number", sk.getKitPartNumber())
+                        .put("type", sk.getType())
+                        .put("ti_part_sku", sk.getTiKitSku())
+                        .put("ti_part_number", sk.getTiKitPartNumber());
+        
+        serviceKits.add(jsog);
+    }
 
     private void addTurboCsvColumns() {
         Turbo turbo = (Turbo) part;
@@ -229,7 +264,7 @@ public class MagmiProduct {
         csvImages(columns, imageResizer);
         
         // Turbo-specific columns
-        if (StringUtils.equals("Turbo", part.getPartType().getTypeName())) {
+        if (part instanceof Turbo) {
             addTurboCsvColumns();
         }
 
@@ -242,19 +277,7 @@ public class MagmiProduct {
         // type
         columns.put("status", "Enabled"); // See magmi genericmapper status.csv
 
-        // categories
-        StringBuilder categories = new StringBuilder()
-                .append("Manufacturer/")
-                .append(part.getManufacturer().getName())
-                .append(";;Part Type/");
-        
-        if (part.getPartType().getParent() != null) {
-            categories.append(part.getPartType().getParent().getName()).append("/");
-        }
-        
-        categories.append(part.getPartType().getName());
-
-        columns.put("categories", categories.toString());
+        columns.put("categories", getCategoriesString());
         
         // Interchanges / TI Interchanges
         columns.put("interchanges", StringUtils.join(interchanges, ','));
@@ -307,10 +330,5 @@ public class MagmiProduct {
 
         // Add the column
         columns.put("media_gallery", galleryString.toString());
-    }
-    
-    public boolean hasTiPart() {
-        return getManufacturerId() == Manufacturer.TI_ID
-            || StringUtils.isNotBlank(tiPartNumber);
     }
 }

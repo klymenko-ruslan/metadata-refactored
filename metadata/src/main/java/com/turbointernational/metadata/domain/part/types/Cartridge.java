@@ -1,7 +1,5 @@
 package com.turbointernational.metadata.domain.part.types;
 import com.turbointernational.metadata.domain.part.Part;
-import flexjson.JSONSerializer;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import javax.persistence.Entity;
@@ -27,20 +25,5 @@ public class Cartridge extends Part {
         joinColumns = @JoinColumn(name="part_id"),
         inverseJoinColumns = @JoinColumn(name="kit_id"))
     private final Set<Kit> serviceKits = new TreeSet();
-
-    @Override
-    public void csvColumns(Map<String, String> columns) {
-        super.csvColumns(columns);
-        
-        // Service kits
-        String kits = new JSONSerializer()
-            .include("id")
-            .include("kitType.name")
-            .include("manufacturerPartNumber")
-            .exclude("*")
-            .serialize(serviceKits);
-        
-        columns.put("service_kits", kits);
-    }
 
 }

@@ -126,19 +126,5 @@ public class Turbo extends Part {
         if (getCoolType() != null) {
             columns.put("cool_type", ObjectUtils.toString(getCoolType().getName()));
         }
-        
-        // Service kits
-        String kits = new JSONSerializer()
-            .include("id")
-            .include("kitType.name")
-            .include("manufacturerPartNumber")
-            .include("manufacturer.name")
-            .include("tiParts.id")
-            .include("tiParts.manufacturerPartNumber")
-            .include("tiParts.")
-            .exclude("*")
-            .serialize(serviceKits);
-        
-        columns.put("service_kits", kits);
     }
 }
