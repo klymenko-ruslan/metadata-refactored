@@ -178,13 +178,13 @@ public class MagmiController {
     String mas90DbPath;
 
     @Value("${magmi.batch.size}")
-    int magmiBatchSize = 1000;
+    Integer magmiBatchSize;
 
     @Value("${magmi.finderId.application}")
-    String finderIdApplication = "1";
+    String finderIdApplication;
     
     @Value("${magmi.finderId.turbo}")
-    String finderIdTurbo = "2";
+    String finderIdTurbo;
     
     @Autowired(required=true)
     ImageResizer imageResizer;
