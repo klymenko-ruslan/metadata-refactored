@@ -172,19 +172,9 @@ CREATE TABLE `turbo_model` (
   PRIMARY KEY(`id`)
 ) ENGINE = INNODB;
 
-DROP VIEW IF EXISTS vparts;
-CREATE VIEW vparts AS
-  SELECT
-    p.id AS part_id,
-    p.dtype AS part_type,
-    p.manfr_part_num AS part_number,
-    m.name AS manufacturer
-  FROM part p
-    JOIN manfr m ON m.id = p.manfr_id;
-
 
 --
--- Interchanges
+-- Interchanges (has triggers)
 --
 CREATE TABLE `interchange_header` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
@@ -211,49 +201,9 @@ CREATE TABLE `i_interchange_log` (
   PRIMARY KEY(`id`)
 ) ENGINE = INNODB;
 
-DROP VIEW IF EXISTS vint;
-CREATE VIEW vint AS
-  SELECT DISTINCT
-    ii1.interchange_header_id AS interchange_header_id,
-
-    p.id AS part_id,
-    p.dtype AS part_type,
-    p.manfr_part_num AS part_number,
-    pm.name AS manufacturer,
-
-    ip.id AS i_part_id,
-    ip.dtype AS i_part_type,
-    ip.manfr_part_num AS i_part_number,
-    ipm.name AS i_manufacturer
-  FROM part p
-    JOIN manfr pm ON pm.id = p.manfr_id
-
-    JOIN interchange_item ii1 ON ii1.part_id = p.id
-    LEFT JOIN interchange_item ii2 ON ii2.interchange_header_id = ii1.interchange_header_id
-
-    LEFT JOIN part ip ON ip.id = ii2.part_id
-    LEFT JOIN manfr ipm ON ipm.id = ip.manfr_id
-  WHERE p.id != ii2.part_id;
-
-DROP VIEW IF EXISTS vint_ti;
-CREATE VIEW vint_ti AS
-  SELECT DISTINCT
-    ii1.interchange_header_id AS interchange_header_id,
-
-    p.id AS part_id,
-    ip.id AS ti_part_id
-  FROM
-    part p
-    JOIN interchange_item ii1 ON ii1.part_id = p.id
-    LEFT JOIN interchange_item ii2 ON ii2.interchange_header_id = ii1.interchange_header_id
-
-    LEFT JOIN part ip ON ip.id = ii2.part_id
-    LEFT JOIN manfr ipm ON ipm.id = ip.manfr_id
-  WHERE ip.manfr_id = 11;
-
 
 --
--- Bill of Materials
+-- Bill of Materials (has triggers)
 --
 CREATE TABLE `bom` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
@@ -293,121 +243,6 @@ CREATE TABLE `bom_ancestor` (
   UNIQUE INDEX(`part_id`, `ancestor_part_id`),
   INDEX(part_id, `type`, distance, ancestor_part_id)
 ) ENGINE = INNODB;
-
-DROP VIEW IF EXISTS vbom;
-CREATE VIEW vbom AS
-  SELECT
-    b.id AS bom_id,
-
-    pp.id AS p_part_id,
-    pp.dtype AS p_part_type,
-    pp.manfr_part_num AS p_part_number,
-    ppm.name AS p_manufacturer,
-
-    cp.id AS c_part_id,
-    cp.dtype AS c_part_type,
-    cp.manfr_part_num AS c_part_number,
-    cpm.name AS c_manufacturer
-  FROM bom b
-    JOIN part pp ON pp.id = b.parent_part_id
-    JOIN manfr ppm ON ppm.id = pp.manfr_id
-
-    JOIN part cp ON cp.id = b.child_part_id
-    JOIN manfr cpm ON cpm.id = cp.manfr_id;
-
-    
-DROP VIEW IF EXISTS vbalt;
-CREATE VIEW vbalt AS
-  SELECT
-    bai.bom_id,
-    bai.part_id,
-    bai.bom_alt_header_id,
-    bah.name AS alt_header_name,
-    bah.description AS alt_header_desc,
-    bai.part_id AS alt_part_id,
-    p.dtype AS alt_part_type,
-    p.manfr_part_num AS alt_part_number,
-    m.name AS alt_manufacturer
-  FROM
-    bom_alt_item bai
-    JOIN bom b ON b.id = bai.bom_id
-    JOIN bom_alt_header bah ON bah.id = bai.bom_alt_header_id
-    JOIN part p ON p.id = bai.part_id
-    JOIN manfr m ON m.id = p.manfr_id;
-
-DELIMITER $$
-DROP PROCEDURE IF EXISTS RebuildBomAncestry$$
-CREATE PROCEDURE RebuildBomAncestry()
-  BEGIN
-
-    START TRANSACTION;
-
-    -- Empty the table
-    TRUNCATE bom_ancestor;
-
-    -- Create self-references
-    INSERT IGNORE INTO bom_ancestor (
-      `part_id`,
-      `ancestor_part_id`,
-      `distance`,
-      `type`
-    )
-    SELECT DISTINCT
-      id     AS part_id,
-      id     AS ancestor_part_id,
-      0      AS distance,
-      'Self' AS `type`
-    FROM
-      part;
-
-    REPEAT
-        SET @distance = (SELECT MAX(distance) FROM bom_ancestor);
-
-        -- Add interchange parents (metaphor: interchanges are my half-siblings, add all my half-parents)
-        INSERT IGNORE INTO bom_ancestor (
-          `part_id`,
-          `ancestor_part_id`,
-          `distance`,
-          `type`
-        )
-        SELECT DISTINCT
-          ba.part_id          AS part_id,          -- Me
-          bom.parent_part_id  AS ancestor_part_id, -- My half-parent
-          @distance + 1       AS distance,
-          IF (@distance = 0, 'InterchangeDirect', 'InterchangeIndirect') AS `type`
-        FROM
-          bom_ancestor ba
-          JOIN interchange_item ii ON ii.part_id = ba.ancestor_part_id
-          JOIN interchange_item ii2 ON
-            ii2.interchange_header_id = ii.interchange_header_id
-            AND ii2.part_id <> ii.part_id
-          JOIN bom ON bom.child_part_id = ii2.part_id
-        WHERE ba.distance = @distance;
-
-        -- Add the next level of parents
-        INSERT IGNORE INTO bom_ancestor (
-          `part_id`,
-          `ancestor_part_id`,
-          `distance`,
-          `type`
-        )
-        SELECT DISTINCT
-          ba.part_id           AS part_id,
-          bom.parent_part_id   AS ancestor_part_id,
-          @distance + 1      AS distance,
-          IF (@distance = 0, 'Direct', IF(ba.`type` LIKE 'Interchange%', 'InterchangeIndirect', 'Indirect')) AS `type`
-        FROM
-          bom_ancestor ba
-          JOIN bom ON bom.child_part_id = ba.ancestor_part_id
-        WHERE ba.distance = @distance;
-
-    UNTIL ROW_COUNT() = 0
-    END REPEAT;
-
-    COMMIT;
-    
-  END$$
-DELIMITER ;
 
 
 --
@@ -567,119 +402,6 @@ CREATE TABLE `kit_part_common_component` (
   UNIQUE INDEX (`kit_id`, `part_id`)
 ) ENGINE = INNODB;
 
-CREATE VIEW `vkp` AS SELECT DISTINCT
-    kii.part_id  AS kit_id,
-    pii.part_id AS part_id,
-    kc.exclude
-FROM
-    -- All the kit's interchanges
-    kit_part_common_component kc
-    JOIN interchange_item ki ON ki.part_id = kc.kit_id
-    JOIN interchange_item kii ON kii.interchange_header_id = ki.interchange_header_id
-
-    -- All the target part's interchanges
-    JOIN interchange_item pi ON pi.part_id = kc.part_id
-    JOIN interchange_item pii ON pii.interchange_header_id = pi.interchange_header_id;
-
-CREATE VIEW `vpart_turbotype_kits` AS (
-    SELECT
-        kc.part_id AS part_id,
-        kc.kit_id
-    FROM
-        kit_part_common_component kc
-    WHERE kc.exclude = 0
-) UNION DISTINCT (
-    SELECT
-        p.id AS part_id,
-        k.part_id AS kit_id
-    FROM
-
-        -- Part-Kit by common turbo type
-        part p
-        JOIN part_turbo_type ptt ON ptt.part_id = p.id
-        JOIN part_turbo_type ptt2 ON ptt2.turbo_type_id = ptt.turbo_type_id
-        JOIN kit k ON
-            k.part_id = ptt2.part_id AND p.id != k.part_id
-
-        -- Join exclusion table
-        LEFT JOIN kit_part_common_component kc ON
-            kc.kit_id = k.part_id AND kc.part_id = p.id
-    -- Exclusion
-    WHERE
-        kc.exclude IS NULL
-        OR kc.exclude = 1
-) UNION DISTINCT ( -- Turbo Type from Turbos
-    SELECT
-        t.part_id AS part_id,
-        k.part_id AS kit_id
-    FROM
-
-        -- Turbo-Kit by common turbo type
-        turbo t
-        JOIN turbo_model tm ON tm.id = t.turbo_model_id
-        JOIN part_turbo_type ptt ON
-            ptt.turbo_type_id = tm.turbo_type_id AND ptt.part_id != t.part_id
-        JOIN kit k ON
-            k.part_id = ptt.part_id AND t.part_id != k.part_id
-
-        -- Join exclusion table
-        LEFT JOIN kit_part_common_component kc ON
-            kc.kit_id = k.part_id AND kc.part_id = t.part_id
-    -- Exclusion
-    WHERE
-        kc.exclude IS NULL
-        OR kc.exclude = 1
-);
-
--- Verify no interchangable parts have a contradictory setting
-DELIMITER $$
-DROP PROCEDURE IF EXISTS `errorOnContradictoryKitPartCommonComponent`$$
-CREATE PROCEDURE `errorOnContradictoryKitPartCommonComponent` ()
-BEGIN
-    IF (SELECT COUNT(*) FROM (
-        SELECT
-          kit_id, part_id, COUNT(exclude) ct
-        FROM vkp
-        GROUP BY
-            vkp.kit_id, vkp.part_id
-        HAVING
-            ct > 1
-    ) AS contradictions) > 0 THEN
-        CALL `Contradictory VKP mappings found.`;
-    END IF;
-END$$
-
-DROP TRIGGER IF EXISTS `kit_part_common_component_AI`$$
-CREATE TRIGGER `kit_part_common_component_AI` AFTER INSERT ON `kit_part_common_component`
-FOR EACH ROW
-BEGIN
-    CALL errorOnContradictoryKitPartCommonComponent();
-END$$
-
-DROP TRIGGER IF EXISTS `kit_part_common_component_AU`;
-CREATE TRIGGER `kit_part_common_component_AU` AFTER UPDATE ON `kit_part_common_component`
-FOR EACH ROW
-BEGIN
-    CALL errorOnContradictoryKitPartCommonComponent();
-END$$
-
-
-DROP TRIGGER IF EXISTS `interchange_item_AI`;
-CREATE TRIGGER `interchange_item_AI` AFTER INSERT ON `interchange_item`
-FOR EACH ROW
-BEGIN
-    CALL errorOnContradictoryKitPartCommonComponent();
-END$$
-
-DROP TRIGGER IF EXISTS `interchange_item_AU`;
-CREATE TRIGGER `interchange_item_AU` AFTER UPDATE ON `interchange_item`
-FOR EACH ROW
-BEGIN
-    CALL errorOnContradictoryKitPartCommonComponent();
-END$$
-
-DELIMITER ;
-
 --
 -- Turbo-Car Relationship
 --
@@ -691,21 +413,6 @@ CREATE TABLE `turbo_car_model_engine_year` (
   FOREIGN KEY (`part_id`) REFERENCES `turbo` (`part_id`),
   PRIMARY KEY(`part_id`, `car_model_engine_year_id`)
 ) ENGINE = INNODB;
-
-DROP VIEW IF EXISTS vtapp;
-CREATE VIEW vtapp AS
-  SELECT DISTINCT
-    t.part_id,
-    cmake.name AS car_make,
-    cyear.name AS car_year,
-    cmodel.name AS car_model
-    FROM turbo t
-    JOIN turbo_car_model_engine_year c ON c.part_id = t.part_id
-    LEFT JOIN car_model_engine_year cmey ON cmey.id = c.car_model_engine_year_id
-    LEFT JOIN car_model cmodel ON cmodel.id = cmey.car_model_id
-    LEFT JOIN car_make cmake ON cmake.id = cmodel.car_make_id
-    LEFT JOIN car_year cyear ON cyear.id = cmey.car_year_id;
-
 --
 -- Part-Turbo Index
 --
@@ -729,23 +436,6 @@ CREATE VIEW vpart_turbo AS (
 ) UNION DISTINCT (
   SELECT part_id, turbo_id FROM part_turbo
 );
-
-
-DROP VIEW IF EXISTS vapp;
-CREATE VIEW vapp AS
-  SELECT DISTINCT
-    p.id AS part_id,
-    cmake.name AS car_make,
-    cyear.name AS car_year,
-    cmodel.name AS car_model
-    FROM part p
-    JOIN vpart_turbo pt ON pt.part_id = p.id
-    JOIN turbo_car_model_engine_year c ON c.part_id = pt.turbo_id
-    LEFT JOIN car_model_engine_year cmey ON cmey.id = c.car_model_engine_year_id
-    LEFT JOIN car_model cmodel ON cmodel.id = cmey.car_model_id
-    LEFT JOIN car_make cmake ON cmake.id = cmodel.car_make_id
-    LEFT JOIN car_year cyear ON cyear.id = cmey.car_year_id;
-
 
 --
 -- Metadata Security
@@ -850,3 +540,385 @@ CREATE TABLE `part_turbo_type` (
   PRIMARY KEY (`part_id`, `turbo_type_id`)
 )
 ENGINE = INNODB;
+
+
+DROP VIEW IF EXISTS vapp;
+CREATE VIEW vapp AS
+  SELECT DISTINCT
+    p.id AS part_id,
+    cmake.name AS car_make,
+    cyear.name AS car_year,
+    cmodel.name AS car_model
+    FROM part p
+    JOIN vpart_turbo pt ON pt.part_id = p.id
+    JOIN turbo_car_model_engine_year c ON c.part_id = pt.turbo_id
+    LEFT JOIN car_model_engine_year cmey ON cmey.id = c.car_model_engine_year_id
+    LEFT JOIN car_model cmodel ON cmodel.id = cmey.car_model_id
+    LEFT JOIN car_make cmake ON cmake.id = cmodel.car_make_id
+    LEFT JOIN car_year cyear ON cyear.id = cmey.car_year_id;
+
+
+DROP VIEW IF EXISTS vtapp;
+CREATE VIEW vtapp AS
+  SELECT DISTINCT
+    t.part_id,
+    cmake.name AS car_make,
+    cyear.name AS car_year,
+    cmodel.name AS car_model
+    FROM turbo t
+    JOIN turbo_car_model_engine_year c ON c.part_id = t.part_id
+    LEFT JOIN car_model_engine_year cmey ON cmey.id = c.car_model_engine_year_id
+    LEFT JOIN car_model cmodel ON cmodel.id = cmey.car_model_id
+    LEFT JOIN car_make cmake ON cmake.id = cmodel.car_make_id
+    LEFT JOIN car_year cyear ON cyear.id = cmey.car_year_id;
+
+
+DROP VIEW IF EXISTS vbom;
+CREATE VIEW vbom AS
+  SELECT
+    b.id AS bom_id,
+
+    pp.id AS p_part_id,
+    ppt.`name` AS p_part_type,
+    pp.manfr_part_num AS p_part_number,
+    ppm.name AS p_manufacturer,
+
+    cp.id AS c_part_id,
+    cpt.`name` AS c_part_type,
+    cp.manfr_part_num AS c_part_number,
+    cpm.name AS c_manufacturer
+  FROM bom b
+    JOIN part pp ON pp.id = b.parent_part_id
+    JOIN part_type ppt ON ppt.id = pp.part_type_id
+    JOIN manfr ppm ON ppm.id = pp.manfr_id
+
+    JOIN part cp ON cp.id = b.child_part_id
+    JOIN part_type cpt ON cpt.id = cp.part_type_id
+    JOIN manfr cpm ON cpm.id = cp.manfr_id;
+
+    
+DROP VIEW IF EXISTS vbalt;
+CREATE VIEW vbalt AS
+  SELECT
+    bai.bom_id,
+    bai.part_id,
+    bai.bom_alt_header_id,
+    bah.`name` AS alt_header_name,
+    bah.description AS alt_header_desc,
+    bai.part_id AS alt_part_id,
+    pt.`name` AS alt_part_type,
+    p.manfr_part_num AS alt_part_number,
+    m.`name` AS alt_manufacturer
+  FROM
+    bom_alt_item bai
+    JOIN bom b ON b.id = bai.bom_id
+    JOIN bom_alt_header bah ON bah.id = bai.bom_alt_header_id
+    JOIN part p ON p.id = bai.part_id
+    JOIN part_type pt ON pt.id = p.part_type_id
+    JOIN manfr m ON m.id = p.manfr_id;
+
+DROP VIEW IF EXISTS vparts;
+CREATE VIEW vparts AS
+  SELECT
+    p.id AS part_id,
+    pt.`name` AS part_type,
+    p.manfr_part_num AS part_number,
+    m.name AS manufacturer
+  FROM part p
+    JOIN part_type pt ON pt.id = p.part_type_id
+    JOIN manfr m ON m.id = p.manfr_id;
+
+DROP VIEW IF EXISTS vint;
+CREATE VIEW vint AS
+  SELECT DISTINCT
+    ii1.interchange_header_id AS interchange_header_id,
+
+    p.id AS part_id,
+    pt.`name` AS part_type,
+    p.manfr_part_num AS part_number,
+    pm.name AS manufacturer,
+
+    ip.id AS i_part_id,
+    ipt.`name` AS i_part_type,
+    ip.manfr_part_num AS i_part_number,
+    ipm.name AS i_manufacturer
+  FROM part p
+    JOIN part_type pt ON pt.id = p.part_type_id
+    JOIN manfr pm ON pm.id = p.manfr_id
+
+    JOIN interchange_item ii1 ON ii1.part_id = p.id
+    LEFT JOIN interchange_item ii2 ON ii2.interchange_header_id = ii1.interchange_header_id
+
+    LEFT JOIN part ip ON ip.id = ii2.part_id
+    JOIN part_type ipt ON ipt.id = ip.part_type_id
+    LEFT JOIN manfr ipm ON ipm.id = ip.manfr_id
+  WHERE p.id != ii2.part_id;
+
+DROP VIEW IF EXISTS vint_ti;
+CREATE VIEW vint_ti AS
+  SELECT DISTINCT
+    ii1.interchange_header_id AS interchange_header_id,
+
+    p.id AS part_id,
+    ip.id AS ti_part_id
+  FROM
+    part p
+    JOIN interchange_item ii1 ON ii1.part_id = p.id
+    LEFT JOIN interchange_item ii2 ON
+        ii2.interchange_header_id = ii1.interchange_header_id
+        AND ii1.part_id != ii2.part_id
+
+    LEFT JOIN part ip ON ip.id = ii2.part_id
+    LEFT JOIN manfr ipm ON ipm.id = ip.manfr_id
+  WHERE ip.manfr_id = 11;
+
+
+-- See #270
+DROP VIEW IF EXISTS `vwhere_used`;
+CREATE VIEW `vwhere_used` AS
+    SELECT DISTINCT
+        -- The principal
+        p.id                   AS principal_id,
+        pt.`name`              AS principal_type,
+
+        -- The ancestor
+        ap.id                  AS sku,
+        apm.`name`             AS manufacturer,
+        ap.manfr_part_num      AS part_number,
+        aptii.ti_part_id       AS ti_sku,
+        aptiip.manfr_part_num  AS ti_part_number,
+
+        -- Ancestor part type, used by turbo principals
+        aptype.`name`             AS partType,
+
+        -- Ancestor turbo's type, used by cartridge principals
+        apt2t.`name`           AS turbo_type,
+
+        -- Ancestor cartridge's turbo mfr p/n, used by all other principals
+        apcatp.manfr_part_num  AS turboPartNumber
+    FROM
+        -- The principal
+        bom_ancestor ba
+        JOIN part      p  ON p.id  = ba.part_id
+        JOIN part_type pt ON pt.id = p.part_type_id
+
+        -- The ancestor
+        JOIN part      ap     ON ap.id  = ba.ancestor_part_id
+        JOIN part_type aptype ON aptype.id = ap.part_type_id
+        JOIN manfr     apm    ON apm.id = ap.manfr_id
+
+        -- Ancestor turbo type, used by cartridge principals
+        LEFT JOIN turbo       apt2  ON apt2.part_id = ap.id
+        LEFT JOIN turbo_model apt2m ON apt2m.id     = apt2.turbo_model_id
+        LEFT JOIN turbo_type  apt2t ON apt2t.id     = apt2m.turbo_type_id
+
+        -- Ancestor cartridges and their interchanges, used by non-cartridge and non-turbo principals
+        LEFT JOIN cartridge apc    ON apc.part_id    = ba.ancestor_part_id
+        LEFT JOIN vint_ti   aptii  ON aptii.part_id  = ba.ancestor_part_id
+        LEFT JOIN part      aptiip ON aptiip.id      = aptii.ti_part_id
+
+        -- Ancestor cartridges' ancestor turbos, used by non-cartridge and non-turbo principals
+        LEFT JOIN bom_ancestor apcba  ON apcba.part_id = apc.part_id AND apcba.distance != 0
+        LEFT JOIN turbo        apcat  ON apcat.part_id = apcba.ancestor_part_id
+        LEFT JOIN part         apcatp ON apcatp.id     = apcat.part_id
+    WHERE
+        ba.distance != 0
+        AND CASE pt.`name`
+             -- Turbos list all ancestors
+            WHEN 'Turbo' THEN 1
+
+            -- Cartridges list turbo ancestors
+            WHEN 'Cartridge' THEN aptype.`name` = 'Turbo'
+
+            -- Everything else lists cartridge ancestors
+            ELSE aptype.`name` = 'Cartridge'
+        END;
+
+
+CREATE VIEW `vkp` AS SELECT DISTINCT
+    kii.part_id  AS kit_id,
+    pii.part_id AS part_id,
+    kc.exclude
+FROM
+    -- All the kit's interchanges
+    kit_part_common_component kc
+    JOIN interchange_item ki ON ki.part_id = kc.kit_id
+    JOIN interchange_item kii ON kii.interchange_header_id = ki.interchange_header_id
+
+    -- All the target part's interchanges
+    JOIN interchange_item pi ON pi.part_id = kc.part_id
+    JOIN interchange_item pii ON pii.interchange_header_id = pi.interchange_header_id;
+
+CREATE VIEW `vpart_turbotype_kits` AS (
+    SELECT
+        kc.part_id AS part_id,
+        kc.kit_id
+    FROM
+        kit_part_common_component kc
+    WHERE kc.exclude = 0
+) UNION DISTINCT (
+    SELECT
+        p.id AS part_id,
+        k.part_id AS kit_id
+    FROM
+
+        -- Part-Kit by common turbo type
+        part p
+        JOIN part_turbo_type ptt ON ptt.part_id = p.id
+        JOIN part_turbo_type ptt2 ON ptt2.turbo_type_id = ptt.turbo_type_id
+        JOIN kit k ON
+            k.part_id = ptt2.part_id AND p.id != k.part_id
+
+        -- Join exclusion table
+        LEFT JOIN kit_part_common_component kc ON
+            kc.kit_id = k.part_id AND kc.part_id = p.id
+    -- Exclusion
+    WHERE
+        kc.exclude IS NULL
+        OR kc.exclude = 1
+) UNION DISTINCT ( -- Turbo Type from Turbos
+    SELECT
+        t.part_id AS part_id,
+        k.part_id AS kit_id
+    FROM
+
+        -- Turbo-Kit by common turbo type
+        turbo t
+        JOIN turbo_model tm ON tm.id = t.turbo_model_id
+        JOIN part_turbo_type ptt ON
+            ptt.turbo_type_id = tm.turbo_type_id AND ptt.part_id != t.part_id
+        JOIN kit k ON
+            k.part_id = ptt.part_id AND t.part_id != k.part_id
+
+        -- Join exclusion table
+        LEFT JOIN kit_part_common_component kc ON
+            kc.kit_id = k.part_id AND kc.part_id = t.part_id
+    -- Exclusion
+    WHERE
+        kc.exclude IS NULL
+        OR kc.exclude = 1
+);
+
+
+-- Rebuild the BOM ancestry table
+DELIMITER $$
+DROP PROCEDURE IF EXISTS RebuildBomAncestry$$
+CREATE PROCEDURE RebuildBomAncestry()
+  BEGIN
+
+    START TRANSACTION;
+
+    -- Empty the table
+    TRUNCATE bom_ancestor;
+
+    -- Create self-references
+    INSERT IGNORE INTO bom_ancestor (
+      `part_id`,
+      `ancestor_part_id`,
+      `distance`,
+      `type`
+    )
+    SELECT DISTINCT
+      id     AS part_id,
+      id     AS ancestor_part_id,
+      0      AS distance,
+      'Self' AS `type`
+    FROM
+      part;
+
+    REPEAT
+        SET @distance = (SELECT MAX(distance) FROM bom_ancestor);
+
+        -- Add interchange parents (metaphor: interchanges are my half-siblings, add all my half-parents)
+        INSERT IGNORE INTO bom_ancestor (
+          `part_id`,
+          `ancestor_part_id`,
+          `distance`,
+          `type`
+        )
+        SELECT DISTINCT
+          ba.part_id          AS part_id,          -- Me
+          bom.parent_part_id  AS ancestor_part_id, -- My half-parent
+          @distance + 1       AS distance,
+          IF (@distance = 0, 'InterchangeDirect', 'InterchangeIndirect') AS `type`
+        FROM
+          bom_ancestor ba
+          JOIN interchange_item ii ON ii.part_id = ba.ancestor_part_id
+          JOIN interchange_item ii2 ON
+            ii2.interchange_header_id = ii.interchange_header_id
+            AND ii2.part_id <> ii.part_id
+          JOIN bom ON bom.child_part_id = ii2.part_id
+        WHERE ba.distance = @distance;
+
+        -- Add the next level of parents
+        INSERT IGNORE INTO bom_ancestor (
+          `part_id`,
+          `ancestor_part_id`,
+          `distance`,
+          `type`
+        )
+        SELECT DISTINCT
+          ba.part_id           AS part_id,
+          bom.parent_part_id   AS ancestor_part_id,
+          @distance + 1      AS distance,
+          IF (@distance = 0, 'Direct', IF(ba.`type` LIKE 'Interchange%', 'InterchangeIndirect', 'Indirect')) AS `type`
+        FROM
+          bom_ancestor ba
+          JOIN bom ON bom.child_part_id = ba.ancestor_part_id
+        WHERE ba.distance = @distance;
+
+    UNTIL ROW_COUNT() = 0
+    END REPEAT;
+
+    COMMIT;
+    
+  END$$
+DELIMITER ;
+
+-- Verify no interchangable parts have a contradictory setting
+DELIMITER $$
+DROP PROCEDURE IF EXISTS `errorOnContradictoryKitPartCommonComponent`$$
+CREATE PROCEDURE `errorOnContradictoryKitPartCommonComponent` ()
+BEGIN
+    IF (SELECT COUNT(*) FROM (
+        SELECT
+          kit_id, part_id, COUNT(exclude) ct
+        FROM vkp
+        GROUP BY
+            vkp.kit_id, vkp.part_id
+        HAVING
+            ct > 1
+    ) AS contradictions) > 0 THEN
+        CALL `Contradictory VKP mappings found.`;
+    END IF;
+END$$
+
+DROP TRIGGER IF EXISTS `kit_part_common_component_AI`$$
+CREATE TRIGGER `kit_part_common_component_AI` AFTER INSERT ON `kit_part_common_component`
+FOR EACH ROW
+BEGIN
+    CALL errorOnContradictoryKitPartCommonComponent();
+END$$
+
+DROP TRIGGER IF EXISTS `kit_part_common_component_AU`;
+CREATE TRIGGER `kit_part_common_component_AU` AFTER UPDATE ON `kit_part_common_component`
+FOR EACH ROW
+BEGIN
+    CALL errorOnContradictoryKitPartCommonComponent();
+END$$
+
+DROP TRIGGER IF EXISTS `interchange_item_AI`;
+CREATE TRIGGER `interchange_item_AI` AFTER INSERT ON `interchange_item`
+FOR EACH ROW
+BEGIN
+    CALL errorOnContradictoryKitPartCommonComponent();
+END$$
+
+DROP TRIGGER IF EXISTS `interchange_item_AU`;
+CREATE TRIGGER `interchange_item_AU` AFTER UPDATE ON `interchange_item`
+FOR EACH ROW
+BEGIN
+    CALL errorOnContradictoryKitPartCommonComponent();
+END$$
+
+DELIMITER ;
