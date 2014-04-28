@@ -176,10 +176,10 @@ public class MagmiProduct {
     public void addServiceKit(MagmiServiceKit sk) {
         JSOG jsog = JSOG.object()
                         .put("sku", sk.kitSku)
-                        .put("part_number", sk.kitPartNumber)
+                        .put("partNumber", sk.kitPartNumber)
                         .put("type", sk.type)
-                        .put("ti_part_sku", sk.tiKitSku)
-                        .put("ti_part_number", sk.tiKitPartNumber);
+                        .put("tiSku", sk.tiKitSku)
+                        .put("tiPartNumber", sk.tiKitPartNumber);
         
         serviceKits.add(jsog);
     }
