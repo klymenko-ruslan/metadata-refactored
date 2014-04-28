@@ -183,3 +183,6 @@ UPDATE `bom` SET quantity = 1 WHERE quantity = 999;
 
 -- Rebuild the BOM ancestry
 CALL rebuildBomAncestry();
+
+-- Clean up part numbers
+UPDATE part SET manfr_part_num = TRIM(manfr_part_num);
