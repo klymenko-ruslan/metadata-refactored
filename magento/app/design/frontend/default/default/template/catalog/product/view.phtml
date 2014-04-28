@@ -42,6 +42,8 @@ $_ad = $this->getAdditionalData();
 // Get the Bill of Materials
 $billOfMaterials = json_decode($_product->getBillOfMaterials(), true);
 
+// Get the usages
+$whereUsed = json_decode($_product->getWhereUsed(), true);
 
 // Get the interchanges SKUs, tiPartSkuArray is a subset of this
 $interchangeSkuArray = $_product->getInterchanges() ? explode(',', $_product->getInterchanges()) : array();
@@ -327,6 +329,76 @@ $tiPartSkuArray = $_product->getTiPartSku() ? explode(',', $_product->getTiPartS
                         <td>
                             <?php if ($bomItemProduct->getTiPartSku()) {
                                 echo Mage::helper('core')->currency($bomItemInterchangeProduct->getFinalPrice());
+                            }?>
+                        </td>
+
+                    </tr>
+                <?php endforeach; ?>
+            </table>
+        </div>
+        
+        
+        <div id="tabs-where-used" class="box-collateral">
+            <h2><?php echo $this->__('Where Used') ?></h2>
+            <table class="data-table" id="where-used">
+                <tr>
+                    <?php switch($_product->getPartType()):
+                              case "Turbo": ?>
+                        <th><strong>OE Part #</strong></th>
+                        <th><strong>Manufacturer</strong></th>
+                        <th><strong>Part Type</strong></th>
+                        <?php break; ?>
+                        
+                        <?php case "Cartridge": ?>
+                        <th><strong>Turbo OE Part #</strong></th>
+                        <th><strong>Manufacturer</strong></th>
+                        <th><strong>Turbo Type</strong></th>
+                        <?php break; ?>
+                        
+                        <?php default: ?>
+                        <th><strong>Cartridge OE Part #</strong></th>
+                        <th><strong>TI Part #</strong></th>
+                        <th><strong>Manufacturer</strong></th>
+                        <th><strong>Turbo OE Part #</strong></th>
+                        <?php break; ?>
+                    <?php endswitch; ?>
+                </tr>
+
+                <?php foreach ($whereUsed as $bomItem): ?>
+                    <?php
+                    $usageProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $usage['sku']);
+                    ?>
+
+                    <tr>
+                        <td><?php echo $usageProduct->getAttributeText('part_type'); ?></td>
+                        <td><?php echo '<a href="' . $usageProduct->getProductUrl() . '">' . $usageProduct->getPartNumber() . '</a>'; ?></td>
+                        <td><?php $a = 1;
+                            foreach ($usage['ti_part_sku'] as $tiPart) {
+                                $usageInterchangeProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $tiPart);
+                                if ($usageInterchangeProduct) {
+                                    echo '<a href="' . $usageInterchangeProduct->getProductUrl() . '">' . $usageInterchangeProduct->getPartNumber() . '</a>';
+                                } else {
+                                    echo $tiPart;
+                                }
+
+                                // Add commas between items
+                                if ($a < count($usage['ti_part_sku'])) {
+                                    echo ", ";
+                                }
+                                $a++;
+                            }?>
+                        </td>
+                        <td>
+                            <?php if ($usageProduct->getId()): ?>
+                                <a href="<?php echo $usageProduct->getProductUrl() ?>"><?php echo $usageProduct->getName() ?></a>
+                            <?php else: ?>
+                                <?php echo $usage['sku'] ?>
+                            <?php endif; ?>
+                        </td>
+                        <td><?php echo $usage['quantity']; ?></td>
+                        <td>
+                            <?php if ($usageProduct->getTiPartSku()) {
+                                echo Mage::helper('core')->currency($usageInterchangeProduct->getFinalPrice());
                             }?>
                         </td>
 
