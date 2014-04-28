@@ -77,7 +77,7 @@ $tiPartSkuArray = $_product->getTiPartSku() ? explode(',', $_product->getTiPartS
 <div class="product-view">
 <div class="product-essential">
     <form action="<?php echo $this->getSubmitUrl($_product) ?>" method="post"
-          id="product_addtocart_form"<?php if ($_product->getOptions()): ?> enctype="multipart/form-data"<?php endif; ?>>
+        id="product_addtocart_form"<?php if ($_product->getOptions()): ?> enctype="multipart/form-data"<?php endif; ?>>
         <div class="no-display">
             <input type="hidden" name="product" value="<?php echo $_product->getId() ?>"/>
             <input type="hidden" name="related_product" id="related-products-field" value=""/>
@@ -244,7 +244,7 @@ $tiPartSkuArray = $_product->getTiPartSku() ? explode(',', $_product->getTiPartS
             </div>
             <?php foreach ($this->getChildGroup('detailed_info', 'getChildHtml') as $alias => $html): ?>
                 <?php if ($alias != 'description'): ?>
-                    <div id="tabs-additional-information" class="box-collateral <?php echo "box-{$alias}" ?>">
+                    <div class="box-collateral <?php echo "box-{$alias}" ?>">
                         <?php if ($title = $this->getChildData($alias, 'title')): ?>
                             <h2><?php echo $this->escapeHtml($title); ?></h2>
                         <?php endif; ?>
@@ -252,6 +252,29 @@ $tiPartSkuArray = $_product->getTiPartSku() ? explode(',', $_product->getTiPartS
                     </div>
                 <?php endif; ?>
             <?php endforeach; ?>
+
+            <?php
+            $part_type = $_product->getAttributeText('part_type');
+            if ($part_type == 'Turbine Wheel' || $part_type == 'Compressor Wheel' || $part_type == 'Backplate / Sealplate'): ?>
+                <?php switch ($part_type) {
+                    case 'Turbine Wheel':
+                        $dimensions_legend = "turbine_wheel_dimensions.gif";
+                        $dimensions_legend_alt = "Turbine Wheel Dimensions Legend";
+                        break;
+                    case 'Compressor Wheel':
+                        $dimensions_legend = "compressor_wheel_dimensions.png";
+                        $dimensions_legend_alt = "Compressor Wheel Dimensions Legend";
+                        break;
+                    case 'Backplate / Sealplate':
+                        $dimensions_legend = "backplate_dimensions.png";
+                        $dimensions_legend_alt = "Backplate Dimensions Legend";
+                        break;
+                } ?>
+                <div class="box-collateral">
+                    <h2><?php echo $this->__('Dimensions Measurement Legend') ?></h2>
+                    <img src="/skin/frontend/default/default/images/<?php echo $dimensions_legend ?>" alt="<?php echo $dimensions_legend_alt ?>"/>
+                </div>
+            <?php endif ?>
         </div>
 
         <div id="tabs-interchangeable-parts" class="box-collateral">
