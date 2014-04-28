@@ -29,7 +29,7 @@ angular.module('ngMetaCrudApp')
         if ($scope.part.interchange) {
 
           // Update
-          if ($scope.pickedPart.interchange) {
+          if ($scope.pickedPart.interchange && $scope.pickedPart.interchange.parts.length > 0) {
 
             // Join the other part's interchange group
             $dialogs.confirm(
