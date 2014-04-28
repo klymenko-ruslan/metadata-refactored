@@ -484,15 +484,16 @@ public class MagmiController {
                     .addInterchange(interchange);
         }
         
-        // Add where used
-        List<MagmiUsage> usages = findMagmiUsages(productIds);
-        
-        for (MagmiUsage usage : usages) {
-            productMap.get(usage.principalId)
-                    .addUsage(usage);
-        }
-        
-        logger.log(Level.INFO, "Found {0} usages.", usages.size());
+        // Add usages
+// DISABLED because it's data explosion
+//        List<MagmiUsage> usages = findMagmiUsages(productIds);
+//
+//        for (MagmiUsage usage : usages) {
+//            productMap.get(usage.principalId)
+//                    .addUsage(usage);
+//        }
+//
+//        logger.log(Level.INFO, "Found {0} usages.", usages.size());
         
         // Add the bom items
         List<MagmiBomItem> bom = findMagmiBom(productIds);
