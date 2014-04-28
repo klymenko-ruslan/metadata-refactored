@@ -196,9 +196,12 @@ public class MagmiProduct {
             jsogUsage.put("tiPartNumber", usage.tiPartNumber);
             jsogUsage.put("partType", usage.partType);
             jsogUsage.put("turboType", usage.turboType);
+            jsogUsage.put("turboPartNumbers", JSOG.array());
         }
         
-        jsogUsage.get("turboPartNumbers").add(usage.turboPartNumber);
+        if (StringUtils.isNotBlank(usage.turboPartNumber)) {
+            jsogUsage.get("turboPartNumbers").add(usage.turboPartNumber);
+        }
     }
 
     private JSOG getBomItemBySku(Long sku) {
