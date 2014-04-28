@@ -485,14 +485,14 @@ public class MagmiController {
         }
         
         // Add usages
-//        List<MagmiUsage> usages = findMagmiUsages(productIds);
-//
-//        for (MagmiUsage usage : usages) {
-//            productMap.get(usage.principalId)
-//                    .addUsage(usage);
-//        }
-//
-//        logger.log(Level.INFO, "Found {0} usages.", usages.size());
+        List<MagmiUsage> usages = findMagmiUsages(productIds);
+
+        for (MagmiUsage usage : usages) {
+            productMap.get(usage.principalId)
+                    .addUsage(usage);
+        }
+
+        logger.log(Level.INFO, "Found {0} usages.", usages.size());
         
         // Add the bom items
         List<MagmiBomItem> bom = findMagmiBom(productIds);
@@ -505,14 +505,14 @@ public class MagmiController {
         logger.log(Level.INFO, "Found {0} BOM items.", bom.size());
         
         // Add the service kits
-//        List<MagmiServiceKit> serviceKits = findMagmiServiceKits(productIds);
-//        
-//        for (MagmiServiceKit sk : serviceKits) {
-//            productMap.get(sk.sku)
-//                    .addServiceKit(sk);
-//        }
-//        
-//        logger.log(Level.INFO, "Found {0} service kits.", serviceKits.size());
+        List<MagmiServiceKit> serviceKits = findMagmiServiceKits(productIds);
+        
+        for (MagmiServiceKit sk : serviceKits) {
+            productMap.get(sk.sku)
+                    .addServiceKit(sk);
+        }
+        
+        logger.log(Level.INFO, "Found {0} service kits.", serviceKits.size());
         
         logger.log(Level.INFO, "Got {0} products in {1}ms",
                 new Object[] {productMap.size(), System.currentTimeMillis() - startTime});
@@ -530,7 +530,7 @@ public class MagmiController {
             .getResultList();
     }
     
-    public static List<MagmiApplication> findMagmiApplications(Collection<Long> productIds) {
+    private static List<MagmiApplication> findMagmiApplications(Collection<Long> productIds) {
         return Part.entityManager().createQuery(
               "SELECT DISTINCT new com.turbointernational.metadata.util.dto.MagmiApplication("
                 + "  p.id AS sku,\n"
@@ -557,7 +557,7 @@ public class MagmiController {
             .getResultList();
     }
     
-    public static List<MagmiTurbo> findMagmiTurbos(Collection<Long> productIds) {
+    private static List<MagmiTurbo> findMagmiTurbos(Collection<Long> productIds) {
         return Part.entityManager().createQuery(
               "SELECT DISTINCT new com.turbointernational.metadata.util.dto.MagmiTurbo("
                 + "  p.id AS sku,\n"
@@ -577,7 +577,7 @@ public class MagmiController {
             .getResultList();
     }
     
-    public static List<MagmiServiceKit> findMagmiServiceKits(Collection<Long> productIds) {
+    private static List<MagmiServiceKit> findMagmiServiceKits(Collection<Long> productIds) {
         return Part.entityManager().createQuery(
               "SELECT DISTINCT new com.turbointernational.metadata.util.dto.MagmiServiceKit("
                 + "  p.id AS sku,\n"
