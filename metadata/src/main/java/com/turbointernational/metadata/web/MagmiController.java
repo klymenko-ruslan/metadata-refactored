@@ -485,7 +485,6 @@ public class MagmiController {
         }
         
         // Add usages
-// DISABLED because it's data explosion
 //        List<MagmiUsage> usages = findMagmiUsages(productIds);
 //
 //        for (MagmiUsage usage : usages) {
@@ -506,14 +505,14 @@ public class MagmiController {
         logger.log(Level.INFO, "Found {0} BOM items.", bom.size());
         
         // Add the service kits
-        List<MagmiServiceKit> serviceKits = findMagmiServiceKits(productIds);
-        
-        for (MagmiServiceKit sk : serviceKits) {
-            productMap.get(sk.sku)
-                    .addServiceKit(sk);
-        }
-        
-        logger.log(Level.INFO, "Found {0} service kits.", serviceKits.size());
+//        List<MagmiServiceKit> serviceKits = findMagmiServiceKits(productIds);
+//        
+//        for (MagmiServiceKit sk : serviceKits) {
+//            productMap.get(sk.sku)
+//                    .addServiceKit(sk);
+//        }
+//        
+//        logger.log(Level.INFO, "Found {0} service kits.", serviceKits.size());
         
         logger.log(Level.INFO, "Got {0} products in {1}ms",
                 new Object[] {productMap.size(), System.currentTimeMillis() - startTime});
