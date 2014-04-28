@@ -4,7 +4,7 @@ package com.turbointernational.metadata.util.dto;
  *
  * @author jrodriguez
  */
-public class MagmiUsages {
+public class MagmiUsage {
 
     public final Long principalId;
 
@@ -24,7 +24,7 @@ public class MagmiUsages {
 
     public final String turboPartNumber;
 
-    public MagmiUsages(
+    public MagmiUsage(
         Long principalId,
         Long sku,
         String manufacturer,

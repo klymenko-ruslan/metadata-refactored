@@ -1,6 +1,7 @@
 package com.turbointernational.metadata.web;
 
 import au.com.bytecode.opencsv.CSVWriter;
+import com.google.common.collect.Lists;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.part.ProductImage;
@@ -17,14 +18,16 @@ import com.turbointernational.metadata.util.dto.MagmiBomItem;
 import com.turbointernational.metadata.util.dto.MagmiInterchange;
 import com.turbointernational.metadata.util.dto.MagmiProduct;
 import com.turbointernational.metadata.util.dto.MagmiServiceKit;
-import com.turbointernational.metadata.util.dto.MagmiUsages;
+import com.turbointernational.metadata.util.dto.MagmiUsage;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -42,6 +45,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -74,6 +78,7 @@ public class MagmiController {
             "ti_part_sku",       // Interchangeable parts by TI
             "interchanges",      // Interchangeable parts
             "bill_of_materials", // BOM
+            "where_used",        // Usages
             "price",
             "qty",
             "turbo_model",      // Turbo Models
@@ -194,6 +199,8 @@ public class MagmiController {
     @Transactional
     @Secured("ROLE_MAGMI")
     public void products(HttpServletResponse response, OutputStream out) throws Exception {
+        logger.log(Level.INFO, "Magmi export started.");
+        
         response.setHeader("Content-Type", "text/csv");
         response.setHeader("Content-Disposition: attachment; filename=products.csv", null);
         
@@ -256,6 +263,34 @@ public class MagmiController {
         
         logger.log(Level.INFO, "Exported {0} products in {1}ms",
                 new Object[] {position, System.currentTimeMillis() - startTime});
+    }
+    
+    @RequestMapping("/product/{partId}")
+    @ResponseBody   
+    @Transactional
+    @Secured("ROLE_MAGMI")
+    public void product(HttpServletResponse response, OutputStream out, @PathVariable Long partId) throws Exception {
+        
+        response.setHeader("Content-Type", "text/csv");
+        response.setHeader("Content-Disposition: attachment; filename=products.csv", null);
+        
+        Mas90Prices mas90 = new Mas90Prices(new File(mas90DbPath));
+        CSVWriter writer = new CSVWriter(new OutputStreamWriter(out), ',', '"');
+        
+        // Write the header row
+        writer.writeNext(getCsvHeaders());
+        
+        Part part = Part.findPart(partId);
+        List<Part> parts = new ArrayList<Part>();
+        parts.add(part);
+        
+        Iterator<MagmiProduct> it = findMagmiProducts(parts).values().iterator();
+        while (it.hasNext()) {
+            writer.writeNext(magmiProductToCsvRow(mas90, it.next()));
+        }
+        
+        writer.flush();
+        writer.close();
     }
     
     private String[] magmiProductToCsvRow(Mas90Prices mas90, MagmiProduct product) {
@@ -450,14 +485,14 @@ public class MagmiController {
         }
         
         // Add where used
-        List<MagmiUsages> usages = findMagmiUsages(productIds);
+        List<MagmiUsage> usages = findMagmiUsages(productIds);
         
-        for (MagmiUsages usage : usages) {
+        for (MagmiUsage usage : usages) {
             productMap.get(usage.principalId)
                     .addUsage(usage);
         }
         
-        logger.log(Level.INFO, "Found {0} WhereUseds.", usages.size());
+        logger.log(Level.INFO, "Found {0} usages.", usages.size());
         
         // Add the bom items
         List<MagmiBomItem> bom = findMagmiBom(productIds);
@@ -581,8 +616,8 @@ public class MagmiController {
                 .getResultList();
     }
     
-    private static List<MagmiUsages> findMagmiUsages(Collection<Long> productIds) {
-        return Part.entityManager()
+    private static List<MagmiUsage> findMagmiUsages(Collection<Long> productIds) {
+        List<Object[]> results = Part.entityManager()
             .createNativeQuery(
                 "SELECT DISTINCT\n"
               + "  principal_id,\n"
@@ -595,9 +630,31 @@ public class MagmiController {
               + "  turbo_type,\n"
               + "  turbo_part_number\n"
               + "FROM vwhere_used\n"
-              + "WHERE p.id IN (" + StringUtils.join(productIds, ',') + ")",
-            MagmiUsages.class)
+              + "WHERE principal_id IN (" + StringUtils.join(productIds, ',') + ")")
             .getResultList();
+        
+            
+
+        // Create the objects
+        List<MagmiUsage> usages = Lists.newLinkedList();
+        
+        for (Object[] row : results) {
+            MagmiUsage usage = new MagmiUsage(
+                    ((BigInteger) row[0]).longValue(),
+                    ((BigInteger) row[1]).longValue(),
+                    (String) row[2],
+                    (String) row[3],
+                    row[4] == null ? null : ((BigInteger) row[4]).longValue(),
+                    (String) row[5],
+                    (String) row[6],
+                    (String) row[7],
+                    (String) row[8]
+                );
+            
+            usages.add(usage);
+        }
+        
+        return usages;
     }
 
     private static List<MagmiBomItem> findMagmiBom(Collection<Long> productIds) {
@@ -624,4 +681,5 @@ public class MagmiController {
               + "WHERE b.parent.id IN (" + StringUtils.join(productIds, ',') + ")", MagmiBomItem.class)
                 .getResultList();
     }
+    
 }

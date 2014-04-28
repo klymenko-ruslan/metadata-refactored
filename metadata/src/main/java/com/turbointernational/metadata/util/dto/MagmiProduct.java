@@ -184,7 +184,7 @@ public class MagmiProduct {
         serviceKits.add(jsog);
     }
     
-    public void addUsage(MagmiUsages usage) {
+    public void addUsage(MagmiUsage usage) {
         
         // Look for a previous usage we need to add to
         JSOG jsogUsage = usages.get(usage.sku.toString());
