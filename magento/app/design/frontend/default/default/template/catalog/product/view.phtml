@@ -264,27 +264,30 @@ $tiPartSkuArray = $_product->getTiPartSku() ? explode(',', $_product->getTiPartS
             <?php endforeach; ?>
 
             <?php
-            $part_type = $_product->getAttributeText('part_type');
-            if ($part_type == 'Turbine Wheel' || $part_type == 'Compressor Wheel' || $part_type == 'Backplate / Sealplate'): ?>
-                <?php switch ($part_type) {
-                    case 'Turbine Wheel':
-                        $dimensions_legend = "turbine_wheel_dimensions.gif";
-                        $dimensions_legend_alt = "Turbine Wheel Dimensions Legend";
-                        break;
-                    case 'Compressor Wheel':
-                        $dimensions_legend = "compressor_wheel_dimensions.png";
-                        $dimensions_legend_alt = "Compressor Wheel Dimensions Legend";
-                        break;
-                    case 'Backplate / Sealplate':
-                        $dimensions_legend = "backplate_dimensions.png";
-                        $dimensions_legend_alt = "Backplate Dimensions Legend";
-                        break;
-                } ?>
+            $attributeSetModel = Mage::getModel("eav/entity_attribute_set");
+            $attributeSetModel->load($_product->getAttributeSetId());
+            $attributeSetName = $attributeSetModel->getAttributeSetName();
+
+            switch ($attributeSetName):
+                case 'Turbine Wheel': ?>
+                    <div class="box-collateral">
+                        <h2><?php echo $this->__('Dimensions Measurement Legend') ?></h2>
+                        <img src="/skin/frontend/default/default/images/turbine_wheel_dimensions.gif" alt="Turbine Wheel Dimensions Legend"/>
+                    </div>
+                    <?php break; ?>
+                <?php case 'Compressor Wheel': ?>
                 <div class="box-collateral">
                     <h2><?php echo $this->__('Dimensions Measurement Legend') ?></h2>
-                    <img src="/skin/frontend/default/default/images/<?php echo $dimensions_legend ?>" alt="<?php echo $dimensions_legend_alt ?>"/>
+                    <img src="/skin/frontend/default/default/images/compressor_wheel_dimensions.png" alt="Compressor Wheel Dimensions Legend"/>
                 </div>
-            <?php endif ?>
+                <?php break; ?>
+            <?php case 'Backplate': ?>
+                <div class="box-collateral">
+                    <h2><?php echo $this->__('Dimensions Measurement Legend') ?></h2>
+                    <img src="/skin/frontend/default/default/images/backplate_dimensions.png" alt="Backplate Dimensions Legend"/>
+                </div>
+                <?php break; ?>
+            <?php endswitch ?>
             
             <?php if ($productAttributeSetName == "Cartridge"
                    || $productAttributeSetName == "Turbo"): ?>
