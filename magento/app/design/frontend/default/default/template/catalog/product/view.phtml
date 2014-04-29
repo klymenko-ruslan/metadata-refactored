@@ -300,9 +300,16 @@ $tiPartSkuArray = $_product->getTiPartSku() ? explode(',', $_product->getTiPartS
                         <th><strong>Price</strong></th>
                     </tr>
 
-                    <?php foreach ($serviceKits as $serviceKit): ?>
-                        <?php
-                            $serviceKitProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $serviceKit['sku']);
+                    <?php foreach ($serviceKits as $serviceKit):
+
+                        $serviceKitProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $serviceKit['sku']);
+
+                        // Load the TI product
+                        $serviceKitTiProduct = null;
+
+                        if (!empty($serviceKit['tiSku'])) {
+                            $serviceKitTiProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $serviceKit['tiSku']); ?>
+                        }
                         ?>
 
                         <tr>
@@ -315,10 +322,7 @@ $tiPartSkuArray = $_product->getTiPartSku() ? explode(',', $_product->getTiPartS
 
                             <!-- TI Part # -->
                             <td>
-                                <?php if(!empty($serviceKit['tiPartNumber'])):
-
-                                    $serviceKitTiProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $serviceKit['tiSku']); ?>
-
+                                <?php if($serviceKitTiProduct): ?>
                                     <a href="<?php echo $serviceKitTiProduct->getProductUrl() ?>">
                                         <?php echo $serviceKit['tiPartNumber']; ?>
                                     </a>
@@ -330,9 +334,12 @@ $tiPartSkuArray = $_product->getTiPartSku() ? explode(',', $_product->getTiPartS
 
                             <!-- Price -->
                             <td>
-                                <?php if ($serviceKitTiProduct->getSku()) {
+                                <?php if ($serviceKitTiProduct) {
                                     echo Mage::helper('core')->currency($serviceKitTiProduct->getFinalPrice());
-                                }?>
+                                } else {
+                                    echo Mage::helper('core')->currency($serviceKitProduct->getFinalPrice());
+                                }
+                                ?>
                             </td>
                         </tr>
                     <?php endforeach; ?>
@@ -534,9 +541,12 @@ $tiPartSkuArray = $_product->getTiPartSku() ? explode(',', $_product->getTiPartS
                                && $productAttributeSetName != "Cartridge"): ?>
                                
                             <td>
-                                <?php if ($usageTiProduct) {
+                                <?php if (!empty($usgae['tiSku']) && $usageTiProduct) {
                                     echo Mage::helper('core')->currency($usageTiProduct->getFinalPrice());
-                                }?>
+                                } else {
+                                    echo Mage::helper('core')->currency($usageProduct->getFinalPrice());
+                                }
+                                ?>
                             </td>
                             
                         <?php endif; ?>
