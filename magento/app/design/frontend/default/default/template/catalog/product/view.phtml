@@ -301,19 +301,19 @@ $tiPartSkuArray = $_product->getTiPartSku() ? explode(',', $_product->getTiPartS
                     <tr>
                         <!-- OE part # -->
                         <td>
-                            <a href="<?php echo $usageProduct->getProductUrl(); ?>">
-                                <?php echo $usage['partType']?>
+                            <a href="<?php echo $serviceKitProduct->getProductUrl(); ?>">
+                                <?php echo $serviceKit['partNumber']?>
                             </a>
                         </td>
                         
                         <!-- TI Part # -->
                         <td>
-                            <?php if($serviceKit['tiPartSku']):
+                            <?php if(!empty($serviceKit['tiPartNumber'])):
                                 
                                 $serviceKitTiProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $serviceKit['tiSku']); ?>
                             
                                 <a href="<?php echo $serviceKitTiProduct->getProductUrl() ?>">
-                                    <?php echo $usage['tiPartNumber']; ?>
+                                    <?php echo $serviceKit['tiPartNumber']; ?>
                                 </a>
                             <?php endif; ?>
                         </td>
@@ -323,7 +323,7 @@ $tiPartSkuArray = $_product->getTiPartSku() ? explode(',', $_product->getTiPartS
                         
                         <!-- Price -->
                         <td>
-                            <?php if ($serviceKitTiProduct->getTiPartSku()) {
+                            <?php if ($serviceKitTiProduct->getSku()) {
                                 echo Mage::helper('core')->currency($serviceKitTiProduct->getFinalPrice());
                             }?>
                         </td>
