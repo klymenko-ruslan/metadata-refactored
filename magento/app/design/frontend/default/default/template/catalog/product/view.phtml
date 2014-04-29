@@ -541,7 +541,7 @@ $tiPartSkuArray = $_product->getTiPartSku() ? explode(',', $_product->getTiPartS
                                && $productAttributeSetName != "Cartridge"): ?>
                                
                             <td>
-                                <?php if (!empty($usgae['tiSku']) && $usageTiProduct) {
+                                <?php if (!empty($usage['tiSku']) && $usageTiProduct) {
                                     echo Mage::helper('core')->currency($usageTiProduct->getFinalPrice());
                                 } else {
                                     echo Mage::helper('core')->currency($usageProduct->getFinalPrice());
