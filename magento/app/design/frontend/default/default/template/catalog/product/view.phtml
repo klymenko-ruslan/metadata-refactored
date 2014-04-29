@@ -37,11 +37,18 @@ $_product = $this->getProduct();
 $_productManufacturer = $_product->getManufacturer();
 $_description = $_product->getDescription();
 $_ad = $this->getAdditionalData();
+$productAttributeSet = Mage::getModel('eav/entity_attribute_set')->load($_product->getAttributeSetId());
+$productAttributeSetName = $productAttributeSet->getAttributeSetName();
 
 
 // Get the Bill of Materials
 $billOfMaterials = json_decode($_product->getBillOfMaterials(), true);
 
+// Get the service kits
+$serviceKits = json_decode($_product->getServiceKits(), true);
+
+// Get the usages
+$whereUsed = json_decode($_product->getWhereUsed(), true);
 
 // Get the interchanges SKUs, tiPartSkuArray is a subset of this
 $interchangeSkuArray = $_product->getInterchanges() ? explode(',', $_product->getInterchanges()) : array();
@@ -211,7 +218,10 @@ $tiPartSkuArray = $_product->getTiPartSku() ? explode(',', $_product->getTiPartS
             <li><a href="#tabs-interchangeable-parts">Interchangeable Parts</a></li>
             <li><a href="#tabs-bill-of-materials">Bill of Materials</a></li>
             <li><a href="#tabs-application-detail">Application Detail</a></li>
+            <li><a href="#tabs-where-used">Where Used</a></li>
         </ul>
+        
+        <!-- Product Information -->
         <div id="tabs-product-information">
             <div class="box-collateral">
                 <h2><?php echo $this->__('Product Information') ?></h2>
@@ -275,8 +285,56 @@ $tiPartSkuArray = $_product->getTiPartSku() ? explode(',', $_product->getTiPartS
                     <img src="/skin/frontend/default/default/images/<?php echo $dimensions_legend ?>" alt="<?php echo $dimensions_legend_alt ?>"/>
                 </div>
             <?php endif ?>
+            
+            <h2><?php echo $this->__('Service Kits') ?></h2>
+            <table class="data-table" id="service-kits">
+                <tr>
+                    <th><strong>OE Part #</strong></th>
+                    <th><strong>TI Part #</strong></th>
+                    <th><strong>Description</strong></th>
+                    <th><strong>Price</strong></th>
+                </tr>
+
+                <?php foreach ($serviceKits as $serviceKit): ?>
+                    <?php
+                        $serviceKitProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $serviceKit['sku']);
+                    ?>
+
+                    <tr>
+                        <!-- OE part # -->
+                        <td>
+                            <a href="<?php echo $serviceKitProduct->getProductUrl(); ?>">
+                                <?php echo $serviceKit['partNumber']?>
+                            </a>
+                        </td>
+                        
+                        <!-- TI Part # -->
+                        <td>
+                            <?php if(!empty($serviceKit['tiPartNumber'])):
+                                
+                                $serviceKitTiProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $serviceKit['tiSku']); ?>
+                            
+                                <a href="<?php echo $serviceKitTiProduct->getProductUrl() ?>">
+                                    <?php echo $serviceKit['tiPartNumber']; ?>
+                                </a>
+                            <?php endif; ?>
+                        </td>
+                        
+                        <!-- Description -->
+                        <td><?php echo $serviceKit['type']; ?></td>
+                        
+                        <!-- Price -->
+                        <td>
+                            <?php if ($serviceKitTiProduct->getSku()) {
+                                echo Mage::helper('core')->currency($serviceKitTiProduct->getFinalPrice());
+                            }?>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </table>
         </div>
 
+        <!-- Interchangeable Parts -->
         <div id="tabs-interchangeable-parts" class="box-collateral">
             <h2><?php echo $this->__('Interchangeable Parts') ?></h2>
             <table class="data-table" id="interchangeable-parts-specs-table">
@@ -303,6 +361,8 @@ $tiPartSkuArray = $_product->getTiPartSku() ? explode(',', $_product->getTiPartS
                 </tbody>
             </table>
         </div>
+        
+        <!-- Bill of Materials -->
         <div id="tabs-bill-of-materials" class="box-collateral">
             <h2><?php echo $this->__('Bill of Materials') ?></h2>
             <table class="data-table" id="bill-of-materials">
@@ -358,7 +418,7 @@ $tiPartSkuArray = $_product->getTiPartSku() ? explode(',', $_product->getTiPartS
             </table>
         </div>
 
-
+        <!-- Application Detail -->
         <div id="tabs-application-detail" class="box-collateral">
             <h2><?php echo $this->__('Application Detail') ?></h2>
             <table class="data-table" id="application_detail">
@@ -384,6 +444,100 @@ $tiPartSkuArray = $_product->getTiPartSku() ? explode(',', $_product->getTiPartS
                 <?php endforeach; ?>
             </table>
         </div>
+        
+        <!-- Where Used -->
+        <div id="tabs-where-used" class="box-collateral">
+            <h2><?php echo $this->__('Where Used') ?></h2>
+            <table class="data-table" id="where-used">
+                <tr>
+                    <?php switch($productAttributeSetName):
+                              case "Turbo": ?>
+                        <th><strong>OE Part #</strong></th>
+                        <th><strong>Manufacturer</strong></th>
+                        <th><strong>Part Type</strong></th>
+                        <?php break; ?>
+                        
+                        <?php case "Cartridge": ?>
+                        <th><strong>Turbo OE Part #</strong></th>
+                        <th><strong>Manufacturer</strong></th>
+                        <th><strong>Turbo Type</strong></th>
+                        <?php break; ?>
+                        
+                        <?php default: ?>
+                        <th><strong>Cartridge OE Part #</strong></th>
+                        <th><strong>TI Part #</strong></th>
+                        <th><strong>Manufacturer</strong></th>
+                        <th><strong>Turbo OE Part #</strong></th>
+                        <th><strong>Price</strong></th>
+                        <?php break; ?>
+                    <?php endswitch; ?>
+                    
+                </tr>
+
+                <?php foreach ($whereUsed as $usage): ?>
+                    <?php
+                        $usageProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $usage['sku']);
+                    ?>
+
+                    <tr>
+                        <!-- OE part # -->
+                        <td>
+                            <a href="<?php echo $usageProduct->getProductUrl(); ?>">
+                                <?php echo $usage['partNumber']?>
+                            </a>
+                        </td>
+                        
+                        <!-- TI Part # -->
+                        <?php if ($productAttributeSetName != "Turbo"
+                               && $productAttributeSetName != "Cartridge"): ?>
+                        <td>
+                            <?php echo $productAttributeSetName ?>
+                            <?php
+                                $usageTiProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $usage['tiSku']); ?>
+                            <a href="<?php echo $usageTiProduct->getProductUrl() ?>">
+                                <?php echo $usage['tiPartNumber']; ?>
+                            </a>
+                        </td>
+                        <?php endif; ?>
+                        
+                        <!-- Manufacturer -->
+                        <td>
+                            <?php echo $usage['manufacturer']; ?>
+                        </td>
+                        
+                        <!-- Part Type-specific; turbo = partType, cartridge = turbo type; else turbo part numbers -->
+                        <td>
+                            <?php
+                            switch($productAttributeSetName) {
+                                case "Turbo":
+                                    echo $usage['partType'];
+                                    break;
+                                case 'Cartridge':
+                                    echo $usage['turboType'];
+                                    break;
+                                default:
+                                    echo join(', ', $usage['turboPartNumbers']);
+                            }
+                            ?>
+                        </td>
+                        
+                        <!-- Price -->
+                        <?php if ($productAttributeSetName != "Turbo"
+                               && $productAttributeSetName != "Cartridge"): ?>): ?>
+                               
+                            <td>
+                                Price
+                                <?php echo "AS: `$productAttributeSetName'"; ?>
+                                <?php if ($usageTiProduct->getProductSku()) {
+                                    echo Mage::helper('core')->currency($usageTiProduct->getFinalPrice());
+                                }?>
+                            </td>
+                            
+                        <?php endif; ?>
+                    </tr>
+                <?php endforeach; ?>
+            </table>
+        </div>
     </div>
 
     <div style="margin-top: 5px;">
@@ -398,3 +552,5 @@ $tiPartSkuArray = $_product->getTiPartSku() ? explode(',', $_product->getTiPartS
 <script type="text/javascript">decorateTable('interchangeable-parts-specs-table')</script>
 <script type="text/javascript">decorateTable('bill-of-materials')</script>
 <script type="text/javascript">decorateTable('application_detail')</script>
+<script type="text/javascript">decorateTable('service-kits')</script>
+<script type="text/javascript">decorateTable('where-used')</script>
