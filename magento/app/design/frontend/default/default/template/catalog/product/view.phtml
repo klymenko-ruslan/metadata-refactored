@@ -37,6 +37,8 @@ $_product = $this->getProduct();
 $_productManufacturer = $_product->getManufacturer();
 $_description = $_product->getDescription();
 $_ad = $this->getAdditionalData();
+$productAttributeSet = Mage::getModel('eav/entity_attribute_set')->load($_product->getAttributeSetId());
+$productAttributeSetName = $productAttributeSet->getAttributeSetName();
 
 
 // Get the Bill of Materials
@@ -448,7 +450,7 @@ $tiPartSkuArray = $_product->getTiPartSku() ? explode(',', $_product->getTiPartS
             <h2><?php echo $this->__('Where Used') ?></h2>
             <table class="data-table" id="where-used">
                 <tr>
-                    <?php switch($_product->getPartType()):
+                    <?php switch($productAttributeSetName):
                               case "Turbo": ?>
                         <th><strong>OE Part #</strong></th>
                         <th><strong>Manufacturer</strong></th>
@@ -481,13 +483,15 @@ $tiPartSkuArray = $_product->getTiPartSku() ? explode(',', $_product->getTiPartS
                         <!-- OE part # -->
                         <td>
                             <a href="<?php echo $usageProduct->getProductUrl(); ?>">
-                                <?php echo $usage['partType']?>
+                                <?php echo $usage['partNumber']?>
                             </a>
                         </td>
                         
                         <!-- TI Part # -->
-                        <?php if ($usage['partType'] != 'Turbo' && $usage['partType'] != 'Cartridge'): ?>
+                        <?php if ($productAttributeSetName != "Turbo"
+                               && $productAttributeSetName != "Cartridge"): ?>
                         <td>
+                            <?php echo $productAttributeSetName ?>
                             <?php
                                 $usageTiProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $usage['tiSku']); ?>
                             <a href="<?php echo $usageTiProduct->getProductUrl() ?>">
@@ -504,7 +508,7 @@ $tiPartSkuArray = $_product->getTiPartSku() ? explode(',', $_product->getTiPartS
                         <!-- Part Type-specific; turbo = partType, cartridge = turbo type; else turbo part numbers -->
                         <td>
                             <?php
-                            switch($usage['partType']) {
+                            switch($productAttributeSetName) {
                                 case "Turbo":
                                     echo $usage['partType'];
                                     break;
@@ -515,15 +519,20 @@ $tiPartSkuArray = $_product->getTiPartSku() ? explode(',', $_product->getTiPartS
                                     echo join(', ', $usage['turboPartNumbers']);
                             }
                             ?>
-                        <td>
+                        </td>
                         
                         <!-- Price -->
-                        <?php if ($usage['partType'] != 'Turbo' && $usage['partType'] != 'Cartridge'): ?>
-                        <td>
-                            <?php if ($usageTiProduct->getProductSku()) {
-                                echo Mage::helper('core')->currency($usageTiProduct->getFinalPrice());
-                            }?>
-                        </td>
+                        <?php if ($productAttributeSetName != "Turbo"
+                               && $productAttributeSetName != "Cartridge"): ?>): ?>
+                               
+                            <td>
+                                Price
+                                <?php echo "AS: `$productAttributeSetName'"; ?>
+                                <?php if ($usageTiProduct->getProductSku()) {
+                                    echo Mage::helper('core')->currency($usageTiProduct->getFinalPrice());
+                                }?>
+                            </td>
+                            
                         <?php endif; ?>
                     </tr>
                 <?php endforeach; ?>
