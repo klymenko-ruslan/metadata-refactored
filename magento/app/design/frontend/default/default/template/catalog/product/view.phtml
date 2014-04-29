@@ -286,52 +286,55 @@ $tiPartSkuArray = $_product->getTiPartSku() ? explode(',', $_product->getTiPartS
                 </div>
             <?php endif ?>
             
-            <h2><?php echo $this->__('Service Kits') ?></h2>
-            <table class="data-table" id="service-kits">
-                <tr>
-                    <th><strong>OE Part #</strong></th>
-                    <th><strong>TI Part #</strong></th>
-                    <th><strong>Description</strong></th>
-                    <th><strong>Price</strong></th>
-                </tr>
-
-                <?php foreach ($serviceKits as $serviceKit): ?>
-                    <?php
-                        $serviceKitProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $serviceKit['sku']);
-                    ?>
-
+            <?php if ($productAttributeSetName == "Cartridge"
+                   || $productAttributeSetName == "Turbo"): ?>
+                <h2><?php echo $this->__('Service Kits') ?></h2>
+                <table class="data-table" id="service-kits">
                     <tr>
-                        <!-- OE part # -->
-                        <td>
-                            <a href="<?php echo $serviceKitProduct->getProductUrl(); ?>">
-                                <?php echo $serviceKit['partNumber']?>
-                            </a>
-                        </td>
-                        
-                        <!-- TI Part # -->
-                        <td>
-                            <?php if(!empty($serviceKit['tiPartNumber'])):
-                                
-                                $serviceKitTiProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $serviceKit['tiSku']); ?>
-                            
-                                <a href="<?php echo $serviceKitTiProduct->getProductUrl() ?>">
-                                    <?php echo $serviceKit['tiPartNumber']; ?>
-                                </a>
-                            <?php endif; ?>
-                        </td>
-                        
-                        <!-- Description -->
-                        <td><?php echo $serviceKit['type']; ?></td>
-                        
-                        <!-- Price -->
-                        <td>
-                            <?php if ($serviceKitTiProduct->getSku()) {
-                                echo Mage::helper('core')->currency($serviceKitTiProduct->getFinalPrice());
-                            }?>
-                        </td>
+                        <th><strong>OE Part #</strong></th>
+                        <th><strong>TI Part #</strong></th>
+                        <th><strong>Description</strong></th>
+                        <th><strong>Price</strong></th>
                     </tr>
-                <?php endforeach; ?>
-            </table>
+
+                    <?php foreach ($serviceKits as $serviceKit): ?>
+                        <?php
+                            $serviceKitProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $serviceKit['sku']);
+                        ?>
+
+                        <tr>
+                            <!-- OE part # -->
+                            <td>
+                                <a href="<?php echo $serviceKitProduct->getProductUrl(); ?>">
+                                    <?php echo $serviceKit['partNumber']?>
+                                </a>
+                            </td>
+
+                            <!-- TI Part # -->
+                            <td>
+                                <?php if(!empty($serviceKit['tiPartNumber'])):
+
+                                    $serviceKitTiProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $serviceKit['tiSku']); ?>
+
+                                    <a href="<?php echo $serviceKitTiProduct->getProductUrl() ?>">
+                                        <?php echo $serviceKit['tiPartNumber']; ?>
+                                    </a>
+                                <?php endif; ?>
+                            </td>
+
+                            <!-- Description -->
+                            <td><?php echo $serviceKit['type']; ?></td>
+
+                            <!-- Price -->
+                            <td>
+                                <?php if ($serviceKitTiProduct->getSku()) {
+                                    echo Mage::helper('core')->currency($serviceKitTiProduct->getFinalPrice());
+                                }?>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </table>
+            <?php endif; ?>
         </div>
 
         <!-- Interchangeable Parts -->
