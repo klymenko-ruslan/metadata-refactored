@@ -308,7 +308,7 @@ $tiPartSkuArray = $_product->getTiPartSku() ? explode(',', $_product->getTiPartS
                         $serviceKitTiProduct = null;
 
                         if (!empty($serviceKit['tiSku'])) {
-                            $serviceKitTiProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $serviceKit['tiSku']); ?>
+                            $serviceKitTiProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $serviceKit['tiSku']);
                         }
                         ?>
 
