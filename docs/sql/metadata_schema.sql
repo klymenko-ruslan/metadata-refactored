@@ -734,7 +734,7 @@ CREATE VIEW `vwhere_used` AS
             ELSE aptype.`name` = 'Cartridge'
         END;
 
-
+DROP VIEW IF EXISTS `vkp`;
 CREATE VIEW `vkp` AS SELECT DISTINCT
     kii.part_id  AS kit_id,
     pii.part_id AS part_id,
