@@ -50,6 +50,8 @@ h6            { font-size:11px; font-weight:bold; }
   height: 100px;
   float: left;
   display: inline-block;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
   box-sizing: border-box;
 }
 .grid-row [class*='grid-col-']:nth-child(n) {
