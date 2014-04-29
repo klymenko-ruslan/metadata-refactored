@@ -494,12 +494,14 @@ $tiPartSkuArray = $_product->getTiPartSku() ? explode(',', $_product->getTiPartS
                         <?php if ($productAttributeSetName != "Turbo"
                                && $productAttributeSetName != "Cartridge"): ?>
                         <td>
-                            <?php echo $productAttributeSetName ?>
-                            <?php
-                                $usageTiProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $usage['tiSku']); ?>
-                            <a href="<?php echo $usageTiProduct->getProductUrl() ?>">
-                                <?php echo $usage['tiPartNumber']; ?>
-                            </a>
+                            <?php if (!empty($usage['tiSku'])): ?>
+                                <?php $usageTiProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $usage['tiSku']); ?>
+                                <?php if ($usageTiProduct): ?>
+                                    <a href="<?php echo $usageTiProduct->getProductUrl() ?>">
+                                        <?php echo $usage['tiPartNumber']; ?>
+                                    </a>
+                                <?php endif; ?>
+                            <?php endif; ?>
                         </td>
                         <?php endif; ?>
                         
@@ -526,12 +528,10 @@ $tiPartSkuArray = $_product->getTiPartSku() ? explode(',', $_product->getTiPartS
                         
                         <!-- Price -->
                         <?php if ($productAttributeSetName != "Turbo"
-                               && $productAttributeSetName != "Cartridge"): ?>): ?>
+                               && $productAttributeSetName != "Cartridge"): ?>
                                
                             <td>
-                                Price
-                                <?php echo "AS: `$productAttributeSetName'"; ?>
-                                <?php if ($usageTiProduct->getProductSku()) {
+                                <?php if ($usageTiProduct) {
                                     echo Mage::helper('core')->currency($usageTiProduct->getFinalPrice());
                                 }?>
                             </td>

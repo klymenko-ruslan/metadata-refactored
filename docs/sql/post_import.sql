@@ -55,8 +55,7 @@ DROP TABLE IF EXISTS `sql server destination`;
 ALTER TABLE `part_type` ADD COLUMN `magento_attribute_set` VARCHAR(50);
 
 -- Default
-SET @partType = 'Part';
-UPDATE `part_type` SET `magento_attribute_set`= @partType;
+UPDATE `part_type` SET `magento_attribute_set`= 'Part';
 
 UPDATE `part_type` SET
     `name`= 'Turbo',
