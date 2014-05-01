@@ -55,8 +55,7 @@ DROP TABLE IF EXISTS `sql server destination`;
 ALTER TABLE `part_type` ADD COLUMN `magento_attribute_set` VARCHAR(50);
 
 -- Default
-SET @partType = 'Part';
-UPDATE `part_type` SET `magento_attribute_set`= @partType;
+UPDATE `part_type` SET `magento_attribute_set`= 'Part';
 
 UPDATE `part_type` SET
     `name`= 'Turbo',
@@ -75,12 +74,12 @@ WHERE ID = 3;
 
 UPDATE `part_type` SET
     `name`= 'Piston Ring',
-    `magento_attribute_set`= 'PistonRing'
+    `magento_attribute_set`= 'Piston Ring'
 WHERE ID = 4;
 
 UPDATE `part_type` SET
     `name`= 'Journal Bearing',
-    `magento_attribute_set`= 'JournalBearing'
+    `magento_attribute_set`= 'Journal Bearing'
 WHERE ID = 5;
 
 UPDATE `part_type` SET
@@ -90,7 +89,7 @@ WHERE ID = 6;
 
 UPDATE `part_type` SET
     `name`= 'Bearing Spacer',
-    `magento_attribute_set`= 'BearingSpacer'
+    `magento_attribute_set`= 'Bearing Spacer'
 WHERE ID = 7;
 
 UPDATE `part_type` SET
@@ -110,17 +109,17 @@ WHERE ID = 10;
 
 UPDATE `part_type` SET
     `name`= 'Compressor Wheel',
-    `magento_attribute_set`= 'CompressorWheel'
+    `magento_attribute_set`= 'Compressor Wheel'
 WHERE ID = 11;
 
 UPDATE `part_type` SET
     `name`= 'Turbine Wheel',
-    `magento_attribute_set`= 'TurbineWheel'
+    `magento_attribute_set`= 'Turbine Wheel'
 WHERE ID = 12;
 
 UPDATE `part_type` SET
     `name`= 'Bearing Housing',
-    `magento_attribute_set`= 'BearingHousing'
+    `magento_attribute_set`= 'Bearing Housing'
 WHERE ID = 13;
 
 UPDATE `part_type` SET
@@ -135,7 +134,7 @@ WHERE ID = 15;
 
 UPDATE `part_type` SET
     `name`= 'Nozzle Ring',
-    `magento_attribute_set`= 'NozzleRing'
+    `magento_attribute_set`= 'Nozzle Ring'
 WHERE ID = 16;
 
 UPDATE `part_type` SET
