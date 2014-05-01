@@ -6,6 +6,14 @@
  * @modified    Mladen Lotar <mladen.lotar@surgeworks.com>, Vedran Subotic <vedran.subotic@surgeworks.com>
  */
 ?>
+<style type="text/css">
+    td {
+        padding-right: 5px;
+    }
+    td:last-of-type {
+        padding-right: 0;
+    }
+</style>
 <?php $image_size = (int) Mage::getStoreConfig("featuredproducts/cmspage/max_image_dimension") ?>
 <?php if (($_products = $this->getProductCollection()) && $_products->getSize()): ?>
     <h3><?php echo $this->__($this->getBlockLabel()) ?></h3>
