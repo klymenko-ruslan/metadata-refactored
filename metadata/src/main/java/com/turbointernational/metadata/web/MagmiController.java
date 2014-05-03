@@ -583,7 +583,7 @@ public class MagmiController {
                 + "  p.id AS sku,\n"
                 + "  k.id AS kitSku,\n"
                 + "  k.manufacturerPartNumber as kitPartNumber,\n"
-                + "  k.name as type,\n"
+                + "  k.description as description,\n"
                 + "  tp.id AS tiKitSku,\n"
                 + "  tp.manufacturerPartNumber as tiKitPartNumber\n"
                 + ")\n"

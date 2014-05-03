@@ -13,17 +13,17 @@ public class MagmiServiceKit {
     
     public final  String kitPartNumber;
     
-    public final  String type;
+    public final  String description;
     
     public final  Long tiKitSku;
     
     public final  String tiKitPartNumber;
 
-    public MagmiServiceKit(Long sku, Long kitSku, String kitPartNumber, String type, Long tiKitSku, String tiKitPartNumber) {
+    public MagmiServiceKit(Long sku, Long kitSku, String kitPartNumber, String description, Long tiKitSku, String tiKitPartNumber) {
         this.sku = sku;
         this.kitSku = kitSku;
         this.kitPartNumber = kitPartNumber;
-        this.type = type;
+        this.description = description;
         this.tiKitSku = tiKitSku;
         this.tiKitPartNumber = tiKitPartNumber;
     }

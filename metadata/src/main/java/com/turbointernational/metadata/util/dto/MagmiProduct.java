@@ -163,7 +163,7 @@ public class MagmiProduct {
         interchanges.add(interchange.getInterchangePartSku());
 
         // TI interchanges
-        if (interchange.getInterchangePartManufacturerId() == Manufacturer.TI_ID) {
+        if (Manufacturer.TI_ID.equals(interchange.getInterchangePartManufacturerId())) {
             tiInterchanges.add(interchange.getInterchangePartSku());
             
             // Save the part number if this is the first interchange part
@@ -177,7 +177,7 @@ public class MagmiProduct {
         JSOG jsog = JSOG.object()
                         .put("sku", sk.kitSku)
                         .put("partNumber", sk.kitPartNumber)
-                        .put("type", sk.type)
+                        .put("description", sk.description)
                         .put("tiSku", sk.tiKitSku)
                         .put("tiPartNumber", sk.tiKitPartNumber);
         
@@ -230,13 +230,13 @@ public class MagmiProduct {
         // Part data
         part.csvColumns(columns);
 
-        // type
+        // description
         columns.put("type", "simple");
 
         // visibility
         columns.put("visibility", "Catalog, Search"); // See magmi genericmapper visibility.csv
 
-        // type
+        // description
         columns.put("status", "Enabled"); // See magmi genericmapper status.csv
 
         columns.put("categories", getCategoriesString());
