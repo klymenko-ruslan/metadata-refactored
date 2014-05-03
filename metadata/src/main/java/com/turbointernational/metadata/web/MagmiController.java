@@ -593,7 +593,8 @@ public class MagmiController {
             + "  LEFT JOIN vint_ti         iti   ON iti.part_id = k.id\n"
             + "  LEFT JOIN part            kti   ON kti.id      = iti.ti_part_id\n"
             + "WHERE p.id in (" + StringUtils.join(productIds, ',') + ")\n"
-            + "  order by p.id")
+            + "GROUP BY p.id, k.id\n"
+            + "ORDER BY p.id, k.id, kti.id")
             .getResultList();
 
         // Create the objects
