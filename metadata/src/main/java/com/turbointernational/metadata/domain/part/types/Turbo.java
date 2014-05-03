@@ -7,7 +7,6 @@ import flexjson.JSONSerializer;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 import javax.persistence.Cacheable;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -42,16 +41,6 @@ public class Turbo extends Part {
             inverseJoinColumns=@JoinColumn(name="car_model_engine_year_id"))
     private Set<CarModelEngineYear> cars = new HashSet<CarModelEngineYear>();
     
-    /**
-     * View takes care of joining by common turbo type and handling the kit_part_common_component aspect.
-     */
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinTable(name="vpart_turbotype_kits",
-        joinColumns = @JoinColumn(name="part_id"),
-        inverseJoinColumns = @JoinColumn(name="kit_id"))
-    private final Set<Kit> serviceKits = new TreeSet();
-
-
     public TurboModel getTurboModel() {
         return turboModel;
     }

@@ -53,7 +53,7 @@ public class Kit extends Part {
         return super.buildJSONSerializer()
             .include("kitType.id")
             .include("kitType.name")
-            .include("kitType.*")
+            .exclude("kitType.*")
             .include("components.id")
             .include("components.exclude")
             .include("components.part.id")

@@ -159,13 +159,6 @@ public class Part implements Comparable<Part> {
             inverseJoinColumns=@JoinColumn(name="interchange_header_id"))
     private Interchange interchange;
     
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinTable(name="vint_ti",
-            joinColumns=@JoinColumn(name="part_id"),
-            inverseJoinColumns=@JoinColumn(name="ti_part_id"))
-    @Column(insertable = false, updatable = false)
-    private Set<Part> tiParts;
-    
     @OneToMany(mappedBy="parent", fetch = FetchType.LAZY, orphanRemoval = true)
     @OrderBy("id")
     private Set<BOMItem> bom = new TreeSet<BOMItem>();
@@ -175,7 +168,9 @@ public class Part implements Comparable<Part> {
     private Set<BOMAncestor> bomAncestors = new LinkedHashSet<BOMAncestor>();
     
     @OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
-    @JoinTable(name="vpart_turbo", joinColumns=@JoinColumn(name="part_id"), inverseJoinColumns=@JoinColumn(name="turbo_id"))
+    @JoinTable(name="vpart_turbo",
+        joinColumns=@JoinColumn(name="part_id", insertable = false, updatable = false),
+        inverseJoinColumns=@JoinColumn(name="turbo_id", insertable = false, updatable = false))
     private Set<Turbo> turbos = new TreeSet<Turbo>();
     
     @OneToMany(cascade = CascadeType.REFRESH, mappedBy = "part", fetch=FetchType.LAZY)

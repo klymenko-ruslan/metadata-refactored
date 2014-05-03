@@ -578,22 +578,41 @@ public class MagmiController {
     }
     
     private static List<MagmiServiceKit> findMagmiServiceKits(Collection<Long> productIds) {
-        return Part.entityManager().createQuery(
-              "SELECT DISTINCT new com.turbointernational.metadata.util.dto.MagmiServiceKit("
-                + "  p.id AS sku,\n"
-                + "  k.id AS kitSku,\n"
-                + "  k.manufacturerPartNumber as kitPartNumber,\n"
-                + "  k.description as description,\n"
-                + "  tp.id AS tiKitSku,\n"
-                + "  tp.manufacturerPartNumber as tiKitPartNumber\n"
-                + ")\n"
-                + "FROM Part p\n"
-                + "  JOIN p.serviceKits k\n"
-                + "  LEFT JOIN k.tiParts tp\n"
-                + "WHERE\n"
-                + "  p.id IN (" + StringUtils.join(productIds, ',') + ")\n"
-                + "ORDER BY p.id", MagmiServiceKit.class)
+        List<Object[]> results = Part.entityManager().createNativeQuery(
+            "SELECT DISTINCT\n"
+            + "  p.id               AS sku,\n"
+            + "  k.id               AS kitSku,\n"
+            + "  k.manfr_part_num   AS partNumber,\n"
+            + "  k.description      AS description,\n"
+            + "  kti.id             AS tiPartSku,\n"
+            + "  kti.manfr_part_num AS tiPartNumber\n"
+            + "FROM\n"
+            + "  part p\n"
+            + "  JOIN vpart_turbotype_kits vpttk ON p.id        = vpttk.part_id\n"
+            + "  JOIN part                 k     ON k.id        = vpttk.kit_id\n"
+            + "  LEFT JOIN vint_ti         iti   ON iti.part_id = k.id\n"
+            + "  LEFT JOIN part            kti   ON kti.id      = iti.ti_part_id\n"
+            + "WHERE p.id in (" + StringUtils.join(productIds, ',') + ")\n"
+            + "  order by p.id")
             .getResultList();
+
+        // Create the objects
+        List<MagmiServiceKit> serviceKits = Lists.newLinkedList();
+        
+        for (Object[] row : results) {
+            MagmiServiceKit serviceKit = new MagmiServiceKit(
+                    ((BigInteger) row[0]).longValue(),
+                    ((BigInteger) row[1]).longValue(),
+                    (String) row[2],
+                    (String) row[3],
+                    row[4] == null ? null : ((BigInteger) row[4]).longValue(),
+                    row[5] == null ? null : (String) row[5]
+                );
+            
+            serviceKits.add(serviceKit);
+        }
+        
+        return serviceKits;
     }
     
     private static List<MagmiInterchange> findMagmiInterchanges(Collection<Long> productIds) {
