@@ -117,4 +117,9 @@
             <security:password-encoder hash="bcrypt"/>
         </security:authentication-provider>
     </security:authentication-manager>
+    
+    <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl"
+          p:host="${email.host}"
+          p:username="${email.user}"
+          p:password="${email.pass}"/>
 </beans>

@@ -69,7 +69,11 @@ class FinderProcessor extends Magmi_ItemProcessor {
             if (!empty($valueIds)) {
                 $this->mapValues($params['product_id'], $item['sku'], $valueIds);
             
+<<<<<<< HEAD
                 error_log("Mapped " . count($valueIds) . " values for finder $finderId");
+=======
+                //error_log("Mapped " . count($valueIds) . " values for finder $finderId");
+>>>>>>> 45_self_service_password_reset
             }
 	}
 
@@ -116,9 +120,15 @@ class FinderProcessor extends Magmi_ItemProcessor {
         // The hard way
         if (!$finalValueId) {
             $finalValueId = $this->createDropdownValues($finderId, $values, $dropdowns);
+<<<<<<< HEAD
             error_log("Created finder $finderId mapping " . join(',', $values) . "$finalValueId");
         } else {
             error_log("Found finder $finderId mapping " . join(',', $values) . "$finalValueId");
+=======
+            //error_log("Created finder $finderId mapping " . join(',', $values) . "$finalValueId");
+        } else {
+            //error_log("Found finder $finderId mapping " . join(',', $values) . "$finalValueId");
+>>>>>>> 45_self_service_password_reset
         }
         
         return $finalValueId;
@@ -206,7 +216,11 @@ class FinderProcessor extends Magmi_ItemProcessor {
         
         $query .= " WHERE " . join(" AND ", $where);
         
+<<<<<<< HEAD
         error_log("optimistic select: " . $query . " values: " . print_r(array_slice($values, 0, $count), true));
+=======
+        //error_log("optimistic select: " . $query . " values: " . print_r(array_slice($values, 0, $count), true));
+>>>>>>> 45_self_service_password_reset
         
         return $this->selectone($query, array_slice($values, 0, $count), "finalValueId");
     }

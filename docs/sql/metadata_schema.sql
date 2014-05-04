@@ -445,8 +445,10 @@ CREATE TABLE `user` (
   `name` VARCHAR(100) NOT NULL,
   `email` VARCHAR(255) NOT NULL,
   `password` VARCHAR(100) NOT NULL,
+  `password_reset_token` CHAR(36) NULL,
   `enabled` BOOLEAN NOT NULL DEFAULT 1,
   UNIQUE INDEX (`email`),
+  UNIQUE INDEX (`password_reset_token`),
   PRIMARY KEY(`id`)
 ) ENGINE = INNODB;
 
