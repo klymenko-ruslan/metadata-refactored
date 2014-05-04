@@ -1,30 +1,42 @@
 package com.turbointernational.metadata.web;
 
+import com.google.common.collect.Sets;
 import com.turbointernational.metadata.domain.security.User;
+import flexjson.JSONSerializer;
+import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Logger;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
  *
  * @author jrodriguez
  */
 @Controller
-@RequestMapping("/password/reset")
-public class PasswordResetController {
+@RequestMapping("/metadata/security")
+public class SecurityController {
     
-    private static final Logger log = Logger.getLogger(PasswordResetController.class.toString());
+    private static final Logger log = Logger.getLogger(SecurityController.class.toString());
     
     @Autowired(required=true)
     MailSender mailer;
@@ -34,9 +46,8 @@ public class PasswordResetController {
     
     @Value("${email.metadata.from}")
     String metadataFrom;
-    
     @Transactional
-    @RequestMapping("token/{token}")
+    @RequestMapping("password/reset/token/{token}")
     public @ResponseBody void token(@PathVariable("token") String token, @RequestParam String password) {
         User user = User.findByPasswordResetToken(token);
         
@@ -50,7 +61,7 @@ public class PasswordResetController {
     }
     
     @Transactional
-    @RequestMapping("request")
+    @RequestMapping("password/reset/request")
     public @ResponseBody void request(@RequestParam String email) {
         
         // Generate a UUID
@@ -73,6 +84,25 @@ public class PasswordResetController {
         
         mailer.send(message);
     }
-
     
+    @RequestMapping("denied")
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public @ResponseBody void denied() {
+    }
+    
+    @RequestMapping("login/success")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public @ResponseBody void loginSuccess() {
+    }
+    
+    @RequestMapping("login/failed")
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public @ResponseBody String loginFailed() {
+        return "\"Login failed\"";
+    }
+    
+    @RequestMapping("login/required")
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public @ResponseBody void loginRequired() {
+    }
 }

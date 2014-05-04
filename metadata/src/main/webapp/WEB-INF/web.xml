@@ -83,7 +83,7 @@
         <url-pattern>/search/*</url-pattern>
         <url-pattern>/magmi</url-pattern>
         <url-pattern>/magmi/*</url-pattern>
-        <url-pattern>/password/reset/*</url-pattern>
+        <url-pattern>/security/*</url-pattern>
     </servlet-mapping>
     
     <session-config>

@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-  .service('User', function User($log, $q, Restangular) {
+  .service('User', function User($location, $log, $q, Restangular) {
       var User = this; // jshint ignore:line
 
       User.roles = [];
@@ -12,6 +12,7 @@ angular.module('ngMetaCrudApp')
 
         var rolesPromise = Restangular.all('security/user/myroles').getList().then(
             function(roles) {
+              $log.log("Set Roles")
               User.roles = roles;
             },
             function() {
@@ -30,4 +31,14 @@ angular.module('ngMetaCrudApp')
 
         return $q.all([rolesPromise, userPromise]);
       };
+
+      User.logout = function() {
+        return Restangular.all("security/logout").post().then(
+          function() {
+            User.user = null;
+            User.roles = [];
+            $location.path("/login")
+          }
+        );
+      }
     });

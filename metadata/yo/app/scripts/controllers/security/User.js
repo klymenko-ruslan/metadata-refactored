@@ -42,8 +42,7 @@ angular.module('ngMetaCrudApp')
           // Update
           $scope.user.put().then(
               function() {
-                gToast.open("Updated user.")
-                $location.path('/security/user/');
+                gToast.open("Updated user.");
               },
               function(response) {
                 restService.error("Could not update user.", response);

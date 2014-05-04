@@ -95,7 +95,7 @@ module.exports = function (grunt) {
             return [
               modRewrite([
                 '^/(metadata/.*)$             http://localhost:8080/$1 [PL]',
-                '^/(.*?spring_security.*?)$   http://localhost:8080/$1 [PL]',
+                '^/(security/.*)$             http://localhost:8080/$1 [PL]',
                 '^/(\\w|/)+$                  /index.html             [L]'
               ]),
               lrSnippet,
