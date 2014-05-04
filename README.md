@@ -8,7 +8,7 @@ Developer IPs
   </tr>
   <tr>
     <td>Jeff Home</td>
-    <td>71.227.128.226 OLD: 67.185.158.56</td>
+    <td>71.227.128.226</td>
   </tr>
   <tr>
     <td>Jeff HUB</td>
@@ -26,8 +26,6 @@ Developer IPs
 
 Dev Servers
 ===========
-Metadata: http://timetadata.herokuapp.com
-
 Magento: ubuntu@ec2-54-204-208-6.compute-1.amazonaws.com
 
 Magento Storefront: http://ec2-54-197-60-94.compute-1.amazonaws.com/
@@ -37,9 +35,9 @@ Magento Admin: http://ec2-54-197-60-94.compute-1.amazonaws.com/admin
 
 Prod Servers
 ============
-Metadata: http://metadata.turbointernational.com
+Metadata: https://metadata.turbointernational.com
 
-Magento: http://54.204.39.114
+Magento: https://store.turbointernational.com
 
 
 Architecture
@@ -61,6 +59,8 @@ Metadata Server Configuration
 The Metadata server uses java properties files for configuration. In the source, these are stored under `/metadata/src/main/java/resources/spring` (or try `metadata/src/main/resources/META-INF/spring`). The webapp also looks in the [tomcat] user's home directory for `ti_metadata.properties` which can be used to override the default values. Here's a sample:
 
 ```
+email.metadata.url=https://metadata.turbointernational.com/
+email.host=turbo.turbointernational.com
 mas90.db.path=/var/mas90.accdb
 elasticsearch.timeout=10000
 elasticsearch.port=9300
