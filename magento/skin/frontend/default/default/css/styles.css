@@ -549,7 +549,7 @@ tr.summary-details-excluded { font-style:italic; }
 .header .form-search label { float:left; width:24px; text-align:left; text-indent:-999em; overflow:hidden; }
 .header .form-search input.input-text { float:left; width:210px; margin-right:4px; padding: 6px 4px; }
 .header .form-search button.button { float:left; border-top: 1px solid #0074d9; border-right: 1px solid #0074d9; border-left: 1px solid #0074d9; border-bottom: none; }
-.header .form-search button.button span { padding-bottom: 7px; }
+.header .form-search button.button span { padding: 4px 6px 3px; }
 .header .form-search button.button span span { background-position:100% 0; padding:4px 6px 7px; }
 .header .form-search .search-autocomplete { z-index:999; left:40px !important; top:22px !important; }
 .header .form-search .search-autocomplete ul { border:1px solid rgb(228,30,0); background-color:#f9f5f0; }
