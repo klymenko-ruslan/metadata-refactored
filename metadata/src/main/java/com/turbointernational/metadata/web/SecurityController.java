@@ -80,7 +80,7 @@ public class SecurityController {
         message.setTo(email);
         message.setFrom(metadataFrom);
         message.setSubject("TI Metadata Password Reset Link");
-        message.setText(metadataUrl + "/" + user.getPasswordResetToken());
+        message.setText(metadataUrl + user.getPasswordResetToken());
         
         mailer.send(message);
     }
