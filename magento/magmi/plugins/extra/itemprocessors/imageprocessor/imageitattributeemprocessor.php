@@ -119,7 +119,6 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 		{
 			return $ivalue;
 		}
-		echo "Image source dir: " . $this->getParam("IMG:sourcedir");
 		
 		//ok , so it's a relative path
 		$imgfile=false;
