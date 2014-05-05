@@ -27,3 +27,5 @@ ssh -q $METADATA_SSH "mysqldump -u $MYSQL_USER $MYSQL_PASS $MYSQL_DB | gzip > $M
 echo "[`date`] Starting import"
 ssh -q $METADATA_SSH "php $MAGMI_DIR/cli/magmi.cli.php -profile=Default -mode=create -CSV:filename=$MAGMI_DIR/import/products.csv" || exit 1
 
+echo "[`date`] Done"
+
