@@ -1,8 +1,10 @@
-$GlyphiconsPath: "../bower_components/sass-bootstrap-glyphicons/fonts"; // TODO: Why isn't this working?
+$icon-font-path: "../bower_components/bootstrap-sass/dist/fonts/";
+$fa-font-path:   "../bower_components/fontawesome/fonts/";
 $iconSpritePath: "../images/glyphicons-halflings.png";
 $iconWhiteSpritePath: "../images/glyphicons-halflings-white.png";
 
-@import "bootstrap-sass/lib/bootstrap";
+@import "../bower_components/bootstrap-sass/lib/bootstrap";
+@import "../bower_components/fontawesome/scss/font-awesome";
 
 /* Mixins */
 @mixin rounded {

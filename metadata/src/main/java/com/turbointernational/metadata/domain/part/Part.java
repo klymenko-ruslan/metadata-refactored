@@ -1,5 +1,6 @@
 package com.turbointernational.metadata.domain.part;
 import com.turbointernational.metadata.domain.other.Manufacturer;
+import com.turbointernational.metadata.domain.other.TurboType;
 import com.turbointernational.metadata.domain.part.bom.BOMAncestor;
 import com.turbointernational.metadata.domain.part.bom.BOMItem;
 import com.turbointernational.metadata.domain.part.types.Backplate;
@@ -34,7 +35,6 @@ import java.util.logging.Logger;
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.FetchType;
@@ -46,8 +46,6 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
@@ -74,26 +72,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 @Configurable
 @Entity
 @Table(name = "PART")
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn
-@NamedQueries({
-    @NamedQuery(name="bom_parent_ids", query=
-          "SELECT DISTINCT p\n"
-        + "FROM\n"
-        + "  Part p\n"
-        + "  JOIN p.bom b\n"
-        + "  JOIN b.parent parent\n"
-        + "WHERE\n"
-        + "  b.child.id = :partId"),
-    @NamedQuery(name="bom_alt_parent_ids", query=
-          "SELECT DISTINCT p.id\n"
-        + "FROM\n"
-        + "  Part p\n"
-        + "  JOIN p.bom b"
-        + "  JOIN b.alternatives alt\n"
-        + "  JOIN alt.part altPart\n"
-        + "WHERE\n"
-        + "  altPart.id = :partId")})
+@Inheritance(strategy = InheritanceType.JOINED)
 public class Part implements Comparable<Part> {
     private static final Logger log = Logger.getLogger(Part.class.toString());
     
@@ -103,7 +82,7 @@ public class Part implements Comparable<Part> {
         public Object instantiate(ObjectBinder context, Object value, Type targetType, Class targetClass) {
             Map<String, Object> valueHash = (Map) value;
             Map<String, Object> partTypeHash = (Map) valueHash.get("partType");
-            String partType = (String) partTypeHash.get("typeName");
+            String partType = (String) partTypeHash.get("name");
             
             // Create the appropriate part type
             Part part = null;
@@ -148,7 +127,7 @@ public class Part implements Comparable<Part> {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "manfr_id", nullable = false)
     private Manufacturer manufacturer;
     
@@ -161,12 +140,18 @@ public class Part implements Comparable<Part> {
     @Column(name="description")
     private String description;
     
-    @OneToOne(fetch=FetchType.EAGER)
+    @OneToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="part_type_id")
     private PartType partType;
     
     @Column(nullable = false, columnDefinition = "BIT", length = 1)
     private Boolean inactive = false;
+    
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinTable(name="part_turbo_type",
+                joinColumns = @JoinColumn(name="part_id"),
+                inverseJoinColumns = @JoinColumn(name="turbo_type_id"))
+    private Set<TurboType> turboTypes = new TreeSet<TurboType>();
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinTable(name="interchange_item",
@@ -182,12 +167,13 @@ public class Part implements Comparable<Part> {
     @OrderBy("id")
     private Set<BOMAncestor> bomAncestors = new LinkedHashSet<BOMAncestor>();
     
-    @OneToMany(cascade = CascadeType.REFRESH)
-    @JoinTable(name="vpart_turbo", joinColumns=@JoinColumn(name="part_id"), inverseJoinColumns=@JoinColumn(name="turbo_id"))
+    @OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
+    @JoinTable(name="vpart_turbo",
+        joinColumns=@JoinColumn(name="part_id", insertable = false, updatable = false),
+        inverseJoinColumns=@JoinColumn(name="turbo_id", insertable = false, updatable = false))
     private Set<Turbo> turbos = new TreeSet<Turbo>();
     
-    @OrderBy("id")
-    @OneToMany(cascade = CascadeType.REFRESH, mappedBy = "part")
+    @OneToMany(cascade = CascadeType.REFRESH, mappedBy = "part", fetch=FetchType.LAZY)
     private Set<ProductImage> productImages = new TreeSet<ProductImage>();
     
     @Version
@@ -276,6 +262,10 @@ public class Part implements Comparable<Part> {
         this.bomAncestors.addAll(bomAncestors);
     }
     
+    public Set<TurboType> getTurboTypes() {
+        return turboTypes;
+    }
+    
     public Set<Turbo> getTurbos() {
         return turbos;
     }
@@ -320,9 +310,10 @@ public class Part implements Comparable<Part> {
     protected JSONSerializer buildJSONSerializer() {
         return new JSONSerializer()
                 .transform(new HibernateTransformer(), this.getClass())
+                .include("turboTypes.id")
+                .include("turboTypes.name")
                 .include("partType.id")
                 .include("partType.name")
-                .include("partType.typeName")
                 .include("manufacturer.id")
                 .include("manufacturer.name")
                 .include("interchange.id")
@@ -332,7 +323,6 @@ public class Part implements Comparable<Part> {
                 .include("interchange.parts.version")
                 .include("interchange.parts.partType.id")
                 .include("interchange.parts.partType.name")
-                .include("interchange.parts.partType.typeName")
                 .include("interchange.parts.manufacturerPartNumber")
                 .include("interchange.parts.manufacturer.id")
                 .include("interchange.parts.manufacturer.name")
@@ -341,7 +331,6 @@ public class Part implements Comparable<Part> {
                 .include("bomParentParts.name")
                 .include("bomParentParts.partType.id")
                 .include("bomParentParts.partType.name")
-                .include("bomParentParts.partType.typeName")
                 .include("bomParentParts.manufacturerPartNumber")
                 .include("bomParentParts.manufacturer.id")
                 .include("bomParentParts.manufacturer.name")
@@ -353,7 +342,6 @@ public class Part implements Comparable<Part> {
                 .include("bom.child.name")
                 .include("bom.child.partType.id")
                 .include("bom.child.partType.name")
-                .include("bom.child.partType.typeName")
                 .include("bom.child.manufacturer.id")
                 .include("bom.child.manufacturer.name")
                 .include("bom.child.manufacturerPartNumber")
@@ -365,7 +353,6 @@ public class Part implements Comparable<Part> {
                 .include("bom.alternatives.part.version")
                 .include("bom.alternatives.part.partType.id")
                 .include("bom.alternatives.part.partType.name")
-                .include("bom.alternatives.part.partType.typeName")
                 .include("bom.alternatives.part.manufacturerPartNumber")
                 .include("bom.alternatives.part.manufacturer.id")
                 .include("bom.alternatives.part.manufacturer.name")
@@ -384,7 +371,7 @@ public class Part implements Comparable<Part> {
                 .put("manufacturer_name", manufacturer.getName())
                 .put("manufacturer_type_name", manufacturer.getType().getName())
                 .put("manufacturer_part_number", manufacturerPartNumber)
-                .put("part_type", partType.getTypeName())
+                .put("part_type", partType.getName())
                 .put("attribute_set_id", partType.getMagentoAttributeSet());
         
         
@@ -409,7 +396,6 @@ public class Part implements Comparable<Part> {
                 .include("description")
                 .include("partType.id")
                 .include("partType.name")
-                .include("partType.typeName")
                 .exclude("partType.*")
                 .include("manufacturer.id")
                 .include("manufacturer.name")
@@ -526,11 +512,25 @@ public class Part implements Comparable<Part> {
         return entityManager()
                 .createQuery(
                   "SELECT p\n"
-                + "FROM Part p\n"
-                + "  JOIN FETCH p.partType pt\n"
-                + "  JOIN FETCH p.manufacturer m", Part.class)
+                + "FROM Part p", Part.class)
                 .setFirstResult(firstResult)
-                .setMaxResults(maxResults).getResultList();
+                .setMaxResults(maxResults)
+                .getResultList();
+    }
+    
+    public static List<BOMAncestor> listBOMAncestors(long partId) {
+        return entityManager().createQuery(
+            "SELECT ba\n"
+                + "FROM\n"
+                + "  BOMAncestor ba\n"
+                + "  JOIN ba.ancestor ap\n"
+                + "  JOIN ap.manufacturer\n"
+                + "  JOIN ap.partType pt\n"
+                + "WHERE\n"
+                + "  ba.part.id = ?\n"
+                + "  AND ba.distance > 0\n" // Non-self parts
+                + "ORDER BY ba.type, pt.name, ap.manufacturerPartNumber"
+        ).setParameter(1, partId).getResultList();
     }
     
     @Transactional

@@ -36,14 +36,8 @@ public class PartType {
     @Column(nullable=false)
     private String name;
     
-    @Column(name="DTYPE", nullable=false)
-    private String typeName;
-    
     @Column(name="magento_attribute_set")
     private String magentoAttributeSet;
-    
-    @Column(name="magento_category")
-    private String magentoCategory;
     
     // TODO: Is this a duplicate of parentTypes?
     @OneToOne(fetch = FetchType.EAGER)
@@ -66,28 +60,12 @@ public class PartType {
         this.name = name;
     }
     
-    public String getTypeName() {
-        return typeName;
-    }
-    
-    public void setTypeName(String typeName) {
-        this.typeName = typeName;
-    }
-    
     public String getMagentoAttributeSet() {
         return magentoAttributeSet;
     }
     
     public void setMagentoAttributeSet(String magentoName) {
         this.magentoAttributeSet = magentoName;
-    }
-    
-    public String getMagentoCategory() {
-        return magentoCategory;
-    }
-    
-    public void setMagentoCategory(String magentoCategory) {
-        this.magentoCategory = magentoCategory;
     }
     
     public PartType getParent() {

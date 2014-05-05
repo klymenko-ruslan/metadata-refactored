@@ -95,7 +95,7 @@ module.exports = function (grunt) {
             return [
               modRewrite([
                 '^/(metadata/.*)$             http://localhost:8080/$1 [PL]',
-                '^/(.*?spring_security.*?)$   http://localhost:8080/$1 [PL]',
+                '^/(security/.*)$             http://localhost:8080/$1 [PL]',
                 '^/(\\w|/)+$                  /index.html             [L]'
               ]),
               lrSnippet,
@@ -305,6 +305,12 @@ module.exports = function (grunt) {
           ]
         }]
       },
+      fonts: {
+        expand: true,
+        cwd: '<%= yeoman.app %>/bower_components/bootstrap-sass/dist/fonts/',
+        dest: '.tmp/fonts/',
+        src: '{,*/}*.*'
+      },
       styles: {
         expand: true,
         cwd: '<%= yeoman.app %>/styles',
@@ -316,16 +322,19 @@ module.exports = function (grunt) {
       server: [
         'coffee:dist',
         'compass:server',
+        'copy:fonts',
         'copy:styles'
       ],
       test: [
         'coffee',
         'compass',
+        'copy:fonts',
         'copy:styles'
       ],
       dist: [
         'coffee',
         'compass:dist',
+        'copy:fonts',
         'copy:styles',
         'imagemin',
         'svgmin',

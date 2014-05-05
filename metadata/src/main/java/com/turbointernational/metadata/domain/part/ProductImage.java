@@ -26,7 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Configurable
 @Cacheable
 @Entity
-@Table(name = "PRODUCT_IMAGE")
+@Table(name = "product_image")
 public class ProductImage implements Comparable<ProductImage> {
 
     public static String getResizedFilename(Long partId, Long imageId, int size) {
@@ -91,6 +91,10 @@ public class ProductImage implements Comparable<ProductImage> {
         Query q = entityManager().createQuery("SELECT DISTINCT p FROM ProductImage p WHERE p.id = :id");
         q.setParameter("id", id);
         return (ProductImage) q.getSingleResult();
+    }
+    
+    public static List<ProductImage> findAll() {
+        return entityManager().createQuery("SELECT o FROM ProductImage o", ProductImage.class).getResultList();
     }
     
     @Transactional

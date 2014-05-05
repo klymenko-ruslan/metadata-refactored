@@ -1,0 +1,66 @@
+<metanav>
+  <li>
+    <a ng-href="#/part/{{ part.partType.name }}/{{ partId }}"
+       class="btn btn-primary">
+      <i class="fa fa-eye"></i>
+      View Part
+    </a>
+  </li>
+
+  <li>
+    <a ng-click="save()"
+       ng-disabled="pickedPart == null"
+       class="btn btn-success">
+      <i class="fa fa-save"></i>
+      Add Mapping
+    </a>
+  </li>
+</metanav>
+
+<h1 class="padding-top" part-name="part" part-name-suffix="Common Component Mapping Search"></h1>
+
+<div class="row">
+
+  <div class="col-xs-6">
+    <h3>Kit Common Component Mappings</h3>
+    <part-table parts="part.components" key="part"
+                extra-columns="{&quot;Mapping&quot;: &quot;item.exclude ? 'Exclude' : 'Include'&quot;}"></part-table>
+  </div>
+
+  <!-- Picked Part -->
+  <div class="col-xs-6">
+    <h3>
+      Picked Part
+      <button id="mapping-input" ng-model="mapping.exclude" class="btn btn-sm btn-info pull-right" btn-checkbox>
+        <span ng-show="mapping.exclude">Exclude</span>
+        <span ng-hide="mapping.exclude">Include</span>
+      </button>
+    </h3>
+
+    <part-summary part="pickedPart" ng-show="pickedPart"></part-summary>
+
+    <div ng-hide="pickedPart" class="well well-sm">
+      Pick a part.
+    </div>
+  </div>
+</div>
+
+<hr/>
+
+<part-search class="well well-lg">
+
+  <a authorize="ROLE_READ"
+     ng-href="#/part/{{partType}}/{{partId}}"
+     class="btn btn-primary btn-xs">
+    <i class="fa fa-eye"></i>
+    View
+  </a>
+
+  <a authorize="ROLE_ALTER_PART"
+     ng-click="pick(partId)"
+     class="btn btn-success btn-xs">
+      <i class="fa fa-bullseye"></i>
+    Pick
+  </a>
+
+</part-search>

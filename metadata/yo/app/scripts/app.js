@@ -30,9 +30,13 @@ angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap', 'restangu
             controller: 'PartDetailCtrl'
           });
         $routeProvider.when('/part/:type/:id/interchange/search', {
-            templateUrl: 'views/part/interchange/PartInterchangeSearch.html',
-            controller: 'PartInterchangeSearchCtrl'
-          });
+          templateUrl: 'views/part/interchange/PartInterchangeSearch.html',
+          controller: 'PartInterchangeSearchCtrl'
+        });
+        $routeProvider.when('/part/Kit/:id/component/search', {
+          templateUrl: '../views/part/KitComponentSearch.html',
+          controller: 'KitComponentSearchCtrl'
+        });
         $routeProvider.when('/part/:type/:id/bom/search', {
             templateUrl: 'views/part/bom/PartBomSearch.html',
             controller: 'PartBomSearchCtrl'
@@ -72,17 +76,23 @@ angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap', 'restangu
           controller: 'MyAccountCtrl'
         });
 
-
-        // Default
-        $routeProvider.when('/', {
-          templateUrl: '/spring_security_login' // From Spring Security in the Java app
+        // Password Reset
+        $routeProvider.when('/password/reset/:token', {
+          templateUrl: 'views/security/pwreset.html',
+          controller: 'LoginCtrl'
         });
+
+        // Default / Login
+        $routeProvider.when('/', {
+          templateUrl: 'views/security/login.html',
+          controller: 'LoginCtrl'
+        });
+
         $routeProvider.otherwise({
           redirectTo: '/'
         });
       })
     .run(function($location, $log, $rootScope, User) {
-
       $rootScope.$location = $location;
 
       // Initialize the user
@@ -92,6 +102,6 @@ angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap', 'restangu
           },
           function() {
             $log.log('User init failed.');
-            $location.path('/spring_security_login');
+            $location.path('/login');
           });
     });

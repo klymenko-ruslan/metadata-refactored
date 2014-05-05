@@ -8,9 +8,11 @@ import java.util.List;
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.PersistenceContext;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -46,6 +48,21 @@ public class CarMake {
     }
     //</editor-fold>
     
+    //<editor-fold defaultstate="collapsed" desc="activerecord">
+    @PersistenceContext
+    transient EntityManager entityManager;
+    
+    public static final EntityManager entityManager() {
+        EntityManager em = new CarMake().entityManager;
+        if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
+        return em;
+    }
+    
+    public static List<CarMake> findAll() {
+        return entityManager().createQuery("SELECT o FROM CarMake o", CarMake.class).getResultList();
+    }
+    //</editor-fold>
+    
     //<editor-fold defaultstate="collapsed" desc="Serialization">
     public String toJson() {
         return new JSONSerializer().exclude("*.class").serialize(this);
@@ -55,7 +72,7 @@ public class CarMake {
         return new JSONSerializer().include(fields).exclude("*.class").serialize(this);
     }
     
-    public static CarMake fromJsonToCarFuelType(String json) {
+    public static CarMake fromJsonToCarMake(String json) {
         return new JSONDeserializer<CarMake>().use(null, CarMake.class).deserialize(json);
     }
     
@@ -67,7 +84,7 @@ public class CarMake {
         return new JSONSerializer().include(fields).exclude("*.class").serialize(collection);
     }
     
-    public static Collection<CarMake> fromJsonArrayToCarFuelTypes(String json) {
+    public static Collection<CarMake> fromJsonArrayToCarMakes(String json) {
         return new JSONDeserializer<List<CarMake>>().use(null, ArrayList.class).use("values", CarMake.class).deserialize(json);
     }
     //</editor-fold>

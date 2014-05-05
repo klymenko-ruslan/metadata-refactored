@@ -9,46 +9,47 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.SecondaryTable;
+import javax.persistence.Table;
 import net.sf.jsog.JSOG;
 import org.apache.commons.lang.ObjectUtils;
 import org.springframework.beans.factory.annotation.Configurable;
 
 @Configurable
 @Entity
-@SecondaryTable(name="backplate", pkJoinColumns=@PrimaryKeyJoinColumn(name = "part_id"))
+@Table(name="backplate")
+@PrimaryKeyJoinColumn(name = "part_id")
 public class Backplate extends Part {
 
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="seal_type_id", table = "backplate")
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="seal_type_id")
     private SealType sealType;
 
-    @Column(name="style_compressor_wheel", table = "backplate")
+    @Column(name="style_compressor_wheel")
     private String styleCompressorWheel;
 
     // ???: How is this different from the seal type's name?
-    @Column(name="seal_type", table = "backplate")
+    @Column(name="seal_type")
     private String sealTypeString;
 
-    @Column(name="overall_diameter", table = "backplate")
+    @Column(name="overall_diameter")
     private Float overallDiameter;
 
-    @Column(name="compressor_wheel_diameter", table = "backplate")
+    @Column(name="compressor_wheel_diameter")
     private Float compressorWheelDiameter;
 
-    @Column(name="piston_ring_diameter", table = "backplate")
+    @Column(name="piston_ring_diameter")
     private Float pistonRingDiameter;
 
-    @Column(name="compressor_housing_diameter", table = "backplate")
+    @Column(name="compressor_housing_diameter")
     private Float compressorHousingDiameter;
 
-    @Column(name="notes", table = "backplate")
+    @Column(name="notes")
     private String notes;
 
-    @Column(name="secondary_diameter", table = "backplate")
+    @Column(name="secondary_diameter")
     private Float secondaryDiameter;
 
-    @Column(name="overall_height", table = "backplate")
+    @Column(name="overall_height")
     private Float overallHeight;
 
     public SealType getSealType() {

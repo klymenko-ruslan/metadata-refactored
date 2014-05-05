@@ -103,13 +103,16 @@
     <task:annotation-driven executor="asyncExecutor" mode="aspectj"/>
     <task:executor id="asyncExecutor" pool-size="10"/>
     
-    <security:http auto-config="false" realm="TI Metadata Login">
-        <security:intercept-url pattern="/metadata/**" access="ROLE_READ"/>
+    <security:http use-expressions="true" access-denied-page="/metadata/security/denied">
+        <security:intercept-url pattern="/metadata/search" access="isAuthenticated()"/>
         <security:remember-me/>
+        <security:form-login login-processing-url="/metadata/security/login"
+                             login-page="/metadata/security/login/required"
+                             default-target-url="/metadata/security/login/success"
+                             authentication-failure-url="/metadata/security/login/failed"
+                             always-use-default-target="true"/>
         
-        <security:form-login always-use-default-target="true" default-target-url="/#/part/list"/>
-        
-        <security:logout logout-success-url="/#/"/>
+        <security:logout logout-url="/metadata/security/logout" logout-success-url="/#/login"/>
     </security:http>
     
     <security:authentication-manager>
@@ -117,4 +120,9 @@
             <security:password-encoder hash="bcrypt"/>
         </security:authentication-provider>
     </security:authentication-manager>
+    
+    <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl"
+          p:host="${email.host}"
+          p:username="${email.user}"
+          p:password="${email.pass}"/>
 </beans>

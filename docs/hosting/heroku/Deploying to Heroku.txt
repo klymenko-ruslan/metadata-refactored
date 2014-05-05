@@ -1,6 +1,0 @@
-WAR method:
-1. Login with heroku command line.
-2. heroku deploy:war --app timetadata -w <path, i.e. target/*.war>
-
-Git method:
-1. Setup the heroku remote in your Git configuration.

@@ -1,10 +1,8 @@
 package com.turbointernational.metadata.util.dto;
 
-import com.turbointernational.metadata.domain.car.CarModelEngineYear;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.part.ProductImage;
-import com.turbointernational.metadata.domain.part.types.Turbo;
 import com.turbointernational.metadata.util.ImageResizer;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -26,7 +24,7 @@ public class MagmiProduct {
     
     private final Part part;
     
-    private TreeSet<Long> imageIds = new TreeSet<Long>();
+    private final TreeSet<Long> imageIds = new TreeSet<Long>();
 
     private final Set<String> turboType = new TreeSet<String>();
 
@@ -51,8 +49,10 @@ public class MagmiProduct {
     private String tiPartNumber = "";
     
     private final JSOG bom = JSOG.array();
-
-    private int rowCount = 0;
+    
+    private final JSOG serviceKits = JSOG.array();
+    
+    private final JSOG usages = JSOG.object();
 
     public MagmiProduct(Part part) {
         this.part = part;
@@ -70,64 +70,55 @@ public class MagmiProduct {
         return part.getManufacturerPartNumber();
     }
 
-    public final void addBasicProductCollections(MagmiBasicProduct basicProduct) {
-        rowCount++;
-
-        if (basicProduct.getImageId() != null) {
-            imageIds.add(basicProduct.getImageId());
+    private String getCategoriesString() {
+        
+        // categories
+        StringBuilder categories = new StringBuilder()
+            .append("Manufacturer/")
+            .append(part.getManufacturer().getName())
+            .append(";;Part Type/");
+        
+        if (part.getPartType().getParent() != null) {
+            categories.append(part.getPartType().getParent().getName()).append("/");
         }
-
-        if (StringUtils.isNotEmpty(basicProduct.getTurboType())) {
-            turboType.add(basicProduct.getTurboType());
-        }
-
-        if (StringUtils.isNotEmpty(basicProduct.getTurboModel())) {
-            turboModel.add(basicProduct.getTurboModel());
-        }
-
-        if (StringUtils.isNotEmpty(basicProduct.getFinderTurbo())) {
-            finderTurbo.add(basicProduct.getFinderTurbo());
-        }
-
-        if (StringUtils.isNotEmpty(basicProduct.getFinderApplication())) {
-            finderApplication.add(basicProduct.getFinderApplication());
-        }
-
-        if (StringUtils.isNotEmpty(basicProduct.getApplicationDetail())) {
-            applicationDetail.add(basicProduct.getApplicationDetail());
-        }
-    }
-
-    public void addInterchange(MagmiInterchange interchange) {
-        interchanges.add(interchange.getInterchangePartSku());
-
-        // TI interchanges
-        if (interchange.getInterchangePartManufacturerId() == Manufacturer.TI_ID) {
-            tiInterchanges.add(interchange.getInterchangePartSku());
-            
-            // Save the part number if this is the first interchange part
-            if (tiInterchanges.size() == 1) {
-                tiPartNumber = interchange.getInterchangePartNumber();
-            }
-        }
+        
+        categories.append(part.getPartType().getName());
+        
+        return categories.toString();
     }
     
-    private JSOG getBomItemBySku(Long sku) {
-        
-        // Find the item, if it exists
-        for (JSOG candidate : bom.arrayIterable()) {
-            if (StringUtils.equals(candidate.get("sku").getStringValue(), sku.toString())) {
-                return candidate;
-            }
+    public boolean hasTiPart() {
+        return getManufacturerId() == Manufacturer.TI_ID
+            || StringUtils.isNotBlank(tiPartNumber);
+    }
+    
+    public final void addApplication(MagmiApplication application) {
+        if (StringUtils.isNotEmpty(application.finder)) {
+            finderApplication.add(application.finder);
         }
-        
-        // Create the item if it doesn't
-        JSOG bomItem = JSOG.object();
-        bom.add(bomItem);
-        bomItem.put("alt_part_sku", JSOG.array());
-        bomItem.put("ti_part_sku", JSOG.array());
-        
-        return bomItem;
+
+        if (StringUtils.isNotEmpty(application.detail)) {
+            applicationDetail.add(application.detail);
+        }
+    }
+
+    public final void addTurbo(MagmiTurbo magmiTurbo) {
+
+        if (StringUtils.isNotEmpty(magmiTurbo.turboType)) {
+            turboType.add(magmiTurbo.turboType);
+        }
+
+        if (StringUtils.isNotEmpty(magmiTurbo.partTurboType)) {
+            turboType.add(magmiTurbo.partTurboType);
+        }
+
+        if (StringUtils.isNotEmpty(magmiTurbo.turboModel)) {
+            turboModel.add(magmiTurbo.turboModel);
+        }
+
+        if (StringUtils.isNotEmpty(magmiTurbo.finder)) {
+            finderTurbo.add(magmiTurbo.finder);
+        }
     }
     
     public static void addSkuToBomItemCollection(JSOG jsogItem, String key, Long sku) {
@@ -163,45 +154,92 @@ public class MagmiProduct {
             addSkuToBomItemCollection(jsogItem, "ti_part_sku", bomItem.getIntSku());
         }
     }
+    
+    public void addImageId(Long imageId) {
+        imageIds.add(imageId);
+    }
 
-    public final Map<String, String> getCsvColumns(ImageResizer imageResizer) {
+    public void addInterchange(MagmiInterchange interchange) {
+        interchanges.add(interchange.getInterchangePartSku());
+
+        // TI interchanges
+        if (Manufacturer.TI_ID.equals(interchange.getInterchangePartManufacturerId())) {
+            tiInterchanges.add(interchange.getInterchangePartSku());
+            
+            // Save the part number if this is the first interchange part
+            if (tiInterchanges.size() == 1) {
+                tiPartNumber = interchange.getInterchangePartNumber();
+            }
+        }
+    }
+    
+    public void addServiceKit(MagmiServiceKit sk) {
+        JSOG jsog = JSOG.object()
+                        .put("sku", sk.kitSku)
+                        .put("partNumber", sk.kitPartNumber)
+                        .put("description", sk.description)
+                        .put("tiSku", sk.tiKitSku)
+                        .put("tiPartNumber", sk.tiKitPartNumber);
+        
+        serviceKits.add(jsog);
+    }
+    
+    public void addUsage(MagmiUsage usage) {
+        
+        // Look for a previous usage we need to add to
+        JSOG jsogUsage = usages.get(usage.sku.toString());
+        if (jsogUsage.isNull()) {
+            jsogUsage.put("sku", usage.sku);
+            jsogUsage.put("manufacturer", usage.manufacturer);
+            jsogUsage.put("partNumber", usage.partNumber);
+            jsogUsage.put("tiSku", usage.tiSku);
+            jsogUsage.put("tiPartNumber", usage.tiPartNumber);
+            jsogUsage.put("partType", usage.partType);
+            jsogUsage.put("turboType", usage.turboType);
+            jsogUsage.put("turboPartNumbers", JSOG.array());
+        }
+        
+        if (StringUtils.isNotBlank(usage.turboPartNumber)) {
+            jsogUsage.get("turboPartNumbers").add(usage.turboPartNumber);
+        }
+    }
+
+    private JSOG getBomItemBySku(Long sku) {
+        
+        // Find the item, if it exists
+        for (JSOG candidate : bom.arrayIterable()) {
+            if (StringUtils.equals(candidate.get("sku").getStringValue(), sku.toString())) {
+                return candidate;
+            }
+        }
+        
+        // Create the item if it doesn't
+        JSOG bomItem = JSOG.object();
+        bom.add(bomItem);
+        bomItem.put("alt_part_sku", JSOG.array());
+        bomItem.put("ti_part_sku", JSOG.array());
+        
+        return bomItem;
+    }
+
+    public final Map<String, String> getCsvColumns() {
 
         // CSV column map
         Map<String, String> columns = new HashMap<String, String>();
         
         // Part data
         part.csvColumns(columns);
-        
-        // Images
-        csvImages(columns, imageResizer);
-        
-        // Turbo-specific columns
-        if (StringUtils.equals("Turbo", part.getPartType().getTypeName())) {
-            addTurboCsvColumns();
-        }
 
-        // type
+        // description
         columns.put("type", "simple");
 
         // visibility
         columns.put("visibility", "Catalog, Search"); // See magmi genericmapper visibility.csv
 
-        // type
+        // description
         columns.put("status", "Enabled"); // See magmi genericmapper status.csv
 
-        // categories
-        StringBuilder categories = new StringBuilder()
-                .append("Manufacturer/")
-                .append(part.getManufacturer().getName())
-                .append(";;Part Type/");
-        
-        if (part.getPartType().getParent() != null) {
-            categories.append(part.getPartType().getParent().getName()).append("/");
-        }
-        
-        categories.append(part.getPartType().getName());
-
-        columns.put("categories", categories.toString());
+        columns.put("categories", getCategoriesString());
         
         // Interchanges / TI Interchanges
         columns.put("interchanges", StringUtils.join(interchanges, ','));
@@ -210,19 +248,26 @@ public class MagmiProduct {
         
         columns.put("turbo_model", StringUtils.join(turboModel, ','));
         columns.put("turbo_type", StringUtils.join(turboType, ','));
-
-        columns.put("finder:" + FINDER_ID_TURBO, StringUtils.join(finderTurbo, "||"));
-
-        columns.put("finder:" + FINDER_ID_APPLICATION, StringUtils.join(finderApplication, "||"));
         
         columns.put("applicationDetail", StringUtils.join(applicationDetail, "||"));
 
         columns.put("bill_of_materials", bom.toString());
         
+        columns.put("service_kits", serviceKits.toString());
+        
+        columns.put("where_used", usages.toString());
+        
         return columns;
     }
+    
+    public final void csvFinderColumns(Map<String, String> columns, String applicationId, String turboId) {
 
-    private void csvImages(Map<String, String> columns, ImageResizer resizer) {
+        columns.put("finder:" + applicationId, StringUtils.join(finderApplication, "||"));
+
+        columns.put("finder:" + turboId, StringUtils.join(finderTurbo, "||"));
+    }
+
+    public void csvImageColumns(Map<String, String> columns, ImageResizer resizer) {
         
         // Stop now if there aren't any images
         if (imageIds.isEmpty()) {
@@ -256,52 +301,4 @@ public class MagmiProduct {
         columns.put("media_gallery", galleryString.toString());
     }
 
-    private void addTurboCsvColumns() {
-        Turbo turbo = (Turbo) part;
-        
-        // Turbo type/model
-        turboModel.add(turbo.getTurboModel().getName());
-        turboType.add(turbo.getTurboModel().getTurboType().getName());
-        
-        // Turbo finder
-        finderTurbo.add(
-                turbo.getManufacturer().getName()
-                        + "!!" + turbo.getTurboModel().getName()
-                        + "!!" + turbo.getTurboModel().getTurboType().getName());
-        
-        // Application detail and application finder
-        for (CarModelEngineYear cmey : turbo.getCars()) {
-            
-            // Skip this application if make or model is null
-            if (cmey.getModel() == null || cmey.getModel().getMake() == null) {
-                continue;
-            }
-            
-            // Check for a year, default to 'not specified'
-            String year = "not specified";
-            if (cmey.getYear() != null) {
-                year = cmey.getYear().getName();
-            }
-            
-            // Check for an engine, default to an empty string
-            String engine = "";
-            String fuel = "";
-            
-            if (cmey.getEngine() != null) {
-                engine = cmey.getEngine().getEngineSize();
-                
-                if (cmey.getEngine().getFuelType() != null) {
-                    fuel = cmey.getEngine().getFuelType().getName();
-                }
-            }
-            
-            // Get the make and model
-            String make = cmey.getModel().getMake().getName();
-            String model = cmey.getModel().getName();
-            
-            // Add the values
-            finderApplication.add(make + "!!" + year + "!!" + model);
-            applicationDetail.add(make + "!!" + year + "!!" + model + "!!" + engine + "!!" + fuel);
-        }
-    }
 }

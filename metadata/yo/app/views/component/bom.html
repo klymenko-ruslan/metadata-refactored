@@ -1,13 +1,13 @@
-<div class="well">
-  <h3 style="display: inline-block;">Bill of Materials</h3>
-  <div class="row">
+<div class="container">
+  <h3>
+    Bill of Materials
     <a authorize="ROLE_BOM"
-       class="btn btn-info pull-right" style="vertical-align: middle;"
-       ng-href="#/part/{{part.partType.typeName}}/{{partId}}/bom/search">
-      <i class="fa fa-cogs"></i>
-      Add BOM Item
+       class="btn btn-primary pull-right" style="vertical-align: middle;"
+       ng-href="#/part/{{part.partType.name}}/{{partId}}/bom/search">
+      <i class="fa fa-plus"></i>
+      Add Child
     </a>
-  </div>
+  </h3>
   <table data-ng-table="bomTableParams" class="table table-bordered table-striped table-hover table-responsive">
     <tr data-ng-repeat="bomItem in $data">
       <td title="'Type'">{{bomItem.child.partType.name}}</td>
@@ -38,7 +38,7 @@
           <i class="fa fa-minus-circle"></i> Cancel
         </button>
 
-        <a ng-href="#/part/{{bomItem.child.partType.typeName}}/{{bomItem.child.id}}"
+        <a ng-href="#/part/{{bomItem.child.partType.name}}/{{bomItem.child.id}}"
            authorize="ROLE_READ" class="btn btn-primary btn-xs"
            ng-hide="isModifying($index, bomItem)">
           <i class="fa fa-eye"></i> View Part
@@ -65,7 +65,7 @@
 
       <a authorize="ROLE_BOM"
          class="btn btn-info pull-right" style="vertical-align: middle;"
-         ng-href="#/part/{{part.partType.typeName}}/{{partId}}/bom/{{altBomItem.id}}/search">
+         ng-href="#/part/{{part.partType.name}}/{{partId}}/bom/{{altBomItem.id}}/search">
         <i class="fa fa-cogs"></i>
         Add Alternate
       </a>

@@ -26,7 +26,8 @@
     <context:property-placeholder ignore-resource-not-found="true" location="classpath*:META-INF/spring/*.properties,file:${user.home}/ti_metadata.properties"/>
 
     <!-- Enable this for integration of file upload functionality -->
-    <bean class="org.springframework.web.multipart.commons.CommonsMultipartResolver" id="multipartResolver"/>
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"
+          p:maxUploadSize="10000000"/>
     
     <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
         <property name="alwaysUseFullPath" value="true"/> 

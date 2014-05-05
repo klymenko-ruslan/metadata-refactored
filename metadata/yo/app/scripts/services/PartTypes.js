@@ -60,7 +60,7 @@ angular.module('ngMetaCrudApp')
          */
         this.getByClassName = function (partTypeClassName) {
             return _.find(this.list, function (partType) {
-                return partTypeClassName === partType.typeName;
+                return partTypeClassName === partType.name;
               }
           );
           };

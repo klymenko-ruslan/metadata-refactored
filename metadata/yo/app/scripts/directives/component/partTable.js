@@ -18,8 +18,8 @@ angular.module('ngMetaCrudApp')
             var extraColumns = JSON.parse(tAttrs.extraColumns);
 
             angular.forEach(extraColumns, function(columnExpression, columnName) {
-              tElement.find('thead > tr').prepend('<th>' + columnName + '</th>');
-              tElement.find('tbody > tr:first').prepend('<td>{{' + columnExpression + '}}</td>');
+              tElement.find('thead > tr > th:last').before('<th>' + columnName + '</th>');
+              tElement.find('tbody > tr:first > td:last:parent').before('<td>{{' + columnExpression + '}}</td>');
             });
 
             tElement.find('tbody > tr:last > td').attr('colspan', 4 + _.size(extraColumns));
@@ -59,7 +59,7 @@ angular.module('ngMetaCrudApp')
           newScope.item = scope.item;
           newScope.part = scope.getPart(scope.item);
           newScope.partId = newScope.part.id;
-          newScope.partType = newScope.part.partType.typeName;
+          newScope.partType = newScope.part.partType.name;
 
           controller.transcludeActionsFn(newScope, function(clone) {
             element.append(clone);

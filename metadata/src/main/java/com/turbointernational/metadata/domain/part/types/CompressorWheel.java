@@ -4,34 +4,35 @@ import java.util.Map;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.SecondaryTable;
+import javax.persistence.Table;
 import net.sf.jsog.JSOG;
 import org.apache.commons.lang.ObjectUtils;
 import org.springframework.beans.factory.annotation.Configurable;
 
 @Configurable
 @Entity
-@SecondaryTable(name="compressor_wheel", pkJoinColumns=@PrimaryKeyJoinColumn(name = "part_id"))
+@Table(name="compressor_wheel")
+@PrimaryKeyJoinColumn(name = "part_id")
 public class CompressorWheel extends Part {
-    @Column(name="inducer_oa", table = "compressor_wheel")
+    @Column(name="inducer_oa")
     private Float inducerOa;
 
-    @Column(name="tip_height_b", table = "compressor_wheel")
+    @Column(name="tip_height_b")
     private Float tipHeightB;
 
-    @Column(name="exducer_oc", table = "compressor_wheel")
+    @Column(name="exducer_oc")
     private Float exducerOc;
 
-    @Column(name="hub_length_d", table = "compressor_wheel")
+    @Column(name="hub_length_d")
     private Float hubLengthD;
 
-    @Column(name="bore_oe", table = "compressor_wheel")
+    @Column(name="bore_oe")
     private Float boreOe;
 
-    @Column(name="trim_no_blades", table = "compressor_wheel")
+    @Column(name="trim_no_blades")
     private String numberOfBlades;
 
-    @Column(name="application", table = "compressor_wheel")
+    @Column(name="application")
     private String application;
 
     public Float getInducerOa() {

@@ -15,7 +15,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.SecondaryTable;
+import javax.persistence.Table;
 import net.sf.jsog.JSOG;
 import org.apache.commons.lang.ObjectUtils;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -23,15 +23,16 @@ import org.springframework.beans.factory.annotation.Configurable;
 @Cacheable
 @Configurable
 @Entity
-@SecondaryTable(name="turbo", pkJoinColumns=@PrimaryKeyJoinColumn(name = "part_id"))
+@Table(name="turbo")
+@PrimaryKeyJoinColumn(name = "part_id")
 public class Turbo extends Part {
 
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="turbo_model_id", table = "turbo")
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="turbo_model_id")
     private TurboModel turboModel;
 
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="cool_type_id", table = "turbo")
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="cool_type_id")
     private CoolType coolType;
     
     @OneToMany(fetch = FetchType.LAZY)
@@ -39,7 +40,7 @@ public class Turbo extends Part {
             joinColumns=@JoinColumn(name="part_id"),
             inverseJoinColumns=@JoinColumn(name="car_model_engine_year_id"))
     private Set<CarModelEngineYear> cars = new HashSet<CarModelEngineYear>();
-
+    
     public TurboModel getTurboModel() {
         return turboModel;
     }

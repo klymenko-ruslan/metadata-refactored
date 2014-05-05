@@ -1,34 +1,30 @@
 <metanav>
-  <li>
-    <a authorize="ROLE_ALTER_PART"
-       data-ng-href="#/part/{{ partType }}/{{ partId }}/form"
+  <li authorize="ROLE_ALTER_PART">
+    <a ng-href="#/part/{{ partType }}/{{ partId }}/form"
        class="btn btn-primary">
       <i class="fa fa-cog"></i>
       Edit Part
     </a>
   </li>
 
-  <li>
-    <a authorize="ROLE_PART_IMAGES"
-       ng-click="addImage()"
+  <li authorize="ROLE_PART_IMAGES">
+    <a ng-click="addImage()"
        class="btn btn-info">
       <i class="fa fa-picture-o"></i>
       Add Image &hellip;
     </a>
   </li>
 
-  <li>
-    <a authorize="ROLE_READ"
-       ng-href="#/part/{{ part.partType.typeName }}/{{ partId }}/ancestors"
+  <li authorize="ROLE_READ">
+    <a ng-href="#/part/{{ part.partType.name }}/{{ partId }}/ancestors"
        class="btn btn-info">
       <i class="fa fa-sitemap"></i>
       Ancestors &hellip;
     </a>
   </li>
 
-  <li>
-    <a authorize="ROLE_INTERCHANGE"
-       ng-href="#/part/{{ part.partType.typeName }}/{{ partId }}/interchange/search"
+  <li authorize="ROLE_INTERCHANGE">
+    <a ng-href="#/part/{{ part.partType.name }}/{{ partId }}/interchange/search"
        class="btn btn-info">
       <i class="fa fa-random"></i>
       Interchanges &hellip;
@@ -39,6 +35,8 @@
 <h1 class="padding-top">[{{part.id}}] {{part.manufacturer.name}} {{part.partType.name}} <span style="white-space: nowrap;">{{part.manufacturerPartNumber}}</span></h1>
 
 <div class="row">
+
+  <!-- Part Details -->
   <div class="col-xs-12 col-md-6 well-small">
     <h3>Part Details</h3>
 
@@ -194,6 +192,23 @@
                 <dt>Kit Type</dt>
                 <dd>{{part.kitType.name}}</dd>
             </dl>
+
+            <h3>
+              Common Component Mappings
+              <a authorize="ROLE_ALTER_PART" class="btn btn-primary pull-right"
+                 ng-href="#/part/Kit/{{ partId }}/component/search">
+                <i class="fa fa-plus"></i>
+                Add Mapping
+              </a>
+            </h3>
+            <part-table parts="part.components" key="part"
+                        extra-columns="{&quot;Mapping&quot;: &quot;item.exclude ? 'Exclude' : 'Include'&quot;}">
+              <a ng-click="removeComponent(item)"
+                 class="btn btn-xs btn-danger">
+                <i class="fa fa-trash-o"></i>
+                Remove
+              </a>
+            </part-table>
         </div>
 
         <!-- Piston Ring -->
@@ -253,6 +268,42 @@
         <img ng-src="/metadata/image/135/{{image.id}}.jpg" style="max-height: 135px; max-width: 135px" />
       </li>
     </ul>
+  </div>
+
+  <!-- Turbo Types -->
+  <div class="col-xs-12 col-md-6">
+    <h3>Turbo Types
+        <a authorize="ROLE_ALTER_PART" class="btn btn-primary pull-right"
+           ng-click="addTurboType()">
+          <i class="fa fa-plus"></i>
+          Add Type
+        </a>
+    </h3>
+    <table class="table table-bordered table-striped table-responsive">
+      <thead>
+        <tr>
+          <th>Manufacturer</th>
+          <th>Type</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="turboType in part.turboTypes">
+          <td>{{turboType.manufacturer.name}}</td>
+          <td>{{turboType.name}}</td>
+          <td>
+            <a ng-click="removeTurboType(turboType)"
+               class="btn btn-xs btn-danger">
+              <i class="fa fa-trash-o"></i>
+              Remove
+            </a>
+          </td>
+        </tr>
+        <tr ng-hide="part.turboTypes.length > 0">
+          <td colspan="3">No extra turbo types.</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 
   <!-- Interchanges -->

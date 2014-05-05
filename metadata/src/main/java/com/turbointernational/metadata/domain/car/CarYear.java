@@ -8,9 +8,11 @@ import java.util.List;
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.PersistenceContext;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -46,6 +48,21 @@ public class CarYear {
     }
     //</editor-fold>
     
+    //<editor-fold defaultstate="collapsed" desc="activerecord">
+    @PersistenceContext
+    transient EntityManager entityManager;
+    
+    public static final EntityManager entityManager() {
+        EntityManager em = new CarYear().entityManager;
+        if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
+        return em;
+    }
+    
+    public static List<CarYear> findAll() {
+        return entityManager().createQuery("SELECT o FROM CarYear o", CarYear.class).getResultList();
+    }
+    //</editor-fold>
+    
     //<editor-fold defaultstate="collapsed" desc="Serialization">
     public String toJson() {
         return new JSONSerializer().exclude("*.class").serialize(this);
@@ -55,7 +72,7 @@ public class CarYear {
         return new JSONSerializer().include(fields).exclude("*.class").serialize(this);
     }
     
-    public static CarYear fromJsonToCarFuelType(String json) {
+    public static CarYear fromJsonToCarYear(String json) {
         return new JSONDeserializer<CarYear>().use(null, CarYear.class).deserialize(json);
     }
     
@@ -67,7 +84,7 @@ public class CarYear {
         return new JSONSerializer().include(fields).exclude("*.class").serialize(collection);
     }
     
-    public static Collection<CarYear> fromJsonArrayToCarFuelTypes(String json) {
+    public static Collection<CarYear> fromJsonArrayToCarYears(String json) {
         return new JSONDeserializer<List<CarYear>>().use(null, ArrayList.class).use("values", CarYear.class).deserialize(json);
     }
     //</editor-fold>

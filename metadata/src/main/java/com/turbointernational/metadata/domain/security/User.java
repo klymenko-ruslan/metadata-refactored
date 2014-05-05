@@ -1,6 +1,5 @@
 package com.turbointernational.metadata.domain.security;
 import com.google.common.collect.Sets;
-import static com.turbointernational.metadata.domain.part.Part.entityManager;
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
 import java.util.Collection;
@@ -15,9 +14,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.security.core.GrantedAuthority;
@@ -50,6 +50,8 @@ public class User implements Comparable<User>, UserDetails {
     private String email;
     
     private String password;
+    
+    private String passwordResetToken;
     
     @Column(columnDefinition = "BIT")
     private Boolean enabled;
@@ -89,6 +91,14 @@ public class User implements Comparable<User>, UserDetails {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public String getPasswordResetToken() {
+        return passwordResetToken;
+    }
+
+    public void setPasswordResetToken(String passwordResetToken) {
+        this.passwordResetToken = passwordResetToken;
+    }
     
     public Boolean getEnabled() {
         return enabled;
@@ -127,6 +137,13 @@ public class User implements Comparable<User>, UserDetails {
         return null;
     }
     
+    public static User findByPasswordResetToken(String token) {
+        EntityManager em = User.entityManager();
+        
+        Query q = em.createQuery("SELECT u FROM User u WHERE u.passwordResetToken = ?", User.class);
+        q.setParameter(1, token);
+        return (User) q.getSingleResult();
+    }
     //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="Serialization">
@@ -256,3 +273,5 @@ public class User implements Comparable<User>, UserDetails {
         return this.getName().compareTo(t.getName());
     }
 }
+
+

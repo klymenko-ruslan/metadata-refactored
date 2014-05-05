@@ -4,7 +4,7 @@ import java.util.Map;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.SecondaryTable;
+import javax.persistence.Table;
 import net.sf.jsog.JSOG;
 import org.apache.commons.lang.ObjectUtils;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -16,28 +16,29 @@ import org.springframework.beans.factory.annotation.Configurable;
  */
 @Configurable
 @Entity
-@SecondaryTable(name="turbine_wheel", pkJoinColumns=@PrimaryKeyJoinColumn(name = "part_id"))
+@Table(name="turbine_wheel")
+@PrimaryKeyJoinColumn(name = "part_id")
 public class TurbineWheel extends Part {
 
-    @Column(name="exduce_oa", table = "turbine_wheel")
+    @Column(name="exduce_oa")
     private Float exducerDiameterA;
 
-    @Column(name="tip_height_b", table = "turbine_wheel")
+    @Column(name="tip_height_b")
     private Float tipHeightB;
 
-    @Column(name="inducer_oc", table = "turbine_wheel")
+    @Column(name="inducer_oc")
     private Float inducerDiameterC;
 
-    @Column(name="journal_od", table = "turbine_wheel")
+    @Column(name="journal_od")
     private Float journalDiameterD;
 
-    @Column(name="stem_oe", table = "turbine_wheel")
+    @Column(name="stem_oe")
     private Float stemDiameterE;
 
-    @Column(name="shaft_thread_f", table = "turbine_wheel")
+    @Column(name="shaft_thread_f")
     private String shaftThreadF;
 
-    @Column(name="trim_no_blades", table = "turbine_wheel")
+    @Column(name="trim_no_blades")
     private String numberOfBlades;
 
     public Float getExducerDiameterA() {
@@ -115,7 +116,7 @@ public class TurbineWheel extends Part {
     public void csvColumns(Map<String, String> columns) {
         super.csvColumns(columns);
         
-        columns.put("exduce_oa", ObjectUtils.toString(getExducerDiameterA()));
+        columns.put("exducer_oa", ObjectUtils.toString(getExducerDiameterA()));
         columns.put("tip_height_b", ObjectUtils.toString(getTipHeightB()));
         columns.put("inducer_oc", ObjectUtils.toString(getInducerDiameterC()));
         columns.put("journal_od", ObjectUtils.toString(getJournalDiameterD()));

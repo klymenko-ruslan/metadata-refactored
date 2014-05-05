@@ -8,14 +8,15 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.SecondaryTable;
+import javax.persistence.Table;
 import net.sf.jsog.JSOG;
 import org.apache.commons.lang.ObjectUtils;
 import org.springframework.beans.factory.annotation.Configurable;
 
 @Configurable
 @Entity
-@SecondaryTable(name="bearing_spacer", pkJoinColumns=@PrimaryKeyJoinColumn(name = "part_id"))
+@Table(name="bearing_spacer")
+@PrimaryKeyJoinColumn(name = "part_id")
 public class BearingSpacer extends Part {
 
     @OneToOne
@@ -30,16 +31,16 @@ public class BearingSpacer extends Part {
                inverseJoinColumns=@JoinColumn(name="oversized_part_id"))
     private BearingSpacer oversize;
     
-    @Column(name="outside_dim_min", table = "bearing_spacer")
+    @Column(name="outside_dim_min")
     private Float outsideDiameterMin;
 
-    @Column(name="outside_dim_max", table = "bearing_spacer")
+    @Column(name="outside_dim_max")
     private Float outsideDiameterMax;
     
-    @Column(name="inside_dim_min", table = "bearing_spacer")
+    @Column(name="inside_dim_min")
     private Float insideDiameterMin;
     
-    @Column(name="inside_dim_max", table = "bearing_spacer")
+    @Column(name="inside_dim_max")
     private Float insideDiameterMax;
 
     public BearingSpacer getStandardSize() {
