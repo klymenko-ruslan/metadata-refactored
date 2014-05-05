@@ -17,7 +17,7 @@ class TagProcessor extends Magmi_ItemProcessor
             "name" => "Product Tags Importer",
             "author" => "Dweeves,Pawel Kazakow",
 			"sponsorinfo"=>array("name"=>"Pawel Kazakow","url"=>"http://xonu.de"),
-            "version" => "0.0.1",
+            "version" => "0.0.3",
 			"url"=>$this->pluginDocUrl("Tag_importer")
             );
 	}
@@ -41,15 +41,12 @@ class TagProcessor extends Magmi_ItemProcessor
 		}
 		else
 		{
-			if($create)
+			//find lowercase
+			$sql="SELECT tag_id FROM ".$this->tablename("tag")." WHERE LOWER(name)=LOWER(?)";
+			$tagid=$this->selectone($sql,$taginfo["name"],"tag_id");
+			if($tagid==NULL  && $create)
 			{
 				$tagid=$this->createTag($taginfo);
-			}
-			else
-			{
-				$sql="SELECT id FROM ".$this->tablename["tag"]." WHERE name=?";
-				$tagid=$this->selectone($sql,$taginfo["name"],"id");
-				
 			}
 			//add to cache
 			$this->_tagidcache[$ck]=$tagid;
@@ -80,32 +77,29 @@ class TagProcessor extends Magmi_ItemProcessor
 			{
 				$this->clearItemTags($item,$pid,$sids);
 			}
-			$ins=array();
-			$adata=array();
+			//inserts with user bound tag
 			//iterate on tag adding
 			foreach($addtags as $taginf)
 			{
 				$tagid=$this->getTagId($taginf,true);
 				foreach($sids as $sid)
 				{
-					$ins[]="(?,?,?,?)";
-					$adata=array_merge($adata,array($tagid,$taginf["user"],$pid,$sid));
+					$uid=isset($taginf["user"])?$taginf["user"]:1;
+					$tdata=array($tagid,$pid,$sid,$uid);
+					$sql="INSERT IGNORE INTO $tr (tag_id,product_id,store_id,customer_id) VALUES (?,?,?,?)";
+					$this->insert($sql,$tdata);
+					
 				}
 			}
-			
-			if(count($ins)>0)
-			{
-				$sql="INSERT IGNORE INTO $tr (tag_id,customer_id,product_id,store_id) VALUES ".implode(",",$ins);
-				$this->insert($sql,$adata);
-			}		
+				
 			
 			//iterate on tag removal
 			$tids=array();
 			$uids=array();
 			foreach($remtags as $taginf)
 			{
-						$tagid=$this->getTagId($taginf,false);
-						if(isset($tagid))
+					$tagid=$this->getTagId($taginf,false);
+					if(isset($tagid))
 						{
 							$tids[]=$tagid;
 					     	$uids[]=$taginf["user"];
@@ -161,13 +155,13 @@ class TagProcessor extends Magmi_ItemProcessor
 	public function getUserId($userinf)
 	{
 		//if id provided , use it
-		$userid=is_int($userinf)?$userinf:$this->getUserIdFromEmail($userinf,0);
+		$userid=is_int($userinf)?$userinf:$this->getUserIdFromEmail($userinf,1);
 		return $userid;
 	}
 	
 	public function parseTag($tag)
 	{
-		$taginfo=array("name"=>null,"status"=>1,"user"=>null);
+		$taginfo=array("name"=>null,"status"=>1,"user"=>1);
 		$tagparts=explode("::",$tag);
 		$tn=$tagparts[0];
 		//matching pending status name, remove whitespaces on capture

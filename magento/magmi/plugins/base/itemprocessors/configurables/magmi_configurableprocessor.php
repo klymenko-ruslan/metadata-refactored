@@ -12,13 +12,13 @@ class Magmi_ConfigurableItemProcessor extends Magmi_ItemProcessor
 	{
 			
 	}
-	
+	/* Plugin info declaration */
 	public function getPluginInfo()
 	{
 		return array(
             "name" => "Configurable Item processor",
             "author" => "Dweeves",
-            "version" => "1.3.7",
+            "version" => "1.3.7a",
 			"url"=> $this->pluginDocUrl("Configurable_Item_processor")
             );
 	}
@@ -183,7 +183,8 @@ public function getConfigurableOptsFromAsId($asid)
 		if(isset($item["configurable_attributes"]))
 		{
 			$confopts=explode(",",$item["configurable_attributes"]);
-			for($i=0;$i<count($confopts);$i++)
+			$copts=count($confopts);
+			for($i=0;$i<$copts;$i++)
 			{
 				$confopts[$i]=trim($confopts[$i]);
 			}
@@ -332,6 +333,7 @@ public function getConfigurableOptsFromAsId($asid)
 				$this->fixedLink($pid,$sskus);
 				$this->updSimpleVisibility($pid);
 				unset($item["simples_skus"]);
+				unset($sskus);
 				break;
 			default:
 				break;

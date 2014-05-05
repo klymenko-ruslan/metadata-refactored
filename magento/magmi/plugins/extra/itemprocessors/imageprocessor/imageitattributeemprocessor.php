@@ -38,9 +38,27 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 		return array(
             "name" => "Image attributes processor",
             "author" => "Dweeves",
-            "version" => "1.0.25",
+            "version" => "1.0.27",
 			"url"=>$this->pluginDocUrl("Image_attributes_processor")
             );
+	}
+	
+	//Image removal feature
+	public function handleRemoveImages($pid,&$item,$ivalue)
+	{
+		$gal_attinfo=$this->getAttrInfo("media_gallery");
+		$t=$this->tablename('catalog_product_entity_media_gallery');
+		$tv=$this->tablename('catalog_product_entity_media_gallery_value');
+		$rimgs=explode(";",$ivalue);
+		$rivals=array();
+		foreach($rimgs as $rimg)
+		{
+			$rivals[]='/'.implode('/',array($rimg[0],$rimg[1],$rimg));
+		}
+		
+		$sql="DELETE $t.* FROM $t
+		WHERE $t.entity_id=? AND $t.attribute_id=? AND $t.value IN (".$this->arr2values($rivals).")";
+		$this->delete($sql,array_merge(array($pid,$gal_attinfo["attribute_id"]),$rivals));
 	}
 	
 	public function handleGalleryTypeAttribute($pid,&$item,$storeid,$attrcode,$attrdesc,$ivalue)
@@ -123,9 +141,9 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 		//ok , so it's a relative path
 		$imgfile=false;
 		$scandirs=explode(";",$this->getParam("IMG:sourcedir"));
-		
+		$cscandirs=count($scandirs);
 		//iterate on image sourcedirs, trying to resolve file name based on input value and current source dir
-		for($i=0;$i<count($scandirs) && $imgfile===false;$i++)
+		for($i=0;$i<$cscandirs && $imgfile===false;$i++)
 		{
 			$sd=$scandirs[$i];
 			//scandir is relative, use mdh
@@ -133,7 +151,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 			{
 				$sd=$this->_mdh->getMagentoDir()."/".$sd;
 			}
-			$imgfile=abspath($ivalue,$sd);
+			$imgfile=abspath($ivalue,$sd,true);
 		}
 		return $imgfile;
 	}
@@ -141,7 +159,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 	public function handleImageTypeAttribute($pid,&$item,$storeid,$attrcode,$attrdesc,$ivalue)
 	{
 		//remove attribute value if empty
-		if($ivalue=="")
+		if($ivalue=="" || $ivalue=="__NULL__")
 		{
 			$this->removeImageFromGallery($pid,$storeid,$attrdesc);
 			return "__MAGMI_DELETE__";
@@ -149,10 +167,10 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 		
 		//add support for explicit exclude
 		$exclude=$this->getExclude($ivalue,true); 
-		
+		$imagefile=trim($ivalue);
 	
 		//else copy image file
-		$imagefile=$this->copyImageFile($ivalue,$item,array("store"=>$storeid,"attr_code"=>$attrcode));
+		$imagefile=$this->copyImageFile($imagefile,$item,array("store"=>$storeid,"attr_code"=>$attrcode));
 		$ovalue=$imagefile;
 		//add to gallery as excluded
 		if($imagefile!==false)
@@ -289,7 +307,7 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 				$sql="INSERT INTO $tgv
 					(value_id,store_id,position,disabled,label)
 					VALUES ".implode(",",$vinserts)." 
-					ON DUPLICATE KEY UPDATE label=VALUES(`label`)";
+					ON DUPLICATE KEY UPDATE label=VALUES(`label`),disabled=VALUES(`disabled`)";
 				$this->insert($sql,$data);
 			}
 			unset($vinserts);
@@ -382,6 +400,9 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 	 */
 	public function copyImageFile($imgfile,&$item,$extra)
 	{
+        if ($imgfile=="__NULL__" || $imgfile==null) {
+            return false;
+        }
 		if($imgfile==$this->_lastnotfound)
 		{
 			if($this->_newitem){
@@ -394,6 +415,8 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 		if($source==false)
 		{
 			$this->log("$imgfile cannot be found in images path","warning");
+			//fixing last not found flag (to avoid redundant searches & logs)
+			$this->_lastnotfound=true;
 			return false;
 		}
 		$imgfile=$source;
@@ -491,6 +514,10 @@ class ImageAttributeItemProcessor extends Magmi_ItemProcessor
 			{
 				$this->resetGallery($pid,$sid,$gattrdesc["attribute_id"]);
 			}
+		}
+		if(isset($item["image_remove"]))
+		{
+			$this->handleRemoveImages($pid, $item,$item["image_remove"]);
 		}
 		return true;
 			

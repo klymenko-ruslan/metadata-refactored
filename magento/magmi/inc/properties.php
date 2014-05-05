@@ -1,7 +1,7 @@
 <?php
-if(!defined("DS"))
+if(!defined("DIRSEP"))
 {
-	define("DS",DIRECTORY_SEPARATOR);
+	define("DIRSEP",DIRECTORY_SEPARATOR);
 }
 class FileNotFoundException extends Exception
 {
@@ -112,7 +112,8 @@ class Properties
             foreach ($elem as $key2=>$elem2) { 
                 if(is_array($elem2)) 
                 { 
-                    for($i=0;$i<count($elem2);$i++) 
+                	$celem2=count($elem2);
+                    for($i=0;$i<$celem2;$i++) 
                     { 
                         $content .= $key2."[] = \"".$this->esc($elem2[$i])."\"\n"; 
                     } 
@@ -126,7 +127,8 @@ class Properties
         foreach ($assoc_arr as $key=>$elem) { 
             if(is_array($elem)) 
             { 
-                for($i=0;$i<count($elem);$i++) 
+            	$celem=count($elem);
+                for($i=0;$i<$celem;$i++) 
                 { 
                     $content .= $key2."[] = \"".$this->esc($elem[$i])."\"\n"; 
                 } 
