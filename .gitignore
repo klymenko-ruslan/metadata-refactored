@@ -1,12 +1,12 @@
 **/log.roo
 **/.DS_Store
 **/.idea
+/sql/script.sql
+/sql/data.sql
 metadata/yo/.idea/
-**/nbactions.xml
 /metadata/target
+**/nbactions.xml
 /mas90magmi/target
-/docs/sql/script.sql
-/docs/sql/data.sql
 **/nbproject/private/
 magento/.ssh/known_hosts
 magento/.viminfo
