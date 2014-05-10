@@ -50,19 +50,19 @@ if ($_productManufacturer == 44) {
     // This is a TI product, use it directly
     $tiProduct = $_product;
     
-} elseif ($_product->getAttributeText("part_type") == "turbo"
+} elseif ($_product->getAttributeText("part_type") == "Turbo"
             && !empty($billOfMaterials)
             && !empty($billOfMaterials[0]['ti_part_sku'])) {
     
     // This is a turbo, get the TI part from the first BOM item (should be a cartridge) TI part SKU array.
     $bomCartridgeTiSku = $billOfMaterials[0]['ti_part_sku'][0];
-    $tiProduct = Mage::helper('catalog/product')->loadByAttribute('sku', $bomCartridgeTiSku);
+    $tiProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $bomCartridgeTiSku);
     
 } elseif (strlen($_product->getTiPartSku()) > 0) {
     
     // It's not a TI part and it's not a turbo, get the first ti_part_sku
     $tiPartSkuArray = explode(',', $_product->getTiPartSku());
-    $tiProduct = Mage::helper('catalog/product')->loadByAttribute('sku', $tiPartSkuArray[0]);
+    $tiProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $tiPartSkuArray[0]);
 } else {
     $tiProduct = null;
 }
