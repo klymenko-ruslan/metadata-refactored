@@ -67,7 +67,7 @@ class Webtex_CustomerPrices_Block_Bundle_Catalog_Product_Price extends Mage_Bund
         if (!$this->getProduct() || $this->getProduct()->getCanShowPrice() === false) {
             return '';
         } if(!(!$this->helper('customerprices')->isEnabled() || (!$this->helper('customerprices')->isHidePrice() || $this->helper('customer')->isLoggedIn()))) {
-            return 'You need to <a href="' . Mage::getUrl('customer/account/login') . '">login</a> to see product price<br/>';
+            return '<a href="' . Mage::getUrl('customer/account/login') . '">Login</a> for price<br/>';
         }
 
         return parent::_toHtml();

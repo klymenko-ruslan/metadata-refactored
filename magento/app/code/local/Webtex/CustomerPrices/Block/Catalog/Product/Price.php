@@ -80,7 +80,7 @@ class Webtex_CustomerPrices_Block_Catalog_Product_Price extends Mage_Catalog_Blo
             return '';
         }
         if(!(!$this->helper('customerprices')->isEnabled() || (!$this->helper('customerprices')->isHidePrice() || $this->helper('customer')->isLoggedIn())) && ($this->getTemplate() == 'catalog/product/price.phtml')) {
-            return 'You need to <a href="' . Mage::getUrl('customer/account/login') . '">login</a> to see product price<br/>';
+            return '<a href="' . Mage::getUrl('customer/account/login') . '">Login</a> for price<br/>';
         }
         if(!(!$this->helper('customerprices')->isEnabled() || (!$this->helper('customerprices')->isHidePrice() || $this->helper('customer')->isLoggedIn())) ) {
             return '';
