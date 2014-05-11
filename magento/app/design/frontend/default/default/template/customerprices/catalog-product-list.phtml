@@ -83,14 +83,14 @@ $_helper = $this->helper('catalog/output');
                                         <a href="<?php echo $tiPart->getProductUrl() ?>"><?php echo $tiPart->getPartNumber(); ?></a>
                                     <?php endif; ?>
                                 <?php endforeach ?>
-                            <?php elseif ($_product->getManufacturer() == 44): ?>
+                            <?php elseif ($_product->isTurboInternational()): ?>
                                 <a href="<?php echo $_product->getProductUrl() ?>"><?php echo $_product->getPartNumber(); ?></a>
                             <?php endif; ?>
                         </td>
                         <td>
                             <?php if (Mage::getSingleton('customer/session')->isLoggedIn()): ?>
                                 <?php
-                                if ($_product->getManufacturer() == 44) {
+                                if ($_product->isTurboInternational()) {
                                     echo Mage::helper('core')->currency($_product->getFinalPrice());
                                 } elseif (strlen($_product->getTiPartSku()) > 0 && !empty($firstTiProduct)) {
                                     echo Mage::helper('core')->currency($firstTiProduct->getFinalPrice());

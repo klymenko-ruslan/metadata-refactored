@@ -88,7 +88,7 @@ $_helper = $this->helper('catalog/output');
                         <td>
                             <?php if (Mage::getSingleton('customer/session')->isLoggedIn()): ?>
                                 <?php
-                                if ($_product->getManufacturer() == 44) {
+                                if ($_product->isTurboInternational()) {
                                     echo Mage::helper('core')->currency($_product->getFinalPrice());
                                 } elseif (!empty($firstTiProduct)) {
                                     echo Mage::helper('core')->currency($firstTiProduct->getFinalPrice());

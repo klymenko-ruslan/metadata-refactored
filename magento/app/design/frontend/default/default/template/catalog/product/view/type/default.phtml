@@ -29,7 +29,7 @@
 $_product = $this->getProduct();
 
 // Get TI part SKUs and turbo types
-$tiPartSkuArray = $_product->getTiPartSku() ? explode(',', $_product->getTiPartSku()) : null;
+$tiPartSkus = $_product->getTiPartSku() ? explode(",", $_product->getTiPartSku()) : null;
 $turboTypes = $_product->getAttributeText('turbo_type');
 ?>
 
@@ -38,22 +38,20 @@ $turboTypes = $_product->getAttributeText('turbo_type');
         <li><strong>Part Type:</strong> <?php echo $_product->getAttributeText('part_type'); ?></li>
         <li><strong>Manufacturer:</strong> <?php echo $_product->getAttributeText('manufacturer'); ?></li>
         <li><strong>Part Number:</strong> <?php echo $_product->getPartNumber(); ?></li>
-        <?php if ($tiPartSkuArray !== null): ?>
-            <li><strong>Compatible TI Part<?php if (count($tiPartSkuArray) > 1) { // English pluralization
+        <?php if ($tiPartSkus): ?>
+            <li><strong>Compatible TI Part<?php if (count($tiPartSkus) > 1) { // English pluralization
                         echo 's';
                     } ?>:</strong> <?php
-                $i = 1;
-                foreach ($tiPartSkuArray as $tiPartSkus) {
-                    $tiProduct = Mage::getModel('catalog/product');
-                    $tiProduct->load($tiProduct->getIdBySku($tiPartSkus));
-                    $_tiProductPartNumber = $tiProduct->getPartNumber();
+                foreach ($tiPartSkus as $i => $tiPartSku) {
+                    $tiProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $tiPartSku);
+                    
                     echo '<a href="' . $tiProduct->getProductUrl() . '">';
-                    echo $_tiProductPartNumber;
+                    echo $tiProduct->getPartNumber();
                     echo '</a>';
-                    if ($i < count($tiPartSkuArray)) {
+                    
+                    if ($i+1 < count($tiPartSkus)) {
                         echo ", ";
                     }
-                    $i++;
                 } ?></li>
         <?php endif; ?>
         <?php if ($turboTypes): ?>
@@ -88,18 +86,25 @@ $turboTypes = $_product->getAttributeText('turbo_type');
                         <li><strong>Cartridge:</strong> <?php
                             echo '<a href="' . $bomItemProduct->getProductUrl() . '">' . $bomItemProduct->getPartNumber() . '</a>'; ?>
                         </li>
-                        <li><strong>Compatible TI Part:</strong> <?php
-                            $a = 1;
-                            foreach ($bomItem['ti_part_sku'] as $bomTiProduct) {
-                                $bomItemInterchangeProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $bomTiProduct);
-                                if ($bomItemInterchangeProduct->getId()) {
+                        <?php if ($bomItem['ti_part_sku']): ?>
+                            <li>
+                                <strong>Compatible TI Part:</strong>
+                                <?php
+                                foreach ($bomItem['ti_part_sku'] as $a => $bomTiProduct) {
+                                    $bomItemInterchangeProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $bomTiProduct);
+                                    if (!$bomItemInterchangeProduct) {
+                                        continue;
+                                    }
+                                    
                                     echo '<a href="' . $bomItemInterchangeProduct->getProductUrl() . '">' . $bomItemInterchangeProduct->getPartNumber() . '</a>';
-                                } else echo $bomTiProduct;
-                                if ($a < count($bomItem['ti_part_sku'])) {
-                                    echo ", ";
+                                    
+                                    if ($a+1 < count($bomItem['ti_part_sku'])) {
+                                        echo ", ";
+                                    }
                                 }
-                                $a++;
-                            } ?></li>
+                                ?>
+                            </li>
+                        <?php endif; ?>
                     <?php endif; ?>
                 <?php
                 }
