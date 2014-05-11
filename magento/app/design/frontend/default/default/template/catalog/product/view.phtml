@@ -34,6 +34,7 @@
 <?php
 $_helper = $this->helper('catalog/output');
 $_product = $this->getProduct();
+$_tiProduct = $_product->getTiProduct();
 $_description = $_product->getDescription();
 $_ad = $this->getAdditionalData();
 
@@ -102,7 +103,7 @@ $tiPartSkuArray = $_product->getTiPartSku() ? explode(',', $_product->getTiPartS
 
             <?php if (!$this->hasOptions()): ?>
                 <div class="add-to-box">
-                    <?php if ($_product->isSaleable() && $_product->isTurboInternational() || $_product->getTiPartSku()): ?>
+                    <?php if ($_product->isSaleable() && $_product->isTurboInternational() || $_tiProduct): ?>
                         <?php echo $this->getChildHtml('addtocart'); ?>
                         <?php if ($this->helper('wishlist')->isAllow() || $_compareUrl = $this->helper('catalog/product_compare')->getAddUrl($_product)): ?>
                             <span class="or"><?php echo $this->__('OR') ?></span>
