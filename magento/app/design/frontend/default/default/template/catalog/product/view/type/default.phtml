@@ -29,7 +29,7 @@
 $_product = $this->getProduct();
 
 // Get TI part SKUs and turbo types
-$tiPartSkus = explode(",", $_product->getTiPartSku());
+$tiPartSkus = $_product->getTiPartSku() ? explode(",", $_product->getTiPartSku()) : null;
 $turboTypes = $_product->getAttributeText('turbo_type');
 ?>
 
