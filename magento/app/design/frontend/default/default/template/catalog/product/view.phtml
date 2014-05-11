@@ -72,10 +72,6 @@ function usortByPartNumberPredicate($a, $b)
 }
 
 uasort($interchangeSkuProductMap, 'usortByPartNumberPredicate');
-
-
-// Should be a subset of interchanges
-$tiPartSkuArray = $_product->getTiPartSku() ? explode(',', $_product->getTiPartSku()) : array();
 ?>
 <script type="text/javascript">
     var optionsPrice = new Product.OptionsPrice(<?php echo $this->getJsonConfig() ?>);
