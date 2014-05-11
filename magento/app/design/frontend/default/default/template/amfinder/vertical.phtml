@@ -4,7 +4,8 @@
 		<input type="hidden" name="finder_id" value="<?php echo $this->getId() ?>">
 		<input type="hidden" name="back_url" value="<?php echo $this->getBackUrl() ?>">
 		<input type="hidden" name="category_id" value="<?php echo $this->getCurrentCategoryId() ?>">
-    	<?php foreach ($this->getFinder()->getDropdowns() as $dropdown): ?>
+    	<h4 style="color: #000000;">Application Finder</h4>
+        <?php foreach ($this->getFinder()->getDropdowns() as $dropdown): ?>
     		<div class="dropdown-title"><?php echo $this->htmlEscape($dropdown->getName()) ?></div>
     		<div class="dropdown-element">
     			<select <?php echo $this->getDropdownAttributes($dropdown)?> style="width:150px">
