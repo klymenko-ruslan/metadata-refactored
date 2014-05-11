@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <TurboInternational_Checkout>
+            <version>1.0.0</version>
+        </TurboInternational_Checkout>
+    </modules>
+    <global>
+        <models>
+            <checkout>
+                <rewrite>
+                    <cart>TurboInternational_Checkout_Model_Cart</cart>
+                </rewrite>
+            </checkout>
+        </models>
+        <routers>
+            <checkout>
+                <rewrite>
+                    <cart>
+                        <to>turbointernational/checkout/cart</to>
+                        <override_actions>true</override_actions>
+                        <actions>
+                            <add>
+                                <to>turbointernational/checkout/cart/add</to>
+                            </add>
+                        </actions>
+                    </cart>
+                </rewrite>
+            </checkout>
+        </routers>
+    </global>
+    <frontend>
+        <routers>
+            <cart>
+                <use>standard</use>
+                <args>
+                    <module before="Mage_Checkout">TurboInternational_Checkout</module>
+                    <frontName>turbointernational</frontName>
+                </args>
+            </cart>
+        </routers>
+    </frontend>
+</config>

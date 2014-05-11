@@ -25,54 +25,25 @@
  */
 ?>
 <?php
-$_product = $this->getProduct();
-$_productManufacturer = $_product->getManufacturer();
+$tiProduct = $this->getProduct()->getTiProduct();
+$addToCartString = "Add to Cart";
 
-
-// Determine which product we're using
-$billOfMaterials = json_decode($_product->getBillOfMaterials(), true);
-if ($_productManufacturer == 44) {
-
-    // This is a TI product, use it directly
-    $tiProduct = $_product;
-    $addToCartString = $this->__('Add to Cart');
-
-    
-} elseif ($_product->getAttributeText("part_type") == "turbo"
-            && !empty($billOfMaterials)
-            && !empty($billOfMaterials[0]['ti_part_sku'])) {
-    
-    // This is a turbo, get the TI part from the first BOM item (should be a cartridge) TI part SKU array.
-    $bomCartridgeTiSku = $billOfMaterials[0]['ti_part_sku'][0];
-    
-    $tiProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $bomCartridgeTiSku);
-    $addToCartString = $this->__('Add TI Part to Cart');
-    
-} elseif (strlen($_product->getTiPartSku()) > 0) {
-    
-    // It's not a TI part and it's not a turbo, get the first ti_part_sku
-    $tiPartSkuArray = explode(',', $_product->getTiPartSku());
-
-    $tiProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $tiPartSkuArray[0]);
-    $addToCartString = $this->__('Add TI Part to Cart');
-} else {
-    $tiProduct = null;
+if ($tiProduct->getId() != $this->getProduct()->getId()) {
+    $addToCartString = "Add TI Part to Cart";
 }
-
 ?>
-<?php if ($_product->isSaleable() && $_productManufacturer == 44 || $_product->getTiPartSku()): ?>
+<?php if ($tiProduct != null && $tiProduct->isSaleable()): ?>
     <div class="add-to-cart">
-        <?php if (!$_product->isGrouped()): ?>
+        <?php if (!$tiProduct->isGrouped()): ?>
             <label for="qty"><?php echo $this->__('Qty:') ?></label>
             <input type="text" name="qty" id="qty" maxlength="12" value="<?php echo $this->getProductDefaultQty() * 1 ?>"
                    title="<?php echo $this->__('Qty') ?>" class="input-text qty"/>
         <?php endif; ?>
-        <?php if ($tiProduct && $tiProduct->isSaleable()): ?>
-            <button type="button" title="<?php echo $addToCartString ?>" class="button btn-cart"
-                    onclick="setLocation('<?php echo $this->getAddToCartUrl($tiProduct) ?>')">
-                <span><span><?php echo $addToCartString ?></span></span>
-            </button>
-        <?php endif; ?>
+            
+        <button type="button" title="<?php echo $addToCartString ?>" class="button btn-cart"
+                onclick="productAddToCartForm.submit(this)">
+            <span><span><?php echo $addToCartString ?></span></span>
+        </button>
         <?php echo $this->getChildHtml('', true, true) ?>
     </div>
 <?php endif; ?>

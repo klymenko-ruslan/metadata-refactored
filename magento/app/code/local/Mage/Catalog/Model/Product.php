@@ -2057,4 +2057,47 @@ class Mage_Catalog_Model_Product extends Mage_Catalog_Model_Abstract
     {
         return $this->getStatus() == Mage_Catalog_Model_Product_Status::STATUS_DISABLED;
     }
+    
+    public function getAttributeSetName() {
+        $productAttributeSet = Mage::getModel('eav/entity_attribute_set')->load($this->getAttributeSetId());
+        return $productAttributeSet->getAttributeSetName();
+    }
+    
+    public function isTurboInternational() {
+        return $this->getManufacturer() == 44; // TODO: Use the name
+    }
+    
+    public function isTurbo() {
+        return $this->getAttributeSetName() == "Turbo";
+    }
+    
+    public function getTiProduct() {
+        
+        // If this product is a TI product, return it
+        if ($this->isTurboInternational()) {
+            return $this;
+        }
+        
+        // If this is a turbo, the first BOM item should be a cartridge
+        // Get the TI part for that cartridge
+        if ($this->isTurbo()) {
+            $billOfMaterials = json_decode($this->getBillOfMaterials(), true);
+            
+            if (!empty($billOfMaterials)
+             && !empty($billOfMaterials[0])
+             && !empty($billOfMaterials[0]['ti_part_sku'])) {
+                $bomCartridgeTiSku = $billOfMaterials[0]['ti_part_sku'][0];
+                return Mage::getModel('catalog/product')->loadByAttribute('sku', $bomCartridgeTiSku);
+             }
+        }
+        
+        // If the product has a TI part sku, use that
+        if (strlen($this->getTiPartSku()) > 0) {
+            $tiPartSkuArray = explode(',', $this->getTiPartSku());
+            return Mage::getModel('catalog/product')->loadByAttribute('sku', $tiPartSkuArray[0]);
+        }
+        
+        return null;
+    }
+
 }

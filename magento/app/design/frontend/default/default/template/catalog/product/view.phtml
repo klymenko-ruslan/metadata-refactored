@@ -37,8 +37,8 @@ $_product = $this->getProduct();
 $_productManufacturer = $_product->getManufacturer();
 $_description = $_product->getDescription();
 $_ad = $this->getAdditionalData();
-$productAttributeSet = Mage::getModel('eav/entity_attribute_set')->load($_product->getAttributeSetId());
-$productAttributeSetName = $productAttributeSet->getAttributeSetName();
+
+$productAttributeSetName = $_product->getAttributeSetName();
 
 
 // Get the Bill of Materials
@@ -264,11 +264,8 @@ $tiPartSkuArray = $_product->getTiPartSku() ? explode(',', $_product->getTiPartS
             <?php endforeach; ?>
 
             <?php
-            $attributeSetModel = Mage::getModel("eav/entity_attribute_set");
-            $attributeSetModel->load($_product->getAttributeSetId());
-            $attributeSetName = $attributeSetModel->getAttributeSetName();
 
-            switch ($attributeSetName):
+            switch ($productAttributeSetName):
                 case 'Turbine Wheel': ?>
                     <div class="box-collateral">
                         <h2><?php echo $this->__('Dimensions Measurement Legend') ?></h2>
@@ -391,25 +388,40 @@ $tiPartSkuArray = $_product->getTiPartSku() ? explode(',', $_product->getTiPartS
                 <?php foreach ($billOfMaterials as $bomItem): ?>
                     <?php
                     $bomItemProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $bomItem['sku']);
+                    $bomItemTiProduct = null;
                     ?>
 
                     <tr>
                         <td><?php echo $bomItemProduct->getAttributeText('part_type'); ?></td>
                         <td><?php echo '<a href="' . $bomItemProduct->getProductUrl() . '">' . $bomItemProduct->getPartNumber() . '</a>'; ?></td>
-                        <td><?php $a = 1;
-                            foreach ($bomItem['ti_part_sku'] as $tiPart) {
-                                $bomItemInterchangeProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $tiPart);
-                                if ($bomItemInterchangeProduct) {
-                                    echo '<a href="' . $bomItemInterchangeProduct->getProductUrl() . '">' . $bomItemInterchangeProduct->getPartNumber() . '</a>';
+                        <td><?php
+                            foreach ($bomItem['ti_part_sku'] as $idx => $tiPartSku) {
+                                
+                                // Get the interchange product
+                                if ($tiPartSku == $bomItem['sku']) {
+                                    $bomItemInterchangeProduct = $bomItemProduct; // Same as the bom item
+//                                } elseif ($bomItemTiProduct && $bomItemTiProduct->getSku() == $tiPartSku) {
+//                                    $bomItemInterchangeProduct = $bomItemProduct; // Same as the bom item TI product
                                 } else {
-                                    echo $tiPart;
+                                    $bomItemInterchangeProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $tiPartSku);
                                 }
+                                
+                                // Skip invalid products
+                                if (!$bomItemInterchangeProduct) {
+                                    continue;
+                                }
+                                
+                                // Use the first TI product for pricing
+                                if (!$bomItemTiProduct) {
+                                    $bomItemTiProduct = $bomItemInterchangeProduct;
+                                }
+                                
+                                echo '<a href="' . $bomItemInterchangeProduct->getProductUrl() . '">' . $bomItemInterchangeProduct->getPartNumber() . '</a>';
 
                                 // Add commas between items
-                                if ($a < count($bomItem['ti_part_sku'])) {
+                                if ($idx+1 < count($bomItem['ti_part_sku'])) {
                                     echo ", ";
                                 }
-                                $a++;
                             }?>
                         </td>
                         <td>
@@ -421,9 +433,11 @@ $tiPartSkuArray = $_product->getTiPartSku() ? explode(',', $_product->getTiPartS
                         </td>
                         <td><?php echo $bomItem['quantity']; ?></td>
                         <td>
-                            <?php if ($bomItemProduct->getTiPartSku()) {
-                                echo Mage::helper('core')->currency($bomItemInterchangeProduct->getFinalPrice());
-                            }?>
+                            <?php
+                            if ($bomItemTiProduct) {
+                                echo Mage::helper('core')->currency($bomItemTiProduct->getFinalPrice());
+                            }
+                            ?>
                         </td>
 
                     </tr>
@@ -543,7 +557,7 @@ $tiPartSkuArray = $_product->getTiPartSku() ? explode(',', $_product->getTiPartS
                             <td>
                                 <?php if (!empty($usage['tiSku']) && $usageTiProduct) {
                                     echo Mage::helper('core')->currency($usageTiProduct->getFinalPrice());
-                                } else {
+                                } elseif ($usageProduct->isTurboInternational()) {
                                     echo Mage::helper('core')->currency($usageProduct->getFinalPrice());
                                 }
                                 ?>
