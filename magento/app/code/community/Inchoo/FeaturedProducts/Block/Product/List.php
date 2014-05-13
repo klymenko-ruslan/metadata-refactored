@@ -68,7 +68,6 @@ class Inchoo_FeaturedProducts_Block_Product_List extends Mage_Catalog_Block_Prod
      */
     public function getFeaturedProductCollection()
     {
-echo "HERE";
         return $this->_getProductCollection();
     }
 
