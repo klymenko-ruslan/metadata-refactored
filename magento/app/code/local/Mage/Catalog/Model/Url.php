@@ -806,7 +806,7 @@ class Mage_Catalog_Model_Url
             /**
              * Check if existing request past can be used
              */
-            if ($product->getUrlKey() == '' && !empty($requestPath)
+            if (!empty($requestPath) // MODIFIED: See http://www.magentocommerce.com/boards/viewthread/416476/P0/
                 && strpos($existingRequestPath, $requestPath) === 0
             ) {
                 $existingRequestPath = preg_replace(
