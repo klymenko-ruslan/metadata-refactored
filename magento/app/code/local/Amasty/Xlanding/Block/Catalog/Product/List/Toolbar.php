@@ -30,4 +30,13 @@ class Amasty_Xlanding_Block_Catalog_Product_List_Toolbar extends Amasty_Xlanding
         return parent::getPagerHtml();
     }
     
+    public function setCurrentMode($mode) {
+        $mode2 = $this->getRequest()->getParam($this->getModeVarName());
+        if ($mode2) {
+            $this->setData('_current_grid_mode', $mode2);
+        } else {
+            $this->setData('_current_grid_mode', $mode);
+        }
+    }
+
 }
