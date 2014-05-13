@@ -30,6 +30,7 @@ $alphaNumeric = str_replace(array('.', '-', ' '), '', $catalogSearchHelper->getQ
 ?>
 <form id="search_mini_form" action="<?php echo $catalogSearchHelper->getResultUrl() ?>" method="get">
     <div class="form-search">
+        <input name="stock" type="hidden" value="1"/>
         <input id="search" type="text" name="<?php echo $catalogSearchHelper->getQueryParamName() ?>" value="<?php echo $catalogSearchHelper->getEscapedQueryText($alphaNumeric) ?>" class="input-text" maxlength="<?php echo $catalogSearchHelper->getMaxQueryLength();?>" placeholder="OEM Part Number&hellip;" />
         <button type="submit" title="<?php echo $this->__('Search') ?>" class="button"><span><?php echo $this->__('Search') ?></span></button>
         <div id="search_autocomplete" class="search-autocomplete"></div>
