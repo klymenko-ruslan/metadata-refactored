@@ -429,11 +429,15 @@ uasort($interchangeSkuProductMap, 'usortByPartNumberPredicate');
                         </td>
                         <td><?php echo $bomItem['quantity']; ?></td>
                         <td>
-                            <?php
-                            if ($bomItemTiProduct) {
-                                echo Mage::helper('core')->currency($bomItemTiProduct->getFinalPrice());
-                            }
-                            ?>
+                            <?php if (Mage::getSingleton('customer/session')->isLoggedIn()): ?>
+                                <?php
+                                if ($bomItemTiProduct) {
+                                    echo Mage::helper('core')->currency($bomItemTiProduct->getFinalPrice());
+                                }
+                                ?>
+                            <?php else: ?>
+                              <a href="<?php echo $this->getUrl('customer/account/login'); ?>">Login for price</a>
+                            <?php endif; ?>
                         </td>
 
                     </tr>
