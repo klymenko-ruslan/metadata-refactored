@@ -50,8 +50,15 @@ $alphaNumeric = str_replace(array('.', '-', ' '), '', $catSearchHelper->getQuery
         <h1><?php echo ($this->getHeaderText() || $this->getHeaderText() === false) ? $this->getHeaderText() : $this->__("Search results for '%s'", $catSearchHelper->getEscapedQueryText()) ?></h1>
     </div>
     <p class="note-msg">
-        <?php echo ($this->getNoResultText()) ? $this->getNoResultText() : $this->__('Your search returns no results. ') ?><?php echo $this->__("Did you mean ") ?><a
-            href="/catalogsearch/result/?q=<?php echo $alphaNumeric ?>"><?php echo $alphaNumeric ?></a><?php echo $this->__("?") ?>
+        <?php echo ($this->getNoResultText()) ? $this->getNoResultText() : $this->__('Your search returns no results. ') ?>
+        <?php
+        if ($catSearchHelper->getQueryText() == $alphaNumeric) {
+            return;
+        } else {
+            echo $this->__("Did you mean ") ?><a
+            href="/catalogsearch/result/?q=<?php echo $alphaNumeric ?>"><?php
+            echo $alphaNumeric ?></a><?php echo $this->__("?");
+        } ?>
         <?php if ($messages = $this->getNoteMessages()): ?>
             <?php foreach ($messages as $message): ?>
                 <br/><?php echo $message ?>
