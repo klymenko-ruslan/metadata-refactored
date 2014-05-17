@@ -11,6 +11,10 @@ server {
 	listen 443;
 	server_name metadata.turbointernational.com;
 
+	# Uploads (for images)
+	client_max_body_size 10M;
+
+
 	root html;
 	index index.html index.htm;
 
