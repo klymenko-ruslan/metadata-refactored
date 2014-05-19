@@ -10,7 +10,7 @@ MYSQL_PASS='-pOI1unqzzO{=.s#?'
 MYSQL_DB=magento
 
 echo "[`date`] Synchronizing metadata images"
-rsync -ar --delete $METADATA_IMAGES/* $METADATA_SSH:$MAGENTO_IMAGES/ || exit 1
+rsync -r --delete $METADATA_IMAGES/* $METADATA_SSH:$MAGENTO_IMAGES/ || exit 1
 
 echo "[`date`] Exporting /tmp/products.csv.gz"
 wget -qO - http://localhost:8080/magmi/products | gzip > /tmp/products.csv.gz || exit 1
