@@ -45,12 +45,10 @@
     </div>
     <div class="row">
         <div class="col-sm-6">
-            <form role="group naming" class="form-inline">
-                <div class="input-group">
-                    <span class="input-group-addon">Group Name</span>
-                    <input type="text" class="form-control" ng-model="group.name" id="group-name-input" placeholder="Group Name"/>
-                </div>
-            </form>
+          <div class="input-group form-inline">
+            <span class="input-group-addon">Group Name</span>
+            <input type="text" class="form-control" ng-model="group.name" id="group-name-input" placeholder="Group Name"/>
+          </div>
         </div>
     </div>
 
@@ -59,7 +57,7 @@
             <h2>Roles</h2>
             <ul class="list-group">
                 <li ng-repeat="role in roles" class="list-group-item">
-                    <input type="checkbox" ng-model="roleSelections[role.id]"/> {{role.display}}
+                    <input type="checkbox" ng-model="roleSelections[role.id]" name="roleSelection"/> {{role.display}}
                 </li>
             </ul>
         </div>
@@ -67,7 +65,7 @@
             <h2>Users</h2>
             <ul class="list-group">
                 <li ng-repeat="user in users" class="list-group-item">
-                    <input type="checkbox" ng-model="userSelections[user.id]"/> {{user.name}}
+                    <input type="checkbox" ng-model="userSelections[user.id]" name="userSelection"/> {{user.name}}
                 </li>
             </ul>
         </div>
