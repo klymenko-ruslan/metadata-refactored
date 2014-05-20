@@ -2100,4 +2100,18 @@ class Mage_Catalog_Model_Product extends Mage_Catalog_Model_Abstract
         return null;
     }
 
+    public function getOemSkuCustomOptionId() {
+        if (sizeof($this->getOptions())==0){
+             return null;
+        }
+        
+        foreach ($this->getOptions() as $o) {
+            if ($o->getTitle() == 'oem_sku') {
+                return $o->getId();                  
+            }
+        }
+        
+        return null;
+    }
+
 }
