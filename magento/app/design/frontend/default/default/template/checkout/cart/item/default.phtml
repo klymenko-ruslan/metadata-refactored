@@ -42,24 +42,24 @@ $canApplyMsrp = Mage::helper('catalog')->canApplyMsrp($_item->getProduct(), Mage
 <!-- Part Type -->
 <td>
     <h3><?php echo $this->htmlEscape($productDetail->getAttributeText('part_type')) ?></h3>
-    <?php if ($_options = $this->getOptionList()): ?>
-        <dl class="item-options">
-            <?php foreach ($_options as $_option) : ?>
-                <?php $_formatedOptionValue = $this->getFormatedOptionValue($_option) ?>
-                <dt><?php echo $this->htmlEscape($_option['label']) ?></dt>
-                <dd<?php if (isset($_formatedOptionValue['full_view'])): ?> class="truncated"<?php endif; ?>><?php echo $_formatedOptionValue['value'] ?>
-                    <?php if (isset($_formatedOptionValue['full_view'])): ?>
-                        <div class="truncated_full_value">
-                            <dl class="item-options">
-                                <dt><?php echo $this->htmlEscape($_option['label']) ?></dt>
-                                <dd><?php echo $_formatedOptionValue['full_view'] ?></dd>
-                            </dl>
-                        </div>
-                    <?php endif; ?>
-                </dd>
-            <?php endforeach; ?>
-        </dl>
-    <?php endif; ?>
+<!--    --><?php //if ($_options = $this->getOptionList()): ?>
+<!--        <dl class="item-options">-->
+<!--            --><?php //foreach ($_options as $_option) : ?>
+<!--                --><?php //$_formatedOptionValue = $this->getFormatedOptionValue($_option) ?>
+<!--                <dt>--><?php //echo $this->htmlEscape($_option['label']) ?><!--</dt>-->
+<!--                <dd--><?php //if (isset($_formatedOptionValue['full_view'])): ?><!-- class="truncated"--><?php //endif; ?><!--><?php //echo $_formatedOptionValue['value'] ?>
+<!--                    --><?php //if (isset($_formatedOptionValue['full_view'])): ?>
+<!--                        <div class="truncated_full_value">-->
+<!--                            <dl class="item-options">-->
+<!--                                <dt>--><?php //echo $this->htmlEscape($_option['label']) ?><!--</dt>-->
+<!--                                <dd>--><?php //echo $_formatedOptionValue['full_view'] ?><!--</dd>-->
+<!--                            </dl>-->
+<!--                        </div>-->
+<!--                    --><?php //endif; ?>
+<!--                </dd>-->
+<!--            --><?php //endforeach; ?>
+<!--        </dl>-->
+<!--    --><?php //endif; ?>
     <?php if ($messages = $this->getMessages()): ?>
         <?php foreach ($messages as $message): ?>
             <p class="item-msg <?php echo $message['type'] ?>">* <?php echo $this->escapeHtml($message['text']) ?></p>
@@ -74,6 +74,21 @@ $canApplyMsrp = Mage::helper('catalog')->canApplyMsrp($_item->getProduct(), Mage
 <td>
     <?php if ($isVisibleProduct): ?>
         <a href="<?php echo $this->getConfigureUrl() ?>"><?php echo $this->htmlEscape($productDetail->getPartNumber()) ?></a>
+    <?php else: ?>
+        <?php echo $this->htmlEscape($productDetail->getPartNumber()) ?>
+    <?php endif; ?>
+</td>
+<!-- OEM Part Number -->
+<td>
+    <?php if ($isVisibleProduct): ?>
+        <?php if ($_options = $this->getOptionList()): ?>
+            <?php foreach ($_options as $_option) :
+                $_formatedOptionValue = $this->getFormatedOptionValue($_option);
+                $productByOem = Mage::getModel('catalog/product')->loadByAttribute('part_number', $_formatedOptionValue['value']);
+                echo '<a href="' . $productByOem->getProductUrl() . '">';
+                echo $_formatedOptionValue['value'] . '</a>';
+            endforeach; ?>
+        <?php endif; ?>
     <?php else: ?>
         <?php echo $this->htmlEscape($productDetail->getPartNumber()) ?>
     <?php endif; ?>

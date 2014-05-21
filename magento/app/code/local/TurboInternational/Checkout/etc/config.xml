@@ -13,21 +13,6 @@
                 </rewrite>
             </checkout>
         </models>
-        <routers>
-            <checkout>
-                <rewrite>
-                    <cart>
-                        <to>turbointernational/checkout/cart</to>
-                        <override_actions>true</override_actions>
-                        <actions>
-                            <add>
-                                <to>turbointernational/checkout/cart/add</to>
-                            </add>
-                        </actions>
-                    </cart>
-                </rewrite>
-            </checkout>
-        </routers>
     </global>
     <frontend>
         <routers>
