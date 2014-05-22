@@ -5,24 +5,15 @@
             <version>1.0.0</version>
         </TurboInternational_Checkout>
     </modules>
-    <global>
-        <models>
-            <checkout>
-                <rewrite>
-                    <cart>TurboInternational_Checkout_Model_Cart</cart>
-                </rewrite>
-            </checkout>
-        </models>
-    </global>
     <frontend>
         <routers>
-            <cart>
-                <use>standard</use>
+            <checkout>
                 <args>
-                    <module before="Mage_Checkout">TurboInternational_Checkout</module>
-                    <frontName>turbointernational</frontName>
+                    <modules>
+                        <TurboInternational_Checkout before="Mage_Checkout">TurboInternational_Checkout</TurboInternational_Checkout>
+                    </modules>
                 </args>
-            </cart>
+            </checkout>
         </routers>
-    </frontend>
+    </frontend> 
 </config>

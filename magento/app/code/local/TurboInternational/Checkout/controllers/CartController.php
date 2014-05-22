@@ -79,17 +79,17 @@ class TurboInternational_Checkout_CartController extends Mage_Checkout_CartContr
             $params['options'][$optionId] = $_product->getSku();
         }
 
-        $cart->addProduct($tiProduct, $params); 
+        
+        // Workaround for a stupid magento bug:
+        // https://stackoverflow.com/questions/10929563/magento-product-load-difference-between-loadbyattribute-and-load-methods
+        $tiProductReloaded = Mage::getModel('catalog/product')->load($tiProduct->getId());
+        
+        // Add the (reloaded) TI product to the cart
+        $cart->addProduct($tiProductReloaded, $params); 
         $cart->save();
    
-       $this->_getSession()->setCartWasUpdated(true);
+        $this->_getSession()->setCartWasUpdated(true);
 
-        /**
-         * @Normal Dispatch
-         */
-        Mage::dispatchEvent('checkout_cart_add_product_complete',
-            array('product' => $product, 'request' => $this->getRequest(), 'response' => $this->getResponse())
-        );
         Mage::dispatchEvent('checkout_cart_add_product_complete',
             array('product' => $tiProduct, 'request' => $this->getRequest(), 'response' => $this->getResponse())
         );
