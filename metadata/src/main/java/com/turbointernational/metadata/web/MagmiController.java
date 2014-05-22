@@ -175,7 +175,10 @@ public class MagmiController {
             "finder:" + finderIdTurbo,
 
             // Make!!Model!!Year!!Displacement!!Fuel||...
-            "application_detail"
+            "application_detail",
+            
+            // OEM SKU (custom option, used to show OEM part in cart)
+            "OEMSKU:field:0"
         };
     }
 

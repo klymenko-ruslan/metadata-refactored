@@ -232,6 +232,14 @@ public class MagmiProduct {
 
         // description
         columns.put("type", "simple");
+        
+        // OEM SKU (For showing OEM p/n in cart)
+        if (Manufacturer.TI_ID.equals(getManufacturerId())) {
+            
+            // Default empty value
+            // See: http://sourceforge.net/apps/mediawiki/magmi/index.php?title=Custom_Options
+            columns.put("OEMSKU", ":"); 
+        }
 
         // visibility
         columns.put("visibility", "Catalog, Search"); // See magmi genericmapper visibility.csv

@@ -2106,7 +2106,7 @@ class Mage_Catalog_Model_Product extends Mage_Catalog_Model_Abstract
         }
         
         foreach ($this->getOptions() as $o) {
-            if ($o->getTitle() == 'oem_sku') {
+            if ($o->getTitle() == 'OEMSKU') {
                 return $o->getId();                  
             }
         }
