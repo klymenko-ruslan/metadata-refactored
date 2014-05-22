@@ -343,8 +343,6 @@ Supported layout update handles (special):
                     <action method="insert">
                         <block>product.tierprices</block>
                     </action>
-                    <block type="catalog/product_view" name="product.clone_prices" as="prices"
-                           template="catalog/product/view/price_clone.phtml"/>
                     <action method="append">
                         <block>product.info.addtocart</block>
                     </action>
