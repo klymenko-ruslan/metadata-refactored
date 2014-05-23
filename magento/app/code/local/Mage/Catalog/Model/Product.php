@@ -2100,16 +2100,27 @@ class Mage_Catalog_Model_Product extends Mage_Catalog_Model_Abstract
         return null;
     }
 
+    public function getOemSkuCustomOptionTitle() {
+        return 'OEMSKU';
+    }
+
     public function getOemSkuCustomOptionId() {
-        if (sizeof($this->getOptions())==0){
-             return null;
-        }
+        $this->getProductOptionsCollection()->load();
         
-        foreach ($this->getOptions() as $o) {
-            if ($o->getTitle() == 'OEMSKU') {
-                return $o->getId();                  
+        foreach ($this->getProductOptionsCollection() as $o) {
+            if ($o->getTitle() == $this->getOemSkuCustomOptionTitle()) {
+                return $o->getId();
             }
         }
+        
+        
+//        if ($this->hasOptions() && sizeof($this->getOptions()) >= 0){
+//            foreach ($this->getOptions() as $o) {
+//                if ($o->getTitle() == $this->getOemSkuCustomOptionTitle()) {
+//                    return $o->getId();
+//                }
+//            }
+//        }
         
         return null;
     }

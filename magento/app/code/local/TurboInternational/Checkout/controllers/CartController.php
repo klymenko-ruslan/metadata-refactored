@@ -58,12 +58,16 @@ class TurboInternational_Checkout_CartController extends Mage_Checkout_CartContr
         
         // Get the TI product
         $tiProduct = $_product->getTiProduct();
-        
-        if (!$tiProduct){
+            
+        if (!$tiProduct || $tiProduct->getId() == $_product->getId()){
             parent::addAction();
             return;
         }
         
+        // Workaround for a stupid magento bug:
+        // https://stackoverflow.com/questions/10929563/magento-product-load-difference-between-loadbyattribute-and-load-methods
+        $tiProduct = Mage::getModel('catalog/product')->load($tiProduct->getId());
+            
         // Update the cart params to use the TI part, add the OEM sku
         $params['product'] = $tiProduct->getId();
         
@@ -72,20 +76,17 @@ class TurboInternational_Checkout_CartController extends Mage_Checkout_CartContr
         if ($optionId) {
             
             // Make 'options' an array if it isn't already
-            if (!is_set($param['options'])) {
+            if (!isset($param['options'])) {
                 $params['options'] = array();
             }
             
-            $params['options'][$optionId] = $_product->getSku();
+            if (!isset($params['options'][$optionId])) {
+                $params['options'][$optionId] = $_product->getSku();
+            }
         }
 
-        
-        // Workaround for a stupid magento bug:
-        // https://stackoverflow.com/questions/10929563/magento-product-load-difference-between-loadbyattribute-and-load-methods
-        $tiProductReloaded = Mage::getModel('catalog/product')->load($tiProduct->getId());
-        
         // Add the (reloaded) TI product to the cart
-        $cart->addProduct($tiProductReloaded, $params); 
+        $cart->addProduct($tiProduct, $params);
         $cart->save();
    
         $this->_getSession()->setCartWasUpdated(true);
