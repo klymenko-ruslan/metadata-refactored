@@ -238,7 +238,7 @@ public class MagmiProduct {
             
             // Default empty value
             // See: http://sourceforge.net/apps/mediawiki/magmi/index.php?title=Custom_Options
-            columns.put("OEMSKU", ":"); 
+            columns.put("OEMSKU:field:0", ":"); 
         }
 
         // visibility
