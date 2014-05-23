@@ -73,34 +73,38 @@ $canApplyMsrp = Mage::helper('catalog')->canApplyMsrp($_item->getProduct(), Mage
 <!-- TI Part Number -->
 <td>
     <?php if ($isVisibleProduct): ?>
-        <a href="<?php echo $this->getConfigureUrl() ?>"><?php echo $this->htmlEscape($productDetail->getPartNumber()) ?></a>
+        <a style="white-space: nowrap;" href="<?php echo $this->getConfigureUrl() ?>"><?php echo $this->htmlEscape($productDetail->getPartNumber()) ?></a>
     <?php else: ?>
         <?php echo $this->htmlEscape($productDetail->getPartNumber()) ?>
     <?php endif; ?>
 </td>
 <!-- OEM Part Number -->
 <td>
-    <?php if ($isVisibleProduct): ?>
-        <?php if ($_options = $this->getOptionList()): ?>
-            <?php foreach ($_options as $_option) :
-                $productByOem = Mage::getModel('catalog/product')->loadByAttribute('sku', $_option['value']);
-                if ($productDetail->getOemSkuCustomOptionTitle() === 'OEMSKU') {
-                    echo '<a href="' . $productByOem->getProductUrl() . '">';
-                    echo $_option['value'] . '</a>';
+    <?php if ($_options = $this->getOptionList()): ?>
+        <?php foreach ($_options as $_option) :
+            $productByOem = Mage::getModel('catalog/product')->loadByAttribute('sku', $_option['value']);
+            if ($_option['label'] === $productDetail->getOemSkuCustomOptionTitle()) {
+
+                if ($isVisibleProduct) {
+                    echo '<a style="white-space: nowrap;" href="' . $productByOem->getProductUrl() . '">';
                 }
-            endforeach; ?>
-        <?php endif; ?>
-    <?php else: ?>
-        <?php echo $this->htmlEscape($productDetail->getPartNumber()) ?>
+
+                    echo $this->htmlEscape($productByOem->getPartNumber());
+
+                if ($isVisibleProduct) {
+                    echo '</a>';
+                }
+            }
+        endforeach; ?>
     <?php endif; ?>
 </td>
 <!-- Edit item -->
-<td class="a-center">
+<!--<td class="a-center">
     <?php if ($isVisibleProduct): ?>
         <a href="<?php echo $this->getConfigureUrl() ?>"
            title="<?php echo $this->__('Edit item parameters') ?>"><?php echo $this->__('Edit') ?></a>
     <?php endif ?>
-</td>
+</td>-->
 <?php if ($this->helper('wishlist')->isAllowInCart()) : ?>
     <!-- Add to wishlist -->
     <td class="a-center">
