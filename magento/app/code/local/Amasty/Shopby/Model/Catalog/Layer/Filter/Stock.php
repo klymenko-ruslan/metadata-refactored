@@ -26,7 +26,9 @@ class Amasty_Shopby_Model_Catalog_Layer_Filter_Stock extends Mage_Catalog_Model_
      */
     public function apply(Zend_Controller_Request_Abstract $request, $filterBlock)
     {
-        $filter = (int) $request->getParam($this->getRequestVar());
+        $input = $request->getParam($this->getRequestVar());
+        $filter = is_null($input) ? 1 : (int) $input;
+
         if (!$filter || Mage::registry('am_stock_filter')) {
             return $this;
         }

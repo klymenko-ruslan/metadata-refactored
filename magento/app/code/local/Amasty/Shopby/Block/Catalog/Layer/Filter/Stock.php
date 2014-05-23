@@ -62,6 +62,6 @@ class Amasty_Shopby_Block_Catalog_Layer_Filter_Stock extends Mage_Catalog_Block_
     
 	public function getRequestValue()
     {
-        return Mage::app()->getRequest()->getParam('stock');
+        return Mage::app()->getRequest()->getParam('stock') ? Mage::app()->getRequest()->getParam('stock') : 1;
     }
 }
