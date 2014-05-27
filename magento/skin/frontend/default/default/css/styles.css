@@ -121,7 +121,7 @@ ul,ol         { list-style:none; }
 .page-print { background:#fff; padding:25px 30px; text-align:left; }
 .page-empty { background:#fff; padding:20px; text-align:left; }
 .page-popup { background:#fff; padding:25px 30px; text-align:left; }
-.main-container { background:#ffffff; }
+.main-container { background:url(/skin/frontend/default/default/images/all-parts_grey2.jpg) repeat fixed 0 0  #ffffff; }
 .main { width:900px; margin:0 auto; min-height:400px; padding:25px 25px 80px; background:#ffffff; text-align:left; }
 
 /* Base Columns */
