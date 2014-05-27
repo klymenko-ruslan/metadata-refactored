@@ -489,6 +489,7 @@ tr.summary-details-excluded { font-style:italic; }
 .std strong { font-weight:bold; }
 .std i,
 .std em { font-style:italic; }
+.std .product-description { text-align:center; }
 
 /* Misc */
 .links li { display:inline; }
