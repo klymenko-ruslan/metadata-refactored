@@ -5,8 +5,7 @@
 class Amasty_Shopby_Model_Catalog_Layer_Filter_Stock extends Mage_Catalog_Model_Layer_Filter_Abstract
 {
 
-	const FILTER_IN_STOCK = 1;
-	const FILTER_OUT_OF_STOCK = 2;
+	const FILTER_OUT_OF_STOCK = 1;
 
     /**
      * Class constructor
@@ -26,10 +25,25 @@ class Amasty_Shopby_Model_Catalog_Layer_Filter_Stock extends Mage_Catalog_Model_
      */
     public function apply(Zend_Controller_Request_Abstract $request, $filterBlock)
     {
-        $input = $request->getParam($this->getRequestVar());
-        $filter = is_null($input) ? 1 : (int) $input;
+        
+        // Stop now if the filter is already applied
+        if (Mage::registry('am_stock_filter')) {
+            return $this;
+        }
+        
+        // Update the registry value
+        $filter = (int) $request->getParam($this->getRequestVar());
+        if ($filter === self::FILTER_OUT_OF_STOCK) {
+            
+            if (is_null(Mage::registry('am_stock_filter'))) {
+                $state = $this->_createItem(Mage::helper('amshopby')->__('Show All'), $filter)
+                                ->setVar($this->_requestVar);
 
-        if (!$filter || Mage::registry('am_stock_filter')) {
+                $this->getLayer()->getState()->addFilter($state);
+
+                Mage::register('am_stock_filter', true);
+            }
+            
             return $this;
         }
         
@@ -38,20 +52,9 @@ class Amasty_Shopby_Model_Catalog_Layer_Filter_Stock extends Mage_Catalog_Model_
         if (strpos($select, 'cataloginventory_stock_status') === false) {
         	Mage::getResourceModel('cataloginventory/stock_status')
                 ->addStockStatusToSelect($select, Mage::app()->getWebsite());
-        } 
-        
-        if ($filter == self::FILTER_IN_STOCK) {
-			$select->where('stock_status.stock_status = ?', 1);	
-        } else {
-        	$select->where('stock_status.stock_status = ?', 0);
         }
         
-        $state = $this->_createItem($filter == self::FILTER_IN_STOCK ? Mage::helper('amshopby')->__('In Stock') : Mage::helper('amshopby')->__('Out of Stock'), $filter)
-                        ->setVar($this->_requestVar);
-                        
-        $this->getLayer()->getState()->addFilter($state);
-        
-        Mage::register('am_stock_filter', true);
+        $select->where('stock_status.stock_status = ?', 1);
             
         return $this;
     }
@@ -64,7 +67,7 @@ class Amasty_Shopby_Model_Catalog_Layer_Filter_Stock extends Mage_Catalog_Model_
      */
     public function getName()
     {
-        return Mage::helper('amshopby')->__('TI Part Filter');
+        return Mage::helper('amshopby')->__('Non-TI Parts');
     }
 
     /**
@@ -78,18 +81,12 @@ class Amasty_Shopby_Model_Catalog_Layer_Filter_Stock extends Mage_Catalog_Model_
     	$status = $this->_getCount();
     	
     	$in_stock = array_keys($status);
-    	$out_stock = array_values($status);
     	
     	$data[] = array(
-        	'label' => Mage::helper('amshopby')->__('TI Parts Only'),
-            'value' => self::FILTER_IN_STOCK,
+            'label' => Mage::helper('amshopby')->__('Show All'),
+            'value' => self::FILTER_OUT_OF_STOCK,
             'count' => $in_stock[0],
 		);
-//		$data[] = array(
-//        	'label' => Mage::helper('amshopby')->__('All Parts'),
-//            'value' => self::FILTER_OUT_OF_STOCK,
-//            'count' => $out_stock[0],
-//		);
         return $data;
     }
     

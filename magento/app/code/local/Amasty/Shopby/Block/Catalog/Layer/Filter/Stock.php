@@ -27,17 +27,13 @@ class Amasty_Shopby_Block_Catalog_Layer_Filter_Stock extends Mage_Catalog_Block_
     
 	public function getItemsAsArray()
     {
-        $items = array(); 
+        $items = array();
         foreach (parent::getItems() as $itemObject){
         	
             $item = array();
             $item['url']   = $this->htmlEscape($itemObject->getUrl());
             $item['label'] = $itemObject->getLabel();
             $item['count'] = '';
-         	$item['countValue']  = $itemObject->getCount();
-            if (!$this->getHideCounts()) {
-                $item['count']  = ' (' . $itemObject->getCount() . ')';
-            }
             
 
             $item['css'] = 'amshopby-attr';
@@ -52,7 +48,7 @@ class Amasty_Shopby_Block_Catalog_Layer_Filter_Stock extends Mage_Catalog_Block_
 
             if ($this->getSeoRel()){ 
                 $item['css'] .= '" rel="nofollow';  
-            }            
+            }
             
             $items[] = $item;
         }
@@ -60,8 +56,8 @@ class Amasty_Shopby_Block_Catalog_Layer_Filter_Stock extends Mage_Catalog_Block_
         return $items;
     }
     
-	public function getRequestValue()
+    public function getRequestValue()
     {
-        return Mage::app()->getRequest()->getParam('stock') ? Mage::app()->getRequest()->getParam('stock') : 1;
+        return ((int) Mage::app()->getRequest()->getParam('stock') === 1 ? 1 : 0);
     }
 }
