@@ -16,11 +16,29 @@
            <block type="amshopby/catalog_layer_view" name="amshopby.navleft" before="-" template="catalog/layer/view.phtml"/>
         </reference>
         <reference name="left">
-            <block type="amfinder/form" name="productfinder" after="-">
+            <block type="amfinder/form" name="productfinder" after="amshopby.navleft">
                 <action method="setId">
                     <id>1</id>
                 </action>
                 <action method="apply"/>
+            </block>
+        </reference>
+        <reference name="left">
+            <block type="checkout/cart_sidebar" name="left_cart_sidebar" template="checkout/cart/sidebar.phtml" after="-"/>
+            <block type="wishlist/customer_sidebar" name="left_wishlist_sidebar" template="wishlist/sidebar.phtml" after="left_cart_sidebar"/>
+            <block type="catalog/product_compare_sidebar" name="left.catalog.compare.sidebar" template="catalog/product/compare/sidebar.phtml" after="left_wishlist_sidebar"/>
+            <block type="reports/product_viewed" name="left.reports.product.viewed" template="reports/product_viewed.phtml" after="left.catalog.compare.sidebar"/>
+            <block type="reports/product_compared" name="left.reports.product.compared" template="reports/product_compared.phtml" after="left.reports.product.compared"/>
+            <block type="sales/reorder_sidebar" name="left.sale.reorder.sidebar" template="sales/reorder/sidebar.phtml"/>
+            <block type="poll/activePoll" name="left.poll">
+              <action method="setPollTemplate">
+                 <template>poll/active.phtml</template>
+                 <type>poll</type>
+              </action>
+              <action method="setPollTemplate">
+                 <template>poll/result.phtml</template>
+                 <type>results</type>
+              </action>
             </block>
         </reference>
         <reference name="content">
