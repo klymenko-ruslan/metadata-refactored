@@ -1,6 +1,6 @@
 #!/bin/bash
 
-MYSQL_DUMP_FILE="`find /var/magento_sql_backups/ -type f | tail -1`"
+MYSQL_DUMP_FILE="`find /var/magento_sql_backups/ -type f | sort | tail -1`"
 MYSQL_USER=root
 MYSQL_PASS='-pOI1unqzzO{=.s#?'
 MYSQL_DB=magento
