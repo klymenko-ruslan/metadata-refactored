@@ -42,18 +42,49 @@ $_helper = $this->helper('catalog/output');
         <?php echo $this->getToolbarHtml() ?>
         <?php if ($this->getMode() != 'grid'): ?>
             <?php // List Mode ?>
+            <?php 
+                // check to see if part_type filter includes turbo
+                $part_type_params = Mage::app()->getRequest()->getParam("part_type"); 
+                $part_type_params_array = explode(',', $part_type_params);
+
+                // check to see if array has attribute_id for turbo
+                $filter_includes_part_type_turbo = in_array("6610", $part_type_params_array);
+            ?>
             <table class="data-table" id="products-list">
                 <tr>
                     <th>Part Type</th>
                     <th>Name</th>
+                    <th>Manufacturer</th>
                     <th>OE Part #</th>
-                    <th>TI Parts</th>
+                    <th>TI Part #</th>
+                    <?php if ($filter_includes_part_type_turbo == 1): ?><th>CHRA</th><?php endif; ?>
                     <th>Price</th>
                 </tr>
                 <?php $_collectionSize = $_productCollection->count() ?>
                 <?php $_columnCount = $this->getColumnCount(); ?>
                 <?php $i = 0;
                 foreach ($_productCollection as $_product): ?>
+                    <?php // if is turbo then extract chra from bom
+                    if ($filter_includes_part_type_turbo == 1){
+                        $cartridge_list = "";
+
+                        // check to see if product is a turbo
+                        if ($_product->getAttributeSetName() == 'Turbo'){
+
+                            // Get the Bill of Materials
+                            $billOfMaterials = json_decode($_product->getBillOfMaterials(), true);
+
+                            foreach ($billOfMaterials as $bomItem) {
+                                $bomItemProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $bomItem['sku']);
+
+                                // check to see if product is a cartridge
+                                if ($bomItemProduct->getAttributeSetName() == 'Cartridge') {
+                                    $cartridge_list = $cartridge_list.'<a href="' . $bomItemProduct->getProductUrl() . '">' . $bomItemProduct->getPartNumber() . '</a>';
+                                }
+                            }
+                        }
+                    }
+                    ?>
                     <?php if ($i++ % $_columnCount == 0): ?>
                     <?php endif ?>
                     <tr>
@@ -61,6 +92,7 @@ $_helper = $this->helper('catalog/output');
                         <td><a href="<?php echo $_product->getProductUrl() ?>"
                                title="<?php echo $this->stripTags($_product->getName(), null, true) ?>"><?php echo $_product->getName() ?></a>
                         </td>
+                        <td><?php echo $_product->getAttributeText('manufacturer') ?></td>
                         <td><a href="<?php echo $_product->getProductUrl() ?>"><?php echo $_product->getPartNumber() ?></a></td>
                         <td><?php $tiPartSkus = explode(",", $_product->getTiPartSku()) ?>
                             <?php $firstTiProduct = null; ?>
@@ -85,6 +117,7 @@ $_helper = $this->helper('catalog/output');
                                 <a href="<?php echo $tiPart->getProductUrl() ?>"><?php echo $tiPart->getPartNumber(); ?></a>
                             <?php endforeach ?>
                         </td>
+                        <?php if ($filter_includes_part_type_turbo == 1): ?><td><?php echo $cartridge_list ?></td><?php endif; ?>
                         <td>
                             <?php if (Mage::getSingleton('customer/session')->isLoggedIn()): ?>
                                 <?php
@@ -94,7 +127,7 @@ $_helper = $this->helper('catalog/output');
                                     echo Mage::helper('core')->currency($firstTiProduct->getFinalPrice());
                                 }?>
                             <?php else: ?>
-                              <a href="<?php echo $this->getUrl('customer/account/login'); ?>">Login to view prices</a>
+                              <a href="<?php echo $this->getUrl('customer/account/login'); ?>">Login for price</a>
                             <?php endif; ?>
                         </td>
                     </tr>
