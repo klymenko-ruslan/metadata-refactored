@@ -1,6 +1,6 @@
 <metanav>
   <li authorize="ROLE_ALTER_PART">
-    <a ng-href="#/part/{{ partType }}/{{ partId }}/form"
+    <a ng-href="#/part/{{ partId }}/form"
        class="btn btn-primary">
       <i class="fa fa-cog"></i>
       Edit Part
@@ -16,7 +16,7 @@
   </li>
 
   <li authorize="ROLE_READ">
-    <a ng-href="#/part/{{ part.partType.name }}/{{ partId }}/ancestors"
+    <a ng-href="#/part/{{ partId }}/ancestors"
        class="btn btn-info">
       <i class="fa fa-sitemap"></i>
       Ancestors &hellip;
@@ -24,7 +24,7 @@
   </li>
 
   <li authorize="ROLE_INTERCHANGE">
-    <a ng-href="#/part/{{ part.partType.name }}/{{ partId }}/interchange/search"
+    <a ng-href="#/part/{{ partId }}/interchange/search"
        class="btn btn-info">
       <i class="fa fa-random"></i>
       Interchanges &hellip;
@@ -32,7 +32,7 @@
   </li>
 </metanav>
 
-<h1 class="padding-top">[{{part.id}}] {{part.manufacturer.name}} {{part.partType.name}} <span style="white-space: nowrap;">{{part.manufacturerPartNumber}}</span></h1>
+<h1 class="padding-top" part-name="part"></h1>
 
 <div class="row">
 
@@ -55,7 +55,7 @@
     </dl>
 
     <!-- Type-specific fields -->
-    <div data-ng-switch="partType">
+    <div data-ng-switch="part.partType.magentoAttributeSet">
 
         <!-- Backplate -->
         <div data-ng-switch-when="Backplate">
@@ -86,7 +86,7 @@
         </div>
 
         <!-- Bearing Housing -->
-        <div data-ng-switch-when="BearingHousing">
+        <div data-ng-switch-when="Bearing Housing">
             <dl class="dl-horizontal">
                 <dt>Coolant</dt>
                 <dd>{{part.coolType.name}}</dd>
@@ -108,7 +108,7 @@
         </div>
 
         <!-- Bearing Spacer -->
-        <div data-ng-switch-when="BearingSpacer">
+        <div data-ng-switch-when="Bearing Spacer">
             <dl class="dl-horizontal">
                 <dt>Standard Size</dt>
                 <dd>{{part.standardSize}}</dd>
@@ -129,7 +129,7 @@
         </div>
 
         <!-- Compressor Wheel -->
-        <div data-ng-switch-when="CompressorWheel">
+        <div data-ng-switch-when="Compressor Wheel">
             <dl class="dl-horizontal">
                 <dt>Inducer Diameter A</dt>
                 <dd>{{part.inducerOa}}</dd>
@@ -169,7 +169,7 @@
         </div>
 
         <!-- Journal Bearing -->
-        <div data-ng-switch-when="JournalBearing">
+        <div data-ng-switch-when="Journal Bearing">
             <dl class="dl-horizontal">
                 <dt>Standard Size</dt>
                 <dd>{{part.standardSize}}</dd>
@@ -212,7 +212,7 @@
         </div>
 
         <!-- Piston Ring -->
-        <div data-ng-switch-when="PistonRing">
+        <div data-ng-switch-when="Piston Ring">
             <dl class="dl-horizontal">
                 <dt>Outside Diameter (min - max)</dt>
                 <dd>{{part.outsideDiameterMin}} - {{part.outsideDiameterMax}}</dd>
@@ -224,7 +224,7 @@
         </div>
 
         <!-- Turbine Wheel -->
-        <div data-ng-switch-when="TurbineWheel">
+        <div data-ng-switch-when="Turbine Wheel">
             <dl class="dl-horizontal">
                 <dt>Exducer Diameter A</dt>
                 <dd>{{part.exducerDiameterA}}</dd>

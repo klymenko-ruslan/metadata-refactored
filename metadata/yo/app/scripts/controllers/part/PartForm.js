@@ -41,7 +41,7 @@ angular.module('ngMetaCrudApp')
             if ($scope.oldPart == null) {
                 Restangular.all('part').post($scope.part).then(
                     function (id) {
-                        $location.path('/part/' + $scope.part.partType.name + '/' + id);
+                        $location.path('/part/' + id);
                     },
                     function () {
                         alert("Could not save part.");
@@ -49,7 +49,7 @@ angular.module('ngMetaCrudApp')
             } else {
                 $scope.part.put().then(
                     function (part) {
-                        $location.path('/part/' + $scope.part.partType.name + '/' + $scope.part.id);
+                        $location.path('/part/' + $scope.part.id);
                     },
                     function () {
                         alert("Could not update part");

@@ -10,7 +10,7 @@ angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap', 'restangu
           });
       })
     .config(function ($locationProvider, $routeProvider) {
-//        $locationProvider.html5Mode(true);
+        $locationProvider.html5Mode(true);
 
         // Parts
         $routeProvider.when('/part/list', {
@@ -21,15 +21,11 @@ angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap', 'restangu
             templateUrl: 'views/part/PartForm.html',
             controller: 'PartFormCtrl'
           });
-        $routeProvider.when('/part/:type/:id/form', {
+        $routeProvider.when('/part/:id/form', {
             templateUrl: 'views/part/PartForm.html',
             controller: 'PartFormCtrl'
           });
-        $routeProvider.when('/part/:type/:id', {
-            templateUrl: 'views/part/PartDetail.html',
-            controller: 'PartDetailCtrl'
-          });
-        $routeProvider.when('/part/:type/:id/interchange/search', {
+        $routeProvider.when('/part/:id/interchange/search', {
           templateUrl: 'views/part/interchange/PartInterchangeSearch.html',
           controller: 'PartInterchangeSearchCtrl'
         });
@@ -37,17 +33,21 @@ angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap', 'restangu
           templateUrl: '../views/part/KitComponentSearch.html',
           controller: 'KitComponentSearchCtrl'
         });
-        $routeProvider.when('/part/:type/:id/bom/search', {
+        $routeProvider.when('/part/:id/bom/search', {
             templateUrl: 'views/part/bom/PartBomSearch.html',
             controller: 'PartBomSearchCtrl'
         });
-        $routeProvider.when('/part/:type/:id/bom/:bomId/search', {
+        $routeProvider.when('/part/:id/bom/:bomId/search', {
           templateUrl: 'views/part/bom/BomAlternateSearch.html',
           controller: 'BomAlternateSearchCtrl'
         });
-        $routeProvider.when('/part/:type/:id/ancestors', {
+        $routeProvider.when('/part/:id/ancestors', {
           templateUrl: 'views/part/PartAncestors.html',
           controller: 'PartAncestorsCtrl'
+        });
+        $routeProvider.when('/part/:id', {
+          templateUrl: 'views/part/PartDetail.html',
+          controller: 'PartDetailCtrl'
         });
 
 

@@ -3,7 +3,6 @@
 angular.module('ngMetaCrudApp')
     .controller('PartBomSearchCtrl', function ($log, $scope, $location, $routeParams, restService, Restangular, $dialogs, gToast) {
         $scope.partId = $routeParams.id;
-        $scope.partType = $routeParams.type;
 
         $scope.pickedPart = null;
         $scope.showPickedPart = false;
@@ -36,7 +35,7 @@ angular.module('ngMetaCrudApp')
             function () {
               // Success
               gToast.open("BOM item added.");
-              $location.path("/part/" + $scope.partType + "/" + $scope.partId);
+              $location.path("/part/" + $scope.partId);
             },
               function (response) {
                 $dialogs.error("Could not add BOM Item", "Server said: <pre>" + JSON.stringify(response.data) + "</pre>");

@@ -2,7 +2,7 @@
 
   <metanav>
     <li authorize="ROLE_READ">
-      <a ng-href="#/part/{{ part.partType.name }}/{{ partId }}"
+      <a ng-href="#/part/{{ partId }}"
          class="btn btn-primary" data-ng-hide="oldPart == null">
         <i class="fa fa-eye"></i>
         View Part
@@ -59,7 +59,7 @@
       <input class="form-control" type="text" ng-model="part.manufacturerPartNumber"/>
 
       <!-- Type-specific fields -->
-      <div ng-switch="part.partType.name">
+      <div ng-switch="part.partType.magentoAttributeSet">
 
         <!-- Backplate -->
         <div ng-switch-when="Backplate">
@@ -95,7 +95,7 @@
         </div>
 
         <!-- Bearing Housing -->
-        <div ng-switch-when="BearingHousing">
+        <div ng-switch-when="Bearing Housing">
           <label>Coolant</label>
           <picker path="type/cool" ng-model="part.coolType"></picker>
 
@@ -122,7 +122,7 @@
         </div>
 
         <!-- Bearing Spacer -->
-        <div ng-switch-when="BearingSpacer">
+        <div ng-switch-when="Bearing Spacer">
           <label>Standard Size</label>
           <!--<picker path="part?type=BearingSpacer" ng-model="part.standardSize"></picker>-->
 
@@ -142,7 +142,7 @@
         <!-- Cartridge -->
 
         <!-- Compressor Wheel -->
-        <div ng-switch-when="CompressorWheel">
+        <div ng-switch-when="Compressor Wheel">
           <label>Inducer Diameter A</label>
           <input class="form-control" type="text" ng-model="part.inducerOa"/>
 
@@ -184,7 +184,7 @@
         </div>
 
         <!-- Journal Bearing -->
-        <div ng-switch-when="JournalBearing">
+        <div ng-switch-when="Journal Bearing">
           <label>Standard Size</label>
           <!--<picker path="part?type=JournalBearing" ng-model="part.standardSize"></picker>-->
 
@@ -209,7 +209,7 @@
         <!-- Nozzle Ring -->
 
         <!-- Piston Ring -->
-        <div ng-switch-when="PistonRing">
+        <div ng-switch-when="Piston Ring">
           <label>Outside Diameter (min - max)</label>
           <input class="form-control" type="text" ng-model="part.outsideDiameterMin"/> - <input type="text"
                                                                                                 ng-model="part.outsideDiameterMax"/>
@@ -223,7 +223,7 @@
         </div>
 
         <!-- Turbine Wheel -->
-        <div ng-switch-when="TurbineWheel">
+        <div ng-switch-when="Turbine Wheel">
           <label>Exducer Diameter A</label>
           <input class="form-control" type="text" ng-model="part.exducerDiameterA"/>
 
