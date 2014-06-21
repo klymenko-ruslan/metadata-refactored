@@ -3,7 +3,7 @@
     Bill of Materials
     <a authorize="ROLE_BOM"
        class="btn btn-primary pull-right" style="vertical-align: middle;"
-       ng-href="#/part/{{partId}}/bom/search">
+       ng-href="/part/{{partId}}/bom/search">
       <i class="fa fa-plus"></i>
       Add Child
     </a>
@@ -38,7 +38,7 @@
           <i class="fa fa-minus-circle"></i> Cancel
         </button>
 
-        <a ng-href="#/part/{{bomItem.child.id}}"
+        <a ng-href="/part/{{bomItem.child.id}}"
            authorize="ROLE_READ" class="btn btn-primary btn-xs"
            ng-hide="isModifying($index, bomItem)">
           <i class="fa fa-eye"></i> View Part
@@ -65,7 +65,7 @@
 
       <a authorize="ROLE_BOM"
          class="btn btn-info pull-right" style="vertical-align: middle;"
-         ng-href="#/part/{{partId}}/bom/{{altBomItem.id}}/search">
+         ng-href="/part/{{partId}}/bom/{{altBomItem.id}}/search">
         <i class="fa fa-cogs"></i>
         Add Alternate
       </a>

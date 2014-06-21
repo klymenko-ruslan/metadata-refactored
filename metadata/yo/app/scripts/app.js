@@ -102,6 +102,6 @@ angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap', 'restangu
           },
           function() {
             $log.log('User init failed.');
-            $location.path('/login');
+            $location.path('/');
           });
     });

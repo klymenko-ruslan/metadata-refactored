@@ -1,6 +1,6 @@
 <metanav>
   <li authorize="ROLE_ALTER_PART">
-    <a ng-href="#/part/{{ partId }}/form"
+    <a ng-href="/part/{{ partId }}/form"
        class="btn btn-primary">
       <i class="fa fa-cog"></i>
       Edit Part
@@ -16,7 +16,7 @@
   </li>
 
   <li authorize="ROLE_READ">
-    <a ng-href="#/part/{{ partId }}/ancestors"
+    <a ng-href="/part/{{ partId }}/ancestors"
        class="btn btn-info">
       <i class="fa fa-sitemap"></i>
       Ancestors &hellip;
@@ -24,7 +24,7 @@
   </li>
 
   <li authorize="ROLE_INTERCHANGE">
-    <a ng-href="#/part/{{ partId }}/interchange/search"
+    <a ng-href="/part/{{ partId }}/interchange/search"
        class="btn btn-info">
       <i class="fa fa-random"></i>
       Interchanges &hellip;
@@ -196,7 +196,7 @@
             <h3>
               Common Component Mappings
               <a authorize="ROLE_ALTER_PART" class="btn btn-primary pull-right"
-                 ng-href="#/part/Kit/{{ partId }}/component/search">
+                 ng-href="/part/Kit/{{ partId }}/component/search">
                 <i class="fa fa-plus"></i>
                 Add Mapping
               </a>

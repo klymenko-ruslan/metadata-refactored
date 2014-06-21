@@ -1,6 +1,6 @@
 <metanav>
   <li>
-    <a ng-href="#/security/user/create"
+    <a ng-href="/security/user/create"
        class="btn-success">
       <i class="fa fa-plus"></i>
       Create User
@@ -15,7 +15,7 @@
 <div class="row">
   <ul>
     <li ng-repeat="user in users">
-      <a ng-href="#/security/user/{{user.id}}"><h3>{{user.name}}</h3></a>
+      <a ng-href="/security/user/{{user.id}}"><h3>{{user.name}}</h3></a>
     </li>
   </ul>
 </div>
