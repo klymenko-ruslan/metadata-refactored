@@ -43,8 +43,9 @@ angular.module('ngMetaCrudApp')
             // Clear and fetch the turbo types
             $scope.turboTypes = null;
 
-            turboTypesPromise = Restangular.all("other/turboType")
-                .getList({"manufacturerId": $scope.manufacturerId})
+            Restangular.setParentless(false);
+            turboTypesPromise = Restangular.all("other/turboType").one('manufacturer', $scope.manufacturerId)
+                .getList()
                 .then(function (response) {
 
                     $scope.turboTypes = response;
