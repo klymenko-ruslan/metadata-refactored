@@ -40,7 +40,7 @@
         <h2 style="margin-top:0;">Groups</h2>
         <ul class="list-group">
             <li ng-repeat="group in user.groups" class="list-group-item">
-                <a ng-href="#/security/group/{{group.id}}">{{group.name}}</a>
+                <a ng-href="/security/group/{{group.id}}">{{group.name}}</a>
             </li>
             <li ng-hide="user.groups" class="list-group-item">No groups assigned</li>
         </ul>

@@ -3,7 +3,6 @@
 angular.module('ngMetaCrudApp')
     .controller('PartInterchangeSearchCtrl', function ($log, $scope, $location, $routeParams, restService, Restangular, gToast, $dialogs) {
       $scope.partId = $routeParams.id;
-      $scope.partType = $routeParams.type;
 
       // The part whose interchange we're editing
       $scope.promise = restService.findPart($scope.partId).then(function (part) {
@@ -40,7 +39,7 @@ angular.module('ngMetaCrudApp')
                   Restangular.one('interchange', $scope.pickedPart.interchange.id).one('part', $scope.partId).put().then(
                       function() {
                         gToast.open("Interchangeable part group changed.");
-                        $location.path("/part/" + $scope.partType + "/" + $scope.partId);
+                        $location.path("/part/" + $scope.partId);
                       },
                       function(response) {
                         $dialogs.error("Could not change interchangeable part group.", "Server said: <pre>" + JSON.stringify(response.data) + "</pre>");
@@ -53,7 +52,7 @@ angular.module('ngMetaCrudApp')
             Restangular.one('interchange', $scope.part.interchange.id).one('part', $scope.pickedPart.id).put().then(
                 function() {
                   gToast.open("Added picked part to interchange.");
-                  $location.path("/part/" + $scope.partType + "/" + $scope.partId);
+                  $location.path("/part/" + $scope.partId);
                 },
                 restService.error);
           }
@@ -65,7 +64,7 @@ angular.module('ngMetaCrudApp')
             Restangular.one('interchange', $scope.pickedPart.interchange.id).one('part', $scope.part.id).put().then(
                 function() {
                   gToast.open("Added part to picked part's interchanges.");
-                  $location.path("/part/" + $scope.partType + "/" + $scope.partId);
+                  $location.path("/part/" + $scope.partId);
                 },
                 restService.error);
           } else {
@@ -81,7 +80,7 @@ angular.module('ngMetaCrudApp')
             Restangular.all('interchange').post(interchange).then(
                 function() {
                   gToast.open("Interchangeable part group changed added.");
-                  $location.path("/part/" + $scope.partType + "/" + $scope.partId);
+                  $location.path("/part/" + $scope.partId);
                 },
                 function(response) {
                   $dialogs.error("Could not add interchangeable part.", "Server said: <pre>" + JSON.stringify(response.data) + "</pre>");
@@ -126,7 +125,7 @@ angular.module('ngMetaCrudApp')
                       function () {
                         // Success
                         gToast.open("Part removed from interchange.");
-                        $location.path("/part/" + $scope.partType + "/" + $scope.partId);
+                        $location.path("/part/" + $scope.partId);
                       },
                       function (response) {
                         $dialogs.error("Could not remove part from interchange", "Server said: <pre>" + JSON.stringify(response.data) + "</pre>");

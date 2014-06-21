@@ -1,6 +1,6 @@
 <metanav>
   <li>
-    <a ng-href="#/security/group/create"
+    <a ng-href="/security/group/create"
        class="btn-success">
       <i class="fa fa-plus"></i>
       Create Group
@@ -15,7 +15,7 @@
 <div class="row">
   <ul>
     <li ng-repeat="group in groups">
-      <a ng-href="#/security/group/{{group.id}}"><h3>{{group.name}}</h3></a>
+      <a ng-href="/security/group/{{group.id}}"><h3>{{group.name}}</h3></a>
     </li>
   </ul>
 </div>

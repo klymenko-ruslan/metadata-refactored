@@ -84,14 +84,27 @@
     <servlet-mapping>
         <servlet-name>metadata</servlet-name>
         <url-pattern>/metadata/*</url-pattern>
-        <url-pattern>/search</url-pattern>
-        <url-pattern>/search/*</url-pattern>
         <url-pattern>/magmi</url-pattern>
         <url-pattern>/magmi/*</url-pattern>
-        <url-pattern>/security/*</url-pattern>
     </servlet-mapping>
     
     <session-config>
         <session-timeout>60</session-timeout>
     </session-config>
+    
+    <welcome-file-list>
+        <welcome-file>index.html</welcome-file>
+    </welcome-file-list>
+
+    <servlet>
+        <servlet-name>StaticServlet</servlet-name>
+        <jsp-file>/index.html</jsp-file>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>StaticServlet</servlet-name>
+        <url-pattern>/part/*</url-pattern>
+        <url-pattern>/security/*</url-pattern>
+        <url-pattern>/password/*</url-pattern>
+    </servlet-mapping>
 </web-app>

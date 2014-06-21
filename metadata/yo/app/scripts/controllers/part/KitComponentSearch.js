@@ -34,7 +34,7 @@ angular.module('ngMetaCrudApp')
             function () {
               // Success
               gToast.open("Common component mapping added.");
-              $location.path("/part/" + $scope.partType + "/" + $scope.partId);
+              $location.path("/part/" + $scope.partId);
             },
               function (response) {
                 restService.error("Could not add kit mapping", response);
