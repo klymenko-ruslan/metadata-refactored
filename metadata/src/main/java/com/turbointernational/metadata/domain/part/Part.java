@@ -82,33 +82,33 @@ public class Part implements Comparable<Part> {
         public Object instantiate(ObjectBinder context, Object value, Type targetType, Class targetClass) {
             Map<String, Object> valueHash = (Map) value;
             Map<String, Object> partTypeHash = (Map) valueHash.get("partType");
-            String partType = (String) partTypeHash.get("name");
+            String partType = (String) partTypeHash.get("magentoAttributeSet");
             
             // Create the appropriate part type
             Part part = null;
             if ("Backplate".equals(partType)) {
                 part = new Backplate();
-            } else if ("BearingHousing".equals(partType)) {
+            } else if ("Bearing Housing".equals(partType)) {
                 part = new BearingHousing();
-            } else if ("BearingSpacer".equals(partType)) {
+            } else if ("Bearing Spacer".equals(partType)) {
                 part = new BearingSpacer();
             } else if ("Cartridge".equals(partType)) {
                 part = new Cartridge();
-            } else if ("CompressorWheel".equals(partType)) {
+            } else if ("Compressor Wheel".equals(partType)) {
                 part = new CompressorWheel();
             } else if ("Gasket".equals(partType)) {
                 part = new Gasket();
             } else if ("Heatshield".equals(partType)) {
                 part = new Heatshield();
-            } else if ("JournalBearing".equals(partType)) {
+            } else if ("Journal Bearing".equals(partType)) {
                 part = new JournalBearing();
             } else if ("Kit".equals(partType)) {
                 part = new Kit();
-            } else if ("NozzleRing".equals(partType)) {
+            } else if ("Nozzle Ring".equals(partType)) {
                 part = new NozzleRing();
-            } else if ("PistonRing".equals(partType)) {
+            } else if ("Piston Ring".equals(partType)) {
                 part = new PistonRing();
-            } else if ("TurbineWheel".equals(partType)) {
+            } else if ("Turbine Wheel".equals(partType)) {
                 part = new TurbineWheel();
             } else if ("Turbo".equals(partType)) {
                 part = new Turbo();
