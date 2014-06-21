@@ -16,7 +16,19 @@ angular.module('ngMetaCrudApp')
         $scope.pickedPartPromise = restService.findPart(pickedPartId).then(
             function (pickedPart) {
               $log.log("Loaded picked part", pickedPart);
-              $scope.pickedPart = pickedPart;
+              var partType = $scope.part.partType.name;
+              var pickedPartType = pickedPart.partType.name;
+
+              // Check part type and add the picked part
+              if (partType !== pickedPartType) {
+                $dialogs.confirm("Confirm Interchange Part Type",
+                                 "Are you sure you want to make the picked " + pickedPartType + " interchangeable with this " + partType + "?")
+                  .result.then(function() {
+                    $scope.pickedPart = pickedPart;
+                  });
+              } else {
+                $scope.pickedPart = pickedPart;
+              }
             },
             function(response) {
               $dialogs.error("Could not load part details.", "Server said: <pre>" + JSON.stringify(response.data) + "</pre>");
