@@ -1,5 +1,9 @@
-package mas90magmi;
+package com.turbointernational.metadata.mas90;
 
+import com.turbointernational.metadata.mas90.Pricing;
+import com.turbointernational.metadata.mas90.ItemPricing;
+import com.turbointernational.metadata.mas90.CalculatedPrice;
+import com.turbointernational.metadata.mas90.DiscountType;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
