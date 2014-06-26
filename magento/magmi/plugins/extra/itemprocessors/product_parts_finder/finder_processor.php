@@ -50,6 +50,10 @@ class FinderProcessor extends Magmi_ItemProcessor {
     Chevrolet,2010,S10
     */
     public function processItemAfterId(&$item, $params = null) {
+        $mapTable = $this->tablename('am_finder_map');
+
+        // Delete old mappings
+        $this->delete("DELETE FROM $mapTable WHERE pid = ?", $params['product_id']);
         
         // Look for "finder:" prefixed columns and process them
 	foreach ($item as $columnName => $columnValue) {
@@ -116,16 +120,16 @@ class FinderProcessor extends Magmi_ItemProcessor {
         // The hard way
         if (!$finalValueId) {
             $finalValueId = $this->createDropdownValues($finderId, $values, $dropdowns);
-            //error_log("Created finder $finderId mapping " . join(',', $values) . "$finalValueId");
+            //error_log("Created finder $finderId mapping " . join(',', $values) . ": $finalValueId");
         } else {
-            //error_log("Found finder $finderId mapping " . join(',', $values) . "$finalValueId");
+            //error_log("Found finder $finderId mapping " . join(',', $values) . ": $finalValueId");
         }
         
         return $finalValueId;
     }
 
     public function mapValues($productId, $sku, $valueIds) {
-	$mapTable = $this->tablename('am_finder_map');
+        $mapTable = $this->tablename('am_finder_map');
 
         // Create any missing mappings
         $mappingInsertPlaceholders = array();
@@ -136,18 +140,14 @@ class FinderProcessor extends Magmi_ItemProcessor {
             $mappingInsertData[] = $valueId;
             $mappingInsertData[] = $productId;
             $mappingInsertData[] = $sku;
-//            error_log("Mapping valueId: $valueId, productId: $productId, sku: $sku");
+            //error_log("Mapping valueId: $valueId, productId: $productId, sku: $sku");
         }
 
         $this->insert(
                 "INSERT IGNORE INTO $mapTable (value_id, pid, sku) VALUES " . join(',', $mappingInsertPlaceholders),
                 $mappingInsertData);
 
-        // Delete old mappings
-        $this->delete(
-                "DELETE FROM $mapTable WHERE pid = ? AND value_id NOT IN (" . join(',', $valueIds) . ")",
-                $productId);
-    }
+   }
     
     public function createDropdownValues($finderId, $values, $dropdowns) {
 	$valueTable = $this->tablename('am_finder_value');
