@@ -41,7 +41,7 @@
             <default_setup>
                 <connection>
                     <!-- <host><![CDATA[magentodb01.cslctedjmc6k.us-east-1.rds.amazonaws.com]]></host> -->
-                    <username><![CDATA[root]]></username>
+                    <username><![CDATA[magento]]></username>
                     <password><![CDATA[OI1unqzzO{=.s#?]]></password>
                     <dbname><![CDATA[magento]]></dbname>
                     <initStatements><![CDATA[SET NAMES utf8]]></initStatements>

@@ -47,8 +47,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   end
 
-  $METADTAIPADDR = "192.168.42.10"
-  $MAGENTOIPADDR = "192.168.42.11"
+  $METADATAIPADDR = "192.168.42.10"
+  $MAGENTOIPADDR  = "192.168.42.11"
   #
   # View the documentation for the provider you're using for more
   # information on available options.
@@ -96,45 +96,48 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       sudo rm -rf /var/lib/tomcat7/webapps/ROOT
       nice mvn clean install && sudo cp target/metadata.war /var/lib/tomcat7/webapps/ROOT.war
 
-      echo Preparing Elasticsearch
-      cd /vagrant/bits/ElasticSearch
-      bash create_index.sh
-
       echo Final preparations for metadata
       sudo mkdir -p /var/product_images
       sudo chown tomcat7:tomcat7 /var/product_images
       sudo usermod -aG tomcat7 vagrant
       ln -s /var/log/tomcat7/catalina.out ~/tomcat7.log
- 
-      mysql -u root -e "CREATE DATABASE IF NOT EXISTS metadata;"
-      mysql -u root -e "GRANT ALL PRIVILEGES ON metadata.* TO metaserver@'%' IDENTIFIED BY 'metaserver'; FLUSH PRIVILEGES;"
 
+      sudo service elasticsearch restart 
       sudo service mysql restart
       sudo service tomcat7 restart
 
-      echo "=================================================" >&2
-      echo "= REQUIRED NEXT STEPS:                           " >&2
-      echo "=                                                " >&2
-      echo "=   1. Load mysqldump (with -R) then:            " >&2
-      echo "= /vagrant/bits/ElasticSearch/index_all_parts.sh " >&2
-      echo "= /vagrant/bits/rebuild_bom_ancestry.sh          " >&2
-      echo "=                                                " >&2
-      echo "=   2. Copy images to:                           " >&2
-      echo "= /var/product_images/                           " >&2
-      echo "=                                                " >&2
-      echo "=   3. Install mas90 db to (required to export): " >&2
-      echo "= /var/mas90.accdb                               " >&2
-      echo "=                                                " >&2
-      echo "= Login to the metadata instance with:           " >&2
-      echo "= vagrant ssh metadata                           " >&2
-      echo "= mysql -u root metadata # no password           " >&2
-      echo "= mysql -u metaserver -pmetaserver metadata      " >&2
-      echo "=                                                " >&2
-      echo "= The metadata server is available at:           " >&2
-      echo "=   http://$METADATAIPADDR:8080/                 " >&2
-      echo "=                                                " >&2
-      echo "= You need data before you can login!            " >&2
-      echo "=================================================" >&2
+      sleep 5 # Elasticsearch can take a bit to start
+      bash /vagrant/bits/ElasticSearch/create_index.sh
+
+      mysql -u root -e "CREATE DATABASE IF NOT EXISTS metadata;"
+      mysql -u root -e "GRANT ALL PRIVILEGES ON metadata.* TO metaserver@'%' IDENTIFIED BY 'metaserver'; FLUSH PRIVILEGES;"
+
+      echo "=================================================================" >&2
+      echo "= REQUIRED NEXT STEPS:                                           " >&2
+      echo "=                                                                " >&2
+      echo "=   1. Login to metadata instance:                               " >&2
+      echo "= vagrant ssh metadata                                           " >&2
+      echo "=                                                                " >&2
+      echo "=   2. Load mysqldump (created with -R) then:                    " >&2
+      echo "= mysql -u metaserver -pmetaserver metadata < /vagrant/DUMP_FILE " >&2
+      echo "=                                                                " >&2
+      echo "=   3. Index the parts and rebuild the BOM:                      " >&2
+      echo "= /vagrant/bits/ElasticSearch/index_all_parts.sh                 " >&2
+      echo "= /vagrant/bits/rebuild_bom_ancestry.sh                          " >&2
+      echo "=                                                                " >&2
+      echo "=   4. Copy images to:                                           " >&2
+      echo "= /var/product_images/                                           " >&2
+      echo "=                                                                " >&2
+      echo "=   5. Install mas90 db to (required to export):                 " >&2
+      echo "= /var/mas90.accdb                                               " >&2
+      echo "=                                                                " >&2
+      echo "= mysql -u metaserver -pmetaserver metadata                      " >&2
+      echo "=                                                                " >&2
+      echo "= The metadata server is available at:                           " >&2
+      echo "=   http://192.168.42.10:8080/                                   " >&2
+      echo "=                                                                " >&2
+      echo "= You need data before you can login!                            " >&2
+      echo "=================================================================" >&2
 
 SCRIPT
 
@@ -142,16 +145,68 @@ SCRIPT
 
   config.vm.define "magento" do |magento|
     magento.vm.hostname = "magento.ti.dev"
-    config.vm.provision "shell", inline: <<SCRIPT
+    # Create a private network, which allows host-only access to the machine
+    # using a specific IP.
+    config.vm.network "private_network", ip: $MAGENTOIPADDR
+
+    config.vm.synced_folder "magento", "/var/www", owner: "www-data", group: "www-data"
+
+    config.vm.provision "shell", privileged: false, inline: <<SCRIPT
 
       echo Installing packages
-      export DEBIAN_FRONTEND=noninteractive
       sudo apt-get update
-      sudo apt-get install -y apache2 mysql-server
+      sudo bash -c "DEBIAN_FRONTEND=noninteractive apt-get install -y apache2 mysql-server-5.6 php5 php5-mysql php5-curl"
+
+      mysql -u root -e "CREATE DATABASE IF NOT EXISTS magento;"
+      mysql -u root -e "GRANT ALL PRIVILEGES ON magento.* TO magento@'localhost' IDENTIFIED BY 'OI1unqzzO{=.s#?'; FLUSH PRIVILEGES;"
 
       echo Installing Magento
-      ln -s /vagrant/magento /var/TurboInternational
-      ln -s /var/TurboInternational/magento /var/www
+      sudo a2enmod rewrite
+      sudo bash -c 'cat > /etc/apache2/sites-enabled/000-default.conf <<APACHE
+<VirtualHost *:80>
+  ServerAdmin webmaster@localhost
+  DocumentRoot /var/www
+  <Directory />
+    Options FollowSymLinks
+    AllowOverride None
+  </Directory>
+  <Directory /var/www/>
+    Options Indexes FollowSymLinks MultiViews
+    AllowOverride All
+    Order allow,deny
+    allow from all
+  </Directory>
+
+  ErrorLog \${APACHE_LOG_DIR}/error.log
+  CustomLog \${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+
+# vim: syntax=apache ts=4 sw=4 sts=4 sr noet
+APACHE'
+
+      sudo service apache2 restart
+
+      echo "=================================================================" >&2
+      echo "= REQUIRED NEXT STEPS:                                           " >&2
+      echo "=                                                                " >&2
+      echo "=   1. Login to metadata instance with:                          " >&2
+      echo "= vagrant ssh magento                                            " >&2
+      echo "=                                                                " >&2
+      echo "=   2. Load mysqldump:                                           " >&2
+      echo "= mysql -u root magento < /vagrant/DUMP_FILE                     " >&2
+      echo "=                                                                " >&2
+      echo "=   3. Update magento URL:                                       " >&2
+      echo "= bash /vagrant/bits/update_magento_url.sh http://192.168.42.11/ " >&2
+      echo "=                                                                " >&2
+      echo "=   4. Copy images from prod to:                                 " >&2
+      echo "= /var/www/media/                                                " >&2
+      echo "=                                                                " >&2
+      echo "= The magento server is available at:                            " >&2
+      echo "=   http://192.168.42.11/                                        " >&2
+      echo "=                                                                " >&2
+      echo "= You need data before you can login!                            " >&2
+      echo "=================================================================" >&2
+
 
 SCRIPT
 
