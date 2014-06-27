@@ -1,6 +1,6 @@
 <metanav>
   <li>
-    <a ng-href="#/part/{{ partType }}/{{ partId }}"
+    <a ng-href="/part/{{ partId }}"
        class="btn btn-primary">
       <i class="fa fa-eye"></i>
       View Part
@@ -59,7 +59,7 @@
 <part-search class="well well-lg">
 
   <a authorize="ROLE_READ"
-     ng-href="#/part/{{partType}}/{{partId}}"
+     ng-href="/part/{{partId}}"
      class="btn btn-primary btn-xs">
     <i class="fa fa-eye"></i>
     View

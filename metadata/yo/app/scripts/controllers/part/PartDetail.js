@@ -3,7 +3,6 @@
 angular.module('ngMetaCrudApp')
     .controller('PartDetailCtrl', function ($scope, $log, $q, $location, $routeParams, ngTableParams, restService, Restangular, $dialogs, gToast) {
         $scope.partId = $routeParams.id;
-        $scope.partType = $routeParams.type;
 
         $scope.part = null;
         $scope.partPromise = restService.findPart($scope.partId).then(

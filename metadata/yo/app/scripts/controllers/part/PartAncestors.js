@@ -3,7 +3,6 @@
 angular.module('ngMetaCrudApp')
   .controller('PartAncestorsCtrl', function ($routeParams, $scope, restService, Restangular) {
     $scope.partId = $routeParams.id;
-    $scope.partType = $routeParams.type;
 
     $scope.part = null;
     $scope.partPromise = restService.findPart($scope.partId).then(
