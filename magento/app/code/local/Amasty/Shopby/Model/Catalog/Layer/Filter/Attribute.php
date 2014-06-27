@@ -135,7 +135,6 @@ class Amasty_Shopby_Model_Catalog_Layer_Filter_Attribute extends Mage_Catalog_Mo
                     );
                 }
             } else {
-                
                 $conditions = array(
                     "{$alias}.entity_id = e.entity_id",
                     $connection->quoteInto("{$alias}.attribute_id = ?", $attribute->getAttributeId()),
@@ -174,6 +173,10 @@ class Amasty_Shopby_Model_Catalog_Layer_Filter_Attribute extends Mage_Catalog_Mo
     public function apply(Zend_Controller_Request_Abstract $request, $filterBlock)
     {
         $currentVals = Mage::helper('amshopby')->getRequestValues($this->_requestVar);
+
+        // always filter out parts where manfr = Turbo International regardless of what other attribute filters are set
+        $this->_applyTiManufacturerFilter();
+
         if ($currentVals) {
             $this->applyFilterToCollection($currentVals);
           
@@ -220,6 +223,56 @@ class Amasty_Shopby_Model_Catalog_Layer_Filter_Attribute extends Mage_Catalog_Mo
         }
         return $this;
     }
+
+    /**
+     * Apply TI manufacturer filter
+     *
+     * @return null
+     */
+    protected function _applyTiManufacturerFilter()
+    {
+        // this function removes all parts where the manufacture is Turbo International
+
+        $collection = $this->getLayer()->getProductCollection();
+        $alias      = "manufacturer_tifilter";
+
+        // check to see if filter has already been added to select sql statement and skip remaining function if it exists
+        if (strpos($collection->getSelect()->__toString(), $alias)) {
+            return null;
+        }
+
+        // get attribute id for manufacturer.  current value = 81
+        $eavAttribute = new Mage_Eav_Model_Mysql4_Entity_Attribute();
+        $attributeId = $eavAttribute->getIdByCode('catalog_product', 'manufacturer');
+
+        // define manufacture id for turbo international
+        $manfrTiId = "44";
+
+        $connection = $this->_getResource()->getReadConnection();
+
+        // generate array that will be applied to select sql
+        $conditions = array(
+            "{$alias}.entity_id = e.entity_id",
+            $connection->quoteInto("{$alias}.attribute_id = ?", $attributeId),
+            $connection->quoteInto("{$alias}.store_id = ?",     $collection->getStoreId()),
+            $connection->quoteInto("{$alias}.value NOT IN(?)",      $manfrTiId)
+        );
+
+        // apply array to select sql
+        $collection->getSelect()->join(
+            #array($alias => $this->_getResource()->getMainTable()),
+            array($alias => 'catalog_product_index_eav'),
+            join(' AND ', $conditions),
+            array()
+        );          
+
+        if (isset($_REQUEST['debug'])) {
+            Zend_Debug::dump("_applyTiManufacturerFilter called");
+        }
+
+        return null;
+    }
+
 
     /**
      * Get data array for building attribute filter items
