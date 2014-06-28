@@ -277,6 +277,7 @@ uasort($interchangeSkuProductMap, 'usortByPartNumberPredicate');
             
             <?php if ($productAttributeSetName == "Cartridge"
                    || $productAttributeSetName == "Turbo"): ?>
+            <div class="box-collateral">
                 <h2><?php echo $this->__('Service Kits') ?></h2>
                 <table class="data-table" id="service-kits">
                     <tr>
@@ -329,6 +330,7 @@ uasort($interchangeSkuProductMap, 'usortByPartNumberPredicate');
                         </tr>
                     <?php endforeach; ?>
                 </table>
+            </div>
             <?php endif; ?>
         <!-- Kit Matrix Testing -->
             <?php
@@ -411,9 +413,9 @@ uasort($interchangeSkuProductMap, 'usortByPartNumberPredicate');
                 #var_dump($kitCollection->getSelect()->__toString());
 
             ?>
-
+            <div class="box-collateral">
                 <h2><?php echo $this->__('Kit Matrix') ?></h2>
-                <table class="data-table" id="service-kits">
+                <table class="data-table" id="kit-matrix">
                     <!-- Column header -->
                     <tr>
                         <th></th>
@@ -421,11 +423,11 @@ uasort($interchangeSkuProductMap, 'usortByPartNumberPredicate');
                             // loop through and crate a column for each kit
                             foreach ($kitCollection as $kit):
                         ?>
-                                <th><strong>
+                                <th class="label">
                                     <a href="<?php echo $kit->getProductUrl(); ?>">
                                         <?php echo $kit->getPartNumber() ?>
                                     </a>
-                                </strong></th>
+                                </th>
                         <?php
                             endforeach;
                         ?>
@@ -436,11 +438,11 @@ uasort($interchangeSkuProductMap, 'usortByPartNumberPredicate');
                                 // first few columns will be part number and other static info
                         ?>
                                 <tr>
-                                    <th><strong>
+                                    <td>
                                         <a href="<?php echo $component->getProductUrl(); ?>">
                                             <?php echo $component->getPartNumber() ?>
                                         </a>
-                                    </strong></th>
+                                    </td>
                         <?php
                                 // a table cell for each kit column qty
                                 foreach ($allUniqueKits as $kit):
@@ -455,7 +457,7 @@ uasort($interchangeSkuProductMap, 'usortByPartNumberPredicate');
                         ?>
 
                 </table>
-
+            </div>
         </div>
 
         <!-- Interchangeable Parts -->
@@ -702,3 +704,4 @@ uasort($interchangeSkuProductMap, 'usortByPartNumberPredicate');
 <script type="text/javascript">decorateTable('application_detail')</script>
 <script type="text/javascript">decorateTable('service-kits')</script>
 <script type="text/javascript">decorateTable('where-used')</script>
+<script type="text/javascript">decorateTable('kit-matrix')</script>
