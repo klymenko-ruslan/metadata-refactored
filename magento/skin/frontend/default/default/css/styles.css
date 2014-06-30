@@ -436,6 +436,37 @@ p.required { font-size:11px; text-align:right; color:#EB340A; }
 .data-table tbody td .option-label { font-weight:bold; font-style:italic; }
 .data-table tbody td .option-value { padding-left:10px; }
 
+/* matrix data */
+.matrix-data { overflow: auto; }
+
+/* vertical text */
+.vertical-text {
+    display: inline-block;
+    overflow: hidden;
+    width: 1.5em;
+}
+.vertical-text__inner {
+    display: inline-block;
+    white-space: nowrap;
+    line-height: 1.5;
+
+     filter:  progid:DXImageTransform.Microsoft.BasicImage(rotation=0.083);  /* IE6,IE7 */
+    -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=0.083)"; /* IE8 */
+    -moz-transform: rotate(-90.0deg);  /* FF3.5+ */
+    -ms-transform: rotate(-90.0deg);  /* IE9+ */
+    -o-transform: rotate(-90.0deg);  /* Opera 10.5 */
+    -webkit-transform: rotate(-90.0deg);  /* Safari 3.1+, Chrome */
+
+    transform: translate(0,100%) rotate(-90deg);
+    transform-origin: 0 0;
+}
+/* This element stretches the parent to be square by using the mechanics of vertical margins  */
+.vertical-text__inner:after {
+    content: "";
+    display: block;
+    margin: -1.5em 0 100%;
+}
+
 /* Generic Info Box */
 .info-box { background:#fff url(../images/bkg_block-title.gif) 0 0 repeat-x; border:1px solid #d0cbc1; padding:12px 15px; margin:0 0 15px; }
 .info-box h2 { font-weight:bold; font-size:13px; }

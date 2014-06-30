@@ -413,7 +413,7 @@ uasort($interchangeSkuProductMap, 'usortByPartNumberPredicate');
                 #var_dump($kitCollection->getSelect()->__toString());
 
             ?>
-            <div class="box-collateral">
+            <div class="box-collateral matrix-data">
                 <h2><?php echo $this->__('Kit Matrix') ?></h2>
                 <table class="data-table" id="kit-matrix">
                     <!-- Column header -->
@@ -424,8 +424,10 @@ uasort($interchangeSkuProductMap, 'usortByPartNumberPredicate');
                             foreach ($kitCollection as $kit):
                         ?>
                                 <th class="label">
-                                    <a href="<?php echo $kit->getProductUrl(); ?>">
-                                        <?php echo $kit->getPartNumber() ?>
+                                    <div class="vertical-text"><div class="vertical-text__inner">
+                                        <a href="<?php echo $kit->getProductUrl(); ?>">
+                                            <?php echo $kit->getPartNumber() ?>
+                                    </div></div>
                                     </a>
                                 </th>
                         <?php
