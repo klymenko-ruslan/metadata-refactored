@@ -97,10 +97,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       nice mvn clean install && sudo cp target/metadata.war /var/lib/tomcat7/webapps/ROOT.war
 
       echo Final preparations for metadata
+      ln -s /vagrant/mas90.accdb /var/mas90.accdb
       sudo mkdir -p /var/product_images
       sudo chown tomcat7:tomcat7 /var/product_images
       sudo usermod -aG tomcat7 vagrant
-      ln -s /var/log/tomcat7/catalina.out ~/tomcat7.log
+      sudo ln -s /var/log/tomcat7/catalina.out ~/tomcat7.log
 
       sudo service elasticsearch restart 
       sudo service mysql restart
@@ -128,8 +129,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       echo "=   4. Copy images to:                                           " >&2
       echo "= /var/product_images/                                           " >&2
       echo "=                                                                " >&2
-      echo "=   5. Install mas90 db to (required to export):                 " >&2
-      echo "= /var/mas90.accdb                                               " >&2
+      echo "=   5. Install mas90.accdb to project root (required to export). " >&2
       echo "=                                                                " >&2
       echo "= mysql -u metaserver -pmetaserver metadata                      " >&2
       echo "=                                                                " >&2
