@@ -191,6 +191,7 @@ uasort($interchangeSkuProductMap, 'usortByPartNumberPredicate');
                 Object.extend(Validation.methods, nv);
             }
         }.bind(productAddToCartForm);
+
         //]]>
     </script>
 </div>
@@ -200,6 +201,48 @@ uasort($interchangeSkuProductMap, 'usortByPartNumberPredicate');
         jQuery("#tabs").tabs();
     });
 </script>
+<script type="text/javascript">
+    // highlights table rows and columns
+    jQuery(function() {
+
+        jQuery("table").delegate('td, th','mouseover mouseleave', function(e) {
+            // pick the closest table and rows so other tables are not affected
+            var $table = jQuery(this).closest("table");
+            var $row = jQuery(this).closest("tr");
+
+            // check to make sure div has the correct class
+            if ($table.closest("div").hasClass("matrix-data")) {
+                if (e.type == 'mouseover') {
+                    // do not highlight header row
+                    if (!(jQuery(this).is("th"))) {
+                        $row.addClass("hover");
+                    }
+
+                    var ind = jQuery(this).index();
+                    // do not highlight first column
+                    if (ind > 0) {
+                        jQuery('td:nth-child(' + (ind + 1) + ')').addClass("hover");
+                        jQuery('th:nth-child(' + (ind + 1) + ')').addClass("hover");
+                    }
+                } else {
+                    // do not do if header row
+                    if (!(jQuery(this).is("th"))) {
+                        $row.removeClass("hover");
+                    }
+
+                    var ind = jQuery(this).index();
+                    // do not do if first column
+                    if (ind > 0) {
+                        jQuery('td:nth-child(' + (ind + 1) + ')').removeClass("hover");
+                        jQuery('th:nth-child(' + (ind + 1) + ')').removeClass("hover");
+                    }
+                }
+            }
+        });
+
+    });
+</script>
+
 <div class="product-collateral">
     <div id="tabs" style="font-size: 97%;">
         <ul>
@@ -415,9 +458,11 @@ uasort($interchangeSkuProductMap, 'usortByPartNumberPredicate');
             ?>
             <div class="box-collateral matrix-data">
                 <h2><?php echo $this->__('Kit Matrix') ?></h2>
+
                 <table class="data-table" id="kit-matrix">
-                    <!-- Column header -->
+                    <!--table header row   -->
                     <tr>
+                        <!--for th element is blank because it is the upper left cell   -->
                         <th></th>
                         <?php
                             // loop through and crate a column for each kit
@@ -437,7 +482,7 @@ uasort($interchangeSkuProductMap, 'usortByPartNumberPredicate');
                     <!-- row for each component -->
                         <?php
                             foreach ($componentCollection as $component):
-                                // first few columns will be part number and other static info
+                                // first few columns will be part number and maybe other static info
                         ?>
                                 <tr>
                                     <td>
@@ -446,7 +491,7 @@ uasort($interchangeSkuProductMap, 'usortByPartNumberPredicate');
                                         </a>
                                     </td>
                         <?php
-                                // a table cell for each kit column qty
+                                // remaining table cells are dynamic: one for each kit column qty
                                 foreach ($allUniqueKits as $kit):
                                     // see if qty exists for component in kit bom
                                     $componentKitQtyValue = $componentKitQty[$component->getSku()][$kit];

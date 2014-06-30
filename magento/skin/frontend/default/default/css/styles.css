@@ -397,6 +397,9 @@ p.required { font-size:11px; text-align:right; color:#EB340A; }
 .toolbar .sorter { border-bottom:1px solid #fff; }
 .toolbar-bottom {}
 
+/* table hover highlight #E41E00*/
+div.matrix-data .hover { background-color: #FF998A !important; }
+
 /* Data Table */
 .data-table { width:100%; border:1px solid #bebcb7; }
 .data-table .odd  { background:#f8f7f5 }
