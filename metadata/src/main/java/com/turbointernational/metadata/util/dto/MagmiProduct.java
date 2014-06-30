@@ -269,7 +269,7 @@ public class MagmiProduct {
     }
     
     public final void csvFinderColumns(Map<String, String> columns, String applicationId, String turboId) {
-        String applications = StringUtils.join(finderApplication, "||");
+        String applications = StringUtils.join(applicationDetail, "||");
 
         columns.put("application_detail", applications);
 
