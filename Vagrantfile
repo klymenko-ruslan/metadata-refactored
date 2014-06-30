@@ -97,7 +97,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       nice mvn clean install && sudo cp target/metadata.war /var/lib/tomcat7/webapps/ROOT.war
 
       echo Final preparations for metadata
-      ln -s /vagrant/mas90.accdb /var/mas90.accdb
+      sudo ln -s /vagrant/mas90.accdb /var/mas90.accdb
       sudo mkdir -p /var/product_images
       sudo chown tomcat7:tomcat7 /var/product_images
       sudo usermod -aG tomcat7 vagrant
