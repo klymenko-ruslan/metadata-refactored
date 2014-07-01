@@ -251,6 +251,7 @@ uasort($interchangeSkuProductMap, 'usortByPartNumberPredicate');
             <li><a href="#tabs-bill-of-materials">Bill of Materials</a></li>
             <li><a href="#tabs-application-detail">Application Detail</a></li>
             <li><a href="#tabs-where-used">Where Used</a></li>
+            <li><a href="#tabs-kit-matrix">Kit Matrix</a></li>
         </ul>
         
         <!-- Product Information -->
@@ -375,6 +376,7 @@ uasort($interchangeSkuProductMap, 'usortByPartNumberPredicate');
                 </table>
             </div>
             <?php endif; ?>
+        </div>
         <!-- Kit Matrix Testing -->
             <?php
                 // order kits ascending by part number
@@ -456,7 +458,7 @@ uasort($interchangeSkuProductMap, 'usortByPartNumberPredicate');
                 #var_dump($kitCollection->getSelect()->__toString());
 
             ?>
-            <div class="box-collateral matrix-data">
+            <div id="tabs-kit-matrix" class="box-collateral matrix-data">
                 <h2><?php echo $this->__('Kit Matrix') ?></h2>
 
                 <table class="data-table" id="kit-matrix">
@@ -505,7 +507,6 @@ uasort($interchangeSkuProductMap, 'usortByPartNumberPredicate');
 
                 </table>
             </div>
-        </div>
 
         <!-- Interchangeable Parts -->
         <div id="tabs-interchangeable-parts" class="box-collateral">
