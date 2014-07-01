@@ -377,105 +377,6 @@ uasort($interchangeSkuProductMap, 'usortByPartNumberPredicate');
             </div>
             <?php endif; ?>
         </div>
-        <!-- Kit Matrix Testing -->
-            <?php
-                // order kits ascending by part number
-
-                // get all components for all kits into an array of arrays. 
-                // array(kit => bom_array([] => array(alt_part_sku => value, ti_part_sku => value, sku => value, quantity => value)))
-                $kitMatrixComponents = array();
-                foreach ($serviceKits as $serviceKit):
-                    // define kit sku
-                    $kitSku = $serviceKit['kitSku'][0];
-                    $allKits[] = $kitSku;
-
-                    // Get the Bill of Materials
-                    $KitMatrixProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $kitSku);
-                    $kitMatrixBillOfMaterials = json_decode($KitMatrixProduct->getBillOfMaterials(), true);
-
-                    // build array of arrays
-                    $kitMatrixComponents[$kitSku] = $kitMatrixBillOfMaterials;
-                endforeach;
-                $allUniqueKits = array_unique($allKits);
-                asort($allUniqueKits);
-
-                // create array of unique components from the BOM
-                $uniqueComponents = array();
-                $componentKitQty = array();
-                // loop through each kit
-                foreach ($kitMatrixComponents as $kitSku => $kitMatrixBillOfMaterials):
-                    // loop through each BOM
-                    foreach ($kitMatrixBillOfMaterials as $kitMatrixBomItem):
-                        $allKitComponents[] = $kitMatrixBomItem[sku];
-
-                        // create array of arrays of component and kit qty. array(component => array(kit => qty))
-                        $componentKitQty[$kitMatrixBomItem[sku]][$kitSku] = $kitMatrixBomItem[quantity];
-                    endforeach;
-                endforeach;
-                $uniqueComponents = array_unique($allKitComponents);
-                asort($uniqueComponents);
-
-                // get collection of kit products
-                $kitCollection = Mage::getModel('catalog/product')->getCollection()
-                    ->addAttributeToSelect('part_number')
-                    ->setOrder('part_number', 'ASC')
-                    ->addFieldToFilter('sku', $allUniqueKits);
-
-                // get collection of component products
-                $componentCollection = Mage::getModel('catalog/product')->getCollection()
-                    ->addAttributeToSelect('part_number')
-                    ->setOrder('part_number', 'ASC')
-                    ->addFieldToFilter('sku', $uniqueComponents);
-            ?>
-            <div id="tabs-kit-matrix" class="box-collateral matrix-data">
-                <h2><?php echo $this->__('Kit Matrix') ?></h2>
-
-                <table class="data-table" id="kit-matrix">
-                    <!--table header row   -->
-                    <tr>
-                        <!--for th element is blank because it is the upper left cell   -->
-                        <th></th>
-                        <?php
-                            // loop through and crate a column for each kit
-                            foreach ($kitCollection as $kit):
-                        ?>
-                                <th class="label">
-                                    <div class="vertical-text"><div class="vertical-text__inner">
-                                        <a href="<?php echo $kit->getProductUrl(); ?>">
-                                            <?php echo $kit->getPartNumber() ?>
-                                    </div></div>
-                                    </a>
-                                </th>
-                        <?php
-                            endforeach;
-                        ?>
-                    </tr>
-                    <!-- row for each component -->
-                        <?php
-                            foreach ($componentCollection as $component):
-                                // first few columns will be part number and maybe other static info
-                        ?>
-                                <tr>
-                                    <td>
-                                        <a href="<?php echo $component->getProductUrl(); ?>">
-                                            <?php echo $component->getPartNumber() ?>
-                                        </a>
-                                    </td>
-                        <?php
-                                // remaining table cells are dynamic: one for each kit column qty
-                                foreach ($allUniqueKits as $kit):
-                                    // see if qty exists for component in kit bom
-                                    $componentKitQtyValue = $componentKitQty[$component->getSku()][$kit];
-                                    echo "<td>";
-                                    echo $componentKitQtyValue;
-                                    echo "</td>";
-                                endforeach;
-                                echo "</tr>";
-                            endforeach;
-                        ?>
-
-                </table>
-            </div>
 
         <!-- Interchangeable Parts -->
         <div id="tabs-interchangeable-parts" class="box-collateral">
@@ -705,6 +606,107 @@ uasort($interchangeSkuProductMap, 'usortByPartNumberPredicate');
                 <?php endforeach; ?>
             </table>
         </div>
+
+        <!-- Kit Matrix Testing -->
+            <?php
+                // order kits ascending by part number
+
+                // get all components for all kits into an array of arrays. 
+                // array(kit => bom_array([] => array(alt_part_sku => value, ti_part_sku => value, sku => value, quantity => value)))
+                $kitMatrixComponents = array();
+                foreach ($serviceKits as $serviceKit):
+                    // define kit sku
+                    $kitSku = $serviceKit['kitSku'][0];
+                    $allKits[] = $kitSku;
+
+                    // Get the Bill of Materials
+                    $KitMatrixProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $kitSku);
+                    $kitMatrixBillOfMaterials = json_decode($KitMatrixProduct->getBillOfMaterials(), true);
+
+                    // build array of arrays
+                    $kitMatrixComponents[$kitSku] = $kitMatrixBillOfMaterials;
+                endforeach;
+                $allUniqueKits = array_unique($allKits);
+                asort($allUniqueKits);
+
+                // create array of unique components from the BOM
+                $uniqueComponents = array();
+                $componentKitQty = array();
+                // loop through each kit
+                foreach ($kitMatrixComponents as $kitSku => $kitMatrixBillOfMaterials):
+                    // loop through each BOM
+                    foreach ($kitMatrixBillOfMaterials as $kitMatrixBomItem):
+                        $allKitComponents[] = $kitMatrixBomItem[sku];
+
+                        // create array of arrays of component and kit qty. array(component => array(kit => qty))
+                        $componentKitQty[$kitMatrixBomItem[sku]][$kitSku] = $kitMatrixBomItem[quantity];
+                    endforeach;
+                endforeach;
+                $uniqueComponents = array_unique($allKitComponents);
+                asort($uniqueComponents);
+
+                // get collection of kit products
+                $kitCollection = Mage::getModel('catalog/product')->getCollection()
+                    ->addAttributeToSelect('part_number')
+                    ->setOrder('part_number', 'ASC')
+                    ->addFieldToFilter('sku', $allUniqueKits);
+
+                // get collection of component products
+                $componentCollection = Mage::getModel('catalog/product')->getCollection()
+                    ->addAttributeToSelect('part_number')
+                    ->setOrder('part_number', 'ASC')
+                    ->addFieldToFilter('sku', $uniqueComponents);
+            ?>
+            <div id="tabs-kit-matrix" class="box-collateral matrix-data">
+                <h2><?php echo $this->__('Kit Matrix') ?></h2>
+
+                <table class="data-table" id="kit-matrix">
+                    <!--table header row   -->
+                    <tr>
+                        <!--for th element is blank because it is the upper left cell   -->
+                        <th></th>
+                        <?php
+                            // loop through and crate a column for each kit
+                            foreach ($kitCollection as $kit):
+                        ?>
+                                <th class="label">
+                                    <div class="vertical-text"><div class="vertical-text__inner">
+                                        <a href="<?php echo $kit->getProductUrl(); ?>">
+                                            <?php echo $kit->getPartNumber() ?>
+                                    </div></div>
+                                    </a>
+                                </th>
+                        <?php
+                            endforeach;
+                        ?>
+                    </tr>
+                    <!-- row for each component -->
+                        <?php
+                            foreach ($componentCollection as $component):
+                                // first few columns will be part number and maybe other static info
+                        ?>
+                                <tr>
+                                    <td>
+                                        <a href="<?php echo $component->getProductUrl(); ?>">
+                                            <?php echo $component->getPartNumber() ?>
+                                        </a>
+                                    </td>
+                        <?php
+                                // remaining table cells are dynamic: one for each kit column qty
+                                foreach ($allUniqueKits as $kit):
+                                    // see if qty exists for component in kit bom
+                                    $componentKitQtyValue = $componentKitQty[$component->getSku()][$kit];
+                                    echo "<td>";
+                                    echo $componentKitQtyValue;
+                                    echo "</td>";
+                                endforeach;
+                                echo "</tr>";
+                            endforeach;
+                        ?>
+
+                </table>
+            </div>
+
     </div>
 
     <div style="margin-top: 5px;">
