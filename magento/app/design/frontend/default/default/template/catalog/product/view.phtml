@@ -389,36 +389,15 @@ uasort($interchangeSkuProductMap, 'usortByPartNumberPredicate');
                     $kitSku = $serviceKit['kitSku'][0];
                     $allKits[] = $kitSku;
 
-                    #echo "<br><br>serviceKit kitSku: ";
-                    #var_dump($kitSku);
-
                     // Get the Bill of Materials
-                    #$KitMatrixProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $serviceKit['kitSku']);
                     $KitMatrixProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $kitSku);
                     $kitMatrixBillOfMaterials = json_decode($KitMatrixProduct->getBillOfMaterials(), true);
 
                     // build array of arrays
                     $kitMatrixComponents[$kitSku] = $kitMatrixBillOfMaterials;
-
-                    #echo "<br><br>array_test: ";
-                    #var_dump($kitMatrixComponents);
-
-                    #$bomItemProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $bomItem['sku']);
-                    #echo "<br><br>var_dump: ";
-                    #var_dump($kitMatrixBillOfMaterials);
                 endforeach;
                 $allUniqueKits = array_unique($allKits);
                 asort($allUniqueKits);
-
-                #echo "<br><br>allKits array: ";
-                #var_dump($allKits);
-
-                #echo "<br><br>allUniqueKits array: ";
-                #var_dump($allUniqueKits);
-
-                #echo "<br><br>kitMatrixComponents array: ";
-                #var_dump($kitMatrixComponents[41441]);
-                #var_dump($kitMatrixComponents);
 
                 // create array of unique components from the BOM
                 $uniqueComponents = array();
@@ -430,18 +409,11 @@ uasort($interchangeSkuProductMap, 'usortByPartNumberPredicate');
                         $allKitComponents[] = $kitMatrixBomItem[sku];
 
                         // create array of arrays of component and kit qty. array(component => array(kit => qty))
-                        #$componentKitQty[$kitMatrixBomItem[sku]] = array($kitSku => $kitMatrixBomItem[quantity]);
                         $componentKitQty[$kitMatrixBomItem[sku]][$kitSku] = $kitMatrixBomItem[quantity];
                     endforeach;
                 endforeach;
                 $uniqueComponents = array_unique($allKitComponents);
                 asort($uniqueComponents);
-
-                #echo "<br><br>uniqueComponents: ";
-                #var_dump($uniqueComponents);
-
-                #echo "<br><br>array(component => array(kit => qty)): ";
-                #var_dump($componentKitQty);
 
                 // get collection of kit products
                 $kitCollection = Mage::getModel('catalog/product')->getCollection()
@@ -454,9 +426,6 @@ uasort($interchangeSkuProductMap, 'usortByPartNumberPredicate');
                     ->addAttributeToSelect('part_number')
                     ->setOrder('part_number', 'ASC')
                     ->addFieldToFilter('sku', $uniqueComponents);
-
-                #var_dump($kitCollection->getSelect()->__toString());
-
             ?>
             <div id="tabs-kit-matrix" class="box-collateral matrix-data">
                 <h2><?php echo $this->__('Kit Matrix') ?></h2>
