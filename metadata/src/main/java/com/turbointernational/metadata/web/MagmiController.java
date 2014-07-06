@@ -278,7 +278,7 @@ public class MagmiController {
         response.setHeader("Content-Disposition: attachment; filename=products.csv", null);
         
         Mas90Prices mas90 = new Mas90Prices(new File(mas90DbPath));
-        CSVWriter writer = new CSVWriter(new OutputStreamWriter(out), ',', '\'');
+        CSVWriter writer = new CSVWriter(new OutputStreamWriter(out), ',', '\'', '\\');
         
         // Write the header row
         writer.writeNext(getCsvHeaders());
