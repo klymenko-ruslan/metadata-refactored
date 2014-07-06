@@ -773,11 +773,11 @@ CREATE VIEW `vpart_turbotype_kits` AS (
 
         -- Join exclusion table
         LEFT JOIN kit_part_common_component kc ON
-            kc.kit_id = k.part_id AND kc.part_id = p.id
+            kc.kit_id = k.part_id
+            AND kc.part_id = p.id
+            AND kc.exclude = 1
     -- Exclusion
-    WHERE
-        kc.exclude IS NULL
-        OR kc.exclude = 1
+    WHERE kc.exclude IS NULL
 ) UNION DISTINCT ( -- Turbo Type from Turbos
     SELECT
         t.part_id AS part_id,
@@ -794,11 +794,11 @@ CREATE VIEW `vpart_turbotype_kits` AS (
 
         -- Join exclusion table
         LEFT JOIN kit_part_common_component kc ON
-            kc.kit_id = k.part_id AND kc.part_id = t.part_id
+            kc.kit_id = k.part_id
+            AND kc.part_id = t.part_id
+            AND kc.exclude = 1
     -- Exclusion
-    WHERE
-        kc.exclude IS NULL
-        OR kc.exclude = 1
+    WHERE kc.exclude IS NULL
 );
 
 
