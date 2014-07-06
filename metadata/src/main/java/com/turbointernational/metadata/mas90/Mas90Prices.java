@@ -1,4 +1,4 @@
-package mas90magmi;
+package com.turbointernational.metadata.mas90;
 
 import com.healthmarketscience.jackcess.Database;
 import com.healthmarketscience.jackcess.DatabaseBuilder;
