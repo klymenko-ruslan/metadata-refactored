@@ -8,6 +8,8 @@ import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
+import org.elasticsearch.common.settings.ImmutableSettings;
+import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
@@ -35,9 +37,18 @@ public class ElasticSearch {
     
     @Value("${elasticsearch.timeout}")
     int timeout = 10000;
+    
+    @Value("${elasticsearch.cluster.name}")
+    String clusterName = "elasticsearch";
 
     public Client client() {
-        return new TransportClient().addTransportAddress(new InetSocketTransportAddress(elasticSearchHost, elasticSearchPort));
+        Settings settings = ImmutableSettings.settingsBuilder()
+            .put("cluster.name", clusterName)
+            .build();
+        
+        return new TransportClient(settings)
+            .addTransportAddress(
+                new InetSocketTransportAddress(elasticSearchHost, elasticSearchPort));
     }
     
     public String search(String searchJson) throws Exception {

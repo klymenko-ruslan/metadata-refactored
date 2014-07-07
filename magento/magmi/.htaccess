@@ -1,6 +1,8 @@
 order deny,allow
 deny from all
 allow from 127.0.0.1
+allow from 192.168.42.1   # Vagrant Host
+allow from 192.168.42.10  # Vagrant Metadata
 allow from 71.227.128.226 # Jeff Home
 allow from 199.231.242.26 # Jeff Hub
 allow from 71.185.167.82  # Paul Home

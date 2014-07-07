@@ -2,11 +2,12 @@
 require_once("../inc/magmi_statemanager.php");
 require_once("progress_parser.php");
 
-$logfile=$_REQUEST["logfile"];
-if(!isset($logfile))
-{
-	$logfile=Magmi_StateManager::getProgressFile();
+if(array_key_exists("logfile", $_REQUEST)) {
+        $logfile=$_REQUEST["logfile"];
+} else {
+        $logfile=Magmi_StateManager::getProgressFile();
 }
+
 $logfile=Magmi_StateManager::getStateDir().DIRSEP.$logfile;
 if(file_exists($logfile))
 {

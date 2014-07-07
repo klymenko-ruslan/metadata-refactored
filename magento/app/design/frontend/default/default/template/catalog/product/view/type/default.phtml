@@ -44,6 +44,11 @@ $turboTypes = $_product->getAttributeText('turbo_type');
                     } ?>:</strong> <?php
                 foreach ($tiPartSkus as $i => $tiPartSku) {
                     $tiProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $tiPartSku);
+                    if ($tiProduct == null) {
+                        
+                        // Skip the product if it doesn't exist
+                        continue;
+                    }
                     
                     echo '<a href="' . $tiProduct->getProductUrl() . '">';
                     echo $tiProduct->getPartNumber();
