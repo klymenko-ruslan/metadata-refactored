@@ -55,11 +55,11 @@ $_helper = $this->helper('catalog/output');
             ?>
             <table class="data-table" id="products-list">
                 <tr>
+                    <th>OE Part #</th>
+                    <th>TI Part #</th>
                     <th>Part Type</th>
                     <th>Name</th>
                     <th>Manufacturer</th>
-                    <th>OE Part #</th>
-                    <th>TI Part #</th>
                     <?php if ($loaded_products_has_part_type_turbo): ?><th>CHRA</th><?php endif; ?>
                     <th>Price</th>
                 </tr>
@@ -91,11 +91,6 @@ $_helper = $this->helper('catalog/output');
                     <?php if ($i++ % $_columnCount == 0): ?>
                     <?php endif ?>
                     <tr>
-                        <td><?php echo $_product->getAttributeText('part_type') ?></td>
-                        <td><a href="<?php echo $_product->getProductUrl() ?>"
-                               title="<?php echo $this->stripTags($_product->getName(), null, true) ?>"><?php echo $_product->getName() ?></a>
-                        </td>
-                        <td><?php echo $_product->getAttributeText('manufacturer') ?></td>
                         <td><a href="<?php echo $_product->getProductUrl() ?>"><?php echo $_product->getPartNumber() ?></a></td>
                         <td><?php $tiPartSkus = explode(",", $_product->getTiPartSku()) ?>
                             <?php $firstTiProduct = null; ?>
@@ -120,6 +115,11 @@ $_helper = $this->helper('catalog/output');
                                 <a href="<?php echo $tiPart->getProductUrl() ?>"><?php echo $tiPart->getPartNumber(); ?></a>
                             <?php endforeach ?>
                         </td>
+                        <td><?php echo $_product->getAttributeText('part_type') ?></td>
+                        <td><a href="<?php echo $_product->getProductUrl() ?>"
+                               title="<?php echo $this->stripTags($_product->getName(), null, true) ?>"><?php echo $_product->getName() ?></a>
+                        </td>
+                        <td><?php echo $_product->getAttributeText('manufacturer') ?></td>
                         <?php if ($loaded_products_has_part_type_turbo): ?><td><?php echo $cartridge_list ?></td><?php endif; ?>
                         <td>
                             <?php if (Mage::getSingleton('customer/session')->isLoggedIn()): ?>
