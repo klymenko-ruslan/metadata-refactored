@@ -81,10 +81,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
       echo Buliding and Installing Metadata Webapp
 
-      # Mas90 library
-      cd /vagrant/mas90magmi
-      mvn clean install -DskipTests
-
       # Use the local DB
       sudo bash -c "echo 'database.host=localhost' > ~tomcat7/ti_metadata.properties"
       sudo bash -c "echo 'database.password=metaserver' >> ~tomcat7/ti_metadata.properties"
@@ -94,7 +90,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       sudo npm install -g yo grunt bower generator-angular
       sudo gem install compass
       sudo rm -rf /var/lib/tomcat7/webapps/ROOT
-      nice mvn clean install && sudo cp target/metadata.war /var/lib/tomcat7/webapps/ROOT.war
+      nice mvn clean install -DskipTests=true && sudo cp target/metadata.war /var/lib/tomcat7/webapps/ROOT.war
 
       echo Final preparations for metadata
       sudo ln -s /vagrant/mas90.accdb /var/mas90.accdb
@@ -104,8 +100,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       sudo ln -s /var/log/tomcat7/catalina.out ~/tomcat7.log
 
       sudo service elasticsearch restart 
-      sudo service mysql restart
-      sudo service tomcat7 restart
+      sudo service mysql start
+      sudo service tomcat7 start
 
       sleep 5 # Elasticsearch can take a bit to start
       bash /vagrant/bits/ElasticSearch/create_index.sh
@@ -145,6 +141,7 @@ SCRIPT
 
   config.vm.define "magento" do |magento|
     magento.vm.hostname = "magento.ti.dev"
+
     # Create a private network, which allows host-only access to the machine
     # using a specific IP.
     config.vm.network "private_network", ip: $MAGENTOIPADDR

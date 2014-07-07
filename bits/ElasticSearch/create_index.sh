@@ -5,17 +5,17 @@ INDEX='metadata'
 TYPE='part'
 
 echo "Creating index..." &&
-curl -X PUT "$SERVER/$INDEX" &&
+wget --tries 1 -qO /dev/null --method PUT "$SERVER/$INDEX"
 
 echo "Closing index to set configuration..." &&
-curl -X POST "$SERVER/$INDEX/_close" &&
+wget --tries 1 -qO /dev/null --method POST "$SERVER/$INDEX/_close"
 
 echo "Setting configuration..." &&
-curl -X PUT "$SERVER/$INDEX/_settings" -H "Content-Type: application/json" --data @metadata_index_settings.json &&
+wget --tries 1 -qO /dev/null --method PUT "$SERVER/$INDEX/_settings" --header "Content-Type: application/json" --body-file @metadata_index_settings.json
 
 echo "Setting mapping..." &&
-curl -X PUT "$SERVER/$INDEX/$TYPE/_mapping" -H "Content-Type: application/json" --data @metadata_index_mapping.json &&
+wget --tries 1 -qO /dev/null --method PUT "$SERVER/$INDEX/$TYPE/_mapping" --header "Content-Type: application/json" --body-file @metadata_index_mapping.json
 
 echo "Opening index for use..." &&
-curl -X POST "$SERVER/$INDEX/_open"
+wget --tries 1 -qO /dev/null --method POST "$SERVER/$INDEX/_open"
 
