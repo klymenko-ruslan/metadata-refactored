@@ -616,7 +616,7 @@ uasort($interchangeSkuProductMap, 'usortByPartNumberPredicate');
                 $kitMatrixComponents = array();
                 foreach ($serviceKits as $serviceKit):
                     // define kit sku
-                    $kitSku = $serviceKit['kitSku'][0];
+                    $kitSku = $serviceKit['sku'];
                     $allKits[] = $kitSku;
 
                     // Get the Bill of Materials
