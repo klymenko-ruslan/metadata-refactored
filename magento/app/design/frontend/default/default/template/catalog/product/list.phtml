@@ -55,12 +55,13 @@ $_helper = $this->helper('catalog/output');
             ?>
             <table class="data-table" id="products-list">
                 <tr>
+                    <th>OE Part #</th>
+                    <th>TI Part #</th>
                     <th>Part Type</th>
                     <th>Name</th>
                     <th>Manufacturer</th>
-                    <th>OE Part #</th>
-                    <th>TI Part #</th>
                     <?php if ($loaded_products_has_part_type_turbo): ?><th>CHRA</th><?php endif; ?>
+                    <?php if ($loaded_products_has_part_type_turbo): ?><th>TI CHRA</th><?php endif; ?>
                     <th>Price</th>
                 </tr>
                 <?php $_collectionSize = $_productCollection->count() ?>
@@ -68,21 +69,43 @@ $_helper = $this->helper('catalog/output');
                 <?php $i = 0;
                 foreach ($_productCollection as $_product): ?>
                     <?php // if is turbo then extract chra from bom
+                    $firstChraProduct = null;
+                    $firstChraTiProduct = null;
                     if ($loaded_products_has_part_type_turbo){
-                        $cartridge_list = "";
+                        $cartridgeArray = array();
+                        $cartridgeTiArray = array();
 
                         // check to see if product is a turbo
-                        if ($_product->getAttributeSetName() == 'Turbo'){
+                        if ($_product->isTurbo()){
 
                             // Get the Bill of Materials
                             $billOfMaterials = json_decode($_product->getBillOfMaterials(), true);
 
-                            foreach ($billOfMaterials as $bomItem) {
+                            foreach ($billOfMaterials as $idx => $bomItem) {
                                 $bomItemProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $bomItem['sku']);
 
                                 // check to see if product is a cartridge
-                                if ($bomItemProduct->getAttributeSetName() == 'Cartridge') {
-                                    $cartridge_list = $cartridge_list.'<a href="' . $bomItemProduct->getProductUrl() . '">' . $bomItemProduct->getPartNumber() . '</a>';
+                                if ($bomItemProduct->isCartridge()) {
+
+                                    // save first chra for pricing
+                                    if ($firstChraProduct == null) {
+                                        $firstChraProduct = $bomItemProduct;
+                                    }
+
+                                    $cartridgeArray[] = '<a href="' . $bomItemProduct->getProductUrl() . '">' . $bomItemProduct->getPartNumber() . '</a>';
+
+                                    // get data for interchangeable chra TI part if exists.  There can be multiple TI parts for a chra
+                                    foreach ($bomItem['ti_part_sku'] as $chraTiPartSku) {
+                                        $chraTiProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $chraTiPartSku);
+
+                                        // save first TI chra for pricing
+                                        if ($firstChraTiProduct == null) {
+                                            $firstChraTiProduct = $chraTiProduct;
+                                        }
+
+                                        $cartridgeTiArray[] = '<a href="' . $chraTiProduct->getProductUrl() . '">' . $chraTiProduct->getPartNumber() . '</a>';
+                                    }
+
                                 }
                             }
                         }
@@ -91,11 +114,6 @@ $_helper = $this->helper('catalog/output');
                     <?php if ($i++ % $_columnCount == 0): ?>
                     <?php endif ?>
                     <tr>
-                        <td><?php echo $_product->getAttributeText('part_type') ?></td>
-                        <td><a href="<?php echo $_product->getProductUrl() ?>"
-                               title="<?php echo $this->stripTags($_product->getName(), null, true) ?>"><?php echo $_product->getName() ?></a>
-                        </td>
-                        <td><?php echo $_product->getAttributeText('manufacturer') ?></td>
                         <td><a href="<?php echo $_product->getProductUrl() ?>"><?php echo $_product->getPartNumber() ?></a></td>
                         <td><?php $tiPartSkus = explode(",", $_product->getTiPartSku()) ?>
                             <?php $firstTiProduct = null; ?>
@@ -120,14 +138,56 @@ $_helper = $this->helper('catalog/output');
                                 <a href="<?php echo $tiPart->getProductUrl() ?>"><?php echo $tiPart->getPartNumber(); ?></a>
                             <?php endforeach ?>
                         </td>
-                        <?php if ($loaded_products_has_part_type_turbo): ?><td><?php echo $cartridge_list ?></td><?php endif; ?>
+                        <td><?php echo $_product->getAttributeText('part_type') ?></td>
+                        <td><a href="<?php echo $_product->getProductUrl() ?>"
+                               title="<?php echo $this->stripTags($_product->getName(), null, true) ?>"><?php echo $_product->getName() ?></a>
+                        </td>
+                        <td><?php echo $_product->getAttributeText('manufacturer') ?></td>
+                        <?php if ($loaded_products_has_part_type_turbo): ?><td><?php echo implode(", ", $cartridgeArray) ?></td><?php endif; ?>
+                        <?php if ($loaded_products_has_part_type_turbo): ?><td><?php echo implode(", ", $cartridgeTiArray) ?></td><?php endif; ?>
                         <td>
                             <?php if (Mage::getSingleton('customer/session')->isLoggedIn()): ?>
                                 <?php
+                                $productPrice = "";
+
+                                // get main product price
                                 if ($_product->isTurboInternational()) {
-                                    echo Mage::helper('core')->currency($_product->getFinalPrice());
-                                } elseif (!empty($firstTiProduct)) {
-                                    echo Mage::helper('core')->currency($firstTiProduct->getFinalPrice());
+                                    $productPrice = Mage::helper('core')->currency($_product->getFinalPrice());
+                                } elseif ($firstTiProduct) {
+                                    $productPrice = Mage::helper('core')->currency($firstTiProduct->getFinalPrice());
+                                }
+
+                                // determine what price to show based on if part type is turbocharger
+                                if ($_product->isTurbo()) {
+                                    // show both BOM chra price and turbo price if part type is turbocharger
+                                    $chraPrice = "";
+
+                                    // display main product price if exists
+                                    if (strlen($productPrice) > 0) {
+                                        echo "<div class='products-list-price'><span class='price-label'>Turbo: </span>";
+                                        echo $productPrice;
+                                        echo "</div>";
+                                    }
+
+                                    // chra price
+                                    if ($firstChraProduct && $firstChraProduct->isTurboInternational()) {
+                                        $chraPrice = Mage::helper('core')->currency($firstChraProduct->getFinalPrice());
+                                    } elseif ($firstChraTiProduct) {
+                                        $chraPrice = Mage::helper('core')->currency($firstChraTiProduct->getFinalPrice());
+                                    }
+
+                                    // display chra price if exists
+                                    if (strlen($chraPrice) > 0) {
+                                        echo "<div class='products-list-price'><span class='price-label'>Chra: </span>";
+                                        echo $chraPrice;
+                                        #echo $this->getPriceHtml($firstChraTiProduct, true);
+                                        echo "</div>";
+                                    }
+                                } else {
+                                    // price for non turbocharger parts
+                                    echo "<div class='products-list-price'>";
+                                    echo $productPrice;
+                                    echo "</div>";
                                 }?>
                             <?php else: ?>
                               <a href="<?php echo $this->getUrl('customer/account/login'); ?>">Login for price</a>
