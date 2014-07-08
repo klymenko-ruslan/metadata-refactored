@@ -1011,6 +1011,12 @@ tr.summary-details-excluded { font-style:italic; }
 .price-box-bundle { padding:0 0 10px 0; }
 .price-box-bundle .price-box { margin:0 !important; padding:0 !important; }
 .price-box-bundle .price { color:#555; }
+
+/* Catalog list price */
+.products-list-price { white-space:nowrap; margin:0; text-align: right;}
+.products-list-price .price-label { color:#999; font-weight: bold;}
+.products-list-price .price { font-weight:normal; color:#c76200; }
+
 /********** Product Prices > */
 
 /* Tier Prices */
