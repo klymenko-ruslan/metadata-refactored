@@ -76,7 +76,7 @@ $_helper = $this->helper('catalog/output');
                         $chraTiList = "";
 
                         // check to see if product is a turbo
-                        if ($_product->getAttributeSetName() == 'Turbo'){
+                        if ($_product->isTurbo()){
 
                             // Get the Bill of Materials
                             $billOfMaterials = json_decode($_product->getBillOfMaterials(), true);
@@ -85,7 +85,7 @@ $_helper = $this->helper('catalog/output');
                                 $bomItemProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $bomItem['sku']);
 
                                 // check to see if product is a cartridge
-                                if ($bomItemProduct->getAttributeSetName() == 'Cartridge') {
+                                if ($bomItemProduct->isCartridge()) {
 
                                     // save first chra for pricing
                                     if ($firstChraProduct == null) {

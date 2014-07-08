@@ -2071,6 +2071,10 @@ class Mage_Catalog_Model_Product extends Mage_Catalog_Model_Abstract
         return $this->getAttributeSetName() == "Turbo";
     }
     
+    public function isCartridge() {
+        return $this->getAttributeSetName() == "Cartridge";
+    }
+
     public function getTiProduct() {
         
         // If this product is a TI product, return it
