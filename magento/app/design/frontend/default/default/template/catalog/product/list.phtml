@@ -72,8 +72,8 @@ $_helper = $this->helper('catalog/output');
                     $firstChraProduct = null;
                     $firstChraTiProduct = null;
                     if ($loaded_products_has_part_type_turbo){
-                        $cartridge_list = "";
-                        $chraTiList = "";
+                        $cartridgeArray = array();
+                        $cartridgeTiArray = array();
 
                         // check to see if product is a turbo
                         if ($_product->isTurbo()){
@@ -92,12 +92,7 @@ $_helper = $this->helper('catalog/output');
                                         $firstChraProduct = $bomItemProduct;
                                     }
 
-                                    // add commas when more than one value exists
-                                    if ($idx > 0) {
-                                        $cartridge_list = $cartridge_list . ", ";
-                                    }
-
-                                    $cartridge_list = $cartridge_list.'<a href="' . $bomItemProduct->getProductUrl() . '">' . $bomItemProduct->getPartNumber() . '</a>';
+                                    $cartridgeArray[] = '<a href="' . $bomItemProduct->getProductUrl() . '">' . $bomItemProduct->getPartNumber() . '</a>';
 
                                     // get data for interchangeable chra TI part if exists.  There can be multiple TI parts for a chra
                                     foreach ($bomItem['ti_part_sku'] as $chraTiPartSku) {
@@ -108,12 +103,7 @@ $_helper = $this->helper('catalog/output');
                                             $firstChraTiProduct = $chraTiProduct;
                                         }
 
-                                        // add commas when more than one value exists
-                                        if (strlen($chraTiList) > 0) {
-                                            $chraTiList = $chraTiList . ", ";
-                                        }
-
-                                        $chraTiList = $chraTiList.'<a href="' . $chraTiProduct->getProductUrl() . '">' . $chraTiProduct->getPartNumber() . '</a>';
+                                        $cartridgeTiArray[] = '<a href="' . $chraTiProduct->getProductUrl() . '">' . $chraTiProduct->getPartNumber() . '</a>';
                                     }
 
                                 }
@@ -153,8 +143,8 @@ $_helper = $this->helper('catalog/output');
                                title="<?php echo $this->stripTags($_product->getName(), null, true) ?>"><?php echo $_product->getName() ?></a>
                         </td>
                         <td><?php echo $_product->getAttributeText('manufacturer') ?></td>
-                        <?php if ($loaded_products_has_part_type_turbo): ?><td><?php echo $cartridge_list ?></td><?php endif; ?>
-                        <?php if ($loaded_products_has_part_type_turbo): ?><td><?php echo $chraTiList ?></td><?php endif; ?>
+                        <?php if ($loaded_products_has_part_type_turbo): ?><td><?php echo implode(", ", $cartridgeArray) ?></td><?php endif; ?>
+                        <?php if ($loaded_products_has_part_type_turbo): ?><td><?php echo implode(", ", $cartridgeTiArray) ?></td><?php endif; ?>
                         <td>
                             <?php if (Mage::getSingleton('customer/session')->isLoggedIn()): ?>
                                 <?php
