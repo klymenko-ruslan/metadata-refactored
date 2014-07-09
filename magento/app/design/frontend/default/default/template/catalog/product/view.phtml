@@ -614,6 +614,13 @@ uasort($interchangeSkuProductMap, 'usortByPartNumberPredicate');
                 // get all components for all kits into an array of arrays. 
                 // array(kit => bom_array([] => array(alt_part_sku => value, ti_part_sku => value, sku => value, quantity => value)))
                 $kitMatrixComponents = array();
+                $allUniqueKits = array();
+                $kitCollection = array();
+                $componentCollection = array();
+
+                // skip if $serviceKits has no data
+                if (!empty($serviceKits)) {
+
                 foreach ($serviceKits as $serviceKit):
                     // define kit sku
                     $kitSku = $serviceKit['sku'];
@@ -636,10 +643,10 @@ uasort($interchangeSkuProductMap, 'usortByPartNumberPredicate');
                 foreach ($kitMatrixComponents as $kitSku => $kitMatrixBillOfMaterials):
                     // loop through each BOM
                     foreach ($kitMatrixBillOfMaterials as $kitMatrixBomItem):
-                        $allKitComponents[] = $kitMatrixBomItem[sku];
+                        $allKitComponents[] = $kitMatrixBomItem['sku'];
 
                         // create array of arrays of component and kit qty. array(component => array(kit => qty))
-                        $componentKitQty[$kitMatrixBomItem[sku]][$kitSku] = $kitMatrixBomItem[quantity];
+                        $componentKitQty[$kitMatrixBomItem['sku']][$kitSku] = $kitMatrixBomItem['quantity'];
                     endforeach;
                 endforeach;
                 $uniqueComponents = array_unique($allKitComponents);
@@ -656,6 +663,8 @@ uasort($interchangeSkuProductMap, 'usortByPartNumberPredicate');
                     ->addAttributeToSelect('part_number')
                     ->setOrder('part_number', 'ASC')
                     ->addFieldToFilter('sku', $uniqueComponents);
+                }
+
             ?>
             <div id="tabs-kit-matrix" class="box-collateral matrix-data">
                 <h2><?php echo $this->__('Kit Matrix') ?></h2>
