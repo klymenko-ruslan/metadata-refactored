@@ -62,7 +62,7 @@ $_helper = $this->helper('catalog/output');
                     <th>Manufacturer</th>
                     <?php if ($loaded_products_has_part_type_turbo): ?><th>CHRA</th><?php endif; ?>
                     <?php if ($loaded_products_has_part_type_turbo): ?><th>TI CHRA</th><?php endif; ?>
-                    <th>Price</th>
+                    <th class="number-right-align">Price</th>
                 </tr>
                 <?php $_collectionSize = $_productCollection->count() ?>
                 <?php $_columnCount = $this->getColumnCount(); ?>
@@ -190,7 +190,7 @@ $_helper = $this->helper('catalog/output');
                                     echo "</div>";
                                 }?>
                             <?php else: ?>
-                              <a href="<?php echo $this->getUrl('customer/account/login'); ?>">Login for price</a>
+                              <div class="number-right-align"><a href="<?php echo $this->getUrl('customer/account/login'); ?>">Login for price</a></div>
                             <?php endif; ?>
                         </td>
                     </tr>

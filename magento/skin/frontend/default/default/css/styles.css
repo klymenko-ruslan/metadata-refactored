@@ -470,6 +470,9 @@ div.matrix-data .hover { background-color: #FF998A !important; }
     margin: -1.5em 0 100%;
 }
 
+/* right align numbers  */
+.number-right-align { text-align: right;}
+
 /* Generic Info Box */
 .info-box { background:#fff url(../images/bkg_block-title.gif) 0 0 repeat-x; border:1px solid #d0cbc1; padding:12px 15px; margin:0 0 15px; }
 .info-box h2 { font-weight:bold; font-size:13px; }
