@@ -25,7 +25,7 @@ class Amasty_Shopby_Model_Catalog_Layer_Filter_Stock extends Mage_Catalog_Model_
      */
     public function apply(Zend_Controller_Request_Abstract $request, $filterBlock)
     {
-        
+
         // Stop now if the filter is already applied
         if (Mage::registry('am_stock_filter')) {
             return $this;
@@ -42,6 +42,7 @@ class Amasty_Shopby_Model_Catalog_Layer_Filter_Stock extends Mage_Catalog_Model_
                 $this->getLayer()->getState()->addFilter($state);
 
                 Mage::register('am_stock_filter', true);
+
             }
             
             return $this;
@@ -53,11 +54,67 @@ class Amasty_Shopby_Model_Catalog_Layer_Filter_Stock extends Mage_Catalog_Model_
         	Mage::getResourceModel('cataloginventory/stock_status')
                 ->addStockStatusToSelect($select, Mage::app()->getWebsite());
         }
-        
-        $select->where('stock_status.stock_status = ?', 1);
-            
+
+        //define where clause for stock status filter
+        $where_str = "stock_status.stock_status = 1";
+
+        // get where clause for turbo override
+        $turbo_where_str = $this->_prepareTurboOverrideStockFilter();
+
+        // if "where clause" from turbo override is not empty then add to existing where string
+        if ($turbo_where_str != '') {
+            $where_str = "stock_status.stock_status = 1 or " . $turbo_where_str;
+        }
+
+        $select->where($where_str);
+
         return $this;
     }
+
+    /**
+     * Prepare where clause to show always turbos when stock filter is applied
+     *
+     * @return string
+     */
+    protected function _prepareTurboOverrideStockFilter()
+    {
+        $collection = $this->getLayer()->getProductCollection();
+        $alias      = "part_type_turbo_override";
+
+        // get attribute id for part type.  current value = 190
+        $eavAttribute = new Mage_Eav_Model_Mysql4_Entity_Attribute();
+        $attributeId = $eavAttribute->getIdByCode('catalog_product', 'part_type');
+
+        // define part type id for turbo. current value is 6610
+        $turbo_part_type_id = "6610";
+
+		$connection = Mage::getSingleton('core/resource')->getConnection('core_read');
+
+        // generate array that will be applied to select sql
+        $conditions = array(
+            "{$alias}.entity_id = e.entity_id",
+            $connection->quoteInto("{$alias}.attribute_id = ?", $attributeId),
+            $connection->quoteInto("{$alias}.store_id = ?",     $collection->getStoreId()),
+            #$connection->quoteInto("{$alias}.value NOT IN(?)",      $turbo_part_type_id)
+        );
+
+        // check to see if filter table has already been added to select sql statement and skip if it exists
+        if (strpos($collection->getSelect()->__toString(), $alias) === false) {
+
+            // apply array to select sql
+            $collection->getSelect()->join(
+                array($alias => 'catalog_product_index_eav'),
+                join(' AND ', $conditions),
+                array()
+            );          
+        }
+
+        // create where clause that will be combined with stock filter where clause
+        $where_str = $connection->quoteInto("{$alias}.value IN (?)", $turbo_part_type_id);
+
+        return $where_str;
+    }
+
 
 
     /**
