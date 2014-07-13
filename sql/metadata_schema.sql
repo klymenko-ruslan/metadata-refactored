@@ -725,7 +725,7 @@ CREATE VIEW `vwhere_used` AS
         LEFT JOIN part         apcatp ON apcatp.id     = apcat.part_id
     WHERE
         ba.distance != 0
-        AND CASE pt.`name`
+        AND CASE pt.`magento_attribute_set`
              -- Turbos list all ancestors
             WHEN 'Turbo' THEN 1
 
