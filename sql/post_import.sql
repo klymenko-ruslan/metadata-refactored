@@ -52,7 +52,6 @@ DROP TABLE IF EXISTS `sql server destination`;
 --
 -- Part types
 --
-ALTER TABLE `part_type` ADD COLUMN `magento_attribute_set` VARCHAR(50);
 
 -- Default
 UPDATE `part_type` SET `magento_attribute_set`= 'Part';

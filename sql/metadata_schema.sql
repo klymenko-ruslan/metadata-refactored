@@ -91,6 +91,7 @@ CREATE TABLE `part_type` (
   `name` VARCHAR(255) NOT NULL,
   `parent_part_type_id` BIGINT NULL,
   `import_pk` BIGINT NULL,
+  `magento_attribute_set` VARCHAR(50),
   FOREIGN KEY (`parent_part_type_id`) REFERENCES `part_type` (`id`),
   PRIMARY KEY(`id`)
 ) ENGINE = INNODB;
