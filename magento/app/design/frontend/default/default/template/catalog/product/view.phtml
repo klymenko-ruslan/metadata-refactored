@@ -607,7 +607,7 @@ uasort($interchangeSkuProductMap, 'usortByPartNumberPredicate');
             </table>
         </div>
 
-        <!-- Kit Matrix Testing -->
+        <!-- Kit Matrix -->
             <?php
                 // order kits ascending by part number
 
@@ -624,10 +624,22 @@ uasort($interchangeSkuProductMap, 'usortByPartNumberPredicate');
                     foreach ($serviceKits as $serviceKit):
                         // define kit sku
                         $kitSku = $serviceKit['sku'];
-                        $allKits[] = $kitSku;
-
-                        // Get the Bill of Materials
                         $KitMatrixProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $kitSku);
+
+                        // use only TI kits
+                        if ($KitMatrixProduct->isTurboInternational()) {
+                            // nothing needs to be changed
+                        } elseif ($serviceKit["tiSku"]) {
+                            // if main part is not TI but an interchangeable TI part exists then use it
+                            $kitSku = $serviceKit["tiSku"];
+                            $KitMatrixProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $kitSku);
+                        } else {
+                            // if main part is not TI and no TI interchangeable exists then do not include in result set
+                            continue;
+                        }
+
+                        $allKits[] = $kitSku;
+                        // Get the Bill of Materials
                         $kitMatrixBillOfMaterials = json_decode($KitMatrixProduct->getBillOfMaterials(), true);
 
                         // build array of arrays
