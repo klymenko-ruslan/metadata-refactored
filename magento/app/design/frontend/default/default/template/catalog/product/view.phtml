@@ -702,9 +702,9 @@ uasort($interchangeSkuProductMap, 'usortByPartNumberPredicate');
                                     </td>
                         <?php
                                 // remaining table cells are dynamic: one for each kit column qty
-                                foreach ($allUniqueKits as $kit):
+                                foreach ($kitCollection as $kit):
                                     // see if qty exists for component in kit bom
-                                    $componentKitQtyValue = $componentKitQty[$component->getSku()][$kit];
+                                    $componentKitQtyValue = $componentKitQty[$component->getSku()][$kit->getSku()];
                                     echo "<td>";
                                     echo $componentKitQtyValue;
                                     echo "</td>";
