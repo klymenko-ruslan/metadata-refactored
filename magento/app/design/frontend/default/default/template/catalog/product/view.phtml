@@ -427,6 +427,7 @@ uasort($interchangeSkuProductMap, 'usortByPartNumberPredicate');
                     <th><strong>Part Type</strong></th>
                     <th><strong>OE Part #</strong></th>
                     <th><strong>TI Part #</strong></th>
+                    <th><strong>Interch Part #</strong></th>
                     <th><strong>Name</strong></th>
                     <th><strong>Qty Per Set</strong></th>
                     <th><strong>Price</strong></th>
@@ -470,6 +471,29 @@ uasort($interchangeSkuProductMap, 'usortByPartNumberPredicate');
                                     echo ", ";
                                 }
                             }?>
+                        </td>
+                        <td><?php // Interchange Products
+
+                            // get array of interchange sku's for current bom item
+                            $bomItemInterchangeSkuArray = $bomItemProduct->getInterchanges() ? explode(',', $bomItemProduct->getInterchanges()) : array();
+
+                            // get collection of interchange products of current bom item
+                            $bomItemInterchangeCollection = Mage::getModel('catalog/product')->getCollection()
+                                ->addAttributeToSelect('part_number')
+                                ->setOrder('part_number', 'ASC')
+                                ->addFieldToFilter('sku', $bomItemInterchangeSkuArray);
+
+                            $bomItemInterchangeProductList = array();
+
+                            // create array of interchangeable items
+                            foreach ($bomItemInterchangeCollection as $idx => $bomItemInterchangeProduct):
+                                    $bomItemInterchangeProductList[] = '<a href="' . $bomItemInterchangeProduct->getProductUrl() . '">' . $bomItemInterchangeProduct->getPartNumber() . '</a>';
+                            endforeach;
+                            
+                            // display list as comma-separated
+                            echo implode(", ", $bomItemInterchangeProductList)
+
+                            ?>
                         </td>
                         <td>
                             <?php if ($bomItemProduct->getId()): ?>
