@@ -425,8 +425,9 @@ uasort($interchangeSkuProductMap, 'usortByPartNumberPredicate');
             <table class="data-table" id="bill-of-materials">
                 <tr>
                     <th><strong>Part Type</strong></th>
-                    <th><strong>OE Part #</strong></th>
-                    <th><strong>TI Part #</strong></th>
+                    <th><strong>Part #</strong></th>
+                    <?php //don't show column if part manfr is TI
+                        if (!$_product->isTurboInternational()): ?><th><strong>TI Part #</strong></th><?php endif; ?>
                     <th><strong>Interch Part #</strong></th>
                     <th><strong>Name</strong></th>
                     <th><strong>Qty Per Set</strong></th>
@@ -442,36 +443,31 @@ uasort($interchangeSkuProductMap, 'usortByPartNumberPredicate');
                     <tr>
                         <td><?php echo $bomItemProduct->getAttributeText('part_type'); ?></td>
                         <td><?php echo '<a href="' . $bomItemProduct->getProductUrl() . '">' . $bomItemProduct->getPartNumber() . '</a>'; ?></td>
-                        <td><?php
-                            foreach ($bomItem['ti_part_sku'] as $idx => $tiPartSku) {
-                                
-                                // Get the interchange product
-                                if ($tiPartSku == $bomItem['sku']) {
-                                    $bomItemInterchangeProduct = $bomItemProduct; // Same as the bom item
-//                                } elseif ($bomItemTiProduct && $bomItemTiProduct->getSku() == $tiPartSku) {
-//                                    $bomItemInterchangeProduct = $bomItemProduct; // Same as the bom item TI product
-                                } else {
-                                    $bomItemInterchangeProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $tiPartSku);
-                                }
-                                
-                                // Skip invalid products
-                                if (!$bomItemInterchangeProduct) {
-                                    continue;
-                                }
-                                
-                                // Use the first TI product for pricing
-                                if (!$bomItemTiProduct) {
-                                    $bomItemTiProduct = $bomItemInterchangeProduct;
-                                }
-                                
-                                echo '<a href="' . $bomItemInterchangeProduct->getProductUrl() . '">' . $bomItemInterchangeProduct->getPartNumber() . '</a>';
+                        <?php 
+                        
+                        // don't display if primary part manfr is TI
+                        if (!$_product->isTurboInternational()): ?>
+                            <td><?php
 
-                                // Add commas between items
-                                if ($idx+1 < count($bomItem['ti_part_sku'])) {
-                                    echo ", ";
-                                }
-                            }?>
-                        </td>
+                                //Get TI first part number
+                                foreach ($bomItem['ti_part_sku'] as $idx => $tiPartSku) {
+
+                                    //get product object from sku
+                                    $bomItemInterchangeTiProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $tiPartSku);
+                                    
+                                    // display product info
+                                    if ($bomItemInterchangeTiProduct) {
+                                        echo '<a href="' . $bomItemInterchangeTiProduct->getProductUrl() . '">' . $bomItemInterchangeTiProduct->getPartNumber() . '</a>';
+
+                                        // Use the first TI product for pricing
+                                        $bomItemTiProduct = $bomItemInterchangeTiProduct;
+                                        
+                                        // exit loop after first product
+                                        break;
+                                    }
+                                }?>
+                            </td>
+                        <?php endif; ?>
                         <td><?php // Interchange Products
 
                             // get array of interchange sku's for current bom item
