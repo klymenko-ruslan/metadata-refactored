@@ -320,6 +320,7 @@ uasort($interchangeSkuProductMap, 'usortByPartNumberPredicate');
             <?php endswitch ?>
             
             <?php if ($productAttributeSetName == "Cartridge"
+                   || $productAttributeSetName == "Kit"
                    || $productAttributeSetName == "Turbo"): ?>
             <div class="box-collateral">
                 <h2><?php echo $this->__('Service Kits') ?></h2>
