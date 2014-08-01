@@ -377,13 +377,18 @@ uasort($interchangeSkuProductMap, 'usortByPartNumberPredicate');
 
                             <!-- Price -->
                             <td>
-                                <?php if ($serviceKitTiProduct) {
-                                    echo Mage::helper('core')->currency($serviceKitTiProduct->getFinalPrice());
-                                } else {
-                                    echo Mage::helper('core')->currency($serviceKitProduct->getFinalPrice());
-                                }
+                                <?php if (Mage::getSingleton('customer/session')->isLoggedIn()):
+                                            if ($serviceKitProduct->isTurboInternational()) {
+                                                echo Mage::helper('core')->currency($serviceKitProduct->getFinalPrice());
+                                            } elseif ($serviceKitTiProduct) {
+                                                echo Mage::helper('core')->currency($serviceKitTiProduct->getFinalPrice());
+                                            }
                                 ?>
+                                <?php      else: ?>
+                                            <a href="<?php echo $this->getUrl('customer/account/login'); ?>">Login for price</a>
+                                <?php endif; ?>
                             </td>
+                            
                         </tr>
                     <?php endforeach; ?>
                 </table>
