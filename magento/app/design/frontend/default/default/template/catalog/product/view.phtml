@@ -477,21 +477,24 @@ uasort($interchangeSkuProductMap, 'usortByPartNumberPredicate');
                             // get array of interchange sku's for current bom item
                             $bomItemInterchangeSkuArray = $bomItemProduct->getInterchanges() ? explode(',', $bomItemProduct->getInterchanges()) : array();
 
-                            // get collection of interchange products of current bom item
-                            $bomItemInterchangeCollection = Mage::getModel('catalog/product')->getCollection()
-                                ->addAttributeToSelect('part_number')
-                                ->setOrder('part_number', 'ASC')
-                                ->addFieldToFilter('sku', $bomItemInterchangeSkuArray);
-
-                            $bomItemInterchangeProductList = array();
-
-                            // create array of interchangeable items
-                            foreach ($bomItemInterchangeCollection as $idx => $bomItemInterchangeProduct):
-                                    $bomItemInterchangeProductList[] = '<a href="' . $bomItemInterchangeProduct->getProductUrl() . '">' . $bomItemInterchangeProduct->getPartNumber() . '</a>';
-                            endforeach;
+                            if (count($bomItemInterchangeSkuArray) > 0) {
                             
-                            // display list as comma-separated
-                            echo implode(", ", $bomItemInterchangeProductList)
+                                // get collection of interchange products of current bom item
+                                $bomItemInterchangeCollection = Mage::getModel('catalog/product')->getCollection()
+                                    ->addAttributeToSelect('part_number')
+                                    ->setOrder('part_number', 'ASC')
+                                    ->addFieldToFilter('sku', $bomItemInterchangeSkuArray);
+
+                                $bomItemInterchangeProductList = array();
+
+                                // create array of interchangeable items
+                                foreach ($bomItemInterchangeCollection as $idx => $bomItemInterchangeProduct):
+                                        $bomItemInterchangeProductList[] = '<a href="' . $bomItemInterchangeProduct->getProductUrl() . '">' . $bomItemInterchangeProduct->getPartNumber() . '</a>';
+                                endforeach;
+                                
+                                // display list as comma-separated
+                                echo implode(", ", $bomItemInterchangeProductList);
+                            }
 
                             ?>
                         </td>
