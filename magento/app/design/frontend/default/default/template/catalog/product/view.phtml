@@ -344,20 +344,32 @@ uasort($interchangeSkuProductMap, 'usortByPartNumberPredicate');
 
                         <tr>
                             <!-- OE part # -->
-                            <td>
-                                <a href="<?php echo $serviceKitProduct->getProductUrl(); ?>">
-                                    <?php echo $serviceKit['partNumber']?>
-                                </a>
-                            </td>
-
-                            <!-- TI Part # -->
-                            <td>
-                                <?php if($serviceKitTiProduct): ?>
-                                    <a href="<?php echo $serviceKitTiProduct->getProductUrl() ?>">
-                                        <?php echo $serviceKit['tiPartNumber']; ?>
+                            <!-- display is based on if primary part number is TI so not to confuse customer -->
+                            <?php if (!$serviceKitProduct->isTurboInternational()): ?>
+                                <!-- display only if part is not TI -->
+                                <td>
+                                    <a href="<?php echo $serviceKitProduct->getProductUrl(); ?>">
+                                        <?php echo $serviceKit['partNumber']?>
                                     </a>
-                                <?php endif; ?>
-                            </td>
+                                </td>
+                                <td>
+                                    <?php if($serviceKitTiProduct): ?>
+                                        <a href="<?php echo $serviceKitTiProduct->getProductUrl() ?>">
+                                            <?php echo $serviceKit['tiPartNumber']; ?>
+                                        </a>
+                                    <?php endif; ?>
+                                </td>
+                            <?php else: ?>
+                                <!-- Primary part is TI Part # -->
+                                <td>
+                                    <!-- do not display if primary part number is TI so not to confuse customer -->
+                                </td>
+                                <td>
+                                    <a href="<?php echo $serviceKitProduct->getProductUrl(); ?>">
+                                        <?php echo $serviceKit['partNumber']?>
+                                    </a>
+                                </td>
+                            <?php endif; ?>
 
                             <!-- Description -->
                             <td><?php echo $serviceKit['description']; ?></td>
