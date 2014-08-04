@@ -584,14 +584,18 @@ if ($serviceKitSkus) {
                     <?php switch($productAttributeSetName):
                               case "Turbo": ?>
                         <th><strong>OE Part #</strong></th>
+                        <th><strong>TI Part #</strong></th>
                         <th><strong>Manufacturer</strong></th>
                         <th><strong>Part Type</strong></th>
+                        <th><strong>Price</strong></th>
                         <?php break; ?>
                         
                         <?php case "Cartridge": ?>
                         <th><strong>Turbo OE Part #</strong></th>
+                        <th><strong>TI Part #</strong></th>
                         <th><strong>Manufacturer</strong></th>
                         <th><strong>Turbo Type</strong></th>
+                        <th><strong>Price</strong></th>
                         <?php break; ?>
                         
                         <?php default: ?>
@@ -646,8 +650,6 @@ if ($serviceKitSkus) {
                         </td>
                         
                         <!-- TI Part # -->
-                        <?php if ($productAttributeSetName != "Turbo"
-                               && $productAttributeSetName != "Cartridge"): ?>
                         <td>
                             <?php if (!empty($usage['tiSku'])): ?>
                                 <?php $usageTiProduct = $whereUsedCollection->getItemByColumnValue('sku', $usage['tiSku']); ?>
@@ -658,7 +660,6 @@ if ($serviceKitSkus) {
                                 <?php endif; ?>
                             <?php endif; ?>
                         </td>
-                        <?php endif; ?>
                         
                         <!-- Manufacturer -->
                         <td>
@@ -682,19 +683,18 @@ if ($serviceKitSkus) {
                         </td>
                         
                         <!-- Price -->
-                        <?php if ($productAttributeSetName != "Turbo"
-                               && $productAttributeSetName != "Cartridge"): ?>
-                               
-                            <td>
-                                <?php if (!empty($usage['tiSku']) && $usageTiProduct) {
-                                    echo Mage::helper('core')->currency($usageTiProduct->getFinalPrice());
-                                } elseif ($usageProduct->isTurboInternational()) {
-                                    echo Mage::helper('core')->currency($usageProduct->getFinalPrice());
-                                }
-                                ?>
-                            </td>
-                            
-                        <?php endif; ?>
+                        <td>
+                            <?php if (Mage::getSingleton('customer/session')->isLoggedIn()):
+                                        if ($usageProduct->isTurboInternational()) {
+                                            echo Mage::helper('core')->currency($usageProduct->getFinalPrice());
+                                        } elseif (!empty($usage['tiSku']) && $usageTiProduct) {
+                                            echo Mage::helper('core')->currency($usageTiProduct->getFinalPrice());
+                                        }
+                            ?>
+                            <?php      else: ?>
+                                        <a href="<?php echo $this->getUrl('customer/account/login'); ?>">Login for price</a>
+                            <?php endif; ?>
+                        </td>
                     </tr>
                 <?php endforeach; ?>
             </table>
