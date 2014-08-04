@@ -72,6 +72,31 @@ function usortByPartNumberPredicate($a, $b)
 }
 
 uasort($interchangeSkuProductMap, 'usortByPartNumberPredicate');
+
+// generate collection to be used in the foreach loop for Service Kits and Kit Matrix.
+// This is more efficient than separate query for each product
+$serviceKitSkus = array();
+$serviceKitCollection = array();
+
+//create array of skus to be used in a collection
+foreach ($serviceKits as $serviceKit):
+    // add the sku of the main part
+    $serviceKitSkus[] = $serviceKit['sku'];
+
+    // add the sku of the TI interchange part - if it exists
+    if (!empty($serviceKit['tiSku']))
+        $serviceKitSkus[] = $serviceKit['tiSku'];
+endforeach;
+
+// get collection of products and their TI interchanges
+if ($serviceKitSkus) {
+    $serviceKitCollection = Mage::getModel('catalog/product')->getCollection()
+        ->addAttributeToSelect('bill_of_materials')
+        ->addAttributeToSelect('manufacturer')
+        ->addAttributeToSelect('part_number')
+        ->addAttributeToSelect('price')
+        ->addFieldToFilter('sku', $serviceKitSkus);
+}
 ?>
 <script type="text/javascript">
     var optionsPrice = new Product.OptionsPrice(<?php echo $this->getJsonConfig() ?>);
@@ -324,34 +349,6 @@ uasort($interchangeSkuProductMap, 'usortByPartNumberPredicate');
                    || $productAttributeSetName == "Turbo"): ?>
             <div class="box-collateral">
                 <h2><?php echo $this->__('Service Kits') ?></h2>
-                <?php
-                    // generate collection to be used in the foreach loop.
-                    // This is more efficient than separate query for each product
-
-                    $serviceKitSkus = array();
-                    $serviceKitCollection = array();
-
-                    //create array of skus to be used in a collection
-                    foreach ($serviceKits as $serviceKit):
-                        // add the sku of the main part
-                        $serviceKitSkus[] = $serviceKit['sku'];
-
-                        // add the sku of the TI interchange part - if it exists
-                        if (!empty($serviceKit['tiSku']))
-                            $serviceKitSkus[] = $serviceKit['tiSku'];
-
-                    endforeach;
-
-                    // get collection of products and their TI interchanges
-                    if ($serviceKitSkus) {
-                        $serviceKitCollection = Mage::getModel('catalog/product')->getCollection()
-                            ->addAttributeToSelect('bill_of_materials')
-                            ->addAttributeToSelect('manufacturer')
-                            ->addAttributeToSelect('part_number')
-                            ->addAttributeToSelect('price')
-                            ->addFieldToFilter('sku', $serviceKitSkus);
-                    }
-                ?>
                 <table class="data-table" id="service-kits">
                     <tr>
                         <th><strong>OE Part #</strong></th>
@@ -704,33 +701,6 @@ uasort($interchangeSkuProductMap, 'usortByPartNumberPredicate');
 
         <!-- Kit Matrix -->
             <?php
-                // generate collection to be used in the foreach loop.
-                // This is more efficient than separate query for each product
-
-                $serviceKitSkus = array();
-                $serviceKitCollection = array();
-
-                //create array of skus to be used in a collection
-                foreach ($serviceKits as $serviceKit):
-                    // add the sku of the main part
-                    $serviceKitSkus[] = $serviceKit['sku'];
-
-                    // add the sku of the TI interchange part - if it exists
-                    if (!empty($serviceKit['tiSku']))
-                        $serviceKitSkus[] = $serviceKit['tiSku'];
-
-                endforeach;
-
-                // get collection of products and their TI interchanges
-                if ($serviceKitSkus) {
-                    $serviceKitCollection = Mage::getModel('catalog/product')->getCollection()
-                        ->addAttributeToSelect('bill_of_materials')
-                        ->addAttributeToSelect('manufacturer')
-                        ->addAttributeToSelect('part_number')
-                        ->addAttributeToSelect('price')
-                        ->addFieldToFilter('sku', $serviceKitSkus);
-                }
-
                 // order kits ascending by part number
 
                 // get all components for all kits into an array of arrays. 
