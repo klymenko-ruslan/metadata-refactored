@@ -580,9 +580,35 @@ uasort($interchangeSkuProductMap, 'usortByPartNumberPredicate');
                     
                 </tr>
 
+                <?php // generate collection to be used in the main foreach loop.
+                      // This is more efficient than separate query for each product
+
+                    $whereUsedSkus = array();
+                    $whereUsedCollection = array();
+
+                    //create array of skus to be used in a collection
+                    foreach ($whereUsed as $usage):
+                        // add the sku of the main whereUsed part
+                        $whereUsedSkus[] = $usage['sku'];
+
+                        // add the sku of the whereUsed TI interchange part - if it exists
+                        if (!empty($usage['tiSku']))
+                            $whereUsedSkus[] = $usage['tiSku'];
+
+                    endforeach;
+
+                    // get collection of whereUsed products and their TI interchanges
+                    if ($whereUsedSkus) {
+                        $whereUsedCollection = Mage::getModel('catalog/product')->getCollection()
+                            ->addAttributeToSelect('part_number')
+                            ->addAttributeToSelect('price')
+                            ->addFieldToFilter('sku', $whereUsedSkus);
+                    }
+                ?>
+
                 <?php foreach ($whereUsed as $usage): ?>
                     <?php
-                        $usageProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $usage['sku']);
+                        $usageProduct = $whereUsedCollection->getItemByColumnValue('sku', $usage['sku']);
                     ?>
 
                     <tr>
@@ -598,7 +624,7 @@ uasort($interchangeSkuProductMap, 'usortByPartNumberPredicate');
                                && $productAttributeSetName != "Cartridge"): ?>
                         <td>
                             <?php if (!empty($usage['tiSku'])): ?>
-                                <?php $usageTiProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $usage['tiSku']); ?>
+                                <?php $usageTiProduct = $whereUsedCollection->getItemByColumnValue('sku', $usage['tiSku']); ?>
                                 <?php if ($usageTiProduct): ?>
                                     <a href="<?php echo $usageTiProduct->getProductUrl() ?>">
                                         <?php echo $usage['tiPartNumber']; ?>
