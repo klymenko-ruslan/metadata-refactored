@@ -676,6 +676,33 @@ uasort($interchangeSkuProductMap, 'usortByPartNumberPredicate');
 
         <!-- Kit Matrix -->
             <?php
+                // generate collection to be used in the foreach loop.
+                // This is more efficient than separate query for each product
+
+                $serviceKitSkus = array();
+                $serviceKitCollection = array();
+
+                //create array of skus to be used in a collection
+                foreach ($serviceKits as $serviceKit):
+                    // add the sku of the main part
+                    $serviceKitSkus[] = $serviceKit['sku'];
+
+                    // add the sku of the TI interchange part - if it exists
+                    if (!empty($serviceKit['tiSku']))
+                        $serviceKitSkus[] = $serviceKit['tiSku'];
+
+                endforeach;
+
+                // get collection of products and their TI interchanges
+                if ($serviceKitSkus) {
+                    $serviceKitCollection = Mage::getModel('catalog/product')->getCollection()
+                        ->addAttributeToSelect('bill_of_materials')
+                        ->addAttributeToSelect('manufacturer')
+                        ->addAttributeToSelect('part_number')
+                        ->addAttributeToSelect('price')
+                        ->addFieldToFilter('sku', $serviceKitSkus);
+                }
+
                 // order kits ascending by part number
 
                 // get all components for all kits into an array of arrays. 
@@ -689,9 +716,10 @@ uasort($interchangeSkuProductMap, 'usortByPartNumberPredicate');
                 if (!empty($serviceKits)) {
 
                     foreach ($serviceKits as $serviceKit):
+
                         // define kit sku
                         $kitSku = $serviceKit['sku'];
-                        $KitMatrixProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $kitSku);
+                        $KitMatrixProduct = $serviceKitCollection->getItemByColumnValue('sku', $kitSku);
 
                         // use only TI kits
                         if ($KitMatrixProduct->isTurboInternational()) {
@@ -699,7 +727,7 @@ uasort($interchangeSkuProductMap, 'usortByPartNumberPredicate');
                         } elseif ($serviceKit["tiSku"]) {
                             // if main part is not TI but an interchangeable TI part exists then use it
                             $kitSku = $serviceKit["tiSku"];
-                            $KitMatrixProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $kitSku);
+                            $KitMatrixProduct = $serviceKitCollection->getItemByColumnValue('sku', $kitSku);
                         } else {
                             // if main part is not TI and no TI interchangeable exists then do not include in result set
                             continue;
