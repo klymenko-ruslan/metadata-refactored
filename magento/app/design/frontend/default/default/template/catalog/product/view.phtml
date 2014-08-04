@@ -625,6 +625,7 @@ if ($serviceKitSkus) {
                     // get collection of whereUsed products and their TI interchanges
                     if ($whereUsedSkus) {
                         $whereUsedCollection = Mage::getModel('catalog/product')->getCollection()
+                            ->addAttributeToSelect('manufacturer')
                             ->addAttributeToSelect('part_number')
                             ->addAttributeToSelect('price')
                             ->addFieldToFilter('sku', $whereUsedSkus);
