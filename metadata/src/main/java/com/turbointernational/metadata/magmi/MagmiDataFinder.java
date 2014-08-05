@@ -1,7 +1,6 @@
 
 package com.turbointernational.metadata.magmi;
 
-import com.google.common.collect.Lists;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.part.ProductImage;
 import com.turbointernational.metadata.util.dto.MagmiApplication;
@@ -11,7 +10,6 @@ import com.turbointernational.metadata.util.dto.MagmiProduct;
 import com.turbointernational.metadata.util.dto.MagmiServiceKit;
 import com.turbointernational.metadata.util.dto.MagmiTurbo;
 import com.turbointernational.metadata.util.dto.MagmiUsage;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -19,6 +17,10 @@ import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
 
 /**
@@ -29,7 +31,10 @@ import org.springframework.stereotype.Service;
 public class MagmiDataFinder {
     private static final Logger logger = Logger.getLogger(MagmiDataFinder.class.toString());
     
-    public static TreeMap<Long, MagmiProduct> findMagmiProducts(List<Part> parts) {
+    @Autowired(required=true)
+    JdbcTemplate db;
+    
+    public TreeMap<Long, MagmiProduct> findMagmiProducts(List<Part> parts) {
         long startTime = System.currentTimeMillis();
         
         // Build a product map from the parts
@@ -114,7 +119,7 @@ public class MagmiDataFinder {
         return productMap;
     }
     
-    public static List<ProductImage> findProductImages(Collection<Long> productIds) {
+    public List<ProductImage> findProductImages(Collection<Long> productIds) {
         return Part.entityManager().createQuery(
                   "SELECT DISTINCT pi\n"
                 + "FROM ProductImage pi\n"
@@ -124,55 +129,91 @@ public class MagmiDataFinder {
             .getResultList();
     }
     
-    static List<MagmiApplication> findMagmiApplications(Collection<Long> productIds) {
-        return Part.entityManager().createQuery(
-              "SELECT DISTINCT new com.turbointernational.metadata.util.dto.MagmiApplication("
-                + "  p.id AS sku,\n"
-                + "  CONCAT(cmake.name, '!!', COALESCE(cyear.name, 'not specified'), '!!', cmodel.name) AS finder,\n"
-                + "  CONCAT("
-                + "   cmake.name, '!!',"
-                + "   cmodel.name, '!!',"
-                + "   COALESCE(cyear.name, 'not specified'), '!!',"
-                + "   COALESCE(cengine.engineSize, ''), '!!',"
-                + "   COALESCE(cfuel.name, '')"
-                + "  ) AS detail\n"
-                + ")\n"
-                + "FROM Part p\n"
-                + "  LEFT JOIN p.turbos t\n"
-                + "  LEFT JOIN t.cars c\n"
-                + "  LEFT JOIN c.model cmodel\n"
-                + "  LEFT JOIN c.engine cengine\n"
-                + "  LEFT JOIN c.year cyear\n"
-                + "  LEFT JOIN cmodel.make cmake\n"
-                + "  LEFT JOIN cengine.fuelType cfuel\n"
-                + "WHERE\n"
-                + "  p.id IN (" + StringUtils.join(productIds, ',') + ")\n"
-                + "ORDER BY p.id", MagmiApplication.class)
-            .getResultList();
+    List<MagmiApplication> findMagmiApplications(Collection<Long> productIds) {
+        return db.query(
+            "SELECT DISTINCT\n"
+          + "  p.id AS sku,\n"
+          + "  CONCAT(cmake.name, '!!', COALESCE(cyear.name, 'not specified'), '!!', cmodel.name) AS finder,\n"
+          + "  CONCAT(\n"
+          + "    cmake.name, '!!',\n"
+          + "    cmodel.name, '!!',\n"
+          + "    COALESCE(cyear.name, 'not specified'), '!!',\n"
+          + "    COALESCE(cengine.engine_size, ''), '!!',\n"
+          + "    COALESCE(cfuel.name, '')\n"
+          + "  ) AS detail\n"
+          + "FROM part p\n"
+          + "  LEFT JOIN vpart_turbo vpt\n"
+          + "         ON vpt.part_id = p.id\n"
+
+          + "  LEFT JOIN turbo_car_model_engine_year tcmey\n"
+          + "         ON tcmey.part_id = vpt.turbo_id\n"
+
+          + "  LEFT JOIN car_model_engine_year c"
+          + "         ON c.id = tcmey.car_model_engine_year_id\n"
+
+          + "  LEFT JOIN car_model cmodel\n"
+          + "         ON cmodel.id = c.car_model_id\n"
+
+          + "  LEFT JOIN car_engine cengine\n"
+          + "         ON cengine.id = c.car_engine_id\n"
+
+          + "  LEFT JOIN car_year cyear\n"
+          + "         ON cyear.id = c.car_year_id"
+
+          + "  LEFT JOIN car_make cmake\n"
+          + "         ON cmake.id = cmodel.car_make_id\n"
+
+          + "  LEFT JOIN car_fuel_type cfuel\n"
+          + "         ON cfuel.id = cengine.car_fuel_type_id\n"
+
+          + "WHERE\n"
+          + "  p.id IN (" + StringUtils.join(productIds, ',') + ")\n"
+          + "ORDER BY p.id", new BeanPropertyRowMapper(MagmiApplication.class));
     }
-    
-    static List<MagmiTurbo> findMagmiTurbos(Collection<Long> productIds) {
-        return Part.entityManager().createQuery(
-              "SELECT DISTINCT new com.turbointernational.metadata.util.dto.MagmiTurbo("
+
+    List<MagmiTurbo> findMagmiTurbos(Collection<Long> productIds) {
+        return db.query(
+              "SELECT DISTINCT"
                 + "  p.id AS sku,\n"
-                + "  ptt.name AS part_turbo_type,\n"
-                + "  tt.name AS turbo_type,\n"
-                + "  tm.name AS turbo_model,\n"
-                + "  CONCAT(tman.name, '!!', tt.name, '!!', tm.name) AS finder\n"
-                + ")\n"
-                + "FROM Part p\n"
-                + "  LEFT JOIN p.turbos t\n"
-                + "  LEFT JOIN t.manufacturer tman\n"
-                + "  LEFT JOIN t.turboModel tm\n"
-                + "  LEFT JOIN tm.turboType tt\n"
-                + "  LEFT JOIN p.turboTypes ptt\n"
+                + "  p_tt.name AS part_turbo_type,\n"
+                + "  t_tt.name AS turbo_type,\n"
+                + "  t_tm.name AS turbo_model,\n"
+                + "  CONCAT(tman.name, '!!', t_tt.name, '!!', t_tm.name) AS finder\n"
+                  
+                  // The part and it's turbo type
+                + "FROM part p\n"
+                + "  LEFT JOIN part_turbo_type ptt\n"
+                + "         ON ptt.part_id = p.id\n"
+                  
+                + "  LEFT JOIN turbo_type p_tt"
+                + "         ON p_tt.id = ptt.turbo_type_id\n"
+                  
+                  // Associated turbos
+                + "  LEFT JOIN vpart_turbo vpt\n"
+                + "         ON vpt.part_id = p.id\n"
+                  
+                + "  LEFT JOIN turbo t\n"
+                + "         ON t.id = vpt.turbo_id\n"
+                  
+                + "  LEFT JOIN part tp\n" // Turbo part
+                + "         ON tp.id = t.id\n"
+                  
+                + "  LEFT JOIN manufacturer tman\n"
+                + "         ON tman.id = tp.manfr_id\n"
+                  
+                + "  LEFT JOIN turbo_model t_tm\n" // Turbo's model
+                + "         ON tm.id = t.turbo_model_id\n"
+                  
+                + "  LEFT JOIN turbo_type t_tt" // Turbo's turbo type
+                + "         ON t_tt.id = t_tm.turbo_type_id\n"
+                  
                 + "WHERE\n"
-                + "  p.id IN (" + StringUtils.join(productIds, ',') + ")", MagmiTurbo.class)
-            .getResultList();
+                + "  p.id IN (" + StringUtils.join(productIds, ',') + ")",
+            new BeanPropertyRowMapper(MagmiTurbo.class));
     }
-    
-    static List<MagmiServiceKit> findMagmiServiceKits(Collection<Long> productIds) {
-        List<Object[]> results = Part.entityManager().createNativeQuery(
+
+    List<MagmiServiceKit> findMagmiServiceKits(Collection<Long> productIds) {
+        return db.query(
             "SELECT DISTINCT\n"
             + "  p.id               AS sku,\n"
             + "  k.id               AS kitSku,\n"
@@ -188,29 +229,10 @@ public class MagmiDataFinder {
             + "  LEFT JOIN part            kti   ON kti.id      = iti.ti_part_id\n"
             + "WHERE p.id in (" + StringUtils.join(productIds, ',') + ")\n"
             + "GROUP BY p.id, k.id\n"
-            + "ORDER BY p.id, k.id, kti.id")
-            .getResultList();
-
-        // Create the objects
-        List<MagmiServiceKit> serviceKits = Lists.newLinkedList();
-        
-        for (Object[] row : results) {
-            MagmiServiceKit serviceKit = new MagmiServiceKit(
-                    ((BigInteger) row[0]).longValue(),
-                    ((BigInteger) row[1]).longValue(),
-                    (String) row[2],
-                    (String) row[3],
-                    row[4] == null ? null : ((BigInteger) row[4]).longValue(),
-                    row[5] == null ? null : (String) row[5]
-                );
-            
-            serviceKits.add(serviceKit);
-        }
-        
-        return serviceKits;
+            + "ORDER BY p.id, k.id, kti.id", new BeanPropertyRowMapper(MagmiServiceKit.class));
     }
     
-    static List<MagmiInterchange> findMagmiInterchanges(Collection<Long> productIds) {
+    List<MagmiInterchange> findMagmiInterchanges(Collection<Long> productIds) {
         return Part.entityManager().createQuery(
                 "SELECT DISTINCT NEW"
               + "  com.turbointernational.metadata.util.dto.MagmiInterchange("
@@ -229,9 +251,8 @@ public class MagmiDataFinder {
                 .getResultList();
     }
     
-    static List<MagmiUsage> findMagmiUsages(Collection<Long> productIds) {
-        List<Object[]> results = Part.entityManager()
-            .createNativeQuery(
+    List<MagmiUsage> findMagmiUsages(Collection<Long> productIds) {
+        return db.query(
                 "SELECT DISTINCT\n"
               + "  principal_id,\n"
               + "  sku,\n"
@@ -243,34 +264,11 @@ public class MagmiDataFinder {
               + "  turbo_type,\n"
               + "  turbo_part_number\n"
               + "FROM vwhere_used\n"
-              + "WHERE principal_id IN (" + StringUtils.join(productIds, ',') + ")")
-            .getResultList();
-        
-            
-
-        // Create the objects
-        List<MagmiUsage> usages = Lists.newLinkedList();
-        
-        for (Object[] row : results) {
-            MagmiUsage usage = new MagmiUsage(
-                    ((BigInteger) row[0]).longValue(),
-                    ((BigInteger) row[1]).longValue(),
-                    (String) row[2],
-                    (String) row[3],
-                    row[4] == null ? null : ((BigInteger) row[4]).longValue(),
-                    (String) row[5],
-                    (String) row[6],
-                    (String) row[7],
-                    (String) row[8]
-                );
-            
-            usages.add(usage);
-        }
-        
-        return usages;
+              + "WHERE principal_id IN (" + StringUtils.join(productIds, ',') + ")",
+            new BeanPropertyRowMapper(MagmiUsage.class));
     }
 
-    static List<MagmiBomItem> findMagmiBom(Collection<Long> productIds) {
+    List<MagmiBomItem> findMagmiBom(Collection<Long> productIds) {
         return Part.entityManager().createQuery(
                 "SELECT DISTINCT NEW com.turbointernational.metadata.util.dto.MagmiBomItem(\n"
               + "  b.parent.id as parent_sku,\n"
@@ -294,6 +292,5 @@ public class MagmiDataFinder {
               + "WHERE b.parent.id IN (" + StringUtils.join(productIds, ',') + ")", MagmiBomItem.class)
                 .getResultList();
     }
-    
     
 }
