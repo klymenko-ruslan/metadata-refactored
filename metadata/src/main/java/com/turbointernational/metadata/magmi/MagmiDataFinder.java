@@ -49,7 +49,7 @@ public class MagmiDataFinder {
         List<MagmiApplication> applications = findMagmiApplications(productIds);
         
         for (MagmiApplication application : applications) {
-            productMap.get(application.sku)
+            productMap.get(application.getSku())
                       .addApplication(application);
         }
         
@@ -87,7 +87,7 @@ public class MagmiDataFinder {
         List<MagmiUsage> usages = findMagmiUsages(productIds);
 
         for (MagmiUsage usage : usages) {
-            productMap.get(usage.principalId)
+            productMap.get(usage.getPrincipalId())
                     .addUsage(usage);
         }
 
@@ -107,7 +107,7 @@ public class MagmiDataFinder {
         List<MagmiServiceKit> serviceKits = findMagmiServiceKits(productIds);
         
         for (MagmiServiceKit sk : serviceKits) {
-            productMap.get(sk.sku)
+            productMap.get(sk.getSku())
                     .addServiceKit(sk);
         }
         
@@ -198,7 +198,7 @@ public class MagmiDataFinder {
                 + "  LEFT JOIN part tp\n" // Turbo part
                 + "         ON tp.id = t.id\n"
                   
-                + "  LEFT JOIN manufacturer tman\n"
+                + "  LEFT JOIN manfr tman\n"
                 + "         ON tman.id = tp.manfr_id\n"
                   
                 + "  LEFT JOIN turbo_model t_tm\n" // Turbo's model
