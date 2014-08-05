@@ -643,14 +643,24 @@ if ($serviceKitSkus) {
 
                     <tr>
                         <!-- OE part # -->
-                        <td>
-                            <a href="<?php echo $usageProduct->getProductUrl(); ?>">
-                                <?php echo $usage['partNumber']?>
-                            </a>
-                        </td>
-                        
+                        <!-- display is based on if primary part number is TI so not to confuse customer -->
+                        <?php if (!$usageProduct->isTurboInternational()): ?>
+                            <!-- display only if part is not TI -->
+                            <td>
+                                <a href="<?php echo $usageProduct->getProductUrl(); ?>">
+                                    <?php echo $usage['partNumber']?>
+                                </a>
+                            </td>
+                        <?php else: ?>
+                            <td>
+                                <!-- nothing to display because primary part is TI -->
+                            </td>
+                        <?php endif; ?>
+
                         <!-- TI Part # -->
                         <td>
+                        <?php if (!$usageProduct->isTurboInternational()): ?>
+                            <!-- display interchange TI parts of primary part -->
                             <?php if (!empty($usage['tiSku'])): ?>
                                 <?php $usageTiProduct = $whereUsedCollection->getItemByColumnValue('sku', $usage['tiSku']); ?>
                                 <?php if ($usageTiProduct): ?>
@@ -659,6 +669,12 @@ if ($serviceKitSkus) {
                                     </a>
                                 <?php endif; ?>
                             <?php endif; ?>
+                        <?php else: ?>
+                            <!-- display only if primary part is TI manfr -->
+                            <a href="<?php echo $usageProduct->getProductUrl(); ?>">
+                                <?php echo $usage['partNumber']?>
+                            </a>
+                        <?php endif; ?>
                         </td>
                         
                         <!-- Manufacturer -->
