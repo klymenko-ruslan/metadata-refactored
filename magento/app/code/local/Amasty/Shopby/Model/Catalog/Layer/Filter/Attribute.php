@@ -241,6 +241,11 @@ class Amasty_Shopby_Model_Catalog_Layer_Filter_Attribute extends Mage_Catalog_Mo
             return null;
         }
 
+        // check to see if sql is from a search result instead of a layered navigation then skip remaining function if true
+        if (strpos($collection->getSelect()->__toString(), "search_result")) {
+            return null;
+        }
+
         // get attribute id for manufacturer.  current value = 81
         $eavAttribute = new Mage_Eav_Model_Mysql4_Entity_Attribute();
         $attributeId = $eavAttribute->getIdByCode('catalog_product', 'manufacturer');
