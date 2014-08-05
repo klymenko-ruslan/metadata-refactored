@@ -172,8 +172,24 @@ $_helper = $this->helper('catalog/output');
                     <?php if ($i++ % $_columnCount == 0): ?>
                     <?php endif ?>
                     <tr>
-                        <td><a href="<?php echo $_product->getProductUrl() ?>"><?php echo $_product->getPartNumber() ?></a></td>
-                        <td><?php $tiPartSkus = explode(",", $_product->getTiPartSku()) ?>
+                        <!-- OE part # -->
+                        <!-- display is based on if primary part number is TI so not to confuse customer -->
+                        <?php if (!$_product->isTurboInternational()): ?>
+                            <!-- display only if part is not TI -->
+                            <td>
+                                <a href="<?php echo $_product->getProductUrl() ?>"><?php echo $_product->getPartNumber() ?></a>
+                            </td>
+                        <?php else: ?>
+                            <td>
+                                <!-- nothing to display because primary part is TI -->
+                            </td>
+                        <?php endif; ?>
+
+                        <!-- TI part # -->
+                        <td>
+                        <?php if (!$_product->isTurboInternational()): ?>
+                            <!-- display interchange TI parts of primary part -->
+                            <?php $tiPartSkus = explode(",", $_product->getTiPartSku()) ?>
                             <?php $firstTiProduct = null; ?>
                             <?php foreach ($tiPartSkus as $idx => $tiPartSku): ?>
                                 <?php
@@ -195,7 +211,13 @@ $_helper = $this->helper('catalog/output');
 
                                 <a href="<?php echo $tiPart->getProductUrl() ?>"><?php echo $tiPart->getPartNumber(); ?></a>
                             <?php endforeach ?>
+                        <?php else: ?>
+                            <!-- display only if primary part is TI manfr -->
+                            <a href="<?php echo $_product->getProductUrl() ?>"><?php echo $_product->getPartNumber() ?></a>
+                        <?php endif; ?>
                         </td>
+
+                        <!-- Part Type -->
                         <td><?php echo $_product->getAttributeText('part_type') ?></td>
                         <td><a href="<?php echo $_product->getProductUrl() ?>"
                                title="<?php echo $this->stripTags($_product->getName(), null, true) ?>"><?php echo $_product->getName() ?></a>
