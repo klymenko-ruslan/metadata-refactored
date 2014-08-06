@@ -104,20 +104,20 @@ public class MagmiProduct {
 
     public final void addTurbo(MagmiTurbo magmiTurbo) {
 
-        if (StringUtils.isNotEmpty(magmiTurbo.turboType)) {
-            turboType.add(magmiTurbo.turboType);
+        if (StringUtils.isNotEmpty(magmiTurbo.getTurboType())) {
+            turboType.add(magmiTurbo.getTurboType());
         }
 
-        if (StringUtils.isNotEmpty(magmiTurbo.partTurboType)) {
-            turboType.add(magmiTurbo.partTurboType);
+        if (StringUtils.isNotEmpty(magmiTurbo.getPartTurboType())) {
+            turboType.add(magmiTurbo.getPartTurboType());
         }
 
-        if (StringUtils.isNotEmpty(magmiTurbo.turboModel)) {
-            turboModel.add(magmiTurbo.turboModel);
+        if (StringUtils.isNotEmpty(magmiTurbo.getTurboModel())) {
+            turboModel.add(magmiTurbo.getTurboModel());
         }
 
-        if (StringUtils.isNotEmpty(magmiTurbo.finder)) {
-            finderTurbo.add(magmiTurbo.finder);
+        if (StringUtils.isNotEmpty(magmiTurbo.getFinder())) {
+            finderTurbo.add(magmiTurbo.getFinder());
         }
     }
     

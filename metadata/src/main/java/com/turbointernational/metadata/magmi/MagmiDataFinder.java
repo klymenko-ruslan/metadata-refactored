@@ -69,7 +69,7 @@ public class MagmiDataFinder {
         List<MagmiTurbo> turbos = findMagmiTurbos(productIds);
         
         for (MagmiTurbo magmiTurbo : turbos) {
-            productMap.get(magmiTurbo.sku)
+            productMap.get(magmiTurbo.getSku())
                     .addTurbo(magmiTurbo);
         }
         
@@ -185,7 +185,7 @@ public class MagmiDataFinder {
                 + "  LEFT JOIN part_turbo_type ptt\n"
                 + "         ON ptt.part_id = p.id\n"
                   
-                + "  LEFT JOIN turbo_type p_tt"
+                + "  LEFT JOIN turbo_type p_tt\n"
                 + "         ON p_tt.id = ptt.turbo_type_id\n"
                   
                   // Associated turbos
@@ -193,18 +193,19 @@ public class MagmiDataFinder {
                 + "         ON vpt.part_id = p.id\n"
                   
                 + "  LEFT JOIN turbo t\n"
-                + "         ON t.id = vpt.turbo_id\n"
-                  
-                + "  LEFT JOIN part tp\n" // Turbo part
-                + "         ON tp.id = t.id\n"
+                + "         ON t.part_id = vpt.turbo_id\n"
+                  // Turbo part
+                + "  LEFT JOIN part tp\n"
+                + "         ON tp.id = t.part_id\n"
                   
                 + "  LEFT JOIN manfr tman\n"
                 + "         ON tman.id = tp.manfr_id\n"
+                  // Turbo's model
+                + "  LEFT JOIN turbo_model t_tm\n"
+                + "         ON t_tm.id = t.turbo_model_id\n"
                   
-                + "  LEFT JOIN turbo_model t_tm\n" // Turbo's model
-                + "         ON tm.id = t.turbo_model_id\n"
-                  
-                + "  LEFT JOIN turbo_type t_tt" // Turbo's turbo type
+                  // Turbo's turbo type
+                + "  LEFT JOIN turbo_type t_tt\n"
                 + "         ON t_tt.id = t_tm.turbo_type_id\n"
                   
                 + "WHERE\n"
