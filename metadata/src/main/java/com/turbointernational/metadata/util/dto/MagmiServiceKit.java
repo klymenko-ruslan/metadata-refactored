@@ -1,10 +1,6 @@
 
 package com.turbointernational.metadata.util.dto;
 
-/**
- * Used in a JPA "NEW" query.
- * @author jrodriguez
- */
 public class MagmiServiceKit {
     
     private  Long sku;
