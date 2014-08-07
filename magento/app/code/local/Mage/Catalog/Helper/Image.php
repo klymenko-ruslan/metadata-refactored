@@ -349,7 +349,14 @@ class Mage_Catalog_Helper_Image extends Mage_Core_Helper_Abstract
             if ($this->getImageFile()) {
                 $model->setBaseFile($this->getImageFile());
             } else {
-                $model->setBaseFile($this->getProduct()->getData($model->getDestinationSubdir()));
+                // if part type is in the passed product then use it otherwise get it
+                if ($this->getProduct()->getPartType()) {
+                    $productPartType = $this->getProduct()->getPartType();
+                } else {
+                    $productPartType = Mage::getModel('catalog/product')->load($this->getProduct()->getId())->getPartType();
+                }
+
+                $model->setBaseFile($this->getProduct()->getData($model->getDestinationSubdir()), $productPartType);
             }
 
             if ($model->isCached()) {

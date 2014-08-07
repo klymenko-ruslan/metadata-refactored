@@ -260,7 +260,7 @@ class Mage_Catalog_Model_Product_Image extends Mage_Core_Model_Abstract
      * @param string $file
      * @return Mage_Catalog_Model_Product_Image
      */
-    public function setBaseFile($file)
+    public function setBaseFile($file, $partType=Null)
     {
         $this->_isBaseFilePlaceholder = false;
 
@@ -278,10 +278,23 @@ class Mage_Catalog_Model_Product_Image extends Mage_Core_Model_Abstract
             }
         }
         if (!$file) {
+            // check if part type placeholder file exists
+            if ($partType) {
+                $skinPartTypeBaseDir     = Mage::getDesign()->getSkinBaseDir();
+                $skinPartTypePlaceholder = "/images/catalog/product/placeholder/{$partType}.jpg";
+                $PartTypefile = $skinPartTypePlaceholder;
+            }
+
             // check if placeholder defined in config
             $isConfigPlaceholder = Mage::getStoreConfig("catalog/placeholder/{$this->getDestinationSubdir()}_placeholder");
             $configPlaceholder   = '/placeholder/' . $isConfigPlaceholder;
-            if ($isConfigPlaceholder && $this->_fileExists($baseDir . $configPlaceholder)) {
+
+            // Use part type placeholder image if it exists
+            if ($partType && file_exists($skinPartTypeBaseDir . $PartTypefile)) {
+                $baseDir = $skinPartTypeBaseDir;
+                $file = $PartTypefile;
+            }
+            elseif ($isConfigPlaceholder && $this->_fileExists($baseDir . $configPlaceholder)) {
                 $file = $configPlaceholder;
             }
             else {
