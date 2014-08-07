@@ -72,6 +72,31 @@ function usortByPartNumberPredicate($a, $b)
 }
 
 uasort($interchangeSkuProductMap, 'usortByPartNumberPredicate');
+
+// generate collection to be used in the foreach loop for Service Kits and Kit Matrix.
+// This is more efficient than separate query for each product
+$serviceKitSkus = array();
+$serviceKitCollection = array();
+
+//create array of skus to be used in a collection
+foreach ($serviceKits as $serviceKit):
+    // add the sku of the main part
+    $serviceKitSkus[] = $serviceKit['sku'];
+
+    // add the sku of the TI interchange part - if it exists
+    if (!empty($serviceKit['tiSku']))
+        $serviceKitSkus[] = $serviceKit['tiSku'];
+endforeach;
+
+// get collection of products and their TI interchanges
+if ($serviceKitSkus) {
+    $serviceKitCollection = Mage::getModel('catalog/product')->getCollection()
+        ->addAttributeToSelect('bill_of_materials')
+        ->addAttributeToSelect('manufacturer')
+        ->addAttributeToSelect('part_number')
+        ->addAttributeToSelect('price')
+        ->addFieldToFilter('sku', $serviceKitSkus);
+}
 ?>
 <script type="text/javascript">
     var optionsPrice = new Product.OptionsPrice(<?php echo $this->getJsonConfig() ?>);
@@ -137,9 +162,9 @@ uasort($interchangeSkuProductMap, 'usortByPartNumberPredicate');
 
         <div class="clearer"></div>
 
-        <?php if ($_product->isSaleable() && $this->hasOptions()): ?>
-            <?php echo $this->getChildChildHtml('container2', '', true, true) ?>
-        <?php endif; ?>
+<!--        --><?php //if ($_product->isSaleable() && $this->hasOptions()): ?>
+<!--            --><?php //echo $this->getChildChildHtml('container2', '', true, true) ?>
+<!--        --><?php //endif; ?>
 
     </form>
     <script type="text/javascript">
@@ -320,6 +345,7 @@ uasort($interchangeSkuProductMap, 'usortByPartNumberPredicate');
             <?php endswitch ?>
             
             <?php if ($productAttributeSetName == "Cartridge"
+                   || $productAttributeSetName == "Kit"
                    || $productAttributeSetName == "Turbo"): ?>
             <div class="box-collateral">
                 <h2><?php echo $this->__('Service Kits') ?></h2>
@@ -332,45 +358,62 @@ uasort($interchangeSkuProductMap, 'usortByPartNumberPredicate');
                     </tr>
                     <?php foreach ($serviceKits as $serviceKit):
 
-                        $serviceKitProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $serviceKit['sku']);
+                        $serviceKitProduct = $serviceKitCollection->getItemByColumnValue('sku', $serviceKit['sku']);
 
                         // Load the TI product
                         $serviceKitTiProduct = null;
 
                         if (!empty($serviceKit['tiSku'])) {
-                            $serviceKitTiProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $serviceKit['tiSku']);
+                            $serviceKitTiProduct = $serviceKitCollection->getItemByColumnValue('sku', $serviceKit['tiSku']);
                         }
                         ?>
 
                         <tr>
                             <!-- OE part # -->
-                            <td>
-                                <a href="<?php echo $serviceKitProduct->getProductUrl(); ?>">
-                                    <?php echo $serviceKit['partNumber']?>
-                                </a>
-                            </td>
-
-                            <!-- TI Part # -->
-                            <td>
-                                <?php if($serviceKitTiProduct): ?>
-                                    <a href="<?php echo $serviceKitTiProduct->getProductUrl() ?>">
-                                        <?php echo $serviceKit['tiPartNumber']; ?>
+                            <!-- display is based on if primary part number is TI so not to confuse customer -->
+                            <?php if (!$serviceKitProduct->isTurboInternational()): ?>
+                                <!-- display only if part is not TI -->
+                                <td>
+                                    <a href="<?php echo $serviceKitProduct->getProductUrl(); ?>">
+                                        <?php echo $serviceKit['partNumber']?>
                                     </a>
-                                <?php endif; ?>
-                            </td>
+                                </td>
+                                <td>
+                                    <?php if($serviceKitTiProduct): ?>
+                                        <a href="<?php echo $serviceKitTiProduct->getProductUrl() ?>">
+                                            <?php echo $serviceKit['tiPartNumber']; ?>
+                                        </a>
+                                    <?php endif; ?>
+                                </td>
+                            <?php else: ?>
+                                <!-- Primary part is TI Part # -->
+                                <td>
+                                    <!-- do not display if primary part number is TI so not to confuse customer -->
+                                </td>
+                                <td>
+                                    <a href="<?php echo $serviceKitProduct->getProductUrl(); ?>">
+                                        <?php echo $serviceKit['partNumber']?>
+                                    </a>
+                                </td>
+                            <?php endif; ?>
 
                             <!-- Description -->
                             <td><?php echo $serviceKit['description']; ?></td>
 
                             <!-- Price -->
                             <td>
-                                <?php if ($serviceKitTiProduct) {
-                                    echo Mage::helper('core')->currency($serviceKitTiProduct->getFinalPrice());
-                                } else {
-                                    echo Mage::helper('core')->currency($serviceKitProduct->getFinalPrice());
-                                }
+                                <?php if (Mage::getSingleton('customer/session')->isLoggedIn()):
+                                            if ($serviceKitProduct->isTurboInternational()) {
+                                                echo Mage::helper('core')->currency($serviceKitProduct->getFinalPrice());
+                                            } elseif ($serviceKitTiProduct) {
+                                                echo Mage::helper('core')->currency($serviceKitTiProduct->getFinalPrice());
+                                            }
                                 ?>
+                                <?php      else: ?>
+                                            <a href="<?php echo $this->getUrl('customer/account/login'); ?>">Login for price</a>
+                                <?php endif; ?>
                             </td>
+                            
                         </tr>
                     <?php endforeach; ?>
                 </table>
@@ -412,8 +455,10 @@ uasort($interchangeSkuProductMap, 'usortByPartNumberPredicate');
             <table class="data-table" id="bill-of-materials">
                 <tr>
                     <th><strong>Part Type</strong></th>
-                    <th><strong>OE Part #</strong></th>
-                    <th><strong>TI Part #</strong></th>
+                    <th><strong>Part #</strong></th>
+                    <?php //don't show column if part manfr is TI
+                        if (!$_product->isTurboInternational()): ?><th><strong>TI Part #</strong></th><?php endif; ?>
+                    <th><strong>Interch Part #</strong></th>
                     <th><strong>Name</strong></th>
                     <th><strong>Qty Per Set</strong></th>
                     <th><strong>Price</strong></th>
@@ -428,35 +473,56 @@ uasort($interchangeSkuProductMap, 'usortByPartNumberPredicate');
                     <tr>
                         <td><?php echo $bomItemProduct->getAttributeText('part_type'); ?></td>
                         <td><?php echo '<a href="' . $bomItemProduct->getProductUrl() . '">' . $bomItemProduct->getPartNumber() . '</a>'; ?></td>
-                        <td><?php
-                            foreach ($bomItem['ti_part_sku'] as $idx => $tiPartSku) {
-                                
-                                // Get the interchange product
-                                if ($tiPartSku == $bomItem['sku']) {
-                                    $bomItemInterchangeProduct = $bomItemProduct; // Same as the bom item
-//                                } elseif ($bomItemTiProduct && $bomItemTiProduct->getSku() == $tiPartSku) {
-//                                    $bomItemInterchangeProduct = $bomItemProduct; // Same as the bom item TI product
-                                } else {
-                                    $bomItemInterchangeProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $tiPartSku);
-                                }
-                                
-                                // Skip invalid products
-                                if (!$bomItemInterchangeProduct) {
-                                    continue;
-                                }
-                                
-                                // Use the first TI product for pricing
-                                if (!$bomItemTiProduct) {
-                                    $bomItemTiProduct = $bomItemInterchangeProduct;
-                                }
-                                
-                                echo '<a href="' . $bomItemInterchangeProduct->getProductUrl() . '">' . $bomItemInterchangeProduct->getPartNumber() . '</a>';
+                        <?php 
+                        
+                        // don't display if primary part manfr is TI
+                        if (!$_product->isTurboInternational()): ?>
+                            <td><?php
 
-                                // Add commas between items
-                                if ($idx+1 < count($bomItem['ti_part_sku'])) {
-                                    echo ", ";
-                                }
-                            }?>
+                                //Get TI first part number
+                                foreach ($bomItem['ti_part_sku'] as $idx => $tiPartSku) {
+
+                                    //get product object from sku
+                                    $bomItemInterchangeTiProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $tiPartSku);
+                                    
+                                    // display product info
+                                    if ($bomItemInterchangeTiProduct) {
+                                        echo '<a href="' . $bomItemInterchangeTiProduct->getProductUrl() . '">' . $bomItemInterchangeTiProduct->getPartNumber() . '</a>';
+
+                                        // Use the first TI product for pricing
+                                        $bomItemTiProduct = $bomItemInterchangeTiProduct;
+                                        
+                                        // exit loop after first product
+                                        break;
+                                    }
+                                }?>
+                            </td>
+                        <?php endif; ?>
+                        <td><?php // Interchange Products
+
+                            // get array of interchange sku's for current bom item
+                            $bomItemInterchangeSkuArray = $bomItemProduct->getInterchanges() ? explode(',', $bomItemProduct->getInterchanges()) : array();
+
+                            if (count($bomItemInterchangeSkuArray) > 0) {
+                            
+                                // get collection of interchange products of current bom item
+                                $bomItemInterchangeCollection = Mage::getModel('catalog/product')->getCollection()
+                                    ->addAttributeToSelect('part_number')
+                                    ->setOrder('part_number', 'ASC')
+                                    ->addFieldToFilter('sku', $bomItemInterchangeSkuArray);
+
+                                $bomItemInterchangeProductList = array();
+
+                                // create array of interchangeable items
+                                foreach ($bomItemInterchangeCollection as $idx => $bomItemInterchangeProduct):
+                                        $bomItemInterchangeProductList[] = '<a href="' . $bomItemInterchangeProduct->getProductUrl() . '">' . $bomItemInterchangeProduct->getPartNumber() . '</a>';
+                                endforeach;
+                                
+                                // display list as comma-separated
+                                echo implode(", ", $bomItemInterchangeProductList);
+                            }
+
+                            ?>
                         </td>
                         <td>
                             <?php if ($bomItemProduct->getId()): ?>
@@ -518,14 +584,18 @@ uasort($interchangeSkuProductMap, 'usortByPartNumberPredicate');
                     <?php switch($productAttributeSetName):
                               case "Turbo": ?>
                         <th><strong>OE Part #</strong></th>
+                        <th><strong>TI Part #</strong></th>
                         <th><strong>Manufacturer</strong></th>
                         <th><strong>Part Type</strong></th>
+                        <th><strong>Price</strong></th>
                         <?php break; ?>
                         
                         <?php case "Cartridge": ?>
                         <th><strong>Turbo OE Part #</strong></th>
+                        <th><strong>TI Part #</strong></th>
                         <th><strong>Manufacturer</strong></th>
                         <th><strong>Turbo Type</strong></th>
+                        <th><strong>Price</strong></th>
                         <?php break; ?>
                         
                         <?php default: ?>
@@ -539,33 +609,73 @@ uasort($interchangeSkuProductMap, 'usortByPartNumberPredicate');
                     
                 </tr>
 
+                <?php // generate collection to be used in the main foreach loop.
+                      // This is more efficient than separate query for each product
+
+                    $whereUsedSkus = array();
+                    $whereUsedCollection = array();
+
+                    //create array of skus to be used in a collection
+                    foreach ($whereUsed as $usage):
+                        // add the sku of the main whereUsed part
+                        $whereUsedSkus[] = $usage['sku'];
+
+                        // add the sku of the whereUsed TI interchange part - if it exists
+                        if (!empty($usage['tiSku']))
+                            $whereUsedSkus[] = $usage['tiSku'];
+
+                    endforeach;
+
+                    // get collection of whereUsed products and their TI interchanges
+                    if ($whereUsedSkus) {
+                        $whereUsedCollection = Mage::getModel('catalog/product')->getCollection()
+                            ->addAttributeToSelect('manufacturer')
+                            ->addAttributeToSelect('part_number')
+                            ->addAttributeToSelect('price')
+                            ->addFieldToFilter('sku', $whereUsedSkus);
+                    }
+                ?>
+
                 <?php foreach ($whereUsed as $usage): ?>
                     <?php
-                        $usageProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $usage['sku']);
+                        $usageProduct = $whereUsedCollection->getItemByColumnValue('sku', $usage['sku']);
                     ?>
 
                     <tr>
                         <!-- OE part # -->
-                        <td>
-                            <a href="<?php echo $usageProduct->getProductUrl(); ?>">
-                                <?php echo $usage['partNumber']?>
-                            </a>
-                        </td>
-                        
+                        <!-- display is based on if primary part number is TI so not to confuse customer -->
+                        <?php if (!$usageProduct->isTurboInternational()): ?>
+                            <!-- display only if part is not TI -->
+                            <td>
+                                <a href="<?php echo $usageProduct->getProductUrl(); ?>">
+                                    <?php echo $usage['partNumber']?>
+                                </a>
+                            </td>
+                        <?php else: ?>
+                            <td>
+                                <!-- nothing to display because primary part is TI -->
+                            </td>
+                        <?php endif; ?>
+
                         <!-- TI Part # -->
-                        <?php if ($productAttributeSetName != "Turbo"
-                               && $productAttributeSetName != "Cartridge"): ?>
                         <td>
+                        <?php if (!$usageProduct->isTurboInternational()): ?>
+                            <!-- display interchange TI parts of primary part -->
                             <?php if (!empty($usage['tiSku'])): ?>
-                                <?php $usageTiProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $usage['tiSku']); ?>
+                                <?php $usageTiProduct = $whereUsedCollection->getItemByColumnValue('sku', $usage['tiSku']); ?>
                                 <?php if ($usageTiProduct): ?>
                                     <a href="<?php echo $usageTiProduct->getProductUrl() ?>">
                                         <?php echo $usage['tiPartNumber']; ?>
                                     </a>
                                 <?php endif; ?>
                             <?php endif; ?>
-                        </td>
+                        <?php else: ?>
+                            <!-- display only if primary part is TI manfr -->
+                            <a href="<?php echo $usageProduct->getProductUrl(); ?>">
+                                <?php echo $usage['partNumber']?>
+                            </a>
                         <?php endif; ?>
+                        </td>
                         
                         <!-- Manufacturer -->
                         <td>
@@ -589,25 +699,24 @@ uasort($interchangeSkuProductMap, 'usortByPartNumberPredicate');
                         </td>
                         
                         <!-- Price -->
-                        <?php if ($productAttributeSetName != "Turbo"
-                               && $productAttributeSetName != "Cartridge"): ?>
-                               
-                            <td>
-                                <?php if (!empty($usage['tiSku']) && $usageTiProduct) {
-                                    echo Mage::helper('core')->currency($usageTiProduct->getFinalPrice());
-                                } elseif ($usageProduct->isTurboInternational()) {
-                                    echo Mage::helper('core')->currency($usageProduct->getFinalPrice());
-                                }
-                                ?>
-                            </td>
-                            
-                        <?php endif; ?>
+                        <td>
+                            <?php if (Mage::getSingleton('customer/session')->isLoggedIn()):
+                                        if ($usageProduct->isTurboInternational()) {
+                                            echo Mage::helper('core')->currency($usageProduct->getFinalPrice());
+                                        } elseif (!empty($usage['tiSku']) && $usageTiProduct) {
+                                            echo Mage::helper('core')->currency($usageTiProduct->getFinalPrice());
+                                        }
+                            ?>
+                            <?php      else: ?>
+                                        <a href="<?php echo $this->getUrl('customer/account/login'); ?>">Login for price</a>
+                            <?php endif; ?>
+                        </td>
                     </tr>
                 <?php endforeach; ?>
             </table>
         </div>
 
-        <!-- Kit Matrix Testing -->
+        <!-- Kit Matrix -->
             <?php
                 // order kits ascending by part number
 
@@ -622,12 +731,25 @@ uasort($interchangeSkuProductMap, 'usortByPartNumberPredicate');
                 if (!empty($serviceKits)) {
 
                     foreach ($serviceKits as $serviceKit):
+
                         // define kit sku
                         $kitSku = $serviceKit['sku'];
-                        $allKits[] = $kitSku;
+                        $KitMatrixProduct = $serviceKitCollection->getItemByColumnValue('sku', $kitSku);
 
+                        // use only TI kits
+                        if ($KitMatrixProduct->isTurboInternational()) {
+                            // nothing needs to be changed
+                        } elseif ($serviceKit["tiSku"]) {
+                            // if main part is not TI but an interchangeable TI part exists then use it
+                            $kitSku = $serviceKit["tiSku"];
+                            $KitMatrixProduct = $serviceKitCollection->getItemByColumnValue('sku', $kitSku);
+                        } else {
+                            // if main part is not TI and no TI interchangeable exists then do not include in result set
+                            continue;
+                        }
+
+                        $allKits[] = $kitSku;
                         // Get the Bill of Materials
-                        $KitMatrixProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $kitSku);
                         $kitMatrixBillOfMaterials = json_decode($KitMatrixProduct->getBillOfMaterials(), true);
 
                         // build array of arrays
@@ -702,9 +824,9 @@ uasort($interchangeSkuProductMap, 'usortByPartNumberPredicate');
                                     </td>
                         <?php
                                 // remaining table cells are dynamic: one for each kit column qty
-                                foreach ($allUniqueKits as $kit):
+                                foreach ($kitCollection as $kit):
                                     // see if qty exists for component in kit bom
-                                    $componentKitQtyValue = $componentKitQty[$component->getSku()][$kit];
+                                    $componentKitQtyValue = $componentKitQty[$component->getSku()][$kit->getSku()];
                                     echo "<td>";
                                     echo $componentKitQtyValue;
                                     echo "</td>";
