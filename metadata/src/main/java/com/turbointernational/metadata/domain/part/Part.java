@@ -167,12 +167,6 @@ public class Part implements Comparable<Part> {
     @OrderBy("id")
     private Set<BOMAncestor> bomAncestors = new LinkedHashSet<BOMAncestor>();
     
-    @OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
-    @JoinTable(name="vpart_turbo",
-        joinColumns=@JoinColumn(name="part_id", insertable = false, updatable = false),
-        inverseJoinColumns=@JoinColumn(name="turbo_id", insertable = false, updatable = false))
-    private Set<Turbo> turbos = new TreeSet<Turbo>();
-    
     @OneToMany(cascade = CascadeType.REFRESH, mappedBy = "part", fetch=FetchType.LAZY)
     private Set<ProductImage> productImages = new TreeSet<ProductImage>();
     
@@ -264,10 +258,6 @@ public class Part implements Comparable<Part> {
     
     public Set<TurboType> getTurboTypes() {
         return turboTypes;
-    }
-    
-    public Set<Turbo> getTurbos() {
-        return turbos;
     }
 
     public Set<ProductImage> getProductImages() {

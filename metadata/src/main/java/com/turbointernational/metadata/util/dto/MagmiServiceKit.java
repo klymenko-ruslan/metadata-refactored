@@ -1,30 +1,101 @@
 
 package com.turbointernational.metadata.util.dto;
 
-/**
- * Used in a JPA "NEW" query.
- * @author jrodriguez
- */
 public class MagmiServiceKit {
     
-    public final  Long sku;
+    private  Long sku;
     
-    public final  Long kitSku;
+    private  Long kitSku;
     
-    public final  String kitPartNumber;
+    private  String kitPartNumber;
     
-    public final  String description;
+    private  String description;
     
-    public final  Long tiKitSku;
+    private  Long tiKitSku;
     
-    public final  String tiKitPartNumber;
+    private  String tiKitPartNumber;
 
-    public MagmiServiceKit(Long sku, Long kitSku, String kitPartNumber, String description, Long tiKitSku, String tiKitPartNumber) {
+    /**
+     * @return the sku
+     */
+    public Long getSku() {
+        return sku;
+    }
+
+    /**
+     * @param sku the sku to set
+     */
+    public void setSku(Long sku) {
         this.sku = sku;
+    }
+
+    /**
+     * @return the kitSku
+     */
+    public Long getKitSku() {
+        return kitSku;
+    }
+
+    /**
+     * @param kitSku the kitSku to set
+     */
+    public void setKitSku(Long kitSku) {
         this.kitSku = kitSku;
+    }
+
+    /**
+     * @return the kitPartNumber
+     */
+    public String getKitPartNumber() {
+        return kitPartNumber;
+    }
+
+    /**
+     * @param kitPartNumber the kitPartNumber to set
+     */
+    public void setKitPartNumber(String kitPartNumber) {
         this.kitPartNumber = kitPartNumber;
+    }
+
+    /**
+     * @return the description
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * @param description the description to set
+     */
+    public void setDescription(String description) {
         this.description = description;
+    }
+
+    /**
+     * @return the tiKitSku
+     */
+    public Long getTiKitSku() {
+        return tiKitSku;
+    }
+
+    /**
+     * @param tiKitSku the tiKitSku to set
+     */
+    public void setTiKitSku(Long tiKitSku) {
         this.tiKitSku = tiKitSku;
+    }
+
+    /**
+     * @return the tiKitPartNumber
+     */
+    public String getTiKitPartNumber() {
+        return tiKitPartNumber;
+    }
+
+    /**
+     * @param tiKitPartNumber the tiKitPartNumber to set
+     */
+    public void setTiKitPartNumber(String tiKitPartNumber) {
         this.tiKitPartNumber = tiKitPartNumber;
     }
     

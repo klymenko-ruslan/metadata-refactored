@@ -93,31 +93,31 @@ public class MagmiProduct {
     }
     
     public final void addApplication(MagmiApplication application) {
-        if (StringUtils.isNotEmpty(application.finder)) {
-            finderApplication.add(application.finder);
+        if (StringUtils.isNotEmpty(application.getFinder())) {
+            finderApplication.add(application.getFinder());
         }
 
-        if (StringUtils.isNotEmpty(application.detail)) {
-            applicationDetail.add(application.detail);
+        if (StringUtils.isNotEmpty(application.getDetail())) {
+            applicationDetail.add(application.getDetail());
         }
     }
 
     public final void addTurbo(MagmiTurbo magmiTurbo) {
 
-        if (StringUtils.isNotEmpty(magmiTurbo.turboType)) {
-            turboType.add(magmiTurbo.turboType);
+        if (StringUtils.isNotEmpty(magmiTurbo.getTurboType())) {
+            turboType.add(magmiTurbo.getTurboType());
         }
 
-        if (StringUtils.isNotEmpty(magmiTurbo.partTurboType)) {
-            turboType.add(magmiTurbo.partTurboType);
+        if (StringUtils.isNotEmpty(magmiTurbo.getPartTurboType())) {
+            turboType.add(magmiTurbo.getPartTurboType());
         }
 
-        if (StringUtils.isNotEmpty(magmiTurbo.turboModel)) {
-            turboModel.add(magmiTurbo.turboModel);
+        if (StringUtils.isNotEmpty(magmiTurbo.getTurboModel())) {
+            turboModel.add(magmiTurbo.getTurboModel());
         }
 
-        if (StringUtils.isNotEmpty(magmiTurbo.finder)) {
-            finderTurbo.add(magmiTurbo.finder);
+        if (StringUtils.isNotEmpty(magmiTurbo.getFinder())) {
+            finderTurbo.add(magmiTurbo.getFinder());
         }
     }
     
@@ -175,11 +175,11 @@ public class MagmiProduct {
     
     public void addServiceKit(MagmiServiceKit sk) {
         JSOG jsog = JSOG.object()
-                        .put("sku", sk.kitSku)
-                        .put("partNumber", sk.kitPartNumber)
-                        .put("description", sk.description)
-                        .put("tiSku", sk.tiKitSku)
-                        .put("tiPartNumber", sk.tiKitPartNumber);
+                        .put("sku", sk.getKitSku())
+                        .put("partNumber", sk.getKitPartNumber())
+                        .put("description", sk.getDescription())
+                        .put("tiSku", sk.getTiKitSku())
+                        .put("tiPartNumber", sk.getTiKitPartNumber());
         
         serviceKits.add(jsog);
     }
@@ -187,20 +187,20 @@ public class MagmiProduct {
     public void addUsage(MagmiUsage usage) {
         
         // Look for a previous usage we need to add to
-        JSOG jsogUsage = usages.get(usage.sku.toString());
+        JSOG jsogUsage = usages.get(usage.getSku().toString());
         if (jsogUsage.isNull()) {
-            jsogUsage.put("sku", usage.sku);
-            jsogUsage.put("manufacturer", usage.manufacturer);
-            jsogUsage.put("partNumber", usage.partNumber);
-            jsogUsage.put("tiSku", usage.tiSku);
-            jsogUsage.put("tiPartNumber", usage.tiPartNumber);
-            jsogUsage.put("partType", usage.partType);
-            jsogUsage.put("turboType", usage.turboType);
+            jsogUsage.put("sku", usage.getSku());
+            jsogUsage.put("manufacturer", usage.getManufacturer());
+            jsogUsage.put("partNumber", usage.getPartNumber());
+            jsogUsage.put("tiSku", usage.getTiSku());
+            jsogUsage.put("tiPartNumber", usage.getTiPartNumber());
+            jsogUsage.put("partType", usage.getPartType());
+            jsogUsage.put("turboType", usage.getTurboType());
             jsogUsage.put("turboPartNumbers", JSOG.array());
         }
         
-        if (StringUtils.isNotBlank(usage.turboPartNumber)) {
-            jsogUsage.get("turboPartNumbers").add(usage.turboPartNumber);
+        if (StringUtils.isNotBlank(usage.getTurboPartNumber())) {
+            jsogUsage.get("turboPartNumbers").add(usage.getTurboPartNumber());
         }
     }
 

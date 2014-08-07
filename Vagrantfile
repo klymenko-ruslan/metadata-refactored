@@ -47,8 +47,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   end
 
-  $METADATAIPADDR = "192.168.42.10"
-  $MAGENTOIPADDR  = "192.168.42.11"
   #
   # View the documentation for the provider you're using for more
   # information on available options.
@@ -59,7 +57,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     # Create a private network, which allows host-only access to the machine
     # using a specific IP.
-    config.vm.network "private_network", ip: $METADATAIPADDR
+    config.vm.network "private_network", ip: "192.168.42.10"
 
     config.vm.provision "shell", privileged: false, inline: <<SCRIPT
 
@@ -144,7 +142,7 @@ SCRIPT
 
     # Create a private network, which allows host-only access to the machine
     # using a specific IP.
-    config.vm.network "private_network", ip: $MAGENTOIPADDR
+    config.vm.network "private_network", ip: "192.168.42.11"
 
     config.vm.synced_folder "magento", "/var/www", owner: "www-data", group: "www-data"
 

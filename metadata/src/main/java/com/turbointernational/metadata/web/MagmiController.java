@@ -9,6 +9,7 @@ import com.turbointernational.metadata.domain.type.KitType;
 import com.turbointernational.metadata.domain.type.ManufacturerType;
 import com.turbointernational.metadata.domain.type.PartType;
 import com.turbointernational.metadata.domain.type.SealType;
+import com.turbointernational.metadata.magmi.MagmiDataFinder;
 import com.turbointernational.metadata.util.ImageResizer;
 import com.turbointernational.metadata.util.dto.MagmiProduct;
 import java.io.File;
@@ -37,7 +38,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import static com.turbointernational.metadata.magmi.MagmiDataFinder.*;
 
 /**
  *
@@ -187,6 +187,9 @@ public class MagmiController {
     @Autowired(required=true)
     ImageResizer imageResizer;
     
+    @Autowired(required=true)
+    MagmiDataFinder magmiDataFinder;
+    
     @RequestMapping("/products")
     @ResponseBody   
     @Transactional
@@ -228,7 +231,7 @@ public class MagmiController {
                 parts = Part.findPartEntries(position, magmiBatchSize);
 
                 // Process each product
-                for (MagmiProduct product : findMagmiProducts(parts).values()) {
+                for (MagmiProduct product : magmiDataFinder.findMagmiProducts(parts).values()) {
                     try {
                         writer.writeNext(magmiProductToCsvRow(mas90, product));
                         
@@ -277,7 +280,7 @@ public class MagmiController {
         List<Part> parts = new ArrayList<Part>();
         parts.add(part);
         
-        Iterator<MagmiProduct> it = findMagmiProducts(parts).values().iterator();
+        Iterator<MagmiProduct> it = magmiDataFinder.findMagmiProducts(parts).values().iterator();
         while (it.hasNext()) {
             writer.writeNext(magmiProductToCsvRow(mas90, it.next()));
         }
