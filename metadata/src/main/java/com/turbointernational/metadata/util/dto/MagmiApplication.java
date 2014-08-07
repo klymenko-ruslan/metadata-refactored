@@ -7,15 +7,51 @@ package com.turbointernational.metadata.util.dto;
  */
 public class MagmiApplication {
     
-    public final Long sku;
+    private Long sku;
     
-    public final String finder;
+    private String finder;
     
-    public final String detail;
+    private String detail;
 
-    public MagmiApplication(Long sku, String finder, String detail) {
+    /**
+     * @return the sku
+     */
+    public Long getSku() {
+        return sku;
+    }
+
+    /**
+     * @param sku the sku to set
+     */
+    public void setSku(Long sku) {
         this.sku = sku;
+    }
+
+    /**
+     * @return the finder
+     */
+    public String getFinder() {
+        return finder;
+    }
+
+    /**
+     * @param finder the finder to set
+     */
+    public void setFinder(String finder) {
         this.finder = finder;
+    }
+
+    /**
+     * @return the detail
+     */
+    public String getDetail() {
+        return detail;
+    }
+
+    /**
+     * @param detail the detail to set
+     */
+    public void setDetail(String detail) {
         this.detail = detail;
     }
     
