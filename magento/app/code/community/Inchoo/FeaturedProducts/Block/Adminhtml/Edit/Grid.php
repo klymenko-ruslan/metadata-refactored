@@ -65,6 +65,7 @@ class Inchoo_FeaturedProducts_Block_Adminhtml_Edit_Grid extends Mage_Adminhtml_B
                 ->addAttributeToSelect('sku')
                 ->addAttributeToSelect('inchoo_featured_product')
                 ->addAttributeToSelect('type_id')
+                ->addAttributeToSelect('part_number')
                 ->addAttributeToFilter('visibility', array('nin' => array(1, 3)));
 
 
@@ -139,6 +140,12 @@ class Inchoo_FeaturedProducts_Block_Adminhtml_Edit_Grid extends Mage_Adminhtml_B
             'header' => Mage::helper('catalog')->__('SKU'),
             'width' => '140',
             'index' => 'sku'
+        ));
+
+        $this->addColumn('part_number', array(
+            'header' => Mage::helper('catalog')->__('Part Number'),
+            'width' => '140',
+            'index' => 'part_number'
         ));
 
         $this->addColumn('visibility', array(
