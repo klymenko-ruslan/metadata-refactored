@@ -29,8 +29,9 @@
 ?>
 <div class="header-container">
     <div class="meta-header">
-        <strong>US &amp; International Sales: +1.760.476.4111</strong>
-        <a href="mailto:sales@turbointernational.com">sales@turbointernational.com</a>
+        <strong>US &amp; International Sales: <?php echo Mage::getStoreConfig('general/store_information/phone') ?></strong>
+        <a href="mailto:<?php echo Mage::getModel('core/variable')->setStoreId(Mage::app()->getStore()->getId())->loadByCode('header_footer_email')->getValue('html') ?>">
+            <?php echo Mage::getModel('core/variable')->setStoreId(Mage::app()->getStore()->getId())->loadByCode('header_footer_email')->getValue('text') ?></a>
         <?php echo $this->getChildHtml('topLinks') ?>
     </div>
     <div class="header">
@@ -38,8 +39,9 @@
             <strong><?php echo $this->getLogoAlt() ?></strong><a href="<?php echo $this->getUrl('') ?>" title="<?php echo $this->getLogoAlt() ?>" class="logo"><img src="<?php echo $this->getLogoSrc() ?>" alt="<?php echo $this->getLogoAlt() ?>"/></a>
         </h1>
 
-        <h2 class="logo">Quality Replacement<br>
-            Turbocharger Parts</h2>
+        <h2 class="logo">
+            <?php echo Mage::getModel('core/variable')->setStoreId(Mage::app()->getStore()->getId())->loadByCode('header_tagline')->getValue('html') ?>
+        </h2>
 
         <p class="welcome-msg">
             <?php echo $this->getChildHtml('custom_currency_selector') ?>

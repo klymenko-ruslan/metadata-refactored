@@ -30,21 +30,23 @@
         <div class="grid-row">
             <div class="grid-col-3">
                 <h4>Our Location</h4>
-                <address>2151 Las Palmas Drive, Suite E<br>
-                    Carlsbad, CA. 920111 USA
+                <address>
+                    <?php echo Mage::getStoreConfig('general/store_information/address') ?>
                 </address>
             </div>
             <div class="grid-col-3">
                 <h4>Contact Us</h4>
-                <address>+1.760.476.1444<br>
-                    800.238.8726<br>
-                    <a href="mailto:sales@turbointernational">sales@turbointernational</a></address>
+                <address><?php echo Mage::getStoreConfig('general/store_information/phone') ?><br>
+                    <?php echo Mage::getModel('core/variable')->setStoreId(Mage::app()->getStore()->getId())->loadByCode('phone1_800')->getValue('text') ?><br>
+                    <a href="mailto:<?php echo Mage::getModel('core/variable')->setStoreId(Mage::app()->getStore()->getId())->loadByCode('header_footer_email')->getValue('html') ?>">
+                        <?php echo Mage::getModel('core/variable')->setStoreId(Mage::app()->getStore()->getId())->loadByCode('header_footer_email')->getValue('text') ?></a>
+                </address>
             </div>
             <div class="grid-col-3">
                 <h4>Follow Us On</h4>
                 <ul class="social-media">
-                    <li><a href="https://www.facebook.com/pages/Turbo-International/420415214663119" target="_blank"><i class="fa fa-facebook"></i></a></li>
-                    <li><a href="https://twitter.com/TurboInternatio" target="_blank"><i class="fa fa-twitter"></i></a></li>
+                    <li><a href="<?php echo Mage::getModel('core/variable')->setStoreId(Mage::app()->getStore()->getId())->loadByCode('facebook_page_url')->getValue('html') ?>" target="_blank"><i class="fa fa-facebook"></i></a></li>
+                    <li><a href="https://twitter.com/<?php echo Mage::getModel('core/variable')->setStoreId(Mage::app()->getStore()->getId())->loadByCode('twitter_handle')->getValue('text') ?>" target="_blank"><i class="fa fa-twitter"></i></a></li>
                 </ul>
             </div>
             <div class="grid-col-3" id="constant-contact-form">
