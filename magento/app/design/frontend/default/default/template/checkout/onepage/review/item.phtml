@@ -24,31 +24,38 @@
  * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 ?>
-<?php $_item = $this->getItem()?>
+<?php $_item = $this->getItem();
+$isVisibleProduct = $_item->getProduct()->isVisibleInSiteVisibility();
+$productDetail = Mage::getModel('catalog/product');
+$productDetail->load($_item->getProduct()->getId());
+?>
 <tr>
-    <td><h3 class="product-name"><?php echo $this->htmlEscape($this->getProductName()) ?></h3>
-        <?php if ($_options = $this->getOptionList()):?>
-        <dl class="item-options">
-            <?php foreach ($_options as $_option) : ?>
-            <?php $_formatedOptionValue = $this->getFormatedOptionValue($_option) ?>
-            <dt><?php echo $this->htmlEscape($_option['label']) ?></dt>
-            <dd<?php if (isset($_formatedOptionValue['full_view'])): ?> class="truncated"<?php endif; ?>><?php echo $_formatedOptionValue['value'] ?>
-                <?php if (isset($_formatedOptionValue['full_view'])): ?>
-                <div class="truncated_full_value">
-                    <dl class="item-options">
-                        <dt><?php echo $this->htmlEscape($_option['label']) ?></dt>
-                        <dd><?php echo $_formatedOptionValue['full_view'] ?></dd>
-                    </dl>
-                </div>
-                <?php endif; ?>
-            </dd>
-            <?php endforeach; ?>
-        </dl>
-        <?php endif;?>
+
+    <!-- Part Type -->
+    <td>
+        <h3 class="product-name"><?php echo $this->htmlEscape($productDetail->getAttributeText('part_type')) ?></h3>
         <?php if ($addtInfoBlock = $this->getProductAdditionalInformationBlock()):?>
             <?php echo $addtInfoBlock->setItem($_item)->toHtml() ?>
         <?php endif;?>
     </td>
+
+    <!-- TI Part Number -->
+    <td>
+        <?php echo $this->htmlEscape($productDetail->getPartNumber()) ?>
+    </td>
+
+    <!-- OEM Part Number -->
+    <td>
+        <?php if ($_options = $this->getOptionList()): ?>
+            <?php foreach ($_options as $_option) :
+                $productByOem = Mage::getModel('catalog/product')->loadByAttribute('sku', $_option['value']);
+                if ($_option['label'] === $productDetail->getOemSkuCustomOptionTitle()) {
+                    echo $this->htmlEscape($productByOem->getPartNumber());
+                }
+            endforeach; ?>
+        <?php endif; ?>
+    </td>
+
     <?php if ($this->helper('tax')->displayCartPriceExclTax() || $this->helper('tax')->displayCartBothPrices()): ?>
     <td class="a-right">
         <?php if (Mage::helper('weee')->typeOfDisplay($_item, array(1, 4), 'sales') && $_item->getWeeeTaxAppliedAmount()): ?>
@@ -97,7 +104,7 @@
     </td>
     <?php endif; ?>
     <?php if ($this->helper('tax')->displayCartPriceInclTax() || $this->helper('tax')->displayCartBothPrices()): ?>
-    <td>
+    <td class="a-right">
         <?php $_incl = $this->helper('checkout')->getPriceInclTax($_item); ?>
         <?php if (Mage::helper('weee')->typeOfDisplay($_item, array(1, 4), 'sales') && $_item->getWeeeTaxAppliedAmount()): ?>
             <span class="cart-tax-total" onclick="taxToggle('unit-item-tax-details<?php echo $_item->getId(); ?>', this, 'cart-tax-total-expanded');">

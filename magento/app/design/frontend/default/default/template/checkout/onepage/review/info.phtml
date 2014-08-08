@@ -38,14 +38,18 @@
         <?php endif; ?>
         <thead>
             <tr>
-                <th rowspan="<?php echo $rowspan ?>"><?php echo $this->__('Product Name') ?></th>
+                <th rowspan="<?php echo $rowspan ?>"><?php echo $this->__('Part Type') ?></th>
+                <th rowspan="<?php echo $rowspan ?>"><?php echo $this->__('TI Part #') ?></th>
+                <th rowspan="<?php echo $rowspan ?>"><?php echo $this->__('OEM Part #') ?></th>
                 <th colspan="<?php echo $colspan ?>" class="a-center"><?php echo $this->__('Price') ?></th>
                 <th rowspan="<?php echo $rowspan ?>" class="a-center"><?php echo $this->__('Qty') ?></th>
-                <th colspan="<?php echo $colspan ?>" class="a-center"><?php echo $this->__('Subtotal') ?></th>
+                <th colspan="<?php echo $colspan ?>" class="a-right"><?php echo $this->__('Subtotal') ?></th>
             </tr>
             <?php if ($this->helper('tax')->displayCartBothPrices()): ?>
                 <tr>
                     <th class="a-right"><?php echo $this->helper('tax')->getIncExcTaxLabel(false) ?></th>
+                    <th></th>
+                    <th></th>
                     <th><?php echo $this->helper('tax')->getIncExcTaxLabel(true) ?></th>
                     <th class="a-right"><?php echo $this->helper('tax')->getIncExcTaxLabel(false) ?></th>
                     <th><?php echo $this->helper('tax')->getIncExcTaxLabel(true) ?></th>
