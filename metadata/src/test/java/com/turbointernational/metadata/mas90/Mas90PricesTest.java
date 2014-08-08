@@ -21,7 +21,8 @@ public class Mas90PricesTest {
     
     @Before
     public void setUp() throws IOException {
-        instance = new Mas90Prices(new File("/home/jrodriguez/Downloads/MAS90_pricing_model.accdb"));
+        String dbPath = getClass().getResource("/mas90.accdb").getFile();
+        instance = new Mas90Prices(new File(dbPath));
     }
 
     @Test

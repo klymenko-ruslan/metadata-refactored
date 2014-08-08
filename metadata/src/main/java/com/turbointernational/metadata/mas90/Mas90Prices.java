@@ -300,24 +300,4 @@ public class Mas90Prices {
         
         return pricing.calculate(item.getStandardPrice());
     }
-    
-    public static void main(String[] args) throws Exception {
-        Mas90Prices instance = new Mas90Prices(new File("/home/jrodriguez/Downloads/MAS90_pricing_model.accdb"));
-        for (Map<String, Object> row : instance.h2db.queryForList("SELECT * FROM customer")) {
-            System.out.println("Customer: " + row);
-        }
-        
-        for (Map<String, Object> row : instance.h2db.queryForList(
-                  "SELECT\n"
-                + "  c.email,\n"
-                + "  p.*\n"
-                + "FROM\n"
-                + "  product_customer_prices p\n"
-                + "  JOIN customer c ON c.id = p.customer_id\n")) {
-            System.out.println("Row: " + row);
-        }
-        
-        ItemPricing itemPricing = instance.getItemPricing("1-F-5066");
-        System.out.println(itemPricing);
-    }
 }
