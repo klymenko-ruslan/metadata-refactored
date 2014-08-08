@@ -235,7 +235,7 @@ public class MagmiDataFinder {
     List<MagmiInterchange> findMagmiInterchanges(Collection<Long> productIds) {
         return Part.entityManager().createQuery(
                 "SELECT DISTINCT NEW"
-              + "  com.turbointernational.metadata.util.dto.MagmiInterchange("
+              + "  com.turbointernational.metadata.magmi.dto.MagmiInterchange("
               + "    p.id AS sku,"
               + "    ip.id AS interchangePartSku,"
               + "    ip.manufacturerPartNumber AS interchangePartNumber,"
@@ -270,7 +270,7 @@ public class MagmiDataFinder {
 
     List<MagmiBomItem> findMagmiBom(Collection<Long> productIds) {
         return Part.entityManager().createQuery(
-                "SELECT DISTINCT NEW com.turbointernational.metadata.util.dto.MagmiBomItem(\n"
+                "SELECT DISTINCT NEW com.turbointernational.metadata.magmi.dto.MagmiBomItem(\n"
               + "  b.parent.id as parent_sku,\n"
               + "  b.child.id as child_sku,\n"
               + "  b.quantity,\n"

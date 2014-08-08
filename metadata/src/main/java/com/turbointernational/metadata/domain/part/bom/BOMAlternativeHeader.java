@@ -86,21 +86,9 @@ public class BOMAlternativeHeader {
         return em;
     }
     
-    public static long countBOMAlternativeHeaders() {
-        return entityManager().createQuery("SELECT COUNT(o) FROM BOMAlternativeHeader o", Long.class).getSingleResult();
-    }
-    
-    public static List<BOMAlternativeHeader> findAllBOMAlternativeHeaders() {
-        return entityManager().createQuery("SELECT o FROM BOMAlternativeHeader o", BOMAlternativeHeader.class).getResultList();
-    }
-    
     public static BOMAlternativeHeader findBOMAlternativeHeader(Long id) {
         if (id == null) return null;
         return entityManager().find(BOMAlternativeHeader.class, id);
-    }
-    
-    public static List<BOMAlternativeHeader> findBOMAlternativeHeaderEntries(int firstResult, int maxResults) {
-        return entityManager().createQuery("SELECT o FROM BOMAlternativeHeader o", BOMAlternativeHeader.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
     @Transactional
@@ -139,7 +127,6 @@ public class BOMAlternativeHeader {
         this.entityManager.flush();
         return merged;
     }
-    
     //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="Serialization">

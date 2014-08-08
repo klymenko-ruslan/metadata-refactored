@@ -17,7 +17,6 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.transaction.annotation.Transactional;
 
 @Configurable
 @Entity
@@ -101,6 +100,21 @@ public class TurboType implements Comparable<TurboType>{
     //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="ActiveRecord">
+    
+    @PersistenceContext
+    transient EntityManager entityManager;
+    
+    public static final EntityManager entityManager() {
+        EntityManager em = new TurboType().entityManager;
+        if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
+        return em;
+    }
+    
+    public static TurboType findTurboType(Long id) {
+        if (id == null) return null;
+        return entityManager().find(TurboType.class, id);
+    }
+    
     public static List<TurboType> findTurboTypesByManufacturerId(Long manufacturerId) {
         return entityManager().createQuery(
               "SELECT o\n"
@@ -112,71 +126,8 @@ public class TurboType implements Comparable<TurboType>{
             .setParameter("manufacturerId", manufacturerId)
             .getResultList();
     }
-    
-    @PersistenceContext
-    transient EntityManager entityManager;
-    
-    public static final EntityManager entityManager() {
-        EntityManager em = new TurboType().entityManager;
-        if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
-        return em;
-    }
-    
-    public static long countTurboTypes() {
-        return entityManager().createQuery("SELECT COUNT(o) FROM TurboType o", Long.class).getSingleResult();
-    }
-    
-    public static List<TurboType> findAllTurboTypes() {
-        return entityManager().createQuery("SELECT o FROM TurboType o", TurboType.class).getResultList();
-    }
-    
-    public static TurboType findTurboType(Long id) {
-        if (id == null) return null;
-        return entityManager().find(TurboType.class, id);
-    }
-    
-    public static List<TurboType> findTurboTypeEntries(int firstResult, int maxResults) {
-        return entityManager().createQuery("SELECT o FROM TurboType o", TurboType.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
-    }
-    
-    @Transactional
-    public void persist() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.persist(this);
-    }
-    
-    @Transactional
-    public void remove() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        if (this.entityManager.contains(this)) {
-            this.entityManager.remove(this);
-        } else {
-            TurboType attached = findTurboType(this.id);
-            this.entityManager.remove(attached);
-        }
-    }
-    
-    @Transactional
-    public void flush() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.flush();
-    }
-    
-    @Transactional
-    public void clear() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.clear();
-    }
-    
-    @Transactional
-    public TurboType merge() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        TurboType merged = this.entityManager.merge(this);
-        this.entityManager.flush();
-        return merged;
-    }
-
     //</editor-fold>
+    
     @Override
     public int compareTo(TurboType o) {
         return this.name.compareTo(o.getName());

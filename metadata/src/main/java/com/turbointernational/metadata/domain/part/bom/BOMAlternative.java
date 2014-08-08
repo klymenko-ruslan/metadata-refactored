@@ -85,21 +85,9 @@ public class BOMAlternative implements Comparable<BOMAlternative> {
         return em;
     }
     
-    public static long countBOMAlternatives() {
-        return entityManager().createQuery("SELECT COUNT(o) FROM BOMAlternative o", Long.class).getSingleResult();
-    }
-    
-    public static List<BOMAlternative> findAllBOMAlternatives() {
-        return entityManager().createQuery("SELECT o FROM BOMAlternative o", BOMAlternative.class).getResultList();
-    }
-    
     public static BOMAlternative findBOMAlternative(Long id) {
         if (id == null) return null;
         return entityManager().find(BOMAlternative.class, id);
-    }
-    
-    public static List<BOMAlternative> findBOMAlternativeEntries(int firstResult, int maxResults) {
-        return entityManager().createQuery("SELECT o FROM BOMAlternative o", BOMAlternative.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
     @Transactional
@@ -123,20 +111,6 @@ public class BOMAlternative implements Comparable<BOMAlternative> {
     public void flush() {
         if (this.entityManager == null) this.entityManager = entityManager();
         this.entityManager.flush();
-    }
-    
-    @Transactional
-    public void clear() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.clear();
-    }
-    
-    @Transactional
-    public BOMAlternative merge() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        BOMAlternative merged = this.entityManager.merge(this);
-        this.entityManager.flush();
-        return merged;
     }
     //</editor-fold>
     
@@ -166,6 +140,7 @@ public class BOMAlternative implements Comparable<BOMAlternative> {
     }
 
     //</editor-fold>
+    
     @Override
     public int compareTo(BOMAlternative t) {
         return ObjectUtils.compare(this.getHeader().getId(), t.getHeader().getId());

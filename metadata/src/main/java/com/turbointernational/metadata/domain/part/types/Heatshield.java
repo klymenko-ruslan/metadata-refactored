@@ -49,17 +49,6 @@ public class Heatshield extends Part {
     }
 
     @Override
-    public JSOG toJsog() {
-        JSOG partObject = super.toJsog();
-        
-        partObject.put("overall_diameter", getOverallDiameter());
-        partObject.put("inside_diameter", getInsideDiameter());
-        partObject.put("inducer_diameter", getInducerDiameter());
-        
-        return partObject;
-    }
-
-    @Override
     public void csvColumns(Map<String, String> columns) {
         super.csvColumns(columns);
         

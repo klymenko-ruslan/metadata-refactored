@@ -2,7 +2,6 @@ package com.turbointernational.metadata.domain.changelog;
 
 import com.turbointernational.metadata.domain.security.User;
 import java.util.Date;
-import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -71,7 +70,7 @@ public class Changelog {
     }
     //</editor-fold>
     
-    //<editor-fold defaultstate="collapsed" desc="activerecord">
+    //<editor-fold defaultstate="collapsed" desc="ActiveRecord">
     
     @PersistenceContext
     transient EntityManager entityManager;
@@ -82,23 +81,6 @@ public class Changelog {
         return em;
     }
     
-    public static long countChangelogs() {
-        return entityManager().createQuery("SELECT COUNT(o) FROM Changelog o", Long.class).getSingleResult();
-    }
-    
-    public static List<Changelog> findAllChangelogs() {
-        return entityManager().createQuery("SELECT o FROM Changelog o", Changelog.class).getResultList();
-    }
-    
-    public static Changelog findChangelog(Long id) {
-        if (id == null) return null;
-        return entityManager().find(Changelog.class, id);
-    }
-    
-    public static List<Changelog> findChangelogEntries(int firstResult, int maxResults) {
-        return entityManager().createQuery("SELECT o FROM Changelog o", Changelog.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
-    }
-    
     @Transactional
     public void persist() {
         if (this.entityManager == null) this.entityManager = entityManager();
@@ -106,34 +88,9 @@ public class Changelog {
     }
     
     @Transactional
-    public void remove() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        if (this.entityManager.contains(this)) {
-            this.entityManager.remove(this);
-        } else {
-            Changelog attached = findChangelog(this.id);
-            this.entityManager.remove(attached);
-        }
-    }
-    
-    @Transactional
     public void flush() {
         if (this.entityManager == null) this.entityManager = entityManager();
         this.entityManager.flush();
-    }
-    
-    @Transactional
-    public void clear() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.clear();
-    }
-    
-    @Transactional
-    public Changelog merge() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        Changelog merged = this.entityManager.merge(this);
-        this.entityManager.flush();
-        return merged;
     }
     //</editor-fold>
 }

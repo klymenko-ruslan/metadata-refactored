@@ -10,7 +10,6 @@ import java.security.Principal;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
-import net.sf.jsog.JSOG;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,7 +42,7 @@ public class PartController {
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ResponseBody
     @Secured("ROLE_READ")
-    public ResponseEntity<String> showJson(@PathVariable("id") Long id) {
+    public ResponseEntity<String> show(@PathVariable("id") Long id) {
         
         Part part = Part.findPart(id);
         HttpHeaders headers = new HttpHeaders();
@@ -52,30 +51,6 @@ public class PartController {
             return new ResponseEntity<String>(headers, HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<String>(part.toJson(), headers, HttpStatus.OK);
-    }
-    
-    @Transactional
-    @RequestMapping(method = RequestMethod.GET)
-    @ResponseBody
-    @Secured("ROLE_READ")
-    public ResponseEntity<String> listJson(
-            @RequestParam(required = false, defaultValue = "1") Integer first,
-            @RequestParam(required = false, defaultValue = "20") Integer count) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/json; charset=utf-8");
-        
-        List<Part> result = Part.findPartEntries(first, count);
-        
-        String[] fields = new String[] {
-            "id",
-            "manufacturer.id",
-            "manufacturer.name",
-            "manufacturerPartNumber",
-            "partType.id",
-            "partType.name"
-        };
-        
-        return new ResponseEntity<String>(Part.toJsonArray(result, fields), headers, HttpStatus.OK);
     }
     
     @RequestMapping(value="/{id}/ancestors", method = RequestMethod.GET)

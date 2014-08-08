@@ -15,7 +15,6 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.transaction.annotation.Transactional;
 
 @Cacheable
 @Configurable
@@ -58,10 +57,6 @@ public class SealType {
         return em;
     }
     
-    public static long countSealTypes() {
-        return entityManager().createQuery("SELECT COUNT(o) FROM SealType o", Long.class).getSingleResult();
-    }
-    
     public static List<SealType> findAllSealTypes() {
         return entityManager().createQuery("SELECT o FROM SealType o", SealType.class).getResultList();
     }
@@ -69,47 +64,6 @@ public class SealType {
     public static SealType findSealType(Long id) {
         if (id == null) return null;
         return entityManager().find(SealType.class, id);
-    }
-    
-    public static List<SealType> findSealTypeEntries(int firstResult, int maxResults) {
-        return entityManager().createQuery("SELECT o FROM SealType o", SealType.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
-    }
-    
-    @Transactional
-    public void persist() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.persist(this);
-    }
-    
-    @Transactional
-    public void remove() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        if (this.entityManager.contains(this)) {
-            this.entityManager.remove(this);
-        } else {
-            SealType attached = findSealType(this.id);
-            this.entityManager.remove(attached);
-        }
-    }
-    
-    @Transactional
-    public void flush() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.flush();
-    }
-    
-    @Transactional
-    public void clear() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.clear();
-    }
-    
-    @Transactional
-    public SealType merge() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        SealType merged = this.entityManager.merge(this);
-        this.entityManager.flush();
-        return merged;
     }
     //</editor-fold>
     

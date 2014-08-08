@@ -3,14 +3,12 @@ import com.turbointernational.metadata.domain.part.Part;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityManager;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
-import javax.persistence.PersistenceContext;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import org.apache.commons.lang3.ObjectUtils;
@@ -78,17 +76,6 @@ public class BOMAncestor implements Comparable<BOMAncestor> {
 
     public void setType(String type) {
         this.type = type;
-    }
-    //</editor-fold>
-    
-    //<editor-fold defaultstate="collapsed" desc="activerecord">
-    @PersistenceContext
-    transient EntityManager entityManager;
-    
-    public static final EntityManager entityManager() {
-        EntityManager em = new BOMAncestor().entityManager;
-        if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
-        return em;
     }
     //</editor-fold>
     

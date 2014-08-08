@@ -118,87 +118,6 @@ public class User implements Comparable<User>, UserDetails {
     //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="Active Record">
-    public static User getCurrentUser() {
-        return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    }
-    
-    public static User findUserByEmail(String email) {
-        if (StringUtils.isNotBlank(email)) {
-            List<User> users = User.entityManager()
-                    .createQuery("SELECT u FROM User u WHERE u.email = ?")
-                    .setParameter(1, email)
-                    .getResultList();
-            
-            if (!users.isEmpty()) {
-                return users.get(0);
-            }
-        }
-        
-        return null;
-    }
-    
-    public static User findByPasswordResetToken(String token) {
-        EntityManager em = User.entityManager();
-        
-        Query q = em.createQuery("SELECT u FROM User u WHERE u.passwordResetToken = ?", User.class);
-        q.setParameter(1, token);
-        return (User) q.getSingleResult();
-    }
-    //</editor-fold>
-    
-    //<editor-fold defaultstate="collapsed" desc="Serialization">
-    public String toJson() {
-        return JSON.serialize(this);
-    }
-    
-    public String toJson(String[] fields) {
-        return new JSONSerializer().include(fields).exclude("*.class").serialize(this);
-    }
-    
-    public static User fromJson(String json) {
-        return new JSONDeserializer<User>().use(null, User.class).deserialize(json);
-    }
-    //</editor-fold>
-    
-    //<editor-fold defaultstate="collapsed" desc="Spring Security">
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        Set<GrantedAuthority> authorities = Sets.newHashSet();
-        
-        for (Group group : groups) {
-            for (Role role : group.getRoles()) {
-                authorities.add(new SimpleGrantedAuthority(role.getName()));
-            }
-        }
-        
-        return authorities;
-    }
-    
-    @Override
-    public String getUsername() {
-        return email;
-    }
-    
-    @Override
-    public boolean isAccountNonExpired() {
-        return getEnabled();
-    }
-    
-    @Override
-    public boolean isAccountNonLocked() {
-        return getEnabled();
-    }
-    
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return getEnabled();
-    }
-    
-    @Override
-    public boolean isEnabled() {
-        return getEnabled();
-    }
-        
     @PersistenceContext
     @Transient
     private transient EntityManager entityManager;
@@ -265,6 +184,87 @@ public class User implements Comparable<User>, UserDetails {
         User merged = this.entityManager.merge(this);
         this.entityManager.flush();
         return merged;
+    }
+    
+    public static User findUserByEmail(String email) {
+        if (StringUtils.isNotBlank(email)) {
+            List<User> users = User.entityManager()
+                    .createQuery("SELECT u FROM User u WHERE u.email = ?")
+                    .setParameter(1, email)
+                    .getResultList();
+            
+            if (!users.isEmpty()) {
+                return users.get(0);
+            }
+        }
+        
+        return null;
+    }
+    
+    public static User findByPasswordResetToken(String token) {
+        EntityManager em = User.entityManager();
+        
+        Query q = em.createQuery("SELECT u FROM User u WHERE u.passwordResetToken = ?", User.class);
+        q.setParameter(1, token);
+        return (User) q.getSingleResult();
+    }
+    //</editor-fold>
+    
+    //<editor-fold defaultstate="collapsed" desc="Serialization">
+    public String toJson() {
+        return JSON.serialize(this);
+    }
+    
+    public String toJson(String[] fields) {
+        return new JSONSerializer().include(fields).exclude("*.class").serialize(this);
+    }
+    
+    public static User fromJson(String json) {
+        return new JSONDeserializer<User>().use(null, User.class).deserialize(json);
+    }
+    //</editor-fold>
+    
+    //<editor-fold defaultstate="collapsed" desc="Spring Security">
+    public static User getCurrentUser() {
+        return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    }
+    
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        Set<GrantedAuthority> authorities = Sets.newHashSet();
+        
+        for (Group group : groups) {
+            for (Role role : group.getRoles()) {
+                authorities.add(new SimpleGrantedAuthority(role.getName()));
+            }
+        }
+        
+        return authorities;
+    }
+    
+    @Override
+    public String getUsername() {
+        return email;
+    }
+    
+    @Override
+    public boolean isAccountNonExpired() {
+        return getEnabled();
+    }
+    
+    @Override
+    public boolean isAccountNonLocked() {
+        return getEnabled();
+    }
+    
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return getEnabled();
+    }
+    
+    @Override
+    public boolean isEnabled() {
+        return getEnabled();
     }
     //</editor-fold>
     

@@ -110,10 +110,6 @@ public class TurboModel {
         return em;
     }
     
-    public static long countTurboModels() {
-        return entityManager().createQuery("SELECT COUNT(o) FROM TurboModel o", Long.class).getSingleResult();
-    }
-    
     public static List<TurboModel> findTurboModelsByTurboTypeId(Long turboTypeId) {
         return entityManager().createQuery(
               "SELECT o\n"
@@ -130,48 +126,6 @@ public class TurboModel {
         if (id == null) return null;
         return entityManager().find(TurboModel.class, id);
     }
-    
-    public static List<TurboModel> findTurboModelEntries(int firstResult, int maxResults) {
-        return entityManager().createQuery("SELECT o FROM TurboModel o", TurboModel.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
-    }
-    
-    @Transactional
-    public void persist() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.persist(this);
-    }
-    
-    @Transactional
-    public void remove() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        if (this.entityManager.contains(this)) {
-            this.entityManager.remove(this);
-        } else {
-            TurboModel attached = findTurboModel(this.id);
-            this.entityManager.remove(attached);
-        }
-    }
-    
-    @Transactional
-    public void flush() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.flush();
-    }
-    
-    @Transactional
-    public void clear() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.clear();
-    }
-    
-    @Transactional
-    public TurboModel merge() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        TurboModel merged = this.entityManager.merge(this);
-        this.entityManager.flush();
-        return merged;
-    }
-    
     //</editor-fold>
     
 }

@@ -89,10 +89,6 @@ public class Manufacturer {
         return em;
     }
     
-    public static long countManufacturers() {
-        return entityManager().createQuery("SELECT COUNT(o) FROM Manufacturer o", Long.class).getSingleResult();
-    }
-    
     @com.googlecode.ehcache.annotations.Cacheable(cacheName = "manufacturers")
     public static List<Manufacturer> findAllManufacturers() {
         return entityManager().createQuery("SELECT o FROM Manufacturer o", Manufacturer.class).getResultList();
@@ -104,40 +100,9 @@ public class Manufacturer {
         return entityManager().find(Manufacturer.class, id);
     }
     
-    public static List<Manufacturer> findManufacturerEntries(int firstResult, int maxResults) {
-        return entityManager().createQuery("SELECT o FROM Manufacturer o", Manufacturer.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
-    }
-
-    @com.googlecode.ehcache.annotations.Cacheable(cacheName = "manufacturers")
-    public static Manufacturer findByName(String name) {
-        return entityManager()
-            .createQuery("SELECT m FROM Manufacturer m WHERE m.name = :name", Manufacturer.class)
-            .setParameter("name", name)
-            .getSingleResult();
-    }
-    
     @com.googlecode.ehcache.annotations.Cacheable(cacheName = "manufacturers")
     public static Manufacturer TI() {
         return findManufacturer(TI_ID);
-    }
-    
-    @TriggersRemove(cacheName = "manufacturers")
-    @Transactional
-    public void persist() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.persist(this);
-    }
-    
-    @TriggersRemove(cacheName = "manufacturers")
-    @Transactional
-    public void remove() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        if (this.entityManager.contains(this)) {
-            this.entityManager.remove(this);
-        } else {
-            Manufacturer attached = Manufacturer.findManufacturer(this.id);
-            this.entityManager.remove(attached);
-        }
     }
     
     @TriggersRemove(cacheName = "manufacturers")
@@ -151,15 +116,6 @@ public class Manufacturer {
     public void clear() {
         if (this.entityManager == null) this.entityManager = entityManager();
         this.entityManager.clear();
-    }
-    
-    @TriggersRemove(cacheName = "manufacturers")
-    @Transactional
-    public Manufacturer merge() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        Manufacturer merged = this.entityManager.merge(this);
-        this.entityManager.flush();
-        return merged;
     }
     //</editor-fold>
     

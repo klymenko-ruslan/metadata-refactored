@@ -59,10 +59,6 @@ public class KitType {
         return em;
     }
     
-    public static long countKitTypes() {
-        return entityManager().createQuery("SELECT COUNT(o) FROM KitType o", Long.class).getSingleResult();
-    }
-    
     public static List<KitType> findAllKitTypes() {
         return entityManager().createQuery("SELECT o FROM KitType o", KitType.class).getResultList();
     }
@@ -70,47 +66,6 @@ public class KitType {
     public static KitType findKitType(Long id) {
         if (id == null) return null;
         return entityManager().find(KitType.class, id);
-    }
-    
-    public static List<KitType> findKitTypeEntries(int firstResult, int maxResults) {
-        return entityManager().createQuery("SELECT o FROM KitType o", KitType.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
-    }
-    
-    @Transactional
-    public void persist() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.persist(this);
-    }
-    
-    @Transactional
-    public void remove() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        if (this.entityManager.contains(this)) {
-            this.entityManager.remove(this);
-        } else {
-            KitType attached = findKitType(this.id);
-            this.entityManager.remove(attached);
-        }
-    }
-    
-    @Transactional
-    public void flush() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.flush();
-    }
-    
-    @Transactional
-    public void clear() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.clear();
-    }
-    
-    @Transactional
-    public KitType merge() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        KitType merged = this.entityManager.merge(this);
-        this.entityManager.flush();
-        return merged;
     }
     //</editor-fold>
     

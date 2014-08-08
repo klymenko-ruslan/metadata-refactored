@@ -120,7 +120,7 @@ public class KitComponent {
     }
     //</editor-fold>
     
-    //<editor-fold defaultstate="collapsed" desc="json">
+    //<editor-fold defaultstate="collapsed" desc="Serialization">
     public String toJson() {
         return new JSONSerializer()
             .include("kit.id")

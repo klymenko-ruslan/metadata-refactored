@@ -14,7 +14,6 @@ import javax.persistence.Id;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Table;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.transaction.annotation.Transactional;
 
 @Cacheable
 @Configurable
@@ -57,10 +56,6 @@ public class CoolType {
         return em;
     }
     
-    public static long countCoolTypes() {
-        return entityManager().createQuery("SELECT COUNT(o) FROM CoolType o", Long.class).getSingleResult();
-    }
-    
     public static List<CoolType> findAllCoolTypes() {
         return entityManager().createQuery("SELECT o FROM CoolType o", CoolType.class).getResultList();
     }
@@ -68,47 +63,6 @@ public class CoolType {
     public static CoolType findCoolType(Long id) {
         if (id == null) return null;
         return entityManager().find(CoolType.class, id);
-    }
-    
-    public static List<CoolType> findCoolTypeEntries(int firstResult, int maxResults) {
-        return entityManager().createQuery("SELECT o FROM CoolType o", CoolType.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
-    }
-    
-    @Transactional
-    public void persist() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.persist(this);
-    }
-    
-    @Transactional
-    public void remove() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        if (this.entityManager.contains(this)) {
-            this.entityManager.remove(this);
-        } else {
-            CoolType attached = findCoolType(this.id);
-            this.entityManager.remove(attached);
-        }
-    }
-    
-    @Transactional
-    public void flush() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.flush();
-    }
-    
-    @Transactional
-    public void clear() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.clear();
-    }
-    
-    @Transactional
-    public CoolType merge() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        CoolType merged = this.entityManager.merge(this);
-        this.entityManager.flush();
-        return merged;
     }
     //</editor-fold>
     

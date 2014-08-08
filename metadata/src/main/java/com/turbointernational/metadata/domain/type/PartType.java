@@ -1,10 +1,8 @@
 package com.turbointernational.metadata.domain.type;
-import com.google.common.collect.Lists;
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
@@ -18,9 +16,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Table;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.transaction.annotation.Transactional;
 
 @Cacheable
 @Configurable
@@ -87,10 +83,6 @@ public class PartType {
         return em;
     }
     
-    public static long countPartTypes() {
-        return entityManager().createQuery("SELECT COUNT(o) FROM PartType o", Long.class).getSingleResult();
-    }
-    
     public static List<PartType> findAllPartTypes() {
         return entityManager().createQuery("SELECT o FROM PartType o", PartType.class).getResultList();
     }
@@ -98,47 +90,6 @@ public class PartType {
     public static PartType findPartType(Long id) {
         if (id == null) return null;
         return entityManager().find(PartType.class, id);
-    }
-    
-    public static List<PartType> findPartTypeEntries(int firstResult, int maxResults) {
-        return entityManager().createQuery("SELECT o FROM PartType o", PartType.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
-    }
-    
-    @Transactional
-    public void persist() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.persist(this);
-    }
-    
-    @Transactional
-    public void remove() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        if (this.entityManager.contains(this)) {
-            this.entityManager.remove(this);
-        } else {
-            PartType attached = findPartType(this.id);
-            this.entityManager.remove(attached);
-        }
-    }
-    
-    @Transactional
-    public void flush() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.flush();
-    }
-    
-    @Transactional
-    public void clear() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.clear();
-    }
-    
-    @Transactional
-    public PartType merge() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        PartType merged = this.entityManager.merge(this);
-        this.entityManager.flush();
-        return merged;
     }
     //</editor-fold>
 
@@ -167,32 +118,5 @@ public class PartType {
         return new JSONDeserializer<List<PartType>>().use(null, ArrayList.class).use("values", PartType.class).deserialize(json);
     }
     //</editor-fold>
-    
-    /**
-     * Create a category of part types:
-     * parent/child/grandchild
-     */
-    public String toMagentoCategories() {
-        
-        // Walk up the parent tree and build the hierarchy using "Part Type" as the root
-        List<String> stack = Lists.newArrayList();
-        
-        // Get the first part type
-        PartType partType = this;
-        
-        while (partType != null) {
-            stack.add(partType.getName());
-
-            // Setup next iteration
-            partType = partType.getParent();
-        }
-        
-        stack.add("Part Type");
-        
-        // The stack is upside down; reverse it.
-        Collections.reverse(stack);
-        
-        return StringUtils.join(stack, '/');
-    }
 
 }

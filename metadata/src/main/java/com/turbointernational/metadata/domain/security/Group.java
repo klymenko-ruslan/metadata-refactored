@@ -95,10 +95,6 @@ public class Group implements Comparable<Group>, Serializable {
         return em;
     }
     
-    public static long countGroups() {
-        return entityManager().createQuery("SELECT COUNT(o) FROM Group o", Long.class).getSingleResult();
-    }
-    
     public static List<Group> findAllGroups() {
         return entityManager().createQuery("SELECT o FROM Group o", Group.class).getResultList();
     }

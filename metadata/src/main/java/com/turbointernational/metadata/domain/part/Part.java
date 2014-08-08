@@ -352,26 +352,6 @@ public class Part implements Comparable<Part> {
                 .exclude("productImages.*");
     }
     
-    public JSOG toJsog() {
-        JSOG partObject = JSOG.object()
-                .put("id", id)
-                .put("_id", id)
-                .put("name", name)
-                .put("description", description)
-                .put("manufacturer_name", manufacturer.getName())
-                .put("manufacturer_type_name", manufacturer.getType().getName())
-                .put("manufacturer_part_number", manufacturerPartNumber)
-                .put("part_type", partType.getName())
-                .put("attribute_set_id", partType.getMagentoAttributeSet());
-        
-        
-        if (interchange != null) {
-            partObject.put("interchange_id", interchange.getId());
-        }
-        
-        return partObject;
-    }
-    
     public String toJson() {
         return buildJSONSerializer()
                 .exclude("*.class")
@@ -485,10 +465,6 @@ public class Part implements Comparable<Part> {
 
     public static List<Part> getPartsUpdatedAfter(Date lastUpdated, int i, int pageSize) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-    
-    public static List<Part> findAll() {
-        return entityManager().createQuery("SELECT o FROM Part o ORDER BY o.id", Part.class).getResultList();
     }
     
     public static Part findPart(Long id) {
