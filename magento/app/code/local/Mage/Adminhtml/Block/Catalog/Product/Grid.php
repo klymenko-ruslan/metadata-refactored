@@ -59,6 +59,12 @@ class Mage_Adminhtml_Block_Catalog_Product_Grid extends Mage_Adminhtml_Block_Wid
             ->addAttributeToSelect('sku')
             ->addAttributeToSelect('name')
             ->addAttributeToSelect('attribute_set_id')
+            ->addAttributeToSelect('part_number')
+            ->addAttributeToSelect('news_from_date')
+            ->addAttributeToSelect('news_to_date')
+            ->addAttributeToSelect('manufacturer')
+            ->addAttributeToSelect('is_clearance')
+            ->addAttributeToSelect('part_type')
             ->addAttributeToSelect('type_id');
 
         if (Mage::helper('catalog')->isModuleEnabled('Mage_CatalogInventory')) {
@@ -169,7 +175,7 @@ class Mage_Adminhtml_Block_Catalog_Product_Grid extends Mage_Adminhtml_Block_Wid
         $this->addColumn('type',
             array(
                 'header'=> Mage::helper('catalog')->__('Type'),
-                'width' => '60px',
+                'width' => '100px',
                 'index' => 'type_id',
                 'type'  => 'options',
                 'options' => Mage::getSingleton('catalog/product_type')->getOptionArray(),
@@ -183,10 +189,42 @@ class Mage_Adminhtml_Block_Catalog_Product_Grid extends Mage_Adminhtml_Block_Wid
         $this->addColumn('set_name',
             array(
                 'header'=> Mage::helper('catalog')->__('Attrib. Set Name'),
-                'width' => '100px',
+                'width' => '150px',
                 'index' => 'attribute_set_id',
                 'type'  => 'options',
                 'options' => $sets,
+        ));
+
+        // build options display list for part type attribute
+        $part_type_items = Mage::getModel('eav/entity_attribute_option')->getCollection()->setStoreFilter()->join('attribute','attribute.attribute_id=main_table.attribute_id', 'attribute_code');
+        foreach ($part_type_items as $part_type_item) :
+            if ($part_type_item->getAttributeCode() == 'part_type')
+                $part_type_options[$part_type_item->getOptionId()] = $part_type_item->getValue();
+        endforeach;
+
+        $this->addColumn('part_type',
+            array(
+                'header'=> Mage::helper('catalog')->__('Part Type'),
+                'width' => '150px',
+                'index' => 'part_type',
+                'type'  => 'options',
+                'options' => $part_type_options,
+        ));
+
+        // build options display list for manufacturer attribute
+        $manufacturer_items = Mage::getModel('eav/entity_attribute_option')->getCollection()->setStoreFilter()->join('attribute','attribute.attribute_id=main_table.attribute_id', 'attribute_code');
+        foreach ($manufacturer_items as $manufacturer_item) :
+            if ($manufacturer_item->getAttributeCode() == 'manufacturer')
+                $manufacturer_options[$manufacturer_item->getOptionId()] = $manufacturer_item->getValue();
+        endforeach;
+
+        $this->addColumn('manufacturer',
+            array(
+                'header'=> Mage::helper('catalog')->__('Manufacturer'),
+                'width' => '150px',
+                'index' => 'manufacturer',
+                'type'  => 'options',
+                'options' => $manufacturer_options,
         ));
 
         $this->addColumn('sku',
@@ -194,6 +232,32 @@ class Mage_Adminhtml_Block_Catalog_Product_Grid extends Mage_Adminhtml_Block_Wid
                 'header'=> Mage::helper('catalog')->__('SKU'),
                 'width' => '80px',
                 'index' => 'sku',
+        ));
+
+        $this->addColumn('part_number', array(
+            'header' => Mage::helper('catalog')->__('Part Number'),
+            'width' => '100',
+            'index' => 'part_number'
+        ));
+
+        $this->addColumn('new_date_from', array(
+            'header' => Mage::helper('catalog')->__('New From'),
+            'type'  => 'date',
+            'width' => '100',
+            'index' => 'news_from_date'
+        ));
+
+        $this->addColumn('new_date_to', array(
+            'header' => Mage::helper('catalog')->__('New To'),
+            'type'  => 'date',
+            'width' => '100',
+            'index' => 'news_to_date'
+        ));
+
+        $this->addColumn('is_clearance', array(
+            'header' => Mage::helper('catalog')->__('Is Clearance'),
+            'width' => '50',
+            'index' => 'is_clearance'
         ));
 
         $store = $this->_getStore();
@@ -218,7 +282,7 @@ class Mage_Adminhtml_Block_Catalog_Product_Grid extends Mage_Adminhtml_Block_Wid
         $this->addColumn('visibility',
             array(
                 'header'=> Mage::helper('catalog')->__('Visibility'),
-                'width' => '70px',
+                'width' => '100px',
                 'index' => 'visibility',
                 'type'  => 'options',
                 'options' => Mage::getModel('catalog/product_visibility')->getOptionArray(),
