@@ -1,5 +1,8 @@
 package com.turbointernational.metadata.mas90;
 
+import com.turbointernational.metadata.mas90.pricing.ItemPricing;
+import com.turbointernational.metadata.mas90.pricing.Pricing;
+import com.turbointernational.metadata.mas90.pricing.DiscountType;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -15,14 +18,14 @@ import org.junit.Before;
  *
  * @author jrodriguez
  */
-public class Mas90PricesTest {
+public class Mas90Test {
     
-    Mas90Prices instance;
+    Mas90 instance;
     
     @Before
     public void setUp() throws IOException {
         String dbPath = getClass().getResource("/mas90.accdb").getFile();
-        instance = new Mas90Prices(new File(dbPath));
+        instance = new Mas90(new File(dbPath));
     }
 
     @Test
@@ -133,7 +136,7 @@ public class Mas90PricesTest {
         expectedPriceLevels.add("R");
         expectedPriceLevels.add("W");
         
-        Set<String> priceLevels = Mas90Prices.getPriceLevels();
+        Set<String> priceLevels = Mas90.getPriceLevels();
         
         assertEquals(expectedPriceLevels, priceLevels);
     }
@@ -142,7 +145,7 @@ public class Mas90PricesTest {
     public void testGetDefaultPriceLevelPricing() throws Exception {
         Map<String, Pricing> priceLevelPricings = instance.getDefaultPriceLevelPricing();
 
-        assertTrue(Mas90Prices.getPriceLevels().containsAll(priceLevelPricings.keySet()));
+        assertTrue(Mas90.getPriceLevels().containsAll(priceLevelPricings.keySet()));
         assertEquals(new BigDecimal("10.0000"),  priceLevelPricings.get("0").getPriceBreak(0).getRate());
         assertEquals(new BigDecimal("5.0000"),   priceLevelPricings.get("1").getPriceBreak(0).getRate());
         assertEquals(new BigDecimal("0.0000"),   priceLevelPricings.get("2").getPriceBreak(0).getRate());

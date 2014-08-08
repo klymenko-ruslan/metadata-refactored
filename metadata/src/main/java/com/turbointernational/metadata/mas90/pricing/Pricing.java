@@ -1,15 +1,15 @@
-package com.turbointernational.metadata.mas90;
+package com.turbointernational.metadata.mas90.pricing;
 
 import com.healthmarketscience.jackcess.Row;
-import com.turbointernational.metadata.mas90.Pricing.PriceBreak;
+import com.turbointernational.metadata.mas90.pricing.Pricing.PriceBreak;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import static com.turbointernational.metadata.mas90.DiscountType.Amount;
-import static com.turbointernational.metadata.mas90.DiscountType.Override;
-import static com.turbointernational.metadata.mas90.DiscountType.Percentage;
+import static com.turbointernational.metadata.mas90.pricing.DiscountType.Amount;
+import static com.turbointernational.metadata.mas90.pricing.DiscountType.Override;
+import static com.turbointernational.metadata.mas90.pricing.DiscountType.Percentage;
 import org.apache.commons.lang.ObjectUtils;
 
 /**

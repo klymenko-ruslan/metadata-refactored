@@ -1,4 +1,4 @@
-package com.turbointernational.metadata.mas90;
+package com.turbointernational.metadata.mas90.pricing;
 
 import java.math.BigDecimal;
 

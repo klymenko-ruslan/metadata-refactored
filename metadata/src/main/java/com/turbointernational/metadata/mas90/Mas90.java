@@ -1,5 +1,8 @@
 package com.turbointernational.metadata.mas90;
 
+import com.turbointernational.metadata.mas90.pricing.Pricing;
+import com.turbointernational.metadata.mas90.pricing.ItemPricing;
+import com.turbointernational.metadata.mas90.pricing.CalculatedPrice;
 import com.healthmarketscience.jackcess.Database;
 import com.healthmarketscience.jackcess.DatabaseBuilder;
 import com.healthmarketscience.jackcess.Row;
@@ -24,7 +27,7 @@ import org.springframework.jdbc.core.RowCallbackHandler;
  *
  * @author jrodriguez
  */
-public class Mas90Prices {
+public class Mas90 {
     
     private static SortedSet<String> priceLevels = new TreeSet();
     
@@ -41,7 +44,7 @@ public class Mas90Prices {
         tempPriceLevels.add("R");
         tempPriceLevels.add("W");
         
-        Mas90Prices.priceLevels = Collections.unmodifiableSortedSet(tempPriceLevels);
+        Mas90.priceLevels = Collections.unmodifiableSortedSet(tempPriceLevels);
     }
 
     public static SortedSet<String> getPriceLevels() {
@@ -65,7 +68,7 @@ public class Mas90Prices {
         return defaultPriceLevelPricing;
     }
 
-    public Mas90Prices(File mas90DbFile) throws IOException {
+    public Mas90(File mas90DbFile) throws IOException {
 
         // Open the mas90 database
         mas90Db = DatabaseBuilder.open(mas90DbFile);

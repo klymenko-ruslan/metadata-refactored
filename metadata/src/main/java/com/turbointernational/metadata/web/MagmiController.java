@@ -25,9 +25,9 @@ import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletResponse;
-import com.turbointernational.metadata.mas90.ItemPricing;
-import com.turbointernational.metadata.mas90.CalculatedPrice;
-import com.turbointernational.metadata.mas90.Mas90Prices;
+import com.turbointernational.metadata.mas90.pricing.ItemPricing;
+import com.turbointernational.metadata.mas90.pricing.CalculatedPrice;
+import com.turbointernational.metadata.mas90.Mas90;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -202,7 +202,7 @@ public class MagmiController {
         
         long startTime = System.currentTimeMillis();
         
-        Mas90Prices mas90 = new Mas90Prices(new File(mas90DbPath));
+        Mas90 mas90 = new Mas90(new File(mas90DbPath));
         CSVWriter writer = new CSVWriter(new OutputStreamWriter(out), ',', '\'', '\\');
         
         // Write the header row
@@ -270,7 +270,7 @@ public class MagmiController {
         response.setHeader("Content-Type", "text/csv");
         response.setHeader("Content-Disposition: attachment; filename=products.csv", null);
         
-        Mas90Prices mas90 = new Mas90Prices(new File(mas90DbPath));
+        Mas90 mas90 = new Mas90(new File(mas90DbPath));
         CSVWriter writer = new CSVWriter(new OutputStreamWriter(out), ',', '\'', '\\');
         
         // Write the header row
@@ -289,7 +289,7 @@ public class MagmiController {
         writer.close();
     }
     
-    private String[] magmiProductToCsvRow(Mas90Prices mas90, MagmiProduct product) {
+    private String[] magmiProductToCsvRow(Mas90 mas90, MagmiProduct product) {
         Map<String, String> columns = product.getCsvColumns();
         product.csvFinderColumns(columns, finderIdApplication, finderIdTurbo);
         product.csvImageColumns(columns, imageResizer);
@@ -321,7 +321,7 @@ public class MagmiController {
         return valueArray;
     }
     
-    private void addErpPrices(Mas90Prices mas90, Map<String, String> columns, MagmiProduct product) {
+    private void addErpPrices(Mas90 mas90, Map<String, String> columns, MagmiProduct product) {
         try {
             
             // Stop now if there's no part number
@@ -351,7 +351,7 @@ public class MagmiController {
     }
     
     // bob@example.com;0:$1.00;10:$0.95;20:$0.90|jim@example.com....
-    private void addErpCustomerPrices(Mas90Prices mas90, ItemPricing itemPricing, Map<String, String> columns) throws IOException {
+    private void addErpCustomerPrices(Mas90 mas90, ItemPricing itemPricing, Map<String, String> columns) throws IOException {
         
         // Build the customer price string
         StringBuilder priceString = new StringBuilder();
@@ -392,10 +392,10 @@ public class MagmiController {
         columns.put("customerprice", priceString.toString());
     }
     
-    private void addErpGroupPrices(Mas90Prices mas90, ItemPricing itemPricing, Map<String, String> columns) throws IOException {
+    private void addErpGroupPrices(Mas90 mas90, ItemPricing itemPricing, Map<String, String> columns) throws IOException {
         
         // Add column data for each price level, group and tier prices
-        for (String priceLevel : Mas90Prices.getPriceLevels()) {
+        for (String priceLevel : Mas90.getPriceLevels()) {
             
             // Get the price level pricing
             StringBuilder priceString = new StringBuilder();
