@@ -11,7 +11,7 @@ import com.turbointernational.metadata.domain.part.types.Turbo;
 import com.turbointernational.metadata.domain.type.CoolType;
 import com.turbointernational.metadata.domain.type.ManufacturerType;
 import com.turbointernational.metadata.domain.type.PartType;
-import com.turbointernational.metadata.util.dto.MagmiBomItem;
+import com.turbointernational.metadata.magmi.dto.MagmiBomItem;
 import java.util.List;
 import org.junit.Before;
 import org.junit.Test;

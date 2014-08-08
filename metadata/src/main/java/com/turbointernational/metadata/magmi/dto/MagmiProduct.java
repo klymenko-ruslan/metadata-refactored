@@ -1,4 +1,4 @@
-package com.turbointernational.metadata.util.dto;
+package com.turbointernational.metadata.magmi.dto;
 
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.Part;

@@ -1,7 +1,6 @@
 package com.turbointernational.metadata.domain.changelog;
 
 import com.turbointernational.metadata.domain.security.User;
-import java.security.Principal;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.Column;
@@ -63,17 +62,12 @@ public class Changelog {
         
         changelog.description = description;
         changelog.changeDate = new Date();
-        changelog.data = data.toString();
+        changelog.data = data;
         changelog.user = User.getCurrentUser();
         
         changelog.persist();
         
         return changelog;
-    }
-    
-    @Deprecated
-    public static Changelog log(Principal principal, String description, String data) {
-        return log(description, data);
     }
     //</editor-fold>
     

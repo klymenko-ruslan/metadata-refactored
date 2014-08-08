@@ -1,15 +1,14 @@
 package com.turbointernational.metadata.domain.part;
+import com.turbointernational.metadata.domain.changelog.Changelog;
 import com.turbointernational.metadata.domain.other.TurboType;
 import com.turbointernational.metadata.domain.part.bom.BOMAncestor;
 import com.turbointernational.metadata.util.ImageResizer;
-import com.turbointernational.metadata.util.ElasticSearch;
 import flexjson.JSONSerializer;
 import flexjson.transformer.HibernateTransformer;
 import java.io.File;
 import java.security.Principal;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Logger;
 import net.sf.jsog.JSOG;
 import org.apache.commons.io.FileUtils;
@@ -35,14 +34,10 @@ public class PartController {
     private static final Logger log = Logger.getLogger(PartController.class.toString());
     
     @Value("${images.originals}")
-    private File originalImagesDir;
+    File originalImagesDir;
     
     @Autowired(required=true)
     ImageResizer resizer;
-    
-    // ElasticSearch
-    @Autowired(required=true)
-    private ElasticSearch elasticSearch;
 
     @Transactional
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
@@ -83,76 +78,6 @@ public class PartController {
         return new ResponseEntity<String>(Part.toJsonArray(result, fields), headers, HttpStatus.OK);
     }
     
-    @Transactional
-    @RequestMapping(method = RequestMethod.POST)
-    @Secured("ROLE_CREATE_PART")
-    public ResponseEntity<String> createFromJson(Principal principal, @RequestBody String partJson) throws Exception {
-        JSOG partJsog = JSOG.parse(partJson);
-        
-        Part part = Part.fromJsonToPart(partJson);
-        
-        part.persist();
-        
-        // Update the changelog
-//        Changelog.log(principal, "Created part", part.toJson());
-        
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/json");
-        return new ResponseEntity<String>(part.getId().toString(), headers, HttpStatus.CREATED);
-    }
-    
-    @Transactional
-    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-    @Secured("ROLE_ALTER_PART")
-    public ResponseEntity<String> updateFromJson(Principal principal, @RequestBody String partJson, @PathVariable("id") Long id) throws Exception {
-        JSOG partJsog = JSOG.parse(partJson);
-        
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/json");
-        
-        // Get the original part so we can log the update
-//        Part originalPart = Part.findPart(id);
-//        String originalPartJson = originalPart.toJson();
-        
-        // Update the part
-        Part part = Part.fromJsonToPart(partJson);
-        
-        if (part.merge() == null) {
-            return new ResponseEntity<String>(headers, HttpStatus.NOT_FOUND);
-        }
-        
-        part = Part.findPart(part.getId());
-        Part.entityManager().refresh(part);
-        
-        // Update the changelog
-//        JSOG dataJsog = JSOG.object("originalPart", originalPartJson)
-//                            .put("updatedPart", part.toJson());
-        
-//        Changelog.log(principal, "Updated part", dataJsog.toString());
-        
-        return new ResponseEntity<String>(part.toJson(), headers, HttpStatus.OK);
-    }
-    
-    @Transactional
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    @Secured("ROLE_DELETE_PART")
-    public ResponseEntity<String> deleteFromJson(Principal principal, @PathVariable("id") Long id) {
-        Part part = Part.findPart(id);
-        String partJson = part.toJson();
-        
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/json");
-        if (part == null) {
-            return new ResponseEntity<String>(headers, HttpStatus.NOT_FOUND);
-        }
-        part.remove();
-        
-        // Update the changelog
-//        Changelog.log(principal, "Deleted part", partJson);
-        
-        return new ResponseEntity<String>(headers, HttpStatus.OK);
-    }
-    
     @RequestMapping(value="/{id}/ancestors", method = RequestMethod.GET)
     @Secured("ROLE_READ")
     public ResponseEntity<String> ancestors(@PathVariable("id") long partId) throws Exception {
@@ -176,6 +101,71 @@ public class PartController {
                 .serialize(ancestors);
         
         return new ResponseEntity<String>(json, headers, HttpStatus.OK);
+    }
+    
+    @Transactional
+    @RequestMapping(method = RequestMethod.POST)
+    @Secured("ROLE_CREATE_PART")
+    public ResponseEntity<String> createFromJson(Principal principal, @RequestBody String partJson) throws Exception {
+        Part part = Part.fromJsonToPart(partJson);
+        
+        part.persist();
+        
+        // Update the changelog
+        Changelog.log("Created part", part.toJson());
+        
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "application/json");
+        return new ResponseEntity<String>(part.getId().toString(), headers, HttpStatus.CREATED);
+    }
+    
+    @Transactional
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    @Secured("ROLE_ALTER_PART")
+    public ResponseEntity<String> updateFromJson(Principal principal, @RequestBody String partJson, @PathVariable("id") Long id) throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "application/json");
+        
+        // Get the original part so we can log the update
+        Part originalPart = Part.findPart(id);
+        String originalPartJson = originalPart.toJson();
+        
+        // Update the part
+        Part part = Part.fromJsonToPart(partJson);
+        
+        if (part.merge() == null) {
+            return new ResponseEntity<String>(headers, HttpStatus.NOT_FOUND);
+        }
+        
+        part = Part.findPart(part.getId());
+        Part.entityManager().refresh(part);
+        
+        // Update the changelog
+        Changelog.log("Updated part",
+            "{original: " + originalPartJson + ",updated: " + part.toJson() + "}");
+        
+        return new ResponseEntity<String>(part.toJson(), headers, HttpStatus.OK);
+    }
+    
+    @Transactional
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    @Secured("ROLE_DELETE_PART")
+    public ResponseEntity<String> deleteFromJson(Principal principal, @PathVariable("id") Long id) {
+        Part part = Part.findPart(id);
+        
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "application/json");
+        if (part == null) {
+            return new ResponseEntity<String>(headers, HttpStatus.NOT_FOUND);
+        }
+        
+        String partJson = part.toJson();
+        part.remove();
+        
+        // Update the changelog
+        Changelog.log("Deleted part", partJson);
+        
+        return new ResponseEntity<String>(headers, HttpStatus.OK);
     }
     
     @Transactional

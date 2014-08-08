@@ -11,7 +11,7 @@ import com.turbointernational.metadata.domain.type.PartType;
 import com.turbointernational.metadata.domain.type.SealType;
 import com.turbointernational.metadata.magmi.MagmiDataFinder;
 import com.turbointernational.metadata.util.ImageResizer;
-import com.turbointernational.metadata.util.dto.MagmiProduct;
+import com.turbointernational.metadata.magmi.dto.MagmiProduct;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;

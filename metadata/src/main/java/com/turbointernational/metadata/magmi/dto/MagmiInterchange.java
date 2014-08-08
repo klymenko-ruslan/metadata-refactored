@@ -1,5 +1,5 @@
 
-package com.turbointernational.metadata.util.dto;
+package com.turbointernational.metadata.magmi.dto;
 
 /**
  * Used in a JPA "NEW" query.
