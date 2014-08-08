@@ -26,9 +26,15 @@ public class UserController {
 
     @RequestMapping(value = "/me", method = RequestMethod.GET)
     @ResponseBody
-    @Secured("ROLE_AUTHENTICATED")
-    public ResponseEntity<String> getMe() {
+    @Secured("ROLE_READ")
+    public ResponseEntity getMe() {
         User user = User.getCurrentUser();
+        
+        if (user == null) {
+            
+        
+        return new ResponseEntity(null, new HttpHeaders(), HttpStatus.FORBIDDEN);
+        }
         
         return new ResponseEntity<String>(
                 User.JSON.serialize(user),
@@ -37,7 +43,7 @@ public class UserController {
 
     @RequestMapping(value = "/me", method = RequestMethod.POST)
     @ResponseBody
-    @Secured("ROLE_AUTHENTICATED")
+    @Secured("ROLE_READ")
     public ResponseEntity<String> updateMe(@RequestBody String json) {
         User jsonUser = User.fromJson(json);
         
@@ -59,7 +65,7 @@ public class UserController {
 
     @RequestMapping(value = "/myroles", method = RequestMethod.GET)
     @ResponseBody
-    @Secured("ROLE_AUTHENTICATED")
+    @Secured("ROLE_READ")
     public ResponseEntity<String> myroles() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Set<String> authoritySet = Sets.newTreeSet();

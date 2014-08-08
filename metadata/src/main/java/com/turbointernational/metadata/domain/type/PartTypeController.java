@@ -3,6 +3,7 @@ import java.util.List;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +16,7 @@ public class PartTypeController {
     
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ResponseBody
+    @Secured("ROLE_READ")
     public ResponseEntity<String> showJson(@PathVariable("id") Long id) {
         PartType partType = PartType.findPartType(id);
         HttpHeaders headers = new HttpHeaders();
@@ -27,6 +29,7 @@ public class PartTypeController {
     
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
+    @Secured("ROLE_READ")
     public ResponseEntity<String> listJson() {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json; charset=utf-8");

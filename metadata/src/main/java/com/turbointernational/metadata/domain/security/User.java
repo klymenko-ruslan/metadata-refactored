@@ -226,7 +226,13 @@ public class User implements Comparable<User>, UserDetails {
     
     //<editor-fold defaultstate="collapsed" desc="Spring Security">
     public static User getCurrentUser() {
-        return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        
+        if (principal instanceof User) {
+            return (User) principal;
+        }
+        
+        return null;
     }
     
     @Override

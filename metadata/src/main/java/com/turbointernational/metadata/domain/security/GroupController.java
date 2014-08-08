@@ -49,7 +49,7 @@ public class GroupController {
     
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
-    @Secured("ROLE_AUTHENTICATED")
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<String> list() {
         List<Group> groups = Group.findAllGroups();
         
@@ -66,7 +66,7 @@ public class GroupController {
     
     @RequestMapping(value = "/roles", method = RequestMethod.GET)
     @ResponseBody
-    @Secured("ROLE_AUTHENTICATED")
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<String> listRoles() {
         List<Role> roles = Role.findAllRoles();
         
@@ -81,7 +81,7 @@ public class GroupController {
     
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ResponseBody
-    @Secured("ROLE_AUTHENTICATED")
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<String> get(@PathVariable("id") Long id) {
         Group group = Group.findGroup(id);
         group.getUsers().size();
