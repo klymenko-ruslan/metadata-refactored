@@ -345,15 +345,19 @@ module.exports = function (grunt) {
       unit: {
         configFile: 'karma.conf.js',
         singleRun: true
+      },
+      e2e: {
+        configFile: 'karma-e2e.conf.js',
+        singleRun: true
       }
     },
     ngmin: {
       dist: {
         files: [{
           expand: true,
-          cwd: '<%= yeoman.dist %>/scripts',
+          cwd: '.tmp/concat/scripts',
           src: '*.js',
-          dest: '<%= yeoman.dist %>/scripts'
+          dest: '.tmp/concat/scripts'
         }]
       }
     },
@@ -397,8 +401,8 @@ module.exports = function (grunt) {
     'concurrent:dist',
     'autoprefixer',
     'concat',
-    'copy:dist',
     'ngmin',
+    'copy:dist',
     'cssmin',
     'uglify',
     'rev',
