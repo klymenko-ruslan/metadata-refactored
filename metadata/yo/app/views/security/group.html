@@ -20,7 +20,7 @@
         <li>
             <a ng-click="undo()"
                ng-disabled="form.$pristine"
-               ng-show="group.id"
+               ng-hide="isNewGroup()"
                class="btn btn-warning">
                 <i class="fa fa-undo"></i>
                 Undo
@@ -29,6 +29,7 @@
 
         <li>
             <a ng-click="delete()"
+               ng-hide="isNewGroup()"
                class="btn btn-danger">
                 <i class="fa fa-trash-o"></i>
                 Delete

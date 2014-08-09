@@ -8,17 +8,27 @@ describe('Controller: GroupCtrl', function () {
   var GroupCtrl,
       scope,
       $controller,
+      $dialogs,
       $httpBackend,
+      $location,
       $routeParams,
+      $q,
+      gToast,
       users,
-      roles;
+      roles,
+      groupOne;
 
   // Initialize the controller and a mock scope
-  beforeEach(inject(function (_$controller_, _$routeParams_, $rootScope, _$httpBackend_) {
+  beforeEach(inject(function (_$controller_, _$dialogs_, _$q_, _$routeParams_, $rootScope, _$httpBackend_, _$location_, _gToast_) {
     $controller = _$controller_;
+    $dialogs = _$dialogs_;
     $httpBackend = _$httpBackend_;
+    $location    = _$location_;
+    $q = _$q_;
     $routeParams = _$routeParams_;
     scope = $rootScope.$new();
+    gToast = _gToast_;
+    spyOn(gToast, 'open');
 
     users = [{
       "id":1,
@@ -41,6 +51,13 @@ describe('Controller: GroupCtrl', function () {
       {"display":"Alter BOM alternates.","id":8},
       {"display":"Superpowers.","id":9}
     ];
+
+    groupOne = {
+      "id": 1,
+      "name": "Admin",
+      "roles": roles,
+      "users": users
+    };
 
     $httpBackend.whenGET('/metadata/security/user/me').respond(users[0]);
     $httpBackend.whenGET('/metadata/security/user/myroles').respond([]);
@@ -65,7 +82,8 @@ describe('Controller: GroupCtrl', function () {
     });
 
     describe('initialization', function() {
-      it('should attach a list of users to the scope', function() {
+
+      it('should attach a list of users to the scope', function () {
         expect(scope.users['1']).toBeDefined();
         expect(scope.users['1'].id).toEqual(users[0].id);
         expect(scope.users['1'].name).toEqual(users[0].name);
@@ -74,7 +92,7 @@ describe('Controller: GroupCtrl', function () {
         expect(scope.users['1'].groups).toEqual(users[0].groups);
       });
 
-      it('should attach a list of roles to the scope', function() {
+      it('should attach a list of roles to the scope', function () {
         expect(_.size(scope.roles)).toBe(roles.length);
         expect(scope.roles['1'].id).toEqual(roles[0].id);
         expect(scope.roles['1'].description).toEqual(roles[0].description);
@@ -88,19 +106,28 @@ describe('Controller: GroupCtrl', function () {
     });
 
     describe('isNewGroup()', function() {
-      it('should return true if the "id" route parameter is create', function() {
-        $routeParams.id = 'create';
+      it('should return false', function() {
+        expect(scope.isNewGroup()).toBeTruthy();
+      });
+    });
+
+    describe('save()', function() {
+      it('should send a POST to the server', function() {
+        $httpBackend.expectPOST('/metadata/security/group').respond(groupOne);
+        scope.save();
+        $httpBackend.flush();
+
+        expect(gToast.open).toHaveBeenCalledWith('Group created.');
+        expect($location.path()).toBe('/security/groups');
       });
     });
   });
 
   describe('Edit Mode', function() {
     beforeEach(function() {
-      $routeParams.id = '1';
+      $routeParams.id = groupOne.id;
 
-      $httpBackend.whenGET('/metadata/security/group/' + $routeParams.id).respond({
-
-      });
+      $httpBackend.whenGET('/metadata/security/group/' + groupOne.id).respond(groupOne);
 
       GroupCtrl = $controller('GroupCtrl', {
         $scope: scope
@@ -109,20 +136,45 @@ describe('Controller: GroupCtrl', function () {
       $httpBackend.flush();
     });
 
+    describe('initialization', function() {
+      it('should attach the group to the scope', function() {
+        expect(scope.group.name).toEqual(groupOne.name);
+        expect(scope.group.roles).toEqual(groupOne.roles);
+        expect(scope.group.users).toEqual(groupOne.users);
+
+      });
+    });
+
     describe('isNewGroup()', function() {
-      it('should return true if the "id" route parameter is create', function() {
-        $routeParams.id = 'create';
+      it('should return false', function() {
+        expect(scope.isNewGroup()).toBeFalsy();
+      });
+    });
+
+    describe('save()', function() {
+      it('should send a PUT to the server', function() {
+        $httpBackend.expectPUT('/metadata/security/group/' + groupOne.id).respond(groupOne);
+        scope.save();
+        $httpBackend.flush();
+
+        expect(gToast.open).toHaveBeenCalledWith('Group updated.');
+        expect($location.path()).toBe('/security/groups');
+      });
+    });
+
+    describe('delete()', function() {
+      it('should send a DELETE request to the server', function() {
+
+        // Dummy promise for the dialog
+        var deferred = $q.defer();
+        deferred.resolve();
+        spyOn($dialogs, 'confirm').andReturn({result: deferred.promise});
+
+        $httpBackend.expectDELETE('/metadata/security/group/' + groupOne.id).respond();
+        scope.delete();
+        $httpBackend.flush();
       });
     });
   });
 
-  describe('undo()', function() {
-    beforeEach(function() {
-      $httpBackend.flush();
-    });
-
-    it('should revert changes to the form', function() {
-
-    });
-  });
 });

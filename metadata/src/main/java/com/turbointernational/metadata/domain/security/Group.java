@@ -28,7 +28,6 @@ public class Group implements Comparable<Group>, Serializable {
                 .include("id")
                 .include("name")
                 .include("roles.id")
-                .include("roles.name")
                 .include("roles.display")
                 .include("users.id")
                 .include("users.name")
