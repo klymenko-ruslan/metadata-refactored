@@ -38,9 +38,9 @@
 
     <div class="row">
         <div class="col-sm-6">
-            <h1 ng-hide="group.id">Create Group</h1>
+            <h1 ng-show="isNewGroup()">Create Group</h1>
 
-            <h1 ng-show="group.id">Group: {{group.name}}</h1>
+            <h1 ng-hide="isNewGroup()">Group: {{group.name}}</h1>
         </div>
     </div>
     <div class="row">

@@ -25,13 +25,15 @@ public class Group implements Comparable<Group>, Serializable {
     public static final long serialVersionUID = 1L;
     
     public static JSONSerializer JSON = new JSONSerializer()
+                .include("id")
+                .include("name")
                 .include("roles.id")
                 .include("roles.name")
                 .include("roles.display")
                 .include("users.id")
                 .include("users.name")
                 .include("users.email")
-                .exclude("*.class");
+                .exclude("*");
 
     //<editor-fold defaultstate="collapsed" desc="properties">
     @Id
