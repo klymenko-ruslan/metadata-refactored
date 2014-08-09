@@ -193,7 +193,6 @@ public class MagmiController {
     @RequestMapping("/products")
     @ResponseBody   
     @Transactional
-    @Secured("ROLE_MAGMI")
     public void products(HttpServletResponse response, OutputStream out) throws Exception {
         logger.log(Level.INFO, "Magmi export started.");
         
@@ -264,7 +263,6 @@ public class MagmiController {
     @RequestMapping("/product/{partId}")
     @ResponseBody   
     @Transactional
-    @Secured("ROLE_MAGMI")
     public void product(HttpServletResponse response, OutputStream out, @PathVariable Long partId) throws Exception {
         
         response.setHeader("Content-Type", "text/csv");

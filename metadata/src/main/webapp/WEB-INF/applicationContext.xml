@@ -110,6 +110,7 @@
     <security:http use-expressions="true" access-denied-page="/metadata/security/denied">
         <security:anonymous enabled="false"/>
         <security:intercept-url pattern="/metadata/**"/>
+        <security:intercept-url pattern="hasIpAddress('127.0.0.1/32')"/>
         <security:remember-me/>
         <security:form-login login-processing-url="/metadata/security/login"
                              login-page="/metadata/security/login/required"
