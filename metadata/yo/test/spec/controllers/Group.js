@@ -75,8 +75,9 @@ describe('Controller: GroupCtrl', function () {
       });
 
       it('should attach a list of roles to the scope', function() {
-        expect(scope.roles).toEqual(roles);
-
+        expect(_.size(scope.roles)).toBe(roles.length);
+        expect(scope.roles['1'].id).toEqual(roles[0].id);
+        expect(scope.roles['1'].description).toEqual(roles[0].description);
       });
 
       it('should attach a new group to the scope', function() {
