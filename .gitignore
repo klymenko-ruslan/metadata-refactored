@@ -1,5 +1,4 @@
 .vagrant
-**/log.roo
 **/.DS_Store
 **/.idea
 **/nbactions.xml
