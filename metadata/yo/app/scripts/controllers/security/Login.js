@@ -26,7 +26,10 @@ angular.module('ngMetaCrudApp')
     }
 
     $scope.resetRequest = function() {
-      Restangular.one('security/password/reset/request').get({email: $scope.email}).then(
+      Restangular.all('security/password/reset/request').post(
+        jQuery.param({email: $scope.email}),
+        {},
+        {'Content-Type': 'application/x-www-form-urlencoded'}).then(
         function() {
           gToast.open("Password reset link sent.");
         },
@@ -37,13 +40,12 @@ angular.module('ngMetaCrudApp')
     }
 
     $scope.resetToken = function() {
-      Restangular.one('security/password/reset/token/' + $routeParams.token).get({password: $scope.password}).then(
-        function(loginResponse) {
-          User.init().then(
-            function() {
-              $location.path("/login")
-            }
-          );
+      Restangular.all('security/password/reset/token/' + $routeParams.token).post(
+        jQuery.param({password: $scope.password}),
+        {},
+        {'Content-Type': 'application/x-www-form-urlencoded'}).then(
+        function() {
+          $location.path("/login")
         },
         function() {
           gToast.open("Could not reset password.");

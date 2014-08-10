@@ -6,12 +6,14 @@ describe('Controller: LoginCtrl', function () {
   beforeEach(module('ngMetaCrudApp'));
 
   var $httpBackend,
+      $routeParams,
     LoginCtrl,
     scope;
 
   // Initialize the controller and a mock scope
-  beforeEach(inject(function ($controller, _$httpBackend_, $rootScope) {
+  beforeEach(inject(function ($controller, _$httpBackend_, _$routeParams_, $rootScope) {
     $httpBackend = _$httpBackend_;
+    $routeParams = _$routeParams_;
     scope = $rootScope.$new();
     LoginCtrl = $controller('LoginCtrl', {
       $scope: scope
@@ -40,10 +42,10 @@ describe('Controller: LoginCtrl', function () {
 
   describe('resetRequest()', function() {
 
-    it('should issue a GET request', function() {
+    it('should issue a POST request', function() {
       scope.email = 'admin@turbointernational.com';
 
-      $httpBackend.expectGET('/metadata/security/password/reset/request?email=' + scope.email).respond();
+      $httpBackend.expectPOST('/metadata/security/password/reset/request', 'email=admin%40turbointernational.com').respond();
 
       scope.resetRequest();
 
@@ -52,7 +54,17 @@ describe('Controller: LoginCtrl', function () {
   });
 
   describe('resetToken()', function() {
+    it('should issue a POST request', function() {
+      scope.password = 'foopw';
 
+      $routeParams.token = 'fooToken'
+
+      $httpBackend.expectPOST('/metadata/security/password/reset/token/' + $routeParams.token, 'password=foopw').respond();
+
+      scope.resetToken();
+
+      $httpBackend.flush();
+    });
   });
 
 });
