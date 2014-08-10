@@ -24,3 +24,6 @@
 /magento/var/locks/
 /magento/var/report/
 /images/
+/metadata/yo/dist/
+/metadata/yo/.tmp/
+/metadata/yo/.sass-cache/

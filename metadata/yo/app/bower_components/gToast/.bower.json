@@ -35,6 +35,6 @@
     "commit": "a83dcd1d67e9d880b87ecf500b321c04d434efb0"
   },
   "_source": "git://github.com/nohros/gToast.git",
-  "_target": "~0.1.2",
+  "_target": "0.1.2",
   "_originalSource": "gToast"
 }

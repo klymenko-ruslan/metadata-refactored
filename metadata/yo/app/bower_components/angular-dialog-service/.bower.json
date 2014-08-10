@@ -19,6 +19,6 @@
     "commit": "7aeccf39b43283cb5f4027c7aebb2c04fc06cd46"
   },
   "_source": "git://github.com/m-e-conroy/angular-dialog-service.git",
-  "_target": "~3.1.0",
+  "_target": "3.1.0",
   "_originalSource": "angular-dialog-service"
 }
