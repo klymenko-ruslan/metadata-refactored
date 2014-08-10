@@ -80,20 +80,6 @@ public class PistonRing extends Part {
     public void setInstalledGapMax(Float installedGapMax) {
         this.installedGapMax = installedGapMax;
     }
-
-    @Override
-    public JSOG toJsog() {
-        JSOG partObject = super.toJsog();
-        
-        partObject.put("outside_dim_min", getOutsideDiameterMin());
-        partObject.put("outside_dim_max", getOutsideDiameterMax());
-        partObject.put("width_min", getWidthMin());
-        partObject.put("width_max", getWidthMax());
-        partObject.put("i_gap_min", getInstalledGapMin());
-        partObject.put("i_gap_max", getInstalledGapMax());
-        
-        return partObject;
-    }
     
     @Override
     public void csvColumns(Map<String, String> columns) {

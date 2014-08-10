@@ -96,21 +96,6 @@ public class TurbineWheel extends Part {
     public void setNumberOfBlades(String numberOfBlades) {
         this.numberOfBlades = numberOfBlades;
     }
-
-    @Override
-    public JSOG toJsog() {
-        JSOG partObject = super.toJsog();
-        
-        partObject.put("exduce_oa", getExducerDiameterA());
-        partObject.put("tip_height_b", getTipHeightB());
-        partObject.put("inducer_oc", getInducerDiameterC());
-        partObject.put("journal_od", getJournalDiameterD());
-        partObject.put("stem_oe", getStemDiameterE());
-        partObject.put("shaft_thread_f", getShaftThreadF());
-        partObject.put("number_of_blades", getNumberOfBlades());
-        
-        return partObject;
-    }
     
     @Override
     public void csvColumns(Map<String, String> columns) {

@@ -125,4 +125,8 @@ angular.module('ngMetaCrudApp')
         setSelections();
       };
 
+      $scope.isNewGroup = function() {
+        return $routeParams.id == 'create';
+      }
+
     });

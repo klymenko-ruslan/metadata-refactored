@@ -90,21 +90,6 @@ public class Turbo extends Part {
                     .include("turboModel.turboType.id")
                     .include("turboModel.turboType.name");
     }
-
-    @Override
-    public JSOG toJsog() {
-        JSOG partObject = super.toJsog();
-        
-        if (turboModel != null) {
-            partObject.put("turbo_model_name", turboModel.getName());
-        }
-
-        if (getCoolType() != null) {
-            partObject.put("cool_type_name", getCoolType().getName());
-        }
-        
-        return partObject;
-    }
     
     @Override
     public void csvColumns(Map<String, String> columns) {

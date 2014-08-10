@@ -23,6 +23,8 @@
         <context:include-filter expression="org.springframework.stereotype.Controller" type="annotation"/>
     </context:component-scan>
     
+    <security:global-method-security secured-annotations="enabled"/>
+    
     <context:property-placeholder ignore-resource-not-found="true" location="classpath*:META-INF/spring/*.properties,file:${user.home}/ti_metadata.properties"/>
 
     <!-- Enable this for integration of file upload functionality -->

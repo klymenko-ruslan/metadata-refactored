@@ -124,27 +124,6 @@ public class BearingHousing extends Part {
                     .include("coolType.name");
     }
     
-    
-
-    @Override
-    public JSOG toJsog() {
-        JSOG partObject = super.toJsog();
-        
-        partObject.put("oil_inlet", getOilInlet());
-        partObject.put("oil_outlet", getOilOutlet());
-        partObject.put("oil", getOil());
-        partObject.put("outlet_flange_holes", getOutletFlangeHoles());
-        partObject.put("water_ports", getWaterPorts());
-        partObject.put("design_features", getDesignFeatures());
-        partObject.put("bearing_type", getBearingType());
-        
-        if (getCoolType() != null) {
-            partObject.put("cool_type_name", getCoolType().getName());
-        }
-        
-        return partObject;
-    }
-    
     @Override
     public void csvColumns(Map<String, String> columns) {
         super.csvColumns(columns);

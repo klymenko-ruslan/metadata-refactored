@@ -63,9 +63,6 @@ public class KitComponentController {
     @Secured("ROLE_ALTER_PART")
     public void update(@PathVariable("id") Long id, @RequestParam(required=true) Boolean exclude) throws Exception {
         
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/json");
-        
         // Get the item
         KitComponent component = KitComponent.find(id);
         
@@ -82,9 +79,6 @@ public class KitComponentController {
     @ResponseBody
     @Secured("ROLE_ALTER_PART")
     public void delete(@PathVariable("id") Long id) throws Exception {
-        
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/json");
         
         // Get the object
         KitComponent component = KitComponent.find(id);

@@ -2,14 +2,11 @@
 **/log.roo
 **/.DS_Store
 **/.idea
+**/nbactions.xml
+**/nbproject/private/
+/metadata/target
 /sql/script.sql
 /sql/data.sql
-metadata/yo/.idea/
-/metadata/target
-**/nbactions.xml
-/mas90magmi/target
-mas90.accdb
-**/nbproject/private/
 magento/.ssh/known_hosts
 magento/.viminfo
 magento/.bash_history

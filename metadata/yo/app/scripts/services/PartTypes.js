@@ -43,14 +43,9 @@ angular.module('ngMetaCrudApp')
          * @returns {Object|promise} the part type object
          */
         this.getById = function (partTypeId) {
-            var partType = _.find(this.list, function (partType) {
-                return partTypeId === partType.id;
-              });
-
-            if (!angular.isObject(partType)) {
-              Restangular.setParentless(false);
-              return Restangular.all('type').one('part', partTypeId).get();
-            }
+          return _.find(PartTypes.list, function (partType) {
+              return partTypeId === partType.id;
+            });
           };
 
         /**
@@ -59,7 +54,7 @@ angular.module('ngMetaCrudApp')
          * @returns {Object} the part type object
          */
         this.getByClassName = function (partTypeClassName) {
-            return _.find(this.list, function (partType) {
+            return _.find(PartTypes.list, function (partType) {
                 return partTypeClassName === partType.name;
               }
           );

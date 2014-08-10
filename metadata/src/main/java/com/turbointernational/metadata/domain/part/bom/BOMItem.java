@@ -126,14 +126,6 @@ public class BOMItem implements Comparable<BOMItem> {
         return em;
     }
     
-    public static long countBOMItems() {
-        return entityManager().createQuery("SELECT COUNT(o) FROM BOMItem o", Long.class).getSingleResult();
-    }
-    
-    public static List<BOMItem> findAllBOMItems() {
-        return entityManager().createQuery("SELECT o FROM BOMItem o", BOMItem.class).getResultList();
-    }
-    
     public static BOMItem findBOMItem(Long id) {
         if (id == null) return null;
         
@@ -141,10 +133,6 @@ public class BOMItem implements Comparable<BOMItem> {
                 .createQuery("SELECT DISTINCT i FROM BOMItem i WHERE id = ?", BOMItem.class)
                 .setParameter(1, id)
                 .getSingleResult();
-    }
-    
-    public static List<BOMItem> findBOMItemEntries(int firstResult, int maxResults) {
-        return entityManager().createQuery("SELECT o FROM BOMItem o", BOMItem.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
     @Transactional
