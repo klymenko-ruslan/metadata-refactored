@@ -40,38 +40,30 @@ describe('Service: PartTypes', function () {
   describe('PartTypes.refresh', function() {
     var refreshPromise;
 
-    it('should issue a request to the server and return a promise', function() {
+    beforeEach(function(){
+      // Prepare for the call
+      $httpBackend.whenGET('/metadata/type/part').respond(partTypes);
 
-      describe('PartTypes.refresh success', function() {
-        beforeEach(function(){
-          // Prepare for the call
-          $httpBackend.when('GET', 'http://localhost:8080/type/part').respond(function (method, url, data) {
-            return [200, partTypes, {}]
-          });
-
-          // Issue the call to the service
-          $rootScope.$apply(function() {
-            refreshPromise = PartTypes.refresh();
-          });
-        });
-
-        it('should put the returned promise in PartTypes.refreshPromise', function() {
-          expect(PartTypes.refreshPromise).toBe(refreshPromise);
-        });
-
-        it('should set PartTypes.refreshPromise to null when resolved', function() {
-          $httpBackend.flush();
-          expect(PartTypes.refreshPromise).toBeNull();
-        });
-
-        it('should save the response in PartTypes.list', function() {
-          $httpBackend.flush();
-          expect(PartTypes.list).toBe(partTypes);
-        });
-
+      // Issue the call to the service
+      $rootScope.$apply(function() {
+        refreshPromise = PartTypes.refresh();
       });
-
     });
+
+    it('should put the returned promise in PartTypes.refreshPromise', function() {
+      expect(PartTypes.refreshPromise).toBe(refreshPromise);
+    });
+
+    it('should set PartTypes.refreshPromise to null when resolved', function() {
+      $httpBackend.flush();
+      expect(PartTypes.refreshPromise).toBeNull();
+    });
+
+    it('should save the response in PartTypes.list', function() {
+      $httpBackend.flush();
+      expect(PartTypes.list.length).toBe(3);
+    });
+
   });
 
   describe('PartTypes.getById', function() {
