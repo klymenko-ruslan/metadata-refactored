@@ -24,28 +24,37 @@
  * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 ?>
-<?php $_item = $this->getItem() ?>
+<?php $_item = $this->getItem();
+$isVisibleProduct = $_item->getProduct()->isVisibleInSiteVisibility();
+$productDetail = Mage::getModel('catalog/product');
+$productDetail->load($_item->getProduct()->getId());
+?>
 <?php $_order = $this->getItem()->getOrder() ?>
 <tr>
     <td align="left" valign="top" style="font-size:11px; padding:3px 9px; border-bottom:1px dotted #CCCCCC;">
-        <strong style="font-size:11px;"><?php echo $this->htmlEscape($_item->getName()) ?></strong>
-        <?php if ($this->getItemOptions()): ?>
-        <dl style="margin:0; padding:0;">
-            <?php foreach ($this->getItemOptions() as $option): ?>
-            <dt><strong><em><?php echo $option['label'] ?></em></strong></dt>
-            <dd style="margin:0; padding:0 0 0 9px;">
-                <?php echo (isset($option['print_value']) ? $option['print_value'] : nl2br($this->escapeHtml($option['value']))) ?>
-            </dd>
-            <?php endforeach; ?>
-        </dl>
-        <?php endif; ?>
+        <strong style="font-size:11px;"><?php echo $this->htmlEscape($productDetail->getAttributeText('part_type')) ?></strong>
         <?php $addInfoBlock = $this->getProductAdditionalInformationBlock(); ?>
         <?php if ($addInfoBlock) :?>
             <?php echo $addInfoBlock->setItem($_item)->toHtml(); ?>
         <?php endif; ?>
         <?php echo $this->escapeHtml($_item->getDescription()) ?>
     </td>
-    <td align="left" valign="top" style="font-size:11px; padding:3px 9px; border-bottom:1px dotted #CCCCCC;"><?php echo $this->htmlEscape($this->getSku($_item)) ?></td>
+
+    <!-- TI Part Number -->
+    <td align="left" valign="top" style="font-size:11px; padding:3px 9px; border-bottom:1px dotted #CCCCCC;"><?php echo $this->htmlEscape($productDetail->getPartNumber()) ?></td>
+
+    <!-- OEM Part Number -->
+    <td align="left" valign="top" style="font-size:11px; padding:3px 9px; border-bottom:1px dotted #CCCCCC;">
+        <?php if ($_options = $this->getItemOptions()): ?>
+            <?php foreach ($_options as $_option) :
+                $productByOem = Mage::getModel('catalog/product')->loadByAttribute('sku', $_option['value']);
+                if ($_option['label'] === $productDetail->getOemSkuCustomOptionTitle()) {
+                    echo $this->htmlEscape($productByOem->getPartNumber());
+                }
+            endforeach; ?>
+        <?php endif; ?>
+    </td>
+
     <td align="center" valign="top" style="font-size:11px; padding:3px 9px; border-bottom:1px dotted #CCCCCC;"><?php echo $_item->getQtyOrdered()*1 ?></td>
     <td align="right" valign="top" style="font-size:11px; padding:3px 9px; border-bottom:1px dotted #CCCCCC;">
         <?php if ($this->helper('tax')->displaySalesPriceExclTax($_order->getStore()) || $this->helper('tax')->displaySalesBothPrices($_order->getStore())): ?>
