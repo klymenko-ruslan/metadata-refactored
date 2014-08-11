@@ -1,82 +1,83 @@
-<metanav>
+<ng-form name="form" role="user information">
+  <metanav>
     <li>
-        <a ng-click="save()"
-           ng-disabled="form.$pristine"
-           class="btn-success">
-            <i class="fa fa-save"></i>
-            Save
-        </a>
+      <a ng-click="save()"
+         ng-disabled="form.$pristine"
+         class="btn btn-success">
+        <i class="fa fa-save"></i>
+        Save
+      </a>
     </li>
 
     <li>
-        <a ng-click="undo()"
-           ng-disabled="form.$pristine"
-           ng-show="user.id"
-           class="btn btn-warning">
-            <i class="fa fa-undo"></i>
-            Undo
-        </a>
+      <a ng-click="undo()"
+         ng-disabled="form.$pristine"
+         ng-show="user.id"
+         class="btn btn-warning">
+        <i class="fa fa-undo"></i>
+        Undo
+      </a>
     </li>
 
     <li ng-show="user.id">
-        <a ng-click="toggleResetPassword()"
-           class="btn btn-primary"
-           ng-class="{active: showResetPassword}">
-            <i class="fa fa-key"></i>
-            Reset Password
-        </a>
+      <a ng-click="toggleResetPassword()"
+         class="btn btn-primary"
+         ng-class="{active: showResetPassword}">
+        <i class="fa fa-key"></i>
+        Reset Password
+      </a>
     </li>
 
     <li ng-show="user.id">
-        <a ng-click="delete()"
-           class="btn btn-danger">
-            <i class="fa fa-trash-o"></i>
-            Delete
-        </a>
+      <a ng-click="delete()"
+         class="btn btn-danger">
+        <i class="fa fa-trash-o"></i>
+        Delete
+      </a>
     </li>
-</metanav>
+  </metanav>
 
-<div class="row">
+  <div class="row">
     <hgroup class="col-xs-12">
-        <h1 ng-hide="user.id">Create User</h1>
+      <h1 ng-hide="user.id">Create User</h1>
 
-        <h1 ng-show="user.id">User: {{user.name}}</h1>
+      <h1 ng-show="user.id">User: {{user.name}}</h1>
     </hgroup>
-</div>
+  </div>
 
 
-<div class="row">
-    <form role="user information" class="col-sm-7 col-md-6 form-horizontal">
-        <div class="form-group">
-            <label for="name-input" class="col-sm-2 control-label">Name</label>
+  <div class="row">
+    <div class="form-group">
+      <label for="name-input" class="col-sm-2 control-label">Name</label>
 
-            <div class="col-sm-10">
-                <input type="text" ng-model="user.name" class="form-control" id="name-input" placeholder="First and last name">
-            </div>
-        </div>
-        <div class="form-group">
-            <label for="email-input" class="col-sm-2 control-label">Email</label>
+      <div class="col-sm-10">
+        <input type="text" ng-model="user.name" class="form-control" id="name-input" placeholder="First and last name">
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="email-input" class="col-sm-2 control-label">Email</label>
 
-            <div class="col-sm-10">
-                <input type="email" ng-model="user.email" class="form-control" id="email-input" placeholder="Email">
-            </div>
-        </div>
-        <div class="form-group" ng-show="user.id == null || showResetPassword">
-            <label for="password-input" class="col-sm-2 control-label">Password</label>
+      <div class="col-sm-10">
+        <input type="email" ng-model="user.email" class="form-control" id="email-input" placeholder="Email">
+      </div>
+    </div>
+    <div class="form-group" ng-show="user.id == null || showResetPassword">
+      <label for="password-input" class="col-sm-2 control-label">Password</label>
 
-            <div class="col-sm-10">
-                <input type="password" ng-model="user.password" class="form-control" id="password-input" placeholder="New password">
-            </div>
-        </div>
-    </form>
+      <div class="col-sm-10">
+        <input type="password" ng-model="user.password" class="form-control" id="password-input" placeholder="New password">
+      </div>
+    </div>
 
     <div class="col-sm-5 col-md-4">
-        <h2 style="margin-top:0;">Groups</h2>
-        <ul class="col-sm-9 list-group">
-            <li ng-repeat="group in user.groups" class="list-group-item">
-                <a ng-href="/security/group/{{group.id}}">{{group.name}}</a>
-            </li>
-            <li ng-hide="user.groups" class="list-group-item">No groups assigned</li>
-        </ul>
+      <h2 style="margin-top:0;">Groups</h2>
+      <ul class="col-sm-9 list-group">
+        <li ng-repeat="group in user.groups" class="list-group-item">
+          <a ng-href="/security/group/{{group.id}}">{{group.name}}</a>
+        </li>
+        <li ng-hide="user.groups" class="list-group-item">No groups assigned</li>
+      </ul>
     </div>
-</div>
+  </div>
+
+</ng-form>

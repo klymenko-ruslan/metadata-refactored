@@ -14,9 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-import javax.persistence.Version;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.transaction.annotation.Transactional;
 
 @Cacheable
 @Configurable
@@ -60,58 +58,8 @@ public class ManufacturerType {
         return em;
     }
     
-    public static long countManufacturerTypes() {
-        return entityManager().createQuery("SELECT COUNT(o) FROM ManufacturerType o", Long.class).getSingleResult();
-    }
-    
     public static List<ManufacturerType> findAllManufacturerTypes() {
         return entityManager().createQuery("SELECT o FROM ManufacturerType o", ManufacturerType.class).getResultList();
-    }
-    
-    public static ManufacturerType findManufacturerType(Long id) {
-        if (id == null) return null;
-        return entityManager().find(ManufacturerType.class, id);
-    }
-    
-    public static List<ManufacturerType> findManufacturerTypeEntries(int firstResult, int maxResults) {
-        return entityManager().createQuery("SELECT o FROM ManufacturerType o", ManufacturerType.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
-    }
-    
-    @Transactional
-    public void persist() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.persist(this);
-    }
-    
-    @Transactional
-    public void remove() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        if (this.entityManager.contains(this)) {
-            this.entityManager.remove(this);
-        } else {
-            ManufacturerType attached = findManufacturerType(this.id);
-            this.entityManager.remove(attached);
-        }
-    }
-    
-    @Transactional
-    public void flush() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.flush();
-    }
-    
-    @Transactional
-    public void clear() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.clear();
-    }
-    
-    @Transactional
-    public ManufacturerType merge() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        ManufacturerType merged = this.entityManager.merge(this);
-        this.entityManager.flush();
-        return merged;
     }
     //</editor-fold>
     

@@ -45,17 +45,6 @@ public class Gasket extends Part {
                     .include("gasketType.id")
                     .include("gasketType.name");
     }
-
-    @Override
-    public JSOG toJsog() {
-        JSOG partObject = super.toJsog();
-        
-        if (gasketType != null) {
-            partObject.put("gasket_type", gasketType.getName());
-        }
-        
-        return partObject;
-    }
     
     @Override
     public void csvColumns(Map<String, String> columns) {

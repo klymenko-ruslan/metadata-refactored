@@ -71,7 +71,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       sudo add-apt-repository ppa:chris-lea/node.js -y
 
       sudo apt-get update
-      sudo bash -c "DEBIAN_FRONTEND=noninteractive apt-get install -y python-software-properties python g++ make nodejs openjdk-7-jdk maven2 tomcat7 elasticsearch mysql-server-5.6"
+      sudo bash -c "DEBIAN_FRONTEND=noninteractive apt-get install -y python-software-properties python g++ make nodejs openjdk-7-jdk maven2 tomcat7 elasticsearch mysql-server-5.6 phantomjs"
 
       # We don't need these memory hogs while we setup, we'll turn them on later
       sudo service mysql stop
@@ -106,6 +106,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
       mysql -u root -e "CREATE DATABASE IF NOT EXISTS metadata;"
       mysql -u root -e "GRANT ALL PRIVILEGES ON metadata.* TO metaserver@'%' IDENTIFIED BY 'metaserver'; FLUSH PRIVILEGES;"
+
+      echo Preparing Selenium
+      /vagrant/metadata/yo/node_modules/protractor/bin/webdriver-manager update
+      /vagrant/metadata/yo/node_modules/protractor/bin/webdriver-manager start
 
       echo "=================================================================" >&2
       echo "= REQUIRED NEXT STEPS:                                           " >&2

@@ -102,26 +102,6 @@ public class JournalBearing extends Part {
             .include("oversize.manufacturerPartNumber")
             .include("oversize.version");
     }
-
-    @Override
-    public JSOG toJsog() {
-        JSOG partObject = super.toJsog();
-
-        partObject.put("outside_diameter_min", getOutsideDiameterMin());
-        partObject.put("outside_diameter_max", getOutsideDiameterMax());
-        partObject.put("inside_diameter_min", getInsideDiameterMin());
-        partObject.put("inside_diameter_max", getInsideDiameterMax());
-        
-//        if (getStandardSize() != null) {
-//            partObject.put("standard_size_id", getStandardSize().getId());
-//        }
-        
-//        if (getOversize() != null) {
-//            partObject.put("oversize_id", getOversize().getId());
-//        }
-        
-        return partObject;
-    }
     
     @Override
     public void csvColumns(Map<String, String> columns) {

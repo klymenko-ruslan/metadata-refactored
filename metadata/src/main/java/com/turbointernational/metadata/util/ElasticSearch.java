@@ -2,6 +2,9 @@ package com.turbointernational.metadata.util;
 
 import com.turbointernational.metadata.domain.part.Part;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.elasticsearch.ElasticSearchException;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.index.IndexRequest;
@@ -22,6 +25,8 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 public class ElasticSearch {
+
+    private static final Logger log = Logger.getLogger(ElasticSearch.class.toString());
     
     @Value("${elasticsearch.index}")
     String elasticSearchIndex = "metadata";
@@ -63,13 +68,16 @@ public class ElasticSearch {
     
     @Transactional(readOnly = true)
     public void indexPart(Part part) throws Exception {
-
+        String document = part.toSearchJson();
+        
         IndexRequest index = new IndexRequest(elasticSearchIndex, elasticSearchType, part.getId().toString());
-        index.source(part.toSearchJson());
+        index.source(document);
         
         Client client = client();
         try {
             client.index(index).actionGet(timeout);
+        } catch (ElasticSearchException e) {
+            log.log(Level.SEVERE, "Could not index part " + document, e);
         } finally {
             client.close();
         }

@@ -133,25 +133,6 @@ public class Backplate extends Part {
     }
 
     @Override
-    public JSOG toJsog() {
-        JSOG partObject = super.toJsog();
-        
-        if (getSealType() != null) {
-            partObject.put("seal_type_name", getSealType().getName());
-        }
-
-        partObject.put("overall_diameter", getOverallDiameter());
-        partObject.put("compressor_wheel_diameter", getCompressorWheelDiameter());
-        partObject.put("piston_ring_diameter", getPistonRingDiameter());
-        partObject.put("compressor_housing_diameter", getCompressorHousingDiameter());
-        partObject.put("secondary_diameter", getSecondaryDiameter());
-        partObject.put("overall_height", getOverallHeight());
-        partObject.put("style_compressor_wheel", getStyleCompressorWheel());
-        
-        return partObject;
-    }
-
-    @Override
     protected JSONSerializer getSearchSerializer() {
         return super.getSearchSerializer()
                     .include("sealType.id")

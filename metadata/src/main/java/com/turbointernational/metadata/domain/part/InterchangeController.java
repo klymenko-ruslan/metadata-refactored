@@ -62,7 +62,7 @@ public class InterchangeController {
         interchange.flush();
         
         // Update the changelog
-        Changelog.log(principal, "Created interchange: ", json);
+        Changelog.log("Created interchange: ", json);
             
         // TODO: Only change what we need to rather than rebuilding everything
         Part.rebuildBomAncestry();
@@ -105,7 +105,7 @@ public class InterchangeController {
         newInterchange.flush();
         
         // Update the changelog
-        Changelog.log(principal, "Added part " + partId + " to interchange " + id, "");
+        Changelog.log("Added part " + partId + " to interchange " + id, "");
             
         // TODO: Only change what we need to rather than rebuilding everything
         Part.rebuildBomAncestry();
@@ -144,7 +144,7 @@ public class InterchangeController {
         iPart.flush();
         
         // Update the changelog
-        Changelog.log(principal, "Deleted " + partId + " from interchange " + interchangeId, "");
+        Changelog.log("Deleted " + partId + " from interchange " + interchangeId, "");
             
         // TODO: Only change what we need to rather than rebuilding everything
         Part.rebuildBomAncestry();

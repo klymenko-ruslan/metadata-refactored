@@ -227,16 +227,6 @@ module.exports = function (grunt) {
         dirs: ['<%= yeoman.dist %>']
       }
     },
-    imagemin: {
-      dist: {
-        files: [{
-          expand: true,
-          cwd: '<%= yeoman.app %>/images',
-          src: '{,*/}*.{png,jpg,jpeg}',
-          dest: '<%= yeoman.dist %>/images'
-        }]
-      }
-    },
     svgmin: {
       dist: {
         files: [{
@@ -293,7 +283,7 @@ module.exports = function (grunt) {
             '*.{ico,png,txt}',
             '.htaccess',
             'bower_components/**/*',
-            'images/{,*/}*.{gif,webp}',
+            'images/{,*/}*.{gif,webp,png,jpg,jpeg}',
             'styles/fonts/*'
           ]
         }, {
@@ -336,7 +326,6 @@ module.exports = function (grunt) {
         'compass:dist',
         'copy:fonts',
         'copy:styles',
-        'imagemin',
         'svgmin',
         'htmlmin'
       ]
@@ -346,14 +335,18 @@ module.exports = function (grunt) {
         configFile: 'karma.conf.js',
         singleRun: true
       }
+      //e2e: {
+      //  configFile: 'karma-e2e.conf.js',
+      //  singleRun: true
+      //}
     },
     ngmin: {
       dist: {
         files: [{
           expand: true,
-          cwd: '<%= yeoman.dist %>/scripts',
+          cwd: '.tmp/concat/scripts',
           src: '*.js',
-          dest: '<%= yeoman.dist %>/scripts'
+          dest: '.tmp/concat/scripts'
         }]
       }
     },
@@ -397,8 +390,8 @@ module.exports = function (grunt) {
     'concurrent:dist',
     'autoprefixer',
     'concat',
-    'copy:dist',
     'ngmin',
+    'copy:dist',
     'cssmin',
     'uglify',
     'rev',

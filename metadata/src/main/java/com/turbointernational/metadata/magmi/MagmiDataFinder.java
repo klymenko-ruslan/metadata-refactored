@@ -3,13 +3,13 @@ package com.turbointernational.metadata.magmi;
 
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.part.ProductImage;
-import com.turbointernational.metadata.util.dto.MagmiApplication;
-import com.turbointernational.metadata.util.dto.MagmiBomItem;
-import com.turbointernational.metadata.util.dto.MagmiInterchange;
-import com.turbointernational.metadata.util.dto.MagmiProduct;
-import com.turbointernational.metadata.util.dto.MagmiServiceKit;
-import com.turbointernational.metadata.util.dto.MagmiTurbo;
-import com.turbointernational.metadata.util.dto.MagmiUsage;
+import com.turbointernational.metadata.magmi.dto.MagmiApplication;
+import com.turbointernational.metadata.magmi.dto.MagmiBomItem;
+import com.turbointernational.metadata.magmi.dto.MagmiInterchange;
+import com.turbointernational.metadata.magmi.dto.MagmiProduct;
+import com.turbointernational.metadata.magmi.dto.MagmiServiceKit;
+import com.turbointernational.metadata.magmi.dto.MagmiTurbo;
+import com.turbointernational.metadata.magmi.dto.MagmiUsage;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -20,7 +20,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
 
 /**
@@ -236,7 +235,7 @@ public class MagmiDataFinder {
     List<MagmiInterchange> findMagmiInterchanges(Collection<Long> productIds) {
         return Part.entityManager().createQuery(
                 "SELECT DISTINCT NEW"
-              + "  com.turbointernational.metadata.util.dto.MagmiInterchange("
+              + "  com.turbointernational.metadata.magmi.dto.MagmiInterchange("
               + "    p.id AS sku,"
               + "    ip.id AS interchangePartSku,"
               + "    ip.manufacturerPartNumber AS interchangePartNumber,"
@@ -271,7 +270,7 @@ public class MagmiDataFinder {
 
     List<MagmiBomItem> findMagmiBom(Collection<Long> productIds) {
         return Part.entityManager().createQuery(
-                "SELECT DISTINCT NEW com.turbointernational.metadata.util.dto.MagmiBomItem(\n"
+                "SELECT DISTINCT NEW com.turbointernational.metadata.magmi.dto.MagmiBomItem(\n"
               + "  b.parent.id as parent_sku,\n"
               + "  b.child.id as child_sku,\n"
               + "  b.quantity,\n"

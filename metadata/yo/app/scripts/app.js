@@ -91,17 +91,4 @@ angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap', 'restangu
         $routeProvider.otherwise({
           redirectTo: '/'
         });
-      })
-    .run(function($location, $log, $rootScope, User) {
-      $rootScope.$location = $location;
-
-      // Initialize the user
-      User.init().then(
-          function() {
-            $log.log('User initialized.');
-          },
-          function() {
-            $log.log('User init failed.');
-            $location.path('/');
-          });
-    });
+      });

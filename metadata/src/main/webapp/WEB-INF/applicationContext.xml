@@ -103,8 +103,14 @@
     <task:annotation-driven executor="asyncExecutor" mode="aspectj"/>
     <task:executor id="asyncExecutor" pool-size="10"/>
     
+    <security:global-method-security secured-annotations="enabled"/>
+    
+    <security:http security="none" pattern="/metadata/security**"/>
+    
     <security:http use-expressions="true" access-denied-page="/metadata/security/denied">
-        <security:intercept-url pattern="/metadata/search" access="isAuthenticated()"/>
+        <security:anonymous enabled="false"/>
+        <security:intercept-url pattern="/metadata/**"/>
+        <security:intercept-url pattern="hasIpAddress('127.0.0.1/32')"/>
         <security:remember-me/>
         <security:form-login login-processing-url="/metadata/security/login"
                              login-page="/metadata/security/login/required"

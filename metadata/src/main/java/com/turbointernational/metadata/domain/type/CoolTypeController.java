@@ -6,7 +6,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -17,6 +16,7 @@ public class CoolTypeController {
     
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ResponseBody
+    @Secured("ROLE_READ")
     public ResponseEntity<String> showJson(@PathVariable("id") Long id) {
         CoolType coolType = CoolType.findCoolType(id);
         HttpHeaders headers = new HttpHeaders();
@@ -29,56 +29,11 @@ public class CoolTypeController {
     
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
+    @Secured("ROLE_READ")
     public ResponseEntity<String> listJson() {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json; charset=utf-8");
         List<CoolType> result = CoolType.findAllCoolTypes();
         return new ResponseEntity<String>(CoolType.toJsonArray(result), headers, HttpStatus.OK);
-    }
-    
-    @RequestMapping(method = RequestMethod.POST)
-    @Secured("ROLE_ADMIN")
-    public ResponseEntity<String> createFromJson(@RequestBody String json) {
-        CoolType coolType = CoolType.fromJsonToCoolType(json);
-        coolType.persist();
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/json");
-        return new ResponseEntity<String>(headers, HttpStatus.CREATED);
-    }
-    
-    @RequestMapping(value = "/jsonArray", method = RequestMethod.POST)
-    @Secured("ROLE_ADMIN")
-    public ResponseEntity<String> createFromJsonArray(@RequestBody String json) {
-        for (CoolType coolType: CoolType.fromJsonArrayToCoolTypes(json)) {
-            coolType.persist();
-        }
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/json");
-        return new ResponseEntity<String>(headers, HttpStatus.CREATED);
-    }
-    
-    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-    @Secured("ROLE_ADMIN")
-    public ResponseEntity<String> updateFromJson(@RequestBody String json, @PathVariable("id") Long id) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/json");
-        CoolType coolType = CoolType.fromJsonToCoolType(json);
-        if (coolType.merge() == null) {
-            return new ResponseEntity<String>(headers, HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<String>(headers, HttpStatus.OK);
-    }
-    
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    @Secured("ROLE_ADMIN")
-    public ResponseEntity<String> deleteFromJson(@PathVariable("id") Long id) {
-        CoolType coolType = CoolType.findCoolType(id);
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/json");
-        if (coolType == null) {
-            return new ResponseEntity<String>(headers, HttpStatus.NOT_FOUND);
-        }
-        coolType.remove();
-        return new ResponseEntity<String>(headers, HttpStatus.OK);
     }
 }

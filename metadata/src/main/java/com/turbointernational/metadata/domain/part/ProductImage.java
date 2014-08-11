@@ -32,7 +32,8 @@ public class ProductImage implements Comparable<ProductImage> {
     public static String getResizedFilename(Long partId, Long imageId, int size) {
         return size + "/" + partId + "_" + imageId + ".jpg";
     }
-    
+
+    //<editor-fold defaultstate="collapsed" desc="Properties">
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -42,11 +43,11 @@ public class ProductImage implements Comparable<ProductImage> {
     private Part part;
     
     private String filename;
-
+    
     public Long getId() {
         return id;
     }
-
+    
     public void setId(Long id) {
         this.id = id;
     }
@@ -54,7 +55,7 @@ public class ProductImage implements Comparable<ProductImage> {
     public Part getPart() {
         return part;
     }
-
+    
     public void setPart(Part part) {
         this.part = part;
     }
@@ -66,10 +67,11 @@ public class ProductImage implements Comparable<ProductImage> {
     public String getFilename(int size) {
         return getResizedFilename(part.getId(), id, size);
     }
-
+    
     public void setFilename(String filename) {
         this.filename = filename;
     }
+    //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="ActiveRecord">
     @PersistenceContext
@@ -91,10 +93,6 @@ public class ProductImage implements Comparable<ProductImage> {
         Query q = entityManager().createQuery("SELECT DISTINCT p FROM ProductImage p WHERE p.id = :id");
         q.setParameter("id", id);
         return (ProductImage) q.getSingleResult();
-    }
-    
-    public static List<ProductImage> findAll() {
-        return entityManager().createQuery("SELECT o FROM ProductImage o", ProductImage.class).getResultList();
     }
     
     @Transactional
@@ -127,20 +125,11 @@ public class ProductImage implements Comparable<ProductImage> {
     }
     
     @Transactional
-    public ProductImage merge() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        ProductImage merged = this.entityManager.merge(this);
-        this.entityManager.flush();
-        return merged;
-    }
-    
-    @Transactional
     public void refresh() {
         if (this.entityManager == null) this.entityManager = entityManager();
         this.entityManager.refresh(this);
     }
     //</editor-fold>
-    
     
     public String toJson() {
         return new JSONSerializer()

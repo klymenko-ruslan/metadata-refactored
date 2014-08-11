@@ -90,21 +90,6 @@ public class CompressorWheel extends Part {
     public void setApplication(String application) {
         this.application = application;
     }
-
-    @Override
-    public JSOG toJsog() {
-        JSOG partObject = super.toJsog();
-        
-        partObject.put("inducer_oa", getInducerOa());
-        partObject.put("tip_height_b", getTipHeightB());
-        partObject.put("exducer_oc", getExducerOc());
-        partObject.put("hub_length_d", getHubLengthD());
-        partObject.put("bore_oe", getBoreOe());
-        partObject.put("number_of_blades", getNumberOfBlades());
-        partObject.put("application", getApplication());
-        
-        return partObject;
-    }
     
     @Override
     public void csvColumns(Map<String, String> columns) {

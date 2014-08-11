@@ -25,13 +25,14 @@ public class Group implements Comparable<Group>, Serializable {
     public static final long serialVersionUID = 1L;
     
     public static JSONSerializer JSON = new JSONSerializer()
+                .include("id")
+                .include("name")
                 .include("roles.id")
-                .include("roles.name")
                 .include("roles.display")
                 .include("users.id")
                 .include("users.name")
                 .include("users.email")
-                .exclude("*.class");
+                .exclude("*");
 
     //<editor-fold defaultstate="collapsed" desc="properties">
     @Id
@@ -93,10 +94,6 @@ public class Group implements Comparable<Group>, Serializable {
         EntityManager em = new Group().entityManager;
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
         return em;
-    }
-    
-    public static long countGroups() {
-        return entityManager().createQuery("SELECT COUNT(o) FROM Group o", Long.class).getSingleResult();
     }
     
     public static List<Group> findAllGroups() {

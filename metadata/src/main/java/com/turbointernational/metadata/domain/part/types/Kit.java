@@ -71,17 +71,6 @@ public class Kit extends Part {
                     .include("kitType.id")
                     .include("kitType.name");
     }
-
-    @Override
-    public JSOG toJsog() {
-        JSOG partObject = super.toJsog();
-        
-        if (kitType != null) {
-            partObject.put("kit_type_name", kitType.getName());
-        }
-        
-        return partObject;
-    }
     
     @Override
     public void csvColumns(Map<String, String> columns) {

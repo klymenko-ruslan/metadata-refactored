@@ -37,18 +37,6 @@ angular.module('ngMetaCrudApp')
                 return Restangular.one('manufacturer', id).get();
               };
 
-            this.createManufacturer = function (manufacturer) {
-                return Restangular.post(manufacturer);
-              };
-
-            this.updateManufacturer = function (manufacturer) {
-                return Restangular.put(manufacturer);
-              };
-
-            this.deleteManufacturer = function (manufacturer) {
-                return Restangular.remove(manufacturer);
-              };
-
             this.listTurboTypesForManufacturerId = function (manufacturerId) {
                 return Restangular.all('other/turboType').getList({'manufacturerId': manufacturerId});
               };

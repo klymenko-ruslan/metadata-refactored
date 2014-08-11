@@ -58,10 +58,6 @@ public class GasketType {
         return em;
     }
     
-    public static long countGasketTypes() {
-        return entityManager().createQuery("SELECT COUNT(o) FROM GasketType o", Long.class).getSingleResult();
-    }
-    
     public static List<GasketType> findAllGasketTypes() {
         return entityManager().createQuery("SELECT o FROM GasketType o", GasketType.class).getResultList();
     }
@@ -69,47 +65,6 @@ public class GasketType {
     public static GasketType findGasketType(Long id) {
         if (id == null) return null;
         return entityManager().find(GasketType.class, id);
-    }
-    
-    public static List<GasketType> findGasketTypeEntries(int firstResult, int maxResults) {
-        return entityManager().createQuery("SELECT o FROM GasketType o", GasketType.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
-    }
-    
-    @Transactional
-    public void persist() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.persist(this);
-    }
-    
-    @Transactional
-    public void remove() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        if (this.entityManager.contains(this)) {
-            this.entityManager.remove(this);
-        } else {
-            GasketType attached = GasketType.findGasketType(this.id);
-            this.entityManager.remove(attached);
-        }
-    }
-    
-    @Transactional
-    public void flush() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.flush();
-    }
-    
-    @Transactional
-    public void clear() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.clear();
-    }
-    
-    @Transactional
-    public GasketType merge() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        GasketType merged = this.entityManager.merge(this);
-        this.entityManager.flush();
-        return merged;
     }
     //</editor-fold>
     
