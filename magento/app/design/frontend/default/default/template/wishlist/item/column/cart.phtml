@@ -37,12 +37,6 @@ $product = $item->getProduct();
 <?php endif; ?>
 <?php if ($product->isSaleable()): ?>
     <button type="button" title="<?php echo $this->__('Add to Cart') ?>" onclick="addWItemToCart(<?php echo $item->getId()?>);" class="button btn-cart"><span><span><?php echo $this->__('Add to Cart') ?></span></span></button>
-<?php else: ?>
-    <?php if ($product->getIsSalable()): ?>
-        <p class="availability in-stock"><span><?php echo $this->__('In stock') ?></span></p>
-    <?php else: ?>
-        <p class="availability out-of-stock"><span><?php echo $this->__('Out of stock') ?></span></p>
-    <?php endif; ?>
 <?php endif; ?>
 </div>
 <?php foreach($this->getSortedChildren() as $childName):?>
