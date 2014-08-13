@@ -533,11 +533,11 @@ tr.summary-details-excluded { font-style:italic; }
 .links li.first { padding-left:0 !important; }
 .links li.last { background:none !important; padding-right:0 !important; }
 
-.link-cart { color:#dc6809 !important; font-weight:bold; }
-.link-wishlist { color:#dc6809 !important; font-weight:bold; }
-.link-reorder { font-weight:bold; color:#dc6809 !important; }
+.link-cart { color:rgb(228, 30, 0) !important; font-weight:bold; }
+.link-wishlist { color:rgb(228, 30, 0) !important; font-weight:bold; }
+.link-reorder { font-weight:bold; color:rgb(228, 30, 0) !important; }
 .link-compare { font-weight:bold; }
-.link-print { /*background:url(../images/i_print.gif) 0 2px no-repeat; padding:2px 0 2px 25px;*/ font-weight:bold; color:#dc6809; }
+.link-print { /*background:url(../images/i_print.gif) 0 2px no-repeat; padding:2px 0 2px 25px;*/ font-weight:bold; color:rgb(228, 30, 0); }
 .link-rss { background:url(../images/i_rss.gif) 0 2px no-repeat; padding-left:18px; line-height:14px; white-space:nowrap; }
 .btn-remove  { display:block; width:11px; height:11px; font-size:0; line-height:0; background:url(../images/btn_remove.gif) 0 0 no-repeat; text-indent:-999em; overflow:hidden; }
 .btn-previous  { display:block; width:11px; height:11px; font-size:0; line-height:0; background:url(../images/btn_previous.gif) 0 0 no-repeat; text-indent:-999em; overflow:hidden; }
@@ -717,13 +717,13 @@ tr.summary-details-excluded { font-style:italic; }
 
 /* Block: Account */
 .block-account { border-color:#bbb; }
-.block-account .block-title { background:#fc9d36 url(../images/bkg_block-title-account.gif) 0 100% repeat-x; border:0; padding:3px 10px; }
+.block-account .block-title { background:rgb(228, 30, 0); border:0; padding:3px 10px; }
 .block-account .block-title strong { font-size:13px; color:#fff; }
 .block-account .block-content { background:#fbfaf6; padding:7px 10px 7px; }
 .block-account .block-content li a { display:block; border-bottom:1px solid #ddd; padding:3px 0; color:#5f5d5c; text-decoration:none !important; }
-.block-account .block-content li a:hover { color:#ea7900; }
+.block-account .block-content li a:hover { color:rgb(228, 30, 0); }
 .block-account .block-content li.last a { border-bottom:0; }
-.block-account .block-content li.current { border-bottom:1px solid #ddd; padding:3px 0; color:#ea7900; }
+.block-account .block-content li.current { border-bottom:1px solid #ddd; padding:3px 0; color:rgb(228, 30, 0); }
 .block-account .block-content li.current.last { border-bottom:0; }
 
 /* Block: Currency Switcher */
@@ -1634,7 +1634,7 @@ tr.summary-details-excluded { font-style:italic; }
 /********** Dashboard > */
 
 /* Address Book */
-.addresses-list h2 { font-weight:bold; font-size:13px; color:#e26703; text-transform:uppercase; }
+.addresses-list h2 { font-weight:bold; font-size:13px; color:rgb(228, 30, 0); text-transform:uppercase; }
 .addresses-list h3 { font-weight:bold; font-size:13px; }
 .addresses-list address { margin:0 0 3px; }
 .addresses-list p { margin:0; }
