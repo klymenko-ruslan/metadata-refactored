@@ -244,8 +244,8 @@ if ($serviceKitSkus) {
                     }
 
                     var ind = jQuery(this).index();
-                    // do not highlight first column
-                    if (ind > 0) {
+                    // do not highlight non-kit columns
+                    if (ind > 1) {
                         jQuery('td:nth-child(' + (ind + 1) + ')').addClass("hover");
                         jQuery('th:nth-child(' + (ind + 1) + ')').addClass("hover");
                     }
