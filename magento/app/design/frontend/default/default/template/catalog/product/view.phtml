@@ -783,6 +783,7 @@ if ($serviceKitSkus) {
                     // get collection of component products
                     $componentCollection = Mage::getModel('catalog/product')->getCollection()
                         ->addAttributeToSelect('part_number')
+                        ->addAttributeToSelect('name')
                         ->setOrder('part_number', 'ASC')
                         ->addFieldToFilter('sku', $uniqueComponents);
                 }
@@ -795,6 +796,7 @@ if ($serviceKitSkus) {
                     <!--table header row   -->
                     <tr>
                         <!--for th element is blank because it is the upper left cell   -->
+                        <th></th>
                         <th></th>
                         <?php
                             // loop through and crate a column for each kit
@@ -821,6 +823,9 @@ if ($serviceKitSkus) {
                                         <a href="<?php echo $component->getProductUrl(); ?>">
                                             <?php echo $component->getPartNumber() ?>
                                         </a>
+                                    </td>
+                                    <td>
+                                            <?php echo $component->getName() ?>
                                     </td>
                         <?php
                                 // remaining table cells are dynamic: one for each kit column qty
