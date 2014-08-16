@@ -806,7 +806,7 @@ if ($serviceKitSkus) {
 
                             if ($kitPrimaryPart) {
                             ?>
-                                <th class="label">
+                                <th class="label first-kit">
                                     <div class="vertical-text"><div class="vertical-text__inner">
                                         <a href="<?php echo $kitPrimaryPart->getProductUrl(); ?>">
                                             <?php echo $kitPrimaryPart->getPartNumber() ?>
@@ -848,7 +848,7 @@ if ($serviceKitSkus) {
                                 // make first kit the primary part if on a the kit detail page
                                 if ($kitPrimaryPart) {
                                     $componentKitQtyValue = $componentKitQty[$component->getSku()][$kitPrimaryPart->getSku()];
-                                    echo "<td>";
+                                    echo "<td class='first-kit'>";
                                     echo $componentKitQtyValue;
                                     echo "</td>";
                                 }

@@ -441,6 +441,7 @@ div.matrix-data .hover { background-color: #FF998A !important; }
 
 /* matrix data */
 .matrix-data { overflow: auto; }
+.first-kit { background-color:#aaa; }
 
 /* vertical text */
 .vertical-text {
