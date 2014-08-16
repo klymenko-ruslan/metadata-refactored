@@ -799,6 +799,23 @@ if ($serviceKitSkus) {
                         <th></th>
                         <th></th>
                         <?php
+                            // see if primary part is in collection
+                            if ($kitCollection) {
+                                $kitPrimaryPart = $kitCollection->getItemByColumnValue('sku', $_product->getSku());
+                            }
+
+                            if ($kitPrimaryPart) {
+                            ?>
+                                <th class="label">
+                                    <div class="vertical-text"><div class="vertical-text__inner">
+                                        <a href="<?php echo $kitPrimaryPart->getProductUrl(); ?>">
+                                            <?php echo $kitPrimaryPart->getPartNumber() ?>
+                                    </div></div>
+                                    </a>
+                                </th>
+                            <?php
+                            }
+
                             // loop through and crate a column for each kit
                             foreach ($kitCollection as $kit):
                         ?>
@@ -828,6 +845,14 @@ if ($serviceKitSkus) {
                                             <?php echo $component->getName() ?>
                                     </td>
                         <?php
+                                // make first kit the primary part if on a the kit detail page
+                                if ($kitPrimaryPart) {
+                                    $componentKitQtyValue = $componentKitQty[$component->getSku()][$kitPrimaryPart->getSku()];
+                                    echo "<td>";
+                                    echo $componentKitQtyValue;
+                                    echo "</td>";
+                                }
+
                                 // remaining table cells are dynamic: one for each kit column qty
                                 foreach ($kitCollection as $kit):
                                     // see if qty exists for component in kit bom
