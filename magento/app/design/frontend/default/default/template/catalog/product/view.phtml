@@ -450,6 +450,27 @@ if ($serviceKitSkus) {
         </div>
         
         <!-- Bill of Materials -->
+        <?php
+        $billOfMaterialsSkus = array();
+        $billOfMaterialsCollection = array();
+
+        //create array of skus to be used in a collection
+        foreach ($billOfMaterials as $part):
+            // add the sku of the main part
+            $billOfMaterialsSkus[] = $part['sku'];
+        endforeach;
+
+        // get collection of bill of material products
+        if (count($billOfMaterialsSkus) > 1) {
+            $billOfMaterialsCollection = Mage::getModel('catalog/product')->getCollection()
+                ->addAttributeToSelect('part_type')
+                ->addAttributeToSelect('part_number')
+                ->addAttributeToSelect('price')
+                ->addAttributeToSelect('interchanges')
+                ->addFieldToFilter('sku', $billOfMaterialsSkus);
+        }
+
+        ?>
         <div id="tabs-bill-of-materials" class="box-collateral">
             <h2><?php echo $this->__('Bill of Materials') ?></h2>
             <table class="data-table" id="bill-of-materials">
@@ -466,7 +487,8 @@ if ($serviceKitSkus) {
 
                 <?php foreach ($billOfMaterials as $bomItem): ?>
                     <?php
-                    $bomItemProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $bomItem['sku']);
+                    $bomItemProduct = $billOfMaterialsCollection->getItemByColumnValue('sku', $bomItem['sku']);
+
                     $bomItemTiProduct = null;
                     ?>
 
