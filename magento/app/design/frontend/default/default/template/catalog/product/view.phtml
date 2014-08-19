@@ -453,6 +453,8 @@ if ($serviceKitSkus) {
         <?php
         $billOfMaterialsSkus = array();
         $billOfMaterialsCollection = array();
+        $bomInterchangeArray = array();
+        $billOfMaterialsInterchangeCollection = array();
 
         //create array of skus to be used in a collection
         foreach ($billOfMaterials as $part):
@@ -465,13 +467,29 @@ if ($serviceKitSkus) {
         endforeach;
 
         // get collection of bill of material products
-        if (count($billOfMaterialsSkus) > 1) {
+        if (count($billOfMaterialsSkus) > 0) {
             $billOfMaterialsCollection = Mage::getModel('catalog/product')->getCollection()
                 ->addAttributeToSelect('part_type')
                 ->addAttributeToSelect('part_number')
                 ->addAttributeToSelect('price')
                 ->addAttributeToSelect('interchanges')
                 ->addFieldToFilter('sku', $billOfMaterialsSkus);
+
+            // create array of interchangeable parts skus for each bom item
+            $billOfMaterialsIntechangesSkus = $billOfMaterialsCollection->getColumnValues('interchanges');
+
+            // convert csv array values into separate array elements
+            foreach ($billOfMaterialsIntechangesSkus as $bomSku):
+                if (!empty($bomSku))
+                    $bomInterchangeArray[] = explode(',', $bomSku);
+            endforeach;
+
+            // get collection of interchangeable parts
+            if (count($bomInterchangeArray) > 0) {
+                $billOfMaterialsInterchangeCollection = Mage::getModel('catalog/product')->getCollection()
+                    ->addAttributeToSelect('part_number')
+                    ->addFieldToFilter('sku', $bomInterchangeArray);
+            }
         }
 
         ?>
@@ -531,19 +549,15 @@ if ($serviceKitSkus) {
 
                             if (count($bomItemInterchangeSkuArray) > 0) {
                             
-                                // get collection of interchange products of current bom item
-                                $bomItemInterchangeCollection = Mage::getModel('catalog/product')->getCollection()
-                                    ->addAttributeToSelect('part_number')
-                                    ->setOrder('part_number', 'ASC')
-                                    ->addFieldToFilter('sku', $bomItemInterchangeSkuArray);
-
                                 $bomItemInterchangeProductList = array();
 
                                 // create array of interchangeable items
-                                foreach ($bomItemInterchangeCollection as $idx => $bomItemInterchangeProduct):
-                                        $bomItemInterchangeProductList[] = '<a href="' . $bomItemInterchangeProduct->getProductUrl() . '">' . $bomItemInterchangeProduct->getPartNumber() . '</a>';
+                                foreach ($bomItemInterchangeSkuArray as $bomItemInterchangeSku):
+                                    //get product object from collection
+                                    $bomItemInterchangeProduct = $billOfMaterialsInterchangeCollection->getItemByColumnValue('sku', $bomItemInterchangeSku);
+                                    $bomItemInterchangeProductList[] = '<a href="' . $bomItemInterchangeProduct->getProductUrl() . '">' . $bomItemInterchangeProduct->getPartNumber() . '</a>';
                                 endforeach;
-                                
+
                                 // display list as comma-separated
                                 echo implode(", ", $bomItemInterchangeProductList);
                             }
