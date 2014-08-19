@@ -458,6 +458,10 @@ if ($serviceKitSkus) {
         foreach ($billOfMaterials as $part):
             // add the sku of the main part
             $billOfMaterialsSkus[] = $part['sku'];
+
+            // add the sku of any TI interchangeable parts from the BOM
+            if (!empty($part['ti_part_sku']))
+                $billOfMaterialsSkus[] = $part['ti_part_sku'];
         endforeach;
 
         // get collection of bill of material products
@@ -496,7 +500,7 @@ if ($serviceKitSkus) {
                         <td><?php echo $bomItemProduct->getAttributeText('part_type'); ?></td>
                         <td><?php echo '<a href="' . $bomItemProduct->getProductUrl() . '">' . $bomItemProduct->getPartNumber() . '</a>'; ?></td>
                         <?php 
-                        
+
                         // don't display if primary part manfr is TI
                         if (!$_product->isTurboInternational()): ?>
                             <td><?php
@@ -505,7 +509,7 @@ if ($serviceKitSkus) {
                                 foreach ($bomItem['ti_part_sku'] as $idx => $tiPartSku) {
 
                                     //get product object from sku
-                                    $bomItemInterchangeTiProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $tiPartSku);
+                                    $bomItemInterchangeTiProduct = $billOfMaterialsCollection->getItemByColumnValue('sku', $tiPartSku);
                                     
                                     // display product info
                                     if ($bomItemInterchangeTiProduct) {
