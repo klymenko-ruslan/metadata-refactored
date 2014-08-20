@@ -452,6 +452,7 @@ if ($serviceKitSkus) {
         <!-- Bill of Materials -->
         <?php
         $billOfMaterialsSkus = array();
+        $billOfMaterialsAlt = array();
         $billOfMaterialsCollection = array();
         $bomInterchangeArray = array();
         $billOfMaterialsInterchangeCollection = array();
@@ -460,6 +461,9 @@ if ($serviceKitSkus) {
         foreach ($billOfMaterials as $part):
             // add the sku of the main part
             $billOfMaterialsSkus[] = $part['sku'];
+
+            // create a duplicate array where the key is the sku
+            $billOfMaterialsAlt[$part['sku']] = $part;
 
             // add the sku of any TI interchangeable parts from the BOM
             if (!empty($part['ti_part_sku']))
@@ -473,6 +477,7 @@ if ($serviceKitSkus) {
                 ->addAttributeToSelect('part_number')
                 ->addAttributeToSelect('price')
                 ->addAttributeToSelect('interchanges')
+                ->addAttributeToSort('part_number', 'ASC')
                 ->addFieldToFilter('sku', $billOfMaterialsSkus);
 
             // create array of interchangeable parts skus for each bom item
@@ -507,9 +512,15 @@ if ($serviceKitSkus) {
                     <th><strong>Price</strong></th>
                 </tr>
 
-                <?php foreach ($billOfMaterials as $bomItem): ?>
+                <?php foreach ($billOfMaterialsCollection as $bomItemProduct): ?>
                     <?php
-                    $bomItemProduct = $billOfMaterialsCollection->getItemByColumnValue('sku', $bomItem['sku']);
+
+                    $bomItem = $billOfMaterialsAlt[$bomItemProduct->getSku()];
+
+                    // check to make sure that bomItem is a primary bom part
+                    if (empty($bomItem)) {
+                        continue;
+                    }
 
                     $bomItemTiProduct = null;
                     ?>
