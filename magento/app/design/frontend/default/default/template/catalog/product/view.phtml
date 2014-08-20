@@ -555,8 +555,13 @@ if ($serviceKitSkus) {
                                 foreach ($bomItemInterchangeSkuArray as $bomItemInterchangeSku):
                                     //get product object from collection
                                     $bomItemInterchangeProduct = $billOfMaterialsInterchangeCollection->getItemByColumnValue('sku', $bomItemInterchangeSku);
-                                    $bomItemInterchangeProductList[] = '<a href="' . $bomItemInterchangeProduct->getProductUrl() . '">' . $bomItemInterchangeProduct->getPartNumber() . '</a>';
+
+                                    // create associative array of output values where key is combination of part number and sku
+                                    // this key enables sorting by part number and ensures uniqueness of keys by adding the sku
+                                    $bomItemInterchangeProductList[$bomItemInterchangeProduct->getPartNumber() . $bomItemInterchangeSku] = '<a href="' . $bomItemInterchangeProduct->getProductUrl() . '">' . $bomItemInterchangeProduct->getPartNumber() . '</a>';
                                 endforeach;
+
+                                uksort($bomItemInterchangeProductList, 'strcasecmp');
 
                                 // display list as comma-separated
                                 echo implode(", ", $bomItemInterchangeProductList);
