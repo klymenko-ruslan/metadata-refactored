@@ -450,6 +450,55 @@ if ($serviceKitSkus) {
         </div>
         
         <!-- Bill of Materials -->
+        <?php
+        $billOfMaterialsSkus = array();
+        $billOfMaterialsAlt = array();
+        $billOfMaterialsCollection = array();
+        $bomInterchangeArray = array();
+        $billOfMaterialsInterchangeCollection = array();
+
+        //create array of skus to be used in a collection
+        foreach ($billOfMaterials as $part):
+            // add the sku of the main part
+            $billOfMaterialsSkus[] = $part['sku'];
+
+            // create a duplicate array where the key is the sku
+            $billOfMaterialsAlt[$part['sku']] = $part;
+
+            // add the sku of any TI interchangeable parts from the BOM
+            if (!empty($part['ti_part_sku']))
+                $billOfMaterialsSkus[] = $part['ti_part_sku'];
+        endforeach;
+
+        // get collection of bill of material products
+        if (count($billOfMaterialsSkus) > 0) {
+            $billOfMaterialsCollection = Mage::getModel('catalog/product')->getCollection()
+                ->addAttributeToSelect('part_type')
+                ->addAttributeToSelect('part_number')
+                ->addAttributeToSelect('price')
+                ->addAttributeToSelect('interchanges')
+                ->addAttributeToSelect('manufacturer')
+                ->addAttributeToSort('part_number', 'ASC')
+                ->addFieldToFilter('sku', $billOfMaterialsSkus);
+
+            // create array of interchangeable parts skus for each bom item
+            $billOfMaterialsIntechangesSkus = $billOfMaterialsCollection->getColumnValues('interchanges');
+
+            // convert csv array values into separate array elements
+            foreach ($billOfMaterialsIntechangesSkus as $bomSku):
+                if (!empty($bomSku))
+                    $bomInterchangeArray[] = explode(',', $bomSku);
+            endforeach;
+
+            // get collection of interchangeable parts
+            if (count($bomInterchangeArray) > 0) {
+                $billOfMaterialsInterchangeCollection = Mage::getModel('catalog/product')->getCollection()
+                    ->addAttributeToSelect('part_number')
+                    ->addFieldToFilter('sku', $bomInterchangeArray);
+            }
+        }
+
+        ?>
         <div id="tabs-bill-of-materials" class="box-collateral">
             <h2><?php echo $this->__('Bill of Materials') ?></h2>
             <table class="data-table" id="bill-of-materials">
@@ -464,9 +513,16 @@ if ($serviceKitSkus) {
                     <th><strong>Price</strong></th>
                 </tr>
 
-                <?php foreach ($billOfMaterials as $bomItem): ?>
+                <?php foreach ($billOfMaterialsCollection as $bomItemProduct): ?>
                     <?php
-                    $bomItemProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $bomItem['sku']);
+
+                    $bomItem = $billOfMaterialsAlt[$bomItemProduct->getSku()];
+
+                    // check to make sure that bomItem is a primary bom part
+                    if (empty($bomItem)) {
+                        continue;
+                    }
+
                     $bomItemTiProduct = null;
                     ?>
 
@@ -474,7 +530,7 @@ if ($serviceKitSkus) {
                         <td><?php echo $bomItemProduct->getAttributeText('part_type'); ?></td>
                         <td><?php echo '<a href="' . $bomItemProduct->getProductUrl() . '">' . $bomItemProduct->getPartNumber() . '</a>'; ?></td>
                         <?php 
-                        
+
                         // don't display if primary part manfr is TI
                         if (!$_product->isTurboInternational()): ?>
                             <td><?php
@@ -483,7 +539,7 @@ if ($serviceKitSkus) {
                                 foreach ($bomItem['ti_part_sku'] as $idx => $tiPartSku) {
 
                                     //get product object from sku
-                                    $bomItemInterchangeTiProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $tiPartSku);
+                                    $bomItemInterchangeTiProduct = $billOfMaterialsCollection->getItemByColumnValue('sku', $tiPartSku);
                                     
                                     // display product info
                                     if ($bomItemInterchangeTiProduct) {
@@ -505,19 +561,20 @@ if ($serviceKitSkus) {
 
                             if (count($bomItemInterchangeSkuArray) > 0) {
                             
-                                // get collection of interchange products of current bom item
-                                $bomItemInterchangeCollection = Mage::getModel('catalog/product')->getCollection()
-                                    ->addAttributeToSelect('part_number')
-                                    ->setOrder('part_number', 'ASC')
-                                    ->addFieldToFilter('sku', $bomItemInterchangeSkuArray);
-
                                 $bomItemInterchangeProductList = array();
 
                                 // create array of interchangeable items
-                                foreach ($bomItemInterchangeCollection as $idx => $bomItemInterchangeProduct):
-                                        $bomItemInterchangeProductList[] = '<a href="' . $bomItemInterchangeProduct->getProductUrl() . '">' . $bomItemInterchangeProduct->getPartNumber() . '</a>';
+                                foreach ($bomItemInterchangeSkuArray as $bomItemInterchangeSku):
+                                    //get product object from collection
+                                    $bomItemInterchangeProduct = $billOfMaterialsInterchangeCollection->getItemByColumnValue('sku', $bomItemInterchangeSku);
+
+                                    // create associative array of output values where key is combination of part number and sku
+                                    // this key enables sorting by part number and ensures uniqueness of keys by adding the sku
+                                    $bomItemInterchangeProductList[$bomItemInterchangeProduct->getPartNumber() . $bomItemInterchangeSku] = '<a href="' . $bomItemInterchangeProduct->getProductUrl() . '">' . $bomItemInterchangeProduct->getPartNumber() . '</a>';
                                 endforeach;
-                                
+
+                                uksort($bomItemInterchangeProductList, 'strcasecmp');
+
                                 // display list as comma-separated
                                 echo implode(", ", $bomItemInterchangeProductList);
                             }
@@ -535,7 +592,9 @@ if ($serviceKitSkus) {
                         <td>
                             <?php if (Mage::getSingleton('customer/session')->isLoggedIn()): ?>
                                 <?php
-                                if ($bomItemTiProduct) {
+                                if ($bomItemProduct->isTurboInternational()) {
+                                    echo Mage::helper('core')->currency($bomItemProduct->getFinalPrice());
+                                } elseif ($bomItemTiProduct) {
                                     echo Mage::helper('core')->currency($bomItemTiProduct->getFinalPrice());
                                 }
                                 ?>
