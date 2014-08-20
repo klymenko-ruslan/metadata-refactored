@@ -477,6 +477,7 @@ if ($serviceKitSkus) {
                 ->addAttributeToSelect('part_number')
                 ->addAttributeToSelect('price')
                 ->addAttributeToSelect('interchanges')
+                ->addAttributeToSelect('manufacturer')
                 ->addAttributeToSort('part_number', 'ASC')
                 ->addFieldToFilter('sku', $billOfMaterialsSkus);
 
@@ -591,7 +592,9 @@ if ($serviceKitSkus) {
                         <td>
                             <?php if (Mage::getSingleton('customer/session')->isLoggedIn()): ?>
                                 <?php
-                                if ($bomItemTiProduct) {
+                                if ($bomItemProduct->isTurboInternational()) {
+                                    echo Mage::helper('core')->currency($bomItemProduct->getFinalPrice());
+                                } elseif ($bomItemTiProduct) {
                                     echo Mage::helper('core')->currency($bomItemTiProduct->getFinalPrice());
                                 }
                                 ?>
