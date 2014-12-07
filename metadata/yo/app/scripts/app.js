@@ -3,7 +3,9 @@
 angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap', 'restangular', 'dialogs', 'gToast'])
     .config(function(RestangularProvider) {
         RestangularProvider.setBaseUrl('/metadata/');
+//        RestangularProvider.setBaseUrl('http://localhost:8080/metadata/');
         RestangularProvider.setParentless(true);
+        RestangularProvider.setDefaultHttpFields({withCredentials: true});
         RestangularProvider.setDefaultHeaders({'Content-Type': 'text/plain'});
         RestangularProvider.setResponseExtractor(function (response) {
             return response;
