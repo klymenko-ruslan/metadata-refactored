@@ -81,10 +81,12 @@ describe('Service: PartTypes', function () {
   });
   
   describe('PartTypes.getPromise', function() {
-    it('should return the promise if there is one', function() {
-      
+    beforeEach(function() {  
       // Prepare for the call
       $httpBackend.whenGET('/metadata/type/part').respond(partTypes);
+    });
+    
+    it('should return the promise if there is one', function() {
 
       // Issue the call to the service
       $rootScope.$apply(function() {
