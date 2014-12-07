@@ -14,7 +14,7 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
  * @author jrodriguez
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:WEB-INF/applicationContext.xml")
+@ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/applicationContext.xml"})
 public class MagmiDataFinderTest extends AbstractTransactionalJUnit4SpringContextTests {
     
     MagmiDataFinder instance;
