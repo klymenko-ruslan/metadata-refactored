@@ -23,9 +23,9 @@ angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap', 'restangu
             templateUrl: 'views/part/PartForm.html',
             controller: 'PartFormCtrl',
             resolve: {
-              partTypes: function(PartTypes) {
+              partTypes: ['PartTypes', function(PartTypes) {
                 return PartTypes.getPromise();
-              }
+              }]
             }
           });
         $routeProvider.when('/part/:id/form', {
