@@ -57,7 +57,7 @@ angular.module('ngMetaCrudApp')
 
         this.getPromise = function() {
           if (PartTypes.refreshPromise != null) {
-            return refreshPromise;
+            return PartTypes.refreshPromise;
           }
           
           return PartTypes.refresh();

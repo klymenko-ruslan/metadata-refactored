@@ -10,6 +10,7 @@ describe('Service: PartTypes', function () {
   var PartTypes;
   var $httpBackend;
   var partTypes;
+  var refreshPromise;
   beforeEach(inject(function ($injector) {
     $rootScope = $injector.get('$rootScope');
     PartTypes = $injector.get('PartTypes');
@@ -31,6 +32,7 @@ describe('Service: PartTypes', function () {
         typeName: 'Part'
       }
     ];
+    refreshPromise = null;
   }));
 
   it('should not have a value in PartTypes.refreshPromise', function() {
@@ -38,7 +40,6 @@ describe('Service: PartTypes', function () {
   });
 
   describe('PartTypes.refresh', function() {
-    var refreshPromise;
 
     beforeEach(function(){
       // Prepare for the call
@@ -54,9 +55,9 @@ describe('Service: PartTypes', function () {
       expect(PartTypes.refreshPromise).toBe(refreshPromise);
     });
 
-    it('should set PartTypes.refreshPromise to null when resolved', function() {
+    it('should not set PartTypes.refreshPromise to null when resolved', function() {
       $httpBackend.flush();
-      expect(PartTypes.refreshPromise).toBeNull();
+      expect(PartTypes.refreshPromise).toBe(refreshPromise);
     });
 
     it('should save the response in PartTypes.list', function() {
@@ -76,6 +77,27 @@ describe('Service: PartTypes', function () {
     it('should return null if no such part type exists', function() {
       PartTypes.list = partTypes;
       expect(PartTypes.getById(0)).not.toBeDefined();
+    });
+  });
+  
+  describe('PartTypes.getPromise', function() {
+    it('should return the promise if there is one', function() {
+      
+      // Prepare for the call
+      $httpBackend.whenGET('/metadata/type/part').respond(partTypes);
+
+      // Issue the call to the service
+      $rootScope.$apply(function() {
+        refreshPromise = PartTypes.refresh();
+      });
+      
+      expect(PartTypes.refreshPromise).not.toBeNull();
+      expect(PartTypes.getPromise()).toBe(refreshPromise);
+    });
+  
+    it('should refresh the list if there is no promise', function() {
+        expect(PartTypes.refreshPromise).toBeNull();
+        expect(PartTypes.getPromise()).not.toBeNull();
     });
   });
 
