@@ -16,23 +16,19 @@ angular.module('ngMetaCrudApp')
          */
         this.refreshPromise = null;
         this.refresh = function () {
-            $log.log('PartTypes.refresh');
+            $log.log('PartTypes.refresh()');
 
             // Out with the old
             this.list = null;
 
             // In with the new
-            PartTypes.refreshPromise = Restangular.all('type/part').getList()
-                .then(
-                function (newPartTypes) {
-                    PartTypes.list = newPartTypes;
-                  },
-                function (status) {
-                    $log.log('Could not get part types.', status);
-                  })
-                .finally(function () {
-                    PartTypes.refreshPromise = null;
-                  });
+            PartTypes.refreshPromise = Restangular.all('type/part').getList().then(
+              function (newPartTypes) {
+                PartTypes.list = newPartTypes;
+              },
+              function (status) {
+                $log.log('Could not get part types.', status);
+              });
                   
             return PartTypes.refreshPromise;
           };
@@ -44,7 +40,7 @@ angular.module('ngMetaCrudApp')
          */
         this.getById = function (partTypeId) {
           return _.find(PartTypes.list, function (partType) {
-              return partTypeId === partType.id;
+              return String(partTypeId) === String(partType.id);
             });
           };
 
@@ -54,14 +50,18 @@ angular.module('ngMetaCrudApp')
          * @returns {Object} the part type object
          */
         this.getByClassName = function (partTypeClassName) {
-            return _.find(PartTypes.list, function (partType) {
-                return partTypeClassName === partType.name;
-              }
-          );
+          return _.find(PartTypes.list, function (partType) {
+              return partTypeClassName === partType.name;
+            });
           };
 
-        // Load the part types
-//      this.refresh();
+        this.getPromise = function() {
+          if (PartTypes.refreshPromise != null) {
+            return PartTypes.refreshPromise;
+          }
+          
+          return PartTypes.refresh();
+        }
 
         return this;
       });

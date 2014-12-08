@@ -25,10 +25,8 @@ angular.module('ngMetaCrudApp')
 
         // Set the part type
         if ($routeParams.typeId) {
-            $q.when(PartTypes.getById($routeParams.typeId)).then(function (partType) {
-                $scope.part.partType = partType;
-                $log.log('Got part type by ID', $routeParams.typeId, $scope.partType);
-            });
+          $scope.part.partType = PartTypes.getById($routeParams.typeId);
+          $log.log('Got part type by ID', $routeParams.typeId, $scope.part.partType);
         }
 
         $scope.revert = function () {

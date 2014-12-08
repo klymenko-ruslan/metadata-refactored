@@ -64,14 +64,17 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       echo Installing packages
 
       # For elasticsearch
-      wget -qO - http://packages.elasticsearch.org/GPG-KEY-elasticsearch | sudo apt-key add -
-      sudo bash -c "echo deb http://packages.elasticsearch.org/elasticsearch/1.2/debian stable main >> /etc/apt/sources.list"
+      sudo dpkg -i /vagrant/bits/ElasticSearch/elasticsearch-0.90.7.deb
+
+      # This will install later versions. War and POM need to be updated accordingly, add elasticsearch to apt-get install below
+      #wget -qO - http://packages.elasticsearch.org/GPG-KEY-elasticsearch | sudo apt-key add -
+      #sudo bash -c "echo deb http://packages.elasticsearch.org/elasticsearch/1.2/debian stable main >> /etc/apt/sources.list"
 
       # For yeoman / angular
       sudo add-apt-repository ppa:chris-lea/node.js -y
 
       sudo apt-get update
-      sudo bash -c "DEBIAN_FRONTEND=noninteractive apt-get install -y python-software-properties python g++ make nodejs openjdk-7-jdk maven2 tomcat7 elasticsearch mysql-server-5.6 phantomjs"
+      sudo bash -c "DEBIAN_FRONTEND=noninteractive apt-get install -y python-software-properties python g++ make nodejs openjdk-7-jdk maven2 tomcat7 mysql-server-5.6 phantomjs"
 
       # We don't need these memory hogs while we setup, we'll turn them on later
       sudo service mysql stop

@@ -3,7 +3,9 @@
 angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap', 'restangular', 'dialogs', 'gToast'])
     .config(function(RestangularProvider) {
         RestangularProvider.setBaseUrl('/metadata/');
+//        RestangularProvider.setBaseUrl('http://localhost:8080/metadata/');
         RestangularProvider.setParentless(true);
+        RestangularProvider.setDefaultHttpFields({withCredentials: true});
         RestangularProvider.setDefaultHeaders({'Content-Type': 'text/plain'});
         RestangularProvider.setResponseExtractor(function (response) {
             return response;
@@ -19,7 +21,12 @@ angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap', 'restangu
           });
         $routeProvider.when('/part/createByPartTypeId/:typeId', {
             templateUrl: 'views/part/PartForm.html',
-            controller: 'PartFormCtrl'
+            controller: 'PartFormCtrl',
+            resolve: {
+              partTypes: ['PartTypes', function(PartTypes) {
+                return PartTypes.getPromise();
+              }]
+            }
           });
         $routeProvider.when('/part/:id/form', {
             templateUrl: 'views/part/PartForm.html',
