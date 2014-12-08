@@ -5,9 +5,9 @@ angular.module('ngMetaCrudApp')
 
       $scope.createPart = function () {
           var modalInstance = $modal.open({
-              templateUrl: '/views/part/PartCreateModal.html',
-              controller: 'PartCreateModalCtrl'
-          });
+          templateUrl: '/views/part/PartCreateModal.html',
+          controller: 'PartCreateModalCtrl'
+        });
       };
 
     });

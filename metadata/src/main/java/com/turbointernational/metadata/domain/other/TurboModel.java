@@ -116,7 +116,8 @@ public class TurboModel {
             + "FROM\n"
             + "  TurboModel o\n"
             + "  JOIN o.turboType\n"
-            + "WHERE o.turboType.id = :turboTypeId",
+            + "WHERE o.turboType.id = :turboTypeId\n"
+            + "ORDER BY o.name",
             TurboModel.class)
             .setParameter("turboTypeId", turboTypeId)
             .getResultList();
@@ -125,6 +126,31 @@ public class TurboModel {
     public static TurboModel findTurboModel(Long id) {
         if (id == null) return null;
         return entityManager().find(TurboModel.class, id);
+    }
+    
+    @Transactional
+    public void persist() {
+        if (this.entityManager == null) this.entityManager = entityManager();
+        this.entityManager.persist(this);
+    }
+    
+    @Transactional
+    public TurboModel merge() {
+        if (this.entityManager == null) this.entityManager = entityManager();
+        TurboModel merged = this.entityManager.merge(this);
+        this.entityManager.flush();
+        return merged;
+    }
+    
+    @Transactional
+    public void remove() {
+        if (this.entityManager == null) this.entityManager = entityManager();
+        if (this.entityManager.contains(this)) {
+            this.entityManager.remove(this);
+        } else {
+            TurboModel attached = TurboModel.findTurboModel(this.id);
+            this.entityManager.remove(attached);
+        }
     }
     //</editor-fold>
     

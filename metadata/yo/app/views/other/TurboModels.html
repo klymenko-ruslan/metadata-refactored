@@ -1,0 +1,79 @@
+<metanav>
+</metanav>
+
+
+<h4>Manufacturer</h4>
+<div class="row">
+    <picker class="col-xs-12 col-md-6"
+            ng-model="selection.manufacturer"
+            path="other/manufacturer"
+            required></picker>
+</div>
+
+<hr/>
+
+<div class="row">
+
+    <div class="col-xs-12 col-md-6">
+        <h4>Turbo Type</h4>
+
+        <input ng-model="turboTypeFilter" class="form-control input-sm" placeholder="Turbo type filter..."/>
+
+        <select ng-model="selection.turboType"
+                ng-options="turboType as turboType.name for turboType in turboTypes | filter:{name:turboTypeFilter}"
+                ng-disabled="turboTypes.length == 0"
+                size="15" class="select-large required form-control">
+        </select>
+
+        <div>
+            <a ng-click="createTurboType()" class="btn btn-success"
+               ng-disabled="!selection.manufacturer.id">
+                <i class="fa fa-wrench"></i>
+                Create Type
+            </a>
+            <a ng-click="renameTurboType(selection.turboType)" class="btn btn-warning"
+               ng-disabled="!selection.turboType">
+                <i class="fa fa-pencil"></i>
+                Rename Type
+            </a>
+            <a ng-click="deleteTurboType(selection.turboType)" class="btn btn-danger"
+               ng-disabled="!selection.turboType">
+                <i class="fa fa-trash-o"></i>
+                Delete Type
+            </a>
+        </div>
+
+        <hr/>
+    </div>
+
+    <div class="col-xs-12 col-md-6">
+        <h4>Turbo Model</h4>
+        <input ng-model="turboModelFilter" class="form-control input-sm" placeholder="Turbo model filter..."/>
+
+        <select ng-model="selection.turboModel"
+                ng-options="turboModel as turboModel.name for turboModel in turboModels | filter:{name:turboModelFilter}"
+                ng-disabled="turboModels.length == 0"
+                size="15" class="select-large required form-control">
+        </select>
+
+        <div>
+            <a ng-click="createTurboModel()" class="btn btn-success"
+               ng-disabled="!selection.turboType">
+                <i class="fa fa-wrench"></i>
+                Create Model
+            </a>
+            <a ng-click="renameTurboModel(selection.turboModel)" class="btn btn-warning"
+               ng-disabled="!selection.turboModel">
+                <i class="fa fa-pencil"></i>
+                Rename Model
+            </a>
+            <a ng-click="deleteTurboModel(selection.turboModel)" class="btn btn-danger"
+               ng-disabled="!selection.turboModel">
+                <i class="fa fa-trash-o"></i>
+                Delete Model
+            </a>
+        </div>
+
+        <hr/>
+    </div>
+</div>
