@@ -56,6 +56,13 @@ angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap', 'restangu
           templateUrl: 'views/part/PartDetail.html',
           controller: 'PartDetailCtrl'
         });
+        
+        // Turbo Models
+        $routeProvider.when('/other/turboModels', {
+          templateUrl: 'views/other/TurboModels.html',
+          controller: 'TurboModelsCtrl'
+        });
+        
 
 
         // Users and groups

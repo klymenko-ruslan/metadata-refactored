@@ -1,4 +1,5 @@
 package com.turbointernational.metadata.domain.other;
+import static com.turbointernational.metadata.domain.other.TurboModel.entityManager;
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.transaction.annotation.Transactional;
 
 @Configurable
 @Entity
@@ -28,7 +30,7 @@ public class TurboType implements Comparable<TurboType>{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @OneToOne(cascade = CascadeType.MERGE)
+    @OneToOne
     @JoinColumn(name="manfr_id", nullable=false)
     private Manufacturer manufacturer;
     
@@ -121,10 +123,36 @@ public class TurboType implements Comparable<TurboType>{
             + "FROM\n"
             + "  TurboType o\n"
             + "  JOIN o.manufacturer\n"
-            + "WHERE o.manufacturer.id = :manufacturerId",
+            + "WHERE o.manufacturer.id = :manufacturerId\n"
+            + "ORDER BY o.name",
             TurboType.class)
             .setParameter("manufacturerId", manufacturerId)
             .getResultList();
+    }
+    
+    @Transactional
+    public void persist() {
+        if (this.entityManager == null) this.entityManager = entityManager();
+        this.entityManager.persist(this);
+    }
+    
+    @Transactional
+    public TurboType merge() {
+        if (this.entityManager == null) this.entityManager = entityManager();
+        TurboType merged = this.entityManager.merge(this);
+        this.entityManager.flush();
+        return merged;
+    }
+    
+    @Transactional
+    public void remove() {
+        if (this.entityManager == null) this.entityManager = entityManager();
+        if (this.entityManager.contains(this)) {
+            this.entityManager.remove(this);
+        } else {
+            TurboType attached = TurboType.findTurboType(this.id);
+            this.entityManager.remove(attached);
+        }
     }
     //</editor-fold>
     

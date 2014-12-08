@@ -494,6 +494,7 @@ INSERT IGNORE INTO `role` (name, display) VALUES ('ROLE_INTERCHANGE', 'Alter int
 INSERT IGNORE INTO `role` (name, display) VALUES ('ROLE_BOM', 'Alter BOM.');
 INSERT IGNORE INTO `role` (name, display) VALUES ('ROLE_BOM_ALT', 'Alter BOM alternates.');
 INSERT IGNORE INTO `role` (name, display) VALUES ('ROLE_ADMIN', 'Superpowers.');
+INSERT IGNORE INTO `role` (name, display) VALUES ('ROLE_TURBO_MODEL_CRUD', 'CRUD operations turbo types and models.');
 
 INSERT IGNORE INTO `groups` (name) VALUES ('Reader');
 INSERT IGNORE INTO `groups` (name) VALUES ('Writer');
@@ -509,6 +510,7 @@ INSERT IGNORE INTO `group_role` (group_id, role_id) VALUES
   ((SELECT id FROM groups WHERE `name` = 'Writer'), (SELECT id FROM role WHERE `name` = 'ROLE_INTERCHANGE')),
   ((SELECT id FROM groups WHERE `name` = 'Writer'), (SELECT id FROM role WHERE `name` = 'ROLE_PART_IMAGES')),
   ((SELECT id FROM groups WHERE `name` = 'Writer'), (SELECT id FROM role WHERE `name` = 'ROLE_READ')),
+  ((SELECT id FROM groups WHERE `name` = 'Writer'), (SELECT id FROM role WHERE `name` = 'ROLE_TURBO_MODEL_CRUD')),
   ((SELECT id FROM groups WHERE `name` = 'Admin'),  (SELECT id FROM role WHERE `name` = 'ROLE_ADMIN')),
   ((SELECT id FROM groups WHERE `name` = 'Admin'),  (SELECT id FROM role WHERE `name` = 'ROLE_BOM')),
   ((SELECT id FROM groups WHERE `name` = 'Admin'),  (SELECT id FROM role WHERE `name` = 'ROLE_BOM_ALT')),
@@ -517,7 +519,8 @@ INSERT IGNORE INTO `group_role` (group_id, role_id) VALUES
   ((SELECT id FROM groups WHERE `name` = 'Admin'),  (SELECT id FROM role WHERE `name` = 'ROLE_DELETE_PART')),
   ((SELECT id FROM groups WHERE `name` = 'Admin'),  (SELECT id FROM role WHERE `name` = 'ROLE_INTERCHANGE')),
   ((SELECT id FROM groups WHERE `name` = 'Admin'),  (SELECT id FROM role WHERE `name` = 'ROLE_PART_IMAGES')),
-  ((SELECT id FROM groups WHERE `name` = 'Admin'),  (SELECT id FROM role WHERE `name` = 'ROLE_READ'));
+  ((SELECT id FROM groups WHERE `name` = 'Admin'),  (SELECT id FROM role WHERE `name` = 'ROLE_READ')),
+  ((SELECT id FROM groups WHERE `name` = 'Writer'), (SELECT id FROM role WHERE `name` = 'ROLE_TURBO_MODEL_CRUD'));
 
 CREATE TABLE `changelog` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
