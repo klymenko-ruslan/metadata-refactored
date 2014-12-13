@@ -72,16 +72,21 @@ public class SearchController {
         }
 
         int result;
-        do {
-            
-            // Clear Hibernate
-            Part.entityManager().clear();
-            
-            result = elasticSearch.indexParts(page * pageSize, pageSize);
-            log.log(Level.INFO, "Indexed parts {0}-{1}: {2}", new Object[]{page * pageSize, (page * pageSize) + pageSize, result});
-            page++;
-            
-        } while (result >= pageSize && page < maxPages);
+        try {
+            do {
+
+                // Clear Hibernate
+                Part.entityManager().clear();
+
+                result = elasticSearch.indexParts(page * pageSize, pageSize);
+                log.log(Level.INFO, "Indexed parts {0}-{1}: {2}", new Object[]{page * pageSize, (page * pageSize) + pageSize, result});
+                page++;
+
+            } while (result >= pageSize && page < maxPages);
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "Reindexing failed.",  e);
+            throw e;
+        }
     }
     
 }
