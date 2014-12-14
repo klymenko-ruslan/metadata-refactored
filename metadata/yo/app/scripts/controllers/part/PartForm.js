@@ -16,7 +16,7 @@ angular.module('ngMetaCrudApp')
                     $scope.oldPart = Restangular.copy(part);
                 },
                 function (response) {
-                    alert("Could not get part data from the server.");
+                    restService.error("Could not get part data from the server.", response);
                 });
         } else {
             $scope.partId = null;
@@ -41,16 +41,16 @@ angular.module('ngMetaCrudApp')
                     function (id) {
                         $location.path('/part/' + id);
                     },
-                    function () {
-                        alert("Could not save part.");
+                    function (response) {
+                        restService.error("Could not save part.", response);
                     })
             } else {
                 $scope.part.put().then(
                     function (part) {
                         $location.path('/part/' + $scope.part.id);
                     },
-                    function () {
-                        alert("Could not update part");
+                    function (response) {
+                        restService.error("Could not update part", response);
                     }
                 );
             }

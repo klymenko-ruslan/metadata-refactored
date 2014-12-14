@@ -5,6 +5,12 @@ angular.module('ngMetaCrudApp')
         return new function () {  // jshint ignore:line
 
             this.error = function(title, response) {
+              
+              // NOOP on access denied, loginRequiredInterceptor will handle the redirect
+              if (response.status === 401 || response.status === 403) {
+                return;
+              }
+              
               $dialogs.error(
                   title, 'Server said: <pre>' + JSON.stringify(response.data) + '</pre>');
             };

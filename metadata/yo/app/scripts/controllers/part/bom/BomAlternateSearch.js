@@ -43,8 +43,8 @@ angular.module('ngMetaCrudApp')
                     $scope.pickedPart = pickedPart;
                 },
                 function (errorResponse) {
-                    alert("Could not pick part.");
                     $log.log("Could not pick part", errorResponse);
+                    restService.error("Could not pick part.", errorResponse);
                 });
         }
     });

@@ -20,7 +20,7 @@ angular.module('ngMetaCrudApp')
                 $log.log("Editing part: ", $scope.part);
                 $log.log("BOM: ", $scope.part.bom);
             }, function (errorResponse) {
-                alert("Could not get part details", errorResponse);
+                restService.error("Could not get part details", errorResponse);
             });
 
         $scope.bomItem = {
@@ -52,7 +52,7 @@ angular.module('ngMetaCrudApp')
                     };
                 },
                 function (errorResponse) {
-                    alert("Could not pick part.");
+                    restService.error("Could not pick part.", errorResponse);
                     $log.log("Could not pick part", errorResponse);
                 });
         }

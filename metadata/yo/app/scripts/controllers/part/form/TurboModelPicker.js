@@ -51,7 +51,7 @@ angular.module('ngMetaCrudApp')
                     $scope.turboTypes = response;
                 }, function (errorResponse) {
 
-                    alert("Could not fetch turbo types");
+                    restService.error("Could not fetch turbo types", errorResponse);
                 });
         });
 
@@ -72,7 +72,7 @@ angular.module('ngMetaCrudApp')
                         $scope.turboModels = response;
                     }, function (errorResponse) {
 
-                        alert("Could not fetch turbo models");
+                        restService.error("Could not fetch turbo models", errorResponse);
                     });
             }
         });

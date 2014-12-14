@@ -1,7 +1,9 @@
 'use strict';
 
 angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap', 'restangular', 'dialogs', 'gToast'])
-    .config(function(RestangularProvider) {
+    .config(function ($locationProvider, $httpProvider, $routeProvider, RestangularProvider) {
+        $httpProvider.interceptors.push('loginRequiredInterceptor');
+    
         RestangularProvider.setBaseUrl('/metadata/');
 //        RestangularProvider.setBaseUrl('http://localhost:8080/metadata/');
         RestangularProvider.setParentless(true);
@@ -10,8 +12,7 @@ angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap', 'restangu
         RestangularProvider.setResponseExtractor(function (response) {
             return response;
           });
-      })
-    .config(function ($locationProvider, $routeProvider) {
+      
         $locationProvider.html5Mode(true);
 
         // Parts

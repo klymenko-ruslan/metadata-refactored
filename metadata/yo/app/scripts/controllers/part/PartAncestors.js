@@ -14,7 +14,7 @@ angular.module('ngMetaCrudApp')
       },
       function (errorResponse) {
         $log.log("Could not get part details", errorResponse);
-        alert("Could not get part details");
+        restService.error("Could not get part details", errorResponse);
       });
 
     Restangular.setParentless(false);
