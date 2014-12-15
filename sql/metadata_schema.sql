@@ -810,12 +810,13 @@ CREATE VIEW `vpart_turbotype_kits` AS (
 DELIMITER $$
 DROP PROCEDURE IF EXISTS RebuildBomAncestry$$
 CREATE PROCEDURE RebuildBomAncestry()
+  SQL SECURITY INVOKER
   BEGIN
 
     START TRANSACTION;
 
     -- Empty the table
-    TRUNCATE bom_ancestor;
+    DELETE FROM bom_ancestor;
 
     -- Create self-references
     INSERT IGNORE INTO bom_ancestor (
@@ -885,7 +886,8 @@ DELIMITER ;
 DELIMITER $$
 DROP PROCEDURE IF EXISTS `errorOnContradictoryKitPartCommonComponent`$$
 CREATE PROCEDURE `errorOnContradictoryKitPartCommonComponent` ()
-BEGIN
+  SQL SECURITY INVOKER
+  BEGIN
     IF (SELECT COUNT(*) FROM (
         SELECT
           kit_id, part_id, COUNT(exclude) ct
@@ -897,7 +899,7 @@ BEGIN
     ) AS contradictions) > 0 THEN
         CALL `Contradictory VKP mappings found.`;
     END IF;
-END$$
+  END$$
 
 DROP TRIGGER IF EXISTS `kit_part_common_component_AI`$$
 CREATE TRIGGER `kit_part_common_component_AI` AFTER INSERT ON `kit_part_common_component`
