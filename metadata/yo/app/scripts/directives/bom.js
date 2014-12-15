@@ -9,6 +9,7 @@ angular.module('ngMetaCrudApp')
 //        element.text('this is the bom directive');
       },
       controller: function($dialogs, $scope, ngTableParams, gToast, Restangular, restService) {
+        $scope.restService = restService;
 
 
         $scope.bomTableParams = new ngTableParams(

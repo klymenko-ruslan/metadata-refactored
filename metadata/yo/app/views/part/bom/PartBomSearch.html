@@ -9,7 +9,7 @@
 
   <li>
     <a ng-click="save()"
-       ng-disabled="pickedPart == null"
+       ng-disabled="pickedPart == null || restService.status.bomAncestryRebuilding"
        class="btn btn-success">
       <i class="fa fa-save"></i>
       Add BOM Item

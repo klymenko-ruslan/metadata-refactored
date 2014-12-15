@@ -2,6 +2,7 @@
 
 angular.module('ngMetaCrudApp')
     .controller('PartInterchangeSearchCtrl', function ($log, $scope, $location, $routeParams, restService, Restangular, gToast, $dialogs) {
+        $scope.restService = restService;
       $scope.partId = $routeParams.id;
 
       // The part whose interchange we're editing

@@ -2,6 +2,7 @@
 
 angular.module('ngMetaCrudApp')
     .controller('PartBomSearchCtrl', function ($log, $scope, $location, $routeParams, restService, Restangular, $dialogs, gToast) {
+        $scope.restService = restService;
         $scope.partId = $routeParams.id;
 
         $scope.pickedPart = null;

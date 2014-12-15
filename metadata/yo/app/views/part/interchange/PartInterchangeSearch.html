@@ -9,7 +9,7 @@
 
   <li authorize="ROLE_INTERCHANGE">
     <a ng-click="removeInterchange()"
-       ng-disabled="!canClear()"
+       ng-disabled="!canClear() || restService.status.bomAncestryRebuilding"
        class="btn btn-danger">
       <i class="fa fa-trash-o"></i>
       Remove Interchange
@@ -18,7 +18,7 @@
 
   <li authorize="ROLE_INTERCHANGE">
     <a ng-click="save(partId)"
-       ng-disabled="!canSave()"
+       ng-disabled="!canSave() || restService.status.bomAncestryRebuilding"
        class="btn btn-success">
       <i class="fa fa-save"></i>
       Save

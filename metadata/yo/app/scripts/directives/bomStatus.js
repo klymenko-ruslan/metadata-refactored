@@ -7,7 +7,7 @@ angular.module('ngMetaCrudApp')
         transclude: true,
         template: '<div class="alert alert-warning"> \
                      <i class="fa fa-cog fa-spin"></i> \
-                     Rebuilding BOM Ancestry\
+                     <strong>Rebuilding BOM Ancestry</strong>\
                      <div ng-transclude></div> \
                    </div>',
         link: function postLink(scope, element, attrs) {
