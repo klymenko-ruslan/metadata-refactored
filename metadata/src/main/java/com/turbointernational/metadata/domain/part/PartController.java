@@ -7,6 +7,7 @@ import flexjson.JSONSerializer;
 import flexjson.transformer.HibernateTransformer;
 import java.io.File;
 import java.security.Principal;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;

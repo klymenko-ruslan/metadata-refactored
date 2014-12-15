@@ -101,7 +101,10 @@
     </bean>
     
     <task:annotation-driven executor="asyncExecutor" mode="aspectj"/>
+    
     <task:executor id="asyncExecutor" pool-size="10"/>
+    
+    <task:executor id="bomRebuildExecutor" pool-size="1"/>
     
     <security:global-method-security secured-annotations="enabled"/>
     

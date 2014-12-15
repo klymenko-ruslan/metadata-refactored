@@ -1,13 +1,22 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-    .directive('metanav', function ($dialogs, gToast, User, restService, Restangular) {
+    .directive('metanav', function ($dialogs, $interval, gToast, User, restService, Restangular) {
       return {
         transclude: true,
         templateUrl: '/views/component/Metanav.html',
         restrict: 'E',
         controller: function($scope) {
           $scope.User = User;
+          
+          // Probably not the greatest place for this startup/teardown code,
+          // but metanav is available everywhere when logged in
+          var timer = $interval(function() {
+            restService.refreshStatus();
+          }, 1000);
+          $scope.$on('$destroy', function() {
+            $interval.cancel(timer);
+          });
 
           $scope.rebuildBomAncestry = function() {
             $dialogs.confirm(

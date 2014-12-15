@@ -1,8 +1,56 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-    .service('restService', function RestService(Restangular, $dialogs) {
+    .service('restService', function RestService(Restangular, $dialogs, $q, $rootScope) {
         return new function () {  // jshint ignore:line
+            var RestService     = this;
+            var refreshPromise  = null;
+            this.status         = null;
+            
+            this.refreshStatus = function() {
+              if (refreshPromise !== null) {
+                return refreshPromise;
+              } else {
+                
+                refreshPromise = Restangular.one('status/all').get();
+                
+                refreshPromise.then(function(status) {
+                  RestService.status = status;
+                  return status;
+                });
+                
+                refreshPromise.finally(function() {
+                  refreshPromise = null;
+                });
+                
+                return refreshPromise;
+              }
+            };
+
+            // Wraps the BOM status logic, resolving when the BOM ancestry is not rebuilding.
+            this.getBomAncestryRebuildingCompletePromise = function() {
+              var deferred = $q.defer();
+              
+              RestService.refreshStatus().then(function(status) {
+                if (status.bomAncestryRebuilding) {
+                
+                  var cancelWatcher = $rootScope.$watch(
+                      function() {
+                        return RestService.status.bomAncestryRebuilding;
+                      },
+                      function(bomAncestryRebuilding) {
+                        if (bomAncestryRebuilding === false) {
+                          deferred.resolve();
+                          cancelWatcher();
+                        }
+                      }, true);
+                } else {
+                  deferred.resolve();
+                }
+              });
+                  
+              return deferred.promise;
+            };
 
             this.error = function(title, response) {
               

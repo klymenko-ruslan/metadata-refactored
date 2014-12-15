@@ -16,14 +16,23 @@ angular.module('ngMetaCrudApp')
         $log.log("Could not get part details", errorResponse);
         restService.error("Could not get part details", errorResponse);
       });
-
-    Restangular.setParentless(false);
-    $scope.ancestorsPromise = Restangular.one('part', $scope.partId).all('ancestors').getList().then(
-      function(ancestors) {
-        $scope.ancestors = ancestors;
-      },
-      function(response) {
-        restService.error("Could not get ancestors.", response);
+      
+    $scope.ancestors = null;
+    $scope.loadAncestors = function() {
+      if (!angular.isArray($scope.ancestors)) {
+        Restangular.setParentless(false);
+        
+        return Restangular.one('part', $scope.partId).all('ancestors').getList().then(
+          function(ancestors) {
+            $scope.ancestors = ancestors;
+            $scope.apply();
+          },
+          function(response) {
+            restService.error("Could not get ancestors.", response);
+          }
+        );
       }
-    );
+    };
+    
+    restService.getBomAncestryRebuildingCompletePromise().then($scope.loadAncestors);
   });

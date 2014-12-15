@@ -543,22 +543,39 @@ public class Part implements Comparable<Part> {
     //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="BOM Ancestry">
-    @Async
+    
+    /**
+     * Contains the date when we started the BOM rebuild, or null if not currently rebuilding.
+     */
+    private volatile static Date bomRebuildStart = null;
+    
+    public static final Date getBomRebuildStart() {
+        return bomRebuildStart;
+    }
+    
+    @Async("bomRebuildExecutor") // One at a time
     public static void rebuildBomAncestry() {
-        new TransactionTemplate(new Part().txManager).execute(new TransactionCallback() {
-            @Override
-            public Object doInTransaction(TransactionStatus status) {
-                log.info("Rebuilding BOM ancestry.");
-                EntityManager em = entityManager();
+        try {
+            // Track the rebuild so users can get status
+            bomRebuildStart = new Date();
+            
+            new TransactionTemplate(new Part().txManager).execute(new TransactionCallback() {
+                @Override
+                public Object doInTransaction(TransactionStatus status) {
+                    log.info("Rebuilding BOM ancestry.");
+                    EntityManager em = entityManager();
 
-                // Delete the old ancestry
-                em.createNativeQuery("CALL RebuildBomAncestry()").executeUpdate();
-                em.clear();
-                log.info("BOM Ancestry rebuild completed.");
-                
-                return null;
-            }
-        });
+                    // Delete the old ancestry
+                    em.createNativeQuery("CALL RebuildBomAncestry()").executeUpdate();
+                    em.clear();
+                    log.info("BOM Ancestry rebuild completed.");
+
+                    return null;
+                }
+            });
+        } finally {
+            bomRebuildStart = null;
+        }
     }
     //</editor-fold>
     
