@@ -439,6 +439,10 @@ div.matrix-data .hover { background-color: #FF998A !important; }
 .data-table tbody td .option-label { font-weight:bold; font-style:italic; }
 .data-table tbody td .option-value { padding-left:10px; }
 
+/* Major Components Table */
+.mc-table th { padding:1px 3px; font-weight:bold; }
+.mc-table td { padding:1px 3px; }
+
 /* matrix data */
 .matrix-data { overflow: auto; }
 .first-kit { background-color:#aaa; }

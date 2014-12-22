@@ -144,6 +144,108 @@ if ($serviceKitSkus) {
 
             <div class="clearer"></div>
 
+            <!-- Major Components  -->
+            <?php
+            if ($productAttributeSetName == "Turbo"):
+                $billOfMaterialsSkus = array();
+                $billOfMaterialsAlt = array();
+                $billOfMaterialsCollection = array();
+
+                //create array of skus to be used in a collection
+                foreach ($billOfMaterials as $part):
+                    // add the sku of the main part
+                    $billOfMaterialsSkus[] = $part['sku'];
+
+                    // create a duplicate array where the key is the sku
+                    $billOfMaterialsAlt[$part['sku']] = $part;
+
+                    // add the sku of any TI interchangeable parts from the BOM
+                    if (!empty($part['ti_part_sku']))
+                        $billOfMaterialsSkus[] = $part['ti_part_sku'];
+                endforeach;
+
+                // get collection of bill of material products
+                if (count($billOfMaterialsSkus) > 0) {
+                    $billOfMaterialsCollection = Mage::getModel('catalog/product')->getCollection()
+                        ->addAttributeToSelect('part_type')
+                        ->addAttributeToSelect('part_number')
+                        ->addAttributeToSelect('price')
+                        ->addAttributeToSelect('interchanges')
+                        ->addAttributeToSelect('manufacturer')
+                        ->addAttributeToSort('part_number', 'ASC')
+                        ->addFieldToFilter('sku', $billOfMaterialsSkus);
+                }
+                ?>
+                <div class="box-collateral">
+                    <h2><?php echo $this->__('Major Components') ?></h2>
+                    <table class="data-table mc-table" id="major-components">
+                        <tr>
+                            <th><strong>Part Type</strong></th>
+                            <th><strong>Part #</strong></th>
+                            <?php //don't show column if part manfr is TI
+                                if (!$_product->isTurboInternational()): ?><th><strong>TI Part #</strong></th><?php endif; ?>
+                            <th><strong>Price</strong></th>
+                        </tr>
+                        <?php foreach ($billOfMaterialsCollection as $bomItemProduct): ?>
+                            <?php
+
+                            $bomItem = $billOfMaterialsAlt[$bomItemProduct->getSku()];
+
+                            // check to make sure that bomItem is a primary bom part
+                            if (empty($bomItem)) {
+                                continue;
+                            }
+
+                            $bomItemTiProduct = null;
+                            ?>
+
+                            <tr>
+                                <td><?php echo $bomItemProduct->getAttributeText('part_type'); ?></td>
+                                <td><?php echo '<a href="' . $bomItemProduct->getProductUrl() . '">' . $bomItemProduct->getPartNumber() . '</a>'; ?></td>
+                                <?php
+
+                                // don't display if primary part manfr is TI
+                                if (!$_product->isTurboInternational()): ?>
+                                    <td><?php
+
+                                        //Get TI first part number
+                                        foreach ($bomItem['ti_part_sku'] as $idx => $tiPartSku) {
+
+                                            //get product object from sku
+                                            $bomItemInterchangeTiProduct = $billOfMaterialsCollection->getItemByColumnValue('sku', $tiPartSku);
+
+                                            // display product info
+                                            if ($bomItemInterchangeTiProduct) {
+                                                echo '<a href="' . $bomItemInterchangeTiProduct->getProductUrl() . '">' . $bomItemInterchangeTiProduct->getPartNumber() . '</a>';
+
+                                                // Use the first TI product for pricing
+                                                $bomItemTiProduct = $bomItemInterchangeTiProduct;
+
+                                                // exit loop after first product
+                                                break;
+                                            }
+                                        }?>
+                                    </td>
+                                <?php endif; ?>
+                                <td>
+                                    <?php if (Mage::getSingleton('customer/session')->isLoggedIn()): ?>
+                                        <?php
+                                        if ($bomItemProduct->isTurboInternational()) {
+                                            echo Mage::helper('core')->currency($bomItemProduct->getFinalPrice());
+                                        } elseif ($bomItemTiProduct) {
+                                            echo Mage::helper('core')->currency($bomItemTiProduct->getFinalPrice());
+                                        }
+                                        ?>
+                                    <?php else: ?>
+                                      <a href="<?php echo $this->getUrl('customer/account/login'); ?>">Login for price</a>
+                                    <?php endif; ?>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </table>
+                </div>
+            <?php endif; ?>
+
             <?php if ($_product->getShortDescription()): ?>
                 <div class="short-description">
                     <h2><?php echo $this->__('Quick Overview') ?></h2>
@@ -951,6 +1053,7 @@ if ($serviceKitSkus) {
 </div>
 </div>
 
+<script type="text/javascript">decorateTable('major-components')</script>
 <script type="text/javascript">decorateTable('product-information-specs-table')</script>
 <script type="text/javascript">decorateTable('bill-of-materials')</script>
 <script type="text/javascript">decorateTable('application_detail')</script>
