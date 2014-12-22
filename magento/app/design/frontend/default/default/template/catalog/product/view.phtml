@@ -112,25 +112,31 @@ if ($serviceKitSkus) {
         </div>
 
         <div class="product-shop">
-            <div class="product-name">
-                <h1><?php echo($_product->getName() ? $_helper->productAttribute($_product, $_product->getName(), 'name') : 'No Name') ?></h1>
+            <div class="product-header-info">
+                <div class="product-name">
+                    <h1><?php echo($_product->getName() ? $_helper->productAttribute($_product, $_product->getName(), 'name') : 'No Name') ?></h1>
+                </div>
+
+                <?php echo $this->getReviewsSummaryHtml($_product, false, true) ?>
+                <?php echo $this->getChildHtml('alert_urls') ?>
+                <?php echo $this->getChildHtml('product_type_data') ?>
+                <?php echo $this->getTierPriceHtml() ?>
+                <?php echo $this->getChildHtml('extrahint') ?>
             </div>
-
-            <?php echo $this->getReviewsSummaryHtml($_product, false, true) ?>
-            <?php echo $this->getChildHtml('alert_urls') ?>
-            <?php echo $this->getChildHtml('product_type_data') ?>
-            <?php echo $this->getTierPriceHtml() ?>
-            <?php echo $this->getChildHtml('extrahint') ?>
-
-            <div class="add-to-box">
-                <?php if ($_product->isSaleable() && $_product->isTurboInternational() || $_tiProduct): ?>
-                    <?php echo $this->getChildHtml('addtocart'); ?>
-                    <?php if ($this->helper('wishlist')->isAllow() || $_compareUrl = $this->helper('catalog/product_compare')->getAddUrl($_product)): ?>
-                        <span class="or"><?php echo $this->__('OR') ?></span>
+            <div class="product-price-add-to-box">
+                <?php echo $this->getPriceHtml($_product) ?>
+                <div class="add-to-box">
+                    <?php if ($_product->isSaleable() && $_product->isTurboInternational() || $_tiProduct): ?>
+                        <?php echo $this->getChildHtml('addtocart'); ?>
+                        <?php if ($this->helper('wishlist')->isAllow() || $_compareUrl = $this->helper('catalog/product_compare')->getAddUrl($_product)): ?>
+                            <span class="or"><?php echo $this->__('OR') ?></span>
+                        <?php endif; ?>
                     <?php endif; ?>
-                <?php endif; ?>
-                <?php echo $this->getChildHtml('addto') ?>
+                    <?php echo $this->getChildHtml('addto') ?>
+                </div>
             </div>
+
+            <div class="clearer"></div>
 
             <!-- Email a friend -->
             <?php if ($this->canEmailToFriend()): ?>
