@@ -78,44 +78,4 @@ $turboTypes = $_product->getAttributeText('turbo_type');
         <?php endif; ?>
     </ul>
 
-    <!-- Turbo cartridge upper section details -->
-    <div style="margin-top:40px;">
-        <?php if ($_product->getAttributeSetName() == 'Turbo'): ?>
-            <ul>
-                <?php $billOfMaterials = json_decode($_product->getBillOfMaterials(), true) ?>
-                <?php
-                foreach ($billOfMaterials as $bomItem) { // <-- need to setup handler to make sure bomItemProduct is a cartridge
-                    $bomItemProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $bomItem['sku']);
-                    ?>
-                    <?php if ($bomItemProduct->getAttributeSetName() == 'Cartridge'): ?>
-                        <li><strong>Cartridge:</strong> <?php
-                            echo '<a href="' . $bomItemProduct->getProductUrl() . '">' . $bomItemProduct->getPartNumber() . '</a>'; ?>
-                        </li>
-                        <?php if ($bomItem['ti_part_sku']): ?>
-                            <li>
-                                <strong>Compatible TI Part:</strong>
-                                <?php
-                                foreach ($bomItem['ti_part_sku'] as $a => $bomTiProduct) {
-                                    $bomItemInterchangeProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $bomTiProduct);
-                                    if (!$bomItemInterchangeProduct) {
-                                        continue;
-                                    }
-                                    
-                                    echo '<a href="' . $bomItemInterchangeProduct->getProductUrl() . '">' . $bomItemInterchangeProduct->getPartNumber() . '</a>';
-                                    
-                                    if ($a+1 < count($bomItem['ti_part_sku'])) {
-                                        echo ", ";
-                                    }
-                                }
-                                ?>
-                            </li>
-                        <?php endif; ?>
-                    <?php endif; ?>
-                <?php
-                }
-                ?>
-            </ul>
-        <?php endif; ?>
-    </div>
-
 <?php echo $this->getChildHtml('product_type_data_extra') ?>
