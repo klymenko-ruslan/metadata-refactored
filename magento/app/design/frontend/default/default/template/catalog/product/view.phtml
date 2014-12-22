@@ -278,11 +278,11 @@ if ($serviceKitSkus) {
     <div id="tabs" style="font-size: 97%;">
         <ul>
             <li><a href="#tabs-product-information">Product Information</a></li>
-            <li><a href="#tabs-interchangeable-parts">Interchangeable Parts</a></li>
             <li><a href="#tabs-bill-of-materials">Bill of Materials</a></li>
             <li><a href="#tabs-application-detail">Application Detail</a></li>
             <li><a href="#tabs-where-used">Where Used</a></li>
             <li><a href="#tabs-kit-matrix">Kit Matrix</a></li>
+            <li><a href="#tabs-interchangeable-parts">Interchangeable Parts</a></li>
         </ul>
         
         <!-- Product Information -->
@@ -425,34 +425,6 @@ if ($serviceKitSkus) {
                 </table>
             </div>
             <?php endif; ?>
-        </div>
-
-        <!-- Interchangeable Parts -->
-        <div id="tabs-interchangeable-parts" class="box-collateral">
-            <h2><?php echo $this->__('Interchangeable Parts') ?></h2>
-            <table class="data-table" id="interchangeable-parts-specs-table">
-                <col width="25%"/>
-                <col/>
-                <tbody>
-                <tr>
-                    <th class="label">Part Number</th>
-                    <th class="label">Manufacturer</th>
-                </tr>
-                <?php if (count($interchangeSkuArray)): ?>
-                    <?php foreach ($interchangeSkuProductMap as $interchangeSku => $interchangeProduct): ?>
-                        <tr>
-                            <td class="data">
-                                <a href="<?php echo $interchangeProduct->getProductUrl(); ?>"><?php echo $interchangeProduct->getPartNumber() ?></a>
-                            <td class="data"><?php echo $interchangeProduct->getAttributeText('manufacturer'); ?></td>
-                        </tr>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <tr>
-                        <td colspan="2"><?php echo $this->__('No Interchangeable Parts') ?></td>
-                    </tr>
-                <?php endif; ?>
-                </tbody>
-            </table>
         </div>
         
         <!-- Bill of Materials -->
@@ -933,6 +905,34 @@ if ($serviceKitSkus) {
                 </table>
             </div>
 
+        <!-- Interchangeable Parts -->
+        <div id="tabs-interchangeable-parts" class="box-collateral">
+            <h2><?php echo $this->__('Interchangeable Parts') ?></h2>
+            <table class="data-table" id="interchangeable-parts-specs-table">
+                <col width="25%"/>
+                <col/>
+                <tbody>
+                <tr>
+                    <th class="label">Part Number</th>
+                    <th class="label">Manufacturer</th>
+                </tr>
+                <?php if (count($interchangeSkuArray)): ?>
+                    <?php foreach ($interchangeSkuProductMap as $interchangeSku => $interchangeProduct): ?>
+                        <tr>
+                            <td class="data">
+                                <a href="<?php echo $interchangeProduct->getProductUrl(); ?>"><?php echo $interchangeProduct->getPartNumber() ?></a>
+                            <td class="data"><?php echo $interchangeProduct->getAttributeText('manufacturer'); ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <tr>
+                        <td colspan="2"><?php echo $this->__('No Interchangeable Parts') ?></td>
+                    </tr>
+                <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+
     </div>
 
     <div style="margin-top: 5px;">
@@ -944,9 +944,9 @@ if ($serviceKitSkus) {
 </div>
 
 <script type="text/javascript">decorateTable('product-information-specs-table')</script>
-<script type="text/javascript">decorateTable('interchangeable-parts-specs-table')</script>
 <script type="text/javascript">decorateTable('bill-of-materials')</script>
 <script type="text/javascript">decorateTable('application_detail')</script>
 <script type="text/javascript">decorateTable('service-kits')</script>
 <script type="text/javascript">decorateTable('where-used')</script>
 <script type="text/javascript">decorateTable('kit-matrix')</script>
+<script type="text/javascript">decorateTable('interchangeable-parts-specs-table')</script>
