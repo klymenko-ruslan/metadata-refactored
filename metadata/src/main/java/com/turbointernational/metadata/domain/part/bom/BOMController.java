@@ -50,7 +50,7 @@ public class BOMController {
             Changelog.log("Added bom item.", item.toJson());
             
             // TODO: Only change what we need to rather than rebuilding everything
-            Part.rebuildBomAncestry();
+            Part.rebuildBomDescendancy();
             
         } catch (NoResultException e) {
             return new ResponseEntity<String>(headers, HttpStatus.NOT_FOUND);
@@ -105,7 +105,7 @@ public class BOMController {
         item.flush();
             
         // TODO: Only change what we need to rather than rebuilding everything
-        Part.rebuildBomAncestry();
+        Part.rebuildBomDescendancy();
     }
     
     

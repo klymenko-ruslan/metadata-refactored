@@ -32,6 +32,12 @@ public class PartType {
     @Column(nullable=false)
     private String name;
     
+    /**
+     * Used externally
+     */
+    @Column(nullable=false)
+    private String value;
+    
     @Column(name="magento_attribute_set")
     private String magentoAttributeSet;
     
@@ -54,6 +60,14 @@ public class PartType {
     
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
     }
     
     public String getMagentoAttributeSet() {

@@ -16,7 +16,7 @@ import org.springframework.beans.factory.annotation.Configurable;
 
 @Configurable
 @Entity
-@Table(name="bom_ancestor", uniqueConstraints=@UniqueConstraint(columnNames={"part_id", "ancestor_part_id"}))
+@Table(name="vbom_ancestor", uniqueConstraints=@UniqueConstraint(columnNames={"part_id", "ancestor_part_id"}))
 public class BOMAncestor implements Comparable<BOMAncestor> {
 
     //<editor-fold defaultstate="collapsed" desc="properties">

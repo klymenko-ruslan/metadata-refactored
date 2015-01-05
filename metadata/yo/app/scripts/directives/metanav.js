@@ -18,20 +18,20 @@ angular.module('ngMetaCrudApp')
             $interval.cancel(timer);
           });
 
-          $scope.rebuildBomAncestry = function() {
+          $scope.rebuildBom = function() {
             $dialogs.confirm(
-                'Rebuild BOM ancestry for all parts?',
+                'Rebuild BOM for all parts?',
                 'You need to run this if changes have been made directly to the database. Proceed?').result.then(
                 function() {
                   // Yes
-                  Restangular.all('part/all').customGET('rebuildBomAncestry').then(
+                  Restangular.all('part/all').customGET('rebuildBom').then(
                       function() {
                         // Success
-                        gToast.open('Rebuilding BOM ancestry.');
+                        gToast.open('Rebuilding BOM.');
                       },
                       function(response) {
                         // Error
-                        restService.error("Could not rebuild BOM ancestry", response);
+                        restService.error("Could not rebuild BOM", response);
                       });
                 },
                 function() {

@@ -37,7 +37,7 @@ angular.module('ngMetaCrudApp')
                         params.total($scope.searchResults.hits.total);
                       },
                       function (errorResponse) {
-                        restService.error("Couldn't search for parts.");
+                        restService.error("Couldn't search for parts.", errorResponse);
                         $defer.reject();
                       });
                 }
