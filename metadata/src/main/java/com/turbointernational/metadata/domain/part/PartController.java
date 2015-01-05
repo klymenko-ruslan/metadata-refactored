@@ -144,11 +144,11 @@ public class PartController {
     }
     
     @Transactional
-    @RequestMapping(value="/all/rebuildBomAncestry")
+    @RequestMapping(value="/all/rebuildBom")
     @ResponseBody
     @Secured("ROLE_ADMIN")
-    public void rebuildAllBomAncestry() throws Exception {
-        Part.rebuildBomAncestry();
+    public void rebuildAllBom() throws Exception {
+        Part.rebuildBomDescendancy();
     }
     
     @Transactional

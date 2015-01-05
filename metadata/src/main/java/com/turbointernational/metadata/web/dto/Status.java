@@ -9,20 +9,20 @@ import flexjson.transformer.ObjectTransformer;
  */
 public class Status {
     
-    private boolean bomAncestryRebuilding = false;
+    private boolean bomRebuilding = false;
 
-    public boolean getBomAncestryRebuilding() {
-        return bomAncestryRebuilding;
+    public boolean isBomRebuilding() {
+        return bomRebuilding;
     }
 
-    public void setBomAncestryRebuilding(boolean bomAncestryRebuilding) {
-        this.bomAncestryRebuilding = bomAncestryRebuilding;
+    public void setBomRebuilding(boolean bomRebuilding) {
+        this.bomRebuilding = bomRebuilding;
     }
     
     public String toJson() {
         return new JSONSerializer()
             .transform(new ObjectTransformer(), this.getClass())
-            .exclude(".class")
+            .exclude("class")
             .serialize(this);
     }
     

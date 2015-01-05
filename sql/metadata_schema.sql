@@ -49,9 +49,9 @@ CREATE TABLE `car_engine` (
 
 CREATE TABLE `car_model_engine_year` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
-  `car_model_id` BIGINT NOT NULL,
-  `car_engine_id` BIGINT NOT NULL,
-  `car_year_id` BIGINT NOT NULL,
+  `car_model_id` BIGINT NULL,
+  `car_engine_id` BIGINT NULL,
+  `car_year_id` BIGINT NULL,
   `import_pk` BIGINT NULL,
   UNIQUE INDEX (`car_model_id`, `car_engine_id`, `car_year_id`),
   FOREIGN KEY (`car_model_id`) REFERENCES `car_model` (`id`),
@@ -92,6 +92,7 @@ CREATE TABLE `part_type` (
   `parent_part_type_id` BIGINT NULL,
   `import_pk` BIGINT NULL,
   `magento_attribute_set` VARCHAR(50),
+  `value` VARCHAR(50) NOT NULL,
   FOREIGN KEY (`parent_part_type_id`) REFERENCES `part_type` (`id`),
   PRIMARY KEY(`id`)
 ) ENGINE = INNODB;
@@ -105,8 +106,10 @@ CREATE TABLE `part` (
   `description` VARCHAR(255) NULL,
   `inactive` BOOLEAN NOT NULL DEFAULT 0,
   `import_pk` BIGINT NULL,
+  `version` INTEGER NOT NULL DEFAULT 1
   PRIMARY KEY(`id`),
   INDEX (`manfr_part_num`, `manfr_id`),
+  UNIQUE KEY (`id`, `version`),
   FOREIGN KEY (`manfr_id`) REFERENCES `manfr` (`id`),
   FOREIGN KEY (`part_type_id`) REFERENCES `part_type` (`id`)
 ) ENGINE = INNODB;
@@ -225,6 +228,7 @@ CREATE TABLE `bom_alt_header` (
 ) ENGINE = INNODB;
 
 CREATE TABLE `bom_alt_item` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `bom_alt_header_id` BIGINT NOT NULL,
   `bom_id` BIGINT NOT NULL,
   `part_id` BIGINT NOT NULL,
@@ -234,16 +238,17 @@ CREATE TABLE `bom_alt_item` (
   FOREIGN KEY (`part_id`)  REFERENCES `part` (`id`)
 ) ENGINE = INNODB;
 
-CREATE TABLE `bom_ancestor` (
+CREATE TABLE bom_descendant (
   `id` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  `part_id` BIGINT NOT NULL,
-  `ancestor_part_id` BIGINT NOT NULL,
+  `part_bom_id` BIGINT NOT NULL,
+  `descendant_bom_id` BIGINT NOT NULL,
   `distance` INTEGER NOT NULL,
-  `type` VARCHAR(20) NOT NULL,
+  `type` VARCHAR(20),
+  `qty` INTEGER NOT NULL,
   INDEX(distance),
-  UNIQUE INDEX(`part_id`, `ancestor_part_id`),
-  INDEX(part_id, `type`, distance, ancestor_part_id)
-) ENGINE = INNODB;
+  UNIQUE INDEX(`part_bom_id`, `descendant_bom_id`),
+  INDEX(part_bom_id, `type`, distance, descendant_bom_id)
+) ENGINE= INNODB;
 
 
 --
@@ -331,7 +336,6 @@ CREATE TABLE `journal_bearing` (
 
 CREATE TABLE `kit` (
   `part_id` BIGINT NOT NULL,
-  `name` VARCHAR(50) NULL,
   `kit_type_id` BIGINT NOT NULL,
   FOREIGN KEY (`kit_type_id`) REFERENCES `kit_type` (`id`),
   FOREIGN KEY (`part_id`) REFERENCES `part` (`id`)
@@ -414,6 +418,7 @@ CREATE TABLE `turbo_car_model_engine_year` (
   FOREIGN KEY (`part_id`) REFERENCES `turbo` (`part_id`),
   PRIMARY KEY(`part_id`, `car_model_engine_year_id`)
 ) ENGINE = INNODB;
+
 --
 -- Part-Turbo Index
 --
@@ -425,18 +430,6 @@ CREATE TABLE `part_turbo` (
   FOREIGN KEY (`turbo_id`) REFERENCES `turbo` (`part_id`)
 ) ENGINE = INNODB;
 
-
-DROP VIEW IF EXISTS vpart_turbo;
-CREATE VIEW vpart_turbo AS (
-  SELECT DISTINCT
-    ba.part_id,
-    ba.ancestor_part_id AS turbo_id
-  FROM
-    bom_ancestor ba
-    JOIN turbo t ON t.part_id = ba.ancestor_part_id
-) UNION DISTINCT (
-  SELECT part_id, turbo_id FROM part_turbo
-);
 
 --
 -- Metadata Security
@@ -548,8 +541,114 @@ CREATE TABLE `part_turbo_type` (
 ENGINE = INNODB;
 
 
+--
+-- Views
+--
+
+-- Provides complete part descendant hierarchy.
+-- Includes interchangeable parts, excludes bom alternates
+-- #439
+DROP VIEW IF EXISTS vbom_descendant;
+CREATE 
+    ALGORITHM = UNDEFINED 
+    DEFINER = `metaserver`@`%` 
+    SQL SECURITY DEFINER
+VIEW `vbom_descendant` AS
+    SELECT 
+        `bd`.`id` AS `id`,
+        `bd`.`part_bom_id` AS `part_bom_id`,
+        `bd`.`descendant_bom_id` AS `descendant_bom_id`,
+        `bd`.`distance` AS `distance`,
+        IF(((`ii2`.`part_id` <> `b`.`parent_part_id`)
+                OR (`ii`.`part_id` <> `bc`.`child_part_id`)),
+            'Interchange',
+            `bd`.`type`) AS `type`,
+        `bd`.`qty` AS `qty`,
+        COALESCE(`ii2`.`part_id`, `b`.`parent_part_id`) AS `part_id_ancestor`,
+        COALESCE(`ii`.`part_id`, `bc`.`child_part_id`) AS `part_id_descendant`
+    FROM
+        ((((((`bom_descendant` `bd`
+        JOIN `bom` `b` ON ((`bd`.`part_bom_id` = `b`.`id`)))
+        LEFT JOIN `interchange_item` `ii1` ON ((`b`.`parent_part_id` = `ii1`.`part_id`)))
+        LEFT JOIN `interchange_item` `ii2` ON ((`ii2`.`interchange_header_id` = `ii1`.`interchange_header_id`)))
+        JOIN `bom` `bc` ON ((`bd`.`descendant_bom_id` = `bc`.`id`)))
+        LEFT JOIN `interchange_item` `ii3` ON ((`bc`.`child_part_id` = `ii3`.`part_id`)))
+        LEFT JOIN `interchange_item` `ii` ON ((`ii3`.`interchange_header_id` = `ii`.`interchange_header_id`)));
+
+-- Provides part.id of direct descendants.
+-- Interchange parts are excluded.
+-- #440
+DROP VIEW IF EXISTS vbom_descendant_direct;
+CREATE 
+    ALGORITHM = UNDEFINED 
+    DEFINER = `metaserver`@`%` 
+    SQL SECURITY DEFINER
+VIEW `vbom_descendant_direct` AS
+    SELECT 
+        `bd`.`id` AS `id`,
+        `bd`.`part_bom_id` AS `part_bom_id`,
+        `bd`.`descendant_bom_id` AS `descendant_bom_id`,
+        `bd`.`distance` AS `distance`,
+        `bd`.`type` AS `type`,
+        `bd`.`qty` AS `qty`,
+        `b`.`parent_part_id` AS `part_id_ancestor`,
+        `bc`.`child_part_id` AS `part_id_descendant`
+    FROM
+        ((`bom_descendant` `bd`
+        JOIN `bom` `b` ON ((`bd`.`part_bom_id` = `b`.`id`)))
+        JOIN `bom` `bc` ON ((`bd`.`descendant_bom_id` = `bc`.`id`)))
+    WHERE
+        (`bd`.`type` = 'direct');
+
+-- bom_ancestor backward compatability
+-- #441
+DROP VIEW IF EXISTS vbom_ancestor;
+CREATE 
+    ALGORITHM = UNDEFINED 
+    DEFINER = `metaserver`@`%` 
+    SQL SECURITY DEFINER
+VIEW `vbom_ancestor` AS
+    SELECT DISTINCT
+        bd.id,
+        COALESCE(`ii`.`part_id`, `bc`.`child_part_id`) AS `part_id`,
+        COALESCE(`ii2`.`part_id`, `b`.`parent_part_id`) AS `ancestor_part_id`,
+        `bd`.`distance` AS `distance`,
+        IF(((`ii2`.`part_id` <> `b`.`parent_part_id`)
+                OR (`ii`.`part_id` <> `bc`.`child_part_id`)),
+            'Interchange',
+            `bd`.`type`) AS `type`
+    FROM
+        ((((((`bom_descendant` `bd`
+        JOIN `bom` `b` ON ((`bd`.`part_bom_id` = `b`.`id`)))
+        LEFT JOIN `interchange_item` `ii1` ON ((`b`.`parent_part_id` = `ii1`.`part_id`)))
+        LEFT JOIN `interchange_item` `ii2` ON ((`ii2`.`interchange_header_id` = `ii1`.`interchange_header_id`)))
+        JOIN `bom` `bc` ON ((`bd`.`descendant_bom_id` = `bc`.`id`)))
+        LEFT JOIN `interchange_item` `ii3` ON ((`bc`.`child_part_id` = `ii3`.`part_id`)))
+        LEFT JOIN `interchange_item` `ii` ON ((`ii3`.`interchange_header_id` = `ii`.`interchange_header_id`)));
+
+-- Parts and their ancestor turbos
+DROP VIEW IF EXISTS vpart_turbo;
+CREATE 
+    ALGORITHM = UNDEFINED 
+    DEFINER = `metaserver`@`%` 
+    SQL SECURITY DEFINER
+VIEW vpart_turbo AS (
+  SELECT DISTINCT
+    ba.part_id,
+    ba.ancestor_part_id AS turbo_id
+  FROM
+    vbom_ancestor ba
+    JOIN turbo t ON t.part_id = ba.ancestor_part_id
+) UNION DISTINCT (
+  SELECT part_id, turbo_id FROM part_turbo
+);
+
 DROP VIEW IF EXISTS vapp;
-CREATE VIEW vapp AS
+CREATE
+    ALGORITHM = UNDEFINED 
+    DEFINER = `metaserver`@`%` 
+    SQL SECURITY DEFINER
+VIEW vapp AS
   SELECT DISTINCT
     p.id AS part_id,
     cmake.name AS car_make,
@@ -563,9 +662,12 @@ CREATE VIEW vapp AS
     LEFT JOIN car_make cmake ON cmake.id = cmodel.car_make_id
     LEFT JOIN car_year cyear ON cyear.id = cmey.car_year_id;
 
-
 DROP VIEW IF EXISTS vtapp;
-CREATE VIEW vtapp AS
+CREATE
+    ALGORITHM = UNDEFINED 
+    DEFINER = `metaserver`@`%` 
+    SQL SECURITY DEFINER
+VIEW vtapp AS
   SELECT DISTINCT
     t.part_id,
     cmake.name AS car_make,
@@ -578,9 +680,12 @@ CREATE VIEW vtapp AS
     LEFT JOIN car_make cmake ON cmake.id = cmodel.car_make_id
     LEFT JOIN car_year cyear ON cyear.id = cmey.car_year_id;
 
-
 DROP VIEW IF EXISTS vbom;
-CREATE VIEW vbom AS
+CREATE
+    ALGORITHM = UNDEFINED 
+    DEFINER = `metaserver`@`%` 
+    SQL SECURITY DEFINER
+VIEW vbom AS
   SELECT
     b.id AS bom_id,
 
@@ -602,19 +707,23 @@ CREATE VIEW vbom AS
     JOIN part_type cpt ON cpt.id = cp.part_type_id
     JOIN manfr cpm ON cpm.id = cp.manfr_id;
 
-    
 DROP VIEW IF EXISTS vbalt;
-CREATE VIEW vbalt AS
+CREATE
+    ALGORITHM = UNDEFINED 
+    DEFINER = `metaserver`@`%` 
+    SQL SECURITY DEFINER
+VIEW vbalt AS
   SELECT
     bai.bom_id,
-    bai.part_id,
+    b.child_part_id,
     bai.bom_alt_header_id,
     bah.`name` AS alt_header_name,
     bah.description AS alt_header_desc,
     bai.part_id AS alt_part_id,
     pt.`name` AS alt_part_type,
     p.manfr_part_num AS alt_part_number,
-    m.`name` AS alt_manufacturer
+    m.`name` AS alt_manufacturer,
+    m.`id` AS alt_manufacturer_id
   FROM
     bom_alt_item bai
     JOIN bom b ON b.id = bai.bom_id
@@ -624,7 +733,11 @@ CREATE VIEW vbalt AS
     JOIN manfr m ON m.id = p.manfr_id;
 
 DROP VIEW IF EXISTS vparts;
-CREATE VIEW vparts AS
+CREATE
+    ALGORITHM = UNDEFINED 
+    DEFINER = `metaserver`@`%` 
+    SQL SECURITY DEFINER
+VIEW vparts AS
   SELECT
     p.id AS part_id,
     pt.`name` AS part_type,
@@ -635,7 +748,11 @@ CREATE VIEW vparts AS
     JOIN manfr m ON m.id = p.manfr_id;
 
 DROP VIEW IF EXISTS vint;
-CREATE VIEW vint AS
+CREATE
+    ALGORITHM = UNDEFINED 
+    DEFINER = `metaserver`@`%` 
+    SQL SECURITY DEFINER
+VIEW vint AS
   SELECT DISTINCT
     ii1.interchange_header_id AS interchange_header_id,
 
@@ -661,7 +778,11 @@ CREATE VIEW vint AS
   WHERE p.id != ii2.part_id;
 
 DROP VIEW IF EXISTS vint_ti;
-CREATE VIEW vint_ti AS
+CREATE
+    ALGORITHM = UNDEFINED 
+    DEFINER = `metaserver`@`%` 
+    SQL SECURITY DEFINER
+VIEW vint_ti AS
   SELECT DISTINCT
     ii1.interchange_header_id AS interchange_header_id,
 
@@ -681,7 +802,11 @@ CREATE VIEW vint_ti AS
 
 -- See #270 magento: add "where used" table to part detail pages
 DROP VIEW IF EXISTS `vwhere_used`;
-CREATE VIEW `vwhere_used` AS
+CREATE
+    ALGORITHM = UNDEFINED 
+    DEFINER = `metaserver`@`%` 
+    SQL SECURITY DEFINER
+VIEW `vwhere_used` AS
     SELECT DISTINCT
         -- The principal
         p.id                   AS principal_id,
@@ -704,7 +829,7 @@ CREATE VIEW `vwhere_used` AS
         apcatp.manfr_part_num  AS turbo_part_number
     FROM
         -- The principal
-        bom_ancestor ba
+        vbom_ancestor ba
         JOIN part      p  ON p.id  = ba.part_id
         JOIN part_type pt ON pt.id = p.part_type_id
 
@@ -724,9 +849,9 @@ CREATE VIEW `vwhere_used` AS
         LEFT JOIN part      aptiip ON aptiip.id      = aptii.ti_part_id
 
         -- Ancestor cartridges' ancestor turbos, used by non-cartridge and non-turbo principals
-        LEFT JOIN bom_ancestor apcba  ON apcba.part_id = apc.part_id AND apcba.distance != 0
-        LEFT JOIN turbo        apcat  ON apcat.part_id = apcba.ancestor_part_id
-        LEFT JOIN part         apcatp ON apcatp.id     = apcat.part_id
+        LEFT JOIN vbom_ancestor apcba  ON apcba.part_id = apc.part_id AND apcba.distance != 0
+        LEFT JOIN turbo         apcat  ON apcat.part_id = apcba.ancestor_part_id
+        LEFT JOIN part          apcatp ON apcatp.id     = apcat.part_id
     WHERE
         ba.distance != 0
         AND CASE pt.`magento_attribute_set`
@@ -741,7 +866,11 @@ CREATE VIEW `vwhere_used` AS
         END;
 
 DROP VIEW IF EXISTS `vkp`;
-CREATE VIEW `vkp` AS SELECT DISTINCT
+CREATE 
+    ALGORITHM = UNDEFINED 
+    DEFINER = `metaserver`@`%` 
+    SQL SECURITY DEFINER
+VIEW `vkp` AS SELECT DISTINCT
     kii.part_id  AS kit_id,
     pii.part_id AS part_id,
     kc.exclude
@@ -755,7 +884,12 @@ FROM
     JOIN interchange_item pi ON pi.part_id = kc.part_id
     JOIN interchange_item pii ON pii.interchange_header_id = pi.interchange_header_id;
 
-CREATE VIEW `vpart_turbotype_kits` AS (
+DROP VIEW IF EXISTS `vpart_turbotype_kits`;
+CREATE 
+    ALGORITHM = UNDEFINED 
+    DEFINER = `metaserver`@`%` 
+    SQL SECURITY DEFINER
+VIEW `vpart_turbotype_kits` AS (
     SELECT
         kc.part_id AS part_id,
         kc.kit_id
@@ -805,80 +939,141 @@ CREATE VIEW `vpart_turbotype_kits` AS (
     WHERE kc.exclude IS NULL
 );
 
+--
+-- Magmi Views
+--
+-- #443
+DROP VIEW IF EXISTS `vmagmi_bom`;
+CREATE 
+    ALGORITHM = UNDEFINED 
+    DEFINER = `metaserver`@`%` 
+    SQL SECURITY DEFINER
+VIEW `vmagmi_bom` AS
+SELECT DISTINCT
+  bd.part_id_ancestor         AS ancestor_sku,
+  bd.part_id_descendant       AS descendant_sku,
+  bd.qty                      AS quantity,
+  bd.distance                 AS distance,
+  dppt.`value`                AS part_type_parent,
+  if(db.id is not null, 1, 0) AS has_bom,
 
--- Rebuild the BOM ancestry table
+  -- Alternates
+  alt.child_part_id       AS alt_sku,
+  alt.alt_manufacturer_id AS alt_mfr_id,
+
+  -- TI Interchanges
+  vit.ti_part_id              AS int_sku
+FROM vbom_descendant_direct bd
+
+  -- for descendant Part Type Parent
+  INNER JOIN part       dp ON dp.id = bd.part_id_descendant
+  INNER JOIN part_type dpt ON dpt.id = dp.part_type_id
+  LEFT JOIN part_type dppt ON dppt.id = dpt.parent_part_type_id
+
+  -- For descendant has_bom
+  LEFT JOIN vbalt   alt ON alt.bom_id = bd.part_bom_id
+  LEFT JOIN vint_ti vit ON vit.part_id = bd.part_id_descendant
+  LEFT JOIN bom      db ON db.parent_part_id = bd.part_id_descendant;
+
+
+DROP VIEW IF EXISTS `vmagmi_service_kits`;
+CREATE 
+    ALGORITHM = UNDEFINED 
+    DEFINER = `metaserver`@`%` 
+    SQL SECURITY DEFINER
+VIEW `vmagmi_service_kits` AS
+SELECT DISTINCT
+  p.id               AS sku,
+  k.id               AS kitSku,
+  k.manfr_part_num   AS kitPartNumber,
+  k.description      AS description,
+  kti.id             AS tiKitSku,
+  kti.manfr_part_num AS tiKitPartNumber
+FROM
+  part p
+  JOIN vpart_turbotype_kits vpttk ON p.id        = vpttk.part_id
+  JOIN part                 k     ON k.id        = vpttk.kit_id
+  LEFT JOIN vint_ti         iti   ON iti.part_id = k.id
+  LEFT JOIN part            kti   ON kti.id      = iti.ti_part_id;
+
+--
+-- Stored Procedures
+--
+
+-- Rebuild the bom_descendant table
 DELIMITER $$
 DROP PROCEDURE IF EXISTS RebuildBomAncestry$$
-CREATE PROCEDURE RebuildBomAncestry()
-  SQL SECURITY INVOKER
-  BEGIN
+DROP PROCEDURE IF EXISTS RebuildBomDescendancy$$
+CREATE DEFINER=`metaserver`@`%` PROCEDURE `RebuildBomDescendancy`()
+    SQL SECURITY INVOKER
+BEGIN
 
     START TRANSACTION;
 
-    -- Empty the table
-    DELETE FROM bom_ancestor;
+    DELETE FROM bom_descendant;
 
-    -- Create self-references
-    INSERT IGNORE INTO bom_ancestor (
-      `part_id`,
-      `ancestor_part_id`,
-      `distance`,
-      `type`
+    -- Add a self-referencing layer 1 of the hierarchy
+    INSERT IGNORE INTO bom_descendant (
+      part_bom_id
+      , descendant_bom_id
+      , distance
+      , type
+      , qty
     )
-    SELECT DISTINCT
-      id     AS part_id,
-      id     AS ancestor_part_id,
-      0      AS distance,
-      'Self' AS `type`
+    SELECT 
+        b.id
+        , b.id
+        , 1
+        , 'direct'
+        , b.quantity
     FROM
-      part;
+        bom b;
 
+    -- Setup the starting @distance for the loop
+    SET @distance = 1;
+
+
+    -- Walk the hierarcy layer by layer
     REPEAT
-        SET @distance = (SELECT MAX(distance) FROM bom_ancestor);
 
-        -- Add interchange parents (metaphor: interchanges are my half-siblings, add all my half-parents)
-        INSERT IGNORE INTO bom_ancestor (
-          `part_id`,
-          `ancestor_part_id`,
-          `distance`,
-          `type`
-        )
-        SELECT DISTINCT
-          ba.part_id          AS part_id,          -- Me
-          bom.parent_part_id  AS ancestor_part_id, -- My half-parent
-          @distance + 1       AS distance,
-          IF (@distance = 0, 'InterchangeDirect', 'InterchangeIndirect') AS `type`
-        FROM
-          bom_ancestor ba
-          JOIN interchange_item ii ON ii.part_id = ba.ancestor_part_id
-          JOIN interchange_item ii2 ON
-            ii2.interchange_header_id = ii.interchange_header_id
-            AND ii2.part_id <> ii.part_id
-          JOIN bom ON bom.child_part_id = ii2.part_id
-        WHERE ba.distance = @distance;
+        -- Increment distance for this layer
+        SET @distance = @distance + 1;
 
-        -- Add the next level of parents
-        INSERT IGNORE INTO bom_ancestor (
-          `part_id`,
-          `ancestor_part_id`,
-          `distance`,
-          `type`
+        -- Add the next layer in the hierarchy
+        INSERT IGNORE INTO bom_descendant (
+            `part_bom_id`,
+            `descendant_bom_id`,
+            `distance`,
+            `type`,
+            `qty`
         )
-        SELECT DISTINCT
-          ba.part_id           AS part_id,
-          bom.parent_part_id   AS ancestor_part_id,
-          @distance + 1      AS distance,
-          IF (@distance = 0, 'Direct', IF(ba.`type` LIKE 'Interchange%', 'InterchangeIndirect', 'Indirect')) AS `type`
+        SELECT
+            bd.part_bom_id,
+            bc.id,
+            @distance,
+            IF (bd.`type` = 'Interchange' OR (ii2.part_id <> b.child_part_id), 'Interchange', 'direct'),
+            bc.quantity * bd.qty -- Additive quantities
         FROM
-          bom_ancestor ba
-          JOIN bom ON bom.child_part_id = ba.ancestor_part_id
-        WHERE ba.distance = @distance;
+            bom_descendant bd
+            
+            -- get part_id from bom table
+            inner join bom as b on bd.descendant_bom_id = b.id
+
+            -- find interchangeable parts of descendant part if exists
+            left join interchange_item ii1 on b.child_part_id = ii1.part_id
+            left join interchange_item ii2 on ii1.interchange_header_id = ii2.interchange_header_id
+
+            -- find any bom components of descendant part (child_part_id or its interchangeable parts)
+            inner join bom as bc on coalesce(ii2.part_id, b.child_part_id) = bc.parent_part_id
+
+        WHERE bd.distance = @distance - 1;
+
 
     UNTIL ROW_COUNT() = 0
     END REPEAT;
 
     COMMIT;
-    
+
   END$$
 DELIMITER ;
 
@@ -901,6 +1096,10 @@ CREATE PROCEDURE `errorOnContradictoryKitPartCommonComponent` ()
     END IF;
   END$$
 
+
+--
+-- Triggers
+--
 DROP TRIGGER IF EXISTS `kit_part_common_component_AI`$$
 CREATE TRIGGER `kit_part_common_component_AI` AFTER INSERT ON `kit_part_common_component`
 FOR EACH ROW

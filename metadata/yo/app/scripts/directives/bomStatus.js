@@ -7,7 +7,7 @@ angular.module('ngMetaCrudApp')
         transclude: true,
         template: '<div class="alert alert-warning"> \
                      <i class="fa fa-cog fa-spin"></i> \
-                     <strong>Rebuilding BOM Ancestry</strong>\
+                     <strong>Rebuilding BOM</strong>\
                      <div ng-transclude></div> \
                    </div>',
         link: function postLink(scope, element, attrs) {
@@ -21,7 +21,7 @@ angular.module('ngMetaCrudApp')
                   return restService.status;
                 },
                 function(status) {
-                  if (status.bomAncestryRebuilding === true) {
+                  if (status.bomRebuilding === true) {
                     angular.element(element).removeClass('hidden');
                   } else {
                     angular.element(element).addClass('hidden');

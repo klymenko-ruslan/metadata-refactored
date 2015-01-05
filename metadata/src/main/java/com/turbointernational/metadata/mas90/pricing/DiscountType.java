@@ -39,8 +39,10 @@ public enum DiscountType {
     /**
      * Gets a discount type by it's discount code.
      * @param code the discount code.
+     * @return 
+     * @throws UnknownDiscountCodeException
      */
-    public static DiscountType getDiscountType(String code) {
+    public static DiscountType getDiscountType(String code) throws UnknownDiscountCodeException {
         String uppercaseCode = code.toUpperCase();
         
         // Look for the discount type
@@ -50,6 +52,6 @@ public enum DiscountType {
             }
         }
         
-        throw new IllegalArgumentException("Unknown discount code: " + code);
+        throw new UnknownDiscountCodeException(code);
     }
 }

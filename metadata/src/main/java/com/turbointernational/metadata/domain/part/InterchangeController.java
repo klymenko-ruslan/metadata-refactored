@@ -65,7 +65,7 @@ public class InterchangeController {
         Changelog.log("Created interchange: ", json);
             
         // TODO: Only change what we need to rather than rebuilding everything
-        Part.rebuildBomAncestry();
+        Part.rebuildBomDescendancy();
         
         return new ResponseEntity<String>("ok", headers, HttpStatus.OK);
     }
@@ -108,7 +108,7 @@ public class InterchangeController {
         Changelog.log("Added part " + partId + " to interchange " + id, "");
             
         // TODO: Only change what we need to rather than rebuilding everything
-        Part.rebuildBomAncestry();
+        Part.rebuildBomDescendancy();
     }
     
     @Transactional
@@ -147,7 +147,7 @@ public class InterchangeController {
         Changelog.log("Deleted " + partId + " from interchange " + interchangeId, "");
             
         // TODO: Only change what we need to rather than rebuilding everything
-        Part.rebuildBomAncestry();
+        Part.rebuildBomDescendancy();
     }
     
     

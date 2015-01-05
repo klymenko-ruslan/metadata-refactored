@@ -27,19 +27,19 @@ angular.module('ngMetaCrudApp')
               }
             };
 
-            // Wraps the BOM status logic, resolving when the BOM ancestry is not rebuilding.
-            this.getBomAncestryRebuildingCompletePromise = function() {
+            // Wraps the BOM status logic, resolving when the BOM is not rebuilding.
+            this.getBomRebuildingCompletePromise = function() {
               var deferred = $q.defer();
               
               RestService.refreshStatus().then(function(status) {
-                if (status.bomAncestryRebuilding) {
+                if (status.bomRebuilding) {
                 
                   var cancelWatcher = $rootScope.$watch(
                       function() {
-                        return RestService.status.bomAncestryRebuilding;
+                        return RestService.status.bomRebuilding;
                       },
-                      function(bomAncestryRebuilding) {
-                        if (bomAncestryRebuilding === false) {
+                      function(bomRebuilding) {
+                        if (bomRebuilding === false) {
                           deferred.resolve();
                           cancelWatcher();
                         }

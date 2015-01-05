@@ -1,7 +1,12 @@
 
 package com.turbointernational.metadata.magmi.dto;
 
-import org.apache.commons.lang3.ObjectUtils;
+import com.google.common.collect.Sets;
+import com.turbointernational.metadata.domain.type.PartType;
+import flexjson.JSON;
+import flexjson.JSONSerializer;
+import java.util.Collection;
+import java.util.Set;
 
 /**
  *
@@ -9,56 +14,72 @@ import org.apache.commons.lang3.ObjectUtils;
  */
 public class MagmiBomItem {
     
-    private final Long parentSku;
-
-    public Long getParentSku() {
-        return parentSku;
-    }
+    /**
+     * Descendant part ID
+     */
+    private final long sku;
     
-    private final Long childSku;
-
-    public Long getChildSku() {
-        return childSku;
-    }
+    private final int quantity;
     
-    private final Integer quantity;
+    private final int distance;
+    
+    private final boolean hasBom;
+    
+    /**
+     * @see PartType#getParent()
+     * @see PartType#getValue()
+     */
+    private final String partTypeParent;
+    
+    private final Set<Long> altSku = Sets.newTreeSet();
+    
+    private final Set<Long> tiPartSku = Sets.newTreeSet();
 
-    public Integer getQuantity() {
+    public MagmiBomItem(long sku, int quantity, int distance, boolean hasBom, String partTypeParent) {
+        this.sku = sku;
+        this.quantity = quantity;
+        this.distance = distance;
+        this.hasBom = hasBom;
+        this.partTypeParent = partTypeParent;
+    }
+
+    public long getSku() {
+        return sku;
+    }
+
+    public int getQuantity() {
         return quantity;
     }
-    
-    private final Long altSku;
 
-    public Long getAltSku() {
+    public int getDistance() {
+        return distance;
+    }
+    
+    @JSON(name = "has_bom")
+    public boolean isHasBom() {
+        return hasBom;
+    }
+
+    @JSON(name = "part_type_parent")
+    public String getPartTypeParent() {
+        return partTypeParent;
+    }
+    
+    @JSON(name = "alt_sku")
+    public Set<Long> getAltSku() {
         return altSku;
     }
-    
-    private final Long altSkuMfrId;
 
-    public Long getAltSkuMfrId() {
-        return altSkuMfrId;
+    @JSON(name = "ti_part_sku")
+    public Set<Long> getTiPartSku() {
+        return tiPartSku;
     }
     
-    private final Long intSku;
-
-    public Long getIntSku() {
-        return intSku;
-    }
     
-    private final Long intSkuMfrId;
-
-    public Long getIntSkuMfrId() {
-        return intSkuMfrId;
-    }
-
-    public MagmiBomItem(Long parentSku, Long childSku, Integer quantity, Long altSku, Long altSkuMfrId, Long intSku, Long intSkuMfrId) {
-        this.parentSku = parentSku;
-        this.childSku = childSku;
-        this.quantity = quantity;
-        this.altSku = altSku;
-        this.altSkuMfrId = altSkuMfrId;
-        this.intSku = intSku;
-        this.intSkuMfrId = intSkuMfrId;
+    public static String toJsonArray(Collection<MagmiBomItem> collection) {
+        return new JSONSerializer()
+                .exclude("*.class")
+                .serialize(collection);
     }
     
 }

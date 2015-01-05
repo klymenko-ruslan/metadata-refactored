@@ -4,8 +4,10 @@ import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.part.ProductImage;
 import com.turbointernational.metadata.util.ImageResizer;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -48,7 +50,7 @@ public class MagmiProduct {
     
     private String tiPartNumber = "";
     
-    private final JSOG bom = JSOG.array();
+    private final List<MagmiBomItem> bom = new ArrayList<MagmiBomItem>();
     
     private final JSOG serviceKits = JSOG.array();
     
@@ -120,39 +122,9 @@ public class MagmiProduct {
             finderTurbo.add(magmiTurbo.getFinder());
         }
     }
-    
-    public static void addSkuToBomItemCollection(JSOG jsogItem, String key, Long sku) {
-        if (sku == null) {
-            return;
-        }
-        
-        // Get the array
-        JSOG skuArray = jsogItem.get(key);
-        if (!skuArray.isArray()) {
-            skuArray.add(sku);
-        } else if (!skuArray.contains(sku)) {
-            skuArray.add(sku);
-        }
-    }
-    
-    public void addBomItem(MagmiBomItem bomItem) {
-        JSOG jsogItem = getBomItemBySku(bomItem.getChildSku());
-        
-        // Set the quantity
-        jsogItem.put("sku", bomItem.getChildSku());
-        jsogItem.put("quantity", bomItem.getQuantity());
-        
-        // Add the alternates
-        addSkuToBomItemCollection(jsogItem, "alt_part_sku", bomItem.getAltSku());
 
-        // Add the alternate and interchange TI skus
-        if (bomItem.getAltSkuMfrId() == Manufacturer.TI_ID) {
-            addSkuToBomItemCollection(jsogItem, "ti_part_sku", bomItem.getAltSku());
-        }
-        
-        if (bomItem.getIntSkuMfrId() == Manufacturer.TI_ID) {
-            addSkuToBomItemCollection(jsogItem, "ti_part_sku", bomItem.getIntSku());
-        }
+    public List<MagmiBomItem> getBom() {
+        return bom;
     }
     
     public void addImageId(Long imageId) {
@@ -204,24 +176,6 @@ public class MagmiProduct {
         }
     }
 
-    private JSOG getBomItemBySku(Long sku) {
-        
-        // Find the item, if it exists
-        for (JSOG candidate : bom.arrayIterable()) {
-            if (StringUtils.equals(candidate.get("sku").getStringValue(), sku.toString())) {
-                return candidate;
-            }
-        }
-        
-        // Create the item if it doesn't
-        JSOG bomItem = JSOG.object();
-        bom.add(bomItem);
-        bomItem.put("alt_part_sku", JSOG.array());
-        bomItem.put("ti_part_sku", JSOG.array());
-        
-        return bomItem;
-    }
-
     public final Map<String, String> getCsvColumns() {
 
         // CSV column map
@@ -259,7 +213,7 @@ public class MagmiProduct {
         
         columns.put("application_detail", StringUtils.join(applicationDetail, "||"));
 
-        columns.put("bill_of_materials", bom.toString());
+        columns.put("bill_of_materials", MagmiBomItem.toJsonArray(bom));
         
         columns.put("service_kits", serviceKits.toString());
         

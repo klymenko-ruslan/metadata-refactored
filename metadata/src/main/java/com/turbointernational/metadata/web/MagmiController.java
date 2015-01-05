@@ -28,11 +28,12 @@ import javax.servlet.http.HttpServletResponse;
 import com.turbointernational.metadata.mas90.pricing.ItemPricing;
 import com.turbointernational.metadata.mas90.pricing.CalculatedPrice;
 import com.turbointernational.metadata.mas90.Mas90;
+import com.turbointernational.metadata.mas90.pricing.UnknownDiscountCodeException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -340,7 +341,8 @@ public class MagmiController {
 
             addErpCustomerPrices(mas90, itemPricing, columns);
             addErpGroupPrices(mas90, itemPricing, columns);
-            
+        } catch (UnknownDiscountCodeException e) {
+                logger.log(Level.WARNING, "Unknown discount code {0} for product {1}", new Object[] {e.getCode(), product.getPartNumber()});
         } catch (EmptyResultDataAccessException e) {
             logger.log(Level.WARNING, "Missing prices for product: {0}", product.getPartNumber());
         } catch (IOException e) {

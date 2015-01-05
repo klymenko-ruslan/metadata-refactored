@@ -1,6 +1,11 @@
 
 package com.turbointernational.metadata.magmi;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Table;
+import com.google.common.collect.TreeBasedTable;
+import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.part.ProductImage;
 import com.turbointernational.metadata.magmi.dto.MagmiApplication;
@@ -10,6 +15,8 @@ import com.turbointernational.metadata.magmi.dto.MagmiProduct;
 import com.turbointernational.metadata.magmi.dto.MagmiServiceKit;
 import com.turbointernational.metadata.magmi.dto.MagmiTurbo;
 import com.turbointernational.metadata.magmi.dto.MagmiUsage;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -18,8 +25,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Service;
 
 /**
@@ -93,11 +102,12 @@ public class MagmiDataFinder {
         logger.log(Level.INFO, "Found {0} usages.", usages.size());
         
         // Add the bom items
-        List<MagmiBomItem> bom = findMagmiBom(productIds);
+        ListMultimap<Long, MagmiBomItem> bom = findMagmiBom(productIds);
         
-        for (MagmiBomItem bomItem : bom) {
-            productMap.get(bomItem.getParentSku())
-                    .addBomItem(bomItem);
+        for (Long ancestorPartId : bom.keySet()) {
+            productMap.get(ancestorPartId)
+                      .getBom()
+                      .addAll(bom.get(ancestorPartId));
         }
         
         logger.log(Level.INFO, "Found {0} BOM items.", bom.size());
@@ -214,22 +224,22 @@ public class MagmiDataFinder {
 
     List<MagmiServiceKit> findMagmiServiceKits(Collection<Long> productIds) {
         return db.query(
-            "SELECT DISTINCT\n"
-            + "  p.id               AS sku,\n"
-            + "  k.id               AS kitSku,\n"
-            + "  k.manfr_part_num   AS kitPartNumber,\n"
-            + "  k.description      AS description,\n"
-            + "  kti.id             AS tiKitSku,\n"
-            + "  kti.manfr_part_num AS tiKitPartNumber\n"
+              "SELECT DISTINCT\n"
+            + "  sku,\n"
+            + "  kitSku,\n"
+            + "  kitPartNumber,\n"
+            + "  description,\n"
+            + "  tiKitSku,\n"
+            + "  tiKitPartNumber\n"
             + "FROM\n"
-            + "  part p\n"
-            + "  JOIN vpart_turbotype_kits vpttk ON p.id        = vpttk.part_id\n"
-            + "  JOIN part                 k     ON k.id        = vpttk.kit_id\n"
-            + "  LEFT JOIN vint_ti         iti   ON iti.part_id = k.id\n"
-            + "  LEFT JOIN part            kti   ON kti.id      = iti.ti_part_id\n"
-            + "WHERE p.id in (" + StringUtils.join(productIds, ',') + ")\n"
-            + "GROUP BY p.id, k.id\n"
-            + "ORDER BY p.id, k.id, kti.id", new BeanPropertyRowMapper(MagmiServiceKit.class));
+            + "  vmagmi_service_kits\n"
+            + "WHERE\n"
+            + "  sku in ("
+            +     StringUtils.join(productIds, ',')
+            + ")\n"
+            + "GROUP BY sku, kitSku\n"
+            + "ORDER BY sku, kitSku, tiKitSku",
+            new BeanPropertyRowMapper(MagmiServiceKit.class));
     }
     
     List<MagmiInterchange> findMagmiInterchanges(Collection<Long> productIds) {
@@ -268,29 +278,75 @@ public class MagmiDataFinder {
             new BeanPropertyRowMapper(MagmiUsage.class));
     }
 
-    List<MagmiBomItem> findMagmiBom(Collection<Long> productIds) {
-        return Part.entityManager().createQuery(
-                "SELECT DISTINCT NEW com.turbointernational.metadata.magmi.dto.MagmiBomItem(\n"
-              + "  b.parent.id as parent_sku,\n"
-              + "  b.child.id as child_sku,\n"
-              + "  b.quantity,\n"
-                        
-                // Alternates
-              + "  alt.id AS alt_sku,\n"
-              + "  alt.manufacturer.id AS alt_mfr_id,\n"
-                        
-                // Interchanges
-              + "  int.id AS int_sku,\n"
-              + "  int.manufacturer.id AS int_mfr_id\n"
-              + ")\n"
-              + "FROM BOMItem b\n" 
-             + "  JOIN b.child bc\n"
-              + "  LEFT JOIN bc.interchange bci\n"
-              + "  LEFT JOIN bci.parts int\n"
-              + "  LEFT JOIN b.alternatives balt\n"
-              + "  LEFT JOIN balt.part alt\n"
-              + "WHERE b.parent.id IN (" + StringUtils.join(productIds, ',') + ")", MagmiBomItem.class)
-                .getResultList();
+    ListMultimap<Long, MagmiBomItem> findMagmiBom(Collection<Long> productIds) {
+        return db.query(
+                "SELECT\n"
+              + "  ancestor_sku,\n"
+              + "  descendant_sku,\n"
+              + "  quantity,\n"
+              + "  distance,\n"
+              + "  part_type_parent,\n"
+              + "  has_bom,\n"
+              + "  alt_sku,\n"
+              + "  alt_mfr_id,\n"
+              + "  int_sku\n"
+              + "FROM vmagmi_bom\n"
+              + "WHERE\n"
+              + "  ancestor_sku IN ("
+              +   StringUtils.join(productIds, ',')
+              + ")",
+            new ResultSetExtractor<ListMultimap<Long, MagmiBomItem>>() {
+
+            @Override
+            public ListMultimap<Long, MagmiBomItem> extractData(ResultSet rs) throws SQLException, DataAccessException {
+                
+                // Ancestor rows, descendant columns
+                Table<Long, Long, MagmiBomItem> bomTable = TreeBasedTable.create();
+                
+                while (rs.next()) {
+                    
+                    // Get the values we need from the result set
+                    long ancestorSku      = rs.getLong("ancestor_sku");
+                    long descendantSku    = rs.getLong("descendant_sku");
+                    int quantity          = rs.getInt("quantity");
+                    int distance          = rs.getInt("distance");
+                    boolean hasBom        = rs.getBoolean("has_bom");
+                    String partTypeParent = rs.getString("part_type_parent");
+                    
+                    // Get the BOM item so we can roll up any alts and interchanges
+                    MagmiBomItem bomItem = bomTable.get(ancestorSku, descendantSku);
+                    if (bomItem == null) {
+                        bomItem = new MagmiBomItem(descendantSku, quantity, distance, hasBom, partTypeParent);
+                        bomTable.put(ancestorSku, descendantSku, bomItem);
+                    }
+                    
+                    // BOM alternate rollup
+                    long altSku = rs.getLong("alt_sku");
+                    if (altSku > 0) {
+                      bomItem.getAltSku().add(altSku);
+                      
+                      // Add it to TI Part skus if the manufacturer matches
+                      if (rs.getLong("alt_mfr_id") == Manufacturer.TI_ID) {
+                          bomItem.getTiPartSku().add(altSku);
+                      }
+                    }
+                    
+                    // TI Part SKU Rollup
+                    long tiSku = rs.getLong("int_sku");
+                    if (tiSku > 0) {
+                        bomItem.getTiPartSku().add(tiSku);
+                    }
+                }
+                
+                ListMultimap<Long, MagmiBomItem> result = ArrayListMultimap.create();
+                
+                for (Long productId : bomTable.rowKeySet()) {
+                    result.putAll(productId, bomTable.row(productId).values());
+                }
+                
+                return result;
+            }
+        });
     }
     
 }
