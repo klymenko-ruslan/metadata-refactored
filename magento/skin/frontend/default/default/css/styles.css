@@ -1105,7 +1105,6 @@ tr.summary-details-excluded { font-style:italic; }
 .product-view .product-shop .add-to-links li,
 .product-view .product-shop .add-to-links li .separator { display:inline; }
 .product-view .product-shop .add-to-links a { color:#1E7EC8 !important; font-weight:normal !important; }
-.product-view .product-shop .product-header-info { float: left; }
 .product-view .product-shop .product-price-add-to-box { float: right; }
 
 /* Product Options */
