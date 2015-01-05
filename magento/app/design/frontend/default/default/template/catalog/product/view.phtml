@@ -196,6 +196,11 @@ if ($serviceKitSkus) {
                                 continue;
                             }
 
+                            // skip component parts that are NOT major components and NOT a chra
+                            if ($bomItem['part_type_parent'] <> 'major_component' AND $bomItemProduct->getAttributeSetName() <> 'Cartridge') {
+                                continue;
+                            }
+
                             $bomItemTiProduct = null;
                             ?>
 
