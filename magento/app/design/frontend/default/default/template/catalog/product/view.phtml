@@ -166,14 +166,24 @@ if ($serviceKitSkus) {
 
                 // get collection of bill of material products
                 if (count($billOfMaterialsSkus) > 0) {
+
+                    // get id for cartridge attribute set
+                    $cartridgeAttributeSetId = Mage::getModel('eav/entity_attribute_set')->getCollection()
+                        ->addFieldToFilter('attribute_set_name', 'Cartridge')
+                        ->getFirstItem()
+                        ->getAttributeSetId();
+
+                    // create collection of bom items
                     $billOfMaterialsCollection = Mage::getModel('catalog/product')->getCollection()
                         ->addAttributeToSelect('part_type')
                         ->addAttributeToSelect('part_number')
                         ->addAttributeToSelect('price')
                         ->addAttributeToSelect('interchanges')
                         ->addAttributeToSelect('manufacturer')
-                        ->addAttributeToSort('part_number', 'ASC')
                         ->addFieldToFilter('sku', $billOfMaterialsSkus);
+
+                    // Add sort to collection
+                    $billOfMaterialsCollection->getSelect()->order( array("IF(attribute_set_id = $cartridgeAttributeSetId, 1, concat('999',part_type_value)) ASC") );
                 }
                 ?>
                 <div class="box-collateral box-major-components">
