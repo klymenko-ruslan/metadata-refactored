@@ -650,9 +650,13 @@ if ($serviceKitSkus) {
 
                     $whereUsedSkus = array();
                     $whereUsedCollection = array();
+                    $sliceMax = 100;
+
+                    // limit array to prevent crashing page. TODO: refactor to use custom whereused model and pagination
+                    $whereUsedSlice = array_slice($whereUsed, 0, $sliceMax);
 
                     //create array of skus to be used in a collection
-                    foreach ($whereUsed as $usage):
+                    foreach ($whereUsedSlice as $usage):
                         // add the sku of the main whereUsed part
                         $whereUsedSkus[] = $usage['sku'];
 
@@ -672,7 +676,7 @@ if ($serviceKitSkus) {
                     }
                 ?>
 
-                <?php foreach ($whereUsed as $usage): ?>
+                <?php foreach ($whereUsedSlice as $usage): ?>
                     <?php
                         $usageProduct = $whereUsedCollection->getItemByColumnValue('sku', $usage['sku']);
                     ?>
@@ -750,6 +754,11 @@ if ($serviceKitSkus) {
                     </tr>
                 <?php endforeach; ?>
             </table>
+
+            <?php if (count($whereUsed) > $sliceMax): //display if not all of the whereuse items are shown ?>
+                <p>only first 100 parts are listed</p>
+            <?php endif; ?>
+
         </div>
 
         <!-- Kit Matrix -->
