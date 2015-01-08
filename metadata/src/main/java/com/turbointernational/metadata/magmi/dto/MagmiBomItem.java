@@ -65,7 +65,7 @@ public class MagmiBomItem {
         return partTypeParent;
     }
     
-    @JSON(name = "alt_sku")
+    @JSON(name = "alt_part_sku")
     public Set<Long> getAltSku() {
         return altSku;
     }
