@@ -93,6 +93,7 @@ CREATE TABLE `part_type` (
   `import_pk` BIGINT NULL,
   `magento_attribute_set` VARCHAR(50),
   `value` VARCHAR(50) NOT NULL,
+  UNIQUE INDEX `value_UNIQUE` (`value` ASC),
   FOREIGN KEY (`parent_part_type_id`) REFERENCES `part_type` (`id`),
   PRIMARY KEY(`id`)
 ) ENGINE = INNODB;
@@ -246,8 +247,10 @@ CREATE TABLE bom_descendant (
   `type` VARCHAR(20),
   `qty` INTEGER NOT NULL,
   INDEX(distance),
-  UNIQUE INDEX(`part_bom_id`, `descendant_bom_id`),
-  INDEX(part_bom_id, `type`, distance, descendant_bom_id)
+  UNIQUE INDEX(`part_bom_id`, `descendant_bom_id`, `distance`, `type`, `qty`),
+  INDEX(part_bom_id, `type`, distance, descendant_bom_id),
+  FOREIGN KEY (part_bom_id) REFERENCES bom (id),
+  FOREIGN KEY (descendant_bom_id) REFERENCES bom (id)
 ) ENGINE= INNODB;
 
 
