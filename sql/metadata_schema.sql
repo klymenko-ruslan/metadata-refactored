@@ -185,6 +185,9 @@ CREATE TABLE `interchange_header` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(255) NULL,
   `description` VARCHAR(255) NULL,
+  `new_part_id` BIGINT(20) NULL,
+  UNIQUE INDEX (`new_part_id`),
+  FOREIGN KEY (`new_part_id`) REFERENCES `part` (`id`),
   PRIMARY KEY(`id`)
 ) ENGINE = INNODB;
 
@@ -1129,6 +1132,22 @@ CREATE TRIGGER `interchange_item_AU` AFTER UPDATE ON `interchange_item`
 FOR EACH ROW
 BEGIN
     CALL errorOnContradictoryKitPartCommonComponent();
+END$$
+
+DROP TRIGGER IF EXISTS `part_AFTER_INSERT`;
+CREATE TRIGGER `part_AFTER_INSERT` AFTER INSERT ON `part`
+FOR EACH ROW
+BEGIN
+
+    -- create new interchange_header record
+    insert into interchange_header (new_part_id) value (new.id);
+
+    -- get id of new interchange_header record
+    set @i_header_id_new = (select id from interchange_header where new_part_id = new.id);
+
+    -- create new interchange_item record
+    insert into interchange_item (part_id, interchange_header_id) values (new.id, @i_header_id_new);
+
 END$$
 
 DELIMITER ;
