@@ -185,6 +185,9 @@ CREATE TABLE `interchange_header` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(255) NULL,
   `description` VARCHAR(255) NULL,
+  `new_part_id` BIGINT(20) NULL,
+  UNIQUE INDEX (`new_part_id`),
+  FOREIGN KEY (`new_part_id`) REFERENCES `part` (`id`),
   PRIMARY KEY(`id`)
 ) ENGINE = INNODB;
 
@@ -567,16 +570,16 @@ VIEW `vbom_descendant` AS
             'Interchange',
             `bd`.`type`) AS `type`,
         `bd`.`qty` AS `qty`,
-        COALESCE(`ii2`.`part_id`, `b`.`parent_part_id`) AS `part_id_ancestor`,
-        COALESCE(`ii`.`part_id`, `bc`.`child_part_id`) AS `part_id_descendant`
+        `ii2`.`part_id` AS `part_id_ancestor`,
+        `ii`.`part_id` AS `part_id_descendant`
     FROM
         ((((((`bom_descendant` `bd`
         JOIN `bom` `b` ON ((`bd`.`part_bom_id` = `b`.`id`)))
-        LEFT JOIN `interchange_item` `ii1` ON ((`b`.`parent_part_id` = `ii1`.`part_id`)))
-        LEFT JOIN `interchange_item` `ii2` ON ((`ii2`.`interchange_header_id` = `ii1`.`interchange_header_id`)))
+        INNER JOIN `interchange_item` `ii1` ON ((`b`.`parent_part_id` = `ii1`.`part_id`)))
+        INNER JOIN `interchange_item` `ii2` ON ((`ii2`.`interchange_header_id` = `ii1`.`interchange_header_id`)))
         JOIN `bom` `bc` ON ((`bd`.`descendant_bom_id` = `bc`.`id`)))
-        LEFT JOIN `interchange_item` `ii3` ON ((`bc`.`child_part_id` = `ii3`.`part_id`)))
-        LEFT JOIN `interchange_item` `ii` ON ((`ii3`.`interchange_header_id` = `ii`.`interchange_header_id`)));
+        INNER JOIN `interchange_item` `ii3` ON ((`bc`.`child_part_id` = `ii3`.`part_id`)))
+        INNER JOIN `interchange_item` `ii` ON ((`ii3`.`interchange_header_id` = `ii`.`interchange_header_id`)));
 
 -- Provides part.id of direct descendants.
 -- Interchange parts are excluded.
@@ -611,10 +614,10 @@ CREATE
     DEFINER = `metaserver`@`%` 
     SQL SECURITY DEFINER
 VIEW `vbom_ancestor` AS
-    SELECT DISTINCT
+    SELECT
         bd.id,
-        COALESCE(`ii`.`part_id`, `bc`.`child_part_id`) AS `part_id`,
-        COALESCE(`ii2`.`part_id`, `b`.`parent_part_id`) AS `ancestor_part_id`,
+        `ii`.`part_id` AS `part_id`,
+        `ii2`.`part_id` AS `ancestor_part_id`,
         `bd`.`distance` AS `distance`,
         IF(((`ii2`.`part_id` <> `b`.`parent_part_id`)
                 OR (`ii`.`part_id` <> `bc`.`child_part_id`)),
@@ -623,11 +626,11 @@ VIEW `vbom_ancestor` AS
     FROM
         ((((((`bom_descendant` `bd`
         JOIN `bom` `b` ON ((`bd`.`part_bom_id` = `b`.`id`)))
-        LEFT JOIN `interchange_item` `ii1` ON ((`b`.`parent_part_id` = `ii1`.`part_id`)))
-        LEFT JOIN `interchange_item` `ii2` ON ((`ii2`.`interchange_header_id` = `ii1`.`interchange_header_id`)))
+        INNER JOIN `interchange_item` `ii1` ON ((`b`.`parent_part_id` = `ii1`.`part_id`)))
+        INNER JOIN `interchange_item` `ii2` ON ((`ii2`.`interchange_header_id` = `ii1`.`interchange_header_id`)))
         JOIN `bom` `bc` ON ((`bd`.`descendant_bom_id` = `bc`.`id`)))
-        LEFT JOIN `interchange_item` `ii3` ON ((`bc`.`child_part_id` = `ii3`.`part_id`)))
-        LEFT JOIN `interchange_item` `ii` ON ((`ii3`.`interchange_header_id` = `ii`.`interchange_header_id`)));
+        INNER JOIN `interchange_item` `ii3` ON ((`bc`.`child_part_id` = `ii3`.`part_id`)))
+        INNER JOIN `interchange_item` `ii` ON ((`ii3`.`interchange_header_id` = `ii`.`interchange_header_id`)));
 
 -- Parts and their ancestor turbos
 DROP VIEW IF EXISTS vpart_turbo;
@@ -810,7 +813,7 @@ CREATE
     DEFINER = `metaserver`@`%` 
     SQL SECURITY DEFINER
 VIEW `vwhere_used` AS
-    SELECT DISTINCT
+    SELECT
         -- The principal
         p.id                   AS principal_id,
         pt.`name`              AS principal_type,
@@ -1129,6 +1132,22 @@ CREATE TRIGGER `interchange_item_AU` AFTER UPDATE ON `interchange_item`
 FOR EACH ROW
 BEGIN
     CALL errorOnContradictoryKitPartCommonComponent();
+END$$
+
+DROP TRIGGER IF EXISTS `part_AFTER_INSERT`;
+CREATE TRIGGER `part_AFTER_INSERT` AFTER INSERT ON `part`
+FOR EACH ROW
+BEGIN
+
+    -- create new interchange_header record
+    insert into interchange_header (new_part_id) value (new.id);
+
+    -- get id of new interchange_header record
+    set @i_header_id_new = (select id from interchange_header where new_part_id = new.id);
+
+    -- create new interchange_item record
+    insert into interchange_item (part_id, interchange_header_id) values (new.id, @i_header_id_new);
+
 END$$
 
 DELIMITER ;
