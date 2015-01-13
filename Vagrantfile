@@ -39,7 +39,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     #vb.gui = true
  
     # Use VBoxManage to customize the VM. For example to change memory:
-    vb.customize ["modifyvm", :id, "--memory", "2048"]
+    vb.customize ["modifyvm", :id, "--memory", "4096"]
 
     # Host-only and NAT
     vb.customize ["modifyvm", :id, "--nic1", "nat"]
@@ -80,6 +80,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       sudo service mysql stop
       sudo service tomcat7 stop
 
+      # Increase tomcat memory
+      sudo bash -c 'echo -e "\n# From Vagrantfile\nJAVA_OPTS=\"-Xmx2g -Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n\"\n" >> /etc/default/tomcat7'
+
       echo Buliding and Installing Metadata Webapp
 
       # Use the local DB
@@ -94,7 +97,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       nice mvn clean install -DskipTests=true && sudo cp target/metadata.war /var/lib/tomcat7/webapps/ROOT.war
 
       echo Final preparations for metadata
-      sudo ln -s /vagrant/mas90.accdb /var/mas90.accdb
+      sudo ln -s /vagrant/metadata/src/test/resources/mas90.accdb /var/mas90.accdb
       sudo mkdir -p /var/product_images
       sudo chown tomcat7:tomcat7 /var/product_images
       sudo usermod -aG tomcat7 vagrant

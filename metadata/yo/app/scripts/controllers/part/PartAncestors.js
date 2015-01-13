@@ -25,7 +25,6 @@ angular.module('ngMetaCrudApp')
         return Restangular.one('part', $scope.partId).all('ancestors').getList().then(
           function(ancestors) {
             $scope.ancestors = ancestors;
-            $scope.apply();
           },
           function(response) {
             restService.error("Could not get ancestors.", response);
@@ -34,5 +33,5 @@ angular.module('ngMetaCrudApp')
       }
     };
     
-    restService.getBomAncestryRebuildingCompletePromise().then($scope.loadAncestors);
+    restService.getBomRebuildingCompletePromise().then($scope.loadAncestors);
   });

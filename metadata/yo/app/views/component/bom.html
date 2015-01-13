@@ -27,7 +27,7 @@
         </button>
 
         <button ng-click="modifySave($index, bomItem)"
-                ng-disabled="restService.status.bomAncestryRebuilding"
+                ng-disabled="restService.status.bomRebuilding"
                 authorize="ROLE_BOM" class="btn btn-success btn-xs"
                 ng-show="isModifying($index, bomItem)">
           <i class="fa fa-save"></i> Save
@@ -52,7 +52,7 @@
         </a>
 
         <button ng-click="remove($index, bomItem)"
-                ng-disabled="restService.status.bomAncestryRebuilding"
+                ng-disabled="restService.status.bomRebuilding"
                 authorize="ROLE_BOM" class="btn btn-danger btn-xs"
                 ng-hide="isModifying($index, bomItem)">
           <i class="fa fa-trash-o"></i> Remove
@@ -81,7 +81,7 @@
                     extra-columns="{&quot;Alt Group #&quot;: &quot;item.header.id&quot;}">
 
           <button ng-click="removeAlternate(index, item)"
-                  ng-disabled="restService.status.bomAncestryRebuilding"
+                  ng-disabled="restService.status.bomRebuilding"
              authorize="ROLE_BOM_ALT" class="btn btn-danger btn-xs">
             <i class="fa fa-trash-o"></i> Remove
           </button>

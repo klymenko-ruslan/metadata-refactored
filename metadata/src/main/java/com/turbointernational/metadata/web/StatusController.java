@@ -29,7 +29,7 @@ public class StatusController {
         Status status = new Status();
         
         if (Part.getBomRebuildStart() != null) {
-            status.setBomAncestryRebuilding(true);
+            status.setBomRebuilding(true);
         }
         
         return new ResponseEntity<String>(status.toJson(), headers, HttpStatus.OK);

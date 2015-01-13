@@ -250,11 +250,6 @@ public class Part implements Comparable<Part> {
         return bomAncestors;
     }
     
-    public void setBomAncestors(Set<BOMAncestor> bomAncestors) {
-        this.bomAncestors.clear();
-        this.bomAncestors.addAll(bomAncestors);
-    }
-    
     public Set<TurboType> getTurboTypes() {
         return turboTypes;
     }
@@ -554,7 +549,7 @@ public class Part implements Comparable<Part> {
     }
     
     @Async("bomRebuildExecutor") // One at a time
-    public static void rebuildBomAncestry() {
+    public static void rebuildBomDescendancy() {
         try {
             // Track the rebuild so users can get status
             bomRebuildStart = new Date();
@@ -566,7 +561,7 @@ public class Part implements Comparable<Part> {
                     EntityManager em = entityManager();
 
                     // Delete the old ancestry
-                    em.createNativeQuery("CALL RebuildBomAncestry()").executeUpdate();
+                    em.createNativeQuery("CALL RebuildBomDescendancy()").executeUpdate();
                     em.clear();
                     log.info("BOM Ancestry rebuild completed.");
 

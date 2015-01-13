@@ -79,7 +79,7 @@
           p:driverClass="com.mysql.jdbc.Driver"
           p:user="${database.username}"
           p:password="${database.password}"
-          p:jdbcUrl="jdbc:mysql://${database.host}:${database.port}/${database.schema}?autoReconnect=true&amp;connectTimeout=10000&amp;socketTimeout=600000"
+          p:jdbcUrl="jdbc:mysql://${database.host}:${database.port}/${database.schema}?autoReconnect=true&amp;connectTimeout=10000&amp;socketTimeout=86400000"
           p:maxIdleTime="3600"
           p:idleConnectionTestPeriod="300"
           p:minPoolSize="2"
