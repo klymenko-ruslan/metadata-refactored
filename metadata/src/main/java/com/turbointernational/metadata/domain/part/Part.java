@@ -557,13 +557,13 @@ public class Part implements Comparable<Part> {
             new TransactionTemplate(new Part().txManager).execute(new TransactionCallback() {
                 @Override
                 public Object doInTransaction(TransactionStatus status) {
-                    log.info("Rebuilding BOM ancestry.");
+                    log.info("Rebuilding BOM descendancy.");
                     EntityManager em = entityManager();
 
                     // Delete the old ancestry
                     em.createNativeQuery("CALL RebuildBomDescendancy()").executeUpdate();
                     em.clear();
-                    log.info("BOM Ancestry rebuild completed.");
+                    log.info("BOM descendancy rebuild completed.");
 
                     return null;
                 }
