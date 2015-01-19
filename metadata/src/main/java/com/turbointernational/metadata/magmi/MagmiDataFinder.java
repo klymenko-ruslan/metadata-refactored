@@ -80,7 +80,7 @@ public class MagmiDataFinder {
             "                                  AND pt.manfr_id = 11\n" +
             "                                  AND pt.part_type_id = 2)\n" +
             "              ON p.id = bd.part_id_ancestor\n" +
-            "WHERE p.id IN (?)", new RowCallbackHandler() {
+            "WHERE p.id IN (" + StringUtils.join(productIds, ',') + ")", new RowCallbackHandler() {
             @Override
             public void processRow(ResultSet rs) throws SQLException {
                 boolean hasTiChra = rs.getBoolean("has_ti_chra");
@@ -90,6 +90,7 @@ public class MagmiDataFinder {
                 product.setHasTiChra(hasTiChra);
             }
         });
+        logger.log(Level.INFO, "Finding images.", applications.size());
         
         // Add the images
         List<ProductImage> images = findProductImages(productIds);
