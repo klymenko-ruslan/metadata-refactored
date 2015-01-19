@@ -70,6 +70,7 @@ public class MagmiController {
             "interchanges",      // Interchangeable parts
             "bill_of_materials", // BOM
             "where_used",        // Usages
+            "has_ti_chra",       // Has TI CHRA descendant
             "price",
             "qty",
             "turbo_model",      // Turbo Models

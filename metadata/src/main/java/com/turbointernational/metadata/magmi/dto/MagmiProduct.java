@@ -50,6 +50,8 @@ public class MagmiProduct {
     
     private String tiPartNumber = "";
     
+    private Boolean hasTiChra = false;
+    
     private final List<MagmiBomItem> bom = new ArrayList<MagmiBomItem>();
     
     private final JSOG serviceKits = JSOG.array();
@@ -92,6 +94,14 @@ public class MagmiProduct {
     public boolean hasTiPart() {
         return getManufacturerId() == Manufacturer.TI_ID
             || StringUtils.isNotBlank(tiPartNumber);
+    }
+    
+    public boolean hasTiChra() {
+        return hasTiChra;
+    }
+
+    public void setHasTiChra(Boolean hasTiChra) {
+        this.hasTiChra = hasTiChra;
     }
     
     public final void addApplication(MagmiApplication application) {
@@ -207,6 +217,7 @@ public class MagmiProduct {
         columns.put("interchanges", StringUtils.join(interchanges, ','));
         columns.put("ti_part_sku", StringUtils.join(tiInterchanges, ','));
         columns.put("ti_part_number", tiPartNumber);
+        columns.put("has_ti_chra", Boolean.toString(hasTiChra));
         
         columns.put("turbo_model", StringUtils.join(turboModel, ','));
         columns.put("turbo_type", StringUtils.join(turboType, ','));

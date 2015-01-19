@@ -29,6 +29,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
+import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.stereotype.Service;
 
 /**
@@ -46,7 +47,7 @@ public class MagmiDataFinder {
         long startTime = System.currentTimeMillis();
         
         // Build a product map from the parts
-        TreeMap<Long, MagmiProduct> productMap = new TreeMap<Long, MagmiProduct>();
+        final TreeMap<Long, MagmiProduct> productMap = new TreeMap<Long, MagmiProduct>();
         for (Part part : parts) {
             productMap.put(part.getId(), new MagmiProduct(part));
         }
@@ -62,6 +63,33 @@ public class MagmiDataFinder {
         }
         
         logger.log(Level.INFO, "Found {0} applications", applications.size());
+        
+        // Add TI CHRAs
+        logger.log(Level.INFO, "Finding TI CHRA descendants.", applications.size());
+        db.query(
+            "SELECT DISTINCT\n" +
+            "    p.id,\n" +
+            "    CASE\n" +
+            "      WHEN pt.manfr_part_num IS NOT NULL THEN 1\n" +
+            "      ELSE 0\n" +
+            "    END has_ti_chra\n" +
+            "FROM\n" +
+            "    part p\n" +
+            "    LEFT JOIN (vbom_descendant bd \n" +
+            "               INNER JOIN part pt ON bd.part_id_descendant = pt.id\n" +
+            "                                  AND pt.manfr_id = 11\n" +
+            "                                  AND pt.part_type_id = 2)\n" +
+            "              ON p.id = bd.part_id_ancestor\n" +
+            "WHERE p.id IN (?)", new RowCallbackHandler() {
+            @Override
+            public void processRow(ResultSet rs) throws SQLException {
+                boolean hasTiChra = rs.getBoolean("has_ti_chra");
+                long partId = rs.getLong("id");
+                
+                MagmiProduct product = productMap.get(partId);
+                product.setHasTiChra(hasTiChra);
+            }
+        });
         
         // Add the images
         List<ProductImage> images = findProductImages(productIds);
