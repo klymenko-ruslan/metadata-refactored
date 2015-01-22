@@ -68,19 +68,11 @@ public class MagmiDataFinder {
         logger.log(Level.INFO, "Finding TI CHRA descendants.", applications.size());
         db.query(
             "SELECT DISTINCT\n" +
-            "    p.id,\n" +
-            "    CASE\n" +
-            "      WHEN pt.manfr_part_num IS NOT NULL THEN 1\n" +
-            "      ELSE 0\n" +
-            "    END has_ti_chra\n" +
+            "    id,\n" +
+            "    has_ti_chra\n" +
             "FROM\n" +
-            "    part p\n" +
-            "    LEFT JOIN (vbom_descendant bd \n" +
-            "               INNER JOIN part pt ON bd.part_id_descendant = pt.id\n" +
-            "                                  AND pt.manfr_id = 11\n" +
-            "                                  AND pt.part_type_id = 2)\n" +
-            "              ON p.id = bd.part_id_ancestor\n" +
-            "WHERE p.id IN (" + StringUtils.join(productIds, ',') + ")", new RowCallbackHandler() {
+            "    vmagmi_ti_chra\n" +
+            "WHERE id IN (" + StringUtils.join(productIds, ',') + ")", new RowCallbackHandler() {
             @Override
             public void processRow(ResultSet rs) throws SQLException {
                 boolean hasTiChra = rs.getBoolean("has_ti_chra");

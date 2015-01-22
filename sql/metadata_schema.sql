@@ -1002,6 +1002,24 @@ FROM
   LEFT JOIN vint_ti         iti   ON iti.part_id = k.id
   LEFT JOIN part            kti   ON kti.id      = iti.ti_part_id;
 
+DROP VIEW IF EXISTS `vmagmi_ti_chra`;
+CREATE
+  ALGORITHM=UNDEFINED
+  DEFINER=`metaserver`@`%`
+  SQL SECURITY DEFINER
+VIEW `vmagmi_ti_chra` AS
+SELECT
+  `p`.`id` AS `id`,
+  (CASE WHEN (`pt`.`manfr_part_num` IS NOT NULL) THEN 'yes' ELSE 'no' END) AS `has_ti_chra`
+FROM (
+  `part` `p`
+  LEFT JOIN (
+    `vbom_descendant` `bd`
+    JOIN `part` `pt` ON (`bd`.`part_id_descendant` = `pt`.`id`
+                         AND `pt`.`manfr_id` = 11
+                         AND `pt`.`part_type_id` = 2))
+      ON`p`.`id` = `bd`.`part_id_ancestor`);
+
 --
 -- Stored Procedures
 --
