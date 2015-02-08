@@ -8,7 +8,9 @@ Developer IPs
   </tr>
   <tr>
     <td>Jeff Home</td>
-    <td>71.227.128.226</td>
+    <td><strike>71.227.128.226</strike><br/>
+        67.183.189.202
+    </td>
   </tr>
   <tr>
     <td>Jeff HUB</td>
