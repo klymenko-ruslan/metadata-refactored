@@ -67,8 +67,7 @@ public class PartController {
         headers.add("Content-Type", "application/json");
         
         List<BOMAncestor> ancestors = db.query(
-              "SELECT DISTINCT \n"
-            + "  ba.id,\n"
+              "SELECT DISTINCT\n"
             + "  ba.part_id,\n"
             + "  ba.ancestor_part_id,\n"
             + "  ba.distance,\n"
@@ -76,18 +75,15 @@ public class PartController {
             + "FROM\n"
             + "  vbom_ancestor ba\n"
             + "  JOIN part ap ON ap.id = ba.ancestor_part_id\n"
-            + "  JOIN manfr apm ON apm.id = ap.manfr_id\n"
-            + "  JOIN part_type pt ON pt.id = ap.part_type_id\n"
             + "WHERE\n"
             + "  ba.part_id = ?\n"
             + "  AND ba.distance > 0\n" // Non-self parts
-            + "ORDER BY ba.type, pt.name, ap.manfr_part_num",
+            + "ORDER BY ba.distance, ba.type, ap.manfr_part_num",
             new RowMapper<BOMAncestor>() {
                 @Override
                 public BOMAncestor mapRow(ResultSet rs, int rowNum) throws SQLException {
                     BOMAncestor ancestor = new BOMAncestor();
-
-                    ancestor.setId(rs.getLong("id"));
+                    
                     ancestor.setDistance(rs.getInt("distance"));
                     ancestor.setType(rs.getString("type"));
                     ancestor.setPart(Part.findPart(rs.getLong("part_id")));
