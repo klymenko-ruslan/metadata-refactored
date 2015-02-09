@@ -1,7 +1,6 @@
 package com.turbointernational.metadata.domain.part;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.other.TurboType;
-import com.turbointernational.metadata.domain.part.bom.BOMAncestor;
 import com.turbointernational.metadata.domain.part.bom.BOMItem;
 import com.turbointernational.metadata.domain.part.types.Backplate;
 import com.turbointernational.metadata.domain.part.types.BearingHousing;
@@ -26,7 +25,6 @@ import flexjson.transformer.HibernateTransformer;
 import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.Date;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -162,10 +160,6 @@ public class Part implements Comparable<Part> {
     @OrderBy("id")
     private Set<BOMItem> bom = new TreeSet<BOMItem>();
     
-    @OneToMany(mappedBy = "part", fetch = FetchType.LAZY)
-    @OrderBy("id")
-    private Set<BOMAncestor> bomAncestors = new LinkedHashSet<BOMAncestor>();
-    
     @OneToMany(cascade = CascadeType.REFRESH, mappedBy = "part", fetch=FetchType.LAZY)
     private Set<ProductImage> productImages = new TreeSet<ProductImage>();
     
@@ -244,10 +238,6 @@ public class Part implements Comparable<Part> {
     public void setBom(Set<BOMItem> bom) {
         this.bom.clear();
         this.bom.addAll(bom);
-    }
-    
-    public Set<BOMAncestor> getBomAncestors() {
-        return bomAncestors;
     }
     
     public Set<TurboType> getTurboTypes() {
@@ -476,21 +466,6 @@ public class Part implements Comparable<Part> {
                 .setFirstResult(firstResult)
                 .setMaxResults(maxResults)
                 .getResultList();
-    }
-    
-    public static List<BOMAncestor> listBOMAncestors(long partId) {
-        return entityManager().createQuery(
-            "SELECT ba\n"
-                + "FROM\n"
-                + "  BOMAncestor ba\n"
-                + "  JOIN ba.ancestor ap\n"
-                + "  JOIN ap.manufacturer\n"
-                + "  JOIN ap.partType pt\n"
-                + "WHERE\n"
-                + "  ba.part.id = ?\n"
-                + "  AND ba.distance > 0\n" // Non-self parts
-                + "ORDER BY ba.type, pt.name, ap.manufacturerPartNumber"
-        ).setParameter(1, partId).getResultList();
     }
     
     @Transactional

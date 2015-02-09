@@ -112,6 +112,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
       mysql -u root -e "CREATE DATABASE IF NOT EXISTS metadata;"
       mysql -u root -e "GRANT ALL PRIVILEGES ON metadata.* TO metaserver@'%' IDENTIFIED BY 'metaserver'; FLUSH PRIVILEGES;"
+      mysql -u root -e "GRANT ALL PRIVILEGES ON *.* TO root@'192.168.42.1'; FLUSH PRIVILEGES;"
 
       echo Preparing Selenium
       /vagrant/metadata/yo/node_modules/protractor/bin/webdriver-manager update
