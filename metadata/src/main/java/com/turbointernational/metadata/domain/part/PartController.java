@@ -7,7 +7,8 @@ import flexjson.JSONSerializer;
 import flexjson.transformer.HibernateTransformer;
 import java.io.File;
 import java.security.Principal;
-import java.util.Date;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
@@ -17,6 +18,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,6 +40,9 @@ public class PartController {
     
     @Autowired(required=true)
     ImageResizer resizer;
+    
+    @Autowired(required=true)
+    JdbcTemplate db;
 
     @Transactional
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
@@ -60,7 +66,32 @@ public class PartController {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json");
         
-        List<BOMAncestor> ancestors = Part.listBOMAncestors(partId);
+        List<BOMAncestor> ancestors = db.query(
+              "SELECT DISTINCT\n"
+            + "  ba.part_id,\n"
+            + "  ba.ancestor_part_id,\n"
+            + "  ba.distance,\n"
+            + "  ba.type\n"
+            + "FROM\n"
+            + "  vbom_ancestor ba\n"
+            + "  JOIN part ap ON ap.id = ba.ancestor_part_id\n"
+            + "WHERE\n"
+            + "  ba.part_id = ?\n"
+            + "  AND ba.distance > 0\n" // Non-self parts
+            + "ORDER BY ba.distance, ba.type, ap.manfr_part_num",
+            new RowMapper<BOMAncestor>() {
+                @Override
+                public BOMAncestor mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    BOMAncestor ancestor = new BOMAncestor();
+                    
+                    ancestor.setDistance(rs.getInt("distance"));
+                    ancestor.setType(rs.getString("type"));
+                    ancestor.setPart(Part.findPart(rs.getLong("part_id")));
+                    ancestor.setAncestor(Part.findPart(rs.getLong("ancestor_part_id")));
+
+                    return ancestor;
+                }
+            }, partId);
         
         String json = new JSONSerializer()
                 .transform(new HibernateTransformer(), BOMAncestor.class)
