@@ -306,6 +306,7 @@ public class MagmiDataFinder {
               + "  descendant_sku,\n"
               + "  quantity,\n"
               + "  distance,\n"
+              + "  type,\n"
               + "  part_type_parent,\n"
               + "  has_bom,\n"
               + "  alt_sku,\n"
@@ -331,13 +332,14 @@ public class MagmiDataFinder {
                     long descendantSku    = rs.getLong("descendant_sku");
                     int quantity          = rs.getInt("quantity");
                     int distance          = rs.getInt("distance");
+                    String type           = rs.getString("type");
                     boolean hasBom        = rs.getBoolean("has_bom");
                     String partTypeParent = rs.getString("part_type_parent");
                     
                     // Get the BOM item so we can roll up any alts and interchanges
                     MagmiBomItem bomItem = bomTable.get(ancestorSku, descendantSku);
                     if (bomItem == null) {
-                        bomItem = new MagmiBomItem(descendantSku, quantity, distance, hasBom, partTypeParent);
+                        bomItem = new MagmiBomItem(descendantSku, quantity, distance, type, hasBom, partTypeParent);
                         bomTable.put(ancestorSku, descendantSku, bomItem);
                     }
                     

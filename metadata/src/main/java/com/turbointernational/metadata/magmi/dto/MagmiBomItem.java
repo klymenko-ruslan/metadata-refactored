@@ -23,6 +23,8 @@ public class MagmiBomItem {
     
     private final int distance;
     
+    private final String type;
+    
     private final boolean hasBom;
     
     /**
@@ -35,10 +37,11 @@ public class MagmiBomItem {
     
     private final Set<Long> tiPartSku = Sets.newTreeSet();
 
-    public MagmiBomItem(long sku, int quantity, int distance, boolean hasBom, String partTypeParent) {
+    public MagmiBomItem(long sku, int quantity, int distance, String type, boolean hasBom, String partTypeParent) {
         this.sku = sku;
         this.quantity = quantity;
         this.distance = distance;
+        this.type = type;
         this.hasBom = hasBom;
         this.partTypeParent = partTypeParent;
     }
@@ -53,6 +56,10 @@ public class MagmiBomItem {
 
     public int getDistance() {
         return distance;
+    }
+
+    public String getType() {
+        return type;
     }
     
     @JSON(name = "has_bom")
@@ -74,7 +81,6 @@ public class MagmiBomItem {
     public Set<Long> getTiPartSku() {
         return tiPartSku;
     }
-    
     
     public static String toJsonArray(Collection<MagmiBomItem> collection) {
         return new JSONSerializer()
