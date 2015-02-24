@@ -164,6 +164,29 @@ if ($serviceKitSkus) {
                         $billOfMaterialsSkus[] = $part['ti_part_sku'];
                 endforeach;
 
+                // add bill of materials from each interchangeable part of primary turbo product
+                foreach ($interchangeSkuProductMap as $interchangeSku => $interchangeProduct):
+
+                    // Get the Bill of Materials
+                    $billOfMaterials_interch = json_decode($interchangeProduct->getBillOfMaterials(), true);
+
+                    // add to array
+                    foreach ($billOfMaterials_interch as $part):
+                        // add the sku of the main part
+                        $billOfMaterialsSkus[] = $part['sku'];
+
+                        // create a duplicate array where the key is the sku
+                        $billOfMaterialsInterchAlt[$part['sku']] = $part;
+
+                        // add the sku of any TI interchangeable parts from the BOM
+                        if (!empty($part['ti_part_sku']))
+                            $billOfMaterialsSkus[] = $part['ti_part_sku'];
+                    endforeach;
+                endforeach;
+
+                // git rid of duplicate values
+                $billOfMaterialsSkus = array_unique($billOfMaterialsSkus);
+
                 // get collection of bill of material products
                 if (count($billOfMaterialsSkus) > 0) {
 
@@ -180,6 +203,7 @@ if ($serviceKitSkus) {
                         ->addAttributeToSelect('price')
                         ->addAttributeToSelect('interchanges')
                         ->addAttributeToSelect('manufacturer')
+                        ->addAttributeToSelect('ti_part_sku')
                         ->addFieldToFilter('sku', $billOfMaterialsSkus);
 
                     // Add sort to collection
@@ -200,14 +224,25 @@ if ($serviceKitSkus) {
                             <?php
 
                             $bomItem = $billOfMaterialsAlt[$bomItemProduct->getSku()];
+                            $bomItemInterch = $billOfMaterialsInterchAlt[$bomItemProduct->getSku()];
 
-                            // check to make sure that bomItem is a primary bom part
-                            if (empty($bomItem)) {
-                                continue;
-                            }
-
-                            // skip component parts that are NOT major components and NOT a chra
-                            if ($bomItem['part_type_parent'] <> 'major_component' AND $bomItemProduct->getAttributeSetName() <> 'Cartridge') {
+                            // decide whether to skip the part or not
+                            if (!(
+                                    (
+                                        // a direct part that is either a major component or a cartridge
+                                        $bomItem
+                                        AND
+                                        ($bomItem['part_type_parent'] == 'major_component' OR $bomItemProduct->getAttributeSetName() == 'Cartridge')
+                                    )
+                                    OR
+                                    (
+                                        // an interchange part that is a cartridge
+                                        $bomItemInterch
+                                        AND
+                                        $bomItemProduct->getAttributeSetName() == 'Cartridge'
+                                    )
+                                ))
+                                                {
                                 continue;
                             }
 
@@ -224,7 +259,7 @@ if ($serviceKitSkus) {
                                     <td><?php
 
                                         //Get TI first part number
-                                        foreach ($bomItem['ti_part_sku'] as $idx => $tiPartSku) {
+                                        foreach (($bomItemProduct->getTiPartSku() ? explode(',', $bomItemProduct->getTiPartSku()) : array()) as $tiPartSku) {
 
                                             //get product object from sku
                                             $bomItemInterchangeTiProduct = $billOfMaterialsCollection->getItemByColumnValue('sku', $tiPartSku);
