@@ -112,31 +112,188 @@ if ($serviceKitSkus) {
         </div>
 
         <div class="product-shop">
-            <div class="product-name">
-                <h1><?php echo($_product->getName() ? $_helper->productAttribute($_product, $_product->getName(), 'name') : 'No Name') ?></h1>
-            </div>
-
-            <?php echo $this->getReviewsSummaryHtml($_product, false, true) ?>
-            <?php echo $this->getChildHtml('alert_urls') ?>
-            <?php echo $this->getChildHtml('product_type_data') ?>
-            <?php echo $this->getTierPriceHtml() ?>
-            <?php echo $this->getChildHtml('extrahint') ?>
-
-            <div class="add-to-box">
-                <?php if ($_product->isSaleable() && $_product->isTurboInternational() || $_tiProduct): ?>
-                    <?php echo $this->getChildHtml('addtocart'); ?>
-                    <?php if ($this->helper('wishlist')->isAllow() || $_compareUrl = $this->helper('catalog/product_compare')->getAddUrl($_product)): ?>
-                        <span class="or"><?php echo $this->__('OR') ?></span>
+            <div class="product-price-add-to-box">
+                <?php echo $this->getPriceHtml($_product) ?>
+                <div class="add-to-box">
+                    <?php if ($_product->isSaleable() && $_product->isTurboInternational() || $_tiProduct): ?>
+                        <?php echo $this->getChildHtml('addtocart'); ?>
                     <?php endif; ?>
-                <?php endif; ?>
-                <?php echo $this->getChildHtml('addto') ?>
+                    <?php echo $this->getChildHtml('addto') ?>
+
+                    <div class="clearer"></div>
+
+                    <!-- Email a friend -->
+                    <?php if ($this->canEmailToFriend()): ?>
+                        <p class="email-friend"><a
+                                href="<?php echo $this->helper('catalog/product')->getEmailToFriendUrl($_product) ?>"><?php echo $this->__('Email to a Friend') ?></a>
+                        </p>
+                    <?php endif; ?>
+                </div>
+            </div>
+            <div class="product-header-info">
+                <div class="product-name">
+                    <h1><?php echo($_product->getName() ? $_helper->productAttribute($_product, $_product->getName(), 'name') : 'No Name') ?></h1>
+                </div>
+
+                <?php echo $this->getReviewsSummaryHtml($_product, false, true) ?>
+                <?php echo $this->getChildHtml('alert_urls') ?>
+                <?php echo $this->getChildHtml('product_type_data') ?>
+                <?php echo $this->getTierPriceHtml() ?>
+                <?php echo $this->getChildHtml('extrahint') ?>
             </div>
 
-            <!-- Email a friend -->
-            <?php if ($this->canEmailToFriend()): ?>
-                <p class="email-friend"><a
-                        href="<?php echo $this->helper('catalog/product')->getEmailToFriendUrl($_product) ?>"><?php echo $this->__('Email to a Friend') ?></a>
-                </p>
+            <div class="clearer"></div>
+
+            <!-- Major Components  -->
+            <?php
+            if ($productAttributeSetName == "Turbo"):
+                $billOfMaterialsSkus = array();
+                $billOfMaterialsAlt = array();
+                $billOfMaterialsCollection = array();
+
+                //create array of skus to be used in a collection
+                foreach ($billOfMaterials as $part):
+                    // add the sku of the main part
+                    $billOfMaterialsSkus[] = $part['sku'];
+
+                    // create a duplicate array where the key is the sku
+                    $billOfMaterialsAlt[$part['sku']] = $part;
+
+                    // add the sku of any TI interchangeable parts from the BOM
+                    if (!empty($part['ti_part_sku']))
+                        $billOfMaterialsSkus[] = $part['ti_part_sku'];
+                endforeach;
+
+                // add bill of materials from each interchangeable part of primary turbo product
+                foreach ($interchangeSkuProductMap as $interchangeSku => $interchangeProduct):
+
+                    // Get the Bill of Materials
+                    $billOfMaterials_interch = json_decode($interchangeProduct->getBillOfMaterials(), true);
+
+                    // add to array
+                    foreach ($billOfMaterials_interch as $part):
+                        // add the sku of the main part
+                        $billOfMaterialsSkus[] = $part['sku'];
+
+                        // create a duplicate array where the key is the sku
+                        $billOfMaterialsInterchAlt[$part['sku']] = $part;
+
+                        // add the sku of any TI interchangeable parts from the BOM
+                        if (!empty($part['ti_part_sku']))
+                            $billOfMaterialsSkus[] = $part['ti_part_sku'];
+                    endforeach;
+                endforeach;
+
+                // git rid of duplicate values
+                $billOfMaterialsSkus = array_unique($billOfMaterialsSkus);
+
+                // get collection of bill of material products
+                if (count($billOfMaterialsSkus) > 0) {
+
+                    // get id for cartridge attribute set
+                    $cartridgeAttributeSetId = Mage::getModel('eav/entity_attribute_set')->getCollection()
+                        ->addFieldToFilter('attribute_set_name', 'Cartridge')
+                        ->getFirstItem()
+                        ->getAttributeSetId();
+
+                    // create collection of bom items
+                    $billOfMaterialsCollection = Mage::getModel('catalog/product')->getCollection()
+                        ->addAttributeToSelect('part_type')
+                        ->addAttributeToSelect('part_number')
+                        ->addAttributeToSelect('price')
+                        ->addAttributeToSelect('interchanges')
+                        ->addAttributeToSelect('manufacturer')
+                        ->addAttributeToSelect('ti_part_sku')
+                        ->addFieldToFilter('sku', $billOfMaterialsSkus);
+
+                    // Add sort to collection
+                    $billOfMaterialsCollection->getSelect()->order( array("IF(attribute_set_id = $cartridgeAttributeSetId, 1, concat('999',part_type_value)) ASC") );
+                }
+                ?>
+                <div class="box-collateral box-major-components">
+                    <h2><?php echo $this->__('Major Components') ?></h2>
+                    <table class="data-table mc-table" id="major-components">
+                        <tr>
+                            <th><strong>Part Type</strong></th>
+                            <th><strong>Part #</strong></th>
+                            <?php //don't show column if part manfr is TI
+                                if (!$_product->isTurboInternational()): ?><th><strong>TI Part #</strong></th><?php endif; ?>
+                            <th><strong>Price</strong></th>
+                        </tr>
+                        <?php foreach ($billOfMaterialsCollection as $bomItemProduct): ?>
+                            <?php
+
+                            $bomItem = $billOfMaterialsAlt[$bomItemProduct->getSku()];
+                            $bomItemInterch = $billOfMaterialsInterchAlt[$bomItemProduct->getSku()];
+
+                            // decide whether to skip the part or not
+                            if (!(
+                                    (
+                                        // a direct part that is either a major component or a cartridge
+                                        $bomItem
+                                        AND
+                                        ($bomItem['part_type_parent'] == 'major_component' OR $bomItemProduct->getAttributeSetName() == 'Cartridge')
+                                    )
+                                    OR
+                                    (
+                                        // an interchange part that is a cartridge
+                                        $bomItemInterch
+                                        AND
+                                        $bomItemProduct->getAttributeSetName() == 'Cartridge'
+                                    )
+                                ))
+                                                {
+                                continue;
+                            }
+
+                            $bomItemTiProduct = null;
+                            ?>
+
+                            <tr>
+                                <td><?php echo $bomItemProduct->getAttributeText('part_type'); ?></td>
+                                <td><?php echo '<a href="' . $bomItemProduct->getProductUrl() . '">' . $bomItemProduct->getPartNumber() . '</a>'; ?></td>
+                                <?php
+
+                                // don't display if primary part manfr is TI
+                                if (!$_product->isTurboInternational()): ?>
+                                    <td><?php
+
+                                        //Get TI first part number
+                                        foreach (($bomItemProduct->getTiPartSku() ? explode(',', $bomItemProduct->getTiPartSku()) : array()) as $tiPartSku) {
+
+                                            //get product object from sku
+                                            $bomItemInterchangeTiProduct = $billOfMaterialsCollection->getItemByColumnValue('sku', $tiPartSku);
+
+                                            // display product info
+                                            if ($bomItemInterchangeTiProduct) {
+                                                echo '<a href="' . $bomItemInterchangeTiProduct->getProductUrl() . '">' . $bomItemInterchangeTiProduct->getPartNumber() . '</a>';
+
+                                                // Use the first TI product for pricing
+                                                $bomItemTiProduct = $bomItemInterchangeTiProduct;
+
+                                                // exit loop after first product
+                                                break;
+                                            }
+                                        }?>
+                                    </td>
+                                <?php endif; ?>
+                                <td>
+                                    <?php if (Mage::getSingleton('customer/session')->isLoggedIn()): ?>
+                                        <?php
+                                        if ($bomItemProduct->isTurboInternational()) {
+                                            echo Mage::helper('core')->currency($bomItemProduct->getFinalPrice());
+                                        } elseif ($bomItemTiProduct) {
+                                            echo Mage::helper('core')->currency($bomItemTiProduct->getFinalPrice());
+                                        }
+                                        ?>
+                                    <?php else: ?>
+                                      <a href="<?php echo $this->getUrl('customer/account/login'); ?>">Login for price</a>
+                                    <?php endif; ?>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </table>
+                </div>
             <?php endif; ?>
 
             <?php if ($_product->getShortDescription()): ?>
@@ -272,11 +429,11 @@ if ($serviceKitSkus) {
     <div id="tabs" style="font-size: 97%;">
         <ul>
             <li><a href="#tabs-product-information">Product Information</a></li>
-            <li><a href="#tabs-interchangeable-parts">Interchangeable Parts</a></li>
             <li><a href="#tabs-bill-of-materials">Bill of Materials</a></li>
             <li><a href="#tabs-application-detail">Application Detail</a></li>
             <li><a href="#tabs-where-used">Where Used</a></li>
             <li><a href="#tabs-kit-matrix">Kit Matrix</a></li>
+            <li><a href="#tabs-interchangeable-parts">Interchangeable Parts</a></li>
         </ul>
         
         <!-- Product Information -->
@@ -419,34 +576,6 @@ if ($serviceKitSkus) {
                 </table>
             </div>
             <?php endif; ?>
-        </div>
-
-        <!-- Interchangeable Parts -->
-        <div id="tabs-interchangeable-parts" class="box-collateral">
-            <h2><?php echo $this->__('Interchangeable Parts') ?></h2>
-            <table class="data-table" id="interchangeable-parts-specs-table">
-                <col width="25%"/>
-                <col/>
-                <tbody>
-                <tr>
-                    <th class="label">Part Number</th>
-                    <th class="label">Manufacturer</th>
-                </tr>
-                <?php if (count($interchangeSkuArray)): ?>
-                    <?php foreach ($interchangeSkuProductMap as $interchangeSku => $interchangeProduct): ?>
-                        <tr>
-                            <td class="data">
-                                <a href="<?php echo $interchangeProduct->getProductUrl(); ?>"><?php echo $interchangeProduct->getPartNumber() ?></a>
-                            <td class="data"><?php echo $interchangeProduct->getAttributeText('manufacturer'); ?></td>
-                        </tr>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <tr>
-                        <td colspan="2"><?php echo $this->__('No Interchangeable Parts') ?></td>
-                    </tr>
-                <?php endif; ?>
-                </tbody>
-            </table>
         </div>
         
         <!-- Bill of Materials -->
@@ -673,9 +802,13 @@ if ($serviceKitSkus) {
 
                     $whereUsedSkus = array();
                     $whereUsedCollection = array();
+                    $sliceMax = 100;
+
+                    // limit array to prevent crashing page. TODO: refactor to use custom whereused model and pagination
+                    $whereUsedSlice = array_slice($whereUsed, 0, $sliceMax);
 
                     //create array of skus to be used in a collection
-                    foreach ($whereUsed as $usage):
+                    foreach ($whereUsedSlice as $usage):
                         // add the sku of the main whereUsed part
                         $whereUsedSkus[] = $usage['sku'];
 
@@ -695,7 +828,7 @@ if ($serviceKitSkus) {
                     }
                 ?>
 
-                <?php foreach ($whereUsed as $usage): ?>
+                <?php foreach ($whereUsedSlice as $usage): ?>
                     <?php
                         $usageProduct = $whereUsedCollection->getItemByColumnValue('sku', $usage['sku']);
                     ?>
@@ -773,6 +906,11 @@ if ($serviceKitSkus) {
                     </tr>
                 <?php endforeach; ?>
             </table>
+
+            <?php if (count($whereUsed) > $sliceMax): //display if not all of the whereuse items are shown ?>
+                <p>only first 100 parts are listed</p>
+            <?php endif; ?>
+
         </div>
 
         <!-- Kit Matrix -->
@@ -927,6 +1065,34 @@ if ($serviceKitSkus) {
                 </table>
             </div>
 
+        <!-- Interchangeable Parts -->
+        <div id="tabs-interchangeable-parts" class="box-collateral">
+            <h2><?php echo $this->__('Interchangeable Parts') ?></h2>
+            <table class="data-table" id="interchangeable-parts-specs-table">
+                <col width="25%"/>
+                <col/>
+                <tbody>
+                <tr>
+                    <th class="label">Part Number</th>
+                    <th class="label">Manufacturer</th>
+                </tr>
+                <?php if (count($interchangeSkuArray)): ?>
+                    <?php foreach ($interchangeSkuProductMap as $interchangeSku => $interchangeProduct): ?>
+                        <tr>
+                            <td class="data">
+                                <a href="<?php echo $interchangeProduct->getProductUrl(); ?>"><?php echo $interchangeProduct->getPartNumber() ?></a>
+                            <td class="data"><?php echo $interchangeProduct->getAttributeText('manufacturer'); ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <tr>
+                        <td colspan="2"><?php echo $this->__('No Interchangeable Parts') ?></td>
+                    </tr>
+                <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+
     </div>
 
     <div style="margin-top: 5px;">
@@ -937,10 +1103,11 @@ if ($serviceKitSkus) {
 </div>
 </div>
 
+<script type="text/javascript">decorateTable('major-components')</script>
 <script type="text/javascript">decorateTable('product-information-specs-table')</script>
-<script type="text/javascript">decorateTable('interchangeable-parts-specs-table')</script>
 <script type="text/javascript">decorateTable('bill-of-materials')</script>
 <script type="text/javascript">decorateTable('application_detail')</script>
 <script type="text/javascript">decorateTable('service-kits')</script>
 <script type="text/javascript">decorateTable('where-used')</script>
 <script type="text/javascript">decorateTable('kit-matrix')</script>
+<script type="text/javascript">decorateTable('interchangeable-parts-specs-table')</script>

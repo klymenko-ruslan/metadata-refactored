@@ -2082,19 +2082,6 @@ class Mage_Catalog_Model_Product extends Mage_Catalog_Model_Abstract
             return $this;
         }
         
-        // If this is a turbo, the first BOM item should be a cartridge
-        // Get the TI part for that cartridge
-        if ($this->isTurbo()) {
-            $billOfMaterials = json_decode($this->getBillOfMaterials(), true);
-            
-            if (!empty($billOfMaterials)
-             && !empty($billOfMaterials[0])
-             && !empty($billOfMaterials[0]['ti_part_sku'])) {
-                $bomCartridgeTiSku = $billOfMaterials[0]['ti_part_sku'][0];
-                return Mage::getModel('catalog/product')->loadByAttribute('sku', $bomCartridgeTiSku);
-             }
-        }
-        
         // If the product has a TI part sku, use that
         if (strlen($this->getTiPartSku()) > 0) {
             $tiPartSkuArray = explode(',', $this->getTiPartSku());
