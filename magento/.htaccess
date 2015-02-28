@@ -32,7 +32,7 @@
 ## adjust memory limit
 
 #    php_value memory_limit 64M
-    php_value memory_limit 256M
+    php_value memory_limit 512M
     php_value max_execution_time 18000
 
 ############################################
@@ -184,7 +184,8 @@
 ## Add default Expires header
 ## http://developer.yahoo.com/performance/rules.html#expires
 
-    ExpiresDefault "access plus 1 year"
+    ExpiresActive On
+    ExpiresDefault "access plus 1 month"
 
 </IfModule>
 
