@@ -582,6 +582,8 @@ if ($serviceKitSkus) {
         <?php
         $billOfMaterialsSkus = array();
         $billOfMaterialsAlt = array();
+        $billOfMaterialsDirect = array();
+        $billOfMaterialsDirectTiInterchange = array();
         $billOfMaterialsCollection = array();
         $bomInterchangeArray = array();
         $billOfMaterialsInterchangeCollection = array();
@@ -594,6 +596,12 @@ if ($serviceKitSkus) {
             // create a duplicate array where the key is the sku
             $billOfMaterialsAlt[$part['sku']] = $part;
 
+            // create a duplicate array of just direct component parts where the key is the sku
+            if ($part['type'] == 'direct') {
+                $billOfMaterialsDirect[$part['sku']] = $part;
+                if (!empty($part['ti_part_sku']))
+                    $billOfMaterialsDirectTiInterchange = array_merge($billOfMaterialsDirectTiInterchange, $part['ti_part_sku']);
+            }
             // add the sku of any TI interchangeable parts from the BOM
             if (!empty($part['ti_part_sku']))
                 $billOfMaterialsSkus[] = $part['ti_part_sku'];
@@ -644,11 +652,10 @@ if ($serviceKitSkus) {
 
                 <?php foreach ($billOfMaterialsCollection as $bomItemProduct): ?>
                     <?php
-
                     $bomItem = $billOfMaterialsAlt[$bomItemProduct->getSku()];
-
                     // check to make sure that bomItem is a primary bom part
-                    if (empty($bomItem)) {
+                    if (empty($bomItem) or (($bomItem['type']!='direct' and !$bomItemProduct->isTurboInternational()) or in_array($bomItemProduct->getSku(), $billOfMaterialsDirectTiInterchange))
+                        ) {
                         continue;
                     }
 
