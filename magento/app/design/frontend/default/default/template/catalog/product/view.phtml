@@ -32,6 +32,7 @@
  */
 ?>
 <?php
+$time_start = microtime(true);
 $_helper = $this->helper('catalog/output');
 $_product = $this->getProduct();
 $_tiProduct = $_product->getTiProduct();
@@ -129,7 +130,10 @@ if ($serviceKitSkus) {
 
                 <?php echo $this->getReviewsSummaryHtml($_product, false, true) ?>
                 <?php echo $this->getChildHtml('alert_urls') ?>
-                <?php echo $this->getChildHtml('product_type_data') ?>
+                <?php
+                    $this->getChild('product_type_data')->setData('interchangecollection', $interchangeCollection);
+                    echo $this->getChildHtml('product_type_data');
+                ?>
                 <?php echo $this->getTierPriceHtml() ?>
                 <?php echo $this->getChildHtml('extrahint') ?>
             </div>

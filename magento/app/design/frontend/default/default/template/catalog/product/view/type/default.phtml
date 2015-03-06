@@ -31,6 +31,7 @@ $_product = $this->getProduct();
 // Get TI part SKUs and turbo types
 $tiPartSkus = $_product->getTiPartSku() ? explode(",", $_product->getTiPartSku()) : null;
 $turboTypes = $_product->getAttributeText('turbo_type');
+$interchangeCollection = $this->getInterchangecollection();
 ?>
 
     <!-- Product Attributes -->
@@ -59,6 +60,39 @@ $turboTypes = $_product->getAttributeText('turbo_type');
                     }
                 } ?></li>
         <?php endif; ?>
+        <?php
+            // only display if primary part manfr is TI
+            if ($_product->isTurboInternational()) {
+
+                $indexCnt = 0;
+                // find all non-ti interchange parts
+                foreach ($interchangeCollection as $interchangeProduct) {
+
+                    // cap items to 10
+                    if ($indexCnt > 10) {
+                        $InterchangeProductList[] = '...see below for more</a>';
+                        break;
+                    }
+
+                    // if part is not TI
+                    if (!$interchangeProduct->isTurboInternational()) {
+                        $indexCnt++;
+
+                        // create array of values to display
+                        $InterchangeProductList[] = '<a href="' . $interchangeProduct->getProductUrl() . '">' . $interchangeProduct->getPartNumber() . '</a>';
+                    }
+                }
+
+                // display html result
+                if ($InterchangeProductList) {
+                    echo "<li><strong>Compatible OE Part:</strong> ";
+
+                    // display list as comma-separated
+                    echo implode(", ", $InterchangeProductList);
+                    echo "</li>";
+                }
+            }
+        ?>
         <?php if ($turboTypes): ?>
             <li><strong>Turbo Type<?php if (count($turboTypes) > 1) { // English pluralization
                         echo 's';
