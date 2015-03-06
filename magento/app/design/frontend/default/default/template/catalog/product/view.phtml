@@ -54,24 +54,16 @@ $whereUsed = json_decode($_product->getWhereUsed(), true);
 $interchangeSkuArray = $_product->getInterchanges() ? explode(',', $_product->getInterchanges()) : array();
 
 
-// Load the interchange products and sort them.
-$interchangeSkuProductMap = array();
-foreach ($interchangeSkuArray as $interchangeSku) {
-    $interchangeProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $interchangeSku);
-
-    // Make sure interchange product exists
-    if ($interchangeProduct) {
-        $interchangeSkuProductMap[$interchangeSku] = $interchangeProduct;
-    }
+// get collection of interchange products
+$interchangeCollection = array();
+if ($interchangeSkuArray) {
+    $interchangeCollection = Mage::getModel('catalog/product')->getCollection()
+        ->addAttributeToSelect('bill_of_materials')
+        ->addAttributeToSelect('manufacturer')
+        ->addAttributeToSelect('part_number')
+        ->addAttributeToSort('part_number', 'ASC')
+        ->addFieldToFilter('sku', $interchangeSkuArray);
 }
-
-// Sorts products by part number
-function usortByPartNumberPredicate($a, $b)
-{
-    return strcmp($a->getPartNumber(), $b->getPartNumber());
-}
-
-uasort($interchangeSkuProductMap, 'usortByPartNumberPredicate');
 
 // generate collection to be used in the foreach loop for Service Kits and Kit Matrix.
 // This is more efficient than separate query for each product
@@ -165,7 +157,7 @@ if ($serviceKitSkus) {
                 endforeach;
 
                 // add bill of materials from each interchangeable part of primary turbo product
-                foreach ($interchangeSkuProductMap as $interchangeSku => $interchangeProduct):
+                foreach ($interchangeCollection as $interchangeProduct):
 
                     // Get the Bill of Materials
                     $billOfMaterials_interch = json_decode($interchangeProduct->getBillOfMaterials(), true);
@@ -1084,7 +1076,7 @@ if ($serviceKitSkus) {
                     <th class="label">Manufacturer</th>
                 </tr>
                 <?php if (count($interchangeSkuArray)): ?>
-                    <?php foreach ($interchangeSkuProductMap as $interchangeSku => $interchangeProduct): ?>
+                    <?php foreach ($interchangeCollection as $interchangeProduct): ?>
                         <tr>
                             <td class="data">
                                 <a href="<?php echo $interchangeProduct->getProductUrl(); ?>"><?php echo $interchangeProduct->getPartNumber() ?></a>
