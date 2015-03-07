@@ -132,6 +132,7 @@ if ($serviceKitSkus) {
                 <?php echo $this->getChildHtml('alert_urls') ?>
                 <?php
                     $this->getChild('product_type_data')->setData('interchangecollection', $interchangeCollection);
+                    $this->getChild('product_type_data')->setData('whereused', $whereUsed);
                     echo $this->getChildHtml('product_type_data');
                 ?>
                 <?php echo $this->getTierPriceHtml() ?>

@@ -32,6 +32,7 @@ $_product = $this->getProduct();
 $tiPartSkus = $_product->getTiPartSku() ? explode(",", $_product->getTiPartSku()) : null;
 $turboTypes = $_product->getAttributeText('turbo_type');
 $interchangeCollection = $this->getInterchangecollection();
+$whereUsed = $this->getWhereused();
 ?>
 
     <!-- Product Attributes -->
@@ -92,6 +93,48 @@ $interchangeCollection = $this->getInterchangecollection();
                     echo "</li>";
                 }
             }
+        ?>
+        <?php   //display Turbo Chargers that are serviced by primary part
+
+            // get id for turbo attribute set
+            $turboAttributeSetId = Mage::getModel('eav/entity_attribute_set')->getCollection()
+                ->addFieldToFilter('attribute_set_name', 'Turbo')
+                ->getFirstItem()
+                ->getAttributeSetId();
+
+            // get collection of where-used turbos
+            if ($whereUsed) {
+                $whereUsedCollection = Mage::getModel('catalog/product')->getCollection()
+                    ->addAttributeToSelect('manufacturer')
+                    ->addAttributeToSelect('part_number')
+                    ->addAttributeToSort('part_number', 'ASC')
+                    ->addFieldToFilter('attribute_set_id', $turboAttributeSetId)
+                    ->addFieldToFilter('sku', array_keys($whereUsed));
+            }
+
+            $indexCnt = 0;
+            foreach ($whereUsedCollection as $whereUsedProduct) {
+                $indexCnt++;
+
+                // cap items to 10
+                if ($indexCnt > 10) {
+                    $turboWhereUsedList[] = '...see below for more</a>';
+                    break;
+                }
+
+                // add to array of values to display
+                $turboWhereUsedList[] = '<a href="' . $whereUsedProduct->getProductUrl() . '">' . $whereUsedProduct->getPartNumber() . '</a>';
+            }
+
+            // display array of html
+            if ($turboWhereUsedList) {
+                echo "<li><strong>Turbo Serviced:</strong> ";
+
+                // display list as comma-separated
+                echo implode(", ", $turboWhereUsedList);
+                echo "</li>";
+            }
+
         ?>
         <?php if ($turboTypes): ?>
             <li><strong>Turbo Type<?php if (count($turboTypes) > 1) { // English pluralization
