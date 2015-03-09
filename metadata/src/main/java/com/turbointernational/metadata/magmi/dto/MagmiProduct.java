@@ -3,6 +3,7 @@ package com.turbointernational.metadata.magmi.dto;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.part.ProductImage;
+import com.turbointernational.metadata.domain.part.types.Turbo;
 import com.turbointernational.metadata.util.ImageResizer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -219,8 +220,11 @@ public class MagmiProduct {
         columns.put("ti_part_number", tiPartNumber);
         columns.put("has_ti_chra", Boolean.toString(hasTiChra));
         
-        columns.put("turbo_model", StringUtils.join(turboModel, ','));
-        columns.put("turbo_type", StringUtils.join(turboType, ','));
+        // Don't overwrite turbo values
+        if (!(part instanceof Turbo)) {
+            columns.put("turbo_model", StringUtils.join(turboModel, ','));
+            columns.put("turbo_type", StringUtils.join(turboType, ','));
+        }
         
         columns.put("application_detail", StringUtils.join(applicationDetail, "||"));
 

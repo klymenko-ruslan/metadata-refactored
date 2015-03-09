@@ -16,7 +16,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
-import net.sf.jsog.JSOG;
 import org.apache.commons.lang.ObjectUtils;
 import org.springframework.beans.factory.annotation.Configurable;
 
@@ -94,8 +93,11 @@ public class Turbo extends Part {
     @Override
     public void csvColumns(Map<String, String> columns) {
         super.csvColumns(columns);
-        
-        // turbo model is handled specially.
+
+        if (getTurboModel() != null) {
+            columns.put("turbo_type", ObjectUtils.toString(getTurboModel().getTurboType().getName()));
+            columns.put("turbo_model", ObjectUtils.toString(getTurboModel().getName()));
+        }
 
         if (getCoolType() != null) {
             columns.put("cool_type", ObjectUtils.toString(getCoolType().getName()));
