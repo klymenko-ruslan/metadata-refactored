@@ -44,7 +44,7 @@
                 </div>
             <?php endif; ?>
             <?php if ($this->canShowOptions()): ?>
-                <p class="block-subtitle"><?php echo $this->__('OEM Number') ?></p>
+                <p class="block-subtitle"><?php echo $this->__('Part Number') ?></p>
                 <!-- Search goes here -->
             <?php
             $catalogSearchHelper = $this->helper('catalogsearch');
@@ -52,13 +52,13 @@
             ?>
                 <form id="search_mini_form" action="<?php echo $catalogSearchHelper->getResultUrl() ?>" method="get">
                     <div class="form-search" style="margin:12px">
-                        <input id="search" type="text" name="<?php echo $catalogSearchHelper->getQueryParamName() ?>" value="<?php echo $catalogSearchHelper->getEscapedQueryText($alphaNumeric) ?>" class="input-text" style="width: 100px;" maxlength="<?php echo $catalogSearchHelper->getMaxQueryLength(); ?>" placeholder="OEM Part &#35;&hellip;"/>
+                        <input id="search" type="text" name="<?php echo $catalogSearchHelper->getQueryParamName() ?>" value="<?php echo $catalogSearchHelper->getEscapedQueryText($alphaNumeric) ?>" class="input-text" style="width: 100px;" maxlength="<?php echo $catalogSearchHelper->getMaxQueryLength(); ?>" placeholder="Part Number&hellip;"/>
                         <button type="submit" title="<?php echo $this->__('Search') ?>" class="button">
                             <span><span><?php echo $this->__('Search') ?></span></span></button>
                         <div id="search_autocomplete" class="search-autocomplete"></div>
                         <script type="text/javascript">
                             //<![CDATA[
-                            var searchForm = new Varien.searchForm('search_mini_form', 'search', '<?php echo $this->__('OEM Part Number...')
+                            var searchForm = new Varien.searchForm('search_mini_form', 'search', '<?php echo $this->__('Part Number...')
             ?>');
                             searchForm.initAutocomplete('<?php echo $catalogSearchHelper->getSuggestUrl() ?>', 'search_autocomplete');
                             //]]>

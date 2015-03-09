@@ -31,6 +31,8 @@ $_product = $this->getProduct();
 // Get TI part SKUs and turbo types
 $tiPartSkus = $_product->getTiPartSku() ? explode(",", $_product->getTiPartSku()) : null;
 $turboTypes = $_product->getAttributeText('turbo_type');
+$interchangeCollection = $this->getInterchangecollection();
+$whereUsed = $this->getWhereused();
 ?>
 
     <!-- Product Attributes -->
@@ -59,6 +61,81 @@ $turboTypes = $_product->getAttributeText('turbo_type');
                     }
                 } ?></li>
         <?php endif; ?>
+        <?php
+            // only display if primary part manfr is TI
+            if ($_product->isTurboInternational()) {
+
+                $indexCnt = 0;
+                // find all non-ti interchange parts
+                foreach ($interchangeCollection as $interchangeProduct) {
+
+                    // cap items to 10
+                    if ($indexCnt > 10) {
+                        $InterchangeProductList[] = '...see below for more</a>';
+                        break;
+                    }
+
+                    // if part is not TI
+                    if (!$interchangeProduct->isTurboInternational()) {
+                        $indexCnt++;
+
+                        // create array of values to display
+                        $InterchangeProductList[] = '<a href="' . $interchangeProduct->getProductUrl() . '">' . $interchangeProduct->getPartNumber() . '</a>';
+                    }
+                }
+
+                // display html result
+                if ($InterchangeProductList) {
+                    echo "<li><strong>Compatible OE Part:</strong> ";
+
+                    // display list as comma-separated
+                    echo implode(", ", $InterchangeProductList);
+                    echo "</li>";
+                }
+            }
+        ?>
+        <?php   //display Turbo Chargers that are serviced by primary part
+
+            // get id for turbo attribute set
+            $turboAttributeSetId = Mage::getModel('eav/entity_attribute_set')->getCollection()
+                ->addFieldToFilter('attribute_set_name', 'Turbo')
+                ->getFirstItem()
+                ->getAttributeSetId();
+
+            // get collection of where-used turbos
+            if ($whereUsed) {
+                $whereUsedCollection = Mage::getModel('catalog/product')->getCollection()
+                    ->addAttributeToSelect('manufacturer')
+                    ->addAttributeToSelect('part_number')
+                    ->addAttributeToSort('part_number', 'ASC')
+                    ->addFieldToFilter('attribute_set_id', $turboAttributeSetId)
+                    ->addFieldToFilter('sku', array_keys($whereUsed));
+            }
+
+            $indexCnt = 0;
+            foreach ($whereUsedCollection as $whereUsedProduct) {
+                $indexCnt++;
+
+                // cap items to 10
+                if ($indexCnt > 10) {
+                    $turboWhereUsedList[] = '...see below for more</a>';
+                    break;
+                }
+
+                // add to array of values to display
+                $turboWhereUsedList[] = '<a href="' . $whereUsedProduct->getProductUrl() . '">' . $whereUsedProduct->getPartNumber() . '</a>';
+            }
+
+            // display array of html
+            if ($turboWhereUsedList) {
+                echo "<li><strong>Turbo Serviced:</strong> ";
+
+                // display list as comma-separated
+                echo implode(", ", $turboWhereUsedList);
+                echo "</li>";
+            }
+
+        ?>
         <?php if ($turboTypes): ?>
             <li><strong>Turbo Type<?php if (count($turboTypes) > 1) { // English pluralization
                         echo 's';
@@ -78,45 +155,4 @@ $turboTypes = $_product->getAttributeText('turbo_type');
         <?php endif; ?>
     </ul>
 
-    <!-- Turbo cartridge upper section details -->
-    <div style="margin-top:40px;">
-        <?php if ($_product->getAttributeSetName() == 'Turbo'): ?>
-            <ul>
-                <?php $billOfMaterials = json_decode($_product->getBillOfMaterials(), true) ?>
-                <?php
-                foreach ($billOfMaterials as $bomItem) { // <-- need to setup handler to make sure bomItemProduct is a cartridge
-                    $bomItemProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $bomItem['sku']);
-                    ?>
-                    <?php if ($bomItemProduct->getAttributeSetName() == 'Cartridge'): ?>
-                        <li><strong>Cartridge:</strong> <?php
-                            echo '<a href="' . $bomItemProduct->getProductUrl() . '">' . $bomItemProduct->getPartNumber() . '</a>'; ?>
-                        </li>
-                        <?php if ($bomItem['ti_part_sku']): ?>
-                            <li>
-                                <strong>Compatible TI Part:</strong>
-                                <?php
-                                foreach ($bomItem['ti_part_sku'] as $a => $bomTiProduct) {
-                                    $bomItemInterchangeProduct = Mage::getModel('catalog/product')->loadByAttribute('sku', $bomTiProduct);
-                                    if (!$bomItemInterchangeProduct) {
-                                        continue;
-                                    }
-                                    
-                                    echo '<a href="' . $bomItemInterchangeProduct->getProductUrl() . '">' . $bomItemInterchangeProduct->getPartNumber() . '</a>';
-                                    
-                                    if ($a+1 < count($bomItem['ti_part_sku'])) {
-                                        echo ", ";
-                                    }
-                                }
-                                ?>
-                            </li>
-                        <?php endif; ?>
-                    <?php endif; ?>
-                <?php
-                }
-                ?>
-            </ul>
-        <?php endif; ?>
-    </div>
-
 <?php echo $this->getChildHtml('product_type_data_extra') ?>
-<?php echo $this->getPriceHtml($_product) ?>

@@ -6,4 +6,6 @@ allow from 192.168.42.10  # Vagrant Metadata
 allow from 71.227.128.226 # Jeff Home
 allow from 199.231.242.26 # Jeff Hub
 allow from 71.185.167.82  # Paul Home
+allow from 162.249.218.162 # TI Carlsbad office
+allow from 76.176.48.235  # Paul Home - Garfield st
 

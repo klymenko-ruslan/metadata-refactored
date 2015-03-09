@@ -35,15 +35,18 @@ if ($tiProduct->getId() != $this->getProduct()->getId()) {
 <?php if ($tiProduct != null && $tiProduct->isSaleable()): ?>
     <div class="add-to-cart">
         <?php if (!$tiProduct->isGrouped()): ?>
+        <div class="add-to-cart-qty">
             <label for="qty"><?php echo $this->__('Qty:') ?></label>
             <input type="text" name="qty" id="qty" maxlength="12" value="<?php echo $this->getProductDefaultQty() * 1 ?>"
                    title="<?php echo $this->__('Qty') ?>" class="input-text qty"/>
+        </div>
         <?php endif; ?>
-            
+        <div>
         <button type="button" title="<?php echo $addToCartString ?>" class="button btn-cart"
                 onclick="productAddToCartForm.submit(this)">
             <span><span><?php echo $addToCartString ?></span></span>
         </button>
+        </div>
         <?php echo $this->getChildHtml('', true, true) ?>
     </div>
 <?php endif; ?>
