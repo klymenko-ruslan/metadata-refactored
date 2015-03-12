@@ -252,8 +252,8 @@ CREATE TABLE bom_descendant (
   INDEX(distance),
   UNIQUE INDEX(`part_bom_id`, `descendant_bom_id`, `distance`, `type`, `qty`),
   INDEX(part_bom_id, `type`, distance, descendant_bom_id),
-  FOREIGN KEY (part_bom_id) REFERENCES bom (id),
-  FOREIGN KEY (descendant_bom_id) REFERENCES bom (id)
+  FOREIGN KEY (part_bom_id) REFERENCES bom (id) ON DELETE CASCADE,
+  FOREIGN KEY (descendant_bom_id) REFERENCES bom (id) ON DELETE CASCADE
 ) ENGINE= INNODB;
 
 
