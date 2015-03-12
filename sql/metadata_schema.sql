@@ -948,7 +948,7 @@ VIEW `vpart_turbotype_kits` AS (
 --
 -- Magmi Views
 --
--- #443
+-- #443, #468
 DROP VIEW IF EXISTS `vmagmi_bom`;
 CREATE 
     ALGORITHM = UNDEFINED 
@@ -960,6 +960,7 @@ SELECT DISTINCT
   bd.part_id_descendant       AS descendant_sku,
   bd.qty                      AS quantity,
   bd.distance                 AS distance,
+  bd.`type`                   AS `type`,
   dppt.`value`                AS part_type_parent,
   if(db.id is not null, 1, 0) AS has_bom,
 
@@ -969,7 +970,7 @@ SELECT DISTINCT
 
   -- TI Interchanges
   vit.ti_part_id              AS int_sku
-FROM vbom_descendant_direct bd
+FROM vbom_descendant bd
 
   -- for descendant Part Type Parent
   INNER JOIN part       dp ON dp.id = bd.part_id_descendant
