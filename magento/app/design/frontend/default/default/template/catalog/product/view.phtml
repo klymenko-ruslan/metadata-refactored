@@ -650,8 +650,19 @@ if ($serviceKitSkus) {
                 <?php foreach ($billOfMaterialsCollection as $bomItemProduct): ?>
                     <?php
                     $bomItem = $billOfMaterialsAlt[$bomItemProduct->getSku()];
-                    // check to make sure that bomItem is a primary bom part
-                    if (empty($bomItem) or (($bomItem['type']!='direct' and !$bomItemProduct->isTurboInternational()) or in_array($bomItemProduct->getSku(), $billOfMaterialsDirectTiInterchange))
+                    // only loop through bomItems that are direct or are TI and not already in TI direct interchange
+                    if (!
+                        (!empty($bomItem)
+                        AND
+                           (
+                                $bomItem['type']=='direct'
+                                OR
+                                (
+                                    $bomItemProduct->isTurboInternational()
+                                    AND !in_array($bomItemProduct->getSku(), $billOfMaterialsDirectTiInterchange)
+                                )
+                            )
+                        )
                         ) {
                         continue;
                     }
@@ -661,13 +672,21 @@ if ($serviceKitSkus) {
 
                     <tr>
                         <td><?php echo $bomItemProduct->getAttributeText('part_type'); ?></td>
-                        <td><?php echo '<a href="' . $bomItemProduct->getProductUrl() . '">' . $bomItemProduct->getPartNumber() . '</a>'; ?></td>
+                        <td><?php // Part # column
+                            // only display if bom item part is a direct descendant of primary part
+                            if ($bomItem['type']=='direct') {
+                                echo '<a href="' . $bomItemProduct->getProductUrl() . '">' . $bomItemProduct->getPartNumber() . '</a>';
+                            }
+                            ?>
+                        </td>
                         <?php 
 
                         // don't display if primary part manfr is TI
                         if (!$_product->isTurboInternational()): ?>
-                            <td><?php
+                            <td><?php // TI Part # column
 
+                            // display first TI interchange part if bom item is direct
+                            if ($bomItem['type']=='direct') {
                                 //Get TI first part number
                                 foreach ($bomItem['ti_part_sku'] as $idx => $tiPartSku) {
 
@@ -684,7 +703,11 @@ if ($serviceKitSkus) {
                                         // exit loop after first product
                                         break;
                                     }
-                                }?>
+                                }
+                            // else, display since bom_item is indirect (already verified that bom_item = TI AND bom_item not in TI interchange)
+                            } else {
+                                echo '<a href="' . $bomItemProduct->getProductUrl() . '">' . $bomItemProduct->getPartNumber() . '</a>';
+                            }?>
                             </td>
                         <?php endif; ?>
                         <td><?php // Interchange Products
