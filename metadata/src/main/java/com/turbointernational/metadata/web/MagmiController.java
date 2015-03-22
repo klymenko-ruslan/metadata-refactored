@@ -29,10 +29,11 @@ import com.turbointernational.metadata.mas90.pricing.ItemPricing;
 import com.turbointernational.metadata.mas90.pricing.CalculatedPrice;
 import com.turbointernational.metadata.mas90.Mas90;
 import com.turbointernational.metadata.mas90.pricing.UnknownDiscountCodeException;
+import java.util.Arrays;
+import java.util.SortedSet;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,10 +50,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class MagmiController {
     private static final Logger logger = Logger.getLogger(MagmiController.class.toString());
     
-    public String[] getCsvHeaders() {
-        return new String[] {
-
-            //<editor-fold defaultstate="collapsed" desc="Basic">
+    public String[] getCsvHeaders(SortedSet<String> priceLevels) {
+        List<String> headers = new ArrayList<String>();
+        
+        //<editor-fold defaultstate="collapsed" desc="Basic">
+        headers.addAll(Arrays.asList(
             "sku",
             "part_type",
             "attribute_set",
@@ -80,17 +82,21 @@ public class MagmiController {
             "image",
             "small_image",
             "thumbnail",
-            "media_gallery",
-            //</editor-fold>
+            "media_gallery"
+        ));
+        //</editor-fold>
 
-            //<editor-fold defaultstate="collapsed" desc="Types">
+        //<editor-fold defaultstate="collapsed" desc="Types">
+        headers.addAll(Arrays.asList(
             "kit_type",
             "gasket_type",
             "seal_type",
-            "cool_type",
-            //</editor-fold>
+            "cool_type"
+        ));
+        //</editor-fold>
 
-            //<editor-fold defaultstate="collapsed" desc="Part Type Specifics">
+        //<editor-fold defaultstate="collapsed" desc="Part Type Specifics">
+        headers.addAll(Arrays.asList(
              // Cartridge
             "service_kits",
 
@@ -133,32 +139,26 @@ public class MagmiController {
             "tip_height_b",
             "water_ports",
             "width_max",
-            "width_min",
-            //</editor-fold>
+            "width_min"
+        ));
+        //</editor-fold>
 
-            //<editor-fold defaultstate="collapsed" desc="MAS90 Prices">
-            "customerprice",
+        //<editor-fold defaultstate="collapsed" desc="MAS90 Prices">
+        headers.add("customerprice");
+        
+        // Group Prices
+        for (String priceLevel: priceLevels) {
+            headers.add("group_price:ERP_PL_" + priceLevel);
+        }
+        
+        // Tier Prices
+        for (String priceLevel: priceLevels) {
+            headers.add("tier_price:ERP_PL_" + priceLevel);
+        }
+        //</editor-fold>
+        
 
-            "group_price:ERP_PL_0",
-            "group_price:ERP_PL_1",
-            "group_price:ERP_PL_2",
-            "group_price:ERP_PL_3",
-            "group_price:ERP_PL_4",
-            "group_price:ERP_PL_5",
-            "group_price:ERP_PL_E",
-            "group_price:ERP_PL_R",
-            "group_price:ERP_PL_W",
-
-            "tier_price:ERP_PL_0",
-            "tier_price:ERP_PL_1",
-            "tier_price:ERP_PL_2",
-            "tier_price:ERP_PL_3",
-            "tier_price:ERP_PL_4",
-            "tier_price:ERP_PL_5",
-            "tier_price:ERP_PL_E",
-            "tier_price:ERP_PL_R",
-            "tier_price:ERP_PL_W",
-            //</editor-fold>
+        headers.addAll(Arrays.asList(
 
             // Make,Year,Model
             "finder:" + finderIdApplication,
@@ -171,7 +171,9 @@ public class MagmiController {
             
             // OEM SKU (custom option, used to show OEM part in cart)
             "OEMSKU:field:0"
-        };
+        ));
+        
+        return headers.toArray(new String[0]);
     }
 
     @Value("${mas90.db.path}")
@@ -207,7 +209,7 @@ public class MagmiController {
         CSVWriter writer = new CSVWriter(new OutputStreamWriter(out), ',', '\'', '\\');
         
         // Write the header row
-        writer.writeNext(getCsvHeaders());
+        writer.writeNext(getCsvHeaders(mas90.getPriceLevels()));
         
         // Get the product IDs to retrieve
         int position = 0;
@@ -274,7 +276,7 @@ public class MagmiController {
         CSVWriter writer = new CSVWriter(new OutputStreamWriter(out), ',', '\'', '\\');
         
         // Write the header row
-        writer.writeNext(getCsvHeaders());
+        writer.writeNext(getCsvHeaders(mas90.getPriceLevels()));
         
         Part part = Part.findPart(partId);
         List<Part> parts = new ArrayList<Part>();
@@ -309,7 +311,7 @@ public class MagmiController {
         }
 
         // Map the column into a value array for the CSV writer
-        String[] csvHeaders = getCsvHeaders();
+        String[] csvHeaders = getCsvHeaders(mas90.getPriceLevels());
         String[] valueArray = new String[csvHeaders.length];
         for (int i = 0; i < csvHeaders.length; i++) {
             
