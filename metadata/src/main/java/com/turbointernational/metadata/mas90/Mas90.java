@@ -1,5 +1,6 @@
 package com.turbointernational.metadata.mas90;
 
+import com.google.common.collect.Sets;
 import com.turbointernational.metadata.mas90.pricing.Pricing;
 import com.turbointernational.metadata.mas90.pricing.ItemPricing;
 import com.turbointernational.metadata.mas90.pricing.CalculatedPrice;
@@ -11,10 +12,10 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import org.apache.commons.lang.ObjectUtils;
@@ -22,34 +23,13 @@ import org.apache.commons.lang.StringUtils;
 import org.h2.jdbcx.JdbcDataSource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
+import org.springframework.jdbc.core.RowMapper;
 
 /**
  *
  * @author jrodriguez
  */
 public class Mas90 {
-    
-    private static SortedSet<String> priceLevels = new TreeSet();
-    
-    static {
-        
-        TreeSet<String> tempPriceLevels = new TreeSet();
-        tempPriceLevels.add("0");
-        tempPriceLevels.add("1");
-        tempPriceLevels.add("2");
-        tempPriceLevels.add("3");
-        tempPriceLevels.add("4");
-        tempPriceLevels.add("5");
-        tempPriceLevels.add("E");
-        tempPriceLevels.add("R");
-        tempPriceLevels.add("W");
-        
-        Mas90.priceLevels = Collections.unmodifiableSortedSet(tempPriceLevels);
-    }
-
-    public static SortedSet<String> getPriceLevels() {
-        return priceLevels;
-    }
 
     /**
      * In-memory H2 database.
@@ -63,6 +43,12 @@ public class Mas90 {
     private final Database mas90Db;
     
     private final Map<String, Pricing> defaultPriceLevelPricing = new HashMap();
+    
+    private final SortedSet<String> priceLevels = new TreeSet();
+
+    public SortedSet<String> getPriceLevels() {
+        return priceLevels;
+    }
 
     public Map<String, Pricing> getDefaultPriceLevelPricing() {
         return defaultPriceLevelPricing;
@@ -160,6 +146,11 @@ public class Mas90 {
         h2db.execute("ALTER TABLE product_customer_prices ADD PRIMARY KEY (product_id, customer_id)");
     }
     
+    /**
+     * 
+     * @return
+     * @throws IOException 
+     */
     private void loadMas90Data() throws IOException {
         
         // Load customer data
@@ -243,9 +234,22 @@ public class Mas90 {
                 throw new IllegalStateException("Unknown PriceCodeRecord in IMB_PriceCode: " + priceCode);
             }
             
-            // Mas90 bug handling
+            // Mas90 bug handling: https://github.com/pthiry/TurboInternational/issues/5#issuecomment-29331951
             h2db.update("UPDATE price_level_prices SET price_level = 2 WHERE price_level = ' '");
         }
+        
+        // Get the price levels
+        priceLevels.addAll(
+                h2db.query("SELECT DISTINCT price_level FROM price_level_prices",
+                        new RowMapper<String>() {
+                            @Override
+                            public String mapRow(ResultSet rs, int rowNum) throws SQLException {
+                                return rs.getString("price_level");
+                            }
+                        }
+                )
+        );
+
     }
     
     public BigDecimal getStandardPrice(String itemNumber) throws IOException {

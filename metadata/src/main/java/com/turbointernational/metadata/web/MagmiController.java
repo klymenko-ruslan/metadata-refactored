@@ -396,7 +396,7 @@ public class MagmiController {
     private void addErpGroupPrices(Mas90 mas90, ItemPricing itemPricing, Map<String, String> columns) throws IOException {
         
         // Add column data for each price level, group and tier prices
-        for (String priceLevel : Mas90.getPriceLevels()) {
+        for (String priceLevel : mas90.getPriceLevels()) {
             
             // Get the price level pricing
             StringBuilder priceString = new StringBuilder();

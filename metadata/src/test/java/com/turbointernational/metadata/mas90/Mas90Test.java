@@ -121,7 +121,6 @@ public class Mas90Test {
     @Test
     public void testCalculatePriceLevelPrices() {
     }
-
     
     @Test
     public void testGetPriceLevels() throws Exception {
@@ -135,8 +134,9 @@ public class Mas90Test {
         expectedPriceLevels.add("E");
         expectedPriceLevels.add("R");
         expectedPriceLevels.add("W");
+        expectedPriceLevels.add("X");
         
-        Set<String> priceLevels = Mas90.getPriceLevels();
+        Set<String> priceLevels = instance.getPriceLevels();
         
         assertEquals(expectedPriceLevels, priceLevels);
     }
@@ -145,7 +145,7 @@ public class Mas90Test {
     public void testGetDefaultPriceLevelPricing() throws Exception {
         Map<String, Pricing> priceLevelPricings = instance.getDefaultPriceLevelPricing();
 
-        assertTrue(Mas90.getPriceLevels().containsAll(priceLevelPricings.keySet()));
+        assertTrue(instance.getPriceLevels().containsAll(priceLevelPricings.keySet()));
         assertEquals(new BigDecimal("10.0000"),  priceLevelPricings.get("0").getPriceBreak(0).getRate());
         assertEquals(new BigDecimal("5.0000"),   priceLevelPricings.get("1").getPriceBreak(0).getRate());
         assertEquals(new BigDecimal("0.0000"),   priceLevelPricings.get("2").getPriceBreak(0).getRate());
@@ -154,6 +154,7 @@ public class Mas90Test {
         assertEquals(new BigDecimal("-25.0000"), priceLevelPricings.get("5").getPriceBreak(0).getRate());
         assertEquals(new BigDecimal("20.0000"),  priceLevelPricings.get("E").getPriceBreak(0).getRate());
         assertEquals(new BigDecimal("0.0000"),   priceLevelPricings.get("R").getPriceBreak(0).getRate());
-        assertEquals(new BigDecimal("27.5000"),  priceLevelPricings.get("W").getPriceBreak(0).getRate());
+        assertEquals(new BigDecimal("24.0000"),  priceLevelPricings.get("W").getPriceBreak(0).getRate());
+        assertEquals(new BigDecimal("28.0000"),  priceLevelPricings.get("X").getPriceBreak(0).getRate());
     }
 }
