@@ -207,10 +207,16 @@ public class MagmiProduct {
         }
 
         // visibility
-        columns.put("visibility", "Catalog, Search"); // See magmi genericmapper visibility.csv
+        // magento/magmi/plugins/base/itemprocessors/genericmapper/mappings/default/visibility.csv
+        columns.put("visibility", "Catalog, Search");
 
-        // description
-        columns.put("status", "Enabled"); // See magmi genericmapper status.csv
+        // status
+        // magento/magmi/plugins/base/itemprocessors/genericmapper/mappings/default/status.csv
+        if (part.getInactive()) {
+            columns.put("status", "Disabled");
+        } else {
+            columns.put("status", "Enabled");
+        }
 
         columns.put("categories", getCategoriesString());
         
