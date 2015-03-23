@@ -35,10 +35,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
@@ -56,6 +58,7 @@ public class MagmiController {
         //<editor-fold defaultstate="collapsed" desc="Basic">
         headers.addAll(Arrays.asList(
             "sku",
+            "magmi:delete",
             "part_type",
             "attribute_set",
             "type",
@@ -194,10 +197,13 @@ public class MagmiController {
     @Autowired(required=true)
     MagmiDataFinder magmiDataFinder;
     
+    @Autowired(required=true)
+    JdbcTemplate db;
+    
     @RequestMapping("/products")
     @ResponseBody   
     @Transactional
-    public void products(HttpServletResponse response, OutputStream out) throws Exception {
+    public void products(HttpServletResponse response, OutputStream out, @RequestParam(defaultValue="30", required=false) int days) throws Exception {
         logger.log(Level.INFO, "Magmi export started.");
         
         response.setHeader("Content-Type", "text/csv");
@@ -255,6 +261,19 @@ public class MagmiController {
                     e);
             }
         } while (parts.size() >= magmiBatchSize);
+        
+        
+        // Deleted products
+        List<String> deletedIds = db.queryForList(
+                  "SELECT"
+                + "  `id`"
+                + "  FROM `deleted_parts`"
+                + "  WHERE dt > DATE_SUB(NOW(), INTERVAL ? DAY)",
+                String.class, days);
+        
+        for (String id : deletedIds) {
+            writer.writeNext(new String[] {id, "1"});
+        }
         
         
         writer.flush();

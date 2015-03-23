@@ -546,6 +546,11 @@ CREATE TABLE `part_turbo_type` (
 )
 ENGINE = INNODB;
 
+CREATE TABLE `deleted_parts` (
+  `id` BIGINT NOT NULL,
+  `dt` TIMESTAMP,
+  UNIQUE INDEX (id)
+) ENGINE = INNODB;
 
 --
 -- Views
