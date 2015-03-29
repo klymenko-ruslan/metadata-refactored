@@ -985,7 +985,15 @@ FROM vbom_descendant bd
   -- For descendant has_bom
   LEFT JOIN vbalt   alt ON alt.bom_id = bd.part_bom_id
   LEFT JOIN vint_ti vit ON vit.part_id = bd.part_id_descendant
-  LEFT JOIN bom      db ON db.parent_part_id = bd.part_id_descendant;
+  LEFT JOIN bom      db ON db.parent_part_id = bd.part_id_descendant
+
+  -- Find interchange parts that are already direct descendants
+  LEFT JOIN vbom_descendant_direct bdd on bd.part_id_ancestor = bdd.part_id_ancestor and bd.part_id_descendant = bdd.part_id_descendant and bd.type = 'Interchange'
+
+WHERE
+  -- Remove interchange parts that are already direct descendants
+  bdd.id is null
+;
 
 
 DROP VIEW IF EXISTS `vmagmi_service_kits`;
