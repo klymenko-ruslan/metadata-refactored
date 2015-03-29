@@ -651,7 +651,7 @@ VIEW vpart_turbo AS (
     vbom_ancestor ba
     JOIN turbo t ON t.part_id = ba.ancestor_part_id
 ) UNION DISTINCT (
-  SELECT part_id, turbo_id FROM part_turbo
+  SELECT part_id, part_id FROM turbo
 );
 
 DROP VIEW IF EXISTS vapp;
