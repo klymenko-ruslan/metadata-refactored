@@ -920,7 +920,7 @@ if ($serviceKitSkus) {
                                     echo $usage['turboType'];
                                     break;
                                 default:
-                                    echo join(', ', $usage['turboPartNumbers']);
+                                    echo join(', ', array_keys(array_flip($usage['turboPartNumbers'])));
                             }
                             ?>
                         </td>

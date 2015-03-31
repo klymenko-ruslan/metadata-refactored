@@ -170,6 +170,9 @@ $_helper = $this->helper('catalog/output');
                                     }
 
                                 }
+
+                                // remove any duplicate values
+                                $cartridgeTiArray = array_keys(array_flip($cartridgeTiArray));
                             }
                         }
                     }
