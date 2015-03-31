@@ -222,7 +222,7 @@ public class Part implements Comparable<Part> {
     public void setInactive(Boolean inactive) {
         this.inactive = inactive;
     }
-    
+
     public Interchange getInterchange() {
         return interchange;
     }

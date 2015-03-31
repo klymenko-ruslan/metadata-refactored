@@ -9,6 +9,7 @@ import java.io.File;
 import java.security.Principal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
@@ -165,11 +166,12 @@ public class PartController {
             return new ResponseEntity<String>(headers, HttpStatus.NOT_FOUND);
         }
         
-        String partJson = part.toJson();
-        part.remove();
-        
         // Update the changelog
-        Changelog.log("Deleted part", partJson);
+        Changelog.log("Deleted part", part.toJson());
+        
+        // Delete the part
+        db.update("INSERT INTO `deleted_parts` (id) VALUES(?)", part.getId());
+        part.remove();
         
         return new ResponseEntity<String>(headers, HttpStatus.OK);
     }
