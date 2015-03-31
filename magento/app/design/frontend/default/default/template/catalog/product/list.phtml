@@ -143,7 +143,7 @@ $_helper = $this->helper('catalog/output');
                                 $bomItemProduct = $bomItemSkusCollection->getItemByColumnValue('sku',$bomItem['sku']);
 
                                 // check to see if product is a cartridge
-                                if ($bomItemProduct->isCartridge()) {
+                                if ($bomItemProduct != null AND $bomItemProduct->isCartridge()) {
 
                                     // save first chra for pricing
                                     if ($firstChraProduct == null) {
@@ -155,6 +155,11 @@ $_helper = $this->helper('catalog/output');
                                     // get data for interchangeable chra TI part if exists.  There can be multiple TI parts for a chra
                                     foreach ($bomItem['ti_part_sku'] as $chraTiPartSku) {
                                         $chraTiProduct = $bomItemTiPartSkusCollection->getItemByColumnValue('sku',$chraTiPartSku);
+
+                                        // Only if sku exists in collection.  If the part is inactive then sku won't be found in collection
+                                        if ($chraTiProduct == null) {
+                                            continue;
+                                        }
 
                                         // save first TI chra for pricing
                                         if ($firstChraTiProduct == null) {
@@ -200,6 +205,11 @@ $_helper = $this->helper('catalog/output');
                                 }
 
                                 $tiPart = $tiPartSkusCollection->getItemByColumnValue('sku',$tiPartSku);
+
+                                // Only if sku exists in collection.  If the part is inactive then sku won't be found in collection
+                                if ($tiPart == null) {
+                                    continue;
+                                }
 
                                 if ($firstTiProduct == null) {
                                     $firstTiProduct = $tiPart;

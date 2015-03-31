@@ -726,7 +726,9 @@ if ($serviceKitSkus) {
 
                                     // create associative array of output values where key is combination of part number and sku
                                     // this key enables sorting by part number and ensures uniqueness of keys by adding the sku
-                                    $bomItemInterchangeProductList[$bomItemInterchangeProduct->getPartNumber() . $bomItemInterchangeSku] = '<a href="' . $bomItemInterchangeProduct->getProductUrl() . '">' . $bomItemInterchangeProduct->getPartNumber() . '</a>';
+                                    if ($bomItemInterchangeProduct) {
+                                        $bomItemInterchangeProductList[$bomItemInterchangeProduct->getPartNumber() . $bomItemInterchangeSku] = '<a href="' . $bomItemInterchangeProduct->getProductUrl() . '">' . $bomItemInterchangeProduct->getPartNumber() . '</a>';
+                                    }
                                 endforeach;
 
                                 uksort($bomItemInterchangeProductList, 'strcasecmp');
@@ -858,6 +860,12 @@ if ($serviceKitSkus) {
                 <?php foreach ($whereUsedSlice as $usage): ?>
                     <?php
                         $usageProduct = $whereUsedCollection->getItemByColumnValue('sku', $usage['sku']);
+
+                        // Continue only if sku exists in collection.  If the part is inactive then sku won't be found in collection
+                        if ($usageProduct == null) {
+                            continue;
+                        }
+
                     ?>
 
                     <tr>
