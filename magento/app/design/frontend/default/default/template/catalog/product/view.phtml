@@ -1017,6 +1017,7 @@ if ($serviceKitSkus) {
                         ->addAttributeToSelect('part_number')
                         ->addAttributeToSelect('name')
                         ->setOrder('part_number', 'ASC')
+                        ->addFieldToFilter('manufacturer', 44)  //TODO use a value for turbo international manfr record instead of the database id
                         ->addFieldToFilter('sku', $uniqueComponents);
                 }
 
