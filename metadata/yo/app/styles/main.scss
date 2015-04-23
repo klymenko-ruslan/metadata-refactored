@@ -1,9 +1,9 @@
-$icon-font-path: "../bower_components/bootstrap-sass/dist/fonts/";
+$icon-font-path: "../bower_components/bootstrap-sass/assets/fonts/bootstrap/";
 $fa-font-path:   "../bower_components/fontawesome/fonts/";
 $iconSpritePath: "../images/glyphicons-halflings.png";
 $iconWhiteSpritePath: "../images/glyphicons-halflings-white.png";
 
-@import "../bower_components/bootstrap-sass/lib/bootstrap";
+@import "../bower_components/bootstrap-sass/assets/stylesheets/bootstrap";
 @import "../bower_components/fontawesome/scss/font-awesome";
 
 /* Mixins */
