@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-    .factory('searchService', function ($http, $log, Facets) {
+    .factory('searchService', function ($http, $log, Facets, METADATA_BASE) {
         return function (partSearchParams) {
 //        console.log('Searching for `' + search.partNumber + '`, facets: ' + JSON.stringify(search.facets));
 
@@ -47,7 +47,7 @@ angular.module('ngMetaCrudApp')
             searchRequest.query.bool.must.push({
                 prefix: {'manufacturerPartNumber.short': partNumberShort}
               });
-              
+
 //              searchRequest.query.bool.should.push({
 //                prefix: {"manufacturerPartNumber.full": partNumber.toLowerCase()}
 //              });
@@ -76,7 +76,8 @@ angular.module('ngMetaCrudApp')
             headers: {
               'Content-type': 'text/plain'
             },
-            url: '/metadata/search',
+            withCredentials: true,
+            url: METADATA_BASE + 'search',
             data: searchRequest
           });
         };
