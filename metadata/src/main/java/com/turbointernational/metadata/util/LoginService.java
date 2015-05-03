@@ -39,7 +39,7 @@ public class LoginService implements UserDetailsService {
     public User createFirstUser() {
         User newUser = new User();
         newUser.setName("Administrator");
-        newUser.setEmail("admin");
+        newUser.setEmail("admin@localhost");
         newUser.setEnabled(true);
         newUser.setPassword(BCrypt.hashpw("admin", BCrypt.gensalt()));
 

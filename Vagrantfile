@@ -81,7 +81,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       sudo service tomcat7 stop
 
       # Increase tomcat memory
-      sudo bash -c 'echo -e "\n# From Vagrantfile\nJAVA_OPTS=\"-Xmx2g -Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n\"\n" >> /etc/default/tomcat7'
+      sudo bash -c 'echo -e "\n# From Vagrantfile\nJAVA_OPTS=\"-Xmx2g\"\n" >> /etc/default/tomcat7'
 
       echo Buliding and Installing Metadata Webapp
 
