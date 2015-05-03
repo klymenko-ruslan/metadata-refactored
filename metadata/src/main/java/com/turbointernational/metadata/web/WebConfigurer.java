@@ -1,4 +1,4 @@
-package com.turbointernational.metadata.config;
+package com.turbointernational.metadata.web;
 
 import java.util.concurrent.TimeUnit;
 import javax.servlet.ServletContext;

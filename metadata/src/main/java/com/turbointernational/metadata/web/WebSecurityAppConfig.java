@@ -1,4 +1,4 @@
-package com.turbointernational.metadata.config;
+package com.turbointernational.metadata.web;
 
 import com.turbointernational.metadata.util.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
