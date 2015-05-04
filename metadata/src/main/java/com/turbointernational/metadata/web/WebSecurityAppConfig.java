@@ -47,21 +47,25 @@ public class WebSecurityAppConfig extends WebSecurityConfigurerAdapter {
 //        http.httpBasic().disable();
         
         http.authorizeRequests()
-            .anyRequest().permitAll()
-//            .antMatchers("/admin/**").authenticated()
-//            .antMatchers("/admin/**").hasRole("ADMIN")
-//            .antMatchers("/metadata/security**").permitAll()
-//            .antMatchers("/", "/signup", "/about").permitAll()
+            .antMatchers("/metadata/security/login",
+                         "/metadata/security/login/**").permitAll()    // Login endpoints open to anyone
+            .antMatchers("/metadata/security/password**").permitAll()  // Password reset endpoints open to anyone
+            .antMatchers("/metadata/**").authenticated()               // API requires authentication
+            .antMatchers("/product_images/**").authenticated()         // Images require authentication
+            .antMatchers("/magmi/**").hasIpAddress("127.0.0.1/32")     // Allow magmi from localhost without user.
             .and().formLogin()
                     .loginPage("/metadata/security/login/required")
                     .loginProcessingUrl("/metadata/security/login")
-                    .failureUrl("/metadata/security/denied")
-            .and().rememberMe();
+                     .defaultSuccessUrl("/metadata/security/login/success")
+                    .failureUrl("/metadata/security/login/denied")
+            .and().rememberMe()
+            .and().logout().logoutUrl("/metadata/security/logout")
+            .and().exceptionHandling().accessDeniedPage("/metadata/security/login/forbidden");
 //            .and().permitAll();
         
+        http.csrf().disable();
+        
 //        http.csrf().disable()
-//            .authorizeRequests().antMatchers("/", "/index.html", "/bootstrap/**", "/jquery/**").permitAll()
-//            .anyRequest().authenticated().and().formLogin()
 //            .loginPage("/login.html").passwordParameter("password").usernameParameter("username")
 //            .permitAll()                    
 //            .and().logout()
@@ -74,7 +78,6 @@ public class WebSecurityAppConfig extends WebSecurityConfigurerAdapter {
 //        <security:anonymous enabled="false"/>
 //        <security:intercept-url pattern="/metadata/**"/>
 //        <security:intercept-url pattern="hasIpAddress('127.0.0.1/32')"/>
-//        <security:remember-me/>
 //        <security:form-login login-processing-url="/metadata/security/login"
 //                             login-page="/metadata/security/login/required"
 //                             default-target-url="/metadata/security/login/success"

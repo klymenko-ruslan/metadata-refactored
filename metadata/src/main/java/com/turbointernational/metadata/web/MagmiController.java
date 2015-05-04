@@ -2,13 +2,15 @@ package com.turbointernational.metadata.web;
 
 import au.com.bytecode.opencsv.CSVWriter;
 import com.turbointernational.metadata.domain.other.Manufacturer;
+import com.turbointernational.metadata.domain.other.ManufacturerDao;
 import com.turbointernational.metadata.domain.part.Part;
-import com.turbointernational.metadata.domain.type.CoolType;
-import com.turbointernational.metadata.domain.type.GasketType;
-import com.turbointernational.metadata.domain.type.KitType;
-import com.turbointernational.metadata.domain.type.ManufacturerType;
-import com.turbointernational.metadata.domain.type.PartType;
-import com.turbointernational.metadata.domain.type.SealType;
+import com.turbointernational.metadata.domain.part.PartDao;
+import com.turbointernational.metadata.domain.type.CoolTypeDao;
+import com.turbointernational.metadata.domain.type.GasketTypeDao;
+import com.turbointernational.metadata.domain.type.KitTypeDao;
+import com.turbointernational.metadata.domain.type.ManufacturerTypeDao;
+import com.turbointernational.metadata.domain.type.PartTypeDao;
+import com.turbointernational.metadata.domain.type.SealTypeDao;
 import com.turbointernational.metadata.magmi.MagmiDataFinder;
 import com.turbointernational.metadata.util.ImageResizer;
 import com.turbointernational.metadata.magmi.dto.MagmiProduct;
@@ -31,6 +33,7 @@ import com.turbointernational.metadata.mas90.Mas90;
 import com.turbointernational.metadata.mas90.pricing.UnknownDiscountCodeException;
 import java.util.Arrays;
 import java.util.SortedSet;
+import javax.persistence.EntityManager;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -198,6 +201,33 @@ public class MagmiController {
     MagmiDataFinder magmiDataFinder;
     
     @Autowired(required=true)
+    EntityManager entityManager;
+    
+    @Autowired(required=true)
+    ManufacturerDao manufacturerDao;
+    
+    @Autowired(required=true)
+    ManufacturerTypeDao manufacturerTypeDao;
+    
+    @Autowired(required=true)
+    PartTypeDao partTypeDao;
+    
+    @Autowired(required=true)
+    CoolTypeDao coolTypeDao;
+    
+    @Autowired(required=true)
+    GasketTypeDao gasketTypeDao;
+    
+    @Autowired(required=true)
+    KitTypeDao kitTypeDao;
+    
+    @Autowired(required=true)
+    SealTypeDao sealTypeDao;
+    
+    @Autowired(required=true)
+    PartDao partDao;
+    
+    @Autowired(required=true)
     JdbcTemplate db;
     
     @RequestMapping("/products")
@@ -225,19 +255,19 @@ public class MagmiController {
             try {
                 
                 // Clear Hibernate
-                Part.entityManager().clear();
+                entityManager.clear();
                 
                 // Pre-cache our frequently-used entities
-                ManufacturerType.findAllManufacturerTypes();
-                Manufacturer.findAllManufacturers();
-                PartType.findAllPartTypes();
-                CoolType.findAllCoolTypes();
-                GasketType.findAllGasketTypes();
-                KitType.findAllKitTypes();
-                SealType.findAllSealTypes();
+                manufacturerTypeDao.findAll();
+                manufacturerDao.findAll();
+                partTypeDao.findAll();
+                coolTypeDao.findAll();
+                gasketTypeDao.findAll();
+                kitTypeDao.findAll();
+                sealTypeDao.findAll();
 
                 // Get the next batch of part IDs
-                parts = Part.findPartEntries(position, magmiBatchSize);
+                parts = partDao.findAll(position, magmiBatchSize);
 
                 // Process each product
                 for (MagmiProduct product : magmiDataFinder.findMagmiProducts(parts).values()) {
@@ -297,7 +327,7 @@ public class MagmiController {
         // Write the header row
         writer.writeNext(getCsvHeaders(mas90.getPriceLevels()));
         
-        Part part = Part.findPart(partId);
+        Part part = partDao.findOne(partId);
         List<Part> parts = new ArrayList<Part>();
         parts.add(part);
         

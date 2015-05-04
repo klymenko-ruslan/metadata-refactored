@@ -1,29 +1,23 @@
 package com.turbointernational.metadata.domain.other;
-import static com.turbointernational.metadata.domain.other.TurboModel.entityManager;
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
-import javax.persistence.PersistenceContext;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.transaction.annotation.Transactional;
 
-@Configurable
 @Entity
 @Table(name="TURBO_TYPE", uniqueConstraints=@UniqueConstraint(columnNames={"name"}))
-public class TurboType implements Comparable<TurboType>{
+public class TurboType implements Comparable<TurboType>, Serializable{
     
     //<editor-fold defaultstate="collapsed" desc="Properties">
     @Id
@@ -100,62 +94,7 @@ public class TurboType implements Comparable<TurboType>{
     }
     
     //</editor-fold>
-    
-    //<editor-fold defaultstate="collapsed" desc="ActiveRecord">
-    
-    @PersistenceContext
-    transient EntityManager entityManager;
-    
-    public static final EntityManager entityManager() {
-        EntityManager em = new TurboType().entityManager;
-        if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
-        return em;
-    }
-    
-    public static TurboType findTurboType(Long id) {
-        if (id == null) return null;
-        return entityManager().find(TurboType.class, id);
-    }
-    
-    public static List<TurboType> findTurboTypesByManufacturerId(Long manufacturerId) {
-        return entityManager().createQuery(
-              "SELECT o\n"
-            + "FROM\n"
-            + "  TurboType o\n"
-            + "  JOIN o.manufacturer\n"
-            + "WHERE o.manufacturer.id = :manufacturerId\n"
-            + "ORDER BY o.name",
-            TurboType.class)
-            .setParameter("manufacturerId", manufacturerId)
-            .getResultList();
-    }
-    
-    @Transactional
-    public void persist() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.persist(this);
-    }
-    
-    @Transactional
-    public TurboType merge() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        TurboType merged = this.entityManager.merge(this);
-        this.entityManager.flush();
-        return merged;
-    }
-    
-    @Transactional
-    public void remove() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        if (this.entityManager.contains(this)) {
-            this.entityManager.remove(this);
-        } else {
-            TurboType attached = TurboType.findTurboType(this.id);
-            this.entityManager.remove(attached);
-        }
-    }
-    //</editor-fold>
-    
+        
     @Override
     public int compareTo(TurboType o) {
         return this.name.compareTo(o.getName());

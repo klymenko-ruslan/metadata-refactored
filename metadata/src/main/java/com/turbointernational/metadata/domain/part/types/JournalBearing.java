@@ -6,11 +6,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
-import net.sf.jsog.JSOG;
 import org.apache.commons.lang.ObjectUtils;
-import org.springframework.beans.factory.annotation.Configurable;
 
-@Configurable
 @Entity
 @Table(name="journal_bearing")
 @PrimaryKeyJoinColumn(name = "part_id")

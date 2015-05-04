@@ -1,6 +1,7 @@
 package com.turbointernational.metadata.domain.part;
-import com.turbointernational.metadata.domain.changelog.Changelog;
+import com.turbointernational.metadata.domain.changelog.ChangelogDao;
 import com.turbointernational.metadata.domain.other.TurboType;
+import com.turbointernational.metadata.domain.other.TurboTypeDao;
 import com.turbointernational.metadata.domain.part.bom.BOMAncestor;
 import com.turbointernational.metadata.util.ImageResizer;
 import flexjson.JSONSerializer;
@@ -9,7 +10,6 @@ import java.io.File;
 import java.security.Principal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
@@ -36,6 +36,18 @@ public class PartController {
 
     private static final Logger log = Logger.getLogger(PartController.class.toString());
     
+    @Autowired
+    ChangelogDao changelogDao;
+    
+    @Autowired
+    TurboTypeDao turboTypeDao;
+    
+    @Autowired
+    PartDao partDao;
+    
+    @Autowired
+    ProductImageDao productImageDao;
+    
     @Value("${images.originals}")
     File originalImagesDir;
     
@@ -51,7 +63,7 @@ public class PartController {
     @Secured("ROLE_READ")
     public ResponseEntity<String> show(@PathVariable("id") Long id) {
         
-        Part part = Part.findPart(id);
+        Part part = partDao.findOne(id);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json; charset=utf-8");
         if (part == null) {
@@ -87,8 +99,8 @@ public class PartController {
                     
                     ancestor.setDistance(rs.getInt("distance"));
                     ancestor.setType(rs.getString("type"));
-                    ancestor.setPart(Part.findPart(rs.getLong("part_id")));
-                    ancestor.setAncestor(Part.findPart(rs.getLong("ancestor_part_id")));
+                    ancestor.setPart(partDao.findOne(rs.getLong("part_id")));
+                    ancestor.setAncestor(partDao.findOne(rs.getLong("ancestor_part_id")));
 
                     return ancestor;
                 }
@@ -116,10 +128,10 @@ public class PartController {
     public ResponseEntity<String> createFromJson(Principal principal, @RequestBody String partJson) throws Exception {
         Part part = Part.fromJsonToPart(partJson);
         
-        part.persist();
+        partDao.persist(part);
         
         // Update the changelog
-        Changelog.log("Created part", part.toJson());
+        changelogDao.log("Created part", part.toJson());
         
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json");
@@ -134,21 +146,21 @@ public class PartController {
         headers.add("Content-Type", "application/json");
         
         // Get the original part so we can log the update
-        Part originalPart = Part.findPart(id);
+        Part originalPart = partDao.findOne(id);
         String originalPartJson = originalPart.toJson();
         
         // Update the part
         Part part = Part.fromJsonToPart(partJson);
         
-        if (part.merge() == null) {
+        if (partDao.merge(part) == null) {
             return new ResponseEntity<String>(headers, HttpStatus.NOT_FOUND);
         }
         
-        part = Part.findPart(part.getId());
-        Part.entityManager().refresh(part);
+        part = partDao.findOne(part.getId());
+        partDao.refresh(part);
         
         // Update the changelog
-        Changelog.log("Updated part",
+        changelogDao.log("Updated part",
             "{original: " + originalPartJson + ",updated: " + part.toJson() + "}");
         
         return new ResponseEntity<String>(part.toJson(), headers, HttpStatus.OK);
@@ -158,7 +170,7 @@ public class PartController {
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     @Secured("ROLE_DELETE_PART")
     public ResponseEntity<String> deleteFromJson(Principal principal, @PathVariable("id") Long id) {
-        Part part = Part.findPart(id);
+        Part part = partDao.findOne(id);
         
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json");
@@ -167,11 +179,11 @@ public class PartController {
         }
         
         // Update the changelog
-        Changelog.log("Deleted part", part.toJson());
+        changelogDao.log("Deleted part", part.toJson());
         
         // Delete the part
         db.update("INSERT INTO `deleted_parts` (id) VALUES(?)", part.getId());
-        part.remove();
+        partDao.remove(part);
         
         return new ResponseEntity<String>(headers, HttpStatus.OK);
     }
@@ -181,7 +193,7 @@ public class PartController {
     @ResponseBody
     @Secured("ROLE_ADMIN")
     public void rebuildAllBom() throws Exception {
-        Part.rebuildBomDescendancy();
+        partDao.rebuildBomDescendancy();
     }
     
     @Transactional
@@ -191,7 +203,7 @@ public class PartController {
     public ResponseEntity<ProductImage> addProductImage(@PathVariable Long id, @RequestBody byte[] imageData) throws Exception {
         
         // Look up the part
-        Part part = Part.findPart(id);
+        Part part = partDao.findOne(id);
         
         // Save the file into the originals directory
         String filename = part.getId().toString() + "_" + System.currentTimeMillis() + ".jpg"; // Good enough
@@ -204,11 +216,11 @@ public class PartController {
         productImage.setPart(part);
         
         // Save it
-        productImage.persist();
+        productImageDao.persist(productImage);
         
         // Update the part
         part.getProductImages().add(productImage);
-        part.merge();
+        partDao.merge(part);
 
         // Generate the resized images
         for (int size : ImageResizer.SIZES) {
@@ -223,10 +235,10 @@ public class PartController {
     @ResponseBody
     @Secured("ROLE_ALTER_PART")
     public void addTurboType(@PathVariable("partId") long partId, @PathVariable("turboTypeId") long turboTypeId) {
-        Part part = Part.findPart(partId);
-        TurboType turboType = TurboType.findTurboType(turboTypeId);
+        Part part = partDao.findOne(partId);
+        TurboType turboType = turboTypeDao.findOne(turboTypeId);
         part.getTurboTypes().add(turboType);
-        part.merge();
+        partDao.merge(part);
     }
     
     @Transactional
@@ -234,7 +246,7 @@ public class PartController {
     @ResponseBody
     @Secured("ROLE_ALTER_PART")
     public void deleteTurboType(@PathVariable("partId") long partId, @PathVariable("turboTypeId") long turboTypeId) {
-        Part part = Part.findPart(partId);
+        Part part = partDao.findOne(partId);
         
         // Remove any matching turbo types
         Iterator<TurboType> it = part.getTurboTypes().iterator();
@@ -245,7 +257,7 @@ public class PartController {
             }
         }
         
-        part.merge();
+        partDao.merge(part);
     }
 
 }

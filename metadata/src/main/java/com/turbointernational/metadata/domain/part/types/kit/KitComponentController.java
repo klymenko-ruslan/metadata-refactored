@@ -1,9 +1,11 @@
 package com.turbointernational.metadata.domain.part.types.kit;
-import com.turbointernational.metadata.domain.changelog.Changelog;
+import com.turbointernational.metadata.domain.changelog.ChangelogDao;
 import com.turbointernational.metadata.domain.part.Part;
+import com.turbointernational.metadata.domain.part.PartDao;
 import com.turbointernational.metadata.domain.part.types.Kit;
 import java.util.logging.Logger;
 import javax.persistence.NoResultException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +25,15 @@ public class KitComponentController {
 
     private static final Logger log = Logger.getLogger(KitComponentController.class.toString());
     
+    @Autowired
+    ChangelogDao changelogDao;
+    
+    @Autowired
+    PartDao partDao;
+    
+    @Autowired
+    KitComponentDao kitComponentDao;
+    
     @Transactional
     @RequestMapping(method = RequestMethod.POST)
     @Secured("ROLE_ALTER_PART")
@@ -36,19 +47,19 @@ public class KitComponentController {
         
         // Link it with the Hibernate parts
         try {
-            Kit kit = (Kit) Part.findPart(component.getKit().getId());
-            Part part = Part.findPart(component.getPart().getId());
+            Kit kit = (Kit) partDao.findOne(component.getKit().getId());
+            Part part = partDao.findOne(component.getPart().getId());
             
             component.setKit(kit);
             component.setPart(part);
 
-            component.persist();
+            kitComponentDao.persist(component);
             
             kit.getComponents().add(component);
-            kit.merge();
+            partDao.merge(kit);
         
             // Update the changelog
-            Changelog.log("Added kit common component.", component.toJson());
+            changelogDao.log("Added kit common component.", component.toJson());
             
         } catch (NoResultException e) {
             return new ResponseEntity<String>(headers, HttpStatus.NOT_FOUND);
@@ -64,14 +75,14 @@ public class KitComponentController {
     public void update(@PathVariable("id") Long id, @RequestParam(required=true) Boolean exclude) throws Exception {
         
         // Get the item
-        KitComponent component = KitComponent.find(id);
+        KitComponent component = kitComponentDao.findOne(id);
         
         // Update the changelog
-        Changelog.log("Changed kit component mapping exclude to " + exclude, component.toJson());
+        changelogDao.log("Changed kit component mapping exclude to " + exclude, component.toJson());
         
         // Update
         component.setExclude(exclude);
-        component.merge();
+        kitComponentDao.merge(component);
     }
     
     @Transactional
@@ -81,14 +92,14 @@ public class KitComponentController {
     public void delete(@PathVariable("id") Long id) throws Exception {
         
         // Get the object
-        KitComponent component = KitComponent.find(id);
+        KitComponent component = kitComponentDao.findOne(id);
         
         // Update the changelog
-        Changelog.log("Deleted kit common component mapping.", component.toJson());
+        changelogDao.log("Deleted kit common component mapping.", component.toJson());
         
         // Remove from the kit (orphan removal will delete the component)
         component.getKit().getComponents().remove(component);
-        component.getKit().merge();
+        partDao.merge(component.getKit());
     }
     
     

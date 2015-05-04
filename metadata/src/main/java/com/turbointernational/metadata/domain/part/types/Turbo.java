@@ -17,10 +17,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import org.apache.commons.lang.ObjectUtils;
-import org.springframework.beans.factory.annotation.Configurable;
 
 @Cacheable
-@Configurable
 @Entity
 @Table(name="turbo")
 @PrimaryKeyJoinColumn(name = "part_id")

@@ -2,7 +2,6 @@ package com.turbointernational.metadata.domain.part.bom;
 import com.turbointernational.metadata.domain.part.Part;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
-import org.apache.commons.lang3.ObjectUtils;
 
 public class BOMAncestor {
     

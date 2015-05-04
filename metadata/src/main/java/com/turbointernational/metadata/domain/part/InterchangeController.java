@@ -1,10 +1,11 @@
 package com.turbointernational.metadata.domain.part;
 import com.google.common.collect.Sets;
-import com.turbointernational.metadata.domain.changelog.Changelog;
+import com.turbointernational.metadata.domain.changelog.ChangelogDao;
 import java.security.Principal;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.logging.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class InterchangeController {
 
     private static final Logger log = Logger.getLogger(InterchangeController.class.toString());
+    
+    @Autowired
+    ChangelogDao changelogDao;
+    
+    @Autowired
+    PartDao partDao;
+    
+    @Autowired
+    InterchangeDao interchangeDao;
     
     @Transactional
     @RequestMapping(method = RequestMethod.POST)
@@ -41,7 +51,7 @@ public class InterchangeController {
         Iterator<Part> it = interchange.getParts().iterator();
         while (it.hasNext()) {
             Part interchangePart = it.next();
-            Part canonicalPart = Part.findPart(interchangePart.getId());
+            Part canonicalPart = partDao.findOne(interchangePart.getId());
 
             if (canonicalPart.getInterchange() != null) {
                 throw new IllegalArgumentException("Part " + interchangePart.getId() + " already has interchangeable parts.");
@@ -53,19 +63,19 @@ public class InterchangeController {
         
         interchange.getParts().clear();
         interchange.getParts().addAll(canonicalParts);
-        interchange.persist();
+        interchangeDao.persist(interchange);
         
         for (Part canonicalPart: canonicalParts) {
             canonicalPart.setInterchange(interchange);
-            canonicalPart.merge();
+            partDao.merge(canonicalPart);
         }
-        interchange.flush();
+        interchangeDao.flush();
         
         // Update the changelog
-        Changelog.log("Created interchange: ", json);
+        changelogDao.log("Created interchange: ", json);
             
         // TODO: Only change what we need to rather than rebuilding everything
-        Part.rebuildBomDescendancy();
+        partDao.rebuildBomDescendancy();
         
         return new ResponseEntity<String>("ok", headers, HttpStatus.OK);
     }
@@ -77,11 +87,11 @@ public class InterchangeController {
     public void update(Principal principal, @PathVariable("id") Long id, @PathVariable("partId") Long partId) throws Exception {
         
         // Get the part and it's original interchange
-        Part iPart = Part.findPart(partId);
+        Part iPart = partDao.findOne(partId);
         Interchange oldInterchange = iPart.getInterchange();
         
         // Update the interchange
-        Interchange newInterchange = Interchange.findInterchange(id);
+        Interchange newInterchange = interchangeDao.findOne(id);
         if (newInterchange == null) {
             throw new IllegalArgumentException("Could not find interchange " + id);
         }
@@ -89,26 +99,27 @@ public class InterchangeController {
         // Save the part
         newInterchange.getParts().add(iPart);
         iPart.setInterchange(newInterchange);
-        newInterchange.merge();
-        iPart.merge();
+        interchangeDao.merge(newInterchange);
+        partDao.merge(iPart);
         
         // Update the old interchange
         if (oldInterchange != null) {
             oldInterchange.getParts().remove(iPart);
-            oldInterchange.merge();
+            interchangeDao.merge(oldInterchange);
             
             // Delete the interchange if it's empty, otherwise save it
             if (oldInterchange.getParts().isEmpty()) {
-                oldInterchange.remove();
+                interchangeDao.remove(oldInterchange);
             }
         }
-        newInterchange.flush();
+        
+        interchangeDao.flush();
         
         // Update the changelog
-        Changelog.log("Added part " + partId + " to interchange " + id, "");
+        changelogDao.log("Added part " + partId + " to interchange " + id, "");
             
         // TODO: Only change what we need to rather than rebuilding everything
-        Part.rebuildBomDescendancy();
+        partDao.rebuildBomDescendancy();
     }
     
     @Transactional
@@ -118,7 +129,7 @@ public class InterchangeController {
     public void delete(Principal principal, @PathVariable("partId") Long partId) throws Exception {
         
         // Get the part and interchange
-        Part iPart = Part.findPart(partId);
+        Part iPart = partDao.findOne(partId);
         Interchange interchange = iPart.getInterchange();
         
         // Stop now if the part doesn't have an interchange
@@ -133,21 +144,21 @@ public class InterchangeController {
 
         // Delete the interchange if it's empty, otherwise save it
         if (interchange.getParts().isEmpty()) {
-            interchange.remove();
+            interchangeDao.remove(interchange);
         } else {
-            interchange.merge();
+            interchangeDao.merge(interchange);
         }
         
         // Remove the interchange from the part
         iPart.setInterchange(null);
-        iPart.merge();
-        iPart.flush();
+        partDao.merge(iPart);
+        partDao.flush();
         
         // Update the changelog
-        Changelog.log("Deleted " + partId + " from interchange " + interchangeId, "");
+        changelogDao.log("Deleted " + partId + " from interchange " + interchangeId, "");
             
         // TODO: Only change what we need to rather than rebuilding everything
-        Part.rebuildBomDescendancy();
+        partDao.rebuildBomDescendancy();
     }
     
     

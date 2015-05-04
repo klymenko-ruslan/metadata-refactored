@@ -1,6 +1,7 @@
 package com.turbointernational.metadata.domain.other;
-import com.turbointernational.metadata.domain.changelog.Changelog;
+import com.turbointernational.metadata.domain.changelog.ChangelogDao;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,15 +19,21 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping("/metadata/other/turboModel")
 public class TurboModelController {
     
+    @Autowired
+    ChangelogDao changelogDao;
+    
+    @Autowired
+    TurboModelDao turboModelDao;
+    
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
     @Secured("ROLE_TURBO_MODEL_CRUD")
     @Transactional
     public ResponseEntity<String> createJson(@RequestBody String turboModelJson) {
         TurboModel turboModel = TurboModel.fromJsonToTurboModel(turboModelJson);
-        turboModel.persist();
+        turboModelDao.persist(turboModel);
         
-        Changelog.log("Created turbo model", turboModel.toJson());
+        changelogDao.log("Created turbo model", turboModel.toJson());
         
         
         HttpHeaders headers = new HttpHeaders();
@@ -40,9 +47,9 @@ public class TurboModelController {
     @Transactional
     public ResponseEntity<String> updateJson(@RequestBody String turboModelJson) {
         TurboModel turboModel = TurboModel.fromJsonToTurboModel(turboModelJson);
-        turboModel.merge();
+        turboModelDao.merge(turboModel);
         
-        Changelog.log("Updated turbo model", turboModel.toJson());
+        changelogDao.log("Updated turbo model", turboModel.toJson());
         
         
         HttpHeaders headers = new HttpHeaders();
@@ -55,11 +62,10 @@ public class TurboModelController {
     @Secured("ROLE_TURBO_MODEL_CRUD")
     @Transactional
     public ResponseEntity<String> deleteJson(@PathVariable Long turboModelId) {
-        TurboModel turboModel = TurboModel.findTurboModel(turboModelId);
+        TurboModel turboModel = turboModelDao.findOne(turboModelId);
+        turboModelDao.remove(turboModel);
+        changelogDao.log("Removed turbo model", turboModel.toJson());
         
-        Changelog.log("Removed turbo model", turboModel.toJson());
-        
-        turboModel.remove();
         
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json; charset=utf-8");
@@ -72,7 +78,7 @@ public class TurboModelController {
     public ResponseEntity<String> listByTurboTypeIdJson(@RequestParam Long turboTypeId) {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json; charset=utf-8");
-        List<TurboModel> result = TurboModel.findTurboModelsByTurboTypeId(turboTypeId);
+        List<TurboModel> result = turboModelDao.findTurboModelsByTurboTypeId(turboTypeId);
         return new ResponseEntity<String>(TurboModel.toJsonArray(result), headers, HttpStatus.OK);
     }
 }

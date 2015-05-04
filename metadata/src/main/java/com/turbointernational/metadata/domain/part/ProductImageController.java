@@ -33,13 +33,19 @@ public class ProductImageController {
     @Autowired(required=true)
     ImageResizer resizer;
     
+    @Autowired
+    PartDao partDao;
+    
+    @Autowired
+    ProductImageDao productImageDao;
+    
     @RequestMapping(value = "/{id}.jpg", method = RequestMethod.GET)
     @ResponseBody
     @Secured("ROLE_READ")
     public ResponseEntity<byte[]> get(@PathVariable Long id) throws Exception {
         
         // Get the image
-        ProductImage productImage = ProductImage.find(id);
+        ProductImage productImage = productImageDao.findOne(id);
         
         // Load it from disk
         File imageFile = new File(originalImagesDir, productImage.getFilename());
@@ -64,7 +70,7 @@ public class ProductImageController {
     public ResponseEntity<byte[]> getResized(@PathVariable int size, @PathVariable Long id) throws Exception {
         
         // Get the image
-        ProductImage productImage = ProductImage.find(id);
+        ProductImage productImage = productImageDao.findOne(id);
         
         // Load it from disk
         File imageFile = new File(resizedImagesDir, productImage.getFilename(size));
@@ -90,15 +96,15 @@ public class ProductImageController {
     public ResponseEntity<Void> remove(@PathVariable Long id) throws Exception {
         
         // Look up the image
-        ProductImage image = ProductImage.find(id);
+        ProductImage image = productImageDao.findOne(id);
         Part part = image.getPart();
         
         // Remove the image from the part
         part.getProductImages().remove(image);
-        part.merge();
+        partDao.merge(part);
         
         // Remove the image
-        image.remove();
+        productImageDao.remove(image);
         
         // Delete the files
         File original = new File(originalImagesDir, image.getFilename());

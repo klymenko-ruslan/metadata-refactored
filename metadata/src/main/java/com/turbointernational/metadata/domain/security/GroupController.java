@@ -1,6 +1,8 @@
 package com.turbointernational.metadata.domain.security;
+
 import flexjson.JSONSerializer;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +19,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class GroupController {
     
+    @Autowired(required=true)
+    GroupDao groupDao;
+    
+    @Autowired(required=true)
+    UserDao userDao;
+    
+    @Autowired(required=true)
+    RoleDao roleDao;
+    
     @Transactional
     @RequestMapping(method = RequestMethod.POST)
     @Secured("ROLE_ADMIN")
@@ -27,7 +38,7 @@ public class GroupController {
         
         // Create the object
         Group group = Group.fromJson(json);
-        group.persist();
+        groupDao.persist(group);
         
         return new ResponseEntity<String>(group.toJson(), headers, HttpStatus.OK);
     }
@@ -42,7 +53,7 @@ public class GroupController {
         
         // Create the object
         Group group = Group.fromJson(json);
-        group.merge();
+        groupDao.merge(group);
         
         return new ResponseEntity<String>(group.toJson(), headers, HttpStatus.OK);
     }
@@ -51,7 +62,7 @@ public class GroupController {
     @ResponseBody
     @Secured("ROLE_ADMIN")
     public ResponseEntity<String> list() {
-        List<Group> groups = Group.findAllGroups();
+        List<Group> groups = groupDao.findAll();
         
         return new ResponseEntity<String>(
             new JSONSerializer()
@@ -68,7 +79,7 @@ public class GroupController {
     @ResponseBody
     @Secured("ROLE_ADMIN")
     public ResponseEntity<String> listRoles() {
-        List<Role> roles = Role.findAllRoles();
+        List<Role> roles = roleDao.findAll();
         
         return new ResponseEntity<String>(
             new JSONSerializer()
@@ -83,10 +94,8 @@ public class GroupController {
     @ResponseBody
     @Secured("ROLE_ADMIN")
     public ResponseEntity<String> get(@PathVariable("id") Long id) {
-        Group group = Group.findGroup(id);
+        Group group = groupDao.findOne(id);
         group.getUsers().size();
-        
-        
         return new ResponseEntity<String>(group.toJson(), new HttpHeaders(), HttpStatus.OK);
     }
     
@@ -95,10 +104,10 @@ public class GroupController {
     @ResponseBody
     @Secured("ROLE_ADMIN")
     public void addRole(@PathVariable("id") Long id, @PathVariable("roleId") Long roleId) throws Exception {
-        Group group = Group.findGroup(id);
-        Role role = Role.findRole(roleId);
+        Group group = groupDao.findOne(id);
+        Role role = roleDao.findOne(roleId);
         group.getRoles().add(role);
-        group.merge();
+        groupDao.merge(group);
     }
     
     @Transactional
@@ -106,10 +115,10 @@ public class GroupController {
     @ResponseBody
     @Secured("ROLE_ADMIN")
     public void removeRole(@PathVariable("id") Long id, @PathVariable("roleId") Long roleId) throws Exception {
-        Group group = Group.findGroup(id);
-        Role role = Role.findRole(roleId);
+        Group group = groupDao.findOne(id);
+        Role role = roleDao.findOne(roleId);
         group.getRoles().remove(role);
-        group.merge();
+        groupDao.merge(group);
     }
     
     @Transactional
@@ -117,10 +126,10 @@ public class GroupController {
     @ResponseBody
     @Secured("ROLE_ADMIN")
     public void addUser(@PathVariable("id") Long id, @PathVariable("userId") Long userId) throws Exception {
-        Group group = Group.findGroup(id);
-        User user = User.findUser(userId);
+        Group group = groupDao.findOne(id);
+        User user = userDao.findOne(userId);
         group.getUsers().add(user);
-        group.merge();
+        groupDao.merge(group);
     }
     
     @Transactional
@@ -128,10 +137,10 @@ public class GroupController {
     @ResponseBody
     @Secured("ROLE_ADMIN")
     public void removeUser(@PathVariable("id") Long id, @PathVariable("userId") Long userId) throws Exception {
-        Group group = Group.findGroup(id);
-        User user = User.findUser(userId);
+        Group group = groupDao.findOne(id);
+        User user = userDao.findOne(userId);
         group.getUsers().remove(user);
-        group.merge();
+        groupDao.merge(group);
     }
     
     @Transactional
@@ -139,7 +148,7 @@ public class GroupController {
     @ResponseBody
     @Secured("ROLE_ADMIN")
     public void delete(@PathVariable("id") Long id) throws Exception {
-        Group group = Group.findGroup(id);
-        group.remove();
+        Group group = groupDao.findOne(id);
+        groupDao.remove(group);
     }
 }

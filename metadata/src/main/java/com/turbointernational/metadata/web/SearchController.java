@@ -1,6 +1,7 @@
 package com.turbointernational.metadata.web;
 
 import com.turbointernational.metadata.domain.part.Part;
+import com.turbointernational.metadata.domain.part.PartDao;
 import com.turbointernational.metadata.util.ElasticSearch;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -30,6 +31,9 @@ public class SearchController {
     @Autowired(required=true)
     ElasticSearch elasticSearch;
     
+    @Autowired
+    PartDao partDao;
+    
     @RequestMapping()
     @ResponseBody
     @Secured("ROLE_READ")
@@ -46,8 +50,7 @@ public class SearchController {
     @ResponseBody
     @Secured("ROLE_ADMIN")
     public void indexAll(@PathVariable("partId") Long partId) throws Exception {
-        
-        Part part = Part.findPart(partId);
+        Part part = partDao.findOne(partId);
         
         elasticSearch.indexPart(part);
     }
@@ -76,7 +79,7 @@ public class SearchController {
             do {
 
                 // Clear Hibernate
-                Part.entityManager().clear();
+                partDao.clear();
 
                 result = elasticSearch.indexParts(page * pageSize, pageSize);
                 log.log(Level.INFO, "Indexed parts {0}-{1}: {2}", new Object[]{page * pageSize, (page * pageSize) + pageSize, result});

@@ -1,6 +1,7 @@
 package com.turbointernational.metadata.domain.other;
-import com.turbointernational.metadata.domain.changelog.Changelog;
+import com.turbointernational.metadata.domain.changelog.ChangelogDao;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,15 +18,21 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping("/metadata/other/turboType")
 public class TurboTypeController {
     
+    @Autowired
+    ChangelogDao changelogDao;
+    
+    @Autowired
+    TurboTypeDao turboTypeDao;
+    
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
     @Secured("ROLE_TURBO_MODEL_CRUD")
     @Transactional
     public ResponseEntity<String> createJson(@RequestBody String typeJson) {
         TurboType type = TurboType.fromJsonToTurboType(typeJson);
-        type.persist();
+        turboTypeDao.persist(type);
         
-        Changelog.log("Created turbo type", type.toJson());
+        changelogDao.log("Created turbo type", type.toJson());
         
         
         HttpHeaders headers = new HttpHeaders();
@@ -39,9 +46,9 @@ public class TurboTypeController {
     @Transactional
     public ResponseEntity<String> updateJson(@RequestBody String turboTypeJson) {
         TurboType turboType = TurboType.fromJsonToTurboType(turboTypeJson);
-        turboType.merge();
+        turboTypeDao.merge(turboType);
         
-        Changelog.log("Updated turbo type", turboType.toJson());
+        changelogDao.log("Updated turbo type", turboType.toJson());
         
         
         HttpHeaders headers = new HttpHeaders();
@@ -54,11 +61,9 @@ public class TurboTypeController {
     @Secured("ROLE_TURBO_MODEL_CRUD")
     @Transactional
     public ResponseEntity<String> deleteJson(@PathVariable Long turboTypeId) {
-        TurboType turboType = TurboType.findTurboType(turboTypeId);
-        
-        Changelog.log("Removed turbo type", turboType.toJson());
-        
-        turboType.remove();
+        TurboType turboType = turboTypeDao.findOne(turboTypeId);
+        changelogDao.log("Removed turbo type", turboType.toJson());
+        turboTypeDao.remove(turboType);
         
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json; charset=utf-8");
@@ -71,7 +76,7 @@ public class TurboTypeController {
     public ResponseEntity<String> listJson(@PathVariable("manufacturerId") Long manufacturerId) {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json; charset=utf-8");
-        List<TurboType> result = TurboType.findTurboTypesByManufacturerId(manufacturerId);
+        List<TurboType> result = turboTypeDao.findTurboTypesByManufacturerId(manufacturerId);
         return new ResponseEntity<String>(TurboType.toJsonArray(result), headers, HttpStatus.OK);
     }
 }

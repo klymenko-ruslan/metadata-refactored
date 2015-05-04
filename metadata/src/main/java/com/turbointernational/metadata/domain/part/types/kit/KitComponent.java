@@ -1,29 +1,24 @@
 package com.turbointernational.metadata.domain.part.types.kit;
 import com.turbointernational.metadata.domain.part.Part;
-import static com.turbointernational.metadata.domain.part.bom.BOMItem.entityManager;
 import com.turbointernational.metadata.domain.part.types.Kit;
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
+import java.io.Serializable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityManager;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
-import javax.persistence.PersistenceContext;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.transaction.annotation.Transactional;
 
-@Configurable
 @Entity
 @Table(name="kit_part_common_component", uniqueConstraints=@UniqueConstraint(columnNames={"kit_id", "part_id"}))
-public class KitComponent {
+public class KitComponent implements Serializable {
 
     //<editor-fold defaultstate="collapsed" desc="properties">
     @Id
@@ -71,52 +66,6 @@ public class KitComponent {
 
     public void setExclude(boolean exclude) {
         this.exclude = exclude;
-    }
-    //</editor-fold>
-    
-    //<editor-fold defaultstate="collapsed" desc="activerecord">
-    @PersistenceContext
-    transient EntityManager entityManager;
-    
-    public static final EntityManager entityManager() {
-        EntityManager em = new KitComponent().entityManager;
-        if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
-        return em;
-    }
-    
-    @Transactional
-    public void persist() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.persist(this);
-    }
-    
-    public static KitComponent find(Long id) {
-        if (id == null) return null;
-        
-        return entityManager()
-                .createQuery("SELECT DISTINCT i FROM KitComponent i WHERE id = ?", KitComponent.class)
-                .setParameter(1, id)
-                .getSingleResult();
-    }
-    
-    
-    @Transactional
-    public void remove() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        if (this.entityManager.contains(this)) {
-            this.entityManager.remove(this);
-        } else {
-            KitComponent attached = find(this.id);
-            this.entityManager.remove(attached);
-        }
-    }
-    
-    @Transactional
-    public KitComponent merge() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        KitComponent merged = this.entityManager.merge(this);
-        this.entityManager.flush();
-        return merged;
     }
     //</editor-fold>
     

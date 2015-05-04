@@ -1,6 +1,7 @@
 package com.turbointernational.metadata.util;
 
 import com.turbointernational.metadata.domain.part.Part;
+import com.turbointernational.metadata.domain.part.PartDao;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -14,6 +15,7 @@ import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -27,6 +29,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class ElasticSearch {
 
     private static final Logger log = Logger.getLogger(ElasticSearch.class.toString());
+    
+    @Autowired
+    PartDao partDao;
     
     @Value("${elasticsearch.index}")
     String elasticSearchIndex = "metadata";
@@ -88,7 +93,7 @@ public class ElasticSearch {
         
         BulkRequest bulk = new BulkRequest();
         
-        List<Part> parts = Part.findPartEntries(firstResult, maxResults);
+        List<Part> parts = partDao.findAll(firstResult, maxResults);
         
         for (Part part : parts) {
             IndexRequest index = new IndexRequest(elasticSearchIndex, elasticSearchType, part.getId().toString());

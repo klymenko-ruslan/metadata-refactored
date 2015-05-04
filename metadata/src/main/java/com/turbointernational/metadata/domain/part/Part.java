@@ -22,10 +22,9 @@ import flexjson.JSONSerializer;
 import flexjson.ObjectBinder;
 import flexjson.ObjectFactory;
 import flexjson.transformer.HibernateTransformer;
+import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.Collection;
-import java.util.Date;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -34,7 +33,6 @@ import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityManager;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -47,30 +45,21 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
-import javax.persistence.PersistenceContext;
 import javax.persistence.PostPersist;
 import javax.persistence.PostUpdate;
 import javax.persistence.PreRemove;
-import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.Version;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionTemplate;
 
 @Cacheable
-@Configurable
 @Entity
 @Table(name = "PART")
 @Inheritance(strategy = InheritanceType.JOINED)
-public class Part implements Comparable<Part> {
+public class Part implements Comparable<Part>, Serializable {
     private static final Logger log = Logger.getLogger(Part.class.toString());
     
     public static final ObjectFactory OBJECT_FACTORY = new ObjectFactory() {
@@ -112,7 +101,6 @@ public class Part implements Comparable<Part> {
             } else {
                 part = new Part();
             }
-            
             
             context.bind(value, part);
             return part;
@@ -428,126 +416,6 @@ public class Part implements Comparable<Part> {
     }
     //</editor-fold>
     
-    //<editor-fold defaultstate="collapsed" desc="ActiveRecord">
-    @PersistenceContext
-    @Transient
-    private EntityManager entityManager;
-    
-    @Autowired(required=true)
-    @Transient
-    private PlatformTransactionManager txManager;
-    
-    public static final EntityManager entityManager() {
-        EntityManager em = new Part().entityManager;
-        if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
-        return em;
-    }
-    
-    public static long count() {
-        return entityManager().createQuery("SELECT COUNT(o) FROM Part o", Long.class).getSingleResult();
-    }
-
-    public static List<Part> getPartsUpdatedAfter(Date lastUpdated, int i, int pageSize) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-    
-    public static Part findPart(Long id) {
-        if (id == null) return null;
-        Query q = entityManager().createQuery("SELECT DISTINCT p FROM Part p LEFT JOIN p.interchange i WHERE p.id = :id");
-        q.setParameter("id", id);
-        return (Part) q.getSingleResult();
-    }
-    
-    public static List<Part> findPartEntries(int firstResult, int maxResults) {
-        return entityManager()
-                .createQuery(
-                  "SELECT p\n"
-                + "FROM Part p", Part.class)
-                .setFirstResult(firstResult)
-                .setMaxResults(maxResults)
-                .getResultList();
-    }
-    
-    @Transactional
-    public void persist() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.persist(this);
-    }
-    
-    @Transactional
-    public void remove() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        if (this.entityManager.contains(this)) {
-            this.entityManager.remove(this);
-        } else {
-            Part attached = Part.findPart(this.id);
-            this.entityManager.remove(attached);
-        }
-    }
-    
-    @Transactional
-    public void flush() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.flush();
-    }
-    
-    @Transactional
-    public void clear() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.clear();
-    }
-    
-    @Transactional
-    public Part merge() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        Part merged = this.entityManager.merge(this);
-        this.entityManager.flush();
-        return merged;
-    }
-    
-    @Transactional
-    public void refresh() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.refresh(this);
-    }
-    //</editor-fold>
-    
-    //<editor-fold defaultstate="collapsed" desc="BOM Ancestry">
-    
-    /**
-     * Contains the date when we started the BOM rebuild, or null if not currently rebuilding.
-     */
-    private volatile static Date bomRebuildStart = null;
-    
-    public static final Date getBomRebuildStart() {
-        return bomRebuildStart;
-    }
-    
-    @Async("bomRebuildExecutor") // One at a time
-    public static void rebuildBomDescendancy() {
-        try {
-            // Track the rebuild so users can get status
-            bomRebuildStart = new Date();
-            
-            new TransactionTemplate(new Part().txManager).execute(new TransactionCallback() {
-                @Override
-                public Object doInTransaction(TransactionStatus status) {
-                    log.info("Rebuilding BOM descendancy.");
-                    EntityManager em = entityManager();
-
-                    // Delete the old ancestry
-                    em.createNativeQuery("CALL RebuildBomDescendancy()").executeUpdate();
-                    em.clear();
-                    log.info("BOM descendancy rebuild completed.");
-
-                    return null;
-                }
-            });
-        } finally {
-            bomRebuildStart = null;
-        }
-    }
-    //</editor-fold>
     
     @Override
     public int compareTo(Part o) {

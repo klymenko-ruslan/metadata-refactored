@@ -1,10 +1,9 @@
 package com.turbointernational.metadata.domain.part.bom;
 
-import com.turbointernational.metadata.domain.changelog.Changelog;
+import com.turbointernational.metadata.domain.changelog.ChangelogDao;
 import com.turbointernational.metadata.domain.part.*;
-import java.security.Principal;
 import java.util.logging.Logger;
-import javax.persistence.NoResultException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +19,22 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping("/metadata/bom/{bomId}/alt")
 @Controller
 public class BOMAlternativeController {
+    
+    @Autowired
+    ChangelogDao changelogDao;
 
+    @Autowired
+    PartDao partDao;
+
+    @Autowired
+    BOMItemDao bomItemDao;
+    
+    @Autowired
+    BOMAlternativeDao bomAltDao;
+    
+    @Autowired
+    BOMAlternativeHeaderDao bomAltHeaderDao;
+    
     private static final Logger log = Logger.getLogger(BOMAlternativeController.class.toString());
     
     @Transactional
@@ -34,7 +48,7 @@ public class BOMAlternativeController {
         headers.add("Content-Type", "application/json");
         
         // Get the BOM Item
-        BOMItem item = BOMItem.findBOMItem(bomId);
+        BOMItem item = bomItemDao.findOne(bomId);
         
         // Create the bom alternative
         BOMAlternative bomAlt = BOMAlternative.fromJsonToBOMAlternative(json);
@@ -42,7 +56,7 @@ public class BOMAlternativeController {
         item.getAlternatives().add(bomAlt);
         
         // Refresh the part
-        Part altPart = Part.findPart(bomAlt.getPart().getId());
+        Part altPart = partDao.findOne(bomAlt.getPart().getId());
         bomAlt.setPart(altPart);
         
         // Create a new header if we need to
@@ -50,21 +64,22 @@ public class BOMAlternativeController {
             BOMAlternativeHeader header = new BOMAlternativeHeader();
             header.setName(item.getParent().getId().toString());
             header.setDescription(bomAlt.getPart().getId().toString());
-            header.persist();
+            bomAltHeaderDao.persist(header);
+            
             
             // Add it to the alternate
             bomAlt.setHeader(header);
         } else {
-            BOMAlternativeHeader header = BOMAlternativeHeader.findBOMAlternativeHeader(bomAlt.getHeader().getId());
+            BOMAlternativeHeader header = bomAltHeaderDao.findOne(bomAlt.getHeader().getId());
             bomAlt.setHeader(header);
         }
         
         // Save the alternate and item
-        bomAlt.persist();
-        item.merge();
+        bomAltDao.persist(bomAlt);
+        bomItemDao.merge(item);
         
         // Update the changelog
-        Changelog.log("Added bom alternative.", bomAlt.toJson());
+        changelogDao.log("Added bom alternative.", bomAlt.toJson());
         
         return new ResponseEntity<String>("ok", headers, HttpStatus.OK);
     }
@@ -76,18 +91,18 @@ public class BOMAlternativeController {
     public void delete(@PathVariable("bomId") Long bomId, @PathVariable("altItemId") Long altId) throws Exception {
         
         // Get the BOM item and alternate
-        BOMItem item = BOMItem.findBOMItem(bomId);
-        BOMAlternative alt = BOMAlternative.findBOMAlternative(altId);
+        BOMItem item = bomItemDao.findOne(bomId);
+        BOMAlternative alt = bomAltDao.findOne(altId);
         
         // Update the changelog
-        Changelog.log("Deleted BOM alternative.", alt.toJson());
+        changelogDao.log("Deleted BOM alternative.", alt.toJson());
         
         // Remove the alternate item
         item.getAlternatives().remove(alt);
-        item.getParent().merge();
+        partDao.merge(item.getParent());
         
         // Delete it
-        alt.remove();
+        bomAltDao.remove(alt);
     }
     
 }

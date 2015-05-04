@@ -1,8 +1,10 @@
 package com.turbointernational.metadata.domain.part.bom;
-import com.turbointernational.metadata.domain.changelog.Changelog;
+import com.turbointernational.metadata.domain.changelog.ChangelogDao;
 import com.turbointernational.metadata.domain.part.Part;
+import com.turbointernational.metadata.domain.part.PartDao;
 import java.util.logging.Logger;
 import javax.persistence.NoResultException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping("/metadata/bom")
 @Controller
 public class BOMController {
+    
+    @Autowired
+    ChangelogDao changelogDao;
+    
+    @Autowired
+    PartDao partDao;
+    
+    @Autowired
+    BOMItemDao bomItemDao;
 
     private static final Logger log = Logger.getLogger(BOMController.class.toString());
     
@@ -35,22 +46,22 @@ public class BOMController {
         
         // Link it with the Hibernate parts
         try {
-            Part child = Part.findPart(item.getChild().getId());
-            Part parent = Part.findPart(item.getParent().getId());
+            Part child = partDao.findOne(item.getChild().getId());
+            Part parent = partDao.findOne(item.getParent().getId());
             
             item.setChild(child);
             item.setParent(parent);
 
-            item.persist();
+            bomItemDao.persist(item);
             parent.getBom().add(item);
-            parent.merge();
-            item.flush();
+            partDao.merge(parent);
+            bomItemDao.flush();
         
             // Update the changelog
-            Changelog.log("Added bom item.", item.toJson());
+            changelogDao.log("Added bom item.", item.toJson());
             
             // TODO: Only change what we need to rather than rebuilding everything
-            Part.rebuildBomDescendancy();
+            partDao.rebuildBomDescendancy();
             
         } catch (NoResultException e) {
             return new ResponseEntity<String>(headers, HttpStatus.NOT_FOUND);
@@ -69,15 +80,15 @@ public class BOMController {
         headers.add("Content-Type", "application/json");
         
         // Get the item
-        BOMItem item = BOMItem.findBOMItem(id);
+        BOMItem item = bomItemDao.findOne(id);
         
         // Update the changelog
-        Changelog.log("Changed BOM item quantity to " + quantity, item.toJson());
+        changelogDao.log("Changed BOM item quantity to " + quantity, item.toJson());
         
         // Update
         item.setQuantity(quantity);
-        item.merge();
-        item.flush();
+        bomItemDao.merge(item);
+        bomItemDao.flush();
     }
     
     @Transactional
@@ -90,22 +101,22 @@ public class BOMController {
         headers.add("Content-Type", "application/json");
         
         // Get the object
-        BOMItem item = BOMItem.findBOMItem(id);
+        BOMItem item = bomItemDao.findOne(id);
         
         // Update the changelog
-        Changelog.log("Deleted BOM item.", item.toJson());
+        changelogDao.log("Deleted BOM item.", item.toJson());
         
         // Remove the BOM Item from the parent
         item.getParent().getBom().remove(item);
-        item.getParent().merge();
+        partDao.merge(item.getParent());
         
         // Delete it
         Part childPart = item.getChild();
-        item.remove();
-        item.flush();
+        bomItemDao.remove(item);
+        bomItemDao.flush();
             
         // TODO: Only change what we need to rather than rebuilding everything
-        Part.rebuildBomDescendancy();
+        partDao.rebuildBomDescendancy();
     }
     
     

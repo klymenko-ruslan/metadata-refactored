@@ -1,6 +1,7 @@
 package com.turbointernational.metadata.web;
 
 import com.turbointernational.metadata.domain.security.User;
+import com.turbointernational.metadata.domain.security.UserDao;
 import java.util.UUID;
 import java.util.logging.Logger;
 import org.apache.commons.lang3.StringUtils;
@@ -29,6 +30,9 @@ public class SecurityController {
     private static final Logger log = Logger.getLogger(SecurityController.class.toString());
     
     @Autowired(required=true)
+    UserDao userDao;
+    
+    @Autowired(required=true)
     MailSender mailer;
     
     @Value("${email.metadata.url}")
@@ -39,7 +43,7 @@ public class SecurityController {
     @Transactional
     @RequestMapping("password/reset/token/{token}")
     public @ResponseBody void token(@PathVariable("token") String token, @RequestParam String password) {
-        User user = User.findByPasswordResetToken(token);
+        User user = userDao.findByPasswordResetToken(token);
         
         if (StringUtils.isNotBlank(password)) {
             user.setPassword(BCrypt.hashpw(password, BCrypt.gensalt()));
@@ -47,7 +51,7 @@ public class SecurityController {
         
         user.setPasswordResetToken(null);
         
-        user.merge();
+        userDao.merge(user);
     }
     
     @Transactional
@@ -58,12 +62,12 @@ public class SecurityController {
         UUID uuid = UUID.randomUUID();
         // Add a field to the User object of the String type called "passwordResetToken" and save the UUID as a string in it.
         // Get a user with:
-        User user = User.findUserByEmail(email);
+        User user = userDao.findUserByEmail(email);
         
         user.setPasswordResetToken(uuid.toString());
         
         // Save the user
-        user.merge();
+        userDao.merge(user);
         
         // Send the user an email with the reset link
         SimpleMailMessage message = new SimpleMailMessage();
@@ -75,9 +79,9 @@ public class SecurityController {
         mailer.send(message);
     }
     
-    @RequestMapping("denied")
+    @RequestMapping("login/forbidden")
     @ResponseStatus(HttpStatus.FORBIDDEN)
-    public @ResponseBody void denied() {
+    public @ResponseBody void loginForbidden() {
     }
     
     @RequestMapping("login/success")
@@ -91,8 +95,8 @@ public class SecurityController {
         return "\"Login failed\"";
     }
     
-    @RequestMapping("login/required")
-    @ResponseStatus(HttpStatus.FORBIDDEN)
-    public @ResponseBody void loginRequired() {
+    @RequestMapping("login/denied")
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public @ResponseBody void loginDenied() {
     }
 }

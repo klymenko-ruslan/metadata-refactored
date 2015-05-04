@@ -15,10 +15,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
-import net.sf.jsog.JSOG;
-import org.springframework.beans.factory.annotation.Configurable;
 
-@Configurable
 @Entity
 @Table(name="kit")
 @PrimaryKeyJoinColumn(name = "part_id")

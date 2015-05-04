@@ -1,6 +1,7 @@
 package com.turbointernational.metadata.domain.other;
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -8,23 +9,18 @@ import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityManager;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
-import javax.persistence.PersistenceContext;
 import javax.persistence.Table;
-import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.transaction.annotation.Transactional;
 
 @Cacheable
-@Configurable
 @Entity
 @Table(name = "TURBO_MODEL")
-public class TurboModel {
+public class TurboModel implements Serializable {
     
     //<editor-fold defaultstate="collapsed" desc="Properties">
     
@@ -97,61 +93,6 @@ public class TurboModel {
         return new JSONDeserializer<List<TurboModel>>().use(null, ArrayList.class).use("values", TurboModel.class).deserialize(json);
     }
     
-    //</editor-fold>
-    
-    //<editor-fold defaultstate="collapsed" desc="ActiveRecord">
-    
-    @PersistenceContext
-    transient EntityManager entityManager;
-    
-    public static final EntityManager entityManager() {
-        EntityManager em = new TurboModel().entityManager;
-        if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
-        return em;
-    }
-    
-    public static List<TurboModel> findTurboModelsByTurboTypeId(Long turboTypeId) {
-        return entityManager().createQuery(
-              "SELECT o\n"
-            + "FROM\n"
-            + "  TurboModel o\n"
-            + "  JOIN o.turboType\n"
-            + "WHERE o.turboType.id = :turboTypeId\n"
-            + "ORDER BY o.name",
-            TurboModel.class)
-            .setParameter("turboTypeId", turboTypeId)
-            .getResultList();
-    }
-    
-    public static TurboModel findTurboModel(Long id) {
-        if (id == null) return null;
-        return entityManager().find(TurboModel.class, id);
-    }
-    
-    @Transactional
-    public void persist() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.persist(this);
-    }
-    
-    @Transactional
-    public TurboModel merge() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        TurboModel merged = this.entityManager.merge(this);
-        this.entityManager.flush();
-        return merged;
-    }
-    
-    @Transactional
-    public void remove() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        if (this.entityManager.contains(this)) {
-            this.entityManager.remove(this);
-        } else {
-            TurboModel attached = TurboModel.findTurboModel(this.id);
-            this.entityManager.remove(attached);
-        }
-    }
     //</editor-fold>
     
 }

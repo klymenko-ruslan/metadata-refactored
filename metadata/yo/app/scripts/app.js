@@ -2,8 +2,8 @@
 
 angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap', 'restangular', 'dialogs', 'gToast'])
 //  .constant('METADATA_BASE', '/metadata/')
-  .constant('METADATA_BASE', 'http://192.168.42.10:8080/metadata/')
-//  .constant('METADATA_BASE', 'http://localhost:8080/metadata/')
+//  .constant('METADATA_BASE', 'http://192.168.42.10:8080/metadata/')
+  .constant('METADATA_BASE', 'http://localhost:8080/metadata/')
   .config(function ($locationProvider, $httpProvider, $routeProvider, RestangularProvider, METADATA_BASE) {
         $httpProvider.interceptors.push('loginRequiredInterceptor');
     
@@ -11,6 +11,7 @@ angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap', 'restangu
         RestangularProvider.setParentless(true);
         RestangularProvider.setDefaultHttpFields({withCredentials: true});
         RestangularProvider.setDefaultHeaders({'Content-Type': 'text/plain'});
+        RestangularProvider.setFullResponse(true);
         RestangularProvider.setResponseExtractor(function (response) {
             return response;
           });

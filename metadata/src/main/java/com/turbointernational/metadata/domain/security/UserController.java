@@ -4,6 +4,7 @@ import flexjson.JSONSerializer;
 import java.util.List;
 import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping("/metadata/security/user")
 @Controller
 public class UserController {
+    
+    @Autowired(required=true)
+    UserDao userDao;
+    
+    @Autowired(required=true)
+    GroupDao groupDao;
 
     @RequestMapping(value = "/me", method = RequestMethod.GET)
     @ResponseBody
@@ -56,7 +63,7 @@ public class UserController {
             user.setPassword(BCrypt.hashpw(jsonUser.getPassword(), BCrypt.gensalt()));
         }
         
-        user.merge();
+        userDao.merge(user);
         
         return new ResponseEntity<String>(
                 User.JSON.serialize(user),
@@ -83,7 +90,7 @@ public class UserController {
     @ResponseBody
     @Secured("ROLE_ADMIN")
     public ResponseEntity<String> list() {
-        List<User> users = User.findActiveUsers();
+        List<User> users = userDao.findActiveUsers();
         
         return new ResponseEntity<String>(
                 User.JSON.serialize(users),
@@ -94,7 +101,7 @@ public class UserController {
     @ResponseBody
     @Secured("ROLE_ADMIN")
     public ResponseEntity<String> get(@PathVariable("id") Long id) {
-        User user = User.findUser(id);
+        User user = userDao.findOne(id);
         
         return new ResponseEntity<String>(
                 User.JSON.serialize(user),
@@ -107,7 +114,7 @@ public class UserController {
     public void update(@PathVariable("id") Long id, @RequestBody String json) {
         User jsonUser = User.fromJson(json);
         
-        User user = User.findUser(id);
+        User user = userDao.findOne(id);
         user.setName(jsonUser.getName());
         user.setEmail(jsonUser.getEmail());
         
@@ -116,7 +123,7 @@ public class UserController {
             user.setPassword(BCrypt.hashpw(jsonUser.getPassword(), BCrypt.gensalt()));
         }
         
-        user.merge();
+        userDao.merge(user);
     }
     
     @Transactional
@@ -132,7 +139,7 @@ public class UserController {
         
         user.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
         
-        user.persist();
+        userDao.persist(user);
         
         return new ResponseEntity<String>(user.toJson(), headers, HttpStatus.OK);
     }
@@ -142,10 +149,10 @@ public class UserController {
     @ResponseBody
     @Secured("ROLE_ADMIN")
     public void addGroup(@PathVariable("id") Long id, @PathVariable("groupId") Long groupId) throws Exception {
-        User user = User.findUser(id);
-        Group group = Group.findGroup(groupId);
+        User user = userDao.findOne(id);
+        Group group = groupDao.findOne(groupId);
         user.getGroups().add(group);
-        user.merge();
+        userDao.merge(user);
     }
     
     @Transactional
@@ -153,10 +160,10 @@ public class UserController {
     @ResponseBody
     @Secured("ROLE_ADMIN")
     public void removeGroup(@PathVariable("id") Long id, @PathVariable("groupId") Long groupId) throws Exception {
-        User user = User.findUser(id);
-        Group group = Group.findGroup(groupId);
+        User user = userDao.findOne(id);
+        Group group = groupDao.findOne(groupId);
         user.getGroups().remove(group);
-        user.merge();
+        userDao.merge(user);
     }
     
     @Transactional
@@ -164,8 +171,8 @@ public class UserController {
     @ResponseBody
     @Secured("ROLE_ADMIN")
     public void delete(@PathVariable("id") Long id) throws Exception {
-        User user = User.findUser(id);
+        User user = userDao.findOne(id);
         user.setEnabled(false);
-        user.merge();
+        userDao.merge(user);
     }
 }
