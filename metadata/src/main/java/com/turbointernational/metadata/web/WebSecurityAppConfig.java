@@ -4,13 +4,13 @@ import com.turbointernational.metadata.util.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
  *
@@ -44,8 +44,6 @@ public class WebSecurityAppConfig extends WebSecurityConfigurerAdapter {
             .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
             .invalidSessionUrl("/");
         
-//        http.httpBasic().disable();
-        
         http.authorizeRequests()
             .antMatchers("/metadata/security/login",
                          "/metadata/security/login/**").permitAll()    // Login endpoints open to anyone
@@ -60,36 +58,20 @@ public class WebSecurityAppConfig extends WebSecurityConfigurerAdapter {
                     .failureUrl("/metadata/security/login/denied")
             .and().rememberMe()
             .and().logout().logoutUrl("/metadata/security/logout")
-            .and().exceptionHandling().accessDeniedPage("/metadata/security/login/forbidden");
-//            .and().permitAll();
+            .and().exceptionHandling().accessDeniedPage("/metadata/security/login/forbidden")
+            .and().authenticationProvider(createDaoAuthenticationProvider());
         
         http.csrf().disable();
-        
-//        http.csrf().disable()
-//            .loginPage("/login.html").passwordParameter("password").usernameParameter("username")
-//            .permitAll()                    
-//            .and().logout()
-//            .permitAll();
-        
+        http.anonymous().disable();
+//        http.httpBasic().disable();
     }
-    
-    
-//    <security:http use-expressions="true" access-denied-page="/metadata/security/denied">
-//        <security:anonymous enabled="false"/>
-//        <security:intercept-url pattern="/metadata/**"/>
-//        <security:intercept-url pattern="hasIpAddress('127.0.0.1/32')"/>
-//        <security:form-login login-processing-url="/metadata/security/login"
-//                             login-page="/metadata/security/login/required"
-//                             default-target-url="/metadata/security/login/success"
-//                             authentication-failure-url="/metadata/security/login/failed"
-//                             always-use-default-target="true"/>
-//        
-//        <security:logout logout-url="/metadata/security/logout" logout-success-url="/#/login"/>
-//    </security:http>
 
     @Bean
-    public PasswordEncoder encoder() {
-        return new BCryptPasswordEncoder();
+    public DaoAuthenticationProvider createDaoAuthenticationProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(loginService);
+        provider.setPasswordEncoder(new BCryptPasswordEncoder());
+        return provider;
     }
     
 }

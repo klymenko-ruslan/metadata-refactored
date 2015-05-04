@@ -6,8 +6,8 @@ angular.module('ngMetaCrudApp')
     $scope.login = function() {
       Restangular.all('security/login').post(
         jQuery.param({
-          j_username:    $scope.email,
-          j_password: $scope.password
+          username: $scope.email,
+          password: $scope.password
         }),
         {},
         {'Content-Type': 'application/x-www-form-urlencoded'}
