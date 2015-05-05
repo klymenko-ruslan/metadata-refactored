@@ -38,9 +38,15 @@ public class UserController {
         User user = User.getCurrentUser();
         
         if (user == null) {
-            
+            return new ResponseEntity(null, new HttpHeaders(), HttpStatus.FORBIDDEN);
+        }
         
-        return new ResponseEntity(null, new HttpHeaders(), HttpStatus.FORBIDDEN);
+        
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Set<String> authoritySet = Sets.newTreeSet();
+        
+        for (GrantedAuthority auth: authentication.getAuthorities()) {
+            authoritySet.add(auth.getAuthority());
         }
         
         return new ResponseEntity<String>(

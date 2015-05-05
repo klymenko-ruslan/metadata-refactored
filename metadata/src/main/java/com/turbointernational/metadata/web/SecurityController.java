@@ -78,25 +78,4 @@ public class SecurityController {
         
         mailer.send(message);
     }
-    
-    @RequestMapping("login/forbidden")
-    @ResponseStatus(HttpStatus.FORBIDDEN)
-    public @ResponseBody void loginForbidden() {
-    }
-    
-    @RequestMapping("login/success")
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    public @ResponseBody void loginSuccess() {
-    }
-    
-    @RequestMapping("login/failed")
-    @ResponseStatus(HttpStatus.FORBIDDEN)
-    public @ResponseBody String loginFailed() {
-        return "\"Login failed\"";
-    }
-    
-    @RequestMapping("login/denied")
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public @ResponseBody void loginDenied() {
-    }
 }

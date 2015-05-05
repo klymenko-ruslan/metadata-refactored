@@ -14,19 +14,17 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
-import org.springframework.orm.jpa.support.OpenEntityManagerInViewInterceptor;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 @SpringBootApplication
 @EnableScheduling
 @EnableAsync
-@EnableTransactionManagement
+@EnableTransactionManagement//(mode = AdviceMode.PROXY, proxyTargetClass = true)
 @EnableJpaRepositories(basePackageClasses = Application.class)
 @EntityScan(basePackageClasses = Application.class)
 public class Application extends WebMvcConfigurerAdapter {
@@ -35,7 +33,7 @@ public class Application extends WebMvcConfigurerAdapter {
     String productImages;
     
     @Autowired(required=true)
-    EntityManagerFactory emf;
+    private EntityManagerFactory emf;
     
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
@@ -64,14 +62,6 @@ public class Application extends WebMvcConfigurerAdapter {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/product_images/**")
                 .addResourceLocations(productImages);
-    }
-    
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        OpenEntityManagerInViewInterceptor icept  = new OpenEntityManagerInViewInterceptor();
-        icept.setEntityManagerFactory(emf);
-        icept.setPersistenceUnitName("default");
-        registry.addWebRequestInterceptor(icept);
     }
     
     @Bean

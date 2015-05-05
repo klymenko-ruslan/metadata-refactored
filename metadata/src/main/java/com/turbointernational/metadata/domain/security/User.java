@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -29,6 +30,7 @@ public class User implements Comparable<User>, UserDetails {
                 .include("enabled")
                 .include("groups.id")
                 .include("groups.name")
+                .include("roles")
                 .exclude("*");
 
     //<editor-fold defaultstate="collapsed" desc="Properties">
@@ -47,7 +49,7 @@ public class User implements Comparable<User>, UserDetails {
     @Column(columnDefinition = "BIT")
     private Boolean enabled;
     
-    @ManyToMany(mappedBy="users")
+    @ManyToMany(mappedBy="users", fetch = FetchType.EAGER)
     private Set<Group> groups = new TreeSet<Group>();
     
     public Long getId() {
@@ -131,6 +133,18 @@ public class User implements Comparable<User>, UserDetails {
         }
         
         return null;
+    }
+    
+    public Set<String> getRoles() {
+        Set<String> authorities = Sets.newTreeSet();
+        
+        for (Group group : groups) {
+            for (Role role : group.getRoles()) {
+                authorities.add(role.getName());
+            }
+        }
+        
+        return authorities;
     }
     
     @Override

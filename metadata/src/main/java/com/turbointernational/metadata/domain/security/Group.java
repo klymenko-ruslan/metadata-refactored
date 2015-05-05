@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.util.Set;
 import java.util.TreeSet;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -41,7 +42,7 @@ public class Group implements Comparable<Group>, Serializable {
             inverseJoinColumns=@JoinColumn(name="user_id"))
     private Set<User> users = new TreeSet<User>();
     
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name="GROUP_ROLE",
             joinColumns=@JoinColumn(name="group_id"),
             inverseJoinColumns=@JoinColumn(name="role_id"))
