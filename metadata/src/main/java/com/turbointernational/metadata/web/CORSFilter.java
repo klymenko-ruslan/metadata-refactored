@@ -1,6 +1,7 @@
 package com.turbointernational.metadata.web;
 
 import java.io.IOException;
+import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
@@ -8,6 +9,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
 
@@ -16,7 +19,8 @@ import org.springframework.web.filter.GenericFilterBean;
  * @author jrodriguez
  */
 @Component
-public class CORSFilter extends GenericFilterBean {
+@Order(Ordered.HIGHEST_PRECEDENCE)
+public class CORSFilter extends GenericFilterBean implements Filter {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
