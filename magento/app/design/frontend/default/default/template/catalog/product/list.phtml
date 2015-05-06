@@ -213,8 +213,9 @@ $_helper = $this->helper('catalog/output');
                             <!-- display interchange TI parts of primary part -->
                             <?php $tiPartSkus = explode(",", $_product->getTiPartSku()) ?>
                             <?php $firstTiProduct = null; ?>
-                            <?php foreach ($tiPartSkus as $idx => $tiPartSku): ?>
-                                <?php
+                            <?php
+                                $TiPartArray = array();
+                                foreach ($tiPartSkus as $idx => $tiPartSku):
 
                                 // Only if there's a sku
                                 if ($tiPartSku == '') {
@@ -232,12 +233,11 @@ $_helper = $this->helper('catalog/output');
                                     $firstTiProduct = $tiPart;
                                 }
 
-                                if ($idx > 0) {
-                                    echo ",";
-                                }?>
+                                $TiPartArray[] = '<a href="' . $tiPart->getProductUrl() . '">' . $tiPart->getPartNumber() . '</a>';
 
-                                <a href="<?php echo $tiPart->getProductUrl() ?>"><?php echo $tiPart->getPartNumber(); ?></a>
-                            <?php endforeach ?>
+                                endforeach;
+                                echo implode(", ", $TiPartArray);
+                            ?>
                         <?php else: ?>
                             <!-- display only if primary part is TI manfr -->
                             <a href="<?php echo $_product->getProductUrl() ?>"><?php echo $_product->getPartNumber() ?></a>
@@ -320,7 +320,7 @@ $_helper = $this->helper('catalog/output');
                                     echo "</div>";
                                 }?>
                             <?php else: ?>
-                              <div class="number-right-align"><a href="<?php echo $this->getUrl('customer/account/login'); ?>">Login for price</a></div>
+                              <div class="number-right-align"><a href="<?php echo $this->getUrl('customer/account/login'); ?>">Login</a></div>
                             <?php endif; ?>
                         </td>
                     </tr>
