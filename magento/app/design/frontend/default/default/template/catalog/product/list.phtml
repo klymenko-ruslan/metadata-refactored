@@ -52,11 +52,25 @@ $_helper = $this->helper('catalog/output');
                 if (count($_productCollection->getItemsByColumnValue('part_type','6610')) > 0) {
                     $loaded_products_has_part_type_turbo = True;
                 }
+
+                // check to see if array has attribute_id for cartridge
+                // get id for cartridge attribute set
+                $cartridgeAttributeSetId = Mage::getModel('eav/entity_attribute_set')->getCollection()
+                    ->addFieldToFilter('attribute_set_name', 'Cartridge')
+                    ->getFirstItem()
+                    ->getAttributeSetId();
+
+                //if (count($_productCollection->getItemsByColumnValue('attribute_set_id', $cartridgeAttributeSetId)) > 0) {
+                if ($_productCollection->getItemsByColumnValue('attribute_set_id', $cartridgeAttributeSetId)) {
+                    $loaded_products_has_part_type_cartridge = True;
+                }
             ?>
             <table class="data-table" id="products-list">
                 <tr>
                     <th>OE Part #</th>
                     <th>TI Part #</th>
+                    <th>Turbo Type</th>
+                    <?php if ($loaded_products_has_part_type_cartridge): ?><th>Turbo Model</th><?php endif; ?>
                     <th>Part Type</th>
                     <th>Name</th>
                     <th>Manufacturer</th>
@@ -229,6 +243,29 @@ $_helper = $this->helper('catalog/output');
                             <a href="<?php echo $_product->getProductUrl() ?>"><?php echo $_product->getPartNumber() ?></a>
                         <?php endif; ?>
                         </td>
+
+                        <!-- Turbo Type -->
+                        <td>
+                            <?php
+                                $turboTypes = $_product->getAttributeText('turbo_type');
+                                echo implode(", ", $turboTypes) ?: $turboTypes;
+                            ?>
+                        </td>
+
+                        <!-- Turbo Model -->
+                        <?php
+                            // only show column if cartridge exists in product collection
+                            if ($loaded_products_has_part_type_cartridge) {
+                                echo "<td>";
+                                // only show value if product is a cartridge
+                                if ($_product->isCartridge()) {
+                                    $turboModels = $_product->getAttributeText('turbo_model');
+                                    //echo implode(", ", $turboModels) ?: $turboModels;
+                                    echo $turboModels;
+                                }
+                                echo "</td>";
+                            }
+                        ?>
 
                         <!-- Part Type -->
                         <td><?php echo $_product->getAttributeText('part_type') ?></td>
