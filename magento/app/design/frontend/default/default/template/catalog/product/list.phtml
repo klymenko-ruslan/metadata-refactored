@@ -43,13 +43,14 @@ $_helper = $this->helper('catalog/output');
         <?php if ($this->getMode() != 'grid'): ?>
             <?php // List Mode ?>
             <?php 
-                // check to see if part_type filter includes turbo
-                $part_type_params = Mage::app()->getRequest()->getParam("part_type"); 
-                $part_type_params_array = explode(',', $part_type_params);
-
                 // check to see if array has attribute_id for turbo
-                $loaded_products_has_part_type_turbo = False;
-                if (count($_productCollection->getItemsByColumnValue('part_type','6610')) > 0) {
+                // get id for turbo attribute set
+                $turboAttributeSetId = Mage::getModel('eav/entity_attribute_set')->getCollection()
+                    ->addFieldToFilter('attribute_set_name', 'Turbo')
+                    ->getFirstItem()
+                    ->getAttributeSetId();
+
+                if ($_productCollection->getItemsByColumnValue('attribute_set_id', $turboAttributeSetId)) {
                     $loaded_products_has_part_type_turbo = True;
                 }
 
@@ -60,7 +61,6 @@ $_helper = $this->helper('catalog/output');
                     ->getFirstItem()
                     ->getAttributeSetId();
 
-                //if (count($_productCollection->getItemsByColumnValue('attribute_set_id', $cartridgeAttributeSetId)) > 0) {
                 if ($_productCollection->getItemsByColumnValue('attribute_set_id', $cartridgeAttributeSetId)) {
                     $loaded_products_has_part_type_cartridge = True;
                 }
