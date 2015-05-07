@@ -676,20 +676,39 @@ if ($serviceKitSkus) {
 
                         <div class="box-standard-oversize">
                         <table class="data-table" id="standard-oversize-<?php echo $standardPart->getSku() ?>">
-                        <tr>
-                            <th><strong>O/D</strong></th>
-                            <th><strong>I/D</strong></th>
-                            <th><strong>TI Part #</strong></th>
-                            <th><strong>OE Interch Part #</strong></th>
-                        </tr>
+                            <tr>
+                                <th><strong>O/D</strong></th>
+                                <th><strong>I/D</strong></th>
+                                <th><strong>TI Part #</strong></th>
+                                <th><strong>OE Interch Part #</strong></th>
+                            </tr>
 
                         <!-- Standard Part Reference to Oversized-->
-                        <tr>
-                            <td>STD</td>
-                            <td>STD</td>
-                            <td><?php echo '<a href="' . $standardPart->getProductUrl() . '">' . $standardPart->getPartNumber() . '</a>'; ?></td>
-                            <td>OE Interch Part #</td>
-                        </tr>
+                            <tr>
+                                <td>STD</td>
+                                <td>STD</td>
+                                <td><?php echo '<a href="' . $standardPart->getProductUrl() . '">' . $standardPart->getPartNumber() . '</a>'; ?></td>
+                                <td>
+                                    <?php  // loop through each interchange part of the standard TI part
+                                        $standardInterchangeArray = array();
+
+                                        // get collection of standard interchange products
+                                        if ($standardPart->getInterchanges()) {
+                                            $standardInterchangeCollection = Mage::getModel('catalog/product')->getCollection()
+                                                ->addAttributeToSelect('part_number')
+                                                ->addAttributeToSort('part_number', 'ASC')
+                                                ->addFieldToFilter('sku', explode(",", $standardPart->getInterchanges()));
+                                        }
+
+                                        foreach ($standardInterchangeCollection as $standardInterchangePart):
+                                            $standardInterchangeArray[] = '<a href="' . $standardInterchangePart->getProductUrl() . '">' . $standardInterchangePart->getPartNumber() . '</a>';    
+                                        endforeach;
+
+                                        // output as comma separated list
+                                        echo implode(", ", $standardInterchangeArray);
+                                    ?>
+                                </td>
+                            </tr>
             <?php 
                         break;
                     case 'Piston Ring': 
@@ -763,7 +782,7 @@ if ($serviceKitSkus) {
 
                         // get first TI part in list
                         if ($oversizePart->isTurboInternational()) {
-                        $oversizeTiPart = $oversizePart;
+                            $oversizeTiPart = $oversizePart;
                         } else {
                             // skip to next part
                             continue;
@@ -777,9 +796,6 @@ if ($serviceKitSkus) {
                                 <tr>
                                     <td><?php echo ($oversizeTiPart->getOutsideDiameterMin() - $standardPartOutsideDiameterMin) ?: 'STD' ?></td>
                                     <td><?php echo ($standardPartInsideDiameterMin - $oversizeTiPart->getInsideDiameterMin()) ?: 'STD' ?></td>
-                                    <td><?php echo '<a href="' . $oversizeTiPart->getProductUrl() . '">' . $oversizeTiPart->getPartNumber() . '</a>'; ?></td>
-                                    <td>OE Interch Part #</td>
-                                </tr>
                     <?php
                                 break;
                             case 'Piston Ring': 
@@ -787,12 +803,31 @@ if ($serviceKitSkus) {
                                 <tr>
                                     <td><?php echo ($oversizeTiPart->getOutsideDiameterMin() - $standardPartOutsideDiameterMin) ?: 'STD' ?></td>
                                     <td><?php echo ($oversizeTiPart->getWidthMin() - $standardPart->getWidthMin()) ?: 'STD' ?></td>
-                                    <td><?php echo '<a href="' . $oversizeTiPart->getProductUrl() . '">' . $oversizeTiPart->getPartNumber() . '</a>'; ?></td>
-                                    <td>OE Interch Part #</td>
-                                </tr>
                     <?php
                                 break;
+                            default: // display first two columns so as to not break table when no switch case matches
+                    ?>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                    <?php
                         endswitch;
+                                // remaining columns are common to all switch cases, so they are not included in each switch case
+                                echo '<td><a href="' . $oversizeTiPart->getProductUrl() . '">' . $oversizeTiPart->getPartNumber() . '</a></td>';
+                                echo "<td>";
+                                    // loop through each interchange part of the oversize TI part
+                                    $oversizeInterchangeArray = array();
+
+                                    foreach (explode(",", $oversizeTiPart->getInterchanges()) as $oversizeInterchangeSku):
+                                        $oversizeInterchangePart = $oversizeCollection->getItemByColumnValue('sku', $oversizeInterchangeSku);
+                                        if ($oversizeInterchangePart) {
+                                            $oversizeInterchangeArray[] = '<a href="' . $oversizeInterchangePart->getProductUrl() . '">' . $oversizeInterchangePart->getPartNumber() . '</a>';    
+                                        }
+                                    endforeach;
+
+                                    // output as comma separated list
+                                    echo implode(", ", $oversizeInterchangeArray);
+                                echo "</td></tr>";
                     endforeach;
                     ?>
 
