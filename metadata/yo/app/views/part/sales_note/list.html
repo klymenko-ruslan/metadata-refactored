@@ -20,9 +20,16 @@
   <option value="Value 4">
 </datalist>
 </div>
-<div class="pull-right">
-<button type="submit" class="btn btn-primary text-center">+ Add Sales Note</button>
-</div>
+
+
+<li>
+  <a ng-href="/part/{{ partId }}/sales_note/NewNote"
+     class="btn btn-primary text-center">
+    <i class="fa fa-file-o"></i>
+    + Add Sales Note &hellip;
+  </a>
+</li>
+
 
 <div class="col-xs-9">
 <table class="table">
@@ -38,13 +45,21 @@
   <tbody>
     <tr>
     <td>2015-03-02</td>
-    <td>This part doesn't fit the VW 2004 through 2007.</td>
+    <td>This part doesn't fit the VW 2004 through 200seven.</td>
     <td>approved</td>
     <td>yes</td>
-    <td><button type="submit" class="btn btn-primary text-center btn-xs">View</button>
+    <td>
+      <!--<button type="submit" class="btn btn-primary text-center btn-xs">View</button>-->
+
+        <a ng-href="/part/{{ partId }}/sales_note/ViewSalesNote"
+           class="btn btn-primary text-center btn-xs">
+          View
+        </a>
+
       <button type="submit" class="btn btn-info text-center btn-xs">Approve</button>
       <button type="submit" class="btn btn-success text-center btn-xs">Publish</button>
-      <button type="submit" class="btn btn-danger text-center btn-xs">Reject</button></td>
+      <button type="submit" class="btn btn-danger text-center btn-xs">Reject</button>
+    </td>
   </tr>
   <tr>
    <td>2015-03-02</td>
@@ -54,7 +69,8 @@
    <td><button type="submit" class="btn btn-primary text-center btn-xs">View</button>
      <button type="submit" class="btn btn-info text-center btn-xs">Approve</button>
      <button type="submit" class="btn btn-success text-center btn-xs">Publish</button>
-     <button type="submit" class="btn btn-danger text-center btn-xs">Reject</button></td></td>
+     <button type="submit" class="btn btn-danger text-center btn-xs">Reject</button>
+   </td>
   </tr>
   <tr>
    <td>2015-03-02</td>
