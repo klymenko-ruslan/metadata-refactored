@@ -41,7 +41,7 @@ public class WebSecurityAppConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring().antMatchers("/resources/**"); // #3
-        web.debug(true);
+        web.debug(false);
     }
 
     @Override
