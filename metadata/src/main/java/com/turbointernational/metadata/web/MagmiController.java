@@ -85,7 +85,8 @@ public class MagmiController {
             "image",
             "small_image",
             "thumbnail",
-            "media_gallery"
+            "media_gallery",
+            "standard_oversize_part"
         ));
         //</editor-fold>
 

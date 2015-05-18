@@ -20,10 +20,13 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.lang3.StringUtils;
+import org.elasticsearch.common.collect.Maps;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -44,6 +47,7 @@ public class MagmiDataFinder {
     JdbcTemplate db;
     
     public TreeMap<Long, MagmiProduct> findMagmiProducts(List<Part> parts) {
+        logger.log(Level.INFO, "Started");
         long startTime = System.currentTimeMillis();
         
         // Build a product map from the parts
@@ -61,8 +65,6 @@ public class MagmiDataFinder {
             productMap.get(application.getSku())
                       .addApplication(application);
         }
-        
-        logger.log(Level.INFO, "Found {0} applications", applications.size());
         
         // Add TI CHRAs
         logger.log(Level.INFO, "Finding TI CHRA descendants.", applications.size());
@@ -82,7 +84,6 @@ public class MagmiDataFinder {
                 product.setHasTiChra(hasTiChra);
             }
         });
-        logger.log(Level.INFO, "Finding images.", applications.size());
         
         // Add the images
         List<ProductImage> images = findProductImages(productIds);
@@ -92,8 +93,6 @@ public class MagmiDataFinder {
                       .addImageId(image.getId());
         }
         
-        logger.log(Level.INFO, "Found {0} images.", images.size());
-        
         // Add the turbos
         List<MagmiTurbo> turbos = findMagmiTurbos(productIds);
         
@@ -101,8 +100,6 @@ public class MagmiDataFinder {
             productMap.get(magmiTurbo.getSku())
                     .addTurbo(magmiTurbo);
         }
-        
-        logger.log(Level.INFO, "Found {0} turbos.", turbos.size());
         
         // Add the interchanges
         List<MagmiInterchange> interchanges = findMagmiInterchanges(productIds);
@@ -119,8 +116,6 @@ public class MagmiDataFinder {
             productMap.get(usage.getPrincipalId())
                     .addUsage(usage);
         }
-
-        logger.log(Level.INFO, "Found {0} usages.", usages.size());
         
         // Add the bom items
         ListMultimap<Long, MagmiBomItem> bom = findMagmiBom(productIds);
@@ -131,8 +126,6 @@ public class MagmiDataFinder {
                       .addAll(bom.get(ancestorPartId));
         }
         
-        logger.log(Level.INFO, "Found {0} BOM items.", bom.size());
-        
         // Add the service kits
         List<MagmiServiceKit> serviceKits = findMagmiServiceKits(productIds);
         
@@ -141,7 +134,13 @@ public class MagmiDataFinder {
                     .addServiceKit(sk);
         }
         
-        logger.log(Level.INFO, "Found {0} service kits.", serviceKits.size());
+        // Add the standard/oversize part JSON
+        Map<Long, String> sopJson = findMagmiSopJson(productIds);
+        
+        for (Entry<Long, String> sopEntry: sopJson.entrySet()) {
+            productMap.get(sopEntry.getKey())
+                    .setSopJson(sopEntry.getValue());
+        }
         
         logger.log(Level.INFO, "Got {0} products in {1}ms",
                 new Object[] {productMap.size(), System.currentTimeMillis() - startTime});
@@ -150,17 +149,25 @@ public class MagmiDataFinder {
     }
     
     public List<ProductImage> findProductImages(Collection<Long> productIds) {
-        return Part.entityManager().createQuery(
+        logger.log(Level.INFO, "Started");
+        
+        List<ProductImage> images = Part.entityManager().createQuery(
                   "SELECT DISTINCT pi\n"
                 + "FROM ProductImage pi\n"
                 + "WHERE\n"
                 + "  pi.part.id IN (" + StringUtils.join(productIds, ',') + ")\n"
                 + "ORDER BY pi.id", ProductImage.class)
             .getResultList();
+        
+        logger.log(Level.INFO, "Found {0} images.", images.size());
+        
+        return images;
     }
     
     List<MagmiApplication> findMagmiApplications(Collection<Long> productIds) {
-        return db.query(
+        logger.log(Level.INFO, "Started");
+        
+        List<MagmiApplication> applications = db.query(
             "SELECT DISTINCT\n"
           + "  p.id AS sku,\n"
           + "  CONCAT(cmake.name, '!!', COALESCE(cyear.name, 'not specified'), '!!', cmodel.name) AS finder,\n"
@@ -199,10 +206,15 @@ public class MagmiDataFinder {
           + "WHERE\n"
           + "  p.id IN (" + StringUtils.join(productIds, ',') + ")\n"
           + "ORDER BY p.id", new BeanPropertyRowMapper(MagmiApplication.class));
+        
+        logger.log(Level.INFO, "Found {0} applications", applications.size());
+        
+        return applications;
     }
 
     List<MagmiTurbo> findMagmiTurbos(Collection<Long> productIds) {
-        return db.query(
+        logger.log(Level.INFO, "Started");
+        List<MagmiTurbo> turbos = db.query(
               "SELECT DISTINCT"
                 + "  p.id AS sku,\n"
                 + "  p_tt.name AS part_turbo_type,\n"
@@ -241,10 +253,17 @@ public class MagmiDataFinder {
                 + "WHERE\n"
                 + "  p.id IN (" + StringUtils.join(productIds, ',') + ")",
             new BeanPropertyRowMapper(MagmiTurbo.class));
+        
+        
+        logger.log(Level.INFO, "Found {0} turbos.", turbos.size());
+        
+        return turbos;
     }
 
     List<MagmiServiceKit> findMagmiServiceKits(Collection<Long> productIds) {
-        return db.query(
+        logger.log(Level.INFO, "Started");
+        
+        List<MagmiServiceKit> kits = db.query(
               "SELECT DISTINCT\n"
             + "  sku,\n"
             + "  kitSku,\n"
@@ -261,9 +280,15 @@ public class MagmiDataFinder {
             + "GROUP BY sku, kitSku\n"
             + "ORDER BY sku, kitSku, tiKitSku",
             new BeanPropertyRowMapper(MagmiServiceKit.class));
+        
+        logger.log(Level.INFO, "Found {0} service kits.", kits.size());
+        
+        return kits;
     }
     
     List<MagmiInterchange> findMagmiInterchanges(Collection<Long> productIds) {
+        logger.log(Level.INFO, "Started");
+        
         return Part.entityManager().createQuery(
                 "SELECT DISTINCT NEW"
               + "  com.turbointernational.metadata.magmi.dto.MagmiInterchange("
@@ -283,7 +308,9 @@ public class MagmiDataFinder {
     }
     
     List<MagmiUsage> findMagmiUsages(Collection<Long> productIds) {
-        return db.query(
+        logger.log(Level.INFO, "Started");
+        
+        List<MagmiUsage> usages = db.query(
                 "SELECT DISTINCT\n"
               + "  principal_id,\n"
               + "  sku,\n"
@@ -297,10 +324,17 @@ public class MagmiDataFinder {
               + "FROM vwhere_used\n"
               + "WHERE principal_id IN (" + StringUtils.join(productIds, ',') + ")",
             new BeanPropertyRowMapper(MagmiUsage.class));
+        
+
+        logger.log(Level.INFO, "Found {0} usages.", usages.size());
+        
+        return usages;
     }
 
     ListMultimap<Long, MagmiBomItem> findMagmiBom(Collection<Long> productIds) {
-        return db.query(
+        logger.log(Level.INFO, "Started");
+        
+        ListMultimap<Long, MagmiBomItem> items = db.query(
                 "SELECT\n"
               + "  ancestor_sku,\n"
               + "  descendant_sku,\n"
@@ -370,6 +404,77 @@ public class MagmiDataFinder {
                 return result;
             }
         });
+        
+        logger.log(Level.INFO, "Found {0} BOM items.", items.size());
+        
+        return items;
+    }
+    
+    Map<Long, String> findMagmiSopJson(Collection<Long> productIds) {
+        logger.log(Level.INFO, "Started");
+        
+        Map<Long, String> infos = db.query(
+                "SELECT\n"
+              + "  part_id,\n"
+              + "  standard_part_sku,\n"
+              + "  oversize_part_skus\n"
+              + "FROM vmagmi_sop\n"
+              + "WHERE\n"
+              + "  part_id IN ("
+              +   StringUtils.join(productIds, ',')
+              + ")",
+            new ResultSetExtractor<Map<Long, String>>() {
+
+            @Override
+            public Map<Long, String> extractData(ResultSet rs) throws SQLException, DataAccessException {
+                
+                // Product ID rows, standard sku columns
+                Table<Long, Long, String> sopTable = TreeBasedTable.create();
+                
+                // Roll up the data
+                while (rs.next()) {
+                    
+                    // Get the values we need from the result set
+                    long productId         = rs.getLong("part_id");
+                    long standardSku       = rs.getLong("standard_part_sku");
+                    String oversizeSkus    = rs.getString("oversize_part_skus");
+                    
+                    sopTable.put(productId, standardSku, oversizeSkus);
+                }
+                
+                // Store the JSON for each product
+                Map<Long, String> result = Maps.newHashMap();
+                
+                for (Long productId : sopTable.rowKeySet()) {
+                    
+                    if (sopTable.rowKeySet().isEmpty()) {
+                        continue;
+                    }
+                    
+                    // Build the JSON for this product
+                    StringBuilder json = new StringBuilder("{");
+                    
+                    for (Entry<Long, String> productSop : sopTable.row(productId).entrySet()) {
+                        json.append(productSop.getKey())
+                            .append(":[")
+                            .append(productSop.getValue())
+                            .append("],");
+                    }
+                      
+                    // Replace the trailing comma with a curly brace
+                    json.replace(json.length()-1, json.length(), "}");
+                    
+                    // Store the result for this product
+                    result.put(productId, json.toString());
+                }
+                
+                return result;
+            }
+        });
+        
+        logger.log(Level.INFO, "Found {0} standard/oversize part infos.", infos.size());
+        
+        return infos;
     }
     
 }

@@ -53,6 +53,8 @@ public class MagmiProduct {
     
     private Boolean hasTiChra = false;
     
+    private String sopJson = "";
+    
     private final List<MagmiBomItem> bom = new ArrayList<MagmiBomItem>();
     
     private final JSOG serviceKits = JSOG.array();
@@ -105,6 +107,10 @@ public class MagmiProduct {
         this.hasTiChra = hasTiChra;
     }
     
+    public void setSopJson(String sopJson) {
+        this.sopJson = sopJson;
+    }
+
     public final void addApplication(MagmiApplication application) {
         if (StringUtils.isNotEmpty(application.getFinder())) {
             finderApplication.add(application.getFinder());
@@ -225,6 +231,7 @@ public class MagmiProduct {
         columns.put("ti_part_sku", StringUtils.join(tiInterchanges, ','));
         columns.put("ti_part_number", tiPartNumber);
         columns.put("has_ti_chra", Boolean.toString(hasTiChra));
+        columns.put("standard_oversize_part", sopJson);
         
         // Don't overwrite turbo values
         if (!(part instanceof Turbo)) {
