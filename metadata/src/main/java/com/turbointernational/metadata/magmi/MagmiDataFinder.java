@@ -455,9 +455,11 @@ public class MagmiDataFinder {
                     StringBuilder json = new StringBuilder("{");
                     
                     for (Entry<Long, String> productSop : sopTable.row(productId).entrySet()) {
-                        json.append(productSop.getKey())
+                        json.append("\"")
+                                .append(productSop.getKey())
+                            .append("\"")
                             .append(":[")
-                            .append(productSop.getValue())
+                                .append(productSop.getValue())
                             .append("],");
                     }
                       
