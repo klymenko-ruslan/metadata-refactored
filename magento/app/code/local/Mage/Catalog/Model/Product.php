@@ -2116,4 +2116,25 @@ class Mage_Catalog_Model_Product extends Mage_Catalog_Model_Abstract
         return null;
     }
 
+    /**
+     * Returns formatted string value or 'STD' if passed value is zero
+     *
+     * @param number|string $numberValue
+     * @param int $scale Desired scale of the returned value
+     * @return string
+     */
+    public function getStandardDimFormat($numberValue, $scale=3) {
+
+        // returns string: formatted value or 'STD' if passed value is zero
+        // inputs are (1) number to be formatted and (2) integer representing scale
+
+        if ($numberValue==0) {
+            // value is zero then return 'STD'
+            return "STD";
+        } else {
+            // else return formatted value
+            return number_format($numberValue, $scale);
+        }
+    }
+
 }
