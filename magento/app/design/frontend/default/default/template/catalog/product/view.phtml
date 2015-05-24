@@ -583,7 +583,6 @@ if ($serviceKitSkus) {
         // Get collection of parts
         $standardCollection = array();
         $oversizeCollection = array();
-//Zend_Debug::dump($standardOversize, 'JSON standardOversize');
 
         // get collection of standard products
         if ($standardOversize) {
@@ -598,6 +597,7 @@ if ($serviceKitSkus) {
                 ->addAttributeToSelect('inside_diameter_max')
                 ->addAttributeToSelect('outside_diameter_min')
                 ->addAttributeToSelect('outside_diameter_max')
+                ->addAttributeToSelect('width_jb')
                 // pistong ring
                 ->addAttributeToSelect('width_min')
                 ->addAttributeToSort('part_number', 'ASC')
@@ -635,7 +635,7 @@ if ($serviceKitSkus) {
                                 <td class="number-right-align"><?php echo $standardPart->getStandardDimFormat($standardPart->getOutsideDiameterMax(), 4) ?></td>
                                 <td class="number-right-align"><?php echo $standardPart->getStandardDimFormat($standardPart->getInsideDiameterMin(), 4) ?></td>
                                 <td class="number-right-align"><?php echo $standardPart->getStandardDimFormat($standardPart->getInsideDiameterMax(), 4) ?></td>
-                                <?php if ($productAttributeSetName == 'Journal Bearing'): ?><td class="number-right-align"></td><?php endif; ?>
+                                <?php if ($productAttributeSetName == 'Journal Bearing'): ?><td class="number-right-align"><?php echo number_format($standardPart->getWidthJb(), 4)?></td><?php endif; ?>
                             </tr>
                             <tr>
                                 <th><strong>MILLIMETERS</strong></th>
@@ -643,7 +643,7 @@ if ($serviceKitSkus) {
                                 <td class="number-right-align"><?php echo $standardPart->getStandardDimFormat($standardPart->getOutsideDiameterMax() * MM_PER_INCH, 4) ?></td>
                                 <td class="number-right-align"><?php echo $standardPart->getStandardDimFormat($standardPart->getInsideDiameterMin() * MM_PER_INCH, 4) ?></td>
                                 <td class="number-right-align"><?php echo $standardPart->getStandardDimFormat($standardPart->getInsideDiameterMax() * MM_PER_INCH, 4) ?></td>
-                                <?php if ($productAttributeSetName == 'Journal Bearing'): ?><td class="number-right-align"></td><?php endif; ?>
+                                <?php if ($productAttributeSetName == 'Journal Bearing'): ?><td class="number-right-align"><?php echo number_format($standardPart->getWidthJb() * MM_PER_INCH, 4)?></td><?php endif; ?>
                             </tr>
                         </table>
                         </div>
