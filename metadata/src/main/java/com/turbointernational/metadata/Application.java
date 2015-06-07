@@ -22,7 +22,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.WebApplicationInitializer;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 @SpringBootApplication
@@ -62,15 +61,6 @@ public class Application extends WebMvcConfigurerAdapter implements WebApplicati
         executor.setThreadNamePrefix("bom-rebuild-");
         executor.setMaxPoolSize(1);
         return executor;
-    }
-
-    /**
-     * Product Image Support
-     */
-    @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/product_images/**")
-                .addResourceLocations(productImages);
     }
 
     @Bean
