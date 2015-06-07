@@ -260,8 +260,7 @@ $_helper = $this->helper('catalog/output');
                                 // only show value if product is a cartridge
                                 if ($_product->isCartridge()) {
                                     $turboModels = $_product->getAttributeText('turbo_model');
-                                    //echo implode(", ", $turboModels) ?: $turboModels;
-                                    echo $turboModels;
+                                    echo implode(", ", $turboModels) ?: $turboModels;
                                 }
                                 echo "</td>";
                             }

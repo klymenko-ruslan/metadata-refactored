@@ -38,6 +38,7 @@ $_product = $this->getProduct();
 $_tiProduct = $_product->getTiProduct();
 $_description = $_product->getDescription();
 $_ad = $this->getAdditionalData();
+const MM_PER_INCH = 25.4;
 
 $productAttributeSetName = $_product->getAttributeSetName();
 
@@ -50,6 +51,9 @@ $serviceKits = json_decode($_product->getServiceKits(), true);
 
 // Get the usages
 $whereUsed = json_decode($_product->getWhereUsed(), true);
+
+// Get the standard oversize
+$standardOversize = json_decode($_product->getStandardOversizePart(), true);
 
 // Get the interchanges SKUs, tiPartSkuArray is a subset of this
 $interchangeSkuArray = $_product->getInterchanges() ? explode(',', $_product->getInterchanges()) : array();
@@ -573,8 +577,226 @@ if ($serviceKitSkus) {
                 </table>
             </div>
             <?php endif; ?>
-        </div>
         
+        <!-- Standard Oversize -->
+        <?php
+        // Get collection of parts
+        $standardCollection = array();
+        $oversizeCollection = array();
+
+        // get collection of standard products
+        if ($standardOversize) {
+            $standardCollection = Mage::getModel('catalog/product')->getCollection()
+                ->addAttributeToSelect('part_type')
+                ->addAttributeToSelect('part_number')
+                ->addAttributeToSelect('price')
+                ->addAttributeToSelect('interchanges')
+                ->addAttributeToSelect('manufacturer')
+                ->addAttributeToSelect('turbo_type')
+                ->addAttributeToSelect('inside_diameter_min')
+                ->addAttributeToSelect('inside_diameter_max')
+                ->addAttributeToSelect('outside_diameter_min')
+                ->addAttributeToSelect('outside_diameter_max')
+                ->addAttributeToSelect('width_jb')
+                // pistong ring
+                ->addAttributeToSelect('width_min')
+                ->addAttributeToSort('part_number', 'ASC')
+                ->addFieldToFilter('sku', array_keys($standardOversize));
+        }
+
+        // Loop through Standard dictionary
+            ?>
+            <div class="box-standard-oversize-master">
+                <h2> <?php echo $this->__('Standard Dimensions') ?></h2>
+            <?php
+            foreach ($standardCollection as $standardPart):
+                echo '<h3>' . $this->__('Turbo Type: ') . implode(", ", $standardPart->getAttributeText('turbo_type')) . '</h3>';
+                switch ($productAttributeSetName):
+                    case 'Journal Bearing': 
+                        // falling through to use code of next case
+                    case 'Bearing Spacer': 
+                    // Loop through Oversize List
+            ?>
+                        <!-- Standard Part Dimensions-->
+                        <div class="box-standard-dimensions">
+                        <table class="data-table" id="standard-dimensions-<?php echo $standardPart->getSku() ?>">
+                            <tr>
+                                <th><strong>STANDARD DIMENSIONS</strong></th>
+                                <th class="number-right-align"><strong>O/D MIN</strong></th>
+                                <th class="number-right-align"><strong>O/D MAX</strong></th>
+                                <th class="number-right-align"><strong>I/D MIN</strong></th>
+                                <th class="number-right-align"><strong>I/D MAX</strong></th>
+                                <?php if ($productAttributeSetName == 'Journal Bearing'): ?><th class="number-right-align"><strong>WIDTH</strong></th><?php endif; ?>
+
+                            </tr>
+                            <tr>
+                                <th><strong>INCHES</strong></th>
+                                <td class="number-right-align"><?php echo $standardPart->getStandardDimFormat($standardPart->getOutsideDiameterMin(), 4) ?></td>
+                                <td class="number-right-align"><?php echo $standardPart->getStandardDimFormat($standardPart->getOutsideDiameterMax(), 4) ?></td>
+                                <td class="number-right-align"><?php echo $standardPart->getStandardDimFormat($standardPart->getInsideDiameterMin(), 4) ?></td>
+                                <td class="number-right-align"><?php echo $standardPart->getStandardDimFormat($standardPart->getInsideDiameterMax(), 4) ?></td>
+                                <?php if ($productAttributeSetName == 'Journal Bearing'): ?><td class="number-right-align"><?php echo number_format($standardPart->getWidthJb(), 4)?></td><?php endif; ?>
+                            </tr>
+                            <tr>
+                                <th><strong>MILLIMETERS</strong></th>
+                                <td class="number-right-align"><?php echo $standardPart->getStandardDimFormat($standardPart->getOutsideDiameterMin() * MM_PER_INCH, 4) ?></td>
+                                <td class="number-right-align"><?php echo $standardPart->getStandardDimFormat($standardPart->getOutsideDiameterMax() * MM_PER_INCH, 4) ?></td>
+                                <td class="number-right-align"><?php echo $standardPart->getStandardDimFormat($standardPart->getInsideDiameterMin() * MM_PER_INCH, 4) ?></td>
+                                <td class="number-right-align"><?php echo $standardPart->getStandardDimFormat($standardPart->getInsideDiameterMax() * MM_PER_INCH, 4) ?></td>
+                                <?php if ($productAttributeSetName == 'Journal Bearing'): ?><td class="number-right-align"><?php echo number_format($standardPart->getWidthJb() * MM_PER_INCH, 4)?></td><?php endif; ?>
+                            </tr>
+                        </table>
+                        </div>
+            <?php 
+                        break;
+                    case 'Piston Ring': 
+                    ?>
+                    <?php 
+                        break;
+                endswitch; 
+            ?>
+                <div class="box-standard-oversize">
+                <table class="data-table" id="standard-oversize-<?php echo $standardPart->getSku() ?>">
+                    <tr>
+                        <th class="number-right-align"><strong>O/D</strong></th>
+                        <td class="number-right-align"><strong><?php
+                                if ($productAttributeSetName == 'Journal Bearing' || $productAttributeSetName == 'Bearing Spacer') {
+                                    echo 'I/D';
+                                } elseif ($productAttributeSetName == 'Piston Ring') {
+                                    echo 'Width';
+                                }
+                                ?></strong></td>
+                        <th><strong>TI Part #</strong></th>
+                        <th><strong>OE Interchange Part #</strong></th>
+                    </tr>
+                <!-- Standard Part Reference to Oversized-->
+                    <tr>
+                        <td class="number-right-align">STD</td>
+                        <td class="number-right-align">STD</td>
+                        <td><?php echo '<a href="' . $standardPart->getProductUrl() . '">' . $standardPart->getPartNumber() . '</a>'; ?></td>
+                        <td>
+                            <?php  // loop through each interchange part of the standard TI part
+                                $standardInterchangeArray = array();
+
+                                // get collection of standard interchange products
+                                if ($standardPart->getInterchanges()) {
+                                    $standardInterchangeCollection = Mage::getModel('catalog/product')->getCollection()
+                                        ->addAttributeToSelect('part_number')
+                                        ->addAttributeToSort('part_number', 'ASC')
+                                        ->addFieldToFilter('sku', explode(",", $standardPart->getInterchanges()));
+                                }
+
+                                foreach ($standardInterchangeCollection as $standardInterchangePart):
+                                    $standardInterchangeArray[] = '<a href="' . $standardInterchangePart->getProductUrl() . '">' . $standardInterchangePart->getPartNumber() . '</a>';    
+                                endforeach;
+
+                                // output as comma separated list
+                                echo implode(", ", $standardInterchangeArray);
+                            ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <?php
+                    // Oversized Part
+
+                    // get collection of Oversized products
+                    if ($standardOversize) {
+                        $oversizeCollection = Mage::getModel('catalog/product')->getCollection()
+                            ->addAttributeToSelect('part_type')
+                            ->addAttributeToSelect('part_number')
+                            ->addAttributeToSelect('price')
+                            ->addAttributeToSelect('interchanges')
+                            ->addAttributeToSelect('manufacturer')
+                            // Journal Bearing and bearing spacer
+                            ->addAttributeToSelect('inside_diameter_min')
+                            ->addAttributeToSelect('outside_diameter_min')
+                            // pistong ring
+                            ->addAttributeToSelect('width_min')
+                            //->addAttributeToSort('part_number', 'ASC')
+                            ->addFieldToFilter('sku', $standardOversize[$standardPart->getSku()]);
+
+                        // Add sort to collection
+                        $standardPartInsideDiameterMin = $standardPart->getInsideDiameterMin();
+                        $standardPartOutsideDiameterMin = $standardPart->getOutsideDiameterMin();
+                        $oversizeCollection->getSelect()->order( array("(outside_diameter_min - $standardPartOutsideDiameterMin), ($standardPartInsideDiameterMin - inside_diameter_min) ASC") );
+                    }
+
+                    // loop through oversize parts for respective standard part
+                    foreach ($oversizeCollection as $oversizePart):
+
+                        // get first TI part in list
+                        if ($oversizePart->isTurboInternational()) {
+                            $oversizeTiPart = $oversizePart;
+                        } else {
+                            // skip to next part
+                            continue;
+                        }
+
+                        switch ($productAttributeSetName):
+                            case 'Journal Bearing': 
+                                // falling through to use code of next case
+                            case 'Bearing Spacer': 
+                    ?>
+                                <tr>
+                                    <td class="number-right-align"><?php echo $oversizePart->getStandardDimFormat($oversizeTiPart->getOutsideDiameterMin() - $standardPartOutsideDiameterMin) ?></td>
+                                    <td class="number-right-align"><?php echo $oversizePart->getStandardDimFormat($standardPartInsideDiameterMin - $oversizeTiPart->getInsideDiameterMin()) ?></td>
+                    <?php
+                                break;
+                            case 'Piston Ring': 
+                    ?>
+                                <tr>
+                                    <td class="number-right-align"><?php echo $oversizePart->getStandardDimFormat($oversizeTiPart->getOutsideDiameterMin() - $standardPartOutsideDiameterMin) ?></td>
+                                    <td class="number-right-align"><?php echo $oversizePart->getStandardDimFormat($oversizeTiPart->getWidthMin() - $standardPart->getWidthMin()) ?></td>
+                    <?php
+                                break;
+                            default: // display first two columns so as to not break table when no switch case matches
+                    ?>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                    <?php
+                        endswitch;
+                                // remaining columns are common to all switch cases, so they are not included in each switch case
+                                echo '<td><a href="' . $oversizeTiPart->getProductUrl() . '">' . $oversizeTiPart->getPartNumber() . '</a></td>';
+                                echo "<td>";
+                                    // loop through each interchange part of the oversize TI part
+                                    $oversizeInterchangeArray = array();
+
+                                    foreach (explode(",", $oversizeTiPart->getInterchanges()) as $oversizeInterchangeSku):
+                                        $oversizeInterchangePart = $oversizeCollection->getItemByColumnValue('sku', $oversizeInterchangeSku);
+                                        if ($oversizeInterchangePart) {
+                                            // use part number and sku as key to allow for sorting
+                                            $oversizeInterchangeArray[$oversizeInterchangePart->getPartNumber() . '_' . $oversizeInterchangeSku] = '<a href="' . $oversizeInterchangePart->getProductUrl() . '">' . $oversizeInterchangePart->getPartNumber() . '</a>';    
+                                        }
+                                    endforeach;
+
+                                    // output as comma separated list
+                                    ksort($oversizeInterchangeArray);
+                                    echo implode(", ", array_values($oversizeInterchangeArray));
+                                echo "</td></tr>";
+                    endforeach;
+                    ?>
+
+                </table>
+                </div>
+
+<script type="text/javascript">decorateTable('standard-dimensions-<?php echo $standardPart->getSku() ?>')</script>
+<script type="text/javascript">decorateTable('standard-oversize-<?php echo $standardPart->getSku() ?>')</script>
+            <?php
+            endforeach;
+        ?>
+            </div>
+        <!-- End of Product Information Tab -->
+        </div>  
+
+
+        <!-- End of Standard Oversize -->
+
         <!-- Bill of Materials -->
         <?php
         $billOfMaterialsSkus = array();
@@ -1147,3 +1369,4 @@ if ($serviceKitSkus) {
 <script type="text/javascript">decorateTable('where-used')</script>
 <script type="text/javascript">decorateTable('kit-matrix')</script>
 <script type="text/javascript">decorateTable('interchangeable-parts-specs-table')</script>
+<script type="text/javascript">decorateTable('standard-oversize')</script>

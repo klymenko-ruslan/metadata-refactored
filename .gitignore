@@ -20,11 +20,13 @@
 /magento/media/js/*
 /magento/media/import/*
 /magento/var/log/
-/magento/var/cache/
+/magento/var/cache
 /magento/var/locks/
 /magento/var/report/
+/magento/var/export/
 /images/
 /metadata/yo/dist/
 /metadata/yo/.tmp/
 /metadata/yo/.sass-cache/
 /metadata/yo/nbproject/private/
+/magento/includes/src/*
