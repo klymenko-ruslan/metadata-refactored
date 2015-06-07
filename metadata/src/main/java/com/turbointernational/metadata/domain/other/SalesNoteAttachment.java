@@ -8,11 +8,11 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.UniqueConstraint;
 
 /**
  *
@@ -20,11 +20,15 @@ import javax.persistence.UniqueConstraint;
  */
 @Cacheable
 @Entity
-@Table(name="sales_note_attachment", uniqueConstraints=@UniqueConstraint(columnNames={"name"}))
+@Table(name="sales_note_attachment")
 public class SalesNoteAttachment implements Serializable {
     
     @Id
     private Long id;
+    
+    @ManyToOne
+    @JoinColumn(name = "sales_note_id")
+    private SalesNote salesNote;
     
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name="create_date")
@@ -51,6 +55,54 @@ public class SalesNoteAttachment implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public SalesNote getSalesNote() {
+        return salesNote;
+    }
+
+    public void setSalesNote(SalesNote salesNote) {
+        this.salesNote = salesNote;
+    }
+
+    public Date getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
+    }
+
+    public User getCreator() {
+        return creator;
+    }
+
+    public void setCreator(User creator) {
+        this.creator = creator;
+    }
+
+    public Date getUpdateDate() {
+        return updateDate;
+    }
+
+    public void setUpdateDate(Date updateDate) {
+        this.updateDate = updateDate;
+    }
+
+    public User getUpdater() {
+        return updater;
+    }
+
+    public void setUpdater(User updater) {
+        this.updater = updater;
+    }
+
+    public String getFilename() {
+        return filename;
+    }
+
+    public void setFilename(String filename) {
+        this.filename = filename;
     }
     
 }

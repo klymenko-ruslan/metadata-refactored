@@ -587,7 +587,7 @@ CREATE TABLE `sales_note_attachment` (
   KEY `fk_sales_note_attachment_user_create_uid_idx` (`create_uid`),
   KEY `fk_sales_note_attachment_user_write_uid_idx` (`write_uid`),
   CONSTRAINT `sales_note_attachment_user_create_uid` FOREIGN KEY (`create_uid`) REFERENCES `user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `sales_note_attachment_user_write_uid` FOREIGN KEY (`write_uid`) REFERENCES `user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `sales_note_attachment_user_write_uid` FOREIGN KEY (`write_uid`) REFERENCES `user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `sales_note_attachment_sales_note_sales_note_id` FOREIGN KEY (`sales_note_id`) REFERENCES `sales_note` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 

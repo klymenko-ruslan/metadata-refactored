@@ -18,7 +18,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.UniqueConstraint;
 
 /**
  *
@@ -26,7 +25,7 @@ import javax.persistence.UniqueConstraint;
  */
 @Cacheable
 @Entity
-@Table(name="sales_note", uniqueConstraints=@UniqueConstraint(columnNames={"name"}))
+@Table(name="sales_note")
 public class SalesNote {
     
     public static enum SalesNoteState {
@@ -61,12 +60,15 @@ public class SalesNote {
     
     private Boolean published;
     
-    @OneToMany(mappedBy = "id")
+    @OneToMany
     @JoinTable(name="sales_note_part",
             indexes = @Index(columnList = "sales_note_id,part_id"),
             joinColumns = @JoinColumn(name = "sales_note_id"),
             inverseJoinColumns = @JoinColumn(name="part_id"))
     private List<Part> parts;
+    
+    @OneToMany(mappedBy="salesNote")
+    private List<SalesNoteAttachment> attachments;
     
     public Long getId() {
         return id;
@@ -74,6 +76,70 @@ public class SalesNote {
     
     public void setId(Long id) {
         this.id = id;
+    }
+    
+    public Date getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
+    }
+
+    public User getCreator() {
+        return creator;
+    }
+
+    public void setCreator(User creator) {
+        this.creator = creator;
+    }
+
+    public Date getUpdateDate() {
+        return updateDate;
+    }
+
+    public void setUpdateDate(Date updateDate) {
+        this.updateDate = updateDate;
+    }
+
+    public User getUpdater() {
+        return updater;
+    }
+
+    public void setUpdater(User updater) {
+        this.updater = updater;
+    }
+
+    public SalesNoteState getState() {
+        return state;
+    }
+
+    public void setState(SalesNoteState state) {
+        this.state = state;
+    }
+
+    public Boolean getPublished() {
+        return published;
+    }
+
+    public void setPublished(Boolean published) {
+        this.published = published;
+    }
+
+    public List<Part> getParts() {
+        return parts;
+    }
+
+    public void setParts(List<Part> parts) {
+        this.parts = parts;
+    }
+
+    public List<SalesNoteAttachment> getAttachments() {
+        return attachments;
+    }
+
+    public void setAttachments(List<SalesNoteAttachment> attachments) {
+        this.attachments = attachments;
     }
     //</editor-fold>
     
