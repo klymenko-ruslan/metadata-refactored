@@ -1,9 +1,9 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-  .controller('MainCtrl', function ($log, $location, User) {
+  .controller('MainCtrl', function($log, $location, User) {
 
-    // Initialize the user
+  //Initialize the user
     User.init().then(
       function() {
         $log.log('User initialized.');
@@ -13,4 +13,4 @@ angular.module('ngMetaCrudApp')
         $location.path('/');
       });
 
-    });
+  });
