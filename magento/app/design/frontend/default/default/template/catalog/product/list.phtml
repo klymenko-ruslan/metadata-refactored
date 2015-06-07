@@ -43,20 +43,34 @@ $_helper = $this->helper('catalog/output');
         <?php if ($this->getMode() != 'grid'): ?>
             <?php // List Mode ?>
             <?php 
-                // check to see if part_type filter includes turbo
-                $part_type_params = Mage::app()->getRequest()->getParam("part_type"); 
-                $part_type_params_array = explode(',', $part_type_params);
-
                 // check to see if array has attribute_id for turbo
-                $loaded_products_has_part_type_turbo = False;
-                if (count($_productCollection->getItemsByColumnValue('part_type','6610')) > 0) {
+                // get id for turbo attribute set
+                $turboAttributeSetId = Mage::getModel('eav/entity_attribute_set')->getCollection()
+                    ->addFieldToFilter('attribute_set_name', 'Turbo')
+                    ->getFirstItem()
+                    ->getAttributeSetId();
+
+                if ($_productCollection->getItemsByColumnValue('attribute_set_id', $turboAttributeSetId)) {
                     $loaded_products_has_part_type_turbo = True;
+                }
+
+                // check to see if array has attribute_id for cartridge
+                // get id for cartridge attribute set
+                $cartridgeAttributeSetId = Mage::getModel('eav/entity_attribute_set')->getCollection()
+                    ->addFieldToFilter('attribute_set_name', 'Cartridge')
+                    ->getFirstItem()
+                    ->getAttributeSetId();
+
+                if ($_productCollection->getItemsByColumnValue('attribute_set_id', $cartridgeAttributeSetId)) {
+                    $loaded_products_has_part_type_cartridge = True;
                 }
             ?>
             <table class="data-table" id="products-list">
                 <tr>
                     <th>OE Part #</th>
                     <th>TI Part #</th>
+                    <th>Turbo Type</th>
+                    <?php if ($loaded_products_has_part_type_cartridge): ?><th>Turbo Model</th><?php endif; ?>
                     <th>Part Type</th>
                     <th>Name</th>
                     <th>Manufacturer</th>
@@ -199,8 +213,9 @@ $_helper = $this->helper('catalog/output');
                             <!-- display interchange TI parts of primary part -->
                             <?php $tiPartSkus = explode(",", $_product->getTiPartSku()) ?>
                             <?php $firstTiProduct = null; ?>
-                            <?php foreach ($tiPartSkus as $idx => $tiPartSku): ?>
-                                <?php
+                            <?php
+                                $TiPartArray = array();
+                                foreach ($tiPartSkus as $idx => $tiPartSku):
 
                                 // Only if there's a sku
                                 if ($tiPartSku == '') {
@@ -218,17 +233,38 @@ $_helper = $this->helper('catalog/output');
                                     $firstTiProduct = $tiPart;
                                 }
 
-                                if ($idx > 0) {
-                                    echo ",";
-                                }?>
+                                $TiPartArray[] = '<a href="' . $tiPart->getProductUrl() . '">' . $tiPart->getPartNumber() . '</a>';
 
-                                <a href="<?php echo $tiPart->getProductUrl() ?>"><?php echo $tiPart->getPartNumber(); ?></a>
-                            <?php endforeach ?>
+                                endforeach;
+                                echo implode(", ", $TiPartArray);
+                            ?>
                         <?php else: ?>
                             <!-- display only if primary part is TI manfr -->
                             <a href="<?php echo $_product->getProductUrl() ?>"><?php echo $_product->getPartNumber() ?></a>
                         <?php endif; ?>
                         </td>
+
+                        <!-- Turbo Type -->
+                        <td>
+                            <?php
+                                $turboTypes = $_product->getAttributeText('turbo_type');
+                                echo implode(", ", $turboTypes) ?: $turboTypes;
+                            ?>
+                        </td>
+
+                        <!-- Turbo Model -->
+                        <?php
+                            // only show column if cartridge exists in product collection
+                            if ($loaded_products_has_part_type_cartridge) {
+                                echo "<td>";
+                                // only show value if product is a cartridge
+                                if ($_product->isCartridge()) {
+                                    $turboModels = $_product->getAttributeText('turbo_model');
+                                    echo implode(", ", $turboModels) ?: $turboModels;
+                                }
+                                echo "</td>";
+                            }
+                        ?>
 
                         <!-- Part Type -->
                         <td><?php echo $_product->getAttributeText('part_type') ?></td>
@@ -283,7 +319,7 @@ $_helper = $this->helper('catalog/output');
                                     echo "</div>";
                                 }?>
                             <?php else: ?>
-                              <div class="number-right-align"><a href="<?php echo $this->getUrl('customer/account/login'); ?>">Login for price</a></div>
+                              <div class="number-right-align"><a href="<?php echo $this->getUrl('customer/account/login'); ?>">Login</a></div>
                             <?php endif; ?>
                         </td>
                     </tr>

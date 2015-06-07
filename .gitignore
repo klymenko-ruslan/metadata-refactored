@@ -11,6 +11,7 @@
 /magento/.bash_history
 /magento/downloader/.cache
 /magento/downloader/cache.cfg
+/magento/includes/src/*
 /magento/magmi/import/*
 /magento/magmi/state/*
 /magento/media/catalog/product/*
@@ -20,9 +21,10 @@
 /magento/media/js/*
 /magento/media/import/*
 /magento/var/log/
-/magento/var/cache/
+/magento/var/cache
 /magento/var/locks/
 /magento/var/report/
+/magento/var/export/
 /images/
 /metadata/yo/dist/
 /metadata/yo/.tmp/

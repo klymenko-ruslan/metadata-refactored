@@ -55,6 +55,19 @@ $productDetail->load($_item->getProduct()->getId());
         <?php endif; ?>
     </td>
 
+    <!-- Show Unit Price here -->
+    <td align="center" valign="top" style="font-size:11px; padding:3px 9px; border-bottom:1px dotted #CCCCCC;">
+    <?php
+        if($this->helper('tax')->displaySalesPriceInclTax($_order->getStore()))
+        {
+             $itemprice = $this->helper('checkout')->getPriceInclTax($_item) ;
+             echo $this->helper('checkout')->formatPrice($itemprice);
+        }
+        else         {
+            echo $this->helper('checkout')->formatPrice($_item->getPrice()) ;
+        }
+    ?>
+    </td>
     <td align="center" valign="top" style="font-size:11px; padding:3px 9px; border-bottom:1px dotted #CCCCCC;"><?php echo $_item->getQtyOrdered()*1 ?></td>
     <td align="right" valign="top" style="font-size:11px; padding:3px 9px; border-bottom:1px dotted #CCCCCC;">
         <?php if ($this->helper('tax')->displaySalesPriceExclTax($_order->getStore()) || $this->helper('tax')->displaySalesBothPrices($_order->getStore())): ?>

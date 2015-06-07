@@ -265,13 +265,13 @@ CREATE TABLE `backplate` (
   `seal_type_id` BIGINT NULL,
   `style_compressor_wheel` VARCHAR(100) NULL,
   `seal_type` VARCHAR(100) NULL,
-  `overall_diameter` FLOAT NULL,
-  `compressor_wheel_diameter` FLOAT NULL,
-  `piston_ring_diameter` FLOAT NULL,
-  `compressor_housing_diameter` FLOAT NULL,
+  `overall_diameter` DECIMAL(10,6) NULL,
+  `compressor_wheel_diameter` DECIMAL(10,6) NULL,
+  `piston_ring_diameter` DECIMAL(10,6) NULL,
+  `compressor_housing_diameter` DECIMAL(10,6) NULL,
   `notes` VARCHAR(500) NULL,
-  `secondary_diameter` FLOAT NULL,
-  `overall_height` FLOAT NULL,
+  `secondary_diameter` DECIMAL(10,6) NULL,
+  `overall_height` DECIMAL(10,6) NULL,
   FOREIGN KEY (`part_id`) REFERENCES `part` (`id`)
 ) ENGINE = INNODB;
 
@@ -290,10 +290,10 @@ CREATE TABLE `bearing_housing` (
 
 CREATE TABLE `bearing_spacer` (
   `part_id` BIGINT NOT NULL,
-  `outside_dim_min` FLOAT NULL,
-  `outside_dim_max` FLOAT NULL,
-  `inside_dim_min` FLOAT NULL,
-  `inside_dim_max` FLOAT NULL,
+  `outside_dim_min` DECIMAL(10,6) NULL,
+  `outside_dim_max` DECIMAL(10,6) NULL,
+  `inside_dim_min` DECIMAL(10,6) NULL,
+  `inside_dim_max` DECIMAL(10,6) NULL,
   FOREIGN KEY (`part_id`) REFERENCES `part` (`id`)
 ) ENGINE = INNODB;
 
@@ -304,11 +304,11 @@ CREATE TABLE `cartridge` (
 
 CREATE TABLE `compressor_wheel` (
   `part_id` BIGINT NOT NULL,
-  `inducer_oa` FLOAT NULL,
-  `tip_height_b` FLOAT NULL,
-  `exducer_oc` FLOAT NULL,
-  `hub_length_d` FLOAT NULL,
-  `bore_oe` FLOAT NULL,
+  `inducer_oa` DECIMAL(10,6) NULL,
+  `tip_height_b` DECIMAL(10,6) NULL,
+  `exducer_oc` DECIMAL(10,6) NULL,
+  `hub_length_d` DECIMAL(10,6) NULL,
+  `bore_oe` DECIMAL(10,6) NULL,
   `trim_no_blades` VARCHAR(100) NULL,
   `application` VARCHAR(100) NULL,
   FOREIGN KEY (`part_id`) REFERENCES `part` (`id`)
@@ -323,20 +323,20 @@ CREATE TABLE `gasket` (
 
 CREATE TABLE `heatshield` (
   `part_id` BIGINT NOT NULL,
-  `overall_diameter` FLOAT NULL,
-  `inside_diameter` FLOAT NULL,
-  `inducer_diameter` FLOAT NULL,
+  `overall_diameter` DECIMAL(10,6) NULL,
+  `inside_diameter` DECIMAL(10,6) NULL,
+  `inducer_diameter` DECIMAL(10,6) NULL,
   `notes` VARCHAR(500) NULL,
   FOREIGN KEY (`part_id`) REFERENCES `part` (`id`)
 ) ENGINE = INNODB;
 
 CREATE TABLE `journal_bearing` (
   `part_id` BIGINT NOT NULL,
-  `outside_dim_min` FLOAT NOT NULL,
-  `outside_dim_max` FLOAT NOT NULL,
-  `inside_dim_min` FLOAT NOT NULL,
-  `inside_dim_max` FLOAT NOT NULL,
-  `width` FLOAT NOT NULL,
+  `outside_dim_min` DECIMAL(10,6) NOT NULL,
+  `outside_dim_max` DECIMAL(10,6) NOT NULL,
+  `inside_dim_min` DECIMAL(10,6) NOT NULL,
+  `inside_dim_max` DECIMAL(10,6) NOT NULL,
+  `width` DECIMAL(10,6) NOT NULL,
   FOREIGN KEY (`part_id`) REFERENCES `part` (`id`)
 ) ENGINE = INNODB;
 
@@ -354,12 +354,12 @@ CREATE TABLE `nozzle_ring` (
 
 CREATE TABLE `piston_ring` (
   `part_id` BIGINT NOT NULL,
-  `outside_dim_min` FLOAT NULL,
-  `outside_dim_max` FLOAT NULL,
-  `width_min` FLOAT NULL,
-  `width_max` FLOAT NULL,
-  `i_gap_min` FLOAT NULL,
-  `i_gap_max` FLOAT NULL,
+  `outside_dim_min` DECIMAL(10,6) NULL,
+  `outside_dim_max` DECIMAL(10,6) NULL,
+  `width_min` DECIMAL(10,6) NULL,
+  `width_max` DECIMAL(10,6) NULL,
+  `i_gap_min` DECIMAL(10,6) NULL,
+  `i_gap_max` DECIMAL(10,6) NULL,
   FOREIGN KEY (`part_id`) REFERENCES `part` (`id`)
 ) ENGINE = INNODB;
 
@@ -381,11 +381,11 @@ CREATE TABLE `standard_journal_bearing` (
 
 CREATE TABLE `turbine_wheel` (
   `part_id` BIGINT NOT NULL,
-  `exduce_oa` FLOAT NULL,
-  `tip_height_b` FLOAT NULL,
-  `inducer_oc` FLOAT NULL,
-  `journal_od` FLOAT NULL,
-  `stem_oe` FLOAT NULL,
+  `exduce_oa` DECIMAL(10,6) NULL,
+  `tip_height_b` DECIMAL(10,6) NULL,
+  `inducer_oc` DECIMAL(10,6) NULL,
+  `journal_od` DECIMAL(10,6) NULL,
+  `stem_oe` DECIMAL(10,6) NULL,
   `trim_no_blades` VARCHAR(100) NULL,
   `shaft_thread_f` VARCHAR(100) NULL,
   FOREIGN KEY (`part_id`) REFERENCES `part` (`id`)
