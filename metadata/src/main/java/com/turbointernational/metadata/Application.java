@@ -15,6 +15,7 @@ import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletCon
 import org.springframework.boot.orm.jpa.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -29,6 +30,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 @EnableAsync
 @EnableTransactionManagement//(mode = AdviceMode.PROXY, proxyTargetClass = true)
 @EnableJpaRepositories(basePackageClasses = Application.class)
+@EnableSpringDataWebSupport
 @EntityScan(basePackageClasses = Application.class)
 public class Application extends WebMvcConfigurerAdapter implements WebApplicationInitializer {
 
