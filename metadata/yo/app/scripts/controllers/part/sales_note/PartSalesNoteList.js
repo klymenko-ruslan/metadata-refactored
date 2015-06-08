@@ -40,7 +40,7 @@ angular.module('ngMetaCrudApp')
                   $scope.notes = searchResults.content;
 
                   // Update the total and slice the result
-                  $defer.resolve(searchResults.numberOfElements);
+                  $defer.resolve(searchResults.content);
                   params.total(searchResults.totalElements);
                 },
                 function (errorResponse) {
