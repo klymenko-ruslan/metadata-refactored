@@ -13,9 +13,6 @@ angular.module('ngMetaCrudApp')
 
             // Make sure we're using the correct part type
             $scope.partType = part.partType.name;
-
-            // Reload the table
-            $scope.bomTableParams.reload();
         },
         function (errorResponse) {
             $log.log("Could not get part details", errorResponse);
@@ -25,7 +22,7 @@ angular.module('ngMetaCrudApp')
     // Latest Results
     $scope.notes = null;
 
-    // Part Table
+    // Notes Table
     $scope.notesTableParams = new ngTableParams({
       page: 1,
       count: 10,
@@ -40,11 +37,11 @@ angular.module('ngMetaCrudApp')
 
           $scope.notesPromise = Restangular.one('other/salesNote/listByPartId', $scope.partId).get().then(
                 function (searchResults) {
-                  $scope.notes = searchResults.data;
+                  $scope.notes = searchResults.content;
 
                   // Update the total and slice the result
-                  $defer.resolve($scope.notes.hits.hits);
-                  params.total($scope.notes.hits.total);
+                  $defer.resolve(searchResults.numberOfElements);
+                  params.total(searchResults.totalElements);
                 },
                 function (errorResponse) {
                   restService.error("Couldn't search for sales notes.", errorResponse);
@@ -77,6 +74,6 @@ angular.module('ngMetaCrudApp')
         return;
       }
 
-      $scope.partTableParams.reload();
+      $scope.notesTableParams.reload();
     }, true);
   });
