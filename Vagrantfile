@@ -5,7 +5,7 @@
 VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  
+
   # All Vagrant configuration is done here. The most common configuration
   # options are documented and commented below. For a complete reference,
   # please see the online documentation at vagrantup.com.
@@ -37,9 +37,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.provider "virtualbox" do |vb|
     # Don't boot with headless mode
     #vb.gui = true
- 
+
     # Use VBoxManage to customize the VM. For example to change memory:
-    vb.customize ["modifyvm", :id, "--memory", "4096"]
+    vb.customize ["modifyvm", :id, "--memory", "2048"]
 
     # Host-only and NAT
     vb.customize ["modifyvm", :id, "--nic1", "nat"]
@@ -103,7 +103,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       sudo usermod -aG tomcat7 vagrant
       sudo ln -s /var/log/tomcat7/catalina.out ~/tomcat7.log
 
-      sudo service elasticsearch restart 
+      sudo service elasticsearch restart
       sudo service mysql start
       sudo service tomcat7 start
 

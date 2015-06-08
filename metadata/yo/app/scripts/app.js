@@ -81,6 +81,10 @@ angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap', 'restangu
       templateUrl: 'views/part/sales_note/ViewSalesNote.html',
       controller: 'PartViewSalesNoteCtrl'
     });
+    $routeProvider.when('/part/:id/sales_note/AddRelatedPart', {
+      templateUrl: 'views/part/sales_note/AddRelatedPart.html',
+      controller: 'AddRelatedPartCtrl'
+    });
 
 
     // Turbo Models
