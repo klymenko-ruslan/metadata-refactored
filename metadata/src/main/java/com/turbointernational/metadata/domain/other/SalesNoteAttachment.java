@@ -43,7 +43,7 @@ public class SalesNoteAttachment implements Serializable {
     private Date updateDate;
     
     @OneToOne
-    @JoinColumn(name="update_uid", nullable=false)
+    @JoinColumn(name="write_uid", nullable=false)
     private User updater;
     
     @Column(name="filename")

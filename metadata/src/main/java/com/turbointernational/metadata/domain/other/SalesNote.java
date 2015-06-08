@@ -1,5 +1,6 @@
 package com.turbointernational.metadata.domain.other;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.security.User;
 import java.util.Date;
@@ -7,12 +8,15 @@ import java.util.List;
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -53,13 +57,18 @@ public class SalesNote {
     private Date updateDate;
     
     @OneToOne
-    @JoinColumn(name="update_uid", nullable=false)
+    @JoinColumn(name="write_uid", nullable=false)
     private User updater;
     
+    @Enumerated(EnumType.STRING)
     private SalesNoteState state;
+    
+    @Lob
+    private String comment;
     
     private Boolean published;
     
+    @JsonIgnore
     @OneToMany
     @JoinTable(name="sales_note_part",
             indexes = @Index(columnList = "sales_note_id,part_id"),
@@ -126,6 +135,15 @@ public class SalesNote {
         this.published = published;
     }
 
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+    
+    @JsonIgnore
     public List<Part> getParts() {
         return parts;
     }

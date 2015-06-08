@@ -1,19 +1,15 @@
 package com.turbointernational.metadata.domain.security;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.Sets;
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
-import java.util.Collection;
 import java.util.Set;
-import java.util.TreeSet;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -42,15 +38,16 @@ public class User implements Comparable<User>, UserDetails {
     
     private String email;
     
+    @JsonIgnore
     private String password;
     
+    @JsonIgnore
     private String passwordResetToken;
     
     @Column(columnDefinition = "BIT")
     private Boolean enabled;
     
-    @ManyToMany(mappedBy="users", fetch = FetchType.EAGER)
-    private Set<Group> groups = new TreeSet<Group>();
+    private final transient Set<SimpleGrantedAuthority> authorities = Sets.newHashSet();
     
     public Long getId() {
         return id;
@@ -100,13 +97,41 @@ public class User implements Comparable<User>, UserDetails {
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
     }
-    
-    public Set<Group> getGroups() {
-        return groups;
+
+    @Override
+    @JsonIgnore
+    public Set<SimpleGrantedAuthority> getAuthorities() {
+        return authorities;
     }
-    
-    public void setGroups(Set<Group> groups) {
-        this.groups = groups;
+
+    @Override
+    @JsonIgnore
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    @JsonIgnore
+    public boolean isAccountNonExpired() {
+        return getEnabled();
+    }
+
+    @Override
+    @JsonIgnore
+    public boolean isAccountNonLocked() {
+        return getEnabled();
+    }
+
+    @Override
+    @JsonIgnore
+    public boolean isCredentialsNonExpired() {
+        return getEnabled();
+    }
+
+    @Override
+    @JsonIgnore
+    public boolean isEnabled() {
+        return getEnabled();
     }
     //</editor-fold>
     
@@ -133,56 +158,6 @@ public class User implements Comparable<User>, UserDetails {
         }
         
         return null;
-    }
-    
-    public Set<String> getRoles() {
-        Set<String> authorities = Sets.newTreeSet();
-        
-        for (Group group : groups) {
-            for (Role role : group.getRoles()) {
-                authorities.add(role.getName());
-            }
-        }
-        
-        return authorities;
-    }
-    
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        Set<GrantedAuthority> authorities = Sets.newHashSet();
-        
-        for (Group group : groups) {
-            for (Role role : group.getRoles()) {
-                authorities.add(new SimpleGrantedAuthority(role.getName()));
-            }
-        }
-        
-        return authorities;
-    }
-    
-    @Override
-    public String getUsername() {
-        return email;
-    }
-    
-    @Override
-    public boolean isAccountNonExpired() {
-        return getEnabled();
-    }
-    
-    @Override
-    public boolean isAccountNonLocked() {
-        return getEnabled();
-    }
-    
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return getEnabled();
-    }
-    
-    @Override
-    public boolean isEnabled() {
-        return getEnabled();
     }
     //</editor-fold>
     

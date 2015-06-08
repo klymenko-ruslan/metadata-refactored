@@ -151,28 +151,6 @@ public class UserController {
     }
     
     @Transactional
-    @RequestMapping(value="/{id}/group/{groupId}", method = RequestMethod.POST)
-    @ResponseBody
-    @Secured("ROLE_ADMIN")
-    public void addGroup(@PathVariable("id") Long id, @PathVariable("groupId") Long groupId) throws Exception {
-        User user = userDao.findOne(id);
-        Group group = groupDao.findOne(groupId);
-        user.getGroups().add(group);
-        userDao.merge(user);
-    }
-    
-    @Transactional
-    @RequestMapping(value="/{id}/group/{groupId}", method = RequestMethod.DELETE)
-    @ResponseBody
-    @Secured("ROLE_ADMIN")
-    public void removeGroup(@PathVariable("id") Long id, @PathVariable("groupId") Long groupId) throws Exception {
-        User user = userDao.findOne(id);
-        Group group = groupDao.findOne(groupId);
-        user.getGroups().remove(group);
-        userDao.merge(user);
-    }
-    
-    @Transactional
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     @ResponseBody
     @Secured("ROLE_ADMIN")

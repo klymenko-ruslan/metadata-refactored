@@ -16,6 +16,6 @@ import org.springframework.security.access.annotation.Secured;
 @Secured("ROLE_READ")
 public interface SalesNoteRepository extends JpaRepository<SalesNote, Long> {
     
-    @Query("SELECT sn FROM SalesNote sn WHERE :partId IN sn.parts")
+    @Query("SELECT sn FROM SalesNote sn JOIN sn.parts snp WHERE snp.id = :partId")
     Page<SalesNote> findByPartId(Pageable pageable, @Param("partId") Long partId);
 }

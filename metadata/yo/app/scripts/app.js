@@ -1,9 +1,9 @@
 'use strict';
 
 angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap', 'restangular', 'dialogs', 'gToast'])
-//  .constant('METADATA_BASE', '/metadata/')
+  .constant('METADATA_BASE', '/metadata/')
 //  .constant('METADATA_BASE', 'http://192.168.42.10:8080/metadata/')
-  .constant('METADATA_BASE', 'http://localhost:8080/metadata/')
+//  .constant('METADATA_BASE', 'http://localhost:8080/metadata/')
   .config(function ($locationProvider, $httpProvider, $routeProvider, RestangularProvider, METADATA_BASE) {
         $httpProvider.interceptors.push('loginRequiredInterceptor');
     
@@ -70,7 +70,7 @@ angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap', 'restangu
       controller: 'PartDetailCtrl'
     });
     $routeProvider.when('/part/:id/sales_notes', {
-      templateUrl: 'views/part/sales_note/list.html',
+      templateUrl: 'views/part/sales_note/PartSalesNoteList.html',
       controller: 'PartSalesNoteListCtrl'
     });
     $routeProvider.when('/part/:id/sales_note/NewNote', {

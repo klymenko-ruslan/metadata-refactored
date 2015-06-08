@@ -6,11 +6,13 @@ import javax.persistence.EntityManagerFactory;
 import javax.servlet.FilterRegistration;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import org.elasticsearch.common.collect.Sets;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory;
+import org.springframework.boot.context.embedded.ErrorPage;
 import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
 import org.springframework.boot.orm.jpa.EntityScan;
 import org.springframework.context.annotation.Bean;
@@ -33,12 +35,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 @EnableSpringDataWebSupport
 @EntityScan(basePackageClasses = Application.class)
 public class Application extends WebMvcConfigurerAdapter implements WebApplicationInitializer {
-
-    @Value("${images.resized}")
-    String productImages;
-
-    @Autowired(required = true)
-    private EntityManagerFactory emf;
 
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
@@ -85,5 +81,5 @@ public class Application extends WebMvcConfigurerAdapter implements WebApplicati
         factory.setSessionTimeout(24, TimeUnit.HOURS);
         return factory;
     }
-
+    
 }
