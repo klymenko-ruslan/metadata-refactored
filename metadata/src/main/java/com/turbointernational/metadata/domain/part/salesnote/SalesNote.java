@@ -1,10 +1,10 @@
 package com.turbointernational.metadata.domain.part.salesnote;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.security.User;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,9 +13,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Index;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -60,12 +58,12 @@ public class SalesNote {
     private Boolean published;
     
     @JsonIgnore
-    @OneToMany
-    @JoinTable(name="sales_note_part",
-            indexes = @Index(columnList = "sales_note_id,part_id"),
-            joinColumns = @JoinColumn(name = "sales_note_id"),
-            inverseJoinColumns = @JoinColumn(name="part_id"))
-    private List<Part> parts;
+    @OneToMany(mappedBy = "pk.salesNote")
+//    @JoinTable(name="sales_note_part",
+//            indexes = @Index(columnList = "sales_note_id,part_id"),
+//            joinColumns = @JoinColumn(name = "sales_note_id"),
+//            inverseJoinColumns = @JoinColumn(name="part_id"))
+    private Set<SalesNotePart> salesNoteParts;
     
     @OneToMany(mappedBy="salesNote")
     private List<SalesNoteAttachment> attachments;
@@ -134,14 +132,6 @@ public class SalesNote {
         this.comment = comment;
     }
     
-    @JsonIgnore
-    public List<Part> getParts() {
-        return parts;
-    }
-
-    public void setParts(List<Part> parts) {
-        this.parts = parts;
-    }
 
     public List<SalesNoteAttachment> getAttachments() {
         return attachments;

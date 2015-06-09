@@ -8,6 +8,19 @@ import org.springframework.data.domain.PageRequest;
  *
  * @author jrodriguez
  */
+
+/*
+SELECT sn
+FROM SalesNote sn
+JOIN sn.salesNoteParts snp
+WHERE
+  sn.state IN :states
+  AND (:primaryPartId IS NULL
+       OR snp)
+  AND (snp.id = :partId OR snp.id = :query)
+  AND sn.
+
+*/
 public class SalesNoteSearchRequest {
     private static final int DEFAULT_PAGE_SIZE = 20;
     

@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
@@ -76,23 +77,21 @@ public class SalesNoteController {
     
     
     
-    @RequestMapping(value="search", method = RequestMethod.POST)
+    @RequestMapping(value="search", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     @Secured("ROLE_READ")
-    public ResponseEntity<String> search() throws JsonProcessingException {
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/json; charset=utf-8");
-        Page<SalesNote> result = salesNotes.findAll(new PageRequest(0, 100));
-        return new ResponseEntity<String>(json.writeValueAsString(result), headers, HttpStatus.OK);
-    }
+    public Page<SalesNote> search(SalesNoteSearchRequest req) {
+        // TODO: Check sales note state permissions
+        return salesNotes.search(req);
+    }   
     
-    @RequestMapping(value="listByPartId/{partId}", method = RequestMethod.GET)
-    @ResponseBody
-    @Secured("ROLE_READ")
-    public ResponseEntity<String> listByPartId(@PathVariable("partId") Long partId) throws JsonProcessingException {
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/json; charset=utf-8");
-        Page<SalesNote> result = salesNotes.findByPartId(new PageRequest(0, 100), partId);
-        return new ResponseEntity<String>(json.writeValueAsString(result), headers, HttpStatus.OK);
-    }
+//    @RequestMapping(value="listByPartId/{partId}", method = RequestMethod.GET)
+//    @ResponseBody
+//    @Secured("ROLE_READ")
+//    public ResponseEntity<String> listByPartId(@PathVariable("partId") Long partId) throws JsonProcessingException {
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.add("Content-Type", "application/json; charset=utf-8");
+//        Page<SalesNote> result = salesNotes.findByPartId(new PageRequest(0, 100), partId);
+//        return new ResponseEntity<String>(json.writeValueAsString(result), headers, HttpStatus.OK);
+//    }
 }
