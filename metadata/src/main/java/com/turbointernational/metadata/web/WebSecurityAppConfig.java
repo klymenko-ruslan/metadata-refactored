@@ -59,6 +59,7 @@ public class WebSecurityAppConfig extends WebSecurityConfigurerAdapter {
             .antMatchers("/metadata/**").authenticated()               // API requires authentication
             .antMatchers("/product_images/**").authenticated()         // Images require authentication
             .antMatchers("/magmi/**").hasIpAddress("127.0.0.1/32")     // Allow magmi from localhost without user.
+            .and().httpBasic().realmName("TI Metadata")
             .and().formLogin()
                 .loginPage("/")
                 .loginProcessingUrl("/metadata/security/login")

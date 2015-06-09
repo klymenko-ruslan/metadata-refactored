@@ -1,6 +1,7 @@
-package com.turbointernational.metadata.domain.other;
+package com.turbointernational.metadata.domain.part.salesnote;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.turbointernational.metadata.domain.changelog.ChangelogDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,6 +20,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class SalesNoteController {
     
     @Autowired(required=true)
+    ChangelogDao changelogDao;
+    
+    @Autowired(required=true)
     SalesNoteRepository salesNotes;
     
     @Autowired(required=true)
@@ -26,23 +30,22 @@ public class SalesNoteController {
     
 //    @RequestMapping(method = RequestMethod.POST)
 //    @ResponseBody
-//    @Secured("ROLE_TURBO_MODEL_CRUD")
+//    @Secured("ROLE_SALES_NOTE_CREATE")
 //    @Transactional
-//    public ResponseEntity<String> createJson(@RequestBody String turboModelJson) {
-//        TurboModel turboModel = TurboModel.fromJsonToTurboModel(turboModelJson);
-//        turboModelDao.persist(turboModel);
+//    public ResponseEntity<SalesNote> createJson(@RequestBody SalesNote salesNote) {
+//        salesNotes.save(salesNote);
 //        
-//        changelogDao.log("Created turbo model", turboModel.toJson());
+//        changelogDao.log("Created sales note.", salesNote.getId().toString());
 //        
 //        
 //        HttpHeaders headers = new HttpHeaders();
 //        headers.add("Content-Type", "application/json; charset=utf-8");
-//        return new ResponseEntity<String>(turboModel.toJson(), headers, HttpStatus.OK);
+//        return new ResponseEntity<SalesNote>(salesNote, headers, HttpStatus.OK);
 //    }
-//    
+    
 //    @RequestMapping(method = RequestMethod.PUT)
 //    @ResponseBody
-//    @Secured("ROLE_TURBO_MODEL_CRUD")
+//    @Secured("ROLE_SALES_NOTE_UPDATE")
 //    @Transactional
 //    public ResponseEntity<String> updateJson(@RequestBody String turboModelJson) {
 //        TurboModel turboModel = TurboModel.fromJsonToTurboModel(turboModelJson);
@@ -58,7 +61,7 @@ public class SalesNoteController {
 //    
 //    @RequestMapping(value="/{turboModelId}", method = RequestMethod.DELETE)
 //    @ResponseBody
-//    @Secured("ROLE_TURBO_MODEL_CRUD")
+//    @Secured("ROLE_SALES_NOTE_DELETE")
 //    @Transactional
 //    public ResponseEntity<String> deleteJson(@PathVariable Long turboModelId) {
 //        TurboModel turboModel = turboModelDao.findOne(turboModelId);
@@ -73,10 +76,10 @@ public class SalesNoteController {
     
     
     
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(value="search", method = RequestMethod.POST)
     @ResponseBody
     @Secured("ROLE_READ")
-    public ResponseEntity<String> list() throws JsonProcessingException {
+    public ResponseEntity<String> search() throws JsonProcessingException {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json; charset=utf-8");
         Page<SalesNote> result = salesNotes.findAll(new PageRequest(0, 100));

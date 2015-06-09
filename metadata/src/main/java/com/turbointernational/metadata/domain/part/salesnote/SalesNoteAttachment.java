@@ -1,4 +1,4 @@
-package com.turbointernational.metadata.domain.other;
+package com.turbointernational.metadata.domain.part.salesnote;
 
 import com.turbointernational.metadata.domain.security.User;
 import java.io.Serializable;

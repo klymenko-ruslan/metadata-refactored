@@ -1,4 +1,4 @@
-package com.turbointernational.metadata.domain.other;
+package com.turbointernational.metadata.domain.part.salesnote;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.turbointernational.metadata.domain.part.Part;
@@ -31,15 +31,6 @@ import javax.persistence.TemporalType;
 @Entity
 @Table(name="sales_note")
 public class SalesNote {
-    
-    public static enum SalesNoteState {
-        Draft,
-        Submitted,
-        Approved,
-        Rejected;
-    }
-    
-    //<editor-fold defaultstate="collapsed" desc="Properties">
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -159,6 +150,4 @@ public class SalesNote {
     public void setAttachments(List<SalesNoteAttachment> attachments) {
         this.attachments = attachments;
     }
-    //</editor-fold>
-    
 }

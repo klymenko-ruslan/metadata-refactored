@@ -1,4 +1,4 @@
-package com.turbointernational.metadata.domain.other;
+package com.turbointernational.metadata.domain.part.salesnote;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
