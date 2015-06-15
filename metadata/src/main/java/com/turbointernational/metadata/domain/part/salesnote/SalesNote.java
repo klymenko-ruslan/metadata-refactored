@@ -41,7 +41,7 @@ public class SalesNote implements Serializable {
     @Column(name="create_date")
     private Date createDate;
     
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name="create_uid", nullable=false)
     private User creator;
     
@@ -49,7 +49,7 @@ public class SalesNote implements Serializable {
     @Column(name="write_date")
     private Date updateDate;
     
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name="write_uid", nullable=false)
     private User updater;
     
