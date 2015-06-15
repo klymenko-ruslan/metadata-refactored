@@ -1,6 +1,7 @@
 package com.turbointernational.metadata.domain.part.salesnote;
 
 import com.google.common.collect.Sets;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
@@ -23,7 +24,7 @@ WHERE
   AND sn.
 
 */
-public class SalesNoteSearchRequest {
+public class SalesNoteSearchRequest implements Serializable {
     private static final int DEFAULT_PAGE_SIZE = 20;
     
     private PageRequest page = new PageRequest(0, DEFAULT_PAGE_SIZE);
