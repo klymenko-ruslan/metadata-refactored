@@ -47,6 +47,7 @@ public class User implements Comparable<User>, UserDetails {
     @Column(columnDefinition = "BIT")
     private Boolean enabled;
     
+    @JsonIgnore
     private final transient Set<SimpleGrantedAuthority> authorities = Sets.newHashSet();
     
     public Long getId() {
