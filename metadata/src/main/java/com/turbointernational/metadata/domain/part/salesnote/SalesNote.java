@@ -1,15 +1,19 @@
 package com.turbointernational.metadata.domain.part.salesnote;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.common.collect.Sets;
 import com.turbointernational.metadata.domain.security.User;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import javax.persistence.Cacheable;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -28,7 +32,7 @@ import javax.persistence.TemporalType;
 @Cacheable
 @Entity
 @Table(name="sales_note")
-public class SalesNote {
+public class SalesNote implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -37,7 +41,7 @@ public class SalesNote {
     @Column(name="create_date")
     private Date createDate;
     
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="create_uid", nullable=false)
     private User creator;
     
@@ -45,7 +49,7 @@ public class SalesNote {
     @Column(name="write_date")
     private Date updateDate;
     
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="write_uid", nullable=false)
     private User updater;
     
@@ -55,17 +59,15 @@ public class SalesNote {
     @Lob
     private String comment;
     
-    private Boolean published;
-    
     @JsonIgnore
-    @OneToMany(mappedBy = "pk.salesNote")
+    @OneToMany(mappedBy = "pk.salesNote", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 //    @JoinTable(name="sales_note_part",
 //            indexes = @Index(columnList = "sales_note_id,part_id"),
 //            joinColumns = @JoinColumn(name = "sales_note_id"),
 //            inverseJoinColumns = @JoinColumn(name="part_id"))
-    private Set<SalesNotePart> salesNoteParts;
+    private Set<SalesNotePart> parts = Sets.newLinkedHashSet();
     
-    @OneToMany(mappedBy="salesNote")
+    @OneToMany(mappedBy="salesNote", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<SalesNoteAttachment> attachments;
     
     public Long getId() {
@@ -116,14 +118,6 @@ public class SalesNote {
         this.state = state;
     }
 
-    public Boolean getPublished() {
-        return published;
-    }
-
-    public void setPublished(Boolean published) {
-        this.published = published;
-    }
-
     public String getComment() {
         return comment;
     }
@@ -131,8 +125,15 @@ public class SalesNote {
     public void setComment(String comment) {
         this.comment = comment;
     }
-    
 
+    public Set<SalesNotePart> getParts() {
+        return parts;
+    }
+
+    public void setParts(Set<SalesNotePart> parts) {
+        this.parts = parts;
+    }
+    
     public List<SalesNoteAttachment> getAttachments() {
         return attachments;
     }

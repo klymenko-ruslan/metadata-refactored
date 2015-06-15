@@ -10,13 +10,11 @@ import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 
 /**
  *
@@ -54,6 +52,18 @@ public class SalesNotePart implements Serializable {
     @Column(name="primary_part")
     private Boolean primary;
 
+    public SalesNotePart() {
+    }
+
+    public SalesNotePart(SalesNotePartId pk, Date createDate, User creator, Date updateDate, User updater, Boolean primary) {
+        this.pk = pk;
+        this.createDate = createDate;
+        this.creator = creator;
+        this.updateDate = updateDate;
+        this.updater = updater;
+        this.primary = primary;
+    }
+    
     public SalesNotePartId getPk() {
         return pk;
     }

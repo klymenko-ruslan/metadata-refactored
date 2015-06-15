@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
+import javax.persistence.NoResultException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.TransactionStatus;
@@ -67,5 +68,11 @@ public class PartDao extends GenericDao<Part> {
                 + StringUtils.join(productIds, ',')
                 + ")\n"
                 + "ORDER BY pi.id", ProductImage.class).getResultList();
+    }
+
+    public Part findByPartNumber(String partNumber) throws NoResultException {
+        return em.createQuery("FROM Part p WHERE p.manufacturerPartNumber = :partNumber", Part.class)
+                .setParameter("partNumber", partNumber)
+                .getSingleResult();
     }
 }

@@ -3,6 +3,7 @@ package com.turbointernational.metadata.domain.part.salesnote;
 import com.turbointernational.metadata.domain.part.Part;
 import java.io.Serializable;
 import javax.persistence.Embeddable;
+import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 
 /**
@@ -15,8 +16,16 @@ public class SalesNotePartId implements Serializable {
     @ManyToOne
     private SalesNote salesNote;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Part part;
+
+    public SalesNotePartId() {
+    }
+
+    public SalesNotePartId(SalesNote salesNote, Part part) {
+        this.salesNote = salesNote;
+        this.part = part;
+    }
     
     public SalesNote getSalesNote() {
         return salesNote;
