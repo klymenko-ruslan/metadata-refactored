@@ -24,8 +24,8 @@ public class UserDao extends GenericDao<User> {
     public User findUserByEmail(String email) {
         if (StringUtils.isNotBlank(email)) {
             List<User> users = em
-                    .createQuery("SELECT u FROM User u WHERE u.email = ?")
-                    .setParameter(1, email)
+                    .createQuery("SELECT u FROM User u WHERE u.email = :email")
+                    .setParameter("email", email)
                     .getResultList();
             
             if (!users.isEmpty()) {
@@ -37,8 +37,8 @@ public class UserDao extends GenericDao<User> {
     }
     
     public User findByPasswordResetToken(String token) {
-        Query q = em.createQuery("SELECT u FROM User u WHERE u.passwordResetToken = ?", User.class);
-        q.setParameter(1, token);
+        Query q = em.createQuery("SELECT u FROM User u WHERE u.passwordResetToken = :token", User.class);
+        q.setParameter("token", token);
         return (User) q.getSingleResult();
     }
     
