@@ -1,17 +1,12 @@
 package com.turbointernational.metadata.domain.part.salesnote;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.turbointernational.metadata.domain.changelog.ChangelogDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -77,12 +72,14 @@ public class SalesNoteController {
     
     
     
-    @RequestMapping(value="search", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value="search", method = RequestMethod.POST,
+                    consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_PLAIN_VALUE},
+                    produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     @Secured("ROLE_READ")
-    public Page<SalesNote> search(SalesNoteSearchRequest req) {
-        // TODO: Check sales note state permissions
-        return salesNotes.search(req);
+    public Page<SalesNote> search(@RequestBody SalesNoteSearchRequest req) {
+        Page<SalesNote> results =  salesNotes.search(req);
+        return results;
     }   
     
 //    @RequestMapping(value="listByPartId/{partId}", method = RequestMethod.GET)
