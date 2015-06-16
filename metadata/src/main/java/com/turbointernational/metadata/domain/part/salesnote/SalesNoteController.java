@@ -13,6 +13,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.web.bind.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -64,6 +65,15 @@ public class SalesNoteController {
         primaryPart.getPartType().getName();
         
         return salesNote;
+    }
+
+    
+    @RequestMapping(value="{partId}", method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    @Secured("ROLE_SALES_NOTE_READ")
+    public SalesNote getNote(@PathVariable("partId") Long partId) {
+        return salesNotes.findOne(partId);
     }
 
 //    @RequestMapping(method = RequestMethod.PUT)
