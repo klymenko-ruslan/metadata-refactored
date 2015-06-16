@@ -284,7 +284,7 @@
                 <executions>
                     <execution>
                         <id>run-frontend-build</id>
-                        <phase>prepare-package</phase>
+                        <phase>generate-resources</phase>
                         <!--<phase>prepare-package</phase> TODO: Don't compile outside packaging-->
                         <goals>
                             <goal>build</goal>
