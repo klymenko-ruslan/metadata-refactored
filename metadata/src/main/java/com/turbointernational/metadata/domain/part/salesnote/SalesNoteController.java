@@ -57,7 +57,7 @@ public class SalesNoteController {
 
         // Save
         salesNotes.save(salesNote);
-        changelogDao.log("Created sales note.", request);
+        changelogDao.log("Created sales note " + salesNote.getId(), request);
         
         // Initialize a few properties before sending the response
         primaryPart.getManufacturer().getName();
