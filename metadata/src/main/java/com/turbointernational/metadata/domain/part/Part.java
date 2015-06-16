@@ -1,4 +1,5 @@
 package com.turbointernational.metadata.domain.part;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.other.TurboType;
 import com.turbointernational.metadata.domain.part.bom.BOMItem;
@@ -334,6 +335,7 @@ public class Part implements Comparable<Part>, Serializable {
                 .serialize(this);
     }
     
+    @JsonIgnore
     protected JSONSerializer getSearchSerializer() {
         return new JSONSerializer()
                 .include("id")

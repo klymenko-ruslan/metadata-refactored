@@ -1,9 +1,11 @@
 package com.turbointernational.metadata;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
 import com.turbointernational.metadata.web.CORSFilter;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 import javax.servlet.FilterRegistration;
 import javax.servlet.ServletContext;
@@ -56,6 +58,7 @@ public class Application extends WebMvcConfigurerAdapter implements WebApplicati
     @Bean
     public Jackson2ObjectMapperBuilder jackson2ObjectMapperBuilder() {
         return new Jackson2ObjectMapperBuilder()
+                .serializationInclusion(JsonInclude.Include.NON_EMPTY)
                 .modulesToInstall(new Hibernate4Module());
     }
     

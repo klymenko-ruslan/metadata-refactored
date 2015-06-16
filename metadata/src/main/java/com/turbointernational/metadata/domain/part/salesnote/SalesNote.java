@@ -59,7 +59,6 @@ public class SalesNote implements Serializable {
     @Lob
     private String comment;
     
-    @JsonIgnore
     @OneToMany(mappedBy = "pk.salesNote", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 //    @JoinTable(name="sales_note_part",
 //            indexes = @Index(columnList = "sales_note_id,part_id"),

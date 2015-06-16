@@ -1,5 +1,6 @@
 package com.turbointernational.metadata.domain.part.salesnote;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.security.User;
 import java.io.Serializable;
@@ -31,6 +32,7 @@ import javax.persistence.TemporalType;
 public class SalesNotePart implements Serializable {
     
     @EmbeddedId
+    @JsonIgnore
     private SalesNotePartId pk;
     
     @Temporal(TemporalType.TIMESTAMP)
@@ -64,6 +66,23 @@ public class SalesNotePart implements Serializable {
         this.primary = primary;
     }
     
+    /**
+     * Convenience method for new sales note parts.
+     */
+    public SalesNotePart(SalesNote salesNote, Part part, boolean primary, User user) {
+        this(
+                new SalesNotePartId(salesNote, part),
+                
+                // Create
+                new Date(), user,
+                
+                // Update
+                new Date(), user,
+                
+                // Primary Part
+                primary);
+    }
+    
     public SalesNotePartId getPk() {
         return pk;
     }
@@ -72,7 +91,7 @@ public class SalesNotePart implements Serializable {
         this.pk = pk;
     }
     
-//    @Transient
+    @JsonIgnore
     public SalesNote getSalesNote() {
         return getPk().getSalesNote();
     }
@@ -81,7 +100,6 @@ public class SalesNotePart implements Serializable {
         getPk().setSalesNote(salesNote);
     }
     
-//    @Transient
     public Part getPart() {
         return getPk().getPart();
     }
