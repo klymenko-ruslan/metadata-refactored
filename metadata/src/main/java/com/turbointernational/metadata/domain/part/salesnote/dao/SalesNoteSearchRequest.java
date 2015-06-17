@@ -1,6 +1,7 @@
-package com.turbointernational.metadata.domain.part.salesnote;
+package com.turbointernational.metadata.domain.part.salesnote.dao;
 
 import com.google.common.collect.Sets;
+import com.turbointernational.metadata.domain.part.salesnote.SalesNoteState;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Set;

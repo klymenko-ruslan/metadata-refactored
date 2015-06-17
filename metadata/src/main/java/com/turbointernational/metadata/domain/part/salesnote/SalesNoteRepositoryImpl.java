@@ -1,5 +1,6 @@
 package com.turbointernational.metadata.domain.part.salesnote;
 
+import com.turbointernational.metadata.domain.part.salesnote.dao.SalesNoteSearchRequest;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;

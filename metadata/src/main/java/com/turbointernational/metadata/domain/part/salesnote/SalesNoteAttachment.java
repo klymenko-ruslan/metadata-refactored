@@ -1,6 +1,7 @@
 package com.turbointernational.metadata.domain.part.salesnote;
 
 import com.turbointernational.metadata.domain.security.User;
+import java.io.File;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Cacheable;
@@ -10,9 +11,12 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.PreRemove;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  *
@@ -104,5 +108,20 @@ public class SalesNoteAttachment implements Serializable {
     public void setFilename(String filename) {
         this.filename = filename;
     }
+        
+    //<editor-fold defaultstate="collapsed" desc="Lifecycle">
+    @Value("${attachments.salesNote}")
+    @Transient
+    private File attachmentDir;
+    
+    public File getFile() {
+        return new File(attachmentDir, filename);
+    }
+    
+    @PreRemove
+    public void deleteFileOnRemove() {
+        getFile().delete();
+    }
+    //</editor-fold>
     
 }
