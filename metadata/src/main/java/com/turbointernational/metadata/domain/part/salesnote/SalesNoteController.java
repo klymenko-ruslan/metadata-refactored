@@ -4,6 +4,7 @@ import com.turbointernational.metadata.domain.part.salesnote.dao.SalesNoteSearch
 import com.turbointernational.metadata.domain.part.salesnote.exception.RemovePrimaryPartException;
 import com.turbointernational.metadata.domain.part.salesnote.dao.CreateSalesNoteRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Sets;
 import com.turbointernational.metadata.domain.changelog.ChangelogDao;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.part.PartDao;
@@ -11,6 +12,7 @@ import com.turbointernational.metadata.domain.security.User;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
+import java.util.Set;
 import org.elasticsearch.common.collect.Iterables;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -48,7 +50,7 @@ public class SalesNoteController {
     @Value("attachments.salesNote")
     File attachmentDir;
     
-    //<editor-fold defaultstate="collapsed" desc="CRUD">
+    //<editor-fold defaultstate="collapsed" desc="CRUDS">
     @RequestMapping(method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
@@ -89,6 +91,27 @@ public class SalesNoteController {
     public SalesNote getSalesNote(@PathVariable("noteId") long noteId) {
         return salesNotes.findOne(noteId);
     }
+    
+    @RequestMapping(value = "search", method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    @Secured("ROLE_SALES_NOTE_READ")
+    public Page<SalesNote> search(@RequestBody SalesNoteSearchRequest req) {
+        Page<SalesNote> results = salesNotes.search(req);
+        return results;
+    }
+    
+//    @RequestMapping(value="listByPartId/{partId}", method = RequestMethod.GET)
+//    @ResponseBody
+//    @Secured("ROLE_READ")
+//    public ResponseEntity<String> listByPartId(@PathVariable("partId") Long partId) throws JsonProcessingException {
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.add("Content-Type", "application/json; charset=utf-8");
+//        Page<SalesNote> result = salesNotes.findByPartId(new PageRequest(0, 100), partId);
+//        return new ResponseEntity<String>(json.writeValueAsString(result), headers, HttpStatus.OK);
+//    }
+    
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Related Parts">
@@ -215,23 +238,89 @@ public class SalesNoteController {
     }
     //</editor-fold>
     
-    @RequestMapping(value = "search", method = RequestMethod.POST,
-            consumes = MediaType.APPLICATION_JSON_VALUE,
+    //<editor-fold defaultstate="collapsed" desc="State changes">
+    @RequestMapping(value="{noteId}/submit", method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    @Secured("ROLE_SALES_NOTE_READ")
-    public Page<SalesNote> search(@RequestBody SalesNoteSearchRequest req) {
-        Page<SalesNote> results = salesNotes.search(req);
-        return results;
+    @Secured("ROLE_SALES_NOTE_SUBMIT")
+    @Transactional
+    public void submit(@AuthenticationPrincipal(errorOnInvalidType = true) User user,
+            @PathVariable("noteId") long noteId) {
+        SalesNote salesNote = salesNotes.findOne(noteId);
+        
+        updateState(user, salesNote, SalesNoteState.submitted,
+                SalesNoteState.approved,
+                SalesNoteState.rejected);
     }
-
-//    @RequestMapping(value="listByPartId/{partId}", method = RequestMethod.GET)
-//    @ResponseBody
-//    @Secured("ROLE_READ")
-//    public ResponseEntity<String> listByPartId(@PathVariable("partId") Long partId) throws JsonProcessingException {
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.add("Content-Type", "application/json; charset=utf-8");
-//        Page<SalesNote> result = salesNotes.findByPartId(new PageRequest(0, 100), partId);
-//        return new ResponseEntity<String>(json.writeValueAsString(result), headers, HttpStatus.OK);
-//    }
+    
+    @RequestMapping(value="{noteId}/approve", method = RequestMethod.POST,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    @Secured("ROLE_SALES_NOTE_APPROVE")
+    @Transactional
+    public void approve(@AuthenticationPrincipal(errorOnInvalidType = true) User user,
+            @PathVariable("noteId") long noteId) {
+        SalesNote salesNote = salesNotes.findOne(noteId);
+        
+        updateState(user, salesNote, SalesNoteState.approved,
+                SalesNoteState.draft,
+                SalesNoteState.submitted);
+    }
+    
+    @RequestMapping(value="{noteId}/reject", method = RequestMethod.POST,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    @Secured("ROLE_SALES_NOTE_REJECT")
+    @Transactional
+    public void reject(@AuthenticationPrincipal(errorOnInvalidType = true) User user,
+            @PathVariable("noteId") long noteId) {
+        SalesNote salesNote = salesNotes.findOne(noteId);
+        
+        updateState(user, salesNote, SalesNoteState.rejected,
+                SalesNoteState.submitted,
+                SalesNoteState.approved);
+    }
+    
+    @RequestMapping(value="{noteId}/publish", method = RequestMethod.POST,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    @Secured("ROLE_SALES_NOTE_PUBLISH")
+    @Transactional
+    public void publish(@AuthenticationPrincipal(errorOnInvalidType = true) User user,
+            @PathVariable("noteId") long noteId) {
+        SalesNote salesNote = salesNotes.findOne(noteId);
+        
+        updateState(user, salesNote, SalesNoteState.published,
+                SalesNoteState.approved);
+    }
+    
+    @RequestMapping(value="{noteId}/retract", method = RequestMethod.POST,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    @Secured("ROLE_SALES_NOTE_PUBLISH")
+    @Transactional
+    public void retract(@AuthenticationPrincipal(errorOnInvalidType = true) User user,
+            @PathVariable("noteId") long noteId) {
+        SalesNote salesNote = salesNotes.findOne(noteId);
+        
+        updateState(user, salesNote, SalesNoteState.approved,
+                SalesNoteState.published);
+    }
+    
+    private void updateState(User user, SalesNote salesNote, SalesNoteState newState, SalesNoteState... allowedStates) {
+        SalesNoteState currentState = salesNote.getState();
+        
+        SalesNoteState.checkState(salesNote.getState(), allowedStates);
+        
+        salesNote.setState(newState);
+        salesNote.setUpdateDate(new Date());
+        salesNote.setUpdater(user);
+        
+        salesNotes.save(salesNote);
+        
+        changelogDao.log("Sales note " + salesNote.getId()
+                + " state changed from " + currentState
+                + " to " + salesNote.getState(), null);
+    }
+    //</editor-fold>
 }
