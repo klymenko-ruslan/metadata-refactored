@@ -12,20 +12,24 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 
 /**
  *
  * @author jrodriguez
  */
 @Configuration
+@EnableGlobalMethodSecurity(securedEnabled = true)
 public class WebSecurityAppConfig extends WebSecurityConfigurerAdapter {
 
     public WebSecurityAppConfig() {}
@@ -40,7 +44,7 @@ public class WebSecurityAppConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/resources/**"); // #3
+        web.ignoring().antMatchers("/resources/**");
         web.debug(false);
     }
 
@@ -48,11 +52,11 @@ public class WebSecurityAppConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.sessionManagement()
             .maximumSessions(1)
-            .expiredUrl("/login?expired")
             .maxSessionsPreventsLogin(true)
+            .expiredUrl("/security/unauthorized?expiredSession")
             .and()
             .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
-            .invalidSessionUrl("/");
+            .invalidSessionUrl("/security/unauthorized?invalidSession");
         
         http.authorizeRequests()
             .antMatchers("/metadata/security/password**").permitAll()  // Password reset endpoints open to anyone
@@ -61,12 +65,14 @@ public class WebSecurityAppConfig extends WebSecurityConfigurerAdapter {
             .antMatchers("/magmi/**").hasIpAddress("127.0.0.1/32")     // Allow magmi from localhost without user.
 //            .and().httpBasic().realmName("TI Metadata")
             .and().formLogin()
-                .loginPage("/")
+                .loginPage("/security/unauthorized")
                 .loginProcessingUrl("/metadata/security/login")
                 .defaultSuccessUrl("/metadata/security/user/me")
                 .failureHandler(new AuthenticationFailureHandlerImpl())
             .and().rememberMe()
-            .and().logout().logoutUrl("/metadata/security/logout")
+            .and().logout()
+                .logoutUrl("/metadata/security/logout")
+                .logoutSuccessHandler(new NoopLogoutSuccessHandler())
             .and().exceptionHandling().accessDeniedHandler(new AccessDeniedHandlerImpl())
             .and().authenticationProvider(createDaoAuthenticationProvider());
         
@@ -97,4 +103,12 @@ public class WebSecurityAppConfig extends WebSecurityConfigurerAdapter {
         }
     }
     
+    private static class NoopLogoutSuccessHandler implements LogoutSuccessHandler {
+
+        @Override
+        public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+            response.setStatus(HttpStatus.OK.value());
+            response.flushBuffer();
+        }
+    }
 }

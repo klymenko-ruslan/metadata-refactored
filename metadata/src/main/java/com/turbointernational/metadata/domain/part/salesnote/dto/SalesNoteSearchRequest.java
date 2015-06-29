@@ -1,5 +1,10 @@
-package com.turbointernational.metadata.domain.part.salesnote.dao;
+package com.turbointernational.metadata.domain.part.salesnote.dto;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.google.common.collect.Sets;
 import com.turbointernational.metadata.domain.part.salesnote.SalesNoteState;
 import java.io.Serializable;
@@ -7,6 +12,7 @@ import java.util.Arrays;
 import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 
 /**
  *
@@ -26,12 +32,11 @@ WHERE
 
 */
 public class SalesNoteSearchRequest implements Serializable {
-    private static final int DEFAULT_PAGE_SIZE = 20;
-    
-    private PageRequest page = new PageRequest(0, DEFAULT_PAGE_SIZE);
     
     private Long primaryPartId;
     private String query;
+    private int page = 0;
+    private int pageSize = 20;
     
     private boolean includePrimary = true;
     private boolean includeRelated = true;
@@ -46,15 +51,23 @@ public class SalesNoteSearchRequest implements Serializable {
         this.query = query;
         this.states.addAll(Arrays.asList(states));
     }
-    
-    public PageRequest getPage() {
+
+    public int getPage() {
         return page;
     }
 
-    public void setPage(PageRequest page) {
+    public void setPage(int page) {
         this.page = page;
     }
 
+    public int getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(int pageSize) {
+        this.pageSize = pageSize;
+    }
+    
     public Long getPrimaryPartId() {
         return primaryPartId;
     }

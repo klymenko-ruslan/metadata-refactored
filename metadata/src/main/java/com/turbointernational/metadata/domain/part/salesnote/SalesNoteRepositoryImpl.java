@@ -1,12 +1,13 @@
 package com.turbointernational.metadata.domain.part.salesnote;
 
-import com.turbointernational.metadata.domain.part.salesnote.dao.SalesNoteSearchRequest;
+import com.turbointernational.metadata.domain.part.salesnote.dto.SalesNoteSearchRequest;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
 /**
  *
@@ -23,11 +24,11 @@ public class SalesNoteRepositoryImpl implements SalesNoteRepositoryCustom {
                 .getSingleResult().longValue();
             
         List<SalesNote> results = buildSearchQuery("SELECT sn", SalesNote.class, request)
-                .setFirstResult(request.getPage().getOffset())
-                .setMaxResults(request.getPage().getPageSize())
+                .setFirstResult(request.getPage() * request.getPageSize())
+                .setMaxResults(request.getPageSize())
                 .getResultList();
         
-        return new PageImpl<SalesNote>(results, request.getPage(), total);
+        return new PageImpl<>(results, new PageRequest(request.getPage(), request.getPageSize()), total);
     }
     
     private <T> TypedQuery<T> buildSearchQuery(String selectClause, Class<T> resultClass, SalesNoteSearchRequest request) {

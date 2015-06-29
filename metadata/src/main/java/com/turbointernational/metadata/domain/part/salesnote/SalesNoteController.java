@@ -1,10 +1,9 @@
 package com.turbointernational.metadata.domain.part.salesnote;
 
-import com.turbointernational.metadata.domain.part.salesnote.dao.SalesNoteSearchRequest;
+import com.turbointernational.metadata.domain.part.salesnote.dto.SalesNoteSearchRequest;
 import com.turbointernational.metadata.domain.part.salesnote.exception.RemovePrimaryPartException;
-import com.turbointernational.metadata.domain.part.salesnote.dao.CreateSalesNoteRequest;
+import com.turbointernational.metadata.domain.part.salesnote.dto.CreateSalesNoteRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Sets;
 import com.turbointernational.metadata.domain.changelog.ChangelogDao;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.part.PartDao;
@@ -12,7 +11,6 @@ import com.turbointernational.metadata.domain.security.User;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
-import java.util.Set;
 import org.elasticsearch.common.collect.Iterables;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -248,8 +246,12 @@ public class SalesNoteController {
             @PathVariable("noteId") long noteId) {
         SalesNote salesNote = salesNotes.findOne(noteId);
         
+        if (salesNote == null) {
+            throw new NoSuchEntityException(SalesNote.class, noteId);
+        }
+        
         updateState(user, salesNote, SalesNoteState.submitted,
-                SalesNoteState.approved,
+                SalesNoteState.draft,
                 SalesNoteState.rejected);
     }
     
@@ -297,7 +299,7 @@ public class SalesNoteController {
     @RequestMapping(value="{noteId}/retract", method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    @Secured("ROLE_SALES_NOTE_PUBLISH")
+    @Secured("ROLE_SALES_NOTE_RETRACT")
     @Transactional
     public void retract(@AuthenticationPrincipal(errorOnInvalidType = true) User user,
             @PathVariable("noteId") long noteId) {

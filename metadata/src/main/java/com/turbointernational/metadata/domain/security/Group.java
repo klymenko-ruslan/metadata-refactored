@@ -1,6 +1,8 @@
 package com.turbointernational.metadata.domain.security;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.web.View;
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
 import java.io.Serializable;
@@ -34,20 +36,24 @@ public class Group implements Comparable<Group>, Serializable {
     //<editor-fold defaultstate="collapsed" desc="properties">
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonView({View.Detail.class, View.Summary.class})
     private Long id;
     
+    @JsonView({View.Detail.class, View.Summary.class})
     private String name;
     
     @ManyToMany
     @JoinTable(name="USER_GROUP",
             joinColumns=@JoinColumn(name="group_id"),
             inverseJoinColumns=@JoinColumn(name="user_id"))
+    @JsonView({View.Detail.class})
     private Set<User> users = new TreeSet<User>();
     
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name="GROUP_ROLE",
             joinColumns=@JoinColumn(name="group_id"),
             inverseJoinColumns=@JoinColumn(name="role_id"))
+    @JsonView({View.Detail.class})
     private Set<Role> roles = new TreeSet<Role>();
     
     public Long getId() {

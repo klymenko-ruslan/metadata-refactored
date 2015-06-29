@@ -1,8 +1,25 @@
+/* global _, angular */
+
 'use strict';
 
-angular.module('ngMetaCrudApp')
-	.controller('PartSalesNoteListCtrl', function($scope, $log, $q, $location,
-    $routeParams, ngTableParams, restService, Restangular, $dialogs, gToast) {
+angular.module('ngMetaCrudApp').controller('SalesNoteListByPartCtrl', function(
+        $scope, $log, $routeParams, ngTableParams, restService, Restangular, SalesNotes) {
+    $scope.SalesNotes = SalesNotes;
+        
+    $scope.possibleStates = ["draft", "submitted", "approved", "rejected", "published"];
+
+    $scope.isStateEnabled = function(state) {
+        return _.contains($scope.search.states, state);
+    };
+    
+    $scope.toggleState = function(state) {
+        if ($scope.isStateEnabled(state)) {
+          $scope.search.states = _.without($scope.search.states, state);
+        } else {
+            $scope.search.states.push(state);
+        }
+    }
+        
     $scope.partId = $routeParams.id;
 
     // Load the part
@@ -29,13 +46,17 @@ angular.module('ngMetaCrudApp')
       sorting: {}
     }, {
       getData: function ($defer, params) {
+          
+          if (_.size($scope.search.states) < 1) {
+              $defer.resolve([])
+              return;
+          }
 
           // Update the pagination info
-          $scope.search.count = params.count();
-          $scope.search.page = params.page();
-          $scope.search.sorting = params.sorting();
-
-          $scope.notesPromise = Restangular.one('other/salesNote/listByPartId', $scope.partId).get().then(
+          $scope.search.page = params.page() - 1;
+          $scope.search.pageSize = params.count();
+          
+          $scope.notesPromise = Restangular.all('other/salesNote/search').post($scope.search).then(
                 function (searchResults) {
                   $scope.notes = searchResults.content;
 
@@ -50,21 +71,16 @@ angular.module('ngMetaCrudApp')
           }
       });
 
-
     // Query Parameters
     $scope.search = {
-      partNumber: "",
-      facets: {},
-      sort: {}
+        "primaryPartId": 1,
+        "query": null,
+        "includePrimary": true,
+        "includeRelated": true,
+        "states": ["draft", "submitted", "approved", "published"],
+        "page": 0,
+        "pageSize": 20
     };
-
-    $scope.clear = function() {
-      $scope.search = {
-        partNumber: "",
-        facets: {},
-        sort: {}
-      }
-    }
 
     // Handle updating search results
     $scope.$watch('search', function (newVal, oldVal) {

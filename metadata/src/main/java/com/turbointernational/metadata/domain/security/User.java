@@ -1,14 +1,19 @@
 package com.turbointernational.metadata.domain.security;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.google.common.collect.Sets;
+import com.turbointernational.metadata.web.View;
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
 import java.util.Set;
+import java.util.TreeSet;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -32,10 +37,13 @@ public class User implements Comparable<User>, UserDetails {
     //<editor-fold defaultstate="collapsed" desc="Properties">
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonView({View.Detail.class, View.Summary.class})
     private Long id;
     
+    @JsonView({View.Detail.class, View.Summary.class})
     private String name;
     
+    @JsonView({View.Detail.class, View.Summary.class})
     private String email;
     
     @JsonIgnore
@@ -44,8 +52,13 @@ public class User implements Comparable<User>, UserDetails {
     @JsonIgnore
     private String passwordResetToken;
     
+    @JsonView(View.Detail.class)
     @Column(columnDefinition = "BIT")
     private Boolean enabled;
+    
+    @JsonView(View.Detail.class)
+    @ManyToMany(mappedBy="users", fetch = FetchType.EAGER)
+    private Set<Group> groups = new TreeSet<Group>();
     
     @JsonIgnore
     private final transient Set<SimpleGrantedAuthority> authorities = Sets.newHashSet();
@@ -137,14 +150,6 @@ public class User implements Comparable<User>, UserDetails {
     //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="Serialization">
-    public String toJson() {
-        return JSON.serialize(this);
-    }
-    
-    public String toJson(String[] fields) {
-        return new JSONSerializer().include(fields).exclude("*.class").serialize(this);
-    }
-    
     public static User fromJson(String json) {
         return new JSONDeserializer<User>().use(null, User.class).deserialize(json);
     }

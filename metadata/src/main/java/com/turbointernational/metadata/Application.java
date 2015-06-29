@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
 import com.turbointernational.metadata.web.CORSFilter;
 import java.util.List;
-import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 import javax.servlet.FilterRegistration;
 import javax.servlet.ServletContext;

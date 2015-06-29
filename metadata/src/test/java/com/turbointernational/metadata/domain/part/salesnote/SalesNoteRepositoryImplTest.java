@@ -1,6 +1,6 @@
 package com.turbointernational.metadata.domain.part.salesnote;
 
-import com.turbointernational.metadata.domain.part.salesnote.dao.SalesNoteSearchRequest;
+import com.turbointernational.metadata.domain.part.salesnote.dto.SalesNoteSearchRequest;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 import com.google.common.collect.Iterables;
 import com.turbointernational.metadata.Application;

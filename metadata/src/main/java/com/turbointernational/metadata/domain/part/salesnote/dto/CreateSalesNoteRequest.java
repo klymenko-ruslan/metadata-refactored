@@ -1,4 +1,4 @@
-package com.turbointernational.metadata.domain.part.salesnote.dao;
+package com.turbointernational.metadata.domain.part.salesnote.dto;
 
 import java.io.Serializable;
 import javax.validation.constraints.NotNull;

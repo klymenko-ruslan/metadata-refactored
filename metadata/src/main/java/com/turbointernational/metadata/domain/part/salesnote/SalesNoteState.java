@@ -1,11 +1,18 @@
 package com.turbointernational.metadata.domain.part.salesnote;
 
+import java.util.Arrays;
+
 /**
  *
  * @author jrodriguez
  */
 public enum SalesNoteState {
     draft, submitted, approved, published, rejected;
+
+    @Override
+    public String toString() {
+        return name();
+    }
     
     public static void checkState(SalesNoteState currentState, SalesNoteState... allowedStates) {
         for (SalesNoteState allowedState : allowedStates) {
@@ -14,6 +21,6 @@ public enum SalesNoteState {
             }
         }
         
-        throw new IllegalStateException("Sales note in state " + currentState + ", must be one of: " + allowedStates);
+        throw new IllegalStateException("Sales note in state " + currentState + ", must be one of: " + Arrays.toString(allowedStates));
     }
 }

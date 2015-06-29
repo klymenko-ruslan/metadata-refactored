@@ -12,9 +12,9 @@ public class AngularSpaRouter {
 
     @RequestMapping({
         "/",
-        "/part/*",
-        "/security/*",
-        "/password/*"
+        "/part/**",
+        "/security/**",
+        "/password/**"
 //        "/",
 //        "/part/\\d+",
 //        "/part/\\d+/component/search",

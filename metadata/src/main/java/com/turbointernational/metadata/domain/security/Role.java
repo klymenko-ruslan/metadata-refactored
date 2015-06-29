@@ -1,4 +1,6 @@
 package com.turbointernational.metadata.domain.security;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.web.View;
 import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,8 +14,13 @@ public class Role implements Comparable<Role>, Serializable {
     //<editor-fold defaultstate="collapsed" desc="properties">
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonView({View.Detail.class, View.Summary.class})
     private Long id;
+    
+    @JsonView({View.Detail.class, View.Summary.class})
     private String name;
+    
+    @JsonView({View.Detail.class, View.Summary.class})
     private String display;
     
     public Long getId() {

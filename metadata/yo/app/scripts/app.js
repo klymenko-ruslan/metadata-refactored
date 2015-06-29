@@ -5,22 +5,13 @@ angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap', 'restangu
 //  .constant('METADATA_BASE', 'http://192.168.42.10:8080/metadata/')
 //  .constant('METADATA_BASE', 'http://localhost:8080/metadata/')
   .config(function ($locationProvider, $httpProvider, $routeProvider, RestangularProvider, METADATA_BASE) {
-        $httpProvider.interceptors.push('loginRequiredInterceptor');
+    $httpProvider.interceptors.push('loginRequiredInterceptor');
     
-        RestangularProvider.setBaseUrl(METADATA_BASE);
-        RestangularProvider.setParentless(true);
-        RestangularProvider.setDefaultHttpFields({withCredentials: true});
-        RestangularProvider.setDefaultHeaders({'Content-Type': 'text/plain'});
-        RestangularProvider.setFullResponse(false);
-
     RestangularProvider.setBaseUrl(METADATA_BASE);
     RestangularProvider.setParentless(true);
-    RestangularProvider.setDefaultHttpFields({
-      withCredentials: true
-    });
-    RestangularProvider.setDefaultHeaders({
-      'Content-Type': 'text/plain'
-    });
+    RestangularProvider.setDefaultHttpFields({withCredentials: true});
+    RestangularProvider.setDefaultHeaders({'Content-Type': 'application/json'});
+    RestangularProvider.setFullResponse(false);
     RestangularProvider.setResponseExtractor(function(response) {
       return response;
     });
@@ -69,17 +60,20 @@ angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap', 'restangu
       templateUrl: 'views/part/PartDetail.html',
       controller: 'PartDetailCtrl'
     });
+    
+    
+    // Part Sales Notes
     $routeProvider.when('/part/:id/sales_notes', {
-      templateUrl: 'views/part/sales_note/PartSalesNoteList.html',
-      controller: 'PartSalesNoteListCtrl'
+      templateUrl: 'views/part/sales_note/SalesNoteListByPart.html',
+      controller: 'SalesNoteListByPartCtrl'
     });
-    $routeProvider.when('/part/:id/sales_note/NewNote', {
-      templateUrl: 'views/part/sales_note/NewNote.html',
-      controller: 'PartSalesNewNoteCtrl'
+    $routeProvider.when('/part/:id/sales_note/create', {
+      templateUrl: 'views/part/sales_note/SalesNoteCreateCtrl.html',
+      controller: 'SalesNoteCreateCtrl'
     });
-    $routeProvider.when('/part/:id/sales_note/ViewSalesNote', {
-      templateUrl: 'views/part/sales_note/ViewSalesNote.html',
-      controller: 'PartViewSalesNoteCtrl'
+    $routeProvider.when('/part/:partId/sales_note/:salesNoteId', {
+      templateUrl: 'views/part/sales_note/SalesNoteDetail.html',
+      controller: 'SalesNoteDetailCtrl'
     });
     $routeProvider.when('/part/:id/sales_note/AddRelatedPart', {
       templateUrl: 'views/part/sales_note/AddRelatedPart.html',

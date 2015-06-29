@@ -1,5 +1,7 @@
 package com.turbointernational.metadata.domain.security;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.google.common.collect.Sets;
+import com.turbointernational.metadata.web.View;
 import flexjson.JSONSerializer;
 import java.util.List;
 import java.util.Set;
@@ -31,16 +33,12 @@ public class UserController {
     @Autowired(required=true)
     GroupDao groupDao;
 
+    @JsonView(View.Detail.class)
     @RequestMapping(value = "/me", method = RequestMethod.GET)
     @ResponseBody
     @Secured("ROLE_READ")
-    public ResponseEntity getMe() {
+    public User getMe() {
         User user = User.getCurrentUser();
-        
-        if (user == null) {
-            return new ResponseEntity(null, new HttpHeaders(), HttpStatus.FORBIDDEN);
-        }
-        
         
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Set<String> authoritySet = Sets.newTreeSet();
@@ -49,15 +47,14 @@ public class UserController {
             authoritySet.add(auth.getAuthority());
         }
         
-        return new ResponseEntity<String>(
-                User.JSON.serialize(user),
-                new HttpHeaders(), HttpStatus.OK);
+        return user;
     }
 
+    @JsonView(View.Detail.class)
     @RequestMapping(value = "/me", method = RequestMethod.POST)
     @ResponseBody
     @Secured("ROLE_READ")
-    public ResponseEntity<String> updateMe(@RequestBody String json) {
+    public User updateMe(@RequestBody String json) {
         User jsonUser = User.fromJson(json);
         
         User user = User.getCurrentUser();
@@ -71,9 +68,7 @@ public class UserController {
         
         userDao.merge(user);
         
-        return new ResponseEntity<String>(
-                User.JSON.serialize(user),
-                new HttpHeaders(), HttpStatus.OK);
+        return user;
     }
 
     @RequestMapping(value = "/myroles", method = RequestMethod.GET)
@@ -92,26 +87,20 @@ public class UserController {
                 new HttpHeaders(), HttpStatus.OK);
     }
 
+    @JsonView(View.Summary.class)
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
     @Secured("ROLE_ADMIN")
-    public ResponseEntity<String> list() {
-        List<User> users = userDao.findActiveUsers();
-        
-        return new ResponseEntity<String>(
-                User.JSON.serialize(users),
-                new HttpHeaders(), HttpStatus.OK);
+    public List<User> list() {
+        return userDao.findActiveUsers();
     }
 
+    @JsonView(View.Detail.class)
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ResponseBody
     @Secured("ROLE_ADMIN")
-    public ResponseEntity<String> get(@PathVariable("id") Long id) {
-        User user = userDao.findOne(id);
-        
-        return new ResponseEntity<String>(
-                User.JSON.serialize(user),
-                new HttpHeaders(), HttpStatus.OK);
+    public User get(@PathVariable("id") Long id) {
+        return userDao.findOne(id);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
@@ -132,13 +121,11 @@ public class UserController {
         userDao.merge(user);
     }
     
+    @JsonView(View.Detail.class)
     @Transactional
     @RequestMapping(method = RequestMethod.POST)
     @Secured("ROLE_ADMIN")
-    public ResponseEntity<String> create(@RequestBody String json) throws Exception {
-        
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/json");
+    public User create(@RequestBody String json) throws Exception {
         
         // Create the object
         User user = User.fromJson(json);
@@ -147,7 +134,7 @@ public class UserController {
         
         userDao.persist(user);
         
-        return new ResponseEntity<String>(user.toJson(), headers, HttpStatus.OK);
+        return user;
     }
     
     @Transactional

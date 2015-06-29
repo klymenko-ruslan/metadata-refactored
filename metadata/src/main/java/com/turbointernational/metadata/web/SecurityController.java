@@ -2,8 +2,10 @@ package com.turbointernational.metadata.web;
 
 import com.turbointernational.metadata.domain.security.User;
 import com.turbointernational.metadata.domain.security.UserDao;
+import java.io.IOException;
 import java.util.UUID;
 import java.util.logging.Logger;
+import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,7 +19,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
  *
@@ -40,6 +41,12 @@ public class SecurityController {
     
     @Value("${email.metadata.from}")
     String metadataFrom;
+    
+    @RequestMapping({"unauthorized", "/security/unauthorized"})
+    public void unauthorized(HttpServletResponse response) throws IOException {
+        response.sendError(HttpStatus.UNAUTHORIZED.value());
+    }
+    
     @Transactional
     @RequestMapping("password/reset/token/{token}")
     public @ResponseBody void token(@PathVariable("token") String token, @RequestParam String password) {
