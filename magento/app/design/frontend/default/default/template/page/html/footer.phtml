@@ -60,6 +60,7 @@
                 <!-- END: Constant Contact Stylish Email Newsletter Form -->
             </div>
         </div>
+        <div><?php echo Mage::getModel('core/variable')->setStoreId(Mage::app()->getStore()->getId())->loadByCode('footer_variable_1')->getValue('html') ?></div>
         <div class="copyright"><?php echo $this->getCopyright() ?></div>
     </div>
 </div>
