@@ -37,13 +37,32 @@ $amshopbyUrlHelper = Mage::helper('amshopby/url');
 
 <div class="nav-container">
     <ul id="nav">
-        <?php // echo $_menu ?>
+        <?php // echo $_menu 
+            // create array of each manufacturer
+            $manfrArray = array();
+            foreach ($amshopbyAttrHelper->getAttributeOptions('manufacturer') as $item) {
+                    $manfrArray[] = array("url" => $amshopbyUrlHelper->getOptionUrl('manufacturer', $item['label'], $item['value']), "label" => $item['label']);
+            }
+
+            // create array of part types
+            $partTypeArray = array();
+            foreach ($amshopbyAttrHelper->getAttributeOptions('part_type') as $item) {
+                    $partTypeArray[] = array("url" => $amshopbyUrlHelper->getOptionUrl('part_type', $item['label'], $item['value']), "label" => $item['label']);
+            }
+        ?>
         <li>
             <a href="#">Manufacturer</a>
             <ul>
-                <?php foreach ($amshopbyAttrHelper->getAttributeOptions('manufacturer') as $item): ?>
+                <?php foreach ($manfrArray as $manfrItem): ?>
                     <li>
-                        <a href="<?php echo $amshopbyUrlHelper->getOptionUrl('manufacturer', $item['label'], $item['value']) ?>"><?php echo $item['label'] ?></a>
+                        <a href="#"><?php echo $manfrItem['label'] ?></a>
+                        <ul>
+                            <?php foreach ($partTypeArray as $partTypeItem): ?>
+                                <li>
+                                    <a href="<?php echo $manfrItem['url'] . '&' . parse_url($partTypeItem['url'], PHP_URL_QUERY) ?>"><?php echo $partTypeItem['label'] ?></a>
+                                </li>
+                            <?php endforeach ?>
+                        </ul>
                     </li>
                 <?php endforeach ?>
             </ul>
@@ -51,9 +70,9 @@ $amshopbyUrlHelper = Mage::helper('amshopby/url');
         <li>
             <a href="#">Component</a>
             <ul>
-                <?php foreach ($amshopbyAttrHelper->getAttributeOptions('part_type') as $item): ?>
+                <?php foreach ($partTypeArray as $partTypeItem): ?>
                     <li>
-                        <a href="<?php echo $amshopbyUrlHelper->getOptionUrl('part_type', $item['label'], $item['value']) ?>"><?php echo $item['label'] ?></a>
+                        <a href="<?php echo $partTypeItem['url'] ?>"><?php echo $partTypeItem['label'] ?></a>
                     </li>
                 <?php endforeach ?>
             </ul>
