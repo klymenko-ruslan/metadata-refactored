@@ -174,8 +174,8 @@ class Amasty_Shopby_Model_Catalog_Layer_Filter_Attribute extends Mage_Catalog_Mo
     {
         $currentVals = Mage::helper('amshopby')->getRequestValues($this->_requestVar);
 
-        // always filter out parts where manfr = Turbo International regardless of what other attribute filters are set
-        $this->_applyTiManufacturerFilter();
+        // always filter out parts that don't meet the ti catalog criteria.
+        $this->_applyTiCatalogFilter();
 
         if ($currentVals) {
             $this->applyFilterToCollection($currentVals);
@@ -222,6 +222,81 @@ class Amasty_Shopby_Model_Catalog_Layer_Filter_Attribute extends Mage_Catalog_Mo
             $this->getLayer()->getState()->addFilter($state);
         }
         return $this;
+    }
+
+    /**
+     * Apply TI Catalog filter
+     *
+     * @return null
+     */
+    protected function _applyTiCatalogFilter()
+    {
+        // this function only returns parts if:
+            // oe part if interchange with TI (has TI interchange = True)
+            // OR
+            // * oe turbo if serviced by TI chra (has_ti_chra = True)
+            // OR
+            // * TI part if not interchange with OE (has Non TI interchange = False)
+
+        if (isset($_REQUEST['debug'])) {
+            Zend_Debug::dump("_applyTiCatalogFilter called");
+        }
+
+        // Stop now if the filter is already applied
+        if (Mage::registry('ti_catalog_filter')) {
+            return $this;
+        }
+
+        $collection = $this->getLayer()->getProductCollection();
+        $connection = $this->_getResource()->getReadConnection();
+
+        // Update the registry value
+        Mage::register('ti_catalog_filter', true);
+
+        // get attribute id for has_ti_chra
+        $eavAttribute = new Mage_Eav_Model_Mysql4_Entity_Attribute();
+        $hasTiChraAttributeId = $eavAttribute->getIdByCode('catalog_product', 'has_ti_chra');
+
+        // define manufacture id for turbo international
+        $manfrTiId = "44";
+
+        // define value id for ti_has_chra = true
+        $tiHasChraTrue = "6633";
+
+        // get id for turbo attribute set
+        $turboAttributeSetId = Mage::getModel('eav/entity_attribute_set')->getCollection()
+            ->addFieldToFilter('attribute_set_name', 'Turbo')
+            ->getFirstItem()
+            ->getAttributeSetId();
+
+        // generate join array
+        $alias      = "ti_catalog_ti_has_chra";
+        $conditions = array(
+            "{$alias}.entity_id = e.entity_id",
+            $connection->quoteInto("{$alias}.attribute_id = ?", $hasTiChraAttributeId),
+            //$connection->quoteInto("{$alias}.store_id = ?",     $collection->getStoreId()),
+            $connection->quoteInto("{$alias}.store_id = ?",     0),
+        );
+
+        // apply array to select sql
+        $collection->getSelect()->joinLeft(
+            array($alias => 'catalog_product_entity_int'),
+            join(' AND ', $conditions),
+            array()
+        );
+
+        // build the where clause
+        //  oe part that has a TI interchange
+        $where_str = "(" . $connection->quoteInto("manufacturer <> ?", $manfrTiId) . " and has_ti_interchange = 1)";
+        //  turbo part that is serviced by TI
+        $where_str .= " OR (" . $connection->quoteInto("attribute_set_id = ?", $turboAttributeSetId) . " and " . $connection->quoteInto("{$alias}.value = ?", $tiHasChraTrue) . ")";
+        //  TI part that is not interchange with an oe part
+        $where_str .= " OR (" . $connection->quoteInto("manufacturer = ?", $manfrTiId) . " and has_foreign_interchange = 0)";
+
+        // append the where clause to existing where clause
+        $collection->getSelect()->where($where_str);
+
+        return null;
     }
 
     /**
