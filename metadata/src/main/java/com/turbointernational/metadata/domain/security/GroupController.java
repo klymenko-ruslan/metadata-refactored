@@ -1,5 +1,7 @@
 package com.turbointernational.metadata.domain.security;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.web.View;
 import flexjson.JSONSerializer;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,37 +32,28 @@ public class GroupController {
     
     @Transactional
     @RequestMapping(method = RequestMethod.POST)
+    @ResponseBody
+    @JsonView(View.Detail.class)
     @Secured("ROLE_ADMIN")
-    public ResponseEntity<String> create(@RequestBody String json) throws Exception {
-        
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/json");
-        
-        // Create the object
-        Group group = Group.fromJson(json);
+    public Group create(@RequestBody Group group) throws Exception {
         groupDao.persist(group);
-        
-        return new ResponseEntity<String>(group.toJson(), headers, HttpStatus.OK);
+        return group;
     }
     
     @Transactional
-    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/{id}", method = {RequestMethod.POST, RequestMethod.PUT})
+    @ResponseBody
+    @JsonView(View.DetailWithUsers.class)
     @Secured("ROLE_ADMIN")
-    public ResponseEntity<String> update(@RequestBody String json) throws Exception {
-        
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/json");
-        
-        // Create the object
-        Group group = Group.fromJson(json);
-        groupDao.merge(group);
-        
-        return new ResponseEntity<String>(group.toJson(), headers, HttpStatus.OK);
+    public Group update(@RequestBody Group group) throws Exception {
+        Group resultGroup = groupDao.merge(group);
+        return resultGroup;
     }
     
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
     @Secured("ROLE_ADMIN")
+    @JsonView(View.Summary.class)
     public ResponseEntity<String> list() {
         List<Group> groups = groupDao.findAll();
         
@@ -78,6 +71,7 @@ public class GroupController {
     @RequestMapping(value = "/roles", method = RequestMethod.GET)
     @ResponseBody
     @Secured("ROLE_ADMIN")
+    @JsonView(View.Summary.class)
     public ResponseEntity<String> listRoles() {
         List<Role> roles = roleDao.findAll();
         
@@ -93,6 +87,7 @@ public class GroupController {
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ResponseBody
     @Secured("ROLE_ADMIN")
+    @JsonView(View.DetailWithUsers.class)
     public ResponseEntity<String> get(@PathVariable("id") Long id) {
         Group group = groupDao.findOne(id);
         group.getUsers().size();

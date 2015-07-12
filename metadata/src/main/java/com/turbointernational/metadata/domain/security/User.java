@@ -56,7 +56,7 @@ public class User implements Comparable<User>, UserDetails {
     @Column(columnDefinition = "BIT")
     private Boolean enabled;
     
-    @JsonView(View.Detail.class)
+    @JsonView(View.DetailWithGroups.class)
     @ManyToMany(mappedBy="users", fetch = FetchType.EAGER)
     private Set<Group> groups = new TreeSet<Group>();
     
@@ -112,6 +112,14 @@ public class User implements Comparable<User>, UserDetails {
         this.enabled = enabled;
     }
 
+    public Set<Group> getGroups() {
+        return groups;
+    }
+
+    public void setGroups(Set<Group> groups) {
+        this.groups = groups;
+    }
+    
     @Override
     @JsonIgnore
     public Set<SimpleGrantedAuthority> getAuthorities() {

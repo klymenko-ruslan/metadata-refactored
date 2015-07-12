@@ -1,6 +1,4 @@
 package com.turbointernational.metadata.domain.security;
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.web.View;
 import flexjson.JSONDeserializer;
@@ -22,7 +20,7 @@ import javax.persistence.Table;
 @Table(name="GROUPS") // GROUP is a reserved word
 public class Group implements Comparable<Group>, Serializable {
     public static final long serialVersionUID = 1L;
-    
+
     public static JSONSerializer JSON = new JSONSerializer()
                 .include("id")
                 .include("name")
