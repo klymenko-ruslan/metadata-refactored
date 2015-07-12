@@ -64,6 +64,7 @@ angular.module('ngMetaCrudApp')
       }
 
       $scope.save = function() {
+        $scope.group.name = $scope.newName;
         $scope.group.roles = _.chain($scope.roleSelections).map(function(isSelected, roleId) {
           if (isSelected) {
             return $scope.roles[roleId];
