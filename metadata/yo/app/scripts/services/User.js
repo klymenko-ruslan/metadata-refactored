@@ -12,7 +12,7 @@ angular.module('ngMetaCrudApp')
 
         var rolesPromise = Restangular.all('security/user/myroles').getList().then(
             function(roles) {
-              $log.log("Set Roles")
+              $log.log("Set Roles", roles);
               User.roles = roles;
             },
             function() {
