@@ -1,8 +1,16 @@
 <metanav>
-  <li>
-    <a ng-href="/part/{{ partId }}/sales_notes"
+  <li authorize="ROLE_READ">
+    <a ng-href="/part/{{ partId }}"
+       class="btn btn-primary">
+      <i class="fa fa-eye"></i> View Part
+    </a>
+  </li>
+
+  <li authorize="ROLE_SALES_NOTE_READ">
+    <a ng-href="/part/{{partId}}/sales_notes"
        class="btn btn-info">
-      View Sales Note
+      <i class="fa fa-book"></i>
+      Sales Notes &hellip;
     </a>
   </li>
 
@@ -15,8 +23,9 @@
   </li>
 </metanav>
 
-<h1>[509] Garrett Cartridge 712402-0066 Create Sales Note</h1>
-<div class="col-xs-8 pull-right">
+<h1 class="padding-top" part-name="part" part-name-suffix="Sales Note {{salesNoteId}}"></h1>
+
+<!--<div class="col-xs-8 pull-right">
   <h5>Status</h5>
   <button type="submit" class="btn btn-info btn-sm text-center">Draft</button>
   <button type="submit" class="btn btn-success btn-sm text-center">Published</button>
@@ -25,156 +34,64 @@
   <h5>4 of 25</h5>
   <button type="submit" class="btn btn-info text-center">Prev</button>
   <button type="submit" class="btn btn-info text-center">Next</button>
-</div>
+</div>-->
 
-<hr>
-<h4>Note</h4>
-
-<textarea name="NewNote" id="" cols="70" rows="5"></textarea>
+<textarea name="NewNote" id="" cols="70" rows="5" ng-model="salesNote.comment"></textarea>
 <hr>
 
 <div class="col-xs-6">
-  <h3 style="float: left;">Attachments</h3>
-    <button type="submit" class="btn btn-primary text-center" style="float: right; position: relative; top: 17px; right: 40px;">+ Add Attachment</button>
-    <!--<div class="fileinput fileinput-new input-group" data-provides="fileinput">
-    <div class="form-control" data-trigger="fileinput"><span class="fileinput-filename"></span></div>
-    <span class="input-group-addon btn btn-default btn-file"><span class="fileinput-new">Select file</span><span class="fileinput-exists">Change</span><input type="file" name="..."></span>
-    <a href="#" class="input-group-addon btn btn-primary text-center fileinput-exists" data-dismiss="fileinput">Remove</a>
-  </div>-->
-    <table class="table">
-      <thead>
-        <tr>
-          <th>File name</th>
-          <th>User</th>
-          <th>Data</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>turbo_picture.pnd</td>
-          <td>Paul Thiry</td>
-          <td>2015-03-05</td>
-          <td>
+  <h3>Attachments
+      <a class="btn btn-primary pull-right"
+         ng-click="addTurboType()">
+        <i class="fa fa-plus"></i>
+        Add Attachment
+      </a>
+  </h3>
+  <table data-ng-table="attachmentTableParams" class="table table-bordered table-striped table-hover table-responsive">
+      <tr data-ng-repeat="attachment in $data">
+          <td title="'File Name'" sortable="'attachment.filename'">
+              {{part._source.partType.name}}
+          </td>
+          <td title="'User'" sortable="'attachment.creator.name'">
+              {{attachment.creator.name}}
+          </td>
+          <td title="'Created'" sortable="'attachment.createDate'">
+              {{attachment.createDate}}
+          </td>
+          <td title="'Actions'" class="actions text-center">
             <button type="submit" class="btn btn-primary text-center btn-xs">Download</button>
             <button type="submit" class="btn btn-danger text-center btn-xs">Remove</button>
           </td>
-        </tr>
-        <tr>
-          <td>chra_list.xlsx</td>
-          <td>John Doe</td>
-          <td>2014-11-28</td>
-          <td>
-            <button type="submit" class="btn btn-primary text-center btn-xs">Download</button>
-            <button type="submit" class="btn btn-danger text-center btn-xs">Remove</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    <nav>
-  <ul class="pagination" style="float: left;">
-    <li>
-      <a href="#" aria-label="Previous">
-        <span aria-hidden="true">&laquo;</span>
-      </a>
-    </li>
-    <li><a href="#">1</a></li>
-    <li><a href="#">2</a></li>
-    <li>
-      <a href="#" aria-label="Next">
-        <span aria-hidden="true">&raquo;</span>
-      </a>
-    </li>
-  </ul>
-</nav>
-<div class="btn-group" role="group" aria-label="..." style="float: right; position: relative; top: 21px; right: 10px;">
-  <button type="button" class="btn btn-default">10</button>
-  <button type="button" class="btn btn-default">25</button>
-  <button type="button" class="btn btn-default">50</button>
-  <button type="button" class="btn btn-default">100</button>
+      </tr>
+  </table>
 </div>
-</div>
-
+    
 <div class="col-xs-6">
-  <h3 style="float: left;">Related Parts</h3>
-    <button type="submit" class="btn btn-primary text-center" style="float: right; position: relative; top: 17px; right: 40px;">+ Add Related Part</button>
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Part #</th>
-          <th>Part Type</th>
-          <th>Manufacturer</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>1-D-4199</td>
-          <td>Cartridge</td>
-          <td>Turbo International</td>
-          <td>
-            <button type="submit" class="btn btn-primary text-center btn-xs">View</button>
-            <button type="submit" class="btn btn-danger text-center btn-xs">Remove</button>
-          </td>
-        </tr>
-        <tr>
-          <td>1-D-4200</td>
-          <td>Cartridge</td>
-          <td>Turbo International</td>
-          <td>
-            <button type="submit" class="btn btn-primary text-center btn-xs">View</button>
-            <button type="submit" class="btn btn-danger text-center btn-xs">Remove</button>
-          </td>
-        </tr>
-        <tr>
-          <td>1-D-3821</td>
-          <td>Cartridge</td>
-          <td>Turbo International</td>
-          <td>
-            <button type="submit" class="btn btn-primary text-center btn-xs">View</button>
-            <button type="submit" class="btn btn-danger text-center btn-xs">Remove</button>
-          </td>
-        </tr>
-        <tr>
-          <td>5439-710-8001</td>
-          <td>Cartridge</td>
-          <td>KKK</td>
-          <td>
-            <button type="submit" class="btn btn-primary text-center btn-xs">View</button>
-            <button type="submit" class="btn btn-danger text-center btn-xs">Remove</button>
-          </td>
-        </tr>
-        <tr>
-          <td>1-D-4197</td>
-          <td>Cartridge</td>
-          <td>Turbo International</td>
-          <td>
-            <button type="submit" class="btn btn-primary text-center btn-xs">View</button>
-            <button type="submit" class="btn btn-danger text-center btn-xs">Remove</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    <nav>
-  <ul class="pagination" style="float: left;">
-    <li>
-      <a href="#" aria-label="Previous">
-        <span aria-hidden="true">&laquo;</span>
+  <h3>Related Parts
+      <a class="btn btn-primary pull-right"
+         ng-click="addTurboType()">
+        <i class="fa fa-plus"></i>
+        Add Related Part
       </a>
-    </li>
-    <li><a href="#">1</a></li>
-    <li><a href="#">2</a></li>
-    <li>
-      <a href="#" aria-label="Next">
-        <span aria-hidden="true">&raquo;</span>
-      </a>
-    </li>
-  </ul>
-</nav>
-<div class="btn-group" role="group" aria-label="..." style="float: right; position: relative; top: 21px; right: 10px;">
-  <button type="button" class="btn btn-default">10</button>
-  <button type="button" class="btn btn-default">25</button>
-  <button type="button" class="btn btn-default">50</button>
-  <button type="button" class="btn btn-default">100</button>
-</div>
+  </h3>
+  <table data-ng-table="relatedPartTableParams" class="table table-bordered table-striped table-hover table-responsive">
+      <tr data-ng-repeat="relatedPart in $data">
+          <td title="'Part #'" sortable="'relatedPart.part.manufacturerPartNumber'">
+              {{relatedPart.part.manufacturerPartNumber}}
+          </td>
+          <td title="'Part Type'" sortable="'relatedPart.part.partType.name'">
+              {{relatedPart.part.partType.name}}
+          </td>
+          <td title="'Manufacturer'" sortable="'relatedPart.part.manufacturer.name'">
+              {{relatedPart.part.manufacturer.name}}
+          </td>
+          <td title="'Actions'" class="actions">
+            <a ng-href="/part/{{ partId }}"
+               class="btn btn-primary btn-xs">
+              <i class="fa fa-eye"></i> View
+            </a>
+            <button type="submit" class="btn btn-danger text-center btn-xs" disabled="disabled">Remove</button>
+          </td>
+      </tr>
+  </table>
 </div>

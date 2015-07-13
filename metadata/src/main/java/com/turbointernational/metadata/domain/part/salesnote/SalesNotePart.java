@@ -1,8 +1,10 @@
 package com.turbointernational.metadata.domain.part.salesnote;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.security.User;
+import com.turbointernational.metadata.web.View;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.AssociationOverride;
@@ -32,7 +34,6 @@ import javax.persistence.TemporalType;
 public class SalesNotePart implements Serializable {
     
     @EmbeddedId
-    @JsonIgnore
     private SalesNotePartId pk;
     
     @Temporal(TemporalType.TIMESTAMP)
@@ -91,7 +92,6 @@ public class SalesNotePart implements Serializable {
         this.pk = pk;
     }
     
-    @JsonIgnore
     public SalesNote getSalesNote() {
         return getPk().getSalesNote();
     }
@@ -100,6 +100,7 @@ public class SalesNotePart implements Serializable {
         getPk().setSalesNote(salesNote);
     }
     
+    @JsonView({View.DetailWithPartsAndAttachments.class})
     public Part getPart() {
         return getPk().getPart();
     }
@@ -108,6 +109,7 @@ public class SalesNotePart implements Serializable {
         getPk().setPart(part);
     }
     
+    @JsonView({View.Summary.class})
     public Date getCreateDate() {
         return createDate;
     }
@@ -116,6 +118,7 @@ public class SalesNotePart implements Serializable {
         this.createDate = createDate;
     }
 
+    @JsonView({View.Summary.class})
     public User getCreator() {
         return creator;
     }
@@ -124,6 +127,7 @@ public class SalesNotePart implements Serializable {
         this.creator = creator;
     }
 
+    @JsonView({View.Summary.class})
     public Date getUpdateDate() {
         return updateDate;
     }
@@ -132,14 +136,17 @@ public class SalesNotePart implements Serializable {
         this.updateDate = updateDate;
     }
 
+    @JsonView({View.Summary.class})
     public User getUpdater() {
         return updater;
     }
 
+    @JsonView({View.Summary.class})
     public void setUpdater(User updater) {
         this.updater = updater;
     }
 
+    @JsonView({View.Summary.class})
     public Boolean getPrimary() {
         return primary;
     }

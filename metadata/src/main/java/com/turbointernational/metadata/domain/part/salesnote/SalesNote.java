@@ -1,9 +1,11 @@
 package com.turbointernational.metadata.domain.part.salesnote;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.google.common.collect.Sets;
 import com.turbointernational.metadata.domain.security.User;
+import com.turbointernational.metadata.web.View;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -35,28 +37,35 @@ import javax.persistence.TemporalType;
 public class SalesNote implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonView({View.Summary.class, View.Detail.class})
     private Long id;
     
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name="create_date")
+    @JsonView({View.Summary.class, View.Detail.class})
     private Date createDate;
     
     @OneToOne
     @JoinColumn(name="create_uid", nullable=false)
+    @JsonView({View.Summary.class, View.Detail.class})
     private User creator;
     
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name="write_date")
+    @JsonView({View.Summary.class, View.Detail.class})
     private Date updateDate;
     
     @OneToOne
     @JoinColumn(name="write_uid", nullable=false)
+    @JsonView({View.Summary.class, View.Detail.class})
     private User updater;
     
     @Enumerated(EnumType.STRING)
+    @JsonView({View.Summary.class, View.Detail.class})
     private SalesNoteState state;
     
     @Lob
+    @JsonView({View.Summary.class, View.Detail.class})
     private String comment;
     
     @OneToMany(mappedBy = "pk.salesNote", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -64,10 +73,12 @@ public class SalesNote implements Serializable {
 //            indexes = @Index(columnList = "sales_note_id,part_id"),
 //            joinColumns = @JoinColumn(name = "sales_note_id"),
 //            inverseJoinColumns = @JoinColumn(name="part_id"))
+    @JsonView({View.DetailWithPartsAndAttachments.class})
     private Set<SalesNotePart> parts = Sets.newLinkedHashSet();
     
+    @JsonView({View.DetailWithPartsAndAttachments.class})
     @OneToMany(mappedBy="salesNote", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<SalesNoteAttachment> attachments;
+    private List<SalesNoteAttachment> attachments = new ArrayList<>();
     
     public Long getId() {
         return id;

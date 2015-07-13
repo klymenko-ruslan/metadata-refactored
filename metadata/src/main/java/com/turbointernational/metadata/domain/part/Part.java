@@ -1,5 +1,6 @@
 package com.turbointernational.metadata.domain.part;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.other.TurboType;
 import com.turbointernational.metadata.domain.part.bom.BOMItem;
@@ -18,6 +19,7 @@ import com.turbointernational.metadata.domain.part.types.TurbineWheel;
 import com.turbointernational.metadata.domain.part.types.Turbo;
 import com.turbointernational.metadata.domain.type.PartType;
 import com.turbointernational.metadata.util.ElasticSearch;
+import com.turbointernational.metadata.web.View;
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
 import flexjson.ObjectBinder;
@@ -115,23 +117,29 @@ public class Part implements Comparable<Part>, Serializable {
     //<editor-fold defaultstate="collapsed" desc="Properties">
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonView({View.Summary.class})
     private Long id;
     
     @OneToOne(fetch = FetchType.LAZY)
+    @JsonView({View.Summary.class})
     @JoinColumn(name = "manfr_id", nullable = false)
     private Manufacturer manufacturer;
     
     @Column(name = "manfr_part_num")
+    @JsonView({View.Summary.class})
     private String manufacturerPartNumber;
     
     @Column(name = "name")
+    @JsonView({View.Summary.class})
     private String name;
     
     @Column(name="description")
+    @JsonView({View.Detail.class})
     private String description;
     
     @OneToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="part_type_id")
+    @JsonView({View.Summary.class})
     private PartType partType;
     
     @Column(nullable = false, columnDefinition = "BIT", length = 1)

@@ -1,5 +1,6 @@
 package com.turbointernational.metadata.domain.part.salesnote;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.domain.part.salesnote.dto.SalesNoteSearchRequest;
 import com.turbointernational.metadata.domain.part.salesnote.exception.RemovePrimaryPartException;
 import com.turbointernational.metadata.domain.part.salesnote.dto.CreateSalesNoteRequest;
@@ -8,6 +9,7 @@ import com.turbointernational.metadata.domain.changelog.ChangelogDao;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.part.PartDao;
 import com.turbointernational.metadata.domain.security.User;
+import com.turbointernational.metadata.web.View;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
@@ -52,8 +54,9 @@ public class SalesNoteController {
     @RequestMapping(method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    @Secured("ROLE_SALES_NOTE_CREATE")
+    @Secured("ROLE_SALES_NOTE_SUBMIT")
     @Transactional
+    @JsonView(View.DetailWithPartsAndAttachments.class)
     public @ResponseBody SalesNote createSalesNote(
             @AuthenticationPrincipal(errorOnInvalidType = true) User user,
             @RequestBody CreateSalesNoteRequest request) {
@@ -86,8 +89,15 @@ public class SalesNoteController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     @Secured("ROLE_SALES_NOTE_READ")
+    @JsonView(View.DetailWithPartsAndAttachments.class)
     public SalesNote getSalesNote(@PathVariable("noteId") long noteId) {
-        return salesNotes.findOne(noteId);
+        SalesNote salesNote = salesNotes.findOne(noteId);
+        salesNote.getParts().size();
+        for (SalesNotePart snp : salesNote.getParts()) {
+            snp.getPart().getManufacturer().getName();
+            snp.getPart().getPartType().getName();
+        }
+        return salesNote;
     }
     
     @RequestMapping(value = "search", method = RequestMethod.POST,

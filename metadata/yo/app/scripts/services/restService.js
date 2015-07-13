@@ -59,6 +59,8 @@ angular.module('ngMetaCrudApp')
                 return;
               }
               
+              $log.log(title, response);
+              
               $dialogs.error(
                   title, 'Server said: <pre>' + JSON.stringify(response.data) + '</pre>');
             };

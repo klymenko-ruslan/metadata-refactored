@@ -57,6 +57,7 @@ public class Application extends WebMvcConfigurerAdapter implements WebApplicati
     @Bean
     public Jackson2ObjectMapperBuilder jackson2ObjectMapperBuilder() {
         return new Jackson2ObjectMapperBuilder()
+                .failOnUnknownProperties(false)
                 .serializationInclusion(JsonInclude.Include.NON_EMPTY)
                 .modulesToInstall(new Hibernate4Module());
     }

@@ -1,4 +1,6 @@
 package com.turbointernational.metadata.domain.type;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.web.View;
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
 import java.io.Serializable;
@@ -24,9 +26,12 @@ public class PartType implements Serializable {
     //<editor-fold defaultstate="collapsed" desc="properties">
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonView({View.Summary.class})
     private Long id;
     
     @Column(nullable=false)
+    
+    @JsonView({View.Summary.class})
     private String name;
     
     /**
@@ -41,6 +46,7 @@ public class PartType implements Serializable {
     // TODO: Is this a duplicate of parentTypes?
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="parent_part_type_id")
+    @JsonView({View.Detail.class})
     private PartType parent;
     
     public Long getId() {

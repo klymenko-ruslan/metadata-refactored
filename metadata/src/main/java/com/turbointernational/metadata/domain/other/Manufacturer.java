@@ -1,5 +1,7 @@
 package com.turbointernational.metadata.domain.other;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.domain.type.ManufacturerType;
+import com.turbointernational.metadata.web.View;
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
 import java.io.Serializable;
@@ -28,17 +30,21 @@ public class Manufacturer implements Serializable {
     //<editor-fold defaultstate="collapsed" desc="Properties">
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonView({View.Summary.class})
     private Long id;
     
     @Column(nullable=false)
+    @JsonView({View.Summary.class})
     private String name;
     
     @OneToOne
     @JoinColumn(name="manfr_type_id", nullable=false)
+    @JsonView({View.Summary.class})
     private ManufacturerType type;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="parent_manfr_id")
+    @JsonView({View.Detail.class})
     private Manufacturer parent;
     
     public Long getId() {
