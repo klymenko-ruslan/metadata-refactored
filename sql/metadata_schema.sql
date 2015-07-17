@@ -379,6 +379,15 @@ CREATE TABLE `standard_journal_bearing` (
   FOREIGN KEY (`oversized_part_id`) REFERENCES `journal_bearing` (`part_id`)
 ) ENGINE = INNODB;
 
+CREATE TABLE `standard_oversize_part` (
+  `standard_part_id` BIGINT NOT NULL,
+  `oversize_part_id` BIGINT NOT NULL,
+  PRIMARY KEY (`standard_part_id`,`oversize_part_id`),
+  KEY `standard_oversize_part_oversized_part_id_idx` (`oversize_part_id`),
+  CONSTRAINT `standard_oversize_part_standard_part_id` FOREIGN KEY (`standard_part_id`) REFERENCES `part` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+  CONSTRAINT `standard_oversize_part_oversized_part_id` FOREIGN KEY (`oversize_part_id`) REFERENCES `part` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
+) ENGINE=InnoDB;
+
 CREATE TABLE `turbine_wheel` (
   `part_id` BIGINT NOT NULL,
   `exduce_oa` DECIMAL(10,6) NULL,
@@ -1045,7 +1054,7 @@ VIEW `vmagmi_sop` AS
 SELECT
     ssop.oversize_part_id                                   AS part_id,
     ssop.standard_part_id                                   AS standard_part_sku,
-    GROUP_CONCAT(DISTINCT ii2.part_id ORDER BY ii2.part_id) AS oversize_part_skus
+    GROUP_CONCAT(DISTINCT ii2.part_id ORDER BY ii2.part_id ASC SEPARATOR ',') AS oversize_part_skus
 FROM
 
     -- Get the oversize TI parts for each standard-size part
@@ -1059,8 +1068,21 @@ FROM
 GROUP BY
   ssop.oversize_part_id,
   ssop.standard_part_id
-ORDER BY ssop.oversize_part_id;
 
+-- add standard part to its own listing
+UNION
+SELECT
+    ssop.standard_part_id AS part_id,
+    ssop.standard_part_id AS standard_part_sku,
+    GROUP_CONCAT(DISTINCT ii2.part_id ORDER BY ii2.part_id ASC SEPARATOR ',') AS oversize_part_skus
+FROM
+    standard_oversize_part ssop
+    LEFT JOIN part op ON op.id = ssop.oversize_part_id AND op.manfr_id = 11
+
+    -- Get the interchanges for the oversize parts
+    LEFT JOIN interchange_item ii ON ii.part_id = op.id
+    LEFT JOIN interchange_item ii2 ON ii2.interchange_header_id = ii.interchange_header_id
+GROUP BY ssop.standard_part_id;
 
 --
 -- Stored Procedures
