@@ -7,14 +7,6 @@
     </a>
   </li>
 
-  <li authorize="ROLE_PART_IMAGES">
-    <a ng-click="addImage()"
-       class="btn btn-info">
-      <i class="fa fa-picture-o"></i>
-      Add Image &hellip;
-    </a>
-  </li>
-
   <li authorize="ROLE_READ">
     <a ng-href="/part/{{ partId }}/ancestors"
        class="btn btn-info">
@@ -38,6 +30,12 @@
       Sales Notes &hellip;
     </a>
   </li>
+  <li class="pull-right col-xs-2">
+    <a class="btn btn-default" disabled="disabled">
+      <strong data-ng-show="part.inactive === false">Active</strong>
+      <strong data-ng-show="part.inactive === true">Inactive</strong>
+    </a>
+  </li>
 </metanav>
 
 <h1 class="padding-top" part-name="part"></h1>
@@ -47,9 +45,6 @@
   <!-- Part Details -->
   <div class="col-xs-12 col-md-6 well-small">
     <h3>Part Details</h3>
-
-    <p class="pull-right"><strong data-ng-show="part.inactive == false">Active</strong>
-        <strong data-ng-show="part.inactive == true">Inactive</strong></p>
 
     <dl class="dl-horizontal">
         <dt>Name</dt>
@@ -270,11 +265,17 @@
 
   <!-- Images -->
   <div class="col-xs-12 col-md-6">
-    <h3>Images</h3>
+    <h3>Images
+      <a  authorize="ROLE_PART_IMAGES" ng-click="addImage()"
+         class="btn btn-primary">
+        <i class="fa fa-plus"></i> Add Image
+      </a>
+    </h3>
     <ul class="list-unstyled list-inline">
       <li data-ng-repeat="image in part.productImages" ng-click="deleteImage(image)">
         <img ng-src="/metadata/image/135/{{image.id}}.jpg" style="max-height: 135px; max-width: 135px" />
       </li>
+      <li class="well well-sm" ng-hide="_.count(part.productImages) === 0">Part has no images.</li>
     </ul>
   </div>
 
