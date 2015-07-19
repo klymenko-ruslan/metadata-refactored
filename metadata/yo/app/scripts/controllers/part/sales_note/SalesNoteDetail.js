@@ -1,9 +1,11 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-	.controller('SalesNoteDetailCtrl', function($routeParams, $scope, ngTableParams, Restangular, restService) {
+	.controller('SalesNoteDetailCtrl', function($routeParams, $scope, ngTableParams, Restangular, SalesNotes, restService) {
     $scope.partId = $routeParams.partId;
     $scope.salesNoteId = $routeParams.salesNoteId;
+    
+    $scope.SalesNotes = SalesNotes;
 
     // Load the part
     $scope.part = null;
@@ -60,4 +62,31 @@ angular.module('ngMetaCrudApp')
       });
 
     $scope.relatedPartTableParams.reload();
+    
+    // Editing flag
+    var editing = false;
+    
+    $scope.isEditing = function() {
+        return editing;
+    };
+    
+    $scope.edit = function() {
+        editing = true;
+        
+        $scope.salesNotePromise.then(function(salesNote) {
+            $scope.editedComment = salesNote.comment;
+        });
+    };
+    
+    $scope.cancel = function() {
+        editing = false;
+    };
+    
+    $scope.save = function() {
+        Restangular.one("other/salesNote")
+                .post($scope.salesNoteId, {"comment": $scope.editedComment})
+                .then(function() {
+                    $scope.salesNote.comment = $scope.editedComment;
+                }, function() {});
+    };
 });

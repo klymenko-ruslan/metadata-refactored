@@ -90,6 +90,6 @@ angular.module('ngMetaCrudApp').controller('SalesNoteListByPartCtrl', function(
         return;
       }
 
-      $scope.notesTableParams.reload();
+//      $scope.notesTableParams.reload();
     }, true);
   });

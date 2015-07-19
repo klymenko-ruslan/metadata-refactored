@@ -68,7 +68,7 @@ angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap', 'restangu
       controller: 'SalesNoteListByPartCtrl'
     });
     $routeProvider.when('/part/:id/sales_note/create', {
-      templateUrl: 'views/part/sales_note/SalesNoteCreateCtrl.html',
+      templateUrl: 'views/part/sales_note/SalesNoteCreate.html',
       controller: 'SalesNoteCreateCtrl'
     });
     $routeProvider.when('/part/:partId/sales_note/:salesNoteId', {

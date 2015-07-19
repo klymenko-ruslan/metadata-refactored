@@ -31,6 +31,10 @@ angular.module('ngMetaCrudApp')
 
         return $q.all([rolesPromise, userPromise]);
       };
+      
+      User.hasRole = function(role) {
+          return _.contains(User.roles, role);
+      }
 
       User.logout = function() {
         return Restangular.all("security/logout").post().then(

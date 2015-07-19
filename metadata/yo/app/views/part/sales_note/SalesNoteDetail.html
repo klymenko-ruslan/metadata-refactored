@@ -5,38 +5,87 @@
       <i class="fa fa-eye"></i> View Part
     </a>
   </li>
-
   <li authorize="ROLE_SALES_NOTE_READ">
     <a ng-href="/part/{{partId}}/sales_notes"
        class="btn btn-info">
-      <i class="fa fa-book"></i>
-      Sales Notes &hellip;
+      <i class="fa fa-book"></i> Sales Notes &hellip;
     </a>
   </li>
-
-  <li>
-   <!--Still need to add save functionality-->
-    <a ng-href="N/A"
+  <li authorize="ROLE_SALES_NOTE_SUBMIT">
+    <a ng-href="/part/{{ partId }}/sales_note/create"
+       class="btn btn-primary text-center">
+      <i class="fa fa-plus"></i> Add Sales Note
+    </a>
+  </li>
+  <li>&nbsp;</li>
+  <li authorize="ROLE_SALES_NOTE_SUBMIT" ng-if="SalesNotes.canSubmit(salesNote)">
+    <a ng-click="SalesNotes.submit(salesNote)" ng-disabled="isEditing()"
+       class="btn btn-info">
+      <span class="fa fa-check-square"></span> Submit
+    </a>
+  </li>
+  <li authorize="ROLE_SALES_NOTE_PUBLISH" ng-if="SalesNotes.canPublish(salesNote)">
+    <a ng-click="SalesNotes.publish(salesNote)" ng-disabled="isEditing()"
+       class="btn btn-primary">
+      <span class="fa fa-cloud-upload"></span> Publish
+    </a>
+  </li>
+  <li authorize="ROLE_SALES_NOTE_APPROVE" ng-if="SalesNotes.canApprove(salesNote)">
+    <a ng-click="SalesNotes.approve(salesNote)" ng-disabled="isEditing()"
        class="btn btn-success">
-      Save
+      <span class="fa fa-thumbs-up"></span> Approve
+    </a>
+  </li>
+  <li authorize="ROLE_SALES_NOTE_REJECT" ng-if="SalesNotes.canReject(salesNote)">
+    <a ng-click="SalesNotes.reject(salesNote)" ng-disabled="isEditing()"
+       class="btn btn-danger">
+      <span class="fa fa-thumbs-down"></span> Reject
+    </a>
+  </li>
+  <li authorize="ROLE_SALES_NOTE_RETRACT" ng-if="SalesNotes.canRetract(salesNote)">
+    <a ng-click="SalesNotes.retract(salesNote)"
+       class="btn btn-warning">
+      <span class="fa fa-cloud-download"></span> Retract
+    </a>
+  </li>
+  <li>&nbsp;</li>
+  <li>
+    <a ng-click="edit()" ng-if="!isEditing()"
+       class="btn btn-success">
+      <i class="fa fa-pencil"></i> Edit Note
+    </a>
+  </li>
+  <li ng-if="isEditing()">
+    <a ng-click="cancel()" ng-disabled="isModified()"
+       class="btn btn-warning">
+      <i class="fa fa-undo"></i> Cancel
+    </a>
+  </li>
+  <li ng-if="isEditing()">
+    <a ng-click="save()"
+       class="btn btn-success">
+      <i class="fa fa-save"></i> Save
     </a>
   </li>
 </metanav>
 
 <h1 class="padding-top" part-name="part" part-name-suffix="Sales Note {{salesNoteId}}"></h1>
+<hr>
 
 <!--<div class="col-xs-8 pull-right">
   <h5>Status</h5>
-  <button type="submit" class="btn btn-info btn-sm text-center">Draft</button>
-  <button type="submit" class="btn btn-success btn-sm text-center">Published</button>
+  <button type="submit" class="btn btn-info text-center">Draft</button>
+  <button type="submit" class="btn btn-success text-center">Published</button>
   <hr>
 
   <h5>4 of 25</h5>
   <button type="submit" class="btn btn-info text-center">Prev</button>
   <button type="submit" class="btn btn-info text-center">Next</button>
 </div>-->
-
-<textarea name="NewNote" id="" cols="70" rows="5" ng-model="salesNote.comment"></textarea>
+<div ng-if="!isEditing()">
+  {{salesNote.comment}}
+</div>
+<textarea ng-if="isEditing()" cols="70" rows="5" ng-model="editedComment"></textarea>
 <hr>
 
 <div class="col-xs-6">

@@ -1,24 +1,28 @@
 package com.turbointernational.metadata.domain.part.salesnote;
 
+import com.turbointernational.metadata.domain.part.salesnote.dto.UpdateSalesNoteRequest;
 import com.fasterxml.jackson.annotation.JsonView;
-import com.turbointernational.metadata.domain.part.salesnote.dto.SalesNoteSearchRequest;
-import com.turbointernational.metadata.domain.part.salesnote.exception.RemovePrimaryPartException;
 import com.turbointernational.metadata.domain.part.salesnote.dto.CreateSalesNoteRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Iterables;
 import com.turbointernational.metadata.domain.changelog.ChangelogDao;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.part.PartDao;
+import static com.turbointernational.metadata.domain.part.salesnote.SalesNoteState.*;
+import com.turbointernational.metadata.domain.part.salesnote.dto.SalesNoteSearchRequest;
+import com.turbointernational.metadata.domain.part.salesnote.exception.RemovePrimaryPartException;
 import com.turbointernational.metadata.domain.security.User;
 import com.turbointernational.metadata.web.View;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
-import org.elasticsearch.common.collect.Iterables;
+import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.web.bind.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -100,6 +104,43 @@ public class SalesNoteController {
         return salesNote;
     }
     
+    @RequestMapping(value="{noteId}", method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_VALUE)
+    @Transactional
+    public @ResponseBody void updateSalesNote(
+            HttpServletRequest request,
+            @AuthenticationPrincipal(errorOnInvalidType = true) User user,
+            @PathVariable("noteId") long noteId,
+            @RequestBody UpdateSalesNoteRequest updateRequest) {
+        
+        SalesNote salesNote = salesNotes.findOne(noteId);
+        
+        if (!canEdit(request, salesNote)) {
+            throw new AccessDeniedException("You are not allowed to update sales notes with the " + salesNote.getState() + " state.");
+        }
+        
+        salesNote.setComment(updateRequest.getComment());
+
+        // Save
+        salesNotes.save(salesNote);
+        changelogDao.log("Changed sales note comment from " + salesNote.getComment(), noteId);
+    }
+    
+    boolean canEdit(HttpServletRequest request, SalesNote salesNote) {
+        if (salesNote.getState() == published
+                && request.isUserInRole("ROLE_SALES_NOTE_PUBLISH")) {
+            return true;
+        }
+        
+        if ((salesNote.getState() == approved || salesNote.getState() == submitted)
+                && request.isUserInRole("ROLE_SALES_NOTE_APPROVE")) {
+            return true;
+        }
+        
+        return (salesNote.getState() == draft || salesNote.getState() == rejected)
+                && request.isUserInRole("ROLE_SALES_NOTE_SUBMIT");
+    }
+
     @RequestMapping(value = "search", method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)

@@ -2,6 +2,7 @@ package com.turbointernational.metadata.domain.part.salesnote;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.google.common.collect.Sets;
+import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.security.User;
 import com.turbointernational.metadata.web.View;
 import java.io.Serializable;
@@ -150,5 +151,16 @@ public class SalesNote implements Serializable {
 
     public void setAttachments(List<SalesNoteAttachment> attachments) {
         this.attachments = attachments;
+    }
+    
+    @JsonView({View.Summary.class, View.Detail.class})
+    public long getPrimaryPartId() {
+        for (SalesNotePart snp : parts) {
+            if (snp.getPrimary()) {
+                return snp.getPart().getId();
+            }
+        }
+        
+        throw new IllegalStateException("No primary part found.");
     }
 }
