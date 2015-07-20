@@ -158,14 +158,14 @@ public class SalesNoteController {
         throw new AccessDeniedException("You are not allowed to update sales notes with the " + salesNote.getState() + " state.");
     }
 
+    @ResponseBody
+    @Secured("ROLE_SALES_NOTE_READ")
+    @JsonView(View.Detail.class)
     @RequestMapping(value = "search", method = RequestMethod.POST,
                     consumes = MediaType.APPLICATION_JSON_VALUE,
                     produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    @Secured("ROLE_SALES_NOTE_READ")
-    public Page<SalesNote> search(@RequestBody SalesNoteSearchRequest req) {
-        Page<SalesNote> results = salesNotes.search(req);
-        return results;
+    public SalesNoteSearchResponse search(@RequestBody SalesNoteSearchRequest req) {
+        return salesNotes.search(req);
     }
     
 //    @RequestMapping(value="listByPartId/{partId}", method = RequestMethod.GET)

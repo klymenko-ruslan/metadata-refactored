@@ -1,18 +1,11 @@
 package com.turbointernational.metadata.domain.part.salesnote.dto;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.google.common.collect.Sets;
 import com.turbointernational.metadata.domain.part.salesnote.SalesNoteState;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort.Direction;
 
 /**
  *

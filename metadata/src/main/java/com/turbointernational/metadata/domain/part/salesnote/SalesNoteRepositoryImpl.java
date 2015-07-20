@@ -5,9 +5,6 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 
 /**
  *
@@ -19,7 +16,7 @@ public class SalesNoteRepositoryImpl implements SalesNoteRepositoryCustom {
     EntityManager entityManager;
 
     @Override
-    public Page<SalesNote> search(SalesNoteSearchRequest request) {
+    public SalesNoteSearchResponse search(SalesNoteSearchRequest request) {
         long total = buildSearchQuery("SELECT COUNT(sn)", Number.class, request)
                 .getSingleResult().longValue();
             
@@ -28,7 +25,7 @@ public class SalesNoteRepositoryImpl implements SalesNoteRepositoryCustom {
                 .setMaxResults(request.getPageSize())
                 .getResultList();
         
-        return new PageImpl<>(results, new PageRequest(request.getPage(), request.getPageSize()), total);
+        return new SalesNoteSearchResponse(total, request.getPageSize(), request.getPage(), results);
     }
     
     private <T> TypedQuery<T> buildSearchQuery(String selectClause, Class<T> resultClass, SalesNoteSearchRequest request) {
