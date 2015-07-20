@@ -1,6 +1,8 @@
 package com.turbointernational.metadata.domain.part.bom;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.Part;
+import com.turbointernational.metadata.web.View;
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
 import java.io.Serializable;
@@ -41,6 +43,7 @@ public class BOMItem implements Comparable<BOMItem>, Serializable {
     
     @OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.REFRESH})
     @JoinColumn(name="child_part_id")
+    @JsonView({View.Detail.class})
     private Part child;
     
     @Column(nullable=false)
@@ -48,6 +51,7 @@ public class BOMItem implements Comparable<BOMItem>, Serializable {
     
     @OneToMany(mappedBy="bomItem", fetch = FetchType.LAZY, orphanRemoval = true)
     @OrderBy("id")
+    @JsonView({View.Detail.class})
     private Set<BOMAlternative> alternatives = new TreeSet<BOMAlternative>();
     
     public Long getId() {

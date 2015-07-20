@@ -1,5 +1,6 @@
 package com.turbointernational.metadata.util;
 
+import com.turbointernational.metadata.Application;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.part.PartDao;
 import java.util.List;
@@ -29,6 +30,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class ElasticSearch {
 
     private static final Logger log = Logger.getLogger(ElasticSearch.class.toString());
+    
+    public static ElasticSearch instance() {
+        return Application.getContext().getBean(ElasticSearch.class);
+    }
     
     @Autowired
     PartDao partDao;

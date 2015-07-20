@@ -178,6 +178,7 @@ public class Part implements Comparable<Part>, Serializable {
     
     @OneToMany(mappedBy="parent", fetch = FetchType.LAZY, orphanRemoval = true)
     @OrderBy("id")
+    @JsonView({View.Detail.class})
     private Set<BOMItem> bom = new TreeSet<BOMItem>();
     
     @OneToMany(cascade = CascadeType.REFRESH, mappedBy = "part", fetch=FetchType.LAZY)
@@ -185,6 +186,7 @@ public class Part implements Comparable<Part>, Serializable {
     
     @Version
     @Column(name = "version")
+    @JsonView({View.Summary.class})
     private Integer version;
     
 //    @JsonView({View.Summary.class})
@@ -284,14 +286,10 @@ public class Part implements Comparable<Part>, Serializable {
     //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="Lifecycle">
-    @Autowired(required=true)
-    @Transient
-    private ElasticSearch elasticSearch;
-    
     @PreRemove
     public void removeSearchIndex() throws Exception {
         try {
-            elasticSearch.deletePart(this);
+            ElasticSearch.instance().deletePart(this);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -301,7 +299,7 @@ public class Part implements Comparable<Part>, Serializable {
     @PostPersist
     public void updateSearchIndex() throws Exception {
         log.info("Updating search index.");
-        elasticSearch.indexPart(this);
+        ElasticSearch.instance().indexPart(this);
     }
     //</editor-fold>
 

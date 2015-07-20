@@ -10,6 +10,7 @@ import java.util.concurrent.TimeUnit;
 import javax.servlet.FilterRegistration;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
@@ -17,6 +18,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory;
 import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
 import org.springframework.boot.orm.jpa.EntityScan;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -41,7 +44,14 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 @EnableSpringDataWebSupport
 @EntityScan(basePackageClasses = Application.class)
 @Configuration
-public class Application extends WebMvcConfigurerAdapter implements WebApplicationInitializer {
+public class Application extends WebMvcConfigurerAdapter implements WebApplicationInitializer, ApplicationContextAware {
+    
+    private static ApplicationContext springContext = null;
+    
+    public static ApplicationContext getContext() {
+        return springContext;
+    }
+    
     
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
@@ -107,5 +117,9 @@ public class Application extends WebMvcConfigurerAdapter implements WebApplicati
         factory.setSessionTimeout(24, TimeUnit.HOURS);
         return factory;
     }
-    
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        Application.springContext = applicationContext;
+    }
 }
