@@ -3,6 +3,7 @@ package com.turbointernational.metadata;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
+import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module.Feature;
 import com.turbointernational.metadata.web.CORSFilter;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -46,7 +47,7 @@ public class Application extends WebMvcConfigurerAdapter implements WebApplicati
         SpringApplication.run(Application.class, args);
     }
     
-    @Autowired(required=true)
+    @Autowired
     ObjectMapper objectMapper;
     
     @Override
@@ -59,7 +60,10 @@ public class Application extends WebMvcConfigurerAdapter implements WebApplicati
         return new Jackson2ObjectMapperBuilder()
                 .failOnUnknownProperties(false)
                 .serializationInclusion(JsonInclude.Include.NON_EMPTY)
-                .modulesToInstall(new Hibernate4Module());
+                .modulesToInstall(new Hibernate4Module() {{
+                    enable(Feature.FORCE_LAZY_LOADING);
+                    enable(Feature.SERIALIZE_IDENTIFIER_FOR_LAZY_NOT_LOADED_OBJECTS);
+                }});
     }
     
     @Bean(name = "asyncExecutor")
