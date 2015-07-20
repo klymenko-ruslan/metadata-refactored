@@ -41,44 +41,41 @@
               {{salesNote.state}}
           </td>
           <td class="text-right" title="'Actions'">
-            <ul class="list-inline">
-              <li data-authorize="ROLE_SALES_NOTE_READ" class="pull-left">
-                <a ng-href="/part/{{salesNote.primaryPartId}}/sales_note/{{salesNote.id}}"
-                   class="btn btn-primary btn-sm">
-                  <span class="fa fa-eye"></span> View
-                </a>
-              </li>
-              <li authorize="ROLE_SALES_NOTE_SUBMIT" ng-if="salesNote.state === 'draft' || salesNote.state === 'rejected'">
-                <a ng-click="SalesNotes.submit(salesNote)"
-                   class="btn btn-info btn-sm">
-                  <span class="fa fa-check-square"></span> Submit
-                </a>
-              </li>
-              <li authorize="ROLE_SALES_NOTE_PUBLISH" ng-if="salesNote.state === 'approved'">
-                <a ng-click="SalesNotes.publish(salesNote)"
-                   class="btn btn-primary btn-sm">
-                  <span class="fa fa-cloud-upload"></span> Publish
-                </a>
-              </li>
-              <li authorize="ROLE_SALES_NOTE_APPROVE" ng-if="salesNote.state === 'submitted'">
-                <a ng-click="SalesNotes.approve(salesNote)"
-                   class="btn btn-success btn-sm">
-                  <span class="fa fa-thumbs-up"></span> Approve
-                </a>
-              </li>
-              <li authorize="ROLE_SALES_NOTE_REJECT" ng-if="salesNote.state === 'submitted' || salesNote.state === 'approved'">
-                <a ng-click="SalesNotes.reject(salesNote)"
-                   class="btn btn-danger btn-sm">
-                  <span class="fa fa-thumbs-down"></span> Reject
-                </a>
-              </li>
-              <li authorize="ROLE_SALES_NOTE_RETRACT" ng-if="salesNote.state === 'published'">
-                <a ng-click="SalesNotes.retract(salesNote)"
-                   class="btn btn-warning btn-sm">
-                  <span class="fa fa-cloud-download"></span> Retract
-                </a>
-              </li>
-            </ul>
+              <a ng-href="/part/{{salesNote.primaryPartId}}/sales_note/{{salesNote.id}}"
+                 authorize="ROLE_SALES_NOTE_READ"
+                 class="btn btn-primary btn-sm pull-left">
+                <span class="fa fa-eye"></span> View
+              </a>
+            
+              <a ng-click="SalesNotes.submit(salesNote)"
+                 authorize="ROLE_SALES_NOTE_SUBMIT" ng-if="SalesNotes.canSubmit(salesNote)"
+                 class="btn btn-info btn-sm">
+                <span class="fa fa-check-square"></span> Submit
+              </a>
+            
+              <a ng-click="SalesNotes.publish(salesNote)"
+                 authorize="ROLE_SALES_NOTE_PUBLISH" ng-if="SalesNotes.canPublish(salesNote)"
+                 class="btn btn-primary btn-sm">
+                <span class="fa fa-cloud-upload"></span> Publish
+              </a>
+            
+              <a ng-click="SalesNotes.approve(salesNote)"
+                 authorize="ROLE_SALES_NOTE_APPROVE" ng-if="SalesNotes.canApprove(salesNote)"
+                 class="btn btn-success btn-sm">
+                <span class="fa fa-thumbs-up"></span> Approve
+              </a>
+            
+              <a ng-click="SalesNotes.reject(salesNote)"
+                 authorize="ROLE_SALES_NOTE_REJECT" ng-if="SalesNotes.canReject(salesNote)"
+                 class="btn btn-danger btn-sm">
+                <span class="fa fa-thumbs-down"></span> Reject
+              </a>
+
+              <a ng-click="SalesNotes.retract(salesNote)"
+                 authorize="ROLE_SALES_NOTE_RETRACT" ng-if="SalesNotes.canRetract(salesNote)"
+                 class="btn btn-warning btn-sm">
+                <span class="fa fa-cloud-download"></span> Retract
+              </a>
           </td>
       </tr>
   </table>

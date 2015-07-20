@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
@@ -156,7 +157,7 @@ public class SalesNote implements Serializable {
     @JsonView({View.Summary.class, View.Detail.class})
     public long getPrimaryPartId() {
         for (SalesNotePart snp : parts) {
-            if (snp.getPrimary()) {
+            if (snp.isPrimary()) {
                 return snp.getPart().getId();
             }
         }

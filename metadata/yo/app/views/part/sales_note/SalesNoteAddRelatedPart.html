@@ -1,0 +1,89 @@
+<metanav>
+  <li authorize="ROLE_READ">
+    <a ng-href="/part/{{partId}}"
+       class="btn btn-primary">
+      <i class="fa fa-eye"></i> View Part
+    </a>
+  </li>
+  <li authorize="ROLE_SALES_NOTE_READ">
+    <a ng-href="/part/{{salesNote.primaryPartId}}/sales_note/{{salesNote.id}}"
+       class="btn btn-primary">
+      <i class="fa fa-eye"></i> View Sales Note
+    </a>
+  </li>
+
+  <li>
+    <a ng-click="save()" ng-disabled="!canSave()"
+       class="btn btn-success">
+      <i class="fa fa-save"></i>
+      Add Related Part
+    </a>
+  </li>
+</metanav>
+
+<h1 class="padding-top" part-name="part" part-name-suffix="Sales Note {{salesNote.id}}"></h1>
+
+<div class="row">
+
+  <!-- Primary Part -->
+  <div class="col-xs-6">
+    <h3>Primary Part</h3>
+    <part-summary part="part"></part-summary>
+  </div>
+
+  <!-- Picked BOM Item -->
+  <div class="col-xs-6">
+    <h3>Picked Part</h3>
+    <part-summary part="pickedPart" ng-show="pickedPart"></part-summary>
+    
+    <div ng-hide="pickedPart" class="well well-sm">
+      Pick a part to add to the sales note.
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  
+  
+  <!-- Related Parts -->
+  <div class="col-xs-6">
+    <h3>Related Parts</h3>
+    <table data-ng-table="relatedPartTableParams" class="table table-bordered table-striped table-hover table-responsive">
+        <tr data-ng-repeat="relatedPart in $data">
+            <td title="'Part #'" sortable="'relatedPart.part.manufacturerPartNumber'">
+                {{relatedPart.part.manufacturerPartNumber}}
+            </td>
+            <td title="'Part Type'" sortable="'relatedPart.part.partType.name'">
+                {{relatedPart.part.partType.name}}
+            </td>
+            <td title="'Manufacturer'" sortable="'relatedPart.part.manufacturer.name'">
+                {{relatedPart.part.manufacturer.name}}
+            </td>
+            <td title="'Actions'" class="actions">
+              <a class="btn btn-xs btn-primary"
+                 ng-href="/part/{{ relatedPart.part.id }}">
+                <i class="fa fa-eye"></i> View {{salesNote.primaryPartId === relatedPart.part.id ? "Primary" : "Related"}}
+              </a>
+            </td>
+        </tr>
+    </table>
+  </div>
+</div>
+
+<hr/>
+
+<part-search class="well well-lg">
+
+  <a authorize="ROLE_READ"
+     ng-href="/part/{{partId}}"
+     class="btn btn-primary btn-xs">
+    <i class="fa fa-eye"></i> View
+  </a>
+
+  <a authorize="ROLE_BOM"
+     ng-click="pickPart(partId)"
+     class="btn btn-success btn-xs">
+    <i class="fa fa-bullseye"></i> Pick
+  </a>
+
+</part-search>

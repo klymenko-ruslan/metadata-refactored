@@ -7,6 +7,7 @@ import com.turbointernational.metadata.domain.security.User;
 import com.turbointernational.metadata.web.View;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Objects;
 import javax.persistence.AssociationOverride;
 import javax.persistence.AssociationOverrides;
 import javax.persistence.Cacheable;
@@ -71,17 +72,16 @@ public class SalesNotePart implements Serializable {
      * Convenience method for new sales note parts.
      */
     public SalesNotePart(SalesNote salesNote, Part part, boolean primary, User user) {
-        this(
-                new SalesNotePartId(salesNote, part),
+        this(new SalesNotePartId(salesNote, part),
                 
-                // Create
-                new Date(), user,
+              // Create
+              new Date(), user,
                 
-                // Update
-                new Date(), user,
+              // Update
+              new Date(), user,
                 
-                // Primary Part
-                primary);
+              // Primary Part
+              primary ? true : null);
     }
     
     public SalesNotePartId getPk() {
@@ -146,9 +146,18 @@ public class SalesNotePart implements Serializable {
         this.updater = updater;
     }
 
-    @JsonView({View.Summary.class})
+    @Deprecated
+    /**
+     * @deprecated Note: May be null.
+     * @see #isPrimary()
+     */
     public Boolean getPrimary() {
         return primary;
+    }
+
+    @JsonView({View.Summary.class})
+    public boolean isPrimary() {
+        return Objects.equals(Boolean.TRUE, primary);
     }
 
     public void setPrimary(Boolean primary) {

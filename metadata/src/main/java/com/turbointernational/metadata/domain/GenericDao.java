@@ -71,8 +71,7 @@ public class GenericDao<T extends Serializable> {
     }
     
     public long count() {
-        return em.createQuery(
-                "SELECT COUNT(o) FROM " + clazz.getName() + " o", Long.class)
+        return em.createQuery("SELECT COUNT(o) FROM " + clazz.getName() + " o", Long.class)
                 .getSingleResult();
     }
     

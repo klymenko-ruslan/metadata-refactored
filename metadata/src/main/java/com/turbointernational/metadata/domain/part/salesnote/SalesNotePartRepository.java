@@ -8,7 +8,8 @@ import org.springframework.security.access.annotation.Secured;
  *
  * @author jrodriguez
  */
+
 @RepositoryRestResource
 @Secured("ROLE_SALES_NOTE_READ")
-public interface SalesNoteAttachmentRepository extends JpaRepository<SalesNoteAttachment, Long> {
+public interface SalesNotePartRepository extends JpaRepository<SalesNotePart, Long> {
 }

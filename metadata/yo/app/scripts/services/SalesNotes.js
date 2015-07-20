@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-  .service('SalesNotes', function SalesNotes($q, Restangular, User) {
+  .service('SalesNotes', function SalesNotes($location, $log, Restangular, User) {
       var SalesNotes = this;
       
       SalesNotes.states = ["draft", "submitted", "approved", "rejected", "published"];
@@ -18,6 +18,32 @@ angular.module('ngMetaCrudApp')
               restService.error("Could not upload image.", response);
             }
         );
+      };
+      
+      SalesNotes.addRelatedPart = function(salesNote, part) {
+          return Restangular.one('other/salesNote/' + salesNote.id + '/part')
+            .post(part.id, null)
+            .then(function() {
+                // TODO: Add the related part? Right now it's reloaded.
+            }, function (errorResponse) {
+                $log.log("Could not add related part", errorResponse);
+            });
+      };
+      
+      SalesNotes.removeRelatedPart = function(salesNote, partId) {
+          return Restangular.one('other/salesNote/' + salesNote.id + '/part', partId)
+            .remove()
+            .then(function() {
+                var idx = _.findIndex(salesNote.parts, function(salesNotePart) {
+                    return salesNotePart.part.id === partId;
+                });
+                
+                if (idx !== -1) {
+                    salesNote.parts.splice(idx, 1);
+                }
+            }, function (errorResponse) {
+                $log.log("Could not remove related part", errorResponse);
+            });
       };
       
       SalesNotes.canSubmit = function(salesNote) {
@@ -60,7 +86,6 @@ angular.module('ngMetaCrudApp')
       }
       
       // State Management
-      
       SalesNotes.submit = function(salesNote) {
           return Restangular.one("other/salesNote", salesNote.id).post("submit")
                   .then(function() {

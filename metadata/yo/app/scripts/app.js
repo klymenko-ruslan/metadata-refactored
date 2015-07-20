@@ -75,9 +75,9 @@ angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap', 'restangu
       templateUrl: 'views/part/sales_note/SalesNoteDetail.html',
       controller: 'SalesNoteDetailCtrl'
     });
-    $routeProvider.when('/part/:id/sales_note/AddRelatedPart', {
-      templateUrl: 'views/part/sales_note/AddRelatedPart.html',
-      controller: 'AddRelatedPartCtrl'
+    $routeProvider.when('/part/:partId/sales_note/:salesNoteId/related_part/search', {
+      templateUrl: 'views/part/sales_note/SalesNoteAddRelatedPart.html',
+      controller: 'SalesNoteAddRelatedPartCtrl'
     });
 
 

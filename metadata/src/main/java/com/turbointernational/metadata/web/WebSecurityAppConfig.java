@@ -53,10 +53,10 @@ public class WebSecurityAppConfig extends WebSecurityConfigurerAdapter {
         http.sessionManagement()
             .maximumSessions(1)
             .maxSessionsPreventsLogin(true)
-            .expiredUrl("/security/unauthorized?expiredSession")
+            .expiredUrl("/metadata/security/unauthorized?expiredSession")
             .and()
             .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
-            .invalidSessionUrl("/security/unauthorized?invalidSession");
+            .invalidSessionUrl("/metadata/security/unauthorized?invalidSession");
         
         http.authorizeRequests()
             .antMatchers("/metadata/security/password**").permitAll()  // Password reset endpoints open to anyone
@@ -64,7 +64,7 @@ public class WebSecurityAppConfig extends WebSecurityConfigurerAdapter {
             .antMatchers("/product_images/**").authenticated()         // Images require authentication
             .antMatchers("/magmi/**").hasIpAddress("127.0.0.1/32")     // Allow magmi from localhost without user.
             .and().formLogin()
-                .loginPage("/security/unauthorized")
+                .loginPage("/metadata/security/unauthorized")
                 .loginProcessingUrl("/metadata/security/login")
                 .defaultSuccessUrl("/metadata/security/user/me")
                 .failureHandler(new AuthenticationFailureHandlerImpl())

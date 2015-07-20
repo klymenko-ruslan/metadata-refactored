@@ -1,11 +1,11 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-	.controller('SalesNoteDetailCtrl', function($routeParams, $scope, ngTableParams, Restangular, SalesNotes, restService) {
+  .controller('SalesNoteAddRelatedPartCtrl', function($location, $log, $routeParams, $scope, ngTableParams, SalesNotes, Restangular, restService) {
+    $scope.SalesNotes = SalesNotes;
+    
     $scope.partId = $routeParams.partId;
     $scope.salesNoteId = $routeParams.salesNoteId;
-    
-    $scope.SalesNotes = SalesNotes;
 
     // Load the part
     $scope.part = null;
@@ -22,7 +22,6 @@ angular.module('ngMetaCrudApp')
 
     // Load the sales note
     $scope.salesNote = null;
-    $scope.editedSalesNote = {};
     $scope.salesNotePromise = Restangular.one('other/salesNote', $scope.salesNoteId).get().then(
         function (salesNote) {
             $scope.salesNote = salesNote;
@@ -31,23 +30,7 @@ angular.module('ngMetaCrudApp')
         function (errorResponse) {
             restService.error("Could not get sales note details", errorResponse);
         });
-        
-    // Attachment Table
-    $scope.attachmentTableParams = new ngTableParams({
-        page: 1,
-        count: 10,
-        sorting: {}
-      }, {
-        getData: function ($defer, params) {
-            $scope.salesNotePromise.then(function(salesNote) {
-                // TODO: Paginate, fiter, sort
-                $defer.resolve(salesNote.attachments);
-            });
-        }
-      });
-
-    $scope.attachmentTableParams.reload();
-    
+            
     // Related Part Table
     $scope.relatedPartTableParams = new ngTableParams({
         page: 1,
@@ -63,35 +46,28 @@ angular.module('ngMetaCrudApp')
       });
 
     $scope.relatedPartTableParams.reload();
-    
-    // Editing flag
-    var editing = false;
-    
-    $scope.isEditing = function() {
-        return editing;
+    $scope.pickedPart = null;
+    $scope.pickPart = function (partId) {
+        $scope.pickedPart = restService.findPart(partId).then(
+            function (pickedPart) {
+                $scope.pickedPart = pickedPart;
+            },
+            function (errorResponse) {
+                restService.error("Could not pick part.", errorResponse);
+                $log.log("Could not pick part", errorResponse);
+            });
     };
     
-    $scope.edit = function() {
-        editing = true;
-        
-        $scope.salesNotePromise.then(function(salesNote) {
-            $scope.editedSalesNote.comment = salesNote.comment;
-        });
-    };
-    
-    $scope.cancel = function() {
-        editing = false;
+    $scope.canSave = function() {
+        return $scope.pickedPart !== null;
     };
     
     $scope.save = function() {
-        Restangular.one("other/salesNote")
-            .post($scope.salesNoteId, {"comment": $scope.editedSalesNote.comment})
+        SalesNotes.addRelatedPart($scope.salesNote, $scope.pickedPart)
             .then(function() {
-                $scope.salesNote.comment = $scope.editedSalesNote.comment;
-                editing = false;
-            },
-            function (errorResponse) {
-                restService.error("Could not get sales note details", errorResponse);
+                $location.path("/part/" + $scope.salesNote.primaryPartId + "/sales_note/" + $scope.salesNoteId);
+            }, function (errorResponse) {
+                restService.error("Could not pick part.", errorResponse);
             });
     };
-});
+  });

@@ -16,12 +16,17 @@ import com.turbointernational.metadata.web.View;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpRequest;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.web.bind.annotation.AuthenticationPrincipal;
@@ -39,16 +44,24 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/metadata/other/salesNote")
 public class SalesNoteController {
 
-    @Autowired(required = true)
+    private static final Logger log = Logger.getLogger(SalesNoteController.class.toString());
+
+    @Autowired
     ChangelogDao changelogDao;
 
-    @Autowired(required = true)
+    @Autowired
     SalesNoteRepository salesNotes;
+    
+    @Autowired
+    SalesNoteAttachmentRepository attachments;
+    
+    @Autowired
+    SalesNotePartRepository salesNoteParts;
 
-    @Autowired(required = true)
+    @Autowired
     PartDao partDao;
 
-    @Autowired(required = true)
+    @Autowired
     ObjectMapper json;
     
     @Value("attachments.salesNote")
@@ -56,8 +69,8 @@ public class SalesNoteController {
     
     //<editor-fold defaultstate="collapsed" desc="CRUDS">
     @RequestMapping(method = RequestMethod.POST,
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+                    consumes = MediaType.APPLICATION_JSON_VALUE,
+                    produces = MediaType.APPLICATION_JSON_VALUE)
     @Secured("ROLE_SALES_NOTE_SUBMIT")
     @Transactional
     @JsonView(View.DetailWithPartsAndAttachments.class)
@@ -90,7 +103,7 @@ public class SalesNoteController {
     }
 
     @RequestMapping(value="{noteId}", method = RequestMethod.GET,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+                    produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     @Secured("ROLE_SALES_NOTE_READ")
     @JsonView(View.DetailWithPartsAndAttachments.class)
@@ -104,10 +117,12 @@ public class SalesNoteController {
         return salesNote;
     }
     
-    @RequestMapping(value="{noteId}", method = RequestMethod.POST,
-            consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
     @Transactional
-    public @ResponseBody void updateSalesNote(
+    @RequestMapping(value="{noteId}", method = RequestMethod.POST,
+                    produces = MediaType.APPLICATION_JSON_VALUE,
+                    consumes = MediaType.APPLICATION_JSON_VALUE)
+    public void updateSalesNote(
             HttpServletRequest request,
             @AuthenticationPrincipal(errorOnInvalidType = true) User user,
             @PathVariable("noteId") long noteId,
@@ -115,9 +130,7 @@ public class SalesNoteController {
         
         SalesNote salesNote = salesNotes.findOne(noteId);
         
-        if (!canEdit(request, salesNote)) {
-            throw new AccessDeniedException("You are not allowed to update sales notes with the " + salesNote.getState() + " state.");
-        }
+        canEditAccess(request, salesNote);
         
         salesNote.setComment(updateRequest.getComment());
 
@@ -126,24 +139,28 @@ public class SalesNoteController {
         changelogDao.log("Changed sales note comment from " + salesNote.getComment(), noteId);
     }
     
-    boolean canEdit(HttpServletRequest request, SalesNote salesNote) {
+    private void canEditAccess(HttpServletRequest request, SalesNote salesNote) {
         if (salesNote.getState() == published
                 && request.isUserInRole("ROLE_SALES_NOTE_PUBLISH")) {
-            return true;
+            return;
         }
         
         if ((salesNote.getState() == approved || salesNote.getState() == submitted)
                 && request.isUserInRole("ROLE_SALES_NOTE_APPROVE")) {
-            return true;
+            return;
         }
         
-        return (salesNote.getState() == draft || salesNote.getState() == rejected)
-                && request.isUserInRole("ROLE_SALES_NOTE_SUBMIT");
+        if ((salesNote.getState() == draft || salesNote.getState() == rejected)
+                && request.isUserInRole("ROLE_SALES_NOTE_SUBMIT")) {
+            return;
+        }
+
+        throw new AccessDeniedException("You are not allowed to update sales notes with the " + salesNote.getState() + " state.");
     }
 
     @RequestMapping(value = "search", method = RequestMethod.POST,
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+                    consumes = MediaType.APPLICATION_JSON_VALUE,
+                    produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     @Secured("ROLE_SALES_NOTE_READ")
     public Page<SalesNote> search(@RequestBody SalesNoteSearchRequest req) {
@@ -164,35 +181,41 @@ public class SalesNoteController {
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Related Parts">
-    @RequestMapping(value="{salesNoteId}", method = RequestMethod.POST,
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    @Secured("ROLE_SALES_NOTE_ADD_PART")
-    public SalesNote addRelatedPart(@AuthenticationPrincipal(errorOnInvalidType = true) User user, @PathVariable("salesNoteId") long salesNoteId, @RequestBody long partId) {
+    @Transactional
+    @RequestMapping(value="{salesNoteId}/part/{partId}", method = RequestMethod.POST,
+                    consumes = MediaType.APPLICATION_JSON_VALUE,
+                    produces = MediaType.APPLICATION_JSON_VALUE)
+    public void addRelatedPart(
+            HttpServletRequest request,
+            @AuthenticationPrincipal(errorOnInvalidType = true) User user,
+            @PathVariable("salesNoteId") long salesNoteId,
+            @PathVariable("partId") long partId) {
         
         // Find the entities
         SalesNote salesNote = salesNotes.findOne(salesNoteId);
+        
+        canEditAccess(request, salesNote);
+        
         Part part = partDao.findOne(partId);
         
         // Create the primary part association
-        SalesNotePart snp = new SalesNotePart(salesNote, part, true, user);
+        SalesNotePart snp = new SalesNotePart(salesNote, part, false, user);
         salesNote.getParts().add(snp);
         
         // Save
         salesNotes.save(salesNote);
         
-        changelogDao.log("Added related part to sales note " + salesNoteId, snp);
-        
-        return salesNote;
+        changelogDao.log("Added related part to sales note " + salesNoteId, partId);
     }
     
-    @RequestMapping(value="{salesNoteId}/part/{partId}", method = RequestMethod.DELETE,
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    @Secured("ROLE_SALES_NOTE_DELETE_PART")
+    @Transactional
+    @RequestMapping(value="{salesNoteId}/part/{partId}", method = RequestMethod.DELETE,
+                    consumes = MediaType.APPLICATION_JSON_VALUE,
+                    produces = MediaType.APPLICATION_JSON_VALUE)
     public void deleteRelatedPart(
+            HttpServletRequest request,
             @AuthenticationPrincipal(errorOnInvalidType = true) User user,
             @PathVariable("salesNoteId") long salesNoteId,
             @PathVariable("partId") final long partId) throws RemovePrimaryPartException {
@@ -200,39 +223,71 @@ public class SalesNoteController {
         // Find the entities
         SalesNote salesNote = salesNotes.findOne(salesNoteId);
         
+        canEditAccess(request, salesNote);
+        
         // Find the SNP
+//        SalesNotePart salesNotePart = salesNote.getParts().stream()
+//                .filter(snp -> snp.getPart().getId() == partId)
+//                .findFirst().get();
         SalesNotePart salesNotePart = Iterables.find(
                 salesNote.getParts(),
                 snp -> snp.getPart().getId() == partId);
         
         // Can't delete primary part
-        if (salesNotePart.getPrimary()) {
+        if (salesNotePart.isPrimary()) {
             throw new RemovePrimaryPartException("Can't delete the primary part for a sales note.");
         }
         
         // Delete the SNP
         salesNote.getParts().remove(salesNotePart);
+        salesNoteParts.delete(salesNotePart);
         
         // Save
         salesNotes.save(salesNote);
-        changelogDao.log("Deleted related part from sales note " + salesNoteId, salesNotePart);
+        changelogDao.log("Deleted related part from sales note " + salesNoteId, partId);
     }
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Attachments">
+    @RequestMapping(value = "attachment/{id}", method = RequestMethod.GET)
+    @Secured("ROLE_SALES_NOTE_READ")
+    public @ResponseBody ResponseEntity<byte[]> getAttachment(@PathVariable Long id) throws Exception {
+        
+        // Get the attachment
+        SalesNoteAttachment attachment = attachments.findOne(id);
+        
+        // Load it from disk
+        File attachmentFile = new File(attachmentDir, attachment.getFilename());
+        
+        try {
+            
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Content-Type", "application/octet-stream");
+            headers.add("Content-Disposition", "attachment; filename=\"" + attachment.getFilename() + "\"");
+
+            byte[] bytes = FileUtils.readFileToByteArray(attachmentFile);
+
+            return new ResponseEntity(bytes, headers, HttpStatus.OK);
+        } catch (IOException e) {
+            log.log(Level.WARNING, "Couldn't load attachment file: " + attachmentFile.getAbsolutePath(), e);
+            throw e;
+        }
+    }
+    
     @RequestMapping(value="{salesNoteId}/attachment", method = RequestMethod.POST,
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    @Secured("ROLE_SALES_NOTE_ADD_ATTACHMENT")
     public SalesNote addAttachment(
-            HttpRequest request,
+            HttpServletRequest request,
             @AuthenticationPrincipal(errorOnInvalidType = true) User user,
             @PathVariable("salesNoteId") long salesNoteId,
             @RequestParam("file") MultipartFile upload) throws IOException {
         
         // Find the entities
         SalesNote salesNote = salesNotes.findOne(salesNoteId);
+        
+        canEditAccess(request, salesNote);
         
         // Create the attachment directory for this sales note
         File salesNoteDir = new File(attachmentDir, Long.toString(salesNote.getId()));
@@ -260,17 +315,19 @@ public class SalesNoteController {
         return salesNote;
     }
     
-    
     @RequestMapping(value="{salesNoteId}/attachment/{attachmentId}", method = RequestMethod.DELETE)
     @ResponseBody
     @Secured("ROLE_SALES_NOTE_DELETE_ATTACHMENT")
     public void deleteAttachment(
+            HttpServletRequest request,
             @AuthenticationPrincipal(errorOnInvalidType = true) User user,
             @PathVariable("salesNoteId") long salesNoteId,
             @PathVariable("attachmentId") long attachmentId) {
         
         // Find the entities
         SalesNote salesNote = salesNotes.findOne(salesNoteId);
+        
+        canEditAccess(request, salesNote);
         
         // Find the attachment
         SalesNoteAttachment salesNoteAttachment = Iterables.find(
