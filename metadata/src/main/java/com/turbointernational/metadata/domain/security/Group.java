@@ -44,7 +44,7 @@ public class Group implements Comparable<Group>, Serializable {
     @JoinTable(name="USER_GROUP",
             joinColumns=@JoinColumn(name="group_id"),
             inverseJoinColumns=@JoinColumn(name="user_id"))
-    @JsonView({View.Detail.class})
+    @JsonView({View.DetailWithUsers.class})
     private Set<User> users = new TreeSet<User>();
     
     @ManyToMany(fetch = FetchType.EAGER)

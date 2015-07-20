@@ -17,6 +17,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -42,7 +43,7 @@ public class SecurityController {
     @Value("${email.metadata.from}")
     String metadataFrom;
     
-    @RequestMapping({"unauthorized", "/security/unauthorized"})
+    @RequestMapping("unauthorized")
     public void unauthorized(HttpServletResponse response) throws IOException {
         response.sendError(HttpStatus.UNAUTHORIZED.value());
     }
@@ -62,7 +63,7 @@ public class SecurityController {
     }
     
     @Transactional
-    @RequestMapping("password/reset/request")
+    @RequestMapping(value="password/reset/request", method=RequestMethod.POST)
     public @ResponseBody void request(@RequestParam String email) {
         
         // Generate a UUID

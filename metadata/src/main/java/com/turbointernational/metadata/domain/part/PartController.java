@@ -26,6 +26,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -49,6 +50,9 @@ public class PartController {
     PartDao partDao;
     
     @Autowired
+    PartRepository partRepository;
+    
+    @Autowired
     ProductImageDao productImageDao;
     
     @Value("${images.originals}")
@@ -60,19 +64,13 @@ public class PartController {
     @Autowired(required=true)
     JdbcTemplate db;
 
-    @Transactional
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ResponseBody
     @Secured("ROLE_READ")
-    public ResponseEntity<String> show(@PathVariable("id") Long id) {
-        
-        Part part = partDao.findOne(id);
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/json; charset=utf-8");
-        if (part == null) {
-            return new ResponseEntity<String>(headers, HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<String>(part.toJson(), headers, HttpStatus.OK);
+    @JsonView(View.Detail.class)
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public Part getPart(@PathVariable("id") Long id) {
+        return partRepository.findOne(id);
     }
     
     @RequestMapping(value="/{id}/ancestors", method = RequestMethod.GET)
@@ -129,7 +127,7 @@ public class PartController {
     @Secured("ROLE_CREATE_PART")
     @JsonView(View.Detail.class)
     @RequestMapping(method = RequestMethod.POST)
-    public @ResponseBody long createFromJson(Principal principal, @RequestBody Part part) throws Exception {
+    public @ResponseBody long createPart(Principal principal, @RequestBody Part part) throws Exception {
         partDao.persist(part);
         
         // Update the changelog
@@ -137,18 +135,18 @@ public class PartController {
         
         return part.getId();
     }
-    
+
     @Transactional
     @Secured("ROLE_ALTER_PART")
     @JsonView(View.Detail.class)
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT,
             produces = MediaType.APPLICATION_JSON_VALUE,
             consumes = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody Part updateFromJson(Principal principal, @RequestBody Part part, @PathVariable("id") Long id) throws PartNotFoundException {
+    public @ResponseBody Part updatePart(Principal principal, @RequestBody Part part, @PathVariable("id") Long id) throws PartNotFoundException {
         
         // Get the original part so we can log the update
-        Part originalPart = partDao.findOne(id);
-        String originalPartJson = originalPart.toJson();
+//        Part originalPart = partDao.findOne(id);
+//        String originalPartJson = originalPart.toJson();
         
         if (partDao.merge(part) == null) {
             throw new PartNotFoundException(id);
@@ -158,8 +156,8 @@ public class PartController {
         partDao.refresh(part);
         
         // Update the changelog
-        changelogDao.log("Updated part",
-            "{original: " + originalPartJson + ",updated: " + part.toJson() + "}");
+//        changelogDao.log("Updated part",
+//            "{original: " + originalPartJson + ",updated: " + part.toJson() + "}");
         
         return part;
     }
@@ -169,7 +167,7 @@ public class PartController {
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Secured("ROLE_DELETE_PART")
-    public @ResponseBody void deleteFromJson(Principal principal, @PathVariable("id") Long id) throws PartNotFoundException {
+    public @ResponseBody void deletePart(Principal principal, @PathVariable("id") Long id) throws PartNotFoundException {
         Part part = partDao.findOne(id);
         
         if (partDao.merge(part) == null) {

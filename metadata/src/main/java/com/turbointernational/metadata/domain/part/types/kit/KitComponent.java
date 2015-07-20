@@ -1,6 +1,8 @@
 package com.turbointernational.metadata.domain.part.types.kit;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.part.types.Kit;
+import com.turbointernational.metadata.web.View;
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
 import java.io.Serializable;
@@ -22,6 +24,7 @@ public class KitComponent implements Serializable {
 
     //<editor-fold defaultstate="collapsed" desc="properties">
     @Id
+    @JsonView({View.Summary.class, View.Detail.class})
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
@@ -31,8 +34,10 @@ public class KitComponent implements Serializable {
     
     @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.REFRESH})
     @JoinColumn(name="part_id")
+    @JsonView(View.Detail.class)
     private Part part;
     
+    @JsonView(View.Detail.class)
     @Column(nullable=false)
     private boolean exclude;
     

@@ -1,5 +1,7 @@
 package com.turbointernational.metadata.domain.part;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.google.common.collect.Sets;
+import com.turbointernational.metadata.web.View;
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
 import java.io.Serializable;
@@ -28,11 +30,14 @@ public class Interchange implements Serializable {
     private Long id;
     
     @Column
+    @JsonView(View.Summary.class)
     private String name;
     
+    @JsonView(View.Summary.class)
     private String description;
     
     @OneToMany(mappedBy = "interchange", fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.MERGE})
+    @JsonView(View.DetailWithInterchangeParts.class)
     private Set<Part> parts = Sets.newTreeSet();
     
     public Long getId() {

@@ -1,4 +1,6 @@
 package com.turbointernational.metadata.domain.type;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.web.View;
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
 import java.io.Serializable;
@@ -20,6 +22,7 @@ public class CoolType implements Serializable {
 
     //<editor-fold defaultstate="collapsed" desc="properties">
     @Id
+    @JsonView(View.Summary.class)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     

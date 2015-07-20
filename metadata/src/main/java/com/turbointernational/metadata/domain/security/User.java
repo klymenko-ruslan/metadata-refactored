@@ -1,6 +1,7 @@
 package com.turbointernational.metadata.domain.security;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.common.collect.Sets;
 import com.turbointernational.metadata.web.View;
 import flexjson.JSONDeserializer;
@@ -60,6 +61,7 @@ public class User implements Comparable<User>, UserDetails {
     @ManyToMany(mappedBy="users", fetch = FetchType.EAGER)
     private Set<Group> groups = new TreeSet<Group>();
     
+    // For UserDetails
     @JsonIgnore
     private final transient Set<SimpleGrantedAuthority> authorities = Sets.newHashSet();
     

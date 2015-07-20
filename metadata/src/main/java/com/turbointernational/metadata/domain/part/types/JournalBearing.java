@@ -1,5 +1,7 @@
 package com.turbointernational.metadata.domain.part.types;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.domain.part.Part;
+import com.turbointernational.metadata.web.View;
 import flexjson.JSONSerializer;
 import java.util.Map;
 import javax.persistence.Column;
@@ -25,15 +27,19 @@ public class JournalBearing extends Part {
 //               inverseJoinColumns=@JoinColumn(name="oversized_part_id"))
 //    private JournalBearing oversize;
 
+    @JsonView(View.Detail.class)
     @Column(name="outside_dim_min")
     private Float outsideDiameterMin;
 
+    @JsonView(View.Detail.class)
     @Column(name="outside_dim_max")
     private Float outsideDiameterMax;
 
+    @JsonView(View.Detail.class)
     @Column(name="inside_dim_min")
     private Float insideDiameterMin;
 
+    @JsonView(View.Detail.class)
     @Column(name="inside_dim_max")
     private Float insideDiameterMax;
 

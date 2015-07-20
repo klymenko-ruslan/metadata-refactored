@@ -1,6 +1,6 @@
 package com.turbointernational.metadata.domain.part;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonTypeId;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -69,7 +69,22 @@ import org.springframework.stereotype.Component;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "_class", include = As.PROPERTY, defaultImpl = Part.class)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "class", include = As.PROPERTY, defaultImpl = Part.class)
+@JsonSubTypes({
+    @JsonSubTypes.Type(Backplate.class),
+    @JsonSubTypes.Type(BearingHousing.class),
+    @JsonSubTypes.Type(BearingSpacer.class),
+    @JsonSubTypes.Type(Cartridge.class),
+    @JsonSubTypes.Type(CompressorWheel.class),
+    @JsonSubTypes.Type(Gasket.class),
+    @JsonSubTypes.Type(Heatshield.class),
+    @JsonSubTypes.Type(JournalBearing.class),
+    @JsonSubTypes.Type(Kit.class),
+    @JsonSubTypes.Type(NozzleRing.class),
+    @JsonSubTypes.Type(PistonRing.class),
+    @JsonSubTypes.Type(TurbineWheel.class),
+    @JsonSubTypes.Type(Turbo.class),
+})
 public class Part implements Comparable<Part>, Serializable {
     private static final Logger log = Logger.getLogger(Part.class.toString());
     
@@ -172,6 +187,7 @@ public class Part implements Comparable<Part>, Serializable {
     @Column(name = "version")
     private Integer version;
     
+//    @JsonView({View.Summary.class})
     public Long getId() {
         return id;
     }
@@ -180,6 +196,7 @@ public class Part implements Comparable<Part>, Serializable {
         this.id = id;
     }
     
+//    @JsonView({View.Summary.class})
     public Manufacturer getManufacturer() {
         return manufacturer;
     }
@@ -188,6 +205,7 @@ public class Part implements Comparable<Part>, Serializable {
         this.manufacturer = manufacturer;
     }
     
+//    @JsonView({View.Summary.class})
     public String getManufacturerPartNumber() {
         return manufacturerPartNumber;
     }
@@ -196,6 +214,7 @@ public class Part implements Comparable<Part>, Serializable {
         this.manufacturerPartNumber = manufacturerPartNumber;
     }
     
+//    @JsonView({View.Summary.class})
     public String getName() {
         return name;
     }
@@ -204,6 +223,7 @@ public class Part implements Comparable<Part>, Serializable {
         this.name = name;
     }
     
+//    @JsonView({View.Summary.class})
     public String getDescription() {
         return description;
     }
@@ -212,6 +232,7 @@ public class Part implements Comparable<Part>, Serializable {
         this.description = description;
     }
     
+//    @JsonView({View.Summary.class})
     public PartType getPartType() {
         return partType;
     }
@@ -347,7 +368,6 @@ public class Part implements Comparable<Part>, Serializable {
                 .serialize(this);
     }
     
-    @JsonIgnore
     protected JSONSerializer getSearchSerializer() {
         return new JSONSerializer()
                 .include("id")

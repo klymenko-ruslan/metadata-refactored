@@ -1,4 +1,6 @@
 package com.turbointernational.metadata.domain.type;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.web.View;
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
 import java.io.Serializable;
@@ -8,11 +10,9 @@ import java.util.List;
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.PersistenceContext;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -23,9 +23,11 @@ public class SealType implements Serializable {
 
     //<editor-fold defaultstate="collapsed" desc="properties">
     @Id
+    @JsonView(View.Summary.class)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
+    @JsonView(View.Summary.class)
     @Column(nullable=false)
     private String name;
     

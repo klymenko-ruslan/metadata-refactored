@@ -1,5 +1,7 @@
 package com.turbointernational.metadata.domain.part.types;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.domain.part.Part;
+import com.turbointernational.metadata.web.View;
 import java.util.Map;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,24 +19,31 @@ import org.apache.commons.lang.ObjectUtils;
 @PrimaryKeyJoinColumn(name = "part_id")
 public class TurbineWheel extends Part {
 
+    @JsonView(View.Detail.class)
     @Column(name="exduce_oa")
     private Float exducerDiameterA;
 
+    @JsonView(View.Detail.class)
     @Column(name="tip_height_b")
     private Float tipHeightB;
 
+    @JsonView(View.Detail.class)
     @Column(name="inducer_oc")
     private Float inducerDiameterC;
 
+    @JsonView(View.Detail.class)
     @Column(name="journal_od")
     private Float journalDiameterD;
 
+    @JsonView(View.Detail.class)
     @Column(name="stem_oe")
     private Float stemDiameterE;
 
+    @JsonView(View.Detail.class)
     @Column(name="shaft_thread_f")
     private String shaftThreadF;
 
+    @JsonView(View.Detail.class)
     @Column(name="trim_no_blades")
     private String numberOfBlades;
 

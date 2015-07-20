@@ -26,21 +26,23 @@ public class PartType implements Serializable {
     //<editor-fold defaultstate="collapsed" desc="properties">
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonView({View.Summary.class})
+    @JsonView(View.Summary.class)
     private Long id;
     
     @Column(nullable=false)
     
-    @JsonView({View.Summary.class})
+    @JsonView(View.Summary.class)
     private String name;
     
     /**
      * Used externally
      */
     @Column(nullable=false)
+    @JsonView(View.Summary.class)
     private String value;
     
     @Column(name="magento_attribute_set")
+    @JsonView(View.Summary.class)
     private String magentoAttributeSet;
     
     // TODO: Is this a duplicate of parentTypes?

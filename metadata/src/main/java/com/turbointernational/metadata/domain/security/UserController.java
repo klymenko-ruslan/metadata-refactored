@@ -39,16 +39,7 @@ public class UserController {
     @ResponseBody
     @Secured("ROLE_READ")
     public User getMe() {
-        User user = User.getCurrentUser();
-        
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Set<String> authoritySet = Sets.newTreeSet();
-        
-        for (GrantedAuthority auth: authentication.getAuthorities()) {
-            authoritySet.add(auth.getAuthority());
-        }
-        
-        return user;
+        return User.getCurrentUser();
     }
 
     @ResponseBody
