@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-    .controller('KitComponentSearchCtrl', function ($log, $scope, $location, $routeParams, restService, Restangular, $dialogs, gToast) {
+    .controller('KitComponentSearchCtrl', function ($log, $scope, $location, $routeParams, restService, Restangular, dialogs, gToast) {
         $scope.partId = $routeParams.id;
         $scope.partType = 'Kit';
 

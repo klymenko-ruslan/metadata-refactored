@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
@@ -33,7 +34,7 @@ public class UserController {
     @Autowired(required=true)
     GroupDao groupDao;
 
-    @JsonView(View.Detail.class)
+    @JsonView(View.DetailWithGroups.class)
     @RequestMapping(value = "/me", method = RequestMethod.GET)
     @ResponseBody
     @Secured("ROLE_READ")
@@ -50,13 +51,14 @@ public class UserController {
         return user;
     }
 
-    @JsonView(View.Detail.class)
-    @RequestMapping(value = "/me", method = RequestMethod.POST)
     @ResponseBody
+    @Transactional
     @Secured("ROLE_READ")
-    public User updateMe(@RequestBody String json) {
-        User jsonUser = User.fromJson(json);
+    @JsonView(View.DetailWithGroups.class)
+    @RequestMapping(value = "/me", method = RequestMethod.POST)
+    public User updateMe(@RequestBody User jsonUser) {
         
+        // Manually copy the properties we're interested in
         User user = User.getCurrentUser();
         user.setName(jsonUser.getName());
         user.setEmail(jsonUser.getEmail());
@@ -87,7 +89,7 @@ public class UserController {
                 new HttpHeaders(), HttpStatus.OK);
     }
 
-    @JsonView(View.Summary.class)
+    @JsonView(View.SummaryWithGroups.class)
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
     @Secured("ROLE_ADMIN")
@@ -95,7 +97,7 @@ public class UserController {
         return userDao.findActiveUsers();
     }
 
-    @JsonView(View.Detail.class)
+    @JsonView(View.DetailWithGroups.class)
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ResponseBody
     @Secured("ROLE_ADMIN")
@@ -103,11 +105,13 @@ public class UserController {
         return userDao.findOne(id);
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     @ResponseBody
     @Secured("ROLE_ADMIN")
-    public void update(@PathVariable("id") Long id, @RequestBody String json) {
-        User jsonUser = User.fromJson(json);
+    @Transactional
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT,
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public void update(@PathVariable("id") Long id, @RequestBody User jsonUser) {
         
         User user = userDao.findOne(id);
         user.setName(jsonUser.getName());
@@ -121,15 +125,14 @@ public class UserController {
         userDao.merge(user);
     }
     
-    @JsonView(View.Detail.class)
+    @ResponseBody
     @Transactional
-    @RequestMapping(method = RequestMethod.POST)
     @Secured("ROLE_ADMIN")
-    public User create(@RequestBody String json) throws Exception {
-        
-        // Create the object
-        User user = User.fromJson(json);
-        
+    @JsonView(View.Detail.class)
+    @RequestMapping(method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public User create(@RequestBody User user) throws Exception {
         user.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
         
         userDao.persist(user);
@@ -137,10 +140,10 @@ public class UserController {
         return user;
     }
     
-    @Transactional
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     @ResponseBody
+    @Transactional
     @Secured("ROLE_ADMIN")
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public void delete(@PathVariable("id") Long id) throws Exception {
         User user = userDao.findOne(id);
         user.setEnabled(false);

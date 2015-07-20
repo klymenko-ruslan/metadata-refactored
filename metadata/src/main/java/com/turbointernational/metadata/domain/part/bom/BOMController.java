@@ -2,11 +2,13 @@ package com.turbointernational.metadata.domain.part.bom;
 import com.turbointernational.metadata.domain.changelog.ChangelogDao;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.part.PartDao;
+import com.turbointernational.metadata.domain.part.bom.dto.CreateBomItemRequest;
 import java.util.logging.Logger;
 import javax.persistence.NoResultException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
@@ -33,41 +35,33 @@ public class BOMController {
 
     private static final Logger log = Logger.getLogger(BOMController.class.toString());
     
+    @ResponseBody
     @Transactional
-    @RequestMapping(method = RequestMethod.POST)
     @Secured("ROLE_BOM")
-    public ResponseEntity<String> create(@RequestBody String json) throws Exception {
+    @RequestMapping(method = RequestMethod.POST,
+                    consumes = MediaType.APPLICATION_JSON_VALUE,
+                    produces = MediaType.APPLICATION_JSON_VALUE)
+    public void create(@RequestBody CreateBomItemRequest request) throws Exception {
         
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/json");
+        // Create a new BOM item
+        Part child = partDao.findOne(request.getChildPartId());
+        Part parent = partDao.findOne(request.getParentPartId());
         
-        // Create the object
-        BOMItem item = BOMItem.fromJsonToBOMItem(json);
+        BOMItem item = new BOMItem();
+        item.setParent(parent);
+        item.setChild(child);
+        item.setQuantity(request.getQuantity());
+        item.getParent().getBom().add(item);
         
-        // Link it with the Hibernate parts
-        try {
-            Part child = partDao.findOne(item.getChild().getId());
-            Part parent = partDao.findOne(item.getParent().getId());
-            
-            item.setChild(child);
-            item.setParent(parent);
+        bomItemDao.persist(item);
+        partDao.merge(parent);
+        bomItemDao.flush();
 
-            bomItemDao.persist(item);
-            parent.getBom().add(item);
-            partDao.merge(parent);
-            bomItemDao.flush();
-        
-            // Update the changelog
-            changelogDao.log("Added bom item.", item.toJson());
-            
-            // TODO: Only change what we need to rather than rebuilding everything
-            partDao.rebuildBomDescendancy();
-            
-        } catch (NoResultException e) {
-            return new ResponseEntity<String>(headers, HttpStatus.NOT_FOUND);
-        }
-        
-        return new ResponseEntity<String>("ok", headers, HttpStatus.OK);
+        // Update the changelog
+        changelogDao.log("Added bom item.", item.toJson());
+
+        // TODO: Only change what we need to rather than rebuilding everything
+        partDao.rebuildBomDescendancy();
     }
     
     @Transactional

@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-    .controller('PartListCtrl', function ($scope, $log, $modal, $dialogs, gToast, Restangular) {
+    .controller('PartListCtrl', function ($scope, $log, $modal, dialogs, gToast, Restangular) {
 
       $scope.createPart = function () {
           var modalInstance = $modal.open({

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.logging.Logger;
 import javax.persistence.NoResultException;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
@@ -42,6 +43,7 @@ public class PartDao extends GenericDao<Part> {
                 .getSingleResult();
     }
 
+    @Async("bomRebuildExecutor")
     public void rebuildBomDescendancy() {
         try {
             bomRebuildStart = new Date();

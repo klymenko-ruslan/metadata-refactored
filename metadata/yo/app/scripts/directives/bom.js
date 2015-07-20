@@ -8,7 +8,7 @@ angular.module('ngMetaCrudApp')
       link: function postLink(/*$scope, element, attrs */) {
 //        element.text('this is the bom directive');
       },
-      controller: function($dialogs, $scope, ngTableParams, gToast, Restangular, restService) {
+      controller: function(dialogs, $scope, ngTableParams, gToast, Restangular, restService) {
         $scope.restService = restService;
 
 
@@ -62,7 +62,7 @@ angular.module('ngMetaCrudApp')
         $scope.remove = function(index, bomItem) {
           $log.log('Remove bom item, part: ', $scope.part);
 
-          $dialogs.confirm(
+          dialogs.confirm(
                   'Remove BOM Item?',
                   'Remove child part from this bill of materials?').result.then(
               function() {
@@ -85,7 +85,7 @@ angular.module('ngMetaCrudApp')
         };
 
         $scope.removeAlternate = function(index, altItem) {
-          $dialogs.confirm(
+          dialogs.confirm(
               "Remove alternate item?",
               "This will remove the alternate part from this BOM item.").result.then(
                   function() {

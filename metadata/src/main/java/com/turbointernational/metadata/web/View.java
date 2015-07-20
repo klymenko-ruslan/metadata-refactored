@@ -6,6 +6,8 @@ package com.turbointernational.metadata.web;
  */
 public class View {
     public static interface Summary {};
+    public static interface SummaryWithGroups extends Summary {};
+    
     public static interface Detail extends Summary {};
     
     public static interface DetailWithGroups extends Detail {};

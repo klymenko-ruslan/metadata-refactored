@@ -56,7 +56,7 @@ public class User implements Comparable<User>, UserDetails {
     @Column(columnDefinition = "BIT")
     private Boolean enabled;
     
-    @JsonView(View.DetailWithGroups.class)
+    @JsonView({View.SummaryWithGroups.class, View.DetailWithGroups.class})
     @ManyToMany(mappedBy="users", fetch = FetchType.EAGER)
     private Set<Group> groups = new TreeSet<Group>();
     
@@ -154,12 +154,6 @@ public class User implements Comparable<User>, UserDetails {
     @JsonIgnore
     public boolean isEnabled() {
         return getEnabled();
-    }
-    //</editor-fold>
-    
-    //<editor-fold defaultstate="collapsed" desc="Serialization">
-    public static User fromJson(String json) {
-        return new JSONDeserializer<User>().use(null, User.class).deserialize(json);
     }
     //</editor-fold>
     

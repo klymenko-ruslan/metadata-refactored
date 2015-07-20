@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap', 'restangular', 'dialogs', 'gToast'])
+angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap', 'restangular', 'dialogs.main', 'gToast'])
   .constant('METADATA_BASE', '/metadata/')
 //  .constant('METADATA_BASE', 'http://192.168.42.10:8080/metadata/')
 //  .constant('METADATA_BASE', 'http://localhost:8080/metadata/')

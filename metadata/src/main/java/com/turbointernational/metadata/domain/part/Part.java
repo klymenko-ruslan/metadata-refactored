@@ -1,5 +1,8 @@
 package com.turbointernational.metadata.domain.part;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonTypeId;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.other.TurboType;
@@ -66,6 +69,7 @@ import org.springframework.stereotype.Component;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "_class", include = As.PROPERTY, defaultImpl = Part.class)
 public class Part implements Comparable<Part>, Serializable {
     private static final Logger log = Logger.getLogger(Part.class.toString());
     
@@ -435,4 +439,10 @@ public class Part implements Comparable<Part>, Serializable {
     public int compareTo(Part o) {
         return ObjectUtils.compare(this.id, o.id);
     }
+
+    @Override
+    public String toString() {
+        return getClass().toString() + "#" + id;
+    }
+    
 }

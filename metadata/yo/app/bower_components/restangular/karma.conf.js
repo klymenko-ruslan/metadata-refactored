@@ -11,10 +11,9 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      'http://code.angularjs.org/1.1.4/angular.js',
-      'http://code.angularjs.org/1.1.4/angular-resource.js',
-      'http://code.angularjs.org/1.1.4/angular-mocks.js',
-      'http://cdnjs.cloudflare.com/ajax/libs/lodash.js/1.2.0/lodash.min.js',
+      'https://ajax.googleapis.com/ajax/libs/angularjs/1.3.12/angular.js',
+      'https://ajax.googleapis.com/ajax/libs/angularjs/1.3.12/angular-mocks.js',
+      'http://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.3.0/lodash.js',
       'src/restangular.js',
       'test/*.js'
     ],
@@ -28,7 +27,7 @@ module.exports = function(config) {
 
     // test results reporter to use
     // possible values: 'dots', 'progress', 'junit'
-    reporters: ['progress'],
+    reporters: ['mocha'],
 
 
     // web server port

@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-    .controller('PartDetailCtrl', function ($scope, $log, $q, $location, $routeParams, ngTableParams, restService, Restangular, $dialogs, gToast) {
+    .controller('PartDetailCtrl', function ($scope, $log, $q, $location, $routeParams, ngTableParams, restService, Restangular, dialogs, gToast) {
         $scope.partId = $routeParams.id;
 
         $scope.part = null;
@@ -23,7 +23,7 @@ angular.module('ngMetaCrudApp')
 
         // Turbo Types
         $scope.addTurboType = function() {
-          $dialogs.create(
+          dialogs.create(
             '/views/part/dialog/AddTurboType.html',
             'AddTurboTypeDialogCtrl',
             {partId: $scope.partId}
@@ -34,7 +34,7 @@ angular.module('ngMetaCrudApp')
 
         $scope.removeTurboType = function(turboTypeToRemove) {
 
-          $dialogs.confirm(
+          dialogs.confirm(
             "Remove Turbo Type?",
             "Do you want to remove this turbo type from the part?").result.then(
             function() {
@@ -60,7 +60,7 @@ angular.module('ngMetaCrudApp')
 
         $scope.removeComponent = function(componentToRemove) {
 
-          $dialogs.confirm(
+          dialogs.confirm(
             "Remove Common Component Mapping?",
             "Do you want to remove this common component mapping from the kit?").result.then(
             function() {
@@ -89,7 +89,7 @@ angular.module('ngMetaCrudApp')
 
         $scope.deleteImage = function(image) {
 
-          $dialogs.confirm(
+          dialogs.confirm(
                   "Delete image?",
                   "Do you want to remove this image from the part?").result.then(
               function() {
@@ -114,7 +114,7 @@ angular.module('ngMetaCrudApp')
         }
 
         $scope.addImage = function() {
-          $dialogs.create(
+          dialogs.create(
             '/views/part/dialog/AddImage.html',
             'AddPartImageCtrl',
             {part: $scope.part}

@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-    .controller('TurboModelsCtrl', function($scope, $dialogs, $log, gToast, Restangular, restService) {
+    .controller('TurboModelsCtrl', function($scope, dialogs, $log, gToast, Restangular, restService) {
       $scope.selection = {
         manufacturer: null,
         turboType: null,
@@ -18,7 +18,7 @@ angular.module('ngMetaCrudApp')
           respondButton: 'Create'
         };
 
-        $dialogs.create('/views/dialog/NameDialog.html', 'NameDialogCtrl', data).result.then(function(name) {
+        dialogs.create('/views/dialog/NameDialog.html', 'NameDialogCtrl', data).result.then(function(name) {
           var turboType = {
             manufacturer: $scope.selection.manufacturer,
             name: name
@@ -43,7 +43,7 @@ angular.module('ngMetaCrudApp')
           name: turboType.name
         };
 
-        $dialogs.create('/views/dialog/NameDialog.html', 'NameDialogCtrl', data).result.then(function(name) {
+        dialogs.create('/views/dialog/NameDialog.html', 'NameDialogCtrl', data).result.then(function(name) {
           turboType.name = name;
 
           Restangular.all('other/turboType').customPUT(turboType).then(
@@ -59,7 +59,7 @@ angular.module('ngMetaCrudApp')
       };
 
       $scope.deleteTurboType = function(turboType) {
-          $dialogs.confirm(
+          dialogs.confirm(
             "Delete Turbo Type?",
             "Do you want to delete this turbo type?").result.then(
             function() {
@@ -74,7 +74,7 @@ angular.module('ngMetaCrudApp')
                 },
                 function() {
                   // Error
-                  $dialogs.error(
+                  dialogs.error(
                     'Could not delete turbo type.',
                     'Turbo type must not be used for any parts or turbo models. Check server log for details.');
                 });
@@ -91,7 +91,7 @@ angular.module('ngMetaCrudApp')
           respondButton: 'Create'
         };
 
-        $dialogs.create('/views/dialog/NameDialog.html', 'NameDialogCtrl', data).result.then(function(name) {
+        dialogs.create('/views/dialog/NameDialog.html', 'NameDialogCtrl', data).result.then(function(name) {
           var turboModel = {
             turboType: $scope.selection.turboType,
             name: name
@@ -116,7 +116,7 @@ angular.module('ngMetaCrudApp')
           name: turboModel.name
         };
 
-        $dialogs.create('/views/dialog/NameDialog.html', 'NameDialogCtrl', data).result.then(function(name) {
+        dialogs.create('/views/dialog/NameDialog.html', 'NameDialogCtrl', data).result.then(function(name) {
           turboModel.name = name;
           
           Restangular.all('other/turboModel').customPUT(turboModel).then(
@@ -132,7 +132,7 @@ angular.module('ngMetaCrudApp')
       };
 
       $scope.deleteTurboModel = function(turboModel) {
-          $dialogs.confirm(
+          dialogs.confirm(
             "Delete Turbo Model?",
             "Do you want to delete this turbo model?").result.then(
             function() {
@@ -147,7 +147,7 @@ angular.module('ngMetaCrudApp')
                 },
                 function(response) {
                   // Error
-                  $dialogs.error(
+                  dialogs.error(
                     'Could not delete turbo model.',
                     'Turbo model must not be used for any parts. Check server log for details.');
                 });
