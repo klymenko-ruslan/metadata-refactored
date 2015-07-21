@@ -1,9 +1,10 @@
 package com.turbointernational.metadata.domain.part;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.other.TurboType;
 import com.turbointernational.metadata.domain.part.bom.BOMItem;
@@ -55,10 +56,8 @@ import javax.persistence.PostPersist;
 import javax.persistence.PostUpdate;
 import javax.persistence.PreRemove;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.persistence.Version;
 import org.apache.commons.lang3.ObjectUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -137,6 +136,7 @@ public class Part implements Comparable<Part>, Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonView({View.Summary.class})
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class)
     private Long id;
     
     @OneToOne(fetch = FetchType.LAZY)
@@ -186,6 +186,7 @@ public class Part implements Comparable<Part>, Serializable {
     
     @OneToMany(cascade = CascadeType.REFRESH, mappedBy = "part", fetch=FetchType.LAZY)
     @JsonView({View.Detail.class})
+    @OrderBy("id")
     private Set<ProductImage> productImages = new TreeSet<ProductImage>();
     
     @Version
