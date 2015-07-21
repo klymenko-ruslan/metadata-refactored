@@ -26,7 +26,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -208,13 +207,10 @@ public class PartController {
         ProductImage productImage = new ProductImage();
         productImage.setFilename(filename);
         productImage.setPart(part);
+        part.getProductImages().add(productImage);
         
         // Save it
         productImageDao.persist(productImage);
-        
-        // Update the part
-        part.getProductImages().add(productImage);
-        partDao.merge(part);
 
         // Generate the resized images
         for (int size : ImageResizer.SIZES) {
