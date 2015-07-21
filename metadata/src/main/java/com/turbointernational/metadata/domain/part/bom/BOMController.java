@@ -4,12 +4,9 @@ import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.part.PartDao;
 import com.turbointernational.metadata.domain.part.bom.dto.CreateBomItemRequest;
 import java.util.logging.Logger;
-import javax.persistence.NoResultException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,6 +32,7 @@ public class BOMController {
 
     private static final Logger log = Logger.getLogger(BOMController.class.toString());
     
+    
     @ResponseBody
     @Transactional
     @Secured("ROLE_BOM")
@@ -51,10 +49,9 @@ public class BOMController {
         item.setParent(parent);
         item.setChild(child);
         item.setQuantity(request.getQuantity());
-        item.getParent().getBom().add(item);
+        parent.getBom().add(item);
         
         bomItemDao.persist(item);
-        partDao.merge(parent);
         bomItemDao.flush();
 
         // Update the changelog
@@ -65,7 +62,9 @@ public class BOMController {
     }
     
     @Transactional
-    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/{id}", method = RequestMethod.POST,
+                    consumes = MediaType.APPLICATION_JSON_VALUE,
+                    produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     @Secured("ROLE_BOM")
     public void update(@PathVariable("id") Long id, @RequestParam(required=true) int quantity) throws Exception {

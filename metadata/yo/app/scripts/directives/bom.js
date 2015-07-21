@@ -49,7 +49,7 @@ angular.module('ngMetaCrudApp')
 
         $scope.modifySave = function(index, bomItem) {
           var quantity = $scope.modifyValues[bomItem.id];
-          Restangular.restangularizeElement($scope.part, bomItem, 'bom').put({quantity: quantity}).then(
+          Restangular.one('bom').post(bomItem.id, null, {quantity: quantity}).then(
               function() {
                 bomItem.quantity = quantity;
                 delete $scope.modifyValues[bomItem.id];
