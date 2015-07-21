@@ -1,4 +1,6 @@
 package com.turbointernational.metadata.domain.part.bom;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.web.View;
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
 import java.io.Serializable;
@@ -19,11 +21,14 @@ public class BOMAlternativeHeader implements Serializable {
     //<editor-fold defaultstate="collapsed" desc="Properties">
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonView({View.Summary.class})
     private Long id;
     
     @Column(nullable=false)
+    @JsonView({View.Summary.class})
     private String name;
     
+    @JsonView({View.Summary.class})
     private String description;
     
     

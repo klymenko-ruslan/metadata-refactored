@@ -206,18 +206,17 @@ public class SalesNoteRepositoryImplTest {
         salesNotes.flush();
         
         // A few different searches on state
-        Page<SalesNote> draftSearchResults = salesNotes.search(new SalesNoteSearchRequest(null, null, SalesNoteState.draft));
-        assertEquals(1, draftSearchResults.getTotalElements());
+        SalesNoteSearchResponse draftSearchResults = salesNotes.search(new SalesNoteSearchRequest(null, null, SalesNoteState.draft));
+        assertEquals(1, draftSearchResults.getTotal());
         
-        Page<SalesNote> submittedSearchResults = salesNotes.search(new SalesNoteSearchRequest(null, null, SalesNoteState.submitted));
-        assertEquals(1, submittedSearchResults.getTotalElements());
+        SalesNoteSearchResponse submittedSearchResults = salesNotes.search(new SalesNoteSearchRequest(null, null, SalesNoteState.submitted));
+        assertEquals(1, submittedSearchResults.getTotal());
         
-        Page<SalesNote> approvedSearchResults = salesNotes.search(new SalesNoteSearchRequest(null, null, SalesNoteState.approved));
-        assertEquals(0, approvedSearchResults.getTotalElements());
+        SalesNoteSearchResponse approvedSearchResults = salesNotes.search(new SalesNoteSearchRequest(null, null, SalesNoteState.approved));
+        assertEquals(0, approvedSearchResults.getTotal());
         
         // Verify the results of a search
-        assertEquals(1, draftSearchResults.getTotalElements());
-        assertEquals(1, draftSearchResults.getTotalPages());
+        assertEquals(1, draftSearchResults.getTotal());
         
         List<SalesNote> resultList = draftSearchResults.getContent();
         assertNotNull(resultList);
@@ -269,8 +268,8 @@ public class SalesNoteRepositoryImplTest {
         assertEquals(2, salesNotes.count());
         
         // Search for the primary part
-        Page<SalesNote> draftSearchResults = salesNotes.search(new SalesNoteSearchRequest(primaryPart.getId(), null, SalesNoteState.values()));
-        assertEquals(1, draftSearchResults.getTotalElements());
+        SalesNoteSearchResponse draftSearchResults = salesNotes.search(new SalesNoteSearchRequest(primaryPart.getId(), null, SalesNoteState.values()));
+        assertEquals(1, draftSearchResults.getTotal());
         
         SalesNote actualNote = draftSearchResults.getContent().get(0);
         SalesNotePart actualSNP = Iterables.get(actualNote.getParts(),0);
@@ -332,18 +331,18 @@ public class SalesNoteRepositoryImplTest {
         primaryAndRelatedByPartNumber.setIncludePrimary(true);
         primaryAndRelatedByPartNumber.setIncludeRelated(true);
         
-        Page<SalesNote> primaryAndRelatedByPartNumberResult = salesNotes.search(primaryAndRelatedByPartNumber);
+        SalesNoteSearchResponse primaryAndRelatedByPartNumberResult = salesNotes.search(primaryAndRelatedByPartNumber);
         
-        assertEquals(2, primaryAndRelatedByPartNumberResult.getTotalElements());
+        assertEquals(2, primaryAndRelatedByPartNumberResult.getTotal());
         
         // Search for primary by manufacturer part number
         SalesNoteSearchRequest primaryByPartNumber = new SalesNoteSearchRequest(null, testPart.getManufacturerPartNumber(), SalesNoteState.draft);
         primaryByPartNumber.setIncludePrimary(true);
         primaryByPartNumber.setIncludeRelated(false);
         
-        Page<SalesNote> primaryByPartNumberResult = salesNotes.search(primaryByPartNumber);
+        SalesNoteSearchResponse primaryByPartNumberResult = salesNotes.search(primaryByPartNumber);
         
-        assertEquals(1, primaryByPartNumberResult.getTotalElements());
+        assertEquals(1, primaryByPartNumberResult.getTotal());
         assertEquals(primaryNote, primaryByPartNumberResult.getContent().get(0));
         
         // Search for related by manufacturer part number
@@ -351,9 +350,9 @@ public class SalesNoteRepositoryImplTest {
         relatedByPartNumber.setIncludePrimary(false);
         relatedByPartNumber.setIncludeRelated(true);
         
-        Page<SalesNote> relatedByPartNumberResult = salesNotes.search(relatedByPartNumber);
+        SalesNoteSearchResponse relatedByPartNumberResult = salesNotes.search(relatedByPartNumber);
         
-        assertEquals(1, relatedByPartNumberResult.getTotalElements());
+        assertEquals(1, relatedByPartNumberResult.getTotal());
         assertEquals(relatedNote, relatedByPartNumberResult.getContent().get(0));
         
         // Search with nothing included
@@ -362,8 +361,8 @@ public class SalesNoteRepositoryImplTest {
         nothingIncluded.setIncludePrimary(false);
         nothingIncluded.setIncludeRelated(false);
         
-        Page<SalesNote> nothingIncludedResponse = salesNotes.search(nothingIncluded);
-        assertEquals(0, nothingIncludedResponse.getTotalElements());
+        SalesNoteSearchResponse nothingIncludedResponse = salesNotes.search(nothingIncluded);
+        assertEquals(0, nothingIncludedResponse.getTotal());
     }
 
     @Test
@@ -417,13 +416,13 @@ public class SalesNoteRepositoryImplTest {
         
         // Search for primary
         SalesNoteSearchRequest primaryRequest = new SalesNoteSearchRequest(null, primaryNote.getComment(), primaryNote.getState());
-        Page<SalesNote> primaryResponse = salesNotes.search(primaryRequest);
-        assertEquals(1, primaryResponse.getTotalElements());
+        SalesNoteSearchResponse primaryResponse = salesNotes.search(primaryRequest);
+        assertEquals(1, primaryResponse.getTotal());
         assertEquals(primaryNote, primaryResponse.getContent().get(0));
         
         SalesNoteSearchRequest relatedRequest = new SalesNoteSearchRequest(null, relatedNote.getComment(), relatedNote.getState());
-        Page<SalesNote> relatedResponse = salesNotes.search(relatedRequest);
-        assertEquals(1, relatedResponse.getTotalElements());
+        SalesNoteSearchResponse relatedResponse = salesNotes.search(relatedRequest);
+        assertEquals(1, relatedResponse.getTotal());
         assertEquals(relatedNote, relatedResponse.getContent().get(0));
     }
 
@@ -477,8 +476,8 @@ public class SalesNoteRepositoryImplTest {
         
         // Search for primary
         SalesNoteSearchRequest primaryRequest = new SalesNoteSearchRequest(null, testPartNumber, primaryNote.getState());
-        Page<SalesNote> primaryResponse = salesNotes.search(primaryRequest);
-        assertEquals(1, primaryResponse.getTotalElements());
+        SalesNoteSearchResponse primaryResponse = salesNotes.search(primaryRequest);
+        assertEquals(1, primaryResponse.getTotal());
         assertEquals(primaryNote, primaryResponse.getContent().get(0));
     }
 
@@ -487,8 +486,8 @@ public class SalesNoteRepositoryImplTest {
     public void testSearch_empty() {
         System.out.println("search");
         SalesNoteSearchRequest request = new SalesNoteSearchRequest(null, null, SalesNoteState.approved);
-        Page<SalesNote> result = salesNotes.search(request);
-        assertEquals(0, result.getTotalElements());
+        SalesNoteSearchResponse result = salesNotes.search(request);
+        assertEquals(0, result.getTotal());
     }
     
 }

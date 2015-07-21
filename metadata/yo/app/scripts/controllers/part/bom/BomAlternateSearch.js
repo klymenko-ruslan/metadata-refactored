@@ -20,20 +20,13 @@ angular.module('ngMetaCrudApp')
             }, restService.error);
 
         $scope.save = function () {
-
-          var altItem = {
-            header: $scope.header,
-            part: $scope.pickedPart
-          };
-
-          Restangular.setParentless(false);
-          Restangular.one('bom', $scope.bomItem.id).all('alt').post(altItem).then(
-            function () {
+          Restangular.one('bom/' + $scope.bomItem.id + '/alt')
+                  .post($scope.pickedPart.id, {header: $scope.header})
+                  .then(function () {
               // Success
               gToast.open("BOM alternate added.");
               $location.path("/part/" + $scope.partId);
-            },
-              function (response) {
+            }, function (response) {
                 dialogs.error("Could not add BOM alternate", "Server said: <pre>" + JSON.stringify(response.data) + "</pre>");
             });
         }
