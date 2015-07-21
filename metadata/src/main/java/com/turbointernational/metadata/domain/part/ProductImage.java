@@ -1,5 +1,7 @@
 package com.turbointernational.metadata.domain.part;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.web.View;
 import flexjson.JSONSerializer;
 import flexjson.transformer.HibernateTransformer;
 import java.io.Serializable;
@@ -26,12 +28,14 @@ public class ProductImage implements Comparable<ProductImage>, Serializable {
     //<editor-fold defaultstate="collapsed" desc="Properties">
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonView({View.Summary.class})
     private Long id;
     
     @ManyToOne
     @JoinColumn(name = "part_id")
     private Part part;
     
+    @JsonView({View.Summary.class})
     private String filename;
     
     public Long getId() {
