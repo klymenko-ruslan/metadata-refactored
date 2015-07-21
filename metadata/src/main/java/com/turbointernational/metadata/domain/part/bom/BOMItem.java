@@ -47,6 +47,7 @@ public class BOMItem implements Comparable<BOMItem>, Serializable {
     private Part child;
     
     @Column(nullable=false)
+    @JsonView({View.Summary.class})
     private Integer quantity;
     
     @OneToMany(mappedBy="bomItem", fetch = FetchType.LAZY, orphanRemoval = true)
