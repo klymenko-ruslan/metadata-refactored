@@ -162,18 +162,21 @@ public class Part implements Comparable<Part>, Serializable {
     private PartType partType;
     
     @Column(nullable = false, columnDefinition = "BIT", length = 1)
+    @JsonView({View.Detail.class})
     private Boolean inactive = false;
     
     @OneToMany(fetch = FetchType.LAZY)
     @JoinTable(name="part_turbo_type",
                 joinColumns = @JoinColumn(name="part_id"),
                 inverseJoinColumns = @JoinColumn(name="turbo_type_id"))
+    @JsonView({View.Detail.class})
     private Set<TurboType> turboTypes = new TreeSet<TurboType>();
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinTable(name="interchange_item",
             joinColumns=@JoinColumn(name="part_id"),
             inverseJoinColumns=@JoinColumn(name="interchange_header_id"))
+    @JsonView({View.Detail.class})
     private Interchange interchange;
     
     @OneToMany(mappedBy="parent", fetch = FetchType.LAZY, orphanRemoval = true)
@@ -182,6 +185,7 @@ public class Part implements Comparable<Part>, Serializable {
     private Set<BOMItem> bom = new TreeSet<BOMItem>();
     
     @OneToMany(cascade = CascadeType.REFRESH, mappedBy = "part", fetch=FetchType.LAZY)
+    @JsonView({View.Detail.class})
     private Set<ProductImage> productImages = new TreeSet<ProductImage>();
     
     @Version
