@@ -1,4 +1,5 @@
 package com.turbointernational.metadata.domain.part.bom;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.Part;
@@ -30,6 +31,7 @@ import org.apache.commons.lang3.ObjectUtils;
 
 @Entity
 @Table(name="bom", uniqueConstraints=@UniqueConstraint(columnNames={"parent_part_id", "child_part_id"}))
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "class", include = JsonTypeInfo.As.PROPERTY, defaultImpl = BOMItem.class)
 public class BOMItem implements Comparable<BOMItem>, Serializable {
 
     //<editor-fold defaultstate="collapsed" desc="properties">

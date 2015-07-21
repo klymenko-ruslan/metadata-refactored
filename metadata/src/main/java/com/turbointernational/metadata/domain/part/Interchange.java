@@ -1,5 +1,7 @@
 package com.turbointernational.metadata.domain.part;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.google.common.collect.Sets;
 import com.turbointernational.metadata.web.View;
 import flexjson.JSONDeserializer;
@@ -21,6 +23,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="interchange_header")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id", scope=Interchange.class)
 public class Interchange implements Serializable {
 
     //<editor-fold defaultstate="collapsed" desc="Properties">
