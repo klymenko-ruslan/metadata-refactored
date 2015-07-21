@@ -1,9 +1,12 @@
 package com.turbointernational.metadata.domain.other;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.domain.changelog.ChangelogDao;
+import com.turbointernational.metadata.web.View;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
@@ -25,60 +28,52 @@ public class TurboModelController {
     @Autowired
     TurboModelDao turboModelDao;
     
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.POST,
+                    consumes = MediaType.APPLICATION_JSON_VALUE,
+                    produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     @Secured("ROLE_TURBO_MODEL_CRUD")
     @Transactional
-    public ResponseEntity<String> createJson(@RequestBody String turboModelJson) {
-        TurboModel turboModel = TurboModel.fromJsonToTurboModel(turboModelJson);
+    @JsonView(View.Detail.class)
+    public TurboModel createJson(@RequestBody TurboModel turboModel) {
         turboModelDao.persist(turboModel);
         
         changelogDao.log("Created turbo model", turboModel.toJson());
         
-        
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/json; charset=utf-8");
-        return new ResponseEntity<String>(turboModel.toJson(), headers, HttpStatus.OK);
+        return turboModel;
     }
     
-    @RequestMapping(method = RequestMethod.PUT)
+    @RequestMapping(method = RequestMethod.PUT,
+                    consumes = MediaType.APPLICATION_JSON_VALUE,
+                    produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     @Secured("ROLE_TURBO_MODEL_CRUD")
     @Transactional
-    public ResponseEntity<String> updateJson(@RequestBody String turboModelJson) {
-        TurboModel turboModel = TurboModel.fromJsonToTurboModel(turboModelJson);
+    @JsonView(View.Detail.class)
+    public TurboModel updateJson(@RequestBody TurboModel turboModel) {
         turboModelDao.merge(turboModel);
         
         changelogDao.log("Updated turbo model", turboModel.toJson());
         
-        
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/json; charset=utf-8");
-        return new ResponseEntity<String>(turboModel.toJson(), headers, HttpStatus.OK);
+        return turboModel;
     }
     
-    @RequestMapping(value="/{turboModelId}", method = RequestMethod.DELETE)
+    @RequestMapping(value="/{turboModelId}", method = RequestMethod.DELETE,
+                    produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     @Secured("ROLE_TURBO_MODEL_CRUD")
     @Transactional
-    public ResponseEntity<String> deleteJson(@PathVariable Long turboModelId) {
+    public void deleteJson(@PathVariable Long turboModelId) {
         TurboModel turboModel = turboModelDao.findOne(turboModelId);
         turboModelDao.remove(turboModel);
         changelogDao.log("Removed turbo model", turboModel.toJson());
-        
-        
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/json; charset=utf-8");
-        return new ResponseEntity<String>("", headers, HttpStatus.OK);
     }
     
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET,
+                    produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     @Secured("ROLE_READ")
-    public ResponseEntity<String> listByTurboTypeIdJson(@RequestParam Long turboTypeId) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/json; charset=utf-8");
-        List<TurboModel> result = turboModelDao.findTurboModelsByTurboTypeId(turboTypeId);
-        return new ResponseEntity<String>(TurboModel.toJsonArray(result), headers, HttpStatus.OK);
+    public List<TurboModel> listByTurboTypeIdJson(@RequestParam Long turboTypeId) {
+        return turboModelDao.findTurboModelsByTurboTypeId(turboTypeId);
     }
 }
