@@ -1,4 +1,6 @@
 package com.turbointernational.metadata.domain.other;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.web.View;
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
 import java.io.Serializable;
@@ -22,13 +24,16 @@ public class TurboType implements Comparable<TurboType>, Serializable{
     //<editor-fold defaultstate="collapsed" desc="Properties">
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonView(View.Summary.class)
     private Long id;
     
     @OneToOne
     @JoinColumn(name="manfr_id", nullable=false)
+    @JsonView(View.Summary.class)
     private Manufacturer manufacturer;
     
     @Column(nullable=false)
+    @JsonView(View.Summary.class)
     private String name;
     
     public Long getId() {
