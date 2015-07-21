@@ -11,8 +11,8 @@ angular.module('ngMetaCrudApp')
           if (_.contains(User.roles, role)) {
             element.removeClass('hidden');
           } else {
-            element.remove();
-            //element.addClass('hidden');
+//            element.remove();
+            element.addClass('hidden');
           }
         }, true);
       }
