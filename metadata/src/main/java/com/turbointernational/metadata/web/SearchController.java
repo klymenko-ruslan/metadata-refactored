@@ -45,51 +45,20 @@ public class SearchController {
         return new ResponseEntity<String>(response, headers, HttpStatus.OK);
     }
     
-    @Async
     @RequestMapping(value="/index/{partId}")
     @ResponseBody
     @Secured("ROLE_ADMIN")
-    public void indexAll(@PathVariable("partId") Long partId) throws Exception {
+    public void indexPart(@PathVariable("partId") Long partId) throws Exception {
         Part part = partDao.findOne(partId);
         
         elasticSearch.indexPart(part);
     }
     
-    @Async
     @RequestMapping(value="/indexAll")
     @ResponseBody
     @Secured("ROLE_ADMIN")
-    public void indexAll(
-            @RequestParam(required=false) Integer page,
-            @RequestParam(required=false) Integer maxPages,
-            @RequestParam(required=false) Integer pageSize) throws Exception {
-        
-        if (maxPages == null ) {
-            maxPages = Integer.MAX_VALUE;
-        }
-        if (page == null ) {
-            page = 0;
-        }
-        if (pageSize == null ) {
-            pageSize = 250;
-        }
-
-        int result;
-        try {
-            do {
-
-                // Clear Hibernate
-                partDao.clear();
-
-                result = elasticSearch.indexParts(page * pageSize, pageSize);
-                log.log(Level.INFO, "Indexed parts {0}-{1}: {2}", new Object[]{page * pageSize, (page * pageSize) + pageSize, result});
-                page++;
-
-            } while (result >= pageSize && page < maxPages);
-        } catch (Exception e) {
-            log.log(Level.SEVERE, "Reindexing failed.",  e);
-            throw e;
-        }
+    public void indexAll() throws Exception {
+        elasticSearch.indexAllParts();
     }
     
 }

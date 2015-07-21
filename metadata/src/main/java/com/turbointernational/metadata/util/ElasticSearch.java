@@ -93,29 +93,44 @@ public class ElasticSearch {
         }
     }
 
+    @Async("asyncExecutor")
     @Transactional(readOnly = true)
-    public int indexParts(int firstResult, int maxResults) throws Exception {
-        
-        BulkRequest bulk = new BulkRequest();
-        
-        List<Part> parts = partDao.findAll(firstResult, maxResults);
-        
-        for (Part part : parts) {
-            IndexRequest index = new IndexRequest(elasticSearchIndex, elasticSearchType, part.getId().toString());
-            
-            
-            index.source(part.toSearchJson());
-            bulk.add(index);
-        }
-        
+    public void indexAllParts() throws Exception {
+        int maxPages = Integer.MAX_VALUE;
+        int page = 0;
+        int pageSize = 250;
+
         Client client = client();
         try {
-            client.bulk(bulk).actionGet();
+            int result;
+            do {
+                // Clear hibernate
+                partDao.clear();
+
+                List<Part> parts = partDao.findAll(page * pageSize, pageSize);
+                
+                BulkRequest bulk = new BulkRequest();
+
+                for (Part part : parts) {
+                    IndexRequest index = new IndexRequest(elasticSearchIndex, elasticSearchType, part.getId().toString());
+                    index.source(part.toSearchJson());
+                    bulk.add(index);
+                }
+
+                result = parts.size();
+                log.log(Level.INFO, "Indexed parts {0}-{1}: {2}", new Object[]{page * pageSize, (page * pageSize) + pageSize, result});
+                page++;
+                
+                client.bulk(bulk).actionGet();
+
+            } while (result >= pageSize && page < maxPages);
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "Reindexing failed.", e);
+            throw e;
         } finally {
+            log.log(Level.INFO, "Reindexing complete.");
             client.close();
         }
-        
-        return parts.size();
     }
 
     @Async

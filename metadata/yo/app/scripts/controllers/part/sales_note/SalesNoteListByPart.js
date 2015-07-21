@@ -62,7 +62,7 @@ angular.module('ngMetaCrudApp').controller('SalesNoteListByPartCtrl', function(
 
                   // Update the total and slice the result
                   $defer.resolve(searchResults.content);
-                  params.total(searchResults.totalElements);
+                  params.total(searchResults.total);
                 },
                 function (errorResponse) {
                   restService.error("Couldn't search for sales notes.", errorResponse);
