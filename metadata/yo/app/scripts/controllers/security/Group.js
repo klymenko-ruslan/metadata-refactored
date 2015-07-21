@@ -108,6 +108,7 @@ angular.module('ngMetaCrudApp')
                   function() {
                     // Success
                     gToast.open("Deleted group.");
+                    $location.path("/security/groups")
                   },
                   function(response) {
                     // Error
