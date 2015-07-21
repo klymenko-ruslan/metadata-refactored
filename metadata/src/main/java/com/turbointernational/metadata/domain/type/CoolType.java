@@ -27,6 +27,7 @@ public class CoolType implements Serializable {
     private Long id;
     
     @Column(nullable=false)
+    @JsonView(View.Summary.class)
     private String name;
     
     public Long getId() {

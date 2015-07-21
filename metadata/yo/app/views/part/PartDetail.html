@@ -106,7 +106,7 @@
                 <dt>Design Features</dt>
                 <dd>{{part.designFeatures}}</dd>
                 <dt>Bearing Type</dt>
-                <dd>{{part.bearingType.name}}</dd>
+                <dd>{{part.bearingType}}</dd>
             </dl>
         </div>
 
@@ -275,7 +275,7 @@
       <li data-ng-repeat="image in part.productImages" ng-click="deleteImage(image)">
         <img ng-src="/metadata/image/135/{{image.id}}.jpg" style="max-height: 135px; max-width: 135px" />
       </li>
-      <li class="well well-sm col-md-12" ng-hide="_.count(part.productImages) === 0">Part has no images.</li>
+      <li class="well well-sm col-md-12" ng-hide="part.productImages.length >= 0">Part has no images.</li>
     </ul>
   </div>
 
