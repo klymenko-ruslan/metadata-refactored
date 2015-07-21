@@ -35,6 +35,7 @@ public class BOMItem implements Comparable<BOMItem>, Serializable {
     //<editor-fold defaultstate="collapsed" desc="properties">
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonView({View.Summary.class})
     private Long id;
     
     @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.REFRESH})
