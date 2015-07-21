@@ -68,12 +68,12 @@ h1:first-of-type {
 .padding-top {
   padding-top: 20px;
 }
-
+/* WHY: This makes modals invisible. Why is it here?
 .modal {
   display: block;
-  height: 0;
+  height: 0; // Invisible modals
   overflow: visible;
-}
+}*/
 
 .picker {
   div[class*='col-'] {
