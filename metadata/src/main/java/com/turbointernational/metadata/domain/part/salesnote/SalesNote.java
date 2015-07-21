@@ -2,14 +2,12 @@ package com.turbointernational.metadata.domain.part.salesnote;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.google.common.collect.Sets;
-import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.security.User;
 import com.turbointernational.metadata.web.View;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
@@ -25,6 +23,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -75,10 +74,12 @@ public class SalesNote implements Serializable {
 //            indexes = @Index(columnList = "sales_note_id,part_id"),
 //            joinColumns = @JoinColumn(name = "sales_note_id"),
 //            inverseJoinColumns = @JoinColumn(name="part_id"))
+    @OrderBy("id")
     @JsonView({View.DetailWithPartsAndAttachments.class})
     private Set<SalesNotePart> parts = Sets.newLinkedHashSet();
     
     @JsonView({View.DetailWithPartsAndAttachments.class})
+    @OrderBy("id")
     @OneToMany(mappedBy="salesNote", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<SalesNoteAttachment> attachments = new ArrayList<>();
     
