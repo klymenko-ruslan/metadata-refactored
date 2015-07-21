@@ -141,17 +141,17 @@ public class SalesNoteController {
     
     private void canEditAccess(HttpServletRequest request, SalesNote salesNote) {
         if (salesNote.getState() == published
-                && request.isUserInRole("ROLE_SALES_NOTE_PUBLISH")) {
+                && request.isUserInRole("SALES_NOTE_PUBLISH")) {
             return;
         }
         
         if ((salesNote.getState() == approved || salesNote.getState() == submitted)
-                && request.isUserInRole("ROLE_SALES_NOTE_APPROVE")) {
+                && request.isUserInRole("SALES_NOTE_APPROVE")) {
             return;
         }
         
         if ((salesNote.getState() == draft || salesNote.getState() == rejected)
-                && request.isUserInRole("ROLE_SALES_NOTE_SUBMIT")) {
+                && request.isUserInRole("SALES_NOTE_SUBMIT")) {
             return;
         }
 
@@ -317,7 +317,6 @@ public class SalesNoteController {
     
     @RequestMapping(value="{salesNoteId}/attachment/{attachmentId}", method = RequestMethod.DELETE)
     @ResponseBody
-    @Secured("ROLE_SALES_NOTE_DELETE_ATTACHMENT")
     public void deleteAttachment(
             HttpServletRequest request,
             @AuthenticationPrincipal(errorOnInvalidType = true) User user,
