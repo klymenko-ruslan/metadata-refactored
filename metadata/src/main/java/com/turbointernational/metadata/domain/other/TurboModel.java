@@ -1,4 +1,6 @@
 package com.turbointernational.metadata.domain.other;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.web.View;
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
 import java.io.Serializable;
@@ -26,9 +28,11 @@ public class TurboModel implements Serializable {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonView(View.Summary.class)
     private Long id;
     
     @Column(nullable=false)
+    @JsonView(View.Summary.class)
     private String name;
     
     @OneToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
