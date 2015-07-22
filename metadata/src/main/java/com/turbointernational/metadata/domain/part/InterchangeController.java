@@ -1,6 +1,8 @@
 package com.turbointernational.metadata.domain.part;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.google.common.collect.Sets;
 import com.turbointernational.metadata.domain.changelog.ChangelogDao;
+import com.turbointernational.metadata.web.View;
 import java.security.Principal;
 import java.util.Iterator;
 import java.util.Set;
@@ -8,6 +10,7 @@ import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
@@ -120,6 +123,15 @@ public class InterchangeController {
             
         // TODO: Only change what we need to rather than rebuilding everything
         partDao.rebuildBomDescendancy();
+    }
+    
+    @ResponseBody
+    @Secured("ROLE_INTERCHANGE")
+    @JsonView({View.SummaryWithInterchangeParts.class})
+    @RequestMapping(value="{id}", method = RequestMethod.GET,
+                    produces = MediaType.APPLICATION_JSON_VALUE)
+    public Interchange get(@PathVariable("id") long interchangeId) {
+        return interchangeDao.findOne(interchangeId);
     }
     
     @Transactional

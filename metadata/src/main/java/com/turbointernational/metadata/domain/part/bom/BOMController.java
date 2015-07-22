@@ -1,8 +1,11 @@
 package com.turbointernational.metadata.domain.part.bom;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.domain.changelog.ChangelogDao;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.part.PartDao;
 import com.turbointernational.metadata.domain.part.bom.dto.CreateBomItemRequest;
+import com.turbointernational.metadata.web.View;
+import java.util.List;
 import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -59,6 +62,15 @@ public class BOMController {
 
         // TODO: Only change what we need to rather than rebuilding everything
         partDao.rebuildBomDescendancy();
+    }
+    
+    @RequestMapping(value = "/byParentPart/{id}", method = RequestMethod.GET,
+                    produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    @Secured("ROLE_READ")
+    @JsonView(View.SummaryWithBOMDetail.class)
+    public List<BOMItem> getByParentId(@PathVariable("id") long id) throws Exception {
+        return bomItemDao.findByParentId(id);
     }
     
     @Transactional

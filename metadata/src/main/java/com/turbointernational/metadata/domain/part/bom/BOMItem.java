@@ -1,4 +1,5 @@
 package com.turbointernational.metadata.domain.part.bom;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.domain.other.Manufacturer;
@@ -46,7 +47,7 @@ public class BOMItem implements Comparable<BOMItem>, Serializable {
     
     @OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.REFRESH})
     @JoinColumn(name="child_part_id")
-    @JsonView({View.Detail.class})
+    @JsonView({View.SummaryWithBOMDetail.class})
     private Part child;
     
     @Column(nullable=false)
@@ -55,7 +56,7 @@ public class BOMItem implements Comparable<BOMItem>, Serializable {
     
     @OneToMany(mappedBy="bomItem", fetch = FetchType.LAZY, orphanRemoval = true)
     @OrderBy("id")
-    @JsonView({View.Detail.class})
+    @JsonView({View.SummaryWithBOMDetail.class})
     private Set<BOMAlternative> alternatives = new TreeSet<BOMAlternative>();
     
     public Long getId() {

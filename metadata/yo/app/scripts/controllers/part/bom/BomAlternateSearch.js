@@ -1,9 +1,11 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-    .controller('BomAlternateSearchCtrl', function ($log, $scope, $location, $routeParams, restService, Restangular, dialogs, gToast) {
+    .controller('BomAlternateSearchCtrl', function ($log, $scope, $location, $routeParams, BOM, restService, Restangular, dialogs, gToast) {
         $scope.restService = restService;
         $scope.partId = $routeParams.id;
+        $scope.bomItemId = $routeParams.bomId;
+        
 
         $scope.pickedPart = null;
         $scope.showPickedPart = false;
@@ -12,11 +14,15 @@ angular.module('ngMetaCrudApp')
         $scope.part = restService.findPart($scope.partId).then(
             function (parentPart) {
                 $scope.part = parentPart;
+            }, restService.error);
+            
+        BOM.listByParentPartId($scope.partId)
+            .then(function(bom) {
+                $scope.bom = bom;
 
-                $scope.bomItem = _.find(parentPart.bom, function(bomItem) {
-                  return bomItem.id == $routeParams.bomId;
+                $scope.bomItem = _.find(bom, function(bomItem) {
+                    return bomItem.id === $scope.bomItemId;
                 });
-
             }, restService.error);
 
         $scope.save = function () {

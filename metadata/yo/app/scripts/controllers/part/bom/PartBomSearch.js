@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-    .controller('PartBomSearchCtrl', function ($log, $scope, $location, $routeParams, restService, Restangular, dialogs, gToast) {
+    .controller('PartBomSearchCtrl', function ($log, $scope, $location, $routeParams, BOM, restService, Restangular, dialogs, gToast) {
         $scope.restService = restService;
         $scope.partId = $routeParams.id;
 
@@ -12,17 +12,15 @@ angular.module('ngMetaCrudApp')
         $scope.part = restService.findPart($scope.partId)
             .then(function (parentPart) {
                 $scope.part = parentPart;
-
-                $scope.bomItem.parent = {
-                    id: parentPart.id,
-                    version: parentPart.version
-                };
-
-                $log.log("Editing part: ", $scope.part);
-                $log.log("BOM: ", $scope.part.bom);
             }, function (errorResponse) {
                 restService.error("Could not get part details", errorResponse);
             });
+            
+        // Load the part's BOM
+        $scope.bom = BOM.listByParentPartId($scope.partId)
+            .then(function(bom) {
+               $scope.bom = bom; 
+            }, restService.error);
 
         $scope.bomItem = {
             parentPartId: $scope.partId,

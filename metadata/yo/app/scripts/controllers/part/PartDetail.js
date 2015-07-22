@@ -11,9 +11,6 @@ angular.module('ngMetaCrudApp')
 
                 // Make sure we're using the correct part type
                 $scope.partType = part.partType.name;
-
-                // Reload the table
-                $scope.bomTableParams.reload();
             },
             function (errorResponse) {
                 $log.log("Could not get part details", errorResponse);

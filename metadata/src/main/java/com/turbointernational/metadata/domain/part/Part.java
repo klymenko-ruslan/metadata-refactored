@@ -1,5 +1,7 @@
 package com.turbointernational.metadata.domain.part;
+import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
@@ -181,7 +183,6 @@ public class Part implements Comparable<Part>, Serializable {
     
     @OneToMany(mappedBy="parent", fetch = FetchType.LAZY, orphanRemoval = true)
     @OrderBy("id")
-    @JsonView({View.Detail.class})
     private Set<BOMItem> bom = new TreeSet<BOMItem>();
     
     @OneToMany(cascade = CascadeType.REFRESH, mappedBy = "part", fetch=FetchType.LAZY)

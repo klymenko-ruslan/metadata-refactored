@@ -65,7 +65,7 @@ public class PartController {
 
     @ResponseBody
     @Secured("ROLE_READ")
-    @JsonView(View.DetailWithInterchangeParts.class)
+    @JsonView(View.Detail.class)
     @RequestMapping(value = "/{id}", method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public Part getPart(@PathVariable("id") Long id) {

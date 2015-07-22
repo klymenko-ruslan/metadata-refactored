@@ -35,12 +35,12 @@ public class BOMAlternative implements Comparable<BOMAlternative>, Serializable 
     
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name="bom_alt_header_id")
-    @JsonView({View.Detail.class})
+    @JsonView({View.Summary.class})
     private BOMAlternativeHeader header;
     
     @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.REFRESH})
     @JoinColumn(name="part_id")
-    @JsonView({View.Detail.class})
+    @JsonView({View.SummaryWithBOMDetail.class})
     private Part part;
     
     public Long getId() {

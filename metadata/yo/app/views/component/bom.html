@@ -3,7 +3,7 @@
     Bill of Materials
     <a authorize="ROLE_BOM"
        class="btn btn-primary pull-right" style="vertical-align: middle;"
-       ng-href="/part/{{partId}}/bom/search">
+       ng-href="/part/{{parentPartId}}/bom/search">
       <i class="fa fa-plus"></i> Add Child
     </a>
   </h3>
@@ -70,7 +70,7 @@
 
       <a authorize="ROLE_BOM"
          class="btn btn-info pull-right" style="vertical-align: middle;"
-         ng-href="/part/{{partId}}/bom/{{altBomItem.id}}/search">
+         ng-href="/part/{{parentPartId}}/bom/{{altBomItem.id}}/search">
         <i class="fa fa-cogs"></i> Add Alternate
       </a>
 

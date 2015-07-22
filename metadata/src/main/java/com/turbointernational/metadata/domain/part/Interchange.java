@@ -30,17 +30,18 @@ public class Interchange implements Serializable {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonView({View.Summary.class})
     private Long id;
     
     @Column
-    @JsonView(View.Summary.class)
+    @JsonView({View.Summary.class})
     private String name;
     
-    @JsonView(View.Summary.class)
+    @JsonView({View.Summary.class})
     private String description;
     
     @OneToMany(mappedBy = "interchange", fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.MERGE})
-    @JsonView(View.DetailWithInterchangeParts.class)
+    @JsonView(View.SummaryWithInterchangeParts.class)
     private Set<Part> parts = Sets.newTreeSet();
     
     public Long getId() {

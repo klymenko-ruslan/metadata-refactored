@@ -1,34 +1,46 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-  .directive('bom', function ($log) {
+  .directive('bom', function ($log, Restangular) {
     return {
+      scope: {
+          parentPartId: "="
+      },
       templateUrl: '/views/component/bom.html',
       restrict: 'E',
       link: function postLink(/*$scope, element, attrs */) {
-//        element.text('this is the bom directive');
       },
-      controller: function(dialogs, $scope, ngTableParams, gToast, Restangular, restService) {
+      controller: function(dialogs, $scope, BOM, ngTableParams, gToast, Restangular, restService) {
         $scope.restService = restService;
 
+        $scope.$watch("parentPartId", function(parentPartId) {
+            if (parentPartId === undefined) {
+                return;
+            }
 
-        $scope.bomTableParams = new ngTableParams(
-            {
+            $log.log("Loading BOM for parent part", parentPartId);
+            BOM.listByParentPartId(parentPartId).then(function(bom) {
+                $scope.bom = bom;
+                $scope.bomTableParams.reload();
+            }, restService.error);
+        });
+
+        $scope.bomTableParams = new ngTableParams({
           page: 1,
           count: 10
-        },
-            {
+        }, {
           getData: function ($defer, params) {
-                if (!angular.isObject($scope.part)) {
+              
+                if (!angular.isObject($scope.bom)) {
                   $defer.reject();
                   return;
                 }
 
-                $scope.part.bom = _.sortBy($scope.part.bom, 'id');
+                $scope.bom = _.sortBy($scope.bom, 'id');
 
                 // Update the total and slice the result
-                $defer.resolve($scope.part.bom.slice((params.page() - 1) * params.count(), params.page() * params.count()));
-                params.total($scope.part.bom.length);
+                $defer.resolve($scope.bom.slice((params.page() - 1) * params.count(), params.page() * params.count()));
+                params.total($scope.bom.length);
               }
         });
 
@@ -60,7 +72,7 @@ angular.module('ngMetaCrudApp')
         };
 
         $scope.remove = function(index, bomItem) {
-          $log.log('Remove bom item, part: ', $scope.part);
+          $log.log('Remove bom item, part: ', $scope.parentPart);
 
           dialogs.confirm(
                   'Remove BOM Item?',
@@ -72,7 +84,7 @@ angular.module('ngMetaCrudApp')
                       // Success
 
                       // Remove the BOM item from the local part and reload the table
-                      $scope.part.bom.splice(index, 1);
+                      $scope.bom.splice(index, 1);
                       $scope.bomTableParams.reload();
 
                       // Clear the alt bom item
