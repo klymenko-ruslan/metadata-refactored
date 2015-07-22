@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-    .controller('PartDetailCtrl', function ($scope, $log, $q, $location, $routeParams, ngTableParams, restService, Restangular, dialogs, gToast) {
+    .controller('PartDetailCtrl', function ($scope, $log, $q, $location, $routeParams, Kits, ngTableParams, restService, Restangular, dialogs, gToast) {
         $scope.partId = $routeParams.id;
 
         $scope.part = null;
@@ -11,6 +11,14 @@ angular.module('ngMetaCrudApp')
 
                 // Make sure we're using the correct part type
                 $scope.partType = part.partType.name;
+                
+                // TODO: Find a better way. Directive?
+                if (part.partType.magentoAttributeSet == 'Kit') {
+                    $scope.kitComponents = Kits.listComponents($scope.partId)
+                            .then(function(components) {
+                                $scope.kitComponents  = components;
+                            }, restService.error);
+                }
             },
             function (errorResponse) {
                 $log.log("Could not get part details", errorResponse);
@@ -68,8 +76,8 @@ angular.module('ngMetaCrudApp')
                   // Success
                   gToast.open("Component removed.");
 
-                  var idx = _.indexOf($scope.part.components, componentToRemove);
-                  $scope.part.components.splice(idx, 1);
+                  var idx = _.indexOf($scope.kitComponents, componentToRemove);
+                  $scope.kitComponents.splice(idx, 1);
                 },
                 function(response) {
                   // Error

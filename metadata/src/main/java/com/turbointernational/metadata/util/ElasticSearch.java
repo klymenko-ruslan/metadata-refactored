@@ -88,6 +88,7 @@ public class ElasticSearch {
             client.index(index).actionGet(timeout);
         } catch (ElasticSearchException e) {
             log.log(Level.SEVERE, "Could not index part " + document, e);
+            throw e;
         } finally {
             client.close();
         }

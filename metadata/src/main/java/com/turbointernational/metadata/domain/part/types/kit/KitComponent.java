@@ -34,10 +34,10 @@ public class KitComponent implements Serializable {
     
     @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.REFRESH})
     @JoinColumn(name="part_id")
-    @JsonView(View.Detail.class)
+    @JsonView(View.Summary.class)
     private Part part;
     
-    @JsonView(View.Detail.class)
+    @JsonView(View.Summary.class)
     @Column(nullable=false)
     private boolean exclude;
     

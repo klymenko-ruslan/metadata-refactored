@@ -29,7 +29,6 @@ public class Kit extends Part {
     private KitType kitType;
     
     @OrderBy("id")
-    @JsonView(View.Detail.class)
     @OneToMany(mappedBy="kit", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<KitComponent> components = new LinkedHashSet();
     
