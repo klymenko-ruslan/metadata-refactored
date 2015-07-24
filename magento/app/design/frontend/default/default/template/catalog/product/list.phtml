@@ -67,13 +67,13 @@ $_helper = $this->helper('catalog/output');
             ?>
             <table class="data-table" id="products-list">
                 <tr>
-                    <th>OE Part #</th>
                     <th>TI Part #</th>
+                    <th>Ref OE Part #</th>
                     <th>Turbo Type</th>
                     <?php if ($loaded_products_has_part_type_cartridge): ?><th>Turbo Model</th><?php endif; ?>
                     <th>Part Type</th>
                     <th>Name</th>
-                    <th>Manufacturer</th>
+                    <th>Ref Manufacturer</th>
                     <?php if ($loaded_products_has_part_type_turbo): ?><th>CHRA</th><?php endif; ?>
                     <?php if ($loaded_products_has_part_type_turbo): ?><th>TI CHRA</th><?php endif; ?>
                     <th class="number-right-align">Price</th>
@@ -194,19 +194,6 @@ $_helper = $this->helper('catalog/output');
                     <?php if ($i++ % $_columnCount == 0): ?>
                     <?php endif ?>
                     <tr>
-                        <!-- OE part # -->
-                        <!-- display is based on if primary part number is TI so not to confuse customer -->
-                        <?php if (!$_product->isTurboInternational()): ?>
-                            <!-- display only if part is not TI -->
-                            <td>
-                                <a href="<?php echo $_product->getProductUrl() ?>"><?php echo $_product->getPartNumber() ?></a>
-                            </td>
-                        <?php else: ?>
-                            <td>
-                                <!-- nothing to display because primary part is TI -->
-                            </td>
-                        <?php endif; ?>
-
                         <!-- TI part # -->
                         <td>
                         <?php if (!$_product->isTurboInternational()): ?>
@@ -243,6 +230,19 @@ $_helper = $this->helper('catalog/output');
                             <a href="<?php echo $_product->getProductUrl() ?>"><?php echo $_product->getPartNumber() ?></a>
                         <?php endif; ?>
                         </td>
+
+                        <!-- OE part # -->
+                        <!-- display is based on if primary part number is TI so not to confuse customer -->
+                        <?php if (!$_product->isTurboInternational()): ?>
+                            <!-- display only if part is not TI -->
+                            <td>
+                                <a href="<?php echo $_product->getProductUrl() ?>"><?php echo $_product->getPartNumber() ?></a>
+                            </td>
+                        <?php else: ?>
+                            <td>
+                                <!-- nothing to display because primary part is TI -->
+                            </td>
+                        <?php endif; ?>
 
                         <!-- Turbo Type -->
                         <td>
