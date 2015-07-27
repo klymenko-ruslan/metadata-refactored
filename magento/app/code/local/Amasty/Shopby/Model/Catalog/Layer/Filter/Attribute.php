@@ -250,6 +250,11 @@ class Amasty_Shopby_Model_Catalog_Layer_Filter_Attribute extends Mage_Catalog_Mo
         $collection = $this->getLayer()->getProductCollection();
         $connection = $this->_getResource()->getReadConnection();
 
+        // check to see if sql is from a search result instead of a layered navigation then skip remaining function if true
+        if (strpos($collection->getSelect()->__toString(), "search_result")) {
+            return null;
+        }
+
         // Update the registry value
         Mage::register('ti_catalog_filter', true);
 
