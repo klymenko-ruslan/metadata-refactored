@@ -11,19 +11,23 @@ angular.module('ngMetaCrudApp')
       restrict: 'E',
       link: function postLink(scope, element, attrs) {
           scope.$watch("interchangeId", function(interchangeId) {
+              
+            // Don't bother until we have an ID
             if (interchangeId === undefined) {
                 return;
             }
-              
+            
+            // It should be an object with an ID field  
             if (_.isObject(scope.interchange) && interchangeId === scope.interchange.id) {
                 return;
             }
             
             $log.log("Loading parts for interchange ", interchangeId);
             Restangular.one("interchange", interchangeId).get().then(function(interchange) {
+                
                 // Remove the parent part
                 var idx = _.findIndex(interchange.parts, function(part) {
-                    return part.id = scope.parentPartId;
+                    return part.id == scope.parentPartId;
                 });
 
                 if (idx > -1) {
