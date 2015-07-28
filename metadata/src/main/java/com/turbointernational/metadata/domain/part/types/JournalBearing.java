@@ -43,6 +43,10 @@ public class JournalBearing extends Part {
     @Column(name="inside_dim_max")
     private Float insideDiameterMax;
 
+    @JsonView(View.Detail.class)
+    @Column(name="width")
+    private Float width;
+
 //    public JournalBearing getStandardSize() {
 //        return standardSize;
 //    }
@@ -90,6 +94,14 @@ public class JournalBearing extends Part {
     public void setInsideDiameterMax(Float insideDiameterMax) {
         this.insideDiameterMax = insideDiameterMax;
     }
+
+    public Float getWidth() {
+        return width;
+    }
+
+    public void setWidth(Float width) {
+        this.width = width;
+    }
     
     @Override
     protected JSONSerializer buildJSONSerializer() {
@@ -110,6 +122,7 @@ public class JournalBearing extends Part {
     public void csvColumns(Map<String, String> columns) {
         super.csvColumns(columns);
         
+        columns.put("width", ObjectUtils.toString(getWidth()));
         columns.put("outside_diameter_min", ObjectUtils.toString(getOutsideDiameterMin()));
         columns.put("outside_diameter_max", ObjectUtils.toString(getOutsideDiameterMax()));
         columns.put("inside_diameter_min", ObjectUtils.toString(getInsideDiameterMin()));

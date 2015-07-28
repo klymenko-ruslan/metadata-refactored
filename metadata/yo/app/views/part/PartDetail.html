@@ -113,21 +113,16 @@
         <!-- Bearing Spacer -->
         <div data-ng-switch-when="Bearing Spacer">
             <dl class="dl-horizontal">
+<!--
                 <dt>Standard Size</dt>
                 <dd>{{part.standardSize}}</dd>
                 <dt>Oversize</dt>
                 <dd>{{part.oversize}}</dd>
-                <dt>Outside Diameter (min - max)</dt>
-                <dd>{{part.outsideDiameterMin}}</dd>
-                <dt></dt>
-                <dd>{{part.outsideDiameterMax}}</dd>
-                <dt>Inside Diameter (min - max)</dt>
-                <dd>{{part.insideDiameterMin}}</dd>
-                <dt></dt>
-                <dt>Inside Diameter (min - max)</dt>
-                <dd>{{part.insideDiameterMin}}</dd>
-                <dt></dt>
-                <dd>{{part.insideDiameterMax}}</dd>
+-->
+                <dt>Outside Diameter</dt>
+                <dd>{{part.outsideDiameterMin}} - {{part.outsideDiameterMax}}</dd>
+                <dt>Inside Diameter</dt>
+                <dd>{{part.insideDiameterMin}} - {{part.insideDiameterMax}}</dd>
             </dl>
         </div>
 
@@ -174,18 +169,18 @@
         <!-- Journal Bearing -->
         <div data-ng-switch-when="Journal Bearing">
             <dl class="dl-horizontal">
+<!--
                 <dt>Standard Size</dt>
                 <dd>{{part.standardSize}}</dd>
                 <dt>Oversize</dt>
                 <dd>{{part.oversize}}</dd>
-                <dt>Outside Diameter (min - max)</dt>
-                <dd>{{part.outsideDiameterMin}}</dd>
-                <dt></dt>
-                <dd>{{part.outsideDiameterMax}}</dd>
-                <dt>Inside Diameter (min - max)</dt>
-                <dd>{{part.insideDiameterMin}}</dd>
-                <dt></dt>
-                <dd>{{part.insideDiameterMax}}</dd>
+-->
+                <dt>Width</dt>
+                <dd>{{part.width}}</dd>
+                <dt>Outside Diameter</dt>
+                <dd>{{part.outsideDiameterMin}} - {{part.outsideDiameterMax}}</dd>
+                <dt>Inside Diameter</dt>
+                <dd>{{part.insideDiameterMin}} - {{part.insideDiameterMax}}</dd>
             </dl>
         </div>
 
