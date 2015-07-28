@@ -39,6 +39,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -231,8 +232,9 @@ public class MagmiController {
     JdbcTemplate db;
     
     @RequestMapping("/products")
-    @ResponseBody   
+    @ResponseBody
     @Transactional
+    @PreAuthorize("hasRole('ROLE_MAGMI_EXPORT') or hasIpAddress('127.0.0.1/32')")
     public void products(HttpServletResponse response, OutputStream out, @RequestParam(defaultValue="30", required=false) int days) throws Exception {
         logger.log(Level.INFO, "Magmi export started.");
         
@@ -314,8 +316,9 @@ public class MagmiController {
     }
     
     @RequestMapping("/product/{partId}")
-    @ResponseBody   
+    @ResponseBody
     @Transactional
+    @PreAuthorize("hasRole('ROLE_MAGMI_EXPORT') or hasIpAddress('127.0.0.1/32')")
     public void product(HttpServletResponse response, OutputStream out, @PathVariable Long partId) throws Exception {
         
         response.setHeader("Content-Type", "text/csv");

@@ -63,7 +63,7 @@ public class WebSecurityAppConfig extends WebSecurityConfigurerAdapter {
 //            .antMatchers("/metadata/security/password**").permitAll()  // Password reset endpoints open to anyone
 //            .antMatchers("/metadata/**").authenticated()               // API requires authentication
             .antMatchers("/product_images/**").authenticated()         // Images require authentication
-            .antMatchers("/magmi/**").hasIpAddress("127.0.0.1/32")     // Allow magmi from localhost without user.
+//            .antMatchers("/magmi/**").hasIpAddress("127.0.0.1/32")     // Allow magmi from localhost without user.
             .and().formLogin()
                 .loginPage("/metadata/security/unauthorized")
                 .loginProcessingUrl("/metadata/security/login")
@@ -79,7 +79,6 @@ public class WebSecurityAppConfig extends WebSecurityConfigurerAdapter {
         
         http.csrf().disable();
         http.anonymous().disable();
-//        http.httpBasic().disable();
     }
 
     @Bean
