@@ -56,7 +56,7 @@ public class WebSecurityAppConfig extends WebSecurityConfigurerAdapter {
 //            .expiredUrl("/metadata/security/unauthorized?expiredSession")
 //            .and()
             .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
-            .invalidSessionUrl("/metadata/security/unauthorized?invalidSession");
+            .invalidSessionUrl("/");
         
         http.authorizeRequests()
 //            .antMatchers("/metadata/security/unauthorized**").permitAll()  // Password reset endpoints open to anyone
