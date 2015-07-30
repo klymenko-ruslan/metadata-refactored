@@ -73,7 +73,7 @@ angular.module('ngMetaCrudApp').controller('SalesNoteListByPartCtrl', function(
 
     // Query Parameters
     $scope.search = {
-        "primaryPartId": 1,
+        "primaryPartId": $scope.partId,
         "query": null,
         "includePrimary": true,
         "includeRelated": true,
