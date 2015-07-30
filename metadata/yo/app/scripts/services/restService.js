@@ -62,7 +62,7 @@ angular.module('ngMetaCrudApp')
               $log.log(title, response);
               
               dialogs.error(
-                  title, 'Server said: <pre>' + JSON.stringify(response.data) + '</pre>');
+                  title, 'Server said: <pre>' + response.data.message + '</pre>');
             };
 
             this.findPart = function (id, params) {
