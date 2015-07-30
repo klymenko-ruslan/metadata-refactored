@@ -18,8 +18,8 @@
 <div class="col-xs-3">
   <form ng-submit="notesTableParams.reload()">
     <h2>Search</h2>
-    <button type="button">clear</button>
-    <input id="part-number" class="form-control" type="text" placeholder="Related Part number or comment">
+    <button type="submit">Search</button>
+    <input id="part-number" class="form-control" type="text" ng-model="search.query" placeholder="Related Part number or comment">
 
     <h4>Status</h4>
     <label ng-repeat="state in SalesNotes.states" style="display: block">
@@ -40,11 +40,14 @@
           <td title="'State'" data-sortable="'note.state'">
               {{salesNote.state}}
           </td>
+          <td title="'Relation'" ng-class="{info:salesNote.primaryPartId == partId}">
+              {{salesNote.primaryPartId == partId ? "Primary" : "Related"}}
+          </td>
           <td class="text-right" title="'Actions'">
               <a ng-href="/part/{{salesNote.primaryPartId}}/sales_note/{{salesNote.id}}"
                  authorize="ROLE_SALES_NOTE_READ"
                  class="btn btn-primary btn-sm pull-left">
-                <span class="fa fa-eye"></span> View
+                <span class="fa fa-file-text-o"></span> View Note
               </a>
             
               <a ng-click="SalesNotes.submit(salesNote)"
