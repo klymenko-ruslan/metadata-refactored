@@ -43,15 +43,13 @@ public class SalesNoteRepositoryImpl implements SalesNoteRepositoryCustom {
             "  AND (\n" +
             "    :primaryPartId IS NULL\n" +
             "    OR p.id = :primaryPartId\n" +
-            "  )\n" +
-            "  AND (\n" +
+            "  ) AND (\n" +
             "    :query IS NULL\n" +
             "    OR LOWER(p.manufacturerPartNumber) LIKE :query\n" +
             "    OR LOWER(sn.comment) LIKE :query\n" +
-            "  )\n" +
-            "  AND (\n" +
-            "    ((true = :includePrimary) AND snp.primary = :includePrimary)\n" +
-            "    OR ((true = :includeRelated) AND snp.primary != :includeRelated)\n" +
+            "  ) AND (\n" +
+            "    (:includePrimary = true AND snp.primary = true)\n" +
+            "    OR (:includeRelated = true AND snp.primary IS NULL)\n" +
             "  )", resultClass)
             .setParameter("states", request.getStates())
             .setParameter("primaryPartId", request.getPrimaryPartId())
