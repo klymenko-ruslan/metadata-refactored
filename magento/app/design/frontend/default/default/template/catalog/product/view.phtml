@@ -521,6 +521,11 @@ if ($serviceKitSkus) {
                         // Load the TI product
                         $serviceKitTiProduct = null;
 
+                        // skip to next if service kit is disabled
+                        if (!$serviceKitProduct) {
+                            continue;
+                        }
+
                         if (!empty($serviceKit['tiSku'])) {
                             $serviceKitTiProduct = $serviceKitCollection->getItemByColumnValue('sku', $serviceKit['tiSku']);
                         }
@@ -1191,14 +1196,15 @@ if ($serviceKitSkus) {
                         $KitMatrixProduct = $serviceKitCollection->getItemByColumnValue('sku', $kitSku);
 
                         // use only TI kits
-                        if ($KitMatrixProduct->isTurboInternational()) {
+                        if ($KitMatrixProduct AND $KitMatrixProduct->isTurboInternational()) {
                             // nothing needs to be changed
-                        } elseif ($serviceKit["tiSku"]) {
+                        } elseif ($KitMatrixProduct AND $serviceKit["tiSku"]) {
                             // if main part is not TI but an interchangeable TI part exists then use it
                             $kitSku = $serviceKit["tiSku"];
                             $KitMatrixProduct = $serviceKitCollection->getItemByColumnValue('sku', $kitSku);
                         } else {
                             // if main part is not TI and no TI interchangeable exists then do not include in result set
+                            // or if $KitMatrixProduct does not exist
                             continue;
                         }
 
