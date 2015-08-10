@@ -35,6 +35,7 @@ public class TurboModel implements Serializable {
     @JsonView(View.Summary.class)
     private String name;
     
+    @JsonView(View.Detail.class)
     @OneToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
     @JoinColumn(name="turbo_type_id")
     private TurboType turboType;
