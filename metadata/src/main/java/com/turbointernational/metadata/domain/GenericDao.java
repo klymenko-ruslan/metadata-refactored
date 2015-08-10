@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceContextType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -20,7 +19,7 @@ public class GenericDao<T extends Serializable> {
 
     protected final Class<T> clazz;
 
-    @PersistenceContext(type=PersistenceContextType.EXTENDED)
+    @PersistenceContext
     protected EntityManager em;
     
     @Autowired(required=true)

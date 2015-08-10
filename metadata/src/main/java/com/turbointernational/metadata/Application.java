@@ -7,7 +7,6 @@ import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module.Feature;
 import com.turbointernational.metadata.web.CORSFilter;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import javax.servlet.FilterRegistration;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import org.springframework.beans.BeansException;
@@ -29,6 +28,7 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -62,7 +62,8 @@ public class Application extends WebMvcConfigurerAdapter implements WebApplicati
     
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
-        FilterRegistration.Dynamic corsFilter = servletContext.addFilter("corsFilter", CORSFilter.class);
+        servletContext.addFilter("corsFilter", CORSFilter.class);
+        servletContext.addFilter("openEntityManagerInViewFilter", OpenEntityManagerInViewFilter.class);
     }
     
     @Bean
