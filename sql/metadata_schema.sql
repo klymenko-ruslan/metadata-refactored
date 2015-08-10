@@ -1114,6 +1114,34 @@ FROM (
                          AND `pt`.`part_type_id` = 2))
       ON`p`.`id` = `bd`.`part_id_ancestor`);
 
+
+-- Standard-Oversize Part
+DROP VIEW IF EXISTS `vmagmi_sop`;
+CREATE
+    ALGORITHM = UNDEFINED
+    DEFINER = `metaserver`@`%`
+    SQL SECURITY DEFINER
+VIEW `vmagmi_sop` AS
+SELECT
+    ssop.oversize_part_id                                   AS part_id,
+    ssop.standard_part_id                                   AS standard_part_sku,
+    GROUP_CONCAT(DISTINCT ii2.part_id ORDER BY ii2.part_id) AS oversize_part_skus
+FROM
+
+    -- Get the oversize TI parts for each standard-size part
+    standard_oversize_part AS ssop
+    JOIN standard_oversize_part AS osop ON osop.standard_part_id = ssop.standard_part_id
+    LEFT JOIN part AS op ON op.id = osop.oversize_part_id AND op.manfr_id = 11
+
+    -- Get the interchanges for the oversize parts
+    LEFT JOIN interchange_item AS ii ON ii.part_id = op.id
+    LEFT JOIN interchange_item AS ii2 ON ii2.interchange_header_id = ii.interchange_header_id
+GROUP BY
+  ssop.oversize_part_id,
+  ssop.standard_part_id
+ORDER BY ssop.oversize_part_id;
+
+
 --
 -- Stored Procedures
 --

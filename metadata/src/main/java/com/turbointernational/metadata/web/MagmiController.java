@@ -89,7 +89,8 @@ public class MagmiController {
             "image",
             "small_image",
             "thumbnail",
-            "media_gallery"
+            "media_gallery",
+            "standard_oversize_part"
         ));
         //</editor-fold>
 
@@ -136,11 +137,9 @@ public class MagmiController {
             "outside_dim_min",
             "overall_diameter",
             "overall_height",
-            "oversize_id",
             "piston_ring_diameter",
             "secondary_diameter",
             "shaft_thread_f",
-            "standard_size_id",
             "stem_oe",
             "style_compressor_wheel",
             "tip_height_b",
