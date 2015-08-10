@@ -38,10 +38,8 @@ angular.module('ngMetaCrudApp')
 
       $scope.save = function() {
 
-        if ($scope.part.interchange) {
-
-          // Update
-          if ($scope.pickedPart.interchange && $scope.pickedPart.interchange.parts.length > 0) {
+        if (_.isObject($scope.part.interchange)) {
+          if (_.isObject($scope.pickedPart.interchange) && !$scope.pickedPart.interchange.alone) {
 
             // Join the other part's interchange group
             dialogs.confirm(
@@ -69,8 +67,7 @@ angular.module('ngMetaCrudApp')
                 },
                 restService.error);
           }
-        } else {
-          if ($scope.pickedPart.interchange) {
+        } else if ($scope.pickedPart.interchange) {
 
             // Add this part to the picked part's interchange
             Restangular.setParentless(false);
@@ -80,7 +77,7 @@ angular.module('ngMetaCrudApp')
                   $location.path("/part/" + $scope.partId);
                 },
                 restService.error);
-          } else {
+        } else {
 
             // Create
             var interchange = {
@@ -98,7 +95,6 @@ angular.module('ngMetaCrudApp')
                 function(response) {
                   dialogs.error("Could not add interchangeable part.", "Server said: <pre>" + JSON.stringify(response.data) + "</pre>");
                 });
-          }
         }
       }
 

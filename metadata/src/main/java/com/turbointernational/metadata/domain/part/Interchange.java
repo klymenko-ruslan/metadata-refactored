@@ -75,6 +75,11 @@ public class Interchange implements Serializable {
     public void setParts(Set<Part> parts) {
         this.parts = parts;
     }
+    
+    @JsonView({View.Summary.class})
+    public boolean isAlone() {
+        return parts.size() == 1;
+    }
     //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="Serialization">

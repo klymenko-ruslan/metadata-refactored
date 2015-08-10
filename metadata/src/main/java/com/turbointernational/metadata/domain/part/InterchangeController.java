@@ -84,14 +84,15 @@ public class InterchangeController {
     }
     
     @Transactional
-    @RequestMapping(value="/{id}/part/{partId}", method = RequestMethod.PUT)
+    @RequestMapping(value="/{interchangeId}/part/{partId}", method = RequestMethod.PUT)
     @ResponseBody
     @Secured("ROLE_INTERCHANGE")
-    public void update(Principal principal, @PathVariable("id") Long id, @PathVariable("partId") Long partId) throws Exception {
+    public void update(Principal principal, @PathVariable("interchangeId") Long id, @PathVariable("partId") Long partId) throws Exception {
         
         // Get the part and it's original interchange
         Part iPart = partDao.findOne(partId);
-        Interchange oldInterchange = iPart.getInterchange();
+        
+        Interchange oldInterchange = interchangeDao.findOne(iPart.getInterchange().getId()); // Hacky fix to multiple session problem
         
         // Update the interchange
         Interchange newInterchange = interchangeDao.findOne(id);
@@ -99,20 +100,20 @@ public class InterchangeController {
             throw new IllegalArgumentException("Could not find interchange " + id);
         }
         
-        // Save the part
+        // Save the part into the new interchange
         newInterchange.getParts().add(iPart);
         iPart.setInterchange(newInterchange);
         interchangeDao.merge(newInterchange);
-        partDao.merge(iPart);
         
         // Update the old interchange
         if (oldInterchange != null) {
             oldInterchange.getParts().remove(iPart);
-            interchangeDao.merge(oldInterchange);
             
             // Delete the interchange if it's empty, otherwise save it
             if (oldInterchange.getParts().isEmpty()) {
                 interchangeDao.remove(oldInterchange);
+            } else {
+                interchangeDao.merge(oldInterchange);
             }
         }
         
