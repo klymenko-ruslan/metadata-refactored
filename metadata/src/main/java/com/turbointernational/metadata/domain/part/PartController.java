@@ -143,20 +143,17 @@ public class PartController {
             consumes = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody Part updatePart(Principal principal, @RequestBody Part part, @PathVariable("id") Long id) throws PartNotFoundException {
         
-        // Get the original part so we can log the update
-//        Part originalPart = partDao.findOne(id);
-//        String originalPartJson = originalPart.toJson();
+        String originalPartJson = partDao.findOne(id).toJson();
         
         if (partDao.merge(part) == null) {
             throw new PartNotFoundException(id);
         }
         
-        part = partDao.findOne(part.getId());
-        partDao.refresh(part);
+        partDao.flush();
         
         // Update the changelog
-//        changelogDao.log("Updated part",
-//            "{original: " + originalPartJson + ",updated: " + part.toJson() + "}");
+        changelogDao.log("Updated part",
+            "{original: " + originalPartJson + ",updated: " + part.toJson() + "}");
         
         return part;
     }
