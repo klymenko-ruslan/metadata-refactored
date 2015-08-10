@@ -144,6 +144,7 @@ public class MagmiController {
             "style_compressor_wheel",
             "tip_height_b",
             "water_ports",
+            "width_jb",
             "width_max",
             "width_min"
         ));

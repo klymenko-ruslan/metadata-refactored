@@ -122,7 +122,7 @@ public class JournalBearing extends Part {
     public void csvColumns(Map<String, String> columns) {
         super.csvColumns(columns);
         
-        columns.put("width", ObjectUtils.toString(getWidth()));
+        columns.put("width_jb", ObjectUtils.toString(getWidth()));
         columns.put("outside_diameter_min", ObjectUtils.toString(getOutsideDiameterMin()));
         columns.put("outside_diameter_max", ObjectUtils.toString(getOutsideDiameterMax()));
         columns.put("inside_diameter_min", ObjectUtils.toString(getInsideDiameterMin()));
