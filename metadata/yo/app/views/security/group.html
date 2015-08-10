@@ -62,11 +62,19 @@
                 </li>
             </ul>
         </div>
-        <div class="col-sm-6">
+        <div class="col-sm-6" ng-if="!isNewGroup()">
             <h2>Users</h2>
             <ul class="list-group">
                 <li ng-repeat="user in users" class="list-group-item">
-                    <input type="checkbox" ng-model="userSelections[user.id]" name="userSelection"/> {{user.name}}
+                  <label>
+                    <input type="checkbox" ng-model="userSelections[user.id]" name="userSelection"/>
+                    {{user.name}}
+                  </label>
+                  <a href="/security/user/{{user.id}}"
+                     class="btn btn-primary btn-xs pull-right">
+                      <i class="fa fa-eye"></i>
+                      View User
+                  </a>
                 </li>
             </ul>
         </div>
