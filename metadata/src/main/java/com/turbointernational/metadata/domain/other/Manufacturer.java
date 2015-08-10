@@ -39,7 +39,7 @@ public class Manufacturer implements Serializable {
     
     @OneToOne
     @JoinColumn(name="manfr_type_id", nullable=false)
-    @JsonView({View.Summary.class})
+    @JsonView({View.Detail.class})
     private ManufacturerType type;
 
     @OneToOne(fetch = FetchType.LAZY)
