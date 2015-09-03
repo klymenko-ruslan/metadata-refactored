@@ -24,6 +24,12 @@ angular.module('ngMetaCrudApp')
         
         return Restangular.one('part', $scope.partId).all('ancestors').getList().then(
           function(ancestors) {
+              
+            // Copy the ancestor ID up to the wrapping object
+            angular.forEach(ancestors, function(wrapper) {
+                wrapper.id = wrapper.ancestor.id;
+            });
+            
             $scope.ancestors = ancestors;
           },
           function(response) {
