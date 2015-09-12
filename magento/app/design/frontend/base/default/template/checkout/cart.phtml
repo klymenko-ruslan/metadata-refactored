@@ -100,8 +100,8 @@
                 <tr>
                     <td colspan="50" class="a-right">
                         <?php if ($this->getContinueShoppingUrl()): ?>
-                            <button type="button" title="<?php echo $this->__('Continue Shopping') ?>" class="button btn-continue"
-                                    onclick="setLocation('<?php echo $this->getContinueShoppingUrl() ?>')">
+                            <button type="button" title="<?php echo Mage::helper('core')->quoteEscape($this->__('Continue Shopping')) ?>" class="button btn-continue"
+                                    onclick="setLocation('<?php echo Mage::helper('core')->quoteEscape($this->getContinueShoppingUrl()) ?>')">
                                 <span><span><?php echo $this->__('Continue Shopping') ?></span></span></button>
                         <?php endif; ?>
                         <button type="submit" name="update_cart_action" value="update_qty"
