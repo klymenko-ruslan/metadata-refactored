@@ -116,6 +116,10 @@
     Options +FollowSymLinks
     RewriteEngine on
 
+#RewriteCond %{HTTP_USER_AGENT} (Baiduspider) [NC]
+#RewriteRule .* - [R=403,L]
+
+
 ############################################
 ## you can put here your magento root folder
 ## path relative to web root
@@ -193,6 +197,7 @@
 ## By default allow all access
 
     Order allow,deny
+    deny from 180.76.15.
     Allow from all
 
 

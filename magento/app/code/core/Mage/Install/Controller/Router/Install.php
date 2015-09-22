@@ -19,27 +19,21 @@
  * needs please refer to http://www.magentocommerce.com for more information.
  *
  * @category    Mage
- * @package     Mage_Adminhtml
- * @copyright   Copyright (c) 2012 Magento Inc. (http://www.magentocommerce.com)
+ * @package     Mage_Install
+ * @copyright   Copyright (c) 2015 Magento Inc. (http://www.magentocommerce.com)
  * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
-
-class Mage_Adminhtml_Catalog_DatafeedsController extends Mage_Adminhtml_Controller_Action
+class Mage_Install_Controller_Router_Install extends Mage_Core_Controller_Varien_Router_Standard
 {
-
-    public function indexAction()
-    {
-        
-    }
-
     /**
-     * Check is allowed access to action
-     *
-     * @return bool
+     * Check if current controller instance is allowed in current router.
+     * 
+     * @param Mage_Core_Controller_Varien_Action $controllerInstance
+     * @return boolean
      */
-    protected function _isAllowed()
+    protected function _validateControllerInstance($controllerInstance)
     {
-        return true;
+        return $controllerInstance instanceof Mage_Install_Controller_Action;
     }
 }
