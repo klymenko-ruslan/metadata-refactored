@@ -24,10 +24,13 @@
  * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 ?>
-<?php $_item = $this->getItem() ?>
+<?php $_item = $this->getItem();
+$productDetail = Mage::getModel('catalog/product');
+$productDetail->load($_item->getOrderItem()->getProduct()->getId());
+?>
 <tr>
     <td align="left" valign="top" style="font-size:11px; padding:3px 9px;">
-        <strong><?php echo $this->htmlEscape($_item->getName()) ?></strong>
+        <strong><?php echo $this->htmlEscape($productDetail->getAttributeText('part_type')) ?></strong>
         <?php if ($this->getItemOptions()): ?>
         <dl style="margin:0; padding:0;">
             <?php foreach ($this->getItemOptions() as $option): ?>
@@ -42,6 +45,7 @@
         <?php endif; ?>
         <?php echo $this->htmlEscape($_item->getDescription()) ?>
     </td>
-    <td align="left" valign="top" style="font-size:11px; padding:3px 9px;"><?php echo $this->htmlEscape($this->getSku($_item)) ?></td>
+    <!-- TI Part Number -->
+    <td align="left" valign="top" style="font-size:11px; padding:3px 9px; border-bottom:1px dotted #CCCCCC;"><?php echo $this->htmlEscape($productDetail->getPartNumber()) ?></td>
     <td align="center" valign="top" style="font-size:11px; padding:3px 9px;"><?php echo $_item->getQty()*1 ?></td>
 </tr>
