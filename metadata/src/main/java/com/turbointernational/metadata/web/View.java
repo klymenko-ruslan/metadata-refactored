@@ -16,4 +16,6 @@ public class View {
     public static interface DetailWithUsers extends Detail {};
     
     public static interface DetailWithPartsAndAttachments extends Detail {};
+
+    public static interface DetailWithParts extends Detail {};
 }

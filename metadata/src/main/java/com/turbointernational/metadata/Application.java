@@ -73,7 +73,6 @@ public class Application extends WebMvcConfigurerAdapter implements WebApplicati
                 .serializationInclusion(JsonInclude.Include.NON_EMPTY)
                 .modulesToInstall(new Hibernate4Module() {{
                     enable(Feature.FORCE_LAZY_LOADING);
-                    enable(Feature.SERIALIZE_IDENTIFIER_FOR_LAZY_NOT_LOADED_OBJECTS);
                 }});
     }
     

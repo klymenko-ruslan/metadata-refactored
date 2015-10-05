@@ -22,7 +22,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -165,6 +164,16 @@ public class SalesNoteController {
                     consumes = MediaType.APPLICATION_JSON_VALUE,
                     produces = MediaType.APPLICATION_JSON_VALUE)
     public SalesNoteSearchResponse search(@RequestBody SalesNoteSearchRequest req) {
+        return salesNotes.search(req);
+    }
+    
+    @ResponseBody
+    @Secured("ROLE_SALES_NOTE_READ")
+    @JsonView(View.DetailWithParts.class)
+    @RequestMapping(value = "searchWithParts", method = RequestMethod.POST,
+                    consumes = MediaType.APPLICATION_JSON_VALUE,
+                    produces = MediaType.APPLICATION_JSON_VALUE)
+    public SalesNoteSearchResponse searchWithParts(@RequestBody SalesNoteSearchRequest req) {
         return salesNotes.search(req);
     }
     

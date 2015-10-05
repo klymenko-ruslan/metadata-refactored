@@ -2,6 +2,7 @@ package com.turbointernational.metadata.domain.part.salesnote;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.google.common.collect.Sets;
+import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.security.User;
 import com.turbointernational.metadata.web.View;
 import java.io.Serializable;
@@ -75,7 +76,7 @@ public class SalesNote implements Serializable {
 //            joinColumns = @JoinColumn(name = "sales_note_id"),
 //            inverseJoinColumns = @JoinColumn(name="part_id"))
     @OrderBy("id")
-    @JsonView({View.DetailWithPartsAndAttachments.class})
+    @JsonView({View.DetailWithParts.class, View.DetailWithPartsAndAttachments.class})
     private Set<SalesNotePart> parts = Sets.newLinkedHashSet();
     
     @JsonView({View.DetailWithPartsAndAttachments.class})
@@ -153,6 +154,17 @@ public class SalesNote implements Serializable {
 
     public void setAttachments(List<SalesNoteAttachment> attachments) {
         this.attachments = attachments;
+    }
+    
+    @JsonView({View.DetailWithParts.class})
+    public Part getPrimaryPart() {
+        for (SalesNotePart snp : parts) {
+            if (snp.isPrimary()) {
+                return snp.getPart();
+            }
+        }
+        
+        throw new IllegalStateException("No primary part found.");
     }
     
     @JsonView({View.Summary.class, View.Detail.class})

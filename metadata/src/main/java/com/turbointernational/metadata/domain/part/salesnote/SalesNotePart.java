@@ -1,7 +1,7 @@
 package com.turbointernational.metadata.domain.part.salesnote;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.security.User;
 import com.turbointernational.metadata.web.View;
@@ -107,6 +107,21 @@ public class SalesNotePart implements Serializable {
     
     public void setPart(Part part) {
         getPk().setPart(part);
+    }
+    
+    @JsonView({View.DetailWithParts.class})
+    public long getPartId() {
+        return pk.getPart().getId();
+    }
+    
+    @JsonView({View.DetailWithParts.class})
+    public String getPartNumber() {
+        return pk.getPart().getManufacturerPartNumber();
+    }
+    
+    @JsonView({View.DetailWithParts.class})
+    public Manufacturer getManufacturer() {
+        return pk.getPart().getManufacturer();
     }
     
     @JsonView({View.Summary.class})

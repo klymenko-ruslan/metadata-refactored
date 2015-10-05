@@ -81,6 +81,13 @@ angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap', 'restangu
     });
 
 
+    // List All Sales Notes
+    $routeProvider.when('/other/salesNotes', {
+      templateUrl: 'views/other/SalesNoteListAll.html',
+      controller: 'SalesNoteListAllCtrl'
+    });
+
+
     // Turbo Models
     $routeProvider.when('/other/turboModels', {
       templateUrl: 'views/other/TurboModels.html',

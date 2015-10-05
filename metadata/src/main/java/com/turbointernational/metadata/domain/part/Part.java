@@ -86,7 +86,7 @@ import org.springframework.stereotype.Component;
     @JsonSubTypes.Type(TurbineWheel.class),
     @JsonSubTypes.Type(Turbo.class),
 })
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id", scope = Part.class)
+//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id", scope = Part.class)
 public class Part implements Comparable<Part>, Serializable {
     private static final Logger log = Logger.getLogger(Part.class.toString());
     
