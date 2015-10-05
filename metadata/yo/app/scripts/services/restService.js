@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-    .service('restService', function RestService(Restangular, $dialogs, $q, $rootScope) {
+    .service('restService', function RestService($log, Restangular, dialogs, $q, $rootScope) {
         return new function () {  // jshint ignore:line
             var RestService     = this;
             var refreshPromise  = null;
@@ -59,8 +59,10 @@ angular.module('ngMetaCrudApp')
                 return;
               }
               
-              $dialogs.error(
-                  title, 'Server said: <pre>' + JSON.stringify(response.data) + '</pre>');
+              $log.log(title, response);
+              
+              dialogs.error(
+                  title, 'Server said: <pre>' + response.data.message + '</pre>');
             };
 
             this.findPart = function (id, params) {

@@ -34,6 +34,10 @@ angular.module('ngMetaCrudApp')
           }
         },
         controller: function($scope) {
+          $scope.hasParts = function() {
+            return _.isArray($scope.parts) && $scope.parts.length > 0;  
+          };
+          
           $scope.getPart = function(item) {
 
             // If we don't have a key, just return the parts list

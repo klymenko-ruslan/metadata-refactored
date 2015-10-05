@@ -19,9 +19,9 @@
 
     <!-- build:css(.tmp) styles/main.css -->
     <link rel="stylesheet" href="styles/main.css">
-    <link rel="stylesheet" href="bower_components/ng-table/ng-table.css">
+    <link rel="stylesheet" href="bower_components/ng-table/dist/ng-table.css">
     <link rel="stylesheet" href="bower_components/gToast/build/gToast.css">
-    <link rel="stylesheet" href="bower_components/angular-dialog-service/dialogs.css">
+    <link rel="stylesheet" href="bower_components/angular-dialog-service/dist/dialogs.css">
     <!-- endbuild -->
 
 </head>
@@ -40,18 +40,18 @@
 <bom-status class="pull-right"></bom-status>
 <div class="container" data-ng-view=""></div>
 
-<script src="bower_components/jquery/jquery.js"></script>
+<script src="bower_components/jquery/dist/jquery.js"></script>
 <script src="bower_components/angular/angular.js"></script>
 
 <!-- build:js scripts/modules.js -->
-<script src="bower_components/angular-cookies/angular-cookies.js"></script>
-<script src="bower_components/angular-dialog-service/dialogs.js"></script>
+<script src="bower_components/angular-dialog-service/dist/dialogs.js"></script>
 <script src="bower_components/angular-route/angular-route.js"></script>
 <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
+<script src="bower_components/angular-bootstrap/ui-bootstrap.js"></script>
 <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
-<script src="bower_components/bootstrap-sass/dist/js/bootstrap.js"></script>
+<script src="bower_components/bootstrap-sass/assets/javascripts/bootstrap.js"></script>
 <script src="bower_components/gToast/build/gToast.js"></script>
-<script src="bower_components/ng-table/ng-table.js"></script>
+<script src="bower_components/ng-table/dist/ng-table.js"></script>
 <script src="bower_components/underscore/underscore.js"></script>
 <!-- endbuild -->
 
@@ -67,6 +67,7 @@
 <script src="scripts/controllers/security/Users.js"></script>
 
 <script src="scripts/controllers/other/NameDialog.js"></script>
+<script src="scripts/controllers/other/SalesNoteListAll.js"></script>
 <script src="scripts/controllers/other/TurboModels.js"></script>
 <script src="scripts/controllers/part/AddPartImage.js"></script>
 <script src="scripts/controllers/part/KitComponentSearch.js"></script>
@@ -80,6 +81,10 @@
 <script src="scripts/controllers/part/dialog/PartCreateModal.js"></script>
 <script src="scripts/controllers/part/form/TurboModelPicker.js"></script>
 <script src="scripts/controllers/part/interchange/PartInterchangeSearch.js"></script>
+<script src="scripts/controllers/part/sales_note/SalesNoteListByPart.js"></script>
+<script src="scripts/controllers/part/sales_note/SalesNoteDetail.js"></script>
+<script src="scripts/controllers/part/sales_note/SalesNoteCreate.js"></script>
+<script src="scripts/controllers/part/sales_note/SalesNoteAddRelatedPart.js"></script>
 
 <script src="scripts/directives/authorize.js"></script>
 <script src="scripts/directives/bom.js"></script>
@@ -99,6 +104,10 @@
 <script src="scripts/services/User.js"></script>
 <script src="scripts/services/loginRequiredInterceptor.js"></script>
 <script src="scripts/directives/bomStatus.js"></script>
+<script src="scripts/services/SalesNotes.js"></script>
+<script src="scripts/directives/interchanges.js"></script>
+<script src="scripts/services/BOM.js"></script>
+<script src="scripts/services/Kits.js"></script>
 <!-- endbuild -->
 
 <!-- additional bower components -->

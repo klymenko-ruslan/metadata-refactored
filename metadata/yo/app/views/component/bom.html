@@ -3,9 +3,8 @@
     Bill of Materials
     <a authorize="ROLE_BOM"
        class="btn btn-primary pull-right" style="vertical-align: middle;"
-       ng-href="/part/{{partId}}/bom/search">
-      <i class="fa fa-plus"></i>
-      Add Child
+       ng-href="/part/{{parentPartId}}/bom/search">
+      <i class="fa fa-plus"></i> Add Child
     </a>
   </h3>
   <table data-ng-table="bomTableParams" class="table table-bordered table-striped table-hover table-responsive">
@@ -67,28 +66,27 @@
   </table>
 
   <div ng-show="altBomItem">
-    <h4 part-name="altBomItem.child" part-name-suffix="Alternates"></h4>
+      <h4 part-name="altBomItem.child" part-name-suffix="Alternates"></h4>
 
       <a authorize="ROLE_BOM"
          class="btn btn-info pull-right" style="vertical-align: middle;"
-         ng-href="/part/{{partId}}/bom/{{altBomItem.id}}/search">
-        <i class="fa fa-cogs"></i>
-        Add Alternate
+         ng-href="/part/{{parentPartId}}/bom/{{altBomItem.id}}/search">
+        <i class="fa fa-cogs"></i> Add Alternate
       </a>
 
-      <div class="row">
-        <part-table parts="altBomItem.alternatives | orderBy: header.id" key="part"
-                    extra-columns="{&quot;Alt Group #&quot;: &quot;item.header.id&quot;}">
+    <div class="row">
+      <part-table parts="altBomItem.alternatives" key="part"
+                  extra-columns="{&quot;Alt Group #&quot;: &quot;item.header.id&quot;}">
 
-          <button ng-click="removeAlternate(index, item)"
-                  ng-disabled="restService.status.bomRebuilding"
-             authorize="ROLE_BOM_ALT" class="btn btn-danger btn-xs">
-            <i class="fa fa-trash-o"></i> Remove
-          </button>
+        <button ng-click="removeAlternate(index, item)"
+                ng-disabled="restService.status.bomRebuilding"
+           authorize="ROLE_BOM_ALT" class="btn btn-danger btn-xs">
+          <i class="fa fa-trash-o"></i> Remove
+        </button>
 
-        </part-table>
+      </part-table>
 
-      </div>
+    </div>
   </div>
 
 </div>

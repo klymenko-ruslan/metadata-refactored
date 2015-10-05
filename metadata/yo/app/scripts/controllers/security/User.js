@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-  .controller('UserCtrl', function ($dialogs, $location, $log, $scope, $routeParams, gToast, restService, Restangular) {
+  .controller('UserCtrl', function (dialogs, $location, $log, $scope, $routeParams, gToast, restService, Restangular) {
 
       $scope.showResetPassword = false;
 
@@ -28,7 +28,7 @@ angular.module('ngMetaCrudApp')
         if ($routeParams.id == 'create') {
 
           // Create
-          Restangular.all('security/user/').post($scope.user).then(
+          Restangular.all('security/user').post($scope.user).then(
               function() {
                 gToast.open("Created user.")
                 $location.path('/security/users/');
@@ -52,7 +52,7 @@ angular.module('ngMetaCrudApp')
       };
 
       $scope.delete = function() {
-        $dialogs.confirm(
+        dialogs.confirm(
                 "Delete user?",
                 "Are you sure you want to delete the user for " + $scope.user.name + "?").result.then(
             function() {
@@ -65,7 +65,7 @@ angular.module('ngMetaCrudApp')
                   },
                   function(response) {
                     // Error
-                    $dialogs.error(
+                    dialogs.error(
                         "Could delete user.", "Server said: <pre>" + JSON.stringify(response.data) + "</pre>");
                   });
             },

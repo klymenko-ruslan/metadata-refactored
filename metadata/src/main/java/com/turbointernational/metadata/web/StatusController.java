@@ -1,7 +1,7 @@
 
 package com.turbointernational.metadata.web;
 
-import com.turbointernational.metadata.domain.part.Part;
+import com.turbointernational.metadata.domain.part.PartDao;
 import com.turbointernational.metadata.web.dto.Status;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -28,7 +28,7 @@ public class StatusController {
         
         Status status = new Status();
         
-        if (Part.getBomRebuildStart() != null) {
+        if (PartDao.getBomRebuildStart() != null) {
             status.setBomRebuilding(true);
         }
         

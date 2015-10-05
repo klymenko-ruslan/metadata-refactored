@@ -9,9 +9,10 @@ angular.module('ngMetaCrudApp')
 
         scope.$watch(function() {return User.roles;}, function() {
           if (_.contains(User.roles, role)) {
-            element.show();
+            element.removeClass('hidden');
           } else {
-            element.hide();
+//            element.remove();
+            element.addClass('hidden');
           }
         }, true);
       }

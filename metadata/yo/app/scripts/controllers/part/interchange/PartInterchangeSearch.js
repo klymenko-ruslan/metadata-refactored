@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-    .controller('PartInterchangeSearchCtrl', function ($log, $scope, $location, $routeParams, restService, Restangular, gToast, $dialogs) {
+    .controller('PartInterchangeSearchCtrl', function ($log, $scope, $location, $routeParams, restService, Restangular, gToast, dialogs) {
         $scope.restService = restService;
       $scope.partId = $routeParams.id;
 
@@ -22,7 +22,7 @@ angular.module('ngMetaCrudApp')
 
               // Check part type and add the picked part
               if (partType !== pickedPartType) {
-                $dialogs.confirm("Confirm Interchange Part Type",
+                dialogs.confirm("Confirm Interchange Part Type",
                                  "Are you sure you want to make the picked " + pickedPartType + " interchangeable with this " + partType + "?")
                   .result.then(function() {
                     $scope.pickedPart = pickedPart;
@@ -32,19 +32,17 @@ angular.module('ngMetaCrudApp')
               }
             },
             function(response) {
-              $dialogs.error("Could not load part details.", "Server said: <pre>" + JSON.stringify(response.data) + "</pre>");
+              dialogs.error("Could not load part details.", "Server said: <pre>" + JSON.stringify(response.data) + "</pre>");
             });
       }
 
       $scope.save = function() {
 
-        if ($scope.part.interchange) {
-
-          // Update
-          if ($scope.pickedPart.interchange && $scope.pickedPart.interchange.parts.length > 0) {
+        if (_.isObject($scope.part.interchange)) {
+          if (_.isObject($scope.pickedPart.interchange) && !$scope.pickedPart.interchange.alone) {
 
             // Join the other part's interchange group
-            $dialogs.confirm(
+            dialogs.confirm(
                     "Change interchangeable part group?",
                     "The part will no longer be interchangeable with it's current interchange parts.")
                 .result.then(function() {
@@ -55,7 +53,7 @@ angular.module('ngMetaCrudApp')
                         $location.path("/part/" + $scope.partId);
                       },
                       function(response) {
-                        $dialogs.error("Could not change interchangeable part group.", "Server said: <pre>" + JSON.stringify(response.data) + "</pre>");
+                        dialogs.error("Could not change interchangeable part group.", "Server said: <pre>" + JSON.stringify(response.data) + "</pre>");
                       });
               });
           } else {
@@ -69,8 +67,7 @@ angular.module('ngMetaCrudApp')
                 },
                 restService.error);
           }
-        } else {
-          if ($scope.pickedPart.interchange) {
+        } else if ($scope.pickedPart.interchange) {
 
             // Add this part to the picked part's interchange
             Restangular.setParentless(false);
@@ -80,7 +77,7 @@ angular.module('ngMetaCrudApp')
                   $location.path("/part/" + $scope.partId);
                 },
                 restService.error);
-          } else {
+        } else {
 
             // Create
             var interchange = {
@@ -96,9 +93,8 @@ angular.module('ngMetaCrudApp')
                   $location.path("/part/" + $scope.partId);
                 },
                 function(response) {
-                  $dialogs.error("Could not add interchangeable part.", "Server said: <pre>" + JSON.stringify(response.data) + "</pre>");
+                  dialogs.error("Could not add interchangeable part.", "Server said: <pre>" + JSON.stringify(response.data) + "</pre>");
                 });
-          }
         }
       }
 
@@ -128,7 +124,7 @@ angular.module('ngMetaCrudApp')
 
       $scope.removeInterchange = function () {
         $log.log("clear");
-        $dialogs.confirm(
+        dialogs.confirm(
                 "Remove from interchangeable part group?",
                 "Other parts in the group will not be modified.")
             .result.then(
@@ -141,7 +137,7 @@ angular.module('ngMetaCrudApp')
                         $location.path("/part/" + $scope.partId);
                       },
                       function (response) {
-                        $dialogs.error("Could not remove part from interchange", "Server said: <pre>" + JSON.stringify(response.data) + "</pre>");
+                        dialogs.error("Could not remove part from interchange", "Server said: <pre>" + JSON.stringify(response.data) + "</pre>");
                       });
                 });
       }

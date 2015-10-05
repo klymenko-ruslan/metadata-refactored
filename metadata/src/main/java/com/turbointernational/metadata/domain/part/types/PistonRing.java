@@ -1,35 +1,40 @@
 package com.turbointernational.metadata.domain.part.types;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.domain.part.Part;
+import com.turbointernational.metadata.web.View;
 import java.util.Map;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
-import net.sf.jsog.JSOG;
 import org.apache.commons.lang.ObjectUtils;
-import org.springframework.beans.factory.annotation.Configurable;
 
-@Configurable
 @Entity
 @Table(name="piston_ring")
 @PrimaryKeyJoinColumn(name = "part_id")
 public class PistonRing extends Part {
     
+    @JsonView(View.Detail.class)
     @Column(name="outside_dim_min")
     private Float outsideDiameterMin;
 
+    @JsonView(View.Detail.class)
     @Column(name="outside_dim_max")
     private Float outsideDiameterMax;
 
+    @JsonView(View.Detail.class)
     @Column(name="width_min")
     private Float widthMin;
 
+    @JsonView(View.Detail.class)
     @Column(name="width_max")
     private Float widthMax;
 
+    @JsonView(View.Detail.class)
     @Column(name="i_gap_min")
     private Float installedGapMin;
 
+    @JsonView(View.Detail.class)
     @Column(name="i_gap_max")
     private Float installedGapMax;
 

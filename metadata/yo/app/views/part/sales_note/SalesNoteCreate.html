@@ -1,0 +1,26 @@
+<metanav>
+  <li authorize="ROLE_READ">
+    <a ng-href="/part/{{partId}}"
+       class="btn btn-primary">
+      <i class="fa fa-eye"></i> View Part
+    </a>
+  </li>
+  <li authorize="ROLE_SALES_NOTE_READ">
+    <a ng-href="/part/{{partId}}/sales_notes"
+       class="btn btn-info">
+      <i class="fa fa-book"></i>
+      Sales Notes &hellip;
+    </a>
+  </li>
+  <li authorize="ROLE_SALES_NOTE_SUBMIT">
+    <a ng-click="saveAndEdit()"
+       class="btn btn-success">
+      <i class="fa fa-save"></i>
+      Save and Edit
+    </a>
+  </li>
+</metanav>
+
+<h1 class="padding-top" part-name="part" part-name-suffix="Create Sales Note"></h1>
+
+<textarea cols="70" rows="5" ng-model="salesNote.comment"></textarea>

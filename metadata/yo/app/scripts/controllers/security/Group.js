@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-  .controller('GroupCtrl', function ($dialogs, $location, $log, $scope, $routeParams, gToast, restService, Restangular) {
+  .controller('GroupCtrl', function (dialogs, $location, $log, $scope, $routeParams, gToast, restService, Restangular) {
 
       $scope.newName,
       $scope.roleSelections,
@@ -64,6 +64,7 @@ angular.module('ngMetaCrudApp')
       }
 
       $scope.save = function() {
+        $scope.group.name = $scope.newName;
         $scope.group.roles = _.chain($scope.roleSelections).map(function(isSelected, roleId) {
           if (isSelected) {
             return $scope.roles[roleId];
@@ -98,7 +99,7 @@ angular.module('ngMetaCrudApp')
       };
 
       $scope.delete = function() {
-        $dialogs.confirm(
+        dialogs.confirm(
                 "Delete group?",
                 "Are you sure you want to delete the " + $scope.group.name + " group?").result.then(
             function() {
@@ -107,10 +108,11 @@ angular.module('ngMetaCrudApp')
                   function() {
                     // Success
                     gToast.open("Deleted group.");
+                    $location.path("/security/groups")
                   },
                   function(response) {
                     // Error
-                    $dialogs.error(
+                    dialogs.error(
                         "Could delete group.", "Server said: <pre>" + JSON.stringify(response.data) + "</pre>");
                   });
             },

@@ -1,5 +1,7 @@
 package com.turbointernational.metadata.domain.part.types;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.domain.part.Part;
+import com.turbointernational.metadata.web.View;
 import flexjson.JSONSerializer;
 import java.util.Map;
 import javax.persistence.Column;
@@ -9,37 +11,40 @@ import javax.persistence.JoinTable;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
-import net.sf.jsog.JSOG;
 import org.apache.commons.lang.ObjectUtils;
-import org.springframework.beans.factory.annotation.Configurable;
 
-@Configurable
 @Entity
 @Table(name="bearing_spacer")
 @PrimaryKeyJoinColumn(name = "part_id")
 public class BearingSpacer extends Part {
 
     @OneToOne
+    @JsonView(View.Detail.class)
     @JoinTable(name="standard_bearing_spacer",
                joinColumns=@JoinColumn(name="oversized_part_id"),
                inverseJoinColumns=@JoinColumn(name="standard_part_id"))
     private BearingSpacer standardSize;
 
     @OneToOne
+    @JsonView(View.Detail.class)
     @JoinTable(name="standard_bearing_spacer",
                joinColumns=@JoinColumn(name="standard_part_id"),
                inverseJoinColumns=@JoinColumn(name="oversized_part_id"))
     private BearingSpacer oversize;
     
+    @JsonView(View.Detail.class)
     @Column(name="outside_dim_min")
     private Float outsideDiameterMin;
 
+    @JsonView(View.Detail.class)
     @Column(name="outside_dim_max")
     private Float outsideDiameterMax;
     
+    @JsonView(View.Detail.class)
     @Column(name="inside_dim_min")
     private Float insideDiameterMin;
     
+    @JsonView(View.Detail.class)
     @Column(name="inside_dim_max")
     private Float insideDiameterMax;
 
@@ -114,14 +119,6 @@ public class BearingSpacer extends Part {
         columns.put("outside_diameter_max", ObjectUtils.toString(getOutsideDiameterMax()));
         columns.put("inside_diameter_min", ObjectUtils.toString(getInsideDiameterMin()));
         columns.put("inside_diameter_max", ObjectUtils.toString(getInsideDiameterMax()));
-
-        if (getStandardSize() != null) {
-            columns.put("standard_size_id", ObjectUtils.toString(getStandardSize().getId()));
-        }
-
-        if (getOversize() != null) {
-            columns.put("oversize_id", ObjectUtils.toString(getOversize().getId()));
-        }
     }
 
 }

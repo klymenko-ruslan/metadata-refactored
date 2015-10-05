@@ -5,8 +5,10 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Table;
 import com.google.common.collect.TreeBasedTable;
+import com.turbointernational.metadata.domain.GenericDao;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.Part;
+import com.turbointernational.metadata.domain.part.PartDao;
 import com.turbointernational.metadata.domain.part.ProductImage;
 import com.turbointernational.metadata.magmi.dto.MagmiApplication;
 import com.turbointernational.metadata.magmi.dto.MagmiBomItem;
@@ -15,6 +17,7 @@ import com.turbointernational.metadata.magmi.dto.MagmiProduct;
 import com.turbointernational.metadata.magmi.dto.MagmiServiceKit;
 import com.turbointernational.metadata.magmi.dto.MagmiTurbo;
 import com.turbointernational.metadata.magmi.dto.MagmiUsage;
+import java.io.Serializable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -42,6 +45,12 @@ public class MagmiDataFinder {
     
     @Autowired(required=true)
     JdbcTemplate db;
+    
+    @Autowired
+    PartDao partDao;
+    
+    @Autowired
+    GenericDao<Serializable> genericDao;
     
     public TreeMap<Long, MagmiProduct> findMagmiProducts(List<Part> parts) {
         long startTime = System.currentTimeMillis();
@@ -85,7 +94,7 @@ public class MagmiDataFinder {
         logger.log(Level.INFO, "Finding images.", applications.size());
         
         // Add the images
-        List<ProductImage> images = findProductImages(productIds);
+        List<ProductImage> images = partDao.findProductImages(productIds, this);
         
         for (ProductImage image : images) {
             productMap.get(image.getPart().getId())
@@ -147,16 +156,6 @@ public class MagmiDataFinder {
                 new Object[] {productMap.size(), System.currentTimeMillis() - startTime});
         
         return productMap;
-    }
-    
-    public List<ProductImage> findProductImages(Collection<Long> productIds) {
-        return Part.entityManager().createQuery(
-                  "SELECT DISTINCT pi\n"
-                + "FROM ProductImage pi\n"
-                + "WHERE\n"
-                + "  pi.part.id IN (" + StringUtils.join(productIds, ',') + ")\n"
-                + "ORDER BY pi.id", ProductImage.class)
-            .getResultList();
     }
     
     List<MagmiApplication> findMagmiApplications(Collection<Long> productIds) {
@@ -264,7 +263,7 @@ public class MagmiDataFinder {
     }
     
     List<MagmiInterchange> findMagmiInterchanges(Collection<Long> productIds) {
-        return Part.entityManager().createQuery(
+        return partDao.getEntityManager().createQuery(
                 "SELECT DISTINCT NEW"
               + "  com.turbointernational.metadata.magmi.dto.MagmiInterchange("
               + "    p.id AS sku,"

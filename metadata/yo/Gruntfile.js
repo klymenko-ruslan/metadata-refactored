@@ -22,7 +22,7 @@ module.exports = function (grunt) {
   // configurable paths
   var yeomanConfig = {
     app: 'app',
-    dist: 'dist'
+    dist: '../src/main/resources/public'
   };
 
   try {
@@ -95,7 +95,7 @@ module.exports = function (grunt) {
             return [
               modRewrite([
                 '^/(metadata/.*)$             http://localhost:8080/$1 [PL]',
-                '^/(security/.*)$             http://localhost:8080/$1 [PL]',
+                //'^/(security/.*)$             http://localhost:8080/$1 [PL]',
                 '^/(\\w|/)+$                  /index.html             [L]'
               ]),
               lrSnippet,
@@ -380,8 +380,8 @@ module.exports = function (grunt) {
     'clean:server',
     'concurrent:test',
     'autoprefixer',
-    'connect:test',
-    'karma'
+//    'connect:test'
+    //'karma'
   ]);
 
   grunt.registerTask('build', [

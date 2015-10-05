@@ -1,49 +1,50 @@
 package com.turbointernational.metadata.domain.other;
-import com.googlecode.ehcache.annotations.TriggersRemove;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.domain.type.ManufacturerType;
+import com.turbointernational.metadata.web.View;
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityManager;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
-import javax.persistence.PersistenceContext;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.transaction.annotation.Transactional;
 
 @Cacheable
-@Configurable
 @Entity
 @Table(name="MANFR", uniqueConstraints=@UniqueConstraint(columnNames={"name"}))
-public class Manufacturer {
+public class Manufacturer implements Serializable {
     
     public static final Long TI_ID = 11L;
     
     //<editor-fold defaultstate="collapsed" desc="Properties">
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonView({View.Summary.class})
     private Long id;
     
     @Column(nullable=false)
+    @JsonView({View.Summary.class})
     private String name;
     
     @OneToOne
     @JoinColumn(name="manfr_type_id", nullable=false)
+    @JsonView({View.Detail.class})
     private ManufacturerType type;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="parent_manfr_id")
+    @JsonView({View.Detail.class})
     private Manufacturer parent;
     
     public Long getId() {
@@ -76,46 +77,6 @@ public class Manufacturer {
     
     public void setParent(Manufacturer parent) {
         this.parent = parent;
-    }
-    //</editor-fold>
-    
-    //<editor-fold defaultstate="collapsed" desc="ActiveRecord">
-    @PersistenceContext
-    transient EntityManager entityManager;
-    
-    public static final EntityManager entityManager() {
-        EntityManager em = new Manufacturer().entityManager;
-        if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
-        return em;
-    }
-    
-    @com.googlecode.ehcache.annotations.Cacheable(cacheName = "manufacturers")
-    public static List<Manufacturer> findAllManufacturers() {
-        return entityManager().createQuery("SELECT o FROM Manufacturer o", Manufacturer.class).getResultList();
-    }
-    
-    @com.googlecode.ehcache.annotations.Cacheable(cacheName = "manufacturers")
-    public static Manufacturer findManufacturer(Long id) {
-        if (id == null) return null;
-        return entityManager().find(Manufacturer.class, id);
-    }
-    
-    @com.googlecode.ehcache.annotations.Cacheable(cacheName = "manufacturers")
-    public static Manufacturer TI() {
-        return findManufacturer(TI_ID);
-    }
-    
-    @TriggersRemove(cacheName = "manufacturers")
-    @Transactional
-    public void flush() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.flush();
-    }
-    
-    @Transactional
-    public void clear() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.clear();
     }
     //</editor-fold>
     

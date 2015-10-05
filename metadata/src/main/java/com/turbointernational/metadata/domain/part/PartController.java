@@ -1,15 +1,17 @@
 package com.turbointernational.metadata.domain.part;
-import com.turbointernational.metadata.domain.changelog.Changelog;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.domain.changelog.ChangelogDao;
 import com.turbointernational.metadata.domain.other.TurboType;
+import com.turbointernational.metadata.domain.other.TurboTypeDao;
 import com.turbointernational.metadata.domain.part.bom.BOMAncestor;
 import com.turbointernational.metadata.util.ImageResizer;
+import com.turbointernational.metadata.web.View;
 import flexjson.JSONSerializer;
 import flexjson.transformer.HibernateTransformer;
 import java.io.File;
 import java.security.Principal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
@@ -18,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -36,6 +39,21 @@ public class PartController {
 
     private static final Logger log = Logger.getLogger(PartController.class.toString());
     
+    @Autowired
+    ChangelogDao changelogDao;
+    
+    @Autowired
+    TurboTypeDao turboTypeDao;
+    
+    @Autowired
+    PartDao partDao;
+    
+    @Autowired
+    PartRepository partRepository;
+    
+    @Autowired
+    ProductImageDao productImageDao;
+    
     @Value("${images.originals}")
     File originalImagesDir;
     
@@ -45,19 +63,13 @@ public class PartController {
     @Autowired(required=true)
     JdbcTemplate db;
 
-    @Transactional
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ResponseBody
     @Secured("ROLE_READ")
-    public ResponseEntity<String> show(@PathVariable("id") Long id) {
-        
-        Part part = Part.findPart(id);
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/json; charset=utf-8");
-        if (part == null) {
-            return new ResponseEntity<String>(headers, HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<String>(part.toJson(), headers, HttpStatus.OK);
+    @JsonView(View.Detail.class)
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public Part getPart(@PathVariable("id") Long id) {
+        return partRepository.findOne(id);
     }
     
     @RequestMapping(value="/{id}/ancestors", method = RequestMethod.GET)
@@ -87,8 +99,8 @@ public class PartController {
                     
                     ancestor.setDistance(rs.getInt("distance"));
                     ancestor.setType(rs.getString("type"));
-                    ancestor.setPart(Part.findPart(rs.getLong("part_id")));
-                    ancestor.setAncestor(Part.findPart(rs.getLong("ancestor_part_id")));
+                    ancestor.setPart(partDao.findOne(rs.getLong("part_id")));
+                    ancestor.setAncestor(partDao.findOne(rs.getLong("ancestor_part_id")));
 
                     return ancestor;
                 }
@@ -111,69 +123,59 @@ public class PartController {
     }
     
     @Transactional
-    @RequestMapping(method = RequestMethod.POST)
     @Secured("ROLE_CREATE_PART")
-    public ResponseEntity<String> createFromJson(Principal principal, @RequestBody String partJson) throws Exception {
-        Part part = Part.fromJsonToPart(partJson);
-        
-        part.persist();
+    @JsonView(View.Detail.class)
+    @RequestMapping(method = RequestMethod.POST)
+    public @ResponseBody long createPart(Principal principal, @RequestBody Part part) throws Exception {
+        partDao.persist(part);
         
         // Update the changelog
-        Changelog.log("Created part", part.toJson());
+        changelogDao.log("Created part", part.toJson());
         
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/json");
-        return new ResponseEntity<String>(part.getId().toString(), headers, HttpStatus.CREATED);
+        return part.getId();
     }
-    
+
     @Transactional
-    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     @Secured("ROLE_ALTER_PART")
-    public ResponseEntity<String> updateFromJson(Principal principal, @RequestBody String partJson, @PathVariable("id") Long id) throws Exception {
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/json");
+    @JsonView(View.Detail.class)
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT,
+            produces = MediaType.APPLICATION_JSON_VALUE,
+            consumes = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody Part updatePart(Principal principal, @RequestBody Part part, @PathVariable("id") Long id) throws PartNotFoundException {
         
-        // Get the original part so we can log the update
-        Part originalPart = Part.findPart(id);
-        String originalPartJson = originalPart.toJson();
+        String originalPartJson = partDao.findOne(id).toJson();
         
-        // Update the part
-        Part part = Part.fromJsonToPart(partJson);
-        
-        if (part.merge() == null) {
-            return new ResponseEntity<String>(headers, HttpStatus.NOT_FOUND);
+        if (partDao.merge(part) == null) {
+            throw new PartNotFoundException(id);
         }
         
-        part = Part.findPart(part.getId());
-        Part.entityManager().refresh(part);
+        partDao.flush();
         
         // Update the changelog
-        Changelog.log("Updated part",
+        changelogDao.log("Updated part",
             "{original: " + originalPartJson + ",updated: " + part.toJson() + "}");
         
-        return new ResponseEntity<String>(part.toJson(), headers, HttpStatus.OK);
+        return part;
     }
     
+    
     @Transactional
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     @Secured("ROLE_DELETE_PART")
-    public ResponseEntity<String> deleteFromJson(Principal principal, @PathVariable("id") Long id) {
-        Part part = Part.findPart(id);
+    public @ResponseBody void deletePart(Principal principal, @PathVariable("id") Long id) throws PartNotFoundException {
+        Part part = partDao.findOne(id);
         
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/json");
-        if (part == null) {
-            return new ResponseEntity<String>(headers, HttpStatus.NOT_FOUND);
+        if (partDao.merge(part) == null) {
+            throw new PartNotFoundException(id);
         }
         
         // Update the changelog
-        Changelog.log("Deleted part", part.toJson());
+        changelogDao.log("Deleted part", part.toJson());
         
         // Delete the part
         db.update("INSERT INTO `deleted_parts` (id) VALUES(?)", part.getId());
-        part.remove();
-        
-        return new ResponseEntity<String>(headers, HttpStatus.OK);
+        partDao.remove(part);
     }
     
     @Transactional
@@ -181,7 +183,7 @@ public class PartController {
     @ResponseBody
     @Secured("ROLE_ADMIN")
     public void rebuildAllBom() throws Exception {
-        Part.rebuildBomDescendancy();
+        partDao.rebuildBomDescendancy();
     }
     
     @Transactional
@@ -191,7 +193,7 @@ public class PartController {
     public ResponseEntity<ProductImage> addProductImage(@PathVariable Long id, @RequestBody byte[] imageData) throws Exception {
         
         // Look up the part
-        Part part = Part.findPart(id);
+        Part part = partDao.findOne(id);
         
         // Save the file into the originals directory
         String filename = part.getId().toString() + "_" + System.currentTimeMillis() + ".jpg"; // Good enough
@@ -202,13 +204,10 @@ public class PartController {
         ProductImage productImage = new ProductImage();
         productImage.setFilename(filename);
         productImage.setPart(part);
+        part.getProductImages().add(productImage);
         
         // Save it
-        productImage.persist();
-        
-        // Update the part
-        part.getProductImages().add(productImage);
-        part.merge();
+        productImageDao.persist(productImage);
 
         // Generate the resized images
         for (int size : ImageResizer.SIZES) {
@@ -223,10 +222,10 @@ public class PartController {
     @ResponseBody
     @Secured("ROLE_ALTER_PART")
     public void addTurboType(@PathVariable("partId") long partId, @PathVariable("turboTypeId") long turboTypeId) {
-        Part part = Part.findPart(partId);
-        TurboType turboType = TurboType.findTurboType(turboTypeId);
+        Part part = partDao.findOne(partId);
+        TurboType turboType = turboTypeDao.findOne(turboTypeId);
         part.getTurboTypes().add(turboType);
-        part.merge();
+        partDao.merge(part);
     }
     
     @Transactional
@@ -234,7 +233,7 @@ public class PartController {
     @ResponseBody
     @Secured("ROLE_ALTER_PART")
     public void deleteTurboType(@PathVariable("partId") long partId, @PathVariable("turboTypeId") long turboTypeId) {
-        Part part = Part.findPart(partId);
+        Part part = partDao.findOne(partId);
         
         // Remove any matching turbo types
         Iterator<TurboType> it = part.getTurboTypes().iterator();
@@ -245,7 +244,12 @@ public class PartController {
             }
         }
         
-        part.merge();
+        partDao.merge(part);
     }
 
+    private class PartNotFoundException extends Exception {
+        public PartNotFoundException(long partId) {
+            super("No part found with id: " + partId);
+        }
+    }
 }

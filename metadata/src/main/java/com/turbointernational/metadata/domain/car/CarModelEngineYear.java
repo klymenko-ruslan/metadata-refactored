@@ -2,6 +2,7 @@ package com.turbointernational.metadata.domain.car;
 
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -14,13 +15,11 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import org.springframework.beans.factory.annotation.Configurable;
 
 @Cacheable
-@Configurable
 @Entity
 @Table(name="car_model_engine_year")
-public class CarModelEngineYear {
+public class CarModelEngineYear implements Serializable {
     
     //<editor-fold defaultstate="collapsed" desc="Properties">
     @Id

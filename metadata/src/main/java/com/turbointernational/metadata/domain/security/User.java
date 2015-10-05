@@ -1,31 +1,25 @@
 package com.turbointernational.metadata.domain.security;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.common.collect.Sets;
+import com.turbointernational.metadata.web.View;
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
-import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityManager;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import javax.persistence.Table;
-import javax.persistence.Transient;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
-@Configurable
 @Entity
 @Table(name="USER")
 public class User implements Comparable<User>, UserDetails {
@@ -38,26 +32,38 @@ public class User implements Comparable<User>, UserDetails {
                 .include("enabled")
                 .include("groups.id")
                 .include("groups.name")
+                .include("roles")
                 .exclude("*");
 
     //<editor-fold defaultstate="collapsed" desc="Properties">
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonView({View.Detail.class, View.Summary.class})
     private Long id;
     
+    @JsonView({View.Detail.class, View.Summary.class})
     private String name;
     
+    @JsonView({View.Detail.class, View.Summary.class})
     private String email;
     
+    @JsonIgnore
     private String password;
     
+    @JsonIgnore
     private String passwordResetToken;
     
+    @JsonView(View.Detail.class)
     @Column(columnDefinition = "BIT")
     private Boolean enabled;
     
-    @ManyToMany(mappedBy="users")
+    @JsonView({View.SummaryWithGroups.class, View.DetailWithGroups.class})
+    @ManyToMany(mappedBy="users", fetch = FetchType.EAGER)
     private Set<Group> groups = new TreeSet<Group>();
+    
+    // For UserDetails
+    @JsonIgnore
+    private final transient Set<SimpleGrantedAuthority> authorities = Sets.newHashSet();
     
     public Long getId() {
         return id;
@@ -107,120 +113,49 @@ public class User implements Comparable<User>, UserDetails {
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
     }
-    
+
     public Set<Group> getGroups() {
         return groups;
     }
-    
+
     public void setGroups(Set<Group> groups) {
         this.groups = groups;
     }
-    //</editor-fold>
     
-    //<editor-fold defaultstate="collapsed" desc="Active Record">
-    @PersistenceContext
-    @Transient
-    private transient EntityManager entityManager;
-    
-    public static final EntityManager entityManager() {
-        EntityManager em = new User().entityManager;
-        if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
-        return em;
+    @Override
+    @JsonIgnore
+    public Set<SimpleGrantedAuthority> getAuthorities() {
+        return authorities;
     }
-    
-    public static long countUsers() {
-        return entityManager().createQuery("SELECT COUNT(o) FROM User o", Long.class).getSingleResult();
+
+    @Override
+    @JsonIgnore
+    public String getUsername() {
+        return email;
     }
-    
-    public static List<User> findActiveUsers() {
-        return entityManager().createQuery("SELECT o FROM User o WHERE o.enabled = true", User.class).getResultList();
+
+    @Override
+    @JsonIgnore
+    public boolean isAccountNonExpired() {
+        return getEnabled();
     }
-    
-    public static List<User> findAllUsers() {
-        return entityManager().createQuery("SELECT o FROM User o", User.class).getResultList();
+
+    @Override
+    @JsonIgnore
+    public boolean isAccountNonLocked() {
+        return getEnabled();
     }
-    
-    public static User findUser(Long id) {
-        if (id == null) return null;
-        return entityManager().find(User.class, id);
+
+    @Override
+    @JsonIgnore
+    public boolean isCredentialsNonExpired() {
+        return getEnabled();
     }
-    
-    public static List<User> findUserEntries(int firstResult, int maxResults) {
-        return entityManager().createQuery("SELECT o FROM User o", User.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
-    }
-    
-    @Transactional
-    public void persist() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.persist(this);
-    }
-    
-    @Transactional
-    public void remove() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        if (this.entityManager.contains(this)) {
-            this.entityManager.remove(this);
-        } else {
-            User attached = findUser(this.id);
-            this.entityManager.remove(attached);
-        }
-    }
-    
-    @Transactional
-    public void flush() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.flush();
-    }
-    
-    @Transactional
-    public void clear() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.clear();
-    }
-    
-    @Transactional
-    public User merge() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        User merged = this.entityManager.merge(this);
-        this.entityManager.flush();
-        return merged;
-    }
-    
-    public static User findUserByEmail(String email) {
-        if (StringUtils.isNotBlank(email)) {
-            List<User> users = User.entityManager()
-                    .createQuery("SELECT u FROM User u WHERE u.email = ?")
-                    .setParameter(1, email)
-                    .getResultList();
-            
-            if (!users.isEmpty()) {
-                return users.get(0);
-            }
-        }
-        
-        return null;
-    }
-    
-    public static User findByPasswordResetToken(String token) {
-        EntityManager em = User.entityManager();
-        
-        Query q = em.createQuery("SELECT u FROM User u WHERE u.passwordResetToken = ?", User.class);
-        q.setParameter(1, token);
-        return (User) q.getSingleResult();
-    }
-    //</editor-fold>
-    
-    //<editor-fold defaultstate="collapsed" desc="Serialization">
-    public String toJson() {
-        return JSON.serialize(this);
-    }
-    
-    public String toJson(String[] fields) {
-        return new JSONSerializer().include(fields).exclude("*.class").serialize(this);
-    }
-    
-    public static User fromJson(String json) {
-        return new JSONDeserializer<User>().use(null, User.class).deserialize(json);
+
+    @Override
+    @JsonIgnore
+    public boolean isEnabled() {
+        return getEnabled();
     }
     //</editor-fold>
     
@@ -233,44 +168,6 @@ public class User implements Comparable<User>, UserDetails {
         }
         
         return null;
-    }
-    
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        Set<GrantedAuthority> authorities = Sets.newHashSet();
-        
-        for (Group group : groups) {
-            for (Role role : group.getRoles()) {
-                authorities.add(new SimpleGrantedAuthority(role.getName()));
-            }
-        }
-        
-        return authorities;
-    }
-    
-    @Override
-    public String getUsername() {
-        return email;
-    }
-    
-    @Override
-    public boolean isAccountNonExpired() {
-        return getEnabled();
-    }
-    
-    @Override
-    public boolean isAccountNonLocked() {
-        return getEnabled();
-    }
-    
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return getEnabled();
-    }
-    
-    @Override
-    public boolean isEnabled() {
-        return getEnabled();
     }
     //</editor-fold>
     

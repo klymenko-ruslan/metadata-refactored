@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-  .controller('MyAccountCtrl', function ($dialogs, $log, $location, $scope, gToast, Restangular, restService) {
+  .controller('MyAccountCtrl', function (dialogs, $log, $location, $scope, gToast, Restangular, restService) {
       $scope.user;
 
       var userPromise = Restangular.one("security/user/me").get().then(

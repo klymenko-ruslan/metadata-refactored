@@ -1,6 +1,8 @@
 package com.turbointernational.metadata.domain.part.types;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.type.GasketType;
+import com.turbointernational.metadata.web.View;
 import flexjson.JSONSerializer;
 import java.util.Map;
 import javax.persistence.Entity;
@@ -9,16 +11,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
-import net.sf.jsog.JSOG;
 import org.apache.commons.lang.ObjectUtils;
-import org.springframework.beans.factory.annotation.Configurable;
 
-@Configurable
 @Entity
 @Table(name="gasket")
 @PrimaryKeyJoinColumn(name = "part_id")
 public class Gasket extends Part {
 
+    @JsonView(View.Summary.class)
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="gasket_type_id")
     private GasketType gasketType;

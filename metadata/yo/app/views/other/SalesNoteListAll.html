@@ -1,0 +1,102 @@
+<metanav>
+<!--  <li authorize="ROLE_READ">
+    <a ng-href="/part/{{ partId }}"
+       class="btn btn-primary">
+      <i class="fa fa-eye"></i> View Part
+    </a>
+  </li>-->
+</metanav>
+
+<h1 class="padding-top">Search All Sales Notes</h1>
+
+
+<div class="row">
+  <div class="col-xs-12">
+    <form ng-submit="notesTableParams.reload()" class="form-inline">
+      <div class="btn-group col-xs-5">
+        <label ng-repeat="state in SalesNotes.states" class="btn btn-default" btn-checkbox
+               ng-model="states.current[state]">{{state}}</label>
+      </div>
+      
+      <div class="btn-group col-xs-2">
+        <label class="btn btn-default" btn-checkbox
+               ng-model="search.includePrimary">Primary</label>
+        <label class="btn btn-default" btn-checkbox
+               ng-model="search.includeRelated">Related</label>
+      </div>
+      
+      <input id="part-number" class="form-control col-xs-3"
+             type="text" placeholder="Part number or comment"
+             size="40"
+             ng-model="search.query" ng-model-options="{debounce:1000}">
+      
+      <button class="form-control col-xs-2" type="submit">Search</button>
+    </form>
+  </div>
+</div>
+
+<div class="row">
+  <hr/>
+</div>
+
+<div class="row">
+  <div class="col-xs-12">
+    <table data-ng-table="notesTableParams" class="table table-bordered table-striped table-hover table-responsive">
+        <tr data-ng-repeat="salesNote in $data">
+            <td title="'Created'" data-sortable="'salesNote.createdDate'">
+                {{salesNote.createDate | date : "yyyy-MM-dd HH:mm" }}
+            </td>
+            <td title="'Primary Part'" data-sortable="'salesNote.manufacturerPartNumber'">
+                {{salesNote.primaryPart.manufacturerPartNumber}}
+            </td>
+            <td title="'Note'" data-sortable="'salesNote.comment'">
+                {{salesNote.comment}}
+            </td>
+            <td title="'State'" data-sortable="'salesNote.state'">
+                {{salesNote.state}}
+            </td>
+<!--            <td title="'Relation'" ng-class="{info:salesNote.primaryPartId == partId}">
+                {{salesNote.primaryPartId === salesNote ? "Primary" : "Related"}}
+            </td>
+-->
+            <td class="text-right" title="'Actions'">
+                <a ng-href="/part/{{salesNote.primaryPartId}}/sales_note/{{salesNote.id}}"
+                   authorize="ROLE_SALES_NOTE_READ"
+                   class="btn btn-primary btn-sm pull-left">
+                  <span class="fa fa-file-text-o"></span> View Note
+                </a>
+
+                <a ng-click="SalesNotes.submit(salesNote)"
+                   authorize="ROLE_SALES_NOTE_SUBMIT" ng-if="SalesNotes.canSubmit(salesNote)"
+                   class="btn btn-info btn-sm">
+                  <span class="fa fa-check-square"></span> Submit
+                </a>
+
+                <a ng-click="SalesNotes.publish(salesNote)"
+                   authorize="ROLE_SALES_NOTE_PUBLISH" ng-if="SalesNotes.canPublish(salesNote)"
+                   class="btn btn-primary btn-sm">
+                  <span class="fa fa-cloud-upload"></span> Publish
+                </a>
+
+                <a ng-click="SalesNotes.approve(salesNote)"
+                   authorize="ROLE_SALES_NOTE_APPROVE" ng-if="SalesNotes.canApprove(salesNote)"
+                   class="btn btn-success btn-sm">
+                  <span class="fa fa-thumbs-up"></span> Approve
+                </a>
+
+                <a ng-click="SalesNotes.reject(salesNote)"
+                   authorize="ROLE_SALES_NOTE_REJECT" ng-if="SalesNotes.canReject(salesNote)"
+                   class="btn btn-danger btn-sm">
+                  <span class="fa fa-thumbs-down"></span> Reject
+                </a>
+
+                <a ng-click="SalesNotes.retract(salesNote)"
+                   authorize="ROLE_SALES_NOTE_RETRACT" ng-if="SalesNotes.canRetract(salesNote)"
+                   class="btn btn-warning btn-sm">
+                  <span class="fa fa-cloud-download"></span> Retract
+                </a>
+            </td>
+        </tr>
+    </table>
+  </div>
+</div>

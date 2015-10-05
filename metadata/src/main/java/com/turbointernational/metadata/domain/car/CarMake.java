@@ -2,6 +2,7 @@ package com.turbointernational.metadata.domain.car;
 
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -13,13 +14,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-import org.springframework.beans.factory.annotation.Configurable;
 
 @Cacheable
-@Configurable
 @Entity
 @Table(name="car_make", uniqueConstraints=@UniqueConstraint(columnNames={"name"}))
-public class CarMake {
+public class CarMake implements Serializable {
     
     //<editor-fold defaultstate="collapsed" desc="Properties">
     @Id

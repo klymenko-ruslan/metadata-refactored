@@ -1,4 +1,12 @@
 package com.turbointernational.metadata.domain.part;
+import com.fasterxml.jackson.annotation.JsonFilter;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.other.TurboType;
 import com.turbointernational.metadata.domain.part.bom.BOMItem;
@@ -17,15 +25,15 @@ import com.turbointernational.metadata.domain.part.types.TurbineWheel;
 import com.turbointernational.metadata.domain.part.types.Turbo;
 import com.turbointernational.metadata.domain.type.PartType;
 import com.turbointernational.metadata.util.ElasticSearch;
+import com.turbointernational.metadata.web.View;
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
 import flexjson.ObjectBinder;
 import flexjson.ObjectFactory;
 import flexjson.transformer.HibernateTransformer;
+import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.Collection;
-import java.util.Date;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -34,7 +42,6 @@ import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityManager;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -47,30 +54,40 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
-import javax.persistence.PersistenceContext;
 import javax.persistence.PostPersist;
 import javax.persistence.PostUpdate;
 import javax.persistence.PreRemove;
-import javax.persistence.Query;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.persistence.Version;
 import org.apache.commons.lang3.ObjectUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 @Cacheable
-@Configurable
 @Entity
 @Table(name = "PART")
 @Inheritance(strategy = InheritanceType.JOINED)
-public class Part implements Comparable<Part> {
+@Component
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "class", include = As.PROPERTY, defaultImpl = Part.class)
+@JsonSubTypes({
+    @JsonSubTypes.Type(Backplate.class),
+    @JsonSubTypes.Type(BearingHousing.class),
+    @JsonSubTypes.Type(BearingSpacer.class),
+    @JsonSubTypes.Type(Cartridge.class),
+    @JsonSubTypes.Type(CompressorWheel.class),
+    @JsonSubTypes.Type(Gasket.class),
+    @JsonSubTypes.Type(Heatshield.class),
+    @JsonSubTypes.Type(JournalBearing.class),
+    @JsonSubTypes.Type(Kit.class),
+    @JsonSubTypes.Type(NozzleRing.class),
+    @JsonSubTypes.Type(PistonRing.class),
+    @JsonSubTypes.Type(TurbineWheel.class),
+    @JsonSubTypes.Type(Turbo.class),
+})
+//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id", scope = Part.class)
+public class Part implements Comparable<Part>, Serializable {
     private static final Logger log = Logger.getLogger(Part.class.toString());
     
     public static final ObjectFactory OBJECT_FACTORY = new ObjectFactory() {
@@ -113,7 +130,6 @@ public class Part implements Comparable<Part> {
                 part = new Part();
             }
             
-            
             context.bind(value, part);
             return part;
         }
@@ -122,38 +138,47 @@ public class Part implements Comparable<Part> {
     //<editor-fold defaultstate="collapsed" desc="Properties">
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonView({View.Summary.class})
     private Long id;
     
     @OneToOne(fetch = FetchType.LAZY)
+    @JsonView({View.Summary.class})
     @JoinColumn(name = "manfr_id", nullable = false)
     private Manufacturer manufacturer;
     
     @Column(name = "manfr_part_num")
+    @JsonView({View.Summary.class})
     private String manufacturerPartNumber;
     
     @Column(name = "name")
+    @JsonView({View.Summary.class})
     private String name;
     
     @Column(name="description")
+    @JsonView({View.Detail.class})
     private String description;
     
     @OneToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="part_type_id")
+    @JsonView({View.Summary.class})
     private PartType partType;
     
     @Column(nullable = false, columnDefinition = "BIT", length = 1)
+    @JsonView({View.Detail.class})
     private Boolean inactive = false;
     
     @OneToMany(fetch = FetchType.LAZY)
     @JoinTable(name="part_turbo_type",
                 joinColumns = @JoinColumn(name="part_id"),
                 inverseJoinColumns = @JoinColumn(name="turbo_type_id"))
+    @JsonView({View.Detail.class})
     private Set<TurboType> turboTypes = new TreeSet<TurboType>();
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinTable(name="interchange_item",
             joinColumns=@JoinColumn(name="part_id"),
             inverseJoinColumns=@JoinColumn(name="interchange_header_id"))
+    @JsonView({View.Detail.class})
     private Interchange interchange;
     
     @OneToMany(mappedBy="parent", fetch = FetchType.LAZY, orphanRemoval = true)
@@ -161,12 +186,16 @@ public class Part implements Comparable<Part> {
     private Set<BOMItem> bom = new TreeSet<BOMItem>();
     
     @OneToMany(cascade = CascadeType.REFRESH, mappedBy = "part", fetch=FetchType.LAZY)
+    @JsonView({View.Detail.class})
+    @OrderBy("id")
     private Set<ProductImage> productImages = new TreeSet<ProductImage>();
     
     @Version
     @Column(name = "version")
+    @JsonView({View.Summary.class})
     private Integer version;
     
+//    @JsonView({View.Summary.class})
     public Long getId() {
         return id;
     }
@@ -175,6 +204,7 @@ public class Part implements Comparable<Part> {
         this.id = id;
     }
     
+//    @JsonView({View.Summary.class})
     public Manufacturer getManufacturer() {
         return manufacturer;
     }
@@ -183,6 +213,7 @@ public class Part implements Comparable<Part> {
         this.manufacturer = manufacturer;
     }
     
+//    @JsonView({View.Summary.class})
     public String getManufacturerPartNumber() {
         return manufacturerPartNumber;
     }
@@ -191,6 +222,7 @@ public class Part implements Comparable<Part> {
         this.manufacturerPartNumber = manufacturerPartNumber;
     }
     
+//    @JsonView({View.Summary.class})
     public String getName() {
         return name;
     }
@@ -199,6 +231,7 @@ public class Part implements Comparable<Part> {
         this.name = name;
     }
     
+//    @JsonView({View.Summary.class})
     public String getDescription() {
         return description;
     }
@@ -207,6 +240,7 @@ public class Part implements Comparable<Part> {
         this.description = description;
     }
     
+//    @JsonView({View.Summary.class})
     public PartType getPartType() {
         return partType;
     }
@@ -258,14 +292,10 @@ public class Part implements Comparable<Part> {
     //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="Lifecycle">
-    @Autowired(required=true)
-    @Transient
-    private ElasticSearch elasticSearch;
-    
     @PreRemove
     public void removeSearchIndex() throws Exception {
         try {
-            elasticSearch.deletePart(this);
+            ElasticSearch.instance().deletePart(this);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -275,7 +305,7 @@ public class Part implements Comparable<Part> {
     @PostPersist
     public void updateSearchIndex() throws Exception {
         log.info("Updating search index.");
-        elasticSearch.indexPart(this);
+        ElasticSearch.instance().indexPart(this);
     }
     //</editor-fold>
 
@@ -428,129 +458,15 @@ public class Part implements Comparable<Part> {
     }
     //</editor-fold>
     
-    //<editor-fold defaultstate="collapsed" desc="ActiveRecord">
-    @PersistenceContext
-    @Transient
-    private EntityManager entityManager;
-    
-    @Autowired(required=true)
-    @Transient
-    private PlatformTransactionManager txManager;
-    
-    public static final EntityManager entityManager() {
-        EntityManager em = new Part().entityManager;
-        if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
-        return em;
-    }
-    
-    public static long count() {
-        return entityManager().createQuery("SELECT COUNT(o) FROM Part o", Long.class).getSingleResult();
-    }
-
-    public static List<Part> getPartsUpdatedAfter(Date lastUpdated, int i, int pageSize) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-    
-    public static Part findPart(Long id) {
-        if (id == null) return null;
-        Query q = entityManager().createQuery("SELECT DISTINCT p FROM Part p LEFT JOIN p.interchange i WHERE p.id = :id");
-        q.setParameter("id", id);
-        return (Part) q.getSingleResult();
-    }
-    
-    public static List<Part> findPartEntries(int firstResult, int maxResults) {
-        return entityManager()
-                .createQuery(
-                  "SELECT p\n"
-                + "FROM Part p", Part.class)
-                .setFirstResult(firstResult)
-                .setMaxResults(maxResults)
-                .getResultList();
-    }
-    
-    @Transactional
-    public void persist() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.persist(this);
-    }
-    
-    @Transactional
-    public void remove() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        if (this.entityManager.contains(this)) {
-            this.entityManager.remove(this);
-        } else {
-            Part attached = Part.findPart(this.id);
-            this.entityManager.remove(attached);
-        }
-    }
-    
-    @Transactional
-    public void flush() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.flush();
-    }
-    
-    @Transactional
-    public void clear() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.clear();
-    }
-    
-    @Transactional
-    public Part merge() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        Part merged = this.entityManager.merge(this);
-        this.entityManager.flush();
-        return merged;
-    }
-    
-    @Transactional
-    public void refresh() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.refresh(this);
-    }
-    //</editor-fold>
-    
-    //<editor-fold defaultstate="collapsed" desc="BOM Ancestry">
-    
-    /**
-     * Contains the date when we started the BOM rebuild, or null if not currently rebuilding.
-     */
-    private volatile static Date bomRebuildStart = null;
-    
-    public static final Date getBomRebuildStart() {
-        return bomRebuildStart;
-    }
-    
-    @Async("bomRebuildExecutor") // One at a time
-    public static void rebuildBomDescendancy() {
-        try {
-            // Track the rebuild so users can get status
-            bomRebuildStart = new Date();
-            
-            new TransactionTemplate(new Part().txManager).execute(new TransactionCallback() {
-                @Override
-                public Object doInTransaction(TransactionStatus status) {
-                    log.info("Rebuilding BOM descendancy.");
-                    EntityManager em = entityManager();
-
-                    // Delete the old ancestry
-                    em.createNativeQuery("CALL RebuildBomDescendancy()").executeUpdate();
-                    em.clear();
-                    log.info("BOM descendancy rebuild completed.");
-
-                    return null;
-                }
-            });
-        } finally {
-            bomRebuildStart = null;
-        }
-    }
-    //</editor-fold>
     
     @Override
     public int compareTo(Part o) {
         return ObjectUtils.compare(this.id, o.id);
     }
+
+    @Override
+    public String toString() {
+        return getClass().toString() + "#" + id;
+    }
+    
 }

@@ -24,7 +24,7 @@
   <!-- Bill of Materials -->
   <div class="col-xs-6">
     <h3>Part BOM</h3>
-    <part-table parts="part.bom" key="child"></part-table>
+    <part-table parts="bom" key="child"></part-table>
   </div>
 
   <!-- BOM Item -->
@@ -39,7 +39,7 @@
   <!-- Current Alternates -->
   <div class="col-xs-6">
     <h3>Current Alternates</h3>
-    <part-table parts="bomItem.alternatives | orderBy: header.id" key="part" extra-columns="{&quot;Alt Group #&quot;: &quot;item.header.id&quot;}"></part-table>
+    <part-table parts="bomItem.alternatives" key="part" extra-columns="{&quot;Alt Group #&quot;: &quot;item.header.id&quot;}"></part-table>
   </div>
 
   <!-- Picked Alternate -->

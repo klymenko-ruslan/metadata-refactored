@@ -1,8 +1,10 @@
 package com.turbointernational.metadata.magmi.dto;
 
+import com.turbointernational.metadata.Application;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.part.ProductImage;
+import com.turbointernational.metadata.domain.part.ProductImageDao;
 import com.turbointernational.metadata.domain.part.types.Turbo;
 import com.turbointernational.metadata.util.ImageResizer;
 import java.util.ArrayList;
@@ -52,6 +54,8 @@ public class MagmiProduct {
     private String tiPartNumber = "";
     
     private Boolean hasTiChra = false;
+    
+    private String sopJson = "";
     
     private final List<MagmiBomItem> bom = new ArrayList<MagmiBomItem>();
     
@@ -105,6 +109,10 @@ public class MagmiProduct {
         this.hasTiChra = hasTiChra;
     }
     
+    public void setSopJson(String sopJson) {
+        this.sopJson = sopJson;
+    }
+
     public final void addApplication(MagmiApplication application) {
         if (StringUtils.isNotEmpty(application.getFinder())) {
             finderApplication.add(application.getFinder());
@@ -225,6 +233,7 @@ public class MagmiProduct {
         columns.put("ti_part_sku", StringUtils.join(tiInterchanges, ','));
         columns.put("ti_part_number", tiPartNumber);
         columns.put("has_ti_chra", Boolean.toString(hasTiChra));
+        columns.put("standard_oversize_part", sopJson);
         
         // Don't overwrite turbo values
         if (!(part instanceof Turbo)) {
@@ -260,9 +269,9 @@ public class MagmiProduct {
         Iterator<Long> it = imageIds.iterator();
         Long firstImage = it.next();
 
-        columns.put("image", ProductImage.getResizedFilename(part.getId(), firstImage, 1000));
-        columns.put("small_image", ProductImage.getResizedFilename(part.getId(), firstImage, 135));
-        columns.put("thumbnail", ProductImage.getResizedFilename(part.getId(), firstImage, 50));
+        columns.put("image", ProductImageDao.getResizedFilename(part.getId(), firstImage, 1000));
+        columns.put("small_image", ProductImageDao.getResizedFilename(part.getId(), firstImage, 135));
+        columns.put("thumbnail", ProductImageDao.getResizedFilename(part.getId(), firstImage, 50));
 
         // Additional images
         StringBuilder galleryString = new StringBuilder();
@@ -276,7 +285,7 @@ public class MagmiProduct {
             }
 
             // Add the filename
-            galleryString.append(ProductImage.getResizedFilename(part.getId(), additionalImage, 1000));
+            galleryString.append(ProductImageDao.getResizedFilename(part.getId(), additionalImage, 1000));
         }
 
         // Add the column
