@@ -1,10 +1,8 @@
 package com.turbointernational.metadata.domain.security;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.common.collect.Sets;
 import com.turbointernational.metadata.web.View;
-import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
 import java.util.Set;
 import java.util.TreeSet;
@@ -47,7 +45,6 @@ public class User implements Comparable<User>, UserDetails {
     @JsonView({View.Detail.class, View.Summary.class})
     private String email;
     
-    @JsonIgnore
     private String password;
     
     @JsonIgnore
