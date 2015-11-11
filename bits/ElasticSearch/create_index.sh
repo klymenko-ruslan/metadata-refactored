@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SERVER='http://localhost:9300'
+SERVER='http://localhost:9200'
 INDEX='metadata'
 TYPE='part'
 
