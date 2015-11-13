@@ -2,6 +2,8 @@ package com.turbointernational.metadata.web;
 
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.util.ElasticSearch;
+
+import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,12 +12,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 /**
  *
@@ -25,8 +25,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping("/metadata/search")
 public class SearchController {
     private static final Logger log = Logger.getLogger(SearchController.class.toString());
-    
-    
+
+
     @Autowired(required=true)
     ElasticSearch elasticSearch;
     
@@ -51,10 +51,23 @@ public class SearchController {
         
         elasticSearch.indexPart(part);
     }
-    
+
+    @RequestMapping("/indexAll2")
+    @ResponseBody
+    public String indexALL2() throws Exception {
+        System.out.println("XXXXX");
+        Collection<SimpleGrantedAuthority> authorities = (Collection<SimpleGrantedAuthority>)
+                SecurityContextHolder.getContext().getAuthentication().getAuthorities();
+        for(SimpleGrantedAuthority auth : authorities) {
+            System.out.println("auth: " + auth);
+        }
+        return "Hello world!";
+    }
+
     @Async
     @RequestMapping(value="/indexAll")
     @ResponseBody
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @Secured("ROLE_ADMIN")
     public void indexAll(
             @RequestParam(required=false) Integer page,
