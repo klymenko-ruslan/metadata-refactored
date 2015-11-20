@@ -1,4 +1,3 @@
-
 package com.turbointernational.metadata.magmi.dto;
 
 /**

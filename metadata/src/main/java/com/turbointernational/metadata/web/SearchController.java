@@ -2,20 +2,17 @@ package com.turbointernational.metadata.web;
 
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.util.ElasticSearch;
-
-import java.util.Collection;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -50,18 +47,6 @@ public class SearchController {
         Part part = Part.findPart(partId);
         
         elasticSearch.indexPart(part);
-    }
-
-    @RequestMapping("/indexAll2")
-    @ResponseBody
-    public String indexALL2() throws Exception {
-        System.out.println("XXXXX");
-        Collection<SimpleGrantedAuthority> authorities = (Collection<SimpleGrantedAuthority>)
-                SecurityContextHolder.getContext().getAuthentication().getAuthorities();
-        for(SimpleGrantedAuthority auth : authorities) {
-            System.out.println("auth: " + auth);
-        }
-        return "Hello world!";
     }
 
     @Async

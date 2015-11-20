@@ -21,6 +21,7 @@
 /magento/media/import/*
 /magento/var
 /images/
+/metadata/metadata.iml
 /metadata/yo/dist/
 /metadata/yo/.tmp/
 /metadata/yo/.sass-cache/

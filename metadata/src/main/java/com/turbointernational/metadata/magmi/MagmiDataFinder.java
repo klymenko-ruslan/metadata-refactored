@@ -1,4 +1,3 @@
-
 package com.turbointernational.metadata.magmi;
 
 import com.google.common.collect.ArrayListMultimap;
@@ -8,21 +7,7 @@ import com.google.common.collect.TreeBasedTable;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.part.ProductImage;
-import com.turbointernational.metadata.magmi.dto.MagmiApplication;
-import com.turbointernational.metadata.magmi.dto.MagmiBomItem;
-import com.turbointernational.metadata.magmi.dto.MagmiInterchange;
-import com.turbointernational.metadata.magmi.dto.MagmiProduct;
-import com.turbointernational.metadata.magmi.dto.MagmiServiceKit;
-import com.turbointernational.metadata.magmi.dto.MagmiTurbo;
-import com.turbointernational.metadata.magmi.dto.MagmiUsage;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.TreeMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.turbointernational.metadata.magmi.dto.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -31,6 +16,15 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.stereotype.Service;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.TreeMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *

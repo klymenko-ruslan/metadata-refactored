@@ -1,8 +1,11 @@
 package com.turbointernational.metadata.mas90;
 
+import com.turbointernational.metadata.mas90.pricing.DiscountType;
 import com.turbointernational.metadata.mas90.pricing.ItemPricing;
 import com.turbointernational.metadata.mas90.pricing.Pricing;
-import com.turbointernational.metadata.mas90.pricing.DiscountType;
+import org.junit.Before;
+import org.junit.Test;
+
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -10,9 +13,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Before;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  *

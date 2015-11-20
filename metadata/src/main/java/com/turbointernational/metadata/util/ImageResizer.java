@@ -1,13 +1,14 @@
 package com.turbointernational.metadata.util;
 
 import com.turbointernational.metadata.domain.part.ProductImage;
-import java.io.File;
-import java.io.IOException;
 import org.im4java.core.ConvertCmd;
 import org.im4java.core.IM4JavaException;
 import org.im4java.core.IMOperation;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  * @author Edward

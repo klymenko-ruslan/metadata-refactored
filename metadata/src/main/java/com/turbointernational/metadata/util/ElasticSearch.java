@@ -1,9 +1,6 @@
 package com.turbointernational.metadata.util;
 
 import com.turbointernational.metadata.domain.part.Part;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.elasticsearch.ElasticSearchException;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
@@ -18,6 +15,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *

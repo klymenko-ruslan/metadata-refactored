@@ -1,12 +1,13 @@
 package com.turbointernational.metadata.mas90.pricing;
 
+import org.junit.Before;
+import org.junit.Test;
+
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
-import org.junit.Test;
 
-import static org.junit.Assert.*;
-import org.junit.Before;
+import static org.junit.Assert.assertEquals;
 
 /**
  *

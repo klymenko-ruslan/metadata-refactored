@@ -2,21 +2,10 @@ package com.turbointernational.metadata.domain.part;
 
 import flexjson.JSONSerializer;
 import flexjson.transformer.HibernateTransformer;
-import java.util.List;
-import javax.persistence.Cacheable;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.*;
 
 /**
  *
