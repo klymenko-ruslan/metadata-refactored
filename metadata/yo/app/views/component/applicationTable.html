@@ -11,23 +11,12 @@
   </thead>
   <tbody>
     <tr ng-repeat="item in applications">
-      <td>
-        {{getPart(item).partType.name}}
-      </td>
-      <td>
-        {{getPart(item).manufacturer.name}}
-      </td>
-      <td style="white-space: nowrap;">
-        {{getPart(item).manufacturerPartNumber}}
-      </td>
-      <td part-table-actions>
-        <a authorize="ROLE_READ"
-           ng-href="/part/{{getPart(item).id}}"
-           class="btn btn-primary btn-xs">
-          <i class="fa fa-eye"></i>
-          View
-        </a>
-      </td>
+      <td>{{getApplication(item).year.name}}</td>
+      <td>{{getApplication(item).model.make.name}}</td>
+      <td>{{getApplication(item).model.name}}</td>
+      <td>{{getApplication(item).engine.engineSize}}</td>
+      <td>{{getApplication(item).engine.fuelType.name}}</td>
+      <td part-table-actions>TODO</td>
     </tr>
     <tr ng-hide="applications">
       <td colspan="7">No applications to display.</td>
