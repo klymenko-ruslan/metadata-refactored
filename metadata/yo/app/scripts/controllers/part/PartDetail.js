@@ -20,16 +20,6 @@ angular.module('ngMetaCrudApp')
                 restService.error("Could not get part details", errorResponse);
             });
 
-        // Applications.
-        restService.findApplications($scope.partId).then(
-            function (applications) {
-                $scope.applications = applications;
-            },
-            function (errorResponse) {
-                $log.log("Could not get part's applications", errorResponse);
-                restService.error("Could not get part's applications", errorResponse);
-            });
-
         // Turbo Types
         $scope.addTurboType = function() {
           $dialogs.create(

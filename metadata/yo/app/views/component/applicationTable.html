@@ -11,11 +11,11 @@
   </thead>
   <tbody>
     <tr ng-repeat="item in applications">
-      <td>{{getApplication(item).year.name}}</td>
-      <td>{{getApplication(item).model.make.name}}</td>
-      <td>{{getApplication(item).model.name}}</td>
-      <td>{{getApplication(item).engine.engineSize}}</td>
-      <td>{{getApplication(item).engine.fuelType.name}}</td>
+      <td>{{item.year.name}}</td>
+      <td>{{item.model.make.name}}</td>
+      <td>{{item.model.name}}</td>
+      <td>{{item.engine.engineSize}}</td>
+      <td>{{item.engine.fuelType.name}}</td>
       <td part-table-actions>TODO</td>
     </tr>
     <tr ng-hide="applications">
