@@ -314,8 +314,17 @@
 
   <!-- Applications (AKA CarModelEngineYear) -->
   <div class="col-xs-12 col-md-6">
-    <h3>Applications</h3>
-    <application-table applications="part.interchange.parts"></application-table>
+    <h3>
+      Applications
+      <a authorize="ROLE_ALTER_PART"
+         class="btn btn-primary pull-right" style="vertical-align: middle;"
+         ng-click="addApplication()">
+        <i class="fa fa-plus"></i>
+        Add Application
+      </a>
+    </h3>
+    <pre>XXX2: {{applications}}</pre>
+    <application-table applications="applications"></application-table>
   </div>
 
 </div>

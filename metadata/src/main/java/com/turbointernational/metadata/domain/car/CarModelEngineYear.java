@@ -2,7 +2,9 @@ package com.turbointernational.metadata.domain.car;
 
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -27,6 +29,17 @@ public class CarModelEngineYear {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="car_engine_id", nullable = true)
     private CarEngine engine;
+
+    @PersistenceContext
+    @Transient
+    private EntityManager entityManager;
+
+    public static final EntityManager entityManager() {
+        EntityManager em = new CarModelEngineYear().entityManager;
+        if (em == null) throw new IllegalStateException("Entity manager has not been injected " +
+                "(is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
+        return em;
+    }
     
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="car_year_id", nullable = true)
@@ -72,6 +85,14 @@ public class CarModelEngineYear {
     
     public String toJson(String[] fields) {
         return new JSONSerializer().include(fields).exclude("*.class").serialize(this);
+    }
+
+    public static List<CarModelEngineYear> findApplications(List<Long> ids) {
+        List<CarModelEngineYear> retVal = entityManager().createQuery(
+                "SELECT cmey FROM CarModelEngineYear cmey WHERE id IN(:ids)",
+                CarModelEngineYear.class).setParameter("ids", ids)
+                .getResultList();
+        return retVal;
     }
     
     public static CarModelEngineYear fromJsonToCarFuelType(String json) {

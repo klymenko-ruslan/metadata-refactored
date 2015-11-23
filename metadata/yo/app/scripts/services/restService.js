@@ -6,23 +6,23 @@ angular.module('ngMetaCrudApp')
             var RestService     = this;
             var refreshPromise  = null;
             this.status         = null;
-            
+
             this.refreshStatus = function() {
               if (refreshPromise !== null) {
                 return refreshPromise;
               } else {
-                
+
                 refreshPromise = Restangular.one('status/all').get();
-                
+
                 refreshPromise.then(function(status) {
                   RestService.status = status;
                   return status;
                 });
-                
+
                 refreshPromise.finally(function() {
                   refreshPromise = null;
                 });
-                
+
                 return refreshPromise;
               }
             };
@@ -30,10 +30,10 @@ angular.module('ngMetaCrudApp')
             // Wraps the BOM status logic, resolving when the BOM is not rebuilding.
             this.getBomRebuildingCompletePromise = function() {
               var deferred = $q.defer();
-              
+
               RestService.refreshStatus().then(function(status) {
                 if (status.bomRebuilding) {
-                
+
                   var cancelWatcher = $rootScope.$watch(
                       function() {
                         return RestService.status.bomRebuilding;
@@ -48,17 +48,17 @@ angular.module('ngMetaCrudApp')
                   deferred.resolve();
                 }
               });
-                  
+
               return deferred.promise;
             };
 
             this.error = function(title, response) {
-              
+
               // NOOP on access denied, loginRequiredInterceptor will handle the redirect
               if (response.status === 401 || response.status === 403) {
                 return;
               }
-              
+
               $dialogs.error(
                   title, 'Server said: <pre>' + JSON.stringify(response.data) + '</pre>');
             };
@@ -77,6 +77,10 @@ angular.module('ngMetaCrudApp')
 
             this.deletePart = function (part) {
                 return Restangular.remove(part);
+              };
+
+            this.findApplications = function (part_id) {
+                return Restangular.one('carmodelengineyear/part', part_id).getList('applications');
               };
 
             this.listManufacturers = function (first, count) {

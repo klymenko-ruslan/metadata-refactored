@@ -414,9 +414,9 @@ public class Part implements Comparable<Part> {
     
     public static Part findPart(Long id) {
         if (id == null) return null;
-        Query q = entityManager().createQuery("SELECT DISTINCT p FROM Part p LEFT JOIN p.interchange i WHERE p.id = :id");
-        q.setParameter("id", id);
-        return (Part) q.getSingleResult();
+        EntityManager em = entityManager();
+        Part retVal = em.find(Part.class, id);
+        return retVal;
     }
     
     public static List<Part> findPartEntries(int firstResult, int maxResults) {
