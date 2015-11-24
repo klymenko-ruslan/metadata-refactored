@@ -17,7 +17,7 @@
     <td>{{item.engine.engineSize}}</td>
     <td>{{item.engine.fuelType.name}}</td>
     <td>
-      <button ng-click="remove(item)" authorize="ROLE_APPLICATION_CRUD" class="btn btn-danger btn-xs">
+      <button ng-click="remove(index, item)" authorize="ROLE_APPLICATION_CRUD" class="btn btn-danger btn-xs">
         <i class="fa fa-trash-o"></i> Remove
       </button>
     </td>

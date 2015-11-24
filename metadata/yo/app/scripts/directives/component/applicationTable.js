@@ -16,7 +16,7 @@ angular.module('ngMetaCrudApp').directive('applicationTable', function ($log,res
           restService.error("Could not get part's applications", errorResponse);
         }
       );
-      $scope.remove = function(item) {
+      $scope.remove = function(idx, item) {
         $dialogs.confirm('Remove Application Item', 'Are you sure?').result.then(
           function() {
             // Yes
@@ -24,7 +24,7 @@ angular.module('ngMetaCrudApp').directive('applicationTable', function ($log,res
             var application_id = 123; // TODO
             restService.removePartApplication(part_id, application_id).then(
               function() {
-                alert('Removed!');
+                $scope.applications.splice(idx, 1);
               },
               restService.error
             );
