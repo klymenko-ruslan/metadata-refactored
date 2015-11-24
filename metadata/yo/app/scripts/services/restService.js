@@ -79,8 +79,12 @@ angular.module('ngMetaCrudApp')
                 return Restangular.remove(part);
               };
 
-            this.findApplications = function (part_id) {
-                return Restangular.one('carmodelengineyear/part', part_id).getList('applications');
+            this.findPartApplications = function (part_id) {
+                return Restangular.one('part', part_id).getList('application');
+              };
+
+            this.removePartApplication = function (part_id, application_id) {
+                return Restangular.one('part', part_id).one('application', application_id).remove();
               };
 
             this.listManufacturers = function (first, count) {

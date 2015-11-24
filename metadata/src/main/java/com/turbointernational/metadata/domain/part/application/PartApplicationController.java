@@ -1,5 +1,6 @@
-package com.turbointernational.metadata.domain.car;
+package com.turbointernational.metadata.domain.part.application;
 
+import com.turbointernational.metadata.domain.car.CarModelEngineYear;
 import flexjson.JSONSerializer;
 import flexjson.transformer.HibernateTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,20 +16,22 @@ import org.springframework.web.bind.annotation.*;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 
-@RequestMapping("/metadata/carmodelengineyear")
+@RequestMapping("/metadata/part")
 @Controller
-public class CarModelEngineYearController {
+public class PartApplicationController {
 
-    private static final Logger log = Logger.getLogger(CarModelEngineYearController.class.toString());
+
+    private static final Logger log = Logger.getLogger(PartApplicationController.class.toString());
 
     @Autowired(required=true)
     JdbcTemplate db;
 
     @Transactional
-    @RequestMapping(value = "part/{partId}/applications", method = RequestMethod.GET)
+    @RequestMapping(value = "{partId}/application", method = RequestMethod.GET)
     @ResponseBody
     @Secured("ROLE_READ")
     public ResponseEntity<String> getApplications(@PathVariable("partId") int partId) {
@@ -47,10 +50,13 @@ public class CarModelEngineYearController {
                     return rs.wasNull() ? null : id;
                 }
             }, partId);
-        if (ids == null || ids.isEmpty()) {
-            return null;
+        List<CarModelEngineYear> applications = null;
+        if (ids != null && !ids.isEmpty()) {
+            applications = CarModelEngineYear.findApplications(ids);
         }
-        List<CarModelEngineYear> applications = CarModelEngineYear.findApplications(ids);
+        if (applications == null) {
+            applications = Collections.<CarModelEngineYear>emptyList();
+        }
         String json = new JSONSerializer()
                 .transform(new HibernateTransformer(), CarModelEngineYear.class)
                 .include("year.name")
@@ -63,4 +69,13 @@ public class CarModelEngineYearController {
         return new ResponseEntity<String>(json, headers, HttpStatus.OK);
     }
 
+    @Transactional
+    @RequestMapping(value = "/{partId}/application/{cmeyId}", method = RequestMethod.DELETE)
+    @ResponseBody
+    @Secured("ROLE_APPLICATION")
+    public ResponseEntity<String> delete(@PathVariable("partId") Long partId, @PathVariable("cmeyId") Long cmeyId)
+            throws Exception {
+        log.info("Deleted application: " + partId + ", " + cmeyId);
+        return new ResponseEntity<String>("", HttpStatus.OK);
+    }
 }

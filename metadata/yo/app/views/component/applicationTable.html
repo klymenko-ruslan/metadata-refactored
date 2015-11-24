@@ -1,25 +1,29 @@
 <table class="table table-bordered table-striped table-hover table-responsive">
   <thead>
-    <tr>
-      <th>Year</th>
-      <th>Make</th>
-      <th>Model</th>
-      <th>Engine</th>
-      <th>Fuel Type</th>
-      <th>Actions</th>
-    </tr>
+  <tr>
+    <th>Year</th>
+    <th>Make</th>
+    <th>Model</th>
+    <th>Engine</th>
+    <th>Fuel Type</th>
+    <th>Actions</th>
+  </tr>
   </thead>
   <tbody>
-    <tr ng-repeat="item in applications">
-      <td>{{item.year.name}}</td>
-      <td>{{item.model.make.name}}</td>
-      <td>{{item.model.name}}</td>
-      <td>{{item.engine.engineSize}}</td>
-      <td>{{item.engine.fuelType.name}}</td>
-      <td part-table-actions>TODO</td>
-    </tr>
-    <tr ng-hide="applications">
-      <td colspan="7">No applications to display.</td>
-    </tr>
+  <tr ng-repeat="item in applications">
+    <td>{{item.year.name}}</td>
+    <td>{{item.model.make.name}}</td>
+    <td>{{item.model.name}}</td>
+    <td>{{item.engine.engineSize}}</td>
+    <td>{{item.engine.fuelType.name}}</td>
+    <td>
+      <button ng-click="remove(item)" authorize="ROLE_APPLICATION_CRUD" class="btn btn-danger btn-xs">
+        <i class="fa fa-trash-o"></i> Remove
+      </button>
+    </td>
+  </tr>
+  <tr ng-hide="applications">
+    <td colspan="7">No applications to display.</td>
+  </tr>
   </tbody>
 </table>
