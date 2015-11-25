@@ -84,7 +84,7 @@ angular.module('ngMetaCrudApp')
               };
 
             this.removePartApplication = function (part_id, application_id) {
-                return Restangular.one('/part/' + part_id + '/application/' +  application_id).remove();
+                return Restangular.one('part/' + part_id + '/application/' +  application_id).remove();
               };
 
             this.listManufacturers = function (first, count) {

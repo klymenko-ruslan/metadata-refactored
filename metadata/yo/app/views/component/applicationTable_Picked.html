@@ -17,13 +17,13 @@
     <td>{{item.engine.engineSize}}</td>
     <td>{{item.engine.fuelType.name}}</td>
     <td>
-      <button ng-click="remove($index)" authorize="ROLE_APPLICATION_CRUD" class="btn btn-danger btn-xs">
-        <i class="fa fa-trash-o"></i> Remove
+      <button ng-click="unpick(index, item)" class="btn btn-danger btn-xs">
+        <i class="fa fa-trash-o"></i> Unpick
       </button>
     </td>
   </tr>
   <tr ng-hide="applications">
-    <td colspan="7">No applications to display.</td>
+    <td colspan="7">Pick an application to associate to part.</td>
   </tr>
   </tbody>
 </table>

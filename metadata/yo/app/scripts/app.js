@@ -3,7 +3,7 @@
 angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap', 'restangular', 'dialogs', 'gToast'])
     .config(function ($locationProvider, $httpProvider, $routeProvider, RestangularProvider) {
         $httpProvider.interceptors.push('loginRequiredInterceptor');
-    
+
         RestangularProvider.setBaseUrl('/metadata/');
 //        RestangularProvider.setBaseUrl('http://localhost:8080/metadata/');
         RestangularProvider.setParentless(true);
@@ -12,7 +12,7 @@ angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap', 'restangu
         RestangularProvider.setResponseExtractor(function (response) {
             return response;
           });
-      
+
         $locationProvider.html5Mode(true);
 
         // Parts
@@ -45,6 +45,10 @@ angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap', 'restangu
             templateUrl: 'views/part/bom/PartBomSearch.html',
             controller: 'PartBomSearchCtrl'
         });
+        $routeProvider.when('/part/:id/application/search', {
+            templateUrl: 'views/part/application/PartApplicationSearch.html',
+            controller: 'PartApplicationSearchCtrl'
+        });
         $routeProvider.when('/part/:id/bom/:bomId/search', {
           templateUrl: 'views/part/bom/BomAlternateSearch.html',
           controller: 'BomAlternateSearchCtrl'
@@ -57,13 +61,13 @@ angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap', 'restangu
           templateUrl: 'views/part/PartDetail.html',
           controller: 'PartDetailCtrl'
         });
-        
+
         // Turbo Models
         $routeProvider.when('/other/turboModels', {
           templateUrl: 'views/other/TurboModels.html',
           controller: 'TurboModelsCtrl'
         });
-        
+
 
 
         // Users and groups

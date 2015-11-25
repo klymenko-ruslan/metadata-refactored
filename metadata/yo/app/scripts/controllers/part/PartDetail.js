@@ -122,9 +122,4 @@ angular.module('ngMetaCrudApp')
           });
         }
 
-        // Applications
-
-        $scope.addApplication = function() {
-          alert("TODO");
-        }
     });

@@ -316,14 +316,14 @@
   <div class="col-xs-12 col-md-6">
     <h3>
       Applications
-      <a authorize="ROLE_ALTER_PART"
+      <a authorize="ROLE_APPLICATION_CRUD"
          class="btn btn-primary pull-right" style="vertical-align: middle;"
-         ng-click="addApplication()">
+         ng-href="/part/{{partId}}/application/search">
         <i class="fa fa-plus"></i>
         Add Application
       </a>
     </h3>
-    <application-table applications="applications"></application-table>
+    <application-table />
   </div>
 
 </div>

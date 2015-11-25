@@ -1,0 +1,29 @@
+<div class="row">
+
+    <!-- Search by input or facet select options -->
+    <div class="col-xs-12 col-sm-3">
+        <form class="" role="form" id="facet-pickers">
+          <button class="btn btn-default" ng-click="clear()">Clear</button>
+
+          <div class="form-group">
+            <label for="partNumber" class="sr-only control-label">Part Number</label>
+            <input class="form-control" id="partNumber" type="text" ng-model="search.partNumber" placeholder="Application..."/>
+          </div>
+
+        </form>
+    </div>
+
+    <!-- Tabular search results -->
+    <div class="col-xs-12 col-sm-9">
+        <table data-ng-table="applicationTableParams" class="table table-bordered table-striped table-hover table-responsive">
+            <tr data-ng-repeat="application in $data">
+              <td>{{item.year.name}}</td>
+              <td>{{item.model.make.name}}</td>
+              <td>{{item.model.name}}</td>
+              <td>{{item.engine.engineSize}}</td>
+              <td>{{item.engine.fuelType.name}}</td>
+              <td class="actions text-center" title="'Actions'" application-search-actions></td>
+            </tr>
+        </table>
+    </div>
+</div>
