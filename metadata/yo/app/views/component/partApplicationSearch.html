@@ -2,14 +2,15 @@
 
     <!-- Search by input or facet select options -->
     <div class="col-xs-12 col-sm-3">
-        <form class="" role="form" id="facet-pickers">
+        <form class="" role="form" id="part-application-facet-pickers">
           <button class="btn btn-default" ng-click="clear()">Clear</button>
 
           <div class="form-group">
-            <label for="partNumber" class="sr-only control-label">Part Number</label>
-            <input class="form-control" id="partNumber" type="text" ng-model="search.partNumber" placeholder="Application..."/>
+            <label for="partApplicationNumber" class="sr-only control-label">Application</label>
+            <input class="form-control" id="partApplicationNumber" type="text" ng-model="search.partApplication" placeholder="Application..."/>
           </div>
 
+          <part-search-facets search="search" results="searchResults"/>
         </form>
     </div>
 

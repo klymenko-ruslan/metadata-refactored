@@ -61,6 +61,10 @@ angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap', 'restangu
           templateUrl: 'views/part/PartDetail.html',
           controller: 'PartDetailCtrl'
         });
+        $routeProvider.when('/application/:id', {
+          templateUrl: 'views/application/ApplicationDetail.html',
+          controller: 'ApplicationDetailCtrl'
+        });
 
         // Turbo Models
         $routeProvider.when('/other/turboModels', {

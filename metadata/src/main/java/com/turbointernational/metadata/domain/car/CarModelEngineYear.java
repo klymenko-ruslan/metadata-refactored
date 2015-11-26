@@ -16,7 +16,7 @@ import java.util.List;
 @Entity
 @Table(name="car_model_engine_year")
 public class CarModelEngineYear {
-    
+
     //<editor-fold defaultstate="collapsed" desc="Properties">
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,7 +40,7 @@ public class CarModelEngineYear {
                 "(is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
         return em;
     }
-    
+
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="car_year_id", nullable = true)
     private CarYear year;
@@ -85,6 +85,10 @@ public class CarModelEngineYear {
     
     public String toJson(String[] fields) {
         return new JSONSerializer().include(fields).exclude("*.class").serialize(this);
+    }
+
+    public static CarModelEngineYear findById(Long id) {
+        return entityManager().find(CarModelEngineYear.class, id);
     }
 
     public static List<CarModelEngineYear> findApplications(List<Long> ids) {

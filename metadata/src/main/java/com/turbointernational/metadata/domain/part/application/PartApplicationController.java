@@ -24,7 +24,6 @@ import java.util.logging.Logger;
 @Controller
 public class PartApplicationController {
 
-
     private static final Logger log = Logger.getLogger(PartApplicationController.class.toString());
 
     @Autowired(required=true)
@@ -33,7 +32,7 @@ public class PartApplicationController {
     @Transactional
     @RequestMapping(value = "{partId}/application", method = RequestMethod.GET)
     @ResponseBody
-    @Secured("ROLE_READ")
+    @Secured("ROLE_APPLICATION_CRUD")
     public ResponseEntity<String> getApplications(@PathVariable("partId") int partId) {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json; charset=utf-8");
@@ -59,6 +58,7 @@ public class PartApplicationController {
         }
         String json = new JSONSerializer()
                 .transform(new HibernateTransformer(), CarModelEngineYear.class)
+                .include("id")
                 .include("year.name")
                 .include("model.name")
                 .include("model.make.name")
@@ -72,7 +72,7 @@ public class PartApplicationController {
     @Transactional
     @RequestMapping(value = "/{partId}/application/{cmeyId}", method = RequestMethod.DELETE)
     @ResponseBody
-    @Secured("ROLE_APPLICATION")
+    @Secured("ROLE_APPLICATION_CRUD")
     public ResponseEntity<String> delete(@PathVariable("partId") Long partId, @PathVariable("cmeyId") Long cmeyId)
             throws Exception {
         log.info("Deleted application: " + partId + ", " + cmeyId);

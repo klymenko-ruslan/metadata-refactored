@@ -6,6 +6,7 @@
     <th>Model</th>
     <th>Engine</th>
     <th>Fuel Type</th>
+    <th>Actions</th>
   </tr>
   </thead>
   <tbody>
@@ -15,9 +16,20 @@
     <td>{{item.model.name}}</td>
     <td>{{item.engine.engineSize}}</td>
     <td>{{item.engine.fuelType.name}}</td>
+    <td>
+      <a authorize="ROLE_APPLICATION_CRUD"
+         ng-href="/application/{{item.id}}"
+         class="btn btn-primary btn-xs">
+        <i class="fa fa-eye"></i>
+        View
+      </a>
+      <button ng-click="remove($index)" authorize="ROLE_APPLICATION_CRUD" class="btn btn-danger btn-xs">
+        <i class="fa fa-trash-o"></i> Remove
+      </button>
+    </td>
   </tr>
   <tr ng-hide="applications">
-    <td colspan="6">There are no applications yet.</td>
+    <td colspan="6">No applications to display.</td>
   </tr>
   </tbody>
 </table>

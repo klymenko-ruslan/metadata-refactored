@@ -5,7 +5,7 @@ angular.module('ngMetaCrudApp')
         return {
             restrict: 'E',
             replace: true,
-            templateUrl: '/views/component/ApplicationSearch.html',
+            templateUrl: '/views/component/partApplicationSearch.html',
             transclude: true,
             link: function postLink(scope, iElement, iAttrs, controller, transcludeFn) {
               controller.transcludeActionsFn = transcludeFn;
