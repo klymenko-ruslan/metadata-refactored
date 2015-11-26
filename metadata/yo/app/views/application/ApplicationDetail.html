@@ -1,6 +1,6 @@
 <metanav>
-  <li authorize="ROLE_APPLICARION_CRUD">
-    <a ng-href="/application/{{ id }}/form"
+  <li authorize="ROLE_APPLICATION_CRUD">
+    <a ng-href="/application/{{applicationId}}/form"
        class="btn btn-primary">
       <i class="fa fa-cog"></i>
       Edit Application
@@ -9,4 +9,4 @@
 
 </metanav>
 
-<pre>{{{application}}}</pre>
+<pre>{{application}}</pre>

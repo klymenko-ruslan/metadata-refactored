@@ -99,6 +99,7 @@
     <servlet-mapping>
         <servlet-name>StaticServlet</servlet-name>
         <url-pattern>/part/*</url-pattern>
+        <url-pattern>/application/*</url-pattern>
         <url-pattern>/security/*</url-pattern>
         <url-pattern>/password/*</url-pattern>
     </servlet-mapping>
