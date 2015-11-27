@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -14,7 +15,7 @@ import java.util.Date;
 @Configurable
 @Entity
 @Table(name = "changelog")
-public class Changelog {
+public class Changelog implements Serializable {
     
     //<editor-fold defaultstate="collapsed" desc="properties">
     @Id

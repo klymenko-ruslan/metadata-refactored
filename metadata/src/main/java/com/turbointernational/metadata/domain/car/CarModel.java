@@ -5,6 +5,7 @@ import flexjson.JSONSerializer;
 import org.springframework.beans.factory.annotation.Configurable;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -13,7 +14,7 @@ import java.util.List;
 @Configurable
 @Entity
 @Table(name="car_model", uniqueConstraints=@UniqueConstraint(columnNames={"name", "car_make_id"}))
-public class CarModel {
+public class CarModel implements Serializable {
     
     //<editor-fold defaultstate="collapsed" desc="Properties">
     @Id

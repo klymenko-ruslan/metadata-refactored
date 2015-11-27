@@ -5,6 +5,7 @@ import flexjson.JSONSerializer;
 import org.springframework.beans.factory.annotation.Configurable;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -13,7 +14,7 @@ import java.util.List;
 @Configurable
 @Entity
 @Table(name="SEAL_TYPE", uniqueConstraints=@UniqueConstraint(columnNames={"name"}))
-public class SealType {
+public class SealType implements Serializable {
 
     //<editor-fold defaultstate="collapsed" desc="properties">
     @Id

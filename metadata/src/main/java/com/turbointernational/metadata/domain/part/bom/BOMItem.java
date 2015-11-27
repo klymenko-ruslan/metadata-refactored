@@ -9,12 +9,13 @@ import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.*;
 
 @Configurable
 @Entity
 @Table(name="bom", uniqueConstraints=@UniqueConstraint(columnNames={"parent_part_id", "child_part_id"}))
-public class BOMItem implements Comparable<BOMItem> {
+public class BOMItem implements Comparable<BOMItem>, Serializable {
 
     //<editor-fold defaultstate="collapsed" desc="properties">
     @Id

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -14,7 +15,7 @@ import java.util.List;
 @Configurable
 @Entity
 @Table(name = "TURBO_MODEL")
-public class TurboModel {
+public class TurboModel implements Serializable {
     
     //<editor-fold defaultstate="collapsed" desc="Properties">
     

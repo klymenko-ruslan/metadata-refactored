@@ -8,11 +8,12 @@ import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Configurable
 @Entity
 @Table(name="kit_part_common_component", uniqueConstraints=@UniqueConstraint(columnNames={"kit_id", "part_id"}))
-public class KitComponent {
+public class KitComponent implements Serializable {
 
     //<editor-fold defaultstate="collapsed" desc="properties">
     @Id

@@ -16,6 +16,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,7 +26,7 @@ import java.util.logging.Logger;
  * @author jrodriguez
  */
 @Service
-public class ElasticSearch {
+public class ElasticSearch implements Serializable {
 
     private static final Logger log = Logger.getLogger(ElasticSearch.class.toString());
     

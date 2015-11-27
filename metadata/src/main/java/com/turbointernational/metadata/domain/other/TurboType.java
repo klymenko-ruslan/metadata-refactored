@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -13,7 +14,7 @@ import java.util.List;
 @Configurable
 @Entity
 @Table(name="TURBO_TYPE", uniqueConstraints=@UniqueConstraint(columnNames={"name"}))
-public class TurboType implements Comparable<TurboType>{
+public class TurboType implements Comparable<TurboType>, Serializable {
     
     //<editor-fold defaultstate="collapsed" desc="Properties">
     @Id

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 /**
  *
@@ -16,7 +17,7 @@ import javax.persistence.*;
 @Cacheable
 @Entity
 @Table(name = "product_image")
-public class ProductImage implements Comparable<ProductImage> {
+public class ProductImage implements Comparable<ProductImage>, Serializable {
 
     public static String getResizedFilename(Long partId, Long imageId, int size) {
         return size + "/" + partId + "_" + imageId + ".jpg";

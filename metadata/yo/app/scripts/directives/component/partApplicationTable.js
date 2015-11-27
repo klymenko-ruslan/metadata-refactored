@@ -20,10 +20,7 @@ angular.module('ngMetaCrudApp').directive('partApplicationTable', function ($log
         $dialogs.confirm('Unlink Application Item', 'Are you sure?').result.then(
           function() {
             // Yes
-            // TODO
-            // alert('partApplicationService: ' + angular.toJson(partApplicationService));
-            // partApplicationService.removeApplication($scope.applications, idx);
-            $scope.applications.splice(idx, 1);
+            partApplicationService.removeApplication($scope.applications, idx);
           }
         );
       }

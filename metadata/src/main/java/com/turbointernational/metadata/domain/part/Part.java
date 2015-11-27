@@ -22,6 +22,7 @@ import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.*;
 import java.util.logging.Logger;
@@ -31,7 +32,7 @@ import java.util.logging.Logger;
 @Entity
 @Table(name = "PART")
 @Inheritance(strategy = InheritanceType.JOINED)
-public class Part implements Comparable<Part> {
+public class Part implements Comparable<Part>, Serializable {
     private static final Logger log = Logger.getLogger(Part.class.toString());
     
     public static final ObjectFactory OBJECT_FACTORY = new ObjectFactory() {

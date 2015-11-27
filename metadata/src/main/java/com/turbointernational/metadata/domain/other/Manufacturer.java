@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -16,7 +17,7 @@ import java.util.List;
 @Configurable
 @Entity
 @Table(name="MANFR", uniqueConstraints=@UniqueConstraint(columnNames={"name"}))
-public class Manufacturer {
+public class Manufacturer implements Serializable {
     
     public static final Long TI_ID = 11L;
     

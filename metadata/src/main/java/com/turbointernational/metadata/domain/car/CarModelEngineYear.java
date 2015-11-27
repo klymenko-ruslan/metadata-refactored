@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -15,7 +16,7 @@ import java.util.List;
 @Configurable
 @Entity
 @Table(name="car_model_engine_year")
-public class CarModelEngineYear {
+public class CarModelEngineYear implements Serializable {
 
     //<editor-fold defaultstate="collapsed" desc="Properties">
     @Id
@@ -91,14 +92,6 @@ public class CarModelEngineYear {
         return entityManager().find(CarModelEngineYear.class, id);
     }
 
-    public static List<CarModelEngineYear> findApplications(List<Long> ids) {
-        List<CarModelEngineYear> retVal = entityManager().createQuery(
-                "SELECT cmey FROM CarModelEngineYear cmey WHERE id IN(:ids)",
-                CarModelEngineYear.class).setParameter("ids", ids)
-                .getResultList();
-        return retVal;
-    }
-    
     public static CarModelEngineYear fromJsonToCarFuelType(String json) {
         return new JSONDeserializer<CarModelEngineYear>().use(null, CarModelEngineYear.class).deserialize(json);
     }
@@ -112,8 +105,9 @@ public class CarModelEngineYear {
     }
     
     public static Collection<CarModelEngineYear> fromJsonArrayToCarFuelTypes(String json) {
-        return new JSONDeserializer<List<CarModelEngineYear>>().use(null, ArrayList.class).use("values", CarModelEngineYear.class).deserialize(json);
+        return new JSONDeserializer<List<CarModelEngineYear>>().use(null, ArrayList.class).
+                use("values", CarModelEngineYear.class).deserialize(json);
     }
     //</editor-fold>
-    
+
 }

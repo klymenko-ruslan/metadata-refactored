@@ -28,11 +28,11 @@ public class Turbo extends Part {
     @JoinColumn(name="cool_type_id")
     private CoolType coolType;
     
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinTable(name="turbo_car_model_engine_year",
-            joinColumns=@JoinColumn(name="part_id"),
-            inverseJoinColumns=@JoinColumn(name="car_model_engine_year_id"))
-    private Set<CarModelEngineYear> cars = new HashSet<CarModelEngineYear>();
+//    @OneToMany(fetch = FetchType.LAZY)
+//    @JoinTable(name="turbo_car_model_engine_year",
+//            joinColumns=@JoinColumn(name="part_id"),
+//            inverseJoinColumns=@JoinColumn(name="car_model_engine_year_id"))
+//    private Set<TurboCarModelEngineYear> cars = new HashSet<TurboCarModelEngineYear>();
     
     public TurboModel getTurboModel() {
         return turboModel;
@@ -50,13 +50,13 @@ public class Turbo extends Part {
         this.coolType = coolType;
     }
 
-    public Set<CarModelEngineYear> getCars() {
-        return cars;
-    }
-
-    public void setCars(Set<CarModelEngineYear> cars) {
-        this.cars = cars;
-    }
+//    public Set<TurboCarModelEngineYear> getCars() {
+//        return cars;
+//    }
+//
+//    public void setCars(Set<TurboCarModelEngineYear> cars) {
+//        this.cars = cars;
+//    }
     
     @Override
     protected JSONSerializer buildJSONSerializer() {

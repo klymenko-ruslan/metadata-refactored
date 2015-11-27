@@ -4,7 +4,9 @@ import com.turbointernational.metadata.domain.part.Part;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
-public class BOMAncestor {
+import java.io.Serializable;
+
+public class BOMAncestor implements Serializable {
     
     //<editor-fold defaultstate="collapsed" desc="Properties">
     private Part part;
