@@ -40,19 +40,20 @@ public class PartApplicationController {
                 .include("carModelEngineYear.model.make.name")
                 .include("carModelEngineYear.engine.engineSize")
                 .include("carModelEngineYear.engine.fuelType.name")
-                .exclude("turbo.*")
+                .exclude("turbo")
                 .exclude("*.class")
                 .serialize(partLinkedApplications);
         return new ResponseEntity<String>(json, headers, HttpStatus.OK);
     }
 
     @Transactional
-    @RequestMapping(value = "/{partId}/application/{cmeyId}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{partId}/application/{applicationId}", method = RequestMethod.DELETE)
     @ResponseBody
     @Secured("ROLE_APPLICATION_CRUD")
-    public ResponseEntity<String> delete(@PathVariable("partId") Long partId, @PathVariable("cmeyId") Long cmeyId)
+    public ResponseEntity<String> delete(@PathVariable("partId") Long partId, @PathVariable("applicationId") Long applicationId)
             throws Exception {
-        log.info("Deleted application: " + partId + ", " + cmeyId);
+        int deleted = TurboCarModelEngineYear.delete(partId, applicationId);
+        log.info("Deleted application (" + partId + ", " + applicationId + "): " + deleted);
         return new ResponseEntity<String>("", HttpStatus.OK);
     }
 }

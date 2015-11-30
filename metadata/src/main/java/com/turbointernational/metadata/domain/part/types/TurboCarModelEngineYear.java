@@ -11,12 +11,18 @@ import java.util.List;
 @Configurable
 @Entity
 @Table(name="turbo_car_model_engine_year")
-@NamedQueries(
+@NamedQueries({
         @NamedQuery(
                 name = "partLinkedApplications",
                 query = "SELECT tcmey FROM TurboCarModelEngineYear AS tcmey WHERE tcmey.turbo.id=:partId"
+        ),
+        @NamedQuery(
+                name = "delelePartApplication",
+                query = "DELETE FROM TurboCarModelEngineYear AS tcmey " +
+                        "WHERE tcmey.turbo.id=:partId " +
+                        "AND tcmey.carModelEngineYear.id=:applicationId"
         )
-)
+})
 public class TurboCarModelEngineYear implements Serializable {
 
     @Id
@@ -70,22 +76,20 @@ public class TurboCarModelEngineYear implements Serializable {
         this.importPk = importPk;
     }
 
-    public static void delete(Long partId, Long applicationId) {
-        TurboCarModelEngineYear partApplication = new TurboCarModelEngineYear();
-        Turbo turbo = new Turbo();
-        turbo.setId(partId);
-        CarModelEngineYear application = new CarModelEngineYear();
-        application.setId(applicationId);
-        partApplication.setTurbo(turbo);
-        partApplication.setCarModelEngineYear(application);
-        entityManager().remove(partApplication);
-    }
-
     public static List<TurboCarModelEngineYear> getPartLinkedApplications(Long partId) {
         return TurboCarModelEngineYear.entityManager().
                 createNamedQuery("partLinkedApplications", TurboCarModelEngineYear.class).
                 setParameter("partId", partId).
                 getResultList();
+    }
+
+    public static int delete(Long partId, Long applicationId) {
+        EntityManager em =  entityManager();
+        final Query delQuery = em.createNamedQuery("delelePartApplication");
+        delQuery.setParameter("partId", partId);
+        delQuery.setParameter("applicationId", applicationId);
+        int deleted = delQuery.executeUpdate();
+        return deleted;
     }
 
 }
