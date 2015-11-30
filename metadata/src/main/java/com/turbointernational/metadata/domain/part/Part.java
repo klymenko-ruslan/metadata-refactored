@@ -5,7 +5,7 @@ import com.turbointernational.metadata.domain.other.TurboType;
 import com.turbointernational.metadata.domain.part.bom.BOMItem;
 import com.turbointernational.metadata.domain.part.types.*;
 import com.turbointernational.metadata.domain.type.PartType;
-import com.turbointernational.metadata.util.ElasticSearch;
+import com.turbointernational.metadata.util.PartElasticSearch;
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
 import flexjson.ObjectBinder;
@@ -222,12 +222,12 @@ public class Part implements Comparable<Part>, Serializable {
     //<editor-fold defaultstate="collapsed" desc="Lifecycle">
     @Autowired(required=true)
     @Transient
-    private ElasticSearch elasticSearch;
+    private PartElasticSearch partElasticSearch;
     
     @PreRemove
     public void removeSearchIndex() throws Exception {
         try {
-            elasticSearch.deletePart(this);
+            partElasticSearch.deletePart(this);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -237,7 +237,7 @@ public class Part implements Comparable<Part>, Serializable {
     @PostPersist
     public void updateSearchIndex() throws Exception {
         log.info("Updating search index.");
-        elasticSearch.indexPart(this);
+        partElasticSearch.indexPart(this);
     }
     //</editor-fold>
 
@@ -484,7 +484,7 @@ public class Part implements Comparable<Part>, Serializable {
     public static final Date getBomRebuildStart() {
         return bomRebuildStart;
     }
-    
+
     @Async("bomRebuildExecutor") // One at a time
     public static void rebuildBomDescendancy() {
         try {

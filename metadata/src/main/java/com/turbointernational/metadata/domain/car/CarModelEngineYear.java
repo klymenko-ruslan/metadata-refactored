@@ -16,6 +16,9 @@ import java.util.List;
 @Configurable
 @Entity
 @Table(name="car_model_engine_year")
+@NamedQueries({
+        @NamedQuery(name = "allApplications", query = "SELECT application FROM CarModelEngineYear AS application")
+})
 public class CarModelEngineYear implements Serializable {
 
     //<editor-fold defaultstate="collapsed" desc="Properties">
@@ -40,6 +43,14 @@ public class CarModelEngineYear implements Serializable {
         if (em == null) throw new IllegalStateException("Entity manager has not been injected " +
                 "(is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
         return em;
+    }
+
+    public static  List<CarModelEngineYear> findApplicationEntries(int firstResult, int maxResults) {
+        return CarModelEngineYear.entityManager().
+                createQuery("allApplications").
+                setFirstResult(firstResult).
+                setMaxResults(maxResults).
+                getResultList();
     }
 
     @OneToOne(fetch = FetchType.LAZY)
@@ -80,6 +91,22 @@ public class CarModelEngineYear implements Serializable {
     //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="Serialization">
+
+    protected JSONSerializer getSearchSerializer() {
+        return new JSONSerializer()
+                .include("id")
+                .include("year.name")
+                .include("model.name")
+                .include("model.make.name")
+                .include("engine.engineSize")
+                .include("engine.fuelType.name")
+                .exclude("*.class");
+    }
+
+    public String toSearchJson() {
+        return getSearchSerializer().exclude("*").serialize(this);
+    }
+
     public String toJson() {
         return new JSONSerializer().exclude("*.class").serialize(this);
     }

@@ -5,18 +5,12 @@ import org.elasticsearch.ElasticSearchException;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.client.Client;
-import org.elasticsearch.client.transport.TransportClient;
-import org.elasticsearch.common.settings.ImmutableSettings;
-import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,48 +20,13 @@ import java.util.logging.Logger;
  * @author jrodriguez
  */
 @Service
-public class ElasticSearch implements Serializable {
+public class PartElasticSearch extends AbstractElasticSearch {
 
-    private static final Logger log = Logger.getLogger(ElasticSearch.class.toString());
-    
-    @Value("${elasticsearch.index}")
-    String elasticSearchIndex = "metadata";
-    
+    private static final Logger log = Logger.getLogger(PartElasticSearch.class.toString());
+
     @Value("${elasticsearch.type}")
-    String elasticSearchType = "part";
+    String elasticSearchType;
 
-    @Value("${elasticsearch.host}")
-    String elasticSearchHost;
-
-    @Value("${elasticsearch.port}")
-    int elasticSearchPort = 9300;
-    
-    @Value("${elasticsearch.timeout}")
-    int timeout = 10000;
-    
-    @Value("${elasticsearch.cluster.name}")
-    String clusterName = "elasticsearch";
-
-    public Client client() {
-        Settings settings = ImmutableSettings.settingsBuilder()
-            .put("cluster.name", clusterName)
-            .build();
-        
-        return new TransportClient(settings)
-            .addTransportAddress(
-                new InetSocketTransportAddress(elasticSearchHost, elasticSearchPort));
-    }
-    
-    public String search(String searchJson) throws Exception {
-        Client client = client();
-        try {
-            SearchRequest request = new SearchRequest(elasticSearchIndex).source(searchJson);
-            return client.search(request).actionGet(timeout).toString();
-        } finally {
-            client.close();
-        }
-    }
-    
     @Transactional(readOnly = true)
     public void indexPart(Part part) throws Exception {
         String document = part.toSearchJson();

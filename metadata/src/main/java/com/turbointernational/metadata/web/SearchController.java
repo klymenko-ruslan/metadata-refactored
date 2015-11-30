@@ -1,7 +1,9 @@
 package com.turbointernational.metadata.web;
 
+import com.turbointernational.metadata.domain.car.CarModelEngineYear;
 import com.turbointernational.metadata.domain.part.Part;
-import com.turbointernational.metadata.util.ElasticSearch;
+import com.turbointernational.metadata.util.ApplicationsElasticSearch;
+import com.turbointernational.metadata.util.PartElasticSearch;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -25,13 +27,16 @@ public class SearchController {
 
 
     @Autowired(required=true)
-    ElasticSearch elasticSearch;
-    
+    PartElasticSearch partElasticSearch;
+
+    @Autowired(required=true)
+    ApplicationsElasticSearch applicationElasticSearch;
+
     @RequestMapping()
     @ResponseBody
     @Secured("ROLE_READ")
     public ResponseEntity<String> search(@RequestBody String request) throws Exception {
-        String response = elasticSearch.search(request);
+        String response = partElasticSearch.search(request);
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json; charset=utf-8");
@@ -46,15 +51,15 @@ public class SearchController {
         
         Part part = Part.findPart(partId);
         
-        elasticSearch.indexPart(part);
+        partElasticSearch.indexPart(part);
     }
 
     @Async
-    @RequestMapping(value="/indexAll")
+    @RequestMapping(value="/part/indexAll")
     @ResponseBody
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Secured("ROLE_ADMIN")
-    public void indexAll(
+    public void indexPartAll(
             @RequestParam(required=false) Integer page,
             @RequestParam(required=false) Integer maxPages,
             @RequestParam(required=false) Integer pageSize) throws Exception {
@@ -76,15 +81,54 @@ public class SearchController {
                 // Clear Hibernate
                 Part.entityManager().clear();
 
-                result = elasticSearch.indexParts(page * pageSize, pageSize);
-                log.log(Level.INFO, "Indexed parts {0}-{1}: {2}", new Object[]{page * pageSize, (page * pageSize) + pageSize, result});
+                result = partElasticSearch.indexParts(page * pageSize, pageSize);
+                log.log(Level.INFO, "Indexed parts {0}-{1}: {2}",
+                        new Object[]{page * pageSize, (page * pageSize) + pageSize, result});
                 page++;
 
             } while (result >= pageSize && page < maxPages);
         } catch (Exception e) {
-            log.log(Level.SEVERE, "Reindexing failed.",  e);
+            log.log(Level.SEVERE, "Reindexing of parts failed.",  e);
             throw e;
         }
     }
-    
+
+    @Async
+    @RequestMapping(value="/application/indexAll")
+    @ResponseBody
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Secured("ROLE_ADMIN")
+    public void indexApplicationAll(
+            @RequestParam(required=false) Integer page,
+            @RequestParam(required=false) Integer maxPages,
+            @RequestParam(required=false) Integer pageSize) throws Exception {
+
+        if (maxPages == null ) {
+            maxPages = Integer.MAX_VALUE;
+        }
+        if (page == null ) {
+            page = 0;
+        }
+        if (pageSize == null ) {
+            pageSize = 250;
+        }
+
+        int result;
+        try {
+            do {
+
+                // Clear Hibernate
+                CarModelEngineYear.entityManager().clear();
+
+                result = applicationElasticSearch.indexApplications(page * pageSize, pageSize);
+                log.log(Level.INFO, "Indexed applications {0}-{1}: {2}",
+                        new Object[]{page * pageSize, (page * pageSize) + pageSize, result});
+                page++;
+
+            } while (result >= pageSize && page < maxPages);
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "Reindexing of application failed.",  e);
+            throw e;
+        }
+    }
 }

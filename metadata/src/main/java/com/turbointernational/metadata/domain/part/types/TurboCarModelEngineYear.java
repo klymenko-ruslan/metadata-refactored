@@ -1,6 +1,7 @@
 package com.turbointernational.metadata.domain.part.types;
 
 import com.turbointernational.metadata.domain.car.CarModelEngineYear;
+import flexjson.JSONSerializer;
 import org.springframework.beans.factory.annotation.Configurable;
 
 import javax.persistence.*;

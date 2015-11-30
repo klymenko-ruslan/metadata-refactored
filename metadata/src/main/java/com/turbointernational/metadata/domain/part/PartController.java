@@ -172,7 +172,7 @@ public class PartController {
         
         return new ResponseEntity<String>(headers, HttpStatus.OK);
     }
-    
+
     @Transactional
     @RequestMapping(value="/all/rebuildBom")
     @ResponseBody
