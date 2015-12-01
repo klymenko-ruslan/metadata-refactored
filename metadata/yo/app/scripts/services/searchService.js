@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-    .factory('searchService', function ($http, $log, Facets) {
+    .factory('partSearchService', function ($http, $log, Facets) {
         return function (partSearchParams) {
 //        console.log('Searching for `' + search.partNumber + '`, facets: ' + JSON.stringify(search.facets));
 
@@ -44,10 +44,14 @@ angular.module('ngMetaCrudApp')
           if (partSearchParams.partNumber) {
             var partNumber = partSearchParams.partNumber.toLowerCase();
             var partNumberShort = partNumber.replace(/\W+/g, '');
+//            searchRequest.query.bool.must.push({
+//                prefix: {'manufacturerPartNumber.short': partNumberShort}
+//              });
+
             searchRequest.query.bool.must.push({
-                prefix: {'manufacturerPartNumber.short': partNumberShort}
+                prefix: {'manufacturerPartNumber': partNumberShort}
               });
-              
+
 //              searchRequest.query.bool.should.push({
 //                prefix: {"manufacturerPartNumber.full": partNumber.toLowerCase()}
 //              });
@@ -76,7 +80,83 @@ angular.module('ngMetaCrudApp')
             headers: {
               'Content-type': 'text/plain'
             },
-            url: '/metadata/search',
+            url: '/metadata/search/part',
+            data: searchRequest
+          });
+        };
+      })
+     .factory('applicationSearchService', function ($http, $log, partApplicationFacets) {
+        return function (applicationSearchParams) {
+//        console.log('Searching for `' + search.partNumber + '`, facets: ' + JSON.stringify(search.facets));
+
+          // Basic search request body
+          var searchRequest = {
+            from: applicationSearchParams.count * (applicationSearchParams.page - 1),
+            size: applicationSearchParams.count,
+            facets: {},
+            query: {
+              bool: {
+                must: [],
+                should: []
+              }
+            },
+            sort: []
+          };
+
+          // Facets
+          angular.forEach(partApplicationFacets, function(facet) {
+
+            // Facets
+            searchRequest.facets[facet.name] = {
+              terms: {
+                field: facet.field,
+                size: 100
+              }
+            };
+
+            // Facet terms
+            var facetValue = applicationSearchParams.facets[facet.name];
+            if (facetValue) {
+              var term = {};
+              term[facet.field] = facetValue;
+
+              searchRequest.query.bool.must.push({'term': term});
+            }
+          });
+
+          // Application
+          if (applicationSearchParams.application) {
+            var application = applicationSearchParams.application.toLowerCase();
+            var applicationShort = partNumber.replace(/\W+/g, '');
+            searchRequest.query.bool.must.push({
+                prefix: {'application': application}
+              });
+          }
+
+          // Default query
+          if (searchRequest.query.bool.must.length === 0 && searchRequest.query.bool.should.length === 0) {
+            searchRequest.query = {match_all: {}}; // jshint ignore:line
+          }
+
+          // Sorting
+          angular.forEach(applicationSearchParams.sorting, function (order, fieldName) {
+              var sortField = {};
+              sortField[fieldName] = {
+                  'missing': '_last',
+                  'ignore_unmapped': true,
+                  'order': order
+                };
+
+              searchRequest.sort.push(sortField);
+            });
+
+        // Call to ElasticSearch
+          return $http({
+            method: 'POST',
+            headers: {
+              'Content-type': 'text/plain'
+            },
+            url: '/metadata/search/application',
             data: searchRequest
           });
         };

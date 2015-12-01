@@ -47,11 +47,21 @@ public class PartApplicationController {
     }
 
     @Transactional
+    @RequestMapping(value = "/{partId}/applicationXXXX/{applicationId}", method = RequestMethod.PUT)
+    @Secured("ROLE_APPLICATION_CRUD")
+    public ResponseEntity<String> add(@PathVariable("partId") Long partId,
+                                      @PathVariable("applicationId") Long applicationId) throws Exception {
+        TurboCarModelEngineYear.add(partId, applicationId);
+        log.info("Linked application (" + partId + ", " + applicationId + ").");
+        return new ResponseEntity<String>("", HttpStatus.OK);
+    }
+
+    @Transactional
     @RequestMapping(value = "/{partId}/application/{applicationId}", method = RequestMethod.DELETE)
     @ResponseBody
     @Secured("ROLE_APPLICATION_CRUD")
-    public ResponseEntity<String> delete(@PathVariable("partId") Long partId, @PathVariable("applicationId") Long applicationId)
-            throws Exception {
+    public ResponseEntity<String> delete(@PathVariable("partId") Long partId,
+                                         @PathVariable("applicationId") Long applicationId) throws Exception {
         int deleted = TurboCarModelEngineYear.delete(partId, applicationId);
         log.info("Deleted application (" + partId + ", " + applicationId + "): " + deleted);
         return new ResponseEntity<String>("", HttpStatus.OK);

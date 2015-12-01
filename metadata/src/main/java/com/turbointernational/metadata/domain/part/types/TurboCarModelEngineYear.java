@@ -84,6 +84,16 @@ public class TurboCarModelEngineYear implements Serializable {
                 getResultList();
     }
 
+    public static void add(Long partId, Long applicationId) {
+        EntityManager em =  entityManager();
+        Turbo turbo = em.getReference(Turbo.class, partId);
+        CarModelEngineYear application = em.getReference(CarModelEngineYear.class, applicationId);
+        TurboCarModelEngineYear partApplication = new TurboCarModelEngineYear();
+        partApplication.setTurbo(turbo);
+        partApplication.setCarModelEngineYear(application);
+        em.persist(partApplication);
+    }
+
     public static int delete(Long partId, Long applicationId) {
         EntityManager em =  entityManager();
         final Query delQuery = em.createNamedQuery("delelePartApplication");

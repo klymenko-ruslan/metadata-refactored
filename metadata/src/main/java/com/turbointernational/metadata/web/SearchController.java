@@ -2,7 +2,8 @@ package com.turbointernational.metadata.web;
 
 import com.turbointernational.metadata.domain.car.CarModelEngineYear;
 import com.turbointernational.metadata.domain.part.Part;
-import com.turbointernational.metadata.util.ApplicationsElasticSearch;
+import com.turbointernational.metadata.util.AbstractElasticSearch;
+import com.turbointernational.metadata.util.ApplicationElasticSearch;
 import com.turbointernational.metadata.util.PartElasticSearch;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -23,26 +24,36 @@ import java.util.logging.Logger;
 @Controller
 @RequestMapping("/metadata/search")
 public class SearchController {
-    private static final Logger log = Logger.getLogger(SearchController.class.toString());
 
+    private static final Logger log = Logger.getLogger(SearchController.class.toString());
 
     @Autowired(required=true)
     PartElasticSearch partElasticSearch;
 
     @Autowired(required=true)
-    ApplicationsElasticSearch applicationElasticSearch;
+    ApplicationElasticSearch applicationElasticSearch;
 
-    @RequestMapping()
-    @ResponseBody
-    @Secured("ROLE_READ")
-    public ResponseEntity<String> search(@RequestBody String request) throws Exception {
-        String response = partElasticSearch.search(request);
-
+    protected ResponseEntity<String> _search(AbstractElasticSearch elasticSearch, String request) throws Exception {
+        String response = elasticSearch.search(request);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json; charset=utf-8");
         return new ResponseEntity<String>(response, headers, HttpStatus.OK);
     }
-    
+
+    @RequestMapping("/part")
+    @ResponseBody
+    @Secured("ROLE_READ")
+    public ResponseEntity<String> searchPart(@RequestBody String request) throws Exception {
+        return _search(partElasticSearch, request);
+    }
+
+    @RequestMapping("/application")
+    @ResponseBody
+    @Secured("ROLE_READ")
+    public ResponseEntity<String> searchApplication(@RequestBody String request) throws Exception {
+        return _search(applicationElasticSearch, request);
+    }
+
     @Async
     @RequestMapping(value="/index/{partId}")
     @ResponseBody
@@ -87,6 +98,7 @@ public class SearchController {
                 page++;
 
             } while (result >= pageSize && page < maxPages);
+            log.info("Indexing of parts finished.");
         } catch (Exception e) {
             log.log(Level.SEVERE, "Reindexing of parts failed.",  e);
             throw e;
@@ -126,6 +138,7 @@ public class SearchController {
                 page++;
 
             } while (result >= pageSize && page < maxPages);
+            log.info("Indexing of application finished.");
         } catch (Exception e) {
             log.log(Level.SEVERE, "Reindexing of application failed.",  e);
             throw e;

@@ -10,7 +10,7 @@ angular.module('ngMetaCrudApp')
             link: function postLink(scope, iElement, iAttrs, controller, transcludeFn) {
               controller.transcludeActionsFn = transcludeFn;
             },
-            controller: function ($log, $q, $scope, searchService, ngTableParams) {
+            controller: function ($log, $q, $scope, partSearchService, ngTableParams) {
 
               // Latest Results
               $scope.searchResults = null;
@@ -28,7 +28,7 @@ angular.module('ngMetaCrudApp')
                   $scope.search.page = params.page();
                   $scope.search.sorting = params.sorting();
 
-                  searchService($scope.search).then(
+                  partSearchService($scope.search).then(
                       function (searchResults) {
                         $scope.searchResults = searchResults.data;
 

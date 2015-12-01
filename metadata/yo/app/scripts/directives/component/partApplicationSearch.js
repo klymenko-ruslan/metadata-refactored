@@ -10,7 +10,7 @@ angular.module('ngMetaCrudApp')
             link: function postLink(scope, iElement, iAttrs, controller, transcludeFn) {
               controller.transcludeActionsFn = transcludeFn;
             },
-            controller: function ($log, $q, $scope, searchService, ngTableParams) {
+            controller: function ($log, $q, $scope, applicationSearchService, ngTableParams) {
 
               // Latest Results
               $scope.searchResults = null;
@@ -28,21 +28,20 @@ angular.module('ngMetaCrudApp')
                   $scope.search.page = params.page();
                   $scope.search.sorting = params.sorting();
 
-//                  searchService($scope.search).then(
-//                      function (searchResults) {
-//                        $scope.searchResults = searchResults.data;
-//
-//                        // Update the total and slice the result
-//                        $defer.resolve($scope.searchResults.hits.hits);
-//                        params.total($scope.searchResults.hits.total);
-//                      },
-//                      function (errorResponse) {
-//                        restService.error("Couldn't search for parts.", errorResponse);
-//                        $defer.reject();
-//                      });
+                  applicationSearchService($scope.search).then(
+                      function (searchResults) {
+                        $scope.searchResults = searchResults.data;
+
+                        // Update the total and slice the result
+                        $defer.resolve($scope.searchResults.hits.hits);
+                        params.total($scope.searchResults.hits.total);
+                      },
+                      function (errorResponse) {
+                        restService.error("Couldn't search for parts.", errorResponse);
+                        $defer.reject();
+                      });
                 }
               });
-
 
               // Query Parameters
               $scope.search = {
@@ -60,14 +59,14 @@ angular.module('ngMetaCrudApp')
               }
 
               // Handle updating search results
-              $scope.$watch('[search.partNumber, search.facets]', function (newVal, oldVal) {
+              $scope.$watch('[search.partApplication, search.facets]', function (newVal, oldVal) {
 
                 // Debounce
                 if (angular.equals(newVal, oldVal, true)) {
                   return;
                 }
 
-                $scope.partTableParams.reload();
+                $scope.applicationTableParams.reload();
               }, true);
             }
         };
@@ -77,8 +76,6 @@ angular.module('ngMetaCrudApp')
         restrict: 'A',
         require: '^applicationSearch',
         link: function postLink(scope, element, attrs, controller) {
-//          scope.partId = scope.part._id;
-//          scope.partType = scope.part._source.partType.name;
           controller.transcludeActionsFn(scope, function(clone) {
             element.append(clone);
           });

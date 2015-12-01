@@ -52,10 +52,10 @@ public class PartElasticSearch extends AbstractElasticSearch {
         List<Part> parts = Part.findPartEntries(firstResult, maxResults);
         
         for (Part part : parts) {
-            IndexRequest index = new IndexRequest(elasticSearchIndex, elasticSearchType, part.getId().toString());
-            
-            
-            index.source(part.toSearchJson());
+            String searchId = part.getId().toString();
+            IndexRequest index = new IndexRequest(elasticSearchIndex, elasticSearchType, searchId);
+            String asJson =  part.toSearchJson();
+            index.source(asJson);
             bulk.add(index);
         }
         
@@ -79,6 +79,11 @@ public class PartElasticSearch extends AbstractElasticSearch {
         } finally {
             client.close();
         }
+    }
+
+    @Override
+    protected String getElasticSearchType() {
+        return elasticSearchType;
     }
 
 }

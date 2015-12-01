@@ -1,0 +1,27 @@
+<dl class="dl-horizontal">
+  <dt>Year</dt>
+  <dd>
+    {{application.year.name}}
+    <span ng-show="application.year.name == null || application.year.name == ''">[blank]</span>
+  </dd>
+  <dt>Make</dt>
+  <dd>
+    {{application.model.make.name}}
+    <span ng-show="application.model.make.name == null || application.model.make.name == ''">[blank]</span>
+  </dd>
+  <dt>Model</dt>
+  <dd>
+    {{application.model.name}}
+    <span ng-show="application.model.name == null || application.model.name == ''">[blank]</span>
+  </dd>
+  <dt>Engine</dt>
+  <dd>
+    {{application.engine.engineSize}}
+    <span ng-show="application.engine.engineSize == null || application.engine.engineSize == ''">[blank]</span>
+  </dd>
+  <dt>Fuel Type</dt>
+  <dd>
+    {{application.engine.fuelType.name}}
+    <span ng-show="application.engine.fuelType.name == null || application.engine.fuelType.name == ''">[blank]</span>
+  </dd>
+</dl>

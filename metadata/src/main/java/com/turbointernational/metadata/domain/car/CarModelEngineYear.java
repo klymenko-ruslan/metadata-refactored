@@ -47,7 +47,7 @@ public class CarModelEngineYear implements Serializable {
 
     public static  List<CarModelEngineYear> findApplicationEntries(int firstResult, int maxResults) {
         return CarModelEngineYear.entityManager().
-                createQuery("allApplications").
+                createNamedQuery("allApplications").
                 setFirstResult(firstResult).
                 setMaxResults(maxResults).
                 getResultList();

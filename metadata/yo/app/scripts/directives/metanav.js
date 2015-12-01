@@ -65,8 +65,6 @@ angular.module('ngMetaCrudApp')
         };
 
         $scope.reindexApplicationSearch = function() {
-          alert("XXXX");
-          /*
           $dialogs.confirm(
             'Reindex search engine data for applications?',
             'You need to run this if changes have been made directly to the database. Proceed?').result.then(
@@ -88,7 +86,6 @@ angular.module('ngMetaCrudApp')
               // No
             }
           );
-          */
         };
 
         $scope.clearHibernate = function() {

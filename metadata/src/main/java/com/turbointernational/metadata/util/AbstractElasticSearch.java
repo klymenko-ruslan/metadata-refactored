@@ -18,9 +18,6 @@ public abstract class AbstractElasticSearch implements Serializable {
     @Value("${elasticsearch.index}")
     String elasticSearchIndex = "metadata";
 
-    //@Value("${elasticsearch.type}")
-    String elasticSearchType = null; // Must be initialized in descendants.
-
     @Value("${elasticsearch.host}")
     String elasticSearchHost;
 
@@ -32,6 +29,8 @@ public abstract class AbstractElasticSearch implements Serializable {
 
     @Value("${elasticsearch.cluster.name}")
     String clusterName = "elasticsearch";
+
+    protected abstract String getElasticSearchType();
 
     public Client client() {
         Settings settings = ImmutableSettings.settingsBuilder()
@@ -46,7 +45,8 @@ public abstract class AbstractElasticSearch implements Serializable {
     public String search(String searchJson) throws Exception {
         Client client = client();
         try {
-            SearchRequest request = new SearchRequest(elasticSearchIndex).source(searchJson);
+            String searchType = getElasticSearchType();
+            SearchRequest request = new SearchRequest(elasticSearchIndex).types(searchType).source(searchJson);
             return client.search(request).actionGet(timeout).toString();
         } finally {
             client.close();
