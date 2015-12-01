@@ -47,7 +47,7 @@ public class PartApplicationController {
     }
 
     @Transactional
-    @RequestMapping(value = "/{partId}/applicationXXXX/{applicationId}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/{partId}/application/{applicationId}", method = RequestMethod.PUT)
     @Secured("ROLE_APPLICATION_CRUD")
     public ResponseEntity<String> add(@PathVariable("partId") Long partId,
                                       @PathVariable("applicationId") Long applicationId) throws Exception {

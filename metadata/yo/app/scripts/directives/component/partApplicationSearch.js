@@ -45,21 +45,21 @@ angular.module('ngMetaCrudApp')
 
               // Query Parameters
               $scope.search = {
-                partNumber: "",
+                application: "",
                 facets: {},
                 sort: {}
               };
 
               $scope.clear = function() {
                 $scope.search = {
-                  partNumber: "",
+                  application: "",
                   facets: {},
                   sort: {}
                 }
               }
 
               // Handle updating search results
-              $scope.$watch('[search.partApplication, search.facets]', function (newVal, oldVal) {
+              $scope.$watch('[search.application, search.facets]', function (newVal, oldVal) {
 
                 // Debounce
                 if (angular.equals(newVal, oldVal, true)) {

@@ -5,7 +5,7 @@ angular.module('ngMetaCrudApp')
         return new function () {  // jshint ignore:line
             var RestService     = this;
             var refreshPromise  = null;
-            this.status         = nulladd;
+            this.status         = null;
 
             this.refreshStatus = function() {
               if (refreshPromise !== null) {
@@ -88,7 +88,7 @@ angular.module('ngMetaCrudApp')
               };
 
             this.addPartApplication = function (part_id, application_id) {
-                return Restangular.one('part/' + part_id + '/application/' +  application_id).post();
+                return Restangular.one('part/' + part_id + '/application/' +  application_id).put();
               }
 
             this.removePartApplication = function (part_id, application_id) {

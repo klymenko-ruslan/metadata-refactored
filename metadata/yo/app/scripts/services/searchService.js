@@ -119,7 +119,6 @@ angular.module('ngMetaCrudApp')
             if (facetValue) {
               var term = {};
               term[facet.field] = facetValue;
-
               searchRequest.query.bool.must.push({'term': term});
             }
           });
@@ -127,15 +126,18 @@ angular.module('ngMetaCrudApp')
           // Application
           if (applicationSearchParams.application) {
             var application = applicationSearchParams.application.toLowerCase();
-            var applicationShort = partNumber.replace(/\W+/g, '');
+            //var applicationShort = partNumber.replace(/\W+/g, '');
             searchRequest.query.bool.must.push({
-                prefix: {'application': application}
+                query_string: {
+                  'default_field': '_all',
+                  'query': '*' + application + '*'
+                }
               });
           }
 
           // Default query
           if (searchRequest.query.bool.must.length === 0 && searchRequest.query.bool.should.length === 0) {
-            searchRequest.query = {match_all: {}}; // jshint ignore:line
+            searchRequest.query = {'match_all': {}}; // jshint ignore:line
           }
 
           // Sorting
