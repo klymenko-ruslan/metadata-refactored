@@ -17,7 +17,7 @@
     <td>{{item.carModelEngineYear.engine.engineSize}}</td>
     <td>{{item.carModelEngineYear.engine.fuelType.name}}</td>
     <td>
-      <a authorize="ROLE_APPLICATION_CRUD"
+      <a authorize="ROLE_READ"
          ng-href="/application/{{item.carModelEngineYear.id}}"
          class="btn btn-primary btn-xs">
         <i class="fa fa-eye"></i>

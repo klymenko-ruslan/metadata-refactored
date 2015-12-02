@@ -26,7 +26,7 @@ public class PartApplicationController {
     @Transactional
     @RequestMapping(value = "{partId}/application", method = RequestMethod.GET)
     @ResponseBody
-    @Secured("ROLE_APPLICATION_CRUD")
+    @Secured("ROLE_READ")
     public ResponseEntity<String> getApplications(@PathVariable("partId") Long partId) {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json; charset=utf-8");

@@ -22,7 +22,7 @@ public class ApplicationController {
     @Transactional
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     @ResponseBody
-    @Secured("ROLE_APPLICATION_CRUD")
+    @Secured("ROLE_READ")
     public ResponseEntity<String> getApplicatation(@PathVariable("id") long id) {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json; charset=utf-8");
