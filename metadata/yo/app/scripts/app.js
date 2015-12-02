@@ -61,6 +61,12 @@ angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap', 'restangu
           templateUrl: 'views/part/PartDetail.html',
           controller: 'PartDetailCtrl'
         });
+
+        // Model Engine Year
+        $routeProvider.when('/modelengineyear/list', {
+            templateUrl: 'views/application/modelengineyear/list.html',
+            controller: 'PartApplicationSearchCtrl'
+          });
         $routeProvider.when('/application/:id', {
           templateUrl: 'views/application/ApplicationDetail.html',
           controller: 'ApplicationDetailCtrl'

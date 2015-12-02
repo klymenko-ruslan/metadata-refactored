@@ -1,0 +1,88 @@
+<metanav authorize="ROLE_APPLICATION_CRUD">
+
+  <li>
+      <a class="btn btn-info">
+        <i class="fa fa-sitemap"></i>
+        Model Engine Year
+      </a>
+  </li>
+  <li>
+      <a class="btn btn-info">
+        <i class="fa fa-book"></i>
+        Make
+      </a>
+  </li>
+  <li>
+      <a class="btn btn-info">
+        <i class="fa fa-book"></i>
+        Model
+      </a>
+  </li>
+  <li>
+      <a class="btn btn-info">
+        <i class="fa fa-book"></i>
+        Engine
+      </a>
+  </li>
+  <li>
+      <a class="btn btn-info">
+        <i class="fa fa-book"></i>
+        Fuel Type
+      </a>
+  </li>
+
+</metanav>
+
+<metanav authorize="ROLE_APPLICATION_CRUD">
+
+  <li>
+    <a ng-href="/application/{{applicationId}}/form"
+       class="btn btn-success">
+      <i class="fa fa-wrench"></i>
+      Create Model Engine Year
+    </a>
+  </li>
+
+</metanav>
+
+<h1>Model Engine Year List</h1>
+
+<div class="row">
+    <!-- Search by input or facet select options -->
+    <div class="col-xs-12 col-sm-3">
+        <form class="" role="form" id="part-application-facet-pickers">
+          <button class="btn btn-default" ng-click="clear()">Clear</button>
+
+          <div class="form-group">
+            <label for="partApplication" class="sr-only control-label">Application</label>
+            <input class="form-control" id="partApplication" type="text" ng-model="search.application" placeholder="Application..."/>
+          </div>
+
+          <part-application-search-facets search="search" results="searchResults"/>
+
+        </form>
+    </div>
+
+    <div class="col-xs-12 col-sm-9">
+        <table data-ng-table="applicationTableParams" class="table table-bordered table-striped table-hover table-responsive">
+            <tr data-ng-repeat="application in $data">
+              <td title="'Year'" sortable="'year.name'">
+                {{application._source.year.name}}
+              </td>
+              <td title="'Make'" sortable="'model.make.name'">
+                {{application._source.model.make.name}}
+              </td>
+              <td title="'Model'" sortable="'model.name'">
+                {{application._source.model.name}}
+              </td>
+              <td title="'Engine'" sortable="'engine.engineSize'">
+                {{application._source.engine.engineSize}}
+              </td>
+              <td title="'Fuel Type'" sortable="'engine.fuelType.name'">
+                {{application._source.engine.fuelType.name}}
+              </td>
+              <td class="actions text-center" title="'Actions'" application-search-actions></td>
+            </tr>
+        </table>
+    </div>
+</div>
