@@ -43,7 +43,6 @@ angular.module('ngMetaCrudApp')
                 }
               });
 
-
               // Query Parameters
               $scope.search = {
                 partNumber: "",
