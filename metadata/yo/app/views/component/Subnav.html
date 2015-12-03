@@ -1,0 +1,40 @@
+<div class="navbar navbar-btn" role="navigation">
+  <div class="container-fluid">
+    <ul class="nav nav-pills">
+      <li>
+          <a class="btn btn-info" ng-disabled="item == 'modelengineyear'" ng-href="/application/modelengineyear/list">
+            <i class="fa fa-sitemap"></i>
+            Model Engine Year
+          </a>
+      </li>
+      <li>
+          <a class="btn btn-info" ng-disabled="item == 'make'" ng-href="/application/make/list">
+            <i class="fa fa-book"></i>
+            Make
+          </a>
+      </li>
+      <li>
+          <a class="btn btn-info" ng-disabled="item == 'model'" ng-href="/application/model/list">
+            <i class="fa fa-book"></i>
+            Model
+          </a>
+      </li>
+      <li>
+          <a class="btn btn-info" ng-disabled="item == 'engine'" ng-href="/application/engine/list">
+            <i class="fa fa-book"></i>
+            Engine
+          </a>
+      </li>
+      <li>
+          <a class="btn btn-info" ng-disabled="item == 'fueltype'" ng-href="/application/fueltype/list">
+            <i class="fa fa-book"></i>
+            Fuel Type
+          </a>
+      </li>
+    </ul>
+    <hr/>
+    <ul class="nav nav-pills" ng-transclude>
+      <!-- Transcluded li -->
+    </ul>
+  </div>
+</div>

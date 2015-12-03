@@ -63,9 +63,20 @@ angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap', 'restangu
         });
 
         // Model Engine Year
-        $routeProvider.when('/modelengineyear/list', {
+        $routeProvider.when('/application/engine/list', {
+            templateUrl: 'views/application/engine/list.html',
+          });
+        $routeProvider.when('/application/fueltype/list', {
+            templateUrl: 'views/application/fueltype/list.html',
+          });
+        $routeProvider.when('/application/make/list', {
+            templateUrl: 'views/application/make/list.html',
+          });
+        $routeProvider.when('/application/model/list', {
+            templateUrl: 'views/application/model/list.html',
+          });
+        $routeProvider.when('/application/modelengineyear/list', {
             templateUrl: 'views/application/modelengineyear/list.html',
-            controller: 'PartApplicationSearchCtrl'
           });
         $routeProvider.when('/application/:id', {
           templateUrl: 'views/application/ApplicationDetail.html',
