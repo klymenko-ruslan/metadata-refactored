@@ -9,9 +9,6 @@ angular.module('ngMetaCrudApp')
       templateUrl: '/views/component/Subnav.html',
       scope: {
         item: '@'
-      },
-      controller: function($log, $scope) {
-        $log.log('1. Scope: ' + angular.toJson($scope));
       }
     }
   });
