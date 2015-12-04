@@ -1,27 +1,29 @@
 package com.turbointernational.metadata.domain.part.types;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.domain.part.Part;
-import org.apache.commons.lang.ObjectUtils;
-import org.springframework.beans.factory.annotation.Configurable;
-
+import com.turbointernational.metadata.web.View;
+import java.util.Map;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
-import java.util.Map;
+import org.apache.commons.lang.ObjectUtils;
 
-@Configurable
 @Entity
 @Table(name="heatshield")
 @PrimaryKeyJoinColumn(name = "part_id")
 public class Heatshield extends Part {
-
+    
+    @JsonView(View.Detail.class)
     @Column(name="overall_diameter")
     private Float overallDiameter;
 
+    @JsonView(View.Detail.class)
     @Column(name="inside_diameter")
     private Float insideDiameter;
 
+    @JsonView(View.Detail.class)
     @Column(name="inducer_diameter")
     private Float inducerDiameter;
 

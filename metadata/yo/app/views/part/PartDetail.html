@@ -7,14 +7,6 @@
     </a>
   </li>
 
-  <li authorize="ROLE_PART_IMAGES">
-    <a ng-click="addImage()"
-       class="btn btn-info">
-      <i class="fa fa-picture-o"></i>
-      Add Image &hellip;
-    </a>
-  </li>
-
   <li authorize="ROLE_READ">
     <a ng-href="/part/{{ partId }}/ancestors"
        class="btn btn-info">
@@ -30,6 +22,20 @@
       Interchanges &hellip;
     </a>
   </li>
+
+  <li authorize="ROLE_SALES_NOTE_READ">
+    <a ng-href="/part/{{partId}}/sales_notes"
+       class="btn btn-info">
+      <i class="fa fa-book"></i>
+      Sales Notes &hellip;
+    </a>
+  </li>
+  <li class="pull-right col-xs-2">
+    <a class="btn btn-default" disabled="disabled">
+      <strong data-ng-show="part.inactive === false">Active</strong>
+      <strong data-ng-show="part.inactive === true">Inactive</strong>
+    </a>
+  </li>
 </metanav>
 
 <h1 class="padding-top" part-name="part"></h1>
@@ -39,9 +45,6 @@
   <!-- Part Details -->
   <div class="col-xs-12 col-md-6 well-small">
     <h3>Part Details</h3>
-
-    <p class="pull-right"><strong data-ng-show="part.inactive == false">Active</strong>
-        <strong data-ng-show="part.inactive == true">Inactive</strong></p>
 
     <dl class="dl-horizontal">
         <dt>Name</dt>
@@ -103,28 +106,23 @@
                 <dt>Design Features</dt>
                 <dd>{{part.designFeatures}}</dd>
                 <dt>Bearing Type</dt>
-                <dd>{{part.bearingType.name}}</dd>
+                <dd>{{part.bearingType}}</dd>
             </dl>
         </div>
 
         <!-- Bearing Spacer -->
         <div data-ng-switch-when="Bearing Spacer">
             <dl class="dl-horizontal">
+<!--
                 <dt>Standard Size</dt>
                 <dd>{{part.standardSize}}</dd>
                 <dt>Oversize</dt>
                 <dd>{{part.oversize}}</dd>
-                <dt>Outside Diameter (min - max)</dt>
-                <dd>{{part.outsideDiameterMin}}</dd>
-                <dt></dt>
-                <dd>{{part.outsideDiameterMax}}</dd>
-                <dt>Inside Diameter (min - max)</dt>
-                <dd>{{part.insideDiameterMin}}</dd>
-                <dt></dt>
-                <dt>Inside Diameter (min - max)</dt>
-                <dd>{{part.insideDiameterMin}}</dd>
-                <dt></dt>
-                <dd>{{part.insideDiameterMax}}</dd>
+-->
+                <dt>Outside Diameter</dt>
+                <dd>{{part.outsideDiameterMin}} - {{part.outsideDiameterMax}}</dd>
+                <dt>Inside Diameter</dt>
+                <dd>{{part.insideDiameterMin}} - {{part.insideDiameterMax}}</dd>
             </dl>
         </div>
 
@@ -171,18 +169,18 @@
         <!-- Journal Bearing -->
         <div data-ng-switch-when="Journal Bearing">
             <dl class="dl-horizontal">
+<!--
                 <dt>Standard Size</dt>
                 <dd>{{part.standardSize}}</dd>
                 <dt>Oversize</dt>
                 <dd>{{part.oversize}}</dd>
-                <dt>Outside Diameter (min - max)</dt>
-                <dd>{{part.outsideDiameterMin}}</dd>
-                <dt></dt>
-                <dd>{{part.outsideDiameterMax}}</dd>
-                <dt>Inside Diameter (min - max)</dt>
-                <dd>{{part.insideDiameterMin}}</dd>
-                <dt></dt>
-                <dd>{{part.insideDiameterMax}}</dd>
+-->
+                <dt>Width</dt>
+                <dd>{{part.width}}</dd>
+                <dt>Outside Diameter</dt>
+                <dd>{{part.outsideDiameterMin}} - {{part.outsideDiameterMax}}</dd>
+                <dt>Inside Diameter</dt>
+                <dd>{{part.insideDiameterMin}} - {{part.insideDiameterMax}}</dd>
             </dl>
         </div>
 
@@ -201,7 +199,7 @@
                 Add Mapping
               </a>
             </h3>
-            <part-table parts="part.components" key="part"
+            <part-table parts="kitComponents " key="part"
                         extra-columns="{&quot;Mapping&quot;: &quot;item.exclude ? 'Exclude' : 'Include'&quot;}">
               <a ng-click="removeComponent(item)"
                  class="btn btn-xs btn-danger">
@@ -262,11 +260,17 @@
 
   <!-- Images -->
   <div class="col-xs-12 col-md-6">
-    <h3>Images</h3>
+    <h3>Images
+      <a  authorize="ROLE_PART_IMAGES" ng-click="addImage()"
+         class="btn btn-primary pull-right">
+        <i class="fa fa-plus"></i> Add Image
+      </a>
+    </h3>
     <ul class="list-unstyled list-inline">
       <li data-ng-repeat="image in part.productImages" ng-click="deleteImage(image)">
         <img ng-src="/metadata/image/135/{{image.id}}.jpg" style="max-height: 135px; max-width: 135px" />
       </li>
+      <li class="well well-sm col-md-12" ng-show="part.productImages.length === 0">Part has no images.</li>
     </ul>
   </div>
 
@@ -309,7 +313,7 @@
   <!-- Interchanges -->
   <div class="col-xs-12 col-md-6">
     <h3>Interchangeable Parts</h3>
-    <part-table parts="part.interchange.parts"></part-table>
+    <interchanges interchange-id="part.interchange.id" parent-part-id="partId"></interchanges>
   </div>
 
   <!-- Applications (AKA CarModelEngineYear) -->
@@ -329,5 +333,5 @@
 </div>
 
 <div class="row">
-  <bom></bom>
+  <bom parent-part-id="partId"></bom>
 </div>

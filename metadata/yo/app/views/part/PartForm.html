@@ -122,21 +122,24 @@
         </div>
 
         <!-- Bearing Spacer -->
-        <div ng-switch-when="Bearing Spacer">
+        <div ng-switch-when="Bearing Spacer" class="controls form-inline">
+          <!--
           <label>Standard Size</label>
-          <!--<picker path="part?type=BearingSpacer" ng-model="part.standardSize"></picker>-->
+          <picker path="part?type=BearingSpacer" ng-model="part.standardSize"></picker>
 
           <label>Oversize</label>
-          <!--<picker path="part?type=BearingSpacer" ng-model="part.oversize"></picker>-->
+          <picker path="part?type=BearingSpacer" ng-model="part.oversize"></picker>
+          -->
 
-          <label>Outside Diameter (min - max)</label>
-          <input class="form-control" type="text" ng-model="part.outsideDiameterMin"/> - <input type="text"
-                                                                                                ng-model="part.outsideDiameterMax"/>
-          private Float insideDiameterMin;
+          <label class="col-xs-12">Outside Diameter (min - max)</label>
+          <input class="col-xs-5" type="text" ng-model="part.outsideDiameterMin"/>
+          <span class="col-xs-1 text-center"> - </span>
+          <input class="col-xs-5" type="text" ng-model="part.outsideDiameterMax"/>
 
-          <label>Inside Diameter (min - max)</label>
-          <input class="form-control" type="text" ng-model="part.insideDiameterMin"/> - <input type="text"
-                                                                                               ng-model="part.insideDiameterMax"/>
+          <label class="col-xs-12">Inside Diameter (min - max)</label>
+          <input class="col-xs-5" type="text" ng-model="part.insideDiameterMin"/>
+          <span class="col-xs-1 text-center"> - </span>
+          <input class="col-xs-5" type="text" ng-model="part.insideDiameterMax"/>
         </div>
 
         <!-- Cartridge -->
@@ -185,19 +188,25 @@
 
         <!-- Journal Bearing -->
         <div ng-switch-when="Journal Bearing">
+          <!--
           <label>Standard Size</label>
-          <!--<picker path="part?type=JournalBearing" ng-model="part.standardSize"></picker>-->
+          <picker path="part?type=JournalBearing" ng-model="part.standardSize"></picker>
 
           <label>Oversize</label>
-          <!--<picker path="part?type=JournalBearing" ng-model="part.oversize"></picker>-->
+          <picker path="part?type=JournalBearing" ng-model="part.oversize"></picker>
+          -->
+          <label>Width</label>
+          <input class="form-control" type="text" ng-model="part.width"/>
 
-          <label>Outside Diameter (min - max)</label>
-          <input class="form-control" type="text" ng-model="part.outsideDiameterMin"/> - <input type="text"
-                                                                                                ng-model="part.outsideDiameterMax"/>
+          <label class="col-xs-12">Outside Diameter (min - max)</label>
+          <input class="col-xs-5" type="text" ng-model="part.outsideDiameterMin"/>
+          <span class="col-xs-1 text-center"> - </span>
+          <input class="col-xs-5" type="text" ng-model="part.outsideDiameterMax"/>
 
-          <label>Inside Diameter (min - max)</label>
-          <input class="form-control" type="text" ng-model="part.insideDiameterMin"/> - <input type="text"
-                                                                                               ng-model="part.insideDiameterMax"/>
+          <label class="col-xs-12">Inside Diameter (min - max)</label>
+          <input class="col-xs-5" type="text" ng-model="part.insideDiameterMin"/>
+          <span class="col-xs-1 text-center"> - </span>
+          <input class="col-xs-5" type="text" ng-model="part.insideDiameterMax"/>
         </div>
 
         <!-- Kit -->

@@ -2,20 +2,32 @@ package com.turbointernational.metadata.web;
 
 import au.com.bytecode.opencsv.CSVWriter;
 import com.turbointernational.metadata.domain.other.Manufacturer;
+import com.turbointernational.metadata.domain.other.ManufacturerDao;
 import com.turbointernational.metadata.domain.part.Part;
-import com.turbointernational.metadata.domain.type.*;
+import com.turbointernational.metadata.domain.part.PartDao;
+import com.turbointernational.metadata.domain.type.CoolTypeDao;
+import com.turbointernational.metadata.domain.type.GasketTypeDao;
+import com.turbointernational.metadata.domain.type.KitTypeDao;
+import com.turbointernational.metadata.domain.type.ManufacturerTypeDao;
+import com.turbointernational.metadata.domain.type.PartTypeDao;
+import com.turbointernational.metadata.domain.type.SealTypeDao;
 import com.turbointernational.metadata.magmi.MagmiDataFinder;
 import com.turbointernational.metadata.magmi.dto.MagmiProduct;
 import com.turbointernational.metadata.mas90.Mas90;
 import com.turbointernational.metadata.mas90.pricing.CalculatedPrice;
 import com.turbointernational.metadata.mas90.pricing.ItemPricing;
 import com.turbointernational.metadata.mas90.pricing.UnknownDiscountCodeException;
+import java.util.Arrays;
+import java.util.SortedSet;
+import javax.persistence.EntityManager;
+
 import com.turbointernational.metadata.util.ImageResizer;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -75,7 +87,8 @@ public class MagmiController {
             "image",
             "small_image",
             "thumbnail",
-            "media_gallery"
+            "media_gallery",
+            "standard_oversize_part"
         ));
         //</editor-fold>
 
@@ -122,15 +135,14 @@ public class MagmiController {
             "outside_dim_min",
             "overall_diameter",
             "overall_height",
-            "oversize_id",
             "piston_ring_diameter",
             "secondary_diameter",
             "shaft_thread_f",
-            "standard_size_id",
             "stem_oe",
             "style_compressor_wheel",
             "tip_height_b",
             "water_ports",
+            "width_jb",
             "width_max",
             "width_min"
         ));
@@ -188,11 +200,39 @@ public class MagmiController {
     MagmiDataFinder magmiDataFinder;
     
     @Autowired(required=true)
+    EntityManager entityManager;
+    
+    @Autowired(required=true)
+    ManufacturerDao manufacturerDao;
+    
+    @Autowired(required=true)
+    ManufacturerTypeDao manufacturerTypeDao;
+    
+    @Autowired(required=true)
+    PartTypeDao partTypeDao;
+    
+    @Autowired(required=true)
+    CoolTypeDao coolTypeDao;
+    
+    @Autowired(required=true)
+    GasketTypeDao gasketTypeDao;
+    
+    @Autowired(required=true)
+    KitTypeDao kitTypeDao;
+    
+    @Autowired(required=true)
+    SealTypeDao sealTypeDao;
+    
+    @Autowired(required=true)
+    PartDao partDao;
+    
+    @Autowired(required=true)
     JdbcTemplate db;
     
     @RequestMapping("/products")
-    @ResponseBody   
+    @ResponseBody
     @Transactional
+    @PreAuthorize("hasRole('ROLE_MAGMI_EXPORT') or hasIpAddress('127.0.0.1/32')")
     public void products(HttpServletResponse response, OutputStream out, @RequestParam(defaultValue="30", required=false) int days) throws Exception {
         logger.log(Level.INFO, "Magmi export started.");
         
@@ -215,19 +255,19 @@ public class MagmiController {
             try {
                 
                 // Clear Hibernate
-                Part.entityManager().clear();
+                entityManager.clear();
                 
                 // Pre-cache our frequently-used entities
-                ManufacturerType.findAllManufacturerTypes();
-                Manufacturer.findAllManufacturers();
-                PartType.findAllPartTypes();
-                CoolType.findAllCoolTypes();
-                GasketType.findAllGasketTypes();
-                KitType.findAllKitTypes();
-                SealType.findAllSealTypes();
+                manufacturerTypeDao.findAll();
+                manufacturerDao.findAll();
+                partTypeDao.findAll();
+                coolTypeDao.findAll();
+                gasketTypeDao.findAll();
+                kitTypeDao.findAll();
+                sealTypeDao.findAll();
 
                 // Get the next batch of part IDs
-                parts = Part.findPartEntries(position, magmiBatchSize);
+                parts = partDao.findAll(position, magmiBatchSize);
 
                 // Process each product
                 for (MagmiProduct product : magmiDataFinder.findMagmiProducts(parts).values()) {
@@ -274,8 +314,9 @@ public class MagmiController {
     }
     
     @RequestMapping("/product/{partId}")
-    @ResponseBody   
+    @ResponseBody
     @Transactional
+    @PreAuthorize("hasRole('ROLE_MAGMI_EXPORT') or hasIpAddress('127.0.0.1/32')")
     public void product(HttpServletResponse response, OutputStream out, @PathVariable Long partId) throws Exception {
         
         response.setHeader("Content-Type", "text/csv");
@@ -287,7 +328,7 @@ public class MagmiController {
         // Write the header row
         writer.writeNext(getCsvHeaders(mas90.getPriceLevels()));
         
-        Part part = Part.findPart(partId);
+        Part part = partDao.findOne(partId);
         List<Part> parts = new ArrayList<Part>();
         parts.add(part);
         

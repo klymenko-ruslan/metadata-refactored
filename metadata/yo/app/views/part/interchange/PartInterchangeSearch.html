@@ -33,7 +33,7 @@
   <!-- Current Interchanges -->
   <div class="col-xs-6">
     <h3>Current Interchanges</h3>
-    <part-table parts="part.interchange.parts"></part-table>
+    <interchanges interchange-id="part.interchange.id" parent-part-id="partId"></interchanges>
   </div>
 
   <!-- Picked Part -->
@@ -54,9 +54,9 @@
   </div>
 
   <!-- Picked Part Interchanges -->
-  <div class="col-xs-6" ng-show="pickedPart">
+  <div class="col-xs-12 col-md-6" ng-show="pickedPart">
     <h3>Picked Part Interchanges</h3>
-    <part-table parts="pickedPart.interchange.parts"></part-table>
+    <interchanges interchange-id="pickedPart.interchange.id" parent-part-id="pickedPart.id"></interchanges>
   </div>
 </div>
 

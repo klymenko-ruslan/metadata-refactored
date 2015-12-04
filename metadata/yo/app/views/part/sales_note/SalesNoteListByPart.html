@@ -1,0 +1,85 @@
+<metanav>
+  <li authorize="ROLE_READ">
+    <a ng-href="/part/{{ partId }}"
+       class="btn btn-primary">
+      <i class="fa fa-eye"></i> View Part
+    </a>
+  </li>
+  <li authorize="ROLE_SALES_NOTE_SUBMIT">
+    <a ng-href="/part/{{ partId }}/sales_note/create"
+       class="btn btn-primary text-center">
+      <i class="fa fa-plus"></i> Add Sales Note
+    </a>
+  </li>
+</metanav>
+
+<h1 class="padding-top" part-name="part" part-name-suffix="Sales Notes"></h1>
+
+<div class="col-xs-3">
+  <form ng-submit="notesTableParams.reload()">
+    <h2>Search</h2>
+    <button type="submit">Search</button>
+    <input id="part-number" class="form-control" type="text" ng-model="search.query" placeholder="Related Part number or comment">
+
+    <h4>Status</h4>
+    <label ng-repeat="state in SalesNotes.states" style="display: block">
+      <input type="checkbox" ng-checked="isStateEnabled(state)" ng-click="toggleState(state)"> {{state}}
+    </label>
+  </form>
+</div>
+
+<div class="col-xs-9">
+  <table data-ng-table="notesTableParams" class="table table-bordered table-striped table-hover table-responsive">
+      <tr data-ng-repeat="salesNote in $data">
+          <td title="'Created'" data-sortable="'note.createdDate'">
+              {{salesNote.createDate | date : "yyyy-MM-dd HH:mm" }}
+          </td>
+          <td title="'Note'" data-sortable="'note.comment'">
+              {{salesNote.comment}}
+          </td>
+          <td title="'State'" data-sortable="'note.state'">
+              {{salesNote.state}}
+          </td>
+          <td title="'Relation'" ng-class="{info:salesNote.primaryPartId == partId}">
+              {{salesNote.primaryPartId == partId ? "Primary" : "Related"}}
+          </td>
+          <td class="text-right" title="'Actions'">
+              <a ng-href="/part/{{salesNote.primaryPartId}}/sales_note/{{salesNote.id}}"
+                 authorize="ROLE_SALES_NOTE_READ"
+                 class="btn btn-primary btn-sm pull-left">
+                <span class="fa fa-file-text-o"></span> View Note
+              </a>
+            
+              <a ng-click="SalesNotes.submit(salesNote)"
+                 authorize="ROLE_SALES_NOTE_SUBMIT" ng-if="SalesNotes.canSubmit(salesNote)"
+                 class="btn btn-info btn-sm">
+                <span class="fa fa-check-square"></span> Submit
+              </a>
+            
+              <a ng-click="SalesNotes.publish(salesNote)"
+                 authorize="ROLE_SALES_NOTE_PUBLISH" ng-if="SalesNotes.canPublish(salesNote)"
+                 class="btn btn-primary btn-sm">
+                <span class="fa fa-cloud-upload"></span> Publish
+              </a>
+            
+              <a ng-click="SalesNotes.approve(salesNote)"
+                 authorize="ROLE_SALES_NOTE_APPROVE" ng-if="SalesNotes.canApprove(salesNote)"
+                 class="btn btn-success btn-sm">
+                <span class="fa fa-thumbs-up"></span> Approve
+              </a>
+            
+              <a ng-click="SalesNotes.reject(salesNote)"
+                 authorize="ROLE_SALES_NOTE_REJECT" ng-if="SalesNotes.canReject(salesNote)"
+                 class="btn btn-danger btn-sm">
+                <span class="fa fa-thumbs-down"></span> Reject
+              </a>
+
+              <a ng-click="SalesNotes.retract(salesNote)"
+                 authorize="ROLE_SALES_NOTE_RETRACT" ng-if="SalesNotes.canRetract(salesNote)"
+                 class="btn btn-warning btn-sm">
+                <span class="fa fa-cloud-download"></span> Retract
+              </a>
+          </td>
+      </tr>
+  </table>
+</div>

@@ -1,5 +1,6 @@
 package com.turbointernational.metadata.domain.car;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,9 @@ public class ApplicationController {
 
     private static final Logger log = Logger.getLogger(ApplicationController.class.toString());
 
+    @Autowired
+    private CarModelEngineYearDao carModelEngineYearDao;
+
     @Transactional
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     @ResponseBody
@@ -26,7 +30,7 @@ public class ApplicationController {
     public ResponseEntity<String> getApplicatation(@PathVariable("id") long id) {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json; charset=utf-8");
-        CarModelEngineYear application = CarModelEngineYear.findById(id);
+        CarModelEngineYear application = carModelEngineYearDao.findById(id);
         String json = null;
         if (application != null) {
             json = application.toJson();

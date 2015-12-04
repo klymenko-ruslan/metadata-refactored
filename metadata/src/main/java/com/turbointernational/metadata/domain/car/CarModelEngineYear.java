@@ -2,16 +2,13 @@ package com.turbointernational.metadata.domain.car;
 
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
-import org.springframework.beans.factory.annotation.Configurable;
-
-import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import javax.persistence.*;
 
 @Cacheable
-@Configurable
 @Entity
 @Table(name="car_model_engine_year")
 @NamedQueries({
@@ -32,24 +29,6 @@ public class CarModelEngineYear implements Serializable {
     @JoinColumn(name="car_engine_id", nullable = true)
     private CarEngine engine;
 
-    @PersistenceContext
-    @Transient
-    private EntityManager entityManager;
-
-    public static final EntityManager entityManager() {
-        EntityManager em = new CarModelEngineYear().entityManager;
-        if (em == null) throw new IllegalStateException("Entity manager has not been injected " +
-                "(is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
-        return em;
-    }
-
-    public static  List<CarModelEngineYear> findApplicationEntries(int firstResult, int maxResults) {
-        return CarModelEngineYear.entityManager().
-                createNamedQuery("allApplications").
-                setFirstResult(firstResult).
-                setMaxResults(maxResults).
-                getResultList();
-    }
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="car_year_id", nullable = true)
@@ -113,9 +92,6 @@ public class CarModelEngineYear implements Serializable {
         return new JSONSerializer().include(fields).exclude("*.class").serialize(this);
     }
 
-    public static CarModelEngineYear findById(Long id) {
-        return entityManager().find(CarModelEngineYear.class, id);
-    }
 
     public static CarModelEngineYear fromJsonToCarFuelType(String json) {
         return new JSONDeserializer<CarModelEngineYear>().use(null, CarModelEngineYear.class).deserialize(json);

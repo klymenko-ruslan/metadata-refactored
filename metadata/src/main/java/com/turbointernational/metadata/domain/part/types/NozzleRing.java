@@ -7,7 +7,6 @@ import javax.persistence.Entity;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
-@Configurable
 @Entity
 @Table(name="nozzle_ring")
 @PrimaryKeyJoinColumn(name = "part_id")

@@ -2,14 +2,12 @@ package com.turbointernational.metadata.domain.part.types;
 
 import com.turbointernational.metadata.domain.car.CarModelEngineYear;
 import flexjson.JSONSerializer;
-import org.springframework.beans.factory.annotation.Configurable;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
 
 @Cacheable
-@Configurable
 @Entity
 @Table(name="turbo_car_model_engine_year")
 @NamedQueries({
@@ -39,17 +37,6 @@ public class TurboCarModelEngineYear implements Serializable {
     @Column(name = "import_pk", nullable = true)
     private Long importPk;
 
-    @PersistenceContext
-    @Transient
-    private EntityManager entityManager;
-
-    public static final EntityManager entityManager() {
-        EntityManager em = new TurboCarModelEngineYear().entityManager;
-        if (em == null) throw new IllegalStateException("Entity manager has not been injected " +
-                "(is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
-        return em;
-    }
-
     public TurboCarModelEngineYear() {
     }
 
@@ -77,30 +64,26 @@ public class TurboCarModelEngineYear implements Serializable {
         this.importPk = importPk;
     }
 
-    public static List<TurboCarModelEngineYear> getPartLinkedApplications(Long partId) {
-        return TurboCarModelEngineYear.entityManager().
-                createNamedQuery("partLinkedApplications", TurboCarModelEngineYear.class).
-                setParameter("partId", partId).
-                getResultList();
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof TurboCarModelEngineYear)) return false;
+
+        TurboCarModelEngineYear that = (TurboCarModelEngineYear) o;
+
+        if (!turbo.equals(that.turbo)) return false;
+        if (!carModelEngineYear.equals(that.carModelEngineYear)) return false;
+        if (importPk != null ? !importPk.equals(that.importPk) : that.importPk != null) return false;
+        return true;
+
     }
 
-    public static void add(Long partId, Long applicationId) {
-        EntityManager em =  entityManager();
-        Turbo turbo = em.getReference(Turbo.class, partId);
-        CarModelEngineYear application = em.getReference(CarModelEngineYear.class, applicationId);
-        TurboCarModelEngineYear partApplication = new TurboCarModelEngineYear();
-        partApplication.setTurbo(turbo);
-        partApplication.setCarModelEngineYear(application);
-        em.persist(partApplication);
-    }
-
-    public static int delete(Long partId, Long applicationId) {
-        EntityManager em =  entityManager();
-        final Query delQuery = em.createNamedQuery("delelePartApplication");
-        delQuery.setParameter("partId", partId);
-        delQuery.setParameter("applicationId", applicationId);
-        int deleted = delQuery.executeUpdate();
-        return deleted;
+    @Override
+    public int hashCode() {
+        int result = turbo.hashCode();
+        result = 31 * result + carModelEngineYear.hashCode();
+        result = 31 * result + (importPk != null ? importPk.hashCode() : 0);
+        return result;
     }
 
 }

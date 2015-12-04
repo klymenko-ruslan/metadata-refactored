@@ -6,7 +6,7 @@ angular.module('ngMetaCrudApp').directive('partApplicationTable', function ($log
     restrict: 'E',
     replace: false,
     templateUrl: '/views/component/partApplicationTable.html',
-    controller: function($scope, $dialogs, partApplicationService) {
+    controller: function($scope, dialogs, partApplicationService) {
       restService.findPartApplications($scope.partId).then(
         function (applications) {
           $scope.applications = applications;
@@ -17,7 +17,7 @@ angular.module('ngMetaCrudApp').directive('partApplicationTable', function ($log
         }
       );
       $scope.remove = function(idx) {
-        $dialogs.confirm('Unlink Application Item', 'Are you sure?').result.then(
+        dialogs.confirm('Unlink Application Item', 'Are you sure?').result.then(
           function() {
             // Yes
             partApplicationService.removeApplication($scope.partId, $scope.applications, idx);

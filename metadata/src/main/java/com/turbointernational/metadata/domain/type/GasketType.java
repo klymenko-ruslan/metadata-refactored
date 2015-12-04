@@ -1,26 +1,34 @@
 package com.turbointernational.metadata.domain.type;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.web.View;
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
-import org.springframework.beans.factory.annotation.Configurable;
-
-import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import javax.persistence.Cacheable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 @Cacheable
-@Configurable
 @Entity
 @Table(name="GASKET_TYPE", uniqueConstraints=@UniqueConstraint(columnNames={"name"}))
 public class GasketType implements Serializable {
 
     //<editor-fold defaultstate="collapsed" desc="properties">
     @Id
+    @JsonView(View.Summary.class)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
+    @JsonView(View.Summary.class)
     @Column(nullable=false)
     private String name;
     
@@ -38,26 +46,6 @@ public class GasketType implements Serializable {
     
     public void setName(String name) {
         this.name = name;
-    }
-    //</editor-fold>
-    
-    //<editor-fold defaultstate="collapsed" desc="activerecord">
-    @PersistenceContext
-    transient EntityManager entityManager;
-    
-    public static final EntityManager entityManager() {
-        EntityManager em = new GasketType().entityManager;
-        if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
-        return em;
-    }
-    
-    public static List<GasketType> findAllGasketTypes() {
-        return entityManager().createQuery("SELECT o FROM GasketType o", GasketType.class).getResultList();
-    }
-    
-    public static GasketType findGasketType(Long id) {
-        if (id == null) return null;
-        return entityManager().find(GasketType.class, id);
     }
     //</editor-fold>
     

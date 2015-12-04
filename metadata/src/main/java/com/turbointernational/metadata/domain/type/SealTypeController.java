@@ -1,5 +1,7 @@
 package com.turbointernational.metadata.domain.type;
 
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,11 +18,14 @@ import java.util.List;
 @RequestMapping("/metadata/type/seal")
 public class SealTypeController {
     
+    @Autowired(required=true)
+    SealTypeDao sealTypeDao;
+    
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ResponseBody
     @Secured("ROLE_READ")
     public ResponseEntity<String> showJson(@PathVariable("id") Long id) {
-        SealType sealType = SealType.findSealType(id);
+        SealType sealType = sealTypeDao.findOne(id);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json; charset=utf-8");
         if (sealType == null) {
@@ -35,7 +40,7 @@ public class SealTypeController {
     public ResponseEntity<String> listJson() {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json; charset=utf-8");
-        List<SealType> result = SealType.findAllSealTypes();
+        List<SealType> result = sealTypeDao.findAll();
         return new ResponseEntity<String>(SealType.toJsonArray(result), headers, HttpStatus.OK);
     }
 }

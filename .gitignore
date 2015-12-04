@@ -11,6 +11,7 @@
 /magento/.bash_history
 /magento/downloader/.cache
 /magento/downloader/cache.cfg
+/magento/includes/src/*
 /magento/magmi/import/*
 /magento/magmi/state/*
 /magento/media/catalog/product/*
@@ -26,4 +27,4 @@
 /metadata/yo/.tmp/
 /metadata/yo/.sass-cache/
 /metadata/yo/nbproject/private/
-/magento/includes/src/*
+/metadata/src/main/resources/public/

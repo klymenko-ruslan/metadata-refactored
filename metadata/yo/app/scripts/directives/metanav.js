@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-  .directive('metanav', function($dialogs, $interval, gToast, User, restService, Restangular) {
+  .directive('metanav', function(dialogs, $interval, gToast, User, restService, Restangular) {
     return {
       transclude: true,
       templateUrl: '/views/component/Metanav.html',
@@ -19,7 +19,7 @@ angular.module('ngMetaCrudApp')
         });
 
         $scope.rebuildBom = function() {
-          $dialogs.confirm(
+          dialogs.confirm(
             'Rebuild BOM for all parts?',
             'You need to run this if changes have been made directly to the database. Proceed?').result.then(
             function() {
@@ -41,7 +41,7 @@ angular.module('ngMetaCrudApp')
         };
 
         $scope.reindexPartSearch = function() {
-          $dialogs.confirm(
+          dialogs.confirm(
             'Reindex search engine data for parts?',
             'You need to run this if changes have been made directly to the database. Proceed?').result.then(
             function() {
@@ -53,7 +53,7 @@ angular.module('ngMetaCrudApp')
                 },
                 function(response) {
                   // Error
-                  $dialogs.error(
+                  dialogs.error(
                     'Could not index search engine data for parts.',
                     'Server said: <pre>' + JSON.stringify(response.data) + '</pre>');
                 });
@@ -65,7 +65,7 @@ angular.module('ngMetaCrudApp')
         };
 
         $scope.reindexApplicationSearch = function() {
-          $dialogs.confirm(
+          dialogs.confirm(
             'Reindex search engine data for applications?',
             'You need to run this if changes have been made directly to the database. Proceed?').result.then(
             function() {
@@ -77,9 +77,9 @@ angular.module('ngMetaCrudApp')
                 },
                 function(response) {
                   // Error
-                  $dialogs.error(
-                    'Could not index search engine data for applications.',
-                    'Server said: <pre>' + JSON.stringify(response.data) + '</pre>');
+                  dialogs.error(
+                    'Could not index search engine data.',
+                    'Here\'s the error: <pre>' + response.status +'</pre>');
                 });
             },
             function() {
@@ -89,7 +89,7 @@ angular.module('ngMetaCrudApp')
         };
 
         $scope.clearHibernate = function() {
-          $dialogs.confirm(
+          dialogs.confirm(
             'Clear Hibernate cache?',
             'You need to run this if changes have been made directly to the database. Proceed?').result.then(
             function() {
@@ -101,7 +101,7 @@ angular.module('ngMetaCrudApp')
                 },
                 function(response) {
                   // Error
-                  $dialogs.error(
+                  dialogs.error(
                     'Could not index search engine data.',
                     'Here\'s the error: <pre>' + response.status + '</pre>');
                 });

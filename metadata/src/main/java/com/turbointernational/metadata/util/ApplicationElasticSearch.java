@@ -1,9 +1,11 @@
 package com.turbointernational.metadata.util;
 
 import com.turbointernational.metadata.domain.car.CarModelEngineYear;
+import com.turbointernational.metadata.domain.car.CarModelEngineYearDao;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.client.Client;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,15 +21,18 @@ public class ApplicationElasticSearch extends AbstractElasticSearch {
 
     private static final Logger log = Logger.getLogger(ApplicationElasticSearch.class.toString());
 
+    @Autowired
+    private CarModelEngineYearDao carModelEngineYearDao;
+
     @Value("${elasticsearch.type.application}")
-    String elasticSearchType;
+    String elasticSearchType = "application";
 
     @Transactional(readOnly = true)
     public int indexApplications(int firstResult, int maxResults) throws Exception {
 
         BulkRequest bulk = new BulkRequest();
 
-        List<CarModelEngineYear> applications = CarModelEngineYear.findApplicationEntries(firstResult, maxResults);
+        List<CarModelEngineYear> applications = carModelEngineYearDao.findApplicationEntries(firstResult, maxResults);
 
         for (CarModelEngineYear application : applications) {
             String searchId = application.getId().toString();

@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-    .factory('partSearchService', function ($http, $log, Facets) {
+    .factory('partSearchService', function ($http, $log, Facets, METADATA_BASE) {
         return function (partSearchParams) {
 //        console.log('Searching for `' + search.partNumber + '`, facets: ' + JSON.stringify(search.facets));
 
@@ -80,12 +80,14 @@ angular.module('ngMetaCrudApp')
             headers: {
               'Content-type': 'text/plain'
             },
-            url: '/metadata/search/part',
+            withCredentials: true,
+            url: METADATA_BASE + 'search/part',
+            //url: '/metadata/search/part',
             data: searchRequest
           });
         };
       })
-     .factory('applicationSearchService', function ($http, $log, partApplicationFacets) {
+     .factory('applicationSearchService', function ($http, $log, partApplicationFacets, METADATA_BASE) {
         return function (applicationSearchParams) {
 //        console.log('Searching for `' + search.partNumber + '`, facets: ' + JSON.stringify(search.facets));
 
@@ -158,7 +160,8 @@ angular.module('ngMetaCrudApp')
             headers: {
               'Content-type': 'text/plain'
             },
-            url: '/metadata/search/application',
+            url: METADATA_BASE + 'search/application',
+            // url: '/metadata/search/application',
             data: searchRequest
           });
         };

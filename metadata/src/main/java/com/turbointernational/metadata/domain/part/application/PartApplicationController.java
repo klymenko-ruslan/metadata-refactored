@@ -1,8 +1,10 @@
 package com.turbointernational.metadata.domain.part.application;
 
 import com.turbointernational.metadata.domain.part.types.TurboCarModelEngineYear;
+import com.turbointernational.metadata.domain.part.types.TurboCarModelEngineYearDao;
 import flexjson.JSONSerializer;
 import flexjson.transformer.HibernateTransformer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +25,9 @@ public class PartApplicationController {
 
     private static final Logger log = Logger.getLogger(PartApplicationController.class.toString());
 
+    @Autowired
+    private TurboCarModelEngineYearDao turboCarModelEngineYearDao;
+
     @Transactional
     @RequestMapping(value = "{partId}/application", method = RequestMethod.GET)
     @ResponseBody
@@ -31,7 +36,7 @@ public class PartApplicationController {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json; charset=utf-8");
         List<TurboCarModelEngineYear> partLinkedApplications =
-                TurboCarModelEngineYear.getPartLinkedApplications(partId);
+                turboCarModelEngineYearDao.getPartLinkedApplications(partId);
         String json = new JSONSerializer()
                 .transform(new HibernateTransformer(), TurboCarModelEngineYear.class)
                 .include("carModelEngineYear.id")
@@ -51,7 +56,7 @@ public class PartApplicationController {
     @Secured("ROLE_APPLICATION_CRUD")
     public ResponseEntity<String> add(@PathVariable("partId") Long partId,
                                       @PathVariable("applicationId") Long applicationId) throws Exception {
-        TurboCarModelEngineYear.add(partId, applicationId);
+        turboCarModelEngineYearDao.add(partId, applicationId);
         log.info("Linked application (" + partId + ", " + applicationId + ").");
         return new ResponseEntity<String>("", HttpStatus.OK);
     }
@@ -62,7 +67,7 @@ public class PartApplicationController {
     @Secured("ROLE_APPLICATION_CRUD")
     public ResponseEntity<String> delete(@PathVariable("partId") Long partId,
                                          @PathVariable("applicationId") Long applicationId) throws Exception {
-        int deleted = TurboCarModelEngineYear.delete(partId, applicationId);
+        int deleted = turboCarModelEngineYearDao.delete(partId, applicationId);
         log.info("Deleted application (" + partId + ", " + applicationId + "): " + deleted);
         return new ResponseEntity<String>("", HttpStatus.OK);
     }

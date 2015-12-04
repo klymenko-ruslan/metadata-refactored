@@ -1,8 +1,19 @@
 package com.turbointernational.metadata.domain.changelog;
 
 import com.turbointernational.metadata.domain.security.User;
-import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.transaction.annotation.Transactional;
+import java.io.Serializable;
+import java.util.Date;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -12,7 +23,6 @@ import java.util.Date;
  *
  * @author jrodriguez
  */
-@Configurable
 @Entity
 @Table(name = "changelog")
 public class Changelog implements Serializable {
@@ -45,42 +55,61 @@ public class Changelog implements Serializable {
     public void setId(Long id) {
         this.id = id;
     }
-
-    public static Changelog log(String description, String data) {
-        Changelog changelog = new Changelog();
-
-        changelog.description = description;
-        changelog.changeDate = new Date();
-        changelog.data = data;
-        changelog.user = User.getCurrentUser();
-
-        changelog.persist();
-
-        return changelog;
-    }
     //</editor-fold>
-    
-    //<editor-fold defaultstate="collapsed" desc="ActiveRecord">
-    
-    @PersistenceContext
-    transient EntityManager entityManager;
-    
-    public static final EntityManager entityManager() {
-        EntityManager em = new Changelog().entityManager;
-        if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
-        return em;
+
+    /**
+     * @return the changeDate
+     */
+    public Date getChangeDate() {
+        return changeDate;
     }
-    
-    @Transactional
-    public void persist() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.persist(this);
+
+    /**
+     * @param changeDate the changeDate to set
+     */
+    public void setChangeDate(Date changeDate) {
+        this.changeDate = changeDate;
     }
-    
-    @Transactional
-    public void flush() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.flush();
+
+    /**
+     * @return the user
+     */
+    public User getUser() {
+        return user;
     }
-    //</editor-fold>
+
+    /**
+     * @param user the user to set
+     */
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    /**
+     * @return the description
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * @param description the description to set
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    /**
+     * @return the data
+     */
+    public String getData() {
+        return data;
+    }
+
+    /**
+     * @param data the data to set
+     */
+    public void setData(String data) {
+        this.data = data;
+    }
 }

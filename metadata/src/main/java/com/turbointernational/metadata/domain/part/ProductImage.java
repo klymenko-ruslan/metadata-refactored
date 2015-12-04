@@ -1,9 +1,18 @@
 package com.turbointernational.metadata.domain.part;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.web.View;
 import flexjson.JSONSerializer;
 import flexjson.transformer.HibernateTransformer;
-import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.transaction.annotation.Transactional;
+import java.io.Serializable;
+import javax.persistence.Cacheable;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -13,25 +22,23 @@ import java.io.Serializable;
  * @author jrodriguez
  */
 
-@Configurable
 @Cacheable
 @Entity
 @Table(name = "product_image")
 public class ProductImage implements Comparable<ProductImage>, Serializable {
 
-    public static String getResizedFilename(Long partId, Long imageId, int size) {
-        return size + "/" + partId + "_" + imageId + ".jpg";
-    }
 
     //<editor-fold defaultstate="collapsed" desc="Properties">
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonView({View.Summary.class})
     private Long id;
     
     @ManyToOne
     @JoinColumn(name = "part_id")
     private Part part;
     
+    @JsonView({View.Summary.class})
     private String filename;
     
     public Long getId() {
@@ -55,69 +62,11 @@ public class ProductImage implements Comparable<ProductImage>, Serializable {
     }
     
     public String getFilename(int size) {
-        return getResizedFilename(part.getId(), id, size);
+        return ProductImageDao.getResizedFilename(part.getId(), id, size);
     }
     
     public void setFilename(String filename) {
         this.filename = filename;
-    }
-    //</editor-fold>
-    
-    //<editor-fold defaultstate="collapsed" desc="ActiveRecord">
-    @PersistenceContext
-    @Transient
-    private EntityManager entityManager;
-    
-    public static final EntityManager entityManager() {
-        EntityManager em = new ProductImage().entityManager;
-        if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
-        return em;
-    }
-    
-    public static long count() {
-        return entityManager().createQuery("SELECT COUNT(o) FROM ProductImage o", Long.class).getSingleResult();
-    }
-    
-    public static ProductImage find(Long id) {
-        if (id == null) return null;
-        Query q = entityManager().createQuery("SELECT DISTINCT p FROM ProductImage p WHERE p.id = :id");
-        q.setParameter("id", id);
-        return (ProductImage) q.getSingleResult();
-    }
-    
-    @Transactional
-    public void persist() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.persist(this);
-    }
-    
-    @Transactional
-    public void remove() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        if (this.entityManager.contains(this)) {
-            this.entityManager.remove(this);
-        } else {
-            ProductImage attached = ProductImage.find(this.id);
-            this.entityManager.remove(attached);
-        }
-    }
-    
-    @Transactional
-    public void flush() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.flush();
-    }
-    
-    @Transactional
-    public void clear() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.clear();
-    }
-    
-    @Transactional
-    public void refresh() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.refresh(this);
     }
     //</editor-fold>
     

@@ -1,42 +1,55 @@
 package com.turbointernational.metadata.domain.part.types;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.type.CoolType;
+import com.turbointernational.metadata.web.View;
 import flexjson.JSONSerializer;
-import org.apache.commons.lang.ObjectUtils;
-import org.springframework.beans.factory.annotation.Configurable;
-
-import javax.persistence.*;
 import java.util.Map;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.Table;
+import org.apache.commons.lang.ObjectUtils;
 
-@Configurable
 @Entity
 @Table(name="bearing_housing")
 @PrimaryKeyJoinColumn(name = "part_id")
 public class BearingHousing extends Part {
     
+    @JsonView(View.Detail.class)
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="cool_type_id")
     private CoolType coolType;
 
+    @JsonView(View.Detail.class)
     @Column(name="oil_inlet")
     private String oilInlet;
 
+    @JsonView(View.Detail.class)
     @Column(name="oil_outlet")
     private String oilOutlet;
 
+    @JsonView(View.Detail.class)
     @Column(name="oil")
     private String oil;
 
+    @JsonView(View.Detail.class)
     @Column(name="outlet_flange_holes")
     private String outletFlangeHoles;
 
+    @JsonView(View.Detail.class)
     @Column(name="water_ports")
     private String waterPorts;
 
+    @JsonView(View.Detail.class)
     @Column(name="design_features")
     private String designFeatures;
 
+    @JsonView(View.Detail.class)
     @Column(name="bearing_type")
     private String bearingType;
 

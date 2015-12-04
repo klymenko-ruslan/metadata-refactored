@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-  .controller('PartApplicationSearchCtrl', function ($log, $scope, $location, $routeParams, restService, $dialogs, gToast) {
+  .controller('PartApplicationSearchCtrl', function ($log, $scope, $location, $routeParams, restService, dialogs, gToast) {
     $scope.partId = $routeParams.id;
     // The part whose applications we're editing
     $scope.part = restService.findPart($scope.partId)
@@ -27,7 +27,7 @@ angular.module('ngMetaCrudApp')
           $location.path("/part/" + $scope.partId);
         },
           function (response) {
-            $dialogs.error("Could not add Application to part.", "Server said: <pre>" + JSON.stringify(response.data) + "</pre>");
+            dialogs.error("Could not add Application to part.", "Server said: <pre>" + JSON.stringify(response.data) + "</pre>");
         });
     }
 

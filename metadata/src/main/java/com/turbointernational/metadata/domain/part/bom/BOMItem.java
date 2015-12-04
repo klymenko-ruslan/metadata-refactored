@@ -1,25 +1,45 @@
 package com.turbointernational.metadata.domain.part.bom;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.Part;
+import com.turbointernational.metadata.web.View;
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
-import org.apache.commons.lang3.ObjectUtils;
-import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.*;
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+import org.apache.commons.lang3.ObjectUtils;
 
-@Configurable
 @Entity
 @Table(name="bom", uniqueConstraints=@UniqueConstraint(columnNames={"parent_part_id", "child_part_id"}))
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "class", include = JsonTypeInfo.As.PROPERTY, defaultImpl = BOMItem.class)
 public class BOMItem implements Comparable<BOMItem>, Serializable {
 
     //<editor-fold defaultstate="collapsed" desc="properties">
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonView({View.Summary.class})
     private Long id;
     
     @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.REFRESH})
@@ -28,13 +48,16 @@ public class BOMItem implements Comparable<BOMItem>, Serializable {
     
     @OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.REFRESH})
     @JoinColumn(name="child_part_id")
+    @JsonView({View.SummaryWithBOMDetail.class})
     private Part child;
     
     @Column(nullable=false)
+    @JsonView({View.Summary.class})
     private Integer quantity;
     
     @OneToMany(mappedBy="bomItem", fetch = FetchType.LAZY, orphanRemoval = true)
     @OrderBy("id")
+    @JsonView({View.SummaryWithBOMDetail.class})
     private Set<BOMAlternative> alternatives = new TreeSet<BOMAlternative>();
     
     public Long getId() {
@@ -96,63 +119,6 @@ public class BOMItem implements Comparable<BOMItem>, Serializable {
         if (ObjectUtils.equals(child.getId(), parent.getId())) {
             throw new IllegalStateException("Child cannot be it's own parent.");
         }
-    }
-    //</editor-fold>
-    
-    //<editor-fold defaultstate="collapsed" desc="activerecord">
-    @PersistenceContext
-    transient EntityManager entityManager;
-    
-    public static final EntityManager entityManager() {
-        EntityManager em = new BOMItem().entityManager;
-        if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
-        return em;
-    }
-    
-    public static BOMItem findBOMItem(Long id) {
-        if (id == null) return null;
-        
-        return entityManager()
-                .createQuery("SELECT DISTINCT i FROM BOMItem i WHERE id = ?", BOMItem.class)
-                .setParameter(1, id)
-                .getSingleResult();
-    }
-    
-    @Transactional
-    public void persist() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.persist(this);
-    }
-    
-    @Transactional
-    public void remove() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        if (this.entityManager.contains(this)) {
-            this.entityManager.remove(this);
-        } else {
-            BOMItem attached = findBOMItem(this.id);
-            this.entityManager.remove(attached);
-        }
-    }
-    
-    @Transactional
-    public void flush() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.flush();
-    }
-    
-    @Transactional
-    public void clear() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.clear();
-    }
-    
-    @Transactional
-    public BOMItem merge() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        BOMItem merged = this.entityManager.merge(this);
-        this.entityManager.flush();
-        return merged;
     }
     //</editor-fold>
     

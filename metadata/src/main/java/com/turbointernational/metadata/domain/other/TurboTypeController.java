@@ -1,8 +1,13 @@
 package com.turbointernational.metadata.domain.other;
 
-import com.turbointernational.metadata.domain.changelog.Changelog;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.domain.changelog.ChangelogDao;
+import com.turbointernational.metadata.web.View;
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
@@ -15,61 +20,56 @@ import java.util.List;
 @RequestMapping("/metadata/other/turboType")
 public class TurboTypeController {
     
-    @RequestMapping(method = RequestMethod.POST)
+    @Autowired
+    ChangelogDao changelogDao;
+    
+    @Autowired
+    TurboTypeDao turboTypeDao;
+    
+    @RequestMapping(method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     @Secured("ROLE_TURBO_MODEL_CRUD")
     @Transactional
-    public ResponseEntity<String> createJson(@RequestBody String typeJson) {
-        TurboType type = TurboType.fromJsonToTurboType(typeJson);
-        type.persist();
+    @JsonView(View.Detail.class)
+    public TurboType createJson(@RequestBody TurboType type) {
+        turboTypeDao.persist(type);
         
-        Changelog.log("Created turbo type", type.toJson());
+        changelogDao.log("Created turbo type", type.toJson());
         
-        
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/json; charset=utf-8");
-        return new ResponseEntity<String>(type.toJson(), headers, HttpStatus.OK);
+        return type;
     }
     
-    @RequestMapping(method = RequestMethod.PUT)
+    @RequestMapping(method = RequestMethod.PUT,
+                    consumes = MediaType.APPLICATION_JSON_VALUE,
+                    produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     @Secured("ROLE_TURBO_MODEL_CRUD")
     @Transactional
-    public ResponseEntity<String> updateJson(@RequestBody String turboTypeJson) {
-        TurboType turboType = TurboType.fromJsonToTurboType(turboTypeJson);
-        turboType.merge();
-        
-        Changelog.log("Updated turbo type", turboType.toJson());
-        
-        
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/json; charset=utf-8");
-        return new ResponseEntity<String>(turboType.toJson(), headers, HttpStatus.OK);
+    @JsonView(View.Detail.class)
+    public TurboType updateJson(@RequestBody TurboType turboType) {
+        turboTypeDao.merge(turboType);
+        changelogDao.log("Updated turbo type", turboType.toJson());
+        return turboType;
     }
     
-    @RequestMapping(value="/{turboTypeId}", method = RequestMethod.DELETE)
+    @RequestMapping(value="/{turboTypeId}", method = RequestMethod.DELETE,
+                    produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     @Secured("ROLE_TURBO_MODEL_CRUD")
     @Transactional
-    public ResponseEntity<String> deleteJson(@PathVariable Long turboTypeId) {
-        TurboType turboType = TurboType.findTurboType(turboTypeId);
-        
-        Changelog.log("Removed turbo type", turboType.toJson());
-        
-        turboType.remove();
-        
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/json; charset=utf-8");
-        return new ResponseEntity<String>("", headers, HttpStatus.OK);
+    public void deleteJson(@PathVariable Long turboTypeId) {
+        TurboType turboType = turboTypeDao.findOne(turboTypeId);
+        changelogDao.log("Removed turbo type", turboType.toJson());
+        turboTypeDao.remove(turboType);
     }
     
-    @RequestMapping(value = "/manufacturer/{manufacturerId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/manufacturer/{manufacturerId}", method = RequestMethod.GET,
+                    produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     @Secured("ROLE_READ")
-    public ResponseEntity<String> listJson(@PathVariable("manufacturerId") Long manufacturerId) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/json; charset=utf-8");
-        List<TurboType> result = TurboType.findTurboTypesByManufacturerId(manufacturerId);
-        return new ResponseEntity<String>(TurboType.toJsonArray(result), headers, HttpStatus.OK);
+    public List<TurboType> listJson(@PathVariable("manufacturerId") Long manufacturerId) {
+        return turboTypeDao.findTurboTypesByManufacturerId(manufacturerId);
     }
 }

@@ -379,6 +379,15 @@ CREATE TABLE `standard_journal_bearing` (
   FOREIGN KEY (`oversized_part_id`) REFERENCES `journal_bearing` (`part_id`)
 ) ENGINE = INNODB;
 
+CREATE TABLE `standard_oversize_part` (
+  `standard_part_id` BIGINT NOT NULL,
+  `oversize_part_id` BIGINT NOT NULL,
+  PRIMARY KEY (`standard_part_id`,`oversize_part_id`),
+  KEY `standard_oversize_part_oversized_part_id_idx` (`oversize_part_id`),
+  CONSTRAINT `standard_oversize_part_standard_part_id` FOREIGN KEY (`standard_part_id`) REFERENCES `part` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+  CONSTRAINT `standard_oversize_part_oversized_part_id` FOREIGN KEY (`oversize_part_id`) REFERENCES `part` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
+) ENGINE=InnoDB;
+
 CREATE TABLE `turbine_wheel` (
   `part_id` BIGINT NOT NULL,
   `exduce_oa` DECIMAL(10,6) NULL,
@@ -551,6 +560,86 @@ CREATE TABLE `deleted_parts` (
   `dt` TIMESTAMP,
   UNIQUE INDEX (id)
 ) ENGINE = INNODB;
+
+--
+-- Sales Notes
+--
+DROP TABLE IF EXISTS `sales_note`;
+CREATE TABLE `sales_note` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `create_date` datetime NOT NULL,
+  `write_date` datetime NOT NULL,
+  `create_uid` bigint(20) NOT NULL,
+  `write_uid` bigint(20) NOT NULL,
+  `state` varchar(15) NOT NULL COMMENT 'draft;submitted;approved;rejected',
+  `comment` longtext NOT NULL,
+  `published` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `fk_sales_note_user_create_uid_idx` (`create_uid`),
+  KEY `fk_sales_note_user_write_uid_idx` (`write_uid`),
+  CONSTRAINT `fk_sales_note_user_create_uid` FOREIGN KEY (`create_uid`) REFERENCES `user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_sales_note_user_write_uid` FOREIGN KEY (`write_uid`) REFERENCES `user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `sales_note_attachment`;
+CREATE TABLE `sales_note_attachment` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `create_date` datetime NOT NULL,
+  `write_date` datetime NOT NULL,
+  `create_uid` bigint(20) NOT NULL,
+  `write_uid` bigint(20) NOT NULL,
+  `sales_note_id` bigint(20) NOT NULL,
+  `filename` varchar(45) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `filename_UNIQUE` (`filename`),
+  KEY `sales_note_attachment_sales_note_sales_note_id_idx` (`sales_note_id`),
+  KEY `fk_sales_note_attachment_user_create_uid_idx` (`create_uid`),
+  KEY `fk_sales_note_attachment_user_write_uid_idx` (`write_uid`),
+  CONSTRAINT `sales_note_attachment_user_create_uid` FOREIGN KEY (`create_uid`) REFERENCES `user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `sales_note_attachment_user_write_uid` FOREIGN KEY (`write_uid`) REFERENCES `user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `sales_note_attachment_sales_note_sales_note_id` FOREIGN KEY (`sales_note_id`) REFERENCES `sales_note` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `sales_note_part`;
+CREATE TABLE `sales_note_part` (
+  `sales_note_id` bigint(20) NOT NULL,
+  `part_id` bigint(20) NOT NULL,
+  `create_date` datetime NOT NULL,
+  `write_date` datetime NOT NULL,
+  `create_uid` bigint(20) NOT NULL,
+  `write_uid` bigint(20) NOT NULL,
+  `primary_part` tinyint(1) DEFAULT NULL,
+  PRIMARY KEY (`sales_note_id`,`part_id`),
+  UNIQUE KEY `sales_note_part_primary_part_unq_idx` (`sales_note_id`,`primary_part`),
+  KEY `sales_note_part_part_part_id_idx` (`part_id`),
+  KEY `sales_note_part_user_create_uid_idx` (`create_uid`),
+  KEY `sales_note_part_user_write_uid_idx` (`write_uid`),
+  CONSTRAINT `sales_note_part_user_create_uid` FOREIGN KEY (`create_uid`) REFERENCES `user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `sales_note_part_user_write_uid` FOREIGN KEY (`write_uid`) REFERENCES `user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `sales_note_part_sales_note_sales_note_id` FOREIGN KEY (`sales_note_id`) REFERENCES `sales_note` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+  CONSTRAINT `sales_note_part_part_part_id` FOREIGN KEY (`part_id`) REFERENCES `part` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+DELIMITER $$
+
+DROP TRIGGER IF EXISTS sales_note_part_BEFORE_UPDATE$$
+CREATE TRIGGER `sales_note_part_BEFORE_UPDATE` BEFORE UPDATE ON `sales_note_part` FOR EACH ROW
+   begin  
+    if  new.primary_part <> 1 then
+        SIGNAL SQLSTATE '45000'   
+        SET MESSAGE_TEXT = 'primary_part value must be 1 or null';
+      end if; 
+      end$$
+
+DROP TRIGGER IF EXISTS sales_note_part_BEFORE_INSERT$$
+CREATE TRIGGER `sales_note_part_BEFORE_INSERT` BEFORE INSERT ON `sales_note_part` FOR EACH ROW
+   begin  
+    if  new.primary_part <> 1 then
+        SIGNAL SQLSTATE '45000'   
+        SET MESSAGE_TEXT = 'primary_part value must be 1 or null';
+      end if; 
+      end$$
+DELIMITER ;
 
 --
 -- Views
@@ -1033,6 +1122,47 @@ FROM (
                          AND `pt`.`manfr_id` = 11
                          AND `pt`.`part_type_id` = 2))
       ON`p`.`id` = `bd`.`part_id_ancestor`);
+
+
+-- Standard-Oversize Part
+DROP VIEW IF EXISTS `vmagmi_sop`;
+CREATE
+    ALGORITHM = UNDEFINED
+    DEFINER = `metaserver`@`%`
+    SQL SECURITY DEFINER
+VIEW `vmagmi_sop` AS
+SELECT
+    ssop.oversize_part_id                                   AS part_id,
+    ssop.standard_part_id                                   AS standard_part_sku,
+    GROUP_CONCAT(DISTINCT ii2.part_id ORDER BY ii2.part_id ASC SEPARATOR ',') AS oversize_part_skus
+FROM
+
+    -- Get the oversize TI parts for each standard-size part
+    standard_oversize_part AS ssop
+    JOIN standard_oversize_part AS osop ON osop.standard_part_id = ssop.standard_part_id
+    LEFT JOIN part AS op ON op.id = osop.oversize_part_id AND op.manfr_id = 11
+
+    -- Get the interchanges for the oversize parts
+    LEFT JOIN interchange_item AS ii ON ii.part_id = op.id
+    LEFT JOIN interchange_item AS ii2 ON ii2.interchange_header_id = ii.interchange_header_id
+GROUP BY
+  ssop.oversize_part_id,
+  ssop.standard_part_id
+
+-- add standard part to its own listing
+UNION
+SELECT
+    ssop.standard_part_id AS part_id,
+    ssop.standard_part_id AS standard_part_sku,
+    GROUP_CONCAT(DISTINCT ii2.part_id ORDER BY ii2.part_id ASC SEPARATOR ',') AS oversize_part_skus
+FROM
+    standard_oversize_part ssop
+    LEFT JOIN part op ON op.id = ssop.oversize_part_id AND op.manfr_id = 11
+
+    -- Get the interchanges for the oversize parts
+    LEFT JOIN interchange_item ii ON ii.part_id = op.id
+    LEFT JOIN interchange_item ii2 ON ii2.interchange_header_id = ii.interchange_header_id
+GROUP BY ssop.standard_part_id;
 
 --
 -- Stored Procedures

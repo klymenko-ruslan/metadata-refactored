@@ -1,14 +1,17 @@
 'use strict';
 
-angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap', 'restangular', 'dialogs', 'gToast'])
-    .config(function ($locationProvider, $httpProvider, $routeProvider, RestangularProvider) {
+angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap', 'restangular', 'dialogs.main', 'gToast'])
+    .constant('METADATA_BASE', '/metadata/')
+//  .constant('METADATA_BASE', 'http://192.168.42.10:8080/metadata/')
+//  .constant('METADATA_BASE', 'http://localhost:8080/metadata/')
+    .config(function ($locationProvider, $httpProvider, $routeProvider, RestangularProvider, METADATA_BASE) {
         $httpProvider.interceptors.push('loginRequiredInterceptor');
 
-        RestangularProvider.setBaseUrl('/metadata/');
-//        RestangularProvider.setBaseUrl('http://localhost:8080/metadata/');
+        RestangularProvider.setBaseUrl(METADATA_BASE);
         RestangularProvider.setParentless(true);
         RestangularProvider.setDefaultHttpFields({withCredentials: true});
         RestangularProvider.setDefaultHeaders({'Content-Type': 'text/plain'});
+        RestangularProvider.setFullResponse(false);
         RestangularProvider.setResponseExtractor(function (response) {
             return response;
           });
@@ -62,6 +65,24 @@ angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap', 'restangu
           controller: 'PartDetailCtrl'
         });
 
+        // Part Sales Notes
+        $routeProvider.when('/part/:id/sales_notes', {
+          templateUrl: 'views/part/sales_note/SalesNoteListByPart.html',
+          controller: 'SalesNoteListByPartCtrl'
+        });
+        $routeProvider.when('/part/:id/sales_note/create', {
+          templateUrl: 'views/part/sales_note/SalesNoteCreate.html',
+          controller: 'SalesNoteCreateCtrl'
+        });
+        $routeProvider.when('/part/:partId/sales_note/:salesNoteId', {
+          templateUrl: 'views/part/sales_note/SalesNoteDetail.html',
+          controller: 'SalesNoteDetailCtrl'
+        });
+        $routeProvider.when('/part/:partId/sales_note/:salesNoteId/related_part/search', {
+          templateUrl: 'views/part/sales_note/SalesNoteAddRelatedPart.html',
+          controller: 'SalesNoteAddRelatedPartCtrl'
+        });
+
         // Model Engine Year
         $routeProvider.when('/application/engine/list', {
             templateUrl: 'views/application/engine/list.html',
@@ -83,52 +104,56 @@ angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap', 'restangu
           controller: 'ApplicationDetailCtrl'
         });
 
+        // List All Sales Notes
+        $routeProvider.when('/other/salesNotes', {
+          templateUrl: 'views/other/SalesNoteListAll.html',
+          controller: 'SalesNoteListAllCtrl'
+        });
+
         // Turbo Models
         $routeProvider.when('/other/turboModels', {
           templateUrl: 'views/other/TurboModels.html',
           controller: 'TurboModelsCtrl'
         });
 
+    // Users and groups
+    $routeProvider.when('/security/groups', {
+      templateUrl: 'views/security/groups.html',
+      controller: 'GroupsCtrl'
+    });
+    $routeProvider.when('/security/group/:id', {
+      templateUrl: 'views/security/group.html',
+      controller: 'GroupCtrl'
+    });
 
+    $routeProvider.when('/security/users', {
+      templateUrl: 'views/security/users.html',
+      controller: 'UsersCtrl'
+    });
+    $routeProvider.when('/security/user/:id', {
+      templateUrl: 'views/security/user.html',
+      controller: 'UserCtrl'
+    });
 
-        // Users and groups
-        $routeProvider.when('/security/groups', {
-          templateUrl: 'views/security/groups.html',
-          controller: 'GroupsCtrl'
-        });
-        $routeProvider.when('/security/group/:id', {
-          templateUrl: 'views/security/group.html',
-          controller: 'GroupCtrl'
-        });
+    // My Account
+    $routeProvider.when('/security/me', {
+      templateUrl: 'views/security/my-account.html',
+      controller: 'MyAccountCtrl'
+    });
 
-        $routeProvider.when('/security/users', {
-          templateUrl: 'views/security/users.html',
-          controller: 'UsersCtrl'
-        });
-        $routeProvider.when('/security/user/:id', {
-          templateUrl: 'views/security/user.html',
-          controller: 'UserCtrl'
-        });
+    // Password Reset
+    $routeProvider.when('/password/reset/:token', {
+      templateUrl: 'views/security/pwreset.html',
+      controller: 'LoginCtrl'
+    });
 
-        // My Account
-        $routeProvider.when('/security/me', {
-          templateUrl: 'views/security/my-account.html',
-          controller: 'MyAccountCtrl'
-        });
+    // Default / Login
+    $routeProvider.when('/', {
+      templateUrl: 'views/security/login.html',
+      controller: 'LoginCtrl'
+    });
 
-        // Password Reset
-        $routeProvider.when('/password/reset/:token', {
-          templateUrl: 'views/security/pwreset.html',
-          controller: 'LoginCtrl'
-        });
-
-        // Default / Login
-        $routeProvider.when('/', {
-          templateUrl: 'views/security/login.html',
-          controller: 'LoginCtrl'
-        });
-
-        $routeProvider.otherwise({
-          redirectTo: '/'
-        });
-      });
+    $routeProvider.otherwise({
+      redirectTo: '/'
+    });
+  });

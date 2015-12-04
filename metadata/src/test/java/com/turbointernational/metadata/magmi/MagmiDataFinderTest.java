@@ -1,18 +1,24 @@
 package com.turbointernational.metadata.magmi;
 
+import com.github.springtestdbunit.annotation.DbUnitConfiguration;
+import com.turbointernational.metadata.Application;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.web.WebAppConfiguration;
 
 /**
  *
  * @author jrodriguez
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/applicationContext.xml"})
+@WebAppConfiguration
+@SpringApplicationConfiguration(classes = Application.class)
+@DbUnitConfiguration
 public class MagmiDataFinderTest extends AbstractTransactionalJUnit4SpringContextTests {
     
     MagmiDataFinder instance;

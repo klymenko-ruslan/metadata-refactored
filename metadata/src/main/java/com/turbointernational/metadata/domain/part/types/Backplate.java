@@ -1,49 +1,64 @@
 package com.turbointernational.metadata.domain.part.types;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.type.SealType;
+import com.turbointernational.metadata.web.View;
 import flexjson.JSONSerializer;
-import org.apache.commons.lang.ObjectUtils;
-import org.springframework.beans.factory.annotation.Configurable;
-
-import javax.persistence.*;
 import java.util.Map;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.Table;
+import org.apache.commons.lang.ObjectUtils;
 
-@Configurable
 @Entity
 @Table(name="backplate")
 @PrimaryKeyJoinColumn(name = "part_id")
 public class Backplate extends Part {
 
+    @JsonView(View.Detail.class)
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="seal_type_id")
     private SealType sealType;
 
+    @JsonView(View.Detail.class)
     @Column(name="style_compressor_wheel")
     private String styleCompressorWheel;
 
+    @JsonView(View.Detail.class)
     // ???: How is this different from the seal type's name?
     @Column(name="seal_type")
     private String sealTypeString;
 
+    @JsonView(View.Detail.class)
     @Column(name="overall_diameter")
     private Float overallDiameter;
 
+    @JsonView(View.Detail.class)
     @Column(name="compressor_wheel_diameter")
     private Float compressorWheelDiameter;
 
+    @JsonView(View.Detail.class)
     @Column(name="piston_ring_diameter")
     private Float pistonRingDiameter;
 
+    @JsonView(View.Detail.class)
     @Column(name="compressor_housing_diameter")
     private Float compressorHousingDiameter;
 
+    @JsonView(View.Detail.class)
     @Column(name="notes")
     private String notes;
 
+    @JsonView(View.Detail.class)
     @Column(name="secondary_diameter")
     private Float secondaryDiameter;
 
+    @JsonView(View.Detail.class)
     @Column(name="overall_height")
     private Float overallHeight;
 

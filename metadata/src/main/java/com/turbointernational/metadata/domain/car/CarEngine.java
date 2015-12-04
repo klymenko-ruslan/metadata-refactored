@@ -11,7 +11,6 @@ import java.util.Collection;
 import java.util.List;
 
 @Cacheable
-@Configurable
 @Entity
 @Table(name="car_engine", uniqueConstraints=@UniqueConstraint(columnNames={"engineSize", "car_fuel_type_id"}))
 public class CarEngine implements Serializable {

@@ -1,17 +1,23 @@
 package com.turbointernational.metadata.domain.type;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.web.View;
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
-import org.springframework.beans.factory.annotation.Configurable;
-
-import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import javax.persistence.Cacheable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 @Cacheable
-@Configurable
 @Entity
 @Table(name="MANFR_TYPE",
        uniqueConstraints=@UniqueConstraint(columnNames={"name"}))
@@ -19,9 +25,11 @@ public class ManufacturerType implements Serializable {
 
     //<editor-fold defaultstate="collapsed" desc="properties">
     @Id
+    @JsonView(View.Summary.class)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
+    @JsonView(View.Summary.class)
     @Column(nullable=false)
     private String name;
     
@@ -39,21 +47,6 @@ public class ManufacturerType implements Serializable {
     
     public void setName(String name) {
         this.name = name;
-    }
-    //</editor-fold>
-    
-    //<editor-fold defaultstate="collapsed" desc="activerecords">
-    @PersistenceContext
-    transient EntityManager entityManager;
-    
-    public static final EntityManager entityManager() {
-        EntityManager em = new ManufacturerType().entityManager;
-        if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
-        return em;
-    }
-    
-    public static List<ManufacturerType> findAllManufacturerTypes() {
-        return entityManager().createQuery("SELECT o FROM ManufacturerType o", ManufacturerType.class).getResultList();
     }
     //</editor-fold>
     

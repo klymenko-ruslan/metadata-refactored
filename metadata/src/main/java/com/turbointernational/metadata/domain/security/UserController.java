@@ -1,10 +1,14 @@
 package com.turbointernational.metadata.domain.security;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.google.common.collect.Sets;
+import com.turbointernational.metadata.web.View;
 import flexjson.JSONSerializer;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
@@ -21,30 +25,29 @@ import java.util.Set;
 @RequestMapping("/metadata/security/user")
 @Controller
 public class UserController {
+    
+    @Autowired(required=true)
+    UserDao userDao;
+    
+    @Autowired(required=true)
+    GroupDao groupDao;
 
+    @JsonView(View.DetailWithGroups.class)
     @RequestMapping(value = "/me", method = RequestMethod.GET)
     @ResponseBody
     @Secured("ROLE_READ")
-    public ResponseEntity getMe() {
-        User user = User.getCurrentUser();
-        
-        if (user == null) {
-            
-        
-        return new ResponseEntity(null, new HttpHeaders(), HttpStatus.FORBIDDEN);
-        }
-        
-        return new ResponseEntity<String>(
-                User.JSON.serialize(user),
-                new HttpHeaders(), HttpStatus.OK);
+    public User getMe() {
+        return User.getCurrentUser();
     }
 
-    @RequestMapping(value = "/me", method = RequestMethod.POST)
     @ResponseBody
+    @Transactional
     @Secured("ROLE_READ")
-    public ResponseEntity<String> updateMe(@RequestBody String json) {
-        User jsonUser = User.fromJson(json);
+    @JsonView(View.DetailWithGroups.class)
+    @RequestMapping(value = "/me", method = RequestMethod.POST)
+    public User updateMe(@RequestBody User jsonUser) {
         
+        // Manually copy the properties we're interested in
         User user = User.getCurrentUser();
         user.setName(jsonUser.getName());
         user.setEmail(jsonUser.getEmail());
@@ -54,11 +57,9 @@ public class UserController {
             user.setPassword(BCrypt.hashpw(jsonUser.getPassword(), BCrypt.gensalt()));
         }
         
-        user.merge();
+        userDao.merge(user);
         
-        return new ResponseEntity<String>(
-                User.JSON.serialize(user),
-                new HttpHeaders(), HttpStatus.OK);
+        return user;
     }
 
     @RequestMapping(value = "/myroles", method = RequestMethod.GET)
@@ -77,35 +78,31 @@ public class UserController {
                 new HttpHeaders(), HttpStatus.OK);
     }
 
+    @JsonView(View.SummaryWithGroups.class)
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
     @Secured("ROLE_ADMIN")
-    public ResponseEntity<String> list() {
-        List<User> users = User.findActiveUsers();
-        
-        return new ResponseEntity<String>(
-                User.JSON.serialize(users),
-                new HttpHeaders(), HttpStatus.OK);
+    public List<User> list() {
+        return userDao.findActiveUsers();
     }
 
+    @JsonView(View.DetailWithGroups.class)
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ResponseBody
     @Secured("ROLE_ADMIN")
-    public ResponseEntity<String> get(@PathVariable("id") Long id) {
-        User user = User.findUser(id);
-        
-        return new ResponseEntity<String>(
-                User.JSON.serialize(user),
-                new HttpHeaders(), HttpStatus.OK);
+    public User get(@PathVariable("id") Long id) {
+        return userDao.findOne(id);
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     @ResponseBody
     @Secured("ROLE_ADMIN")
-    public void update(@PathVariable("id") Long id, @RequestBody String json) {
-        User jsonUser = User.fromJson(json);
+    @Transactional
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT,
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public void update(@PathVariable("id") Long id, @RequestBody User jsonUser) {
         
-        User user = User.findUser(id);
+        User user = userDao.findOne(id);
         user.setName(jsonUser.getName());
         user.setEmail(jsonUser.getEmail());
         
@@ -114,56 +111,31 @@ public class UserController {
             user.setPassword(BCrypt.hashpw(jsonUser.getPassword(), BCrypt.gensalt()));
         }
         
-        user.merge();
+        userDao.merge(user);
     }
     
+    @ResponseBody
     @Transactional
-    @RequestMapping(method = RequestMethod.POST)
     @Secured("ROLE_ADMIN")
-    public ResponseEntity<String> create(@RequestBody String json) throws Exception {
-        
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/json");
-        
-        // Create the object
-        User user = User.fromJson(json);
-        
+    @JsonView(View.Detail.class)
+    @RequestMapping(method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public User create(@RequestBody User user) throws Exception {
         user.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
         
-        user.persist();
+        userDao.persist(user);
         
-        return new ResponseEntity<String>(user.toJson(), headers, HttpStatus.OK);
+        return user;
     }
     
-    @Transactional
-    @RequestMapping(value="/{id}/group/{groupId}", method = RequestMethod.POST)
     @ResponseBody
-    @Secured("ROLE_ADMIN")
-    public void addGroup(@PathVariable("id") Long id, @PathVariable("groupId") Long groupId) throws Exception {
-        User user = User.findUser(id);
-        Group group = Group.findGroup(groupId);
-        user.getGroups().add(group);
-        user.merge();
-    }
-    
     @Transactional
-    @RequestMapping(value="/{id}/group/{groupId}", method = RequestMethod.DELETE)
-    @ResponseBody
     @Secured("ROLE_ADMIN")
-    public void removeGroup(@PathVariable("id") Long id, @PathVariable("groupId") Long groupId) throws Exception {
-        User user = User.findUser(id);
-        Group group = Group.findGroup(groupId);
-        user.getGroups().remove(group);
-        user.merge();
-    }
-    
-    @Transactional
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    @ResponseBody
-    @Secured("ROLE_ADMIN")
     public void delete(@PathVariable("id") Long id) throws Exception {
-        User user = User.findUser(id);
+        User user = userDao.findOne(id);
         user.setEnabled(false);
-        user.merge();
+        userDao.merge(user);
     }
 }

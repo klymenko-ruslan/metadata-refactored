@@ -1,35 +1,48 @@
 package com.turbointernational.metadata.domain.part;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.google.common.collect.Sets;
+import com.turbointernational.metadata.web.View;
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
-import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
-@Configurable
 @Entity
 @Table(name="interchange_header")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id", scope=Interchange.class)
 public class Interchange implements Serializable {
 
     //<editor-fold defaultstate="collapsed" desc="Properties">
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonView({View.Summary.class})
     private Long id;
     
     @Column
+    @JsonView({View.Summary.class})
     private String name;
     
+    @JsonView({View.Summary.class})
     private String description;
     
     @OneToMany(mappedBy = "interchange", fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.MERGE})
+    @JsonView(View.SummaryWithInterchangeParts.class)
     private Set<Part> parts = Sets.newTreeSet();
     
     public Long getId() {
@@ -63,73 +76,11 @@ public class Interchange implements Serializable {
     public void setParts(Set<Part> parts) {
         this.parts = parts;
     }
-    //</editor-fold>
     
-    //<editor-fold defaultstate="collapsed" desc="ActiveRecord">
-    
-    @PersistenceContext
-    transient EntityManager entityManager;
-    
-    public static final EntityManager entityManager() {
-        EntityManager em = new Interchange().entityManager;
-        if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
-        return em;
+    @JsonView({View.Summary.class})
+    public boolean isAlone() {
+        return parts.size() == 1;
     }
-    
-    public static long countInterchanges() {
-        return entityManager().createQuery("SELECT COUNT(o) FROM Interchange o", Long.class).getSingleResult();
-    }
-    
-    public static List<Interchange> findAllInterchanges() {
-        return entityManager().createQuery("SELECT o FROM Interchange o", Interchange.class).getResultList();
-    }
-    
-    public static Interchange findInterchange(Long id) {
-        if (id == null) return null;
-        return entityManager().find(Interchange.class, id);
-    }
-    
-    public static List<Interchange> findInterchangeEntries(int firstResult, int maxResults) {
-        return entityManager().createQuery("SELECT o FROM Interchange o", Interchange.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
-    }
-    
-    @Transactional
-    public void persist() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.persist(this);
-    }
-    
-    @Transactional
-    public void remove() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        if (this.entityManager.contains(this)) {
-            this.entityManager.remove(this);
-        } else {
-            Interchange attached = findInterchange(this.id);
-            this.entityManager.remove(attached);
-        }
-    }
-    
-    @Transactional
-    public void flush() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.flush();
-    }
-    
-    @Transactional
-    public void clear() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.clear();
-    }
-    
-    @Transactional
-    public Interchange merge() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        Interchange merged = this.entityManager.merge(this);
-        this.entityManager.flush();
-        return merged;
-    }
-    
     //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="Serialization">
