@@ -45,17 +45,17 @@ public class Changelog implements Serializable {
     public void setId(Long id) {
         this.id = id;
     }
-    
+
     public static Changelog log(String description, String data) {
         Changelog changelog = new Changelog();
-        
+
         changelog.description = description;
         changelog.changeDate = new Date();
         changelog.data = data;
         changelog.user = User.getCurrentUser();
-        
+
         changelog.persist();
-        
+
         return changelog;
     }
     //</editor-fold>

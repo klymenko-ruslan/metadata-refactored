@@ -2,9 +2,7 @@ package com.turbointernational.metadata.domain.car;
 
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.persistence.*;
 import java.io.Serializable;
