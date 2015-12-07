@@ -129,7 +129,8 @@ public class InterchangeController {
     }
     
     @ResponseBody
-    @Secured("ROLE_INTERCHANGE")
+    // Commented as fix for #536. @Secured("ROLE_INTERCHANGE")
+    @Secured("ROLE_READ") // Ticket #536.
     @JsonView({View.SummaryWithInterchangeParts.class})
     @RequestMapping(value="{id}", method = RequestMethod.GET,
                     produces = MediaType.APPLICATION_JSON_VALUE)
