@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-  .directive('interchanges', function ($log, Restangular) {
+  .directive('interchanges', function ($log, restService) {
     return {
       scope: {
           interchangeId: "=",
@@ -23,7 +23,7 @@ angular.module('ngMetaCrudApp')
             }
 
             $log.log("Loading parts for interchange ", interchangeId);
-            Restangular.one("interchange", interchangeId).get().then(function(interchange) {
+            restService.findInterchange(interchangeId).then(function(interchange) {
 
                 // Remove the parent part
                 var idx = _.findIndex(interchange.parts, function(part) {

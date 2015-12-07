@@ -114,5 +114,10 @@ angular.module('ngMetaCrudApp')
             this.listTurboModelsForTurboTypeId = function (turboTypeId) {
                 return Restangular.all('other/turboModel').getList({'turboTypeId': turboTypeId});
               };
+
+            this.findInterchange = function (id) {
+                return Restangular.one("interchange", id).get();
+            };
+
           };
       });
