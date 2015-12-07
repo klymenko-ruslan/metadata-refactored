@@ -58,10 +58,6 @@ public class Part implements Comparable<Part>, Serializable {
 
     private static final Logger log = Logger.getLogger(Part.class.toString());
 
-    @Transient
-    @Autowired(required=true)
-    PartElasticSearch partElasticSearch;
-
     public static final ObjectFactory OBJECT_FACTORY = new ObjectFactory() {
         
         @Override
@@ -267,7 +263,7 @@ public class Part implements Comparable<Part>, Serializable {
     @PreRemove
     public void removeSearchIndex() throws Exception {
         try {
-            partElasticSearch.instance().deletePart(this);
+            PartElasticSearch.instance().deletePart(this);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -277,7 +273,7 @@ public class Part implements Comparable<Part>, Serializable {
     @PostPersist
     public void updateSearchIndex() throws Exception {
         log.info("Updating search index.");
-        partElasticSearch.indexPart(this);
+        PartElasticSearch.instance().indexPart(this);
     }
     //</editor-fold>
 

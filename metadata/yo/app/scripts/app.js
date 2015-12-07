@@ -10,7 +10,7 @@ angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap', 'restangu
         RestangularProvider.setBaseUrl(METADATA_BASE);
         RestangularProvider.setParentless(true);
         RestangularProvider.setDefaultHttpFields({withCredentials: true});
-        RestangularProvider.setDefaultHeaders({'Content-Type': 'text/plain'});
+        RestangularProvider.setDefaultHeaders({'Content-Type': 'application/json'});
         RestangularProvider.setFullResponse(false);
         RestangularProvider.setResponseExtractor(function (response) {
             return response;
