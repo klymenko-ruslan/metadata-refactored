@@ -31,8 +31,8 @@ angular.module('ngMetaCrudApp')
         });
     }
 
-    $scope.pickApplication = function (applicationId) {
-      $scope.pickedApplication = restService.findApplication(applicationId).then(
+    $scope.pickApplication = function (cmeyId) {
+      $scope.pickedApplication = restService.findCarmodelengineyear(cmeyId).then(
         function (pickedApplication) {
           $scope.pickedApplication = pickedApplication;
         },

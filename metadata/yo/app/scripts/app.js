@@ -84,24 +84,24 @@ angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap', 'restangu
         });
 
         // Model Engine Year
-        $routeProvider.when('/application/engine/list', {
-            templateUrl: 'views/application/engine/list.html',
+        $routeProvider.when('/application/carengine/list', {
+            templateUrl: 'views/application/carengine/list.html',
           });
-        $routeProvider.when('/application/fueltype/list', {
-            templateUrl: 'views/application/fueltype/list.html',
+        $routeProvider.when('/application/carfueltype/list', {
+            templateUrl: 'views/application/carfueltype/list.html',
           });
-        $routeProvider.when('/application/make/list', {
-            templateUrl: 'views/application/make/list.html',
+        $routeProvider.when('/application/carmake/list', {
+            templateUrl: 'views/application/carmake/list.html',
           });
-        $routeProvider.when('/application/model/list', {
-            templateUrl: 'views/application/model/list.html',
+        $routeProvider.when('/application/carmodel/list', {
+            templateUrl: 'views/application/carmodel/list.html',
           });
-        $routeProvider.when('/application/modelengineyear/list', {
-            templateUrl: 'views/application/modelengineyear/list.html',
+        $routeProvider.when('/application/carmodelengineyear/list', {
+            templateUrl: 'views/application/carmodelengineyear/list.html',
           });
-        $routeProvider.when('/application/:id', {
-          templateUrl: 'views/application/ApplicationDetail.html',
-          controller: 'ApplicationDetailCtrl'
+        $routeProvider.when('/application/carmodelengineyear/:id', {
+          templateUrl: 'views/application/carmodelengineyear/detail.html',
+          controller: 'CarmodelengineyearDetailCtrl'
         });
 
         // List All Sales Notes

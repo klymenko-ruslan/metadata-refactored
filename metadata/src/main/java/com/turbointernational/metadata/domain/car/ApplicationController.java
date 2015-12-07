@@ -24,10 +24,10 @@ public class ApplicationController {
     private CarModelEngineYearDao carModelEngineYearDao;
 
     @Transactional
-    @RequestMapping(value = "{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/carmodelengineyear/{id}", method = RequestMethod.GET)
     @ResponseBody
     @Secured("ROLE_READ")
-    public ResponseEntity<String> getApplicatation(@PathVariable("id") long id) {
+    public ResponseEntity<String> getCarmodelengineyear(@PathVariable("id") long id) {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json; charset=utf-8");
         CarModelEngineYear application = carModelEngineYearDao.findById(id);
