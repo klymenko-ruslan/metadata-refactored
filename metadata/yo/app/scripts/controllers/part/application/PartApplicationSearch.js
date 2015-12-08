@@ -36,7 +36,16 @@ angular.module('ngMetaCrudApp')
 
     $scope.pickApplication = function (app) {
       if ($scope.pickedApplications.indexOf(app) == -1) {
+        for(var i = 0; i < $scope.applications.length; i++) {
+          var val = $scope.applications[i];
+          if (val.carModelEngineYear.id == app.id) {
+            gToast.open("The item already exists.");
+            return;
+          }
+        }
         $scope.pickedApplications.push(app);
+      } else {
+          gToast.open("The item is already picked.");
       }
     }
 
