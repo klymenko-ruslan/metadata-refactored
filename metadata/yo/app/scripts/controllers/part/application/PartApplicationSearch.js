@@ -15,31 +15,33 @@ angular.module('ngMetaCrudApp')
         $scope.applications = applications;
       }, function (errorResponse) {
         restService.error("Could not get part details", errorResponse);
-      });
+      }
+    );
 
-    $scope.pickedApplication = null;
+    $scope.pickedApplications = [];
 
     $scope.save = function () {
-      restService.addPartApplication($scope.partId, $scope.pickedApplication.id).then(
+      restService.addPartApplications($scope.partId, $scope.pickedApplications).then(
         function () {
           // Success
-          gToast.open("Application item added to part.");
+          gToast.open("Application(s) added to part.");
           $location.path("/part/" + $scope.partId);
         },
           function (response) {
-            dialogs.error("Could not add Application to part.", "Server said: <pre>" + JSON.stringify(response.data) + "</pre>");
-        });
+            dialogs.error("Could not add Applications to part.",
+                          "Server said: <pre>" + JSON.stringify(response.data) + "</pre>");
+        }
+      );
     }
 
-    $scope.pickApplication = function (cmeyId) {
-      $scope.pickedApplication = restService.findCarmodelengineyear(cmeyId).then(
-        function (pickedApplication) {
-          $scope.pickedApplication = pickedApplication;
-        },
-        function (errorResponse) {
-          restService.error("Could not pick application.", errorResponse);
-          $log.log("Could not pick application", errorResponse);
-        });
+    $scope.pickApplication = function (app) {
+      if ($scope.pickedApplications.indexOf(app) == -1) {
+        $scope.pickedApplications.push(app);
       }
+    }
+
+    $scope.unpickApplication = function (idx) {
+      $scope.pickedApplications.splice(idx, 1);
+    }
 
   });

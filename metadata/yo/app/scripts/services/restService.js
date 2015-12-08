@@ -87,7 +87,7 @@ angular.module('ngMetaCrudApp')
                 return Restangular.one('part', part_id).getList('application');
               };
 
-            this.addPartApplication = function (part_id, application_id) {
+            this.addPartApplications = function (part_id, applications) {
                 return Restangular.one('part/' + part_id + '/application/' +  application_id).put();
               }
 
