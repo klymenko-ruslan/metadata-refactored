@@ -44,12 +44,13 @@ angular.module('ngMetaCrudApp')
           if (partSearchParams.partNumber) {
             var partNumber = partSearchParams.partNumber.toLowerCase();
             var partNumberShort = partNumber.replace(/\W+/g, '');
+            //$log.log("partNumber: " + partNumber + ", partNumberShort: " + partNumberShort);
 //            searchRequest.query.bool.must.push({
 //                prefix: {'manufacturerPartNumber.short': partNumberShort}
 //              });
 
             searchRequest.query.bool.must.push({
-                prefix: {'manufacturerPartNumber': partNumberShort}
+                prefix: {'manufacturerPartNumber.short': partNumberShort}
               });
 
 //              searchRequest.query.bool.should.push({
