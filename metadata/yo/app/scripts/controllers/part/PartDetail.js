@@ -11,7 +11,6 @@ angular.module('ngMetaCrudApp')
 
                 // Make sure we're using the correct part type
                 $scope.partType = part.partType.name;
-                
                 // TODO: Find a better way. Directive?
                 if (part.partType.magentoAttributeSet == 'Kit') {
                     $scope.kitComponents = Kits.listComponents($scope.partId)
