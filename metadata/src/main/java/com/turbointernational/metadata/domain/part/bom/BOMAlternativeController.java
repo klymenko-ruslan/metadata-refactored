@@ -2,7 +2,8 @@ package com.turbointernational.metadata.domain.part.bom;
 
 import com.turbointernational.metadata.domain.changelog.ChangelogDao;
 import com.turbointernational.metadata.domain.part.*;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.annotation.Secured;
@@ -29,7 +30,7 @@ public class BOMAlternativeController {
     @Autowired
     BOMAlternativeHeaderDao bomAltHeaderDao;
     
-    private static final Logger log = Logger.getLogger(BOMAlternativeController.class.toString());
+    private static final Logger log = LoggerFactory.getLogger(BOMAlternativeController.class);
     
     @Transactional
     @Secured("ROLE_BOM_ALT")

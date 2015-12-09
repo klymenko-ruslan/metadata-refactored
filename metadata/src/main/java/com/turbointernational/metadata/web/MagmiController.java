@@ -23,6 +23,8 @@ import javax.persistence.EntityManager;
 
 import com.turbointernational.metadata.util.ImageResizer;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -43,7 +45,6 @@ import java.io.OutputStreamWriter;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -52,7 +53,7 @@ import java.util.logging.Logger;
 @Controller
 @RequestMapping(value={"/magmi", "/metadata/magmi"})
 public class MagmiController {
-    private static final Logger logger = Logger.getLogger(MagmiController.class.toString());
+    private static final Logger logger = LoggerFactory.getLogger(MagmiController.class);
     
     public String[] getCsvHeaders(SortedSet<String> priceLevels) {
         List<String> headers = new ArrayList<String>();
@@ -234,7 +235,7 @@ public class MagmiController {
     @Transactional
     @PreAuthorize("hasRole('ROLE_MAGMI_EXPORT') or hasIpAddress('127.0.0.1/32')")
     public void products(HttpServletResponse response, OutputStream out, @RequestParam(defaultValue="30", required=false) int days) throws Exception {
-        logger.log(Level.INFO, "Magmi export started.");
+        logger.info("Magmi export started.");
         
         response.setHeader("Content-Type", "text/csv");
         response.setHeader("Content-Disposition: attachment; filename=products.csv", null);
@@ -277,15 +278,14 @@ public class MagmiController {
                         // Debugging variable
                         lastSuccessfulSku = product.getSku();
                     } catch (Exception e) {
-                        logger.log(Level.WARNING, "Could not write magmi part " + product.getSku(), e);
+                        logger.warn("Could not write magmi part " + product.getSku(), e);
                     }
                 }
 
                 // Update the position
                 position += parts.size();
             } catch (Exception e) {
-                logger.log(Level.SEVERE,
-                    "Batch failed! position: " + position
+                logger.error("Batch failed! position: " + position
                             + ", batch size: " + magmiBatchSize
                             + ", lastSuccessfulSku: " + lastSuccessfulSku,
                     e);
@@ -309,8 +309,7 @@ public class MagmiController {
         writer.flush();
         writer.close();
         
-        logger.log(Level.INFO, "Exported {0} products in {1}ms",
-                new Object[] {position, System.currentTimeMillis() - startTime});
+        logger.info("Exported {} products in {}ms", position, System.currentTimeMillis() - startTime);
     }
     
     @RequestMapping("/product/{partId}")
@@ -386,7 +385,7 @@ public class MagmiController {
 
             // Stop if there's no standard price
             if (itemPricing.getStandardPrice() == null) {
-                logger.log(Level.INFO, "Missing standard price product: {0}", product.getPartNumber());
+                logger.info("Missing standard price product: {}", product.getPartNumber());
                 return;
             }
             
@@ -395,11 +394,11 @@ public class MagmiController {
             addErpCustomerPrices(mas90, itemPricing, columns);
             addErpGroupPrices(mas90, itemPricing, columns);
         } catch (UnknownDiscountCodeException e) {
-                logger.log(Level.WARNING, "Unknown discount code {0} for product {1}", new Object[] {e.getCode(), product.getPartNumber()});
+                logger.warn("Unknown discount code {} for product {}", e.getCode(), product.getPartNumber());
         } catch (EmptyResultDataAccessException e) {
-            logger.log(Level.WARNING, "Missing prices for product: {0}", product.getPartNumber());
+            logger.warn("Missing prices for product: {}", product.getPartNumber());
         } catch (IOException e) {
-            logger.log(Level.SEVERE, "Error getting prices from MAS90 db {0}", e);
+            logger.error("Error getting prices from MAS90 db", e);
         }
     }
     

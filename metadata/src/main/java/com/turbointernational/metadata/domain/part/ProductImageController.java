@@ -2,6 +2,8 @@ package com.turbointernational.metadata.domain.part;
 
 import com.turbointernational.metadata.util.ImageResizer;
 import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -18,13 +20,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 @RequestMapping("/metadata/image")
 @Controller
 public class ProductImageController {
 
-    private static final Logger log = Logger.getLogger(ProductImageController.class.toString());
+    private static final Logger log = LoggerFactory.getLogger(ProductImageController.class);
     
     @Value("${images.originals}")
     private File originalImagesDir;
@@ -61,7 +62,7 @@ public class ProductImageController {
 
             return new ResponseEntity(bytes, headers, HttpStatus.OK);
         } catch (IOException e) {
-            log.log(Level.INFO, "Couldn't load image file: " + imageFile.getAbsolutePath(), e);
+            log.info("Couldn't load image file: " + imageFile.getAbsolutePath(), e);
             throw e;
         }
     }
@@ -86,7 +87,7 @@ public class ProductImageController {
 
             return new ResponseEntity(bytes, headers, HttpStatus.OK);
         } catch (IOException e) {
-            log.log(Level.INFO, "Couldn't load image file: " + imageFile.getAbsolutePath(), e);
+            log.info("Couldn't load image file: " + imageFile.getAbsolutePath(), e);
             throw e;
         }
     }

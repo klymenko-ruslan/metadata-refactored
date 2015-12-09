@@ -4,13 +4,13 @@ import com.turbointernational.metadata.Application;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.part.PartDao;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.elasticsearch.ElasticSearchException;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.client.Client;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
@@ -24,7 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class PartElasticSearch extends AbstractElasticSearch {
 
-    private static final Logger log = Logger.getLogger(PartElasticSearch.class.toString());
+    private static final Logger log = LoggerFactory.getLogger(PartElasticSearch.class);
     
     public static PartElasticSearch instance() {
         return Application.getContext().getBean(PartElasticSearch.class);
@@ -47,7 +47,7 @@ public class PartElasticSearch extends AbstractElasticSearch {
         try {
             client.index(index).actionGet(timeout);
         } catch (ElasticSearchException e) {
-            log.log(Level.SEVERE, "Could not index part " + document, e);
+            log.error("Could not index part " + document, e);
             throw e;
         } finally {
             client.close();
@@ -78,17 +78,17 @@ public class PartElasticSearch extends AbstractElasticSearch {
                 }
 
                 result = parts.size();
-                log.log(Level.INFO, "Indexed parts {0}-{1}: {2}", new Object[]{page * pageSize, (page * pageSize) + pageSize, result});
+                log.info("Indexed parts {}-{}: {}", page * pageSize, (page * pageSize) + pageSize, result);
                 page++;
                 
                 client.bulk(bulk).actionGet();
 
             } while (result >= pageSize && page < maxPages);
         } catch (Exception e) {
-            log.log(Level.SEVERE, "Reindexing failed.", e);
+            log.error("Reindexing failed.", e);
             throw e;
         } finally {
-            log.log(Level.INFO, "Reindexing complete.");
+            log.info("Reindexing complete.");
             client.close();
         }
     }

@@ -5,9 +5,10 @@ import com.turbointernational.metadata.magmi.MagmiDataFinder;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Logger;
 import javax.persistence.NoResultException;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.TransactionStatus;
@@ -21,7 +22,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 @Repository
 public class PartDao extends GenericDao<Part> {
     
-    private static final Logger log = Logger.getLogger(PartDao.class.toString());
+    private static final Logger log = LoggerFactory.getLogger(PartDao.class);
     
     /**
      * Contains the date when we started the BOM rebuild, or null if not currently rebuilding.

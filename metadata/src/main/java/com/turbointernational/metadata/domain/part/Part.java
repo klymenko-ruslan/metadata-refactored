@@ -17,6 +17,8 @@ import flexjson.ObjectBinder;
 import flexjson.ObjectFactory;
 import flexjson.transformer.HibernateTransformer;
 import org.apache.commons.lang3.ObjectUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -29,7 +31,6 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.logging.Logger;
 
 @Cacheable
 @Entity
@@ -56,7 +57,7 @@ import java.util.logging.Logger;
 //@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id", scope = Part.class)
 public class Part implements Comparable<Part>, Serializable {
 
-    private static final Logger log = Logger.getLogger(Part.class.toString());
+    private static final Logger log = LoggerFactory.getLogger(Part.class);
 
     public static final ObjectFactory OBJECT_FACTORY = new ObjectFactory() {
         

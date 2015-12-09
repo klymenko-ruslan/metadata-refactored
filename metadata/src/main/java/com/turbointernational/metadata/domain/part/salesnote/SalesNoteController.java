@@ -17,9 +17,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -43,7 +44,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/metadata/other/salesNote")
 public class SalesNoteController {
 
-    private static final Logger log = Logger.getLogger(SalesNoteController.class.toString());
+    private static final Logger log = LoggerFactory.getLogger(SalesNoteController.class);
 
     @Autowired
     ChangelogDao changelogDao;
@@ -278,7 +279,7 @@ public class SalesNoteController {
 
             return new ResponseEntity(bytes, headers, HttpStatus.OK);
         } catch (IOException e) {
-            log.log(Level.WARNING, "Couldn't load attachment file: " + attachmentFile.getAbsolutePath(), e);
+            log.warn("Couldn't load attachment file: " + attachmentFile.getAbsolutePath(), e);
             throw e;
         }
     }

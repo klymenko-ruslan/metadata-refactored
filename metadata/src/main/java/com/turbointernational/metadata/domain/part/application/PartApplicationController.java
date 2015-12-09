@@ -4,6 +4,8 @@ import com.turbointernational.metadata.domain.part.types.TurboCarModelEngineYear
 import com.turbointernational.metadata.domain.part.types.TurboCarModelEngineYearDao;
 import flexjson.JSONSerializer;
 import flexjson.transformer.HibernateTransformer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -14,13 +16,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.logging.Logger;
 
 @RequestMapping("/metadata/part")
 @Controller
 public class PartApplicationController {
 
-    private static final Logger log = Logger.getLogger(PartApplicationController.class.toString());
+    private static final Logger log = LoggerFactory.getLogger(PartApplicationController.class);
 
     @Autowired
     private TurboCarModelEngineYearDao turboCarModelEngineYearDao;

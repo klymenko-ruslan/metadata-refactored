@@ -9,23 +9,10 @@ import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.part.PartDao;
 import com.turbointernational.metadata.domain.part.ProductImage;
-import com.turbointernational.metadata.magmi.dto.MagmiApplication;
-import com.turbointernational.metadata.magmi.dto.MagmiBomItem;
-import com.turbointernational.metadata.magmi.dto.MagmiInterchange;
-import com.turbointernational.metadata.magmi.dto.MagmiProduct;
-import com.turbointernational.metadata.magmi.dto.MagmiServiceKit;
-import com.turbointernational.metadata.magmi.dto.MagmiTurbo;
-import com.turbointernational.metadata.magmi.dto.MagmiUsage;
-import java.io.Serializable;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.TreeMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.turbointernational.metadata.magmi.dto.*;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -34,14 +21,13 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.stereotype.Service;
 
+import java.io.Serializable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.TreeMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -49,7 +35,7 @@ import java.util.logging.Logger;
  */
 @Service
 public class MagmiDataFinder {
-    private static final Logger logger = Logger.getLogger(MagmiDataFinder.class.toString());
+    private static final Logger logger = LoggerFactory.getLogger(MagmiDataFinder.class);
     
     @Autowired(required=true)
     JdbcTemplate db;
@@ -79,10 +65,10 @@ public class MagmiDataFinder {
                       .addApplication(application);
         }
         
-        logger.log(Level.INFO, "Found {0} applications", applications.size());
+        logger.info("Found {} applications", applications.size());
         
         // Add TI CHRAs
-        logger.log(Level.INFO, "Finding TI CHRA descendants.", applications.size());
+        logger.info("Finding TI CHRA descendants: {}", applications.size());
         db.query(
             "SELECT DISTINCT\n" +
             "    id,\n" +
@@ -99,7 +85,7 @@ public class MagmiDataFinder {
                 product.setHasTiChra(hasTiChra);
             }
         });
-        logger.log(Level.INFO, "Finding images.", applications.size());
+        logger.info("Finding images: {}", applications.size());
         
         // Add the images
         List<ProductImage> images = partDao.findProductImages(productIds, this);
@@ -109,7 +95,7 @@ public class MagmiDataFinder {
                       .addImageId(image.getId());
         }
         
-        logger.log(Level.INFO, "Found {0} images.", images.size());
+        logger.info("Found {} images.", images.size());
         
         // Add the turbos
         List<MagmiTurbo> turbos = findMagmiTurbos(productIds);
@@ -119,7 +105,7 @@ public class MagmiDataFinder {
                     .addTurbo(magmiTurbo);
         }
         
-        logger.log(Level.INFO, "Found {0} turbos.", turbos.size());
+        logger.info("Found {} turbos.", turbos.size());
         
         // Add the interchanges
         List<MagmiInterchange> interchanges = findMagmiInterchanges(productIds);
@@ -137,7 +123,7 @@ public class MagmiDataFinder {
                     .addUsage(usage);
         }
 
-        logger.log(Level.INFO, "Found {0} usages.", usages.size());
+        logger.info("Found {} usages.", usages.size());
         
         // Add the bom items
         ListMultimap<Long, MagmiBomItem> bom = findMagmiBom(productIds);
@@ -148,7 +134,7 @@ public class MagmiDataFinder {
                       .addAll(bom.get(ancestorPartId));
         }
         
-        logger.log(Level.INFO, "Found {0} BOM items.", bom.size());
+        logger.info("Found {} BOM items.", bom.size());
         
         // Add the service kits
         List<MagmiServiceKit> serviceKits = findMagmiServiceKits(productIds);
@@ -158,9 +144,9 @@ public class MagmiDataFinder {
                     .addServiceKit(sk);
         }
         
-        logger.log(Level.INFO, "Found {0} service kits.", serviceKits.size());
+        logger.info("Found {} service kits.", serviceKits.size());
         
-        logger.log(Level.INFO, "Got {0} products in {1}ms",
+        logger.info("Got {} products in {}ms",
                 new Object[] {productMap.size(), System.currentTimeMillis() - startTime});
         
         return productMap;

@@ -10,6 +10,8 @@ import com.turbointernational.metadata.web.View;
 import flexjson.JSONSerializer;
 import flexjson.transformer.HibernateTransformer;
 import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -29,13 +31,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Logger;
 
 @RequestMapping("/metadata/part")
 @Controller
 public class PartController {
 
-    private static final Logger log = Logger.getLogger(PartController.class.toString());
+    private static final Logger log = LoggerFactory.getLogger(PartController.class);
     
     @Autowired
     ChangelogDao changelogDao;

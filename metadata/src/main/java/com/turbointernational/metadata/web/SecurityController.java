@@ -4,9 +4,10 @@ import com.turbointernational.metadata.domain.security.User;
 import com.turbointernational.metadata.domain.security.UserDao;
 import java.io.IOException;
 import java.util.UUID;
-import java.util.logging.Logger;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -29,7 +30,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping("/metadata/security")
 public class SecurityController {
     
-    private static final Logger log = Logger.getLogger(SecurityController.class.toString());
+    private static final Logger log = LoggerFactory.getLogger(SecurityController.class);
     
     @Autowired(required=true)
     UserDao userDao;

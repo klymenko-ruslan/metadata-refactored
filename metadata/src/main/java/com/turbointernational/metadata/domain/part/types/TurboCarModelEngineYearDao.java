@@ -2,11 +2,12 @@ package com.turbointernational.metadata.domain.part.types;
 
 import com.turbointernational.metadata.domain.GenericDao;
 import com.turbointernational.metadata.domain.car.CarModelEngineYear;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.Query;
 import java.util.List;
-import java.util.logging.Logger;
 
 /**
  * Created by trunikov on 12/4/15.
@@ -14,7 +15,7 @@ import java.util.logging.Logger;
 @Repository
 public class TurboCarModelEngineYearDao extends GenericDao<TurboCarModelEngineYear> {
 
-   private static final Logger log = Logger.getLogger(TurboCarModelEngineYearDao.class.toString());
+   private static final Logger log = LoggerFactory.getLogger(TurboCarModelEngineYearDao.class);
 
     public List<TurboCarModelEngineYear> getPartLinkedApplications(Long partId) {
         return em.createNamedQuery("partLinkedApplications", TurboCarModelEngineYear.class).

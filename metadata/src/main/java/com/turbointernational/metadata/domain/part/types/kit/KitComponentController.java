@@ -5,7 +5,9 @@ import com.turbointernational.metadata.domain.changelog.ChangelogDao;
 import com.turbointernational.metadata.domain.part.PartDao;
 import com.turbointernational.metadata.web.View;
 import java.util.List;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.annotation.Secured;
@@ -14,13 +16,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.NoResultException;
-import java.util.logging.Logger;
 
 @RequestMapping("/metadata/kit/{kitId}/component")
 @Controller
 public class KitComponentController {
 
-    private static final Logger log = Logger.getLogger(KitComponentController.class.toString());
+    private static final Logger log = LoggerFactory.getLogger(KitComponentController.class);
     
     @Autowired
     ChangelogDao changelogDao;

@@ -5,6 +5,8 @@ import com.turbointernational.metadata.domain.part.PartDao;
 import com.turbointernational.metadata.util.AbstractElasticSearch;
 import com.turbointernational.metadata.util.CarModelEngineYearElasticSearch;
 import com.turbointernational.metadata.util.PartElasticSearch;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -14,9 +16,6 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 /**
  *
  * @author jrodriguez
@@ -25,7 +24,7 @@ import java.util.logging.Logger;
 @RequestMapping("/metadata/search")
 public class SearchController {
 
-    private static final Logger log = Logger.getLogger(SearchController.class.toString());
+    private static final Logger log = LoggerFactory.getLogger(SearchController.class);
 
     @Autowired(required=true)
     PartElasticSearch partElasticSearch;
@@ -101,19 +100,16 @@ public class SearchController {
         int result;
         try {
             do {
-
                 // Clear Hibernate
                 //CarModelEngineYear.entityManager().clear();
-
                 result = carModelEngineYearElasticSearch.indexApplications(page * pageSize, pageSize);
-                log.log(Level.INFO, "Indexed applications {0}-{1}: {2}",
-                        new Object[]{page * pageSize, (page * pageSize) + pageSize, result});
+                log.info("Indexed applications {}-{}: {}", page * pageSize, (page * pageSize) + pageSize, result);
                 page++;
 
             } while (result >= pageSize && page < maxPages);
             log.info("Indexing of application finished.");
         } catch (Exception e) {
-            log.log(Level.SEVERE, "Reindexing of application failed.", e);
+            log.error("Reindexing of application failed.", e);
             throw e;
         }
     }
