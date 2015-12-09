@@ -3,7 +3,7 @@ package com.turbointernational.metadata.web;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.part.PartDao;
 import com.turbointernational.metadata.util.AbstractElasticSearch;
-import com.turbointernational.metadata.util.ApplicationElasticSearch;
+import com.turbointernational.metadata.util.CarModelEngineYearElasticSearch;
 import com.turbointernational.metadata.util.PartElasticSearch;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -31,7 +31,7 @@ public class SearchController {
     PartElasticSearch partElasticSearch;
 
     @Autowired(required=true)
-    ApplicationElasticSearch applicationElasticSearch;
+    CarModelEngineYearElasticSearch carModelEngineYearElasticSearch;
 
     @Autowired
     PartDao partDao;
@@ -50,11 +50,11 @@ public class SearchController {
         return _search(partElasticSearch, request);
     }
 
-    @RequestMapping("/application")
+    @RequestMapping(value="/carmodelengineyear", method = RequestMethod.POST)
     @ResponseBody
     @Secured("ROLE_READ")
-    public ResponseEntity<String> searchApplication(@RequestBody String request) throws Exception {
-        return _search(applicationElasticSearch, request);
+    public ResponseEntity<String> searchCarModelEngineYear(@RequestBody String request) throws Exception {
+        return _search(carModelEngineYearElasticSearch, request);
     }
 
     @Async
@@ -105,7 +105,7 @@ public class SearchController {
                 // Clear Hibernate
                 //CarModelEngineYear.entityManager().clear();
 
-                result = applicationElasticSearch.indexApplications(page * pageSize, pageSize);
+                result = carModelEngineYearElasticSearch.indexApplications(page * pageSize, pageSize);
                 log.log(Level.INFO, "Indexed applications {0}-{1}: {2}",
                         new Object[]{page * pageSize, (page * pageSize) + pageSize, result});
                 page++;

@@ -7,17 +7,17 @@
 
           <div class="form-group">
             <label for="partApplication" class="sr-only control-label">Application</label>
-            <input class="form-control" id="partApplication" type="text" ng-model="search.application" placeholder="Application..."/>
+            <input class="form-control" id="partApplication" type="text" ng-model="search.cmey" placeholder="Application..."/>
           </div>
 
-          <part-application-search-facets search="search" results="searchResults"/>
+          <cmey-search-facets search="search" results="searchResults"/>
 
         </form>
     </div>
 
     <!-- Tabular search results -->
     <div class="col-xs-12 col-sm-9">
-        <table data-ng-table="applicationTableParams" class="table table-bordered table-striped table-hover table-responsive">
+        <table data-ng-table="cmeyTableParams" class="table table-bordered table-striped table-hover table-responsive">
             <tr data-ng-repeat="application in $data">
               <td title="'Year'" sortable="'year.name'">
                 {{application._source.year.name}}
@@ -34,7 +34,7 @@
               <td title="'Fuel Type'" sortable="'engine.fuelType.name'">
                 {{application._source.engine.fuelType.name}}
               </td>
-              <td class="actions text-center" title="'Actions'" application-search-actions></td>
+              <td class="actions text-center" title="'Actions'" cmey-search-actions></td>
             </tr>
         </table>
     </div>

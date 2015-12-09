@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-  .constant('partApplicationFacets', [
+  .constant('cmeyFacets', [
   {
     name: 'Year',
     field: 'year.name'

@@ -88,14 +88,12 @@ angular.module('ngMetaCrudApp')
           });
         };
       })
-     .factory('applicationSearchService', function ($http, $log, partApplicationFacets, METADATA_BASE) {
-        return function (applicationSearchParams) {
-//        console.log('Searching for `' + search.partNumber + '`, facets: ' + JSON.stringify(search.facets));
-
+     .factory('cmeySearchService', function ($http, $log, cmeyFacets, METADATA_BASE) {
+        return function (cmeySearchParams) {
           // Basic search request body
           var searchRequest = {
-            from: applicationSearchParams.count * (applicationSearchParams.page - 1),
-            size: applicationSearchParams.count,
+            from: cmeySearchParams.count * (cmeySearchParams.page - 1),
+            size: cmeySearchParams.count,
             facets: {},
             query: {
               bool: {
@@ -105,64 +103,53 @@ angular.module('ngMetaCrudApp')
             },
             sort: []
           };
-
           // Facets
-          angular.forEach(partApplicationFacets, function(facet) {
-
-            // Facets
+          angular.forEach(cmeyFacets, function(facet) {
             searchRequest.facets[facet.name] = {
               terms: {
                 field: facet.field,
                 size: 100
               }
             };
-
             // Facet terms
-            var facetValue = applicationSearchParams.facets[facet.name];
+            var facetValue = cmeySearchParams.facets[facet.name];
             if (facetValue) {
               var term = {};
               term[facet.field] = facetValue;
               searchRequest.query.bool.must.push({'term': term});
             }
           });
-
-          // Application
-          if (applicationSearchParams.application) {
-            var application = applicationSearchParams.application.toLowerCase();
-            //var applicationShort = partNumber.replace(/\W+/g, '');
+          var cmey = cmeySearchParams.cmey;
+          if (cmey) {
             searchRequest.query.bool.must.push({
                 query_string: {
                   'default_field': '_all',
-                  'query': '*' + application + '*'
+                  'query': '*' + cmey.toLowerCase() + '*'
                 }
-              });
+              }
+            );
           }
-
           // Default query
           if (searchRequest.query.bool.must.length === 0 && searchRequest.query.bool.should.length === 0) {
             searchRequest.query = {'match_all': {}}; // jshint ignore:line
           }
-
           // Sorting
-          angular.forEach(applicationSearchParams.sorting, function (order, fieldName) {
+          angular.forEach(cmeySearchParams.sorting, function (order, fieldName) {
               var sortField = {};
               sortField[fieldName] = {
                   'missing': '_last',
                   'ignore_unmapped': true,
                   'order': order
                 };
-
               searchRequest.sort.push(sortField);
             });
-
-        // Call to ElasticSearch
+          // Call to ElasticSearch
           return $http({
             method: 'POST',
             headers: {
               'Content-type': 'text/plain'
             },
-            url: METADATA_BASE + 'search/application',
-            // url: '/metadata/search/application',
+            url: METADATA_BASE + 'search/carmodelengineyear',
             data: searchRequest
           });
         };

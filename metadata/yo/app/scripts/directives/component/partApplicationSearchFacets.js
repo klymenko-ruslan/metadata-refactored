@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-    .directive('partApplicationSearchFacets', function ($log, partApplicationFacets) {
+    .directive('cmeySearchFacets', function ($log, cmeyFacets) {
         return {
             scope: {
               search: '=',
@@ -9,7 +9,7 @@ angular.module('ngMetaCrudApp')
             },
             restrict: 'E',
             controller:  function ($scope) {
-              $scope.Facets = partApplicationFacets;
+              $scope.Facets = cmeyFacets;
 
               $scope.isSelected = function (facet) {
                 return angular.isDefined($scope.search.facets[facet.name]);

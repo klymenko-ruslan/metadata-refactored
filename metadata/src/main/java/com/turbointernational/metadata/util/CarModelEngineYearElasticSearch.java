@@ -17,13 +17,13 @@ import java.util.logging.Logger;
  * Created by trunikov on 30.11.15.
  */
 @Service
-public class ApplicationElasticSearch extends AbstractElasticSearch {
+public class CarModelEngineYearElasticSearch extends AbstractElasticSearch {
 
     @Autowired
     private CarModelEngineYearDao carModelEngineYearDao;
 
-    @Value("${elasticsearch.type.application}")
-    String elasticSearchType = "application";
+    @Value("${elasticsearch.type.carmodelengineyear}")
+    String elasticSearchType = "carmodelengineyear";
 
     @Transactional(readOnly = true)
     public int indexApplications(int firstResult, int maxResults) throws Exception {
