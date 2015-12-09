@@ -11,10 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.logging.Logger;
@@ -52,12 +49,14 @@ public class PartApplicationController {
     }
 
     @Transactional
-    @RequestMapping(value = "/{partId}/application/{applicationId}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/{partId}/application", method = RequestMethod.POST)
     @Secured("ROLE_APPLICATION_CRUD")
-    public ResponseEntity<String> add(@PathVariable("partId") Long partId,
-                                      @PathVariable("applicationId") Long applicationId) throws Exception {
-        turboCarModelEngineYearDao.add(partId, applicationId);
-        log.info("Linked application (" + partId + ", " + applicationId + ").");
+    public ResponseEntity<String> add(@PathVariable("partId") Long partId, @RequestBody Long[] cmeyIds) throws Exception {
+        if (cmeyIds != null) {
+            for (Long cmeyId : cmeyIds) {
+                turboCarModelEngineYearDao.add(partId, cmeyId);
+            }
+        }
         return new ResponseEntity<String>("", HttpStatus.OK);
     }
 

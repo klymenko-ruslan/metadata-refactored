@@ -88,7 +88,9 @@ angular.module('ngMetaCrudApp')
               };
 
             this.addPartApplications = function (part_id, applications) {
-                return Restangular.one('part/' + part_id + '/application/' +  application_id).put();
+                var ids = [];
+                angular.forEach(applications, function (val) { ids.push(val.id); });
+                return Restangular.one('part', part_id).post('application', ids);
               }
 
             this.removePartApplication = function (part_id, application_id) {

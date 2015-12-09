@@ -44,8 +44,6 @@ angular.module('ngMetaCrudApp')
           }
         }
         $scope.pickedApplications.push(app);
-      } else {
-          gToast.open("The item is already picked.");
       }
     }
 

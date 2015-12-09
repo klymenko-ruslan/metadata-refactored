@@ -1,13 +1,9 @@
 package com.turbointernational.metadata.web;
 
-import com.turbointernational.metadata.domain.car.CarModelEngineYear;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.part.PartDao;
 import com.turbointernational.metadata.util.AbstractElasticSearch;
 import com.turbointernational.metadata.util.ApplicationElasticSearch;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import com.turbointernational.metadata.util.PartElasticSearch;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -17,6 +13,9 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *

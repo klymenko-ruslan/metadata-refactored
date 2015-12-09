@@ -19,8 +19,6 @@ import java.util.logging.Logger;
 @Service
 public class ApplicationElasticSearch extends AbstractElasticSearch {
 
-    private static final Logger log = Logger.getLogger(ApplicationElasticSearch.class.toString());
-
     @Autowired
     private CarModelEngineYearDao carModelEngineYearDao;
 
