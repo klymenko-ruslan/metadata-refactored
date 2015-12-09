@@ -61,7 +61,8 @@ public class SearchController {
     @Async
     @RequestMapping(value="/index/{partId}")
     @ResponseBody
-    @Secured("ROLE_ADMIN")
+    // TODO
+    //@Secured("ROLE_ADMIN")
     public void indexPart(@PathVariable("partId") Long partId) throws Exception {
         Part part = partDao.findOne(partId);
         partElasticSearch.indexPart(part);
@@ -71,7 +72,8 @@ public class SearchController {
     @RequestMapping(value="/part/indexAll")
     @ResponseBody
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Secured("ROLE_ADMIN")
+    // TODO
+    //@Secured("ROLE_ADMIN")
     public void indexPartAll() throws Exception {
         partElasticSearch.indexAllParts();
     }
@@ -80,7 +82,8 @@ public class SearchController {
     @RequestMapping(value="/application/indexAll")
     @ResponseBody
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Secured("ROLE_ADMIN")
+    // TODO
+    //@Secured("ROLE_ADMIN")
     public void indexApplicationAll(
             @RequestParam(required=false) Integer page,
             @RequestParam(required=false) Integer maxPages,
