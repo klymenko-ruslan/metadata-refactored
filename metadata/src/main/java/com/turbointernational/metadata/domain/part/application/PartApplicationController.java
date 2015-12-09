@@ -67,7 +67,6 @@ public class PartApplicationController {
     public ResponseEntity<String> delete(@PathVariable("partId") Long partId,
                                          @PathVariable("applicationId") Long applicationId) throws Exception {
         int deleted = turboCarModelEngineYearDao.delete(partId, applicationId);
-        log.info("Deleted application (" + partId + ", " + applicationId + "): " + deleted);
         return new ResponseEntity<String>("", HttpStatus.OK);
     }
 }

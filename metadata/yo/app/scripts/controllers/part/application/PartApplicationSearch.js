@@ -21,17 +21,19 @@ angular.module('ngMetaCrudApp')
     $scope.pickedApplications = [];
 
     $scope.save = function () {
-      restService.addPartApplications($scope.partId, $scope.pickedApplications).then(
-        function () {
-          // Success
-          gToast.open("Application(s) added to part.");
-          $location.path("/part/" + $scope.partId);
-        },
+      if ($scope.pickedApplications.length) {
+        restService.addPartApplications($scope.partId, $scope.pickedApplications).then(
+          function () {
+            // Success
+            gToast.open("Application(s) added to part.");
+            $location.path("/part/" + $scope.partId);
+          },
           function (response) {
             dialogs.error("Could not add Applications to part.",
                           "Server said: <pre>" + JSON.stringify(response.data) + "</pre>");
-        }
-      );
+          }
+        );
+      }
     }
 
     $scope.pickApplication = function (app) {
