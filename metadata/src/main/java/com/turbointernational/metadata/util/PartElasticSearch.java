@@ -37,7 +37,7 @@ public class PartElasticSearch extends AbstractElasticSearch {
     String elasticSearchType = "part";
 
     @Transactional(readOnly = true)
-    public void indexPart(Part part) throws Exception {
+    public void index(Part part) throws Exception {
         String document = part.toSearchJson();
         
         IndexRequest index = new IndexRequest(elasticSearchIndex, elasticSearchType, part.getId().toString());
@@ -56,7 +56,7 @@ public class PartElasticSearch extends AbstractElasticSearch {
 
     @Async("asyncExecutor")
     @Transactional(readOnly = true)
-    public void indexAllParts() throws Exception {
+    public void indexAll() throws Exception {
         int maxPages = Integer.MAX_VALUE;
         int page = 0;
         int pageSize = 250;
@@ -66,23 +66,17 @@ public class PartElasticSearch extends AbstractElasticSearch {
             do {
                 // Clear hibernate
                 partDao.clear();
-
                 List<Part> parts = partDao.findAll(page * pageSize, pageSize);
-                
                 BulkRequest bulk = new BulkRequest();
-
                 for (Part part : parts) {
                     IndexRequest index = new IndexRequest(elasticSearchIndex, elasticSearchType, part.getId().toString());
                     index.source(part.toSearchJson());
                     bulk.add(index);
                 }
-
                 result = parts.size();
                 log.info("Indexed parts {}-{}: {}", page * pageSize, (page * pageSize) + pageSize, result);
                 page++;
-                
                 client.bulk(bulk).actionGet();
-
             } while (result >= pageSize && page < maxPages);
         } catch (Exception e) {
             log.error("Reindexing failed.", e);
@@ -94,7 +88,7 @@ public class PartElasticSearch extends AbstractElasticSearch {
     }
 
     @Async
-    public void deletePart(Part part) throws Exception {
+    public void delete(Part part) throws Exception {
         DeleteRequest delete = new DeleteRequest(elasticSearchIndex, elasticSearchType, part.getId().toString());
         
         Client client = client();

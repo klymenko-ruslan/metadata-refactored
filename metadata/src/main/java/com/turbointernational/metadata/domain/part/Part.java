@@ -19,7 +19,6 @@ import flexjson.transformer.HibernateTransformer;
 import org.apache.commons.lang3.ObjectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -264,7 +263,7 @@ public class Part implements Comparable<Part>, Serializable {
     @PreRemove
     public void removeSearchIndex() throws Exception {
         try {
-            PartElasticSearch.instance().deletePart(this);
+            PartElasticSearch.instance().delete(this);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -274,7 +273,7 @@ public class Part implements Comparable<Part>, Serializable {
     @PostPersist
     public void updateSearchIndex() throws Exception {
         log.info("Updating search index.");
-        PartElasticSearch.instance().indexPart(this);
+        PartElasticSearch.instance().index(this);
     }
     //</editor-fold>
 

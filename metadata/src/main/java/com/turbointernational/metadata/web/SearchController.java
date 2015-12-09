@@ -63,7 +63,7 @@ public class SearchController {
     //@Secured("ROLE_ADMIN")
     public void indexPart(@PathVariable("partId") Long partId) throws Exception {
         Part part = partDao.findOne(partId);
-        partElasticSearch.indexPart(part);
+        partElasticSearch.index(part);
     }
 
     @Async
@@ -73,7 +73,7 @@ public class SearchController {
     // TODO
     //@Secured("ROLE_ADMIN")
     public void indexPartAll() throws Exception {
-        partElasticSearch.indexAllParts();
+        partElasticSearch.indexAll();
     }
 
     @Async
@@ -82,35 +82,7 @@ public class SearchController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     // TODO
     //@Secured("ROLE_ADMIN")
-    public void indexApplicationAll(
-            @RequestParam(required=false) Integer page,
-            @RequestParam(required=false) Integer maxPages,
-            @RequestParam(required=false) Integer pageSize) throws Exception {
-
-        if (maxPages == null) {
-            maxPages = Integer.MAX_VALUE;
-        }
-        if (page == null) {
-            page = 0;
-        }
-        if (pageSize == null) {
-            pageSize = 250;
-        }
-
-        int result;
-        try {
-            do {
-                // Clear Hibernate
-                //CarModelEngineYear.entityManager().clear();
-                result = carModelEngineYearElasticSearch.indexApplications(page * pageSize, pageSize);
-                log.info("Indexed applications {}-{}: {}", page * pageSize, (page * pageSize) + pageSize, result);
-                page++;
-
-            } while (result >= pageSize && page < maxPages);
-            log.info("Indexing of application finished.");
-        } catch (Exception e) {
-            log.error("Reindexing of application failed.", e);
-            throw e;
-        }
+    public void indexApplicationAll() throws Exception {
+        carModelEngineYearElasticSearch.indexAll();
     }
 }
