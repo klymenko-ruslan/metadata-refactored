@@ -48,6 +48,19 @@ public class CarFuelType implements Serializable {
     //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="Serialization">
+
+    //<editor-fold defaultstate="collapsed" desc="Serialization">
+    protected JSONSerializer getSearchSerializer() {
+        return new JSONSerializer()
+                .include("id")
+                .include("name")
+                .exclude("*.class");
+    }
+
+    public String toSearchJson() {
+        return getSearchSerializer().exclude("*").serialize(this);
+    }
+
     public String toJson() {
         return new JSONSerializer().exclude("*.class").serialize(this);
     }

@@ -51,8 +51,21 @@ public class CarEngine implements Serializable {
         this.fuelType = fuelType;
     }
     //</editor-fold>
-    
+
     //<editor-fold defaultstate="collapsed" desc="Serialization">
+    protected JSONSerializer getSearchSerializer() {
+        return new JSONSerializer()
+                .include("id")
+                .include("engineSize")
+                .include("fuelType.id")
+                .include("fuelType.name")
+                .exclude("*.class");
+    }
+
+    public String toSearchJson() {
+        return getSearchSerializer().exclude("*").serialize(this);
+    }
+
     public String toJson() {
         return new JSONSerializer().exclude("*.class").serialize(this);
     }

@@ -2,9 +2,7 @@ package com.turbointernational.metadata.web;
 
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.part.PartDao;
-import com.turbointernational.metadata.util.AbstractElasticSearch;
-import com.turbointernational.metadata.util.CarModelEngineYearElasticSearch;
-import com.turbointernational.metadata.util.PartElasticSearch;
+import com.turbointernational.metadata.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,14 +24,26 @@ public class SearchController {
 
     private static final Logger log = LoggerFactory.getLogger(SearchController.class);
 
-    @Autowired(required=true)
-    PartElasticSearch partElasticSearch;
-
-    @Autowired(required=true)
-    CarModelEngineYearElasticSearch carModelEngineYearElasticSearch;
+    @Autowired
+    private PartElasticSearch partElasticSearch;
 
     @Autowired
-    PartDao partDao;
+    private CarModelEngineYearElasticSearch carModelEngineYearElasticSearch;
+
+    @Autowired
+    private CarEngineElasticSearch carEngineElasticSearch;
+
+    @Autowired
+    private CarFuelTypeElasticSearch carFuelTypeElasticSearch;
+
+    @Autowired
+    private CarMakeElasticSearch carMakeElasticSearch;
+
+    @Autowired
+    private CarModelElasticSearch carModelElasticSearch;
+
+    @Autowired
+    private PartDao partDao;
 
     protected ResponseEntity<String> _search(AbstractElasticSearch elasticSearch, String request) throws Exception {
         String response = elasticSearch.search(request);
@@ -84,5 +94,10 @@ public class SearchController {
     //@Secured("ROLE_ADMIN")
     public void indexApplicationAll() throws Exception {
         carModelEngineYearElasticSearch.indexAll();
+        carEngineElasticSearch.indexAll();
+        carFuelTypeElasticSearch.indexAll();
+        carMakeElasticSearch.indexAll();
+        carModelElasticSearch.indexAll();
     }
+
 }

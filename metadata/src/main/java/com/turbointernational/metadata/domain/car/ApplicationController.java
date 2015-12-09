@@ -30,7 +30,7 @@ public class ApplicationController {
     public ResponseEntity<String> getCarmodelengineyear(@PathVariable("id") long id) {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json; charset=utf-8");
-        CarModelEngineYear application = carModelEngineYearDao.findById(id);
+        CarModelEngineYear application = carModelEngineYearDao.findOne(id);
         String json = null;
         if (application != null) {
             json = application.toJson();

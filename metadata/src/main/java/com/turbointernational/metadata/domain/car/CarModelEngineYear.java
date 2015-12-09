@@ -11,9 +11,6 @@ import javax.persistence.*;
 @Cacheable
 @Entity
 @Table(name="car_model_engine_year")
-@NamedQueries({
-        @NamedQuery(name = "allApplications", query = "SELECT application FROM CarModelEngineYear AS application")
-})
 public class CarModelEngineYear implements Serializable {
 
     //<editor-fold defaultstate="collapsed" desc="Properties">

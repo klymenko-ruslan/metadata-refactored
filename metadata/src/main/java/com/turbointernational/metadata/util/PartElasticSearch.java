@@ -1,11 +1,10 @@
 package com.turbointernational.metadata.util;
 
 import com.turbointernational.metadata.Application;
+import com.turbointernational.metadata.domain.GenericDao;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.part.PartDao;
-import java.util.List;
 import org.elasticsearch.ElasticSearchException;
-import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.client.Client;
@@ -31,10 +30,10 @@ public class PartElasticSearch extends AbstractElasticSearch {
     }
     
     @Autowired
-    PartDao partDao;
+    private PartDao partDao;
 
     @Value("${elasticsearch.type.part}")
-    String elasticSearchType = "part";
+    private String elasticSearchType = "part";
 
     @Transactional(readOnly = true)
     public void index(Part part) throws Exception {
@@ -54,39 +53,6 @@ public class PartElasticSearch extends AbstractElasticSearch {
         }
     }
 
-    @Async("asyncExecutor")
-    @Transactional(readOnly = true)
-    public void indexAll() throws Exception {
-        int maxPages = Integer.MAX_VALUE;
-        int page = 0;
-        int pageSize = 250;
-        Client client = client();
-        try {
-            int result;
-            do {
-                // Clear hibernate
-                partDao.clear();
-                List<Part> parts = partDao.findAll(page * pageSize, pageSize);
-                BulkRequest bulk = new BulkRequest();
-                for (Part part : parts) {
-                    IndexRequest index = new IndexRequest(elasticSearchIndex, elasticSearchType, part.getId().toString());
-                    index.source(part.toSearchJson());
-                    bulk.add(index);
-                }
-                result = parts.size();
-                log.info("Indexed parts {}-{}: {}", page * pageSize, (page * pageSize) + pageSize, result);
-                page++;
-                client.bulk(bulk).actionGet();
-            } while (result >= pageSize && page < maxPages);
-        } catch (Exception e) {
-            log.error("Reindexing failed.", e);
-            throw e;
-        } finally {
-            log.info("Reindexing complete.");
-            client.close();
-        }
-    }
-
     @Async
     public void delete(Part part) throws Exception {
         DeleteRequest delete = new DeleteRequest(elasticSearchIndex, elasticSearchType, part.getId().toString());
@@ -102,6 +68,23 @@ public class PartElasticSearch extends AbstractElasticSearch {
     @Override
     protected String getElasticSearchType() {
         return elasticSearchType;
+    }
+
+    @Override
+    protected GenericDao<?> getDao() {
+        return partDao;
+    }
+
+    @Override
+    protected String getSearchId(Object o) {
+        Part part = (Part) o;
+        return part.getId().toString();
+    }
+
+    @Override
+    protected String toSearchJson(Object o) {
+        Part part = (Part) o;
+        return part.toSearchJson();
     }
 
 }
