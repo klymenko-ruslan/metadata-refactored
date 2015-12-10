@@ -1,6 +1,6 @@
 package com.turbointernational.metadata.domain.part.types.kit;
 
-import com.turbointernational.metadata.domain.GenericDao;
+import com.turbointernational.metadata.domain.AbstractDao;
 import java.util.List;
 import org.springframework.stereotype.Repository;
 
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
  * @author jrodriguez
  */
 @Repository
-public class KitComponentDao extends GenericDao<KitComponent> {
+public class KitComponentDao extends AbstractDao<KitComponent> {
 
     public KitComponentDao() {
         super(KitComponent.class);

@@ -1,6 +1,6 @@
 package com.turbointernational.metadata.domain.part;
 
-import com.turbointernational.metadata.domain.GenericDao;
+import com.turbointernational.metadata.domain.AbstractDao;
 import com.turbointernational.metadata.magmi.MagmiDataFinder;
 import java.util.Collection;
 import java.util.Date;
@@ -20,7 +20,7 @@ import org.springframework.transaction.support.TransactionTemplate;
  * @author jrodriguez
  */
 @Repository
-public class PartDao extends GenericDao<Part> {
+public class PartDao extends AbstractDao<Part> {
     
     private static final Logger log = LoggerFactory.getLogger(PartDao.class);
     

@@ -1,6 +1,6 @@
 package com.turbointernational.metadata.domain.security;
 
-import com.turbointernational.metadata.domain.GenericDao;
+import com.turbointernational.metadata.domain.AbstractDao;
 import java.util.List;
 import javax.persistence.Query;
 import org.apache.commons.lang3.StringUtils;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
  * @author jrodriguez
  */
 @Repository
-public class UserDao extends GenericDao<User> {
+public class UserDao extends AbstractDao<User> {
 
     public UserDao() {
         super(User.class);

@@ -1,6 +1,6 @@
 package com.turbointernational.metadata.util;
 
-import com.turbointernational.metadata.domain.GenericDao;
+import com.turbointernational.metadata.domain.AbstractDao;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchRequest;
@@ -41,7 +41,7 @@ public abstract class AbstractElasticSearch implements Serializable {
 
     protected abstract String getElasticSearchType();
 
-    protected abstract GenericDao<?> getDao();
+    protected abstract AbstractDao<?> getDao();
 
     protected abstract String getSearchId(Object o);
 
@@ -67,7 +67,7 @@ public abstract class AbstractElasticSearch implements Serializable {
         Client client = client();
         try {
             int result;
-            GenericDao<?> dao = getDao();
+            AbstractDao<?> dao = getDao();
             do {
                 // Clear Hibernate
                 dao.clear();

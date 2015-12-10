@@ -1,7 +1,7 @@
 package com.turbointernational.metadata.util;
 
 import com.turbointernational.metadata.Application;
-import com.turbointernational.metadata.domain.GenericDao;
+import com.turbointernational.metadata.domain.AbstractDao;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.part.PartDao;
 import org.elasticsearch.ElasticSearchException;
@@ -71,7 +71,7 @@ public class PartElasticSearch extends AbstractElasticSearch {
     }
 
     @Override
-    protected GenericDao<?> getDao() {
+    protected AbstractDao<?> getDao() {
         return partDao;
     }
 

@@ -1,21 +1,20 @@
 package com.turbointernational.metadata.domain;
 
-import java.io.Serializable;
-import java.util.List;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.io.Serializable;
+import java.util.List;
 
 /**
  *
  * @author jrodriguez
  * @param <T> The entity class to operate on
  */
-@Repository
-public class GenericDao<T extends Serializable> {
+public abstract class AbstractDao<T extends Serializable> {
 
     protected final Class<T> clazz;
 
@@ -29,12 +28,8 @@ public class GenericDao<T extends Serializable> {
         return em;
     }
     
-    public GenericDao(Class<T> clazz) {
+    public AbstractDao(Class<T> clazz) {
         this.clazz = clazz;
-    }
-
-    public GenericDao() {
-        this.clazz = (Class<T>) Serializable.class;
     }
 
     public T findOne(long id) {
@@ -67,7 +62,7 @@ public class GenericDao<T extends Serializable> {
 
     public void delete(long entityId) {
         T entity = findOne(entityId);
-        GenericDao.this.remove(entity);
+        AbstractDao.this.remove(entity);
     }
     
     public long count() {

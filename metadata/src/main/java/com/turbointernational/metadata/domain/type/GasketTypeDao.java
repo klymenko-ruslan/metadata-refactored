@@ -1,6 +1,6 @@
 package com.turbointernational.metadata.domain.type;
 
-import com.turbointernational.metadata.domain.GenericDao;
+import com.turbointernational.metadata.domain.AbstractDao;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
  * @author jrodriguez
  */
 @Repository
-public class GasketTypeDao extends GenericDao<GasketType> {
+public class GasketTypeDao extends AbstractDao<GasketType> {
     public GasketTypeDao() {
         super(GasketType.class);
     }

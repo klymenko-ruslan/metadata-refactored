@@ -1,6 +1,6 @@
 package com.turbointernational.metadata.domain.part.bom;
 
-import com.turbointernational.metadata.domain.GenericDao;
+import com.turbointernational.metadata.domain.AbstractDao;
 import java.util.List;
 import org.springframework.stereotype.Repository;
 
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
  * @author jrodriguez
  */
 @Repository
-public class BOMItemDao extends GenericDao<BOMItem> {
+public class BOMItemDao extends AbstractDao<BOMItem> {
     
     public BOMItemDao() {
         super(BOMItem.class);

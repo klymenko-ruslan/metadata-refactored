@@ -1,6 +1,6 @@
 package com.turbointernational.metadata.domain.security;
 
-import com.turbointernational.metadata.domain.GenericDao;
+import com.turbointernational.metadata.domain.AbstractDao;
 import java.util.List;
 import org.springframework.stereotype.Repository;
 
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
  * @author jrodriguez
  */
 @Repository
-public class RoleDao extends GenericDao<Role> {
+public class RoleDao extends AbstractDao<Role> {
 
     public RoleDao() {
         super(Role.class);

@@ -1,7 +1,7 @@
 package com.turbointernational.metadata.domain.part;
 
 import com.turbointernational.metadata.domain.other.*;
-import com.turbointernational.metadata.domain.GenericDao;
+import com.turbointernational.metadata.domain.AbstractDao;
 import java.util.List;
 import org.springframework.stereotype.Repository;
 
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
  * @author jrodriguez
  */
 @Repository
-public class InterchangeDao extends GenericDao<Interchange> {
+public class InterchangeDao extends AbstractDao<Interchange> {
     
     public InterchangeDao() {
         super(Interchange.class);

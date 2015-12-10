@@ -1,6 +1,6 @@
 package com.turbointernational.metadata.domain.part.types;
 
-import com.turbointernational.metadata.domain.GenericDao;
+import com.turbointernational.metadata.domain.AbstractDao;
 import com.turbointernational.metadata.domain.car.CarModelEngineYear;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,9 +13,13 @@ import java.util.List;
  * Created by trunikov on 12/4/15.
  */
 @Repository
-public class TurboCarModelEngineYearDao extends GenericDao<TurboCarModelEngineYear> {
+public class TurboCarModelEngineYearDao extends AbstractDao<TurboCarModelEngineYear> {
 
    private static final Logger log = LoggerFactory.getLogger(TurboCarModelEngineYearDao.class);
+
+    public TurboCarModelEngineYearDao() {
+        super(TurboCarModelEngineYear.class);
+    }
 
     public List<TurboCarModelEngineYear> getPartLinkedApplications(Long partId) {
         return em.createNamedQuery("partLinkedApplications", TurboCarModelEngineYear.class).

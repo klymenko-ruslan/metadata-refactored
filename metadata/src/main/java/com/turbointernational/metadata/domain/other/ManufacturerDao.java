@@ -1,6 +1,6 @@
 package com.turbointernational.metadata.domain.other;
 
-import com.turbointernational.metadata.domain.GenericDao;
+import com.turbointernational.metadata.domain.AbstractDao;
 import static com.turbointernational.metadata.domain.other.Manufacturer.TI_ID;
 import java.util.List;
 import org.springframework.stereotype.Repository;
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
  * @author jrodriguez
  */
 @Repository
-public class ManufacturerDao extends GenericDao<Manufacturer> {
+public class ManufacturerDao extends AbstractDao<Manufacturer> {
     
     public ManufacturerDao() {
         super(Manufacturer.class);

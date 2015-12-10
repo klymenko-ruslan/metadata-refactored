@@ -30,17 +30,17 @@ public class SearchController {
     @Autowired
     private CarModelEngineYearElasticSearch carModelEngineYearElasticSearch;
 
-    @Autowired
-    private CarEngineElasticSearch carEngineElasticSearch;
-
-    @Autowired
-    private CarFuelTypeElasticSearch carFuelTypeElasticSearch;
-
-    @Autowired
-    private CarMakeElasticSearch carMakeElasticSearch;
-
-    @Autowired
-    private CarModelElasticSearch carModelElasticSearch;
+//    @Autowired
+//    private CarEngineElasticSearch carEngineElasticSearch;
+//
+//    @Autowired
+//    private CarFuelTypeElasticSearch carFuelTypeElasticSearch;
+//
+//    @Autowired
+//    private CarMakeElasticSearch carMakeElasticSearch;
+//
+//    @Autowired
+//    private CarModelElasticSearch carModelElasticSearch;
 
     @Autowired
     private PartDao partDao;
@@ -94,10 +94,10 @@ public class SearchController {
     //@Secured("ROLE_ADMIN")
     public void indexApplicationAll() throws Exception {
         carModelEngineYearElasticSearch.indexAll();
-        carEngineElasticSearch.indexAll();
-        carFuelTypeElasticSearch.indexAll();
-        carMakeElasticSearch.indexAll();
-        carModelElasticSearch.indexAll();
+//        carEngineElasticSearch.indexAll();
+//        carFuelTypeElasticSearch.indexAll();
+//        carMakeElasticSearch.indexAll();
+//        carModelElasticSearch.indexAll();
     }
 
 }

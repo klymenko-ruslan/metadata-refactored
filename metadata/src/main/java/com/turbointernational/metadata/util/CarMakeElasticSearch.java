@@ -1,6 +1,6 @@
 package com.turbointernational.metadata.util;
 
-import com.turbointernational.metadata.domain.GenericDao;
+import com.turbointernational.metadata.domain.AbstractDao;
 import com.turbointernational.metadata.domain.car.CarMake;
 import com.turbointernational.metadata.domain.car.CarMakeDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ public class CarMakeElasticSearch  extends AbstractElasticSearch {
     }
 
     @Override
-    protected GenericDao<?> getDao() {
+    protected AbstractDao<?> getDao() {
         return carMakeDao;
     }
 

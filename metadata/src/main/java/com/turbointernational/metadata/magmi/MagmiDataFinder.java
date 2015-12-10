@@ -4,7 +4,6 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Table;
 import com.google.common.collect.TreeBasedTable;
-import com.turbointernational.metadata.domain.GenericDao;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.part.PartDao;
@@ -21,7 +20,6 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.stereotype.Service;
 
-import java.io.Serializable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -35,6 +33,7 @@ import java.util.TreeMap;
  */
 @Service
 public class MagmiDataFinder {
+
     private static final Logger logger = LoggerFactory.getLogger(MagmiDataFinder.class);
     
     @Autowired(required=true)
@@ -42,9 +41,6 @@ public class MagmiDataFinder {
     
     @Autowired
     PartDao partDao;
-    
-    @Autowired
-    GenericDao<Serializable> genericDao;
     
     public TreeMap<Long, MagmiProduct> findMagmiProducts(List<Part> parts) {
         long startTime = System.currentTimeMillis();

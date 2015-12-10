@@ -1,6 +1,6 @@
 package com.turbointernational.metadata.domain.part.bom;
 
-import com.turbointernational.metadata.domain.GenericDao;
+import com.turbointernational.metadata.domain.AbstractDao;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
  * @author jrodriguez
  */
 @Repository
-public class BOMAlternativeHeaderDao extends GenericDao<BOMAlternativeHeader> {
+public class BOMAlternativeHeaderDao extends AbstractDao<BOMAlternativeHeader> {
     
     public BOMAlternativeHeaderDao() {
         super(BOMAlternativeHeader.class);

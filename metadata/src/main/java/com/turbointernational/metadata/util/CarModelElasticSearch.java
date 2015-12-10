@@ -1,9 +1,8 @@
 package com.turbointernational.metadata.util;
 
-import com.turbointernational.metadata.domain.GenericDao;
+import com.turbointernational.metadata.domain.AbstractDao;
 import com.turbointernational.metadata.domain.car.CarModel;
 import com.turbointernational.metadata.domain.car.CarModelDao;
-import com.turbointernational.metadata.domain.car.CarModelEngineYearDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -24,7 +23,7 @@ public class CarModelElasticSearch extends AbstractElasticSearch {
     }
 
     @Override
-    protected GenericDao<?> getDao() {
+    protected AbstractDao<?> getDao() {
         return carModelDao;
     }
 
