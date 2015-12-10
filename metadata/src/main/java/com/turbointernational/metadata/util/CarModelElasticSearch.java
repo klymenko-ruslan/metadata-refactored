@@ -5,10 +5,12 @@ import com.turbointernational.metadata.domain.car.CarModel;
 import com.turbointernational.metadata.domain.car.CarModelDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 /**
  * Created by trunikov on 12/9/15.
  */
+@Service
 public class CarModelElasticSearch extends AbstractElasticSearch {
 
     @Autowired

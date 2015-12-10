@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-    .directive('carmodelengineyearSummary', function () {
+    .directive('cmeySummary', function () {
       return {
         scope: {
           item: '='
