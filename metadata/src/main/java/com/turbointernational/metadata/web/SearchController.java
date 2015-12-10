@@ -66,6 +66,34 @@ public class SearchController {
         return _search(carModelEngineYearElasticSearch, request);
     }
 
+    @RequestMapping(value="/carmake", method = RequestMethod.POST)
+    @ResponseBody
+    @Secured("ROLE_READ")
+    public ResponseEntity<String> searchCarMake(@RequestBody String request) throws Exception {
+        return _search(carMakeElasticSearch, request);
+    }
+
+    @RequestMapping(value="/carmodel", method = RequestMethod.POST)
+    @ResponseBody
+    @Secured("ROLE_READ")
+    public ResponseEntity<String> searchCarModel(@RequestBody String request) throws Exception {
+        return _search(carModelElasticSearch, request);
+    }
+
+    @RequestMapping(value="/carengine", method = RequestMethod.POST)
+    @ResponseBody
+    @Secured("ROLE_READ")
+    public ResponseEntity<String> searchCarEngine(@RequestBody String request) throws Exception {
+        return _search(carEngineElasticSearch, request);
+    }
+
+    @RequestMapping(value="/carfueltype", method = RequestMethod.POST)
+    @ResponseBody
+    @Secured("ROLE_READ")
+    public ResponseEntity<String> searchCarFuelType(@RequestBody String request) throws Exception {
+        return _search(carFuelTypeElasticSearch, request);
+    }
+
     @Async
     @RequestMapping(value="/index/{partId}")
     @ResponseBody

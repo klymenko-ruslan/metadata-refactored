@@ -1,6 +1,6 @@
 "use strict";
 
-angular.module("ngMetaCrudApp").directive("cmeySearch", function ($log, restService) {
+angular.module("ngMetaCrudApp").directive("cmeySearch", ["$log", "restService", function ($log, restService) {
   return {
     "restrict": "E",
     "replace": true,
@@ -9,7 +9,8 @@ angular.module("ngMetaCrudApp").directive("cmeySearch", function ($log, restServ
       "link": function postLink(scope, iElement, iAttrs, controller, transcludeFn) {
         controller.transcludeActionsFn = transcludeFn;
       },
-      "controller": function ($log, $q, $scope, cmeySearchService, ngTableParams) {
+      "controller": ["$log", "$q", "$scope", "cmeySearchService", "ngTableParams",
+                    function ($log, $q, $scope, cmeySearchService, ngTableParams) {
         // Latest Results
         $scope.searchResults = null;
         // Applications Table
@@ -33,7 +34,7 @@ angular.module("ngMetaCrudApp").directive("cmeySearch", function ($log, restServ
                   params.total($scope.searchResults.hits.total);
                 },
                 function (errorResponse) {
-                  $log.log("Couldn't search for applications.");
+                  $log.log("Couldn't search for 'carmodelengineyear'.");
                   $defer.reject();
                 }
               );
@@ -62,11 +63,12 @@ angular.module("ngMetaCrudApp").directive("cmeySearch", function ($log, restServ
             }
             $scope.cmeyTableParams.reload();
           },
-          true);
-      }
+          true
+        );
+      }]
     };
-  }
-).directive("cmeySearchActions", function($log) {
+  }]
+).directive("cmeySearchActions", ["$log", function($log) {
   return {
     "restrict": "A",
     "require": "^cmeySearch",
@@ -76,4 +78,4 @@ angular.module("ngMetaCrudApp").directive("cmeySearch", function ($log, restServ
       });
     }
   };
-});
+}]);

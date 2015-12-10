@@ -1,6 +1,6 @@
 "use strict";
 
-angular.module("ngMetaCrudApp").factory("partSearchService", function ($http, $log, Facets, METADATA_BASE) {
+angular.module("ngMetaCrudApp").factory("partSearchService", ["$http", "Facets", "METADATA_BASE", function ($http, Facets, METADATA_BASE) {
   return function (partSearchParams) {
     // Basic search request body
     var searchRequest = {
@@ -65,7 +65,7 @@ angular.module("ngMetaCrudApp").factory("partSearchService", function ($http, $l
       "data": searchRequest
     });
   };
-}).factory('cmeySearchService', function ($http, $log, cmeyFacets, METADATA_BASE) {
+}]).factory('cmeySearchService', ["$http", "cmeyFacets", "METADATA_BASE", function ($http, cmeyFacets, METADATA_BASE) {
   return function (cmeySearchParams) {
     // Basic search request body
     var searchRequest = {
@@ -129,7 +129,7 @@ angular.module("ngMetaCrudApp").factory("partSearchService", function ($http, $l
       "data": searchRequest
     });
   };
-}).factory('carmakeSearchService', function ($http, $log, METADATA_BASE) {
+}]).factory('carmakeSearchService', ["$http", "METADATA_BASE", function ($http, METADATA_BASE) {
   return function (carmakeSearchParams) {
     // Basic search request body
     var searchRequest = {
@@ -177,4 +177,52 @@ angular.module("ngMetaCrudApp").factory("partSearchService", function ($http, $l
       "data": searchRequest
     });
   };
-});
+}]).factory('carfueltypeSearchService', [ "$http", "METADATA_BASE", function ($http, METADATA_BASE) {
+  return function (carfueltypeSearchParams) {
+    // Basic search request body
+    var searchRequest = {
+      "from": carfueltypeSearchParams.count * (carfueltypeSearchParams.page - 1),
+      "size": carfueltypeSearchParams.count,
+      "facets": {},
+      "query": {
+        "bool": {
+          "must": [],
+          "should": []
+        }
+      },
+      "sort": []
+    };
+    var carfueltype = carfueltypeSearchParams.carfueltype;
+    if (carfueltype) {
+      searchRequest.query.bool.must.push({
+        "query_string": {
+          "default_field": "_all",
+          "query": "*" + carfueltype.toLowerCase() + "*"
+        }
+      });
+    }
+    // Default query
+    if (searchRequest.query.bool.must.length === 0 && searchRequest.query.bool.should.length === 0) {
+      searchRequest.query = {'match_all': {}}; // jshint ignore:line
+    }
+    // Sorting
+    angular.forEach(carfueltypeSearchParams.sorting, function (order, fieldName) {
+      var sortField = {};
+      sortField[fieldName] = {
+        "missing": "_last",
+        "ignore_unmapped": true,
+        "order": order
+      };
+      searchRequest.sort.push(sortField);
+    });
+    // Call to ElasticSearch
+    return $http({
+      "method": "POST",
+      "headers": {
+        "Content-type": "text/plain"
+      },
+      "url": METADATA_BASE + "search/carfueltype",
+      "data": searchRequest
+    });
+  };
+}]);

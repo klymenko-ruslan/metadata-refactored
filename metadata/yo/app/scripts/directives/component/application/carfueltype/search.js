@@ -1,19 +1,19 @@
 "use strict";
 
-angular.module("ngMetaCrudApp").directive("carmakeSearch", ["$log", "restService", function ($log, restService) {
+angular.module("ngMetaCrudApp").directive("carfueltypeSearch", ["$log", "restService", function ($log, restService) {
   return {
     "restrict": "E",
     "replace": true,
-    "templateUrl": "/views/component/application/carmake/search.html",
+    "templateUrl": "/views/component/application/carfueltype/search.html",
     "transclude": true,
     "link": function postLink(scope, iElement, iAttrs, controller, transcludeFn) {
       controller.transcludeActionsFn = transcludeFn;
     },
-    "controller": ["$log", "$q", "$scope", "carmakeSearchService", "ngTableParams", function ($log, $q, $scope, carmakeSearchService, ngTableParams) {
+    "controller": ["$log", "$q", "$scope", "carfueltypeSearchService", "ngTableParams", function ($log, $q, $scope, carfueltypeSearchService, ngTableParams) {
       // Latest Results
       $scope.searchResults = null;
       // Applications Table
-      $scope.carmakeTableParams = new ngTableParams(
+      $scope.carfueltypeTableParams = new ngTableParams(
         {
           "page": 1,
           "count": 10,
@@ -25,7 +25,7 @@ angular.module("ngMetaCrudApp").directive("carmakeSearch", ["$log", "restService
             $scope.search.count = params.count();
             $scope.search.page = params.page();
             $scope.search.sorting = params.sorting();
-            carmakeSearchService($scope.search).then(
+            carfueltypeSearchService($scope.search).then(
               function (searchResults) {
                 $scope.searchResults = searchResults.data;
                 // Update the total and slice the result
@@ -33,7 +33,7 @@ angular.module("ngMetaCrudApp").directive("carmakeSearch", ["$log", "restService
                 params.total($scope.searchResults.hits.total);
               },
               function (errorResponse) {
-                $log.log("Couldn't search for 'carmake'.");
+                $log.log("Couldn't search for 'carfueltype'.");
                 $defer.reject();
               }
             );
@@ -42,36 +42,36 @@ angular.module("ngMetaCrudApp").directive("carmakeSearch", ["$log", "restService
       );
       // Query Parameters
       $scope.search = {
-        "carmake": "",
+        "carfueltype": "",
         "facets": {},
         "sort": {}
       };
       $scope.clear = function() {
         $scope.search = {
-          "carmake": "",
+          "carfueltype": "",
           "facets": {},
           "sort": {}
         };
       };
       // Handle updating search results
       $scope.$watch(
-        "[search.carmake, search.facets]",
+        "[search.carfueltype, search.facets]",
         function (newVal, oldVal) {
           // Debounce
           if (angular.equals(newVal, oldVal, true)) {
             return;
           }
-          $scope.carmakeTableParams.reload();
+          $scope.carfueltypeTableParams.reload();
         },
         true
       );
     }]
   };
 }]
-).directive("carmakeSearchActions", ["$log", function($log) {
+).directive("carfueltypeSearchActions", ["$log", function($log) {
   return {
     "restrict": "A",
-    "require": "^carmakeSearch",
+    "require": "^carfueltypeSearch",
     "link": function postLink(scope, element, attrs, controller) {
       controller.transcludeActionsFn(scope, function(clone) {
         element.append(clone);

@@ -6,8 +6,8 @@
           <button class="btn btn-default" ng-click="clear()">Clear</button>
 
           <div class="form-group">
-            <label for="carmake" class="sr-only control-label">Name</label>
-            <input class="form-control" id="carmake" type="text" ng-model="search.carmake" placeholder="Car Make..."/>
+            <label for="fueltype" class="sr-only control-label">Name</label>
+            <input class="form-control" id="fueltype" type="text" ng-model="search.carfueltype" placeholder="Fuel Type..."/>
           </div>
 
         </form>
@@ -15,12 +15,12 @@
 
     <!-- Tabular search results -->
     <div class="col-xs-12 col-sm-9">
-        <table data-ng-table="carmakeTableParams" class="table table-bordered table-striped table-hover table-responsive">
+        <table data-ng-table="carfueltypeTableParams" class="table table-bordered table-striped table-hover table-responsive">
             <tr data-ng-repeat="rec in $data">
               <td title="'Name'" sortable="'name'">
                 {{rec._source.name}}
               </td>
-              <td class="actions text-center" title="'Actions'" carmake-search-action></td>
+              <td class="actions text-center" title="'Actions'" carfueltype-search-action></td>
             </tr>
         </table>
     </div>
