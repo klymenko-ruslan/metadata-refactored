@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Level;
 
 @RequestMapping("/metadata/image")
 @Controller

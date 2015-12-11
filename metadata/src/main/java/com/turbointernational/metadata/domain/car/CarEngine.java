@@ -57,8 +57,8 @@ public class CarEngine implements Serializable {
         return new JSONSerializer()
                 .include("id")
                 .include("engineSize")
-                .include("fuelType.id")
                 .include("fuelType.name")
+                .exclude("fuelType.*")
                 .exclude("*.class");
     }
 

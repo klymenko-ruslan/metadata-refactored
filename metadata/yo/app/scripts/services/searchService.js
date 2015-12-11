@@ -1,6 +1,10 @@
 "use strict";
 
-angular.module("ngMetaCrudApp").factory("partSearchService", ["$http", "Facets", "METADATA_BASE", function ($http, Facets, METADATA_BASE) {
+angular.module("ngMetaCrudApp").service("searchStringNormalizer", [function(){
+  return function(s) {
+    return s.toLowerCase().replace(/\W+/g, '');
+  }
+}]).factory("partSearchService", ["$http", "Facets", "METADATA_BASE", "searchStringNormalizer", function ($http, Facets, METADATA_BASE, searchStringNormalizer) {
   return function (partSearchParams) {
     // Basic search request body
     var searchRequest = {
@@ -34,8 +38,7 @@ angular.module("ngMetaCrudApp").factory("partSearchService", ["$http", "Facets",
     });
     // Part Number
     if (partSearchParams.partNumber) {
-      var partNumber = partSearchParams.partNumber.toLowerCase();
-      var partNumberShort = partNumber.replace(/\W+/g, '');
+      var partNumberShort = searchStringNormalizer(partSearchParams.partNumber);
       searchRequest.query.bool.must.push({
         "prefix": {"manufacturerPartNumber.short": partNumberShort}
       });
@@ -65,7 +68,7 @@ angular.module("ngMetaCrudApp").factory("partSearchService", ["$http", "Facets",
       "data": searchRequest
     });
   };
-}]).factory('cmeySearchService', ["$http", "cmeyFacets", "METADATA_BASE", function ($http, cmeyFacets, METADATA_BASE) {
+}]).factory('cmeySearchService', ["$http", "cmeyFacets", "METADATA_BASE", "searchStringNormalizer", function ($http, cmeyFacets, METADATA_BASE, searchStringNormalizer) {
   return function (cmeySearchParams) {
     // Basic search request body
     var searchRequest = {
@@ -98,10 +101,11 @@ angular.module("ngMetaCrudApp").factory("partSearchService", ["$http", "Facets",
     });
     var cmey = cmeySearchParams.cmey;
     if (cmey) {
+      var sq = "*" + searchStringNormalizer(cmey) + "*";
       searchRequest.query.bool.must.push({
         "query_string": {
           "default_field": "_all",
-          "query": "*" + cmey.toLowerCase() + "*"
+          "query": sq
         }
       });
     }
@@ -129,7 +133,7 @@ angular.module("ngMetaCrudApp").factory("partSearchService", ["$http", "Facets",
       "data": searchRequest
     });
   };
-}]).factory('carmakeSearchService', ["$http", "METADATA_BASE", function ($http, METADATA_BASE) {
+}]).factory('carmakeSearchService', ["$http", "METADATA_BASE", "searchStringNormalizer", function ($http, METADATA_BASE, searchStringNormalizer) {
   return function (carmakeSearchParams) {
     // Basic search request body
     var searchRequest = {
@@ -146,12 +150,17 @@ angular.module("ngMetaCrudApp").factory("partSearchService", ["$http", "Facets",
     };
     var carmake = carmakeSearchParams.carmake;
     if (carmake) {
+      var sq = searchStringNormalizer(carmake);
       searchRequest.query.bool.must.push({
-        "query_string": {
-          "default_field": "_all",
-          "query": "*" + carmake.toLowerCase() + "*"
-        }
+        "prefix": {"name.short": sq}
       });
+//      var sq = "*" + searchStringNormalizer(carmake) + "*";
+//      searchRequest.query.bool.must.push({
+//        "query_string": {
+//          "default_field": "_all",
+//          "query": sq
+//        }
+//      });
     }
     // Default query
     if (searchRequest.query.bool.must.length === 0 && searchRequest.query.bool.should.length === 0) {
@@ -177,7 +186,7 @@ angular.module("ngMetaCrudApp").factory("partSearchService", ["$http", "Facets",
       "data": searchRequest
     });
   };
-}]).factory('carfueltypeSearchService', [ "$http", "METADATA_BASE", function ($http, METADATA_BASE) {
+}]).factory('carfueltypeSearchService', [ "$http", "METADATA_BASE", "searchStringNormalizer", function ($http, METADATA_BASE, searchStringNormalizer) {
   return function (carfueltypeSearchParams) {
     // Basic search request body
     var searchRequest = {
@@ -194,12 +203,16 @@ angular.module("ngMetaCrudApp").factory("partSearchService", ["$http", "Facets",
     };
     var carfueltype = carfueltypeSearchParams.carfueltype;
     if (carfueltype) {
+      var sq = searchStringNormalizer(carfueltype);
       searchRequest.query.bool.must.push({
-        "query_string": {
-          "default_field": "_all",
-          "query": "*" + carfueltype.toLowerCase() + "*"
-        }
+        "prefix": {"name.short": sq}
       });
+//      searchRequest.query.bool.must.push({
+//        "query_string": {
+//          "default_field": "_all",
+//          "query": sq
+//        }
+//      });
     }
     // Default query
     if (searchRequest.query.bool.must.length === 0 && searchRequest.query.bool.should.length === 0) {
@@ -222,6 +235,58 @@ angular.module("ngMetaCrudApp").factory("partSearchService", ["$http", "Facets",
         "Content-type": "text/plain"
       },
       "url": METADATA_BASE + "search/carfueltype",
+      "data": searchRequest
+    });
+  };
+}]).factory('carmodelSearchService', [ "$http", "METADATA_BASE", "searchStringNormalizer", function ($http, METADATA_BASE, searchStringNormalizer) {
+  return function (carmodelSearchParams) {
+    // Basic search request body
+    var searchRequest = {
+      "from": carmodelSearchParams.count * (carmodelSearchParams.page - 1),
+      "size": carmodelSearchParams.count,
+      "facets": {},
+      "query": {
+        "bool": {
+          "must": [],
+          "should": []
+        }
+      },
+      "sort": []
+    };
+    var carmodel = carmodelSearchParams.carmodel;
+    if (carmodel) {
+      var sq = searchStringNormalizer(carmodel);
+      searchRequest.query.bool.must.push({
+        "prefix": {"name.short": sq}
+      });
+//      searchRequest.query.bool.must.push({
+//        "query_string": {
+//          "default_field": "_all",
+//          "query": sq
+//        }
+//      });
+    }
+    // Default query
+    if (searchRequest.query.bool.must.length === 0 && searchRequest.query.bool.should.length === 0) {
+      searchRequest.query = {'match_all': {}}; // jshint ignore:line
+    }
+    // Sorting
+    angular.forEach(carmodelSearchParams.sorting, function (order, fieldName) {
+      var sortField = {};
+      sortField[fieldName] = {
+        "missing": "_last",
+        "ignore_unmapped": true,
+        "order": order
+      };
+      searchRequest.sort.push(sortField);
+    });
+    // Call to ElasticSearch
+    return $http({
+      "method": "POST",
+      "headers": {
+        "Content-type": "text/plain"
+      },
+      "url": METADATA_BASE + "search/carmodel",
       "data": searchRequest
     });
   };

@@ -70,10 +70,13 @@ public class CarModelEngineYear implements Serializable {
         return new JSONSerializer()
                 .include("id")
                 .include("year.name")
+                .exclude("year.*")
                 .include("model.name")
                 .include("model.make.name")
+                .exclude("model.*")
                 .include("engine.engineSize")
                 .include("engine.fuelType.name")
+                .exclude("engine.*")
                 .exclude("*.class");
     }
 

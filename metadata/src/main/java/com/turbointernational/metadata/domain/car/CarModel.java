@@ -66,6 +66,8 @@ public class CarModel implements Serializable {
         return new JSONSerializer()
                 .include("id")
                 .include("name")
+                .include("make.name")
+                .exclude("make.*")
                 .exclude("*.class");
     }
 

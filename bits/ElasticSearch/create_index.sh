@@ -34,7 +34,7 @@ echo "Setting mapping..." && curl -XPUT "$SERVER/$INDEX/?pretty=1" -d '
             },
             "short": {
               "type": "string",
-              "analyzer": "part_number_short"
+              "analyzer": "normalized_short"
             }
           }
         },
@@ -124,6 +124,134 @@ echo "Setting mapping..." && curl -XPUT "$SERVER/$INDEX/?pretty=1" -d '
           "analyzer": "keyword"
         }
       }
+    },
+    "carmodelengineyear": {
+      "properties": {
+        "id": {
+          "type": "long",
+          "store": "yes"
+        },
+        "year.name": {
+          "type": "string",
+          "store": "yes"
+        },
+        "model.name": {
+          "type": "string",
+          "store": "yes"
+        },
+        "model.make.name": {
+          "type": "string",
+          "store": "yes"
+        },
+        "engine.engineSize": {
+          "type": "string",
+          "store": "yes"
+        },
+        "engine.fuelType.name": {
+          "type": "string",
+          "store": "yes"
+        }
+      }
+    },
+    "carmake": {
+      "properties": {
+        "id": {
+          "type": "long",
+          "store": "yes"
+        },
+        "name": {
+          "type": "multi_field",
+          "store": "yes",
+          "fields": {
+            "full": {
+              "type": "string",
+              "tokenizer": "lowercase",
+              "analyzer": "keyword"
+            },
+            "short": {
+              "type": "string",
+              "analyzer": "normalized_short"
+            }
+          }
+        }
+      }
+    },
+    "carfueltype": {
+      "properties": {
+        "id": {
+          "type": "long",
+          "store": "yes"
+        },
+        "name": {
+          "type": "multi_field",
+          "store": "yes",
+          "fields": {
+            "full": {
+              "type": "string",
+              "tokenizer": "lowercase",
+              "analyzer": "keyword"
+            },
+            "short": {
+              "type": "string",
+              "analyzer": "normalized_short"
+            }
+          }
+        }
+      }
+    },
+    "carmodel": {
+      "properties": {
+        "id": {
+          "type": "long",
+          "store": "yes"
+        },
+        "name": {
+          "type": "multi_field",
+          "store": "yes",
+          "fields": {
+            "full": {
+              "type": "string",
+              "tokenizer": "lowercase",
+              "analyzer": "keyword"
+            },
+            "short": {
+              "type": "string",
+              "analyzer": "normalized_short"
+            }
+          }
+        },
+        "make.name": {
+          "type": "string",
+          "store": "yes"
+        }
+      }
+    },
+    "carengine": {
+      "properties": {
+        "id": {
+          "type": "long",
+          "store": "yes"
+        },
+        "name": {
+          "type": "multi_field",
+          "store": "yes",
+          "fields": {
+            "full": {
+              "type": "string",
+              "tokenizer": "lowercase",
+              "analyzer": "keyword"
+            },
+            "short": {
+              "type": "string",
+              "analyzer": "normalized_short"
+            }
+          }
+        },
+        "fueltype.name": {
+          "type": "string",
+          "store": "yes"
+        }
+      }
     }
   },
   "settings": {
@@ -136,7 +264,7 @@ echo "Setting mapping..." && curl -XPUT "$SERVER/$INDEX/?pretty=1" -d '
         }
       },
       "analyzer": {
-        "part_number_short": {
+        "normalized_short": {
           "type": "custom",
           "tokenizer": "keyword",
           "filter": [

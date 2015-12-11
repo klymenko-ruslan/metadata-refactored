@@ -3,6 +3,7 @@ package com.turbointernational.metadata.util;
 import com.turbointernational.metadata.domain.AbstractDao;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.search.SearchPhaseExecutionException;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
@@ -48,11 +49,15 @@ public abstract class AbstractElasticSearch implements Serializable {
     protected abstract String toSearchJson(Object o);
 
     public String search(String searchJson) throws Exception {
+        String searchType = getElasticSearchType();
         Client client = client();
         try {
-            String searchType = getElasticSearchType();
+            log.debug("Search query [{}]: {}", searchType, searchJson);
             SearchRequest request = new SearchRequest(elasticSearchIndex).types(searchType).source(searchJson);
             return client.search(request).actionGet(timeout).toString();
+        } catch(SearchPhaseExecutionException e) {
+            log.error("Search query [" + searchType + "] failed: " + searchJson, e);
+            throw e;
         } finally {
             client.close();
         }
