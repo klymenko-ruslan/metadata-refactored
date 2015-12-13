@@ -1,7 +1,6 @@
 "use strict";
 
 angular.module("ngMetaCrudApp").directive("cmeySearch", ["$log", "restService", function ($log, restService) {
-$log.log("registered directive 'cmeySearch'");
   return {
     "restrict": "E",
     "replace": true,

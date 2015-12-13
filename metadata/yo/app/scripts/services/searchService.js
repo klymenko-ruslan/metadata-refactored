@@ -1,11 +1,12 @@
+
 "use strict";
 
-angular.module("ngMetaCrudApp").service("searchStringNormalizer", [function(){
+angular.module("ngMetaCrudApp").service("searchStringNormalizer", [function() {
   return function(s) {
     return s.toLowerCase().replace(/\W+/g, '');
   }
-}]).factory("partSearchService", ["$http", "Facets", "METADATA_BASE", "searchStringNormalizer", function ($http, Facets, METADATA_BASE, searchStringNormalizer) {
-  return function (partSearchParams) {
+}]).factory("partSearchService", ["$http", "partFacets", "METADATA_BASE", "searchStringNormalizer", function($http, partFacets, METADATA_BASE, searchStringNormalizer) {
+  return function(partSearchParams) {
     // Basic search request body
     var searchRequest = {
       "from": partSearchParams.count * (partSearchParams.page - 1),
@@ -20,7 +21,7 @@ angular.module("ngMetaCrudApp").service("searchStringNormalizer", [function(){
       "sort": []
     };
     // Facets
-    angular.forEach(Facets, function(facet) {
+    angular.forEach(partFacets, function(facet) {
       // Facets
       searchRequest.facets[facet.name] = {
         "terms": {
@@ -33,22 +34,28 @@ angular.module("ngMetaCrudApp").service("searchStringNormalizer", [function(){
       if (facetValue) {
         var term = {};
         term[facet.field] = facetValue;
-        searchRequest.query.bool.must.push({"term": term});
+        searchRequest.query.bool.must.push({
+          "term": term
+        });
       }
     });
     // Part Number
     if (partSearchParams.partNumber) {
       var partNumberShort = searchStringNormalizer(partSearchParams.partNumber);
       searchRequest.query.bool.must.push({
-        "prefix": {"manufacturerPartNumber.short": partNumberShort}
+        "prefix": {
+          "manufacturerPartNumber.short": partNumberShort
+        }
       });
     }
     // Default query
     if (searchRequest.query.bool.must.length === 0 && searchRequest.query.bool.should.length === 0) {
-      searchRequest.query = {match_all: {}}; // jshint ignore:line
+      searchRequest.query = {
+        match_all: {}
+      }; // jshint ignore:line
     }
     // Sorting
-    angular.forEach(partSearchParams.sorting, function (order, fieldName) {
+    angular.forEach(partSearchParams.sorting, function(order, fieldName) {
       var sortField = {};
       sortField[fieldName] = {
         "missing": "_last",
@@ -68,8 +75,8 @@ angular.module("ngMetaCrudApp").service("searchStringNormalizer", [function(){
       "data": searchRequest
     });
   };
-}]).factory('cmeySearchService', ["$http", "cmeyFacets", "METADATA_BASE", "searchStringNormalizer", function ($http, cmeyFacets, METADATA_BASE, searchStringNormalizer) {
-  return function (cmeySearchParams) {
+}]).factory('cmeySearchService', ["$http", "cmeyFacets", "METADATA_BASE", "searchStringNormalizer", function($http, cmeyFacets, METADATA_BASE, searchStringNormalizer) {
+  return function(cmeySearchParams) {
     // Basic search request body
     var searchRequest = {
       "from": cmeySearchParams.count * (cmeySearchParams.page - 1),
@@ -96,7 +103,9 @@ angular.module("ngMetaCrudApp").service("searchStringNormalizer", [function(){
       if (facetValue) {
         var term = {};
         term[facet.field] = facetValue;
-        searchRequest.query.bool.must.push({'term': term});
+        searchRequest.query.bool.must.push({
+          'term': term
+        });
       }
     });
     var cmey = cmeySearchParams.cmey;
@@ -111,10 +120,12 @@ angular.module("ngMetaCrudApp").service("searchStringNormalizer", [function(){
     }
     // Default query
     if (searchRequest.query.bool.must.length === 0 && searchRequest.query.bool.should.length === 0) {
-      searchRequest.query = {'match_all': {}}; // jshint ignore:line
+      searchRequest.query = {
+        'match_all': {}
+      }; // jshint ignore:line
     }
     // Sorting
-    angular.forEach(cmeySearchParams.sorting, function (order, fieldName) {
+    angular.forEach(cmeySearchParams.sorting, function(order, fieldName) {
       var sortField = {};
       sortField[fieldName] = {
         "missing": "_last",
@@ -133,8 +144,8 @@ angular.module("ngMetaCrudApp").service("searchStringNormalizer", [function(){
       "data": searchRequest
     });
   };
-}]).factory('carmakeSearchService', ["$http", "METADATA_BASE", "searchStringNormalizer", function ($http, METADATA_BASE, searchStringNormalizer) {
-  return function (carmakeSearchParams) {
+}]).factory('carmakeSearchService', ["$http", "METADATA_BASE", "searchStringNormalizer", function($http, METADATA_BASE, searchStringNormalizer) {
+  return function(carmakeSearchParams) {
     // Basic search request body
     var searchRequest = {
       "from": carmakeSearchParams.count * (carmakeSearchParams.page - 1),
@@ -152,22 +163,19 @@ angular.module("ngMetaCrudApp").service("searchStringNormalizer", [function(){
     if (carmake) {
       var sq = searchStringNormalizer(carmake);
       searchRequest.query.bool.must.push({
-        "prefix": {"name.short": sq}
+        "prefix": {
+          "name.short": sq
+        }
       });
-//      var sq = "*" + searchStringNormalizer(carmake) + "*";
-//      searchRequest.query.bool.must.push({
-//        "query_string": {
-//          "default_field": "_all",
-//          "query": sq
-//        }
-//      });
     }
     // Default query
     if (searchRequest.query.bool.must.length === 0 && searchRequest.query.bool.should.length === 0) {
-      searchRequest.query = {'match_all': {}}; // jshint ignore:line
+      searchRequest.query = {
+        'match_all': {}
+      }; // jshint ignore:line
     }
     // Sorting
-    angular.forEach(carmakeSearchParams.sorting, function (order, fieldName) {
+    angular.forEach(carmakeSearchParams.sorting, function(order, fieldName) {
       var sortField = {};
       sortField[fieldName] = {
         "missing": "_last",
@@ -186,8 +194,8 @@ angular.module("ngMetaCrudApp").service("searchStringNormalizer", [function(){
       "data": searchRequest
     });
   };
-}]).factory('carfueltypeSearchService', [ "$http", "METADATA_BASE", "searchStringNormalizer", function ($http, METADATA_BASE, searchStringNormalizer) {
-  return function (carfueltypeSearchParams) {
+}]).factory('carfueltypeSearchService', ["$http", "METADATA_BASE", "searchStringNormalizer", function($http, METADATA_BASE, searchStringNormalizer) {
+  return function(carfueltypeSearchParams) {
     // Basic search request body
     var searchRequest = {
       "from": carfueltypeSearchParams.count * (carfueltypeSearchParams.page - 1),
@@ -205,21 +213,19 @@ angular.module("ngMetaCrudApp").service("searchStringNormalizer", [function(){
     if (carfueltype) {
       var sq = searchStringNormalizer(carfueltype);
       searchRequest.query.bool.must.push({
-        "prefix": {"name.short": sq}
+        "prefix": {
+          "name.short": sq
+        }
       });
-//      searchRequest.query.bool.must.push({
-//        "query_string": {
-//          "default_field": "_all",
-//          "query": sq
-//        }
-//      });
     }
     // Default query
     if (searchRequest.query.bool.must.length === 0 && searchRequest.query.bool.should.length === 0) {
-      searchRequest.query = {'match_all': {}}; // jshint ignore:line
+      searchRequest.query = {
+        'match_all': {}
+      }; // jshint ignore:line
     }
     // Sorting
-    angular.forEach(carfueltypeSearchParams.sorting, function (order, fieldName) {
+    angular.forEach(carfueltypeSearchParams.sorting, function(order, fieldName) {
       var sortField = {};
       sortField[fieldName] = {
         "missing": "_last",
@@ -238,8 +244,8 @@ angular.module("ngMetaCrudApp").service("searchStringNormalizer", [function(){
       "data": searchRequest
     });
   };
-}]).factory('carmodelSearchService', [ "$http", "METADATA_BASE", "searchStringNormalizer", function ($http, METADATA_BASE, searchStringNormalizer) {
-  return function (carmodelSearchParams) {
+}]).factory('carmodelSearchService', ["$http", "carmodelFacets", "METADATA_BASE", "searchStringNormalizer", function($http, carmodelFacets, METADATA_BASE, searchStringNormalizer) {
+  return function(carmodelSearchParams) {
     // Basic search request body
     var searchRequest = {
       "from": carmodelSearchParams.count * (carmodelSearchParams.page - 1),
@@ -253,25 +259,42 @@ angular.module("ngMetaCrudApp").service("searchStringNormalizer", [function(){
       },
       "sort": []
     };
+    // Facets
+    angular.forEach(carmodelFacets, function(facet) {
+      // Facets
+      searchRequest.facets[facet.name] = {
+        "terms": {
+          "field": facet.field,
+          "size": 100
+        }
+      };
+      // Facet terms
+      var facetValue = carmodelSearchParams.facets[facet.name];
+      if (facetValue) {
+        var term = {};
+        term[facet.field] = facetValue;
+        searchRequest.query.bool.must.push({
+          "term": term
+        });
+      }
+    });
     var carmodel = carmodelSearchParams.carmodel;
     if (carmodel) {
       var sq = searchStringNormalizer(carmodel);
       searchRequest.query.bool.must.push({
-        "prefix": {"name.short": sq}
+        "prefix": {
+          "name.short": sq
+        }
       });
-//      searchRequest.query.bool.must.push({
-//        "query_string": {
-//          "default_field": "_all",
-//          "query": sq
-//        }
-//      });
     }
     // Default query
     if (searchRequest.query.bool.must.length === 0 && searchRequest.query.bool.should.length === 0) {
-      searchRequest.query = {'match_all': {}}; // jshint ignore:line
+      searchRequest.query = {
+        'match_all': {}
+      }; // jshint ignore:line
     }
     // Sorting
-    angular.forEach(carmodelSearchParams.sorting, function (order, fieldName) {
+    angular.forEach(carmodelSearchParams.sorting, function(order, fieldName) {
       var sortField = {};
       sortField[fieldName] = {
         "missing": "_last",
