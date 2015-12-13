@@ -3,12 +3,7 @@ package com.turbointernational.metadata;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
-import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module.Feature;
 import com.turbointernational.metadata.web.CORSFilter;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,6 +30,11 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @SpringBootApplication
 @EnableScheduling
