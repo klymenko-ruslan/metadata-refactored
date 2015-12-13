@@ -1,20 +1,19 @@
 "use strict";
 
-angular.module("ngMetaCrudApp").directive("cmeySearch", ["$log", "restService", function ($log, restService) {
+angular.module("ngMetaCrudApp").directive("carengineSearch", ["$log", "restService", function ($log, restService) {
   return {
     restrict: "E",
     replace: true,
-    templateUrl: "/views/component/application/carmodelengineyear/search.html",
+    templateUrl: "/views/component/application/carengine/search.html",
       transclude: true,
       link: function postLink(scope, iElement, iAttrs, controller, transcludeFn) {
         controller.transcludeActionsFn = transcludeFn;
       },
-      controller: ["$log", "$q", "$scope", "cmeySearchService", "ngTableParams",
-                    function ($log, $q, $scope, cmeySearchService, ngTableParams) {
+      controller: ["$log", "$q", "$scope", "carengineSearchService", "ngTableParams",
+                    function ($log, $q, $scope, carengineSearchService, ngTableParams) {
         // Latest Results
         $scope.searchResults = null;
-        // Applications Table
-        $scope.cmeyTableParams = new ngTableParams(
+        $scope.carengineTableParams = new ngTableParams(
           {
             page: 1,
             count: 10,
@@ -26,7 +25,7 @@ angular.module("ngMetaCrudApp").directive("cmeySearch", ["$log", "restService", 
               $scope.search.count = params.count();
               $scope.search.page = params.page();
               $scope.search.sorting = params.sorting();
-              cmeySearchService($scope.search).then(
+              carengineSearchService($scope.search).then(
                 function (searchResults) {
                   $scope.searchResults = searchResults.data;
                   // Update the total and slice the result
@@ -34,7 +33,7 @@ angular.module("ngMetaCrudApp").directive("cmeySearch", ["$log", "restService", 
                   params.total($scope.searchResults.hits.total);
                 },
                 function (errorResponse) {
-                  $log.log("Couldn't search for 'carmodelengineyear'.");
+                  $log.log("Couldn't search for 'carengine'.");
                   $defer.reject();
                 }
               );
@@ -43,35 +42,35 @@ angular.module("ngMetaCrudApp").directive("cmeySearch", ["$log", "restService", 
         );
         // Query Parameters
         $scope.search = {
-          cmey: "",
+          carengine: "",
           facets: {},
           sort: {}
         };
         $scope.clear = function() {
           $scope.search = {
-            cmey: "",
+            carengine: "",
             facets: {},
             sort: {}
           };
         };
         // Handle updating search results
-        $scope.$watch("[search.cmey, search.facets]",
+        $scope.$watch("[search.carengine, search.facets]",
           function (newVal, oldVal) {
             // Debounce
             if (angular.equals(newVal, oldVal, true)) {
               return;
             }
-            $scope.cmeyTableParams.reload();
+            $scope.carengineTableParams.reload();
           },
           true
         );
       }]
     };
   }]
-).directive("cmeySearchActions", ["$log", function($log) {
+).directive("carengineSearchActions", ["$log", function($log) {
   return {
     restrict: "A",
-    require: "^cmeySearch",
+    require: "^carengineSearch",
     link: function postLink(scope, element, attrs, controller) {
       controller.transcludeActionsFn(scope, function(clone) {
         element.append(clone);

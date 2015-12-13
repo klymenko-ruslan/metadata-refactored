@@ -3,12 +3,12 @@
 angular.module("ngMetaCrudApp")
   .directive("carmodelSearchFacets", ["$log", "carmodelFacets", function($log, carmodelFacets) {
     return {
-      "scope": {
-        "search": "=",
-        "results": "="
+      scope: {
+        search: "=",
+        results: "="
       },
-      "restrict": "E",
-      "controller": function($scope) {
+      restrict: "E",
+      controller: function($scope) {
         $scope.Facets = carmodelFacets;
         $scope.isSelected = function(facet) {
           return angular.isDefined($scope.search.facets[facet.name]);
@@ -17,6 +17,6 @@ angular.module("ngMetaCrudApp")
           $scope.search.facets[facet.name] = term;
         };
       },
-      "templateUrl": "/views/component/searchFacets.html"
+      templateUrl: "/views/component/searchFacets.html"
     };
   }]);

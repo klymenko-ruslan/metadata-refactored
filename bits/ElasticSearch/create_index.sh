@@ -232,7 +232,7 @@ echo "Setting mapping..." && curl -XPUT "$SERVER/$INDEX/?pretty=1" -d '
           "type": "long",
           "store": "yes"
         },
-        "name": {
+        "engineSize": {
           "type": "multi_field",
           "store": "yes",
           "fields": {
@@ -247,7 +247,7 @@ echo "Setting mapping..." && curl -XPUT "$SERVER/$INDEX/?pretty=1" -d '
             }
           }
         },
-        "fueltype.name": {
+        "fuelType.name": {
           "type": "string",
           "store": "yes"
         }

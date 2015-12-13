@@ -2,7 +2,6 @@
 
 angular.module("ngMetaCrudApp")
   .directive("partSearchFacets", ["$log", "partFacets", function($log, partFacets) {
-    $log.log("DEBUG: 1. searchFacets");
     return {
       scope: {
         search: "=",
@@ -10,7 +9,6 @@ angular.module("ngMetaCrudApp")
       },
       restrict: "E",
       controller: function($scope) {
-        $log.log("DEBUG: 2. searchFacets");
         $scope.Facets = partFacets;
         $scope.isSelected = function(facet) {
           return angular.isDefined($scope.search.facets[facet.name]);

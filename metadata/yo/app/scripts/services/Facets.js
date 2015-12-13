@@ -43,4 +43,7 @@ angular.module("ngMetaCrudApp")
   }]).constant("carmodelFacets", [{
     name: "Make",
     field: "make.name"
+  }]).constant("carengineFacets", [{
+    name: "Fuel Type",
+    field: "fuelType.name"
   }]);
