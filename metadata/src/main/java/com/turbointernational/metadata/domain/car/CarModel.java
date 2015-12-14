@@ -1,28 +1,25 @@
 package com.turbointernational.metadata.domain.car;
 
+import com.turbointernational.metadata.domain.SearchableEntity;
+import com.turbointernational.metadata.util.CarModelElasticSearch;
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import javax.persistence.Cacheable;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 
 @Cacheable
 @Entity
 @Table(name="car_model", uniqueConstraints=@UniqueConstraint(columnNames={"name", "car_make_id"}))
-public class CarModel implements Serializable {
+public class CarModel implements Serializable, SearchableEntity {
+
+    private final static Logger log = LoggerFactory.getLogger(CarModel.class);
     
     //<editor-fold defaultstate="collapsed" desc="Properties">
     @Id
@@ -99,5 +96,21 @@ public class CarModel implements Serializable {
         return new JSONDeserializer<List<CarModel>>().use(null, ArrayList.class).use("values", CarModel.class).deserialize(json);
     }
     //</editor-fold>
-    
+
+    //<editor-fold defaultstate="collapsed" desc="Lifecycle">
+    @PreRemove
+    @Override
+    public void removeSearchIndex() throws Exception {
+        log.info("Removing from search index.");
+        CarModelElasticSearch.instance().delete(this);
+    }
+
+    @PostUpdate
+    @PostPersist
+    @Override
+    public void updateSearchIndex() throws Exception {
+        log.info("Updating search index.");
+        CarModelElasticSearch.instance().index(this);
+    }
+    //</editor-fold>
 }

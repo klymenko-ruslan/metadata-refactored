@@ -1,7 +1,13 @@
 package com.turbointernational.metadata.domain.car;
 
+import com.turbointernational.metadata.domain.SearchableEntity;
+import com.turbointernational.metadata.util.CarModelElasticSearch;
+import com.turbointernational.metadata.util.CarModelEngineYearElasticSearch;
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -11,7 +17,9 @@ import javax.persistence.*;
 @Cacheable
 @Entity
 @Table(name="car_model_engine_year")
-public class CarModelEngineYear implements Serializable {
+public class CarModelEngineYear implements Serializable, SearchableEntity {
+
+    private final static Logger log = LoggerFactory.getLogger(CarModelEngineYear.class);
 
     //<editor-fold defaultstate="collapsed" desc="Properties">
     @Id
@@ -111,4 +119,20 @@ public class CarModelEngineYear implements Serializable {
     }
     //</editor-fold>
 
+    //<editor-fold defaultstate="collapsed" desc="Lifecycle">
+    @PreRemove
+    @Override
+    public void removeSearchIndex() throws Exception {
+        log.info("Removing from search index.");
+        CarModelEngineYearElasticSearch.instance().delete(this);
+    }
+
+    @PostUpdate
+    @PostPersist
+    @Override
+    public void updateSearchIndex() throws Exception {
+        log.info("Updating search index.");
+        CarModelEngineYearElasticSearch.instance().index(this);
+    }
+    //</editor-fold>
 }

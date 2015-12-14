@@ -1,5 +1,6 @@
 package com.turbointernational.metadata.util;
 
+import com.turbointernational.metadata.Application;
 import com.turbointernational.metadata.domain.AbstractDao;
 import com.turbointernational.metadata.domain.car.CarEngine;
 import com.turbointernational.metadata.domain.car.CarEngineDao;
@@ -18,6 +19,10 @@ public class CarEngineElasticSearch extends AbstractElasticSearch {
 
     @Value("${elasticsearch.type.carengine}")
     String elasticSearchType = "carengine";
+
+    public static CarMakeElasticSearch instance() {
+        return Application.getContext().getBean(CarMakeElasticSearch.class);
+    }
 
     @Override
     protected String getElasticSearchType() {

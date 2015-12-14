@@ -1,6 +1,6 @@
 "use strict";
 
-angular.module("ngMetaCrudApp").directive("carmakeSearch", ["$log", "restService", function ($log, restService) {
+angular.module("ngMetaCrudApp").directive("carmakeSearch", ["$log", "restService", "gToast", function ($log, restService, gToast) {
   return {
     "restrict": "E",
     "replace": true,
@@ -9,9 +9,52 @@ angular.module("ngMetaCrudApp").directive("carmakeSearch", ["$log", "restService
     "link": function postLink(scope, iElement, iAttrs, controller, transcludeFn) {
       controller.transcludeActionsFn = transcludeFn;
     },
-    "controller": ["$log", "$q", "$scope", "carmakeSearchService", "ngTableParams", function ($log, $q, $scope, carmakeSearchService, ngTableParams) {
+    "controller": ["$log", "$q", "$scope", "dialogs", "carmakeSearchService", "ngTableParams", function ($log, $q, $scope, dialogs, carmakeSearchService, ngTableParams) {
       // Latest Results
       $scope.searchResults = null;
+
+      // Temp storage for quantities
+      $scope.modifyValues = {};
+
+      $scope.isModifying = function(rec) {
+        $log.log("isModifying rec: " + angular.toJson(rec));
+        $log.log("isModifying modifyValues: " + angular.toJson($scope.modifyValues));
+        var retval = angular.isDefined($scope.modifyValues[rec.id]);
+        $log.log("isModifying retval: " + retval);
+        return retval;
+      };
+
+      $scope.modifyStart = function(rec) {
+        $scope.modifyValues[rec.id] = rec.name;
+      };
+
+      $scope.modifyCancel = function(rec) {
+        delete $scope.modifyValues[rec.id];
+      };
+
+      $scope.modifySave = function(rec) {
+        var name = $scope.modifyValues[rec.id];
+        $log.log("modifyValues: " + angular.toJson($scope.modifyValues));
+        $log.log("modifySave(" + rec.id + ",'" + name + "')");
+        delete $scope.modifyValues[rec.id];
+      };
+
+      $scope.remove = function(id, name) {
+        dialogs.confirm("Delete car model '" + name + "'.", "Are you sure?").result.then(
+          function() {
+            // Yes
+            restService.removeCarmake(id).then(
+              function () {
+                $scope.clear(); // reload table
+                gToast.open("Car make '" + name + "' has been successfully removed.");
+              },
+              function errorResponse(response) {
+                restService.error("Car make '" + name + "' remove failed.", response);
+              }
+            );
+          }
+        );
+      };
       // Applications Table
       $scope.carmakeTableParams = new ngTableParams(
         {

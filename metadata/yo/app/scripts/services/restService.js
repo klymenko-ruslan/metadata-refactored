@@ -51,16 +51,13 @@ angular.module('ngMetaCrudApp')
 
               return deferred.promise;
             };
-
             this.error = function(title, response) {
-
               // NOOP on access denied, loginRequiredInterceptor will handle the redirect
               if (response.status === 401 || response.status === 403) {
                 return;
               }
               $log.log(title, response);
-              dialogs.error(
-                  title, 'Server said: <pre>' + response.data.message + '</pre>');
+              dialogs.error(title, 'Server said: <pre>' + response.data.message + '</pre>');
             };
 
             this.findPart = function (id, params) {
@@ -126,15 +123,15 @@ angular.module('ngMetaCrudApp')
             };
 
             this.createCarmake = function (carmake) {
-                return Restangular.one("application/carmake").post();
+                return Restangular.one("application").post("carmake", carmake);
             };
 
-            this.createCarmake = function (carmake) {
+            this.updateCarmake = function (carmake) {
                 return Restangular.one("application/carmake", carmake.id).put();
             };
 
-            this.removeCarmake = function(carmake) {
-              return Restangular.one("application/carmake", carmake).remove();
+            this.removeCarmake = function(id) {
+              return Restangular.one("application/carmake", id).remove();
             }
 
           };

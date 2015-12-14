@@ -1,10 +1,7 @@
 "use strict";
 
-angular.module("ngMetaCrudApp").controller("CarMakeFormCtrl", ["$q", "$scope", "$location", "$log", "$routeParams",
-  "restService",
-  function($q, $scope,
-    $location, $log, $routeParams, ngTableParams,
-    restService) {
+angular.module("ngMetaCrudApp").controller("CarMakeFormCtrl", ["restService", "$q", "$scope", "$location", "$log",
+  "$routeParams", "gToast", function(restService, $q, $scope, $location, $log, $routeParams, gToast) {
     // Setup the create/update workflow
     if ($routeParams.id) {
       $scope.carmakeId = $routeParams.id;
@@ -23,7 +20,6 @@ angular.module("ngMetaCrudApp").controller("CarMakeFormCtrl", ["$q", "$scope", "
     } else {
       $scope.carmakeId = null;
       $scope.carmake = {};
-
     }
 
     $scope.revert = function() {
@@ -37,8 +33,17 @@ angular.module("ngMetaCrudApp").controller("CarMakeFormCtrl", ["$q", "$scope", "
         // TODO
         $log.log("TODO");
       } else {
-        $scope.carmakeId = restService.createCarmake($scope.carmake);
-        $log.log("Created carmake: " + $scope.carmakeId);
+        restService.createCarmake($scope.carmake).then(
+          function(carmakeId) {
+            $log.log("Carmake has been successfully created: " + carmakeId);
+            $scope.carmakeId = carmakeId;
+            gToast.open("Carmake '" + $scope.carmake.name + "' has been successfully created.");
+            $location.path('/application/carmake/list');
+          },
+          function (errorResponse) {
+            restService.error("Could not create carmake.", response);
+          }
+        );
       }
 
 //      if ($scope.oldCarmake == null) {
@@ -67,8 +72,7 @@ angular.module("ngMetaCrudApp").controller("CarMakeFormCtrl", ["$q", "$scope", "
   return {
     require: "ngModel",
     link: function($scope, elm, attr, ctrl) {
-      ctrl.$asyncValidators.carmakeNameUniqueValidator = function(modelValue, viewValue) {
-$log.log("form: " + angular.toJson($scope.carmakeForm));
+      ctrl.$asyncValidators.nonUniqueName = function(modelValue, viewValue) {
         var def = $q.defer();
         if (ctrl.$isEmpty(modelValue)) {
           return $q.when();

@@ -1,7 +1,9 @@
 package com.turbointernational.metadata.util;
 
 import com.turbointernational.metadata.domain.AbstractDao;
+import org.elasticsearch.ElasticSearchException;
 import org.elasticsearch.action.bulk.BulkRequest;
+import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchPhaseExecutionException;
 import org.elasticsearch.action.search.SearchRequest;
@@ -13,6 +15,7 @@ import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
@@ -98,6 +101,39 @@ public abstract class AbstractElasticSearch implements Serializable {
             client.close();
         }
     }
+
+
+    @Transactional(readOnly = true)
+    public void index(Object doc) throws Exception {
+        String elasticSearchType = getElasticSearchType();
+        String searchId = getSearchId(doc);
+        String document = toSearchJson(doc);
+        IndexRequest index = new IndexRequest(elasticSearchIndex, elasticSearchType, searchId);
+        index.source(document);
+        Client client = client();
+        try {
+            client.index(index).actionGet(timeout);
+        } catch (ElasticSearchException e) {
+            log.error("Could not index a document: " + document, e);
+            throw e;
+        } finally {
+            client.close();
+        }
+    }
+
+    @Async
+    public void delete(Object doc) throws Exception {
+        String elasticSearchType = getElasticSearchType();
+        String searchId = getSearchId(doc);
+        DeleteRequest delete = new DeleteRequest(elasticSearchIndex, elasticSearchType, searchId);
+        Client client = client();
+        try {
+            client.delete(delete).actionGet(timeout);
+        } finally {
+            client.close();
+        }
+    }
+
     protected Client client() {
         Settings settings = ImmutableSettings.settingsBuilder()
             .put("cluster.name", clusterName)

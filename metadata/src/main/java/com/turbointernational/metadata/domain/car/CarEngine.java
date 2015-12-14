@@ -1,7 +1,11 @@
 package com.turbointernational.metadata.domain.car;
 
+import com.turbointernational.metadata.domain.SearchableEntity;
+import com.turbointernational.metadata.util.CarEngineElasticSearch;
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Configurable;
 
 import javax.persistence.*;
@@ -13,7 +17,9 @@ import java.util.List;
 @Cacheable
 @Entity
 @Table(name="car_engine", uniqueConstraints=@UniqueConstraint(columnNames={"engineSize", "car_fuel_type_id"}))
-public class CarEngine implements Serializable {
+public class CarEngine implements Serializable, SearchableEntity {
+
+    private final static Log log = LogFactory.getLog(CarEngine.class);
     
     //<editor-fold defaultstate="collapsed" desc="Properties">
     @Id
@@ -90,5 +96,22 @@ public class CarEngine implements Serializable {
         return new JSONDeserializer<List<CarEngine>>().use(null, ArrayList.class).use("values", CarEngine.class).deserialize(json);
     }
     //</editor-fold>
-    
+
+    //<editor-fold defaultstate="collapsed" desc="Lifecycle">
+    @PreRemove
+    @Override
+    public void removeSearchIndex() throws Exception {
+        log.info("Removing from search index.");
+        CarEngineElasticSearch.instance().delete(this);
+    }
+
+    @PostUpdate
+    @PostPersist
+    @Override
+    public void updateSearchIndex() throws Exception {
+        log.info("Updating search index.");
+        CarEngineElasticSearch.instance().index(this);
+    }
+    //</editor-fold>
+
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.domain.SearchableEntity;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.other.TurboType;
 import com.turbointernational.metadata.domain.part.bom.BOMItem;
@@ -39,33 +40,33 @@ import java.util.TreeSet;
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "class", include = As.PROPERTY, defaultImpl = Part.class)
 @JsonSubTypes({
-    @JsonSubTypes.Type(Backplate.class),
-    @JsonSubTypes.Type(BearingHousing.class),
-    @JsonSubTypes.Type(BearingSpacer.class),
-    @JsonSubTypes.Type(Cartridge.class),
-    @JsonSubTypes.Type(CompressorWheel.class),
-    @JsonSubTypes.Type(Gasket.class),
-    @JsonSubTypes.Type(Heatshield.class),
-    @JsonSubTypes.Type(JournalBearing.class),
-    @JsonSubTypes.Type(Kit.class),
-    @JsonSubTypes.Type(NozzleRing.class),
-    @JsonSubTypes.Type(PistonRing.class),
-    @JsonSubTypes.Type(TurbineWheel.class),
-    @JsonSubTypes.Type(Turbo.class),
+        @JsonSubTypes.Type(Backplate.class),
+        @JsonSubTypes.Type(BearingHousing.class),
+        @JsonSubTypes.Type(BearingSpacer.class),
+        @JsonSubTypes.Type(Cartridge.class),
+        @JsonSubTypes.Type(CompressorWheel.class),
+        @JsonSubTypes.Type(Gasket.class),
+        @JsonSubTypes.Type(Heatshield.class),
+        @JsonSubTypes.Type(JournalBearing.class),
+        @JsonSubTypes.Type(Kit.class),
+        @JsonSubTypes.Type(NozzleRing.class),
+        @JsonSubTypes.Type(PistonRing.class),
+        @JsonSubTypes.Type(TurbineWheel.class),
+        @JsonSubTypes.Type(Turbo.class),
 })
 //@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id", scope = Part.class)
-public class Part implements Comparable<Part>, Serializable {
+public class Part implements Comparable<Part>, Serializable, SearchableEntity {
 
     private static final Logger log = LoggerFactory.getLogger(Part.class);
 
     public static final ObjectFactory OBJECT_FACTORY = new ObjectFactory() {
-        
+
         @Override
         public Object instantiate(ObjectBinder context, Object value, Type targetType, Class targetClass) {
             Map<String, Object> valueHash = (Map) value;
             Map<String, Object> partTypeHash = (Map) valueHash.get("partType");
             String partType = (String) partTypeHash.get("magentoAttributeSet");
-            
+
             // Create the appropriate part type
             Part part = null;
             if ("Backplate".equals(partType)) {
@@ -97,130 +98,130 @@ public class Part implements Comparable<Part>, Serializable {
             } else {
                 part = new Part();
             }
-            
+
             context.bind(value, part);
             return part;
         }
     };
-    
+
     //<editor-fold defaultstate="collapsed" desc="Properties">
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonView({View.Summary.class})
     private Long id;
-    
+
     @OneToOne(fetch = FetchType.LAZY)
     @JsonView({View.Summary.class})
     @JoinColumn(name = "manfr_id", nullable = false)
     private Manufacturer manufacturer;
-    
+
     @Column(name = "manfr_part_num")
     @JsonView({View.Summary.class})
     private String manufacturerPartNumber;
-    
+
     @Column(name = "name")
     @JsonView({View.Summary.class})
     private String name;
-    
-    @Column(name="description")
+
+    @Column(name = "description")
     @JsonView({View.Detail.class})
     private String description;
-    
-    @OneToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="part_type_id")
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "part_type_id")
     @JsonView({View.Summary.class})
     private PartType partType;
-    
+
     @Column(nullable = false, columnDefinition = "BIT", length = 1)
     @JsonView({View.Detail.class})
     private Boolean inactive = false;
-    
+
     @OneToMany(fetch = FetchType.LAZY)
-    @JoinTable(name="part_turbo_type",
-                joinColumns = @JoinColumn(name="part_id"),
-                inverseJoinColumns = @JoinColumn(name="turbo_type_id"))
+    @JoinTable(name = "part_turbo_type",
+            joinColumns = @JoinColumn(name = "part_id"),
+            inverseJoinColumns = @JoinColumn(name = "turbo_type_id"))
     @JsonView({View.Detail.class})
     private Set<TurboType> turboTypes = new TreeSet<TurboType>();
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinTable(name="interchange_item",
-            joinColumns=@JoinColumn(name="part_id"),
-            inverseJoinColumns=@JoinColumn(name="interchange_header_id"))
+    @JoinTable(name = "interchange_item",
+            joinColumns = @JoinColumn(name = "part_id"),
+            inverseJoinColumns = @JoinColumn(name = "interchange_header_id"))
     @JsonView({View.Detail.class})
     private Interchange interchange;
-    
-    @OneToMany(mappedBy="parent", fetch = FetchType.LAZY, orphanRemoval = true)
+
+    @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY, orphanRemoval = true)
     @OrderBy("id")
     private Set<BOMItem> bom = new TreeSet<BOMItem>();
-    
-    @OneToMany(cascade = CascadeType.REFRESH, mappedBy = "part", fetch=FetchType.LAZY)
+
+    @OneToMany(cascade = CascadeType.REFRESH, mappedBy = "part", fetch = FetchType.LAZY)
     @JsonView({View.Detail.class})
     @OrderBy("id")
     private Set<ProductImage> productImages = new TreeSet<ProductImage>();
-    
+
     @Version
     @Column(name = "version")
     @JsonView({View.Summary.class})
     private Integer version;
-    
-//    @JsonView({View.Summary.class})
+
+    //    @JsonView({View.Summary.class})
     public Long getId() {
         return id;
     }
-    
+
     public void setId(Long id) {
         this.id = id;
     }
-    
-//    @JsonView({View.Summary.class})
+
+    //    @JsonView({View.Summary.class})
     public Manufacturer getManufacturer() {
         return manufacturer;
     }
-    
+
     public void setManufacturer(Manufacturer manufacturer) {
         this.manufacturer = manufacturer;
     }
-    
-//    @JsonView({View.Summary.class})
+
+    //    @JsonView({View.Summary.class})
     public String getManufacturerPartNumber() {
         return manufacturerPartNumber;
     }
-    
+
     public void setManufacturerPartNumber(String manufacturerPartNumber) {
         this.manufacturerPartNumber = manufacturerPartNumber;
     }
-    
-//    @JsonView({View.Summary.class})
+
+    //    @JsonView({View.Summary.class})
     public String getName() {
         return name;
     }
-    
+
     public void setName(String name) {
         this.name = name;
     }
-    
-//    @JsonView({View.Summary.class})
+
+    //    @JsonView({View.Summary.class})
     public String getDescription() {
         return description;
     }
-    
+
     public void setDescription(String description) {
         this.description = description;
     }
-    
-//    @JsonView({View.Summary.class})
+
+    //    @JsonView({View.Summary.class})
     public PartType getPartType() {
         return partType;
     }
-    
+
     public void setPartType(PartType partType) {
         this.partType = partType;
     }
-    
+
     public Boolean getInactive() {
         return inactive;
     }
-    
+
     public void setInactive(Boolean inactive) {
         this.inactive = inactive;
     }
@@ -228,20 +229,20 @@ public class Part implements Comparable<Part>, Serializable {
     public Interchange getInterchange() {
         return interchange;
     }
-    
+
     public void setInterchange(Interchange interchange) {
         this.interchange = interchange;
     }
-    
+
     public Set<BOMItem> getBom() {
         return bom;
     }
-    
+
     public void setBom(Set<BOMItem> bom) {
         this.bom.clear();
         this.bom.addAll(bom);
     }
-    
+
     public Set<TurboType> getTurboTypes() {
         return turboTypes;
     }
@@ -249,28 +250,27 @@ public class Part implements Comparable<Part>, Serializable {
     public Set<ProductImage> getProductImages() {
         return productImages;
     }
-    
+
     public Integer getVersion() {
         return version;
     }
-    
+
     public void setVersion(Integer version) {
         this.version = version;
     }
     //</editor-fold>
-    
+
     //<editor-fold defaultstate="collapsed" desc="Lifecycle">
     @PreRemove
+    @Override
     public void removeSearchIndex() throws Exception {
-        try {
-            PartElasticSearch.instance().delete(this);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        log.info("Updating search index.");
+        PartElasticSearch.instance().delete(this);
     }
-    
+
     @PostUpdate
     @PostPersist
+    @Override
     public void updateSearchIndex() throws Exception {
         log.info("Updating search index.");
         PartElasticSearch.instance().index(this);
@@ -333,13 +333,13 @@ public class Part implements Comparable<Part>, Serializable {
                 .include("productImages.filename")
                 .exclude("productImages.*");
     }
-    
+
     public String toJson() {
         return buildJSONSerializer()
                 .exclude("*.class")
                 .serialize(this);
     }
-    
+
     protected JSONSerializer getSearchSerializer() {
         return new JSONSerializer()
                 .include("id")
@@ -359,21 +359,21 @@ public class Part implements Comparable<Part>, Serializable {
                 .exclude("productImages")
                 .exclude("*.class");
     }
-    
+
     public String toSearchJson() {
         return getSearchSerializer().exclude("*").serialize(this);
     }
-    
+
     public static Part fromJsonToPart(String json) {
         Part part = new JSONDeserializer<Part>()
                 .use((String) null, OBJECT_FACTORY)
 //                .use("bom", TreeSet.class)
                 .use("bom.values", BOMItem.class)
                 .deserialize(json);
-        
+
         return part;
     }
-    
+
     public static String toJsonArray(Collection<Part> collection) {
         return new JSONSerializer()
                 .transform(new HibernateTransformer(), Part.class)
@@ -381,7 +381,7 @@ public class Part implements Comparable<Part>, Serializable {
                 .exclude("*.class")
                 .serialize(collection);
     }
-    
+
     public static String toJsonArray(Collection<Part> collection, String[] fields) {
         return new JSONSerializer()
                 .transform(new HibernateTransformer(), Part.class)
@@ -393,39 +393,39 @@ public class Part implements Comparable<Part>, Serializable {
     public void csvColumns(Map<String, String> columns) {
         // part_type
         columns.put("part_type", getPartType().getName());
-        
+
         // sku
         columns.put("sku", getId().toString());
-        
+
         // attribute_set
         columns.put("attribute_set", getPartType().getMagentoAttributeSet());
-        
+
         // type
         columns.put("type", "simple");
-        
+
         // visibility
         columns.put("visibility", "Catalog, Search"); // See magmi genericmapper visibility.csv
-        
+
         // type
         columns.put("status", "Enabled"); // See magmi genericmapper status.csv
-        
+
         // name
         columns.put("name", ObjectUtils.toString(getName()));
-        
+
         // description
         columns.put("description", ObjectUtils.toString(getDescription()));
-        
+
         // manufacturer
         columns.put("manufacturer", ObjectUtils.toString(getManufacturer().getName()));
-        
+
         // part_number
         columns.put("part_number", ObjectUtils.toString(getManufacturerPartNumber()));
-        
+
         // part_number
         columns.put("part_number_short", ObjectUtils.toString(getManufacturerPartNumber()).replaceAll("\\W", ""));
     }
     //</editor-fold>
-    
+
     @Override
     public int compareTo(Part o) {
         return ObjectUtils.compare(this.id, o.id);
@@ -435,5 +435,5 @@ public class Part implements Comparable<Part>, Serializable {
     public String toString() {
         return getClass().toString() + "#" + id;
     }
-    
+
 }

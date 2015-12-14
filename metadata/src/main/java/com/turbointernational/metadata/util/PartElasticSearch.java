@@ -35,35 +35,6 @@ public class PartElasticSearch extends AbstractElasticSearch {
     @Value("${elasticsearch.type.part}")
     private String elasticSearchType = "part";
 
-    @Transactional(readOnly = true)
-    public void index(Part part) throws Exception {
-        String document = part.toSearchJson();
-        
-        IndexRequest index = new IndexRequest(elasticSearchIndex, elasticSearchType, part.getId().toString());
-        index.source(document);
-        
-        Client client = client();
-        try {
-            client.index(index).actionGet(timeout);
-        } catch (ElasticSearchException e) {
-            log.error("Could not index part " + document, e);
-            throw e;
-        } finally {
-            client.close();
-        }
-    }
-
-    @Async
-    public void delete(Part part) throws Exception {
-        DeleteRequest delete = new DeleteRequest(elasticSearchIndex, elasticSearchType, part.getId().toString());
-        
-        Client client = client();
-        try {
-            client.delete(delete).actionGet(timeout);
-        } finally {
-            client.close();
-        }
-    }
 
     @Override
     protected String getElasticSearchType() {

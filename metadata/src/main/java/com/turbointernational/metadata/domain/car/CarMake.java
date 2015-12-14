@@ -1,7 +1,11 @@
 package com.turbointernational.metadata.domain.car;
 
+import com.turbointernational.metadata.domain.SearchableEntity;
+import com.turbointernational.metadata.util.CarMakeElasticSearch;
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -15,7 +19,9 @@ import javax.persistence.*;
 @NamedQueries(
         @NamedQuery(name = "findCarMakeByName", query = "FROM CarMake WHERE name=:name")
 )
-public class CarMake implements Serializable {
+public class CarMake implements Serializable, SearchableEntity {
+
+    private final static Logger log = LoggerFactory.getLogger(CarMake.class);
 
     //<editor-fold defaultstate="collapsed" desc="Properties">
     @Id
@@ -77,6 +83,23 @@ public class CarMake implements Serializable {
 
     public static Collection<CarMake> fromJsonArrayToCarMakes(String json) {
         return new JSONDeserializer<List<CarMake>>().use(null, ArrayList.class).use("values", CarMake.class).deserialize(json);
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="Lifecycle">
+    @PreRemove
+    @Override
+    public void removeSearchIndex() throws Exception {
+        log.info("Removing from search index.");
+        CarMakeElasticSearch.instance().delete(this);
+    }
+
+    @PostUpdate
+    @PostPersist
+    @Override
+    public void updateSearchIndex() throws Exception {
+        log.info("Updating search index.");
+        CarMakeElasticSearch.instance().index(this);
     }
     //</editor-fold>
 
