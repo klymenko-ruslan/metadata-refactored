@@ -121,5 +121,21 @@ angular.module('ngMetaCrudApp')
                 return Restangular.one("interchange", id).get();
             };
 
+            this.findCarmakeByName = function (name) {
+                return Restangular.one("application/carmake").get({"name": name});
+            };
+
+            this.createCarmake = function (carmake) {
+                return Restangular.one("application/carmake").post();
+            };
+
+            this.createCarmake = function (carmake) {
+                return Restangular.one("application/carmake", carmake.id).put();
+            };
+
+            this.removeCarmake = function(carmake) {
+              return Restangular.one("application/carmake", carmake).remove();
+            }
+
           };
       });

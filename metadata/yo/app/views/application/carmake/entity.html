@@ -1,0 +1,43 @@
+<form name="carmakeForm" novalidate authorize="ROLE_APPLICATION_CRUD">
+
+  <metanav />
+
+  <subnav>
+
+    <li>
+      <a ng-disabled="carmakeForm.$pristine"
+         ng-click="save()" class="btn btn-success">
+        <i class="fa fa-save"></i>
+        Save
+      </a>
+    </li>
+    <li>
+      <a ng-click="revert()"
+         ng-disabled="carmakeForm.$pristine"
+         class="btn btn-warning"
+         data-ng-hide="oldCarmake == null">
+        <i class="fa fa-undo"></i>
+        Revert
+      </a>
+    </li>
+
+  </subnav>
+
+  <div class="row">
+    <div class="col-xs-12 col-sm-6">
+
+      <h2>Create Make [Valid: {{carmakeForm.$valid}}]</h2>
+
+      <label>Name</label>
+      <input class="form-control" type="text" name="carmake_name" ng-model="carmake.name" ng-model-options="{ debounce: 500, blur: 0 }" unique-carmake-name />
+      <br />
+      <div ng-show="carmakeForm.$submitted || carmakeForm.carmake_name.$touched">
+        <span ng-show="carmakeForm.carmake_name.$error.required">Required!</span>
+        <span ng-show="carmakeForm.$error.carmakeNameUniqueValidator">Not unique!</span>
+      </div>
+    </div>
+  </div>
+
+  <pre>{{carmakeForm.$error | json}}</pre>
+
+</form>
