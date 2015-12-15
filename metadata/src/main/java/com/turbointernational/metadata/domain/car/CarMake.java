@@ -16,9 +16,10 @@ import javax.persistence.*;
 @Cacheable
 @Entity
 @Table(name = "car_make", uniqueConstraints = @UniqueConstraint(columnNames = {"name"}))
-@NamedQueries(
-        @NamedQuery(name = "findCarMakeByName", query = "FROM CarMake WHERE name=:name")
-)
+@NamedQueries({
+        @NamedQuery(name = "findCarMakeByName", query = "FROM CarMake WHERE name=:name"),
+        @NamedQuery(name = "findAllCarMakeOrderedByName", query = "FROM CarMake ORDER BY name")
+})
 public class CarMake implements Serializable, SearchableEntity {
 
     private final static Logger log = LoggerFactory.getLogger(CarMake.class);

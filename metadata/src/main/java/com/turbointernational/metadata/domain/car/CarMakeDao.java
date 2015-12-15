@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
+import java.util.List;
 
 /**
  * Created by trunikov on 12/9/15.
@@ -23,6 +24,11 @@ public class CarMakeDao extends AbstractDao<CarMake> {
         } catch (NoResultException e) {
             return null;
         }
+    }
+
+    public List<CarMake>  findAllOrderedByName() {
+        Query query = em.createNamedQuery("findAllCarMakeOrderedByName");
+        return query.getResultList();
     }
 
 }

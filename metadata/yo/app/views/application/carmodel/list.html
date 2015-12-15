@@ -3,7 +3,7 @@
 <subnav authorize="ROLE_APPLICATION_CRUD" item="model">
 
   <li>
-    <a class="btn btn-success">
+    <a class="btn btn-success" ng-href="/application/carmodel/form">
       <i class="fa fa-wrench"></i>
       Create Model
     </a>
@@ -15,10 +15,13 @@
 
 <carmodel-search class="well well-lg">
 
-  <!-- a class="btn btn-primary btn-xs"
-     ng-href="/application/carmodel/{{rec._source.id}}">
+  <a class="btn btn-primary btn-xs"
+     ng-href="/application/carmodel/{{rec._source.id}}/form">
     <i class="fa fa-eye"></i>
-    View
-  </a -->
+    Edit
+  </a>
+  <button ng-click="remove(rec._source.id, rec._source.name)" authorize="ROLE_APPLICATION_CRUD" class="btn btn-danger btn-xs">
+    <i class="fa fa-trash-o"></i> Remove
+  </button>
 
 </carmodel-search>

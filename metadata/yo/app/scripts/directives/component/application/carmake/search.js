@@ -53,7 +53,7 @@ angular.module("ngMetaCrudApp").directive("carmakeSearch", ["$log", "restService
       };
 
       $scope.remove = function(id, name) {
-        dialogs.confirm("Delete car model '" + name + "'.", "Are you sure?").result.then(
+        dialogs.confirm("Delete car make '" + name + "'.", "Are you sure?").result.then(
           function() {
             // Yes
             restService.removeCarmake(id).then(

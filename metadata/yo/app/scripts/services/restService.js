@@ -122,6 +122,10 @@ angular.module('ngMetaCrudApp')
                 return Restangular.one("application/carmake").get({"name": name});
             };
 
+            this.findAllCarMakesOrderedByName = function() {
+                return Restangular.one("application").getList("carmakes");
+            };
+
             this.createCarmake = function (carmake) {
                 return Restangular.one("application").post("carmake", carmake);
             };
@@ -148,6 +152,23 @@ angular.module('ngMetaCrudApp')
 
             this.removeCarfueltype = function(id) {
               return Restangular.one("application/carfueltype", id).remove();
+            };
+
+            this.findCarmodel = function (id) {
+                return Restangular.one('application/carmodel', id).get();
+            };
+
+            this.createCarmodel = function (carmodel) {
+                return Restangular.one("application").post("carmodel", carmodel);
             }
+
+            this.updateCarmodel = function (carmodel) {
+                return Restangular.one("application/carmodel", carmodel.id).customPUT(carmodel);
+            };
+
+            this.removeCarmodel = function(id) {
+              return Restangular.one("application/carmodel", id).remove();
+            };
+
           };
       });

@@ -7,10 +7,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * Created by trunikov on 14.12.15.
  */
-@RequestMapping("/metadata/application/carmake")
+@RequestMapping("/metadata/application")
 @Controller
 public class CarMakeController {
 
@@ -18,7 +20,7 @@ public class CarMakeController {
     private CarMakeDao carMakeDao;
 
     @Transactional
-    @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/carmake", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     @Secured("ROLE_READ")
     public CarMake findByName(@RequestParam("name") String name) {
@@ -26,7 +28,15 @@ public class CarMakeController {
     }
 
     @Transactional
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(value = "/carmakes", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    @Secured("ROLE_READ")
+    public List<CarMake> findAllOrderedByName() {
+        return carMakeDao.findAllOrderedByName();
+    }
+
+    @Transactional
+    @RequestMapping(value = "/carmake", method = RequestMethod.POST)
     @ResponseBody
     @Secured("ROLE_APPLICATION_CRUD")
     public long create(@RequestBody CarMake carMake) {
@@ -35,7 +45,7 @@ public class CarMakeController {
     }
 
     @Transactional
-    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/carmake/{id}", method = RequestMethod.PUT)
     @ResponseBody
     @Secured("ROLE_APPLICATION_CRUD")
     public void update(@RequestBody CarMake carMake) {
@@ -43,7 +53,7 @@ public class CarMakeController {
     }
 
     @Transactional
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/carmake/{id}", method = RequestMethod.DELETE)
     @ResponseBody
     @Secured("ROLE_APPLICATION_CRUD")
     public void remove(@PathVariable("id") long id) {

@@ -9,11 +9,29 @@ angular.module("ngMetaCrudApp").directive("carmodelSearch", ["$log", "restServic
       "link": function postLink(scope, iElement, iAttrs, controller, transcludeFn) {
         controller.transcludeActionsFn = transcludeFn;
       },
-      "controller": ["$log", "$q", "$scope", "carmodelSearchService", "ngTableParams",
-                    function ($log, $q, $scope, carmodelSearchService, ngTableParams) {
+      "controller": ["$log", "$q", "$scope", "dialogs", "carmodelSearchService", "ngTableParams",
+                    function ($log, $q, $scope, dialogs, carmodelSearchService, ngTableParams) {
         // Latest Results
         $scope.searchResults = null;
-        // Applications Table
+
+        $scope.remove = function(id, name) {
+          dialogs.confirm("Delete car model '" + name + "'.", "Are you sure?").result.then(
+            function() {
+              // Yes
+              restService.removeCarmodel(id).then(
+                function () {
+                  $scope.clear(); // reload table
+                  gToast.open("Car model '" + name + "' has been successfully removed.");
+                },
+                function errorResponse(response) {
+                  restService.error("Car model remove failed.", response);
+                }
+              );
+            }
+          );
+        };
+
+        // Car Model Table
         $scope.carmodelTableParams = new ngTableParams(
           {
             "page": 1,
