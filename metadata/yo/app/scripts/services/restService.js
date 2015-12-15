@@ -127,12 +127,27 @@ angular.module('ngMetaCrudApp')
             };
 
             this.updateCarmake = function (carmake) {
-                return Restangular.one("application/carmake", carmake.id).put();
+                return Restangular.one("application/carmake", carmake.id).customPUT(carmake);
             };
 
             this.removeCarmake = function(id) {
               return Restangular.one("application/carmake", id).remove();
             }
 
+            this.findCarfueltypeByName = function (name) {
+                return Restangular.one("application/carfueltype").get({"name": name});
+            };
+
+            this.createCarfueltype = function (carfueltype) {
+                return Restangular.one("application").post("carfueltype", carfueltype);
+            };
+
+            this.updateCarfueltype = function (carfueltype) {
+                return Restangular.one("application/carfueltype", carfueltype.id).customPUT(carfueltype);
+            };
+
+            this.removeCarfueltype = function(id) {
+              return Restangular.one("application/carfueltype", id).remove();
+            }
           };
       });

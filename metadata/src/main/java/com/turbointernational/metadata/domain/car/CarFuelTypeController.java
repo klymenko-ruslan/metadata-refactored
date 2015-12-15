@@ -8,38 +8,38 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * Created by trunikov on 14.12.15.
+ * Created by trunikov on 12/15/15.
  */
-@RequestMapping("/metadata/application/carmake")
+@RequestMapping("/metadata/application/carfueltype")
 @Controller
-public class CarMakeController {
+public class CarFuelTypeController {
 
     @Autowired
-    private CarMakeDao carMakeDao;
+    private CarFuelTypeDao carFuelTypeDao;
 
     @Transactional
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     @Secured("ROLE_READ")
-    public CarMake findByName(@RequestParam("name") String name) {
-        return carMakeDao.findCarMakeByName(name);
+    public CarFuelType findByName(@RequestParam("name") String name) {
+        return carFuelTypeDao.findCarFuelTypeByName(name);
     }
 
     @Transactional
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
     @Secured("ROLE_APPLICATION_CRUD")
-    public long create(@RequestBody CarMake carMake) {
-        carMakeDao.persist(carMake);
-        return carMake.getId();
+    public long create(@RequestBody CarFuelType carFuelType) {
+        carFuelTypeDao.persist(carFuelType);
+        return carFuelType.getId();
     }
 
     @Transactional
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     @ResponseBody
     @Secured("ROLE_APPLICATION_CRUD")
-    public void update(@RequestBody CarMake carMake) {
-        carMakeDao.merge(carMake);
+    public void update(@RequestBody CarFuelType carFuelType) {
+        carFuelTypeDao.merge(carFuelType);
     }
 
     @Transactional
@@ -47,6 +47,6 @@ public class CarMakeController {
     @ResponseBody
     @Secured("ROLE_APPLICATION_CRUD")
     public void remove(@PathVariable("id") long id) {
-        carMakeDao.delete(id);
+        carFuelTypeDao.delete(id);
     }
 }

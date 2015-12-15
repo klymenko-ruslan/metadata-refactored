@@ -90,6 +90,10 @@ angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap', 'restangu
         $routeProvider.when('/application/carfueltype/list', {
             templateUrl: 'views/application/carfueltype/list.html',
           });
+        $routeProvider.when('/application/carfueltype/form', {
+            templateUrl: 'views/application/carfueltype/entity.html',
+            controller: 'CarFuelTypeFormCtrl'
+        });
         $routeProvider.when('/application/carmake/list', {
             templateUrl: 'views/application/carmake/list.html',
           });

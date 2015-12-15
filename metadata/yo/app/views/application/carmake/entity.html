@@ -11,15 +11,6 @@
         Save
       </button>
     </li>
-    <li>
-      <button ng-click="revert()"
-         ng-disabled="carmakeForm.$pristine"
-         class="btn btn-warning"
-         data-ng-hide="oldCarmake == null">
-        <i class="fa fa-undo"></i>
-        Revert
-      </button>
-    </li>
 
   </subnav>
 
@@ -29,7 +20,7 @@
       <h2>Create Make</h2>
 
       <label for="carmake_name">Name</label>
-      <input class="form-control" type="text" id="carmake_name" name="carmake_name" ng-model="carmake.name" ng-model-options="{ debounce: 500 }" required maxlength="50" unique-carmake-name />
+      <input id="carmake_name" name="carmake_name" class="form-control" type="text" ng-model="carmake.name" ng-model-options="{ debounce: 500 }" required maxlength="50" unique-carmake-name />
       <span ng-show="carmakeForm.carmake_name.$dirty && carmakeForm.carmake_name.$invalid" class="alert alert-danger" role="alert">
         <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
         <span ng-show="carmakeForm.carmake_name.$error.required">Required!</span>

@@ -1,6 +1,6 @@
 "use strict";
 
-angular.module("ngMetaCrudApp").directive("carfueltypeSearch", ["$log", "restService", function ($log, restService) {
+angular.module("ngMetaCrudApp").directive("carfueltypeSearch", ["$log", "restService", "gToast", function ($log, restService, gToast) {
   return {
     "restrict": "E",
     "replace": true,
@@ -9,10 +9,67 @@ angular.module("ngMetaCrudApp").directive("carfueltypeSearch", ["$log", "restSer
     "link": function postLink(scope, iElement, iAttrs, controller, transcludeFn) {
       controller.transcludeActionsFn = transcludeFn;
     },
-    "controller": ["$log", "$q", "$scope", "carfueltypeSearchService", "ngTableParams", function ($log, $q, $scope, carfueltypeSearchService, ngTableParams) {
+    "controller": ["$log", "$q", "$scope", "dialogs", "carfueltypeSearchService", "ngTableParams", function ($log, $q, $scope, dialogs, carfueltypeSearchService, ngTableParams) {
       // Latest Results
       $scope.searchResults = null;
-      // Applications Table
+
+      // Temp storage for quantities
+      $scope.modifyValues = {};
+
+      $scope.isModifying = function(carfueltype) {
+        return angular.isDefined($scope.modifyValues[carfueltype.id]);
+      };
+
+      $scope.modifyStart = function(carfueltype, form) {
+        $scope._resetForm(form);
+        $scope.modifyValues = {}; // close other edited form
+        $scope.modifyValues[carfueltype.id] = carfueltype.name;
+      };
+
+      $scope._resetForm = function(form) {
+        form.$rollbackViewValue();
+        form.$setPristine();
+      };
+
+      $scope.modifyCancel = function(carfueltype, form) {
+        delete $scope.modifyValues[carfueltype.id];
+        $scope._resetForm(form);
+      };
+
+      $scope.modifySave = function(carfueltype, form) {
+        var name = $scope.modifyValues[carfueltype.id];
+        carfueltype.name = name;
+        restService.updateCarfueltype(carfueltype).then(
+          function() {
+            // Success.
+            delete $scope.modifyValues[carfueltype.id];
+            $scope._resetForm(form);
+            gToast.open("The car fuel type '" + name + "' has been successfully updated.");
+          },
+          function errorResponse(response) {
+            restService.error("Car fuel type (id:" + carfueltype.id + ") '" + name + "' update failed.", response);
+          }
+        );
+      };
+
+      $scope.remove = function(id, name) {
+        dialogs.confirm("Delete car fuel type '" + name + "'.", "Are you sure?").result.then(
+          function() {
+            // Yes
+            restService.removeCarfueltype(id).then(
+              function () {
+                $scope.clear(); // reload table
+                gToast.open("Car fuel type '" + name + "' has been successfully removed.");
+              },
+              function errorResponse(response) {
+                restService.error("Car fuel type '" + name + "' remove failed.", response);
+              }
+            );
+          }
+        );
+      };
+
+      // CarFuelType Table
       $scope.carfueltypeTableParams = new ngTableParams(
         {
           "page": 1,

@@ -16,27 +16,40 @@ angular.module("ngMetaCrudApp").directive("carmakeSearch", ["$log", "restService
       // Temp storage for quantities
       $scope.modifyValues = {};
 
-      $scope.isModifying = function(rec) {
-        $log.log("isModifying rec: " + angular.toJson(rec));
-        $log.log("isModifying modifyValues: " + angular.toJson($scope.modifyValues));
-        var retval = angular.isDefined($scope.modifyValues[rec.id]);
-        $log.log("isModifying retval: " + retval);
-        return retval;
+      $scope.isModifying = function(carmake) {
+        return angular.isDefined($scope.modifyValues[carmake.id]);
       };
 
-      $scope.modifyStart = function(rec) {
-        $scope.modifyValues[rec.id] = rec.name;
+      $scope.modifyStart = function(carmake, form) {
+        $scope._resetForm(form);
+        $scope.modifyValues = {}; // close other edited form
+        $scope.modifyValues[carmake.id] = carmake.name;
       };
 
-      $scope.modifyCancel = function(rec) {
-        delete $scope.modifyValues[rec.id];
+      $scope._resetForm = function(form) {
+        form.$rollbackViewValue();
+        form.$setPristine();
       };
 
-      $scope.modifySave = function(rec) {
-        var name = $scope.modifyValues[rec.id];
-        $log.log("modifyValues: " + angular.toJson($scope.modifyValues));
-        $log.log("modifySave(" + rec.id + ",'" + name + "')");
-        delete $scope.modifyValues[rec.id];
+      $scope.modifyCancel = function(carmake, form) {
+        delete $scope.modifyValues[carmake.id];
+        $scope._resetForm(form);
+      };
+
+      $scope.modifySave = function(carmake, form) {
+        var name = $scope.modifyValues[carmake.id];
+        carmake.name = name;
+        restService.updateCarmake(carmake).then(
+          function() {
+            // Success.
+            delete $scope.modifyValues[carmake.id];
+            $scope._resetForm(form);
+            gToast.open("The car make '" + name + "' has been successfully updated.");
+          },
+          function errorResponse(response) {
+            restService.error("Car make (id:" + carmake.id + ") '" + name + "' update failed.", response);
+          }
+        );
       };
 
       $scope.remove = function(id, name) {
@@ -55,7 +68,8 @@ angular.module("ngMetaCrudApp").directive("carmakeSearch", ["$log", "restService
           }
         );
       };
-      // Applications Table
+
+      // CarMake Table
       $scope.carmakeTableParams = new ngTableParams(
         {
           "page": 1,

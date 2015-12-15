@@ -18,9 +18,9 @@
         <table data-ng-table="carmakeTableParams" class="table table-bordered table-striped table-hover table-responsive">
             <tr data-ng-repeat="rec in $data">
               <td title="'Name'" sortable="'name'">
-                <span ng-hide="isModifying(rec)">{{rec._source.name}}</span>
-                <form name="carmakeForm" novalidate authorize="ROLE_APPLICATION_CRUD" ng-show="isModifying(rec)">
-                  <input ng-model="modifyValues[rec.id]" type="text" ng-model-options="{ debounce: 500 }" required maxlength="50" unique-carmake-name>
+                <span ng-hide="isModifying(rec._source)">{{rec._source.name}}</span>
+                <form name="carmakeForm" novalidate authorize="ROLE_APPLICATION_CRUD" ng-show="isModifying(rec._source)">
+                  <input name="carmake_name" ng-model="modifyValues[rec._source.id]" type="text" ng-model-options="{ debounce: 500 }" required maxlength="50" unique-carmake-name>
                   <span ng-show="carmakeForm.carmake_name.$dirty && carmakeForm.carmake_name.$invalid" class="alert alert-danger" role="alert">
                     <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
                     <span ng-show="carmakeForm.carmake_name.$error.required">Required!</span>
@@ -33,4 +33,8 @@
             </tr>
         </table>
     </div>
+    <!--
+    <label>modifyValues:</label>
+    <pre>{{modifyValues | json}}</pre>
+    -->
 </div>

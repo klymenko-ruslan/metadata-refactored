@@ -25,9 +25,4 @@ public class CarMakeDao extends AbstractDao<CarMake> {
         }
     }
 
-    public long create(CarMake carMake) {
-        em.persist(carMake);
-        return carMake.getId();
-    }
-
 }

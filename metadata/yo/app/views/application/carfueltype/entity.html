@@ -1,0 +1,34 @@
+<form name="carfueltypeForm" novalidate authorize="ROLE_APPLICATION_CRUD">
+
+  <metanav />
+
+  <subnav>
+
+    <li>
+      <button ng-disabled="carfueltypeForm.$pristine || carfueltypeForm.$invalid || carfueltypeForm.$pending"
+         ng-click="save()" class="btn btn-success">
+        <i class="fa fa-save"></i>
+        Save
+      </button>
+    </li>
+
+  </subnav>
+
+  <div class="row">
+    <div class="col-xs-12 col-sm-6">
+
+      <h2>Create Fuel Type</h2>
+
+      <label for="carfueltype_name">Name</label>
+      <input id="carfueltype_name" name="carfueltype_name" class="form-control" type="text" ng-model="carfueltype.name" ng-model-options="{ debounce: 500 }" required maxlength="255" unique-carfueltype-name />
+      <span ng-show="carfueltypeForm.carfueltype_name.$dirty && carfueltypeForm.carfueltype_name.$invalid" class="alert alert-danger" role="alert">
+        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+        <span ng-show="carfueltypeForm.carfueltype_name.$error.required">Required!</span>
+        <span ng-show="carfueltypeForm.carfueltype_name.$error.maxlenth">Too long name (max 255 chars)!</span>
+        <span ng-show="carfueltypeForm.carfueltype_name.$error.nonUniqueName">Not unique!</span>
+      </span>
+
+    </div>
+  </div>
+
+</form>
