@@ -142,6 +142,10 @@ angular.module('ngMetaCrudApp')
                 return Restangular.one("application/carfueltype").get({"name": name});
             };
 
+            this.findAllCarFuelTypesOrderedByName = function() {
+                return Restangular.one("application").getList("carfueltypes");
+            };
+
             this.createCarfueltype = function (carfueltype) {
                 return Restangular.one("application").post("carfueltype", carfueltype);
             };
@@ -170,5 +174,22 @@ angular.module('ngMetaCrudApp')
               return Restangular.one("application/carmodel", id).remove();
             };
 
-          };
+
+            this.findCarengine = function (id) {
+                return Restangular.one('application/carengine', id).get();
+            };
+
+            this.createCarengine = function (carengine) {
+                return Restangular.one("application").post("carengine", carengine);
+            }
+
+            this.updateCarengine = function (carengine) {
+                return Restangular.one("application/carengine", carengine.id).customPUT(carengine);
+            };
+
+            this.removeCarengine = function(id) {
+              return Restangular.one("application/carengine", id).remove();
+            };
+
+        };
       });

@@ -1,7 +1,9 @@
 package com.turbointernational.metadata.domain.car;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.domain.SearchableEntity;
 import com.turbointernational.metadata.util.CarEngineElasticSearch;
+import com.turbointernational.metadata.web.View;
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
 import org.apache.commons.logging.Log;
@@ -24,13 +26,16 @@ public class CarEngine implements Serializable, SearchableEntity {
     //<editor-fold defaultstate="collapsed" desc="Properties">
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonView(View.CarEngine.class)
     private Long id;
     
     @Column(nullable=false)
+    @JsonView(View.CarEngine.class)
     private String engineSize;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="car_fuel_type_id")
+    @JsonView(View.CarEngine.class)
     private CarFuelType fuelType;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "engine", cascade = CascadeType.ALL)

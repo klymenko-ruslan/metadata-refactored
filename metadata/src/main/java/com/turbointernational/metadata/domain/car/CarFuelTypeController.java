@@ -1,5 +1,7 @@
 package com.turbointernational.metadata.domain.car;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.web.View;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.annotation.Secured;
@@ -7,10 +9,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * Created by trunikov on 12/15/15.
  */
-@RequestMapping("/metadata/application/carfueltype")
+@RequestMapping("/metadata/application")
 @Controller
 public class CarFuelTypeController {
 
@@ -18,7 +22,7 @@ public class CarFuelTypeController {
     private CarFuelTypeDao carFuelTypeDao;
 
     @Transactional
-    @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/carfueltype", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     @Secured("ROLE_READ")
     public CarFuelType findByName(@RequestParam("name") String name) {
@@ -26,7 +30,16 @@ public class CarFuelTypeController {
     }
 
     @Transactional
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(value = "/carfueltypes", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    @JsonView(View.CarFuelType.class)
+    @Secured("ROLE_READ")
+    public List<View.CarFuelType> findAllOrderedByName() {
+        return carFuelTypeDao.findAllOrderedByName();
+    }
+
+    @Transactional
+    @RequestMapping(value = "/carfueltype", method = RequestMethod.POST)
     @ResponseBody
     @Secured("ROLE_APPLICATION_CRUD")
     public long create(@RequestBody CarFuelType carFuelType) {
@@ -35,7 +48,7 @@ public class CarFuelTypeController {
     }
 
     @Transactional
-    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/fueltype/{id}", method = RequestMethod.PUT)
     @ResponseBody
     @Secured("ROLE_APPLICATION_CRUD")
     public void update(@RequestBody CarFuelType carFuelType) {
@@ -43,7 +56,7 @@ public class CarFuelTypeController {
     }
 
     @Transactional
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/fueltype/{id}", method = RequestMethod.DELETE)
     @ResponseBody
     @Secured("ROLE_APPLICATION_CRUD")
     public void remove(@PathVariable("id") long id) {

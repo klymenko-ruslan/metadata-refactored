@@ -1,0 +1,47 @@
+<form name="carengineForm" novalidate authorize="ROLE_APPLICATION_CRUD">
+
+  <metanav />
+
+  <subnav>
+
+    <li>
+      <button ng-disabled="carengineForm.$pristine || carengineForm.$invalid || carengineForm.$pending"
+         ng-click="save()" class="btn btn-success">
+        <i class="fa fa-save"></i>
+        Save
+      </button>
+    </li>
+
+  </subnav>
+
+  <div class="row">
+
+    <div class="col-xs-12 col-sm-6">
+
+      <h2>{{::titleHead}} Car Engine</h2>
+
+      <label for="carengine_enginesize">Engine Size</label>
+      <input id="carengine_enginesize" name="carengine_enginesize" class="form-control" type="text" ng-model="carengine.engineSize" ng-model-options="{ debounce: 500 }" required maxlength="50" />
+      <span ng-show="carengineForm.carengine_enginesize.$dirty && carengineForm.carengine_enginesize.$invalid" class="alert alert-danger" role="alert">
+        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+        <span ng-show="carengineForm.carengine_enginesize.$error.required">Required!</span>
+        <span ng-show="carengineForm.carengine_enginesize.$error.maxlenth">Too long name (max 50 chars)!</span>
+      </span>
+
+    </div>
+
+    <div class="col-xs-12 col-sm-6">
+      <label class="control-label">Fuel Type</label>
+      <input ng-model="carfueltypeFilter" class="form-control input-sm" placeholder="Car fuel type filter..."/>
+      <br/>
+      <select required
+        data-ng-model="carengine.fuelType.id"
+        data-ng-options="carfueltype.id as carfueltype.name for carfueltype in carfueltypes | filter:{name:carfueltypeFilter}"
+        data-ng-disabled="carfueltypes.length == 0"
+        size="15" class="select-large required form-control">
+      </select>
+    </div>
+
+  </div>
+
+</form>

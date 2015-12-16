@@ -1,8 +1,10 @@
 package com.turbointernational.metadata.domain.car;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.domain.SearchableEntity;
 import com.turbointernational.metadata.util.CarFuelTypeElasticSearch;
 import com.turbointernational.metadata.util.CarMakeElasticSearch;
+import com.turbointernational.metadata.web.View;
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
 import org.slf4j.Logger;
@@ -18,9 +20,10 @@ import javax.persistence.*;
 @Cacheable
 @Entity
 @Table(name = "car_fuel_type", uniqueConstraints = @UniqueConstraint(columnNames = {"name"}))
-@NamedQueries(
-        @NamedQuery(name = "findCarFuelTypeByName", query = "FROM CarFuelType WHERE name=:name")
-)
+@NamedQueries({
+        @NamedQuery(name = "findCarFuelTypeByName", query = "FROM CarFuelType WHERE name=:name"),
+        @NamedQuery(name = "findAllCarFuelTypeOrderedByName", query = "FROM CarFuelType ORDER BY name")
+})
 public class CarFuelType implements Serializable, SearchableEntity {
 
     private final static Logger log = LoggerFactory.getLogger(CarFuelType.class);
@@ -28,9 +31,11 @@ public class CarFuelType implements Serializable, SearchableEntity {
     //<editor-fold defaultstate="collapsed" desc="Properties">
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonView({View.CarFuelType.class, View.CarEngine.class})
     private Long id;
 
     @Column(nullable = false)
+    @JsonView({View.CarFuelType.class, View.CarEngine.class})
     private String name;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "fuelType", cascade = CascadeType.ALL)

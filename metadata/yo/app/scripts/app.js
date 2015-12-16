@@ -84,9 +84,7 @@ angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap', 'restangu
         });
 
         // Model Engine Year
-        $routeProvider.when('/application/carengine/list', {
-            templateUrl: 'views/application/carengine/list.html',
-          });
+
         $routeProvider.when('/application/carfueltype/list', {
             templateUrl: 'views/application/carfueltype/list.html',
           });
@@ -101,6 +99,7 @@ angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap', 'restangu
             templateUrl: 'views/application/carmake/entity.html',
             controller: 'CarMakeFormCtrl'
         });
+
         $routeProvider.when('/application/carmodel/list', {
             templateUrl: 'views/application/carmodel/list.html',
           });
@@ -118,6 +117,18 @@ angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap', 'restangu
         $routeProvider.when('/application/carmodelengineyear/:id', {
           templateUrl: 'views/application/carmodelengineyear/detail.html',
           controller: 'CarmodelengineyearDetailCtrl'
+        });
+
+        $routeProvider.when('/application/carengine/list', {
+            templateUrl: 'views/application/carengine/list.html',
+          });
+        $routeProvider.when('/application/carengine/form', {
+            templateUrl: 'views/application/carengine/entity.html',
+            controller: 'CarEngineFormCtrl'
+        });
+        $routeProvider.when('/application/carengine/:id/form', {
+            templateUrl: 'views/application/carengine/entity.html',
+            controller: 'CarEngineFormCtrl'
         });
 
         // List All Sales Notes

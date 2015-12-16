@@ -20,8 +20,8 @@ public class CarEngineElasticSearch extends AbstractElasticSearch {
     @Value("${elasticsearch.type.carengine}")
     String elasticSearchType = "carengine";
 
-    public static CarMakeElasticSearch instance() {
-        return Application.getContext().getBean(CarMakeElasticSearch.class);
+    public static CarEngineElasticSearch instance() {
+        return Application.getContext().getBean(CarEngineElasticSearch.class);
     }
 
     @Override
