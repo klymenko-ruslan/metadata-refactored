@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Configurable;
 
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.persistence.Cacheable;
@@ -47,7 +48,18 @@ public class Turbo extends Part {
             joinColumns=@JoinColumn(name="part_id"),
             inverseJoinColumns=@JoinColumn(name="car_model_engine_year_id"))
     private Set<CarModelEngineYear> cars = new HashSet<CarModelEngineYear>();
-    
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "turbo", cascade = CascadeType.ALL)
+    private List<TurboCarModelEngineYear> turboCarModelEngineYears;
+
+    public List<TurboCarModelEngineYear> getTurboCarModelEngineYears() {
+        return turboCarModelEngineYears;
+    }
+
+    public void setTurboCarModelEngineYears(List<TurboCarModelEngineYear> turboCarModelEngineYears) {
+        this.turboCarModelEngineYears = turboCarModelEngineYears;
+    }
+
     public TurboModel getTurboModel() {
         return turboModel;
     }
@@ -103,4 +115,5 @@ public class Turbo extends Part {
             columns.put("cool_type", ObjectUtils.toString(getCoolType().getName()));
         }
     }
+
 }

@@ -25,12 +25,14 @@ import java.util.List;
 public class TurboCarModelEngineYear implements Serializable {
 
     @Id
-    @OneToOne(fetch = FetchType.LAZY)
+//    @OneToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name="part_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="part_id", nullable = false)
     private Turbo turbo;
 
     @Id
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="car_model_engine_year_id", nullable = false)
     private CarModelEngineYear carModelEngineYear;
 

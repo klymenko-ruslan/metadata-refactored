@@ -33,6 +33,9 @@ public class CarFuelType implements Serializable, SearchableEntity {
     @Column(nullable = false)
     private String name;
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "fuelType", cascade = CascadeType.ALL)
+    private List<CarEngine> carEngines;
+
     public Long getId() {
         return id;
     }
@@ -47,6 +50,14 @@ public class CarFuelType implements Serializable, SearchableEntity {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public List<CarEngine> getCarEngines() {
+        return carEngines;
+    }
+
+    public void setCarEngines(List<CarEngine> carEngines) {
+        this.carEngines = carEngines;
     }
     //</editor-fold>
 
@@ -90,7 +101,7 @@ public class CarFuelType implements Serializable, SearchableEntity {
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Lifecycle">
-    @PreRemove
+    @PostRemove
     @Override
     public void removeSearchIndex() throws Exception {
         log.info("Removing from search index.");
@@ -104,6 +115,7 @@ public class CarFuelType implements Serializable, SearchableEntity {
         log.info("Updating search index.");
         CarFuelTypeElasticSearch.instance().index(this);
     }
+
     //</editor-fold>
 
 }

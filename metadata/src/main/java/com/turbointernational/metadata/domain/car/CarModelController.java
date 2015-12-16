@@ -23,6 +23,7 @@ public class CarModelController {
     @Transactional
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
+    @JsonView(View.CarModel.class)
     @Secured("ROLE_READ")
     public CarModel get(@PathVariable("id") Long id) {
         return carModelDao.findOne(id);

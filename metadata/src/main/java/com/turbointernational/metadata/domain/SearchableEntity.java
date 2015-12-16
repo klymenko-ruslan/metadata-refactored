@@ -6,7 +6,7 @@ package com.turbointernational.metadata.domain;
 public interface SearchableEntity {
 
     // Don't forget to annotate this method in an inherited class by this annotation:
-    //@PreRemove
+    //@PostRemove
     public void removeSearchIndex() throws Exception;
 
     // Don't forget to annotate this method in an inherited class by these annotations:

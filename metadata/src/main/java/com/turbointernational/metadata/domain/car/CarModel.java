@@ -1,7 +1,9 @@
 package com.turbointernational.metadata.domain.car;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.domain.SearchableEntity;
 import com.turbointernational.metadata.util.CarModelElasticSearch;
+import com.turbointernational.metadata.web.View;
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
 import org.slf4j.Logger;
@@ -24,15 +26,22 @@ public class CarModel implements Serializable, SearchableEntity {
     //<editor-fold defaultstate="collapsed" desc="Properties">
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonView(View.CarModel.class)
     private Long id;
     
     @Column(nullable=false)
+    @JsonView(View.CarModel.class)
     private String name;
     
-    @OneToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="car_make_id", nullable = true)
+    @JsonView(View.CarModel.class)
     private CarMake make;
-    
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "model", cascade = CascadeType.ALL)
+    private List<CarModelEngineYear> carModelEngineYears;
+
+
     public Long getId() {
         return id;
     }
@@ -56,8 +65,16 @@ public class CarModel implements Serializable, SearchableEntity {
     public void setMake(CarMake make) {
         this.make = make;
     }
+
+    public List<CarModelEngineYear> getCarModelEngineYears() {
+        return carModelEngineYears;
+    }
+
+    public void setCarModelEngineYears(List<CarModelEngineYear> carModelEngineYears) {
+        this.carModelEngineYears = carModelEngineYears;
+    }
     //</editor-fold>
-    
+
     //<editor-fold defaultstate="collapsed" desc="Serialization">
     protected JSONSerializer getSearchSerializer() {
         return new JSONSerializer()
@@ -98,7 +115,7 @@ public class CarModel implements Serializable, SearchableEntity {
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Lifecycle">
-    @PreRemove
+    @PostRemove
     @Override
     public void removeSearchIndex() throws Exception {
         log.info("Removing from search index.");

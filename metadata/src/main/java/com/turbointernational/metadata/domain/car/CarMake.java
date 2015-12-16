@@ -1,7 +1,9 @@
 package com.turbointernational.metadata.domain.car;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.domain.SearchableEntity;
 import com.turbointernational.metadata.util.CarMakeElasticSearch;
+import com.turbointernational.metadata.web.View;
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
 import org.slf4j.Logger;
@@ -27,10 +29,15 @@ public class CarMake implements Serializable, SearchableEntity {
     //<editor-fold defaultstate="collapsed" desc="Properties">
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonView({View.CarMake.class, View.CarModel.class})
     private Long id;
 
     @Column(nullable = false)
+    @JsonView({View.CarMake.class, View.CarModel.class})
     private String name;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "make", cascade = CascadeType.ALL)
+    private List<CarModel> carModels;
 
     public Long getId() {
         return id;
@@ -47,6 +54,15 @@ public class CarMake implements Serializable, SearchableEntity {
     public void setName(String name) {
         this.name = name;
     }
+
+    public List<CarModel> getCarModels() {
+        return carModels;
+    }
+
+    public void setCarModels(List<CarModel> carModels) {
+        this.carModels = carModels;
+    }
+
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Serialization">
@@ -88,7 +104,7 @@ public class CarMake implements Serializable, SearchableEntity {
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Lifecycle">
-    @PreRemove
+    @PostRemove
     @Override
     public void removeSearchIndex() throws Exception {
         log.info("Removing from search index.");
@@ -102,6 +118,7 @@ public class CarMake implements Serializable, SearchableEntity {
         log.info("Updating search index.");
         CarMakeElasticSearch.instance().index(this);
     }
+
     //</editor-fold>
 
 }

@@ -18,4 +18,9 @@ public class View {
     public static interface DetailWithPartsAndAttachments extends Detail {};
 
     public static interface DetailWithParts extends Detail {};
+
+    public static interface CarModel extends Summary {};
+
+    public static interface CarMake extends Summary {};
+
 }

@@ -6,14 +6,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import javax.persistence.Cacheable;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 
 @Cacheable
 @Entity
@@ -27,7 +20,10 @@ public class CarYear implements Serializable {
     
     @Column(nullable=false)
     private String name;
-    
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "year", cascade = CascadeType.ALL)
+    private List<CarModelEngineYear> carModelEngineYears;
+
     public Long getId() {
         return id;
     }
@@ -42,6 +38,14 @@ public class CarYear implements Serializable {
     
     public void setName(String name) {
         this.name = name;
+    }
+
+    public List<CarModelEngineYear> getCarModelEngineYears() {
+        return carModelEngineYears;
+    }
+
+    public void setCarModelEngineYears(List<CarModelEngineYear> carModelEngineYears) {
+        this.carModelEngineYears = carModelEngineYears;
     }
     //</editor-fold>
     

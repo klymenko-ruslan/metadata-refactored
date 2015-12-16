@@ -59,6 +59,7 @@ angular.module("ngMetaCrudApp").directive("carfueltypeSearch", ["$log", "restSer
             restService.removeCarfueltype(id).then(
               function () {
                 $scope.clear(); // reload table
+                $scope.carfueltypeTableParams.reload();
                 gToast.open("Car fuel type '" + name + "' has been successfully removed.");
               },
               function errorResponse(response) {

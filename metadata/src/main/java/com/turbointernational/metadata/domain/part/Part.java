@@ -261,7 +261,7 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Lifecycle">
-    @PreRemove
+    @PostRemove
     @Override
     public void removeSearchIndex() throws Exception {
         log.info("Updating search index.");

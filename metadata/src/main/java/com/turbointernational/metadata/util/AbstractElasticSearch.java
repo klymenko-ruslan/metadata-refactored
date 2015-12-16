@@ -121,7 +121,6 @@ public abstract class AbstractElasticSearch implements Serializable {
         }
     }
 
-    @Async
     public void delete(Object doc) throws Exception {
         String elasticSearchType = getElasticSearchType();
         String searchId = getSearchId(doc);

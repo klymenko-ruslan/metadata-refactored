@@ -9,8 +9,8 @@ angular.module("ngMetaCrudApp").directive("carmodelSearch", ["$log", "restServic
       "link": function postLink(scope, iElement, iAttrs, controller, transcludeFn) {
         controller.transcludeActionsFn = transcludeFn;
       },
-      "controller": ["$log", "$q", "$scope", "dialogs", "carmodelSearchService", "ngTableParams",
-                    function ($log, $q, $scope, dialogs, carmodelSearchService, ngTableParams) {
+      "controller": ["$log", "$q", "$scope", "gToast", "dialogs", "carmodelSearchService", "ngTableParams",
+                    function ($log, $q, $scope, gToast, dialogs, carmodelSearchService, ngTableParams) {
         // Latest Results
         $scope.searchResults = null;
 

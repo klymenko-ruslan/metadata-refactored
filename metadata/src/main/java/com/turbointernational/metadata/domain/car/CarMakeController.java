@@ -1,5 +1,7 @@
 package com.turbointernational.metadata.domain.car;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.web.View;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.annotation.Secured;
@@ -30,6 +32,7 @@ public class CarMakeController {
     @Transactional
     @RequestMapping(value = "/carmakes", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
+    @JsonView(View.CarMake.class)
     @Secured("ROLE_READ")
     public List<CarMake> findAllOrderedByName() {
         return carMakeDao.findAllOrderedByName();

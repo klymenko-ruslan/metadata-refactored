@@ -1,6 +1,7 @@
 package com.turbointernational.metadata.domain.car;
 
 import com.turbointernational.metadata.domain.SearchableEntity;
+import com.turbointernational.metadata.domain.part.types.TurboCarModelEngineYear;
 import com.turbointernational.metadata.util.CarModelElasticSearch;
 import com.turbointernational.metadata.util.CarModelEngineYearElasticSearch;
 import flexjson.JSONDeserializer;
@@ -26,19 +27,21 @@ public class CarModelEngineYear implements Serializable, SearchableEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="car_model_id", nullable = true)
     private CarModel model;
     
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="car_engine_id", nullable = true)
     private CarEngine engine;
 
-
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="car_year_id", nullable = true)
     private CarYear year;
-    
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "carModelEngineYear", cascade = CascadeType.ALL)
+    private List<TurboCarModelEngineYear> turboCarModelEngineYears;
+
     public Long getId() {
         return id;
     }
@@ -117,10 +120,18 @@ public class CarModelEngineYear implements Serializable, SearchableEntity {
         return new JSONDeserializer<List<CarModelEngineYear>>().use(null, ArrayList.class).
                 use("values", CarModelEngineYear.class).deserialize(json);
     }
+
+    public List<TurboCarModelEngineYear> getTurboCarModelEngineYears() {
+        return turboCarModelEngineYears;
+    }
+
+    public void setTurboCarModelEngineYears(List<TurboCarModelEngineYear> turboCarModelEngineYears) {
+        this.turboCarModelEngineYears = turboCarModelEngineYears;
+    }
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Lifecycle">
-    @PreRemove
+    @PostRemove
     @Override
     public void removeSearchIndex() throws Exception {
         log.info("Removing from search index.");
@@ -134,5 +145,6 @@ public class CarModelEngineYear implements Serializable, SearchableEntity {
         log.info("Updating search index.");
         CarModelEngineYearElasticSearch.instance().index(this);
     }
+
     //</editor-fold>
 }
