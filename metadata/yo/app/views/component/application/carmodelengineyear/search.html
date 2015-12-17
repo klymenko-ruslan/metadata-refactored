@@ -18,21 +18,21 @@
     <!-- Tabular search results -->
     <div class="col-xs-12 col-sm-9">
         <table data-ng-table="cmeyTableParams" class="table table-bordered table-striped table-hover table-responsive">
-            <tr data-ng-repeat="application in $data">
+            <tr data-ng-repeat="rec in $data">
               <td title="'Year'" sortable="'year.name'">
-                {{application._source.year.name}}
+                {{rec._source.year.name}}
               </td>
               <td title="'Make'" sortable="'model.make.name'">
-                {{application._source.model.make.name}}
+                {{rec._source.model.make.name}}
               </td>
               <td title="'Model'" sortable="'model.name'">
-                {{application._source.model.name}}
+                {{rec._source.model.name}}
               </td>
               <td title="'Engine'" sortable="'engine.engineSize'">
-                {{application._source.engine.engineSize}}
+                {{rec._source.engine.engineSize}}
               </td>
               <td title="'Fuel Type'" sortable="'engine.fuelType.name'">
-                {{application._source.engine.fuelType.name}}
+                {{rec._source.engine.fuelType.name}}
               </td>
               <td class="actions text-center" title="'Actions'" cmey-search-actions></td>
             </tr>

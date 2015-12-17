@@ -174,6 +174,9 @@ angular.module('ngMetaCrudApp')
               return Restangular.one("application/carmodel", id).remove();
             };
 
+            this.findCarModelsOfMake = function(makeId) {
+                return Restangular.one("application").getList("carmodels", {makeId: makeId});
+            };
 
             this.findCarengine = function (id) {
                 return Restangular.one('application/carengine', id).get();

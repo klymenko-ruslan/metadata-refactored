@@ -3,7 +3,7 @@
 <subnav authorize="ROLE_APPLICATION_CRUD" item="modelengineyear">
 
   <li>
-    <a class="btn btn-success" onclick="alert('TODO')">
+    <a class="btn btn-success" ng-href="/application/carmodelengineyear/form">
       <i class="fa fa-wrench"></i>
       Create Model Engine Year
     </a>
@@ -14,9 +14,20 @@
 <h1>Model Engine Year List</h1>
 
 <cmey-search class="well well-lg">
+
   <a class="btn btn-primary btn-xs"
-    ng-href="/application/carmodelengineyear/{{application._source.id}}">
+    ng-href="/application/carmodelengineyear/{{rec._source.id}}">
     <i class="fa fa-eye"></i>
     View
   </a>
+  <a class="btn btn-primary btn-xs"
+     ng-href="/application/carmodelengineyear/{{rec._source.id}}/form">
+    <i class="fa fa-eye"></i>
+    Edit
+  </a>
+  <button ng-click="remove(rec._source.id)" authorize="ROLE_APPLICATION_CRUD" class="btn btn-danger btn-xs">
+    <i class="fa fa-trash-o"></i>
+    Remove
+  </button>
+
 </cmey-search>

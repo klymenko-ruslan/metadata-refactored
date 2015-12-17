@@ -25,4 +25,12 @@ public class CarModelDao extends AbstractDao<CarModel> {
         List r = q.getResultList();
         return !r.isEmpty();
     }
+
+    public List<CarModel> findCarModelsOfMake(long makeId) {
+        EntityManager em = getEntityManager();
+        Query q = em.createNamedQuery("findCarModelsOfMake", CarModel.class);
+        q.setParameter("makeId", makeId);
+        return q.getResultList();
+    }
+
 }

@@ -11,10 +11,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * Created by trunikov on 12/15/15.
  */
-@RequestMapping("/metadata/application/carmodel")
+@RequestMapping("/metadata/application")
 @Controller
 public class CarModelController {
 
@@ -22,7 +24,7 @@ public class CarModelController {
     private CarModelDao carModelDao;
 
     @Transactional
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/carmodel/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     @JsonView(View.CarModel.class)
     @Secured("ROLE_READ")
@@ -31,7 +33,16 @@ public class CarModelController {
     }
 
     @Transactional
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(value = "/carmodels", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    @JsonView(View.CarModel.class)
+    @Secured("ROLE_READ")
+    public List<CarModel> CarModelsOfMake(@RequestParam Long makeId) {
+        return carModelDao.findCarModelsOfMake(makeId);
+    }
+
+    @Transactional
+    @RequestMapping(value = "/carmodel", method = RequestMethod.POST)
     @ResponseBody
     @Secured("ROLE_APPLICATION_CRUD")
     public long create(@RequestBody CarModel carModel) {
@@ -45,7 +56,7 @@ public class CarModelController {
     }
 
     @Transactional
-    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/carmodel/{id}", method = RequestMethod.PUT)
     @ResponseBody
     @Secured("ROLE_APPLICATION_CRUD")
     public void update(@RequestBody CarModel carModel) {
@@ -55,7 +66,7 @@ public class CarModelController {
     }
 
     @Transactional
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/carmodel/{id}", method = RequestMethod.DELETE)
     @ResponseBody
     @Secured("ROLE_APPLICATION_CRUD")
     public void remove(@PathVariable("id") long id) {

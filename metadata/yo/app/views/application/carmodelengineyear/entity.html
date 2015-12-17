@@ -1,0 +1,55 @@
+<form name="cmeyForm" novalidate authorize="ROLE_APPLICATION_CRUD">
+
+  <metanav />
+
+  <subnav>
+
+    <li>
+      <button ng-disabled="cmeyForm.$pristine || cmeyForm.$invalid || cmeyForm.$pending"
+         ng-click="save()" class="btn btn-success">
+        <i class="fa fa-save"></i>
+        Save
+      </button>
+    </li>
+
+  </subnav>
+
+  <div class="col-xs-12">
+    <h2>{{::titleHead}} Car Model Engine Year<span data-ng-show="cmey.id">#{{cmey.id}}</span></h2>
+  </div>
+
+    <div class="row">
+
+      <div class="col-xs-12 col-md-6">
+        <label class="control-label">Car Make</label>
+        <input ng-model="carmakeFilter" class="form-control input-sm" placeholder="Car make filter..."/>
+        <br/>
+        <select
+          ng-model="cmey.model.make.id" data-ng-change="onChangeMake()"
+          data-ng-options="carmake.id as carmake.name for carmake in carmakes | filter:{name:carmakeFilter}"
+          data-ng-disabled="carmakes.length == 0"
+          size="15" class="select-large required form-control">
+        </select>
+      </div>
+
+      <div class="col-xs-12 col-md-6">
+        <label class="control-label">Car Model</label>
+        <input ng-model="carmodelFilter" class="form-control input-sm" placeholder="Car model filter..."/>
+        <br/>
+        <select required
+          data-ng-model="cmey.model.id"
+          data-ng-options="carmodel.id as carmodel.name for carmodel in carmodels | filter:{name:carmodelFilter}"
+          data-ng-disabled="carmodels.length == 0"
+          size="15" class="select-large required form-control">
+        </select>
+      </div>
+
+    </div>
+
+    <div class="row">
+      <div class="col-xs-12">
+        <input data-ng-model="cmey.year.name">
+      </div>
+    </div>
+
+</form>
