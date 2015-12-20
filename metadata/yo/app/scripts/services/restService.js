@@ -147,11 +147,11 @@ angular.module('ngMetaCrudApp')
             };
 
             this.createCarfueltype = function (carfueltype) {
-                return Restangular.one("application").post("carfueltype", carfueltype);
+              return Restangular.one("application").post("carfueltype", carfueltype);
             };
 
             this.updateCarfueltype = function (carfueltype) {
-                return Restangular.one("application/carfueltype", carfueltype.id).customPUT(carfueltype);
+              return Restangular.one("application/carfueltype", carfueltype.id).customPUT(carfueltype);
             };
 
             this.removeCarfueltype = function(id) {
@@ -159,15 +159,15 @@ angular.module('ngMetaCrudApp')
             };
 
             this.findCarmodel = function (id) {
-                return Restangular.one('application/carmodel', id).get();
+              return Restangular.one('application/carmodel', id).get();
             };
 
             this.createCarmodel = function (carmodel) {
-                return Restangular.one("application").post("carmodel", carmodel);
+              return Restangular.one("application").post("carmodel", carmodel);
             }
 
             this.updateCarmodel = function (carmodel) {
-                return Restangular.one("application/carmodel", carmodel.id).customPUT(carmodel);
+              return Restangular.one("application/carmodel", carmodel.id).customPUT(carmodel);
             };
 
             this.removeCarmodel = function(id) {
@@ -175,15 +175,15 @@ angular.module('ngMetaCrudApp')
             };
 
             this.findCarModelsOfMake = function(makeId) {
-                return Restangular.one("application").getList("carmodels", {makeId: makeId});
+              return Restangular.one("application").getList("carmodels", {makeId: makeId});
             };
 
             this.findCarengine = function (id) {
-                return Restangular.one('application/carengine', id).get();
+              return Restangular.one('application/carengine', id).get();
             };
 
             this.createCarengine = function (carengine) {
-                return Restangular.one("application").post("carengine", carengine);
+              return Restangular.one("application").post("carengine", carengine);
             }
 
             this.updateCarengine = function (carengine) {
@@ -193,6 +193,14 @@ angular.module('ngMetaCrudApp')
             this.removeCarengine = function(id) {
               return Restangular.one("application/carengine", id).remove();
             };
+
+            this.findAllCarEnginesOrderedByName = function() {
+              return Restangular.one("application").getList("carengines");
+            };
+
+            this.findCarYearByName = function (name) {
+              return Restangular.one("application/caryear").get({"name": name});
+            }
 
         };
       });

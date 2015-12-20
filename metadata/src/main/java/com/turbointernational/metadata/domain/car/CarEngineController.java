@@ -9,10 +9,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * Created by trunikov on 12/15/15.
  */
-@RequestMapping("/metadata/application/carengine")
+@RequestMapping("/metadata/application")
 @Controller
 public class CarEngineController {
 
@@ -20,7 +22,7 @@ public class CarEngineController {
     private CarEngineDao carEngineDao;
 
     @Transactional
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/carengine/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     @JsonView(View.CarEngine.class)
     @Secured("ROLE_READ")
@@ -29,7 +31,16 @@ public class CarEngineController {
     }
 
     @Transactional
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(value = "/carengines", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    @JsonView(View.CarEngine.class)
+    @Secured("ROLE_READ")
+    public List<CarEngine> findAllOrderedByName() {
+        return carEngineDao.findAllOrderedByName();
+    }
+
+    @Transactional
+    @RequestMapping(value = "/carengine", method = RequestMethod.POST)
     @ResponseBody
     @Secured("ROLE_APPLICATION_CRUD")
     public long create(@RequestBody CarEngine carEngine) {
@@ -43,7 +54,7 @@ public class CarEngineController {
     }
 
     @Transactional
-    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/carengine/{id}", method = RequestMethod.PUT)
     @ResponseBody
     @Secured("ROLE_APPLICATION_CRUD")
     public void update(@RequestBody CarEngine carEngine) {
@@ -53,7 +64,7 @@ public class CarEngineController {
     }
 
     @Transactional
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/carengine/{id}", method = RequestMethod.DELETE)
     @ResponseBody
     @Secured("ROLE_APPLICATION_CRUD")
     public void remove(@PathVariable("id") long id) {

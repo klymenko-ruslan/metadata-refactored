@@ -25,5 +25,10 @@ public class CarEngineDao extends AbstractDao<CarEngine> {
         List r = q.getResultList();
         return !r.isEmpty();
     }
+
+    public List<CarEngine> findAllOrderedByName() {
+        Query query = em.createNamedQuery("findAllCarEngineOrderedByName");
+        return query.getResultList();
+    }
 }
 

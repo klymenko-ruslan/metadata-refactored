@@ -32,4 +32,6 @@ public class View {
 
     public static interface CarFuelType extends Summary {};
 
+    public static interface CarYear extends Summary {};
+
 }

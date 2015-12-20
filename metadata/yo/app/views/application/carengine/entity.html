@@ -14,11 +14,13 @@
 
   </subnav>
 
+  <div class="col-xs-12">
+    <h2>{{::titleHead}} Car Engine</h2>
+  </div>
+
   <div class="row">
 
     <div class="col-xs-12 col-sm-6">
-
-      <h2>{{::titleHead}} Car Engine</h2>
 
       <label for="carengine_enginesize">Engine Size</label>
       <input id="carengine_enginesize" name="carengine_enginesize" class="form-control" type="text" ng-model="carengine.engineSize" ng-model-options="{ debounce: 500 }" required maxlength="50" />
@@ -33,7 +35,6 @@
     <div class="col-xs-12 col-sm-6">
       <label class="control-label">Fuel Type</label>
       <input ng-model="carfueltypeFilter" class="form-control input-sm" placeholder="Car fuel type filter..."/>
-      <br/>
       <select required
         data-ng-model="carengine.fuelType.id"
         data-ng-options="carfueltype.id as carfueltype.name for carfueltype in carfueltypes | filter:{name:carfueltypeFilter}"

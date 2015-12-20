@@ -14,11 +14,13 @@
 
   </subnav>
 
+  <div class="col-xs-12">
+    <h2>{{::titleHead}} Car Model</h2>
+  </div>
+
   <div class="row">
 
     <div class="col-xs-12 col-sm-6">
-
-      <h2>{{::titleHead}} Car Model</h2>
 
       <label for="carmodel_name">Name</label>
       <input id="carmodel_name" name="carmodel_name" class="form-control" type="text" ng-model="carmodel.name" ng-model-options="{ debounce: 500 }" required maxlength="50" unique-carmodel-name />
@@ -34,7 +36,6 @@
     <div class="col-xs-12 col-sm-6">
       <label class="control-label">Car Make</label>
       <input ng-model="carmakeFilter" class="form-control input-sm" placeholder="Car make filter..."/>
-      <br/>
       <select required
         data-ng-model="carmodel.make.id"
         data-ng-options="carmake.id as carmake.name for carmake in carmakes | filter:{name:carmakeFilter}"

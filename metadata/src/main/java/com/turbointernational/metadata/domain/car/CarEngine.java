@@ -19,6 +19,9 @@ import java.util.List;
 @Cacheable
 @Entity
 @Table(name="car_engine", uniqueConstraints=@UniqueConstraint(columnNames={"engineSize", "car_fuel_type_id"}))
+@NamedQueries({
+        @NamedQuery(name="findAllCarEngineOrderedByName", query = "FROM CarEngine ORDER BY engineSize")
+})
 public class CarEngine implements Serializable, SearchableEntity {
 
     private final static Log log = LogFactory.getLog(CarEngine.class);
