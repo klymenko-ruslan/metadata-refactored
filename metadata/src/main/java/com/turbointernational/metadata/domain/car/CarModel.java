@@ -21,7 +21,11 @@ import javax.persistence.*;
 @Table(name = "car_model", uniqueConstraints = @UniqueConstraint(columnNames = {"name", "car_make_id"}))
 @NamedQueries({
         @NamedQuery(name = "findCarModelsOfMake",
-                query = "SELECT cm FROM CarModel AS cm WHERE cm.make.id=:makeId ORDER BY cm.name")
+                query = "SELECT cm FROM CarModel AS cm WHERE cm.make.id=:makeId ORDER BY cm.name"),
+        @NamedQuery(name = "findCarModelsByFilter",
+                query = "SELECT cm FROM CarModel AS cm WHERE cm.name=:name AND cm.make.id=:makeId"),
+        @NamedQuery(name = "findCarModelsByFilter2",
+                query = "SELECT cm FROM CarModel AS cm WHERE cm.id !=:id cm.name=:name AND cm.make.id=:makeId")
 })
 public class CarModel implements Serializable, SearchableEntity {
 

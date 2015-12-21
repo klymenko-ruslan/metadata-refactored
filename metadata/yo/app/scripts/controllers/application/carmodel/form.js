@@ -74,7 +74,7 @@ angular.module("ngMetaCrudApp").controller("CarModelFormCtrl", ["restService", "
     };
 
   }
-]).directive("uniqueCarmodelName", ["$log", "$q", "restService", function($log, $q, restService) {
+]).directive("uniqueCarmodelRec", ["$log", "$q", "restService", function($log, $q, restService) {
   // Validator for uniqueness of the carmodel name.
   return {
     require: "ngModel",
