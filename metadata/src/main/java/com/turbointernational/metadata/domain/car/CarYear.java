@@ -32,6 +32,13 @@ public class CarYear implements Serializable {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "year", cascade = CascadeType.ALL)
     private List<CarModelEngineYear> carModelEngineYears;
 
+    public CarYear() {
+    }
+
+    public CarYear(String year) {
+        setName(year);
+    }
+
     public Long getId() {
         return id;
     }

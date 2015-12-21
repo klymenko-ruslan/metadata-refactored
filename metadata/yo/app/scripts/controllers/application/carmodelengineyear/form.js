@@ -63,12 +63,55 @@ $log.log("cmey: " + angular.toJson($scope.cmey));
       }
     };
 
-    $scope.save = function () {
-      $log.log("To save: " + angular.toJson($scope.cmey));
+    $scope._merge = function () {
+      var cmey2 = {
+        "id": $scope.cmeyId
+      };
+      if ($scope.cmey.model != null && $scope.cmey.model.id) {
+        cmey2["model"] = {
+          "id": $scope.cmey.model.id,
+        };
+      }
+      if ($scope.cmey.engine != null && $scope.cmey.engine.id) {
+        cmey2["engine"] = {
+          "id": $scope.cmey.engine.id
+        };
+      }
+      if ($scope.cmey.year != null && $scope.cmey.year.name) {
+        cmey2["year"] = {
+          "name": $scope.cmey.year.name
+        };
+      }
+      return cmey2;
     };
 
-    $scope.remove = function () {
-      alert("TODO");
+    $scope.save = function () {
+      $log.log("To save (raw): " + angular.toJson($scope.cmey));
+      var cmey2 = $scope._merge();
+      $log.log("To save (normalized): " + angular.toJson(cmey2));
+      if ($scope.cmeyId == null) {
+        restService.createCarmodelengineyear(cmey2).then(
+          function (newCmeyId) {
+            $log.log("Created 'car_model_engine_year': " + newCmeyId);
+            gToast.open("A new Model Engine Year has been successfully created.");
+            $location.path('/application/carmodelengineyear/list');
+          },
+          function (errorResponse) {
+            restService.error("Could not create 'car_model_engine_year'.", errorResponse);
+          }
+        );
+      } else {
+        restService.updateCarmodelengineyear(cmey2).then(
+          function (newCmeyId) {
+            $log.log("Updated 'car_model_engine_year': " + $scope.cmeyId);
+            gToast.open("The Model Engine Year has been successfully updated.");
+            $location.path('/application/carmodelengineyear/list');
+          },
+          function (errorResponse) {
+            restService.error("Could not update 'car_model_engine_year': " + $scope.cmeyId, errorResponse);
+          }
+        );
+      }
     };
 
     $scope.onChangeMake = function () {

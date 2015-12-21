@@ -24,6 +24,7 @@ public class CarFuelTypeController {
     @Transactional
     @RequestMapping(value = "/carfueltype", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
+    @JsonView(View.CarFuelType.class)
     @Secured("ROLE_READ")
     public CarFuelType findByName(@RequestParam("name") String name) {
         return carFuelTypeDao.findCarFuelTypeByName(name);
@@ -34,7 +35,7 @@ public class CarFuelTypeController {
     @ResponseBody
     @JsonView(View.CarFuelType.class)
     @Secured("ROLE_READ")
-    public List<View.CarFuelType> findAllOrderedByName() {
+    public List<CarFuelType> findAllOrderedByName() {
         return carFuelTypeDao.findAllOrderedByName();
     }
 

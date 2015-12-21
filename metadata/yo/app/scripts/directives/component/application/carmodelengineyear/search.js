@@ -9,8 +9,8 @@ angular.module("ngMetaCrudApp").directive("cmeySearch", ["$log", "restService", 
       link: function postLink(scope, iElement, iAttrs, controller, transcludeFn) {
         controller.transcludeActionsFn = transcludeFn;
       },
-      controller: ["$log", "$q", "$scope", "cmeySearchService", "ngTableParams",
-                    function ($log, $q, $scope, cmeySearchService, ngTableParams) {
+      controller: ["$log", "$q", "dialogs", "gToast", "$scope", "cmeySearchService", "ngTableParams",
+                    function ($log, $q, dialogs, gToast, $scope, cmeySearchService, ngTableParams) {
         // Latest Results
         $scope.searchResults = null;
         // Applications Table
@@ -65,6 +65,24 @@ angular.module("ngMetaCrudApp").directive("cmeySearch", ["$log", "restService", 
           },
           true
         );
+
+        $scope.remove = function (id) {
+          dialogs.confirm("Delete Model Engine Year.", "Are you sure?").result.then(
+            function() {
+              // Yes
+              restService.removeCarmodelengineyear(id).then(
+                function () {
+                  $scope.clear(); // reload table
+                  gToast.open("Car Model Engine Year has been successfully removed.");
+                },
+                function errorResponse(response) {
+                  restService.error("Car Model Engine Year remove failed.", response);
+                }
+              );
+            }
+          );
+        };
+
       }]
     };
   }]

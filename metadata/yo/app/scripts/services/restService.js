@@ -77,8 +77,20 @@ angular.module('ngMetaCrudApp')
               };
 
             this.findCarmodelengineyear = function (cmey_id) {
-                return Restangular.one('application/carmodelengineyear', cmey_id).get();
-              };
+              return Restangular.one("application/carmodelengineyear", cmey_id).get();
+            };
+
+            this.createCarmodelengineyear = function (cmey) {
+              return Restangular.one("application").post("carmodelengineyear", cmey);
+            };
+
+            this.updateCarmodelengineyear = function (cmey) {
+              return Restangular.one("application/carmodelengineyear", cmey.id).customPUT(cmey);
+            };
+
+            this.removeCarmodelengineyear = function (id) {
+                return Restangular.one("/application/carmodelengineyear/" +  id).remove();
+            };
 
             this.findPartApplications = function (part_id) {
                 return Restangular.one('part', part_id).getList('application');

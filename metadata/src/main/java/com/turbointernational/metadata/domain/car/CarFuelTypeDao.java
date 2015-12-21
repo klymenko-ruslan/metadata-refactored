@@ -1,7 +1,6 @@
 package com.turbointernational.metadata.domain.car;
 
 import com.turbointernational.metadata.domain.AbstractDao;
-import com.turbointernational.metadata.web.View;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.NoResultException;
@@ -27,7 +26,7 @@ public class CarFuelTypeDao extends AbstractDao<CarFuelType> {
         }
     }
 
-    public List<View.CarFuelType> findAllOrderedByName() {
+    public List<CarFuelType> findAllOrderedByName() {
         Query query = em.createNamedQuery("findAllCarFuelTypeOrderedByName");
         return query.getResultList();
     }

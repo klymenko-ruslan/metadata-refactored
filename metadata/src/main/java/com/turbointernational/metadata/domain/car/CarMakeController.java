@@ -24,6 +24,7 @@ public class CarMakeController {
     @Transactional
     @RequestMapping(value = "/carmake", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
+    @JsonView(View.CarMake.class)
     @Secured("ROLE_READ")
     public CarMake findByName(@RequestParam("name") String name) {
         return carMakeDao.findCarMakeByName(name);

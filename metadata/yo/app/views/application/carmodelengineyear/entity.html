@@ -40,6 +40,7 @@
     <div class="col-xs-12 col-md-6">
       <label class="control-label" for="carmakeFilter">
         Car Make
+       <span ng-click="onClearModel(cmeyForm)" ng-disabled="cmey.model.id == null" class="btn btn-link btn-sm"><i></i></span>
       </label>
 
       <input id="carmakeFilter" ng-model="carmakeFilter" class="form-control input-sm" placeholder="Car make filter..."/>
@@ -55,7 +56,7 @@
     <div class="col-xs-12 col-md-6">
       <label class="control-label" for="carmodelFilter">
         Car Model
-        <span ng-click="onClearModel(cmeyForm)" ng-disabled="cmey.model.id == null" class="btn btn-link btn-sm" stype="padding:0">
+        <span ng-click="onClearModel(cmeyForm)" ng-disabled="cmey.model.id == null" class="btn btn-link btn-sm">
           <i class="fa fa-times"></i>
         </span>
       </label>
