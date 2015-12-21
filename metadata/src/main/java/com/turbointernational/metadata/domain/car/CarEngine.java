@@ -29,16 +29,16 @@ public class CarEngine implements Serializable, SearchableEntity {
     //<editor-fold defaultstate="collapsed" desc="Properties">
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonView(View.CarEngine.class)
+    @JsonView(View.Summary.class)
     private Long id;
     
     @Column(nullable=false)
-    @JsonView(View.CarEngine.class)
+    @JsonView(View.Summary.class)
     private String engineSize;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="car_fuel_type_id")
-    @JsonView(View.CarEngine.class)
+    @JsonView(View.CarEngineDetailed.class)
     private CarFuelType fuelType;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "engine", cascade = CascadeType.ALL)

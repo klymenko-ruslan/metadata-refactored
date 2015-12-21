@@ -31,11 +31,11 @@ public class CarFuelType implements Serializable, SearchableEntity {
     //<editor-fold defaultstate="collapsed" desc="Properties">
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonView({View.CarFuelType.class, View.CarEngine.class})
+    @JsonView({View.Summary.class})
     private Long id;
 
     @Column(nullable = false)
-    @JsonView({View.CarFuelType.class, View.CarEngine.class})
+    @JsonView({View.Summary.class})
     private String name;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "fuelType", cascade = CascadeType.ALL)

@@ -24,7 +24,7 @@ public class CarYearController {
 
     @Transactional
     @RequestMapping(value = "/caryear", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @JsonView(View.CarYear.class)
+    @JsonView(View.Summary.class)
     @ResponseBody
     @Secured("ROLE_READ")
     public CarYear findByName(@RequestParam("name") String name) {

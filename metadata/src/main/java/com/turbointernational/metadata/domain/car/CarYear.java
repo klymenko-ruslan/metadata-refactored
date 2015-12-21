@@ -21,12 +21,12 @@ public class CarYear implements Serializable {
 
     //<editor-fold defaultstate="collapsed" desc="Properties">
     @Id
-    @JsonView(View.CarYear.class)
+    @JsonView(View.Summary.class)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false, unique = true)
-    @JsonView(View.CarYear.class)
+    @JsonView(View.Summary.class)
     private String name;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "year", cascade = CascadeType.ALL)

@@ -24,7 +24,7 @@ public class CarFuelTypeController {
     @Transactional
     @RequestMapping(value = "/carfueltype", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    @JsonView(View.CarFuelType.class)
+    @JsonView(View.Summary.class)
     @Secured("ROLE_READ")
     public CarFuelType findByName(@RequestParam("name") String name) {
         return carFuelTypeDao.findCarFuelTypeByName(name);
@@ -33,7 +33,7 @@ public class CarFuelTypeController {
     @Transactional
     @RequestMapping(value = "/carfueltypes", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    @JsonView(View.CarFuelType.class)
+    @JsonView(View.Summary.class)
     @Secured("ROLE_READ")
     public List<CarFuelType> findAllOrderedByName() {
         return carFuelTypeDao.findAllOrderedByName();
@@ -49,7 +49,7 @@ public class CarFuelTypeController {
     }
 
     @Transactional
-    @RequestMapping(value = "/fueltype/{id}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/carfueltype/{id}", method = RequestMethod.PUT)
     @ResponseBody
     @Secured("ROLE_APPLICATION_CRUD")
     public void update(@RequestBody CarFuelType carFuelType) {
@@ -57,7 +57,7 @@ public class CarFuelTypeController {
     }
 
     @Transactional
-    @RequestMapping(value = "/fueltype/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/carfueltype/{id}", method = RequestMethod.DELETE)
     @ResponseBody
     @Secured("ROLE_APPLICATION_CRUD")
     public void remove(@PathVariable("id") long id) {

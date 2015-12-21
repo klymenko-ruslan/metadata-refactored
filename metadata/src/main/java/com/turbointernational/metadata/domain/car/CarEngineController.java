@@ -24,7 +24,7 @@ public class CarEngineController {
     @Transactional
     @RequestMapping(value = "/carengine/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    @JsonView(View.CarEngine.class)
+    @JsonView(View.CarEngineDetailed.class)
     @Secured("ROLE_READ")
     public CarEngine get(@PathVariable("id") Long id) {
         return carEngineDao.findOne(id);
@@ -33,7 +33,7 @@ public class CarEngineController {
     @Transactional
     @RequestMapping(value = "/carengines", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    @JsonView(View.CarEngine.class)
+    @JsonView(View.Summary.class)
     @Secured("ROLE_READ")
     public List<CarEngine> findAllOrderedByName() {
         return carEngineDao.findAllOrderedByName();

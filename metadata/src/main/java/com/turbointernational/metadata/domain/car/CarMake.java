@@ -29,11 +29,11 @@ public class CarMake implements Serializable, SearchableEntity {
     //<editor-fold defaultstate="collapsed" desc="Properties">
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonView({View.CarMake.class, View.CarModel.class})
+    @JsonView(View.Summary.class)
     private Long id;
 
     @Column(nullable = false)
-    @JsonView({View.CarMake.class, View.CarModel.class})
+    @JsonView(View.Summary.class)
     private String name;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "make", cascade = CascadeType.ALL)
