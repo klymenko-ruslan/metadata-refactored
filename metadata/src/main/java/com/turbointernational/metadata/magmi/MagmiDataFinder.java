@@ -60,7 +60,9 @@ public class MagmiDataFinder {
             productMap.get(application.getSku())
                       .addApplication(application);
         }
-        
+
+        String productIdsCommas = StringUtils.join(productIds, ',');
+
         logger.info("Found {} applications", applications.size());
         
         // Add TI CHRAs
@@ -71,7 +73,7 @@ public class MagmiDataFinder {
             "    has_ti_chra\n" +
             "FROM\n" +
             "    vmagmi_ti_chra\n" +
-            "WHERE id IN (" + StringUtils.join(productIds, ',') + ")", new RowCallbackHandler() {
+            "WHERE id IN (" + productIdsCommas + ")", new RowCallbackHandler() {
             @Override
             public void processRow(ResultSet rs) throws SQLException {
                 boolean hasTiChra = rs.getBoolean("has_ti_chra");
@@ -81,8 +83,36 @@ public class MagmiDataFinder {
                 product.setHasTiChra(hasTiChra);
             }
         });
+
+        // Add "has_ti_interchange" and "has_foreign_interchange". See tickets #537 and #538.
+        logger.info("Finding 'has_ti_interchange' and 'has_foreign_interchange': {}", applications.size());
+        db.query("  SELECT " +
+                 "      p.id AS sku, " +
+                 "      max(case when p1.manfr_id = 11 then 1 else 0 end) AS has_ti_interchange, " +
+                 "      max(case when p1.manfr_id <> p.manfr_id then 1 else 0 end) AS has_foreign_interchange " +
+                 "  FROM " +
+                 "      part AS p " +
+                 "      -- inactive products are excluded " +
+                 "      LEFT JOIN (interchange_item AS ii1 " +
+                 "      INNER JOIN interchange_item AS ii2 ON ii1.interchange_header_id = ii2.interchange_header_id " +
+                 "      AND ii1.part_id <> ii2.part_id " +
+                 "      INNER JOIN part AS p1 ON ii2.part_id = p1.id AND p1.inactive = False) ON p.id = ii1.part_id " +
+                 "  WHERE " +
+                 "      p.id IN(" + productIdsCommas + ") " +
+                 "  GROUP BY p.id",
+                new RowCallbackHandler() {
+                    @Override
+                    public void processRow(ResultSet rs) throws SQLException {
+                        boolean hasTiInterchange = rs.getBoolean("has_ti_interchange");
+                        boolean hasForeignInterchange = rs.getBoolean("has_foreign_interchange");
+                        long partId = rs.getLong("id");
+                        MagmiProduct product = productMap.get(partId);
+                        product.setHasTiInterchange(hasTiInterchange);
+                        product.setHasForeignInterchange(hasForeignInterchange);
+                    }
+                });
+
         logger.info("Finding images: {}", applications.size());
-        
         // Add the images
         List<ProductImage> images = partDao.findProductImages(productIds, this);
         

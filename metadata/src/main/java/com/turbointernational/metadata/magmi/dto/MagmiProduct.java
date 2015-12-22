@@ -48,8 +48,12 @@ public class MagmiProduct {
     
     private String tiPartNumber = "";
     
-    private Boolean hasTiChra = false;
-    
+    private Boolean hasTiChra = Boolean.FALSE;
+
+    private Boolean hasTiInterchange = Boolean.FALSE;
+
+    private Boolean hasForeignInterchange = Boolean.FALSE;
+
     private String sopJson = "";
     
     private final List<MagmiBomItem> bom = new ArrayList<MagmiBomItem>();
@@ -103,7 +107,23 @@ public class MagmiProduct {
     public void setHasTiChra(Boolean hasTiChra) {
         this.hasTiChra = hasTiChra;
     }
-    
+
+    public Boolean getHasTiInterchange() {
+        return hasTiInterchange;
+    }
+
+    public void setHasTiInterchange(Boolean hasTiInterchange) {
+        this.hasTiInterchange = hasTiInterchange;
+    }
+
+    public Boolean getHasForeignInterchange() {
+        return hasForeignInterchange;
+    }
+
+    public void setHasForeignInterchange(Boolean hasForeignInterchange) {
+        this.hasForeignInterchange = hasForeignInterchange;
+    }
+
     public void setSopJson(String sopJson) {
         this.sopJson = sopJson;
     }
@@ -228,6 +248,8 @@ public class MagmiProduct {
         columns.put("ti_part_sku", StringUtils.join(tiInterchanges, ','));
         columns.put("ti_part_number", tiPartNumber);
         columns.put("has_ti_chra", Boolean.toString(hasTiChra));
+        columns.put("has_ti_interchange", Boolean.toString(hasTiInterchange));
+        columns.put("has_foreign_interchange", Boolean.toString(hasForeignInterchange));
         columns.put("standard_oversize_part", sopJson);
         
         // Don't overwrite turbo values

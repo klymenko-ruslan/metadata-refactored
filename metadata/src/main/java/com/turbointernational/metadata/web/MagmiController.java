@@ -78,6 +78,8 @@ public class MagmiController {
             "bill_of_materials", // BOM
             "where_used",        // Usages
             "has_ti_chra",       // Has TI CHRA descendant
+            "has_ti_interchange",
+            "has_foreign_interchange",
             "price",
             "qty",
             "turbo_model",      // Turbo Models
