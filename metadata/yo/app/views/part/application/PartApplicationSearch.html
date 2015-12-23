@@ -46,7 +46,7 @@
       <td>{{item.engine.engineSize}}</td>
       <td>{{item.engine.fuelType.name}}</td>
       <td>
-        <a class="btn btn-danger btn-xs" ng-click="unpickApplication($index, application._source.id)">
+        <a class="btn btn-danger btn-xs" ng-click="unpickApplication($index)">
           <i class="fa fa-times"></i>
           Unpick
         </a>
@@ -66,13 +66,13 @@
 <cmey-search class="well well-lg">
 
   <a class="btn btn-primary btn-xs"
-     ng-href="/application/carmodelengineyear/{{application._source.id}}">
+     ng-href="/application/carmodelengineyear/{{rec._source.id}}">
     <i class="fa fa-eye"></i>
     View
   </a>
 
   <a class="btn btn-success btn-xs"
-    ng-click="pickApplication(application._source)">
+    ng-click="pickApplication(rec._source)">
       <i class="fa fa-bullseye"></i>
     Pick
   </a>
