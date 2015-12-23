@@ -109,10 +109,18 @@ public class MagmiDataFinder {
                     public void processRow(ResultSet rs) throws SQLException {
                         long partId = rs.getLong("sku");
                         MagmiProduct product = productMap.get(partId);
-                        boolean hasTiInterchange = rs.getBoolean("has_ti_interchange");
-                        product.setHasTiInterchange(hasTiInterchange);
-                        boolean hasForeignInterchange = rs.getBoolean("has_foreign_interchange");
-                        product.setHasForeignInterchange(hasForeignInterchange);
+                        int hasTiInterchange = rs.getInt("has_ti_interchange");
+                        if (rs.wasNull()) {
+                            product.setHasTiInterchange(null);
+                        } else {
+                            product.setHasTiInterchange(hasTiInterchange);
+                        }
+                        int hasForeignInterchange = rs.getInt("has_foreign_interchange");
+                        if (rs.wasNull()) {
+                            product.setHasForeignInterchange(null);
+                        } else {
+                            product.setHasForeignInterchange(hasForeignInterchange);
+                        }
                     }
                 });
         // Add the images

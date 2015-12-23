@@ -50,9 +50,9 @@ public class MagmiProduct {
     
     private Boolean hasTiChra = Boolean.FALSE;
 
-    private Boolean hasTiInterchange = Boolean.FALSE;
+    private Integer hasTiInterchange = null;
 
-    private Boolean hasForeignInterchange = Boolean.FALSE;
+    private Integer hasForeignInterchange = null;
 
     private String sopJson = "";
     
@@ -108,19 +108,19 @@ public class MagmiProduct {
         this.hasTiChra = hasTiChra;
     }
 
-    public Boolean getHasTiInterchange() {
+    public Integer getHasTiInterchange() {
         return hasTiInterchange;
     }
 
-    public void setHasTiInterchange(Boolean hasTiInterchange) {
+    public void setHasTiInterchange(Integer hasTiInterchange) {
         this.hasTiInterchange = hasTiInterchange;
     }
 
-    public Boolean getHasForeignInterchange() {
+    public Integer getHasForeignInterchange() {
         return hasForeignInterchange;
     }
 
-    public void setHasForeignInterchange(Boolean hasForeignInterchange) {
+    public void setHasForeignInterchange(Integer hasForeignInterchange) {
         this.hasForeignInterchange = hasForeignInterchange;
     }
 
@@ -248,8 +248,8 @@ public class MagmiProduct {
         columns.put("ti_part_sku", StringUtils.join(tiInterchanges, ','));
         columns.put("ti_part_number", tiPartNumber);
         columns.put("has_ti_chra", Boolean.toString(hasTiChra));
-        columns.put("has_ti_interchange", Boolean.toString(hasTiInterchange));
-        columns.put("has_foreign_interchange", Boolean.toString(hasForeignInterchange));
+        columns.put("has_ti_interchange", hasTiInterchange == null ? null : hasTiInterchange.toString());
+        columns.put("has_foreign_interchange", hasForeignInterchange == null ? null : hasForeignInterchange.toString());
         columns.put("standard_oversize_part", sopJson);
         
         // Don't overwrite turbo values
