@@ -224,15 +224,6 @@ public class MagmiController {
         return headers.toArray(new String[0]);
     }
 
-    // TODO: remove when development will be finished
-    @RequestMapping("/mssql")
-    @Transactional
-    public ResponseEntity<String> mssql() throws Exception {
-        Mas90Service.Mas90 mas90 = mas90Service.getService(Mas90Service.Implementation.MS_SQL);
-
-        return ResponseEntity.ok("Export finished.");
-    }
-
     @RequestMapping("/products")
     @ResponseBody
     @Transactional
