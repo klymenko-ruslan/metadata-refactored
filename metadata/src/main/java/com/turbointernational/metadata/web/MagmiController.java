@@ -19,7 +19,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -240,6 +239,7 @@ public class MagmiController {
         long startTime = System.currentTimeMillis();
         
         Mas90Service.Mas90 mas90 = mas90Service.getService(implementation);
+        logger.info("Mas90 implementation: {}", mas90.toString());
         CSVWriter writer = new CSVWriter(new OutputStreamWriter(out), ',', '\'', '\\');
         
         // Write the header row
@@ -321,6 +321,7 @@ public class MagmiController {
         response.setHeader("Content-Disposition: attachment; filename=products.csv", null);
 
         Mas90Service.Mas90 mas90 = mas90Service.getService(implementation);
+        logger.info("Mas90 implementation: {}", mas90.toString());
         CSVWriter writer = new CSVWriter(new OutputStreamWriter(out), ',', '\'', '\\');
         
         // Write the header row
