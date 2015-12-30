@@ -5,22 +5,13 @@ import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.other.ManufacturerDao;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.part.PartDao;
-import com.turbointernational.metadata.domain.type.CoolTypeDao;
-import com.turbointernational.metadata.domain.type.GasketTypeDao;
-import com.turbointernational.metadata.domain.type.KitTypeDao;
-import com.turbointernational.metadata.domain.type.ManufacturerTypeDao;
-import com.turbointernational.metadata.domain.type.PartTypeDao;
-import com.turbointernational.metadata.domain.type.SealTypeDao;
+import com.turbointernational.metadata.domain.type.*;
 import com.turbointernational.metadata.magmi.MagmiDataFinder;
 import com.turbointernational.metadata.magmi.dto.MagmiProduct;
-import com.turbointernational.metadata.mas90.Mas90;
-import com.turbointernational.metadata.mas90.pricing.CalculatedPrice;
-import com.turbointernational.metadata.mas90.pricing.ItemPricing;
-import com.turbointernational.metadata.mas90.pricing.UnknownDiscountCodeException;
-import java.util.Arrays;
-import java.util.SortedSet;
-import javax.persistence.EntityManager;
-
+import com.turbointernational.metadata.services.Mas90Service;
+import com.turbointernational.metadata.services.mas90.pricing.CalculatedPrice;
+import com.turbointernational.metadata.services.mas90.pricing.ItemPricing;
+import com.turbointernational.metadata.services.mas90.pricing.UnknownDiscountCodeException;
 import com.turbointernational.metadata.util.ImageResizer;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -28,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -37,8 +29,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -52,11 +44,60 @@ import java.util.Map.Entry;
 @Controller
 @RequestMapping(value={"/magmi", "/metadata/magmi"})
 public class MagmiController {
+
     private static final Logger logger = LoggerFactory.getLogger(MagmiController.class);
+
+    @Value("${magmi.batch.size}")
+    Integer magmiBatchSize;
+
+    @Value("${magmi.finderId.application}")
+    String finderIdApplication;
     
+    @Value("${magmi.finderId.turbo}")
+    String finderIdTurbo;
+    
+    @Autowired
+    ImageResizer imageResizer;
+    
+    @Autowired
+    MagmiDataFinder magmiDataFinder;
+    
+    @Autowired
+    EntityManager entityManager;
+    
+    @Autowired
+    ManufacturerDao manufacturerDao;
+    
+    @Autowired
+    ManufacturerTypeDao manufacturerTypeDao;
+    
+    @Autowired
+    PartTypeDao partTypeDao;
+    
+    @Autowired
+    CoolTypeDao coolTypeDao;
+    
+    @Autowired
+    GasketTypeDao gasketTypeDao;
+    
+    @Autowired
+    KitTypeDao kitTypeDao;
+    
+    @Autowired
+    SealTypeDao sealTypeDao;
+    
+    @Autowired
+    PartDao partDao;
+    
+    @Autowired
+    JdbcTemplate db;
+
+    @Autowired
+    Mas90Service mas90Service;
+
     public String[] getCsvHeaders(SortedSet<String> priceLevels) {
         List<String> headers = new ArrayList<String>();
-        
+
         //<editor-fold defaultstate="collapsed" desc="Basic">
         headers.addAll(Arrays.asList(
             "sku",
@@ -152,18 +193,18 @@ public class MagmiController {
 
         //<editor-fold defaultstate="collapsed" desc="MAS90 Prices">
         headers.add("customerprice");
-        
+
         // Group Prices
         for (String priceLevel: priceLevels) {
             headers.add("group_price:ERP_PL_" + priceLevel);
         }
-        
+
         // Tier Prices
         for (String priceLevel: priceLevels) {
             headers.add("tier_price:ERP_PL_" + priceLevel);
         }
         //</editor-fold>
-        
+
 
         headers.addAll(Arrays.asList(
 
@@ -175,67 +216,31 @@ public class MagmiController {
 
             // Make!!Model!!Year!!Displacement!!Fuel||...
             "application_detail",
-            
+
             // OEM SKU (custom option, used to show OEM part in cart)
             "OEMSKU:field:0"
         ));
-        
+
         return headers.toArray(new String[0]);
     }
 
-    @Value("${mas90.db.path}")
-    String mas90DbPath;
+    // TODO: remove when development will be finished
+    @RequestMapping("/mssql")
+    @Transactional
+    public ResponseEntity<String> mssql() throws Exception {
+        Mas90Service.Mas90 mas90 = mas90Service.getService(Mas90Service.Implementation.MS_SQL);
 
-    @Value("${magmi.batch.size}")
-    Integer magmiBatchSize;
+        return ResponseEntity.ok("Export finished.");
+    }
 
-    @Value("${magmi.finderId.application}")
-    String finderIdApplication;
-    
-    @Value("${magmi.finderId.turbo}")
-    String finderIdTurbo;
-    
-    @Autowired(required=true)
-    ImageResizer imageResizer;
-    
-    @Autowired(required=true)
-    MagmiDataFinder magmiDataFinder;
-    
-    @Autowired(required=true)
-    EntityManager entityManager;
-    
-    @Autowired(required=true)
-    ManufacturerDao manufacturerDao;
-    
-    @Autowired(required=true)
-    ManufacturerTypeDao manufacturerTypeDao;
-    
-    @Autowired(required=true)
-    PartTypeDao partTypeDao;
-    
-    @Autowired(required=true)
-    CoolTypeDao coolTypeDao;
-    
-    @Autowired(required=true)
-    GasketTypeDao gasketTypeDao;
-    
-    @Autowired(required=true)
-    KitTypeDao kitTypeDao;
-    
-    @Autowired(required=true)
-    SealTypeDao sealTypeDao;
-    
-    @Autowired(required=true)
-    PartDao partDao;
-    
-    @Autowired(required=true)
-    JdbcTemplate db;
-    
     @RequestMapping("/products")
     @ResponseBody
     @Transactional
     @PreAuthorize("hasRole('ROLE_MAGMI_EXPORT') or hasIpAddress('127.0.0.1/32')")
-    public void products(HttpServletResponse response, OutputStream out, @RequestParam(defaultValue="30", required=false) int days) throws Exception {
+    public void products(HttpServletResponse response, OutputStream out,
+                         @RequestParam(name = "impl", required = false, defaultValue = "MS_SQL")
+                         Mas90Service.Implementation implementation,
+                         @RequestParam(defaultValue="30", required=false) int days) throws Exception {
         logger.info("Magmi export started.");
         
         response.setHeader("Content-Type", "text/csv");
@@ -243,7 +248,7 @@ public class MagmiController {
         
         long startTime = System.currentTimeMillis();
         
-        Mas90 mas90 = new Mas90(new File(mas90DbPath));
+        Mas90Service.Mas90 mas90 = mas90Service.getService(implementation);
         CSVWriter writer = new CSVWriter(new OutputStreamWriter(out), ',', '\'', '\\');
         
         // Write the header row
@@ -317,12 +322,14 @@ public class MagmiController {
     @ResponseBody
     @Transactional
     @PreAuthorize("hasRole('ROLE_MAGMI_EXPORT') or hasIpAddress('127.0.0.1/32')")
-    public void product(HttpServletResponse response, OutputStream out, @PathVariable Long partId) throws Exception {
+    public void product(HttpServletResponse response, OutputStream out, @PathVariable Long partId,
+                         @RequestParam(name = "impl", required = false, defaultValue = "MS_SQL")
+                         Mas90Service.Implementation implementation) throws Exception {
         
         response.setHeader("Content-Type", "text/csv");
         response.setHeader("Content-Disposition: attachment; filename=products.csv", null);
-        
-        Mas90 mas90 = new Mas90(new File(mas90DbPath));
+
+        Mas90Service.Mas90 mas90 = mas90Service.getService(implementation);
         CSVWriter writer = new CSVWriter(new OutputStreamWriter(out), ',', '\'', '\\');
         
         // Write the header row
@@ -341,7 +348,7 @@ public class MagmiController {
         writer.close();
     }
     
-    private String[] magmiProductToCsvRow(Mas90 mas90, MagmiProduct product) {
+    private String[] magmiProductToCsvRow(Mas90Service.Mas90 mas90, MagmiProduct product) {
         Map<String, String> columns = product.getCsvColumns();
         product.csvFinderColumns(columns, finderIdApplication, finderIdTurbo);
         product.csvImageColumns(columns, imageResizer);
@@ -373,7 +380,7 @@ public class MagmiController {
         return valueArray;
     }
     
-    private void addErpPrices(Mas90 mas90, Map<String, String> columns, MagmiProduct product) {
+    private void addErpPrices(Mas90Service.Mas90 mas90, Map<String, String> columns, MagmiProduct product) {
         try {
             
             // Stop now if there's no part number
@@ -404,7 +411,7 @@ public class MagmiController {
     }
     
     // bob@example.com;0:$1.00;10:$0.95;20:$0.90|jim@example.com....
-    private void addErpCustomerPrices(Mas90 mas90, ItemPricing itemPricing, Map<String, String> columns) throws IOException {
+    private void addErpCustomerPrices(Mas90Service.Mas90 mas90, ItemPricing itemPricing, Map<String, String> columns) throws IOException {
         
         // Build the customer price string
         StringBuilder priceString = new StringBuilder();
@@ -445,7 +452,7 @@ public class MagmiController {
         columns.put("customerprice", priceString.toString());
     }
     
-    private void addErpGroupPrices(Mas90 mas90, ItemPricing itemPricing, Map<String, String> columns) throws IOException {
+    private void addErpGroupPrices(Mas90Service.Mas90 mas90, ItemPricing itemPricing, Map<String, String> columns) throws IOException {
         
         // Add column data for each price level, group and tier prices
         for (String priceLevel : mas90.getPriceLevels()) {

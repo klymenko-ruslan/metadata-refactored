@@ -1,4 +1,4 @@
-package com.turbointernational.metadata.mas90.pricing;
+package com.turbointernational.metadata.services.mas90.pricing;
 
 import org.junit.Test;
 

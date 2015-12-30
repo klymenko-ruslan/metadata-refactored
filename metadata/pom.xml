@@ -21,6 +21,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+        <sqlserver.version>4.2</sqlserver.version>
     </properties>
     
     <repositories>
@@ -53,6 +54,12 @@
         </pluginRepository>
     </pluginRepositories>
     <dependencies>
+
+        <dependency>
+            <groupId>com.microsoft.sqlserver</groupId>
+            <artifactId>sqljdbc4</artifactId>
+            <version>${sqlserver.version}</version>
+        </dependency>
 
         <!-- Commons -->
         <dependency>

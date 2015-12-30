@@ -1,8 +1,8 @@
-package com.turbointernational.metadata.mas90;
+package com.turbointernational.metadata.services.mas90;
 
-import com.turbointernational.metadata.mas90.pricing.DiscountType;
-import com.turbointernational.metadata.mas90.pricing.ItemPricing;
-import com.turbointernational.metadata.mas90.pricing.Pricing;
+import com.turbointernational.metadata.services.mas90.pricing.DiscountType;
+import com.turbointernational.metadata.services.mas90.pricing.ItemPricing;
+import com.turbointernational.metadata.services.mas90.pricing.Pricing;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -21,14 +21,14 @@ import static org.junit.Assert.assertTrue;
  *
  * @author jrodriguez
  */
-public class Mas90Test {
+public class MsAccessMas90Test {
     
-    Mas90 instance;
+    MsAccessMas90 instance;
     
     @Before
     public void setUp() throws IOException {
         String dbPath = getClass().getResource("/mas90.accdb").getFile();
-        instance = new Mas90(new File(dbPath));
+        instance = new MsAccessMas90(new File(dbPath));
     }
 
     @Test
