@@ -60,7 +60,6 @@ public abstract class AbstractMas90 implements Mas90Service.Mas90 {
                 public void processRow(ResultSet rs) throws SQLException {
                     String priceLevel = rs.getString("price_level");
                     Pricing pricing = Pricing.fromResultSet(rs);
-
                     defaultPriceLevelPricing.put(priceLevel, pricing);
                 }
             }

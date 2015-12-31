@@ -73,7 +73,7 @@ public class MsSqlMas90  extends AbstractMas90 {
                 String discountMarkUp4 = rs.getString(12);
                 String discountMarkUp5 = rs.getString(13);
                 String itemCode = StringUtils.trim(rs.getString(14));
-                String cusromerNo = StringUtils.trim(rs.getString(15));
+                String customerNo = StringUtils.trim(rs.getString(15));
                 if ("0".equals(priceCode)) {
                     // PriceLevel Pricing
                     h2db.update("INSERT INTO price_level_prices ("
@@ -124,7 +124,7 @@ public class MsSqlMas90  extends AbstractMas90 {
                             + "  BreakQty4, DiscountMarkupPriceRate4,"
                             + "  BreakQty5, DiscountMarkupPriceRate5"
                             + ") VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                            itemCode, cusromerNo, pricingMethod,
+                            itemCode, customerNo, pricingMethod,
                             breakQuantity1, discountMarkUp1,
                             breakQuantity2, discountMarkUp2,
                             breakQuantity3, discountMarkUp3,
