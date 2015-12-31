@@ -192,7 +192,6 @@ public class MagmiController {
 
         //<editor-fold defaultstate="collapsed" desc="MAS90 Prices">
         headers.add("customerprice");
-
         // Group Prices
         for (String priceLevel: priceLevels) {
             headers.add("group_price:ERP_PL_" + priceLevel);

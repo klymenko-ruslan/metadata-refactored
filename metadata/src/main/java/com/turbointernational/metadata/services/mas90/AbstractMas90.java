@@ -4,6 +4,8 @@ import com.turbointernational.metadata.services.Mas90Service;
 import com.turbointernational.metadata.services.mas90.pricing.CalculatedPrice;
 import com.turbointernational.metadata.services.mas90.pricing.ItemPricing;
 import com.turbointernational.metadata.services.mas90.pricing.Pricing;
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.h2.jdbcx.JdbcDataSource;
 import org.springframework.jdbc.core.RowCallbackHandler;
@@ -42,8 +44,71 @@ public abstract class AbstractMas90 implements Mas90Service.Mas90 {
 
     }, false);
 
-    protected AbstractMas90() {
 
+    @Override
+    public SortedSet<String> getPriceLevels() {
+        return priceLevels;
+    }
+
+    @Override
+    public Map<String, Pricing> getDefaultPriceLevelPricing() {
+        return defaultPriceLevelPricing;
+    }
+
+    @Override
+    public BigDecimal getStandardPrice(String itemNumber) {
+        return h2db.queryForObject("SELECT price FROM product WHERE id = ?",
+                BigDecimal.class, itemNumber);
+    }
+
+    @Override
+    public ItemPricing getItemPricing(String itemNumber) {
+        final ItemPricing itemPricing = new ItemPricing(itemNumber, getStandardPrice(itemNumber));
+
+        // Get the Product-Customer pricing
+        h2db.query(
+                  "SELECT\n"
+                + "  c.email,\n"
+                + "  p.*\n"
+                + "FROM\n"
+                + "  product_customer_prices p\n"
+                + "  JOIN customer c ON c.id = p.customer_id\n"
+                + "WHERE p.product_id = ?",
+            new RowCallbackHandler() {
+                @Override
+                public void processRow(ResultSet rs) throws SQLException {
+                    String email = rs.getString("email");
+                    Pricing pricing = Pricing.fromResultSet(rs);
+                    itemPricing.getCustomerPricings().put(email, pricing);
+                }
+            },
+            itemNumber);
+
+        // Get the Product-PriceLevel pricing
+        h2db.query("SELECT * FROM product_price_level_prices WHERE product_id = ?",
+            new RowCallbackHandler() {
+                @Override
+                public void processRow(ResultSet rs) throws SQLException {
+                    String priceLevel = rs.getString("price_level");
+                    Pricing pricing = Pricing.fromResultSet(rs);
+
+                    itemPricing.getPriceLevelPricings().put(priceLevel, pricing);
+                }
+            },
+            itemNumber);
+
+        return itemPricing;
+    }
+
+    @Override
+    public List<CalculatedPrice> calculatePriceLevelPrices(final String priceLevel, final ItemPricing item) {
+        // Get the item-price-level pricing, if any
+        Pricing pricing = item.getPriceLevelPricings().get(priceLevel);
+        // Fall back to price-level pricing
+        if (pricing == null) {
+            pricing = defaultPriceLevelPricing.get(priceLevel);
+        }
+        return pricing.calculate(item.getStandardPrice());
     }
 
     protected abstract void loadMas90Data() throws IOException;
@@ -64,6 +129,82 @@ public abstract class AbstractMas90 implements Mas90Service.Mas90 {
                 }
             }
         );
+    }
+
+    protected void insertPrices(String priceCode, String customerPriceLevel, String pricingMethod,
+                                String breakQuantity1, String breakQuantity2, String breakQuantity3,
+                                String breakQuantity4, String breakQuantity5, String discountMarkUp1,
+                                String discountMarkUp2, String discountMarkUp3, String discountMarkUp4,
+                                String discountMarkUp5, String itemCode, String customerNo) {
+        // Normalization.
+        priceCode = ObjectUtils.toString(priceCode);
+        itemCode = StringUtils.trim(itemCode);
+        customerNo = StringUtils.trim(customerNo);
+
+        if ("0".equals(priceCode)) {
+            // Mas90 bug handling: https://github.com/pthiry/TurboInternational/issues/5#issuecomment-29331951
+            if (ObjectUtils.toString(customerPriceLevel).trim().equals("")) {
+                customerPriceLevel = "2";
+            }
+            // PriceLevel Pricing
+            h2db.update("INSERT INTO price_level_prices ("
+                            + "  price_level,"
+                            + "  discount_type,"
+                            + "  BreakQty1, DiscountMarkupPriceRate1,"
+                            + "  BreakQty2, DiscountMarkupPriceRate2,"
+                            + "  BreakQty3, DiscountMarkupPriceRate3,"
+                            + "  BreakQty4, DiscountMarkupPriceRate4,"
+                            + "  BreakQty5, DiscountMarkupPriceRate5"
+                            + ") VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    customerPriceLevel, pricingMethod,
+                    breakQuantity1, discountMarkUp1,
+                    breakQuantity2, discountMarkUp2,
+                    breakQuantity3, discountMarkUp3,
+                    breakQuantity4, discountMarkUp4,
+                    breakQuantity5, discountMarkUp5
+            );
+        } else if ("1".equals(priceCode)) {
+            // Part-PriceLevel Pricing
+            h2db.update("INSERT INTO product_price_level_prices ("
+                            + "  product_id,"
+                            + "  price_level,"
+                            + "  discount_type,"
+                            + "  BreakQty1, DiscountMarkupPriceRate1,"
+                            + "  BreakQty2, DiscountMarkupPriceRate2,"
+                            + "  BreakQty3, DiscountMarkupPriceRate3,"
+                            + "  BreakQty4, DiscountMarkupPriceRate4,"
+                            + "  BreakQty5, DiscountMarkupPriceRate5"
+                            + ") VALUES(?, ?, ?,  ?, ?,  ?, ?,  ?, ?,  ?, ?,  ?, ?)",
+                    itemCode, customerPriceLevel, pricingMethod,
+                    breakQuantity1, discountMarkUp1,
+                    breakQuantity2, discountMarkUp2,
+                    breakQuantity3, discountMarkUp3,
+                    breakQuantity4, discountMarkUp4,
+                    breakQuantity5, discountMarkUp5
+            );
+        } else if ("2".equals(priceCode)) {
+
+            // Part-Customer Pricing
+            h2db.update("INSERT INTO product_customer_prices ("
+                            + "  product_id,"
+                            + "  customer_id,"
+                            + "  discount_type,"
+                            + "  BreakQty1, DiscountMarkupPriceRate1,"
+                            + "  BreakQty2, DiscountMarkupPriceRate2,"
+                            + "  BreakQty3, DiscountMarkupPriceRate3,"
+                            + "  BreakQty4, DiscountMarkupPriceRate4,"
+                            + "  BreakQty5, DiscountMarkupPriceRate5"
+                            + ") VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    itemCode, customerNo, pricingMethod,
+                    breakQuantity1, discountMarkUp1,
+                    breakQuantity2, discountMarkUp2,
+                    breakQuantity3, discountMarkUp3,
+                    breakQuantity4, discountMarkUp4,
+                    breakQuantity5, discountMarkUp5
+            );
+        } else {
+            throw new IllegalStateException("Unknown PriceCodeRecord in IMB_PriceCode: " + priceCode);
+        }
     }
 
     private void loadPriceLevels() {
@@ -148,75 +289,6 @@ public abstract class AbstractMas90 implements Mas90Service.Mas90 {
                 + "  DiscountMarkupPriceRate5 DECIMAL\n"
                 + ")");
         h2db.execute("ALTER TABLE product_customer_prices ADD PRIMARY KEY (product_id, customer_id)");
-    }
-
-    @Override
-    public SortedSet<String> getPriceLevels() {
-        return priceLevels;
-    }
-
-    @Override
-    public Map<String, Pricing> getDefaultPriceLevelPricing() {
-        return defaultPriceLevelPricing;
-    }
-
-    @Override
-    public BigDecimal getStandardPrice(String itemNumber) {
-        return h2db.queryForObject("SELECT price FROM product WHERE id = ?",
-                BigDecimal.class, itemNumber);
-    }
-
-    @Override
-    public ItemPricing getItemPricing(String itemNumber) {
-        final ItemPricing itemPricing = new ItemPricing(itemNumber, getStandardPrice(itemNumber));
-
-        // Get the Product-Customer pricing
-        h2db.query(
-                  "SELECT\n"
-                + "  c.email,\n"
-                + "  p.*\n"
-                + "FROM\n"
-                + "  product_customer_prices p\n"
-                + "  JOIN customer c ON c.id = p.customer_id\n"
-                + "WHERE p.product_id = ?",
-            new RowCallbackHandler() {
-                @Override
-                public void processRow(ResultSet rs) throws SQLException {
-                    String email = rs.getString("email");
-                    Pricing pricing = Pricing.fromResultSet(rs);
-                    itemPricing.getCustomerPricings().put(email, pricing);
-                }
-            },
-            itemNumber);
-
-        // Get the Product-PriceLevel pricing
-        h2db.query("SELECT * FROM product_price_level_prices WHERE product_id = ?",
-            new RowCallbackHandler() {
-                @Override
-                public void processRow(ResultSet rs) throws SQLException {
-                    String priceLevel = rs.getString("price_level");
-                    Pricing pricing = Pricing.fromResultSet(rs);
-
-                    itemPricing.getPriceLevelPricings().put(priceLevel, pricing);
-                }
-            },
-            itemNumber);
-
-        return itemPricing;
-    }
-
-    @Override
-    public List<CalculatedPrice> calculatePriceLevelPrices(final String priceLevel, final ItemPricing item) {
-
-        // Get the item-price-level pricing, if any
-        Pricing pricing = item.getPriceLevelPricings().get(priceLevel);
-
-        // Fall back to price-level pricing
-        if (pricing == null) {
-            pricing = defaultPriceLevelPricing.get(priceLevel);
-        }
-
-        return pricing.calculate(item.getStandardPrice());
     }
 
 }

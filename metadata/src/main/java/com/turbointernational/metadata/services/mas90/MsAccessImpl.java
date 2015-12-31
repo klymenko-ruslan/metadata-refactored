@@ -13,11 +13,11 @@ import java.io.IOException;
  *
  * @author jrodriguez
  */
-public class MsAccessMas90 extends AbstractMas90 {
+public class MsAccessImpl extends AbstractMas90 {
 
     private final Database mas90Db;
 
-    public MsAccessMas90(File mas90DbFile) throws IOException {
+    public MsAccessImpl(File mas90DbFile) throws IOException {
         // Open the mas90 database
         mas90Db = DatabaseBuilder.open(mas90DbFile);
         super.init();

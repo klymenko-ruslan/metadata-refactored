@@ -1,7 +1,7 @@
 package com.turbointernational.metadata.services;
 
-import com.turbointernational.metadata.services.mas90.MsAccessMas90;
-import com.turbointernational.metadata.services.mas90.MsSqlMas90;
+import com.turbointernational.metadata.services.mas90.MsAccessImpl;
+import com.turbointernational.metadata.services.mas90.MsSqlImpl;
 import com.turbointernational.metadata.services.mas90.pricing.CalculatedPrice;
 import com.turbointernational.metadata.services.mas90.pricing.ItemPricing;
 import com.turbointernational.metadata.services.mas90.pricing.Pricing;
@@ -47,10 +47,10 @@ public class Mas90Service {
         Mas90 retVal = null;
         switch (implementation) {
             case MS_ACCESS:
-                retVal = new MsAccessMas90(new File(mas90DbPath));
+                retVal = new MsAccessImpl(new File(mas90DbPath));
                 break;
             case MS_SQL:
-                retVal = new MsSqlMas90(mas90mssqlUrl, mas90mssqlUsername, mas90mssqlPassword);
+                retVal = new MsSqlImpl(mas90mssqlUrl, mas90mssqlUsername, mas90mssqlPassword);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported service implementation: " + implementation);

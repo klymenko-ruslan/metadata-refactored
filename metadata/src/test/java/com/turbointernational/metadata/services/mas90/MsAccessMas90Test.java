@@ -23,12 +23,12 @@ import static org.junit.Assert.assertTrue;
  */
 public class MsAccessMas90Test {
     
-    MsAccessMas90 instance;
+    MsAccessImpl instance;
     
     @Before
     public void setUp() throws IOException {
         String dbPath = getClass().getResource("/mas90.accdb").getFile();
-        instance = new MsAccessMas90(new File(dbPath));
+        instance = new MsAccessImpl(new File(dbPath));
     }
 
     @Test
