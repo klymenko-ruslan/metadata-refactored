@@ -57,29 +57,26 @@ public class MsSqlImpl extends AbstractMas90 {
                 "   PRICECODERECORD, CUSTOMERPRICELEVEL, PRICINGMETHOD, BREAKQUANTITY1, BREAKQUANTITY2, " +
                 "   BREAKQUANTITY3, BREAKQUANTITY4, BREAKQUANTITY5, DISCOUNTMARKUP1, DISCOUNTMARKUP2, " +
                 "   DISCOUNTMARKUP3, DISCOUNTMARKUP4, DISCOUNTMARKUP5, ITEMCODE, CUSTOMERNO " +
-                "FROM IM_PRICECODE", new RowCallbackHandler() {
-            @Override
-            public void processRow(ResultSet rs) throws SQLException {
-                String priceCode = ObjectUtils.toString(rs.getString(1));
-                String customerPriceLevel = rs.getString(2);
-                String pricingMethod = rs.getString(3);
-                String breakQuantity1 = rs.getString(4);
-                String breakQuantity2 = rs.getString(5);
-                String breakQuantity3 = rs.getString(6);
-                String breakQuantity4 = rs.getString(7);
-                String breakQuantity5 = rs.getString(8);
-                String discountMarkUp1 = rs.getString(9);
-                String discountMarkUp2 = rs.getString(10);
-                String discountMarkUp3 = rs.getString(11);
-                String discountMarkUp4 = rs.getString(12);
-                String discountMarkUp5 = rs.getString(13);
-                String itemCode = rs.getString(14);
-                String customerNo = rs.getString(15);
-                insertPrices(priceCode, customerPriceLevel, pricingMethod, breakQuantity1, breakQuantity2,
-                        breakQuantity3, breakQuantity4, breakQuantity5, discountMarkUp1, discountMarkUp2,
-                        discountMarkUp3, discountMarkUp4, discountMarkUp5, itemCode, customerNo);
-            }
-        });
+                "FROM IM_PRICECODE", rs -> {
+                    String priceCode = rs.getString(1);
+                    String customerPriceLevel = rs.getString(2);
+                    String pricingMethod = rs.getString(3);
+                    String breakQuantity1 = rs.getString(4);
+                    String breakQuantity2 = rs.getString(5);
+                    String breakQuantity3 = rs.getString(6);
+                    String breakQuantity4 = rs.getString(7);
+                    String breakQuantity5 = rs.getString(8);
+                    String discountMarkUp1 = rs.getString(9);
+                    String discountMarkUp2 = rs.getString(10);
+                    String discountMarkUp3 = rs.getString(11);
+                    String discountMarkUp4 = rs.getString(12);
+                    String discountMarkUp5 = rs.getString(13);
+                    String itemCode = rs.getString(14);
+                    String customerNo = rs.getString(15);
+                    insertPrices(priceCode, customerPriceLevel, pricingMethod, breakQuantity1, breakQuantity2,
+                            breakQuantity3, breakQuantity4, breakQuantity5, discountMarkUp1, discountMarkUp2,
+                            discountMarkUp3, discountMarkUp4, discountMarkUp5, itemCode, customerNo);
+                });
 
     }
 

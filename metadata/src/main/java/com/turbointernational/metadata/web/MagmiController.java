@@ -8,7 +8,8 @@ import com.turbointernational.metadata.domain.part.PartDao;
 import com.turbointernational.metadata.domain.type.*;
 import com.turbointernational.metadata.magmi.MagmiDataFinder;
 import com.turbointernational.metadata.magmi.dto.MagmiProduct;
-import com.turbointernational.metadata.services.Mas90Service;
+import com.turbointernational.metadata.services.Mas90ServiceFactory;
+import com.turbointernational.metadata.services.mas90.Mas90;
 import com.turbointernational.metadata.services.mas90.pricing.CalculatedPrice;
 import com.turbointernational.metadata.services.mas90.pricing.ItemPricing;
 import com.turbointernational.metadata.services.mas90.pricing.UnknownDiscountCodeException;
@@ -92,7 +93,7 @@ public class MagmiController {
     JdbcTemplate db;
 
     @Autowired
-    Mas90Service mas90Service;
+    Mas90ServiceFactory mas90ServiceFactory;
 
     public String[] getCsvHeaders(SortedSet<String> priceLevels) {
         List<String> headers = new ArrayList<String>();
@@ -228,7 +229,7 @@ public class MagmiController {
     @PreAuthorize("hasRole('ROLE_MAGMI_EXPORT') or hasIpAddress('127.0.0.1/32')")
     public void products(HttpServletResponse response, OutputStream out,
                          @RequestParam(name = "impl", required = false, defaultValue = "MS_SQL")
-                         Mas90Service.Implementation implementation,
+                         Mas90ServiceFactory.Implementation implementation,
                          @RequestParam(defaultValue="30", required=false) int days) throws Exception {
         logger.info("Magmi export started.");
         
@@ -237,7 +238,7 @@ public class MagmiController {
         
         long startTime = System.currentTimeMillis();
         
-        Mas90Service.Mas90 mas90 = mas90Service.getService(implementation);
+        Mas90 mas90 = mas90ServiceFactory.getService(implementation);
         logger.info("Mas90 implementation: {}", mas90.toString());
         CSVWriter writer = new CSVWriter(new OutputStreamWriter(out), ',', '\'', '\\');
         
@@ -314,12 +315,12 @@ public class MagmiController {
     @PreAuthorize("hasRole('ROLE_MAGMI_EXPORT') or hasIpAddress('127.0.0.1/32')")
     public void product(HttpServletResponse response, OutputStream out, @PathVariable Long partId,
                          @RequestParam(name = "impl", required = false, defaultValue = "MS_SQL")
-                         Mas90Service.Implementation implementation) throws Exception {
+                         Mas90ServiceFactory.Implementation implementation) throws Exception {
         
         response.setHeader("Content-Type", "text/csv");
         response.setHeader("Content-Disposition: attachment; filename=products.csv", null);
 
-        Mas90Service.Mas90 mas90 = mas90Service.getService(implementation);
+        Mas90 mas90 = mas90ServiceFactory.getService(implementation);
         logger.info("Mas90 implementation: {}", mas90.toString());
         CSVWriter writer = new CSVWriter(new OutputStreamWriter(out), ',', '\'', '\\');
         
@@ -339,7 +340,7 @@ public class MagmiController {
         writer.close();
     }
     
-    private String[] magmiProductToCsvRow(Mas90Service.Mas90 mas90, MagmiProduct product) {
+    private String[] magmiProductToCsvRow(Mas90 mas90, MagmiProduct product) {
         Map<String, String> columns = product.getCsvColumns();
         product.csvFinderColumns(columns, finderIdApplication, finderIdTurbo);
         product.csvImageColumns(columns, imageResizer);
@@ -371,7 +372,7 @@ public class MagmiController {
         return valueArray;
     }
     
-    private void addErpPrices(Mas90Service.Mas90 mas90, Map<String, String> columns, MagmiProduct product) {
+    private void addErpPrices(Mas90 mas90, Map<String, String> columns, MagmiProduct product) {
         try {
             
             // Stop now if there's no part number
@@ -402,7 +403,7 @@ public class MagmiController {
     }
     
     // bob@example.com;0:$1.00;10:$0.95;20:$0.90|jim@example.com....
-    private void addErpCustomerPrices(Mas90Service.Mas90 mas90, ItemPricing itemPricing, Map<String, String> columns) throws IOException {
+    private void addErpCustomerPrices(Mas90 mas90, ItemPricing itemPricing, Map<String, String> columns) throws IOException {
         
         // Build the customer price string
         StringBuilder priceString = new StringBuilder();
@@ -443,7 +444,7 @@ public class MagmiController {
         columns.put("customerprice", priceString.toString());
     }
     
-    private void addErpGroupPrices(Mas90Service.Mas90 mas90, ItemPricing itemPricing, Map<String, String> columns) throws IOException {
+    private void addErpGroupPrices(Mas90 mas90, ItemPricing itemPricing, Map<String, String> columns) throws IOException {
         
         // Add column data for each price level, group and tier prices
         for (String priceLevel : mas90.getPriceLevels()) {

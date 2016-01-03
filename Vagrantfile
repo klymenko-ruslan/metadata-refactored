@@ -96,6 +96,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       sudo apt-get install -y ruby-dev	
       sudo gem install compass
       sudo rm -rf /var/lib/tomcat7/webapps/ROOT
+      mvn install:install-file -Dfile=bits/libs/sqljdbc_4.2/enu/sqljdbc42.jar -DgroupId=com.microsoft.sqlserver -DartifactId=sqljdbc4 -Dversion=4.2 -Dpackaging=jar
       nice mvn clean install -DskipTests=true && sudo cp target/metadata.war /var/lib/tomcat7/webapps/ROOT.war
 
       echo Final preparations for metadata

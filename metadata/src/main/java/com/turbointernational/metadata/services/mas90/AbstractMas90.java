@@ -1,6 +1,6 @@
 package com.turbointernational.metadata.services.mas90;
 
-import com.turbointernational.metadata.services.Mas90Service;
+import com.turbointernational.metadata.services.Mas90ServiceFactory;
 import com.turbointernational.metadata.services.mas90.pricing.CalculatedPrice;
 import com.turbointernational.metadata.services.mas90.pricing.ItemPricing;
 import com.turbointernational.metadata.services.mas90.pricing.Pricing;
@@ -22,7 +22,7 @@ import java.util.logging.Logger;
 /**
  * Created by dmytro.trunykov@zorallabs.com on 12/30/15.
  */
-public abstract class AbstractMas90 implements Mas90Service.Mas90 {
+public abstract class AbstractMas90 implements Mas90 {
 
     private final Map<String, Pricing> defaultPriceLevelPricing = new HashMap();
 
