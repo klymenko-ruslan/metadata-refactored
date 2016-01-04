@@ -6,12 +6,8 @@ import com.turbointernational.metadata.domain.type.GasketType;
 import com.turbointernational.metadata.web.View;
 import flexjson.JSONSerializer;
 import java.util.Map;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.Table;
+import javax.persistence.*;
+
 import org.apache.commons.lang.ObjectUtils;
 
 @Entity

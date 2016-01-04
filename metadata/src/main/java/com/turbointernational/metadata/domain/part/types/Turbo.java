@@ -8,23 +8,12 @@ import com.turbointernational.metadata.domain.type.CoolType;
 import com.turbointernational.metadata.web.View;
 import flexjson.JSONSerializer;
 import org.apache.commons.lang.ObjectUtils;
-import org.springframework.beans.factory.annotation.Configurable;
 
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import javax.persistence.Cacheable;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.Table;
-import org.apache.commons.lang.ObjectUtils;
 
 @Cacheable
 @Entity

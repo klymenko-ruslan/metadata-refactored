@@ -4,12 +4,9 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.web.View;
 import java.util.Map;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.Table;
-import org.apache.commons.lang.ObjectUtils;
+import javax.persistence.*;
 
+import org.apache.commons.lang.ObjectUtils;
 
 /**
  * http://www.turbointernational.com/products/majorCmptDetails.asp?mcid=454&turbotype=35

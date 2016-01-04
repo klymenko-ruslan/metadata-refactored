@@ -12,10 +12,7 @@ import com.turbointernational.metadata.domain.part.types.*;
 import com.turbointernational.metadata.domain.type.PartType;
 import com.turbointernational.metadata.util.PartElasticSearch;
 import com.turbointernational.metadata.web.View;
-import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
-import flexjson.ObjectBinder;
-import flexjson.ObjectFactory;
 import flexjson.transformer.HibernateTransformer;
 import org.apache.commons.lang3.ObjectUtils;
 import org.slf4j.Logger;
@@ -26,7 +23,6 @@ import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
@@ -36,6 +32,7 @@ import java.util.TreeSet;
 @Entity
 @Table(name = "PART")
 @Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(discriminatorType = DiscriminatorType.INTEGER, name = "part_type_id")
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "class", include = As.PROPERTY, defaultImpl = Part.class)
@@ -58,51 +55,6 @@ import java.util.TreeSet;
 public class Part implements Comparable<Part>, Serializable, SearchableEntity {
 
     private static final Logger log = LoggerFactory.getLogger(Part.class);
-
-    public static final ObjectFactory OBJECT_FACTORY = new ObjectFactory() {
-
-        @Override
-        public Object instantiate(ObjectBinder context, Object value, Type targetType, Class targetClass) {
-            Map<String, Object> valueHash = (Map) value;
-            Map<String, Object> partTypeHash = (Map) valueHash.get("partType");
-            String partType = (String) partTypeHash.get("magentoAttributeSet");
-
-            // Create the appropriate part type
-            Part part = null;
-            if ("Backplate".equals(partType)) {
-                part = new Backplate();
-            } else if ("Bearing Housing".equals(partType)) {
-                part = new BearingHousing();
-            } else if ("Bearing Spacer".equals(partType)) {
-                part = new BearingSpacer();
-            } else if ("Cartridge".equals(partType)) {
-                part = new Cartridge();
-            } else if ("Compressor Wheel".equals(partType)) {
-                part = new CompressorWheel();
-            } else if ("Gasket".equals(partType)) {
-                part = new Gasket();
-            } else if ("Heatshield".equals(partType)) {
-                part = new Heatshield();
-            } else if ("Journal Bearing".equals(partType)) {
-                part = new JournalBearing();
-            } else if ("Kit".equals(partType)) {
-                part = new Kit();
-            } else if ("Nozzle Ring".equals(partType)) {
-                part = new NozzleRing();
-            } else if ("Piston Ring".equals(partType)) {
-                part = new PistonRing();
-            } else if ("Turbine Wheel".equals(partType)) {
-                part = new TurbineWheel();
-            } else if ("Turbo".equals(partType)) {
-                part = new Turbo();
-            } else {
-                part = new Part();
-            }
-
-            context.bind(value, part);
-            return part;
-        }
-    };
 
     //<editor-fold defaultstate="collapsed" desc="Properties">
     @Id
@@ -362,16 +314,6 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
 
     public String toSearchJson() {
         return getSearchSerializer().exclude("*").serialize(this);
-    }
-
-    public static Part fromJsonToPart(String json) {
-        Part part = new JSONDeserializer<Part>()
-                .use((String) null, OBJECT_FACTORY)
-//                .use("bom", TreeSet.class)
-                .use("bom.values", BOMItem.class)
-                .deserialize(json);
-
-        return part;
     }
 
     public static String toJsonArray(Collection<Part> collection) {

@@ -127,10 +127,8 @@ public class PartController {
     @RequestMapping(method = RequestMethod.POST)
     public @ResponseBody long createPart(Principal principal, @RequestBody Part part) throws Exception {
         partDao.persist(part);
-        
         // Update the changelog
         changelogDao.log("Created part", part.toJson());
-        
         return part.getId();
     }
 
@@ -140,38 +138,24 @@ public class PartController {
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT,
             produces = MediaType.APPLICATION_JSON_VALUE,
             consumes = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody Part updatePart(Principal principal, @RequestBody Part part, @PathVariable("id") Long id) throws PartNotFoundException {
-        
+    public @ResponseBody Part updatePart(@RequestBody Part part, @PathVariable("id") Long id) {
         String originalPartJson = partDao.findOne(id).toJson();
-        
-        if (partDao.merge(part) == null) {
-            throw new PartNotFoundException(id);
-        }
-        
-        partDao.flush();
-        
+        partDao.merge(part);
+        //partDao.flush();
         // Update the changelog
-        changelogDao.log("Updated part",
-            "{original: " + originalPartJson + ",updated: " + part.toJson() + "}");
-        
+        changelogDao.log("Updated part", "{original: " + originalPartJson + ",updated: " + part.toJson() + "}");
         return part;
     }
-    
-    
+
     @Transactional
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Secured("ROLE_DELETE_PART")
-    public @ResponseBody void deletePart(Principal principal, @PathVariable("id") Long id) throws PartNotFoundException {
+    public @ResponseBody void deletePart(Principal principal, @PathVariable("id") Long id) {
         Part part = partDao.findOne(id);
-        
-        if (partDao.merge(part) == null) {
-            throw new PartNotFoundException(id);
-        }
-        
+        partDao.merge(part);
         // Update the changelog
         changelogDao.log("Deleted part", part.toJson());
-        
         // Delete the part
         db.update("INSERT INTO `deleted_parts` (id) VALUES(?)", part.getId());
         partDao.remove(part);
@@ -246,9 +230,4 @@ public class PartController {
         partDao.merge(part);
     }
 
-    private class PartNotFoundException extends Exception {
-        public PartNotFoundException(long partId) {
-            super("No part found with id: " + partId);
-        }
-    }
 }
