@@ -62,15 +62,61 @@ angular.module('ngMetaCrudApp')
 
             this.findPart = function (id, params) {
                 return Restangular.one('part', id).get(params);
-              };
+            };
 
             this.createPart = function (part) {
-                return Restangular.post(part);
-              };
+              // Specify class depending on part type.
+              var clazz = "com.turbointernational.metadata.domain.part.types.";
+              switch(part.partType.id) {
+              case 1:
+                clazz += "Turbo";
+                break;
+              case 2:
+                clazz += "Cartridge";
+                break;
+              case 3:
+                clazz += "Kit";
+                break;
+              case 4:
+                clazz += "PistonRing";
+                break;
+              case 5:
+                clazz += "JournalBearing";
+                break;
+              case 6:
+                clazz += "Gasket";
+                break;
+              case 7:
+                clazz += "BearingSpacer";
+                break;
+              case 11:
+                clazz += "CompressorWheel";
+                break;
+              case 12:
+                clazz += "TurbineWheel";
+                break;
+              case 13:
+                clazz += "BearingHousing";
+                break;
+              case 14:
+                clazz += "Backplate";
+                break;
+              case 15:
+                clazz += "Heatshield";
+                break;
+              case 16:
+                clazz += "NozzleRing";
+                break;
+              default:
+                clazz = "com.turbointernational.metadata.domain.part.Part";
+              }
+              part.class = clazz;
+              return Restangular.all('part').post(part);
+            };
 
             this.updatePart = function (part) {
-                return Restangular.put(part);
-              };
+              return Restangular.one("part", part.id).customPUT(part);
+            };
 
             this.deletePart = function (part) {
                 return Restangular.remove(part);

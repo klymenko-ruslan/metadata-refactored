@@ -11,7 +11,6 @@ import org.apache.commons.lang.ObjectUtils;
 @Entity
 @Table(name="heatshield")
 @PrimaryKeyJoinColumn(name = "part_id")
-@DiscriminatorValue("15")
 public class Heatshield extends Part {
     
     @JsonView(View.Detail.class)

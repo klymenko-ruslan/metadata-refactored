@@ -1,16 +1,16 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-    .controller('PartFormCtrl', function ($q, $scope, $location, $log, $routeParams, ngTableParams, restService, Restangular, PartTypes) {
+    .controller('PartFormCtrl', ["$q", "$scope", "$location", "$log", "$routeParams", "ngTableParams", "restService",
+                                 "Restangular", "PartTypes",
+                                 function ($q, $scope, $location, $log, $routeParams, ngTableParams, restService,
+                                           Restangular, PartTypes) {
 
         // Setup the create/update workflow
         if ($routeParams.id) {
             $scope.partId = $routeParams.id;
-
             $scope.oldPartPromise = restService.findPart($scope.partId).then(
                 function (part) {
-                    console.log("Part data loaded.");
-
                     // Save the part
                     $scope.part = part;
                     $scope.oldPart = Restangular.copy(part);
@@ -36,8 +36,9 @@ angular.module('ngMetaCrudApp')
         }
 
         $scope.save = function () {
+            var url = 'part';
             if ($scope.oldPart == null) {
-                Restangular.all('part').post($scope.part).then(
+                restService.createPart($scope.part).then(
                     function (id) {
                         $location.path('/part/' + id);
                     },
@@ -45,7 +46,7 @@ angular.module('ngMetaCrudApp')
                         restService.error("Could not save part.", response);
                     })
             } else {
-                $scope.part.put().then(
+                restService.updatePart($scope.part).then(
                     function (part) {
                         $location.path('/part/' + $scope.part.id);
                     },
@@ -56,4 +57,4 @@ angular.module('ngMetaCrudApp')
             }
         }
 
-    });
+    }]);

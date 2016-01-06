@@ -124,7 +124,7 @@ public class MagmiDataFinder {
                     }
                 });
         // Add the images
-        List<ProductImage> images = partDao.findProductImages(productIds, this);
+        List<ProductImage> images = partDao.findProductImages(productIds);
         
         for (ProductImage image : images) {
             productMap.get(image.getPart().getId())

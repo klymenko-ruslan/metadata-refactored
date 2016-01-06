@@ -25,6 +25,12 @@ import java.io.Serializable;
 @Cacheable
 @Entity
 @Table(name = "product_image")
+@NamedQueries(
+        @NamedQuery(
+                name = "findProductImagesForPart",
+                query = "SELECT DISTINCT pi FROM ProductImage pi WHERE pi.part.id IN :productIds ORDER BY pi.id"
+        )
+)
 public class ProductImage implements Comparable<ProductImage>, Serializable {
 
 

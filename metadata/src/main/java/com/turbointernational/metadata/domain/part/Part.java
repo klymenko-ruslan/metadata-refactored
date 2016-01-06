@@ -32,7 +32,6 @@ import java.util.TreeSet;
 @Entity
 @Table(name = "PART")
 @Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn(discriminatorType = DiscriminatorType.INTEGER, name = "part_type_id")
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "class", include = As.PROPERTY, defaultImpl = Part.class)
@@ -50,6 +49,16 @@ import java.util.TreeSet;
         @JsonSubTypes.Type(PistonRing.class),
         @JsonSubTypes.Type(TurbineWheel.class),
         @JsonSubTypes.Type(Turbo.class),
+})
+@NamedQueries({
+        @NamedQuery(
+                name = "findOnePart",
+                query = "SELECT DISTINCT p FROM Part p LEFT JOIN p.interchange i WHERE p.id = :id"
+        ),
+        @NamedQuery(
+                name = "findByPartNumber",
+                query = "FROM Part p WHERE p.manufacturerPartNumber = :partNumber"
+        )
 })
 //@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id", scope = Part.class)
 public class Part implements Comparable<Part>, Serializable, SearchableEntity {

@@ -39,7 +39,7 @@ public class PartDao extends AbstractDao<Part> {
 
     @Override
     public Part findOne(long id) {
-        return em.createQuery("SELECT DISTINCT p FROM Part p LEFT JOIN p.interchange i WHERE p.id = :id", Part.class)
+        return em.createNamedQuery("findOnePart", Part.class)
                 .setParameter("id", id)
                 .getSingleResult();
     }
@@ -63,18 +63,13 @@ public class PartDao extends AbstractDao<Part> {
         }
     }
 
-    public List<ProductImage> findProductImages(Collection<Long> productIds, MagmiDataFinder magmiDataFinder) {
-        return em.createQuery("SELECT DISTINCT pi\n"
-                + "FROM ProductImage pi\n"
-                + "WHERE\n"
-                + "  pi.part.id IN ("
-                + StringUtils.join(productIds, ',')
-                + ")\n"
-                + "ORDER BY pi.id", ProductImage.class).getResultList();
+    public List<ProductImage> findProductImages(Collection<Long> productIds) {
+        return em.createNamedQuery("findProductImagesForPart", ProductImage.class)
+                .setParameter("productIds", productIds).getResultList();
     }
 
     public Part findByPartNumber(String partNumber) throws NoResultException {
-        return em.createQuery("FROM Part p WHERE p.manufacturerPartNumber = :partNumber", Part.class)
+        return em.createNamedQuery("findByPartNumber", Part.class)
                 .setParameter("partNumber", partNumber)
                 .getSingleResult();
     }
