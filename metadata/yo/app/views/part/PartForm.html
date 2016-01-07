@@ -56,7 +56,7 @@
       <picker ng-model="part.manufacturer" path="other/manufacturer"></picker>
 
       <label>Manufacturer P/N</label>
-      <input class="form-control" type="text" ng-model="part.manufacturerPartNumber"/>
+      <input class="form-control" type="text" ng-model="part.manufacturerPartNumber" ng-model-options="{ debounce: 500 }" required maxlength="255" />
 
       <!-- Type-specific fields -->
       <div ng-switch="part.partType.magentoAttributeSet">

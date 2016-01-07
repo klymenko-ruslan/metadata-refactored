@@ -29,9 +29,7 @@ angular.module("ngMetaCrudApp").controller("CarModelEngineYearFormCtrl", ["restS
               restService.findCarmodelengineyear($scope.cmeyId).then(
                 function (foundCmey) {
                   $scope.origCmey = foundCmey;
-$log.log("foundCmey: " + angular.toJson(foundCmey));
                   angular.copy($scope.origCmey, $scope.cmey);
-$log.log("cmey: " + angular.toJson($scope.cmey));
                   $scope.onChangeMake();
                   $scope.carYearExists = true;
                 },
