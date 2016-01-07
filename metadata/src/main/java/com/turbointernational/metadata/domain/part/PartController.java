@@ -18,17 +18,15 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
-import java.security.Principal;
 import java.util.Iterator;
 import java.util.List;
 
 @RequestMapping("/metadata")
-@Controller
+@RestController
 public class PartController {
 
     @Autowired
@@ -55,7 +53,6 @@ public class PartController {
     @Autowired(required=true)
     JdbcTemplate db;
 
-    @ResponseBody
     @Secured("ROLE_READ")
     @JsonView(View.Detail.class)
     @RequestMapping(value = "/part/{id}", method = RequestMethod.GET,
@@ -115,7 +112,7 @@ public class PartController {
     @Secured("ROLE_CREATE_PART")
     @JsonView(View.Detail.class)
     @RequestMapping(value = "/part", method = RequestMethod.POST)
-    public @ResponseBody long createPart(Principal principal, @RequestBody Part part) throws Exception {
+    public long createPart(@RequestBody Part part) throws Exception {
         partDao.persist(part);
         // Update the changelog
         changelogDao.log("Created part", part.toJson());
@@ -128,7 +125,7 @@ public class PartController {
     @RequestMapping(value = "/part/{id}", method = RequestMethod.PUT,
             produces = MediaType.APPLICATION_JSON_VALUE,
             consumes = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody Part updatePart(@RequestBody Part part, @PathVariable("id") Long id) {
+    public Part updatePart(@RequestBody Part part, @PathVariable("id") Long id) {
         String originalPartJson = partDao.findOne(id).toJson();
         Part retVal = partDao.merge(part);
         // Update the changelog
@@ -140,7 +137,7 @@ public class PartController {
     @RequestMapping(value = "/part/{id}", method = RequestMethod.DELETE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Secured("ROLE_DELETE_PART")
-    public @ResponseBody void deletePart(Principal principal, @PathVariable("id") Long id) {
+    public void deletePart(@PathVariable("id") Long id) {
         Part part = partDao.findOne(id);
         partDao.merge(part);
         // Update the changelog
@@ -152,7 +149,6 @@ public class PartController {
 
     @Transactional
     @RequestMapping(value="/part/all/rebuildBom")
-    @ResponseBody
     @Secured("ROLE_ADMIN")
     public void rebuildAllBom() throws Exception {
         partDao.rebuildBomDescendancy();
@@ -160,7 +156,6 @@ public class PartController {
     
     @Transactional
     @RequestMapping(value="/part/{id}/image", method = RequestMethod.POST)
-    @ResponseBody
     @Secured("ROLE_PART_IMAGES")
     public ResponseEntity<String> addProductImage(@PathVariable Long id, @RequestBody byte[] imageData) throws Exception {
         
@@ -191,7 +186,6 @@ public class PartController {
     
     @Transactional
     @RequestMapping(value="/part/{partId}/turboType/{turboTypeId}", method=RequestMethod.POST)
-    @ResponseBody
     @Secured("ROLE_ALTER_PART")
     public void addTurboType(@PathVariable("partId") long partId, @PathVariable("turboTypeId") long turboTypeId) {
         Part part = partDao.findOne(partId);
@@ -202,7 +196,6 @@ public class PartController {
     
     @Transactional
     @RequestMapping(value="/part/{partId}/turboType/{turboTypeId}", method=RequestMethod.DELETE)
-    @ResponseBody
     @Secured("ROLE_ALTER_PART")
     public void deleteTurboType(@PathVariable("partId") long partId, @PathVariable("turboTypeId") long turboTypeId) {
         Part part = partDao.findOne(partId);

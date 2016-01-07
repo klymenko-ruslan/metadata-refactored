@@ -10,18 +10,14 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
 import java.io.IOException;
 
 @RequestMapping("/metadata/image")
-@Controller
+@RestController
 public class ProductImageController {
 
     private static final Logger log = LoggerFactory.getLogger(ProductImageController.class);
@@ -33,16 +29,15 @@ public class ProductImageController {
     private File resizedImagesDir;
     
     @Autowired(required=true)
-    ImageResizer resizer;
+    private ImageResizer resizer;
     
     @Autowired
-    PartDao partDao;
+    private PartDao partDao;
     
     @Autowired
-    ProductImageDao productImageDao;
+    private ProductImageDao productImageDao;
     
     @RequestMapping(value = "/{id}.jpg", method = RequestMethod.GET)
-    @ResponseBody
     @Secured("ROLE_READ")
     public ResponseEntity<byte[]> get(@PathVariable Long id) throws Exception {
         
@@ -67,7 +62,6 @@ public class ProductImageController {
     }
     
     @RequestMapping(value = "/{size}/{id}.jpg", method = RequestMethod.GET)
-    @ResponseBody
     @Secured("ROLE_READ")
     public ResponseEntity<byte[]> getResized(@PathVariable int size, @PathVariable Long id) throws Exception {
         
@@ -93,7 +87,6 @@ public class ProductImageController {
     
     @Transactional
     @RequestMapping(value="/{id}", method = RequestMethod.DELETE)
-    @ResponseBody
     @Secured("ROLE_PART_IMAGES")
     public ResponseEntity<Void> remove(@PathVariable Long id) throws Exception {
         
@@ -117,7 +110,7 @@ public class ProductImageController {
             FileUtils.deleteQuietly(resized);
         }
         
-        return new ResponseEntity<Void>((Void) null, HttpStatus.OK);
+        return new ResponseEntity<>((Void) null, HttpStatus.OK);
     }
     
     

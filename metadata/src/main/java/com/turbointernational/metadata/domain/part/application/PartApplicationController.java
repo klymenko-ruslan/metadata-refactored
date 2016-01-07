@@ -4,31 +4,25 @@ import com.turbointernational.metadata.domain.part.types.TurboCarModelEngineYear
 import com.turbointernational.metadata.domain.part.types.TurboCarModelEngineYearDao;
 import flexjson.JSONSerializer;
 import flexjson.transformer.HibernateTransformer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RequestMapping("/metadata/part")
-@Controller
+@RestController
 public class PartApplicationController {
-
-    private static final Logger log = LoggerFactory.getLogger(PartApplicationController.class);
 
     @Autowired
     private TurboCarModelEngineYearDao turboCarModelEngineYearDao;
 
     @Transactional
     @RequestMapping(value = "{partId}/application", method = RequestMethod.GET)
-    @ResponseBody
     @Secured("ROLE_READ")
     public ResponseEntity<String> getApplications(@PathVariable("partId") Long partId) {
         HttpHeaders headers = new HttpHeaders();
@@ -46,7 +40,7 @@ public class PartApplicationController {
                 .exclude("turbo")
                 .exclude("*.class")
                 .serialize(partLinkedApplications);
-        return new ResponseEntity<String>(json, headers, HttpStatus.OK);
+        return new ResponseEntity<>(json, headers, HttpStatus.OK);
     }
 
     @Transactional
@@ -58,16 +52,15 @@ public class PartApplicationController {
                 turboCarModelEngineYearDao.add(partId, cmeyId);
             }
         }
-        return new ResponseEntity<String>("", HttpStatus.OK);
+        return new ResponseEntity<>("", HttpStatus.OK);
     }
 
     @Transactional
     @RequestMapping(value = "/{partId}/application/{applicationId}", method = RequestMethod.DELETE)
-    @ResponseBody
     @Secured("ROLE_APPLICATION_CRUD")
     public ResponseEntity<String> delete(@PathVariable("partId") Long partId,
                                          @PathVariable("applicationId") Long applicationId) throws Exception {
-        int deleted = turboCarModelEngineYearDao.delete(partId, applicationId);
-        return new ResponseEntity<String>("", HttpStatus.OK);
+        turboCarModelEngineYearDao.delete(partId, applicationId);
+        return new ResponseEntity<>("", HttpStatus.OK);
     }
 }
