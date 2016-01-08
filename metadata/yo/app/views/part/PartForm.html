@@ -8,9 +8,8 @@
         View Part
       </a>
     </li>
-
     <li authorize="ROLE_ALTER_PART">
-      <a ng-disabled="partForm.$pristine"
+      <a ng-disabled="partForm.$pristine || partForm.$invalid || partForm.$pending"
          ng-click="save()" class="btn btn-success">
         <i class="fa fa-save"></i>
         Save
@@ -46,17 +45,23 @@
         <span ng-show="partId">#{{ partId }} </span>
       </h2>
 
-      <label>Name</label>
-      <input class="form-control" type="text" ng-model="part.name"/>
+      <label for="name">Name</label>
+      <input id="name" class="form-control" type="text" ng-model="part.name"/>
 
-      <label>Description</label>
-      <textarea class="form-control" rows="4" ng-model="part.description"></textarea>
+      <label for="description">Description</label>
+      <textarea id="description" class="form-control" rows="4" ng-model="part.description"></textarea>
 
       <label>Manufacturer</label>
       <picker ng-model="part.manufacturer" path="other/manufacturer"></picker>
 
-      <label>Manufacturer P/N</label>
-      <input class="form-control" type="text" ng-model="part.manufacturerPartNumber" ng-model-options="{ debounce: 500 }" required maxlength="255" />
+      <label for="manufacturerPartNumber">Manufacturer P/N</label>
+      <input id="manufacturerPartNumber" name="manufacturerPartNumber" class="form-control" type="text" ng-model="part.manufacturerPartNumber" ng-model-options="{ debounce: 500 }" required maxlength="255" unique-part-number />
+      <span ng-show="partForm.manufacturerPartNumber.$dirty && partForm.manufacturerPartNumber.$invalid" class="alert alert-danger" role="alert">
+        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+        <span ng-show="partForm.manufacturerPartNumber.$error.required">Required!</span>
+        <span ng-show="partForm.manufacturerPartNumber.$error.maxlenth">Too long manufacturer part number (max 255 chars)!</span>
+        <span ng-show="partForm.manufacturerPartNumber.$error.nonUniquePartNumber">Not unique!</span>
+      </span>
 
       <!-- Type-specific fields -->
       <div ng-switch="part.partType.magentoAttributeSet">

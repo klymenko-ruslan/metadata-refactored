@@ -60,7 +60,15 @@ public class PartController {
     public Part getPart(@PathVariable("id") Long id) {
         return partRepository.findOne(id);
     }
-    
+
+    @Secured("ROLE_READ")
+    @JsonView(View.Detail.class)
+    @RequestMapping(value = "/part/numbers", method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public Part findByPartNumber(@RequestParam(name = "pn") String partNumber) {
+        return partDao.findByPartNumber(partNumber);
+    }
+
     @RequestMapping(value="/part/{id}/ancestors", method = RequestMethod.GET)
     @Secured("ROLE_READ")
     public ResponseEntity<String> ancestors(@PathVariable("id") long partId) throws Exception {

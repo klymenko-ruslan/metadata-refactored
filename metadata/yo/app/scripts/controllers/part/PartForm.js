@@ -1,8 +1,7 @@
-// Code goes here
 
-'use strict';
+"use strict";
 
-angular.module('ngMetaCrudApp').controller('PartFormCtrl', ["$q", "$scope", "$location",
+angular.module("ngMetaCrudApp").controller("PartFormCtrl", ["$q", "$scope", "$location",
   "$log", "$routeParams", "ngTableParams", "restService",
   "Restangular", "PartTypes",
   function($q, $scope, $location, $log, $routeParams,
@@ -29,7 +28,7 @@ angular.module('ngMetaCrudApp').controller('PartFormCtrl', ["$q", "$scope", "$lo
     // Set the part type
     if ($routeParams.typeId) {
       $scope.part.partType = PartTypes.getById($routeParams.typeId);
-      $log.log('Got part type by ID', $routeParams.typeId, $scope.part.partType);
+      $log.log("Got part type by ID", $routeParams.typeId, $scope.part.partType);
     }
 
     $scope.revert = function() {
@@ -39,11 +38,11 @@ angular.module('ngMetaCrudApp').controller('PartFormCtrl', ["$q", "$scope", "$lo
     };
 
     $scope.save = function() {
-      var url = 'part';
-      if ($scope.oldPart === null) {
+      var url = "part";
+      if (!angular.isObject($scope.oldPart)) {
         restService.createPart($scope.part).then(
           function(id) {
-            $location.path('/part/' + id);
+            $location.path("/part/" + id);
           },
           function(response) {
             restService.error("Could not save part.", response);
@@ -51,7 +50,7 @@ angular.module('ngMetaCrudApp').controller('PartFormCtrl', ["$q", "$scope", "$lo
       } else {
         restService.updatePart($scope.part).then(
           function(part) {
-            $location.path('/part/' + $scope.part.id);
+            $location.path("/part/" + $scope.part.id);
           },
           function(response) {
             restService.error("Could not update part", response);
@@ -73,7 +72,7 @@ angular.module('ngMetaCrudApp').controller('PartFormCtrl', ["$q", "$scope", "$lo
         }
         restService.findPartByNumber(viewValue).then(
           function(foundPart) {
-            if (foundPart === null) {
+            if (!angular.isObject(foundPart) || foundPart.id == $scope.partId) {
               def.resolve();
             } else {
               def.reject();
@@ -88,3 +87,4 @@ angular.module('ngMetaCrudApp').controller('PartFormCtrl', ["$q", "$scope", "$lo
       };
     }
   };
+}]);

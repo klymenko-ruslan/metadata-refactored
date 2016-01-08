@@ -1,264 +1,288 @@
-'use strict';
 
-angular.module('ngMetaCrudApp')
-    .service('restService', function RestService($log, Restangular, dialogs, $q, $rootScope) {
-        return new function () {  // jshint ignore:line
-            var RestService     = this;
-            var refreshPromise  = null;
-            this.status         = null;
+"use strict";
 
-            this.refreshStatus = function() {
-              if (refreshPromise !== null) {
-                return refreshPromise;
-              } else {
+angular.module("ngMetaCrudApp")
+  .service("restService", function RestService($log, Restangular, dialogs, $q, $rootScope) {
+    return new function() { // jshint ignore:line
+      var RestService = this;
+      var refreshPromise = null;
+      this.status = null;
 
-                refreshPromise = Restangular.one('status/all').get();
+      this.refreshStatus = function() {
+        if (refreshPromise !== null) {
+          return refreshPromise;
+        } else {
 
-                refreshPromise.then(function(status) {
-                  RestService.status = status;
-                  return status;
-                });
+          refreshPromise = Restangular.one("status/all").get();
 
-                refreshPromise.finally(function() {
-                  refreshPromise = null;
-                });
+          refreshPromise.then(function(status) {
+            RestService.status = status;
+            return status;
+          });
 
-                return refreshPromise;
-              }
-            };
+          refreshPromise.finally(function() {
+            refreshPromise = null;
+          });
 
-            // Wraps the BOM status logic, resolving when the BOM is not rebuilding.
-            this.getBomRebuildingCompletePromise = function() {
-              var deferred = $q.defer();
+          return refreshPromise;
+        }
+      };
 
-              RestService.refreshStatus().then(function(status) {
-                if (status.bomRebuilding) {
+      // Wraps the BOM status logic, resolving when the BOM is not rebuilding.
+      this.getBomRebuildingCompletePromise = function() {
+        var deferred = $q.defer();
 
-                  var cancelWatcher = $rootScope.$watch(
-                      function() {
-                        return RestService.status.bomRebuilding;
-                      },
-                      function(bomRebuilding) {
-                        if (bomRebuilding === false) {
-                          deferred.resolve();
-                          cancelWatcher();
-                        }
-                      }, true);
-                } else {
+        RestService.refreshStatus().then(function(status) {
+          if (status.bomRebuilding) {
+
+            var cancelWatcher = $rootScope.$watch(
+              function() {
+                return RestService.status.bomRebuilding;
+              },
+              function(bomRebuilding) {
+                if (bomRebuilding === false) {
                   deferred.resolve();
+                  cancelWatcher();
                 }
-              });
+              }, true);
+          } else {
+            deferred.resolve();
+          }
+        });
 
-              return deferred.promise;
-            };
-            this.error = function(title, response) {
-              // NOOP on access denied, loginRequiredInterceptor will handle the redirect
-              if (response.status === 401 || response.status === 403) {
-                return;
-              }
-              $log.log(title, response);
-              dialogs.error(title, 'Server said: <pre>' + response.data.message + '</pre>');
-            };
+        return deferred.promise;
+      };
+      this.error = function(title, response) {
+        // NOOP on access denied, loginRequiredInterceptor will handle the redirect
+        if (response.status === 401 || response.status === 403) {
+          return;
+        }
+        $log.log(title, response);
+        dialogs.error(title, 'Server said: <pre>' + response.data.message + '</pre>');
+      };
 
-            this.findPart = function (id, params) {
-                return Restangular.one('part', id).get(params);
-            };
+      this.findPart = function(id, params) {
+        return Restangular.one('part', id).get(params);
+      };
 
-            this.createPart = function (part) {
-              // Specify class depending on part type.
-              var clazz = "com.turbointernational.metadata.domain.part.types.";
-              switch(part.partType.id) {
-              case 1:
-                clazz += "Turbo";
-                break;
-              case 2:
-                clazz += "Cartridge";
-                break;
-              case 3:
-                clazz += "Kit";
-                break;
-              case 4:
-                clazz += "PistonRing";
-                break;
-              case 5:
-                clazz += "JournalBearing";
-                break;
-              case 6:
-                clazz += "Gasket";
-                break;
-              case 7:
-                clazz += "BearingSpacer";
-                break;
-              case 11:
-                clazz += "CompressorWheel";
-                break;
-              case 12:
-                clazz += "TurbineWheel";
-                break;
-              case 13:
-                clazz += "BearingHousing";
-                break;
-              case 14:
-                clazz += "Backplate";
-                break;
-              case 15:
-                clazz += "Heatshield";
-                break;
-              case 16:
-                clazz += "NozzleRing";
-                break;
-              default:
-                clazz = "com.turbointernational.metadata.domain.part.Part";
-              }
-              part.class = clazz;
-              return Restangular.all('part').post(part);
-            };
+      this.findPartByNumber = function(pn) {
+        return Restangular.one('part/numbers').get({
+          "pn": pn
+        });
+      };
 
-            this.updatePart = function (part) {
-              return Restangular.one("part", part.id).customPUT(part);
-            };
+      this.createPart = function(part) {
+        // Specify class depending on part type.
+        var clazz = "com.turbointernational.metadata.domain.part.types.";
+        switch (part.partType.id) {
+          case 1:
+            clazz += "Turbo";
+            break;
+          case 2:
+            clazz += "Cartridge";
+            break;
+          case 3:
+            clazz += "Kit";
+            break;
+          case 4:
+            clazz += "PistonRing";
+            break;
+          case 5:
+            clazz += "JournalBearing";
+            break;
+          case 6:
+            clazz += "Gasket";
+            break;
+          case 7:
+            clazz += "BearingSpacer";
+            break;
+          case 11:
+            clazz += "CompressorWheel";
+            break;
+          case 12:
+            clazz += "TurbineWheel";
+            break;
+          case 13:
+            clazz += "BearingHousing";
+            break;
+          case 14:
+            clazz += "Backplate";
+            break;
+          case 15:
+            clazz += "Heatshield";
+            break;
+          case 16:
+            clazz += "NozzleRing";
+            break;
+          default:
+            clazz = "com.turbointernational.metadata.domain.part.Part";
+        }
+        part.class = clazz;
+        return Restangular.all('part').post(part);
+      };
 
-            this.deletePart = function (part) {
-                return Restangular.remove(part);
-              };
+      this.updatePart = function(part) {
+        return Restangular.one("part", part.id).customPUT(part);
+      };
 
-            this.findCarmodelengineyear = function (cmey_id) {
-              return Restangular.one("application/carmodelengineyear", cmey_id).get();
-            };
+      this.deletePart = function(part) {
+        return Restangular.remove(part);
+      };
 
-            this.createCarmodelengineyear = function (cmey) {
-              return Restangular.one("application").post("carmodelengineyear", cmey);
-            };
+      this.findCarmodelengineyear = function(cmey_id) {
+        return Restangular.one("application/carmodelengineyear", cmey_id).get();
+      };
 
-            this.updateCarmodelengineyear = function (cmey) {
-              return Restangular.one("application/carmodelengineyear", cmey.id).customPUT(cmey);
-            };
+      this.createCarmodelengineyear = function(cmey) {
+        return Restangular.one("application").post("carmodelengineyear", cmey);
+      };
 
-            this.removeCarmodelengineyear = function (id) {
-                return Restangular.one("/application/carmodelengineyear/" +  id).remove();
-            };
+      this.updateCarmodelengineyear = function(cmey) {
+        return Restangular.one("application/carmodelengineyear", cmey.id).customPUT(cmey);
+      };
 
-            this.findPartApplications = function (part_id) {
-                return Restangular.one('part', part_id).getList('application');
-              };
+      this.removeCarmodelengineyear = function(id) {
+        return Restangular.one("/application/carmodelengineyear/" + id).remove();
+      };
 
-            this.addPartApplications = function (part_id, applications) {
-                var ids = [];
-                angular.forEach(applications, function (val) { ids.push(val.id); });
-                return Restangular.one('part', part_id).post('application', ids);
-              }
+      this.findPartApplications = function(part_id) {
+        return Restangular.one("part", part_id).getList("application");
+      };
 
-            this.removePartApplication = function (part_id, application_id) {
-                return Restangular.one('part/' + part_id + '/application/' +  application_id).remove();
-              };
+      this.addPartApplications = function(part_id, applications) {
+        var ids = [];
+        angular.forEach(applications, function(val) {
+          ids.push(val.id);
+        });
+        return Restangular.one("part", part_id).post("application", ids);
+      };
 
-            this.listManufacturers = function (first, count) {
-                return Restangular.all('other/manufacturer', {first: first, count: count}).getList();
-              };
+      this.removePartApplication = function(part_id, application_id) {
+        return Restangular.one("part/" + part_id + "/application/" + application_id).remove();
+      };
 
-            this.listPartTypes = function () {
-                return Restangular.all('type/part').getList();
-              };
+      this.listManufacturers = function(first, count) {
+        return Restangular.all("other/manufacturer", {
+          first: first,
+          count: count
+        }).getList();
+      };
 
-            this.findManufacturer = function (id) {
-                return Restangular.one('manufacturer', id).get();
-              };
+      this.listPartTypes = function() {
+        return Restangular.all("type/part").getList();
+      };
 
-            this.listTurboTypesForManufacturerId = function (manufacturerId) {
-                return Restangular.all('other/turboType').getList({'manufacturerId': manufacturerId});
-              };
+      this.findManufacturer = function(id) {
+        return Restangular.one("manufacturer", id).get();
+      };
 
-            this.listTurboModelsForTurboTypeId = function (turboTypeId) {
-                return Restangular.all('other/turboModel').getList({'turboTypeId': turboTypeId});
-              };
+      this.listTurboTypesForManufacturerId = function(manufacturerId) {
+        return Restangular.all("other/turboType").getList({
+          "manufacturerId": manufacturerId
+        });
+      };
 
-            this.findInterchange = function (id) {
-                return Restangular.one("interchange", id).get();
-            };
+      this.listTurboModelsForTurboTypeId = function(turboTypeId) {
+        return Restangular.all("other/turboModel").getList({
+          "turboTypeId": turboTypeId
+        });
+      };
 
-            this.findCarmakeByName = function (name) {
-                return Restangular.one("application/carmake").get({"name": name});
-            };
+      this.findInterchange = function(id) {
+        return Restangular.one("interchange", id).get();
+      };
 
-            this.findAllCarMakesOrderedByName = function() {
-                return Restangular.one("application").getList("carmakes");
-            };
+      this.findCarmakeByName = function(name) {
+        return Restangular.one("application/carmake").get({
+          "name": name
+        });
+      };
 
-            this.createCarmake = function (carmake) {
-                return Restangular.one("application").post("carmake", carmake);
-            };
+      this.findAllCarMakesOrderedByName = function() {
+        return Restangular.one("application").getList("carmakes");
+      };
 
-            this.updateCarmake = function (carmake) {
-                return Restangular.one("application/carmake", carmake.id).customPUT(carmake);
-            };
+      this.createCarmake = function(carmake) {
+        return Restangular.one("application").post("carmake", carmake);
+      };
 
-            this.removeCarmake = function(id) {
-              return Restangular.one("application/carmake", id).remove();
-            }
+      this.updateCarmake = function(carmake) {
+        return Restangular.one("application/carmake", carmake.id).customPUT(carmake);
+      };
 
-            this.findCarfueltypeByName = function (name) {
-                return Restangular.one("application/carfueltype").get({"name": name});
-            };
+      this.removeCarmake = function(id) {
+        return Restangular.one("application/carmake", id).remove();
+      };
 
-            this.findAllCarFuelTypesOrderedByName = function() {
-                return Restangular.one("application").getList("carfueltypes");
-            };
+      this.findCarfueltypeByName = function(name) {
+        return Restangular.one("application/carfueltype").get({
+          "name": name
+        });
+      };
 
-            this.createCarfueltype = function (carfueltype) {
-              return Restangular.one("application").post("carfueltype", carfueltype);
-            };
+      this.findAllCarFuelTypesOrderedByName = function() {
+        return Restangular.one("application").getList("carfueltypes");
+      };
 
-            this.updateCarfueltype = function (carfueltype) {
-              return Restangular.one("application/carfueltype", carfueltype.id).customPUT(carfueltype);
-            };
+      this.createCarfueltype = function(carfueltype) {
+        return Restangular.one("application").post("carfueltype", carfueltype);
+      };
 
-            this.removeCarfueltype = function(id) {
-              return Restangular.one("application/carfueltype", id).remove();
-            };
+      this.updateCarfueltype = function(carfueltype) {
+        return Restangular.one("application/carfueltype", carfueltype.id).customPUT(carfueltype);
+      };
 
-            this.findCarmodel = function (id) {
-              return Restangular.one('application/carmodel', id).get();
-            };
+      this.removeCarfueltype = function(id) {
+        return Restangular.one("application/carfueltype", id).remove();
+      };
 
-            this.createCarmodel = function (carmodel) {
-              return Restangular.one("application").post("carmodel", carmodel);
-            }
+      this.findCarmodel = function(id) {
+        return Restangular.one('application/carmodel', id).get();
+      };
 
-            this.updateCarmodel = function (carmodel) {
-              return Restangular.one("application/carmodel", carmodel.id).customPUT(carmodel);
-            };
+      this.createCarmodel = function(carmodel) {
+        return Restangular.one("application").post("carmodel", carmodel);
+      };
 
-            this.removeCarmodel = function(id) {
-              return Restangular.one("application/carmodel", id).remove();
-            };
+      this.updateCarmodel = function(carmodel) {
+        return Restangular.one("application/carmodel", carmodel.id).customPUT(carmodel);
+      };
 
-            this.findCarModelsOfMake = function(makeId) {
-              return Restangular.one("application").getList("carmodels", {makeId: makeId});
-            };
+      this.removeCarmodel = function(id) {
+        return Restangular.one("application/carmodel", id).remove();
+      };
 
-            this.findCarengine = function (id) {
-              return Restangular.one('application/carengine', id).get();
-            };
+      this.findCarModelsOfMake = function(makeId) {
+        return Restangular.one("application").getList("carmodels", {
+          makeId: makeId
+        });
+      };
 
-            this.createCarengine = function (carengine) {
-              return Restangular.one("application").post("carengine", carengine);
-            }
+      this.findCarengine = function(id) {
+        return Restangular.one("application/carengine", id).get();
+      };
 
-            this.updateCarengine = function (carengine) {
-                return Restangular.one("application/carengine", carengine.id).customPUT(carengine);
-            };
+      this.createCarengine = function(carengine) {
+        return Restangular.one("application").post("carengine", carengine);
+      };
 
-            this.removeCarengine = function(id) {
-              return Restangular.one("application/carengine", id).remove();
-            };
+      this.updateCarengine = function(carengine) {
+        return Restangular.one("application/carengine", carengine.id).customPUT(carengine);
+      };
 
-            this.findAllCarEnginesOrderedByName = function() {
-              return Restangular.one("application").getList("carengines");
-            };
+      this.removeCarengine = function(id) {
+        return Restangular.one("application/carengine", id).remove();
+      };
 
-            this.findCarYearByName = function (name) {
-              return Restangular.one("application/caryear").get({"name": name});
-            }
+      this.findAllCarEnginesOrderedByName = function() {
+        return Restangular.one("application").getList("carengines");
+      };
 
-        };
-      });
+      this.findCarYearByName = function(name) {
+        return Restangular.one("application/caryear").get({
+          "name": name
+        });
+      };
+
+    };
+  });

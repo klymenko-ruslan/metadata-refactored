@@ -69,8 +69,12 @@ public class PartDao extends AbstractDao<Part> {
     }
 
     public Part findByPartNumber(String partNumber) throws NoResultException {
-        return em.createNamedQuery("findByPartNumber", Part.class)
-                .setParameter("partNumber", partNumber)
-                .getSingleResult();
+        try {
+            return em.createNamedQuery("findByPartNumber", Part.class)
+                    .setParameter("partNumber", partNumber)
+                    .getSingleResult();
+        } catch(NoResultException e) {
+            return null;
+        }
     }
 }
