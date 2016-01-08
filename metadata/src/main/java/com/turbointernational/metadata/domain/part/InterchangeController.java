@@ -4,10 +4,6 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.google.common.collect.Sets;
 import com.turbointernational.metadata.domain.changelog.ChangelogDao;
 import com.turbointernational.metadata.web.View;
-import java.security.Principal;
-import java.util.Iterator;
-import java.util.Set;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +16,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -42,7 +37,7 @@ public class InterchangeController {
     @Transactional
     @RequestMapping(method = RequestMethod.POST)
     @Secured("ROLE_INTERCHANGE")
-    public ResponseEntity<String> create(Principal principal, @RequestBody String json) throws Exception {
+    public ResponseEntity<String> create(@RequestBody String json) throws Exception {
         
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json");
@@ -90,36 +85,37 @@ public class InterchangeController {
     @RequestMapping(value="/{interchangeId}/part/{partId}", method = RequestMethod.PUT)
     @ResponseBody
     @Secured("ROLE_INTERCHANGE")
-    public void update(Principal principal, @PathVariable("interchangeId") Long id, @PathVariable("partId") Long partId) throws Exception {
-        
+    public void update(@PathVariable("interchangeId") Long id, @PathVariable("partId") Long partId) throws Exception {
+
         // Get the part and it's original interchange
         Part iPart = partDao.findOne(partId);
-        
-        Interchange oldInterchange = interchangeDao.findOne(iPart.getInterchange().getId()); // Hacky fix to multiple session problem
-        
+
         // Update the interchange
         Interchange newInterchange = interchangeDao.findOne(id);
         if (newInterchange == null) {
             throw new IllegalArgumentException("Could not find interchange " + id);
         }
-        
+
         // Save the part into the new interchange
         newInterchange.getParts().add(iPart);
         iPart.setInterchange(newInterchange);
         interchangeDao.merge(newInterchange);
-        
-        // Update the old interchange
-        if (oldInterchange != null) {
-            oldInterchange.getParts().remove(iPart);
-            
-            // Delete the interchange if it's empty, otherwise save it
-            if (oldInterchange.getParts().isEmpty()) {
-                interchangeDao.remove(oldInterchange);
-            } else {
-                interchangeDao.merge(oldInterchange);
+
+        Interchange iPartInterchange = iPart.getInterchange();
+        if (iPartInterchange != null) {
+            Interchange oldInterchange = interchangeDao.findOne(iPartInterchange.getId()); // Hacky fix to multiple session problem
+            // Update the old interchange
+            if (oldInterchange != null) {
+                oldInterchange.getParts().remove(iPart);
+                // Delete the interchange if it's empty, otherwise save it
+                if (oldInterchange.getParts().isEmpty()) {
+                    interchangeDao.remove(oldInterchange);
+                } else {
+                    interchangeDao.merge(oldInterchange);
+                }
             }
         }
-        
+
         interchangeDao.flush();
         
         // Update the changelog
@@ -143,7 +139,7 @@ public class InterchangeController {
     @RequestMapping(value = "/part/{partId}", method = RequestMethod.DELETE)
     @ResponseBody
     @Secured("ROLE_INTERCHANGE")
-    public void delete(Principal principal, @PathVariable("partId") Long partId) throws Exception {
+    public void delete(@PathVariable("partId") Long partId) throws Exception {
         
         // Get the part and interchange
         Part iPart = partDao.findOne(partId);
