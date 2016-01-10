@@ -102,7 +102,7 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
             joinColumns = @JoinColumn(name = "part_id"),
             inverseJoinColumns = @JoinColumn(name = "turbo_type_id"))
     @JsonView({View.Detail.class})
-    private Set<TurboType> turboTypes = new TreeSet<TurboType>();
+    private Set<TurboType> turboTypes = new TreeSet<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinTable(name = "interchange_item",
@@ -113,12 +113,12 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
 
     @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY, orphanRemoval = true)
     @OrderBy("id")
-    private Set<BOMItem> bom = new TreeSet<BOMItem>();
+    private Set<BOMItem> bom = new TreeSet<>();
 
     @OneToMany(cascade = CascadeType.REFRESH, mappedBy = "part", fetch = FetchType.LAZY)
     @JsonView({View.Detail.class})
     @OrderBy("id")
-    private Set<ProductImage> productImages = new TreeSet<ProductImage>();
+    private Set<ProductImage> productImages = new TreeSet<>();
 
     @Version
     @Column(name = "version")

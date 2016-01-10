@@ -1,0 +1,25 @@
+<table data-ng-table="interchangeablePartsTableParams" class="table table-bordered table-striped table-hover table-responsive">
+  <thead>
+    <tr>
+      <th>Part Type</th>
+      <th>Manufacturer</th>
+      <th>Part #</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr ng-repeat="item in $data">
+      <td>{{item.partType.name}}</td>
+      <td>{{item.manufacturer.name}}</td>
+      <td style="white-space: nowrap;">{{item.manufacturerPartNumber}}</td>
+      <td part-table-actions>
+        <a authorize="ROLE_READ" ng-href="/part/{{item.id}}" class="btn btn-primary btn-xs">
+          <i class="fa fa-eye"></i> View
+        </a>
+      </td>
+    </tr>
+    <tr ng-hide="$data.length > 0">
+      <td colspan="4">No parts to display.</td>
+    </tr>
+  </tbody>
+</table>

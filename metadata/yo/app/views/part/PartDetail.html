@@ -312,9 +312,20 @@
 
   <!-- Interchanges -->
   <div class="col-xs-12 col-md-6">
-    <h3>Interchangeable Parts</h3>
+    <ul>
+      <li>part.interchange.id: {{part.interchange.id}}</li>
+      <li>partId: {{partId}}</li>
+    </ul>
+  </div>
+  <div class="col-xs-12 col-md-6">
+    <h3>Interchangeable Parts (OLD)</h3>
     <interchanges interchange-id="part.interchange.id" parent-part-id="partId"></interchanges>
   </div>
+  <div class="col-xs-12 col-md-6">
+    <h3>Interchangeable Parts (NEW)</h3>
+    <interchangeable-parts interchange-id="part.interchange.id" parent-part-id="partId"></interchangeable-parts>
+  </div>
+
 
   <!-- Applications (AKA CarModelEngineYear) -->
   <div class="col-xs-12 col-md-6" ng-show="part.partType.value == 'turbo'">

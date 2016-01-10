@@ -1,37 +1,41 @@
+
 "use strict";
 
 angular.module("ngMetaCrudApp")
-  .directive("interchangeableParts", function($log, Restangular) {
+  .directive("interchangeableParts", ["$log", "restService", "ngTableParams", function($log, restService, ngTableParams) {
     return {
       scope: {
-        partId: "="
+        interchangeId: "=",
+        parentPartId: "=",
       },
-      replace: true,
       templateUrl: '/views/component/interchangeable_parts.html',
       restrict: 'E',
-      controller: function($scope, restService, ngTableParams) {
-
-        restService.findInterchange(interchangeId).then(
-        function(interchange) {
-        $scope.interchangeablePartsTableParams = new ngTableParams({
-          page: 1,
-          count: 10
-        }, {
-          getData: function($defer, params) {
-
-            if (!angular.isObject($scope.bom)) {
-              $defer.reject();
-              return;
+      controller: function($scope) {
+        $log.log("scope: " + angular.toJson($scope));
+        $log.log("$scope.interchangeId: " + $scope.interchangeId);
+        $log.log("interchangeId: " + interchangeId);
+        restService.findInterchange($scope.interchangeId).then(
+          function(interchange) {
+            // Remove the parent part.
+            $log.log("interchange: " + interchange);
+            var idx = _.findIndex(interchange.parts, function(part) {
+              return part.id == $scope.parentPartId;
+            });
+            if (idx > -1) {
+              interchange.parts.splice(idx, 1);
             }
-
-            $scope.bom = _.sortBy($scope.bom, 'id');
-
-            // Update the total and slice the result
-            $defer.resolve($scope.bom.slice((params.page() - 1) * params.count(), params.page() * params.count()));
-            params.total($scope.bom.length);
-          }
-        });
-
+            $scope.interchangeablePartsTableParams = new ngTableParams({
+              page: 1,
+              count: 10
+            }, {
+              getData: function($defer, params) {
+                $defer.resolve(interchange.slice((params.page() - 1) * params.count(), params.page() * params.count()));
+                params.total(interchange.parts.length);
+              }
+            });
+          },
+          restService.error
+        );
       }
     };
-  });
+  }]);
