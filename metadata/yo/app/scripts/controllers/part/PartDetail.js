@@ -12,7 +12,9 @@ angular.module('ngMetaCrudApp')
             function(components) {
               $scope.kitComponents  = components;
             },
-            restService.error
+            function (error) {
+              restService.error("Can't load kits.", error);
+            }
           );
         }
 

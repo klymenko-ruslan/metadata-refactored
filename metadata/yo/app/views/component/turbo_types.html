@@ -1,0 +1,25 @@
+<table data-ng-table="turboTypesTableParams" class="table table-bordered table-striped table-hover table-responsive">
+  <thead>
+    <tr>
+      <th>Manufacturer</th>
+      <th>Type</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr ng-repeat="turboType in $data">
+      <td>{{turboType.manufacturer.name}}</td>
+      <td>{{turboType.name}}</td>
+      <td>
+        <a ng-click="removeTurboType(turboType)"
+           class="btn btn-xs btn-danger">
+          <i class="fa fa-trash-o"></i>
+          Remove
+        </a>
+      </td>
+    </tr>
+    <tr ng-hide="$data.length > 0">
+      <td colspan="3">No extra turbo types.</td>
+    </tr>
+  </tbody>
+</table>
