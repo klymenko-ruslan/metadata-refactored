@@ -1,28 +1,20 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-    .controller('PartDetailCtrl', function ($scope, $log, $q, $location, $routeParams, Kits, ngTableParams, restService, Restangular, dialogs, gToast) {
-        $scope.partId = $routeParams.id;
-
-        $scope.part = null;
-        $scope.partPromise = restService.findPart($scope.partId).then(
-            function (part) {
-                $scope.part = part;
-
-                // Make sure we're using the correct part type
-                $scope.partType = part.partType.name;
-                // TODO: Find a better way. Directive?
-                if (part.partType.magentoAttributeSet == 'Kit') {
-                    $scope.kitComponents = Kits.listComponents($scope.partId)
-                            .then(function(components) {
-                                $scope.kitComponents  = components;
-                            }, restService.error);
-                }
+    .controller('PartDetailCtrl', function ($scope, $log, $q, $location, $routeParams, Kits, ngTableParams, restService, Restangular, dialogs, gToast, part) {
+        $scope.partId = part.id;
+        $scope.part = part;
+        // Make sure we're using the correct part type
+        $scope.partType = part.partType.name;
+        // TODO: Find a better way. Directive?
+        if (part.partType.magentoAttributeSet == 'Kit') {
+          $scope.kitComponents = Kits.listComponents($scope.partId).then(
+            function(components) {
+              $scope.kitComponents  = components;
             },
-            function (errorResponse) {
-                $log.log("Could not get part details", errorResponse);
-                restService.error("Could not get part details", errorResponse);
-            });
+            restService.error
+          );
+        }
 
         // Turbo Types
         $scope.addTurboType = function() {
