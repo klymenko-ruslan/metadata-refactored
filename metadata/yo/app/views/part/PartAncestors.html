@@ -12,17 +12,16 @@
 
 <div class="col-xs-12 col-md-6">
     <p ng-if="ancestors === null">
-        
+
         Loading...
-        
+
         <bom-status>
             <a ng-click="loadAncestors()" class="btn btn-large btn-primary">
                 Load Anyway
             </a>
         </bom-status>
     </p>
-  
-  <part-table ng-if="ancestors !== null"
-              parts="ancestors" key="ancestor"
-              extra-columns="{&quot;Relation Type&quot;:&quot;item.type&quot;, &quot;Relation Distance&quot;:&quot;item.distance&quot;}"></part-table>
+
+    <ancestors ng-if="ancestors !== null"></ancestors>
+
 </div>
