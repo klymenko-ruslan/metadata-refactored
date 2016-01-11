@@ -62,7 +62,10 @@ angular.module('ngMetaCrudApp', ['ngRoute', 'ngTable', 'ui.bootstrap', 'restangu
         });
         $routeProvider.when('/part/:id', {
           templateUrl: 'views/part/PartDetail.html',
-          controller: 'PartDetailCtrl'
+          controller: 'PartDetailCtrl',
+          resolve: {
+            part: Restangular.one('part', $routeParams.id).get();
+          }
         });
 
         // Part Sales Notes
