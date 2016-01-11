@@ -65,8 +65,9 @@ public class PartController {
     @JsonView(View.Detail.class)
     @RequestMapping(value = "/part/numbers", method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public Part findByPartNumber(@RequestParam(name = "pn") String partNumber) {
-        return partDao.findByPartNumber(partNumber);
+    public Part findByPartNumber(@RequestParam(name = "mid") Long manufacturerId,
+                                 @RequestParam(name = "pn") String partNumber) {
+        return partDao.findByPartNumberAndManufacturer(manufacturerId, partNumber);
     }
 
     @RequestMapping(value="/part/{id}/ancestors", method = RequestMethod.GET)

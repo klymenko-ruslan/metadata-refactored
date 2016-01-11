@@ -77,4 +77,16 @@ public class PartDao extends AbstractDao<Part> {
             return null;
         }
     }
+
+
+    public Part findByPartNumberAndManufacturer(Long manufacturerId, String partNumber) throws NoResultException {
+        try {
+            return em.createNamedQuery("findByPartNumberAndManufacturer", Part.class)
+                    .setParameter("manufacturerId", manufacturerId)
+                    .setParameter("partNumber", partNumber)
+                    .getSingleResult();
+        } catch(NoResultException e) {
+            return null;
+        }
+    }
 }

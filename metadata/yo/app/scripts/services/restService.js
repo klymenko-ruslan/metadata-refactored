@@ -1,4 +1,3 @@
-
 "use strict";
 
 angular.module("ngMetaCrudApp")
@@ -65,8 +64,9 @@ angular.module("ngMetaCrudApp")
         return Restangular.one('part', id).get(params);
       };
 
-      this.findPartByNumber = function(pn) {
+      this.findPartByNumber = function(manufacturerId, pn) {
         return Restangular.one('part/numbers').get({
+          "mid": manufacturerId,
           "pn": pn
         });
       };

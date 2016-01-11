@@ -70,7 +70,8 @@ angular.module("ngMetaCrudApp").controller("PartFormCtrl", ["$q", "$scope", "$lo
         if (ctrl.$isEmpty(modelValue)) {
           return $q.when();
         }
-        restService.findPartByNumber(viewValue).then(
+$log.log("BEFORE VALIDATION. mid=" + $scope.part.manufacturer.id + ", partnumber=" + viewValue);
+        restService.findPartByNumber($scope.part.manufacturer.id, viewValue).then(
           function(foundPart) {
             if (!angular.isObject(foundPart) || foundPart.id == $scope.partId) {
               def.resolve();

@@ -58,6 +58,10 @@ import java.util.TreeSet;
         @NamedQuery(
                 name = "findByPartNumber",
                 query = "FROM Part p WHERE p.manufacturerPartNumber = :partNumber"
+        ),
+        @NamedQuery(
+                name = "findByPartNumberAndManufacturer",
+                query = "FROM Part p WHERE p.manufacturer.id=:manufacturerId AND p.manufacturerPartNumber = :partNumber"
         )
 })
 //@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id", scope = Part.class)
