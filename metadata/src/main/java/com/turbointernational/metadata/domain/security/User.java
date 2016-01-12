@@ -5,24 +5,11 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.google.common.collect.Sets;
 import com.turbointernational.metadata.web.View;
 import flexjson.JSONSerializer;
-import java.util.Set;
-import java.util.TreeSet;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
-import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
