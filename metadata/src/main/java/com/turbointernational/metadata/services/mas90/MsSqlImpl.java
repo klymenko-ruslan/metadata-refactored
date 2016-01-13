@@ -2,10 +2,12 @@ package com.turbointernational.metadata.services.mas90;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
+import javax.sql.DataSource;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -17,14 +19,8 @@ public class MsSqlImpl extends AbstractMas90 {
 
     private JdbcTemplate mssqldb;
 
-    public MsSqlImpl(String url, String username, String password) throws IOException {
-        // TODO: add to Vagrantfile: mvn install:install-file -Dfile=sqljdbc42.jar -DgroupId=com.microsoft.sqlserver -DartifactId=sqljdbc4 -Dversion=4.2 -Dpackaging=jar
-        DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-        dataSource.setUrl(url);
-        dataSource.setUsername(username);
-        dataSource.setPassword(password);
-        this.mssqldb = new JdbcTemplate(dataSource, true);
+    public MsSqlImpl(DataSource dataSourceMas90) throws IOException {
+        this.mssqldb = new JdbcTemplate(dataSourceMas90, true);
         super.init();
     }
 

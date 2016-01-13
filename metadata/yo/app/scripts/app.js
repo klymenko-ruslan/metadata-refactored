@@ -160,6 +160,13 @@ angular.module("ngMetaCrudApp", ["ngRoute", "ngTable", "ui.bootstrap",
       controller: "TurboModelsCtrl"
     });
 
+    // MAS90
+
+    $routeProvider.when("/mas90sync/status", {
+      templateUrl: "views/mas90/sync/status.html",
+      controller: "Mas90SyncCtrl"
+    });
+
     // Users and groups
     $routeProvider.when("/security/groups", {
       templateUrl: "views/security/groups.html",

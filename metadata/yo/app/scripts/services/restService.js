@@ -284,5 +284,12 @@ angular.module("ngMetaCrudApp")
         });
       };
 
+      this.findMas90SyncHistory = function(startPosition, maxResults) {
+        return Restangular.one("mas90sync/history").get({
+          "start": startPosition,
+          "max": maxResults
+        });
+      }
+
     };
   });

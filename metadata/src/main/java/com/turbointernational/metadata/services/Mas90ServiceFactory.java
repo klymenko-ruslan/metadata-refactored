@@ -3,9 +3,12 @@ package com.turbointernational.metadata.services;
 import com.turbointernational.metadata.services.mas90.Mas90;
 import com.turbointernational.metadata.services.mas90.MsAccessImpl;
 import com.turbointernational.metadata.services.mas90.MsSqlImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.sql.DataSource;
 import java.io.File;
 import java.io.IOException;
 
@@ -17,17 +20,12 @@ public class Mas90ServiceFactory {
 
     public enum Implementation {MS_ACCESS, MS_SQL}
 
+    @Qualifier("dataSourceMas90")
+    @Autowired
+    private DataSource dataSourceMas90;
+
     @Value("${mas90.db.path}")
     private String mas90DbPath;
-
-    @Value("${mas90.db.mssql.url}")
-    private String mas90mssqlUrl;
-
-    @Value("${mas90.db.mssql.username}")
-    private String mas90mssqlUsername;
-
-    @Value("${mas90.db.mssql.password}")
-    private String mas90mssqlPassword;
 
     /**
      * Get implementation of Mas90 service.
@@ -51,7 +49,7 @@ public class Mas90ServiceFactory {
                 retVal = new MsAccessImpl(f);
                 break;
             case MS_SQL:
-                retVal = new MsSqlImpl(mas90mssqlUrl, mas90mssqlUsername, mas90mssqlPassword);
+                retVal = new MsSqlImpl(dataSourceMas90);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported service implementation: " + implementation);
