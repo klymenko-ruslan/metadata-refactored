@@ -162,9 +162,14 @@ angular.module("ngMetaCrudApp", ["ngRoute", "ngTable", "ui.bootstrap",
 
     // MAS90
 
-    $routeProvider.when("/mas90sync/status", {
+    $routeProvider.when("/mas90/sync/status", {
       templateUrl: "views/mas90/sync/status.html",
-      controller: "Mas90SyncCtrl"
+      controller: "Mas90SyncCtrl",
+      resolve: {
+        status: ["restService", function(restService) {
+          return restService.statusMas90Sync();
+        }]
+      }
     });
 
     // Users and groups

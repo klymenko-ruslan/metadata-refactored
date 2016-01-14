@@ -289,7 +289,15 @@ angular.module("ngMetaCrudApp")
           "start": startPosition,
           "max": maxResults
         });
-      }
+      };
+
+      this.startMas90Sync = function() {
+        return Restangular.one("mas90sync/start").post();
+      };
+
+      this.statusMas90Sync = function() {
+        return Restangular.one("mas90sync/status").get();
+      };
 
     };
   });
