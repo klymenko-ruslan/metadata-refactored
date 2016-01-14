@@ -52,7 +52,7 @@ angular.module("ngMetaCrudApp", ["ngRoute", "ngTable", "ui.bootstrap",
     });
     $routeProvider.when("/part/:id/bom/search", {
       templateUrl: "views/part/bom/PartBomSearch.html",
-      controller: "PartBomSearchCtr"
+      controller: "PartBomSearchCtrl"
     });
     $routeProvider.when("/part/:id/application/search", {
       templateUrl: "views/part/application/PartApplicationSearch.html",
