@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.domain.other.Mas90SyncDao;
 import com.turbointernational.metadata.domain.security.User;
 import com.turbointernational.metadata.services.Mas90SyncService;
-import com.turbointernational.metadata.services.Mas90Synchronizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,9 +32,9 @@ public class Mas90SyncController {
     @ResponseBody
     @JsonView(View.Summary.class)
     @Secured("ROLE_ADMIN")
-    public Mas90Synchronizer.SyncProcessStatus status() {
-        Mas90Synchronizer.SyncProcessStatus retVal = mas90SyncService.status();
-        log.info("Status: {}", retVal);
+    public Mas90SyncService.SyncProcessStatus status() {
+        Mas90SyncService.SyncProcessStatus retVal = mas90SyncService.status();
+        //log.info("Status: {}", retVal);
         return retVal;
     }
 
@@ -54,14 +53,12 @@ public class Mas90SyncController {
     @Transactional
     @JsonView(View.Summary.class)
     @Secured("ROLE_ADMIN")
-    public Mas90Synchronizer.SyncProcessStatus start(Authentication principal) {
-        log.info("1. START");
+    public Mas90SyncService.SyncProcessStatus start(Authentication principal) {
         User user = null;
         if (principal != null) {
             user = (User) principal.getPrincipal();
         }
-        Mas90Synchronizer.SyncProcessStatus status = mas90SyncService.start(user);
-        log.info("2. START: {}", status);
+        Mas90SyncService.SyncProcessStatus status = mas90SyncService.start(user);
         return status;
     }
 

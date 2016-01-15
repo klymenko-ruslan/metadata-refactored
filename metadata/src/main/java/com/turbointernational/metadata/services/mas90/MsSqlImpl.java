@@ -28,23 +28,17 @@ public class MsSqlImpl extends AbstractMas90 {
     protected void loadMas90Data() throws IOException {
 
         // Load customer data
-        mssqldb.query("SELECT CUSTOMERNO, EMAILADDRESS FROM AR_CUSTOMER", new RowCallbackHandler() {
-            @Override
-            public void processRow(ResultSet rs) throws SQLException {
-                String customerNo = StringUtils.trim((String) rs.getString(1));
-                String emailAddress = rs.getString(2);
-                h2db.update("INSERT INTO customer (id, email) VALUES(?, ?)", customerNo, emailAddress);
-            }
+        mssqldb.query("SELECT CUSTOMERNO, EMAILADDRESS FROM AR_CUSTOMER", rs -> {
+            String customerNo = StringUtils.trim(rs.getString(1));
+            String emailAddress = rs.getString(2);
+            h2db.update("INSERT INTO customer (id, email) VALUES(?, ?)", customerNo, emailAddress);
         });
 
         // Load product data
-        mssqldb.query("SELECT ITEMCODE, STANDARDUNITPRICE FROM CI_ITEM", new RowCallbackHandler() {
-            @Override
-            public void processRow(ResultSet rs) throws SQLException {
-                String itemCode = StringUtils.trim((String) rs.getString(1));
-                String stdPrice = rs.getString(2);
-                h2db.update("MERGE INTO product (id, price) VALUES(?, ?)", itemCode, stdPrice);
-            }
+        mssqldb.query("SELECT ITEMCODE, STANDARDUNITPRICE FROM CI_ITEM", rs -> {
+            String itemCode = StringUtils.trim( rs.getString(1));
+            String stdPrice = rs.getString(2);
+            h2db.update("MERGE INTO product (id, price) VALUES(?, ?)", itemCode, stdPrice);
         });
 
         // Load pricing data

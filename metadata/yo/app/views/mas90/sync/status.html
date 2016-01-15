@@ -11,26 +11,70 @@
     </span>
   </div>
 
-  <div ng-hide="finished">
-    <uib-progressbar type="info" max="partsUpdateTotalSteps" value="partsUpdateCurrentStep" class="progress-striped active">
-      <span style="color:white; white-space:nowrap;">{{partsUpdateCurrentStep}} / {{partsUpdateTotalSteps}}</span>
-    </uib-progressbar>
+  <div class="modal-dialog" ng-hide="finished">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Progress of synchronization</h3>
+      </div>
+      <div class="modal-body">
+        <div>
+          <h4>Updating of parts (Step 1/2)</h4>
+          <div ng-hide="partsUpdateTotalSteps">
+            <p>
+              Job size estimating. Please wait...&nbsp;<i class="fa fa-circle-o-notch fa-spin"></i>
+            </p>
+          </div>
+          <div ng-hide="!partsUpdateTotalSteps">
+            <p>
+              <uib-progressbar type="info" max="partsUpdateTotalSteps" value="partsUpdateCurrentStep" ng-class="{'progress-striped active': phase == 0}">
+                <span style="color:white; white-space:nowrap;">{{partsUpdateCurrentStep}} / {{partsUpdateTotalSteps}}</span>
+              </uib-progressbar>
+              <div>
+                <span>Updated: {{partsUpdateUpdates | number:0}}</span><span style="padding-left:3em;">Inserted: {{partsUpdateInserts | number:0}}</span>
+              </div>
+            </p>
+          </div>
+        </div>
+        <div data-ng-hide="phase < 1">
+          <h4>Updating of BOM (Step 2/2)</h4>
+          <div ng-hide="bomUpdateTotalSteps">
+            <p>
+              Job size estimating. Please wait...&nbsp;<i class="fa fa-circle-o-notch fa-spin"></i>
+            </p>
+          </div>
+          <div ng-hide="!bomUpdateTotalSteps">
+            <p>
+              <div>
+                <span>Updated: {{bomUpdateUpdates | number:0}}</span><span style="padding-left:3em;">Inserted: {{bomUpdateInserts | number:0}}</span>
+              </div>
+              <uib-progressbar type="info" max="bomUpdateTotalSteps" value="bomUpdateCurrentStep" class="progress-striped active">
+                <span style="color:white; white-space:nowrap;">{{bomUpdateCurrentStep}} / {{bomUpdateTotalSteps}}</span>
+              </uib-progressbar>
+            </p>
+          </div>
+        </div>
+        <hr/>
+        <p ng-hide="userId">The process started on {{startedOn | date : "yyyy-MM-dd HH:mm.ss"}} by scheduler.</p>
+        <p ng-hide="!userId">The process started on {{startedOn | date : "yyyy-MM-dd HH:mm.ss"}} by <a ng-href="security/user/{{userId}}">{{userName}}</a>.</p>
+      </div>
+
+    </div>
   </div>
 
 </div>
 
 <div class="row" style="margin-top:3em;">
 
-  <h1>History of synchronization</h1>
+  <h2>History of synchronization sessions</h2>
 
   <div class="col-xs-12 col-sm-9">
     <table data-ng-table="mas90syncHistoryTableParams" class="table table-bordered table-striped">
       <tr data-ng-repeat="rec in $data">
         <td title="'Started'" class="text-center">{{rec.started | date : "yyyy-MM-dd HH:mm.ss"}}</td>
         <td title="'Finished'" class="text-center">{{rec.finished | date : "yyyy-MM-dd HH:mm.ss"}}</td>
-        <td title="'To Process'" class="text-right">{{rec.toProcess}}</td>
-        <td title="'Updated'" class="text-right">{{rec.updated}}</td>
-        <td title="'Inserted'" class="text-right">{{rec.inserted}}</td>
+        <td title="'To Process'" class="text-right">{{rec.toProcess | number:0}}</td>
+        <td title="'Updated'" class="text-right">{{rec.updated | number:0}}</td>
+        <td title="'Inserted'" class="text-right">{{rec.inserted | number:0}}</td>
         <td title="'Started By'"><a ng-href="security/user/{{rec.user.id}}">{{rec.user.name}}</a></td>
         <td title="'Status'" class="text-center">{{rec.status}}</td>
       </tr>

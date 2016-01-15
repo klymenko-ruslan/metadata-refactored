@@ -1,12 +1,6 @@
 package com.turbointernational.metadata.domain.part;
 
 import com.turbointernational.metadata.domain.AbstractDao;
-import com.turbointernational.metadata.magmi.MagmiDataFinder;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import javax.persistence.NoResultException;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
@@ -14,6 +8,11 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
+
+import javax.persistence.NoResultException;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -78,8 +77,7 @@ public class PartDao extends AbstractDao<Part> {
         }
     }
 
-
-    public Part findByPartNumberAndManufacturer(Long manufacturerId, String partNumber) throws NoResultException {
+    public Part findByPartNumberAndManufacturer(Long manufacturerId, String partNumber) {
         try {
             return em.createNamedQuery("findByPartNumberAndManufacturer", Part.class)
                     .setParameter("manufacturerId", manufacturerId)
@@ -89,4 +87,5 @@ public class PartDao extends AbstractDao<Part> {
             return null;
         }
     }
+
 }
