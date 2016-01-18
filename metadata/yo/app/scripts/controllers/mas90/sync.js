@@ -5,7 +5,13 @@ angular.module("ngMetaCrudApp").controller("Mas90SyncCtrl", ["$scope", "$interva
   function($scope, $interval, $log, gToast, ngTableParams, restService, status) {
 
     $scope.errors = "";
-    $scope.phase = 0;
+    /*
+     * Phases:
+     *  0. Pre-request.
+     *  1. Synchronization request in a progress.
+     *  2. Synchronization request finished.
+     */
+    $scope.phase = null;
 
     $scope._updateStatus = function(newStatus) {
       if (newStatus) {
@@ -22,10 +28,19 @@ angular.module("ngMetaCrudApp").controller("Mas90SyncCtrl", ["$scope", "$interva
             $scope.errors += ("\u2022 " + s + "\n");
           });
         }
+        if ($scope.phase == null) {
+          $scope.phase = newStatus.finished ? 0 : 1;
+        } else if ($scope.phase == 0 && $scope.finished && !newStatus.finished) {
+          $scope.phase = 1;
+        } else if ($scope.phase == 1 && !$scope.finished && newStatus.finished) {
+          $scope.phase = 2;
+        }
         $scope.finished = newStatus.finished;
       }
     };
+
     $scope._updateStatus(status);
+
     $scope.mas90syncHistoryTableParams = new ngTableParams({
       page: 1,
       count: 25
@@ -48,9 +63,10 @@ angular.module("ngMetaCrudApp").controller("Mas90SyncCtrl", ["$scope", "$interva
     };
 
     $scope.startSync = function() {
+      $scope.phase = 0;
+      $scope.errors = "";
       restService.startMas90Sync().then(
         function success(newStatus) {
-          $scope.phase = 1;
           $scope._updateStatus(newStatus);
         },
         function failure(error) {
@@ -67,15 +83,7 @@ angular.module("ngMetaCrudApp").controller("Mas90SyncCtrl", ["$scope", "$interva
     var refreshTask = $interval(function() {
       restService.statusMas90Sync().then(
         function success(newStatus2) {
-          if (newStatus2.finished) {
-            $scope.mas90syncHistoryTableParams.reload();
-          }
-          if (newStatus2.finished && $scope.phase == 1) {
-            $scope._updateStatus(newStatus2);
-            $scope.phase = 2; // Started synchronization finished.
-          } else {
-            $scope._updateStatus(newStatus2);
-          }
+          $scope._updateStatus(newStatus2);
         },
         function failure(error) {
           $log.log("Update of the sync.status failed: " + angular.toJson(error));

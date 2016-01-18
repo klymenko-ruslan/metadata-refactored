@@ -57,11 +57,11 @@ public class Mas90SyncService {
     private PartTypeDao partTypeDao;
 
     @Autowired
-    private Mas90SyncDao mas90SyncDao;  // local storage
+    private Mas90SyncDao mas90SyncDao;      // local storage
 
     @Qualifier("dataSourceMas90")
     @Autowired
-    private DataSource dataSourceMas90;         // connections to MS-SQL (MAS90)
+    private DataSource dataSourceMas90;     // connections to MS-SQL (MAS90)
 
     private JdbcTemplate mssqldb;
 
@@ -310,79 +310,86 @@ public class Mas90SyncService {
                 synchronized (syncProcessStatus) {
                     syncProcessStatus.incPartsUpdateCurrentStep();
                 }
-                mssqldb.query("select itemcode, itemcodedesc, productline, producttype  " +
-                        " from ci_item as im join productLine_to_parttype_value as t2 " +
-                        " on im.productline = t2.productLineCode where " +
-                        " itemcode like '[0-9]-[a-z]-[0-6][0-9][0-9][0-9]' or " +
-                        " itemcode like '[0-9][0-9]-[a-z]-[0-6][0-9][0-9][0-9]'", rs -> {
-                    String itemcode = rs.getString(1);
-                    String itemcodedesc = rs.getString(2);
-                    String productline = rs.getString(3);
-                    String producttype = rs.getString(4);
-                    Long partTypeId = mas90toLocal.get(productline);
-                    if (partTypeId != null) {
-                        Boolean inactive = "D".equals(producttype);
-                        // We need a separate transaction to update/insert the Part
-                        // because different types of exceptions could arise during this operation
-                        // and we don't won't to rollback a transaction with main loop.
-                        TransactionTemplate modifyTransaction = new TransactionTemplate(txManager);
-                        modifyTransaction.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-                        modifyTransaction.execute((TransactionCallback<Void>) ts -> {
-                            Part part = partDao.findByPartNumberAndManufacturer(TURBO_INTERNATIONAL_MANUFACTURER_ID,
-                                    itemcode);
-                            try {
-                                if (part == null) {
-                                    part = insertPart(itemcode, itemcodedesc, partTypeId, inactive);
-                                    log.info("Inserted: {} - {}", part.getId(), part.getManufacturerPartNumber());
-                                    synchronized (syncProcessStatus) {
-                                        syncProcessStatus.incPartsUpdateInserts();
-                                    }
-                                } else {
-                                    if (part.getPartType().getId() == partTypeId) {
-                                        boolean updated = updatePart(part, itemcodedesc, inactive);
-                                        if (updated) {
-                                            log.info("Updated: {} - {}", part.getId(), part.getManufacturerPartNumber());
-                                            synchronized (syncProcessStatus) {
-                                                syncProcessStatus.incPartsUpdateUpdates();
-                                            }
+                try {
+                    mssqldb.query("select itemcode, itemcodedesc, productline, producttype  " +
+                            " from ci_item as im join productLine_to_parttype_value as t2 " +
+                            " on im.productline = t2.productLineCode where " +
+                            " itemcode like '[0-9]-[a-z]-[0-6][0-9][0-9][0-9]' or " +
+                            " itemcode like '[0-9][0-9]-[a-z]-[0-6][0-9][0-9][0-9]'", rs -> {
+                        String itemcode = rs.getString(1);
+                        String itemcodedesc = rs.getString(2);
+                        String productline = rs.getString(3);
+                        String producttype = rs.getString(4);
+                        Long partTypeId = mas90toLocal.get(productline);
+                        if (partTypeId != null) {
+                            Boolean inactive = "D".equals(producttype);
+                            // We need a separate transaction to update/insert the Part
+                            // because different types of exceptions could arise during this operation
+                            // and we don't won't to rollback a transaction with main loop.
+                            TransactionTemplate modifyTransaction = new TransactionTemplate(txManager);
+                            modifyTransaction.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+                            modifyTransaction.execute((TransactionCallback<Void>) ts -> {
+                                Part part = partDao.findByPartNumberAndManufacturer(TURBO_INTERNATIONAL_MANUFACTURER_ID,
+                                        itemcode);
+                                try {
+                                    if (part == null) {
+                                        part = insertPart(itemcode, itemcodedesc, partTypeId, inactive);
+                                        log.info("Inserted: {} - {}", part.getId(), part.getManufacturerPartNumber());
+                                        synchronized (syncProcessStatus) {
+                                            syncProcessStatus.incPartsUpdateInserts();
                                         }
                                     } else {
-                                        throw new IllegalArgumentException("Updated part has different part type " +
-                                                "in MAS90 (" + partTypeId + ") and in 'metadata' (" +
-                                                part.getPartType().getId() + ").");
+                                        if (part.getPartType().getId() == partTypeId) {
+                                            boolean updated = updatePart(part, itemcodedesc, inactive);
+                                            if (updated) {
+                                                log.info("Updated: {} - {}", part.getId(), part.getManufacturerPartNumber());
+                                                synchronized (syncProcessStatus) {
+                                                    syncProcessStatus.incPartsUpdateUpdates();
+                                                }
+                                            }
+                                        } else {
+                                            throw new IllegalArgumentException("Updated part has different part type " +
+                                                    "in MAS90 (" + partTypeId + ") and in 'metadata' (" +
+                                                    part.getPartType().getId() + ").");
+                                        }
                                     }
+                                } catch (Exception e) {
+                                    String cause = ExceptionUtils.getRootCauseMessage(e);
+                                    String err = "Processing of a part with code '" + itemcode + "' failed. Cause: " + cause;
+                                    synchronized (syncProcessStatus) {
+                                        syncProcessStatus.addError(err);
+                                        syncProcessStatus.incPartsUpdateSkipped();
+                                    }
+                                    log.error(err, e);
+                                    ts.setRollbackOnly();
                                 }
-                            } catch (Exception e) {
-                                String cause = ExceptionUtils.getRootCauseMessage(e);
-                                String err = "Processing of a part with code '" + itemcode + "' failed. Cause: " + cause;
-                                synchronized (syncProcessStatus) {
-                                    syncProcessStatus.addError(err);
-                                    syncProcessStatus.incPartsUpdateSkipped();
-                                }
-                                log.error(err, e);
-                                ts.setRollbackOnly();
-                            }
-                            return null;
-                        });
-
-                    } else {
-                        // Actually this should never happen because we joined ci_item with productLine_to_parttype_value.
-                        log.warn("Can't convert productline ('{}') to product_type_id. Item with code '{}' skipped.",
-                                productline, itemcode);
-                    }
-
+                                return null;
+                            });
+                        } else {
+                            // Actually this should never happen because we joined ci_item with productLine_to_parttype_value.
+                            log.warn("Can't convert productline ('{}') to product_type_id. Item with code '{}' skipped.",
+                                    productline, itemcode);
+                        }
+                        synchronized (syncProcessStatus) {
+                            syncProcessStatus.incPartsUpdateCurrentStep();
+                        }
+                    });
+                } catch (Throwable e) {
                     synchronized (syncProcessStatus) {
-                        syncProcessStatus.incPartsUpdateCurrentStep();
+                        syncProcessStatus.setFinished(true);
                     }
-                });
+                    log.error("Synchronization with MAS90 failed.", e);
+                    transactionStatus.setRollbackOnly();
+                    return null;
+                }
                 long total, updated, inserted, skipped;
                 synchronized (syncProcessStatus) {
                     total = syncProcessStatus.getPartsUpdateTotalSteps();
                     updated = syncProcessStatus.getPartsUpdateUpdates();
                     inserted = syncProcessStatus.getPartsUpdateInserts();
+                    skipped = syncProcessStatus.getPartsUpdateSkipped();
+                    syncProcessStatus.setFinished(true);
                 }
-                //syncProcessStatus.reset(); // finished = true
-                syncProcessStatus.setFinished(true);
                 record.setStatus(Mas90Sync.Status.FINISHED);
                 record.setToProcess(total);
                 record.setUpdated(updated);
@@ -464,7 +471,8 @@ public class Mas90SyncService {
         private boolean updatePart(Part p, String itemcodedesc,  Boolean inactive) {
             boolean updated = false;
             String currDesc = p.getDescription();
-            if (!StringUtils.equals(currDesc, itemcodedesc)) {
+            // if (!StringUtils.equals(currDesc, itemcodedesc)) {
+            if (currDesc == null && itemcodedesc != null) {
                 updated = true;
                 log.info("Updated description for: {}. {} => {}", p.getManufacturerPartNumber(), currDesc, itemcodedesc);
                 p.setDescription(itemcodedesc);

@@ -10,8 +10,7 @@
       Start synchronization process between ERP (<i>MAS90</i>) and local database.
     </span>
   </div>
-
-  <div class="modal-dialog" ng-hide="phase!=1 && phase!=2">
+  <div class="modal-dialog" ng-hide="phase == 0 && finished && !dialogVisible">
     <div class="modal-content">
       <div class="modal-header">
         <h3 class="modal-title">Progress of synchronization</h3>
@@ -19,37 +18,33 @@
       <div class="modal-body">
         <div>
           <h4>Updating of Parts and BOMs</h4>
-          <div ng-hide="partsUpdateTotalSteps || phase!=1">
+          <div ng-hide="partsUpdateTotalSteps">
             <p>
               Job size estimating. Please wait...&nbsp;<i class="fa fa-circle-o-notch fa-spin"></i>
             </p>
           </div>
-          <div ng-hide="!partsUpdateTotalSteps || phase!=1 && phase!=2">
-            <p>
-              <uib-progressbar type="info" max="partsUpdateTotalSteps" value="partsUpdateCurrentStep" ng-class="{'progress-striped active': phase == 0}">
+          <div ng-hide="!partsUpdateTotalSteps">
+            <div>
+              <span>Updated: <span>{{partsUpdateUpdates | number:0}}</span></span>
+              <span style="padding-left:3em;">Inserted: <span>{{partsUpdateInserts | number:0}}</span></span>
+              <span style="padding-left:3em;">Skipped: <span ng-class="{'text-danger': partsUpdateSkipped}">{{partsUpdateSkipped | number:0}}</span></span>
+            </div>
+            <uib-progressbar type="info" max="partsUpdateTotalSteps" value="partsUpdateCurrentStep" ng-class="{'progress-striped active': partsUpdateCurrentStep != partsUpdateTotalSteps}">
                 <span style="color:white; white-space:nowrap;">{{partsUpdateCurrentStep}} / {{partsUpdateTotalSteps}}</span>
-              </uib-progressbar>
-              <div>
-                <span>Updated: <span>{{partsUpdateUpdates | number:0}}</span></span>
-                <span style="padding-left:3em;">Inserted: <span>{{partsUpdateInserts | number:0}}</span></span>
-                <span style="padding-left:3em;">Skipped: <span ng-class="{'text-danger': partsUpdateSkipped}">{{partsUpdateSkipped | number:0}}</span></span>
-              </div>
-            </p>
+            </uib-progressbar>
           </div>
-          <div ng-hide="!partsUpdateTotalSteps || phase!=1 && phase!=2">
+          <div ng-hide="!partsUpdateTotalSteps">
             <label for="failures">Failures:</label>
             <textarea id="failures" ng-class="['col-xs-12', 'text-nowrap',  {'bg-danger': partsUpdateSkipped}]" rows="10" readonly="readonly" data-ng-disabled="!partsUpdateSkipped">{{errors}}</textarea>
           </div>
-        </div>
-        <br/>
-        <div>
-          <hr/>
-          <p ng-hide="userId">The process started on {{startedOn | date : "yyyy-MM-dd HH:mm.ss"}} by scheduler.</p>
-          <p ng-hide="!userId">The process started on {{startedOn | date : "yyyy-MM-dd HH:mm.ss"}} by <a ng-href="security/user/{{userId}}">{{userName}}</a>.</p>
+          <div>
+            <span ng-hide="userId">The process started on {{startedOn | date : "yyyy-MM-dd HH:mm.ss"}} by scheduler.</span>
+            <span ng-hide="!userId">The process started on {{startedOn | date : "yyyy-MM-dd HH:mm.ss"}} by <a ng-href="security/user/{{userId}}">{{userName}}</a>.</span>
+          </div>
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal" data-ng-disabled="phase != 2" ng-click="onCloseStatus()">Close</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal" data-ng-disabled="!finished" ng-click="onCloseStatus()">Close</button>
       </div>
     </div>
   </div>
