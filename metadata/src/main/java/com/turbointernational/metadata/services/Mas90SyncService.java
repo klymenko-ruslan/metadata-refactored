@@ -1,30 +1,38 @@
 package com.turbointernational.metadata.services;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.other.Mas90Sync;
 import com.turbointernational.metadata.domain.other.Mas90SyncDao;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.part.PartDao;
+import com.turbointernational.metadata.domain.part.types.*;
 import com.turbointernational.metadata.domain.security.User;
 import com.turbointernational.metadata.domain.type.PartType;
 import com.turbointernational.metadata.domain.type.PartTypeDao;
 import com.turbointernational.metadata.web.View;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
 import javax.sql.DataSource;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -41,8 +49,6 @@ public class Mas90SyncService {
 
     @Autowired
     private PlatformTransactionManager txManager;
-
-    private TransactionTemplate transaction;
 
     @Autowired
     private PartDao partDao;
@@ -65,7 +71,6 @@ public class Mas90SyncService {
 
     @PostConstruct
     public void init() {
-        transaction = new TransactionTemplate(txManager);
         mssqldb = new JdbcTemplate(dataSourceMas90);
         syncProcessStatus = new SyncProcessStatus();
         syncProcess = null;
@@ -73,21 +78,14 @@ public class Mas90SyncService {
 
     public static class SyncProcessStatus implements Cloneable {
 
-        private final static int PHASE_UPDATE_PARTS = 0;
-        private final static int PHASE_UPDATE_BOM = 1;
-
         private final static Long DEF_STARTED_ON = null;
         private final static Long DEF_USER_ID = null;
         private final static String DEF_USER_NAME = null;
-        private final static int DEF_PHASE = PHASE_UPDATE_PARTS;
         private final static long DEF_PARTSUPDATE_TOTAL_STEPS = 0L;
         private final static long DEF_PARTSUPDATE_CURRENT_STEP = 0L;
         private final static long DEF_PARTSUPDATE_INSERTS = 0L;
         private final static long DEF_PARTSUPDATE_UPDATES = 0L;
-        private final static long DEF_BOMUPDATE_TOTAL_STEPS = 0L;
-        private final static long DEF_BOMUPDATE_CURRENT_STEP = 0L;
-        private final static long DEF_BOMUPDATE_INSERTS = 0L;
-        private final static long DEF_BOMUPDATE_UPDATES = 0L;
+        private final static long DEF_PARTSUPDATE_SKIPPED = 0L;
          // By default we assume that finished == true.
         // It is important (see JS logic).
         private final static boolean DEF_PARTSUPDATE_FINISHED = Boolean.TRUE;
@@ -102,9 +100,6 @@ public class Mas90SyncService {
         private String userName;
 
         @JsonView({View.Summary.class})
-        private int phase;
-
-        @JsonView({View.Summary.class})
         private long partsUpdateTotalSteps;
 
         @JsonView({View.Summary.class})
@@ -117,19 +112,13 @@ public class Mas90SyncService {
         private long partsUpdateUpdates;
 
         @JsonView({View.Summary.class})
-        private long bomUpdateTotalSteps;
-
-        @JsonView({View.Summary.class})
-        private long bomUpdateCurrentStep;
-
-        @JsonView({View.Summary.class})
-        private long bomUpdateInserts;
-
-        @JsonView({View.Summary.class})
-        private long bomUpdateUpdates;
+        private long partsUpdateSkipped;
 
         @JsonView({View.Summary.class})
         private boolean finished;
+
+        @JsonView({View.Summary.class})
+        private List<String> errors = new ArrayList<>();
 
         SyncProcessStatus() {
             reset();
@@ -157,14 +146,6 @@ public class Mas90SyncService {
 
         public void setUserName(String userName) {
             this.userName = userName;
-        }
-
-        public int getPhase() {
-            return phase;
-        }
-
-        public void setPhase(int phase) {
-            this.phase = phase;
         }
 
         public long getPartsUpdateTotalSteps() {
@@ -211,36 +192,16 @@ public class Mas90SyncService {
             return ++partsUpdateUpdates;
         }
 
-        public long getBomUpdateTotalSteps() {
-            return bomUpdateTotalSteps;
+        public long getPartsUpdateSkipped() {
+            return partsUpdateSkipped;
         }
 
-        public void setBomUpdateTotalSteps(long bomUpdateTotalSteps) {
-            this.bomUpdateTotalSteps = bomUpdateTotalSteps;
+        public void setPartsUpdateSkipped(long partsUpdateSkipped) {
+            this.partsUpdateSkipped = partsUpdateSkipped;
         }
 
-        public long getBomUpdateCurrentStep() {
-            return bomUpdateCurrentStep;
-        }
-
-        public void setBomUpdateCurrentStep(long bomUpdateCurrentStep) {
-            this.bomUpdateCurrentStep = bomUpdateCurrentStep;
-        }
-
-        public long getBomUpdateInserts() {
-            return bomUpdateInserts;
-        }
-
-        public void setBomUpdateInserts(long bomUpdateInserts) {
-            this.bomUpdateInserts = bomUpdateInserts;
-        }
-
-        public long getBomUpdateUpdates() {
-            return bomUpdateUpdates;
-        }
-
-        public void setBomUpdateUpdates(long bomUpdateUpdates) {
-            this.bomUpdateUpdates = bomUpdateUpdates;
+        public long incPartsUpdateSkipped() {
+            return ++partsUpdateSkipped;
         }
 
         public boolean isFinished() {
@@ -251,19 +212,32 @@ public class Mas90SyncService {
             this.finished = finished;
         }
 
+        public List<String> getErrors() {
+            return errors;
+        }
+
+        public void setErrors(List<String> errors) {
+            this.errors = errors;
+        }
+
+        public void addError(String error) {
+            errors.add(error);
+        }
+
+        public void resetErrors() {
+            errors.clear();
+        }
+
         void reset() {
             this.startedOn = DEF_STARTED_ON;
             this.userId = DEF_USER_ID;
             this.userName = DEF_USER_NAME;
-            this.phase = DEF_PHASE;
             this.partsUpdateTotalSteps = DEF_PARTSUPDATE_TOTAL_STEPS;
             this.partsUpdateCurrentStep = DEF_PARTSUPDATE_CURRENT_STEP;
             this.partsUpdateInserts = DEF_PARTSUPDATE_INSERTS;
             this.partsUpdateUpdates = DEF_PARTSUPDATE_UPDATES;
-            this.bomUpdateTotalSteps = DEF_BOMUPDATE_TOTAL_STEPS;
-            this.bomUpdateCurrentStep = DEF_BOMUPDATE_CURRENT_STEP;
-            this.bomUpdateInserts = DEF_BOMUPDATE_INSERTS;
-            this.bomUpdateUpdates = DEF_BOMUPDATE_UPDATES;
+            this.partsUpdateSkipped = DEF_PARTSUPDATE_SKIPPED;
+            this.errors.clear();
             this.finished = DEF_PARTSUPDATE_FINISHED;
         }
 
@@ -273,15 +247,12 @@ public class Mas90SyncService {
             retVal.startedOn = startedOn;
             retVal.userId = userId;
             retVal.userName = userName;
-            retVal.phase = phase;
             retVal.partsUpdateCurrentStep = partsUpdateCurrentStep;
             retVal.partsUpdateTotalSteps = partsUpdateTotalSteps;
             retVal.partsUpdateInserts = partsUpdateInserts;
             retVal.partsUpdateUpdates = partsUpdateUpdates;
-            retVal.bomUpdateTotalSteps = bomUpdateTotalSteps;
-            retVal.bomUpdateCurrentStep = bomUpdateCurrentStep;
-            retVal.bomUpdateInserts = bomUpdateInserts;
-            retVal.bomUpdateUpdates = bomUpdateUpdates;
+            retVal.partsUpdateSkipped = partsUpdateSkipped;
+            retVal.errors = new ArrayList<>(errors);
             retVal.finished = finished;
             return retVal;
         }
@@ -292,16 +263,13 @@ public class Mas90SyncService {
                     "startedOn=" + startedOn +
                     ", userId=" + userId +
                     ", userName='" + userName + '\'' +
-                    ", phase=" + phase +
                     ", partsUpdateTotalSteps=" + partsUpdateTotalSteps +
                     ", partsUpdateCurrentStep=" + partsUpdateCurrentStep +
                     ", partsUpdateInserts=" + partsUpdateInserts +
                     ", partsUpdateUpdates=" + partsUpdateUpdates +
-                    ", bomUpdateTotalSteps=" + bomUpdateTotalSteps +
-                    ", bomUpdateCurrentStep=" + bomUpdateCurrentStep +
-                    ", bomUpdateInserts=" + bomUpdateInserts +
-                    ", bomUpdateUpdates=" + bomUpdateUpdates +
+                    ", partsUpdateSkipped=" + partsUpdateSkipped +
                     ", finished=" + finished +
+                    ", errors=" + errors +
                     '}';
         }
 
@@ -313,7 +281,10 @@ public class Mas90SyncService {
 
         private final Mas90Sync record;
 
-        private Mas90Synchronizer(Mas90Sync record) {
+        private final PlatformTransactionManager txManager;
+
+        private Mas90Synchronizer(PlatformTransactionManager txManager, Mas90Sync record) {
+            this.txManager = txManager;
             this.record = record;
         }
 
@@ -324,12 +295,9 @@ public class Mas90SyncService {
          */
         @Override
         public void run() {
+            TransactionTemplate transaction = new TransactionTemplate(txManager);
             transaction.execute((TransactionCallback<Void>) transactionStatus -> {
                 log.info("Started synchronization with MAS90.");
-                // Update: parts
-                synchronized (syncProcessStatus) {
-                    syncProcessStatus.setPhase(SyncProcessStatus.PHASE_UPDATE_PARTS);
-                }
                 long numItems = mssqldb.queryForObject("select count(*) " +
                         " from ci_item as im join productLine_to_parttype_value as t2 " +
                         " on im.productline = t2.productLineCode where " +
@@ -354,25 +322,49 @@ public class Mas90SyncService {
                     Long partTypeId = mas90toLocal.get(productline);
                     if (partTypeId != null) {
                         Boolean inactive = "D".equals(producttype);
-                        Part part = partDao.findByPartNumberAndManufacturer(TURBO_INTERNATIONAL_MANUFACTURER_ID, itemcode);
-                        if (part == null) {
-                            insertPart(itemcode, itemcodedesc, partTypeId, inactive);
-                            synchronized (syncProcessStatus) {
-                                syncProcessStatus.incPartsUpdateInserts();
-                            }
-                        } else {
-                            if (part.getPartType().getId() == partTypeId) {
-                                boolean updated = updatePart(part, itemcodedesc, inactive);
-                                if (updated) {
+                        // We need a separate transaction to update/insert the Part
+                        // because different types of exceptions could arise during this operation
+                        // and we don't won't to rollback a transaction with main loop.
+                        TransactionTemplate modifyTransaction = new TransactionTemplate(txManager);
+                        modifyTransaction.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+                        modifyTransaction.execute((TransactionCallback<Void>) ts -> {
+                            Part part = partDao.findByPartNumberAndManufacturer(TURBO_INTERNATIONAL_MANUFACTURER_ID,
+                                    itemcode);
+                            try {
+                                if (part == null) {
+                                    part = insertPart(itemcode, itemcodedesc, partTypeId, inactive);
+                                    log.info("Inserted: {} - {}", part.getId(), part.getManufacturerPartNumber());
                                     synchronized (syncProcessStatus) {
-                                        syncProcessStatus.incPartsUpdateUpdates();
+                                        syncProcessStatus.incPartsUpdateInserts();
+                                    }
+                                } else {
+                                    if (part.getPartType().getId() == partTypeId) {
+                                        boolean updated = updatePart(part, itemcodedesc, inactive);
+                                        if (updated) {
+                                            log.info("Updated: {} - {}", part.getId(), part.getManufacturerPartNumber());
+                                            synchronized (syncProcessStatus) {
+                                                syncProcessStatus.incPartsUpdateUpdates();
+                                            }
+                                        }
+                                    } else {
+                                        throw new IllegalArgumentException("Updated part has different part type " +
+                                                "in MAS90 (" + partTypeId + ") and in 'metadata' (" +
+                                                part.getPartType().getId() + ").");
                                     }
                                 }
-                            } else {
-                                log.warn("Part with code {} has different part type in MAS90 ({}) and " +
-                                         "'metadata' ({}). Skipped.", itemcode, partTypeId, part.getPartType().getId());
+                            } catch (Exception e) {
+                                String cause = ExceptionUtils.getRootCauseMessage(e);
+                                String err = "Processing of a part with code '" + itemcode + "' failed. Cause: " + cause;
+                                synchronized (syncProcessStatus) {
+                                    syncProcessStatus.addError(err);
+                                    syncProcessStatus.incPartsUpdateSkipped();
+                                }
+                                log.error(err, e);
+                                ts.setRollbackOnly();
                             }
-                        }
+                            return null;
+                        });
+
                     } else {
                         // Actually this should never happen because we joined ci_item with productLine_to_parttype_value.
                         log.warn("Can't convert productline ('{}') to product_type_id. Item with code '{}' skipped.",
@@ -383,51 +375,14 @@ public class Mas90SyncService {
                         syncProcessStatus.incPartsUpdateCurrentStep();
                     }
                 });
-//                // TODO: implementation
-//                for (int i = 0; i < syncProcessStatus.getPartsUpdateTotalSteps(); i++) {
-//                    log.info("Synchronization (part): {}", i);
-//                    try {
-//                        Thread.sleep(1000L);
-//                        synchronized (syncProcessStatus) {
-//                            syncProcessStatus.setPartsUpdateCurrentStep(i);
-//                        }
-//                    } catch (InterruptedException e) {
-//                        log.warn("Unexpected interruption.", e);
-//                    }
-//                }
-                // Update: BOM
+                long total, updated, inserted, skipped;
                 synchronized (syncProcessStatus) {
-                    syncProcessStatus.setPhase(SyncProcessStatus.PHASE_UPDATE_BOM);
+                    total = syncProcessStatus.getPartsUpdateTotalSteps();
+                    updated = syncProcessStatus.getPartsUpdateUpdates();
+                    inserted = syncProcessStatus.getPartsUpdateInserts();
                 }
-                try {
-                    Thread.sleep(3000L);
-                } catch (InterruptedException e) {
-                    // ignore
-                    e.printStackTrace();
-                }
-                synchronized (syncProcessStatus) {
-                    syncProcessStatus.setBomUpdateTotalSteps(15);
-                }
-                // TODO: implementation
-                for (int i = 0; i < syncProcessStatus.getBomUpdateTotalSteps(); i++) {
-                    log.info("Synchronization (BOM): {}", i);
-                    try {
-                        Thread.sleep(700L);
-                        synchronized (syncProcessStatus) {
-                            syncProcessStatus.setBomUpdateCurrentStep(i);
-                        }
-                    } catch (InterruptedException e) {
-                        log.warn("Unexpected interruption.", e);
-                    }
-                }
-
-                long total, updated, inserted;
-                synchronized (syncProcessStatus) {
-                    total = syncProcessStatus.getPartsUpdateTotalSteps() + syncProcessStatus.getBomUpdateTotalSteps();
-                    updated = syncProcessStatus.getPartsUpdateUpdates() + syncProcessStatus.getBomUpdateUpdates();
-                    inserted = syncProcessStatus.getPartsUpdateInserts() + syncProcessStatus.getBomUpdateInserts();
-                }
-                syncProcessStatus.reset(); // finished = true
+                //syncProcessStatus.reset(); // finished = true
+                syncProcessStatus.setFinished(true);
                 record.setStatus(Mas90Sync.Status.FINISHED);
                 record.setToProcess(total);
                 record.setUpdated(updated);
@@ -463,9 +418,46 @@ public class Mas90SyncService {
             return retVal;
         }
 
-        private Part insertPart(String itemcode, String itemcodedesc, Long productTypeId, Boolean inactive) {
-            Part p = null;
-            // TODO
+        private Part insertPart(String itemcode, String itemcodedesc, Long partTypeId, Boolean inactive) {
+            Part p;
+            if (partTypeId == 1L) {
+                p = new Turbo();
+            } else if (partTypeId == 2L) {
+                p = new Cartridge();
+            } else if (partTypeId == 3L) {
+                p = new Kit();
+            } else if (partTypeId == 4L) {
+                p = new PistonRing();
+            } else if (partTypeId == 5L) {
+                p = new JournalBearing();
+            } else if (partTypeId == 6L) {
+                p = new Gasket();
+            } else if (partTypeId == 7L) {
+                p = new BearingSpacer();
+            } else if (partTypeId == 11L) {
+                p = new CompressorWheel();
+            } else if (partTypeId == 12L) {
+                p = new TurbineWheel();
+            } else  if (partTypeId == 13L) {
+                p = new BearingHousing();
+            } else if (partTypeId == 14L) {
+                p = new Backplate();
+            } else if (partTypeId == 15L) {
+                p = new Heatshield();
+            } else if (partTypeId == 16L) {
+                p = new NozzleRing();
+            } else {
+                p = new Part();
+            }
+            EntityManager em = partDao.getEntityManager();
+            PartType partType = em.getReference(PartType.class, partTypeId);
+            p.setManufacturerPartNumber(itemcode);
+            Manufacturer manufacturer = em.getReference(Manufacturer.class, TURBO_INTERNATIONAL_MANUFACTURER_ID);
+            p.setManufacturer(manufacturer);
+            p.setDescription(itemcodedesc);
+            p.setPartType(partType);
+            p.setInactive(inactive);
+            partDao.persist(p);
             return p;
         }
 
@@ -495,7 +487,9 @@ public class Mas90SyncService {
     public SyncProcessStatus status() {
         synchronized (syncProcessStatus) {
             try {
-                return (SyncProcessStatus) syncProcessStatus.clone();
+                SyncProcessStatus retVal = (SyncProcessStatus) syncProcessStatus.clone();
+                syncProcessStatus.resetErrors();
+                return retVal;
             } catch (CloneNotSupportedException e) {
                 // can't be reached
                 log.error("Unexpected internal error.", e);
@@ -526,7 +520,7 @@ public class Mas90SyncService {
             }
             syncProcessStatus.setFinished(false);
         }
-        syncProcess = new Mas90Synchronizer(record);
+        syncProcess = new Mas90Synchronizer(txManager, record);
         syncProcess.start();
         return status();
     }

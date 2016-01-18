@@ -63,6 +63,13 @@ public class Mas90Sync implements Serializable {
     @Column(name = "inserted")
     private Long inserted;
 
+    /**
+     * Number of skipped items.
+     */
+    @JsonView({View.Summary.class})
+    @Column(name = "skipped")
+    private Long skipped;
+
     @OneToOne
     @JsonView({View.Summary.class})
     @JoinColumn(name = "user_id")
@@ -152,6 +159,7 @@ create table mas90sync(
     to_process bigint(20) default 0 comment 'Total number of records to process.',
     updated bigint(20) default 0 comment 'Number of updates.',
     inserted bigint(20) default 0 comment 'Number of inserts.',
+    skipped bigint(20) default 0 comment 'Number of skipped items.',
     user_id bigint(20) default null comment 'Ref. to an user who initiated the sync.process. NULL -- the process started by scheduler.',
     status enum('IN_PROGRESS', 'CANCELLED', 'FINISHED') not null comment 'Status of the sync.process.',
     primary key (id),

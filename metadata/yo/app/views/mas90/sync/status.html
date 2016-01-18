@@ -2,7 +2,7 @@
 
 <div class="row">
 
-  <div ng-hide="!finished">
+  <div ng-hide="phase != 0">
     <button ng-click="startSync()" authorize="ROLE_ADMIN" class="btn btn-primary btn-lg active">
       <i class="fa fa-flag"></i> Start
     </button>
@@ -11,53 +11,46 @@
     </span>
   </div>
 
-  <div class="modal-dialog" ng-hide="finished">
+  <div class="modal-dialog" ng-hide="phase!=1 && phase!=2">
     <div class="modal-content">
       <div class="modal-header">
         <h3 class="modal-title">Progress of synchronization</h3>
       </div>
       <div class="modal-body">
         <div>
-          <h4>Updating of parts (Step 1/2)</h4>
-          <div ng-hide="partsUpdateTotalSteps">
+          <h4>Updating of Parts and BOMs</h4>
+          <div ng-hide="partsUpdateTotalSteps || phase!=1">
             <p>
               Job size estimating. Please wait...&nbsp;<i class="fa fa-circle-o-notch fa-spin"></i>
             </p>
           </div>
-          <div ng-hide="!partsUpdateTotalSteps">
+          <div ng-hide="!partsUpdateTotalSteps || phase!=1 && phase!=2">
             <p>
               <uib-progressbar type="info" max="partsUpdateTotalSteps" value="partsUpdateCurrentStep" ng-class="{'progress-striped active': phase == 0}">
                 <span style="color:white; white-space:nowrap;">{{partsUpdateCurrentStep}} / {{partsUpdateTotalSteps}}</span>
               </uib-progressbar>
               <div>
-                <span>Updated: {{partsUpdateUpdates | number:0}}</span><span style="padding-left:3em;">Inserted: {{partsUpdateInserts | number:0}}</span>
+                <span>Updated: <span>{{partsUpdateUpdates | number:0}}</span></span>
+                <span style="padding-left:3em;">Inserted: <span>{{partsUpdateInserts | number:0}}</span></span>
+                <span style="padding-left:3em;">Skipped: <span ng-class="{'text-danger': partsUpdateSkipped}">{{partsUpdateSkipped | number:0}}</span></span>
               </div>
             </p>
           </div>
-        </div>
-        <div data-ng-hide="phase < 1">
-          <h4>Updating of BOM (Step 2/2)</h4>
-          <div ng-hide="bomUpdateTotalSteps">
-            <p>
-              Job size estimating. Please wait...&nbsp;<i class="fa fa-circle-o-notch fa-spin"></i>
-            </p>
-          </div>
-          <div ng-hide="!bomUpdateTotalSteps">
-            <p>
-              <div>
-                <span>Updated: {{bomUpdateUpdates | number:0}}</span><span style="padding-left:3em;">Inserted: {{bomUpdateInserts | number:0}}</span>
-              </div>
-              <uib-progressbar type="info" max="bomUpdateTotalSteps" value="bomUpdateCurrentStep" class="progress-striped active">
-                <span style="color:white; white-space:nowrap;">{{bomUpdateCurrentStep}} / {{bomUpdateTotalSteps}}</span>
-              </uib-progressbar>
-            </p>
+          <div ng-hide="!partsUpdateTotalSteps || phase!=1 && phase!=2">
+            <label for="failures">Failures:</label>
+            <textarea id="failures" ng-class="['col-xs-12', 'text-nowrap',  {'bg-danger': partsUpdateSkipped}]" rows="10" readonly="readonly" data-ng-disabled="!partsUpdateSkipped">{{errors}}</textarea>
           </div>
         </div>
-        <hr/>
-        <p ng-hide="userId">The process started on {{startedOn | date : "yyyy-MM-dd HH:mm.ss"}} by scheduler.</p>
-        <p ng-hide="!userId">The process started on {{startedOn | date : "yyyy-MM-dd HH:mm.ss"}} by <a ng-href="security/user/{{userId}}">{{userName}}</a>.</p>
+        <br/>
+        <div>
+          <hr/>
+          <p ng-hide="userId">The process started on {{startedOn | date : "yyyy-MM-dd HH:mm.ss"}} by scheduler.</p>
+          <p ng-hide="!userId">The process started on {{startedOn | date : "yyyy-MM-dd HH:mm.ss"}} by <a ng-href="security/user/{{userId}}">{{userName}}</a>.</p>
+        </div>
       </div>
-
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal" data-ng-disabled="phase != 2" ng-click="onCloseStatus()">Close</button>
+      </div>
     </div>
   </div>
 

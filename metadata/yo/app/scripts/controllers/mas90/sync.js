@@ -3,21 +3,25 @@
 angular.module("ngMetaCrudApp").controller("Mas90SyncCtrl", ["$scope", "$interval", "$log", "gToast", "ngTableParams",
     "restService", "status",
   function($scope, $interval, $log, gToast, ngTableParams, restService, status) {
+
+    $scope.errors = "";
+    $scope.phase = 0;
+
     $scope._updateStatus = function(newStatus) {
-      $log.log("newStatus: " + angular.toJson(newStatus));
       if (newStatus) {
         $scope.startedOn = newStatus.startedOn;
         $scope.userId = newStatus.userId;
         $scope.userName = newStatus.userName;
-        $scope.phase = newStatus.phase;
         $scope.partsUpdateCurrentStep = newStatus.partsUpdateCurrentStep;
         $scope.partsUpdateTotalSteps = newStatus.partsUpdateTotalSteps;
         $scope.partsUpdateInserts = newStatus.partsUpdateInserts;
         $scope.partsUpdateUpdates = newStatus.partsUpdateUpdates;
-        $scope.bomUpdateTotalSteps = newStatus.bomUpdateTotalSteps;
-        $scope.bomUpdateCurrentStep = newStatus.bomUpdateCurrentStep;
-        $scope.bomUpdateInserts = newStatus.bomUpdateInserts;
-        $scope.bomUpdateUpdates = newStatus.bomUpdateUpdates;
+        $scope.partsUpdateSkipped = newStatus.partsUpdateSkipped;
+        if (angular.isObject(newStatus.errors)) {
+          angular.forEach(newStatus.errors, function(s) {
+            $scope.errors += ("\u2022 " + s + "\n");
+          });
+        }
         $scope.finished = newStatus.finished;
       }
     };
@@ -39,27 +43,14 @@ angular.module("ngMetaCrudApp").controller("Mas90SyncCtrl", ["$scope", "$interva
       }
     });
 
-    var refreshTask = $interval(function() {
-      restService.statusMas90Sync().then(
-        function success(newStatus2) {
-          $scope._updateStatus(newStatus2);
-          if (newStatus2.finished) {
-            $scope.mas90syncHistoryTableParams.reload();
-          }
-        },
-        function failure(error) {
-          $log.log("Update of the sync.status failed: " + angular.toJson(error));
-        }
-      );
-    }, 1000);
-
-    $scope.$on("$destroy", function () {
-      $interval.cancel(refreshTask);
-    });
+    $scope.onCloseStatus = function () {
+      $scope.phase = 0;
+    };
 
     $scope.startSync = function() {
       restService.startMas90Sync().then(
         function success(newStatus) {
+          $scope.phase = 1;
           $scope._updateStatus(newStatus);
         },
         function failure(error) {
@@ -67,6 +58,30 @@ angular.module("ngMetaCrudApp").controller("Mas90SyncCtrl", ["$scope", "$interva
         }
       );
     };
+
+    $scope.$on("$destroy", function () {
+      $interval.cancel(refreshTask);
+    });
+
+    // Start periodical update of the status.
+    var refreshTask = $interval(function() {
+      restService.statusMas90Sync().then(
+        function success(newStatus2) {
+          if (newStatus2.finished) {
+            $scope.mas90syncHistoryTableParams.reload();
+          }
+          if (newStatus2.finished && $scope.phase == 1) {
+            $scope._updateStatus(newStatus2);
+            $scope.phase = 2; // Started synchronization finished.
+          } else {
+            $scope._updateStatus(newStatus2);
+          }
+        },
+        function failure(error) {
+          $log.log("Update of the sync.status failed: " + angular.toJson(error));
+        }
+      );
+    }, 1000);
 
   }
 ]);
