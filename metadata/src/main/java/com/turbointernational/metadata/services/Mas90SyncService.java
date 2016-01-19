@@ -6,6 +6,7 @@ import com.turbointernational.metadata.domain.other.Mas90Sync;
 import com.turbointernational.metadata.domain.other.Mas90SyncDao;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.part.PartDao;
+import com.turbointernational.metadata.domain.part.bom.BOMItem;
 import com.turbointernational.metadata.domain.part.types.*;
 import com.turbointernational.metadata.domain.security.User;
 import com.turbointernational.metadata.domain.type.PartType;
@@ -18,8 +19,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCallback;
+import org.springframework.jdbc.core.PreparedStatementSetter;
+import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
@@ -29,11 +34,8 @@ import org.springframework.transaction.support.TransactionTemplate;
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.sql.DataSource;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.sql.*;
+import java.util.*;
 
 /**
  * Synchronization service between Mas90 and 'metadata' database.
@@ -63,7 +65,13 @@ public class Mas90SyncService {
     @Autowired
     private DataSource dataSourceMas90;     // connections to MS-SQL (MAS90)
 
+    @Qualifier("dataSource")
+    @Autowired
+    private DataSource dataSource;     // connections to MYSQL (metadata)
+
     private JdbcTemplate mssqldb;
+
+    private JdbcTemplate metadatadb;
 
     private Mas90Synchronizer syncProcess;
 
@@ -72,6 +80,7 @@ public class Mas90SyncService {
     @PostConstruct
     public void init() {
         mssqldb = new JdbcTemplate(dataSourceMas90);
+        metadatadb = new JdbcTemplate(dataSource);
         syncProcessStatus = new SyncProcessStatus();
         syncProcess = null;
     }
@@ -281,10 +290,7 @@ public class Mas90SyncService {
 
         private final Mas90Sync record;
 
-        private final PlatformTransactionManager txManager;
-
-        private Mas90Synchronizer(PlatformTransactionManager txManager, Mas90Sync record) {
-            this.txManager = txManager;
+        private Mas90Synchronizer(Mas90Sync record) {
             this.record = record;
         }
 
@@ -304,9 +310,13 @@ public class Mas90SyncService {
                         " im.itemcode like '[0-9]-[a-z]-[0-6][0-9][0-9][0-9]' or " +
                         " im.itemcode like '[0-9][0-9]-[a-z]-[0-6][0-9][0-9][0-9]'", Long.class);
                 synchronized (syncProcessStatus) {
-                    syncProcessStatus.setPartsUpdateTotalSteps(numItems + 1); // +1 to load part_types
+                    syncProcessStatus.setPartsUpdateTotalSteps(numItems + 2); // +2 to load part_types and #bom
                 }
                 Map<String, Long> mas90toLocal = loadPartTypesMap(); // part type value => part type ID
+                synchronized (syncProcessStatus) {
+                    syncProcessStatus.incPartsUpdateCurrentStep();
+                }
+                loadLatestBom();
                 synchronized (syncProcessStatus) {
                     syncProcessStatus.incPartsUpdateCurrentStep();
                 }
@@ -322,51 +332,13 @@ public class Mas90SyncService {
                         String producttype = rs.getString(4);
                         Long partTypeId = mas90toLocal.get(productline);
                         if (partTypeId != null) {
-                            Boolean inactive = "D".equals(producttype);
-                            // We need a separate transaction to update/insert the Part
-                            // because different types of exceptions could arise during this operation
-                            // and we don't won't to rollback a transaction with main loop.
-                            TransactionTemplate modifyTransaction = new TransactionTemplate(txManager);
-                            modifyTransaction.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-                            modifyTransaction.execute((TransactionCallback<Void>) ts -> {
-                                Part part = partDao.findByPartNumberAndManufacturer(TURBO_INTERNATIONAL_MANUFACTURER_ID,
-                                        itemcode);
-                                try {
-                                    if (part == null) {
-                                        part = insertPart(itemcode, itemcodedesc, partTypeId, inactive);
-                                        log.info("Inserted: {} - {}", part.getId(), part.getManufacturerPartNumber());
-                                        synchronized (syncProcessStatus) {
-                                            syncProcessStatus.incPartsUpdateInserts();
-                                        }
-                                    } else {
-                                        if (part.getPartType().getId() == partTypeId) {
-                                            boolean updated = updatePart(part, itemcodedesc, inactive);
-                                            if (updated) {
-                                                log.info("Updated: {} - {}", part.getId(), part.getManufacturerPartNumber());
-                                                synchronized (syncProcessStatus) {
-                                                    syncProcessStatus.incPartsUpdateUpdates();
-                                                }
-                                            }
-                                        } else {
-                                            throw new IllegalArgumentException("Updated part has different part type " +
-                                                    "in MAS90 (" + partTypeId + ") and in 'metadata' (" +
-                                                    part.getPartType().getId() + ").");
-                                        }
-                                    }
-                                } catch (Exception e) {
-                                    String cause = ExceptionUtils.getRootCauseMessage(e);
-                                    String err = "Processing of a part with code '" + itemcode + "' failed. Cause: " + cause;
-                                    synchronized (syncProcessStatus) {
-                                        syncProcessStatus.addError(err);
-                                        syncProcessStatus.incPartsUpdateSkipped();
-                                    }
-                                    log.error(err, e);
-                                    ts.setRollbackOnly();
-                                }
-                                return null;
-                            });
+                            long partId = processPart(itemcode, itemcodedesc, producttype, partTypeId); // separate transaction
+                            if (partId != -1) {
+                                processBOM(partId, itemcode); // separate transaction
+                            }
                         } else {
-                            // Actually this should never happen because we joined ci_item with productLine_to_parttype_value.
+                            // Actually this should never happen because we joined ci_item
+                            // with productLine_to_parttype_value.
                             log.warn("Can't convert productline ('{}') to product_type_id. Item with code '{}' skipped.",
                                     productline, itemcode);
                         }
@@ -423,6 +395,102 @@ public class Mas90SyncService {
                 }
 
             });
+            return retVal;
+        }
+
+        /**
+         * Load BOMs of last version from MAS90 to a local table in 'metadata'.
+         *
+         * Result table is a table #bm2 in the original synchronization script (metadata_update_bom_from_MAS.sql).
+         * We load this table in a separate transaction so result will be visible in other transactions.
+         */
+        private void loadLatestBom() {
+            TransactionTemplate tt = new TransactionTemplate(txManager);
+            tt.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+            tt.execute(ts -> {
+                metadatadb.execute("delete from mas90sync_bom_revision");
+                mssqldb.query("select bd.billno, bd.componentitemcode, bd.quantityperbill " +
+                        "from bm_billdetail bd inner join (select bh.billno, max(bh.revision) max_revision " +
+                        "from bm_billheader bh group by bh.billno) bv on bd.billno = bv.billno and " +
+                        "bd.revision = bv.max_revision", rs -> {
+                    String billno = rs.getString(1);
+                    String componentitemcode = rs.getString(2);
+                    long quantityperbill = rs.getLong(3);
+                    metadatadb.execute("insert into mas90sync_bom_revision(billno, componentitemcode, quantityperbill)" +
+                            " values(?,?,?)", (PreparedStatementCallback<Void>) ps -> {
+                        ps.setString(1, billno);
+                        ps.setString(2, componentitemcode);
+                        ps.setLong(3, quantityperbill);
+                        ps.executeUpdate();
+                        return null;
+                    });
+                });
+                return null;
+            });
+
+        }
+
+        /**
+         * Insert or update a part.
+         *
+         * This operation is made in a separate transaction.
+         * We need a separate transaction to update/insert the Part
+         * because different types of exceptions could arise during this operation
+         * and we don't wont to rollback a transaction with-in the main loop.
+         *
+         * @param itemcode
+         * @param itemcodedesc
+         * @param producttype
+         * @param partTypeId
+         * @return partId
+         */
+        private long processPart(String itemcode, String itemcodedesc, String producttype, Long partTypeId) {
+            long retVal = -1;
+            Boolean inactive = "D".equals(producttype);
+            TransactionTemplate modifyTransaction = new TransactionTemplate(txManager);
+            modifyTransaction.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW); // new transaction
+            Long pId = modifyTransaction.execute(ts -> {
+                Long partId = null;
+                Part part = partDao.findByPartNumberAndManufacturer(TURBO_INTERNATIONAL_MANUFACTURER_ID, itemcode);
+                try {
+                    if (part == null) {
+                        part = insertPart(itemcode, itemcodedesc, partTypeId, inactive);
+                        partId = part.getId();
+                        log.info("Inserted: {} - {}", part.getId(), part.getManufacturerPartNumber());
+                        synchronized (syncProcessStatus) {
+                            syncProcessStatus.incPartsUpdateInserts();
+                        }
+                    } else {
+                        if (part.getPartType().getId() == partTypeId) {
+                            partId = part.getId();
+                            boolean updated = updatePart(part, itemcodedesc, inactive);
+                            if (updated) {
+                                log.info("Updated: {} - {}", part.getId(), part.getManufacturerPartNumber());
+                                synchronized (syncProcessStatus) {
+                                    syncProcessStatus.incPartsUpdateUpdates();
+                                }
+                            }
+                        } else {
+                            throw new IllegalArgumentException("Updated part has different part type " +
+                                    "in MAS90 (" + partTypeId + ") and in 'metadata' (" +
+                                    part.getPartType().getId() + ").");
+                        }
+                    }
+                } catch (Exception e) {
+                    String cause = ExceptionUtils.getRootCauseMessage(e);
+                    String err = "Processing of a part with code '" + itemcode + "' failed. Cause: " + cause;
+                    synchronized (syncProcessStatus) {
+                        syncProcessStatus.addError(err);
+                        syncProcessStatus.incPartsUpdateSkipped();
+                    }
+                    log.error(err /*, e*/);
+                    ts.setRollbackOnly();
+                }
+                return partId;
+            });
+            if (pId != null) {
+                retVal = pId;
+            }
             return retVal;
         }
 
@@ -487,6 +555,66 @@ public class Mas90SyncService {
             return updated;
         }
 
+        private void processBOM(long partId, String itemcode) {
+            log.info("===[BEGIN] itemcode: {} ===", itemcode);
+            Part part = partDao.findOne(partId);
+            log.info("Part: {}", part);
+            Set<BOMItem> boms = part.getBom();
+            for (BOMItem bi : boms) {
+                log.info("bi: {}" + bi);
+            }
+            log.info("===[END] itemcode: {} ===", itemcode);
+//            TransactionTemplate tt = new TransactionTemplate(txManager);
+//            tt.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW); // new transaction
+//            tt.execute(ts -> {
+//                metadatadb.query(
+//                        "select " +
+//                        "   bm2.billno, bm2.componentitemcode, bm2.quantityperbill, bom.id bom_id, " +
+//                        "   pp.manfr_part_num bom_parent, pc.manfr_part_num bom_child, bom.quantity, " +
+//                        "   ifnull(bm2.BILLNO, pp.manfr_part_num) as parent, " +
+//                        "   ifnull(bm2.componentitemcode, pc.manfr_part_num) as child, " +
+//                        "   case when bm2.quantityperbill <> bom.quantity then 1 else 0 end as qty_mismatch, " +
+//                        "   ppp.id metadata_billnumber_part_id, pcc.id metadata_componentitemcode_part_id " +
+////                        "   imm.itemcode as mas_billnumber_part_id, immc.itemcode as mas_componentitemcode_part_id " +
+//                        "from " +
+//                        "   mas90sync_bom_revision as bm2 " +
+//                        // -- only get TI parts
+//                        //"   inner join #im as im on bm2.BILLNO = im.ITEMCODE " +
+//                        //"   inner join #im as imc on bm2.componentitemcode = imc.ITEMCODE " +
+//                        // --join against Metadata BOM
+//                        "   full outer join " +
+//                        "   ( bom " +
+//                        // "       #bom as bom " +
+//                        "       inner join part as pp on bom.parent_part_id = pp.id and pp.manfr_id = " + TURBO_INTERNATIONAL_MANUFACTURER_ID + " " +
+//                        "       inner join part as pc on bom.child_part_id = pc.id and pp.manfr_id = " + TURBO_INTERNATIONAL_MANUFACTURER_ID + " " +
+//                        "   ) on bm2.billno = pp.manfr_part_num and bm2.componentitemcode = pc.manfr_part_num " +
+//                        // -- check to see if parts are missing from Metadata
+//                        "   left join part as ppp on ifnull(bm2.billno, pp.manfr_part_num) = ppp.manfr_part_num " +
+//                        "   left join part as pcc on ifnull(bm2.componentitemcode, pc.manfr_part_num) = pcc.manfr_part_num " +
+//                        // -- check to see if parts are missing from MAS
+////                        "   left join #im as imm on imm.ITEMCODE = ifnull(bm2.BILLNO, pp.manfr_part_num) " +
+////                        "   left join #im as immc on immc.ITEMCODE = ifnull(bm2.componentitemcode, pc.manfr_part_num) " +
+//                        "where " +
+//                        "    bm2.billno = ? or bm2.componentitemcode = ? " + // itemcode
+//                        // --and pc.id is null
+//                        // --and ppp.id is null
+//                        // --and pcc.id is null
+//                        // --and bm2.QUANTITYPERBILL <> bom.quantity
+//                        "order by parent, child",
+//                        ps -> {
+//                            ps.setString(1, itemcode);
+//                            ps.setString(2, itemcode);
+//                        },
+//                        rs -> {
+//                            String billno = rs.getString(1);
+//                            log.info("billno: {}", billno );
+//                            return;
+//                        });
+//                return null;
+//            });
+//            log.info("===[END] itemcode: {} ===", itemcode);
+        }
+
     } // Mas90Synchronizer
 
     public Mas90SyncDao.Page history(int startPosition, int maxResults) {
@@ -529,7 +657,7 @@ public class Mas90SyncService {
             }
             syncProcessStatus.setFinished(false);
         }
-        syncProcess = new Mas90Synchronizer(txManager, record);
+        syncProcess = new Mas90Synchronizer(record);
         syncProcess.start();
         return status();
     }
