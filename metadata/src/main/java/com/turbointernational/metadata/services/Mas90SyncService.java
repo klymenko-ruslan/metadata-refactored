@@ -394,6 +394,7 @@ public class Mas90SyncService {
                 record.setToProcess(total);
                 record.setUpdated(updated);
                 record.setInserted(inserted);
+                record.setSkipped(skipped);
                 mas90SyncDao.merge(record);
                 log.info("Finish synchronization with MAS90.");
                 return null;

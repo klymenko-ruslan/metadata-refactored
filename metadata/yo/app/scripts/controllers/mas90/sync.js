@@ -34,6 +34,7 @@ angular.module("ngMetaCrudApp").controller("Mas90SyncCtrl", ["$scope", "$interva
           $scope.phase = 1;
         } else if ($scope.phase == 1 && !$scope.finished && newStatus.finished) {
           $scope.phase = 2;
+          $scope.mas90syncHistoryTableParams.reload();
         }
         $scope.finished = newStatus.finished;
       }

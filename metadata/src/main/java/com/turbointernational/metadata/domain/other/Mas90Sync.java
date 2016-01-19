@@ -133,6 +133,14 @@ public class Mas90Sync implements Serializable {
         this.inserted = inserted;
     }
 
+    public Long getSkipped() {
+        return skipped;
+    }
+
+    public void setSkipped(Long skipped) {
+        this.skipped = skipped;
+    }
+
     public User getUser() {
         return user;
     }

@@ -27,7 +27,7 @@
             <div>
               <span>Updated: <span>{{partsUpdateUpdates | number:0}}</span></span>
               <span style="padding-left:3em;">Inserted: <span>{{partsUpdateInserts | number:0}}</span></span>
-              <span style="padding-left:3em;">Skipped: <span ng-class="{'text-danger': partsUpdateSkipped}">{{partsUpdateSkipped | number:0}}</span></span>
+              <span style="padding-left:3em;">Failures: <span ng-class="{'text-danger': partsUpdateSkipped}">{{partsUpdateSkipped | number:0}}</span></span>
             </div>
             <uib-progressbar type="info" max="partsUpdateTotalSteps" value="partsUpdateCurrentStep" ng-class="{'progress-striped active': partsUpdateCurrentStep != partsUpdateTotalSteps}">
                 <span style="color:white; white-space:nowrap;">{{partsUpdateCurrentStep}} / {{partsUpdateTotalSteps}}</span>
@@ -63,6 +63,7 @@
         <td title="'To Process'" class="text-right">{{rec.toProcess | number:0}}</td>
         <td title="'Updated'" class="text-right">{{rec.updated | number:0}}</td>
         <td title="'Inserted'" class="text-right">{{rec.inserted | number:0}}</td>
+        <td title="'Failures'" class="text-right">{{rec.skipped | number:0}}</td>
         <td title="'Started By'"><a ng-href="security/user/{{rec.user.id}}">{{rec.user.name}}</a></td>
         <td title="'Status'" class="text-center">{{rec.status}}</td>
       </tr>
