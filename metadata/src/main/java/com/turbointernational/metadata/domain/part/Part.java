@@ -8,6 +8,7 @@ import com.turbointernational.metadata.domain.SearchableEntity;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.other.TurboType;
 import com.turbointernational.metadata.domain.part.bom.BOMItem;
+import com.turbointernational.metadata.domain.part.salesnote.SalesNotePart;
 import com.turbointernational.metadata.domain.part.types.*;
 import com.turbointernational.metadata.domain.type.PartType;
 import com.turbointernational.metadata.util.PartElasticSearch;
@@ -23,10 +24,7 @@ import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 @Cacheable
 @Entity
@@ -124,6 +122,10 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
     @OrderBy("id")
     private Set<ProductImage> productImages = new TreeSet<>();
 
+    @OneToMany(cascade = CascadeType.REFRESH, mappedBy = "pk.part", fetch = FetchType.LAZY)
+    @OrderBy("pk.salesNote.id")
+    private List<SalesNotePart> salesNoteParts = new ArrayList<>();
+
     @Version
     @Column(name = "version")
     @JsonView({View.Summary.class})
@@ -214,6 +216,14 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
 
     public Set<ProductImage> getProductImages() {
         return productImages;
+    }
+
+    public List<SalesNotePart> getSalesNoteParts() {
+        return salesNoteParts;
+    }
+
+    public void setSalesNoteParts(List<SalesNotePart> salesNoteParts) {
+        this.salesNoteParts = salesNoteParts;
     }
 
     public Integer getVersion() {

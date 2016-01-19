@@ -5,6 +5,7 @@ import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.part.ProductImage;
 import com.turbointernational.metadata.domain.part.ProductImageDao;
+import com.turbointernational.metadata.domain.part.salesnote.SalesNotePart;
 import com.turbointernational.metadata.domain.part.types.Turbo;
 import com.turbointernational.metadata.util.ImageResizer;
 import net.sf.jsog.JSOG;
@@ -76,6 +77,10 @@ public class MagmiProduct {
 
     public String getPartNumber() {
         return part.getManufacturerPartNumber();
+    }
+
+    public List<SalesNotePart> getSalesNoteParts() {
+        return part.getSalesNoteParts();
     }
 
     private String getCategoriesString() {
@@ -213,7 +218,7 @@ public class MagmiProduct {
     public final Map<String, String> getCsvColumns() {
 
         // CSV column map
-        Map<String, String> columns = new HashMap<String, String>();
+        Map<String, String> columns = new HashMap<>();
         
         // Part data
         part.csvColumns(columns);

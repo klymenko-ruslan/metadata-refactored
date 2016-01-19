@@ -5,6 +5,9 @@ import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.other.ManufacturerDao;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.part.PartDao;
+import com.turbointernational.metadata.domain.part.salesnote.SalesNote;
+import com.turbointernational.metadata.domain.part.salesnote.SalesNotePart;
+import com.turbointernational.metadata.domain.part.salesnote.SalesNoteState;
 import com.turbointernational.metadata.domain.type.*;
 import com.turbointernational.metadata.magmi.MagmiDataFinder;
 import com.turbointernational.metadata.magmi.dto.MagmiProduct;
@@ -14,6 +17,7 @@ import com.turbointernational.metadata.services.mas90.pricing.CalculatedPrice;
 import com.turbointernational.metadata.services.mas90.pricing.ItemPricing;
 import com.turbointernational.metadata.services.mas90.pricing.UnknownDiscountCodeException;
 import com.turbointernational.metadata.util.ImageResizer;
+import flexjson.JSONSerializer;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -219,8 +223,9 @@ public class MagmiController {
             // OEM SKU (custom option, used to show OEM part in cart)
             "OEMSKU:field:0"
         ));
-
-        return headers.toArray(new String[0]);
+        headers.add("sale_notes");
+        String[] retVal = new String[headers.size()];
+        return headers.toArray(retVal);
     }
 
     @RequestMapping("/products")
@@ -243,7 +248,8 @@ public class MagmiController {
         CSVWriter writer = new CSVWriter(new OutputStreamWriter(out), ',', '\'', '\\');
         
         // Write the header row
-        writer.writeNext(getCsvHeaders(mas90.getPriceLevels()));
+        String[] csvHeaders = getCsvHeaders(mas90.getPriceLevels());
+        writer.writeNext(csvHeaders);
         
         // Get the product IDs to retrieve
         int position = 0;
@@ -270,7 +276,7 @@ public class MagmiController {
                 // Process each product
                 for (MagmiProduct product : magmiDataFinder.findMagmiProducts(parts).values()) {
                     try {
-                        writer.writeNext(magmiProductToCsvRow(mas90, product));
+                        writer.writeNext(magmiProductToCsvRow(csvHeaders, mas90, product));
                         
                         // Debugging variable
                         lastSuccessfulSku = product.getSku();
@@ -325,7 +331,8 @@ public class MagmiController {
         CSVWriter writer = new CSVWriter(new OutputStreamWriter(out), ',', '\'', '\\');
         
         // Write the header row
-        writer.writeNext(getCsvHeaders(mas90.getPriceLevels()));
+        String[] csvHeaders = getCsvHeaders(mas90.getPriceLevels());
+        writer.writeNext(csvHeaders);
         
         Part part = partDao.findOne(partId);
         List<Part> parts = new ArrayList<Part>();
@@ -333,14 +340,14 @@ public class MagmiController {
         
         Iterator<MagmiProduct> it = magmiDataFinder.findMagmiProducts(parts).values().iterator();
         while (it.hasNext()) {
-            writer.writeNext(magmiProductToCsvRow(mas90, it.next()));
+            writer.writeNext(magmiProductToCsvRow(csvHeaders, mas90, it.next()));
         }
         
         writer.flush();
         writer.close();
     }
     
-    private String[] magmiProductToCsvRow(Mas90 mas90, MagmiProduct product) {
+    private String[] magmiProductToCsvRow(String[] csvHeaders, Mas90 mas90, MagmiProduct product) {
         Map<String, String> columns = product.getCsvColumns();
         product.csvFinderColumns(columns, finderIdApplication, finderIdTurbo);
         product.csvImageColumns(columns, imageResizer);
@@ -358,9 +365,26 @@ public class MagmiController {
         } else {
             columns.put("qty", "0");
         }
+        // Sale notes.
+        List<SalesNotePart> salesNoteParts = product.getSalesNoteParts();
+        List<SalesNotePart> publishedSaleNotes = new ArrayList<>(salesNoteParts.size());
+        salesNoteParts.forEach(snp -> {
+            SalesNote sn = snp.getSalesNote();
+            if (sn != null && sn.getState() == SalesNoteState.published) {
+                publishedSaleNotes.add(snp);
+            }
+        });
+        String jsonPublishedNotes = "[]";
+        if (!publishedSaleNotes.isEmpty()) {
+            JSONSerializer js = new JSONSerializer();
+            // Created, Primary Part, Note
+            js.include("createDate", "salesNote.comment", "part.manufacturerPartNumber");
+            js.exclude("*");
+            jsonPublishedNotes = js.serialize(publishedSaleNotes);
+        }
+        columns.put("sale_notes", jsonPublishedNotes);
 
         // Map the column into a value array for the CSV writer
-        String[] csvHeaders = getCsvHeaders(mas90.getPriceLevels());
         String[] valueArray = new String[csvHeaders.length];
         for (int i = 0; i < csvHeaders.length; i++) {
             
