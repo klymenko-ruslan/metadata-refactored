@@ -34,8 +34,15 @@
             </uib-progressbar>
           </div>
           <div ng-hide="!partsUpdateTotalSteps">
-            <label for="failures">Failures:</label>
-            <textarea id="failures" ng-class="['col-xs-12', 'text-nowrap',  {'bg-danger': partsUpdateSkipped}]" rows="10" readonly="readonly" data-ng-disabled="!partsUpdateSkipped">{{errors}}</textarea>
+            <div>
+              <label for="log">Modifications:</label>
+              <textarea id="log" class="col-xs-12 text-nowrap bg-success text-primary" rows="5" readonly="readonly">{{log}}</textarea>
+            </div>
+            <div>
+              <div>&nbsp;</div>
+              <label for="failures">Failures:</label>
+              <textarea id="failures" ng-class="['col-xs-12', 'text-nowrap',  {'bg-danger': partsUpdateSkipped}]" rows="5" readonly="readonly" data-ng-disabled="!partsUpdateSkipped">{{errors}}</textarea>
+            </div>
           </div>
           <div>
             <span ng-hide="userId">The process started on {{startedOn | date : "yyyy-MM-dd HH:mm.ss"}} by scheduler.</span>

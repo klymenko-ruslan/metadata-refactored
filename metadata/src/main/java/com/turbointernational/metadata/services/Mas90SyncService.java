@@ -322,20 +322,31 @@ public class Mas90SyncService {
                         String itemcodedesc = rs.getString(2);
                         String productline = rs.getString(3);
                         String producttype = rs.getString(4);
-                        Long partTypeId = mas90toLocal.get(productline);
-                        if (partTypeId != null) {
-                            long partId = processPart(itemcode, itemcodedesc, producttype, partTypeId); // separate transaction
-                            if (partId != -1) {
-                                processBOM(partId); // separate transaction
+                        long partId = -1;
+                        try {
+                            Long partTypeId = mas90toLocal.get(productline);
+                            if (partTypeId != null) {
+                                partId = processPart(itemcode, itemcodedesc, producttype, partTypeId); // separate transaction
+                                if (partId != -1) {
+                                    Boolean updated = processBOM(partId); // separate transaction
+                                    if (updated == Boolean.TRUE) {
+                                        synchronized (syncProcessStatus) {
+                                            syncProcessStatus.incPartsUpdateUpdates();
+                                        }
+                                    }
+                                }
+                            } else {
+                                // Actually this should never happen because we joined ci_item
+                                // with productLine_to_parttype_value.
+                                log.warn("Can't convert productline ('{}') to product_type_id. Item with code '{}' skipped.",
+                                        productline, itemcode);
                             }
-                        } else {
-                            // Actually this should never happen because we joined ci_item
-                            // with productLine_to_parttype_value.
-                            log.warn("Can't convert productline ('{}') to product_type_id. Item with code '{}' skipped.",
-                                    productline, itemcode);
-                        }
-                        synchronized (syncProcessStatus) {
-                            syncProcessStatus.incPartsUpdateCurrentStep();
+                            synchronized (syncProcessStatus) {
+                                syncProcessStatus.incPartsUpdateCurrentStep();
+                            }
+                        } catch (Throwable th) {
+                            log.error("Failed processing at the part: [{}] {}", partId, itemcode);
+                            throw th;
                         }
                     });
                 } catch (Throwable e) {
@@ -343,7 +354,7 @@ public class Mas90SyncService {
                         syncProcessStatus.addError("Critical error, processing stopped. Cause: " + getRootErrorMessage(e));
                         syncProcessStatus.setFinished(true);
                     }
-                    log.error("Synchronization with MAS90 failed.", e);
+                    log.error("Synchronization with MAS90 failed." , e);
                     transactionStatus.setRollbackOnly();
                     return null;
                 }
@@ -403,7 +414,7 @@ public class Mas90SyncService {
          * @param itemcodedesc
          * @param producttype
          * @param partTypeId
-         * @return partId
+         * @return partId or -1 on failure
          */
         private long processPart(String itemcode, String itemcodedesc, String producttype, Long partTypeId) {
             long retVal = -1;
@@ -516,7 +527,7 @@ public class Mas90SyncService {
             return dirty;
         }
 
-        private void processBOM(long partId) {
+        private Boolean processBOM(long partId) {
             class Mas90Bom {
                 final String childManufacturerCode;
                 final int quantity;
@@ -527,24 +538,24 @@ public class Mas90SyncService {
             }
             Part part = partDao.getEntityManager().find(Part.class, partId);
             assert part != null : "Part not found: " + partId;
-            long manufacturerId = part.getManufacturer().getId();
+            Manufacturer manufacturer = part.getManufacturer();
+            assert manufacturer != null : "Manufacturer for the part " + partId + " not found.";
+            Long manufacturerId = part.getId();
+            assert manufacturerId != null : "Nullable manufacturer ID.";
             assert manufacturerId == TURBO_INTERNATIONAL_MANUFACTURER_ID :
                     String.format("Part (id=%-12d) from unexpected manufacturer (id=%-12d).", partId, manufacturerId);
             String manufacturerPartNumber = part.getManufacturerPartNumber();
             Set<BOMItem> boms = part.getBom();
             TransactionTemplate tt = new TransactionTemplate(txManager);
             tt.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW); // new transaction
-            tt.execute(ts -> {
+            Boolean updated = tt.execute(ts -> {
                 List<Mas90Bom> mas90boms = mssqldb.query(
-                        "select " +
-                        "   bd.componentitemcode, bd.quantityperbill " +
+                        "select bd.componentitemcode, bd.quantityperbill " +
                         "from " +
                         "   bm_billdetail as bd join ( " +
-                        "       select billno, max(revision) as last_revision from dbo.BM_BILLHEADER group by billno " +
-                        "   ) as br on bd.billno = br.billno " +
-                        "where " +
-                        "   bd.billno = ? " +
-                        "   and bd.revision = br.last_revision",
+                        "       select billno, max(revision) as last_revision from bm_billheader group by billno " +
+                        "   ) as br on bd.billno = br.billno and bd.revision = br.last_revision " +
+                        "where bd.billno = ?",
                         ps -> {
                             ps.setString(1, manufacturerPartNumber);
                         },
@@ -608,10 +619,11 @@ public class Mas90SyncService {
                             newBom.setQuantity(mb.quantity);
                             boms.add(newBom);
                             dirty = true;
-                            log.info("Added new BOM (child ID: {}) to the part (ID: {}).", mb.childManufacturerCode,
+                            log.info("Added new BOM (child manufacture code ID: {}) to the part (ID: {}).", mb.childManufacturerCode,
                                     partId);
                         } else {
-                            log.info("Child not found: {}", mb.childManufacturerCode);
+                            log.debug("BOM's child not found (manufacture code: {}) for the part (ID: {}).",
+                                    mb.childManufacturerCode, partId);
                         }
                     }
                  }
@@ -619,8 +631,9 @@ public class Mas90SyncService {
                     log.info("Part ({}) is merged.", partId);
                     partDao.merge(part);
                 }
-                return null;
+                return dirty;
             });
+            return updated;
         }
 
         private String getRootErrorMessage(Throwable th) {
