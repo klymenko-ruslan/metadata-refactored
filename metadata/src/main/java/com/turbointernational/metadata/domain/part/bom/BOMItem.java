@@ -43,11 +43,11 @@ public class BOMItem implements Comparable<BOMItem>, Serializable {
     private Long id;
     
     @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.REFRESH})
-    @JoinColumn(name="parent_part_id")
+    @JoinColumn(name="parent_part_id", nullable = false)
     private Part parent;
     
     @OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.REFRESH})
-    @JoinColumn(name="child_part_id")
+    @JoinColumn(name="child_part_id", nullable = false)
     @JsonView({View.SummaryWithBOMDetail.class})
     private Part child;
     

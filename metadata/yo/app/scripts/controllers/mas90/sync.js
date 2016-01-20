@@ -59,6 +59,11 @@ angular.module("ngMetaCrudApp").controller("Mas90SyncCtrl", ["$scope", "$interva
       }
     });
 
+    $scope.getProgressBarType = function() {
+      return $scope.finished && $scope.errors.length && $scope.partsUpdateCurrentStep > 0 &&
+        $scope.partsUpdateCurrentStep < $scope.partsUpdateTotalSteps ? "error" : "info";
+    };
+
     $scope.onCloseStatus = function () {
       $scope.phase = 0;
     };
