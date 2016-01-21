@@ -280,11 +280,6 @@ public class Mas90SyncService {
             this.record = record;
         }
 
-        /**
-         * This method is needed to begin a separate transaction.
-         *
-         * @return
-         */
         @Override
         public void run() {
             TransactionTemplate transaction = new TransactionTemplate(txManager);

@@ -174,13 +174,4 @@ create table mas90sync(
     constraint usrid_fk foreign key (user_id) references user(id)
 ) engine=InnoDB auto_increment=1000 default charset=utf8 comment 'History of the syncronizations with MAS90.';
 
-create table mas90sync_bom_revision(
-    billno varchar(30) not null,
-    componentitemcode varchar(30) not null,
-    quantityperbill bigint not null
-) engine=InnoDB default charset=utf8 comment 'Temporary table to store last revicions of BOM from MAS90.';
-
-create index ix_m90_bomr_billno on mas90sync_bom_revision(billno);
-create index ix_m90_bomr_cic on mas90sync_bom_revision(componentitemcode);
-
  */

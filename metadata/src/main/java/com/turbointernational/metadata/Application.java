@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
 import com.turbointernational.metadata.web.CORSFilter;
+import org.hibernate.jpa.HibernatePersistenceProvider;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,6 +28,7 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -39,6 +41,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.sql.DataSource;
 import java.util.List;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 @SpringBootApplication
@@ -95,6 +98,36 @@ public class Application extends WebMvcConfigurerAdapter implements WebApplicati
         return DataSourceBuilder.create().build();
     }
 
+//    @Bean
+//    public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+//         LocalContainerEntityManagerFactoryBean entityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
+//        /*
+//      <property name="hibernate.show_sql" value="false"/>
+//      <property name="hibernate.format_sql" value="true"/>
+//      <property name="hibernate.log.level" value="INFO"/>
+//      <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5InnoDBDialect"/>
+//      <property name="hibernate.hbm2ddl.auto" value=""/>
+//      <property name="hibernate.ejb.naming_strategy" value="org.hibernate.cfg.ImprovedNamingStrategy"/>
+//      <property name="hibernate.connection.charSet" value="UTF-8"/>
+//      <property name="hibernate.cache.region.factory_class" value="org.hibernate.cache.ehcache.EhCacheRegionFactory"/>
+//      <property name="net.sf.Ehcache.configurationResourceName" value="/ehcache.xml"/>
+//      <property name="hibernate.cache.use_query_cache" value="true"/>
+//      <property name="hibernate.cache.use_second_level_cache" value="true"/>
+//      <property name="hibernate.generate_statistics" value="true"/>
+//
+//         */
+//         //entityManagerFactoryBean.setJpaVendorAdapter(vendorAdaptor());
+//         entityManagerFactoryBean.setDataSource(dataSource());
+//         entityManagerFactoryBean.setPersistenceProviderClass(HibernatePersistenceProvider.class);
+//         //entityManagerFactoryBean.setPackagesToScan(ENTITYMANAGER_PACKAGES_TO_SCAN);
+//         //entityManagerFactoryBean.setJpaProperties(jpaHibernateProperties());
+//        Properties jpaHibernateProperties = new Properties();
+//        jpaHibernateProperties.put("hibernate.dialect", "org.hibernate.dialect.MySQL5InnoDBDialect");
+//        entityManagerFactoryBean.setJpaProperties(jpaHibernateProperties);
+//
+//         return entityManagerFactoryBean;
+//     }
+
     @Bean(name = "asyncExecutor")
     protected ThreadPoolTaskExecutor mvcTaskExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
@@ -141,4 +174,5 @@ public class Application extends WebMvcConfigurerAdapter implements WebApplicati
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         Application.springContext = applicationContext;
     }
+
 }

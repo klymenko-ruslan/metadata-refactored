@@ -620,6 +620,22 @@ CREATE TABLE `sales_note_part` (
   CONSTRAINT `sales_note_part_part_part_id` FOREIGN KEY (`part_id`) REFERENCES `part` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+DROP TABLE IF EXISTS `mas90sync`;
+CREATE TABLE `mas90sync` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `started` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'When the sync.process started.',
+  `finished` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT 'When the sync.process finished.',
+  `to_process` bigint(20) DEFAULT '0' COMMENT 'Total number of records to process.',
+  `updated` bigint(20) DEFAULT '0' COMMENT 'Number of updates.',
+  `inserted` bigint(20) DEFAULT '0' COMMENT 'Number of inserts.',
+  `skipped` bigint(20) DEFAULT '0' COMMENT 'Number of skipped items.',
+  `user_id` bigint(20) DEFAULT NULL COMMENT 'Ref. to an user who initiated the sync.process. NULL -- the process started by scheduler.',
+  `status` enum('IN_PROGRESS','CANCELLED','FINISHED') NOT NULL COMMENT 'Status of the sync.process.',
+  PRIMARY KEY (`id`),
+  KEY `usrid_fk` (`user_id`),
+  CONSTRAINT `usrid_fk` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1106 DEFAULT CHARSET=utf8 COMMENT='History of the syncronizations with MAS90.'
+
 DELIMITER $$
 
 DROP TRIGGER IF EXISTS sales_note_part_BEFORE_UPDATE$$
