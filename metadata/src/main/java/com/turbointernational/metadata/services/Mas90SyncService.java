@@ -123,14 +123,13 @@ public class Mas90SyncService {
         private boolean finished;
 
         @JsonView({View.Summary.class})
-        private List<String> errors = new ArrayList<>();
+        private final List<String> errors = new ArrayList<>();
+
+        @JsonView({View.Summary.class})
+        private final List<String> modifications = new ArrayList<>();
 
         SyncProcessStatus() {
             reset();
-        }
-
-        public Long getStartedOn() {
-            return startedOn;
         }
 
         public void setStartedOn(Long startedOn) {
@@ -161,24 +160,12 @@ public class Mas90SyncService {
             this.partsUpdateTotalSteps = partsUpdateTotalSteps;
         }
 
-        public long getPartsUpdateCurrentStep() {
-            return partsUpdateCurrentStep;
-        }
-
-        public void setPartsUpdateCurrentStep(long partsUpdateCurrentStep) {
-            this.partsUpdateCurrentStep = partsUpdateCurrentStep;
-        }
-
         public long incPartsUpdateCurrentStep() {
             return ++this.partsUpdateCurrentStep;
         }
 
         public long getPartsUpdateInserts() {
             return partsUpdateInserts;
-        }
-
-        public void setPartsUpdateInserts(long partsUpdateInserts) {
-            this.partsUpdateInserts = partsUpdateInserts;
         }
 
         public long incPartsUpdateInserts() {
@@ -189,20 +176,12 @@ public class Mas90SyncService {
             return partsUpdateUpdates;
         }
 
-        public void setPartsUpdateUpdates(long partsUpdateUpdates) {
-            this.partsUpdateUpdates = partsUpdateUpdates;
-        }
-
         public long incPartsUpdateUpdates() {
             return ++partsUpdateUpdates;
         }
 
         public long getPartsUpdateSkipped() {
             return partsUpdateSkipped;
-        }
-
-        public void setPartsUpdateSkipped(long partsUpdateSkipped) {
-            this.partsUpdateSkipped = partsUpdateSkipped;
         }
 
         public long incPartsUpdateSkipped() {
@@ -221,16 +200,24 @@ public class Mas90SyncService {
             return errors;
         }
 
-        public void setErrors(List<String> errors) {
-            this.errors = errors;
-        }
-
         public void addError(String error) {
             errors.add(error);
         }
 
         public void resetErrors() {
             errors.clear();
+        }
+
+        public List<String> getModifications() {
+            return modifications;
+        }
+
+        public void addModifications(String s) {
+            modifications.add(s);
+        }
+
+        public void resetModifications() {
+            modifications.clear();
         }
 
         void reset() {
@@ -242,8 +229,9 @@ public class Mas90SyncService {
             this.partsUpdateInserts = DEF_PARTSUPDATE_INSERTS;
             this.partsUpdateUpdates = DEF_PARTSUPDATE_UPDATES;
             this.partsUpdateSkipped = DEF_PARTSUPDATE_SKIPPED;
-            this.errors.clear();
             this.finished = DEF_PARTSUPDATE_FINISHED;
+            resetErrors();
+            resetModifications();
         }
 
         @Override
@@ -257,7 +245,8 @@ public class Mas90SyncService {
             retVal.partsUpdateInserts = partsUpdateInserts;
             retVal.partsUpdateUpdates = partsUpdateUpdates;
             retVal.partsUpdateSkipped = partsUpdateSkipped;
-            retVal.errors = new ArrayList<>(errors);
+            retVal.errors.addAll(errors);
+            retVal.modifications.addAll(modifications);
             retVal.finished = finished;
             return retVal;
         }
@@ -274,6 +263,7 @@ public class Mas90SyncService {
                     ", partsUpdateUpdates=" + partsUpdateUpdates +
                     ", partsUpdateSkipped=" + partsUpdateSkipped +
                     ", finished=" + finished +
+                    ", modifications=" + modifications +
                     ", errors=" + errors +
                     '}';
         }
@@ -322,13 +312,13 @@ public class Mas90SyncService {
                         String itemcodedesc = rs.getString(2);
                         String productline = rs.getString(3);
                         String producttype = rs.getString(4);
-                        long partId = -1;
+                        Part processedPart = null;
                         try {
                             Long partTypeId = mas90toLocal.get(productline);
                             if (partTypeId != null) {
-                                partId = processPart(itemcode, itemcodedesc, producttype, partTypeId); // separate transaction
-                                if (partId != -1) {
-                                    Boolean updated = processBOM(partId); // separate transaction
+                                processedPart = processPart(itemcode, itemcodedesc, producttype, partTypeId); // separate transaction
+                                if (processedPart != null) {
+                                    Boolean updated = processBOM(processedPart.getId(), processedPart.getManufacturerPartNumber()); // separate transaction
                                     if (updated == Boolean.TRUE) {
                                         synchronized (syncProcessStatus) {
                                             syncProcessStatus.incPartsUpdateUpdates();
@@ -345,7 +335,17 @@ public class Mas90SyncService {
                                 syncProcessStatus.incPartsUpdateCurrentStep();
                             }
                         } catch (Throwable th) {
-                            log.error("Failed processing at the part: [{}] {}", partId, itemcode);
+                            String errMsg;
+                            if (processedPart == null) {
+                                errMsg = String.format("Failed processing at the part: '%s'", itemcode);
+                            } else {
+                                errMsg = String.format("Failed processing at the part: [%d] {%s}",
+                                        processedPart.getId(), processedPart.getManufacturerPartNumber());
+                            }
+                            synchronized (syncProcessStatus) {
+                                syncProcessStatus.addError(errMsg);
+                            }
+                            log.error(errMsg);
                             throw th;
                         }
                     });
@@ -414,30 +414,30 @@ public class Mas90SyncService {
          * @param itemcodedesc
          * @param producttype
          * @param partTypeId
-         * @return partId or -1 on failure
+         * @return processed part or null on failure
          */
-        private long processPart(String itemcode, String itemcodedesc, String producttype, Long partTypeId) {
-            long retVal = -1;
+        private Part processPart(String itemcode, String itemcodedesc, String producttype, Long partTypeId) {
             Boolean inactive = "D".equals(producttype);
             TransactionTemplate modifyTransaction = new TransactionTemplate(txManager);
             modifyTransaction.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW); // new transaction
-            Long pId = modifyTransaction.execute(ts -> {
+            Part processedPart = modifyTransaction.execute(ts -> {
                 Long partId = null;
                 Part part = partDao.findByPartNumberAndManufacturer(TURBO_INTERNATIONAL_MANUFACTURER_ID, itemcode);
                 try {
                     if (part == null) {
                         part = insertPart(itemcode, itemcodedesc, partTypeId, inactive);
                         partId = part.getId();
-                        log.info("Inserted: {} - {}", part.getId(), part.getManufacturerPartNumber());
+                        String logMsg = String.format("Inserted a new part: [%d] %s", part.getId(), part.getManufacturerPartNumber());
+                        log.info(logMsg);
                         synchronized (syncProcessStatus) {
                             syncProcessStatus.incPartsUpdateInserts();
+                            syncProcessStatus.addModifications(logMsg);
                         }
                     } else {
                         if (part.getPartType().getId() == partTypeId) {
                             partId = part.getId();
                             boolean updated = updatePart(part, itemcodedesc, inactive);
                             if (updated) {
-                                log.info("Updated: {} - {}", part.getId(), part.getManufacturerPartNumber());
                                 synchronized (syncProcessStatus) {
                                     syncProcessStatus.incPartsUpdateUpdates();
                                 }
@@ -450,20 +450,23 @@ public class Mas90SyncService {
                     }
                 } catch (Exception e) {
                     String cause = getRootErrorMessage(e);
-                    String err = "Processing of a part with code '" + itemcode + "' failed. Cause: " + cause;
+                    String err;
+                    if (partId != null) {
+                        err = String.format("Update of the part [%d] %s failed. Cause: %s", partId, itemcode, cause);
+                    } else {
+                        err = String.format("Creation of a new part '%s' failed. Cause: %s", itemcode, cause);
+                    }
                     synchronized (syncProcessStatus) {
                         syncProcessStatus.addError(err);
                         syncProcessStatus.incPartsUpdateSkipped();
                     }
                     log.error(err /*, e*/);
+                    part = null;
                     ts.setRollbackOnly();
                 }
-                return partId;
+                return part;
             });
-            if (pId != null) {
-                retVal = pId;
-            }
-            return retVal;
+            return processedPart;
         }
 
         private Part insertPart(String itemcode, String itemcodedesc, Long partTypeId, Boolean inactive) {
@@ -511,23 +514,36 @@ public class Mas90SyncService {
 
         private boolean updatePart(Part p, String itemcodedesc,  Boolean inactive) {
             boolean dirty = false;
+            StringBuilder modified = new StringBuilder(256);
             String currDesc = p.getDescription();
-            // if (!StringUtils.equals(currDesc, itemcodedesc)) {
             if (currDesc == null && itemcodedesc != null) {
                 dirty = true;
-                log.info("Updated description for: {}. {} => {}", p.getManufacturerPartNumber(), currDesc, itemcodedesc);
+                modified.append(String.format("Updated description: %s => %s.", currDesc, itemcodedesc));
                 p.setDescription(itemcodedesc);
             }
             Boolean currInactive = p.getInactive();
             if (!ObjectUtils.equals(currInactive, inactive)) {
-                dirty = true;
-                log.info("Updated 'inactive' for: {}. {} => {}", p.getManufacturerPartNumber(), currInactive, inactive);
+                if (dirty) {
+                    modified.append(" ");
+                } else {
+                    dirty = true;
+                }
+                modified.append(String.format("Updated attr. 'inactive': %B => %B.", currInactive, inactive));
                 p.setInactive(inactive);
+            }
+            if (dirty ) {
+                synchronized (syncProcessStatus) {
+                    String s = String.format("Updated the part: [%d] %s ", p.getId(), p.getManufacturerPartNumber()) +
+                            modified.toString();
+                    syncProcessStatus.addModifications(s);
+                    log.info(s);
+                }
             }
             return dirty;
         }
 
-        private Boolean processBOM(long partId) {
+        private Boolean processBOM(long partId, String manufacturerPartNumber) {
+
             class Mas90Bom {
                 final String childManufacturerCode;
                 final int quantity;
@@ -536,16 +552,7 @@ public class Mas90SyncService {
                     this.quantity = quantity;
                 }
             }
-            Part part = partDao.getEntityManager().find(Part.class, partId);
-            assert part != null : "Part not found: " + partId;
-            Manufacturer manufacturer = part.getManufacturer();
-            assert manufacturer != null : "Manufacturer for the part " + partId + " not found.";
-            Long manufacturerId = part.getId();
-            assert manufacturerId != null : "Nullable manufacturer ID.";
-            assert manufacturerId == TURBO_INTERNATIONAL_MANUFACTURER_ID :
-                    String.format("Part (id=%-12d) from unexpected manufacturer (id=%-12d).", partId, manufacturerId);
-            String manufacturerPartNumber = part.getManufacturerPartNumber();
-            Set<BOMItem> boms = part.getBom();
+
             TransactionTemplate tt = new TransactionTemplate(txManager);
             tt.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW); // new transaction
             Boolean updated = tt.execute(ts -> {
@@ -566,6 +573,16 @@ public class Mas90SyncService {
                         }
 
                 );
+                // Load part in this transaction (Entity Manager context).
+                Part part = partDao.getEntityManager().find(Part.class, partId);
+                assert part != null : "Internal error. Part not found: " + partId;
+                Manufacturer manufacturer = part.getManufacturer();
+                assert manufacturer != null : "Manufacturer for the part " + partId + " not found.";
+                Long manufacturerId = part.getId();
+                assert manufacturerId != null : "Nullable manufacturer ID.";
+                assert manufacturerId == TURBO_INTERNATIONAL_MANUFACTURER_ID :
+                    String.format("Part (id=%d) from unexpected manufacturer (id=%d).", partId, manufacturerId);
+                Set<BOMItem> boms = part.getBom();
 
                 // Merge BOMs.
                 boolean dirty = false;
@@ -585,20 +602,32 @@ public class Mas90SyncService {
                     if (child.getManufacturer().getId() == TURBO_INTERNATIONAL_MANUFACTURER_ID) {
                         String chMnPrtNum = child.getManufacturerPartNumber();
                         Mas90Bom mas90Bom = idxMas90Boms.get(chMnPrtNum);
+                        String modification = null;
                         if (mas90Bom == null) {
-                            log.info("BOM (ID: {}) is removed.", bom.getId());
+                            modification = String.format("Part [%d] %s modified. BOM [%d] (child: [%d] %s) " +
+                                    "is removed.", partId, manufacturerPartNumber, bom.getId(), child.getId(),
+                                    chMnPrtNum);
+                            partDao.getEntityManager().remove(bom);
                             rmIter.remove();
                             dirty = true;
                         } else {
                             if (bom.getQuantity() != mas90Bom.quantity) {
-                                log.info("BOM (ID: {}) is updated. Quantity: {} -> {}", bom.getId(),
-                                        bom.getQuantity(), mas90Bom.quantity);
+                                modification = String.format("Part [%d] %s modified. BOM [%d] (child: [%d] %s) " +
+                                    "updated. Quantity: %d => %d", partId, manufacturerPartNumber, bom.getId(),
+                                        child.getId(), chMnPrtNum, bom.getQuantity(), mas90Bom.quantity);
                                 bom.setQuantity(mas90Bom.quantity);
+                                partDao.getEntityManager().merge(bom);
                                 dirty = true;
                             }
                         }
+                        if (modification != null) {
+                            synchronized (syncProcessStatus) {
+                                syncProcessStatus.addModifications(modification);
+                            }
+                            log.info(modification);
+                        }
                     } else {
-                        log.info("Modification of the BOM (ID: {}) skipped as child part belongs " +
+                        log.debug("Modification of the BOM (ID: {}) skipped as child part belongs " +
                                 "to foreign manufacturer (ID: {}).", bom.getId(), child.getManufacturer().getId());
                     }
                 }
@@ -618,17 +647,22 @@ public class Mas90SyncService {
                             newBom.setChild(child);
                             newBom.setQuantity(mb.quantity);
                             boms.add(newBom);
+                            partDao.getEntityManager().persist(newBom);
                             dirty = true;
-                            log.info("Added new BOM (child manufacture code ID: {}) to the part (ID: {}).", mb.childManufacturerCode,
-                                    partId);
+                            String modification = String.format("Part [%d] %s modified. Added BOM [%d] " +
+                                    "(child: [%d] %s), quantity=%d.", partId, manufacturerPartNumber, newBom.getId(),
+                                    child.getId(), child.getManufacturerPartNumber(), newBom.getQuantity());
+                            synchronized (syncProcessStatus) {
+                                syncProcessStatus.addModifications(modification);
+                            }
+                            log.info(modification);
                         } else {
                             log.debug("BOM's child not found (manufacture code: {}) for the part (ID: {}).",
                                     mb.childManufacturerCode, partId);
                         }
                     }
-                 }
+                }
                 if (dirty) {
-                    log.info("Part ({}) is merged.", partId);
                     partDao.merge(part);
                 }
                 return dirty;
@@ -658,6 +692,7 @@ public class Mas90SyncService {
             try {
                 SyncProcessStatus retVal = (SyncProcessStatus) syncProcessStatus.clone();
                 syncProcessStatus.resetErrors();
+                syncProcessStatus.resetModifications();
                 return retVal;
             } catch (CloneNotSupportedException e) {
                 // can't be reached
@@ -675,8 +710,10 @@ public class Mas90SyncService {
         Mas90Sync record = new Mas90Sync();
         synchronized (syncProcessStatus) {
             record.setStarted(new Timestamp(now));
+            record.setFinished(null);
             record.setInserted(0L);
             record.setUpdated(0L);
+            record.setSkipped(0L);
             record.setToProcess(0L);
             record.setUser(user);
             record.setStatus(Mas90Sync.Status.IN_PROGRESS);
@@ -696,17 +733,3 @@ public class Mas90SyncService {
 
 
 }
-/*
-im.ITEMCODE     varchar(30)
-im.ITEMCODEDESC varchar(30)
-
-im.productLine  varchar(4)
-im.producttype  varchar(1)
-
-
-manfr_part_num  rtrim(im.ITEMCODE)
-manfr_id        11
-part_type_id    @part_type_id => productLine_to_parttype_value[part_type_value = part_type.value] => pt.id
-inactive        case when im.producttype = 'D' then 1 else 0
-description     im.ITEMCODEDESC
- */

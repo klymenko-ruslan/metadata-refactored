@@ -36,7 +36,7 @@
           <div ng-hide="!partsUpdateTotalSteps">
             <div>
               <label for="log">Modifications:</label>
-              <textarea id="log" class="col-xs-12 text-nowrap bg-success text-primary" rows="5" readonly="readonly">{{log}}</textarea>
+              <textarea id="log" class="col-xs-12 text-nowrap bg-success text-primary" rows="5" readonly="readonly">{{modifications}}</textarea>
             </div>
             <div>
               <div>&nbsp;</div>
@@ -44,6 +44,7 @@
               <textarea id="failures" ng-class="['col-xs-12', 'text-nowrap',  {'bg-danger': partsUpdateSkipped}]" rows="5" readonly="readonly" data-ng-disabled="!partsUpdateSkipped">{{errors}}</textarea>
             </div>
           </div>
+          <div>&nbsp;</div>
           <div>
             <span ng-hide="userId">The process started on {{startedOn | date : "yyyy-MM-dd HH:mm.ss"}} by scheduler.</span>
             <span ng-hide="!userId">The process started on {{startedOn | date : "yyyy-MM-dd HH:mm.ss"}} by <a ng-href="security/user/{{userId}}">{{userName}}</a>.</span>

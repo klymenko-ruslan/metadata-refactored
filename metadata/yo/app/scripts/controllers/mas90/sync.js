@@ -5,6 +5,8 @@ angular.module("ngMetaCrudApp").controller("Mas90SyncCtrl", ["$scope", "$interva
   function($scope, $interval, $log, gToast, ngTableParams, restService, status) {
 
     $scope.errors = "";
+    $scope.modifications = "";
+
     /*
      * Phases:
      *  0. Pre-request.
@@ -26,6 +28,11 @@ angular.module("ngMetaCrudApp").controller("Mas90SyncCtrl", ["$scope", "$interva
         if (angular.isObject(newStatus.errors)) {
           angular.forEach(newStatus.errors, function(s) {
             $scope.errors += ("\u2022 " + s + "\n");
+          });
+        }
+        if (angular.isObject(newStatus.modifications)) {
+          angular.forEach(newStatus.modifications, function(s) {
+            $scope.modifications += ("\u2022 " + s + "\n");
           });
         }
         if ($scope.phase == null) {
@@ -61,7 +68,7 @@ angular.module("ngMetaCrudApp").controller("Mas90SyncCtrl", ["$scope", "$interva
 
     $scope.getProgressBarType = function() {
       return $scope.finished && $scope.errors.length && $scope.partsUpdateCurrentStep > 0 &&
-        $scope.partsUpdateCurrentStep < $scope.partsUpdateTotalSteps ? "error" : "info";
+        $scope.partsUpdateCurrentStep < $scope.partsUpdateTotalSteps ? "danger" : "info";
     };
 
     $scope.onCloseStatus = function () {
@@ -71,6 +78,7 @@ angular.module("ngMetaCrudApp").controller("Mas90SyncCtrl", ["$scope", "$interva
     $scope.startSync = function() {
       $scope.phase = 0;
       $scope.errors = "";
+      $scope.modifications = "";
       restService.startMas90Sync().then(
         function success(newStatus) {
           $scope._updateStatus(newStatus);
