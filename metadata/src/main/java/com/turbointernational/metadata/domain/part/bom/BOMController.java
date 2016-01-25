@@ -46,6 +46,10 @@ public class BOMController {
         // Create a new BOM item
         Part child = partDao.findOne(request.getChildPartId());
         Part parent = partDao.findOne(request.getParentPartId());
+
+        if (child.getManufacturer().getId() != parent.getManufacturer().getId()) {
+            throw new AssertionError("Child part must have the same manufacturer as the Parent part.");
+        }
         
         BOMItem item = new BOMItem();
         item.setParent(parent);

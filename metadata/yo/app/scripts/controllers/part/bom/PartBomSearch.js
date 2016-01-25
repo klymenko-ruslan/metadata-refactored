@@ -45,16 +45,22 @@ angular.module("ngMetaCrudApp")
           });
       };
 
-      $scope.pickBomItemPart = function(bomItemPartId) {
-        $scope.pickedPart = restService.findPart(bomItemPartId).then(
-          function(pickedPart) {
-            $scope.pickedPart = pickedPart;
-            $scope.bomItem.childPartId = $scope.pickedPart.id;
-          },
-          function(errorResponse) {
-            restService.error("Could not pick part.", errorResponse);
-            $log.log("Could not pick part", errorResponse);
-          });
+      $scope.pickBomItemPart = function(bomItemPartId, allowed) {
+        if (allowed) {
+          $scope.pickedPart = restService.findPart(bomItemPartId).then(
+            function(pickedPart) {
+              $scope.pickedPart = pickedPart;
+              $scope.bomItem.childPartId = $scope.pickedPart.id;
+            },
+            function(errorResponse) {
+              restService.error("Could not pick part.", errorResponse);
+              $log.log("Could not pick part", errorResponse);
+            }
+          );
+        } else {
+          dialogs.error("Child part must have the same manufacturer as the Parent part.");
+        }
       };
+
     }
   ]);
