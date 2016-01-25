@@ -58,7 +58,7 @@ angular.module("ngMetaCrudApp")
             }
           );
         } else {
-          dialogs.error("Child part must have the same manufacturer as the Parent part.");
+          dialogs.error("Warning", "Child part must have the same manufacturer as the Parent part.");
         }
       };
 
