@@ -1,6 +1,5 @@
 package com.turbointernational.metadata.domain.part.bom;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.domain.other.Manufacturer;
@@ -8,28 +7,12 @@ import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.web.View;
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.OrderBy;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import flexjson.transformer.HibernateTransformer;
 import org.apache.commons.lang3.ObjectUtils;
+
+import javax.persistence.*;
+import java.io.Serializable;
+import java.util.*;
 
 @Entity
 @Table(name="bom", uniqueConstraints=@UniqueConstraint(columnNames={"parent_part_id", "child_part_id"}))
@@ -58,7 +41,7 @@ public class BOMItem implements Comparable<BOMItem>, Serializable {
     @OneToMany(mappedBy="bomItem", fetch = FetchType.LAZY, orphanRemoval = true)
     @OrderBy("id")
     @JsonView({View.SummaryWithBOMDetail.class})
-    private Set<BOMAlternative> alternatives = new TreeSet<BOMAlternative>();
+    private Set<BOMAlternative> alternatives = new TreeSet<>();
     
     public Long getId() {
         return id;
@@ -124,9 +107,22 @@ public class BOMItem implements Comparable<BOMItem>, Serializable {
     
     //<editor-fold defaultstate="collapsed" desc="json">
     public String toJson() {
-        return new JSONSerializer().exclude("*.class").serialize(this);
+        return new JSONSerializer().transform(
+                new HibernateTransformer(), BOMItem.class).
+                include("parent.id", "parent.name", "parent.version", "parent.manufacturerPartNumber",
+                        "parent.interchange", "parent.description", "parent.inactive").
+                include("parent.partType.id", "parent.partType.magentoAttributeSet", "parent.partType.name", "parent.partType.value").
+                exclude("parent.partType.*").
+                include("parent.manufacturer.id", "parent.manufacturer.name").
+                include("parent.manufacturer.type.id", "parent.manufacturer.type.name").
+                exclude("parent.manufacturer.type.*").
+                include("parent.interchange.alone", "parent.interchange.description",
+                        "parent.interchange.id", "parent.interchange.name").
+                exclude("parent.interchange.*").
+                exclude("parent.*", "*.class").
+                serialize(this);
     }
-    
+
     public String toJson(String[] fields) {
         return new JSONSerializer().include(fields).exclude("*.class").serialize(this);
     }

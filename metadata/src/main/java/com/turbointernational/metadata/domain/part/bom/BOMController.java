@@ -5,20 +5,23 @@ import com.turbointernational.metadata.domain.changelog.ChangelogDao;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.part.PartDao;
 import com.turbointernational.metadata.domain.part.bom.dto.CreateBomItemRequest;
+import com.turbointernational.metadata.domain.type.PartType;
 import com.turbointernational.metadata.web.View;
-import java.util.List;
-
+import flexjson.JSONSerializer;
+import flexjson.transformer.HibernateTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.NoResultException;
+import java.util.List;
 
 @RequestMapping("/metadata/bom")
 @Controller
@@ -34,6 +37,32 @@ public class BOMController {
     BOMItemDao bomItemDao;
 
     private static final Logger log = LoggerFactory.getLogger(BOMController.class);
+
+    // TODO: remove when finished #569
+    /*
+    @Transactional
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    public ResponseEntity<String> get(@PathVariable("id") Long id) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "application/json");
+        BOMItem item = bomItemDao.findOne(id);
+        String strJsonBom = new JSONSerializer().transform(
+                new HibernateTransformer(), BOMItem.class).
+                    include("parent.id", "parent.name", "parent.version", "parent.manufacturerPartNumber",
+                            "parent.interchange", "parent.description", "parent.inactive").
+                    include("parent.partType.id", "parent.partType.magentoAttributeSet", "parent.partType.name", "parent.partType.value").
+                    exclude("parent.partType.*").
+                    include("parent.manufacturer.id", "parent.manufacturer.name").
+                    include("parent.manufacturer.type.id", "parent.manufacturer.type.name").
+                    exclude("parent.manufacturer.type.*").
+                    include("parent.interchange.alone", "parent.interchange.description",
+                            "parent.interchange.id", "parent.interchange.name").
+                    exclude("parent.interchange.*").
+                    exclude("parent.*", "*.class").
+                    serialize(item);
+        return new ResponseEntity<>(strJsonBom, headers, HttpStatus.OK);
+    }
+    */
 
     @ResponseBody
     @Transactional
@@ -75,7 +104,7 @@ public class BOMController {
     public List<BOMItem> getByParentId(@PathVariable("id") long id) throws Exception {
         return bomItemDao.findByParentId(id);
     }
-    
+
     @Transactional
     @RequestMapping(value = "/{id}", method = RequestMethod.POST,
                     consumes = MediaType.APPLICATION_JSON_VALUE,
@@ -110,16 +139,17 @@ public class BOMController {
         
         // Get the object
         BOMItem item = bomItemDao.findOne(id);
-        
+        Part parent = item.getParent();
+
         // Update the changelog
-        changelogDao.log("Deleted BOM item.", item.toJson());
-        
+        String strJsonBom = item.toJson();
+        changelogDao.log("Deleted BOM item.", strJsonBom);
+
         // Remove the BOM Item from the parent
-        item.getParent().getBom().remove(item);
-        partDao.merge(item.getParent());
+        parent.getBom().remove(item);
+        partDao.merge(parent);
         
         // Delete it
-        Part childPart = item.getChild();
         bomItemDao.remove(item);
         bomItemDao.flush();
             
