@@ -13,7 +13,7 @@
     "angular-bootstrap": "0.14.3",
     "angular-dialog-service": "5.2.8",
     "restangular": "1.5.1",
-    "ng-table": "0.7.0",
+    "ng-table": "0.8.3",
     "gToast": "0.1.2"
   },
   "devDependencies": {

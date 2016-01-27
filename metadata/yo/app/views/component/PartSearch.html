@@ -17,7 +17,7 @@
 
     <!-- Tabular search results -->
     <div class="col-xs-12 col-sm-9">
-        <table data-ng-table="partTableParams" class="table table-bordered table-striped table-hover table-responsive">
+        <table data-ng-table="partTableParams" class="table table-condensed table-bordered table-striped">
             <tr data-ng-repeat="part in $data">
                 <td title="'Part Type'" sortable="'partType.name'">
                     {{part._source.partType.name}}
@@ -25,7 +25,7 @@
                 <td title="'Manufacturer'" sortable="'manufacturer.name'">
                     {{part._source.manufacturer.name}}
                 </td>
-                <td title="'Mfr Part #'" sortable="'manufacturerPartNumber.short'">
+                <td title="'Mfr Part #'" sortable="'manufacturerPartNumber.full'">
                     {{part._source.manufacturerPartNumber}}
                 </td>
                 <td title="'Name'" sortable="'name'">
