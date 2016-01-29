@@ -20,108 +20,241 @@ echo "Setting mapping..." && curl -XPUT "$SERVER/$INDEX/?pretty=1" -d '
           "store": "yes"
         },
         "name": {
-          "type": "string",
-          "store": "yes"
-        },
-        "manufacturerPartNumber": {
           "type": "multi_field",
-          "store": "yes",
           "fields": {
             "full": {
               "type": "string",
               "tokenizer": "lowercase",
-              "analyzer": "keyword"
+              "analyzer": "keyword",
+              "store": "yes"
             },
             "short": {
               "type": "string",
-              "analyzer": "normalized_short"
+              "analyzer": "normalized_short",
+              "store": "yes"
             }
           }
         },
-        "partType.id": {
-          "type": "long",
-          "store": "yes",
-          "analyzer": "keyword"
+        "manufacturerPartNumber": {
+          "type": "multi_field",
+          "fields": {
+            "full": {
+              "type": "string",
+              "tokenizer": "lowercase",
+              "analyzer": "keyword",
+              "store": "yes"
+            },
+            "short": {
+              "type": "string",
+              "analyzer": "normalized_short",
+              "store": "yes"
+            }
+          }
         },
-        "partType.name": {
-          "store": "yes",
-          "type": "string",
-          "analyzer": "keyword"
+        "partType": {
+          "properties": {
+            "id": {
+              "type": "long",
+              "store": "yes",
+              "analyzer": "keyword"
+            },
+            "name": {
+              "type": "multi_field",
+              "fields": {
+                "full": {
+                  "type": "string",
+                  "tokenizer": "lowercase",
+                  "analyzer": "keyword",
+                  "store": "yes"
+                },
+                "short": {
+                  "type": "string",
+                  "analyzer": "normalized_short",
+                  "store": "yes"
+                }
+              }
+            },
+            "typeName": {
+              "type": "string",
+              "analyzer": "keyword",
+              "store": "yes"
+            }
+          }
         },
-        "partType.typeName": {
-          "type": "string",
-          "analyzer": "keyword",
-          "store": "yes"
+        "manufacturer": {
+          "properties": {
+            "id": {
+              "type": "long",
+              "store": "yes",
+              "analyzer": "keyword"
+            },
+            "name": {
+              "type": "multi_field",
+              "fields": {
+                "full": {
+                  "type": "string",
+                  "tokenizer": "lowercase",
+                  "analyzer": "keyword",
+                  "store": "yes"
+                },
+                "short": {
+                  "type": "string",
+                  "analyzer": "normalized_short",
+                  "store": "yes"
+                }
+              }
+            }
+          }
         },
-        "manufacturer.id": {
-          "type": "long",
-          "store": "yes",
-          "analyzer": "keyword"
+        "coolType": {
+          "properties": {
+            "id": {
+              "type": "long",
+              "store": "yes",
+              "analyzer": "keyword"
+            },
+            "name": {
+              "type": "multi_field",
+              "fields": {
+                "full": {
+                  "type": "string",
+                  "tokenizer": "lowercase",
+                  "analyzer": "keyword",
+                  "store": "yes"
+                },
+                "short": {
+                  "type": "string",
+                  "analyzer": "normalized_short",
+                  "store": "yes"
+                }
+              }
+            }
+          }
         },
-        "manufacturer.name": {
-          "store": "yes",
-          "type": "string",
-          "analyzer": "keyword"
+        "gasketType": {
+          "properties": {
+            "id": {
+              "type": "long",
+              "store": "yes",
+              "analyzer": "keyword"
+            },
+            "name": {
+              "type": "multi_field",
+              "fields": {
+                "full": {
+                  "type": "string",
+                  "tokenizer": "lowercase",
+                  "analyzer": "keyword",
+                  "store": "yes"
+                },
+                "short": {
+                  "type": "string",
+                  "analyzer": "normalized_short",
+                  "store": "yes"
+                }
+              }
+            }
+          }
         },
-        "coolType.id": {
-          "type": "long",
-          "store": "yes",
-          "analyzer": "keyword"
+        "kitType": {
+          "properties": {
+            "id": {
+              "type": "long",
+              "store": "yes",
+              "analyzer": "keyword"
+            },
+            "name": {
+              "type": "multi_field",
+              "fields": {
+                "full": {
+                  "type": "string",
+                  "tokenizer": "lowercase",
+                  "analyzer": "keyword",
+                  "store": "yes"
+                },
+                "short": {
+                  "type": "string",
+                  "analyzer": "normalized_short",
+                  "store": "yes"
+                }
+              }
+            }
+          }
         },
-        "coolType.name": {
-          "store": "yes",
-          "type": "string",
-          "analyzer": "keyword"
+        "sealType": {
+          "properties": {
+            "id": {
+              "type": "long",
+              "store": "yes",
+              "analyzer": "keyword"
+            },
+            "name": {
+              "type": "multi_field",
+                "fields": {
+                  "full": {
+                  "type": "string",
+                  "tokenizer": "lowercase",
+                  "analyzer": "keyword",
+                  "store": "yes"
+                },
+                "short": {
+                  "type": "string",
+                  "analyzer": "normalized_short",
+                  "store": "yes"
+                }
+              }
+            }
+          }
         },
-        "gasketType.id": {
-          "type": "long",
-          "store": "yes",
-          "analyzer": "keyword"
-        },
-        "gasketType.name": {
-          "store": "yes",
-          "type": "string",
-          "analyzer": "keyword"
-        },
-        "kitType.id": {
-          "type": "long",
-          "store": "yes",
-          "analyzer": "keyword"
-        },
-        "kitType.name": {
-          "store": "yes",
-          "type": "string",
-          "analyzer": "keyword"
-        },
-        "sealType.id": {
-          "type": "long",
-          "store": "yes",
-          "analyzer": "keyword"
-        },
-        "sealType.name": {
-          "store": "yes",
-          "type": "string",
-          "analyzer": "keyword"
-        },
-        "turboModel.id": {
-          "type": "long",
-          "store": "yes",
-          "analyzer": "keyword"
-        },
-        "turboModel.name": {
-          "store": "yes",
-          "type": "string",
-          "analyzer": "keyword"
-        },
-        "turboModel.turboType.id": {
-          "type": "long",
-          "store": "yes",
-          "analyzer": "keyword"
-        },
-        "turboModel.turboType.name": {
-          "store": "yes",
-          "type": "string",
-          "analyzer": "keyword"
+        "turboModel": {
+          "properties": {
+            "id": {
+              "type": "long",
+              "store": "yes",
+              "analyzer": "keyword"
+            },
+            "name": {
+              "type": "multi_field",
+              "fields": {
+                "full": {
+                  "type": "string",
+                  "tokenizer": "lowercase",
+                  "analyzer": "keyword",
+                  "store": "yes"
+                },
+                "short": {
+                  "type": "string",
+                  "analyzer": "normalized_short",
+                  "store": "yes"
+                }
+              }
+            },
+            "turboType": {
+              "properties": {
+                "id": {
+                  "type": "long",
+                  "store": "yes",
+                  "analyzer": "keyword"
+                },
+                "name": {
+                  "type": "multi_field",
+                  "fields": {
+                    "full": {
+                      "type": "string",
+                      "tokenizer": "lowercase",
+                      "analyzer": "keyword",
+                      "store": "yes"
+                    },
+                    "short": {
+                      "type": "string",
+                      "analyzer": "normalized_short",
+                      "store": "yes"
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -131,25 +264,93 @@ echo "Setting mapping..." && curl -XPUT "$SERVER/$INDEX/?pretty=1" -d '
           "type": "long",
           "store": "yes"
         },
-        "year.name": {
-          "type": "string",
-          "store": "yes"
+        "year": {
+          "properties": {
+            "name": {
+              "type": "multi_field",
+              "fields": {
+                "full": {
+                  "type": "string",
+                  "tokenizer": "lowercase",
+                  "analyzer": "keyword",
+                  "store": "yes"
+                },
+                "short": {
+                  "type": "string",
+                  "analyzer": "normalized_short",
+                  "store": "yes"
+                }
+              }
+            }
+          }
         },
-        "model.name": {
-          "type": "string",
-          "store": "yes"
+        "model": {
+          "properties": {
+            "name": {
+              "type": "multi_field",
+              "fields": {
+                "full": {
+                  "type": "string",
+                  "tokenizer": "lowercase",
+                  "analyzer": "keyword",
+                  "store": "yes"
+                },
+                "short": {
+                  "type": "string",
+                  "analyzer": "normalized_short",
+                  "store": "yes"
+                }
+              }
+            },
+            "make": {
+              "properties": {
+                "name": {
+                  "type": "multi_field",
+                  "fields": {
+                    "full": {
+                      "type": "string",
+                      "tokenizer": "lowercase",
+                      "analyzer": "keyword",
+                      "store": "yes"
+                    },
+                    "short": {
+                      "type": "string",
+                      "analyzer": "normalized_short",
+                      "store": "yes"
+                    }
+                  }
+                }
+              }
+            }
+          }
         },
-        "model.make.name": {
-          "type": "string",
-          "store": "yes"
-        },
-        "engine.engineSize": {
-          "type": "string",
-          "store": "yes"
-        },
-        "engine.fuelType.name": {
-          "type": "string",
-          "store": "yes"
+        "engine": {
+          "properties": {
+            "engineSize": {
+              "type": "string",
+              "store": "yes"
+            },
+            "fuelType": {
+              "properties": {
+                "name": {
+                  "type": "multi_field",
+                  "fields": {
+                    "full": {
+                      "type": "string",
+                      "tokenizer": "lowercase",
+                      "analyzer": "keyword",
+                      "store": "yes"
+                    },
+                    "short": {
+                      "type": "string",
+                      "analyzer": "normalized_short",
+                      "store": "yes"
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -161,16 +362,17 @@ echo "Setting mapping..." && curl -XPUT "$SERVER/$INDEX/?pretty=1" -d '
         },
         "name": {
           "type": "multi_field",
-          "store": "yes",
           "fields": {
             "full": {
               "type": "string",
               "tokenizer": "lowercase",
-              "analyzer": "keyword"
+              "analyzer": "keyword",
+              "store": "yes"
             },
             "short": {
               "type": "string",
-              "analyzer": "normalized_short"
+              "analyzer": "normalized_short",
+              "store": "yes"
             }
           }
         }
@@ -184,16 +386,17 @@ echo "Setting mapping..." && curl -XPUT "$SERVER/$INDEX/?pretty=1" -d '
         },
         "name": {
           "type": "multi_field",
-          "store": "yes",
           "fields": {
             "full": {
               "type": "string",
               "tokenizer": "lowercase",
-              "analyzer": "keyword"
+              "analyzer": "keyword",
+              "store": "yes"
             },
             "short": {
               "type": "string",
-              "analyzer": "normalized_short"
+              "analyzer": "normalized_short",
+              "store": "yes"
             }
           }
         }
@@ -207,22 +410,39 @@ echo "Setting mapping..." && curl -XPUT "$SERVER/$INDEX/?pretty=1" -d '
         },
         "name": {
           "type": "multi_field",
-          "store": "yes",
           "fields": {
             "full": {
               "type": "string",
               "tokenizer": "lowercase",
-              "analyzer": "keyword"
+              "analyzer": "keyword",
+              "store": "yes"
             },
             "short": {
               "type": "string",
-              "analyzer": "normalized_short"
+              "analyzer": "normalized_short",
+              "store": "yes"
             }
           }
         },
-        "make.name": {
-          "type": "string",
-          "store": "yes"
+        "make": {
+          "properties": {
+            "name": {
+              "type": "multi_field",
+              "fields": {
+                "full": {
+                  "type": "string",
+                  "tokenizer": "lowercase",
+                  "analyzer": "keyword",
+                  "store": "yes"
+                },
+                "short": {
+                  "type": "string",
+                  "analyzer": "normalized_short",
+                  "store": "yes"
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -234,22 +454,39 @@ echo "Setting mapping..." && curl -XPUT "$SERVER/$INDEX/?pretty=1" -d '
         },
         "engineSize": {
           "type": "multi_field",
-          "store": "yes",
           "fields": {
             "full": {
               "type": "string",
               "tokenizer": "lowercase",
-              "analyzer": "keyword"
+              "analyzer": "keyword",
+              "store": "yes"
             },
             "short": {
               "type": "string",
-              "analyzer": "normalized_short"
+              "analyzer": "normalized_short",
+              "store": "yes"
             }
           }
         },
-        "fuelType.name": {
-          "type": "string",
-          "store": "yes"
+        "fuelType": {
+          "properties": {
+            "name": {
+              "type": "multi_field",
+              "fields": {
+                "full": {
+                  "type": "string",
+                  "tokenizer": "lowercase",
+                  "analyzer": "keyword",
+                  "store": "yes"
+                },
+                "short": {
+                  "type": "string",
+                  "analyzer": "normalized_short",
+                  "store": "yes"
+                }
+              }
+            }
+          }
         }
       }
     }

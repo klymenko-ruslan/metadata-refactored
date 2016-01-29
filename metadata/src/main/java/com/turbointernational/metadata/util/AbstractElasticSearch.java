@@ -1,7 +1,6 @@
 package com.turbointernational.metadata.util;
 
 import com.turbointernational.metadata.domain.AbstractDao;
-import org.elasticsearch.ElasticSearchException;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.index.IndexRequest;
@@ -9,16 +8,19 @@ import org.elasticsearch.action.search.SearchPhaseExecutionException;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
-import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
+import org.elasticsearch.common.transport.TransportAddress;
+import org.elasticsearch.node.Node;
+import static org.elasticsearch.node.NodeBuilder.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.List;
 
 /**
@@ -113,9 +115,6 @@ public abstract class AbstractElasticSearch implements Serializable {
         Client client = client();
         try {
             client.index(index).actionGet(timeout);
-        } catch (ElasticSearchException e) {
-            log.error("Could not index a document: " + document, e);
-            throw e;
         } finally {
             client.close();
         }
@@ -133,14 +132,12 @@ public abstract class AbstractElasticSearch implements Serializable {
         }
     }
 
-    protected Client client() {
-        Settings settings = ImmutableSettings.settingsBuilder()
-            .put("cluster.name", clusterName)
-            .build();
-
-        return new TransportClient(settings)
-            .addTransportAddress(
-                new InetSocketTransportAddress(elasticSearchHost, elasticSearchPort));
+    protected Client client() throws UnknownHostException {
+        InetAddress inetAddrElasticSearchHost = InetAddress.getByName(elasticSearchHost);
+        TransportAddress taddr = new InetSocketTransportAddress(inetAddrElasticSearchHost, elasticSearchPort);
+        Settings settings = Settings.settingsBuilder().put("cluster.name", clusterName).build();
+        Client client = TransportClient.builder().settings(settings).build().addTransportAddress(taddr);
+        return client;
     }
 
 }
