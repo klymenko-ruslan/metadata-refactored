@@ -190,8 +190,8 @@ echo "Setting mapping..." && curl -XPUT "$SERVER/$INDEX/?pretty=1" -d '
             },
             "name": {
               "type": "multi_field",
-                "fields": {
-                  "full": {
+              "fields": {
+                "full": {
                   "type": "string",
                   "tokenizer": "lowercase",
                   "analyzer": "keyword",
