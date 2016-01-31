@@ -2,13 +2,12 @@ package com.turbointernational.metadata.domain.car;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.domain.SearchableEntity;
-import com.turbointernational.metadata.util.CarEngineElasticSearch;
+import com.turbointernational.metadata.services.SearchService;
 import com.turbointernational.metadata.web.View;
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Configurable;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -88,8 +87,14 @@ public class CarEngine implements Serializable, SearchableEntity {
                 .exclude("*.class");
     }
 
+    @Override
     public String toSearchJson() {
         return getSearchSerializer().exclude("*").serialize(this);
+    }
+
+    @Override
+    public String getSearchId() {
+        return getId().toString();
     }
 
     public String toJson() {
@@ -122,7 +127,7 @@ public class CarEngine implements Serializable, SearchableEntity {
     @Override
     public void removeSearchIndex() throws Exception {
         log.info("Removing from search index.");
-        CarEngineElasticSearch.instance().delete(this);
+        SearchService.instance().deleteCarEngine(this);
     }
 
     @PostUpdate
@@ -130,7 +135,7 @@ public class CarEngine implements Serializable, SearchableEntity {
     @Override
     public void updateSearchIndex() throws Exception {
         log.info("Updating search index.");
-        CarEngineElasticSearch.instance().index(this);
+        SearchService.instance().indexCarEngine(this);
     }
     //</editor-fold>
 

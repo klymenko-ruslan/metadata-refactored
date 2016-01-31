@@ -2,8 +2,7 @@ package com.turbointernational.metadata.domain.car;
 
 import com.turbointernational.metadata.domain.SearchableEntity;
 import com.turbointernational.metadata.domain.part.types.TurboCarModelEngineYear;
-import com.turbointernational.metadata.util.CarModelElasticSearch;
-import com.turbointernational.metadata.util.CarModelEngineYearElasticSearch;
+import com.turbointernational.metadata.services.SearchService;
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
 import org.slf4j.Logger;
@@ -91,8 +90,14 @@ public class CarModelEngineYear implements Serializable, SearchableEntity {
                 .exclude("*.class");
     }
 
+    @Override
     public String toSearchJson() {
         return getSearchSerializer().exclude("*").serialize(this);
+    }
+
+    @Override
+    public String getSearchId() {
+        return getId().toString();
     }
 
     public String toJson() {
@@ -135,7 +140,7 @@ public class CarModelEngineYear implements Serializable, SearchableEntity {
     @Override
     public void removeSearchIndex() throws Exception {
         log.info("Removing from search index.");
-        CarModelEngineYearElasticSearch.instance().delete(this);
+        SearchService.instance().deleteCarModelEngineYear(this);
     }
 
     @PostUpdate
@@ -143,7 +148,7 @@ public class CarModelEngineYear implements Serializable, SearchableEntity {
     @Override
     public void updateSearchIndex() throws Exception {
         log.info("Updating search index.");
-        CarModelEngineYearElasticSearch.instance().index(this);
+        SearchService.instance().indexCarModelEngineYear(this);
     }
 
     //</editor-fold>

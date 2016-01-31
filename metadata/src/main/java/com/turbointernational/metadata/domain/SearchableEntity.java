@@ -1,17 +1,21 @@
 package com.turbointernational.metadata.domain;
 
 /**
- * Created by trunikov on 12/14/15.
+ * Created by dmytro.trunykov@zorallabs.com on 12/14/15.
  */
 public interface SearchableEntity {
 
     // Don't forget to annotate this method in an inherited class by this annotation:
     //@PostRemove
-    public void removeSearchIndex() throws Exception;
+    void removeSearchIndex() throws Exception;
 
     // Don't forget to annotate this method in an inherited class by these annotations:
     //@PostUpdate
     //@PostPersist
-    public void updateSearchIndex() throws Exception;
+    void updateSearchIndex() throws Exception;
+
+    String toSearchJson();
+
+    String getSearchId();
 
 }

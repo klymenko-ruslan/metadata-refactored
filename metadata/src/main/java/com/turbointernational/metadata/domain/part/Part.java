@@ -11,7 +11,7 @@ import com.turbointernational.metadata.domain.part.bom.BOMItem;
 import com.turbointernational.metadata.domain.part.salesnote.SalesNotePart;
 import com.turbointernational.metadata.domain.part.types.*;
 import com.turbointernational.metadata.domain.type.PartType;
-import com.turbointernational.metadata.util.PartElasticSearch;
+import com.turbointernational.metadata.services.SearchService;
 import com.turbointernational.metadata.web.View;
 import flexjson.JSONSerializer;
 import flexjson.transformer.HibernateTransformer;
@@ -240,7 +240,7 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
     @Override
     public void removeSearchIndex() throws Exception {
         log.info("Updating search index.");
-        PartElasticSearch.instance().delete(this);
+        SearchService.instance().deletePart(this);
     }
 
     @PostUpdate
@@ -248,7 +248,7 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
     @Override
     public void updateSearchIndex() throws Exception {
         log.info("Updating search index.");
-        PartElasticSearch.instance().index(this);
+        SearchService.instance().indexPart(this);
     }
     //</editor-fold>
 
@@ -335,8 +335,14 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
                 .exclude("*.class");
     }
 
+    @Override
     public String toSearchJson() {
         return getSearchSerializer().exclude("*").serialize(this);
+    }
+
+    @Override
+    public String getSearchId() {
+        return getId().toString();
     }
 
     public static String toJsonArray(Collection<Part> collection) {

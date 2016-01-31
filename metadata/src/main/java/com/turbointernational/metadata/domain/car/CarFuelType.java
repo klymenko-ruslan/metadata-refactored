@@ -2,8 +2,7 @@ package com.turbointernational.metadata.domain.car;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.domain.SearchableEntity;
-import com.turbointernational.metadata.util.CarFuelTypeElasticSearch;
-import com.turbointernational.metadata.util.CarMakeElasticSearch;
+import com.turbointernational.metadata.services.SearchService;
 import com.turbointernational.metadata.web.View;
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
@@ -76,8 +75,14 @@ public class CarFuelType implements Serializable, SearchableEntity {
                 .exclude("*.class");
     }
 
+    @Override
     public String toSearchJson() {
         return getSearchSerializer().exclude("*").serialize(this);
+    }
+
+    @Override
+    public String getSearchId() {
+        return getId().toString();
     }
 
     public String toJson() {
@@ -110,7 +115,7 @@ public class CarFuelType implements Serializable, SearchableEntity {
     @Override
     public void removeSearchIndex() throws Exception {
         log.info("Removing from search index.");
-        CarFuelTypeElasticSearch.instance().delete(this);
+        SearchService.instance().deleteCarFuelType(this);
     }
 
     @PostUpdate
@@ -118,7 +123,7 @@ public class CarFuelType implements Serializable, SearchableEntity {
     @Override
     public void updateSearchIndex() throws Exception {
         log.info("Updating search index.");
-        CarFuelTypeElasticSearch.instance().index(this);
+        SearchService.instance().indexCarFuelType(this);
     }
 
     //</editor-fold>
