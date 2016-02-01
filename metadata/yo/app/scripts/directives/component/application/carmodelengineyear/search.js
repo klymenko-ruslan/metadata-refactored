@@ -9,8 +9,8 @@ angular.module("ngMetaCrudApp").directive("cmeySearch", ["$log", "restService", 
       link: function postLink(scope, iElement, iAttrs, controller, transcludeFn) {
         controller.transcludeActionsFn = transcludeFn;
       },
-      controller: ["$log", "$q", "dialogs", "gToast", "$scope", "cmeySearchService", "ngTableParams",
-                    function ($log, $q, dialogs, gToast, $scope, cmeySearchService, ngTableParams) {
+      controller: ["$log", "$q", "dialogs", "gToast", "$scope", "ngTableParams",
+                    function ($log, $q, dialogs, gToast, $scope, ngTableParams) {
         // Latest Results
         $scope.searchResults = null;
         // Applications Table
@@ -26,9 +26,19 @@ angular.module("ngMetaCrudApp").directive("cmeySearch", ["$log", "restService", 
               $scope.search.count = params.count();
               $scope.search.page = params.page();
               $scope.search.sorting = params.sorting();
-              cmeySearchService($scope.search).then(
-                function (searchResults) {
-                  $scope.searchResults = searchResults.data;
+              var offset = params.count() * (params.page() - 1);
+              var limit = params.count();
+              for (var sortProperty in $scope.search.sorting) break;
+              if (sortProperty) {
+                var sortOrder = $scope.search.sorting[sortProperty];
+              }
+              restService.filterCarModelEngineYear($scope.search.cmey,
+                  $scope.search.aggregations["Year"], $scope.search.aggregations["Make"],
+                  $scope.search.aggregations["Model"], $scope.search.aggregations["Engine"],
+                  $scope.search.aggregations["Fuel Type"],
+                  sortProperty, sortOrder, offset, limit).then(
+                function (filtered) {
+                  $scope.searchResults = filtered;
                   // Update the total and slice the result
                   $defer.resolve($scope.searchResults.hits.hits);
                   params.total($scope.searchResults.hits.total);
@@ -44,18 +54,18 @@ angular.module("ngMetaCrudApp").directive("cmeySearch", ["$log", "restService", 
         // Query Parameters
         $scope.search = {
           cmey: "",
-          facets: {},
+          aggregations: {},
           sort: {}
         };
         $scope.clear = function() {
           $scope.search = {
             cmey: "",
-            facets: {},
+            aggregations: {},
             sort: {}
           };
         };
         // Handle updating search results
-        $scope.$watch("[search.cmey, search.facets]",
+        $scope.$watch("[search.cmey, search.aggregations]",
           function (newVal, oldVal) {
             // Debounce
             if (angular.equals(newVal, oldVal, true)) {

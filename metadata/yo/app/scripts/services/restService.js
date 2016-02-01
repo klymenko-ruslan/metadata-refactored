@@ -316,6 +316,23 @@ angular.module("ngMetaCrudApp")
           "offset": offset,
           "limit": limit
         });
-      }
+      };
+
+      this.filterCarModelEngineYear = function(cmey, year, make, model, engine, fuel, sortProperty, sortOrder,
+        offset, limit) {
+        return Restangular.one("search/carmodelengineyears").get({
+          "carModelEngineYear": cmey,
+          "year": year,
+          "make": make,
+          "model": model,
+          "engine": engine,
+          "fuel": fuel,
+          "sortProperty": sortProperty,
+          "sortOrder": sortOrder,
+          "offset": offset,
+          "limit": limit
+        });
+      };
+
     };
   });

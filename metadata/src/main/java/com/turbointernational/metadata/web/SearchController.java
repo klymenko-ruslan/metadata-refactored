@@ -26,7 +26,7 @@ public class SearchController {
     @RequestMapping(value = "/parts", method = RequestMethod.GET)
     @ResponseBody
     @Secured("ROLE_READ")
-    public ResponseEntity<String> searchPart(@RequestParam(required = false) String partNumber,
+    public ResponseEntity<String> filterParts(@RequestParam(required = false) String partNumber,
                                              @RequestParam(required = false) String partTypeName,
                                              @RequestParam(required = false) String manufacturerName,
                                              @RequestParam(required = false) String kitType,
@@ -41,6 +41,36 @@ public class SearchController {
                                              @RequestParam(defaultValue = "10") Integer limit) throws Exception {
         String json = searchService.filterParts(partNumber, partTypeName, manufacturerName, kitType, gasketType,
                 sealType, coolType, turboType, turboModel, sortProperty, sortOrder,  offset,  limit);
+        return new ResponseEntity<>(json, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/carmodelengineyears", method = RequestMethod.GET)
+    @ResponseBody
+    @Secured("ROLE_READ")
+    public ResponseEntity<String> filterCarModelEngineYears(@RequestParam(required = false) String carModelEngineYear,
+                                                            @RequestParam(required = false) String year,
+                                                            @RequestParam(required = false) String make,
+                                                            @RequestParam(required = false) String model,
+                                                            @RequestParam(required = false) String engine,
+                                                            @RequestParam(required = false) String fuel,
+                                                            @RequestParam(required = false) String sortProperty,
+                                                            @RequestParam(required = false) String sortOrder,
+                                                            @RequestParam(defaultValue = "0") Integer offset,
+                                                            @RequestParam(defaultValue = "10") Integer limit) throws Exception {
+        String json = searchService.filterCarModelEngineYears(carModelEngineYear, year, make, model, engine, fuel,
+                sortProperty, sortOrder, offset, limit);
+        return new ResponseEntity<>(json, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/carmakes", method = RequestMethod.GET)
+    @ResponseBody
+    @Secured("ROLE_READ")
+    public ResponseEntity<String> filterCarMake(@RequestParam(required = false) String carMake,
+                                                            @RequestParam(required = false) String sortProperty,
+                                                            @RequestParam(required = false) String sortOrder,
+                                                            @RequestParam(defaultValue = "0") Integer offset,
+                                                            @RequestParam(defaultValue = "10") Integer limit) throws Exception {
+        String json = searchService.filterCarMakes(carMake, sortProperty, sortOrder, offset, limit);
         return new ResponseEntity<>(json, HttpStatus.OK);
     }
 
