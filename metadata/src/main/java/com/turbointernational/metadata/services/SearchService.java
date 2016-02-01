@@ -6,6 +6,7 @@ import com.turbointernational.metadata.domain.SearchableEntity;
 import com.turbointernational.metadata.domain.car.*;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.part.PartDao;
+import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.index.IndexRequest;
@@ -210,6 +211,7 @@ public class SearchService {
                               String gasketType, String sealType, String coolType, String turboType,
                               String turboModel, String sortProperty, String sortOrder,
                               Integer offset, Integer limit) {
+        partNumber = StringUtils.defaultIfEmpty(partNumber, null);
         SearchRequestBuilder srb = elasticSearch.prepareSearch(elasticSearchIndex).setTypes(elasticSearchTypePart)
                 .setSearchType(SearchType.DFS_QUERY_THEN_FETCH);
         QueryBuilder query;

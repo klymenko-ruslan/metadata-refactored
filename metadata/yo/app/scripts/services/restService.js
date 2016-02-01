@@ -299,5 +299,23 @@ angular.module("ngMetaCrudApp")
         return Restangular.one("mas90sync/status").get();
       };
 
+      this.filterParts = function(partNumber, partTypeName, manufacturerName, kitType, gasketType, sealType, coolType,
+      turboType, turboModel, sortProperty, sortOrder, offset, limit) {
+        return Restangular.one("search/parts").get({
+          "partNumber": partNumber,
+          "partTypeName": partTypeName,
+          "manufacturerName": manufacturerName,
+          "kitType": kitType,
+          "gasketType": gasketType,
+          "sealType": sealType,
+          "coolType": coolType,
+          "turboType": turboType,
+          "turboModel": turboModel,
+          "sortProperty": sortProperty,
+          "sortOrder": sortOrder,
+          "offset": offset,
+          "limit": limit
+        });
+      }
     };
   });

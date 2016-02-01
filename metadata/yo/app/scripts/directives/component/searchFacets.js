@@ -11,10 +11,10 @@ angular.module("ngMetaCrudApp")
       controller: function($scope) {
         $scope.Facets = partFacets;
         $scope.isSelected = function(facet) {
-          return angular.isDefined($scope.search.facets[facet.name]);
+          return angular.isDefined($scope.search.aggregations[facet.name]);
         };
         $scope.select = function(facet, term) {
-          $scope.search.facets[facet.name] = term;
+          $scope.search.aggregations[facet.name] = term;
         };
       },
       templateUrl: "/views/component/searchFacets.html"

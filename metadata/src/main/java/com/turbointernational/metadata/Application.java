@@ -9,6 +9,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory;
@@ -30,6 +31,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -45,14 +47,14 @@ import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 @SpringBootApplication
+@Configuration
+@EnableAutoConfiguration
+@EnableJpaRepositories(basePackages = {"com.turbointernational.metadata.domain"})
+@EnableTransactionManagement//(mode = AdviceMode.PROXY, proxyTargetClass = true)
 @EnableScheduling
 @EnableAsync
-@EnableTransactionManagement//(mode = AdviceMode.PROXY, proxyTargetClass = true)
-@EnableJpaRepositories(basePackageClasses = Application.class)
 @EnableSpringDataWebSupport
 @ComponentScan
-@EntityScan(basePackageClasses = Application.class)
-@Configuration
 public class Application extends WebMvcConfigurerAdapter implements WebApplicationInitializer, ApplicationContextAware {
     
     private static ApplicationContext springContext = null;
@@ -60,8 +62,7 @@ public class Application extends WebMvcConfigurerAdapter implements WebApplicati
     public static ApplicationContext getContext() {
         return springContext;
     }
-    
-    
+
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }
@@ -100,33 +101,14 @@ public class Application extends WebMvcConfigurerAdapter implements WebApplicati
 
 //    @Bean
 //    public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
-//         LocalContainerEntityManagerFactoryBean entityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
-//        /*
-//      <property name="hibernate.show_sql" value="false"/>
-//      <property name="hibernate.format_sql" value="true"/>
-//      <property name="hibernate.log.level" value="INFO"/>
-//      <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5InnoDBDialect"/>
-//      <property name="hibernate.hbm2ddl.auto" value=""/>
-//      <property name="hibernate.ejb.naming_strategy" value="org.hibernate.cfg.ImprovedNamingStrategy"/>
-//      <property name="hibernate.connection.charSet" value="UTF-8"/>
-//      <property name="hibernate.cache.region.factory_class" value="org.hibernate.cache.ehcache.EhCacheRegionFactory"/>
-//      <property name="net.sf.Ehcache.configurationResourceName" value="/ehcache.xml"/>
-//      <property name="hibernate.cache.use_query_cache" value="true"/>
-//      <property name="hibernate.cache.use_second_level_cache" value="true"/>
-//      <property name="hibernate.generate_statistics" value="true"/>
-//
-//         */
-//         //entityManagerFactoryBean.setJpaVendorAdapter(vendorAdaptor());
-//         entityManagerFactoryBean.setDataSource(dataSource());
-//         entityManagerFactoryBean.setPersistenceProviderClass(HibernatePersistenceProvider.class);
-//         //entityManagerFactoryBean.setPackagesToScan(ENTITYMANAGER_PACKAGES_TO_SCAN);
-//         //entityManagerFactoryBean.setJpaProperties(jpaHibernateProperties());
-//        Properties jpaHibernateProperties = new Properties();
-//        jpaHibernateProperties.put("hibernate.dialect", "org.hibernate.dialect.MySQL5InnoDBDialect");
-//        entityManagerFactoryBean.setJpaProperties(jpaHibernateProperties);
-//
-//         return entityManagerFactoryBean;
-//     }
+//        LocalContainerEntityManagerFactoryBean entityManagerFactory =
+//                new LocalContainerEntityManagerFactoryBean();
+//        entityManagerFactory.setDataSource(dataSource());
+//        // Vendor adapter
+//        HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
+//        entityManagerFactory.setJpaVendorAdapter(vendorAdapter);
+//        return entityManagerFactory;
+//    }
 
     @Bean(name = "asyncExecutor")
     protected ThreadPoolTaskExecutor mvcTaskExecutor() {

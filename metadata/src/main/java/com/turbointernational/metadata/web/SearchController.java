@@ -23,7 +23,7 @@ public class SearchController {
     @Autowired
     private SearchService searchService;
 
-    @RequestMapping(value = "/part", method = RequestMethod.GET)
+    @RequestMapping(value = "/parts", method = RequestMethod.GET)
     @ResponseBody
     @Secured("ROLE_READ")
     public ResponseEntity<String> searchPart(@RequestParam(required = false) String partNumber,
