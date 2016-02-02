@@ -9,7 +9,7 @@ angular.module("ngMetaCrudApp").directive("carmakeSearch", ["$log", "restService
     "link": function postLink(scope, iElement, iAttrs, controller, transcludeFn) {
       controller.transcludeActionsFn = transcludeFn;
     },
-    "controller": ["$log", "$q", "$scope", "dialogs", "carmakeSearchService", "ngTableParams", function ($log, $q, $scope, dialogs, carmakeSearchService, ngTableParams) {
+    "controller": ["$log", "$q", "$scope", "dialogs", "ngTableParams", function ($log, $q, $scope, dialogs, ngTableParams) {
       // Latest Results
       $scope.searchResults = null;
 
@@ -82,9 +82,15 @@ angular.module("ngMetaCrudApp").directive("carmakeSearch", ["$log", "restService
             $scope.search.count = params.count();
             $scope.search.page = params.page();
             $scope.search.sorting = params.sorting();
-            carmakeSearchService($scope.search).then(
-              function (searchResults) {
-                $scope.searchResults = searchResults.data;
+            var offset = params.count() * (params.page() - 1);
+            var limit = params.count();
+            for (var sortProperty in $scope.search.sorting) break;
+            if (sortProperty) {
+              var sortOrder = $scope.search.sorting[sortProperty];
+            }
+            restService.filterCarMakes($scope.search.carmake, sortProperty, sortOrder, offset, limit).then(
+              function (filtered) {
+                $scope.searchResults = filtered;
                 // Update the total and slice the result
                 $defer.resolve($scope.searchResults.hits.hits);
                 params.total($scope.searchResults.hits.total);
@@ -100,13 +106,13 @@ angular.module("ngMetaCrudApp").directive("carmakeSearch", ["$log", "restService
       // Query Parameters
       $scope.search = {
         "carmake": "",
-        "facets": {},
+        "aggregations": {},
         "sort": {}
       };
       $scope.clear = function() {
         $scope.search = {
           "carmake": "",
-          "facets": {},
+          "aggregations": {},
           "sort": {}
         };
       };

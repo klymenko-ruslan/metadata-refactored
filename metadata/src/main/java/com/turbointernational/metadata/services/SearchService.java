@@ -36,6 +36,7 @@ import javax.annotation.PostConstruct;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.List;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 
 /**
@@ -122,6 +123,10 @@ public class SearchService {
             AggregationBuilders.terms("Fuel Type").field("engine.fuelType.name.full").size(DEF_AGGR_RESULT_SIZE)
     };
 
+    private final static AggregationBuilder[] CARMODEL_AGGREGATIONS = new AggregationBuilder[]{
+            AggregationBuilders.terms("Make").field("make.name.full").size(DEF_AGGR_RESULT_SIZE)
+    };
+
     @PostConstruct
     private void init() throws UnknownHostException {
         // Establish connection to ElasticSearch cluster.
@@ -130,6 +135,29 @@ public class SearchService {
         Settings settings = Settings.settingsBuilder().put("cluster.name", clusterName).build();
         this.elasticSearch = TransportClient.builder().settings(settings).build().addTransportAddress(taddr);
     }
+
+    /**
+     * Transform a string to a string for search in the "name.short" field.
+     * <p/>
+     * Some types in the ElasticSearch index has property "name" that is mapped on two versions:
+     * <dd>
+     * <dt>full</dt>
+     * <dd>the field indexed as is</dd>
+     * <dt>short</dt>
+     * <dd>the field transformed to a lower-case string and removed all non-word characters</dd>
+     * </dd>
+     *
+     * @param s string to transform. null not allowed.
+     * @return transformed string
+     */
+    private final static Function<String, String> str2shotfield = s -> REGEX_TOSHORTFIELD.matcher(s).replaceAll("").toLowerCase();
+
+    /**
+     * Convert string to SortOrder.
+     */
+    private final static Function<String, SortOrder> convertSortOrder = sortOrder -> SortOrder.valueOf(sortOrder.toUpperCase());
+
+    private final static Function<String, String> queryString = s -> "*" + s + "*";
 
     public static SearchService instance() {
         return Application.getContext().getBean(SearchService.class);
@@ -230,7 +258,7 @@ public class SearchService {
         } else {
             BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
             if (partNumber != null) {
-                String normalizedPartNumber = str2shotfield(partNumber);
+                String normalizedPartNumber = str2shotfield.apply(partNumber);
                 boolQuery.must(QueryBuilders.termQuery("manufacturerPartNumber.short", normalizedPartNumber));
             }
             if (partTypeName != null) {
@@ -262,7 +290,7 @@ public class SearchService {
         srb.setQuery(query);
         if (sortProperty != null) {
             SortBuilder sort = SortBuilders.fieldSort(sortProperty)
-                    .order(SortOrder.valueOf(sortOrder.toUpperCase()))
+                    .order(convertSortOrder.apply(sortOrder))
                     .missing("_last");
             srb.addSort(sort);
         }
@@ -276,7 +304,7 @@ public class SearchService {
             srb.setSize(limit);
         }
         log.debug("Search request (parts) to search engine:\n{}", srb);
-        return srb.execute().actionGet().toString();
+        return srb.execute().actionGet(timeout).toString();
     }
 
     public String filterCarModelEngineYears(String carModelEngineYear, String year, String make, String model,
@@ -293,14 +321,14 @@ public class SearchService {
         } else {
             BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
             if (carModelEngineYear != null) {
-                String normalizedCarModelEngineYear = str2shotfield(carModelEngineYear);
-                boolQuery.must(QueryBuilders.queryStringQuery(queryString(normalizedCarModelEngineYear)));
+                String normalizedCarModelEngineYear = str2shotfield.apply(carModelEngineYear);
+                boolQuery.must(QueryBuilders.queryStringQuery(queryString.apply(normalizedCarModelEngineYear)));
             }
             if (year != null) {
                 boolQuery.must(QueryBuilders.termQuery("year.name.full", year));
             }
             if (make != null) {
-                boolQuery.must(QueryBuilders.termQuery("make.name.full", make));
+                boolQuery.must(QueryBuilders.termQuery("model.make.name.full", make));
             }
             if (model != null) {
                 boolQuery.must(QueryBuilders.termQuery("model.name.full", model));
@@ -316,7 +344,7 @@ public class SearchService {
         srb.setQuery(query);
         if (sortProperty != null) {
             SortBuilder sort = SortBuilders.fieldSort(sortProperty)
-                    .order(SortOrder.valueOf(sortOrder.toUpperCase()))
+                    .order(convertSortOrder.apply(sortOrder))
                     .missing("_last");
             srb.addSort(sort);
         }
@@ -330,14 +358,14 @@ public class SearchService {
             srb.setSize(limit);
         }
         log.debug("Search request (car model engine years) to search engine:\n{}", srb);
-        return srb.execute().actionGet().toString();
+        return srb.execute().actionGet(timeout).toString();
     }
 
     public String filterCarMakes(String carMake , String sortProperty, String sortOrder,
                                  Integer offset, Integer limit) {
         carMake = StringUtils.defaultIfEmpty(carMake, null);
         SearchRequestBuilder srb = elasticSearch.prepareSearch(elasticSearchIndex)
-                .setTypes(elasticSearchTypeCarModelEngineYear)
+                .setTypes(elasticSearchTypeCarMake)
                 .setSearchType(SearchType.DFS_QUERY_THEN_FETCH);
         QueryBuilder query;
         if (carMake == null) {
@@ -345,7 +373,7 @@ public class SearchService {
         } else {
             BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
             if (carMake != null) {
-                String normalizedCarMake = str2shotfield(carMake);
+                String normalizedCarMake = str2shotfield.apply(carMake);
                 boolQuery.must(QueryBuilders.termQuery("name.short", normalizedCarMake));
             }
             query = boolQuery;
@@ -353,7 +381,7 @@ public class SearchService {
         srb.setQuery(query);
         if (sortProperty != null) {
             SortBuilder sort = SortBuilders.fieldSort(sortProperty)
-                    .order(SortOrder.valueOf(sortOrder.toUpperCase()))
+                    .order(convertSortOrder.apply(sortOrder))
                     .missing("_last");
             srb.addSort(sort);
         }
@@ -364,29 +392,121 @@ public class SearchService {
             srb.setSize(limit);
         }
         log.debug("Search request (car makes) to search engine:\n{}", srb);
-        return srb.execute().actionGet().toString();
+        return srb.execute().actionGet(timeout).toString();
     }
 
-    /**
-     * Transform a string to a string for search in the "name.short" field.
-     * <p/>
-     * Some types in the ElasticSearch index has property "name" that is mapped on two versions:
-     * <dd>
-     * <dt>full</dt>
-     * <dd>the field indexed as is</dd>
-     * <dt>short</dt>
-     * <dd>the field transformed to a lower-case string and removed all non-word characters</dd>
-     * </dd>
-     *
-     * @param s string to transform. null not allowed.
-     * @return transformed string
-     */
-    private static String str2shotfield(String s) {
-        return REGEX_TOSHORTFIELD.matcher(s).replaceAll("").toLowerCase();
+    public String filterCarModels(String carModel, String make, String sortProperty, String sortOrder,
+                                 Integer offset, Integer limit) {
+        carModel = StringUtils.defaultIfEmpty(carModel, null);
+        SearchRequestBuilder srb = elasticSearch.prepareSearch(elasticSearchIndex)
+                .setTypes(elasticSearchTypeCarModel)
+                .setSearchType(SearchType.DFS_QUERY_THEN_FETCH);
+        QueryBuilder query;
+        if (carModel == null && make == null) {
+            query = QueryBuilders.matchAllQuery();
+        } else {
+            BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
+            if (carModel != null) {
+                String normalizedCarModel = str2shotfield.apply(carModel);
+                boolQuery.must(QueryBuilders.termQuery("name.short", normalizedCarModel));
+            }
+            if (make != null) {
+                boolQuery.must(QueryBuilders.termQuery("make.name.full", make));
+            }
+            query = boolQuery;
+        }
+        srb.setQuery(query);
+        if (sortProperty != null) {
+            SortBuilder sort = SortBuilders.fieldSort(sortProperty)
+                    .order(convertSortOrder.apply(sortOrder))
+                    .missing("_last");
+            srb.addSort(sort);
+        }
+        for (AggregationBuilder agg : CARMODEL_AGGREGATIONS) {
+            srb.addAggregation(agg);
+        }
+        if (offset != null) {
+            srb.setFrom(offset);
+        }
+        if (limit != null) {
+            srb.setSize(limit);
+        }
+        log.debug("Search request (car models) to search engine:\n{}", srb);
+        return srb.execute().actionGet(timeout).toString();
     }
 
-    private static String queryString(String s) {
-        return "*" + s + "*";
+    public String filterCarEngines(String carEngine, String fuelType, String sortProperty, String sortOrder,
+                                 Integer offset, Integer limit) {
+        carEngine = StringUtils.defaultIfEmpty(carEngine, null);
+        SearchRequestBuilder srb = elasticSearch.prepareSearch(elasticSearchIndex)
+                .setTypes(elasticSearchTypeCarEngine)
+                .setSearchType(SearchType.DFS_QUERY_THEN_FETCH);
+        QueryBuilder query;
+        if (carEngine == null && fuelType == null) {
+            query = QueryBuilders.matchAllQuery();
+        } else {
+            BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
+            if (carEngine != null) {
+                String normalizedCarEngine = str2shotfield.apply(carEngine);
+                boolQuery.must(QueryBuilders.termQuery("name.short", normalizedCarEngine));
+            }
+            if (fuelType != null) {
+                boolQuery.must(QueryBuilders.termQuery("fuelType.name.full", fuelType));
+            }
+            query = boolQuery;
+        }
+        srb.setQuery(query);
+        if (sortProperty != null) {
+            SortBuilder sort = SortBuilders.fieldSort(sortProperty)
+                    .order(convertSortOrder.apply(sortOrder))
+                    .missing("_last");
+            srb.addSort(sort);
+        }
+        for (AggregationBuilder agg : CARMODEL_AGGREGATIONS) {
+            srb.addAggregation(agg);
+        }
+        if (offset != null) {
+            srb.setFrom(offset);
+        }
+        if (limit != null) {
+            srb.setSize(limit);
+        }
+        log.debug("Search request (car engines) to search engine:\n{}", srb);
+        return srb.execute().actionGet(timeout).toString();
+    }
+
+    public String filterCarFuelTypes(String fuelType , String sortProperty, String sortOrder,
+                                 Integer offset, Integer limit) {
+        fuelType = StringUtils.defaultIfEmpty(fuelType, null);
+        SearchRequestBuilder srb = elasticSearch.prepareSearch(elasticSearchIndex)
+                .setTypes(elasticSearchTypeCarFuelType)
+                .setSearchType(SearchType.DFS_QUERY_THEN_FETCH);
+        QueryBuilder query;
+        if (fuelType == null) {
+            query = QueryBuilders.matchAllQuery();
+        } else {
+            BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
+            if (fuelType != null) {
+                String normalizedFuelType = str2shotfield.apply(fuelType);
+                boolQuery.must(QueryBuilders.termQuery("name.short", normalizedFuelType));
+            }
+            query = boolQuery;
+        }
+        srb.setQuery(query);
+        if (sortProperty != null) {
+            SortBuilder sort = SortBuilders.fieldSort(sortProperty)
+                    .order(convertSortOrder.apply(sortOrder))
+                    .missing("_last");
+            srb.addSort(sort);
+        }
+        if (offset != null) {
+            srb.setFrom(offset);
+        }
+        if (limit != null) {
+            srb.setSize(limit);
+        }
+        log.debug("Search request (car makes) to search engine:\n{}", srb);
+        return srb.execute().actionGet(timeout).toString();
     }
 
     private void deleteDoc(String elasticSearchType, String searchId) throws Exception {

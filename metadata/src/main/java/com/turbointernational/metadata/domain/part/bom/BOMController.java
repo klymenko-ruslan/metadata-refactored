@@ -38,32 +38,6 @@ public class BOMController {
 
     private static final Logger log = LoggerFactory.getLogger(BOMController.class);
 
-    // TODO: remove when finished #569
-    /*
-    @Transactional
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ResponseEntity<String> get(@PathVariable("id") Long id) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/json");
-        BOMItem item = bomItemDao.findOne(id);
-        String strJsonBom = new JSONSerializer().transform(
-                new HibernateTransformer(), BOMItem.class).
-                    include("parent.id", "parent.name", "parent.version", "parent.manufacturerPartNumber",
-                            "parent.interchange", "parent.description", "parent.inactive").
-                    include("parent.partType.id", "parent.partType.magentoAttributeSet", "parent.partType.name", "parent.partType.value").
-                    exclude("parent.partType.*").
-                    include("parent.manufacturer.id", "parent.manufacturer.name").
-                    include("parent.manufacturer.type.id", "parent.manufacturer.type.name").
-                    exclude("parent.manufacturer.type.*").
-                    include("parent.interchange.alone", "parent.interchange.description",
-                            "parent.interchange.id", "parent.interchange.name").
-                    exclude("parent.interchange.*").
-                    exclude("parent.*", "*.class").
-                    serialize(item);
-        return new ResponseEntity<>(strJsonBom, headers, HttpStatus.OK);
-    }
-    */
-
     @ResponseBody
     @Transactional
     @Secured("ROLE_BOM")

@@ -9,8 +9,8 @@ angular.module("ngMetaCrudApp").directive("carmodelSearch", ["$log", "restServic
       "link": function postLink(scope, iElement, iAttrs, controller, transcludeFn) {
         controller.transcludeActionsFn = transcludeFn;
       },
-      "controller": ["$log", "$q", "$scope", "gToast", "dialogs", "carmodelSearchService", "ngTableParams",
-                    function ($log, $q, $scope, gToast, dialogs, carmodelSearchService, ngTableParams) {
+      "controller": ["$log", "$q", "$scope", "gToast", "dialogs", "ngTableParams",
+                    function ($log, $q, $scope, gToast, dialogs, ngTableParams) {
         // Latest Results
         $scope.searchResults = null;
 
@@ -44,9 +44,15 @@ angular.module("ngMetaCrudApp").directive("carmodelSearch", ["$log", "restServic
               $scope.search.count = params.count();
               $scope.search.page = params.page();
               $scope.search.sorting = params.sorting();
-              carmodelSearchService($scope.search).then(
-                function (searchResults) {
-                  $scope.searchResults = searchResults.data;
+              var offset = params.count() * (params.page() - 1);
+              var limit = params.count();
+              for (var sortProperty in $scope.search.sorting) break;
+              if (sortProperty) {
+                var sortOrder = $scope.search.sorting[sortProperty];
+              }
+              restService.filterCarModels($scope.search.carmodel, $scope.search.aggregations["Make"], sortProperty, sortOrder, offset, limit).then(
+                function (filtered) {
+                  $scope.searchResults = filtered;
                   // Update the total and slice the result
                   $defer.resolve($scope.searchResults.hits.hits);
                   params.total($scope.searchResults.hits.total);
@@ -62,18 +68,18 @@ angular.module("ngMetaCrudApp").directive("carmodelSearch", ["$log", "restServic
         // Query Parameters
         $scope.search = {
           "carmodel": "",
-          "facets": {},
+          "aggregations": {},
           "sort": {}
         };
         $scope.clear = function() {
           $scope.search = {
             "carmodel": "",
-            "facets": {},
+            "aggregations": {},
             "sort": {}
           };
         };
         // Handle updating search results
-        $scope.$watch("[search.carmodel, search.facets]",
+        $scope.$watch("[search.carmodel, search.aggregations]",
           function (newVal, oldVal) {
             // Debounce
             if (angular.equals(newVal, oldVal, true)) {

@@ -318,7 +318,7 @@ angular.module("ngMetaCrudApp")
         });
       };
 
-      this.filterCarModelEngineYear = function(cmey, year, make, model, engine, fuel, sortProperty, sortOrder,
+      this.filterCarModelEngineYears = function(cmey, year, make, model, engine, fuel, sortProperty, sortOrder,
         offset, limit) {
         return Restangular.one("search/carmodelengineyears").get({
           "carModelEngineYear": cmey,
@@ -327,6 +327,48 @@ angular.module("ngMetaCrudApp")
           "model": model,
           "engine": engine,
           "fuel": fuel,
+          "sortProperty": sortProperty,
+          "sortOrder": sortOrder,
+          "offset": offset,
+          "limit": limit
+        });
+      };
+
+      this.filterCarMakes = function(make, sortProperty, sortOrder, offset, limit) {
+        return Restangular.one("search/carmakes").get({
+          "make": make,
+          "sortProperty": sortProperty,
+          "sortOrder": sortOrder,
+          "offset": offset,
+          "limit": limit
+        });
+      };
+
+      this.filterCarModels = function(model, make, sortProperty, sortOrder, offset, limit) {
+        return Restangular.one("search/carmodels").get({
+          "model": model,
+          "make": make,
+          "sortProperty": sortProperty,
+          "sortOrder": sortOrder,
+          "offset": offset,
+          "limit": limit
+        });
+      };
+
+      this.filterCarEngines = function(engine, fuelType, sortProperty, sortOrder, offset, limit) {
+        return Restangular.one("search/carengines").get({
+          "engine": engine,
+          "fuelType": fuelType,
+          "sortProperty": sortProperty,
+          "sortOrder": sortOrder,
+          "offset": offset,
+          "limit": limit
+        });
+      };
+
+      this.filterCarFuelTypes = function(fuelType, sortProperty, sortOrder, offset, limit) {
+        return Restangular.one("search/carfueltypes").get({
+          "fuelType": fuelType,
           "sortProperty": sortProperty,
           "sortOrder": sortOrder,
           "offset": offset,

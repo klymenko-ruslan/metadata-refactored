@@ -64,7 +64,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       echo Installing packages
 
       # For elasticsearch
-      sudo dpkg -i /vagrant/bits/ElasticSearch/elasticsearch-0.90.7.deb
+      sudo dpkg -i /vagrant/bits/ElasticSearch/elasticsearch-2.1.1.deb
 
       # This will install later versions. War and POM need to be updated accordingly, add elasticsearch to apt-get install below
       #wget -qO - http://packages.elasticsearch.org/GPG-KEY-elasticsearch | sudo apt-key add -

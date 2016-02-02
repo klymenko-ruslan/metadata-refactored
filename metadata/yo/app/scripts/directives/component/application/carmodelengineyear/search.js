@@ -32,7 +32,7 @@ angular.module("ngMetaCrudApp").directive("cmeySearch", ["$log", "restService", 
               if (sortProperty) {
                 var sortOrder = $scope.search.sorting[sortProperty];
               }
-              restService.filterCarModelEngineYear($scope.search.cmey,
+              restService.filterCarModelEngineYears($scope.search.cmey,
                   $scope.search.aggregations["Year"], $scope.search.aggregations["Make"],
                   $scope.search.aggregations["Model"], $scope.search.aggregations["Engine"],
                   $scope.search.aggregations["Fuel Type"],
