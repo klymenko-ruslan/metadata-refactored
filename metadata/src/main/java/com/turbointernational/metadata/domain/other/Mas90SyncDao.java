@@ -31,13 +31,6 @@ public class Mas90SyncDao extends AbstractDao<Mas90Sync> {
             this.recs = recs;
         }
 
-        public long getTotal() {
-            return total;
-        }
-
-        public List<Mas90Sync> getRecs() {
-            return recs;
-        }
     }
 
     public Mas90SyncDao() {
