@@ -32,6 +32,11 @@ echo "Setting mapping..." && curl -XPUT "$SERVER/$INDEX/?pretty=1" -d '
               "type": "string",
               "analyzer": "normalized_short",
               "store": "yes"
+            },
+            "lower_case_sort": {
+              "type": "string",
+              "analyzer": "case_insensitive_sort",
+              "store": "yes"
             }
           }
         },
@@ -47,6 +52,11 @@ echo "Setting mapping..." && curl -XPUT "$SERVER/$INDEX/?pretty=1" -d '
             "short": {
               "type": "string",
               "analyzer": "normalized_short",
+              "store": "yes"
+            },
+            "lower_case_sort": {
+              "type": "string",
+              "analyzer": "case_insensitive_sort",
               "store": "yes"
             }
           }
@@ -71,13 +81,25 @@ echo "Setting mapping..." && curl -XPUT "$SERVER/$INDEX/?pretty=1" -d '
                   "type": "string",
                   "analyzer": "normalized_short",
                   "store": "yes"
+                },
+                "lower_case_sort": {
+                  "type": "string",
+                  "analyzer": "case_insensitive_sort",
+                  "store": "yes"
                 }
               }
             },
             "typeName": {
               "type": "string",
               "analyzer": "keyword",
-              "store": "yes"
+              "store": "yes",
+              "fields": {
+                "lower_case_sort": {
+                  "type": "string",
+                  "analyzer": "case_insensitive_sort",
+                  "store": "yes"
+                }
+              }
             }
           }
         },
@@ -100,6 +122,11 @@ echo "Setting mapping..." && curl -XPUT "$SERVER/$INDEX/?pretty=1" -d '
                 "short": {
                   "type": "string",
                   "analyzer": "normalized_short",
+                  "store": "yes"
+                },
+                "lower_case_sort": {
+                  "type": "string",
+                  "analyzer": "case_insensitive_sort",
                   "store": "yes"
                 }
               }
@@ -126,6 +153,11 @@ echo "Setting mapping..." && curl -XPUT "$SERVER/$INDEX/?pretty=1" -d '
                   "type": "string",
                   "analyzer": "normalized_short",
                   "store": "yes"
+                },
+                "lower_case_sort": {
+                  "type": "string",
+                  "analyzer": "case_insensitive_sort",
+                  "store": "yes"
                 }
               }
             }
@@ -150,6 +182,11 @@ echo "Setting mapping..." && curl -XPUT "$SERVER/$INDEX/?pretty=1" -d '
                 "short": {
                   "type": "string",
                   "analyzer": "normalized_short",
+                  "store": "yes"
+                },
+                "lower_case_sort": {
+                  "type": "string",
+                  "analyzer": "case_insensitive_sort",
                   "store": "yes"
                 }
               }
@@ -176,6 +213,11 @@ echo "Setting mapping..." && curl -XPUT "$SERVER/$INDEX/?pretty=1" -d '
                   "type": "string",
                   "analyzer": "normalized_short",
                   "store": "yes"
+                },
+                "lower_case_sort": {
+                  "type": "string",
+                  "analyzer": "case_insensitive_sort",
+                  "store": "yes"
                 }
               }
             }
@@ -200,6 +242,11 @@ echo "Setting mapping..." && curl -XPUT "$SERVER/$INDEX/?pretty=1" -d '
                 "short": {
                   "type": "string",
                   "analyzer": "normalized_short",
+                  "store": "yes"
+                },
+                "lower_case_sort": {
+                  "type": "string",
+                  "analyzer": "case_insensitive_sort",
                   "store": "yes"
                 }
               }
@@ -226,6 +273,11 @@ echo "Setting mapping..." && curl -XPUT "$SERVER/$INDEX/?pretty=1" -d '
                   "type": "string",
                   "analyzer": "normalized_short",
                   "store": "yes"
+                },
+                "lower_case_sort": {
+                  "type": "string",
+                  "analyzer": "case_insensitive_sort",
+                  "store": "yes"
                 }
               }
             },
@@ -248,6 +300,11 @@ echo "Setting mapping..." && curl -XPUT "$SERVER/$INDEX/?pretty=1" -d '
                     "short": {
                       "type": "string",
                       "analyzer": "normalized_short",
+                      "store": "yes"
+                    },
+                    "lower_case_sort": {
+                      "type": "string",
+                      "analyzer": "case_insensitive_sort",
                       "store": "yes"
                     }
                   }
@@ -279,6 +336,11 @@ echo "Setting mapping..." && curl -XPUT "$SERVER/$INDEX/?pretty=1" -d '
                   "type": "string",
                   "analyzer": "normalized_short",
                   "store": "yes"
+                },
+                "lower_case_sort": {
+                  "type": "string",
+                  "analyzer": "case_insensitive_sort",
+                  "store": "yes"
                 }
               }
             }
@@ -299,6 +361,11 @@ echo "Setting mapping..." && curl -XPUT "$SERVER/$INDEX/?pretty=1" -d '
                   "type": "string",
                   "analyzer": "normalized_short",
                   "store": "yes"
+                },
+                "lower_case_sort": {
+                  "type": "string",
+                  "analyzer": "case_insensitive_sort",
+                  "store": "yes"
                 }
               }
             },
@@ -317,6 +384,11 @@ echo "Setting mapping..." && curl -XPUT "$SERVER/$INDEX/?pretty=1" -d '
                       "type": "string",
                       "analyzer": "normalized_short",
                       "store": "yes"
+                    },
+                    "lower_case_sort": {
+                      "type": "string",
+                      "analyzer": "case_insensitive_sort",
+                      "store": "yes"
                     }
                   }
                 }
@@ -327,8 +399,25 @@ echo "Setting mapping..." && curl -XPUT "$SERVER/$INDEX/?pretty=1" -d '
         "engine": {
           "properties": {
             "engineSize": {
-              "type": "string",
-              "store": "yes"
+              "type": "multi_field",
+              "fields": {
+                "full": {
+                  "type": "string",
+                  "tokenizer": "lowercase",
+                  "analyzer": "keyword",
+                  "store": "yes"
+                },
+                "short": {
+                  "type": "string",
+                  "analyzer": "normalized_short",
+                  "store": "yes"
+                },
+                "lower_case_sort": {
+                  "type": "string",
+                  "analyzer": "case_insensitive_sort",
+                  "store": "yes"
+                }
+              }
             },
             "fuelType": {
               "properties": {
@@ -344,6 +433,11 @@ echo "Setting mapping..." && curl -XPUT "$SERVER/$INDEX/?pretty=1" -d '
                     "short": {
                       "type": "string",
                       "analyzer": "normalized_short",
+                      "store": "yes"
+                    },
+                    "lower_case_sort": {
+                      "type": "string",
+                      "analyzer": "case_insensitive_sort",
                       "store": "yes"
                     }
                   }
@@ -373,6 +467,11 @@ echo "Setting mapping..." && curl -XPUT "$SERVER/$INDEX/?pretty=1" -d '
               "type": "string",
               "analyzer": "normalized_short",
               "store": "yes"
+            },
+            "lower_case_sort": {
+              "type": "string",
+              "analyzer": "case_insensitive_sort",
+              "store": "yes"
             }
           }
         }
@@ -396,6 +495,11 @@ echo "Setting mapping..." && curl -XPUT "$SERVER/$INDEX/?pretty=1" -d '
             "short": {
               "type": "string",
               "analyzer": "normalized_short",
+              "store": "yes"
+            },
+            "lower_case_sort": {
+              "type": "string",
+              "analyzer": "case_insensitive_sort",
               "store": "yes"
             }
           }
@@ -421,6 +525,11 @@ echo "Setting mapping..." && curl -XPUT "$SERVER/$INDEX/?pretty=1" -d '
               "type": "string",
               "analyzer": "normalized_short",
               "store": "yes"
+            },
+            "lower_case_sort": {
+              "type": "string",
+              "analyzer": "case_insensitive_sort",
+              "store": "yes"
             }
           }
         },
@@ -438,6 +547,11 @@ echo "Setting mapping..." && curl -XPUT "$SERVER/$INDEX/?pretty=1" -d '
                 "short": {
                   "type": "string",
                   "analyzer": "normalized_short",
+                  "store": "yes"
+                },
+                "lower_case_sort": {
+                  "type": "string",
+                  "analyzer": "case_insensitive_sort",
                   "store": "yes"
                 }
               }
@@ -465,6 +579,11 @@ echo "Setting mapping..." && curl -XPUT "$SERVER/$INDEX/?pretty=1" -d '
               "type": "string",
               "analyzer": "normalized_short",
               "store": "yes"
+            },
+            "lower_case_sort": {
+              "type": "string",
+              "analyzer": "case_insensitive_sort",
+              "store": "yes"
             }
           }
         },
@@ -482,6 +601,11 @@ echo "Setting mapping..." && curl -XPUT "$SERVER/$INDEX/?pretty=1" -d '
                 "short": {
                   "type": "string",
                   "analyzer": "normalized_short",
+                  "store": "yes"
+                },
+                "lower_case_sort": {
+                  "type": "string",
+                  "analyzer": "case_insensitive_sort",
                   "store": "yes"
                 }
               }
@@ -518,6 +642,12 @@ echo "Setting mapping..." && curl -XPUT "$SERVER/$INDEX/?pretty=1" -d '
           "filter": [
             "lowercase",
             "autocomplete"
+          ]
+        },
+        "case_insensitive_sort": {
+          "tokenizer": "keyword",
+          "filter": [
+            "lowercase"
           ]
         }
       },
