@@ -8,7 +8,7 @@ angular.module("ngMetaCrudApp")
         part: "="
       },
       templateUrl: '/views/component/interchangeable_parts.html',
-      controller: function($scope) {
+      controller: ["$scope", "$parse", function($scope, $parse) {
         restService.findInterchange($scope.part.interchange.id).then(
           function(interchange) {
             // Remove the parent part.
@@ -23,9 +23,31 @@ angular.module("ngMetaCrudApp")
               count: 10
             }, {
               getData: function($defer, params) {
+                var sorting = params.sorting();
+                var sortAsc = true;
+                for (var sortProperty in sorting) break;
+                if (sortProperty) {
+                  sortAsc = sorting[sortProperty] == "asc";
+                } else {
+                  sortProperty = "manufacturer.name"; // asc. see above.
+                }
+                var sortedAsc = _.sortBy(interchange.parts, function(b) {
+                  var s = $parse(sortProperty)(b);
+                  if (s && _.isString(s)) {
+                    s = s.toLowerCase();
+                  }
+                  return s;
+                });
+                var sorted = sortAsc ? sortedAsc : sortedAsc.reverse();
+                var page = sorted.slice((params.page() - 1) * params.count(), params.page() * params.count());
+                params.total(interchange.parts.length);
+                $defer.resolve(page);
+
+                /*
                 params.total(interchange.parts.length);
                 var recs = interchange.parts.slice((params.page() - 1) * params.count(), params.page() * params.count());
                 $defer.resolve(recs);
+                */
               }
             });
           },
@@ -33,6 +55,6 @@ angular.module("ngMetaCrudApp")
             restService.error("Can't load interchangeable parts.", error);
           }
         );
-      }
+      }]
     };
   }]);

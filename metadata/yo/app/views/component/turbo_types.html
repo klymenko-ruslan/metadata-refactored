@@ -1,16 +1,9 @@
 <table data-ng-table="turboTypesTableParams" class="table table-bordered table-striped table-hover table-responsive">
-  <thead>
-    <tr>
-      <th>Manufacturer</th>
-      <th>Type</th>
-      <th>Actions</th>
-    </tr>
-  </thead>
   <tbody>
     <tr ng-repeat="turboType in $data">
-      <td>{{turboType.manufacturer.name}}</td>
-      <td>{{turboType.name}}</td>
-      <td>
+      <td title="'Manufacturer'" data-sortable="'manufacturer.name'">{{turboType.manufacturer.name}}</td>
+      <td title="'Type'" data-sortable="'name'">{{turboType.name}}</td>
+      <td title="'Actions'">
         <a ng-click="removeTurboType(turboType)"
            class="btn btn-xs btn-danger">
           <i class="fa fa-trash-o"></i>
