@@ -14,6 +14,11 @@ angular.module("ngMetaCrudApp")
           count: 10
         }, {
           getData: function($defer, params) {
+            if (!angular.isObject($scope.turboTypes)) {
+              params.total(0);
+              $defer.resolve([]);
+              return;
+            }
             var sorting = params.sorting();
             var sortAsc = true;
             for (var sortProperty in sorting) break;
