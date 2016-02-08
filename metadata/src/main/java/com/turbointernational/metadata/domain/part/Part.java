@@ -129,7 +129,7 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
     @Version
     @Column(name = "version")
     @JsonView({View.Summary.class})
-    private Integer version;
+    private int version;
 
     //    @JsonView({View.Summary.class})
     public Long getId() {
@@ -226,11 +226,11 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
         this.salesNoteParts = salesNoteParts;
     }
 
-    public Integer getVersion() {
+    public int getVersion() {
         return version;
     }
 
-    public void setVersion(Integer version) {
+    public void setVersion(int version) {
         this.version = version;
     }
     //</editor-fold>
