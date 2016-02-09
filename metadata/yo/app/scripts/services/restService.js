@@ -192,6 +192,27 @@ angular.module("ngMetaCrudApp")
         return Restangular.one("interchange", id).get();
       };
 
+      this.createPartInterchange = function(partId, pickedPartId) {
+        var interchange = {
+          parts: [{
+            id: partId
+          }, {
+            id: pickedPartId
+          }]
+        };
+        return Restangular.all("interchange").post(interchange);
+      };
+
+      this.updatePartInterchange = function(partId, interchangeId, mergeChoice) {
+        Restangular.setParentless(false);
+        return Restangular.one("interchange", interchangeId).one("part", partId).put({mergeChoice: mergeChoice});
+      };
+
+      this.deletePartInterchange = function(partId, interchangeId) {
+        Restangular.setParentless(false);
+        return Restangular.one("interchange", interchangeId).one("part", partId).remove();
+      }
+
       this.findCarmakeByName = function(name) {
         return Restangular.one("application/carmake").get({
           "name": name

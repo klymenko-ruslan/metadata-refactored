@@ -85,7 +85,7 @@ public class InterchangeController {
     @RequestMapping(value="/{interchangeId}/part/{partId}", method = RequestMethod.PUT)
     @ResponseBody
     @Secured("ROLE_INTERCHANGE")
-    public void update(@PathVariable("interchangeId") Long id, @PathVariable("partId") Long partId) throws Exception {
+    public void update(@PathVariable("interchangeId") Long id, @PathVariable("partId") Long partId, @RequestParam("mergeChoice") Integer mergeChoice) throws Exception {
 
         // Get the part and it's original interchange
         Part iPart = partDao.findOne(partId);
