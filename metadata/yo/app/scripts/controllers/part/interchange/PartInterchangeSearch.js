@@ -2,7 +2,7 @@
 
 angular.module("ngMetaCrudApp")
 
-  .controller("mergeInterchangablesCtrl", ["$scope", "$uibModalInstance", "data", function($scope, $uibModalInstance, data) {
+  .controller("mergeInterchangeablesCtrl", ["$scope", "$uibModalInstance", "data", function($scope, $uibModalInstance, data) {
     $scope.mergeChoice = data["mergeChoice"];
     $scope.cancel = function() {
       $uibModalInstance.dismiss("Canceled");
@@ -50,14 +50,13 @@ angular.module("ngMetaCrudApp")
       if (partAlreadyHasInterchange) {
         if (partAlreadyHasInterchange && !$scope.pickedPart.interchange.alone) {
           // Join the other part's interchange group
-          var mergeDialog = dialogs.create("mergeInterchangablesDlg.html", "mergeInterchangablesCtrl", {mergeChoice: 3}, {
+          var mergeDialog = dialogs.create("/views/dialog/MergeInterchangeablesDlg.html", "mergeInterchangeablesCtrl", {mergeChoice: 3}, {
             size: 'lg',
             keyboard: true,
             backdrop: false
           });
           mergeDialog.result.then(
             function(mergeChoice) {
-              //alert("mergeChoice: " + mergeChoice);
               restService.updatePartInterchange($scope.partId, $scope.pickedPart.interchange.id, mergeChoice).then(
                 function() {
                   gToast.open("Interchangeable part group changed.");

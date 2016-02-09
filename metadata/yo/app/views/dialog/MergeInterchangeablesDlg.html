@@ -1,0 +1,18 @@
+<div class="modal-header">
+  <h4 class="modal-title"><span class="glyphicon glyphicon-star"></span> How to change interchangeable part group?</h4>
+</div>
+<div class="modal-body">
+  <ng-form name="mergeDialog" novalidate role="form">
+      <p>Picked part can't be added automatically to this part. There are several possible solutions.</p>
+      <p>Please chose one of the following:</p>
+      <ul class="list-unstyled" style="margin-left:1em;">
+        <li><input id="merge_choice_1" type="radio" ng-model="mergeChoice" ng-value="1">&nbsp;<span>Add picked part to interchange group of this part and remove picked part from its existing interchange</span></li>
+        <li><input id="merge_choice_2" type="radio" ng-model="mergeChoice" ng-value="2">&nbsp;<span>Add this part to interchange group of the picked part and remove this part from its existing interchange</span></li>
+        <li><input id="merge_choice_3" type="radio" ng-model="mergeChoice" ng-value="3">&nbsp;<span >Add the picked part and all its existing interchange parts to interchange group of this part</span></li>
+      </ul>
+  </ng-form>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-default" ng-click="cancel()">Cancel</button>
+  <button type="button" class="btn btn-primary" ng-click="doIt()">Do it!</button>
+</div>
