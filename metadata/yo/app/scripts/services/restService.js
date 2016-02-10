@@ -203,9 +203,9 @@ angular.module("ngMetaCrudApp")
         return Restangular.all("interchange").post(interchange);
       };
 
-      this.updatePartInterchange = function(partId, interchangeId, mergeChoice) {
+      this.updatePartInterchange = function(partId, pickedPartId, mergeChoice) {
         Restangular.setParentless(false);
-        return Restangular.one("interchange", interchangeId).one("part", partId).put({mergeChoice: mergeChoice});
+        return Restangular.one("interchange", partId).one("part", pickedPartId).put({mergeChoice: mergeChoice});
       };
 
       this.deletePartInterchange = function(partId, interchangeId) {

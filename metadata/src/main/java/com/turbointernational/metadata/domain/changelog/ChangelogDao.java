@@ -23,7 +23,12 @@ public class ChangelogDao extends AbstractDao<Changelog> {
     public ChangelogDao() {
         super(Changelog.class);
     }
-    
+
+    @Transactional
+    public Changelog log(String description) {
+        return log(description, "");
+    }
+
     @Transactional
     public Changelog log(String description, String data) {
         Changelog changelog = new Changelog();

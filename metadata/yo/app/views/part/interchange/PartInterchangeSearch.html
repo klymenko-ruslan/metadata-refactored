@@ -1,28 +1,28 @@
 <metanav>
   <li authorize="ROLE_READ">
-    <a ng-href="/part/{{ partId }}"
+    <button ng-click="go('/part/' + partId)"
        class="btn btn-primary">
       <i class="fa fa-eye"></i>
       View Part
-    </a>
+    </button>
   </li>
 
   <li authorize="ROLE_INTERCHANGE">
-    <a ng-click="removeInterchange()"
+    <button ng-click="removeInterchange()"
        ng-disabled="!canClear() || restService.status.bomRebuilding"
        class="btn btn-danger">
       <i class="fa fa-trash-o"></i>
       Remove Interchange
-    </a>
+    </button>
   </li>
 
   <li authorize="ROLE_INTERCHANGE">
-    <a ng-click="save(partId)"
+    <button ng-click="save(partId)"
        ng-disabled="!canSave() || restService.status.bomRebuilding"
        class="btn btn-success">
       <i class="fa fa-save"></i>
       Save
-    </a>
+    </button>
   </li>
 </metanav>
 

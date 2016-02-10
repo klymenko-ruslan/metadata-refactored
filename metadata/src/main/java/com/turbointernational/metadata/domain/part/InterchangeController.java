@@ -16,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -23,7 +24,11 @@ import java.util.Set;
 @Controller
 public class InterchangeController {
 
-    private static final Logger log = LoggerFactory.getLogger(InterchangeController.class);
+    private final static Logger log = LoggerFactory.getLogger(InterchangeController.class);
+
+    private final static int MERGE_OPT_PICKED_ALONE_TO_PART = 1; // Add picked part to interchange group of this part and remove picked part from its existing interchange
+    private final static int MERGE_OPT_PART_ALONE_TO_PICKED = 2; // Add this part to interchange group of the picked part and remove this part from its existing interchange
+    private final static int MERGE_OPT_PICKED_ALL_TO_PART = 3; // Add the picked part and all its existing interchange parts to interchange group of this part
     
     @Autowired
     ChangelogDao changelogDao;
@@ -78,15 +83,138 @@ public class InterchangeController {
         // TODO: Only change what we need to rather than rebuilding everything
         partDao.rebuildBomDescendancy();
         
-        return new ResponseEntity<String>("ok", headers, HttpStatus.OK);
+        return new ResponseEntity<>("ok", headers, HttpStatus.OK);
     }
-    
+
+    /**
+     * Add picked part to interchange group of this part and remove picked part from its existing interchange.
+     *
+     * @param part
+     * @param pickedPart
+     */
+    private void mergePickedAloneToPart(Part part, Part pickedPart) {
+        Interchange ppi = pickedPart.getInterchange();
+        pickedPart.setInterchange(null);
+        partDao.merge(pickedPart);
+        partDao.flush(); // important
+        if (ppi != null) {
+            interchangeDao.remove(ppi);
+        }
+        Interchange interchange = part.getInterchange();
+        if (interchange == null) {
+            interchange = new Interchange();
+            interchangeDao.persist(interchange);
+            part.setInterchange(interchange);
+            partDao.merge(part);
+        }
+        pickedPart.setInterchange(interchange);
+        Set<Part> parts = interchange.getParts();
+        parts.add(pickedPart);
+        interchangeDao.merge(interchange);
+        partDao.merge(part);
+        changelogDao.log("Added picked part " + pickedPart.getId() + " as interchange to the part " + part.getId());
+    }
+
+    /**
+     * Add this part to interchange group of the picked part and remove this part from its existing interchange.
+     *
+     * @param part
+     * @param pickedPart
+     */
+    private void mergePartAloneToPicked(Part part, Part pickedPart) {
+        Interchange pi = part.getInterchange();
+        part.setInterchange(null);
+        partDao.merge(part);
+        partDao.flush(); // important
+        if (pi != null) {
+            interchangeDao.remove(pi);
+        }
+        Interchange interchange = pickedPart.getInterchange();
+        if (interchange == null) {
+            interchange = new Interchange();
+            interchangeDao.persist(interchange);
+            pickedPart.setInterchange(interchange);
+            partDao.merge(pickedPart);
+        }
+        part.setInterchange(interchange);
+        Set<Part> parts = interchange.getParts();
+        parts.add(part);
+        interchangeDao.merge(interchange);
+        changelogDao.log("Added part " + part.getId() + " as interchange to the picked part " + pickedPart.getId());
+    }
+
+    /**
+     * Add the picked part and all its existing interchange parts to interchange group of this part.
+     *
+     * @param part
+     * @param pickedPart
+     */
+    private void mergePickedAllToPart(Part part, Part pickedPart) {
+        Interchange ppi = pickedPart.getInterchange();
+        if (ppi != null) {
+            // Remove current interchanges.  They will be copied later (see below).
+            pickedPart.setInterchange(null);
+            partDao.merge(pickedPart);
+            partDao.flush(); // important
+        }
+        Interchange interchange = part.getInterchange();
+        if (interchange == null) {
+            interchange = new Interchange();
+            interchangeDao.persist(interchange);
+            part.setInterchange(interchange);
+            partDao.merge(part);
+        }
+        Set<Part> iParts = interchange.getParts();
+        pickedPart.setInterchange(interchange);
+        partDao.merge(pickedPart);
+        partDao.flush(); // important
+        iParts.add(pickedPart);
+        if (ppi != null) {
+            for (Part p : ppi.getParts()) {
+                p.setInterchange(interchange);
+                iParts.add(p);
+            }
+        }
+        interchangeDao.merge(interchange);
+        pickedPart.setInterchange(null);
+        partDao.merge(pickedPart);
+        changelogDao.log("Added picked part " + pickedPart.getId() + " and all its interchanges to the part " + part.getId());
+    }
+
     @Transactional
-    @RequestMapping(value="/{interchangeId}/part/{partId}", method = RequestMethod.PUT)
+    @RequestMapping(value="/{partId}/part/{pickedPartId}", method = RequestMethod.PUT)
     @ResponseBody
     @Secured("ROLE_INTERCHANGE")
-    public void update(@PathVariable("interchangeId") Long id, @PathVariable("partId") Long partId, @RequestParam("mergeChoice") Integer mergeChoice) throws Exception {
+    public void update(@PathVariable("partId") long partId, @PathVariable("pickedPartId") long pickedPartId,
+                       @RequestParam(name = "mergeChoice", required = true) int mergeChoice,
+                       HttpServletResponse response) throws Exception {
+        log.debug("partId: {}, pickedPartid: {}, mergeChoice: {}", partId, pickedPartId, mergeChoice);
+        if (mergeChoice != MERGE_OPT_PICKED_ALONE_TO_PART
+                && mergeChoice != MERGE_OPT_PART_ALONE_TO_PICKED
+                && mergeChoice != MERGE_OPT_PICKED_ALL_TO_PART) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        }
+        Part part = partDao.findOne(partId);
+        Part pickedPart = partDao.findOne(pickedPartId);
+        switch (mergeChoice) {
+            case MERGE_OPT_PICKED_ALONE_TO_PART:
+                mergePickedAloneToPart(part, pickedPart);
+                break;
+            case MERGE_OPT_PART_ALONE_TO_PICKED:
+                mergePartAloneToPicked(part, pickedPart);
+                break;
+            case MERGE_OPT_PICKED_ALL_TO_PART:
+                mergePickedAllToPart(part, pickedPart);
+                break;
+            default:
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                return;
+        }
 
+        // TODO: Only change what we need to rather than rebuilding everything
+        partDao.rebuildBomDescendancy();
+
+        /*
         // Get the part and it's original interchange
         Part iPart = partDao.findOne(partId);
 
@@ -123,6 +251,7 @@ public class InterchangeController {
             
         // TODO: Only change what we need to rather than rebuilding everything
         partDao.rebuildBomDescendancy();
+*/
     }
     
     @ResponseBody

@@ -2,7 +2,14 @@
 
 angular.module("ngMetaCrudApp")
 
-  .controller("mergeInterchangeablesCtrl", ["$scope", "$uibModalInstance", "data", function($scope, $uibModalInstance, data) {
+  .constant("MERGE_OPTIONS", {
+    "PICKED_ALONE_TO_PART": 1,  // Add picked part to interchange group of this part and remove picked part from its existing interchange
+    "PART_ALONE_TO_PICKED": 2,  // Add this part to interchange group of the picked part and remove this part from its existing interchange
+    "PICKED_ALL_TO_PART": 3     // Add the picked part and all its existing interchange parts to interchange group of this part
+  })
+
+  .controller("mergeInterchangeablesCtrl", ["$scope", "$uibModalInstance", "data", "MERGE_OPTIONS", function($scope, $uibModalInstance, data, MERGE_OPTIONS) {
+    $scope.mergeOptions = MERGE_OPTIONS;
     $scope.mergeChoice = data["mergeChoice"];
     $scope.cancel = function() {
       $uibModalInstance.dismiss("Canceled");
@@ -13,14 +20,19 @@ angular.module("ngMetaCrudApp")
   }])
 
   .controller("PartInterchangeSearchCtrl", ["$log", "$scope", "$location", "$routeParams", "restService",
-      "Restangular", "gToast", "dialogs", function($log, $scope, $location, $routeParams,
-        restService, Restangular, gToast, dialogs) {
+      "Restangular", "gToast", "dialogs", "MERGE_OPTIONS", function($log, $scope, $location, $routeParams,
+        restService, Restangular, gToast, dialogs, MERGE_OPTIONS) {
     //$scope.restService = restService;
     $scope.partId = $routeParams.id;
     // The part whose interchange we're editing
     $scope.promise = restService.findPart($scope.partId).then(function(part) {
       $scope.part = part;
     });
+
+    $scope.go = function(path) {
+      $location.path(path);
+    };
+
     $scope.pick = function(pickedPartId) {
       // Lookup the picked part
       $scope.pickedPartPromise = restService.findPart(pickedPartId).then(
@@ -46,18 +58,30 @@ angular.module("ngMetaCrudApp")
     };
 
     $scope.save = function() {
-      var partAlreadyHasInterchange = angular.isObject($scope.part.interchange);
-      if (partAlreadyHasInterchange) {
-        if (partAlreadyHasInterchange && !$scope.pickedPart.interchange.alone) {
-          // Join the other part's interchange group
-          var mergeDialog = dialogs.create("/views/dialog/MergeInterchangeablesDlg.html", "mergeInterchangeablesCtrl", {mergeChoice: 3}, {
-            size: 'lg',
-            keyboard: true,
-            backdrop: false
-          });
+      if ($scope.part.interchange) {
+        if (!$scope.pickedPart.interchange || $scope.pickedPart.interchange.alone) {
+          // Add part to this interchange group
+          restService.updatePartInterchange($scope.partId, $scope.pickedPart.id, MERGE_OPTIONS.PICKED_ALONE_TO_PART).then(
+            function() {
+              gToast.open("Added picked part to interchange.");
+              $location.path("/part/" + $scope.partId);
+            },
+            restService.error);
+        } else {
+          // In this case there are several possibilities how interchangeables can be merged.
+          // See ticket #484.
+          var mergeDialog = dialogs.create("/views/dialog/MergeInterchangeablesDlg.html", "mergeInterchangeablesCtrl",
+            {
+              "mergeChoice": MERGE_OPTIONS.PICKED_ALL_TO_PART
+            }, {
+              "size": "lg",
+              "keyboard": true,
+              "backdrop": false
+            }
+          );
           mergeDialog.result.then(
             function(mergeChoice) {
-              restService.updatePartInterchange($scope.partId, $scope.pickedPart.interchange.id, mergeChoice).then(
+              restService.updatePartInterchange($scope.partId, $scope.pickedPart.id, mergeChoice).then(
                 function() {
                   gToast.open("Interchangeable part group changed.");
                   $location.path("/part/" + $scope.partId);
@@ -71,20 +95,10 @@ angular.module("ngMetaCrudApp")
               $log.log("Cancelled.");
             }
           );
-        } else {
-          // Add part to this interchange group
-          restService.updatePartInterchange($scope.pickedPart.id, $scope.part.interchange.id).then(
-            function() {
-              gToast.open("Added picked part to interchange.");
-              $location.path("/part/" + $scope.partId);
-            },
-            restService.error);
         }
       } else if ($scope.pickedPart.interchange) {
-        // This case equals to mergeCoice=2 --
-
         // Add this part to the picked part's interchange
-        restService.updatePartInterchange($scope.part.id, $scope.pickedPart.interchange.id, 2).then(
+        restService.updatePartInterchange($scope.partId, $scope.pickedPart.id, MERGE_OPTIONS.PART_ALONE_TO_PICKED).then(
           function() {
             gToast.open("Added part to picked part's interchanges.");
             $location.path("/part/" + $scope.partId);
@@ -130,8 +144,6 @@ angular.module("ngMetaCrudApp")
         .result.then(
           function() {
             restService.deletePartInterchange($scope.partId, $scope.part.interchangeId).then(
-//            Restangular.setParentless(false);
-//            Restangular.one('interchange', $scope.part.interchangeId).one('part', $scope.partId).remove().then(
               function() {
                 // Success
                 gToast.open("Part removed from interchange.");
