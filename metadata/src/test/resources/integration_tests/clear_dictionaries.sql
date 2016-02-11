@@ -1,0 +1,1 @@
+DELETE FROM part_type;

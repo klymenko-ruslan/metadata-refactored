@@ -36,13 +36,6 @@ public class PartDao extends AbstractDao<Part> {
         super(Part.class);
     }
 
-    @Override
-    public Part findOne(long id) {
-        return em.createNamedQuery("findOnePart", Part.class)
-                .setParameter("id", id)
-                .getSingleResult();
-    }
-
     @Async("bomRebuildExecutor")
     public void rebuildBomDescendancy() {
         try {

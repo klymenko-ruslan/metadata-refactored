@@ -1,0 +1,23 @@
+INSERT INTO part_type(id, name, parent_part_type_id, import_pk, magento_attribute_set, value)
+VALUES
+(1,'Turbo',NULL,NULL,'Turbo','turbo'),
+(2,'Cartridge',NULL,NULL,'Cartridge','cartridge'),
+(3,'Kit',NULL,NULL,'Kit','kit'),
+(4,'Piston Ring',NULL,NULL,'Piston Ring','piston_ring'),
+(5,'Journal Bearing',NULL,NULL,'Journal Bearing','journal_bearing'),
+(6,'Gasket',NULL,NULL,'Gasket','gasket'),
+(7,'Bearing Spacer',NULL,NULL,'Bearing Spacer','bearing_spacer'),
+(8,'Fast Wearing Component',NULL,NULL,'Part','fast_wearing_component'),
+(9,'Major Component',NULL,NULL,'Part','major_component'),
+(10,'Minor Component',NULL,NULL,'Part','minor_component'),
+(11,'Compressor Wheel',9,11,'Compressor Wheel','compressor_wheel'),
+(12,'Turbine Wheel',9,12,'Turbine Wheel','turbine_wheel'),
+(13,'Bearing Housing',9,13,'Bearing Housing','bearing_housing'),
+(14,'Backplate / Sealplate',9,14,'Backplate','backplate_sealplate'),
+(15,'Heatshield / Shroud',9,15,'Heatshield','heatshield_shroud'),
+(16,'Nozzle Ring',9,16,'Nozzle Ring','nozzle_ring'),
+(17,'O Ring',10,50,'Part','o_ring'),
+(18,'Oil Deflector',10,51,'Part','oil_deflector'),
+(19,'Clamp',10,52,'Part','clamp'),
+(20,'Thrust Parts',10,53,'Part','thrust_parts'),
+(21,'Miscellaneous Minor Components',10,54,'Part','misc_minor_components');

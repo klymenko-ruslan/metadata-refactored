@@ -25,9 +25,11 @@ public class PartType implements Serializable {
     private Long id;
     
     @Column(nullable=false)
-    
     @JsonView(View.Summary.class)
     private String name;
+
+    @Column(name = "import_pk")
+    private Long importPK;
     
     /**
      * Used externally
@@ -60,6 +62,14 @@ public class PartType implements Serializable {
     
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Long getImportPK() {
+        return importPK;
+    }
+
+    public void setImportPK(Long importPK) {
+        this.importPK = importPK;
     }
 
     public String getValue() {
