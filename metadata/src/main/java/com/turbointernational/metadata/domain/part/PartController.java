@@ -58,7 +58,14 @@ public class PartController {
     @RequestMapping(value = "/part/{id}", method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public Part getPart(@PathVariable("id") Long id) {
-        return partRepository.findOne(id);
+        Part part = partRepository.findOne(id);
+//        Interchange interchange = part.getInterchange();
+//        if (interchange == null) {
+//            System.out.println("Interchange is null.");
+//        } else {
+//            System.out.println("Interchange ID: " + interchange.getId());
+//        }
+        return part;
     }
 
     @Secured("ROLE_READ")
