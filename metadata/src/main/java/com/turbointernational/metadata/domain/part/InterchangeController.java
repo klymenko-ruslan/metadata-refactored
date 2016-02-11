@@ -143,40 +143,26 @@ public class InterchangeController {
     @ResponseBody
     @Secured("ROLE_INTERCHANGE")
     public void delete(@PathVariable("partId") Long partId) throws Exception {
-        
-        // Get the part and interchange
-        Part iPart = partDao.findOne(partId);
-        Interchange interchange = iPart.getInterchange();
-        
-        // Stop now if the part doesn't have an interchange
-        if (interchange == null) {
+        Part part = partDao.findOne(partId);
+        normalizePartInterchange(part);
+        Interchange interchange = part.getInterchange();
+        if (interchange.isAlone()) {
             return;
         }
-        
-        Long interchangeId = interchange.getId();
-
-        // Remove the part from the interchange
-        interchange.getParts().remove(iPart);
-
-        // Delete the interchange if it's empty, otherwise save it
-        if (interchange.getParts().isEmpty()) {
-            interchangeDao.remove(interchange);
-        } else {
-            interchangeDao.merge(interchange);
-        }
-        
-        // Remove the interchange from the part
-        iPart.setInterchange(null);
-        partDao.merge(iPart);
-        partDao.flush();
-        
+        interchange.getParts().remove(part);
+        interchangeDao.merge(interchange);
+        // Create a new interchange group.
+        // Any part must belong to an interchange group (see #589, #482).
+        Interchange newInterchange = new Interchange();
+        interchangeDao.persist(newInterchange);
+        part.setInterchange(newInterchange);
+        newInterchange.getParts().add(part);
+        interchangeDao.merge(newInterchange);
         // Update the changelog
-        changelogDao.log("Deleted " + partId + " from interchange " + interchangeId, "");
-            
+        changelogDao.log("Deleted " + partId + " from interchange " + newInterchange.getId());
         // TODO: Only change what we need to rather than rebuilding everything
         partDao.rebuildBomDescendancy();
     }
-    
 
     /**
      * Assign interchange to the part if it is absent.
