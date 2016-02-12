@@ -31,7 +31,10 @@ public class KitType implements Serializable {
     @JsonView(View.Summary.class)
     @Column(nullable=false)
     private String name;
-    
+
+    @Column(name = "import_pk")
+    private Long importPK;
+
     public Long getId() {
         return id;
     }
@@ -47,6 +50,15 @@ public class KitType implements Serializable {
     public void setName(String name) {
         this.name = name;
     }
+
+    public Long getImportPK() {
+        return importPK;
+    }
+
+    public void setImportPK(Long importPK) {
+        this.importPK = importPK;
+    }
+
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="json">

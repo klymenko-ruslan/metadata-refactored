@@ -126,12 +126,14 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
     @OrderBy("pk.salesNote.id")
     private List<SalesNotePart> salesNoteParts = new ArrayList<>();
 
+    @Column(name = "import_pk")
+    private Long importPk;
+
     @Version
     @Column(name = "version")
     @JsonView({View.Summary.class})
-    private int version;
+    private int version = 1; // default 1
 
-    //    @JsonView({View.Summary.class})
     public Long getId() {
         return id;
     }
@@ -140,7 +142,6 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
         this.id = id;
     }
 
-    //    @JsonView({View.Summary.class})
     public Manufacturer getManufacturer() {
         return manufacturer;
     }
@@ -149,7 +150,6 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
         this.manufacturer = manufacturer;
     }
 
-    //    @JsonView({View.Summary.class})
     public String getManufacturerPartNumber() {
         return manufacturerPartNumber;
     }
@@ -158,7 +158,6 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
         this.manufacturerPartNumber = manufacturerPartNumber;
     }
 
-    //    @JsonView({View.Summary.class})
     public String getName() {
         return name;
     }
@@ -167,7 +166,6 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
         this.name = name;
     }
 
-    //    @JsonView({View.Summary.class})
     public String getDescription() {
         return description;
     }
@@ -176,7 +174,6 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
         this.description = description;
     }
 
-    //    @JsonView({View.Summary.class})
     public PartType getPartType() {
         return partType;
     }
@@ -224,6 +221,14 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
 
     public void setSalesNoteParts(List<SalesNotePart> salesNoteParts) {
         this.salesNoteParts = salesNoteParts;
+    }
+
+    public Long getImportPk() {
+        return importPk;
+    }
+
+    public void setImportPk(Long importPk) {
+        this.importPk = importPk;
     }
 
     public int getVersion() {

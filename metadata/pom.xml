@@ -274,6 +274,11 @@
             <type>jar</type>
         </dependency>
         <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
+            <version>4.0.3.RELEASE</version>
+        </dependency>
+        <dependency>
             <groupId>com.github.springtestdbunit</groupId>
             <artifactId>spring-test-dbunit</artifactId>
             <version>1.2.1</version>

@@ -43,6 +43,9 @@ public class Manufacturer implements Serializable {
     @JsonView({View.Detail.class})
     private ManufacturerType type;
 
+    @Column(name = "import_pk")
+    private Long importPK;
+
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="parent_manfr_id")
     @JsonView({View.Detail.class})
@@ -71,7 +74,15 @@ public class Manufacturer implements Serializable {
     public void setType(ManufacturerType type) {
         this.type = type;
     }
-    
+
+    public Long getImportPK() {
+        return importPK;
+    }
+
+    public void setImportPK(Long importPK) {
+        this.importPK = importPK;
+    }
+
     public Manufacturer getParent() {
         return parent;
     }
