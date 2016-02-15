@@ -1,6 +1,5 @@
 package com.turbointernational.metadata.services;
 
-import com.google.common.collect.Sets;
 import com.turbointernational.metadata.domain.changelog.ChangelogDao;
 import com.turbointernational.metadata.domain.part.Interchange;
 import com.turbointernational.metadata.domain.part.InterchangeDao;
@@ -13,6 +12,7 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -53,10 +53,9 @@ public class InterchangeService {
     @Transactional
     public void create(Interchange interchange) {
         // Link it with the Hibernate parts
-        Set<Part> canonicalParts = Sets.newTreeSet();
+        Set<Part> canonicalParts = new HashSet<>();
         // Map the incoming part IDs to their canonical part
-        Iterator<Part> it = interchange.getParts().iterator();
-        while (it.hasNext()) {
+        for(Iterator<Part> it = interchange.getParts().iterator(); it.hasNext();) {
             Part interchangePart = it.next();
             Part canonicalPart = partDao.findOne(interchangePart.getId());
             if (canonicalPart.getInterchange() != null) {
