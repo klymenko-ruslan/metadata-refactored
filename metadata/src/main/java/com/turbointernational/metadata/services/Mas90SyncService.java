@@ -367,6 +367,7 @@ public class Mas90SyncService {
                 record.setInserted(inserted);
                 record.setSkipped(skipped);
                 mas90SyncDao.merge(record);
+                partDao.rebuildBomDescendancy(); // Ticket #592.
                 log.info("Finish synchronization with MAS90.");
                 return null;
             });
