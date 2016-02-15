@@ -26,30 +26,46 @@ public class ChangelogDao extends AbstractDao<Changelog> {
 
     @Transactional
     public Changelog log(String description) {
-        return log(description, "");
+        User user = User.getCurrentUser();
+        return log(user, description, "");
+    }
+
+    @Transactional
+    public Changelog log(User user, String description) {
+        return log(user, description, "");
     }
 
     @Transactional
     public Changelog log(String description, String data) {
+        User user = User.getCurrentUser();
+        return log(user, description, data);
+    }
+
+    @Transactional
+    public Changelog log(User user, String description, String data) {
         Changelog changelog = new Changelog();
         changelog.setDescription(description);
         changelog.setChangeDate(new Date());
         changelog.setData(data);
-        changelog.setUser(User.getCurrentUser());
-        
+        changelog.setUser(user);
         persist(changelog);
-        
         return changelog;
     }
-    
+
     @Transactional
     public Changelog log(String description, Serializable data) {
+        User user = User.getCurrentUser();
+        return log(user, description, data);
+    }
+
+    @Transactional
+    public Changelog log(User user, String description, Serializable data) {
         try {
             Changelog changelog = new Changelog();
             changelog.setDescription(description);
             changelog.setChangeDate(new Date());
             changelog.setData(json.writeValueAsString(data));
-            changelog.setUser(User.getCurrentUser());
+            changelog.setUser(user);
 
             persist(changelog);
 

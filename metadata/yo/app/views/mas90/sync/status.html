@@ -7,10 +7,10 @@
       <i class="fa fa-flag"></i> Start
     </button>
     <span style="padding-left:1em;">
-      Start synchronization process between ERP (<i>MAS90</i>) and local database.
+      Start synchronization process between ERP (<i>MAS90</i>) and local database ('metadata').
     </span>
   </div>
-  <div class="modal-dialog" ng-hide="phase == 0 && finished && !dialogVisible">
+  <div class="modal-dialog" ng-hide="phase == 0 && finished">
     <div class="modal-content">
       <div class="modal-header">
         <h3 class="modal-title">Progress of synchronization</h3>
@@ -30,7 +30,7 @@
               <span style="padding-left:3em;">Failures: <span ng-class="{'text-danger': partsUpdateSkipped}">{{partsUpdateSkipped | number:0}}</span></span>
             </div>
             <uib-progressbar type="{{getProgressBarType()}}" max="partsUpdateTotalSteps" value="partsUpdateCurrentStep" ng-class="{'progress-striped active': !finished}">
-              <span style="color:white; white-space:nowrap;">{{partsUpdateCurrentStep}} / {{partsUpdateTotalSteps}}</span>
+              <span style="color:#333; white-space:nowrap;">{{partsUpdateCurrentStep}} / {{partsUpdateTotalSteps}}</span>
             </uib-progressbar>
           </div>
           <div ng-hide="!partsUpdateTotalSteps">
@@ -76,7 +76,7 @@
         <td title="'Status'" class="text-center">{{rec.status}}</td>
       </tr>
       <tr ng-hide="$data.length > 0">
-        <td colspan="7">No records to display.</td>
+        <td colspan="8">No records to display.</td>
       </tr>
     </table>
   </div>

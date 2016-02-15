@@ -1,6 +1,8 @@
 package com.turbointernational.metadata.services;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.domain.changelog.ChangelogDao;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.other.Mas90Sync;
 import com.turbointernational.metadata.domain.other.Mas90SyncDao;
@@ -55,6 +57,9 @@ public class Mas90SyncService {
     private PartTypeDao partTypeDao;
 
     @Autowired
+    private ChangelogDao changelogDao;
+
+    @Autowired
     private Mas90SyncDao mas90SyncDao;      // local storage
 
     @Qualifier("dataSourceMas90")
@@ -96,36 +101,47 @@ public class Mas90SyncService {
         private final static boolean DEF_PARTSUPDATE_FINISHED = Boolean.TRUE;
 
         @JsonView({View.Summary.class})
+        @JsonInclude(JsonInclude.Include.ALWAYS)
         private Long startedOn;
 
         @JsonView({View.Summary.class})
+        @JsonInclude(JsonInclude.Include.ALWAYS)
         private Long userId;
 
         @JsonView({View.Summary.class})
+        @JsonInclude(JsonInclude.Include.ALWAYS)
         private String userName;
 
         @JsonView({View.Summary.class})
+        @JsonInclude(JsonInclude.Include.ALWAYS)
         private long partsUpdateTotalSteps;
 
         @JsonView({View.Summary.class})
+        @JsonInclude(JsonInclude.Include.ALWAYS)
         private long partsUpdateCurrentStep;
 
         @JsonView({View.Summary.class})
+        @JsonInclude(JsonInclude.Include.ALWAYS)
         private long partsUpdateInserts;
 
         @JsonView({View.Summary.class})
+        @JsonInclude(JsonInclude.Include.ALWAYS)
         private long partsUpdateUpdates;
 
         @JsonView({View.Summary.class})
+        @JsonInclude(JsonInclude.Include.ALWAYS)
         private long partsUpdateSkipped;
 
         @JsonView({View.Summary.class})
+        @JsonInclude(JsonInclude.Include.ALWAYS)
         private boolean finished;
 
         @JsonView({View.Summary.class})
+        @JsonInclude(JsonInclude.Include.ALWAYS)
         private final List<String> errors = new ArrayList<>();
 
         @JsonView({View.Summary.class})
+        @JsonInclude(JsonInclude.Include.ALWAYS)
         private final List<String> modifications = new ArrayList<>();
 
         SyncProcessStatus() {
@@ -274,9 +290,12 @@ public class Mas90SyncService {
 
         private final Logger log = LoggerFactory.getLogger(Mas90Synchronizer.class);
 
+        private final User user;
+
         private final Mas90Sync record;
 
-        private Mas90Synchronizer(Mas90Sync record) {
+        private Mas90Synchronizer(User user, Mas90Sync record) {
+            this.user = user;
             this.record = record;
         }
 
@@ -425,6 +444,7 @@ public class Mas90SyncService {
                         partId = part.getId();
                         String logMsg = String.format("Inserted a new part: [%d] %s", part.getId(), part.getManufacturerPartNumber());
                         log.info(logMsg);
+                        changelogDao.log(user, logMsg);
                         synchronized (syncProcessStatus) {
                             syncProcessStatus.incPartsUpdateInserts();
                             syncProcessStatus.addModifications(logMsg);
@@ -456,7 +476,7 @@ public class Mas90SyncService {
                         syncProcessStatus.addError(err);
                         syncProcessStatus.incPartsUpdateSkipped();
                     }
-                    log.error(err /*, e*/);
+                    log.error(err/*, e*/);
                     part = null;
                     ts.setRollbackOnly();
                 }
@@ -528,11 +548,12 @@ public class Mas90SyncService {
                 p.setInactive(inactive);
             }
             if (dirty ) {
+                String s = String.format("Updated the part: [%d] %s ", p.getId(), p.getManufacturerPartNumber()) +
+                        modified.toString();
+                log.info(s);
+                changelogDao.log(user, s);
                 synchronized (syncProcessStatus) {
-                    String s = String.format("Updated the part: [%d] %s ", p.getId(), p.getManufacturerPartNumber()) +
-                            modified.toString();
                     syncProcessStatus.addModifications(s);
-                    log.info(s);
                 }
             }
             return dirty;
@@ -617,10 +638,11 @@ public class Mas90SyncService {
                             }
                         }
                         if (modification != null) {
+                            log.info(modification);
+                            changelogDao.log(user, modification);
                             synchronized (syncProcessStatus) {
                                 syncProcessStatus.addModifications(modification);
                             }
-                            log.info(modification);
                         }
                     } else {
                         log.debug("Modification of the BOM (ID: {}) skipped as child part belongs " +
@@ -648,10 +670,11 @@ public class Mas90SyncService {
                             String modification = String.format("Part [%d] %s modified. Added BOM [%d] " +
                                     "(child: [%d] %s), quantity=%d.", partId, manufacturerPartNumber, newBom.getId(),
                                     child.getId(), child.getManufacturerPartNumber(), newBom.getQuantity());
+                            log.info(modification);
+                            changelogDao.log(user, modification);
                             synchronized (syncProcessStatus) {
                                 syncProcessStatus.addModifications(modification);
                             }
-                            log.info(modification);
                         } else {
                             log.debug("BOM's child not found (manufacture code: {}) for the part (ID: {}).",
                                     mb.childManufacturerCode, partId);
@@ -699,12 +722,16 @@ public class Mas90SyncService {
     }
 
     public SyncProcessStatus start(User user) {
-        if (!syncProcessStatus.isFinished()) {
-            throw new IllegalStateException("New 'sync. process' can't be started because exists other process.");
+        if (user == null) {
+            throw new AssertionError("User can't be null.");
         }
-        long now = System.currentTimeMillis();
-        Mas90Sync record = new Mas90Sync();
+        Mas90Sync record = null;
         synchronized (syncProcessStatus) {
+            if (!syncProcessStatus.isFinished()) {
+                throw new IllegalStateException("New 'sync. process' can't be started because exists other process.");
+            }
+            long now = System.currentTimeMillis();
+            record = new Mas90Sync();
             record.setStarted(new Timestamp(now));
             record.setFinished(null);
             record.setInserted(0L);
@@ -716,13 +743,11 @@ public class Mas90SyncService {
             mas90SyncDao.persist(record);
             syncProcessStatus.reset();
             syncProcessStatus.setStartedOn(now);
-            if (user != null) {
-                syncProcessStatus.setUserId(user.getId());
-                syncProcessStatus.setUserName(user.getName());
-            }
+            syncProcessStatus.setUserId(user.getId());
+            syncProcessStatus.setUserName(user.getName());
             syncProcessStatus.setFinished(false);
         }
-        syncProcess = new Mas90Synchronizer(record);
+        syncProcess = new Mas90Synchronizer(user, record);
         syncProcess.start();
         return status();
     }

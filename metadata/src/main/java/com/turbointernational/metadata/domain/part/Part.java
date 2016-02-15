@@ -1,5 +1,6 @@
 package com.turbointernational.metadata.domain.part;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
@@ -132,6 +133,7 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
     @Version
     @Column(name = "version")
     @JsonView({View.Summary.class})
+    @JsonInclude(JsonInclude.Include.ALWAYS)
     private int version;
 
     public Long getId() {
