@@ -512,7 +512,7 @@ public class Mas90SyncService {
             boolean dirty = false;
             StringBuilder modified = new StringBuilder(256);
             String currDesc = p.getDescription();
-            if (currDesc == null && itemcodedesc != null) {
+            if (StringUtils.isBlank(currDesc) && itemcodedesc != null) {
                 dirty = true;
                 modified.append(String.format("Updated description: %s => %s.", currDesc, itemcodedesc));
                 p.setDescription(itemcodedesc);

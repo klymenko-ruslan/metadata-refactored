@@ -132,7 +132,7 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
     @Version
     @Column(name = "version")
     @JsonView({View.Summary.class})
-    private int version = 1; // default 1
+    private int version;
 
     public Long getId() {
         return id;
