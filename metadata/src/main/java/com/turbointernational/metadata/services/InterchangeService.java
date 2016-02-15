@@ -80,7 +80,7 @@ public class InterchangeService {
 
     /**
      * Remove part from interchangeable group.
-     * <p/>
+     *
      * Every part must belong to an interchangeable group.
      * When part is removed from an interchangeable group a new group should be created and
      * this part added to that group.
@@ -124,7 +124,9 @@ public class InterchangeService {
         normalizePartInterchange(pickedPart);
         movePartToOtherInterchangeGroup(pickedPart, part);
         changelogDao.log("Added picked part " + pickedPart.getId() + " as interchange to the part " + part.getId());
-    }
+        // TODO: Only change what we need to rather than rebuilding everything
+        partDao.rebuildBomDescendancy();
+     }
 
     /**
      * Add this part to interchange group of the picked part and remove this part from its existing interchange.
@@ -140,7 +142,9 @@ public class InterchangeService {
         normalizePartInterchange(pickedPart);
         movePartToOtherInterchangeGroup(part, pickedPart);
         changelogDao.log("Added part " + part.getId() + " as interchange to the picked part " + pickedPart.getId());
-    }
+        // TODO: Only change what we need to rather than rebuilding everything
+        partDao.rebuildBomDescendancy();
+     }
 
     /**
      * Add the picked part and all its existing interchange parts to interchange group of this part.
@@ -156,7 +160,9 @@ public class InterchangeService {
         normalizePartInterchange(pickedPart);
         moveInterchangeableGroupToOtherGroup(pickedPart, part);
         changelogDao.log("Added picked part " + pickedPart.getId() + " and all its interchanges to the part " + part.getId());
-    }
+        // TODO: Only change what we need to rather than rebuilding everything
+        partDao.rebuildBomDescendancy();
+     }
 
     /**
      * Move a part from its current interchange group to an interchange group of other part.

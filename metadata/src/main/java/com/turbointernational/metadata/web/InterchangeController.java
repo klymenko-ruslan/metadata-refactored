@@ -45,13 +45,13 @@ public class InterchangeController {
     private InterchangeService interchangeService;
 
     @Autowired
-    ChangelogDao changelogDao;
+    private ChangelogDao changelogDao;
 
     @Autowired
-    PartDao partDao;
+    private PartDao partDao;
 
     @Autowired
-    InterchangeDao interchangeDao;
+    private InterchangeDao interchangeDao;
 
     @Transactional
     @RequestMapping(method = RequestMethod.POST)

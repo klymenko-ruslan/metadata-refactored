@@ -58,3 +58,10 @@ values
 
 insert into user(id, name, email, password, password_reset_token, enabled)
 values (10, 'mock', 'mock@gmail.com', '123', null, 1);
+
+-- Mocked stored procedure.
+--create procedure RebuildBomDescendancy()
+--    modifies sql data
+--begin atomic
+--    declare temp_id integer;
+--end

@@ -5,7 +5,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -37,19 +40,14 @@ public class PartDao extends AbstractDao<Part> {
     }
 
     @Async("bomRebuildExecutor")
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void rebuildBomDescendancy() {
         try {
             bomRebuildStart = new Date();
-            new TransactionTemplate(txManager).execute(new TransactionCallback() {
-                @Override
-                public Object doInTransaction(TransactionStatus status) {
-                    log.info("Rebuilding BOM descendancy.");
-                    em.createNativeQuery("CALL RebuildBomDescendancy()").executeUpdate();
-                    em.clear();
-                    log.info("BOM descendancy rebuild completed.");
-                    return null;
-                }
-            });
+            log.info("Rebuilding BOM descendancy.");
+            em.createNativeQuery("CALL RebuildBomDescendancy()").executeUpdate();
+            em.clear();
+            log.info("BOM descendancy rebuild completed.");
         } finally {
             bomRebuildStart = null;
         }
