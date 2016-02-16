@@ -269,13 +269,14 @@ public class InterchangeServiceTest {
      * <li>Make sure that:
      * <ul>
      * <li>the 'pickedPartId' belongs to the same group as 'partId' -- 'A';</li>
-     * <li>all othe members of the group 'B' have been moved to the group 'A';</li>
+     * <li>all other members of the group 'B' have been moved to the group 'A';</li>
      * <li>the group 'B' does not exists anymore;</li>
      * <li>no other groups created;</li>
      * <li>changes wrote to the 'changelog' table.</li>
      * </ul>
      * </li>
      * </ol>
+     * See also ticket #590.
      */
      @Test
     @SqlGroup({
