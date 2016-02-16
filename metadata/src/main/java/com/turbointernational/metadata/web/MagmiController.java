@@ -100,7 +100,8 @@ public class MagmiController {
     Mas90ServiceFactory mas90ServiceFactory;
 
     public String[] getCsvHeaders(SortedSet<String> priceLevels) {
-        List<String> headers = new ArrayList<String>();
+
+        List<String> headers = new ArrayList<>();
 
         //<editor-fold defaultstate="collapsed" desc="Basic">
         headers.addAll(Arrays.asList(
@@ -208,7 +209,6 @@ public class MagmiController {
         }
         //</editor-fold>
 
-
         headers.addAll(Arrays.asList(
 
             // Make,Year,Model
@@ -271,13 +271,13 @@ public class MagmiController {
                 sealTypeDao.findAll();
 
                 // Get the next batch of part IDs
-                parts = partDao.findAll(position, magmiBatchSize);
+                parts = partDao.findAllOrderedById(position, magmiBatchSize);
 
                 // Process each product
                 for (MagmiProduct product : magmiDataFinder.findMagmiProducts(parts).values()) {
                     try {
-                        writer.writeNext(magmiProductToCsvRow(csvHeaders, mas90, product));
-                        
+                        String[] row = magmiProductToCsvRow(csvHeaders, mas90, product);
+                        writer.writeNext(row);
                         // Debugging variable
                         lastSuccessfulSku = product.getSku();
                     } catch (Exception e) {

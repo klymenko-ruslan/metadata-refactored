@@ -39,6 +39,23 @@ public class PartDao extends AbstractDao<Part> {
         super(Part.class);
     }
 
+    /**
+     * Get list of parts ordered by 'id'.
+     *
+     * Ordering is important when parts are processed by batches (as in Magmi CSV export).
+     * Unordered (sub)list can contain duplications or skip some rows.
+     *
+     * @param firstResult
+     * @param maxResults
+     * @return
+     */
+    public List<Part> findAllOrderedById(int firstResult, int maxResults) {
+        return em.createNamedQuery("findAllPartsOrderedById", Part.class)
+                .setFirstResult(firstResult)
+                .setMaxResults(maxResults)
+                .getResultList();
+    }
+
     @Async("bomRebuildExecutor")
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void rebuildBomDescendancy() {

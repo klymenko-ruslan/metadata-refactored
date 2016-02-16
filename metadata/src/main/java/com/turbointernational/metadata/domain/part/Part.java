@@ -61,6 +61,10 @@ import java.util.*;
         @NamedQuery(
                 name = "findByPartNumberAndManufacturer",
                 query = "FROM Part p WHERE p.manufacturer.id=:manufacturerId AND p.manufacturerPartNumber = :partNumber"
+        ),
+        @NamedQuery(
+                name = "findAllPartsOrderedById",
+                query = "FROM Part p ORDER BY p.id"
         )
 })
 //@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id", scope = Part.class)

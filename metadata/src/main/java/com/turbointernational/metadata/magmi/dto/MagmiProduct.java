@@ -25,27 +25,27 @@ public class MagmiProduct {
     
     private final Part part;
     
-    private final TreeSet<Long> imageIds = new TreeSet<Long>();
+    private final TreeSet<Long> imageIds = new TreeSet<>();
 
-    private final Set<String> turboType = new TreeSet<String>();
+    private final Set<String> turboType = new TreeSet<>();
 
-    private final Set<String> turboModel = new TreeSet<String>();
+    private final Set<String> turboModel = new TreeSet<>();
 
-    private final Set<String> finderTurbo = new TreeSet<String>();
+    private final Set<String> finderTurbo = new TreeSet<>();
 
     /**
      * make!!year!!model
      */
-    private final Set<String> finderApplication = new TreeSet<String>();
+    private final Set<String> finderApplication = new TreeSet<>();
 
     /**
      * make!!model!!year!!engine!!fuel
      */
-    private final Set<String> applicationDetail = new TreeSet<String>();
+    private final Set<String> applicationDetail = new TreeSet<>();
 
-    private final Set<Long> interchanges = new TreeSet<Long>();
+    private final Set<Long> interchanges = new TreeSet<>();
 
-    private final Set<Long> tiInterchanges = new TreeSet<Long>();
+    private final Set<Long> tiInterchanges = new TreeSet<>();
     
     private String tiPartNumber = "";
     
@@ -57,7 +57,7 @@ public class MagmiProduct {
 
     private String sopJson = "";
     
-    private final List<MagmiBomItem> bom = new ArrayList<MagmiBomItem>();
+    private final List<MagmiBomItem> bom = new ArrayList<>();
     
     private final JSOG serviceKits = JSOG.array();
     

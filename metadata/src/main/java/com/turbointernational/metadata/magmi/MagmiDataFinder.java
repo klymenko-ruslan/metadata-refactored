@@ -22,10 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -38,21 +35,21 @@ public class MagmiDataFinder {
     private static final Logger logger = LoggerFactory.getLogger(MagmiDataFinder.class);
     
     @Autowired(required=true)
-    JdbcTemplate db;
+    private JdbcTemplate db;
     
     @Autowired
-    PartDao partDao;
+    private PartDao partDao;
     
-    public TreeMap<Long, MagmiProduct> findMagmiProducts(List<Part> parts) {
+    public Map<Long, MagmiProduct> findMagmiProducts(List<Part> parts) {
         long startTime = System.currentTimeMillis();
         
         // Build a product map from the parts
-        final TreeMap<Long, MagmiProduct> productMap = new TreeMap<Long, MagmiProduct>();
+        final TreeMap<Long, MagmiProduct> productMap = new TreeMap<>();
         for (Part part : parts) {
             productMap.put(part.getId(), new MagmiProduct(part));
         }
         
-        List<Long> productIds = new ArrayList<Long>(productMap.keySet());
+        List<Long> productIds = new ArrayList<>(productMap.keySet());
         
         // Add the applications
         List<MagmiApplication> applications = findMagmiApplications(productIds);
@@ -74,16 +71,13 @@ public class MagmiDataFinder {
             "    has_ti_chra\n" +
             "FROM\n" +
             "    vmagmi_ti_chra\n" +
-            "WHERE id IN (" + productIdsCommas + ")", new RowCallbackHandler() {
-            @Override
-            public void processRow(ResultSet rs) throws SQLException {
+            "WHERE id IN (" + productIdsCommas + ")", rs -> {
                 boolean hasTiChra = rs.getBoolean("has_ti_chra");
                 long partId = rs.getLong("id");
-                
+
                 MagmiProduct product = productMap.get(partId);
                 product.setHasTiChra(hasTiChra);
-            }
-        });
+            });
 
         // Add "has_ti_interchange" and "has_foreign_interchange". See tickets #537 and #538.
         logger.info("Finding 'has_ti_interchange' and 'has_foreign_interchange': {}", applications.size());
@@ -104,25 +98,35 @@ public class MagmiDataFinder {
                 "   GROUP BY p.id";
         //@formatter:on
         db.query(interchangeSql,
-                new RowCallbackHandler() {
-                    @Override
-                    public void processRow(ResultSet rs) throws SQLException {
-                        long partId = rs.getLong("sku");
-                        MagmiProduct product = productMap.get(partId);
-                        int hasTiInterchange = rs.getInt("has_ti_interchange");
-                        if (rs.wasNull()) {
-                            product.setHasTiInterchange(null);
-                        } else {
-                            product.setHasTiInterchange(hasTiInterchange);
-                        }
-                        int hasForeignInterchange = rs.getInt("has_foreign_interchange");
-                        if (rs.wasNull()) {
-                            product.setHasForeignInterchange(null);
-                        } else {
-                            product.setHasForeignInterchange(hasForeignInterchange);
-                        }
+                rs -> {
+                    long partId = rs.getLong("sku");
+                    MagmiProduct product = productMap.get(partId);
+                    int hasTiInterchange = rs.getInt("has_ti_interchange");
+                    if (rs.wasNull()) {
+                        product.setHasTiInterchange(null);
+                    } else {
+                        product.setHasTiInterchange(hasTiInterchange);
+                    }
+                    int hasForeignInterchange = rs.getInt("has_foreign_interchange");
+                    if (rs.wasNull()) {
+                        product.setHasForeignInterchange(null);
+                    } else {
+                        product.setHasForeignInterchange(hasForeignInterchange);
                     }
                 });
+        // Ticket #598.
+        db.query("select part_id, standard_part_sku, oversize_part_skus from vmagmi_sop", rs -> {
+            Long partId = rs.getLong(1);
+            long standardPartSku =  rs.getLong(2);
+            String oversizedPartSkus = rs.getString(3);
+            if (oversizedPartSkus != null) {
+                MagmiProduct product = productMap.get(partId);
+                if (product != null) {
+                    String sopJson = "{\"" + standardPartSku + "\":[" + oversizedPartSkus + "]}";
+                    product.setSopJson(sopJson);
+                }
+            }
+        });
         // Add the images
         List<ProductImage> images = partDao.findProductImages(productIds);
         
@@ -346,59 +350,55 @@ public class MagmiDataFinder {
               + "  ancestor_sku IN ("
               +   StringUtils.join(productIds, ',')
               + ")",
-            new ResultSetExtractor<ListMultimap<Long, MagmiBomItem>>() {
+                rs -> {
 
-            @Override
-            public ListMultimap<Long, MagmiBomItem> extractData(ResultSet rs) throws SQLException, DataAccessException {
-                
-                // Ancestor rows, descendant columns
-                Table<Long, Long, MagmiBomItem> bomTable = TreeBasedTable.create();
-                
-                while (rs.next()) {
-                    
-                    // Get the values we need from the result set
-                    long ancestorSku      = rs.getLong("ancestor_sku");
-                    long descendantSku    = rs.getLong("descendant_sku");
-                    int quantity          = rs.getInt("quantity");
-                    int distance          = rs.getInt("distance");
-                    String type           = rs.getString("type");
-                    boolean hasBom        = rs.getBoolean("has_bom");
-                    String partTypeParent = rs.getString("part_type_parent");
-                    
-                    // Get the BOM item so we can roll up any alts and interchanges
-                    MagmiBomItem bomItem = bomTable.get(ancestorSku, descendantSku);
-                    if (bomItem == null) {
-                        bomItem = new MagmiBomItem(descendantSku, quantity, distance, type, hasBom, partTypeParent);
-                        bomTable.put(ancestorSku, descendantSku, bomItem);
+                    // Ancestor rows, descendant columns
+                    Table<Long, Long, MagmiBomItem> bomTable = TreeBasedTable.create();
+
+                    while (rs.next()) {
+
+                        // Get the values we need from the result set
+                        long ancestorSku      = rs.getLong("ancestor_sku");
+                        long descendantSku    = rs.getLong("descendant_sku");
+                        int quantity          = rs.getInt("quantity");
+                        int distance          = rs.getInt("distance");
+                        String type           = rs.getString("type");
+                        boolean hasBom        = rs.getBoolean("has_bom");
+                        String partTypeParent = rs.getString("part_type_parent");
+
+                        // Get the BOM item so we can roll up any alts and interchanges
+                        MagmiBomItem bomItem = bomTable.get(ancestorSku, descendantSku);
+                        if (bomItem == null) {
+                            bomItem = new MagmiBomItem(descendantSku, quantity, distance, type, hasBom, partTypeParent);
+                            bomTable.put(ancestorSku, descendantSku, bomItem);
+                        }
+
+                        // BOM alternate rollup
+                        long altSku = rs.getLong("alt_sku");
+                        if (altSku > 0) {
+                          bomItem.getAltSku().add(altSku);
+
+                          // Add it to TI Part skus if the manufacturer matches
+                          if (rs.getLong("alt_mfr_id") == Manufacturer.TI_ID) {
+                              bomItem.getTiPartSku().add(altSku);
+                          }
+                        }
+
+                        // TI Part SKU Rollup
+                        long tiSku = rs.getLong("int_sku");
+                        if (tiSku > 0) {
+                            bomItem.getTiPartSku().add(tiSku);
+                        }
                     }
-                    
-                    // BOM alternate rollup
-                    long altSku = rs.getLong("alt_sku");
-                    if (altSku > 0) {
-                      bomItem.getAltSku().add(altSku);
-                      
-                      // Add it to TI Part skus if the manufacturer matches
-                      if (rs.getLong("alt_mfr_id") == Manufacturer.TI_ID) {
-                          bomItem.getTiPartSku().add(altSku);
-                      }
+
+                    ListMultimap<Long, MagmiBomItem> result = ArrayListMultimap.create();
+
+                    for (Long productId : bomTable.rowKeySet()) {
+                        result.putAll(productId, bomTable.row(productId).values());
                     }
-                    
-                    // TI Part SKU Rollup
-                    long tiSku = rs.getLong("int_sku");
-                    if (tiSku > 0) {
-                        bomItem.getTiPartSku().add(tiSku);
-                    }
-                }
-                
-                ListMultimap<Long, MagmiBomItem> result = ArrayListMultimap.create();
-                
-                for (Long productId : bomTable.rowKeySet()) {
-                    result.putAll(productId, bomTable.row(productId).values());
-                }
-                
-                return result;
-            }
-        });
+
+                    return result;
+                });
     }
     
 }
