@@ -1,7 +1,7 @@
 "use strict";
 
 angular.module("ngMetaCrudApp")
-  .directive("interchangeableParts", ["restService", "ngTableParams", function(restService, ngTableParams) {
+  .directive("interchangeableParts", ["$log", "restService", "ngTableParams", function($log, restService, ngTableParams) {
     return {
       restrict: 'E',
       scope: {
@@ -9,6 +9,12 @@ angular.module("ngMetaCrudApp")
       },
       templateUrl: '/views/component/interchangeable_parts.html',
       controller: ["$scope", "$parse", function($scope, $parse) {
+$log.log("directive: " + (new Date()).getMilliseconds());
+        $scope.$watch($scope.part, function(newVal, oldVal) {
+          $log.log("2. newVal: " + angular.toJson(newVal) + ", oldVal: " + angular.toJson(oldVal));
+        });
+$log.log("part: " + angular.toJson($scope.part));
+        /*
         restService.findInterchange($scope.part.interchange.id).then(
           function(interchange) {
             // Remove the parent part.
@@ -42,12 +48,6 @@ angular.module("ngMetaCrudApp")
                 var page = sorted.slice((params.page() - 1) * params.count(), params.page() * params.count());
                 params.total(interchange.parts.length);
                 $defer.resolve(page);
-
-                /*
-                params.total(interchange.parts.length);
-                var recs = interchange.parts.slice((params.page() - 1) * params.count(), params.page() * params.count());
-                $defer.resolve(recs);
-                */
               }
             });
           },
@@ -55,6 +55,7 @@ angular.module("ngMetaCrudApp")
             restService.error("Can't load interchangeable parts.", error);
           }
         );
+        */
       }]
     };
   }]);
