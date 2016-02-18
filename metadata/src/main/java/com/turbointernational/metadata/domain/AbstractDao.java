@@ -32,7 +32,7 @@ public abstract class AbstractDao<T extends Serializable> {
         this.clazz = clazz;
     }
 
-    public T findOne(long id) {
+    public T findOne(Long id) {
         return em.find(clazz, id);
     }
 

@@ -285,7 +285,7 @@ public class SalesNoteRepositoryImplTest {
         User updater = userList.get(1);
         
         Part testPart = spring.getBean(Part.class);
-        testPart.setPartType(partTypeDao.findOne(10)); // Minor component
+        testPart.setPartType(partTypeDao.findOne(10L)); // Minor component
         testPart.setName("Part for query test");
         testPart.setManufacturerPartNumber(testPartNumber);
         testPart.setManufacturer(manufacturerDao.TI());
@@ -373,7 +373,7 @@ public class SalesNoteRepositoryImplTest {
         User updater = userList.get(1);
         
         Part testPart = spring.getBean(Part.class);
-        testPart.setPartType(partTypeDao.findOne(10)); // Minor component
+        testPart.setPartType(partTypeDao.findOne(10L)); // Minor component
         testPart.setName("Part for query test");
         testPart.setManufacturerPartNumber(testPartNumber);
         testPart.setManufacturer(manufacturerDao.TI());
@@ -434,7 +434,7 @@ public class SalesNoteRepositoryImplTest {
         User updater = userList.get(1);
         
         Part testPart = spring.getBean(Part.class);
-        testPart.setPartType(partTypeDao.findOne(10)); // Minor component
+        testPart.setPartType(partTypeDao.findOne(10L)); // Minor component
         testPart.setName("Part for query test");
         testPart.setManufacturerPartNumber(testPartNumber);
         testPart.setManufacturer(manufacturerDao.TI());
