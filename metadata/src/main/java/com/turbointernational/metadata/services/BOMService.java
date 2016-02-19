@@ -9,7 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.*;
+
+import static java.util.Collections.binarySearch;
 
 /**
  * Created by dmytro.trunykov@zorallabs.com on 18.02.16.
@@ -26,18 +28,35 @@ public class BOMService {
     @Autowired
     private ChangelogDao changelogDao;
 
-    static class FoundBomRecursionException extends Exception {
+    /**
+     * Signals that a BOMs tree has a circular recursion.
+     */
+    public static class FoundBomRecursionException extends Exception {
 
-    };
+        /**
+         * An ID of a part which makes the circular recursion.
+         */
+        private Long failedId;
 
-    @Transactional
-    public BOMItem create(Long parentPartId, Long childPartId, Integer quantity) {
+        FoundBomRecursionException(Long failedId) {
+            this.failedId = failedId;
+        }
+
+        public Long getFailedId() {
+            return failedId;
+        }
+
+    }
+
+    @Transactional(noRollbackFor = {FoundBomRecursionException.class, AssertionError.class})
+    public BOMItem create(Long parentPartId, Long childPartId, Integer quantity) throws FoundBomRecursionException {
         // Create a new BOM item
         Part parent = partDao.findOne(parentPartId);
         Part child = partDao.findOne(childPartId);
         if (child.getManufacturer().getId() != parent.getManufacturer().getId()) {
             throw new AssertionError("Child part must have the same manufacturer as the Parent part.");
         }
+        bomRecursionCheck(parent, child);
         BOMItem item = new BOMItem();
         item.setParent(parent);
         item.setChild(child);
@@ -84,8 +103,68 @@ public class BOMService {
         partDao.rebuildBomDescendancy();
     }
 
+    /**
+     * Check that two specified parts has no any cycled recursions:
+     * <ul>
+     *     <li>not in a BOMs tree of the parentPart</li>
+     *     <li>not in a BOMs tree of the childPart</li>
+     *     <li>not in a union of these BOMs trees</li>
+     * </ul>
+     *
+     * @param parentPart
+     * @param childPart
+     * @throws FoundBomRecursionException
+     */
     void bomRecursionCheck(Part parentPart, Part childPart) throws FoundBomRecursionException {
+        List<Long> parentBoms = loadAllBomsOfPart(parentPart);
+        List<Long> childBoms = loadAllBomsOfPart(childPart);
+        // Try to find an intersection.
+        for (Iterator<Long> parentIter = parentBoms.iterator(); parentIter.hasNext(); ) {
+            Long id = parentIter.next();
+            if (binarySearch(childBoms, id) >= 0) {
+                throw new FoundBomRecursionException(id);
+            }
+        }
+    }
 
+    /**
+     * Load IDs of all parts which are BOMs for the specified part.
+     *
+     * The method recursively walks a tree of BOMs of the specified part
+     * and fills a sorted list of IDs of the found parts.
+     * The list will also include an ID of the specified part.
+     *
+     * @param part a part to load its BOMs
+     * @return (ascending) ordered list of IDs of parts which are BOM for the specified part.
+     *          The list also includes ID of the part.
+     * @throws FoundBomRecursionException if the BOM's tree contains cycled recursion
+     */
+    List<Long> loadAllBomsOfPart(Part part) throws FoundBomRecursionException {
+        List<Long> retVal = new ArrayList<>(); // ordered list of IDs
+        Stack<Iterator<BOMItem>> postponed = new Stack<>();
+        Part p = part;
+        while (p != null || !postponed.empty()) {
+            if (p == null) {
+                Iterator<BOMItem> bomIter = postponed.peek();
+                if (bomIter.hasNext()) {
+                    BOMItem bom = bomIter.next();
+                    p = bom.getChild();
+                } else {
+                    postponed.pop(); // remove from the stack this exhausted iterator
+                }
+            } else {
+                Long id = p.getId();
+                if (binarySearch(retVal, id) >= 0) {
+                    throw new FoundBomRecursionException(id);
+                }
+                retVal.add(id);
+                Collections.sort(retVal);
+                Set<BOMItem> boms = p.getBom();
+                postponed.push(boms.iterator());
+                p = null;
+            }
+        }
+        return retVal;
     }
 
 }

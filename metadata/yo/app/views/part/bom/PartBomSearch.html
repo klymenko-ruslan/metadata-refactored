@@ -58,7 +58,7 @@
 
   <a authorize="ROLE_BOM"
      ng-click="pickBomItemPart(partId, $parent.part.manufacturer.id == part._source.manufacturer.id)"
-     ng-disabled="$parent.part.manufacturer.id != part._source.manufacturer.id"
+     ng-disabled="$parent.part.manufacturer.id != part._source.manufacturer.id || $parent.part.id == part._source.id || part._source.id == pickedPart.id"
      class="btn btn-success btn-xs">
       <i class="fa fa-bullseye"></i>
     Pick
