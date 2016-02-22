@@ -9,7 +9,6 @@
 
 <h1 class="padding-top">Search All Sales Notes</h1>
 
-
 <div class="row">
   <div class="col-xs-12">
     <form ng-submit="notesTableParams.reload()" class="form-inline">
@@ -17,30 +16,26 @@
         <label ng-repeat="state in SalesNotes.states" class="btn btn-default" btn-checkbox
                ng-model="states.current[state]">{{state}}</label>
       </div>
-      
+
       <div class="btn-group col-xs-2">
         <label class="btn btn-default" btn-checkbox
                ng-model="search.includePrimary">Primary</label>
         <label class="btn btn-default" btn-checkbox
                ng-model="search.includeRelated">Related</label>
       </div>
-      
+
       <input id="part-number" class="form-control col-xs-3"
              type="text" placeholder="Part number or comment"
              size="40"
              ng-model="search.query" ng-model-options="{debounce:1000}">
-      
+
       <button class="form-control col-xs-2" type="submit">Search</button>
     </form>
   </div>
 </div>
 
 <div class="row">
-  <hr/>
-</div>
-
-<div class="row">
-  <div class="col-xs-12">
+  <div class="col-md-12" style="padding-top:0.5em;">
     <table data-ng-table="notesTableParams" class="table table-bordered table-striped table-hover table-responsive">
         <tr data-ng-repeat="salesNote in $data">
             <td title="'Created'" data-sortable="'salesNote.createdDate'">
