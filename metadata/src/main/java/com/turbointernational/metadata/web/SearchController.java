@@ -136,4 +136,17 @@ public class SearchController {
         searchService.indexAllApplications();
     }
 
+    @Secured("ROLE_ADMIN")
+    @RequestMapping(value = "/salesnotesparts/indexAll")
+    @ResponseBody
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void indexSalesNotesPartsAll() throws Exception {
+        new Thread(() -> {
+            try {
+                searchService.indexAllSalesNotes();
+            } catch (Exception e) {
+                log.error("Indexing of sales notes parts failed.", e);
+            }
+        }).start();
+    }
 }

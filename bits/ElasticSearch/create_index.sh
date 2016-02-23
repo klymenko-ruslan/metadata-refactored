@@ -613,6 +613,86 @@ echo "Setting mapping..." && curl -XPUT "$SERVER/$INDEX/?pretty=1" -d '
           }
         }
       }
+    },
+    "salesnotepart": {
+      "properties": {
+        "createDate": {
+          "type": "string",
+          "analyzer": "keyword",
+          "store": "yes"
+        },
+        "primary": {
+          "type": "boolean",
+          "store": "yes"
+        },
+        "pk": {
+          "properties": {
+            "salesNote": {
+              "properties": {
+                "id": {
+                  "type": "long",
+                  "store": "yes"
+                },
+                "state": {
+                  "type": "string",
+                  "analyzer": "keyword",
+                  "store": "yes"
+                },
+                "comment": {
+                  "type": "multi_field",
+                  "fields": {
+                    "full": {
+                      "type": "string",
+                      "tokenizer": "lowercase",
+                      "analyzer": "keyword",
+                      "store": "yes"
+                    },
+                    "short": {
+                      "type": "string",
+                      "analyzer": "normalized_short",
+                      "store": "yes"
+                    },
+                    "lower_case_sort": {
+                      "type": "string",
+                      "analyzer": "case_insensitive_sort",
+                      "store": "yes"
+                    }
+                  }
+                }
+              }
+            },
+            "part": {
+              "properties": {
+                "id": {
+                  "type": "long",
+                  "store": "yes"
+                },
+                "manufacturerPartNumber": {
+                  "type": "multi_field",
+                  "fields": {
+                    "full": {
+                      "type": "string",
+                      "tokenizer": "lowercase",
+                      "analyzer": "keyword",
+                      "store": "yes"
+                    },
+                    "short": {
+                      "type": "string",
+                      "analyzer": "normalized_short",
+                      "store": "yes"
+                    },
+                    "lower_case_sort": {
+                      "type": "string",
+                      "analyzer": "case_insensitive_sort",
+                      "store": "yes"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "settings": {

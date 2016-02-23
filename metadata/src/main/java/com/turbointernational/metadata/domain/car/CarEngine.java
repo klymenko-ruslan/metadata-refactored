@@ -6,8 +6,8 @@ import com.turbointernational.metadata.services.SearchService;
 import com.turbointernational.metadata.web.View;
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -23,7 +23,7 @@ import java.util.List;
 })
 public class CarEngine implements Serializable, SearchableEntity {
 
-    private final static Log log = LogFactory.getLog(CarEngine.class);
+    private final static Logger log = LoggerFactory.getLogger(CarEngine.class);
     
     //<editor-fold defaultstate="collapsed" desc="Properties">
     @Id

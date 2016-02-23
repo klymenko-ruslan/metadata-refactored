@@ -88,6 +88,30 @@ angular.module('ngMetaCrudApp')
           );
         };
 
+        $scope.reindexSalesNotesSearch = function() {
+          dialogs.confirm(
+            'Reindex search engine data for sales notes?',
+            'You need to run this if changes have been made directly to the database. Proceed?').result.then(
+            function() {
+              // Yes
+              Restangular.all('search/salesnotesparts/indexAll').post().then(
+                function() {
+                  // Success
+                  gToast.open('Indexing of sales notes started, check the server log for progress.');
+                },
+                function(response) {
+                  // Error
+                  dialogs.error(
+                    'Could not index search engine data.',
+                    'Here\'s the error: <pre>' + response.status +'</pre>');
+                });
+            },
+            function() {
+              // No
+            }
+          );
+        }
+
         $scope.clearHibernate = function() {
           dialogs.confirm(
             'Clear Hibernate cache?',

@@ -1,24 +1,20 @@
 package com.turbointernational.metadata.domain.part.salesnote;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.domain.SearchableEntity;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.security.User;
+import com.turbointernational.metadata.services.SearchService;
 import com.turbointernational.metadata.web.View;
+import flexjson.JSONSerializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
-import javax.persistence.AssociationOverride;
-import javax.persistence.AssociationOverrides;
-import javax.persistence.Cacheable;
-import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 
 /**
  *
@@ -32,7 +28,9 @@ import javax.persistence.TemporalType;
 			joinColumns = @JoinColumn(name = "sales_note_id")),
 		@AssociationOverride(name = "pk.part", 
 			joinColumns = @JoinColumn(name = "part_id")) })
-public class SalesNotePart implements Serializable {
+public class SalesNotePart implements Serializable, SearchableEntity {
+
+    private final static Logger log = LoggerFactory.getLogger(SalesNotePart.class);
     
     @EmbeddedId
     private SalesNotePartId pk;
@@ -42,7 +40,7 @@ public class SalesNotePart implements Serializable {
     private Date createDate;
     
     @OneToOne
-    @JoinColumn(name="create_uid", nullable=false)
+    @JoinColumn(name="create_uid", nullable = false)
     private User creator;
     
     @Temporal(TemporalType.TIMESTAMP)
@@ -50,16 +48,16 @@ public class SalesNotePart implements Serializable {
     private Date updateDate;
     
     @OneToOne
-    @JoinColumn(name="write_uid", nullable=false)
+    @JoinColumn(name="write_uid", nullable = false)
     private User updater;
     
-    @Column(name="primary_part")
-    private Boolean primary;
+    @Column(name="primary_part", nullable = false)
+    private boolean primary;
 
     public SalesNotePart() {
     }
 
-    public SalesNotePart(SalesNotePartId pk, Date createDate, User creator, Date updateDate, User updater, Boolean primary) {
+    public SalesNotePart(SalesNotePartId pk, Date createDate, User creator, Date updateDate, User updater, boolean primary) {
         this.pk = pk;
         this.createDate = createDate;
         this.creator = creator;
@@ -81,7 +79,7 @@ public class SalesNotePart implements Serializable {
               new Date(), user,
                 
               // Primary Part
-              primary ? true : null);
+              primary);
     }
     
     public SalesNotePartId getPk() {
@@ -161,22 +159,54 @@ public class SalesNotePart implements Serializable {
         this.updater = updater;
     }
 
-    @Deprecated
-    /**
-     * @deprecated Note: May be null.
-     * @see #isPrimary()
-     */
-    public Boolean getPrimary() {
+    @JsonView({View.Summary.class})
+    public boolean isPrimary() {
         return primary;
     }
 
-    @JsonView({View.Summary.class})
-    public boolean isPrimary() {
-        return Objects.equals(Boolean.TRUE, primary);
-    }
-
-    public void setPrimary(Boolean primary) {
+    public void setPrimary(boolean primary) {
         this.primary = primary;
     }
-    
+
+    //<editor-fold defaultstate="collapsed" desc="Lifecycle">
+    @PostRemove
+    @Override
+    public void removeSearchIndex() throws Exception {
+        log.info("Removing from search index.");
+        SearchService.instance().deleteSalesNotePart(this);
+    }
+
+    @PostUpdate
+    @Override
+    public void updateSearchIndex() throws Exception {
+        log.info("Updating search index.");
+        SearchService.instance().indexSalesNotePart(this);
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="Serialization">
+    protected JSONSerializer getSearchSerializer() {
+        return new JSONSerializer()
+                .include("createDate")
+                .include("primary")
+                .include("pk.salesNote.id")
+                .include("pk.salesNote.state")
+                .include("pk.salesNote.comment")
+                .include("pk.part.id")
+                .include("pk.part.manufacturerPartNumber")
+                .exclude("*.class");
+    }
+
+    @Override
+    public String toSearchJson() {
+        return getSearchSerializer().exclude("*").serialize(this);
+    }
+
+    @Override
+    public String getSearchId() {
+        SalesNotePartId pk = getPk();
+        return pk.getSalesNote().getId().toString() + "_" + pk.getPart().getId().toString();
+    }
+    //</editor-fold>
+
 }

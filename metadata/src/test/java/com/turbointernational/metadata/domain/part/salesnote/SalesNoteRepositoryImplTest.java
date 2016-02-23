@@ -1,6 +1,5 @@
 package com.turbointernational.metadata.domain.part.salesnote;
 
-import com.turbointernational.metadata.domain.part.salesnote.dto.SalesNoteSearchRequest;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 import com.google.common.collect.Iterables;
 import com.turbointernational.metadata.Application;
@@ -8,25 +7,26 @@ import com.turbointernational.metadata.domain.other.ManufacturerDao;
 import com.turbointernational.metadata.domain.part.InterchangeDao;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.part.PartDao;
+import com.turbointernational.metadata.domain.part.salesnote.dto.SalesNoteSearchRequest;
 import com.turbointernational.metadata.domain.security.User;
 import com.turbointernational.metadata.domain.security.UserDao;
 import com.turbointernational.metadata.domain.type.PartTypeDao;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-import javax.persistence.NoResultException;
-import javax.transaction.Transactional;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.context.ApplicationContext;
-import org.springframework.data.domain.Page;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
+
+import javax.persistence.NoResultException;
+import javax.transaction.Transactional;
+import java.util.Date;
+import java.util.List;
+
+import static org.junit.Assert.*;
 
 
 
@@ -150,18 +150,18 @@ public class SalesNoteRepositoryImplTest {
         assertEquals(expectedNote.getState(), actualNote.getState());
         
         // Verify the SalesNotePart relationship
-        Set<SalesNotePart> actualSnpSet = actualNote.getParts();
+        List<SalesNotePart> actualSnpSet = actualNote.getParts();
         assertEquals(2, actualSnpSet.size());
         
         // Verify the primary part
         SalesNotePart actualSNP1 = Iterables.get(actualSnpSet, 0);
         assertEquals(expectedPart1, actualSNP1.getPart());
-        assertTrue(actualSNP1.getPrimary());
+        assertTrue(actualSNP1.isPrimary());
         
         // Verify the related part
         SalesNotePart actualSNP2 = Iterables.get(actualSnpSet, 1);
         assertEquals(expectedPart2, actualSNP2.getPart());
-        assertFalse(actualSNP2.getPrimary());
+        assertFalse(actualSNP2.isPrimary());
     }
 
     @Test
@@ -273,7 +273,7 @@ public class SalesNoteRepositoryImplTest {
         
         SalesNote actualNote = draftSearchResults.getContent().get(0);
         SalesNotePart actualSNP = Iterables.get(actualNote.getParts(),0);
-        assertTrue(actualSNP.getPrimary());
+        assertTrue(actualSNP.isPrimary());
         assertEquals(primaryPart, actualSNP.getPart());
     }
 

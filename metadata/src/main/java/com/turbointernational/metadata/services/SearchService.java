@@ -6,6 +6,8 @@ import com.turbointernational.metadata.domain.SearchableEntity;
 import com.turbointernational.metadata.domain.car.*;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.part.PartDao;
+import com.turbointernational.metadata.domain.part.salesnote.SalesNotePart;
+import com.turbointernational.metadata.domain.part.salesnote.SalesNotePartDao;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
@@ -99,6 +101,12 @@ public class SearchService {
 
     @Autowired
     private CarModelDao carModelDao;
+
+    @Value("${elasticsearch.type.salesnotepart}")
+    private String elasticSearchTypeSalesNotePart = "salesnotepart";
+
+    @Autowired
+    private SalesNotePartDao salesNotePartDao;
 
     private Client elasticSearch; // connection with ElasticSearch
 
@@ -241,6 +249,21 @@ public class SearchService {
         indexAllDocs(carFuelTypeDao, elasticSearchTypeCarFuelType);
         indexAllDocs(carMakeDao, elasticSearchTypeCarMake);
         indexAllDocs(carModelDao, elasticSearchTypeCarModel);
+    }
+
+    @Transactional(readOnly = true)
+    public void indexSalesNotePart(SalesNotePart salesNotePart) {
+        indexDoc(salesNotePart, elasticSearchTypeSalesNotePart);
+    }
+
+    @Transactional(readOnly = true)
+    public void deleteSalesNotePart(SalesNotePart salesNotePart) throws Exception {
+        deleteDoc(elasticSearchTypeSalesNotePart, salesNotePart.getSearchId());
+    }
+
+    @Transactional(readOnly = true)
+    public void indexAllSalesNotes() throws Exception {
+        indexAllDocs(salesNotePartDao, elasticSearchTypeSalesNotePart);
     }
 
     public String filterParts(String partNumber, String partTypeName, String manufacturerName, String kitType,
@@ -529,8 +552,6 @@ public class SearchService {
         try {
             int result;
             do {
-                // Clear Hibernate
-                dao.clear();
                 BulkRequest bulk = new BulkRequest();
                 List<?> applications = dao.findAll(page * pageSize, pageSize);
                 for (Object o : applications) {
@@ -538,6 +559,7 @@ public class SearchService {
                     String searchId = doc.getSearchId();
                     IndexRequest index = new IndexRequest(elasticSearchIndex, elasticSearchType, searchId);
                     String asJson = doc.toSearchJson();
+                    log.info("elasticSearchIndex: {}, elasticSearchType: {}, searchId: {}, asJson: {}", elasticSearchIndex, elasticSearchType, searchId, asJson);
                     index.source(asJson);
                     bulk.add(index);
                 }

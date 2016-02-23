@@ -608,7 +608,7 @@ CREATE TABLE `sales_note_part` (
   `write_date` datetime NOT NULL,
   `create_uid` bigint(20) NOT NULL,
   `write_uid` bigint(20) NOT NULL,
-  `primary_part` tinyint(1) DEFAULT NULL,
+  `primary_part` tinyint(1) NOT NULL,
   PRIMARY KEY (`sales_note_id`,`part_id`),
   UNIQUE KEY `sales_note_part_primary_part_unq_idx` (`sales_note_id`,`primary_part`),
   KEY `sales_note_part_part_part_id_idx` (`part_id`),
