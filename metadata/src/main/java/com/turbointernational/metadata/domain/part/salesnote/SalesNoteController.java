@@ -428,16 +428,24 @@ public class SalesNoteController {
     }
     
     private void updateState(User user, SalesNote salesNote, SalesNoteState newState, SalesNoteState... allowedStates) {
+        Date now = new Date();
         SalesNoteState currentState = salesNote.getState();
         
         SalesNoteState.checkState(salesNote.getState(), allowedStates);
         
         salesNote.setState(newState);
-        salesNote.setUpdateDate(new Date());
+        salesNote.setUpdateDate(now);
         salesNote.setUpdater(user);
+
+        // Mark as dirty the associated SaleNotePart(s) in order
+        // to trigger entities' lifecycle method @PostUpdate.
+        // That method will update entities in an ElastcSearch index to reflect changed state.
+        // @see SalesNotePart#updateSearchIndex().
+        salesNote.getParts().forEach(snp -> snp.setUpdateDate(now));
         
         salesNotes.save(salesNote);
-        
+
+
         changelogDao.log("Sales note " + salesNote.getId()
                 + " state changed from " + currentState
                 + " to " + salesNote.getState(), null);
