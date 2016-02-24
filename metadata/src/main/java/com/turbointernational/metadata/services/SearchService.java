@@ -8,6 +8,7 @@ import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.part.PartDao;
 import com.turbointernational.metadata.domain.part.salesnote.SalesNotePart;
 import com.turbointernational.metadata.domain.part.salesnote.SalesNotePartDao;
+import com.turbointernational.metadata.domain.part.salesnote.SalesNoteState;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
@@ -38,6 +39,7 @@ import javax.annotation.PostConstruct;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 
@@ -264,6 +266,29 @@ public class SearchService {
     @Transactional(readOnly = true)
     public void indexAllSalesNotes() throws Exception {
         indexAllDocs(salesNotePartDao, elasticSearchTypeSalesNotePart);
+    }
+
+    public String filterSalesNotes(String partNumOrComment, Set<SalesNoteState> states, boolean includePrimary,
+                                   boolean includeRelated,
+                                   String sortProperty, String sortOrder, Integer offset, Integer limit) {
+        SearchRequestBuilder srb = elasticSearch.prepareSearch(elasticSearchIndex).setTypes(elasticSearchTypeSalesNotePart)
+                .setSearchType(SearchType.DFS_QUERY_THEN_FETCH);
+        QueryBuilder query = QueryBuilders.matchAllQuery(); // TODO
+        srb.setQuery(query);
+        if (sortProperty != null) {
+            SortBuilder sort = SortBuilders.fieldSort(sortProperty)
+                    .order(convertSortOrder.apply(sortOrder))
+                    .missing("_last");
+            srb.addSort(sort);
+        }
+        if (offset != null) {
+            srb.setFrom(offset);
+        }
+        if (limit != null) {
+            srb.setSize(limit);
+        }
+        log.info("Search request (sales notes) to search engine:\n{}", srb);
+        return srb.execute().actionGet(timeout).toString();
     }
 
     public String filterParts(String partNumber, String partTypeName, String manufacturerName, String kitType,
@@ -559,7 +584,8 @@ public class SearchService {
                     String searchId = doc.getSearchId();
                     IndexRequest index = new IndexRequest(elasticSearchIndex, elasticSearchType, searchId);
                     String asJson = doc.toSearchJson();
-                    log.info("elasticSearchIndex: {}, elasticSearchType: {}, searchId: {}, asJson: {}", elasticSearchIndex, elasticSearchType, searchId, asJson);
+                    log.debug("elasticSearchIndex: {}, elasticSearchType: {}, searchId: {}, asJson: {}",
+                            elasticSearchIndex, elasticSearchType, searchId, asJson);
                     index.source(asJson);
                     bulk.add(index);
                 }

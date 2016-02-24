@@ -625,7 +625,11 @@ echo "Setting mapping..." && curl -XPUT "$SERVER/$INDEX/?pretty=1" -d '
           "type": "boolean",
           "store": "yes"
         },
-        "pk": {
+        "primaryPartId": {
+          "type": "long",
+          "store": "yes"
+        },
+         "pk": {
           "properties": {
             "salesNote": {
               "properties": {

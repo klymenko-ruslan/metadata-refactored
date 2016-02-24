@@ -37,56 +37,56 @@
 <div class="row">
   <div class="col-md-12" style="padding-top:0.5em;">
     <table data-ng-table="notesTableParams" class="table table-bordered table-striped table-hover table-responsive">
-        <tr data-ng-repeat="salesNote in $data">
-            <td title="'Created'" data-sortable="'salesNote.createdDate'">
-                {{salesNote.createDate | date : "yyyy-MM-dd HH:mm" }}
+        <tr data-ng-repeat="row in $data">
+            <td title="'Created'" data-sortable="'createDate'">
+                {{row._source.createDate | date : "yyyy-MM-dd HH:mm" }}
             </td>
-            <td title="'Primary Part'" data-sortable="'salesNote.manufacturerPartNumber'">
-                {{salesNote.primaryPart.manufacturerPartNumber}}
+            <td title="'Primary Part'" data-sortable="'manufacturerPartNumber'">
+                {{row._source.pk.part.manufacturerPartNumber}}
             </td>
-            <td title="'Note'" data-sortable="'salesNote.comment'">
-                {{salesNote.comment}}
+            <td title="'Note'" data-sortable="'comment'">
+                {{row._source.pk.salesNote.comment}}
             </td>
-            <td title="'State'" data-sortable="'salesNote.state'">
-                {{salesNote.state}}
+            <td title="'State'" data-sortable="'state'">
+                {{row._source.pk.salesNote.state}}
             </td>
 <!--            <td title="'Relation'" ng-class="{info:salesNote.primaryPartId == partId}">
                 {{salesNote.primaryPartId === salesNote ? "Primary" : "Related"}}
             </td>
 -->
             <td class="text-right" title="'Actions'">
-                <a ng-href="/part/{{salesNote.primaryPartId}}/sales_note/{{salesNote.id}}"
+                <a ng-href="/part/{{row._source.primaryPartId}}/sales_note/{{row._source.pk.salesNote.id}}"
                    authorize="ROLE_SALES_NOTE_READ"
                    class="btn btn-primary btn-sm pull-left">
                   <span class="fa fa-file-text-o"></span> View Note
                 </a>
 
-                <a ng-click="SalesNotes.submit(salesNote)"
-                   authorize="ROLE_SALES_NOTE_SUBMIT" ng-if="SalesNotes.canSubmit(salesNote)"
+                <a ng-click="SalesNotes.submit(row._source.pk.salesNote)"
+                   authorize="ROLE_SALES_NOTE_SUBMIT" ng-if="SalesNotes.canSubmit(row._source.pk.salesNote)"
                    class="btn btn-info btn-sm">
                   <span class="fa fa-check-square"></span> Submit
                 </a>
 
-                <a ng-click="SalesNotes.publish(salesNote)"
-                   authorize="ROLE_SALES_NOTE_PUBLISH" ng-if="SalesNotes.canPublish(salesNote)"
+                <a ng-click="SalesNotes.publish(row._source.pk.salesNote)"
+                   authorize="ROLE_SALES_NOTE_PUBLISH" ng-if="SalesNotes.canPublish(row._source.pk.salesNote)"
                    class="btn btn-primary btn-sm">
                   <span class="fa fa-cloud-upload"></span> Publish
                 </a>
 
-                <a ng-click="SalesNotes.approve(salesNote)"
-                   authorize="ROLE_SALES_NOTE_APPROVE" ng-if="SalesNotes.canApprove(salesNote)"
+                <a ng-click="SalesNotes.approve(row._source.pk.salesNote)"
+                   authorize="ROLE_SALES_NOTE_APPROVE" ng-if="SalesNotes.canApprove(row._source.pk.salesNote)"
                    class="btn btn-success btn-sm">
                   <span class="fa fa-thumbs-up"></span> Approve
                 </a>
 
-                <a ng-click="SalesNotes.reject(salesNote)"
-                   authorize="ROLE_SALES_NOTE_REJECT" ng-if="SalesNotes.canReject(salesNote)"
+                <a ng-click="SalesNotes.reject(row._source.pk.salesNote)"
+                   authorize="ROLE_SALES_NOTE_REJECT" ng-if="SalesNotes.canReject(row._source.pk.salesNote)"
                    class="btn btn-danger btn-sm">
                   <span class="fa fa-thumbs-down"></span> Reject
                 </a>
 
-                <a ng-click="SalesNotes.retract(salesNote)"
-                   authorize="ROLE_SALES_NOTE_RETRACT" ng-if="SalesNotes.canRetract(salesNote)"
+                <a ng-click="SalesNotes.retract(row._source.pk.salesNote)"
+                   authorize="ROLE_SALES_NOTE_RETRACT" ng-if="SalesNotes.canRetract(row._source.pk.salesNote)"
                    class="btn btn-warning btn-sm">
                   <span class="fa fa-cloud-download"></span> Retract
                 </a>

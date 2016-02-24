@@ -168,6 +168,17 @@ public class SalesNotePart implements Serializable, SearchableEntity {
         this.primary = primary;
     }
 
+    /**
+     * This method is called by Flexjson during serialization.
+     * @see #toSearchJson()
+     *
+     * @return
+     */
+    public long getPrimaryPartId() {
+        long primaryPartId = primary ? pk.getPart().getId() : pk.getSalesNote().getPrimaryPartId();
+        return primaryPartId;
+    }
+
     //<editor-fold defaultstate="collapsed" desc="Lifecycle">
     @PostRemove
     @Override
@@ -189,6 +200,7 @@ public class SalesNotePart implements Serializable, SearchableEntity {
         return new JSONSerializer()
                 .include("createDate")
                 .include("primary")
+                .include("primaryPartId")
                 .include("pk.salesNote.id")
                 .include("pk.salesNote.state")
                 .include("pk.salesNote.comment")

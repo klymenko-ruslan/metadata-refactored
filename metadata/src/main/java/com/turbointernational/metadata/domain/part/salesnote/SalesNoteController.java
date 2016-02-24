@@ -12,6 +12,7 @@ import static com.turbointernational.metadata.domain.part.salesnote.SalesNoteSta
 import com.turbointernational.metadata.domain.part.salesnote.dto.SalesNoteSearchRequest;
 import com.turbointernational.metadata.domain.part.salesnote.exception.RemovePrimaryPartException;
 import com.turbointernational.metadata.domain.security.User;
+import com.turbointernational.metadata.services.SearchService;
 import com.turbointernational.metadata.web.View;
 import java.io.File;
 import java.io.IOException;
@@ -46,26 +47,26 @@ public class SalesNoteController {
     private static final Logger log = LoggerFactory.getLogger(SalesNoteController.class);
 
     @Autowired
-    ChangelogDao changelogDao;
+    private ChangelogDao changelogDao;
 
     @Autowired
-    SalesNoteRepository salesNotes;
+    private SalesNoteRepository salesNotes;
     
     @Autowired
-    SalesNoteAttachmentRepository attachments;
+    private SalesNoteAttachmentRepository attachments;
     
     @Autowired
-    SalesNotePartRepository salesNoteParts;
+    private SalesNotePartRepository salesNoteParts;
 
     @Autowired
-    PartDao partDao;
+    private PartDao partDao;
 
     @Autowired
-    ObjectMapper json;
-    
+    private SearchService searchService;
+
     @Value("attachments.salesNote")
-    File attachmentDir;
-    
+    private File attachmentDir;
+
     //<editor-fold defaultstate="collapsed" desc="CRUDS">
     @RequestMapping(method = RequestMethod.POST,
                     consumes = MediaType.APPLICATION_JSON_VALUE,
@@ -157,15 +158,15 @@ public class SalesNoteController {
         throw new AccessDeniedException("You are not allowed to update sales notes with the " + salesNote.getState() + " state.");
     }
 
-    @ResponseBody
-    @Secured("ROLE_SALES_NOTE_READ")
-    @JsonView(View.Detail.class)
-    @RequestMapping(value = "search", method = RequestMethod.POST,
-                    consumes = MediaType.APPLICATION_JSON_VALUE,
-                    produces = MediaType.APPLICATION_JSON_VALUE)
-    public SalesNoteSearchResponse search(@RequestBody SalesNoteSearchRequest req) {
-        return salesNotes.search(req);
-    }
+//    @ResponseBody
+//    @Secured("ROLE_SALES_NOTE_READ")
+//    @JsonView(View.Detail.class)
+//    @RequestMapping(value = "search", method = RequestMethod.POST,
+//                    consumes = MediaType.APPLICATION_JSON_VALUE,
+//                    produces = MediaType.APPLICATION_JSON_VALUE)
+//    public SalesNoteSearchResponse search(@RequestBody SalesNoteSearchRequest req) {
+//        return salesNotes.search(req);
+//    }
     
     @ResponseBody
     @Secured("ROLE_SALES_NOTE_READ")
@@ -173,8 +174,9 @@ public class SalesNoteController {
     @RequestMapping(value = "searchWithParts", method = RequestMethod.POST,
                     consumes = MediaType.APPLICATION_JSON_VALUE,
                     produces = MediaType.APPLICATION_JSON_VALUE)
-    public SalesNoteSearchResponse searchWithParts(@RequestBody SalesNoteSearchRequest req) {
-        return salesNotes.search(req);
+    public String searchWithParts(@RequestBody SalesNoteSearchRequest req) {
+        return searchService.filterSalesNotes(req.getQuery(), req.getStates(), req.isIncludePrimary(),
+                req.isIncludeRelated(), null, null, req.getPage()*req.getPageSize(), req.getPageSize());
     }
     
 //    @RequestMapping(value="listByPartId/{partId}", method = RequestMethod.GET)

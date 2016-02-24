@@ -5,7 +5,7 @@
 angular.module('ngMetaCrudApp').controller('SalesNoteListAllCtrl', function(
         $scope, $log, $routeParams, ngTableParams, restService, Restangular, SalesNotes) {
     $scope.SalesNotes = SalesNotes;
-    
+
     $scope.states = {
         "current": {
             "draft":true,
@@ -14,7 +14,7 @@ angular.module('ngMetaCrudApp').controller('SalesNoteListAllCtrl', function(
             "published":true
         }
     };
-    
+
     // Notes Table
     $scope.notesTableParams = new ngTableParams({
       page: 1,
@@ -23,9 +23,7 @@ angular.module('ngMetaCrudApp').controller('SalesNoteListAllCtrl', function(
     }, {
       getData: function ($defer, params) {
           $log.info("Searching", $scope.search, params);
-          
-          
-          
+
           if (_.size($scope.search.states) < 1) {
               $defer.resolve([])
               return;
@@ -41,13 +39,13 @@ angular.module('ngMetaCrudApp').controller('SalesNoteListAllCtrl', function(
 //                  return null;
 //              }
 //          }).compact().value();
-          
+
           $scope.notesPromise = Restangular.all('other/salesNote/searchWithParts').post($scope.search).then(
                 function (searchResults) {
 
                   // Update the total and slice the result
-                  $defer.resolve(searchResults.content);
-                  params.total(searchResults.total);
+                  $defer.resolve(searchResults.hits.hits);
+                  params.total(searchResults.hits.total);
                 },
                 function (errorResponse) {
                   restService.error("Couldn't search for sales notes.", errorResponse);
@@ -69,13 +67,13 @@ angular.module('ngMetaCrudApp').controller('SalesNoteListAllCtrl', function(
 
     // Keep the states up-to-date
     $scope.$watch('states.current', function (currentStates) {
-        
+
         // Get a list of active states, currentStates={stateName:boolean, ...}
         var newStates = _.chain(currentStates)
                          .map(function(value, key) {
                              return value === true ? key : null;
                          }).compact().value();
-             
+
         // Update the states and reload the table
         if (!angular.equals($scope.search.states, newStates)) {
             $scope.search.states = newStates;
