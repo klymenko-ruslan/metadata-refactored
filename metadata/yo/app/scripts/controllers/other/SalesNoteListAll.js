@@ -19,30 +19,26 @@ angular.module('ngMetaCrudApp').controller('SalesNoteListAllCtrl', function(
     $scope.notesTableParams = new ngTableParams({
       page: 1,
       count: 10,
-      sorting: {}
+      sorting: {
+        createDate: 'desc'
+      }
     }, {
       getData: function ($defer, params) {
           $log.info("Searching", $scope.search, params);
-
           if (_.size($scope.search.states) < 1) {
               $defer.resolve([])
               return;
           }
-
-          // Update the pagination info
-          $scope.search.page = params.page() - 1;
-          $scope.search.pageSize = params.count();
-//          $scope.search.states = _.chain($scope.states).map(function(value, state) {
-//              if (value) {
-//                  return state;
-//              } else {
-//                  return null;
-//              }
-//          }).compact().value();
-
-          $scope.notesPromise = Restangular.all('other/salesNote/searchWithParts').post($scope.search).then(
+          var sorting = params.sorting();
+          for (var sortProperty in sorting) break;
+          if (sortProperty) {
+            var sortOrder = sorting[sortProperty];
+          }
+          var offset = params.count() * (params.page() - 1);
+          var limit = params.count();
+          $scope.notesPromise = restService.filterSalesNotes($scope.search.query, $scope.search.includePrimary,
+            $scope.search.includeRelated, $scope.search.states, sortProperty, sortOrder, offset, limit).then(
                 function (searchResults) {
-
                   // Update the total and slice the result
                   $defer.resolve(searchResults.hits.hits);
                   params.total(searchResults.hits.total);
@@ -59,10 +55,7 @@ angular.module('ngMetaCrudApp').controller('SalesNoteListAllCtrl', function(
         "query": null,
         "includePrimary": true,
         "includeRelated": true,
-        "statesObject": {},
         "states": [],
-        "page": 0,
-        "pageSize": 20
     };
 
     // Keep the states up-to-date

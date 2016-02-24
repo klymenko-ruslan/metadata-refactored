@@ -41,13 +41,13 @@
             <td title="'Created'" data-sortable="'createDate'">
                 {{row._source.createDate | date : "yyyy-MM-dd HH:mm" }}
             </td>
-            <td title="'Primary Part'" data-sortable="'manufacturerPartNumber'">
+            <td title="'Primary Part'" data-sortable="'pk.part.manufacturerPartNumber'">
                 {{row._source.pk.part.manufacturerPartNumber}}
             </td>
-            <td title="'Note'" data-sortable="'comment'">
+            <td title="'Note'" data-sortable="'pk.salesNote.comment'">
                 {{row._source.pk.salesNote.comment}}
             </td>
-            <td title="'State'" data-sortable="'state'">
+            <td title="'State'" data-sortable="'pk.salesNote.state'">
                 {{row._source.pk.salesNote.state}}
             </td>
 <!--            <td title="'Relation'" ng-class="{info:salesNote.primaryPartId == partId}">

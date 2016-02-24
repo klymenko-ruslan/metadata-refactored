@@ -17,6 +17,7 @@ import com.turbointernational.metadata.web.View;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
+import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -158,25 +159,20 @@ public class SalesNoteController {
         throw new AccessDeniedException("You are not allowed to update sales notes with the " + salesNote.getState() + " state.");
     }
 
-//    @ResponseBody
-//    @Secured("ROLE_SALES_NOTE_READ")
-//    @JsonView(View.Detail.class)
-//    @RequestMapping(value = "search", method = RequestMethod.POST,
-//                    consumes = MediaType.APPLICATION_JSON_VALUE,
-//                    produces = MediaType.APPLICATION_JSON_VALUE)
-//    public SalesNoteSearchResponse search(@RequestBody SalesNoteSearchRequest req) {
-//        return salesNotes.search(req);
-//    }
-    
     @ResponseBody
     @Secured("ROLE_SALES_NOTE_READ")
     @JsonView(View.DetailWithParts.class)
-    @RequestMapping(value = "searchWithParts", method = RequestMethod.POST,
-                    consumes = MediaType.APPLICATION_JSON_VALUE,
-                    produces = MediaType.APPLICATION_JSON_VALUE)
-    public String searchWithParts(@RequestBody SalesNoteSearchRequest req) {
-        return searchService.filterSalesNotes(req.getQuery(), req.getStates(), req.isIncludePrimary(),
-                req.isIncludeRelated(), null, null, req.getPage()*req.getPageSize(), req.getPageSize());
+    @RequestMapping(value = "searchWithParts", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String searchWithParts(@RequestParam(name = "query", required = false) String query,
+                                  @RequestParam("includePrimary") boolean includePrimary,
+                                  @RequestParam("includeRelated") boolean includeRelated,
+                                  @RequestParam("states") Set<SalesNoteState> states,
+                                  @RequestParam("sortProperty") String sortProperty,
+                                  @RequestParam("sortOrder") String sortOrder,
+                                  @RequestParam("offset") int offset,
+                                  @RequestParam("limit") int limit) {
+        return searchService.filterSalesNotes(query, states, includePrimary, includeRelated, sortProperty, sortOrder,
+                offset, limit);
     }
     
 //    @RequestMapping(value="listByPartId/{partId}", method = RequestMethod.GET)

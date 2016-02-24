@@ -397,5 +397,18 @@ angular.module("ngMetaCrudApp")
         });
       };
 
+      this.filterSalesNotes = function(query, includePrimary, includeRelated, states, sortProperty, sortOrder, offset, limit) {
+        return Restangular.one("other/salesNote/searchWithParts").get({
+          "query": query,
+          "includePrimary": includePrimary,
+          "includeRelated": includeRelated,
+          "states": states,
+          "sortProperty": sortProperty,
+          "sortOrder": sortOrder,
+          "offset": offset,
+          "limit": limit
+        });
+      };
+
     };
   });
