@@ -11,6 +11,7 @@ angular.module('ngMetaCrudApp').controller('SalesNoteListAllCtrl', function(
             "draft":true,
             "submitted":true,
             "approved":true,
+            "rejected": false,
             "published":true
         }
     };
@@ -36,8 +37,9 @@ angular.module('ngMetaCrudApp').controller('SalesNoteListAllCtrl', function(
           }
           var offset = params.count() * (params.page() - 1);
           var limit = params.count();
-          $scope.notesPromise = restService.filterSalesNotes($scope.search.query, $scope.search.includePrimary,
-            $scope.search.includeRelated, $scope.search.states, sortProperty, sortOrder, offset, limit).then(
+          $scope.notesPromise = restService.filterSalesNotes($scope.search.partNumber, $scope.search.comment,
+            $scope.search.includePrimary, $scope.search.includeRelated, $scope.search.states,
+            sortProperty, sortOrder, offset, limit).then(
                 function (searchResults) {
                   // Update the total and slice the result
                   $defer.resolve(searchResults.hits.hits);
@@ -52,10 +54,11 @@ angular.module('ngMetaCrudApp').controller('SalesNoteListAllCtrl', function(
 
     // Query Parameters
     $scope.search = {
-        "query": null,
+        "partNumber": null,
         "includePrimary": true,
         "includeRelated": true,
         "states": [],
+        "comment": null
     };
 
     // Keep the states up-to-date

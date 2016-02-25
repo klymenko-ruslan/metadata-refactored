@@ -163,7 +163,8 @@ public class SalesNoteController {
     @Secured("ROLE_SALES_NOTE_READ")
     @JsonView(View.DetailWithParts.class)
     @RequestMapping(value = "searchWithParts", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public String searchWithParts(@RequestParam(name = "query", required = false) String query,
+    public String searchWithParts(@RequestParam(name = "partNumber", required = false) String partNumber,
+                                  @RequestParam(name = "comment", required = false) String comment,
                                   @RequestParam("includePrimary") boolean includePrimary,
                                   @RequestParam("includeRelated") boolean includeRelated,
                                   @RequestParam("states") Set<SalesNoteState> states,
@@ -171,8 +172,11 @@ public class SalesNoteController {
                                   @RequestParam("sortOrder") String sortOrder,
                                   @RequestParam("offset") int offset,
                                   @RequestParam("limit") int limit) {
-        return searchService.filterSalesNotes(query, states, includePrimary, includeRelated, sortProperty, sortOrder,
-                offset, limit);
+        log.debug("partNumber: {}, comment: {}, includePrimary: {}, includeRelated: {}, states: {}, " +
+                "sortProperty: {}, sortOrder: {}, offset: {}, limit: {}", partNumber, comment, includePrimary,
+                includeRelated, states, sortProperty, sortOrder, offset, limit);
+        return searchService.filterSalesNotes(partNumber, comment, states, includePrimary, includeRelated,
+                sortProperty, sortOrder, offset, limit);
     }
     
 //    @RequestMapping(value="listByPartId/{partId}", method = RequestMethod.GET)

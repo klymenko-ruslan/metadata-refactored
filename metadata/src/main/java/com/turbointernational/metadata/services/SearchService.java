@@ -268,29 +268,6 @@ public class SearchService {
         indexAllDocs(salesNotePartDao, elasticSearchTypeSalesNotePart);
     }
 
-    public String filterSalesNotes(String partNumOrComment, Set<SalesNoteState> states, boolean includePrimary,
-                                   boolean includeRelated,
-                                   String sortProperty, String sortOrder, Integer offset, Integer limit) {
-        SearchRequestBuilder srb = elasticSearch.prepareSearch(elasticSearchIndex).setTypes(elasticSearchTypeSalesNotePart)
-                .setSearchType(SearchType.DFS_QUERY_THEN_FETCH);
-        QueryBuilder query = QueryBuilders.matchAllQuery(); // TODO
-        srb.setQuery(query);
-        if (sortProperty != null) {
-            SortBuilder sort = SortBuilders.fieldSort(sortProperty)
-                    .order(convertSortOrder.apply(sortOrder))
-                    .missing("_last");
-            srb.addSort(sort);
-        }
-        if (offset != null) {
-            srb.setFrom(offset);
-        }
-        if (limit != null) {
-            srb.setSize(limit);
-        }
-        log.info("Search request (sales notes) to search engine:\n{}", srb);
-        return srb.execute().actionGet(timeout).toString();
-    }
-
     public String filterParts(String partNumber, String partTypeName, String manufacturerName, String kitType,
                               String gasketType, String sealType, String coolType, String turboType,
                               String turboModel, String sortProperty, String sortOrder,
@@ -554,6 +531,54 @@ public class SearchService {
             srb.setSize(limit);
         }
         log.debug("Search request (car makes) to search engine:\n{}", srb);
+        return srb.execute().actionGet(timeout).toString();
+    }
+
+    public String filterSalesNotes(String partNumber, String comment, Set<SalesNoteState> states,
+                                   boolean includePrimary, boolean includeRelated,
+                                   String sortProperty, String sortOrder, Integer offset, Integer limit) {
+        SearchRequestBuilder srb = elasticSearch.prepareSearch(elasticSearchIndex).setTypes(elasticSearchTypeSalesNotePart)
+                .setSearchType(SearchType.DFS_QUERY_THEN_FETCH);
+        QueryBuilder query;
+        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
+        if (StringUtils.isNotBlank(partNumber)) {
+            String normalizedPartNum = str2shotfield.apply(partNumber);
+            boolQuery.must(QueryBuilders.termQuery("pk.part.manufacturerPartNumber.short", normalizedPartNum));
+        }
+        if (StringUtils.isNotBlank(comment)) {
+            String normalizedComment = str2shotfield.apply(comment);
+            boolQuery.must(QueryBuilders.termQuery("pk.salesNote.comment.short", normalizedComment));
+        }
+        if (states != null && !states.isEmpty()) {
+            BoolQueryBuilder subBoolQuery = QueryBuilders.boolQuery();
+            states.forEach(sns -> subBoolQuery.should(QueryBuilders.termQuery("pk.salesNote.state", sns.toString())));
+            boolQuery.must(subBoolQuery);
+        }
+        if (includePrimary || includeRelated) {
+            BoolQueryBuilder subBoolQuery = QueryBuilders.boolQuery();
+            if (includePrimary) {
+                subBoolQuery.should(QueryBuilders.termQuery("primary", true));
+            }
+            if (includeRelated) {
+                subBoolQuery.should(QueryBuilders.termQuery("primary", false));
+            }
+            boolQuery.must(subBoolQuery);
+        }
+        query = boolQuery;
+        srb.setQuery(query);
+        if (sortProperty != null) {
+            SortBuilder sort = SortBuilders.fieldSort(sortProperty)
+                    .order(convertSortOrder.apply(sortOrder))
+                    .missing("_last");
+            srb.addSort(sort);
+        }
+        if (offset != null) {
+            srb.setFrom(offset);
+        }
+        if (limit != null) {
+            srb.setSize(limit);
+        }
+        log.debug("Search request (sales notes) to search engine:\n{}", srb);
         return srb.execute().actionGet(timeout).toString();
     }
 

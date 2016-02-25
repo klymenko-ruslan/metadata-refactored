@@ -397,9 +397,10 @@ angular.module("ngMetaCrudApp")
         });
       };
 
-      this.filterSalesNotes = function(query, includePrimary, includeRelated, states, sortProperty, sortOrder, offset, limit) {
+      this.filterSalesNotes = function(partNumber, comment, includePrimary, includeRelated, states, sortProperty, sortOrder, offset, limit) {
         return Restangular.one("other/salesNote/searchWithParts").get({
-          "query": query,
+          "partNumber": partNumber,
+          "comment": comment,
           "includePrimary": includePrimary,
           "includeRelated": includeRelated,
           "states": states,
