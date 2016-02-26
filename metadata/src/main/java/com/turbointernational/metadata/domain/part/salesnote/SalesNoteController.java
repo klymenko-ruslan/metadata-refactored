@@ -1,24 +1,16 @@
 package com.turbointernational.metadata.domain.part.salesnote;
 
-import com.turbointernational.metadata.domain.part.salesnote.dto.UpdateSalesNoteRequest;
 import com.fasterxml.jackson.annotation.JsonView;
-import com.turbointernational.metadata.domain.part.salesnote.dto.CreateSalesNoteRequest;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Iterables;
 import com.turbointernational.metadata.domain.changelog.ChangelogDao;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.part.PartDao;
-import static com.turbointernational.metadata.domain.part.salesnote.SalesNoteState.*;
-import com.turbointernational.metadata.domain.part.salesnote.dto.SalesNoteSearchRequest;
+import com.turbointernational.metadata.domain.part.salesnote.dto.CreateSalesNoteRequest;
+import com.turbointernational.metadata.domain.part.salesnote.dto.UpdateSalesNoteRequest;
 import com.turbointernational.metadata.domain.part.salesnote.exception.RemovePrimaryPartException;
 import com.turbointernational.metadata.domain.security.User;
 import com.turbointernational.metadata.services.SearchService;
 import com.turbointernational.metadata.web.View;
-import java.io.File;
-import java.io.IOException;
-import java.util.Date;
-import java.util.Set;
-import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,13 +25,17 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.web.bind.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.io.IOException;
+import java.util.Date;
+
+import static com.turbointernational.metadata.domain.part.salesnote.SalesNoteState.*;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @Controller
 @RequestMapping("/metadata/other/salesNote")
@@ -70,8 +66,8 @@ public class SalesNoteController {
 
     //<editor-fold defaultstate="collapsed" desc="CRUDS">
     @RequestMapping(method = RequestMethod.POST,
-                    consumes = MediaType.APPLICATION_JSON_VALUE,
-                    produces = MediaType.APPLICATION_JSON_VALUE)
+                    consumes = APPLICATION_JSON_VALUE,
+                    produces = APPLICATION_JSON_VALUE)
     @Secured("ROLE_SALES_NOTE_SUBMIT")
     @Transactional
     @JsonView(View.DetailWithPartsAndAttachments.class)
@@ -103,8 +99,8 @@ public class SalesNoteController {
         return salesNote;
     }
 
-    @RequestMapping(value="{noteId}", method = RequestMethod.GET,
-                    produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value="{noteId}", method = GET,
+                    produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     @Secured("ROLE_SALES_NOTE_READ")
     @JsonView(View.DetailWithPartsAndAttachments.class)
@@ -121,8 +117,8 @@ public class SalesNoteController {
     @ResponseBody
     @Transactional
     @RequestMapping(value="{noteId}", method = RequestMethod.POST,
-                    produces = MediaType.APPLICATION_JSON_VALUE,
-                    consumes = MediaType.APPLICATION_JSON_VALUE)
+                    produces = APPLICATION_JSON_VALUE,
+                    consumes = APPLICATION_JSON_VALUE)
     public void updateSalesNote(
             HttpServletRequest request,
             @AuthenticationPrincipal(errorOnInvalidType = true) User user,
@@ -159,44 +155,14 @@ public class SalesNoteController {
         throw new AccessDeniedException("You are not allowed to update sales notes with the " + salesNote.getState() + " state.");
     }
 
-    @ResponseBody
-    @Secured("ROLE_SALES_NOTE_READ")
-    @JsonView(View.DetailWithParts.class)
-    @RequestMapping(value = "searchWithParts", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public String searchWithParts(@RequestParam(name = "partNumber", required = false) String partNumber,
-                                  @RequestParam(name = "comment", required = false) String comment,
-                                  @RequestParam("includePrimary") boolean includePrimary,
-                                  @RequestParam("includeRelated") boolean includeRelated,
-                                  @RequestParam("states") Set<SalesNoteState> states,
-                                  @RequestParam("sortProperty") String sortProperty,
-                                  @RequestParam("sortOrder") String sortOrder,
-                                  @RequestParam("offset") int offset,
-                                  @RequestParam("limit") int limit) {
-        log.debug("partNumber: {}, comment: {}, includePrimary: {}, includeRelated: {}, states: {}, " +
-                "sortProperty: {}, sortOrder: {}, offset: {}, limit: {}", partNumber, comment, includePrimary,
-                includeRelated, states, sortProperty, sortOrder, offset, limit);
-        return searchService.filterSalesNotes(partNumber, comment, states, includePrimary, includeRelated,
-                sortProperty, sortOrder, offset, limit);
-    }
-    
-//    @RequestMapping(value="listByPartId/{partId}", method = RequestMethod.GET)
-//    @ResponseBody
-//    @Secured("ROLE_READ")
-//    public ResponseEntity<String> listByPartId(@PathVariable("partId") Long partId) throws JsonProcessingException {
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.add("Content-Type", "application/json; charset=utf-8");
-//        Page<SalesNote> result = salesNotes.findByPartId(new PageRequest(0, 100), partId);
-//        return new ResponseEntity<String>(json.writeValueAsString(result), headers, HttpStatus.OK);
-//    }
-    
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Related Parts">
     @ResponseBody
     @Transactional
     @RequestMapping(value="{salesNoteId}/part/{partId}", method = RequestMethod.POST,
-                    consumes = MediaType.APPLICATION_JSON_VALUE,
-                    produces = MediaType.APPLICATION_JSON_VALUE)
+                    consumes = APPLICATION_JSON_VALUE,
+                    produces = APPLICATION_JSON_VALUE)
     public void addRelatedPart(
             HttpServletRequest request,
             @AuthenticationPrincipal(errorOnInvalidType = true) User user,
@@ -223,8 +189,8 @@ public class SalesNoteController {
     @ResponseBody
     @Transactional
     @RequestMapping(value="{salesNoteId}/part/{partId}", method = RequestMethod.DELETE,
-                    consumes = MediaType.APPLICATION_JSON_VALUE,
-                    produces = MediaType.APPLICATION_JSON_VALUE)
+                    consumes = APPLICATION_JSON_VALUE,
+                    produces = APPLICATION_JSON_VALUE)
     public void deleteRelatedPart(
             HttpServletRequest request,
             @AuthenticationPrincipal(errorOnInvalidType = true) User user,
@@ -260,7 +226,7 @@ public class SalesNoteController {
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Attachments">
-    @RequestMapping(value = "attachment/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "attachment/{id}", method = GET)
     @Secured("ROLE_SALES_NOTE_READ")
     public @ResponseBody ResponseEntity<byte[]> getAttachment(@PathVariable Long id) throws Exception {
         
@@ -287,7 +253,7 @@ public class SalesNoteController {
     
     @RequestMapping(value="{salesNoteId}/attachment", method = RequestMethod.POST,
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+            produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     public SalesNote addAttachment(
             HttpServletRequest request,
@@ -356,7 +322,7 @@ public class SalesNoteController {
     
     //<editor-fold defaultstate="collapsed" desc="State changes">
     @RequestMapping(value="{noteId}/submit", method = RequestMethod.POST,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+            produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     @Secured("ROLE_SALES_NOTE_SUBMIT")
     @Transactional
@@ -374,7 +340,7 @@ public class SalesNoteController {
     }
     
     @RequestMapping(value="{noteId}/approve", method = RequestMethod.POST,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+            produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     @Secured("ROLE_SALES_NOTE_APPROVE")
     @Transactional
@@ -388,7 +354,7 @@ public class SalesNoteController {
     }
     
     @RequestMapping(value="{noteId}/reject", method = RequestMethod.POST,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+            produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     @Secured("ROLE_SALES_NOTE_REJECT")
     @Transactional
@@ -402,7 +368,7 @@ public class SalesNoteController {
     }
     
     @RequestMapping(value="{noteId}/publish", method = RequestMethod.POST,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+            produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     @Secured("ROLE_SALES_NOTE_PUBLISH")
     @Transactional
@@ -415,7 +381,7 @@ public class SalesNoteController {
     }
     
     @RequestMapping(value="{noteId}/retract", method = RequestMethod.POST,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+            produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     @Secured("ROLE_SALES_NOTE_RETRACT")
     @Transactional

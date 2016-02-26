@@ -79,7 +79,7 @@ angular.module("ngMetaCrudApp", ["ngRoute", "ngTable", "ui.bootstrap",
     // Part Sales Notes
     $routeProvider.when("/part/:id/sales_notes", {
       templateUrl: "views/part/sales_note/SalesNoteListByPart.html",
-      controller: "SalesNoteListByPartCtrl"
+      controller: "SalesNoteListCtrl"
     });
     $routeProvider.when("/part/:id/sales_note/create", {
       templateUrl: "views/part/sales_note/SalesNoteCreate.html",
@@ -151,7 +151,7 @@ angular.module("ngMetaCrudApp", ["ngRoute", "ngTable", "ui.bootstrap",
     // List All Sales Notes
     $routeProvider.when("/other/salesNotes", {
       templateUrl: "views/other/SalesNoteListAll.html",
-      controller: "SalesNoteListAllCtrl"
+      controller: "SalesNoteListCtrl"
     });
 
     // Turbo Models

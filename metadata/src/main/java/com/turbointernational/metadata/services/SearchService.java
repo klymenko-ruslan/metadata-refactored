@@ -534,11 +534,11 @@ public class SearchService {
         return srb.execute().actionGet(timeout).toString();
     }
 
-    public String filterSalesNotes(String partNumber, String comment, Set<SalesNoteState> states,
+    public String filterSalesNotes(String partNumber, String comment, Long primaryPartId, Set<SalesNoteState> states,
                                    boolean includePrimary, boolean includeRelated,
                                    String sortProperty, String sortOrder, Integer offset, Integer limit) {
-        SearchRequestBuilder srb = elasticSearch.prepareSearch(elasticSearchIndex).setTypes(elasticSearchTypeSalesNotePart)
-                .setSearchType(SearchType.DFS_QUERY_THEN_FETCH);
+        SearchRequestBuilder srb = elasticSearch.prepareSearch(elasticSearchIndex)
+                .setTypes(elasticSearchTypeSalesNotePart).setSearchType(SearchType.DFS_QUERY_THEN_FETCH);
         QueryBuilder query;
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
         if (StringUtils.isNotBlank(partNumber)) {
@@ -548,6 +548,9 @@ public class SearchService {
         if (StringUtils.isNotBlank(comment)) {
             String normalizedComment = str2shotfield.apply(comment);
             boolQuery.must(QueryBuilders.termQuery("pk.salesNote.comment.short", normalizedComment));
+        }
+        if (primaryPartId != null) {
+            boolQuery.must(QueryBuilders.termQuery("primaryPartId", primaryPartId));
         }
         if (states != null && !states.isEmpty()) {
             BoolQueryBuilder subBoolQuery = QueryBuilders.boolQuery();

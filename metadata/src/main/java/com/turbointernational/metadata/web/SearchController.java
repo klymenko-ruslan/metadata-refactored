@@ -1,15 +1,23 @@
 package com.turbointernational.metadata.web;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.domain.part.salesnote.SalesNoteState;
 import com.turbointernational.metadata.services.SearchService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Set;
+
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 /**
  * @author jrodriguez
@@ -23,7 +31,7 @@ public class SearchController {
     @Autowired
     private SearchService searchService;
 
-    @RequestMapping(value = "/parts", method = RequestMethod.GET)
+    @RequestMapping(value = "/parts", method = GET)
     @ResponseBody
     @Secured("ROLE_READ")
     public ResponseEntity<String> filterParts(@RequestParam(required = false) String partNumber,
@@ -44,7 +52,7 @@ public class SearchController {
         return new ResponseEntity<>(json, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/carmodelengineyears", method = RequestMethod.GET)
+    @RequestMapping(value = "/carmodelengineyears", method = GET)
     @ResponseBody
     @Secured("ROLE_READ")
     public ResponseEntity<String> filterCarModelEngineYears(@RequestParam(required = false) String carModelEngineYear,
@@ -62,7 +70,7 @@ public class SearchController {
         return new ResponseEntity<>(json, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/carmakes", method = RequestMethod.GET)
+    @RequestMapping(value = "/carmakes", method = GET)
     @ResponseBody
     @Secured("ROLE_READ")
     public ResponseEntity<String> filterCarMake(@RequestParam(required = false) String make,
@@ -74,7 +82,7 @@ public class SearchController {
         return new ResponseEntity<>(json, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/carmodels", method = RequestMethod.GET)
+    @RequestMapping(value = "/carmodels", method = GET)
     @ResponseBody
     @Secured("ROLE_READ")
     public ResponseEntity<String> filterCarModels(@RequestParam(required = false) String model, String make,
@@ -86,7 +94,7 @@ public class SearchController {
         return new ResponseEntity<>(json, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/carengines", method = RequestMethod.GET)
+    @RequestMapping(value = "/carengines", method = GET)
     @ResponseBody
     @Secured("ROLE_READ")
     public ResponseEntity<String> filterCarEngines(@RequestParam(required = false) String engine, String fuelType,
@@ -98,7 +106,7 @@ public class SearchController {
         return new ResponseEntity<>(json, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/carfueltypes", method = RequestMethod.GET)
+    @RequestMapping(value = "/carfueltypes", method = GET)
     @ResponseBody
     @Secured("ROLE_READ")
     public ResponseEntity<String> filterCarFuelTypes(@RequestParam(required = false) String fuelType,
@@ -108,6 +116,27 @@ public class SearchController {
                                                      @RequestParam(defaultValue = "10") Integer limit) throws Exception {
         String json = searchService.filterCarFuelTypes(fuelType, sortProperty, sortOrder, offset, limit);
         return new ResponseEntity<>(json, HttpStatus.OK);
+    }
+
+    @ResponseBody
+    @Secured("ROLE_SALES_NOTE_READ")
+    @JsonView(View.DetailWithParts.class)
+    @RequestMapping(value = "salesnotes", method = GET, produces = APPLICATION_JSON_VALUE)
+    public String searchWithParts(@RequestParam(name = "partNumber", required = false) String partNumber,
+                                  @RequestParam(name = "comment", required = false) String comment,
+                                  @RequestParam(name = "primaryPartId", required = false) Long primaryPartId,
+                                  @RequestParam("includePrimary") boolean includePrimary,
+                                  @RequestParam("includeRelated") boolean includeRelated,
+                                  @RequestParam("states") Set<SalesNoteState> states,
+                                  @RequestParam("sortProperty") String sortProperty,
+                                  @RequestParam("sortOrder") String sortOrder,
+                                  @RequestParam("offset") int offset,
+                                  @RequestParam("limit") int limit) {
+        log.debug("partNumber: {}, comment: {}, includePrimary: {}, includeRelated: {}, states: {}, " +
+                "sortProperty: {}, sortOrder: {}, offset: {}, limit: {}", partNumber, comment, includePrimary,
+                includeRelated, states, sortProperty, sortOrder, offset, limit);
+        return searchService.filterSalesNotes(partNumber, comment, primaryPartId, states, includePrimary,
+                includeRelated, sortProperty, sortOrder, offset, limit);
     }
 
     @Async
