@@ -58,8 +58,8 @@ angular.module("ngMetaCrudApp").controller("SalesNoteListCtrl", ["$scope", "$log
         var offset = params.count() * (params.page() - 1);
         var limit = params.count();
         $scope.notesPromise = restService.filterSalesNotes($scope.search.partNumber, $scope.search.comment,
-          null, $scope.search.includePrimary, $scope.search.includeRelated, $scope.search.states,
-          sortProperty, sortOrder, offset, limit).then(
+          $scope.search.primaryPartId, $scope.search.includePrimary, $scope.search.includeRelated,
+          $scope.search.states, sortProperty, sortOrder, offset, limit).then(
           function(searchResults) {
             // Update the total and slice the result
             $defer.resolve(searchResults.hits.hits);
@@ -75,7 +75,7 @@ angular.module("ngMetaCrudApp").controller("SalesNoteListCtrl", ["$scope", "$log
     // Query Parameters
     $scope.search = {
       "partNumber": null,
-      "primaryPartId": $scope.partId,
+      "primaryPartId": $scope.primaryPartId, // $scope.primaryPartId is initialized in app.js.
       "includePrimary": true,
       "includeRelated": true,
       "states": [],

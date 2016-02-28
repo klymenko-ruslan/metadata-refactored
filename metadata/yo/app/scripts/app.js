@@ -79,7 +79,13 @@ angular.module("ngMetaCrudApp", ["ngRoute", "ngTable", "ui.bootstrap",
     // Part Sales Notes
     $routeProvider.when("/part/:id/sales_notes", {
       templateUrl: "views/part/sales_note/SalesNoteListByPart.html",
-      controller: "SalesNoteListCtrl"
+      controller: "SalesNoteListCtrl",
+      resolve: {
+        primaryPartId: ["$route", "restService", function($route, restService) {
+          // -1 below means that part has no any sales notes.
+          return restService.findPrimaryPartIdForThePart($route.current.pathParams.id) || -1;
+        }]
+      }
     });
     $routeProvider.when("/part/:id/sales_note/create", {
       templateUrl: "views/part/sales_note/SalesNoteCreate.html",

@@ -122,7 +122,7 @@ public class SearchController {
     @Secured("ROLE_SALES_NOTE_READ")
     @JsonView(View.DetailWithParts.class)
     @RequestMapping(value = "salesnotes", method = GET, produces = APPLICATION_JSON_VALUE)
-    public String searchWithParts(@RequestParam(name = "partNumber", required = false) String partNumber,
+    public String filterSalesNotes(@RequestParam(name = "partNumber", required = false) String partNumber,
                                   @RequestParam(name = "comment", required = false) String comment,
                                   @RequestParam(name = "primaryPartId", required = false) Long primaryPartId,
                                   @RequestParam("includePrimary") boolean includePrimary,
@@ -132,37 +132,52 @@ public class SearchController {
                                   @RequestParam("sortOrder") String sortOrder,
                                   @RequestParam("offset") int offset,
                                   @RequestParam("limit") int limit) {
-        log.debug("partNumber: {}, comment: {}, includePrimary: {}, includeRelated: {}, states: {}, " +
-                "sortProperty: {}, sortOrder: {}, offset: {}, limit: {}", partNumber, comment, includePrimary,
-                includeRelated, states, sortProperty, sortOrder, offset, limit);
+        log.info("partNumber: {}, comment: {}, primaryPartId: {}, includePrimary: {}, includeRelated: {}, " +
+                "states: {}, sortProperty: {}, sortOrder: {}, offset: {}, limit: {}", partNumber, comment,
+                primaryPartId, includePrimary, includeRelated, states, sortProperty, sortOrder, offset, limit);
         return searchService.filterSalesNotes(partNumber, comment, primaryPartId, states, includePrimary,
                 includeRelated, sortProperty, sortOrder, offset, limit);
     }
 
-    @Async
     @RequestMapping(value = "/index/{partId}")
     @ResponseBody
-    // TODO: @Secured("ROLE_ADMIN")
+    @Secured("ROLE_ADMIN")
     public void indexPart(@PathVariable("partId") Long partId) throws Exception {
-        searchService.indexPart(partId);
+        new Thread(() -> {
+            try {
+                searchService.indexPart(partId);
+            } catch (Exception e) {
+                log.error("Indexing of the part (ID: {}) failed.", partId);
+            }
+        });
     }
 
-    @Async
     @RequestMapping(value = "/part/indexAll")
     @ResponseBody
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    // TODO: @Secured("ROLE_ADMIN")
+    @Secured("ROLE_ADMIN")
     public void indexPartAll() throws Exception {
-        searchService.indexAllParts();
+        new Thread(() -> {
+            try {
+                searchService.indexAllParts();
+            } catch (Exception e) {
+                log.error("Indexing of all parts failed.");
+            }
+        });
     }
 
-    @Async
     @RequestMapping(value = "/application/indexAll")
     @ResponseBody
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    // TODO: @Secured("ROLE_ADMIN")
+    @Secured("ROLE_ADMIN")
     public void indexApplicationAll() throws Exception {
-        searchService.indexAllApplications();
+        new Thread(() -> {
+            try {
+                searchService.indexAllApplications();
+            } catch (Exception e) {
+                log.error("Indexing of applications failed.");
+            }
+        });
     }
 
     @Secured("ROLE_ADMIN")

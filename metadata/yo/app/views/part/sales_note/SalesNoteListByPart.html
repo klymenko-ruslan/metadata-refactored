@@ -53,9 +53,9 @@
         <td title="'Relation'" ng-class="{info:row._source.primary}" data-sortable="'primary'">
           {{row._source.primary ? "Primary" : "Related"}}
         </td>
-        <td class="text-right" title="'Actions'">
+        <td class="text-nowrap" title="'Actions'">
 
-          <a ng-href="/part/{{row._source.primaryPartId}}/sales_note/{{row._source.pk.salesNote.id}}" authorize="ROLE_SALES_NOTE_READ" class="btn btn-primary btn-sm pull-left">
+          <a ng-href="/part/{{row._source.primaryPartId}}/sales_note/{{row._source.pk.salesNote.id}}" authorize="ROLE_SALES_NOTE_READ" class="btn btn-primary btn-sm">
             <span class="fa fa-file-text-o"></span> View Note
           </a>
 

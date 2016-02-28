@@ -9,7 +9,7 @@ import com.turbointernational.metadata.domain.part.salesnote.dto.CreateSalesNote
 import com.turbointernational.metadata.domain.part.salesnote.dto.UpdateSalesNoteRequest;
 import com.turbointernational.metadata.domain.part.salesnote.exception.RemovePrimaryPartException;
 import com.turbointernational.metadata.domain.security.User;
-import com.turbointernational.metadata.services.SearchService;
+import com.turbointernational.metadata.services.SalesNoteService;
 import com.turbointernational.metadata.web.View;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -36,12 +36,16 @@ import java.util.Date;
 import static com.turbointernational.metadata.domain.part.salesnote.SalesNoteState.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
 @RequestMapping("/metadata/other/salesNote")
 public class SalesNoteController {
 
     private static final Logger log = LoggerFactory.getLogger(SalesNoteController.class);
+
+    @Autowired
+    private SalesNoteService salesNoteService;
 
     @Autowired
     private ChangelogDao changelogDao;
@@ -58,14 +62,19 @@ public class SalesNoteController {
     @Autowired
     private PartDao partDao;
 
-    @Autowired
-    private SearchService searchService;
-
     @Value("attachments.salesNote")
     private File attachmentDir;
 
+    @ResponseBody
+    @Transactional
+    @RequestMapping(value = "primarypartidforthepart", method = GET,
+                    produces = APPLICATION_JSON_VALUE)
+    public Long findPrimaryPartIdForThePart(@RequestParam(name = "partId") long partId) {
+        return salesNoteService.findPrimaryPartIdForThePart(partId);
+    }
+
     //<editor-fold defaultstate="collapsed" desc="CRUDS">
-    @RequestMapping(method = RequestMethod.POST,
+    @RequestMapping(method = POST,
                     consumes = APPLICATION_JSON_VALUE,
                     produces = APPLICATION_JSON_VALUE)
     @Secured("ROLE_SALES_NOTE_SUBMIT")
@@ -116,7 +125,7 @@ public class SalesNoteController {
     
     @ResponseBody
     @Transactional
-    @RequestMapping(value="{noteId}", method = RequestMethod.POST,
+    @RequestMapping(value="{noteId}", method = POST,
                     produces = APPLICATION_JSON_VALUE,
                     consumes = APPLICATION_JSON_VALUE)
     public void updateSalesNote(
@@ -160,7 +169,7 @@ public class SalesNoteController {
     //<editor-fold defaultstate="collapsed" desc="Related Parts">
     @ResponseBody
     @Transactional
-    @RequestMapping(value="{salesNoteId}/part/{partId}", method = RequestMethod.POST,
+    @RequestMapping(value="{salesNoteId}/part/{partId}", method = POST,
                     consumes = APPLICATION_JSON_VALUE,
                     produces = APPLICATION_JSON_VALUE)
     public void addRelatedPart(
@@ -251,7 +260,7 @@ public class SalesNoteController {
         }
     }
     
-    @RequestMapping(value="{salesNoteId}/attachment", method = RequestMethod.POST,
+    @RequestMapping(value="{salesNoteId}/attachment", method = POST,
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -321,7 +330,7 @@ public class SalesNoteController {
     //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="State changes">
-    @RequestMapping(value="{noteId}/submit", method = RequestMethod.POST,
+    @RequestMapping(value="{noteId}/submit", method = POST,
             produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     @Secured("ROLE_SALES_NOTE_SUBMIT")
@@ -339,7 +348,7 @@ public class SalesNoteController {
                 SalesNoteState.rejected);
     }
     
-    @RequestMapping(value="{noteId}/approve", method = RequestMethod.POST,
+    @RequestMapping(value="{noteId}/approve", method = POST,
             produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     @Secured("ROLE_SALES_NOTE_APPROVE")
@@ -353,7 +362,7 @@ public class SalesNoteController {
                 SalesNoteState.submitted);
     }
     
-    @RequestMapping(value="{noteId}/reject", method = RequestMethod.POST,
+    @RequestMapping(value="{noteId}/reject", method = POST,
             produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     @Secured("ROLE_SALES_NOTE_REJECT")
@@ -367,7 +376,7 @@ public class SalesNoteController {
                 SalesNoteState.approved);
     }
     
-    @RequestMapping(value="{noteId}/publish", method = RequestMethod.POST,
+    @RequestMapping(value="{noteId}/publish", method = POST,
             produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     @Secured("ROLE_SALES_NOTE_PUBLISH")
@@ -380,7 +389,7 @@ public class SalesNoteController {
                 SalesNoteState.approved);
     }
     
-    @RequestMapping(value="{noteId}/retract", method = RequestMethod.POST,
+    @RequestMapping(value="{noteId}/retract", method = POST,
             produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     @Secured("ROLE_SALES_NOTE_RETRACT")

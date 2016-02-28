@@ -413,5 +413,11 @@ angular.module("ngMetaCrudApp")
         });
       };
 
+      this.findPrimaryPartIdForThePart = function(id) {
+        return Restangular.one("other/salesNote/primarypartidforthepart").get({
+          "partId": id
+        });
+      };
+
     };
   });

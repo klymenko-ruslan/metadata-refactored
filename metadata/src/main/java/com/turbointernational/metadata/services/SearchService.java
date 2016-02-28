@@ -550,7 +550,10 @@ public class SearchService {
             boolQuery.must(QueryBuilders.termQuery("pk.salesNote.comment.short", normalizedComment));
         }
         if (primaryPartId != null) {
-            boolQuery.must(QueryBuilders.termQuery("primaryPartId", primaryPartId));
+            BoolQueryBuilder subBoolQuery = QueryBuilders.boolQuery();
+            subBoolQuery.should(QueryBuilders.termQuery("primaryPartId", primaryPartId));
+            subBoolQuery.should(QueryBuilders.termQuery("pk.id", primaryPartId));
+            boolQuery.must(subBoolQuery);
         }
         if (states != null && !states.isEmpty()) {
             BoolQueryBuilder subBoolQuery = QueryBuilders.boolQuery();
@@ -581,7 +584,7 @@ public class SearchService {
         if (limit != null) {
             srb.setSize(limit);
         }
-        log.debug("Search request (sales notes) to search engine:\n{}", srb);
+        log.info("Search request (sales notes) to search engine:\n{}", srb);
         return srb.execute().actionGet(timeout).toString();
     }
 
