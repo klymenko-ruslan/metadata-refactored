@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,10 +32,9 @@ public class Mas90SyncController {
     @RequestMapping(value = "/status", method = RequestMethod.GET)
     @ResponseBody
     @JsonView(View.Summary.class)
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_READ")
     public Mas90SyncService.SyncProcessStatus status() {
         Mas90SyncService.SyncProcessStatus retVal = mas90SyncService.status();
-        //log.info("Status: {}", retVal);
         return retVal;
     }
 
@@ -42,7 +42,7 @@ public class Mas90SyncController {
     @ResponseBody
     @Transactional
     @JsonView(View.Summary.class)
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_MAS90_SYNC")
     public Mas90SyncDao.Page history(@RequestParam(name = "start", required = true) int startPosition,
                                      @RequestParam(name = "max", required = true) int maxResults) {
         return mas90SyncService.history(startPosition, maxResults);
@@ -52,7 +52,7 @@ public class Mas90SyncController {
     @ResponseBody
     @Transactional
     @JsonView(View.Summary.class)
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_MAS90_SYNC")
     public Mas90SyncService.SyncProcessStatus start(Authentication principal) {
         User user = null;
         if (principal != null) {
