@@ -132,7 +132,7 @@ public class SearchController {
                                   @RequestParam("sortOrder") String sortOrder,
                                   @RequestParam("offset") int offset,
                                   @RequestParam("limit") int limit) {
-        log.info("partNumber: {}, comment: {}, primaryPartId: {}, includePrimary: {}, includeRelated: {}, " +
+        log.debug("partNumber: {}, comment: {}, primaryPartId: {}, includePrimary: {}, includeRelated: {}, " +
                 "states: {}, sortProperty: {}, sortOrder: {}, offset: {}, limit: {}", partNumber, comment,
                 primaryPartId, includePrimary, includeRelated, states, sortProperty, sortOrder, offset, limit);
         return searchService.filterSalesNotes(partNumber, comment, primaryPartId, states, includePrimary,

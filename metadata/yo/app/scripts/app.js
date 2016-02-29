@@ -157,7 +157,10 @@ angular.module("ngMetaCrudApp", ["ngRoute", "ngTable", "ui.bootstrap",
     // List All Sales Notes
     $routeProvider.when("/other/salesNotes", {
       templateUrl: "views/other/SalesNoteListAll.html",
-      controller: "SalesNoteListCtrl"
+      controller: "SalesNoteListCtrl",
+      resolve: {
+        primaryPartId: function() { return null; }
+      }
     });
 
     // Turbo Models
