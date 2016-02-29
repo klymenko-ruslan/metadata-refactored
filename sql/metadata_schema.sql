@@ -503,6 +503,14 @@ INSERT IGNORE INTO `role` (name, display) VALUES ('ROLE_BOM', 'Alter BOM.');
 INSERT IGNORE INTO `role` (name, display) VALUES ('ROLE_BOM_ALT', 'Alter BOM alternates.');
 INSERT IGNORE INTO `role` (name, display) VALUES ('ROLE_ADMIN', 'Superpowers.');
 INSERT IGNORE INTO `role` (name, display) VALUES ('ROLE_TURBO_MODEL_CRUD', 'CRUD operations turbo types and models.');
+INSERT IGNORE INTO `role` (name, display) VALUES ('ROLE_SALES_NOTE_READ', 'Read sales notes.');
+INSERT IGNORE INTO `role` (name, display) VALUES ('ROLE_SALES_NOTE_SUBMIT', 'Submit draft sales notes for approval.');
+INSERT IGNORE INTO `role` (name, display) VALUES ('ROLE_SALES_NOTE_APPROVE', 'Approve submitted sales notes.');
+INSERT IGNORE INTO `role` (name, display) VALUES ('ROLE_SALES_NOTE_REJECT', 'Reject submitted and approved sales notes.');
+INSERT IGNORE INTO `role` (name, display) VALUES ('ROLE_SALES_NOTE_RETRACT', 'Retract published sales notes.');
+INSERT IGNORE INTO `role` (name, display) VALUES ('ROLE_SALES_NOTE_PUBLISH', 'Publish approved sales notes.');
+INSERT IGNORE INTO `role` (name, display) VALUES ('ROLE_APPLICATION_CRUD', 'CRUD operations on applications.');
+INSERT IGNORE INTO `role` (name, display) VALUES ('ROLE_MAS90_SYNC', 'Start MAS90 synchronization process.');
 
 INSERT IGNORE INTO `groups` (name) VALUES ('Reader');
 INSERT IGNORE INTO `groups` (name) VALUES ('Writer');
@@ -519,16 +527,33 @@ INSERT IGNORE INTO `group_role` (group_id, role_id) VALUES
   ((SELECT id FROM groups WHERE `name` = 'Writer'), (SELECT id FROM role WHERE `name` = 'ROLE_PART_IMAGES')),
   ((SELECT id FROM groups WHERE `name` = 'Writer'), (SELECT id FROM role WHERE `name` = 'ROLE_READ')),
   ((SELECT id FROM groups WHERE `name` = 'Writer'), (SELECT id FROM role WHERE `name` = 'ROLE_TURBO_MODEL_CRUD')),
+  ((SELECT id FROM groups WHERE `name` = 'Reader'), (SELECT id FROM role WHERE `name` = 'ROLE_SALES_NOTE_READ')),
+  ((SELECT id FROM groups WHERE `name` = 'Writer'), (SELECT id FROM role WHERE `name` = 'ROLE_SALES_NOTE_READ')),
+  ((SELECT id FROM groups WHERE `name` = 'Writer'), (SELECT id FROM role WHERE `name` = 'ROLE_SALES_NOTE_SUBMIT')),
+  ((SELECT id FROM groups WHERE `name` = 'Writer'), (SELECT id FROM role WHERE `name` = 'ROLE_SALES_NOTE_APPROVE')),
+  ((SELECT id FROM groups WHERE `name` = 'Writer'), (SELECT id FROM role WHERE `name` = 'ROLE_SALES_NOTE_REJECT')),
+  ((SELECT id FROM groups WHERE `name` = 'Writer'), (SELECT id FROM role WHERE `name` = 'ROLE_SALES_NOTE_RETRACT')),
+  ((SELECT id FROM groups WHERE `name` = 'Writer'), (SELECT id FROM role WHERE `name` = 'ROLE_SALES_NOTE_PUBLISH')),
+  ((SELECT id FROM groups WHERE `name` = 'Writer'), (SELECT id FROM role WHERE `name` = 'ROLE_APPLICATION_CRUD')),
+  ((SELECT id FROM groups WHERE `name` = 'Writer'), (SELECT id FROM role WHERE `name` = 'ROLE_MAS90_SYNC')),
   ((SELECT id FROM groups WHERE `name` = 'Admin'),  (SELECT id FROM role WHERE `name` = 'ROLE_ADMIN')),
-  ((SELECT id FROM groups WHERE `name` = 'Admin'),  (SELECT id FROM role WHERE `name` = 'ROLE_BOM')),
+  ((SELECT id FROM groups WHERE `name` = 'Admin'),  (SELECT id FROM role WHERE `name` = 'ROLE_READ')),
   ((SELECT id FROM groups WHERE `name` = 'Admin'),  (SELECT id FROM role WHERE `name` = 'ROLE_BOM_ALT')),
+  ((SELECT id FROM groups WHERE `name` = 'Admin'),  (SELECT id FROM role WHERE `name` = 'ROLE_BOM')),
   ((SELECT id FROM groups WHERE `name` = 'Admin'),  (SELECT id FROM role WHERE `name` = 'ROLE_CREATE_PART')),
   ((SELECT id FROM groups WHERE `name` = 'Admin'),  (SELECT id FROM role WHERE `name` = 'ROLE_ALTER_PART')),
   ((SELECT id FROM groups WHERE `name` = 'Admin'),  (SELECT id FROM role WHERE `name` = 'ROLE_DELETE_PART')),
   ((SELECT id FROM groups WHERE `name` = 'Admin'),  (SELECT id FROM role WHERE `name` = 'ROLE_INTERCHANGE')),
   ((SELECT id FROM groups WHERE `name` = 'Admin'),  (SELECT id FROM role WHERE `name` = 'ROLE_PART_IMAGES')),
-  ((SELECT id FROM groups WHERE `name` = 'Admin'),  (SELECT id FROM role WHERE `name` = 'ROLE_READ')),
-  ((SELECT id FROM groups WHERE `name` = 'Writer'), (SELECT id FROM role WHERE `name` = 'ROLE_TURBO_MODEL_CRUD'));
+  ((SELECT id FROM groups WHERE `name` = 'Admin'),  (SELECT id FROM role WHERE `name` = 'ROLE_TURBO_MODEL_CRUD')),
+  ((SELECT id FROM groups WHERE `name` = 'Admin'),  (SELECT id FROM role WHERE `name` = 'ROLE_SALES_NOTE_READ')),
+  ((SELECT id FROM groups WHERE `name` = 'Admin'),  (SELECT id FROM role WHERE `name` = 'ROLE_SALES_NOTE_SUBMIT')),
+  ((SELECT id FROM groups WHERE `name` = 'Admin'),  (SELECT id FROM role WHERE `name` = 'ROLE_SALES_NOTE_APPROVE')),
+  ((SELECT id FROM groups WHERE `name` = 'Admin'),  (SELECT id FROM role WHERE `name` = 'ROLE_SALES_NOTE_REJECT')),
+  ((SELECT id FROM groups WHERE `name` = 'Admin'),  (SELECT id FROM role WHERE `name` = 'ROLE_SALES_NOTE_RETRACT')),
+  ((SELECT id FROM groups WHERE `name` = 'Admin'),  (SELECT id FROM role WHERE `name` = 'ROLE_SALES_NOTE_PUBLISH')),
+  ((SELECT id FROM groups WHERE `name` = 'Admin'),  (SELECT id FROM role WHERE `name` = 'ROLE_APPLICATION_CRUD')),
+  ((SELECT id FROM groups WHERE `name` = 'Admin'),  (SELECT id FROM role WHERE `name` = 'ROLE_MAS90_SYNC'));
 
 CREATE TABLE `changelog` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
