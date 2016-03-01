@@ -6,8 +6,6 @@ angular.module("ngMetaCrudApp").controller("SalesNoteListCtrl", ["$scope", "$log
   function(
     $scope, $log, $routeParams, ngTableParams, restService, Restangular, SalesNotes, primaryPartId) {
 
-$log.log("primaryPartId: " + primaryPartId);
-
     $scope.states = {
       "current": {
         "draft": true,
