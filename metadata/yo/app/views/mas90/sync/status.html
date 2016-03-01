@@ -2,20 +2,26 @@
 
 <div class="row">
 
-  <div ng-hide="phase != 0">
-    <div class="col-xs-1">
-      <button ng-click="startSync()" class="btn btn-primary btn-lg active" data-ng-disabled="{{::!hasRole('ROLE_MAS90_SYNC')}}">
-        <i class="fa fa-flag"></i> Start
-      </button>
-    </div>
-    <div class="col-xs-11">
-      <span style="padding-left:1em;">Start synchronization process between ERP (<i>MAS90</i>) and local database ('metadata').</span>
-      <br data-ng-if="{{::!hasRole('ROLE_MAS90_SYNC')}}" />
-      <span class="text-info" style="padding-left:1em;" data-ng-if="{{::!hasRole('ROLE_MAS90_SYNC')}}">
-        <small>(You have no enough permission to start the process.)</small>
-      </span>
+  <div class="col-xs-12" ng-hide="phase != 0">
+    <div class="row">
+      <div class="col-xs-12 col-sm-11 col-sm-push-1" style="padding-left:3em;">
+        <div class="row">
+          <p class="col-xs-12">Start synchronization process between ERP (<i>MAS90</i>) and local database ('metadata').</p>
+        </div>
+        <div class="row" ng-hide="{{::hasRole('ROLE_MAS90_SYNC')}}">
+          <p class="col-xs-12 text-info">
+            <small>(You have no enough permissions to start the process.)</small>
+          </p>
+        </div>
+      </div>
+      <div class="col-xs-12 col-sm-1 col-sm-pull-11">
+        <button ng-click="startSync()" role="button" class="btn btn-primary btn-lg active" data-ng-disabled="{{::!hasRole('ROLE_MAS90_SYNC')}}">
+          <i class="fa fa-flag"></i> Start
+        </button>
+      </div>
     </div>
   </div>
+
   <div class="modal-dialog" ng-hide="phase == 0 && finished">
     <div class="modal-content">
       <div class="modal-header">
