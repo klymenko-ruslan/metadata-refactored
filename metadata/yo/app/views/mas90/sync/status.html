@@ -8,14 +8,14 @@
         <div class="row">
           <p class="col-xs-12">Start synchronization process between ERP (<i>MAS90</i>) and local database ('metadata').</p>
         </div>
-        <div class="row" ng-hide="{{::hasRole('ROLE_MAS90_SYNC')}}">
+        <div class="row" ng-hide="::hasRole('ROLE_MAS90_SYNC')">
           <p class="col-xs-12 text-info">
             <small>(You have no enough permissions to start the process.)</small>
           </p>
         </div>
       </div>
       <div class="col-xs-12 col-sm-1 col-sm-pull-11">
-        <button ng-click="startSync()" role="button" class="btn btn-primary btn-lg active" data-ng-disabled="{{::!hasRole('ROLE_MAS90_SYNC')}}">
+        <button ng-click="startSync()" role="button" class="btn btn-primary btn-lg active" data-ng-disabled="::!hasRole('ROLE_MAS90_SYNC')">
           <i class="fa fa-flag"></i> Start
         </button>
       </div>
@@ -41,7 +41,7 @@
               <span style="padding-left:3em;">Inserted: <span>{{partsUpdateInserts | number:0}}</span></span>
               <span style="padding-left:3em;">Failures: <span ng-class="{'text-danger': partsUpdateSkipped}">{{partsUpdateSkipped | number:0}}</span></span>
             </div>
-            <uib-progressbar type="{{getProgressBarType()}}" max="partsUpdateTotalSteps" value="partsUpdateCurrentStep" ng-class="{'progress-striped active': !finished}">
+            <uib-progressbar type="getProgressBarType()" max="partsUpdateTotalSteps" value="partsUpdateCurrentStep" ng-class="{'progress-striped active': !finished}">
               <span style="color:#333; white-space:nowrap;">{{partsUpdateCurrentStep}} / {{partsUpdateTotalSteps}}</span>
             </uib-progressbar>
           </div>
@@ -71,7 +71,7 @@
 
 </div>
 
-<div class="row" style="margin-top:3em;" ng-if="{{::hasRole('ROLE_MAS90_SYNC')}}">
+<div class="row" style="margin-top:3em;" data-ng-if="::hasRole('ROLE_MAS90_SYNC')">
 
   <h2>History of synchronization sessions</h2>
 
