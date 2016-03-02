@@ -2,8 +2,10 @@
 
 angular.module("ngMetaCrudApp")
   .controller("SalesNoteDetailCtrl", ["$log", "$routeParams", "$parse", "$scope",
-    "ngTableParams", "SalesNotes", "restService", "part", "salesNote",
-    function($log, $routeParams, $parse, $scope, ngTableParams, SalesNotes, restService, part, salesNote) {
+    "ngTableParams", "SalesNotes", "utils", "restService", "part", "salesNote",
+    function($log, $routeParams, $parse, $scope, ngTableParams, SalesNotes, utils, restService, part, salesNote) {
+      $scope.part = part;
+      $scope.salesNote = salesNote;
       $scope.salesNoteId = $routeParams.salesNoteId;
       $scope.SalesNotes = SalesNotes;
       $scope.editedSalesNote = {};
@@ -18,7 +20,7 @@ angular.module("ngMetaCrudApp")
         count: 10,
         sorting: {}
       }, {
-        getData: localPagination(salesNote.attachments, "createDate");
+        getData: utils.localPagination(salesNote.attachments, "createDate")
       });
 
       // Related Part Table
@@ -27,7 +29,7 @@ angular.module("ngMetaCrudApp")
         count: 10,
         sorting: {}
       }, {
-        getData: localPagination(salesNote.parts, "part.manufacturerPartNumber");
+        getData: utils.localPagination(salesNote.parts, "part.manufacturerPartNumber")
       });
 
       // Editing flag
