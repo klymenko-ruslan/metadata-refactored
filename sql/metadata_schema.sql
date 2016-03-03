@@ -655,7 +655,7 @@ CREATE TABLE `mas90sync` (
   `inserted` bigint(20) DEFAULT '0' COMMENT 'Number of inserts.',
   `skipped` bigint(20) DEFAULT '0' COMMENT 'Number of skipped items.',
   `user_id` bigint(20) DEFAULT NULL COMMENT 'Ref. to an user who initiated the sync.process. NULL -- the process started by scheduler.',
-  `status` enum('IN_PROGRESS','CANCELLED','FINISHED') NOT NULL COMMENT 'Status of the sync.process.',
+  `status` enum('IN_PROGRESS','CANCELLED','FINISHED', 'FAILED') NOT NULL COMMENT 'Status of the sync.process.',
   PRIMARY KEY (`id`),
   KEY `usrid_fk` (`user_id`),
   CONSTRAINT `usrid_fk` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)

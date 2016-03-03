@@ -28,6 +28,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
@@ -72,8 +73,6 @@ public class Mas90SyncService {
 
     private JdbcTemplate mas90db;
 
-    private JdbcTemplate metadatadb;
-
     private Mas90Synchronizer syncProcess;
 
     private SyncProcessStatus syncProcessStatus;
@@ -81,7 +80,6 @@ public class Mas90SyncService {
     @PostConstruct
     public void init() {
         mas90db = new JdbcTemplate(dataSourceMas90);
-        metadatadb = new JdbcTemplate(dataSource);
         syncProcessStatus = new SyncProcessStatus();
         syncProcess = null;
     }
@@ -599,13 +597,15 @@ public class Mas90SyncService {
                 );
                 // Load part in this transaction (Entity Manager context).
                 Part part = partDao.getEntityManager().find(Part.class, partId);
-                assert part != null : "Internal error. Part not found: " + partId;
+                if (part == null) {
+                    throw new AssertionError("Internal error. Part not found: " + partId);
+                }
                 Manufacturer manufacturer = part.getManufacturer();
-                assert manufacturer != null : "Manufacturer for the part " + partId + " not found.";
-                Long manufacturerId = part.getId();
-                assert manufacturerId != null : "Nullable manufacturer ID.";
-                assert manufacturerId == TURBO_INTERNATIONAL_MANUFACTURER_ID :
-                    String.format("Part (id=%d) from unexpected manufacturer (id=%d).", partId, manufacturerId);
+                Long manufacturerId = manufacturer.getId();
+                if(manufacturerId != TURBO_INTERNATIONAL_MANUFACTURER_ID) {
+                    throw new AssertionError(String.format("Part (id=%d) from unexpected manufacturer (id=%d).",
+                            partId, manufacturerId));
+                }
                 Set<BOMItem> boms = part.getBom();
 
                 // Merge BOMs.
