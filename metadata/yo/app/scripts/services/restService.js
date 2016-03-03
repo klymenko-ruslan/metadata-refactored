@@ -419,5 +419,13 @@ angular.module("ngMetaCrudApp")
         });
       };
 
+      this.findSalesNote = function(id) {
+        return Restangular.one("other/salesNote", id).get();
+      };
+
+      this.updateSalesNote = function(id, comment) {
+        return Restangular.one("other/salesNote").post(id, { "comment": comment });
+      };
+
     };
   });
