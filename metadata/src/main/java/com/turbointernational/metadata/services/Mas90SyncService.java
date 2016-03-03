@@ -302,7 +302,8 @@ public class Mas90SyncService {
         @Override
         public void run() {
             TransactionTemplate transaction = new TransactionTemplate(txManager);
-            transaction.execute((TransactionCallback<Void>) transactionStatus -> {
+            transaction.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW); // new transaction
+            Mas90Sync.Status status = transaction.execute(transactionStatus -> {
                 log.info("Started synchronization with MAS90.");
                 long numItems = mas90db.queryForObject("select count(*) " +
                         " from ci_item as im join productLine_to_parttype_value as t2 " +
@@ -370,8 +371,14 @@ public class Mas90SyncService {
                     }
                     log.error("Synchronization with MAS90 failed." , e);
                     transactionStatus.setRollbackOnly();
-                    return null;
+                    return Mas90Sync.Status.FAILED;
                 }
+                return Mas90Sync.Status.FINISHED;
+            });
+            // Save to a history table a result of this synchronization.
+            TransactionTemplate transaction2 = new TransactionTemplate(txManager);
+            transaction2.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW); // new transaction
+            transaction2.execute((TransactionCallback<Void>) transactionStatus -> {
                 long total, updated, inserted, skipped;
                 synchronized (syncProcessStatus) {
                     total = syncProcessStatus.getPartsUpdateTotalSteps();
@@ -380,7 +387,7 @@ public class Mas90SyncService {
                     skipped = syncProcessStatus.getPartsUpdateSkipped();
                     syncProcessStatus.setFinished(true);
                 }
-                record.setStatus(Mas90Sync.Status.FINISHED);
+                record.setStatus(status);
                 record.setFinished(new Timestamp(System.currentTimeMillis()));
                 record.setToProcess(total);
                 record.setUpdated(updated);
@@ -388,10 +395,9 @@ public class Mas90SyncService {
                 record.setSkipped(skipped);
                 mas90SyncDao.merge(record);
                 partDao.rebuildBomDescendancy(); // Ticket #592.
-                log.info("Finish synchronization with MAS90.");
                 return null;
             });
-
+            log.info("Synchronization with MAS90 finished.");
         }
 
         /**

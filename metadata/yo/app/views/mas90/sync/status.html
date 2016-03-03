@@ -85,7 +85,7 @@
         <td title="'Inserted'" class="text-right">{{rec.inserted | number:0}}</td>
         <td title="'Failures'" class="text-right">{{rec.skipped | number:0}}</td>
         <td title="'Started By'"><a ng-href="security/user/{{rec.user.id}}">{{rec.user.name}}</a></td>
-        <td title="'Status'" class="text-center">{{rec.status}}</td>
+        <td title="'Status'" ng-class="['text-center', {'active': rec.status=='IN_PROGRESS', 'warning': rec.status=='CANCELLED', 'sussess': rec.status=='FINISHED', 'danger': rec.status=='FAILED'}]">{{rec.status}}</td>
       </tr>
       <tr ng-hide="$data.length > 0">
         <td colspan="8">No records to display.</td>

@@ -19,7 +19,7 @@ public class Mas90Sync implements Serializable {
     /**
      * Status of the sync.process.
      */
-    public enum Status {IN_PROGRESS, CANCELLED, FINISHED};
+    public enum Status {IN_PROGRESS, CANCELLED, FINISHED, FAILED};
 
     //<editor-fold defaultstate="collapsed" desc="Properties">
     @Id
@@ -158,20 +158,3 @@ public class Mas90Sync implements Serializable {
     }
 
 }
-
-/*
-create table mas90sync(
-    id bigint(20) not null auto_increment,
-    started timestamp not null comment 'When the sync.process started.',
-    finished timestamp comment 'When the sync.process finished.',
-    to_process bigint(20) default 0 comment 'Total number of records to process.',
-    updated bigint(20) default 0 comment 'Number of updates.',
-    inserted bigint(20) default 0 comment 'Number of inserts.',
-    skipped bigint(20) default 0 comment 'Number of skipped items.',
-    user_id bigint(20) default null comment 'Ref. to an user who initiated the sync.process. NULL -- the process started by scheduler.',
-    status enum('IN_PROGRESS', 'CANCELLED', 'FINISHED') not null comment 'Status of the sync.process.',
-    primary key (id),
-    constraint usrid_fk foreign key (user_id) references user(id)
-) engine=InnoDB auto_increment=1000 default charset=utf8 comment 'History of the syncronizations with MAS90.';
-
- */
