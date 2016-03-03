@@ -70,7 +70,7 @@ public class Mas90SyncService {
     @Autowired
     private DataSource dataSource;     // connections to MYSQL (metadata)
 
-    private JdbcTemplate mssqldb;
+    private JdbcTemplate mas90db;
 
     private JdbcTemplate metadatadb;
 
@@ -80,7 +80,7 @@ public class Mas90SyncService {
 
     @PostConstruct
     public void init() {
-        mssqldb = new JdbcTemplate(dataSourceMas90);
+        mas90db = new JdbcTemplate(dataSourceMas90);
         metadatadb = new JdbcTemplate(dataSource);
         syncProcessStatus = new SyncProcessStatus();
         syncProcess = null;
@@ -304,7 +304,7 @@ public class Mas90SyncService {
             TransactionTemplate transaction = new TransactionTemplate(txManager);
             transaction.execute((TransactionCallback<Void>) transactionStatus -> {
                 log.info("Started synchronization with MAS90.");
-                long numItems = mssqldb.queryForObject("select count(*) " +
+                long numItems = mas90db.queryForObject("select count(*) " +
                         " from ci_item as im join productLine_to_parttype_value as t2 " +
                         " on im.productline = t2.productLineCode where " +
                         " im.itemcode like '[0-9]-[a-z]-[0-6][0-9][0-9][0-9]' or " +
@@ -317,7 +317,7 @@ public class Mas90SyncService {
                     syncProcessStatus.incPartsUpdateCurrentStep();
                 }
                 try {
-                    mssqldb.query("select itemcode, itemcodedesc, productline, producttype  " +
+                    mas90db.query("select itemcode, itemcodedesc, productline, producttype  " +
                             " from ci_item as im join productLine_to_parttype_value as t2 " +
                             " on im.productline = t2.productLineCode where " +
                             " itemcode like '[0-9]-[a-z]-[0-6][0-9][0-9][0-9]' or " +
@@ -331,7 +331,7 @@ public class Mas90SyncService {
                             Long partTypeId = mas90toLocal.get(productline);
                             if (partTypeId != null) {
                                 processedPart = processPart(itemcode, itemcodedesc, producttype, partTypeId); // separate transaction
-                                if (processedPart != null) {
+                                if (processedPart != null) { // null -- failure
                                     Boolean updated = processBOM(processedPart.getId(), processedPart.getManufacturerPartNumber()); // separate transaction
                                     if (updated == Boolean.TRUE) {
                                         synchronized (syncProcessStatus) {
@@ -381,6 +381,7 @@ public class Mas90SyncService {
                     syncProcessStatus.setFinished(true);
                 }
                 record.setStatus(Mas90Sync.Status.FINISHED);
+                record.setFinished(new Timestamp(System.currentTimeMillis()));
                 record.setToProcess(total);
                 record.setUpdated(updated);
                 record.setInserted(inserted);
@@ -402,7 +403,7 @@ public class Mas90SyncService {
          */
         private Map<String, Long> loadPartTypesMap() {
             Map<String, Long> retVal = new HashMap<>(30);
-            mssqldb.query("select ProductLineCode, part_type_value from productLine_to_parttype_value", rs -> {
+            mas90db.query("select ProductLineCode, part_type_value from productLine_to_parttype_value", rs -> {
                 String productLineCode = rs.getString(1);
                 String partTypeValue = rs.getString(2);
                 PartType pt = partTypeDao.findPartTypeByValue(partTypeValue);
@@ -573,7 +574,7 @@ public class Mas90SyncService {
             TransactionTemplate tt = new TransactionTemplate(txManager);
             tt.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW); // new transaction
             Boolean updated = tt.execute(ts -> {
-                List<Mas90Bom> mas90boms = mssqldb.query(
+                List<Mas90Bom> mas90boms = mas90db.query(
                         "select bd.componentitemcode, bd.quantityperbill " +
                         "from " +
                         "   bm_billdetail as bd join ( " +
