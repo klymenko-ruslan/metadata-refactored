@@ -1,12 +1,12 @@
 <metanav>
   <li authorize="ROLE_READ">
-    <a ng-href="/part/{{ partId }}"
+    <a ng-href="/part/{{::part.id}}"
        class="btn btn-primary">
       <i class="fa fa-eye"></i> View Part
     </a>
   </li>
   <li authorize="ROLE_SALES_NOTE_READ">
-    <a ng-href="/part/{{partId}}/sales_notes"
+    <a ng-href="/part/{{::part.id}}/sales_notes"
        class="btn btn-info">
       <i class="fa fa-book"></i> Sales Notes &hellip;
     </a>
