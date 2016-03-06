@@ -6,6 +6,7 @@ import com.turbointernational.metadata.domain.part.InterchangeDao;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.part.PartDao;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,12 +17,14 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.jdbc.SqlGroup;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.jdbc.JdbcTestUtils;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
-import javax.transaction.Transactional;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -33,11 +36,14 @@ import java.util.Set;
 @SpringApplicationConfiguration(classes = Application.class)
 @WebIntegrationTest
 @ActiveProfiles("integration")
+@SqlConfig(dataSource = "dataSource", transactionManager = "transactionManager", transactionMode = SqlConfig.TransactionMode.ISOLATED)
 public class InterchangeServiceTest {
 
     @Qualifier("dataSource")
     @Autowired
     private DataSource dataSource;
+
+    private JdbcTemplate jdbcTemplate;
 
     @Autowired
     private InterchangeService interchangeService;
@@ -47,6 +53,11 @@ public class InterchangeServiceTest {
 
     @Autowired
     private InterchangeDao interchangeDao;
+
+    @Before
+    public void setUp() {
+        this.jdbcTemplate = new JdbcTemplate(dataSource);
+    }
 
     /**
      * Test removing a part from interchangeable group when this part is an only member of the group.
@@ -74,21 +85,21 @@ public class InterchangeServiceTest {
     @Transactional
     public void testLeaveInterchangeableGroup_0() {
         // Check prerequisites before testing.
-        int chlogCount = JdbcTestUtils.countRowsInTable(new JdbcTemplate(dataSource), "changelog");
+        int chlogCount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "changelog");
         Assert.assertEquals("Table 'changelog' contains unexpected data.", 0, chlogCount);
         long partId = 42077L;
         interchangeService.leaveInterchangeableGroup(partId);
         partDao.getEntityManager().flush(); // Important: propagate changes to the database
-        int ihcount = JdbcTestUtils.countRowsInTable(new JdbcTemplate(dataSource), "interchange_header");
+        int ihcount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "interchange_header");
         Assert.assertEquals("Unexpected number of rows in the table 'interchange_header'.", 1, ihcount);
-        int iicount = JdbcTestUtils.countRowsInTable(new JdbcTemplate(dataSource), "interchange_item");
+        int iicount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "interchange_item");
         Assert.assertEquals("Unexpected number of rows in the table 'interchange_item'.", 1, iicount);
         Part part = partDao.findOne(partId);
         Interchange interchange = part.getInterchange();
         Assert.assertNotNull("Absent a record in the 'interchange_header' table.", interchange);
         Assert.assertEquals("A new interchangeable group has been created.", 5L, (long) interchange.getId());
         // Check that record to the 'changelog' was inserted.
-        chlogCount = JdbcTestUtils.countRowsInTable(new JdbcTemplate(dataSource), "changelog");
+        chlogCount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "changelog");
         Assert.assertEquals("Added record(s) to the table 'changelog'.", 0, chlogCount);
     }
 
@@ -120,15 +131,15 @@ public class InterchangeServiceTest {
     @WithUserDetails("mock@gmail.com")
     public void testLeaveInterchangeableGroup_1() {
         // Check prerequisites before testing.
-        int chlogCount = JdbcTestUtils.countRowsInTable(new JdbcTemplate(dataSource), "changelog");
+        int chlogCount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "changelog");
         Assert.assertEquals("Table 'changelog' contains unexpected data.", 0, chlogCount);
         // The test.
         long partId0 = 42077L, partId1 = 41405;
         interchangeService.leaveInterchangeableGroup(partId0);
         partDao.getEntityManager().flush(); // Important: propagate changes to the database
-        int ihcount = JdbcTestUtils.countRowsInTable(new JdbcTemplate(dataSource), "interchange_header");
+        int ihcount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "interchange_header");
         Assert.assertEquals("Unexpected number of rows in the table 'interchange_header'.", 2, ihcount);
-        int iicount = JdbcTestUtils.countRowsInTable(new JdbcTemplate(dataSource), "interchange_item");
+        int iicount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "interchange_item");
         Assert.assertEquals("Unexpected number of rows in the table 'interchange_item'.", 2, iicount);
         // This part should be moved to a new group.
         Part part0 = partDao.findOne(partId0);
@@ -141,7 +152,7 @@ public class InterchangeServiceTest {
         Assert.assertNotNull("The part does not belong to any interchangeable's group.", interchange1);
         Assert.assertEquals("The part migrated to other group.", 5L, (long) interchange1.getId());
         // Check that record to the 'changelog' was inserted.
-        chlogCount = JdbcTestUtils.countRowsInTable(new JdbcTemplate(dataSource), "changelog");
+        chlogCount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "changelog");
         Assert.assertEquals("Table 'changelog' has no record about last changes.", 1, chlogCount);
     }
 
@@ -174,19 +185,19 @@ public class InterchangeServiceTest {
     @WithUserDetails("mock@gmail.com")
     public void testMergePickedAloneToPart() {
         // Check prerequisites before testing.
-        int chlogCount = JdbcTestUtils.countRowsInTable(new JdbcTemplate(dataSource), "changelog");
+        int chlogCount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "changelog");
         Assert.assertEquals("Table 'changelog' contains unexpected data.", 0, chlogCount);
-        int ihcount = JdbcTestUtils.countRowsInTable(new JdbcTemplate(dataSource), "interchange_header");
+        int ihcount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "interchange_header");
         Assert.assertEquals("Unexpected number of rows in the table 'interchange_header'.", 2, ihcount);
-        int iicount = JdbcTestUtils.countRowsInTable(new JdbcTemplate(dataSource), "interchange_item");
+        int iicount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "interchange_item");
         Assert.assertEquals("Unexpected number of rows in the table 'interchange_item'.", 5, iicount);
         // The test.
         long pickedPartId = 40393L, partId = 41405L;
         interchangeService.mergePickedAloneToPart(partId, pickedPartId);
         partDao.getEntityManager().flush(); // Important: propagate changes to the database
-        ihcount = JdbcTestUtils.countRowsInTable(new JdbcTemplate(dataSource), "interchange_header");
+        ihcount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "interchange_header");
         Assert.assertEquals("Unexpected number of rows in the table 'interchange_header'.", 2, ihcount);
-        iicount = JdbcTestUtils.countRowsInTable(new JdbcTemplate(dataSource), "interchange_item");
+        iicount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "interchange_item");
         Assert.assertEquals("Unexpected number of rows in the table 'interchange_item'.", 5, iicount);
         Part part = partDao.findOne(partId);
         Part pickedPart = partDao.findOne(pickedPartId);
@@ -205,7 +216,7 @@ public class InterchangeServiceTest {
             p -> Assert.assertTrue("Found unexpected part in the source group.", expectedSrcGroup.contains(p.getId()))
         );
         // Check that record to the 'changelog' was inserted.
-        chlogCount = JdbcTestUtils.countRowsInTable(new JdbcTemplate(dataSource), "changelog");
+        chlogCount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "changelog");
         Assert.assertEquals("Table 'changelog' has no record about last changes.", 1, chlogCount);
     }
 
@@ -223,19 +234,19 @@ public class InterchangeServiceTest {
     @WithUserDetails("mock@gmail.com")
     public void testMergePartAloneToPicked() {
         // Check prerequisites before testing.
-        int chlogCount = JdbcTestUtils.countRowsInTable(new JdbcTemplate(dataSource), "changelog");
+        int chlogCount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "changelog");
         Assert.assertEquals("Table 'changelog' contains unexpected data.", 0, chlogCount);
-        int ihcount = JdbcTestUtils.countRowsInTable(new JdbcTemplate(dataSource), "interchange_header");
+        int ihcount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "interchange_header");
         Assert.assertEquals("Unexpected number of rows in the table 'interchange_header'.", 2, ihcount);
-        int iicount = JdbcTestUtils.countRowsInTable(new JdbcTemplate(dataSource), "interchange_item");
+        int iicount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "interchange_item");
         Assert.assertEquals("Unexpected number of rows in the table 'interchange_item'.", 5, iicount);
         // The test.
         long pickedPartId = 40393L, partId = 41405L;
         interchangeService.mergePartAloneToPicked(partId, pickedPartId);
         partDao.getEntityManager().flush(); // Important: propagate changes to the database
-        ihcount = JdbcTestUtils.countRowsInTable(new JdbcTemplate(dataSource), "interchange_header");
+        ihcount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "interchange_header");
         Assert.assertEquals("Unexpected number of rows in the table 'interchange_header'.", 2, ihcount);
-        iicount = JdbcTestUtils.countRowsInTable(new JdbcTemplate(dataSource), "interchange_item");
+        iicount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "interchange_item");
         Assert.assertEquals("Unexpected number of rows in the table 'interchange_item'.", 5, iicount);
         Part part = partDao.findOne(partId);
         Part pickedPart = partDao.findOne(pickedPartId);
@@ -254,7 +265,7 @@ public class InterchangeServiceTest {
             p -> Assert.assertTrue("Found unexpected part in the source group.", expectedSrcGroup.contains(p.getId()))
         );
         // Check that record to the 'changelog' was inserted.
-        chlogCount = JdbcTestUtils.countRowsInTable(new JdbcTemplate(dataSource), "changelog");
+        chlogCount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "changelog");
         Assert.assertEquals("Table 'changelog' has no record about last changes.", 1, chlogCount);
     }
 
@@ -289,19 +300,19 @@ public class InterchangeServiceTest {
     @WithUserDetails("mock@gmail.com")
     public void testMergePickedAllToPart() {
         // Check prerequisites before testing.
-        int chlogCount = JdbcTestUtils.countRowsInTable(new JdbcTemplate(dataSource), "changelog");
+        int chlogCount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "changelog");
         Assert.assertEquals("Table 'changelog' contains unexpected data.", 0, chlogCount);
-        int ihcount = JdbcTestUtils.countRowsInTable(new JdbcTemplate(dataSource), "interchange_header");
+        int ihcount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "interchange_header");
         Assert.assertEquals("Unexpected number of rows in the table 'interchange_header'.", 2, ihcount);
-        int iicount = JdbcTestUtils.countRowsInTable(new JdbcTemplate(dataSource), "interchange_item");
+        int iicount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "interchange_item");
         Assert.assertEquals("Unexpected number of rows in the table 'interchange_item'.", 5, iicount);
         // The test.
         long pickedPartId = 40393L, partId = 41405L;
         interchangeService.mergePickedAllToPart(partId, pickedPartId);
         partDao.getEntityManager().flush(); // Important: propagate changes to the database
-        ihcount = JdbcTestUtils.countRowsInTable(new JdbcTemplate(dataSource), "interchange_header");
+        ihcount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "interchange_header");
         Assert.assertEquals("Unexpected number of rows in the table 'interchange_header'.", 1, ihcount);
-        iicount = JdbcTestUtils.countRowsInTable(new JdbcTemplate(dataSource), "interchange_item");
+        iicount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "interchange_item");
         Assert.assertEquals("Unexpected number of rows in the table 'interchange_item'.", 5, iicount);
         Part part = partDao.findOne(partId);
         Part pickedPart = partDao.findOne(pickedPartId);
@@ -314,7 +325,7 @@ public class InterchangeServiceTest {
             p -> Assert.assertTrue("Found unexpected part in the target group.", expectedDstGroup.contains(p.getId()))
         );
         // Check that record to the 'changelog' was inserted.
-        chlogCount = JdbcTestUtils.countRowsInTable(new JdbcTemplate(dataSource), "changelog");
+        chlogCount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "changelog");
         Assert.assertEquals("Table 'changelog' has no record about last changes.", 1, chlogCount);
     }
 

@@ -48,8 +48,13 @@ public class Mas90SyncService {
 
     private final static long TURBO_INTERNATIONAL_MANUFACTURER_ID = 11L;
 
+    @Qualifier("transactionManagerMetadata")
     @Autowired
-    private PlatformTransactionManager txManager;
+    private PlatformTransactionManager txManagerMetadata;
+
+    @Qualifier("transactionManagerMas90")
+    @Autowired
+    private PlatformTransactionManager txManagerMas90;
 
     @Autowired
     private PartDao partDao;
@@ -66,10 +71,6 @@ public class Mas90SyncService {
     @Qualifier("dataSourceMas90")
     @Autowired
     private DataSource dataSourceMas90;     // connections to MS-SQL (MAS90)
-
-    @Qualifier("dataSource")
-    @Autowired
-    private DataSource dataSource;     // connections to MYSQL (metadata)
 
     private JdbcTemplate mas90db;
 
@@ -302,14 +303,14 @@ public class Mas90SyncService {
         private final Pattern MANUFACTURER_NUMBER_REGEX = Pattern.compile(MANUFACTURER_NUMBER_STR_REGEX_0 +
                 "|" + MANUFACTURER_NUMBER_STR_REGEX_1);
 
-        private Mas90Synchronizer(User user, Mas90Sync record) {
+        Mas90Synchronizer(User user, Mas90Sync record) {
             this.user = user;
             this.record = record;
         }
 
         @Override
         public void run() {
-            TransactionTemplate transaction = new TransactionTemplate(txManager);
+            TransactionTemplate transaction = new TransactionTemplate(txManagerMas90);
             transaction.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW); // new transaction
             Mas90Sync.Status status = transaction.execute(transactionStatus -> {
                 log.info("Started synchronization with MAS90.");
@@ -412,7 +413,7 @@ public class Mas90SyncService {
                 return Mas90Sync.Status.FINISHED;
             });
             // Save to a history table a result of this synchronization.
-            TransactionTemplate transaction2 = new TransactionTemplate(txManager);
+            TransactionTemplate transaction2 = new TransactionTemplate(txManagerMetadata);
             transaction2.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW); // new transaction
             transaction2.execute((TransactionCallback<Void>) transactionStatus -> {
                 long total, updated, inserted, skipped;
@@ -476,7 +477,7 @@ public class Mas90SyncService {
          */
         private Part processPart(String itemcode, String itemcodedesc, String producttype, Long partTypeId) {
             Boolean inactive = "D".equals(producttype);
-            TransactionTemplate modifyTransaction = new TransactionTemplate(txManager);
+            TransactionTemplate modifyTransaction = new TransactionTemplate(txManagerMetadata);
             modifyTransaction.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW); // new transaction
             Part processedPart = modifyTransaction.execute(ts -> {
                 Long partId = null;
@@ -615,7 +616,7 @@ public class Mas90SyncService {
                 }
             }
 
-            TransactionTemplate tt = new TransactionTemplate(txManager);
+            TransactionTemplate tt = new TransactionTemplate(txManagerMetadata);
             tt.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW); // new transaction
             Boolean updated = tt.execute(ts -> {
                 List<Mas90Bom> mas90boms = mas90db.query(

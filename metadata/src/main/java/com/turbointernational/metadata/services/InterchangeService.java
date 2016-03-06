@@ -6,6 +6,7 @@ import com.turbointernational.metadata.domain.part.InterchangeDao;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.part.PartDao;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
@@ -31,8 +32,9 @@ public class InterchangeService {
     @Autowired
     private ChangelogDao changelogDao;
 
+    @Qualifier("transactionManagerMetadata")
     @Autowired
-    private PlatformTransactionManager txManager;
+    private PlatformTransactionManager txManagerMetadata;
 
     /**
      * Find an interchangeable by its ID.
@@ -222,7 +224,7 @@ public class InterchangeService {
      * @return true when a new interchange group has been created.
      */
     private Boolean normalizePartInterchange(Part part) {
-        TransactionTemplate tt = new TransactionTemplate(txManager);
+        TransactionTemplate tt = new TransactionTemplate(txManagerMetadata);
         tt.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW); // new transaction
         Boolean modified = tt.execute(ts -> {
             Interchange interchange = part.getInterchange();

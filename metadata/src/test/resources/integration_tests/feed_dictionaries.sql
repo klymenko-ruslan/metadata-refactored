@@ -1,3 +1,9 @@
+insert into user(id, name, email, password) values(1, 'Admin', '', '');
+insert into groups(id, name) values(1, 'Administrators');
+insert into user_group(user_id, group_id) values(1, 1);
+insert into role(id, name, display) values(1, 'ADMIN', 'Administrator');
+insert into group_role(group_id, role_id) values(1, 1);
+
 insert into part_type(id, name, parent_part_type_id, import_pk, magento_attribute_set, value)
 values
 (1, 'Turbo', NULL, NULL, 'Turbo', 'turbo'),

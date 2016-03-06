@@ -1,7 +1,5 @@
 package com.turbointernational.metadata.domain;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
@@ -20,9 +18,6 @@ public abstract class AbstractDao<T extends Serializable> {
 
     @PersistenceContext
     protected EntityManager em;
-    
-    @Autowired(required=true)
-    protected PlatformTransactionManager txManager;
 
     public EntityManager getEntityManager() {
         return em;
