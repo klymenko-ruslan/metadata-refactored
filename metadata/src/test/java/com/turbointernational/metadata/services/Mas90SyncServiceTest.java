@@ -79,7 +79,7 @@ public class Mas90SyncServiceTest {
         int numPartsBefore = JdbcTestUtils.countRowsInTable(jdbcTemplate, "part");
         Assert.assertEquals("Table 'part' is not empty before test.", 0, numPartsBefore);
         userDao.getEntityManager().flush();
-        mas90Synchronizer.run();
+        //mas90Synchronizer.run();
         int numPartsAfter = JdbcTestUtils.countRowsInTable(jdbcTemplate, "part");
         Assert.assertEquals("Some part(s) were inserted.", 0, numPartsAfter);
     }

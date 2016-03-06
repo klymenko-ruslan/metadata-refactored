@@ -48,9 +48,9 @@ public class Mas90SyncService {
 
     private final static long TURBO_INTERNATIONAL_MANUFACTURER_ID = 11L;
 
-    @Qualifier("transactionManagerMetadata")
+    @Qualifier("transactionManager")
     @Autowired
-    private PlatformTransactionManager txManagerMetadata;
+    private PlatformTransactionManager txManager; // JPA
 
     @Qualifier("transactionManagerMas90")
     @Autowired
@@ -413,7 +413,7 @@ public class Mas90SyncService {
                 return Mas90Sync.Status.FINISHED;
             });
             // Save to a history table a result of this synchronization.
-            TransactionTemplate transaction2 = new TransactionTemplate(txManagerMetadata);
+            TransactionTemplate transaction2 = new TransactionTemplate(txManager);
             transaction2.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW); // new transaction
             transaction2.execute((TransactionCallback<Void>) transactionStatus -> {
                 long total, updated, inserted, skipped;
@@ -477,7 +477,7 @@ public class Mas90SyncService {
          */
         private Part processPart(String itemcode, String itemcodedesc, String producttype, Long partTypeId) {
             Boolean inactive = "D".equals(producttype);
-            TransactionTemplate modifyTransaction = new TransactionTemplate(txManagerMetadata);
+            TransactionTemplate modifyTransaction = new TransactionTemplate(txManager);
             modifyTransaction.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW); // new transaction
             Part processedPart = modifyTransaction.execute(ts -> {
                 Long partId = null;
@@ -616,7 +616,7 @@ public class Mas90SyncService {
                 }
             }
 
-            TransactionTemplate tt = new TransactionTemplate(txManagerMetadata);
+            TransactionTemplate tt = new TransactionTemplate(txManager);
             tt.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW); // new transaction
             Boolean updated = tt.execute(ts -> {
                 List<Mas90Bom> mas90boms = mas90db.query(
