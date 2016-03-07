@@ -1,8 +1,14 @@
-insert into user(id, name, email, password) values(1, 'Admin', '', '');
-insert into groups(id, name) values(1, 'Administrators');
-insert into user_group(user_id, group_id) values(1, 1);
-insert into role(id, name, display) values(1, 'ADMIN', 'Administrator');
-insert into group_role(group_id, role_id) values(1, 1);
+drop procedure if exists rebuildbomdescendancy;
+drop table if exists rebuildbomdescendancy_tbl;
+
+create table rebuildbomdescendancy_tbl(
+    id  integer primary key
+);
+
+-- Mocked stored procedure.
+create procedure rebuildbomdescendancy()
+    modifies sql data
+    insert into rebuildbomdescendancy_tbl(id) values(1);
 
 insert into part_type(id, name, parent_part_type_id, import_pk, magento_attribute_set, value)
 values
@@ -62,12 +68,12 @@ values
 (14, 'Thrust', 15),
 (15, 'Universal', 16);
 
+insert into user(id, name, email, password) values(1, 'Admin', '', '');
+insert into groups(id, name) values(1, 'Administrators');
+insert into user_group(user_id, group_id) values(1, 1);
+insert into role(id, name, display) values(1, 'ADMIN', 'Administrator');
+insert into group_role(group_id, role_id) values(1, 1);
+
 insert into user(id, name, email, password, password_reset_token, enabled)
 values (10, 'mock', 'mock@gmail.com', '123', null, 1);
 
--- Mocked stored procedure.
---create procedure RebuildBomDescendancy()
---    modifies sql data
---begin atomic
---    declare temp_id integer;
---end

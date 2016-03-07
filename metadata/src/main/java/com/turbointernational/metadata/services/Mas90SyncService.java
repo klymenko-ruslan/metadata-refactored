@@ -782,7 +782,7 @@ public class Mas90SyncService {
         }
     }
 
-    public SyncProcessStatus start(User user) {
+    Mas90Sync prepareStart(User user) {
         if (user == null) {
             throw new AssertionError("User can't be null.");
         }
@@ -808,6 +808,11 @@ public class Mas90SyncService {
             syncProcessStatus.setUserName(user.getName());
             syncProcessStatus.setFinished(false);
         }
+        return record;
+    }
+
+    public SyncProcessStatus start(User user) {
+        Mas90Sync record = prepareStart(user);
         syncProcess = new Mas90Synchronizer(user, record);
         syncProcess.start();
         return status();
