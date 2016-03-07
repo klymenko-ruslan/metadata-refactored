@@ -1,13 +1,8 @@
 package com.turbointernational.metadata.magmi.dto;
 
-import com.turbointernational.metadata.Application;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.Part;
-import com.turbointernational.metadata.domain.part.ProductImage;
-import com.turbointernational.metadata.domain.part.ProductImageDao;
-import com.turbointernational.metadata.domain.part.salesnote.SalesNotePart;
 import com.turbointernational.metadata.domain.part.types.Turbo;
-import com.turbointernational.metadata.util.ImageResizer;
 import net.sf.jsog.JSOG;
 import org.apache.commons.lang.StringUtils;
 
@@ -19,14 +14,8 @@ import java.util.*;
  */
 public class MagmiProduct {
 
-    public static final String FINDER_ID_APPLICATION = "1";
-
-    public static final String FINDER_ID_TURBO = "2";
-    
     private final Part part;
     
-    private final TreeSet<Long> imageIds = new TreeSet<>();
-
     private final Set<String> turboType = new TreeSet<>();
 
     private final Set<String> turboModel = new TreeSet<>();
@@ -77,10 +66,6 @@ public class MagmiProduct {
 
     public String getPartNumber() {
         return part.getManufacturerPartNumber();
-    }
-
-    public List<SalesNotePart> getSalesNoteParts() {
-        return part.getSalesNoteParts();
     }
 
     private String getCategoriesString() {
@@ -164,10 +149,6 @@ public class MagmiProduct {
 
     public List<MagmiBomItem> getBom() {
         return bom;
-    }
-    
-    public void addImageId(Long imageId) {
-        imageIds.add(imageId);
     }
 
     public void addInterchange(MagmiInterchange interchange) {
@@ -278,40 +259,6 @@ public class MagmiProduct {
         columns.put("finder:" + applicationId, StringUtils.join(finderApplication, "||"));
 
         columns.put("finder:" + turboId, StringUtils.join(finderTurbo, "||"));
-    }
-
-    public void csvImageColumns(Map<String, String> columns, ImageResizer resizer) {
-        
-        // Stop now if there aren't any images
-        if (imageIds.isEmpty()) {
-            return;
-        }
-            
-        // Get the first image
-        Iterator<Long> it = imageIds.iterator();
-        Long firstImage = it.next();
-
-        columns.put("image", ProductImageDao.getResizedFilename(part.getId(), firstImage, 1000));
-        columns.put("small_image", ProductImageDao.getResizedFilename(part.getId(), firstImage, 135));
-        columns.put("thumbnail", ProductImageDao.getResizedFilename(part.getId(), firstImage, 50));
-
-        // Additional images
-        StringBuilder galleryString = new StringBuilder();
-        while (it.hasNext()) {
-            Long additionalImage = it.next();
-            
-
-            // Add a separator if this isn't the first additional image
-            if (galleryString.length() > 0) {
-                galleryString.append(';');
-            }
-
-            // Add the filename
-            galleryString.append(ProductImageDao.getResizedFilename(part.getId(), additionalImage, 1000));
-        }
-
-        // Add the column
-        columns.put("media_gallery", galleryString.toString());
     }
 
 }

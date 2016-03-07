@@ -5,9 +5,6 @@ import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.other.ManufacturerDao;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.part.PartDao;
-import com.turbointernational.metadata.domain.part.salesnote.SalesNote;
-import com.turbointernational.metadata.domain.part.salesnote.SalesNotePart;
-import com.turbointernational.metadata.domain.part.salesnote.SalesNoteState;
 import com.turbointernational.metadata.domain.type.*;
 import com.turbointernational.metadata.magmi.MagmiDataFinder;
 import com.turbointernational.metadata.magmi.dto.MagmiProduct;
@@ -16,8 +13,6 @@ import com.turbointernational.metadata.services.mas90.Mas90;
 import com.turbointernational.metadata.services.mas90.pricing.CalculatedPrice;
 import com.turbointernational.metadata.services.mas90.pricing.ItemPricing;
 import com.turbointernational.metadata.services.mas90.pricing.UnknownDiscountCodeException;
-import com.turbointernational.metadata.util.ImageResizer;
-import flexjson.JSONSerializer;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,10 +54,7 @@ public class MagmiController {
     
     @Value("${magmi.finderId.turbo}")
     String finderIdTurbo;
-    
-    @Autowired
-    ImageResizer imageResizer;
-    
+
     @Autowired
     MagmiDataFinder magmiDataFinder;
     
@@ -130,12 +122,7 @@ public class MagmiController {
             "qty",
             "turbo_model",      // Turbo Models
             "turbo_type",       // Turbo Types
-
             // Product images
-            "image",
-            "small_image",
-            "thumbnail",
-            "media_gallery",
             "standard_oversize_part"
         ));
         //</editor-fold>
@@ -223,7 +210,6 @@ public class MagmiController {
             // OEM SKU (custom option, used to show OEM part in cart)
             "OEMSKU:field:0"
         ));
-        headers.add("sale_notes");
         String[] retVal = new String[headers.size()];
         return headers.toArray(retVal);
     }
@@ -350,8 +336,7 @@ public class MagmiController {
     private String[] magmiProductToCsvRow(String[] csvHeaders, Mas90 mas90, MagmiProduct product) {
         Map<String, String> columns = product.getCsvColumns();
         product.csvFinderColumns(columns, finderIdApplication, finderIdTurbo);
-        product.csvImageColumns(columns, imageResizer);
-        
+
         // Only TI parts get this info
         if (product.hasTiPart()) {
 
@@ -365,31 +350,11 @@ public class MagmiController {
         } else {
             columns.put("qty", "0");
         }
-        // Sale notes.
-        List<SalesNotePart> salesNoteParts = product.getSalesNoteParts();
-        List<SalesNotePart> publishedSaleNotes = new ArrayList<>(salesNoteParts.size());
-        salesNoteParts.forEach(snp -> {
-            SalesNote sn = snp.getSalesNote();
-            if (sn != null && sn.getState() == SalesNoteState.published) {
-                publishedSaleNotes.add(snp);
-            }
-        });
-        String jsonPublishedNotes = "[]";
-        if (!publishedSaleNotes.isEmpty()) {
-            JSONSerializer js = new JSONSerializer();
-            // Created, Primary Part, Note
-            js.include("createDate", "salesNote.comment", "part.manufacturerPartNumber");
-            js.exclude("*");
-            jsonPublishedNotes = js.serialize(publishedSaleNotes);
-        }
-        columns.put("sale_notes", jsonPublishedNotes);
 
         // Map the column into a value array for the CSV writer
         String[] valueArray = new String[csvHeaders.length];
         for (int i = 0; i < csvHeaders.length; i++) {
-            
             String header = csvHeaders[i];
-            
             valueArray[i] = StringUtils.defaultIfEmpty(columns.get(header), "");
         }
         
