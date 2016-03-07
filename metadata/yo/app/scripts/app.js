@@ -93,7 +93,15 @@ angular.module("ngMetaCrudApp", ["ngRoute", "ngTable", "ui.bootstrap",
     });
     $routeProvider.when("/part/:partId/sales_note/:salesNoteId", {
       templateUrl: "views/part/sales_note/SalesNoteDetail.html",
-      controller: "SalesNoteDetailCtrl"
+      controller: "SalesNoteDetailCtrl",
+      resolve: {
+        part: ["$route", "restService", function($route, restService) {
+          return restService.findPart($route.current.pathParams.partId);
+        }],
+        salesNote: ["$route", "restService", function($route, restService) {
+          return restService.findSalesNote($route.current.pathParams.salesNoteId);
+        }]
+      }
     });
     $routeProvider.when("/part/:partId/sales_note/:salesNoteId/related_part/search", {
       templateUrl: "views/part/sales_note/SalesNoteAddRelatedPart.html",

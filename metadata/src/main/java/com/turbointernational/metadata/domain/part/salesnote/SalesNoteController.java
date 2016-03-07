@@ -115,11 +115,13 @@ public class SalesNoteController {
     @JsonView(View.DetailWithPartsAndAttachments.class)
     public SalesNote getSalesNote(@PathVariable("noteId") long noteId) {
         SalesNote salesNote = salesNotes.findOne(noteId);
+        /*
         salesNote.getParts().size();
         for (SalesNotePart snp : salesNote.getParts()) {
             snp.getPart().getManufacturer().getName();
             snp.getPart().getPartType().getName();
         }
+        */
         return salesNote;
     }
     

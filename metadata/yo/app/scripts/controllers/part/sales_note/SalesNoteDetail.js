@@ -1,97 +1,63 @@
-'use strict';
+"use strict";
 
-angular.module('ngMetaCrudApp')
-	.controller('SalesNoteDetailCtrl', function($routeParams, $scope, ngTableParams, Restangular, SalesNotes, restService) {
-    $scope.partId = $routeParams.partId;
-    $scope.salesNoteId = $routeParams.salesNoteId;
-    
-    $scope.SalesNotes = SalesNotes;
+angular.module("ngMetaCrudApp")
+  .controller("SalesNoteDetailCtrl", ["$log", "$routeParams", "$parse", "$scope",
+    "ngTableParams", "SalesNotes", "utils", "restService", "part", "salesNote",
+    function($log, $routeParams, $parse, $scope, ngTableParams, SalesNotes, utils, restService, part, salesNote) {
+      $scope.part = part;
+      $scope.salesNote = salesNote;
+      $scope.salesNoteId = $routeParams.salesNoteId;
+      $scope.SalesNotes = SalesNotes;
+      $scope.editedSalesNote = {};
 
-    // Load the part
-    $scope.part = null;
-    $scope.partPromise = restService.findPart($scope.partId).then(
-        function (part) {
-            $scope.part = part;
+      $scope.isPrimaryRelatedPart = function(relatedPart) {
+        return salesNote.primaryPartId === relatedPart.part.id;
+      };
 
-            // Make sure we're using the correct part type
-            $scope.partType = part.partType.name;
-        },
-        function (errorResponse) {
-            restService.error("Could not get part details", errorResponse);
-        });
-
-    // Load the sales note
-    $scope.salesNote = null;
-    $scope.editedSalesNote = {};
-    $scope.salesNotePromise = Restangular.one('other/salesNote', $scope.salesNoteId).get().then(
-        function (salesNote) {
-            $scope.salesNote = salesNote;
-            return salesNote;
-        },
-        function (errorResponse) {
-            restService.error("Could not get sales note details", errorResponse);
-        });
-        
-    // Attachment Table
-    $scope.attachmentTableParams = new ngTableParams({
+      // Attachment Table
+      $scope.attachmentTableParams = new ngTableParams({
         page: 1,
         count: 10,
         sorting: {}
       }, {
-        getData: function ($defer, params) {
-            $scope.salesNotePromise.then(function(salesNote) {
-                // TODO: Paginate, fiter, sort
-                $defer.resolve(salesNote.attachments);
-            });
-        }
+        getData: utils.localPagination(salesNote.attachments, "createDate")
       });
 
-    $scope.attachmentTableParams.reload();
-    
-    // Related Part Table
-    $scope.relatedPartTableParams = new ngTableParams({
+      // Related Part Table
+      $scope.relatedPartTableParams = new ngTableParams({
         page: 1,
         count: 10,
         sorting: {}
       }, {
-        getData: function ($defer, params) {
-            $scope.salesNotePromise.then(function(salesNote) {
-                // TODO: Paginate, fiter, sort
-                $defer.resolve(salesNote.parts);
-            });
-        }
+        getData: utils.localPagination(salesNote.parts, "part.manufacturerPartNumber")
       });
 
-    $scope.relatedPartTableParams.reload();
-    
-    // Editing flag
-    var editing = false;
-    
-    $scope.isEditing = function() {
+      // Editing flag
+      var editing = false;
+
+      $scope.isEditing = function() {
         return editing;
-    };
-    
-    $scope.edit = function() {
+      };
+
+      $scope.edit = function() {
         editing = true;
-        
-        $scope.salesNotePromise.then(function(salesNote) {
-            $scope.editedSalesNote.comment = salesNote.comment;
-        });
-    };
-    
-    $scope.cancel = function() {
+        $scope.editedSalesNote.comment = salesNote.comment;
+      };
+
+      $scope.cancel = function() {
         editing = false;
-    };
-    
-    $scope.save = function() {
-        Restangular.one("other/salesNote")
-            .post($scope.salesNoteId, {"comment": $scope.editedSalesNote.comment})
-            .then(function() {
-                $scope.salesNote.comment = $scope.editedSalesNote.comment;
-                editing = false;
+      };
+
+      $scope.save = function() {
+        restService.updateSalesNote($scope.salesNoteId, $scope.editedSalesNote.comment).then(
+            function success() {
+              $scope.salesNote.comment = $scope.editedSalesNote.comment;
+              editing = false;
             },
-            function (errorResponse) {
-                restService.error("Could not get sales note details", errorResponse);
+            function failure(errorResponse) {
+              restService.error("Could not get sales note details", errorResponse);
             });
-    };
-});
+      };
+
+    }
+  ]);

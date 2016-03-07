@@ -1,12 +1,12 @@
 <metanav>
   <li authorize="ROLE_READ">
-    <a ng-href="/part/{{ partId }}"
+    <a ng-href="/part/{{::part.id}}"
        class="btn btn-primary">
       <i class="fa fa-eye"></i> View Part
     </a>
   </li>
   <li authorize="ROLE_SALES_NOTE_READ">
-    <a ng-href="/part/{{partId}}/sales_notes"
+    <a ng-href="/part/{{::part.id}}/sales_notes"
        class="btn btn-info">
       <i class="fa fa-book"></i> Sales Notes &hellip;
     </a>
@@ -95,13 +95,13 @@
   </h3>
   <table data-ng-table="attachmentTableParams" class="table table-bordered table-striped table-hover table-responsive">
       <tr data-ng-repeat="attachment in $data">
-          <td title="'File Name'" sortable="'attachment.filename'">
+          <td title="'File Name'" sortable="'filename'">
               {{part._source.partType.name}}
           </td>
-          <td title="'User'" sortable="'attachment.creator.name'">
+          <td title="'User'" sortable="'creator.name'">
               {{attachment.creator.name}}
           </td>
-          <td title="'Created'" sortable="'attachment.createDate'">
+          <td title="'Created'" sortable="'createDate'">
               {{attachment.createDate}}
           </td>
           <td title="'Actions'" class="actions text-center">
@@ -113,7 +113,7 @@
       </tr>
   </table>
 </div>
-    
+
 <div class="col-xs-6">
   <h3>Related Parts
       <a class="btn btn-primary pull-right"
@@ -124,19 +124,19 @@
   </h3>
   <table data-ng-table="relatedPartTableParams" class="table table-bordered table-striped table-hover table-responsive">
       <tr data-ng-repeat="relatedPart in $data">
-          <td title="'Part #'" sortable="'relatedPart.part.manufacturerPartNumber'">
+          <td title="'Part #'" sortable="'part.manufacturerPartNumber'">
               {{relatedPart.part.manufacturerPartNumber}}
           </td>
-          <td title="'Part Type'" sortable="'relatedPart.part.partType.name'">
+          <td title="'Part Type'" sortable="'part.partType.name'">
               {{relatedPart.part.partType.name}}
           </td>
-          <td title="'Manufacturer'" sortable="'relatedPart.part.manufacturer.name'">
+          <td title="'Manufacturer'" sortable="'part.manufacturer.name'">
               {{relatedPart.part.manufacturer.name}}
           </td>
           <td title="'Actions'" class="actions">
             <a class="btn btn-primary btn-xs"
                ng-href="/part/{{ relatedPart.part.id }}">
-              <i class="fa fa-eye"></i> View {{salesNote.primaryPartId === relatedPart.part.id ? "Primary" : "Related"}}
+              <i class="fa fa-eye"></i> View {{isPrimaryRelatedPart(relatedPart) ? "Primary" : "Related"}}
             </a>
             <a class="btn btn-danger btn-xs"
                ng-click="SalesNotes.removeRelatedPart(salesNote, relatedPart.part.id)"

@@ -149,7 +149,7 @@ public class SearchController {
             } catch (Exception e) {
                 log.error("Indexing of the part (ID: {}) failed.", partId);
             }
-        });
+        }).start();
     }
 
     @RequestMapping(value = "/part/indexAll")
@@ -163,7 +163,7 @@ public class SearchController {
             } catch (Exception e) {
                 log.error("Indexing of all parts failed.");
             }
-        });
+        }).start();
     }
 
     @RequestMapping(value = "/application/indexAll")
@@ -177,7 +177,7 @@ public class SearchController {
             } catch (Exception e) {
                 log.error("Indexing of applications failed.");
             }
-        });
+        }).start();
     }
 
     @Secured("ROLE_ADMIN")
