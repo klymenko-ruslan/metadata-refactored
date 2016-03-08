@@ -1,9 +1,7 @@
 package com.turbointernational.metadata.services;
 
 import com.turbointernational.metadata.Application;
-import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.other.Mas90Sync;
-import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.security.User;
 import com.turbointernational.metadata.domain.security.UserDao;
 import org.junit.Assert;
@@ -11,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.boot.test.WebIntegrationTest;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -19,11 +18,12 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.jdbc.JdbcTestUtils;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 
-import javax.persistence.EntityManager;
 import javax.sql.DataSource;
+
+import static org.springframework.transaction.TransactionDefinition.PROPAGATION_REQUIRES_NEW;
 
 /**
  * Created by dmytro.trunykov on 3/6/16.
@@ -32,11 +32,19 @@ import javax.sql.DataSource;
 @SpringApplicationConfiguration(classes = Application.class)
 @WebIntegrationTest
 @ActiveProfiles("integration")
-@SqlConfig(dataSource = "dataSource", transactionMode = SqlConfig.TransactionMode.ISOLATED)
 public class Mas90SyncServiceTest {
 
     @Autowired
+    @Qualifier("dataSource")
     private DataSource dataSource;
+
+    @Autowired
+    @Qualifier("dataSourceMas90")
+    private DataSource dataSourceMas90;
+
+    @Qualifier("transactionManager")
+    @Autowired
+    private PlatformTransactionManager txManager; // JPA
 
     @Autowired
     private Mas90SyncService mas90SyncService;
@@ -44,7 +52,9 @@ public class Mas90SyncServiceTest {
     @Autowired
     private UserDao userDao;
 
-    private JdbcTemplate jdbcTemplate;
+    private JdbcTemplate jdbcTemplateMetadata;
+
+    private JdbcTemplate jdbcTemplateMas90;
 
     private User user;
 
@@ -54,12 +64,30 @@ public class Mas90SyncServiceTest {
 
     @Before
     public void setUp() {
-        this.jdbcTemplate = new JdbcTemplate(dataSource);
+        this.jdbcTemplateMetadata = new JdbcTemplate(dataSource);
+        this.jdbcTemplateMas90 = new JdbcTemplate(dataSourceMas90);
         this.user = userDao.findOne(1L); // admin
-        this.record = mas90SyncService.prepareStart(user);
+        TransactionTemplate tt = new TransactionTemplate(txManager);
+        tt.setPropagationBehavior(PROPAGATION_REQUIRES_NEW);
+        this.record = tt.execute(ts -> mas90SyncService.prepareStart(user));
         this.mas90Synchronizer = mas90SyncService.new Mas90Synchronizer(user, record);
     }
 
+    /**
+     * Test that synchronization procedure does not process records which have manufacturer numbers
+     * unmatched with the pattern.
+     *
+     * Test case:
+     * <ol>
+     *     <li>Insert into MAS90 database a record with manufacturer number '/BH2350'.</li>
+     *     <li>Call method {@link Mas90SyncService.Mas90Synchronizer#run()}</li>
+     *     <li>Make sure that</li>
+     *     <ul>
+     *         <li>Table 'part' has no any new record.</li>
+     *         <li>Record with result of the execution has correct values and persistent.<li/>
+     *     </ul>
+     * </ol>
+     */
     @Test
     @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
             scripts = "classpath:integration_tests/feed_dictionaries.sql")
@@ -69,7 +97,9 @@ public class Mas90SyncServiceTest {
     @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
             config = @SqlConfig(dataSource = "dataSourceMas90", transactionManager = "transactionManagerMas90"),
             scripts = "classpath:integration_tests/mas90sync_service/feed_mas90.sql")
-    /*
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            config = @SqlConfig(dataSource = "dataSourceMas90", transactionManager = "transactionManagerMas90"),
+            scripts = "classpath:integration_tests/mas90sync_service/insertnewpart_mas90_0.sql")
     @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
             config = @SqlConfig(dataSource = "dataSourceMas90", transactionManager = "transactionManagerMas90"),
             scripts = "classpath:integration_tests/mas90sync_service/clear_mas90.sql")
@@ -77,23 +107,78 @@ public class Mas90SyncServiceTest {
             scripts = "classpath:integration_tests/clear_dictionaries.sql")
     @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_tables.sql")
-    */
-    @Transactional
     public void testInsertNewPart_0() {
-        int numPartsBefore = JdbcTestUtils.countRowsInTable(jdbcTemplate, "part");
+        int numPartsBefore = JdbcTestUtils.countRowsInTable(jdbcTemplateMetadata, "part");
         Assert.assertEquals("Table 'part' is not empty before test.", 0, numPartsBefore);
-        // mas90Synchronizer.run();
-        EntityManager em = userDao.getEntityManager();
-        Part p = new Part();
-        p.setInactive(Boolean.TRUE);
-        Manufacturer m = em.getReference(Manufacturer.class, 1L);
-        p.setManufacturer(m);
-        em.persist(p);
-        System.out.println("The new part ID: " + p.getId());
-        em.flush();
-        int numPartsAfter = JdbcTestUtils.countRowsInTable(jdbcTemplate, "part");
-        Assert.assertEquals("Some part(s) were inserted.", 1, numPartsAfter);
+        int numCiItemBefore = JdbcTestUtils.countRowsInTable(jdbcTemplateMas90, "ci_item");
+        Assert.assertEquals("Table 'ci_item' has unexpected number of records.", 1, numCiItemBefore);
+        mas90Synchronizer.run();
+        int numPartsAfter = JdbcTestUtils.countRowsInTable(jdbcTemplateMetadata, "part");
+        // Check record with result.
+        Assert.assertEquals("Some part(s) were inserted.", 0, numPartsAfter);
+        Assert.assertNotNull("The 'mas90sync' record was not persistent.", record.getId());
+        Assert.assertNotNull("Field 'started' was not initialized.", record.getStarted());
+        Assert.assertNotNull("Field 'finished' was not initialized.", record.getFinished());
+        Assert.assertTrue("Value of the field 'started' must be lower or equal to a value in the field 'finished.'",
+                record.getFinished().compareTo(record.getStarted()) >= 0);
+        Assert.assertEquals("Not fetched any record from MAS90 to process.", 1L, (long) record.getToProcess());
+        Assert.assertEquals("There is updated record(s).", 0L, (long) record.getUpdated());
+        Assert.assertEquals("There is skipped record(s).", 0L, (long) record.getSkipped());
     }
 
+    /**
+     * Test that synchronization procedure does not process records which have manufacturer numbers
+     * unmatched with the pattern.
+     *
+     * Test case:
+     * <ol>
+     *     <li>Insert into MAS90 database a record with manufacturer number '/BH2350'.</li>
+     *     <li>Call method {@link Mas90SyncService.Mas90Synchronizer#run()}</li>
+     *     <li>Make sure that</li>
+     *     <ul>
+     *         <li>Table 'part' has no any new record.</li>
+     *         <li>Record with result of the execution has correct values and persistent.<li/>
+     *     </ul>
+     * </ol>
+     */
+    @Test
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            scripts = "classpath:integration_tests/feed_dictionaries.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            config = @SqlConfig(dataSource = "dataSourceMas90", transactionManager = "transactionManagerMas90"),
+            scripts = "classpath:integration_tests/mas90sync_service/create_mas90.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            config = @SqlConfig(dataSource = "dataSourceMas90", transactionManager = "transactionManagerMas90"),
+            scripts = "classpath:integration_tests/mas90sync_service/feed_mas90.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            config = @SqlConfig(dataSource = "dataSourceMas90", transactionManager = "transactionManagerMas90"),
+            scripts = "classpath:integration_tests/mas90sync_service/insertnewpart_mas90_1.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            config = @SqlConfig(dataSource = "dataSourceMas90", transactionManager = "transactionManagerMas90"),
+            scripts = "classpath:integration_tests/mas90sync_service/clear_mas90.sql")
+    /*
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            scripts = "classpath:integration_tests/clear_dictionaries.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            scripts = "classpath:integration_tests/clear_tables.sql")
+    */
+    public void testInsertNewPart_1() {
+        int numPartsBefore = JdbcTestUtils.countRowsInTable(jdbcTemplateMetadata, "part");
+        Assert.assertEquals("Table 'part' is not empty before test.", 0, numPartsBefore);
+        int numCiItemBefore = JdbcTestUtils.countRowsInTable(jdbcTemplateMas90, "ci_item");
+        Assert.assertEquals("Table 'ci_item' has unexpected number of records.", 1, numCiItemBefore);
+        mas90Synchronizer.run();
+        int numPartsAfter = JdbcTestUtils.countRowsInTable(jdbcTemplateMetadata, "part");
+        // Check record with result.
+        Assert.assertEquals("A new part has not been inserted.", 1, numPartsAfter);
+        Assert.assertNotNull("The 'mas90sync' record was not persistent.", record.getId());
+        Assert.assertNotNull("Field 'started' was not initialized.", record.getStarted());
+        Assert.assertNotNull("Field 'finished' was not initialized.", record.getFinished());
+        Assert.assertTrue("Value of the field 'started' must be lower or equal to a value in the field 'finished.'",
+                record.getFinished().compareTo(record.getStarted()) >= 0);
+        Assert.assertEquals("Not fetched any record from MAS90 to process.", 1L, (long) record.getToProcess());
+        Assert.assertEquals("There is updated record(s).", 0L, (long) record.getUpdated());
+        Assert.assertEquals("There is skipped record(s).", 0L, (long) record.getSkipped());
+    }
 
 }

@@ -7,7 +7,6 @@ import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.part.PartDao;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +17,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.jdbc.SqlGroup;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.transaction.annotation.Transactional;
@@ -77,10 +75,9 @@ public class InterchangeServiceTest {
     @Test
     @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:integration_tests/feed_dictionaries.sql")
     @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:integration_tests/interchange_service/leave_interchangeable_group_0_before.sql")
-//    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:integration_tests/clear_tables.sql")
-//    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:integration_tests/clear_dictionaries.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:integration_tests/clear_tables.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:integration_tests/clear_dictionaries.sql")
     public void testLeaveInterchangeableGroup_0() {
-        /*
         // Check prerequisites before testing.
         int chlogCount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "changelog");
         Assert.assertEquals("Table 'changelog' contains unexpected data.", 0, chlogCount);
@@ -98,7 +95,6 @@ public class InterchangeServiceTest {
         // Check that record to the 'changelog' was inserted.
         chlogCount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "changelog");
         Assert.assertEquals("Added record(s) to the table 'changelog'.", 0, chlogCount);
-        */
     }
 
     /**
@@ -125,7 +121,6 @@ public class InterchangeServiceTest {
     @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:integration_tests/clear_dictionaries.sql")
     @WithUserDetails("mock@gmail.com")
     public void testLeaveInterchangeableGroup_1() {
-        /*
         // Check prerequisites before testing.
         int chlogCount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "changelog");
         Assert.assertEquals("Table 'changelog' contains unexpected data.", 0, chlogCount);
@@ -150,7 +145,6 @@ public class InterchangeServiceTest {
         // Check that record to the 'changelog' was inserted.
         chlogCount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "changelog");
         Assert.assertEquals("Table 'changelog' has no record about last changes.", 1, chlogCount);
-        */
     }
 
     /**
@@ -172,14 +166,10 @@ public class InterchangeServiceTest {
      * </ol>
      */
     @Test
-    @Ignore
-    @SqlGroup({
-            @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:integration_tests/feed_dictionaries.sql"),
-            @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:integration_tests/interchange_service/merge_interchangeables.sql"),
-            @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:integration_tests/clear_tables.sql"),
-            @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:integration_tests/clear_dictionaries.sql")
-    })
-    @Transactional
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:integration_tests/feed_dictionaries.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:integration_tests/interchange_service/merge_interchangeables.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:integration_tests/clear_tables.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:integration_tests/clear_dictionaries.sql")
     @WithUserDetails("mock@gmail.com")
     public void testMergePickedAloneToPart() {
         // Check prerequisites before testing.
@@ -222,14 +212,10 @@ public class InterchangeServiceTest {
      * The same test as described in {@link #testMergePickedAloneToPart()} but in reverse order.
      */
     @Test
-    @Ignore
-    @SqlGroup({
-            @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:integration_tests/feed_dictionaries.sql"),
-            @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:integration_tests/interchange_service/merge_interchangeables.sql"),
-            @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:integration_tests/clear_tables.sql"),
-            @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:integration_tests/clear_dictionaries.sql")
-    })
-    @Transactional
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:integration_tests/feed_dictionaries.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:integration_tests/interchange_service/merge_interchangeables.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:integration_tests/clear_tables.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:integration_tests/clear_dictionaries.sql")
     @WithUserDetails("mock@gmail.com")
     public void testMergePartAloneToPicked() {
         // Check prerequisites before testing.
@@ -289,14 +275,10 @@ public class InterchangeServiceTest {
      * See also ticket #590.
      */
     @Test
-    @Ignore
-    @SqlGroup({
-            @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:integration_tests/feed_dictionaries.sql"),
-            @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:integration_tests/interchange_service/merge_interchangeables.sql"),
-            @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:integration_tests/clear_tables.sql"),
-            @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:integration_tests/clear_dictionaries.sql")
-    })
-    @Transactional
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:integration_tests/feed_dictionaries.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:integration_tests/interchange_service/merge_interchangeables.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:integration_tests/clear_tables.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:integration_tests/clear_dictionaries.sql")
     @WithUserDetails("mock@gmail.com")
     public void testMergePickedAllToPart() {
         // Check prerequisites before testing.

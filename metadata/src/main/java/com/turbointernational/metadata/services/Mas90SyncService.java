@@ -48,6 +48,9 @@ public class Mas90SyncService {
 
     private final static long TURBO_INTERNATIONAL_MANUFACTURER_ID = 11L;
 
+    @Autowired
+    private Mas90Database mas90Database;
+
     @Qualifier("transactionManager")
     @Autowired
     private PlatformTransactionManager txManager; // JPA
@@ -297,8 +300,8 @@ public class Mas90SyncService {
 
         private final Mas90Sync record;
 
-        private final String MANUFACTURER_NUMBER_STR_REGEX_0 = "[0-9]-[a-z]-[0-6][0-9][0-9][0-9]";
-        private final String MANUFACTURER_NUMBER_STR_REGEX_1 = "[0-9][0-9]-[a-z]-[0-6][0-9][0-9][0-9]";
+        private final String MANUFACTURER_NUMBER_STR_REGEX_0 = "[0-9]-[a-z|A-Z]-[0-6][0-9][0-9][0-9]";
+        private final String MANUFACTURER_NUMBER_STR_REGEX_1 = "[0-9][0-9]-[a-z|A-Z]-[0-6][0-9][0-9][0-9]";
 
         private final Pattern MANUFACTURER_NUMBER_REGEX = Pattern.compile(MANUFACTURER_NUMBER_STR_REGEX_0 +
                 "|" + MANUFACTURER_NUMBER_STR_REGEX_1);
@@ -314,16 +317,8 @@ public class Mas90SyncService {
             transaction.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW); // new transaction
             Mas90Sync.Status status = transaction.execute(transactionStatus -> {
                 log.info("Started synchronization with MAS90.");
-                long numItems = mas90db.queryForObject(
-                        // @formatter:off
-                        "select count(*) " +
-                        "from ci_item as im join productLine_to_parttype_value as t2 " +
-                        "   on im.productline = t2.productLineCode " +
-                        "where " +
-                        "   im.itemcode like '" + MANUFACTURER_NUMBER_STR_REGEX_0 + "' or " +
-                        "   im.itemcode like '" + MANUFACTURER_NUMBER_STR_REGEX_1 + "'",
-                        // @formatter:on
-                        Long.class);
+                String countQuery = mas90Database.getCountQuery();
+                long numItems = mas90db.queryForObject(countQuery, Long.class);
                 synchronized (syncProcessStatus) {
                     syncProcessStatus.setPartsUpdateTotalSteps(numItems + 1); // +1 to load part_types
                 }
@@ -333,58 +328,50 @@ public class Mas90SyncService {
                 }
                 try {
                     List<Part> toBeReprocessed = new ArrayList<>();
-                    mas90db.query(
-                            // @formatter:off
-                            "select itemcode, itemcodedesc, productline, producttype  " +
-                            "from ci_item as im join productLine_to_parttype_value as t2 " +
-                            "   on im.productline = t2.productLineCode " +
-                            "where " +
-                            "   itemcode like '" + MANUFACTURER_NUMBER_STR_REGEX_0 + "' or " +
-                            "   itemcode like '" + MANUFACTURER_NUMBER_STR_REGEX_1 + "'",
-                            // @formatter:on
-                            rs -> {
-                                String itemcode = rs.getString(1);
-                                String itemcodedesc = rs.getString(2);
-                                String productline = rs.getString(3);
-                                String producttype = rs.getString(4);
-                                Part processedPart = null;
-                                try {
-                                    Long partTypeId = mas90toLocal.get(productline);
-                                    if (partTypeId != null) {
-                                        processedPart = processPart(itemcode, itemcodedesc, producttype, partTypeId); // separate transaction
-                                        if (processedPart != null) { // null -- failure
-                                            Boolean updated = processBOM(processedPart, toBeReprocessed, true); // separate transaction
-                                            if (updated == Boolean.TRUE) {
-                                                synchronized (syncProcessStatus) {
-                                                    syncProcessStatus.incPartsUpdateUpdates();
-                                                }
-                                            }
+                    String itemsQuery = mas90Database.getItemsQuery();
+                    mas90db.query(itemsQuery, rs -> {
+                        String itemcode = rs.getString(1);
+                        String itemcodedesc = rs.getString(2);
+                        String productline = rs.getString(3);
+                        String producttype = rs.getString(4);
+                        Part processedPart = null;
+                        try {
+                            Long partTypeId = mas90toLocal.get(productline);
+                            if (partTypeId != null) {
+                                processedPart = processPart(itemcode, itemcodedesc, producttype, partTypeId); // separate transaction
+                                if (processedPart != null) { // null -- failure
+                                    Boolean updated = processBOM(processedPart, toBeReprocessed, true); // separate transaction
+                                    if (updated == Boolean.TRUE) {
+                                        synchronized (syncProcessStatus) {
+                                            syncProcessStatus.incPartsUpdateUpdates();
                                         }
-                                    } else {
-                                        // Actually this should never happen because we joined ci_item
-                                        // with productLine_to_parttype_value.
-                                        throw new AssertionError(String.format("Can't convert productline ('{}') " +
-                                                        "to product_type_id. Item with code '{}'.",
-                                                productline, itemcode));
                                     }
-                                    synchronized (syncProcessStatus) {
-                                        syncProcessStatus.incPartsUpdateCurrentStep();
-                                    }
-                                } catch (Throwable th) {
-                                    String errMsg;
-                                    if (processedPart == null) {
-                                        errMsg = String.format("Failed processing at the part: '%s'", itemcode);
-                                    } else {
-                                        errMsg = String.format("Failed processing at the part: [%d] {%s}",
-                                                processedPart.getId(), processedPart.getManufacturerPartNumber());
-                                    }
-                                    synchronized (syncProcessStatus) {
-                                        syncProcessStatus.addError(errMsg);
-                                    }
-                                    log.error(errMsg);
-                                    throw th;
                                 }
-                            });
+                            } else {
+                                // Actually this should never happen because we joined ci_item
+                                // with productLine_to_parttype_value.
+                                throw new AssertionError(String.format("Can't convert productline ('{}') " +
+                                                "to product_type_id. Item with code '{}'.",
+                                        productline, itemcode));
+                            }
+                            synchronized (syncProcessStatus) {
+                                syncProcessStatus.incPartsUpdateCurrentStep();
+                            }
+                        } catch (Throwable th) {
+                            String errMsg;
+                            if (processedPart == null) {
+                                errMsg = String.format("Failed processing at the part: '%s'", itemcode);
+                            } else {
+                                errMsg = String.format("Failed processing at the part: [%d] {%s}",
+                                        processedPart.getId(), processedPart.getManufacturerPartNumber());
+                            }
+                            synchronized (syncProcessStatus) {
+                                syncProcessStatus.addError(errMsg);
+                            }
+                            log.error(errMsg);
+                            throw th;
+                        }
+                    });
                     if (!toBeReprocessed.isEmpty()) {
                         List<Part> toBeReprocessed2 = new ArrayList<>();
                         toBeReprocessed.forEach(thePart -> {
@@ -619,15 +606,8 @@ public class Mas90SyncService {
             TransactionTemplate tt = new TransactionTemplate(txManager);
             tt.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW); // new transaction
             Boolean updated = tt.execute(ts -> {
-                List<Mas90Bom> mas90boms = mas90db.query(
-                        // @formatter:off
-                        "select bd.componentitemcode, bd.quantityperbill " +
-                        "from " +
-                        "   bm_billdetail as bd join ( " +
-                        "       select billno, max(revision) as last_revision from bm_billheader group by billno " +
-                        "   ) as br on bd.billno = br.billno and bd.revision = br.last_revision " +
-                        "where bd.billno = ?",
-                        // @formatter:on
+                String bomsQuery = mas90Database.getBomsQuery();
+                List<Mas90Bom> mas90boms = mas90db.query(bomsQuery,
                         ps -> ps.setString(1, manufacturerPartNumber),
                         (rs, rowNum) -> {
                             String componentItemCode = rs.getString(1);
