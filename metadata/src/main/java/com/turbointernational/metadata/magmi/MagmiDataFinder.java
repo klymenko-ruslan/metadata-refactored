@@ -7,23 +7,16 @@ import com.google.common.collect.TreeBasedTable;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.part.PartDao;
-import com.turbointernational.metadata.domain.part.ProductImage;
 import com.turbointernational.metadata.magmi.dto.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.ResultSetExtractor;
-import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.stereotype.Service;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  *
@@ -127,16 +120,7 @@ public class MagmiDataFinder {
                 }
             }
         });
-        // Add the images
-        List<ProductImage> images = partDao.findProductImages(productIds);
-        
-        for (ProductImage image : images) {
-            productMap.get(image.getPart().getId())
-                      .addImageId(image.getId());
-        }
-        
-        logger.info("Found {} images.", images.size());
-        
+
         // Add the turbos
         List<MagmiTurbo> turbos = findMagmiTurbos(productIds);
         
