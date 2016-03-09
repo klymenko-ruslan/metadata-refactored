@@ -27,18 +27,20 @@ angular.module("ngMetaCrudApp")
               return;
             }
             $log.log("Loading BOM for parent part", parentPartId);
-            BOM.listByParentPartId(parentPartId).then(function(bom) {
-              $scope.bom = bom;
-              $scope.bomTableParams.reload();
-            }, restService.error);
+            BOM.listByParentPartId(parentPartId).then(
+              function success(bom) {
+                $scope.bom = bom;
+                $scope.bomTableParams = new ngTableParams({
+                  page: 1,
+                  count: 10
+                }, {
+                  getData: utils.localPagination($scope.bom, "child.manufacturerPartNumber")
+                });
+              },
+              restService.error
+            );
           });
 
-          $scope.bomTableParams = new ngTableParams({
-            page: 1,
-            count: 10
-          }, {
-            getData: utils.localPagination($scope.bom, "child.manufacturerPartNumber")
-          });
 
           // Temp storage for quantities
           $scope.modifyValues = {};

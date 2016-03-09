@@ -27,7 +27,7 @@ angular.module("ngMetaCrudApp")
                   page: 1,
                   count: 10
                 }, {
-                  getData: utils.localPagination($scope.interchange.parts, "manufacturer.name")
+                  getData: utils.localPagination(interchange.parts, "manufacturer.name")
                 });
               },
               function(error) {
