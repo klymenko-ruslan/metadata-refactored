@@ -13,8 +13,13 @@ public class SalesNoteService {
     @Autowired
     private SalesNotePartDao salesNotePartDao;
 
+    /**
+     * @param partId
+     * @return primary part ID or -1 if this part has no one
+     */
     public Long findPrimaryPartIdForThePart(long partId) {
-        return salesNotePartDao.findPrimaryPartIdForThePart(partId);
+        Long primaryPartId = salesNotePartDao.findPrimaryPartIdForThePart(partId);
+        return primaryPartId == null ? -1L : primaryPartId;
     }
 
 }

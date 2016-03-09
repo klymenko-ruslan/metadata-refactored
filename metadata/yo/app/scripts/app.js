@@ -82,8 +82,7 @@ angular.module("ngMetaCrudApp", ["ngRoute", "ngTable", "ui.bootstrap",
       controller: "SalesNoteListCtrl",
       resolve: {
         primaryPartId: ["$route", "restService", function($route, restService) {
-          // -1 below means that part has no any sales notes.
-          return restService.findPrimaryPartIdForThePart($route.current.pathParams.id) || -1;
+          return restService.findPrimaryPartIdForThePart($route.current.pathParams.id);
         }]
       }
     });
