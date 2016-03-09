@@ -2,6 +2,8 @@ package com.turbointernational.metadata.services;
 
 import com.turbointernational.metadata.Application;
 import com.turbointernational.metadata.domain.other.Mas90Sync;
+import com.turbointernational.metadata.domain.part.Part;
+import com.turbointernational.metadata.domain.part.PartDao;
 import com.turbointernational.metadata.domain.security.User;
 import com.turbointernational.metadata.domain.security.UserDao;
 import org.junit.Assert;
@@ -48,6 +50,9 @@ public class Mas90SyncServiceTest {
 
     @Autowired
     private Mas90SyncService mas90SyncService;
+
+    @Autowired
+    private PartDao partDao;
 
     @Autowired
     private UserDao userDao;
@@ -169,8 +174,21 @@ public class Mas90SyncServiceTest {
         Assert.assertEquals("Table 'ci_item' has unexpected number of records.", 1, numCiItemBefore);
         mas90Synchronizer.run();
         int numPartsAfter = JdbcTestUtils.countRowsInTable(jdbcTemplateMetadata, "part");
-        // Check record with result.
         Assert.assertEquals("A new part has not been inserted.", 1, numPartsAfter);
+        Assert.assertEquals("A new part (cartridge) has been created partially. " +
+                "Table 'cartridge' has no corresponding record.", 1,
+                JdbcTestUtils.countRowsInTable(jdbcTemplateMetadata, "cartridge"));
+        Part part = partDao.findByPartNumber("1-A-1047");
+        Assert.assertNotNull("Part (1-A-1047) not found.", part);
+        Assert.assertNotNull(part.getManufacturer());
+        Assert.assertNotNull(part.getManufacturer().getId());
+        Assert.assertEquals("Wrong manufacturer.", Mas90SyncService.TURBO_INTERNATIONAL_MANUFACTURER_ID,
+                (long) part.getManufacturer().getId());
+        Assert.assertEquals("Wrong description.", "*NLA - USE 1-A-1046* CARTRIDGE" , part.getDescription());
+        Assert.assertTrue("Wrong 'inactive'.", part.getInactive());
+        Assert.assertEquals("Table BOM must be empty.", 0,
+                JdbcTestUtils.countRowsInTable(jdbcTemplateMetadata, "bom"));
+        // Check record with result.
         Assert.assertNotNull("The 'mas90sync' record was not persistent.", record.getId());
         Assert.assertNotNull("Field 'started' was not initialized.", record.getStarted());
         Assert.assertNotNull("Field 'finished' was not initialized.", record.getFinished());

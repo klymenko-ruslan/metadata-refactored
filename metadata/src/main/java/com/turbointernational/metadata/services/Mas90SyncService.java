@@ -46,7 +46,7 @@ public class Mas90SyncService {
 
     private final Logger log = LoggerFactory.getLogger(Mas90SyncService.class);
 
-    private final static long TURBO_INTERNATIONAL_MANUFACTURER_ID = 11L;
+    final static long TURBO_INTERNATIONAL_MANUFACTURER_ID = 11L;
 
     @Autowired
     private Mas90Database mas90Database;
