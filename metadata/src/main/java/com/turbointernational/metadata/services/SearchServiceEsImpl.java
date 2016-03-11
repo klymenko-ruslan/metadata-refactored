@@ -45,7 +45,7 @@ import java.util.regex.Pattern;
 
 /**
  * Implementation of the {@link SearchService} based on the ElasticSearch.
- *
+ * <p>
  * Created by dmytro.trunykov@zorallabs.com on 3/8/16.
  */
 @Service
@@ -116,7 +116,7 @@ public class SearchServiceEsImpl implements SearchService {
 
     private final static Pattern REGEX_TOSHORTFIELD = Pattern.compile("\\W");
 
-    private final static int DEF_AGGR_RESULT_SIZE = 100;
+    private final static int DEF_AGGR_RESULT_SIZE = 300;
 
     private final static AggregationBuilder[] PART_AGGREGATIONS = new AggregationBuilder[]{
             AggregationBuilders.terms("Part Type").field("partType.name.full").size(DEF_AGGR_RESULT_SIZE),
@@ -152,7 +152,7 @@ public class SearchServiceEsImpl implements SearchService {
 
     /**
      * Transform a string to a string for search in the "name.short" field.
-     * <p/>
+     * <p>
      * Some types in the ElasticSearch index has property "name" that is mapped on two versions:
      * <dd>
      * <dt>full</dt>
@@ -170,8 +170,6 @@ public class SearchServiceEsImpl implements SearchService {
      * Convert string to SortOrder.
      */
     private final static Function<String, SortOrder> convertSortOrder = sortOrder -> SortOrder.valueOf(sortOrder.toUpperCase());
-
-    private final static Function<String, String> queryString = s -> "*" + s + "*";
 
     @Override
     @Transactional(readOnly = true)
@@ -367,7 +365,13 @@ public class SearchServiceEsImpl implements SearchService {
             BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
             if (carModelEngineYear != null) {
                 String normalizedCarModelEngineYear = str2shotfield.apply(carModelEngineYear);
-                boolQuery.must(QueryBuilders.queryStringQuery(queryString.apply(normalizedCarModelEngineYear)));
+                BoolQueryBuilder subBoolQuery = QueryBuilders.boolQuery();
+                subBoolQuery.should(QueryBuilders.termQuery("year.name.short", normalizedCarModelEngineYear));
+                subBoolQuery.should(QueryBuilders.termQuery("model.name.short", normalizedCarModelEngineYear));
+                subBoolQuery.should(QueryBuilders.termQuery("model.make.name.short", normalizedCarModelEngineYear));
+                subBoolQuery.should(QueryBuilders.termQuery("engine.engineSize.short", normalizedCarModelEngineYear));
+                subBoolQuery.should(QueryBuilders.termQuery("engine.fueltype.name.short", normalizedCarModelEngineYear));
+                boolQuery.must(subBoolQuery);
             }
             if (year != null) {
                 boolQuery.must(QueryBuilders.termQuery("year.name.full", year));
@@ -407,7 +411,7 @@ public class SearchServiceEsImpl implements SearchService {
     }
 
     @Override
-    public String filterCarMakes(String carMake , String sortProperty, String sortOrder,
+    public String filterCarMakes(String carMake, String sortProperty, String sortOrder,
                                  Integer offset, Integer limit) {
         carMake = StringUtils.defaultIfEmpty(carMake, null);
         SearchRequestBuilder srb = elasticSearch.prepareSearch(elasticSearchIndex)
@@ -443,7 +447,7 @@ public class SearchServiceEsImpl implements SearchService {
 
     @Override
     public String filterCarModels(String carModel, String make, String sortProperty, String sortOrder,
-                                 Integer offset, Integer limit) {
+                                  Integer offset, Integer limit) {
         carModel = StringUtils.defaultIfEmpty(carModel, null);
         SearchRequestBuilder srb = elasticSearch.prepareSearch(elasticSearchIndex)
                 .setTypes(elasticSearchTypeCarModel)
@@ -484,7 +488,7 @@ public class SearchServiceEsImpl implements SearchService {
 
     @Override
     public String filterCarEngines(String carEngine, String fuelType, String sortProperty, String sortOrder,
-                                 Integer offset, Integer limit) {
+                                   Integer offset, Integer limit) {
         carEngine = StringUtils.defaultIfEmpty(carEngine, null);
         SearchRequestBuilder srb = elasticSearch.prepareSearch(elasticSearchIndex)
                 .setTypes(elasticSearchTypeCarEngine)
@@ -496,7 +500,7 @@ public class SearchServiceEsImpl implements SearchService {
             BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
             if (carEngine != null) {
                 String normalizedCarEngine = str2shotfield.apply(carEngine);
-                boolQuery.must(QueryBuilders.termQuery("name.short", normalizedCarEngine));
+                boolQuery.must(QueryBuilders.termQuery("engineSize.short", normalizedCarEngine));
             }
             if (fuelType != null) {
                 boolQuery.must(QueryBuilders.termQuery("fuelType.name.full", fuelType));
@@ -524,8 +528,8 @@ public class SearchServiceEsImpl implements SearchService {
     }
 
     @Override
-    public String filterCarFuelTypes(String fuelType , String sortProperty, String sortOrder,
-                                 Integer offset, Integer limit) {
+    public String filterCarFuelTypes(String fuelType, String sortProperty, String sortOrder,
+                                     Integer offset, Integer limit) {
         fuelType = StringUtils.defaultIfEmpty(fuelType, null);
         SearchRequestBuilder srb = elasticSearch.prepareSearch(elasticSearchIndex)
                 .setTypes(elasticSearchTypeCarFuelType)

@@ -21,10 +21,13 @@ import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.sql.DataSource;
 
+import static org.springframework.transaction.TransactionDefinition.PROPAGATION_MANDATORY;
+import static org.springframework.transaction.TransactionDefinition.PROPAGATION_REQUIRED;
 import static org.springframework.transaction.TransactionDefinition.PROPAGATION_REQUIRES_NEW;
 
 /**
@@ -73,7 +76,8 @@ public class Mas90SyncServiceTest {
         this.jdbcTemplateMas90 = new JdbcTemplate(dataSourceMas90);
         this.user = userDao.findOne(1L); // admin
         TransactionTemplate tt = new TransactionTemplate(txManager);
-        tt.setPropagationBehavior(PROPAGATION_REQUIRES_NEW);
+        //tt.setPropagationBehavior(PROPAGATION_REQUIRES_NEW);
+        tt.setPropagationBehavior(PROPAGATION_MANDATORY);
         this.record = tt.execute(ts -> mas90SyncService.prepareStart(user));
         this.mas90Synchronizer = mas90SyncService.new Mas90Synchronizer(user, record);
     }
@@ -167,6 +171,7 @@ public class Mas90SyncServiceTest {
     @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_tables.sql")
     */
+    @Transactional
     public void testInsertNewPart_1() {
         int numPartsBefore = JdbcTestUtils.countRowsInTable(jdbcTemplateMetadata, "part");
         Assert.assertEquals("Table 'part' is not empty before test.", 0, numPartsBefore);
