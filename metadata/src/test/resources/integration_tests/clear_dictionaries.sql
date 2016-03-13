@@ -7,3 +7,4 @@ delete from group_role;
 delete from groups;
 delete from mas90sync;
 delete from user;
+delete from role;

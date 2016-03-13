@@ -4,6 +4,9 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 /**
+ * Implementation of the interface {@link Mas90Database} with the HSQL database as backend.
+ * This implementation is used in integration tests only.
+ *
  * Created by dmytro.trunykov@zorallabs.com on 3/8/16.
  */
 @Service

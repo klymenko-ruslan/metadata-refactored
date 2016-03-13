@@ -37,6 +37,7 @@ import static org.springframework.transaction.TransactionDefinition.PROPAGATION_
 @SpringApplicationConfiguration(classes = Application.class)
 @WebIntegrationTest
 @ActiveProfiles("integration")
+@Transactional
 public class Mas90SyncServiceTest {
 
     @Autowired
@@ -165,13 +166,10 @@ public class Mas90SyncServiceTest {
     @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
             config = @SqlConfig(dataSource = "dataSourceMas90", transactionManager = "transactionManagerMas90"),
             scripts = "classpath:integration_tests/mas90sync_service/clear_mas90.sql")
-    /*
     @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_dictionaries.sql")
     @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_tables.sql")
-    */
-    @Transactional
     public void testInsertNewPart_1() {
         int numPartsBefore = JdbcTestUtils.countRowsInTable(jdbcTemplateMetadata, "part");
         Assert.assertEquals("Table 'part' is not empty before test.", 0, numPartsBefore);

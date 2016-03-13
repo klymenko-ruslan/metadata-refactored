@@ -17,6 +17,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +35,10 @@ import java.util.Set;
 @WebIntegrationTest
 @ActiveProfiles("integration")
 @Transactional
+@SqlConfig(
+        dataSource = "dataSource",
+        transactionManager = "transactionManagerMetadata"
+)
 public class InterchangeServiceTest {
 
     @Qualifier("dataSource")
@@ -58,7 +63,7 @@ public class InterchangeServiceTest {
 
     /**
      * Test removing a part from interchangeable group when this part is an only member of the group.
-     *
+     * <p>
      * Test-case:
      * <ol>
      * <li>Create a part and interchangeable's group for the part.</li>
@@ -73,10 +78,22 @@ public class InterchangeServiceTest {
      * </ol>
      */
     @Test
-    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:integration_tests/feed_dictionaries.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:integration_tests/interchange_service/leave_interchangeable_group_0_before.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:integration_tests/clear_tables.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:integration_tests/clear_dictionaries.sql")
+    @Sql(
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            scripts = "classpath:integration_tests/feed_dictionaries.sql"
+    )
+    @Sql(
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            scripts = "classpath:integration_tests/interchange_service/leave_interchangeable_group_0_before.sql"
+    )
+    @Sql(
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            scripts = "classpath:integration_tests/clear_tables.sql"
+    )
+    @Sql(
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            scripts = "classpath:integration_tests/clear_dictionaries.sql"
+    )
     public void testLeaveInterchangeableGroup_0() {
         // Check prerequisites before testing.
         int chlogCount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "changelog");
@@ -99,7 +116,7 @@ public class InterchangeServiceTest {
 
     /**
      * Test removing a part from interchangeable group when the group has several members.
-     *
+     * <p>
      * Test-case:
      * <ol>
      * <li>Create two parts and interchangeable's group for them.</li>
@@ -115,10 +132,22 @@ public class InterchangeServiceTest {
      * </ol>
      */
     @Test
-    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:integration_tests/feed_dictionaries.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:integration_tests/interchange_service/leave_interchangeable_group_1_before.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:integration_tests/clear_tables.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:integration_tests/clear_dictionaries.sql")
+    @Sql(
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            scripts = "classpath:integration_tests/feed_dictionaries.sql"
+    )
+    @Sql(
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            scripts = "classpath:integration_tests/interchange_service/leave_interchangeable_group_1_before.sql"
+    )
+    @Sql(
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            scripts = "classpath:integration_tests/clear_tables.sql"
+    )
+    @Sql(
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            scripts = "classpath:integration_tests/clear_dictionaries.sql"
+    )
     @WithUserDetails("mock@gmail.com")
     public void testLeaveInterchangeableGroup_1() {
         // Check prerequisites before testing.
@@ -149,7 +178,7 @@ public class InterchangeServiceTest {
 
     /**
      * Test movement of a part from its interchangeable group to an interchangeable group of other part.
-     *
+     * <p>
      * Test-case:
      * <ol>
      * <li>Create two interchangeable groups.</li>
@@ -166,10 +195,22 @@ public class InterchangeServiceTest {
      * </ol>
      */
     @Test
-    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:integration_tests/feed_dictionaries.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:integration_tests/interchange_service/merge_interchangeables.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:integration_tests/clear_tables.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:integration_tests/clear_dictionaries.sql")
+    @Sql(
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            scripts = "classpath:integration_tests/feed_dictionaries.sql"
+    )
+    @Sql(
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            scripts = "classpath:integration_tests/interchange_service/merge_interchangeables.sql"
+    )
+    @Sql(
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            scripts = "classpath:integration_tests/clear_tables.sql"
+    )
+    @Sql(
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            scripts = "classpath:integration_tests/clear_dictionaries.sql"
+    )
     @WithUserDetails("mock@gmail.com")
     public void testMergePickedAloneToPart() {
         // Check prerequisites before testing.
@@ -195,13 +236,13 @@ public class InterchangeServiceTest {
         // Check that targeted group has expected members.
         Set<Long> expectedDstGroup = new HashSet<>(Arrays.asList(42077L, 41405L, 40393L));
         pickedPart.getInterchange().getParts().forEach(
-            p -> Assert.assertTrue("Found unexpected part in the target group.", expectedDstGroup.contains(p.getId()))
+                p -> Assert.assertTrue("Found unexpected part in the target group.", expectedDstGroup.contains(p.getId()))
         );
         // Check that source group has expected members.
         Set<Long> expectedSrcGroup = new HashSet<>(Arrays.asList(40392L, 41587L));
         Part partFromSrcGrp = partDao.findOne(40392L);
         partFromSrcGrp.getInterchange().getParts().forEach(
-            p -> Assert.assertTrue("Found unexpected part in the source group.", expectedSrcGroup.contains(p.getId()))
+                p -> Assert.assertTrue("Found unexpected part in the source group.", expectedSrcGroup.contains(p.getId()))
         );
         // Check that record to the 'changelog' was inserted.
         chlogCount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "changelog");
@@ -212,10 +253,22 @@ public class InterchangeServiceTest {
      * The same test as described in {@link #testMergePickedAloneToPart()} but in reverse order.
      */
     @Test
-    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:integration_tests/feed_dictionaries.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:integration_tests/interchange_service/merge_interchangeables.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:integration_tests/clear_tables.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:integration_tests/clear_dictionaries.sql")
+    @Sql(
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            scripts = "classpath:integration_tests/feed_dictionaries.sql"
+    )
+    @Sql(
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            scripts = "classpath:integration_tests/interchange_service/merge_interchangeables.sql"
+    )
+    @Sql(
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            scripts = "classpath:integration_tests/clear_tables.sql"
+    )
+    @Sql(
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            scripts = "classpath:integration_tests/clear_dictionaries.sql"
+    )
     @WithUserDetails("mock@gmail.com")
     public void testMergePartAloneToPicked() {
         // Check prerequisites before testing.
@@ -241,13 +294,13 @@ public class InterchangeServiceTest {
         // Check that targeted group has expected members.
         Set<Long> expectedDstGroup = new HashSet<>(Arrays.asList(40392L, 40393L, 41587L, 41405L));
         pickedPart.getInterchange().getParts().forEach(
-            p -> Assert.assertTrue("Found unexpected part in the target group.", expectedDstGroup.contains(p.getId()))
+                p -> Assert.assertTrue("Found unexpected part in the target group.", expectedDstGroup.contains(p.getId()))
         );
         // Check that source group has expected members.
         Set<Long> expectedSrcGroup = new HashSet<>(Arrays.asList(42077L));
         Part partFromSrcGrp = partDao.findOne(42077L);
         partFromSrcGrp.getInterchange().getParts().forEach(
-            p -> Assert.assertTrue("Found unexpected part in the source group.", expectedSrcGroup.contains(p.getId()))
+                p -> Assert.assertTrue("Found unexpected part in the source group.", expectedSrcGroup.contains(p.getId()))
         );
         // Check that record to the 'changelog' was inserted.
         chlogCount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "changelog");
@@ -256,7 +309,7 @@ public class InterchangeServiceTest {
 
     /**
      * Test a movement of a part and all members of the interchangeable group to an interchangeable group of other part.
-     *
+     * <p>
      * Test-case:
      * <ol>
      * <li>Create two interchangeable groups.</li>
@@ -275,10 +328,22 @@ public class InterchangeServiceTest {
      * See also ticket #590.
      */
     @Test
-    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:integration_tests/feed_dictionaries.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:integration_tests/interchange_service/merge_interchangeables.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:integration_tests/clear_tables.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:integration_tests/clear_dictionaries.sql")
+    @Sql(
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            scripts = "classpath:integration_tests/feed_dictionaries.sql"
+    )
+    @Sql(
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            scripts = "classpath:integration_tests/interchange_service/merge_interchangeables.sql"
+    )
+    @Sql(
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            scripts = "classpath:integration_tests/clear_tables.sql"
+    )
+    @Sql(
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            scripts = "classpath:integration_tests/clear_dictionaries.sql"
+    )
     @WithUserDetails("mock@gmail.com")
     public void testMergePickedAllToPart() {
         // Check prerequisites before testing.
@@ -304,7 +369,7 @@ public class InterchangeServiceTest {
         // Check that targeted group has expected members.
         Set<Long> expectedDstGroup = new HashSet<>(Arrays.asList(42077L, 41405L, 40392L, 40393L, 41587L));
         pickedPart.getInterchange().getParts().forEach(
-            p -> Assert.assertTrue("Found unexpected part in the target group.", expectedDstGroup.contains(p.getId()))
+                p -> Assert.assertTrue("Found unexpected part in the target group.", expectedDstGroup.contains(p.getId()))
         );
         // Check that record to the 'changelog' was inserted.
         chlogCount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "changelog");
