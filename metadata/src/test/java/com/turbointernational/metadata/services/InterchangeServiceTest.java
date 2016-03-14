@@ -61,22 +61,26 @@ public class InterchangeServiceTest {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
+
+    //@formatter:off
     /**
      * Test removing a part from interchangeable group when this part is an only member of the group.
      * <p>
-     * Test-case:
+     *   Test-case:
+     * </p>
      * <ol>
-     * <li>Create a part and interchangeable's group for the part.</li>
-     * <li>Call method {@link InterchangeService#leaveInterchangeableGroup(long)} for the part.</li>
-     * <li>Make sure that:
-     * <ul>
-     * <li>part still be a member of the same group;</li>
-     * <li>no other groups created;</li>
-     * <li>no changes wrote to the 'changelog' table.</li>
-     * </ul>
-     * </li>
+     *   <li>Create a part and interchangeable's group for the part.</li>
+     *   <li>Call method {@link InterchangeService#leaveInterchangeableGroup(long)} for the part.</li>
+     *   <li>Make sure that:
+     *     <ul>
+     *       <li>part still be a member of the same group;</li>
+     *       <li>no other groups created;</li>
+     *       <li>no changes wrote to the 'changelog' table.</li>
+     *     </ul>
+     *   </li>
      * </ol>
      */
+    //@formatter:on
     @Test
     @Sql(
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
@@ -114,23 +118,27 @@ public class InterchangeServiceTest {
         Assert.assertEquals("Added record(s) to the table 'changelog'.", 0, chlogCount);
     }
 
+
+    //@formatter:off
     /**
      * Test removing a part from interchangeable group when the group has several members.
      * <p>
-     * Test-case:
+     *   Test-case:
+     * </p>
      * <ol>
-     * <li>Create two parts and interchangeable's group for them.</li>
-     * <li>Call method {@link InterchangeService#leaveInterchangeableGroup(long)} for the first part.</li>
-     * <li>Make sure that:
-     * <ul>
-     * <li>the firs part was moved to a new (created) group;</li>
-     * <li>the second part still be a member of the same group;</li>
-     * <li>no other groups created;</li>
-     * <li>changes wrote to the 'changelog' table.</li>
-     * </ul>
-     * </li>
+     *   <li>Create two parts and interchangeable's group for them.</li>
+     *   <li>Call method {@link InterchangeService#leaveInterchangeableGroup(long)} for the first part.</li>
+     *   <li>Make sure that:
+     *     <ul>
+     *       <li>the firs part was moved to a new (created) group;</li>
+     *       <li>the second part still be a member of the same group;</li>
+     *       <li>no other groups created;</li>
+     *       <li>changes wrote to the 'changelog' table.</li>
+     *     </ul>
+     *   </li>
      * </ol>
      */
+    //@formatter:on
     @Test
     @Sql(
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
@@ -176,24 +184,28 @@ public class InterchangeServiceTest {
         Assert.assertEquals("Table 'changelog' has no record about last changes.", 1, chlogCount);
     }
 
+
+    //@formatter:off
     /**
      * Test movement of a part from its interchangeable group to an interchangeable group of other part.
      * <p>
-     * Test-case:
+     *   Test-case:
+     * </p>
      * <ol>
-     * <li>Create two interchangeable groups.</li>
-     * <li>Let part with ID 'partId' belong to the group 'A' and 'pickedPartId' to the group 'B'.</li>
-     * <li>Call method {@link InterchangeService#mergePickedAloneToPart(long partId, long pickedPartId)}</li>
-     * <li>Make sure that:
-     * <ul>
-     * <li>the 'pickedPartId' belongs to the same group as 'partId' -- 'A';</li>
-     * <li>the group 'B' exists and contains the same elements except 'pickedPartId';</li>
-     * <li>no other groups created;</li>
-     * <li>changes wrote to the 'changelog' table.</li>
-     * </ul>
-     * </li>
+     *   <li>Create two interchangeable groups.</li>
+     *   <li>Let part with ID 'partId' belong to the group 'A' and 'pickedPartId' to the group 'B'.</li>
+     *   <li>Call method {@link InterchangeService#mergePickedAloneToPart(long partId, long pickedPartId)}</li>
+     *   <li>Make sure that:
+     *     <ul>
+     *       <li>the 'pickedPartId' belongs to the same group as 'partId' -- 'A';</li>
+     *       <li>the group 'B' exists and contains the same elements except 'pickedPartId';</li>
+     *       <li>no other groups created;</li>
+     *       <li>changes wrote to the 'changelog' table.</li>
+     *     </ul>
+     *   </li>
      * </ol>
      */
+    //@formatter:on
     @Test
     @Sql(
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
@@ -248,6 +260,7 @@ public class InterchangeServiceTest {
         chlogCount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "changelog");
         Assert.assertEquals("Table 'changelog' has no record about last changes.", 1, chlogCount);
     }
+
 
     /**
      * The same test as described in {@link #testMergePickedAloneToPart()} but in reverse order.
@@ -307,26 +320,30 @@ public class InterchangeServiceTest {
         Assert.assertEquals("Table 'changelog' has no record about last changes.", 1, chlogCount);
     }
 
+
+    //@formatter:off
     /**
      * Test a movement of a part and all members of the interchangeable group to an interchangeable group of other part.
      * <p>
-     * Test-case:
+     *   Test-case:
+     * </p>
      * <ol>
-     * <li>Create two interchangeable groups.</li>
-     * <li>Let part with ID 'partId' belong to the group 'A' and 'pickedPartId' to the group 'B'.</li>
-     * <li>Call method {@link InterchangeService#mergePickedAllToPart(long partId, long pickedPartId)}</li>
-     * <li>Make sure that:
-     * <ul>
-     * <li>the 'pickedPartId' belongs to the same group as 'partId' -- 'A';</li>
-     * <li>all other members of the group 'B' have been moved to the group 'A';</li>
-     * <li>the group 'B' does not exists anymore;</li>
-     * <li>no other groups created;</li>
-     * <li>changes wrote to the 'changelog' table.</li>
-     * </ul>
-     * </li>
+     *   <li>Create two interchangeable groups.</li>
+     *   <li>Let part with ID 'partId' belong to the group 'A' and 'pickedPartId' to the group 'B'.</li>
+     *   <li>Call method {@link InterchangeService#mergePickedAllToPart(long partId, long pickedPartId)}</li>
+     *   <li>Make sure that:
+     *     <ul>
+     *       <li>the 'pickedPartId' belongs to the same group as 'partId' -- 'A';</li>
+     *       <li>all other members of the group 'B' have been moved to the group 'A';</li>
+     *       <li>the group 'B' does not exists anymore;</li>
+     *       <li>no other groups created;</li>
+     *       <li>changes wrote to the 'changelog' table.</li>
+     *     </ul>
+     *   </li>
      * </ol>
      * See also ticket #590.
      */
+    //@formatter:on
     @Test
     @Sql(
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
@@ -375,5 +392,6 @@ public class InterchangeServiceTest {
         chlogCount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "changelog");
         Assert.assertEquals("Table 'changelog' has no record about last changes.", 1, chlogCount);
     }
+
 
 }

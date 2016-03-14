@@ -89,21 +89,28 @@ public class Mas90SyncServiceTest {
         this.mas90Synchronizer = mas90SyncService.new Mas90Synchronizer(user, record);
     }
 
+
+    //@formatter:off
     /**
-     * Test that synchronization procedure does not process records which have manufacturer numbers
-     * unmatched with the pattern.
-     *
-     * Test case:
+     * Test that synchronization procedure does not process records which manufacturer numbers does not match to
+     * the patter of eligible numbers.
+     * <p>
+     *   Test case:
+     * </p>
      * <ol>
-     *     <li>Insert into MAS90 database a record with manufacturer number '/BH2350'.</li>
-     *     <li>Call method {@link Mas90SyncService.Mas90Synchronizer#run()}</li>
-     *     <li>Make sure that</li>
-     *     <ul>
-     *         <li>Table 'part' has no any new record.</li>
-     *         <li>Record with result of the execution has correct values and persistent.<li/>
-     *     </ul>
+     *   <li>Insert into MAS90 database a record with manufacturer number '/BH2350'.</li>
+     *   <li>Call method {@link Mas90SyncService.Mas90Synchronizer#run()}</li>
+     *   <li>Make sure that</li>
+     *   <ul>
+     *     <li>Table 'part' has no any new record.</li>
+     *     <li>
+     *       Record with result of the execution ("History of synchronization sessions")
+     *       has correct values and persistent.
+     *     <li/>
+     *   </ul>
      * </ol>
      */
+    //@formatter:on
     @Test
     @Sql(
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
@@ -159,21 +166,28 @@ public class Mas90SyncServiceTest {
         Assert.assertEquals("Unexpected sync.process status.", Mas90Sync.Status.FINISHED, record.getStatus());
     }
 
+
+    //@formatter:off
     /**
-     * Test that synchronization procedure does not process records which have manufacturer numbers
-     * unmatched with the pattern.
-     *
-     * Test case:
+     * Test that synchronization procedure creates a new part.
+     * <p>
+     *   Test case:
+     * </p>
      * <ol>
-     *     <li>Insert into MAS90 database a record with manufacturer number '/BH2350'.</li>
-     *     <li>Call method {@link Mas90SyncService.Mas90Synchronizer#run()}</li>
-     *     <li>Make sure that</li>
-     *     <ul>
-     *         <li>Table 'part' has no any new record.</li>
-     *         <li>Record with result of the execution has correct values and persistent.<li/>
-     *     </ul>
+     *   <li>Insert into MAS90 database a record with eligible manufacturer number.</li>
+     *   <li>Call method {@link Mas90SyncService.Mas90Synchronizer#run()}</li>
+     *   <li>Make sure that</li>
+     *   <ul>
+     *     <li>Table 'part' has a new record.</li>
+     *     <li>Make sure that just created part has expected correct values.</li>
+     *     <li>
+     *       Record with result of the execution ("History of synchronization sessions")
+     *       has correct values and persistent.
+     *     </li>
+     *   </ul>
      * </ol>
      */
+    //@formatter:on
     @Test
     @Sql(
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
@@ -216,7 +230,7 @@ public class Mas90SyncServiceTest {
         int numPartsAfter = JdbcTestUtils.countRowsInTable(jdbcTemplateMetadata, "part");
         Assert.assertEquals("A new part has not been inserted.", 1, numPartsAfter);
         Assert.assertEquals("A new part (cartridge) has been created partially. " +
-                "Table 'cartridge' has no corresponding record.", 1,
+                        "Table 'cartridge' has no corresponding record.", 1,
                 JdbcTestUtils.countRowsInTable(jdbcTemplateMetadata, "cartridge"));
         Part part = partDao.findByPartNumber("1-A-1047");
         Assert.assertNotNull("Part (1-A-1047) not found.", part);
@@ -224,7 +238,7 @@ public class Mas90SyncServiceTest {
         Assert.assertNotNull(part.getManufacturer().getId());
         Assert.assertEquals("Wrong manufacturer.", Mas90SyncService.TURBO_INTERNATIONAL_MANUFACTURER_ID,
                 (long) part.getManufacturer().getId());
-        Assert.assertEquals("Wrong description.", "*NLA - USE 1-A-1046* CARTRIDGE" , part.getDescription());
+        Assert.assertEquals("Wrong description.", "*NLA - USE 1-A-1046* CARTRIDGE", part.getDescription());
         Assert.assertTrue("Wrong 'inactive'.", part.getInactive());
         Assert.assertEquals("Table BOM must be empty.", 0,
                 JdbcTestUtils.countRowsInTable(jdbcTemplateMetadata, "bom"));
@@ -237,6 +251,8 @@ public class Mas90SyncServiceTest {
         Assert.assertEquals("Not fetched any record from MAS90 to process.", 1L, (long) record.getToProcess());
         Assert.assertEquals("There is updated record(s).", 0L, (long) record.getUpdated());
         Assert.assertEquals("There is skipped record(s).", 0L, (long) record.getSkipped());
+        Assert.assertEquals("Unexpected sync.process status.", Mas90Sync.Status.FINISHED, record.getStatus());
     }
+
 
 }
