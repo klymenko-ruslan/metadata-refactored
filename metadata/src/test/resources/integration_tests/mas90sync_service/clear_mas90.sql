@@ -1,2 +1,4 @@
-delete from ci_item;
-delete from productLine_to_parttype_value;
+drop table ci_item;
+drop table productLine_to_parttype_value;
+drop table bm_billheader;
+drop table bm_billdetail;

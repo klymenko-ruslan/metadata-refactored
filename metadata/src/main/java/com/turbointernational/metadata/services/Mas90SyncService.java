@@ -55,10 +55,6 @@ public class Mas90SyncService {
     @Autowired
     private PlatformTransactionManager txManager; // JPA
 
-    @Qualifier("transactionManagerMas90")
-    @Autowired
-    private PlatformTransactionManager txManagerMas90;
-
     @Autowired
     private PartDao partDao;
 
@@ -79,7 +75,7 @@ public class Mas90SyncService {
 
     private Mas90Synchronizer syncProcess;
 
-    private SyncProcessStatus syncProcessStatus;
+    SyncProcessStatus syncProcessStatus;
 
     @PostConstruct
     public void init() {
@@ -313,93 +309,90 @@ public class Mas90SyncService {
 
         @Override
         public void run() {
-            TransactionTemplate transaction = new TransactionTemplate(txManagerMas90);
-            transaction.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW); // new transaction
-            Mas90Sync.Status status = transaction.execute(transactionStatus -> {
-                log.info("Started synchronization with MAS90.");
-                String countQuery = mas90Database.getCountQuery();
-                long numItems = mas90db.queryForObject(countQuery, Long.class);
-                synchronized (syncProcessStatus) {
-                    syncProcessStatus.setPartsUpdateTotalSteps(numItems + 1); // +1 to load part_types
-                }
-                Map<String, Long> mas90toLocal = loadPartTypesMap(); // part type value => part type ID
-                synchronized (syncProcessStatus) {
-                    syncProcessStatus.incPartsUpdateCurrentStep();
-                }
-                try {
-                    List<Part> toBeReprocessed = new ArrayList<>();
-                    String itemsQuery = mas90Database.getItemsQuery();
-                    mas90db.query(itemsQuery, rs -> {
-                        String itemcode = rs.getString(1);
-                        String itemcodedesc = rs.getString(2);
-                        String productline = rs.getString(3);
-                        String producttype = rs.getString(4);
-                        Part processedPart = null;
-                        try {
-                            Long partTypeId = mas90toLocal.get(productline);
-                            if (partTypeId != null) {
-                                processedPart = processPart(itemcode, itemcodedesc, producttype, partTypeId); // separate transaction
-                                if (processedPart != null) { // null -- failure
-                                    Boolean updated = processBOM(processedPart, toBeReprocessed, true); // separate transaction
-                                    if (updated == Boolean.TRUE) {
-                                        synchronized (syncProcessStatus) {
-                                            syncProcessStatus.incPartsUpdateUpdates();
-                                        }
+            Mas90Sync.Status status;
+            log.info("Started synchronization with MAS90.");
+            String countQuery = mas90Database.getCountQuery();
+            long numItems = mas90db.queryForObject(countQuery, Long.class);
+            synchronized (syncProcessStatus) {
+                syncProcessStatus.setPartsUpdateTotalSteps(numItems + 1); // +1 to load part_types
+            }
+            Map<String, Long> mas90toLocal = loadPartTypesMap(); // part type value => part type ID
+            synchronized (syncProcessStatus) {
+                syncProcessStatus.incPartsUpdateCurrentStep();
+            }
+            try {
+                List<Part> toBeReprocessed = new ArrayList<>();
+                String itemsQuery = mas90Database.getItemsQuery();
+                mas90db.query(itemsQuery, rs -> {   // we may skip transaction as we use MAS90 DB to query only
+                    String itemcode = rs.getString(1);
+                    String itemcodedesc = rs.getString(2);
+                    String productline = rs.getString(3);
+                    String producttype = rs.getString(4);
+                    Part processedPart = null;
+                    try {
+                        Long partTypeId = mas90toLocal.get(productline);
+                        if (partTypeId != null) {
+                            processedPart = processPart(itemcode, itemcodedesc, producttype, partTypeId); // separate transaction
+                            if (processedPart != null) { // null -- failure
+                                Boolean updated = processBOM(processedPart, toBeReprocessed, true); // separate transaction
+                                if (updated == Boolean.TRUE) {
+                                    synchronized (syncProcessStatus) {
+                                        syncProcessStatus.incPartsUpdateUpdates();
                                     }
                                 }
-                            } else {
-                                // Actually this should never happen because we joined ci_item
-                                // with productLine_to_parttype_value.
-                                throw new AssertionError(String.format("Can't convert productline ('{}') " +
-                                                "to product_type_id. Item with code '{}'.",
-                                        productline, itemcode));
                             }
-                            synchronized (syncProcessStatus) {
-                                syncProcessStatus.incPartsUpdateCurrentStep();
-                            }
-                        } catch (Throwable th) {
-                            String errMsg;
-                            if (processedPart == null) {
-                                errMsg = String.format("Failed processing at the part: '%s'", itemcode);
-                            } else {
-                                errMsg = String.format("Failed processing at the part: [%d] {%s}",
-                                        processedPart.getId(), processedPart.getManufacturerPartNumber());
-                            }
-                            synchronized (syncProcessStatus) {
-                                syncProcessStatus.addError(errMsg);
-                            }
-                            log.error(errMsg);
-                            throw th;
+                        } else {
+                            // Actually this should never happen because we joined ci_item
+                            // with productLine_to_parttype_value.
+                            throw new AssertionError(String.format("Can't convert productline ('{}') " +
+                                            "to product_type_id. Item with code '{}'.",
+                                    productline, itemcode));
+                        }
+                        synchronized (syncProcessStatus) {
+                            syncProcessStatus.incPartsUpdateCurrentStep();
+                        }
+                    } catch (Throwable th) {
+                        String errMsg;
+                        if (processedPart == null) {
+                            errMsg = String.format("Failed processing at the part: '%s'", itemcode);
+                        } else {
+                            errMsg = String.format("Failed processing at the part: [%d] {%s}",
+                                    processedPart.getId(), processedPart.getManufacturerPartNumber());
+                        }
+                        synchronized (syncProcessStatus) {
+                            syncProcessStatus.addError(errMsg);
+                        }
+                        log.error(errMsg);
+                        throw th;
+                    }
+                });
+                if (!toBeReprocessed.isEmpty()) {
+                    List<Part> toBeReprocessed2 = new ArrayList<>();
+                    toBeReprocessed.forEach(thePart -> {
+                        processBOM(thePart, toBeReprocessed2, false);
+                        synchronized (syncProcessStatus) {
+                            syncProcessStatus.incPartsUpdateCurrentStep();
                         }
                     });
-                    if (!toBeReprocessed.isEmpty()) {
-                        List<Part> toBeReprocessed2 = new ArrayList<>();
-                        toBeReprocessed.forEach(thePart -> {
-                            processBOM(thePart, toBeReprocessed2, false);
-                            synchronized (syncProcessStatus) {
-                                syncProcessStatus.incPartsUpdateCurrentStep();
-                            }
-                        });
-                        if (!toBeReprocessed2.isEmpty()) {
-                            // Because MAS90 is external system, so data there can be changed
-                            // while this process is running. We can't fix this in any way,
-                            // so here we just write notification that this case happened.
-                            // This case is actually not critical.
-                            log.warn("In the second iteration we still found absent parts.");
-                        }
+                    if (!toBeReprocessed2.isEmpty()) {
+                        // Because MAS90 is external system, so data there can be changed
+                        // while this process is running. We can't fix this in any way,
+                        // so here we just write notification that this case happened.
+                        // This case is actually not critical.
+                        log.warn("In the second iteration we still found absent parts.");
                     }
-                } catch (Throwable e) {
-                    synchronized (syncProcessStatus) {
-                        syncProcessStatus.addError("Critical error, processing stopped. Cause: " + getRootErrorMessage(e));
-                        syncProcessStatus.setFinished(true);
-                    }
-                    log.error("Synchronization with MAS90 failed.", e);
-                    transactionStatus.setRollbackOnly();
-                    return Mas90Sync.Status.FAILED;
                 }
-                return Mas90Sync.Status.FINISHED;
-            });
+                status = Mas90Sync.Status.FINISHED;
+            } catch (Throwable e) {
+                synchronized (syncProcessStatus) {
+                    syncProcessStatus.addError("Critical error, processing stopped. Cause: " + getRootErrorMessage(e));
+                    syncProcessStatus.setFinished(true);
+                }
+                log.error("Synchronization with MAS90 failed.", e);
+                status = Mas90Sync.Status.FAILED;
+            }
             // Save to a history table a result of this synchronization.
+            final Mas90Sync.Status status2 = status; // helper final variable in order to be accessible from lambda below
             TransactionTemplate transaction2 = new TransactionTemplate(txManager);
             transaction2.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW); // new transaction
             transaction2.execute((TransactionCallback<Void>) transactionStatus -> {
@@ -411,7 +404,7 @@ public class Mas90SyncService {
                     skipped = syncProcessStatus.getPartsUpdateSkipped();
                     syncProcessStatus.setFinished(true);
                 }
-                record.setStatus(status);
+                record.setStatus(status2);
                 record.setFinished(new Timestamp(System.currentTimeMillis()));
                 record.setToProcess(total);
                 record.setUpdated(updated);
@@ -763,13 +756,11 @@ public class Mas90SyncService {
     }
 
     Mas90Sync prepareStart(User user) {
-        if (user == null) {
-            throw new AssertionError("User can't be null.");
-        }
         Mas90Sync record = null;
         synchronized (syncProcessStatus) {
             if (!syncProcessStatus.isFinished()) {
-                throw new IllegalStateException("New 'sync. process' can't be started because exists other process.");
+                throw new IllegalStateException("New synchronization process can't be started because " +
+                        "exists other process.");
             }
             long now = System.currentTimeMillis();
             record = new Mas90Sync();
@@ -784,14 +775,22 @@ public class Mas90SyncService {
             mas90SyncDao.persist(record);
             syncProcessStatus.reset();
             syncProcessStatus.setStartedOn(now);
-            syncProcessStatus.setUserId(user.getId());
-            syncProcessStatus.setUserName(user.getName());
+            if (user == null) {
+                syncProcessStatus.setUserId(null);
+                syncProcessStatus.setUserName(null);
+            } else {
+                syncProcessStatus.setUserId(user.getId());
+                syncProcessStatus.setUserName(user.getName());
+            }
             syncProcessStatus.setFinished(false);
         }
         return record;
     }
 
     public SyncProcessStatus start(User user) {
+        if (user == null) {
+            throw new AssertionError("User can't be null.");
+        }
         Mas90Sync record = prepareStart(user);
         syncProcess = new Mas90Synchronizer(user, record);
         syncProcess.start();

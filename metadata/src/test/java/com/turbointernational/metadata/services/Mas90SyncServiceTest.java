@@ -26,8 +26,6 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.sql.DataSource;
 
-import static org.springframework.transaction.TransactionDefinition.PROPAGATION_MANDATORY;
-import static org.springframework.transaction.TransactionDefinition.PROPAGATION_REQUIRED;
 import static org.springframework.transaction.TransactionDefinition.PROPAGATION_REQUIRES_NEW;
 
 /**
@@ -38,6 +36,10 @@ import static org.springframework.transaction.TransactionDefinition.PROPAGATION_
 @WebIntegrationTest
 @ActiveProfiles("integration")
 @Transactional
+@SqlConfig(
+        dataSource = "dataSource",
+        transactionManager = "transactionManagerMetadata"
+)
 public class Mas90SyncServiceTest {
 
     @Autowired
@@ -76,10 +78,14 @@ public class Mas90SyncServiceTest {
         this.jdbcTemplateMetadata = new JdbcTemplate(dataSource);
         this.jdbcTemplateMas90 = new JdbcTemplate(dataSourceMas90);
         this.user = userDao.findOne(1L); // admin
+        // We have to reset sync.process status in case when prev run test failed.
+        // This reset re-initialize value of the status field from 'running' to 'finished'.
+        // Without this reinitialization an assert exception will be thrown in the 'prepareStart(user)' procedure
+        // during validation of the status.
+        this.mas90SyncService.syncProcessStatus.reset();
         TransactionTemplate tt = new TransactionTemplate(txManager);
-        //tt.setPropagationBehavior(PROPAGATION_REQUIRES_NEW);
-        tt.setPropagationBehavior(PROPAGATION_MANDATORY);
-        this.record = tt.execute(ts -> mas90SyncService.prepareStart(user));
+        tt.setPropagationBehavior(PROPAGATION_REQUIRES_NEW);
+        this.record = tt.execute(ts -> mas90SyncService.prepareStart(/*user*/ null));
         this.mas90Synchronizer = mas90SyncService.new Mas90Synchronizer(user, record);
     }
 
@@ -99,25 +105,41 @@ public class Mas90SyncServiceTest {
      * </ol>
      */
     @Test
-    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
-            scripts = "classpath:integration_tests/feed_dictionaries.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
-            config = @SqlConfig(dataSource = "dataSourceMas90", transactionManager = "transactionManagerMas90"),
-            scripts = "classpath:integration_tests/mas90sync_service/create_mas90.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
-            config = @SqlConfig(dataSource = "dataSourceMas90", transactionManager = "transactionManagerMas90"),
-            scripts = "classpath:integration_tests/mas90sync_service/feed_mas90.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
-            config = @SqlConfig(dataSource = "dataSourceMas90", transactionManager = "transactionManagerMas90"),
-            scripts = "classpath:integration_tests/mas90sync_service/insertnewpart_mas90_0.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
-            config = @SqlConfig(dataSource = "dataSourceMas90", transactionManager = "transactionManagerMas90"),
-            scripts = "classpath:integration_tests/mas90sync_service/clear_mas90.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
-            scripts = "classpath:integration_tests/clear_dictionaries.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
-            scripts = "classpath:integration_tests/clear_tables.sql")
+    @Sql(
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            scripts = "classpath:integration_tests/feed_dictionaries.sql"
+    )
+    @Sql(
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            scripts = "classpath:integration_tests/mas90sync_service/create_mas90.sql",
+            config = @SqlConfig(dataSource = "dataSourceMas90", transactionManager = "transactionManagerMas90")
+    )
+    @Sql(
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            scripts = "classpath:integration_tests/mas90sync_service/feed_mas90.sql",
+            config = @SqlConfig(dataSource = "dataSourceMas90", transactionManager = "transactionManagerMas90")
+    )
+    @Sql(
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            scripts = "classpath:integration_tests/mas90sync_service/insertnewpart_mas90_0.sql",
+            config = @SqlConfig(dataSource = "dataSourceMas90", transactionManager = "transactionManagerMas90")
+    )
+    @Sql(
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            scripts = "classpath:integration_tests/mas90sync_service/clear_mas90.sql",
+            config = @SqlConfig(dataSource = "dataSourceMas90", transactionManager = "transactionManagerMas90")
+    )
+    @Sql(
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            scripts = "classpath:integration_tests/clear_tables.sql"
+    )
+    @Sql(
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            scripts = "classpath:integration_tests/clear_dictionaries.sql"
+    )
     public void testInsertNewPart_0() {
+        int numMas90Sync = JdbcTestUtils.countRowsInTable(jdbcTemplateMetadata, "mas90sync");
+        Assert.assertEquals("Table 'mas90sync' is empty.", 1, numMas90Sync);
         int numPartsBefore = JdbcTestUtils.countRowsInTable(jdbcTemplateMetadata, "part");
         Assert.assertEquals("Table 'part' is not empty before test.", 0, numPartsBefore);
         int numCiItemBefore = JdbcTestUtils.countRowsInTable(jdbcTemplateMas90, "ci_item");
@@ -134,6 +156,7 @@ public class Mas90SyncServiceTest {
         Assert.assertEquals("Not fetched any record from MAS90 to process.", 1L, (long) record.getToProcess());
         Assert.assertEquals("There is updated record(s).", 0L, (long) record.getUpdated());
         Assert.assertEquals("There is skipped record(s).", 0L, (long) record.getSkipped());
+        Assert.assertEquals("Unexpected sync.process status.", Mas90Sync.Status.FINISHED, record.getStatus());
     }
 
     /**
@@ -152,24 +175,38 @@ public class Mas90SyncServiceTest {
      * </ol>
      */
     @Test
-    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
-            scripts = "classpath:integration_tests/feed_dictionaries.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
-            config = @SqlConfig(dataSource = "dataSourceMas90", transactionManager = "transactionManagerMas90"),
-            scripts = "classpath:integration_tests/mas90sync_service/create_mas90.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
-            config = @SqlConfig(dataSource = "dataSourceMas90", transactionManager = "transactionManagerMas90"),
-            scripts = "classpath:integration_tests/mas90sync_service/feed_mas90.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
-            config = @SqlConfig(dataSource = "dataSourceMas90", transactionManager = "transactionManagerMas90"),
-            scripts = "classpath:integration_tests/mas90sync_service/insertnewpart_mas90_1.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
-            config = @SqlConfig(dataSource = "dataSourceMas90", transactionManager = "transactionManagerMas90"),
-            scripts = "classpath:integration_tests/mas90sync_service/clear_mas90.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
-            scripts = "classpath:integration_tests/clear_dictionaries.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
-            scripts = "classpath:integration_tests/clear_tables.sql")
+    @Sql(
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            scripts = "classpath:integration_tests/feed_dictionaries.sql"
+    )
+    @Sql(
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            scripts = "classpath:integration_tests/mas90sync_service/create_mas90.sql",
+            config = @SqlConfig(dataSource = "dataSourceMas90", transactionManager = "transactionManagerMas90")
+    )
+    @Sql(
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            scripts = "classpath:integration_tests/mas90sync_service/feed_mas90.sql",
+            config = @SqlConfig(dataSource = "dataSourceMas90", transactionManager = "transactionManagerMas90")
+    )
+    @Sql(
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            scripts = "classpath:integration_tests/mas90sync_service/insertnewpart_mas90_1.sql",
+            config = @SqlConfig(dataSource = "dataSourceMas90", transactionManager = "transactionManagerMas90")
+    )
+    @Sql(
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            scripts = "classpath:integration_tests/mas90sync_service/clear_mas90.sql",
+            config = @SqlConfig(dataSource = "dataSourceMas90", transactionManager = "transactionManagerMas90")
+    )
+    @Sql(
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            scripts = "classpath:integration_tests/clear_tables.sql"
+    )
+    @Sql(
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            scripts = "classpath:integration_tests/clear_dictionaries.sql"
+    )
     public void testInsertNewPart_1() {
         int numPartsBefore = JdbcTestUtils.countRowsInTable(jdbcTemplateMetadata, "part");
         Assert.assertEquals("Table 'part' is not empty before test.", 0, numPartsBefore);
