@@ -31,6 +31,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
 import java.sql.Timestamp;
 import java.util.*;
@@ -54,6 +55,9 @@ public class Mas90SyncService {
     @Qualifier("transactionManager")
     @Autowired
     private PlatformTransactionManager txManager; // JPA
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Autowired
     private PartDao partDao;
@@ -321,7 +325,7 @@ public class Mas90SyncService {
                 syncProcessStatus.incPartsUpdateCurrentStep();
             }
             try {
-                List<Part> toBeReprocessed = new ArrayList<>();
+                Set<Part> toBeReprocessed = new HashSet<>();
                 String itemsQuery = mas90Database.getItemsQuery();
                 mas90db.query(itemsQuery, rs -> {   // we may skip transaction as we use MAS90 DB to query only
                     String itemcode = rs.getString(1);
@@ -367,8 +371,10 @@ public class Mas90SyncService {
                     }
                 });
                 if (!toBeReprocessed.isEmpty()) {
-                    List<Part> toBeReprocessed2 = new ArrayList<>();
+                    log.info("There are {} parts for reprocessing.", toBeReprocessed.size());
+                    Set<Part> toBeReprocessed2 = new HashSet<>();
                     toBeReprocessed.forEach(thePart -> {
+                        log.info("Reprocessing the part: {}", thePart.getManufacturerPartNumber());
                         processBOM(thePart, toBeReprocessed2, false);
                         synchronized (syncProcessStatus) {
                             syncProcessStatus.incPartsUpdateCurrentStep();
@@ -380,6 +386,7 @@ public class Mas90SyncService {
                         // so here we just write notification that this case happened.
                         // This case is actually not critical.
                         log.warn("In the second iteration we still found absent parts.");
+                        toBeReprocessed2.forEach(p -> log.info("Absent part: {}", p.getManufacturerPartNumber()));
                     }
                 }
                 status = Mas90Sync.Status.FINISHED;
@@ -540,10 +547,9 @@ public class Mas90SyncService {
             } else {
                 p = new Part();
             }
-            EntityManager em = partDao.getEntityManager();
-            PartType partType = em.getReference(PartType.class, partTypeId);
+            PartType partType = entityManager.getReference(PartType.class, partTypeId);
             p.setManufacturerPartNumber(itemcode);
-            Manufacturer manufacturer = em.getReference(Manufacturer.class, TURBO_INTERNATIONAL_MANUFACTURER_ID);
+            Manufacturer manufacturer = entityManager.getReference(Manufacturer.class, TURBO_INTERNATIONAL_MANUFACTURER_ID);
             p.setManufacturer(manufacturer);
             p.setDescription(itemcodedesc);
             p.setPartType(partType);
@@ -583,7 +589,7 @@ public class Mas90SyncService {
             return dirty;
         }
 
-        private Boolean processBOM(Part thePart, List<Part> toBeReprocessed, boolean adjustCounter) {
+        private Boolean processBOM(Part thePart, Set<Part> toBeReprocessed, boolean adjustCounter) {
             long partId = thePart.getId();
             String manufacturerPartNumber = thePart.getManufacturerPartNumber();
             class Mas90Bom {
@@ -609,7 +615,7 @@ public class Mas90SyncService {
                         }
                 );
                 // Load part in this transaction (EntityManager context).
-                Part part = partDao.getEntityManager().find(Part.class, partId);
+                Part part = entityManager.find(Part.class, partId);
                 if (part == null) {
                     throw new AssertionError("Internal error. Part not found: " + partId);
                 }
@@ -644,7 +650,7 @@ public class Mas90SyncService {
                             modification = String.format("Part [%d] %s modified. BOM [%d] (child: [%d] %s) " +
                                             "is removed.", partId, manufacturerPartNumber, bom.getId(), child.getId(),
                                     chMnPrtNum);
-                            partDao.getEntityManager().remove(bom);
+                            entityManager.remove(bom);
                             rmIter.remove();
                             dirty = true;
                         } else {
@@ -653,7 +659,7 @@ public class Mas90SyncService {
                                                 "updated. Quantity: %d => %d", partId, manufacturerPartNumber, bom.getId(),
                                         child.getId(), chMnPrtNum, bom.getQuantity(), mas90Bom.quantity);
                                 bom.setQuantity(mas90Bom.quantity);
-                                partDao.getEntityManager().merge(bom);
+                                entityManager.merge(bom);
                                 dirty = true;
                             }
                         }
@@ -691,7 +697,7 @@ public class Mas90SyncService {
                             newBom.setChild(child);
                             newBom.setQuantity(mb.quantity);
                             boms.add(newBom);
-                            partDao.getEntityManager().persist(newBom);
+                            entityManager.persist(newBom);
                             dirty = true;
                             String modification = String.format("Part [%d] %s modified. Added BOM [%d] " +
                                             "(child: [%d] %s), quantity=%d.", partId, manufacturerPartNumber,

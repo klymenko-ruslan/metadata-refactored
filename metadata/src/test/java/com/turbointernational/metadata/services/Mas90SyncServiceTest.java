@@ -83,6 +83,7 @@ public class Mas90SyncServiceTest {
         // Without this reinitialization an assert exception will be thrown in the 'prepareStart(user)' procedure
         // during validation of the status.
         this.mas90SyncService.syncProcessStatus.reset();
+        // Method 'prepareStart()' should be called in a separate transaction to emulate its call from controller.
         TransactionTemplate tt = new TransactionTemplate(txManager);
         tt.setPropagationBehavior(PROPAGATION_REQUIRES_NEW);
         this.record = tt.execute(ts -> mas90SyncService.prepareStart(/*user*/ null));
@@ -250,6 +251,104 @@ public class Mas90SyncServiceTest {
                 record.getFinished().compareTo(record.getStarted()) >= 0);
         Assert.assertEquals("Not fetched any record from MAS90 to process.", 1L, (long) record.getToProcess());
         Assert.assertEquals("There is updated record(s).", 0L, (long) record.getUpdated());
+        Assert.assertEquals("There is skipped record(s).", 0L, (long) record.getSkipped());
+        Assert.assertEquals("Unexpected sync.process status.", Mas90Sync.Status.FINISHED, record.getStatus());
+    }
+
+
+    //@formatter:off
+    /**
+     * Test that synchronization procedure creates a new part and BOMs.
+     * This test is extension of the previous test {@link #testInsertNewPart_1}.
+     * <p>
+     *   Test case:
+     * </p>
+     * <ol>
+     *   <li>Insert into MAS90 database a record with eligible manufacturer number and corresponding BOMs.</li>
+     *   <li>Call method {@link Mas90SyncService.Mas90Synchronizer#run()}</li>
+     *   <li>Make sure that</li>
+     *   <ul>
+     *     <li>Table 'part' has a new record.</li>
+     *     <li>Make sure that just created part has expected correct values.</li>
+     *     <li>Make sure that corresponding BOMs created too.</li>
+     *     <li>
+     *       Record with result of the execution ("History of synchronization sessions")
+     *       has correct values and persistent.
+     *     </li>
+     *   </ul>
+     * </ol>
+     */
+    //@formatter:on
+    @Test
+    @Sql(
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            scripts = "classpath:integration_tests/feed_dictionaries.sql"
+    )
+    @Sql(
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            scripts = "classpath:integration_tests/mas90sync_service/insertnewpart_metadata_2.sql"
+    )
+    @Sql(
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            scripts = "classpath:integration_tests/mas90sync_service/create_mas90.sql",
+            config = @SqlConfig(dataSource = "dataSourceMas90", transactionManager = "transactionManagerMas90")
+    )
+    @Sql(
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            scripts = "classpath:integration_tests/mas90sync_service/feed_mas90.sql",
+            config = @SqlConfig(dataSource = "dataSourceMas90", transactionManager = "transactionManagerMas90")
+    )
+    @Sql(
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            scripts = "classpath:integration_tests/mas90sync_service/insertnewpart_mas90_2.sql",
+            config = @SqlConfig(dataSource = "dataSourceMas90", transactionManager = "transactionManagerMas90")
+    )
+    @Sql(
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            scripts = "classpath:integration_tests/mas90sync_service/clear_mas90.sql",
+            config = @SqlConfig(dataSource = "dataSourceMas90", transactionManager = "transactionManagerMas90")
+    )
+    @Sql(
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            scripts = "classpath:integration_tests/clear_tables.sql"
+    )
+    @Sql(
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            scripts = "classpath:integration_tests/clear_dictionaries.sql"
+    )
+    public void testInsertNewPart_2() {
+        int numPartsBefore = JdbcTestUtils.countRowsInTable(jdbcTemplateMetadata, "part");
+        Assert.assertEquals("Unexpected number of rows in the table 'part'.", 2, numPartsBefore);
+        int numCiItemBefore = JdbcTestUtils.countRowsInTable(jdbcTemplateMas90, "ci_item");
+        Assert.assertEquals("Table 'ci_item' has unexpected number of records.", 1, numCiItemBefore);
+        int numBmBilldetail = JdbcTestUtils.countRowsInTable(jdbcTemplateMas90, "bm_billdetail");
+        Assert.assertEquals("Table 'bm_billdetail' has unexpected number of records.", 2, numBmBilldetail);
+        int numBmBillheader = JdbcTestUtils.countRowsInTable(jdbcTemplateMas90, "bm_billheader");
+        Assert.assertEquals("Table 'bm_billheader' has unexpected number of records.", 1, numBmBillheader);
+        mas90Synchronizer.run();
+        int numPartsAfter = JdbcTestUtils.countRowsInTable(jdbcTemplateMetadata, "part");
+        Assert.assertEquals("A new part has not been inserted.", 3, numPartsAfter); // 3 = 2 in the begin + 1 new
+        Assert.assertEquals("A new part (kit) has been created partially. " +
+                        "Table 'kit' has no corresponding record.", 2,
+                JdbcTestUtils.countRowsInTable(jdbcTemplateMetadata, "kit"));
+        Part part = partDao.findByPartNumber("14-A-5383");
+        Assert.assertNotNull("Part (14-A-5383) not found.", part);
+        Assert.assertNotNull(part.getManufacturer());
+        Assert.assertNotNull(part.getManufacturer().getId());
+        Assert.assertEquals("Wrong manufacturer.", Mas90SyncService.TURBO_INTERNATIONAL_MANUFACTURER_ID,
+                (long) part.getManufacturer().getId());
+        Assert.assertEquals("Wrong description.", "CHRA & Nozzle Ring assy, GT174", part.getDescription());
+        Assert.assertFalse("Wrong 'inactive'.", part.getInactive());
+        Assert.assertEquals("Unexpected number of BOMs.", 2,
+                JdbcTestUtils.countRowsInTable(jdbcTemplateMetadata, "bom"));
+        // Check record with result.
+        Assert.assertNotNull("The 'mas90sync' record was not persistent.", record.getId());
+        Assert.assertNotNull("Field 'started' was not initialized.", record.getStarted());
+        Assert.assertNotNull("Field 'finished' was not initialized.", record.getFinished());
+        Assert.assertTrue("Value of the field 'started' must be lower or equal to a value in the field 'finished.'",
+                record.getFinished().compareTo(record.getStarted()) >= 0);
+        Assert.assertEquals("Not fetched any record from MAS90 to process.", 1L, (long) record.getToProcess());
+        Assert.assertEquals("Unexpected number of updated record(s).", 1L, (long) record.getUpdated());
         Assert.assertEquals("There is skipped record(s).", 0L, (long) record.getSkipped());
         Assert.assertEquals("Unexpected sync.process status.", Mas90Sync.Status.FINISHED, record.getStatus());
     }

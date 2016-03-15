@@ -22,11 +22,11 @@ package com.turbointernational.metadata.services;
  */
 public interface Mas90Database {
 
-    final static String MANUFACTURER_NUMBER_STR_REGEX_0 = "[0-9]-[a-z|A-Z]-[0-6][0-9][0-9][0-9]";
-    final static String MANUFACTURER_NUMBER_STR_REGEX_1 = "[0-9][0-9]-[a-z|A-Z]-[0-6][0-9][0-9][0-9]";
+    String MANUFACTURER_NUMBER_STR_REGEX_0 = "[0-9]-[a-z|A-Z]-[0-6][0-9][0-9][0-9]";
+    String MANUFACTURER_NUMBER_STR_REGEX_1 = "[0-9][0-9]-[a-z|A-Z]-[0-6][0-9][0-9][0-9]";
 
-    final static String BOMS_QUERY =
-            // @formatter:off
+    // @formatter:off
+    String BOMS_QUERY =
             "select bd.componentitemcode, bd.quantityperbill " +
             "from " +
             "   bm_billdetail as bd join ( " +
