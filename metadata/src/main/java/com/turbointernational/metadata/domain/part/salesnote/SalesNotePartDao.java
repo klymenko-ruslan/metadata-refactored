@@ -1,9 +1,11 @@
 package com.turbointernational.metadata.domain.part.salesnote;
 
 import com.turbointernational.metadata.domain.AbstractDao;
+import com.turbointernational.metadata.domain.part.Part;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
 
@@ -38,6 +40,18 @@ public class SalesNotePartDao extends AbstractDao<SalesNotePart> {
                 "        where p.id = ? " +
                 "    );", ps -> ps.setLong(1, partId), rs -> rs.next() ? rs.getLong(1) : null);
         return primaryPartId;
+    }
+
+    public SalesNotePart findOne(Long salesNoteId, Long partId) {
+        SalesNote salesNote = em.getReference(SalesNote.class, salesNoteId);
+        Part part = em.getReference(Part.class, partId);
+        SalesNotePartId id = new SalesNotePartId(salesNote, part);
+        return em.find(SalesNotePart.class, id);
+    }
+
+    @Transactional
+    public void delete(SalesNotePart salesNotePart) {
+        em.remove(salesNotePart);
     }
 
 }
