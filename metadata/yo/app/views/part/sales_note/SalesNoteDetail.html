@@ -133,8 +133,8 @@
           <td title="'Manufacturer'" sortable="'part.manufacturer.name'">
               {{relatedPart.part.manufacturer.name}}
           </td>
-          <td title="'Actions'" class="actions">
-            <a class="btn btn-primary btn-xs"
+          <td title="'Actions'" class="actions text-center">
+            <a ng-class="['btn', 'btn-xs', {'btn-primary': !isPrimaryRelatedPart(relatedPart), 'btn-success': isPrimaryRelatedPart(relatedPart)}]"
                ng-href="/part/{{ relatedPart.part.id }}">
               <i class="fa fa-eye"></i> View {{isPrimaryRelatedPart(relatedPart) ? "Primary" : "Related"}}
             </a>

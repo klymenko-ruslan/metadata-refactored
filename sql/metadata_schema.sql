@@ -635,7 +635,6 @@ CREATE TABLE `sales_note_part` (
   `write_uid` bigint(20) NOT NULL,
   `primary_part` tinyint(1) NOT NULL,
   PRIMARY KEY (`sales_note_id`,`part_id`),
-  UNIQUE KEY `sales_note_part_primary_part_unq_idx` (`sales_note_id`,`primary_part`),
   KEY `sales_note_part_part_part_id_idx` (`part_id`),
   KEY `sales_note_part_user_create_uid_idx` (`create_uid`),
   KEY `sales_note_part_user_write_uid_idx` (`write_uid`),
@@ -644,6 +643,46 @@ CREATE TABLE `sales_note_part` (
   CONSTRAINT `sales_note_part_sales_note_sales_note_id` FOREIGN KEY (`sales_note_id`) REFERENCES `sales_note` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
   CONSTRAINT `sales_note_part_part_part_id` FOREIGN KEY (`part_id`) REFERENCES `part` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+DELIMITER $$
+
+DROP TRIGGER IF EXISTS sales_note_part_BEFORE_UPDATE$$
+CREATE TRIGGER `sales_note_part_BEFORE_UPDATE` BEFORE UPDATE ON `sales_note_part` FOR EACH ROW
+BEGIN
+    DECLARE constraint_violation CONDITION FOR SQLSTATE '45000';
+    DECLARE n INT;
+    IF  new.primary_part <> 0 AND new.primary_part <>  1 THEN
+        SIGNAL constraint_violation
+        SET MESSAGE_TEXT = 'primary_part value must be 0 or 1';
+    END IF;
+    IF new.primary_part = 1 THEN
+        SET n = (SELECT 1 FROM sales_note_part WHERE sales_note_id = new.sales_note_id AND primary_part = 1 LIMIT 1);
+        IF n = 1 THEN
+            SIGNAL constraint_violation
+            SET MESSAGE_TEXT = 'sales note may have only one primary part';
+        END IF;
+    END IF;
+END$$
+
+DROP TRIGGER IF EXISTS sales_note_part_BEFORE_INSERT$$
+CREATE TRIGGER `sales_note_part_BEFORE_INSERT` BEFORE INSERT ON `sales_note_part` FOR EACH ROW
+BEGIN
+    DECLARE constraint_violation CONDITION FOR SQLSTATE '45000';
+    DECLARE n INT;
+    IF  new.primary_part <> 0 and new.primary_part <> 1 THEN
+        SIGNAL SQLSTATE '45000'   
+        SET MESSAGE_TEXT = 'primary_part value must be 0 or 1';
+    END IF;
+    IF new.primary_part = 1 THEN
+        SET n = (SELECT 1 FROM sales_note_part WHERE sales_note_id = new.sales_note_id AND primary_part = 1 LIMIT 1);
+        IF n = 1 THEN
+            SIGNAL constraint_violation
+            SET MESSAGE_TEXT = 'sales note may have only one primary part';
+        END IF;
+    END IF;
+END$$
+
+DELIMITER ;
 
 DROP TABLE IF EXISTS `mas90sync`;
 CREATE TABLE `mas90sync` (
@@ -660,27 +699,6 @@ CREATE TABLE `mas90sync` (
   KEY `usrid_fk` (`user_id`),
   CONSTRAINT `usrid_fk` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1106 DEFAULT CHARSET=utf8 COMMENT='History of the syncronizations with MAS90.'
-
-DELIMITER $$
-
-DROP TRIGGER IF EXISTS sales_note_part_BEFORE_UPDATE$$
-CREATE TRIGGER `sales_note_part_BEFORE_UPDATE` BEFORE UPDATE ON `sales_note_part` FOR EACH ROW
-   begin  
-    if  new.primary_part <> 1 then
-        SIGNAL SQLSTATE '45000'   
-        SET MESSAGE_TEXT = 'primary_part value must be 1 or null';
-      end if; 
-      end$$
-
-DROP TRIGGER IF EXISTS sales_note_part_BEFORE_INSERT$$
-CREATE TRIGGER `sales_note_part_BEFORE_INSERT` BEFORE INSERT ON `sales_note_part` FOR EACH ROW
-   begin  
-    if  new.primary_part <> 1 then
-        SIGNAL SQLSTATE '45000'   
-        SET MESSAGE_TEXT = 'primary_part value must be 1 or null';
-      end if; 
-      end$$
-DELIMITER ;
 
 --
 -- Views
