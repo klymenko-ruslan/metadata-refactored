@@ -1,6 +1,6 @@
 package com.turbointernational.metadata.domain.part;
 
-import com.turbointernational.metadata.util.ImageResizer;
+import com.turbointernational.metadata.services.ImageResizerService;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +29,7 @@ public class ProductImageController {
     private File resizedImagesDir;
     
     @Autowired(required=true)
-    private ImageResizer resizer;
+    private ImageResizerService resizer;
     
     @Autowired
     private PartDao partDao;
@@ -105,7 +105,7 @@ public class ProductImageController {
         File original = new File(originalImagesDir, image.getFilename());
         FileUtils.deleteQuietly(original);
         
-        for (int size : ImageResizer.SIZES) {
+        for (int size : ImageResizerService.SIZES) {
             File resized = new File(resizedImagesDir, image.getFilename(size));
             FileUtils.deleteQuietly(resized);
         }

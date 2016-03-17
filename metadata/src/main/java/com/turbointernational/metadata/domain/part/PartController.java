@@ -5,7 +5,7 @@ import com.turbointernational.metadata.domain.changelog.ChangelogDao;
 import com.turbointernational.metadata.domain.other.TurboType;
 import com.turbointernational.metadata.domain.other.TurboTypeDao;
 import com.turbointernational.metadata.domain.part.bom.BOMAncestor;
-import com.turbointernational.metadata.util.ImageResizer;
+import com.turbointernational.metadata.services.ImageResizerService;
 import com.turbointernational.metadata.web.View;
 import flexjson.JSONSerializer;
 import flexjson.transformer.HibernateTransformer;
@@ -48,7 +48,7 @@ public class PartController {
     File originalImagesDir;
     
     @Autowired(required=true)
-    ImageResizer resizer;
+    ImageResizerService resizer;
     
     @Autowired(required=true)
     JdbcTemplate db;
@@ -193,7 +193,7 @@ public class PartController {
         productImageDao.persist(productImage);
 
         // Generate the resized images
-        for (int size : ImageResizer.SIZES) {
+        for (int size : ImageResizerService.SIZES) {
             resizer.generateResizedImage(productImage, size);
         }
         

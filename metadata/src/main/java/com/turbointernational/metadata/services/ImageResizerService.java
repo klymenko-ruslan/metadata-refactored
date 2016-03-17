@@ -1,4 +1,4 @@
-package com.turbointernational.metadata.util;
+package com.turbointernational.metadata.services;
 
 import com.turbointernational.metadata.domain.part.ProductImage;
 import org.im4java.core.ConvertCmd;
@@ -14,7 +14,7 @@ import java.io.IOException;
  * @author Edward
  */
 @Service
-public class ImageResizer {
+public class ImageResizerService {
     
     public static final int[] SIZES = {50, 135, 1000};
     

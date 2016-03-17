@@ -1,6 +1,6 @@
-package com.turbointernational.metadata.web;
+package com.turbointernational.metadata.security;
 
-import com.turbointernational.metadata.util.LoginService;
+import com.turbointernational.metadata.services.LoginService;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -35,7 +36,7 @@ public class WebSecurityAppConfig extends WebSecurityConfigurerAdapter {
     public WebSecurityAppConfig() {}
     
     @Autowired
-    LoginService loginService;
+    private LoginService loginService;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -75,12 +76,18 @@ public class WebSecurityAppConfig extends WebSecurityConfigurerAdapter {
                 .logoutUrl("/metadata/security/logout")
                 .logoutSuccessHandler(new NoopLogoutSuccessHandler())
             .and().exceptionHandling().accessDeniedHandler(new AccessDeniedHandlerImpl())
-            .and().authenticationProvider(createDaoAuthenticationProvider());
+            .and().authenticationProvider(/*createDaoAuthenticationProvider()*/ createMetadataAuthenticationProvider());
         
         http.csrf().disable();
         http.anonymous().disable();
     }
 
+    @Bean
+    public AuthenticationProvider createMetadataAuthenticationProvider() {
+        return new MetadataAuthenticationProvider(loginService, new BCryptPasswordEncoder());
+    }
+
+    /*
     @Bean
     public DaoAuthenticationProvider createDaoAuthenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
@@ -88,6 +95,7 @@ public class WebSecurityAppConfig extends WebSecurityConfigurerAdapter {
         provider.setPasswordEncoder(new BCryptPasswordEncoder());
         return provider;
     }
+    */
 
     private static class AccessDeniedHandlerImpl implements AccessDeniedHandler {
         @Override

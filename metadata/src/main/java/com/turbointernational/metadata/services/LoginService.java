@@ -1,4 +1,4 @@
-package com.turbointernational.metadata.util;
+package com.turbointernational.metadata.services;
 
 import com.turbointernational.metadata.domain.security.Group;
 import com.turbointernational.metadata.domain.security.GroupDao;
