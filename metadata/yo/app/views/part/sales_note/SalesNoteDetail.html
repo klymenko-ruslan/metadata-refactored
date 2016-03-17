@@ -139,7 +139,7 @@
               <i class="fa fa-eye"></i> View {{isPrimaryRelatedPart(relatedPart) ? "Primary" : "Related"}}
             </a>
             <a class="btn btn-danger btn-xs"
-               ng-click="SalesNotes.removeRelatedPart(salesNote, relatedPart.part.id)"
+               ng-click="SalesNotes.removeRelatedPart(salesNote, relatedPart.part.id, relatedPartTableParams)"
                ng-if="salesNote.primaryPartId !== relatedPart.part.id"
                ng-disabled="isEditing()">
               <i class="fa fa-trash-o"></i> Remove

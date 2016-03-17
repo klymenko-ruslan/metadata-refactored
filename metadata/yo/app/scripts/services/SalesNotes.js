@@ -1,7 +1,7 @@
 "use strict";
 
 angular.module("ngMetaCrudApp")
-  .service('SalesNotes', ["$location", "$log", "Restangular", "User",
+  .service("SalesNotes", ["$location", "$log", "Restangular", "User",
     function SalesNotes($location, $log, Restangular, User) {
       var SalesNotes = this;
 
@@ -33,20 +33,17 @@ angular.module("ngMetaCrudApp")
           });
       };
 
-      SalesNotes.removeRelatedPart = function(salesNote, partId) {
+      SalesNotes.removeRelatedPart = function(salesNote, partId, tableParams) {
         return Restangular.one("other/salesNote/" + salesNote.id + "/part", partId)
           .remove()
           .then(function() {
             var idx = _.findIndex(salesNote.parts, function(salesNotePart) {
               return salesNotePart.part.id === partId;
             });
-$log.log("1. salesNotePart: " + angular.toJson(salesNote.parts));
-$log.log("idx: " + idx);
             if (idx !== -1) {
-$log.log("Before slicing.");
               salesNote.parts.splice(idx, 1);
+              tableParams.reload();
             }
-$log.log("2. salesNotePart: " + angular.toJson(salesNote.parts));
           }, function(errorResponse) {
             $log.log("Could not remove related part", errorResponse);
           });
