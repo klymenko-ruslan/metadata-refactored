@@ -68,7 +68,7 @@ public class User implements Comparable<User>, UserDetails {
     @Column(columnDefinition = "BIT")
     private Boolean enabled;
 
-    @Column(nullable = true)
+    @OneToOne(fetch = FetchType.LAZY)
     private AuthProvider authProvider;
     
     @JsonView({View.SummaryWithGroups.class, View.DetailWithGroups.class})
