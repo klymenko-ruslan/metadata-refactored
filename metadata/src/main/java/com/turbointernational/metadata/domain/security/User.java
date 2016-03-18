@@ -67,6 +67,9 @@ public class User implements Comparable<User>, UserDetails {
     @JsonView(View.Detail.class)
     @Column(columnDefinition = "BIT")
     private Boolean enabled;
+
+    @Column(nullable = true)
+    private AuthProvider authProvider;
     
     @JsonView({View.SummaryWithGroups.class, View.DetailWithGroups.class})
     @ManyToMany(mappedBy="users", fetch = FetchType.EAGER)
@@ -123,6 +126,14 @@ public class User implements Comparable<User>, UserDetails {
     
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public AuthProvider getAuthProvider() {
+        return authProvider;
+    }
+
+    public void setAuthProvider(AuthProvider authProvider) {
+        this.authProvider = authProvider;
     }
 
     public Set<Group> getGroups() {
