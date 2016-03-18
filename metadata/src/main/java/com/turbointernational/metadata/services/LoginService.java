@@ -6,6 +6,7 @@ import com.turbointernational.metadata.domain.security.Role;
 import com.turbointernational.metadata.domain.security.RoleDao;
 import com.turbointernational.metadata.domain.security.User;
 import com.turbointernational.metadata.domain.security.UserDao;
+import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.dao.DataAccessException;
@@ -34,25 +35,26 @@ public class LoginService implements UserDetailsService {
     RoleDao roleDao;
     
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException, DataAccessException {
-        User user =  userDao.findUserByEmail(email);
-        
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
+        User user;
+        boolean isEmail = (new EmailValidator()).isValid(username, null);
+        if (isEmail) {
+            user = userDao.findUserByEmail(username);
+        } else {
+            user = userDao.findUserByName(username);
+        }
         if (user == null) {
-            
             // If there are users on the system, this is just a failed login
             if (userDao.count() > 0) {
-                throw new UsernameNotFoundException("No users with email address: " + email);
+                throw new UsernameNotFoundException("No users with email address: " + username);
             }
-            
             // If we don't have any users, create the admin account
             user = createFirstUser();
         }
-
         // Setup the user's granted authorities
         for (Role role : roleDao.findByUserId(user.getId())) {
             user.getAuthorities().add(new SimpleGrantedAuthority(role.getName()));
         }
-        
         return user;
     }
             

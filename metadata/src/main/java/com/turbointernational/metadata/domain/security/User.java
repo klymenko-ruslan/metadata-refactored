@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.google.common.collect.Sets;
 import com.turbointernational.metadata.web.View;
-import flexjson.JSONSerializer;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,20 +12,38 @@ import javax.persistence.*;
 import java.util.Set;
 import java.util.TreeSet;
 
+/*
+
+alter table user add unique key `name` (`name`);
+create table auth_provider(id int primary key, typ enum('ldap') not null);
+create table auth_provider_ldap(
+    id int primary key references auth_provider(id) on update cascade on delete cascade,
+    name varchar(64) not null,
+    host varchar(255) not null,
+    port int not null default 636,
+    bind_dn varchar(256) not null,
+    unique key name (name)
+);
+alter table user add column auth_provider int default null references auth_provider(id) on update cascade on delete no action;
+*/
+
 @Entity
 @Table(name="USER")
+@NamedQueries({
+    @NamedQuery(name = "findUserByEmail", query = "SELECT u FROM User u WHERE u.email = :email"),
+    @NamedQuery(name = "findUserByName", query = "SELECT u FROM User u WHERE u.name = :name")
+})
 public class User implements Comparable<User>, UserDetails {
-    public static final long serialVersionUID = 1L;
-    
-    public static final JSONSerializer JSON = new JSONSerializer()
-                .include("id")
-                .include("name")
-                .include("email")
-                .include("enabled")
-                .include("groups.id")
-                .include("groups.name")
-                .include("roles")
-                .exclude("*");
+
+//    public static final JSONSerializer JSON = new JSONSerializer()
+//                .include("id")
+//                .include("name")
+//                .include("email")
+//                .include("enabled")
+//                .include("groups.id")
+//                .include("groups.name")
+//                .include("roles")
+//                .exclude("*");
 
     //<editor-fold defaultstate="collapsed" desc="Properties">
     @Id
@@ -35,9 +52,11 @@ public class User implements Comparable<User>, UserDetails {
     private Long id;
     
     @JsonView({View.Detail.class, View.Summary.class})
+    @Column(unique = true)
     private String name;
     
     @JsonView({View.Detail.class, View.Summary.class})
+    @Column(unique = true)
     private String email;
     
     private String password;

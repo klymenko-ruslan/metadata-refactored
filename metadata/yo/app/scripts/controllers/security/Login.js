@@ -34,7 +34,7 @@ angular.module('ngMetaCrudApp')
           gToast.open("Password reset link sent.");
         },
         function() {
-          gToast.open("Is your email address correct?");
+          gToast.open("Is your username/email correct?");
         }
       );
     }

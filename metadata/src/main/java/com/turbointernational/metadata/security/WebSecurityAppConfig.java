@@ -38,10 +38,12 @@ public class WebSecurityAppConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private LoginService loginService;
 
+    /*
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(loginService);
     }
+    */
 
     @Override
     public void configure(WebSecurity web) throws Exception {
@@ -84,18 +86,8 @@ public class WebSecurityAppConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public AuthenticationProvider createMetadataAuthenticationProvider() {
-        return new MetadataAuthenticationProvider(loginService, new BCryptPasswordEncoder());
+        return new MetadataAuthenticationProvider(loginService);
     }
-
-    /*
-    @Bean
-    public DaoAuthenticationProvider createDaoAuthenticationProvider() {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(loginService);
-        provider.setPasswordEncoder(new BCryptPasswordEncoder());
-        return provider;
-    }
-    */
 
     private static class AccessDeniedHandlerImpl implements AccessDeniedHandler {
         @Override
