@@ -1,20 +1,24 @@
 package com.turbointernational.metadata.domain.security;
 
+import org.hibernate.annotations.DiscriminatorOptions;
+
 import javax.persistence.*;
 
 /**
  * Created by dmytro.trunykov@zorallabs.com on 18.03.16.
  */
 @Entity
+@Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name="typ", discriminatorType = DiscriminatorType.STRING)
 public class AuthProvider {
 
-    private enum AuthProviderTypeEnum{ ldap };
+    public enum AuthProviderTypeEnum{ LDAP };
 
     //<editor-fold defaultstate="collapsed" desc="properties">
     @Id
     private Long id;
 
-    @Column
+    @Column(name = "typ")
     @Enumerated(EnumType.STRING)
     private AuthProviderTypeEnum typ;
     //</editor-fold>

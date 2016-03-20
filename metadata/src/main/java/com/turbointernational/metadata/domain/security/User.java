@@ -15,16 +15,15 @@ import java.util.TreeSet;
 /*
 
 alter table user add unique key `name` (`name`);
-create table auth_provider(id int primary key, typ enum('ldap') not null);
+create table auth_provider(id int primary key, typ enum('LDAP') not null);
 create table auth_provider_ldap(
     id int primary key references auth_provider(id) on update cascade on delete cascade,
     name varchar(64) not null,
     host varchar(255) not null,
     port int not null default 636,
-    bind_dn varchar(256) not null,
     unique key name (name)
 );
-alter table user add column auth_provider int default null references auth_provider(id) on update cascade on delete no action;
+alter table user add column auth_provider_id int default null references auth_provider(id) on update cascade on delete no action;
 */
 
 @Entity
@@ -68,12 +67,12 @@ public class User implements Comparable<User>, UserDetails {
     @Column(columnDefinition = "BIT")
     private Boolean enabled;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     private AuthProvider authProvider;
     
     @JsonView({View.SummaryWithGroups.class, View.DetailWithGroups.class})
     @ManyToMany(mappedBy="users", fetch = FetchType.EAGER)
-    private Set<Group> groups = new TreeSet<Group>();
+    private Set<Group> groups = new TreeSet<>();
     
     // For UserDetails
     @JsonIgnore
