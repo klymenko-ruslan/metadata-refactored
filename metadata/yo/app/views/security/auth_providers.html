@@ -1,0 +1,61 @@
+<metanav>
+  <li>
+    <a ng-href="/security/auth_providers/create"
+       class="btn-success">
+      <i class="fa fa-plus"></i>
+      Create
+    </a>
+  </li>
+</metanav>
+
+<div class="row">
+  <h1 class="col-xs-12 col-sm-9">Authentication providers</h1>
+</div>
+
+<div class="row">
+  <div class="col-xs-12 col-sm-9">
+    <form name="authProviderForm" novalidate authorize="ROLE_ADMIN">
+      <table data-ng-table="authProvidersTableParams" class="table table-bordered table-striped table-hover table-responsive">
+        <tr data-ng-repeat="rec in $data.recs">
+          <td title="'Name'" sortable="'name'" class="text-left">
+            <span ng-hide="isModifying(rec.id)">{{rec.name}}</span>
+            <div ng-show="isModifying(rec.id)">
+              <input name="authp_name" ng-model="modifyingRow.name" type="text" ng-model-options="{ debounce: 500 }" required maxlength="64" unique-authprovider-name>
+              <span ng-show="authProviderForm.authp_name.$dirty && authProviderForm.authp_name.$invalid" class="alert alert-danger" role="alert">
+                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                <span ng-show="authProviderForm.authp_name.$error.required">Required!</span>
+                <span ng-show="authProviderForm.authp_name.$error.maxlenth">Too long name (max 64 chars)!</span>
+                <span ng-show="carmakeForm.carmake_name.$error.nonUniqueName">Not unique!</span>
+              </span>
+            </div>
+          </td>
+          <td title="'Host'" sortable="'host'" class="text-left">
+            <span ng-hide="isModifying(rec.id)">{{rec.host}}</span>
+          </td>
+          <td title="'Port'" sortable="'port'" class="text-right">
+            <span ng-hide="isModifying(rec.id)">{{rec.port}}</span>
+          </td>
+          <td class="actions" title="'Actions'">
+            <button ng-click="modifyStart(rec, authProviderForm)" class="btn btn-primary btn-xs" authorize="ROLE_ADMIN" ng-hide="isModifying(rec.id)">
+              <i class="fa fa-cog"></i>
+              Modify
+            </button>
+            <button ng-click="remove(rec, authProviderForm)" class="btn btn-danger btn-xs" authorize="ROLE_ADMIN" ng-hide="isModifying(rec.id)">
+              <i class="fa fa-trash-o"></i>
+              Remove
+            </button>
+            <button ng-click="modifySave(rec, authProviderForm)" authorize="ROLE_ADMIN" class="btn btn-success btn-xs ng-hide" ng-show="isModifying(rec.id)"  ng-disabled="authProviderForm.$pristine || authProviderForm.$invalid || authProviderForm.$pending">
+              <i class="fa fa-save"></i> Save
+            </button>
+            <button ng-click="modifyCancel(rec, authProviderForm)" class="btn btn-warning btn-xs ng-hide" ng-show="isModifying(rec.id)">
+              <i class="fa fa-minus-circle"></i> Cancel
+            </button>
+          </td>
+        </tr>
+        <tr ng-hide="$data.total > 0">
+          <td colspan="4">No providers to display.</td>
+        </tr>
+      </table>
+    </form>
+  </div>
+</div>

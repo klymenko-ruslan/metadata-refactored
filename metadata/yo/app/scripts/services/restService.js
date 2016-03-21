@@ -427,5 +427,18 @@ angular.module("ngMetaCrudApp")
         return Restangular.one("other/salesNote").post(id, { "comment": comment });
       };
 
+      this.getAllAuthProviders = function(sortProperty, sortOrder, offset, limit) {
+        return Restangular.one("authprovider/list").get({
+          "sortProperty": sortProperty,
+          "sortOrder": sortOrder,
+          "offset": offset,
+          "limit": limit
+        });
+      };
+
+      this.createAuthProviderLDAP = function(authProviderLDAP) {
+        return Restangular.one("authprovider").post("create", authProviderLDAP);
+      };
+
     };
   });

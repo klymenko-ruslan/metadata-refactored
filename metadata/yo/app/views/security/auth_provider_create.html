@@ -1,0 +1,52 @@
+  <metanav />
+
+  <li>
+    <button
+       ng-click="back()" class="btn">
+      <i class="fa fa-backward"></i>
+      Back
+    </button>
+     <button ng-disabled="authProviderForm.$pristine || authProviderForm.$invalid || authProviderForm.$pending"
+       ng-click="save()" class="btn btn-success">
+      <i class="fa fa-save"></i>
+      Save
+    </button>
+  </li>
+
+  <div class="col-xs-12">
+    <h2>Create Authentication Provider</h2>
+  </div>
+
+  <div class="row">
+    <div class="col-xs-12 col-sm-6">
+
+      <form name="authProviderForm" novalidate authorize="ROLE_ADMIN">
+        <label for="authp_name">Name</label>
+        <input id="authp_name" name="authp_name" class="form-control" type="text" ng-model="authp.name" ng-model-options="{ debounce: 500 }" required maxlength="64" unique-authp-name />
+        <span ng-show="authProviderForm.authp_name.$dirty && authProviderForm.authp_name.$invalid" class="alert alert-danger" role="alert">
+          <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+          <span ng-show="authProviderForm.authp_name.$error.required">Required!</span>
+          <span ng-show="authProviderForm.authp_name.$error.maxlenth">Too long name (max 64 chars)!</span>
+          <span ng-show="authProviderForm.authp_name.$error.nonUniqueName">Not unique!</span>
+        </span>
+        <label for="authp_host">Host</label>
+        <input id="authp_host" name="authp_host" class="form-control" type="text" ng-model="authp.host" required maxlength="255" host-name />
+        <span ng-show="authProviderForm.authp_name.$dirty && authProviderForm.authp_name.$invalid" class="alert alert-danger" role="alert">
+          <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+          <span ng-show="authProviderForm.authp_name.$error.required">Required!</span>
+          <span ng-show="authProviderForm.authp_name.$error.invalidHostname">Invalid hostname!</span>
+          <span ng-show="authProviderForm.authp_name.$error.maxlenth">Too long name (max 255 chars)!</span>
+        </span>
+        <label for="authp_port">Port</label>
+        <input id="authp_port" name="authp_port" class="form-control" type="number" ng-model="authp.port" required maxlength="5" port-number />
+        <span ng-show="authProviderForm.authp_port.$dirty && authProviderForm.authp_port.$invalid" class="alert alert-danger" role="alert">
+          <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+          <span ng-show="authProviderForm.authp_name.$error.required">Required!</span>
+          <span ng-show="authProviderForm.authp_name.$error.invalidPortNumber">Invalid portnumber!</span>
+          <span ng-show="authProviderForm.authp_name.$error.maxlenth">Too long port number (max 5 digits)!</span>
+        </span>
+       </form>
+
+    </div>
+  </div>
+

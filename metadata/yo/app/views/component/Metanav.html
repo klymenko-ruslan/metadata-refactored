@@ -36,6 +36,7 @@
         <ul class="dropdown-menu">
           <li data-ng-disabled="{{::!hasRole('ROLE_ADMIN')}}"><a ng-href="/security/users/"><i class="fa fa-user"></i> Users</a></li>
           <li data-ng-disabled="{{::!hasRole('ROLE_ADMIN')}}"><a ng-href="/security/groups/"><i class="fa fa-group"></i> Groups</a></li>
+          <li data-ng-disabled="{{::!hasRole('ROLE_ADMIN')}}"><a ng-href="/security/auth_providers/"><i class="fa fa-unlock-alt"></i> Authentication providers</a></li>
 
           <li class="divider"></li>
 

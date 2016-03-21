@@ -2,6 +2,7 @@ package com.turbointernational.metadata.domain.other;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.domain.AbstractDao;
+import com.turbointernational.metadata.web.Page;
 import com.turbointernational.metadata.web.View;
 import org.hibernate.criterion.Order;
 import org.springframework.stereotype.Repository;
@@ -17,21 +18,6 @@ import java.util.List;
  */
 @Repository
 public class Mas90SyncDao extends AbstractDao<Mas90Sync> {
-
-    public class Page {
-
-        @JsonView({View.Summary.class})
-        private final long total;
-
-        @JsonView({View.Summary.class})
-        private final List<Mas90Sync> recs;
-
-        public Page(long total, List<Mas90Sync> recs) {
-            this.total = total;
-            this.recs = recs;
-        }
-
-    }
 
     public Mas90SyncDao() {
         super(Mas90Sync.class);

@@ -1,5 +1,8 @@
 package com.turbointernational.metadata.domain.security;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.web.View;
+
 import javax.persistence.*;
 
 /**
@@ -7,23 +10,34 @@ import javax.persistence.*;
  */
 @Entity
 @PrimaryKeyJoinColumn(name = "id")
-@DiscriminatorValue("LDAP")
 public class AuthProviderLdap extends AuthProvider {
 
     //<editor-fold defaultstate="collapsed" desc="properties">
     @Column(nullable = false, unique = true)
+    @JsonView({View.Summary.class})
     private String name;
 
     @Column(nullable = false)
+    @JsonView({View.Summary.class})
     private String host;
 
     @Column(nullable = false)
+    @JsonView({View.Summary.class})
     private int port;
 
     //</editor-fold>
 
     public AuthProviderLdap() {
         super();
+        setTyp(AuthProviderTypeEnum.LDAP);
+    }
+
+    public AuthProviderLdap(String name, String host, int port) {
+        super();
+        this.name = name;
+        this.host = host;
+        this.port = port;
+        setTyp(AuthProviderTypeEnum.LDAP);
     }
 
     public String getName() {

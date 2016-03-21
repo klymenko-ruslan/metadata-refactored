@@ -101,16 +101,18 @@ public class UserController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public void update(@PathVariable("id") Long id, @RequestBody User jsonUser) {
-        
         User user = userDao.findOne(id);
         user.setName(jsonUser.getName());
         user.setEmail(jsonUser.getEmail());
-        
         // Password
         if (StringUtils.isNotBlank(jsonUser.getPassword())) {
             user.setPassword(BCrypt.hashpw(jsonUser.getPassword(), BCrypt.gensalt()));
         }
-        
+        if (jsonUser.getAuthProvider().getId() < 0) {
+            user.setAuthProvider(null);
+        } else {
+            user.setAuthProvider(jsonUser.getAuthProvider());
+        }
         userDao.merge(user);
     }
     
@@ -123,9 +125,10 @@ public class UserController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public User create(@RequestBody User user) throws Exception {
         user.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
-        
+        if (user.getAuthProvider().getId() < 0) {
+            user.setAuthProvider(null);
+        }
         userDao.persist(user);
-        
         return user;
     }
     

@@ -15,15 +15,16 @@ import java.util.TreeSet;
 /*
 
 alter table user add unique key `name` (`name`);
-create table auth_provider(id int primary key, typ enum('LDAP') not null);
+create table auth_provider(id bigint(20) auto_increment primary key, typ enum('LDAP') not null);
 create table auth_provider_ldap(
-    id int primary key references auth_provider(id) on update cascade on delete cascade,
+    id bigint(20) primary key references auth_provider(id) on update cascade on delete cascade,
     name varchar(64) not null,
     host varchar(255) not null,
     port int not null default 636,
     unique key name (name)
 );
-alter table user add column auth_provider_id int default null references auth_provider(id) on update cascade on delete no action;
+alter table user add column auth_provider_id bigint(20) default null references auth_provider(id) on update cascade on delete no action;
+alter table user modify column password varchar(100);
 */
 
 @Entity

@@ -13,6 +13,7 @@ import com.turbointernational.metadata.domain.part.types.*;
 import com.turbointernational.metadata.domain.security.User;
 import com.turbointernational.metadata.domain.type.PartType;
 import com.turbointernational.metadata.domain.type.PartTypeDao;
+import com.turbointernational.metadata.web.Page;
 import com.turbointernational.metadata.web.View;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.ObjectUtils;
@@ -742,7 +743,7 @@ public class Mas90SyncService {
 
     } // Mas90Synchronizer
 
-    public Mas90SyncDao.Page history(int startPosition, int maxResults) {
+    public Page history(int startPosition, int maxResults) {
         return mas90SyncDao.findHistory(startPosition, maxResults);
     }
 

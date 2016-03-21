@@ -43,8 +43,7 @@ public class Mas90SyncController {
     @Transactional
     @JsonView(View.Summary.class)
     @Secured("ROLE_MAS90_SYNC")
-    public Mas90SyncDao.Page history(@RequestParam(name = "start", required = true) int startPosition,
-                                     @RequestParam(name = "max", required = true) int maxResults) {
+    public Page history(@RequestParam(name = "start") int startPosition, @RequestParam(name = "max") int maxResults) {
         return mas90SyncService.history(startPosition, maxResults);
     }
 

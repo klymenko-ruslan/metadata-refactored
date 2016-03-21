@@ -214,9 +214,22 @@ angular.module("ngMetaCrudApp", ["ngRoute", "ngTable", "ui.bootstrap",
     });
     $routeProvider.when("/security/user/:id", {
       templateUrl: "views/security/user.html",
-      controller: "UserCtrl"
+      controller: "UserCtrl",
+      resolve: {
+        authProviders: ["restService", function(restService) {
+          return restService.getAllAuthProviders("id", "asc", 0, 1000);
+        }]
+      }
     });
-
+    // Authentication providers.
+    $routeProvider.when("/security/auth_providers", {
+      templateUrl: "views/security/auth_providers.html",
+      controller: "AuthProvidersCtrl"
+    });
+    $routeProvider.when("/security/auth_providers/create", {
+      templateUrl: "views/security/auth_provider_create.html",
+      controller: "AuthProviderFormCtrl"
+    });
     // My Account
     $routeProvider.when("/security/me", {
       templateUrl: "views/security/my-account.html",
