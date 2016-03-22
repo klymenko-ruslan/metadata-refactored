@@ -20,8 +20,10 @@ import java.util.Hashtable;
 public class TestAD {
 
     private final static String SERVER_HOST = "ldap.turbointernational.com";
-    private final static String USER = "LDAP";
-    private final static String PASSWORD = "9)Fkp6%gaBk";
+//    private final static String USER = "LDAP";
+//    private final static String PASSWORD = "9)Fkp6%gaBk";
+    private final static String USER = "max suen";
+    private final static String PASSWORD = "turbotemp01!";
 
     @Test
     public void testLDAPAuth() throws NamingException {
