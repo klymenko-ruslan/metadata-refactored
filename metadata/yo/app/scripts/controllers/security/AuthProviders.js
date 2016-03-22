@@ -122,7 +122,7 @@ angular.module("ngMetaCrudApp").controller("AuthProviderFormCtrl", ["$scope", "$
   }
 
   $scope.back = function() {
-    $location.path('/security/auth_providers');
+    $location.path("/security/auth_providers");
   }
 
 }]);

@@ -124,9 +124,9 @@ public class UserController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public User create(@RequestBody User user) throws Exception {
-        user.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
         if (user.getAuthProvider().getId() < 0) {
             user.setAuthProvider(null);
+            user.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
         }
         userDao.persist(user);
         return user;
