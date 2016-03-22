@@ -10,7 +10,14 @@ import javax.persistence.*;
  */
 @Entity
 @PrimaryKeyJoinColumn(name = "id")
+@NamedQueries(
+        @NamedQuery(name = "findAuthProviderLdapByName", query = "from AuthProviderLdap where name=:name")
+)
 public class AuthProviderLdap extends AuthProvider {
+
+    public enum ProtocolEnum {LDAP, LDAPS, LDAPS_SOFT}
+
+    ;
 
     //<editor-fold defaultstate="collapsed" desc="properties">
     @Column(nullable = false, unique = true)
@@ -24,6 +31,11 @@ public class AuthProviderLdap extends AuthProvider {
     @Column(nullable = false)
     @JsonView({View.Summary.class})
     private int port;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    @JsonView({View.Summary.class})
+    private ProtocolEnum protocol;
 
     //</editor-fold>
 
@@ -64,17 +76,26 @@ public class AuthProviderLdap extends AuthProvider {
         this.port = port;
     }
 
+    public ProtocolEnum getProtocol() {
+        return protocol;
+    }
+
+    public void setProtocol(ProtocolEnum protocol) {
+        this.protocol = protocol;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof AuthProviderLdap)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
 
         AuthProviderLdap that = (AuthProviderLdap) o;
 
         if (port != that.port) return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
-        return host != null ? host.equals(that.host) : that.host == null;
+        if (host != null ? !host.equals(that.host) : that.host != null) return false;
+        return protocol == that.protocol;
 
     }
 
@@ -84,6 +105,7 @@ public class AuthProviderLdap extends AuthProvider {
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (host != null ? host.hashCode() : 0);
         result = 31 * result + port;
+        result = 31 * result + (protocol != null ? protocol.hashCode() : 0);
         return result;
     }
 

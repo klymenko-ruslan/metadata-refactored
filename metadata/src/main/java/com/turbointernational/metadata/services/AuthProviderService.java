@@ -26,4 +26,19 @@ public class AuthProviderService {
         return authProviderDao.createAuthProviderLDAP(authProviderLDAP);
     }
 
+    @Transactional
+    public void updateAuthProviderLDAP(AuthProviderLdap authProviderLDAP) {
+        authProviderDao.updateAuthProviderLDAP(authProviderLDAP);
+    }
+
+    @Transactional
+    public void removeAuthProvider(Long id) {
+        authProviderDao.removeAuthProvider(id);
+    }
+
+    @Transactional
+    public AuthProviderLdap findAuthProviderLdapByName(String name) {
+        return authProviderDao.findAuthProviderLdapByName(name);
+    }
+
 }

@@ -14,17 +14,28 @@ import java.util.TreeSet;
 
 /*
 
-alter table user add unique key `name` (`name`);
-create table auth_provider(id bigint(20) auto_increment primary key, typ enum('LDAP') not null);
-create table auth_provider_ldap(
-    id bigint(20) primary key references auth_provider(id) on update cascade on delete cascade,
-    name varchar(64) not null,
-    host varchar(255) not null,
-    port int not null default 636,
-    unique key name (name)
-);
-alter table user add column auth_provider_id bigint(20) default null references auth_provider(id) on update cascade on delete no action;
-alter table user modify column password varchar(100);
+ALTER TABLE user ADD UNIQUE KEY `name` (`name`);
+
+CREATE TABLE `auth_provider` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `typ` enum('LDAP') NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=INNODB;
+
+CREATE TABLE `auth_provider_ldap` (
+  `id` bigint(20) NOT NULL,
+  `name` varchar(64) NOT NULL,
+  `host` varchar(255) NOT NULL,
+  `port` int(11) NOT NULL DEFAULT '636',
+  `protocol` enum('LDAP','LDAPS','LDAPS_SOFT') NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `name` (`name`),
+  CONSTRAINT `auth_provider_ldap_ibfk_1` FOREIGN KEY (`id`) REFERENCES `auth_provider` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=INNODB;
+
+ALTER TABLE user ADD COLUMN auth_provider_id bigint;
+ALTER TABLE user ADD CONSTRAINT fk_authp FOREIGN KEY (auth_provider_id) REFERENCES auth_provider(id) ON UPDATE CASCADE ON DELETE SET NULL;
+
 */
 
 @Entity

@@ -11,7 +11,7 @@ angular.module("ngMetaCrudApp")
         name: "Local DB"
       };
       $scope.showResetPassword = false;
-      $scope.authProviders = authProviders.recs;
+      $scope.authProviders = authProviders.recs || [];
       $scope.authProviders.unshift(authProviderLocalDB);
 
       // Setup the user object for create/edit

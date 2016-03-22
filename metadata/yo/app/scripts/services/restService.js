@@ -440,5 +440,17 @@ angular.module("ngMetaCrudApp")
         return Restangular.one("authprovider").post("create", authProviderLDAP);
       };
 
+      this.updateAuthProviderLDAP = function(authProviderLDAP) {
+        return Restangular.one("authprovider", authProviderLDAP.id).customPUT(authProviderLDAP);
+      };
+
+      this.removeAuthenticationProvider = function(id) {
+        return Restangular.one("authprovider", id).remove();
+      };
+
+      this.findAuthProviderLdapByName = function(name) {
+        return Restangular.one("authprovider/findbyname").get({"name": name});
+      };
+
     };
   });

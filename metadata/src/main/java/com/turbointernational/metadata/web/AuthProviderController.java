@@ -24,10 +24,10 @@ public class AuthProviderController {
     @Transactional
     @JsonView(View.Summary.class)
     @Secured("ROLE_ADMIN")
-    public Page getAllAuthProviders(@RequestParam(name = "sortProperty") String sortProperty,
-                                    @RequestParam(name = "sortOrder") String sortOrder,
-                                    @RequestParam(name = "offset") int offset,
-                                    @RequestParam(name = "limit") int limit) {
+    public Page getAllAuthProviders(@RequestParam("sortProperty") String sortProperty,
+                                    @RequestParam("sortOrder") String sortOrder,
+                                    @RequestParam("offset") int offset,
+                                    @RequestParam("limit") int limit) {
         return authProviderService.getAllAuthProviders(sortProperty, sortOrder, offset, limit);
     }
 
@@ -38,6 +38,32 @@ public class AuthProviderController {
     @Secured("ROLE_ADMIN")
     public Long createAuthProviderLDAP(@RequestBody AuthProviderLdap authProviderLDAP) {
         return authProviderService.createAuthProviderLDAP(authProviderLDAP);
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    @ResponseBody
+    @Transactional
+    @JsonView(View.Summary.class)
+    @Secured("ROLE_ADMIN")
+    public void updateAuthProviderLDAP(@RequestBody AuthProviderLdap authProviderLDAP) {
+        authProviderService.updateAuthProviderLDAP(authProviderLDAP);
+    }
+
+    @Transactional
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    @ResponseBody
+    @Secured("ROLE_ADMIN")
+    public void removeAuthProvider(@PathVariable("id") Long id) {
+        authProviderService.removeAuthProvider(id);
+    }
+
+    @Transactional
+    @RequestMapping(value = "findbyname", method = RequestMethod.GET)
+    @ResponseBody
+    @Secured("ROLE_ADMIN")
+    public AuthProviderLdap findAuthProviderLdapByName(@RequestParam("name") String name) {
+        AuthProviderLdap retVal = authProviderService.findAuthProviderLdapByName(name);
+        return retVal;
     }
 
 }

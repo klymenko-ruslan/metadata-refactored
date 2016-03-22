@@ -55,7 +55,7 @@ public abstract class AbstractDao<T extends Serializable> {
         em.remove(entity);
     }
 
-    public void delete(long entityId) {
+    public void delete(Long entityId) {
         T entity = findOne(entityId);
         AbstractDao.this.remove(entity);
     }
