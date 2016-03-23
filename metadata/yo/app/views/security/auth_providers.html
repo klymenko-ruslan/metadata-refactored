@@ -9,34 +9,33 @@
 </metanav>
 
 <div class="row">
-  <h1 class="col-xs-12 col-sm-9">Authentication providers</h1>
+  <h1 class="col-xs-12">Authentication providers</h1>
 </div>
 
 <div class="row">
-  <div class="col-xs-12 col-sm-9">
-    <form name="authProviderForm" novalidate authorize="ROLE_ADMIN">
+    <form name="authProviderForm" class="css-form" novalidate>
       <table data-ng-table="authProvidersTableParams" class="table table-bordered table-striped table-hover table-responsive">
         <tr data-ng-repeat="rec in $data.recs">
           <td title="'Name'" sortable="'name'" class="text-left">
             <span ng-hide="isModifying(rec.id)">{{rec.name}}</span>
             <div ng-show="isModifying(rec.id)">
-              <input name="authp_name" ng-model="modifyingRow.name" class="form-control" type="text" ng-model-options="{ debounce: 500 }" required maxlength="64" unique-authprovider-name>
+              <input name="authp_name" ng-model="modifyingRow.name" class="form-control" type="text" ng-model-options="{ debounce: 500 }" maxlength="64" unique-auth-ldap-name required />
               <span ng-show="authProviderForm.authp_name.$invalid" class="alert alert-danger" role="alert">
                 <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
                 <span ng-show="authProviderForm.authp_name.$error.required">Required!</span>
-                <span ng-show="authProviderForm.authp_name.$error.maxlenth">Too long name (max 64 chars)!</span>
-                <span ng-show="carmakeForm.carmake_name.$error.nonUniqueName">Not unique!</span>
+                <span ng-show="authProviderForm.authp_name.$error.maxlenth">Max 64 chars!</span>
+                <span ng-show="authProviderForm.authp_name.$error.nonUniqueName">Not unique name!</span>
               </span>
             </div>
           </td>
           <td title="'Host'" sortable="'host'" class="text-left">
             <span ng-hide="isModifying(rec.id)">{{rec.host}}</span>
             <div ng-show="isModifying(rec.id)">
-              <input id="authp_host" name="authp_host" class="form-control" type="text" ng-model="modifyingRow.host" required maxlength="255" host-name />
+              <input id="authp_host" name="authp_host" class="form-control" type="text" ng-model="modifyingRow.host" maxlength="255" host-name required />
               <span ng-show="authProviderForm.authp_host.$invalid" class="alert alert-danger" role="alert">
                 <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
                 <span ng-show="authProviderForm.authp_host.$error.required">Required!</span>
-                <span ng-show="authProviderForm.authp_host.$error.hostName">Invalid host name or IP address!</span>
+                <span ng-show="authProviderForm.authp_host.$error.hostName">Invalid host address!</span>
                 <span ng-show="authProviderForm.authp_host.$error.maxlenth">Too long name (max 255 chars)!</span>
               </span>
             </div>
@@ -44,13 +43,13 @@
           <td title="'Port'" sortable="'port'" class="text-right">
             <span ng-hide="isModifying(rec.id)">{{rec.port}}</span>
             <div ng-show="isModifying(rec.id)">
-              <input id="authp_port" name="authp_port" class="form-control" type="number" ng-model="modifyingRow.port" required maxlength="5" min="0" max="65535" />
+              <input id="authp_port" name="authp_port" class="form-control" type="number" ng-model="modifyingRow.port" maxlength="5" min="0" max="65535"  required/>
               <span ng-show="authProviderForm.authp_port.$invalid" class="alert alert-danger" role="alert">
                 <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
                 <span ng-show="authProviderForm.authp_port.$error.required">Required!</span>
-                <span ng-show="authProviderForm.authp_port.$error.invalidPortNumber">Invalid portnumber!</span>
-                <span ng-show="authProviderForm.authp_port.$error.maxlenth">Too long port number (max 5 digits)!</span>
-                <span ng-show="authProviderForm.authp_port.$error.min || authProviderForm.authp_port.$error.max">Port number must be in range 0..65535!</span>
+                <span ng-show="authProviderForm.authp_port.$error.invalidPortNumber">Invalid!</span>
+                <span ng-show="authProviderForm.authp_port.$error.maxlenth">Maximum 5 digits!</span>
+                <span ng-show="authProviderForm.authp_port.$error.min || authProviderForm.authp_port.$error.max">Valid values 0..65535!</span>
               </span>
             </div>
           </td>
@@ -74,10 +73,16 @@
               Remove
             </button>
             <button ng-click="modifySave(rec, authProviderForm)" authorize="ROLE_ADMIN" class="btn btn-success btn-xs ng-hide" ng-show="isModifying(rec.id)"  ng-disabled="authProviderForm.$pristine || authProviderForm.$invalid || authProviderForm.$pending">
-              <i class="fa fa-save"></i> Save
+              <i class="fa fa-save"></i>
+              Save
+            </button>
+            <button ng-click="undo(authProviderForm)" ng-show="isModifying(rec.id)" ng-disabled="form.$pristine" class="btn btn-warning btn-xs ng-hide">
+              <i class="fa fa-undo"></i>
+              Undo
             </button>
             <button ng-click="modifyCancel(rec, authProviderForm)" class="btn btn-warning btn-xs ng-hide" ng-show="isModifying(rec.id)">
-              <i class="fa fa-minus-circle"></i> Cancel
+              <i class="fa fa-minus-circle"></i>
+              Cancel
             </button>
           </td>
         </tr>
@@ -86,5 +91,4 @@
         </tr>
       </table>
     </form>
-  </div>
 </div>

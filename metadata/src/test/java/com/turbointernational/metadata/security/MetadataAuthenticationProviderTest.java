@@ -27,6 +27,9 @@ import static org.junit.Assert.*;
 @Transactional
 public class MetadataAuthenticationProviderTest {
 
+    private final static String USER = "ldaptest";
+    private final static String PASSWORD = "7jFboLWrgzijbfn";
+
     @Autowired
     private AuthenticationProvider metadataAuthenticationProvider;
 
@@ -35,7 +38,7 @@ public class MetadataAuthenticationProviderTest {
     @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:integration_tests/clear_tables.sql")
     @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:integration_tests/clear_dictionaries.sql")
     public void testAuthenticate() throws Exception {
-        Authentication authentication = new UsernamePasswordAuthenticationToken("LDAP", "9)Fkp6%gaBk");
+        Authentication authentication = new UsernamePasswordAuthenticationToken(USER, PASSWORD);
         Authentication authenticate = metadataAuthenticationProvider.authenticate(authentication);
         Assert.assertTrue("LDAP authentication failed.", authenticate.isAuthenticated());
     }

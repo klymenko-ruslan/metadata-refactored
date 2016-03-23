@@ -37,18 +37,22 @@ public class AuthProviderLdap extends AuthProvider {
     @JsonView({View.Summary.class})
     private ProtocolEnum protocol;
 
+    @Column
+    @JsonView({View.Summary.class})
+    private String domain;
+
     //</editor-fold>
 
     public AuthProviderLdap() {
-        super();
-        setTyp(AuthProviderTypeEnum.LDAP);
+        this(null, null, 0, null);
     }
 
-    public AuthProviderLdap(String name, String host, int port) {
+    public AuthProviderLdap(String name, String host, int port, String domain) {
         super();
         this.name = name;
         this.host = host;
         this.port = port;
+        this.domain = domain;
         setTyp(AuthProviderTypeEnum.LDAP);
     }
 
@@ -84,6 +88,14 @@ public class AuthProviderLdap extends AuthProvider {
         this.protocol = protocol;
     }
 
+    public String getDomain() {
+        return domain;
+    }
+
+    public void setDomain(String domain) {
+        this.domain = domain;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -95,7 +107,8 @@ public class AuthProviderLdap extends AuthProvider {
         if (port != that.port) return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
         if (host != null ? !host.equals(that.host) : that.host != null) return false;
-        return protocol == that.protocol;
+        if (protocol != that.protocol) return false;
+        return domain != null ? domain.equals(that.domain) : that.domain == null;
 
     }
 
@@ -106,6 +119,7 @@ public class AuthProviderLdap extends AuthProvider {
         result = 31 * result + (host != null ? host.hashCode() : 0);
         result = 31 * result + port;
         result = 31 * result + (protocol != null ? protocol.hashCode() : 0);
+        result = 31 * result + (domain != null ? domain.hashCode() : 0);
         return result;
     }
 

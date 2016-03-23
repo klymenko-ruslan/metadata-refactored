@@ -38,19 +38,24 @@ angular.module("ngMetaCrudApp").controller("AuthProvidersCtrl", ["$scope", "$log
       }
     });
 
-    $scope.isModifying = function(id) {
-      return angular.isObject($scope.modifyingRow) && (angular.isUndefined(id) || $scope.modifyingRow.id == id);
-    };
-
     $scope._resetForm = function(form) {
       form.$rollbackViewValue();
       form.$setPristine();
     };
 
+    $scope.isModifying = function(id) {
+      return angular.isObject($scope.modifyingRow) && (angular.isUndefined(id) || $scope.modifyingRow.id == id);
+    };
+
     $scope.modifyStart = function(row, form) {
       $scope._resetForm(form);
       $scope.refRow = row;
-      $scope.modifyingRow = Restangular.copy(row);
+      $scope.modifyingRow = Restangular.copy($scope.refRow);
+    };
+
+    $scope.undo = function(form) {
+      $scope._resetForm(form);
+      $scope.modifyingRow = Restangular.copy($scope.refRow);
     };
 
     $scope.modifyCancel = function(row, form) {
@@ -149,19 +154,24 @@ angular.module("ngMetaCrudApp").controller("AuthProvidersCtrl", ["$scope", "$log
     require: "ngModel",
     link: function($scope, elm, attr, ctrl) {
       ctrl.$asyncValidators.uniqueAuthLdapName = function(modelValue, viewValue) {
-        var def = $q.defer();
-        if (ctrl.$isEmpty(modelValue)) {
+        if (ctrl.$isEmpty(modelValue) /*|| modelValue ===  viewValue*/) {
           return $q.when();
         }
+        var def = $q.defer();
         restService.findAuthProviderLdapByName(viewValue).then(
-          function(authProvider) {
+          function success(authProvider) {
             if (authProvider === undefined) {
               def.resolve();
             } else {
-              def.reject();
+              var id = $scope.$eval("modifyingRow.id");
+              if (authProvider.id == id) {
+                def.resolve();
+              } else {
+                def.reject();
+              }
             }
           },
-          function(errorResponse) {
+          function failure(errorResponse) {
             $log.log("Couldn't validate name of the LDAP authentication provider: " + viewValue);
             def.reject();
           }

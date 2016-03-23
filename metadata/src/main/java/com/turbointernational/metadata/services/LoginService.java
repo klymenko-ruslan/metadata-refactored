@@ -41,12 +41,12 @@ public class LoginService implements UserDetailsService {
         if (isEmail) {
             user = userDao.findUserByEmail(username);
         } else {
-            user = userDao.findUserByName(username);
+            user = userDao.findUserByLogon(username);
         }
         if (user == null) {
             // If there are users on the system, this is just a failed login
             if (userDao.count() > 0) {
-                throw new UsernameNotFoundException("No users with email address: " + username);
+                throw new UsernameNotFoundException("No users with username: " + username);
             }
             // If we don't have any users, create the admin account
             user = createFirstUser();

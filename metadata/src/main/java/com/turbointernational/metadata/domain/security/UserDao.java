@@ -32,9 +32,9 @@ public class UserDao extends AbstractDao<User> {
         return null;
     }
 
-    public User findUserByName(String name) {
-        if (StringUtils.isNotBlank(name)) {
-            List<User> users = em.createNamedQuery("findUserByName").setParameter("name", name).getResultList();
+    public User findUserByLogon(String logon) {
+        if (StringUtils.isNotBlank(logon)) {
+            List<User> users = em.createNamedQuery("findUserByLogon").setParameter("logon", logon).getResultList();
             if (!users.isEmpty()) {
                 return users.get(0);
             }
