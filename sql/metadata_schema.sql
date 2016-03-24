@@ -449,17 +449,41 @@ CREATE TABLE `part_turbo` (
 --
 -- Metadata Security
 --
+
+CREATE TABLE `auth_provider` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `typ` enum('LDAP') NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=13;
+
+ CREATE TABLE `auth_provider_ldap` (
+  `id` bigint(20) NOT NULL,
+  `name` varchar(64) NOT NULL,
+  `host` varchar(255) NOT NULL,
+  `port` int(11) NOT NULL DEFAULT '636',
+  `protocol` enum('LDAP','LDAPS','LDAPS_SOFT') NOT NULL,
+  `domain` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `name` (`name`),
+  CONSTRAINT `auth_provider_ldap_ibfk_1` FOREIGN KEY (`id`) REFERENCES `auth_provider` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=INNODB;
+
 CREATE TABLE `user` (
-  `id` BIGINT NOT NULL AUTO_INCREMENT,
-  `name` VARCHAR(100) NOT NULL,
-  `email` VARCHAR(255) NOT NULL,
-  `password` VARCHAR(100) NOT NULL,
-  `password_reset_token` CHAR(36) NULL,
-  `enabled` BOOLEAN NOT NULL DEFAULT 1,
-  UNIQUE INDEX (`email`),
-  UNIQUE INDEX (`password_reset_token`),
-  PRIMARY KEY(`id`)
-) ENGINE = INNODB;
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `password` varchar(100) DEFAULT NULL,
+  `password_reset_token` char(36) DEFAULT NULL,
+  `enabled` tinyint(1) NOT NULL DEFAULT '1',
+  `auth_provider_id` bigint(20) DEFAULT NULL,
+  `username` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `email` (`email`),
+  UNIQUE KEY `username` (`username`),
+  UNIQUE KEY `password_reset_token` (`password_reset_token`),
+  KEY `fk_authp` (`auth_provider_id`),
+  CONSTRAINT `fk_authp` FOREIGN KEY (`auth_provider_id`) REFERENCES `auth_provider` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=INNODB AUTO_INCREMENT=21;
 
 CREATE TABLE `groups` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
