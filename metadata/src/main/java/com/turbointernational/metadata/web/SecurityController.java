@@ -65,19 +65,16 @@ public class SecurityController {
     
     @Transactional
     @RequestMapping(value="password/reset/request", method=RequestMethod.POST)
-    public @ResponseBody void request(@RequestParam String email) {
-        
+    public @ResponseBody void request(@RequestParam String username) {
         // Generate a UUID
         UUID uuid = UUID.randomUUID();
         // Add a field to the User object of the String type called "passwordResetToken" and save the UUID as a string in it.
         // Get a user with:
-        User user = userDao.findUserByEmail(email);
-        
+        User user = userDao.findUserByUsername(username);
         user.setPasswordResetToken(uuid.toString());
-        
+        String email = user.getEmail();
         // Save the user
         userDao.merge(user);
-        
         // Send the user an email with the reset link
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(email);

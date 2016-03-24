@@ -49,7 +49,16 @@
                 <span ng-show="authProviderForm.authp_port.$error.required">Required!</span>
                 <span ng-show="authProviderForm.authp_port.$error.invalidPortNumber">Invalid!</span>
                 <span ng-show="authProviderForm.authp_port.$error.maxlenth">Maximum 5 digits!</span>
-                <span ng-show="authProviderForm.authp_port.$error.min || authProviderForm.authp_port.$error.max">Valid values 0..65535!</span>
+                <span ng-show="authProviderForm.authp_port.$error.min || authProviderForm.authp_port.$error.max">Invalid port number!</span>
+              </span>
+            </div>
+          </td>
+          <td title="'Domain'" sortable="'domain'" class="text-right">
+            <span ng-hide="isModifying(rec.id)">{{rec.domain}}</span>
+            <div ng-show="isModifying(rec.id)">
+              <input id="authp_domain" name="authp_domain" class="form-control" type="text" ng-model="modifyingRow.domain" domain-name />
+              <span ng-show="authProviderForm.authp_domain.$invalid" class="alert alert-danger" role="alert">
+                <span ng-show="authProviderForm.authp_domain.$error.domainName">Invalid domain name!</span>
               </span>
             </div>
           </td>
@@ -72,7 +81,7 @@
               <i class="fa fa-trash-o"></i>
               Remove
             </button>
-            <button ng-click="modifySave(rec, authProviderForm)" authorize="ROLE_ADMIN" class="btn btn-success btn-xs ng-hide" ng-show="isModifying(rec.id)"  ng-disabled="authProviderForm.$pristine || authProviderForm.$invalid || authProviderForm.$pending">
+            <button ng-click="modifySave(authProviderForm)" authorize="ROLE_ADMIN" class="btn btn-success btn-xs ng-hide" ng-show="isModifying(rec.id)"  ng-disabled="authProviderForm.$pristine || authProviderForm.$invalid || authProviderForm.$pending">
               <i class="fa fa-save"></i>
               Save
             </button>

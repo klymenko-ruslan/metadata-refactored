@@ -71,6 +71,7 @@ angular.module("ngMetaCrudApp").controller("AuthProvidersCtrl", ["$scope", "$log
           $scope.refRow.name = $scope.modifyingRow.name;
           $scope.refRow.host = $scope.modifyingRow.host;
           $scope.refRow.port = $scope.modifyingRow.port;
+          $scope.refRow.domain = $scope.modifyingRow.domain;
           $scope.refRow.protocol = $scope.modifyingRow.protocol;
 
           $scope.modifyingRow = null;
@@ -110,6 +111,7 @@ angular.module("ngMetaCrudApp").controller("AuthProvidersCtrl", ["$scope", "$log
       name: null,
       host: null,
       port: 389,
+      domain: null,
       typ: "LDAP",
       protocol: "LDAP"
     };
@@ -131,19 +133,33 @@ angular.module("ngMetaCrudApp").controller("AuthProvidersCtrl", ["$scope", "$log
     };
 
   }
-]).directive("hostName", ["$log", function($log) {
+]).directive("hostName", ["$log", "VALID_IP_ADDRESS_REGEX", "VALID_HOSTNAME_REGEX",
+  function($log, VALID_IP_ADDRESS_REGEX, VALID_HOSTNAME_REGEX) {
   // Validator of a hostname (or IP).
   return {
     require: "ngModel",
     link: function($scope, elm, attr, ctrl) {
-      var validIpAddressRegex = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/;
-      var validHostnameRegex = /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$/;
       ctrl.$validators.hostName = function(modelValue, viewValue) {
         if (ctrl.$isEmpty(modelValue)) {
           // consider empty models to be valid
           return true;
         } else {
-          return validHostnameRegex.test(viewValue) || validIpAddressRegex.test(viewValue);
+          return VALID_IP_ADDRESS_REGEX.test(viewValue) || VALID_HOSTNAME_REGEX.test(viewValue);
+        }
+      };
+    }
+  };
+}]).directive("domainName", ["$log", "VALID_HOSTNAME_REGEX", function($log, VALID_HOSTNAME_REGEX) {
+  // Validator of a hostname (or IP).
+  return {
+    require: "ngModel",
+    link: function($scope, elm, attr, ctrl) {
+      ctrl.$validators.domainName = function(modelValue, viewValue) {
+        if (ctrl.$isEmpty(modelValue)) {
+          // consider empty models to be valid
+          return true;
+        } else {
+          return VALID_HOSTNAME_REGEX.test(viewValue);
         }
       };
     }

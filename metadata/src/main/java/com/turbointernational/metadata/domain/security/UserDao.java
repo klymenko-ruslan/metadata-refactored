@@ -3,6 +3,8 @@ package com.turbointernational.metadata.domain.security;
 import com.turbointernational.metadata.domain.AbstractDao;
 
 import java.util.List;
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
 import javax.persistence.Query;
 
 import org.apache.commons.lang3.StringUtils;
@@ -22,21 +24,14 @@ public class UserDao extends AbstractDao<User> {
         return em.createQuery("SELECT o FROM User o WHERE o.enabled = true", User.class).getResultList();
     }
 
-    public User findUserByEmail(String email) {
-        if (StringUtils.isNotBlank(email)) {
-            List<User> users = em.createNamedQuery("findUserByEmail").setParameter("email", email).getResultList();
-            if (!users.isEmpty()) {
-                return users.get(0);
-            }
-        }
-        return null;
-    }
-
-    public User findUserByLogon(String logon) {
-        if (StringUtils.isNotBlank(logon)) {
-            List<User> users = em.createNamedQuery("findUserByLogon").setParameter("logon", logon).getResultList();
-            if (!users.isEmpty()) {
-                return users.get(0);
+    public User findUserByUsername(String username) {
+        if (StringUtils.isNotBlank(username)) {
+            try {
+                return em.createNamedQuery("findUserByUsername", User.class)
+                        .setParameter("username", username)
+                        .getSingleResult();
+            } catch(NoResultException | NonUniqueResultException e) {
+                // Ignore, return null.
             }
         }
         return null;

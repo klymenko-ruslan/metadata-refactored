@@ -52,6 +52,13 @@
     </span>
   </fieldset>
   <fieldset class="form-group">
+    <label for="authp_domain">Domain</label>
+    <input id="authp_domain" name="authp_domain" class="form-control" type="text" ng-model="authp.domain" domain-name />
+    <span ng-show="authProviderForm.authp_domain.$dirty && authProviderForm.authp_domain.$invalid" class="alert alert-danger" role="alert">
+      <span ng-show="authProviderForm.authp_domain.$error.domainName">Invalid domain name!</span>
+    </span>
+  </fieldset>
+  <fieldset class="form-group">
     <label>Protocol</label>
     <div class="radio">
       <label>

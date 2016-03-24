@@ -181,7 +181,7 @@ class MetadataLdapAuthenticationProvider implements AuthenticationProvider {
             if (log.isDebugEnabled()) {
                 log.debug("Authentication of an user '" + fullLogonName + "' failed.", e);
             } else {
-                log.info("Authentication of an user '{}' failed.", fullLogonName);
+                log.info("Authentication of an user '{}' failed: {}", fullLogonName, e.getMessage());
             }
             ldapAuthResult = authentication; // isAuthenticated() == false
         }

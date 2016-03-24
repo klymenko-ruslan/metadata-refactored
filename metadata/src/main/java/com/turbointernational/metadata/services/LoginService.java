@@ -1,12 +1,6 @@
 package com.turbointernational.metadata.services;
 
-import com.turbointernational.metadata.domain.security.Group;
-import com.turbointernational.metadata.domain.security.GroupDao;
-import com.turbointernational.metadata.domain.security.Role;
-import com.turbointernational.metadata.domain.security.RoleDao;
-import com.turbointernational.metadata.domain.security.User;
-import com.turbointernational.metadata.domain.security.UserDao;
-import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator;
+import com.turbointernational.metadata.domain.security.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.dao.DataAccessException;
@@ -25,24 +19,18 @@ import org.springframework.stereotype.Service;
 @Configuration
 public class LoginService implements UserDetailsService {
     
-    @Autowired(required=true)
+    @Autowired
     UserDao userDao;
     
-    @Autowired(required=true)
+    @Autowired
     GroupDao groupDao;
     
-    @Autowired(required=true)
+    @Autowired
     RoleDao roleDao;
     
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
-        User user;
-        boolean isEmail = (new EmailValidator()).isValid(username, null);
-        if (isEmail) {
-            user = userDao.findUserByEmail(username);
-        } else {
-            user = userDao.findUserByLogon(username);
-        }
+        User user = userDao.findUserByUsername(username);
         if (user == null) {
             // If there are users on the system, this is just a failed login
             if (userDao.count() > 0) {

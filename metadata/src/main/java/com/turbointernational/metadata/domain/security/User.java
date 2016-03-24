@@ -14,8 +14,6 @@ import java.util.TreeSet;
 
 /*
 
-ALTER TABLE user ADD UNIQUE KEY `name` (`name`);
-
 CREATE TABLE `auth_provider` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `typ` enum('LDAP') NOT NULL,
@@ -35,7 +33,11 @@ CREATE TABLE `auth_provider_ldap` (
 
 ALTER TABLE user ADD COLUMN auth_provider_id bigint;
 ALTER TABLE user ADD CONSTRAINT fk_authp FOREIGN KEY (auth_provider_id) REFERENCES auth_provider(id) ON UPDATE CASCADE ON DELETE SET NULL;
-ALTER TABLE user ADD COLUMN logon VARCHAR(255) NULL UNIQUE;
+ALTER TABLE user ADD COLUMN username VARCHAR(255) UNIQUE;
+update user set username = email;
+alter table user modify column username varchar(255) not null unique;
+alter table user drop key name;
+
 
 alter table auth_provider_ldap add column domain varchar(255);
 
@@ -45,7 +47,7 @@ alter table auth_provider_ldap add column domain varchar(255);
 @Table(name="USER")
 @NamedQueries({
     @NamedQuery(name = "findUserByEmail", query = "SELECT u FROM User u WHERE u.email = :email"),
-    @NamedQuery(name = "findUserByLogon", query = "SELECT u FROM User u WHERE u.logon = :logon")
+    @NamedQuery(name = "findUserByUsername", query = "SELECT u FROM User u WHERE u.username = :username")
 })
 public class User implements Comparable<User>, UserDetails {
 
@@ -59,19 +61,16 @@ public class User implements Comparable<User>, UserDetails {
     @Column(unique = true)
     private String name;
 
-    /**
-     * This name is used for authentication against database.
-     */
     @JsonView({View.Detail.class, View.Summary.class})
     @Column(unique = true)
     private String email;
 
     /**
-     * This name is used for authentication against LDAP servers.
+     * This field is used for authentication.
      */
     @JsonView({View.Detail.class, View.Summary.class})
     @Column(unique = true)
-    private String logon;
+    private String username;
 
     private String password;
     
@@ -118,12 +117,8 @@ public class User implements Comparable<User>, UserDetails {
         this.email = email;
     }
 
-    public String getLogon() {
-        return logon;
-    }
-
-    public void setLogon(String logon) {
-        this.logon = logon;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     @Override
@@ -176,12 +171,7 @@ public class User implements Comparable<User>, UserDetails {
     @Override
     @JsonIgnore
     public String getUsername() {
-        if (authProvider == null) {
-            return email; // localdb authentication
-        } else if (authProvider.getTyp() == AuthProvider.AuthProviderTypeEnum.LDAP) {
-            return logon;
-        }
-        throw new IllegalArgumentException("Unknown authentication provider: " + authProvider);
+        return username;
     }
 
     @Override

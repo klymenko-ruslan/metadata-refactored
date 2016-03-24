@@ -103,6 +103,7 @@ public class UserController {
     public void update(@PathVariable("id") Long id, @RequestBody User jsonUser) {
         User user = userDao.findOne(id);
         user.setName(jsonUser.getName());
+        user.setUsername(jsonUser.getUsername());
         user.setEmail(jsonUser.getEmail());
         // Password
         if (StringUtils.isNotBlank(jsonUser.getPassword())) {

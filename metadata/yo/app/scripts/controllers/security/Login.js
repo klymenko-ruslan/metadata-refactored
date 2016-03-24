@@ -6,7 +6,7 @@ angular.module('ngMetaCrudApp')
     $scope.login = function() {
       Restangular.all('security/login').post(
         jQuery.param({
-          username: $scope.email,
+          username: $scope.username,
           password: $scope.password
         }),
         {},
@@ -27,14 +27,14 @@ angular.module('ngMetaCrudApp')
 
     $scope.resetRequest = function() {
       Restangular.all('security/password/reset/request').post(
-        jQuery.param({email: $scope.email}),
+        jQuery.param({username: $scope.username}),
         {},
         {'Content-Type': 'application/x-www-form-urlencoded'}).then(
         function() {
           gToast.open("Password reset link sent.");
         },
         function() {
-          gToast.open("Is your username/email correct?");
+          gToast.open("Is your username correct?");
         }
       );
     }
