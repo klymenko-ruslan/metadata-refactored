@@ -12,37 +12,6 @@ import javax.persistence.*;
 import java.util.Set;
 import java.util.TreeSet;
 
-/*
-
-CREATE TABLE `auth_provider` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `typ` enum('LDAP') NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=INNODB;
-
-CREATE TABLE `auth_provider_ldap` (
-  `id` bigint(20) NOT NULL,
-  `name` varchar(64) NOT NULL,
-  `host` varchar(255) NOT NULL,
-  `port` int(11) NOT NULL DEFAULT '636',
-  `protocol` enum('LDAP','LDAPS','LDAPS_SOFT') NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `name` (`name`),
-  CONSTRAINT `auth_provider_ldap_ibfk_1` FOREIGN KEY (`id`) REFERENCES `auth_provider` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=INNODB;
-
-ALTER TABLE user ADD COLUMN auth_provider_id bigint;
-ALTER TABLE user ADD CONSTRAINT fk_authp FOREIGN KEY (auth_provider_id) REFERENCES auth_provider(id) ON UPDATE CASCADE ON DELETE SET NULL;
-ALTER TABLE user ADD COLUMN username VARCHAR(255) UNIQUE;
-update user set username = email;
-alter table user modify column username varchar(255) not null unique;
-alter table user drop key name;
-
-
-alter table auth_provider_ldap add column domain varchar(255);
-
-*/
-
 @Entity
 @Table(name="USER")
 @NamedQueries({
