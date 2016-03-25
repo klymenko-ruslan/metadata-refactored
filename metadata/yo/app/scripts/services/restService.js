@@ -60,6 +60,10 @@ angular.module("ngMetaCrudApp")
         dialogs.error(title, 'Server said: <pre>' + response.data.message + '</pre>');
       };
 
+      this.getAllUsers = function() {
+        return Restangular.all("security/user").getList();
+      };
+
       this.findPart = function(id, params) {
         return Restangular.one('part', id).get(params);
       };

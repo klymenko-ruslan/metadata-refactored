@@ -1,15 +1,21 @@
-'use strict';
+"use strict";
 
-angular.module('ngMetaCrudApp')
-    .controller('UsersCtrl', function ($log, $scope, $routeParams, Restangular, dialogs, gToast) {
-
-      // Load the users
-      Restangular.all('security/user').getList().then(
-          function(users) {
-            $scope.users = users;
-          },
-          function() {
-            dialogs.error("Could not load user data", "Server said: <pre>" + JSON.stringify(response.data) + "</pre>");
-          });
-
-    });
+angular.module("ngMetaCrudApp")
+  .controller('UsersCtrl', ["$log", "$scope", "$routeParams",
+    "ngTableParams", "utils", "users",
+    function($log, $scope, $routeParams,
+      ngTableParams, utils, users) {
+      var localDbAuthProvider = {"name": "Local DB"};
+      angular.forEach(users, function(u) {
+        if (angular.isUndefined(u.authProvider)) {
+          u.authProvider = localDbAuthProvider;
+        }
+      });
+      $scope.usersTableParams = new ngTableParams({
+        page: 1,
+        count: 10
+      }, {
+        getData: utils.localPagination(users, "username")
+      });
+    }
+  ]);

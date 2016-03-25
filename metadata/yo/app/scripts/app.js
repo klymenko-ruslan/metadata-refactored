@@ -210,7 +210,10 @@ angular.module("ngMetaCrudApp", ["ngRoute", "ngTable", "ui.bootstrap",
 
     $routeProvider.when("/security/users", {
       templateUrl: "views/security/users.html",
-      controller: "UsersCtrl"
+      controller: "UsersCtrl",
+      resolve: {
+        users: ["restService", function(restService) { return restService.getAllUsers()}]
+      }
     });
     $routeProvider.when("/security/user/:id", {
       templateUrl: "views/security/user.html",

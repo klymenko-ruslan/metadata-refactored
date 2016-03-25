@@ -50,7 +50,7 @@ public class User implements Comparable<User>, UserDetails {
     @Column(columnDefinition = "BIT")
     private Boolean enabled;
 
-    @JsonView(View.Detail.class)
+    @JsonView(View.Summary.class)
     @OneToOne(fetch = FetchType.EAGER)
     private AuthProvider authProvider;
     
