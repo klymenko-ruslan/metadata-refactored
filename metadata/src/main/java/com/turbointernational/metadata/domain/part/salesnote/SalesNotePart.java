@@ -188,6 +188,7 @@ public class SalesNotePart implements Serializable, SearchableEntity {
     }
 
     @PostUpdate
+    @PostPersist
     @Override
     public void updateSearchIndex() throws Exception {
         log.info("Updating search index.");
