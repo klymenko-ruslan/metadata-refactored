@@ -2,26 +2,23 @@
 
 <h1 class="padding-top">Search All Sales Notes</h1>
 
-<div class="row">
-  <form ng-submit="notesTableParams.reload()" class="form-inline" style="left-padding:0;">
-    <div class="btn-group col-xs-5">
-      <label ng-repeat="state in SalesNotes.states" class="btn btn-default" btn-checkbox ng-model="states.current[state]">{{state}}</label>
-    </div>
+<form ng-submit="notesTableParams.reload()" class="form-inline" style="left-padding:0;">
 
-    <div class="btn-group col-xs-2">
-      <label class="btn btn-default" btn-checkbox ng-model="search.includePrimary">Primary</label>
-      <label class="btn btn-default" btn-checkbox ng-model="search.includeRelated">Related</label>
-    </div>
+  <div class="btn-group" style="padding-right:3em;">
+    <label ng-repeat="state in SalesNotes.states" class="btn btn-default" btn-checkbox ng-model="states.current[state]">{{state}}</label>
+  </div>
 
-    <div class="col-xs-1">
-      <input id="part-number" class="form-control" size="15" type="text" placeholder="Primary Part" ng-model="search.partNumber" ng-model-options="{debounce:300}">
-    </div>
+  <div class="btn-group">
+    <label class="btn btn-default" btn-checkbox ng-model="search.includePrimary">Primary</label>
+    <label class="btn btn-default" btn-checkbox ng-model="search.includeRelated">Related</label>
+  </div>
 
-    <div class="col-xs-2">
-      <input id="comment" class="form-control" size="25" type="text" placeholder="Comment" ng-model="search.comment" ng-model-options="{debounce:300}">
-    </div>
-  </form>
-</div>
+  <div class="form-group pull-right">
+    <input id="part-number" class="form-control" size="15" type="text" placeholder="Primary Part" ng-model="search.partNumber" ng-model-options="{debounce:300}">
+    <input id="comment" class="form-control" size="25" type="text" placeholder="Comment" ng-model="search.comment" ng-model-options="{debounce:300}">
+  </div>
+
+</form>
 
 <div class="row">
   <div class="col-xs-12" style="padding-top:0.5em;">
