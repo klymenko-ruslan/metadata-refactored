@@ -29,6 +29,12 @@
       <i class="fa fa-save"></i> Save
     </a>
   </li>
+  <li ng-if="!isEditing()">
+    <a ng-click="remove()"
+       class="btn btn-danger">
+      <i class="fa fa-trash-o"></i> Remove
+    </a>
+  </li>
   <li class="pull-right col-xs-2">
     <a class="btn btn-default" disabled="disabled">
       {{salesNote.state}}

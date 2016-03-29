@@ -1,9 +1,10 @@
 "use strict";
 
 angular.module("ngMetaCrudApp")
-  .controller("SalesNoteDetailCtrl", ["$log", "$routeParams", "$parse", "$scope",
-    "ngTableParams", "SalesNotes", "utils", "restService", "part", "salesNote",
-    function($log, $routeParams, $parse, $scope, ngTableParams, SalesNotes, utils, restService, part, salesNote) {
+  .controller("SalesNoteDetailCtrl", ["$log", "$routeParams", "$parse", "dialogs", "$scope",
+    "ngTableParams", "$location", "SalesNotes", "utils", "restService", "part", "salesNote",
+    function($log, $routeParams, $parse, dialogs, $scope, ngTableParams, $location, SalesNotes,
+        utils, restService, part, salesNote) {
       $scope.part = part;
       $scope.salesNote = salesNote;
       $scope.salesNoteId = $routeParams.salesNoteId;
@@ -57,6 +58,22 @@ angular.module("ngMetaCrudApp")
             function failure(errorResponse) {
               restService.error("Could not get sales note details", errorResponse);
             });
+      };
+
+      $scope.remove = function() {
+        dialogs.confirm("Delete sales note [" + $scope.salesNoteId + "].", "Are you sure?").result.then(
+          function() {
+            restService.removeSalesNote($scope.salesNoteId).then(
+              function() {
+                $location.path("/part/" + $scope.part.id + "/sales_notes");
+                gToast.open("Sales note [" + $scope.salesNoteId + "] has been successfully removed.");
+              },
+              function errorResponse(response) {
+                restService.error("Removal of the sales note [" + $scope.salesNoteId + "] failed.", response);
+              }
+            );
+          }
+        );
       };
 
     }

@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.IOException;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
@@ -73,12 +74,21 @@ public class SalesNoteController {
     }
 
     @ResponseBody
+    @Secured("ROLE_SALES_NOTE_SUBMIT")
     @Transactional
     @RequestMapping(value = "{noteId}", method = POST, produces = APPLICATION_JSON_VALUE,
             consumes = APPLICATION_JSON_VALUE)
     public void updateSalesNote(HttpServletRequest request, @PathVariable("noteId") Long noteId,
                                 @RequestBody UpdateSalesNoteRequest updateRequest) {
         salesNoteService.updateSalesNote(request, noteId, updateRequest.getComment());
+    }
+
+    @ResponseBody
+    @Secured("ROLE_SALES_NOTE_SUBMIT")
+    @Transactional
+    @RequestMapping(value = "{noteId}", method = DELETE)
+    public void removeSalesNote(@PathVariable("noteId") Long noteId) {
+        salesNoteService.removeSalesNote(noteId);
     }
 
     //</editor-fold>

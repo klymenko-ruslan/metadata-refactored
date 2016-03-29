@@ -456,5 +456,9 @@ angular.module("ngMetaCrudApp")
         return Restangular.one("authprovider/findbyname").get({"name": name});
       };
 
+      this.removeSalesNote = function(id) {
+        return Restangular.one("other/salesNote", id).remove();
+      };
+
     };
   });

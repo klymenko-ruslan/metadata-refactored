@@ -36,6 +36,9 @@ public class SalesNoteService {
     private PartDao partDao;
 
     @Autowired
+    private SalesNoteDao salesNoteDao;
+
+    @Autowired
     private SalesNoteRepository salesNotes;
 
     @Autowired
@@ -237,6 +240,11 @@ public class SalesNoteService {
     public void retract(User user, Long noteId) {
         SalesNote salesNote = salesNotes.findOne(noteId);
         updateState(user, salesNote, SalesNoteState.approved, SalesNoteState.published);
+    }
+
+    @Transactional
+    public void removeSalesNote(Long id) {
+        salesNoteDao.delete(id);
     }
 
     private void hasEditAccess(HttpServletRequest request, SalesNote salesNote) {
