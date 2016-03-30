@@ -679,7 +679,7 @@ BEGIN
         SIGNAL constraint_violation
         SET MESSAGE_TEXT = 'primary_part value must be 0 or 1';
     END IF;
-    IF new.primary_part = 1 THEN
+    IF old.primary_part = 0 AND new.primary_part = 1 THEN
         SET n = (SELECT 1 FROM sales_note_part WHERE sales_note_id = new.sales_note_id AND primary_part = 1 LIMIT 1);
         IF n = 1 THEN
             SIGNAL constraint_violation
@@ -693,7 +693,7 @@ CREATE TRIGGER `sales_note_part_BEFORE_INSERT` BEFORE INSERT ON `sales_note_part
 BEGIN
     DECLARE constraint_violation CONDITION FOR SQLSTATE '45000';
     DECLARE n INT;
-    IF  new.primary_part <> 0 and new.primary_part <> 1 THEN
+    IF  new.primary_part <> 0 AND new.primary_part <> 1 THEN
         SIGNAL SQLSTATE '45000'   
         SET MESSAGE_TEXT = 'primary_part value must be 0 or 1';
     END IF;

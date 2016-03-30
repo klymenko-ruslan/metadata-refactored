@@ -1,38 +1,30 @@
-<div class="navbar navbar-btn" role="navigation">
-  <!-- div class="container-fluid" -->
-    <ul class="nav nav-pills">
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <ul class="nav navbar-nav">
       <li authorize="ROLE_READ">
-        <a ng-href="/part/list" class="btn btn-primary">
-          <i class="fa fa-home"></i>
-          Part List
+        <a ng-href="/part/list">
+          <i class="fa fa-home"></i> Part List
         </a>
       </li>
       <li authorize="ROLE_TURBO_MODEL_CRUD">
-        <a ng-href="/other/salesNotes" class="btn btn-primary">
-          <i class="fa fa-files-o"></i>
-          Sales Notes
+        <a ng-href="/other/salesNotes">
+          <i class="fa fa-files-o"></i> Sales Notes
         </a>
       </li>
       <li authorize="ROLE_TURBO_MODEL_CRUD">
-        <a ng-href="/other/turboModels" class="btn btn-primary">
-          <i class="fa fa-book"></i>
-          Turbo Models
+        <a ng-href="/other/turboModels">
+          <i class="fa fa-book"></i> Turbo Models
         </a>
       </li>
       <li authorize="ROLE_APPLICATION_CRUD">
-        <a ng-href="/application/carmodelengineyear/list" class="btn btn-primary">
-          <i class="fa fa-book"></i>
-          Applications
+        <a ng-href="/application/carmodelengineyear/list">
+          <i class="fa fa-book"></i> Applications
         </a>
       </li>
-
       <li class="dropdown">
-        <a class="dropdown-toggle btn btn-warning" data-toggle="dropdown">
-          <i class="fa fa-th"></i>
-          Admin
-          <i class="fa fa-caret-down"></i>
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+          <i class="fa fa-th"></i> Admin <span class="caret"></span>
         </a>
-
         <ul class="dropdown-menu">
           <li data-ng-disabled="{{::!hasRole('ROLE_ADMIN')}}"><a ng-href="/security/users/"><i class="fa fa-user"></i> Users</a></li>
           <li data-ng-disabled="{{::!hasRole('ROLE_ADMIN')}}"><a ng-href="/security/groups/"><i class="fa fa-group"></i> Groups</a></li>
@@ -54,25 +46,26 @@
           <li data-ng-disabled="{{::!hasRole('ROLE_ADMIN')}}"><a ng-click="clearHibernate()"><i class="fa fa-trash-o"></i> Clear Hibernate Cache</a></li>
         </ul>
       </li>
+    </ul>
+
+    <ul class="nav navbar-nav navbar-right">
       <li>
-        <a ng-href="/security/me" class="navbar-right btn btn-default">
-          <i class="fa fa-smile-o"></i>
-          My Account
+        <a ng-href="/security/me">
+          <i class="fa fa-smile-o"></i> My Account
         </a>
       </li>
-
       <li>
-        <a ng-click="User.logout()" class="navbar-right btn btn-default">
-          <i class="fa fa-sign-out"></i>
-          Logout {{User.user.name}}
+        <a href="#" ng-click="User.logout()">
+          <i class="fa fa-sign-out"></i> Logout {{User.user.name}}
         </a>
       </li>
     </ul>
-    <hr/>
 
-    <ul class="nav nav-pills" ng-transclude>
-      <!-- Transcluded li -->
-    </ul>
-    <hr/>
-  <!-- /div -->
-</div>
+
+  </div>
+</nav>
+
+<ul class="nav nav-pills" ng-transclude>
+  <!-- Transcluded li -->
+</ul>
+<hr/>
