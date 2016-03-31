@@ -104,5 +104,6 @@ angular.module("ngMetaCrudApp").controller("SalesNoteListCtrl", ["$scope", "$log
       }
       $scope.notesTableParams.reload();
     }, true);
+
   }
 ]);

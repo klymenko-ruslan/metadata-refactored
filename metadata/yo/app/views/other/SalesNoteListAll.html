@@ -42,25 +42,25 @@
             <span class="fa fa-file-text-o"></span> View Note
           </a>
 
-          <a ng-click="SalesNotes.submit(row._source.pk.salesNote)" authorize="ROLE_SALES_NOTE_SUBMIT" ng-if="SalesNotes.canSubmit(row._source.pk.salesNote)" class="btn btn-info btn-xs">
+          <button ng-click="SalesNotes.submit(row._source.pk.salesNote)" authorize="ROLE_SALES_NOTE_SUBMIT" ng-if="SalesNotes.canSubmit(row._source.pk.salesNote)" class="btn btn-info btn-xs">
             <span class="fa fa-check-square"></span> Submit
-          </a>
+          </button>
 
-          <a ng-click="SalesNotes.publish(row._source.pk.salesNote)" authorize="ROLE_SALES_NOTE_PUBLISH" ng-if="SalesNotes.canPublish(row._source.pk.salesNote)" class="btn btn-primary btn-xs">
+          <button ng-click="SalesNotes.publish(row._source.pk.salesNote)" authorize="ROLE_SALES_NOTE_PUBLISH" ng-if="SalesNotes.canPublish(row._source.pk.salesNote)" class="btn btn-primary btn-xs">
             <span class="fa fa-cloud-upload"></span> Publish
-          </a>
+          </button>
 
-          <a ng-click="SalesNotes.approve(row._source.pk.salesNote)" authorize="ROLE_SALES_NOTE_APPROVE" ng-if="SalesNotes.canApprove(row._source.pk.salesNote)" class="btn btn-success btn-xs">
+          <button ng-click="SalesNotes.approve(row._source.pk.salesNote)" authorize="ROLE_SALES_NOTE_APPROVE" ng-if="SalesNotes.canApprove(row._source.pk.salesNote)" class="btn btn-success btn-xs">
             <span class="fa fa-thumbs-up"></span> Approve
-          </a>
+          </button>
 
-          <a ng-click="SalesNotes.reject(row._source.pk.salesNote)" authorize="ROLE_SALES_NOTE_REJECT" ng-if="SalesNotes.canReject(row._source.pk.salesNote)" class="btn btn-danger btn-xs">
+          <button ng-click="SalesNotes.reject(row._source.pk.salesNote)" authorize="ROLE_SALES_NOTE_REJECT" ng-if="SalesNotes.canReject(row._source.pk.salesNote)" class="btn btn-danger btn-xs">
             <span class="fa fa-thumbs-down"></span> Reject
-          </a>
+          </button>
 
-          <a ng-click="SalesNotes.retract(row._source.pk.salesNote)" authorize="ROLE_SALES_NOTE_RETRACT" ng-if="SalesNotes.canRetract(row._source.pk.salesNote)" class="btn btn-warning btn-xs">
+          <button ng-click="SalesNotes.retract(row._source.pk.salesNote)" authorize="ROLE_SALES_NOTE_RETRACT" ng-if="SalesNotes.canRetract(row._source.pk.salesNote)" class="btn btn-warning btn-xs">
             <span class="fa fa-cloud-download"></span> Retract
-          </a>
+          </button>
 
         </td>
       </tr>

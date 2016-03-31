@@ -26,24 +26,24 @@
           <i class="fa fa-th"></i> Admin <span class="caret"></span>
         </a>
         <ul class="dropdown-menu">
-          <li data-ng-disabled="{{::!hasRole('ROLE_ADMIN')}}"><a ng-href="/security/users/"><i class="fa fa-user"></i> Users</a></li>
-          <li data-ng-disabled="{{::!hasRole('ROLE_ADMIN')}}"><a ng-href="/security/groups/"><i class="fa fa-group"></i> Groups</a></li>
-          <li data-ng-disabled="{{::!hasRole('ROLE_ADMIN')}}"><a ng-href="/security/auth_providers/"><i class="fa fa-unlock-alt"></i> Authentication providers</a></li>
+          <li data-ng-disabled="{{::!hasRole('ROLE_ADMIN')}}"><a href="#" ng-href="/security/users/"><i class="fa fa-user"></i> Users</a></li>
+          <li data-ng-disabled="{{::!hasRole('ROLE_ADMIN')}}"><a href="#" ng-href="/security/groups/"><i class="fa fa-group"></i> Groups</a></li>
+          <li data-ng-disabled="{{::!hasRole('ROLE_ADMIN')}}"><a href="#" ng-href="/security/auth_providers/"><i class="fa fa-unlock-alt"></i> Authentication providers</a></li>
 
           <li class="divider"></li>
 
-          <li data-ng-disabled="{{::!hasRole('ROLE_ADMIN')}}"><a ng-click="rebuildBom()"><i class="fa fa-refresh"></i> Rebuild BOM</a></li>
-          <li data-ng-disabled="{{::!hasRole('ROLE_ADMIN')}}"><a ng-click="reindexPartSearch()"><i class="fa fa-refresh"></i> Reindex Parts</a></li>
-          <li data-ng-disabled="{{::!hasRole('ROLE_ADMIN')}}"><a ng-click="reindexApplicationSearch()"><i class="fa fa-refresh"></i> Reindex Applications</a></li>
-          <li data-ng-disabled="{{::!hasRole('ROLE_ADMIN')}}"><a ng-click="reindexSalesNotesSearch()"><i class="fa fa-refresh"></i> Reindex Sales Notes</a></li>
+          <li data-ng-disabled="{{::!hasRole('ROLE_ADMIN')}}"><a href="#" ng-click="rebuildBom()"><i class="fa fa-refresh"></i> Rebuild BOM</a></li>
+          <li data-ng-disabled="{{::!hasRole('ROLE_ADMIN')}}"><a href="#" ng-click="reindexPartSearch()"><i class="fa fa-refresh"></i> Reindex Parts</a></li>
+          <li data-ng-disabled="{{::!hasRole('ROLE_ADMIN')}}"><a href="#" ng-click="reindexApplicationSearch()"><i class="fa fa-refresh"></i> Reindex Applications</a></li>
+          <li data-ng-disabled="{{::!hasRole('ROLE_ADMIN')}}"><a href="#" ng-click="reindexSalesNotesSearch()"><i class="fa fa-refresh"></i> Reindex Sales Notes</a></li>
 
           <li class="divider"></li>
 
-          <li data-ng-disabled="{{::!hasRole('ROLE_MAS90_SYNC')}}"><a ng-href="/mas90/sync/status"><i class="fa fa-refresh"></i> MAS90 Synchronization</a></li>
+          <li data-ng-disabled="{{::!hasRole('ROLE_MAS90_SYNC')}}"><a href="#" ng-href="/mas90/sync/status"><i class="fa fa-refresh"></i> MAS90 Synchronization</a></li>
 
           <li class="divider"></li>
 
-          <li data-ng-disabled="{{::!hasRole('ROLE_ADMIN')}}"><a ng-click="clearHibernate()"><i class="fa fa-trash-o"></i> Clear Hibernate Cache</a></li>
+          <li data-ng-disabled="{{::!hasRole('ROLE_ADMIN')}}"><a href="#" ng-click="clearHibernate()"><i class="fa fa-trash-o"></i> Clear Hibernate Cache</a></li>
         </ul>
       </li>
     </ul>
@@ -60,7 +60,6 @@
         </a>
       </li>
     </ul>
-
 
   </div>
 </nav>
