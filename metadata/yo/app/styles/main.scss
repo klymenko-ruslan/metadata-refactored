@@ -142,3 +142,10 @@ h1:first-of-type {
   border-bottom: 1px solid #ddd;
   border-right: 1px solid #ddd;
 }
+
+div.no-image {
+  height: 200px;
+  width: 200px;
+  border-width: 0;
+  background-image: url("../images/no-image.png");
+}

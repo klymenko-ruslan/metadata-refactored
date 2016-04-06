@@ -288,12 +288,16 @@
           <li data-ng-repeat="image in part.productImages" ng-click="deleteImage(image)">
             <img ng-src="/metadata/image/135/{{image.id}}.jpg" style="max-height: 135px; max-width: 135px" />
           </li>
-          <li class="well well-sm col-md-12" ng-show="part.productImages.length === 0">Part has no images.</li>
+          <li ng-show="part.productImages === undefined">
+            <div class="no-image" />
+          </li>
         </ul>
       </div>
     </div>
   </div>
-  <div role="tabpanel" class="tab-pane fade tab-part-detail" id="critical_dimensions">Critical dimensions</div>
+  <div role="tabpanel" class="tab-pane fade tab-part-detail" id="critical_dimensions">
+    <p>{{criticalDimensions}}</p>
+  </div>
   <div role="tabpanel" class="tab-pane fade tab-part-detail" id="turbo_types">
     <a authorize="ROLE_ALTER_PART" class="btn btn-primary pull-right" ng-click="addTurboType()" style="margin-bottom:10px;">
       <i class="fa fa-plus"></i>

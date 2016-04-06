@@ -72,6 +72,9 @@ angular.module("ngMetaCrudApp", ["ngRoute", "ngTable", "ui.bootstrap",
       resolve: {
         part: ["$route", "restService", function($route, restService) {
           return restService.findPart($route.current.pathParams.id);
+        }],
+        criticalDimensions: ["$route", "restService", function($route, restService) {
+          return restService.findCriticalDimensionsForThePart($route.current.pathParams.id);
         }]
       }
     });

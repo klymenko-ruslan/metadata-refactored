@@ -1,9 +1,10 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-    .controller('PartDetailCtrl', function ($scope, $log, $q, $location, $routeParams, Kits, ngTableParams, restService, Restangular, dialogs, gToast, part) {
+    .controller('PartDetailCtrl', function ($scope, $log, $q, $location, $routeParams, Kits, ngTableParams, restService, Restangular, dialogs, gToast, part, criticalDimensions) {
         $scope.partId = part.id;
         $scope.part = part;
+        $scope.criticalDimensions = criticalDimensions;
         // Make sure we're using the correct part type
         $scope.partType = part.partType.name;
         // TODO: Find a better way. Directive?

@@ -460,5 +460,9 @@ angular.module("ngMetaCrudApp")
         return Restangular.one("other/salesNote", id).remove();
       };
 
+      this.findCriticalDimensionsForThePart = function(id) {
+        return Restangular.one("/criticaldimension/part", id).get();
+      };
+
     };
   });
