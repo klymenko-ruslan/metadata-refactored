@@ -33,7 +33,7 @@ public class CriticalDimension implements Serializable {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "part_type_id")
-    @JsonView({View.Summary.class})
+    @JsonView({View.Detail.class})
     private PartType partType;
 
     @Column(name = "seq_num", nullable = false)

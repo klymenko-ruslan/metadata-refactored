@@ -8,6 +8,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 
@@ -27,6 +28,7 @@ public class CriticalDimensionController {
     @Secured("ROLE_READ")
     @JsonView(View.Summary.class)
     @RequestMapping(value = "/part/{partId}", method = GET, produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
     public List<CriticalDimension> findForThePart(@PathVariable("partId") long partId) {
         return criticalDimensionService.findForThePart(partId);
     }

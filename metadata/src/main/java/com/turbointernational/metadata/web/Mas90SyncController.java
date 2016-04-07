@@ -1,7 +1,6 @@
 package com.turbointernational.metadata.web;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import com.turbointernational.metadata.domain.other.Mas90SyncDao;
 import com.turbointernational.metadata.domain.security.User;
 import com.turbointernational.metadata.services.Mas90SyncService;
 import org.slf4j.Logger;
@@ -9,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
