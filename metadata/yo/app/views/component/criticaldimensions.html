@@ -1,0 +1,35 @@
+<form class="form-horizontal">
+  <div class="form-group">
+    <div class="col-xs-2">
+      <div class="checkbox">
+        <label>
+          <input type="checkbox" data-ng-model="opts.hideBlank" />Hide&nbsp;blank
+        </label>
+      </div>
+    </div>
+    <div class="col-xs-3">
+      <div class="checkbox">
+        <label>
+          <input type="checkbox" data-ng-model="opts.inlineLayout" />Inline&nbsp;layout
+        </label>
+      </div>
+    </div>
+    <div class="col-xs-7">
+      <input type="text" class="form-control" data-ng-model="opts.filter" data-ng-model-options="{debounce:300}" data-ng-trim="true" placeholder="Filter" />
+    </div>
+  </div>
+</form>
+<table class="table table-striped table-condensed">
+  <tr data-ng-repeat="d in toDisplay">
+    <td style="width:40%;">{{d.displayName}}</td>
+    <td>{{d.displayValue}}</td>
+    <td>
+      <button class="btn btn-warning btn-xs pull-right" onclick="alert('Under development.')">
+        <i class="fa fa-cog"></i> Modify
+      </button>
+    </td>
+  </tr>
+  <tr ng-hide="toDisplay.length > 0">
+    <td colspan="3">No rows to display.</td>
+  </tr>
+</table>

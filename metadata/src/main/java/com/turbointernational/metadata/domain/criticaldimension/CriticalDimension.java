@@ -70,7 +70,7 @@ public class CriticalDimension implements Serializable {
     @JsonView({View.Summary.class})
     private String nullDisplay;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name="parent_id")
     @JsonView({View.Detail.class})
     private CriticalDimension parent;
