@@ -1,23 +1,70 @@
 package com.turbointernational.metadata.domain.part.types;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.turbointernational.metadata.domain.criticaldimension.YesNoEnum;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.type.CoolType;
 import com.turbointernational.metadata.web.View;
 import flexjson.JSONSerializer;
-
-import java.util.Map;
-import javax.persistence.*;
-
 import org.apache.commons.lang.ObjectUtils;
+
+import javax.persistence.*;
+import java.io.IOException;
+import java.util.Map;
 
 @Entity
 @Table(name = "bearing_housing")
 @PrimaryKeyJoinColumn(name = "part_id")
 public class BearingHousing extends Part {
 
-    public enum WaterCooledEnum {OIL, WATER}
+    @JsonFormat(shape = JsonFormat.Shape.OBJECT)
+    public enum WaterCooledEnum {
+
+        OIL("OIL", "OIL"), WATER("WATER", "WATER");
+
+        @JsonView(View.Summary.class)
+        @JsonProperty("name")
+        public final String name;
+
+        @JsonView(View.Summary.class)
+        @JsonProperty("value")
+        public final String value;
+
+        WaterCooledEnum(String name, String value) {
+            this.name = name;
+            this.value = value;
+        }
+
+        /**
+         * This serializer is used to serialize field in the JPA entity.
+         */
+        static class Serializer extends JsonSerializer<WaterCooledEnum> {
+            public void serialize(WaterCooledEnum value, JsonGenerator generator, SerializerProvider provider) throws IOException, JsonProcessingException {
+                generator.writeString(value.value);
+            }
+        }
+
+    }
+
+    @JsonProperty("waterCooledEnum")
+    @JsonView(View.Detail.class)
+    public WaterCooledEnum[] getWaterCooledEnum() {
+        return WaterCooledEnum.values();
+    }
+
+    @JsonProperty("yesNoEnum")
+    @JsonView(View.Detail.class)
+    public YesNoEnum[] getYesNoEnum() {
+        return YesNoEnum.values();
+    }
 
     @JsonView(View.Detail.class)
     @OneToOne(fetch = FetchType.LAZY)
@@ -53,9 +100,9 @@ public class BearingHousing extends Part {
     private String bearingType;
 
 
-
     @JsonView(View.Detail.class)
     @JsonProperty("waterCooled")
+    @JsonSerialize(using = WaterCooledEnum.Serializer.class)
     @Column(name = "water_cooled")
     @Enumerated(EnumType.STRING)
     private WaterCooledEnum waterCooled;
@@ -248,7 +295,6 @@ public class BearingHousing extends Part {
     public void setBearingType(String bearingType) {
         this.bearingType = bearingType;
     }
-
 
     public WaterCooledEnum getWaterCooled() {
         return waterCooled;

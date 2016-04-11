@@ -1,5 +1,6 @@
 package com.turbointernational.metadata.domain.criticaldimension;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.domain.type.PartType;
 import com.turbointernational.metadata.web.View;
@@ -44,6 +45,10 @@ public class CriticalDimension implements Serializable {
     @Enumerated(EnumType.STRING)
     @JsonView({View.Summary.class})
     private DataTypeEnum dataType;
+
+    @Column(name = "json_enum", nullable = false)
+    @JsonView({View.Summary.class})
+    private String jsonEnum;
 
     @Column(name = "unit")
     @Enumerated(EnumType.STRING)
@@ -115,6 +120,14 @@ public class CriticalDimension implements Serializable {
 
     public void setDataType(DataTypeEnum dataType) {
         this.dataType = dataType;
+    }
+
+    public String getJsonEnum() {
+        return jsonEnum;
+    }
+
+    public void setJsonEnum(String jsonEnum) {
+        this.jsonEnum = jsonEnum;
     }
 
     public UnitEnum getUnit() {
