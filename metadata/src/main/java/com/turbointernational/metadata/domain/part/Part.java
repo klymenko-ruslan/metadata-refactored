@@ -136,7 +136,7 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
 
     @Version
     @Column(name = "version")
-    @JsonView({View.Summary.class})
+    @JsonView(View.Summary.class)
     @JsonInclude(JsonInclude.Include.ALWAYS)
     private int version;
 

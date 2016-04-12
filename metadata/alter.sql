@@ -25,7 +25,7 @@ insert into crit_dim
 (id, part_type_id, seq_num,     data_type,     unit, tolerance, name,                      json_name,              json_enum,              null_allowed, null_display, parent_id, length, scale)
 values
 -- Bearing housing
-(  1,          13,       1, 'ENUMERATION',     null,      null, 'WATER COOLED',            'waterCooled',          'waterCooledEnum',                 1,         'no',      null,   null,  null),
+(  1,          13,       1, 'ENUMERATION',     null,      null, 'WATER COOLED',            'waterCooled',          'waterCooledEnum',                 1,         'No',      null,   null,  null),
 (  2,          13,       2,     'DECIMAL', 'INCHES',         0, 'C/E DIA "A"',             'ceDiaA',                            null,                 1,         null,      null,      6,     3),
 (  3,          13,       3,     'DECIMAL', 'INCHES',         1, 'C/E DIA "A" TOL',         'ceDiaATol',                         null,                 1,         null,         2,      6,     3),
 (  4,          13,       4,     'DECIMAL', 'INCHES',         0, 'C/E DIA "B"',             'ceDiaB',                            null,                 1,         null,      null,      6,     3),

@@ -28,7 +28,7 @@ public class BearingHousing extends Part {
     @JsonFormat(shape = JsonFormat.Shape.OBJECT)
     public enum WaterCooledEnum {
 
-        OIL("OIL", "OIL"), WATER("WATER", "WATER");
+        OIL("Oil", "OIL"), WATER("Water", "WATER");
 
         @JsonView(View.Summary.class)
         @JsonProperty("name")

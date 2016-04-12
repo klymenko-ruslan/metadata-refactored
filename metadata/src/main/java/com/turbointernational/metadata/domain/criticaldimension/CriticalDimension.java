@@ -23,7 +23,7 @@ import java.io.Serializable;
 public class CriticalDimension implements Serializable {
 
     //<editor-fold defaultstate="collapsed" desc="Enumerations">
-    public enum DataTypeEnum { BOOLEAN, DECIMAL, ENUMERATION, INTEGER, TEXT }
+    public enum DataTypeEnum { DECIMAL, ENUMERATION, INTEGER, TEXT }
     public enum UnitEnum { DEGREES, GRAMS, INCHES }
     //</editor-fold>
 

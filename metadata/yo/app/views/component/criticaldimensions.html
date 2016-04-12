@@ -1,35 +1,56 @@
-<form class="form-horizontal">
+<form class="form-horizontal" novalidate>
   <div class="form-group">
     <div class="col-xs-2">
       <div class="checkbox">
         <label>
-          <input type="checkbox" data-ng-model="opts.hideBlank" />Hide&nbsp;blank
+          <input type="checkbox" data-ng-model="opts.hideBlank" data-ng-disabled="isEditing()" />Hide&nbsp;blank
         </label>
       </div>
     </div>
     <div class="col-xs-3">
       <div class="checkbox">
         <label>
-          <input type="checkbox" data-ng-model="opts.inlineLayout" />Inline&nbsp;layout
+          <input type="checkbox" data-ng-model="opts.inlineLayout" data-ng-disabled="isEditing()" />Inline&nbsp;layout
         </label>
       </div>
     </div>
     <div class="col-xs-7">
-      <input type="text" class="form-control" data-ng-model="opts.filter" data-ng-model-options="{debounce:300}" data-ng-trim="true" placeholder="Filter" />
+      <input type="text" class="form-control" data-ng-model="opts.filter" data-ng-model-options="{debounce:300}" data-ng-trim="true" placeholder="Filter" data-ng-disabled="isEditing()" />
     </div>
   </div>
 </form>
-<table class="table table-striped table-condensed">
-  <tr data-ng-repeat="d in toDisplay">
-    <td style="width:40%;">{{d.displayName}}</td>
-    <td>{{d.displayValue}}</td>
-    <td>
-      <button class="btn btn-warning btn-xs pull-right" onclick="alert('Under development.')">
-        <i class="fa fa-cog"></i> Modify
-      </button>
-    </td>
-  </tr>
-  <tr ng-hide="toDisplay.length > 0">
-    <td colspan="3">No rows to display.</td>
-  </tr>
-</table>
+<form name="cdRowEditForm" novalidate>
+  <table class="table table-striped table-condensed">
+    <tr data-ng-repeat="d in toDisplay">
+      <td style="width:40%;">{{d.displayName}}</td>
+      <td data-ng-class="{'bg-danger': d.invalidDisplayValue}">
+        <span data-ng-hide="isModifying(d)">{{d.displayValue}}</span>
+        <div data-ng-show="isModifying(d)">
+          <select data-ng-show="d.selectOptions" ng-options="item.value as item.name for item in d.selectOptions" data-ng-model="editedPart[d.jsonName]">
+            <option value="" data-ng-if="d.nullAllowed">{{d.nullDisplay}}</option>
+          </select>
+          <input data-ng-hide="d.selectOptions" data-ng-model="editedPart[d.jsonName]" />
+          <span data-ng-show="d.toleranceJsonName">&plusmn;</span>
+          <input data-ng-show="d.toleranceJsonName" data-ng-model="editedPart[d.toleranceJsonName]" />
+        </div>
+      </td>
+      <td class="text-right">
+        <button data-ng-click="modifyStart(d)" authorize="ROLE_ALTER_PART" data-ng-hide="isModifying(d)" data-ng-disabled="{{::d.invalidDisplayValue}}" class="btn btn-primary btn-xs">
+          <i class="fa fa-cog"></i> Modify
+        </button>
+        <button data-ng-click="modifySave()" authorize="ROLE_ALTER_PART" class="btn btn-success btn-xs ng-hide" data-ng-show="isModifying(d)" data-ng-disabled="cdRowEditForm.$pristine || cdRowEditForm.$invalid || cdRowEditForm.$pending">
+          <i class="fa fa-save"></i> Save
+        </button>
+        <button data-ng-click="modifyUndo(cdRowEditForm)" data-ng-show="isModifying(d)" data-ng-disabled="cdRowEditForm.$pristine || cdRowEditForm.$pending" class="btn btn-warning btn-xs ng-hide">
+          <i class="fa fa-undo"></i> Undo
+        </button>
+        <button data-ng-click="modifyCancel()" data-ng-show="isModifying(d)" class="btn btn-warning btn-xs">
+          <i class="fa fa-minus-circle"></i> Cancel
+        </button>
+      </td>
+    </tr>
+    <tr ng-hide="toDisplay.length > 0">
+      <td colspan="3">No rows to display.</td>
+    </tr>
+  </table>
+</form>
