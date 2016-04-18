@@ -1,12 +1,15 @@
 package com.turbointernational.metadata.domain.criticaldimension;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.domain.type.PartType;
 import com.turbointernational.metadata.web.View;
 
 import javax.persistence.*;
 import java.io.Serializable;
+
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
 
 /**
  * Created by dmytro.trunykov@zorallabs.com on 06.04.16.
@@ -20,6 +23,7 @@ import java.io.Serializable;
             query = "FROM CriticalDimension WHERE partType.id=:partTypeId ORDER BY seqNum ASC"
     )
 })
+@JsonInclude(ALWAYS)
 public class CriticalDimension implements Serializable {
 
     //<editor-fold defaultstate="collapsed" desc="Enumerations">
@@ -74,6 +78,18 @@ public class CriticalDimension implements Serializable {
     @Column(name = "null_display")
     @JsonView({View.Summary.class})
     private String nullDisplay;
+
+    @Column(name = "min_val")
+    @JsonView({View.Summary.class})
+     private Double minVal;
+
+    @Column(name = "max_val")
+    @JsonView({View.Summary.class})
+    private Double maxVal;
+
+    @Column(name = "regex")
+    @JsonView({View.Summary.class})
+    private String regex;
 
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name="parent_id")
@@ -201,6 +217,30 @@ public class CriticalDimension implements Serializable {
     public void setScale(Byte scale) {
         this.scale = scale;
     }
-    //</editor-fold>
+
+    public Double getMinVal() {
+        return minVal;
+    }
+
+    public void setMinVal(Double minVal) {
+        this.minVal = minVal;
+    }
+
+    public Double getMaxVal() {
+        return maxVal;
+    }
+
+    public void setMaxVal(Double maxVal) {
+        this.maxVal = maxVal;
+    }
+
+    public String getRegex() {
+        return regex;
+    }
+
+    public void setRegex(String regex) {
+        this.regex = regex;
+    }
+//</editor-fold>
 
 }

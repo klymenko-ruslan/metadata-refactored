@@ -5,11 +5,14 @@ import com.turbointernational.metadata.domain.changelog.ChangelogDao;
 import com.turbointernational.metadata.domain.other.TurboType;
 import com.turbointernational.metadata.domain.other.TurboTypeDao;
 import com.turbointernational.metadata.domain.part.bom.BOMAncestor;
+import com.turbointernational.metadata.services.CriticalDimensionService;
 import com.turbointernational.metadata.services.ImageResizerService;
 import com.turbointernational.metadata.web.View;
 import flexjson.JSONSerializer;
 import flexjson.transformer.HibernateTransformer;
 import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -19,9 +22,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
@@ -29,29 +35,34 @@ import java.util.List;
 @RestController
 public class PartController {
 
+    private final static Logger log = LoggerFactory.getLogger(PartController.class);
+
     @Autowired
-    ChangelogDao changelogDao;
+    private ChangelogDao changelogDao;
     
     @Autowired
-    TurboTypeDao turboTypeDao;
+    private TurboTypeDao turboTypeDao;
     
     @Autowired
-    PartDao partDao;
+    private PartDao partDao;
+
+    @Autowired
+    private CriticalDimensionService criticalDimensionService;
     
     @Autowired
-    PartRepository partRepository;
+    private PartRepository partRepository;
     
     @Autowired
-    ProductImageDao productImageDao;
+    private ProductImageDao productImageDao;
     
     @Value("${images.originals}")
-    File originalImagesDir;
+    private File originalImagesDir;
     
     @Autowired(required=true)
-    ImageResizerService resizer;
+    private ImageResizerService resizer;
     
     @Autowired(required=true)
-    JdbcTemplate db;
+    private JdbcTemplate db;
 
     @Secured("ROLE_READ")
     @JsonView(View.Detail.class)
@@ -141,7 +152,13 @@ public class PartController {
     @RequestMapping(value = "/part/{id}", method = RequestMethod.PUT,
             produces = MediaType.APPLICATION_JSON_VALUE,
             consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Part updatePart(@RequestBody Part part, @PathVariable("id") Long id) {
+    public Part updatePart(HttpServletResponse response, @RequestBody Part part, @PathVariable("id") Long id) throws IOException {
+        Errors errors = criticalDimensionService.validateCriticalDimensions(part);
+        if (errors.hasErrors()) {
+            log.error("Validation critical dimensions for the part (ID: {}) failed. Details: {}", part.getId(), errors);
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, errors.toString());
+            return null;
+        }
         String originalPartJson = partDao.findOne(id).toJson();
         Part retVal = partDao.merge(part);
         // Update the changelog

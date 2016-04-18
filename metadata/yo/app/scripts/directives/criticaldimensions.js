@@ -7,21 +7,14 @@ angular.module("ngMetaCrudApp")
         replace: false,
         transclude: true,
         templateUrl: "/views/component/criticaldimensions.html",
-        //templateUrl: "criticaldimensions.html",
         scope: {
           part: "=",
           descriptors: "="
         },
         controller: ["$scope", "$log", "Restangular", "gToast", "restService", function($scope, $log, Restangular, gToast, restService) {
 
-          var ERROR_MSG_PREFIX = "Error: ";
-
           $scope._buildErrorMessage = function(msg) {
-            return ERROR_MSG_PREFIX + msg;
-          };
-
-          $scope._isErrorMessage = function(displayVal) {
-            return displayVal !== undefined && displayVal !== null && displayVal.startsWith(ERROR_MSG_PREFIX);
+            return "Error: " + msg;
           };
 
           // Index descriptors by name.
@@ -89,6 +82,15 @@ angular.module("ngMetaCrudApp")
             return retVal;
           };
 
+          $scope._inputType = function(d) {
+            var retVal = null;
+            var dt = d.dataType;
+            if (dt !== "ENUMERATION") {
+              retVal = dt == "DECIMAL" ? "number" : "text";
+            }
+            return retVal;
+          };
+
           // Get formatted critical dimension value that is ready for displaying on the UI.
           // If for some reason the value can't be displayed on the web correctly
           // then this method returns error message.
@@ -110,10 +112,10 @@ angular.module("ngMetaCrudApp")
                 if (selected !== undefined) {
                   retVal = selected.name;
                 } else {
-                  retVal = $scope._buildErrorMessage("value '" + value + "' not found in the enumeration '" + descriptor.jsonEnum + "'.");
+                  throw new Error("value '" + value + "' not found in the enumeration '" + descriptor.jsonEnum + "'.");
                 }
               } else {
-                retVal = $scope._buildErrorMessage("definition of the enum '" + descriptor.jsonEnum + "' not found.");
+                throw new Error("definition of the enum '" + descriptor.jsonEnum + "' not found.");
               }
             } else {
               retVal = String(value);
@@ -126,21 +128,21 @@ angular.module("ngMetaCrudApp")
 
           // Calculate and add property 'displayValue' to the passed 'display object'.
           $scope._addDisplayValue = function(dispObj) {
-            // Display value.
-            var displayValue = $scope._getDisplayVal(dispObj.valueDescriptor, dispObj.value, dispObj.displayUnit);
-            if ($scope._isErrorMessage(displayValue)) {
-              dispObj.invalidDisplayValue = true;
-            }
-            if (!dispObj.invalidDisplayValue && dispObj.toleranceJsonName) {
-              // If the dispOject has a tolerance.
-              var toleranceDisplayValue = $scope._getDisplayVal(dispObj.toleranceDescriptor, dispObj.tolerance, dispObj.toleranceDisplayUnit);
-              displayValue += (" " + String.fromCharCode(0x00B1) + " " + toleranceDisplayValue);
-              if ($scope._isErrorMessage(displayValue)) {
-                dispObj.invalidDisplayValue = true;
+            try {
+              // Display value.
+              var displayValue = $scope._getDisplayVal(dispObj.valueDescriptor, dispObj.value, dispObj.displayUnit);
+              if (dispObj.toleranceJsonName) {
+                // If the dispOject has a tolerance.
+                var toleranceDisplayValue = $scope._getDisplayVal(dispObj.toleranceDescriptor, dispObj.tolerance, dispObj.toleranceDisplayUnit);
+                displayValue += (" " + String.fromCharCode(0x00B1) + " " + toleranceDisplayValue);
               }
+              dispObj.displayValue = displayValue;
+              dispObj.filterValue = displayValue.toLowerCase();
+            } catch (e) {
+              dispObj.invalidDisplayValue = true;
+              return $scope._buildErrorMessage(e.message);
             }
-            dispObj.displayValue = displayValue;
-            dispObj.filterValue = displayValue.toLowerCase();
+
           };
 
           // This method build a JS object that represents a row in the UI table.
@@ -157,13 +159,13 @@ angular.module("ngMetaCrudApp")
           //  * valueDescriptor
           //  * displayValue
           //  * selectOptions         (optional)
-          //  * nullAllowed
-          //  * nullDisplay
+          //  * inputType             (optional)
           // In a case of the "inline layout" the object also has following extra properties:
           //  * toleranceJsonName     (optional)
           //  * tolerance             (optional)
           //  * toleranceDescriptor   (optional)
           //  * toleranceDisplayUnit  (optional)
+          //  * toleranceInputType    (optional)
           //  If a value of a critical dimesions, for some reason, can't be correctly displayed on the UI then following property is added:
           //  * invalidDisplayValue   (optional)
           $scope._toDisplayObject = function(d) {
@@ -176,6 +178,10 @@ angular.module("ngMetaCrudApp")
             var val = $scope.part[d.jsonName];
             retVal.value = val;
             retVal.valueDescriptor = d;
+            var inputType = $scope._inputType(d);
+            if (inputType) {
+              retVal.inputType = inputType;
+            }
             // Add properties for tolerance if any.
             if ($scope.opts.inlineLayout && d.tolerance === false) { // nominal value
               // This is a special case when we should display nominal and tolerance values in the "inline layout" .
@@ -193,6 +199,10 @@ angular.module("ngMetaCrudApp")
                   retVal.toleranceDisplayValue = $filter("number")(tolerance, toleranceDesc.scale);
                   retVal.toleranceDisplayUnit = $scope._unit2displaystr(toleranceDesc);
                   retVal.toleranceDescriptor = toleranceDesc;
+                  var toleranceInputType = $scope._inputType(toleranceDesc);
+                  if (toleranceInputType) {
+                    retVal.toleranceInputType = toleranceInputType;
+                  }
                 }
               }
             }
@@ -204,8 +214,6 @@ angular.module("ngMetaCrudApp")
               var enumVals = angular.copy($scope.part[d.jsonEnum]);
               if (enumVals) {
                 retVal.selectOptions = enumVals;
-                retVal.nullAllowed = d.nullAllowed;
-                retVal.nullDisplay = d.nullDisplay;
               } else {
                 retVal.displayValue = $scope._buildErrorMessage("definition of the enum '" + d.jsonEnum + "' not found.");
                 retVal.invalidDisplayValue = true;
@@ -214,12 +222,20 @@ angular.module("ngMetaCrudApp")
             return retVal;
           }; // $scope._getDisplayObject(d);
 
-          $scope.editedDispObj = null; // critical dimension that is modfying (but modified object is $scope.part)
-          $scope.editedPart = null;
+          // *** CRUD ***
+
+          $scope.editedDispObj = null; // critical dimension that is modfying (but modified object is $scope.editedPart)
+          // It is important to copy the 'part' to 'editedPart' because validation on the UI form is done against 'editedPart'
+          // and if this member is null or undefined than some validators (e.g. 'required') can be triggered (false positive).
+          $scope.editedPart = Restangular.copy($scope.part);
 
           $scope.modifyStart = function(dispObj) {
             $scope.editedPart = Restangular.copy($scope.part);
             $scope.editedDispObj = dispObj;
+          };
+
+          $scope._modifyEnd = function() {
+            $scope.editedDispObj = null;
           };
 
           $scope.isEditing = function() {
@@ -235,7 +251,7 @@ angular.module("ngMetaCrudApp")
               function success(updatedPart) {
                 gToast.open("The part has been successfully updated.");
                 $scope.part = updatedPart;
-                $scope.modifyCancel();
+                $scope._modifyEnd();
                 $scope._copyDescriptorsToDisplay(); // redraw with updated values
               },
               function failure(response) {
@@ -244,16 +260,59 @@ angular.module("ngMetaCrudApp")
             );
           };
 
-          $scope.modifyUndo = function(formController) {
+          $scope.modifyUndo = function() {
             $scope.editedPart = Restangular.copy($scope.part);
-            formController.$setPristine();
           };
 
           $scope.modifyCancel = function() {
-            $scope.editedDispObj = null;
-            $scope.editedPart = null;
+            $scope.modifyUndo();
+            $scope._modifyEnd();
           };
 
         }]
+      };
+    }])
+    .directive('criticalDimensionValidator', ["$log", function($log) {
+      /**
+       * Do validation of a critical dimension.
+       * It validates only constraints which are not covered by
+       * standart validators.
+       */
+      return {
+        restrict: "A",
+        require: "ngModel",
+        link: function(scope, elm, attrs, ctrl) {
+          var dispObj = scope[attrs.criticalDimensionValidator];
+          if (!angular.isObject(dispObj)) {
+            return;
+          }
+          // Find a critical dimension descriptor.
+          var descriptor = null;
+          var jsonName = attrs.name;
+          if (jsonName === dispObj.jsonName) {
+            descriptor = dispObj.valueDescriptor;
+          } else {
+            descriptor = dispObj.toleranceDescriptor;
+          }
+          if (!angular.isObject(descriptor)) {
+            $log.error("Critical dimension descriptor not found: " + jsonName);
+          }
+          if (descriptor.dataType === "DECIMAL" && descriptor.scale !== null) {
+            ctrl.$validators.criticalDimensionScaleValidator = function(modelValue, viewValue) {
+              if (viewValue === null) {
+                return true;
+              }
+              var dp = viewValue.indexOf(".");
+              if (dp == -1) {
+                return true;
+              }
+              var scaleLength = viewValue.length - dp - 1;
+              if (scaleLength <= descriptor.scale) {
+                return true;
+              }
+              return false;
+            };
+          }
+        }
       };
     }]);
