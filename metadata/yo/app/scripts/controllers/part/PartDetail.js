@@ -30,32 +30,6 @@ angular.module('ngMetaCrudApp')
           });
         }
 
-        $scope.removeTurboType = function(turboTypeToRemove) {
-
-          dialogs.confirm(
-            "Remove Turbo Type?",
-            "Do you want to remove this turbo type from the part?").result.then(
-            function() {
-              // Yes
-              Restangular.setParentless(false);
-              Restangular.one('part', $scope.partId).one('turboType', turboTypeToRemove.id).remove().then(
-                function() {
-                  // Success
-                  gToast.open("Turbo type removed.");
-
-                  var idx = _.indexOf($scope.part.turboTypes, turboTypeToRemove);
-                  $scope.part.turboTypes.splice(idx, 1);
-                },
-                function(response) {
-                  // Error
-                  restService.error("Could not delete image.", response);
-                });
-            },
-            function() {
-              // No
-            });
-        };
-
         $scope.removeComponent = function(componentToRemove) {
 
           dialogs.confirm(
