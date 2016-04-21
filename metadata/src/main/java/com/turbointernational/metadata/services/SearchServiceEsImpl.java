@@ -253,7 +253,7 @@ public class SearchServiceEsImpl implements SearchService {
     @Override
     @Transactional(readOnly = true)
     public void deleteCarModelEngineYear(CarModelEngineYear carModelEngineYear) throws Exception {
-        deleteDoc(elasticSearchTypeCarModel, carModelEngineYear.getSearchId());
+        deleteDoc(elasticSearchTypeCarModelEngineYear, carModelEngineYear.getSearchId());
     }
 
     @Override
@@ -660,4 +660,3 @@ public class SearchServiceEsImpl implements SearchService {
         }
     }
 }
-
