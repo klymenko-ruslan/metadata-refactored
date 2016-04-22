@@ -1,15 +1,8 @@
 package com.turbointernational.metadata.domain.part.types;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.annotation.JsonView;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.turbointernational.metadata.domain.criticaldimension.YesNoEnum;
+import com.turbointernational.metadata.domain.criticaldimension.CriticalDimensionEnumVal;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.type.CoolType;
 import com.turbointernational.metadata.web.View;
@@ -17,54 +10,12 @@ import flexjson.JSONSerializer;
 import org.apache.commons.lang.ObjectUtils;
 
 import javax.persistence.*;
-import java.io.IOException;
 import java.util.Map;
 
 @Entity
 @Table(name = "bearing_housing")
 @PrimaryKeyJoinColumn(name = "part_id")
 public class BearingHousing extends Part {
-
-    @JsonFormat(shape = JsonFormat.Shape.OBJECT)
-    public enum WaterCooledEnum {
-
-        OIL("Oil", "OIL"), WATER("Water", "WATER");
-
-        @JsonView(View.Summary.class)
-        @JsonProperty("name")
-        public final String name;
-
-        @JsonView(View.Summary.class)
-        @JsonProperty("value")
-        public final String value;
-
-        WaterCooledEnum(String name, String value) {
-            this.name = name;
-            this.value = value;
-        }
-
-        /**
-         * This serializer is used to serialize field in the JPA entity.
-         */
-        static class Serializer extends JsonSerializer<WaterCooledEnum> {
-            public void serialize(WaterCooledEnum value, JsonGenerator generator, SerializerProvider provider) throws IOException, JsonProcessingException {
-                generator.writeString(value.value);
-            }
-        }
-
-    }
-
-    @JsonProperty("waterCooledEnum")
-    @JsonView(View.Detail.class)
-    public WaterCooledEnum[] getWaterCooledEnum() {
-        return WaterCooledEnum.values();
-    }
-
-    @JsonProperty("yesNoEnum")
-    @JsonView(View.Detail.class)
-    public YesNoEnum[] getYesNoEnum() {
-        return YesNoEnum.values();
-    }
 
     @JsonView(View.Detail.class)
     @OneToOne(fetch = FetchType.LAZY)
@@ -99,13 +50,12 @@ public class BearingHousing extends Part {
     @Column(name = "bearing_type")
     private String bearingType;
 
-
     @JsonView(View.Detail.class)
-    @JsonProperty("waterCooled")
-    @JsonSerialize(using = WaterCooledEnum.Serializer.class)
-    @Column(name = "water_cooled")
-    @Enumerated(EnumType.STRING)
-    private WaterCooledEnum waterCooled;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinTable(name = "cri_dim_enum_val",
+            joinColumns = @JoinColumn(name = "id"),
+            inverseJoinColumns = @JoinColumn(name = "water_cooled"))
+    private CriticalDimensionEnumVal waterCooled;
 
     @JsonView(View.Detail.class)
     @JsonProperty("ceDiaA")
@@ -163,9 +113,11 @@ public class BearingHousing extends Part {
     private Double prBoreDiaTol;
 
     @JsonView(View.Detail.class)
-    @JsonProperty("spinningBearing")
-    @Column(name = "spinning_bearing")
-    private Boolean spinningBearing;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinTable(name = "crit_dim_enum_val",
+            joinColumns = @JoinColumn(name = "id"),
+            inverseJoinColumns = @JoinColumn(name = "spinning_bearing"))
+    private CriticalDimensionEnumVal spinningBearing;
 
     @JsonView(View.Detail.class)
     @JsonProperty("teDiaD")
@@ -296,11 +248,11 @@ public class BearingHousing extends Part {
         this.bearingType = bearingType;
     }
 
-    public WaterCooledEnum getWaterCooled() {
+    public CriticalDimensionEnumVal getWaterCooled() {
         return waterCooled;
     }
 
-    public void setWaterCooled(WaterCooledEnum waterCooled) {
+    public void setWaterCooled(CriticalDimensionEnumVal waterCooled) {
         this.waterCooled = waterCooled;
     }
 
@@ -392,11 +344,11 @@ public class BearingHousing extends Part {
         this.prBoreDiaTol = prBoreDiaTol;
     }
 
-    public Boolean getSpinningBearing() {
+    public CriticalDimensionEnumVal getSpinningBearing() {
         return spinningBearing;
     }
 
-    public void setSpinningBearing(Boolean spinningBearing) {
+    public void setSpinningBearing(CriticalDimensionEnumVal spinningBearing) {
         this.spinningBearing = spinningBearing;
     }
 

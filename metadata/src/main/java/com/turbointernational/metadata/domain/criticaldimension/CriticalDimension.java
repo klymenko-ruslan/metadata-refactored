@@ -50,9 +50,10 @@ public class CriticalDimension implements Serializable {
     @JsonView({View.Summary.class})
     private DataTypeEnum dataType;
 
-    @Column(name = "json_enum", nullable = false)
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "enum_id")
     @JsonView({View.Summary.class})
-    private String jsonEnum;
+    private CriticalDimensionEnum enumeration;
 
     @Column(name = "unit")
     @Enumerated(EnumType.STRING)
@@ -138,12 +139,12 @@ public class CriticalDimension implements Serializable {
         this.dataType = dataType;
     }
 
-    public String getJsonEnum() {
-        return jsonEnum;
+    public CriticalDimensionEnum getEnumeration() {
+        return enumeration;
     }
 
-    public void setJsonEnum(String jsonEnum) {
-        this.jsonEnum = jsonEnum;
+    public void setJsonEnum(CriticalDimensionEnum enumeration) {
+        this.enumeration = enumeration;
     }
 
     public UnitEnum getUnit() {
