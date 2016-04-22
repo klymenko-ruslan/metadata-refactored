@@ -20,11 +20,6 @@ angular.module("ngMetaCrudApp")
           // Index descriptors by name.
           $scope.idxDescriptorsByJsonName = _.indexBy($scope.descriptors, "jsonName");
 
-          // A list which will be actually displayed on the web.
-          // See function _copyDescriptorsToDisplay() below to
-          // know how this list is filled in.
-          $scope.toDisplay = null;
-
           // Options bar's values.
           $scope.opts = {
             hideBlank: true,
@@ -36,6 +31,12 @@ angular.module("ngMetaCrudApp")
           $scope.$watchCollection("opts", function(newOpts, oldOpts) {
             $scope._copyDescriptorsToDisplay();
           });
+
+          // A list which will be actually displayed on the web.
+          // See function _copyDescriptorsToDisplay() below to
+          // know how this list is filled in.
+          $scope.toDisplay = null;
+          $scope.errors = null; // jsonName => errorMessage
 
           // This is a heart function of this directive.
           // It filters critical dimensions desctiptors according to
@@ -55,7 +56,7 @@ angular.module("ngMetaCrudApp")
                   return !$scope.opts.inlineLayout || $scope.opts.inlineLayout && !d.tolerance;
                 }
               )
-              .map($scope._toDisplayObject)
+              .map($scope._toDisplayObject) // convert a descriptor to a "display object"
               .filter(
                 // Filter hide/show blank.
                 function(dto) {
@@ -65,7 +66,25 @@ angular.module("ngMetaCrudApp")
                   ));
                 }
               );
-          };
+            $scope.errors = {};
+          };  // _copyDescriptorsToDisplay
+
+
+          // Watch properties valid/invalid for controls on the form
+          // and update state of properties "error message" in
+          // the backend "display objects".
+          _.each($scope.descriptors, function(d) {
+            $scope.$watch("cdForm." + d.jsonName + ".$valid", function(valid, oldVal) {
+              //$log.log("Watch::" + d.jsonName + ": " + newVal + ", " + oldVal);
+              if (valid === true) {
+                //$log.log("Clear error messaged in: " + d.jsonName);
+                delete $scope.errors[d.jsonName];
+              } else if (valid === false) {
+                //$log.log("Added error messaged in: " + d.jsonName);
+                $scope.errors[d.jsonName] = $scope.getErrorFor(d.jsonName);
+              }
+            });
+          });
 
           $scope._unit2displaystr = function(d) {
             var u = d.unit;
@@ -222,28 +241,79 @@ angular.module("ngMetaCrudApp")
             return retVal;
           }; // $scope._getDisplayObject(d);
 
-          // *** CRUD ***
+          $scope._errorId2errorMessage = function(errorId) {
+            if (errorId === "required") {
+              return "The vaue is required!";
+            } else if (errorId === "number") {
+              return "Invalid number!";
+            } else if (errorId === "maxlength") {
+              return "The value is too long!";
+            } else if (errorId === "min") {
+              return "The value is lower than minimal allowed value!";
+            } else if (errorId === "max") {
+              return "The value is higher than maximal allowed value!";
+            } else if (errorId == "criticalDimensionScaleValidator") {
+              return "Too many digits in the fraction!";
+            } else {
+              return "Unknown error: " + angular.toJson(errorId);
+            }
+          };
 
-          $scope.editedDispObj = null; // critical dimension that is modfying (but modified object is $scope.editedPart)
+          $scope.getErrorFor = function(controlName) {
+            var control = $scope.cdForm[controlName];
+            if (control === undefined) {
+              return null;
+            }
+            var errors = control.$error;
+            if (errors === undefined) {
+              return null;
+            }
+            var firstError;
+            _.find(errors, function(value, key) {
+              if (value === true) {
+                firstError = key;
+                return true;
+              } else {
+                return false;
+              };
+            });
+            return $scope._errorId2errorMessage(firstError);
+          };
+
+          // ************
+          // *** CRUD ***
+          // ************
+          $scope.editedDispObjs = {}; // critical dimensions that are modfying (but modified object is $scope.editedPart)
           // It is important to copy the 'part' to 'editedPart' because validation on the UI form is done against 'editedPart'
           // and if this member is null or undefined than some validators (e.g. 'required') can be triggered (false positive).
           $scope.editedPart = Restangular.copy($scope.part);
 
           $scope.modifyStart = function(dispObj) {
-            $scope.editedPart = Restangular.copy($scope.part);
-            $scope.editedDispObj = dispObj;
+            //$scope.editedPart = Restangular.copy($scope.part);
+            $scope.editedDispObjs[dispObj.id] = dispObj;
           };
 
-          $scope._modifyEnd = function() {
-            $scope.editedDispObj = null;
+          $scope.modifyStartAll = function() {
+            $scope.editedPart = Restangular.copy($scope.part);
+            _.each($scope.toDisplay, function(dispObj) {
+              $scope.editedDispObjs[dispObj.id] = dispObj;
+            });
+          };
+
+          $scope._modifyEnd = function(d) {
+            delete $scope.editedDispObjs[d.id];
+          };
+
+          $scope._modifyEndAll = function() {
+            $scope.editedDispObjs = {};
           };
 
           $scope.isEditing = function() {
-            return $scope.editedDispObj !== null;
+            return !angular.equals({}, $scope.editedDispObjs);
           };
 
           $scope.isModifying = function(d) {
-            return $scope.editedDispObj !== null && $scope.editedDispObj.id === d.id;
+            return $scope.editedDispObjs[d.id] !== undefined;
           };
 
           $scope.modifySave = function() {
@@ -251,7 +321,8 @@ angular.module("ngMetaCrudApp")
               function success(updatedPart) {
                 gToast.open("The part has been successfully updated.");
                 $scope.part = updatedPart;
-                $scope._modifyEnd();
+                $scope.editedPart = Restangular.copy($scope.part);
+                $scope._modifyEndAll();
                 $scope._copyDescriptorsToDisplay(); // redraw with updated values
               },
               function failure(response) {
@@ -260,13 +331,25 @@ angular.module("ngMetaCrudApp")
             );
           };
 
-          $scope.modifyUndo = function() {
+          $scope.modifyUndo = function(d) {
+            $scope.editedPart[d.jsonName] = $scope.part[d.jsonName];
+            if (d.toleranceJsonName !== null) {
+              $scope.editedPart[d.toleranceJsonName] = $scope.part[d.toleranceJsonName];
+            }
+          };
+
+          $scope.modifyUndoAll = function() {
             $scope.editedPart = Restangular.copy($scope.part);
           };
 
-          $scope.modifyCancel = function() {
-            $scope.modifyUndo();
-            $scope._modifyEnd();
+          $scope.modifyCancel = function(d) {
+            $scope.modifyUndo(d);
+            $scope._modifyEnd(d);
+          };
+
+          $scope.modifyCancelAll = function() {
+            $scope.modifyUndoAll();
+            $scope._modifyEndAll();
           };
 
         }]

@@ -18,65 +18,81 @@
       <input type="text" class="form-control" data-ng-model="opts.filter" data-ng-model-options="{debounce:300}" data-ng-trim="true" placeholder="Filter" data-ng-disabled="isEditing()" />
     </div>
   </div>
+  <hr/>
 </form>
-<form name="cdForm" novalidate>
-  <ul class="list-unstyled" ng-show="cdForm.$invalid" role="alert">
-    <li class="alert alert-danger" ng-show="cdForm.$error.required">
-      <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-      The vaue is required!
-    </li>
-    <li class="alert alert-danger" ng-show="cdForm.$error.number">
-      <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-      Invalid number!
-    </li>
-    <li class="alert alert-danger" ng-show="cdForm.$error.maxlength">
-      <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-      The value is too long!
-    </li>
-    <li class="alert alert-danger" ng-show="cdForm.$error.min">
-      <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-      The value is lower than minimal allowed value!
-    </li>
-    <li class="alert alert-danger" ng-show="cdForm.$error.max">
-      <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-      The value is higher than maximal allowed value!
-    </li>
-    <li class="alert alert-danger" ng-show="cdForm.$error.criticalDimensionScaleValidator">
-      <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-      Too many digits in the fraction!
-    </li>
-  </ul>
-  <table class="table table-striped table-condensed critical-dimensions">
-    <tr data-ng-repeat="d in toDisplay">
-      <td style="width:30%;" class="text-uppercase">{{d.displayName}}</td>
-      <td data-ng-class="{'bg-danger': d.invalidDisplayValue}">
-        <span data-ng-hide="isModifying(d)">{{d.displayValue}}</span>
-        <div data-ng-show="isModifying(d)" data-ng-if="::!d.invalidDisplayValue">
-          <select name="{{::d.jsonName}}" data-ng-if="d.selectOptions" ng-options="item.value as item.name for item in d.selectOptions" data-ng-model="editedPart[d.jsonName]">
-            <option value="" data-ng-if="::d.valueDescriptor.nullAllowed">{{::d.valueDescriptor.nullDisplay}}</option>
-          </select>
-          <input name="{{::d.jsonName}}" type="{{::d.inputType}}" data-ng-if="::!d.selectOptions" data-ng-model="editedPart[d.jsonName]" data-ng-required="::!d.valueDescriptor.nullAllowed" data-ng-min="::d.valueDescriptor.minVal" data-ng-max="::d.valueDescriptor.maxVal" data-ng-maxlength="::d.valueDescriptor.length" data-ng-pattern="::d.valueDescriptor.regex" critical-dimension-validator="d" data-ng-trim="true" />
-          <span data-ng-if="d.toleranceJsonName">&plusmn;</span>
-          <input name="{{::d.toleranceJsonName}}" type="{{::d.toleranceInputType}}" data-ng-if="::d.toleranceJsonName" data-ng-model="editedPart[d.toleranceJsonName]" data-ng-required="::!d.toleranceDescriptor.nullAllowed" data-ng-min="::d.toleranceDescriptor.minVal" data-ng-max="::d.toleranceDescriptor.maxVal" data-ng-maxlength="::d.toleranceDescriptor.length" data-ng-pattern="::d.toleranceDescriptor.regex" critical-dimension-validator="d" data-ng-trim="true" />
-        </div>
-      </td>
-      <td class="text-right">
-        <button data-ng-click="modifyStart(d)" authorize="ROLE_ALTER_PART" data-ng-hide="isModifying(d)" data-ng-disabled="{{::d.invalidDisplayValue}}" class="btn btn-primary btn-xs">
-          <i class="fa fa-cog"></i> Modify
+
+<form name="cdForm" class="form-horizontal" novalidate>
+
+  <div class="form-group">
+    <div class="col-xs-12">
+      <div class="pull-right">
+        <button data-ng-click="modifyStartAll()" data-ng-hide="isEditing()" authorize="ROLE_ALTER_PART" class="btn btn-primary">
+          <i class="fa fa-cog"></i> Modify All
         </button>
-        <button data-ng-click="modifySave()" authorize="ROLE_ALTER_PART" class="btn btn-success btn-xs ng-hide" data-ng-show="isModifying(d)" data-ng-disabled="cdForm.$pristine || cdForm.$invalid || cdForm.$pending">
-          <i class="fa fa-save"></i> Save
+        <button data-ng-click="modifySaveAll()" data-ng-show="isEditing()" authorize="ROLE_ALTER_PART" class="btn btn-success ng-hide" data-ng-disabled="cdForm.$pristine || cdForm.$invalid || cdForm.$pending">
+          <i class="fa fa-save"></i> Save All
         </button>
-        <button data-ng-click="modifyUndo()" data-ng-show="isModifying(d)" data-ng-disabled="cdForm.$pristine || cdForm.$pending" class="btn btn-warning btn-xs ng-hide">
-          <i class="fa fa-undo"></i> Undo
+        <button data-ng-click="modifyUndoAll()" data-ng-show="isEditing()" data-ng-disabled="cdForm.$pristine || cdForm.$pending" class="btn btn-warning ng-hide">
+          <i class="fa fa-undo"></i> Undo All
         </button>
-        <button data-ng-click="modifyCancel()" data-ng-show="isModifying(d)" class="btn btn-warning btn-xs">
-          <i class="fa fa-minus-circle"></i> Cancel
+        <button data-ng-click="modifyCancelAll()" data-ng-show="isEditing()" class="btn btn-warning">
+          <i class="fa fa-minus-circle"></i> Cancel All
         </button>
-      </td>
-    </tr>
-    <tr ng-hide="toDisplay.length > 0">
-      <td colspan="3">No rows to display.</td>
-    </tr>
-  </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div class="col-xs-12">
+      <table class="table table-striped table-condensed critical-dimensions">
+        <tr data-ng-repeat="d in toDisplay">
+          <td style="width:30%;" class="text-uppercase">{{d.displayName}}</td>
+          <td data-ng-class="{'bg-danger': d.invalidDisplayValue}">
+            <span data-ng-hide="isModifying(d)">{{d.displayValue}}</span>
+            <div data-ng-show="isModifying(d)" data-ng-if="::!d.invalidDisplayValue">
+              <select name="{{::d.jsonName}}" data-ng-if="d.selectOptions" ng-options="item.value as item.name for item in d.selectOptions" data-ng-model="editedPart[d.jsonName]">
+                <option value="" data-ng-if="::d.valueDescriptor.nullAllowed">{{::d.valueDescriptor.nullDisplay}}</option>
+              </select>
+              <input
+                name="{{::d.jsonName}}" type="{{::d.inputType}}"
+                title="{{errors[d.jsonName]}}"
+                data-ng-if="::!d.selectOptions" data-ng-model="editedPart[d.jsonName]"
+                data-ng-required="::!d.valueDescriptor.nullAllowed"
+                data-ng-min="::d.valueDescriptor.minVal" data-ng-max="::d.valueDescriptor.maxVal"
+                data-ng-maxlength="::d.valueDescriptor.length"
+                data-ng-pattern="::d.valueDescriptor.regex"
+                critical-dimension-validator="d"
+                data-ng-trim="true" />
+              <span data-ng-if="d.toleranceJsonName">&plusmn;</span>
+              <input
+                name="{{::d.toleranceJsonName}}" type="{{::d.toleranceInputType}}"
+                title="{{errors[d.toleranceJsonName]}}"
+                data-ng-if="::d.toleranceJsonName" data-ng-model="editedPart[d.toleranceJsonName]"
+                data-ng-required="::!d.toleranceDescriptor.nullAllowed"
+                data-ng-min="::d.toleranceDescriptor.minVal" data-ng-max="::d.toleranceDescriptor.maxVal"
+                data-ng-maxlength="::d.toleranceDescriptor.length"
+                data-ng-pattern="::d.toleranceDescriptor.regex"
+                critical-dimension-validator="d"
+                data-ng-trim="true" />
+            </div>
+          </td>
+          <td class="text-right">
+            <button data-ng-click="modifyStart(d)" authorize="ROLE_ALTER_PART" data-ng-hide="isModifying(d)" data-ng-disabled="{{::d.invalidDisplayValue}}" class="btn btn-primary btn-xs">
+              <i class="fa fa-cog"></i> Modify
+            </button>
+            <button data-ng-click="modifyUndo(d)" data-ng-show="isModifying(d)" data-ng-disabled="cdForm.$pristine || cdForm.$pending" class="btn btn-warning btn-xs ng-hide">
+              <i class="fa fa-undo"></i> Undo
+            </button>
+            <button data-ng-click="modifyCancel(d)" data-ng-show="isModifying(d)" class="btn btn-warning btn-xs">
+              <i class="fa fa-minus-circle"></i> Cancel
+            </button>
+          </td>
+        </tr>
+        <tr ng-hide="toDisplay.length > 0">
+          <td colspan="3">No rows to display.</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
 </form>
