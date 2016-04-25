@@ -50,7 +50,7 @@
           <td data-ng-class="{'bg-danger': d.invalidDisplayValue}">
             <span data-ng-hide="isModifying(d)">{{d.displayValue}}</span>
             <div data-ng-show="isModifying(d)" data-ng-if="::!d.invalidDisplayValue">
-              <select name="{{::d.jsonName}}" data-ng-if="d.selectOptions" ng-options="item.value as item.name for item in d.selectOptions" data-ng-model="editedPart[d.jsonName]">
+              <select name="{{::d.jsonName}}" data-ng-if="d.selectOptions" ng-options="item.val for item in d.selectOptions track by item.id" data-ng-model="editedPart[d.jsonName]">
                 <option value="" data-ng-if="::d.valueDescriptor.nullAllowed">{{::d.valueDescriptor.nullDisplay}}</option>
               </select>
               <input

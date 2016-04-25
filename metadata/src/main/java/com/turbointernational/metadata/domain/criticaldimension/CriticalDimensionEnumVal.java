@@ -34,6 +34,7 @@ public class CriticalDimensionEnumVal {
     public CriticalDimensionEnumVal() {
     }
 
+    //<editor-fold defaultstate="collapsed" desc="Getters and Setters">
     public Integer getId() {
         return id;
     }
@@ -49,4 +50,5 @@ public class CriticalDimensionEnumVal {
     public void setVal(String val) {
         this.val = val;
     }
+    //</editor-fold>
 }

@@ -1,6 +1,8 @@
 package com.turbointernational.metadata.domain.criticaldimension;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.web.View;
 import org.springframework.cache.annotation.Cacheable;
 
 import javax.persistence.*;
@@ -18,13 +20,18 @@ import static javax.persistence.FetchType.EAGER;
 @JsonInclude(ALWAYS)
 public class CriticalDimensionEnum {
 
+    //<editor-fold defaultstate="collapsed" desc="Properties">
     @Id
+    @JsonView({View.Summary.class})
     private Integer id;
 
     @Column
+    @JsonView({View.Summary.class})
     private String name;
+    //</editor-fold>
 
     @OneToMany(fetch = EAGER)
+    @JsonView({View.Summary.class})
     @JoinTable(name = "CRIT_DIM_ENUM_VAL",
             joinColumns = @JoinColumn(name = "crit_dim_enum_id"),
             inverseJoinColumns = @JoinColumn(name = "id"))
@@ -33,11 +40,7 @@ public class CriticalDimensionEnum {
     public CriticalDimensionEnum() {
     }
 
-    public CriticalDimensionEnum(Integer id, String name) {
-        this.id = id;
-        this.name = name;
-    }
-
+    //<editor-fold defaultstate="collapsed" desc="Getters and Setters">
     public Integer getId() {
         return id;
     }
@@ -53,4 +56,14 @@ public class CriticalDimensionEnum {
     public void setName(String name) {
         this.name = name;
     }
+
+    public List<CriticalDimensionEnumVal> getValues() {
+        return values;
+    }
+
+    public void setValues(List<CriticalDimensionEnumVal> values) {
+        this.values = values;
+    }
+    //</editor-fold>
+
 }

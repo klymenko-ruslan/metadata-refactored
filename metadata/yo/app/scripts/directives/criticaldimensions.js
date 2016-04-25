@@ -67,7 +67,7 @@ angular.module("ngMetaCrudApp")
                 }
               );
             $scope.errors = {};
-          };  // _copyDescriptorsToDisplay
+          }; // _copyDescriptorsToDisplay
 
 
           // Watch properties valid/invalid for controls on the form
@@ -123,18 +123,22 @@ angular.module("ngMetaCrudApp")
             } else if (descriptor.dataType === "DECIMAL") {
               retVal = $filter("number")(value, descriptor.scale);
             } else if (descriptor.dataType === "ENUMERATION") {
-              var valEnum = $scope.part[descriptor.jsonEnum];
+              var valEnum;
+              var mEnum = descriptor.enumeration;
+              if (mEnum) {
+                valEnum = mEnum.values;
+              }
               if (valEnum !== undefined) {
                 var selected = _.find(valEnum, function(ve) {
-                  return ve.value == value;
+                  return ve.id == value.id;
                 });
                 if (selected !== undefined) {
-                  retVal = selected.name;
+                  retVal = selected.val; // 'val' is a text representation
                 } else {
-                  throw new Error("value '" + value + "' not found in the enumeration '" + descriptor.jsonEnum + "'.");
+                  throw new Error("value '" + value + "' not found in the enumeration '" + angular.toJson(descriptor.enumeration) + "'.");
                 }
               } else {
-                throw new Error("definition of the enum '" + descriptor.jsonEnum + "' not found.");
+                throw new Error("definition of the enum '" + mEnum.name + "' not found.");
               }
             } else {
               retVal = String(value);
@@ -230,11 +234,10 @@ angular.module("ngMetaCrudApp")
               // It is possible that property 'invalidDisplayValue' was not set in the '_getDisplayVal'
               // even when enumeration is not defined (see comments for the method '_getDisplayVal' for details).
               // So we do check too for existence of the enumeration here.
-              var enumVals = angular.copy($scope.part[d.jsonEnum]);
-              if (enumVals) {
-                retVal.selectOptions = enumVals;
+              if (d.enumeration) {
+                retVal.selectOptions = angular.copy(d.enumeration.values);
               } else {
-                retVal.displayValue = $scope._buildErrorMessage("definition of the enum '" + d.jsonEnum + "' not found.");
+                retVal.displayValue = $scope._buildErrorMessage("definition of the enum for field'" + d.jsonName + "' not found.");
                 retVal.invalidDisplayValue = true;
               }
             }
@@ -275,7 +278,7 @@ angular.module("ngMetaCrudApp")
                 return true;
               } else {
                 return false;
-              };
+              }
             });
             return $scope._errorId2errorMessage(firstError);
           };
@@ -316,7 +319,7 @@ angular.module("ngMetaCrudApp")
             return $scope.editedDispObjs[d.id] !== undefined;
           };
 
-          $scope.modifySave = function() {
+          $scope.modifySaveAll = function() {
             restService.updatePart($scope.editedPart).then(
               function success(updatedPart) {
                 gToast.open("The part has been successfully updated.");

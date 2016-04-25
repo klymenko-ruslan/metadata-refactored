@@ -12,178 +12,181 @@ import org.apache.commons.lang.ObjectUtils;
 import javax.persistence.*;
 import java.util.Map;
 
+import static javax.persistence.FetchType.EAGER;
+
 @Entity
 @Table(name = "bearing_housing")
 @PrimaryKeyJoinColumn(name = "part_id")
 public class BearingHousing extends Part {
 
-    @JsonView(View.Detail.class)
+    //<editor-fold defaultstate="collapsed" desc="Properties">
+    @JsonView(View.Summary.class)
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cool_type_id")
     private CoolType coolType;
 
-    @JsonView(View.Detail.class)
+    @JsonView(View.Summary.class)
     @Column(name = "oil_inlet")
     private String oilInlet;
 
-    @JsonView(View.Detail.class)
+    @JsonView(View.Summary.class)
     @Column(name = "oil_outlet")
     private String oilOutlet;
 
-    @JsonView(View.Detail.class)
+    @JsonView(View.Summary.class)
     @Column(name = "oil")
     private String oil;
 
-    @JsonView(View.Detail.class)
+    @JsonView(View.Summary.class)
     @Column(name = "outlet_flange_holes")
     private String outletFlangeHoles;
 
-    @JsonView(View.Detail.class)
+    @JsonView(View.Summary.class)
     @Column(name = "water_ports")
     private String waterPorts;
 
-    @JsonView(View.Detail.class)
+    @JsonView(View.Summary.class)
     @Column(name = "design_features")
     private String designFeatures;
 
-    @JsonView(View.Detail.class)
+    @JsonView(View.Summary.class)
     @Column(name = "bearing_type")
     private String bearingType;
 
-    @JsonView(View.Detail.class)
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinTable(name = "cri_dim_enum_val",
-            joinColumns = @JoinColumn(name = "id"),
-            inverseJoinColumns = @JoinColumn(name = "water_cooled"))
+    @JsonView(View.Summary.class)
+    @JsonProperty("waterCooled")
+    @ManyToOne(fetch = EAGER)
+    @JoinColumn(name = "water_cooled")
     private CriticalDimensionEnumVal waterCooled;
 
-    @JsonView(View.Detail.class)
+    @JsonView(View.Summary.class)
     @JsonProperty("ceDiaA")
     @Column(name = "ce_dia_a")
     private Double ceDiaA;
 
-    @JsonView(View.Detail.class)
+    @JsonView(View.Summary.class)
     @JsonProperty("ceDiaATol")
     @Column(name = "ce_dia_a_tol")
     private Double ceDiaATol;
 
-    @JsonView(View.Detail.class)
+    @JsonView(View.Summary.class)
     @JsonProperty("ceDiaB")
     @Column(name = "ce_dia_b")
     private Double ceDiaB;
 
-    @JsonView(View.Detail.class)
+    @JsonView(View.Summary.class)
     @JsonProperty("ceDiaBTol")
     @Column(name = "ce_dia_b_tol")
     private Double ceDiaBTol;
 
-    @JsonView(View.Detail.class)
+    @JsonView(View.Summary.class)
     @JsonProperty("ceDiaC")
     @Column(name = "ce_dia_c")
     private Double ceDiaC;
 
-    @JsonView(View.Detail.class)
+    @JsonView(View.Summary.class)
     @JsonProperty("ceDiaCTol")
     @Column(name = "ce_dia_c_tol")
     private Double ceDiaCTol;
 
-    @JsonView(View.Detail.class)
+    @JsonView(View.Summary.class)
     @JsonProperty("cwcDia")
     @Column(name = "cwc_dia")
     private Double cwcDia;
 
-    @JsonView(View.Detail.class)
+    @JsonView(View.Summary.class)
     @JsonProperty("cwcDiaTol")
     @Column(name = "cwc_dia_tol")
     private Double cwcDiaTol;
 
-    @JsonView(View.Detail.class)
+    @JsonView(View.Summary.class)
     @JsonProperty("boreDiaMax")
     @Column(name = "bore_dia_max")
     private Double boreDiaMax;
 
-    @JsonView(View.Detail.class)
+    @JsonView(View.Summary.class)
     @JsonProperty("prBoreDia")
     @Column(name = "pr_bore_dia")
     private Double prBoreDia;
 
-    @JsonView(View.Detail.class)
+    @JsonView(View.Summary.class)
     @JsonProperty("prBoreDiaTol")
     @Column(name = "pr_bore_dia_tol")
     private Double prBoreDiaTol;
 
-    @JsonView(View.Detail.class)
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinTable(name = "crit_dim_enum_val",
-            joinColumns = @JoinColumn(name = "id"),
-            inverseJoinColumns = @JoinColumn(name = "spinning_bearing"))
+    @JsonView(View.Summary.class)
+    @JsonProperty("spinningBearing")
+    @ManyToOne(fetch = EAGER)
+    @JoinColumn(name = "spinning_bearing")
     private CriticalDimensionEnumVal spinningBearing;
 
-    @JsonView(View.Detail.class)
+    @JsonView(View.Summary.class)
     @JsonProperty("teDiaD")
     @Column(name = "te_dia_d")
     private Double teDiaD;
 
-    @JsonView(View.Detail.class)
+    @JsonView(View.Summary.class)
     @JsonProperty("teDiaDTol")
     @Column(name = "te_dia_d_tol")
     private Double teDiaDTol;
 
-    @JsonView(View.Detail.class)
+    @JsonView(View.Summary.class)
     @JsonProperty("teDiaE")
     @Column(name = "te_dia_e")
     private Double teDiaE;
 
-    @JsonView(View.Detail.class)
+    @JsonView(View.Summary.class)
     @JsonProperty("teDiaETol")
     @Column(name = "te_dia_e_tol")
     private Double teDiaETol;
 
-    @JsonView(View.Detail.class)
+    @JsonView(View.Summary.class)
     @JsonProperty("teDiaF")
     @Column(name = "te_dia_f")
     private Double teDiaF;
 
-    @JsonView(View.Detail.class)
+    @JsonView(View.Summary.class)
     @JsonProperty("teDiaFTol")
     @Column(name = "te_dia_f_tol")
     private Double teDiaFTol;
 
-    @JsonView(View.Detail.class)
+    @JsonView(View.Summary.class)
     @JsonProperty("armAngle")
     @Column(name = "arm_angle")
     private Double armAngle;
 
-    @JsonView(View.Detail.class)
+    @JsonView(View.Summary.class)
     @JsonProperty("oal")
     @Column(name = "oal")
     private Double oal;
 
-    @JsonView(View.Detail.class)
+    @JsonView(View.Summary.class)
     @JsonProperty("oalTol")
     @Column(name = "oal_tol")
     private Double oalTol;
 
-    @JsonView(View.Detail.class)
+    @JsonView(View.Summary.class)
     @JsonProperty("weight")
     @Column(name = "weight")
     private Double weight;
 
-    @JsonView(View.Detail.class)
+    @JsonView(View.Summary.class)
     @JsonProperty("diagramNum")
     @Column(name = "diagram_num")
     private Integer diagramNum;
 
-    @JsonView(View.Detail.class)
+    @JsonView(View.Summary.class)
     @JsonProperty("ledInChmfrAngle")
     @Column(name = "led_in_chmfr_angle")
     private Double ledInChmfrAngle;
 
-    @JsonView(View.Detail.class)
+    @JsonView(View.Summary.class)
     @JsonProperty("ledInChmfrLen")
     @Column(name = "led_in_chmfr_len")
     private Double ledInChmfrLen;
+    //</editor-fold>
 
+    //<editor-fold defaultstate="collapsed" desc="Getters and Setters">
     public CoolType getCoolType() {
         return coolType;
     }
@@ -455,6 +458,7 @@ public class BearingHousing extends Part {
     public void setLedInChmfrLen(Double ledInChmfrLen) {
         this.ledInChmfrLen = ledInChmfrLen;
     }
+    //</editor-fold>
 
     @Override
     protected JSONSerializer buildJSONSerializer() {
