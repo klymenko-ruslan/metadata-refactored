@@ -2,6 +2,8 @@ package com.turbointernational.metadata.web;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.domain.criticaldimension.CriticalDimension;
+import com.turbointernational.metadata.domain.criticaldimension.CriticalDimensionEnum;
+import com.turbointernational.metadata.domain.criticaldimension.CriticalDimensionEnumVal;
 import com.turbointernational.metadata.services.CriticalDimensionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
@@ -31,6 +33,22 @@ public class CriticalDimensionController {
     @ResponseBody
     public List<CriticalDimension> findForThePart(@PathVariable("partId") long partId) {
         return criticalDimensionService.findForThePart(partId);
+    }
+
+    @Secured("ROLE_ADMIN")
+    @JsonView(View.Summary.class)
+    @RequestMapping(value = "/enum/list", method = GET, produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<CriticalDimensionEnum> getAllCritDimEnums() {
+        return criticalDimensionService.getAllCritDimEnums();
+    }
+
+    @Secured("ROLE_ADMIN")
+    @JsonView(View.Summary.class)
+    @RequestMapping(value = "/enum/{enumId}/list", method = GET, produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<CriticalDimensionEnumVal> getCritDimEnumVals(@PathVariable("enumId") Integer enumId) {
+        return criticalDimensionService.getCritDimEnumVals(enumId);
     }
 
 }

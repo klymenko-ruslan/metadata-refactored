@@ -3,8 +3,8 @@ drop table crit_dim_enum_val;
 drop table crit_dim_enum;
 
 create table crit_dim_enum (
-    id int not null,
-    name varchar(32) not null,
+    id int not null auto_increment,
+    name varchar(64) not null,
     primary key (id)
 ) comment='Enumerations for critical dimensions.' engine=innodb;
 
@@ -14,9 +14,9 @@ values
 (2, 'waterCooledEnum');
 
 create table crit_dim_enum_val (
-    id int not null,
+    id int not null auto_increment,
     crit_dim_enum_id int not null references crit_dim_enum(id),
-    val varchar(32) not null,
+    val varchar(64) not null,
     primary key (id),
     unique key (id, crit_dim_enum_id)
 ) comment='Enumeration values for critical dimensions enumerations.' engine=innodb;
@@ -148,4 +148,6 @@ update bearing_housing set
     led_in_chmfr_angle = 22,
     led_in_chmfr_len = .015
 where part_id=44024;
+
+
 

@@ -2,6 +2,8 @@ package com.turbointernational.metadata.services;
 
 import com.turbointernational.metadata.domain.criticaldimension.CriticalDimension;
 import com.turbointernational.metadata.domain.criticaldimension.CriticalDimensionDao;
+import com.turbointernational.metadata.domain.criticaldimension.CriticalDimensionEnum;
+import com.turbointernational.metadata.domain.criticaldimension.CriticalDimensionEnumVal;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.part.PartDao;
 import com.turbointernational.metadata.domain.type.PartType;
@@ -36,6 +38,14 @@ public class CriticalDimensionService {
         Part part = partDao.findOne(partId);
         Long partTypeId = part.getPartType().getId();
         return criticalDimensionDao.findForPartType(partTypeId);
+    }
+
+    public List<CriticalDimensionEnum> getAllCritDimEnums() {
+        return criticalDimensionDao.getAllCritDimEnums();
+    }
+
+    public List<CriticalDimensionEnumVal> getCritDimEnumVals(Integer enumId) {
+        return criticalDimensionDao.getCritDimEnumVals(enumId);
     }
 
     public Errors validateCriticalDimensions(Part part) {

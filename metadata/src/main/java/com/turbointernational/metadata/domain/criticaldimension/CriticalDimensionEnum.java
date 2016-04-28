@@ -10,6 +10,7 @@ import java.util.List;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
 import static javax.persistence.FetchType.EAGER;
+import static javax.persistence.GenerationType.IDENTITY;
 
 /**
  * Created by trunikov on 22.04.16.
@@ -17,21 +18,29 @@ import static javax.persistence.FetchType.EAGER;
 @Cacheable
 @Entity
 @Table(name = "CRIT_DIM_ENUM")
+@NamedQueries({
+    @NamedQuery(
+            name = "getAllCritDimEnums",
+            query = "FROM CriticalDimensionEnum ORDER BY id ASC"
+    )
+})
 @JsonInclude(ALWAYS)
+//
 public class CriticalDimensionEnum {
 
     //<editor-fold defaultstate="collapsed" desc="Properties">
     @Id
+    @GeneratedValue(strategy = IDENTITY)
     @JsonView({View.Summary.class})
     private Integer id;
 
-    @Column
+    @Column(nullable = false, length = 64)
     @JsonView({View.Summary.class})
     private String name;
     //</editor-fold>
 
     @OneToMany(fetch = EAGER)
-    @JsonView({View.Summary.class})
+    @JsonView({View.Detail.class})
     @JoinTable(name = "CRIT_DIM_ENUM_VAL",
             joinColumns = @JoinColumn(name = "crit_dim_enum_id"),
             inverseJoinColumns = @JoinColumn(name = "id"))

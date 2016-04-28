@@ -27,6 +27,8 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.*;
 
+import static javax.persistence.GenerationType.IDENTITY;
+
 @Cacheable
 @Entity
 @Table(name = "PART")
@@ -74,7 +76,7 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
 
     //<editor-fold defaultstate="collapsed" desc="Properties">
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = IDENTITY)
     @JsonView({View.Summary.class})
     private Long id;
 

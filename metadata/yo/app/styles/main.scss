@@ -177,3 +177,16 @@ form .ng-invalid {
   border: 1px solid transparent;
   border-radius: 3px;
 }
+
+.tool-control {
+  margin: 5px 0;
+}
+
+td.actions {
+  white-space: nowrap;
+  width: 100px;
+}
+
+tr.clicked-row {
+  cursor:pointer;
+}

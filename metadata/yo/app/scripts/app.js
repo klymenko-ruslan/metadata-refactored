@@ -201,6 +201,17 @@ angular.module("ngMetaCrudApp", ["ngRoute", "ngTable", "ui.bootstrap",
       }
     });
 
+    // Critical dimensions
+    $routeProvider.when("/criticaldimension/enums", {
+      templateUrl: "views/criticaldimension/enums.html",
+      controller: "CriticalDimensionEnumsCtrl",
+      resolve: {
+        critDimEnums: ["restService", function(restService) {
+          return restService.getAllCritDimEnums()
+        }]
+      }
+    });
+
     // Users and groups
     $routeProvider.when("/security/groups", {
       templateUrl: "views/security/groups.html",

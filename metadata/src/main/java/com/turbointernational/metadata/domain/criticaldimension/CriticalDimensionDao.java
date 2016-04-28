@@ -20,4 +20,15 @@ public class CriticalDimensionDao extends AbstractDao<CriticalDimension> {
                 .setParameter("partTypeId", partTypeId).getResultList();
     }
 
+    public List<CriticalDimensionEnum> getAllCritDimEnums() {
+        return em.createNamedQuery("getAllCritDimEnums", CriticalDimensionEnum.class)
+                .getResultList();
+    }
+
+    public List<CriticalDimensionEnumVal> getCritDimEnumVals(Integer enumId) {
+        return em.createNamedQuery("getAllCritDimEnums", CriticalDimensionEnumVal.class)
+                .setParameter("enumId", enumId)
+                .getResultList();
+    }
+
 }

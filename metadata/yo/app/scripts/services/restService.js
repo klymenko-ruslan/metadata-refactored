@@ -464,5 +464,45 @@ angular.module("ngMetaCrudApp")
         return Restangular.one("/criticaldimension/part", id).get();
       };
 
+      this.getAllCritDimEnums = function() {
+        return Restangular.all("/criticaldimension/enum/list").getList();
+      };
+
+      this.getCritDimEnumVals = function(id) {
+        return Restangular.all("/criticaldimension/enum", id).getList("list");
+      };
+
+      this.addCritDimEnum = function(newEnum) {
+        // TODO
+      };
+
+      this.addCritDimEnumItm = function(enumId, newEnumItm) {
+        // TODO
+      };
+
+      this.removeCritDimEnum = function(id) {
+        // TODO
+      };
+
+      this.removeCritDimEnumItm = function(id) {
+        // TODO
+      };
+
+      this.updateCritDimEnum = function(cde) {
+        // TODO
+      };
+
+      this.updateCritDimEnumItm = function(cdev) {
+        // TODO
+      };
+
+      this.findCritDimEnumByName = function(name) {
+        // TODO
+      };
+
+      this.findCritDimEnumItmByName = function(enumId, name) {
+        // TODO
+      };
+
     };
   });
