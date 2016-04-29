@@ -48,6 +48,40 @@ public class CriticalDimensionService {
         return criticalDimensionDao.getCritDimEnumVals(enumId);
     }
 
+    public CriticalDimensionEnum addCritDimEnum(CriticalDimensionEnum cde) {
+        return criticalDimensionDao.addCritDimEnum(cde);
+    }
+
+    public CriticalDimensionEnumVal addCritDimEnumVal(CriticalDimensionEnumVal cdev) {
+        return criticalDimensionDao.addCritDimEnumVal(cdev);
+    }
+
+    public CriticalDimensionEnum updateCritDimEnum(CriticalDimensionEnum cde) {
+        CriticalDimensionEnum original = criticalDimensionDao.getCriticalDimensionEnumById(cde.getId());
+        original.setName(cde.getName());
+        return criticalDimensionDao.updateCritDimEnum(original);
+    }
+
+    public CriticalDimensionEnumVal updateCritDimEnumVal(CriticalDimensionEnumVal cdev) {
+        return criticalDimensionDao.updateCritDimEnumVal(cdev);
+    }
+
+    public void removeCritDimEnum(Integer cdeId) {
+        criticalDimensionDao.removeCritDimEnum(cdeId);
+    }
+
+    public void removeCritDimEnumVal(Integer cdevId) {
+        criticalDimensionDao.removeCritDimEnumVal(cdevId);
+    }
+
+    public CriticalDimensionEnum findCritDimEnumByName(String name) {
+        return criticalDimensionDao.findCritDimEnumByName(name);
+    }
+
+    public CriticalDimensionEnumVal findCritDimEnumValByName(Integer enumId, String name) {
+        return criticalDimensionDao.findCritDimEnumValByName(enumId, name);
+    }
+
     public Errors validateCriticalDimensions(Part part) {
         PartType partType = part.getPartType();
         Errors errors = new ValidationErrors(partType.getName(), part, null);

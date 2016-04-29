@@ -2,7 +2,7 @@
 
 angular.module("ngMetaCrudApp")
     .controller("CriticalDimensionEnumsCtrl", [
-      "$scope", "$log", "Restangular", "gToast", "ngTableParams", "restService", "utils", "CRIT_DIM_ENUMS",
+      "$scope", "$log", "Restangular", "gToast", "ngTableParams", "restService", "utils", "critDimEnums",
       function($scope, $log, Restangular, gToast, ngTableParams, restService, utils, critDimEnums) {
 
         $scope.selectedRow = null;
@@ -83,6 +83,7 @@ angular.module("ngMetaCrudApp")
         };
 
         $scope.showAddEnumDlg = function() {
+          //$scope._resetForm($scope.formAddEnum);
           $scope.cdEnumToAdd = {
             name: null
           };
@@ -146,6 +147,7 @@ angular.module("ngMetaCrudApp")
         };
 
         $scope.showAddEnumItmDlg = function() {
+          //$scope._resetForm($scope.formAddItmEnum);
           $scope.cdEnumItmToAdd = {
             val: null
           };

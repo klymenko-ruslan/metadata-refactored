@@ -12,6 +12,7 @@ import org.apache.commons.lang.ObjectUtils;
 import javax.persistence.*;
 import java.util.Map;
 
+import static javax.persistence.CascadeType.DETACH;
 import static javax.persistence.FetchType.EAGER;
 
 @Entity
@@ -55,7 +56,7 @@ public class BearingHousing extends Part {
 
     @JsonView(View.Summary.class)
     @JsonProperty("waterCooled")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = EAGER, cascade = DETACH)
     @JoinColumn(name = "water_cooled")
     private CriticalDimensionEnumVal waterCooled;
 
@@ -116,7 +117,7 @@ public class BearingHousing extends Part {
 
     @JsonView(View.Summary.class)
     @JsonProperty("spinningBearing")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = EAGER, cascade = DETACH)
     @JoinColumn(name = "spinning_bearing")
     private CriticalDimensionEnumVal spinningBearing;
 

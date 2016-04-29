@@ -22,6 +22,10 @@ import static javax.persistence.GenerationType.IDENTITY;
     @NamedQuery(
             name = "getAllCritDimEnums",
             query = "FROM CriticalDimensionEnum ORDER BY id ASC"
+    ),
+    @NamedQuery(
+            name = "findCritDimEnumByName",
+            query = "FROM CriticalDimensionEnum WHERE name=:name"
     )
 })
 @JsonInclude(ALWAYS)

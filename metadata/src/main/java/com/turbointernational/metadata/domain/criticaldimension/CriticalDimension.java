@@ -1,15 +1,16 @@
 package com.turbointernational.metadata.domain.criticaldimension;
 
-import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.domain.type.PartType;
 import com.turbointernational.metadata.web.View;
-import org.codehaus.jackson.annotate.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
+import static javax.persistence.CascadeType.DETACH;
 
 /**
  * Created by dmytro.trunykov@zorallabs.com on 06.04.16.
@@ -51,7 +52,7 @@ public class CriticalDimension implements Serializable {
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     private DataTypeEnum dataType;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.EAGER, cascade = DETACH)
     @JoinColumn(name = "enum_id")
     @JsonView({View.Summary.class})
     private CriticalDimensionEnum enumeration;
@@ -94,7 +95,7 @@ public class CriticalDimension implements Serializable {
     @JsonView({View.Summary.class})
     private String regex;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.EAGER, cascade = DETACH)
     @JoinColumn(name="parent_id")
     @JsonView({View.Summary.class})
     private CriticalDimension parent;

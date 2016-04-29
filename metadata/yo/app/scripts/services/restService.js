@@ -122,7 +122,7 @@ angular.module("ngMetaCrudApp")
             clazz = "com.turbointernational.metadata.domain.part.Part";
         }
         part.class = clazz;
-        return Restangular.all('part').post(part);
+        return Restangular.all("part").post(part);
       };
 
       this.updatePart = function(part) {
@@ -469,39 +469,39 @@ angular.module("ngMetaCrudApp")
       };
 
       this.getCritDimEnumVals = function(id) {
-        return Restangular.all("/criticaldimension/enum", id).getList("list");
+        return Restangular.one("/criticaldimension/enum", id).getList("list");
       };
 
       this.addCritDimEnum = function(newEnum) {
-        // TODO
+        return Restangular.one("/criticaldimension").post("enum", newEnum);
       };
 
       this.addCritDimEnumItm = function(enumId, newEnumItm) {
-        // TODO
+        return Restangular.one("/criticaldimension/enum", enumId).post("item", newEnumItm);
       };
 
       this.removeCritDimEnum = function(id) {
-        // TODO
+        return Restangular.one("/criticaldimension/enum", id).remove();
       };
 
       this.removeCritDimEnumItm = function(id) {
-        // TODO
+        return Restangular.one("/criticaldimension/enum/item", id).remove();
       };
 
       this.updateCritDimEnum = function(cde) {
-        // TODO
+        return Restangular.one("/criticaldimension/enum", cde.id).customPUT(cde);
       };
 
       this.updateCritDimEnumItm = function(cdev) {
-        // TODO
+        return Restangular.one("/criticaldimension/enum/item", cdev.id).customPUT(cdev);
       };
 
       this.findCritDimEnumByName = function(name) {
-        // TODO
+        return Restangular.one("/criticaldimension/enum").get({"name": name});
       };
 
       this.findCritDimEnumItmByName = function(enumId, name) {
-        // TODO
+        return Restangular.one("/criticaldimension/enum/" + enumId + "/items").get({"name": name});
       };
 
     };

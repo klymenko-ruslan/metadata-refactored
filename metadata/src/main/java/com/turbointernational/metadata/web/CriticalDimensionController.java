@@ -8,14 +8,12 @@ import com.turbointernational.metadata.services.CriticalDimensionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 /**
  * Created by dmytro.trunykov@zorallabs.com on 06.04.16.
@@ -28,7 +26,7 @@ public class CriticalDimensionController {
     private CriticalDimensionService criticalDimensionService;
 
     @Secured("ROLE_READ")
-    @JsonView(View.Summary.class)
+    @JsonView(View.Detail.class)
     @RequestMapping(value = "/part/{partId}", method = GET, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     public List<CriticalDimension> findForThePart(@PathVariable("partId") long partId) {
@@ -49,6 +47,69 @@ public class CriticalDimensionController {
     @ResponseBody
     public List<CriticalDimensionEnumVal> getCritDimEnumVals(@PathVariable("enumId") Integer enumId) {
         return criticalDimensionService.getCritDimEnumVals(enumId);
+    }
+
+    @Secured("ROLE_ADMIN")
+    @JsonView(View.Summary.class)
+    @RequestMapping(value = "/enum", method = POST, produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public CriticalDimensionEnum addCritDimEnum(@RequestBody CriticalDimensionEnum cde) {
+        return criticalDimensionService.addCritDimEnum(cde);
+    }
+
+    @Secured("ROLE_ADMIN")
+    @JsonView(View.Summary.class)
+    @RequestMapping(value = "/enum/{enumId}/item", method = POST, produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public CriticalDimensionEnumVal addCritDimEnumVal(@PathVariable("enumId") Integer enumId, @RequestBody CriticalDimensionEnumVal cdev) {
+        cdev.setCriticalDimensionEnumId(enumId);
+        return criticalDimensionService.addCritDimEnumVal(cdev);
+    }
+
+    @RequestMapping(value = "/enum/{enumId}", method = PUT)
+    @ResponseBody
+    @JsonView(View.Summary.class)
+    @Secured("ROLE_ADMIN")
+    public CriticalDimensionEnum updateCritDimEnum(@RequestBody CriticalDimensionEnum cde) {
+        return criticalDimensionService.updateCritDimEnum(cde);
+    }
+
+    @RequestMapping(value = "/enum/item/{id}", method = PUT)
+    @ResponseBody
+    @JsonView(View.Summary.class)
+    @Secured("ROLE_ADMIN")
+    public CriticalDimensionEnumVal updateCritDimEnumVal(@RequestBody CriticalDimensionEnumVal cdev) {
+        return criticalDimensionService.updateCritDimEnumVal(cdev);
+    }
+
+    @RequestMapping(value = "/enum/{enumId}", method = DELETE)
+    @ResponseBody
+    @Secured("ROLE_ADMIN")
+    public void removeCritDimEnum(@PathVariable("enumId") Integer enumId) {
+        criticalDimensionService.removeCritDimEnum(enumId);
+    }
+
+    @RequestMapping(value = "/enum/item/{itmId}", method = DELETE)
+    @ResponseBody
+    @Secured("ROLE_ADMIN")
+    public void removeCritDimEnumVal(@PathVariable("itmId") Integer itmId) {
+        criticalDimensionService.removeCritDimEnumVal(itmId);
+    }
+
+    @Secured("ROLE_ADMIN")
+    @JsonView(View.Summary.class)
+    @RequestMapping(value = "/enum", method = GET, produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public CriticalDimensionEnum findCritDimEnumByName(@RequestParam("name") String name) {
+        return criticalDimensionService.findCritDimEnumByName(name);
+    }
+
+    @Secured("ROLE_ADMIN")
+    @JsonView(View.Summary.class)
+    @RequestMapping(value = "/enum/{enumId}/items", method = GET, produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public CriticalDimensionEnumVal findCritDimEnumValByName(@PathVariable("enumId") Integer enumId, @RequestParam("name") String name) {
+        return criticalDimensionService.findCritDimEnumValByName(enumId, name);
     }
 
 }

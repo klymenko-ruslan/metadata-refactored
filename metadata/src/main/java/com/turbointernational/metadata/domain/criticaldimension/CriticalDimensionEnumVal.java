@@ -19,8 +19,12 @@ import static javax.persistence.GenerationType.*;
 // public List<CriticalDimensionEnumVal> getCritDimEnumVals(Integer enumId)
 @NamedQueries({
     @NamedQuery(
-            name = "getAllCritDimEnums",
+            name = "getAllCritDimEnumVals",
             query = "FROM CriticalDimensionEnumVal as cdev WHERE cdev.criticalDimensionEnumId=:enumId ORDER BY id ASC"
+    ),
+    @NamedQuery(
+            name = "findCritDimEnumValByName",
+            query = "FROM CriticalDimensionEnumVal as cdev WHERE cdev.criticalDimensionEnumId=:enumId AND val=:name"
     )
 })
 @JsonInclude(ALWAYS)
