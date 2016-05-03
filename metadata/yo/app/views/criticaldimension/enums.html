@@ -139,14 +139,17 @@
       </div>
       <div class="modal-body">
         <p>
-          If you confirm this action the emumeration [{{cdEnumToDel.id | number}}] &mdash; "{{cdEnumToDel.name}}" will be deleted.
+          If you confirm this action the enumeration [{{cdEnumToDel.id | number}}] &mdash; "{{cdEnumToDel.name}}" will be deleted.
         </p>
         <p>
           Are you sure?
         </p>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-danger" data-ng-click="removeCritDimEnum()">Delete</button>
+        <button type="button" class="btn btn-danger" data-ng-click="removeCritDimEnum()">
+          <i class="fa fa-trash-o" aria-hidden="true"></i>
+          Delete
+        </button>
         <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
       </div>
     </div>
@@ -198,7 +201,10 @@
         </p>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-danger" data-ng-click="removeCritDimEnumItm()">Delete</button>
+        <button type="button" class="btn btn-danger" data-ng-click="removeCritDimEnumItm()">
+          <i class="fa fa-trash-o" aria-hidden="true"></i>
+          Delete
+        </button>
         <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
       </div>
     </div>

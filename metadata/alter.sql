@@ -15,7 +15,7 @@ values
 
 create table crit_dim_enum_val (
     id int not null auto_increment,
-    crit_dim_enum_id int not null references crit_dim_enum(id),
+    crit_dim_enum_id int not null references crit_dim_enum(id) on delete cascade on update cascade,
     val varchar(64) not null,
     primary key (id),
     unique key (id, crit_dim_enum_id)
@@ -34,7 +34,7 @@ create table crit_dim (
     part_type_id    bigint not null,
     seq_num         int not null,
     data_type       enum ('DECIMAL', 'ENUMERATION', 'INTEGER', 'TEXT') not null,
-    enum_id         int references crit_dim_enum(id),
+    enum_id         int,
     unit            enum ('DEGREES', 'GRAMS', 'INCHES'),
     tolerance       tinyint(1) comment '0 - nominal, 1 - tolerance/limit, null - not a tolerance',
     name            varchar(255) not null,
@@ -50,7 +50,8 @@ create table crit_dim (
     primary key(id),
     unique key(part_type_id, seq_num),
     foreign key (part_type_id) references part_type(id),
-    foreign key (parent_id) references crit_dim(id) on delete cascade on update cascade
+    foreign key (enum_id) references crit_dim_enum(id) on delete set null on update cascade,
+    foreign key (parent_id) references crit_dim(id) on delete set null on update cascade
 ) engine=innodb;
 
 insert into crit_dim
@@ -91,7 +92,6 @@ values
 ( 34,          13,      34,     'DECIMAL',     null,      null, 'LEAD IN CHMFR ½-ANGLE',   'leadInChmfr05Angle',                null,                 1,         null,       0,    null,  null,      null,      6,     1),
 ( 35,          13,      35,     'DECIMAL',     null,      null, 'LEAD IN CHMFR LEN',       'leadInChmfrLen',                    null,                 1,         null,       0,    null,  null,      null,      6,     1);
 
-alter table bearing_housing add column water_cooled int references crit_dim_enum_val(id);
 alter table bearing_housing add column ce_dia_a decimal(6,3);
 alter table bearing_housing add column ce_dia_a_tol decimal(6,3);
 alter table bearing_housing add column ce_dia_b decimal(6,3);
@@ -104,7 +104,6 @@ alter table bearing_housing add column bore_dia_max decimal(6,3);
 alter table bearing_housing add column bore_dia_min decimal(6,3);
 alter table bearing_housing add column pr_bore_dia decimal(6,3);
 alter table bearing_housing add column pr_bore_dia_tol decimal(6,3);
-alter table bearing_housing add column spinning_bearing int references crit_dim_enum_val(id);
 alter table bearing_housing add column te_dia_d decimal(6,3);
 alter table bearing_housing add column te_dia_d_tol decimal(6,3);
 alter table bearing_housing add column te_dia_e decimal(6,3);
@@ -118,6 +117,13 @@ alter table bearing_housing add column weight decimal(6,1);
 alter table bearing_housing add column diagram_num int;
 alter table bearing_housing add column led_in_chmfr_angle decimal(6,1);
 alter table bearing_housing add column led_in_chmfr_len decimal(6,3);
+alter table bearing_housing add column water_cooled int, add foreign key (water_cooled) references crit_dim_enum_val(id) on delete set null on update cascade;
+alter table bearing_housing add column spinning_bearing int, add foreign key (spinning_bearing) references crit_dim_enum_val(id) on delete set null on update cascade;
+
+/*
+alter table bearing_housing modify column water_cooled int references crit_dim_enum_val(id) on delete set null on update cascade;
+alter table bearing_housing modify column spinning_bearing int references crit_dim_enum_val(id) on delete set null on update cascade;
+*/
 
 update bearing_housing set
     water_cooled = 4,

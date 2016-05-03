@@ -10,7 +10,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
-import static javax.persistence.CascadeType.DETACH;
+import static javax.persistence.FetchType.EAGER;
 
 /**
  * Created by dmytro.trunykov@zorallabs.com on 06.04.16.
@@ -52,7 +52,7 @@ public class CriticalDimension implements Serializable {
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     private DataTypeEnum dataType;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = DETACH)
+    @OneToOne(fetch = EAGER)
     @JoinColumn(name = "enum_id")
     @JsonView({View.Summary.class})
     private CriticalDimensionEnum enumeration;
@@ -95,7 +95,7 @@ public class CriticalDimension implements Serializable {
     @JsonView({View.Summary.class})
     private String regex;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = DETACH)
+    @OneToOne(fetch = EAGER)
     @JoinColumn(name="parent_id")
     @JsonView({View.Summary.class})
     private CriticalDimension parent;
