@@ -52,7 +52,9 @@ public class BearingHousing extends Part {
     @JsonView(View.Summary.class)
     @Column(name = "bearing_type")
     private String bearingType;
+    //</editor-fold>
 
+    //<editor-fold defaultstate="collapsed" desc="Critical dimensions">
     @JsonView(View.Summary.class)
     @JsonProperty("waterCooled")
     @ManyToOne(fetch = EAGER)
@@ -105,6 +107,11 @@ public class BearingHousing extends Part {
     private Double boreDiaMax;
 
     @JsonView(View.Summary.class)
+    @JsonProperty("boreDiaMin")
+    @Column(name = "bore_dia_min")
+    private Double boreDiaMin;
+
+    @JsonView(View.Summary.class)
     @JsonProperty("prBoreDia")
     @Column(name = "pr_bore_dia")
     private Double prBoreDia;
@@ -113,6 +120,27 @@ public class BearingHousing extends Part {
     @JsonProperty("prBoreDiaTol")
     @Column(name = "pr_bore_dia_tol")
     private Double prBoreDiaTol;
+
+    @JsonView(View.Summary.class)
+    @JsonProperty("leadInChmfr05Angle")
+    @Column(name = "lead_in_chmfr_angle")
+    private Double leadInChmfr05Angle;
+
+    @JsonView(View.Summary.class)
+    @JsonProperty("leadInChmfrLen")
+    @Column(name = "led_in_chmfr_len")
+    private Double leadInChmfrLen;
+
+    @JsonView(View.Summary.class)
+    @JsonProperty("quadrant")
+    @Column(name = "quadrant")
+    private CriticalDimensionEnumVal quadrant;
+
+    @JsonView(View.Summary.class)
+    @JsonProperty("oilFeed")
+    @ManyToOne(fetch = EAGER)
+    @JoinColumn(name = "oil_feed")
+    private CriticalDimensionEnumVal oilFeed;
 
     @JsonView(View.Summary.class)
     @JsonProperty("spinningBearing")
@@ -166,6 +194,42 @@ public class BearingHousing extends Part {
     private Double oalTol;
 
     @JsonView(View.Summary.class)
+    @JsonProperty("oilInletThread")
+    @ManyToOne(fetch = EAGER)
+    @JoinColumn(name = "oil_inlet_thread")
+    private CriticalDimensionEnumVal oilInletThread;
+
+    @JsonView(View.Summary.class)
+    @JsonProperty("oilInletGlangeThread")
+    @ManyToOne(fetch = EAGER)
+    @JoinColumn(name = "oil_inlet_glange_thread")
+    private CriticalDimensionEnumVal oilInletGlangeThread;
+
+    @JsonView(View.Summary.class)
+    @JsonProperty("oilDrainThread")
+    @ManyToOne(fetch = EAGER)
+    @JoinColumn(name = "oil_drain_thread")
+    private CriticalDimensionEnumVal oilDrainThread;
+
+    @JsonView(View.Summary.class)
+    @JsonProperty("oilDrainFlangeThread")
+    @ManyToOne(fetch = EAGER)
+    @JoinColumn(name = "oil_drain_flange_thread")
+    private CriticalDimensionEnumVal oilDrainFlangeThread;
+
+    @JsonView(View.Summary.class)
+    @JsonProperty("coolantPortThread1")
+    @ManyToOne(fetch = EAGER)
+    @JoinColumn(name = "coolant_port_thread1")
+    private CriticalDimensionEnumVal coolantPortThread1;
+
+    @JsonView(View.Summary.class)
+    @JsonProperty("coolantPortThread2")
+    @ManyToOne(fetch = EAGER)
+    @JoinColumn(name = "coolant_port_thread2")
+    private CriticalDimensionEnumVal coolantPortThread2;
+
+    @JsonView(View.Summary.class)
     @JsonProperty("weight")
     @Column(name = "weight")
     private Double weight;
@@ -175,15 +239,6 @@ public class BearingHousing extends Part {
     @Column(name = "diagram_num")
     private Integer diagramNum;
 
-    @JsonView(View.Summary.class)
-    @JsonProperty("ledInChmfrAngle")
-    @Column(name = "led_in_chmfr_angle")
-    private Double ledInChmfrAngle;
-
-    @JsonView(View.Summary.class)
-    @JsonProperty("ledInChmfrLen")
-    @Column(name = "led_in_chmfr_len")
-    private Double ledInChmfrLen;
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Getters and Setters">
@@ -331,6 +386,14 @@ public class BearingHousing extends Part {
         this.boreDiaMax = boreDiaMax;
     }
 
+    public Double getBoreDiaMin() {
+        return boreDiaMin;
+    }
+
+    public void setBoreDiaMin(Double boreDiaMin) {
+        this.boreDiaMin = boreDiaMin;
+    }
+
     public Double getPrBoreDia() {
         return prBoreDia;
     }
@@ -427,6 +490,54 @@ public class BearingHousing extends Part {
         this.oalTol = oalTol;
     }
 
+    public CriticalDimensionEnumVal getOilInletThread() {
+        return oilInletThread;
+    }
+
+    public void setOilInletThread(CriticalDimensionEnumVal oilInletThread) {
+        this.oilInletThread = oilInletThread;
+    }
+
+    public CriticalDimensionEnumVal getOilInletGlangeThread() {
+        return oilInletGlangeThread;
+    }
+
+    public void setOilInletGlangeThread(CriticalDimensionEnumVal oilInletGlangeThread) {
+        this.oilInletGlangeThread = oilInletGlangeThread;
+    }
+
+    public CriticalDimensionEnumVal getOilDrainThread() {
+        return oilDrainThread;
+    }
+
+    public void setOilDrainThread(CriticalDimensionEnumVal oilDrainThread) {
+        this.oilDrainThread = oilDrainThread;
+    }
+
+    public CriticalDimensionEnumVal getOilDrainFlangeThread() {
+        return oilDrainFlangeThread;
+    }
+
+    public void setOilDrainFlangeThread(CriticalDimensionEnumVal oilDrainFlangeThread) {
+        this.oilDrainFlangeThread = oilDrainFlangeThread;
+    }
+
+    public CriticalDimensionEnumVal getCoolantPortThread1() {
+        return coolantPortThread1;
+    }
+
+    public void setCoolantPortThread1(CriticalDimensionEnumVal coolantPortThread1) {
+        this.coolantPortThread1 = coolantPortThread1;
+    }
+
+    public CriticalDimensionEnumVal getCoolantPortThread2() {
+        return coolantPortThread2;
+    }
+
+    public void setCoolantPortThread2(CriticalDimensionEnumVal coolantPortThread2) {
+        this.coolantPortThread2 = coolantPortThread2;
+    }
+
     public Double getWeight() {
         return weight;
     }
@@ -443,20 +554,36 @@ public class BearingHousing extends Part {
         this.diagramNum = diagramNum;
     }
 
-    public Double getLedInChmfrAngle() {
-        return ledInChmfrAngle;
+    public Double getLeadInChmfr05Angle() {
+        return leadInChmfr05Angle;
     }
 
-    public void setLedInChmfrAngle(Double ledInChmfrAngle) {
-        this.ledInChmfrAngle = ledInChmfrAngle;
+    public void setLeadInChmfr05Angle(Double leadInChmfr05Angle) {
+        this.leadInChmfr05Angle = leadInChmfr05Angle;
     }
 
-    public Double getLedInChmfrLen() {
-        return ledInChmfrLen;
+    public Double getLeadInChmfrLen() {
+        return leadInChmfrLen;
     }
 
-    public void setLedInChmfrLen(Double ledInChmfrLen) {
-        this.ledInChmfrLen = ledInChmfrLen;
+    public void setLeadInChmfrLen(Double leadInChmfrLen) {
+        this.leadInChmfrLen = leadInChmfrLen;
+    }
+
+    public CriticalDimensionEnumVal getQuadrant() {
+        return quadrant;
+    }
+
+    public void setQuadrant(CriticalDimensionEnumVal quadrant) {
+        this.quadrant = quadrant;
+    }
+
+    public CriticalDimensionEnumVal getOilFeed() {
+        return oilFeed;
+    }
+
+    public void setOilFeed(CriticalDimensionEnumVal oilFeed) {
+        this.oilFeed = oilFeed;
     }
     //</editor-fold>
 
