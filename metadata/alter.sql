@@ -62,12 +62,21 @@ create table crit_dim_enum (
 ) comment='Enumerations for critical dimensions.' engine=innodb;
 
 insert into crit_dim_enum(id, name) values
-(1, 'yesNoEnum'),
-(2, 'waterCooledEnum'),
-(3, 'dynCsEnum'),
-(4, 'superbackFlatbackEnum'),
-(5, 'mountingHoleThreadCallout'),
-(6, 'matlEnum');
+( 1, 'yesNoEnum'),
+( 2, 'waterCooledEnum'),
+( 3, 'dynCsEnum'),
+( 4, 'superbackFlatbackEnum'),
+( 5, 'mountingHoleThreadCallout'),
+( 6, 'matlEnum'),
+( 7, 'oilInletThreadEnum'),
+( 8, 'oilInletGlangeThreadEnum'),
+( 9, 'oilDrainThreadEnum'),
+(10, 'oilDrainFlangeThreadEnum'),
+(11, 'coolantPortThread1Enum'),
+(12, 'coolantPortThread2Enum'),
+(13, 'quadrantEnum'),
+(15, 'oilFeedEnum');
+
 
 create table crit_dim_enum_val (
     id int not null auto_increment,
@@ -90,8 +99,12 @@ insert into crit_dim_enum_val(id, crit_dim_enum_id, val) values
 (  8, 4, 'FLATBACK'),
 -- matlEnum
 (  9, 6, 'ALUMINUM'),
-( 10, 6, 'CAST IRON');
-
+( 10, 6, 'CAST IRON'),
+-- quadrant
+( 11, 13, 'I'),
+( 12, 13, 'II'),
+( 13, 13, 'III'),
+( 14, 13, 'IV');
 
 create table crit_dim (
     id              bigint not null,
@@ -149,7 +162,7 @@ values
 ( 25,           14,      25,     'DECIMAL',  'INCHES',         0, 'LEAD IN CHMFR LEN',            'leadInChmfrLen',                    null,                 1,         null,       0,    null,  null,      null,      6,     3),
 ( 26,           14,      26, 'ENUMERATION',      null,      null, 'MAT''L',                       'matl',                                 6,                 1,         null,    null,    null,  null,      null,   null,  null),
 ( 27,           14,      27,     'DECIMAL',   'GRAMS',         0, 'WEIGHT',                       'weight',                            null,                 1,         null,       0,    null,  null,      null,      6,     1),
-( 28,           14,      28,     'INTEGER',      null,      null, 'DIAGRAM #',                    'diagramNum',                        null,                 1,         null,    null,    null,  null,      null,      3,  null);
+( 28,           14,      28,     'INTEGER',      null,      null, 'DIAGRAM #',                    'diagramNum',                        null,                 1,         null,    null,    null,  null,      null,      3,  null),
 -- Bearing housing
 ( 29,           13,       1, 'ENUMERATION',     null,      null, 'WATER COOLED',                 'waterCooled',                           2,                 1,         null,    null,    null,  null,      null,   null,  null),
 ( 30,           13,       2,     'DECIMAL',  'INCHES',         0, 'CWC DIA',                     'cwcDia',                             null,                 1,         null,       0,    null,  null,      null,      6,     3),
@@ -170,17 +183,17 @@ values
 ( 45,           13,      17,     'DECIMAL', 'INCHES',         1, 'T/E DIA "F" TOL',              'teDiaFTol',                          null,                 1,         null,       0,    null,  null,        44,      6,     3),
 ( 46,           13,      18,     'DECIMAL', 'INCHES',         0, 'OAL',                          'oal',                                null,                 1,         null,       0,    null,  null,      null,      6,     3),
 ( 47,           13,      19,     'DECIMAL', 'INCHES',         1, 'OAL TOL',                      'oalTol',                             null,                 1,         null,       0,    null,  null,        46,      6,     3),
-( 48,           13,      20, 'ENUMERATION',     null,      null, 'OIL INLET THREAD',             'oilInletThread',                     null,                 1,         null,    null,    null,  null,      null,   null,  null),
-( 49,           13,      30, 'ENUMERATION',     null,      null, 'OIL INLET FLANGE THREAD',      'oilInletGlangeThread',               null,                 1,         null,    null,    null,  null,      null,   null,  null),
-( 50,           13,      31, 'ENUMERATION',     null,      null, 'OIL DRAIN THREAD',             'oilDrainThread',                     null,                 1,         null,    null,    null,  null,      null,   null,  null),
-( 51,           13,      32, 'ENUMERATION',     null,      null, 'OIL DRAIN FLANGE THREAD',      'oilDrainFlangeThread',               null,                 1,         null,    null,    null,  null,      null,   null,  null),
-( 52,           13,      33, 'ENUMERATION',     null,      null, 'COOLANT PORT THREAD 1',        'coolantPortThread1',                 null,                 1,         null,    null,    null,  null,      null,   null,  null),
-( 53,           13,      34, 'ENUMERATION',     null,      null, 'COOLANT PORT THREAD 2',        'coolantPortThread2',                 null,                 1,         null,    null,    null,  null,      null,   null,  null),
+( 48,           13,      20, 'ENUMERATION',     null,      null, 'OIL INLET THREAD',             'oilInletThread',                        7,                 1,         null,    null,    null,  null,      null,   null,  null),
+( 49,           13,      30, 'ENUMERATION',     null,      null, 'OIL INLET FLANGE THREAD',      'oilInletGlangeThread',                  8,                 1,         null,    null,    null,  null,      null,   null,  null),
+( 50,           13,      31, 'ENUMERATION',     null,      null, 'OIL DRAIN THREAD',             'oilDrainThread',                        9,                 1,         null,    null,    null,  null,      null,   null,  null),
+( 51,           13,      32, 'ENUMERATION',     null,      null, 'OIL DRAIN FLANGE THREAD',      'oilDrainFlangeThread',                 10,                 1,         null,    null,    null,  null,      null,   null,  null),
+( 52,           13,      33, 'ENUMERATION',     null,      null, 'COOLANT PORT THREAD 1',        'coolantPortThread1',                   11,                 1,         null,    null,    null,  null,      null,   null,  null),
+( 53,           13,      34, 'ENUMERATION',     null,      null, 'COOLANT PORT THREAD 2',        'coolantPortThread2',                   12,                 1,         null,    null,    null,  null,      null,   null,  null),
 ( 54,           13,      35,     'DECIMAL', 'INCHES',         0, 'PR BORE DIA',                  'prBoreDia',                          null,                 1,         null,       0,    null,  null,      null,      6,     3),
 ( 55,           13,      36,     'DECIMAL', 'INCHES',         1, 'PR BORE DIA TOL',              'prBoreDiaTol',                       null,                 1,         null,       0,    null,  null,        54,      6,     3),
 ( 56,           13,      37,     'DECIMAL',     null,      null, 'LEAD IN CHMFR ½-ANGLE',        'leadInChmfr05Angle',                 null,                 1,         null,       0,    null,  null,      null,      6,     1),
 ( 57,           13,      38,     'DECIMAL',     null,      null, 'LEAD IN CHMFR LEN',            'leadInChmfrLen',                     null,                 1,         null,       0,    null,  null,      null,      6,     1),
-( 58,           13,      39, 'ENUMERATION',     null,      null, 'QUADRANT',                     'quadrant',                           null,                 1,         null,    null,    null,  null,      null,   null,  null),
+( 58,           13,      39, 'ENUMERATION',     null,      null, 'QUADRANT',                     'quadrant',                             13,                 1,         null,    null,    null,  null,      null,   null,  null),
 ( 59,           13,      40,     'DECIMAL', 'DEGREES',        0, 'ARM ANGLE',                    'armAngle',                           null,                 1,         null,       0,    null,  null,      null,      6,     1),
 ( 60,           13,      41, 'ENUMERATION',     null,      null, 'SINGLE/DUAL OIL FEED',         'oilFeed',                            null,                 1,         null,    null,    null,  null,      null,   null,  null), 
 ( 61,           13,      42, 'ENUMERATION',     null,      null, 'SPINNING BEARING',             'spinningBearing',                       1,                 1,         null,    null,    null,  null,      null,   null,  null),

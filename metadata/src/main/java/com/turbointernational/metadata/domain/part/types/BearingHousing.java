@@ -133,7 +133,8 @@ public class BearingHousing extends Part {
 
     @JsonView(View.Summary.class)
     @JsonProperty("quadrant")
-    @Column(name = "quadrant")
+    @ManyToOne(fetch = EAGER)
+    @JoinColumn(name = "quadrant")
     private CriticalDimensionEnumVal quadrant;
 
     @JsonView(View.Summary.class)
