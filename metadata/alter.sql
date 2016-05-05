@@ -250,7 +250,7 @@ alter table bearing_housing add column te_dia_f_tol decimal(6,3);
 alter table bearing_housing add column oal decimal(6,3);
 alter table bearing_housing add column oal_tol decimal(6,3);
 alter table bearing_housing add column oil_inlet_thread int, add foreign key (oil_inlet_thread) references crit_dim_enum_val(id) on delete set null on update cascade;
-alter table bearing_housing add column oil_inlet_glande_thread int, add foreign key (oil_inlet_glande_thread) references crit_dim_enum_val(id) on delete set null on update cascade;
+alter table bearing_housing add column oil_inlet_flange_thread int, add foreign key (oil_inlet_flange_thread) references crit_dim_enum_val(id) on delete set null on update cascade;
 alter table bearing_housing add column oil_drain_thread int, add foreign key (oil_drain_thread) references crit_dim_enum_val(id) on delete set null on update cascade;
 alter table bearing_housing add column oil_drain_flange_thread int, add foreign key (oil_drain_flange_thread) references crit_dim_enum_val(id) on delete set null on update cascade;
 alter table bearing_housing add column coolant_port_thread1 int, add foreign key (coolant_port_thread1) references crit_dim_enum_val(id) on delete set null on update cascade;

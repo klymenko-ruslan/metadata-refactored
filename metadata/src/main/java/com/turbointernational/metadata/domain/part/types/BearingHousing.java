@@ -128,7 +128,7 @@ public class BearingHousing extends Part {
 
     @JsonView(View.Summary.class)
     @JsonProperty("leadInChmfrLen")
-    @Column(name = "led_in_chmfr_len")
+    @Column(name = "lead_in_chmfr_len")
     private Double leadInChmfrLen;
 
     @JsonView(View.Summary.class)
@@ -201,10 +201,10 @@ public class BearingHousing extends Part {
     private CriticalDimensionEnumVal oilInletThread;
 
     @JsonView(View.Summary.class)
-    @JsonProperty("oilInletGlangeThread")
+    @JsonProperty("oilInletFlangeThread")
     @ManyToOne(fetch = EAGER)
-    @JoinColumn(name = "oil_inlet_glange_thread")
-    private CriticalDimensionEnumVal oilInletGlangeThread;
+    @JoinColumn(name = "oil_inlet_flange_thread")
+    private CriticalDimensionEnumVal oilInletFlangeThread;
 
     @JsonView(View.Summary.class)
     @JsonProperty("oilDrainThread")
@@ -499,12 +499,12 @@ public class BearingHousing extends Part {
         this.oilInletThread = oilInletThread;
     }
 
-    public CriticalDimensionEnumVal getOilInletGlangeThread() {
-        return oilInletGlangeThread;
+    public CriticalDimensionEnumVal getOilInletFlangeThread() {
+        return oilInletFlangeThread;
     }
 
-    public void setOilInletGlangeThread(CriticalDimensionEnumVal oilInletGlangeThread) {
-        this.oilInletGlangeThread = oilInletGlangeThread;
+    public void setOilInletFlangeThread(CriticalDimensionEnumVal oilInletGlangeThread) {
+        this.oilInletFlangeThread = oilInletGlangeThread;
     }
 
     public CriticalDimensionEnumVal getOilDrainThread() {
