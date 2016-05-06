@@ -22,6 +22,8 @@ public interface SearchService {
         return Application.getContext().getBean(SearchService.class);
     }
 
+    void resetCriticalDimensionsCache();
+
     void indexPart(long id);
 
     void indexPart(Part part);

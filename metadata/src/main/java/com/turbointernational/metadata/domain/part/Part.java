@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.domain.SearchableEntity;
+import com.turbointernational.metadata.domain.criticaldimension.CriticalDimension;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.other.TurboType;
 import com.turbointernational.metadata.domain.part.bom.BOMItem;
@@ -16,6 +17,7 @@ import com.turbointernational.metadata.services.SearchService;
 import com.turbointernational.metadata.web.View;
 import flexjson.JSONSerializer;
 import flexjson.transformer.HibernateTransformer;
+import flexjson.transformer.Transformer;
 import org.apache.commons.lang3.ObjectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -328,8 +330,9 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
                 .serialize(this);
     }
 
-    protected JSONSerializer getSearchSerializer() {
-        return new JSONSerializer()
+    @Override
+    public final String toSearchJson(List<CriticalDimension> criticalDimensions) {
+        JSONSerializer jsonSerializer = new JSONSerializer()
                 .include("id")
                 .include("name")
                 .include("manufacturerPartNumber")
@@ -346,11 +349,16 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
                 .exclude("turbos")
                 .exclude("productImages")
                 .exclude("*.class");
-    }
-
-    @Override
-    public String toSearchJson() {
-        return getSearchSerializer().exclude("*").serialize(this);
+        // Add critical dimensions.
+        if (criticalDimensions != null) {
+            for(CriticalDimension cd : criticalDimensions) {
+                Transformer t = cd.getJsonIdxNameTransformer();
+                if (t != null) {
+                    jsonSerializer.transform(t, cd.getJsonName());
+                }
+            }
+        }
+        return jsonSerializer.exclude("*").serialize(this);
     }
 
     @Override

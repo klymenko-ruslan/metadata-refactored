@@ -2,6 +2,7 @@ package com.turbointernational.metadata.domain.part.salesnote;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.domain.SearchableEntity;
+import com.turbointernational.metadata.domain.criticaldimension.CriticalDimension;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.security.User;
@@ -13,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import javax.persistence.*;
 
@@ -211,7 +213,7 @@ public class SalesNotePart implements Serializable, SearchableEntity {
     }
 
     @Override
-    public String toSearchJson() {
+    public String toSearchJson(List<CriticalDimension> criticalDimensions) {
         return getSearchSerializer().exclude("*").serialize(this);
     }
 

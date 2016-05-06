@@ -23,6 +23,11 @@ public class SearchServiceMockImpl implements SearchService {
     private final static Logger log = LoggerFactory.getLogger(SearchServiceMockImpl.class);
 
     @Override
+    public void resetCriticalDimensionsCache() {
+        log.debug("Critical dimensions cache has been cleared.");
+    }
+
+    @Override
     public void indexPart(long id) {
         log.debug("Indexing: indexPart(long id)");
     }

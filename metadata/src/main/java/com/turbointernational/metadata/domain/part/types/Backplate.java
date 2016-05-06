@@ -489,12 +489,14 @@ public class Backplate extends Part {
         this.diagramNum = diagramNum;
     }
 
+    /*
     @Override
     protected JSONSerializer getSearchSerializer() {
         return super.getSearchSerializer()
                     .include("sealType.id")
                     .include("sealType.name");
     }
+    */
     
     @Override
     public void csvColumns(Map<String, String> columns) {

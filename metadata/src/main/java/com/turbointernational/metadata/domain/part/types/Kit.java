@@ -58,13 +58,15 @@ public class Kit extends Part {
             .include("components.part.manufacturer.name")
             .exclude("components.*");
     }
-    
+
+    /*
     @Override
     protected JSONSerializer getSearchSerializer() {
         return super.getSearchSerializer()
                     .include("kitType.id")
                     .include("kitType.name");
     }
+    */
     
     @Override
     public void csvColumns(Map<String, String> columns) {

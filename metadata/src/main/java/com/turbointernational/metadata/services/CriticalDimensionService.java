@@ -34,6 +34,9 @@ public class CriticalDimensionService {
     @Autowired
     private PartDao partDao;
 
+    @Autowired
+    private SearchService searchService;
+
     public List<CriticalDimension> findForThePart(long partId) {
         Part part = partDao.findOne(partId);
         Long partTypeId = part.getPartType().getId();
@@ -49,28 +52,38 @@ public class CriticalDimensionService {
     }
 
     public CriticalDimensionEnum addCritDimEnum(CriticalDimensionEnum cde) {
-        return criticalDimensionDao.addCritDimEnum(cde);
+        CriticalDimensionEnum retVal = criticalDimensionDao.addCritDimEnum(cde);
+        searchService.resetCriticalDimensionsCache();
+        return retVal;
     }
 
     public CriticalDimensionEnumVal addCritDimEnumVal(CriticalDimensionEnumVal cdev) {
-        return criticalDimensionDao.addCritDimEnumVal(cdev);
+        CriticalDimensionEnumVal retVal = criticalDimensionDao.addCritDimEnumVal(cdev);
+        searchService.resetCriticalDimensionsCache();
+        return retVal;
     }
 
     public CriticalDimensionEnum updateCritDimEnum(CriticalDimensionEnum cde) {
         CriticalDimensionEnum original = criticalDimensionDao.getCriticalDimensionEnumById(cde.getId());
         original.setName(cde.getName());
-        return criticalDimensionDao.updateCritDimEnum(original);
+        CriticalDimensionEnum retVal = criticalDimensionDao.updateCritDimEnum(original);
+        searchService.resetCriticalDimensionsCache();
+        return retVal;
     }
 
     public CriticalDimensionEnumVal updateCritDimEnumVal(CriticalDimensionEnumVal cdev) {
-        return criticalDimensionDao.updateCritDimEnumVal(cdev);
+        CriticalDimensionEnumVal retVal = criticalDimensionDao.updateCritDimEnumVal(cdev);
+        searchService.resetCriticalDimensionsCache();
+        return retVal;
     }
 
     public void removeCritDimEnum(Integer cdeId) {
         criticalDimensionDao.removeCritDimEnum(cdeId);
+        searchService.resetCriticalDimensionsCache();
     }
 
     public void removeCritDimEnumVal(Integer cdevId) {
+        searchService.resetCriticalDimensionsCache();
         criticalDimensionDao.removeCritDimEnumVal(cdevId);
     }
 

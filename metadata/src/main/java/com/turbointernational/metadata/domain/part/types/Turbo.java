@@ -79,7 +79,8 @@ public class Turbo extends Part {
             .include("turboModel.turboType.manufacturer.id")
             .include("turboModel.turboType.manufacturer.name");
     }
-    
+
+    /*
     @Override
     protected JSONSerializer getSearchSerializer() {
         return super.getSearchSerializer()
@@ -90,6 +91,7 @@ public class Turbo extends Part {
                     .include("turboModel.turboType.id")
                     .include("turboModel.turboType.name");
     }
+    */
     
     @Override
     public void csvColumns(Map<String, String> columns) {

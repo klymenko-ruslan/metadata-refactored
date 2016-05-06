@@ -1,5 +1,10 @@
 package com.turbointernational.metadata.domain;
 
+import com.turbointernational.metadata.domain.criticaldimension.CriticalDimension;
+import com.turbointernational.metadata.services.SearchServiceEsImpl;
+
+import java.util.List;
+
 /**
  * Created by dmytro.trunykov@zorallabs.com on 12/14/15.
  */
@@ -14,8 +19,15 @@ public interface SearchableEntity {
     //@PostPersist
     void updateSearchIndex() throws Exception;
 
-    String toSearchJson();
+    String toSearchJson(List<CriticalDimension> criticalDimensions);
 
+    /**
+     * Get ID for a document in an ElasticSearch index.
+     *
+     * @return
+     * @see SearchServiceEsImpl#indexDoc(SearchableEntity, String)
+     * @see SearchServiceEsImpl#indexAllDocs(AbstractDao, String)
+     */
     String getSearchId();
 
 }

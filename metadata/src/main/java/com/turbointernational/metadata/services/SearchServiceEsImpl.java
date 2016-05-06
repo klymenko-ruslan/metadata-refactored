@@ -3,11 +3,16 @@ package com.turbointernational.metadata.services;
 import com.turbointernational.metadata.domain.AbstractDao;
 import com.turbointernational.metadata.domain.SearchableEntity;
 import com.turbointernational.metadata.domain.car.*;
+import com.turbointernational.metadata.domain.criticaldimension.CriticalDimension;
+import com.turbointernational.metadata.domain.criticaldimension.CriticalDimensionDao;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.part.PartDao;
 import com.turbointernational.metadata.domain.part.salesnote.SalesNotePart;
 import com.turbointernational.metadata.domain.part.salesnote.SalesNotePartDao;
 import com.turbointernational.metadata.domain.part.salesnote.SalesNoteState;
+import flexjson.TypeContext;
+import flexjson.transformer.AbstractTransformer;
+import net.sf.ehcache.config.Searchable;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
@@ -38,8 +43,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.PostConstruct;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 
@@ -54,6 +58,10 @@ public class SearchServiceEsImpl implements SearchService {
 
     private final static Logger log = LoggerFactory.getLogger(SearchService.class);
 
+    @Autowired
+    private CriticalDimensionDao criticalDimensionDao;
+
+    private Map<Long, List<CriticalDimension>> criticalDimensionsCache = null;
 
     @Value("${elasticsearch.index}")
     protected String elasticSearchIndex = "metadata";
@@ -165,6 +173,69 @@ public class SearchServiceEsImpl implements SearchService {
      * @return transformed string
      */
     private final static Function<String, String> str2shotfield = s -> REGEX_TOSHORTFIELD.matcher(s).replaceAll("").toLowerCase();
+
+    private class JsonIdxNameTransformer extends AbstractTransformer {
+
+        private String fieldName;
+
+        private JsonIdxNameTransformer(String fieldName) {
+            this.fieldName = fieldName;
+        }
+
+        @Override
+        public void transform(Object object) {
+            boolean setContext = false;
+            TypeContext typeContext = getContext().peekTypeContext();
+            //Write comma before starting to write field name if this
+            //isn't first property that is being transformed
+            if (!typeContext.isFirst()) {
+                getContext().writeComma();
+            }
+
+            // typeContext.setFirst(false);
+
+            getContext().writeName(fieldName);
+            getContext().writeQuoted(object.toString());
+
+            if (setContext) {
+                getContext().writeCloseObject();
+            }
+        }
+
+        @Override
+        public Boolean isInline() {
+            return Boolean.TRUE;
+        }
+
+    }
+
+    private synchronized List<CriticalDimension> getCriticalDimensionForPartType(Long partTypeId) {
+        if (criticalDimensionsCache == null) {
+            Map<Long, List<CriticalDimension>> cache = new HashMap<>(); // part type ID => List<CriticalDimension>
+            // Load current values to the cache.
+            for(CriticalDimension cd : criticalDimensionDao.findAll()) {
+                // Initialize {@link CriticalDimension#jsonIdxNameTransformer}.
+                if (!cd.getJsonName().equals(cd.getIdxName())) {
+                    cd.setJsonIdxNameTransformer(new JsonIdxNameTransformer(cd.getIdxName()));
+                }
+                // Put to the cache.
+                Long ptid = cd.getPartType().getId();
+                List<CriticalDimension> cdlst = cache.get(ptid);
+                if (cdlst == null) {
+                    cdlst = new ArrayList<>(10);
+                    cache.put(ptid, cdlst);
+                }
+                cdlst.add(cd);
+            }
+            criticalDimensionsCache = cache;
+        }
+        return criticalDimensionsCache.get(partTypeId);
+    }
+
+    @Override
+    public synchronized void resetCriticalDimensionsCache() {
+        this.criticalDimensionsCache = null;
+    }
 
     /**
      * Convert string to SortOrder.
@@ -619,9 +690,20 @@ public class SearchServiceEsImpl implements SearchService {
         elasticSearch.delete(delete).actionGet(timeout);
     }
 
+    private List<CriticalDimension> getCriticalDimensions(SearchableEntity doc) {
+        List<CriticalDimension> retVal = null;
+        if (Part.class.isAssignableFrom(doc.getClass())) {
+            Part p = (Part) doc;
+            Long partTypeId = p.getPartType().getId();
+            retVal = getCriticalDimensionForPartType(partTypeId);
+        }
+        return retVal;
+    }
+
     private void indexDoc(SearchableEntity doc, String elasticSearchType) {
         String searchId = doc.getSearchId();
-        String json = doc.toSearchJson();
+        List<CriticalDimension> criticalDimensions = getCriticalDimensions(doc);
+        String json = doc.toSearchJson(criticalDimensions);
         IndexRequest index = new IndexRequest(elasticSearchIndex, elasticSearchType, searchId);
         index.source(json);
         elasticSearch.index(index).actionGet(timeout);
@@ -635,18 +717,19 @@ public class SearchServiceEsImpl implements SearchService {
             int result;
             do {
                 BulkRequest bulk = new BulkRequest();
-                List<?> applications = dao.findAll(page * pageSize, pageSize);
-                for (Object o : applications) {
+                List<?> docs = dao.findAll(page * pageSize, pageSize);
+                for (Object o : docs) {
                     SearchableEntity doc = (SearchableEntity) o;
                     String searchId = doc.getSearchId();
                     IndexRequest index = new IndexRequest(elasticSearchIndex, elasticSearchType, searchId);
-                    String asJson = doc.toSearchJson();
+                    List<CriticalDimension> criticalDimensions = getCriticalDimensions(doc);
+                    String asJson = doc.toSearchJson(criticalDimensions);
                     log.debug("elasticSearchIndex: {}, elasticSearchType: {}, searchId: {}, asJson: {}",
                             elasticSearchIndex, elasticSearchType, searchId, asJson);
                     index.source(asJson);
                     bulk.add(index);
                 }
-                result = applications.size();
+                result = docs.size();
                 log.info("Indexed '{}' {}-{}: {}", elasticSearchType, page * pageSize,
                         (page * pageSize) + pageSize, result);
                 page++;

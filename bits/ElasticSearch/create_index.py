@@ -4,7 +4,16 @@
 """ Utility. """
 
 import argparse
-from elasticsearch import Elasticsearch
+import sys
+
+try:
+    # sudo pip3 install elasticsearch
+    from elasticsearch import Elasticsearch
+    # sudo apt-get install python3-mysql.connector
+    import mysql.connector
+except ImportError as e:
+    print("Required python module not found: {}".format(e), file=sys.stderr)
+    sys.exit(1)
 
 INDEX_NAME = "metadata"
 
@@ -14,11 +23,10 @@ def idx_carmodelengineyear():
     idx = None
 
 
-def build_index_body():
+def build_index_definition():
     """ Build an index definition. """
     body = {
         "mappings": {
-            # ================================================================
             "part": {
                 "properties": {
                     "id": {
@@ -45,6 +53,31 @@ def build_index_body():
                                 "store": "yes"
                             }
                         }
+                    },
+                    "description": {
+                        "type": "multi_field",
+                        "fields": {
+                            "full": {
+                                "type": "string",
+                                "tokenizer": "lowercase",
+                                "analyzer": "keyword",
+                                "store": "yes"
+                            },
+                            "short": {
+                                "type": "string",
+                                "analyzer": "normalized_short",
+                                "store": "yes"
+                            },
+                            "lower_case_sort": {
+                                "type": "string",
+                                "analyzer": "case_insensitive_sort",
+                                "store": "yes"
+                            }
+                        }
+                    },
+                    "inactive": {
+                        "type": "boolean",
+                        "store": "yes"
                     },
                     "manufacturerPartNumber": {
                         "type": "multi_field",
@@ -138,191 +171,9 @@ def build_index_body():
                                 }
                             }
                         }
-                    },
-                    "coolType": {
-                        "properties": {
-                            "id": {
-                                "type": "long",
-                                "store": "yes",
-                                "analyzer": "keyword"
-                            },
-                            "name": {
-                                "type": "multi_field",
-                                "fields": {
-                                    "full": {
-                                        "type": "string",
-                                        "tokenizer": "lowercase",
-                                        "analyzer": "keyword",
-                                        "store": "yes"
-                                    },
-                                    "short": {
-                                        "type": "string",
-                                        "analyzer": "normalized_short",
-                                        "store": "yes"
-                                    },
-                                    "lower_case_sort": {
-                                        "type": "string",
-                                        "analyzer": "case_insensitive_sort",
-                                        "store": "yes"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "gasketType": {
-                        "properties": {
-                            "id": {
-                                "type": "long",
-                                "store": "yes",
-                                "analyzer": "keyword"
-                            },
-                            "name": {
-                                "type": "multi_field",
-                                "fields": {
-                                    "full": {
-                                        "type": "string",
-                                        "tokenizer": "lowercase",
-                                        "analyzer": "keyword",
-                                        "store": "yes"
-                                    },
-                                    "short": {
-                                        "type": "string",
-                                        "analyzer": "normalized_short",
-                                        "store": "yes"
-                                    },
-                                    "lower_case_sort": {
-                                        "type": "string",
-                                        "analyzer": "case_insensitive_sort",
-                                        "store": "yes"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "kitType": {
-                        "properties": {
-                            "id": {
-                                "type": "long",
-                                "store": "yes",
-                                "analyzer": "keyword"
-                            },
-                            "name": {
-                                "type": "multi_field",
-                                "fields": {
-                                    "full": {
-                                        "type": "string",
-                                        "tokenizer": "lowercase",
-                                        "analyzer": "keyword",
-                                        "store": "yes"
-                                    },
-                                    "short": {
-                                        "type": "string",
-                                        "analyzer": "normalized_short",
-                                        "store": "yes"
-                                    },
-                                    "lower_case_sort": {
-                                        "type": "string",
-                                        "analyzer": "case_insensitive_sort",
-                                        "store": "yes"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "sealType": {
-                        "properties": {
-                            "id": {
-                                "type": "long",
-                                "store": "yes",
-                                "analyzer": "keyword"
-                            },
-                            "name": {
-                                "type": "multi_field",
-                                "fields": {
-                                    "full": {
-                                        "type": "string",
-                                        "tokenizer": "lowercase",
-                                        "analyzer": "keyword",
-                                        "store": "yes"
-                                    },
-                                    "short": {
-                                        "type": "string",
-                                        "analyzer": "normalized_short",
-                                        "store": "yes"
-                                    },
-                                    "lower_case_sort": {
-                                        "type": "string",
-                                        "analyzer": "case_insensitive_sort",
-                                        "store": "yes"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "turboModel": {
-                        "properties": {
-                            "id": {
-                                "type": "long",
-                                "store": "yes",
-                                "analyzer": "keyword"
-                            },
-                            "name": {
-                                "type": "multi_field",
-                                "fields": {
-                                    "full": {
-                                        "type": "string",
-                                        "tokenizer": "lowercase",
-                                        "analyzer": "keyword",
-                                        "store": "yes"
-                                    },
-                                    "short": {
-                                        "type": "string",
-                                        "analyzer": "normalized_short",
-                                        "store": "yes"
-                                    },
-                                    "lower_case_sort": {
-                                        "type": "string",
-                                        "analyzer": "case_insensitive_sort",
-                                        "store": "yes"
-                                    }
-                                }
-                            },
-                            "turboType": {
-                                "properties": {
-                                    "id": {
-                                        "type": "long",
-                                        "store": "yes",
-                                        "analyzer": "keyword"
-                                    },
-                                    "name": {
-                                        "type": "multi_field",
-                                        "fields": {
-                                            "full": {
-                                                "type": "string",
-                                                "tokenizer": "lowercase",
-                                                "analyzer": "keyword",
-                                                "store": "yes"
-                                            },
-                                            "short": {
-                                                "type": "string",
-                                                "analyzer": "normalized_short",
-                                                "store": "yes"
-                                            },
-                                            "lower_case_sort": {
-                                                "type": "string",
-                                                "analyzer":
-                                                    "case_insensitive_sort",
-                                                "store": "yes"
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
                     }
                 }
             },
-            # ================================================================
             "carmodelengineyear": {
                 "properties": {
                     "id": {
@@ -764,19 +615,61 @@ def build_index_body():
 argparser = argparse.ArgumentParser(description="Utility to (re)create index "
                                     "for the 'metadata' webapp in "
                                     "an instance of ElasticSearch service.")
-argparser.add_argument("-H", "--host", required=False, default="localhost",
+argparser.add_argument("--es-host", required=False, default="localhost",
                        help="Host where ElasticSearch service runs.")
-argparser.add_argument("-p", "--port", required=False, default=9200,
+argparser.add_argument("--es-port", required=False, default=9200,
                        help="Port on the host where ElasticSearch service "
                        "runs.")
+argparser.add_argument("--db-name", required=False, default="metadata",
+                       help="Database name.")
+argparser.add_argument("--db-host", required=False, default="localhost",
+                       help="Host where MySql server runs.")
+argparser.add_argument("--db-port", required=False, default=3306,
+                       help="Port on the host where MySql server "
+                       "runs.")
+argparser.add_argument("--db-user", required=False, default="metaserver",
+                       help="Username to connect to the database.")
+argparser.add_argument("--db-password", required=False, default="metaserver",
+                       help="Password to connect to the database.")
 args = argparser.parse_args()
 
-es = Elasticsearch([{"host": args.host, "port": args.port}])
+es = Elasticsearch([{"host": args.es_host, "port": args.es_port}])
 
+index_definition = build_index_definition()
+
+# Add to the index mapping critical dimensions defined in a database.
+cnx = mysql.connector.connect(user=args.db_user, password=args.db_password,
+                              host=args.db_host, database=args.db_name)
+try:
+    cursor = cnx.cursor()
+    try:
+        cursor.execute("select idx_name, data_type "
+                       "from crit_dim "
+                       "order by part_type_id, seq_num")
+        for (idx_name, data_type) in cursor:
+            if data_type == "DECIMAL":
+                idx_type = "double"
+            elif (data_type == "INTEGER" or data_type == "ENUMERATION"):
+                idx_type = "long"
+            elif data_type == "TEXT":
+                idx_type = "string"
+            else:
+                print("Unknown data type: {}".format(data_type),
+                      file=sys.stderr)
+            index_definition["mappings"]["part"]["properties"][idx_name] = {
+                "type": idx_type,
+                "store": "yes"
+            }
+    finally:
+        cursor.close()
+finally:
+    cnx.close()
+
+# Delete existing index (if any) and create a new one.
 if es.indices.exists(INDEX_NAME):
     print("Found index '{0:s}'. Deleting...".format(INDEX_NAME))
     es.indices.delete(INDEX_NAME)
 
-index_body = build_index_body()
 print("Creating a new index '{0:s}'.".format(INDEX_NAME))
-es.indices.create(index=INDEX_NAME, body=build_index_body())
+
+es.indices.create(index=INDEX_NAME, body=index_definition)

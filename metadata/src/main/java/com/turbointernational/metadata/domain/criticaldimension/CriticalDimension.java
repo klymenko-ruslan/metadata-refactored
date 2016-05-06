@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.domain.type.PartType;
 import com.turbointernational.metadata.web.View;
+import flexjson.transformer.Transformer;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -71,9 +72,24 @@ public class CriticalDimension implements Serializable {
     @JsonView({View.Summary.class})
     private String name;
 
+    /**
+     * Name of a property in serialized to JSON part''s object. It must be the exact name of the property
+     * in JPA entity. So we can use reflection to get value of the critical dimension in a part instance at runtime.
+     */
     @Column(name = "json_name", nullable = false)
     @JsonView({View.Summary.class})
     private String jsonName;
+
+    /**
+     * Name of a property in the ElasticSearch mapping.
+     *
+     * In theory parts of different types can have critical dimensions with the same name.
+     * But properties in the index definition for ElasticSearch must be unique.
+     * So we introduce this member as compliment to {@link #jsonName}.
+     */
+    @Column(name = "idx_name", nullable = false, unique = true)
+    @JsonView({View.Summary.class})
+    private String idxName;
 
     @Column(name = "null_allowed", nullable = false)
     @JsonView({View.Summary.class})
@@ -108,6 +124,18 @@ public class CriticalDimension implements Serializable {
     @JsonView({View.Summary.class})
     private Byte scale;
     //</editor-fold>
+
+    /**
+     * Transformer for properties name during serialization to JSON for ElasticSearch.
+     *
+     * Because name of a property in an Part instance that holds critical dimension value
+     * can have different name in an ElasticSearch index we use this transformer to
+     * convert {@link #jsonName} => {@link #idxName}.
+     *
+     * In case when {@link #jsonName} is equal to {@link #idxName} this property is null.
+     */
+    @Transient
+    private Transformer jsonIdxNameTransformer;
 
     //<editor-fold defaultstate="collapsed" desc="Getters and Setters">
     public Long getId() {
@@ -182,6 +210,14 @@ public class CriticalDimension implements Serializable {
         this.jsonName = jsonName;
     }
 
+    public String getIdxName() {
+        return idxName;
+    }
+
+    public void setIdxName(String idxName) {
+        this.idxName = idxName;
+    }
+
     public boolean isNullAllowed() {
         return nullAllowed;
     }
@@ -245,6 +281,19 @@ public class CriticalDimension implements Serializable {
     public void setRegex(String regex) {
         this.regex = regex;
     }
+
+    public void setEnumeration(CriticalDimensionEnum enumeration) {
+        this.enumeration = enumeration;
+    }
+
+    public Transformer getJsonIdxNameTransformer() {
+        return jsonIdxNameTransformer;
+    }
+
+    public void setJsonIdxNameTransformer(Transformer jsonIdxNameTransformer) {
+        this.jsonIdxNameTransformer = jsonIdxNameTransformer;
+    }
+
 //</editor-fold>
 
 }
