@@ -10,8 +10,13 @@ import com.turbointernational.metadata.domain.part.PartDao;
 import com.turbointernational.metadata.domain.part.salesnote.SalesNotePart;
 import com.turbointernational.metadata.domain.part.salesnote.SalesNotePartDao;
 import com.turbointernational.metadata.domain.part.salesnote.SalesNoteState;
+import flexjson.BasicType;
+import flexjson.JSONContext;
+import flexjson.TransformerUtil;
 import flexjson.TypeContext;
 import flexjson.transformer.AbstractTransformer;
+import flexjson.transformer.Transformer;
+import flexjson.transformer.TypeTransformerMap;
 import net.sf.ehcache.config.Searchable;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.bulk.BulkRequest;
@@ -174,32 +179,26 @@ public class SearchServiceEsImpl implements SearchService {
      */
     private final static Function<String, String> str2shotfield = s -> REGEX_TOSHORTFIELD.matcher(s).replaceAll("").toLowerCase();
 
-    private class JsonIdxNameTransformer extends AbstractTransformer {
+    static class JsonIdxNameTransformer extends AbstractTransformer {
 
         private String fieldName;
 
-        private JsonIdxNameTransformer(String fieldName) {
+        JsonIdxNameTransformer(String fieldName) {
             this.fieldName = fieldName;
         }
 
         @Override
         public void transform(Object object) {
-            boolean setContext = false;
-            TypeContext typeContext = getContext().peekTypeContext();
-            //Write comma before starting to write field name if this
-            //isn't first property that is being transformed
-            if (!typeContext.isFirst()) {
-                getContext().writeComma();
+            JSONContext jsonContext = getContext();
+            TypeContext typeContext = jsonContext.peekTypeContext();
+            if (typeContext.isFirst()) {
+                typeContext.increment();
+            } else {
+                jsonContext.writeComma();
             }
-
-            // typeContext.setFirst(false);
-
-            getContext().writeName(fieldName);
-            getContext().writeQuoted(object.toString());
-
-            if (setContext) {
-                getContext().writeCloseObject();
-            }
+            jsonContext.writeName(fieldName);
+            Transformer defTransformer = TransformerUtil.getDefaultTypeTransformers().getTransformer(object);
+            defTransformer.transform(object);
         }
 
         @Override
