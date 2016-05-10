@@ -6,7 +6,6 @@ import com.turbointernational.metadata.domain.criticaldimension.CriticalDimensio
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.type.SealType;
 import com.turbointernational.metadata.web.View;
-import flexjson.JSONSerializer;
 import java.util.Map;
 import javax.persistence.*;
 
@@ -119,12 +118,12 @@ public class Backplate extends Part {
     private Double diaDTol;
 
     @JsonView(View.Summary.class)
-    @Column(name = "dia_e")
-    private Double diaE;
+    @Column(name = "cwc_dia_e")
+    private Double cwcDiaE;
 
     @JsonView(View.Summary.class)
-    @Column(name = "dia_e_tol")
-    private Double diaETol;
+    @Column(name = "cwc_dia_e_tol")
+    private Double cwcDiaETol;
 
     @JsonView(View.Summary.class)
     @Column(name = "bore_dia")
@@ -361,20 +360,20 @@ public class Backplate extends Part {
         this.diaDTol = diaDTol;
     }
 
-    public Double getDiaE() {
-        return diaE;
+    public Double getCwcDiaE() {
+        return cwcDiaE;
     }
 
-    public void setDiaE(Double diaE) {
-        this.diaE = diaE;
+    public void setCwcDiaE(Double cwcDiaE) {
+        this.cwcDiaE = cwcDiaE;
     }
 
-    public Double getDiaETol() {
-        return diaETol;
+    public Double getCwcDiaETol() {
+        return cwcDiaETol;
     }
 
-    public void setDiaETol(Double diaETol) {
-        this.diaETol = diaETol;
+    public void setCwcDiaETol(Double cwcDiaETol) {
+        this.cwcDiaETol = cwcDiaETol;
     }
 
     public Double getBoreDia() {

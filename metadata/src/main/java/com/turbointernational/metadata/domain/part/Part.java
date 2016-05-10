@@ -354,11 +354,14 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
             for(CriticalDimension cd : criticalDimensions) {
                 Transformer t = cd.getJsonIdxNameTransformer();
                 if (t != null) {
-                    jsonSerializer.transform(t, cd.getJsonName());
+                    String jsonName = cd.getJsonName();
+                    jsonSerializer.include(jsonName);
+                    jsonSerializer.transform(t, jsonName);
                 }
             }
         }
-        return jsonSerializer.exclude("*").serialize(this);
+        String json = jsonSerializer.exclude("*").serialize(this);
+        return json;
     }
 
     @Override
