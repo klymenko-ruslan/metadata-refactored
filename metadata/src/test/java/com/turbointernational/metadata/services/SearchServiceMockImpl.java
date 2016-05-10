@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -21,11 +22,6 @@ import java.util.Set;
 public class SearchServiceMockImpl implements SearchService {
 
     private final static Logger log = LoggerFactory.getLogger(SearchServiceMockImpl.class);
-
-    @Override
-    public void resetCriticalDimensionsCache() {
-        log.debug("Critical dimensions cache has been cleared.");
-    }
 
     @Override
     public void indexPart(long id) {
@@ -131,7 +127,11 @@ public class SearchServiceMockImpl implements SearchService {
     }
 
     @Override
-    public String filterParts(String partNumber, String partTypeName, String manufacturerName, String kitType, String gasketType, String sealType, String coolType, String turboType, String turboModel, String sortProperty, String sortOrder, Integer offset, Integer limit) {
+    public String filterParts(String partNumber, Long partTypeId, String partTypeName, String manufacturerName,
+                              String name, String description, Boolean inactive,
+                              Map<String, String[]> queriedCriticalDimensions,
+                              String sortProperty, String sortOrder,
+                              Integer offset, Integer limit) {
         return null;
     }
 

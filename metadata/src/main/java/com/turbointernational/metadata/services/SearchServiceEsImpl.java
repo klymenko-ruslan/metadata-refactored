@@ -32,6 +32,7 @@ import org.elasticsearch.common.transport.TransportAddress;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.RangeQueryBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.sort.SortBuilder;
@@ -46,11 +47,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
+import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.*;
 import java.util.function.Function;
 import java.util.regex.Pattern;
+
+import static com.turbointernational.metadata.services.SearchTermCmpOperatorEnum.EQ;
+import static com.turbointernational.metadata.services.SearchTermEnum.*;
 
 /**
  * Implementation of the {@link SearchService} based on the ElasticSearch.
@@ -65,8 +70,6 @@ public class SearchServiceEsImpl implements SearchService {
 
     @Autowired
     private CriticalDimensionDao criticalDimensionDao;
-
-    private Map<Long, List<CriticalDimension>> criticalDimensionsCache = null;
 
     @Value("${elasticsearch.index}")
     protected String elasticSearchIndex = "metadata";
@@ -125,6 +128,9 @@ public class SearchServiceEsImpl implements SearchService {
     @Autowired
     private SalesNotePartDao salesNotePartDao;
 
+    @Autowired
+    private CriticalDimensionService criticalDimensionService;
+
     private Client elasticSearch; // connection with ElasticSearch
 
     private final static Pattern REGEX_TOSHORTFIELD = Pattern.compile("\\W");
@@ -178,63 +184,6 @@ public class SearchServiceEsImpl implements SearchService {
      * @return transformed string
      */
     private final static Function<String, String> str2shotfield = s -> REGEX_TOSHORTFIELD.matcher(s).replaceAll("").toLowerCase();
-
-    static class JsonIdxNameTransformer extends AbstractTransformer {
-
-        private String fieldName;
-
-        JsonIdxNameTransformer(String fieldName) {
-            this.fieldName = fieldName;
-        }
-
-        @Override
-        public void transform(Object object) {
-            JSONContext jsonContext = getContext();
-            TypeContext typeContext = jsonContext.peekTypeContext();
-            if (typeContext.isFirst()) {
-                typeContext.increment();
-            } else {
-                jsonContext.writeComma();
-            }
-            jsonContext.writeName(fieldName);
-            Transformer defTransformer = TransformerUtil.getDefaultTypeTransformers().getTransformer(object);
-            defTransformer.transform(object);
-        }
-
-        @Override
-        public Boolean isInline() {
-            return Boolean.TRUE;
-        }
-
-    }
-
-    private synchronized List<CriticalDimension> getCriticalDimensionForPartType(Long partTypeId) {
-        if (criticalDimensionsCache == null) {
-            Map<Long, List<CriticalDimension>> cache = new HashMap<>(); // part type ID => List<CriticalDimension>
-            // Load current values to the cache.
-            for(CriticalDimension cd : criticalDimensionDao.findAll()) {
-                // Initialize {@link CriticalDimension#jsonIdxNameTransformer}.
-                if (!cd.getJsonName().equals(cd.getIdxName())) {
-                    cd.setJsonIdxNameTransformer(new JsonIdxNameTransformer(cd.getIdxName()));
-                }
-                // Put to the cache.
-                Long ptid = cd.getPartType().getId();
-                List<CriticalDimension> cdlst = cache.get(ptid);
-                if (cdlst == null) {
-                    cdlst = new ArrayList<>(10);
-                    cache.put(ptid, cdlst);
-                }
-                cdlst.add(cd);
-            }
-            criticalDimensionsCache = cache;
-        }
-        return criticalDimensionsCache.get(partTypeId);
-    }
-
-    @Override
-    public synchronized void resetCriticalDimensionsCache() {
-        this.criticalDimensionsCache = null;
-    }
 
     /**
      * Convert string to SortOrder.
@@ -355,47 +304,128 @@ public class SearchServiceEsImpl implements SearchService {
     }
 
     @Override
-    public String filterParts(String partNumber, String partTypeName, String manufacturerName, String kitType,
-                              String gasketType, String sealType, String coolType, String turboType,
-                              String turboModel, String sortProperty, String sortOrder,
+    public String filterParts(String partNumber, Long partTypeId, String partTypeName, String manufacturerName,
+                              String name, String description, Boolean inactive,
+                              Map<String, String[]> queriedCriticalDimensions,
+                              String sortProperty, String sortOrder,
                               Integer offset, Integer limit) {
+        List<AbstractSearchTerm> sterms = new ArrayList<>(64);
         partNumber = StringUtils.defaultIfEmpty(partNumber, null);
+        if (partNumber != null) {
+            String normalizedPartNumber = str2shotfield.apply(partNumber);
+            sterms.add(SearchTermFactory.newTextSearchTerm("manufacturerPartNumber.short", normalizedPartNumber));
+        }
+        if (partTypeName != null) {
+            sterms.add(SearchTermFactory.newTextSearchTerm("partType.name.full", partTypeName));
+        }
+        if (manufacturerName != null) {
+            sterms.add(SearchTermFactory.newTextSearchTerm("manufacturer.name.full", manufacturerName));
+        }
+        if (name != null) {
+            sterms.add(SearchTermFactory.newTextSearchTerm("name", name));
+        }
+        if (description != null) {
+            sterms.add(SearchTermFactory.newTextSearchTerm("description", description));
+        }
+        if (inactive != null) {
+            sterms.add(SearchTermFactory.newBooleanSearchTerm("inactive", inactive));
+        }
+        if (partTypeId != null) {
+            List<CriticalDimension> criticalDimensions = criticalDimensionService.getCriticalDimensionForPartType(partTypeId);
+            if (criticalDimensions != null && !criticalDimensions.isEmpty()) {
+                 for (CriticalDimension cd : criticalDimensions) {
+                     String val = null;
+                     String idxName = cd.getIdxName();
+                     String[] paramVals = queriedCriticalDimensions.get(idxName);
+                     if (paramVals != null && paramVals.length > 0) {
+                         val = paramVals[0];
+                     }
+                     if (val != null) {
+                         AbstractSearchTerm asterm = SearchTermFactory.newSearchTerm(cd, val);
+                         sterms.add(asterm);
+                     }
+                 }
+            }
+        }
         SearchRequestBuilder srb = elasticSearch.prepareSearch(elasticSearchIndex).setTypes(elasticSearchTypePart)
                 .setSearchType(SearchType.DFS_QUERY_THEN_FETCH);
         QueryBuilder query;
-        if (partNumber == null && partTypeName == null && manufacturerName == null && kitType == null
-                && gasketType == null && sealType == null && coolType == null && turboType == null
-                && turboModel == null) {
+        if (sterms.isEmpty()) {
             query = QueryBuilders.matchAllQuery();
         } else {
             BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
-            if (partNumber != null) {
-                String normalizedPartNumber = str2shotfield.apply(partNumber);
-                boolQuery.must(QueryBuilders.termQuery("manufacturerPartNumber.short", normalizedPartNumber));
-            }
-            if (partTypeName != null) {
-                boolQuery.must(QueryBuilders.termQuery("partType.name.full", partTypeName));
-            }
-            if (manufacturerName != null) {
-                boolQuery.must(QueryBuilders.termQuery("manufacturer.name.full", manufacturerName));
-            }
-            if (kitType != null) {
-                boolQuery.must(QueryBuilders.termQuery("kitType.name.full", kitType));
-            }
-            if (gasketType != null) {
-                boolQuery.must(QueryBuilders.termQuery("gasketType.name.full", gasketType));
-            }
-            if (sealType != null) {
-                boolQuery.must(QueryBuilders.termQuery("sealType.name.full", sealType));
-            }
-            if (coolType != null) {
-                boolQuery.must(QueryBuilders.termQuery("coolType.name.full", coolType));
-            }
-            if (turboType != null) {
-                boolQuery.must(QueryBuilders.termQuery("turboModel.turboType.name.full", turboModel));
-            }
-            if (turboModel != null) {
-                boolQuery.must(QueryBuilders.termQuery("turboModel.name.full", turboModel));
+            for (AbstractSearchTerm ast : sterms) {
+                SearchTermEnum astType = ast.getType();
+                switch (astType) {
+                    case BOOLEAN:
+                        BooleanSearchTerm bst = (BooleanSearchTerm) ast;
+                        boolQuery.must(QueryBuilders.termQuery(bst.getFieldName(), bst.getTerm()));
+                        break;
+                    case DECIMAL:
+                        DecimalSearchTerm dst = (DecimalSearchTerm) ast;
+                        QueryBuilder dqb;
+                        switch(dst.getCmpOperator()) {
+                            case EQ:
+                                dqb = QueryBuilders.termQuery(dst.getFieldName(), dst.getTerm());
+                                break;
+                            case LT:
+                                dqb = QueryBuilders.rangeQuery(dst.getFieldName()).lt(dst.getTerm());
+                                break;
+                            case LTE:
+                                dqb = QueryBuilders.rangeQuery(dst.getFieldName()).lte(dst.getTerm());
+                                break;
+                            case GTE:
+                                dqb = QueryBuilders.rangeQuery(dst.getFieldName()).gte(dst.getTerm());
+                                break;
+                            case GT:
+                                dqb = QueryBuilders.rangeQuery(dst.getFieldName()).gt(dst.getTerm());
+                                break;
+                            default:
+                                throw new IllegalArgumentException("Unsupported compare operator: " + dst.getCmpOperator());
+                        }
+                        boolQuery.must(dqb);
+                        break;
+                    case INTEGER:
+                        IntegerSearchTerm ist = (IntegerSearchTerm) ast;
+                        QueryBuilder iqb;
+                        switch(ist.getCmpOperator()) {
+                            case EQ:
+                                iqb = QueryBuilders.termQuery(ist.getFieldName(), ist.getTerm());
+                                break;
+                            case LT:
+                                iqb = QueryBuilders.rangeQuery(ist.getFieldName()).lt(ist.getTerm());
+                                break;
+                            case LTE:
+                                iqb = QueryBuilders.rangeQuery(ist.getFieldName()).lte(ist.getTerm());
+                                break;
+                            case GTE:
+                                iqb = QueryBuilders.rangeQuery(ist.getFieldName()).gte(ist.getTerm());
+                                break;
+                            case GT:
+                                iqb = QueryBuilders.rangeQuery(ist.getFieldName()).gt(ist.getTerm());
+                                break;
+                            default:
+                                throw new IllegalArgumentException("Unsupported compare operator: " + ist.getCmpOperator());
+                        }
+                        boolQuery.must(iqb);
+                        break;
+                    case TEXT:
+                        TextSearchTerm tst = (TextSearchTerm) ast;
+                        boolQuery.must(QueryBuilders.termQuery(tst.getFieldName(), tst.getTerm()));
+                        break;
+                    case DECIMAL_RANGE:
+                        DecimalRangeSearchTerm drst = (DecimalRangeSearchTerm) ast;
+                        RangeQueryBuilder drqb = QueryBuilders.rangeQuery(drst.getFieldName());
+                        drqb.gte(drst.getFrom()).lte(drst.getTo());
+                        boolQuery.must(drqb);
+                    case INTEGER_RANGE:
+                        IntegerRangeSearchTerm irst = (IntegerRangeSearchTerm) ast;
+                        RangeQueryBuilder irqb = QueryBuilders.rangeQuery(irst.getFieldName());
+                        irqb.gte(irst.getFrom()).lte(irst.getTo());
+                        boolQuery.must(irqb);
+                    default:
+                        throw new IllegalArgumentException("Unsupported search term type: " + astType);
+                }
             }
             query = boolQuery;
         }
@@ -405,9 +435,6 @@ public class SearchServiceEsImpl implements SearchService {
                     .order(convertSortOrder.apply(sortOrder))
                     .missing("_last");
             srb.addSort(sort);
-        }
-        for (AggregationBuilder agg : PART_AGGREGATIONS) {
-            srb.addAggregation(agg);
         }
         if (offset != null) {
             srb.setFrom(offset);
@@ -694,7 +721,7 @@ public class SearchServiceEsImpl implements SearchService {
         if (Part.class.isAssignableFrom(doc.getClass())) {
             Part p = (Part) doc;
             Long partTypeId = p.getPartType().getId();
-            retVal = getCriticalDimensionForPartType(partTypeId);
+            retVal = criticalDimensionService.getCriticalDimensionForPartType(partTypeId);
         }
         return retVal;
     }
@@ -741,4 +768,222 @@ public class SearchServiceEsImpl implements SearchService {
             log.info("Indexing of '{}' finished.", elasticSearchType);
         }
     }
+}
+
+enum SearchTermEnum {
+    BOOLEAN, DECIMAL, INTEGER, DECIMAL_RANGE, INTEGER_RANGE, TEXT
+}
+
+enum SearchTermCmpOperatorEnum {
+    LT, LTE, EQ, GTE, GT
+}
+
+abstract class AbstractSearchTerm {
+
+    private final SearchTermEnum type;
+
+    private final String fieldName;
+
+    AbstractSearchTerm(SearchTermEnum type, String fieldName) {
+        this.type = type;
+        this.fieldName = fieldName;
+    }
+
+    SearchTermEnum getType() {
+        return type;
+    }
+
+    String getFieldName() {
+        return fieldName;
+    }
+
+}
+
+class BooleanSearchTerm extends AbstractSearchTerm {
+
+    private final Boolean term;
+
+    BooleanSearchTerm(String fieldName, Boolean term) {
+        super(BOOLEAN, fieldName);
+        this.term = term;
+    }
+
+    Boolean getTerm() {
+        return term;
+    }
+
+}
+
+class AbstractNumberSearchTerm extends AbstractSearchTerm {
+
+    private final SearchTermCmpOperatorEnum cmpOperator;
+
+    public AbstractNumberSearchTerm(SearchTermEnum type, String fieldName, SearchTermCmpOperatorEnum cmpOperator) {
+        super(type, fieldName);
+        this.cmpOperator = cmpOperator;
+    }
+
+    SearchTermCmpOperatorEnum getCmpOperator() {
+        return cmpOperator;
+    }
+
+}
+
+class DecimalSearchTerm extends AbstractNumberSearchTerm {
+
+    private final Double term;
+
+    DecimalSearchTerm(String fieldName, SearchTermCmpOperatorEnum cmpOperator, Double term) {
+        super(DECIMAL, fieldName, cmpOperator);
+        this.term = term;
+    }
+
+    Double getTerm() {
+        return term;
+    }
+
+}
+
+class IntegerSearchTerm extends AbstractNumberSearchTerm {
+
+    private final Long term;
+
+    IntegerSearchTerm(String fieldName, SearchTermCmpOperatorEnum cmpOperator, Long term) {
+        super(INTEGER, fieldName, cmpOperator);
+        this.term = term;
+    }
+
+    Long getTerm() {
+        return this.term;
+    }
+
+}
+
+class DecimalRangeSearchTerm extends AbstractSearchTerm {
+
+    private final Double from;
+    private final Double to;
+
+    DecimalRangeSearchTerm(String fieldName, Double from, Double to) {
+        super(DECIMAL_RANGE, fieldName);
+        this.from = from;
+        this.to = to;
+    }
+
+    Double getFrom() {
+        return from;
+    }
+
+    Double getTo() {
+        return to;
+    }
+
+}
+
+class IntegerRangeSearchTerm extends AbstractSearchTerm {
+
+    private final Long from;
+    private final Long to;
+
+    IntegerRangeSearchTerm(String fieldName, Long from, Long to) {
+        super(INTEGER_RANGE, fieldName);
+        this.from = from;
+        this.to = to;
+    }
+
+    Long getFrom() {
+        return from;
+    }
+
+    Long getTo() {
+        return to;
+    }
+
+}
+
+class TextSearchTerm extends AbstractSearchTerm {
+
+    private final String term;
+
+    TextSearchTerm(String fieldName, String term) {
+        super(TEXT, fieldName);
+        this.term = term;
+    }
+
+    String getTerm() {
+        return term;
+    }
+
+}
+
+class SearchTermFactory {
+
+    static TextSearchTerm newTextSearchTerm(String fieldName, String term) {
+        return new TextSearchTerm(fieldName, term);
+    }
+
+    static BooleanSearchTerm newBooleanSearchTerm(String fieldName, Boolean term) {
+        return new BooleanSearchTerm(fieldName, term);
+    }
+
+    static AbstractSearchTerm newSearchTerm(CriticalDimension cd, String s) {
+        AbstractSearchTerm retVal;
+        ParseResult pr;
+        String idxName = cd.getIdxName();
+        CriticalDimension.DataTypeEnum dataType = cd.getDataType();
+        switch(dataType) {
+            case DECIMAL:
+                pr = parseSearchStr(s);
+                if (pr.isLimitedRange()) {
+                    retVal = new DecimalRangeSearchTerm(idxName, (Double) pr.val1, (Double) pr.val2);
+                } else {
+                    retVal = new DecimalSearchTerm(idxName, pr.operator1, (Double) pr.val1);
+                }
+                break;
+            case ENUMERATION:
+                Long n = Long.valueOf(s);
+                retVal = new IntegerSearchTerm(idxName, EQ, n);
+                break;
+            case INTEGER:
+                pr = parseSearchStr(s);
+                if (pr.isLimitedRange()) {
+                    retVal = new IntegerRangeSearchTerm(idxName, (Long) pr.val1, (Long) pr.val2);
+                } else {
+                    retVal = new IntegerSearchTerm(idxName, pr.operator1, (Long) pr.val1);
+                }
+                break;
+            case TEXT:
+                retVal = newTextSearchTerm(idxName, s);
+                break;
+            default:
+                throw new AssertionError("Unsupported data type: " + dataType);
+        }
+        return retVal;
+    }
+
+    static ParseResult parseSearchStr(String s) {
+
+        return null; // TODO
+    }
+
+    static class ParseResult {
+
+        final SearchTermCmpOperatorEnum operator1;
+        final Number val1;
+        final SearchTermCmpOperatorEnum operator2;
+        final Number val2;
+
+        ParseResult(SearchTermCmpOperatorEnum operator1, Number val1, SearchTermCmpOperatorEnum operator2, Number val2) {
+            this.operator1 = operator1;
+            this.val1 = val1;
+            this.operator2 = operator2;
+            this.val2 = val2;
+        }
+
+        boolean isLimitedRange() {
+            return val1 != null && val2 != null;
+        }
+
+    }
+
 }

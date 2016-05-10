@@ -69,10 +69,10 @@ public class JsonIdxNameTransformerTest {
         }});
         JSONSerializer jsonSerializer = new JSONSerializer();
         jsonSerializer.include("memA", "memB", "memC", "memD").exclude("*.class");
-        jsonSerializer.transform(new SearchServiceEsImpl.JsonIdxNameTransformer("memA_transformed"), "memA");
-        jsonSerializer.transform(new SearchServiceEsImpl.JsonIdxNameTransformer("memB_transformed"), "memB");
-        jsonSerializer.transform(new SearchServiceEsImpl.JsonIdxNameTransformer("memC_transformed"), "memC");
-        jsonSerializer.transform(new SearchServiceEsImpl.JsonIdxNameTransformer("memD_transformed"), "memD");
+        jsonSerializer.transform(new CriticalDimensionService.JsonIdxNameTransformer("memA_transformed"), "memA");
+        jsonSerializer.transform(new CriticalDimensionService.JsonIdxNameTransformer("memB_transformed"), "memB");
+        jsonSerializer.transform(new CriticalDimensionService.JsonIdxNameTransformer("memC_transformed"), "memC");
+        jsonSerializer.transform(new CriticalDimensionService.JsonIdxNameTransformer("memD_transformed"), "memD");
         String json = jsonSerializer.serialize(fooBean);
 //        System.out.println(json);
         Assert.assertEquals("Serialization to JSON failed.", "{\"memA_transformed\":\"hello\"," +

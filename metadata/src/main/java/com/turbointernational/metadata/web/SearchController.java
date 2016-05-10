@@ -13,7 +13,9 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.WebRequest;
 
+import java.util.Map;
 import java.util.Set;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -34,21 +36,22 @@ public class SearchController {
     @RequestMapping(value = "/parts", method = GET)
     @ResponseBody
     @Secured("ROLE_READ")
-    public ResponseEntity<String> filterParts(@RequestParam(required = false) String partNumber,
-                                              @RequestParam(required = false) String partTypeName,
-                                              @RequestParam(required = false) String manufacturerName,
-                                              @RequestParam(required = false) String kitType,
-                                              @RequestParam(required = false) String gasketType,
-                                              @RequestParam(required = false) String sealType,
-                                              @RequestParam(required = false) String coolType,
-                                              @RequestParam(required = false) String turboType,
-                                              @RequestParam(required = false) String turboModel,
-                                              @RequestParam(required = false) String sortProperty,
-                                              @RequestParam(required = false) String sortOrder,
+    public ResponseEntity<String> filterParts(@RequestParam(name = "partNumber", required = false) String partNumber,
+                                              @RequestParam(name = "partTypeId", required = false) Long partTypeId,
+                                              @RequestParam(name = "partTypeName", required = false) String partTypeName,
+                                              @RequestParam(name = "manufacturerName", required = false) String manufacturerName,
+                                              @RequestParam(name = "name", required = false) String name,
+                                              @RequestParam(name = "description", required = false) String description,
+                                              @RequestParam(name = "inactive", required = false) Boolean inactive,
+                                              WebRequest webRequest,
+                                              @RequestParam(name = "sortProperty", required = false) String sortProperty,
+                                              @RequestParam(name = "sortOrder", required = false) String sortOrder,
                                               @RequestParam(defaultValue = "0") Integer offset,
                                               @RequestParam(defaultValue = "10") Integer limit) throws Exception {
-        String json = searchService.filterParts(partNumber, partTypeName, manufacturerName, kitType, gasketType,
-                sealType, coolType, turboType, turboModel, sortProperty, sortOrder, offset, limit);
+        Map<String, String[]> queriedCriticalDimensions = webRequest.getParameterMap();
+        String json = searchService.filterParts(partNumber, partTypeId, partTypeName, manufacturerName, name, description, inactive,
+                queriedCriticalDimensions,
+                sortProperty, sortOrder, offset, limit);
         return new ResponseEntity<>(json, HttpStatus.OK);
     }
 

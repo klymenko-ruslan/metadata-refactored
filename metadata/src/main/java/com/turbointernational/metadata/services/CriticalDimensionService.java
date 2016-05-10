@@ -7,6 +7,11 @@ import com.turbointernational.metadata.domain.criticaldimension.CriticalDimensio
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.part.PartDao;
 import com.turbointernational.metadata.domain.type.PartType;
+import flexjson.JSONContext;
+import flexjson.TransformerUtil;
+import flexjson.TypeContext;
+import flexjson.transformer.AbstractTransformer;
+import flexjson.transformer.Transformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +22,10 @@ import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.turbointernational.metadata.domain.criticaldimension.CriticalDimension.DataTypeEnum.DECIMAL;
 import static com.turbointernational.metadata.domain.criticaldimension.CriticalDimension.DataTypeEnum.TEXT;
@@ -34,13 +42,69 @@ public class CriticalDimensionService {
     @Autowired
     private PartDao partDao;
 
-    @Autowired
-    private SearchService searchService;
+    private Map<Long, List<CriticalDimension>> criticalDimensionsCache = null;
+
+    static class JsonIdxNameTransformer extends AbstractTransformer {
+
+        private String fieldName;
+
+        JsonIdxNameTransformer(String fieldName) {
+            this.fieldName = fieldName;
+        }
+
+        @Override
+        public void transform(Object object) {
+            JSONContext jsonContext = getContext();
+            TypeContext typeContext = jsonContext.peekTypeContext();
+            if (typeContext.isFirst()) {
+                typeContext.increment();
+            } else {
+                jsonContext.writeComma();
+            }
+            jsonContext.writeName(fieldName);
+            Transformer defTransformer = TransformerUtil.getDefaultTypeTransformers().getTransformer(object);
+            defTransformer.transform(object);
+        }
+
+        @Override
+        public Boolean isInline() {
+            return Boolean.TRUE;
+        }
+
+    }
+
+    public synchronized List<CriticalDimension> getCriticalDimensionForPartType(Long partTypeId) {
+        if (criticalDimensionsCache == null) {
+            Map<Long, List<CriticalDimension>> cache = new HashMap<>(); // part type ID => List<CriticalDimension>
+            // Load current values to the cache.
+            for (CriticalDimension cd : criticalDimensionDao.findAll()) {
+                criticalDimensionDao.getEntityManager().detach(cd);
+                // Initialize {@link CriticalDimension#jsonIdxNameTransformer}.
+                if (!cd.getJsonName().equals(cd.getIdxName())) {
+                    cd.setJsonIdxNameTransformer(new JsonIdxNameTransformer(cd.getIdxName()));
+                }
+                // Put to the cache.
+                Long ptid = cd.getPartType().getId();
+                List<CriticalDimension> cdlst = cache.get(ptid);
+                if (cdlst == null) {
+                    cdlst = new ArrayList<>(10);
+                    cache.put(ptid, cdlst);
+                }
+                cdlst.add(cd);
+            }
+            criticalDimensionsCache = cache;
+        }
+        return criticalDimensionsCache.get(partTypeId);
+    }
+
+    private synchronized void resetCriticalDimensionsCache() {
+        this.criticalDimensionsCache = null;
+    }
 
     public List<CriticalDimension> findForThePart(long partId) {
         Part part = partDao.findOne(partId);
         Long partTypeId = part.getPartType().getId();
-        return criticalDimensionDao.findForPartType(partTypeId);
+        return getCriticalDimensionForPartType(partTypeId);
     }
 
     public List<CriticalDimensionEnum> getAllCritDimEnums() {
@@ -53,13 +117,13 @@ public class CriticalDimensionService {
 
     public CriticalDimensionEnum addCritDimEnum(CriticalDimensionEnum cde) {
         CriticalDimensionEnum retVal = criticalDimensionDao.addCritDimEnum(cde);
-        searchService.resetCriticalDimensionsCache();
+        resetCriticalDimensionsCache();
         return retVal;
     }
 
     public CriticalDimensionEnumVal addCritDimEnumVal(CriticalDimensionEnumVal cdev) {
         CriticalDimensionEnumVal retVal = criticalDimensionDao.addCritDimEnumVal(cdev);
-        searchService.resetCriticalDimensionsCache();
+        resetCriticalDimensionsCache();
         return retVal;
     }
 
@@ -67,23 +131,23 @@ public class CriticalDimensionService {
         CriticalDimensionEnum original = criticalDimensionDao.getCriticalDimensionEnumById(cde.getId());
         original.setName(cde.getName());
         CriticalDimensionEnum retVal = criticalDimensionDao.updateCritDimEnum(original);
-        searchService.resetCriticalDimensionsCache();
+        resetCriticalDimensionsCache();
         return retVal;
     }
 
     public CriticalDimensionEnumVal updateCritDimEnumVal(CriticalDimensionEnumVal cdev) {
         CriticalDimensionEnumVal retVal = criticalDimensionDao.updateCritDimEnumVal(cdev);
-        searchService.resetCriticalDimensionsCache();
+        resetCriticalDimensionsCache();
         return retVal;
     }
 
     public void removeCritDimEnum(Integer cdeId) {
         criticalDimensionDao.removeCritDimEnum(cdeId);
-        searchService.resetCriticalDimensionsCache();
+        resetCriticalDimensionsCache();
     }
 
     public void removeCritDimEnumVal(Integer cdevId) {
-        searchService.resetCriticalDimensionsCache();
+        resetCriticalDimensionsCache();
         criticalDimensionDao.removeCritDimEnumVal(cdevId);
     }
 
