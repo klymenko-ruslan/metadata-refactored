@@ -10,15 +10,9 @@ import com.turbointernational.metadata.domain.part.PartDao;
 import com.turbointernational.metadata.domain.part.salesnote.SalesNotePart;
 import com.turbointernational.metadata.domain.part.salesnote.SalesNotePartDao;
 import com.turbointernational.metadata.domain.part.salesnote.SalesNoteState;
-import flexjson.BasicType;
-import flexjson.JSONContext;
-import flexjson.TransformerUtil;
-import flexjson.TypeContext;
-import flexjson.transformer.AbstractTransformer;
-import flexjson.transformer.Transformer;
-import flexjson.transformer.TypeTransformerMap;
-import net.sf.ehcache.config.Searchable;
+import com.turbointernational.metadata.utils.RegExpUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.index.IndexRequest;
@@ -47,15 +41,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
-import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.*;
 import java.util.function.Function;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.turbointernational.metadata.services.SearchTermCmpOperatorEnum.EQ;
+import static com.turbointernational.metadata.services.SearchTermCmpOperatorEnum.*;
 import static com.turbointernational.metadata.services.SearchTermEnum.*;
+import static com.turbointernational.metadata.utils.RegExpUtils.PTRN_DOUBLE_LIMIT;
+import static com.turbointernational.metadata.utils.RegExpUtils.PTRN_INTEGER_LIMIT;
 
 /**
  * Implementation of the {@link SearchService} based on the ElasticSearch.
@@ -442,7 +438,7 @@ public class SearchServiceEsImpl implements SearchService {
         if (limit != null) {
             srb.setSize(limit);
         }
-        log.debug("Search request (parts) to search engine:\n{}", srb);
+        log.info("Search request (parts) to search engine:\n{}", srb);
         return srb.execute().actionGet(timeout).toString();
     }
 
@@ -775,7 +771,33 @@ enum SearchTermEnum {
 }
 
 enum SearchTermCmpOperatorEnum {
-    LT, LTE, EQ, GTE, GT
+
+    LT("<"), LTE("<="), EQ("="), GTE(">="), GT(">");
+
+    final String sign;
+
+    SearchTermCmpOperatorEnum(String sign) {
+        this.sign = sign;
+    }
+
+    static SearchTermCmpOperatorEnum fromSign(String s) throws IllegalArgumentException {
+        if (s == null) {
+            return null;
+        }
+        s = s.trim();
+        if (s.equals("<")) {
+            return LT;
+        } else if (s.equals("<=")) {
+            return LTE;
+        } else if (s.equals("=")) {
+            return EQ;
+        } else if (s.equals(">=")) {
+            return GTE;
+        } else if (s.equals(">")) {
+            return GT;
+        }
+        throw new IllegalArgumentException("Can't parse sing: " + s);
+    }
 }
 
 abstract class AbstractSearchTerm {
@@ -928,16 +950,16 @@ class SearchTermFactory {
 
     static AbstractSearchTerm newSearchTerm(CriticalDimension cd, String s) {
         AbstractSearchTerm retVal;
-        ParseResult pr;
+        Range pr;
         String idxName = cd.getIdxName();
         CriticalDimension.DataTypeEnum dataType = cd.getDataType();
         switch(dataType) {
             case DECIMAL:
                 pr = parseSearchStr(s);
-                if (pr.isLimitedRange()) {
-                    retVal = new DecimalRangeSearchTerm(idxName, (Double) pr.val1, (Double) pr.val2);
+                if (pr.isBoundLimit()) {
+                    retVal = new DecimalRangeSearchTerm(idxName, pr.limit1.val.doubleValue(), pr.limit2.val.doubleValue());
                 } else {
-                    retVal = new DecimalSearchTerm(idxName, pr.operator1, (Double) pr.val1);
+                    retVal = new DecimalSearchTerm(idxName, pr.limit1.operator, pr.limit1.val.doubleValue());
                 }
                 break;
             case ENUMERATION:
@@ -946,10 +968,10 @@ class SearchTermFactory {
                 break;
             case INTEGER:
                 pr = parseSearchStr(s);
-                if (pr.isLimitedRange()) {
-                    retVal = new IntegerRangeSearchTerm(idxName, (Long) pr.val1, (Long) pr.val2);
+                if (pr.isBoundLimit()) {
+                    retVal = new IntegerRangeSearchTerm(idxName, pr.limit1.val.longValue(), pr.limit2.val.longValue());
                 } else {
-                    retVal = new IntegerSearchTerm(idxName, pr.operator1, (Long) pr.val1);
+                    retVal = new IntegerSearchTerm(idxName, pr.limit1.operator, pr.limit1.val.longValue());
                 }
                 break;
             case TEXT:
@@ -961,27 +983,128 @@ class SearchTermFactory {
         return retVal;
     }
 
-    static ParseResult parseSearchStr(String s) {
-
-        return null; // TODO
+    static Limit parseLimit(String s) throws IllegalArgumentException {
+        if (s == null) {
+            return null;
+        }
+        Matcher matcher = PTRN_DOUBLE_LIMIT.matcher(s);
+        if (matcher.matches()) {
+            SearchTermCmpOperatorEnum operator = SearchTermCmpOperatorEnum.fromSign(matcher.group(2));
+            if (operator == null) {
+                operator = EQ;
+            }
+            Double val = RegExpUtils.parseDouble(matcher.group(3));
+            if (val == null) {
+                throw new IllegalArgumentException("Invalid limit: " + s);
+            }
+            return new Limit(operator, val);
+        } else {
+            throw new NumberFormatException(s);
+        }
     }
 
-    static class ParseResult {
+    static Range parseRange(String s) throws IllegalArgumentException {
+        if (s == null) {
+            return null;
+        }
+        int p0 = s.indexOf("..");
+        if (p0 < 1) {
+            throw new IllegalArgumentException("Invalid range: " + s);
+        }
+        if (s.length() - 2 == p0) {
+            throw new IllegalArgumentException("Invalid range: " + s);
+        }
+        String s0 = s.substring(0, p0);
+        String s1 = s.substring(p0 + 2);
+        Double r0 = RegExpUtils.parseDouble(s0);
+        Double r1 = RegExpUtils.parseDouble(s1);
+        Limit limit0 = new Limit(GTE, r0);
+        Limit limit1 = new Limit(LTE, r1);
+        return new Range(limit0, limit1);
+    }
 
-        final SearchTermCmpOperatorEnum operator1;
-        final Number val1;
-        final SearchTermCmpOperatorEnum operator2;
-        final Number val2;
+    static Range parseSearchStr(String s) throws IllegalArgumentException {
+        if (s == null) {
+            return null;
+        }
+        try {
+            Limit iLimit = parseLimit(s);
+            return new Range(iLimit, null);
+        } catch (IllegalArgumentException e) {
+            // ignore
+        }
+        try {
+            return parseRange(s);
+        } catch (IllegalArgumentException e) {
+            // ignore
+        }
+        throw new IllegalArgumentException("Parsing failed: " + s);
+    }
 
-        ParseResult(SearchTermCmpOperatorEnum operator1, Number val1, SearchTermCmpOperatorEnum operator2, Number val2) {
-            this.operator1 = operator1;
-            this.val1 = val1;
-            this.operator2 = operator2;
-            this.val2 = val2;
+    static class Limit {
+
+        final SearchTermCmpOperatorEnum operator;
+        final Number val;
+
+        Limit(SearchTermCmpOperatorEnum operator, Number val) {
+            this.operator = operator;
+            this.val = val;
         }
 
-        boolean isLimitedRange() {
-            return val1 != null && val2 != null;
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            Limit limit = (Limit) o;
+
+            if (operator != limit.operator) return false;
+            return val != null ? val.equals(limit.val) : limit.val == null;
+
+        }
+
+        @Override
+        public String toString() {
+            return "Limit{" +
+                    "operator=" + operator +
+                    ", val=" + val +
+                    '}';
+        }
+
+    }
+
+    static class Range {
+
+        final Limit limit1;
+        final Limit limit2;
+
+        public Range(Limit limit1, Limit limit2) {
+            this.limit1 = limit1;
+            this.limit2 = limit2;
+        }
+
+        boolean isBoundLimit() {
+            return limit1 != null && limit2 != null;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            Range range = (Range) o;
+
+            if (limit1 != null ? !limit1.equals(range.limit1) : range.limit1 != null) return false;
+            return limit2 != null ? limit2.equals(range.limit2) : range.limit2 == null;
+
+        }
+
+        @Override
+        public String toString() {
+            return "Range{" +
+                    "limit1=" + limit1 +
+                    ", limit2=" + limit2 +
+                    '}';
         }
 
     }

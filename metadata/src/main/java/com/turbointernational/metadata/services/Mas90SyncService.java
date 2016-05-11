@@ -36,7 +36,8 @@ import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
 import java.sql.Timestamp;
 import java.util.*;
-import java.util.regex.Pattern;
+
+import static com.turbointernational.metadata.utils.RegExpUtils.PTRN_MANUFACTURER_NUMBER;
 
 /**
  * Synchronization service between Mas90 and 'metadata' database.
@@ -301,11 +302,6 @@ public class Mas90SyncService {
 
         private final Mas90Sync record;
 
-        private final String MANUFACTURER_NUMBER_STR_REGEX_0 = "[0-9]-[a-z|A-Z]-[0-6][0-9][0-9][0-9]";
-        private final String MANUFACTURER_NUMBER_STR_REGEX_1 = "[0-9][0-9]-[a-z|A-Z]-[0-6][0-9][0-9][0-9]";
-
-        private final Pattern MANUFACTURER_NUMBER_REGEX = Pattern.compile(MANUFACTURER_NUMBER_STR_REGEX_0 +
-                "|" + MANUFACTURER_NUMBER_STR_REGEX_1);
 
         Mas90Synchronizer(User user, Mas90Sync record) {
             this.user = user;
@@ -681,7 +677,7 @@ public class Mas90SyncService {
                 while (addIter.hasNext()) {
                     Mas90Bom mb = addIter.next();
                     if (!idxBoms.containsKey(mb.childManufacturerCode)) {
-                        if (!MANUFACTURER_NUMBER_REGEX.matcher(mb.childManufacturerCode).matches()) {
+                        if (!PTRN_MANUFACTURER_NUMBER.matcher(mb.childManufacturerCode).matches()) {
                             log.debug("Skip this part to add as child BOM because of unsuitable " +
                                             "manufacturer number: {}",
                                     mb.childManufacturerCode);
