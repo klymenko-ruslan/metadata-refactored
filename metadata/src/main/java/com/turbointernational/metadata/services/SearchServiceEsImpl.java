@@ -358,7 +358,7 @@ public class SearchServiceEsImpl implements SearchService {
                         boolQuery.must(QueryBuilders.termQuery(bst.getFieldName(), bst.getTerm()));
                         break;
                     case DECIMAL:
-                        DecimalSearchTerm dst = (DecimalSearchTerm) ast;
+                        NumberSearchTerm dst = (NumberSearchTerm) ast;
                         QueryBuilder dqb;
                         switch(dst.getCmpOperator()) {
                             case EQ:
@@ -382,7 +382,7 @@ public class SearchServiceEsImpl implements SearchService {
                         boolQuery.must(dqb);
                         break;
                     case INTEGER:
-                        IntegerSearchTerm ist = (IntegerSearchTerm) ast;
+                        NumberSearchTerm ist = (NumberSearchTerm) ast;
                         QueryBuilder iqb;
                         switch(ist.getCmpOperator()) {
                             case EQ:
@@ -410,15 +410,17 @@ public class SearchServiceEsImpl implements SearchService {
                         boolQuery.must(QueryBuilders.termQuery(tst.getFieldName(), tst.getTerm()));
                         break;
                     case DECIMAL_RANGE:
-                        DecimalRangeSearchTerm drst = (DecimalRangeSearchTerm) ast;
+                        RangeSearchTerm drst = (RangeSearchTerm) ast;
                         RangeQueryBuilder drqb = QueryBuilders.rangeQuery(drst.getFieldName());
-                        drqb.gte(drst.getFrom()).lte(drst.getTo());
+                        drqb.gte(drst.getFrom().doubleValue()).lte(drst.getTo().doubleValue());
                         boolQuery.must(drqb);
+                        break;
                     case INTEGER_RANGE:
-                        IntegerRangeSearchTerm irst = (IntegerRangeSearchTerm) ast;
+                        RangeSearchTerm irst = (RangeSearchTerm) ast;
                         RangeQueryBuilder irqb = QueryBuilders.rangeQuery(irst.getFieldName());
-                        irqb.gte(irst.getFrom()).lte(irst.getTo());
+                        irqb.gte(irst.getFrom().longValue()).lte(irst.getTo().longValue());
                         boolQuery.must(irqb);
+                        break;
                     default:
                         throw new IllegalArgumentException("Unsupported search term type: " + astType);
                 }
@@ -851,73 +853,37 @@ class AbstractNumberSearchTerm extends AbstractSearchTerm {
 
 }
 
-class DecimalSearchTerm extends AbstractNumberSearchTerm {
+class NumberSearchTerm extends AbstractNumberSearchTerm {
 
-    private final Double term;
+    private final Number term;
 
-    DecimalSearchTerm(String fieldName, SearchTermCmpOperatorEnum cmpOperator, Double term) {
+    NumberSearchTerm(String fieldName, SearchTermCmpOperatorEnum cmpOperator, Number term) {
         super(DECIMAL, fieldName, cmpOperator);
         this.term = term;
     }
 
-    Double getTerm() {
+    Number getTerm() {
         return term;
     }
 
 }
 
-class IntegerSearchTerm extends AbstractNumberSearchTerm {
+class RangeSearchTerm extends AbstractSearchTerm {
 
-    private final Long term;
+    private final Number from;
+    private final Number to;
 
-    IntegerSearchTerm(String fieldName, SearchTermCmpOperatorEnum cmpOperator, Long term) {
-        super(INTEGER, fieldName, cmpOperator);
-        this.term = term;
-    }
-
-    Long getTerm() {
-        return this.term;
-    }
-
-}
-
-class DecimalRangeSearchTerm extends AbstractSearchTerm {
-
-    private final Double from;
-    private final Double to;
-
-    DecimalRangeSearchTerm(String fieldName, Double from, Double to) {
+    RangeSearchTerm(String fieldName, Number from, Number to) {
         super(DECIMAL_RANGE, fieldName);
         this.from = from;
         this.to = to;
     }
 
-    Double getFrom() {
+    Number getFrom() {
         return from;
     }
 
-    Double getTo() {
-        return to;
-    }
-
-}
-
-class IntegerRangeSearchTerm extends AbstractSearchTerm {
-
-    private final Long from;
-    private final Long to;
-
-    IntegerRangeSearchTerm(String fieldName, Long from, Long to) {
-        super(INTEGER_RANGE, fieldName);
-        this.from = from;
-        this.to = to;
-    }
-
-    Long getFrom() {
-        return from;
-    }
-
-    Long getTo() {
+    Number getTo() {
         return to;
     }
 
@@ -957,21 +923,21 @@ class SearchTermFactory {
             case DECIMAL:
                 pr = parseSearchStr(s);
                 if (pr.isBoundLimit()) {
-                    retVal = new DecimalRangeSearchTerm(idxName, pr.limit1.val.doubleValue(), pr.limit2.val.doubleValue());
+                    retVal = new RangeSearchTerm(idxName, pr.limit1.val, pr.limit2.val);
                 } else {
-                    retVal = new DecimalSearchTerm(idxName, pr.limit1.operator, pr.limit1.val.doubleValue());
+                    retVal = new NumberSearchTerm(idxName, pr.limit1.operator, pr.limit1.val);
                 }
                 break;
             case ENUMERATION:
                 Long n = Long.valueOf(s);
-                retVal = new IntegerSearchTerm(idxName, EQ, n);
+                retVal = new NumberSearchTerm(idxName, EQ, n);
                 break;
             case INTEGER:
                 pr = parseSearchStr(s);
                 if (pr.isBoundLimit()) {
-                    retVal = new IntegerRangeSearchTerm(idxName, pr.limit1.val.longValue(), pr.limit2.val.longValue());
+                    retVal = new RangeSearchTerm(idxName, pr.limit1.val, pr.limit2.val);
                 } else {
-                    retVal = new IntegerSearchTerm(idxName, pr.limit1.operator, pr.limit1.val.longValue());
+                    retVal = new NumberSearchTerm(idxName, pr.limit1.operator, pr.limit1.val);
                 }
                 break;
             case TEXT:

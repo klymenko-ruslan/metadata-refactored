@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.core.ValidationErrors;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
@@ -73,6 +74,7 @@ public class CriticalDimensionService {
 
     }
 
+    @Transactional
     public synchronized List<CriticalDimension> getCriticalDimensionForPartType(Long partTypeId) {
         if (criticalDimensionsCache == null) {
             Map<Long, List<CriticalDimension>> cache = new HashMap<>(); // part type ID => List<CriticalDimension>
