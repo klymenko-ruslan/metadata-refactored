@@ -42,7 +42,7 @@ public class CriticalDimensionController {
         return criticalDimensionService.findForThePart(partId);
     }
 
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_READ")
     @JsonView(View.Summary.class)
     @RequestMapping(value = "/enum/list", method = GET, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -50,7 +50,15 @@ public class CriticalDimensionController {
         return criticalDimensionService.getAllCritDimEnums();
     }
 
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_READ")
+    @JsonView(View.Detail.class)
+    @RequestMapping(value = "/enums/vals", method = GET, produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<CriticalDimensionEnum> getAllCritDimEnumVals() {
+        return criticalDimensionService.getAllCritDimEnums();
+    }
+
+    @Secured("ROLE_READ")
     @JsonView(View.Summary.class)
     @RequestMapping(value = "/enum/{enumId}/list", method = GET, produces = APPLICATION_JSON_VALUE)
     @ResponseBody

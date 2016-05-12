@@ -37,6 +37,9 @@ angular.module("ngMetaCrudApp", ["ngRoute", "ngTable", "ui.bootstrap",
         }],
         critDimsByPartTypes: ["restService", function(restService) {
           return restService.getCritDimsByPartTypes();
+        }],
+        critDimEnumVals: ["restService", function(restService) {
+          return restService.getAllCritDimEnumVals();
         }]
       }
     });

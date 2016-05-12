@@ -469,6 +469,10 @@ angular.module("ngMetaCrudApp")
         return Restangular.all("/criticaldimension/enum/list").getList();
       };
 
+      this.getAllCritDimEnumVals = function() {
+        return Restangular.all("/criticaldimension/enums/vals").getList();
+      };
+
       this.getCritDimEnumVals = function(id) {
         return Restangular.one("/criticaldimension/enum", id).getList("list");
       };
