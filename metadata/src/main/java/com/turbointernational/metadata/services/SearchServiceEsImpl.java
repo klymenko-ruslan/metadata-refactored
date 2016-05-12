@@ -300,7 +300,7 @@ public class SearchServiceEsImpl implements SearchService {
     }
 
     @Override
-    public String filterParts(String partNumber, Long partTypeId, String partTypeName, String manufacturerName,
+    public String filterParts(String partNumber, Long partTypeId, Long manufacturerId,
                               String name, String description, Boolean inactive,
                               Map<String, String[]> queriedCriticalDimensions,
                               String sortProperty, String sortOrder,
@@ -311,11 +311,11 @@ public class SearchServiceEsImpl implements SearchService {
             String normalizedPartNumber = str2shotfield.apply(partNumber);
             sterms.add(SearchTermFactory.newTextSearchTerm("manufacturerPartNumber.short", normalizedPartNumber));
         }
-        if (partTypeName != null) {
-            sterms.add(SearchTermFactory.newTextSearchTerm("partType.name.full", partTypeName));
+        if (partTypeId != null) {
+            sterms.add(SearchTermFactory.newIntegerSearchTerm("partType.id", EQ, partTypeId));
         }
-        if (manufacturerName != null) {
-            sterms.add(SearchTermFactory.newTextSearchTerm("manufacturer.name.full", manufacturerName));
+        if (manufacturerId != null) {
+            sterms.add(SearchTermFactory.newIntegerSearchTerm("manufacturer.id", EQ, manufacturerId));
         }
         if (name != null) {
             sterms.add(SearchTermFactory.newTextSearchTerm("name", name));
@@ -440,7 +440,7 @@ public class SearchServiceEsImpl implements SearchService {
         if (limit != null) {
             srb.setSize(limit);
         }
-        log.info("Search request (parts) to search engine:\n{}", srb);
+        log.debug("Search request (parts) to search engine:\n{}", srb);
         return srb.execute().actionGet(timeout).toString();
     }
 
@@ -857,8 +857,8 @@ class NumberSearchTerm extends AbstractNumberSearchTerm {
 
     private final Number term;
 
-    NumberSearchTerm(String fieldName, SearchTermCmpOperatorEnum cmpOperator, Number term) {
-        super(DECIMAL, fieldName, cmpOperator);
+    NumberSearchTerm(SearchTermEnum type, String fieldName, SearchTermCmpOperatorEnum cmpOperator, Number term) {
+        super(type, fieldName, cmpOperator);
         this.term = term;
     }
 
@@ -914,6 +914,10 @@ class SearchTermFactory {
         return new BooleanSearchTerm(fieldName, term);
     }
 
+    static NumberSearchTerm newIntegerSearchTerm(String fieldName, SearchTermCmpOperatorEnum cmpOperator, Long term) {
+        return new NumberSearchTerm(INTEGER, fieldName, cmpOperator, term);
+    }
+
     static AbstractSearchTerm newSearchTerm(CriticalDimension cd, String s) {
         AbstractSearchTerm retVal;
         Range pr;
@@ -925,19 +929,19 @@ class SearchTermFactory {
                 if (pr.isBoundLimit()) {
                     retVal = new RangeSearchTerm(idxName, pr.limit1.val, pr.limit2.val);
                 } else {
-                    retVal = new NumberSearchTerm(idxName, pr.limit1.operator, pr.limit1.val);
+                    retVal = new NumberSearchTerm(DECIMAL, idxName, pr.limit1.operator, pr.limit1.val);
                 }
                 break;
             case ENUMERATION:
                 Long n = Long.valueOf(s);
-                retVal = new NumberSearchTerm(idxName, EQ, n);
+                retVal = new NumberSearchTerm(INTEGER, idxName, EQ, n);
                 break;
             case INTEGER:
                 pr = parseSearchStr(s);
                 if (pr.isBoundLimit()) {
                     retVal = new RangeSearchTerm(idxName, pr.limit1.val, pr.limit2.val);
                 } else {
-                    retVal = new NumberSearchTerm(idxName, pr.limit1.operator, pr.limit1.val);
+                    retVal = new NumberSearchTerm(INTEGER, idxName, pr.limit1.operator, pr.limit1.val);
                 }
                 break;
             case TEXT:

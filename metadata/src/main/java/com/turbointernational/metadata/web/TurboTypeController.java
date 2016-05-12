@@ -1,7 +1,9 @@
-package com.turbointernational.metadata.domain.other;
+package com.turbointernational.metadata.web;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.domain.changelog.ChangelogDao;
+import com.turbointernational.metadata.domain.other.TurboType;
+import com.turbointernational.metadata.domain.other.TurboTypeDao;
 import com.turbointernational.metadata.web.View;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,28 +19,28 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Controller
-@RequestMapping("/metadata/other/turboModel")
-public class TurboModelController {
+@RequestMapping("/metadata/other/turboType")
+public class TurboTypeController {
     
     @Autowired
     ChangelogDao changelogDao;
     
     @Autowired
-    TurboModelDao turboModelDao;
+    TurboTypeDao turboTypeDao;
     
     @RequestMapping(method = RequestMethod.POST,
-                    consumes = MediaType.APPLICATION_JSON_VALUE,
-                    produces = MediaType.APPLICATION_JSON_VALUE)
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     @Secured("ROLE_TURBO_MODEL_CRUD")
     @Transactional
     @JsonView(View.Detail.class)
-    public TurboModel createJson(@RequestBody TurboModel turboModel) {
-        turboModelDao.persist(turboModel);
+    public TurboType createJson(@RequestBody TurboType type) {
+        turboTypeDao.persist(type);
         
-        changelogDao.log("Created turbo model", turboModel.toJson());
+        changelogDao.log("Created turbo type", type.toJson());
         
-        return turboModel;
+        return type;
     }
     
     @RequestMapping(method = RequestMethod.PUT,
@@ -48,30 +50,28 @@ public class TurboModelController {
     @Secured("ROLE_TURBO_MODEL_CRUD")
     @Transactional
     @JsonView(View.Detail.class)
-    public TurboModel updateJson(@RequestBody TurboModel turboModel) {
-        turboModelDao.merge(turboModel);
-        
-        changelogDao.log("Updated turbo model", turboModel.toJson());
-        
-        return turboModel;
+    public TurboType updateJson(@RequestBody TurboType turboType) {
+        turboTypeDao.merge(turboType);
+        changelogDao.log("Updated turbo type", turboType.toJson());
+        return turboType;
     }
     
-    @RequestMapping(value="/{turboModelId}", method = RequestMethod.DELETE,
+    @RequestMapping(value="/{turboTypeId}", method = RequestMethod.DELETE,
                     produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     @Secured("ROLE_TURBO_MODEL_CRUD")
     @Transactional
-    public void deleteJson(@PathVariable Long turboModelId) {
-        TurboModel turboModel = turboModelDao.findOne(turboModelId);
-        turboModelDao.remove(turboModel);
-        changelogDao.log("Removed turbo model", turboModel.toJson());
+    public void deleteJson(@PathVariable Long turboTypeId) {
+        TurboType turboType = turboTypeDao.findOne(turboTypeId);
+        changelogDao.log("Removed turbo type", turboType.toJson());
+        turboTypeDao.remove(turboType);
     }
     
-    @RequestMapping(method = RequestMethod.GET,
+    @RequestMapping(value = "/manufacturer/{manufacturerId}", method = RequestMethod.GET,
                     produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     @Secured("ROLE_READ")
-    public List<TurboModel> listByTurboTypeIdJson(@RequestParam Long turboTypeId) {
-        return turboModelDao.findTurboModelsByTurboTypeId(turboTypeId);
+    public List<TurboType> listJson(@PathVariable("manufacturerId") Long manufacturerId) {
+        return turboTypeDao.findTurboTypesByManufacturerId(manufacturerId);
     }
 }

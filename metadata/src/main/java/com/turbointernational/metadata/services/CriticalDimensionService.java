@@ -23,10 +23,7 @@ import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.turbointernational.metadata.domain.criticaldimension.CriticalDimension.DataTypeEnum.DECIMAL;
 import static com.turbointernational.metadata.domain.criticaldimension.CriticalDimension.DataTypeEnum.TEXT;
@@ -74,33 +71,40 @@ public class CriticalDimensionService {
 
     }
 
-    @Transactional
-    public synchronized List<CriticalDimension> getCriticalDimensionForPartType(Long partTypeId) {
-        if (criticalDimensionsCache == null) {
-            Map<Long, List<CriticalDimension>> cache = new HashMap<>(); // part type ID => List<CriticalDimension>
-            // Load current values to the cache.
-            for (CriticalDimension cd : criticalDimensionDao.findAll()) {
-                criticalDimensionDao.getEntityManager().detach(cd);
-                // Initialize {@link CriticalDimension#jsonIdxNameTransformer}.
-                if (!cd.getJsonName().equals(cd.getIdxName())) {
-                    cd.setJsonIdxNameTransformer(new JsonIdxNameTransformer(cd.getIdxName()));
-                }
-                // Put to the cache.
-                Long ptid = cd.getPartType().getId();
-                List<CriticalDimension> cdlst = cache.get(ptid);
-                if (cdlst == null) {
-                    cdlst = new ArrayList<>(10);
-                    cache.put(ptid, cdlst);
-                }
-                cdlst.add(cd);
-            }
-            criticalDimensionsCache = cache;
-        }
-        return criticalDimensionsCache.get(partTypeId);
+    public List<CriticalDimension> getCriticalDimensionForPartType(Long partTypeId) {
+        Map<Long, List<CriticalDimension>> cache = getCriticalDimensionsCache();
+        return cache.get(partTypeId);
     }
 
     private synchronized void resetCriticalDimensionsCache() {
         this.criticalDimensionsCache = null;
+    }
+
+    @Transactional // needed for lazy initializations
+    public Map<Long, List<CriticalDimension>> getCriticalDimensionsCache() {
+        if (criticalDimensionsCache == null) {
+            synchronized (this) {
+                Map<Long, List<CriticalDimension>> cache = new HashMap<>(); // part type ID => List<CriticalDimension>
+                // Load current values to the cache.
+                for (CriticalDimension cd : criticalDimensionDao.findAll()) {
+                    criticalDimensionDao.getEntityManager().detach(cd);
+                    // Initialize {@link CriticalDimension#jsonIdxNameTransformer}.
+                    if (!cd.getJsonName().equals(cd.getIdxName())) {
+                        cd.setJsonIdxNameTransformer(new JsonIdxNameTransformer(cd.getIdxName()));
+                    }
+                    // Put to the cache.
+                    Long ptid = cd.getPartType().getId();
+                    List<CriticalDimension> cdlst = cache.get(ptid);
+                    if (cdlst == null) {
+                        cdlst = new ArrayList<>(10);
+                        cache.put(ptid, cdlst);
+                    }
+                    cdlst.add(cd);
+                }
+                criticalDimensionsCache = Collections.unmodifiableMap(cache);
+            }
+        }
+        return criticalDimensionsCache;
     }
 
     public List<CriticalDimension> findForThePart(long partId) {

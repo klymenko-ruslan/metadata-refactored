@@ -1,6 +1,9 @@
-package com.turbointernational.metadata.domain.type;
+package com.turbointernational.metadata.web;
 
 import java.util.List;
+
+import com.turbointernational.metadata.domain.type.CoolType;
+import com.turbointernational.metadata.domain.type.CoolTypeDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -15,23 +18,23 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.List;
 
 @Controller
-@RequestMapping("/metadata/type/seal")
-public class SealTypeController {
+@RequestMapping("/metadata/type/cool")
+public class CoolTypeController {
     
     @Autowired(required=true)
-    SealTypeDao sealTypeDao;
+    CoolTypeDao coolTypeDao;
     
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ResponseBody
     @Secured("ROLE_READ")
     public ResponseEntity<String> showJson(@PathVariable("id") Long id) {
-        SealType sealType = sealTypeDao.findOne(id);
+        CoolType coolType = coolTypeDao.findOne(id);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json; charset=utf-8");
-        if (sealType == null) {
+        if (coolType == null) {
             return new ResponseEntity<String>(headers, HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<String>(sealType.toJson(), headers, HttpStatus.OK);
+        return new ResponseEntity<String>(coolType.toJson(), headers, HttpStatus.OK);
     }
     
     @RequestMapping(method = RequestMethod.GET)
@@ -40,7 +43,7 @@ public class SealTypeController {
     public ResponseEntity<String> listJson() {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json; charset=utf-8");
-        List<SealType> result = sealTypeDao.findAll();
-        return new ResponseEntity<String>(SealType.toJsonArray(result), headers, HttpStatus.OK);
+        List<CoolType> result = coolTypeDao.findAll();
+        return new ResponseEntity<String>(CoolType.toJsonArray(result), headers, HttpStatus.OK);
     }
 }

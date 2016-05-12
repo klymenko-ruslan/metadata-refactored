@@ -27,7 +27,18 @@ angular.module("ngMetaCrudApp", ["ngRoute", "ngTable", "ui.bootstrap",
     // Parts
     $routeProvider.when("/part/list", {
       templateUrl: "views/part/PartList.html",
-      controller: "PartListCtrl"
+      controller: "PartListCtrl",
+      resolve: {
+        partTypes: ["restService", function(restService) {
+          return restService.listPartTypes();
+        }],
+        manufacturers: ["restService", function(restService) {
+          return restService.listManufacturers();
+        }],
+        critDimsByPartTypes: ["restService", function(restService) {
+          return restService.getCritDimsByPartTypes();
+        }]
+      }
     });
     $routeProvider.when("/part/createByPartTypeId/:typeId", {
       templateUrl: "views/part/PartForm.html",

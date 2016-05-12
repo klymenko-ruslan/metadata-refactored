@@ -59,7 +59,7 @@ public interface SearchService {
 
     void indexAllSalesNotes() throws Exception;
 
-    String filterParts(String partNumber, Long partTypeId, String partTypeName, String manufacturerName,
+    String filterParts(String partNumber, Long partTypeId, Long manufacturerId,
                        String name, String description, Boolean inactive,
                        Map<String, String[]> queriedCriticalDimensions,
                        String sortProperty, String sortOrder,

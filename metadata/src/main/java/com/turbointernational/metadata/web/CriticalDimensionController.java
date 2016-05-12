@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
@@ -24,6 +25,14 @@ public class CriticalDimensionController {
 
     @Autowired
     private CriticalDimensionService criticalDimensionService;
+
+    @Secured("ROLE_READ")
+    @JsonView(View.Summary.class)
+    @RequestMapping(value = "/byparttypes", method = GET, produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public Map<Long, List<CriticalDimension>> getCriticalDimensionsByPartTypes() {
+        return criticalDimensionService.getCriticalDimensionsCache();
+    }
 
     @Secured("ROLE_READ")
     @JsonView(View.Detail.class)

@@ -165,11 +165,8 @@ angular.module("ngMetaCrudApp")
         return Restangular.one("part/" + part_id + "/application/" + application_id).remove();
       };
 
-      this.listManufacturers = function(first, count) {
-        return Restangular.all("other/manufacturer", {
-          first: first,
-          count: count
-        }).getList();
+      this.listManufacturers = function() {
+        return Restangular.all("other/manufacturer/list").getList();
       };
 
       this.listPartTypes = function() {
@@ -462,6 +459,10 @@ angular.module("ngMetaCrudApp")
 
       this.findCriticalDimensionsForThePart = function(id) {
         return Restangular.one("/criticaldimension/part", id).get();
+      };
+
+      this.getCritDimsByPartTypes = function() {
+        return Restangular.one("/criticaldimension/byparttypes").get();
       };
 
       this.getAllCritDimEnums = function() {

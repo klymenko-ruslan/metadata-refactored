@@ -38,8 +38,7 @@ public class SearchController {
     @Secured("ROLE_READ")
     public ResponseEntity<String> filterParts(@RequestParam(name = "partNumber", required = false) String partNumber,
                                               @RequestParam(name = "partTypeId", required = false) Long partTypeId,
-                                              @RequestParam(name = "partTypeName", required = false) String partTypeName,
-                                              @RequestParam(name = "manufacturerName", required = false) String manufacturerName,
+                                              @RequestParam(name = "manufacturerId", required = false) Long manufacturerId,
                                               @RequestParam(name = "name", required = false) String name,
                                               @RequestParam(name = "description", required = false) String description,
                                               @RequestParam(name = "inactive", required = false) Boolean inactive,
@@ -49,7 +48,7 @@ public class SearchController {
                                               @RequestParam(defaultValue = "0") Integer offset,
                                               @RequestParam(defaultValue = "10") Integer limit) throws Exception {
         Map<String, String[]> queriedCriticalDimensions = webRequest.getParameterMap();
-        String json = searchService.filterParts(partNumber, partTypeId, partTypeName, manufacturerName, name, description, inactive,
+        String json = searchService.filterParts(partNumber, partTypeId, manufacturerId, name, description, inactive,
                 queriedCriticalDimensions,
                 sortProperty, sortOrder, offset, limit);
         return new ResponseEntity<>(json, HttpStatus.OK);
