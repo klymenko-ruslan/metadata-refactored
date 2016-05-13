@@ -322,7 +322,7 @@ angular.module("ngMetaCrudApp")
       };
 
       this.filterParts = function(searchPartTypeId, searchManufacturerId, search, searchCritDims, sortProperty, sortOrder, offset, limit) {
-$log.log("searchCritDims: " + angular.toJson(searchCritDims, 2));
+        //$log.log("searchCritDims: " + angular.toJson(searchCritDims, 2));
         var params = angular.merge({
           partTypeId: searchPartTypeId,
           manufacturerId: searchManufacturerId,
