@@ -44,10 +44,12 @@ public class CriticalDimensionService {
 
     static class JsonIdxNameTransformer extends AbstractTransformer {
 
-        private String fieldName;
+        private final String fieldName;
+        private final boolean enumeration;
 
-        JsonIdxNameTransformer(String fieldName) {
+        JsonIdxNameTransformer(String fieldName, boolean enumeration) {
             this.fieldName = fieldName;
+            this.enumeration = enumeration;
         }
 
         @Override
@@ -60,8 +62,15 @@ public class CriticalDimensionService {
                 jsonContext.writeComma();
             }
             jsonContext.writeName(fieldName);
-            Transformer defTransformer = TransformerUtil.getDefaultTypeTransformers().getTransformer(object);
-            defTransformer.transform(object);
+            Object value;
+            if (enumeration && object != null) {
+                CriticalDimensionEnumVal cdev = (CriticalDimensionEnumVal) object;
+                value = cdev.getId();
+            } else {
+                value = object;
+            }
+            Transformer defTransformer = TransformerUtil.getDefaultTypeTransformers().getTransformer(value);
+            defTransformer.transform(value);
         }
 
         @Override
@@ -89,8 +98,9 @@ public class CriticalDimensionService {
                 for (CriticalDimension cd : criticalDimensionDao.findAll()) {
                     criticalDimensionDao.getEntityManager().detach(cd);
                     // Initialize {@link CriticalDimension#jsonIdxNameTransformer}.
-                    if (!cd.getJsonName().equals(cd.getIdxName())) {
-                        cd.setJsonIdxNameTransformer(new JsonIdxNameTransformer(cd.getIdxName()));
+                    boolean enumeration = cd.getEnumeration() != null;
+                    if (!cd.getJsonName().equals(cd.getIdxName()) || enumeration) {
+                        cd.setJsonIdxNameTransformer(new JsonIdxNameTransformer(cd.getIdxName(), enumeration));
                     }
                     // Put to the cache.
                     Long ptid = cd.getPartType().getId();

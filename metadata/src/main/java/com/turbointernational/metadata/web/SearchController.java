@@ -43,10 +43,10 @@ public class SearchController {
                                               @RequestParam(name = "description", required = false) String description,
                                               @RequestParam(name = "inactive", required = false) Boolean inactive,
                                               WebRequest webRequest,
-                                              @RequestParam(name = "sortProperty", required = false) String sortProperty,
-                                              @RequestParam(name = "sortOrder", required = false) String sortOrder,
-                                              @RequestParam(defaultValue = "0") Integer offset,
-                                              @RequestParam(defaultValue = "10") Integer limit) throws Exception {
+                                              @RequestParam(name = "pgSortProperty", required = false) String sortProperty,
+                                              @RequestParam(name = "pgSortOrder", required = false) String sortOrder,
+                                              @RequestParam(name = "pgOffset", defaultValue = "0") Integer offset,
+                                              @RequestParam(name = "pgLimit", defaultValue = "10") Integer limit) throws Exception {
         Map<String, String[]> queriedCriticalDimensions = webRequest.getParameterMap();
         String json = searchService.filterParts(partNumber, partTypeId, manufacturerId, name, description, inactive,
                 queriedCriticalDimensions,

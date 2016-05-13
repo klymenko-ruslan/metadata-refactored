@@ -10,7 +10,13 @@ angular.module("ngMetaCrudApp")
       link: function postLink(scope, iElement, iAttrs, controller, transcludeFn) {
         controller.transcludeActionsFn = transcludeFn;
       },
-      controller: function($log, $q, $scope, ngTableParams) {
+      controller: ["$log", "$q", "$scope", "ngTableParams", function($log, $q, $scope, ngTableParams) {
+        $scope.critDimEnumValsMap = _.indexBy($scope.critDimEnumVals, "id");
+        // Filter
+        $scope.searchPartType = null;
+        $scope.searchManufacturer = null;
+        $scope.search = {};
+        $scope.searchCritDims = {};
         // Latest Results
         $scope.searchResults = null;
         // Part Table
@@ -21,24 +27,16 @@ angular.module("ngMetaCrudApp")
         }, {
           getData: function($defer, params) {
             // Update the pagination info
-            $scope.search.count = params.count();
-            $scope.search.page = params.page();
-            $scope.search.sorting = params.sorting();
-            // $log.log("sorting: " + angular.toJson($scope.search.sorting));
             var offset = params.count() * (params.page() - 1);
             var limit = params.count();
-            for (var sortProperty in $scope.search.sorting) break;
+            var sortProperty, sortOrder;
+            for (sortProperty in params.sorting()) break;
             if (sortProperty) {
-              var sortOrder = $scope.search.sorting[sortProperty];
+              sortOrder = params.sorting()[sortProperty];
             }
-            // $log.log("sortProperty: " + sortProperty + ", sortOrder: " + sortOrder);
-            // $log.log("aggregations: " + angular.toJson($scope.search.aggregations));
-            restService.filterParts($scope.search.partNumber, $scope.search.aggregations["Part Type"],
-                $scope.search.aggregations["Manufacturer"], $scope.search.aggregations["Kit Type"],
-                $scope.search.aggregations["Gasket Type"], $scope.search.aggregations["Seal Type"],
-                $scope.search.aggregations["Coolant Type"], $scope.search.aggregations["Turbo Type"],
-                $scope.search.aggregations["Turbo Model"],
-                sortProperty, sortOrder, offset, limit).then(
+            var searchPartTypeId = $scope.searchPartType ? $scope.searchPartType.id : null;
+            var searchManufacturerId = $scope.searchManufacturer ? $scope.searchManufacturer.id : null;
+            restService.filterParts(searchPartTypeId, searchManufacturerId, $scope.search, $scope.searchCritDims, sortProperty, sortOrder, offset, limit).then(
               function(filtered) {
                 $scope.searchResults = filtered;
                 // Update the total and slice the result
@@ -53,32 +51,43 @@ angular.module("ngMetaCrudApp")
           }
         });
 
-        // Query Parameters
-        $scope.search = {
-          partNumber: "",
-          aggregations: {},
-          sort: {}
+        $scope.clearPartNumber = function() {
+          $scope.search.partNumber = null;
         };
 
-        $scope.clear = function() {
-          $scope.search = {
-            partNumber: "",
-            aggregations: {},
-            sort: {}
-          };
-        };
+        $scope.clearPartNumber();
 
-        // Handle updating search results
-        $scope.$watch("[search.partNumber, search.aggregations]", function(newVal, oldVal) {
+        // Critical dimensions for the current choosed $scope.searchPartType.
+        $scope.critDims = null;
+
+        $scope.$watch("[search, searchManufacturer, searchCritDims]", function(newVal, oldVal) {
           // Debounce
           if (angular.equals(newVal, oldVal, true)) {
             return;
           }
           $scope.partTableParams.reload();
         }, true);
-      }
+
+        // Watch a change of $scope.searchPartType
+        // and initialize $scope.critDims by critical dimensions which are
+        // corresponding the part type.
+        $scope.$watch("[searchPartType]", function(newVal, oldVal) {
+          // Debounce
+          if (angular.equals(newVal, oldVal, true) && !angular.isObject(newVal)) {
+            return;
+          }
+          var pt = newVal[0];
+          if (angular.isObject(pt)) {
+            $scope.critDims = $scope.critDimsByPartTypes[pt.id];
+            $scope.searchCritDims = {}; // re-init
+          }
+          $scope.partTableParams.reload();
+        }, true);
+
+      }]
     };
-  }]).directive("partSearchActions", ["$log", function($log) {
+  }])
+  .directive("partSearchActions", ["$log", function($log) {
     return {
       restrict: "A",
       require: "^partSearch",

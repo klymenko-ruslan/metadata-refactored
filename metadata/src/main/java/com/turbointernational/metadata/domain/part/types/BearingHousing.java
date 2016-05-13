@@ -596,15 +596,6 @@ public class BearingHousing extends Part {
                 .include("coolType.version");
     }
 
-    /*
-    @Override
-    protected JSONSerializer getSearchSerializer() {
-        return super.getSearchSerializer()
-                .include("coolType.id")
-                .include("coolType.name");
-    }
-    */
-
     @Override
     public void csvColumns(Map<String, String> columns) {
         super.csvColumns(columns);

@@ -321,23 +321,24 @@ angular.module("ngMetaCrudApp")
         return Restangular.one("mas90sync/status").get();
       };
 
-      this.filterParts = function(partNumber, partTypeName, manufacturerName, kitType, gasketType, sealType, coolType,
-      turboType, turboModel, sortProperty, sortOrder, offset, limit) {
-        return Restangular.one("search/parts").get({
-          "partNumber": partNumber,
-          "partTypeName": partTypeName,
-          "manufacturerName": manufacturerName,
-          "kitType": kitType,
-          "gasketType": gasketType,
-          "sealType": sealType,
-          "coolType": coolType,
-          "turboType": turboType,
-          "turboModel": turboModel,
-          "sortProperty": sortProperty,
-          "sortOrder": sortOrder,
-          "offset": offset,
-          "limit": limit
+      this.filterParts = function(searchPartTypeId, searchManufacturerId, search, searchCritDims, sortProperty, sortOrder, offset, limit) {
+$log.log("searchCritDims: " + angular.toJson(searchCritDims, 2));
+        var params = angular.merge({
+          partTypeId: searchPartTypeId,
+          manufacturerId: searchManufacturerId,
+          pgSortProperty: sortProperty,
+          pgSortOrder: sortOrder,
+          pgOffset: offset,
+          pgLimit: limit
+        }, search);
+        _.each(searchCritDims, function(val, key) {
+          if (_.isObject(val)) {
+            val = val.id;
+          }
+          params[key] = val;
         });
+$log.log("params: " +  angular.toJson(params, 2));
+        return Restangular.one("search/parts").get(params);
       };
 
       this.filterCarModelEngineYears = function(cmey, year, make, model, engine, fuel, sortProperty, sortOrder,

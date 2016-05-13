@@ -52,6 +52,7 @@ import static com.turbointernational.metadata.services.SearchTermCmpOperatorEnum
 import static com.turbointernational.metadata.services.SearchTermEnum.*;
 import static com.turbointernational.metadata.utils.RegExpUtils.PTRN_DOUBLE_LIMIT;
 import static com.turbointernational.metadata.utils.RegExpUtils.PTRN_INTEGER_LIMIT;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
  * Implementation of the {@link SearchService} based on the ElasticSearch.
@@ -307,7 +308,7 @@ public class SearchServiceEsImpl implements SearchService {
                               Integer offset, Integer limit) {
         List<AbstractSearchTerm> sterms = new ArrayList<>(64);
         partNumber = StringUtils.defaultIfEmpty(partNumber, null);
-        if (partNumber != null) {
+        if (isNotBlank(partNumber)) {
             String normalizedPartNumber = str2shotfield.apply(partNumber);
             sterms.add(SearchTermFactory.newTextSearchTerm("manufacturerPartNumber.short", normalizedPartNumber));
         }
@@ -317,10 +318,10 @@ public class SearchServiceEsImpl implements SearchService {
         if (manufacturerId != null) {
             sterms.add(SearchTermFactory.newIntegerSearchTerm("manufacturer.id", EQ, manufacturerId));
         }
-        if (name != null) {
+        if (isNotBlank(name)) {
             sterms.add(SearchTermFactory.newTextSearchTerm("name", name));
         }
-        if (description != null) {
+        if (isNotBlank(description)) {
             sterms.add(SearchTermFactory.newTextSearchTerm("description", description));
         }
         if (inactive != null) {
@@ -330,15 +331,19 @@ public class SearchServiceEsImpl implements SearchService {
             List<CriticalDimension> criticalDimensions = criticalDimensionService.getCriticalDimensionForPartType(partTypeId);
             if (criticalDimensions != null && !criticalDimensions.isEmpty()) {
                  for (CriticalDimension cd : criticalDimensions) {
-                     String val = null;
-                     String idxName = cd.getIdxName();
-                     String[] paramVals = queriedCriticalDimensions.get(idxName);
-                     if (paramVals != null && paramVals.length > 0) {
-                         val = paramVals[0];
-                     }
-                     if (val != null) {
-                         AbstractSearchTerm asterm = SearchTermFactory.newSearchTerm(cd, val);
-                         sterms.add(asterm);
+                     try {
+                         String val = null;
+                         String idxName = cd.getIdxName();
+                         String[] paramVals = queriedCriticalDimensions.get(idxName);
+                         if (paramVals != null && paramVals.length > 0) {
+                             val = paramVals[0];
+                         }
+                         if (isNotBlank(val)) {
+                             AbstractSearchTerm asterm = SearchTermFactory.newSearchTerm(cd, val);
+                             sterms.add(asterm);
+                         }
+                     } catch(IllegalArgumentException e) {
+                         // ignore
                      }
                  }
             }
@@ -665,11 +670,11 @@ public class SearchServiceEsImpl implements SearchService {
                 .setTypes(elasticSearchTypeSalesNotePart).setSearchType(SearchType.DFS_QUERY_THEN_FETCH);
         QueryBuilder query;
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
-        if (StringUtils.isNotBlank(partNumber)) {
+        if (isNotBlank(partNumber)) {
             String normalizedPartNum = str2shotfield.apply(partNumber);
             boolQuery.must(QueryBuilders.termQuery("pk.part.manufacturerPartNumber.short", normalizedPartNum));
         }
-        if (StringUtils.isNotBlank(comment)) {
+        if (isNotBlank(comment)) {
             String normalizedComment = str2shotfield.apply(comment);
             boolQuery.must(QueryBuilders.termQuery("pk.salesNote.comment.short", normalizedComment));
         }
@@ -727,9 +732,11 @@ public class SearchServiceEsImpl implements SearchService {
     private void indexDoc(SearchableEntity doc, String elasticSearchType) {
         String searchId = doc.getSearchId();
         List<CriticalDimension> criticalDimensions = getCriticalDimensions(doc);
-        String json = doc.toSearchJson(criticalDimensions);
+        String asJson = doc.toSearchJson(criticalDimensions);
+        log.debug("elasticSearchIndex: {}, elasticSearchType: {}, searchId: {}, asJson: {}",
+                elasticSearchIndex, elasticSearchType, searchId, asJson);
         IndexRequest index = new IndexRequest(elasticSearchIndex, elasticSearchType, searchId);
-        index.source(json);
+        index.source(asJson);
         elasticSearch.index(index).actionGet(timeout);
     }
 
