@@ -319,10 +319,12 @@ public class SearchServiceEsImpl implements SearchService {
             sterms.add(SearchTermFactory.newIntegerSearchTerm("manufacturer.id", EQ, manufacturerId));
         }
         if (isNotBlank(name)) {
-            sterms.add(SearchTermFactory.newTextSearchTerm("name", name));
+            String normalizedName = str2shotfield.apply(name);
+            sterms.add(SearchTermFactory.newTextSearchTerm("name.short", normalizedName));
         }
         if (isNotBlank(description)) {
-            sterms.add(SearchTermFactory.newTextSearchTerm("description", description));
+            String normalizedDescription = str2shotfield.apply(description);
+            sterms.add(SearchTermFactory.newTextSearchTerm("description.short", normalizedDescription));
         }
         if (inactive != null) {
             sterms.add(SearchTermFactory.newBooleanSearchTerm("inactive", inactive));

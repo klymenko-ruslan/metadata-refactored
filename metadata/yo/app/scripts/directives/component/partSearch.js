@@ -15,6 +15,7 @@ angular.module("ngMetaCrudApp")
         // Filter
         $scope.searchPartType = null;
         $scope.searchManufacturer = null;
+        $scope.searchName = null;
         $scope.search = {};
         $scope.searchCritDims = {};
         // Latest Results
@@ -36,7 +37,7 @@ angular.module("ngMetaCrudApp")
             }
             var searchPartTypeId = $scope.searchPartType ? $scope.searchPartType.id : null;
             var searchManufacturerId = $scope.searchManufacturer ? $scope.searchManufacturer.id : null;
-            restService.filterParts(searchPartTypeId, searchManufacturerId, $scope.search, $scope.searchCritDims, sortProperty, sortOrder, offset, limit).then(
+            restService.filterParts(searchPartTypeId, searchManufacturerId, $scope.searchName, $scope.search, $scope.searchCritDims, sortProperty, sortOrder, offset, limit).then(
               function(filtered) {
                 $scope.searchResults = filtered;
                 // Update the total and slice the result
@@ -60,7 +61,7 @@ angular.module("ngMetaCrudApp")
         // Critical dimensions for the current choosed $scope.searchPartType.
         $scope.critDims = null;
 
-        $scope.$watch("[search, searchManufacturer, searchCritDims]", function(newVal, oldVal) {
+        $scope.$watch("[search, searchManufacturer, searchName, searchCritDims]", function(newVal, oldVal) {
           // Debounce
           if (angular.equals(newVal, oldVal, true)) {
             return;

@@ -321,11 +321,12 @@ angular.module("ngMetaCrudApp")
         return Restangular.one("mas90sync/status").get();
       };
 
-      this.filterParts = function(searchPartTypeId, searchManufacturerId, search, searchCritDims, sortProperty, sortOrder, offset, limit) {
+      this.filterParts = function(searchPartTypeId, searchManufacturerId, searchName, search, searchCritDims, sortProperty, sortOrder, offset, limit) {
         //$log.log("searchCritDims: " + angular.toJson(searchCritDims, 2));
         var params = angular.merge({
           partTypeId: searchPartTypeId,
           manufacturerId: searchManufacturerId,
+          name: searchName,
           pgSortProperty: sortProperty,
           pgSortOrder: sortOrder,
           pgOffset: offset,
