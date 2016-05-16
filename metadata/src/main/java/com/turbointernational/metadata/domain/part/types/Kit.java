@@ -1,6 +1,7 @@
 package com.turbointernational.metadata.domain.part.types;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.domain.criticaldimension.CriticalDimension;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.part.types.kit.KitComponent;
 import com.turbointernational.metadata.domain.type.KitType;
@@ -9,6 +10,7 @@ import flexjson.JSONSerializer;
 
 import javax.persistence.*;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -43,8 +45,8 @@ public class Kit extends Part {
     }
     
     @Override
-    protected JSONSerializer buildJSONSerializer() {
-        return super.buildJSONSerializer()
+    protected JSONSerializer buildJSONSerializer(List<CriticalDimension> criticalDimensions) {
+        return super.buildJSONSerializer(criticalDimensions)
             .include("kitType.id")
             .include("kitType.name")
             .exclude("kitType.*")

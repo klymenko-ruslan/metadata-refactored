@@ -2,6 +2,7 @@ package com.turbointernational.metadata.domain.part.types;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.domain.car.CarModelEngineYear;
+import com.turbointernational.metadata.domain.criticaldimension.CriticalDimension;
 import com.turbointernational.metadata.domain.other.TurboModel;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.type.CoolType;
@@ -66,8 +67,8 @@ public class Turbo extends Part {
     }
 
     @Override
-    protected JSONSerializer buildJSONSerializer() {
-        return super.buildJSONSerializer()
+    protected JSONSerializer buildJSONSerializer(List<CriticalDimension> criticalDimensions) {
+        return super.buildJSONSerializer(criticalDimensions)
             .include("coolType.id")
             .include("coolType.name")
             .include("coolType.version")

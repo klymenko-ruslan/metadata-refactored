@@ -269,8 +269,8 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
 
     //<editor-fold defaultstate="collapsed" desc="Serialization">
 
-    protected JSONSerializer buildJSONSerializer() {
-        return new JSONSerializer()
+    protected JSONSerializer buildJSONSerializer(List<CriticalDimension> criticalDimensions) {
+        JSONSerializer jsonSerializer = new JSONSerializer()
                 .transform(new HibernateTransformer(), this.getClass())
                 .include("turboTypes.id")
                 .include("turboTypes.name")
@@ -322,10 +322,13 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
                 .include("productImages.id")
                 .include("productImages.filename")
                 .exclude("productImages.*");
+        // Add critical dimensions.
+        addCriticalDimensionsToSerialization(criticalDimensions, jsonSerializer);
+        return jsonSerializer;
     }
 
-    public String toJson() {
-        return buildJSONSerializer()
+    public String toJson(List<CriticalDimension> criticalDimensions) {
+        return buildJSONSerializer(criticalDimensions)
                 .exclude("*.class")
                 .serialize(this);
     }
@@ -350,6 +353,13 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
                 .exclude("productImages")
                 .exclude("*.class");
         // Add critical dimensions.
+        addCriticalDimensionsToSerialization(criticalDimensions, jsonSerializer);
+        String json = jsonSerializer.exclude("*").serialize(this);
+        return json;
+    }
+
+    private void addCriticalDimensionsToSerialization(List<CriticalDimension> criticalDimensions,
+                                                      JSONSerializer jsonSerializer) {
         if (criticalDimensions != null) {
             for(CriticalDimension cd : criticalDimensions) {
                 Transformer t = cd.getJsonIdxNameTransformer();
@@ -360,29 +370,11 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
                 }
             }
         }
-        String json = jsonSerializer.exclude("*").serialize(this);
-        return json;
     }
 
     @Override
     public String getSearchId() {
         return getId().toString();
-    }
-
-    public static String toJsonArray(Collection<Part> collection) {
-        return new JSONSerializer()
-                .transform(new HibernateTransformer(), Part.class)
-//                .include("bom")
-                .exclude("*.class")
-                .serialize(collection);
-    }
-
-    public static String toJsonArray(Collection<Part> collection, String[] fields) {
-        return new JSONSerializer()
-                .transform(new HibernateTransformer(), Part.class)
-                .include(fields)
-                .exclude("*")
-                .serialize(collection);
     }
 
     public void csvColumns(Map<String, String> columns) {

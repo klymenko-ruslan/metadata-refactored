@@ -142,7 +142,7 @@ public class PartController {
     public long createPart(@RequestBody Part part) throws Exception {
         partDao.persist(part);
         // Update the changelog
-        changelogDao.log("Created part", part.toJson());
+        changelogDao.log("Created part", part.toJson(criticalDimensionService.getCriticalDimensionForPartType(part.getPartType().getId())));
         return part.getId();
     }
 
@@ -159,10 +159,10 @@ public class PartController {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, errors.toString());
             return null;
         }
-        String originalPartJson = partDao.findOne(id).toJson();
+        String originalPartJson = partDao.findOne(id).toJson(criticalDimensionService.getCriticalDimensionForPartType(part.getPartType().getId()));
         Part retVal = partDao.merge(part);
         // Update the changelog
-        changelogDao.log("Updated part", "{original: " + originalPartJson + ",updated: " + part.toJson() + "}");
+        changelogDao.log("Updated part", "{original: " + originalPartJson + ",updated: " + part.toJson(criticalDimensionService.getCriticalDimensionForPartType(part.getPartType().getId())) + "}");
         return retVal;
     }
 
@@ -174,7 +174,7 @@ public class PartController {
         Part part = partDao.findOne(id);
         partDao.merge(part);
         // Update the changelog
-        changelogDao.log("Deleted part", part.toJson());
+        changelogDao.log("Deleted part", part.toJson(criticalDimensionService.getCriticalDimensionForPartType(part.getPartType().getId())));
         // Delete the part
         db.update("INSERT INTO `deleted_parts` (id) VALUES(?)", part.getId());
         partDao.remove(part);

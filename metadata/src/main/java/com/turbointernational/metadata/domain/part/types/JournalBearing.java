@@ -1,6 +1,7 @@
 package com.turbointernational.metadata.domain.part.types;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.domain.criticaldimension.CriticalDimension;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.web.View;
 import flexjson.JSONSerializer;
@@ -10,6 +11,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
+import java.util.List;
 import java.util.Map;
 
 @Entity
@@ -106,8 +108,8 @@ public class JournalBearing extends Part {
     }
     
     @Override
-    protected JSONSerializer buildJSONSerializer() {
-        return super.buildJSONSerializer()
+    protected JSONSerializer buildJSONSerializer(List<CriticalDimension> criticalDimensions) {
+        return super.buildJSONSerializer(criticalDimensions)
             .include("standardSize.id")
             .include("standardSize.manufacturer.id")
             .include("standardSize.manufacturer.name")
