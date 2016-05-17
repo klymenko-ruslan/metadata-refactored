@@ -113,7 +113,6 @@ public class BearingSpacer extends Part {
     @Override
     public void csvColumns(Map<String, String> columns) {
         super.csvColumns(columns);
-        
         columns.put("outside_diameter_min", ObjectUtils.toString(getOutsideDiameterMin()));
         columns.put("outside_diameter_max", ObjectUtils.toString(getOutsideDiameterMax()));
         columns.put("inside_diameter_min", ObjectUtils.toString(getInsideDiameterMin()));
