@@ -13,6 +13,17 @@ import json
 import os
 
 
+KEY_PT_ID = "_pt_id"
+KEY_PT_META = "_pt_meta"
+KEY_CDA = "_cda"
+KEY_LIST = "_list"
+
+
+def format_warn(s):
+    """Return a formatted string with warning."""
+    return "-- WARN: " + s
+
+
 def load_input_data(args):
     """Load data."""
     with open(args.in_part_type) as fp:
@@ -27,10 +38,10 @@ def load_input_data(args):
     for cda in crit_dim_attributes:
         pt_id = cda["part_type_id"]
         part_type = part_types_idx_by_id[pt_id]
-        _cda = part_type.get("_cda")
+        _cda = part_type.get(KEY_CDA)
         if _cda is None:
             _cda = list()
-            part_type["_cda"] = _cda
+            part_type[KEY_CDA] = _cda
         _cda.append(cda)
         _cda.sort(key=lambda x: x["sequence"]
                   if x["sequence"] is not None else 0)
@@ -56,22 +67,27 @@ def load_input_data(args):
     for ls in list_selections:
         cda_id = ls["crit_dim_attribute_id"]
         cda = crit_dim_attributes_idx_by_id[cda_id]
-        _list = cda.get("_list")
+        _list = cda.get(KEY_LIST)
         if _list is None:
             _list = list()
-            cda["_list"] = _list
+            cda[KEY_LIST] = _list
         _list.append(ls)
 
     with open(args.in_part_type_metadata) as fp:
         part_types_metadata = json.load(fp)["part_type"]
 
+    obsolete_part_type = list()
+
     for ptm in part_types_metadata:
         value = ptm["value"]
         pt = part_types_idx_by_value.get(value)
-        if pt is not None:
-            pt["_pt_meta"] = pt
+        if pt is None:
+            obsolete_part_type.append(ptm)
+        else:
+            pt[KEY_PT_META] = ptm
+            pt[KEY_PT_ID] = ptm["id"]
 
-    return part_types
+    return (obsolete_part_type, part_types)
 
 
 def createTableCritDimSql():
@@ -163,15 +179,39 @@ argparser.add_argument("--in-list-selection", required=False,
                        "table 'list_selection'.")
 args = argparser.parse_args()
 
-part_types = load_input_data(args)
+(obsolete_part_type, part_types) = load_input_data(args)
 
-print(json.dumps(part_types, indent=2))
+# print(json.dumps(part_types, indent=2))
 
-# print(createTableCritDimSql())
-#
-# seq_part_types = 30
+print(createTableCritDimSql())
+
+seq_part_type = 30
 #
 # print("delete from part_types where id >= {};".format(seq_part_types))
 #
-# for pt in part_types:
-#     pass
+
+if obsolete_part_type:
+    print(format_warn("Found obsolete part types."))
+    for ptm in obsolete_part_type:
+        print("-- delete from part_type where id={0:d}; -- {1:s}".format(
+            ptm["id"], ptm["name"]))
+    print()
+
+for pt in part_types:
+    pt_id = pt.get(KEY_PT_ID)
+    if pt_id is None:
+        # Register this new part type.
+        print("insert into part_type(id, name, magento_attribute_set, value) "
+              "values({id_}, '{name}', '{mas}', '{value}');".format(
+                  id_=seq_part_type, name=pt["name"], mas=pt["name_value"],
+                  value=pt["name_value"]))
+        pt[KEY_PT_ID] = seq_part_type
+        seq_part_type += 1
+        print("""XXX """.format(table_name=pt["name_value"]))
+    cda_ = pt.get(KEY_CDA)
+    if cda_:
+        for cd in cda_:
+            print("".format())
+    else:
+        print(format_warn("Part type [{0:d}] - {1:s} has no defined "
+                          "critical dimensions.".format(pt_id, pt["name"])))
