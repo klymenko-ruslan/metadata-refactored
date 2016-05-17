@@ -1,0 +1,48 @@
+{
+    // Mapping "Part type value" => "table name"
+    // This mapping is needed to generate tables for new part types
+    // and 'alter' statements for existing ones.
+    "part_type_mapping": {
+        "actuator": {
+            "table": "actuator",
+            "exists": true
+        },
+        "backplate": {
+            "table": "backplate_2", // warn
+            "exists": false
+        },
+        "bearing_housing": {
+            "table": "bearing_housing",
+            "exists": true
+        },
+        "cartridge": "cartridge",
+        "compressor_cover": "compressor_cover",
+        "compressor_wheel": "compressor_wheel",
+        "gasket": "gasket",
+        "heatshield_shroud": "heatshield",
+        "journal_bearing": "journal_bearing",
+        "nozzle_ring": "nozzle_ring",
+        "piston_ring": "piston_ring",
+        "plug": "plug",
+        "turbine_housing": "turbine_housing",
+        "turbine_wheel": "turbine_wheel",
+        "turbo": "turbo",
+        "bolt_screw": "",
+        "clamp": "",
+        "fitting": "",
+        "journal_bearing_spacer": "journal_bearing_spacer",
+        "nut": "",
+        "oil_deflector": "",
+        "o_ring": "",
+        "pin": "",
+        "retaining_ring": "",
+        "seal_plate": "",
+        "spring": "",
+        "thrust_bearing": "",
+        "thrust_collar": "",
+        "thrust_spacer": "",
+        "thrust_washer": "",
+        "washer": "",
+        "carbon_seal": ""
+    }
+}
