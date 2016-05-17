@@ -2,10 +2,17 @@
 # -*- coding: UTF-8 -*-
 
 r"""
-Utility.
+Utility to convert critical dimension desctiptors to *.sql patch file.
+The input data is a set of export to JSON tables from the provided MS-ACCESS
+database.
 
-Vim:
+Export of a table to JSON is broken in 'dbeaver' program.
+A string values are not escaped, so if a value contain char '"' an output JSON
+is not valid. Below is a regexp for Vim to fix this issue (the text to fix
+must be selected before run this regex):
+
 '<,'>s/^\(\t\t"\w\+" : "[^"]*\)\("\)\([^"]*\)\("\)\(.*",\)$/\1\\\2\3\\\4\5/gc
+
 """
 
 import argparse
@@ -93,61 +100,70 @@ def load_input_data(args):
 def createTableCritDimSql():
     """SQL statements to create tables for critical dimensions."""
     return r"""
-        drop table if exists crit_dim_enum_val, crit_dim_enum, crit_dim;
-        create table crit_dim_enum (
-            id int not null auto_increment,
-            name varchar(64) not null,
-            primary key (id)
-        ) comment='Enumerations for critical dimensions.' engine=innodb;
-        create table crit_dim_enum_val (
-            id int not null auto_increment,
-            crit_dim_enum_id int not null references crit_dim_enum(id)
-                                    on delete cascade on update cascade,
-            val varchar(64) not null,
-            primary key (id),
-            unique key (id, crit_dim_enum_id)
-        ) comment='Enumeration values for critical dimensions enumerations.'
-            engine=innodb;
-        create table crit_dim (
-            id              bigint not null,
-            part_type_id    bigint not null,
-            seq_num         int not null,
-            data_type       enum ('DECIMAL', 'ENUMERATION',
-                                  'INTEGER', 'TEXT') not null,
-            enum_id         int,
-            unit            enum ('DEGREES', 'GRAMS', 'INCHES'),
-            tolerance       tinyint(1) comment '0 - nominal,
-                            1 - tolerance/limit, null - not a tolerance',
-            name            varchar(255) not null,
-            json_name       varchar(48) not null comment 'Name of a property
-                                in serialized to JSON part''s object.
-                                It must be the exact name of the property
-                                in JPA entity.',
-            idx_name        varchar(48) not null unique comment 'Name of
-                                a property in the ElasticSearch mapping.',
-            null_allowed    tinyint(1) not null comment 'Validation:
-                                Is NULL allowed?',
-            null_display    varchar(32) comment 'How to display NULL values.',
-            min_val         decimal(15, 6) comment 'Validation:
-                                minal (inclusive) allowed value for numeric
-                                types (DECIMAL, INTEGER).',
-            max_val         decimal(15, 6) comment 'Validation:
-                                maximal (inclusive) allowed value for numeric
-                                types (DECIMAL, INTEGER).',
-            regex           varchar(255) comment 'Validation: JS regular
-                                expression',
-            parent_id       bigint,
-            length          tinyint comment 'Lenth on a web page',
-            scale           tinyint comment 'Scale on a web pate.',
-            primary key(id),
-            unique key(part_type_id, seq_num),
-            foreign key (part_type_id) references part_type(id),
-            foreign key (enum_id) references crit_dim_enum(id)
-                                on delete set null on update cascade,
-            foreign key (parent_id) references crit_dim(id)
-                                on delete set null on update cascade
-        ) engine=innodb;
-    """
+drop table if exists crit_dim_enum_val, crit_dim_enum, crit_dim;
+create table crit_dim_enum (
+    id int not null auto_increment,
+    name varchar(64) not null,
+    primary key (id)
+) comment='Enumerations for critical dimensions.' engine=innodb;
+create table crit_dim_enum_val (
+    id int not null auto_increment,
+    crit_dim_enum_id int not null references crit_dim_enum(id)
+                            on delete cascade on update cascade,
+    val varchar(64) not null,
+    primary key (id),
+    unique key (id, crit_dim_enum_id)
+) comment='Enumeration values for critical dimensions enumerations.'
+    engine=innodb;
+create table crit_dim (
+    id              bigint not null,
+    part_type_id    bigint not null,
+    seq_num         int not null,
+    data_type       enum ('DECIMAL', 'ENUMERATION',
+                          'INTEGER', 'TEXT') not null,
+    enum_id         int,
+    unit            enum ('DEGREES', 'GRAMS', 'INCHES'),
+    tolerance       tinyint(1) comment '0 - nominal,
+                    1 - tolerance/limit, null - not a tolerance',
+    name            varchar(255) not null,
+    json_name       varchar(48) not null comment 'Name of a property
+                        in serialized to JSON part''s object.
+                        It must be the exact name of the property
+                        in JPA entity.',
+    idx_name        varchar(48) not null unique comment 'Name of
+                        a property in the ElasticSearch mapping.',
+    null_allowed    tinyint(1) not null comment 'Validation:
+                        Is NULL allowed?',
+    null_display    varchar(32) comment 'How to display NULL values.',
+    min_val         decimal(15, 6) comment 'Validation:
+                        minal (inclusive) allowed value for numeric
+                        types (DECIMAL, INTEGER).',
+    max_val         decimal(15, 6) comment 'Validation:
+                        maximal (inclusive) allowed value for numeric
+                        types (DECIMAL, INTEGER).',
+    regex           varchar(255) comment 'Validation: JS regular
+                        expression',
+    parent_id       bigint,
+    length          tinyint com: "",ment 'Lenth on a web page',
+    scale           tinyint comment 'Scale on a web pate.',
+    primary key(id),
+    unique key(part_type_id, seq_num),
+    foreign key (part_type_id) references part_type(id),
+    foreign key (enum_id) references crit_dim_enum(id)
+                        on delete set null on update cascade,
+    foreign key (parent_id) references crit_dim(id)
+                        on delete set null on update cascade
+) engine=innodb;
+"""
+
+
+def generate_create_table(table_name, cda_):
+    return "-- CREATE TABLE {}".format(table_name) # TODO
+
+
+def generate_alters(table_name, cda_):
+    return "-- ALTER TABLE {}".format(table_name) # TODO
+
 
 # *****************************************************************************
 #                                M A I N
@@ -199,6 +215,7 @@ if obsolete_part_type:
 
 for pt in part_types:
     pt_id = pt.get(KEY_PT_ID)
+    entity_table_exists = True
     if pt_id is None:
         # Register this new part type.
         print("insert into part_type(id, name, magento_attribute_set, value) "
@@ -207,11 +224,19 @@ for pt in part_types:
                   value=pt["name_value"]))
         pt[KEY_PT_ID] = seq_part_type
         seq_part_type += 1
-        print("""XXX """.format(table_name=pt["name_value"]))
+        entity_table_exists = False
     cda_ = pt.get(KEY_CDA)
-    if cda_:
-        for cd in cda_:
-            print("".format())
-    else:
+    if not cda_:
         print(format_warn("Part type [{0:d}] - {1:s} has no defined "
                           "critical dimensions.".format(pt_id, pt["name"])))
+        if cda_ is None:
+            cda_ = list()
+    table_name = pt["name_value"] 
+    if entity_table_exists:
+        sql = generate_alters(table_name, cda_)
+    else:
+        sql = generate_create_table(table_name, cda_)
+
+    print(sql)
+#     for cd in cda_:
+#         print("".format())

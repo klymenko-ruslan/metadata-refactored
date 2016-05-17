@@ -10,7 +10,7 @@ import javax.persistence.Table;
  * Created by dmytro.trunykov@zorallabs.com on 04.05.16.
  */
 @Entity
-@Table(name="actuator")
+@Table(name="plug")
 @PrimaryKeyJoinColumn(name = "part_id")
 public class Plug extends Part {
 }
