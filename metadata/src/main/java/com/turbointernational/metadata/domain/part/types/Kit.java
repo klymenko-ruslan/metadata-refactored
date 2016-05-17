@@ -11,7 +11,6 @@ import flexjson.JSONSerializer;
 import javax.persistence.*;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 @Entity
@@ -68,8 +67,7 @@ public class Kit extends Part {
                     .include("kitType.id")
                     .include("kitType.name");
     }
-    */
-    
+
     @Override
     public void csvColumns(Map<String, String> columns) {
         super.csvColumns(columns);
@@ -78,4 +76,6 @@ public class Kit extends Part {
             columns.put("kit_type", kitType.getName());
         }
     }
+    */
+
 }

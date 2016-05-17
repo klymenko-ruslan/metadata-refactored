@@ -42,6 +42,39 @@ public class CriticalDimensionService {
 
     private Map<Long, List<CriticalDimension>> criticalDimensionsCache = null;
 
+    public interface ValueExtractorCallback {
+
+        void processValue(Object value);
+
+        void onError(Exception e);
+
+    }
+
+    /**
+     * Extract value of a critical dimension from a part instance and process it.
+     *
+     * @param part instance of a part
+     * @param cd critical dimension descriptor
+     * @param extractorCallback callback to process value of the extracted critical dimensions
+     */
+    public static void extractValue(Part part, CriticalDimension cd, ValueExtractorCallback extractorCallback) {
+        String fieldName = cd.getJsonName();
+        Class partClass = part.getClass();
+        try {
+            Field field = partClass.getDeclaredField(fieldName);
+            boolean accessible = field.isAccessible();
+            try {
+                field.setAccessible(true);
+                Object value = field.get(part);
+                extractorCallback.processValue(value);
+            } finally {
+                field.setAccessible(accessible);
+            }
+        } catch (Exception e) {
+            extractorCallback.onError(e);
+        }
+    }
+
     static class JsonIdxNameTransformer extends AbstractTransformer {
 
         private final String fieldName;
@@ -213,13 +246,9 @@ class CriticalDimensionsValidator implements Validator {
         Part part = (Part) target;
         for (CriticalDimension cd : criticalDimensions) {
             String fieldName = cd.getJsonName();
-            Class partClass = part.getClass();
-            try {
-                Field field = partClass.getDeclaredField(fieldName);
-                boolean accessible = field.isAccessible();
-                try {
-                    field.setAccessible(true);
-                    Object value = field.get(part);
+            CriticalDimensionService.extractValue(part, cd, new CriticalDimensionService.ValueExtractorCallback() {
+                @Override
+                public void processValue(Object value) {
                     // Check: not null.
                     if (!cd.isNullAllowed() && value == null) {
                         errors.rejectValue(fieldName, null, "The value is required.");
@@ -231,7 +260,7 @@ class CriticalDimensionsValidator implements Validator {
                         }
                         Double maxVal = cd.getMaxVal();
                         if (maxVal != null && decimal > maxVal) {
-                            errors.rejectValue(fieldName, null, "The value greather than allowed: " + maxVal);
+                            errors.rejectValue(fieldName, null, "The value greater than allowed: " + maxVal);
                         }
                     } else if (cd.getDataType() == TEXT) {
                         String text = (String) value;
@@ -241,16 +270,17 @@ class CriticalDimensionsValidator implements Validator {
                                     + "' is not matched for regex '" + regex + "'.");
                         }
                     }
-                } finally {
-                    field.setAccessible(accessible);
                 }
-            } catch (Exception e) {
+
+                @Override
+                public void onError(Exception e) {
                 String message = "Internal error. Validation of the field '" + fieldName
                         + "' failed for the part with ID="
                         + part.getId() + ". Does JPA entity declares this field? Details: " + e.getMessage();
                 log.warn(message);
                 //errors.rejectValue(fieldName, null, message);
-            }
+                }
+            });
         }
     }
 }

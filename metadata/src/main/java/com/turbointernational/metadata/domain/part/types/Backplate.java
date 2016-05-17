@@ -495,8 +495,7 @@ public class Backplate extends Part {
                     .include("sealType.id")
                     .include("sealType.name");
     }
-    */
-    
+
     @Override
     public void csvColumns(Map<String, String> columns) {
         super.csvColumns(columns);
@@ -513,5 +512,6 @@ public class Backplate extends Part {
         columns.put("overall_height", ObjectUtils.toString(getOverallHeight()));
         columns.put("style_compressor_wheel", ObjectUtils.toString(getStyleCompressorWheel()));
     }
+    */
 
 }

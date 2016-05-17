@@ -74,6 +74,69 @@ def load_input_data(args):
     return part_types
 
 
+def createTableCritDimSql():
+    """SQL statements to create tables for critical dimensions."""
+    return r"""
+        drop table if exists crit_dim_enum_val, crit_dim_enum, crit_dim;
+        create table crit_dim_enum (
+            id int not null auto_increment,
+            name varchar(64) not null,
+            primary key (id)
+        ) comment='Enumerations for critical dimensions.' engine=innodb;
+        create table crit_dim_enum_val (
+            id int not null auto_increment,
+            crit_dim_enum_id int not null references crit_dim_enum(id)
+                                    on delete cascade on update cascade,
+            val varchar(64) not null,
+            primary key (id),
+            unique key (id, crit_dim_enum_id)
+        ) comment='Enumeration values for critical dimensions enumerations.'
+            engine=innodb;
+        create table crit_dim (
+            id              bigint not null,
+            part_type_id    bigint not null,
+            seq_num         int not null,
+            data_type       enum ('DECIMAL', 'ENUMERATION',
+                                  'INTEGER', 'TEXT') not null,
+            enum_id         int,
+            unit            enum ('DEGREES', 'GRAMS', 'INCHES'),
+            tolerance       tinyint(1) comment '0 - nominal,
+                            1 - tolerance/limit, null - not a tolerance',
+            name            varchar(255) not null,
+            json_name       varchar(48) not null comment 'Name of a property
+                                in serialized to JSON part''s object.
+                                It must be the exact name of the property
+                                in JPA entity.',
+            idx_name        varchar(48) not null unique comment 'Name of
+                                a property in the ElasticSearch mapping.',
+            null_allowed    tinyint(1) not null comment 'Validation:
+                                Is NULL allowed?',
+            null_display    varchar(32) comment 'How to display NULL values.',
+            min_val         decimal(15, 6) comment 'Validation:
+                                minal (inclusive) allowed value for numeric
+                                types (DECIMAL, INTEGER).',
+            max_val         decimal(15, 6) comment 'Validation:
+                                maximal (inclusive) allowed value for numeric
+                                types (DECIMAL, INTEGER).',
+            regex           varchar(255) comment 'Validation: JS regular
+                                expression',
+            parent_id       bigint,
+            length          tinyint comment 'Lenth on a web page',
+            scale           tinyint comment 'Scale on a web pate.',
+            primary key(id),
+            unique key(part_type_id, seq_num),
+            foreign key (part_type_id) references part_type(id),
+            foreign key (enum_id) references crit_dim_enum(id)
+                                on delete set null on update cascade,
+            foreign key (parent_id) references crit_dim(id)
+                                on delete set null on update cascade
+        ) engine=innodb;
+    """
+
+# *****************************************************************************
+#                                M A I N
+# *****************************************************************************
+
 argparser = argparse.ArgumentParser(description="Utility to (re)create patch "
                                     "files to add support of the critical "
                                     "dimensions functionality to 'metadata' "
@@ -103,3 +166,12 @@ args = argparser.parse_args()
 part_types = load_input_data(args)
 
 print(json.dumps(part_types, indent=2))
+
+# print(createTableCritDimSql())
+#
+# seq_part_types = 30
+#
+# print("delete from part_types where id >= {};".format(seq_part_types))
+#
+# for pt in part_types:
+#     pass

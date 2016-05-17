@@ -3,10 +3,11 @@ package com.turbointernational.metadata.domain.part.types;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.web.View;
-import java.util.Map;
-import javax.persistence.*;
 
-import org.apache.commons.lang.ObjectUtils;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.Table;
 
 @Entity
 @Table(name="piston_ring")
@@ -84,7 +85,8 @@ public class PistonRing extends Part {
     public void setInstalledGapMax(Float installedGapMax) {
         this.installedGapMax = installedGapMax;
     }
-    
+
+    /*
     @Override
     public void csvColumns(Map<String, String> columns) {
         super.csvColumns(columns);
@@ -96,4 +98,6 @@ public class PistonRing extends Part {
         columns.put("i_gap_min", ObjectUtils.toString(getInstalledGapMin()));
         columns.put("i_gap_max", ObjectUtils.toString(getInstalledGapMax()));
     }
+    */
+
 }

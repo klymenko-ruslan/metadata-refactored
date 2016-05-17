@@ -96,7 +96,8 @@ public class CompressorWheel extends Part {
     public void setApplication(String application) {
         this.application = application;
     }
-    
+
+    /*
     @Override
     public void csvColumns(Map<String, String> columns) {
         super.csvColumns(columns);
@@ -109,4 +110,6 @@ public class CompressorWheel extends Part {
         columns.put("number_of_blades", ObjectUtils.toString(getNumberOfBlades()));
         columns.put("application", ObjectUtils.toString(getApplication()));
     }
+    */
+
 }

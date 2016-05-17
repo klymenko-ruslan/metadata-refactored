@@ -588,6 +588,7 @@ public class BearingHousing extends Part {
     }
     //</editor-fold>
 
+    /*
     @Override
     public void csvColumns(Map<String, String> columns) {
         super.csvColumns(columns);
@@ -604,4 +605,6 @@ public class BearingHousing extends Part {
             columns.put("cool_type", ObjectUtils.toString(getCoolType().getName()));
         }
     }
+    */
+
 }

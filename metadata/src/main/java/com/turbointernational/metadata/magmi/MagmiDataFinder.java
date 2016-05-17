@@ -4,10 +4,12 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Table;
 import com.google.common.collect.TreeBasedTable;
+import com.turbointernational.metadata.domain.criticaldimension.CriticalDimension;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.part.PartDao;
 import com.turbointernational.metadata.magmi.dto.*;
+import com.turbointernational.metadata.services.CriticalDimensionService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +34,9 @@ public class MagmiDataFinder {
     
     @Autowired
     private PartDao partDao;
+
+    @Autowired
+    private CriticalDimensionService criticalDimensionService;
     
     public Map<Long, MagmiProduct> findMagmiProducts(List<Part> parts) {
         long startTime = System.currentTimeMillis();
@@ -39,7 +44,9 @@ public class MagmiDataFinder {
         // Build a product map from the parts
         final TreeMap<Long, MagmiProduct> productMap = new TreeMap<>();
         for (Part part : parts) {
-            productMap.put(part.getId(), new MagmiProduct(part));
+            Long ptId = part.getPartType().getId();
+            List<CriticalDimension> criticalDimensions = criticalDimensionService.getCriticalDimensionForPartType(ptId);
+            productMap.put(part.getId(), new MagmiProduct(part, criticalDimensions));
         }
         
         List<Long> productIds = new ArrayList<>(productMap.keySet());

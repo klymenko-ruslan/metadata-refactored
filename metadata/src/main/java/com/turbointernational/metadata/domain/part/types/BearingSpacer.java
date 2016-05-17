@@ -109,7 +109,8 @@ public class BearingSpacer extends Part {
             .include("oversize.manufacturerPartNumber")
             .include("oversize.version");
     }
-    
+
+    /*
     @Override
     public void csvColumns(Map<String, String> columns) {
         super.csvColumns(columns);
@@ -118,5 +119,6 @@ public class BearingSpacer extends Part {
         columns.put("inside_diameter_min", ObjectUtils.toString(getInsideDiameterMin()));
         columns.put("inside_diameter_max", ObjectUtils.toString(getInsideDiameterMax()));
     }
+    */
 
 }

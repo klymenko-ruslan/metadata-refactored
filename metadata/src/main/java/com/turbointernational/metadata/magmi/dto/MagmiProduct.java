@@ -1,5 +1,6 @@
 package com.turbointernational.metadata.magmi.dto;
 
+import com.turbointernational.metadata.domain.criticaldimension.CriticalDimension;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.part.types.Turbo;
@@ -15,6 +16,8 @@ import java.util.*;
 public class MagmiProduct {
 
     private final Part part;
+
+    private final List<CriticalDimension> criticalDimensions;
     
     private final Set<String> turboType = new TreeSet<>();
 
@@ -52,8 +55,9 @@ public class MagmiProduct {
     
     private final JSOG usages = JSOG.object();
 
-    public MagmiProduct(Part part) {
+    public MagmiProduct(Part part, List<CriticalDimension> criticalDimensions) {
         this.part = part;
+        this.criticalDimensions = criticalDimensions;
     }
     
     public Long getSku() {
@@ -202,7 +206,7 @@ public class MagmiProduct {
         Map<String, String> columns = new HashMap<>();
         
         // Part data
-        part.csvColumns(columns);
+        part.csvColumns(columns, criticalDimensions);
 
         // description
         columns.put("type", "simple");

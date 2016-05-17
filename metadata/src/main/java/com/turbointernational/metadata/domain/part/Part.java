@@ -13,6 +13,7 @@ import com.turbointernational.metadata.domain.part.bom.BOMItem;
 import com.turbointernational.metadata.domain.part.salesnote.SalesNotePart;
 import com.turbointernational.metadata.domain.part.types.*;
 import com.turbointernational.metadata.domain.type.PartType;
+import com.turbointernational.metadata.services.CriticalDimensionService;
 import com.turbointernational.metadata.services.SearchService;
 import com.turbointernational.metadata.web.View;
 import flexjson.JSONSerializer;
@@ -323,7 +324,7 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
                 .include("productImages.filename")
                 .exclude("productImages.*");
         // Add critical dimensions.
-        addCriticalDimensionsToSerialization(criticalDimensions, jsonSerializer);
+        addCriticalDimensionsToSerialization(criticalDimensions, jsonSerializer, false);
         return jsonSerializer;
     }
 
@@ -353,20 +354,30 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
                 .exclude("productImages")
                 .exclude("*.class");
         // Add critical dimensions.
-        addCriticalDimensionsToSerialization(criticalDimensions, jsonSerializer);
+        addCriticalDimensionsToSerialization(criticalDimensions, jsonSerializer, true);
         String json = jsonSerializer.exclude("*").serialize(this);
         return json;
     }
 
+    /**
+     * Add critical dimensions to a serialized part.
+     *
+     * @param criticalDimensions
+     * @param jsonSerializer
+     * @param searchSerialization true if a part is serialized to a search engine.
+     * @see com.turbointernational.metadata.services.CriticalDimensionService#JsonIdxNameTransformer
+     */
     private void addCriticalDimensionsToSerialization(List<CriticalDimension> criticalDimensions,
-                                                      JSONSerializer jsonSerializer) {
+                                                      JSONSerializer jsonSerializer, boolean searchSerialization) {
         if (criticalDimensions != null) {
             for(CriticalDimension cd : criticalDimensions) {
-                Transformer t = cd.getJsonIdxNameTransformer();
-                if (t != null) {
-                    String jsonName = cd.getJsonName();
-                    jsonSerializer.include(jsonName);
-                    jsonSerializer.transform(t, jsonName);
+                String jsonName = cd.getJsonName();
+                jsonSerializer.include(jsonName);
+                if (searchSerialization) {
+                    Transformer t = cd.getJsonIdxNameTransformer();
+                    if (t != null) {
+                        jsonSerializer.transform(t, jsonName);
+                    }
                 }
             }
         }
@@ -377,7 +388,7 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
         return getId().toString();
     }
 
-    public void csvColumns(Map<String, String> columns) {
+    public void csvColumns(Map<String, String> columns, List<CriticalDimension> criticalDimensions) {
         // part_type
         columns.put("part_type", getPartType().getName());
 
@@ -410,6 +421,30 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
 
         // part_number
         columns.put("part_number_short", ObjectUtils.toString(getManufacturerPartNumber()).replaceAll("\\W", ""));
+
+        if (criticalDimensions != null) {
+            for(CriticalDimension cd : criticalDimensions) {
+                String fieldName = cd.getJsonName();
+                CriticalDimensionService.extractValue(this, cd, new CriticalDimensionService.ValueExtractorCallback() {
+
+                    @Override
+                    public void processValue(Object value) {
+                        columns.put(fieldName, ObjectUtils.toString(value));
+
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+                        String message = "Internal error. Extraction of a value of the field '" + fieldName
+                            + "' failed for the part with ID="
+                            + getId() + ". Does JPA entity declares this field? Details: " + e.getMessage();
+                        log.warn(message);
+                    }
+                });
+
+            }
+        }
+
     }
     //</editor-fold>
 

@@ -100,7 +100,8 @@ public class TurbineWheel extends Part {
     public void setNumberOfBlades(String numberOfBlades) {
         this.numberOfBlades = numberOfBlades;
     }
-    
+
+    /*
     @Override
     public void csvColumns(Map<String, String> columns) {
         super.csvColumns(columns);
@@ -113,4 +114,6 @@ public class TurbineWheel extends Part {
         columns.put("shaft_thread_f", ObjectUtils.toString(getShaftThreadF()));
         columns.put("number_of_blades", ObjectUtils.toString(getNumberOfBlades()));
     }
+    */
+
 }

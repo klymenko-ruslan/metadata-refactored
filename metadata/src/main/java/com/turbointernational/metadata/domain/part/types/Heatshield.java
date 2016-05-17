@@ -49,6 +49,7 @@ public class Heatshield extends Part {
         this.inducerDiameter = inducerDiameter;
     }
 
+    /*
     @Override
     public void csvColumns(Map<String, String> columns) {
         super.csvColumns(columns);
@@ -56,4 +57,6 @@ public class Heatshield extends Part {
         columns.put("inside_diameter", ObjectUtils.toString(getInsideDiameter()));
         columns.put("inducer_diameter", ObjectUtils.toString(getInducerDiameter()));
     }
+    */
+
 }

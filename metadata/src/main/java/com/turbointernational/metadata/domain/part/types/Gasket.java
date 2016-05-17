@@ -46,8 +46,7 @@ public class Gasket extends Part {
                     .include("gasketType.id")
                     .include("gasketType.name");
     }
-    */
-    
+
     @Override
     public void csvColumns(Map<String, String> columns) {
         super.csvColumns(columns);
@@ -56,4 +55,5 @@ public class Gasket extends Part {
             columns.put("gasket_type", ObjectUtils.toString(getGasketType().getName()));
         }
     }
+    */
 }

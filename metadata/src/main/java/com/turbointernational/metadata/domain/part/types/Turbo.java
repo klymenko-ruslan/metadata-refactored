@@ -92,8 +92,7 @@ public class Turbo extends Part {
                     .include("turboModel.turboType.id")
                     .include("turboModel.turboType.name");
     }
-    */
-    
+
     @Override
     public void csvColumns(Map<String, String> columns) {
         super.csvColumns(columns);
@@ -107,5 +106,6 @@ public class Turbo extends Part {
             columns.put("cool_type", ObjectUtils.toString(getCoolType().getName()));
         }
     }
+    */
 
 }
