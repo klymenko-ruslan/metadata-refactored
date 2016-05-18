@@ -1,48 +1,164 @@
 {
-    // Mapping "Part type value" => "table name"
-    // This mapping is needed to generate tables for new part types
-    // and 'alter' statements for existing ones.
-    "part_type_mapping": {
-        "actuator": {
-            "table": "actuator",
-            "exists": true
-        },
-        "backplate": {
-            "table": "backplate_2", // warn
-            "exists": false
-        },
-        "bearing_housing": {
-            "table": "bearing_housing",
-            "exists": true
-        },
-        "cartridge": "cartridge",
-        "compressor_cover": "compressor_cover",
-        "compressor_wheel": "compressor_wheel",
-        "gasket": "gasket",
-        "heatshield_shroud": "heatshield",
-        "journal_bearing": "journal_bearing",
-        "nozzle_ring": "nozzle_ring",
-        "piston_ring": "piston_ring",
-        "plug": "plug",
-        "turbine_housing": "turbine_housing",
-        "turbine_wheel": "turbine_wheel",
-        "turbo": "turbo",
-        "bolt_screw": "",
-        "clamp": "",
-        "fitting": "",
-        "journal_bearing_spacer": "journal_bearing_spacer",
-        "nut": "",
-        "oil_deflector": "",
-        "o_ring": "",
-        "pin": "",
-        "retaining_ring": "",
-        "seal_plate": "",
-        "spring": "",
-        "thrust_bearing": "",
-        "thrust_collar": "",
-        "thrust_spacer": "",
-        "thrust_washer": "",
-        "washer": "",
-        "carbon_seal": ""
+  "part_type_mapping": {
+    "actuator": {
+      "table": "actuator",
+      "exists": true
+    },
+    "bearing_housing": {
+      "table": "bearing_housing",
+      "exists": true
+    },
+    "cartridge": {
+      "table": "cartridge",
+      "exists": true
+    },
+    "compressor_cover": {
+      "table": "compressor_cover",
+      "exists": true
+    },
+    "compressor_wheel": {
+      "table": "compressor_wheel",
+      "exists": true
+    },
+    "gasket": {
+      "table": "gasket",
+      "exists": true
+    },
+    "heatshield_shroud": {
+      "table": "heatshield",
+      "exists": true
+    },
+    "journal_bearing": {
+      "table": "journal_bearing",
+      "exists": true
+    },
+    "nozzle_ring": {
+      "table": "nozzle_ring",
+      "exists": true
+    },
+    "piston_ring": {
+      "table": "piston_ring",
+      "exists": true
+    },
+    "plug": {
+      "table": "plug",
+      "exists": true
+    },
+    "turbine_housing": {
+      "table": "turbine_housing",
+      "exists": true
+    },
+    "turbine_wheel": {
+      "table": "turbine_wheel",
+      "exists": true
+    },
+    "turbo": {
+      "table": "turbo",
+      "exists": true
+    },
+    "backplate": {
+      "table": "backplate_",
+      "exists": false
+    },
+    "journal_bearing_spacer": {
+      "table": "journal_bearing_spacer",
+      "exists": false
+    },
+    "bolt_screw": {
+      "table": "bolt_screw",
+      "exists": false
+    },
+    "clamp": {
+      "table": "clamp",
+      "exists": false
+    },
+    "fitting": {
+      "table": "fitting",
+      "exists": false
+    },
+    "nut": {
+      "table": "nut",
+      "exists": false
+    },
+    "oil_deflector": {
+      "table": "oil_deflector",
+      "exists": false
+    },
+    "o_ring": {
+      "table": "o_ring",
+      "exists": false
+    },
+    "pin": {
+      "table": "pin",
+      "exists": false
+    },
+    "retaining_ring": {
+      "table": "retaining_ring",
+      "exists": false
+    },
+    "seal_plate": {
+      "table": "seal_plate",
+      "exists": false
+    },
+    "spring": {
+      "table": "spring",
+      "exists": false
+    },
+    "thrust_bearing": {
+      "table": "thrust_bearing",
+      "exists": false
+    },
+    "thrust_collar": {
+      "table": "thrust_collar",
+      "exists": false
+    },
+    "thrust_spacer": {
+      "table": "thrust_spacer",
+      "exists": false
+    },
+    "thrust_washer": {
+      "table": "thrust_washer",
+      "exists": false
+    },
+    "washer": {
+      "table": "washer",
+      "exists": false
+    },
+    "carbon_seal": {
+      "table": "carbon_seal",
+      "exists": false
+    },
+    "kit": {
+      "table": "kit",
+      "exists": true
+    },
+    "bearing_spacer": {
+      "table": "bearing_spacer",
+      "exists": true
+    },
+    "fast_wearing_component": {
+      "table": "fast_wearing_component",
+      "exists": false
+    },
+    "major_component": {
+      "table": "major_component",
+      "exists": false
+    },
+    "minor_component": {
+      "table": "minor_component",
+      "exists": false
+    },
+    "backplate_sealplate": {
+      "table": "backplate",
+      "exists": true
+    },
+    "thrust_parts": {
+      "table": "thrust_parts",
+      "exists": false
+    },
+    "misc_minor_components": {
+      "table": "misc_minor_components",
+      "exists": false
     }
+  }
 }

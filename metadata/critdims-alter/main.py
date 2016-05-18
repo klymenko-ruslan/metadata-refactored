@@ -18,12 +18,70 @@ must be selected before run this regex):
 import argparse
 import json
 import os
+import re
+import sys
 
 
 KEY_PT_ID = "_pt_id"
 KEY_PT_META = "_pt_meta"
 KEY_CDA = "_cda"
 KEY_LIST = "_list"
+
+REGEX_NONALPHANUM = re.compile(r'\W')
+
+
+def name2jsonName(s):
+    """
+    Convert a string to a valid JSON identifier.
+
+    Example: 'T/E RAMP DRAIN DIA "F" TOL' -> 'teRampDrainDiaFTol'
+    """
+    retval = ""
+    cap = False
+    prevSingleChar = False
+    for w in REGEX_NONALPHANUM.split(s):
+        if w != "":
+            n = len(w)
+            if not cap or w != "TOL" and n == 1 and prevSingleChar:
+                retval += w.lower()
+                cap = True
+            else:
+                retval += w.capitalize()
+                cap = True
+            prevSingleChar = n == 1
+    return retval
+
+
+def cd2sqltype(cd):
+    """Convert critical dimension to SQL type."""
+    retval = None
+    data_type = cd["field_type"]
+    if data_type == "DECIMAL":
+        length = cd["length"]
+        scale = cd["scale"]
+        retval = "decimal({},{})".format(length, scale)
+    elif data_type == "INTEGER":
+        length = cd["length"]
+        retval = "int({})".format(length)
+    elif data_type == "LIST":
+        retval = "int"
+    elif data_type == "LOGICAL":
+        retval = "int"
+    elif data_type == "MEMO":
+        retval = "varchar"
+    else:
+        raise ValueError("Unsupported field type: {}".format(data_type))
+    return retval
+
+
+def cd2sqlconstraint(cd):
+    """Convert critical dimension to SQL constraint."""
+    data_type = cd["field_type"]
+    retval = ""
+    if data_type == "LIST" or data_type == "LOGICAL":
+        retval = "references crit_dim_enum_val(id) on delete set null " \
+            "on update cascade"
+    return retval
 
 
 def format_warn(s):
@@ -33,8 +91,7 @@ def format_warn(s):
 
 def load_input_data(args):
     """Load data."""
-    with open(args.in_part_type) as fp:
-        part_types = json.load(fp)["part_type"]
+    with open(args.in_part_type) as fp: part_types = json.load(fp)["part_type"]
 
     part_types_idx_by_id = {pt["id"]: pt for pt in part_types}
     part_types_idx_by_value = {pt["name_value"]: pt for pt in part_types}
@@ -100,7 +157,9 @@ def load_input_data(args):
 def createTableCritDimSql():
     """SQL statements to create tables for critical dimensions."""
     return r"""
-drop table if exists crit_dim_enum_val, crit_dim_enum, crit_dim;
+drop table if exists crit_dim cascade;
+drop table if exists crit_dim_enum cascade;
+drop table if exists crit_dim_enum_val cascade;
 create table crit_dim_enum (
     id int not null auto_increment,
     name varchar(64) not null,
@@ -144,7 +203,7 @@ create table crit_dim (
     regex           varchar(255) comment 'Validation: JS regular
                         expression',
     parent_id       bigint,
-    length          tinyint com: "",ment 'Lenth on a web page',
+    length          tinyint comment 'Lenth on a web page',
     scale           tinyint comment 'Scale on a web pate.',
     primary key(id),
     unique key(part_type_id, seq_num),
@@ -154,15 +213,54 @@ create table crit_dim (
     foreign key (parent_id) references crit_dim(id)
                         on delete set null on update cascade
 ) engine=innodb;
+
+insert into crit_dim_enum(id, name) values(1, 'yesNoEnum');
+
+insert into crit_dim_enum_val(id, crit_dim_enum_id, val) values
+(  1, 1, 'YES'),
+(  2, 1, 'NO');
 """
 
 
-def generate_create_table(table_name, cda_):
-    return "-- CREATE TABLE {}".format(table_name) # TODO
+def get_part_type_mapping(extra_data, key):
+    ed = extra_data["part_type_mapping"].get(key)
+    if ed is None:
+        print("Extra info for 'part_type_mapping' for key '{}' "
+                "not found.".format(ptm["value"]))
+        sys.exit(2)
+    return ed
 
 
-def generate_alters(table_name, cda_):
-    return "-- ALTER TABLE {}".format(table_name) # TODO
+def generate_create_table(ed, cda_):
+    retval = "create table {} (\n" \
+        "\tpart_id bigint(20) not null,\n" \
+        "\tkey part_id (part_id)".format(ed["table"])
+    if cda_:
+        retval += ",\n"
+        for idx, cd in enumerate(cda_):
+            if idx:
+                retval += ",\n"
+            col_name = name2jsonName(cd["name"])
+            col_type = cd2sqltype(cd)
+            col_constraint = cd2sqlconstraint(cd)
+            retval += "\t{} {} {}".format(col_name, col_type, col_constraint)
+    retval += "\n) engine=innodb default charset=utf8;"
+    return retval
+
+
+def generate_alters(ed, cda_):
+    table_name = ed["table"]
+    retval = ""
+    for cd in cda_:
+        col_name = name2jsonName(cd["name"])
+        col_type = cd2sqltype(cd)
+        col_constraint = cd2sqlconstraint(cd)
+        retval += "alter table {} add column {} {}".format(
+            table_name, col_name, col_type)
+        if col_constraint:
+            retval += (" " + col_constraint)
+        retval += ";\n"
+    return retval
 
 
 # *****************************************************************************
@@ -193,7 +291,13 @@ argparser.add_argument("--in-list-selection", required=False,
                                             "list_selection.json"),
                        help="File in JSON format with exported data from the "
                        "table 'list_selection'.")
+argparser.add_argument("--in-extra-data", required=False,
+                       default=os.path.join(os.getcwd(), "in",
+                                            "extra_data.json"),
+                       help="File in JSON format with extra info.")
 args = argparser.parse_args()
+
+with open(args.in_extra_data) as fp: extra_data = json.load(fp)
 
 (obsolete_part_type, part_types) = load_input_data(args)
 
@@ -211,6 +315,9 @@ if obsolete_part_type:
     for ptm in obsolete_part_type:
         print("-- delete from part_type where id={0:d}; -- {1:s}".format(
             ptm["id"], ptm["name"]))
+        ed = get_part_type_mapping(extra_data, ptm["value"])
+        if ed["exists"] == True:
+            print("-- drop table {};".format(ed["table"]))
     print()
 
 for pt in part_types:
@@ -228,15 +335,15 @@ for pt in part_types:
     cda_ = pt.get(KEY_CDA)
     if not cda_:
         print(format_warn("Part type [{0:d}] - {1:s} has no defined "
-                          "critical dimensions.".format(pt_id, pt["name"])))
+                          "critical dimensions.".format(pt[KEY_PT_ID],
+                                                        pt["name"])))
         if cda_ is None:
             cda_ = list()
-    table_name = pt["name_value"] 
+    ed = get_part_type_mapping(extra_data, pt["name_value"])
     if entity_table_exists:
-        sql = generate_alters(table_name, cda_)
+        sql = generate_alters(ed, cda_)
     else:
-        sql = generate_create_table(table_name, cda_)
+        sql = generate_create_table(ed, cda_)
 
     print(sql)
-#     for cd in cda_:
-#         print("".format())
+
