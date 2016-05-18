@@ -2,7 +2,7 @@
   "part_type_mapping": {
     "actuator": {
       "table": "actuator",
-      "exists": true
+      "exists": false
     },
     "bearing_housing": {
       "table": "bearing_housing",
@@ -14,7 +14,7 @@
     },
     "compressor_cover": {
       "table": "compressor_cover",
-      "exists": true
+      "exists": false
     },
     "compressor_wheel": {
       "table": "compressor_wheel",
@@ -42,11 +42,11 @@
     },
     "plug": {
       "table": "plug",
-      "exists": true
+      "exists": false
     },
     "turbine_housing": {
       "table": "turbine_housing",
-      "exists": true
+      "exists": false
     },
     "turbine_wheel": {
       "table": "turbine_wheel",

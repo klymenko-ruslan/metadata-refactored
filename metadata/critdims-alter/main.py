@@ -29,6 +29,7 @@ KEY_LIST = "_list"
 
 REGEX_NONALPHANUM = re.compile(r'\W')
 
+isAscii = lambda s: len(s) == len(s.encode())
 
 def name2jsonName(s):
     """
@@ -41,6 +42,10 @@ def name2jsonName(s):
     prevSingleChar = False
     for w in REGEX_NONALPHANUM.split(s):
         if w != "":
+            if w == "½":
+                w = "05"
+            if not isAscii(w):
+                raise ValueError("Found unsupported unicode character: " + w)
             n = len(w)
             if not cap or w != "TOL" and n == 1 and prevSingleChar:
                 retval += w.lower()
@@ -68,14 +73,15 @@ def cd2sqltype(cd):
     elif data_type == "LOGICAL":
         retval = "int"
     elif data_type == "MEMO":
-        retval = "varchar"
+        length = cd["length"] or 4096
+        retval = "varchar({})".format(length)
     else:
         raise ValueError("Unsupported field type: {}".format(data_type))
     return retval
 
 
-def cd2sqlconstraint(cd):
-    """Convert critical dimension to SQL constraint."""
+def cd2sqlreference(cd):
+    """Convert critical dimension to SQL foreign key reference."""
     data_type = cd["field_type"]
     retval = ""
     if data_type == "LIST" or data_type == "LOGICAL":
@@ -232,33 +238,44 @@ def get_part_type_mapping(extra_data, key):
 
 
 def generate_create_table(ed, cda_):
+    table_name = ed["table"]
     retval = "create table {} (\n" \
         "\tpart_id bigint(20) not null,\n" \
-        "\tkey part_id (part_id)".format(ed["table"])
+        "\tkey part_id (part_id)".format(table_name)
+    columns = set()
     if cda_:
         retval += ",\n"
         for idx, cd in enumerate(cda_):
             if idx:
                 retval += ",\n"
             col_name = name2jsonName(cd["name"])
+            if col_name in columns:
+                raise ValueError("In table '{}' found duplicated columns '{}'.".format(table_name, col_name))
+            else:
+                columns.add(col_name)
             col_type = cd2sqltype(cd)
-            col_constraint = cd2sqlconstraint(cd)
-            retval += "\t{} {} {}".format(col_name, col_type, col_constraint)
+            col_ref = cd2sqlreference(cd)
+            retval += "\t{} {} {}".format(col_name, col_type, col_ref)
     retval += "\n) engine=innodb default charset=utf8;"
     return retval
 
 
 def generate_alters(ed, cda_):
     table_name = ed["table"]
+    columns = set()
     retval = ""
     for cd in cda_:
         col_name = name2jsonName(cd["name"])
         col_type = cd2sqltype(cd)
-        col_constraint = cd2sqlconstraint(cd)
+        col_ref = cd2sqlreference(cd)
+        if col_name in columns:
+            raise ValueError("In table '{}' found duplicated columns '{}'.".format(table_name, col_name))
+        else:
+            columns.add(col_name)
         retval += "alter table {} add column {} {}".format(
             table_name, col_name, col_type)
-        if col_constraint:
-            retval += (" " + col_constraint)
+        if col_ref:
+            retval += ", add foreign key ({}) {}".format(col_name, col_ref)
         retval += ";\n"
     return retval
 
@@ -322,7 +339,6 @@ if obsolete_part_type:
 
 for pt in part_types:
     pt_id = pt.get(KEY_PT_ID)
-    entity_table_exists = True
     if pt_id is None:
         # Register this new part type.
         print("insert into part_type(id, name, magento_attribute_set, value) "
@@ -331,7 +347,6 @@ for pt in part_types:
                   value=pt["name_value"]))
         pt[KEY_PT_ID] = seq_part_type
         seq_part_type += 1
-        entity_table_exists = False
     cda_ = pt.get(KEY_CDA)
     if not cda_:
         print(format_warn("Part type [{0:d}] - {1:s} has no defined "
@@ -340,6 +355,7 @@ for pt in part_types:
         if cda_ is None:
             cda_ = list()
     ed = get_part_type_mapping(extra_data, pt["name_value"])
+    entity_table_exists = ed["exists"]
     if entity_table_exists:
         sql = generate_alters(ed, cda_)
     else:
