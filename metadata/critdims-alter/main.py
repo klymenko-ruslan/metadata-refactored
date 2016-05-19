@@ -16,6 +16,7 @@ must be selected before run this regex):
 """
 
 import argparse
+import collections
 import json
 import os
 import re
@@ -26,10 +27,37 @@ KEY_PT_ID = "_pt_id"
 KEY_PT_META = "_pt_meta"
 KEY_CDA = "_cda"
 KEY_LIST = "_list"
+KEY_CDDBID = "_dbid"
+
+KEY_COLNAME = "_col_name"
+KEY_TYPES = "_types"
+
+YESNOENUM_ID = 1
 
 REGEX_NONALPHANUM = re.compile(r'\W')
 
+seq_part_type = 30
+seq_critdim = 1
+
+Types = collections.namedtuple("Types", ["field_type", "sql_type",
+                                         "data_type"])
+
+
 isAscii = lambda s: len(s) == len(s.encode())
+
+
+def def_sql_null(d, k):
+    if k not in d: return "null"
+    retval = d[k]
+    if retval is None: return "null"
+    return retval
+
+
+def sql_str_praram(s):
+    if s is None: return "null"
+    s = s.replace("'", "''")
+    return "'" + s + "'"
+
 
 def name2jsonName(s):
     """
@@ -57,27 +85,50 @@ def name2jsonName(s):
     return retval
 
 
-def cd2sqltype(cd):
-    """Convert critical dimension to SQL type."""
+def name2idxName(table_name, jsonName):
+    """
+    Convert a string to a valid fied identifier in ElasticSearch index.
+
+    Example: ('backplate', 'diaA') -> 'bckpltDiaA'
+    """
+    pref = ""
+    for c in table_name.lower():
+        if c not in "aeiou_":
+            pref += c
+    return pref + jsonName.capitalize()
+
+
+def cd2types(cd):
+    """
+    Convert critical dimension to SQL type and type for critical
+    dimension descriptor to enum item of the data_type field in the table
+    that contains critical dimensions -- 'crit_dim'.
+    """
     retval = None
-    data_type = cd["field_type"]
-    if data_type == "DECIMAL":
+    field_type = cd["field_type"]
+    if field_type == "DECIMAL":
         length = cd["length"]
         scale = cd["scale"]
-        retval = "decimal({},{})".format(length, scale)
-    elif data_type == "INTEGER":
+        sql_type = "decimal({},{})".format(length, scale)
+        data_type = "DECIMAL"
+    elif field_type == "INTEGER":
         length = cd["length"]
-        retval = "int({})".format(length)
-    elif data_type == "LIST":
-        retval = "int"
-    elif data_type == "LOGICAL":
-        retval = "int"
-    elif data_type == "MEMO":
+        sql_type = "int({})".format(length)
+        data_type = "INTEGER"
+    elif field_type == "LIST":
+        sql_type = "int"
+        data_type = "ENUMERATION"
+    elif field_type == "LOGICAL":
+        sql_type = "int"
+        data_type = "ENUMERATION"
+    elif field_type == "MEMO":
         length = cd["length"] or 4096
-        retval = "varchar({})".format(length)
+        sql_type = "varchar({})".format(length)
+        data_type = "TEXT"
     else:
         raise ValueError("Unsupported field type: {}".format(data_type))
-    return retval
+    return Types(field_type=field_type, sql_type=sql_type,
+                 data_type=data_type)
 
 
 def cd2sqlreference(cd):
@@ -105,18 +156,18 @@ def load_input_data(args):
     with open(args.in_crit_dim_attribute) as fp:
         crit_dim_attributes = json.load(fp)["crit_dim_attribute"]
 
-    for cda in crit_dim_attributes:
-        pt_id = cda["part_type_id"]
+    for cd in crit_dim_attributes:
+        pt_id = cd["part_type_id"]
         part_type = part_types_idx_by_id[pt_id]
         _cda = part_type.get(KEY_CDA)
         if _cda is None:
             _cda = list()
             part_type[KEY_CDA] = _cda
-        _cda.append(cda)
+        _cda.append(cd)
         _cda.sort(key=lambda x: x["sequence"]
                   if x["sequence"] is not None else 0)
 
-    crit_dim_attributes_idx_by_id = {cda["id"]: cda for cda
+    crit_dim_attributes_idx_by_id = {cd["id"]: cd for cd
                                      in crit_dim_attributes}
 
     # d = dict()
@@ -157,7 +208,8 @@ def load_input_data(args):
             pt[KEY_PT_META] = ptm
             pt[KEY_PT_ID] = ptm["id"]
 
-    return (obsolete_part_type, part_types)
+    return (obsolete_part_type, part_types,
+            crit_dim_attributes, crit_dim_attributes_idx_by_id)
 
 
 def createTableCritDimSql():
@@ -220,12 +272,12 @@ create table crit_dim (
                         on delete set null on update cascade
 ) engine=innodb;
 
-insert into crit_dim_enum(id, name) values(1, 'yesNoEnum');
+insert into crit_dim_enum(id, name) values({yesnoenum_id}, 'yesNoEnum');
 
 insert into crit_dim_enum_val(id, crit_dim_enum_id, val) values
-(  1, 1, 'YES'),
-(  2, 1, 'NO');
-"""
+(  1, {yesnoenum_id}, 'YES'),
+(  2, {yesnoenum_id}, 'NO');
+""".format(yesnoenum_id=YESNOENUM_ID)
 
 
 def get_part_type_mapping(extra_data, key):
@@ -235,6 +287,29 @@ def get_part_type_mapping(extra_data, key):
                 "not found.".format(ptm["value"]))
         sys.exit(2)
     return ed
+
+
+def generate_alters(ed, cda_):
+    table_name = ed["table"]
+    columns = set()
+    retval = ""
+    for cd in cda_:
+        col_name = name2jsonName(cd["name"])
+        types = cd2types(cd)
+        cd[KEY_COLNAME] = col_name
+        cd[KEY_TYPES] = types
+        col_type = types.sql_type
+        col_ref = cd2sqlreference(cd)
+        if col_name in columns:
+            raise ValueError("In table '{}' found duplicated columns '{}'.".format(table_name, col_name))
+        else:
+            columns.add(col_name)
+        retval += "alter table {} add column {} {}".format(
+            table_name, col_name, col_type)
+        if col_ref:
+            retval += ", add foreign key ({}) {}".format(col_name, col_ref)
+        retval += ";\n"
+    return retval
 
 
 def generate_create_table(ed, cda_):
@@ -250,34 +325,90 @@ def generate_create_table(ed, cda_):
                 retval += ",\n"
             col_name = name2jsonName(cd["name"])
             if col_name in columns:
-                raise ValueError("In table '{}' found duplicated columns '{}'.".format(table_name, col_name))
+                raise ValueError("In table '{}' found duplicated columns '{}'."
+                                 .format(table_name, col_name))
             else:
                 columns.add(col_name)
-            col_type = cd2sqltype(cd)
+            types = cd2types(cd)
+            cd[KEY_COLNAME] = col_name
+            cd[KEY_TYPES] = types
+            col_type = types.sql_type
             col_ref = cd2sqlreference(cd)
             retval += "\t{} {} {}".format(col_name, col_type, col_ref)
     retval += "\n) engine=innodb default charset=utf8;"
     return retval
 
 
-def generate_alters(ed, cda_):
-    table_name = ed["table"]
-    columns = set()
-    retval = ""
+def register_crit_dim(part_type_id, table_name, cda_, crit_dim_attributes,
+                      crit_dim_attributes_idx_by_id):
+    sql = "insert into crit_dim(id, part_type_id, seq_num, data_type, " \
+        "unit, "\
+        "tolerance, name, json_name, idx_name, " \
+        "enum_id, null_allowed, null_display, " \
+        "min_val, "\
+        "max_val, regex, parent_id, length, " \
+        "scale) "\
+        "values\n"
+    add_comma = False
     for cd in cda_:
-        col_name = name2jsonName(cd["name"])
-        col_type = cd2sqltype(cd)
-        col_ref = cd2sqlreference(cd)
-        if col_name in columns:
-            raise ValueError("In table '{}' found duplicated columns '{}'.".format(table_name, col_name))
+        types = cd[KEY_TYPES]
+        id_ = crit_dim_attributes_idx_by_id[cd["id"]][KEY_CDDBID]
+        seq_num = cd["sequence"]
+        data_type = types.data_type
+        if cd["unit"] is not None:
+            unit = cd["unit"]
         else:
-            columns.add(col_name)
-        retval += "alter table {} add column {} {}".format(
-            table_name, col_name, col_type)
-        if col_ref:
-            retval += ", add foreign key ({}) {}".format(col_name, col_ref)
-        retval += ";\n"
-    return retval
+            unit = None
+        if cd["tolerance"] == "PLUS;MINUS":
+            tolerance = 1
+        else:
+            tolerance = 0
+        name = cd["name"]
+        json_name = cd[KEY_COLNAME]
+        idx_name = name2idxName(table_name, json_name)
+        if types.field_type == "BOOLEAN":
+            enum_id = YESNOENUM_ID
+        elif types.data_type == "ENUMERATION":
+            enum_id = "null" # TODO
+        else:
+            enum_id = "null"
+        null_allowed = "true"
+        null_display = None
+        if types.data_type in ["DECIMAL", "INTEGER"]:
+            min_val = 0
+        else:
+            min_val = "null"
+        max_val = "null"
+        regex = None
+        parent_attribute = cd["parent_attribute"]
+        if parent_attribute is None:
+            parent_id= "null"
+        else:
+            parent_id = crit_dim_attributes_idx_by_id[parent_attribute][KEY_CDDBID]
+        length = def_sql_null(cd, "length")
+        scale = def_sql_null(cd, "scale")
+        if add_comma: sql += ",\n"
+        values = "({id_}, {part_type_id}, {seq_num}, {data_type}, {unit}, " \
+            "{tolerance}, {name}, {json_name}, {idx_name}, " \
+            "{enum_id}, {null_allowed}, {null_display}, {min_val}, " \
+            "{max_val}, {regex}, {parent_id}, {length}, " \
+            "{scale})".format(
+            id_=id_, part_type_id=part_type_id, seq_num=seq_num,
+            data_type=sql_str_praram(data_type), unit=sql_str_praram(unit),
+            tolerance=tolerance, name=sql_str_praram(name),
+            json_name=sql_str_praram(json_name),
+            idx_name=sql_str_praram(idx_name), enum_id=enum_id,
+            null_allowed=null_allowed,
+            null_display=sql_str_praram(null_display), min_val=min_val,
+            max_val=max_val, regex=sql_str_praram(regex),
+            parent_id=parent_id, length=length, scale=scale)
+        sql += values
+        add_comma = True
+    if add_comma:
+        sql += ";\n"
+    else:
+        sql = ""
+    return sql
 
 
 # *****************************************************************************
@@ -316,15 +447,18 @@ args = argparser.parse_args()
 
 with open(args.in_extra_data) as fp: extra_data = json.load(fp)
 
-(obsolete_part_type, part_types) = load_input_data(args)
+(obsolete_part_type, part_types, crit_dim_attributes,
+    crit_dim_attributes_idx_by_id) = load_input_data(args)
+
+for cd in crit_dim_attributes:
+    seq_critdim += 1
+    cd[KEY_CDDBID] = seq_critdim
 
 # print(json.dumps(part_types, indent=2))
 
 print(createTableCritDimSql())
 
-seq_part_type = 30
-#
-# print("delete from part_types where id >= {};".format(seq_part_types))
+# print("delete from part_types where id >= {};".format(seq_part_type))
 #
 
 if obsolete_part_type:
@@ -345,7 +479,8 @@ for pt in part_types:
               "values({id_}, '{name}', '{mas}', '{value}');".format(
                   id_=seq_part_type, name=pt["name"], mas=pt["name_value"],
                   value=pt["name_value"]))
-        pt[KEY_PT_ID] = seq_part_type
+        pt_id = seq_part_type
+        pt[KEY_PT_ID] = pt_id
         seq_part_type += 1
     cda_ = pt.get(KEY_CDA)
     if not cda_:
@@ -360,6 +495,11 @@ for pt in part_types:
         sql = generate_alters(ed, cda_)
     else:
         sql = generate_create_table(ed, cda_)
+
+    print(sql)
+
+    sql = register_crit_dim(pt_id, ed["table"], cda_, crit_dim_attributes,
+        crit_dim_attributes_idx_by_id)
 
     print(sql)
 
