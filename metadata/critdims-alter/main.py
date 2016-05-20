@@ -20,6 +20,7 @@ import collections
 import json
 import os
 import re
+import shutil
 import sys
 
 
@@ -38,9 +39,33 @@ REGEX_NONALPHANUM = re.compile(r'\W')
 
 seq_part_type = 30
 seq_critdim = 1
+seq_critdim_enum = YESNOENUM_ID + 1
+seq_critdim_enum_val = 100
+
+Warn = collections.namedtuple("Warn", ["id", "message"])
+
+WARN_BAD_SEQ = Warn(1, "A critical dimension [{cd_id}] - '{cd_name}' has "
+                    "nullable field 'sequence'.")
+WARN_ENUM_NOT_DEF = Warn(2, "Enumeration for the critical dimension "
+                         "[{id_}] - '{name}' is not defined.")
+WARN_INVALID_REF = Warn(3, "A critical dimension [{cd_id}] - '{cd_name}' "
+                        "that belongs to a part type [{cd_ptid}] "
+                        "references on a parent critical dimension "
+                        "[{pcd_id}] - '{pcd_name}' that belongs "
+                        "to other part type [{pcd_ptid}]. Skipped.")
+WARN_OBSOLETE_PART_TYPES = Warn(4, "Found obsolete part types.")
+WARN_NO_CRITDIMS = Warn(5, "Part type [{ptid:d}] - '{name:s}' has no defined "
+                        "critical dimensions.")
 
 Types = collections.namedtuple("Types", ["field_type", "sql_type",
                                          "data_type"])
+
+
+def format_warn(w, **kwargs):
+    """Return a formatted string with warning."""
+    return "-- WARN[{warn_id}]: {warn_msg}".format(warn_id=w.id,
+                                                   warn_msg=w.message.format(
+                                                       **kwargs))
 
 
 isAscii = lambda s: len(s) == len(s.encode())
@@ -85,16 +110,26 @@ def name2jsonName(s):
     return retval
 
 
+def normalizeName(name):
+    """
+    Transform input string as:
+        * convert to lowercast;
+        * remove volwes.
+    """
+    retval = ""
+    for c in name.lower():
+        if c not in "aeiou_":
+            retval += c
+    return retval
+
+
 def name2idxName(table_name, jsonName):
     """
     Convert a string to a valid fied identifier in ElasticSearch index.
 
     Example: ('backplate', 'diaA') -> 'bckpltDiaA'
     """
-    pref = ""
-    for c in table_name.lower():
-        if c not in "aeiou_":
-            pref += c
+    pref = normalizeName(table_name)
     return pref + jsonName.capitalize()
 
 
@@ -139,11 +174,6 @@ def cd2sqlreference(cd):
         retval = "references crit_dim_enum_val(id) on delete set null " \
             "on update cascade"
     return retval
-
-
-def format_warn(s):
-    """Return a formatted string with warning."""
-    return "-- WARN: " + s
 
 
 def load_input_data(args):
@@ -264,7 +294,7 @@ create table crit_dim (
     length          tinyint comment 'Lenth on a web page',
     scale           tinyint comment 'Scale on a web pate.',
     primary key(id),
-    unique key(part_type_id, seq_num),
+    -- unique key(part_type_id, seq_num),
     foreign key (part_type_id) references part_type(id),
     foreign key (enum_id) references crit_dim_enum(id)
                         on delete set null on update cascade,
@@ -339,8 +369,41 @@ def generate_create_table(ed, cda_):
     return retval
 
 
+def register_crit_dim_enum(cd, table_name, col_name):
+    global seq_critdim_enum, seq_critdim_enum_val
+    lst = cd.get(KEY_LIST)
+    if not lst:
+        lst_selection = cd.get("list_selection")
+        if lst_selection:
+            # TODO: should be added a warning?
+            lst = list()
+            for itm in lst_selection.split(";"):
+                lst.append(dict(list_name=itm))
+        else:
+            return (None, None)
+    sql = ""
+    seq_critdim_enum += 1
+    id_ = seq_critdim_enum
+    name = normalizeName(table_name) + col_name.capitalize() + "Enum"
+    sql = "insert into crit_dim_enum(id, name) values({id_}, " \
+        "'{name}');\n".format(id_=id_, name=name)
+    if lst:
+        sql += "insert into crit_dim_enum_val(id, crit_dim_enum_id, val) " \
+            "values\n"
+        add_comma = False
+        for itm in lst:
+            if add_comma: sql += ",\n"
+            sql += "({id2_}, {id_}, '{val}')".format(
+                id2_=seq_critdim_enum_val, id_=id_, val=itm["list_name"])
+            seq_critdim_enum_val += 1
+            add_comma = True
+        if add_comma: sql += ";\n"
+    return (id_, sql)
+
+
 def register_crit_dim(part_type_id, table_name, cda_, crit_dim_attributes,
                       crit_dim_attributes_idx_by_id):
+    global alter_file
     sql = "insert into crit_dim(id, part_type_id, seq_num, data_type, " \
         "unit, "\
         "tolerance, name, json_name, idx_name, " \
@@ -350,10 +413,15 @@ def register_crit_dim(part_type_id, table_name, cda_, crit_dim_attributes,
         "scale) "\
         "values\n"
     add_comma = False
+    registered_enums = ""
     for cd in cda_:
         types = cd[KEY_TYPES]
         id_ = crit_dim_attributes_idx_by_id[cd["id"]][KEY_CDDBID]
         seq_num = cd["sequence"]
+        if seq_num is None:
+            seq_num = "null"
+        print(format_warn(WARN_BAD_SEQ, cd_id=cd["id"], cd_name=cd["name"]),
+              file=alter_file)
         data_type = types.data_type
         if cd["unit"] is not None:
             unit = cd["unit"]
@@ -369,7 +437,14 @@ def register_crit_dim(part_type_id, table_name, cda_, crit_dim_attributes,
         if types.field_type == "BOOLEAN":
             enum_id = YESNOENUM_ID
         elif types.data_type == "ENUMERATION":
-            enum_id = "null" # TODO
+            (eid, snippet) = register_crit_dim_enum(cd, table_name, json_name)
+            if eid is None:
+                print(format_warn(WARN_ENUM_NOT_DEF, id_=id_, name=name),
+                      file=alter_file)
+                enum_id = "null"
+            else:
+                enum_id = eid
+                registered_enums += snippet
         else:
             enum_id = "null"
         null_allowed = "true"
@@ -384,7 +459,17 @@ def register_crit_dim(part_type_id, table_name, cda_, crit_dim_attributes,
         if parent_attribute is None:
             parent_id= "null"
         else:
-            parent_id = crit_dim_attributes_idx_by_id[parent_attribute][KEY_CDDBID]
+            pcd = crit_dim_attributes_idx_by_id[parent_attribute]
+            pcd_ptid = pcd["part_type_id"]
+            cd_ptid = cd["part_type_id"]
+            if pcd_ptid == cd_ptid:
+                parent_id = pcd[KEY_CDDBID]
+            else:
+                print(format_warn(WARN_INVALID_REF, cd_id=cd["id"],
+                                  cd_name=cd["name"], cd_ptid=cd_ptid,
+                                  pcd_id=pcd["id"], pcd_name=pcd["name"],
+                                  pcd_ptid=pcd_ptid), file=alter_file)
+                continue
         length = def_sql_null(cd, "length")
         scale = def_sql_null(cd, "scale")
         if add_comma: sql += ",\n"
@@ -408,6 +493,7 @@ def register_crit_dim(part_type_id, table_name, cda_, crit_dim_attributes,
         sql += ";\n"
     else:
         sql = ""
+    if registered_enums: sql = registered_enums + sql
     return sql
 
 
@@ -443,63 +529,98 @@ argparser.add_argument("--in-extra-data", required=False,
                        default=os.path.join(os.getcwd(), "in",
                                             "extra_data.json"),
                        help="File in JSON format with extra info.")
+argparser.add_argument("--out-dir", required=False,
+                       default=os.path.join(os.getcwd(), "out"),
+                       help="Output directory.")
 args = argparser.parse_args()
+
+if os.path.exists(args.out_dir):
+    shutil.rmtree(args.out_dir)
+os.mkdir(args.out_dir)
 
 with open(args.in_extra_data) as fp: extra_data = json.load(fp)
 
-(obsolete_part_type, part_types, crit_dim_attributes,
-    crit_dim_attributes_idx_by_id) = load_input_data(args)
+filename_alter = os.path.join(args.out_dir, "alter.sql")
+with open(filename_alter, "w", encoding="utf-8") as alter_file:
 
-for cd in crit_dim_attributes:
-    seq_critdim += 1
-    cd[KEY_CDDBID] = seq_critdim
+    (obsolete_part_type, part_types, crit_dim_attributes,
+        crit_dim_attributes_idx_by_id) = load_input_data(args)
 
-# print(json.dumps(part_types, indent=2))
+    for cd in crit_dim_attributes:
+        seq_critdim += 1
+        cd[KEY_CDDBID] = seq_critdim
 
-print(createTableCritDimSql())
+    print(createTableCritDimSql(), file=alter_file)
 
-# print("delete from part_types where id >= {};".format(seq_part_type))
-#
+    if obsolete_part_type:
+        print(format_warn(WARN_OBSOLETE_PART_TYPES), file=alter_file)
+        for ptm in obsolete_part_type:
+            print("-- delete from part_type where id={0:d}; -- {1:s}".format(
+                ptm["id"], ptm["name"]), file=alter_file)
+            ed = get_part_type_mapping(extra_data, ptm["value"])
+            if ed["exists"] == True:
+                print("-- drop table {};".format(ed["table"]), file=alter_file)
+        print(file=alter_file)
 
-if obsolete_part_type:
-    print(format_warn("Found obsolete part types."))
-    for ptm in obsolete_part_type:
-        print("-- delete from part_type where id={0:d}; -- {1:s}".format(
-            ptm["id"], ptm["name"]))
-        ed = get_part_type_mapping(extra_data, ptm["value"])
-        if ed["exists"] == True:
-            print("-- drop table {};".format(ed["table"]))
-    print()
+    for pt in part_types:
+        pt_id = pt.get(KEY_PT_ID)
+        if pt_id is None:
+            # Register this new part type.
+            print("insert into part_type(id, name, magento_attribute_set, "
+                  "value) values({id_}, '{name}', '{mas}', '{value}');"
+                  .format(
+                    id_=seq_part_type, name=pt["name"], mas=pt["name_value"],
+                    value=pt["name_value"]), file=alter_file)
+            pt_id = seq_part_type
+            pt[KEY_PT_ID] = pt_id
+            seq_part_type += 1
+        cda_ = pt.get(KEY_CDA)
+        if not cda_:
+            print(format_warn(WARN_NO_CRITDIMS, ptid=pt[KEY_PT_ID],
+                            name=pt["name"]), file=alter_file)
+            if cda_ is None:
+                cda_ = list()
+                pt[KEY_CDA] = cda_
+        ed = get_part_type_mapping(extra_data, pt["name_value"])
+        entity_table_exists = ed["exists"]
+        if entity_table_exists:
+            sql = generate_alters(ed, cda_)
+        else:
+            sql = generate_create_table(ed, cda_)
 
+        print(sql, file=alter_file)
+
+        sql = register_crit_dim(pt_id, ed["table"], cda_, crit_dim_attributes,
+            crit_dim_attributes_idx_by_id)
+
+        print(sql, file=alter_file)
+
+
+# Generate java code snippets.
 for pt in part_types:
-    pt_id = pt.get(KEY_PT_ID)
-    if pt_id is None:
-        # Register this new part type.
-        print("insert into part_type(id, name, magento_attribute_set, value) "
-              "values({id_}, '{name}', '{mas}', '{value}');".format(
-                  id_=seq_part_type, name=pt["name"], mas=pt["name_value"],
-                  value=pt["name_value"]))
-        pt_id = seq_part_type
-        pt[KEY_PT_ID] = pt_id
-        seq_part_type += 1
     cda_ = pt.get(KEY_CDA)
-    if not cda_:
-        print(format_warn("Part type [{0:d}] - {1:s} has no defined "
-                          "critical dimensions.".format(pt[KEY_PT_ID],
-                                                        pt["name"])))
-        if cda_ is None:
-            cda_ = list()
+    if not cda_: continue
     ed = get_part_type_mapping(extra_data, pt["name_value"])
-    entity_table_exists = ed["exists"]
-    if entity_table_exists:
-        sql = generate_alters(ed, cda_)
-    else:
-        sql = generate_create_table(ed, cda_)
-
-    print(sql)
-
-    sql = register_crit_dim(pt_id, ed["table"], cda_, crit_dim_attributes,
-        crit_dim_attributes_idx_by_id)
-
-    print(sql)
+    table_name = ed["table"]
+    snippet_file_name = os.path.join(args.out_dir,
+                                     "{}.java.snippet".format(table_name))
+    snippet = ""
+    getter_setter = ""
+    with open(snippet_file_name, "w", encoding="utf-8") as snippet_file:
+        for cd in cda_:
+            mem_type = "Object"
+            mem_name = cd[KEY_COLNAME]
+            snippet += "    private {mem_type:s} {mem_name:s};\n".format(
+                mem_type=mem_type, mem_name=mem_name)
+            method_suff = mem_name.capitalize()
+            getter_setter += "    public {mem_type:s} get{method_suff:s}" \
+                "() {\n" \
+                "        return {mem_name:s};\n" \
+                "}\n\n" \
+                "    public void set{method_suff:s}({mem_type:s} " \
+                "{mem_name:s}) {\n" \
+                "        this.{mem_name:s} = {mem_name:s};\n" \
+                "    }\n".format(mem_type=mem_type, mem_name=mem_name,
+                                 method_suff=method_suff)
+        print(snippet, file=snippet_file)
 
