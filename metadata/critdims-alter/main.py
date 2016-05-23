@@ -33,6 +33,10 @@ KEY_CDDBID = "_dbid"
 KEY_COLNAME = "_col_name"
 KEY_TYPES = "_types"
 
+
+IDX_NAME_MAXLEN = 32
+
+
 YESNOENUM_ID = 1
 
 REGEX_NONALPHANUM = re.compile(r'\W')
@@ -58,8 +62,9 @@ WARN_NO_CRITDIMS = Warn(5, "Part type [{ptid:d}] - '{name:s}' has no defined "
                         "critical dimensions.")
 
 Types = collections.namedtuple("Types", ["field_type", "sql_type",
-                                         "data_type"])
+                                         "data_type", "jpa_type"])
 
+JpaType = collections.namedtuple("JpaType", ["java_type", "is_enum"])
 
 def format_warn(w, **kwargs):
     """Return a formatted string with warning."""
@@ -107,6 +112,8 @@ def name2jsonName(s):
                 retval += w.capitalize()
                 cap = True
             prevSingleChar = n == 1
+    if retval[0].isdigit():
+        retval = "the" + retval
     return retval
 
 
@@ -123,14 +130,48 @@ def normalizeName(name):
     return retval
 
 
-def name2idxName(table_name, jsonName):
+def name2MagentoAttributeSet(name):
+    """
+    Convert a string (table name) to a value for
+    a field 'magento_attribute_set' in a table path_type.
+    This field contains a string where:
+        * first character in a word is capital
+    """
+    retval = ""
+    for w in name.split("_"):
+        retval += (" " + w.capitalize())
+    return retval
+
+
+def name2idxName(table_name, json_name, idxNames):
     """
     Convert a string to a valid fied identifier in ElasticSearch index.
+    The name is limited by 32 characters. If a generated name is longer
+    then a new attempt is done in oder to satisfy to the constraint.
+    If the second generation attemp failed then exception is thrown.
+
+    In the end the subroutine checked that generated name is unique.
 
     Example: ('backplate', 'diaA') -> 'bckpltDiaA'
     """
     pref = normalizeName(table_name)
-    return pref + jsonName.capitalize()
+    suff = json_name.capitalize()
+    nname = pref + suff
+    if len(nname) > IDX_NAME_MAXLEN:
+        suff = normalizeName(suff).capitalize()
+        nname = pref + suff
+        if len(nname) > IDX_NAME_MAXLEN:
+            raise ValueException("Internal error. "
+                                 "Index name generation failed: "
+                                 "table_name='{}', json_name='{}' => '{}'."
+                                 .format(table_name, json_name, nname))
+    if nname in idxNames:
+        raise ValueException("Internal error. "
+                             "Index name generation failed. "
+                             ": The generated name is not unique: "
+                             "table_name='{}', json_name='{}' => '{}'."
+                             .format(table_name, json_name, nname))
+    return nname
 
 
 def cd2types(cd):
@@ -146,24 +187,31 @@ def cd2types(cd):
         scale = cd["scale"]
         sql_type = "decimal({},{})".format(length, scale)
         data_type = "DECIMAL"
+        jpa_type = JpaType(java_type = "Double", is_enum=False)
     elif field_type == "INTEGER":
         length = cd["length"]
         sql_type = "int({})".format(length)
         data_type = "INTEGER"
+        jpa_type = JpaType(java_type = "Integer", is_enum=False)
     elif field_type == "LIST":
         sql_type = "int"
         data_type = "ENUMERATION"
+        jpa_type = JpaType(java_type = "CriticalDimensionEnumVal",
+                           is_enum=True)
     elif field_type == "LOGICAL":
         sql_type = "int"
         data_type = "ENUMERATION"
+        jpa_type = JpaType(java_type = "CriticalDimensionEnumVal",
+                           is_enum=True)
     elif field_type == "MEMO":
         length = cd["length"] or 4096
         sql_type = "varchar({})".format(length)
         data_type = "TEXT"
+        jpa_type = JpaType(java_type = "String", is_enum=False)
     else:
         raise ValueError("Unsupported field type: {}".format(data_type))
     return Types(field_type=field_type, sql_type=sql_type,
-                 data_type=data_type)
+                 data_type=data_type, jpa_type=jpa_type)
 
 
 def cd2sqlreference(cd):
@@ -277,7 +325,7 @@ create table crit_dim (
                         in serialized to JSON part''s object.
                         It must be the exact name of the property
                         in JPA entity.',
-    idx_name        varchar(48) not null unique comment 'Name of
+    idx_name        varchar({idx_name_len}) not null unique comment 'Name of
                         a property in the ElasticSearch mapping.',
     null_allowed    tinyint(1) not null comment 'Validation:
                         Is NULL allowed?',
@@ -307,7 +355,7 @@ insert into crit_dim_enum(id, name) values({yesnoenum_id}, 'yesNoEnum');
 insert into crit_dim_enum_val(id, crit_dim_enum_id, val) values
 (  1, {yesnoenum_id}, 'YES'),
 (  2, {yesnoenum_id}, 'NO');
-""".format(yesnoenum_id=YESNOENUM_ID)
+""".format(idx_name_len=IDX_NAME_MAXLEN,yesnoenum_id=YESNOENUM_ID)
 
 
 def get_part_type_mapping(extra_data, key):
@@ -414,6 +462,7 @@ def register_crit_dim(part_type_id, table_name, cda_, crit_dim_attributes,
         "values\n"
     add_comma = False
     registered_enums = ""
+    idx_names = set()
     for cd in cda_:
         types = cd[KEY_TYPES]
         id_ = crit_dim_attributes_idx_by_id[cd["id"]][KEY_CDDBID]
@@ -433,7 +482,8 @@ def register_crit_dim(part_type_id, table_name, cda_, crit_dim_attributes,
             tolerance = 0
         name = cd["name"]
         json_name = cd[KEY_COLNAME]
-        idx_name = name2idxName(table_name, json_name)
+        idx_name = name2idxName(table_name, json_name, idx_names)
+        idx_names.add(idx_name)
         if types.field_type == "BOOLEAN":
             enum_id = YESNOENUM_ID
         elif types.data_type == "ENUMERATION":
@@ -566,10 +616,11 @@ with open(filename_alter, "w", encoding="utf-8") as alter_file:
         pt_id = pt.get(KEY_PT_ID)
         if pt_id is None:
             # Register this new part type.
+            mas=name2MagentoAttributeSet(pt["name_value"])
             print("insert into part_type(id, name, magento_attribute_set, "
                   "value) values({id_}, '{name}', '{mas}', '{value}');"
                   .format(
-                    id_=seq_part_type, name=pt["name"], mas=pt["name_value"],
+                    id_=seq_part_type, name=pt["name"], mas=mas,
                     value=pt["name_value"]), file=alter_file)
             pt_id = seq_part_type
             pt[KEY_PT_ID] = pt_id
@@ -602,25 +653,69 @@ for pt in part_types:
     if not cda_: continue
     ed = get_part_type_mapping(extra_data, pt["name_value"])
     table_name = ed["table"]
+    class_name = ed["class"]
     snippet_file_name = os.path.join(args.out_dir,
-                                     "{}.java.snippet".format(table_name))
-    snippet = ""
-    getter_setter = ""
+                                     "{}.java".format(class_name))
+    members_snippet = ""
+    getters_setters_snippet = ""
     with open(snippet_file_name, "w", encoding="utf-8") as snippet_file:
         for cd in cda_:
-            mem_type = "Object"
             mem_name = cd[KEY_COLNAME]
-            snippet += "    private {mem_type:s} {mem_name:s};\n".format(
-                mem_type=mem_type, mem_name=mem_name)
+            types = cd[KEY_TYPES]
+            mem_type = types.jpa_type.java_type
+            annotations = "    @JsonView(View.Summary.class)\n"
+            annotations += "    @JsonProperty(\"{}\")\n".format(mem_name)
+            if types.jpa_type.is_enum:
+                annotations += ("    @ManyToOne(fetch = EAGER)\n"
+                                "    @JoinColumn(name = \"{}\")\n"
+                                .format(mem_name))
+            else:
+                annotations += "    @Column(name = \"{}\")\n".format(mem_name)
+            members_snippet += annotations
+            members_snippet += "    private {mem_type:s} {mem_name:s};\n\n" \
+                .format(mem_type=mem_type, mem_name=mem_name)
             method_suff = mem_name.capitalize()
-            getter_setter += "    public {mem_type:s} get{method_suff:s}" \
-                "() {\n" \
+            getters_setters_snippet += "    public {mem_type:s} " \
+                "get{method_suff:s}() {{\n" \
                 "        return {mem_name:s};\n" \
-                "}\n\n" \
+                "    }}\n\n" \
                 "    public void set{method_suff:s}({mem_type:s} " \
-                "{mem_name:s}) {\n" \
+                "{mem_name:s}) {{\n" \
                 "        this.{mem_name:s} = {mem_name:s};\n" \
-                "    }\n".format(mem_type=mem_type, mem_name=mem_name,
-                                 method_suff=method_suff)
-        print(snippet, file=snippet_file)
+                "    }}\n\n" \
+                .format(mem_type=mem_type, mem_name=mem_name,
+                        method_suff=method_suff)
+        print("package com.turbointernational.metadata.domain.part.types;\n",
+              file=snippet_file)
+        print("import com.fasterxml.jackson.annotation.JsonProperty;",
+              file=snippet_file)
+        print("import com.fasterxml.jackson.annotation.JsonView;",
+              file=snippet_file)
+        print("import com.turbointernational.metadata.domain."
+              "criticaldimension.CriticalDimensionEnumVal;", file=snippet_file)
+        print("import com.turbointernational.metadata.domain.part.Part;",
+              file=snippet_file)
+        print("import com.turbointernational.metadata.web.View;\n",
+              file=snippet_file)
+        print("import javax.persistence.*;\n", file=snippet_file)
+        print("import static javax.persistence.FetchType.EAGER;\n\n",
+              file=snippet_file)
+        print("/**\n * Created by dmytro.trunykov@zorallabs.com.\n */",
+              file=snippet_file)
+        print("@Entity", file=snippet_file)
+        print("@Table(name = \"{}\")".format(table_name), file=snippet_file)
+        print("@PrimaryKeyJoinColumn(name = \"part_id\")", file=snippet_file)
+        print("public class {} extends Part {{".format(class_name),
+              file=snippet_file)
+        print("    //<editor-fold defaultstate=\"collapsed\" " \
+              "desc=\"Properties: critical dimensions\">", file=snippet_file)
+        print(members_snippet, file=snippet_file)
+        print("    //</editor-fold>", file=snippet_file)
+        print("", file=snippet_file)
+        print("    //<editor-fold defaultstate=\"collapsed\" " \
+              "desc=\"Getters and setters: critical dimensions\">",
+              file=snippet_file)
+        print(getters_setters_snippet, file=snippet_file)
+        print("    //</editor-fold>", file=snippet_file)
+        print("}", file=snippet_file)
 

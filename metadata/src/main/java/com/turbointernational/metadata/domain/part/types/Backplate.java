@@ -4,399 +4,302 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.domain.criticaldimension.CriticalDimensionEnumVal;
 import com.turbointernational.metadata.domain.part.Part;
-import com.turbointernational.metadata.domain.type.SealType;
 import com.turbointernational.metadata.web.View;
-import java.util.Map;
-import javax.persistence.*;
 
-import org.apache.commons.lang.ObjectUtils;
+import javax.persistence.*;
 
 import static javax.persistence.FetchType.EAGER;
 
+
+/**
+ * Created by dmytro.trunykov@zorallabs.com.
+ */
 @Entity
-@Table(name="backplate")
+@Table(name = "backplate")
 @PrimaryKeyJoinColumn(name = "part_id")
 public class Backplate extends Part {
-
-    //<editor-fold defaultstate="collapsed" desc="Properties">
-    @JsonView(View.Detail.class)
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="seal_type_id")
-    private SealType sealType;
-
-    @JsonView(View.Detail.class)
-    @Column(name="style_compressor_wheel")
-    private String styleCompressorWheel;
-
-    @JsonView(View.Detail.class)
-    // ???: How is this different from the seal type's name?
-    @Column(name="seal_type")
-    private String sealTypeString;
-
-    @JsonView(View.Detail.class)
-    @Column(name="overall_diameter")
-    private Float overallDiameter;
-
-    @JsonView(View.Detail.class)
-    @Column(name="compressor_wheel_diameter")
-    private Float compressorWheelDiameter;
-
-    @JsonView(View.Detail.class)
-    @Column(name="piston_ring_diameter")
-    private Float pistonRingDiameter;
-
-    @JsonView(View.Detail.class)
-    @Column(name="compressor_housing_diameter")
-    private Float compressorHousingDiameter;
-
-    @JsonView(View.Detail.class)
-    @Column(name="notes")
-    private String notes;
-
-    @JsonView(View.Detail.class)
-    @Column(name="secondary_diameter")
-    private Float secondaryDiameter;
-
-    @JsonView(View.Detail.class)
-    @Column(name="overall_height")
-    private Float overallHeight;
-    //</editor-fold>
-
-    //<editor-fold defaultstate="collapsed" desc="Critical dimensions">
+    //<editor-fold defaultstate="collapsed" desc="Properties: critical dimensions">
     @JsonView(View.Summary.class)
     @JsonProperty("dynCs")
     @ManyToOne(fetch = EAGER)
-    @JoinColumn(name = "dyn_cs")
+    @JoinColumn(name = "dynCs")
     private CriticalDimensionEnumVal dynCs;
 
     @JsonView(View.Summary.class)
     @JsonProperty("superbackFlatback")
     @ManyToOne(fetch = EAGER)
-    @JoinColumn(name = "superback_flatback")
+    @JoinColumn(name = "superbackFlatback")
     private CriticalDimensionEnumVal superbackFlatback;
 
     @JsonView(View.Summary.class)
-    @Column(name = "num_mounting_holes")
-    private Integer numMountingHoles;
+    @JsonProperty("mountingHoles")
+    @Column(name = "mountingHoles")
+    private Integer mountingHoles;
 
     @JsonView(View.Summary.class)
     @JsonProperty("mountingHoleThreadCallout")
     @ManyToOne(fetch = EAGER)
-    @JoinColumn(name = "mounting_hole_thread_callout")
+    @JoinColumn(name = "mountingHoleThreadCallout")
     private CriticalDimensionEnumVal mountingHoleThreadCallout;
 
     @JsonView(View.Summary.class)
-    @Column(name = "dia_a")
+    @JsonProperty("diaA")
+    @Column(name = "diaA")
     private Double diaA;
 
     @JsonView(View.Summary.class)
-    @Column(name = "dia_a_tol")
+    @JsonProperty("diaATol")
+    @Column(name = "diaATol")
     private Double diaATol;
 
     @JsonView(View.Summary.class)
-    @Column(name = "dia_b")
+    @JsonProperty("diaB")
+    @Column(name = "diaB")
     private Double diaB;
 
     @JsonView(View.Summary.class)
-    @Column(name = "dia_b_tol")
+    @JsonProperty("diaBTol")
+    @Column(name = "diaBTol")
     private Double diaBTol;
 
     @JsonView(View.Summary.class)
-    @Column(name = "dia_c")
+    @JsonProperty("diaC")
+    @Column(name = "diaC")
     private Double diaC;
 
     @JsonView(View.Summary.class)
-    @Column(name = "dia_c_tol")
+    @JsonProperty("diaCTol")
+    @Column(name = "diaCTol")
     private Double diaCTol;
 
     @JsonView(View.Summary.class)
-    @Column(name = "dia_d")
+    @JsonProperty("diaD")
+    @Column(name = "diaD")
     private Double diaD;
 
     @JsonView(View.Summary.class)
-    @Column(name = "dia_d_tol")
+    @JsonProperty("diaDTol")
+    @Column(name = "diaDTol")
     private Double diaDTol;
 
     @JsonView(View.Summary.class)
-    @Column(name = "cwc_dia_e")
+    @JsonProperty("cwcDiaE")
+    @Column(name = "cwcDiaE")
     private Double cwcDiaE;
 
     @JsonView(View.Summary.class)
-    @Column(name = "cwc_dia_e_tol")
+    @JsonProperty("cwcDiaETol")
+    @Column(name = "cwcDiaETol")
     private Double cwcDiaETol;
 
     @JsonView(View.Summary.class)
-    @Column(name = "bore_dia")
+    @JsonProperty("boreDia")
+    @Column(name = "boreDia")
     private Double boreDia;
 
     @JsonView(View.Summary.class)
-    @Column(name = "bore_dia_tol")
+    @JsonProperty("boreDiaTol")
+    @Column(name = "boreDiaTol")
     private Double boreDiaTol;
 
     @JsonView(View.Summary.class)
-    @Column(name = "mounting_hole_dia")
+    @JsonProperty("mountingHoleDia")
+    @Column(name = "mountingHoleDia")
     private Double mountingHoleDia;
 
     @JsonView(View.Summary.class)
+    @JsonProperty("oal")
     @Column(name = "oal")
     private Double oal;
 
     @JsonView(View.Summary.class)
+    @JsonProperty("oalTol")
     @Column(name = "oalTol")
     private Double oalTol;
 
     @JsonView(View.Summary.class)
-    @Column(name = "hub_pos_f")
+    @JsonProperty("hubPosF")
+    @Column(name = "hubPosF")
     private Double hubPosF;
 
     @JsonView(View.Summary.class)
-    @Column(name = "hub_pos_f_tol")
+    @JsonProperty("hubPosFTol")
+    @Column(name = "hubPosFTol")
     private Double hubPosFTol;
 
     @JsonView(View.Summary.class)
-    @Column(name = "cc_loc_pos_g")
+    @JsonProperty("ccLocPosG")
+    @Column(name = "ccLocPosG")
     private Double ccLocPosG;
 
     @JsonView(View.Summary.class)
-    @Column(name = "cc_loc_pos_g_tol")
+    @JsonProperty("ccLocPosGTol")
+    @Column(name = "ccLocPosGTol")
     private Double ccLocPosGTol;
 
     @JsonView(View.Summary.class)
-    @Column(name = "lead_in_chmfr_angle")
-    private Double leadInChmfrAngle;
+    @JsonProperty("leadInChmfr05Angle")
+    @Column(name = "leadInChmfr05Angle")
+    private Double leadInChmfr05Angle;
 
     @JsonView(View.Summary.class)
-    @Column(name = "lead_in_chmfr_len")
+    @JsonProperty("leadInChmfrLen")
+    @Column(name = "leadInChmfrLen")
     private Double leadInChmfrLen;
 
     @JsonView(View.Summary.class)
-    @JsonProperty("matl")
+    @JsonProperty("matL")
     @ManyToOne(fetch = EAGER)
-    @JoinColumn(name = "matl")
-    private CriticalDimensionEnumVal matl;
+    @JoinColumn(name = "matL")
+    private CriticalDimensionEnumVal matL;
 
     @JsonView(View.Summary.class)
+    @JsonProperty("weight")
     @Column(name = "weight")
     private Double weight;
 
     @JsonView(View.Summary.class)
-    @Column(name = "diagram_num")
-    private Integer diagramNum;
+    @JsonProperty("diagram")
+    @Column(name = "diagram")
+    private Integer diagram;
+
+
     //</editor-fold>
 
-    public SealType getSealType() {
-        return sealType;
-    }
-
-    public void setSealType(SealType sealType) {
-        this.sealType = sealType;
-    }
-
-    public String getStyleCompressorWheel() {
-        return styleCompressorWheel;
-    }
-
-    public void setStyleCompressorWheel(String styleCompressorWheel) {
-        this.styleCompressorWheel = styleCompressorWheel;
-    }
-
-    public String getSealTypeString() {
-        return sealTypeString;
-    }
-
-    public void setSealTypeString(String sealTypeString) {
-        this.sealTypeString = sealTypeString;
-    }
-
-    public Float getOverallDiameter() {
-        return overallDiameter;
-    }
-
-    public void setOverallDiameter(Float overallDiameter) {
-        this.overallDiameter = overallDiameter;
-    }
-
-    public Float getCompressorWheelDiameter() {
-        return compressorWheelDiameter;
-    }
-
-    public void setCompressorWheelDiameter(Float compressorWheelDiameter) {
-        this.compressorWheelDiameter = compressorWheelDiameter;
-    }
-
-    public Float getPistonRingDiameter() {
-        return pistonRingDiameter;
-    }
-
-    public void setPistonRingDiameter(Float pistonRingDiameter) {
-        this.pistonRingDiameter = pistonRingDiameter;
-    }
-
-    public Float getCompressorHousingDiameter() {
-        return compressorHousingDiameter;
-    }
-
-    public void setCompressorHousingDiameter(Float compressorHousingDiameter) {
-        this.compressorHousingDiameter = compressorHousingDiameter;
-    }
-
-    public String getNotes() {
-        return notes;
-    }
-
-    public void setNotes(String notes) {
-        this.notes = notes;
-    }
-
-    public Float getSecondaryDiameter() {
-        return secondaryDiameter;
-    }
-
-    public void setSecondaryDiameter(Float secondaryDiameter) {
-        this.secondaryDiameter = secondaryDiameter;
-    }
-
-    public Float getOverallHeight() {
-        return overallHeight;
-    }
-
-    public void setOverallHeight(Float overallHeight) {
-        this.overallHeight = overallHeight;
-    }
-
-    public CriticalDimensionEnumVal getDynCs() {
+    //<editor-fold defaultstate="collapsed" desc="Getters and setters: critical dimensions">
+    public CriticalDimensionEnumVal getDyncs() {
         return dynCs;
     }
 
-    public void setDynCs(CriticalDimensionEnumVal dynCs) {
+    public void setDyncs(CriticalDimensionEnumVal dynCs) {
         this.dynCs = dynCs;
     }
 
-    public CriticalDimensionEnumVal getSuperbackFlatback() {
+    public CriticalDimensionEnumVal getSuperbackflatback() {
         return superbackFlatback;
     }
 
-    public void setSuperbackFlatback(CriticalDimensionEnumVal superbackFlatback) {
+    public void setSuperbackflatback(CriticalDimensionEnumVal superbackFlatback) {
         this.superbackFlatback = superbackFlatback;
     }
 
-    public Integer getNumMountingHoles() {
-        return numMountingHoles;
+    public Integer getMountingholes() {
+        return mountingHoles;
     }
 
-    public void setNumMountingHoles(Integer numMountingHoles) {
-        this.numMountingHoles = numMountingHoles;
+    public void setMountingholes(Integer mountingHoles) {
+        this.mountingHoles = mountingHoles;
     }
 
-    public CriticalDimensionEnumVal getMountingHoleThreadCallout() {
+    public CriticalDimensionEnumVal getMountingholethreadcallout() {
         return mountingHoleThreadCallout;
     }
 
-    public void setMountingHoleThreadCallout(CriticalDimensionEnumVal mountingHoleThreadCallout) {
+    public void setMountingholethreadcallout(CriticalDimensionEnumVal mountingHoleThreadCallout) {
         this.mountingHoleThreadCallout = mountingHoleThreadCallout;
     }
 
-    public Double getDiaA() {
+    public Double getDiaa() {
         return diaA;
     }
 
-    public void setDiaA(Double diaA) {
+    public void setDiaa(Double diaA) {
         this.diaA = diaA;
     }
 
-    public Double getDiaATol() {
+    public Double getDiaatol() {
         return diaATol;
     }
 
-    public void setDiaATol(Double diaATol) {
+    public void setDiaatol(Double diaATol) {
         this.diaATol = diaATol;
     }
 
-    public Double getDiaB() {
+    public Double getDiab() {
         return diaB;
     }
 
-    public void setDiaB(Double diaB) {
+    public void setDiab(Double diaB) {
         this.diaB = diaB;
     }
 
-    public Double getDiaBTol() {
+    public Double getDiabtol() {
         return diaBTol;
     }
 
-    public void setDiaBTol(Double diaBTol) {
+    public void setDiabtol(Double diaBTol) {
         this.diaBTol = diaBTol;
     }
 
-    public Double getDiaC() {
+    public Double getDiac() {
         return diaC;
     }
 
-    public void setDiaC(Double diaC) {
+    public void setDiac(Double diaC) {
         this.diaC = diaC;
     }
 
-    public Double getDiaCTol() {
+    public Double getDiactol() {
         return diaCTol;
     }
 
-    public void setDiaCTol(Double diaCTol) {
+    public void setDiactol(Double diaCTol) {
         this.diaCTol = diaCTol;
     }
 
-    public Double getDiaD() {
+    public Double getDiad() {
         return diaD;
     }
 
-    public void setDiaD(Double diaD) {
+    public void setDiad(Double diaD) {
         this.diaD = diaD;
     }
 
-    public Double getDiaDTol() {
+    public Double getDiadtol() {
         return diaDTol;
     }
 
-    public void setDiaDTol(Double diaDTol) {
+    public void setDiadtol(Double diaDTol) {
         this.diaDTol = diaDTol;
     }
 
-    public Double getCwcDiaE() {
+    public Double getCwcdiae() {
         return cwcDiaE;
     }
 
-    public void setCwcDiaE(Double cwcDiaE) {
+    public void setCwcdiae(Double cwcDiaE) {
         this.cwcDiaE = cwcDiaE;
     }
 
-    public Double getCwcDiaETol() {
+    public Double getCwcdiaetol() {
         return cwcDiaETol;
     }
 
-    public void setCwcDiaETol(Double cwcDiaETol) {
+    public void setCwcdiaetol(Double cwcDiaETol) {
         this.cwcDiaETol = cwcDiaETol;
     }
 
-    public Double getBoreDia() {
+    public Double getBoredia() {
         return boreDia;
     }
 
-    public void setBoreDia(Double boreDia) {
+    public void setBoredia(Double boreDia) {
         this.boreDia = boreDia;
     }
 
-    public Double getBoreDiaTol() {
+    public Double getBorediatol() {
         return boreDiaTol;
     }
 
-    public void setBoreDiaTol(Double boreDiaTol) {
+    public void setBorediatol(Double boreDiaTol) {
         this.boreDiaTol = boreDiaTol;
     }
 
-    public Double getMountingHoleDia() {
+    public Double getMountingholedia() {
         return mountingHoleDia;
     }
 
-    public void setMountingHoleDia(Double mountingHoleDia) {
+    public void setMountingholedia(Double mountingHoleDia) {
         this.mountingHoleDia = mountingHoleDia;
     }
 
@@ -408,68 +311,68 @@ public class Backplate extends Part {
         this.oal = oal;
     }
 
-    public Double getOalTol() {
+    public Double getOaltol() {
         return oalTol;
     }
 
-    public void setOalTol(Double oalTol) {
+    public void setOaltol(Double oalTol) {
         this.oalTol = oalTol;
     }
 
-    public Double getHubPosF() {
+    public Double getHubposf() {
         return hubPosF;
     }
 
-    public void setHubPosF(Double hubPosF) {
+    public void setHubposf(Double hubPosF) {
         this.hubPosF = hubPosF;
     }
 
-    public Double getHubPosFTol() {
+    public Double getHubposftol() {
         return hubPosFTol;
     }
 
-    public void setHubPosFTol(Double hubPosFTol) {
+    public void setHubposftol(Double hubPosFTol) {
         this.hubPosFTol = hubPosFTol;
     }
 
-    public Double getCcLocPosG() {
+    public Double getCclocposg() {
         return ccLocPosG;
     }
 
-    public void setCcLocPosG(Double ccLocPosG) {
+    public void setCclocposg(Double ccLocPosG) {
         this.ccLocPosG = ccLocPosG;
     }
 
-    public Double getCcLocPosGTol() {
+    public Double getCclocposgtol() {
         return ccLocPosGTol;
     }
 
-    public void setCcLocPosGTol(Double ccLocPosGTol) {
+    public void setCclocposgtol(Double ccLocPosGTol) {
         this.ccLocPosGTol = ccLocPosGTol;
     }
 
-    public Double getLeadInChmfrAngle() {
-        return leadInChmfrAngle;
+    public Double getLeadinchmfr05angle() {
+        return leadInChmfr05Angle;
     }
 
-    public void setLeadInChmfrAngle(Double leadInChmfrAngle) {
-        this.leadInChmfrAngle = leadInChmfrAngle;
+    public void setLeadinchmfr05angle(Double leadInChmfr05Angle) {
+        this.leadInChmfr05Angle = leadInChmfr05Angle;
     }
 
-    public Double getLeadInChmfrLen() {
+    public Double getLeadinchmfrlen() {
         return leadInChmfrLen;
     }
 
-    public void setLeadInChmfrLen(Double leadInChmfrLen) {
+    public void setLeadinchmfrlen(Double leadInChmfrLen) {
         this.leadInChmfrLen = leadInChmfrLen;
     }
 
     public CriticalDimensionEnumVal getMatl() {
-        return matl;
+        return matL;
     }
 
-    public void setMatl(CriticalDimensionEnumVal matl) {
-        this.matl = matl;
+    public void setMatl(CriticalDimensionEnumVal matL) {
+        this.matL = matL;
     }
 
     public Double getWeight() {
@@ -480,38 +383,14 @@ public class Backplate extends Part {
         this.weight = weight;
     }
 
-    public Integer getDiagramNum() {
-        return diagramNum;
+    public Integer getDiagram() {
+        return diagram;
     }
 
-    public void setDiagramNum(Integer diagramNum) {
-        this.diagramNum = diagramNum;
+    public void setDiagram(Integer diagram) {
+        this.diagram = diagram;
     }
 
-    /*
-    @Override
-    protected JSONSerializer getSearchSerializer() {
-        return super.getSearchSerializer()
-                    .include("sealType.id")
-                    .include("sealType.name");
-    }
 
-    @Override
-    public void csvColumns(Map<String, String> columns) {
-        super.csvColumns(columns);
-        
-        if (getSealType() != null) {
-            columns.put("seal_type", ObjectUtils.toString(getSealType().getName()));
-        }
-
-        columns.put("overall_diameter", ObjectUtils.toString(getOverallDiameter()));
-        columns.put("compressor_wheel_diameter", ObjectUtils.toString(getCompressorWheelDiameter()));
-        columns.put("piston_ring_diameter", ObjectUtils.toString(getPistonRingDiameter()));
-        columns.put("compressor_housing_diameter", ObjectUtils.toString(getCompressorHousingDiameter()));
-        columns.put("secondary_diameter", ObjectUtils.toString(getSecondaryDiameter()));
-        columns.put("overall_height", ObjectUtils.toString(getOverallHeight()));
-        columns.put("style_compressor_wheel", ObjectUtils.toString(getStyleCompressorWheel()));
-    }
-    */
-
+    //</editor-fold>
 }

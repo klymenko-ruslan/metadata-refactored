@@ -1,0 +1,98 @@
+trunikov@trunikov-u144:~/Projects/TurboInternational/metadata/critdims-alter$ git status
+On branch critical_dimensions
+Your branch is up-to-date with 'origin/critical_dimensions'.
+
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
+
+	new file:   ../src/main/java/com/turbointernational/metadata/domain/part/types/BoltScrew.java
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+	modified:   in/extra_data.json
+	modified:   main.py
+	modified:   ../src/main/java/com/turbointernational/metadata/domain/part/types/Backplate.java
+	modified:   ../src/main/java/com/turbointernational/metadata/domain/part/types/BearingHousing.java
+	modified:   ../src/main/java/com/turbointernational/metadata/domain/part/types/BoltScrew.java
+	modified:   ../src/main/java/com/turbointernational/metadata/domain/part/types/CompressorWheel.java
+	modified:   ../src/main/java/com/turbointernational/metadata/domain/part/types/Gasket.java
+	modified:   ../src/main/java/com/turbointernational/metadata/domain/part/types/Heatshield.java
+	modified:   ../src/main/java/com/turbointernational/metadata/domain/part/types/JournalBearing.java
+	modified:   ../src/main/java/com/turbointernational/metadata/domain/part/types/NozzleRing.java
+	modified:   ../src/main/java/com/turbointernational/metadata/domain/part/types/PistonRing.java
+	modified:   ../src/main/java/com/turbointernational/metadata/domain/part/types/TurbineWheel.java
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+
+	../../bits/ElasticSearch/.ropeproject/
+	.ropeproject/
+	metadata_201605181617.sql.bz2
+	out/
+	part_types_processed.json
+	../src/main/java/com/turbointernational/metadata/domain/part/types/CarbonSeal.java
+	../src/main/java/com/turbointernational/metadata/domain/part/types/Clamp.java
+	../src/main/java/com/turbointernational/metadata/domain/part/types/Fitting.java
+	../src/main/java/com/turbointernational/metadata/domain/part/types/JournalBearingSpacer.java
+	../src/main/java/com/turbointernational/metadata/domain/part/types/Nut.java
+	../src/main/java/com/turbointernational/metadata/domain/part/types/ORing.java
+	../src/main/java/com/turbointernational/metadata/domain/part/types/OilDeflector.java
+	../src/main/java/com/turbointernational/metadata/domain/part/types/Pin.java
+	../src/main/java/com/turbointernational/metadata/domain/part/types/RetainingRing.java
+	../src/main/java/com/turbointernational/metadata/domain/part/types/SealPlate.java
+	../src/main/java/com/turbointernational/metadata/domain/part/types/Spring.java
+	../src/main/java/com/turbointernational/metadata/domain/part/types/ThrustBearing.java
+	../src/main/java/com/turbointernational/metadata/domain/part/types/ThrustCollar.java
+	../src/main/java/com/turbointernational/metadata/domain/part/types/ThrustSpacer.java
+	../src/main/java/com/turbointernational/metadata/domain/part/types/ThrustWasher.java
+	../src/main/java/com/turbointernational/metadata/domain/part/types/Washer.java
+
+
+It took 2.73 seconds to enumerate untracked files. 'status -uno'
+may speed it up, but you have to be careful not to forget to add
+new files yourself (see 'git help status').
+
+
+
+
+
+
+
+
+
+
+
+**********************************
+
+
+
+	new file:   critdims-alter/README
+	modified:   src/main/java/com/turbointernational/metadata/domain/part/types/Backplate.java
+	modified:   src/main/java/com/turbointernational/metadata/domain/part/types/BearingHousing.java
+	new file:   src/main/java/com/turbointernational/metadata/domain/part/types/BoltScrew.java
+	new file:   src/main/java/com/turbointernational/metadata/domain/part/types/CarbonSeal.java
+	new file:   src/main/java/com/turbointernational/metadata/domain/part/types/Clamp.java
+	modified:   src/main/java/com/turbointernational/metadata/domain/part/types/CompressorWheel.java
+	new file:   src/main/java/com/turbointernational/metadata/domain/part/types/Fitting.java
+	modified:   src/main/java/com/turbointernational/metadata/domain/part/types/Gasket.java
+	modified:   src/main/java/com/turbointernational/metadata/domain/part/types/Heatshield.java
+	modified:   src/main/java/com/turbointernational/metadata/domain/part/types/JournalBearing.java
+	new file:   src/main/java/com/turbointernational/metadata/domain/part/types/JournalBearingSpacer.java
+	modified:   src/main/java/com/turbointernational/metadata/domain/part/types/NozzleRing.java
+	new file:   src/main/java/com/turbointernational/metadata/domain/part/types/Nut.java
+	new file:   src/main/java/com/turbointernational/metadata/domain/part/types/ORing.java
+	new file:   src/main/java/com/turbointernational/metadata/domain/part/types/OilDeflector.java
+	new file:   src/main/java/com/turbointernational/metadata/domain/part/types/Pin.java
+	modified:   src/main/java/com/turbointernational/metadata/domain/part/types/PistonRing.java
+	new file:   src/main/java/com/turbointernational/metadata/domain/part/types/RetainingRing.java
+	new file:   src/main/java/com/turbointernational/metadata/domain/part/types/SealPlate.java
+	new file:   src/main/java/com/turbointernational/metadata/domain/part/types/Spring.java
+	new file:   src/main/java/com/turbointernational/metadata/domain/part/types/ThrustBearing.java
+	new file:   src/main/java/com/turbointernational/metadata/domain/part/types/ThrustCollar.java
+	new file:   src/main/java/com/turbointernational/metadata/domain/part/types/ThrustSpacer.java
+	new file:   src/main/java/com/turbointernational/metadata/domain/part/types/ThrustWasher.java
+	modified:   src/main/java/com/turbointernational/metadata/domain/part/types/TurbineWheel.java
+	new file:   src/main/java/com/turbointernational/metadata/domain/part/types/Washer.java
+
