@@ -8,7 +8,7 @@ import com.turbointernational.metadata.web.View;
 
 import javax.persistence.*;
 
-import static javax.persistence.FetchType.EAGER;
+import static javax.persistence.FetchType.LAZY;
 
 
 /**
@@ -18,6 +18,7 @@ import static javax.persistence.FetchType.EAGER;
 @Table(name = "heatshield")
 @PrimaryKeyJoinColumn(name = "part_id")
 public class Heatshield extends Part {
+
     //<editor-fold defaultstate="collapsed" desc="Properties: critical dimensions">
     @JsonView(View.Summary.class)
     @JsonProperty("diaA")
@@ -96,7 +97,7 @@ public class Heatshield extends Part {
 
     @JsonView(View.Summary.class)
     @JsonProperty("matL")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "matL")
     private CriticalDimensionEnumVal matL;
 
@@ -107,7 +108,7 @@ public class Heatshield extends Part {
 
     @JsonView(View.Summary.class)
     @JsonProperty("rolledLip")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "rolledLip")
     private CriticalDimensionEnumVal rolledLip;
 

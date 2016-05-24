@@ -9,6 +9,7 @@ import javax.persistence.*;
  * Created by dmytro.trunykov@zorallabs.com on 18.03.16.
  */
 @Entity
+@Table(name = "auth_provider_ldap")
 @PrimaryKeyJoinColumn(name = "id")
 @NamedQueries(
         @NamedQuery(name = "findAuthProviderLdapByName", query = "from AuthProviderLdap where name=:name")

@@ -16,7 +16,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="BOM_ALT_HEADER")
+@Table(name="bom_alt_header")
 public class BOMAlternativeHeader implements Serializable {
     
     //<editor-fold defaultstate="collapsed" desc="Properties">

@@ -17,7 +17,7 @@ import javax.persistence.*;
         @NamedQuery(name = "findAllPartTypes", query = "FROM PartType AS pt ORDER BY pt.name"),
         @NamedQuery(name = "findPartTypeByValue", query = "FROM PartType AS pt WHERE pt.value=:value")
 })
-@Table(name = "PART_TYPE")
+@Table(name = "part_type")
 public class PartType implements Serializable {
 
     //<editor-fold defaultstate="collapsed" desc="properties">

@@ -19,7 +19,7 @@ import javax.persistence.UniqueConstraint;
 
 @Cacheable
 @Entity
-@Table(name="SEAL_TYPE", uniqueConstraints=@UniqueConstraint(columnNames={"name"}))
+@Table(name="seal_type", uniqueConstraints=@UniqueConstraint(columnNames={"name"}))
 public class SealType implements Serializable {
 
     //<editor-fold defaultstate="collapsed" desc="properties">

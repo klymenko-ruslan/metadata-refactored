@@ -15,8 +15,7 @@ import static javax.persistence.GenerationType.*;
  */
 @Cacheable
 @Entity
-@Table(name = "CRIT_DIM_ENUM_VAL")
-// public List<CriticalDimensionEnumVal> getCritDimEnumVals(Integer enumId)
+@Table(name = "crit_dim_enum_val")
 @NamedQueries({
     @NamedQuery(
             name = "getAllCritDimEnumVals",

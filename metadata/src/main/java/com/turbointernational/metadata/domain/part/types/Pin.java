@@ -8,7 +8,7 @@ import com.turbointernational.metadata.web.View;
 
 import javax.persistence.*;
 
-import static javax.persistence.FetchType.EAGER;
+import static javax.persistence.FetchType.LAZY;
 
 
 /**
@@ -18,6 +18,7 @@ import static javax.persistence.FetchType.EAGER;
 @Table(name = "pin")
 @PrimaryKeyJoinColumn(name = "part_id")
 public class Pin extends Part {
+
     //<editor-fold defaultstate="collapsed" desc="Properties: critical dimensions">
     @JsonView(View.Summary.class)
     @JsonProperty("length")
@@ -36,13 +37,13 @@ public class Pin extends Part {
 
     @JsonView(View.Summary.class)
     @JsonProperty("location")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "location")
     private CriticalDimensionEnumVal location;
 
     @JsonView(View.Summary.class)
     @JsonProperty("material")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "material")
     private CriticalDimensionEnumVal material;
 

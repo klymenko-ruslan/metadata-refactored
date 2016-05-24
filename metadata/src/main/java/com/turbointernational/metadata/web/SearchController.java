@@ -163,7 +163,7 @@ public class SearchController {
             try {
                 searchService.indexAllParts();
             } catch (Exception e) {
-                log.error("Indexing of all parts failed.");
+                log.error("Indexing of all parts failed.", e);
             }
         }).start();
     }

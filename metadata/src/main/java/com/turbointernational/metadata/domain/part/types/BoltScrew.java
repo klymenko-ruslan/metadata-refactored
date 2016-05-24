@@ -8,7 +8,7 @@ import com.turbointernational.metadata.web.View;
 
 import javax.persistence.*;
 
-import static javax.persistence.FetchType.EAGER;
+import static javax.persistence.FetchType.LAZY;
 
 
 /**
@@ -18,10 +18,11 @@ import static javax.persistence.FetchType.EAGER;
 @Table(name = "bolt_screw")
 @PrimaryKeyJoinColumn(name = "part_id")
 public class BoltScrew extends Part {
+
     //<editor-fold defaultstate="collapsed" desc="Properties: critical dimensions">
     @JsonView(View.Summary.class)
     @JsonProperty("threadCalloutA")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "threadCalloutA")
     private CriticalDimensionEnumVal threadCalloutA;
 
@@ -32,7 +33,7 @@ public class BoltScrew extends Part {
 
     @JsonView(View.Summary.class)
     @JsonProperty("threadHand")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "threadHand")
     private CriticalDimensionEnumVal threadHand;
 
@@ -53,19 +54,19 @@ public class BoltScrew extends Part {
 
     @JsonView(View.Summary.class)
     @JsonProperty("headType")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "headType")
     private CriticalDimensionEnumVal headType;
 
     @JsonView(View.Summary.class)
     @JsonProperty("driveType")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "driveType")
     private CriticalDimensionEnumVal driveType;
 
     @JsonView(View.Summary.class)
     @JsonProperty("driveSize")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "driveSize")
     private CriticalDimensionEnumVal driveSize;
 
@@ -81,25 +82,25 @@ public class BoltScrew extends Part {
 
     @JsonView(View.Summary.class)
     @JsonProperty("prevailingTorqueYn")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "prevailingTorqueYn")
     private CriticalDimensionEnumVal prevailingTorqueYn;
 
     @JsonView(View.Summary.class)
     @JsonProperty("threadLockCompoundType")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "threadLockCompoundType")
     private CriticalDimensionEnumVal threadLockCompoundType;
 
     @JsonView(View.Summary.class)
     @JsonProperty("platingCoating")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "platingCoating")
     private CriticalDimensionEnumVal platingCoating;
 
     @JsonView(View.Summary.class)
     @JsonProperty("propertyClassOrGrade")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "propertyClassOrGrade")
     private CriticalDimensionEnumVal propertyClassOrGrade;
 
@@ -110,7 +111,7 @@ public class BoltScrew extends Part {
 
     @JsonView(View.Summary.class)
     @JsonProperty("specialFeaturesOnOff")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "specialFeaturesOnOff")
     private CriticalDimensionEnumVal specialFeaturesOnOff;
 

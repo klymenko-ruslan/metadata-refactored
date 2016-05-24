@@ -30,29 +30,54 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.*;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
+import static com.fasterxml.jackson.annotation.JsonTypeInfo.As.PROPERTY;
+import static com.fasterxml.jackson.annotation.JsonTypeInfo.Id.CLASS;
 import static javax.persistence.GenerationType.IDENTITY;
+import static javax.persistence.InheritanceType.JOINED;
+import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_PROTOTYPE;
 
 @Cacheable
 @Entity
-@Table(name = "PART")
-@Inheritance(strategy = InheritanceType.JOINED)
+@Table(name = "part")
+@Inheritance(strategy = JOINED)
 @Component
-@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "class", include = As.PROPERTY, defaultImpl = Part.class)
+@Scope(SCOPE_PROTOTYPE)
+@JsonTypeInfo(use = CLASS, property = "class", include = PROPERTY, defaultImpl = Part.class)
 @JsonSubTypes({
+        @JsonSubTypes.Type(Actuator.class),
         @JsonSubTypes.Type(Backplate.class),
         @JsonSubTypes.Type(BearingHousing.class),
         @JsonSubTypes.Type(BearingSpacer.class),
+        @JsonSubTypes.Type(BoltScrew.class),
+        @JsonSubTypes.Type(CarbonSeal.class),
         @JsonSubTypes.Type(Cartridge.class),
+        @JsonSubTypes.Type(Clamp.class),
+        @JsonSubTypes.Type(CompressorCover.class),
         @JsonSubTypes.Type(CompressorWheel.class),
+        @JsonSubTypes.Type(Fitting.class),
         @JsonSubTypes.Type(Gasket.class),
         @JsonSubTypes.Type(Heatshield.class),
         @JsonSubTypes.Type(JournalBearing.class),
+        @JsonSubTypes.Type(JournalBearingSpacer.class),
         @JsonSubTypes.Type(Kit.class),
         @JsonSubTypes.Type(NozzleRing.class),
+        @JsonSubTypes.Type(Nut.class),
+        @JsonSubTypes.Type(OilDeflector.class),
+        @JsonSubTypes.Type(ORing.class),
+        @JsonSubTypes.Type(Pin.class),
         @JsonSubTypes.Type(PistonRing.class),
+        @JsonSubTypes.Type(Plug.class),
+        @JsonSubTypes.Type(RetainingRing.class),
+        @JsonSubTypes.Type(SealPlate.class),
+        @JsonSubTypes.Type(Spring.class),
+        @JsonSubTypes.Type(ThrustBearing.class),
+        @JsonSubTypes.Type(ThrustCollar.class),
+        @JsonSubTypes.Type(ThrustWasher.class),
+        @JsonSubTypes.Type(TurbineHousing.class),
         @JsonSubTypes.Type(TurbineWheel.class),
         @JsonSubTypes.Type(Turbo.class),
+        @JsonSubTypes.Type(Washer.class),
 })
 @NamedQueries({
         @NamedQuery(
@@ -72,7 +97,7 @@ import static javax.persistence.GenerationType.IDENTITY;
                 query = "FROM Part p ORDER BY p.id"
         )
 })
-//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id", scope = Part.class)
+@JsonInclude(ALWAYS)
 public class Part implements Comparable<Part>, Serializable, SearchableEntity {
 
     private static final Logger log = LoggerFactory.getLogger(Part.class);
@@ -105,7 +130,7 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
     @JsonView({View.Summary.class})
     private PartType partType;
 
-    @Column(nullable = false, columnDefinition = "BIT", length = 1)
+    @Column(name = "inactive", nullable = false, columnDefinition = "BIT", length = 1)
     @JsonView({View.Detail.class})
     private Boolean inactive = false;
 
@@ -142,7 +167,7 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
     @Version
     @Column(name = "version")
     @JsonView(View.Summary.class)
-    @JsonInclude(JsonInclude.Include.ALWAYS)
+    @JsonInclude(ALWAYS)
     private int version;
 
     public Long getId() {

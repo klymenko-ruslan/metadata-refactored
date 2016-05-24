@@ -8,7 +8,7 @@ import com.turbointernational.metadata.web.View;
 
 import javax.persistence.*;
 
-import static javax.persistence.FetchType.EAGER;
+import static javax.persistence.FetchType.LAZY;
 
 
 /**
@@ -18,6 +18,7 @@ import static javax.persistence.FetchType.EAGER;
 @Table(name = "thrust_bearing")
 @PrimaryKeyJoinColumn(name = "part_id")
 public class ThrustBearing extends Part {
+
     //<editor-fold defaultstate="collapsed" desc="Properties: critical dimensions">
     @JsonView(View.Summary.class)
     @JsonProperty("maxThicknessA")
@@ -101,7 +102,7 @@ public class ThrustBearing extends Part {
 
     @JsonView(View.Summary.class)
     @JsonProperty("rotation")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "rotation")
     private CriticalDimensionEnumVal rotation;
 
@@ -122,7 +123,7 @@ public class ThrustBearing extends Part {
 
     @JsonView(View.Summary.class)
     @JsonProperty("material")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "material")
     private CriticalDimensionEnumVal material;
 

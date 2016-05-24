@@ -8,7 +8,7 @@ import com.turbointernational.metadata.web.View;
 
 import javax.persistence.*;
 
-import static javax.persistence.FetchType.EAGER;
+import static javax.persistence.FetchType.LAZY;
 
 
 /**
@@ -18,6 +18,7 @@ import static javax.persistence.FetchType.EAGER;
 @Table(name = "retaining_ring")
 @PrimaryKeyJoinColumn(name = "part_id")
 public class RetainingRing extends Part {
+
     //<editor-fold defaultstate="collapsed" desc="Properties: critical dimensions">
     @JsonView(View.Summary.class)
     @JsonProperty("referenceNumber")
@@ -26,43 +27,43 @@ public class RetainingRing extends Part {
 
     @JsonView(View.Summary.class)
     @JsonProperty("internalExternal")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "internalExternal")
     private CriticalDimensionEnumVal internalExternal;
 
     @JsonView(View.Summary.class)
     @JsonProperty("ringType")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "ringType")
     private CriticalDimensionEnumVal ringType;
 
     @JsonView(View.Summary.class)
     @JsonProperty("taperedConstantSection")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "taperedConstantSection")
     private CriticalDimensionEnumVal taperedConstantSection;
 
     @JsonView(View.Summary.class)
     @JsonProperty("axiallyRadiallyAssembled")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "axiallyRadiallyAssembled")
     private CriticalDimensionEnumVal axiallyRadiallyAssembled;
 
     @JsonView(View.Summary.class)
     @JsonProperty("selfLocking")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "selfLocking")
     private CriticalDimensionEnumVal selfLocking;
 
     @JsonView(View.Summary.class)
     @JsonProperty("beveled")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "beveled")
     private CriticalDimensionEnumVal beveled;
 
     @JsonView(View.Summary.class)
     @JsonProperty("bowed")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "bowed")
     private CriticalDimensionEnumVal bowed;
 
@@ -143,13 +144,13 @@ public class RetainingRing extends Part {
 
     @JsonView(View.Summary.class)
     @JsonProperty("material")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "material")
     private CriticalDimensionEnumVal material;
 
     @JsonView(View.Summary.class)
     @JsonProperty("finishPlating")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "finishPlating")
     private CriticalDimensionEnumVal finishPlating;
 

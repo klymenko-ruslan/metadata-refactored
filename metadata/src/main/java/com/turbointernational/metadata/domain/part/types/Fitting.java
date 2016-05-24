@@ -8,7 +8,7 @@ import com.turbointernational.metadata.web.View;
 
 import javax.persistence.*;
 
-import static javax.persistence.FetchType.EAGER;
+import static javax.persistence.FetchType.LAZY;
 
 
 /**
@@ -18,6 +18,7 @@ import static javax.persistence.FetchType.EAGER;
 @Table(name = "fitting")
 @PrimaryKeyJoinColumn(name = "part_id")
 public class Fitting extends Part {
+
     //<editor-fold defaultstate="collapsed" desc="Properties: critical dimensions">
     @JsonView(View.Summary.class)
     @JsonProperty("diameterA")
@@ -46,7 +47,7 @@ public class Fitting extends Part {
 
     @JsonView(View.Summary.class)
     @JsonProperty("thread")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "thread")
     private CriticalDimensionEnumVal thread;
 

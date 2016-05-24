@@ -8,7 +8,7 @@ import com.turbointernational.metadata.web.View;
 
 import javax.persistence.*;
 
-import static javax.persistence.FetchType.EAGER;
+import static javax.persistence.FetchType.LAZY;
 
 
 /**
@@ -18,40 +18,41 @@ import static javax.persistence.FetchType.EAGER;
 @Table(name = "nut")
 @PrimaryKeyJoinColumn(name = "part_id")
 public class Nut extends Part {
+
     //<editor-fold defaultstate="collapsed" desc="Properties: critical dimensions">
     @JsonView(View.Summary.class)
     @JsonProperty("shaftNut")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "shaftNut")
     private CriticalDimensionEnumVal shaftNut;
 
     @JsonView(View.Summary.class)
     @JsonProperty("type")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "type")
     private CriticalDimensionEnumVal type;
 
     @JsonView(View.Summary.class)
     @JsonProperty("flange")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "flange")
     private CriticalDimensionEnumVal flange;
 
     @JsonView(View.Summary.class)
     @JsonProperty("driveType")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "driveType")
     private CriticalDimensionEnumVal driveType;
 
     @JsonView(View.Summary.class)
     @JsonProperty("thread")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "thread")
     private CriticalDimensionEnumVal thread;
 
     @JsonView(View.Summary.class)
     @JsonProperty("thdHand")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "thdHand")
     private CriticalDimensionEnumVal thdHand;
 
@@ -82,13 +83,13 @@ public class Nut extends Part {
 
     @JsonView(View.Summary.class)
     @JsonProperty("grade")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "grade")
     private CriticalDimensionEnumVal grade;
 
     @JsonView(View.Summary.class)
     @JsonProperty("platingCoating")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "platingCoating")
     private CriticalDimensionEnumVal platingCoating;
 
@@ -99,7 +100,7 @@ public class Nut extends Part {
 
     @JsonView(View.Summary.class)
     @JsonProperty("showSpecialFeatures")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "showSpecialFeatures")
     private CriticalDimensionEnumVal showSpecialFeatures;
 
@@ -110,7 +111,7 @@ public class Nut extends Part {
 
     @JsonView(View.Summary.class)
     @JsonProperty("prevailingTorqueType")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "prevailingTorqueType")
     private CriticalDimensionEnumVal prevailingTorqueType;
 

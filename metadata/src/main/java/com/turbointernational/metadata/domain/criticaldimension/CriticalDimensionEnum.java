@@ -17,7 +17,7 @@ import static javax.persistence.GenerationType.IDENTITY;
  */
 @Cacheable
 @Entity
-@Table(name = "CRIT_DIM_ENUM")
+@Table(name = "crit_dim_enum")
 @NamedQueries({
     @NamedQuery(
             name = "getAllCritDimEnums",
@@ -45,7 +45,7 @@ public class CriticalDimensionEnum {
 
     @OneToMany(fetch = EAGER)
     @JsonView({View.Detail.class})
-    @JoinTable(name = "CRIT_DIM_ENUM_VAL",
+    @JoinTable(name = "crit_dim_enum_val",
             joinColumns = @JoinColumn(name = "crit_dim_enum_id"),
             inverseJoinColumns = @JoinColumn(name = "id"))
     private List<CriticalDimensionEnumVal> values;

@@ -8,7 +8,7 @@ import com.turbointernational.metadata.web.View;
 
 import javax.persistence.*;
 
-import static javax.persistence.FetchType.EAGER;
+import static javax.persistence.FetchType.LAZY;
 
 
 /**
@@ -18,6 +18,7 @@ import static javax.persistence.FetchType.EAGER;
 @Table(name = "nozzle_ring")
 @PrimaryKeyJoinColumn(name = "part_id")
 public class NozzleRing extends Part {
+
     //<editor-fold defaultstate="collapsed" desc="Properties: critical dimensions">
     @JsonView(View.Summary.class)
     @JsonProperty("unisonRingDiaA")
@@ -81,7 +82,7 @@ public class NozzleRing extends Part {
 
     @JsonView(View.Summary.class)
     @JsonProperty("rotation")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "rotation")
     private CriticalDimensionEnumVal rotation;
 

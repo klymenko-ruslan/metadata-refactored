@@ -19,7 +19,7 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table(name="TURBO_TYPE", uniqueConstraints=@UniqueConstraint(columnNames={"name"}))
+@Table(name="turbo_type", uniqueConstraints=@UniqueConstraint(columnNames={"name"}))
 public class TurboType implements Comparable<TurboType>, Serializable {
     //<editor-fold defaultstate="collapsed" desc="Properties">
     @Id

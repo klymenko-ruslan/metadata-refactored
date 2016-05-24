@@ -18,7 +18,7 @@ import static javax.persistence.FetchType.EAGER;
  */
 @Cacheable
 @Entity
-@Table(name = "CRIT_DIM")
+@Table(name = "crit_dim")
 @NamedQueries({
     @NamedQuery(
             name = "findCriticalDimensionsForPartType",

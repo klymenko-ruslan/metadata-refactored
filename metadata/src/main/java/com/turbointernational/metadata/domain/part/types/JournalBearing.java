@@ -8,7 +8,7 @@ import com.turbointernational.metadata.web.View;
 
 import javax.persistence.*;
 
-import static javax.persistence.FetchType.EAGER;
+import static javax.persistence.FetchType.LAZY;
 
 
 /**
@@ -18,6 +18,7 @@ import static javax.persistence.FetchType.EAGER;
 @Table(name = "journal_bearing")
 @PrimaryKeyJoinColumn(name = "part_id")
 public class JournalBearing extends Part {
+
     //<editor-fold defaultstate="collapsed" desc="Properties: critical dimensions">
     @JsonView(View.Summary.class)
     @JsonProperty("maxOuterDiameter")
@@ -41,7 +42,7 @@ public class JournalBearing extends Part {
 
     @JsonView(View.Summary.class)
     @JsonProperty("size")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "size")
     private CriticalDimensionEnumVal size;
 
@@ -67,7 +68,7 @@ public class JournalBearing extends Part {
 
     @JsonView(View.Summary.class)
     @JsonProperty("freePinned")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "freePinned")
     private CriticalDimensionEnumVal freePinned;
 
@@ -78,19 +79,19 @@ public class JournalBearing extends Part {
 
     @JsonView(View.Summary.class)
     @JsonProperty("oilFeed")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "oilFeed")
     private CriticalDimensionEnumVal oilFeed;
 
     @JsonView(View.Summary.class)
     @JsonProperty("rotation")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "rotation")
     private CriticalDimensionEnumVal rotation;
 
     @JsonView(View.Summary.class)
     @JsonProperty("material")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "material")
     private CriticalDimensionEnumVal material;
 
@@ -101,13 +102,13 @@ public class JournalBearing extends Part {
 
     @JsonView(View.Summary.class)
     @JsonProperty("endConfiguration")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "endConfiguration")
     private CriticalDimensionEnumVal endConfiguration;
 
     @JsonView(View.Summary.class)
     @JsonProperty("boreConfiguration")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "boreConfiguration")
     private CriticalDimensionEnumVal boreConfiguration;
 
@@ -123,7 +124,7 @@ public class JournalBearing extends Part {
 
     @JsonView(View.Summary.class)
     @JsonProperty("specialFeaturesOnOff")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "specialFeaturesOnOff")
     private CriticalDimensionEnumVal specialFeaturesOnOff;
 

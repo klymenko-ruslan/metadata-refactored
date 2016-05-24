@@ -8,7 +8,7 @@ import com.turbointernational.metadata.web.View;
 
 import javax.persistence.*;
 
-import static javax.persistence.FetchType.EAGER;
+import static javax.persistence.FetchType.LAZY;
 
 
 /**
@@ -18,34 +18,35 @@ import static javax.persistence.FetchType.EAGER;
 @Table(name = "compressor_wheel")
 @PrimaryKeyJoinColumn(name = "part_id")
 public class CompressorWheel extends Part {
+
     //<editor-fold defaultstate="collapsed" desc="Properties: critical dimensions">
     @JsonView(View.Summary.class)
     @JsonProperty("rotation")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "rotation")
     private CriticalDimensionEnumVal rotation;
 
     @JsonView(View.Summary.class)
     @JsonProperty("flatbackSuperback")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "flatbackSuperback")
     private CriticalDimensionEnumVal flatbackSuperback;
 
     @JsonView(View.Summary.class)
     @JsonProperty("extendedTips")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "extendedTips")
     private CriticalDimensionEnumVal extendedTips;
 
     @JsonView(View.Summary.class)
     @JsonProperty("threadedBore")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "threadedBore")
     private CriticalDimensionEnumVal threadedBore;
 
     @JsonView(View.Summary.class)
     @JsonProperty("boreless")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "boreless")
     private CriticalDimensionEnumVal boreless;
 
@@ -111,7 +112,7 @@ public class CompressorWheel extends Part {
 
     @JsonView(View.Summary.class)
     @JsonProperty("bladeCount")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "bladeCount")
     private CriticalDimensionEnumVal bladeCount;
 
@@ -127,13 +128,13 @@ public class CompressorWheel extends Part {
 
     @JsonView(View.Summary.class)
     @JsonProperty("threadCallout")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "threadCallout")
     private CriticalDimensionEnumVal threadCallout;
 
     @JsonView(View.Summary.class)
     @JsonProperty("threadHand")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "threadHand")
     private CriticalDimensionEnumVal threadHand;
 

@@ -22,8 +22,9 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="GROUPS") // GROUP is a reserved word
+@Table(name="groups") // GROUP is a reserved word
 public class Group implements Comparable<Group>, Serializable {
+
     public static final long serialVersionUID = 1L;
 
     public static JSONSerializer JSON = new JSONSerializer()
@@ -36,28 +37,29 @@ public class Group implements Comparable<Group>, Serializable {
                 .include("users.email")
                 .exclude("*");
 
-    //<editor-fold defaultstate="collapsed" desc="properties">
+    //<editor-fold defaultstate="collapsed" desc="Properties">
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonView({View.Detail.class, View.Summary.class})
     private Long id;
     
     @JsonView({View.Detail.class, View.Summary.class})
+    @Column(name = "name")
     private String name;
     
     @ManyToMany
-    @JoinTable(name="USER_GROUP",
+    @JoinTable(name="user_group",
             joinColumns=@JoinColumn(name="group_id"),
             inverseJoinColumns=@JoinColumn(name="user_id"))
     @JsonView({View.DetailWithUsers.class})
-    private Set<User> users = new TreeSet<User>();
+    private Set<User> users = new TreeSet<>();
     
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name="GROUP_ROLE",
+    @JoinTable(name="group_role",
             joinColumns=@JoinColumn(name="group_id"),
             inverseJoinColumns=@JoinColumn(name="role_id"))
     @JsonView({View.Detail.class})
-    private Set<Role> roles = new TreeSet<Role>();
+    private Set<Role> roles = new TreeSet<>();
     
     public Long getId() {
         return id;

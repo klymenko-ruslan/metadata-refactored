@@ -19,7 +19,7 @@ import javax.persistence.UniqueConstraint;
 
 @Cacheable
 @Entity
-@Table(name="MANFR_TYPE",
+@Table(name="manfr_type",
        uniqueConstraints=@UniqueConstraint(columnNames={"name"}))
 public class ManufacturerType implements Serializable {
 

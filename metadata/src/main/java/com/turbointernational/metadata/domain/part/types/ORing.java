@@ -8,7 +8,7 @@ import com.turbointernational.metadata.web.View;
 
 import javax.persistence.*;
 
-import static javax.persistence.FetchType.EAGER;
+import static javax.persistence.FetchType.LAZY;
 
 
 /**
@@ -18,6 +18,7 @@ import static javax.persistence.FetchType.EAGER;
 @Table(name = "o_ring")
 @PrimaryKeyJoinColumn(name = "part_id")
 public class ORing extends Part {
+
     //<editor-fold defaultstate="collapsed" desc="Properties: critical dimensions">
     @JsonView(View.Summary.class)
     @JsonProperty("innerDiaA")
@@ -31,7 +32,7 @@ public class ORing extends Part {
 
     @JsonView(View.Summary.class)
     @JsonProperty("crossSectionType")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "crossSectionType")
     private CriticalDimensionEnumVal crossSectionType;
 
@@ -67,13 +68,13 @@ public class ORing extends Part {
 
     @JsonView(View.Summary.class)
     @JsonProperty("matL")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "matL")
     private CriticalDimensionEnumVal matL;
 
     @JsonView(View.Summary.class)
     @JsonProperty("dashNo")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "dashNo")
     private CriticalDimensionEnumVal dashNo;
 
@@ -84,7 +85,7 @@ public class ORing extends Part {
 
     @JsonView(View.Summary.class)
     @JsonProperty("showSpecialFeatures")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "showSpecialFeatures")
     private CriticalDimensionEnumVal showSpecialFeatures;
 

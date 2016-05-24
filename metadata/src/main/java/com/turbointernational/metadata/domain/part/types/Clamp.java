@@ -8,7 +8,7 @@ import com.turbointernational.metadata.web.View;
 
 import javax.persistence.*;
 
-import static javax.persistence.FetchType.EAGER;
+import static javax.persistence.FetchType.LAZY;
 
 
 /**
@@ -18,10 +18,11 @@ import static javax.persistence.FetchType.EAGER;
 @Table(name = "clamp")
 @PrimaryKeyJoinColumn(name = "part_id")
 public class Clamp extends Part {
+
     //<editor-fold defaultstate="collapsed" desc="Properties: critical dimensions">
     @JsonView(View.Summary.class)
     @JsonProperty("type")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "type")
     private CriticalDimensionEnumVal type;
 
@@ -52,13 +53,13 @@ public class Clamp extends Part {
 
     @JsonView(View.Summary.class)
     @JsonProperty("material")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "material")
     private CriticalDimensionEnumVal material;
 
     @JsonView(View.Summary.class)
     @JsonProperty("platingCoating")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "platingCoating")
     private CriticalDimensionEnumVal platingCoating;
 

@@ -8,7 +8,7 @@ import com.turbointernational.metadata.web.View;
 
 import javax.persistence.*;
 
-import static javax.persistence.FetchType.EAGER;
+import static javax.persistence.FetchType.LAZY;
 
 
 /**
@@ -18,10 +18,11 @@ import static javax.persistence.FetchType.EAGER;
 @Table(name = "bearing_housing")
 @PrimaryKeyJoinColumn(name = "part_id")
 public class BearingHousing extends Part {
+
     //<editor-fold defaultstate="collapsed" desc="Properties: critical dimensions">
     @JsonView(View.Summary.class)
     @JsonProperty("waterCooled")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "waterCooled")
     private CriticalDimensionEnumVal waterCooled;
 
@@ -117,37 +118,37 @@ public class BearingHousing extends Part {
 
     @JsonView(View.Summary.class)
     @JsonProperty("oilInletThread")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "oilInletThread")
     private CriticalDimensionEnumVal oilInletThread;
 
     @JsonView(View.Summary.class)
     @JsonProperty("oilInletFlangeThread")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "oilInletFlangeThread")
     private CriticalDimensionEnumVal oilInletFlangeThread;
 
     @JsonView(View.Summary.class)
     @JsonProperty("oilDrainThread")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "oilDrainThread")
     private CriticalDimensionEnumVal oilDrainThread;
 
     @JsonView(View.Summary.class)
     @JsonProperty("oilDrainFlangeThread")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "oilDrainFlangeThread")
     private CriticalDimensionEnumVal oilDrainFlangeThread;
 
     @JsonView(View.Summary.class)
     @JsonProperty("coolantPortThread1")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "coolantPortThread1")
     private CriticalDimensionEnumVal coolantPortThread1;
 
     @JsonView(View.Summary.class)
     @JsonProperty("coolantPortThread2")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "coolantPortThread2")
     private CriticalDimensionEnumVal coolantPortThread2;
 
@@ -173,7 +174,7 @@ public class BearingHousing extends Part {
 
     @JsonView(View.Summary.class)
     @JsonProperty("quadrant")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "quadrant")
     private CriticalDimensionEnumVal quadrant;
 
@@ -184,13 +185,13 @@ public class BearingHousing extends Part {
 
     @JsonView(View.Summary.class)
     @JsonProperty("singleDualOilFeed")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "singleDualOilFeed")
     private CriticalDimensionEnumVal singleDualOilFeed;
 
     @JsonView(View.Summary.class)
     @JsonProperty("spinningBearing")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "spinningBearing")
     private CriticalDimensionEnumVal spinningBearing;
 

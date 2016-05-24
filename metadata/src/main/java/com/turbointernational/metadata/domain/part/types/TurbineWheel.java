@@ -8,7 +8,7 @@ import com.turbointernational.metadata.web.View;
 
 import javax.persistence.*;
 
-import static javax.persistence.FetchType.EAGER;
+import static javax.persistence.FetchType.LAZY;
 
 
 /**
@@ -18,6 +18,7 @@ import static javax.persistence.FetchType.EAGER;
 @Table(name = "turbine_wheel")
 @PrimaryKeyJoinColumn(name = "part_id")
 public class TurbineWheel extends Part {
+
     //<editor-fold defaultstate="collapsed" desc="Properties: critical dimensions">
     @JsonView(View.Summary.class)
     @JsonProperty("inducerDiameterA")
@@ -96,13 +97,13 @@ public class TurbineWheel extends Part {
 
     @JsonView(View.Summary.class)
     @JsonProperty("thread")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "thread")
     private CriticalDimensionEnumVal thread;
 
     @JsonView(View.Summary.class)
     @JsonProperty("threadHand")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "threadHand")
     private CriticalDimensionEnumVal threadHand;
 
@@ -168,7 +169,7 @@ public class TurbineWheel extends Part {
 
     @JsonView(View.Summary.class)
     @JsonProperty("rotation")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "rotation")
     private CriticalDimensionEnumVal rotation;
 
@@ -179,19 +180,19 @@ public class TurbineWheel extends Part {
 
     @JsonView(View.Summary.class)
     @JsonProperty("shroudType")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "shroudType")
     private CriticalDimensionEnumVal shroudType;
 
     @JsonView(View.Summary.class)
     @JsonProperty("journalType")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "journalType")
     private CriticalDimensionEnumVal journalType;
 
     @JsonView(View.Summary.class)
     @JsonProperty("extendedTips")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "extendedTips")
     private CriticalDimensionEnumVal extendedTips;
 

@@ -8,7 +8,7 @@ import com.turbointernational.metadata.web.View;
 
 import javax.persistence.*;
 
-import static javax.persistence.FetchType.EAGER;
+import static javax.persistence.FetchType.LAZY;
 
 
 /**
@@ -18,16 +18,17 @@ import static javax.persistence.FetchType.EAGER;
 @Table(name = "backplate")
 @PrimaryKeyJoinColumn(name = "part_id")
 public class Backplate extends Part {
+
     //<editor-fold defaultstate="collapsed" desc="Properties: critical dimensions">
     @JsonView(View.Summary.class)
     @JsonProperty("dynCs")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "dynCs")
     private CriticalDimensionEnumVal dynCs;
 
     @JsonView(View.Summary.class)
     @JsonProperty("superbackFlatback")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "superbackFlatback")
     private CriticalDimensionEnumVal superbackFlatback;
 
@@ -38,7 +39,7 @@ public class Backplate extends Part {
 
     @JsonView(View.Summary.class)
     @JsonProperty("mountingHoleThreadCallout")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "mountingHoleThreadCallout")
     private CriticalDimensionEnumVal mountingHoleThreadCallout;
 
@@ -149,7 +150,7 @@ public class Backplate extends Part {
 
     @JsonView(View.Summary.class)
     @JsonProperty("matL")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "matL")
     private CriticalDimensionEnumVal matL;
 

@@ -13,7 +13,7 @@ import java.sql.Timestamp;
  */
 @Cacheable
 @Entity
-@Table(name = "MAS90SYNC")
+@Table(name = "mas90sync")
 public class Mas90Sync implements Serializable {
 
     /**

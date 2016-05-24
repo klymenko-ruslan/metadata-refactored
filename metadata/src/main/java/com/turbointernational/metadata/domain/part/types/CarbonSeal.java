@@ -8,7 +8,7 @@ import com.turbointernational.metadata.web.View;
 
 import javax.persistence.*;
 
-import static javax.persistence.FetchType.EAGER;
+import static javax.persistence.FetchType.LAZY;
 
 
 /**
@@ -18,10 +18,11 @@ import static javax.persistence.FetchType.EAGER;
 @Table(name = "carbon_seal")
 @PrimaryKeyJoinColumn(name = "part_id")
 public class CarbonSeal extends Part {
+
     //<editor-fold defaultstate="collapsed" desc="Properties: critical dimensions">
     @JsonView(View.Summary.class)
     @JsonProperty("encapsulated")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "encapsulated")
     private CriticalDimensionEnumVal encapsulated;
 

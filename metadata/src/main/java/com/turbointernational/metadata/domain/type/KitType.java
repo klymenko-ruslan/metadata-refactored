@@ -19,7 +19,7 @@ import javax.persistence.UniqueConstraint;
 
 @Cacheable
 @Entity
-@Table(name="KIT_TYPE", uniqueConstraints=@UniqueConstraint(columnNames={"name"}))
+@Table(name="kit_type", uniqueConstraints=@UniqueConstraint(columnNames={"name"}))
 public class KitType implements Serializable {
 
     //<editor-fold defaultstate="collapsed" desc="properties">

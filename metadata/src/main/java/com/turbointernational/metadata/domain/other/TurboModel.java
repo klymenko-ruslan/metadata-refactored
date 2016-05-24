@@ -22,7 +22,7 @@ import javax.persistence.Table;
 
 @Cacheable
 @Entity
-@Table(name = "TURBO_MODEL")
+@Table(name = "turbo_model")
 public class TurboModel implements Serializable {
     
     //<editor-fold defaultstate="collapsed" desc="Properties">

@@ -3,12 +3,10 @@ package com.turbointernational.metadata.domain.security;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.web.View;
 import java.io.Serializable;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
+@Table(name = "role")
 public class Role implements Comparable<Role>, Serializable {
     public static final long serialVersionUID = 1L;
     
@@ -19,9 +17,11 @@ public class Role implements Comparable<Role>, Serializable {
     private Long id;
     
     @JsonView({View.Detail.class, View.Summary.class})
+    @Column(name = "name")
     private String name;
     
     @JsonView({View.Detail.class, View.Summary.class})
+    @Column(name = "display")
     private String display;
     
     public Long getId() {

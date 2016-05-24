@@ -19,7 +19,7 @@ import javax.persistence.UniqueConstraint;
 
 @Cacheable
 @Entity
-@Table(name="GASKET_TYPE", uniqueConstraints=@UniqueConstraint(columnNames={"name"}))
+@Table(name="gasket_type", uniqueConstraints=@UniqueConstraint(columnNames={"name"}))
 public class GasketType implements Serializable {
 
     //<editor-fold defaultstate="collapsed" desc="properties">

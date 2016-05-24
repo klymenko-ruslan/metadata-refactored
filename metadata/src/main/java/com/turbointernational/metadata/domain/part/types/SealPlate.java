@@ -8,7 +8,7 @@ import com.turbointernational.metadata.web.View;
 
 import javax.persistence.*;
 
-import static javax.persistence.FetchType.EAGER;
+import static javax.persistence.FetchType.LAZY;
 
 
 /**
@@ -18,6 +18,7 @@ import static javax.persistence.FetchType.EAGER;
 @Table(name = "seal_plate")
 @PrimaryKeyJoinColumn(name = "part_id")
 public class SealPlate extends Part {
+
     //<editor-fold defaultstate="collapsed" desc="Properties: critical dimensions">
     @JsonView(View.Summary.class)
     @JsonProperty("leadInChmfr05Angle")
@@ -161,25 +162,25 @@ public class SealPlate extends Part {
 
     @JsonView(View.Summary.class)
     @JsonProperty("superbackFlatbackSpecial")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "superbackFlatbackSpecial")
     private CriticalDimensionEnumVal superbackFlatbackSpecial;
 
     @JsonView(View.Summary.class)
     @JsonProperty("dynamicCarbonSeal")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "dynamicCarbonSeal")
     private CriticalDimensionEnumVal dynamicCarbonSeal;
 
     @JsonView(View.Summary.class)
     @JsonProperty("dynCs")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "dynCs")
     private CriticalDimensionEnumVal dynCs;
 
     @JsonView(View.Summary.class)
     @JsonProperty("matL")
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "matL")
     private CriticalDimensionEnumVal matL;
 

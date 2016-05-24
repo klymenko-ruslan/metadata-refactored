@@ -34,7 +34,7 @@ KEY_COLNAME = "_col_name"
 KEY_TYPES = "_types"
 
 
-IDX_NAME_MAXLEN = 32
+IDX_NAME_MAXLEN = 30
 
 
 YESNOENUM_ID = 1
@@ -89,6 +89,15 @@ def sql_str_praram(s):
     return "'" + s + "'"
 
 
+def name2PartTypeName(name):
+    retval = ""
+    for idx, w in enumerate(name.split()):
+        if idx > 0:
+            retval += " "
+        retval += w.capitalize()
+    return retval
+
+
 def name2jsonName(s):
     """
     Convert a string to a valid JSON identifier.
@@ -138,8 +147,10 @@ def name2MagentoAttributeSet(name):
         * first character in a word is capital
     """
     retval = ""
-    for w in name.split("_"):
-        retval += (" " + w.capitalize())
+    for idx, w in enumerate(name.split("_")):
+        if idx > 0:
+            retval += " "
+        retval += w.capitalize()
     return retval
 
 
@@ -614,13 +625,14 @@ with open(filename_alter, "w", encoding="utf-8") as alter_file:
 
     for pt in part_types:
         pt_id = pt.get(KEY_PT_ID)
+        pt_name = name2PartTypeName(pt["name"])
         if pt_id is None:
             # Register this new part type.
             mas=name2MagentoAttributeSet(pt["name_value"])
             print("insert into part_type(id, name, magento_attribute_set, "
                   "value) values({id_}, '{name}', '{mas}', '{value}');"
                   .format(
-                    id_=seq_part_type, name=pt["name"], mas=mas,
+                    id_=seq_part_type, name=pt_name, mas=mas,
                     value=pt["name_value"]), file=alter_file)
             pt_id = seq_part_type
             pt[KEY_PT_ID] = pt_id
@@ -666,7 +678,7 @@ for pt in part_types:
             annotations = "    @JsonView(View.Summary.class)\n"
             annotations += "    @JsonProperty(\"{}\")\n".format(mem_name)
             if types.jpa_type.is_enum:
-                annotations += ("    @ManyToOne(fetch = EAGER)\n"
+                annotations += ("    @ManyToOne(fetch = LAZY)\n"
                                 "    @JoinColumn(name = \"{}\")\n"
                                 .format(mem_name))
             else:
@@ -698,14 +710,14 @@ for pt in part_types:
         print("import com.turbointernational.metadata.web.View;\n",
               file=snippet_file)
         print("import javax.persistence.*;\n", file=snippet_file)
-        print("import static javax.persistence.FetchType.EAGER;\n\n",
+        print("import static javax.persistence.FetchType.LAZY;\n\n",
               file=snippet_file)
         print("/**\n * Created by dmytro.trunykov@zorallabs.com.\n */",
               file=snippet_file)
         print("@Entity", file=snippet_file)
         print("@Table(name = \"{}\")".format(table_name), file=snippet_file)
         print("@PrimaryKeyJoinColumn(name = \"part_id\")", file=snippet_file)
-        print("public class {} extends Part {{".format(class_name),
+        print("public class {} extends Part {{\n".format(class_name),
               file=snippet_file)
         print("    //<editor-fold defaultstate=\"collapsed\" " \
               "desc=\"Properties: critical dimensions\">", file=snippet_file)

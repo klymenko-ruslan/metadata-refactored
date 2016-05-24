@@ -11,6 +11,7 @@ import java.io.Serializable;
  * Created by dmytro.trunykov@zorallabs.com on 18.03.16.
  */
 @Entity
+@Table(name = "auth_provider")
 @Inheritance(strategy = InheritanceType.JOINED)
 public class AuthProvider implements Serializable {
 
