@@ -12,7 +12,7 @@ import static javax.persistence.FetchType.LAZY;
 
 
 /**
- * Created by dmytro.trunykov@zorallabs.com.
+ * Created by dmytro.trunykov@zorallabs.com on 2016-05-26 10:44:43.039954.
  */
 @Entity
 @Table(name = "retaining_ring")
@@ -20,6 +20,7 @@ import static javax.persistence.FetchType.LAZY;
 public class RetainingRing extends Part {
 
     //<editor-fold defaultstate="collapsed" desc="Properties: critical dimensions">
+
     @JsonView(View.Summary.class)
     @JsonProperty("referenceNumber")
     @Column(name = "referenceNumber")
@@ -164,55 +165,55 @@ public class RetainingRing extends Part {
     @Column(name = "diagram")
     private Integer diagram;
 
-
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Getters and setters: critical dimensions">
-    public String getReferencenumber() {
+
+    public String getReferenceNumber() {
         return referenceNumber;
     }
 
-    public void setReferencenumber(String referenceNumber) {
+    public void setReferenceNumber(String referenceNumber) {
         this.referenceNumber = referenceNumber;
     }
 
-    public CriticalDimensionEnumVal getInternalexternal() {
+    public CriticalDimensionEnumVal getInternalExternal() {
         return internalExternal;
     }
 
-    public void setInternalexternal(CriticalDimensionEnumVal internalExternal) {
+    public void setInternalExternal(CriticalDimensionEnumVal internalExternal) {
         this.internalExternal = internalExternal;
     }
 
-    public CriticalDimensionEnumVal getRingtype() {
+    public CriticalDimensionEnumVal getRingType() {
         return ringType;
     }
 
-    public void setRingtype(CriticalDimensionEnumVal ringType) {
+    public void setRingType(CriticalDimensionEnumVal ringType) {
         this.ringType = ringType;
     }
 
-    public CriticalDimensionEnumVal getTaperedconstantsection() {
+    public CriticalDimensionEnumVal getTaperedConstantSection() {
         return taperedConstantSection;
     }
 
-    public void setTaperedconstantsection(CriticalDimensionEnumVal taperedConstantSection) {
+    public void setTaperedConstantSection(CriticalDimensionEnumVal taperedConstantSection) {
         this.taperedConstantSection = taperedConstantSection;
     }
 
-    public CriticalDimensionEnumVal getAxiallyradiallyassembled() {
+    public CriticalDimensionEnumVal getAxiallyRadiallyAssembled() {
         return axiallyRadiallyAssembled;
     }
 
-    public void setAxiallyradiallyassembled(CriticalDimensionEnumVal axiallyRadiallyAssembled) {
+    public void setAxiallyRadiallyAssembled(CriticalDimensionEnumVal axiallyRadiallyAssembled) {
         this.axiallyRadiallyAssembled = axiallyRadiallyAssembled;
     }
 
-    public CriticalDimensionEnumVal getSelflocking() {
+    public CriticalDimensionEnumVal getSelfLocking() {
         return selfLocking;
     }
 
-    public void setSelflocking(CriticalDimensionEnumVal selfLocking) {
+    public void setSelfLocking(CriticalDimensionEnumVal selfLocking) {
         this.selfLocking = selfLocking;
     }
 
@@ -232,123 +233,123 @@ public class RetainingRing extends Part {
         this.bowed = bowed;
     }
 
-    public Double getFreediaa() {
+    public Double getFreeDiaA() {
         return freeDiaA;
     }
 
-    public void setFreediaa(Double freeDiaA) {
+    public void setFreeDiaA(Double freeDiaA) {
         this.freeDiaA = freeDiaA;
     }
 
-    public Double getFreedialoweratol() {
+    public Double getFreeDiaLowerATol() {
         return freeDiaLowerATol;
     }
 
-    public void setFreedialoweratol(Double freeDiaLowerATol) {
+    public void setFreeDiaLowerATol(Double freeDiaLowerATol) {
         this.freeDiaLowerATol = freeDiaLowerATol;
     }
 
-    public Double getFreediaupperatol() {
+    public Double getFreeDiaUpperATol() {
         return freeDiaUpperATol;
     }
 
-    public void setFreediaupperatol(Double freeDiaUpperATol) {
+    public void setFreeDiaUpperATol(Double freeDiaUpperATol) {
         this.freeDiaUpperATol = freeDiaUpperATol;
     }
 
-    public Double getThicknessb() {
+    public Double getThicknessB() {
         return thicknessB;
     }
 
-    public void setThicknessb(Double thicknessB) {
+    public void setThicknessB(Double thicknessB) {
         this.thicknessB = thicknessB;
     }
 
-    public Double getThicknessbtol() {
+    public Double getThicknessBTol() {
         return thicknessBTol;
     }
 
-    public void setThicknessbtol(Double thicknessBTol) {
+    public void setThicknessBTol(Double thicknessBTol) {
         this.thicknessBTol = thicknessBTol;
     }
 
-    public Double getHolediac() {
+    public Double getHoleDiaC() {
         return holeDiaC;
     }
 
-    public void setHolediac(Double holeDiaC) {
+    public void setHoleDiaC(Double holeDiaC) {
         this.holeDiaC = holeDiaC;
     }
 
-    public Integer getNumberofprongs() {
+    public Integer getNumberOfProngs() {
         return numberOfProngs;
     }
 
-    public void setNumberofprongs(Integer numberOfProngs) {
+    public void setNumberOfProngs(Integer numberOfProngs) {
         this.numberOfProngs = numberOfProngs;
     }
 
-    public Double getHousingborediae() {
+    public Double getHousingBoreDiaE() {
         return housingBoreDiaE;
     }
 
-    public void setHousingborediae(Double housingBoreDiaE) {
+    public void setHousingBoreDiaE(Double housingBoreDiaE) {
         this.housingBoreDiaE = housingBoreDiaE;
     }
 
-    public Double getShaftdiad() {
+    public Double getShaftDiaD() {
         return shaftDiaD;
     }
 
-    public void setShaftdiad(Double shaftDiaD) {
+    public void setShaftDiaD(Double shaftDiaD) {
         this.shaftDiaD = shaftDiaD;
     }
 
-    public Double getGroovedia() {
+    public Double getGrooveDia() {
         return grooveDia;
     }
 
-    public void setGroovedia(Double grooveDia) {
+    public void setGrooveDia(Double grooveDia) {
         this.grooveDia = grooveDia;
     }
 
-    public Double getGroovediauppertol() {
+    public Double getGrooveDiaUpperTol() {
         return grooveDiaUpperTol;
     }
 
-    public void setGroovediauppertol(Double grooveDiaUpperTol) {
+    public void setGrooveDiaUpperTol(Double grooveDiaUpperTol) {
         this.grooveDiaUpperTol = grooveDiaUpperTol;
     }
 
-    public Double getGroovedialowertol() {
+    public Double getGrooveDiaLowerTol() {
         return grooveDiaLowerTol;
     }
 
-    public void setGroovedialowertol(Double grooveDiaLowerTol) {
+    public void setGrooveDiaLowerTol(Double grooveDiaLowerTol) {
         this.grooveDiaLowerTol = grooveDiaLowerTol;
     }
 
-    public Double getGroovewidth() {
+    public Double getGrooveWidth() {
         return grooveWidth;
     }
 
-    public void setGroovewidth(Double grooveWidth) {
+    public void setGrooveWidth(Double grooveWidth) {
         this.grooveWidth = grooveWidth;
     }
 
-    public Double getGroovewidthuppertol() {
+    public Double getGrooveWidthUpperTol() {
         return grooveWidthUpperTol;
     }
 
-    public void setGroovewidthuppertol(Double grooveWidthUpperTol) {
+    public void setGrooveWidthUpperTol(Double grooveWidthUpperTol) {
         this.grooveWidthUpperTol = grooveWidthUpperTol;
     }
 
-    public Double getGroovewidthlowertol() {
+    public Double getGrooveWidthLowerTol() {
         return grooveWidthLowerTol;
     }
 
-    public void setGroovewidthlowertol(Double grooveWidthLowerTol) {
+    public void setGrooveWidthLowerTol(Double grooveWidthLowerTol) {
         this.grooveWidthLowerTol = grooveWidthLowerTol;
     }
 
@@ -360,11 +361,11 @@ public class RetainingRing extends Part {
         this.material = material;
     }
 
-    public CriticalDimensionEnumVal getFinishplating() {
+    public CriticalDimensionEnumVal getFinishPlating() {
         return finishPlating;
     }
 
-    public void setFinishplating(CriticalDimensionEnumVal finishPlating) {
+    public void setFinishPlating(CriticalDimensionEnumVal finishPlating) {
         this.finishPlating = finishPlating;
     }
 
@@ -384,6 +385,6 @@ public class RetainingRing extends Part {
         this.diagram = diagram;
     }
 
-
     //</editor-fold>
+
 }

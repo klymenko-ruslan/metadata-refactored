@@ -3,6 +3,7 @@
 
 r"""
 Utility to convert critical dimension desctiptors to *.sql patch file.
+
 The input data is a set of export to JSON tables from the provided MS-ACCESS
 database.
 
@@ -17,6 +18,7 @@ must be selected before run this regex):
 
 import argparse
 import collections
+import datetime
 import json
 import os
 import re
@@ -66,6 +68,7 @@ Types = collections.namedtuple("Types", ["field_type", "sql_type",
 
 JpaType = collections.namedtuple("JpaType", ["java_type", "is_enum"])
 
+
 def format_warn(w, **kwargs):
     """Return a formatted string with warning."""
     return "-- WARN[{warn_id}]: {warn_msg}".format(warn_id=w.id,
@@ -73,23 +76,40 @@ def format_warn(w, **kwargs):
                                                        **kwargs))
 
 
-isAscii = lambda s: len(s) == len(s.encode())
+def isAscii(s):
+    """Test if a string contains ASCII only characters."""
+    return len(s) == len(s.encode())
 
 
 def def_sql_null(d, k):
-    if k not in d: return "null"
+    """
+    Get a value for key 'k' in the dictionary 'd'.
+
+    If the 'k' does not exist in the 'd' or the value is None
+    then the function returns string "null".
+    """
+    if k not in d:
+        return "null"
     retval = d[k]
-    if retval is None: return "null"
+    if retval is None:
+        return "null"
     return retval
 
 
 def sql_str_praram(s):
-    if s is None: return "null"
+    """Escape a string as SQL parameter."""
+    if s is None:
+        return "null"
     s = s.replace("'", "''")
     return "'" + s + "'"
 
 
 def name2PartTypeName(name):
+    """
+    Convert a string to a part type for UI.
+
+    Example: "bearing housing" => "Bearing Housing"
+    """
     retval = ""
     for idx, w in enumerate(name.split()):
         if idx > 0:
@@ -128,7 +148,9 @@ def name2jsonName(s):
 
 def normalizeName(name):
     """
-    Transform input string as:
+    Transform input string.
+
+    The transformation steps:
         * convert to lowercast;
         * remove volwes.
     """
@@ -141,8 +163,11 @@ def normalizeName(name):
 
 def name2MagentoAttributeSet(name):
     """
+    Convert a string.
+
     Convert a string (table name) to a value for
     a field 'magento_attribute_set' in a table path_type.
+
     This field contains a string where:
         * first character in a word is capital
     """
@@ -157,6 +182,7 @@ def name2MagentoAttributeSet(name):
 def name2idxName(table_name, json_name, idxNames):
     """
     Convert a string to a valid fied identifier in ElasticSearch index.
+
     The name is limited by 32 characters. If a generated name is longer
     then a new attempt is done in oder to satisfy to the constraint.
     If the second generation attemp failed then exception is thrown.
@@ -187,6 +213,8 @@ def name2idxName(table_name, json_name, idxNames):
 
 def cd2types(cd):
     """
+    Convert a sting.
+
     Convert critical dimension to SQL type and type for critical
     dimension descriptor to enum item of the data_type field in the table
     that contains critical dimensions -- 'crit_dim'.
@@ -198,27 +226,27 @@ def cd2types(cd):
         scale = cd["scale"]
         sql_type = "decimal({},{})".format(length, scale)
         data_type = "DECIMAL"
-        jpa_type = JpaType(java_type = "Double", is_enum=False)
+        jpa_type = JpaType(java_type="Double", is_enum=False)
     elif field_type == "INTEGER":
         length = cd["length"]
         sql_type = "int({})".format(length)
         data_type = "INTEGER"
-        jpa_type = JpaType(java_type = "Integer", is_enum=False)
+        jpa_type = JpaType(java_type="Integer", is_enum=False)
     elif field_type == "LIST":
         sql_type = "int"
         data_type = "ENUMERATION"
-        jpa_type = JpaType(java_type = "CriticalDimensionEnumVal",
+        jpa_type = JpaType(java_type="CriticalDimensionEnumVal",
                            is_enum=True)
     elif field_type == "LOGICAL":
         sql_type = "int"
         data_type = "ENUMERATION"
-        jpa_type = JpaType(java_type = "CriticalDimensionEnumVal",
+        jpa_type = JpaType(java_type="CriticalDimensionEnumVal",
                            is_enum=True)
     elif field_type == "MEMO":
         length = cd["length"] or 4096
         sql_type = "varchar({})".format(length)
         data_type = "TEXT"
-        jpa_type = JpaType(java_type = "String", is_enum=False)
+        jpa_type = JpaType(java_type="String", is_enum=False)
     else:
         raise ValueError("Unsupported field type: {}".format(data_type))
     return Types(field_type=field_type, sql_type=sql_type,
@@ -237,7 +265,8 @@ def cd2sqlreference(cd):
 
 def load_input_data(args):
     """Load data."""
-    with open(args.in_part_type) as fp: part_types = json.load(fp)["part_type"]
+    with open(args.in_part_type) as fp:
+        part_types = json.load(fp)["part_type"]
 
     part_types_idx_by_id = {pt["id"]: pt for pt in part_types}
     part_types_idx_by_value = {pt["name_value"]: pt for pt in part_types}
@@ -366,19 +395,25 @@ insert into crit_dim_enum(id, name) values({yesnoenum_id}, 'yesNoEnum');
 insert into crit_dim_enum_val(id, crit_dim_enum_id, val) values
 (  1, {yesnoenum_id}, 'YES'),
 (  2, {yesnoenum_id}, 'NO');
-""".format(idx_name_len=IDX_NAME_MAXLEN,yesnoenum_id=YESNOENUM_ID)
+""".format(idx_name_len=IDX_NAME_MAXLEN, yesnoenum_id=YESNOENUM_ID)
 
 
 def get_part_type_mapping(extra_data, key):
+    """Get part type desctiptor in the 'extra_data'."""
     ed = extra_data["part_type_mapping"].get(key)
     if ed is None:
         print("Extra info for 'part_type_mapping' for key '{}' "
-                "not found.".format(ptm["value"]))
+              "not found.".format(ptm["value"]))
         sys.exit(2)
     return ed
 
 
 def generate_alters(ed, cda_):
+    """
+    Generate ALTER SQL statements.
+
+    The statements add critical dimensions to existing tables.
+    """
     table_name = ed["table"]
     columns = set()
     retval = ""
@@ -390,7 +425,8 @@ def generate_alters(ed, cda_):
         col_type = types.sql_type
         col_ref = cd2sqlreference(cd)
         if col_name in columns:
-            raise ValueError("In table '{}' found duplicated columns '{}'.".format(table_name, col_name))
+            raise ValueError("In table '{}' found duplicated columns '{}'."
+                             .format(table_name, col_name))
         else:
             columns.add(col_name)
         retval += "alter table {} add column {} {}".format(
@@ -402,6 +438,11 @@ def generate_alters(ed, cda_):
 
 
 def generate_create_table(ed, cda_):
+    """
+    Generate CREATE TABLE SQL statements.
+
+    The statements creates tables for new part types.
+    """
     table_name = ed["table"]
     retval = "create table {} (\n" \
         "\tpart_id bigint(20) not null,\n" \
@@ -429,6 +470,7 @@ def generate_create_table(ed, cda_):
 
 
 def register_crit_dim_enum(cd, table_name, col_name):
+    """Generate INSERT statements to register a new crit.dims. enumeration."""
     global seq_critdim_enum, seq_critdim_enum_val
     lst = cd.get(KEY_LIST)
     if not lst:
@@ -451,17 +493,20 @@ def register_crit_dim_enum(cd, table_name, col_name):
             "values\n"
         add_comma = False
         for itm in lst:
-            if add_comma: sql += ",\n"
+            if add_comma:
+                sql += ",\n"
             sql += "({id2_}, {id_}, '{val}')".format(
                 id2_=seq_critdim_enum_val, id_=id_, val=itm["list_name"])
             seq_critdim_enum_val += 1
             add_comma = True
-        if add_comma: sql += ";\n"
+        if add_comma:
+            sql += ";\n"
     return (id_, sql)
 
 
 def register_crit_dim(part_type_id, table_name, cda_, crit_dim_attributes,
                       crit_dim_attributes_idx_by_id):
+    """Generate INSERT statements to register a new critical dimension."""
     global alter_file
     sql = "insert into crit_dim(id, part_type_id, seq_num, data_type, " \
         "unit, "\
@@ -518,7 +563,7 @@ def register_crit_dim(part_type_id, table_name, cda_, crit_dim_attributes,
         regex = None
         parent_attribute = cd["parent_attribute"]
         if parent_attribute is None:
-            parent_id= "null"
+            parent_id = "null"
         else:
             pcd = crit_dim_attributes_idx_by_id[parent_attribute]
             pcd_ptid = pcd["part_type_id"]
@@ -533,28 +578,30 @@ def register_crit_dim(part_type_id, table_name, cda_, crit_dim_attributes,
                 continue
         length = def_sql_null(cd, "length")
         scale = def_sql_null(cd, "scale")
-        if add_comma: sql += ",\n"
+        if add_comma:
+            sql += ",\n"
         values = "({id_}, {part_type_id}, {seq_num}, {data_type}, {unit}, " \
             "{tolerance}, {name}, {json_name}, {idx_name}, " \
             "{enum_id}, {null_allowed}, {null_display}, {min_val}, " \
             "{max_val}, {regex}, {parent_id}, {length}, " \
             "{scale})".format(
-            id_=id_, part_type_id=part_type_id, seq_num=seq_num,
-            data_type=sql_str_praram(data_type), unit=sql_str_praram(unit),
-            tolerance=tolerance, name=sql_str_praram(name),
-            json_name=sql_str_praram(json_name),
-            idx_name=sql_str_praram(idx_name), enum_id=enum_id,
-            null_allowed=null_allowed,
-            null_display=sql_str_praram(null_display), min_val=min_val,
-            max_val=max_val, regex=sql_str_praram(regex),
-            parent_id=parent_id, length=length, scale=scale)
+                id_=id_, part_type_id=part_type_id, seq_num=seq_num,
+                data_type=sql_str_praram(data_type), unit=sql_str_praram(unit),
+                tolerance=tolerance, name=sql_str_praram(name),
+                json_name=sql_str_praram(json_name),
+                idx_name=sql_str_praram(idx_name), enum_id=enum_id,
+                null_allowed=null_allowed,
+                null_display=sql_str_praram(null_display), min_val=min_val,
+                max_val=max_val, regex=sql_str_praram(regex),
+                parent_id=parent_id, length=length, scale=scale)
         sql += values
         add_comma = True
     if add_comma:
         sql += ";\n"
     else:
         sql = ""
-    if registered_enums: sql = registered_enums + sql
+    if registered_enums:
+        sql = registered_enums + sql
     return sql
 
 
@@ -599,7 +646,8 @@ if os.path.exists(args.out_dir):
     shutil.rmtree(args.out_dir)
 os.mkdir(args.out_dir)
 
-with open(args.in_extra_data) as fp: extra_data = json.load(fp)
+with open(args.in_extra_data) as fp:
+    extra_data = json.load(fp)
 
 filename_alter = os.path.join(args.out_dir, "alter.sql")
 with open(filename_alter, "w", encoding="utf-8") as alter_file:
@@ -619,7 +667,7 @@ with open(filename_alter, "w", encoding="utf-8") as alter_file:
             print("-- delete from part_type where id={0:d}; -- {1:s}".format(
                 ptm["id"], ptm["name"]), file=alter_file)
             ed = get_part_type_mapping(extra_data, ptm["value"])
-            if ed["exists"] == True:
+            if ed["exists"] is True:
                 print("-- drop table {};".format(ed["table"]), file=alter_file)
         print(file=alter_file)
 
@@ -628,19 +676,19 @@ with open(filename_alter, "w", encoding="utf-8") as alter_file:
         pt_name = name2PartTypeName(pt["name"])
         if pt_id is None:
             # Register this new part type.
-            mas=name2MagentoAttributeSet(pt["name_value"])
+            mas = name2MagentoAttributeSet(pt["name_value"])
             print("insert into part_type(id, name, magento_attribute_set, "
                   "value) values({id_}, '{name}', '{mas}', '{value}');"
                   .format(
-                    id_=seq_part_type, name=pt_name, mas=mas,
-                    value=pt["name_value"]), file=alter_file)
+                      id_=seq_part_type, name=pt_name, mas=mas,
+                      value=pt["name_value"]), file=alter_file)
             pt_id = seq_part_type
             pt[KEY_PT_ID] = pt_id
             seq_part_type += 1
         cda_ = pt.get(KEY_CDA)
         if not cda_:
             print(format_warn(WARN_NO_CRITDIMS, ptid=pt[KEY_PT_ID],
-                            name=pt["name"]), file=alter_file)
+                              name=pt["name"]), file=alter_file)
             if cda_ is None:
                 cda_ = list()
                 pt[KEY_CDA] = cda_
@@ -654,7 +702,7 @@ with open(filename_alter, "w", encoding="utf-8") as alter_file:
         print(sql, file=alter_file)
 
         sql = register_crit_dim(pt_id, ed["table"], cda_, crit_dim_attributes,
-            crit_dim_attributes_idx_by_id)
+                                crit_dim_attributes_idx_by_id)
 
         print(sql, file=alter_file)
 
@@ -662,7 +710,8 @@ with open(filename_alter, "w", encoding="utf-8") as alter_file:
 # Generate java code snippets.
 for pt in part_types:
     cda_ = pt.get(KEY_CDA)
-    if not cda_: continue
+    if not cda_:
+        continue
     ed = get_part_type_mapping(extra_data, pt["name_value"])
     table_name = ed["table"]
     class_name = ed["class"]
@@ -670,6 +719,7 @@ for pt in part_types:
                                      "{}.java".format(class_name))
     members_snippet = ""
     getters_setters_snippet = ""
+    datetimestamp = datetime.datetime.now()
     with open(snippet_file_name, "w", encoding="utf-8") as snippet_file:
         for cd in cda_:
             mem_name = cd[KEY_COLNAME]
@@ -686,7 +736,7 @@ for pt in part_types:
             members_snippet += annotations
             members_snippet += "    private {mem_type:s} {mem_name:s};\n\n" \
                 .format(mem_type=mem_type, mem_name=mem_name)
-            method_suff = mem_name.capitalize()
+            method_suff = mem_name[0].upper() + mem_name[1:]
             getters_setters_snippet += "    public {mem_type:s} " \
                 "get{method_suff:s}() {{\n" \
                 "        return {mem_name:s};\n" \
@@ -712,22 +762,22 @@ for pt in part_types:
         print("import javax.persistence.*;\n", file=snippet_file)
         print("import static javax.persistence.FetchType.LAZY;\n\n",
               file=snippet_file)
-        print("/**\n * Created by dmytro.trunykov@zorallabs.com.\n */",
+        print("/**\n * Created by dmytro.trunykov@zorallabs.com on {}.\n */"
+              .format(datetimestamp),
               file=snippet_file)
         print("@Entity", file=snippet_file)
         print("@Table(name = \"{}\")".format(table_name), file=snippet_file)
         print("@PrimaryKeyJoinColumn(name = \"part_id\")", file=snippet_file)
         print("public class {} extends Part {{\n".format(class_name),
               file=snippet_file)
-        print("    //<editor-fold defaultstate=\"collapsed\" " \
-              "desc=\"Properties: critical dimensions\">", file=snippet_file)
-        print(members_snippet, file=snippet_file)
+        print("    //<editor-fold defaultstate=\"collapsed\" "
+              "desc=\"Properties: critical dimensions\">\n", file=snippet_file)
+        print(members_snippet, file=snippet_file, end="")
         print("    //</editor-fold>", file=snippet_file)
         print("", file=snippet_file)
-        print("    //<editor-fold defaultstate=\"collapsed\" " \
-              "desc=\"Getters and setters: critical dimensions\">",
+        print("    //<editor-fold defaultstate=\"collapsed\" "
+              "desc=\"Getters and setters: critical dimensions\">\n",
               file=snippet_file)
-        print(getters_setters_snippet, file=snippet_file)
-        print("    //</editor-fold>", file=snippet_file)
+        print(getters_setters_snippet, file=snippet_file, end="")
+        print("    //</editor-fold>\n", file=snippet_file)
         print("}", file=snippet_file)
-

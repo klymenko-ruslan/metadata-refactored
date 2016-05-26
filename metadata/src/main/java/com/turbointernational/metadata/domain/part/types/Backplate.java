@@ -12,7 +12,7 @@ import static javax.persistence.FetchType.LAZY;
 
 
 /**
- * Created by dmytro.trunykov@zorallabs.com.
+ * Created by dmytro.trunykov@zorallabs.com on 2016-05-26 10:44:43.036436.
  */
 @Entity
 @Table(name = "backplate")
@@ -20,6 +20,7 @@ import static javax.persistence.FetchType.LAZY;
 public class Backplate extends Part {
 
     //<editor-fold defaultstate="collapsed" desc="Properties: critical dimensions">
+
     @JsonView(View.Summary.class)
     @JsonProperty("dynCs")
     @ManyToOne(fetch = LAZY)
@@ -164,143 +165,143 @@ public class Backplate extends Part {
     @Column(name = "diagram")
     private Integer diagram;
 
-
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Getters and setters: critical dimensions">
-    public CriticalDimensionEnumVal getDyncs() {
+
+    public CriticalDimensionEnumVal getDynCs() {
         return dynCs;
     }
 
-    public void setDyncs(CriticalDimensionEnumVal dynCs) {
+    public void setDynCs(CriticalDimensionEnumVal dynCs) {
         this.dynCs = dynCs;
     }
 
-    public CriticalDimensionEnumVal getSuperbackflatback() {
+    public CriticalDimensionEnumVal getSuperbackFlatback() {
         return superbackFlatback;
     }
 
-    public void setSuperbackflatback(CriticalDimensionEnumVal superbackFlatback) {
+    public void setSuperbackFlatback(CriticalDimensionEnumVal superbackFlatback) {
         this.superbackFlatback = superbackFlatback;
     }
 
-    public Integer getMountingholes() {
+    public Integer getMountingHoles() {
         return mountingHoles;
     }
 
-    public void setMountingholes(Integer mountingHoles) {
+    public void setMountingHoles(Integer mountingHoles) {
         this.mountingHoles = mountingHoles;
     }
 
-    public CriticalDimensionEnumVal getMountingholethreadcallout() {
+    public CriticalDimensionEnumVal getMountingHoleThreadCallout() {
         return mountingHoleThreadCallout;
     }
 
-    public void setMountingholethreadcallout(CriticalDimensionEnumVal mountingHoleThreadCallout) {
+    public void setMountingHoleThreadCallout(CriticalDimensionEnumVal mountingHoleThreadCallout) {
         this.mountingHoleThreadCallout = mountingHoleThreadCallout;
     }
 
-    public Double getDiaa() {
+    public Double getDiaA() {
         return diaA;
     }
 
-    public void setDiaa(Double diaA) {
+    public void setDiaA(Double diaA) {
         this.diaA = diaA;
     }
 
-    public Double getDiaatol() {
+    public Double getDiaATol() {
         return diaATol;
     }
 
-    public void setDiaatol(Double diaATol) {
+    public void setDiaATol(Double diaATol) {
         this.diaATol = diaATol;
     }
 
-    public Double getDiab() {
+    public Double getDiaB() {
         return diaB;
     }
 
-    public void setDiab(Double diaB) {
+    public void setDiaB(Double diaB) {
         this.diaB = diaB;
     }
 
-    public Double getDiabtol() {
+    public Double getDiaBTol() {
         return diaBTol;
     }
 
-    public void setDiabtol(Double diaBTol) {
+    public void setDiaBTol(Double diaBTol) {
         this.diaBTol = diaBTol;
     }
 
-    public Double getDiac() {
+    public Double getDiaC() {
         return diaC;
     }
 
-    public void setDiac(Double diaC) {
+    public void setDiaC(Double diaC) {
         this.diaC = diaC;
     }
 
-    public Double getDiactol() {
+    public Double getDiaCTol() {
         return diaCTol;
     }
 
-    public void setDiactol(Double diaCTol) {
+    public void setDiaCTol(Double diaCTol) {
         this.diaCTol = diaCTol;
     }
 
-    public Double getDiad() {
+    public Double getDiaD() {
         return diaD;
     }
 
-    public void setDiad(Double diaD) {
+    public void setDiaD(Double diaD) {
         this.diaD = diaD;
     }
 
-    public Double getDiadtol() {
+    public Double getDiaDTol() {
         return diaDTol;
     }
 
-    public void setDiadtol(Double diaDTol) {
+    public void setDiaDTol(Double diaDTol) {
         this.diaDTol = diaDTol;
     }
 
-    public Double getCwcdiae() {
+    public Double getCwcDiaE() {
         return cwcDiaE;
     }
 
-    public void setCwcdiae(Double cwcDiaE) {
+    public void setCwcDiaE(Double cwcDiaE) {
         this.cwcDiaE = cwcDiaE;
     }
 
-    public Double getCwcdiaetol() {
+    public Double getCwcDiaETol() {
         return cwcDiaETol;
     }
 
-    public void setCwcdiaetol(Double cwcDiaETol) {
+    public void setCwcDiaETol(Double cwcDiaETol) {
         this.cwcDiaETol = cwcDiaETol;
     }
 
-    public Double getBoredia() {
+    public Double getBoreDia() {
         return boreDia;
     }
 
-    public void setBoredia(Double boreDia) {
+    public void setBoreDia(Double boreDia) {
         this.boreDia = boreDia;
     }
 
-    public Double getBorediatol() {
+    public Double getBoreDiaTol() {
         return boreDiaTol;
     }
 
-    public void setBorediatol(Double boreDiaTol) {
+    public void setBoreDiaTol(Double boreDiaTol) {
         this.boreDiaTol = boreDiaTol;
     }
 
-    public Double getMountingholedia() {
+    public Double getMountingHoleDia() {
         return mountingHoleDia;
     }
 
-    public void setMountingholedia(Double mountingHoleDia) {
+    public void setMountingHoleDia(Double mountingHoleDia) {
         this.mountingHoleDia = mountingHoleDia;
     }
 
@@ -312,67 +313,67 @@ public class Backplate extends Part {
         this.oal = oal;
     }
 
-    public Double getOaltol() {
+    public Double getOalTol() {
         return oalTol;
     }
 
-    public void setOaltol(Double oalTol) {
+    public void setOalTol(Double oalTol) {
         this.oalTol = oalTol;
     }
 
-    public Double getHubposf() {
+    public Double getHubPosF() {
         return hubPosF;
     }
 
-    public void setHubposf(Double hubPosF) {
+    public void setHubPosF(Double hubPosF) {
         this.hubPosF = hubPosF;
     }
 
-    public Double getHubposftol() {
+    public Double getHubPosFTol() {
         return hubPosFTol;
     }
 
-    public void setHubposftol(Double hubPosFTol) {
+    public void setHubPosFTol(Double hubPosFTol) {
         this.hubPosFTol = hubPosFTol;
     }
 
-    public Double getCclocposg() {
+    public Double getCcLocPosG() {
         return ccLocPosG;
     }
 
-    public void setCclocposg(Double ccLocPosG) {
+    public void setCcLocPosG(Double ccLocPosG) {
         this.ccLocPosG = ccLocPosG;
     }
 
-    public Double getCclocposgtol() {
+    public Double getCcLocPosGTol() {
         return ccLocPosGTol;
     }
 
-    public void setCclocposgtol(Double ccLocPosGTol) {
+    public void setCcLocPosGTol(Double ccLocPosGTol) {
         this.ccLocPosGTol = ccLocPosGTol;
     }
 
-    public Double getLeadinchmfr05angle() {
+    public Double getLeadInChmfr05Angle() {
         return leadInChmfr05Angle;
     }
 
-    public void setLeadinchmfr05angle(Double leadInChmfr05Angle) {
+    public void setLeadInChmfr05Angle(Double leadInChmfr05Angle) {
         this.leadInChmfr05Angle = leadInChmfr05Angle;
     }
 
-    public Double getLeadinchmfrlen() {
+    public Double getLeadInChmfrLen() {
         return leadInChmfrLen;
     }
 
-    public void setLeadinchmfrlen(Double leadInChmfrLen) {
+    public void setLeadInChmfrLen(Double leadInChmfrLen) {
         this.leadInChmfrLen = leadInChmfrLen;
     }
 
-    public CriticalDimensionEnumVal getMatl() {
+    public CriticalDimensionEnumVal getMatL() {
         return matL;
     }
 
-    public void setMatl(CriticalDimensionEnumVal matL) {
+    public void setMatL(CriticalDimensionEnumVal matL) {
         this.matL = matL;
     }
 
@@ -392,6 +393,6 @@ public class Backplate extends Part {
         this.diagram = diagram;
     }
 
-
     //</editor-fold>
+
 }

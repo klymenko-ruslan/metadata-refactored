@@ -12,7 +12,7 @@ import static javax.persistence.FetchType.LAZY;
 
 
 /**
- * Created by dmytro.trunykov@zorallabs.com.
+ * Created by dmytro.trunykov@zorallabs.com on 2016-05-26 10:44:43.037446.
  */
 @Entity
 @Table(name = "clamp")
@@ -20,6 +20,7 @@ import static javax.persistence.FetchType.LAZY;
 public class Clamp extends Part {
 
     //<editor-fold defaultstate="collapsed" desc="Properties: critical dimensions">
+
     @JsonView(View.Summary.class)
     @JsonProperty("type")
     @ManyToOne(fetch = LAZY)
@@ -73,10 +74,10 @@ public class Clamp extends Part {
     @Column(name = "diagram")
     private Integer diagram;
 
-
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Getters and setters: critical dimensions">
+
     public CriticalDimensionEnumVal getType() {
         return type;
     }
@@ -85,43 +86,43 @@ public class Clamp extends Part {
         this.type = type;
     }
 
-    public Integer getNummountingholes() {
+    public Integer getNumMountingHoles() {
         return numMountingHoles;
     }
 
-    public void setNummountingholes(Integer numMountingHoles) {
+    public void setNumMountingHoles(Integer numMountingHoles) {
         this.numMountingHoles = numMountingHoles;
     }
 
-    public Double getInnerradius() {
+    public Double getInnerRadius() {
         return innerRadius;
     }
 
-    public void setInnerradius(Double innerRadius) {
+    public void setInnerRadius(Double innerRadius) {
         this.innerRadius = innerRadius;
     }
 
-    public Double getHolecldistanceb() {
+    public Double getHoleClDistanceB() {
         return holeClDistanceB;
     }
 
-    public void setHolecldistanceb(Double holeClDistanceB) {
+    public void setHoleClDistanceB(Double holeClDistanceB) {
         this.holeClDistanceB = holeClDistanceB;
     }
 
-    public Double getMountingholediaa() {
+    public Double getMountingHoleDiaA() {
         return mountingHoleDiaA;
     }
 
-    public void setMountingholediaa(Double mountingHoleDiaA) {
+    public void setMountingHoleDiaA(Double mountingHoleDiaA) {
         this.mountingHoleDiaA = mountingHoleDiaA;
     }
 
-    public Double getThicknessc() {
+    public Double getThicknessC() {
         return thicknessC;
     }
 
-    public void setThicknessc(Double thicknessC) {
+    public void setThicknessC(Double thicknessC) {
         this.thicknessC = thicknessC;
     }
 
@@ -133,11 +134,11 @@ public class Clamp extends Part {
         this.material = material;
     }
 
-    public CriticalDimensionEnumVal getPlatingcoating() {
+    public CriticalDimensionEnumVal getPlatingCoating() {
         return platingCoating;
     }
 
-    public void setPlatingcoating(CriticalDimensionEnumVal platingCoating) {
+    public void setPlatingCoating(CriticalDimensionEnumVal platingCoating) {
         this.platingCoating = platingCoating;
     }
 
@@ -157,6 +158,6 @@ public class Clamp extends Part {
         this.diagram = diagram;
     }
 
-
     //</editor-fold>
+
 }

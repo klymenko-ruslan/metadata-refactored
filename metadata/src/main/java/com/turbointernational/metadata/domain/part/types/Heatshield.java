@@ -12,7 +12,7 @@ import static javax.persistence.FetchType.LAZY;
 
 
 /**
- * Created by dmytro.trunykov@zorallabs.com.
+ * Created by dmytro.trunykov@zorallabs.com on 2016-05-26 10:44:43.038279.
  */
 @Entity
 @Table(name = "heatshield")
@@ -20,6 +20,7 @@ import static javax.persistence.FetchType.LAZY;
 public class Heatshield extends Part {
 
     //<editor-fold defaultstate="collapsed" desc="Properties: critical dimensions">
+
     @JsonView(View.Summary.class)
     @JsonProperty("diaA")
     @Column(name = "diaA")
@@ -127,119 +128,119 @@ public class Heatshield extends Part {
     @Column(name = "materialThickness")
     private Double materialThickness;
 
-
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Getters and setters: critical dimensions">
-    public Double getDiaa() {
+
+    public Double getDiaA() {
         return diaA;
     }
 
-    public void setDiaa(Double diaA) {
+    public void setDiaA(Double diaA) {
         this.diaA = diaA;
     }
 
-    public Double getDiaatol() {
+    public Double getDiaATol() {
         return diaATol;
     }
 
-    public void setDiaatol(Double diaATol) {
+    public void setDiaATol(Double diaATol) {
         this.diaATol = diaATol;
     }
 
-    public Double getDiab() {
+    public Double getDiaB() {
         return diaB;
     }
 
-    public void setDiab(Double diaB) {
+    public void setDiaB(Double diaB) {
         this.diaB = diaB;
     }
 
-    public Double getDiabtol() {
+    public Double getDiaBTol() {
         return diaBTol;
     }
 
-    public void setDiabtol(Double diaBTol) {
+    public void setDiaBTol(Double diaBTol) {
         this.diaBTol = diaBTol;
     }
 
-    public Double getDiac() {
+    public Double getDiaC() {
         return diaC;
     }
 
-    public void setDiac(Double diaC) {
+    public void setDiaC(Double diaC) {
         this.diaC = diaC;
     }
 
-    public Double getDiactol() {
+    public Double getDiaCTol() {
         return diaCTol;
     }
 
-    public void setDiactol(Double diaCTol) {
+    public void setDiaCTol(Double diaCTol) {
         this.diaCTol = diaCTol;
     }
 
-    public Double getDiad() {
+    public Double getDiaD() {
         return diaD;
     }
 
-    public void setDiad(Double diaD) {
+    public void setDiaD(Double diaD) {
         this.diaD = diaD;
     }
 
-    public Double getDiadtol() {
+    public Double getDiaDTol() {
         return diaDTol;
     }
 
-    public void setDiadtol(Double diaDTol) {
+    public void setDiaDTol(Double diaDTol) {
         this.diaDTol = diaDTol;
     }
 
-    public Double getBorediae() {
+    public Double getBoreDiaE() {
         return boreDiaE;
     }
 
-    public void setBorediae(Double boreDiaE) {
+    public void setBoreDiaE(Double boreDiaE) {
         this.boreDiaE = boreDiaE;
     }
 
-    public Double getBorediaetol() {
+    public Double getBoreDiaETol() {
         return boreDiaETol;
     }
 
-    public void setBorediaetol(Double boreDiaETol) {
+    public void setBoreDiaETol(Double boreDiaETol) {
         this.boreDiaETol = boreDiaETol;
     }
 
-    public Double getBoreheightf() {
+    public Double getBoreHeightF() {
         return boreHeightF;
     }
 
-    public void setBoreheightf(Double boreHeightF) {
+    public void setBoreHeightF(Double boreHeightF) {
         this.boreHeightF = boreHeightF;
     }
 
-    public Double getBoreheightftol() {
+    public Double getBoreHeightFTol() {
         return boreHeightFTol;
     }
 
-    public void setBoreheightftol(Double boreHeightFTol) {
+    public void setBoreHeightFTol(Double boreHeightFTol) {
         this.boreHeightFTol = boreHeightFTol;
     }
 
-    public Double getOalg() {
+    public Double getOalG() {
         return oalG;
     }
 
-    public void setOalg(Double oalG) {
+    public void setOalG(Double oalG) {
         this.oalG = oalG;
     }
 
-    public Double getOalgtol() {
+    public Double getOalGTol() {
         return oalGTol;
     }
 
-    public void setOalgtol(Double oalGTol) {
+    public void setOalGTol(Double oalGTol) {
         this.oalGTol = oalGTol;
     }
 
@@ -251,27 +252,27 @@ public class Heatshield extends Part {
         this.gauge = gauge;
     }
 
-    public CriticalDimensionEnumVal getMatl() {
+    public CriticalDimensionEnumVal getMatL() {
         return matL;
     }
 
-    public void setMatl(CriticalDimensionEnumVal matL) {
+    public void setMatL(CriticalDimensionEnumVal matL) {
         this.matL = matL;
     }
 
-    public String getSpecialfeatures() {
+    public String getSpecialFeatures() {
         return specialFeatures;
     }
 
-    public void setSpecialfeatures(String specialFeatures) {
+    public void setSpecialFeatures(String specialFeatures) {
         this.specialFeatures = specialFeatures;
     }
 
-    public CriticalDimensionEnumVal getRolledlip() {
+    public CriticalDimensionEnumVal getRolledLip() {
         return rolledLip;
     }
 
-    public void setRolledlip(CriticalDimensionEnumVal rolledLip) {
+    public void setRolledLip(CriticalDimensionEnumVal rolledLip) {
         this.rolledLip = rolledLip;
     }
 
@@ -291,14 +292,14 @@ public class Heatshield extends Part {
         this.diagram = diagram;
     }
 
-    public Double getMaterialthickness() {
+    public Double getMaterialThickness() {
         return materialThickness;
     }
 
-    public void setMaterialthickness(Double materialThickness) {
+    public void setMaterialThickness(Double materialThickness) {
         this.materialThickness = materialThickness;
     }
 
-
     //</editor-fold>
+
 }

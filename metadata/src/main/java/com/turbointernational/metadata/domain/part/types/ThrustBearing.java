@@ -12,7 +12,7 @@ import static javax.persistence.FetchType.LAZY;
 
 
 /**
- * Created by dmytro.trunykov@zorallabs.com.
+ * Created by dmytro.trunykov@zorallabs.com on 2016-05-26 10:44:43.041043.
  */
 @Entity
 @Table(name = "thrust_bearing")
@@ -20,6 +20,7 @@ import static javax.persistence.FetchType.LAZY;
 public class ThrustBearing extends Part {
 
     //<editor-fold defaultstate="collapsed" desc="Properties: critical dimensions">
+
     @JsonView(View.Summary.class)
     @JsonProperty("maxThicknessA")
     @Column(name = "maxThicknessA")
@@ -137,135 +138,135 @@ public class ThrustBearing extends Part {
     @Column(name = "diagram")
     private Integer diagram;
 
-
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Getters and setters: critical dimensions">
-    public Double getMaxthicknessa() {
+
+    public Double getMaxThicknessA() {
         return maxThicknessA;
     }
 
-    public void setMaxthicknessa(Double maxThicknessA) {
+    public void setMaxThicknessA(Double maxThicknessA) {
         this.maxThicknessA = maxThicknessA;
     }
 
-    public Double getMinthicknessa() {
+    public Double getMinThicknessA() {
         return minThicknessA;
     }
 
-    public void setMinthicknessa(Double minThicknessA) {
+    public void setMinThicknessA(Double minThicknessA) {
         this.minThicknessA = minThicknessA;
     }
 
-    public Double getOdb() {
+    public Double getOdB() {
         return odB;
     }
 
-    public void setOdb(Double odB) {
+    public void setOdB(Double odB) {
         this.odB = odB;
     }
 
-    public Double getOdbtol() {
+    public Double getOdBTol() {
         return odBTol;
     }
 
-    public void setOdbtol(Double odBTol) {
+    public void setOdBTol(Double odBTol) {
         this.odBTol = odBTol;
     }
 
-    public Double getIdc() {
+    public Double getIdC() {
         return idC;
     }
 
-    public void setIdc(Double idC) {
+    public void setIdC(Double idC) {
         this.idC = idC;
     }
 
-    public Double getIdctol() {
+    public Double getIdCTol() {
         return idCTol;
     }
 
-    public void setIdctol(Double idCTol) {
+    public void setIdCTol(Double idCTol) {
         this.idCTol = idCTol;
     }
 
-    public Double getTerampdiad() {
+    public Double getTeRampDiaD() {
         return teRampDiaD;
     }
 
-    public void setTerampdiad(Double teRampDiaD) {
+    public void setTeRampDiaD(Double teRampDiaD) {
         this.teRampDiaD = teRampDiaD;
     }
 
-    public Double getTerampdiadtol() {
+    public Double getTeRampDiaDTol() {
         return teRampDiaDTol;
     }
 
-    public void setTerampdiadtol(Double teRampDiaDTol) {
+    public void setTeRampDiaDTol(Double teRampDiaDTol) {
         this.teRampDiaDTol = teRampDiaDTol;
     }
 
-    public Double getCerampdiae() {
+    public Double getCeRampDiaE() {
         return ceRampDiaE;
     }
 
-    public void setCerampdiae(Double ceRampDiaE) {
+    public void setCeRampDiaE(Double ceRampDiaE) {
         this.ceRampDiaE = ceRampDiaE;
     }
 
-    public Double getCerampdiaetol() {
+    public Double getCeRampDiaETol() {
         return ceRampDiaETol;
     }
 
-    public void setCerampdiaetol(Double ceRampDiaETol) {
+    public void setCeRampDiaETol(Double ceRampDiaETol) {
         this.ceRampDiaETol = ceRampDiaETol;
     }
 
-    public Integer getNumrampste() {
+    public Integer getNumRampsTe() {
         return numRampsTe;
     }
 
-    public void setNumrampste(Integer numRampsTe) {
+    public void setNumRampsTe(Integer numRampsTe) {
         this.numRampsTe = numRampsTe;
     }
 
-    public Integer getNumrampsce() {
+    public Integer getNumRampsCe() {
         return numRampsCe;
     }
 
-    public void setNumrampsce(Integer numRampsCe) {
+    public void setNumRampsCe(Integer numRampsCe) {
         this.numRampsCe = numRampsCe;
     }
 
-    public Double getTerampdraindiaf() {
+    public Double getTeRampDrainDiaF() {
         return teRampDrainDiaF;
     }
 
-    public void setTerampdraindiaf(Double teRampDrainDiaF) {
+    public void setTeRampDrainDiaF(Double teRampDrainDiaF) {
         this.teRampDrainDiaF = teRampDrainDiaF;
     }
 
-    public Double getTerampdraindiaftol() {
+    public Double getTeRampDrainDiaFTol() {
         return teRampDrainDiaFTol;
     }
 
-    public void setTerampdraindiaftol(Double teRampDrainDiaFTol) {
+    public void setTeRampDrainDiaFTol(Double teRampDrainDiaFTol) {
         this.teRampDrainDiaFTol = teRampDrainDiaFTol;
     }
 
-    public Double getCerampdraindiag() {
+    public Double getCeRampDrainDiaG() {
         return ceRampDrainDiaG;
     }
 
-    public void setCerampdraindiag(Double ceRampDrainDiaG) {
+    public void setCeRampDrainDiaG(Double ceRampDrainDiaG) {
         this.ceRampDrainDiaG = ceRampDrainDiaG;
     }
 
-    public Double getCerampdraindiagtol() {
+    public Double getCeRampDrainDiaGTol() {
         return ceRampDrainDiaGTol;
     }
 
-    public void setCerampdraindiagtol(Double ceRampDrainDiaGTol) {
+    public void setCeRampDrainDiaGTol(Double ceRampDrainDiaGTol) {
         this.ceRampDrainDiaGTol = ceRampDrainDiaGTol;
     }
 
@@ -277,27 +278,27 @@ public class ThrustBearing extends Part {
         this.rotation = rotation;
     }
 
-    public Integer getNumlocatingholes() {
+    public Integer getNumLocatingHoles() {
         return numLocatingHoles;
     }
 
-    public void setNumlocatingholes(Integer numLocatingHoles) {
+    public void setNumLocatingHoles(Integer numLocatingHoles) {
         this.numLocatingHoles = numLocatingHoles;
     }
 
-    public Double getDialocatingholes() {
+    public Double getDiaLocatingHoles() {
         return diaLocatingHoles;
     }
 
-    public void setDialocatingholes(Double diaLocatingHoles) {
+    public void setDiaLocatingHoles(Double diaLocatingHoles) {
         this.diaLocatingHoles = diaLocatingHoles;
     }
 
-    public Integer getDegreesoframps() {
+    public Integer getDegreesOfRamps() {
         return degreesOfRamps;
     }
 
-    public void setDegreesoframps(Integer degreesOfRamps) {
+    public void setDegreesOfRamps(Integer degreesOfRamps) {
         this.degreesOfRamps = degreesOfRamps;
     }
 
@@ -325,6 +326,6 @@ public class ThrustBearing extends Part {
         this.diagram = diagram;
     }
 
-
     //</editor-fold>
+
 }

@@ -12,7 +12,7 @@ import static javax.persistence.FetchType.LAZY;
 
 
 /**
- * Created by dmytro.trunykov@zorallabs.com.
+ * Created by dmytro.trunykov@zorallabs.com on 2016-05-26 10:44:43.042140.
  */
 @Entity
 @Table(name = "carbon_seal")
@@ -20,6 +20,7 @@ import static javax.persistence.FetchType.LAZY;
 public class CarbonSeal extends Part {
 
     //<editor-fold defaultstate="collapsed" desc="Properties: critical dimensions">
+
     @JsonView(View.Summary.class)
     @JsonProperty("encapsulated")
     @ManyToOne(fetch = LAZY)
@@ -86,10 +87,10 @@ public class CarbonSeal extends Part {
     @Column(name = "diameterD")
     private Double diameterD;
 
-
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Getters and setters: critical dimensions">
+
     public CriticalDimensionEnumVal getEncapsulated() {
         return encapsulated;
     }
@@ -98,102 +99,102 @@ public class CarbonSeal extends Part {
         this.encapsulated = encapsulated;
     }
 
-    public Double getMaxod() {
+    public Double getMaxOd() {
         return maxOd;
     }
 
-    public void setMaxod(Double maxOd) {
+    public void setMaxOd(Double maxOd) {
         this.maxOd = maxOd;
     }
 
-    public Double getMinod() {
+    public Double getMinOd() {
         return minOd;
     }
 
-    public void setMinod(Double minOd) {
+    public void setMinOd(Double minOd) {
         this.minOd = minOd;
     }
 
-    public Double getMaxid() {
+    public Double getMaxId() {
         return maxId;
     }
 
-    public void setMaxid(Double maxId) {
+    public void setMaxId(Double maxId) {
         this.maxId = maxId;
     }
 
-    public Double getMinid() {
+    public Double getMinId() {
         return minId;
     }
 
-    public void setMinid(Double minId) {
+    public void setMinId(Double minId) {
         this.minId = minId;
     }
 
-    public Double getFreeheight() {
+    public Double getFreeHeight() {
         return freeHeight;
     }
 
-    public void setFreeheight(Double freeHeight) {
+    public void setFreeHeight(Double freeHeight) {
         this.freeHeight = freeHeight;
     }
 
-    public Double getCompressedheight() {
+    public Double getCompressedHeight() {
         return compressedHeight;
     }
 
-    public void setCompressedheight(Double compressedHeight) {
+    public void setCompressedHeight(Double compressedHeight) {
         this.compressedHeight = compressedHeight;
     }
 
-    public Double getMaxoperheight() {
+    public Double getMaxOperHeight() {
         return maxOperHeight;
     }
 
-    public void setMaxoperheight(Double maxOperHeight) {
+    public void setMaxOperHeight(Double maxOperHeight) {
         this.maxOperHeight = maxOperHeight;
     }
 
-    public Double getMinoperheight() {
+    public Double getMinOperHeight() {
         return minOperHeight;
     }
 
-    public void setMinoperheight(Double minOperHeight) {
+    public void setMinOperHeight(Double minOperHeight) {
         this.minOperHeight = minOperHeight;
     }
 
-    public Double getDiametera() {
+    public Double getDiameterA() {
         return diameterA;
     }
 
-    public void setDiametera(Double diameterA) {
+    public void setDiameterA(Double diameterA) {
         this.diameterA = diameterA;
     }
 
-    public Double getDiameterb() {
+    public Double getDiameterB() {
         return diameterB;
     }
 
-    public void setDiameterb(Double diameterB) {
+    public void setDiameterB(Double diameterB) {
         this.diameterB = diameterB;
     }
 
-    public Double getDiameterc() {
+    public Double getDiameterC() {
         return diameterC;
     }
 
-    public void setDiameterc(Double diameterC) {
+    public void setDiameterC(Double diameterC) {
         this.diameterC = diameterC;
     }
 
-    public Double getDiameterd() {
+    public Double getDiameterD() {
         return diameterD;
     }
 
-    public void setDiameterd(Double diameterD) {
+    public void setDiameterD(Double diameterD) {
         this.diameterD = diameterD;
     }
 
-
     //</editor-fold>
+
 }

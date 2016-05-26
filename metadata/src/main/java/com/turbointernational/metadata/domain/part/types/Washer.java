@@ -12,7 +12,7 @@ import static javax.persistence.FetchType.LAZY;
 
 
 /**
- * Created by dmytro.trunykov@zorallabs.com.
+ * Created by dmytro.trunykov@zorallabs.com on 2016-05-26 10:44:43.041980.
  */
 @Entity
 @Table(name = "washer")
@@ -20,6 +20,7 @@ import static javax.persistence.FetchType.LAZY;
 public class Washer extends Part {
 
     //<editor-fold defaultstate="collapsed" desc="Properties: critical dimensions">
+
     @JsonView(View.Summary.class)
     @JsonProperty("odA")
     @Column(name = "odA")
@@ -78,55 +79,55 @@ public class Washer extends Part {
     @Column(name = "diagram")
     private Integer diagram;
 
-
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Getters and setters: critical dimensions">
-    public Double getOda() {
+
+    public Double getOdA() {
         return odA;
     }
 
-    public void setOda(Double odA) {
+    public void setOdA(Double odA) {
         this.odA = odA;
     }
 
-    public Double getOdatol() {
+    public Double getOdATol() {
         return odATol;
     }
 
-    public void setOdatol(Double odATol) {
+    public void setOdATol(Double odATol) {
         this.odATol = odATol;
     }
 
-    public Double getIdb() {
+    public Double getIdB() {
         return idB;
     }
 
-    public void setIdb(Double idB) {
+    public void setIdB(Double idB) {
         this.idB = idB;
     }
 
-    public Double getIdtolb() {
+    public Double getIdTolB() {
         return idTolB;
     }
 
-    public void setIdtolb(Double idTolB) {
+    public void setIdTolB(Double idTolB) {
         this.idTolB = idTolB;
     }
 
-    public Double getThicknessc() {
+    public Double getThicknessC() {
         return thicknessC;
     }
 
-    public void setThicknessc(Double thicknessC) {
+    public void setThicknessC(Double thicknessC) {
         this.thicknessC = thicknessC;
     }
 
-    public Double getThicknesstolc() {
+    public Double getThicknessTolC() {
         return thicknessTolC;
     }
 
-    public void setThicknesstolc(Double thicknessTolC) {
+    public void setThicknessTolC(Double thicknessTolC) {
         this.thicknessTolC = thicknessTolC;
     }
 
@@ -146,11 +147,11 @@ public class Washer extends Part {
         this.material = material;
     }
 
-    public CriticalDimensionEnumVal getPlatingcoating() {
+    public CriticalDimensionEnumVal getPlatingCoating() {
         return platingCoating;
     }
 
-    public void setPlatingcoating(CriticalDimensionEnumVal platingCoating) {
+    public void setPlatingCoating(CriticalDimensionEnumVal platingCoating) {
         this.platingCoating = platingCoating;
     }
 
@@ -170,6 +171,6 @@ public class Washer extends Part {
         this.diagram = diagram;
     }
 
-
     //</editor-fold>
+
 }

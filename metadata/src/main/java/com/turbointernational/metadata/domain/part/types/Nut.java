@@ -12,7 +12,7 @@ import static javax.persistence.FetchType.LAZY;
 
 
 /**
- * Created by dmytro.trunykov@zorallabs.com.
+ * Created by dmytro.trunykov@zorallabs.com on 2016-05-26 10:44:43.039105.
  */
 @Entity
 @Table(name = "nut")
@@ -20,6 +20,7 @@ import static javax.persistence.FetchType.LAZY;
 public class Nut extends Part {
 
     //<editor-fold defaultstate="collapsed" desc="Properties: critical dimensions">
+
     @JsonView(View.Summary.class)
     @JsonProperty("shaftNut")
     @ManyToOne(fetch = LAZY)
@@ -125,15 +126,15 @@ public class Nut extends Part {
     @Column(name = "acrossFlats")
     private Double acrossFlats;
 
-
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Getters and setters: critical dimensions">
-    public CriticalDimensionEnumVal getShaftnut() {
+
+    public CriticalDimensionEnumVal getShaftNut() {
         return shaftNut;
     }
 
-    public void setShaftnut(CriticalDimensionEnumVal shaftNut) {
+    public void setShaftNut(CriticalDimensionEnumVal shaftNut) {
         this.shaftNut = shaftNut;
     }
 
@@ -153,11 +154,11 @@ public class Nut extends Part {
         this.flange = flange;
     }
 
-    public CriticalDimensionEnumVal getDrivetype() {
+    public CriticalDimensionEnumVal getDriveType() {
         return driveType;
     }
 
-    public void setDrivetype(CriticalDimensionEnumVal driveType) {
+    public void setDriveType(CriticalDimensionEnumVal driveType) {
         this.driveType = driveType;
     }
 
@@ -169,19 +170,19 @@ public class Nut extends Part {
         this.thread = thread;
     }
 
-    public CriticalDimensionEnumVal getThdhand() {
+    public CriticalDimensionEnumVal getThdHand() {
         return thdHand;
     }
 
-    public void setThdhand(CriticalDimensionEnumVal thdHand) {
+    public void setThdHand(CriticalDimensionEnumVal thdHand) {
         this.thdHand = thdHand;
     }
 
-    public Double getThreadlength() {
+    public Double getThreadLength() {
         return threadLength;
     }
 
-    public void setThreadlength(Double threadLength) {
+    public void setThreadLength(Double threadLength) {
         this.threadLength = threadLength;
     }
 
@@ -193,27 +194,27 @@ public class Nut extends Part {
         this.oal = oal;
     }
 
-    public Double getOaltol() {
+    public Double getOalTol() {
         return oalTol;
     }
 
-    public void setOaltol(Double oalTol) {
+    public void setOalTol(Double oalTol) {
         this.oalTol = oalTol;
     }
 
-    public Double getFlangedia() {
+    public Double getFlangeDia() {
         return flangeDia;
     }
 
-    public void setFlangedia(Double flangeDia) {
+    public void setFlangeDia(Double flangeDia) {
         this.flangeDia = flangeDia;
     }
 
-    public Double getFlangediatol() {
+    public Double getFlangeDiaTol() {
         return flangeDiaTol;
     }
 
-    public void setFlangediatol(Double flangeDiaTol) {
+    public void setFlangeDiaTol(Double flangeDiaTol) {
         this.flangeDiaTol = flangeDiaTol;
     }
 
@@ -225,27 +226,27 @@ public class Nut extends Part {
         this.grade = grade;
     }
 
-    public CriticalDimensionEnumVal getPlatingcoating() {
+    public CriticalDimensionEnumVal getPlatingCoating() {
         return platingCoating;
     }
 
-    public void setPlatingcoating(CriticalDimensionEnumVal platingCoating) {
+    public void setPlatingCoating(CriticalDimensionEnumVal platingCoating) {
         this.platingCoating = platingCoating;
     }
 
-    public String getSpecialfeatures() {
+    public String getSpecialFeatures() {
         return specialFeatures;
     }
 
-    public void setSpecialfeatures(String specialFeatures) {
+    public void setSpecialFeatures(String specialFeatures) {
         this.specialFeatures = specialFeatures;
     }
 
-    public CriticalDimensionEnumVal getShowspecialfeatures() {
+    public CriticalDimensionEnumVal getShowSpecialFeatures() {
         return showSpecialFeatures;
     }
 
-    public void setShowspecialfeatures(CriticalDimensionEnumVal showSpecialFeatures) {
+    public void setShowSpecialFeatures(CriticalDimensionEnumVal showSpecialFeatures) {
         this.showSpecialFeatures = showSpecialFeatures;
     }
 
@@ -257,11 +258,11 @@ public class Nut extends Part {
         this.weight = weight;
     }
 
-    public CriticalDimensionEnumVal getPrevailingtorquetype() {
+    public CriticalDimensionEnumVal getPrevailingTorqueType() {
         return prevailingTorqueType;
     }
 
-    public void setPrevailingtorquetype(CriticalDimensionEnumVal prevailingTorqueType) {
+    public void setPrevailingTorqueType(CriticalDimensionEnumVal prevailingTorqueType) {
         this.prevailingTorqueType = prevailingTorqueType;
     }
 
@@ -273,14 +274,14 @@ public class Nut extends Part {
         this.diagram = diagram;
     }
 
-    public Double getAcrossflats() {
+    public Double getAcrossFlats() {
         return acrossFlats;
     }
 
-    public void setAcrossflats(Double acrossFlats) {
+    public void setAcrossFlats(Double acrossFlats) {
         this.acrossFlats = acrossFlats;
     }
 
-
     //</editor-fold>
+
 }

@@ -12,7 +12,7 @@ import static javax.persistence.FetchType.LAZY;
 
 
 /**
- * Created by dmytro.trunykov@zorallabs.com.
+ * Created by dmytro.trunykov@zorallabs.com on 2016-05-26 10:44:43.036840.
  */
 @Entity
 @Table(name = "bearing_housing")
@@ -20,6 +20,7 @@ import static javax.persistence.FetchType.LAZY;
 public class BearingHousing extends Part {
 
     //<editor-fold defaultstate="collapsed" desc="Properties: critical dimensions">
+
     @JsonView(View.Summary.class)
     @JsonProperty("waterCooled")
     @ManyToOne(fetch = LAZY)
@@ -205,143 +206,143 @@ public class BearingHousing extends Part {
     @Column(name = "diagram")
     private Integer diagram;
 
-
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Getters and setters: critical dimensions">
-    public CriticalDimensionEnumVal getWatercooled() {
+
+    public CriticalDimensionEnumVal getWaterCooled() {
         return waterCooled;
     }
 
-    public void setWatercooled(CriticalDimensionEnumVal waterCooled) {
+    public void setWaterCooled(CriticalDimensionEnumVal waterCooled) {
         this.waterCooled = waterCooled;
     }
 
-    public Double getCwcdia() {
+    public Double getCwcDia() {
         return cwcDia;
     }
 
-    public void setCwcdia(Double cwcDia) {
+    public void setCwcDia(Double cwcDia) {
         this.cwcDia = cwcDia;
     }
 
-    public Double getCwcdiatol() {
+    public Double getCwcDiaTol() {
         return cwcDiaTol;
     }
 
-    public void setCwcdiatol(Double cwcDiaTol) {
+    public void setCwcDiaTol(Double cwcDiaTol) {
         this.cwcDiaTol = cwcDiaTol;
     }
 
-    public Double getBorediamax() {
+    public Double getBoreDiaMax() {
         return boreDiaMax;
     }
 
-    public void setBorediamax(Double boreDiaMax) {
+    public void setBoreDiaMax(Double boreDiaMax) {
         this.boreDiaMax = boreDiaMax;
     }
 
-    public Double getBorediamin() {
+    public Double getBoreDiaMin() {
         return boreDiaMin;
     }
 
-    public void setBorediamin(Double boreDiaMin) {
+    public void setBoreDiaMin(Double boreDiaMin) {
         this.boreDiaMin = boreDiaMin;
     }
 
-    public Double getCediaa() {
+    public Double getCeDiaA() {
         return ceDiaA;
     }
 
-    public void setCediaa(Double ceDiaA) {
+    public void setCeDiaA(Double ceDiaA) {
         this.ceDiaA = ceDiaA;
     }
 
-    public Double getCediaatol() {
+    public Double getCeDiaATol() {
         return ceDiaATol;
     }
 
-    public void setCediaatol(Double ceDiaATol) {
+    public void setCeDiaATol(Double ceDiaATol) {
         this.ceDiaATol = ceDiaATol;
     }
 
-    public Double getTediad() {
+    public Double getTeDiaD() {
         return teDiaD;
     }
 
-    public void setTediad(Double teDiaD) {
+    public void setTeDiaD(Double teDiaD) {
         this.teDiaD = teDiaD;
     }
 
-    public Double getTediadtol() {
+    public Double getTeDiaDTol() {
         return teDiaDTol;
     }
 
-    public void setTediadtol(Double teDiaDTol) {
+    public void setTeDiaDTol(Double teDiaDTol) {
         this.teDiaDTol = teDiaDTol;
     }
 
-    public Double getCediab() {
+    public Double getCeDiaB() {
         return ceDiaB;
     }
 
-    public void setCediab(Double ceDiaB) {
+    public void setCeDiaB(Double ceDiaB) {
         this.ceDiaB = ceDiaB;
     }
 
-    public Double getCediabtol() {
+    public Double getCeDiaBTol() {
         return ceDiaBTol;
     }
 
-    public void setCediabtol(Double ceDiaBTol) {
+    public void setCeDiaBTol(Double ceDiaBTol) {
         this.ceDiaBTol = ceDiaBTol;
     }
 
-    public Double getCediac() {
+    public Double getCeDiaC() {
         return ceDiaC;
     }
 
-    public void setCediac(Double ceDiaC) {
+    public void setCeDiaC(Double ceDiaC) {
         this.ceDiaC = ceDiaC;
     }
 
-    public Double getCediactol() {
+    public Double getCeDiaCTol() {
         return ceDiaCTol;
     }
 
-    public void setCediactol(Double ceDiaCTol) {
+    public void setCeDiaCTol(Double ceDiaCTol) {
         this.ceDiaCTol = ceDiaCTol;
     }
 
-    public Double getTediae() {
+    public Double getTeDiaE() {
         return teDiaE;
     }
 
-    public void setTediae(Double teDiaE) {
+    public void setTeDiaE(Double teDiaE) {
         this.teDiaE = teDiaE;
     }
 
-    public Double getTediaetol() {
+    public Double getTeDiaETol() {
         return teDiaETol;
     }
 
-    public void setTediaetol(Double teDiaETol) {
+    public void setTeDiaETol(Double teDiaETol) {
         this.teDiaETol = teDiaETol;
     }
 
-    public Double getTediaf() {
+    public Double getTeDiaF() {
         return teDiaF;
     }
 
-    public void setTediaf(Double teDiaF) {
+    public void setTeDiaF(Double teDiaF) {
         this.teDiaF = teDiaF;
     }
 
-    public Double getTediaftol() {
+    public Double getTeDiaFTol() {
         return teDiaFTol;
     }
 
-    public void setTediaftol(Double teDiaFTol) {
+    public void setTeDiaFTol(Double teDiaFTol) {
         this.teDiaFTol = teDiaFTol;
     }
 
@@ -353,91 +354,91 @@ public class BearingHousing extends Part {
         this.oal = oal;
     }
 
-    public Double getOaltol() {
+    public Double getOalTol() {
         return oalTol;
     }
 
-    public void setOaltol(Double oalTol) {
+    public void setOalTol(Double oalTol) {
         this.oalTol = oalTol;
     }
 
-    public CriticalDimensionEnumVal getOilinletthread() {
+    public CriticalDimensionEnumVal getOilInletThread() {
         return oilInletThread;
     }
 
-    public void setOilinletthread(CriticalDimensionEnumVal oilInletThread) {
+    public void setOilInletThread(CriticalDimensionEnumVal oilInletThread) {
         this.oilInletThread = oilInletThread;
     }
 
-    public CriticalDimensionEnumVal getOilinletflangethread() {
+    public CriticalDimensionEnumVal getOilInletFlangeThread() {
         return oilInletFlangeThread;
     }
 
-    public void setOilinletflangethread(CriticalDimensionEnumVal oilInletFlangeThread) {
+    public void setOilInletFlangeThread(CriticalDimensionEnumVal oilInletFlangeThread) {
         this.oilInletFlangeThread = oilInletFlangeThread;
     }
 
-    public CriticalDimensionEnumVal getOildrainthread() {
+    public CriticalDimensionEnumVal getOilDrainThread() {
         return oilDrainThread;
     }
 
-    public void setOildrainthread(CriticalDimensionEnumVal oilDrainThread) {
+    public void setOilDrainThread(CriticalDimensionEnumVal oilDrainThread) {
         this.oilDrainThread = oilDrainThread;
     }
 
-    public CriticalDimensionEnumVal getOildrainflangethread() {
+    public CriticalDimensionEnumVal getOilDrainFlangeThread() {
         return oilDrainFlangeThread;
     }
 
-    public void setOildrainflangethread(CriticalDimensionEnumVal oilDrainFlangeThread) {
+    public void setOilDrainFlangeThread(CriticalDimensionEnumVal oilDrainFlangeThread) {
         this.oilDrainFlangeThread = oilDrainFlangeThread;
     }
 
-    public CriticalDimensionEnumVal getCoolantportthread1() {
+    public CriticalDimensionEnumVal getCoolantPortThread1() {
         return coolantPortThread1;
     }
 
-    public void setCoolantportthread1(CriticalDimensionEnumVal coolantPortThread1) {
+    public void setCoolantPortThread1(CriticalDimensionEnumVal coolantPortThread1) {
         this.coolantPortThread1 = coolantPortThread1;
     }
 
-    public CriticalDimensionEnumVal getCoolantportthread2() {
+    public CriticalDimensionEnumVal getCoolantPortThread2() {
         return coolantPortThread2;
     }
 
-    public void setCoolantportthread2(CriticalDimensionEnumVal coolantPortThread2) {
+    public void setCoolantPortThread2(CriticalDimensionEnumVal coolantPortThread2) {
         this.coolantPortThread2 = coolantPortThread2;
     }
 
-    public Double getPrboredia() {
+    public Double getPrBoreDia() {
         return prBoreDia;
     }
 
-    public void setPrboredia(Double prBoreDia) {
+    public void setPrBoreDia(Double prBoreDia) {
         this.prBoreDia = prBoreDia;
     }
 
-    public Double getPrborediatol() {
+    public Double getPrBoreDiaTol() {
         return prBoreDiaTol;
     }
 
-    public void setPrborediatol(Double prBoreDiaTol) {
+    public void setPrBoreDiaTol(Double prBoreDiaTol) {
         this.prBoreDiaTol = prBoreDiaTol;
     }
 
-    public Double getLeadinchmfr05angle() {
+    public Double getLeadInChmfr05Angle() {
         return leadInChmfr05Angle;
     }
 
-    public void setLeadinchmfr05angle(Double leadInChmfr05Angle) {
+    public void setLeadInChmfr05Angle(Double leadInChmfr05Angle) {
         this.leadInChmfr05Angle = leadInChmfr05Angle;
     }
 
-    public Double getLeadinchmfrlen() {
+    public Double getLeadInChmfrLen() {
         return leadInChmfrLen;
     }
 
-    public void setLeadinchmfrlen(Double leadInChmfrLen) {
+    public void setLeadInChmfrLen(Double leadInChmfrLen) {
         this.leadInChmfrLen = leadInChmfrLen;
     }
 
@@ -449,27 +450,27 @@ public class BearingHousing extends Part {
         this.quadrant = quadrant;
     }
 
-    public Double getArmangle() {
+    public Double getArmAngle() {
         return armAngle;
     }
 
-    public void setArmangle(Double armAngle) {
+    public void setArmAngle(Double armAngle) {
         this.armAngle = armAngle;
     }
 
-    public CriticalDimensionEnumVal getSingledualoilfeed() {
+    public CriticalDimensionEnumVal getSingleDualOilFeed() {
         return singleDualOilFeed;
     }
 
-    public void setSingledualoilfeed(CriticalDimensionEnumVal singleDualOilFeed) {
+    public void setSingleDualOilFeed(CriticalDimensionEnumVal singleDualOilFeed) {
         this.singleDualOilFeed = singleDualOilFeed;
     }
 
-    public CriticalDimensionEnumVal getSpinningbearing() {
+    public CriticalDimensionEnumVal getSpinningBearing() {
         return spinningBearing;
     }
 
-    public void setSpinningbearing(CriticalDimensionEnumVal spinningBearing) {
+    public void setSpinningBearing(CriticalDimensionEnumVal spinningBearing) {
         this.spinningBearing = spinningBearing;
     }
 
@@ -489,6 +490,6 @@ public class BearingHousing extends Part {
         this.diagram = diagram;
     }
 
-
     //</editor-fold>
+
 }

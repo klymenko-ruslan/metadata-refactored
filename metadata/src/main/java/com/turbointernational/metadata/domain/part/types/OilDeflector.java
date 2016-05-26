@@ -12,7 +12,7 @@ import static javax.persistence.FetchType.LAZY;
 
 
 /**
- * Created by dmytro.trunykov@zorallabs.com.
+ * Created by dmytro.trunykov@zorallabs.com on 2016-05-26 10:44:43.039319.
  */
 @Entity
 @Table(name = "oil_deflector")
@@ -20,6 +20,7 @@ import static javax.persistence.FetchType.LAZY;
 public class OilDeflector extends Part {
 
     //<editor-fold defaultstate="collapsed" desc="Properties: critical dimensions">
+
     @JsonView(View.Summary.class)
     @JsonProperty("outerDiameterA")
     @Column(name = "outerDiameterA")
@@ -67,23 +68,23 @@ public class OilDeflector extends Part {
     @Column(name = "diagram")
     private Integer diagram;
 
-
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Getters and setters: critical dimensions">
-    public Double getOuterdiametera() {
+
+    public Double getOuterDiameterA() {
         return outerDiameterA;
     }
 
-    public void setOuterdiametera(Double outerDiameterA) {
+    public void setOuterDiameterA(Double outerDiameterA) {
         this.outerDiameterA = outerDiameterA;
     }
 
-    public Double getInnerdiameterb() {
+    public Double getInnerDiameterB() {
         return innerDiameterB;
     }
 
-    public void setInnerdiameterb(Double innerDiameterB) {
+    public void setInnerDiameterB(Double innerDiameterB) {
         this.innerDiameterB = innerDiameterB;
     }
 
@@ -103,35 +104,35 @@ public class OilDeflector extends Part {
         this.weight = weight;
     }
 
-    public Integer getMountingholes() {
+    public Integer getMountingHoles() {
         return mountingHoles;
     }
 
-    public void setMountingholes(Integer mountingHoles) {
+    public void setMountingHoles(Integer mountingHoles) {
         this.mountingHoles = mountingHoles;
     }
 
-    public Double getMountingholediac() {
+    public Double getMountingHoleDiaC() {
         return mountingHoleDiaC;
     }
 
-    public void setMountingholediac(Double mountingHoleDiaC) {
+    public void setMountingHoleDiaC(Double mountingHoleDiaC) {
         this.mountingHoleDiaC = mountingHoleDiaC;
     }
 
-    public Double getMatlthicknessd() {
+    public Double getMatLThicknessD() {
         return matLThicknessD;
     }
 
-    public void setMatlthicknessd(Double matLThicknessD) {
+    public void setMatLThicknessD(Double matLThicknessD) {
         this.matLThicknessD = matLThicknessD;
     }
 
-    public CriticalDimensionEnumVal getPlatingcoating() {
+    public CriticalDimensionEnumVal getPlatingCoating() {
         return platingCoating;
     }
 
-    public void setPlatingcoating(CriticalDimensionEnumVal platingCoating) {
+    public void setPlatingCoating(CriticalDimensionEnumVal platingCoating) {
         this.platingCoating = platingCoating;
     }
 
@@ -143,6 +144,6 @@ public class OilDeflector extends Part {
         this.diagram = diagram;
     }
 
-
     //</editor-fold>
+
 }

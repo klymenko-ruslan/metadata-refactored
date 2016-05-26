@@ -141,6 +141,8 @@ angular.module("ngMetaCrudApp")
             var mEnum = descriptor.enumeration;
             if (mEnum) {
               valEnum = mEnum.values;
+            } else {
+              throw Error("definition of the enum for the field '" + descriptor.jsonName + "' not found.");
             }
             if (valEnum !== undefined) {
               var selected = _.find(valEnum, function(ve) {
@@ -171,13 +173,15 @@ angular.module("ngMetaCrudApp")
             if (dispObj.toleranceJsonName) {
               // If the dispOject has a tolerance.
               var toleranceDisplayValue = $scope._getDisplayVal(dispObj.toleranceDescriptor, dispObj.tolerance, dispObj.toleranceDisplayUnit);
-              displayValue += (" " + String.fromCharCode(0x00B1) + " " + toleranceDisplayValue);
+              if (displayValue) {
+                displayValue += (" " + String.fromCharCode(0x00B1) + " " + toleranceDisplayValue);
+              }
             }
             dispObj.displayValue = displayValue;
             dispObj.filterValue = displayValue.toLowerCase();
           } catch (e) {
             dispObj.invalidDisplayValue = true;
-            return $scope._buildErrorMessage(e.message);
+            dispObj.displayValue = $scope._buildErrorMessage(e.message);
           }
 
         };

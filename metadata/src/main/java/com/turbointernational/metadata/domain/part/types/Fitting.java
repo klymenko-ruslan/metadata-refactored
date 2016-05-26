@@ -12,7 +12,7 @@ import static javax.persistence.FetchType.LAZY;
 
 
 /**
- * Created by dmytro.trunykov@zorallabs.com.
+ * Created by dmytro.trunykov@zorallabs.com on 2016-05-26 10:44:43.037920.
  */
 @Entity
 @Table(name = "fitting")
@@ -20,6 +20,7 @@ import static javax.persistence.FetchType.LAZY;
 public class Fitting extends Part {
 
     //<editor-fold defaultstate="collapsed" desc="Properties: critical dimensions">
+
     @JsonView(View.Summary.class)
     @JsonProperty("diameterA")
     @Column(name = "diameterA")
@@ -61,39 +62,39 @@ public class Fitting extends Part {
     @Column(name = "diagram")
     private Integer diagram;
 
-
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Getters and setters: critical dimensions">
-    public Double getDiametera() {
+
+    public Double getDiameterA() {
         return diameterA;
     }
 
-    public void setDiametera(Double diameterA) {
+    public void setDiameterA(Double diameterA) {
         this.diameterA = diameterA;
     }
 
-    public Double getDiameterb() {
+    public Double getDiameterB() {
         return diameterB;
     }
 
-    public void setDiameterb(Double diameterB) {
+    public void setDiameterB(Double diameterB) {
         this.diameterB = diameterB;
     }
 
-    public Double getDiameterc() {
+    public Double getDiameterC() {
         return diameterC;
     }
 
-    public void setDiameterc(Double diameterC) {
+    public void setDiameterC(Double diameterC) {
         this.diameterC = diameterC;
     }
 
-    public Double getLengthd() {
+    public Double getLengthD() {
         return lengthD;
     }
 
-    public void setLengthd(Double lengthD) {
+    public void setLengthD(Double lengthD) {
         this.lengthD = lengthD;
     }
 
@@ -129,6 +130,6 @@ public class Fitting extends Part {
         this.diagram = diagram;
     }
 
-
     //</editor-fold>
+
 }

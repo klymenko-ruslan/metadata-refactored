@@ -12,7 +12,7 @@ import static javax.persistence.FetchType.LAZY;
 
 
 /**
- * Created by dmytro.trunykov@zorallabs.com.
+ * Created by dmytro.trunykov@zorallabs.com on 2016-05-26 10:44:43.038745.
  */
 @Entity
 @Table(name = "journal_bearing_spacer")
@@ -20,6 +20,7 @@ import static javax.persistence.FetchType.LAZY;
 public class JournalBearingSpacer extends Part {
 
     //<editor-fold defaultstate="collapsed" desc="Properties: critical dimensions">
+
     @JsonView(View.Summary.class)
     @JsonProperty("outerDiameterA")
     @Column(name = "outerDiameterA")
@@ -87,95 +88,95 @@ public class JournalBearingSpacer extends Part {
     @Column(name = "diagram")
     private Integer diagram;
 
-
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Getters and setters: critical dimensions">
-    public Double getOuterdiametera() {
+
+    public Double getOuterDiameterA() {
         return outerDiameterA;
     }
 
-    public void setOuterdiametera(Double outerDiameterA) {
+    public void setOuterDiameterA(Double outerDiameterA) {
         this.outerDiameterA = outerDiameterA;
     }
 
-    public Double getOuterdiameteratol() {
+    public Double getOuterDiameterATol() {
         return outerDiameterATol;
     }
 
-    public void setOuterdiameteratol(Double outerDiameterATol) {
+    public void setOuterDiameterATol(Double outerDiameterATol) {
         this.outerDiameterATol = outerDiameterATol;
     }
 
-    public Double getInnerdiameterb() {
+    public Double getInnerDiameterB() {
         return innerDiameterB;
     }
 
-    public void setInnerdiameterb(Double innerDiameterB) {
+    public void setInnerDiameterB(Double innerDiameterB) {
         this.innerDiameterB = innerDiameterB;
     }
 
-    public Double getInnerdiameterbtol() {
+    public Double getInnerDiameterBTol() {
         return innerDiameterBTol;
     }
 
-    public void setInnerdiameterbtol(Double innerDiameterBTol) {
+    public void setInnerDiameterBTol(Double innerDiameterBTol) {
         this.innerDiameterBTol = innerDiameterBTol;
     }
 
-    public Double getLengthc() {
+    public Double getLengthC() {
         return lengthC;
     }
 
-    public void setLengthc(Double lengthC) {
+    public void setLengthC(Double lengthC) {
         this.lengthC = lengthC;
     }
 
-    public Double getLengthctol() {
+    public Double getLengthCTol() {
         return lengthCTol;
     }
 
-    public void setLengthctol(Double lengthCTol) {
+    public void setLengthCTol(Double lengthCTol) {
         this.lengthCTol = lengthCTol;
     }
 
-    public Integer getNotchesside() {
+    public Integer getNotchesSide() {
         return notchesSide;
     }
 
-    public void setNotchesside(Integer notchesSide) {
+    public void setNotchesSide(Integer notchesSide) {
         this.notchesSide = notchesSide;
     }
 
-    public Double getHolediamd() {
+    public Double getHoleDiamD() {
         return holeDiamD;
     }
 
-    public void setHolediamd(Double holeDiamD) {
+    public void setHoleDiamD(Double holeDiamD) {
         this.holeDiamD = holeDiamD;
     }
 
-    public Double getHolediamdtol() {
+    public Double getHoleDiamDTol() {
         return holeDiamDTol;
     }
 
-    public void setHolediamdtol(Double holeDiamDTol) {
+    public void setHoleDiamDTol(Double holeDiamDTol) {
         this.holeDiamDTol = holeDiamDTol;
     }
 
-    public CriticalDimensionEnumVal getOuterconfiguration() {
+    public CriticalDimensionEnumVal getOuterConfiguration() {
         return outerConfiguration;
     }
 
-    public void setOuterconfiguration(CriticalDimensionEnumVal outerConfiguration) {
+    public void setOuterConfiguration(CriticalDimensionEnumVal outerConfiguration) {
         this.outerConfiguration = outerConfiguration;
     }
 
-    public CriticalDimensionEnumVal getPressedfloating() {
+    public CriticalDimensionEnumVal getPressedFloating() {
         return pressedFloating;
     }
 
-    public void setPressedfloating(CriticalDimensionEnumVal pressedFloating) {
+    public void setPressedFloating(CriticalDimensionEnumVal pressedFloating) {
         this.pressedFloating = pressedFloating;
     }
 
@@ -195,6 +196,6 @@ public class JournalBearingSpacer extends Part {
         this.diagram = diagram;
     }
 
-
     //</editor-fold>
+
 }

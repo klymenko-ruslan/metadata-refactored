@@ -12,7 +12,7 @@ import static javax.persistence.FetchType.LAZY;
 
 
 /**
- * Created by dmytro.trunykov@zorallabs.com.
+ * Created by dmytro.trunykov@zorallabs.com on 2016-05-26 10:44:43.041576.
  */
 @Entity
 @Table(name = "thrust_spacer")
@@ -20,6 +20,7 @@ import static javax.persistence.FetchType.LAZY;
 public class ThrustSpacer extends Part {
 
     //<editor-fold defaultstate="collapsed" desc="Properties: critical dimensions">
+
     @JsonView(View.Summary.class)
     @JsonProperty("aOal")
     @Column(name = "aOal")
@@ -156,199 +157,199 @@ public class ThrustSpacer extends Part {
     @Column(name = "diagram")
     private Integer diagram;
 
-
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Getters and setters: critical dimensions">
-    public Double getAoal() {
+
+    public Double getAOal() {
         return aOal;
     }
 
-    public void setAoal(Double aOal) {
+    public void setAOal(Double aOal) {
         this.aOal = aOal;
     }
 
-    public Double getAoaltol() {
+    public Double getAOalTol() {
         return aOalTol;
     }
 
-    public void setAoaltol(Double aOalTol) {
+    public void setAOalTol(Double aOalTol) {
         this.aOalTol = aOalTol;
     }
 
-    public Double getBthrustdia() {
+    public Double getBThrustDia() {
         return bThrustDia;
     }
 
-    public void setBthrustdia(Double bThrustDia) {
+    public void setBThrustDia(Double bThrustDia) {
         this.bThrustDia = bThrustDia;
     }
 
-    public Double getBthrustdiatol() {
+    public Double getBThrustDiaTol() {
         return bThrustDiaTol;
     }
 
-    public void setBthrustdiatol(Double bThrustDiaTol) {
+    public void setBThrustDiaTol(Double bThrustDiaTol) {
         this.bThrustDiaTol = bThrustDiaTol;
     }
 
-    public Double getCboredia() {
+    public Double getCBoreDia() {
         return cBoreDia;
     }
 
-    public void setCboredia(Double cBoreDia) {
+    public void setCBoreDia(Double cBoreDia) {
         this.cBoreDia = cBoreDia;
     }
 
-    public Double getCborediatol() {
+    public Double getCBoreDiaTol() {
         return cBoreDiaTol;
     }
 
-    public void setCborediatol(Double cBoreDiaTol) {
+    public void setCBoreDiaTol(Double cBoreDiaTol) {
         this.cBoreDiaTol = cBoreDiaTol;
     }
 
-    public Double getDpistonringgroove1majordia() {
+    public Double getDPistonRingGroove1MajorDia() {
         return dPistonRingGroove1MajorDia;
     }
 
-    public void setDpistonringgroove1majordia(Double dPistonRingGroove1MajorDia) {
+    public void setDPistonRingGroove1MajorDia(Double dPistonRingGroove1MajorDia) {
         this.dPistonRingGroove1MajorDia = dPistonRingGroove1MajorDia;
     }
 
-    public Double getDpistonringgroove1majordiatol() {
+    public Double getDPistonRingGroove1MajorDiaTol() {
         return dPistonRingGroove1MajorDiaTol;
     }
 
-    public void setDpistonringgroove1majordiatol(Double dPistonRingGroove1MajorDiaTol) {
+    public void setDPistonRingGroove1MajorDiaTol(Double dPistonRingGroove1MajorDiaTol) {
         this.dPistonRingGroove1MajorDiaTol = dPistonRingGroove1MajorDiaTol;
     }
 
-    public Double getEpistonringgroove1minordia() {
+    public Double getEPistonRingGroove1MinorDia() {
         return ePistonRingGroove1MinorDia;
     }
 
-    public void setEpistonringgroove1minordia(Double ePistonRingGroove1MinorDia) {
+    public void setEPistonRingGroove1MinorDia(Double ePistonRingGroove1MinorDia) {
         this.ePistonRingGroove1MinorDia = ePistonRingGroove1MinorDia;
     }
 
-    public Double getEpistonringgroove1minordiatol() {
+    public Double getEPistonRingGroove1MinorDiaTol() {
         return ePistonRingGroove1MinorDiaTol;
     }
 
-    public void setEpistonringgroove1minordiatol(Double ePistonRingGroove1MinorDiaTol) {
+    public void setEPistonRingGroove1MinorDiaTol(Double ePistonRingGroove1MinorDiaTol) {
         this.ePistonRingGroove1MinorDiaTol = ePistonRingGroove1MinorDiaTol;
     }
 
-    public Double getFpistonringgroove1width() {
+    public Double getFPistonRingGroove1Width() {
         return fPistonRingGroove1Width;
     }
 
-    public void setFpistonringgroove1width(Double fPistonRingGroove1Width) {
+    public void setFPistonRingGroove1Width(Double fPistonRingGroove1Width) {
         this.fPistonRingGroove1Width = fPistonRingGroove1Width;
     }
 
-    public Double getFpistonringgroove1widthtol() {
+    public Double getFPistonRingGroove1WidthTol() {
         return fPistonRingGroove1WidthTol;
     }
 
-    public void setFpistonringgroove1widthtol(Double fPistonRingGroove1WidthTol) {
+    public void setFPistonRingGroove1WidthTol(Double fPistonRingGroove1WidthTol) {
         this.fPistonRingGroove1WidthTol = fPistonRingGroove1WidthTol;
     }
 
-    public Double getGpistonringgroove2majordia() {
+    public Double getGPistonRingGroove2MajorDia() {
         return gPistonRingGroove2MajorDia;
     }
 
-    public void setGpistonringgroove2majordia(Double gPistonRingGroove2MajorDia) {
+    public void setGPistonRingGroove2MajorDia(Double gPistonRingGroove2MajorDia) {
         this.gPistonRingGroove2MajorDia = gPistonRingGroove2MajorDia;
     }
 
-    public Double getGpistonringgroove2majordiatol() {
+    public Double getGPistonRingGroove2MajorDiaTol() {
         return gPistonRingGroove2MajorDiaTol;
     }
 
-    public void setGpistonringgroove2majordiatol(Double gPistonRingGroove2MajorDiaTol) {
+    public void setGPistonRingGroove2MajorDiaTol(Double gPistonRingGroove2MajorDiaTol) {
         this.gPistonRingGroove2MajorDiaTol = gPistonRingGroove2MajorDiaTol;
     }
 
-    public Double getHpistonringgroove2minordia() {
+    public Double getHPistonRingGroove2MinorDia() {
         return hPistonRingGroove2MinorDia;
     }
 
-    public void setHpistonringgroove2minordia(Double hPistonRingGroove2MinorDia) {
+    public void setHPistonRingGroove2MinorDia(Double hPistonRingGroove2MinorDia) {
         this.hPistonRingGroove2MinorDia = hPistonRingGroove2MinorDia;
     }
 
-    public Double getHpistonringgroove2minordiatol() {
+    public Double getHPistonRingGroove2MinorDiaTol() {
         return hPistonRingGroove2MinorDiaTol;
     }
 
-    public void setHpistonringgroove2minordiatol(Double hPistonRingGroove2MinorDiaTol) {
+    public void setHPistonRingGroove2MinorDiaTol(Double hPistonRingGroove2MinorDiaTol) {
         this.hPistonRingGroove2MinorDiaTol = hPistonRingGroove2MinorDiaTol;
     }
 
-    public Double getIpistonringgroove2width() {
+    public Double getIPistonRingGroove2Width() {
         return iPistonRingGroove2Width;
     }
 
-    public void setIpistonringgroove2width(Double iPistonRingGroove2Width) {
+    public void setIPistonRingGroove2Width(Double iPistonRingGroove2Width) {
         this.iPistonRingGroove2Width = iPistonRingGroove2Width;
     }
 
-    public Double getIpistonringgroove2widthtol() {
+    public Double getIPistonRingGroove2WidthTol() {
         return iPistonRingGroove2WidthTol;
     }
 
-    public void setIpistonringgroove2widthtol(Double iPistonRingGroove2WidthTol) {
+    public void setIPistonRingGroove2WidthTol(Double iPistonRingGroove2WidthTol) {
         this.iPistonRingGroove2WidthTol = iPistonRingGroove2WidthTol;
     }
 
-    public Double getJceflingerdia() {
+    public Double getJceFlingerDia() {
         return jceFlingerDia;
     }
 
-    public void setJceflingerdia(Double jceFlingerDia) {
+    public void setJceFlingerDia(Double jceFlingerDia) {
         this.jceFlingerDia = jceFlingerDia;
     }
 
-    public Double getKteflingerdia() {
+    public Double getKteFlingerDia() {
         return kteFlingerDia;
     }
 
-    public void setKteflingerdia(Double kteFlingerDia) {
+    public void setKteFlingerDia(Double kteFlingerDia) {
         this.kteFlingerDia = kteFlingerDia;
     }
 
-    public Integer getNumflingerholescerow() {
+    public Integer getNumFlingerHolesCeRow() {
         return numFlingerHolesCeRow;
     }
 
-    public void setNumflingerholescerow(Integer numFlingerHolesCeRow) {
+    public void setNumFlingerHolesCeRow(Integer numFlingerHolesCeRow) {
         this.numFlingerHolesCeRow = numFlingerHolesCeRow;
     }
 
-    public Double getDiaflingerholescerow() {
+    public Double getDiaFlingerHolesCeRow() {
         return diaFlingerHolesCeRow;
     }
 
-    public void setDiaflingerholescerow(Double diaFlingerHolesCeRow) {
+    public void setDiaFlingerHolesCeRow(Double diaFlingerHolesCeRow) {
         this.diaFlingerHolesCeRow = diaFlingerHolesCeRow;
     }
 
-    public Integer getNumflingerholesterow() {
+    public Integer getNumFlingerHolesTeRow() {
         return numFlingerHolesTeRow;
     }
 
-    public void setNumflingerholesterow(Integer numFlingerHolesTeRow) {
+    public void setNumFlingerHolesTeRow(Integer numFlingerHolesTeRow) {
         this.numFlingerHolesTeRow = numFlingerHolesTeRow;
     }
 
-    public Double getDiaflingerholesterow() {
+    public Double getDiaFlingerHolesTeRow() {
         return diaFlingerHolesTeRow;
     }
 
-    public void setDiaflingerholesterow(Double diaFlingerHolesTeRow) {
+    public void setDiaFlingerHolesTeRow(Double diaFlingerHolesTeRow) {
         this.diaFlingerHolesTeRow = diaFlingerHolesTeRow;
     }
 
@@ -376,6 +377,6 @@ public class ThrustSpacer extends Part {
         this.diagram = diagram;
     }
 
-
     //</editor-fold>
+
 }

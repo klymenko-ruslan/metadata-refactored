@@ -12,7 +12,7 @@ import static javax.persistence.FetchType.LAZY;
 
 
 /**
- * Created by dmytro.trunykov@zorallabs.com.
+ * Created by dmytro.trunykov@zorallabs.com on 2016-05-26 10:44:43.040267.
  */
 @Entity
 @Table(name = "seal_plate")
@@ -20,6 +20,7 @@ import static javax.persistence.FetchType.LAZY;
 public class SealPlate extends Part {
 
     //<editor-fold defaultstate="collapsed" desc="Properties: critical dimensions">
+
     @JsonView(View.Summary.class)
     @JsonProperty("leadInChmfr05Angle")
     @Column(name = "leadInChmfr05Angle")
@@ -194,263 +195,263 @@ public class SealPlate extends Part {
     @Column(name = "diagram")
     private Integer diagram;
 
-
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Getters and setters: critical dimensions">
-    public Double getLeadinchmfr05angle() {
+
+    public Double getLeadInChmfr05Angle() {
         return leadInChmfr05Angle;
     }
 
-    public void setLeadinchmfr05angle(Double leadInChmfr05Angle) {
+    public void setLeadInChmfr05Angle(Double leadInChmfr05Angle) {
         this.leadInChmfr05Angle = leadInChmfr05Angle;
     }
 
-    public Double getLeadinchmfrlen() {
+    public Double getLeadInChmfrLen() {
         return leadInChmfrLen;
     }
 
-    public void setLeadinchmfrlen(Double leadInChmfrLen) {
+    public void setLeadInChmfrLen(Double leadInChmfrLen) {
         this.leadInChmfrLen = leadInChmfrLen;
     }
 
-    public Double getDiaa() {
+    public Double getDiaA() {
         return diaA;
     }
 
-    public void setDiaa(Double diaA) {
+    public void setDiaA(Double diaA) {
         this.diaA = diaA;
     }
 
-    public Double getDiaatol() {
+    public Double getDiaATol() {
         return diaATol;
     }
 
-    public void setDiaatol(Double diaATol) {
+    public void setDiaATol(Double diaATol) {
         this.diaATol = diaATol;
     }
 
-    public Double getDiab() {
+    public Double getDiaB() {
         return diaB;
     }
 
-    public void setDiab(Double diaB) {
+    public void setDiaB(Double diaB) {
         this.diaB = diaB;
     }
 
-    public Double getDiabtol() {
+    public Double getDiaBTol() {
         return diaBTol;
     }
 
-    public void setDiabtol(Double diaBTol) {
+    public void setDiaBTol(Double diaBTol) {
         this.diaBTol = diaBTol;
     }
 
-    public Double getDiac() {
+    public Double getDiaC() {
         return diaC;
     }
 
-    public void setDiac(Double diaC) {
+    public void setDiaC(Double diaC) {
         this.diaC = diaC;
     }
 
-    public Double getDiactol() {
+    public Double getDiaCTol() {
         return diaCTol;
     }
 
-    public void setDiactol(Double diaCTol) {
+    public void setDiaCTol(Double diaCTol) {
         this.diaCTol = diaCTol;
     }
 
-    public Double getDiad() {
+    public Double getDiaD() {
         return diaD;
     }
 
-    public void setDiad(Double diaD) {
+    public void setDiaD(Double diaD) {
         this.diaD = diaD;
     }
 
-    public Double getDiadtol() {
+    public Double getDiaDTol() {
         return diaDTol;
     }
 
-    public void setDiadtol(Double diaDTol) {
+    public void setDiaDTol(Double diaDTol) {
         this.diaDTol = diaDTol;
     }
 
-    public Double getOale() {
+    public Double getOalE() {
         return oalE;
     }
 
-    public void setOale(Double oalE) {
+    public void setOalE(Double oalE) {
         this.oalE = oalE;
     }
 
-    public Double getOaletol() {
+    public Double getOalETol() {
         return oalETol;
     }
 
-    public void setOaletol(Double oalETol) {
+    public void setOalETol(Double oalETol) {
         this.oalETol = oalETol;
     }
 
-    public Double getBoredia() {
+    public Double getBoreDia() {
         return boreDia;
     }
 
-    public void setBoredia(Double boreDia) {
+    public void setBoreDia(Double boreDia) {
         this.boreDia = boreDia;
     }
 
-    public Double getBorediatol() {
+    public Double getBoreDiaTol() {
         return boreDiaTol;
     }
 
-    public void setBorediatol(Double boreDiaTol) {
+    public void setBoreDiaTol(Double boreDiaTol) {
         this.boreDiaTol = boreDiaTol;
     }
 
-    public Double getPrboredia() {
+    public Double getPrBoreDia() {
         return prBoreDia;
     }
 
-    public void setPrboredia(Double prBoreDia) {
+    public void setPrBoreDia(Double prBoreDia) {
         this.prBoreDia = prBoreDia;
     }
 
-    public Double getPrborediatol() {
+    public Double getPrBoreDiaTol() {
         return prBoreDiaTol;
     }
 
-    public void setPrborediatol(Double prBoreDiaTol) {
+    public void setPrBoreDiaTol(Double prBoreDiaTol) {
         this.prBoreDiaTol = prBoreDiaTol;
     }
 
-    public Double getCwcdia() {
+    public Double getCwcDia() {
         return cwcDia;
     }
 
-    public void setCwcdia(Double cwcDia) {
+    public void setCwcDia(Double cwcDia) {
         this.cwcDia = cwcDia;
     }
 
-    public Double getCwcdiatol() {
+    public Double getCwcDiaTol() {
         return cwcDiaTol;
     }
 
-    public void setCwcdiatol(Double cwcDiaTol) {
+    public void setCwcDiaTol(Double cwcDiaTol) {
         this.cwcDiaTol = cwcDiaTol;
     }
 
-    public Double getOringgroovedia() {
+    public Double getORingGrooveDia() {
         return oRingGrooveDia;
     }
 
-    public void setOringgroovedia(Double oRingGrooveDia) {
+    public void setORingGrooveDia(Double oRingGrooveDia) {
         this.oRingGrooveDia = oRingGrooveDia;
     }
 
-    public Double getOringgroovediatol() {
+    public Double getORingGrooveDiaTol() {
         return oRingGrooveDiaTol;
     }
 
-    public void setOringgroovediatol(Double oRingGrooveDiaTol) {
+    public void setORingGrooveDiaTol(Double oRingGrooveDiaTol) {
         this.oRingGrooveDiaTol = oRingGrooveDiaTol;
     }
 
-    public Double getOringgroovewidth() {
+    public Double getORingGrooveWidth() {
         return oRingGrooveWidth;
     }
 
-    public void setOringgroovewidth(Double oRingGrooveWidth) {
+    public void setORingGrooveWidth(Double oRingGrooveWidth) {
         this.oRingGrooveWidth = oRingGrooveWidth;
     }
 
-    public Double getOringgroovewidthtol() {
+    public Double getORingGrooveWidthTol() {
         return oRingGrooveWidthTol;
     }
 
-    public void setOringgroovewidthtol(Double oRingGrooveWidthTol) {
+    public void setORingGrooveWidthTol(Double oRingGrooveWidthTol) {
         this.oRingGrooveWidthTol = oRingGrooveWidthTol;
     }
 
-    public Integer getMountingholes() {
+    public Integer getMountingHoles() {
         return mountingHoles;
     }
 
-    public void setMountingholes(Integer mountingHoles) {
+    public void setMountingHoles(Integer mountingHoles) {
         this.mountingHoles = mountingHoles;
     }
 
-    public Double getMountingholedia() {
+    public Double getMountingHoleDia() {
         return mountingHoleDia;
     }
 
-    public void setMountingholedia(Double mountingHoleDia) {
+    public void setMountingHoleDia(Double mountingHoleDia) {
         this.mountingHoleDia = mountingHoleDia;
     }
 
-    public Double getHubposf() {
+    public Double getHubPosF() {
         return hubPosF;
     }
 
-    public void setHubposf(Double hubPosF) {
+    public void setHubPosF(Double hubPosF) {
         this.hubPosF = hubPosF;
     }
 
-    public Double getHubposftol() {
+    public Double getHubPosFTol() {
         return hubPosFTol;
     }
 
-    public void setHubposftol(Double hubPosFTol) {
+    public void setHubPosFTol(Double hubPosFTol) {
         this.hubPosFTol = hubPosFTol;
     }
 
-    public Double getClampedwidthg() {
+    public Double getClampedWidthG() {
         return clampedWidthG;
     }
 
-    public void setClampedwidthg(Double clampedWidthG) {
+    public void setClampedWidthG(Double clampedWidthG) {
         this.clampedWidthG = clampedWidthG;
     }
 
-    public Double getClampedwidthgtol() {
+    public Double getClampedWidthGTol() {
         return clampedWidthGTol;
     }
 
-    public void setClampedwidthgtol(Double clampedWidthGTol) {
+    public void setClampedWidthGTol(Double clampedWidthGTol) {
         this.clampedWidthGTol = clampedWidthGTol;
     }
 
-    public CriticalDimensionEnumVal getSuperbackflatbackspecial() {
+    public CriticalDimensionEnumVal getSuperbackFlatbackSpecial() {
         return superbackFlatbackSpecial;
     }
 
-    public void setSuperbackflatbackspecial(CriticalDimensionEnumVal superbackFlatbackSpecial) {
+    public void setSuperbackFlatbackSpecial(CriticalDimensionEnumVal superbackFlatbackSpecial) {
         this.superbackFlatbackSpecial = superbackFlatbackSpecial;
     }
 
-    public CriticalDimensionEnumVal getDynamiccarbonseal() {
+    public CriticalDimensionEnumVal getDynamicCarbonSeal() {
         return dynamicCarbonSeal;
     }
 
-    public void setDynamiccarbonseal(CriticalDimensionEnumVal dynamicCarbonSeal) {
+    public void setDynamicCarbonSeal(CriticalDimensionEnumVal dynamicCarbonSeal) {
         this.dynamicCarbonSeal = dynamicCarbonSeal;
     }
 
-    public CriticalDimensionEnumVal getDyncs() {
+    public CriticalDimensionEnumVal getDynCs() {
         return dynCs;
     }
 
-    public void setDyncs(CriticalDimensionEnumVal dynCs) {
+    public void setDynCs(CriticalDimensionEnumVal dynCs) {
         this.dynCs = dynCs;
     }
 
-    public CriticalDimensionEnumVal getMatl() {
+    public CriticalDimensionEnumVal getMatL() {
         return matL;
     }
 
-    public void setMatl(CriticalDimensionEnumVal matL) {
+    public void setMatL(CriticalDimensionEnumVal matL) {
         this.matL = matL;
     }
 
@@ -470,6 +471,6 @@ public class SealPlate extends Part {
         this.diagram = diagram;
     }
 
-
     //</editor-fold>
+
 }

@@ -12,7 +12,7 @@ import static javax.persistence.FetchType.LAZY;
 
 
 /**
- * Created by dmytro.trunykov@zorallabs.com.
+ * Created by dmytro.trunykov@zorallabs.com on 2016-05-26 10:44:43.041842.
  */
 @Entity
 @Table(name = "thrust_washer")
@@ -20,6 +20,7 @@ import static javax.persistence.FetchType.LAZY;
 public class ThrustWasher extends Part {
 
     //<editor-fold defaultstate="collapsed" desc="Properties: critical dimensions">
+
     @JsonView(View.Summary.class)
     @JsonProperty("aThickness")
     @Column(name = "aThickness")
@@ -61,55 +62,55 @@ public class ThrustWasher extends Part {
     @Column(name = "weight")
     private Double weight;
 
-
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Getters and setters: critical dimensions">
-    public Double getAthickness() {
+
+    public Double getAThickness() {
         return aThickness;
     }
 
-    public void setAthickness(Double aThickness) {
+    public void setAThickness(Double aThickness) {
         this.aThickness = aThickness;
     }
 
-    public Double getAthicknesstol() {
+    public Double getAThicknessTol() {
         return aThicknessTol;
     }
 
-    public void setAthicknesstol(Double aThicknessTol) {
+    public void setAThicknessTol(Double aThicknessTol) {
         this.aThicknessTol = aThicknessTol;
     }
 
-    public Double getBod() {
+    public Double getBOd() {
         return bOd;
     }
 
-    public void setBod(Double bOd) {
+    public void setBOd(Double bOd) {
         this.bOd = bOd;
     }
 
-    public Double getBodtol() {
+    public Double getBOdTol() {
         return bOdTol;
     }
 
-    public void setBodtol(Double bOdTol) {
+    public void setBOdTol(Double bOdTol) {
         this.bOdTol = bOdTol;
     }
 
-    public Double getCid() {
+    public Double getCId() {
         return cId;
     }
 
-    public void setCid(Double cId) {
+    public void setCId(Double cId) {
         this.cId = cId;
     }
 
-    public Double getCidtol() {
+    public Double getCIdTol() {
         return cIdTol;
     }
 
-    public void setCidtol(Double cIdTol) {
+    public void setCIdTol(Double cIdTol) {
         this.cIdTol = cIdTol;
     }
 
@@ -129,6 +130,6 @@ public class ThrustWasher extends Part {
         this.weight = weight;
     }
 
-
     //</editor-fold>
+
 }

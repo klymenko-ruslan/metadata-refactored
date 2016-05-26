@@ -12,7 +12,7 @@ import static javax.persistence.FetchType.LAZY;
 
 
 /**
- * Created by dmytro.trunykov@zorallabs.com.
+ * Created by dmytro.trunykov@zorallabs.com on 2016-05-26 10:44:43.037207.
  */
 @Entity
 @Table(name = "bolt_screw")
@@ -20,6 +20,7 @@ import static javax.persistence.FetchType.LAZY;
 public class BoltScrew extends Part {
 
     //<editor-fold defaultstate="collapsed" desc="Properties: critical dimensions">
+
     @JsonView(View.Summary.class)
     @JsonProperty("threadCalloutA")
     @ManyToOne(fetch = LAZY)
@@ -125,143 +126,143 @@ public class BoltScrew extends Part {
     @Column(name = "diagram")
     private Integer diagram;
 
-
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Getters and setters: critical dimensions">
-    public CriticalDimensionEnumVal getThreadcallouta() {
+
+    public CriticalDimensionEnumVal getThreadCalloutA() {
         return threadCalloutA;
     }
 
-    public void setThreadcallouta(CriticalDimensionEnumVal threadCalloutA) {
+    public void setThreadCalloutA(CriticalDimensionEnumVal threadCalloutA) {
         this.threadCalloutA = threadCalloutA;
     }
 
-    public Double getThreadlengthb() {
+    public Double getThreadLengthB() {
         return threadLengthB;
     }
 
-    public void setThreadlengthb(Double threadLengthB) {
+    public void setThreadLengthB(Double threadLengthB) {
         this.threadLengthB = threadLengthB;
     }
 
-    public CriticalDimensionEnumVal getThreadhand() {
+    public CriticalDimensionEnumVal getThreadHand() {
         return threadHand;
     }
 
-    public void setThreadhand(CriticalDimensionEnumVal threadHand) {
+    public void setThreadHand(CriticalDimensionEnumVal threadHand) {
         this.threadHand = threadHand;
     }
 
-    public Double getOveralllength() {
+    public Double getOverallLength() {
         return overallLength;
     }
 
-    public void setOveralllength(Double overallLength) {
+    public void setOverallLength(Double overallLength) {
         this.overallLength = overallLength;
     }
 
-    public Double getHeadheightc() {
+    public Double getHeadHeightC() {
         return headHeightC;
     }
 
-    public void setHeadheightc(Double headHeightC) {
+    public void setHeadHeightC(Double headHeightC) {
         this.headHeightC = headHeightC;
     }
 
-    public Double getAcrossflatsd() {
+    public Double getAcrossFlatsD() {
         return acrossFlatsD;
     }
 
-    public void setAcrossflatsd(Double acrossFlatsD) {
+    public void setAcrossFlatsD(Double acrossFlatsD) {
         this.acrossFlatsD = acrossFlatsD;
     }
 
-    public CriticalDimensionEnumVal getHeadtype() {
+    public CriticalDimensionEnumVal getHeadType() {
         return headType;
     }
 
-    public void setHeadtype(CriticalDimensionEnumVal headType) {
+    public void setHeadType(CriticalDimensionEnumVal headType) {
         this.headType = headType;
     }
 
-    public CriticalDimensionEnumVal getDrivetype() {
+    public CriticalDimensionEnumVal getDriveType() {
         return driveType;
     }
 
-    public void setDrivetype(CriticalDimensionEnumVal driveType) {
+    public void setDriveType(CriticalDimensionEnumVal driveType) {
         this.driveType = driveType;
     }
 
-    public CriticalDimensionEnumVal getDrivesize() {
+    public CriticalDimensionEnumVal getDriveSize() {
         return driveSize;
     }
 
-    public void setDrivesize(CriticalDimensionEnumVal driveSize) {
+    public void setDriveSize(CriticalDimensionEnumVal driveSize) {
         this.driveSize = driveSize;
     }
 
-    public Double getHeaddiameter() {
+    public Double getHeadDiameter() {
         return headDiameter;
     }
 
-    public void setHeaddiameter(Double headDiameter) {
+    public void setHeadDiameter(Double headDiameter) {
         this.headDiameter = headDiameter;
     }
 
-    public Double getFlangediameter() {
+    public Double getFlangeDiameter() {
         return flangeDiameter;
     }
 
-    public void setFlangediameter(Double flangeDiameter) {
+    public void setFlangeDiameter(Double flangeDiameter) {
         this.flangeDiameter = flangeDiameter;
     }
 
-    public CriticalDimensionEnumVal getPrevailingtorqueyn() {
+    public CriticalDimensionEnumVal getPrevailingTorqueYn() {
         return prevailingTorqueYn;
     }
 
-    public void setPrevailingtorqueyn(CriticalDimensionEnumVal prevailingTorqueYn) {
+    public void setPrevailingTorqueYn(CriticalDimensionEnumVal prevailingTorqueYn) {
         this.prevailingTorqueYn = prevailingTorqueYn;
     }
 
-    public CriticalDimensionEnumVal getThreadlockcompoundtype() {
+    public CriticalDimensionEnumVal getThreadLockCompoundType() {
         return threadLockCompoundType;
     }
 
-    public void setThreadlockcompoundtype(CriticalDimensionEnumVal threadLockCompoundType) {
+    public void setThreadLockCompoundType(CriticalDimensionEnumVal threadLockCompoundType) {
         this.threadLockCompoundType = threadLockCompoundType;
     }
 
-    public CriticalDimensionEnumVal getPlatingcoating() {
+    public CriticalDimensionEnumVal getPlatingCoating() {
         return platingCoating;
     }
 
-    public void setPlatingcoating(CriticalDimensionEnumVal platingCoating) {
+    public void setPlatingCoating(CriticalDimensionEnumVal platingCoating) {
         this.platingCoating = platingCoating;
     }
 
-    public CriticalDimensionEnumVal getPropertyclassorgrade() {
+    public CriticalDimensionEnumVal getPropertyClassOrGrade() {
         return propertyClassOrGrade;
     }
 
-    public void setPropertyclassorgrade(CriticalDimensionEnumVal propertyClassOrGrade) {
+    public void setPropertyClassOrGrade(CriticalDimensionEnumVal propertyClassOrGrade) {
         this.propertyClassOrGrade = propertyClassOrGrade;
     }
 
-    public String getSpecialfeatures() {
+    public String getSpecialFeatures() {
         return specialFeatures;
     }
 
-    public void setSpecialfeatures(String specialFeatures) {
+    public void setSpecialFeatures(String specialFeatures) {
         this.specialFeatures = specialFeatures;
     }
 
-    public CriticalDimensionEnumVal getSpecialfeaturesonoff() {
+    public CriticalDimensionEnumVal getSpecialFeaturesOnOff() {
         return specialFeaturesOnOff;
     }
 
-    public void setSpecialfeaturesonoff(CriticalDimensionEnumVal specialFeaturesOnOff) {
+    public void setSpecialFeaturesOnOff(CriticalDimensionEnumVal specialFeaturesOnOff) {
         this.specialFeaturesOnOff = specialFeaturesOnOff;
     }
 
@@ -281,6 +282,6 @@ public class BoltScrew extends Part {
         this.diagram = diagram;
     }
 
-
     //</editor-fold>
+
 }

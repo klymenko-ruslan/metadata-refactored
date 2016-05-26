@@ -12,7 +12,7 @@ import static javax.persistence.FetchType.LAZY;
 
 
 /**
- * Created by dmytro.trunykov@zorallabs.com.
+ * Created by dmytro.trunykov@zorallabs.com on 2016-05-26 10:44:43.038504.
  */
 @Entity
 @Table(name = "journal_bearing")
@@ -20,6 +20,7 @@ import static javax.persistence.FetchType.LAZY;
 public class JournalBearing extends Part {
 
     //<editor-fold defaultstate="collapsed" desc="Properties: critical dimensions">
+
     @JsonView(View.Summary.class)
     @JsonProperty("maxOuterDiameter")
     @Column(name = "maxOuterDiameter")
@@ -138,39 +139,39 @@ public class JournalBearing extends Part {
     @Column(name = "diagram")
     private Integer diagram;
 
-
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Getters and setters: critical dimensions">
-    public Double getMaxouterdiameter() {
+
+    public Double getMaxOuterDiameter() {
         return maxOuterDiameter;
     }
 
-    public void setMaxouterdiameter(Double maxOuterDiameter) {
+    public void setMaxOuterDiameter(Double maxOuterDiameter) {
         this.maxOuterDiameter = maxOuterDiameter;
     }
 
-    public Double getMinouterdiameter() {
+    public Double getMinOuterDiameter() {
         return minOuterDiameter;
     }
 
-    public void setMinouterdiameter(Double minOuterDiameter) {
+    public void setMinOuterDiameter(Double minOuterDiameter) {
         this.minOuterDiameter = minOuterDiameter;
     }
 
-    public Double getMaxinnerdiameter() {
+    public Double getMaxInnerDiameter() {
         return maxInnerDiameter;
     }
 
-    public void setMaxinnerdiameter(Double maxInnerDiameter) {
+    public void setMaxInnerDiameter(Double maxInnerDiameter) {
         this.maxInnerDiameter = maxInnerDiameter;
     }
 
-    public Double getMininnerdiameter() {
+    public Double getMinInnerDiameter() {
         return minInnerDiameter;
     }
 
-    public void setMininnerdiameter(Double minInnerDiameter) {
+    public void setMinInnerDiameter(Double minInnerDiameter) {
         this.minInnerDiameter = minInnerDiameter;
     }
 
@@ -190,51 +191,51 @@ public class JournalBearing extends Part {
         this.length = length;
     }
 
-    public Double getLengthtol() {
+    public Double getLengthTol() {
         return lengthTol;
     }
 
-    public void setLengthtol(Double lengthTol) {
+    public void setLengthTol(Double lengthTol) {
         this.lengthTol = lengthTol;
     }
 
-    public Integer getFeedholecount() {
+    public Integer getFeedHoleCount() {
         return feedHoleCount;
     }
 
-    public void setFeedholecount(Integer feedHoleCount) {
+    public void setFeedHoleCount(Integer feedHoleCount) {
         this.feedHoleCount = feedHoleCount;
     }
 
-    public Double getFeedholediameter() {
+    public Double getFeedHoleDiameter() {
         return feedHoleDiameter;
     }
 
-    public void setFeedholediameter(Double feedHoleDiameter) {
+    public void setFeedHoleDiameter(Double feedHoleDiameter) {
         this.feedHoleDiameter = feedHoleDiameter;
     }
 
-    public CriticalDimensionEnumVal getFreepinned() {
+    public CriticalDimensionEnumVal getFreePinned() {
         return freePinned;
     }
 
-    public void setFreepinned(CriticalDimensionEnumVal freePinned) {
+    public void setFreePinned(CriticalDimensionEnumVal freePinned) {
         this.freePinned = freePinned;
     }
 
-    public Integer getBearingspercartridge() {
+    public Integer getBearingsPerCartridge() {
         return bearingsPerCartridge;
     }
 
-    public void setBearingspercartridge(Integer bearingsPerCartridge) {
+    public void setBearingsPerCartridge(Integer bearingsPerCartridge) {
         this.bearingsPerCartridge = bearingsPerCartridge;
     }
 
-    public CriticalDimensionEnumVal getOilfeed() {
+    public CriticalDimensionEnumVal getOilFeed() {
         return oilFeed;
     }
 
-    public void setOilfeed(CriticalDimensionEnumVal oilFeed) {
+    public void setOilFeed(CriticalDimensionEnumVal oilFeed) {
         this.oilFeed = oilFeed;
     }
 
@@ -254,27 +255,27 @@ public class JournalBearing extends Part {
         this.material = material;
     }
 
-    public Double getCenterdiameterod() {
+    public Double getCenterDiameterOd() {
         return centerDiameterOd;
     }
 
-    public void setCenterdiameterod(Double centerDiameterOd) {
+    public void setCenterDiameterOd(Double centerDiameterOd) {
         this.centerDiameterOd = centerDiameterOd;
     }
 
-    public CriticalDimensionEnumVal getEndconfiguration() {
+    public CriticalDimensionEnumVal getEndConfiguration() {
         return endConfiguration;
     }
 
-    public void setEndconfiguration(CriticalDimensionEnumVal endConfiguration) {
+    public void setEndConfiguration(CriticalDimensionEnumVal endConfiguration) {
         this.endConfiguration = endConfiguration;
     }
 
-    public CriticalDimensionEnumVal getBoreconfiguration() {
+    public CriticalDimensionEnumVal getBoreConfiguration() {
         return boreConfiguration;
     }
 
-    public void setBoreconfiguration(CriticalDimensionEnumVal boreConfiguration) {
+    public void setBoreConfiguration(CriticalDimensionEnumVal boreConfiguration) {
         this.boreConfiguration = boreConfiguration;
     }
 
@@ -286,27 +287,27 @@ public class JournalBearing extends Part {
         this.weight = weight;
     }
 
-    public String getSpecialfeatures() {
+    public String getSpecialFeatures() {
         return specialFeatures;
     }
 
-    public void setSpecialfeatures(String specialFeatures) {
+    public void setSpecialFeatures(String specialFeatures) {
         this.specialFeatures = specialFeatures;
     }
 
-    public CriticalDimensionEnumVal getSpecialfeaturesonoff() {
+    public CriticalDimensionEnumVal getSpecialFeaturesOnOff() {
         return specialFeaturesOnOff;
     }
 
-    public void setSpecialfeaturesonoff(CriticalDimensionEnumVal specialFeaturesOnOff) {
+    public void setSpecialFeaturesOnOff(CriticalDimensionEnumVal specialFeaturesOnOff) {
         this.specialFeaturesOnOff = specialFeaturesOnOff;
     }
 
-    public Integer getBrgsurfaces() {
+    public Integer getBrgSurfaces() {
         return brgSurfaces;
     }
 
-    public void setBrgsurfaces(Integer brgSurfaces) {
+    public void setBrgSurfaces(Integer brgSurfaces) {
         this.brgSurfaces = brgSurfaces;
     }
 
@@ -318,6 +319,6 @@ public class JournalBearing extends Part {
         this.diagram = diagram;
     }
 
-
     //</editor-fold>
+
 }

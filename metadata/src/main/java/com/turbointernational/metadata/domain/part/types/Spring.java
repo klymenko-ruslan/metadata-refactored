@@ -12,7 +12,7 @@ import static javax.persistence.FetchType.LAZY;
 
 
 /**
- * Created by dmytro.trunykov@zorallabs.com.
+ * Created by dmytro.trunykov@zorallabs.com on 2016-05-26 10:44:43.040920.
  */
 @Entity
 @Table(name = "spring")
@@ -20,6 +20,7 @@ import static javax.persistence.FetchType.LAZY;
 public class Spring extends Part {
 
     //<editor-fold defaultstate="collapsed" desc="Properties: critical dimensions">
+
     @JsonView(View.Summary.class)
     @JsonProperty("outerDiameter")
     @Column(name = "outerDiameter")
@@ -47,23 +48,23 @@ public class Spring extends Part {
     @Column(name = "diagram")
     private Integer diagram;
 
-
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Getters and setters: critical dimensions">
-    public Double getOuterdiameter() {
+
+    public Double getOuterDiameter() {
         return outerDiameter;
     }
 
-    public void setOuterdiameter(Double outerDiameter) {
+    public void setOuterDiameter(Double outerDiameter) {
         this.outerDiameter = outerDiameter;
     }
 
-    public Double getOveralllength() {
+    public Double getOverallLength() {
         return overallLength;
     }
 
-    public void setOveralllength(Double overallLength) {
+    public void setOverallLength(Double overallLength) {
         this.overallLength = overallLength;
     }
 
@@ -91,6 +92,6 @@ public class Spring extends Part {
         this.diagram = diagram;
     }
 
-
     //</editor-fold>
+
 }

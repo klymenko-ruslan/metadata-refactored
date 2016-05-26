@@ -12,7 +12,7 @@ import static javax.persistence.FetchType.LAZY;
 
 
 /**
- * Created by dmytro.trunykov@zorallabs.com.
+ * Created by dmytro.trunykov@zorallabs.com on 2016-05-26 10:44:43.038083.
  */
 @Entity
 @Table(name = "gasket")
@@ -20,6 +20,7 @@ import static javax.persistence.FetchType.LAZY;
 public class Gasket extends Part {
 
     //<editor-fold defaultstate="collapsed" desc="Properties: critical dimensions">
+
     @JsonView(View.Summary.class)
     @JsonProperty("type")
     @ManyToOne(fetch = LAZY)
@@ -103,10 +104,10 @@ public class Gasket extends Part {
     @Column(name = "diagram")
     private Integer diagram;
 
-
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Getters and setters: critical dimensions">
+
     public CriticalDimensionEnumVal getType() {
         return type;
     }
@@ -115,11 +116,11 @@ public class Gasket extends Part {
         this.type = type;
     }
 
-    public CriticalDimensionEnumVal getSplitsinglepassage() {
+    public CriticalDimensionEnumVal getSplitSinglePassage() {
         return splitSinglePassage;
     }
 
-    public void setSplitsinglepassage(CriticalDimensionEnumVal splitSinglePassage) {
+    public void setSplitSinglePassage(CriticalDimensionEnumVal splitSinglePassage) {
         this.splitSinglePassage = splitSinglePassage;
     }
 
@@ -131,11 +132,11 @@ public class Gasket extends Part {
         this.shape = shape;
     }
 
-    public Integer getBoltholes() {
+    public Integer getBoltHoles() {
         return boltHoles;
     }
 
-    public void setBoltholes(Integer boltHoles) {
+    public void setBoltHoles(Integer boltHoles) {
         this.boltHoles = boltHoles;
     }
 
@@ -203,11 +204,11 @@ public class Gasket extends Part {
         this.h = h;
     }
 
-    public Double getThicknessj() {
+    public Double getThicknessJ() {
         return thicknessJ;
     }
 
-    public void setThicknessj(Double thicknessJ) {
+    public void setThicknessJ(Double thicknessJ) {
         this.thicknessJ = thicknessJ;
     }
 
@@ -235,6 +236,6 @@ public class Gasket extends Part {
         this.diagram = diagram;
     }
 
-
     //</editor-fold>
+
 }

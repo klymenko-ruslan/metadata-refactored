@@ -12,7 +12,7 @@ import static javax.persistence.FetchType.LAZY;
 
 
 /**
- * Created by dmytro.trunykov@zorallabs.com.
+ * Created by dmytro.trunykov@zorallabs.com on 2016-05-26 10:44:43.040587.
  */
 @Entity
 @Table(name = "turbine_wheel")
@@ -20,6 +20,7 @@ import static javax.persistence.FetchType.LAZY;
 public class TurbineWheel extends Part {
 
     //<editor-fold defaultstate="collapsed" desc="Properties: critical dimensions">
+
     @JsonView(View.Summary.class)
     @JsonProperty("inducerDiameterA")
     @Column(name = "inducerDiameterA")
@@ -206,127 +207,127 @@ public class TurbineWheel extends Part {
     @Column(name = "diagram")
     private Integer diagram;
 
-
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Getters and setters: critical dimensions">
-    public Double getInducerdiametera() {
+
+    public Double getInducerDiameterA() {
         return inducerDiameterA;
     }
 
-    public void setInducerdiametera(Double inducerDiameterA) {
+    public void setInducerDiameterA(Double inducerDiameterA) {
         this.inducerDiameterA = inducerDiameterA;
     }
 
-    public Double getInducerdiameteratol() {
+    public Double getInducerDiameterATol() {
         return inducerDiameterATol;
     }
 
-    public void setInducerdiameteratol(Double inducerDiameterATol) {
+    public void setInducerDiameterATol(Double inducerDiameterATol) {
         this.inducerDiameterATol = inducerDiameterATol;
     }
 
-    public Double getExducerdiameterb() {
+    public Double getExducerDiameterB() {
         return exducerDiameterB;
     }
 
-    public void setExducerdiameterb(Double exducerDiameterB) {
+    public void setExducerDiameterB(Double exducerDiameterB) {
         this.exducerDiameterB = exducerDiameterB;
     }
 
-    public Double getExducerdiameterbtol() {
+    public Double getExducerDiameterBTol() {
         return exducerDiameterBTol;
     }
 
-    public void setExducerdiameterbtol(Double exducerDiameterBTol) {
+    public void setExducerDiameterBTol(Double exducerDiameterBTol) {
         this.exducerDiameterBTol = exducerDiameterBTol;
     }
 
-    public Double getTipheightc() {
+    public Double getTipHeightC() {
         return tipHeightC;
     }
 
-    public void setTipheightc(Double tipHeightC) {
+    public void setTipHeightC(Double tipHeightC) {
         this.tipHeightC = tipHeightC;
     }
 
-    public Double getTipheightctol() {
+    public Double getTipHeightCTol() {
         return tipHeightCTol;
     }
 
-    public void setTipheightctol(Double tipHeightCTol) {
+    public void setTipHeightCTol(Double tipHeightCTol) {
         this.tipHeightCTol = tipHeightCTol;
     }
 
-    public Double getMaxjournaldiameterd() {
+    public Double getMaxJournalDiameterD() {
         return maxJournalDiameterD;
     }
 
-    public void setMaxjournaldiameterd(Double maxJournalDiameterD) {
+    public void setMaxJournalDiameterD(Double maxJournalDiameterD) {
         this.maxJournalDiameterD = maxJournalDiameterD;
     }
 
-    public Double getMinjournaldiameterd() {
+    public Double getMinJournalDiameterD() {
         return minJournalDiameterD;
     }
 
-    public void setMinjournaldiameterd(Double minJournalDiameterD) {
+    public void setMinJournalDiameterD(Double minJournalDiameterD) {
         this.minJournalDiameterD = minJournalDiameterD;
     }
 
-    public Double getMinstemdiametere() {
+    public Double getMinStemDiameterE() {
         return minStemDiameterE;
     }
 
-    public void setMinstemdiametere(Double minStemDiameterE) {
+    public void setMinStemDiameterE(Double minStemDiameterE) {
         this.minStemDiameterE = minStemDiameterE;
     }
 
-    public Double getMaxstemdiametere() {
+    public Double getMaxStemDiameterE() {
         return maxStemDiameterE;
     }
 
-    public void setMaxstemdiametere(Double maxStemDiameterE) {
+    public void setMaxStemDiameterE(Double maxStemDiameterE) {
         this.maxStemDiameterE = maxStemDiameterE;
     }
 
-    public Double getStemlengthf() {
+    public Double getStemLengthF() {
         return stemLengthF;
     }
 
-    public void setStemlengthf(Double stemLengthF) {
+    public void setStemLengthF(Double stemLengthF) {
         this.stemLengthF = stemLengthF;
     }
 
-    public Double getStemlengthftol() {
+    public Double getStemLengthFTol() {
         return stemLengthFTol;
     }
 
-    public void setStemlengthftol(Double stemLengthFTol) {
+    public void setStemLengthFTol(Double stemLengthFTol) {
         this.stemLengthFTol = stemLengthFTol;
     }
 
-    public Double getPlatformheighth() {
+    public Double getPlatformHeightH() {
         return platformHeightH;
     }
 
-    public void setPlatformheighth(Double platformHeightH) {
+    public void setPlatformHeightH(Double platformHeightH) {
         this.platformHeightH = platformHeightH;
     }
 
-    public Double getBladeheight() {
+    public Double getBladeHeight() {
         return bladeHeight;
     }
 
-    public void setBladeheight(Double bladeHeight) {
+    public void setBladeHeight(Double bladeHeight) {
         this.bladeHeight = bladeHeight;
     }
 
-    public Double getThreadlengthg() {
+    public Double getThreadLengthG() {
         return threadLengthG;
     }
 
-    public void setThreadlengthg(Double threadLengthG) {
+    public void setThreadLengthG(Double threadLengthG) {
         this.threadLengthG = threadLengthG;
     }
 
@@ -338,107 +339,107 @@ public class TurbineWheel extends Part {
         this.thread = thread;
     }
 
-    public CriticalDimensionEnumVal getThreadhand() {
+    public CriticalDimensionEnumVal getThreadHand() {
         return threadHand;
     }
 
-    public void setThreadhand(CriticalDimensionEnumVal threadHand) {
+    public void setThreadHand(CriticalDimensionEnumVal threadHand) {
         this.threadHand = threadHand;
     }
 
-    public Double getPistonringgroovemajordiameteri() {
+    public Double getPistonRingGrooveMajorDiameterI() {
         return pistonRingGrooveMajorDiameterI;
     }
 
-    public void setPistonringgroovemajordiameteri(Double pistonRingGrooveMajorDiameterI) {
+    public void setPistonRingGrooveMajorDiameterI(Double pistonRingGrooveMajorDiameterI) {
         this.pistonRingGrooveMajorDiameterI = pistonRingGrooveMajorDiameterI;
     }
 
-    public Double getPistonringgroovemajordiaitol() {
+    public Double getPistonRingGrooveMajorDiaITol() {
         return pistonRingGrooveMajorDiaITol;
     }
 
-    public void setPistonringgroovemajordiaitol(Double pistonRingGrooveMajorDiaITol) {
+    public void setPistonRingGrooveMajorDiaITol(Double pistonRingGrooveMajorDiaITol) {
         this.pistonRingGrooveMajorDiaITol = pistonRingGrooveMajorDiaITol;
     }
 
-    public Double getPistonringgrooveminordiameterj() {
+    public Double getPistonRingGrooveMinorDiameterJ() {
         return pistonRingGrooveMinorDiameterJ;
     }
 
-    public void setPistonringgrooveminordiameterj(Double pistonRingGrooveMinorDiameterJ) {
+    public void setPistonRingGrooveMinorDiameterJ(Double pistonRingGrooveMinorDiameterJ) {
         this.pistonRingGrooveMinorDiameterJ = pistonRingGrooveMinorDiameterJ;
     }
 
-    public Double getPistonringgrooveminorjdiatol() {
+    public Double getPistonRingGrooveMinorJDiaTol() {
         return pistonRingGrooveMinorJDiaTol;
     }
 
-    public void setPistonringgrooveminorjdiatol(Double pistonRingGrooveMinorJDiaTol) {
+    public void setPistonRingGrooveMinorJDiaTol(Double pistonRingGrooveMinorJDiaTol) {
         this.pistonRingGrooveMinorJDiaTol = pistonRingGrooveMinorJDiaTol;
     }
 
-    public Double getPistonringgroovewidthk() {
+    public Double getPistonRingGrooveWidthK() {
         return pistonRingGrooveWidthK;
     }
 
-    public void setPistonringgroovewidthk(Double pistonRingGrooveWidthK) {
+    public void setPistonRingGrooveWidthK(Double pistonRingGrooveWidthK) {
         this.pistonRingGrooveWidthK = pistonRingGrooveWidthK;
     }
 
-    public Double getPistonringgroovewidthktol() {
+    public Double getPistonRingGrooveWidthKTol() {
         return pistonRingGrooveWidthKTol;
     }
 
-    public void setPistonringgroovewidthktol(Double pistonRingGrooveWidthKTol) {
+    public void setPistonRingGrooveWidthKTol(Double pistonRingGrooveWidthKTol) {
         this.pistonRingGrooveWidthKTol = pistonRingGrooveWidthKTol;
     }
 
-    public Double getThe2ndpistonringgroovemajordia() {
+    public Double getThe2ndPistonRingGrooveMajorDia() {
         return the2ndPistonRingGrooveMajorDia;
     }
 
-    public void setThe2ndpistonringgroovemajordia(Double the2ndPistonRingGrooveMajorDia) {
+    public void setThe2ndPistonRingGrooveMajorDia(Double the2ndPistonRingGrooveMajorDia) {
         this.the2ndPistonRingGrooveMajorDia = the2ndPistonRingGrooveMajorDia;
     }
 
-    public Double getThe2ndpistonringgroovemajordiatol() {
+    public Double getThe2ndPistonRingGrooveMajorDiaTol() {
         return the2ndPistonRingGrooveMajorDiaTol;
     }
 
-    public void setThe2ndpistonringgroovemajordiatol(Double the2ndPistonRingGrooveMajorDiaTol) {
+    public void setThe2ndPistonRingGrooveMajorDiaTol(Double the2ndPistonRingGrooveMajorDiaTol) {
         this.the2ndPistonRingGrooveMajorDiaTol = the2ndPistonRingGrooveMajorDiaTol;
     }
 
-    public Double getThe2ndpistonringgrooveminordia() {
+    public Double getThe2ndPistonRingGrooveMinorDia() {
         return the2ndPistonRingGrooveMinorDia;
     }
 
-    public void setThe2ndpistonringgrooveminordia(Double the2ndPistonRingGrooveMinorDia) {
+    public void setThe2ndPistonRingGrooveMinorDia(Double the2ndPistonRingGrooveMinorDia) {
         this.the2ndPistonRingGrooveMinorDia = the2ndPistonRingGrooveMinorDia;
     }
 
-    public Double getThe2ndpistonringgrooveminordiatol() {
+    public Double getThe2ndPistonRingGrooveMinorDiaTol() {
         return the2ndPistonRingGrooveMinorDiaTol;
     }
 
-    public void setThe2ndpistonringgrooveminordiatol(Double the2ndPistonRingGrooveMinorDiaTol) {
+    public void setThe2ndPistonRingGrooveMinorDiaTol(Double the2ndPistonRingGrooveMinorDiaTol) {
         this.the2ndPistonRingGrooveMinorDiaTol = the2ndPistonRingGrooveMinorDiaTol;
     }
 
-    public Double getThe2ndpistonringgroovewidth() {
+    public Double getThe2ndPistonRingGrooveWidth() {
         return the2ndPistonRingGrooveWidth;
     }
 
-    public void setThe2ndpistonringgroovewidth(Double the2ndPistonRingGrooveWidth) {
+    public void setThe2ndPistonRingGrooveWidth(Double the2ndPistonRingGrooveWidth) {
         this.the2ndPistonRingGrooveWidth = the2ndPistonRingGrooveWidth;
     }
 
-    public Double getThe2ndpistonringgroovewidthtol() {
+    public Double getThe2ndPistonRingGrooveWidthTol() {
         return the2ndPistonRingGrooveWidthTol;
     }
 
-    public void setThe2ndpistonringgroovewidthtol(Double the2ndPistonRingGrooveWidthTol) {
+    public void setThe2ndPistonRingGrooveWidthTol(Double the2ndPistonRingGrooveWidthTol) {
         this.the2ndPistonRingGrooveWidthTol = the2ndPistonRingGrooveWidthTol;
     }
 
@@ -450,35 +451,35 @@ public class TurbineWheel extends Part {
         this.rotation = rotation;
     }
 
-    public Integer getBladecount() {
+    public Integer getBladeCount() {
         return bladeCount;
     }
 
-    public void setBladecount(Integer bladeCount) {
+    public void setBladeCount(Integer bladeCount) {
         this.bladeCount = bladeCount;
     }
 
-    public CriticalDimensionEnumVal getShroudtype() {
+    public CriticalDimensionEnumVal getShroudType() {
         return shroudType;
     }
 
-    public void setShroudtype(CriticalDimensionEnumVal shroudType) {
+    public void setShroudType(CriticalDimensionEnumVal shroudType) {
         this.shroudType = shroudType;
     }
 
-    public CriticalDimensionEnumVal getJournaltype() {
+    public CriticalDimensionEnumVal getJournalType() {
         return journalType;
     }
 
-    public void setJournaltype(CriticalDimensionEnumVal journalType) {
+    public void setJournalType(CriticalDimensionEnumVal journalType) {
         this.journalType = journalType;
     }
 
-    public CriticalDimensionEnumVal getExtendedtips() {
+    public CriticalDimensionEnumVal getExtendedTips() {
         return extendedTips;
     }
 
-    public void setExtendedtips(CriticalDimensionEnumVal extendedTips) {
+    public void setExtendedTips(CriticalDimensionEnumVal extendedTips) {
         this.extendedTips = extendedTips;
     }
 
@@ -498,6 +499,6 @@ public class TurbineWheel extends Part {
         this.diagram = diagram;
     }
 
-
     //</editor-fold>
+
 }

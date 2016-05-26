@@ -53,8 +53,8 @@ public class CriticalDimensionService {
     /**
      * Extract value of a critical dimension from a part instance and process it.
      *
-     * @param part instance of a part
-     * @param cd critical dimension descriptor
+     * @param part              instance of a part
+     * @param cd                critical dimension descriptor
      * @param extractorCallback callback to process value of the extracted critical dimensions
      */
     public static void extractValue(Part part, CriticalDimension cd, ValueExtractorCallback extractorCallback) {
@@ -252,6 +252,8 @@ class CriticalDimensionsValidator implements Validator {
                     // Check: not null.
                     if (!cd.isNullAllowed() && value == null) {
                         errors.rejectValue(fieldName, null, "The value is required.");
+                    } else if (value == null) { // Important: this check must be after check on null (if needed).
+                        return;
                     } else if (cd.getDataType() == DECIMAL) {
                         Double decimal = (Double) value;
                         Double minVal = cd.getMinVal();
@@ -274,11 +276,11 @@ class CriticalDimensionsValidator implements Validator {
 
                 @Override
                 public void onError(Exception e) {
-                String message = "Internal error. Validation of the field '" + fieldName
-                        + "' failed for the part with ID="
-                        + part.getId() + ". Does JPA entity declares this field? Details: " + e.getMessage();
-                log.warn(message);
-                //errors.rejectValue(fieldName, null, message);
+                    String message = "Internal error. Validation of the field '" + fieldName
+                            + "' failed for the part with ID="
+                            + part.getId() + ". Does JPA entity declares this field? Details: " + e.getMessage();
+                    log.warn(message);
+                    //errors.rejectValue(fieldName, null, message);
                 }
             });
         }

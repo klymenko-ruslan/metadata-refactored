@@ -12,7 +12,7 @@ import static javax.persistence.FetchType.LAZY;
 
 
 /**
- * Created by dmytro.trunykov@zorallabs.com.
+ * Created by dmytro.trunykov@zorallabs.com on 2016-05-26 10:44:43.038922.
  */
 @Entity
 @Table(name = "nozzle_ring")
@@ -20,6 +20,7 @@ import static javax.persistence.FetchType.LAZY;
 public class NozzleRing extends Part {
 
     //<editor-fold defaultstate="collapsed" desc="Properties: critical dimensions">
+
     @JsonView(View.Summary.class)
     @JsonProperty("unisonRingDiaA")
     @Column(name = "unisonRingDiaA")
@@ -91,79 +92,79 @@ public class NozzleRing extends Part {
     @Column(name = "diagram")
     private Integer diagram;
 
-
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Getters and setters: critical dimensions">
-    public Double getUnisonringdiaa() {
+
+    public Double getUnisonRingDiaA() {
         return unisonRingDiaA;
     }
 
-    public void setUnisonringdiaa(Double unisonRingDiaA) {
+    public void setUnisonRingDiaA(Double unisonRingDiaA) {
         this.unisonRingDiaA = unisonRingDiaA;
     }
 
-    public Double getUnisonringdiaatol() {
+    public Double getUnisonRingDiaATol() {
         return unisonRingDiaATol;
     }
 
-    public void setUnisonringdiaatol(Double unisonRingDiaATol) {
+    public void setUnisonRingDiaATol(Double unisonRingDiaATol) {
         this.unisonRingDiaATol = unisonRingDiaATol;
     }
 
-    public Double getOuterdiameterb() {
+    public Double getOuterDiameterB() {
         return outerDiameterB;
     }
 
-    public void setOuterdiameterb(Double outerDiameterB) {
+    public void setOuterDiameterB(Double outerDiameterB) {
         this.outerDiameterB = outerDiameterB;
     }
 
-    public Double getOuterdiameterbtol() {
+    public Double getOuterDiameterBTol() {
         return outerDiameterBTol;
     }
 
-    public void setOuterdiameterbtol(Double outerDiameterBTol) {
+    public void setOuterDiameterBTol(Double outerDiameterBTol) {
         this.outerDiameterBTol = outerDiameterBTol;
     }
 
-    public Double getInnerdiameterc() {
+    public Double getInnerDiameterC() {
         return innerDiameterC;
     }
 
-    public void setInnerdiameterc(Double innerDiameterC) {
+    public void setInnerDiameterC(Double innerDiameterC) {
         this.innerDiameterC = innerDiameterC;
     }
 
-    public Double getInnerdiameterctol() {
+    public Double getInnerDiameterCTol() {
         return innerDiameterCTol;
     }
 
-    public void setInnerdiameterctol(Double innerDiameterCTol) {
+    public void setInnerDiameterCTol(Double innerDiameterCTol) {
         this.innerDiameterCTol = innerDiameterCTol;
     }
 
-    public Integer getNumvanes() {
+    public Integer getNumVanes() {
         return numVanes;
     }
 
-    public void setNumvanes(Integer numVanes) {
+    public void setNumVanes(Integer numVanes) {
         this.numVanes = numVanes;
     }
 
-    public Integer getNumrollers() {
+    public Integer getNumRollers() {
         return numRollers;
     }
 
-    public void setNumrollers(Integer numRollers) {
+    public void setNumRollers(Integer numRollers) {
         this.numRollers = numRollers;
     }
 
-    public String getSpecialfeatures() {
+    public String getSpecialFeatures() {
         return specialFeatures;
     }
 
-    public void setSpecialfeatures(String specialFeatures) {
+    public void setSpecialFeatures(String specialFeatures) {
         this.specialFeatures = specialFeatures;
     }
 
@@ -175,19 +176,19 @@ public class NozzleRing extends Part {
         this.weight = weight;
     }
 
-    public Integer getNummountingholes() {
+    public Integer getNumMountingHoles() {
         return numMountingHoles;
     }
 
-    public void setNummountingholes(Integer numMountingHoles) {
+    public void setNumMountingHoles(Integer numMountingHoles) {
         this.numMountingHoles = numMountingHoles;
     }
 
-    public Double getCenterholepassaged() {
+    public Double getCenterHolePassageD() {
         return centerHolePassageD;
     }
 
-    public void setCenterholepassaged(Double centerHolePassageD) {
+    public void setCenterHolePassageD(Double centerHolePassageD) {
         this.centerHolePassageD = centerHolePassageD;
     }
 
@@ -207,6 +208,6 @@ public class NozzleRing extends Part {
         this.diagram = diagram;
     }
 
-
     //</editor-fold>
+
 }

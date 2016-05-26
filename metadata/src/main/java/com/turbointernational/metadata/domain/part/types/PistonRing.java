@@ -12,7 +12,7 @@ import static javax.persistence.FetchType.LAZY;
 
 
 /**
- * Created by dmytro.trunykov@zorallabs.com.
+ * Created by dmytro.trunykov@zorallabs.com on 2016-05-26 10:44:43.039792.
  */
 @Entity
 @Table(name = "piston_ring")
@@ -20,6 +20,7 @@ import static javax.persistence.FetchType.LAZY;
 public class PistonRing extends Part {
 
     //<editor-fold defaultstate="collapsed" desc="Properties: critical dimensions">
+
     @JsonView(View.Summary.class)
     @JsonProperty("installedDiameterA")
     @Column(name = "installedDiameterA")
@@ -77,63 +78,63 @@ public class PistonRing extends Part {
     @Column(name = "diagram")
     private Integer diagram;
 
-
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Getters and setters: critical dimensions">
-    public Double getInstalleddiametera() {
+
+    public Double getInstalledDiameterA() {
         return installedDiameterA;
     }
 
-    public void setInstalleddiametera(Double installedDiameterA) {
+    public void setInstalledDiameterA(Double installedDiameterA) {
         this.installedDiameterA = installedDiameterA;
     }
 
-    public Double getGapinstalleddiameterb() {
+    public Double getGapInstalledDiameterB() {
         return gapInstalledDiameterB;
     }
 
-    public void setGapinstalleddiameterb(Double gapInstalledDiameterB) {
+    public void setGapInstalledDiameterB(Double gapInstalledDiameterB) {
         this.gapInstalledDiameterB = gapInstalledDiameterB;
     }
 
-    public Double getThicknessc() {
+    public Double getThicknessC() {
         return thicknessC;
     }
 
-    public void setThicknessc(Double thicknessC) {
+    public void setThicknessC(Double thicknessC) {
         this.thicknessC = thicknessC;
     }
 
-    public Double getThicknessctol() {
+    public Double getThicknessCTol() {
         return thicknessCTol;
     }
 
-    public void setThicknessctol(Double thicknessCTol) {
+    public void setThicknessCTol(Double thicknessCTol) {
         this.thicknessCTol = thicknessCTol;
     }
 
-    public Double getWidthd() {
+    public Double getWidthD() {
         return widthD;
     }
 
-    public void setWidthd(Double widthD) {
+    public void setWidthD(Double widthD) {
         this.widthD = widthD;
     }
 
-    public Double getWidthduppertol() {
+    public Double getWidthDUpperTol() {
         return widthDUpperTol;
     }
 
-    public void setWidthduppertol(Double widthDUpperTol) {
+    public void setWidthDUpperTol(Double widthDUpperTol) {
         this.widthDUpperTol = widthDUpperTol;
     }
 
-    public Double getWidthdlowertol() {
+    public Double getWidthDLowerTol() {
         return widthDLowerTol;
     }
 
-    public void setWidthdlowertol(Double widthDLowerTol) {
+    public void setWidthDLowerTol(Double widthDLowerTol) {
         this.widthDLowerTol = widthDLowerTol;
     }
 
@@ -169,6 +170,6 @@ public class PistonRing extends Part {
         this.diagram = diagram;
     }
 
-
     //</editor-fold>
+
 }

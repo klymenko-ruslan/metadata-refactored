@@ -12,7 +12,7 @@ import static javax.persistence.FetchType.LAZY;
 
 
 /**
- * Created by dmytro.trunykov@zorallabs.com.
+ * Created by dmytro.trunykov@zorallabs.com on 2016-05-26 10:44:43.039469.
  */
 @Entity
 @Table(name = "o_ring")
@@ -20,6 +20,7 @@ import static javax.persistence.FetchType.LAZY;
 public class ORing extends Part {
 
     //<editor-fold defaultstate="collapsed" desc="Properties: critical dimensions">
+
     @JsonView(View.Summary.class)
     @JsonProperty("innerDiaA")
     @Column(name = "innerDiaA")
@@ -94,111 +95,111 @@ public class ORing extends Part {
     @Column(name = "weight")
     private Double weight;
 
-
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Getters and setters: critical dimensions">
-    public Double getInnerdiaa() {
+
+    public Double getInnerDiaA() {
         return innerDiaA;
     }
 
-    public void setInnerdiaa(Double innerDiaA) {
+    public void setInnerDiaA(Double innerDiaA) {
         this.innerDiaA = innerDiaA;
     }
 
-    public Double getInnerdiaatol() {
+    public Double getInnerDiaATol() {
         return innerDiaATol;
     }
 
-    public void setInnerdiaatol(Double innerDiaATol) {
+    public void setInnerDiaATol(Double innerDiaATol) {
         this.innerDiaATol = innerDiaATol;
     }
 
-    public CriticalDimensionEnumVal getCrosssectiontype() {
+    public CriticalDimensionEnumVal getCrossSectionType() {
         return crossSectionType;
     }
 
-    public void setCrosssectiontype(CriticalDimensionEnumVal crossSectionType) {
+    public void setCrossSectionType(CriticalDimensionEnumVal crossSectionType) {
         this.crossSectionType = crossSectionType;
     }
 
-    public Double getXsecdiab() {
+    public Double getXSecDiaB() {
         return xSecDiaB;
     }
 
-    public void setXsecdiab(Double xSecDiaB) {
+    public void setXSecDiaB(Double xSecDiaB) {
         this.xSecDiaB = xSecDiaB;
     }
 
-    public Double getXsecdiabtol() {
+    public Double getXSecDiaBTol() {
         return xSecDiaBTol;
     }
 
-    public void setXsecdiabtol(Double xSecDiaBTol) {
+    public void setXSecDiaBTol(Double xSecDiaBTol) {
         this.xSecDiaBTol = xSecDiaBTol;
     }
 
-    public Double getRadialsectiondimsquare() {
+    public Double getRadialSectionDimSquare() {
         return radialSectionDimSquare;
     }
 
-    public void setRadialsectiondimsquare(Double radialSectionDimSquare) {
+    public void setRadialSectionDimSquare(Double radialSectionDimSquare) {
         this.radialSectionDimSquare = radialSectionDimSquare;
     }
 
-    public Double getRadialsectiondimtol() {
+    public Double getRadialSectionDimTol() {
         return radialSectionDimTol;
     }
 
-    public void setRadialsectiondimtol(Double radialSectionDimTol) {
+    public void setRadialSectionDimTol(Double radialSectionDimTol) {
         this.radialSectionDimTol = radialSectionDimTol;
     }
 
-    public Double getAxialsectiondimsquare() {
+    public Double getAxialSectionDimSquare() {
         return axialSectionDimSquare;
     }
 
-    public void setAxialsectiondimsquare(Double axialSectionDimSquare) {
+    public void setAxialSectionDimSquare(Double axialSectionDimSquare) {
         this.axialSectionDimSquare = axialSectionDimSquare;
     }
 
-    public Double getAxialsectiondimtol() {
+    public Double getAxialSectionDimTol() {
         return axialSectionDimTol;
     }
 
-    public void setAxialsectiondimtol(Double axialSectionDimTol) {
+    public void setAxialSectionDimTol(Double axialSectionDimTol) {
         this.axialSectionDimTol = axialSectionDimTol;
     }
 
-    public CriticalDimensionEnumVal getMatl() {
+    public CriticalDimensionEnumVal getMatL() {
         return matL;
     }
 
-    public void setMatl(CriticalDimensionEnumVal matL) {
+    public void setMatL(CriticalDimensionEnumVal matL) {
         this.matL = matL;
     }
 
-    public CriticalDimensionEnumVal getDashno() {
+    public CriticalDimensionEnumVal getDashNo() {
         return dashNo;
     }
 
-    public void setDashno(CriticalDimensionEnumVal dashNo) {
+    public void setDashNo(CriticalDimensionEnumVal dashNo) {
         this.dashNo = dashNo;
     }
 
-    public String getSpecialfeatures() {
+    public String getSpecialFeatures() {
         return specialFeatures;
     }
 
-    public void setSpecialfeatures(String specialFeatures) {
+    public void setSpecialFeatures(String specialFeatures) {
         this.specialFeatures = specialFeatures;
     }
 
-    public CriticalDimensionEnumVal getShowspecialfeatures() {
+    public CriticalDimensionEnumVal getShowSpecialFeatures() {
         return showSpecialFeatures;
     }
 
-    public void setShowspecialfeatures(CriticalDimensionEnumVal showSpecialFeatures) {
+    public void setShowSpecialFeatures(CriticalDimensionEnumVal showSpecialFeatures) {
         this.showSpecialFeatures = showSpecialFeatures;
     }
 
@@ -210,6 +211,6 @@ public class ORing extends Part {
         this.weight = weight;
     }
 
-
     //</editor-fold>
+
 }

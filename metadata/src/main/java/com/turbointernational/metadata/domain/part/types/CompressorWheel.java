@@ -12,7 +12,7 @@ import static javax.persistence.FetchType.LAZY;
 
 
 /**
- * Created by dmytro.trunykov@zorallabs.com.
+ * Created by dmytro.trunykov@zorallabs.com on 2016-05-26 10:44:43.037613.
  */
 @Entity
 @Table(name = "compressor_wheel")
@@ -20,6 +20,7 @@ import static javax.persistence.FetchType.LAZY;
 public class CompressorWheel extends Part {
 
     //<editor-fold defaultstate="collapsed" desc="Properties: critical dimensions">
+
     @JsonView(View.Summary.class)
     @JsonProperty("rotation")
     @ManyToOne(fetch = LAZY)
@@ -178,10 +179,10 @@ public class CompressorWheel extends Part {
     @Column(name = "diagram")
     private Integer diagram;
 
-
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Getters and setters: critical dimensions">
+
     public CriticalDimensionEnumVal getRotation() {
         return rotation;
     }
@@ -190,27 +191,27 @@ public class CompressorWheel extends Part {
         this.rotation = rotation;
     }
 
-    public CriticalDimensionEnumVal getFlatbacksuperback() {
+    public CriticalDimensionEnumVal getFlatbackSuperback() {
         return flatbackSuperback;
     }
 
-    public void setFlatbacksuperback(CriticalDimensionEnumVal flatbackSuperback) {
+    public void setFlatbackSuperback(CriticalDimensionEnumVal flatbackSuperback) {
         this.flatbackSuperback = flatbackSuperback;
     }
 
-    public CriticalDimensionEnumVal getExtendedtips() {
+    public CriticalDimensionEnumVal getExtendedTips() {
         return extendedTips;
     }
 
-    public void setExtendedtips(CriticalDimensionEnumVal extendedTips) {
+    public void setExtendedTips(CriticalDimensionEnumVal extendedTips) {
         this.extendedTips = extendedTips;
     }
 
-    public CriticalDimensionEnumVal getThreadedbore() {
+    public CriticalDimensionEnumVal getThreadedBore() {
         return threadedBore;
     }
 
-    public void setThreadedbore(CriticalDimensionEnumVal threadedBore) {
+    public void setThreadedBore(CriticalDimensionEnumVal threadedBore) {
         this.threadedBore = threadedBore;
     }
 
@@ -222,187 +223,187 @@ public class CompressorWheel extends Part {
         this.boreless = boreless;
     }
 
-    public Double getInducerdiametera() {
+    public Double getInducerDiameterA() {
         return inducerDiameterA;
     }
 
-    public void setInducerdiametera(Double inducerDiameterA) {
+    public void setInducerDiameterA(Double inducerDiameterA) {
         this.inducerDiameterA = inducerDiameterA;
     }
 
-    public Double getInducerdiameteratol() {
+    public Double getInducerDiameterATol() {
         return inducerDiameterATol;
     }
 
-    public void setInducerdiameteratol(Double inducerDiameterATol) {
+    public void setInducerDiameterATol(Double inducerDiameterATol) {
         this.inducerDiameterATol = inducerDiameterATol;
     }
 
-    public Double getExducerbdiameter() {
+    public Double getExducerBDiameter() {
         return exducerBDiameter;
     }
 
-    public void setExducerbdiameter(Double exducerBDiameter) {
+    public void setExducerBDiameter(Double exducerBDiameter) {
         this.exducerBDiameter = exducerBDiameter;
     }
 
-    public Double getExducerbdiametertol() {
+    public Double getExducerBDiameterTol() {
         return exducerBDiameterTol;
     }
 
-    public void setExducerbdiametertol(Double exducerBDiameterTol) {
+    public void setExducerBDiameterTol(Double exducerBDiameterTol) {
         this.exducerBDiameterTol = exducerBDiameterTol;
     }
 
-    public Double getTiplocation() {
+    public Double getTipLocation() {
         return tipLocation;
     }
 
-    public void setTiplocation(Double tipLocation) {
+    public void setTipLocation(Double tipLocation) {
         this.tipLocation = tipLocation;
     }
 
-    public Double getTiplocationtol() {
+    public Double getTipLocationTol() {
         return tipLocationTol;
     }
 
-    public void setTiplocationtol(Double tipLocationTol) {
+    public void setTipLocationTol(Double tipLocationTol) {
         this.tipLocationTol = tipLocationTol;
     }
 
-    public Double getTipheightd() {
+    public Double getTipHeightD() {
         return tipHeightD;
     }
 
-    public void setTipheightd(Double tipHeightD) {
+    public void setTipHeightD(Double tipHeightD) {
         this.tipHeightD = tipHeightD;
     }
 
-    public Double getTipheightdtol() {
+    public Double getTipHeightDTol() {
         return tipHeightDTol;
     }
 
-    public void setTipheightdtol(Double tipHeightDTol) {
+    public void setTipHeightDTol(Double tipHeightDTol) {
         this.tipHeightDTol = tipHeightDTol;
     }
 
-    public Double getPlatformheighte() {
+    public Double getPlatformHeightE() {
         return platformHeightE;
     }
 
-    public void setPlatformheighte(Double platformHeightE) {
+    public void setPlatformHeightE(Double platformHeightE) {
         this.platformHeightE = platformHeightE;
     }
 
-    public Double getPlatformheighttol() {
+    public Double getPlatformHeightTol() {
         return platformHeightTol;
     }
 
-    public void setPlatformheighttol(Double platformHeightTol) {
+    public void setPlatformHeightTol(Double platformHeightTol) {
         this.platformHeightTol = platformHeightTol;
     }
 
-    public Double getMaxborediameter() {
+    public Double getMaxBoreDiameter() {
         return maxBoreDiameter;
     }
 
-    public void setMaxborediameter(Double maxBoreDiameter) {
+    public void setMaxBoreDiameter(Double maxBoreDiameter) {
         this.maxBoreDiameter = maxBoreDiameter;
     }
 
-    public Double getMinborediameter() {
+    public Double getMinBoreDiameter() {
         return minBoreDiameter;
     }
 
-    public void setMinborediameter(Double minBoreDiameter) {
+    public void setMinBoreDiameter(Double minBoreDiameter) {
         this.minBoreDiameter = minBoreDiameter;
     }
 
-    public CriticalDimensionEnumVal getBladecount() {
+    public CriticalDimensionEnumVal getBladeCount() {
         return bladeCount;
     }
 
-    public void setBladecount(CriticalDimensionEnumVal bladeCount) {
+    public void setBladeCount(CriticalDimensionEnumVal bladeCount) {
         this.bladeCount = bladeCount;
     }
 
-    public Double getPlatformthickness() {
+    public Double getPlatformThickness() {
         return platformThickness;
     }
 
-    public void setPlatformthickness(Double platformThickness) {
+    public void setPlatformThickness(Double platformThickness) {
         this.platformThickness = platformThickness;
     }
 
-    public Double getPlatformthicknesstol() {
+    public Double getPlatformThicknessTol() {
         return platformThicknessTol;
     }
 
-    public void setPlatformthicknesstol(Double platformThicknessTol) {
+    public void setPlatformThicknessTol(Double platformThicknessTol) {
         this.platformThicknessTol = platformThicknessTol;
     }
 
-    public CriticalDimensionEnumVal getThreadcallout() {
+    public CriticalDimensionEnumVal getThreadCallout() {
         return threadCallout;
     }
 
-    public void setThreadcallout(CriticalDimensionEnumVal threadCallout) {
+    public void setThreadCallout(CriticalDimensionEnumVal threadCallout) {
         this.threadCallout = threadCallout;
     }
 
-    public CriticalDimensionEnumVal getThreadhand() {
+    public CriticalDimensionEnumVal getThreadHand() {
         return threadHand;
     }
 
-    public void setThreadhand(CriticalDimensionEnumVal threadHand) {
+    public void setThreadHand(CriticalDimensionEnumVal threadHand) {
         this.threadHand = threadHand;
     }
 
-    public Double getPlatformdiameterf() {
+    public Double getPlatformDiameterF() {
         return platformDiameterF;
     }
 
-    public void setPlatformdiameterf(Double platformDiameterF) {
+    public void setPlatformDiameterF(Double platformDiameterF) {
         this.platformDiameterF = platformDiameterF;
     }
 
-    public Double getPlatformdiameterftol() {
+    public Double getPlatformDiameterFTol() {
         return platformDiameterFTol;
     }
 
-    public void setPlatformdiameterftol(Double platformDiameterFTol) {
+    public void setPlatformDiameterFTol(Double platformDiameterFTol) {
         this.platformDiameterFTol = platformDiameterFTol;
     }
 
-    public Double getOverallheightc() {
+    public Double getOverallHeightC() {
         return overallHeightC;
     }
 
-    public void setOverallheightc(Double overallHeightC) {
+    public void setOverallHeightC(Double overallHeightC) {
         this.overallHeightC = overallHeightC;
     }
 
-    public Double getNosediameterg() {
+    public Double getNoseDiameterG() {
         return noseDiameterG;
     }
 
-    public void setNosediameterg(Double noseDiameterG) {
+    public void setNoseDiameterG(Double noseDiameterG) {
         this.noseDiameterG = noseDiameterG;
     }
 
-    public Double getFootdiameterh() {
+    public Double getFootDiameterH() {
         return footDiameterH;
     }
 
-    public void setFootdiameterh(Double footDiameterH) {
+    public void setFootDiameterH(Double footDiameterH) {
         this.footDiameterH = footDiameterH;
     }
 
-    public Double getBladeheight() {
+    public Double getBladeHeight() {
         return bladeHeight;
     }
 
-    public void setBladeheight(Double bladeHeight) {
+    public void setBladeHeight(Double bladeHeight) {
         this.bladeHeight = bladeHeight;
     }
 
@@ -422,6 +423,6 @@ public class CompressorWheel extends Part {
         this.diagram = diagram;
     }
 
-
     //</editor-fold>
+
 }
