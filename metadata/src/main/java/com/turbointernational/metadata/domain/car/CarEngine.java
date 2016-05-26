@@ -18,7 +18,7 @@ import java.util.List;
 
 @Cacheable
 @Entity
-@Table(name="car_engine", uniqueConstraints=@UniqueConstraint(columnNames={"engineSize", "car_fuel_type_id"}))
+@Table(name="car_engine", uniqueConstraints=@UniqueConstraint(columnNames={"engine_size", "car_fuel_type_id"}))
 @NamedQueries({
         @NamedQuery(name="findAllCarEngineOrderedByName", query = "FROM CarEngine ORDER BY engineSize")
 })
@@ -32,7 +32,7 @@ public class CarEngine implements Serializable, SearchableEntity {
     @JsonView(View.Summary.class)
     private Long id;
     
-    @Column(nullable=false)
+    @Column(name="engine_size", nullable=false)
     @JsonView(View.Summary.class)
     private String engineSize;
     

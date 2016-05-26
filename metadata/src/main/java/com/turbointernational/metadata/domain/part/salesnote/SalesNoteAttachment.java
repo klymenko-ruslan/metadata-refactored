@@ -1,6 +1,7 @@
 package com.turbointernational.metadata.domain.part.salesnote;
 
 import com.turbointernational.metadata.domain.security.User;
+
 import java.io.File;
 import java.io.Serializable;
 import java.util.Date;
@@ -16,41 +17,41 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+
 import org.springframework.beans.factory.annotation.Value;
 
 /**
- *
  * @author jrodriguez
  */
 @Cacheable
 @Entity
-@Table(name="sales_note_attachment")
+@Table(name = "sales_note_attachment")
 public class SalesNoteAttachment implements Serializable {
-    
+
     @Id
     private Long id;
-    
+
     @ManyToOne
     @JoinColumn(name = "sales_note_id")
     private SalesNote salesNote;
-    
+
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name="create_date")
+    @Column(name = "create_date")
     private Date createDate;
-    
+
     @OneToOne
-    @JoinColumn(name="create_uid", nullable=false)
+    @JoinColumn(name = "create_uid", nullable = false)
     private User creator;
-    
+
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name="write_date")
+    @Column(name = "write_date")
     private Date updateDate;
-    
+
     @OneToOne
-    @JoinColumn(name="write_uid", nullable=false)
+    @JoinColumn(name = "write_uid", nullable = false)
     private User updater;
-    
-    @Column(name="filename")
+
+    @Column(name = "filename")
     private String filename;
 
     public Long getId() {
@@ -108,20 +109,20 @@ public class SalesNoteAttachment implements Serializable {
     public void setFilename(String filename) {
         this.filename = filename;
     }
-        
+
     //<editor-fold defaultstate="collapsed" desc="Lifecycle">
     @Value("${attachments.salesNote}")
     @Transient
     private File attachmentDir;
-    
+
     public File getFile() {
         return new File(attachmentDir, filename);
     }
-    
+
     @PreRemove
     public void deleteFileOnRemove() {
         getFile().delete();
     }
     //</editor-fold>
-    
+
 }

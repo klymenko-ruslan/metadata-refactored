@@ -26,7 +26,7 @@ public class PartType implements Serializable {
     @JsonView(View.Summary.class)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(name = "name", nullable = false)
     @JsonView(View.Summary.class)
     private String name;
 
@@ -36,7 +36,7 @@ public class PartType implements Serializable {
     /**
      * Used externally
      */
-    @Column(nullable = false, unique = true)
+    @Column(name = "value", nullable = false, unique = true)
     @JsonView(View.Summary.class)
     private String value;
 

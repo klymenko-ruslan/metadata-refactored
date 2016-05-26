@@ -19,7 +19,9 @@ public class Mas90Sync implements Serializable {
     /**
      * Status of the sync.process.
      */
-    public enum Status {IN_PROGRESS, CANCELLED, FINISHED, FAILED};
+    public enum Status {
+        IN_PROGRESS, CANCELLED, FINISHED, FAILED
+    }
 
     //<editor-fold defaultstate="collapsed" desc="Properties">
     @Id

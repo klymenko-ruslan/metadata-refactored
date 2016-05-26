@@ -27,7 +27,7 @@ public class CoolType implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @Column(nullable=false)
+    @Column(name = "name", nullable=false)
     @JsonView(View.Summary.class)
     private String name;
     

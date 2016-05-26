@@ -29,7 +29,7 @@ public class KitType implements Serializable {
     private Long id;
     
     @JsonView(View.Summary.class)
-    @Column(nullable=false)
+    @Column(name = "name", nullable=false)
     private String name;
 
     @Column(name = "import_pk")

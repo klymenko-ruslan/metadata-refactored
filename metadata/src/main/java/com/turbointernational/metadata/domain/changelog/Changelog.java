@@ -1,57 +1,43 @@
 package com.turbointernational.metadata.domain.changelog;
 
 import com.turbointernational.metadata.domain.security.User;
-import java.io.Serializable;
-import java.util.Date;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
 /**
- *
  * @author jrodriguez
  */
 @Entity
 @Table(name = "changelog")
 public class Changelog implements Serializable {
-    
+
     //<editor-fold defaultstate="collapsed" desc="properties">
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
     private Long id;
-    
+
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name="change_date", nullable = false)
+    @Column(name = "change_date", nullable = false)
     private Date changeDate;
-    
+
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
-    
-    @Column(name="description", nullable = false)
+
+    @Column(name = "description", nullable = false)
     private String description;
-    
+
     @Lob
-    @Column(name="data")
+    @Column(name = "data")
     private String data;
-    
+
     public Long getId() {
         return this.id;
     }
-    
+
     public void setId(Long id) {
         this.id = id;
     }

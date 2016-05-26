@@ -18,27 +18,25 @@ public class AuthProviderLdap extends AuthProvider {
 
     public enum ProtocolEnum {LDAP, LDAPS, LDAPS_SOFT}
 
-    ;
-
     //<editor-fold defaultstate="collapsed" desc="properties">
-    @Column(nullable = false, unique = true)
+    @Column(name = "name", nullable = false, unique = true)
     @JsonView({View.Summary.class})
     private String name;
 
-    @Column(nullable = false)
+    @Column(name = "host", nullable = false)
     @JsonView({View.Summary.class})
     private String host;
 
-    @Column(nullable = false)
+    @Column(name = "port", nullable = false)
     @JsonView({View.Summary.class})
     private int port;
 
-    @Column(nullable = false)
+    @Column(name = "protocol", nullable = false)
     @Enumerated(EnumType.STRING)
     @JsonView({View.Summary.class})
     private ProtocolEnum protocol;
 
-    @Column
+    @Column(name = "domain")
     @JsonView({View.Summary.class})
     private String domain;
 
