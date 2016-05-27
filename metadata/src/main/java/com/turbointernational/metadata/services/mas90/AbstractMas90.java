@@ -1,20 +1,15 @@
 package com.turbointernational.metadata.services.mas90;
 
-import com.turbointernational.metadata.services.Mas90ServiceFactory;
 import com.turbointernational.metadata.services.mas90.pricing.CalculatedPrice;
 import com.turbointernational.metadata.services.mas90.pricing.ItemPricing;
 import com.turbointernational.metadata.services.mas90.pricing.Pricing;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.h2.jdbcx.JdbcDataSource;
-import org.springframework.jdbc.core.RowCallbackHandler;
-import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 import java.util.*;
 import java.util.logging.Logger;
@@ -71,30 +66,22 @@ public abstract class AbstractMas90 implements Mas90 {
                 + "  c.email,\n"
                 + "  p.*\n"
                 + "FROM\n"
-                + "  product_customer_prices p\n"
-                + "  JOIN customer c ON c.id = p.customer_id\n"
+                + "  product_customer_prices p JOIN customer c ON c.id = p.customer_id\n"
                 + "WHERE p.product_id = ?",
-            new RowCallbackHandler() {
-                @Override
-                public void processRow(ResultSet rs) throws SQLException {
+                rs -> {
                     String email = rs.getString("email");
                     Pricing pricing = Pricing.fromResultSet(rs);
                     itemPricing.getCustomerPricings().put(email, pricing);
-                }
-            },
+                },
             itemNumber);
 
         // Get the Product-PriceLevel pricing
         h2db.query("SELECT * FROM product_price_level_prices WHERE product_id = ?",
-            new RowCallbackHandler() {
-                @Override
-                public void processRow(ResultSet rs) throws SQLException {
+                rs -> {
                     String priceLevel = rs.getString("price_level");
                     Pricing pricing = Pricing.fromResultSet(rs);
-
                     itemPricing.getPriceLevelPricings().put(priceLevel, pricing);
-                }
-            },
+                },
             itemNumber);
 
         return itemPricing;
@@ -120,14 +107,11 @@ public abstract class AbstractMas90 implements Mas90 {
 
         // Get the default price level pricings
         h2db.query("SELECT * FROM price_level_prices",
-            new RowCallbackHandler() {
-                @Override
-                public void processRow(ResultSet rs) throws SQLException {
+                rs -> {
                     String priceLevel = rs.getString("price_level");
                     Pricing pricing = Pricing.fromResultSet(rs);
                     defaultPriceLevelPricing.put(priceLevel, pricing);
                 }
-            }
         );
     }
 
@@ -211,12 +195,9 @@ public abstract class AbstractMas90 implements Mas90 {
         // Get the price levels
         priceLevels.addAll(
             h2db.query("SELECT DISTINCT price_level FROM price_level_prices",
-                new RowMapper<String>() {
-                    @Override
-                    public String mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    (rs, rowNum) -> {
                         return rs.getString("price_level");
                     }
-                }
             )
         );
     }

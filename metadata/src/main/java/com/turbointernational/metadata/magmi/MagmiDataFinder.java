@@ -29,7 +29,7 @@ public class MagmiDataFinder {
 
     private static final Logger logger = LoggerFactory.getLogger(MagmiDataFinder.class);
     
-    @Autowired(required=true)
+    @Autowired
     private JdbcTemplate db;
     
     @Autowired
