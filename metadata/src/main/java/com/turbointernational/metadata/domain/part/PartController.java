@@ -31,7 +31,9 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
-@RequestMapping("/metadata")
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
+@RequestMapping(value = "/metadata")
 @RestController
 public class PartController {
 
@@ -58,16 +60,16 @@ public class PartController {
     @Value("${images.originals}")
     private File originalImagesDir;
     
-    @Autowired(required=true)
+    @Autowired
     private ImageResizerService resizer;
     
-    @Autowired(required=true)
+    @Autowired
     private JdbcTemplate db;
 
     @Secured("ROLE_READ")
     @JsonView(View.Detail.class)
     @RequestMapping(value = "/part/{id}", method = RequestMethod.GET,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+            produces = APPLICATION_JSON_VALUE)
     public Part getPart(@PathVariable("id") Long id) {
         Part part = partRepository.findOne(id);
 //        Interchange interchange = part.getInterchange();
@@ -82,7 +84,7 @@ public class PartController {
     @Secured("ROLE_READ")
     @JsonView(View.Detail.class)
     @RequestMapping(value = "/part/numbers", method = RequestMethod.GET,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+            produces = APPLICATION_JSON_VALUE)
     public Part findByPartNumber(@RequestParam(name = "mid") Long manufacturerId,
                                  @RequestParam(name = "pn") String partNumber) {
         return partDao.findByPartNumberAndManufacturer(manufacturerId, partNumber);
@@ -150,8 +152,8 @@ public class PartController {
     @Secured("ROLE_ALTER_PART")
     @JsonView(View.Detail.class)
     @RequestMapping(value = "/part/{id}", method = RequestMethod.PUT,
-            produces = MediaType.APPLICATION_JSON_VALUE,
-            consumes = MediaType.APPLICATION_JSON_VALUE)
+            produces = APPLICATION_JSON_VALUE,
+            consumes = APPLICATION_JSON_VALUE)
     public Part updatePart(HttpServletResponse response, @RequestBody Part part, @PathVariable("id") Long id) throws IOException {
         Errors errors = criticalDimensionService.validateCriticalDimensions(part);
         if (errors.hasErrors()) {
@@ -168,7 +170,7 @@ public class PartController {
 
     @Transactional
     @RequestMapping(value = "/part/{id}", method = RequestMethod.DELETE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+            produces = APPLICATION_JSON_VALUE)
     @Secured("ROLE_DELETE_PART")
     public void deletePart(@PathVariable("id") Long id) {
         Part part = partDao.findOne(id);

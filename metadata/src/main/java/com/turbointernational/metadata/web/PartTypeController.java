@@ -2,13 +2,16 @@ package com.turbointernational.metadata.web;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.domain.type.PartType;
 import com.turbointernational.metadata.domain.type.PartTypeDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,33 +20,24 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+
 @Controller
-@RequestMapping("/metadata/type/part")
+@RequestMapping(value = {"/parttype", "/metadata/parttype"})
 public class PartTypeController {
-    
-    @Autowired(required=true)
-    PartTypeDao partTypeDao;
-    
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+
+    @Autowired
+    private PartTypeDao partTypeDao;
+
+    @RequestMapping(value = "list2", method = GET)
     @ResponseBody
+    @JsonView(View.Detail.class)
+    //@PreAuthorize("hasRole('ROLE_READ') or hasIpAddress('127.0.0.1/32')")
     @Secured("ROLE_READ")
-    public ResponseEntity<String> showJson(@PathVariable("id") Long id) {
-        PartType partType = partTypeDao.findOne(id);
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/json; charset=utf-8");
-        if (partType == null) {
-            return new ResponseEntity<String>(headers, HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<String>(partType.toJson(), headers, HttpStatus.OK);
+    public List<PartType> getAllPartTypes() {
+        List<PartType> retVal = partTypeDao.findAll();
+        return retVal;
     }
-    
-    @RequestMapping(method = RequestMethod.GET)
-    @ResponseBody
-    @Secured("ROLE_READ")
-    public ResponseEntity<String> listJson() {
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/json; charset=utf-8");
-        List<PartType> result = partTypeDao.findAll();
-        return new ResponseEntity<String>(PartType.toJsonArray(result), headers, HttpStatus.OK);
-    }
+
 }

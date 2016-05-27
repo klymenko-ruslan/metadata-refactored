@@ -1,7 +1,8 @@
 "use strict";
 
 angular.module("ngMetaCrudApp")
-  .service("restService", function RestService($log, Restangular, dialogs, $q, $rootScope) {
+  .service("restService", function RestService($log, Restangular,
+        dialogs, $q, $rootScope) {
     return new function() { // jshint ignore:line
       var RestService = this;
       var refreshPromise = null;
@@ -170,7 +171,7 @@ angular.module("ngMetaCrudApp")
       };
 
       this.listPartTypes = function() {
-        return Restangular.all("type/part").getList();
+        return Restangular.all("parttype/list2").getList();
       };
 
       this.findManufacturer = function(id) {
@@ -338,7 +339,6 @@ angular.module("ngMetaCrudApp")
           }
           params[key] = val;
         });
-$log.log("params: " +  angular.toJson(params, 2));
         return Restangular.one("search/parts").get(params);
       };
 

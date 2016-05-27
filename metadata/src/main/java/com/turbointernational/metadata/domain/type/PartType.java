@@ -33,6 +33,9 @@ public class PartType implements Serializable {
     @Column(name = "import_pk")
     private Long importPK;
 
+    @Column(name = "legend_img_filename")
+    private String legendImgFilename;
+
     /**
      * Used externally
      */
@@ -97,6 +100,14 @@ public class PartType implements Serializable {
     public void setParent(PartType parent) {
         this.parent = parent;
     }
+
+    public String getLegendImgFilename() {
+        return legendImgFilename;
+    }
+
+    public void setLegendImgFilename(String legendImgFilename) {
+        this.legendImgFilename = legendImgFilename;
+    }
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="json">
@@ -123,6 +134,7 @@ public class PartType implements Serializable {
     public static Collection<PartType> fromJsonArrayToPartTypes(String json) {
         return new JSONDeserializer<List<PartType>>().use(null, ArrayList.class).use("values", PartType.class).deserialize(json);
     }
+
     //</editor-fold>
 
 }

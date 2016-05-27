@@ -6,7 +6,9 @@ angular.module("ngMetaCrudApp", ["ngRoute", "ngTable", "ui.bootstrap",
   .constant("METADATA_BASE", "/metadata/")
   .constant("VALID_IP_ADDRESS_REGEX", /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/)
   .constant("VALID_HOSTNAME_REGEX", /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$/)
-  .config(function($locationProvider, $httpProvider, $routeProvider, RestangularProvider, METADATA_BASE) {
+  .config(["$locationProvider", "$httpProvider", "$routeProvider", "RestangularProvider", "METADATA_BASE",
+    function($locationProvider, $httpProvider, $routeProvider, RestangularProvider, METADATA_BASE) {
+
     $httpProvider.interceptors.push("loginRequiredInterceptor");
 
     RestangularProvider.setBaseUrl(METADATA_BASE);
@@ -89,6 +91,17 @@ angular.module("ngMetaCrudApp", ["ngRoute", "ngTable", "ui.bootstrap",
         }],
         criticalDimensions: ["$route", "restService", function($route, restService) {
           return restService.findCriticalDimensionsForThePart($route.current.pathParams.id);
+        }]
+      }
+    });
+
+    // Part Types
+    $routeProvider.when("/parttype/list", {
+      templateUrl: "views/parttype/list.html",
+      controller: "PartTypeListCtrl",
+      resolve: {
+        partTypes: ["restService", function(restService) {
+          return restService.listPartTypes();
         }]
       }
     });
@@ -282,4 +295,4 @@ angular.module("ngMetaCrudApp", ["ngRoute", "ngTable", "ui.bootstrap",
     $routeProvider.otherwise({
       redirectTo: "/"
     });
-  });
+  }]);

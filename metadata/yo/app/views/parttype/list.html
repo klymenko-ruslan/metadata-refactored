@@ -1,0 +1,19 @@
+<metanav>
+</metanav>
+
+<div class="row">
+  <h1 class="col-xs-12 col-sm-9">Part Type List</h1>
+</div>
+
+<div class="row">
+  <table data-ng-table="partTypesTableParams" class="table table-bordered table-striped table-hover table-responsive">
+    <tr data-ng-repeat="pt in $data">
+      <td title="'Id'" sortable="'id'" class="text-right">{{pt.id}}</td>
+      <td title="'Name'" sortable="'name'" class="text-left">{{pt.name}}</td>
+      <td title="'Parent'" sortable="'parent.id'" class="text-right">{{pt.parent.id}}</td>
+      <td title="'Magento Attribute Set'" sortable="'magentoAttributeSet'" class="text-left">{{pt.magentoAttributeSet}}</td>
+      <td title="'Value'" sortable="'value'" class="text-left">{{pt.value}}</td>
+      <td class="actions" title="'Actions'">TODO</td>
+    </tr>
+  </table>
+</div>

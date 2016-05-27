@@ -170,6 +170,9 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
     @JsonInclude(ALWAYS)
     private int version;
 
+    @Column(name = "legend_img_filename")
+    private String legendImgFilename;
+
     public Long getId() {
         return id;
     }
@@ -274,7 +277,16 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
     public void setVersion(int version) {
         this.version = version;
     }
-    //</editor-fold>
+
+    public String getLegendImgFilename() {
+        return legendImgFilename;
+    }
+
+    public void setLegendImgFilename(String legendImgFilename) {
+        this.legendImgFilename = legendImgFilename;
+    }
+
+//</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Lifecycle">
     @PostRemove
