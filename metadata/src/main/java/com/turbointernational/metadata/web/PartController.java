@@ -1,13 +1,13 @@
-package com.turbointernational.metadata.domain.part;
+package com.turbointernational.metadata.web;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.domain.changelog.ChangelogDao;
 import com.turbointernational.metadata.domain.other.TurboType;
 import com.turbointernational.metadata.domain.other.TurboTypeDao;
+import com.turbointernational.metadata.domain.part.*;
 import com.turbointernational.metadata.domain.part.bom.BOMAncestor;
 import com.turbointernational.metadata.services.CriticalDimensionService;
 import com.turbointernational.metadata.services.ImageResizerService;
-import com.turbointernational.metadata.web.View;
 import flexjson.JSONSerializer;
 import flexjson.transformer.HibernateTransformer;
 import org.apache.commons.io.FileUtils;
@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.access.annotation.Secured;
@@ -31,7 +30,11 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
+import static com.turbointernational.metadata.services.ImageResizerService.PART_TYPE_CRIT_DIM_LEGEND_HEIGHT;
+import static com.turbointernational.metadata.services.ImageResizerService.PART_TYPE_CRIT_DIM_LEGEND_WIDTH;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @RequestMapping(value = "/metadata")
 @RestController
@@ -140,7 +143,7 @@ public class PartController {
     @Transactional
     @Secured("ROLE_CREATE_PART")
     @JsonView(View.Detail.class)
-    @RequestMapping(value = "/part", method = RequestMethod.POST)
+    @RequestMapping(value = "/part", method = POST)
     public long createPart(@RequestBody Part part) throws Exception {
         partDao.persist(part);
         // Update the changelog
@@ -188,9 +191,9 @@ public class PartController {
     public void rebuildAllBom() throws Exception {
         partDao.rebuildBomDescendancy();
     }
-    
+
     @Transactional
-    @RequestMapping(value="/part/{id}/image", method = RequestMethod.POST)
+    @RequestMapping(value="/part/{id}/image", method = POST)
     @Secured("ROLE_PART_IMAGES")
     public ResponseEntity<String> addProductImage(@PathVariable Long id, @RequestBody byte[] imageData) throws Exception {
         
@@ -218,9 +221,27 @@ public class PartController {
         
         return new ResponseEntity<>(productImage.toJson(), HttpStatus.OK);
     }
-    
+
     @Transactional
-    @RequestMapping(value="/part/{partId}/turboType/{turboTypeId}", method=RequestMethod.POST)
+    @RequestMapping(value="/part/{id}/cdlegend/image", method = POST, produces = APPLICATION_JSON_VALUE)
+    @Secured("ROLE_PART_IMAGES")
+    public String addCriticalDimensionLegendImage(@PathVariable Long id, @RequestBody byte[] imageData) throws Exception {
+        Part part = partDao.findOne(id);
+        String pidstr = part.getId().toString();
+        String now = new Long(System.currentTimeMillis()).toString();
+        String filenameOriginal = pidstr + "_cdlgndorig_" + now + ".jpg";
+        String filenameScaled = pidstr + "_cdlgnd_" + now + ".jpg";
+
+        File originalFile = new File(originalImagesDir, filenameOriginal);
+        FileUtils.writeByteArrayToFile(originalFile, imageData);
+        resizer.generateResizedImage(filenameOriginal, filenameScaled,
+                PART_TYPE_CRIT_DIM_LEGEND_WIDTH, PART_TYPE_CRIT_DIM_LEGEND_HEIGHT, true);
+        part.setLegendImgFilename(filenameScaled);
+        return filenameScaled;
+    }
+
+    @Transactional
+    @RequestMapping(value="/part/{partId}/turboType/{turboTypeId}", method= POST)
     @Secured("ROLE_ALTER_PART")
     public void addTurboType(@PathVariable("partId") long partId, @PathVariable("turboTypeId") long turboTypeId) {
         Part part = partDao.findOne(partId);

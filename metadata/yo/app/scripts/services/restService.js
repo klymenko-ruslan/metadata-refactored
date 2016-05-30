@@ -134,6 +134,17 @@ angular.module("ngMetaCrudApp")
         return Restangular.remove(part);
       };
 
+      this.uploadPartCritDimsLegend = function(partId, bytes) {
+        $log.log("partId: " + partId);
+        Restangular.setParentless(false);
+        return Restangular.one("part/" + partId + "/cdlegend/image")
+          .post(bytes, {}, {"Content-Type": "application/octet-stream"});
+      };
+
+      this.deletePartCritdimsLegend = function(partId) {
+        return Restangular.one("/image/" + partId + "/cdlegend.jpg").remove();
+      };
+
       this.findCarmodelengineyear = function(cmey_id) {
         return Restangular.one("application/carmodelengineyear", cmey_id).get();
       };
