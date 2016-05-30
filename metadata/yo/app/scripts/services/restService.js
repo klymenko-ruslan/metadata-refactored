@@ -134,11 +134,17 @@ angular.module("ngMetaCrudApp")
         return Restangular.remove(part);
       };
 
-      this.uploadPartCritDimsLegend = function(partId, bytes) {
-        $log.log("partId: " + partId);
+      this.uploadPartCritDimsLegend = function(partId, /*fd*/ imgBytes) {
+        var url = "part/" + partId + "/cdlegend/image";
+        var fd = new FormData();
+        fd.append("file", imgBytes);
+        return Restangular.one(url)
+          .withHttpConfig({transformRequest: angular.identity})
+          .customPOST(fd, "", undefined, {"Content-Type": undefined});
+        /*
         Restangular.setParentless(false);
-        return Restangular.one("part/" + partId + "/cdlegend/image")
-          .post(bytes, {}, {"Content-Type": "application/octet-stream"});
+        return Restangular.one(url).post(fd, {}, {"Content-Type": "application/octet-stream"});
+        */
       };
 
       this.deletePartCritdimsLegend = function(partId) {

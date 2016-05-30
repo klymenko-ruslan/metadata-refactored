@@ -649,13 +649,13 @@ os.mkdir(args.out_dir)
 with open(args.in_extra_data) as fp:
     extra_data = json.load(fp)
 
-print("alter table part add column legend_img_filename varchar(255);",
-      file=alter_file)
-print("alter table part_type add column legend_img_filename varchar(255);",
-      file=alter_file)
-
 filename_alter = os.path.join(args.out_dir, "alter.sql")
 with open(filename_alter, "w", encoding="utf-8") as alter_file:
+
+    print("alter table part add column legend_img_filename varchar(255);",
+          file=alter_file)
+    print("alter table part_type add column legend_img_filename varchar(255);",
+          file=alter_file)
 
     (obsolete_part_type, part_types, crit_dim_attributes,
         crit_dim_attributes_idx_by_id) = load_input_data(args)

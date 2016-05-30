@@ -11,7 +11,8 @@ angular.module("ngMetaCrudApp")
           part: "=",
           descriptors: "="
         },
-        controller: ["$scope", "$log", "Restangular", "gToast", "restService", "dialogs", function($scope, $log, Restangular, gToast, restService, dialogs) {
+        controller: ["$scope", "$log", "Restangular", "gToast", "restService", "dialogs",
+          function($scope, $log, Restangular, gToast, restService, dialogs) {
 
           $scope._buildErrorMessage = function(msg) {
             return "Error: " + msg;
@@ -380,13 +381,13 @@ angular.module("ngMetaCrudApp")
 
           $scope.onSelectLegendImage = function(files) {
             $scope.legendImage = files[0];
-            var fdLegendImage = new FormData();
-            fdLegendImage.append("file", files[0]);
           };
 
           $scope.uploadLegend = function() {
             $("#dlgUploadLegend").modal("hide");
-            restService.uploadPartCritDimsLegend($scope.part.id, $scope.legendImage).then(
+            var fdLegendImage = new FormData();
+            fdLegendImage.append("file", $scope.legendImage);
+            restService.uploadPartCritDimsLegend($scope.part.id, /*fdLegendImage*/ $scope.legendImage).then(
               function success(imageUrl) {
                 $scope.part.cdLegendUrl = imageUrl;
               },

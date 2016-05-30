@@ -23,6 +23,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
@@ -225,14 +226,14 @@ public class PartController {
     @Transactional
     @RequestMapping(value="/part/{id}/cdlegend/image", method = POST, produces = APPLICATION_JSON_VALUE)
     @Secured("ROLE_PART_IMAGES")
-    public String addCriticalDimensionLegendImage(@PathVariable Long id, @RequestBody byte[] imageData) throws Exception {
+    public String addCriticalDimensionLegendImage(@PathVariable Long id, @RequestBody /*MultipartFile mpf*/ byte[] imageData) throws Exception {
         Part part = partDao.findOne(id);
         String pidstr = part.getId().toString();
         String now = new Long(System.currentTimeMillis()).toString();
         String filenameOriginal = pidstr + "_cdlgndorig_" + now + ".jpg";
         String filenameScaled = pidstr + "_cdlgnd_" + now + ".jpg";
-
         File originalFile = new File(originalImagesDir, filenameOriginal);
+        //mpf.transferTo(originalFile);
         FileUtils.writeByteArrayToFile(originalFile, imageData);
         resizer.generateResizedImage(filenameOriginal, filenameScaled,
                 PART_TYPE_CRIT_DIM_LEGEND_WIDTH, PART_TYPE_CRIT_DIM_LEGEND_HEIGHT, true);
