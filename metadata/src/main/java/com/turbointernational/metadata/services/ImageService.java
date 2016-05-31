@@ -6,16 +6,21 @@ import org.im4java.core.ConvertCmd;
 import org.im4java.core.IM4JavaException;
 import org.im4java.core.IMOperation;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
 
+import static org.springframework.http.HttpStatus.OK;
+
 /**
  * @author Edward
  */
 @Service
-public class ImageResizerService {
+public class ImageService {
     
     public final static int[] SIZES = {50, 135, 1000};
 
@@ -47,6 +52,35 @@ public class ImageResizerService {
         if (removeSource) {
             FileUtils.deleteQuietly(new File(originalsDir, source));
         }
+    }
+
+    public ResponseEntity<byte[]> getOriginalImage(String filename) throws IOException {
+        return getImage(originalsDir, filename);
+    }
+
+    public ResponseEntity<byte[]> getResizedImage(String filename) throws IOException {
+        return getImage(resizedDir, filename);
+    }
+
+    public void delOriginalImage(String filename) {
+        delImage(originalsDir, filename);
+    }
+
+    public void delResizedImage(String filename) {
+        delImage(resizedDir, filename);
+    }
+
+    private void delImage(File dir, String filename) {
+        File original = new File(dir, filename);
+        FileUtils.deleteQuietly(original);
+    }
+
+    private ResponseEntity<byte[]> getImage(File dir, String filename) throws IOException {
+        File imageFile = new File(dir, filename);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "image/jpg");
+        byte[] bytes = FileUtils.readFileToByteArray(imageFile);
+        return new ResponseEntity(bytes, headers, OK);
     }
 
 }

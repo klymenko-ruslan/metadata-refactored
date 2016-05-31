@@ -4,21 +4,17 @@ import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.part.PartDao;
 import com.turbointernational.metadata.domain.part.ProductImage;
 import com.turbointernational.metadata.domain.part.ProductImageDao;
-import com.turbointernational.metadata.services.ImageResizerService;
-import org.apache.commons.io.FileUtils;
+import com.turbointernational.metadata.services.ImageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
-
-import java.io.File;
-import java.io.IOException;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
@@ -28,15 +24,9 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 public class ImageController {
 
     private static final Logger log = LoggerFactory.getLogger(ImageController.class);
-    
-    @Value("${images.originals}")
-    private File originalImagesDir;
-    
-    @Value("${images.resized}")
-    private File resizedImagesDir;
-    
+
     @Autowired
-    private ImageResizerService resizer;
+    private ImageService imageService;
     
     @Autowired
     private PartDao partDao;
@@ -48,7 +38,7 @@ public class ImageController {
     public ResponseEntity<byte[]> getPartImage(@PathVariable Long id) throws Exception {
         ProductImage productImage = productImageDao.findOne(id);
         String filename = productImage.getFilename();
-        return getImage(originalImagesDir, filename);
+        return imageService.getOriginalImage(filename);
     }
 
     @RequestMapping(value = "/{size}/{id}.jpg", method = GET)
@@ -56,15 +46,15 @@ public class ImageController {
     public ResponseEntity<byte[]> getResizedPartImage(@PathVariable int size, @PathVariable Long id) throws Exception {
         ProductImage productImage = productImageDao.findOne(id);
         String filename = productImage.getFilename(size);
-        return getImage(resizedImagesDir, filename);
+        return imageService.getResizedImage(filename);
     }
 
-    @RequestMapping(value = "/{id}/cdlegend.jpg", method = GET)
+    @RequestMapping(value = "/{partId}/cdlegend/{name}", method = GET)
     @Secured("ROLE_READ")
-    public ResponseEntity<byte[]> getPartCritDimsLegendImage(@PathVariable Long partId) throws Exception {
+    public ResponseEntity<byte[]> getPartCritDimsLegendImage(@PathVariable("partId") Long partId) throws Exception {
         Part part = partDao.findOne(partId);
         String filename = part.getLegendImgFilename();
-        return getImage(originalImagesDir, filename);
+        return imageService.getResizedImage(filename);
     }
 
     @Transactional
@@ -80,9 +70,9 @@ public class ImageController {
         // Remove the image
         productImageDao.remove(image);
         // Delete the files
-        delImage(originalImagesDir, image.getFilename());
-        for (int size : ImageResizerService.SIZES) {
-            delImage(resizedImagesDir, image.getFilename(size));
+        imageService.delOriginalImage(image.getFilename());
+        for (int size : ImageService.SIZES) {
+            imageService.delResizedImage(image.getFilename(size));
         }
         return new ResponseEntity<>((Void) null, HttpStatus.OK);
     }
@@ -92,21 +82,9 @@ public class ImageController {
     @Secured("ROLE_PART_IMAGES")
     public ResponseEntity<Void> removePartCritDimsLegendImage(@PathVariable Long id) throws Exception {
         Part part = partDao.findOne(id);
-        delImage(resizedImagesDir, part.getLegendImgFilename());
+        imageService.delResizedImage(part.getLegendImgFilename());
+        part.setLegendImgFilename(null);
         return new ResponseEntity<>((Void) null, HttpStatus.OK);
-    }
-
-    private ResponseEntity<byte[]> getImage(File dir, String filename) throws IOException {
-        File imageFile = new File(dir, filename);
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "image/jpg");
-        byte[] bytes = FileUtils.readFileToByteArray(imageFile);
-        return new ResponseEntity(bytes, headers, HttpStatus.OK);
-    }
-
-    private void delImage(File dir, String filename) throws IOException {
-        File original = new File(dir, filename);
-        FileUtils.deleteQuietly(original);
     }
 
 }

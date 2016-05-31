@@ -7,10 +7,11 @@ import com.turbointernational.metadata.domain.other.TurboTypeDao;
 import com.turbointernational.metadata.domain.part.*;
 import com.turbointernational.metadata.domain.part.bom.BOMAncestor;
 import com.turbointernational.metadata.services.CriticalDimensionService;
-import com.turbointernational.metadata.services.ImageResizerService;
+import com.turbointernational.metadata.services.ImageService;
 import flexjson.JSONSerializer;
 import flexjson.transformer.HibernateTransformer;
 import org.apache.commons.io.FileUtils;
+import org.hibernate.validator.constraints.NotBlank;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,14 +27,15 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
-import static com.turbointernational.metadata.services.ImageResizerService.PART_TYPE_CRIT_DIM_LEGEND_HEIGHT;
-import static com.turbointernational.metadata.services.ImageResizerService.PART_TYPE_CRIT_DIM_LEGEND_WIDTH;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static com.turbointernational.metadata.services.ImageService.PART_TYPE_CRIT_DIM_LEGEND_HEIGHT;
+import static com.turbointernational.metadata.services.ImageService.PART_TYPE_CRIT_DIM_LEGEND_WIDTH;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
@@ -65,7 +67,7 @@ public class PartController {
     private File originalImagesDir;
     
     @Autowired
-    private ImageResizerService resizer;
+    private ImageService imageService;
     
     @Autowired
     private JdbcTemplate db;
@@ -210,14 +212,13 @@ public class PartController {
         ProductImage productImage = new ProductImage();
         productImage.setFilename(filename);
         productImage.setPart(part);
-        part.getProductImages().add(productImage);
-        
+
         // Save it
         productImageDao.persist(productImage);
 
         // Generate the resized images
-        for (int size : ImageResizerService.SIZES) {
-            resizer.generateResizedImage(productImage, size);
+        for (int size : ImageService.SIZES) {
+            imageService.generateResizedImage(productImage, size);
         }
         
         return new ResponseEntity<>(productImage.toJson(), HttpStatus.OK);
@@ -225,20 +226,27 @@ public class PartController {
 
     @Transactional
     @RequestMapping(value="/part/{id}/cdlegend/image", method = POST, produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
+    @JsonView(View.Summary.class)
     @Secured("ROLE_PART_IMAGES")
-    public String addCriticalDimensionLegendImage(@PathVariable Long id, @RequestBody /*MultipartFile mpf*/ byte[] imageData) throws Exception {
+    public Part addCriticalDimensionLegendImage(@PathVariable Long id,
+                                                  @RequestPart("file") @Valid @NotNull @NotBlank
+                                                          MultipartFile mpf) throws Exception {
         Part part = partDao.findOne(id);
+        String currImgFilename = part.getLegendImgFilename();
+        if (currImgFilename != null) {
+            imageService.delResizedImage(currImgFilename);
+        }
         String pidstr = part.getId().toString();
         String now = new Long(System.currentTimeMillis()).toString();
         String filenameOriginal = pidstr + "_cdlgndorig_" + now + ".jpg";
         String filenameScaled = pidstr + "_cdlgnd_" + now + ".jpg";
         File originalFile = new File(originalImagesDir, filenameOriginal);
-        //mpf.transferTo(originalFile);
-        FileUtils.writeByteArrayToFile(originalFile, imageData);
-        resizer.generateResizedImage(filenameOriginal, filenameScaled,
+        mpf.transferTo(originalFile);
+        imageService.generateResizedImage(filenameOriginal, filenameScaled,
                 PART_TYPE_CRIT_DIM_LEGEND_WIDTH, PART_TYPE_CRIT_DIM_LEGEND_HEIGHT, true);
         part.setLegendImgFilename(filenameScaled);
-        return filenameScaled;
+        return part;
     }
 
     @Transactional

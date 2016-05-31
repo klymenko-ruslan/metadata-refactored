@@ -1,7 +1,8 @@
 "use strict";
 
 angular.module("ngMetaCrudApp")
-    .directive("criticalDimensions", ["$log", "$filter", function($log, $filter) {
+    .directive("criticalDimensions", ["$log", "$filter",
+    function($log, $filter) {
       return {
         restrict: "E",
         replace: false,
@@ -11,8 +12,10 @@ angular.module("ngMetaCrudApp")
           part: "=",
           descriptors: "="
         },
-        controller: ["$scope", "$log", "Restangular", "gToast", "restService", "dialogs",
-          function($scope, $log, Restangular, gToast, restService, dialogs) {
+        controller: ["$scope", "$log", "Restangular", "gToast", "restService", "dialogs", "METADATA_BASE",
+          function($scope, $log, Restangular, gToast, restService, dialogs, METADATA_BASE) {
+
+          $scope.METADATA_BASE = METADATA_BASE;
 
           $scope._buildErrorMessage = function(msg) {
             return "Error: " + msg;
@@ -377,31 +380,30 @@ angular.module("ngMetaCrudApp")
             $scope._modifyEndAll();
           };
 
-          var fdLegendImage = null;
-
           $scope.onSelectLegendImage = function(files) {
             $scope.legendImage = files[0];
           };
 
           $scope.uploadLegend = function() {
             $("#dlgUploadLegend").modal("hide");
-            var fdLegendImage = new FormData();
-            fdLegendImage.append("file", $scope.legendImage);
-            restService.uploadPartCritDimsLegend($scope.part.id, /*fdLegendImage*/ $scope.legendImage).then(
-              function success(imageUrl) {
-                $scope.part.cdLegendUrl = imageUrl;
+            if ($scope.legendImage === null || $scope.legendImage === undefined) {
+              $("#dlgFileNotSelected").modal("show");
+              return;
+            }
+            restService.uploadPartCritDimsLegend($scope.part.id, $scope.legendImage).then(
+              function success(httpResponse) {
+                $scope.part.legendImgFilename = httpResponse.data.legendImgFilename;
               },
               function failure(response) {
                 restService.error("Uploading of a part critical dimensions legend failed.", response);
               }
             ).finally(function() {
-              fdLegendImage = null;
               $scope.legendImage = null;
             });
           };
 
           $scope.showDeleteLegendDlg = function() {
-            if ($scope.part.cdLegendUrl) {
+            if ($scope.part.legendImgFilename) {
               $('#dlgDeleteLegend').modal("show");
             }
           };
@@ -410,7 +412,7 @@ angular.module("ngMetaCrudApp")
             $('#dlgDeleteLegend').modal("hide");
             restService.deletePartCritdimsLegend($scope.part.id).then(
               function success() {
-                $scope.part.cdLegendUrl = null;
+                $scope.part.legendImgFilename = null;
               },
               function failure(response) {
                 restService.error("Deletion of a part critical dimensions legend failed.", response);

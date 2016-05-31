@@ -1,8 +1,9 @@
 "use strict";
 
 angular.module("ngMetaCrudApp")
-  .service("restService", function RestService($log, Restangular,
-        dialogs, $q, $rootScope) {
+  .service("restService", ["$log", "$http", "Restangular", "dialogs", "$q", "$rootScope", "METADATA_BASE",
+    function RestService($log, $http, Restangular, dialogs, $q, $rootScope, METADATA_BASE) {
+
     return new function() { // jshint ignore:line
       var RestService = this;
       var refreshPromise = null;
@@ -58,7 +59,7 @@ angular.module("ngMetaCrudApp")
           return;
         }
         $log.log(title, response);
-        dialogs.error(title, 'Server said: <pre>' + response.data.message + '</pre>');
+        dialogs.error(title, 'Server said: <pre>' + angular.toJson(response.data, 2) + '</pre>');
       };
 
       this.getAllUsers = function() {
@@ -134,17 +135,18 @@ angular.module("ngMetaCrudApp")
         return Restangular.remove(part);
       };
 
-      this.uploadPartCritDimsLegend = function(partId, /*fd*/ imgBytes) {
-        var url = "part/" + partId + "/cdlegend/image";
+      this._upload = function(url, bytes) {
         var fd = new FormData();
-        fd.append("file", imgBytes);
-        return Restangular.one(url)
-          .withHttpConfig({transformRequest: angular.identity})
-          .customPOST(fd, "", undefined, {"Content-Type": undefined});
-        /*
-        Restangular.setParentless(false);
-        return Restangular.one(url).post(fd, {}, {"Content-Type": "application/octet-stream"});
-        */
+        fd.append("file", bytes);
+        return $http.post(url, fd, {
+          transformRequest: angular.identity,
+          headers: {"Content-Type": undefined}
+        });
+      };
+
+      this.uploadPartCritDimsLegend = function(partId, imgBytes) {
+        var url = METADATA_BASE + "part/" + partId + "/cdlegend/image";
+        return this._upload(url, imgBytes);
       };
 
       this.deletePartCritdimsLegend = function(partId) {
@@ -529,4 +531,4 @@ angular.module("ngMetaCrudApp")
       };
 
     };
-  });
+  }]);

@@ -171,6 +171,7 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
     private int version;
 
     @Column(name = "legend_img_filename")
+    @JsonView(View.Summary.class)
     private String legendImgFilename;
 
     public Long getId() {
@@ -292,7 +293,8 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
     @PostRemove
     @Override
     public void removeSearchIndex() throws Exception {
-        log.info("Updating search index.");
+        log.info("Updating search index: delete [{}] {} {}", id,
+                partType == null ? "" : partType.getName(), manufacturerPartNumber);
         SearchService.instance().deletePart(this);
     }
 
@@ -300,7 +302,8 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
     @PostPersist
     @Override
     public void updateSearchIndex() throws Exception {
-        log.info("Updating search index.");
+        log.info("Updating search index: update [{}] {} {}", id,
+                partType == null ? "" : partType.getName(), manufacturerPartNumber);
         SearchService.instance().indexPart(this);
     }
     //</editor-fold>
