@@ -12,6 +12,7 @@ import flexjson.JSONSerializer;
 import flexjson.transformer.HibernateTransformer;
 import org.apache.commons.io.FileUtils;
 import org.hibernate.validator.constraints.NotBlank;
+import org.im4java.core.CommandException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -36,6 +38,7 @@ import java.util.List;
 
 import static com.turbointernational.metadata.services.ImageService.PART_TYPE_CRIT_DIM_LEGEND_HEIGHT;
 import static com.turbointernational.metadata.services.ImageService.PART_TYPE_CRIT_DIM_LEGEND_WIDTH;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
@@ -199,28 +202,25 @@ public class PartController {
     @RequestMapping(value="/part/{id}/image", method = POST)
     @Secured("ROLE_PART_IMAGES")
     public ResponseEntity<String> addProductImage(@PathVariable Long id, @RequestBody byte[] imageData) throws Exception {
-        
-        // Look up the part
         Part part = partDao.findOne(id);
-        
         // Save the file into the originals directory
         String filename = part.getId().toString() + "_" + System.currentTimeMillis() + ".jpg"; // Good enough
         File originalFile = new File(originalImagesDir, filename);
         FileUtils.writeByteArrayToFile(originalFile, imageData);
-        
         // Create the product image
         ProductImage productImage = new ProductImage();
         productImage.setFilename(filename);
         productImage.setPart(part);
-
-        // Save it
         productImageDao.persist(productImage);
-
-        // Generate the resized images
-        for (int size : ImageService.SIZES) {
-            imageService.generateResizedImage(productImage, size);
+        // Generate the resized images.
+        try {
+            for (int size : ImageService.SIZES) {
+                imageService.generateResizedImage(filename, productImage.getFilename(size), size);
+            }
+        } catch(CommandException e) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            throw e;
         }
-        
         return new ResponseEntity<>(productImage.toJson(), HttpStatus.OK);
     }
 

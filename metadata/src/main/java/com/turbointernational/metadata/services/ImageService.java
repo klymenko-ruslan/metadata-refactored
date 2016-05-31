@@ -33,8 +33,8 @@ public class ImageService {
     @Value("${images.resized}")
     private File resizedDir;
     
-    public void generateResizedImage(ProductImage image, int size) throws IOException, InterruptedException, IM4JavaException {
-        generateResizedImage(image.getFilename(), image.getFilename(size), size, size, false);
+    public void generateResizedImage(String filenameOrigin, String filenameResized, int size) throws IOException, InterruptedException, IM4JavaException {
+        generateResizedImage(filenameOrigin, filenameResized, size, size, false);
     }
 
     public void generateResizedImage(String source, String destination, int width, int height, boolean removeSource) throws IOException, InterruptedException, IM4JavaException {
