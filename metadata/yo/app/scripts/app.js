@@ -105,6 +105,15 @@ angular.module("ngMetaCrudApp", ["ngRoute", "ngTable", "ui.bootstrap",
         }]
       }
     });
+    $routeProvider.when("/parttype/:id", {
+      templateUrl: "views/parttype/edit.html",
+      controller: "PartTypeEditCtrl",
+      resolve: {
+        partType: ["$route", "restService", function($route, restService) {
+          return restService.findPartType($route.current.pathParams.id);
+        }]
+      }
+    });
 
     // Part Sales Notes
     $routeProvider.when("/part/:id/sales_notes", {

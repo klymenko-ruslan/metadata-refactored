@@ -30,6 +30,16 @@ public class PartTypeController {
     @Autowired
     private PartTypeDao partTypeDao;
 
+    @Secured("ROLE_READ")
+    @ResponseBody
+    @JsonView(View.Summary.class)
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET,
+            produces = APPLICATION_JSON_VALUE)
+    public PartType getPartType(@PathVariable("id") Long id) {
+        PartType partType = partTypeDao.findOne(id);
+        return partType;
+    }
+
     @RequestMapping(value = "list2", method = GET)
     @ResponseBody
     @JsonView(View.Detail.class)

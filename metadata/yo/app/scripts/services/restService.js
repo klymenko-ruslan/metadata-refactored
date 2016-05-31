@@ -189,12 +189,16 @@ angular.module("ngMetaCrudApp")
         return Restangular.all("other/manufacturer/list").getList();
       };
 
-      this.listPartTypes = function() {
-        return Restangular.all("parttype/list2").getList();
-      };
-
       this.findManufacturer = function(id) {
         return Restangular.one("manufacturer", id).get();
+      };
+
+      this.findPartType = function(id) {
+        return Restangular.one("parttype", id).get();
+      };
+
+      this.listPartTypes = function() {
+        return Restangular.all("parttype/list2").getList();
       };
 
       this.listTurboTypesForManufacturerId = function(manufacturerId) {

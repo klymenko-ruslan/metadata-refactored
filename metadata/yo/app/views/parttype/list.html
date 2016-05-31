@@ -13,7 +13,11 @@
       <td title="'Parent'" sortable="'parent.id'" class="text-right">{{pt.parent.id}}</td>
       <td title="'Magento Attribute Set'" sortable="'magentoAttributeSet'" class="text-left">{{pt.magentoAttributeSet}}</td>
       <td title="'Value'" sortable="'value'" class="text-left">{{pt.value}}</td>
-      <td class="actions" title="'Actions'">TODO</td>
+      <td class="actions" title="'Actions'">
+        <a authorize="ROLE_READ" ng-href="/parttype/{{pt.id}}" class="btn btn-primary btn-xs">
+          <i class="fa fa-eye"></i>View
+        </a >
+      </td>
     </tr>
   </table>
 </div>
