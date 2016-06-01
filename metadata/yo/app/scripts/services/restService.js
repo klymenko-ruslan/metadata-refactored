@@ -153,6 +153,15 @@ angular.module("ngMetaCrudApp")
         return Restangular.one("/image/" + partId + "/cdlegend.jpg").remove();
       };
 
+      this.uploadPartTypeLegend = function(partTypeId, imgBytes) {
+        var url = METADATA_BASE + "parttype/" + partTypeId + "/ptlegend/image";
+        return this._upload(url, imgBytes);
+      };
+
+      this.deletePartTypeLegend = function(partTypeId) {
+        return Restangular.one("/image/" + partTypeId + "/ptlegend.jpg").remove();
+      };
+
       this.findCarmodelengineyear = function(cmey_id) {
         return Restangular.one("application/carmodelengineyear", cmey_id).get();
       };
@@ -194,11 +203,11 @@ angular.module("ngMetaCrudApp")
       };
 
       this.findPartType = function(id) {
-        return Restangular.one("parttype", id).get();
+        return Restangular.one("parttype/json", id).get();
       };
 
       this.listPartTypes = function() {
-        return Restangular.all("parttype/list2").getList();
+        return Restangular.all("parttype/json/list").getList();
       };
 
       this.listTurboTypesForManufacturerId = function(manufacturerId) {
@@ -346,7 +355,6 @@ angular.module("ngMetaCrudApp")
       };
 
       this.filterParts = function(searchPartTypeId, searchManufacturerId, searchName, search, searchCritDims, sortProperty, sortOrder, offset, limit) {
-        //$log.log("searchCritDims: " + angular.toJson(searchCritDims, 2));
         var params = angular.merge({
           partTypeId: searchPartTypeId,
           manufacturerId: searchManufacturerId,

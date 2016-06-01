@@ -1,13 +1,11 @@
 package com.turbointernational.metadata.services;
 
-import com.turbointernational.metadata.domain.part.ProductImage;
 import org.apache.commons.io.FileUtils;
 import org.im4java.core.ConvertCmd;
 import org.im4java.core.IM4JavaException;
 import org.im4java.core.IMOperation;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -24,9 +22,12 @@ public class ImageService {
     
     public final static int[] SIZES = {50, 135, 1000};
 
-    public final static int PART_TYPE_CRIT_DIM_LEGEND_WIDTH = 640;
-    public final static int PART_TYPE_CRIT_DIM_LEGEND_HEIGHT = 480;
-    
+    public final static int PART_TYPE_LEGEND_WIDTH = 800;
+    public final static int PART_TYPE_LEGEND_HEIGHT = 600;
+
+    public final static int PART_CRIT_DIM_LEGEND_WIDTH = 640;
+    public final static int PART_CRIT_DIM_LEGEND_HEIGHT = 480;
+
     @Value("${images.originals}")
     private File originalsDir;
     

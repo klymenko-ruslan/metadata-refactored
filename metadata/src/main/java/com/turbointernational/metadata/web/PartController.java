@@ -36,9 +36,8 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
-import static com.turbointernational.metadata.services.ImageService.PART_TYPE_CRIT_DIM_LEGEND_HEIGHT;
-import static com.turbointernational.metadata.services.ImageService.PART_TYPE_CRIT_DIM_LEGEND_WIDTH;
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static com.turbointernational.metadata.services.ImageService.PART_CRIT_DIM_LEGEND_HEIGHT;
+import static com.turbointernational.metadata.services.ImageService.PART_CRIT_DIM_LEGEND_WIDTH;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
@@ -244,7 +243,7 @@ public class PartController {
         File originalFile = new File(originalImagesDir, filenameOriginal);
         mpf.transferTo(originalFile);
         imageService.generateResizedImage(filenameOriginal, filenameScaled,
-                PART_TYPE_CRIT_DIM_LEGEND_WIDTH, PART_TYPE_CRIT_DIM_LEGEND_HEIGHT, true);
+                PART_CRIT_DIM_LEGEND_WIDTH, PART_CRIT_DIM_LEGEND_HEIGHT, true);
         part.setLegendImgFilename(filenameScaled);
         return part;
     }

@@ -34,6 +34,7 @@ public class PartType implements Serializable {
     private Long importPK;
 
     @Column(name = "legend_img_filename")
+    @JsonView(View.Summary.class)
     private String legendImgFilename;
 
     /**
