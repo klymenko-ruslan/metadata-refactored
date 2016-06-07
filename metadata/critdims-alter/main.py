@@ -18,6 +18,7 @@ must be selected before run this regex):
 
 import argparse
 import collections
+import csv
 import datetime
 import json
 import os
@@ -605,9 +606,33 @@ def register_crit_dim(part_type_id, table_name, cda_, crit_dim_attributes,
     return sql
 
 
+def tsvrec2dict(cda_, headers, row):
+    """
+    Covert row - array of values, to a dict where
+    keys are defined by elements in the 'headers' array
+    and values are correspondent (with the same index) values
+    in the 'row' array.
+    """
+    retval = dict()
+    cda_idx_by_fieldname = {"cd_" + cd["name_clean"] : cd for cd in cda_}
+    for idx, header in enumerate(headers):
+        cd = cda_idx_by_fieldname[header]
+        col_name = cd[KEY_COLNAME]
+        retval[col_name] = row[idx]
+    return retval
+
+
 # *****************************************************************************
 #                                M A I N
 # *****************************************************************************
+
+# drop table if exists backplate, bearing_housing, bearing_spacer,
+#         cartridge, compressor_wheel, gasket,
+#         heatshield, interchange_item, journal_bearing, kit,
+#         kit_part_common_component, nozzle_ring, part_turbo, part_turbo_type,
+#         piston_ring, product_image, sales_note_part, standard_oversize_part,
+#         turbine_wheel, turbo;
+# -- Other dependencies of part: bom, bom_alt_item
 
 argparser = argparse.ArgumentParser(description="Utility to (re)create patch "
                                     "files to add support of the critical "
@@ -637,6 +662,10 @@ argparser.add_argument("--in-extra-data", required=False,
                        default=os.path.join(os.getcwd(), "in",
                                             "extra_data.json"),
                        help="File in JSON format with extra info.")
+argparser.add_argument("--in-data-dir", required=False,
+                       default=os.path.join(os.getcwd(), "in",
+                                            "data"),
+                       help="Directory with *.tsv files to import.")
 argparser.add_argument("--out-dir", required=False,
                        default=os.path.join(os.getcwd(), "out"),
                        help="Output directory.")
@@ -652,10 +681,11 @@ with open(args.in_extra_data) as fp:
 filename_alter = os.path.join(args.out_dir, "alter.sql")
 with open(filename_alter, "w", encoding="utf-8") as alter_file:
 
-    print("alter table part add column legend_img_filename varchar(255);",
-          file=alter_file)
-    print("alter table part_type add column legend_img_filename varchar(255);",
-          file=alter_file)
+    print("""
+create temporaty table tmp_imported(mpn varchar(255) not null unique);
+alter table part add column legend_img_filename varchar(255);
+alter table part_type add column legend_img_filename varchar(255);
+        """, file=alter_file)
 
     (obsolete_part_type, part_types, crit_dim_attributes,
         crit_dim_attributes_idx_by_id) = load_input_data(args)
@@ -710,6 +740,21 @@ with open(filename_alter, "w", encoding="utf-8") as alter_file:
                                 crit_dim_attributes_idx_by_id)
 
         print(sql, file=alter_file)
+
+        # Populate tables.
+        datafile_name = os.path.join(args.in_data_dir,
+                pt["name_short"] + ".tsv")
+        with open(datafile_name, "rt") as df:
+            tsvin = csv.reader(df, delimiter='\t')
+            for idx, row in enumerate(tsvin):
+                if idx == 0:
+                    headers = row
+                else:
+                    part_num = row[1]
+                    # Range [2:] below skips 'id' and 
+                    # 'manufacturer part number'.
+                    col2val = tsvrec2dict(cda_, headers[2:], row[2:])
+                    print(col2val)
 
 
 # Generate java code snippets.
