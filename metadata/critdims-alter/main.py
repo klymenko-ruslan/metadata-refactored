@@ -30,7 +30,7 @@ import sys
 KEY_PT_ID = "_pt_id"
 KEY_PT_META = "_pt_meta"
 KEY_CDA = "_cda"
-KEY_LIST = "_list"
+# KEY_LIST = "_list"
 KEY_CDDBID = "_dbid"
 
 KEY_COLNAME = "_col_name"
@@ -69,6 +69,8 @@ Types = collections.namedtuple("Types", ["field_type", "sql_type",
 
 JpaType = collections.namedtuple("JpaType", ["java_type", "is_enum"])
 
+ImportValue = collections.namedtuple("ImportValue", ["cd", "value"])
+
 
 def format_warn(w, **kwargs):
     """Return a formatted string with warning."""
@@ -97,7 +99,7 @@ def def_sql_null(d, k):
     return retval
 
 
-def sql_str_praram(s):
+def sql_str_param(s):
     """Escape a string as SQL parameter."""
     if s is None:
         return "null"
@@ -289,29 +291,23 @@ def load_input_data(args):
     crit_dim_attributes_idx_by_id = {cd["id"]: cd for cd
                                      in crit_dim_attributes}
 
-    # d = dict()
-    # for cda in crit_dim_attributes:
-    #     name = cda["name"]
-    #     lst = d.get(name)
-    #     if lst is None:
-    #         lst = list()
-    #         d[name] = lst
-    #     lst.append(cda)
-    # for name, lst in d.items():
-    #     if len(lst) > 1:
-    #         print(name, len(lst))
+#     with open(args.in_list_selection) as fp:
+#         list_selections = json.load(fp)["list_selection"]
 
-    with open(args.in_list_selection) as fp:
-        list_selections = json.load(fp)["list_selection"]
+    with open(args.in_enumerations) as fp:
+        enumerations = json.load(fp)["enumeration"]
 
-    for ls in list_selections:
-        cda_id = ls["crit_dim_attribute_id"]
-        cda = crit_dim_attributes_idx_by_id[cda_id]
-        _list = cda.get(KEY_LIST)
-        if _list is None:
-            _list = list()
-            cda[KEY_LIST] = _list
-        _list.append(ls)
+    with open(args.in_enum_items) as fp:
+        enum_items = json.load(fp)["enum_item"]
+
+#    for ls in list_selections:
+#        cd_id = ls["crit_dim_attribute_id"]
+#        cd = crit_dim_attributes_idx_by_id[cd_id]
+#        _list = cd.get(KEY_LIST)
+#        if _list is None:
+#            _list = list()
+#            cd[KEY_LIST] = _list
+#        _list.append(ls)
 
     with open(args.in_part_type_metadata) as fp:
         part_types_metadata = json.load(fp)["part_type"]
@@ -328,7 +324,8 @@ def load_input_data(args):
             pt[KEY_PT_ID] = ptm["id"]
 
     return (obsolete_part_type, part_types,
-            crit_dim_attributes, crit_dim_attributes_idx_by_id)
+            crit_dim_attributes, crit_dim_attributes_idx_by_id,
+            enumerations, enum_items)
 
 
 def createTableCritDimSql():
@@ -470,39 +467,39 @@ def generate_create_table(ed, cda_):
     return retval
 
 
-def register_crit_dim_enum(cd, table_name, col_name):
-    """Generate INSERT statements to register a new crit.dims. enumeration."""
-    global seq_critdim_enum, seq_critdim_enum_val
-    lst = cd.get(KEY_LIST)
-    if not lst:
-        lst_selection = cd.get("list_selection")
-        if lst_selection:
-            # TODO: should be added a warning?
-            lst = list()
-            for itm in lst_selection.split(";"):
-                lst.append(dict(list_name=itm))
-        else:
-            return (None, None)
-    sql = ""
-    seq_critdim_enum += 1
-    id_ = seq_critdim_enum
-    name = normalizeName(table_name) + col_name.capitalize() + "Enum"
-    sql = "insert into crit_dim_enum(id, name) values({id_}, " \
-        "'{name}');\n".format(id_=id_, name=name)
-    if lst:
-        sql += "insert into crit_dim_enum_val(id, crit_dim_enum_id, val) " \
-            "values\n"
-        add_comma = False
-        for itm in lst:
-            if add_comma:
-                sql += ",\n"
-            sql += "({id2_}, {id_}, '{val}')".format(
-                id2_=seq_critdim_enum_val, id_=id_, val=itm["list_name"])
-            seq_critdim_enum_val += 1
-            add_comma = True
-        if add_comma:
-            sql += ";\n"
-    return (id_, sql)
+# def register_crit_dim_enum(cd, table_name, col_name):
+#     """Generate INSERT statements to register a new crit.dims.enumeration."""
+#     global seq_critdim_enum, seq_critdim_enum_val
+#     lst = cd.get(KEY_LIST)
+#     if not lst:
+#         lst_selection = cd.get("list_selection")
+#         if lst_selection:
+#             # TODO: should be added a warning?
+#             lst = list()
+#             for itm in lst_selection.split(";"):
+#                 lst.append(dict(list_name=itm))
+#         else:
+#             return (None, None)
+#     sql = ""
+#     seq_critdim_enum += 1
+#     id_ = seq_critdim_enum
+#     name = normalizeName(table_name) + col_name.capitalize() + "Enum"
+#     sql = "insert into crit_dim_enum(id, name) values({id_}, " \
+#         "'{name}');\n".format(id_=id_, name=name)
+#     if lst:
+#         sql += "insert into crit_dim_enum_val(id, crit_dim_enum_id, val) " \
+#             "values\n"
+#         add_comma = False
+#         for itm in lst:
+#             if add_comma:
+#                 sql += ",\n"
+#             sql += "({id2_}, {id_}, '{val}')".format(
+#                 id2_=seq_critdim_enum_val, id_=id_, val=itm["list_name"])
+#             seq_critdim_enum_val += 1
+#             add_comma = True
+#         if add_comma:
+#             sql += ";\n"
+#     return (id_, sql)
 
 
 def register_crit_dim(part_type_id, table_name, cda_, crit_dim_attributes,
@@ -544,14 +541,19 @@ def register_crit_dim(part_type_id, table_name, cda_, crit_dim_attributes,
         if types.field_type == "BOOLEAN":
             enum_id = YESNOENUM_ID
         elif types.data_type == "ENUMERATION":
-            (eid, snippet) = register_crit_dim_enum(cd, table_name, json_name)
-            if eid is None:
-                print(format_warn(WARN_ENUM_NOT_DEF, id_=id_, name=name),
-                      file=alter_file)
+            # (eid, snippet) = register_crit_dim_enum(cd,table_name,json_name)
+            # if eid is None:
+            #     print(format_warn(WARN_ENUM_NOT_DEF, id_=id_, name=name),
+            #           file=alter_file)
+            #     enum_id = "null"
+            # else:
+            #     enum_id = eid
+            #     registered_enums += snippet
+            enum_id = cd["enumeration_id"]
+            if enum_id is None:
+                # raise ValueError("Enumeration for critical dimension [{}] "
+                #                  "not defined.".format(cd["id"]))
                 enum_id = "null"
-            else:
-                enum_id = eid
-                registered_enums += snippet
         else:
             enum_id = "null"
         null_allowed = "true"
@@ -587,13 +589,13 @@ def register_crit_dim(part_type_id, table_name, cda_, crit_dim_attributes,
             "{max_val}, {regex}, {parent_id}, {length}, " \
             "{scale})".format(
                 id_=id_, part_type_id=part_type_id, seq_num=seq_num,
-                data_type=sql_str_praram(data_type), unit=sql_str_praram(unit),
-                tolerance=tolerance, name=sql_str_praram(name),
-                json_name=sql_str_praram(json_name),
-                idx_name=sql_str_praram(idx_name), enum_id=enum_id,
+                data_type=sql_str_param(data_type), unit=sql_str_param(unit),
+                tolerance=tolerance, name=sql_str_param(name),
+                json_name=sql_str_param(json_name),
+                idx_name=sql_str_param(idx_name), enum_id=enum_id,
                 null_allowed=null_allowed,
-                null_display=sql_str_praram(null_display), min_val=min_val,
-                max_val=max_val, regex=sql_str_praram(regex),
+                null_display=sql_str_param(null_display), min_val=min_val,
+                max_val=max_val, regex=sql_str_param(regex),
                 parent_id=parent_id, length=length, scale=scale)
         sql += values
         add_comma = True
@@ -606,19 +608,50 @@ def register_crit_dim(part_type_id, table_name, cda_, crit_dim_attributes,
     return sql
 
 
-def tsvrec2dict(cda_, headers, row):
+def tsvrec2importval(cda_, headers, row):
     """
-    Covert row - array of values, to a dict where
-    keys are defined by elements in the 'headers' array
+    Covert row - array of values, to a dict.
+
+    In the dict keys are defined by elements in the 'headers' array
     and values are correspondent (with the same index) values
     in the 'row' array.
     """
-    retval = dict()
-    cda_idx_by_fieldname = {"cd_" + cd["name_clean"] : cd for cd in cda_}
+    retval = list()
+    cda_idx_by_fieldname = {"cd_" + cd["name_clean"]: cd for cd in cda_}
     for idx, header in enumerate(headers):
         cd = cda_idx_by_fieldname[header]
-        col_name = cd[KEY_COLNAME]
-        retval[col_name] = row[idx]
+        value = row[idx]
+        if cd[KEY_TYPES].data_type == "ENUMERATION":
+            # TODO: correct enumeration value
+            value = None
+        retval.append(ImportValue(cd, value))
+    return retval
+
+
+def import_insert(part_number, table_name, import_values):
+    """TODO."""
+    retval = ""
+    if import_values:
+        retval += ("insert into part(manfr_part_num) "
+                   " values('" + part_number + "');\n")
+        retval += ("insert into " + table_name + "(part_id")
+        for iv in import_values:
+            retval += (", " + iv.cd[KEY_COLNAME])
+        retval += ") values(last_insert_id()"
+        for iv in import_values:
+            retval += (", " + sql_str_param(iv.value))
+        retval += ");\n"
+    return retval
+
+
+def import_update(part_id, table_name, import_values):
+    """TODO."""
+    retval = ""
+    if import_values:
+        retval += "update " + table_name + " set "
+        for iv in import_values:
+            retval += (iv.cd[KEY_COLNAME] + "=" + sql_str_param(iv.value))
+        retval += "wher part_id=" + part_id + ";\n"
     return retval
 
 
@@ -653,11 +686,21 @@ argparser.add_argument("--in-crit-dim-attribute", required=False,
                                             "crit_dim_attribute.json"),
                        help="File in JSON format with exported data from the "
                        "table 'crit_dim_attribute'.")
-argparser.add_argument("--in-list-selection", required=False,
+# argparser.add_argument("--in-list-selection", required=False,
+#                        default=os.path.join(os.getcwd(), "in",
+#                                             "list_selection.json"),
+#                        help="File in JSON format with exported data from the"
+#                        " table 'list_selection'.")
+argparser.add_argument("--in-enumerations", required=False,
                        default=os.path.join(os.getcwd(), "in",
-                                            "list_selection.json"),
+                                            "enumerations.json"),
                        help="File in JSON format with exported data from the "
-                       "table 'list_selection'.")
+                       "table 'enumeration'.")
+argparser.add_argument("--in-enum-items", required=False,
+                       default=os.path.join(os.getcwd(), "in",
+                                            "enum_items.json"),
+                       help="File in JSON format with exported data from the "
+                       "table 'enum_item'.")
 argparser.add_argument("--in-extra-data", required=False,
                        default=os.path.join(os.getcwd(), "in",
                                             "extra_data.json"),
@@ -682,19 +725,56 @@ filename_alter = os.path.join(args.out_dir, "alter.sql")
 with open(filename_alter, "w", encoding="utf-8") as alter_file:
 
     print("""
-create temporaty table tmp_imported(mpn varchar(255) not null unique);
+-- Cear database.
+delete from bom_alt_item;
+delete from bom;
+delete from cartridge;
+delete from interchange_item;
+delete from part_turbo_type;
+delete from interchange_header;
+delete from product_image;
+delete from turbo_car_model_engine_year;
+delete from turbo;
+delete from kit;
+delete from turbine_wheel;
+delete from compressor_wheel;
+delete from bearing_housing;
+delete from backplate;
+delete from heatshield;
+delete from nozzle_ring;
+delete from gasket;
+delete from bearing_spacer;
+delete from standard_journal_bearing;
+delete from journal_bearing;
+delete from piston_ring;
+delete from part;
+
 alter table part add column legend_img_filename varchar(255);
 alter table part_type add column legend_img_filename varchar(255);
         """, file=alter_file)
 
     (obsolete_part_type, part_types, crit_dim_attributes,
-        crit_dim_attributes_idx_by_id) = load_input_data(args)
+        crit_dim_attributes_idx_by_id,
+        enumerations, enum_items) = load_input_data(args)
 
     for cd in crit_dim_attributes:
         seq_critdim += 1
         cd[KEY_CDDBID] = seq_critdim
 
     print(createTableCritDimSql(), file=alter_file)
+
+    for e in enumerations:
+        print("insert into crit_dim_enum(id, name) "
+              "values({enum_id}, '{enum_name}');"
+              .format(enum_id=e["id"], enum_name=e["enum_text"]),
+              file=alter_file)
+
+    for ei in enum_items:
+        print("insert into crit_dim_enum_val(id, crit_dim_enum_id, val) "
+              "values({enum_itm_id}, {enum_id}, '{val}');"
+              .format(enum_itm_id=ei["id"], enum_id=ei["enum_id"],
+                      val=ei["enum_item_text"]),
+              file=alter_file)
 
     if obsolete_part_type:
         print(format_warn(WARN_OBSOLETE_PART_TYPES), file=alter_file)
@@ -743,7 +823,7 @@ alter table part_type add column legend_img_filename varchar(255);
 
         # Populate tables.
         datafile_name = os.path.join(args.in_data_dir,
-                pt["name_short"] + ".tsv")
+                                     pt["name_short"] + ".tsv")
         with open(datafile_name, "rt") as df:
             tsvin = csv.reader(df, delimiter='\t')
             for idx, row in enumerate(tsvin):
@@ -751,10 +831,13 @@ alter table part_type add column legend_img_filename varchar(255);
                     headers = row
                 else:
                     part_num = row[1]
-                    # Range [2:] below skips 'id' and 
+                    # Range [2:] below skips 'id' and
                     # 'manufacturer part number'.
-                    col2val = tsvrec2dict(cda_, headers[2:], row[2:])
-                    print(col2val)
+                    part_number = row[1]
+                    importval = tsvrec2importval(cda_, headers[2:], row[2:])
+                    table_name = ed["table"]
+                    sql = import_insert(part_number, table_name, importval)
+                    print(sql, file=alter_file)
 
 
 # Generate java code snippets.
