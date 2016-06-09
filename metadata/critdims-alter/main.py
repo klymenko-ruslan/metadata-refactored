@@ -30,12 +30,9 @@ import sys
 KEY_PT_ID = "_pt_id"
 KEY_PT_META = "_pt_meta"
 KEY_CDA = "_cda"
-# KEY_LIST = "_list"
-KEY_CDDBID = "_dbid"
 
 KEY_COLNAME = "_col_name"
 KEY_TYPES = "_types"
-
 
 IDX_NAME_MAXLEN = 30
 
@@ -45,7 +42,6 @@ YESNOENUM_ID = 1
 REGEX_NONALPHANUM = re.compile(r'\W')
 
 seq_part_type = 30
-seq_critdim = 1
 seq_critdim_enum = YESNOENUM_ID + 1
 seq_critdim_enum_val = 100
 
@@ -70,6 +66,194 @@ Types = collections.namedtuple("Types", ["field_type", "sql_type",
 JpaType = collections.namedtuple("JpaType", ["java_type", "is_enum"])
 
 ImportValue = collections.namedtuple("ImportValue", ["cd", "value"])
+
+
+class InputData:
+
+    """
+    Mapping between part type definitions and critical dimensions.
+
+    Part types in the 'metadata' database and imported data have different IDs.
+    They could be matched by a value in fields 'value'.
+    """
+
+    def __init__(self, in_part_types, in_part_types_metadata,
+                 in_crit_dim_attributes, in_enumerations, in_enum_items,
+                 in_extra_data):
+        """
+        Constructor indexes part types from different sources.
+
+        Args:
+            in_part_types (str): filename for 'in/part_type.json'.
+            in_part_types_metadata (str): filename for
+                                          'in/part_type_metadata.json'.
+            crit_dim_attributes (str): filename for
+                                       'in/crit_dim_attribute.json'.
+            in_enumerations (str): filename for 'in/enumerations.json'.
+            in_enum_items (str): filename for 'in/enum_items.json'.
+            in_extra_data (str): filename for 'in/extra_data.json'.
+        """
+        with open(in_part_types) as fp:
+            self.part_types = json.load(fp)["part_type"]
+
+        with open(in_part_types_metadata) as fp:
+            part_types_metadata = json.load(fp)["part_type"]
+
+        with open(in_crit_dim_attributes) as fp:
+            crit_dim_attributes = json.load(fp)["crit_dim_attribute"]
+
+        with open(in_enumerations) as fp:
+            self.enumerations = json.load(fp)["enumeration"]
+
+        with open(in_enum_items) as fp:
+            self.enum_items = json.load(fp)["enum_item"]
+
+        with open(in_extra_data) as fp:
+            self.extra_data = json.load(fp)
+
+        self.pt_idx_by_id = dict()
+        self.pt_idx_by_val = dict()
+        self.obsolete_part_types = list()
+        self.cda_by_id = dict()
+        self.cda_by_ptid = dict()
+
+        for pt in part_types:
+            pt_id = pt["id"]
+            name_value = pt["name_value"]
+            self.pt_idx_by_id[pt_id] = pt
+            self.pt_idx_by_val[name_value] = pt
+            self.cda_by_ptid[pt_id] = list()
+
+        for ptm in part_types_metadata:
+            value = ptm["value"]
+            pt = self.getPtByVal(value)
+            if pt is None:
+                self.obsolete_part_types.append(ptm)
+
+        for cd in crit_dim_attributes:
+            cd_id = cd["id"]
+            cda = self.cda_by_ptid[pt_id]
+            cda.append(cd)
+            cda.sort(key=lambda x: x["sequence"]
+                     if x["sequence"] is not None else 0)
+
+    def getPartTypes(self):
+        """Get part types ('in/part_type.json')."""
+        return self.part_types
+
+    def getPtById(self, id):
+        """
+        Get part type by ID as defined in import data.
+
+        Args:
+            id(int): 'id' from 'in/part_type.json'.
+
+        Returns:
+            None if part type not found.
+        """
+        return self.pt_idx_by_id.get(id, None)
+
+    def getPtByVal(self, val):
+        """
+        Get part type by 'value'.
+
+        Args:
+            val(str): 'name_value' from 'in/part_type.json' or 'value'
+                      from 'in/part_type_metadata.json'.
+
+        Returns:
+            None if part type not found.
+        """
+        return self.pt_idx_by_val.get(val, None)
+
+    def getCdaByPt(self, pt):
+        """
+        Get a list of critical dimensions for part type.
+
+        Args:
+            pt (dict): part type record as defined 'in/part_type.json'.
+
+        Returns:
+            List of critical dimensions for the part type.
+        """
+        pt_id = pt["id"]
+        return self.cda_by_ptid[pt_id]
+
+    def getCdaById(self, cd_id):
+        """
+        Get a critical dimension for ID.
+
+        Args:
+            cd_id (int): critica dimension ID.
+        """
+        return self.cda_by_id[cd_id]
+
+    def getParentCda(self, cd):
+        """
+        Get a parent critical dimension for the dimension.
+
+        Args:
+            cd (dict): a critical dimension
+
+        Returns:
+            A parent critical dimension for the specified dimension or None.
+        """
+        pcd_id = cd["parent_attribute"]
+        if pcd_id is not None:
+            return self.getCdaById(pcd_id)
+        else:
+            return None
+
+    def getEnumerations(self):
+        """Get loaded 'in/enumerations.json'."""
+        return self.enumerations
+
+    def getEnumItems(self):
+        """Get loaded 'in/enum_items.json'."""
+        return self.enum_items
+
+    def getObsoletePartTypes(self):
+        """Get part types which are not used anymore."""
+        return self.obsolete_part_types
+
+    def _getExtraDataByValue(self, val):
+        """
+        Get 'part type mapping' in the 'extra_data' for the 'val'.
+
+        Args:
+            val (str): a key to search
+
+        Returns:
+            A 'part type mapping' dictionary for the specified key.
+        """
+        return self.extra_data["part_type_mapping"][val]
+
+    def getExtraDataForPt(self, pt):
+        """
+        Get 'part type mapping' in the 'extra_data' for the 'part type'.
+
+        Args:
+            pt (dict): a 'part type' dictionary
+
+        Returns:
+            A 'part type mapping' dictionary for the specified 'part type'.
+        """
+        val = pt["name_value"]
+        return self._getExtraDataByValue(val)
+
+    def getExtraDataForPtm(self, ptm):
+        """
+        Get 'part type mapping' in the 'extra_data' for the 'part type meta'.
+
+        Args:
+            ptm (dict): a 'part type meta' dictionary
+
+        Returns:
+            A 'part type mapping' dictionary for
+            the specified 'part type meta'.
+        """
+        val = ptm["value"]
+        return self._getExtraDataByValue(val)
 
 
 def format_warn(w, **kwargs):
@@ -266,68 +450,6 @@ def cd2sqlreference(cd):
     return retval
 
 
-def load_input_data(args):
-    """Load data."""
-    with open(args.in_part_type) as fp:
-        part_types = json.load(fp)["part_type"]
-
-    part_types_idx_by_id = {pt["id"]: pt for pt in part_types}
-    part_types_idx_by_value = {pt["name_value"]: pt for pt in part_types}
-
-    with open(args.in_crit_dim_attribute) as fp:
-        crit_dim_attributes = json.load(fp)["crit_dim_attribute"]
-
-    for cd in crit_dim_attributes:
-        pt_id = cd["part_type_id"]
-        part_type = part_types_idx_by_id[pt_id]
-        _cda = part_type.get(KEY_CDA)
-        if _cda is None:
-            _cda = list()
-            part_type[KEY_CDA] = _cda
-        _cda.append(cd)
-        _cda.sort(key=lambda x: x["sequence"]
-                  if x["sequence"] is not None else 0)
-
-    crit_dim_attributes_idx_by_id = {cd["id"]: cd for cd
-                                     in crit_dim_attributes}
-
-#     with open(args.in_list_selection) as fp:
-#         list_selections = json.load(fp)["list_selection"]
-
-    with open(args.in_enumerations) as fp:
-        enumerations = json.load(fp)["enumeration"]
-
-    with open(args.in_enum_items) as fp:
-        enum_items = json.load(fp)["enum_item"]
-
-#    for ls in list_selections:
-#        cd_id = ls["crit_dim_attribute_id"]
-#        cd = crit_dim_attributes_idx_by_id[cd_id]
-#        _list = cd.get(KEY_LIST)
-#        if _list is None:
-#            _list = list()
-#            cd[KEY_LIST] = _list
-#        _list.append(ls)
-
-    with open(args.in_part_type_metadata) as fp:
-        part_types_metadata = json.load(fp)["part_type"]
-
-    obsolete_part_type = list()
-
-    for ptm in part_types_metadata:
-        value = ptm["value"]
-        pt = part_types_idx_by_value.get(value)
-        if pt is None:
-            obsolete_part_type.append(ptm)
-        else:
-            pt[KEY_PT_META] = ptm
-            pt[KEY_PT_ID] = ptm["id"]
-
-    return (obsolete_part_type, part_types,
-            crit_dim_attributes, crit_dim_attributes_idx_by_id,
-            enumerations, enum_items)
-
-
 def createTableCritDimSql():
     """SQL statements to create tables for critical dimensions."""
     return r"""
@@ -396,16 +518,6 @@ insert into crit_dim_enum_val(id, crit_dim_enum_id, val) values
 """.format(idx_name_len=IDX_NAME_MAXLEN, yesnoenum_id=YESNOENUM_ID)
 
 
-def get_part_type_mapping(extra_data, key):
-    """Get part type desctiptor in the 'extra_data'."""
-    ed = extra_data["part_type_mapping"].get(key)
-    if ed is None:
-        print("Extra info for 'part_type_mapping' for key '{}' "
-              "not found.".format(ptm["value"]))
-        sys.exit(2)
-    return ed
-
-
 def generate_alters(ed, cda_):
     """
     Generate ALTER SQL statements.
@@ -467,41 +579,6 @@ def generate_create_table(ed, cda_):
     return retval
 
 
-# def register_crit_dim_enum(cd, table_name, col_name):
-#     """Generate INSERT statements to register a new crit.dims.enumeration."""
-#     global seq_critdim_enum, seq_critdim_enum_val
-#     lst = cd.get(KEY_LIST)
-#     if not lst:
-#         lst_selection = cd.get("list_selection")
-#         if lst_selection:
-#             # TODO: should be added a warning?
-#             lst = list()
-#             for itm in lst_selection.split(";"):
-#                 lst.append(dict(list_name=itm))
-#         else:
-#             return (None, None)
-#     sql = ""
-#     seq_critdim_enum += 1
-#     id_ = seq_critdim_enum
-#     name = normalizeName(table_name) + col_name.capitalize() + "Enum"
-#     sql = "insert into crit_dim_enum(id, name) values({id_}, " \
-#         "'{name}');\n".format(id_=id_, name=name)
-#     if lst:
-#         sql += "insert into crit_dim_enum_val(id, crit_dim_enum_id, val) " \
-#             "values\n"
-#         add_comma = False
-#         for itm in lst:
-#             if add_comma:
-#                 sql += ",\n"
-#             sql += "({id2_}, {id_}, '{val}')".format(
-#                 id2_=seq_critdim_enum_val, id_=id_, val=itm["list_name"])
-#             seq_critdim_enum_val += 1
-#             add_comma = True
-#         if add_comma:
-#             sql += ";\n"
-#     return (id_, sql)
-
-
 def register_crit_dim(part_type_id, table_name, cda_, crit_dim_attributes,
                       crit_dim_attributes_idx_by_id):
     """Generate INSERT statements to register a new critical dimension."""
@@ -519,7 +596,7 @@ def register_crit_dim(part_type_id, table_name, cda_, crit_dim_attributes,
     idx_names = set()
     for cd in cda_:
         types = cd[KEY_TYPES]
-        id_ = crit_dim_attributes_idx_by_id[cd["id"]][KEY_CDDBID]
+        id_ = crit_dim_attributes_idx_by_id[cd["id"]]["id"]
         seq_num = cd["sequence"]
         if seq_num is None:
             seq_num = "null"
@@ -541,14 +618,6 @@ def register_crit_dim(part_type_id, table_name, cda_, crit_dim_attributes,
         if types.field_type == "BOOLEAN":
             enum_id = YESNOENUM_ID
         elif types.data_type == "ENUMERATION":
-            # (eid, snippet) = register_crit_dim_enum(cd,table_name,json_name)
-            # if eid is None:
-            #     print(format_warn(WARN_ENUM_NOT_DEF, id_=id_, name=name),
-            #           file=alter_file)
-            #     enum_id = "null"
-            # else:
-            #     enum_id = eid
-            #     registered_enums += snippet
             enum_id = cd["enumeration_id"]
             if enum_id is None:
                 # raise ValueError("Enumeration for critical dimension [{}] "
@@ -564,15 +633,15 @@ def register_crit_dim(part_type_id, table_name, cda_, crit_dim_attributes,
             min_val = "null"
         max_val = "null"
         regex = None
-        parent_attribute = cd["parent_attribute"]
-        if parent_attribute is None:
+
+        pcd = input_data.getParentCda(cd)
+        if pcd is None:
             parent_id = "null"
         else:
-            pcd = crit_dim_attributes_idx_by_id[parent_attribute]
             pcd_ptid = pcd["part_type_id"]
             cd_ptid = cd["part_type_id"]
             if pcd_ptid == cd_ptid:
-                parent_id = pcd[KEY_CDDBID]
+                parent_id = pcd["id"]
             else:
                 print(format_warn(WARN_INVALID_REF, cd_id=cd["id"],
                                   cd_name=cd["name"], cd_ptid=cd_ptid,
@@ -629,7 +698,7 @@ def tsvrec2importval(cda_, headers, row):
 
 
 def import_insert(part_number, table_name, import_values):
-    """TODO."""
+    """Generate INSERT SQL statements to register a new part."""
     retval = ""
     if import_values:
         retval += ("insert into part(manfr_part_num) "
@@ -645,7 +714,7 @@ def import_insert(part_number, table_name, import_values):
 
 
 def import_update(part_id, table_name, import_values):
-    """TODO."""
+    """Generate UPDATE SQL statements to update a part."""
     retval = ""
     if import_values:
         retval += "update " + table_name + " set "
@@ -658,14 +727,6 @@ def import_update(part_id, table_name, import_values):
 # *****************************************************************************
 #                                M A I N
 # *****************************************************************************
-
-# drop table if exists backplate, bearing_housing, bearing_spacer,
-#         cartridge, compressor_wheel, gasket,
-#         heatshield, interchange_item, journal_bearing, kit,
-#         kit_part_common_component, nozzle_ring, part_turbo, part_turbo_type,
-#         piston_ring, product_image, sales_note_part, standard_oversize_part,
-#         turbine_wheel, turbo;
-# -- Other dependencies of part: bom, bom_alt_item
 
 argparser = argparse.ArgumentParser(description="Utility to (re)create patch "
                                     "files to add support of the critical "
@@ -686,11 +747,6 @@ argparser.add_argument("--in-crit-dim-attribute", required=False,
                                             "crit_dim_attribute.json"),
                        help="File in JSON format with exported data from the "
                        "table 'crit_dim_attribute'.")
-# argparser.add_argument("--in-list-selection", required=False,
-#                        default=os.path.join(os.getcwd(), "in",
-#                                             "list_selection.json"),
-#                        help="File in JSON format with exported data from the"
-#                        " table 'list_selection'.")
 argparser.add_argument("--in-enumerations", required=False,
                        default=os.path.join(os.getcwd(), "in",
                                             "enumerations.json"),
@@ -718,75 +774,70 @@ if os.path.exists(args.out_dir):
     shutil.rmtree(args.out_dir)
 os.mkdir(args.out_dir)
 
-with open(args.in_extra_data) as fp:
-    extra_data = json.load(fp)
 
 filename_alter = os.path.join(args.out_dir, "alter.sql")
 with open(filename_alter, "w", encoding="utf-8") as alter_file:
 
     print("""
 -- Cear database.
-delete from bom_alt_item;
-delete from bom;
-delete from cartridge;
-delete from interchange_item;
-delete from part_turbo_type;
-delete from interchange_header;
-delete from product_image;
-delete from turbo_car_model_engine_year;
-delete from turbo;
-delete from kit;
-delete from turbine_wheel;
-delete from compressor_wheel;
-delete from bearing_housing;
-delete from backplate;
-delete from heatshield;
-delete from nozzle_ring;
-delete from gasket;
-delete from bearing_spacer;
-delete from standard_journal_bearing;
-delete from journal_bearing;
-delete from piston_ring;
-delete from part;
+-- delete from bom_alt_item;
+-- delete from bom;
+-- delete from cartridge;
+-- delete from interchange_item;
+-- delete from part_turbo_type;
+-- delete from interchange_header;
+-- delete from product_image;
+-- delete from turbo_car_model_engine_year;
+-- delete from turbo;
+-- delete from kit;
+-- delete from turbine_wheel;
+-- delete from compressor_wheel;
+-- delete from bearing_housing;
+-- delete from backplate;
+-- delete from heatshield;
+-- delete from nozzle_ring;
+-- delete from gasket;
+-- delete from bearing_spacer;
+-- delete from standard_journal_bearing;
+-- delete from journal_bearing;
+-- delete from piston_ring;
+-- delete from part;
 
 alter table part add column legend_img_filename varchar(255);
 alter table part_type add column legend_img_filename varchar(255);
         """, file=alter_file)
 
-    (obsolete_part_type, part_types, crit_dim_attributes,
-        crit_dim_attributes_idx_by_id,
-        enumerations, enum_items) = load_input_data(args)
-
-    for cd in crit_dim_attributes:
-        seq_critdim += 1
-        cd[KEY_CDDBID] = seq_critdim
+    input_data = InputData(args.in_part_type, args.in_part_type_metadata,
+                           args.in_crit_dim_attribute, args.in_enumerations,
+                           args.in_enum_items, args.in_extra_data)
 
     print(createTableCritDimSql(), file=alter_file)
 
-    for e in enumerations:
+    for e in input_data.getEnumerations():
         print("insert into crit_dim_enum(id, name) "
               "values({enum_id}, '{enum_name}');"
               .format(enum_id=e["id"], enum_name=e["enum_text"]),
               file=alter_file)
 
-    for ei in enum_items:
+    for ei in input_data.getEnumItems():
         print("insert into crit_dim_enum_val(id, crit_dim_enum_id, val) "
               "values({enum_itm_id}, {enum_id}, '{val}');"
               .format(enum_itm_id=ei["id"], enum_id=ei["enum_id"],
                       val=ei["enum_item_text"]),
               file=alter_file)
 
-    if obsolete_part_type:
+    obsolete_part_types = input_data.getObsoletePartTypes()
+    if obsolete_part_types:
         print(format_warn(WARN_OBSOLETE_PART_TYPES), file=alter_file)
-        for ptm in obsolete_part_type:
+        for ptm in obsolete_part_types:
             print("-- delete from part_type where id={0:d}; -- {1:s}".format(
                 ptm["id"], ptm["name"]), file=alter_file)
-            ed = get_part_type_mapping(extra_data, ptm["value"])
+            ed = input_data.getExtraDataForPtm(ptm)
             if ed["exists"] is True:
                 print("-- drop table {};".format(ed["table"]), file=alter_file)
         print(file=alter_file)
 
-    for pt in part_types:
+    for pt in input_data.getPartTypes():
         pt_id = pt.get(KEY_PT_ID)
         pt_name = name2PartTypeName(pt["name"])
         if pt_id is None:
@@ -802,12 +853,12 @@ alter table part_type add column legend_img_filename varchar(255);
             seq_part_type += 1
         cda_ = pt.get(KEY_CDA)
         if not cda_:
-            print(format_warn(WARN_NO_CRITDIMS, ptid=pt[KEY_PT_ID],
+            print(format_warn(WARN_NO_CRITDIMS, ptid=pt["id"],
                               name=pt["name"]), file=alter_file)
             if cda_ is None:
                 cda_ = list()
                 pt[KEY_CDA] = cda_
-        ed = get_part_type_mapping(extra_data, pt["name_value"])
+        ed = input_data.getExtraDataForPt(pt)
         entity_table_exists = ed["exists"]
         if entity_table_exists:
             sql = generate_alters(ed, cda_)
@@ -841,11 +892,11 @@ alter table part_type add column legend_img_filename varchar(255);
 
 
 # Generate java code snippets.
-for pt in part_types:
+for pt in input_data.getPartTypes():
     cda_ = pt.get(KEY_CDA)
     if not cda_:
         continue
-    ed = get_part_type_mapping(extra_data, pt["name_value"])
+    ed = input_data.getExtraDataForPt(pt)
     table_name = ed["table"]
     class_name = ed["class"]
     snippet_file_name = os.path.join(args.out_dir,
