@@ -16,6 +16,8 @@ must be selected before run this regex):
 
 """
 
+from enum import Enum
+
 import argparse
 import collections
 import csv
@@ -41,7 +43,6 @@ YESNOENUM_ID = 1
 
 REGEX_NONALPHANUM = re.compile(r'\W')
 
-seq_part_type = 30
 seq_critdim_enum = YESNOENUM_ID + 1
 seq_critdim_enum_val = 100
 
@@ -60,12 +61,26 @@ WARN_OBSOLETE_PART_TYPES = Warn(4, "Found obsolete part types.")
 WARN_NO_CRITDIMS = Warn(5, "Part type [{ptid:d}] - '{name:s}' has no defined "
                         "critical dimensions.")
 
-Types = collections.namedtuple("Types", ["field_type", "sql_type",
-                                         "data_type", "jpa_type"])
 
-JpaType = collections.namedtuple("JpaType", ["java_type", "is_enum"])
+class PartTypeStatusEnum(Enum):
 
-ImportValue = collections.namedtuple("ImportValue", ["cd", "value"])
+    """TODO."""
+
+    obsolete = 1
+    exist = 2
+    new = 3
+
+PartType = collections.namedtuple("PartType", "id, name, name_short, "
+                                  "magento_attribute_set, value, status")
+
+Types = collections.namedtuple("Types", "field_type, sql_type, "
+                               "data_type, jpa_type")
+
+JpaType = collections.namedtuple("JpaType", "java_type, is_enum")
+
+ColumnMetaInfo = collections.namedtuple("ColumnMetaInfo", "col_name, types")
+
+ImportValue = collections.namedtuple("ImportValue", "col_meta, value")
 
 
 class InputData:
@@ -81,7 +96,19 @@ class InputData:
                  in_crit_dim_attributes, in_enumerations, in_enum_items,
                  in_extra_data):
         """
-        Constructor indexes part types from different sources.
+        Load input files and process them.
+
+        The main issue in a processing of loaded fiels are dirrerent IDs
+        which are used in input files exported from provided
+        'MS Access' file and IDs for exist entities (part_type)
+        in the 'metadata' database. Main logic below merges part types
+        descriptors from these two sources and build a list of merged
+        part types. Each item in the list contains main attributes of
+        a part type (i.e. name, value, ID in the database) and also
+        its status: is it new part type, exist one or obsolete.
+
+        Also the constructor load descriptors for critical dimensions
+        and groups them by part type ID to which them are blonged.
 
         Args:
             in_part_types (str): filename for 'in/part_type.json'.
@@ -94,7 +121,7 @@ class InputData:
             in_extra_data (str): filename for 'in/extra_data.json'.
         """
         with open(in_part_types) as fp:
-            self.part_types = json.load(fp)["part_type"]
+            part_types_msaccess = json.load(fp)["part_type"]
 
         with open(in_part_types_metadata) as fp:
             part_types_metadata = json.load(fp)["part_type"]
@@ -111,60 +138,94 @@ class InputData:
         with open(in_extra_data) as fp:
             self.extra_data = json.load(fp)
 
-        self.pt_idx_by_id = dict()
-        self.pt_idx_by_val = dict()
-        self.obsolete_part_types = list()
-        self.cda_by_id = dict()
-        self.cda_by_ptid = dict()
+        # to search parents
+        self.cda_by_id = {cd["id"]: cd for cd in crit_dim_attributes}
 
-        for pt in part_types:
-            pt_id = pt["id"]
-            name_value = pt["name_value"]
-            self.pt_idx_by_id[pt_id] = pt
-            self.pt_idx_by_val[name_value] = pt
-            self.cda_by_ptid[pt_id] = list()
+        self.part_types = list()
 
-        for ptm in part_types_metadata:
-            value = ptm["value"]
-            pt = self.getPtByVal(value)
-            if pt is None:
-                self.obsolete_part_types.append(ptm)
+        ptmsa_idx_by_val = {
+            ptmsa["name_value"]: ptmsa for ptmsa in part_types_msaccess
+        }
+
+        ptmd_idx_by_val = {
+            ptmd["value"]: ptmd for ptmd in part_types_metadata
+        }
+
+        ptmsaid2ptid = dict()
+
+        merged_ptmds = set()
+        seq_pt_id = 30
+        for ptmsa in part_types_msaccess:
+            value = ptmsa["name_value"]
+            ptmd = ptmd_idx_by_val.get(value)
+            if ptmd is None:
+                pt_id = seq_pt_id
+                seq_pt_id += 1
+                name = name2PartTypeName(ptmsa["name"])
+                status = PartTypeStatusEnum.new
+                mas = name2MagentoAttributeSet(ptmsa["name_value"])
+            else:
+                pt_id = ptmd["id"]
+                name = ptmd["name"]
+                status = PartTypeStatusEnum.exist
+                mas = ptmd["magento_attribute_set"]
+                merged_ptmds.add(pt_id)
+            pt = PartType(id=pt_id, name=ptmsa, name_short=ptmsa["name_short"],
+                          magento_attribute_set=mas, value=value,
+                          status=status)
+            ptmsaid2ptid[ptmsa["id"]] = pt_id
+            self.part_types.append(pt)
+
+        for ptmd in part_types_metadata:
+            pt_id = ptmd["id"]
+            if pt_id not in merged_ptmds:
+                pt = PartType(id=pt_id, name=ptmd["name"], name_short=None,
+                              magento_attribute_set=ptmd[
+                                  "magento_attribute_set"],
+                              value=ptmd["value"],
+                              status=PartTypeStatusEnum.obsolete)
+                self.part_types.append(pt)
+
+        # To have access for critical dimensions for a part type.
+        self.cda_by_ptid = {pt.id: list() for pt in self.part_types}
 
         for cd in crit_dim_attributes:
-            cd_id = cd["id"]
-            cda = self.cda_by_ptid[pt_id]
+            ptmsaid = cd["part_type_id"]
+            # Translate internal ID to ID of merged part types.
+            pt_id = ptmsaid2ptid[ptmsaid]
+            cda = self.cda_by_ptid.get(pt_id)
             cda.append(cd)
             cda.sort(key=lambda x: x["sequence"]
                      if x["sequence"] is not None else 0)
 
     def getPartTypes(self):
-        """Get part types ('in/part_type.json')."""
+        """Get merged part types."""
         return self.part_types
 
-    def getPtById(self, id):
-        """
-        Get part type by ID as defined in import data.
-
-        Args:
-            id(int): 'id' from 'in/part_type.json'.
-
-        Returns:
-            None if part type not found.
-        """
-        return self.pt_idx_by_id.get(id, None)
-
-    def getPtByVal(self, val):
-        """
-        Get part type by 'value'.
-
-        Args:
-            val(str): 'name_value' from 'in/part_type.json' or 'value'
-                      from 'in/part_type_metadata.json'.
-
-        Returns:
-            None if part type not found.
-        """
-        return self.pt_idx_by_val.get(val, None)
+#     def getPtById(self, id):
+#         """
+#         Get part type by ID as defined in import data.
+#
+#         Args:
+#             id(int): 'id' from 'in/part_type.json'.
+#
+#         Returns:
+#             None if part type not found.
+#         """
+#         return self.pt_idx_by_id.get(id, None)
+#
+#     def getPtByVal(self, val):
+#         """
+#         Get part type by 'value'.
+#
+#         Args:
+#             val(str): 'name_value' from 'in/part_type.json' or 'value'
+#                       from 'in/part_type_metadata.json'.
+#
+#         Returns:
+#             None if part type not found.
+#         """
+#         return self.pt_idx_by_val.get(val, None)
 
     def getCdaByPt(self, pt):
         """
@@ -176,8 +237,7 @@ class InputData:
         Returns:
             List of critical dimensions for the part type.
         """
-        pt_id = pt["id"]
-        return self.cda_by_ptid[pt_id]
+        return self.cda_by_ptid[pt.id]
 
     def getCdaById(self, cd_id):
         """
@@ -214,19 +274,10 @@ class InputData:
 
     def getObsoletePartTypes(self):
         """Get part types which are not used anymore."""
-        return self.obsolete_part_types
-
-    def _getExtraDataByValue(self, val):
-        """
-        Get 'part type mapping' in the 'extra_data' for the 'val'.
-
-        Args:
-            val (str): a key to search
-
-        Returns:
-            A 'part type mapping' dictionary for the specified key.
-        """
-        return self.extra_data["part_type_mapping"][val]
+        return [
+            pt for pt in self.part_types
+            if pt.status == PartTypeStatusEnum.obsolete
+        ]
 
     def getExtraDataForPt(self, pt):
         """
@@ -238,22 +289,7 @@ class InputData:
         Returns:
             A 'part type mapping' dictionary for the specified 'part type'.
         """
-        val = pt["name_value"]
-        return self._getExtraDataByValue(val)
-
-    def getExtraDataForPtm(self, ptm):
-        """
-        Get 'part type mapping' in the 'extra_data' for the 'part type meta'.
-
-        Args:
-            ptm (dict): a 'part type meta' dictionary
-
-        Returns:
-            A 'part type mapping' dictionary for
-            the specified 'part type meta'.
-        """
-        val = ptm["value"]
-        return self._getExtraDataByValue(val)
+        return self.extra_data["part_type_mapping"][pt.value]
 
 
 def format_warn(w, **kwargs):
@@ -518,69 +554,69 @@ insert into crit_dim_enum_val(id, crit_dim_enum_id, val) values
 """.format(idx_name_len=IDX_NAME_MAXLEN, yesnoenum_id=YESNOENUM_ID)
 
 
-def generate_alters(ed, cda_):
+def cd2colmetainfo(cd):
+    """Convert a critical dimension to column name and types."""
+    col_name = name2jsonName(cd["name"])
+    types = cd2types(cd)
+    return ColumnMetaInfo(col_name=col_name, types=types)
+
+
+def generate_alters(table_name, cda):
     """
     Generate ALTER SQL statements.
 
     The statements add critical dimensions to existing tables.
     """
-    table_name = ed["table"]
+    columns_meta = dict()
     columns = set()
-    retval = ""
-    for cd in cda_:
-        col_name = name2jsonName(cd["name"])
-        types = cd2types(cd)
-        cd[KEY_COLNAME] = col_name
-        cd[KEY_TYPES] = types
-        col_type = types.sql_type
+    sql = ""
+    for cd in cda:
+        col_meta = cd2colmetainfo(cd)
+        columns_meta[cd["id"]] = col_meta
         col_ref = cd2sqlreference(cd)
-        if col_name in columns:
+        if col_meta.col_name in columns:
             raise ValueError("In table '{}' found duplicated columns '{}'."
                              .format(table_name, col_name))
         else:
-            columns.add(col_name)
-        retval += "alter table {} add column {} {}".format(
-            table_name, col_name, col_type)
+            columns.add(col_meta.col_name)
+        sql += "alter table {} add column {} {}".format(
+            table_name, col_meta.col_name, col_meta.types.sql_type)
         if col_ref:
-            retval += ", add foreign key ({}) {}".format(col_name, col_ref)
-        retval += ";\n"
-    return retval
+            sql += ", add foreign key ({}) {}".format(col_meta.col_name,
+                                                      col_ref)
+        sql += ";\n"
+    return columns_meta, sql
 
 
-def generate_create_table(ed, cda_):
+def generate_create_table(table_name, cda):
     """
     Generate CREATE TABLE SQL statements.
 
     The statements creates tables for new part types.
     """
-    table_name = ed["table"]
-    retval = "create table {} (\n" \
+    columns_meta = dict()
+    sql = "create table {} (\n" \
         "\tpart_id bigint(20) not null,\n" \
         "\tkey part_id (part_id)".format(table_name)
     columns = set()
-    if cda_:
-        retval += ",\n"
-        for idx, cd in enumerate(cda_):
-            if idx:
-                retval += ",\n"
-            col_name = name2jsonName(cd["name"])
-            if col_name in columns:
-                raise ValueError("In table '{}' found duplicated columns '{}'."
-                                 .format(table_name, col_name))
-            else:
-                columns.add(col_name)
-            types = cd2types(cd)
-            cd[KEY_COLNAME] = col_name
-            cd[KEY_TYPES] = types
-            col_type = types.sql_type
-            col_ref = cd2sqlreference(cd)
-            retval += "\t{} {} {}".format(col_name, col_type, col_ref)
-    retval += "\n) engine=innodb default charset=utf8;"
-    return retval
+    for idx, cd in enumerate(cda):
+        if idx:
+            sql += ",\n"
+        col_meta = cd2colmetainfo(cd)
+        columns_meta[cd["id"]] = col_meta
+        if col_meta.col_name in columns:
+            raise ValueError("In table '{}' found duplicated columns '{}'."
+                             .format(table_name, col_meta.col_name))
+        else:
+            columns.add(col_meta.col_name)
+        col_ref = cd2sqlreference(cd)
+        sql += "\t{} {} {}".format(col_meta.col_name,
+                                   col_meta.types.sql_type, col_ref)
+    sql += "\n) engine=innodb default charset=utf8;"
+    return columns_meta, sql
 
 
-def register_crit_dim(part_type_id, table_name, cda_, crit_dim_attributes,
-                      crit_dim_attributes_idx_by_id):
+def register_crit_dim(input_data, table_name, pt_id, pt_cda, columns_meta):
     """Generate INSERT statements to register a new critical dimension."""
     global alter_file
     sql = "insert into crit_dim(id, part_type_id, seq_num, data_type, " \
@@ -594,13 +630,14 @@ def register_crit_dim(part_type_id, table_name, cda_, crit_dim_attributes,
     add_comma = False
     registered_enums = ""
     idx_names = set()
-    for cd in cda_:
-        types = cd[KEY_TYPES]
-        id_ = crit_dim_attributes_idx_by_id[cd["id"]]["id"]
+    for cd in pt_cda:
+        cd_id = cd["id"]
+        col_meta = columns_meta[cd_id]
+        types = col_meta.types
         seq_num = cd["sequence"]
         if seq_num is None:
             seq_num = "null"
-        print(format_warn(WARN_BAD_SEQ, cd_id=cd["id"], cd_name=cd["name"]),
+        print(format_warn(WARN_BAD_SEQ, cd_id=cd_id, cd_name=cd["name"]),
               file=alter_file)
         data_type = types.data_type
         if cd["unit"] is not None:
@@ -612,7 +649,7 @@ def register_crit_dim(part_type_id, table_name, cda_, crit_dim_attributes,
         else:
             tolerance = 0
         name = cd["name"]
-        json_name = cd[KEY_COLNAME]
+        json_name = col_meta.col_name
         idx_name = name2idxName(table_name, json_name, idx_names)
         idx_names.add(idx_name)
         if types.field_type == "BOOLEAN":
@@ -620,8 +657,6 @@ def register_crit_dim(part_type_id, table_name, cda_, crit_dim_attributes,
         elif types.data_type == "ENUMERATION":
             enum_id = cd["enumeration_id"]
             if enum_id is None:
-                # raise ValueError("Enumeration for critical dimension [{}] "
-                #                  "not defined.".format(cd["id"]))
                 enum_id = "null"
         else:
             enum_id = "null"
@@ -643,7 +678,7 @@ def register_crit_dim(part_type_id, table_name, cda_, crit_dim_attributes,
             if pcd_ptid == cd_ptid:
                 parent_id = pcd["id"]
             else:
-                print(format_warn(WARN_INVALID_REF, cd_id=cd["id"],
+                print(format_warn(WARN_INVALID_REF, cd_id=cd_id,
                                   cd_name=cd["name"], cd_ptid=cd_ptid,
                                   pcd_id=pcd["id"], pcd_name=pcd["name"],
                                   pcd_ptid=pcd_ptid), file=alter_file)
@@ -652,12 +687,12 @@ def register_crit_dim(part_type_id, table_name, cda_, crit_dim_attributes,
         scale = def_sql_null(cd, "scale")
         if add_comma:
             sql += ",\n"
-        values = "({id_}, {part_type_id}, {seq_num}, {data_type}, {unit}, " \
+        values = "({cd_id}, {part_type_id}, {seq_num}, {data_type}, {unit}, " \
             "{tolerance}, {name}, {json_name}, {idx_name}, " \
             "{enum_id}, {null_allowed}, {null_display}, {min_val}, " \
             "{max_val}, {regex}, {parent_id}, {length}, " \
             "{scale})".format(
-                id_=id_, part_type_id=part_type_id, seq_num=seq_num,
+                cd_id=cd_id, part_type_id=pt_id, seq_num=seq_num,
                 data_type=sql_str_param(data_type), unit=sql_str_param(unit),
                 tolerance=tolerance, name=sql_str_param(name),
                 json_name=sql_str_param(json_name),
@@ -677,7 +712,7 @@ def register_crit_dim(part_type_id, table_name, cda_, crit_dim_attributes,
     return sql
 
 
-def tsvrec2importval(cda_, headers, row):
+def tsvrec2importval(pt_cda, columns_meta, headers, row):
     """
     Covert row - array of values, to a dict.
 
@@ -686,14 +721,15 @@ def tsvrec2importval(cda_, headers, row):
     in the 'row' array.
     """
     retval = list()
-    cda_idx_by_fieldname = {"cd_" + cd["name_clean"]: cd for cd in cda_}
+    cda_idx_by_fieldname = {"cd_" + cd["name_clean"]: cd for cd in pt_cda}
     for idx, header in enumerate(headers):
         cd = cda_idx_by_fieldname[header]
+        cd_id = cd["id"]
         value = row[idx]
-        if cd[KEY_TYPES].data_type == "ENUMERATION":
-            # TODO: correct enumeration value
+        col_meta = columns_meta[cd_id]
+        if col_meta.types.data_type == "ENUMERATION":
             value = None
-        retval.append(ImportValue(cd, value))
+        retval.append(ImportValue(col_meta, value))
     return retval
 
 
@@ -705,7 +741,7 @@ def import_insert(part_number, table_name, import_values):
                    " values('" + part_number + "');\n")
         retval += ("insert into " + table_name + "(part_id")
         for iv in import_values:
-            retval += (", " + iv.cd[KEY_COLNAME])
+            retval += (", " + iv.col_meta.col_name)
         retval += ") values(last_insert_id()"
         for iv in import_values:
             retval += (", " + sql_str_param(iv.value))
@@ -829,139 +865,130 @@ alter table part_type add column legend_img_filename varchar(255);
     obsolete_part_types = input_data.getObsoletePartTypes()
     if obsolete_part_types:
         print(format_warn(WARN_OBSOLETE_PART_TYPES), file=alter_file)
-        for ptm in obsolete_part_types:
+        for pt in obsolete_part_types:
             print("-- delete from part_type where id={0:d}; -- {1:s}".format(
-                ptm["id"], ptm["name"]), file=alter_file)
-            ed = input_data.getExtraDataForPtm(ptm)
+                pt.id, pt.name), file=alter_file)
+            ed = input_data.getExtraDataForPt(pt)
             if ed["exists"] is True:
                 print("-- drop table {};".format(ed["table"]), file=alter_file)
         print(file=alter_file)
 
     for pt in input_data.getPartTypes():
-        pt_id = pt.get(KEY_PT_ID)
-        pt_name = name2PartTypeName(pt["name"])
-        if pt_id is None:
-            # Register this new part type.
-            mas = name2MagentoAttributeSet(pt["name_value"])
+        if pt.status == PartTypeStatusEnum.new:
             print("insert into part_type(id, name, magento_attribute_set, "
                   "value) values({id_}, '{name}', '{mas}', '{value}');"
-                  .format(
-                      id_=seq_part_type, name=pt_name, mas=mas,
-                      value=pt["name_value"]), file=alter_file)
-            pt_id = seq_part_type
-            pt[KEY_PT_ID] = pt_id
-            seq_part_type += 1
-        cda_ = pt.get(KEY_CDA)
-        if not cda_:
-            print(format_warn(WARN_NO_CRITDIMS, ptid=pt["id"],
-                              name=pt["name"]), file=alter_file)
-            if cda_ is None:
-                cda_ = list()
-                pt[KEY_CDA] = cda_
+                  .format(id_=pt.id, name=pt.name,
+                          mas=pt.magento_attribute_set, value=pt.value),
+                  file=alter_file)
+        pt_cda = input_data.getCdaByPt(pt)
         ed = input_data.getExtraDataForPt(pt)
+        table_name = ed["table"]
         entity_table_exists = ed["exists"]
         if entity_table_exists:
-            sql = generate_alters(ed, cda_)
+            columns_meta, sql = generate_alters(table_name, pt_cda)
         else:
-            sql = generate_create_table(ed, cda_)
+            columns_meta, sql = generate_create_table(table_name, pt_cda)
 
         print(sql, file=alter_file)
 
-        sql = register_crit_dim(pt_id, ed["table"], cda_, crit_dim_attributes,
-                                crit_dim_attributes_idx_by_id)
+        sql = register_crit_dim(input_data, table_name, pt.id, pt_cda,
+                                columns_meta)
 
         print(sql, file=alter_file)
 
         # Populate tables.
-        datafile_name = os.path.join(args.in_data_dir,
-                                     pt["name_short"] + ".tsv")
-        with open(datafile_name, "rt") as df:
-            tsvin = csv.reader(df, delimiter='\t')
-            for idx, row in enumerate(tsvin):
-                if idx == 0:
-                    headers = row
+        if pt.status != PartTypeStatusEnum.obsolete:
+            datafile_name = os.path.join(args.in_data_dir,
+                                         pt.name_short + ".tsv")
+            with open(datafile_name, "rt") as df:
+                tsvin = csv.reader(df, delimiter='\t')
+                for idx, row in enumerate(tsvin):
+                    if idx == 0:
+                        headers = row
+                    else:
+                        part_num = row[1]
+                        # Range [2:] below skips 'id' and
+                        # 'manufacturer part number'.
+                        part_number = row[1]
+                        importval = tsvrec2importval(pt_cda, columns_meta,
+                                                     headers[2:], row[2:])
+                        sql = import_insert(part_number, table_name, importval)
+                        print(sql, file=alter_file)
+
+        # Generate java code snippets.
+        ed = input_data.getExtraDataForPt(pt)
+        table_name = ed["table"]
+        class_name = ed["class"]
+        snippet_file_name = os.path.join(args.out_dir, "{}.java"
+                                         .format(class_name))
+        members_snippet = ""
+        getters_setters_snippet = ""
+        datetimestamp = datetime.datetime.now()
+        with open(snippet_file_name, "w", encoding="utf-8") as snippet_file:
+            for cd in pt_cda:
+                cd_id = cd["id"]
+                col_meta = columns_meta[cd_id]
+                mem_name = col_meta.col_name
+                types = col_meta.types
+                mem_type = types.jpa_type.java_type
+                annotations = "    @JsonView(View.Summary.class)\n"
+                annotations += "    @JsonProperty(\"{}\")\n".format(mem_name)
+                if types.jpa_type.is_enum:
+                    annotations += ("    @ManyToOne(fetch = LAZY)\n"
+                                    "    @JoinColumn(name = \"{}\")\n"
+                                    .format(mem_name))
                 else:
-                    part_num = row[1]
-                    # Range [2:] below skips 'id' and
-                    # 'manufacturer part number'.
-                    part_number = row[1]
-                    importval = tsvrec2importval(cda_, headers[2:], row[2:])
-                    table_name = ed["table"]
-                    sql = import_insert(part_number, table_name, importval)
-                    print(sql, file=alter_file)
-
-
-# Generate java code snippets.
-for pt in input_data.getPartTypes():
-    cda_ = pt.get(KEY_CDA)
-    if not cda_:
-        continue
-    ed = input_data.getExtraDataForPt(pt)
-    table_name = ed["table"]
-    class_name = ed["class"]
-    snippet_file_name = os.path.join(args.out_dir,
-                                     "{}.java".format(class_name))
-    members_snippet = ""
-    getters_setters_snippet = ""
-    datetimestamp = datetime.datetime.now()
-    with open(snippet_file_name, "w", encoding="utf-8") as snippet_file:
-        for cd in cda_:
-            mem_name = cd[KEY_COLNAME]
-            types = cd[KEY_TYPES]
-            mem_type = types.jpa_type.java_type
-            annotations = "    @JsonView(View.Summary.class)\n"
-            annotations += "    @JsonProperty(\"{}\")\n".format(mem_name)
-            if types.jpa_type.is_enum:
-                annotations += ("    @ManyToOne(fetch = LAZY)\n"
-                                "    @JoinColumn(name = \"{}\")\n"
-                                .format(mem_name))
-            else:
-                annotations += "    @Column(name = \"{}\")\n".format(mem_name)
-            members_snippet += annotations
-            members_snippet += "    private {mem_type:s} {mem_name:s};\n\n" \
-                .format(mem_type=mem_type, mem_name=mem_name)
-            method_suff = mem_name[0].upper() + mem_name[1:]
-            getters_setters_snippet += "    public {mem_type:s} " \
-                "get{method_suff:s}() {{\n" \
-                "        return {mem_name:s};\n" \
-                "    }}\n\n" \
-                "    public void set{method_suff:s}({mem_type:s} " \
-                "{mem_name:s}) {{\n" \
-                "        this.{mem_name:s} = {mem_name:s};\n" \
-                "    }}\n\n" \
-                .format(mem_type=mem_type, mem_name=mem_name,
-                        method_suff=method_suff)
-        print("package com.turbointernational.metadata.domain.part.types;\n",
-              file=snippet_file)
-        print("import com.fasterxml.jackson.annotation.JsonProperty;",
-              file=snippet_file)
-        print("import com.fasterxml.jackson.annotation.JsonView;",
-              file=snippet_file)
-        print("import com.turbointernational.metadata.domain."
-              "criticaldimension.CriticalDimensionEnumVal;", file=snippet_file)
-        print("import com.turbointernational.metadata.domain.part.Part;",
-              file=snippet_file)
-        print("import com.turbointernational.metadata.web.View;\n",
-              file=snippet_file)
-        print("import javax.persistence.*;\n", file=snippet_file)
-        print("import static javax.persistence.FetchType.LAZY;\n\n",
-              file=snippet_file)
-        print("/**\n * Created by dmytro.trunykov@zorallabs.com on {}.\n */"
-              .format(datetimestamp),
-              file=snippet_file)
-        print("@Entity", file=snippet_file)
-        print("@Table(name = \"{}\")".format(table_name), file=snippet_file)
-        print("@PrimaryKeyJoinColumn(name = \"part_id\")", file=snippet_file)
-        print("public class {} extends Part {{\n".format(class_name),
-              file=snippet_file)
-        print("    //<editor-fold defaultstate=\"collapsed\" "
-              "desc=\"Properties: critical dimensions\">\n", file=snippet_file)
-        print(members_snippet, file=snippet_file, end="")
-        print("    //</editor-fold>", file=snippet_file)
-        print("", file=snippet_file)
-        print("    //<editor-fold defaultstate=\"collapsed\" "
-              "desc=\"Getters and setters: critical dimensions\">\n",
-              file=snippet_file)
-        print(getters_setters_snippet, file=snippet_file, end="")
-        print("    //</editor-fold>\n", file=snippet_file)
-        print("}", file=snippet_file)
+                    annotations += ("    @Column(name = \"{}\")\n"
+                                    .format(mem_name))
+                members_snippet += annotations
+                members_snippet += "    private {mem_type:s} {mem_name:s};\n\n" \
+                    .format(mem_type=mem_type, mem_name=mem_name)
+                method_suff = mem_name[0].upper() + mem_name[1:]
+                getters_setters_snippet += "    public {mem_type:s} " \
+                    "get{method_suff:s}() {{\n" \
+                    "        return {mem_name:s};\n" \
+                    "    }}\n\n" \
+                    "    public void set{method_suff:s}({mem_type:s} " \
+                    "{mem_name:s}) {{\n" \
+                    "        this.{mem_name:s} = {mem_name:s};\n" \
+                    "    }}\n\n" \
+                    .format(mem_type=mem_type, mem_name=mem_name,
+                            method_suff=method_suff)
+            print("package com.turbointernational.metadata.domain."
+                  "part.types;\n", file=snippet_file)
+            print("import com.fasterxml.jackson.annotation.JsonProperty;",
+                  file=snippet_file)
+            print("import com.fasterxml.jackson.annotation.JsonView;",
+                  file=snippet_file)
+            print("import com.turbointernational.metadata.domain."
+                  "criticaldimension.CriticalDimensionEnumVal;",
+                  file=snippet_file)
+            print("import com.turbointernational.metadata.domain.part.Part;",
+                  file=snippet_file)
+            print("import com.turbointernational.metadata.web.View;\n",
+                  file=snippet_file)
+            print("import javax.persistence.*;\n", file=snippet_file)
+            print("import static javax.persistence.FetchType.LAZY;\n\n",
+                  file=snippet_file)
+            print("/**\n * Created by dmytro.trunykov@zorallabs.com "
+                  "on {}.\n */".format(datetimestamp),
+                  file=snippet_file)
+            print("@Entity", file=snippet_file)
+            print("@Table(name = \"{}\")".format(table_name),
+                  file=snippet_file)
+            print("@PrimaryKeyJoinColumn(name = \"part_id\")",
+                  file=snippet_file)
+            print("public class {} extends Part {{\n".format(class_name),
+                  file=snippet_file)
+            print("    //<editor-fold defaultstate=\"collapsed\" "
+                  "desc=\"Properties: critical dimensions\">\n",
+                  file=snippet_file)
+            print(members_snippet, file=snippet_file, end="")
+            print("    //</editor-fold>", file=snippet_file)
+            print("", file=snippet_file)
+            print("    //<editor-fold defaultstate=\"collapsed\" "
+                  "desc=\"Getters and setters: critical dimensions\">\n",
+                  file=snippet_file)
+            print(getters_setters_snippet, file=snippet_file, end="")
+            print("    //</editor-fold>\n", file=snippet_file)
+            print("}", file=snippet_file)
