@@ -1,4 +1,6 @@
 {
+  "todo": {
+  },
   "part_type_mapping": {
     "actuator": {
       "table": "actuator",
@@ -31,9 +33,9 @@
       "exists": true
     },
     "heatshield_shroud": {
-      "table": "heatshield",
-      "class": "Heatshield",
-      "exists": true
+      "table": "heatshield_shroud",
+      "class": "HeatshieldShroud",
+      "exists": false
     },
     "journal_bearing": {
       "table": "journal_bearing",
@@ -188,7 +190,7 @@
     "backplate_sealplate": {
       "table": "backplate_sealplate",
       "class": "BackplateSealplate",
-      "exists": true
+      "exists": false
     },
     "thrust_parts": {
       "table": "thrust_part",

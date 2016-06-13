@@ -747,11 +747,11 @@ def tsvrec2importval(pt_cda, columns_meta, headers, row):
     return retval
 
 
-def import_insert(part_number, manfr_id, part_type_id, inactive, version,
-                  table_name, import_values, new_part):
+def import_insert(part_id, part_number, manfr_id, part_type_id, inactive,
+                  version, table_name, import_values):
     """Generate INSERT SQL statements to register a new part."""
     retval = ""
-    if new_part:
+    if part_id is None:
         retval += ("insert into part(manfr_part_num, manfr_id, "
                    "part_type_id, inactive, version) "
                    "values('{}', {}, {}, {}, {});\n".format(part_number,
@@ -762,7 +762,11 @@ def import_insert(part_number, manfr_id, part_type_id, inactive, version,
     retval += ("insert into " + table_name + "(part_id")
     for iv in import_values:
         retval += (", " + iv.col_meta.col_name)
-    retval += ") values(last_insert_id()"
+    retval += ") values("
+    if part_id is None:
+        retval += "last_insert_id()"
+    else:
+        retval += str(part_id)
     for iv in import_values:
         retval += (", " + sql_str_param(iv.value))
     retval += ");\n"
@@ -782,10 +786,13 @@ def import_update(part_id, table_name, import_values):
     return retval
 
 
-def delete_part_from(part_id, table_name):
-    """Delete record about part from a specific table."""
-    retval = "delete from {} where part_id={};\n".format(table_name,
-                                                         part_id)
+def change_part_type(part_id, new_part_type_id, old_table_name):
+    """Delete record about part from a specific table and change its type."""
+    retval = ("delete from {old_table_name} where part_id={part_id};\n"
+              "update part set part_type_id={new_part_type_id} "
+              "where id={part_id};\n"
+              .format(old_table_name=old_table_name,
+                      new_part_type_id=new_part_type_id, part_id=part_id))
     return retval
 
 
@@ -961,9 +968,9 @@ alter table part_type add column legend_img_filename varchar(255);
                             part_id, part_type_id = obj
                         if part_id is None:
                             inserted += 1
-                            sql = import_insert(part_num, manfr_id, pt.id,
-                                                False, 1, table_name,
-                                                import_values, True)
+                            sql = import_insert(None, part_num, manfr_id,
+                                                pt.id, False, 1, table_name,
+                                                import_values)
                         else:
                             if part_type_id != pt.id:
                                 conflicted += 1
@@ -977,15 +984,18 @@ alter table part_type add column legend_img_filename varchar(255);
                                 ed2 = input_data.getExtraDataForPt(pt_db)
                                 old_table_name = ed2["table"]
                                 if old_table_name is not None:
+                                    if part_num == '5-A-0293':
+                                        print("pt_db: {}\ned2: {}"
+                                              .format(pt_db, ed2))
                                     # Remove the part from obsolete place.
-                                    sql = delete_part_from(part_id,
+                                    sql = change_part_type(part_id, pt.id,
                                                            old_table_name)
                                     # And save it as a part with of the new
                                     # type.
-                                    sql += import_insert(part_num, manfr_id,
-                                                         pt.id, False, 1,
-                                                         table_name,
-                                                         import_values, False)
+                                    sql += import_insert(part_id, part_num,
+                                                         manfr_id, pt.id,
+                                                         False, 1, table_name,
+                                                         import_values)
 
                             else:
                                 updated += 1

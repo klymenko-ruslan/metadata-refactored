@@ -7,6 +7,4 @@ mysql -uroot -proot -e "drop database if exists metadata;create database metadat
 bzcat ${DUMP_DB} | mysql -uroot -proot metadata
 ./prepare.sh
 ./main.py
-# mysql -uroot -proot -e "drop database if exists metadata;create database metadata;"
-# bzcat ${DUMP_DB} | mysql -uroot -proot metadata
 mysql -umetaserver -pmetaserver metadata < out/alter.sql
