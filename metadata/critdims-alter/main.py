@@ -29,15 +29,7 @@ import shutil
 import sys
 
 
-KEY_PT_ID = "_pt_id"
-KEY_PT_META = "_pt_meta"
-KEY_CDA = "_cda"
-
-KEY_COLNAME = "_col_name"
-KEY_TYPES = "_types"
-
 IDX_NAME_MAXLEN = 30
-
 
 YESNOENUM_ID = 1
 
@@ -60,6 +52,10 @@ WARN_INVALID_REF = Warn(3, "A critical dimension [{cd_id}] - '{cd_name}' "
 WARN_OBSOLETE_PART_TYPES = Warn(4, "Found obsolete part types.")
 WARN_NO_CRITDIMS = Warn(5, "Part type [{ptid:d}] - '{name:s}' has no defined "
                         "critical dimensions.")
+WARN_CONFLICTED_PART_TYPE = Warn(6, "Part {p_id} [{part_num}] has "
+                                 "different part type in the "
+                                 "database ({db_pt_id}) and in "
+                                 "the imported data ({imp_pt_id}).")
 
 
 class PartTypeStatusEnum(Enum):
@@ -82,6 +78,9 @@ ColumnMetaInfo = collections.namedtuple("ColumnMetaInfo", "col_name, types")
 
 ImportValue = collections.namedtuple("ImportValue", "col_meta, value")
 
+CurrentStateKey = collections.namedtuple("CurrentStateKey",
+                                         "manfr_part_num, manfr_id")
+
 
 class InputData:
 
@@ -94,7 +93,7 @@ class InputData:
 
     def __init__(self, in_part_types, in_part_types_metadata,
                  in_crit_dim_attributes, in_enumerations, in_enum_items,
-                 in_extra_data):
+                 in_extra_data, in_current_state):
         """
         Load input files and process them.
 
@@ -138,6 +137,20 @@ class InputData:
         with open(in_extra_data) as fp:
             self.extra_data = json.load(fp)
 
+        self.current_state_idx = dict()
+        with open(in_current_state) as fp:
+            current_state = csv.reader(fp, delimiter='\t')
+            self.current_state_idx = {
+                CurrentStateKey(cs[1], cs[2]): (cs[0], cs[3])
+                for cs in current_state
+            }
+        # print("Debug: {}".format(self.current_state_idx))
+        # CurrentStateKey(manfr_part_num='8-K-1140', part_type_id=48)
+        # CurrentStateKey(manfr_part_num='7-E-2837', part_type_id='3'))
+        # xxx = self.current_state_idx.get(
+        #     CurrentStateKey(manfr_part_num='5-A-0293', part_type_id='11'))
+        # print("xxx={}".format(xxx))
+
         # to search parents
         self.cda_by_id = {cd["id"]: cd for cd in crit_dim_attributes}
 
@@ -170,7 +183,8 @@ class InputData:
                 status = PartTypeStatusEnum.exist
                 mas = ptmd["magento_attribute_set"]
                 merged_ptmds.add(pt_id)
-            pt = PartType(id=pt_id, name=ptmsa, name_short=ptmsa["name_short"],
+            pt = PartType(id=pt_id, name=ptmsa["name"],
+                          name_short=ptmsa["name_short"],
                           magento_attribute_set=mas, value=value,
                           status=status)
             ptmsaid2ptid[ptmsa["id"]] = pt_id
@@ -185,6 +199,8 @@ class InputData:
                               value=ptmd["value"],
                               status=PartTypeStatusEnum.obsolete)
                 self.part_types.append(pt)
+
+        self.pt_idx_by_id = {pt.id: pt for pt in self.part_types}
 
         # To have access for critical dimensions for a part type.
         self.cda_by_ptid = {pt.id: list() for pt in self.part_types}
@@ -202,18 +218,18 @@ class InputData:
         """Get merged part types."""
         return self.part_types
 
-#     def getPtById(self, id):
-#         """
-#         Get part type by ID as defined in import data.
-#
-#         Args:
-#             id(int): 'id' from 'in/part_type.json'.
-#
-#         Returns:
-#             None if part type not found.
-#         """
-#         return self.pt_idx_by_id.get(id, None)
-#
+    def getPtById(self, id):
+        """
+        Get part type by ID as defined in import data.
+
+        Args:
+            id(int): 'id' as defined in self.part_types.
+
+        Returns:
+            None if part type not found.
+        """
+        return self.pt_idx_by_id.get(id, None)
+
 #     def getPtByVal(self, val):
 #         """
 #         Get part type by 'value'.
@@ -274,10 +290,9 @@ class InputData:
 
     def getObsoletePartTypes(self):
         """Get part types which are not used anymore."""
-        return [
-            pt for pt in self.part_types
-            if pt.status == PartTypeStatusEnum.obsolete
-        ]
+        for pt in self.part_types:
+            if pt.status == PartTypeStatusEnum.obsolete:
+                yield pt
 
     def getExtraDataForPt(self, pt):
         """
@@ -596,12 +611,11 @@ def generate_create_table(table_name, cda):
     """
     columns_meta = dict()
     sql = "create table {} (\n" \
-        "\tpart_id bigint(20) not null,\n" \
+        "\tpart_id bigint(20) not null references part (id),\n" \
         "\tkey part_id (part_id)".format(table_name)
     columns = set()
-    for idx, cd in enumerate(cda):
-        if idx:
-            sql += ",\n"
+    for cd in cda:
+        sql += ",\n"
         col_meta = cd2colmetainfo(cd)
         columns_meta[cd["id"]] = col_meta
         if col_meta.col_name in columns:
@@ -733,19 +747,25 @@ def tsvrec2importval(pt_cda, columns_meta, headers, row):
     return retval
 
 
-def import_insert(part_number, table_name, import_values):
+def import_insert(part_number, manfr_id, part_type_id, inactive, version,
+                  table_name, import_values, new_part):
     """Generate INSERT SQL statements to register a new part."""
     retval = ""
-    if import_values:
-        retval += ("insert into part(manfr_part_num) "
-                   " values('" + part_number + "');\n")
-        retval += ("insert into " + table_name + "(part_id")
-        for iv in import_values:
-            retval += (", " + iv.col_meta.col_name)
-        retval += ") values(last_insert_id()"
-        for iv in import_values:
-            retval += (", " + sql_str_param(iv.value))
-        retval += ");\n"
+    if new_part:
+        retval += ("insert into part(manfr_part_num, manfr_id, "
+                   "part_type_id, inactive, version) "
+                   "values('{}', {}, {}, {}, {});\n".format(part_number,
+                                                            manfr_id,
+                                                            part_type_id,
+                                                            inactive,
+                                                            version))
+    retval += ("insert into " + table_name + "(part_id")
+    for iv in import_values:
+        retval += (", " + iv.col_meta.col_name)
+    retval += ") values(last_insert_id()"
+    for iv in import_values:
+        retval += (", " + sql_str_param(iv.value))
+    retval += ");\n"
     return retval
 
 
@@ -753,10 +773,19 @@ def import_update(part_id, table_name, import_values):
     """Generate UPDATE SQL statements to update a part."""
     retval = ""
     if import_values:
-        retval += "update " + table_name + " set "
-        for iv in import_values:
-            retval += (iv.cd[KEY_COLNAME] + "=" + sql_str_param(iv.value))
-        retval += "wher part_id=" + part_id + ";\n"
+        retval += ("update " + table_name + " set ")
+        for idx, iv in enumerate(import_values):
+            if idx > 0:
+                retval += ", "
+            retval += (iv.col_meta.col_name + "=" + sql_str_param(iv.value))
+        retval += "where part_id=" + part_id + ";\n"
+    return retval
+
+
+def delete_part_from(part_id, table_name):
+    """Delete record about part from a specific table."""
+    retval = "delete from {} where part_id={};\n".format(table_name,
+                                                         part_id)
     return retval
 
 
@@ -797,6 +826,11 @@ argparser.add_argument("--in-extra-data", required=False,
                        default=os.path.join(os.getcwd(), "in",
                                             "extra_data.json"),
                        help="File in JSON format with extra info.")
+argparser.add_argument("--in-current-state", required=False,
+                       default=os.path.join(os.getcwd(), "in",
+                                            "current_state.tsv"),
+                       help="File in TSV format with info about current "
+                            "exist parts.")
 argparser.add_argument("--in-data-dir", required=False,
                        default=os.path.join(os.getcwd(), "in",
                                             "data"),
@@ -845,7 +879,8 @@ alter table part_type add column legend_img_filename varchar(255);
 
     input_data = InputData(args.in_part_type, args.in_part_type_metadata,
                            args.in_crit_dim_attribute, args.in_enumerations,
-                           args.in_enum_items, args.in_extra_data)
+                           args.in_enum_items, args.in_extra_data,
+                           args.in_current_state)
 
     print(createTableCritDimSql(), file=alter_file)
 
@@ -873,6 +908,8 @@ alter table part_type add column legend_img_filename varchar(255);
                 print("-- drop table {};".format(ed["table"]), file=alter_file)
         print(file=alter_file)
 
+    # Create/alter databases.
+    ptid2columns_meta = dict()
     for pt in input_data.getPartTypes():
         if pt.status == PartTypeStatusEnum.new:
             print("insert into part_type(id, name, magento_attribute_set, "
@@ -888,7 +925,7 @@ alter table part_type add column legend_img_filename varchar(255);
             columns_meta, sql = generate_alters(table_name, pt_cda)
         else:
             columns_meta, sql = generate_create_table(table_name, pt_cda)
-
+        ptid2columns_meta[pt.id] = columns_meta
         print(sql, file=alter_file)
 
         sql = register_crit_dim(input_data, table_name, pt.id, pt_cda,
@@ -896,10 +933,15 @@ alter table part_type add column legend_img_filename varchar(255);
 
         print(sql, file=alter_file)
 
-        # Populate tables.
+    # Populate tables.
+    for pt in input_data.getPartTypes():
+        inserted = updated = conflicted = 0
+        manfr_id = 11  # Turbo International
         if pt.status != PartTypeStatusEnum.obsolete:
             datafile_name = os.path.join(args.in_data_dir,
                                          pt.name_short + ".tsv")
+            pt_cda = input_data.getCdaByPt(pt)
+            columns_meta = ptid2columns_meta[pt.id]
             with open(datafile_name, "rt") as df:
                 tsvin = csv.reader(df, delimiter='\t')
                 for idx, row in enumerate(tsvin):
@@ -909,12 +951,50 @@ alter table part_type add column legend_img_filename varchar(255);
                         part_num = row[1]
                         # Range [2:] below skips 'id' and
                         # 'manufacturer part number'.
-                        part_number = row[1]
-                        importval = tsvrec2importval(pt_cda, columns_meta,
-                                                     headers[2:], row[2:])
-                        sql = import_insert(part_number, table_name, importval)
+                        import_values = tsvrec2importval(pt_cda, columns_meta,
+                                                         headers[2:], row[2:])
+                        cs_key = CurrentStateKey(part_num, str(manfr_id))
+                        obj = input_data.current_state_idx.get(cs_key)
+                        if obj is None:
+                            part_id, part_type_id = None, None
+                        else:
+                            part_id, part_type_id = obj
+                        if part_id is None:
+                            inserted += 1
+                            sql = import_insert(part_num, manfr_id, pt.id,
+                                                False, 1, table_name,
+                                                import_values, True)
+                        else:
+                            if part_type_id != pt.id:
+                                conflicted += 1
+                                warn = format_warn(WARN_CONFLICTED_PART_TYPE,
+                                                   p_id=part_id,
+                                                   part_num=part_num,
+                                                   db_pt_id=part_type_id,
+                                                   imp_pt_id=pt.id)
+                                print(warn, file=alter_file)
+                                pt_db = input_data.getPtById(int(part_type_id))
+                                ed2 = input_data.getExtraDataForPt(pt_db)
+                                old_table_name = ed2["table"]
+                                if old_table_name is not None:
+                                    # Remove the part from obsolete place.
+                                    sql = delete_part_from(part_id,
+                                                           old_table_name)
+                                    # And save it as a part with of the new
+                                    # type.
+                                    sql += import_insert(part_num, manfr_id,
+                                                         pt.id, False, 1,
+                                                         table_name,
+                                                         import_values, False)
+
+                            else:
+                                updated += 1
+                                sql = import_update(part_id, table_name,
+                                                    import_values)
                         print(sql, file=alter_file)
 
+        # print("{}: inserted: {}, updated: {}, conflicts: {}".format(
+        #       pt.name, inserted, updated, conflicted))
         # Generate java code snippets.
         ed = input_data.getExtraDataForPt(pt)
         table_name = ed["table"]
