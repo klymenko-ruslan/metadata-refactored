@@ -12,12 +12,12 @@ import static javax.persistence.FetchType.LAZY;
 
 
 /**
- * Created by dmytro.trunykov@zorallabs.com on 2016-06-14 17:51:47.497931.
+ * Created by dmytro.trunykov@zorallabs.com on 2016-06-14 17:51:47.772069.
  */
 @Entity
-@Table(name = "compressor_cover")
+@Table(name = "fast_wearing_component")
 @PrimaryKeyJoinColumn(name = "part_id")
-public class CompressorCover extends Part {
+public class FastWearingComponent extends Part {
 
     //<editor-fold defaultstate="collapsed" desc="Properties: critical dimensions">
 

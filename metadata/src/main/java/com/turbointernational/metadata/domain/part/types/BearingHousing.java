@@ -12,7 +12,7 @@ import static javax.persistence.FetchType.LAZY;
 
 
 /**
- * Created by dmytro.trunykov@zorallabs.com on 2016-05-26 10:44:43.036840.
+ * Created by dmytro.trunykov@zorallabs.com on 2016-06-14 17:51:47.552816.
  */
 @Entity
 @Table(name = "bearing_housing")

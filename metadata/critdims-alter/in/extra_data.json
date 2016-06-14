@@ -35,7 +35,7 @@
     "heatshield_shroud": {
       "table": "heatshield_shroud",
       "class": "HeatshieldShroud",
-      "exists": false
+      "exists": true
     },
     "journal_bearing": {
       "table": "journal_bearing",
@@ -75,7 +75,7 @@
     "backplate": {
       "table": "backplate",
       "class": "Backplate",
-      "exists": true
+      "exists": false
     },
     "journal_bearing_spacer": {
       "table": "journal_bearing_spacer",
@@ -190,7 +190,7 @@
     "backplate_sealplate": {
       "table": "backplate_sealplate",
       "class": "BackplateSealplate",
-      "exists": false
+      "exists": true
     },
     "thrust_parts": {
       "table": "thrust_part",

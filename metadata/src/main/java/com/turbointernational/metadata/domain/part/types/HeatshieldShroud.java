@@ -12,12 +12,12 @@ import static javax.persistence.FetchType.LAZY;
 
 
 /**
- * Created by dmytro.trunykov@zorallabs.com on 2016-05-26 10:44:43.038279.
+ * Created by dmytro.trunykov@zorallabs.com on 2016-06-14 17:51:47.612557.
  */
 @Entity
-@Table(name = "heatshield")
+@Table(name = "heatshield_shroud")
 @PrimaryKeyJoinColumn(name = "part_id")
-public class Heatshield extends Part {
+public class HeatshieldShroud extends Part {
 
     //<editor-fold defaultstate="collapsed" desc="Properties: critical dimensions">
 
@@ -124,9 +124,9 @@ public class Heatshield extends Part {
     private Integer diagram;
 
     @JsonView(View.Summary.class)
-    @JsonProperty("materialThickness")
-    @Column(name = "materialThickness")
-    private Double materialThickness;
+    @JsonProperty("thickness")
+    @Column(name = "thickness")
+    private Double thickness;
 
     //</editor-fold>
 
@@ -292,12 +292,12 @@ public class Heatshield extends Part {
         this.diagram = diagram;
     }
 
-    public Double getMaterialThickness() {
-        return materialThickness;
+    public Double getThickness() {
+        return thickness;
     }
 
-    public void setMaterialThickness(Double materialThickness) {
-        this.materialThickness = materialThickness;
+    public void setThickness(Double thickness) {
+        this.thickness = thickness;
     }
 
     //</editor-fold>

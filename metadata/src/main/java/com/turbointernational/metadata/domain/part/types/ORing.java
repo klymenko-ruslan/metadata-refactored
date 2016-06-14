@@ -12,7 +12,7 @@ import static javax.persistence.FetchType.LAZY;
 
 
 /**
- * Created by dmytro.trunykov@zorallabs.com on 2016-05-26 10:44:43.039469.
+ * Created by dmytro.trunykov@zorallabs.com on 2016-06-14 17:51:47.681376.
  */
 @Entity
 @Table(name = "o_ring")

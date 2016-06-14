@@ -12,7 +12,7 @@ import static javax.persistence.FetchType.LAZY;
 
 
 /**
- * Created by dmytro.trunykov@zorallabs.com on 2016-05-26 10:44:43.038083.
+ * Created by dmytro.trunykov@zorallabs.com on 2016-06-14 17:51:47.604661.
  */
 @Entity
 @Table(name = "gasket")
@@ -44,9 +44,9 @@ public class Gasket extends Part {
     private Integer boltHoles;
 
     @JsonView(View.Summary.class)
-    @JsonProperty("a")
-    @Column(name = "a")
-    private Double a;
+    @JsonProperty("passageA")
+    @Column(name = "passageA")
+    private Double passageA;
 
     @JsonView(View.Summary.class)
     @JsonProperty("b")
@@ -84,9 +84,9 @@ public class Gasket extends Part {
     private Double h;
 
     @JsonView(View.Summary.class)
-    @JsonProperty("thicknessJ")
-    @Column(name = "thicknessJ")
-    private Double thicknessJ;
+    @JsonProperty("thickness")
+    @Column(name = "thickness")
+    private Double thickness;
 
     @JsonView(View.Summary.class)
     @JsonProperty("material")
@@ -140,12 +140,12 @@ public class Gasket extends Part {
         this.boltHoles = boltHoles;
     }
 
-    public Double getA() {
-        return a;
+    public Double getPassageA() {
+        return passageA;
     }
 
-    public void setA(Double a) {
-        this.a = a;
+    public void setPassageA(Double passageA) {
+        this.passageA = passageA;
     }
 
     public Double getB() {
@@ -204,12 +204,12 @@ public class Gasket extends Part {
         this.h = h;
     }
 
-    public Double getThicknessJ() {
-        return thicknessJ;
+    public Double getThickness() {
+        return thickness;
     }
 
-    public void setThicknessJ(Double thicknessJ) {
-        this.thicknessJ = thicknessJ;
+    public void setThickness(Double thickness) {
+        this.thickness = thickness;
     }
 
     public CriticalDimensionEnumVal getMaterial() {

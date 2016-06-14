@@ -12,7 +12,7 @@ import static javax.persistence.FetchType.LAZY;
 
 
 /**
- * Created by dmytro.trunykov@zorallabs.com on 2016-05-26 10:44:43.040587.
+ * Created by dmytro.trunykov@zorallabs.com on 2016-06-14 17:51:47.738376.
  */
 @Entity
 @Table(name = "turbine_wheel")
@@ -22,24 +22,24 @@ public class TurbineWheel extends Part {
     //<editor-fold defaultstate="collapsed" desc="Properties: critical dimensions">
 
     @JsonView(View.Summary.class)
-    @JsonProperty("inducerDiameterA")
-    @Column(name = "inducerDiameterA")
-    private Double inducerDiameterA;
+    @JsonProperty("inducerDiaA")
+    @Column(name = "inducerDiaA")
+    private Double inducerDiaA;
 
     @JsonView(View.Summary.class)
-    @JsonProperty("inducerDiameterATol")
-    @Column(name = "inducerDiameterATol")
-    private Double inducerDiameterATol;
+    @JsonProperty("inducerDiaATol")
+    @Column(name = "inducerDiaATol")
+    private Double inducerDiaATol;
 
     @JsonView(View.Summary.class)
-    @JsonProperty("exducerDiameterB")
-    @Column(name = "exducerDiameterB")
-    private Double exducerDiameterB;
+    @JsonProperty("exducerDiaB")
+    @Column(name = "exducerDiaB")
+    private Double exducerDiaB;
 
     @JsonView(View.Summary.class)
-    @JsonProperty("exducerDiameterBTol")
-    @Column(name = "exducerDiameterBTol")
-    private Double exducerDiameterBTol;
+    @JsonProperty("exducerDiaBTol")
+    @Column(name = "exducerDiaBTol")
+    private Double exducerDiaBTol;
 
     @JsonView(View.Summary.class)
     @JsonProperty("tipHeightC")
@@ -109,9 +109,9 @@ public class TurbineWheel extends Part {
     private CriticalDimensionEnumVal threadHand;
 
     @JsonView(View.Summary.class)
-    @JsonProperty("pistonRingGrooveMajorDiameterI")
-    @Column(name = "pistonRingGrooveMajorDiameterI")
-    private Double pistonRingGrooveMajorDiameterI;
+    @JsonProperty("pistonRingGrooveMajorDiaI")
+    @Column(name = "pistonRingGrooveMajorDiaI")
+    private Double pistonRingGrooveMajorDiaI;
 
     @JsonView(View.Summary.class)
     @JsonProperty("pistonRingGrooveMajorDiaITol")
@@ -119,14 +119,14 @@ public class TurbineWheel extends Part {
     private Double pistonRingGrooveMajorDiaITol;
 
     @JsonView(View.Summary.class)
-    @JsonProperty("pistonRingGrooveMinorDiameterJ")
-    @Column(name = "pistonRingGrooveMinorDiameterJ")
-    private Double pistonRingGrooveMinorDiameterJ;
+    @JsonProperty("pistonRingGrooveMinorDiaJ")
+    @Column(name = "pistonRingGrooveMinorDiaJ")
+    private Double pistonRingGrooveMinorDiaJ;
 
     @JsonView(View.Summary.class)
-    @JsonProperty("pistonRingGrooveMinorJDiaTol")
-    @Column(name = "pistonRingGrooveMinorJDiaTol")
-    private Double pistonRingGrooveMinorJDiaTol;
+    @JsonProperty("pistonRingGrooveMinorDiaJTol")
+    @Column(name = "pistonRingGrooveMinorDiaJTol")
+    private Double pistonRingGrooveMinorDiaJTol;
 
     @JsonView(View.Summary.class)
     @JsonProperty("pistonRingGrooveWidthK")
@@ -211,36 +211,36 @@ public class TurbineWheel extends Part {
 
     //<editor-fold defaultstate="collapsed" desc="Getters and setters: critical dimensions">
 
-    public Double getInducerDiameterA() {
-        return inducerDiameterA;
+    public Double getInducerDiaA() {
+        return inducerDiaA;
     }
 
-    public void setInducerDiameterA(Double inducerDiameterA) {
-        this.inducerDiameterA = inducerDiameterA;
+    public void setInducerDiaA(Double inducerDiaA) {
+        this.inducerDiaA = inducerDiaA;
     }
 
-    public Double getInducerDiameterATol() {
-        return inducerDiameterATol;
+    public Double getInducerDiaATol() {
+        return inducerDiaATol;
     }
 
-    public void setInducerDiameterATol(Double inducerDiameterATol) {
-        this.inducerDiameterATol = inducerDiameterATol;
+    public void setInducerDiaATol(Double inducerDiaATol) {
+        this.inducerDiaATol = inducerDiaATol;
     }
 
-    public Double getExducerDiameterB() {
-        return exducerDiameterB;
+    public Double getExducerDiaB() {
+        return exducerDiaB;
     }
 
-    public void setExducerDiameterB(Double exducerDiameterB) {
-        this.exducerDiameterB = exducerDiameterB;
+    public void setExducerDiaB(Double exducerDiaB) {
+        this.exducerDiaB = exducerDiaB;
     }
 
-    public Double getExducerDiameterBTol() {
-        return exducerDiameterBTol;
+    public Double getExducerDiaBTol() {
+        return exducerDiaBTol;
     }
 
-    public void setExducerDiameterBTol(Double exducerDiameterBTol) {
-        this.exducerDiameterBTol = exducerDiameterBTol;
+    public void setExducerDiaBTol(Double exducerDiaBTol) {
+        this.exducerDiaBTol = exducerDiaBTol;
     }
 
     public Double getTipHeightC() {
@@ -347,12 +347,12 @@ public class TurbineWheel extends Part {
         this.threadHand = threadHand;
     }
 
-    public Double getPistonRingGrooveMajorDiameterI() {
-        return pistonRingGrooveMajorDiameterI;
+    public Double getPistonRingGrooveMajorDiaI() {
+        return pistonRingGrooveMajorDiaI;
     }
 
-    public void setPistonRingGrooveMajorDiameterI(Double pistonRingGrooveMajorDiameterI) {
-        this.pistonRingGrooveMajorDiameterI = pistonRingGrooveMajorDiameterI;
+    public void setPistonRingGrooveMajorDiaI(Double pistonRingGrooveMajorDiaI) {
+        this.pistonRingGrooveMajorDiaI = pistonRingGrooveMajorDiaI;
     }
 
     public Double getPistonRingGrooveMajorDiaITol() {
@@ -363,20 +363,20 @@ public class TurbineWheel extends Part {
         this.pistonRingGrooveMajorDiaITol = pistonRingGrooveMajorDiaITol;
     }
 
-    public Double getPistonRingGrooveMinorDiameterJ() {
-        return pistonRingGrooveMinorDiameterJ;
+    public Double getPistonRingGrooveMinorDiaJ() {
+        return pistonRingGrooveMinorDiaJ;
     }
 
-    public void setPistonRingGrooveMinorDiameterJ(Double pistonRingGrooveMinorDiameterJ) {
-        this.pistonRingGrooveMinorDiameterJ = pistonRingGrooveMinorDiameterJ;
+    public void setPistonRingGrooveMinorDiaJ(Double pistonRingGrooveMinorDiaJ) {
+        this.pistonRingGrooveMinorDiaJ = pistonRingGrooveMinorDiaJ;
     }
 
-    public Double getPistonRingGrooveMinorJDiaTol() {
-        return pistonRingGrooveMinorJDiaTol;
+    public Double getPistonRingGrooveMinorDiaJTol() {
+        return pistonRingGrooveMinorDiaJTol;
     }
 
-    public void setPistonRingGrooveMinorJDiaTol(Double pistonRingGrooveMinorJDiaTol) {
-        this.pistonRingGrooveMinorJDiaTol = pistonRingGrooveMinorJDiaTol;
+    public void setPistonRingGrooveMinorDiaJTol(Double pistonRingGrooveMinorDiaJTol) {
+        this.pistonRingGrooveMinorDiaJTol = pistonRingGrooveMinorDiaJTol;
     }
 
     public Double getPistonRingGrooveWidthK() {

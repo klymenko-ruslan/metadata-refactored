@@ -12,7 +12,7 @@ import static javax.persistence.FetchType.LAZY;
 
 
 /**
- * Created by dmytro.trunykov@zorallabs.com on 2016-05-26 10:44:43.037613.
+ * Created by dmytro.trunykov@zorallabs.com on 2016-06-14 17:51:47.599633.
  */
 @Entity
 @Table(name = "compressor_wheel")
@@ -62,14 +62,14 @@ public class CompressorWheel extends Part {
     private Double inducerDiameterATol;
 
     @JsonView(View.Summary.class)
-    @JsonProperty("exducerBDiameter")
-    @Column(name = "exducerBDiameter")
-    private Double exducerBDiameter;
+    @JsonProperty("exducerDiameterB")
+    @Column(name = "exducerDiameterB")
+    private Double exducerDiameterB;
 
     @JsonView(View.Summary.class)
-    @JsonProperty("exducerBDiameterTol")
-    @Column(name = "exducerBDiameterTol")
-    private Double exducerBDiameterTol;
+    @JsonProperty("exducerDiameterBTol")
+    @Column(name = "exducerDiameterBTol")
+    private Double exducerDiameterBTol;
 
     @JsonView(View.Summary.class)
     @JsonProperty("tipLocation")
@@ -113,9 +113,8 @@ public class CompressorWheel extends Part {
 
     @JsonView(View.Summary.class)
     @JsonProperty("bladeCount")
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "bladeCount")
-    private CriticalDimensionEnumVal bladeCount;
+    @Column(name = "bladeCount")
+    private Integer bladeCount;
 
     @JsonView(View.Summary.class)
     @JsonProperty("platformThickness")
@@ -239,20 +238,20 @@ public class CompressorWheel extends Part {
         this.inducerDiameterATol = inducerDiameterATol;
     }
 
-    public Double getExducerBDiameter() {
-        return exducerBDiameter;
+    public Double getExducerDiameterB() {
+        return exducerDiameterB;
     }
 
-    public void setExducerBDiameter(Double exducerBDiameter) {
-        this.exducerBDiameter = exducerBDiameter;
+    public void setExducerDiameterB(Double exducerDiameterB) {
+        this.exducerDiameterB = exducerDiameterB;
     }
 
-    public Double getExducerBDiameterTol() {
-        return exducerBDiameterTol;
+    public Double getExducerDiameterBTol() {
+        return exducerDiameterBTol;
     }
 
-    public void setExducerBDiameterTol(Double exducerBDiameterTol) {
-        this.exducerBDiameterTol = exducerBDiameterTol;
+    public void setExducerDiameterBTol(Double exducerDiameterBTol) {
+        this.exducerDiameterBTol = exducerDiameterBTol;
     }
 
     public Double getTipLocation() {
@@ -319,11 +318,11 @@ public class CompressorWheel extends Part {
         this.minBoreDiameter = minBoreDiameter;
     }
 
-    public CriticalDimensionEnumVal getBladeCount() {
+    public Integer getBladeCount() {
         return bladeCount;
     }
 
-    public void setBladeCount(CriticalDimensionEnumVal bladeCount) {
+    public void setBladeCount(Integer bladeCount) {
         this.bladeCount = bladeCount;
     }
 

@@ -12,7 +12,7 @@ import static javax.persistence.FetchType.LAZY;
 
 
 /**
- * Created by dmytro.trunykov@zorallabs.com on 2016-05-26 10:44:43.039792.
+ * Created by dmytro.trunykov@zorallabs.com on 2016-06-14 17:51:47.690869.
  */
 @Entity
 @Table(name = "piston_ring")
@@ -27,9 +27,9 @@ public class PistonRing extends Part {
     private Double installedDiameterA;
 
     @JsonView(View.Summary.class)
-    @JsonProperty("gapInstalledDiameterB")
-    @Column(name = "gapInstalledDiameterB")
-    private Double gapInstalledDiameterB;
+    @JsonProperty("gapBInstalledDiameter")
+    @Column(name = "gapBInstalledDiameter")
+    private Double gapBInstalledDiameter;
 
     @JsonView(View.Summary.class)
     @JsonProperty("thicknessC")
@@ -90,12 +90,12 @@ public class PistonRing extends Part {
         this.installedDiameterA = installedDiameterA;
     }
 
-    public Double getGapInstalledDiameterB() {
-        return gapInstalledDiameterB;
+    public Double getGapBInstalledDiameter() {
+        return gapBInstalledDiameter;
     }
 
-    public void setGapInstalledDiameterB(Double gapInstalledDiameterB) {
-        this.gapInstalledDiameterB = gapInstalledDiameterB;
+    public void setGapBInstalledDiameter(Double gapBInstalledDiameter) {
+        this.gapBInstalledDiameter = gapBInstalledDiameter;
     }
 
     public Double getThicknessC() {

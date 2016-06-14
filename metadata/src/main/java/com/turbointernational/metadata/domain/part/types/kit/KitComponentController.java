@@ -85,7 +85,8 @@ public class KitComponentController {
         KitComponent component = kitComponentDao.findOne(id);
         
         // Remove from the component
-        component.getKit().getComponents().remove(component);
+        // TODO: line below commented out during migration to critical dimensions
+        //component.getKit().getComponents().remove(component);
         kitComponentDao.remove(component);
         
         // Update the changelog

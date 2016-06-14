@@ -12,7 +12,7 @@ import static javax.persistence.FetchType.LAZY;
 
 
 /**
- * Created by dmytro.trunykov@zorallabs.com on 2016-05-26 10:44:43.041842.
+ * Created by dmytro.trunykov@zorallabs.com on 2016-06-14 17:51:47.769266.
  */
 @Entity
 @Table(name = "thrust_washer")
@@ -22,34 +22,34 @@ public class ThrustWasher extends Part {
     //<editor-fold defaultstate="collapsed" desc="Properties: critical dimensions">
 
     @JsonView(View.Summary.class)
-    @JsonProperty("aThickness")
-    @Column(name = "aThickness")
-    private Double aThickness;
+    @JsonProperty("thickness")
+    @Column(name = "thickness")
+    private Double thickness;
 
     @JsonView(View.Summary.class)
-    @JsonProperty("aThicknessTol")
-    @Column(name = "aThicknessTol")
-    private Double aThicknessTol;
+    @JsonProperty("thicknessTol")
+    @Column(name = "thicknessTol")
+    private Double thicknessTol;
 
     @JsonView(View.Summary.class)
-    @JsonProperty("bOd")
-    @Column(name = "bOd")
-    private Double bOd;
+    @JsonProperty("od")
+    @Column(name = "od")
+    private Double od;
 
     @JsonView(View.Summary.class)
-    @JsonProperty("bOdTol")
-    @Column(name = "bOdTol")
-    private Double bOdTol;
+    @JsonProperty("odTol")
+    @Column(name = "odTol")
+    private Double odTol;
 
     @JsonView(View.Summary.class)
-    @JsonProperty("cId")
-    @Column(name = "cId")
-    private Double cId;
+    @JsonProperty("id_")
+    @Column(name = "id_")
+    private Double id_;
 
     @JsonView(View.Summary.class)
-    @JsonProperty("cIdTol")
-    @Column(name = "cIdTol")
-    private Double cIdTol;
+    @JsonProperty("idTol")
+    @Column(name = "idTol")
+    private Double idTol;
 
     @JsonView(View.Summary.class)
     @JsonProperty("material")
@@ -66,52 +66,52 @@ public class ThrustWasher extends Part {
 
     //<editor-fold defaultstate="collapsed" desc="Getters and setters: critical dimensions">
 
-    public Double getAThickness() {
-        return aThickness;
+    public Double getThickness() {
+        return thickness;
     }
 
-    public void setAThickness(Double aThickness) {
-        this.aThickness = aThickness;
+    public void setThickness(Double thickness) {
+        this.thickness = thickness;
     }
 
-    public Double getAThicknessTol() {
-        return aThicknessTol;
+    public Double getThicknessTol() {
+        return thicknessTol;
     }
 
-    public void setAThicknessTol(Double aThicknessTol) {
-        this.aThicknessTol = aThicknessTol;
+    public void setThicknessTol(Double thicknessTol) {
+        this.thicknessTol = thicknessTol;
     }
 
-    public Double getBOd() {
-        return bOd;
+    public Double getOd() {
+        return od;
     }
 
-    public void setBOd(Double bOd) {
-        this.bOd = bOd;
+    public void setOd(Double od) {
+        this.od = od;
     }
 
-    public Double getBOdTol() {
-        return bOdTol;
+    public Double getOdTol() {
+        return odTol;
     }
 
-    public void setBOdTol(Double bOdTol) {
-        this.bOdTol = bOdTol;
+    public void setOdTol(Double odTol) {
+        this.odTol = odTol;
     }
 
-    public Double getCId() {
-        return cId;
+    public Double getId_() {
+        return id_;
     }
 
-    public void setCId(Double cId) {
-        this.cId = cId;
+    public void setId_(Double id_) {
+        this.id_ = id_;
     }
 
-    public Double getCIdTol() {
-        return cIdTol;
+    public Double getIdTol() {
+        return idTol;
     }
 
-    public void setCIdTol(Double cIdTol) {
-        this.cIdTol = cIdTol;
+    public void setIdTol(Double idTol) {
+        this.idTol = idTol;
     }
 
     public CriticalDimensionEnumVal getMaterial() {

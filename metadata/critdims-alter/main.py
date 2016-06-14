@@ -139,7 +139,7 @@ class InputData:
 
         self.current_state_idx = dict()
         with open(in_current_state) as fp:
-            current_state = csv.reader(fp, delimiter='\t')
+            current_state = csv.reader(fp, delimiter="\t")
             self.current_state_idx = {
                 CurrentStateKey(cs[1], cs[2]): (cs[0], cs[3])
                 for cs in current_state
@@ -183,7 +183,7 @@ class InputData:
                 status = PartTypeStatusEnum.exist
                 mas = ptmd["magento_attribute_set"]
                 merged_ptmds.add(pt_id)
-            pt = PartType(id=pt_id, name=ptmsa["name"],
+            pt = PartType(id=pt_id, name=name,
                           name_short=ptmsa["name_short"],
                           magento_attribute_set=mas, value=value,
                           status=status)
@@ -572,6 +572,8 @@ insert into crit_dim_enum_val(id, crit_dim_enum_id, val) values
 def cd2colmetainfo(cd):
     """Convert a critical dimension to column name and types."""
     col_name = name2jsonName(cd["name"])
+    if (col_name == "id"):
+        col_name = "id_"
     types = cd2types(cd)
     return ColumnMetaInfo(col_name=col_name, types=types)
 
@@ -630,9 +632,9 @@ def generate_create_table(table_name, cda):
     return columns_meta, sql
 
 
-def register_crit_dim(input_data, table_name, pt_id, pt_cda, columns_meta):
+def register_crit_dim(alter_file, input_data, table_name, pt_id, pt_cda,
+                      columns_meta):
     """Generate INSERT statements to register a new critical dimension."""
-    global alter_file
     sql = "insert into crit_dim(id, part_type_id, seq_num, data_type, " \
         "unit, "\
         "tolerance, name, json_name, idx_name, " \
@@ -788,11 +790,16 @@ def import_update(part_id, table_name, import_values):
 
 def change_part_type(part_id, new_part_type_id, old_table_name):
     """Delete record about part from a specific table and change its type."""
-    retval = ("delete from {old_table_name} where part_id={part_id};\n"
-              "update part set part_type_id={new_part_type_id} "
-              "where id={part_id};\n"
-              .format(old_table_name=old_table_name,
-                      new_part_type_id=new_part_type_id, part_id=part_id))
+    retval = ""
+    if old_table_name == "journal_bearing":
+        retval += ("delete from standard_journal_bearing "
+                   "where standard_part_id={part_id} "
+                   "or oversized_part_id={part_id};\n".format(part_id=part_id))
+    retval += ("delete from {old_table_name} where part_id={part_id};\n"
+               "update part set part_type_id={new_part_type_id} "
+               "where id={part_id};\n"
+               .format(old_table_name=old_table_name,
+                       new_part_type_id=new_part_type_id, part_id=part_id))
     return retval
 
 
@@ -882,6 +889,26 @@ with open(filename_alter, "w", encoding="utf-8") as alter_file:
 
 alter table part add column legend_img_filename varchar(255);
 alter table part_type add column legend_img_filename varchar(255);
+-- Change 'magento_attribute_set' (a current value is 'Backplate') for obsolete
+-- part type 'Backplate / Sealplate' to avoid conflict with
+-- a new part type 'Backplate'.
+update part_type set magento_attribute_set='Backplate or Sealplate'
+where id=14;
+alter table backplate rename backplate_sealplate;
+-- The same change for 'Heatshield / Shroud':
+-- 'Heatshield' -> 'Heatshield or Shroud'
+update part_type set magento_attribute_set='Heatshield or Shroud'
+where id=15;
+alter table heatshield rename heatshield_shroud;
+
+alter table gasket modify gasket_type_id bigint(20) null;
+alter table journal_bearing modify outside_dim_min decimal(10,6) null;
+alter table journal_bearing modify outside_dim_max decimal(10,6) null;
+alter table journal_bearing modify inside_dim_min decimal(10,6) null;
+alter table journal_bearing modify inside_dim_max decimal(10,6) null;
+alter table journal_bearing modify width decimal(10,6) null;
+alter table kit modify kit_type_id bigint(20) null;
+alter table turbo modify turbo_model_id bigint(20) null;
         """, file=alter_file)
 
     input_data = InputData(args.in_part_type, args.in_part_type_metadata,
@@ -935,8 +962,8 @@ alter table part_type add column legend_img_filename varchar(255);
         ptid2columns_meta[pt.id] = columns_meta
         print(sql, file=alter_file)
 
-        sql = register_crit_dim(input_data, table_name, pt.id, pt_cda,
-                                columns_meta)
+        sql = register_crit_dim(alter_file, input_data, table_name, pt.id,
+                                pt_cda, columns_meta)
 
         print(sql, file=alter_file)
 
@@ -944,10 +971,10 @@ alter table part_type add column legend_img_filename varchar(255);
     for pt in input_data.getPartTypes():
         inserted = updated = conflicted = 0
         manfr_id = 11  # Turbo International
+        pt_cda = input_data.getCdaByPt(pt)
         if pt.status != PartTypeStatusEnum.obsolete:
             datafile_name = os.path.join(args.in_data_dir,
                                          pt.name_short + ".tsv")
-            pt_cda = input_data.getCdaByPt(pt)
             columns_meta = ptid2columns_meta[pt.id]
             with open(datafile_name, "rt") as df:
                 tsvin = csv.reader(df, delimiter='\t')
@@ -955,7 +982,14 @@ alter table part_type add column legend_img_filename varchar(255);
                     if idx == 0:
                         headers = row
                     else:
+                        ed = input_data.getExtraDataForPt(pt)
+                        table_name = ed["table"]
                         part_num = row[1]
+
+                        # TODO: workaround
+                        if part_num in ["9-Z-9999", "part"]:
+                            continue
+
                         # Range [2:] below skips 'id' and
                         # 'manufacturer part number'.
                         import_values = tsvrec2importval(pt_cda, columns_meta,
@@ -984,9 +1018,15 @@ alter table part_type add column legend_img_filename varchar(255);
                                 ed2 = input_data.getExtraDataForPt(pt_db)
                                 old_table_name = ed2["table"]
                                 if old_table_name is not None:
-                                    if part_num == '5-A-0293':
-                                        print("pt_db: {}\ned2: {}"
-                                              .format(pt_db, ed2))
+
+                                    # if part_num == '5-A-0293':
+                                    #     print("part_id: {}\npt_db: {}\n"
+                                    #           "ed2: {}"
+                                    #           .format(part_id, pt_db, ed2))
+                                    #     print("table_name: {}\nold: {}"
+                                    #           .format(table_name,
+                                    #                   old_table_name))
+
                                     # Remove the part from obsolete place.
                                     sql = change_part_type(part_id, pt.id,
                                                            old_table_name)
@@ -1005,6 +1045,7 @@ alter table part_type add column legend_img_filename varchar(255);
 
         # print("{}: inserted: {}, updated: {}, conflicts: {}".format(
         #       pt.name, inserted, updated, conflicted))
+
         # Generate java code snippets.
         ed = input_data.getExtraDataForPt(pt)
         table_name = ed["table"]

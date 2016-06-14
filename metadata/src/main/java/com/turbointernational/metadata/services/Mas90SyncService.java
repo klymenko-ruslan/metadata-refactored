@@ -538,7 +538,7 @@ public class Mas90SyncService {
             } else if (partTypeId == 14L) {
                 p = new Backplate();
             } else if (partTypeId == 15L) {
-                p = new Heatshield();
+                p = new HeatshieldShroud();
             } else if (partTypeId == 16L) {
                 p = new NozzleRing();
             } else {

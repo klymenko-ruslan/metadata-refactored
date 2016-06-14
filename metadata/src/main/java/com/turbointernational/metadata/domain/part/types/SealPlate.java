@@ -12,7 +12,7 @@ import static javax.persistence.FetchType.LAZY;
 
 
 /**
- * Created by dmytro.trunykov@zorallabs.com on 2016-05-26 10:44:43.040267.
+ * Created by dmytro.trunykov@zorallabs.com on 2016-06-14 17:51:47.705067.
  */
 @Entity
 @Table(name = "seal_plate")
@@ -20,16 +20,6 @@ import static javax.persistence.FetchType.LAZY;
 public class SealPlate extends Part {
 
     //<editor-fold defaultstate="collapsed" desc="Properties: critical dimensions">
-
-    @JsonView(View.Summary.class)
-    @JsonProperty("leadInChmfr05Angle")
-    @Column(name = "leadInChmfr05Angle")
-    private Double leadInChmfr05Angle;
-
-    @JsonView(View.Summary.class)
-    @JsonProperty("leadInChmfrLen")
-    @Column(name = "leadInChmfrLen")
-    private Double leadInChmfrLen;
 
     @JsonView(View.Summary.class)
     @JsonProperty("diaA")
@@ -152,6 +142,16 @@ public class SealPlate extends Part {
     private Double hubPosFTol;
 
     @JsonView(View.Summary.class)
+    @JsonProperty("leadInChmfr05Angle")
+    @Column(name = "leadInChmfr05Angle")
+    private Double leadInChmfr05Angle;
+
+    @JsonView(View.Summary.class)
+    @JsonProperty("leadInChmfrLen")
+    @Column(name = "leadInChmfrLen")
+    private Double leadInChmfrLen;
+
+    @JsonView(View.Summary.class)
     @JsonProperty("clampedWidthG")
     @Column(name = "clampedWidthG")
     private Double clampedWidthG;
@@ -174,12 +174,6 @@ public class SealPlate extends Part {
     private CriticalDimensionEnumVal dynamicCarbonSeal;
 
     @JsonView(View.Summary.class)
-    @JsonProperty("dynCs")
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "dynCs")
-    private CriticalDimensionEnumVal dynCs;
-
-    @JsonView(View.Summary.class)
     @JsonProperty("matL")
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "matL")
@@ -198,22 +192,6 @@ public class SealPlate extends Part {
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Getters and setters: critical dimensions">
-
-    public Double getLeadInChmfr05Angle() {
-        return leadInChmfr05Angle;
-    }
-
-    public void setLeadInChmfr05Angle(Double leadInChmfr05Angle) {
-        this.leadInChmfr05Angle = leadInChmfr05Angle;
-    }
-
-    public Double getLeadInChmfrLen() {
-        return leadInChmfrLen;
-    }
-
-    public void setLeadInChmfrLen(Double leadInChmfrLen) {
-        this.leadInChmfrLen = leadInChmfrLen;
-    }
 
     public Double getDiaA() {
         return diaA;
@@ -407,6 +385,22 @@ public class SealPlate extends Part {
         this.hubPosFTol = hubPosFTol;
     }
 
+    public Double getLeadInChmfr05Angle() {
+        return leadInChmfr05Angle;
+    }
+
+    public void setLeadInChmfr05Angle(Double leadInChmfr05Angle) {
+        this.leadInChmfr05Angle = leadInChmfr05Angle;
+    }
+
+    public Double getLeadInChmfrLen() {
+        return leadInChmfrLen;
+    }
+
+    public void setLeadInChmfrLen(Double leadInChmfrLen) {
+        this.leadInChmfrLen = leadInChmfrLen;
+    }
+
     public Double getClampedWidthG() {
         return clampedWidthG;
     }
@@ -437,14 +431,6 @@ public class SealPlate extends Part {
 
     public void setDynamicCarbonSeal(CriticalDimensionEnumVal dynamicCarbonSeal) {
         this.dynamicCarbonSeal = dynamicCarbonSeal;
-    }
-
-    public CriticalDimensionEnumVal getDynCs() {
-        return dynCs;
-    }
-
-    public void setDynCs(CriticalDimensionEnumVal dynCs) {
-        this.dynCs = dynCs;
     }
 
     public CriticalDimensionEnumVal getMatL() {

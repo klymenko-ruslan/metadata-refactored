@@ -12,7 +12,7 @@ import static javax.persistence.FetchType.LAZY;
 
 
 /**
- * Created by dmytro.trunykov@zorallabs.com on 2016-05-26 10:44:43.041980.
+ * Created by dmytro.trunykov@zorallabs.com on 2016-06-14 17:51:47.771081.
  */
 @Entity
 @Table(name = "washer")
@@ -22,34 +22,34 @@ public class Washer extends Part {
     //<editor-fold defaultstate="collapsed" desc="Properties: critical dimensions">
 
     @JsonView(View.Summary.class)
-    @JsonProperty("odA")
-    @Column(name = "odA")
-    private Double odA;
+    @JsonProperty("od")
+    @Column(name = "od")
+    private Double od;
 
     @JsonView(View.Summary.class)
-    @JsonProperty("odATol")
-    @Column(name = "odATol")
-    private Double odATol;
+    @JsonProperty("odTol")
+    @Column(name = "odTol")
+    private Double odTol;
 
     @JsonView(View.Summary.class)
-    @JsonProperty("idB")
-    @Column(name = "idB")
-    private Double idB;
+    @JsonProperty("id_")
+    @Column(name = "id_")
+    private Double id_;
 
     @JsonView(View.Summary.class)
-    @JsonProperty("idTolB")
-    @Column(name = "idTolB")
-    private Double idTolB;
+    @JsonProperty("idTol")
+    @Column(name = "idTol")
+    private Double idTol;
 
     @JsonView(View.Summary.class)
-    @JsonProperty("thicknessC")
-    @Column(name = "thicknessC")
-    private Double thicknessC;
+    @JsonProperty("thickness")
+    @Column(name = "thickness")
+    private Double thickness;
 
     @JsonView(View.Summary.class)
-    @JsonProperty("thicknessTolC")
-    @Column(name = "thicknessTolC")
-    private Double thicknessTolC;
+    @JsonProperty("thicknessTol")
+    @Column(name = "thicknessTol")
+    private Double thicknessTol;
 
     @JsonView(View.Summary.class)
     @JsonProperty("type")
@@ -83,52 +83,52 @@ public class Washer extends Part {
 
     //<editor-fold defaultstate="collapsed" desc="Getters and setters: critical dimensions">
 
-    public Double getOdA() {
-        return odA;
+    public Double getOd() {
+        return od;
     }
 
-    public void setOdA(Double odA) {
-        this.odA = odA;
+    public void setOd(Double od) {
+        this.od = od;
     }
 
-    public Double getOdATol() {
-        return odATol;
+    public Double getOdTol() {
+        return odTol;
     }
 
-    public void setOdATol(Double odATol) {
-        this.odATol = odATol;
+    public void setOdTol(Double odTol) {
+        this.odTol = odTol;
     }
 
-    public Double getIdB() {
-        return idB;
+    public Double getId_() {
+        return id_;
     }
 
-    public void setIdB(Double idB) {
-        this.idB = idB;
+    public void setId_(Double id_) {
+        this.id_ = id_;
     }
 
-    public Double getIdTolB() {
-        return idTolB;
+    public Double getIdTol() {
+        return idTol;
     }
 
-    public void setIdTolB(Double idTolB) {
-        this.idTolB = idTolB;
+    public void setIdTol(Double idTol) {
+        this.idTol = idTol;
     }
 
-    public Double getThicknessC() {
-        return thicknessC;
+    public Double getThickness() {
+        return thickness;
     }
 
-    public void setThicknessC(Double thicknessC) {
-        this.thicknessC = thicknessC;
+    public void setThickness(Double thickness) {
+        this.thickness = thickness;
     }
 
-    public Double getThicknessTolC() {
-        return thicknessTolC;
+    public Double getThicknessTol() {
+        return thicknessTol;
     }
 
-    public void setThicknessTolC(Double thicknessTolC) {
-        this.thicknessTolC = thicknessTolC;
+    public void setThicknessTol(Double thicknessTol) {
+        this.thicknessTol = thicknessTol;
     }
 
     public CriticalDimensionEnumVal getType() {

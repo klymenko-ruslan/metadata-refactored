@@ -12,7 +12,7 @@ import static javax.persistence.FetchType.LAZY;
 
 
 /**
- * Created by dmytro.trunykov@zorallabs.com on 2016-05-26 10:44:43.039954.
+ * Created by dmytro.trunykov@zorallabs.com on 2016-06-14 17:51:47.697546.
  */
 @Entity
 @Table(name = "retaining_ring")
@@ -74,14 +74,14 @@ public class RetainingRing extends Part {
     private Double freeDiaA;
 
     @JsonView(View.Summary.class)
-    @JsonProperty("freeDiaLowerATol")
-    @Column(name = "freeDiaLowerATol")
-    private Double freeDiaLowerATol;
+    @JsonProperty("freeDiaALowerTol")
+    @Column(name = "freeDiaALowerTol")
+    private Double freeDiaALowerTol;
 
     @JsonView(View.Summary.class)
-    @JsonProperty("freeDiaUpperATol")
-    @Column(name = "freeDiaUpperATol")
-    private Double freeDiaUpperATol;
+    @JsonProperty("freeDiaAUpperTol")
+    @Column(name = "freeDiaAUpperTol")
+    private Double freeDiaAUpperTol;
 
     @JsonView(View.Summary.class)
     @JsonProperty("thicknessB")
@@ -241,20 +241,20 @@ public class RetainingRing extends Part {
         this.freeDiaA = freeDiaA;
     }
 
-    public Double getFreeDiaLowerATol() {
-        return freeDiaLowerATol;
+    public Double getFreeDiaALowerTol() {
+        return freeDiaALowerTol;
     }
 
-    public void setFreeDiaLowerATol(Double freeDiaLowerATol) {
-        this.freeDiaLowerATol = freeDiaLowerATol;
+    public void setFreeDiaALowerTol(Double freeDiaALowerTol) {
+        this.freeDiaALowerTol = freeDiaALowerTol;
     }
 
-    public Double getFreeDiaUpperATol() {
-        return freeDiaUpperATol;
+    public Double getFreeDiaAUpperTol() {
+        return freeDiaAUpperTol;
     }
 
-    public void setFreeDiaUpperATol(Double freeDiaUpperATol) {
-        this.freeDiaUpperATol = freeDiaUpperATol;
+    public void setFreeDiaAUpperTol(Double freeDiaAUpperTol) {
+        this.freeDiaAUpperTol = freeDiaAUpperTol;
     }
 
     public Double getThicknessB() {

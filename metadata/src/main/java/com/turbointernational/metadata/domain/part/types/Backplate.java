@@ -12,7 +12,7 @@ import static javax.persistence.FetchType.LAZY;
 
 
 /**
- * Created by dmytro.trunykov@zorallabs.com on 2016-05-26 10:44:43.036436.
+ * Created by dmytro.trunykov@zorallabs.com on 2016-06-14 17:51:47.523691.
  */
 @Entity
 @Table(name = "backplate")
@@ -140,9 +140,9 @@ public class Backplate extends Part {
     private Double ccLocPosGTol;
 
     @JsonView(View.Summary.class)
-    @JsonProperty("leadInChmfr05Angle")
-    @Column(name = "leadInChmfr05Angle")
-    private Double leadInChmfr05Angle;
+    @JsonProperty("leadInChmfr12Angle")
+    @Column(name = "leadInChmfr12Angle")
+    private Double leadInChmfr12Angle;
 
     @JsonView(View.Summary.class)
     @JsonProperty("leadInChmfrLen")
@@ -353,12 +353,12 @@ public class Backplate extends Part {
         this.ccLocPosGTol = ccLocPosGTol;
     }
 
-    public Double getLeadInChmfr05Angle() {
-        return leadInChmfr05Angle;
+    public Double getLeadInChmfr12Angle() {
+        return leadInChmfr12Angle;
     }
 
-    public void setLeadInChmfr05Angle(Double leadInChmfr05Angle) {
-        this.leadInChmfr05Angle = leadInChmfr05Angle;
+    public void setLeadInChmfr12Angle(Double leadInChmfr12Angle) {
+        this.leadInChmfr12Angle = leadInChmfr12Angle;
     }
 
     public Double getLeadInChmfrLen() {
