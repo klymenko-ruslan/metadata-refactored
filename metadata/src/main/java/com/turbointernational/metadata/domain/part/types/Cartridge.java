@@ -12,7 +12,7 @@ import static javax.persistence.FetchType.LAZY;
 
 
 /**
- * Created by dmytro.trunykov@zorallabs.com on 2016-06-14 17:51:47.498106.
+ * Created by dmytro.trunykov@zorallabs.com on 2016-06-15 17:07:35.985624.
  */
 @Entity
 @Table(name = "cartridge")
