@@ -58,7 +58,8 @@ public abstract class AbstractMas90 implements Mas90 {
 
     @Override
     public ItemPricing getItemPricing(String itemNumber) {
-        final ItemPricing itemPricing = new ItemPricing(itemNumber, getStandardPrice(itemNumber));
+        BigDecimal standardPrice = getStandardPrice(itemNumber);
+        final ItemPricing itemPricing = new ItemPricing(itemNumber, standardPrice);
 
         // Get the Product-Customer pricing
         h2db.query(

@@ -380,7 +380,7 @@ public class MagmiController {
             
             columns.put("price", itemPricing.getStandardPrice().toString());
 
-            addErpCustomerPrices(mas90, itemPricing, columns);
+            addErpCustomerPrices(itemPricing, columns);
             addErpGroupPrices(mas90, itemPricing, columns);
         } catch (UnknownDiscountCodeException e) {
                 logger.warn("Unknown discount code {} for product {}", e.getCode(), product.getPartNumber());
@@ -392,7 +392,7 @@ public class MagmiController {
     }
     
     // bob@example.com;0:$1.00;10:$0.95;20:$0.90|jim@example.com....
-    private void addErpCustomerPrices(Mas90 mas90, ItemPricing itemPricing, Map<String, String> columns) throws IOException {
+    private void addErpCustomerPrices(ItemPricing itemPricing, Map<String, String> columns) throws IOException {
         
         // Build the customer price string
         StringBuilder priceString = new StringBuilder();

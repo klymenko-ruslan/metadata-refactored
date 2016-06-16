@@ -54,7 +54,6 @@ public class Pricing {
                 case Percentage:
                     BigDecimal pctMultiplier = rate.movePointLeft(2);
                     BigDecimal discountAmount = standardPrice.multiply(pctMultiplier);
-
                     return standardPrice.subtract(discountAmount);
                 default:
                     throw new IllegalStateException("Unknown discount type.");
@@ -65,21 +64,18 @@ public class Pricing {
     public static final int BREAK_COUNT = 5;
     
     public static Pricing fromResultSet(ResultSet rs) throws SQLException {
-        String discountTypeCode = (String) rs.getString("discount_type");
-
-        Pricing pricing = new Pricing(DiscountType.getDiscountType(discountTypeCode));
-
+        String discountTypeCode = rs.getString("discount_type");
+        DiscountType discountType = DiscountType.getDiscountType(discountTypeCode);
+        Pricing pricing = new Pricing(discountType);
         for (int i = 0; i < BREAK_COUNT; i++) {
             String breakColumnName = "BreakQty" + (i+1);
             String rateColumnName  = "DiscountMarkupPriceRate" + (i+1);
-
             pricing.breaks[i] = rs.getBigDecimal(breakColumnName); // Quantity
             pricing.rates[i] = rs.getBigDecimal(rateColumnName);   // Discount/Markup/Price/Rate
         }
-
         return pricing;
     }
-    
+
     private final DiscountType discountType;
     private final BigDecimal[] breaks;
     private final BigDecimal[] rates;

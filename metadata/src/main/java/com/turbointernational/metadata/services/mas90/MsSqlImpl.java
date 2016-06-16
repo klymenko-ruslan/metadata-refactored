@@ -1,14 +1,21 @@
 package com.turbointernational.metadata.services.mas90;
 
+import com.turbointernational.metadata.domain.part.Part;
+import com.turbointernational.metadata.domain.part.PartDao;
+import com.turbointernational.metadata.exceptions.PartNotFound;
+import com.turbointernational.metadata.services.mas90.pricing.ItemPricing;
+import javassist.NotFoundException;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import javax.sql.DataSource;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -17,11 +24,28 @@ import java.sql.SQLException;
  */
 public class MsSqlImpl extends AbstractMas90 {
 
-    private JdbcTemplate mssqldb;
+    private PartDao partDao;
 
-    public MsSqlImpl(DataSource dataSourceMas90) throws IOException {
+    private final JdbcTemplate mssqldb;
+
+    public MsSqlImpl(PartDao partDao, DataSource dataSourceMas90) throws IOException {
+        this.partDao = partDao;
         this.mssqldb = new JdbcTemplate(dataSourceMas90, true);
         super.init();
+    }
+
+    public ItemPricing getItemPricing(Long partId) throws PartNotFound {
+        ItemPricing retVal = null;
+        Part part = partDao.findOne(partId);
+        if (part == null) {
+            throw new PartNotFound(partId);
+        }
+        String partNumber = part.getManufacturerPartNumber();
+        BigDecimal standardPrice = mssqldb.queryForObject(
+                "SELECT STANDARDUNITPRICE FROM CI_ITEM WHERE ITEMCODE=?",
+                BigDecimal.class, partNumber);
+        retVal = new ItemPricing(partNumber, standardPrice);
+        return retVal;
     }
 
     @Override

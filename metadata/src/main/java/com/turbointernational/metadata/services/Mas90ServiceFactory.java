@@ -1,5 +1,6 @@
 package com.turbointernational.metadata.services;
 
+import com.turbointernational.metadata.domain.part.PartDao;
 import com.turbointernational.metadata.services.mas90.Mas90;
 import com.turbointernational.metadata.services.mas90.MsAccessImpl;
 import com.turbointernational.metadata.services.mas90.MsSqlImpl;
@@ -19,6 +20,9 @@ import java.io.IOException;
 public class Mas90ServiceFactory {
 
     public enum Implementation {MS_ACCESS, MS_SQL}
+
+    @Autowired
+    private PartDao partDao;
 
     @Qualifier("dataSourceMas90")
     @Autowired
@@ -49,7 +53,7 @@ public class Mas90ServiceFactory {
                 retVal = new MsAccessImpl(f);
                 break;
             case MS_SQL:
-                retVal = new MsSqlImpl(dataSourceMas90);
+                retVal = new MsSqlImpl(partDao, dataSourceMas90);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported service implementation: " + implementation);
