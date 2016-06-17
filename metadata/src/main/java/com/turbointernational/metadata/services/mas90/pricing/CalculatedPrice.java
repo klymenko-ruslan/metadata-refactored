@@ -1,6 +1,12 @@
 package com.turbointernational.metadata.services.mas90.pricing;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.web.View;
+
 import java.math.BigDecimal;
+
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
 
 /**
  *
@@ -8,10 +14,16 @@ import java.math.BigDecimal;
  */
 public class CalculatedPrice {
 
+    @JsonView(View.Summary.class)
+    @JsonInclude(ALWAYS)
     private int breakLevel;
 
+    @JsonView(View.Summary.class)
+    @JsonInclude(ALWAYS)
     private int quantity;
 
+    @JsonView(View.Summary.class)
+    @JsonInclude(ALWAYS)
     private BigDecimal price;
 
     public CalculatedPrice(int breakLevel, int quantity, BigDecimal price) {

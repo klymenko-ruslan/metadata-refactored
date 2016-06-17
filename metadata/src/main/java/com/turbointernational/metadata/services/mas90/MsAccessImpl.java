@@ -3,6 +3,8 @@ package com.turbointernational.metadata.services.mas90;
 import com.healthmarketscience.jackcess.Database;
 import com.healthmarketscience.jackcess.DatabaseBuilder;
 import com.healthmarketscience.jackcess.Row;
+import com.turbointernational.metadata.exceptions.PartNotFound;
+import com.turbointernational.metadata.services.mas90.pricing.ProductPrices;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -21,6 +23,11 @@ public class MsAccessImpl extends AbstractMas90 {
         // Open the mas90 database
         mas90Db = DatabaseBuilder.open(mas90DbFile);
         super.init();
+    }
+
+    @Override
+    public ProductPrices getProductPrices(Long partId) throws PartNotFound {
+        throw new Error("Not implemented.");
     }
 
     /**

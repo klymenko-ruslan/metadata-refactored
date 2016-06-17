@@ -3,30 +3,55 @@ package com.turbointernational.metadata.services.mas90;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.part.PartDao;
 import com.turbointernational.metadata.exceptions.PartNotFound;
+import com.turbointernational.metadata.services.mas90.pricing.CalculatedPrice;
 import com.turbointernational.metadata.services.mas90.pricing.ItemPricing;
-import javassist.NotFoundException;
-import org.apache.commons.lang.ObjectUtils;
+import com.turbointernational.metadata.services.mas90.pricing.ProductPrices;
+import com.turbointernational.metadata.services.mas90.pricing.Pricing;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.crossstore.ChangeSetPersister;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowCallbackHandler;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
- * Created by dmytro.trunykov on 12/30/15.
+ * Created by dmytro.trunykov@zorallabs.com on 12/30/15.
  */
 public class MsSqlImpl extends AbstractMas90 {
 
+    private final static Logger log = LoggerFactory.getLogger(MsSqlImpl.class);
+
+    @Autowired
     private PartDao partDao;
 
     private final JdbcTemplate mssqldb;
+
+    private final static String SQL_ITEM_PRICING = "select "
+        + "p.CUSTOMERPRICELEVEL as price_level, "
+        + "p.PRICINGMETHOD as discount_type, "
+        + "p.BREAKQUANTITY1 as BreakQty1, "
+        + "p.BREAKQUANTITY2 as BreakQty2, "
+        + "p.BREAKQUANTITY3 as BreakQty3, "
+        + "p.BREAKQUANTITY4 as BreakQty4, "
+        + "p.BREAKQUANTITY5 as BreakQty5, "
+        + "p.DISCOUNTMARKUP1 as DiscountMarkupPriceRate1, "
+        + "p.DISCOUNTMARKUP2 as DiscountMarkupPriceRate2, "
+        + "p.DISCOUNTMARKUP3 as DiscountMarkupPriceRate3, "
+        + "p.DISCOUNTMARKUP4 as DiscountMarkupPriceRate4, "
+        + "p.DISCOUNTMARKUP5 as DiscountMarkupPriceRate5, "
+        + "p.ITEMCODE, p.CUSTOMERNO, c.EMAILADDRESS "
+        + "from "
+        + "IM_PRICECODE as p left outer join AR_CUSTOMER as c on p.CUSTOMERNO = c.CUSTOMERNO "
+        + "where "
+        + "p.PRICECODE = ? "
+        + "and p.ITEMCODE = ?";
 
     public MsSqlImpl(PartDao partDao, DataSource dataSourceMas90) throws IOException {
         this.partDao = partDao;
@@ -34,17 +59,53 @@ public class MsSqlImpl extends AbstractMas90 {
         super.init();
     }
 
-    public ItemPricing getItemPricing(Long partId) throws PartNotFound {
-        ItemPricing retVal = null;
+    @Override
+    public ProductPrices getProductPrices(Long partId) throws PartNotFound {
         Part part = partDao.findOne(partId);
         if (part == null) {
             throw new PartNotFound(partId);
         }
         String partNumber = part.getManufacturerPartNumber();
-        BigDecimal standardPrice = mssqldb.queryForObject(
-                "SELECT STANDARDUNITPRICE FROM CI_ITEM WHERE ITEMCODE=?",
-                BigDecimal.class, partNumber);
-        retVal = new ItemPricing(partNumber, standardPrice);
+        BigDecimal standardPrice;
+        try {
+            standardPrice = mssqldb.queryForObject(
+                    "select STANDARDUNITPRICE from CI_ITEM where ITEMCODE=?",
+                    BigDecimal.class, partNumber);
+        } catch(DataAccessException e) {
+            log.warn("Product prices calculation failed for the part [{}]: {}", partId, e.getMessage());
+            return new ProductPrices(partId);
+        }
+        /* 45503
+
+        "price": {
+"5": "2.3040",
+"6": "2.4320",
+"7": "2.5600",
+"8": "2.6880",
+"9": "2.8160",
+"10": "3.2000",
+"11": "2.0480",
+"12": "2.5600",
+"13": "1.9456",
+"14": "1.8432"}
+
+
+        Map<String, Pricing> priceLevelPricings = new HashMap<>();
+        mssqldb.query(SQL_ITEM_PRICING, rs -> {
+            String priceLevel = rs.getString("price_level");
+            Pricing pricing = Pricing.fromResultSet(rs);
+            priceLevelPricings.put(priceLevel, pricing);
+        }, "1", partNumber);
+        */
+        Map<String, Pricing> customerPricings = new HashMap<>();
+        mssqldb.query(SQL_ITEM_PRICING, rs -> {
+            String email = rs.getString("email");
+            Pricing pricing = Pricing.fromResultSet(rs);
+            customerPricings.put(email, pricing);
+        }, "2", partNumber);
+        Map<String, List<CalculatedPrice>> customerPrices = ItemPricing.calculateCustomerSpecificPrices(standardPrice,
+                customerPricings);
+        ProductPrices retVal = new ProductPrices(partId, standardPrice, customerPrices);
         return retVal;
     }
 

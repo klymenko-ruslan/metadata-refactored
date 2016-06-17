@@ -6,13 +6,16 @@ import com.turbointernational.metadata.domain.other.ManufacturerDao;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.part.PartDao;
 import com.turbointernational.metadata.domain.type.*;
+import com.turbointernational.metadata.exceptions.PartNotFound;
 import com.turbointernational.metadata.magmi.MagmiDataFinder;
 import com.turbointernational.metadata.magmi.dto.MagmiProduct;
 import com.turbointernational.metadata.services.Mas90ServiceFactory;
 import com.turbointernational.metadata.services.mas90.Mas90;
 import com.turbointernational.metadata.services.mas90.pricing.CalculatedPrice;
 import com.turbointernational.metadata.services.mas90.pricing.ItemPricing;
+import com.turbointernational.metadata.services.mas90.pricing.ProductPrices;
 import com.turbointernational.metadata.services.mas90.pricing.UnknownDiscountCodeException;
+import com.turbointernational.metadata.web.dto.ProductPricesDto;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,6 +93,31 @@ public class MagmiController {
 
     @Autowired
     Mas90ServiceFactory mas90ServiceFactory;
+
+    @RequestMapping("/prices")
+    @ResponseBody
+    @Transactional
+    @PreAuthorize("hasRole('ROLE_MAGMI_EXPORT') or hasIpAddress('127.0.0.1/32')")
+    public ProductPricesDto[] getProductPrices(
+            @RequestParam(name = "id") Long[] partIds,
+            @RequestParam(name = "impl", required = false, defaultValue = "MS_SQL")
+       Mas90ServiceFactory.Implementation implementation) throws IOException {
+        int n = partIds.length;
+        Mas90 mas90service = mas90ServiceFactory.getService(implementation);
+        ProductPricesDto[] retVal = new ProductPricesDto[n];
+        for(int i = 0; i < n; i++) {
+            Long partId = partIds[i];
+            ProductPricesDto ppdto;
+            try {
+                ProductPrices pp = mas90service.getProductPrices(partId);
+                ppdto = new ProductPricesDto(pp);
+            } catch(PartNotFound e) {
+                ppdto = new ProductPricesDto(partId, e.getMessage());
+            }
+            retVal[i] = ppdto;
+        }
+        return retVal;
+    }
 
     public String[] getCsvHeaders(SortedSet<String> priceLevels) {
 

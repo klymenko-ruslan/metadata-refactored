@@ -1,10 +1,7 @@
 package com.turbointernational.metadata.services.mas90.pricing;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  *
@@ -63,17 +60,17 @@ public class ItemPricing {
     }
     
     public Map<String, List<CalculatedPrice>> calculateCustomerSpecificPrices() {
-        Map<String, List<CalculatedPrice>> prices = new TreeMap();
-        
+        return  calculateCustomerSpecificPrices(standardPrice, customerPricings);
+    }
+
+    public static Map<String, List<CalculatedPrice>> calculateCustomerSpecificPrices(
+            BigDecimal standardPrice, Map<String, Pricing> customerPricings) {
+        Map<String, List<CalculatedPrice>> prices = new HashMap();
         // Calculate customer-specific prices
         for (Map.Entry<String, Pricing> pricing : customerPricings.entrySet()) {
-            
             List<CalculatedPrice> customerPrices = pricing.getValue().calculate(standardPrice);
-            
             prices.put(pricing.getKey(), customerPrices);
         }
-        
         return prices;
     }
-    
 }

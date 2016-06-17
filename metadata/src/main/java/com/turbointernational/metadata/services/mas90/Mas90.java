@@ -1,8 +1,10 @@
 package com.turbointernational.metadata.services.mas90;
 
+import com.turbointernational.metadata.exceptions.PartNotFound;
 import com.turbointernational.metadata.services.mas90.pricing.CalculatedPrice;
 import com.turbointernational.metadata.services.mas90.pricing.ItemPricing;
 import com.turbointernational.metadata.services.mas90.pricing.Pricing;
+import com.turbointernational.metadata.services.mas90.pricing.ProductPrices;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -18,6 +20,8 @@ import java.util.SortedSet;
  * Created by dmytro.trunykov@zorallabs.com on 1/1/16.
  */
 public interface Mas90 {
+
+        ProductPrices getProductPrices(Long partId) throws PartNotFound;
 
         SortedSet<String> getPriceLevels();
 
