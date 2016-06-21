@@ -33,9 +33,7 @@ public class MsSqlImpl extends AbstractMas90 {
 
     private final JdbcTemplate mssqldb;
 
-    private final static String SQL_ITEM_PRICING = "select "
-        + "p.CUSTOMERPRICELEVEL as price_level, "
-        + "p.PRICINGMETHOD as discount_type, "
+    private final static String PRICING_COLS = "p.PRICINGMETHOD as discount_type, "
         + "p.BREAKQUANTITY1 as BreakQty1, "
         + "p.BREAKQUANTITY2 as BreakQty2, "
         + "p.BREAKQUANTITY3 as BreakQty3, "
@@ -45,12 +43,14 @@ public class MsSqlImpl extends AbstractMas90 {
         + "p.DISCOUNTMARKUP2 as DiscountMarkupPriceRate2, "
         + "p.DISCOUNTMARKUP3 as DiscountMarkupPriceRate3, "
         + "p.DISCOUNTMARKUP4 as DiscountMarkupPriceRate4, "
-        + "p.DISCOUNTMARKUP5 as DiscountMarkupPriceRate5, "
-        + "p.ITEMCODE, p.CUSTOMERNO, c.EMAILADDRESS "
+        + "p.DISCOUNTMARKUP5 as DiscountMarkupPriceRate5";
+
+    private final static String SQL_ITEM_PRICING = "select "
+        + "p.CUSTOMERPRICELEVEL as price_level, " + PRICING_COLS + ", p.ITEMCODE, p.CUSTOMERNO, c.EMAILADDRESS "
         + "from "
         + "IM_PRICECODE as p left outer join AR_CUSTOMER as c on p.CUSTOMERNO = c.CUSTOMERNO "
         + "where "
-        + "p.PRICECODE = ? "
+        + "p.PRICECODERECORD = ? "
         + "and p.ITEMCODE = ?";
 
     public MsSqlImpl(PartDao partDao, DataSource dataSourceMas90) throws IOException {
@@ -75,37 +75,24 @@ public class MsSqlImpl extends AbstractMas90 {
             log.warn("Product prices calculation failed for the part [{}]: {}", partId, e.getMessage());
             return new ProductPrices(partId);
         }
-        /* 45503
 
-        "price": {
-"5": "2.3040",
-"6": "2.4320",
-"7": "2.5600",
-"8": "2.6880",
-"9": "2.8160",
-"10": "3.2000",
-"11": "2.0480",
-"12": "2.5600",
-"13": "1.9456",
-"14": "1.8432"}
+        Map<String, BigDecimal> prices = new HashMap(50);
+        mssqldb.query("select p.CUSTOMERPRICELEVEL as price_level, " + PRICING_COLS + " FROM IM_PRICECODE as P " +
+                "WHERE p.PRICECODERECORD in ('', ' ', '0')",
+                rs -> {
+                    String priceLevel = rs.getString("price_level");
+                    // Mas90 bug handling: https://github.com/pthiry/TurboInternational/issues/5#issuecomment-29331951
+                    if (StringUtils.isBlank(priceLevel)) {
+                        priceLevel = "2";
+                    }
+                    Pricing pricing = Pricing.fromResultSet(rs);
+                    List<CalculatedPrice> calculatedPrices = pricing.calculate(standardPrice);
+                    for(CalculatedPrice cp: calculatedPrices) {
+                        prices.put(priceLevel, cp.getPrice());
+                    }
+                });
 
-
-        Map<String, Pricing> priceLevelPricings = new HashMap<>();
-        mssqldb.query(SQL_ITEM_PRICING, rs -> {
-            String priceLevel = rs.getString("price_level");
-            Pricing pricing = Pricing.fromResultSet(rs);
-            priceLevelPricings.put(priceLevel, pricing);
-        }, "1", partNumber);
-        */
-        Map<String, Pricing> customerPricings = new HashMap<>();
-        mssqldb.query(SQL_ITEM_PRICING, rs -> {
-            String email = rs.getString("email");
-            Pricing pricing = Pricing.fromResultSet(rs);
-            customerPricings.put(email, pricing);
-        }, "2", partNumber);
-        Map<String, List<CalculatedPrice>> customerPrices = ItemPricing.calculateCustomerSpecificPrices(standardPrice,
-                customerPricings);
-        ProductPrices retVal = new ProductPrices(partId, standardPrice, customerPrices);
+        ProductPrices retVal = new ProductPrices(partId, standardPrice, prices);
         return retVal;
     }
 

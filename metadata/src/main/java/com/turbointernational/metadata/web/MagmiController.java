@@ -72,19 +72,7 @@ public class MagmiController {
     
     @Autowired
     PartTypeDao partTypeDao;
-    
-    @Autowired
-    CoolTypeDao coolTypeDao;
-    
-    @Autowired
-    GasketTypeDao gasketTypeDao;
-    
-    @Autowired
-    KitTypeDao kitTypeDao;
-    
-    @Autowired
-    SealTypeDao sealTypeDao;
-    
+
     @Autowired
     PartDao partDao;
     
@@ -271,18 +259,14 @@ public class MagmiController {
         List<Part> parts = Collections.emptyList();
         do {
             try {
-                
+
                 // Clear Hibernate
                 entityManager.clear();
-                
+
                 // Pre-cache our frequently-used entities
                 manufacturerTypeDao.findAll();
                 manufacturerDao.findAll();
                 partTypeDao.findAll();
-                coolTypeDao.findAll();
-                gasketTypeDao.findAll();
-                kitTypeDao.findAll();
-                sealTypeDao.findAll();
 
                 // Get the next batch of part IDs
                 parts = partDao.findAllOrderedById(position, magmiBatchSize);

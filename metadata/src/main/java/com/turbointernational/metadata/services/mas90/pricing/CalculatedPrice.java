@@ -52,5 +52,13 @@ public class CalculatedPrice {
     public BigDecimal getPrice() {
         return price;
     }
-    
+
+    @Override
+    public String toString() {
+        return "CalculatedPrice{" +
+                "breakLevel=" + breakLevel +
+                ", quantity=" + quantity +
+                ", price=" + price +
+                '}';
+    }
 }
