@@ -706,7 +706,7 @@ def import_data(alter_file, input_data, ptid2columns_meta):
               .format(pt.name, inserted, updated, conflicted, skipped))
 
 
-def generate_jpa_classes(alter_file, input_data, ptid2columns_meta):
+def generate_jpa_classes(input_data, ptid2columns_meta):
     """Generate JPA java classes."""
     for pt in input_data.getPartTypes():
         # Generate java code snippets.
@@ -788,6 +788,33 @@ def generate_jpa_classes(alter_file, input_data, ptid2columns_meta):
             print(getters_setters_snippet, file=snippet_file, end="")
             print("    //</editor-fold>\n", file=snippet_file)
             print("}", file=snippet_file)
+
+
+def generate_js_snippents(input_data):
+    """Generate JavaScript code snippet(s)."""
+    with open(os.path.join(args.out_dir, "snippet.js"), "w") as fjs:
+        print("// Snippet for restService.js", file=fjs)
+        print("      this.createPart = function(part) {", file=fjs)
+        print("      // Specify class depending on part type.", file=fjs)
+        print("      var clazz = \"com.turbointernational.metadata.domain."
+              "part.types.\";", file=fjs)
+        print("      switch (part.partType.id) {", file=fjs)
+
+        for pt in input_data.getPartTypes():
+            # Generate java code snippets.
+            ed = input_data.getExtraDataForPt(pt)
+            class_name = ed["class"]
+            print("      case {}:".format(pt.id), file=fjs)
+            print("        clazz += \"{}\";".format(class_name), file=fjs)
+            print("        break;", file=fjs)
+
+        print("      default:", file=fjs)
+        print("          clazz = \"com.turbointernational.metadata.domain."
+              "part.Part\";", file=fjs)
+        print("      }", file=fjs)
+        print("      part.class = clazz;", file=fjs)
+        print("      return Restangular.all(\"part\").post(part);", file=fjs)
+        print("    };", file=fjs)
 
 
 def cd2colmetainfo(cd):
@@ -1218,4 +1245,5 @@ drop table kit_type;
     delete_obsolete_part_types(alter_file, input_data)
     ptid2columns_meta = register_new_part_types(alter_file, input_data)
     import_data(alter_file, input_data, ptid2columns_meta)
-    generate_jpa_classes(alter_file, input_data, ptid2columns_meta)
+    generate_jpa_classes(input_data, ptid2columns_meta)
+    generate_js_snippents(input_data)

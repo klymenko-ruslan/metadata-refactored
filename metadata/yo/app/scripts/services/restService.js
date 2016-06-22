@@ -81,47 +81,128 @@ angular.module("ngMetaCrudApp")
         // Specify class depending on part type.
         var clazz = "com.turbointernational.metadata.domain.part.types.";
         switch (part.partType.id) {
-          case 1:
-            clazz += "Turbo";
+          case 30:
+            clazz += "Actuator";
+            break;
+          case 31:
+            clazz += "CompressorCover";
             break;
           case 2:
             clazz += "Cartridge";
             break;
-          case 3:
-            clazz += "Kit";
+          case 32:
+            clazz += "Plug";
             break;
-          case 4:
-            clazz += "PistonRing";
+          case 33:
+            clazz += "TurbineHousing";
             break;
-          case 5:
-            clazz += "JournalBearing";
+          case 1:
+            clazz += "Turbo";
             break;
-          case 6:
-            clazz += "Gasket";
-            break;
-          case 7:
-            clazz += "BearingSpacer";
-            break;
-          case 11:
-            clazz += "CompressorWheel";
-            break;
-          case 12:
-            clazz += "TurbineWheel";
+          case 34:
+            clazz += "Backplate";
             break;
           case 13:
             clazz += "BearingHousing";
             break;
-          case 14:
-            clazz += "Backplate";
+          case 35:
+            clazz += "BoltScrew";
+            break;
+          case 19:
+            clazz += "Clamp";
+            break;
+          case 11:
+            clazz += "CompressorWheel";
+            break;
+          case 36:
+            clazz += "Fitting";
+            break;
+          case 6:
+            clazz += "Gasket";
             break;
           case 15:
-            clazz += "Heatshield";
+            clazz += "HeatshieldShroud";
+            break;
+          case 5:
+            clazz += "JournalBearing";
+            break;
+          case 37:
+            clazz += "JournalBearingSpacer";
             break;
           case 16:
             clazz += "NozzleRing";
             break;
+          case 38:
+            clazz += "Nut";
+            break;
+          case 18:
+            clazz += "OilDeflector";
+            break;
+          case 17:
+            clazz += "ORing";
+            break;
+          case 39:
+            clazz += "Pin";
+            break;
+          case 4:
+            clazz += "PistonRing";
+            break;
+          case 40:
+            clazz += "RetainingRing";
+            break;
+          case 41:
+            clazz += "SealPlate";
+            break;
+          case 12:
+            clazz += "TurbineWheel";
+            break;
+          case 42:
+            clazz += "Spring";
+            break;
+          case 43:
+            clazz += "ThrustBearing";
+            break;
+          case 44:
+            clazz += "ThrustCollar";
+            break;
+          case 45:
+            clazz += "ThrustSpacer";
+            break;
+          case 46:
+            clazz += "ThrustWasher";
+            break;
+          case 47:
+            clazz += "Washer";
+            break;
+          case 48:
+            clazz += "CarbonSeal";
+            break;
+          case 3:
+            clazz += "Kit";
+            break;
+          case 7:
+            clazz += "BearingSpacer";
+            break;
+          case 8:
+            clazz += "FastWearingComponent";
+            break;
+          case 9:
+            clazz += "MajorComponent";
+            break;
+          case 10:
+            clazz += "MinorComponent";
+            break;
+          case 14:
+            clazz += "BackplateSealplate";
+            break;
+          case 20:
+            clazz += "ThrustPart";
+            break;
+          case 21:
+            clazz += "MiscMinorComponent";
+            break;
           default:
-            clazz = "com.turbointernational.metadata.domain.part.Part";
+              clazz = "com.turbointernational.metadata.domain.part.Part";
         }
         part.class = clazz;
         return Restangular.all("part").post(part);
