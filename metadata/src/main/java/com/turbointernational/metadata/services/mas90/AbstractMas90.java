@@ -52,7 +52,7 @@ public abstract class AbstractMas90 implements Mas90 {
 
     @Override
     public BigDecimal getStandardPrice(String itemNumber) {
-        return h2db.queryForObject("SELECT price FROM product WHERE id = ?",
+        return h2db.queryForObject("select price from product where id = ?",
                 BigDecimal.class, itemNumber);
     }
 
@@ -63,27 +63,24 @@ public abstract class AbstractMas90 implements Mas90 {
 
         // Get the Product-Customer pricing
         h2db.query(
-                  "SELECT\n"
-                + "  c.email,\n"
-                + "  p.*\n"
-                + "FROM\n"
-                + "  product_customer_prices p JOIN customer c ON c.id = p.customer_id\n"
-                + "WHERE p.product_id = ?",
+                "select c.email, p.* " +
+                        "from product_customer_prices p join customer c on c.id = p.customer_id " +
+                        "where p.product_id = ?",
                 rs -> {
                     String email = rs.getString("email");
                     Pricing pricing = Pricing.fromResultSet(rs);
                     itemPricing.getCustomerPricings().put(email, pricing);
                 },
-            itemNumber);
+                itemNumber);
 
         // Get the Product-PriceLevel pricing
-        h2db.query("SELECT * FROM product_price_level_prices WHERE product_id = ?",
+        h2db.query("select * from product_price_level_prices where product_id = ?",
                 rs -> {
                     String priceLevel = rs.getString("price_level");
                     Pricing pricing = Pricing.fromResultSet(rs);
                     itemPricing.getPriceLevelPricings().put(priceLevel, pricing);
                 },
-            itemNumber);
+                itemNumber);
 
         return itemPricing;
     }
@@ -107,7 +104,7 @@ public abstract class AbstractMas90 implements Mas90 {
         loadPriceLevels();
 
         // Get the default price level pricings
-        h2db.query("SELECT * FROM price_level_prices",
+        h2db.query("select * from price_level_prices",
                 rs -> {
                     String priceLevel = rs.getString("price_level");
                     Pricing pricing = Pricing.fromResultSet(rs);
@@ -132,7 +129,7 @@ public abstract class AbstractMas90 implements Mas90 {
                 customerPriceLevel = "2";
             }
             // PriceLevel Pricing
-            h2db.update("INSERT INTO price_level_prices ("
+            h2db.update("insert into price_level_prices ("
                             + "  price_level,"
                             + "  discount_type,"
                             + "  BreakQty1, DiscountMarkupPriceRate1,"
@@ -140,7 +137,7 @@ public abstract class AbstractMas90 implements Mas90 {
                             + "  BreakQty3, DiscountMarkupPriceRate3,"
                             + "  BreakQty4, DiscountMarkupPriceRate4,"
                             + "  BreakQty5, DiscountMarkupPriceRate5"
-                            + ") VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                            + ") values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                     customerPriceLevel, pricingMethod,
                     breakQuantity1, discountMarkUp1,
                     breakQuantity2, discountMarkUp2,
@@ -150,7 +147,7 @@ public abstract class AbstractMas90 implements Mas90 {
             );
         } else if ("1".equals(priceCode)) {
             // Part-PriceLevel Pricing
-            h2db.update("INSERT INTO product_price_level_prices ("
+            h2db.update("insert into product_price_level_prices ("
                             + "  product_id,"
                             + "  price_level,"
                             + "  discount_type,"
@@ -159,7 +156,7 @@ public abstract class AbstractMas90 implements Mas90 {
                             + "  BreakQty3, DiscountMarkupPriceRate3,"
                             + "  BreakQty4, DiscountMarkupPriceRate4,"
                             + "  BreakQty5, DiscountMarkupPriceRate5"
-                            + ") VALUES(?, ?, ?,  ?, ?,  ?, ?,  ?, ?,  ?, ?,  ?, ?)",
+                            + ") values(?, ?, ?,  ?, ?,  ?, ?,  ?, ?,  ?, ?,  ?, ?)",
                     itemCode, customerPriceLevel, pricingMethod,
                     breakQuantity1, discountMarkUp1,
                     breakQuantity2, discountMarkUp2,
@@ -170,7 +167,7 @@ public abstract class AbstractMas90 implements Mas90 {
         } else if ("2".equals(priceCode)) {
 
             // Part-Customer Pricing
-            h2db.update("INSERT INTO product_customer_prices ("
+            h2db.update("insert into product_customer_prices ("
                             + "  product_id,"
                             + "  customer_id,"
                             + "  discount_type,"
@@ -179,7 +176,7 @@ public abstract class AbstractMas90 implements Mas90 {
                             + "  BreakQty3, DiscountMarkupPriceRate3,"
                             + "  BreakQty4, DiscountMarkupPriceRate4,"
                             + "  BreakQty5, DiscountMarkupPriceRate5"
-                            + ") VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                            + ") values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                     itemCode, customerNo, pricingMethod,
                     breakQuantity1, discountMarkUp1,
                     breakQuantity2, discountMarkUp2,
@@ -195,82 +192,78 @@ public abstract class AbstractMas90 implements Mas90 {
     private void loadPriceLevels() {
         // Get the price levels
         priceLevels.addAll(
-            h2db.query("SELECT DISTINCT price_level FROM price_level_prices",
-                    (rs, rowNum) -> {
-                        return rs.getString("price_level");
-                    }
-            )
+                h2db.query("select distinct price_level from price_level_prices",
+                        (rs, rowNum) -> {
+                            return rs.getString("price_level");
+                        }
+                )
         );
     }
 
     private void createH2Schema() {
 
-        h2db.update("DROP TABLE customer IF EXISTS");
-        h2db.update("CREATE TABLE customer (id VARCHAR(20) NOT NULL, email VARCHAR(255))");
-        h2db.update("ALTER TABLE customer ADD PRIMARY KEY (id)");
+        h2db.update("drop table customer if exists");
+        h2db.update("create table customer (id varchar(20) not null, email varchar(255))");
+        h2db.update("alter table customer add primary key (id)");
 
-        h2db.update("DROP TABLE product IF EXISTS");
-        h2db.execute("CREATE TABLE product (id VARCHAR(20) NOT NULL, price DECIMAL)");
-        h2db.execute("ALTER TABLE product ADD PRIMARY KEY (id)");
+        h2db.update("drop table product if exists");
+        h2db.execute("create table product (id varchar(20) not null, price decimal)");
+        h2db.execute("alter table product add primary key (id)");
 
         // PriceLevel prices
-        h2db.update("DROP TABLE price_level_prices IF EXISTS");
-        h2db.execute(
-                  "CREATE TABLE price_level_prices (\n"
-                + "  price_level VARCHAR(20) NOT NULL,\n"
-                + "  discount_type CHAR(1) NOT NULL,\n"
-                + "  BreakQty1 INTEGER,\n"
-                + "  DiscountMarkupPriceRate1 DECIMAL,\n"
-                + "  BreakQty2 INTEGER,\n"
-                + "  DiscountMarkupPriceRate2 DECIMAL,\n"
-                + "  BreakQty3 INTEGER,\n"
-                + "  DiscountMarkupPriceRate3 DECIMAL,\n"
-                + "  BreakQty4 INTEGER,\n"
-                + "  DiscountMarkupPriceRate4 DECIMAL,\n"
-                + "  BreakQty5 INTEGER,\n"
-                + "  DiscountMarkupPriceRate5 DECIMAL\n"
-                + ")");
-        h2db.execute("ALTER TABLE price_level_prices ADD PRIMARY KEY (price_level)");
+        h2db.update("drop table price_level_prices if exists");
+        h2db.execute("create table price_level_prices("
+                + "price_level varchar(20) not null, "
+                + "discount_type char(1) not null, "
+                + "BreakQty1 integer, "
+                + "DiscountMarkupPriceRate1 decimal, "
+                + "BreakQty2 integer, "
+                + "DiscountMarkupPriceRate2 decimal, "
+                + "BreakQty3 integer, "
+                + "DiscountMarkupPriceRate3 decimal, "
+                + "BreakQty4 integer, "
+                + "DiscountMarkupPriceRate4 decimal, "
+                + "BreakQty5 integer, "
+                + "DiscountMarkupPriceRate5 decimal)");
+        h2db.execute("alter table price_level_prices add primary key(price_level)");
 
         // Product-PriceLevel
-        h2db.update("DROP TABLE product_price_level_prices IF EXISTS");
+        h2db.update("drop table product_price_level_prices if exists");
         h2db.execute(
-                  "CREATE TABLE product_price_level_prices (\n"
-                + "  product_id VARCHAR(20) NOT NULL,\n"
-                + "  price_level VARCHAR(20) NOT NULL,\n"
-                + "  discount_type CHAR(1) NOT NULL,\n"
-                + "  BreakQty1 INTEGER,\n"
-                + "  DiscountMarkupPriceRate1 DECIMAL,\n"
-                + "  BreakQty2 INTEGER,\n"
-                + "  DiscountMarkupPriceRate2 DECIMAL,\n"
-                + "  BreakQty3 INTEGER,\n"
-                + "  DiscountMarkupPriceRate3 DECIMAL,\n"
-                + "  BreakQty4 INTEGER,\n"
-                + "  DiscountMarkupPriceRate4 DECIMAL,\n"
-                + "  BreakQty5 INTEGER,\n"
-                + "  DiscountMarkupPriceRate5 DECIMAL\n"
-                + ")");
-        h2db.execute("ALTER TABLE product_price_level_prices ADD PRIMARY KEY (product_id, price_level)");
+                "create table product_price_level_prices("
+                        + "product_id varchar(20) not null, "
+                        + "price_level varchar(20) not null, "
+                        + "discount_type char(1) not null, "
+                        + "BreakQty1 integer, "
+                        + "DiscountMarkupPriceRate1 decimal, "
+                        + "BreakQty2 integer, "
+                        + "DiscountMarkupPriceRate2 decimal, "
+                        + "BreakQty3 integer, "
+                        + "DiscountMarkupPriceRate3 decimal, "
+                        + "BreakQty4 integer, "
+                        + "DiscountMarkupPriceRate4 decimal, "
+                        + "BreakQty5 integer, "
+                        + "DiscountMarkupPriceRate5 decimal)");
+        h2db.execute("alter table product_price_level_prices add primary key(product_id, price_level)");
 
         // Product-Customer
-        h2db.update("DROP TABLE product_customer_prices IF EXISTS");
+        h2db.update("drop table product_customer_prices if exists");
         h2db.execute(
-                  "CREATE TABLE product_customer_prices (\n"
-                + "  product_id VARCHAR(20) NOT NULL,\n"
-                + "  customer_id VARCHAR(20) NOT NULL,\n"
-                + "  discount_type CHAR(1) NOT NULL,\n"
-                + "  BreakQty1 INTEGER,\n"
-                + "  DiscountMarkupPriceRate1 DECIMAL,\n"
-                + "  BreakQty2 INTEGER,\n"
-                + "  DiscountMarkupPriceRate2 DECIMAL,\n"
-                + "  BreakQty3 INTEGER,\n"
-                + "  DiscountMarkupPriceRate3 DECIMAL,\n"
-                + "  BreakQty4 INTEGER,\n"
-                + "  DiscountMarkupPriceRate4 DECIMAL,\n"
-                + "  BreakQty5 INTEGER,\n"
-                + "  DiscountMarkupPriceRate5 DECIMAL\n"
-                + ")");
-        h2db.execute("ALTER TABLE product_customer_prices ADD PRIMARY KEY (product_id, customer_id)");
+                "create table product_customer_prices("
+                        + "product_id varchar(20) not null, "
+                        + "customer_id varchar(20) not null, "
+                        + "discount_type char(1) not null, "
+                        + "BreakQty1 integer, "
+                        + "DiscountMarkupPriceRate1 decimal, "
+                        + "BreakQty2 integer, "
+                        + "DiscountMarkupPriceRate2 decimal, "
+                        + "BreakQty3 integer, "
+                        + "DiscountMarkupPriceRate3 decimal, "
+                        + "BreakQty4 integer, "
+                        + "DiscountMarkupPriceRate4 decimal, "
+                        + "BreakQty5 integer, "
+                        + "DiscountMarkupPriceRate5 decimal)");
+        h2db.execute("alter table product_customer_prices add primary key(product_id, customer_id)");
     }
 
 }

@@ -4,9 +4,8 @@ import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.part.PartDao;
 import com.turbointernational.metadata.exceptions.PartNotFound;
 import com.turbointernational.metadata.services.mas90.pricing.CalculatedPrice;
-import com.turbointernational.metadata.services.mas90.pricing.ItemPricing;
-import com.turbointernational.metadata.services.mas90.pricing.ProductPrices;
 import com.turbointernational.metadata.services.mas90.pricing.Pricing;
+import com.turbointernational.metadata.services.mas90.pricing.ProductPrices;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,25 +32,25 @@ public class MsSqlImpl extends AbstractMas90 {
 
     private final JdbcTemplate mssqldb;
 
-    private final static String PRICING_COLS = "p.PRICINGMETHOD as discount_type, "
-        + "p.BREAKQUANTITY1 as BreakQty1, "
-        + "p.BREAKQUANTITY2 as BreakQty2, "
-        + "p.BREAKQUANTITY3 as BreakQty3, "
-        + "p.BREAKQUANTITY4 as BreakQty4, "
-        + "p.BREAKQUANTITY5 as BreakQty5, "
-        + "p.DISCOUNTMARKUP1 as DiscountMarkupPriceRate1, "
-        + "p.DISCOUNTMARKUP2 as DiscountMarkupPriceRate2, "
-        + "p.DISCOUNTMARKUP3 as DiscountMarkupPriceRate3, "
-        + "p.DISCOUNTMARKUP4 as DiscountMarkupPriceRate4, "
-        + "p.DISCOUNTMARKUP5 as DiscountMarkupPriceRate5";
+    private final static String PRICING_COLS = "p.pricingmethod as discount_type, "
+        + "p.breakquantity1 as BreakQty1, "
+        + "p.breakquantity2 as BreakQty2, "
+        + "p.breakquantity3 as BreakQty3, "
+        + "p.breakquantity4 as BreakQty4, "
+        + "p.breakquantity5 as BreakQty5, "
+        + "p.discountmarkup1 as DiscountMarkupPriceRate1, "
+        + "p.discountmarkup2 as DiscountMarkupPriceRate2, "
+        + "p.discountmarkup3 as DiscountMarkupPriceRate3, "
+        + "p.discountmarkup4 as DiscountMarkupPriceRate4, "
+        + "p.discountmarkup5 as DiscountMarkupPriceRate5";
 
     private final static String SQL_ITEM_PRICING = "select "
-        + "p.CUSTOMERPRICELEVEL as price_level, " + PRICING_COLS + ", p.ITEMCODE, p.CUSTOMERNO, c.EMAILADDRESS "
+        + "p.customerpricelevel as price_level, " + PRICING_COLS + ", p.itemcode, p.customerno, c.emailaddress "
         + "from "
-        + "IM_PRICECODE as p left outer join AR_CUSTOMER as c on p.CUSTOMERNO = c.CUSTOMERNO "
+        + "im_pricecode as p left outer join ar_customer as c on p.customerno = c.customerno "
         + "where "
-        + "p.PRICECODERECORD = ? "
-        + "and p.ITEMCODE = ?";
+        + "p.pricecoderecord = ? "
+        + "and p.itemcode = ?";
 
     public MsSqlImpl(PartDao partDao, DataSource dataSourceMas90) throws IOException {
         this.partDao = partDao;
@@ -69,7 +68,7 @@ public class MsSqlImpl extends AbstractMas90 {
         BigDecimal standardPrice;
         try {
             standardPrice = mssqldb.queryForObject(
-                    "select STANDARDUNITPRICE from CI_ITEM where ITEMCODE=?",
+                    "select standardunitprice from ci_item where itemcode=?",
                     BigDecimal.class, partNumber);
         } catch(DataAccessException e) {
             log.warn("Product prices calculation failed for the part [{}]: {}", partId, e.getMessage());
@@ -77,8 +76,8 @@ public class MsSqlImpl extends AbstractMas90 {
         }
 
         Map<String, BigDecimal> prices = new HashMap(50);
-        mssqldb.query("select p.CUSTOMERPRICELEVEL as price_level, " + PRICING_COLS + " FROM IM_PRICECODE as P " +
-                "WHERE p.PRICECODERECORD in ('', ' ', '0')",
+        mssqldb.query("select p.customerpricelevel as price_level, " + PRICING_COLS + " from im_pricecode as p " +
+                "where p.pricecoderecord in ('', ' ', '0')",
                 rs -> {
                     String priceLevel = rs.getString("price_level");
                     // Mas90 bug handling: https://github.com/pthiry/TurboInternational/issues/5#issuecomment-29331951
@@ -100,26 +99,26 @@ public class MsSqlImpl extends AbstractMas90 {
     protected void loadMas90Data() throws IOException {
 
         // Load customer data
-        mssqldb.query("SELECT CUSTOMERNO, EMAILADDRESS FROM AR_CUSTOMER", rs -> {
+        mssqldb.query("select customerno, emailaddress from ar_customer", rs -> {
             String customerNo = StringUtils.trim(rs.getString(1));
             String emailAddress = rs.getString(2);
-            h2db.update("INSERT INTO customer (id, email) VALUES(?, ?)", customerNo, emailAddress);
+            h2db.update("insert into customer (id, email) values(?, ?)", customerNo, emailAddress);
         });
 
         // Load product data
-        mssqldb.query("SELECT ITEMCODE, STANDARDUNITPRICE FROM CI_ITEM", rs -> {
+        mssqldb.query("select itemcode, standardunitprice from ci_item", rs -> {
             String itemCode = StringUtils.trim( rs.getString(1));
             String stdPrice = rs.getString(2);
-            h2db.update("MERGE INTO product (id, price) VALUES(?, ?)", itemCode, stdPrice);
+            h2db.update("merge into product (id, price) values(?, ?)", itemCode, stdPrice);
         });
 
         // Load pricing data
         mssqldb.query(
-                "SELECT " +
-                "   PRICECODERECORD, CUSTOMERPRICELEVEL, PRICINGMETHOD, BREAKQUANTITY1, BREAKQUANTITY2, " +
-                "   BREAKQUANTITY3, BREAKQUANTITY4, BREAKQUANTITY5, DISCOUNTMARKUP1, DISCOUNTMARKUP2, " +
-                "   DISCOUNTMARKUP3, DISCOUNTMARKUP4, DISCOUNTMARKUP5, ITEMCODE, CUSTOMERNO " +
-                "FROM IM_PRICECODE", rs -> {
+                "select " +
+                "   pricecoderecord, customerpricelevel, pricingmethod, breakquantity1, breakquantity2, " +
+                "   breakquantity3, breakquantity4, breakquantity5, discountmarkup1, discountmarkup2, " +
+                "   discountmarkup3, discountmarkup4, discountmarkup5, itemcode, customerno " +
+                "from im_pricecode", rs -> {
                     String priceCode = rs.getString(1);
                     String customerPriceLevel = rs.getString(2);
                     String pricingMethod = rs.getString(3);
