@@ -1,12 +1,9 @@
-
 "use strict";
 
 angular.module("ngMetaCrudApp").controller("PartFormCtrl", ["$q", "$scope", "$location",
-  "$log", "$routeParams", "ngTableParams", "restService",
-  "Restangular", "PartTypes",
+  "$log", "$routeParams", "ngTableParams", "restService", "Restangular", "PartTypes",
   function($q, $scope, $location, $log, $routeParams,
-    ngTableParams, restService, Restangular,
-    PartTypes) {
+    ngTableParams, restService, Restangular, PartTypes) {
 
     // Setup the create/update workflow
     if ($routeParams.id) {
@@ -40,6 +37,7 @@ angular.module("ngMetaCrudApp").controller("PartFormCtrl", ["$q", "$scope", "$lo
     $scope.save = function() {
       var url = "part";
       if (!angular.isObject($scope.oldPart)) {
+        $log.log("Part: " + angular.toJson($scope.part));
         restService.createPart($scope.part).then(
           function(id) {
             $location.path("/part/" + id);
