@@ -21,8 +21,6 @@ import java.util.SortedSet;
  */
 public interface Mas90 {
 
-        ProductPrices getProductPrices(Long partId) throws PartNotFound;
-
         SortedSet<String> getPriceLevels();
 
         Map<String, Pricing> getDefaultPriceLevelPricing();

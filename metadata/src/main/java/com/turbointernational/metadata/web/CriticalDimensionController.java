@@ -39,7 +39,8 @@ public class CriticalDimensionController {
     @RequestMapping(value = "/part/{partId}", method = GET, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     public List<CriticalDimension> findForThePart(@PathVariable("partId") long partId) {
-        return criticalDimensionService.findForThePart(partId);
+        List<CriticalDimension> criticalDimensions = criticalDimensionService.findForThePart(partId);
+        return criticalDimensions;
     }
 
     @Secured("ROLE_READ")

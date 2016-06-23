@@ -152,6 +152,9 @@ public class CriticalDimensionService {
 
     public List<CriticalDimension> findForThePart(long partId) {
         Part part = partDao.findOne(partId);
+        if (part == null) {
+            return null;
+        }
         Long partTypeId = part.getPartType().getId();
         return getCriticalDimensionForPartType(partTypeId);
     }

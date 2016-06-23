@@ -14,11 +14,11 @@ public class PartNotFound extends Exception {
     }
 
     public PartNotFound(Long id) {
-        super(String.format("Part [%!d] not found.", id));
+        super(String.format("Part [%1$d] not found.", id));
     }
 
     public PartNotFound(Long id, String manufacturerNumber) {
-        super(String.format("Part [%1!d] - %2!s", id, manufacturerNumber));
+        super(String.format("Part [%1$d] - %2!s", id, manufacturerNumber));
     }
 
 }

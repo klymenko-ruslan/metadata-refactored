@@ -12,6 +12,7 @@ angular.module("ngMetaCrudApp").controller("PartFormCtrl", ["$q", "$scope", "$lo
         function(part) {
           // Save the part
           $scope.part = part;
+          // $log.log("Part: " + angular.toJson(part));
           $scope.oldPart = Restangular.copy(part);
         },
         function(response) {

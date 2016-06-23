@@ -25,11 +25,6 @@ public class MsAccessImpl extends AbstractMas90 {
         super.init();
     }
 
-    @Override
-    public ProductPrices getProductPrices(Long partId) throws PartNotFound {
-        throw new Error("Not implemented.");
-    }
-
     /**
      * @return
      * @throws IOException

@@ -1,15 +1,21 @@
 package com.turbointernational.metadata.web;
 
 import au.com.bytecode.opencsv.CSVWriter;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.other.ManufacturerDao;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.part.PartDao;
-import com.turbointernational.metadata.domain.type.*;
+import com.turbointernational.metadata.domain.type.ManufacturerTypeDao;
+import com.turbointernational.metadata.domain.type.PartTypeDao;
 import com.turbointernational.metadata.exceptions.PartNotFound;
 import com.turbointernational.metadata.magmi.MagmiDataFinder;
 import com.turbointernational.metadata.magmi.dto.MagmiProduct;
 import com.turbointernational.metadata.services.Mas90ServiceFactory;
+import com.turbointernational.metadata.services.PriceService;
 import com.turbointernational.metadata.services.mas90.Mas90;
 import com.turbointernational.metadata.services.mas90.pricing.CalculatedPrice;
 import com.turbointernational.metadata.services.mas90.pricing.ItemPricing;
@@ -26,10 +32,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletResponse;
@@ -38,6 +41,9 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.*;
 import java.util.Map.Entry;
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
  *
@@ -82,27 +88,50 @@ public class MagmiController {
     @Autowired
     Mas90ServiceFactory mas90ServiceFactory;
 
-    @RequestMapping("/prices")
+    @Autowired
+    private PriceService priceService;
+
+    @RequestMapping(value = "/prices", method = GET)
     @ResponseBody
-    @Transactional
+    @Transactional(noRollbackFor = PartNotFound.class)
     @PreAuthorize("hasRole('ROLE_MAGMI_EXPORT') or hasIpAddress('127.0.0.1/32')")
-    public ProductPricesDto[] getProductPrices(
-            @RequestParam(name = "id") Long[] partIds,
-            @RequestParam(name = "impl", required = false, defaultValue = "MS_SQL")
-       Mas90ServiceFactory.Implementation implementation) throws IOException {
+    public ProductPricesDto[] getProductPricesAsGet(@RequestParam(name = "id") Long[] partIds) throws IOException {
         int n = partIds.length;
-        Mas90 mas90service = mas90ServiceFactory.getService(implementation);
         ProductPricesDto[] retVal = new ProductPricesDto[n];
         for(int i = 0; i < n; i++) {
             Long partId = partIds[i];
-            ProductPricesDto ppdto;
-            try {
-                ProductPrices pp = mas90service.getProductPrices(partId);
-                ppdto = new ProductPricesDto(pp);
-            } catch(PartNotFound e) {
-                ppdto = new ProductPricesDto(partId, e.getMessage());
-            }
-            retVal[i] = ppdto;
+            retVal[i] = loadPrices(partId);
+        }
+        return retVal;
+    }
+
+    @RequestMapping(value = "/prices", method = POST)
+    @ResponseBody
+    @Transactional(noRollbackFor = PartNotFound.class)
+    @PreAuthorize("hasRole('ROLE_MAGMI_EXPORT') or hasIpAddress('127.0.0.1/32')")
+    public ProductPricesDto[] getProductPricesAsPost(@RequestBody String strJson) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonFactory factory = mapper.getFactory();
+        JsonParser jp = factory.createParser(strJson);
+        JsonNode json = mapper.readTree(jp);
+        int n = json.size();
+        ProductPricesDto[] retVal = new ProductPricesDto[n];
+        int i = 0;
+        for(Iterator<JsonNode> iter = json.iterator(); iter.hasNext();) {
+            JsonNode jn = iter.next();
+            Long partId = jn.asLong();
+            retVal[i++] = loadPrices(partId);
+        }
+        return retVal;
+    }
+
+    private ProductPricesDto loadPrices(Long partId) {
+        ProductPricesDto retVal;
+        try {
+            ProductPrices pp = priceService.getProductPrices(partId);
+            retVal = new ProductPricesDto(pp);
+        } catch(PartNotFound e) {
+            retVal = new ProductPricesDto(partId, e.getMessage());
         }
         return retVal;
     }

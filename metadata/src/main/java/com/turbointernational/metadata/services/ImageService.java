@@ -4,14 +4,18 @@ import org.apache.commons.io.FileUtils;
 import org.im4java.core.ConvertCmd;
 import org.im4java.core.IM4JavaException;
 import org.im4java.core.IMOperation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
 
 /**
@@ -19,6 +23,8 @@ import static org.springframework.http.HttpStatus.OK;
  */
 @Service
 public class ImageService {
+
+    private final static Logger log = LoggerFactory.getLogger(ImageService.class);
     
     public final static int[] SIZES = {50, 135, 1000};
 
@@ -80,8 +86,13 @@ public class ImageService {
         File imageFile = new File(dir, filename);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "image/jpg");
-        byte[] bytes = FileUtils.readFileToByteArray(imageFile);
-        return new ResponseEntity(bytes, headers, OK);
+        try {
+            byte[] bytes = FileUtils.readFileToByteArray(imageFile);
+            return new ResponseEntity(bytes, headers, OK);
+        } catch(FileNotFoundException e) {
+            log.warn("Part's image loading failed: {}", e.getMessage());
+            return new ResponseEntity(null, headers, NOT_FOUND);
+        }
     }
 
 }
