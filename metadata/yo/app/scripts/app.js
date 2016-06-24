@@ -49,14 +49,27 @@ angular.module("ngMetaCrudApp", ["ngRoute", "ngTable", "ui.bootstrap",
       templateUrl: "views/part/PartForm.html",
       controller: "PartFormCtrl",
       resolve: {
-        partTypes: ["PartTypes", function(PartTypes) {
-          return PartTypes.getPromise();
+        part: function () {
+          return null;
+        },
+        partType: ["$route", function($route) {
+          var partId = $route.current.pathParams.partId;
+          return restService.findPartType(partId)
         }]
       }
     });
     $routeProvider.when("/part/:id/form", {
       templateUrl: "views/part/PartForm.html",
-      controller: "PartFormCtrl"
+      controller: "PartFormCtrl",
+      resolve: {
+        part: ["$route", "restService", function ($route, restService) {
+          var partId = $route.current.pathParams.id;
+          return restService.findPart(partId);
+        }],
+        partType: function () {
+          return null;
+        }
+      }
     });
     $routeProvider.when("/part/:id/interchange/search", {
       templateUrl: "views/part/interchange/PartInterchangeSearch.html",
