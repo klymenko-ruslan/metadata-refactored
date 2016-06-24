@@ -52,9 +52,9 @@ angular.module("ngMetaCrudApp", ["ngRoute", "ngTable", "ui.bootstrap",
         part: function () {
           return null;
         },
-        partType: ["$route", function($route) {
-          var partId = $route.current.pathParams.partId;
-          return restService.findPartType(partId)
+        partType: ["$log", "$route", "restService", function($log, $route, restService) {
+          var typeId = $route.current.pathParams.typeId;
+          return restService.findPartType(typeId)
         }]
       }
     });
