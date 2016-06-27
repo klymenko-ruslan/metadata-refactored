@@ -261,7 +261,11 @@ class CriticalDimensionsValidator implements Validator {
                         Double decimal = (Double) value;
                         Double minVal = cd.getMinVal();
                         if (minVal != null && decimal < minVal) {
-                            errors.rejectValue(fieldName, null, "The value lower than allowed: " + minVal);
+                            // We use range [-99.0..-100.0) as a NULL value.
+                            // So if the value is not in this range we assume it as invalid.
+                            if (decimal > -99.0D || decimal <= -100.0D) {
+                                errors.rejectValue(fieldName, null, "The value lower than allowed: " + minVal);
+                            }
                         }
                         Double maxVal = cd.getMaxVal();
                         if (maxVal != null && decimal > maxVal) {
