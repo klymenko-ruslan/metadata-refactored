@@ -14,9 +14,9 @@ import com.turbointernational.metadata.domain.type.PartTypeDao;
 import com.turbointernational.metadata.exceptions.PartNotFound;
 import com.turbointernational.metadata.magmi.MagmiDataFinder;
 import com.turbointernational.metadata.magmi.dto.MagmiProduct;
-import com.turbointernational.metadata.services.Mas90ServiceFactory;
 import com.turbointernational.metadata.services.PriceService;
 import com.turbointernational.metadata.services.mas90.Mas90;
+import com.turbointernational.metadata.services.mas90.MsSqlImpl;
 import com.turbointernational.metadata.services.mas90.pricing.CalculatedPrice;
 import com.turbointernational.metadata.services.mas90.pricing.ItemPricing;
 import com.turbointernational.metadata.services.mas90.pricing.ProductPrices;
@@ -26,6 +26,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -36,6 +37,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -86,10 +88,11 @@ public class MagmiController {
     JdbcTemplate db;
 
     @Autowired
-    Mas90ServiceFactory mas90ServiceFactory;
-
-    @Autowired
     private PriceService priceService;
+
+    @Qualifier("dataSourceMas90")
+    @Autowired
+    private DataSource dataSourceMas90;
 
     @RequestMapping(value = "/prices", method = GET)
     @ResponseBody
@@ -264,8 +267,6 @@ public class MagmiController {
     @Transactional
     @PreAuthorize("hasRole('ROLE_MAGMI_EXPORT') or hasIpAddress('127.0.0.1/32')")
     public void products(HttpServletResponse response, OutputStream out,
-                         @RequestParam(name = "impl", required = false, defaultValue = "MS_SQL")
-                         Mas90ServiceFactory.Implementation implementation,
                          @RequestParam(defaultValue="30", required=false) int days) throws Exception {
         logger.info("Magmi export started.");
         
@@ -274,7 +275,7 @@ public class MagmiController {
         
         long startTime = System.currentTimeMillis();
         
-        Mas90 mas90 = mas90ServiceFactory.getService(implementation);
+        Mas90 mas90 = new MsSqlImpl(dataSourceMas90);;
         logger.info("Mas90 implementation: {}", mas90.toString());
         CSVWriter writer = new CSVWriter(new OutputStreamWriter(out), ',', '\'', '\\');
         
@@ -346,14 +347,13 @@ public class MagmiController {
     @ResponseBody
     @Transactional
     @PreAuthorize("hasRole('ROLE_MAGMI_EXPORT') or hasIpAddress('127.0.0.1/32')")
-    public void product(HttpServletResponse response, OutputStream out, @PathVariable Long partId,
-                         @RequestParam(name = "impl", required = false, defaultValue = "MS_SQL")
-                         Mas90ServiceFactory.Implementation implementation) throws Exception {
+    public void product(HttpServletResponse response, OutputStream out, @PathVariable Long partId)
+            throws Exception {
         
         response.setHeader("Content-Type", "text/csv");
         response.setHeader("Content-Disposition: attachment; filename=products.csv", null);
 
-        Mas90 mas90 = mas90ServiceFactory.getService(implementation);
+        Mas90 mas90 = new MsSqlImpl(dataSourceMas90);;
         logger.info("Mas90 implementation: {}", mas90.toString());
         CSVWriter writer = new CSVWriter(new OutputStreamWriter(out), ',', '\'', '\\');
         
@@ -362,7 +362,7 @@ public class MagmiController {
         writer.writeNext(csvHeaders);
         
         Part part = partDao.findOne(partId);
-        List<Part> parts = new ArrayList<Part>();
+        List<Part> parts = new ArrayList();
         parts.add(part);
         
         Iterator<MagmiProduct> it = magmiDataFinder.findMagmiProducts(parts).values().iterator();
