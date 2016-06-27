@@ -22,6 +22,8 @@ import static javax.persistence.FetchType.EAGER;
 })
 public class User implements Comparable<User>, UserDetails {
 
+    public final static Long SYNC_AGENT_USER_ID = 10000L;
+
     //<editor-fold defaultstate="collapsed" desc="Properties">
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

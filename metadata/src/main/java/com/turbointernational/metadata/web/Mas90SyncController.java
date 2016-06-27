@@ -2,18 +2,26 @@ package com.turbointernational.metadata.web;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.domain.security.User;
+import com.turbointernational.metadata.domain.security.UserDao;
 import com.turbointernational.metadata.services.Mas90SyncService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.servlet.http.HttpServletResponse;
+
+import java.io.IOException;
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
  * Created by dmytro.trunykov@zorallabs.com on 13.01.16.
@@ -25,18 +33,21 @@ public class Mas90SyncController {
     private static Logger log = LoggerFactory.getLogger(Mas90SyncController.class);
 
     @Autowired
+    private UserDao userDao;
+
+    @Autowired
     private Mas90SyncService mas90SyncService;
 
-    @RequestMapping(value = "/status", method = RequestMethod.GET)
+    @RequestMapping(value = "/status", method = GET)
     @ResponseBody
     @JsonView(View.Summary.class)
-    @Secured("ROLE_READ")
+    @PreAuthorize("hasRole('ROLE_MAS90_SYNC') or hasIpAddress('127.0.0.1/32')")
     public Mas90SyncService.SyncProcessStatus status() {
         Mas90SyncService.SyncProcessStatus retVal = mas90SyncService.status();
         return retVal;
     }
 
-    @RequestMapping(value = "/history", method = RequestMethod.GET)
+    @RequestMapping(value = "/history", method = GET)
     @ResponseBody
     @Transactional
     @JsonView(View.Summary.class)
@@ -45,7 +56,7 @@ public class Mas90SyncController {
         return mas90SyncService.history(startPosition, maxResults);
     }
 
-    @RequestMapping(value = "/start", method = RequestMethod.POST)
+    @RequestMapping(value = "/start", method = POST)
     @ResponseBody
     @Transactional
     @JsonView(View.Summary.class)
@@ -56,6 +67,27 @@ public class Mas90SyncController {
             user = (User) principal.getPrincipal();
         }
         Mas90SyncService.SyncProcessStatus status = mas90SyncService.start(user);
+        return status;
+    }
+
+    @RequestMapping(value = "/startsyncjob", method = POST)
+    @ResponseBody
+    @Transactional
+    @JsonView(View.Summary.class)
+    @PreAuthorize("hasRole('ROLE_MAS90_SYNC') or hasIpAddress('127.0.0.1/32')")
+    public Mas90SyncService.SyncProcessStatus start(HttpServletResponse response) throws IOException {
+        User syncAgent = userDao.findOne(User.SYNC_AGENT_USER_ID);
+        if (syncAgent == null) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "User [" + User.SYNC_AGENT_USER_ID
+                    + "] not found.");
+            return null;
+        }
+        if (!syncAgent.isEnabled()) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "User account [" + User.SYNC_AGENT_USER_ID
+                    + "] is disabled.");
+            return null;
+        }
+        Mas90SyncService.SyncProcessStatus status = mas90SyncService.start(syncAgent);
         return status;
     }
 
