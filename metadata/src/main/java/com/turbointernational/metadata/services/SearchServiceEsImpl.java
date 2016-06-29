@@ -322,7 +322,7 @@ public class SearchServiceEsImpl implements SearchService {
                 boolQuery.must(QueryBuilders.termQuery("coolType.name.full", coolType));
             }
             if (turboType != null) {
-                boolQuery.must(QueryBuilders.termQuery("turboModel.turboType.name.full", turboModel));
+                boolQuery.must(QueryBuilders.termQuery("turboModel.turboType.name.full", turboType));
             }
             if (turboModel != null) {
                 boolQuery.must(QueryBuilders.termQuery("turboModel.name.full", turboModel));
