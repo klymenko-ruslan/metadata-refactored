@@ -1,12 +1,12 @@
 <nav class="navbar navbar-inverse navbar-fixed-top">
   <div class="container-fluid">
     <ul class="nav navbar-nav">
+      <li data-ng-disabled="{{::!hasRole('ROLE_READ')}}"><a href="#" data-ng-href="/part/list"><i class="fa fa-cog" aria-hidden="true"></i> Parts</a></li>
       <li class="dropdown">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
           <i class="fa fa-cogs" aria-hidden="true"></i> Entities <span class="caret"></span>
         </a>
         <ul class="dropdown-menu">
-          <li data-ng-disabled="{{::!hasRole('ROLE_READ')}}"><a href="#" data-ng-href="/part/list"><i class="fa fa-cog" aria-hidden="true"></i> Parts</a></li>
           <li data-ng-disabled="{{::!hasRole('ROLE_READ')}}"><a href="#" data-ng-href="/parttype/list"><i class="fa fa-gg" aria-hidden="true"></i> Part Types</a></li>
           <li data-ng-disabled="{{::!hasRole('ROLE_TURBO_MODEL_CRUD')}}"><a href="#" data-ng-href="/other/salesNotes"><i class="fa fa-files-o" aria-hidden="true"></i> Sales Notes</a></li>
           <li data-ng-disabled="{{::!hasRole('ROLE_TURBO_MODEL_CRUD')}}"><a href="#" data-ng-href="/other/turboModels"><i class="fa fa-superscript" aria-hidden="true"></i> Turbo Models</a></li>
