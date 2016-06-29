@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * @author jrodriguez
  */
 @Controller
-public class AngularSpaRouter {
+public class AngularSpaRouterController {
 
     @RequestMapping({
         "/",
