@@ -156,13 +156,13 @@
             </div>
           </td>
           <td class="text-right">
-            <button data-ng-click="modifyStart(d)" authorize="ROLE_ALTER_PART" data-ng-hide="isModifying(d)" data-ng-disabled="{{::d.invalidDisplayValue}}" class="btn btn-primary btn-xs">
+            <button tabindex="-1" data-ng-click="modifyStart(d)" authorize="ROLE_ALTER_PART" data-ng-hide="isModifying(d)" data-ng-disabled="{{::d.invalidDisplayValue}}" class="btn btn-primary btn-xs">
               <i class="fa fa-cog"></i> Modify
             </button>
-            <button data-ng-click="modifyUndo(d)" data-ng-show="isModifying(d)" data-ng-disabled="cdForm.$pristine || cdForm.$pending" class="btn btn-warning btn-xs ng-hide">
+            <button tabindex="-1" data-ng-click="modifyUndo(d)" data-ng-show="isModifying(d)" data-ng-disabled="cdForm.$pristine || cdForm.$pending" class="btn btn-warning btn-xs ng-hide">
               <i class="fa fa-undo"></i> Undo
             </button>
-            <button data-ng-click="modifyCancel(d)" data-ng-show="isModifying(d)" class="btn btn-warning btn-xs">
+            <button tabindex="-1" data-ng-click="modifyCancel(d)" data-ng-show="isModifying(d)" class="btn btn-warning btn-xs">
               <i class="fa fa-minus-circle"></i> Cancel
             </button>
           </td>
