@@ -1,7 +1,7 @@
 "use strict";
 
 angular.module("ngMetaCrudApp")
-    .directive("criticalDimensions", ["$log", "$filter",
+  .directive("criticalDimensions", ["$log", "$filter",
     function($log, $filter) {
       return {
         restrict: "E",
@@ -12,8 +12,8 @@ angular.module("ngMetaCrudApp")
           part: "=",
           descriptors: "="
         },
-        controller: ["$scope", "$log", "Restangular", "gToast", "restService", "dialogs", "METADATA_BASE",
-          function($scope, $log, Restangular, gToast, restService, dialogs, METADATA_BASE) {
+        controller: ["$scope", "$log", "Restangular", "gToast", "restService", "METADATA_BASE",
+          function($scope, $log, Restangular, gToast, restService, METADATA_BASE) {
 
           $scope.METADATA_BASE = METADATA_BASE;
 
