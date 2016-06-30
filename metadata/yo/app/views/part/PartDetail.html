@@ -59,22 +59,10 @@
       Turbo Types
     </a>
   </li>
-  <li role="presentation">
-    <a href="#interchangeable_parts" aria-controls="interchangeable_parts" role="tab" data-toggle="tab">
-      <i class="fa fa-random"></i>
-      Interchangeable Parts
-    </a>
-  </li>
   <li role="presentation" ng-show="part.partType.value == 'turbo'">
     <a href="#applications" aria-controls="applications" role="tab" data-toggle="tab">
       <i class="fa fa-book"></i>
       Applications
-    </a>
-  </li>
-  <li role="presentation">
-    <a href="#bill_of_materials" aria-controls="bill_of_materials" role="tab" data-toggle="tab">
-      <i class="fa fa-cogs"></i>
-      Bill of Materials
     </a>
   </li>
 </ul>
@@ -109,6 +97,16 @@
         </ul>
       </div>
     </div>
+    <div class="row">
+      <div class="col-xs-12">
+        <hr/>
+        <h4><u>Interchangeable Parts</u></h4>
+        <interchangeable-parts part="part"></interchangeable-parts>
+        <hr/>
+        <h4><u>Bill of Materials</u></h4>
+        <bom parent-part-id="partId"></bom>
+      </div>
+    </div>
   </div>
   <div role="tabpanel" class="tab-pane fade tab-part-detail" id="critical_dimensions">
     <critical-dimensions part="part" descriptors="criticalDimensions"></critical-dimensions>
@@ -120,18 +118,12 @@
     </a>
     <turbo-types part="part"></turbo-types>
   </div>
-  <div role="tabpanel" class="tab-pane fade tab-part-detail" id="interchangeable_parts">
-    <interchangeable-parts part="part"></interchangeable-parts>
-  </div>
   <div role="tabpanel" class="tab-pane fade tab-part-detail" id="applications">
     <a authorize="ROLE_APPLICATION_CRUD" class="btn btn-primary pull-right" style="margin-bottom:10px;" ng-href="/part/{{partId}}/application/search">
       <i class="fa fa-plus"></i>
       Add Application
     </a>
     <part-application-table />
-  </div>
-  <div role="tabpanel" class="tab-pane fade tab-part-detail" id="bill_of_materials">
-    <bom parent-part-id="partId"></bom>
   </div>
 </div>
 <script>
