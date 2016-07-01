@@ -18,6 +18,9 @@ angular.module("ngMetaCrudApp")
         $scope.searchName = null;
         $scope.search = {};
         $scope.searchCritDims = {};
+
+        $scope.showCriticalDimensions = false;
+
         // Latest Results
         $scope.searchResults = null;
         // Part Table

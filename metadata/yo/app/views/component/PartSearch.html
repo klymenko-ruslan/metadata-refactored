@@ -39,6 +39,12 @@
 
   <!-- Tabular search results -->
   <div class="col-xs-12 col-sm-9">
+    <div data-ng-class="['checkbox', {'disabled': !searchPartType}]">
+      <label data-ng-class="{'text-muted': !searchPartType}">
+        <input type="checkbox" tabindex="-1" data-ng-model="showCriticalDimensions" value="true" data-ng-disabled="!searchPartType"/>
+        Show critical dimensions
+      </label>
+    </div>
     <table data-ng-table="partTableParams" class="table table-condensed table-bordered table-striped">
       <tr data-ng-repeat="part in $data">
         <td title="'Part Type'" sortable="'partType.name.lower_case_sort'">
