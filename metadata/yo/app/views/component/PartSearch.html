@@ -39,30 +39,24 @@
 
   <!-- Tabular search results -->
   <div class="col-xs-12 col-sm-9">
-    <div data-ng-class="['checkbox', {'disabled': !searchPartType}]">
-      <label data-ng-class="{'text-muted': !searchPartType}">
-        <input type="checkbox" tabindex="-1" data-ng-model="showCriticalDimensions" value="true" data-ng-disabled="!searchPartType"/>
-        Show critical dimensions
-      </label>
+    <div class="bg-info">
+      <form class="form-inline table-top-form">
+        <div data-ng-class="['checkbox', {'disabled': !searchPartType}]">
+          <label data-ng-class="{'text-muted': !searchPartType}">
+            <input type="checkbox" tabindex="-1" data-ng-model="showCriticalDimensions" value="true" data-ng-disabled="!searchPartType"/>
+            Show critical dimensions
+          </label>
+        </div>
+      </form>
+      <div style="background-color: white;">
+        <table data-ng-table-dynamic="partTableParams with columns" class="table table-condensed table-bordered table-striped">
+          <tr data-ng-repeat="part in $data">
+            <td data-ng-repeat="col in $columns" data-title="col.title" data-sortable="col.sortable" data-ng-class="col.cssClass" data-ng-bind-html="col.getter(part)"></td>
+          </tr>
+          <tr data-ng-hide="$data.length"><td colspan="5">No data to display.</td></tr>
+        </table>
+      </div>
     </div>
-    <table data-ng-table="partTableParams" class="table table-condensed table-bordered table-striped">
-      <tr data-ng-repeat="part in $data">
-        <td title="'Part Type'" sortable="'partType.name.lower_case_sort'">
-          {{part._source.partType.name}}
-        </td>
-        <td title="'Manufacturer'" sortable="'manufacturer.name.lower_case_sort'">
-          {{part._source.manufacturer.name}}
-        </td>
-        <td title="'Mfr Part #'" sortable="'manufacturerPartNumber.lower_case_sort'">
-          {{part._source.manufacturerPartNumber}}
-        </td>
-        <td title="'Name'" sortable="'name.lower_case_sort'">
-          {{part._source.name}}
-        </td>
-        <td class="actions text-center" title="'Actions'" part-search-actions></td>
-      </tr>
-      <tr data-ng-hide="$data.length"><td colspan="5">No data to display.</td></tr>
-    </table>
   </div>
 
 </div>

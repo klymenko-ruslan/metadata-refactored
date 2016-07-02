@@ -10,7 +10,9 @@ angular.module("ngMetaCrudApp")
       link: function postLink(scope, iElement, iAttrs, controller, transcludeFn) {
         controller.transcludeActionsFn = transcludeFn;
       },
-      controller: ["$log", "$q", "$scope", "ngTableParams", function($log, $q, $scope, ngTableParams) {
+      controller: ["$parse", "$sce", "$log", "$q", "$scope", "ngTableParams", function($parse, $sce, $log, $q,
+        $scope, ngTableParams) {
+
         $scope.critDimEnumValsMap = _.indexBy($scope.critDimEnumVals, "id");
         // Filter
         $scope.searchPartType = null;
@@ -20,6 +22,80 @@ angular.module("ngMetaCrudApp")
         $scope.searchCritDims = {};
 
         $scope.showCriticalDimensions = false;
+
+        $scope.fixedCols = [
+          {
+            title: "Part Type",
+            getter: $parse("_source.partType.name"),
+            sortable: "partType.name.lower_case_sort"
+          },
+          {
+            title: "Manufacturer",
+            getter: $parse("_source.manufacturer.name"),
+            sortable: "manufacturer.name.lower_case_sort"
+          },
+          {
+            title: "Mfr Part #",
+            getter: $parse("_source.manufacturerPartNumber"),
+            sortable: "manufacturerPartNumber.lower_case_sort"
+          },
+          {
+            title: "Name",
+            getter: $parse("_source.name"),
+            sortable: "name.lower_case_sort"
+          }
+        ];
+
+        $scope.actionsCol = [
+          {
+            title: "Action",
+            cssClass: ['actions', 'text-center'],
+            getter: function(part) {
+              var partId = part._source.id;
+              var linkView = "<a authorize=\"ROLE_READ\" " +
+                "href=\"/part/" + partId + "\" " +
+                "class=\"btn btn-primary btn-xs\"> " +
+                "<i class=\"fa fa-eye\"></i> View</a>";
+              var linkEdit = "<a authorize=\"ROLE_ALTER_PART\" " +
+                "href=\"/part/" + partId + "/form\" " +
+                "class=\"btn btn-primary btn-xs\"> " +
+                "<i class=\"fa fa-cog\"></i> Edit</a>";
+              var html = linkView + "\n" + linkEdit;
+              return $sce.trustAsHtml(html);
+            }
+          }
+        ];
+
+        $scope.columns = null;
+
+        $scope.initColumns = function() {
+          if ($scope.showCriticalDimensions) {
+            $log.log("showCriticalDimensions is TRUE. critDimCols: " + angular.toJson($scope.critDims));
+            var critDimCols = [];
+            if ($scope.critDims) {
+              _.each($scope.critDims, function (d) {
+                var col = {
+                  title: d.name,
+                  getter: $parse("_source." + d.jsonName),
+                  sortable: d.idxName
+                };
+                $log.log("col: " + angular.toJson(d));
+                critDimCols.push(col);
+              });
+            }
+            $log.log("critDimCols: " + angular.toJson(critDimCols));
+            $scope.columns = Array.prototype.concat($scope.fixedCols, critDimCols, $scope.actionsCol);
+          } else {
+            $log.log("showCriticalDimensions is FALSE");
+            $scope.columns = Array.prototype.concat($scope.fixedCols, $scope.actionsCol);
+          }
+        };
+
+        $scope.initColumns();
+
+        $scope.$watch("[showCriticalDimensions]", function(newVal, oldVal) {
+          $scope.initColumns();
+        });
 
         // Latest Results
         $scope.searchResults = null;
@@ -61,7 +137,7 @@ angular.module("ngMetaCrudApp")
 
         $scope.clearPartNumber();
 
-        // Critical dimensions for the current choosed $scope.searchPartType.
+        // Critical dimensions for the current choose $scope.searchPartType.
         $scope.critDims = null;
 
         $scope.$watch("[search, searchManufacturer, searchName, searchCritDims]", function(newVal, oldVal) {
@@ -76,31 +152,17 @@ angular.module("ngMetaCrudApp")
         // and initialize $scope.critDims by critical dimensions which are
         // corresponding the part type.
         $scope.$watch("[searchPartType]", function(newVal, oldVal) {
-          // Debounce
-          if (angular.equals(newVal, oldVal, true) && !angular.isObject(newVal)) {
-            return;
-          }
           var pt = newVal[0];
           if (angular.isObject(pt)) {
             $scope.critDims = $scope.critDimsByPartTypes[pt.id];
-            $scope.searchCritDims = {}; // re-init
+          } else {
+            $scope.critDims = null;
+            $scope.showCriticalDimensions = false;
           }
+          $scope.searchCritDims = {}; // re-init
           $scope.partTableParams.reload();
         }, true);
 
       }]
-    };
-  }])
-  .directive("partSearchActions", ["$log", function($log) {
-    return {
-      restrict: "A",
-      require: "^partSearch",
-      link: function postLink(scope, element, attrs, controller) {
-        scope.partId = scope.part._id;
-        scope.partType = scope.part._source.partType.name;
-        controller.transcludeActionsFn(scope, function(clone) {
-          element.append(clone);
-        });
-      }
     };
   }]);
