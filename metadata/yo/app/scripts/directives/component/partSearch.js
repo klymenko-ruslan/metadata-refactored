@@ -70,23 +70,22 @@ angular.module("ngMetaCrudApp")
 
         $scope.initColumns = function() {
           if ($scope.showCriticalDimensions) {
-            $log.log("showCriticalDimensions is TRUE. critDimCols: " + angular.toJson($scope.critDims));
+// $log.log("showCriticalDimensions is TRUE. critDimCols: " + angular.toJson($scope.critDims));
             var critDimCols = [];
             if ($scope.critDims) {
               _.each($scope.critDims, function (d) {
                 var col = {
                   title: d.name,
-                  getter: $parse("_source." + d.jsonName),
+                  getter: $parse("_source." + d.idxName),
                   sortable: d.idxName
                 };
-                $log.log("col: " + angular.toJson(d));
                 critDimCols.push(col);
               });
             }
-            $log.log("critDimCols: " + angular.toJson(critDimCols));
+// $log.log("critDimCols: " + angular.toJson(critDimCols));
             $scope.columns = Array.prototype.concat($scope.fixedCols, critDimCols, $scope.actionsCol);
           } else {
-            $log.log("showCriticalDimensions is FALSE");
+// $log.log("showCriticalDimensions is FALSE");
             $scope.columns = Array.prototype.concat($scope.fixedCols, $scope.actionsCol);
           }
         };
@@ -157,8 +156,8 @@ angular.module("ngMetaCrudApp")
             $scope.critDims = $scope.critDimsByPartTypes[pt.id];
           } else {
             $scope.critDims = null;
-            $scope.showCriticalDimensions = false;
           }
+          $scope.showCriticalDimensions = false;
           $scope.searchCritDims = {}; // re-init
           $scope.partTableParams.reload();
         }, true);
