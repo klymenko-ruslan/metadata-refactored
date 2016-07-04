@@ -9,11 +9,22 @@ import sys
 try:
     # sudo pip3 install elasticsearch
     from elasticsearch import Elasticsearch
+except ImportError as e:
+    print("Required python module 'elasticsearch' not found.",
+          file=sys.stderr)
+    print("Use following command to install:", file=sys.stderr)
+    print("\t $ sudo pip3 install elasticsearch", file=sys.stderr)
+    sys.exit(1)
+try:
     # sudo apt-get install python3-mysql.connector
     import mysql.connector
 except ImportError as e:
-    print("Required python module not found: {}".format(e), file=sys.stderr)
+    print("Required python module 'mysql.connector' not found.",
+          file=sys.stderr)
+    print("Use following command to install:", file=sys.stderr)
+    print("\t $ sudo pip3 install python3-mysql.connector", file=sys.stderr)
     sys.exit(1)
+
 
 INDEX_NAME = "metadata"
 
@@ -646,13 +657,54 @@ try:
         cursor.execute("select idx_name, data_type "
                        "from crit_dim "
                        "order by part_type_id, seq_num")
+        index_properties = index_definition["mappings"]["part"]["properties"]
         for (idx_name, data_type) in cursor:
             if data_type == "DECIMAL":
                 idx_type = "double"
-            elif (data_type == "INTEGER" or data_type == "ENUMERATION"):
+            elif data_type == "INTEGER":
                 idx_type = "long"
             elif data_type == "TEXT":
                 idx_type = "string"
+            elif data_type == "ENUMERATION":
+                # Enumeration has a special index structure in oder
+                # to store an enumeration item ID and its textual
+                # representation. We need in the textual representation
+                # in order to have a possibility to show enumeration value
+                # in a WEB UI (e.g. in tables).
+
+                # Index to store enumeration item ID.
+                index_properties[idx_name] = {
+                    "type": "long",
+                    "store": "yes"
+                }
+
+                # Index to store enumeration item LABEL.
+                # Caveat. The suffix "Label" below is hardcoded in the
+                # Java
+                # (see method CriticalDimensionService.JsonIdxNameTransformer
+                #  #transform(Object)),
+                # in the JavaSript code (see PartSearch.js)
+                # and in the HTML (see PartSearch.html).
+                # So if you changes this suffix you also must reflect the
+                # rename in those files too.
+                idx_name_label = idx_name + "Label"
+                index_properties[idx_name_label] = {
+                    "type": "multi_field",
+                    "fields": {
+                        "text": {
+                            "type": "string",
+                            "tokenizer": "lowercase",
+                            "analyzer": "keyword",
+                            "store": "yes"
+                        },
+                        "lower_case_sort": {
+                            "type": "string",
+                            "analyzer": "case_insensitive_sort",
+                            "store": "yes"
+                        }
+                    }
+                }
+                continue
             else:
                 print("Unknown data type: {}".format(data_type),
                       file=sys.stderr)

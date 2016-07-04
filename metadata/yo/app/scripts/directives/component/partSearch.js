@@ -36,6 +36,7 @@ angular.module("ngMetaCrudApp")
           },
           {
             title: "Mfr Part #",
+            cssClass: ['text-nowrap'],
             getter: $parse("_source.manufacturerPartNumber"),
             sortable: "manufacturerPartNumber.lower_case_sort"
           },
@@ -74,10 +75,19 @@ angular.module("ngMetaCrudApp")
             var critDimCols = [];
             if ($scope.critDims) {
               _.each($scope.critDims, function (d) {
+                var gttr = null;
+                var srtbl = null;
+                if (d.dataType == 'ENUMERATION') {
+                  gttr = $parse("_source." + d.idxName + "Label");
+                  srtbl = d.idxName + "Label.lower_case_sort";
+                } else {
+                  gttr = $parse("_source." + d.idxName);
+                  srtbl = d.idxName;
+                }
                 var col = {
                   title: d.name,
-                  getter: $parse("_source." + d.idxName),
-                  sortable: d.idxName
+                  getter: gttr,
+                  sortable: srtbl
                 };
                 critDimCols.push(col);
               });

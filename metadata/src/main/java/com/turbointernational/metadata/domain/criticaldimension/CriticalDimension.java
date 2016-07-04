@@ -128,7 +128,7 @@ public class CriticalDimension implements Serializable {
     /**
      * Transformer for properties name during serialization to JSON for ElasticSearch.
      *
-     * Because name of a property in an Part instance that holds critical dimension value
+     * Because name of a property in a Part instance that holds critical dimension value
      * can have different name in an ElasticSearch index we use this transformer to
      * convert {@link #jsonName} => {@link #idxName}.
      *

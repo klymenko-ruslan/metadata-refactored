@@ -12,6 +12,7 @@ import flexjson.TransformerUtil;
 import flexjson.TypeContext;
 import flexjson.transformer.AbstractTransformer;
 import flexjson.transformer.Transformer;
+import flexjson.transformer.TypeTransformerMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,6 +88,7 @@ public class CriticalDimensionService {
 
         @Override
         public void transform(Object object) {
+            TypeTransformerMap defTypeTransformers = TransformerUtil.getDefaultTypeTransformers();
             JSONContext jsonContext = getContext();
             TypeContext typeContext = jsonContext.peekTypeContext();
             if (typeContext.isFirst()) {
@@ -96,14 +98,30 @@ public class CriticalDimensionService {
             }
             jsonContext.writeName(fieldName);
             Object value;
-            if (enumeration && object != null) {
-                CriticalDimensionEnumVal cdev = (CriticalDimensionEnumVal) object;
-                value = cdev.getId();
+            if (enumeration) {
+                CriticalDimensionEnumVal cdev = null;
+                // Serialize enumeration item ID.
+                if (object == null) {
+                    value = null;
+                } else {
+                    cdev = (CriticalDimensionEnumVal) object;
+                    value = cdev.getId();
+                }
+                Transformer defTransformer = defTypeTransformers.getTransformer(value);
+                defTransformer.transform(value);
+                // Serialize enumeration item LABEL.
+                jsonContext.writeComma();
+                jsonContext.writeName(fieldName + "Label");
+                if (cdev != null) {
+                    value = cdev.getVal();
+                }
+                defTransformer = defTypeTransformers.getTransformer(value);
+                defTransformer.transform(value);
             } else {
                 value = object;
+                Transformer defTransformer = defTypeTransformers.getTransformer(value);
+                defTransformer.transform(value);
             }
-            Transformer defTransformer = TransformerUtil.getDefaultTypeTransformers().getTransformer(value);
-            defTransformer.transform(value);
         }
 
         @Override
