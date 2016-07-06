@@ -23,6 +23,15 @@ public interface SearchService {
         return Application.getContext().getBean(SearchService.class);
     }
 
+    class IndexingStatus {
+
+    }
+
+    SearchService.IndexingStatus startIndexing(boolean indexParts, boolean indexApplications,
+                                               boolean indexSalesNotes) throws Exception;
+
+    SearchService.IndexingStatus getIndexingState() throws Exception;
+
     void indexPart(long id);
 
     void indexPart(Part part);

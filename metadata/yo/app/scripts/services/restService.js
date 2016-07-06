@@ -62,6 +62,10 @@ angular.module("ngMetaCrudApp")
         dialogs.error(title, 'Server said: <pre>' + angular.toJson(response.data, 2) + '</pre>');
       };
 
+      this.getCurrentUser = function() {
+        return Restangular.one('security/user/me').get();
+      };
+
       this.getAllUsers = function() {
         return Restangular.all("security/user").getList();
       };
@@ -433,6 +437,14 @@ angular.module("ngMetaCrudApp")
 
       this.statusMas90Sync = function() {
         return Restangular.one("mas90sync/status").get();
+      };
+
+      this.startIndexing = function(toIndex) {
+        return Restangular.one("").post();
+      };
+
+      this.getIndexingState = function() {
+        return Restangular.one("").get();
       };
 
       this.filterParts = function(searchPartTypeId, searchManufacturerId, searchName, search, searchCritDims, sortProperty, sortOrder, offset, limit) {

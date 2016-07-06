@@ -195,4 +195,19 @@ public class SearchController {
             }
         }).start();
     }
+
+    @Secured("ROLE_ADMIN")
+    @RequestMapping(value = "/indexing/status")
+    @ResponseBody
+    public SearchService.IndexingStatus startIndexing(boolean indexParts, boolean indexApplications,
+                                                      boolean indexSalesNotes) throws Exception {
+        return null; // TODO
+    }
+
+    @Secured("ROLE_ADMIN")
+    @RequestMapping(value = "/indexing/start")
+    public SearchService.IndexingStatus getIndexingState() throws Exception {
+        return null; // TODO
+    }
+
 }

@@ -12,7 +12,6 @@ import com.turbointernational.metadata.domain.part.salesnote.SalesNotePartDao;
 import com.turbointernational.metadata.domain.part.salesnote.SalesNoteState;
 import com.turbointernational.metadata.utils.RegExpUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.index.IndexRequest;
@@ -43,7 +42,10 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.PostConstruct;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -51,7 +53,6 @@ import java.util.regex.Pattern;
 import static com.turbointernational.metadata.services.SearchTermCmpOperatorEnum.*;
 import static com.turbointernational.metadata.services.SearchTermEnum.*;
 import static com.turbointernational.metadata.utils.RegExpUtils.PTRN_DOUBLE_LIMIT;
-import static com.turbointernational.metadata.utils.RegExpUtils.PTRN_INTEGER_LIMIT;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
@@ -175,6 +176,17 @@ public class SearchServiceEsImpl implements SearchService {
      * Convert string to SortOrder.
      */
     private final static Function<String, SortOrder> convertSortOrder = sortOrder -> SortOrder.valueOf(sortOrder.toUpperCase());
+
+    @Override
+    public SearchService.IndexingStatus startIndexing(boolean indexParts, boolean indexApplications,
+                                               boolean indexSalesNotes) throws Exception {
+        return null;
+    }
+
+    @Override
+    public SearchService.IndexingStatus getIndexingState() throws Exception {
+        return null;
+    }
 
     @Override
     @Transactional(readOnly = true)

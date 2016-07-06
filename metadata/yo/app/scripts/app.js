@@ -239,13 +239,26 @@ angular.module("ngMetaCrudApp", ["ngRoute", "ngTable", "ui.bootstrap",
     });
 
     // MAS90
-
     $routeProvider.when("/mas90/sync/status", {
       templateUrl: "views/mas90/sync/status.html",
       controller: "Mas90SyncCtrl",
       resolve: {
         status: ["restService", function(restService) {
           return restService.statusMas90Sync();
+        }]
+      }
+    });
+
+    // Indexing.
+    $routeProvider.when("/indexing/status", {
+      templateUrl: "views/indexing/status.html",
+      controller: "IndexingCtrl",
+      resolve: {
+        status: ["restService", function(restService) {
+          return restService.statusMas90Sync();
+        }],
+        user: ["restService", function(restService) {
+          return restService.getCurrentUser();
         }]
       }
     });

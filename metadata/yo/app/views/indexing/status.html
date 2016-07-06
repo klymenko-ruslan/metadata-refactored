@@ -1,0 +1,142 @@
+<div class="row" data-ng-controller="IndexingCtrl as ctrl" style="margin-top: 2em;">
+  <div class="col-xs-12">
+    <h4>Indexing of the entities.</h4>
+    <form data-ng-show="phase == 0">
+
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="checkbox">
+            <label>
+              <input type="checkbox" data-ng-model="toIndex.parts" data-ng-disabled="::!hasRole('ROLE_ADMIN')" /> Index parts
+            </label>
+          </div>
+          <div class="checkbox">
+            <label>
+              <input type="checkbox" data-ng-model="toIndex.applications" data-ng-disabled="::!hasRole('ROLE_ADMIN')" /> Index applications
+            </label>
+          </div>
+          <div class="checkbox">
+            <label>
+              <input type="checkbox" data-ng-model="toIndex.salesNotes" data-ng-disabled="::!hasRole('ROLE_ADMIN')" /> Index sales notes
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-xs-12 col-sm-10 col-sm-push-2 text-info">
+          <small data-ng-hide="::hasRole('ROLE_ADMIN')">(You have no enough permissions to start the process.)</small>
+        </div>
+        <div class="col-xs-12 col-sm-2 col-sm-pull-10">
+          <button data-ng-click="ctrl.startIndexing()" role="button" class="btn btn-primary btn-lg active" data-ng-disabled="!(toIndex.parts || toIndex.applications || toIndex.salesNotes) || !hasRole('ROLE_ADMIN')">
+            <i class="fa fa-flag"></i> Start
+          </button>
+        </div>
+      </div>
+
+    </form>
+
+    <div class="row" data-ng-show="phase == 1 || phase == 2 || phase == 3">
+      <div class="col-xs-12">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h3 class="modal-title">Progress of the indexing</h3>
+            </div>
+            <div class="modal-body">
+              <div class="row">
+                <div class="col-xs-12">
+
+                  <div class="row" data-ng-show="phase == 1">
+                    <div class="col-xs-12">
+                      Job size estimating. Please wait...&nbsp;<i class="fa fa-circle-o-notch fa-spin"></i>
+                    </div>
+                  </div>
+
+                  <div class="row" data-ng-show="(phase == 2 || phase == 3) && toIndex.parts">
+                    <div class="col-xs-12">
+                      <h4>Indexing of Parts</h4>
+                      <div class="row">
+                        <div class="col-xs-3">
+                          Indexed: <span>{{partsIndexed | number:0}}</span>
+                        </div>
+                        <div class="col-xs-9">
+                          Failures: <span ng-class="{'text-danger': partsIndexingFailures}">{{partsIndexingFailures | number:0}}</span>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-xs-12">
+                          <uib-progressbar max="partsIndexingTotalSteps" value="partsIndexingCurrentStep" ng-class="{'progress-striped active': phase != 3}">
+                            <span style="color:white; white-space:nowrap;">{{partsIndexingCurrentStep}} / {{partsIndexingTotalSteps}}</span>
+                          </uib-progressbar>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row" data-ng-show="(phase == 2 || phase == 3) && toIndex.applications">
+                    <div class="col-xs-12">
+                      <h4>Indexing of Applications</h4>
+                      <div class="row">
+                        <div class="col-xs-3">
+                          Indexed: <span>{{applicationsIndexed | number:0}}</span>
+                        </div>
+                        <div class="col-xs-9">
+                          Failures: <span ng-class="{'text-danger': applicationsIndexingFailures}">{{applicationsIndexingFailures | number:0}}</span>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-xs-12">
+                          <uib-progressbar max="applicationsIndexingTotalSteps" value="applicationsIndexingCurrentStep" ng-class="{'progress-striped active': phase != 3}">
+                            <span style="color:white; white-space:nowrap;">{{applicationsIndexingCurrentStep}} / {{applicationsIndexingTotalSteps}}</span>
+                          </uib-progressbar>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row" data-ng-show="(phase == 2 || phase == 3) && toIndex.salesNotes">
+                    <div class="col-xs-12">
+                      <h4>Indexing of Sales Notes</h4>
+                      <div class="row">
+                        <div class="col-xs-3">
+                          Indexed: <span>{{salesNotesIndexed | number:0}}</span>
+                        </div>
+                        <div class="col-xs-9">
+                          Failures: <span ng-class="{'text-danger': salesNotesIndexingFailures}">{{salesNotesIndexingFailures | number:0}}</span>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-xs-12">
+                          <uib-progressbar max="salesNotesIndexingTotalSteps" value="salesNotesIndexingCurrentStep" ng-class="{'progress-striped active': phase != 3}">
+                            <span style="color:white; white-space:nowrap;">{{salesNotesIndexingCurrentStep}} / {{salesNotesIndexingTotalSteps}}</span>
+                          </uib-progressbar>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row" data-ng-show="(phase == 2 || phase == 3) && errorMessage">
+                    <div class="col-xs-12">
+                      <span class="text-danger">Failure:</span>&nbsp;<span class="bg-danger" style="padding: 2px 4px;">{{errorMessage}}</span>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <div class="pull-left">
+                <span class="text-muted">The process started on {{startedOn | date : "yyyy-MM-dd HH:mm.ss"}} by <a ng-href="security/user/{{user.id}}">{{user.name}}</a>.</span>
+              </div>
+              <div class="pull-right">
+                <button type="button" class="btn btn-default" data-dismiss="modal" data-ng-disabled="phase != 3" ng-click="ctrl.onCloseStatus()">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
