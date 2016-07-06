@@ -140,11 +140,14 @@ angular.module("ngMetaCrudApp")
           }
         });
 
-        $scope.clearPartNumber = function() {
+        $scope.clearFilter = function() {
           $scope.search.partNumber = null;
+          $scope.searchPartType = null;
+          $scope.searchManufacturer = null;
+          $scope.searchName = null;
         };
 
-        $scope.clearPartNumber();
+        $scope.clearFilter();
 
         // Critical dimensions for the current choose $scope.searchPartType.
         $scope.critDims = null;
