@@ -2,10 +2,8 @@
 
 angular.module("ngMetaCrudApp")
 .controller("IndexingCtrl", ["$log", "$scope", "$timeout", "$interval",
-  "restService", "user", "status",
-  function($log, $scope, $timeout, $interval, restService, user, status) {
-
-    $scope.user = user;
+  "restService", "status",
+  function($log, $scope, $timeout, $interval, restService, status) {
 
     $scope.toIndex = {};
 
@@ -33,6 +31,9 @@ angular.module("ngMetaCrudApp")
     $scope.salesNotesIndexingFailures = null;
     $scope.salesNotesIndexingTotalSteps = null;
     $scope.salesNotesIndexingCurrentStep = null;
+
+    $scope.userId = null;
+    $scope.userName = null;
 
     $scope._updateStatus = function(status) {
 
@@ -63,6 +64,9 @@ angular.module("ngMetaCrudApp")
       $scope.toIndex.applications = status.indexApplications;
       $scope.toIndex.salesNotes = status.indexSalesNotes;
 
+      $scope.userId = status.userId;
+      $scope.userName = status.userName;
+
     };
 
     this._resetToIndex = function() {
@@ -91,7 +95,7 @@ angular.module("ngMetaCrudApp")
     $scope._updateStatus(status);
 
     $scope.refreshTask = $interval(function() {
-      restService.getIndexingState().then(
+      restService.getIndexingStatus().then(
         function success(newStatus) {
           $scope._updateStatus(newStatus);
         },

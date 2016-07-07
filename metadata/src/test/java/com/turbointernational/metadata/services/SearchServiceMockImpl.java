@@ -4,6 +4,7 @@ import com.turbointernational.metadata.domain.car.*;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.part.salesnote.SalesNotePart;
 import com.turbointernational.metadata.domain.part.salesnote.SalesNoteState;
+import com.turbointernational.metadata.domain.security.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
@@ -22,6 +23,18 @@ import java.util.Set;
 public class SearchServiceMockImpl implements SearchService {
 
     private final static Logger log = LoggerFactory.getLogger(SearchServiceMockImpl.class);
+
+    @Override
+    public IndexingStatus startIndexing(User user, boolean indexParts, boolean indexApplications, boolean indexSalesNotes) throws Exception {
+        log.debug("Started indexing.");
+        return null;
+    }
+
+    @Override
+    public IndexingStatus getIndexingStatus() throws Exception {
+        log.debug("Get indexing status.");
+        return null;
+    }
 
     @Override
     public void indexPart(long id) {

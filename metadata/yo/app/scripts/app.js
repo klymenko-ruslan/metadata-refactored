@@ -250,15 +250,12 @@ angular.module("ngMetaCrudApp", ["ngRoute", "ngTable", "ui.bootstrap",
     });
 
     // Indexing.
-    $routeProvider.when("/indexing/status", {
+    $routeProvider.when("/search/indexing/status", {
       templateUrl: "views/indexing/status.html",
-      controller: "IndexingCtrl",
+      controller: "IndexingCtrl as ctrl",
       resolve: {
         status: ["restService", function(restService) {
-          return restService.statusMas90Sync();
-        }],
-        user: ["restService", function(restService) {
-          return restService.getCurrentUser();
+          return restService.getIndexingStatus();
         }]
       }
     });

@@ -2,15 +2,16 @@ package com.turbointernational.metadata.web;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.domain.part.salesnote.SalesNoteState;
+import com.turbointernational.metadata.domain.security.User;
 import com.turbointernational.metadata.services.SearchService;
+import com.turbointernational.metadata.services.SearchService.IndexingStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
@@ -20,6 +21,7 @@ import java.util.Set;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
  * @author jrodriguez
@@ -197,17 +199,26 @@ public class SearchController {
     }
 
     @Secured("ROLE_ADMIN")
-    @RequestMapping(value = "/indexing/status")
+    @RequestMapping(value = "/indexing/start", method = POST)
     @ResponseBody
-    public SearchService.IndexingStatus startIndexing(boolean indexParts, boolean indexApplications,
-                                                      boolean indexSalesNotes) throws Exception {
-        return null; // TODO
+    @JsonView(View.Summary.class)
+    public IndexingStatus startIndexing(Authentication principal,
+                                        @RequestParam(name = "parts", required = false) boolean indexParts,
+                                        @RequestParam(name = "applications", required = false) boolean indexApplications,
+                                        @RequestParam(name = "salesNotes", required = false) boolean indexSalesNotes) throws Exception {
+        User user = null;
+        if (principal != null) {
+            user = (User) principal.getPrincipal();
+        }
+        return searchService.startIndexing(user, indexParts, indexApplications, indexSalesNotes);
     }
 
-    @Secured("ROLE_ADMIN")
-    @RequestMapping(value = "/indexing/start")
-    public SearchService.IndexingStatus getIndexingState() throws Exception {
-        return null; // TODO
+    @Secured("ROLE_READ")
+    @ResponseBody
+    @RequestMapping(value = "/indexing/status", method = GET)
+    @JsonView(View.Summary.class)
+    public IndexingStatus getIndexingStatus() throws Exception {
+        return searchService.getIndexingStatus();
     }
 
 }

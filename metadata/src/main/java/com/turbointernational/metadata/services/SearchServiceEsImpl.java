@@ -10,6 +10,8 @@ import com.turbointernational.metadata.domain.part.PartDao;
 import com.turbointernational.metadata.domain.part.salesnote.SalesNotePart;
 import com.turbointernational.metadata.domain.part.salesnote.SalesNotePartDao;
 import com.turbointernational.metadata.domain.part.salesnote.SalesNoteState;
+import com.turbointernational.metadata.domain.security.User;
+import com.turbointernational.metadata.services.SearchService.IndexingStatus;
 import com.turbointernational.metadata.utils.RegExpUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.bulk.BulkRequest;
@@ -26,6 +28,7 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.RangeQueryBuilder;
+import org.elasticsearch.index.shard.SnapshotStatus;
 import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.sort.SortBuilder;
@@ -50,6 +53,9 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.turbointernational.metadata.services.SearchService.IndexingStatus.PHASE_ESTIMATION;
+import static com.turbointernational.metadata.services.SearchService.IndexingStatus.PHASE_FINISHED;
+import static com.turbointernational.metadata.services.SearchService.IndexingStatus.PHASE_INDEXING;
 import static com.turbointernational.metadata.services.SearchTermCmpOperatorEnum.*;
 import static com.turbointernational.metadata.services.SearchTermEnum.*;
 import static com.turbointernational.metadata.utils.RegExpUtils.PTRN_DOUBLE_LIMIT;
@@ -147,6 +153,8 @@ public class SearchServiceEsImpl implements SearchService {
             AggregationBuilders.terms("Make").field("make.name.full").size(DEF_AGGR_RESULT_SIZE)
     };
 
+    private final IndexingStatus indexingStatus = new IndexingStatus();
+
     @PostConstruct
     private void init() throws UnknownHostException {
         // Establish connection to ElasticSearch cluster.
@@ -177,15 +185,71 @@ public class SearchServiceEsImpl implements SearchService {
      */
     private final static Function<String, SortOrder> convertSortOrder = sortOrder -> SortOrder.valueOf(sortOrder.toUpperCase());
 
-    @Override
-    public SearchService.IndexingStatus startIndexing(boolean indexParts, boolean indexApplications,
-                                               boolean indexSalesNotes) throws Exception {
-        return null;
+    private class IndexingJob extends Thread {
+
+        @Override
+        public void run() {
+            try {
+                int partsTotal = partDao.getTotal();
+                int carModelEngineYearTotal = carModelEngineYearDao.getTotal();
+                int carEngineTotal = carEngineDao.getTotal();
+                int carFuelTypeTotal = carFuelTypeDao.getTotal();
+                int carMakeTotal = carMakeDao.getTotal();
+                int carModelTotal = carModelDao.getTotal();
+                int applicationsTotal = carModelEngineYearTotal + carEngineTotal +
+                        carFuelTypeTotal + carMakeTotal + carModelTotal;
+                int salesNotesTotal = salesNotePartDao.getTotal();
+                synchronized (indexingStatus) {
+                    indexingStatus.setPartsIndexingTotalSteps(partsTotal);
+                    indexingStatus.setApplicationsIndexingTotalSteps(applicationsTotal);
+                    indexingStatus.setSalesNotesIndexingTotalSteps(salesNotesTotal);
+                    indexingStatus.setPhase(PHASE_INDEXING);
+                }
+                // TODO
+                try {
+                    sleep(10000L);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            } catch(Exception e) {
+                synchronized (indexingStatus) {
+                    indexingStatus.setErrorMessage(e.getMessage());
+                }
+            } finally {
+                synchronized (indexingStatus) {
+                    indexingStatus.setPhase(PHASE_FINISHED);
+                }
+            }
+        }
+
     }
 
     @Override
-    public SearchService.IndexingStatus getIndexingState() throws Exception {
-        return null;
+    public IndexingStatus startIndexing(User user, boolean indexParts, boolean indexApplications,
+                                        boolean indexSalesNotes) throws Exception {
+        IndexingStatus retVal = null;
+        long now = System.currentTimeMillis();
+        synchronized (indexingStatus) {
+            int phase = indexingStatus.getPhase();
+            if (phase == PHASE_ESTIMATION || phase == PHASE_INDEXING) {
+                throw new IllegalStateException("Indexing is already in progress.");
+            }
+            indexingStatus.setPhase(PHASE_ESTIMATION);
+            indexingStatus.setStartedOn(now);
+            indexingStatus.setUserId(user.getId());
+            indexingStatus.setUserName(user.getUsername());
+            retVal = getIndexingStatus();
+        }
+        Thread job = new IndexingJob();
+        job.start();
+        return retVal;
+    }
+
+    @Override
+    public IndexingStatus getIndexingStatus() throws Exception {
+        synchronized (indexingStatus) {
+            return (IndexingStatus) indexingStatus.clone();
+        }
     }
 
     @Override
@@ -333,22 +397,22 @@ public class SearchServiceEsImpl implements SearchService {
         if (partTypeId != null) {
             List<CriticalDimension> criticalDimensions = criticalDimensionService.getCriticalDimensionForPartType(partTypeId);
             if (criticalDimensions != null && !criticalDimensions.isEmpty()) {
-                 for (CriticalDimension cd : criticalDimensions) {
-                     try {
-                         String val = null;
-                         String idxName = cd.getIdxName();
-                         String[] paramVals = queriedCriticalDimensions.get(idxName);
-                         if (paramVals != null && paramVals.length > 0) {
-                             val = paramVals[0];
-                         }
-                         if (isNotBlank(val)) {
-                             AbstractSearchTerm asterm = SearchTermFactory.newSearchTerm(cd, val);
-                             sterms.add(asterm);
-                         }
-                     } catch(IllegalArgumentException e) {
-                         // ignore
-                     }
-                 }
+                for (CriticalDimension cd : criticalDimensions) {
+                    try {
+                        String val = null;
+                        String idxName = cd.getIdxName();
+                        String[] paramVals = queriedCriticalDimensions.get(idxName);
+                        if (paramVals != null && paramVals.length > 0) {
+                            val = paramVals[0];
+                        }
+                        if (isNotBlank(val)) {
+                            AbstractSearchTerm asterm = SearchTermFactory.newSearchTerm(cd, val);
+                            sterms.add(asterm);
+                        }
+                    } catch (IllegalArgumentException e) {
+                        // ignore
+                    }
+                }
             }
         }
         SearchRequestBuilder srb = elasticSearch.prepareSearch(elasticSearchIndex).setTypes(elasticSearchTypePart)
@@ -368,7 +432,7 @@ public class SearchServiceEsImpl implements SearchService {
                     case DECIMAL:
                         NumberSearchTerm dst = (NumberSearchTerm) ast;
                         QueryBuilder dqb;
-                        switch(dst.getCmpOperator()) {
+                        switch (dst.getCmpOperator()) {
                             case EQ:
                                 dqb = QueryBuilders.termQuery(dst.getFieldName(), dst.getTerm());
                                 break;
@@ -392,7 +456,7 @@ public class SearchServiceEsImpl implements SearchService {
                     case INTEGER:
                         NumberSearchTerm ist = (NumberSearchTerm) ast;
                         QueryBuilder iqb;
-                        switch(ist.getCmpOperator()) {
+                        switch (ist.getCmpOperator()) {
                             case EQ:
                                 iqb = QueryBuilders.termQuery(ist.getFieldName(), ist.getTerm());
                                 break;
@@ -933,7 +997,7 @@ class SearchTermFactory {
         Range pr;
         String idxName = cd.getIdxName();
         CriticalDimension.DataTypeEnum dataType = cd.getDataType();
-        switch(dataType) {
+        switch (dataType) {
             case DECIMAL:
                 pr = parseSearchStr(s);
                 if (pr.isBoundLimit()) {

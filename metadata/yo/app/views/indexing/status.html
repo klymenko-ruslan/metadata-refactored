@@ -1,4 +1,4 @@
-<div class="row" data-ng-controller="IndexingCtrl as ctrl" style="margin-top: 2em;">
+<div class="row" style="margin-top: 2em;">
   <div class="col-xs-12">
     <h4>Indexing of the entities.</h4>
     <form data-ng-show="phase == 0">
@@ -127,7 +127,7 @@
             </div>
             <div class="modal-footer">
               <div class="pull-left">
-                <span class="text-muted">The process started on {{startedOn | date : "yyyy-MM-dd HH:mm.ss"}} by <a ng-href="security/user/{{user.id}}">{{user.name}}</a>.</span>
+                <span class="text-muted">The process started on {{startedOn | date : "yyyy-MM-dd HH:mm.ss"}} by <a ng-href="security/user/{{userId}}">{{userName}}</a>.</span>
               </div>
               <div class="pull-right">
                 <button type="button" class="btn btn-default" data-dismiss="modal" data-ng-disabled="phase != 3" ng-click="ctrl.onCloseStatus()">Close</button>

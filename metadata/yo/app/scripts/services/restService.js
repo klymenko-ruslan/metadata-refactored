@@ -440,11 +440,11 @@ angular.module("ngMetaCrudApp")
       };
 
       this.startIndexing = function(toIndex) {
-        return Restangular.one("").post();
+        return Restangular.one("search/indexing").post("start", toIndex);
       };
 
-      this.getIndexingState = function() {
-        return Restangular.one("").get();
+      this.getIndexingStatus = function() {
+        return Restangular.one("search/indexing/status").get();
       };
 
       this.filterParts = function(searchPartTypeId, searchManufacturerId, searchName, search, searchCritDims, sortProperty, sortOrder, offset, limit) {
