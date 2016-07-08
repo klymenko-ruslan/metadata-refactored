@@ -11,7 +11,6 @@ import com.turbointernational.metadata.domain.part.salesnote.SalesNotePart;
 import com.turbointernational.metadata.domain.part.salesnote.SalesNotePartDao;
 import com.turbointernational.metadata.domain.part.salesnote.SalesNoteState;
 import com.turbointernational.metadata.domain.security.User;
-import com.turbointernational.metadata.services.SearchService.IndexingStatus;
 import com.turbointernational.metadata.utils.RegExpUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.bulk.BulkRequest;
@@ -28,7 +27,6 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.RangeQueryBuilder;
-import org.elasticsearch.index.shard.SnapshotStatus;
 import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.sort.SortBuilder;
@@ -37,10 +35,16 @@ import org.elasticsearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.PostConstruct;
 import java.net.InetAddress;
@@ -53,13 +57,12 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.turbointernational.metadata.services.SearchService.IndexingStatus.PHASE_ESTIMATION;
-import static com.turbointernational.metadata.services.SearchService.IndexingStatus.PHASE_FINISHED;
-import static com.turbointernational.metadata.services.SearchService.IndexingStatus.PHASE_INDEXING;
+import static com.turbointernational.metadata.services.SearchService.IndexingStatus.*;
 import static com.turbointernational.metadata.services.SearchTermCmpOperatorEnum.*;
 import static com.turbointernational.metadata.services.SearchTermEnum.*;
 import static com.turbointernational.metadata.utils.RegExpUtils.PTRN_DOUBLE_LIMIT;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.springframework.transaction.TransactionDefinition.PROPAGATION_REQUIRES_NEW;
 
 /**
  * Implementation of the {@link SearchService} based on the ElasticSearch.
@@ -71,6 +74,13 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 public class SearchServiceEsImpl implements SearchService {
 
     private final static Logger log = LoggerFactory.getLogger(SearchService.class);
+
+    @Qualifier("transactionManager")
+    @Autowired
+    private PlatformTransactionManager txManager; // JPA
+
+    @Autowired
+    private ApplicationEventPublisher appEventPublisher;
 
     @Autowired
     private CriticalDimensionDao criticalDimensionDao;
@@ -185,35 +195,154 @@ public class SearchServiceEsImpl implements SearchService {
      */
     private final static Function<String, SortOrder> convertSortOrder = sortOrder -> SortOrder.valueOf(sortOrder.toUpperCase());
 
+
     private class IndexingJob extends Thread {
+
+        private final boolean indexParts;
+        private final boolean indexApplications;
+        private final boolean indexSalesNotes;
+
+        class PartsIndexer extends Thread implements ApplicationListener<IndexingEvent> {
+
+            @Override
+            public void run() {
+                super.run();
+                TransactionTemplate tt = new TransactionTemplate(txManager);
+                tt.setPropagationBehavior(PROPAGATION_REQUIRES_NEW); // new transaction
+                tt.execute(ts -> {
+                    try {
+                        indexAllParts(this);
+                    } catch (Exception e) {
+                        synchronized (indexingStatus) {
+                            indexingStatus.setErrorMessage(e.getMessage());
+                            indexingStatus.setPartsIndexingFailures(1);
+                        }
+                    }
+                    return null;
+                });
+            }
+
+            @Override
+            public void onApplicationEvent(IndexingEvent event) {
+                synchronized (indexingStatus) {
+                    int current = indexingStatus.getPartsIndexingCurrentStep();
+                    indexingStatus.setPartsIndexingCurrentStep(current + event.getIndexed());
+                }
+            }
+
+        }
+
+        class ApplicationsIndexer extends Thread implements ApplicationListener<IndexingEvent> {
+
+            @Override
+            public void run() {
+                super.run();
+                TransactionTemplate tt = new TransactionTemplate(txManager);
+                tt.setPropagationBehavior(PROPAGATION_REQUIRES_NEW); // new transaction
+                tt.execute(ts -> {
+                    try {
+                        indexAllApplications(this);
+                    } catch (Exception e) {
+                        synchronized (indexingStatus) {
+                            indexingStatus.setErrorMessage(e.getMessage());
+                            indexingStatus.setApplicationsIndexingFailures(1);
+                        }
+                    }
+                    return null;
+                });
+            }
+
+            @Override
+            public void onApplicationEvent(IndexingEvent event) {
+                synchronized (indexingStatus) {
+                    int current = indexingStatus.getApplicationsIndexingCurrentStep();
+                    indexingStatus.setApplicationsIndexingCurrentStep(current + event.getIndexed());
+                }
+            }
+        }
+
+        class SalesNotesIndexer extends Thread implements ApplicationListener<IndexingEvent> {
+
+            @Override
+            public void run() {
+                super.run();
+                TransactionTemplate tt = new TransactionTemplate(txManager);
+                tt.setPropagationBehavior(PROPAGATION_REQUIRES_NEW); // new transaction
+                tt.execute(ts -> {
+                    try {
+                        indexAllSalesNotes(this);
+                    } catch (Exception e) {
+                        synchronized (indexingStatus) {
+                            indexingStatus.setErrorMessage(e.getMessage());
+                            indexingStatus.setSalesNotesIndexingFailures(1);
+                        }
+                    }
+                    return null;
+                });
+            }
+
+            @Override
+            public void onApplicationEvent(IndexingEvent event) {
+                synchronized (indexingStatus) {
+                    int current = indexingStatus.getSalesNotesIndexingCurrentStep();
+                    indexingStatus.setSalesNotesIndexingCurrentStep(current + event.getIndexed());
+                }
+            }
+        }
+
+        IndexingJob(boolean indexParts, boolean indexApplications, boolean indexSalesNotes) {
+            super();
+            this.indexParts = indexParts;
+            this.indexApplications = indexApplications;
+            this.indexSalesNotes = indexSalesNotes;
+        }
 
         @Override
         public void run() {
+            super.run();
             try {
-                int partsTotal = partDao.getTotal();
-                int carModelEngineYearTotal = carModelEngineYearDao.getTotal();
-                int carEngineTotal = carEngineDao.getTotal();
-                int carFuelTypeTotal = carFuelTypeDao.getTotal();
-                int carMakeTotal = carMakeDao.getTotal();
-                int carModelTotal = carModelDao.getTotal();
+                int partsTotal = 0;
+                int carModelEngineYearTotal = 0;
+                int carEngineTotal = 0;
+                int carFuelTypeTotal = 0;
+                int carMakeTotal = 0;
+                int carModelTotal = 0;
+                int salesNotesTotal = 0;
+
+                if (indexParts) {
+                    partsTotal = partDao.getTotal();
+                }
+                if (indexApplications) {
+                    carModelEngineYearTotal = carModelEngineYearDao.getTotal();
+                    carEngineTotal = carEngineDao.getTotal();
+                    carFuelTypeTotal = carFuelTypeDao.getTotal();
+                    carMakeTotal = carMakeDao.getTotal();
+                    carModelTotal = carModelDao.getTotal();
+                }
                 int applicationsTotal = carModelEngineYearTotal + carEngineTotal +
                         carFuelTypeTotal + carMakeTotal + carModelTotal;
-                int salesNotesTotal = salesNotePartDao.getTotal();
+                if (indexSalesNotes) {
+                    salesNotesTotal = salesNotePartDao.getTotal();
+                }
                 synchronized (indexingStatus) {
                     indexingStatus.setPartsIndexingTotalSteps(partsTotal);
                     indexingStatus.setApplicationsIndexingTotalSteps(applicationsTotal);
                     indexingStatus.setSalesNotesIndexingTotalSteps(salesNotesTotal);
                     indexingStatus.setPhase(PHASE_INDEXING);
                 }
-                // TODO
-                try {
-                    sleep(10000L);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            } catch(Exception e) {
+                Thread partsIndexer = new PartsIndexer();
+                partsIndexer.start();
+                Thread applicationsIndexer = new ApplicationsIndexer();
+                applicationsIndexer.start();
+                Thread salesNotesIndexer = new SalesNotesIndexer();
+                salesNotesIndexer.start();
+                partsIndexer.join();
+                applicationsIndexer.join();
+                salesNotesIndexer.join();
+            } catch (Exception e) {
                 synchronized (indexingStatus) {
                     indexingStatus.setErrorMessage(e.getMessage());
+                    log.error("Indexing job failed.", e);
                 }
             } finally {
                 synchronized (indexingStatus) {
@@ -227,7 +356,7 @@ public class SearchServiceEsImpl implements SearchService {
     @Override
     public IndexingStatus startIndexing(User user, boolean indexParts, boolean indexApplications,
                                         boolean indexSalesNotes) throws Exception {
-        IndexingStatus retVal = null;
+        IndexingStatus retVal;
         long now = System.currentTimeMillis();
         synchronized (indexingStatus) {
             int phase = indexingStatus.getPhase();
@@ -240,7 +369,7 @@ public class SearchServiceEsImpl implements SearchService {
             indexingStatus.setUserName(user.getUsername());
             retVal = getIndexingStatus();
         }
-        Thread job = new IndexingJob();
+        Thread job = new IndexingJob(indexParts, indexApplications, indexSalesNotes);
         job.start();
         return retVal;
     }
@@ -273,8 +402,8 @@ public class SearchServiceEsImpl implements SearchService {
 
     @Override
     @Transactional(readOnly = true)
-    public void indexAllParts() throws Exception {
-        indexAllDocs(partDao, elasticSearchTypePart);
+    public void indexAllParts(ApplicationListener<IndexingEvent> listener) throws Exception {
+        indexAllDocs(partDao, elasticSearchTypePart, listener);
     }
 
     @Override
@@ -339,12 +468,12 @@ public class SearchServiceEsImpl implements SearchService {
 
     @Override
     @Transactional(readOnly = true)
-    public void indexAllApplications() throws Exception {
-        indexAllDocs(carModelEngineYearDao, elasticSearchTypeCarModelEngineYear);
-        indexAllDocs(carEngineDao, elasticSearchTypeCarEngine);
-        indexAllDocs(carFuelTypeDao, elasticSearchTypeCarFuelType);
-        indexAllDocs(carMakeDao, elasticSearchTypeCarMake);
-        indexAllDocs(carModelDao, elasticSearchTypeCarModel);
+    public void indexAllApplications(ApplicationListener<IndexingEvent> listener) throws Exception {
+        indexAllDocs(carModelEngineYearDao, elasticSearchTypeCarModelEngineYear, listener);
+        indexAllDocs(carEngineDao, elasticSearchTypeCarEngine, listener);
+        indexAllDocs(carFuelTypeDao, elasticSearchTypeCarFuelType, listener);
+        indexAllDocs(carMakeDao, elasticSearchTypeCarMake, listener);
+        indexAllDocs(carModelDao, elasticSearchTypeCarModel, listener);
     }
 
     @Override
@@ -361,8 +490,8 @@ public class SearchServiceEsImpl implements SearchService {
 
     @Override
     @Transactional(readOnly = true)
-    public void indexAllSalesNotes() throws Exception {
-        indexAllDocs(salesNotePartDao, elasticSearchTypeSalesNotePart);
+    public void indexAllSalesNotes(ApplicationListener<IndexingEvent> listener) throws Exception {
+        indexAllDocs(salesNotePartDao, elasticSearchTypeSalesNotePart, listener);
     }
 
     @Override
@@ -807,7 +936,8 @@ public class SearchServiceEsImpl implements SearchService {
         elasticSearch.index(index).actionGet(timeout);
     }
 
-    private void indexAllDocs(AbstractDao<?> dao, String elasticSearchType) throws Exception {
+    private void indexAllDocs(AbstractDao<?> dao, String elasticSearchType,
+                              ApplicationListener<IndexingEvent> listener) throws Exception {
         int maxPages = Integer.MAX_VALUE;
         int page = 0;
         int pageSize = 250;
@@ -832,6 +962,10 @@ public class SearchServiceEsImpl implements SearchService {
                         (page * pageSize) + pageSize, result);
                 page++;
                 elasticSearch.bulk(bulk).actionGet();
+                if (appEventPublisher != null) {
+                    log.debug("Publishing indexing event: {}", result);
+                    appEventPublisher.publishEvent(new IndexingEvent(this, result));
+                }
             } while (result >= pageSize && page < maxPages);
         } catch (Exception e) {
             log.error("Reindexing of '" + elasticSearchType + "' failed.", e);

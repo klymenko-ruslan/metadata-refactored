@@ -16,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
+import java.io.Serializable;
 import java.util.Map;
 import java.util.Set;
 
@@ -163,7 +164,7 @@ public class SearchController {
     public void indexPartAll() throws Exception {
         new Thread(() -> {
             try {
-                searchService.indexAllParts();
+                searchService.indexAllParts(null);
             } catch (Exception e) {
                 log.error("Indexing of all parts failed.", e);
             }
@@ -177,7 +178,7 @@ public class SearchController {
     public void indexApplicationAll() throws Exception {
         new Thread(() -> {
             try {
-                searchService.indexAllApplications();
+                searchService.indexAllApplications(null);
             } catch (Exception e) {
                 log.error("Indexing of applications failed.");
             }
@@ -191,7 +192,7 @@ public class SearchController {
     public void indexSalesNotesPartsAll() throws Exception {
         new Thread(() -> {
             try {
-                searchService.indexAllSalesNotes();
+                searchService.indexAllSalesNotes(null);
             } catch (Exception e) {
                 log.error("Indexing of sales notes parts failed.", e);
             }
@@ -202,13 +203,15 @@ public class SearchController {
     @RequestMapping(value = "/indexing/start", method = POST)
     @ResponseBody
     @JsonView(View.Summary.class)
-    public IndexingStatus startIndexing(Authentication principal,
-                                        @RequestParam(name = "parts", required = false) boolean indexParts,
-                                        @RequestParam(name = "applications", required = false) boolean indexApplications,
-                                        @RequestParam(name = "salesNotes", required = false) boolean indexSalesNotes) throws Exception {
+    public IndexingStatus startIndexing(Authentication authentication, @RequestBody Map<String, Boolean> toIndex) throws Exception {
+        boolean indexParts = toIndex.getOrDefault("parts", false);
+        boolean indexApplications = toIndex.getOrDefault("applications", false);
+        boolean indexSalesNotes = toIndex.getOrDefault("salesNotes", false);
+        log.debug("startIndexing: parts={}, applications={}, salesNotes={}", indexParts, indexApplications,
+                indexSalesNotes);
         User user = null;
-        if (principal != null) {
-            user = (User) principal.getPrincipal();
+        if (authentication != null) {
+            user = (User) authentication.getPrincipal();
         }
         return searchService.startIndexing(user, indexParts, indexApplications, indexSalesNotes);
     }

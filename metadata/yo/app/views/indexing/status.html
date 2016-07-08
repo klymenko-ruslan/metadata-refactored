@@ -1,3 +1,5 @@
+<metanav />
+
 <div class="row" style="margin-top: 2em;">
   <div class="col-xs-12">
     <h4>Indexing of the entities.</h4>
@@ -66,7 +68,7 @@
                       </div>
                       <div class="row">
                         <div class="col-xs-12">
-                          <uib-progressbar max="partsIndexingTotalSteps" value="partsIndexingCurrentStep" ng-class="{'progress-striped active': phase != 3}">
+                          <uib-progressbar max="partsIndexingTotalSteps" value="partsIndexingCurrentStep" data-ng-class="{'progress-striped active': phase != 3, 'progress-bar-danger': errorMessage}">
                             <span style="color:white; white-space:nowrap;">{{partsIndexingCurrentStep}} / {{partsIndexingTotalSteps}}</span>
                           </uib-progressbar>
                         </div>
@@ -87,7 +89,7 @@
                       </div>
                       <div class="row">
                         <div class="col-xs-12">
-                          <uib-progressbar max="applicationsIndexingTotalSteps" value="applicationsIndexingCurrentStep" ng-class="{'progress-striped active': phase != 3}">
+                          <uib-progressbar max="applicationsIndexingTotalSteps" value="applicationsIndexingCurrentStep" data-ng-class="{'progress-striped active': phase != 3, 'progress-bar-danger': errorMessage}">
                             <span style="color:white; white-space:nowrap;">{{applicationsIndexingCurrentStep}} / {{applicationsIndexingTotalSteps}}</span>
                           </uib-progressbar>
                         </div>
@@ -108,7 +110,7 @@
                       </div>
                       <div class="row">
                         <div class="col-xs-12">
-                          <uib-progressbar max="salesNotesIndexingTotalSteps" value="salesNotesIndexingCurrentStep" ng-class="{'progress-striped active': phase != 3}">
+                          <uib-progressbar max="salesNotesIndexingTotalSteps" value="salesNotesIndexingCurrentStep" data-ng-class="{'progress-striped active': phase != 3, 'progress-bar-danger': errorMessage}">
                             <span style="color:white; white-space:nowrap;">{{salesNotesIndexingCurrentStep}} / {{salesNotesIndexingTotalSteps}}</span>
                           </uib-progressbar>
                         </div>

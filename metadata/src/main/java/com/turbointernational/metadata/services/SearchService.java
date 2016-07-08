@@ -9,6 +9,8 @@ import com.turbointernational.metadata.domain.part.salesnote.SalesNotePart;
 import com.turbointernational.metadata.domain.part.salesnote.SalesNoteState;
 import com.turbointernational.metadata.domain.security.User;
 import com.turbointernational.metadata.web.View;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationListener;
 
 import java.util.Map;
 import java.util.Set;
@@ -331,6 +333,25 @@ public interface SearchService {
         }
     }
 
+    class IndexingEvent extends ApplicationEvent {
+
+        private int indexed;
+
+        IndexingEvent(Object source, int indexed) {
+            super(source);
+            this.indexed = indexed;
+        }
+
+        public int getIndexed() {
+            return indexed;
+        }
+
+        public void setIndexed(int indexed) {
+            this.indexed = indexed;
+        }
+
+    }
+
     SearchService.IndexingStatus startIndexing(User user, boolean indexParts, boolean indexApplications,
                                                boolean indexSalesNotes) throws Exception;
 
@@ -342,7 +363,7 @@ public interface SearchService {
 
     void deletePart(Part part) throws Exception;
 
-    void indexAllParts() throws Exception;
+    void indexAllParts(ApplicationListener<IndexingEvent> listener) throws Exception;
 
     void indexCarEngine(CarEngine carEngine);
 
@@ -364,13 +385,13 @@ public interface SearchService {
 
     void deleteCarModelEngineYear(CarModelEngineYear carModelEngineYear) throws Exception;
 
-    void indexAllApplications() throws Exception;
+    void indexAllApplications(ApplicationListener<IndexingEvent> listener) throws Exception;
 
     void indexSalesNotePart(SalesNotePart salesNotePart);
 
     void deleteSalesNotePart(SalesNotePart salesNotePart) throws Exception;
 
-    void indexAllSalesNotes() throws Exception;
+    void indexAllSalesNotes(ApplicationListener<IndexingEvent> listener) throws Exception;
 
     String filterParts(String partNumber, Long partTypeId, Long manufacturerId,
                        String name, String description, Boolean inactive,

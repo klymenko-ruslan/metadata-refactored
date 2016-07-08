@@ -44,7 +44,8 @@ public abstract class AbstractDao<T extends Serializable> {
     }
 
     public int getTotal() {
-        return ((Number) em.createQuery("SELECT count(o) FROM " + clazz.getName()).getSingleResult()).intValue();
+        return ((Number) em.createQuery("SELECT count(o) FROM " +
+                clazz.getName() + " o").getSingleResult()).intValue();
     }
 
     public void persist(T entity) {

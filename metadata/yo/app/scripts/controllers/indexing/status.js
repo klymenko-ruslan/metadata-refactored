@@ -34,14 +34,17 @@ angular.module("ngMetaCrudApp")
 
     $scope.userId = null;
     $scope.userName = null;
+    $scope.startedOn = null;
 
     $scope._updateStatus = function(status) {
 
       $scope.phase = status.phase;
 
+      /*
       if (status.phase == 3) {
         $interval.cancel($scope.refreshTask);
       }
+      */
 
       $scope.errorMessage = status.errorMessage;
 
@@ -60,12 +63,16 @@ angular.module("ngMetaCrudApp")
       $scope.salesNotesIndexingTotalSteps = status.salesNotesIndexingTotalSteps;
       $scope.salesNotesIndexingCurrentStep = status.salesNotesIndexingCurrentStep;
 
-      $scope.toIndex.parts = status.indexParts;
-      $scope.toIndex.applications = status.indexApplications;
-      $scope.toIndex.salesNotes = status.indexSalesNotes;
+      if (status.phase != 0) {
+        $scope.toIndex.parts = status.indexParts;
+        $scope.toIndex.applications = status.indexApplications;
+        $scope.toIndex.salesNotes = status.indexSalesNotes;
+      }
 
       $scope.userId = status.userId;
       $scope.userName = status.userName;
+
+      $scope.startedOn = status.startedOn;
 
     };
 
@@ -92,6 +99,7 @@ angular.module("ngMetaCrudApp")
       $scope.phase = 0;
     };
 
+    this._resetToIndex();
     $scope._updateStatus(status);
 
     $scope.refreshTask = $interval(function() {

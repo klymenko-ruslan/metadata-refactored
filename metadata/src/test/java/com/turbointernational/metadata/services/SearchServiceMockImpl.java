@@ -7,6 +7,7 @@ import com.turbointernational.metadata.domain.part.salesnote.SalesNoteState;
 import com.turbointernational.metadata.domain.security.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
@@ -52,7 +53,7 @@ public class SearchServiceMockImpl implements SearchService {
     }
 
     @Override
-    public void indexAllParts() throws Exception {
+    public void indexAllParts(ApplicationListener<IndexingEvent> listener) throws Exception {
         log.debug("Indexing: indexAllParts()");
     }
 
@@ -116,7 +117,7 @@ public class SearchServiceMockImpl implements SearchService {
     }
 
     @Override
-    public void indexAllApplications() throws Exception {
+    public void indexAllApplications(ApplicationListener<IndexingEvent> listener) throws Exception {
         log.debug("Indexing: indexAllApplications()");
 
     }
@@ -134,7 +135,7 @@ public class SearchServiceMockImpl implements SearchService {
     }
 
     @Override
-    public void indexAllSalesNotes() throws Exception {
+    public void indexAllSalesNotes(ApplicationListener<IndexingEvent> listener) throws Exception {
         log.debug("Indexing: indexAllSalesNotes()");
 
     }
