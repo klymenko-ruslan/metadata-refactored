@@ -35,16 +35,23 @@ angular.module("ngMetaCrudApp")
     $scope.userId = null;
     $scope.userName = null;
     $scope.startedOn = null;
+    $scope.finishedOn = null;
+    $scope.closed = false;
 
     $scope._updateStatus = function(status) {
 
+      if ($scope.closed) {
+        // Prevent displaying of the progress dialog if it was closed by an user.
+        return;
+      }
+
       $scope.phase = status.phase;
 
-      /*
-      if (status.phase == 3) {
-        $interval.cancel($scope.refreshTask);
+      if ($scope.phase != 0) {
+        $scope.toIndex.parts = status.indexParts;
+        $scope.toIndex.applications = status.indexApplications;
+        $scope.toIndex.salesNotes = status.indexSalesNotes;
       }
-      */
 
       $scope.errorMessage = status.errorMessage;
 
@@ -63,16 +70,11 @@ angular.module("ngMetaCrudApp")
       $scope.salesNotesIndexingTotalSteps = status.salesNotesIndexingTotalSteps;
       $scope.salesNotesIndexingCurrentStep = status.salesNotesIndexingCurrentStep;
 
-      if (status.phase != 0) {
-        $scope.toIndex.parts = status.indexParts;
-        $scope.toIndex.applications = status.indexApplications;
-        $scope.toIndex.salesNotes = status.indexSalesNotes;
-      }
-
       $scope.userId = status.userId;
       $scope.userName = status.userName;
 
       $scope.startedOn = status.startedOn;
+      $scope.finishedOn = status.finishedOn;
 
     };
 
@@ -85,6 +87,7 @@ angular.module("ngMetaCrudApp")
     this.startIndexing = function() {
       restService.startIndexing($scope.toIndex).then(
         function success(newStatus) {
+          $scope.closed = false;
           $scope._updateStatus(newStatus);
         },
         function failure(response) {
@@ -96,6 +99,7 @@ angular.module("ngMetaCrudApp")
 
     this.onCloseStatus = function() {
       this._resetToIndex();
+      $scope.closed = true;
       $scope.phase = 0;
     };
 

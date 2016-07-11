@@ -2,7 +2,9 @@
 
 <div class="row" style="margin-top: 2em;">
   <div class="col-xs-12">
+
     <h4>Indexing of the entities.</h4>
+
     <form data-ng-show="phase == 0">
 
       <div class="row">
@@ -68,7 +70,7 @@
                       </div>
                       <div class="row">
                         <div class="col-xs-12">
-                          <uib-progressbar max="partsIndexingTotalSteps" value="partsIndexingCurrentStep" data-ng-class="{'progress-striped active': phase != 3, 'progress-bar-danger': errorMessage}">
+                          <uib-progressbar max="partsIndexingTotalSteps" value="partsIndexingCurrentStep" data-ng-class="{'progress-striped active': !errorMessage && partsIndexingCurrentStep < partsIndexingTotalSteps, 'progress-bar-danger': errorMessage}">
                             <span style="color:white; white-space:nowrap;">{{partsIndexingCurrentStep}} / {{partsIndexingTotalSteps}}</span>
                           </uib-progressbar>
                         </div>
@@ -89,7 +91,7 @@
                       </div>
                       <div class="row">
                         <div class="col-xs-12">
-                          <uib-progressbar max="applicationsIndexingTotalSteps" value="applicationsIndexingCurrentStep" data-ng-class="{'progress-striped active': phase != 3, 'progress-bar-danger': errorMessage}">
+                          <uib-progressbar max="applicationsIndexingTotalSteps" value="applicationsIndexingCurrentStep" data-ng-class="{'progress-striped active': !errorMessage && applicationsIndexingCurrentStep < applicationsIndexingTotalSteps, 'progress-bar-danger': errorMessage}">
                             <span style="color:white; white-space:nowrap;">{{applicationsIndexingCurrentStep}} / {{applicationsIndexingTotalSteps}}</span>
                           </uib-progressbar>
                         </div>
@@ -110,7 +112,7 @@
                       </div>
                       <div class="row">
                         <div class="col-xs-12">
-                          <uib-progressbar max="salesNotesIndexingTotalSteps" value="salesNotesIndexingCurrentStep" data-ng-class="{'progress-striped active': phase != 3, 'progress-bar-danger': errorMessage}">
+                          <uib-progressbar max="salesNotesIndexingTotalSteps" value="salesNotesIndexingCurrentStep" data-ng-class="{'progress-striped active': !errorMessage && salesNotesIndexingCurrentStep < salesNotesIndexingTotalSteps, 'progress-bar-danger': errorMessage}">
                             <span style="color:white; white-space:nowrap;">{{salesNotesIndexingCurrentStep}} / {{salesNotesIndexingTotalSteps}}</span>
                           </uib-progressbar>
                         </div>
@@ -129,7 +131,8 @@
             </div>
             <div class="modal-footer">
               <div class="pull-left">
-                <span class="text-muted">The process started on {{startedOn | date : "yyyy-MM-dd HH:mm.ss"}} by <a ng-href="security/user/{{userId}}">{{userName}}</a>.</span>
+                <div class="text-muted">The process started on {{startedOn | date : "yyyy-MM-dd HH:mm.ss"}} by <a ng-href="security/user/{{userId}}">{{userName}}</a>.</div>
+                <div class="text-muted" data-ng-show="finishedOn">The process finished on {{finishedOn | date : "yyyy-MM-dd HH:mm.ss"}}.</div>
               </div>
               <div class="pull-right">
                 <button type="button" class="btn btn-default" data-dismiss="modal" data-ng-disabled="phase != 3" ng-click="ctrl.onCloseStatus()">Close</button>

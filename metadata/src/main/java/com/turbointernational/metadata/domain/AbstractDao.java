@@ -1,11 +1,16 @@
 package com.turbointernational.metadata.domain;
 
+import org.hibernate.*;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Observer;
+
+import static org.hibernate.LockMode.NONE;
+import static org.hibernate.ScrollMode.FORWARD_ONLY;
 
 /**
  *
@@ -41,6 +46,24 @@ public abstract class AbstractDao<T extends Serializable> {
                 .setFirstResult(firstResult)
                 .setMaxResults(maxResults)
                 .getResultList();
+    }
+
+    public void mapAll(int fetchSize, String orderProperty, Observer observer) {
+        Session session = (Session) em.getDelegate();
+        Query query = session.createQuery("SELECT o FROM " + clazz.getName() + " o ORDER BY o." + orderProperty);
+        query.setFetchSize(fetchSize);
+        query.setReadOnly(true);
+        query.setLockMode("o", NONE);
+        ScrollableResults results = query.scroll(FORWARD_ONLY);
+        try {
+            while (results.next()) {
+                Object o = results.get(0);
+                observer.update(null, o);
+            }
+        } finally {
+            results.close();
+        }
+        observer.update(null, null); // signal -- end of processing
     }
 
     public int getTotal() {

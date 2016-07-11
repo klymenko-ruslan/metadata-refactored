@@ -37,22 +37,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.PostConstruct;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -78,9 +72,6 @@ public class SearchServiceEsImpl implements SearchService {
     @Qualifier("transactionManager")
     @Autowired
     private PlatformTransactionManager txManager; // JPA
-
-    @Autowired
-    private ApplicationEventPublisher appEventPublisher;
 
     @Autowired
     private CriticalDimensionDao criticalDimensionDao;
@@ -202,7 +193,7 @@ public class SearchServiceEsImpl implements SearchService {
         private final boolean indexApplications;
         private final boolean indexSalesNotes;
 
-        class PartsIndexer extends Thread implements ApplicationListener<IndexingEvent> {
+        class PartsIndexer extends Thread implements Observer {
 
             @Override
             public void run() {
@@ -214,8 +205,10 @@ public class SearchServiceEsImpl implements SearchService {
                         indexAllParts(this);
                     } catch (Exception e) {
                         synchronized (indexingStatus) {
-                            indexingStatus.setErrorMessage(e.getMessage());
-                            indexingStatus.setPartsIndexingFailures(1);
+                            if (indexingStatus.getErrorMessage() != null) {
+                                indexingStatus.setErrorMessage(e.getMessage());
+                                indexingStatus.setPartsIndexingFailures(1);
+                            }
                         }
                     }
                     return null;
@@ -223,16 +216,19 @@ public class SearchServiceEsImpl implements SearchService {
             }
 
             @Override
-            public void onApplicationEvent(IndexingEvent event) {
+            public void update(Observable o, Object arg) {
+                Integer indexed = (Integer) arg;
                 synchronized (indexingStatus) {
                     int current = indexingStatus.getPartsIndexingCurrentStep();
-                    indexingStatus.setPartsIndexingCurrentStep(current + event.getIndexed());
+                    int sum = current + indexed;
+                    indexingStatus.setPartsIndexed(sum);
+                    indexingStatus.setPartsIndexingCurrentStep(sum);
                 }
             }
 
         }
 
-        class ApplicationsIndexer extends Thread implements ApplicationListener<IndexingEvent> {
+        class ApplicationsIndexer extends Thread implements Observer {
 
             @Override
             public void run() {
@@ -244,8 +240,10 @@ public class SearchServiceEsImpl implements SearchService {
                         indexAllApplications(this);
                     } catch (Exception e) {
                         synchronized (indexingStatus) {
-                            indexingStatus.setErrorMessage(e.getMessage());
-                            indexingStatus.setApplicationsIndexingFailures(1);
+                            if (indexingStatus.getErrorMessage() != null) {
+                                indexingStatus.setErrorMessage(e.getMessage());
+                                indexingStatus.setApplicationsIndexingFailures(1);
+                            }
                         }
                     }
                     return null;
@@ -253,15 +251,19 @@ public class SearchServiceEsImpl implements SearchService {
             }
 
             @Override
-            public void onApplicationEvent(IndexingEvent event) {
+            public void update(Observable o, Object arg) {
+                Integer indexed = (Integer) arg;
                 synchronized (indexingStatus) {
                     int current = indexingStatus.getApplicationsIndexingCurrentStep();
-                    indexingStatus.setApplicationsIndexingCurrentStep(current + event.getIndexed());
+                    int sum = current + indexed;
+                    indexingStatus.setApplicationsIndexed(sum);
+                    indexingStatus.setApplicationsIndexingCurrentStep(sum);
                 }
             }
+
         }
 
-        class SalesNotesIndexer extends Thread implements ApplicationListener<IndexingEvent> {
+        class SalesNotesIndexer extends Thread implements Observer {
 
             @Override
             public void run() {
@@ -273,8 +275,10 @@ public class SearchServiceEsImpl implements SearchService {
                         indexAllSalesNotes(this);
                     } catch (Exception e) {
                         synchronized (indexingStatus) {
-                            indexingStatus.setErrorMessage(e.getMessage());
-                            indexingStatus.setSalesNotesIndexingFailures(1);
+                            if (indexingStatus.getErrorMessage() != null) {
+                                indexingStatus.setErrorMessage(e.getMessage());
+                                indexingStatus.setSalesNotesIndexingFailures(1);
+                            }
                         }
                     }
                     return null;
@@ -282,12 +286,16 @@ public class SearchServiceEsImpl implements SearchService {
             }
 
             @Override
-            public void onApplicationEvent(IndexingEvent event) {
+            public void update(Observable o, Object arg) {
+                Integer indexed = (Integer) arg;
                 synchronized (indexingStatus) {
                     int current = indexingStatus.getSalesNotesIndexingCurrentStep();
-                    indexingStatus.setSalesNotesIndexingCurrentStep(current + event.getIndexed());
+                    int sum = current + indexed;
+                    indexingStatus.setSalesNotesIndexed(sum);
+                    indexingStatus.setSalesNotesIndexingCurrentStep(sum);
                 }
             }
+
         }
 
         IndexingJob(boolean indexParts, boolean indexApplications, boolean indexSalesNotes) {
@@ -330,23 +338,41 @@ public class SearchServiceEsImpl implements SearchService {
                     indexingStatus.setSalesNotesIndexingTotalSteps(salesNotesTotal);
                     indexingStatus.setPhase(PHASE_INDEXING);
                 }
-                Thread partsIndexer = new PartsIndexer();
-                partsIndexer.start();
-                Thread applicationsIndexer = new ApplicationsIndexer();
-                applicationsIndexer.start();
-                Thread salesNotesIndexer = new SalesNotesIndexer();
-                salesNotesIndexer.start();
-                partsIndexer.join();
-                applicationsIndexer.join();
-                salesNotesIndexer.join();
+                Thread partsIndexer = null;
+                if (indexParts) {
+                    partsIndexer = new PartsIndexer();
+                    partsIndexer.start();
+                }
+                Thread applicationsIndexer = null;
+                if (indexApplications) {
+                    applicationsIndexer = new ApplicationsIndexer();
+                    applicationsIndexer.start();
+                }
+                Thread salesNotesIndexer = null;
+                if (indexSalesNotes) {
+                    salesNotesIndexer = new SalesNotesIndexer();
+                    salesNotesIndexer.start();
+                }
+                if (partsIndexer != null) {
+                    partsIndexer.join();
+                }
+                if (applicationsIndexer != null) {
+                    applicationsIndexer.join();
+                }
+                if (salesNotesIndexer != null) {
+                    salesNotesIndexer.join();
+                }
             } catch (Exception e) {
                 synchronized (indexingStatus) {
-                    indexingStatus.setErrorMessage(e.getMessage());
-                    log.error("Indexing job failed.", e);
+                    if (indexingStatus.getErrorMessage() != null) {
+                        indexingStatus.setErrorMessage(e.getMessage());
+                        log.error("Indexing job failed.", e);
+                    }
                 }
             } finally {
                 synchronized (indexingStatus) {
                     indexingStatus.setPhase(PHASE_FINISHED);
+                    indexingStatus.setFinishedOn(System.currentTimeMillis());
                 }
             }
         }
@@ -367,6 +393,9 @@ public class SearchServiceEsImpl implements SearchService {
             indexingStatus.setStartedOn(now);
             indexingStatus.setUserId(user.getId());
             indexingStatus.setUserName(user.getUsername());
+            indexingStatus.setIndexParts(indexParts);
+            indexingStatus.setIndexApplications(indexApplications);
+            indexingStatus.setIndexSalesNotes(indexSalesNotes);
             retVal = getIndexingStatus();
         }
         Thread job = new IndexingJob(indexParts, indexApplications, indexSalesNotes);
@@ -402,8 +431,9 @@ public class SearchServiceEsImpl implements SearchService {
 
     @Override
     @Transactional(readOnly = true)
-    public void indexAllParts(ApplicationListener<IndexingEvent> listener) throws Exception {
-        indexAllDocs(partDao, elasticSearchTypePart, listener);
+    public void indexAllParts(Observer observer) throws Exception {
+        // indexAllDocs(partDao, elasticSearchTypePart, observer);
+        indexAllDocs(partDao, "id", elasticSearchTypePart, observer);
     }
 
     @Override
@@ -468,12 +498,19 @@ public class SearchServiceEsImpl implements SearchService {
 
     @Override
     @Transactional(readOnly = true)
-    public void indexAllApplications(ApplicationListener<IndexingEvent> listener) throws Exception {
-        indexAllDocs(carModelEngineYearDao, elasticSearchTypeCarModelEngineYear, listener);
-        indexAllDocs(carEngineDao, elasticSearchTypeCarEngine, listener);
-        indexAllDocs(carFuelTypeDao, elasticSearchTypeCarFuelType, listener);
-        indexAllDocs(carMakeDao, elasticSearchTypeCarMake, listener);
-        indexAllDocs(carModelDao, elasticSearchTypeCarModel, listener);
+    public void indexAllApplications(Observer observer) throws Exception {
+        /*
+        indexAllDocs(carModelEngineYearDao, elasticSearchTypeCarModelEngineYear, observer);
+        indexAllDocs(carEngineDao, elasticSearchTypeCarEngine, observer);
+        indexAllDocs(carFuelTypeDao, elasticSearchTypeCarFuelType, observer);
+        indexAllDocs(carMakeDao, elasticSearchTypeCarMake, observer);
+        indexAllDocs(carModelDao, elasticSearchTypeCarModel, observer);
+        */
+        indexAllDocs(carModelEngineYearDao, "id", elasticSearchTypeCarModelEngineYear, observer);
+        indexAllDocs(carEngineDao, "id", elasticSearchTypeCarEngine, observer);
+        indexAllDocs(carFuelTypeDao, "id", elasticSearchTypeCarFuelType, observer);
+        indexAllDocs(carMakeDao, "id", elasticSearchTypeCarMake, observer);
+        indexAllDocs(carModelDao, "id", elasticSearchTypeCarModel, observer);
     }
 
     @Override
@@ -490,8 +527,9 @@ public class SearchServiceEsImpl implements SearchService {
 
     @Override
     @Transactional(readOnly = true)
-    public void indexAllSalesNotes(ApplicationListener<IndexingEvent> listener) throws Exception {
-        indexAllDocs(salesNotePartDao, elasticSearchTypeSalesNotePart, listener);
+    public void indexAllSalesNotes(Observer observer) throws Exception {
+        // indexAllDocs(salesNotePartDao, elasticSearchTypeSalesNotePart, observer);
+        indexAllDocs(salesNotePartDao, "pk.salesNote.id", elasticSearchTypeSalesNotePart, observer);
     }
 
     @Override
@@ -936,8 +974,72 @@ public class SearchServiceEsImpl implements SearchService {
         elasticSearch.index(index).actionGet(timeout);
     }
 
-    private void indexAllDocs(AbstractDao<?> dao, String elasticSearchType,
-                              ApplicationListener<IndexingEvent> listener) throws Exception {
+    class IndexingAllDocsObserver implements Observer {
+
+        private final String elasticSearchType;
+
+        private final int fetchSize;
+
+        private final Observer observer;
+
+        private BulkRequest bulk;
+
+        private int total;
+
+        IndexingAllDocsObserver(String elasticSearchType, int fetchSize, Observer observer) {
+            this.elasticSearchType = elasticSearchType;
+            this.fetchSize = fetchSize;
+            this.observer = observer;
+            this.total = 0;
+        }
+
+        @Override
+        public void update(Observable o, Object arg) {
+            boolean flush;
+            if (arg == null) {
+                flush = true;
+            } else {
+                SearchableEntity doc = (SearchableEntity) arg;
+                String searchId = doc.getSearchId();
+                IndexRequest index = new IndexRequest(elasticSearchIndex, elasticSearchType, searchId);
+                List<CriticalDimension> criticalDimensions = getCriticalDimensions(doc);
+                String asJson = doc.toSearchJson(criticalDimensions);
+                log.debug("elasticSearchIndex: {}, elasticSearchType: {}, searchId: {}, asJson: {}",
+                        elasticSearchIndex, elasticSearchType, searchId, asJson);
+                index.source(asJson);
+                if (bulk == null) {
+                    bulk = new BulkRequest();
+                }
+                bulk.add(index);
+                flush = bulk.numberOfActions() == fetchSize;
+            }
+            if (flush && bulk != null) {
+                elasticSearch.bulk(bulk).actionGet();
+                int n = bulk.numberOfActions();
+                total += n;
+                log.info("Indexed '{}': {} docs.", elasticSearchType, total);
+                if (observer != null) {
+                    log.debug("Publishing indexing event: {}", n);
+                    observer.update(null, new Integer(n));
+                }
+                bulk = null;
+            }
+        }
+    }
+
+    private void indexAllDocs(AbstractDao<?> dao, String orderProperty,String elasticSearchType,
+                              Observer observer) throws Exception {
+        try {
+            int fetchSize = 250;
+            dao.mapAll(fetchSize, orderProperty,
+                    new IndexingAllDocsObserver(elasticSearchType, fetchSize, observer));
+        } catch (Exception e) {
+            log.error("Reindexing of '" + elasticSearchType + "' failed.", e);
+            throw e;
+        }
+    }
+/*
+    private void indexAllDocs(AbstractDao<?> dao, String elasticSearchType, Observer observer) throws Exception {
         int maxPages = Integer.MAX_VALUE;
         int page = 0;
         int pageSize = 250;
@@ -962,9 +1064,9 @@ public class SearchServiceEsImpl implements SearchService {
                         (page * pageSize) + pageSize, result);
                 page++;
                 elasticSearch.bulk(bulk).actionGet();
-                if (appEventPublisher != null) {
+                if (observer != null) {
                     log.debug("Publishing indexing event: {}", result);
-                    appEventPublisher.publishEvent(new IndexingEvent(this, result));
+                    observer.update(null, new Integer(result));
                 }
             } while (result >= pageSize && page < maxPages);
         } catch (Exception e) {
@@ -974,6 +1076,8 @@ public class SearchServiceEsImpl implements SearchService {
             log.info("Indexing of '{}' finished.", elasticSearchType);
         }
     }
+*/
+
 }
 
 enum SearchTermEnum {

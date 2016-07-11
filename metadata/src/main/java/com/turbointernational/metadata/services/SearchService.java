@@ -9,10 +9,9 @@ import com.turbointernational.metadata.domain.part.salesnote.SalesNotePart;
 import com.turbointernational.metadata.domain.part.salesnote.SalesNoteState;
 import com.turbointernational.metadata.domain.security.User;
 import com.turbointernational.metadata.web.View;
-import org.springframework.context.ApplicationEvent;
-import org.springframework.context.ApplicationListener;
 
 import java.util.Map;
+import java.util.Observer;
 import java.util.Set;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
@@ -109,6 +108,10 @@ public interface SearchService {
         @JsonView({View.Summary.class})
         @JsonInclude(ALWAYS)
         private Long startedOn = null;
+
+        @JsonView({View.Summary.class})
+        @JsonInclude(ALWAYS)
+        private Long finishedOn = null;
 
         @JsonView({View.Summary.class})
         @JsonInclude(ALWAYS)
@@ -265,6 +268,14 @@ public interface SearchService {
             this.startedOn = startedOn;
         }
 
+        public Long getFinishedOn() {
+            return finishedOn;
+        }
+
+        public void setFinishedOn(Long finishedOn) {
+            this.finishedOn = finishedOn;
+        }
+
         public Long getUserId() {
             return userId;
         }
@@ -302,6 +313,7 @@ public interface SearchService {
             retVal.indexApplications = indexApplications;
             retVal.indexSalesNotes = indexSalesNotes;
             retVal.startedOn = startedOn;
+            retVal.finishedOn = finishedOn;
             retVal.userName = userName;
             return retVal;
         }
@@ -327,29 +339,11 @@ public interface SearchService {
                     ", indexApplications=" + indexApplications +
                     ", indexSalesNotes=" + indexSalesNotes +
                     ", startedOn=" + startedOn +
+                    ", finishedOn=" + finishedOn +
                     ", userId=" + userId +
                     ", userName='" + userName + '\'' +
                     '}';
         }
-    }
-
-    class IndexingEvent extends ApplicationEvent {
-
-        private int indexed;
-
-        IndexingEvent(Object source, int indexed) {
-            super(source);
-            this.indexed = indexed;
-        }
-
-        public int getIndexed() {
-            return indexed;
-        }
-
-        public void setIndexed(int indexed) {
-            this.indexed = indexed;
-        }
-
     }
 
     SearchService.IndexingStatus startIndexing(User user, boolean indexParts, boolean indexApplications,
@@ -363,7 +357,7 @@ public interface SearchService {
 
     void deletePart(Part part) throws Exception;
 
-    void indexAllParts(ApplicationListener<IndexingEvent> listener) throws Exception;
+    void indexAllParts(Observer observer) throws Exception;
 
     void indexCarEngine(CarEngine carEngine);
 
@@ -385,13 +379,13 @@ public interface SearchService {
 
     void deleteCarModelEngineYear(CarModelEngineYear carModelEngineYear) throws Exception;
 
-    void indexAllApplications(ApplicationListener<IndexingEvent> listener) throws Exception;
+    void indexAllApplications(Observer observer) throws Exception;
 
     void indexSalesNotePart(SalesNotePart salesNotePart);
 
     void deleteSalesNotePart(SalesNotePart salesNotePart) throws Exception;
 
-    void indexAllSalesNotes(ApplicationListener<IndexingEvent> listener) throws Exception;
+    void indexAllSalesNotes(Observer observer) throws Exception;
 
     String filterParts(String partNumber, Long partTypeId, Long manufacturerId,
                        String name, String description, Boolean inactive,
