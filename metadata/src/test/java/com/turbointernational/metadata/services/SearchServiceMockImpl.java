@@ -53,11 +53,6 @@ public class SearchServiceMockImpl implements SearchService {
     }
 
     @Override
-    public void indexAllParts(Observer observer) throws Exception {
-        log.debug("Indexing: indexAllParts()");
-    }
-
-    @Override
     public void indexCarEngine(CarEngine carEngine) {
         log.debug("Indexing: indexCarEngine(CarEngine carEngine)");
     }
@@ -117,12 +112,6 @@ public class SearchServiceMockImpl implements SearchService {
     }
 
     @Override
-    public void indexAllApplications(Observer observer) throws Exception {
-        log.debug("Indexing: indexAllApplications()");
-
-    }
-
-    @Override
     public void indexSalesNotePart(SalesNotePart salesNotePart) {
         log.debug("Indexing: indexSalesNotePart(SalesNotePart salesNotePart)");
 
@@ -131,12 +120,6 @@ public class SearchServiceMockImpl implements SearchService {
     @Override
     public void deleteSalesNotePart(SalesNotePart salesNotePart) throws Exception {
         log.debug("Indexing: deleteSalesNotePart(SalesNotePart salesNotePart)");
-
-    }
-
-    @Override
-    public void indexAllSalesNotes(Observer observer) throws Exception {
-        log.debug("Indexing: indexAllSalesNotes()");
 
     }
 

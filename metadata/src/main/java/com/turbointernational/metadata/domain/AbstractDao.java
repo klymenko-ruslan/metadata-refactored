@@ -1,5 +1,6 @@
 package com.turbointernational.metadata.domain;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.*;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,23 +49,38 @@ public abstract class AbstractDao<T extends Serializable> {
                 .getResultList();
     }
 
-    public void mapAll(int fetchSize, String orderProperty, Observer observer) {
-        Session session = (Session) em.getDelegate();
-        Query query = session.createQuery("SELECT o FROM " + clazz.getName() + " o ORDER BY o." + orderProperty);
+    public ScrollableResults getScrollableResults(int fetchSize, boolean distinct, String orderProperty) {
+        Session hibernateSession = (Session) em.getDelegate();
+        String sql ="SELECT ";
+        if (distinct) {
+            sql += " DISTINCT ";
+        }
+        sql ="o FROM " + clazz.getName() + " o";
+        if (StringUtils.isNotBlank(orderProperty)) {
+            sql += (" ORDER BY o." + orderProperty);
+        }
+        Query query = hibernateSession.createQuery(sql);
         query.setFetchSize(fetchSize);
         query.setReadOnly(true);
         query.setLockMode("o", NONE);
-        ScrollableResults results = query.scroll(FORWARD_ONLY);
+        ScrollableResults retVal = query.scroll(FORWARD_ONLY);
+        return retVal;
+    }
+
+    /*
+    public void mapAll(int fetchSize, boolean distinct, String orderProperty, Observer observer) {
+       ScrollableResults results = getScrollableResult(fetchSize, distinct, orderProperty);
         try {
             while (results.next()) {
-                Object o = results.get(0);
-                observer.update(null, o);
+                Object entity = results.get(0);
+                observer.update(null, entity);
             }
         } finally {
             results.close();
         }
         observer.update(null, null); // signal -- end of processing
     }
+    */
 
     public int getTotal() {
         return ((Number) em.createQuery("SELECT count(o) FROM " +

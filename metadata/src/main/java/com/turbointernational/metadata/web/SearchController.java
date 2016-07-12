@@ -16,7 +16,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
-import java.io.Serializable;
 import java.util.Map;
 import java.util.Set;
 
@@ -157,47 +156,6 @@ public class SearchController {
         }).start();
     }
 
-    @RequestMapping(value = "/part/indexAll")
-    @ResponseBody
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Secured("ROLE_ADMIN")
-    public void indexPartAll() throws Exception {
-        new Thread(() -> {
-            try {
-                searchService.indexAllParts(null);
-            } catch (Exception e) {
-                log.error("Indexing of all parts failed.", e);
-            }
-        }).start();
-    }
-
-    @RequestMapping(value = "/application/indexAll")
-    @ResponseBody
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Secured("ROLE_ADMIN")
-    public void indexApplicationAll() throws Exception {
-        new Thread(() -> {
-            try {
-                searchService.indexAllApplications(null);
-            } catch (Exception e) {
-                log.error("Indexing of applications failed.");
-            }
-        }).start();
-    }
-
-    @Secured("ROLE_ADMIN")
-    @RequestMapping(value = "/salesnotesparts/indexAll")
-    @ResponseBody
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void indexSalesNotesPartsAll() throws Exception {
-        new Thread(() -> {
-            try {
-                searchService.indexAllSalesNotes(null);
-            } catch (Exception e) {
-                log.error("Indexing of sales notes parts failed.", e);
-            }
-        }).start();
-    }
 
     @Secured("ROLE_ADMIN")
     @RequestMapping(value = "/indexing/start", method = POST)

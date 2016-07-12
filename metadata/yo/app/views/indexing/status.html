@@ -130,10 +130,10 @@
               </div>
             </div>
             <div class="modal-footer">
-              <div class="pull-left">
-                <div class="text-muted">The process started on {{startedOn | date : "yyyy-MM-dd HH:mm.ss"}} by <a ng-href="security/user/{{userId}}">{{userName}}</a>.</div>
-                <div class="text-muted" data-ng-show="finishedOn">The process finished on {{finishedOn | date : "yyyy-MM-dd HH:mm.ss"}}.</div>
-              </div>
+              <ul class="list-unstyled pull-left">
+                <li class="text-muted text-left">The process started on  {{startedOn | date : "yyyy-MM-dd HH:mm.ss"}} by <a ng-href="security/user/{{userId}}">{{userName}}</a>.</li>
+                <li class="text-muted text-left" data-ng-show="finishedOn">The process finished on {{finishedOn | date : "yyyy-MM-dd HH:mm.ss"}}.</li>
+              </ul>
               <div class="pull-right">
                 <button type="button" class="btn btn-default" data-dismiss="modal" data-ng-disabled="phase != 3" ng-click="ctrl.onCloseStatus()">Close</button>
               </div>

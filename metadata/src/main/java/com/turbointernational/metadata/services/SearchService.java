@@ -39,89 +39,114 @@ public interface SearchService {
 
         @JsonView({View.Summary.class})
         @JsonInclude(ALWAYS)
-        private int phase = PHASE_NONE;
+        private int phase;
 
         @JsonView({View.Summary.class})
         @JsonInclude(ALWAYS)
-        private String errorMessage = null;
+        private String errorMessage;
 
         @JsonView({View.Summary.class})
         @JsonInclude(ALWAYS)
-        private int partsIndexed = 0;
+        private int partsIndexed;
 
         @JsonView({View.Summary.class})
         @JsonInclude(ALWAYS)
-        private int partsIndexingFailures = 0;
+        private int partsIndexingFailures;
 
         @JsonView({View.Summary.class})
         @JsonInclude(ALWAYS)
-        private int partsIndexingTotalSteps = 0;
+        private int partsIndexingTotalSteps;
 
         @JsonView({View.Summary.class})
         @JsonInclude(ALWAYS)
-        private int partsIndexingCurrentStep = 0;
+        private int partsIndexingCurrentStep;
 
         @JsonView({View.Summary.class})
         @JsonInclude(ALWAYS)
-        private int applicationsIndexed = 0;
+        private int applicationsIndexed;
 
         @JsonView({View.Summary.class})
         @JsonInclude(ALWAYS)
-        private int applicationsIndexingFailures = 0;
+        private int applicationsIndexingFailures;
 
         @JsonView({View.Summary.class})
         @JsonInclude(ALWAYS)
-        private int applicationsIndexingTotalSteps = 0;
+        private int applicationsIndexingTotalSteps;
 
         @JsonView({View.Summary.class})
         @JsonInclude(ALWAYS)
-        private int applicationsIndexingCurrentStep = 0;
+        private int applicationsIndexingCurrentStep;
 
         @JsonView({View.Summary.class})
         @JsonInclude(ALWAYS)
-        private int salesNotesIndexed = 0;
+        private int salesNotesIndexed;
 
         @JsonView({View.Summary.class})
         @JsonInclude(ALWAYS)
-        private int salesNotesIndexingFailures = 0;
+        private int salesNotesIndexingFailures;
 
         @JsonView({View.Summary.class})
         @JsonInclude(ALWAYS)
-        private int salesNotesIndexingTotalSteps = 0;
+        private int salesNotesIndexingTotalSteps;
 
         @JsonView({View.Summary.class})
         @JsonInclude(ALWAYS)
-        private int salesNotesIndexingCurrentStep = 0;
+        private int salesNotesIndexingCurrentStep;
 
         @JsonView({View.Summary.class})
         @JsonInclude(ALWAYS)
-        private boolean indexParts = true;
+        private boolean indexParts;
 
         @JsonView({View.Summary.class})
         @JsonInclude(ALWAYS)
-        private boolean indexApplications = true;
+        private boolean indexApplications;
 
         @JsonView({View.Summary.class})
         @JsonInclude(ALWAYS)
-        private boolean indexSalesNotes = true;
+        private boolean indexSalesNotes;
 
         @JsonView({View.Summary.class})
         @JsonInclude(ALWAYS)
-        private Long startedOn = null;
+        private Long startedOn;
 
         @JsonView({View.Summary.class})
         @JsonInclude(ALWAYS)
-        private Long finishedOn = null;
+        private Long finishedOn;
 
         @JsonView({View.Summary.class})
         @JsonInclude(ALWAYS)
-        private Long userId = null;
+        private Long userId;
 
         @JsonView({View.Summary.class})
         @JsonInclude(ALWAYS)
         private String userName;
 
         public IndexingStatus() {
+            reset();
+        }
+
+        public void reset() {
+            this.phase = PHASE_NONE;
+            this.errorMessage = null;
+            this.partsIndexed = 0;
+            this.partsIndexingFailures = 0;
+            this.partsIndexingTotalSteps = 0;
+            this.partsIndexingCurrentStep = 0;
+            this.applicationsIndexed = 0;
+            this.applicationsIndexingFailures = 0;
+            this.applicationsIndexingTotalSteps = 0;
+            this.applicationsIndexingCurrentStep = 0;
+            this.salesNotesIndexed = 0;
+            this.salesNotesIndexingFailures = 0;
+            this.salesNotesIndexingTotalSteps = 0;
+            this.salesNotesIndexingCurrentStep = 0;
+            this.indexParts = true;
+            this.indexApplications = true;
+            this.indexSalesNotes = true;
+            this.startedOn = null;
+            this.finishedOn = null;
+            this.userId = null;
+            this.userName = null;
         }
 
         public int getPhase() {
@@ -357,8 +382,6 @@ public interface SearchService {
 
     void deletePart(Part part) throws Exception;
 
-    void indexAllParts(Observer observer) throws Exception;
-
     void indexCarEngine(CarEngine carEngine);
 
     void deleteCarEngine(CarEngine carEngine) throws Exception;
@@ -379,13 +402,9 @@ public interface SearchService {
 
     void deleteCarModelEngineYear(CarModelEngineYear carModelEngineYear) throws Exception;
 
-    void indexAllApplications(Observer observer) throws Exception;
-
     void indexSalesNotePart(SalesNotePart salesNotePart);
 
     void deleteSalesNotePart(SalesNotePart salesNotePart) throws Exception;
-
-    void indexAllSalesNotes(Observer observer) throws Exception;
 
     String filterParts(String partNumber, Long partTypeId, Long manufacturerId,
                        String name, String description, Boolean inactive,

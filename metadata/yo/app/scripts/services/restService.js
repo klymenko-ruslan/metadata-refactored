@@ -53,6 +53,7 @@ angular.module("ngMetaCrudApp")
 
         return deferred.promise;
       };
+
       this.error = function(title, response) {
         // NOOP on access denied, loginRequiredInterceptor will handle the redirect
         if (response.status === 401 || response.status === 403) {
