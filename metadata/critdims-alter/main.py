@@ -702,7 +702,7 @@ def import_data(alter_file, input_data, ptid2columns_meta):
                                                     import_values)
                         print(sql, file=alter_file)
 
-        print("{}: inserted: {}, updated: {}, conflicts: {}, sipped: {}"
+        print("{}: inserted: {}, updated: {}, conflicts: {}, skipped: {}"
               .format(pt.name, inserted, updated, conflicted, skipped))
 
 
@@ -986,6 +986,10 @@ def tsvrec2importval(pt_cda, columns_meta, headers, row):
     In the dict keys are defined by elements in the 'headers' array
     and values are correspondent (with the same index) values
     in the 'row' array.
+
+    The value is normalized:
+        - for columns of the type 'ENUMERATION' a value is set as None;
+        - if value is string 'NULL' it is replaced by None.
     """
     retval = list()
     cda_idx_by_fieldname = {"cd_" + cd["name_clean"]: cd for cd in pt_cda}
@@ -994,7 +998,7 @@ def tsvrec2importval(pt_cda, columns_meta, headers, row):
         cd_id = cd["id"]
         value = row[idx]
         col_meta = columns_meta[cd_id]
-        if col_meta.types.data_type == "ENUMERATION":
+        if value == 'NULL' or col_meta.types.data_type == "ENUMERATION":
             value = None
         retval.append(ImportValue(col_meta, value))
     return retval

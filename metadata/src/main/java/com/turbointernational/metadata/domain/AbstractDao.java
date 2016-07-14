@@ -50,12 +50,17 @@ public abstract class AbstractDao<T extends Serializable> {
     }
 
     public ScrollableResults getScrollableResults(int fetchSize, boolean distinct, String orderProperty) {
-        Session hibernateSession = (Session) em.getDelegate();
-        String sql ="SELECT ";
+        return getScrollableResults(em, clazz, fetchSize, distinct, orderProperty);
+    }
+
+    public static ScrollableResults getScrollableResults(EntityManager entityManager, Class clazz,
+                                                  int fetchSize, boolean distinct, String orderProperty) {
+        Session hibernateSession = (Session) entityManager.getDelegate();
+        String sql = "SELECT ";
         if (distinct) {
             sql += " DISTINCT ";
         }
-        sql ="o FROM " + clazz.getName() + " o";
+        sql += "o FROM " + clazz.getName() + " o";
         if (StringUtils.isNotBlank(orderProperty)) {
             sql += (" ORDER BY o." + orderProperty);
         }
@@ -67,23 +72,12 @@ public abstract class AbstractDao<T extends Serializable> {
         return retVal;
     }
 
-    /*
-    public void mapAll(int fetchSize, boolean distinct, String orderProperty, Observer observer) {
-       ScrollableResults results = getScrollableResult(fetchSize, distinct, orderProperty);
-        try {
-            while (results.next()) {
-                Object entity = results.get(0);
-                observer.update(null, entity);
-            }
-        } finally {
-            results.close();
-        }
-        observer.update(null, null); // signal -- end of processing
-    }
-    */
-
     public int getTotal() {
-        return ((Number) em.createQuery("SELECT count(o) FROM " +
+        return getTotal(em, clazz);
+    }
+
+    public static int getTotal(EntityManager entityManager, Class clazz) {
+        return ((Number) entityManager.createQuery("SELECT count(o) FROM " +
                 clazz.getName() + " o").getSingleResult()).intValue();
     }
 

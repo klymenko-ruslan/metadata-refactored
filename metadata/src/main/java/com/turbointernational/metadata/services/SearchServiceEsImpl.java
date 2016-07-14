@@ -40,10 +40,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.PostConstruct;
+import javax.persistence.EntityManagerFactory;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.*;
@@ -72,9 +75,6 @@ public class SearchServiceEsImpl implements SearchService {
     @Qualifier("transactionManager")
     @Autowired
     private PlatformTransactionManager txManager; // JPA
-
-    @Autowired
-    private CriticalDimensionDao criticalDimensionDao;
 
     @Value("${elasticsearch.index}")
     protected String elasticSearchIndex = "metadata";
@@ -205,21 +205,16 @@ public class SearchServiceEsImpl implements SearchService {
             @Override
             public void run() {
                 super.run();
-                TransactionTemplate tt = new TransactionTemplate(txManager);
-                tt.setPropagationBehavior(PROPAGATION_REQUIRES_NEW); // new transaction
-                tt.execute(ts -> {
-                    try {
-                        indexAllDocs(scrollableParts, fetchSize, elasticSearchTypePart, this);
-                    } catch (Exception e) {
-                        synchronized (indexingStatus) {
-                            if (indexingStatus.getErrorMessage() != null) {
-                                indexingStatus.setErrorMessage(e.getMessage());
-                                indexingStatus.setPartsIndexingFailures(1);
-                            }
+                try {
+                    indexAllDocs(scrollableParts, fetchSize, elasticSearchTypePart, this);
+                } catch (Exception e) {
+                    synchronized (indexingStatus) {
+                        if (indexingStatus.getErrorMessage() != null) {
+                            indexingStatus.setErrorMessage(e.getMessage());
+                            indexingStatus.setPartsIndexingFailures(1);
                         }
                     }
-                    return null;
-                });
+                }
             }
 
             @Override
@@ -244,10 +239,10 @@ public class SearchServiceEsImpl implements SearchService {
             private final ScrollableResults scrollableCarModels;
 
             private ApplicationsIndexer(ScrollableResults scrollableCarModelEngineYears,
-                                ScrollableResults scrollableCarEngines,
-                                ScrollableResults scrollableCarFuelTypes,
-                                ScrollableResults scrollableCarMakes,
-                                ScrollableResults scrollableCarModels) {
+                                        ScrollableResults scrollableCarEngines,
+                                        ScrollableResults scrollableCarFuelTypes,
+                                        ScrollableResults scrollableCarMakes,
+                                        ScrollableResults scrollableCarModels) {
                 this.scrollableCarModelEngineYears = scrollableCarModelEngineYears;
                 this.scrollableCarEngines = scrollableCarEngines;
                 this.scrollableCarFuelTypes = scrollableCarFuelTypes;
@@ -258,26 +253,21 @@ public class SearchServiceEsImpl implements SearchService {
             @Override
             public void run() {
                 super.run();
-                TransactionTemplate tt = new TransactionTemplate(txManager);
-                tt.setPropagationBehavior(PROPAGATION_REQUIRES_NEW); // new transaction
-                tt.execute(ts -> {
-                    try {
-                        indexAllDocs(scrollableCarModelEngineYears, fetchSize,
-                                elasticSearchTypeCarModelEngineYear, this);
-                        indexAllDocs(scrollableCarEngines, fetchSize, elasticSearchTypeCarEngine, this);
-                        indexAllDocs(scrollableCarFuelTypes, fetchSize, elasticSearchTypeCarFuelType, this);
-                        indexAllDocs(scrollableCarMakes, fetchSize, elasticSearchTypeCarMake, this);
-                        indexAllDocs(scrollableCarModels, fetchSize, elasticSearchTypeCarModel, this);
-                    } catch (Exception e) {
-                        synchronized (indexingStatus) {
-                            if (indexingStatus.getErrorMessage() != null) {
-                                indexingStatus.setErrorMessage(e.getMessage());
-                                indexingStatus.setApplicationsIndexingFailures(1);
-                            }
+                try {
+                    indexAllDocs(scrollableCarModelEngineYears, fetchSize,
+                            elasticSearchTypeCarModelEngineYear, this);
+                    indexAllDocs(scrollableCarEngines, fetchSize, elasticSearchTypeCarEngine, this);
+                    indexAllDocs(scrollableCarFuelTypes, fetchSize, elasticSearchTypeCarFuelType, this);
+                    indexAllDocs(scrollableCarMakes, fetchSize, elasticSearchTypeCarMake, this);
+                    indexAllDocs(scrollableCarModels, fetchSize, elasticSearchTypeCarModel, this);
+                } catch (Exception e) {
+                    synchronized (indexingStatus) {
+                        if (indexingStatus.getErrorMessage() != null) {
+                            indexingStatus.setErrorMessage(e.getMessage());
+                            indexingStatus.setApplicationsIndexingFailures(1);
                         }
                     }
-                    return null;
-                });
+                }
             }
 
             @Override
@@ -304,21 +294,16 @@ public class SearchServiceEsImpl implements SearchService {
             @Override
             public void run() {
                 super.run();
-                TransactionTemplate tt = new TransactionTemplate(txManager);
-                tt.setPropagationBehavior(PROPAGATION_REQUIRES_NEW); // new transaction
-                tt.execute(ts -> {
-                    try {
-                        indexAllDocs(scrollableSalesNotes, fetchSize, elasticSearchTypeSalesNotePart, this);
-                    } catch (Exception e) {
-                        synchronized (indexingStatus) {
-                            if (indexingStatus.getErrorMessage() != null) {
-                                indexingStatus.setErrorMessage(e.getMessage());
-                                indexingStatus.setSalesNotesIndexingFailures(1);
-                            }
+                try {
+                    indexAllDocs(scrollableSalesNotes, fetchSize, elasticSearchTypeSalesNotePart, this);
+                } catch (Exception e) {
+                    synchronized (indexingStatus) {
+                        if (indexingStatus.getErrorMessage() != null) {
+                            indexingStatus.setErrorMessage(e.getMessage());
+                            indexingStatus.setSalesNotesIndexingFailures(1);
                         }
                     }
-                    return null;
-                });
+                }
             }
 
             @Override
@@ -345,122 +330,136 @@ public class SearchServiceEsImpl implements SearchService {
         @Override
         public void run() {
             super.run();
-            try {
-                int partsTotal = 0;
-                int carModelEngineYearTotal = 0;
-                int carEngineTotal = 0;
-                int carFuelTypeTotal = 0;
-                int carMakeTotal = 0;
-                int carModelTotal = 0;
-                int salesNotesTotal = 0;
-
-                if (indexParts) {
-                    partsTotal = partDao.getTotal();
-                }
-                if (indexApplications) {
-                    carModelEngineYearTotal = carModelEngineYearDao.getTotal();
-                    carEngineTotal = carEngineDao.getTotal();
-                    carFuelTypeTotal = carFuelTypeDao.getTotal();
-                    carMakeTotal = carMakeDao.getTotal();
-                    carModelTotal = carModelDao.getTotal();
-                }
-                int applicationsTotal = carModelEngineYearTotal + carEngineTotal +
-                        carFuelTypeTotal + carMakeTotal + carModelTotal;
-                if (indexSalesNotes) {
-                    salesNotesTotal = salesNotePartDao.getTotal();
-                }
-
-                Thread partsIndexer = null;
-                ScrollableResults scrollableParts = null;
-
-                Thread applicationsIndexer = null;
-                ScrollableResults scrollableCarModelEngineYears = null;
-                ScrollableResults scrollableCarEngines = null;
-                ScrollableResults scrollableCarFuelTypes = null;
-                ScrollableResults scrollableCarMakes = null;
-                ScrollableResults scrollableCarModels = null;
-
-                Thread salesNotesIndexer = null;
-                ScrollableResults scrollableSalesNotes = null;
-
+            TransactionTemplate tt = new TransactionTemplate(txManager);
+            tt.setPropagationBehavior(PROPAGATION_REQUIRES_NEW); // new transaction
+            tt.execute((TransactionCallback<Void>) ts -> {
                 try {
+                    int partsTotal = 0;
+                    int carModelEngineYearTotal = 0;
+                    int carEngineTotal = 0;
+                    int carFuelTypeTotal = 0;
+                    int carMakeTotal = 0;
+                    int carModelTotal = 0;
+                    int salesNotesTotal = 0;
+
+
                     if (indexParts) {
-                        scrollableParts = partDao.getScrollableResults(fetchSize, true, "id");
-                        partsIndexer = new PartsIndexer(scrollableParts);
+                        partsTotal = partDao.getTotal();
                     }
                     if (indexApplications) {
-                        scrollableCarModelEngineYears = carModelEngineYearDao.getScrollableResults(fetchSize, true, "id");
-                        scrollableCarEngines = carEngineDao.getScrollableResults(fetchSize, true, "id");
-                        scrollableCarFuelTypes = carFuelTypeDao.getScrollableResults(fetchSize, true, "id");
-                        scrollableCarMakes = carMakeDao.getScrollableResults(fetchSize, true, "id");
-                        scrollableCarModels = carModelDao.getScrollableResults(fetchSize, true, "id");
-
-                        applicationsIndexer = new ApplicationsIndexer(
-                                scrollableCarModelEngineYears,
-                                scrollableCarEngines,
-                                scrollableCarFuelTypes,
-                                scrollableCarMakes,
-                                scrollableCarModels);
+                        carModelEngineYearTotal = carModelEngineYearDao.getTotal();
+                        carEngineTotal = carEngineDao.getTotal();
+                        carFuelTypeTotal = carFuelTypeDao.getTotal();
+                        carMakeTotal = carMakeDao.getTotal();
+                        carModelTotal = carModelDao.getTotal();
                     }
+                    int applicationsTotal = carModelEngineYearTotal + carEngineTotal +
+                            carFuelTypeTotal + carMakeTotal + carModelTotal;
                     if (indexSalesNotes) {
-                        scrollableSalesNotes = salesNotePartDao.getScrollableResults(fetchSize, true, "pk.salesNote.id");
-                        salesNotesIndexer = new SalesNotesIndexer(scrollableSalesNotes);
+                        salesNotesTotal = salesNotePartDao.getTotal();
                     }
-                    synchronized (indexingStatus) {
-                        indexingStatus.setPartsIndexingTotalSteps(partsTotal);
-                        indexingStatus.setApplicationsIndexingTotalSteps(applicationsTotal);
-                        indexingStatus.setSalesNotesIndexingTotalSteps(salesNotesTotal);
-                        indexingStatus.setPhase(PHASE_INDEXING);
-                    }
-                    partsIndexer.start();
-                    applicationsIndexer.start();
-                    salesNotesIndexer.start();
 
-                    if (partsIndexer != null) {
-                        partsIndexer.join();
+                    Thread partsIndexer = null;
+                    ScrollableResults scrollableParts = null;
+
+                    Thread applicationsIndexer = null;
+                    ScrollableResults scrollableCarModelEngineYears = null;
+                    ScrollableResults scrollableCarEngines = null;
+                    ScrollableResults scrollableCarFuelTypes = null;
+                    ScrollableResults scrollableCarMakes = null;
+                    ScrollableResults scrollableCarModels = null;
+
+                    Thread salesNotesIndexer = null;
+                    ScrollableResults scrollableSalesNotes = null;
+
+                    try {
+                        if (indexParts) {
+                            scrollableParts = partDao.getScrollableResults(fetchSize, true, "id");
+                            partsIndexer = new PartsIndexer(scrollableParts);
+                        }
+                        if (indexApplications) {
+                            scrollableCarModelEngineYears = carModelEngineYearDao.getScrollableResults(fetchSize, true, "id");
+                            scrollableCarEngines = carEngineDao.getScrollableResults(fetchSize, true, "id");
+                            scrollableCarFuelTypes = carFuelTypeDao.getScrollableResults(fetchSize, true, "id");
+                            scrollableCarMakes = carMakeDao.getScrollableResults(fetchSize, true, "id");
+                            scrollableCarModels = carModelDao.getScrollableResults(fetchSize, true, "id");
+
+                            applicationsIndexer = new ApplicationsIndexer(
+                                    scrollableCarModelEngineYears,
+                                    scrollableCarEngines,
+                                    scrollableCarFuelTypes,
+                                    scrollableCarMakes,
+                                    scrollableCarModels);
+                        }
+                        if (indexSalesNotes) {
+                            scrollableSalesNotes = salesNotePartDao.getScrollableResults(fetchSize, true, "pk.salesNote.id");
+                            salesNotesIndexer = new SalesNotesIndexer(scrollableSalesNotes);
+                        }
+                        synchronized (indexingStatus) {
+                            indexingStatus.setPartsIndexingTotalSteps(partsTotal);
+                            indexingStatus.setApplicationsIndexingTotalSteps(applicationsTotal);
+                            indexingStatus.setSalesNotesIndexingTotalSteps(salesNotesTotal);
+                            indexingStatus.setPhase(PHASE_INDEXING);
+                        }
+
+                        if (partsIndexer != null) {
+                            partsIndexer.start();
+                        }
+                        if (applicationsIndexer != null) {
+                            applicationsIndexer.start();
+                        }
+                        if (salesNotesIndexer != null) {
+                            salesNotesIndexer.start();
+                        }
+
+                        if (partsIndexer != null) {
+                            partsIndexer.join();
+                        }
+                        if (applicationsIndexer != null) {
+                            applicationsIndexer.join();
+                        }
+                        if (salesNotesIndexer != null) {
+                            salesNotesIndexer.join();
+                        }
+
+                    } finally {
+                        if (scrollableParts != null) {
+                            scrollableParts.close();
+                        }
+                        if (scrollableCarModelEngineYears != null) {
+                            scrollableCarModelEngineYears.close();
+                        }
+                        if (scrollableCarEngines != null) {
+                            scrollableCarEngines.close();
+                        }
+                        if (scrollableCarFuelTypes != null) {
+                            scrollableCarFuelTypes.close();
+                        }
+                        if (scrollableCarMakes != null) {
+                            scrollableCarMakes.close();
+                        }
+                        if (scrollableCarModels != null) {
+                            scrollableCarModels.close();
+                        }
+                        if (scrollableSalesNotes != null) {
+                            scrollableSalesNotes.close();
+                        }
                     }
-                    if (applicationsIndexer != null) {
-                        applicationsIndexer.join();
-                    }
-                    if (salesNotesIndexer != null) {
-                        salesNotesIndexer.join();
+                } catch (Exception e) {
+                    log.error("Indexing job failed.", e);
+                    synchronized (indexingStatus) {
+                        if (indexingStatus.getErrorMessage() == null) {
+                            indexingStatus.setErrorMessage(e.getMessage());
+                        }
                     }
                 } finally {
-                    if (scrollableParts != null) {
-                        scrollableParts.close();
-                    }
-                    if (scrollableCarModelEngineYears != null) {
-                        scrollableCarModelEngineYears.close();
-                    }
-                    if (scrollableCarEngines != null) {
-                        scrollableCarEngines.close();
-                    }
-                    if (scrollableCarFuelTypes != null) {
-                        scrollableCarFuelTypes.close();
-                    }
-                    if (scrollableCarMakes != null) {
-                        scrollableCarMakes.close();
-                    }
-                    if (scrollableCarModels != null) {
-                        scrollableCarModels.close();
-                    }
-                    if (scrollableSalesNotes != null) {
-                        scrollableSalesNotes.close();
+                    synchronized (indexingStatus) {
+                        indexingStatus.setPhase(PHASE_FINISHED);
+                        indexingStatus.setFinishedOn(System.currentTimeMillis());
                     }
                 }
-            } catch (Exception e) {
-                log.error("Indexing job failed.", e);
-                synchronized (indexingStatus) {
-                    if (indexingStatus.getErrorMessage() != null) {
-                        indexingStatus.setErrorMessage(e.getMessage());
-                    }
-                }
-            } finally {
-                synchronized (indexingStatus) {
-                    indexingStatus.setPhase(PHASE_FINISHED);
-                    indexingStatus.setFinishedOn(System.currentTimeMillis());
-                }
-            }
+                return null;
+            });
         }
 
     }
@@ -1030,59 +1029,6 @@ public class SearchServiceEsImpl implements SearchService {
         elasticSearch.index(index).actionGet(timeout);
     }
 
-    class IndexingAllDocsObserver implements Observer {
-
-        private final String elasticSearchType;
-
-        private final int fetchSize;
-
-        private final Observer observer;
-
-        private BulkRequest bulk;
-
-        private int total;
-
-        IndexingAllDocsObserver(String elasticSearchType, int fetchSize, Observer observer) {
-            this.elasticSearchType = elasticSearchType;
-            this.fetchSize = fetchSize;
-            this.observer = observer;
-            this.total = 0;
-        }
-
-        @Override
-        public void update(Observable o, Object arg) {
-            boolean flush;
-            if (arg == null) {
-                flush = true;
-            } else {
-                SearchableEntity doc = (SearchableEntity) arg;
-                String searchId = doc.getSearchId();
-                IndexRequest index = new IndexRequest(elasticSearchIndex, elasticSearchType, searchId);
-                List<CriticalDimension> criticalDimensions = getCriticalDimensions(doc);
-                String asJson = doc.toSearchJson(criticalDimensions);
-                log.debug("elasticSearchIndex: {}, elasticSearchType: {}, searchId: {}, asJson: {}",
-                        elasticSearchIndex, elasticSearchType, searchId, asJson);
-                index.source(asJson);
-                if (bulk == null) {
-                    bulk = new BulkRequest();
-                }
-                bulk.add(index);
-                flush = bulk.numberOfActions() == fetchSize;
-            }
-            if (flush && bulk != null) {
-                elasticSearch.bulk(bulk).actionGet();
-                int n = bulk.numberOfActions();
-                total += n;
-                log.info("Indexed '{}': {} docs.", elasticSearchType, total);
-                if (observer != null) {
-                    log.debug("Publishing indexing event: {}", n);
-                    observer.update(null, new Integer(n));
-                }
-                bulk = null;
-            }
-        }
-    }
-
     private int batchIndex(BulkRequest bulk, String elasticSearchType, Observer observer) {
         elasticSearch.bulk(bulk).actionGet();
         int n = bulk.numberOfActions();
@@ -1095,16 +1041,25 @@ public class SearchServiceEsImpl implements SearchService {
     }
 
     private void indexAllDocs(ScrollableResults scrollableResults, int batchSize,
-                              String elasticSearchType, Observer observer) throws Exception {
+                                           String elasticSearchType, Observer observer) throws Exception {
         try {
             BulkRequest bulk = null;
-            while (scrollableResults.next()) {
-                Object entity = scrollableResults.get(0);
-                SearchableEntity doc = (SearchableEntity) entity;
-                String searchId = doc.getSearchId();
-                IndexRequest index = new IndexRequest(elasticSearchIndex, elasticSearchType, searchId);
-                List<CriticalDimension> criticalDimensions = getCriticalDimensions(doc);
-                String asJson = doc.toSearchJson(criticalDimensions);
+            while (true) {
+                String searchId;
+                IndexRequest index;
+                String asJson;
+                synchronized (this) {
+                    if (!scrollableResults.next()) {
+                        break; // stop cycle
+                    }
+                    Object entity = scrollableResults.get(0);
+                    SearchableEntity doc = (SearchableEntity) entity;
+                    searchId = doc.getSearchId();
+                    index = new IndexRequest(elasticSearchIndex, elasticSearchType, searchId);
+                    List<CriticalDimension> criticalDimensions = getCriticalDimensions(doc);
+                    asJson = doc.toSearchJson(criticalDimensions);
+                }
+                Thread.yield();
                 log.debug("elasticSearchIndex: {}, elasticSearchType: {}, searchId: {}, asJson: {}",
                         elasticSearchIndex, elasticSearchType, searchId, asJson);
                 index.source(asJson);
@@ -1128,45 +1083,6 @@ public class SearchServiceEsImpl implements SearchService {
             scrollableResults.close();
         }
     }
-/*
-    private void indexAllDocs(AbstractDao<?> dao, String elasticSearchType, Observer observer) throws Exception {
-        int maxPages = Integer.MAX_VALUE;
-        int page = 0;
-        int pageSize = 250;
-        try {
-            int result;
-            do {
-                BulkRequest bulk = new BulkRequest();
-                List<?> docs = dao.findAll(page * pageSize, pageSize);
-                for (Object o : docs) {
-                    SearchableEntity doc = (SearchableEntity) o;
-                    String searchId = doc.getSearchId();
-                    IndexRequest index = new IndexRequest(elasticSearchIndex, elasticSearchType, searchId);
-                    List<CriticalDimension> criticalDimensions = getCriticalDimensions(doc);
-                    String asJson = doc.toSearchJson(criticalDimensions);
-                    log.debug("elasticSearchIndex: {}, elasticSearchType: {}, searchId: {}, asJson: {}",
-                            elasticSearchIndex, elasticSearchType, searchId, asJson);
-                    index.source(asJson);
-                    bulk.add(index);
-                }
-                result = docs.size();
-                log.info("Indexed '{}' {}-{}: {}", elasticSearchType, page * pageSize,
-                        (page * pageSize) + pageSize, result);
-                page++;
-                elasticSearch.bulk(bulk).actionGet();
-                if (observer != null) {
-                    log.debug("Publishing indexing event: {}", result);
-                    observer.update(null, new Integer(result));
-                }
-            } while (result >= pageSize && page < maxPages);
-        } catch (Exception e) {
-            log.error("Reindexing of '" + elasticSearchType + "' failed.", e);
-            throw e;
-        } finally {
-            log.info("Indexing of '{}' finished.", elasticSearchType);
-        }
-    }
-*/
 
 }
 
