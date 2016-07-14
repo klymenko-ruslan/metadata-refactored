@@ -7,11 +7,13 @@ import com.turbointernational.metadata.services.mas90.pricing.CalculatedPrice;
 import com.turbointernational.metadata.services.mas90.pricing.Pricing;
 import com.turbointernational.metadata.services.mas90.pricing.ProductPrices;
 import org.apache.commons.lang3.StringUtils;
+import org.elasticsearch.action.support.broadcast.node.TransportBroadcastByNodeAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
@@ -63,9 +65,14 @@ public class PriceService {
             standardPrice = mssqldb.queryForObject(
                     "select standardunitprice from ci_item where itemcode=?",
                     BigDecimal.class, partNumber);
+        } catch(EmptyResultDataAccessException e) {
+            log.warn("Standard unit price for the part [{}] not found.", partId);
+            return new ProductPrices(partId, "Standard unit price not found.");
         } catch(DataAccessException e) {
-            log.warn("Product prices calculation failed for the part [{}]: {}", partId, e.getMessage());
-            return new ProductPrices(partId);
+            log.warn("Calculation of a standard unit price for the part [{}] failed: {}",
+                    partId, e.getMessage());
+            return new ProductPrices(partId, String.format("Calculation of a standard " +
+                    "unit price failed: {%s}", e.getMessage()));
         }
 
         Map<String, BigDecimal> prices = new HashMap(50);
