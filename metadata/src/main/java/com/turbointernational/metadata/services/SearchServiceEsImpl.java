@@ -1048,6 +1048,8 @@ public class SearchServiceEsImpl implements SearchService {
                 String searchId;
                 IndexRequest index;
                 String asJson;
+                // The synchronization below is needed because scrollable results share the same
+                // EntityManager that is not multithreaded.
                 synchronized (this) {
                     if (!scrollableResults.next()) {
                         break; // stop cycle
