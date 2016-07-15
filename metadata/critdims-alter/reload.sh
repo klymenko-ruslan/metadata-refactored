@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DUMP_DB="metadata_201606131739.sql.bz2"
+DUMP_DB="metadata_201607151347.sql.bz2"
 
 rm -rf out/*
 mysql -uroot -proot -e "drop database if exists metadata;create database metadata;"

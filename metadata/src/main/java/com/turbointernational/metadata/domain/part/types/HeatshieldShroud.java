@@ -12,10 +12,10 @@ import static javax.persistence.FetchType.LAZY;
 
 
 /**
- * Created by dmytro.trunykov@zorallabs.com on 2016-06-15 17:07:35.987608.
+ * Created by dmytro.trunykov@zorallabs.com on 2016-07-15 14:03:20.420003.
  */
 @Entity
-@Table(name = "heatshield_shroud")
+@Table(name = "heatshield")
 @PrimaryKeyJoinColumn(name = "part_id")
 public class HeatshieldShroud extends Part {
 

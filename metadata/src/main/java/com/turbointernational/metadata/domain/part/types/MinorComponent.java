@@ -12,7 +12,7 @@ import static javax.persistence.FetchType.LAZY;
 
 
 /**
- * Created by dmytro.trunykov@zorallabs.com on 2016-06-15 17:07:35.992056.
+ * Created by dmytro.trunykov@zorallabs.com on 2016-07-15 14:03:20.424448.
  */
 @Entity
 @Table(name = "minor_component")

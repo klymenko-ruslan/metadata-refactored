@@ -1118,7 +1118,7 @@ filename_alter = os.path.join(args.out_dir, "alter.sql")
 with open(filename_alter, "w", encoding="utf-8") as alter_file:
 
     print("""
--- Cear database.
+-- Clear database.
 -- delete from bom_alt_item;
 -- delete from bom;
 -- delete from cartridge;
@@ -1156,11 +1156,11 @@ alter table part_type add column legend_img_filename varchar(255);
 update part_type set magento_attribute_set='Backplate or Sealplate'
 where id=14;
 alter table backplate rename backplate_sealplate;
--- The same change for 'Heatshield / Shroud':
--- 'Heatshield' -> 'Heatshield or Shroud'
-update part_type set magento_attribute_set='Heatshield or Shroud'
-where id=15;
-alter table heatshield rename heatshield_shroud;
+-- -- The same change for 'Heatshield / Shroud':
+-- -- 'Heatshield' -> 'Heatshield or Shroud'
+-- update part_type set magento_attribute_set='Heatshield or Shroud'
+-- where id=15;
+-- alter table heatshield rename heatshield_shroud;
 
 alter table bearing_housing drop column cool_type_id;
 alter table bearing_housing drop column oil_inlet;
@@ -1183,10 +1183,10 @@ alter table compressor_wheel drop column application;
 alter table gasket drop foreign key gasket_ibfk_2;
 alter table gasket drop column gasket_type_id;
 
-alter table heatshield_shroud drop column overall_diameter;
-alter table heatshield_shroud drop column inside_diameter;
-alter table heatshield_shroud drop column inducer_diameter;
-alter table heatshield_shroud drop column notes;
+-- alter table heatshield_shroud drop column overall_diameter;
+-- alter table heatshield_shroud drop column inside_diameter;
+-- alter table heatshield_shroud drop column inducer_diameter;
+-- alter table heatshield_shroud drop column notes;
 
 alter table journal_bearing drop column outside_dim_min;
 alter table journal_bearing drop column outside_dim_max;

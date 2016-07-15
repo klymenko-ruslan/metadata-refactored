@@ -33,7 +33,7 @@
       "exists": true
     },
     "heatshield_shroud": {
-      "table": "heatshield_shroud",
+      "table": "heatshield",
       "class": "HeatshieldShroud",
       "exists": true
     },

@@ -12,7 +12,7 @@ import static javax.persistence.FetchType.LAZY;
 
 
 /**
- * Created by dmytro.trunykov@zorallabs.com on 2016-06-15 17:07:35.988078.
+ * Created by dmytro.trunykov@zorallabs.com on 2016-07-15 14:03:20.420480.
  */
 @Entity
 @Table(name = "journal_bearing_spacer")

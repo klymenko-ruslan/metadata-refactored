@@ -12,7 +12,7 @@ import static javax.persistence.FetchType.LAZY;
 
 
 /**
- * Created by dmytro.trunykov@zorallabs.com on 2016-06-15 17:07:35.991878.
+ * Created by dmytro.trunykov@zorallabs.com on 2016-07-15 14:03:20.424275.
  */
 @Entity
 @Table(name = "fast_wearing_component")
