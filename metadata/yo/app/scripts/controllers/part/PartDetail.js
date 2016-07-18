@@ -19,16 +19,6 @@ angular.module('ngMetaCrudApp')
           );
         }
 
-        // Turbo Types
-        $scope.addTurboType = function() {
-          dialogs.create(
-            '/views/part/dialog/AddTurboType.html',
-            'AddTurboTypeDialogCtrl',
-            {partId: $scope.partId}
-          ).result.then(function(turboType) {
-            $scope.part.turboTypes.push(turboType);
-          });
-        }
 
         $scope.removeComponent = function(componentToRemove) {
 

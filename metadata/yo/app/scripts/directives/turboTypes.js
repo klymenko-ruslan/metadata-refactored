@@ -7,23 +7,34 @@ angular.module("ngMetaCrudApp")
       scope: {
         part: "="
       },
-      templateUrl: '/views/component/turbo_types.html',
-      controller: ["$scope", "$parse", "dialogs", "gToast", "Restangular", "restService",
-        function($scope, $parse, dialogs, gToast, Restangular, restService) {
+      templateUrl: "/views/component/turbo_types.html",
+      controller: ["$scope", "$parse", "dialogs", "gToast", "restService",
+        function($scope, $parse, dialogs, gToast, restService) {
           $scope.turboTypesTableParams = new ngTableParams({
             page: 1,
             count: 10
           }, {
             getData: utils.localPagination($scope.part.turboTypes, "manufacturer.name")
           });
+
+          // Turbo Types
+          $scope.addTurboType = function() {
+            dialogs.create(
+              "/views/part/dialog/AddTurboType.html",
+              "AddTurboTypeDialogCtrl",
+              {partId: $scope.part.id}
+            ).result.then(function(turboType) {
+              $scope.part.turboTypes.push(turboType);
+              $scope.turboTypesTableParams.reload();
+            });
+          }
+
           $scope.removeTurboType = function(turboTypeToRemove) {
-            dialogs.confirm(
-              "Remove Turbo Type?",
+            dialogs.confirm("Remove Turbo Type?",
               "Do you want to remove this turbo type from the part?").result.then(
                 function() {
                   // Yes
-                  Restangular.setParentless(false);
-                  Restangular.one("part", $scope.part.id).one("turboType", turboTypeToRemove.id).remove().then(
+                  restService.removeTurboType($scope.part.id, turboTypeToRemove.id).then(
                     function() {
                       // Success
                       gToast.open("Turbo type removed.");
@@ -41,7 +52,8 @@ angular.module("ngMetaCrudApp")
                   // No
                 }
               );
-          };
+          }
+
         }
       ]
     };

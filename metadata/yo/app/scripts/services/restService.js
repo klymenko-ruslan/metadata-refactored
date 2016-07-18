@@ -308,6 +308,11 @@ angular.module("ngMetaCrudApp")
         });
       };
 
+      this.removeTurboType = function(partId, turboTypeId) {
+        Restangular.setParentless(false);
+        return Restangular.one("part", partId).one("turboType", turboTypeId).remove();
+      };
+
       this.findInterchange = function(id) {
         return Restangular.one("interchange", id).get();
       };
