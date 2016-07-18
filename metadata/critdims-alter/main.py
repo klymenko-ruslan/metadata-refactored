@@ -529,8 +529,8 @@ create table crit_dim (
                           'INTEGER', 'TEXT') not null,
     enum_id         int,
     unit            enum ('DEGREES', 'GRAMS', 'INCHES'),
-    tolerance       tinyint(1) comment '0 - nominal,
-                    1 - tolerance/limit, null - not a tolerance',
+    tolerance  enum ('LOWER', 'UPPER', 'BOTH')
+                        comment 'NULL - not a tolerance',
     name            varchar(255) not null,
     json_name       varchar(48) not null comment 'Name of a property
                         in serialized to JSON part''s object.
@@ -550,8 +550,10 @@ create table crit_dim (
     regex           varchar(255) comment 'Validation: JS regular
                         expression',
     parent_id       bigint,
-    length          tinyint comment 'Lenth on a web page',
-    scale           tinyint comment 'Scale on a web pate.',
+    length          tinyint comment 'Lenth in a database.',
+    scale           tinyint comment 'Scale in a database.',
+    length_web      tinyint comment 'Lenth on a web page',
+    scale_web       tinyint comment 'Scale on a web pate.',
     primary key(id),
     -- unique key(part_type_id, seq_num),
     foreign key (part_type_id) references part_type(id),
@@ -867,6 +869,7 @@ def generate_create_table(table_name, cda):
         "\tpart_id bigint(20) not null references part (id),\n" \
         "\tkey part_id (part_id)".format(table_name)
     columns = set()
+    references = list()
     for cd in cda:
         sql += ",\n"
         col_meta = cd2colmetainfo(cd)
@@ -877,10 +880,32 @@ def generate_create_table(table_name, cda):
         else:
             columns.add(col_meta.col_name)
         col_ref = cd2sqlreference(cd)
-        sql += "\t{} {} {}".format(col_meta.col_name,
-                                   col_meta.types.sql_type, col_ref)
-    sql += "\n) engine=innodb default charset=utf8;"
+        if col_ref:
+            references.append((col_meta.col_name, col_ref))
+        sql += "\t{} {}".format(col_meta.col_name, col_meta.types.sql_type)
+    sql += "\n) engine=innodb default charset=utf8;\n"
+    sql += ("alter table {} add foreign key (part_id) "
+            "references part (id);\n".format(table_name))
+    for rf in references:
+        sql += "alter table {} add foreign key ({}) {};\n".format(table_name,
+                                                                  rf[0],
+                                                                  rf[1])
     return columns_meta, sql
+
+
+def to_tolerance_type(tolerance, tolerance_type):
+    """Analyze values in imported record and convert it to tolerance."""
+    if tolerance_type:
+        if tolerance_type == "upper":
+            return "'UPPER'"
+        elif tolerance_type == "lower":
+            return "'LOWER'"
+        else:
+            raise ValueError("Unknown tolerance type: {}"
+                             .format(tolerance_type))
+    elif tolerance == "PLUS;MINUS":
+        return "'BOTH'"
+    return "null"
 
 
 def register_crit_dim(alter_file, input_data, table_name, pt_id, pt_cda,
@@ -891,8 +916,8 @@ def register_crit_dim(alter_file, input_data, table_name, pt_id, pt_cda,
         "tolerance, name, json_name, idx_name, " \
         "enum_id, null_allowed, null_display, " \
         "min_val, "\
-        "max_val, regex, parent_id, length, " \
-        "scale) "\
+        "max_val, regex, parent_id, " \
+        "length, scale, length_web, scale_web) "\
         "values\n"
     add_comma = False
     registered_enums = ""
@@ -911,10 +936,7 @@ def register_crit_dim(alter_file, input_data, table_name, pt_id, pt_cda,
             unit = cd["unit"]
         else:
             unit = None
-        if cd["tolerance"] == "PLUS;MINUS":
-            tolerance = 1
-        else:
-            tolerance = 0
+        tolerance = to_tolerance_type(cd["tolerance"], cd["tolerance_type"])
         name = cd["name"]
         json_name = col_meta.col_name
         idx_name = name2idxName(table_name, json_name, idx_names)
@@ -952,13 +974,15 @@ def register_crit_dim(alter_file, input_data, table_name, pt_id, pt_cda,
                 continue
         length = def_sql_null(cd, "length")
         scale = def_sql_null(cd, "scale")
+        length_web = def_sql_null(cd, "length_web")
+        scale_web = def_sql_null(cd, "scale_web")
         if add_comma:
             sql += ",\n"
         values = "({cd_id}, {part_type_id}, {seq_num}, {data_type}, {unit}, " \
             "{tolerance}, {name}, {json_name}, {idx_name}, " \
             "{enum_id}, {null_allowed}, {null_display}, {min_val}, " \
             "{max_val}, {regex}, {parent_id}, {length}, " \
-            "{scale})".format(
+            "{scale}, {length_web}, {scale_web})".format(
                 cd_id=cd_id, part_type_id=pt_id, seq_num=seq_num,
                 data_type=sql_str_param(data_type), unit=sql_str_param(unit),
                 tolerance=tolerance, name=sql_str_param(name),
@@ -967,7 +991,8 @@ def register_crit_dim(alter_file, input_data, table_name, pt_id, pt_cda,
                 null_allowed=null_allowed,
                 null_display=sql_str_param(null_display), min_val=min_val,
                 max_val=max_val, regex=sql_str_param(regex),
-                parent_id=parent_id, length=length, scale=scale)
+                parent_id=parent_id, length=length, scale=scale,
+                length_web=length_web, scale_web=scale_web)
         sql += values
         add_comma = True
     if add_comma:
@@ -1183,10 +1208,10 @@ alter table compressor_wheel drop column application;
 alter table gasket drop foreign key gasket_ibfk_2;
 alter table gasket drop column gasket_type_id;
 
--- alter table heatshield_shroud drop column overall_diameter;
--- alter table heatshield_shroud drop column inside_diameter;
--- alter table heatshield_shroud drop column inducer_diameter;
--- alter table heatshield_shroud drop column notes;
+alter table heatshield drop column overall_diameter;
+alter table heatshield drop column inside_diameter;
+alter table heatshield drop column inducer_diameter;
+alter table heatshield drop column notes;
 
 alter table journal_bearing drop column outside_dim_min;
 alter table journal_bearing drop column outside_dim_max;
@@ -1209,13 +1234,13 @@ alter table turbine_wheel drop column stem_oe;
 alter table turbine_wheel drop column trim_no_blades;
 alter table turbine_wheel drop column shaft_thread_f;
 
-alter table turbo drop foreign key turbo_ibfk_2;
-alter table turbo drop column cool_type_id;
+-- alter table turbo drop foreign key turbo_ibfk_2;
+-- alter table turbo drop column cool_type_id;
 -- alter table turbo drop foreign key turbo_ibfk_3;
 -- alter table turbo drop column turbo_model_id;
 
-alter table kit drop foreign key kit_ibfk_1;
-alter table kit drop column kit_type_id;
+-- alter table kit drop foreign key kit_ibfk_1;
+-- alter table kit drop column kit_type_id;
 
 alter table bearing_spacer drop column outside_dim_min;
 alter table bearing_spacer drop column outside_dim_max;
@@ -1235,10 +1260,10 @@ alter table backplate_sealplate drop column overall_height;
 
 drop table gasket_type;
 drop table seal_type;
--- drop table turbo_model;
-drop table cool_type;
-drop table part_turbo;
-drop table kit_type;
+-- -- drop table turbo_model;
+-- drop table cool_type;
+-- drop table part_turbo;
+-- drop table kit_type;
         """, file=alter_file)
 
     input_data = InputData(args.in_part_type, args.in_part_type_metadata,

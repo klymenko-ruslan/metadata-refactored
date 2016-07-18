@@ -11,7 +11,9 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
+import static javax.persistence.EnumType.STRING;
 import static javax.persistence.FetchType.EAGER;
+import static javax.persistence.FetchType.LAZY;
 
 /**
  * Created by dmytro.trunykov@zorallabs.com on 06.04.16.
@@ -31,6 +33,7 @@ public class CriticalDimension implements Serializable {
     //<editor-fold defaultstate="collapsed" desc="Enumerations">
     public enum DataTypeEnum { DECIMAL, ENUMERATION, INTEGER, TEXT }
     public enum UnitEnum { DEGREES, GRAMS, INCHES }
+    public enum ToleranceTypeEnum { LOWER, UPPER, BOTH }
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Properties">
@@ -38,7 +41,7 @@ public class CriticalDimension implements Serializable {
     @JsonView({View.Summary.class})
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = LAZY)
     @JoinColumn(name = "part_type_id")
     @JsonView({View.Detail.class})
     private PartType partType;
@@ -48,7 +51,7 @@ public class CriticalDimension implements Serializable {
     private int seqNum;
 
     @Column(name = "data_type", nullable = false)
-    @Enumerated(EnumType.STRING)
+    @Enumerated(STRING)
     @JsonView({View.Summary.class})
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     private DataTypeEnum dataType;
@@ -59,14 +62,15 @@ public class CriticalDimension implements Serializable {
     private CriticalDimensionEnum enumeration;
 
     @Column(name = "unit")
-    @Enumerated(EnumType.STRING)
+    @Enumerated(STRING)
     @JsonView({View.Summary.class})
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     private UnitEnum unit;
 
     @Column(name = "tolerance")
+    @Enumerated(STRING)
     @JsonView({View.Summary.class})
-    private Boolean tolerance;
+    private ToleranceTypeEnum tolerance;
 
     @Column(name = "name", nullable = false)
     @JsonView({View.Summary.class})
@@ -123,6 +127,14 @@ public class CriticalDimension implements Serializable {
     @Column(name = "scale")
     @JsonView({View.Summary.class})
     private Byte scale;
+
+    @Column(name = "length_web")
+    @JsonView({View.Summary.class})
+    private Byte lengthWeb;
+
+    @Column(name = "scale_web")
+    @JsonView({View.Summary.class})
+    private Byte scaleWeb;
     //</editor-fold>
 
     /**
@@ -186,11 +198,11 @@ public class CriticalDimension implements Serializable {
         this.unit = unit;
     }
 
-    public Boolean getTolerance() {
+    public ToleranceTypeEnum getTolerance() {
         return tolerance;
     }
 
-    public void setTolerance(Boolean tolerance) {
+    public void setTolerance(ToleranceTypeEnum tolerance) {
         this.tolerance = tolerance;
     }
 
@@ -284,6 +296,22 @@ public class CriticalDimension implements Serializable {
 
     public void setEnumeration(CriticalDimensionEnum enumeration) {
         this.enumeration = enumeration;
+    }
+
+    public Byte getLengthWeb() {
+        return lengthWeb;
+    }
+
+    public void setLengthWeb(Byte lengthWeb) {
+        this.lengthWeb = lengthWeb;
+    }
+
+    public Byte getScaleWeb() {
+        return scaleWeb;
+    }
+
+    public void setScaleWeb(Byte scaleWeb) {
+        this.scaleWeb = scaleWeb;
     }
 
     public Transformer getJsonIdxNameTransformer() {

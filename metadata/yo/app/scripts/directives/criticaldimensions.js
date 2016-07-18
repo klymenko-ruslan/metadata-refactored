@@ -70,7 +70,7 @@ angular.module("ngMetaCrudApp")
                 function(d) {
                   // For "inline layout" skip desctiptors which are tolerance.
                   // In "inline layout" a tolarace is displayed on the line of nominal value.
-                  return !$scope.opts.inlineLayout || $scope.opts.inlineLayout && !d.tolerance;
+                  return !$scope.opts.inlineLayout || $scope.opts.inlineLayout && d.tolerance === null;
                 }
               )
               .map($scope._toDisplayObject) // convert a descriptor to a "display object"
@@ -228,7 +228,7 @@ angular.module("ngMetaCrudApp")
               retVal.inputType = inputType;
             }
             // Add properties for tolerance if any.
-            if ($scope.opts.inlineLayout && d.tolerance === false) { // nominal value
+            if ($scope.opts.inlineLayout && d.tolerance === null) { // nominal value
               // This is a special case when we should display nominal and tolerance values in the "inline layout" .
 
               // Try to find a descriptor for a tolerance and a tolerance.
@@ -239,7 +239,7 @@ angular.module("ngMetaCrudApp")
               var toleranceDesc = $scope.idxDescriptorsByJsonName[toleranceJsonName];
               */
               var toleranceDesc = $scope.idxDim2Tol[d.id];
-              if (toleranceDesc && toleranceDesc.tolerance === true) { // if this is a real tolerance
+              if (toleranceDesc && toleranceDesc.tolerance !== null) { // if this is a real tolerance
                 var tolerance = $scope.part[toleranceDesc.jsonName];
                 if (tolerance !== undefined) {
                   retVal.toleranceJsonName = toleranceDesc.jsonName;
