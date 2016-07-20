@@ -138,21 +138,48 @@
                 data-ng-if="::!d.selectOptions" data-ng-model="editedPart[d.jsonName]"
                 data-ng-required="::!d.valueDescriptor.nullAllowed"
                 data-ng-max="::d.valueDescriptor.maxVal"
-                data-ng-maxlength="::d.valueDescriptor.length"
                 data-ng-pattern="::d.valueDescriptor.regex"
-                critical-dimension-validator="d"
+                critical-dimension-validator="d.valueDescriptor"
                 data-ng-trim="true" />
-              <span data-ng-if="d.toleranceJsonName">&plusmn;</span>
-              <input
-                name="{{::d.toleranceJsonName}}" type="{{::d.toleranceInputType}}"
-                title="{{errors[d.toleranceJsonName]}}"
-                data-ng-if="::d.toleranceJsonName" data-ng-model="editedPart[d.toleranceJsonName]"
-                data-ng-required="::!d.toleranceDescriptor.nullAllowed"
-                data-ng-max="::d.toleranceDescriptor.maxVal"
-                data-ng-maxlength="::d.toleranceDescriptor.length"
-                data-ng-pattern="::d.toleranceDescriptor.regex"
-                critical-dimension-validator="d"
-                data-ng-trim="true" />
+              <div data-ng-if="d.bothToleranceJsonName" class="tolerance">&plusmn;
+                <input
+                  name="{{::d.bothToleranceJsonName}}" type="{{::d.bothToleranceInputType}}"
+                  title="{{errors[d.bothToleranceJsonName]}}"
+                  data-ng-if="d.bothToleranceJsonName"
+                  data-ng-model="editedPart[d.bothToleranceJsonName]"
+                  data-ng-required="::!d.bothToleranceDescriptor.nullAllowed"
+                  data-ng-max="::d.bothToleranceDescriptor.maxVal"
+                  data-ng-pattern="::d.bothToleranceDescriptor.regex"
+                  critical-dimension-validator="d.bothToleranceDescriptor"
+                  data-ng-trim="true" />
+              </div>
+
+              <div data-ng-if="d.lowerToleranceJsonName" class="tolerance">&#8595;
+                <input
+                  name="{{::d.lowerToleranceJsonName}}" type="{{::d.lowerToleranceInputType}}"
+                  title="{{errors[d.lowerToleranceJsonName]}}"
+                  data-ng-if="d.lowerToleranceJsonName"
+                  data-ng-model="editedPart[d.lowerToleranceJsonName]"
+                  data-ng-required="::!d.lowerToleranceDescriptor.nullAllowed"
+                  data-ng-max="::d.lowerToleranceDescriptor.maxVal"
+                  data-ng-pattern="::d.lowerToleranceDescriptor.regex"
+                  critical-dimension-validator="d.lowerToleranceDescriptor"
+                  data-ng-trim="true" />
+              </div>
+
+              <div data-ng-if="d.upperToleranceJsonName" class="tolerance">&#8593;
+                <input
+                  name="{{::d.upperToleranceJsonName}}" type="{{::d.upperToleranceInputType}}"
+                  title="{{errors[d.upperToleranceJsonName]}}"
+                  data-ng-if="d.upperToleranceJsonName"
+                  data-ng-model="editedPart[d.upperToleranceJsonName]"
+                  data-ng-required="::!d.upperToleranceDescriptor.nullAllowed"
+                  data-ng-max="::d.upperToleranceDescriptor.maxVal"
+                  data-ng-pattern="::d.upperToleranceDescriptor.regex"
+                  critical-dimension-validator="d.upperToleranceDescriptor"
+                  data-ng-trim="true" />
+              </div>
+
             </div>
           </td>
           <td class="text-right">
