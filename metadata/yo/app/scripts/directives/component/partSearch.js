@@ -10,15 +10,15 @@ angular.module("ngMetaCrudApp")
       link: function postLink(scope, iElement, iAttrs, controller, transcludeFn) {
         controller.transcludeActionsFn = transcludeFn;
       },
-      controller: ["$parse", "$sce", "$log", "$q", "$scope", "ngTableParams", function($parse, $sce, $log, $q,
-        $scope, ngTableParams) {
+      controller: ["$parse", "$sce", "$log", "$q", "$location", "$scope", "ngTableParams",
+        function($parse, $sce, $log, $q, $location, $scope, ngTableParams) {
 
         $scope.critDimEnumValsMap = _.indexBy($scope.critDimEnumVals, "id");
         // Filter
         $scope.searchPartType = null;
         $scope.searchManufacturer = null;
         $scope.searchName = null;
-        $scope.search = {};
+        $scope.searchPartNumber = null;
         $scope.searchCritDims = {};
 
         $scope.showCriticalDimensions = false;
@@ -71,7 +71,6 @@ angular.module("ngMetaCrudApp")
 
         $scope.initColumns = function() {
           if ($scope.showCriticalDimensions) {
-// $log.log("showCriticalDimensions is TRUE. critDimCols: " + angular.toJson($scope.critDims));
             var critDimCols = [];
             if ($scope.critDims) {
               _.each($scope.critDims, function (d) {
@@ -92,10 +91,8 @@ angular.module("ngMetaCrudApp")
                 critDimCols.push(col);
               });
             }
-// $log.log("critDimCols: " + angular.toJson(critDimCols));
             $scope.columns = Array.prototype.concat($scope.fixedCols, critDimCols, $scope.actionsCol);
           } else {
-// $log.log("showCriticalDimensions is FALSE");
             $scope.columns = Array.prototype.concat($scope.fixedCols, $scope.actionsCol);
           }
         };
@@ -107,7 +104,12 @@ angular.module("ngMetaCrudApp")
         });
 
         // Latest Results
-        $scope.searchResults = null;
+        $scope.searchResults = {
+          hits: {
+            total: 0,
+            hits: []
+          }
+        };
         // Part Table
         $scope.partTableParams = new ngTableParams({
           page: 1,
@@ -125,15 +127,16 @@ angular.module("ngMetaCrudApp")
             }
             var searchPartTypeId = $scope.searchPartType ? $scope.searchPartType.id : null;
             var searchManufacturerId = $scope.searchManufacturer ? $scope.searchManufacturer.id : null;
-            restService.filterParts(searchPartTypeId, searchManufacturerId, $scope.searchName, $scope.search, $scope.searchCritDims, sortProperty, sortOrder, offset, limit).then(
-              function(filtered) {
+            restService.filterParts(searchPartTypeId, searchManufacturerId, $scope.searchName, $scope.searchPartNumber, $scope.searchCritDims, sortProperty, sortOrder, offset, limit).then(
+              function(filtered) { // The 'filtered' is a JSON returned by ElasticSearch.
                 $scope.searchResults = filtered;
                 // Update the total and slice the result
                 $defer.resolve($scope.searchResults.hits.hits);
                 params.total($scope.searchResults.hits.total);
+
               },
               function(errorResponse) {
-                $log.log("Couldn't search for parts.");
+                $log.log("Parts search failed: " + errorResponse);
                 $defer.reject();
               }
             );
@@ -141,7 +144,7 @@ angular.module("ngMetaCrudApp")
         });
 
         $scope.clearFilter = function() {
-          $scope.search.partNumber = null;
+          $scope.searchPartNumber = null;
           $scope.searchPartType = null;
           $scope.searchManufacturer = null;
           $scope.searchName = null;
@@ -152,7 +155,7 @@ angular.module("ngMetaCrudApp")
         // Critical dimensions for the current choose $scope.searchPartType.
         $scope.critDims = null;
 
-        $scope.$watch("[search, searchManufacturer, searchName, searchCritDims]", function(newVal, oldVal) {
+        $scope.$watch("[searchPartNumber, searchManufacturer, searchName, searchCritDims]", function(newVal, oldVal) {
           // Debounce
           if (angular.equals(newVal, oldVal, true)) {
             return;
@@ -174,6 +177,14 @@ angular.module("ngMetaCrudApp")
           $scope.searchCritDims = {}; // re-init
           $scope.partTableParams.reload();
         }, true);
+
+        $scope.onPressedEnter = function() {
+          if ($scope.searchResults.hits.total === 1) {
+            var rec = $scope.searchResults.hits.hits[0]._source;
+            var partId = rec.id;
+            $location.path("/part/" + partId);
+          };
+        };
 
       }]
     };

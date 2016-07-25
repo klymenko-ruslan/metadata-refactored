@@ -453,8 +453,9 @@ angular.module("ngMetaCrudApp")
         return Restangular.one("search/indexing/status").get();
       };
 
-      this.filterParts = function(searchPartTypeId, searchManufacturerId, searchName, search, searchCritDims, sortProperty, sortOrder, offset, limit) {
-        var params = angular.merge({
+      this.filterParts = function(searchPartTypeId, searchManufacturerId, searchName, searchPartNumber, searchCritDims, sortProperty, sortOrder, offset, limit) {
+        var params = {
+          partNumber: searchPartNumber,
           partTypeId: searchPartTypeId,
           manufacturerId: searchManufacturerId,
           name: searchName,
@@ -462,8 +463,9 @@ angular.module("ngMetaCrudApp")
           pgSortOrder: sortOrder,
           pgOffset: offset,
           pgLimit: limit
-        }, search);
+        };
         _.each(searchCritDims, function(val, key) {
+          // Normalize enumerations.
           if (_.isObject(val)) {
             val = val.id;
           }
