@@ -1,7 +1,6 @@
 package com.turbointernational.metadata.web;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import com.turbointernational.metadata.domain.changelog.ChangelogDao;
 import com.turbointernational.metadata.domain.part.Interchange;
 import com.turbointernational.metadata.domain.part.InterchangeDao;
 import com.turbointernational.metadata.domain.part.PartDao;
@@ -43,9 +42,6 @@ public class InterchangeController {
 
     @Autowired
     private InterchangeService interchangeService;
-
-    @Autowired
-    private ChangelogDao changelogDao;
 
     @Autowired
     private PartDao partDao;
