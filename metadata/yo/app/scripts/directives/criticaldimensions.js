@@ -568,7 +568,7 @@ angular.module("ngMetaCrudApp")
             descriptor.scale !== null) {
             ctrl.$validators.criticalDimensionScaleValidator =
               function(modelValue, viewValue) {
-                if (viewValue != null) { // null or undefined
+                if (viewValue == null) { // null or undefined
                   return true;
                 }
                 var dp = viewValue.indexOf(".");

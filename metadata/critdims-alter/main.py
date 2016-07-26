@@ -493,9 +493,9 @@ def cd2types(cd):
 
 def cd2sqlreference(cd):
     """Convert critical dimension to SQL foreign key reference."""
-    data_type = cd["field_type"]
+    field_type = cd["field_type"]
     retval = ""
-    if data_type == "LIST" or data_type == "LOGICAL":
+    if field_type == "LIST" or field_type == "LOGICAL":
         retval = "references crit_dim_enum_val(id) on delete set null " \
             "on update cascade"
     return retval
@@ -514,11 +514,12 @@ create table crit_dim_enum (
 ) comment='Enumerations for critical dimensions.' engine=innodb;
 create table crit_dim_enum_val (
     id int not null auto_increment,
-    crit_dim_enum_id int not null references crit_dim_enum(id)
-                            on delete cascade on update cascade,
+    crit_dim_enum_id int not null,
     val varchar(64) not null,
     primary key (id),
-    unique key (id, crit_dim_enum_id)
+    unique key (id, crit_dim_enum_id),
+    foreign key (crit_dim_enum_id) references crit_dim_enum(id)
+                            on delete cascade on update cascade
 ) comment='Enumeration values for critical dimensions enumerations.'
     engine=innodb;
 create table crit_dim (
@@ -866,10 +867,11 @@ def generate_create_table(table_name, cda):
     """
     columns_meta = dict()
     sql = "create table {} (\n" \
-        "\tpart_id bigint(20) not null references part (id),\n" \
+        "\tpart_id bigint(20) not null,\n" \
         "\tkey part_id (part_id)".format(table_name)
     columns = set()
     references = list()
+    references.append(("part_id", "references part (id)"))
     for cd in cda:
         sql += ",\n"
         col_meta = cd2colmetainfo(cd)
@@ -884,8 +886,8 @@ def generate_create_table(table_name, cda):
             references.append((col_meta.col_name, col_ref))
         sql += "\t{} {}".format(col_meta.col_name, col_meta.types.sql_type)
     sql += "\n) engine=innodb default charset=utf8;\n"
-    sql += ("alter table {} add foreign key (part_id) "
-            "references part (id);\n".format(table_name))
+    # sql += ("alter table {} add foreign key (part_id) "
+    #        "references part (id);\n".format(table_name))
     for rf in references:
         sql += "alter table {} add foreign key ({}) {};\n".format(table_name,
                                                                   rf[0],
@@ -941,7 +943,7 @@ def register_crit_dim(alter_file, input_data, table_name, pt_id, pt_cda,
         json_name = col_meta.col_name
         idx_name = name2idxName(table_name, json_name, idx_names)
         idx_names.add(idx_name)
-        if types.field_type == "BOOLEAN":
+        if types.field_type == "LOGICAL":
             enum_id = YESNOENUM_ID
         elif types.data_type == "ENUMERATION":
             enum_id = cd["enumeration_id"]
