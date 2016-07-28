@@ -11,17 +11,17 @@ angular.module('ngMetaCrudApp')
                      <div ng-transclude></div> \
                    </div>',
         link: function postLink(scope, element, attrs) {
-          
+
           // Hidden by default
           angular.element(element).addClass('hidden');
-          
+
           restService.refreshStatus().finally(function() {
             scope.$watch(
                 function() {
                   return restService.status;
                 },
                 function(status) {
-                  if (status.bomRebuilding === true) {
+                  if (angular.isObject(status) && status.bomRebuilding === true) {
                     angular.element(element).removeClass('hidden');
                   } else {
                     angular.element(element).addClass('hidden');

@@ -1076,7 +1076,7 @@ def import_update(part_id, table_name, import_values):
             if idx > 0:
                 retval += ", "
             retval += (iv.col_meta.col_name + "=" + sql_str_param(iv.value))
-        retval += "where part_id=" + part_id + ";\n"
+        retval += " where part_id=" + part_id + ";\n"
     return retval
 
 

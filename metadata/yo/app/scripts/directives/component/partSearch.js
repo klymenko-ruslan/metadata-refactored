@@ -13,8 +13,6 @@ angular.module("ngMetaCrudApp")
       controller: ["$parse", "$sce", "$log", "$q", "$location", "$scope", "ngTableParams",
         function($parse, $sce, $log, $q, $location, $scope, ngTableParams) {
 
-$log.log("In controller.");
-
         $scope.critDimEnumValsMap = _.indexBy($scope.critDimEnumVals, "id");
         // Filter
         $scope.searchPartType = null;
@@ -24,8 +22,6 @@ $log.log("In controller.");
         $scope.searchName = null;
         $scope.searchPartNumber = null;
         $scope.searchCritDims = {};
-
-        $scope._keyExtractor = $parse("key");
 
         $scope.showCriticalDimensions = false;
 
@@ -131,14 +127,16 @@ $log.log("In controller.");
             if (sortProperty) {
               sortOrder = params.sorting()[sortProperty];
             }
-
-            var searchPartTypeName = $scope._keyExtractor($scope.searchPartType);
-            var searchManufacturerName = $scope._keyExtractor($scope.searchManufacturer);
-            var searchTurboModelName = $scope._keyExtractor($scope.searchTurboModel);
-            var searchTurboTypeName = $scope._keyExtractor($scope.searchTurboType);
-
-            restService.filterParts(searchPartTypeName, searchManufacturerName, $scope.searchName,
-              $scope.searchPartNumber, searchTurboModelName, searchTurboTypeName,
+            // Values in the filter for 'Turbo Model' and 'Turbo Type'
+            // have sens only when current part type is 'Turbo'.
+            var turboModelName = null;
+            var turboTypeName = null;
+            if ($scope.searchPartType === "Turbo") {
+              turboModelName = $scope.searchTurboModel;
+              turboTypeName = $scope.searchTurboType;
+            }
+            restService.filterParts($scope.searchPartType, $scope.searchManufacturer, $scope.searchName,
+              $scope.searchPartNumber, turboModelName, turboTypeName,
               $scope.searchCritDims, sortProperty, sortOrder, offset, limit).then(
               function(filtered) { // The 'filtered' is a JSON returned by ElasticSearch.
                 $scope.searchResults = filtered;
@@ -155,7 +153,6 @@ $log.log("In controller.");
         });
 
         $scope.clearFilter = function() {
-$log.log("Clear filter.");
           $scope.searchPartNumber = null;
           $scope.searchPartType = null;
           $scope.searchManufacturer = null;

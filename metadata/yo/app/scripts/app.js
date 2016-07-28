@@ -31,12 +31,6 @@ angular.module("ngMetaCrudApp", ["ngRoute", "ngTable", "ui.bootstrap",
       templateUrl: "views/part/PartList.html",
       controller: "PartListCtrl",
       resolve: {
-        partTypes: ["restService", function(restService) {
-          return restService.listPartTypes();
-        }],
-        manufacturers: ["restService", function(restService) {
-          return restService.listManufacturers();
-        }],
         critDimsByPartTypes: ["restService", function(restService) {
           return restService.getCritDimsByPartTypes();
         }],
