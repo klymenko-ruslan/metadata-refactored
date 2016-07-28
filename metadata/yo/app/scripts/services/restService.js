@@ -453,11 +453,14 @@ angular.module("ngMetaCrudApp")
         return Restangular.one("search/indexing/status").get();
       };
 
-      this.filterParts = function(searchPartTypeId, searchManufacturerId, searchName, searchPartNumber, searchCritDims, sortProperty, sortOrder, offset, limit) {
+      this.filterParts = function(searchPartTypeName, searchManufacturerName, searchName, searchPartNumber,
+          searchTurboModelName, searchTurboTypeName, searchCritDims, sortProperty, sortOrder, offset, limit) {
         var params = {
           partNumber: searchPartNumber,
-          partTypeId: searchPartTypeId,
-          manufacturerId: searchManufacturerId,
+          partTypeName: searchPartTypeName,
+          manufacturerName: searchManufacturerName,
+          searchTurboModelName: searchTurboModelName,
+          searchTurboTypeName: searchTurboTypeName,
           name: searchName,
           pgSortProperty: sortProperty,
           pgSortOrder: sortOrder,

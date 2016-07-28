@@ -11,7 +11,7 @@
     </div>
     <div class="form-group">
       <label for="fltrManufacturer">Manufacturer</label>
-      <select id="fltrManufacturer" name="fltrManufacturer" class="form-control input-sm" data-ng-options="m.name for m in manufacturers track by m.id" data-ng-model="searchManufacturer">
+      <select id="fltrManufacturer" name="fltrManufacturer" class="form-control input-sm" data-ng-options="itm.key + ' (' + itm.doc_count + ')' for itm in searchResults.aggregations['Manufacturer'].buckets | orderBy: 'key'" data-ng-model="searchManufacturer">
         <option></option>
       </select>
     </div>
@@ -21,11 +21,24 @@
     </div>
     <div class="form-group">
       <label for="fltrPartType">Part Type</label>
-      <select id="fltrPartType" name="fltrPartType" class="form-control input-sm" data-ng-options="pt.name for pt in partTypes track by pt.id" data-ng-model="searchPartType">
+      <select id="fltrPartType" name="fltrPartType" class="form-control input-sm" data-ng-options="itm.key + ' (' + itm.doc_count + ')' for itm in searchResults.aggregations['Part Type'].buckets | orderBy: 'key'" data-ng-model="searchPartType">
         <option></option>
       </select>
     </div>
     <hr/>
+    <div class="form-group">
+      <label for="fltrTurboModel">Turbo Model</label>
+      <select id="fltrTurboModel" name="fltrTurboModel" class="form-control input-sm" data-ng-options="itm.key + ' (' + itm.doc_count + ')' for itm in searchResults.aggregations['Turbo Model'].buckets | orderBy: 'key'" data-ng-model="searchTurboModel">
+        <option></option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="fltrTurboType">Turbo Type</label>
+      <select id="fltrTurboType" name="fltrTurboType" class="form-control input-sm" data-ng-options="itm.key + ' (' + itm.doc_count + ')' for itm in searchResults.aggregations['Turbo Type'].buckets | orderBy: 'key'" data-ng-model="searchTurboType">
+        <option></option>
+      </select>
+    </div>
+
     <div class="form-group" data-ng-repeat="cd in critDims">
       <input type="text" placeholder="{{cd.name}}" class="form-control input-sm" data-ng-if="cd.dataType !== 'ENUMERATION'" data-ng-model="searchCritDims[cd.idxName]" data-ng-model-options="{debounce: 500}" />
       <label data-ng-if="cd.dataType == 'ENUMERATION'">{{cd.name}}</label>
@@ -55,6 +68,13 @@
         </table>
       </div>
     </div>
+  </div>
+
+  <div class="row">
+    <ul class="col-xs-12">
+      <li>searchPartType: <pre>{{searchPartType | json}}</pre></li>
+      <li>searchManufacturer: <pre>{{searchManufacturer | json}}</pre></li>
+    </ul>
   </div>
 
 </div>

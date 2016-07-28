@@ -13,13 +13,19 @@ angular.module("ngMetaCrudApp")
       controller: ["$parse", "$sce", "$log", "$q", "$location", "$scope", "ngTableParams",
         function($parse, $sce, $log, $q, $location, $scope, ngTableParams) {
 
+$log.log("In controller.");
+
         $scope.critDimEnumValsMap = _.indexBy($scope.critDimEnumVals, "id");
         // Filter
         $scope.searchPartType = null;
         $scope.searchManufacturer = null;
+        $scope.searchTurboModel = null;
+        $scope.searchTurboType = null;
         $scope.searchName = null;
         $scope.searchPartNumber = null;
         $scope.searchCritDims = {};
+
+        $scope._keyExtractor = $parse("key");
 
         $scope.showCriticalDimensions = false;
 
@@ -125,15 +131,20 @@ angular.module("ngMetaCrudApp")
             if (sortProperty) {
               sortOrder = params.sorting()[sortProperty];
             }
-            var searchPartTypeId = $scope.searchPartType ? $scope.searchPartType.id : null;
-            var searchManufacturerId = $scope.searchManufacturer ? $scope.searchManufacturer.id : null;
-            restService.filterParts(searchPartTypeId, searchManufacturerId, $scope.searchName, $scope.searchPartNumber, $scope.searchCritDims, sortProperty, sortOrder, offset, limit).then(
+
+            var searchPartTypeName = $scope._keyExtractor($scope.searchPartType);
+            var searchManufacturerName = $scope._keyExtractor($scope.searchManufacturer);
+            var searchTurboModelName = $scope._keyExtractor($scope.searchTurboModel);
+            var searchTurboTypeName = $scope._keyExtractor($scope.searchTurboType);
+
+            restService.filterParts(searchPartTypeName, searchManufacturerName, $scope.searchName,
+              $scope.searchPartNumber, searchTurboModelName, searchTurboTypeName,
+              $scope.searchCritDims, sortProperty, sortOrder, offset, limit).then(
               function(filtered) { // The 'filtered' is a JSON returned by ElasticSearch.
                 $scope.searchResults = filtered;
                 // Update the total and slice the result
                 $defer.resolve($scope.searchResults.hits.hits);
                 params.total($scope.searchResults.hits.total);
-
               },
               function(errorResponse) {
                 $log.log("Parts search failed: " + errorResponse);
@@ -144,10 +155,13 @@ angular.module("ngMetaCrudApp")
         });
 
         $scope.clearFilter = function() {
+$log.log("Clear filter.");
           $scope.searchPartNumber = null;
           $scope.searchPartType = null;
           $scope.searchManufacturer = null;
           $scope.searchName = null;
+          $scope.searchTurboModel = null;
+          $scope.searchTurboType = null;
         };
 
         $scope.clearFilter();
@@ -155,7 +169,7 @@ angular.module("ngMetaCrudApp")
         // Critical dimensions for the current choose $scope.searchPartType.
         $scope.critDims = null;
 
-        $scope.$watch("[searchPartNumber, searchManufacturer, searchName, searchCritDims]", function(newVal, oldVal) {
+        $scope.$watch("[searchPartNumber, searchManufacturer, searchName, searchCritDims, searchTurboModel, searchTurboType]", function(newVal, oldVal) {
           // Debounce
           if (angular.equals(newVal, oldVal, true)) {
             return;
@@ -167,6 +181,10 @@ angular.module("ngMetaCrudApp")
         // and initialize $scope.critDims by critical dimensions which are
         // corresponding the part type.
         $scope.$watch("[searchPartType]", function(newVal, oldVal) {
+          // Debounce
+          if (angular.equals(newVal, oldVal, true)) {
+            return;
+          }
           var pt = newVal[0];
           if (angular.isObject(pt)) {
             $scope.critDims = $scope.critDimsByPartTypes[pt.id];

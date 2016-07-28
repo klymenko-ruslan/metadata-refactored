@@ -3,7 +3,6 @@ package com.turbointernational.metadata.domain.part;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.domain.SearchableEntity;
 import com.turbointernational.metadata.domain.criticaldimension.CriticalDimension;
@@ -22,7 +21,6 @@ import flexjson.transformer.Transformer;
 import org.apache.commons.lang3.ObjectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -400,6 +398,17 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
                 .exclude("turbos")
                 .exclude("productImages")
                 .exclude("*.class");
+        // Ticket #733.
+        // The code below is looked clumsy. Class Turbo is more suitable place for it.
+        // But the class Turbo is automatically generated. So it is easier place it here
+        // for the sake of a maintainability.
+        // TODO: move this to Turbo after migration
+        if (this instanceof Turbo) {
+            jsonSerializer.include("turboModel.id");
+            jsonSerializer.include("turboModel.name");
+            jsonSerializer.include("turboModel.turboType.id");
+            jsonSerializer.include("turboModel.turboType.name");
+        }
         // Add critical dimensions.
         addCriticalDimensionsToSerialization(criticalDimensions, jsonSerializer, true);
         String json = jsonSerializer.exclude("*").serialize(this);

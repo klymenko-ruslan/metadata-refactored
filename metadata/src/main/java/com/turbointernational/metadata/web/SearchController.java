@@ -19,6 +19,7 @@ import org.springframework.web.context.request.WebRequest;
 import java.util.Map;
 import java.util.Set;
 
+import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
@@ -39,21 +40,23 @@ public class SearchController {
     @ResponseBody
     @Secured("ROLE_READ")
     public ResponseEntity<String> filterParts(@RequestParam(name = "partNumber", required = false) String partNumber,
-                                              @RequestParam(name = "partTypeId", required = false) Long partTypeId,
-                                              @RequestParam(name = "manufacturerId", required = false) Long manufacturerId,
+                                              @RequestParam(name = "partTypeName", required = false) String partTypeName,
+                                              @RequestParam(name = "manufacturerName", required = false) String manufacturerName,
                                               @RequestParam(name = "name", required = false) String name,
                                               @RequestParam(name = "description", required = false) String description,
                                               @RequestParam(name = "inactive", required = false) Boolean inactive,
+                                              @RequestParam(name = "turboTypeName", required = false) String turboTypeName,
+                                              @RequestParam(name = "turboModelName", required = false) String turboModelName,
                                               WebRequest webRequest,
                                               @RequestParam(name = "pgSortProperty", required = false) String sortProperty,
                                               @RequestParam(name = "pgSortOrder", required = false) String sortOrder,
                                               @RequestParam(name = "pgOffset", defaultValue = "0") Integer offset,
                                               @RequestParam(name = "pgLimit", defaultValue = "10") Integer limit) throws Exception {
+
         Map<String, String[]> queriedCriticalDimensions = webRequest.getParameterMap();
-        String json = searchService.filterParts(partNumber, partTypeId, manufacturerId, name, description, inactive,
-                queriedCriticalDimensions,
-                sortProperty, sortOrder, offset, limit);
-        return new ResponseEntity<>(json, HttpStatus.OK);
+        String json = searchService.filterParts(partNumber, partTypeName, manufacturerName, name, description, inactive,
+                turboTypeName, turboModelName, queriedCriticalDimensions, sortProperty, sortOrder, offset, limit);
+        return new ResponseEntity<>(json, OK);
     }
 
     @RequestMapping(value = "/carmodelengineyears", method = GET)
@@ -71,7 +74,7 @@ public class SearchController {
                                                             @RequestParam(defaultValue = "10") Integer limit) throws Exception {
         String json = searchService.filterCarModelEngineYears(carModelEngineYear, year, make, model, engine, fuel,
                 sortProperty, sortOrder, offset, limit);
-        return new ResponseEntity<>(json, HttpStatus.OK);
+        return new ResponseEntity<>(json, OK);
     }
 
     @RequestMapping(value = "/carmakes", method = GET)
@@ -83,7 +86,7 @@ public class SearchController {
                                                 @RequestParam(defaultValue = "0") Integer offset,
                                                 @RequestParam(defaultValue = "10") Integer limit) throws Exception {
         String json = searchService.filterCarMakes(make, sortProperty, sortOrder, offset, limit);
-        return new ResponseEntity<>(json, HttpStatus.OK);
+        return new ResponseEntity<>(json, OK);
     }
 
     @RequestMapping(value = "/carmodels", method = GET)
@@ -95,7 +98,7 @@ public class SearchController {
                                                   @RequestParam(defaultValue = "0") Integer offset,
                                                   @RequestParam(defaultValue = "10") Integer limit) throws Exception {
         String json = searchService.filterCarModels(model, make, sortProperty, sortOrder, offset, limit);
-        return new ResponseEntity<>(json, HttpStatus.OK);
+        return new ResponseEntity<>(json, OK);
     }
 
     @RequestMapping(value = "/carengines", method = GET)
@@ -107,7 +110,7 @@ public class SearchController {
                                                    @RequestParam(defaultValue = "0") Integer offset,
                                                    @RequestParam(defaultValue = "10") Integer limit) throws Exception {
         String json = searchService.filterCarEngines(engine, fuelType, sortProperty, sortOrder, offset, limit);
-        return new ResponseEntity<>(json, HttpStatus.OK);
+        return new ResponseEntity<>(json, OK);
     }
 
     @RequestMapping(value = "/carfueltypes", method = GET)
@@ -119,7 +122,7 @@ public class SearchController {
                                                      @RequestParam(defaultValue = "0") Integer offset,
                                                      @RequestParam(defaultValue = "10") Integer limit) throws Exception {
         String json = searchService.filterCarFuelTypes(fuelType, sortProperty, sortOrder, offset, limit);
-        return new ResponseEntity<>(json, HttpStatus.OK);
+        return new ResponseEntity<>(json, OK);
     }
 
     @ResponseBody

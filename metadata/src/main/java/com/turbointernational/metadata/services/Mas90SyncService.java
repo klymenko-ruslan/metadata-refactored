@@ -542,7 +542,8 @@ public class Mas90SyncService {
             } else if (partTypeId == 16L) {
                 p = new NozzleRing();
             } else {
-                p = new Part();
+                //p = new Part();
+                throw new AssertionError("Unsupported part type: " + partTypeId);
             }
             PartType partType = entityManager.getReference(PartType.class, partTypeId);
             p.setManufacturerPartNumber(itemcode);

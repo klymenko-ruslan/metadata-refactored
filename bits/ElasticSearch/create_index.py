@@ -90,6 +90,67 @@ def build_index_definition():
                         "type": "boolean",
                         "store": "yes"
                     },
+                    "turboModel": {
+                        "properties": {
+                            "id": {
+                                "type": "long",
+                                "store": "yes",
+                                "analyzer": "keyword"
+                            },
+                            "name": {
+                                "type": "multi_field",
+                                "fields": {
+                                    "full": {
+                                        "type": "string",
+                                        "tokenizer": "lowercase",
+                                        "analyzer": "keyword",
+                                        "store": "yes"
+                                    },
+                                    "short": {
+                                        "type": "string",
+                                        "analyzer": "normalized_short",
+                                        "store": "yes"
+                                    },
+                                    "lower_case_sort": {
+                                        "type": "string",
+                                        "analyzer": "case_insensitive_sort",
+                                        "store": "yes"
+                                    }
+                                }
+                            },
+                            "turboType": {
+                                "properties": {
+                                    "id": {
+                                        "type": "long",
+                                        "store": "yes",
+                                        "analyzer": "keyword"
+                                    },
+                                    "name": {
+                                        "type": "multi_field",
+                                        "fields": {
+                                            "full": {
+                                                "type": "string",
+                                                "tokenizer": "lowercase",
+                                                "analyzer": "keyword",
+                                                "store": "yes"
+                                            },
+                                            "short": {
+                                                "type": "string",
+                                                "analyzer": "normalized_short",
+                                                "store": "yes"
+                                            },
+                                            "lower_case_sort": {
+                                                "type": "string",
+                                                "analyzer":
+                                                    "case_insensitive_sort",
+                                                "store": "yes"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
                     "manufacturerPartNumber": {
                         "type": "multi_field",
                         "fields": {
@@ -132,18 +193,6 @@ def build_index_definition():
                                         "analyzer": "normalized_short",
                                         "store": "yes"
                                     },
-                                    "lower_case_sort": {
-                                        "type": "string",
-                                        "analyzer": "case_insensitive_sort",
-                                        "store": "yes"
-                                    }
-                                }
-                            },
-                            "typeName": {
-                                "type": "string",
-                                "analyzer": "keyword",
-                                "store": "yes",
-                                "fields": {
                                     "lower_case_sort": {
                                         "type": "string",
                                         "analyzer": "case_insensitive_sort",

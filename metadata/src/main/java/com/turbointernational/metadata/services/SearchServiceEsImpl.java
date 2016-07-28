@@ -3,7 +3,6 @@ package com.turbointernational.metadata.services;
 import com.turbointernational.metadata.domain.SearchableEntity;
 import com.turbointernational.metadata.domain.car.*;
 import com.turbointernational.metadata.domain.criticaldimension.CriticalDimension;
-import com.turbointernational.metadata.domain.criticaldimension.CriticalDimensionDao;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.part.PartDao;
 import com.turbointernational.metadata.domain.part.salesnote.SalesNotePart;
@@ -40,13 +39,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.PostConstruct;
-import javax.persistence.EntityManagerFactory;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.*;
@@ -57,6 +54,8 @@ import java.util.regex.Pattern;
 import static com.turbointernational.metadata.services.SearchService.IndexingStatus.*;
 import static com.turbointernational.metadata.services.SearchTermCmpOperatorEnum.*;
 import static com.turbointernational.metadata.services.SearchTermEnum.*;
+import static com.turbointernational.metadata.services.SearchTermFactory.newIntegerSearchTerm;
+import static com.turbointernational.metadata.services.SearchTermFactory.newTextSearchTerm;
 import static com.turbointernational.metadata.utils.RegExpUtils.PTRN_DOUBLE_LIMIT;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.springframework.transaction.TransactionDefinition.PROPAGATION_REQUIRES_NEW;
@@ -141,6 +140,17 @@ public class SearchServiceEsImpl implements SearchService {
     private final static Pattern REGEX_TOSHORTFIELD = Pattern.compile("\\W");
 
     private final static int DEF_AGGR_RESULT_SIZE = 300;
+
+    private final static AggregationBuilder[] PART_AGGREGATIONS = new AggregationBuilder[]{
+            AggregationBuilders.terms("Part Type").field("partType.name.full").size(DEF_AGGR_RESULT_SIZE),
+            AggregationBuilders.terms("Manufacturer").field("manufacturer.name.full").size(DEF_AGGR_RESULT_SIZE),
+//            AggregationBuilders.terms("Kit Type").field("kitType.name.full").size(DEF_AGGR_RESULT_SIZE),
+//            AggregationBuilders.terms("Gasket Type").field("gasketType.name.full").size(DEF_AGGR_RESULT_SIZE),
+//            AggregationBuilders.terms("Seal Type").field("sealType.name.full").size(DEF_AGGR_RESULT_SIZE),
+//            AggregationBuilders.terms("Coolant Type").field("coolType.name.full").size(DEF_AGGR_RESULT_SIZE),
+            AggregationBuilders.terms("Turbo Type").field("turboModel.turboType.name.full").size(DEF_AGGR_RESULT_SIZE),
+            AggregationBuilders.terms("Turbo Model").field("turboModel.name.full").size(DEF_AGGR_RESULT_SIZE)
+    };
 
     private final static AggregationBuilder[] CMEY_AGGREGATIONS = new AggregationBuilder[]{
             AggregationBuilders.terms("Year").field("year.name.full").size(DEF_AGGR_RESULT_SIZE),
@@ -588,8 +598,9 @@ public class SearchServiceEsImpl implements SearchService {
     }
 
     @Override
-    public String filterParts(String partNumber, Long partTypeId, Long manufacturerId,
+    public String filterParts(String partNumber, String partTypeName, String manufacturerName,
                               String name, String description, Boolean inactive,
+                              String turboTypeName, String turboModelName,
                               Map<String, String[]> queriedCriticalDimensions,
                               String sortProperty, String sortOrder,
                               Integer offset, Integer limit) {
@@ -597,27 +608,34 @@ public class SearchServiceEsImpl implements SearchService {
         partNumber = StringUtils.defaultIfEmpty(partNumber, null);
         if (isNotBlank(partNumber)) {
             String normalizedPartNumber = str2shotfield.apply(partNumber);
-            sterms.add(SearchTermFactory.newTextSearchTerm("manufacturerPartNumber.short", normalizedPartNumber));
+            sterms.add(newTextSearchTerm("manufacturerPartNumber.short", normalizedPartNumber));
         }
-        if (partTypeId != null) {
-            sterms.add(SearchTermFactory.newIntegerSearchTerm("partType.id", EQ, partTypeId));
+        if (partTypeName != null) {
+            sterms.add(newTextSearchTerm("partType.name.full", partTypeName));
         }
-        if (manufacturerId != null) {
-            sterms.add(SearchTermFactory.newIntegerSearchTerm("manufacturer.id", EQ, manufacturerId));
+        if (manufacturerName != null) {
+            sterms.add(newTextSearchTerm("manufacturer.name.full", manufacturerName));
         }
         if (isNotBlank(name)) {
             String normalizedName = str2shotfield.apply(name);
-            sterms.add(SearchTermFactory.newTextSearchTerm("name.short", normalizedName));
+            sterms.add(newTextSearchTerm("name.short", normalizedName));
         }
         if (isNotBlank(description)) {
             String normalizedDescription = str2shotfield.apply(description);
-            sterms.add(SearchTermFactory.newTextSearchTerm("description.short", normalizedDescription));
+            sterms.add(newTextSearchTerm("description.short", normalizedDescription));
         }
         if (inactive != null) {
             sterms.add(SearchTermFactory.newBooleanSearchTerm("inactive", inactive));
         }
-        if (partTypeId != null) {
-            List<CriticalDimension> criticalDimensions = criticalDimensionService.getCriticalDimensionForPartType(partTypeId);
+
+        if (turboTypeName != null) {
+            sterms.add(newTextSearchTerm("turboModel.turboType.name.full", turboTypeName));
+        }
+        if (turboModelName != null) {
+            sterms.add(newTextSearchTerm("turboModel.name.full", turboModelName));
+        }
+        if (partTypeName != null) {
+            List<CriticalDimension> criticalDimensions = criticalDimensionService.getCriticalDimensionForPartType(partTypeName);
             if (criticalDimensions != null && !criticalDimensions.isEmpty()) {
                 for (CriticalDimension cd : criticalDimensions) {
                     try {
@@ -727,6 +745,9 @@ public class SearchServiceEsImpl implements SearchService {
                     .order(convertSortOrder.apply(sortOrder))
                     .missing("_last");
             srb.addSort(sort);
+        }
+        for (AggregationBuilder agg : PART_AGGREGATIONS) {
+            srb.addAggregation(agg);
         }
         if (offset != null) {
             srb.setFrom(offset);
@@ -1029,17 +1050,6 @@ public class SearchServiceEsImpl implements SearchService {
         elasticSearch.index(index).actionGet(timeout);
     }
 
-    private int batchIndex(BulkRequest bulk, String elasticSearchType, Observer observer) {
-        elasticSearch.bulk(bulk).actionGet();
-        int n = bulk.numberOfActions();
-        log.info("Indexed '{}': {} docs.", elasticSearchType, n);
-        if (observer != null) {
-            log.debug("Publishing indexing event: {}", n);
-            observer.update(null, new Integer(n));
-        }
-        return n;
-    }
-
     private void indexAllDocs(ScrollableResults scrollableResults, int batchSize,
                                            String elasticSearchType, Observer observer) throws Exception {
         try {
@@ -1084,6 +1094,17 @@ public class SearchServiceEsImpl implements SearchService {
         } finally {
             scrollableResults.close();
         }
+    }
+
+    private int batchIndex(BulkRequest bulk, String elasticSearchType, Observer observer) {
+        elasticSearch.bulk(bulk).actionGet();
+        int n = bulk.numberOfActions();
+        log.info("Indexed '{}': {} docs.", elasticSearchType, n);
+        if (observer != null) {
+            log.debug("Publishing indexing event: {}", n);
+            observer.update(null, new Integer(n));
+        }
+        return n;
     }
 
 }

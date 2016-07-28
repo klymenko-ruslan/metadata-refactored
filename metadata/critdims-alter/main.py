@@ -716,6 +716,8 @@ def generate_jpa_classes(input_data, ptid2columns_meta):
         ed = input_data.getExtraDataForPt(pt)
         table_name = ed["table"]
         class_name = ed["class"]
+        code_snippet_members = ed.get("code_snippet_members")
+        code_snippet_getterssetters = ed.get("code_snippet_getterssetters")
         columns_meta = ptid2columns_meta[pt.id]
         snippet_file_name = os.path.join(args.out_dir, "{}.java"
                                          .format(class_name))
@@ -779,12 +781,28 @@ def generate_jpa_classes(input_data, ptid2columns_meta):
                   file=snippet_file)
             print("public class {} extends Part {{\n".format(class_name),
                   file=snippet_file)
+            if code_snippet_members is not None:
+                print("    //<editor-fold defaultstate=\"collapsed\" "
+                      "desc=\"Properties: members\">\n",
+                      file=snippet_file)
+                print(code_snippet_members, file=snippet_file)
+                print("", file=snippet_file)
+                print("    //</editor-fold>", file=snippet_file)
+                print("", file=snippet_file)
             print("    //<editor-fold defaultstate=\"collapsed\" "
                   "desc=\"Properties: critical dimensions\">\n",
                   file=snippet_file)
             print(members_snippet, file=snippet_file, end="")
             print("    //</editor-fold>", file=snippet_file)
             print("", file=snippet_file)
+            if code_snippet_getterssetters is not None:
+                print("    //<editor-fold defaultstate=\"collapsed\" "
+                      "desc=\"Getters and setters: members\">\n",
+                      file=snippet_file)
+                print(code_snippet_getterssetters, file=snippet_file)
+                print("", file=snippet_file)
+                print("    //</editor-fold>\n", file=snippet_file)
+                print("", file=snippet_file)
             print("    //<editor-fold defaultstate=\"collapsed\" "
                   "desc=\"Getters and setters: critical dimensions\">\n",
                   file=snippet_file)

@@ -70,7 +70,9 @@
     "turbo": {
       "table": "turbo",
       "class": "Turbo",
-      "exists": true
+      "exists": true,
+      "code_snippet_members": "    @JsonView(View.Detail.class)\n    @OneToOne(fetch = FetchType.LAZY)\n    @JoinColumn(name=\"turbo_model_id\")\n    private TurboModel turboModel;",
+      "code_snippet_getterssetters": "    public TurboModel getTurboModel() {\n        return turboModel;\n    }\n\n    public void setTurboModel(TurboModel turboModel) {\n        this.turboModel = turboModel;\n    }"
     },
     "backplate": {
       "table": "backplate",

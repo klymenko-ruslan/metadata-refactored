@@ -31,7 +31,7 @@ public class CriticalDimensionController {
     @RequestMapping(value = "/byparttypes", method = GET, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     public Map<Long, List<CriticalDimension>> getCriticalDimensionsByPartTypes() {
-        return criticalDimensionService.getCriticalDimensionsCache();
+        return criticalDimensionService.getCriticalDimensionsCacheById();
     }
 
     @Secured("ROLE_READ")
