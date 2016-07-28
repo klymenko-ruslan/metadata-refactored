@@ -640,6 +640,7 @@ def import_data(alter_file, input_data, ptid2columns_meta):
             with open(datafile_name, "rt") as df:
                 tsvin = csv.reader(df, delimiter='\t')
                 for idx, row in enumerate(tsvin):
+                    insert_generated = False
                     if idx == 0:
                         headers = row
                     else:
@@ -668,7 +669,7 @@ def import_data(alter_file, input_data, ptid2columns_meta):
                                                 pt.id, False, 1, table_name,
                                                 import_values)
                         else:
-                            if part_type_id != pt.id:
+                            if int(part_type_id) != pt.id:
                                 conflicted += 1
                                 warn = format_warn(WARN_CONFLICTED_PART_TYPE,
                                                    p_id=part_id,
@@ -680,15 +681,6 @@ def import_data(alter_file, input_data, ptid2columns_meta):
                                 ed2 = input_data.getExtraDataForPt(pt_db)
                                 old_table_name = ed2["table"]
                                 if old_table_name is not None:
-
-                                    # if part_num == '5-A-0293':
-                                    #     print("part_id: {}\npt_db: {}\n"
-                                    #           "ed2: {}"
-                                    #           .format(part_id, pt_db, ed2))
-                                    #     print("table_name: {}\nold: {}"
-                                    #           .format(table_name,
-                                    #                   old_table_name))
-
                                     # Remove the part from obsolete place.
                                     sql = change_part_type(part_id, pt.id,
                                                            old_table_name)
