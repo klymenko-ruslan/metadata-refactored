@@ -453,11 +453,11 @@ angular.module("ngMetaCrudApp")
         return Restangular.one("search/indexing/status").get();
       };
 
-      this.filterParts = function(searchPartTypeName, searchManufacturerName, searchName, searchPartNumber,
+      this.filterParts = function(searchPartTypeId, searchManufacturerName, searchName, searchPartNumber,
           searchTurboModelName, searchTurboTypeName, searchCritDims, sortProperty, sortOrder, offset, limit) {
         var params = {
           partNumber: searchPartNumber,
-          partTypeName: searchPartTypeName,
+          partTypeId: searchPartTypeId,
           manufacturerName: searchManufacturerName,
           turboModelName: searchTurboModelName,
           turboTypeName: searchTurboTypeName,
@@ -598,8 +598,16 @@ angular.module("ngMetaCrudApp")
         return Restangular.one("/criticaldimension/part", id).get();
       };
 
-      this.getCritDimsByPartTypes = function() {
-        return Restangular.one("/criticaldimension/byparttypes").get();
+      this.getCritDimsByPartTypes = function(indexBy) {
+        if (!indexBy) {
+          indexBy = "ID";
+        }
+        if (indexBy != "ID" && indexBy != "NAME") {
+          throw "Unexpected value of 'indexBy': " + angular.toJson(indexBy);
+        }
+        return Restangular.one("/criticaldimension/byparttypes").get({
+          "indexBy": indexBy
+        });
       };
 
       this.getAllCritDimEnums = function() {

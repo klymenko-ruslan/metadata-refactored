@@ -80,6 +80,13 @@
           <dt>Description</dt>
           <dd>{{part.description}}</dd>
         </dl>
+        <dl class="dl-horizontal" data-ng-if="part.partType.id === 1">
+          <!-- Turbo -->
+          <dt>Turbo Type</dt>
+          <dd>{{part.turboModel.turboType.name}}</dd>
+          <dt>Turbo Model</dt>
+          <dd>{{part.turboModel.name}}</dd>
+        </dl>
      </div>
       <div class="col-xs-6">
         <div>

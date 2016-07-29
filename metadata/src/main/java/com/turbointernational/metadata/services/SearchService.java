@@ -406,7 +406,7 @@ public interface SearchService {
 
     void deleteSalesNotePart(SalesNotePart salesNotePart) throws Exception;
 
-    String filterParts(String partNumber, String partTypeName, String manufacturerName,
+    String filterParts(String partNumber, Long partTypeId, String manufacturerName,
                        String name, String description, Boolean inactive,
                        String turboTypeName, String turboModelName,
                        Map<String, String[]> queriedCriticalDimensions,

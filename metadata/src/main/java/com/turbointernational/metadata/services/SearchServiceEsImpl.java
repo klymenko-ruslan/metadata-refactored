@@ -598,7 +598,7 @@ public class SearchServiceEsImpl implements SearchService {
     }
 
     @Override
-    public String filterParts(String partNumber, String partTypeName, String manufacturerName,
+    public String filterParts(String partNumber, Long partTypeId, String manufacturerName,
                               String name, String description, Boolean inactive,
                               String turboTypeName, String turboModelName,
                               Map<String, String[]> queriedCriticalDimensions,
@@ -610,8 +610,8 @@ public class SearchServiceEsImpl implements SearchService {
             String normalizedPartNumber = str2shotfield.apply(partNumber);
             sterms.add(newTextSearchTerm("manufacturerPartNumber.short", normalizedPartNumber));
         }
-        if (partTypeName != null) {
-            sterms.add(newTextSearchTerm("partType.name.full", partTypeName));
+        if (partTypeId != null) {
+            sterms.add(newIntegerSearchTerm("partType.id", EQ, partTypeId));
         }
         if (manufacturerName != null) {
             sterms.add(newTextSearchTerm("manufacturer.name.full", manufacturerName));
@@ -634,8 +634,8 @@ public class SearchServiceEsImpl implements SearchService {
         if (turboModelName != null) {
             sterms.add(newTextSearchTerm("turboModel.name.full", turboModelName));
         }
-        if (partTypeName != null) {
-            List<CriticalDimension> criticalDimensions = criticalDimensionService.getCriticalDimensionForPartType(partTypeName);
+        if (partTypeId != null) {
+            List<CriticalDimension> criticalDimensions = criticalDimensionService.getCriticalDimensionForPartType(partTypeId);
             if (criticalDimensions != null && !criticalDimensions.isEmpty()) {
                 for (CriticalDimension cd : criticalDimensions) {
                     try {

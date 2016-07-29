@@ -23,6 +23,10 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 @RequestMapping(value = {"/criticaldimension", "/metadata/criticaldimension"})
 public class CriticalDimensionController {
 
+    enum PartTypesIndexByEnum {
+        ID, NAME
+    }
+
     @Autowired
     private CriticalDimensionService criticalDimensionService;
 
@@ -30,8 +34,18 @@ public class CriticalDimensionController {
     @JsonView(View.Summary.class)
     @RequestMapping(value = "/byparttypes", method = GET, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
-    public Map<Long, List<CriticalDimension>> getCriticalDimensionsByPartTypes() {
-        return criticalDimensionService.getCriticalDimensionsCacheById();
+    public Map<?, List<CriticalDimension>> getCriticalDimensionsByPartTypes(
+            @RequestParam("indexBy") PartTypesIndexByEnum indexBy)
+    {
+        switch(indexBy) {
+            case ID:
+                return criticalDimensionService.getCriticalDimensionsCacheById();
+            case NAME:
+                return criticalDimensionService.getCriticalDimensionsCacheByName();
+            default:
+                throw new AssertionError("Unsupported value of 'indexBy' parameter: " + indexBy);
+        }
+
     }
 
     @Secured("ROLE_READ")

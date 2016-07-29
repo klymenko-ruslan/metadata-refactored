@@ -131,11 +131,12 @@ angular.module("ngMetaCrudApp")
             // have sens only when current part type is 'Turbo'.
             var turboModelName = null;
             var turboTypeName = null;
-            if ($scope.searchPartType === "Turbo") {
+            var searchPartTypeId = $scope.searchPartType ? $scope.searchPartType.id : null;
+            if (searchPartTypeId === 1) { // 1 is ID of Turbo
               turboModelName = $scope.searchTurboModel;
               turboTypeName = $scope.searchTurboType;
             }
-            restService.filterParts($scope.searchPartType, $scope.searchManufacturer, $scope.searchName,
+            restService.filterParts(searchPartTypeId, $scope.searchManufacturer, $scope.searchName,
               $scope.searchPartNumber, turboModelName, turboTypeName,
               $scope.searchCritDims, sortProperty, sortOrder, offset, limit).then(
               function(filtered) { // The 'filtered' is a JSON returned by ElasticSearch.
