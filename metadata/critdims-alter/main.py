@@ -618,6 +618,17 @@ def register_new_part_types(alter_file, input_data):
             columns_meta, sql = generate_alters(table_name, pt_cda)
         else:
             columns_meta, sql = generate_create_table(table_name, pt_cda)
+            # Some parts had no a child table before.
+            # For such part types we create a child table (see above)
+            # and then fill its by corresponding records.
+            # For example part type 'Clamp' had records in the table 'part'
+            # but had no child table.
+            sql += ("\n-- Fill in the child table '{table_name}' "
+                    "for already exist parts.\n"
+                    "insert into {table_name}(part_id) "
+                    "select id from part where part_type_id={part_type_id} "
+                    "and id not in(select part_id from {table_name});\n"
+                    .format(table_name=table_name, part_type_id=pt.id))
         ptid2columns_meta[pt.id] = columns_meta
         print(sql, file=alter_file)
 
