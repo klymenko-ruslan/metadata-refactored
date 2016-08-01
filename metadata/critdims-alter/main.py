@@ -1299,3 +1299,24 @@ drop table seal_type;
     import_data(alter_file, input_data, ptid2columns_meta)
     generate_jpa_classes(input_data, ptid2columns_meta)
     generate_js_snippents(input_data)
+
+    # Some fixes.
+    print("""
+-- Bearing Spacers are migrated to the Journal Bearing Spacer.
+update part set part_type_id=37 where part_type_id=7;
+insert into journal_bearing_spacer(part_id) select part_id from bearing_spacer;
+alter table standard_bearing_spacer
+          drop foreign key standard_bearing_spacer_ibfk_1;
+alter table standard_bearing_spacer
+          drop foreign key standard_bearing_spacer_ibfk_2;
+drop table bearing_spacer;
+alter table standard_bearing_spacer add foreign key (standard_part_id)
+          references journal_bearing_spacer (part_id);
+alter table standard_bearing_spacer add foreign key (oversized_part_id)
+          references journal_bearing_spacer (part_id);
+delete from part_type where value='bearing_spacer';
+-- Fix magento attribute set in the part types.
+update part_type set magento_attribute_set = null
+          where value in('gasket_kit', 'misc', 'p', 'shroud');
+""", file=alter_file)
+    os.remove(os.path.join(args.out_dir, "BearingSpacer.java"))

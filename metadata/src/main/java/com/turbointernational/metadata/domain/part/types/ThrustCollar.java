@@ -12,7 +12,7 @@ import static javax.persistence.FetchType.LAZY;
 
 
 /**
- * Created by dmytro.trunykov@zorallabs.com on 2016-07-15 14:03:20.423052.
+ * Created by dmytro.trunykov@zorallabs.com on 2016-08-01 17:06:08.761641.
  */
 @Entity
 @Table(name = "thrust_collar")

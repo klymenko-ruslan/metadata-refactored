@@ -203,6 +203,26 @@
       "table": "misc_minor_component",
       "class": "MiscMinorComponent",
       "exists": false
+    },
+    "gasket_kit": {
+      "table": "gasket_kit",
+      "class": "GasketKit",
+      "exists": false
+    },
+    "misc": {
+      "table": "misc",
+      "class": "Misc",
+      "exists": false
+    },
+    "p": {
+      "table": "p",
+      "class": "P",
+      "exists": false
+    },
+    "shroud": {
+      "table": "shroud",
+      "class": "Shroud",
+      "exists": false
     }
   }
 }

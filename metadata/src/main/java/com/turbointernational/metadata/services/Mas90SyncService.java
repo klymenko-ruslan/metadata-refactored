@@ -527,8 +527,6 @@ public class Mas90SyncService {
                 p = new JournalBearing();
             } else if (partTypeId == 6L) {
                 p = new Gasket();
-            } else if (partTypeId == 7L) {
-                p = new BearingSpacer();
             } else if (partTypeId == 11L) {
                 p = new CompressorWheel();
             } else if (partTypeId == 12L) {

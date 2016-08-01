@@ -12,7 +12,7 @@ import static javax.persistence.FetchType.LAZY;
 
 
 /**
- * Created by dmytro.trunykov@zorallabs.com on 2016-07-15 14:03:20.418983.
+ * Created by dmytro.trunykov@zorallabs.com on 2016-08-01 17:06:08.757440.
  */
 @Entity
 @Table(name = "bolt_screw")

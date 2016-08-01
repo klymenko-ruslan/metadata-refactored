@@ -191,5 +191,35 @@
 		"name" : "CARBON SEAL",
 		"name_short" : "CS",
 		"name_value" : "carbon_seal"
+	},
+	{
+		"id" : 33,
+		"name" : "GASKET KIT",
+		"name_short" : "GK",
+		"name_value" : "gasket_kit"
+	},
+	{
+		"id" : 34,
+		"name" : "MISC",
+		"name_short" : "MISC",
+		"name_value" : "misc"
+	},
+	{
+		"id" : 35,
+		"name" : "PART",
+		"name_short" : "P",
+		"name_value" : "p"
+	},
+	{
+		"id" : 36,
+		"name" : "SHROUD",
+		"name_short" : "SD",
+		"name_value" : "shroud"
+	},
+	{
+		"id" : 37,
+		"name" : "KIT",
+		"name_short" : "KIT",
+		"name_value" : "kit"
 	}
 ]}

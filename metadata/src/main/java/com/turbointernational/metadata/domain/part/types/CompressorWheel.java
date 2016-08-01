@@ -12,7 +12,7 @@ import static javax.persistence.FetchType.LAZY;
 
 
 /**
- * Created by dmytro.trunykov@zorallabs.com on 2016-07-15 14:03:20.419365.
+ * Created by dmytro.trunykov@zorallabs.com on 2016-08-01 17:06:08.757820.
  */
 @Entity
 @Table(name = "compressor_wheel")
