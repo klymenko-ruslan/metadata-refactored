@@ -1318,5 +1318,12 @@ delete from part_type where value='bearing_spacer';
 -- Fix magento attribute set in the part types.
 update part_type set magento_attribute_set = null
           where value in('gasket_kit', 'misc', 'p', 'shroud');
+update part_type set value='heatshield' where value='heatshield_shroud';
+-- Rename magento_attribute_set to: Backplate / Sealplate
+update part_type set magento_attribute_set=name
+-- Rename magento_attribute_set from 'Part' to a value from column 'name'
+where magento_attribute_set='Backplate or Sealplate';
+update part_type set magento_attribute_set=name
+where magento_attribute_set='Part';
 """, file=alter_file)
     os.remove(os.path.join(args.out_dir, "BearingSpacer.java"))
