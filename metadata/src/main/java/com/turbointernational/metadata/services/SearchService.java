@@ -10,6 +10,7 @@ import com.turbointernational.metadata.domain.part.salesnote.SalesNoteState;
 import com.turbointernational.metadata.domain.security.User;
 import com.turbointernational.metadata.web.View;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.Observer;
 import java.util.Set;
@@ -371,10 +372,13 @@ public interface SearchService {
         }
     }
 
+
     SearchService.IndexingStatus startIndexing(User user, boolean indexParts, boolean indexApplications,
                                                boolean indexSalesNotes) throws Exception;
 
     SearchService.IndexingStatus getIndexingStatus() throws Exception;
+
+    void createIndex() throws IOException;
 
     void indexPart(long id);
 

@@ -26,14 +26,19 @@ public class SearchServiceMockImpl implements SearchService {
     private final static Logger log = LoggerFactory.getLogger(SearchServiceMockImpl.class);
 
     @Override
+    public void createIndex() {
+        log.debug("Indexing: createIndex.");
+    }
+
+    @Override
     public IndexingStatus startIndexing(User user, boolean indexParts, boolean indexApplications, boolean indexSalesNotes) throws Exception {
-        log.debug("Started indexing.");
+        log.debug("Indexing: Started indexing.");
         return null;
     }
 
     @Override
     public IndexingStatus getIndexingStatus() throws Exception {
-        log.debug("Get indexing status.");
+        log.debug("Indexing: Get indexing status.");
         return null;
     }
 

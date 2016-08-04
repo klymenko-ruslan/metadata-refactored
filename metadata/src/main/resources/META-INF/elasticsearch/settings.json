@@ -1,0 +1,45 @@
+{
+  "analysis": {
+    "char_filter": {
+      "nonword": {
+        "type": "pattern_replace",
+        "pattern": "\\W+",
+        "replacement": ""
+      }
+    },
+    "analyzer": {
+      "normalized_short": {
+        "type": "custom",
+        "tokenizer": "keyword",
+        "filter": [
+          "lowercase",
+          "autocomplete"
+        ],
+        "char_filter": [
+          "nonword"
+        ]
+      },
+      "autocomplete": {
+        "type": "custom",
+        "tokenizer": "keyword",
+        "filter": [
+          "lowercase",
+          "autocomplete"
+        ]
+      },
+      "case_insensitive_sort": {
+        "tokenizer": "keyword",
+        "filter": [
+          "lowercase"
+        ]
+      }
+    },
+    "filter": {
+      "autocomplete": {
+        "type": "nGram",
+        "min_gram": 2,
+        "max_gram": 20
+      }
+    }
+  }
+}

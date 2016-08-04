@@ -174,6 +174,10 @@ public class SearchController {
         if (authentication != null) {
             user = (User) authentication.getPrincipal();
         }
+
+        // TODO
+        //searchService.createIndex();
+
         return searchService.startIndexing(user, indexParts, indexApplications, indexSalesNotes);
     }
 

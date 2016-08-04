@@ -11,16 +11,23 @@ import com.turbointernational.metadata.domain.part.salesnote.SalesNoteState;
 import com.turbointernational.metadata.domain.security.User;
 import com.turbointernational.metadata.utils.RegExpUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder;
+import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
+import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.client.IndicesAdminClient;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.common.settings.loader.JsonSettingsLoader;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.common.transport.TransportAddress;
+import org.elasticsearch.common.xcontent.XContentBuilder;
+import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -37,6 +44,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,6 +52,7 @@ import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.PostConstruct;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.*;
@@ -134,6 +143,9 @@ public class SearchServiceEsImpl implements SearchService {
 
     @Autowired
     private CriticalDimensionService criticalDimensionService;
+
+    @Autowired
+    private ResourceService resourceService;
 
     private Client elasticSearch; // connection with ElasticSearch
 
@@ -504,6 +516,46 @@ public class SearchServiceEsImpl implements SearchService {
         synchronized (indexingStatus) {
             return (IndexingStatus) indexingStatus.clone();
         }
+    }
+
+    @Override
+    public void createIndex() throws IOException {
+        IndicesAdminClient indices = elasticSearch.admin().indices();
+        // Delete index.
+        boolean indexExists = indices.prepareExists(elasticSearchIndex).execute().actionGet().isExists();
+        if (indexExists) {
+            String s = indices.prepareDelete(elasticSearchIndex).toString();
+            /*
+            DeleteIndexResponse delIdxResponse = indices.prepareDelete(elasticSearchIndex).get();
+            if (!delIdxResponse.isAcknowledged()) {
+                throw new AssertionError("Deletion of the ElasticSearch index '%1$s' failed.".
+                        format(elasticSearchIndex));
+            }
+            */
+        }
+        CreateIndexRequestBuilder indexRequestBuilder = indices.prepareCreate(elasticSearchIndex);
+        String mappingsDefinition = resourceService.loadFromMeta("elasticsearch/mappings.json");
+        indexRequestBuilder.addMapping("", "");
+        String settingsDefinition = resourceService.loadFromMeta("elasticsearch/settings.json");
+        Map<String, String> settings = (new JsonSettingsLoader()).load(settingsDefinition);
+        indexRequestBuilder.setSettings(settings);
+        // Add Part fields to the index.
+        //indexRequestBuilder.addMapping()
+        // Add critical dimensions to the index.
+        Map<Long, List<CriticalDimension>> crtclDmnsns = criticalDimensionService.getCriticalDimensionsCacheById();
+        crtclDmnsns.forEach((partTypeId, ptCrtclDmnsns) -> {
+            ptCrtclDmnsns.forEach(cd -> {
+                // TODO
+            });
+        });
+        System.out.println(indexRequestBuilder.toString());
+        /*
+        CreateIndexResponse createIndexResponse = indexRequestBuilder.get();
+        if (!createIndexResponse.isAcknowledged()) {
+            throw new AssertionError("Creation of the ElasticSearch index '%1$s' failed.".
+                    format(elasticSearchIndex));
+        }
+        */
     }
 
     @Override
