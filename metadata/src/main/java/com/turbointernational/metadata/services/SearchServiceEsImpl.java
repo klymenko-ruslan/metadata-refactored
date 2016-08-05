@@ -1,5 +1,8 @@
 package com.turbointernational.metadata.services;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.turbointernational.metadata.domain.SearchableEntity;
 import com.turbointernational.metadata.domain.car.*;
 import com.turbointernational.metadata.domain.criticaldimension.CriticalDimension;
@@ -26,8 +29,11 @@ import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.settings.loader.JsonSettingsLoader;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.common.transport.TransportAddress;
+import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
+import org.elasticsearch.common.xcontent.XContentParser;
+import org.elasticsearch.common.xcontent.json.JsonXContent;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -214,6 +220,7 @@ public class SearchServiceEsImpl implements SearchService {
         private final boolean indexParts;
         private final boolean indexApplications;
         private final boolean indexSalesNotes;
+        private final boolean recreateIndex;
         private final int fetchSize;
 
         class PartsIndexer extends Thread implements Observer {
@@ -341,11 +348,13 @@ public class SearchServiceEsImpl implements SearchService {
 
         }
 
-        IndexingJob(boolean indexParts, boolean indexApplications, boolean indexSalesNotes, int fetchSize) {
+        IndexingJob(boolean indexParts, boolean indexApplications, boolean indexSalesNotes, boolean recreateIndex,
+                    int fetchSize) {
             super();
             this.indexParts = indexParts;
             this.indexApplications = indexApplications;
             this.indexSalesNotes = indexSalesNotes;
+            this.recreateIndex = recreateIndex;
             this.fetchSize = fetchSize;
         }
 
@@ -363,8 +372,6 @@ public class SearchServiceEsImpl implements SearchService {
                     int carMakeTotal = 0;
                     int carModelTotal = 0;
                     int salesNotesTotal = 0;
-
-
                     if (indexParts) {
                         partsTotal = partDao.getTotal();
                     }
@@ -395,6 +402,9 @@ public class SearchServiceEsImpl implements SearchService {
                     ScrollableResults scrollableSalesNotes = null;
 
                     try {
+                        if (recreateIndex) {
+                            createIndex();
+                        }
                         if (indexParts) {
                             scrollableParts = partDao.getScrollableResults(fetchSize, true, "id");
                             partsIndexer = new PartsIndexer(scrollableParts);
@@ -488,7 +498,7 @@ public class SearchServiceEsImpl implements SearchService {
 
     @Override
     public IndexingStatus startIndexing(User user, boolean indexParts, boolean indexApplications,
-                                        boolean indexSalesNotes) throws Exception {
+                                        boolean indexSalesNotes, boolean recreateIndex) throws Exception {
         IndexingStatus retVal;
         long now = System.currentTimeMillis();
         synchronized (indexingStatus) {
@@ -504,9 +514,10 @@ public class SearchServiceEsImpl implements SearchService {
             indexingStatus.setIndexParts(indexParts);
             indexingStatus.setIndexApplications(indexApplications);
             indexingStatus.setIndexSalesNotes(indexSalesNotes);
+            indexingStatus.setRecreateIndex(recreateIndex);
             retVal = getIndexingStatus();
         }
-        Thread job = new IndexingJob(indexParts, indexApplications, indexSalesNotes, 250);
+        Thread job = new IndexingJob(indexParts, indexApplications, indexSalesNotes, recreateIndex, 250);
         job.start();
         return retVal;
     }
@@ -519,43 +530,110 @@ public class SearchServiceEsImpl implements SearchService {
     }
 
     @Override
-    public void createIndex() throws IOException {
+    public void createIndex() throws IOException, AssertionError {
         IndicesAdminClient indices = elasticSearch.admin().indices();
         // Delete index.
         boolean indexExists = indices.prepareExists(elasticSearchIndex).execute().actionGet().isExists();
         if (indexExists) {
             String s = indices.prepareDelete(elasticSearchIndex).toString();
-            /*
             DeleteIndexResponse delIdxResponse = indices.prepareDelete(elasticSearchIndex).get();
             if (!delIdxResponse.isAcknowledged()) {
                 throw new AssertionError("Deletion of the ElasticSearch index '%1$s' failed.".
                         format(elasticSearchIndex));
             }
-            */
         }
         CreateIndexRequestBuilder indexRequestBuilder = indices.prepareCreate(elasticSearchIndex);
-        String mappingsDefinition = resourceService.loadFromMeta("elasticsearch/mappings.json");
-        indexRequestBuilder.addMapping("", "");
+        for (String indexType : new String[]{"carengine", "carfueltype", "carmake", "carmodel", "carmodelengineyear",
+                "salesnotepart"}) {
+            String resourceName = "elasticsearch/" + indexType + ".json";
+            String typeDef = resourceService.loadFromMeta(resourceName);
+            indexRequestBuilder.addMapping(indexType, typeDef);
+        }
+        // Add Part fields to the index.
+        String partDefTmpl = resourceService.loadFromMeta("elasticsearch/part.json");
+        // Add critical dimensions to the Part type index definition.
+        XContentBuilder xcb = XContentFactory.jsonBuilder();
+        Map<Long, List<CriticalDimension>> crtclDmnsns = criticalDimensionService.getCriticalDimensionsCacheById();
+        try {
+            crtclDmnsns.forEach((partTypeId, ptCrtclDmnsns) -> {
+                ptCrtclDmnsns.forEach(cd -> {
+                    try {
+                        String idxType;
+                        CriticalDimension.DataTypeEnum dataType = cd.getDataType();
+                        switch (dataType) {
+                            case DECIMAL:
+                                idxType = "double";
+                                break;
+                            case INTEGER:
+                                idxType = "long";
+                                break;
+                            case TEXT:
+                                idxType = "string";
+                                break;
+                            case ENUMERATION:
+                                // Enumeration has a special index structure in oder
+                                // to store an enumeration item ID and its textual
+                                // representation. We need in the textual representation
+                                // in order to have a possibility to show enumeration value
+                                // in a WEB UI (e.g. in tables).
+                                String idxName = cd.getIdxName();
+                                xcb.startObject(idxName)
+                                        .field("type", "long")
+                                        .field("store", "yes")
+                                        .endObject();
+                                // Index to store enumeration item LABEL.
+                                // Caveat. The suffix "Label" below is hardcoded in the
+                                // Java (see method CriticalDimensionService.JsonIdxNameTransformer#transform(Object)),
+                                // in the JavaSript code (see PartSearch.js)
+                                // and in the HTML (see PartSearch.html).
+                                // So if you changes this suffix you also must reflect the
+                                // rename in those files too.
+                                String idxNameLabel = idxName + "Label";
+                                xcb.startObject(idxNameLabel)
+                                        .field("type", "multi_field")
+                                        .startObject("fields")
+                                        .startObject("text")
+                                        .field("type", "string")
+                                        .field("tokenizer", "lowercase")
+                                        .field("analyzer", "keyword")
+                                        .field("store", "yes")
+                                        .endObject()
+                                        .startObject("lower_case_sort")
+                                        .field("type", "string")
+                                        .field("analyzer", "case_insensitive_sort")
+                                        .field("store", "yes")
+                                        .endObject()
+                                        .endObject()
+                                        .endObject();
+                                return; // continue
+                            default:
+                                throw new AssertionError("Unknown data type: " + dataType);
+                        }
+                        xcb.startObject(cd.getIdxName())
+                                .field("type", idxType)
+                                .field("store", "yes")
+                                .endObject();
+                    } catch (IOException e) {
+                        throw new AssertionError("Declaring of critical dimensions in the index failed: " + e.getMessage());
+                    }
+                });
+            });
+        } catch (AssertionError e) {
+            throw new IOException(e);
+        }
+        String critDimsDef = xcb.string();
+        int l = partDefTmpl.lastIndexOf('}');
+        // Insert definitions of critical dimensions to the end of the definition of type Part.
+        String partDef = partDefTmpl.substring(0, l) + "," + critDimsDef + partDefTmpl.substring(l);
+        indexRequestBuilder.addMapping("part", partDef);
         String settingsDefinition = resourceService.loadFromMeta("elasticsearch/settings.json");
         Map<String, String> settings = (new JsonSettingsLoader()).load(settingsDefinition);
         indexRequestBuilder.setSettings(settings);
-        // Add Part fields to the index.
-        //indexRequestBuilder.addMapping()
-        // Add critical dimensions to the index.
-        Map<Long, List<CriticalDimension>> crtclDmnsns = criticalDimensionService.getCriticalDimensionsCacheById();
-        crtclDmnsns.forEach((partTypeId, ptCrtclDmnsns) -> {
-            ptCrtclDmnsns.forEach(cd -> {
-                // TODO
-            });
-        });
-        System.out.println(indexRequestBuilder.toString());
-        /*
         CreateIndexResponse createIndexResponse = indexRequestBuilder.get();
         if (!createIndexResponse.isAcknowledged()) {
             throw new AssertionError("Creation of the ElasticSearch index '%1$s' failed.".
                     format(elasticSearchIndex));
         }
-        */
     }
 
     @Override

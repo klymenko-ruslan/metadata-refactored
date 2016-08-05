@@ -3,25 +3,33 @@
 <div class="row" style="margin-top: 2em;">
   <div class="col-xs-12">
 
-    <h4>Indexing of the entities.</h4>
+    <h3>Indexing of the entities.</h3>
 
-    <form data-ng-show="phase == 0">
+
+    <form role="form" data-ng-show="phase == 0">
 
       <div class="row">
         <div class="col-xs-12">
+          <h4>Update index for</h4>
           <div class="checkbox">
             <label>
-              <input type="checkbox" data-ng-model="toIndex.parts" data-ng-disabled="::!hasRole('ROLE_ADMIN')" /> Index parts
+              <input type="checkbox" data-ng-model="toIndex.parts" data-ng-disabled="!hasRole('ROLE_ADMIN') || toIndex.recreateIndex" /> Parts
             </label>
           </div>
           <div class="checkbox">
             <label>
-              <input type="checkbox" data-ng-model="toIndex.applications" data-ng-disabled="::!hasRole('ROLE_ADMIN')" /> Index applications
+              <input type="checkbox" data-ng-model="toIndex.applications" data-ng-disabled="!hasRole('ROLE_ADMIN') || toIndex.recreateIndex" /> Applications
             </label>
           </div>
           <div class="checkbox">
             <label>
-              <input type="checkbox" data-ng-model="toIndex.salesNotes" data-ng-disabled="::!hasRole('ROLE_ADMIN')" /> Index sales notes
+              <input type="checkbox" data-ng-model="toIndex.salesNotes" data-ng-disabled="!hasRole('ROLE_ADMIN') || toIndex.recreateIndex" /> Sales Notes
+            </label>
+          </div>
+          <h4>Options</h4>
+          <div class="checkbox">
+            <label>
+              <input type="checkbox" data-ng-model="toIndex.recreateIndex" data-ng-disabled="::!hasRole('ROLE_ADMIN')" /> (Re)Create the index before update
             </label>
           </div>
         </div>

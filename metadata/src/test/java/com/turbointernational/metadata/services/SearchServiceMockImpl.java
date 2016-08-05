@@ -31,7 +31,8 @@ public class SearchServiceMockImpl implements SearchService {
     }
 
     @Override
-    public IndexingStatus startIndexing(User user, boolean indexParts, boolean indexApplications, boolean indexSalesNotes) throws Exception {
+    public IndexingStatus startIndexing(User user, boolean indexParts, boolean indexApplications,
+                                        boolean indexSalesNotes, boolean recreateIndex) throws Exception {
         log.debug("Indexing: Started indexing.");
         return null;
     }

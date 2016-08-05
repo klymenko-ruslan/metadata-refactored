@@ -168,17 +168,14 @@ public class SearchController {
         boolean indexParts = toIndex.getOrDefault("parts", false);
         boolean indexApplications = toIndex.getOrDefault("applications", false);
         boolean indexSalesNotes = toIndex.getOrDefault("salesNotes", false);
-        log.debug("startIndexing: parts={}, applications={}, salesNotes={}", indexParts, indexApplications,
-                indexSalesNotes);
+        boolean recreateIndex = toIndex.getOrDefault("recreateIndex", false);
+        log.debug("startIndexing: parts={}, applications={}, salesNotes={}, recreateIndex={}", indexParts, indexApplications,
+                indexSalesNotes, recreateIndex);
         User user = null;
         if (authentication != null) {
             user = (User) authentication.getPrincipal();
         }
-
-        // TODO
-        //searchService.createIndex();
-
-        return searchService.startIndexing(user, indexParts, indexApplications, indexSalesNotes);
+        return searchService.startIndexing(user, indexParts, indexApplications, indexSalesNotes, recreateIndex);
     }
 
     @Secured("ROLE_READ")

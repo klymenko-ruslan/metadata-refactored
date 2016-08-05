@@ -108,6 +108,10 @@ public interface SearchService {
 
         @JsonView({View.Summary.class})
         @JsonInclude(ALWAYS)
+        private boolean recreateIndex;
+
+        @JsonView({View.Summary.class})
+        @JsonInclude(ALWAYS)
         private Long startedOn;
 
         @JsonView({View.Summary.class})
@@ -144,6 +148,7 @@ public interface SearchService {
             this.indexParts = true;
             this.indexApplications = true;
             this.indexSalesNotes = true;
+            this.recreateIndex = true;
             this.startedOn = null;
             this.finishedOn = null;
             this.userId = null;
@@ -336,6 +341,7 @@ public interface SearchService {
             retVal.salesNotesIndexingTotalSteps = salesNotesIndexingTotalSteps;
             retVal.salesNotesIndexingCurrentStep = salesNotesIndexingCurrentStep;
             retVal.indexParts = indexParts;
+            retVal.recreateIndex = recreateIndex;
             retVal.indexApplications = indexApplications;
             retVal.indexSalesNotes = indexSalesNotes;
             retVal.startedOn = startedOn;
@@ -364,17 +370,26 @@ public interface SearchService {
                     ", indexParts=" + indexParts +
                     ", indexApplications=" + indexApplications +
                     ", indexSalesNotes=" + indexSalesNotes +
+                    ", recreateIndex=" + recreateIndex +
                     ", startedOn=" + startedOn +
                     ", finishedOn=" + finishedOn +
                     ", userId=" + userId +
                     ", userName='" + userName + '\'' +
                     '}';
         }
+
+        public boolean isRecreateIndex() {
+            return recreateIndex;
+        }
+
+        public void setRecreateIndex(boolean recreateIndex) {
+            this.recreateIndex = recreateIndex;
+        }
     }
 
 
     SearchService.IndexingStatus startIndexing(User user, boolean indexParts, boolean indexApplications,
-                                               boolean indexSalesNotes) throws Exception;
+                                               boolean indexSalesNotes, boolean recreateIndex) throws Exception;
 
     SearchService.IndexingStatus getIndexingStatus() throws Exception;
 

@@ -51,6 +51,7 @@ angular.module("ngMetaCrudApp")
         $scope.toIndex.parts = status.indexParts;
         $scope.toIndex.applications = status.indexApplications;
         $scope.toIndex.salesNotes = status.indexSalesNotes;
+        $scope.toIndex.recreateIndex = status.recreateIndex;
       }
 
       $scope.errorMessage = status.errorMessage;
@@ -82,6 +83,7 @@ angular.module("ngMetaCrudApp")
       $scope.toIndex.parts = true;
       $scope.toIndex.applications = true;
       $scope.toIndex.salesNotes = true;
+      $scope.toIndex.recreateIndex = true;
     };
 
     this.startIndexing = function() {
@@ -105,6 +107,14 @@ angular.module("ngMetaCrudApp")
 
     this._resetToIndex();
     $scope._updateStatus(status);
+
+    $scope.$watch("toIndex.recreateIndex", function(newVal, oldVal) {
+      if (newVal) {
+        $scope.toIndex.parts = true;
+        $scope.toIndex.applications = true;
+        $scope.toIndex.salesNotes = true;
+      }
+    });
 
     $scope.refreshTask = $interval(function() {
       restService.getIndexingStatus().then(
