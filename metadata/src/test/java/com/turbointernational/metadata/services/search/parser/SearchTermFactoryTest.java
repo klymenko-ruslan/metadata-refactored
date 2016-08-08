@@ -1,10 +1,10 @@
-package com.turbointernational.metadata.services;
+package com.turbointernational.metadata.services.search.parser;
 
-import com.turbointernational.metadata.services.SearchTermFactory.Limit;
-import com.turbointernational.metadata.services.SearchTermFactory.Range;
+import com.turbointernational.metadata.services.search.parser.SearchTermFactory.Limit;
+import com.turbointernational.metadata.services.search.parser.SearchTermFactory.Range;
 import org.junit.Test;
 
-import static com.turbointernational.metadata.services.SearchTermCmpOperatorEnum.*;
+import static com.turbointernational.metadata.services.search.parser.SearchTermCmpOperatorEnum.*;
 import static org.junit.Assert.*;
 
 /**

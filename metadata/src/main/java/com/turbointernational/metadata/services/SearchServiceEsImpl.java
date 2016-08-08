@@ -1,8 +1,5 @@
 package com.turbointernational.metadata.services;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.turbointernational.metadata.domain.SearchableEntity;
 import com.turbointernational.metadata.domain.car.*;
 import com.turbointernational.metadata.domain.criticaldimension.CriticalDimension;
@@ -12,7 +9,8 @@ import com.turbointernational.metadata.domain.part.salesnote.SalesNotePart;
 import com.turbointernational.metadata.domain.part.salesnote.SalesNotePartDao;
 import com.turbointernational.metadata.domain.part.salesnote.SalesNoteState;
 import com.turbointernational.metadata.domain.security.User;
-import com.turbointernational.metadata.utils.RegExpUtils;
+import com.turbointernational.metadata.services.search.index.IndexBuilder;
+import com.turbointernational.metadata.services.search.parser.*;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder;
 import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
@@ -26,14 +24,8 @@ import org.elasticsearch.client.Client;
 import org.elasticsearch.client.IndicesAdminClient;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.common.settings.loader.JsonSettingsLoader;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.common.transport.TransportAddress;
-import org.elasticsearch.common.unit.TimeValue;
-import org.elasticsearch.common.xcontent.XContentBuilder;
-import org.elasticsearch.common.xcontent.XContentFactory;
-import org.elasticsearch.common.xcontent.XContentParser;
-import org.elasticsearch.common.xcontent.json.JsonXContent;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -50,7 +42,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Transactional;
@@ -63,15 +54,11 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.*;
 import java.util.function.Function;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.turbointernational.metadata.services.SearchService.IndexingStatus.*;
-import static com.turbointernational.metadata.services.SearchTermCmpOperatorEnum.*;
-import static com.turbointernational.metadata.services.SearchTermEnum.*;
-import static com.turbointernational.metadata.services.SearchTermFactory.newIntegerSearchTerm;
-import static com.turbointernational.metadata.services.SearchTermFactory.newTextSearchTerm;
-import static com.turbointernational.metadata.utils.RegExpUtils.PTRN_DOUBLE_LIMIT;
+import static com.turbointernational.metadata.services.search.parser.SearchTermCmpOperatorEnum.EQ;
+import static com.turbointernational.metadata.services.search.parser.SearchTermFactory.*;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.springframework.transaction.TransactionDefinition.PROPAGATION_REQUIRES_NEW;
 
@@ -543,92 +530,7 @@ public class SearchServiceEsImpl implements SearchService {
             }
         }
         CreateIndexRequestBuilder indexRequestBuilder = indices.prepareCreate(elasticSearchIndex);
-        for (String indexType : new String[]{"carengine", "carfueltype", "carmake", "carmodel", "carmodelengineyear",
-                "salesnotepart"}) {
-            String resourceName = "elasticsearch/" + indexType + ".json";
-            String typeDef = resourceService.loadFromMeta(resourceName);
-            indexRequestBuilder.addMapping(indexType, typeDef);
-        }
-        // Add Part fields to the index.
-        String partDefTmpl = resourceService.loadFromMeta("elasticsearch/part.json");
-        // Add critical dimensions to the Part type index definition.
-        XContentBuilder xcb = XContentFactory.jsonBuilder();
-        Map<Long, List<CriticalDimension>> crtclDmnsns = criticalDimensionService.getCriticalDimensionsCacheById();
-        try {
-            crtclDmnsns.forEach((partTypeId, ptCrtclDmnsns) -> {
-                ptCrtclDmnsns.forEach(cd -> {
-                    try {
-                        String idxType;
-                        CriticalDimension.DataTypeEnum dataType = cd.getDataType();
-                        switch (dataType) {
-                            case DECIMAL:
-                                idxType = "double";
-                                break;
-                            case INTEGER:
-                                idxType = "long";
-                                break;
-                            case TEXT:
-                                idxType = "string";
-                                break;
-                            case ENUMERATION:
-                                // Enumeration has a special index structure in oder
-                                // to store an enumeration item ID and its textual
-                                // representation. We need in the textual representation
-                                // in order to have a possibility to show enumeration value
-                                // in a WEB UI (e.g. in tables).
-                                String idxName = cd.getIdxName();
-                                xcb.startObject(idxName)
-                                        .field("type", "long")
-                                        .field("store", "yes")
-                                        .endObject();
-                                // Index to store enumeration item LABEL.
-                                // Caveat. The suffix "Label" below is hardcoded in the
-                                // Java (see method CriticalDimensionService.JsonIdxNameTransformer#transform(Object)),
-                                // in the JavaSript code (see PartSearch.js)
-                                // and in the HTML (see PartSearch.html).
-                                // So if you changes this suffix you also must reflect the
-                                // rename in those files too.
-                                String idxNameLabel = idxName + "Label";
-                                xcb.startObject(idxNameLabel)
-                                        .field("type", "multi_field")
-                                        .startObject("fields")
-                                        .startObject("text")
-                                        .field("type", "string")
-                                        .field("tokenizer", "lowercase")
-                                        .field("analyzer", "keyword")
-                                        .field("store", "yes")
-                                        .endObject()
-                                        .startObject("lower_case_sort")
-                                        .field("type", "string")
-                                        .field("analyzer", "case_insensitive_sort")
-                                        .field("store", "yes")
-                                        .endObject()
-                                        .endObject()
-                                        .endObject();
-                                return; // continue
-                            default:
-                                throw new AssertionError("Unknown data type: " + dataType);
-                        }
-                        xcb.startObject(cd.getIdxName())
-                                .field("type", idxType)
-                                .field("store", "yes")
-                                .endObject();
-                    } catch (IOException e) {
-                        throw new AssertionError("Declaring of critical dimensions in the index failed: " + e.getMessage());
-                    }
-                });
-            });
-        } catch (AssertionError e) {
-            throw new IOException(e);
-        }
-        String critDimsDef = xcb.string();
-        int l = partDefTmpl.lastIndexOf('}');
-        // Insert definitions of critical dimensions to the end of the definition of type Part.
-        String partDef = partDefTmpl.substring(0, l) + "," + critDimsDef + partDefTmpl.substring(l);
-        indexRequestBuilder.addMapping("part", partDef);
-        String settingsDefinition = resourceService.loadFromMeta("elasticsearch/settings.json");
-        Map<String, String> settings = (new JsonSettingsLoader()).load(settingsDefinition);
-        indexRequestBuilder.setSettings(settings);
+        IndexBuilder.build(criticalDimensionService, resourceService, indexRequestBuilder);
         CreateIndexResponse createIndexResponse = indexRequestBuilder.get();
         if (!createIndexResponse.isAcknowledged()) {
             throw new AssertionError("Creation of the ElasticSearch index '%1$s' failed.".
@@ -755,7 +657,7 @@ public class SearchServiceEsImpl implements SearchService {
             sterms.add(newTextSearchTerm("description.short", normalizedDescription));
         }
         if (inactive != null) {
-            sterms.add(SearchTermFactory.newBooleanSearchTerm("inactive", inactive));
+            sterms.add(newBooleanSearchTerm("inactive", inactive));
         }
 
         if (turboTypeName != null) {
@@ -776,7 +678,7 @@ public class SearchServiceEsImpl implements SearchService {
                             val = paramVals[0];
                         }
                         if (isNotBlank(val)) {
-                            AbstractSearchTerm asterm = SearchTermFactory.newSearchTerm(cd, val);
+                            AbstractSearchTerm asterm = newSearchTerm(cd, val);
                             sterms.add(asterm);
                         }
                     } catch (IllegalArgumentException e) {
@@ -1229,325 +1131,12 @@ public class SearchServiceEsImpl implements SearchService {
     private int batchIndex(BulkRequest bulk, String elasticSearchType, Observer observer) {
         elasticSearch.bulk(bulk).actionGet();
         int n = bulk.numberOfActions();
-        log.info("Indexed '{}': {} docs.", elasticSearchType, n);
+        log.debug("Indexed '{}': {} docs.", elasticSearchType, n);
         if (observer != null) {
             log.debug("Publishing indexing event: {}", n);
             observer.update(null, new Integer(n));
         }
         return n;
-    }
-
-}
-
-enum SearchTermEnum {
-    BOOLEAN, DECIMAL, INTEGER, DECIMAL_RANGE, INTEGER_RANGE, TEXT
-}
-
-enum SearchTermCmpOperatorEnum {
-
-    LT("<"), LTE("<="), EQ("="), GTE(">="), GT(">");
-
-    final String sign;
-
-    SearchTermCmpOperatorEnum(String sign) {
-        this.sign = sign;
-    }
-
-    static SearchTermCmpOperatorEnum fromSign(String s) throws IllegalArgumentException {
-        if (s == null) {
-            return null;
-        }
-        s = s.trim();
-        if (s.equals("<")) {
-            return LT;
-        } else if (s.equals("<=")) {
-            return LTE;
-        } else if (s.equals("=")) {
-            return EQ;
-        } else if (s.equals(">=")) {
-            return GTE;
-        } else if (s.equals(">")) {
-            return GT;
-        }
-        throw new IllegalArgumentException("Can't parse sing: " + s);
-    }
-}
-
-abstract class AbstractSearchTerm {
-
-    private final SearchTermEnum type;
-
-    private final String fieldName;
-
-    AbstractSearchTerm(SearchTermEnum type, String fieldName) {
-        this.type = type;
-        this.fieldName = fieldName;
-    }
-
-    SearchTermEnum getType() {
-        return type;
-    }
-
-    String getFieldName() {
-        return fieldName;
-    }
-
-}
-
-class BooleanSearchTerm extends AbstractSearchTerm {
-
-    private final Boolean term;
-
-    BooleanSearchTerm(String fieldName, Boolean term) {
-        super(BOOLEAN, fieldName);
-        this.term = term;
-    }
-
-    Boolean getTerm() {
-        return term;
-    }
-
-}
-
-class AbstractNumberSearchTerm extends AbstractSearchTerm {
-
-    private final SearchTermCmpOperatorEnum cmpOperator;
-
-    public AbstractNumberSearchTerm(SearchTermEnum type, String fieldName, SearchTermCmpOperatorEnum cmpOperator) {
-        super(type, fieldName);
-        this.cmpOperator = cmpOperator;
-    }
-
-    SearchTermCmpOperatorEnum getCmpOperator() {
-        return cmpOperator;
-    }
-
-}
-
-class NumberSearchTerm extends AbstractNumberSearchTerm {
-
-    private final Number term;
-
-    NumberSearchTerm(SearchTermEnum type, String fieldName, SearchTermCmpOperatorEnum cmpOperator, Number term) {
-        super(type, fieldName, cmpOperator);
-        this.term = term;
-    }
-
-    Number getTerm() {
-        return term;
-    }
-
-}
-
-class RangeSearchTerm extends AbstractSearchTerm {
-
-    private final Number from;
-    private final Number to;
-
-    RangeSearchTerm(String fieldName, Number from, Number to) {
-        super(DECIMAL_RANGE, fieldName);
-        this.from = from;
-        this.to = to;
-    }
-
-    Number getFrom() {
-        return from;
-    }
-
-    Number getTo() {
-        return to;
-    }
-
-}
-
-class TextSearchTerm extends AbstractSearchTerm {
-
-    private final String term;
-
-    TextSearchTerm(String fieldName, String term) {
-        super(TEXT, fieldName);
-        this.term = term;
-    }
-
-    String getTerm() {
-        return term;
-    }
-
-}
-
-class SearchTermFactory {
-
-    static TextSearchTerm newTextSearchTerm(String fieldName, String term) {
-        return new TextSearchTerm(fieldName, term);
-    }
-
-    static BooleanSearchTerm newBooleanSearchTerm(String fieldName, Boolean term) {
-        return new BooleanSearchTerm(fieldName, term);
-    }
-
-    static NumberSearchTerm newIntegerSearchTerm(String fieldName, SearchTermCmpOperatorEnum cmpOperator, Long term) {
-        return new NumberSearchTerm(INTEGER, fieldName, cmpOperator, term);
-    }
-
-    static AbstractSearchTerm newSearchTerm(CriticalDimension cd, String s) {
-        AbstractSearchTerm retVal;
-        Range pr;
-        String idxName = cd.getIdxName();
-        CriticalDimension.DataTypeEnum dataType = cd.getDataType();
-        switch (dataType) {
-            case DECIMAL:
-                pr = parseSearchStr(s);
-                if (pr.isBoundLimit()) {
-                    retVal = new RangeSearchTerm(idxName, pr.limit1.val, pr.limit2.val);
-                } else {
-                    retVal = new NumberSearchTerm(DECIMAL, idxName, pr.limit1.operator, pr.limit1.val);
-                }
-                break;
-            case ENUMERATION:
-                Long n = Long.valueOf(s);
-                retVal = new NumberSearchTerm(INTEGER, idxName, EQ, n);
-                break;
-            case INTEGER:
-                pr = parseSearchStr(s);
-                if (pr.isBoundLimit()) {
-                    retVal = new RangeSearchTerm(idxName, pr.limit1.val, pr.limit2.val);
-                } else {
-                    retVal = new NumberSearchTerm(INTEGER, idxName, pr.limit1.operator, pr.limit1.val);
-                }
-                break;
-            case TEXT:
-                retVal = newTextSearchTerm(idxName, s);
-                break;
-            default:
-                throw new AssertionError("Unsupported data type: " + dataType);
-        }
-        return retVal;
-    }
-
-    static Limit parseLimit(String s) throws IllegalArgumentException {
-        if (s == null) {
-            return null;
-        }
-        Matcher matcher = PTRN_DOUBLE_LIMIT.matcher(s);
-        if (matcher.matches()) {
-            SearchTermCmpOperatorEnum operator = SearchTermCmpOperatorEnum.fromSign(matcher.group(2));
-            if (operator == null) {
-                operator = EQ;
-            }
-            Double val = RegExpUtils.parseDouble(matcher.group(3));
-            if (val == null) {
-                throw new IllegalArgumentException("Invalid limit: " + s);
-            }
-            return new Limit(operator, val);
-        } else {
-            throw new NumberFormatException(s);
-        }
-    }
-
-    static Range parseRange(String s) throws IllegalArgumentException {
-        if (s == null) {
-            return null;
-        }
-        int p0 = s.indexOf("..");
-        if (p0 < 1) {
-            throw new IllegalArgumentException("Invalid range: " + s);
-        }
-        if (s.length() - 2 == p0) {
-            throw new IllegalArgumentException("Invalid range: " + s);
-        }
-        String s0 = s.substring(0, p0);
-        String s1 = s.substring(p0 + 2);
-        Double r0 = RegExpUtils.parseDouble(s0);
-        Double r1 = RegExpUtils.parseDouble(s1);
-        Limit limit0 = new Limit(GTE, r0);
-        Limit limit1 = new Limit(LTE, r1);
-        return new Range(limit0, limit1);
-    }
-
-    static Range parseSearchStr(String s) throws IllegalArgumentException {
-        if (s == null) {
-            return null;
-        }
-        try {
-            Limit iLimit = parseLimit(s);
-            return new Range(iLimit, null);
-        } catch (IllegalArgumentException e) {
-            // ignore
-        }
-        try {
-            return parseRange(s);
-        } catch (IllegalArgumentException e) {
-            // ignore
-        }
-        throw new IllegalArgumentException("Parsing failed: " + s);
-    }
-
-    static class Limit {
-
-        final SearchTermCmpOperatorEnum operator;
-        final Number val;
-
-        Limit(SearchTermCmpOperatorEnum operator, Number val) {
-            this.operator = operator;
-            this.val = val;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-
-            Limit limit = (Limit) o;
-
-            if (operator != limit.operator) return false;
-            return val != null ? val.equals(limit.val) : limit.val == null;
-
-        }
-
-        @Override
-        public String toString() {
-            return "Limit{" +
-                    "operator=" + operator +
-                    ", val=" + val +
-                    '}';
-        }
-
-    }
-
-    static class Range {
-
-        final Limit limit1;
-        final Limit limit2;
-
-        public Range(Limit limit1, Limit limit2) {
-            this.limit1 = limit1;
-            this.limit2 = limit2;
-        }
-
-        boolean isBoundLimit() {
-            return limit1 != null && limit2 != null;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-
-            Range range = (Range) o;
-
-            if (limit1 != null ? !limit1.equals(range.limit1) : range.limit1 != null) return false;
-            return limit2 != null ? limit2.equals(range.limit2) : range.limit2 == null;
-
-        }
-
-        @Override
-        public String toString() {
-            return "Range{" +
-                    "limit1=" + limit1 +
-                    ", limit2=" + limit2 +
-                    '}';
-        }
-
     }
 
 }

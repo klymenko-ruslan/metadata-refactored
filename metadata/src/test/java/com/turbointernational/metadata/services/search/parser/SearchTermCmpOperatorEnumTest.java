@@ -1,13 +1,8 @@
-package com.turbointernational.metadata.services;
+package com.turbointernational.metadata.services.search.parser;
 
 import org.junit.Test;
 
-import static com.turbointernational.metadata.services.SearchTermCmpOperatorEnum.LT;
-import static com.turbointernational.metadata.services.SearchTermCmpOperatorEnum.LTE;
-import static com.turbointernational.metadata.services.SearchTermCmpOperatorEnum.EQ;
-import static com.turbointernational.metadata.services.SearchTermCmpOperatorEnum.GTE;
-import static com.turbointernational.metadata.services.SearchTermCmpOperatorEnum.GT;
-import static com.turbointernational.metadata.services.SearchTermCmpOperatorEnum.fromSign;
+import static com.turbointernational.metadata.services.search.parser.SearchTermCmpOperatorEnum.*;
 import static org.junit.Assert.*;
 
 /**
