@@ -294,6 +294,11 @@ angular.module("ngMetaCrudApp", ["ngRoute", "ngTable", "ui.bootstrap",
         }]
       }
     });
+    // Chagelog.
+    $routeProvider.when("/changelog/list", {
+      templateUrl: "views/changelog/list.html",
+      controller: "ChangelogListCtrl"
+    });
     // Authentication providers.
     $routeProvider.when("/security/auth_providers", {
       templateUrl: "views/security/auth_providers.html",

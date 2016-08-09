@@ -1,6 +1,8 @@
 package com.turbointernational.metadata.domain.changelog;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.domain.security.User;
+import com.turbointernational.metadata.web.View;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -17,21 +19,26 @@ public class Changelog implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
+    @JsonView(View.Summary.class)
     private Long id;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "change_date", nullable = false)
+    @JsonView(View.Summary.class)
     private Date changeDate;
 
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonView(View.Summary.class)
     private User user;
 
     @Column(name = "description", nullable = false)
+    @JsonView(View.Summary.class)
     private String description;
 
     @Lob
     @Column(name = "data")
+    @JsonView(View.Summary.class)
     private String data;
 
     public Long getId() {

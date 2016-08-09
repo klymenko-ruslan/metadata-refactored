@@ -563,6 +563,20 @@ angular.module("ngMetaCrudApp")
         });
       };
 
+      this.filterChangelog = function(startDate, finishDate, userId, description,
+        sortProperty, sortOrder, offset, limit) {
+        return Restangular.one("changelog/list").get({
+          "startDate": startDate,
+          "finishDate": finishDate,
+          "userId": userId,
+          "description": description,
+          "sortProperty": sortProperty,
+          "sortOrder": sortOrder,
+          "offset": offset,
+          "limit": limit
+        });
+      };
+
       this.findPrimaryPartIdForThePart = function(id) {
         return Restangular.one("other/salesNote/primarypartidforthepart").get({
           "partId": id

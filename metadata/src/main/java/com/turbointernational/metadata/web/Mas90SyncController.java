@@ -70,6 +70,15 @@ public class Mas90SyncController {
         return status;
     }
 
+    /**
+     * Start synchronization process.
+     *
+     * This method can be called by CURL or WGET from localhost to start the process.
+     * So expression below <code>hasIpAddress('127.0.0.1/32')</code> is mandatory.
+     * Don't remove it.
+     *
+     * @return
+     */
     @RequestMapping(value = "/startsyncjob", method = POST)
     @ResponseBody
     @Transactional

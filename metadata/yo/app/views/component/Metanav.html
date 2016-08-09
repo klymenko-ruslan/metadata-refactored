@@ -25,6 +25,8 @@
           <li data-ng-disabled="{{::!hasRole('ROLE_ADMIN')}}"><a href="#" data-ng-href="/security/auth_providers/"><i class="fa fa-unlock-alt" aria-hidden="true"></i> Authentication providers</a></li>
 
           <li class="divider"></li>
+          <li data-ng-disabled="{{::!hasRole('ROLE_ADMIN')}}"><a href="#" data-ng-href="/changelog/list"><i class="fa fa-list-ol" aria-hidden="true"></i> Audit</a></li>
+          <li class="divider"></li>
 
           <li data-ng-disabled="{{::!hasRole('ROLE_ADMIN')}}"><a href="#" data-ng-click="rebuildBom()"><i class="fa fa-refresh" aria-hidden="true"></i> Rebuild BOM</a></li>
 
