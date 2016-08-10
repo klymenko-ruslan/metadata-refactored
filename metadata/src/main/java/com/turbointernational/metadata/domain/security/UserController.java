@@ -22,18 +22,20 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Set;
 
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+
 @RequestMapping("/metadata/security/user")
 @Controller
 public class UserController {
     
-    @Autowired(required=true)
+    @Autowired
     UserDao userDao;
     
-    @Autowired(required=true)
+    @Autowired
     GroupDao groupDao;
 
     @JsonView(View.DetailWithGroups.class)
-    @RequestMapping(value = "/me", method = RequestMethod.GET)
+    @RequestMapping(value = "/me", method = GET)
     @ResponseBody
     @Secured("ROLE_READ")
     public User getMe() {
@@ -62,7 +64,7 @@ public class UserController {
         return user;
     }
 
-    @RequestMapping(value = "/myroles", method = RequestMethod.GET)
+    @RequestMapping(value = "/myroles", method = GET)
     @ResponseBody
     @Secured("ROLE_READ")
     public ResponseEntity<String> myroles() {
@@ -79,15 +81,23 @@ public class UserController {
     }
 
     @JsonView(View.SummaryWithGroups.class)
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(method = GET)
     @ResponseBody
     @Secured("ROLE_ADMIN")
-    public List<User> list() {
+    public List<User> findActiveUsers() {
         return userDao.findActiveUsers();
     }
 
+    @JsonView(View.SummaryWithGroups.class)
+    @RequestMapping(value = "list", method = GET)
+    @ResponseBody
+    @Secured("ROLE_ADMIN")
+    public List<User> findAllUsers() {
+        return userDao.findAll();
+    }
+
     @JsonView(View.DetailWithGroups.class)
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}", method = GET)
     @ResponseBody
     @Secured("ROLE_ADMIN")
     public User get(@PathVariable("id") Long id) {

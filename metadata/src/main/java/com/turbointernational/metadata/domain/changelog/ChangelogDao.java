@@ -5,18 +5,20 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.turbointernational.metadata.domain.AbstractDao;
 import com.turbointernational.metadata.domain.security.User;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import com.turbointernational.metadata.web.Page;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
+import javax.persistence.metamodel.EntityType;
+import javax.persistence.metamodel.Metamodel;
 
 /**
  *
@@ -89,17 +91,43 @@ public class ChangelogDao extends AbstractDao<Changelog> {
                                   Integer offset, Integer limit) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Changelog> ecq = cb.createQuery(Changelog.class);
-        Root<Changelog> changelogRoot = ecq.from(Changelog.class);
-        ecq.select(changelogRoot);
-        // TODO: where
+        Root<Changelog> root = ecq.from(Changelog.class);
+        Join<Object, Object> userJoin = root.join("user");
+        ecq.select(root);
+        int numPredicates = 0;
+        List<Predicate> lstPredicates = new ArrayList<>(4);
+        if (userId != null) {
+            lstPredicates.add(cb.equal(userJoin.get("id"), userId));
+            numPredicates++;
+        }
+        if (startDate != null) {
+            lstPredicates.add(cb.greaterThanOrEqualTo(root.get("changeDate"), startDate));
+            numPredicates++;
+        }
+        if (finishDate != null) {
+            lstPredicates.add(cb.lessThanOrEqualTo(root.get("changeDate"), finishDate));
+            numPredicates++;
+        }
+        if (description != null) {
+            lstPredicates.add(cb.like(root.get("description"), "%" + description + "%"));
+        }
+        Predicate[] arrPredicates = lstPredicates.toArray(new Predicate[numPredicates]);
+        ecq.where(arrPredicates);
         if (sortOrder != null) {
             if (sortProperty == null) {
                 throw new NullPointerException("Parameter 'sortOrder' can't be null.");
             }
+            From f;
+            if (sortProperty.equals("user.name")) {
+                f = userJoin;
+                sortProperty = "name";
+            } else {
+                f = root;
+            }
             if (sortOrder.equalsIgnoreCase("asc")) {
-                ecq.orderBy(cb.asc(changelogRoot.get(sortProperty)));
+                ecq.orderBy(cb.asc(f.get(sortProperty)));
             } else if (sortOrder.equalsIgnoreCase("desc")) {
-                ecq.orderBy(cb.desc(changelogRoot.get(sortProperty)));
+                ecq.orderBy(cb.desc(f.get(sortProperty)));
             } else {
                 throw new AssertionError("Unknown sort order: " + sortOrder);
             }
@@ -114,8 +142,9 @@ public class ChangelogDao extends AbstractDao<Changelog> {
         List<Changelog> recs = q.getResultList();
         CriteriaQuery<Long> ccq = cb.createQuery(Long.class);
         Root<Changelog> changelogCountRoot = ccq.from(Changelog.class);
+        changelogCountRoot.join("user");
         ccq.select(cb.count(changelogCountRoot));
-        // TODO: where
+        ccq.where(arrPredicates);
         long total = em.createQuery(ccq).getSingleResult();
         return new Page(total, recs);
     }

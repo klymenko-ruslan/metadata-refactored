@@ -67,8 +67,12 @@ angular.module("ngMetaCrudApp")
         return Restangular.one('security/user/me').get();
       };
 
-      this.getAllUsers = function() {
+      this.findActiveUsers = function() {
         return Restangular.all("security/user").getList();
+      };
+
+      this.findAllUsers = function() {
+        return Restangular.all("security/user/list").getList();
       };
 
       this.findPart = function(id, params) {
@@ -565,6 +569,7 @@ angular.module("ngMetaCrudApp")
 
       this.filterChangelog = function(startDate, finishDate, userId, description,
         sortProperty, sortOrder, offset, limit) {
+$log.log("filterChangelog: sartDate=" + startDate + ", finishDate=" + finishDate + ", userId=" + userId);
         return Restangular.one("changelog/list").get({
           "startDate": startDate,
           "finishDate": finishDate,

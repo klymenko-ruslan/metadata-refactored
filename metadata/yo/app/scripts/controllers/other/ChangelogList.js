@@ -1,14 +1,33 @@
 "use strict";
 
 angular.module("ngMetaCrudApp")
-  .controller("ChangelogListCtrl", ["$scope", "$log", "ngTableParams", "restService",
+  .controller("ChangelogListCtrl", ["$scope", "$log", "ngTableParams", "restService", "users",
   function(
-    $scope, $log, ngTableParams, restService) {
+    $scope, $log, ngTableParams, restService, users) {
+
+    $scope.users = users;
+
+    $scope.startDateOpened = false;
+    $scope.finishDateOpened = false;
+
+    $scope.openStartDateCalendar = function() {
+      $scope.startDateOpened = true;
+    };
+
+    $scope.openFinishDateCalendar = function() {
+      $scope.finishDateOpened = true;
+    };
+
+    $scope.datePickerOptions = {
+      dateDisabled: false,
+      formatYear: 'yyyy',
+      startingDay: 1
+    };
 
     // Notes Table
     $scope.changelogTableParams = new ngTableParams({
       page: 1,
-      count: 10,
+      count: 25,
       sorting: {
         changeDate: "desc"
       }
@@ -23,8 +42,8 @@ angular.module("ngMetaCrudApp")
         var offset = params.count() * (params.page() - 1);
         var limit = params.count();
         var userId = null;
-        if ($scope.search.user) {
-          userId = user.id;
+        if (angular.isObject($scope.search.user)) {
+          userId = $scope.search.user.id;
         }
         restService.filterChangelog($scope.search.startDate, $scope.search.finishDate,
           userId, $scope.search.description,
@@ -47,6 +66,11 @@ angular.module("ngMetaCrudApp")
       "finishDate": null,
       "user": null,
       "description": null
+    };
+
+    $scope.applyFilter = function() {
+$log.log("Search: " + angular.toJson($scope.search));
+      $scope.changelogTableParams.reload();
     };
 
   }

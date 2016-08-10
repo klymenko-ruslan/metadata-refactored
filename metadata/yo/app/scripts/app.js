@@ -282,7 +282,7 @@ angular.module("ngMetaCrudApp", ["ngRoute", "ngTable", "ui.bootstrap",
       templateUrl: "views/security/users.html",
       controller: "UsersCtrl",
       resolve: {
-        users: ["restService", function(restService) { return restService.getAllUsers()}]
+        users: ["restService", function(restService) { return restService.findActiveUsers()}]
       }
     });
     $routeProvider.when("/security/user/:id", {
@@ -297,7 +297,12 @@ angular.module("ngMetaCrudApp", ["ngRoute", "ngTable", "ui.bootstrap",
     // Chagelog.
     $routeProvider.when("/changelog/list", {
       templateUrl: "views/changelog/list.html",
-      controller: "ChangelogListCtrl"
+      controller: "ChangelogListCtrl",
+      resolve: {
+        users: ["restService", function(restService) {
+          return restService.findAllUsers();
+        }]
+      }
     });
     // Authentication providers.
     $routeProvider.when("/security/auth_providers", {

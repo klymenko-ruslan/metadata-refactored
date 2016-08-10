@@ -1,8 +1,53 @@
 <metanav />
 
+<h2>Changelog</h2>
+
+<div class="row" style="margin-bottom:1em;">
+  <div class="col-xs-12">
+    <div class="row form-inline">
+      <div class="col-xs-7">
+        <div class="form-group" style="white-space: nowrap;">
+          <label style="width:6em;">Date</label>
+          <p class="input-group">
+            <input type="text" class="form-control" data-ng-model="search.startDate" uib-datepicker-popup is-open="startDateOpened" close-text="Close">
+            <span class="input-group-btn">
+              <button type="button" class="btn btn-default" data-ng-click="openStartDateCalendar()"><i class="glyphicon glyphicon-calendar"></i></button>
+            </span>
+          </p>
+          &#8230;
+          <p class="input-group">
+            <input type="text" class="form-control" data-ng-model="search.finishDate" uib-datepicker-popup is-open="finishDateOpened" close-text="Close">
+            <span class="input-group-btn">
+              <button type="button" class="btn btn-default" data-ng-click="openFinishDateCalendar()"><i class="glyphicon glyphicon-calendar"></i></button>
+            </span>
+          </p>
+        </div>
+      </div>
+      <div class="col-xs-4">
+        <div class="form-group">
+          <label for="ctrl-user">User</label>
+          <select id="ctrl-user" class="form-control" data-ng-model="search.user" data-ng-options="u.name for u in users | orderBy:'name' track by u.id">
+            <option></option>
+          </select>
+        </div>
+      </div>
+      <div class="col-xs-1">
+        <button type="button" class="btn btn-primary pull-right" data-ng-click="applyFilter()"><i class="fa fa-search" aria-hidden="true"></i> Apply</button>
+      </div>
+    </div>
+    <div class="row form-inline">
+      <div class="col-xs-12">
+        <div class="form-group">
+          <label for="ctrl-description" style="width:6em;">Description</label>
+          <input id="ctrl-description" type="text" class="form-control" data-ng-model="search.description" />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="row">
   <div class="col-xs-12">
-    <h2>Changelog</h2>
     <table data-ng-table="changelogTableParams" class="table table-bordered table-striped">
       <tr data-ng-repeat="rec in $data">
         <td title="'Date'" data-sortable="'changeDate'" class="text-center">{{rec.changeDate | date : "yyyy-MM-dd HH:mm.ss"}}</td>
