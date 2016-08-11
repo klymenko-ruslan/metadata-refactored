@@ -16,13 +16,11 @@
     <link rel="icon" type="image/png" href="favicon.png" />
     <link rel="apple-touch-icon" href="apple-touch-favicon.png"/>
 
-    <base href="/"/>
-
     <!-- build:css(.tmp) styles/main.css -->
-    <link rel="stylesheet" href="/css/main.css">
-    <link rel="stylesheet" href="/css/ng-table.css">
-    <link rel="stylesheet" href="/css/gToast.css">
-    <link rel="stylesheet" href="/css/dialogs.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/ng-table.css">
+    <link rel="stylesheet" href="css/gToast.css">
+    <link rel="stylesheet" href="css/dialogs.css">
     <!-- endbuild -->
 </head>
 <body data-ng-app="mockApp">
@@ -37,23 +35,27 @@
 <![endif]-->
 
 <!-- Add your site or application content here -->
-<div class="container" data-ng-view=""></div>
+<div class="container">
+    <part-search>
+        <p>John Rambo</p>
+    </part-search>
+</div>
 
-<script src="/js/jquery-2.2.0.js"></script>
-<script src="/js/angular.js"></script>
+<script src="js/jquery-2.2.0.js"></script>
+<script src="js/angular.js"></script>
 
-<script src="/js/dialogs.js"></script>
-<script src="/js/angular-route.js"></script>
-<script src="/js/angular-sanitize.js"></script>
-<script src="/js/ui-bootstrap.js"></script>
-<script src="/js/ui-bootstrap-tpls.js"></script>
-<script src="/js/bootstrap.js"></script>
-<script src="/js/gToast.js"></script>
-<script src="/js/ng-table.js"></script>
-<script src="/js/underscore.js"></script>
-<script src="/js/restangular.js"></script>
+<script src="js/dialogs.js"></script>
+<script src="js/angular-route.js"></script>
+<script src="js/angular-sanitize.js"></script>
+<script src="js/ui-bootstrap.js"></script>
+<script src="js/ui-bootstrap-tpls.js"></script>
+<script src="js/bootstrap.js"></script>
+<script src="js/gToast.js"></script>
+<script src="js/ng-table.js"></script>
+<script src="js/underscore.js"></script>
+<script src="js/restangular.js"></script>
 
-<script src="/js/script.js"></script>
+<script src="js/script.js"></script>
 
 </body>
 </html>

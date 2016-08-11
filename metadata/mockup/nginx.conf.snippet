@@ -1,0 +1,10 @@
+#
+# Add this config to the 'server' section in a nginx configuration file.
+# Path in the 'alias' option should be ajusted.
+# The mockup site should be available by the URL: http://127.0.0.1/ti/mockup
+#
+
+location /ti/mockup {
+    alias  /home/trunikov/Projects/TurboInternational/metadata/mockup;
+    index  index.html;
+}
