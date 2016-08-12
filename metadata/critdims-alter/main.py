@@ -334,12 +334,15 @@ def def_sql_null(d, k):
     return retval
 
 
-def sql_str_param(s):
+def sql_param(s):
     """Escape a string as SQL parameter."""
     if s is None:
         return "null"
-    s = s.replace("'", "''")
-    return "'" + s + "'"
+    elif type(s) == int:
+        return str(s)
+    else:
+        s = s.replace("'", "''")
+        return "'" + s + "'"
 
 
 def name2PartTypeName(name):
@@ -1007,13 +1010,13 @@ def register_crit_dim(alter_file, input_data, table_name, pt_id, pt_cda,
             "{max_val}, {regex}, {parent_id}, {length}, " \
             "{scale}, {length_web}, {scale_web})".format(
                 cd_id=cd_id, part_type_id=pt_id, seq_num=seq_num,
-                data_type=sql_str_param(data_type), unit=sql_str_param(unit),
-                tolerance=tolerance, name=sql_str_param(name),
-                json_name=sql_str_param(json_name),
-                idx_name=sql_str_param(idx_name), enum_id=enum_id,
+                data_type=sql_param(data_type), unit=sql_param(unit),
+                tolerance=tolerance, name=sql_param(name),
+                json_name=sql_param(json_name),
+                idx_name=sql_param(idx_name), enum_id=enum_id,
                 null_allowed=null_allowed,
-                null_display=sql_str_param(null_display), min_val=min_val,
-                max_val=max_val, regex=sql_str_param(regex),
+                null_display=sql_param(null_display), min_val=min_val,
+                max_val=max_val, regex=sql_param(regex),
                 parent_id=parent_id, length=length, scale=scale,
                 length_web=length_web, scale_web=scale_web)
         sql += values
@@ -1036,7 +1039,6 @@ def tsvrec2importval(pt_cda, columns_meta, headers, row):
     in the 'row' array.
 
     The value is normalized:
-        - for columns of the type 'ENUMERATION' a value is set as None;
         - if value is string 'NULL' it is replaced by None.
     """
     retval = list()
@@ -1046,7 +1048,20 @@ def tsvrec2importval(pt_cda, columns_meta, headers, row):
         cd_id = cd["id"]
         value = row[idx]
         col_meta = columns_meta[cd_id]
-        if value == 'NULL' or col_meta.types.data_type == "ENUMERATION":
+        if (col_meta.types.data_type == "ENUMERATION"
+                and value is not None and value != 'NULL'):
+            if col_meta.types.field_type == 'LOGICAL':
+                # Map value from 'yesNoEnum'.
+                if value == "0":
+                    value = 2  # "NO"
+                elif value == "1":
+                    value = 1  # "YES"
+                else:
+                    raise ValueError("Unexpected LOGICAL value: {}".
+                                     format(value))
+            else:
+                value = int(value)
+        elif value == 'NULL':
             value = None
         retval.append(ImportValue(col_meta, value))
     return retval
@@ -1073,7 +1088,7 @@ def import_insert(part_id, part_number, manfr_id, part_type_id, inactive,
     else:
         retval += str(part_id)
     for iv in import_values:
-        retval += (", " + sql_str_param(iv.value))
+        retval += (", " + sql_param(iv.value))
     retval += ");\n"
     return retval
 
@@ -1086,7 +1101,7 @@ def import_update(part_id, table_name, import_values):
         for idx, iv in enumerate(import_values):
             if idx > 0:
                 retval += ", "
-            retval += (iv.col_meta.col_name + "=" + sql_str_param(iv.value))
+            retval += (iv.col_meta.col_name + "=" + sql_param(iv.value))
         retval += " where part_id=" + part_id + ";\n"
     return retval
 
