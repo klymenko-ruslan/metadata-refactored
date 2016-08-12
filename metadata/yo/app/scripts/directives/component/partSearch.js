@@ -7,12 +7,8 @@ angular.module("ngMetaCrudApp")
       replace: true,
       templateUrl: "/views/component/PartSearch.html",
       transclude: true,
-      link: function postLink(scope, iElement, iAttrs, controller, transcludeFn) {
-        controller.transcludeActionsFn = transcludeFn;
-      },
-      controller: ["$parse", "$sce", "$log", "$q", "$location", "$scope", "ngTableParams",
-        function($parse, $sce, $log, $q, $location, $scope, ngTableParams) {
-
+      controller: ["$transclude", "$parse", "$sce", "$log", "$q", "$location", "$scope", "ngTableParams",
+        function($transclude, $parse, $sce, $log, $q, $location, $scope, ngTableParams) {
         $scope.critDimEnumValsMap = _.indexBy($scope.critDimEnumVals, "id");
         // Filter
         $scope.searchPartType = null;
@@ -22,6 +18,9 @@ angular.module("ngMetaCrudApp")
         $scope.searchName = null;
         $scope.searchPartNumber = null;
         $scope.searchCritDims = {};
+
+        // $scope.actions = angular.element($transclude()).text();
+        $scope.actions = $transclude();
 
         $scope.showCriticalDimensions = false;
 
@@ -54,6 +53,7 @@ angular.module("ngMetaCrudApp")
             title: "Action",
             cssClass: ['actions', 'text-center'],
             getter: function(part) {
+              //var html = $scope.actions;
               var partId = part._source.id;
               var linkView = "<a authorize=\"ROLE_READ\" " +
                 "href=\"/part/" + partId + "\" " +
@@ -63,8 +63,24 @@ angular.module("ngMetaCrudApp")
                 "href=\"/part/" + partId + "/form\" " +
                 "class=\"btn btn-primary btn-xs\"> " +
                 "<i class=\"fa fa-cog\"></i> Edit</a>";
+              var linkPick = "<a authorize=\"ROLE_INTERCHANGE\" " +
+                "data-ng-click=\"pick(partId)\" class=\"btn btn-success btn-xs\"> " +
+                "<i class=\"fa fa-bullseye\"></i> Pick</a>";
               var html = linkView + "\n" + linkEdit;
+              /*
+              var html = "";
+              if ($scope.showViewBttn) {
+                html += (linkView + "\n");
+              }
+              if ($scope.showEditBttn) {
+                html += (linkEdit + "\n");
+              }
+              if ($scope.showPickBttn) {
+                html += (linkPick + "\n");
+              }
+              */
               return $sce.trustAsHtml(html);
+              //return html;
             }
           }
         ];

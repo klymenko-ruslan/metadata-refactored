@@ -70,7 +70,18 @@ angular.module("ngMetaCrudApp", ["ngRoute", "ngTable", "ui.bootstrap",
     });
     $routeProvider.when("/part/:id/interchange/search", {
       templateUrl: "views/part/interchange/PartInterchangeSearch.html",
-      controller: "PartInterchangeSearchCtrl"
+      controller: "PartInterchangeSearchCtrl",
+      resolve: {
+        partTypes: ["restService", function(restService) {
+          return restService.listPartTypes();
+        }],
+        critDimsByPartTypes: ["restService", function(restService) {
+          return restService.getCritDimsByPartTypes("ID");
+        }],
+        critDimEnumVals: ["restService", function(restService) {
+          return restService.getAllCritDimEnumVals();
+        }]
+      }
     });
     $routeProvider.when("/part/Kit/:id/component/search", {
       templateUrl: "../views/part/KitComponentSearch.html",
