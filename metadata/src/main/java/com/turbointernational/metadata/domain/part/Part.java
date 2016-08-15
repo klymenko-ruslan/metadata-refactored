@@ -389,6 +389,7 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
                 .include("name")
                 .include("manufacturerPartNumber")
                 .include("description")
+                .include("inactive")
                 .include("partType.id")
                 .include("partType.name")
                 .exclude("partType.*")

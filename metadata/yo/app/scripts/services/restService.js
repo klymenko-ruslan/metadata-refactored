@@ -470,9 +470,11 @@ angular.module("ngMetaCrudApp")
       };
 
       this.filterParts = function(searchPartTypeId, searchManufacturerName, searchName, searchPartNumber,
-          searchTurboModelName, searchTurboTypeName, searchCritDims, sortProperty, sortOrder, offset, limit) {
+          searchInactive, searchTurboModelName, searchTurboTypeName, searchCritDims,
+          sortProperty, sortOrder, offset, limit) {
         var params = {
           partNumber: searchPartNumber,
+          inactive: searchInactive,
           partTypeId: searchPartTypeId,
           manufacturerName: searchManufacturerName,
           turboModelName: searchTurboModelName,
@@ -569,7 +571,7 @@ angular.module("ngMetaCrudApp")
 
       this.filterChangelog = function(startDate, finishDate, userId, description,
         sortProperty, sortOrder, offset, limit) {
-$log.log("filterChangelog: sartDate=" + startDate + ", finishDate=" + finishDate + ", userId=" + userId);
+//$log.log("filterChangelog: sartDate=" + startDate + ", finishDate=" + finishDate + ", userId=" + userId);
         return Restangular.one("changelog/list").get({
           "startDate": startDate,
           "finishDate": finishDate,

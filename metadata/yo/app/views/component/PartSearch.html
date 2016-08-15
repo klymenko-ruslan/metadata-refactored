@@ -10,6 +10,14 @@
       <input class="form-control input-sm" id="fltrPartNumber" name="fltrPartNumber" type="text" data-ng-model="searchPartNumber" data-ng-model-options="{debounce: 200}" data-ng-keyup="$event.keyCode === 13 && onPressedEnter()" placeholder="Part number..." />
     </div>
     <div class="form-group">
+      <label for="">State</label>
+      <select id="fltrState" name="fltrState" class="form-control input-sm" data-ng-model="searchInactive">
+        <option></option>
+        <option value="false">Active</option>
+        <option value="true">Inactive</option>
+      </select>
+    </div>
+    <div class="form-group">
       <label for="fltrManufacturer">Manufacturer</label>
       <select id="fltrManufacturer" name="fltrManufacturer" class="form-control input-sm" data-ng-options="itm.key as itm.key + ' (' + itm.doc_count + ')' for itm in searchResults.aggregations['Manufacturer'].buckets | orderBy: 'key'" data-ng-model="searchManufacturer">
         <option></option>

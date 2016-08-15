@@ -12,6 +12,7 @@ angular.module("ngMetaCrudApp")
         $scope.critDimEnumValsMap = _.indexBy($scope.critDimEnumVals, "id");
         // Filter
         $scope.searchPartType = null;
+        $scope.searchInactive = null;
         $scope.searchManufacturer = null;
         $scope.searchTurboModel = null;
         $scope.searchTurboType = null;
@@ -153,7 +154,7 @@ angular.module("ngMetaCrudApp")
               turboTypeName = $scope.searchTurboType;
             }
             restService.filterParts(searchPartTypeId, $scope.searchManufacturer, $scope.searchName,
-              $scope.searchPartNumber, turboModelName, turboTypeName,
+              $scope.searchPartNumber, $scope.searchInactive, turboModelName, turboTypeName,
               $scope.searchCritDims, sortProperty, sortOrder, offset, limit).then(
               function(filtered) { // The 'filtered' is a JSON returned by ElasticSearch.
                 $scope.searchResults = filtered;
@@ -171,6 +172,7 @@ angular.module("ngMetaCrudApp")
 
         $scope.clearFilter = function() {
           $scope.searchPartNumber = null;
+          $scope.searchInactive = null;
           $scope.searchPartType = null;
           $scope.searchManufacturer = null;
           $scope.searchName = null;
@@ -183,7 +185,9 @@ angular.module("ngMetaCrudApp")
         // Critical dimensions for the current choose $scope.searchPartType.
         $scope.critDims = null;
 
-        $scope.$watch("[searchPartNumber, searchManufacturer, searchName, searchCritDims, searchTurboModel, searchTurboType]", function(newVal, oldVal) {
+        $scope.$watch("[searchPartNumber, searchInactive, searchManufacturer, searchName, searchCritDims, " +
+          "searchTurboModel, searchTurboType]", function(newVal, oldVal)
+        {
           // Debounce
           if (angular.equals(newVal, oldVal, true)) {
             return;
