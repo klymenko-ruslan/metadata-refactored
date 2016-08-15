@@ -35,10 +35,13 @@
 <![endif]-->
 
 <!-- Add your site or application content here -->
-<div class="container">
-    <part-search>
+<div class="container" data-ng-controller="indexCtrl">
+    <!-- part-search>
         <p>John Rambo</p>
-    </part-search>
+    </part-search -->
+
+    <button type="button" class="btn btn-primary" data-ng-click="onOpenChangelogDetails()">Open changelog dialog</button>
+
 </div>
 
 <script src="js/jquery-2.2.0.js"></script>

@@ -155,7 +155,7 @@ set shiftwidth=2
 set suffixes=.bak,~,.o,.h,.info,.swp,.obj,.info,.aux,.log,.dvi,.bbl,.out,.o,.lo
 set tabstop=2
 set termencoding=utf-8
-set window=41
+set window=40
 let s:so_save = &so | let s:siso_save = &siso | set so=0 siso=0
 let v:this_session=expand("<sfile>:p")
 silent only
@@ -164,14 +164,15 @@ if expand('%') == '' && !&modified && line('$') <= 1 && getline(1) == ''
   let s:wipebuf = bufnr('%')
 endif
 set shortmess=aoO
-badd +61 index.html
+badd +51 index.html
 badd +1 js/script.js
-badd +6 views/PartSearch.html
+badd +11 views/PartSearch.html
+badd +6 views/ChangelogDlg.html
 argglobal
 silent! argdel *
 argadd index.html
 argadd js/script.js
-edit views/PartSearch.html
+edit index.html
 set splitbelow splitright
 wincmd _ | wincmd |
 split
@@ -181,10 +182,10 @@ set nosplitbelow
 set nosplitright
 wincmd t
 set winheight=1 winwidth=1
-exe '1resize ' . ((&lines * 17 + 21) / 42)
-exe '2resize ' . ((&lines * 22 + 21) / 42)
+exe '1resize ' . ((&lines * 18 + 20) / 41)
+exe '2resize ' . ((&lines * 20 + 20) / 41)
 argglobal
-edit views/PartSearch.html
+edit index.html
 setlocal keymap=
 setlocal noarabic
 setlocal autoindent
@@ -238,7 +239,7 @@ setlocal formatoptions=tcq
 setlocal formatlistpat=^\\s*\\d\\+[\\]:.)}\\t\ ]\\s*
 setlocal grepprg=
 setlocal iminsert=0
-setlocal imsearch=2
+setlocal imsearch=0
 setlocal include=
 setlocal includeexpr=
 setlocal indentexpr=HtmlIndent()
@@ -269,7 +270,7 @@ setlocal norelativenumber
 setlocal norightleft
 setlocal rightleftcmd=search
 setlocal noscrollbind
-setlocal shiftwidth=4
+setlocal shiftwidth=2
 setlocal noshortname
 setlocal nosmartindent
 setlocal softtabstop=0
@@ -284,7 +285,7 @@ setlocal synmaxcol=3000
 if &syntax != 'html'
 setlocal syntax=html
 endif
-setlocal tabstop=4
+setlocal tabstop=2
 setlocal tags=
 setlocal textwidth=0
 setlocal thesaurus=
@@ -295,12 +296,12 @@ setlocal nowinfixwidth
 setlocal wrap
 setlocal wrapmargin=0
 silent! normal! zE
-let s:l = 1 - ((0 * winheight(0) + 8) / 17)
+let s:l = 43 - ((0 * winheight(0) + 9) / 18)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-1
-normal! 0
+43
+normal! 052|
 wincmd w
 argglobal
 edit js/script.js
@@ -414,16 +415,16 @@ setlocal nowinfixwidth
 setlocal wrap
 setlocal wrapmargin=0
 silent! normal! zE
-let s:l = 18 - ((17 * winheight(0) + 11) / 22)
+let s:l = 40 - ((11 * winheight(0) + 10) / 20)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-18
-normal! 025|
+40
+normal! 088|
 wincmd w
 2wincmd w
-exe '1resize ' . ((&lines * 17 + 21) / 42)
-exe '2resize ' . ((&lines * 22 + 21) / 42)
+exe '1resize ' . ((&lines * 18 + 20) / 41)
+exe '2resize ' . ((&lines * 20 + 20) / 41)
 tabnext 1
 if exists('s:wipebuf')
   silent exe 'bwipe ' . s:wipebuf

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.Date;
+import java.util.Calendar;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
@@ -31,9 +31,9 @@ public class ChangelogController {
     @Secured("ROLE_ADMIN")
     public Page<Changelog> filterChangelog(@RequestParam(name = "userId", required = false) Long userId,
                                            @RequestParam(name = "startDate", required = false)
-                                           @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
+                                           @DateTimeFormat(pattern = "yyyy-MM-dd") Calendar startDate,
                                            @RequestParam(name = "finishDate", required = false)
-                                           @DateTimeFormat(pattern = "yyyy-MM-dd") Date finishDate,
+                                           @DateTimeFormat(pattern = "yyyy-MM-dd") Calendar finishDate,
                                            @RequestParam(name = "description", required = false) String description,
                                            @RequestParam(name = "sortProperty", required = false) String sortProperty,
                                            @RequestParam(name = "sortOrder", required = false) String sortOrder,

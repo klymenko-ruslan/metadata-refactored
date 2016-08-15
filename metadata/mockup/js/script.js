@@ -5,8 +5,9 @@ angular.module("mockApp", ["ngRoute", "ngTable", "ui.bootstrap",
 
 
 angular.module("mockApp")
-.controller("dynColsCtrl", ["$scope", "$log", "NgTableParams",
-    function($scope, $log, NgTableParams) {
+.controller("indexCtrl", ["$scope", "$log", "NgTableParams",
+    "$uibModal", /*"$uibModalInstance",*/
+    function($scope, $log, NgTableParams, $uibModal /*, $uibModalInstance*/) {
       $scope.cols = [
       {field: "name", title: "Name"},
       {field: "action", title: "Action"}
@@ -18,7 +19,31 @@ angular.module("mockApp")
         {name: "Юрий Лоза", action: "None"},
         ]
       });
+
+      $scope.onOpenChangelogDetails = function() {
+        $log.log("onOpenChangelogDetais");
+        $uibModal.open({
+          templateUrl: "views/ChangelogDlg.html",
+          size: "lg",
+          controller: "changelogDlgCtrl"
+          /*controller: "indexCtrl"*/
+        });
+      };
+
+      $scope.onCloseChangelogDetails = function() {
+        $uibModalInstance.close();
+      };
+
     }]);
+
+angular.module("mockApp")
+.controller("changelogDlgCtrl",["$scope", "$log", "$uibModalInstance", function($scope, $log, $uibModalInstance) {
+
+  $scope.onCloseChangelogDetails = function() {
+    $uibModalInstance.close();
+  };
+
+}]);
 
 angular.module("mockApp")
 .directive("partSearch", ["$log", function($log) {
