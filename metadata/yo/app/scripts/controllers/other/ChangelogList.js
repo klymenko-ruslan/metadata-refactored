@@ -1,26 +1,28 @@
 "use strict";
 
 angular.module("ngMetaCrudApp")
-  .controller("ChangelogListCtrl", ["$scope", "$log", "ngTableParams", "restService", "users",
-  function(
-    $scope, $log, ngTableParams, restService, users) {
+  .controller("ChangelogListCtrl", ["$scope", "$log", "ngTableParams", "$uibModal", "restService", "users",
+    "DATE_FORMAT", function(
+    $scope, $log, ngTableParams, $uibModal, restService, users, DATE_FORMAT) {
+
+    $scope.dateFormat = DATE_FORMAT;
 
     $scope.users = users;
 
-    $scope.startDateOpened = false;
-    $scope.finishDateOpened = false;
-
+    $scope.opened = {
+      startDate: false,
+      finishDate: false
+    };
     $scope.openStartDateCalendar = function() {
-      $scope.startDateOpened = true;
+      $scope.opened.startDate = true;
     };
 
     $scope.openFinishDateCalendar = function() {
-      $scope.finishDateOpened = true;
+      $scope.opened.finishDate = true;
     };
 
     $scope.datePickerOptions = {
       dateDisabled: false,
-      formatYear: 'yyyy',
       startingDay: 1
     };
 

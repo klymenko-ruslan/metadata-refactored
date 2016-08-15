@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.domain.changelog.Changelog;
 import com.turbointernational.metadata.services.ChangelogService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,8 +30,10 @@ public class ChangelogController {
     @JsonView(View.Summary.class)
     @Secured("ROLE_ADMIN")
     public Page<Changelog> filterChangelog(@RequestParam(name = "userId", required = false) Long userId,
-                                           @RequestParam(name = "startDate", required = false) Date startDate,
-                                           @RequestParam(name = "finishDate", required = false) Date finishDate,
+                                           @RequestParam(name = "startDate", required = false)
+                                           @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
+                                           @RequestParam(name = "finishDate", required = false)
+                                           @DateTimeFormat(pattern = "yyyy-MM-dd") Date finishDate,
                                            @RequestParam(name = "description", required = false) String description,
                                            @RequestParam(name = "sortProperty", required = false) String sortProperty,
                                            @RequestParam(name = "sortOrder", required = false) String sortOrder,

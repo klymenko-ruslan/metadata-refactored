@@ -1,8 +1,9 @@
 "use strict";
 
 angular.module("ngMetaCrudApp")
-  .service("restService", ["$log", "$http", "Restangular", "dialogs", "$q", "$rootScope", "METADATA_BASE",
-    function RestService($log, $http, Restangular, dialogs, $q, $rootScope, METADATA_BASE) {
+  .service("restService", ["$log", "$http", "Restangular", "dialogs", "$q", "$rootScope", "$filter",
+      "METADATA_BASE", "DATE_FORMAT",
+      function RestService($log, $http, Restangular, dialogs, $q, $rootScope, $filter, METADATA_BASE, DATE_FORMAT) {
 
     return new function() { // jshint ignore:line
       var RestService = this;
@@ -571,7 +572,16 @@ angular.module("ngMetaCrudApp")
 
       this.filterChangelog = function(startDate, finishDate, userId, description,
         sortProperty, sortOrder, offset, limit) {
-//$log.log("filterChangelog: sartDate=" + startDate + ", finishDate=" + finishDate + ", userId=" + userId);
+$log.log("toJson(startDate)=" + angular.toJson(startDate))
+$log.log("toJson(finishDate)=" + angular.toJson(finishDate))
+        if (startDate) {
+          startDate = $filter("date")(startDate, DATE_FORMAT);
+        }
+        if (finishDate) {
+          finishDate = $filter("date")(finishDate, DATE_FORMAT);
+        }
+
+$log.log("filterChangelog: sartDate=" + startDate + ", finishDate=" + finishDate + ", userId=" + userId);
         return Restangular.one("changelog/list").get({
           "startDate": startDate,
           "finishDate": finishDate,

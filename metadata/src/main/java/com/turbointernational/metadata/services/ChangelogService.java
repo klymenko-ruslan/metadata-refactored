@@ -20,6 +20,12 @@ public class ChangelogService {
     public Page<Changelog> filter(Long userId, Date startDate, Date finishDate, String description,
                                   String sortProperty, String sortOrder,
                                   Integer offset, Integer limit) {
+        // Normalizaton of the time range.
+        if (startDate != null && finishDate != null && startDate.compareTo(finishDate) > 0) {
+            Date swap = finishDate;
+            finishDate = startDate;
+            startDate = swap;
+        }
         return changelogDao.filter(userId, startDate, finishDate, description, sortProperty, sortOrder,
                 offset, limit);
     }
