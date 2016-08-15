@@ -1,1 +1,11 @@
-<h1>Hello world!</h1>
+<div class="row" data-ng-controller="dynColsCtrl as ctrl">
+    <div class="col-xs-12">
+        <table ng-table-dynamic="ctrl.tableParams with ctrl.cols" 
+               class="table table-condensed table-bordered table-striped">
+            <tr ng-repeat="row in $data">
+                <td ng-repeat="col in $columns">{{row[col.field]}}</td>
+            </tr>
+            <tr data-ng-if="$data"><td colspan="2">No data.</tr>
+        </table>
+    </div>
+</div>
