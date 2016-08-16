@@ -5,21 +5,8 @@ angular.module("mockApp", ["ngRoute", "ngTable", "ui.bootstrap",
 
 
 angular.module("mockApp")
-.controller("indexCtrl", ["$scope", "$log", "NgTableParams",
-    "$uibModal", /*"$uibModalInstance",*/
-    function($scope, $log, NgTableParams, $uibModal /*, $uibModalInstance*/) {
-      $scope.cols = [
-      {field: "name", title: "Name"},
-      {field: "action", title: "Action"}
-      ];
-      $scope.tableParams = new NgTableParams({},{
-        dataset: [
-        {name: "John Rambo", action: "None"},
-        {name: "Forrest Gump", action: "None"},
-        {name: "Юрий Лоза", action: "None"},
-        ]
-      });
-
+.controller("indexCtrl", ["$scope", "$log", "$uibModal",
+    function($scope, $log, $uibModal) {
       $scope.onOpenChangelogDetails = function() {
         $log.log("onOpenChangelogDetais");
         $uibModal.open({
@@ -32,6 +19,10 @@ angular.module("mockApp")
 
       $scope.onCloseChangelogDetails = function() {
         $uibModalInstance.close();
+      };
+
+      $scope.pickRecord = function() {
+        alert("The record has been picket.");
       };
 
     }]);
@@ -52,8 +43,38 @@ angular.module("mockApp")
     replace: true,
     templateUrl: "views/PartSearch.html",
     transclude: true,
-    controller: ["$parse", "$sce", "$log", "$q", "$location", "$scope", "ngTableParams",
-    function($parse, $sce, $log, $q, $location, $scope, ngTableParams) {
+    controller: ["$parse", "$sce", "$log", "$q", "$scope", "NgTableParams",
+      "$transclude",
+    function($parse, $sce, $log, $q, $scope, NgTableParams, $transclude) {
+
+      var transcludedHtml = null;
+      $transclude(function(clone) {
+        transcludedHtml = clone[0].outerHTML;
+      });
+      $log.log("transcludedHtml: " + transcludedHtml);
+      $scope.tableDataSet = [
+        {name: $sce.trustAsHtml("John Rambo"), action: $sce.trustAsHtml("None")},
+        {name: $sce.trustAsHtml("Forrest Gump"), action: $sce.trustAsHtml("None")},
+        {name: $sce.trustAsHtml("Юрий Лоза"), action: $sce.trustAsHtml("None")}
+      ];
+      $scope.columns = [
+        {field: "name", title: "Name"},
+        {field: "action", title: "Action"}
+      ];
+      $scope.tableParams = new NgTableParams({
+          page: 1,
+          count: 10,
+          sorting: {} 
+        },{
+          getData: function($defer, params) {
+            var dataSet = angular.copy($scope.tableDataSet);
+            _.each(dataSet, function(rec) {
+              rec.action = $sce.trustAsHtml(transcludedHtml);
+            });
+            $defer.resolve(dataSet);
+            params.total(dataSet.length);
+          }
+        });
     }]
   };
 }]);
