@@ -54,7 +54,7 @@
         <td title="'User'" data-sortable="'user.name'" class="text-nowrap"><a data-ng-href="security/user/{{rec.user.id}}">{{rec.user.name}}</a></td>
         <td title="'Description'">{{rec.description}}</td>
         <td title="'Actions'" class="actions text-center">
-          <button class="btn btn-primary btn-xs"><i class="fa fa-eye"></i> View </button>
+          <button class="btn btn-primary btn-xs" data-ng-click="onOpenViewDlg(rec)"><i class="fa fa-eye"></i> View </button>
         </td>
       </tr>
       <tr data-ng-hide="$data.length > 0">

@@ -71,9 +71,44 @@ angular.module("ngMetaCrudApp")
     };
 
     $scope.applyFilter = function() {
-$log.log("Search: " + angular.toJson($scope.search));
       $scope.changelogTableParams.reload();
     };
 
-  }
-]);
+    $scope.onOpenViewDlg = function(changelogRecord) {
+      $uibModal.open({
+        templateUrl: "/views/changelog/view.html",
+        animation: false,
+        size: "lg",
+        controller: "ChangelogViewDlgCtrl",
+        resolve: {
+          changelogRecord: function() {
+            return changelogRecord;
+          }
+        }
+      });
+    };
+
+  }])
+  .controller("ChangelogViewDlgCtrl", ["$scope", "$log", "$uibModalInstance", "changelogRecord",
+    function($scope, $log, $uibModalInstance,  changelogRecord) {
+      $scope.changes = null;
+      if (changelogRecord && changelogRecord.data !== undefined && changelogRecord.data !== null) {
+        var data = changelogRecord.data;
+        try {
+          $scope.changes = angular.fromJson(data);
+        } catch (e) {
+          var patched = data.replace(/(['"])?([a-zA-Z0-9_]+)(['"])?:/g, '"$2": ');
+          try {
+            $scope.changes = angular.fromJson(patched);
+          } catch(e) {
+            $log.log("Bad data of a changelog record [" + changelogRecord.id + "]: " + e);
+            $scope.changes = data; // string
+          }
+        }
+      }
+
+      $scope.onCloseViewDlg = function() {
+        $uibModalInstance.close();
+      };
+
+  }]);
