@@ -21,8 +21,8 @@ angular.module("mockApp")
         $uibModalInstance.close();
       };
 
-      $scope.pickRecord = function() {
-        alert("The record has been picket.");
+      $scope.pickRecord = function(row) {
+        alert("Picked: " + row.name);
       };
 
     }]);
@@ -37,6 +37,22 @@ angular.module("mockApp")
 }]);
 
 angular.module("mockApp")
+.directive('ngHtmlCompile', function($compile) {
+  /**
+   * The directive was copy-pasted from:
+   *  * https://github.com/francisbouvier/ng_html_compile
+   * Thank you Francis Bouvier for your perfect work :)
+   */
+  return {
+      restrict: 'A',
+      link: function(scope, element, attrs) {
+        scope.$watch(attrs.ngHtmlCompile, function(newValue, oldValue) {
+          element.html(newValue);
+          $compile(element.contents())(scope);
+        });
+      }
+  }
+})
 .directive("partSearch", ["$log", function($log) {
   return {
     restrict: "E",
@@ -46,16 +62,18 @@ angular.module("mockApp")
     controller: ["$parse", "$sce", "$log", "$q", "$scope", "NgTableParams",
       "$transclude",
     function($parse, $sce, $log, $q, $scope, NgTableParams, $transclude) {
-
+      var transcludedHtml = $transclude();
+      /*
       var transcludedHtml = null;
       $transclude(function(clone) {
         transcludedHtml = clone[0].outerHTML;
       });
+      */
       $log.log("transcludedHtml: " + transcludedHtml);
       $scope.tableDataSet = [
-        {name: $sce.trustAsHtml("John Rambo"), action: $sce.trustAsHtml("None")},
-        {name: $sce.trustAsHtml("Forrest Gump"), action: $sce.trustAsHtml("None")},
-        {name: $sce.trustAsHtml("Юрий Лоза"), action: $sce.trustAsHtml("None")}
+        {name: "John Rambo", action: "None"},
+        {name: "Forrest Gump", action: "None"},
+        {name: "Юрий Лоза", action: "None"}
       ];
       $scope.columns = [
         {field: "name", title: "Name"},
@@ -67,9 +85,11 @@ angular.module("mockApp")
           sorting: {} 
         },{
           getData: function($defer, params) {
+            //var dataSet = $scope.tableDataSet;
             var dataSet = angular.copy($scope.tableDataSet);
             _.each(dataSet, function(rec) {
-              rec.action = $sce.trustAsHtml(transcludedHtml);
+              //rec.action = $sce.trustAsHtml(transcludedHtml);
+              rec.action = transcludedHtml;
             });
             $defer.resolve(dataSet);
             params.total(dataSet.length);

@@ -4,7 +4,7 @@
     <table ng-table-dynamic="tableParams with columns"
       class="table table-condensed table-bordered table-striped">
       <tr ng-repeat="row in $data">
-        <td ng-repeat="col in $columns" data-ng-bind-html="row[col.field]"></td>
+        <td ng-repeat="col in $columns" data-ng-html-compile="row[col.field]"></td>
       </tr>
       <tr data-ng-if="$data"><td colspan="2">No data.</tr>
     </table>
