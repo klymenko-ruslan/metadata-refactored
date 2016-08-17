@@ -26,6 +26,7 @@ body {
   margin: 20px;
   background-image: url("../images/bg.gif");
   background-repeat: repeat;
+  padding-top: 50px;
 }
 
 h1:first-of-type {
@@ -90,3 +91,114 @@ h1:first-of-type {
 .ng-table-pagination {
   margin-top: 0;
 }
+
+.navbar-inverse .navbar-nav>li>a, .navbar-inverse .navbar-text {
+    color: #ddd;
+}
+
+.navbar-inverse {
+  background-color: #3A5A98;
+  border-color: #090909;
+}
+
+#partTabs > li {
+  float: left;
+  margin-bottom: -1px;
+  background-color: transparent;
+}
+
+#partTabs > li > a {
+  margin-right: 2px;
+  line-height: 1.42857143;
+  border: 1px solid transparent;
+  border-radius: 4px 4px 0 0;
+  background-color: #859994; /*#555E7B;*/
+  color: #fff;
+  font-size: 16px;
+  font-weight: normal;
+}
+
+#partTabs > li > a:hover {
+  text-decoration: underline;
+  background-color: #000;
+  color: #fff;
+}
+
+#partTabs > li.active > a,
+#partTabs > li.active > a:hover,
+#partTabs > li.active > a:focus {
+  text-decoration: underline;
+  color: #333;
+  cursor: default;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-bottom-color: transparent;
+}
+
+.tab-part-detail {
+  padding: 20px 10px;
+  background-color: #FFF;
+  border-left: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+}
+
+div.no-image {
+  height: 200px;
+  width: 200px;
+  margin-left: auto;
+  margin-right: auto;
+  border-width: 0;
+  background-image: url("../images/no-image.png");
+}
+
+/**
+ * Critical dimensions.
+ */
+
+table.critical-dimensions {
+  /* Marker, to define styles for child elements. Don't remove! */
+}
+
+table.critical-dimensions input {
+  line-height: 100%;
+  padding-left: 2px;
+  padding-right: 2px;
+}
+
+form .ng-invalid {
+  border: 1px solid #a94442;
+  background-color: #f2dede;
+}
+
+.alert {
+  padding: 5px;
+  margin-bottom: 10px;
+  border: 1px solid transparent;
+  border-radius: 3px;
+}
+
+.tool-control {
+  margin: 5px 0;
+}
+
+td.actions {
+  white-space: nowrap;
+  width: 100px;
+}
+
+.clicked-row {
+  cursor:pointer;
+}
+
+form.table-top-form {
+  padding: 6px 6px;
+  border-left: 1px solid #ddd;
+  border-top: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+}
+
+div.tolerance {
+  display: inline-block;
+}
+

@@ -18,7 +18,7 @@ public class ManufacturerDao extends AbstractDao<Manufacturer> {
     
     @com.googlecode.ehcache.annotations.Cacheable(cacheName = "manufacturers")
     public List<Manufacturer> findAllManufacturers() {
-        return em.createQuery("SELECT o FROM Manufacturer o", Manufacturer.class).getResultList();
+        return em.createQuery("SELECT o FROM Manufacturer o ORDER BY o.name", Manufacturer.class).getResultList();
     }
     
     @com.googlecode.ehcache.annotations.Cacheable(cacheName = "manufacturers")

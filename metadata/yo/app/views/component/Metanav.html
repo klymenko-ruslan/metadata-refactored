@@ -1,61 +1,61 @@
-<nav class="navbar navbar-default">
+<nav class="navbar navbar-inverse navbar-fixed-top">
   <div class="container-fluid">
     <ul class="nav navbar-nav">
-      <li authorize="ROLE_READ">
-        <a ng-href="/part/list">
-          <i class="fa fa-home"></i> Part List
+      <li data-ng-disabled="{{::!hasRole('ROLE_READ')}}"><a href="#" data-ng-href="/part/list"><i class="fa fa-cog" aria-hidden="true"></i> Parts</a></li>
+      <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+          <i class="fa fa-cogs" aria-hidden="true"></i> Entities <span class="caret"></span>
         </a>
-      </li>
-      <li authorize="ROLE_TURBO_MODEL_CRUD">
-        <a ng-href="/other/salesNotes">
-          <i class="fa fa-files-o"></i> Sales Notes
-        </a>
-      </li>
-      <li authorize="ROLE_TURBO_MODEL_CRUD">
-        <a ng-href="/other/turboModels">
-          <i class="fa fa-book"></i> Turbo Models
-        </a>
-      </li>
-      <li authorize="ROLE_APPLICATION_CRUD">
-        <a ng-href="/application/carmodelengineyear/list">
-          <i class="fa fa-book"></i> Applications
-        </a>
+        <ul class="dropdown-menu">
+          <li data-ng-disabled="{{::!hasRole('ROLE_READ')}}"><a href="#" data-ng-href="/parttype/list"><i class="fa fa-gg" aria-hidden="true"></i> Part Types</a></li>
+          <li data-ng-disabled="{{::!hasRole('ROLE_TURBO_MODEL_CRUD')}}"><a href="#" data-ng-href="/other/salesNotes"><i class="fa fa-files-o" aria-hidden="true"></i> Sales Notes</a></li>
+          <li data-ng-disabled="{{::!hasRole('ROLE_TURBO_MODEL_CRUD')}}"><a href="#" data-ng-href="/other/turboModels"><i class="fa fa-superscript" aria-hidden="true"></i> Turbo Models</a></li>
+          <li data-ng-disabled="{{::!hasRole('ROLE_APPLICATION_CRUD')}}"><a href="#" data-ng-href="/application/carmodelengineyear/list"><i class="fa fa-cubes" aria-hidden="true"></i> Applications</a></li>
+          <li class="divider"></li>
+          <li data-ng-disabled="{{::!hasRole('ROLE_ADMIN')}}"><a href="#" data-ng-href="/criticaldimension/enums"><i class="fa fa-list-ol" aria-hidden="true"></i> Critical dimensions enumerations </a></li>
+        </ul>
       </li>
       <li class="dropdown">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-          <i class="fa fa-th"></i> Admin <span class="caret"></span>
+          <i class="fa fa-th" aria-hidden="true"></i> Admin <span class="caret"></span>
         </a>
         <ul class="dropdown-menu">
-          <li data-ng-disabled="{{::!hasRole('ROLE_ADMIN')}}"><a href="#" ng-href="/security/users/"><i class="fa fa-user"></i> Users</a></li>
-          <li data-ng-disabled="{{::!hasRole('ROLE_ADMIN')}}"><a href="#" ng-href="/security/groups/"><i class="fa fa-group"></i> Groups</a></li>
-          <li data-ng-disabled="{{::!hasRole('ROLE_ADMIN')}}"><a href="#" ng-href="/security/auth_providers/"><i class="fa fa-unlock-alt"></i> Authentication providers</a></li>
+          <li data-ng-disabled="{{::!hasRole('ROLE_ADMIN')}}"><a href="#" data-ng-href="/security/users/"><i class="fa fa-user" aria-hidden="true"></i> Users</a></li>
+          <li data-ng-disabled="{{::!hasRole('ROLE_ADMIN')}}"><a href="#" data-ng-href="/security/groups/"><i class="fa fa-group" aria-hidden="true"></i> Groups</a></li>
+          <li data-ng-disabled="{{::!hasRole('ROLE_ADMIN')}}"><a href="#" data-ng-href="/security/auth_providers/"><i class="fa fa-unlock-alt" aria-hidden="true"></i> Authentication providers</a></li>
+
+          <!--
+          <li class="divider"></li>
+          <li data-ng-disabled="{{::!hasRole('ROLE_ADMIN')}}"><a href="#" data-ng-href="/changelog/list"><i class="fa fa-list-ol" aria-hidden="true"></i> Audit</a></li>
+          -->
 
           <li class="divider"></li>
 
-          <li data-ng-disabled="{{::!hasRole('ROLE_ADMIN')}}"><a href="#" ng-click="rebuildBom()"><i class="fa fa-refresh"></i> Rebuild BOM</a></li>
-          <li data-ng-disabled="{{::!hasRole('ROLE_ADMIN')}}"><a href="#" ng-click="reindexPartSearch()"><i class="fa fa-refresh"></i> Reindex Parts</a></li>
-          <li data-ng-disabled="{{::!hasRole('ROLE_ADMIN')}}"><a href="#" ng-click="reindexApplicationSearch()"><i class="fa fa-refresh"></i> Reindex Applications</a></li>
-          <li data-ng-disabled="{{::!hasRole('ROLE_ADMIN')}}"><a href="#" ng-click="reindexSalesNotesSearch()"><i class="fa fa-refresh"></i> Reindex Sales Notes</a></li>
+          <li data-ng-disabled="{{::!hasRole('ROLE_ADMIN')}}"><a href="#" data-ng-click="rebuildBom()"><i class="fa fa-refresh" aria-hidden="true"></i> Rebuild BOM</a></li>
 
           <li class="divider"></li>
 
-          <li data-ng-disabled="{{::!hasRole('ROLE_MAS90_SYNC')}}"><a href="#" ng-href="/mas90/sync/status"><i class="fa fa-refresh"></i> MAS90 Synchronization</a></li>
+          <li data-ng-disabled="{{::!hasRole('ROLE_ADMIN')}}"><a href="#" data-ng-href="/search/indexing/status"><i class="fa fa-refresh" aria-hidden="true"></i> Indexing</a></li>
 
           <li class="divider"></li>
 
-          <li data-ng-disabled="{{::!hasRole('ROLE_ADMIN')}}"><a href="#" ng-click="clearHibernate()"><i class="fa fa-trash-o"></i> Clear Hibernate Cache</a></li>
+          <li data-ng-disabled="{{::!hasRole('ROLE_MAS90_SYNC')}}"><a href="#" data-ng-href="/mas90/sync/status"><i class="fa fa-refresh" aria-hidden="true"></i> MAS90 Synchronization</a></li>
+
+          <li class="divider"></li>
+
+          <li data-ng-disabled="{{::!hasRole('ROLE_ADMIN')}}"><a href="#" data-ng-click="clearHibernate()"><i class="fa fa-trash-o" aria-hidden="true"></i> Clear Hibernate Cache</a></li>
         </ul>
       </li>
     </ul>
 
     <ul class="nav navbar-nav navbar-right">
       <li>
-        <a ng-href="/security/me">
+        <a data-ng-href="/security/me">
           <i class="fa fa-smile-o"></i> My Account
         </a>
       </li>
       <li>
-        <a href="#" ng-click="User.logout()">
+        <a href="#" data-ng-click="User.logout()">
           <i class="fa fa-sign-out"></i> Logout {{User.user.name}}
         </a>
       </li>
@@ -64,7 +64,7 @@
   </div>
 </nav>
 
-<ul class="nav nav-pills" ng-transclude>
+<ul class="nav nav-pills" data-ng-transclude>
   <!-- Transcluded li -->
 </ul>
 <hr/>

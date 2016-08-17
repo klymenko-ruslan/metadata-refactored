@@ -2,27 +2,27 @@
 
 <div class="row">
 
-  <div class="col-xs-12" ng-hide="phase != 0">
+  <div class="col-xs-12" data-ng-hide="phase != 0">
     <div class="row">
       <div class="col-xs-12 col-sm-11 col-sm-push-1" style="padding-left:3em;">
         <div class="row">
           <p class="col-xs-12">Start synchronization process between ERP (<i>MAS90</i>) and local database ('metadata').</p>
         </div>
-        <div class="row" ng-hide="::hasRole('ROLE_MAS90_SYNC')">
+        <div class="row" data-ng-hide="::hasRole('ROLE_MAS90_SYNC')">
           <p class="col-xs-12 text-info">
             <small>(You have no enough permissions to start the process.)</small>
           </p>
         </div>
       </div>
       <div class="col-xs-12 col-sm-1 col-sm-pull-11">
-        <button ng-click="startSync()" role="button" class="btn btn-primary btn-lg active" data-ng-disabled="::!hasRole('ROLE_MAS90_SYNC')">
+        <button data-ng-click="startSync()" role="button" class="btn btn-primary btn-lg active" data-ng-disabled="::!hasRole('ROLE_MAS90_SYNC')">
           <i class="fa fa-flag"></i> Start
         </button>
       </div>
     </div>
   </div>
 
-  <div class="modal-dialog" ng-hide="phase == 0 && finished">
+  <div class="modal-dialog" data-ng-hide="phase == 0 && finished">
     <div class="modal-content">
       <div class="modal-header">
         <h3 class="modal-title">Progress of synchronization</h3>
@@ -30,41 +30,41 @@
       <div class="modal-body">
         <div>
           <h4>Updating of Parts and BOMs</h4>
-          <div ng-hide="partsUpdateTotalSteps">
+          <div data-ng-hide="partsUpdateTotalSteps">
             <p>
               Job size estimating. Please wait...&nbsp;<i class="fa fa-circle-o-notch fa-spin"></i>
             </p>
           </div>
-          <div ng-hide="!partsUpdateTotalSteps">
+          <div data-ng-hide="!partsUpdateTotalSteps">
             <div>
               <span>Updated: <span>{{partsUpdateUpdates | number:0}}</span></span>
               <span style="padding-left:3em;">Inserted: <span>{{partsUpdateInserts | number:0}}</span></span>
-              <span style="padding-left:3em;">Failures: <span ng-class="{'text-danger': partsUpdateSkipped}">{{partsUpdateSkipped | number:0}}</span></span>
+              <span style="padding-left:3em;">Failures: <span data-ng-class="{'text-danger': partsUpdateSkipped}">{{partsUpdateSkipped | number:0}}</span></span>
             </div>
-            <uib-progressbar type="getProgressBarType()" max="partsUpdateTotalSteps" value="partsUpdateCurrentStep" ng-class="{'progress-striped active': !finished}">
+            <uib-progressbar type="getProgressBarType()" max="partsUpdateTotalSteps" value="partsUpdateCurrentStep" data-ng-class="{'progress-striped active': !finished}">
               <span style="color:#333; white-space:nowrap;">{{partsUpdateCurrentStep}} / {{partsUpdateTotalSteps}}</span>
             </uib-progressbar>
           </div>
-          <div ng-hide="!partsUpdateTotalSteps">
+          <div data-ng-hide="!partsUpdateTotalSteps">
             <div>
               <label for="log">Modifications:</label>
-              <textarea id="log" class="col-xs-12 text-nowrap bg-success text-primary" rows="5" readonly="readonly">{{modifications}}</textarea>
+              <textarea id="log" class="col-xs-12 bg-success text-primary" rows="5" readonly="readonly">{{modifications}}</textarea>
             </div>
             <div>
               <div>&nbsp;</div>
               <label for="failures">Failures:</label>
-              <textarea id="failures" ng-class="['col-xs-12', 'text-nowrap',  {'bg-danger': partsUpdateSkipped}]" rows="5" readonly="readonly" data-ng-disabled="!partsUpdateSkipped">{{errors}}</textarea>
+              <textarea id="failures" data-ng-class="['col-xs-12', {'bg-danger': partsUpdateSkipped}]" rows="5" readonly="readonly" data-ng-disabled="!partsUpdateSkipped">{{errors}}</textarea>
             </div>
           </div>
           <div>&nbsp;</div>
           <div>
-            <span ng-hide="userId">The process started on {{startedOn | date : "yyyy-MM-dd HH:mm.ss"}} by scheduler.</span>
-            <span ng-hide="!userId">The process started on {{startedOn | date : "yyyy-MM-dd HH:mm.ss"}} by <a ng-href="security/user/{{userId}}">{{userName}}</a>.</span>
+            <span data-ng-hide="userId">The process started on {{startedOn | date : "yyyy-MM-dd HH:mm.ss"}} by scheduler.</span>
+            <span data-ng-hide="!userId">The process started on {{startedOn | date : "yyyy-MM-dd HH:mm.ss"}} by <a data-ng-href="security/user/{{userId}}">{{userName}}</a>.</span>
           </div>
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal" data-ng-disabled="!finished" ng-click="onCloseStatus()">Close</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal" data-ng-disabled="!finished" data-ng-click="onCloseStatus()">Close</button>
       </div>
     </div>
   </div>
@@ -84,10 +84,10 @@
         <td title="'Updated'" class="text-right">{{rec.updated | number:0}}</td>
         <td title="'Inserted'" class="text-right">{{rec.inserted | number:0}}</td>
         <td title="'Failures'" class="text-right">{{rec.skipped | number:0}}</td>
-        <td title="'Started By'"><a ng-href="security/user/{{rec.user.id}}">{{rec.user.name}}</a></td>
-        <td title="'Status'" ng-class="['text-center', {'active': rec.status=='IN_PROGRESS', 'warning': rec.status=='CANCELLED', 'sussess': rec.status=='FINISHED', 'danger': rec.status=='FAILED'}]">{{rec.status}}</td>
+        <td title="'Started By'"><a data-ng-href="security/user/{{rec.user.id}}">{{rec.user.name}}</a></td>
+        <td title="'Status'" data-ng-class="['text-center', {'active': rec.status=='IN_PROGRESS', 'warning': rec.status=='CANCELLED', 'sussess': rec.status=='FINISHED', 'danger': rec.status=='FAILED'}]">{{rec.status}}</td>
       </tr>
-      <tr ng-hide="$data.length > 0">
+      <tr data-ng-hide="$data.length > 0">
         <td colspan="8">No records to display.</td>
       </tr>
     </table>

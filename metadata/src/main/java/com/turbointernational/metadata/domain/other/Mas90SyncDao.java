@@ -1,15 +1,11 @@
 package com.turbointernational.metadata.domain.other;
 
-import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.domain.AbstractDao;
 import com.turbointernational.metadata.web.Page;
-import com.turbointernational.metadata.web.View;
-import org.hibernate.criterion.Order;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.List;
 

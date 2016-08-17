@@ -1,112 +1,427 @@
 package com.turbointernational.metadata.domain.part.types;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.domain.criticaldimension.CriticalDimensionEnumVal;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.web.View;
-import java.util.Map;
+
 import javax.persistence.*;
 
-import org.apache.commons.lang.ObjectUtils;
+import static javax.persistence.FetchType.LAZY;
 
+
+/**
+ * Created by dmytro.trunykov@zorallabs.com on 2016-08-01 17:06:08.757820.
+ */
 @Entity
-@Table(name="compressor_wheel")
+@Table(name = "compressor_wheel")
 @PrimaryKeyJoinColumn(name = "part_id")
 public class CompressorWheel extends Part {
-    
-    @JsonView(View.Detail.class)
-    @Column(name="inducer_oa")
-    private Float inducerOa;
 
-    @JsonView(View.Detail.class)
-    @Column(name="tip_height_b")
-    private Float tipHeightB;
+    //<editor-fold defaultstate="collapsed" desc="Properties: critical dimensions">
 
-    @JsonView(View.Detail.class)
-    @Column(name="exducer_oc")
-    private Float exducerOc;
+    @JsonView(View.Summary.class)
+    @JsonProperty("rotation")
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "rotation")
+    private CriticalDimensionEnumVal rotation;
 
-    @JsonView(View.Detail.class)
-    @Column(name="hub_length_d")
-    private Float hubLengthD;
+    @JsonView(View.Summary.class)
+    @JsonProperty("flatbackSuperback")
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "flatbackSuperback")
+    private CriticalDimensionEnumVal flatbackSuperback;
 
-    @JsonView(View.Detail.class)
-    @Column(name="bore_oe")
-    private Float boreOe;
+    @JsonView(View.Summary.class)
+    @JsonProperty("extendedTips")
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "extendedTips")
+    private CriticalDimensionEnumVal extendedTips;
 
-    @JsonView(View.Detail.class)
-    @Column(name="trim_no_blades")
-    private String numberOfBlades;
+    @JsonView(View.Summary.class)
+    @JsonProperty("threadedBore")
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "threadedBore")
+    private CriticalDimensionEnumVal threadedBore;
 
-    @JsonView(View.Detail.class)
-    @Column(name="application")
-    private String application;
+    @JsonView(View.Summary.class)
+    @JsonProperty("boreless")
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "boreless")
+    private CriticalDimensionEnumVal boreless;
 
-    public Float getInducerOa() {
-        return inducerOa;
+    @JsonView(View.Summary.class)
+    @JsonProperty("inducerDiameterA")
+    @Column(name = "inducerDiameterA")
+    private Double inducerDiameterA;
+
+    @JsonView(View.Summary.class)
+    @JsonProperty("inducerDiameterATol")
+    @Column(name = "inducerDiameterATol")
+    private Double inducerDiameterATol;
+
+    @JsonView(View.Summary.class)
+    @JsonProperty("exducerDiameterB")
+    @Column(name = "exducerDiameterB")
+    private Double exducerDiameterB;
+
+    @JsonView(View.Summary.class)
+    @JsonProperty("exducerDiameterBTol")
+    @Column(name = "exducerDiameterBTol")
+    private Double exducerDiameterBTol;
+
+    @JsonView(View.Summary.class)
+    @JsonProperty("tipLocation")
+    @Column(name = "tipLocation")
+    private Double tipLocation;
+
+    @JsonView(View.Summary.class)
+    @JsonProperty("tipLocationTol")
+    @Column(name = "tipLocationTol")
+    private Double tipLocationTol;
+
+    @JsonView(View.Summary.class)
+    @JsonProperty("tipHeightD")
+    @Column(name = "tipHeightD")
+    private Double tipHeightD;
+
+    @JsonView(View.Summary.class)
+    @JsonProperty("tipHeightDTol")
+    @Column(name = "tipHeightDTol")
+    private Double tipHeightDTol;
+
+    @JsonView(View.Summary.class)
+    @JsonProperty("platformHeightE")
+    @Column(name = "platformHeightE")
+    private Double platformHeightE;
+
+    @JsonView(View.Summary.class)
+    @JsonProperty("platformHeightTol")
+    @Column(name = "platformHeightTol")
+    private Double platformHeightTol;
+
+    @JsonView(View.Summary.class)
+    @JsonProperty("maxBoreDiameter")
+    @Column(name = "maxBoreDiameter")
+    private Double maxBoreDiameter;
+
+    @JsonView(View.Summary.class)
+    @JsonProperty("minBoreDiameter")
+    @Column(name = "minBoreDiameter")
+    private Double minBoreDiameter;
+
+    @JsonView(View.Summary.class)
+    @JsonProperty("bladeCount")
+    @Column(name = "bladeCount")
+    private Integer bladeCount;
+
+    @JsonView(View.Summary.class)
+    @JsonProperty("platformThickness")
+    @Column(name = "platformThickness")
+    private Double platformThickness;
+
+    @JsonView(View.Summary.class)
+    @JsonProperty("platformThicknessTol")
+    @Column(name = "platformThicknessTol")
+    private Double platformThicknessTol;
+
+    @JsonView(View.Summary.class)
+    @JsonProperty("threadCallout")
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "threadCallout")
+    private CriticalDimensionEnumVal threadCallout;
+
+    @JsonView(View.Summary.class)
+    @JsonProperty("threadHand")
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "threadHand")
+    private CriticalDimensionEnumVal threadHand;
+
+    @JsonView(View.Summary.class)
+    @JsonProperty("platformDiameterF")
+    @Column(name = "platformDiameterF")
+    private Double platformDiameterF;
+
+    @JsonView(View.Summary.class)
+    @JsonProperty("platformDiameterFTol")
+    @Column(name = "platformDiameterFTol")
+    private Double platformDiameterFTol;
+
+    @JsonView(View.Summary.class)
+    @JsonProperty("overallHeightC")
+    @Column(name = "overallHeightC")
+    private Double overallHeightC;
+
+    @JsonView(View.Summary.class)
+    @JsonProperty("noseDiameterG")
+    @Column(name = "noseDiameterG")
+    private Double noseDiameterG;
+
+    @JsonView(View.Summary.class)
+    @JsonProperty("footDiameterH")
+    @Column(name = "footDiameterH")
+    private Double footDiameterH;
+
+    @JsonView(View.Summary.class)
+    @JsonProperty("bladeHeight")
+    @Column(name = "bladeHeight")
+    private Double bladeHeight;
+
+    @JsonView(View.Summary.class)
+    @JsonProperty("weight")
+    @Column(name = "weight")
+    private Double weight;
+
+    @JsonView(View.Summary.class)
+    @JsonProperty("diagram")
+    @Column(name = "diagram")
+    private Integer diagram;
+
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="Getters and setters: critical dimensions">
+
+    public CriticalDimensionEnumVal getRotation() {
+        return rotation;
     }
 
-    public void setInducerOa(Float inducerOa) {
-        this.inducerOa = inducerOa;
+    public void setRotation(CriticalDimensionEnumVal rotation) {
+        this.rotation = rotation;
     }
 
-    public Float getTipHeightB() {
-        return tipHeightB;
+    public CriticalDimensionEnumVal getFlatbackSuperback() {
+        return flatbackSuperback;
     }
 
-    public void setTipHeightB(Float tipHeightB) {
-        this.tipHeightB = tipHeightB;
+    public void setFlatbackSuperback(CriticalDimensionEnumVal flatbackSuperback) {
+        this.flatbackSuperback = flatbackSuperback;
     }
 
-    public Float getExducerOc() {
-        return exducerOc;
+    public CriticalDimensionEnumVal getExtendedTips() {
+        return extendedTips;
     }
 
-    public void setExducerOc(Float exducerOc) {
-        this.exducerOc = exducerOc;
+    public void setExtendedTips(CriticalDimensionEnumVal extendedTips) {
+        this.extendedTips = extendedTips;
     }
 
-    public Float getHubLengthD() {
-        return hubLengthD;
+    public CriticalDimensionEnumVal getThreadedBore() {
+        return threadedBore;
     }
 
-    public void setHubLengthD(Float hubLengthD) {
-        this.hubLengthD = hubLengthD;
+    public void setThreadedBore(CriticalDimensionEnumVal threadedBore) {
+        this.threadedBore = threadedBore;
     }
 
-    public Float getBoreOe() {
-        return boreOe;
+    public CriticalDimensionEnumVal getBoreless() {
+        return boreless;
     }
 
-    public void setBoreOe(Float boreOe) {
-        this.boreOe = boreOe;
+    public void setBoreless(CriticalDimensionEnumVal boreless) {
+        this.boreless = boreless;
     }
 
-    public String getNumberOfBlades() {
-        return numberOfBlades;
+    public Double getInducerDiameterA() {
+        return inducerDiameterA;
     }
 
-    public void setNumberOfBlades(String numberOfBlades) {
-        this.numberOfBlades = numberOfBlades;
+    public void setInducerDiameterA(Double inducerDiameterA) {
+        this.inducerDiameterA = inducerDiameterA;
     }
 
-    public String getApplication() {
-        return application;
+    public Double getInducerDiameterATol() {
+        return inducerDiameterATol;
     }
 
-    public void setApplication(String application) {
-        this.application = application;
+    public void setInducerDiameterATol(Double inducerDiameterATol) {
+        this.inducerDiameterATol = inducerDiameterATol;
     }
-    
-    @Override
-    public void csvColumns(Map<String, String> columns) {
-        super.csvColumns(columns);
-        
-        columns.put("inducer_oa", ObjectUtils.toString(getInducerOa()));
-        columns.put("tip_height_b", ObjectUtils.toString(getTipHeightB()));
-        columns.put("exducer_oc", ObjectUtils.toString(getExducerOc()));
-        columns.put("hub_length_d", ObjectUtils.toString(getHubLengthD()));
-        columns.put("bore_oe", ObjectUtils.toString(getBoreOe()));
-        columns.put("number_of_blades", ObjectUtils.toString(getNumberOfBlades()));
-        columns.put("application", ObjectUtils.toString(getApplication()));
+
+    public Double getExducerDiameterB() {
+        return exducerDiameterB;
     }
+
+    public void setExducerDiameterB(Double exducerDiameterB) {
+        this.exducerDiameterB = exducerDiameterB;
+    }
+
+    public Double getExducerDiameterBTol() {
+        return exducerDiameterBTol;
+    }
+
+    public void setExducerDiameterBTol(Double exducerDiameterBTol) {
+        this.exducerDiameterBTol = exducerDiameterBTol;
+    }
+
+    public Double getTipLocation() {
+        return tipLocation;
+    }
+
+    public void setTipLocation(Double tipLocation) {
+        this.tipLocation = tipLocation;
+    }
+
+    public Double getTipLocationTol() {
+        return tipLocationTol;
+    }
+
+    public void setTipLocationTol(Double tipLocationTol) {
+        this.tipLocationTol = tipLocationTol;
+    }
+
+    public Double getTipHeightD() {
+        return tipHeightD;
+    }
+
+    public void setTipHeightD(Double tipHeightD) {
+        this.tipHeightD = tipHeightD;
+    }
+
+    public Double getTipHeightDTol() {
+        return tipHeightDTol;
+    }
+
+    public void setTipHeightDTol(Double tipHeightDTol) {
+        this.tipHeightDTol = tipHeightDTol;
+    }
+
+    public Double getPlatformHeightE() {
+        return platformHeightE;
+    }
+
+    public void setPlatformHeightE(Double platformHeightE) {
+        this.platformHeightE = platformHeightE;
+    }
+
+    public Double getPlatformHeightTol() {
+        return platformHeightTol;
+    }
+
+    public void setPlatformHeightTol(Double platformHeightTol) {
+        this.platformHeightTol = platformHeightTol;
+    }
+
+    public Double getMaxBoreDiameter() {
+        return maxBoreDiameter;
+    }
+
+    public void setMaxBoreDiameter(Double maxBoreDiameter) {
+        this.maxBoreDiameter = maxBoreDiameter;
+    }
+
+    public Double getMinBoreDiameter() {
+        return minBoreDiameter;
+    }
+
+    public void setMinBoreDiameter(Double minBoreDiameter) {
+        this.minBoreDiameter = minBoreDiameter;
+    }
+
+    public Integer getBladeCount() {
+        return bladeCount;
+    }
+
+    public void setBladeCount(Integer bladeCount) {
+        this.bladeCount = bladeCount;
+    }
+
+    public Double getPlatformThickness() {
+        return platformThickness;
+    }
+
+    public void setPlatformThickness(Double platformThickness) {
+        this.platformThickness = platformThickness;
+    }
+
+    public Double getPlatformThicknessTol() {
+        return platformThicknessTol;
+    }
+
+    public void setPlatformThicknessTol(Double platformThicknessTol) {
+        this.platformThicknessTol = platformThicknessTol;
+    }
+
+    public CriticalDimensionEnumVal getThreadCallout() {
+        return threadCallout;
+    }
+
+    public void setThreadCallout(CriticalDimensionEnumVal threadCallout) {
+        this.threadCallout = threadCallout;
+    }
+
+    public CriticalDimensionEnumVal getThreadHand() {
+        return threadHand;
+    }
+
+    public void setThreadHand(CriticalDimensionEnumVal threadHand) {
+        this.threadHand = threadHand;
+    }
+
+    public Double getPlatformDiameterF() {
+        return platformDiameterF;
+    }
+
+    public void setPlatformDiameterF(Double platformDiameterF) {
+        this.platformDiameterF = platformDiameterF;
+    }
+
+    public Double getPlatformDiameterFTol() {
+        return platformDiameterFTol;
+    }
+
+    public void setPlatformDiameterFTol(Double platformDiameterFTol) {
+        this.platformDiameterFTol = platformDiameterFTol;
+    }
+
+    public Double getOverallHeightC() {
+        return overallHeightC;
+    }
+
+    public void setOverallHeightC(Double overallHeightC) {
+        this.overallHeightC = overallHeightC;
+    }
+
+    public Double getNoseDiameterG() {
+        return noseDiameterG;
+    }
+
+    public void setNoseDiameterG(Double noseDiameterG) {
+        this.noseDiameterG = noseDiameterG;
+    }
+
+    public Double getFootDiameterH() {
+        return footDiameterH;
+    }
+
+    public void setFootDiameterH(Double footDiameterH) {
+        this.footDiameterH = footDiameterH;
+    }
+
+    public Double getBladeHeight() {
+        return bladeHeight;
+    }
+
+    public void setBladeHeight(Double bladeHeight) {
+        this.bladeHeight = bladeHeight;
+    }
+
+    public Double getWeight() {
+        return weight;
+    }
+
+    public void setWeight(Double weight) {
+        this.weight = weight;
+    }
+
+    public Integer getDiagram() {
+        return diagram;
+    }
+
+    public void setDiagram(Integer diagram) {
+        this.diagram = diagram;
+    }
+
+    //</editor-fold>
+
 }

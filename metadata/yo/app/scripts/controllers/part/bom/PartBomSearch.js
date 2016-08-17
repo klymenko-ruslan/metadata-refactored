@@ -9,9 +9,10 @@ angular.module("ngMetaCrudApp")
   })
 
   .controller("PartBomSearchCtrl", ["$log", "$scope", "$location", "$routeParams", "BOM", "restService",
-    "Restangular", "dialogs", "gToast", "BOM_RESULT_STATUS",
+    "Restangular", "dialogs", "gToast", "BOM_RESULT_STATUS", "partTypes", "part",
     function($log, $scope, $location, $routeParams, BOM, restService,
-      Restangular, dialogs, gToast, BOM_RESULT_STATUS) {
+      Restangular, dialogs, gToast, BOM_RESULT_STATUS, partTypes, part) {
+      $scope.partTypes = partTypes;
       $scope.restService = restService;
       $scope.partId = $routeParams.id;
 
@@ -19,12 +20,7 @@ angular.module("ngMetaCrudApp")
       $scope.showPickedPart = false;
 
       // The part whose bom we're editing
-      $scope.part = restService.findPart($scope.partId)
-        .then(function(parentPart) {
-          $scope.part = parentPart;
-        }, function(errorResponse) {
-          restService.error("Could not get part details", errorResponse);
-        });
+      $scope.part = part;
 
       // Load the part's BOM
       $scope.bom = BOM.listByParentPartId($scope.partId).then(

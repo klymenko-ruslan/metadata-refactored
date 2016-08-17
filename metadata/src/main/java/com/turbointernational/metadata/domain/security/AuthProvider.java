@@ -2,7 +2,6 @@ package com.turbointernational.metadata.domain.security;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.web.View;
-import org.hibernate.annotations.DiscriminatorOptions;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -11,10 +10,11 @@ import java.io.Serializable;
  * Created by dmytro.trunykov@zorallabs.com on 18.03.16.
  */
 @Entity
+@Table(name = "auth_provider")
 @Inheritance(strategy = InheritanceType.JOINED)
 public class AuthProvider implements Serializable {
 
-    public enum AuthProviderTypeEnum{ LDAP };
+    public enum AuthProviderTypeEnum {LDAP}
 
     //<editor-fold defaultstate="collapsed" desc="properties">
     @Id

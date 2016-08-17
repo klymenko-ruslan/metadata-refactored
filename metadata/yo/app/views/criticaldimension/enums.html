@@ -1,0 +1,212 @@
+<metanav />
+
+<h1 class="padding-top">Critical dimensions enumerations</h1>
+<div class="row">
+  <div class="col-md-6 col-xs-12">
+    <h3>Enumerations</h3>
+    <button class="btn btn-primary pull-right tool-control" data-ng-disabled="critDimEnumValsPending || cdeIsModifying()" data-ng-click="showAddEnumDlg()">
+      <i class="fa fa-plus"></i> Add
+    </button>
+    <form name="rowCdeForm">
+      <table data-ng-table="critDimEnumsTableParams" class="table table-condensed table-bordered table-striped table-hover">
+        <tbody>
+          <tr name="name" data-ng-repeat="row in $data" data-ng-class="{'warning': isSelected(row), 'clicked-row': !cdeIsModifying()}" data-ng-click="selectRow(row)">
+            <td title="'Name'" data-sortable="'name'" class="col-xs-11">
+              <span data-ng-hide="cdeIsModifying(row)">{{row.name}}</span>
+              <input name="name" data-ng-show="cdeIsModifying(row)" class="form-control input-sm" type="text" data-ng-model="cdeModifying.name" data-ng-model-options="{debounce: { 'default': 500, 'blur': 0 }}" data-ng-trim="true" required data-ng-maxlength="64" unique-cde-name/>
+              <span data-ng-show="cdeIsModifying(row)&& rowCdeForm.name.$invalid" class="alert alert-danger" role="alert">
+                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                <span data-ng-show="rowCdeForm.name.$error.required">Required!</span>
+                <span data-ng-show="rowCdeForm.name.$error.maxlenth">Max 64 chars!</span>
+                <span data-ng-show="rowCdeForm.name.$error.uniqueCdeName">Not unique name!</span>
+              </span>
+            </td>
+            <td title="'Actions'" class="col-xs-1 actions">
+              <button data-ng-click="cdeStartModify($event, row)" class="btn btn-primary btn-xs" authorize="ROLE_ADMIN" data-ng-hide="cdeIsModifying(row)">
+                <i class="fa fa-cog"></i> Modify
+              </button>
+              <button data-ng-click="cdeModifySave($event)" data-ng-show="cdeIsModifying(row)" authorize="ROLE_ADMIN" class="btn btn-success btn-xs" data-ng-disabled="rowCdeForm.$pristine || rowCdeForm.$invalid || rowCdeForm.$pending">
+                <i class="fa fa-save"></i> Save
+              </button>
+              <button data-ng-click="cdeModifyUndo($event, row, rowCdeForm)" data-ng-show="cdeIsModifying(row)" data-ng-disabled="rowCdeForm.$pristine || rowCdeForm.$pending" class="btn btn-warning btn-xs">
+                <i class="fa fa-undo"></i> Undo
+              </button>
+              <button data-ng-click="cdeModifyCancel($event)" data-ng-show="cdeIsModifying(row)" class="btn btn-warning btn-xs">
+                <i class="fa fa-minus-circle"></i> Cancel
+              </button>
+              <button data-ng-click="showDeleteEnumDlg($event, row)" class="btn btn-danger btn-xs" authorize="ROLE_ADMIN" data-ng-hide="cdeIsModifying(row)">
+                <i class="fa fa-trash-o" aria-hidden="true"></i> Delete
+              </button>
+            </td>
+          </tr>
+          <tr data-ng-hide="$data.length > 0">
+            <td colspan="2">No rows to display.</td>
+          </tr>
+        </tbody>
+      </table>
+    </form>
+  </div>
+  <div class="col-md-6 col-xs-12">
+    <div data-ng-show="critDimEnumValsPending" class="text-center text-muted" style="padding-top:3em;">
+      <div>
+        <i class="fa fa-circle-o-notch fa-5x fa-spin" aria-hidden="true"></i>
+        <span class="sr-only">Loading...</span>
+      </div>
+      <div class="text-info">Loading...</div>
+    </div>
+    <div data-ng-hide="critDimEnumValsPending">
+      <h3>Items in [{{selectedRow.id | number}}]&mdash;"{{selectedRow.name}}"</h3>
+      <button class="btn btn-primary pull-right tool-control" data-ng-disabled="cdevIsModifying()" data-ng-click="showAddEnumItmDlg()">
+        <i class="fa fa-plus"></i> Add
+      </button>
+      <table data-ng-table="critDimEnumValsTableParams" class="table table-condensed table-bordered table-striped table-hover">
+        <tbody>
+          <tr data-ng-form="rowCdevForm" data-ng-repeat="row in $data">
+            <td title="'Value'" data-sortable="'val'" class="col-xs-11">
+              <span data-ng-hide="cdevIsModifying(row)">{{row.val}}</span>
+              <input name="val" data-ng-show="cdevIsModifying(row)" class="form-control input-sm" type="text" data-ng-model="cdevModifying.val" data-ng-model-options="{debounce: { 'default': 500, 'blur': 0 }}" data-ng-trim="true" required data-ng-maxlength="64" unique-cdev-name/>
+              <span data-ng-show="cdevIsModifying(row) && rowCdevForm.val.$invalid" class="alert alert-danger" role="alert">
+                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                <span data-ng-show="rowCdevForm.val.$error.required">Required!</span>
+                <span data-ng-show="rowCdevForm.val.$error.maxlenth">Max 64 chars!</span>
+                <span data-ng-show="rowCdevForm.val.$error.uniqueCdevName">Not unique name!</span>
+              </span>
+            </td>
+            <td title="'Actions'" class="col-xs-1 actions">
+              <button data-ng-click="cdevStartModify(row)" class="btn btn-primary btn-xs" authorize="ROLE_ADMIN" data-ng-hide="cdevIsModifying(row)">
+                <i class="fa fa-cog"></i> Modify
+              </button>
+              <button data-ng-click="cdevModifySave()" data-ng-show="cdevIsModifying(row)" authorize="ROLE_ADMIN" class="btn btn-success btn-xs" data-ng-disabled="rowCdevForm.$pristine || rowCdevForm.$invalid || rowCdevForm.$pending">
+                <i class="fa fa-save"></i> Save
+              </button>
+              <button data-ng-click="cdevModifyUndo(row, rowCdevForm)" data-ng-show="cdevIsModifying(row)" data-ng-disabled="rowCdevForm.$pristine || rowCdevForm.$pending" class="btn btn-warning btn-xs">
+                <i class="fa fa-undo"></i> Undo
+              </button>
+              <button data-ng-click="cdevModifyCancel($event)" data-ng-show="cdevIsModifying(row)" class="btn btn-warning btn-xs">
+                <i class="fa fa-minus-circle"></i> Cancel
+              </button>
+              <button class="btn btn-danger btn-xs" data-ng-click="showDeleteEnumItmDlg($event, row)">
+                <i class="fa fa-trash-o" aria-hidden="true"></i> Delete
+              </button>
+            </td>
+          </tr>
+          <tr data-ng-hide="$data.length > 0">
+            <td colspan="2">No rows to display.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Dialogs -->
+
+<div class="modal" id="addEnumDlg" tabindex="-1" role="dialog" aria-labelledby="addEnumDlgTitle">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="addEnumDlgTitle">Add a new critical dimension enumeration</h4>
+      </div>
+      <div class="modal-body">
+        <ng-form name="formAddEnum" novalidate>
+          <div class="form-group">
+            <label for="addEnumDlgCtrlName">Name</label>
+            <input id="addEnumDlgCtrlName" name="name" data-ng-model="cdEnumToAdd.name" class="form-control" type="text" data-ng-trim="true" required data-ng-maxlength="64" unique-cde-name />
+            <span data-ng-show="formAddEnum.name.$dirty && formAddEnum.name.$invalid" class="alert alert-danger" role="alert">
+              <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+              <span data-ng-show="formAddEnum.name.$error.required">Required!</span>
+              <span data-ng-show="formAddEnum.name.$error.maxlenth">Max 64 chars!</span>
+              <span data-ng-show="formAddEnum.name.$error.uniqueCdeName">Not unique name!</span>
+            </span>
+          </div>
+        </ng-form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-ng-disabled="formAddEnum.$invalid" data-ng-click="addEnum()">Create</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="delEnumDlg" tabindex="-1" role="dialog" aria-labelledby="delEnumDlgTitle">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="delEnumDlgTitle">Delete critical dimension enumeration</h4>
+      </div>
+      <div class="modal-body">
+        <p>
+          If you confirm this action the enumeration [{{cdEnumToDel.id | number}}] &mdash; "{{cdEnumToDel.name}}" will be deleted.
+        </p>
+        <p>
+          Are you sure?
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-ng-click="removeCritDimEnum()">
+          <i class="fa fa-trash-o" aria-hidden="true"></i>
+          Delete
+        </button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="addEnumItmDlg" tabindex="-1" role="dialog" aria-labelledby="addEnumItmDlgTitle">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="addEnumItmDlgTitle">Add a new item to the critical dimension enumeration</h4>
+      </div>
+      <div class="modal-body">
+        <ng-form name="formAddItmEnum" novalidate>
+          <div class="form-group">
+            <label for="addEnumItmDlgCtrlName">Name</label>
+            <input id="addEnumItmDlgCtrlName" name="val" data-ng-model="cdEnumItmToAdd.val" class="form-control" type="text" data-ng-trim="true" data-ng-maxlength="64" required unique-cdev-name />
+            <span data-ng-show="formAddItmEnum.val.$dirty && formAddItmEnum.val.$invalid" class="alert alert-danger" role="alert">
+              <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+              <span data-ng-show="formAddItmEnum.val.$error.required">Required!</span>
+              <span data-ng-show="formAddItmEnum.val.$error.maxlenth">Max 64 chars!</span>
+              <span data-ng-show="formAddItmEnum.val.$error.uniqueCdevName">Not unique name!</span>
+            </span>
+          </div>
+        </ng-form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-ng-disabled="formAddItmEnum.$invalid" data-ng-click="addEnumItm()">Add</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="delEnumItmDlg" tabindex="-1" role="dialog" aria-labelledby="delEnumItmDlgTitle">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="delEnumItmDlgTitle">Delete item in the critical dimension enumeration</h4>
+      </div>
+      <div class="modal-body">
+        <p>
+          If you confirm this action the item [{{cdEnumItmToDel.id | number}}] &mdash; "{{cdEnumItmToDel.val}}" in the emumeration [{{selectedRow.id | number}}]&mdash;"{{selectedRow.name}}" will be deleted.
+        </p>
+        <p>
+          Are you sure?
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-ng-click="removeCritDimEnumItm()">
+          <i class="fa fa-trash-o" aria-hidden="true"></i>
+          Delete
+        </button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>

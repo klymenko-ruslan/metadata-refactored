@@ -32,7 +32,7 @@ public enum DiscountType {
      */
     public final String CODE;
 
-    private DiscountType(String code) {
+    DiscountType(String code) {
         this.CODE = code;
     }
     

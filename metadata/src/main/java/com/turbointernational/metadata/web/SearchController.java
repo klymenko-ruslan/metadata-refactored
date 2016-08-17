@@ -2,22 +2,27 @@ package com.turbointernational.metadata.web;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.domain.part.salesnote.SalesNoteState;
+import com.turbointernational.metadata.domain.security.User;
 import com.turbointernational.metadata.services.SearchService;
+import com.turbointernational.metadata.services.SearchService.IndexingStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.WebRequest;
 
+import java.util.Map;
 import java.util.Set;
 
+import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
  * @author jrodriguez
@@ -34,22 +39,24 @@ public class SearchController {
     @RequestMapping(value = "/parts", method = GET)
     @ResponseBody
     @Secured("ROLE_READ")
-    public ResponseEntity<String> filterParts(@RequestParam(required = false) String partNumber,
-                                              @RequestParam(required = false) String partTypeName,
-                                              @RequestParam(required = false) String manufacturerName,
-                                              @RequestParam(required = false) String kitType,
-                                              @RequestParam(required = false) String gasketType,
-                                              @RequestParam(required = false) String sealType,
-                                              @RequestParam(required = false) String coolType,
-                                              @RequestParam(required = false) String turboType,
-                                              @RequestParam(required = false) String turboModel,
-                                              @RequestParam(required = false) String sortProperty,
-                                              @RequestParam(required = false) String sortOrder,
-                                              @RequestParam(defaultValue = "0") Integer offset,
-                                              @RequestParam(defaultValue = "10") Integer limit) throws Exception {
-        String json = searchService.filterParts(partNumber, partTypeName, manufacturerName, kitType, gasketType,
-                sealType, coolType, turboType, turboModel, sortProperty, sortOrder, offset, limit);
-        return new ResponseEntity<>(json, HttpStatus.OK);
+    public ResponseEntity<String> filterParts(@RequestParam(name = "partNumber", required = false) String partNumber,
+                                              @RequestParam(name = "partTypeId", required = false) Long partTypeId,
+                                              @RequestParam(name = "manufacturerName", required = false) String manufacturerName,
+                                              @RequestParam(name = "name", required = false) String name,
+                                              @RequestParam(name = "description", required = false) String description,
+                                              @RequestParam(name = "inactive", required = false) Boolean inactive,
+                                              @RequestParam(name = "turboTypeName", required = false) String turboTypeName,
+                                              @RequestParam(name = "turboModelName", required = false) String turboModelName,
+                                              WebRequest webRequest,
+                                              @RequestParam(name = "pgSortProperty", required = false) String sortProperty,
+                                              @RequestParam(name = "pgSortOrder", required = false) String sortOrder,
+                                              @RequestParam(name = "pgOffset", defaultValue = "0") Integer offset,
+                                              @RequestParam(name = "pgLimit", defaultValue = "10") Integer limit) throws Exception {
+
+        Map<String, String[]> queriedCriticalDimensions = webRequest.getParameterMap();
+        String json = searchService.filterParts(partNumber, partTypeId, manufacturerName, name, description, inactive,
+                turboTypeName, turboModelName, queriedCriticalDimensions, sortProperty, sortOrder, offset, limit);
+        return new ResponseEntity<>(json, OK);
     }
 
     @RequestMapping(value = "/carmodelengineyears", method = GET)
@@ -67,7 +74,7 @@ public class SearchController {
                                                             @RequestParam(defaultValue = "10") Integer limit) throws Exception {
         String json = searchService.filterCarModelEngineYears(carModelEngineYear, year, make, model, engine, fuel,
                 sortProperty, sortOrder, offset, limit);
-        return new ResponseEntity<>(json, HttpStatus.OK);
+        return new ResponseEntity<>(json, OK);
     }
 
     @RequestMapping(value = "/carmakes", method = GET)
@@ -79,7 +86,7 @@ public class SearchController {
                                                 @RequestParam(defaultValue = "0") Integer offset,
                                                 @RequestParam(defaultValue = "10") Integer limit) throws Exception {
         String json = searchService.filterCarMakes(make, sortProperty, sortOrder, offset, limit);
-        return new ResponseEntity<>(json, HttpStatus.OK);
+        return new ResponseEntity<>(json, OK);
     }
 
     @RequestMapping(value = "/carmodels", method = GET)
@@ -91,7 +98,7 @@ public class SearchController {
                                                   @RequestParam(defaultValue = "0") Integer offset,
                                                   @RequestParam(defaultValue = "10") Integer limit) throws Exception {
         String json = searchService.filterCarModels(model, make, sortProperty, sortOrder, offset, limit);
-        return new ResponseEntity<>(json, HttpStatus.OK);
+        return new ResponseEntity<>(json, OK);
     }
 
     @RequestMapping(value = "/carengines", method = GET)
@@ -103,7 +110,7 @@ public class SearchController {
                                                    @RequestParam(defaultValue = "0") Integer offset,
                                                    @RequestParam(defaultValue = "10") Integer limit) throws Exception {
         String json = searchService.filterCarEngines(engine, fuelType, sortProperty, sortOrder, offset, limit);
-        return new ResponseEntity<>(json, HttpStatus.OK);
+        return new ResponseEntity<>(json, OK);
     }
 
     @RequestMapping(value = "/carfueltypes", method = GET)
@@ -115,7 +122,7 @@ public class SearchController {
                                                      @RequestParam(defaultValue = "0") Integer offset,
                                                      @RequestParam(defaultValue = "10") Integer limit) throws Exception {
         String json = searchService.filterCarFuelTypes(fuelType, sortProperty, sortOrder, offset, limit);
-        return new ResponseEntity<>(json, HttpStatus.OK);
+        return new ResponseEntity<>(json, OK);
     }
 
     @ResponseBody
@@ -152,45 +159,31 @@ public class SearchController {
         }).start();
     }
 
-    @RequestMapping(value = "/part/indexAll")
-    @ResponseBody
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Secured("ROLE_ADMIN")
-    public void indexPartAll() throws Exception {
-        new Thread(() -> {
-            try {
-                searchService.indexAllParts();
-            } catch (Exception e) {
-                log.error("Indexing of all parts failed.");
-            }
-        }).start();
-    }
-
-    @RequestMapping(value = "/application/indexAll")
-    @ResponseBody
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Secured("ROLE_ADMIN")
-    public void indexApplicationAll() throws Exception {
-        new Thread(() -> {
-            try {
-                searchService.indexAllApplications();
-            } catch (Exception e) {
-                log.error("Indexing of applications failed.");
-            }
-        }).start();
-    }
 
     @Secured("ROLE_ADMIN")
-    @RequestMapping(value = "/salesnotesparts/indexAll")
+    @RequestMapping(value = "/indexing/start", method = POST)
     @ResponseBody
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void indexSalesNotesPartsAll() throws Exception {
-        new Thread(() -> {
-            try {
-                searchService.indexAllSalesNotes();
-            } catch (Exception e) {
-                log.error("Indexing of sales notes parts failed.", e);
-            }
-        }).start();
+    @JsonView(View.Summary.class)
+    public IndexingStatus startIndexing(Authentication authentication, @RequestBody Map<String, Boolean> toIndex) throws Exception {
+        boolean indexParts = toIndex.getOrDefault("parts", false);
+        boolean indexApplications = toIndex.getOrDefault("applications", false);
+        boolean indexSalesNotes = toIndex.getOrDefault("salesNotes", false);
+        boolean recreateIndex = toIndex.getOrDefault("recreateIndex", false);
+        log.debug("startIndexing: parts={}, applications={}, salesNotes={}, recreateIndex={}", indexParts, indexApplications,
+                indexSalesNotes, recreateIndex);
+        User user = null;
+        if (authentication != null) {
+            user = (User) authentication.getPrincipal();
+        }
+        return searchService.startIndexing(user, indexParts, indexApplications, indexSalesNotes, recreateIndex);
     }
+
+    @Secured("ROLE_READ")
+    @ResponseBody
+    @RequestMapping(value = "/indexing/status", method = GET)
+    @JsonView(View.Summary.class)
+    public IndexingStatus getIndexingStatus() throws Exception {
+        return searchService.getIndexingStatus();
+    }
+
 }

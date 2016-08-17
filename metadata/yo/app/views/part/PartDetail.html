@@ -11,7 +11,7 @@
     <a ng-href="/part/{{ partId }}/ancestors"
        class="btn btn-info">
       <i class="fa fa-sitemap"></i>
-      Ancestors &hellip;
+      Where used &hellip;
     </a>
   </li>
 
@@ -40,274 +40,104 @@
 
 <h1 class="padding-top" part-name="part"></h1>
 
-<div class="row">
-
-  <!-- Part Details -->
-  <div class="col-xs-12 col-md-6 well-small">
-    <h3>Part Details</h3>
-
-    <dl class="dl-horizontal">
-        <dt>Name</dt>
-        <dd>{{part.name}}</dd>
-        <dt>Manufacturer</dt>
-        <dd>{{part.manufacturer.name}}</dd>
-        <dt>Manufacturer P/N</dt>
-        <dd>{{part.manufacturerPartNumber}}</dd>
-        <dt>Description</dt>
-        <dd>{{part.description}}</dd>
-    </dl>
-
-    <!-- Type-specific fields -->
-    <div data-ng-switch="part.partType.magentoAttributeSet">
-
-        <!-- Backplate -->
-        <div data-ng-switch-when="Backplate">
-            <dl class="dl-horizontal">
-                <dt>Seal Type</dt>
-                <dd>{{part.sealType.name}}</dd>
-                <dt>Seal Type (freeform)</dt>
-                <dd>{{part.sealTypeString}}</dd>
-                <dt>Compressor Wheel Style</dt>
-                <dd>{{part.styleCompressorWheel}}</dd>
-                <dt>Overall Diameter</dt>
-                <dd>{{part.overallDiameter}}</dd>
-                <dt>Compressor Wheel Diameter</dt>
-                <dd>{{part.compressorWheelDiameter}}</dd>
-                <dt>Piston Ring Diameter</dt>
-                <dd>{{part.pistonRingDiameter}}</dd>
-                <dt>Compressor Housing Diameter</dt>
-                <dd>{{part.compressorHousingDiameter}}</dd>
-                <dt>Secondary Diameter</dt>
-                <dd>{{part.secondaryDiameter}}</dd>
-                <dt>Overall Height</dt>
-                <dd>{{part.overallHeight}}</dd>
-                <dt>Notes</dt>
-                <dd>
-                    <pre>{{part.notes }}</pre>
-                </dd>
-            </dl>
+<ul id="partTabs" class="nav nav-tabs" role="tablist">
+  <li role="presentation">
+    <a href="#details" aria-controls="details" role="tab" data-toggle="tab">
+      <i class="fa fa-bars"></i>
+      Part Details
+    </a>
+  </li>
+  <li role="presentation">
+    <a href="#critical_dimensions" aria-controls="critical_dimensions" role="tab" data-toggle="tab">
+      <i class="fa fa-arrows"></i>
+      Critical Dimensions
+    </a>
+  </li>
+  <li role="presentation">
+    <a href="#turbo_types" aria-controls="turbo_types" role="tab" data-toggle="tab">
+      <i class="fa fa-cog"></i>
+      Turbo Types
+    </a>
+  </li>
+  <li role="presentation" ng-show="part.partType.value == 'turbo'">
+    <a href="#applications" aria-controls="applications" role="tab" data-toggle="tab">
+      <i class="fa fa-book"></i>
+      Applications
+    </a>
+  </li>
+</ul>
+<div class="tab-content">
+  <div role="tabpanel" class="tab-pane fade tab-part-detail" id="details">
+    <div class="row">
+      <div class="col-xs-6">
+        <dl class="dl-horizontal">
+          <dt>Name</dt>
+          <dd>{{part.name}}</dd>
+          <dt>Manufacturer</dt>
+          <dd>{{part.manufacturer.name}}</dd>
+          <dt>Manufacturer P/N</dt>
+          <dd>{{part.manufacturerPartNumber}}</dd>
+          <dt>State</dt>
+          <dd>
+            <span data-ng-show="part.inactive === false" class="bg-primary">Active</span>
+            <span data-ng-show="part.inactive === true" class="bg-warning text-muted">Inactive</span>
+          </dd>
+          <dt>Description</dt>
+          <dd>{{part.description}}</dd>
+        </dl>
+        <dl class="dl-horizontal" data-ng-if="part.partType.id === 1">
+          <!-- Turbo -->
+          <dt>Turbo Type</dt>
+          <dd>{{part.turboModel.turboType.name}}</dd>
+          <dt>Turbo Model</dt>
+          <dd>{{part.turboModel.name}}</dd>
+        </dl>
+     </div>
+      <div class="col-xs-6">
+        <div>
+          <a  authorize="ROLE_PART_IMAGES" ng-click="addImage()" class="btn btn-primary pull-right">
+            <i class="fa fa-plus"></i> Add Image
+          </a>
         </div>
-
-        <!-- Bearing Housing -->
-        <div data-ng-switch-when="Bearing Housing">
-            <dl class="dl-horizontal">
-                <dt>Coolant</dt>
-                <dd>{{part.coolType.name}}</dd>
-                <dt>Oil Inlet</dt>
-                <dd>{{part.oilInlet}}</dd>
-                <dt>Oil Outlet</dt>
-                <dd>{{part.oilOutlet}}</dd>
-                <dt>Oil</dt>
-                <dd>{{part.oil}}</dd>
-                <dt>Outlet Flange Holes</dt>
-                <dd>{{part.outletFlangeHoles}}</dd>
-                <dt>Water Ports</dt>
-                <dd>{{part.waterPorts}}</dd>
-                <dt>Design Features</dt>
-                <dd>{{part.designFeatures}}</dd>
-                <dt>Bearing Type</dt>
-                <dd>{{part.bearingType}}</dd>
-            </dl>
-        </div>
-
-        <!-- Bearing Spacer -->
-        <div data-ng-switch-when="Bearing Spacer">
-            <dl class="dl-horizontal">
-<!--
-                <dt>Standard Size</dt>
-                <dd>{{part.standardSize}}</dd>
-                <dt>Oversize</dt>
-                <dd>{{part.oversize}}</dd>
--->
-                <dt>Outside Diameter</dt>
-                <dd>{{part.outsideDiameterMin}} - {{part.outsideDiameterMax}}</dd>
-                <dt>Inside Diameter</dt>
-                <dd>{{part.insideDiameterMin}} - {{part.insideDiameterMax}}</dd>
-            </dl>
-        </div>
-
-        <!-- Compressor Wheel -->
-        <div data-ng-switch-when="Compressor Wheel">
-            <dl class="dl-horizontal">
-                <dt>Inducer Diameter A</dt>
-                <dd>{{part.inducerOa}}</dd>
-                <dt>Tip Height B</dt>
-                <dd>{{part.tipHeightB}}</dd>
-                <dt>Exducer Diameter C</dt>
-                <dd>{{part.exducerOc}}</dd>
-                <dt>Hub Length D</dt>
-                <dd>{{part.hubLengthD}}</dd>
-                <dt>Bore Diameter E</dt>
-                <dd>{{part.boreOe}}</dd>
-                <dt>Number of Blades</dt>
-                <dd>{{part.numberOfBlades}}</dd>
-                <dt>Application</dt>
-                <dd>{{part.application}}</dd>
-            </dl>
-        </div>
-
-        <!-- Gasket -->
-        <div data-ng-switch-when="Gasket">
-            <dl class="dl-horizontal">
-                <dt>Type</dt>
-                <dd>{{part.gasketType.name}}</dd>
-            </dl>
-        </div>
-
-        <!-- Heatshield -->
-        <div data-ng-switch-when="Heatshield">
-            <dl class="dl-horizontal">
-                <dt>Overall Diameter</dt>
-                <dd>{{part.overallDiameter}}</dd>
-                <dt>Inside Diameter</dt>
-                <dd>{{part.insideDiameter}}</dd>
-                <dt>Inducer Diameter</dt>
-                <dd>{{part.inducerDiameter}}</dd>
-            </dl>
-        </div>
-
-        <!-- Journal Bearing -->
-        <div data-ng-switch-when="Journal Bearing">
-            <dl class="dl-horizontal">
-<!--
-                <dt>Standard Size</dt>
-                <dd>{{part.standardSize}}</dd>
-                <dt>Oversize</dt>
-                <dd>{{part.oversize}}</dd>
--->
-                <dt>Width</dt>
-                <dd>{{part.width}}</dd>
-                <dt>Outside Diameter</dt>
-                <dd>{{part.outsideDiameterMin}} - {{part.outsideDiameterMax}}</dd>
-                <dt>Inside Diameter</dt>
-                <dd>{{part.insideDiameterMin}} - {{part.insideDiameterMax}}</dd>
-            </dl>
-        </div>
-
-        <!-- Kit -->
-        <div data-ng-switch-when="Kit">
-            <dl class="dl-horizontal">
-                <dt>Kit Type</dt>
-                <dd>{{part.kitType.name}}</dd>
-            </dl>
-
-            <h3>
-              Common Component Mappings
-              <a authorize="ROLE_ALTER_PART" class="btn btn-primary pull-right"
-                 ng-href="/part/Kit/{{ partId }}/component/search">
-                <i class="fa fa-plus"></i>
-                Add Mapping
-              </a>
-            </h3>
-            <part-table parts="kitComponents " key="part"
-                        extra-columns="{&quot;Mapping&quot;: &quot;item.exclude ? 'Exclude' : 'Include'&quot;}">
-              <a ng-click="removeComponent(item)"
-                 class="btn btn-xs btn-danger">
-                <i class="fa fa-trash-o"></i>
-                Remove
-              </a>
-            </part-table>
-        </div>
-
-        <!-- Piston Ring -->
-        <div data-ng-switch-when="Piston Ring">
-            <dl class="dl-horizontal">
-                <dt>Outside Diameter (min - max)</dt>
-                <dd>{{part.outsideDiameterMin}} - {{part.outsideDiameterMax}}</dd>
-                <dt>Width (min - max)</dt>
-                <dd>{{part.widthMin}} - {{part.widthMax}}</dd>
-                <dt>Installed Gap (min - max)</dt>
-                <dd>{{part.installedGapMin}} - {{part.installedGapMax}}</dd>
-            </dl>
-        </div>
-
-        <!-- Turbine Wheel -->
-        <div data-ng-switch-when="Turbine Wheel">
-            <dl class="dl-horizontal">
-                <dt>Exducer Diameter A</dt>
-                <dd>{{part.exducerDiameterA}}</dd>
-                <dt>Tip Height B</dt>
-                <dd>{{part.tipHeightB}}</dd>
-                <dt>Inducer Diameter C</dt>
-                <dd>{{part.inducerDiameterC}}</dd>
-                <dt>Journal Diameter D</dt>
-                <dd>{{part.journalDiameterD}}</dd>
-                <dt>Stem Diameter E</dt>
-                <dd>{{part.stemDiameterE}}</dd>
-                <dt>Shaft Thread F</dt>
-                <dd>{{part.shaftThreadF}}</dd>
-                <dt>Number of Blades</dt>
-                <dd>{{part.numberOfBlades}}</dd>
-            </dl>
-        </div>
-
-        <!-- Turbo -->
-        <div data-ng-switch-when="Turbo">
-            <dl class="dl-horizontal">
-                <dt data-ng-show="part.turboModel != null">Turbo Type</dt>
-                <dd data-ng-show="part.turboModel != null">{{part.turboModel.turboType.name}}</dd>
-                <dt data-ng-show="part.turboModel != null">Turbo Model</dt>
-                <dd data-ng-show="part.turboModel != null">{{part.turboModel.name}}</dd>
-                <dt data-ng-show="part.turboModel == null">Turbo Type</dt>
-                <dd data-ng-show="part.turboModel == null">[none]</dd>
-                <dt>Coolant</dt>
-                <dd>{{part.coolType.name}}</dd>
-            </dl>
-        </div>
+        <ul class="list-unstyled list-inline">
+          <li data-ng-repeat="image in part.productImages" ng-click="deleteImage(image)">
+            <img ng-src="/metadata/image/135/{{image.id}}.jpg" style="max-height: 135px; max-width: 135px" />
+          </li>
+          <li ng-show="part.productImages === undefined">
+            <div class="no-image" />
+          </li>
+        </ul>
+      </div>
     </div>
-
+    <div class="row">
+      <div class="col-xs-12">
+        <hr/>
+        <h4><u>Interchangeable Parts</u></h4>
+        <interchangeable-parts part="part"></interchangeable-parts>
+        <hr/>
+        <h4><u>Bill of Materials</u></h4>
+        <bom parent-part-id="partId"></bom>
+      </div>
+    </div>
   </div>
-
-  <!-- Images -->
-  <div class="col-xs-12 col-md-6">
-    <h3>Images
-      <a  authorize="ROLE_PART_IMAGES" ng-click="addImage()"
-         class="btn btn-primary pull-right">
-        <i class="fa fa-plus"></i> Add Image
-      </a>
-    </h3>
-    <ul class="list-unstyled list-inline">
-      <li data-ng-repeat="image in part.productImages" ng-click="deleteImage(image)">
-        <img ng-src="/metadata/image/135/{{image.id}}.jpg" style="max-height: 135px; max-width: 135px" />
-      </li>
-      <li class="well well-sm col-md-12" ng-show="part.productImages.length === 0">Part has no images.</li>
-    </ul>
+  <div role="tabpanel" class="tab-pane fade tab-part-detail" id="critical_dimensions">
+    <critical-dimensions part="part" descriptors="criticalDimensions"></critical-dimensions>
   </div>
-
-  <!-- Turbo Types -->
-  <div class="col-xs-12 col-md-6">
-    <h3>Turbo Types
-        <a authorize="ROLE_ALTER_PART" class="btn btn-primary pull-right"
-           ng-click="addTurboType()">
-          <i class="fa fa-plus"></i>
-          Add Type
-        </a>
-    </h3>
+  <div role="tabpanel" class="tab-pane fade tab-part-detail" id="turbo_types">
     <turbo-types part="part"></turbo-types>
   </div>
-
-  <!-- Interchanges -->
-  <div class="col-xs-12 col-md-6">
-    <h3>Interchangeable Parts</h3>
-    <interchangeable-parts part="part"></interchangeable-parts>
-  </div>
-
-  <!-- Applications (AKA CarModelEngineYear) -->
-  <div class="col-xs-12 col-md-6" ng-show="part.partType.value == 'turbo'">
-    <h3>
-      Applications
-      <a authorize="ROLE_APPLICATION_CRUD"
-         class="btn btn-primary pull-right" style="vertical-align: middle;"
-         ng-href="/part/{{partId}}/application/search">
-        <i class="fa fa-plus"></i>
-        Add Application
-      </a>
-    </h3>
+  <div role="tabpanel" class="tab-pane fade tab-part-detail" id="applications">
+    <a authorize="ROLE_APPLICATION_CRUD" class="btn btn-primary pull-right" style="margin-bottom:10px;" ng-href="/part/{{partId}}/application/search">
+      <i class="fa fa-plus"></i>
+      Add Application
+    </a>
     <part-application-table />
   </div>
-
 </div>
-
-<div class="row">
-  <bom parent-part-id="partId"></bom>
-</div>
+<script>
+  $('#partTabs a').click(function (e) {
+    e.preventDefault();
+    $(this).tab('show');
+  });
+  $('#partTabs a:first').tab('show');
+</script>

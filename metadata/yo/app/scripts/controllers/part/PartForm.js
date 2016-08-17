@@ -1,34 +1,23 @@
-
 "use strict";
 
-angular.module("ngMetaCrudApp").controller("PartFormCtrl", ["$q", "$scope", "$location",
-  "$log", "$routeParams", "ngTableParams", "restService",
-  "Restangular", "PartTypes",
-  function($q, $scope, $location, $log, $routeParams,
-    ngTableParams, restService, Restangular,
-    PartTypes) {
+angular.module("ngMetaCrudApp").controller("PartFormCtrl",
+  ["$scope", "$location", "$log", "restService", "Restangular", "part", "partType",
+  function($scope, $location, $log, restService, Restangular, part, partType) {
 
     // Setup the create/update workflow
-    if ($routeParams.id) {
-      $scope.partId = $routeParams.id;
-      $scope.oldPartPromise = restService.findPart($scope.partId).then(
-        function(part) {
-          // Save the part
-          $scope.part = part;
-          $scope.oldPart = Restangular.copy(part);
-        },
-        function(response) {
-          restService.error("Could not get part data from the server.", response);
-        });
+    if (part !== null) {
+      $scope.partId = part.id;
+      $scope.part = part;
+      $scope.oldPart = Restangular.copy(part);
     } else {
       $scope.partId = null;
       $scope.part = {};
+      $scope.oldPart = null;
     }
 
     // Set the part type
-    if ($routeParams.typeId) {
-      $scope.part.partType = PartTypes.getById($routeParams.typeId);
-      $log.log("Got part type by ID", $routeParams.typeId, $scope.part.partType);
+    if (partType !== null) {
+      $scope.part.partType = partType;
     }
 
     $scope.revert = function() {

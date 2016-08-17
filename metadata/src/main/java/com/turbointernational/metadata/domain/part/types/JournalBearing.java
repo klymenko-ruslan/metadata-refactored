@@ -1,133 +1,324 @@
 package com.turbointernational.metadata.domain.part.types;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.domain.criticaldimension.CriticalDimensionEnumVal;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.web.View;
-import flexjson.JSONSerializer;
-import org.apache.commons.lang.ObjectUtils;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.Table;
-import java.util.Map;
+import javax.persistence.*;
 
+import static javax.persistence.FetchType.LAZY;
+
+
+/**
+ * Created by dmytro.trunykov@zorallabs.com on 2016-08-01 17:06:08.758702.
+ */
 @Entity
-@Table(name="journal_bearing")
+@Table(name = "journal_bearing")
 @PrimaryKeyJoinColumn(name = "part_id")
 public class JournalBearing extends Part {
 
-//    @OneToOne(fetch = FetchType.LAZY)
-//    @JoinTable(name="standard_journal_bearing",
-//               joinColumns=@JoinColumn(name="oversized_part_id"),
-//               inverseJoinColumns=@JoinColumn(name="standard_part_id"))
-//    private JournalBearing standardSize;
-//
-//    @OneToOne(fetch = FetchType.LAZY)
-//    @JoinTable(name="standard_journal_bearing",
-//               joinColumns=@JoinColumn(name="standard_part_id"),
-//               inverseJoinColumns=@JoinColumn(name="oversized_part_id"))
-//    private JournalBearing oversize;
+    //<editor-fold defaultstate="collapsed" desc="Properties: critical dimensions">
 
-    @JsonView(View.Detail.class)
-    @Column(name="outside_dim_min")
-    private Float outsideDiameterMin;
+    @JsonView(View.Summary.class)
+    @JsonProperty("maxOuterDiameter")
+    @Column(name = "maxOuterDiameter")
+    private Double maxOuterDiameter;
 
-    @JsonView(View.Detail.class)
-    @Column(name="outside_dim_max")
-    private Float outsideDiameterMax;
+    @JsonView(View.Summary.class)
+    @JsonProperty("minOuterDiameter")
+    @Column(name = "minOuterDiameter")
+    private Double minOuterDiameter;
 
-    @JsonView(View.Detail.class)
-    @Column(name="inside_dim_min")
-    private Float insideDiameterMin;
+    @JsonView(View.Summary.class)
+    @JsonProperty("maxInnerDiameter")
+    @Column(name = "maxInnerDiameter")
+    private Double maxInnerDiameter;
 
-    @JsonView(View.Detail.class)
-    @Column(name="inside_dim_max")
-    private Float insideDiameterMax;
+    @JsonView(View.Summary.class)
+    @JsonProperty("minInnerDiameter")
+    @Column(name = "minInnerDiameter")
+    private Double minInnerDiameter;
 
-    @JsonView(View.Detail.class)
-    @Column(name="width")
-    private Float width;
+    @JsonView(View.Summary.class)
+    @JsonProperty("size")
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "size")
+    private CriticalDimensionEnumVal size;
 
-//    public JournalBearing getStandardSize() {
-//        return standardSize;
-//    }
-//
-//    public void setStandardSize(JournalBearing standardSize) {
-//        this.standardSize = standardSize;
-//    }
-//
-//    public JournalBearing getOversize() {
-//        return oversize;
-//    }
-//
-//    public void setOversize(JournalBearing oversize) {
-//        this.oversize = oversize;
-//    }
+    @JsonView(View.Summary.class)
+    @JsonProperty("length")
+    @Column(name = "length")
+    private Double length;
 
-    public Float getOutsideDiameterMin() {
-        return outsideDiameterMin;
+    @JsonView(View.Summary.class)
+    @JsonProperty("lengthTol")
+    @Column(name = "lengthTol")
+    private Double lengthTol;
+
+    @JsonView(View.Summary.class)
+    @JsonProperty("feedHoleCount")
+    @Column(name = "feedHoleCount")
+    private Integer feedHoleCount;
+
+    @JsonView(View.Summary.class)
+    @JsonProperty("feedHoleDiameter")
+    @Column(name = "feedHoleDiameter")
+    private Double feedHoleDiameter;
+
+    @JsonView(View.Summary.class)
+    @JsonProperty("freePinned")
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "freePinned")
+    private CriticalDimensionEnumVal freePinned;
+
+    @JsonView(View.Summary.class)
+    @JsonProperty("bearingsPerCartridge")
+    @Column(name = "bearingsPerCartridge")
+    private Integer bearingsPerCartridge;
+
+    @JsonView(View.Summary.class)
+    @JsonProperty("oilFeed")
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "oilFeed")
+    private CriticalDimensionEnumVal oilFeed;
+
+    @JsonView(View.Summary.class)
+    @JsonProperty("rotation")
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "rotation")
+    private CriticalDimensionEnumVal rotation;
+
+    @JsonView(View.Summary.class)
+    @JsonProperty("material")
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "material")
+    private CriticalDimensionEnumVal material;
+
+    @JsonView(View.Summary.class)
+    @JsonProperty("centerDiameterOd")
+    @Column(name = "centerDiameterOd")
+    private Double centerDiameterOd;
+
+    @JsonView(View.Summary.class)
+    @JsonProperty("endConfiguration")
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "endConfiguration")
+    private CriticalDimensionEnumVal endConfiguration;
+
+    @JsonView(View.Summary.class)
+    @JsonProperty("boreConfiguration")
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "boreConfiguration")
+    private CriticalDimensionEnumVal boreConfiguration;
+
+    @JsonView(View.Summary.class)
+    @JsonProperty("weight")
+    @Column(name = "weight")
+    private Double weight;
+
+    @JsonView(View.Summary.class)
+    @JsonProperty("specialFeatures")
+    @Column(name = "specialFeatures")
+    private String specialFeatures;
+
+    @JsonView(View.Summary.class)
+    @JsonProperty("specialFeaturesOnOff")
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "specialFeaturesOnOff")
+    private CriticalDimensionEnumVal specialFeaturesOnOff;
+
+    @JsonView(View.Summary.class)
+    @JsonProperty("brgSurfaces")
+    @Column(name = "brgSurfaces")
+    private Integer brgSurfaces;
+
+    @JsonView(View.Summary.class)
+    @JsonProperty("diagram")
+    @Column(name = "diagram")
+    private Integer diagram;
+
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="Getters and setters: critical dimensions">
+
+    public Double getMaxOuterDiameter() {
+        return maxOuterDiameter;
     }
 
-    public void setOutsideDiameterMin(Float outsideDiameterMin) {
-        this.outsideDiameterMin = outsideDiameterMin;
+    public void setMaxOuterDiameter(Double maxOuterDiameter) {
+        this.maxOuterDiameter = maxOuterDiameter;
     }
 
-    public Float getOutsideDiameterMax() {
-        return outsideDiameterMax;
+    public Double getMinOuterDiameter() {
+        return minOuterDiameter;
     }
 
-    public void setOutsideDiameterMax(Float outsideDiameterMax) {
-        this.outsideDiameterMax = outsideDiameterMax;
+    public void setMinOuterDiameter(Double minOuterDiameter) {
+        this.minOuterDiameter = minOuterDiameter;
     }
 
-    public Float getInsideDiameterMin() {
-        return insideDiameterMin;
+    public Double getMaxInnerDiameter() {
+        return maxInnerDiameter;
     }
 
-    public void setInsideDiameterMin(Float insideDiameterMin) {
-        this.insideDiameterMin = insideDiameterMin;
+    public void setMaxInnerDiameter(Double maxInnerDiameter) {
+        this.maxInnerDiameter = maxInnerDiameter;
     }
 
-    public Float getInsideDiameterMax() {
-        return insideDiameterMax;
+    public Double getMinInnerDiameter() {
+        return minInnerDiameter;
     }
 
-    public void setInsideDiameterMax(Float insideDiameterMax) {
-        this.insideDiameterMax = insideDiameterMax;
+    public void setMinInnerDiameter(Double minInnerDiameter) {
+        this.minInnerDiameter = minInnerDiameter;
     }
 
-    public Float getWidth() {
-        return width;
+    public CriticalDimensionEnumVal getSize() {
+        return size;
     }
 
-    public void setWidth(Float width) {
-        this.width = width;
+    public void setSize(CriticalDimensionEnumVal size) {
+        this.size = size;
     }
-    
-    @Override
-    protected JSONSerializer buildJSONSerializer() {
-        return super.buildJSONSerializer()
-            .include("standardSize.id")
-            .include("standardSize.manufacturer.id")
-            .include("standardSize.manufacturer.name")
-            .include("standardSize.manufacturerPartNumber")
-            .include("standardSize.version")
-            .include("oversize.id")
-            .include("oversize.manufacturer.id")
-            .include("oversize.manufacturer.name")
-            .include("oversize.manufacturerPartNumber")
-            .include("oversize.version");
+
+    public Double getLength() {
+        return length;
     }
-    
-    @Override
-    public void csvColumns(Map<String, String> columns) {
-        super.csvColumns(columns);
-        
-        columns.put("width_jb", ObjectUtils.toString(getWidth()));
-        columns.put("outside_diameter_min", ObjectUtils.toString(getOutsideDiameterMin()));
-        columns.put("outside_diameter_max", ObjectUtils.toString(getOutsideDiameterMax()));
-        columns.put("inside_diameter_min", ObjectUtils.toString(getInsideDiameterMin()));
-        columns.put("inside_diameter_max", ObjectUtils.toString(getInsideDiameterMax()));
+
+    public void setLength(Double length) {
+        this.length = length;
     }
+
+    public Double getLengthTol() {
+        return lengthTol;
+    }
+
+    public void setLengthTol(Double lengthTol) {
+        this.lengthTol = lengthTol;
+    }
+
+    public Integer getFeedHoleCount() {
+        return feedHoleCount;
+    }
+
+    public void setFeedHoleCount(Integer feedHoleCount) {
+        this.feedHoleCount = feedHoleCount;
+    }
+
+    public Double getFeedHoleDiameter() {
+        return feedHoleDiameter;
+    }
+
+    public void setFeedHoleDiameter(Double feedHoleDiameter) {
+        this.feedHoleDiameter = feedHoleDiameter;
+    }
+
+    public CriticalDimensionEnumVal getFreePinned() {
+        return freePinned;
+    }
+
+    public void setFreePinned(CriticalDimensionEnumVal freePinned) {
+        this.freePinned = freePinned;
+    }
+
+    public Integer getBearingsPerCartridge() {
+        return bearingsPerCartridge;
+    }
+
+    public void setBearingsPerCartridge(Integer bearingsPerCartridge) {
+        this.bearingsPerCartridge = bearingsPerCartridge;
+    }
+
+    public CriticalDimensionEnumVal getOilFeed() {
+        return oilFeed;
+    }
+
+    public void setOilFeed(CriticalDimensionEnumVal oilFeed) {
+        this.oilFeed = oilFeed;
+    }
+
+    public CriticalDimensionEnumVal getRotation() {
+        return rotation;
+    }
+
+    public void setRotation(CriticalDimensionEnumVal rotation) {
+        this.rotation = rotation;
+    }
+
+    public CriticalDimensionEnumVal getMaterial() {
+        return material;
+    }
+
+    public void setMaterial(CriticalDimensionEnumVal material) {
+        this.material = material;
+    }
+
+    public Double getCenterDiameterOd() {
+        return centerDiameterOd;
+    }
+
+    public void setCenterDiameterOd(Double centerDiameterOd) {
+        this.centerDiameterOd = centerDiameterOd;
+    }
+
+    public CriticalDimensionEnumVal getEndConfiguration() {
+        return endConfiguration;
+    }
+
+    public void setEndConfiguration(CriticalDimensionEnumVal endConfiguration) {
+        this.endConfiguration = endConfiguration;
+    }
+
+    public CriticalDimensionEnumVal getBoreConfiguration() {
+        return boreConfiguration;
+    }
+
+    public void setBoreConfiguration(CriticalDimensionEnumVal boreConfiguration) {
+        this.boreConfiguration = boreConfiguration;
+    }
+
+    public Double getWeight() {
+        return weight;
+    }
+
+    public void setWeight(Double weight) {
+        this.weight = weight;
+    }
+
+    public String getSpecialFeatures() {
+        return specialFeatures;
+    }
+
+    public void setSpecialFeatures(String specialFeatures) {
+        this.specialFeatures = specialFeatures;
+    }
+
+    public CriticalDimensionEnumVal getSpecialFeaturesOnOff() {
+        return specialFeaturesOnOff;
+    }
+
+    public void setSpecialFeaturesOnOff(CriticalDimensionEnumVal specialFeaturesOnOff) {
+        this.specialFeaturesOnOff = specialFeaturesOnOff;
+    }
+
+    public Integer getBrgSurfaces() {
+        return brgSurfaces;
+    }
+
+    public void setBrgSurfaces(Integer brgSurfaces) {
+        this.brgSurfaces = brgSurfaces;
+    }
+
+    public Integer getDiagram() {
+        return diagram;
+    }
+
+    public void setDiagram(Integer diagram) {
+        this.diagram = diagram;
+    }
+
+    //</editor-fold>
+
 }

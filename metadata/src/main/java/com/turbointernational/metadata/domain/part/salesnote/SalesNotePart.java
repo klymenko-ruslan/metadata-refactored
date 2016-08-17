@@ -2,6 +2,7 @@ package com.turbointernational.metadata.domain.part.salesnote;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.domain.SearchableEntity;
+import com.turbointernational.metadata.domain.criticaldimension.CriticalDimension;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.security.User;
@@ -11,47 +12,46 @@ import flexjson.JSONSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.Objects;
-import javax.persistence.*;
+import java.util.List;
 
 /**
- *
  * @author jrodriguez
  */
 @Cacheable
 @Entity
-@Table(name="sales_note_part")
+@Table(name = "sales_note_part")
 @AssociationOverrides({
-		@AssociationOverride(name = "pk.salesNote", 
-			joinColumns = @JoinColumn(name = "sales_note_id")),
-		@AssociationOverride(name = "pk.part", 
-			joinColumns = @JoinColumn(name = "part_id")) })
+        @AssociationOverride(name = "pk.salesNote",
+                joinColumns = @JoinColumn(name = "sales_note_id")),
+        @AssociationOverride(name = "pk.part",
+                joinColumns = @JoinColumn(name = "part_id"))})
 public class SalesNotePart implements Serializable, SearchableEntity {
 
     private final static Logger log = LoggerFactory.getLogger(SalesNotePart.class);
-    
+
     @EmbeddedId
     private SalesNotePartId pk;
-    
+
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name="create_date")
+    @Column(name = "create_date")
     private Date createDate;
-    
+
     @OneToOne
-    @JoinColumn(name="create_uid", nullable = false)
+    @JoinColumn(name = "create_uid", nullable = false)
     private User creator;
-    
+
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name="write_date")
+    @Column(name = "write_date")
     private Date updateDate;
-    
+
     @OneToOne
-    @JoinColumn(name="write_uid", nullable = false)
+    @JoinColumn(name = "write_uid", nullable = false)
     private User updater;
-    
-    @Column(name="primary_part", nullable = false)
+
+    @Column(name = "primary_part", nullable = false)
     private boolean primary;
 
     public SalesNotePart() {
@@ -65,23 +65,23 @@ public class SalesNotePart implements Serializable, SearchableEntity {
         this.updater = updater;
         this.primary = primary;
     }
-    
+
     /**
      * Convenience method for new sales note parts.
      */
     public SalesNotePart(SalesNote salesNote, Part part, boolean primary, User user) {
         this(new SalesNotePartId(salesNote, part),
-                
-              // Create
-              new Date(), user,
-                
-              // Update
-              new Date(), user,
-                
-              // Primary Part
-              primary);
+
+                // Create
+                new Date(), user,
+
+                // Update
+                new Date(), user,
+
+                // Primary Part
+                primary);
     }
-    
+
     public SalesNotePartId getPk() {
         return pk;
     }
@@ -89,39 +89,39 @@ public class SalesNotePart implements Serializable, SearchableEntity {
     public void setPk(SalesNotePartId pk) {
         this.pk = pk;
     }
-    
+
     public SalesNote getSalesNote() {
         return getPk().getSalesNote();
     }
-    
+
     public void setSalesNote(SalesNote salesNote) {
         getPk().setSalesNote(salesNote);
     }
-    
+
     @JsonView({View.DetailWithPartsAndAttachments.class})
     public Part getPart() {
         return getPk().getPart();
     }
-    
+
     public void setPart(Part part) {
         getPk().setPart(part);
     }
-    
+
     @JsonView({View.DetailWithParts.class})
     public long getPartId() {
         return pk.getPart().getId();
     }
-    
+
     @JsonView({View.DetailWithParts.class})
     public String getPartNumber() {
         return pk.getPart().getManufacturerPartNumber();
     }
-    
+
     @JsonView({View.DetailWithParts.class})
     public Manufacturer getManufacturer() {
         return pk.getPart().getManufacturer();
     }
-    
+
     @JsonView({View.Summary.class})
     public Date getCreateDate() {
         return createDate;
@@ -170,9 +170,9 @@ public class SalesNotePart implements Serializable, SearchableEntity {
 
     /**
      * This method is called by Flexjson during serialization.
-     * @see #toSearchJson()
      *
      * @return
+     * @see #toSearchJson()
      */
     public long getPrimaryPartId() {
         long primaryPartId = primary ? pk.getPart().getId() : pk.getSalesNote().getPrimaryPartId();
@@ -211,7 +211,7 @@ public class SalesNotePart implements Serializable, SearchableEntity {
     }
 
     @Override
-    public String toSearchJson() {
+    public String toSearchJson(List<CriticalDimension> criticalDimensions) {
         return getSearchSerializer().exclude("*").serialize(this);
     }
 

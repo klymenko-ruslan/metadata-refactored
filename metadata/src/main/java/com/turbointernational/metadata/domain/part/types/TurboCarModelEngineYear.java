@@ -1,11 +1,9 @@
 package com.turbointernational.metadata.domain.part.types;
 
 import com.turbointernational.metadata.domain.car.CarModelEngineYear;
-import flexjson.JSONSerializer;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.List;
 
 @Cacheable
 @Entity

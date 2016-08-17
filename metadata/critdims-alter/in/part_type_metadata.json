@@ -1,0 +1,171 @@
+{
+"part_type": [
+	{
+		"id" : 1,
+		"name" : "Turbo",
+		"parent_part_type_id" : null,
+		"import_pk" : null,
+		"magento_attribute_set" : "Turbo",
+		"value" : "turbo"
+	},
+	{
+		"id" : 2,
+		"name" : "Cartridge",
+		"parent_part_type_id" : null,
+		"import_pk" : null,
+		"magento_attribute_set" : "Cartridge",
+		"value" : "cartridge"
+	},
+	{
+		"id" : 3,
+		"name" : "Kit",
+		"parent_part_type_id" : null,
+		"import_pk" : null,
+		"magento_attribute_set" : "Kit",
+		"value" : "kit"
+	},
+	{
+		"id" : 4,
+		"name" : "Piston Ring",
+		"parent_part_type_id" : null,
+		"import_pk" : null,
+		"magento_attribute_set" : "Piston Ring",
+		"value" : "piston_ring"
+	},
+	{
+		"id" : 5,
+		"name" : "Journal Bearing",
+		"parent_part_type_id" : null,
+		"import_pk" : null,
+		"magento_attribute_set" : "Journal Bearing",
+		"value" : "journal_bearing"
+	},
+	{
+		"id" : 6,
+		"name" : "Gasket",
+		"parent_part_type_id" : null,
+		"import_pk" : null,
+		"magento_attribute_set" : "Gasket",
+		"value" : "gasket"
+	},
+	{
+		"id" : 7,
+		"name" : "Bearing Spacer",
+		"parent_part_type_id" : null,
+		"import_pk" : null,
+		"magento_attribute_set" : "Bearing Spacer",
+		"value" : "bearing_spacer"
+	},
+	{
+		"id" : 8,
+		"name" : "Fast Wearing Component",
+		"parent_part_type_id" : null,
+		"import_pk" : null,
+		"magento_attribute_set" : "Part",
+		"value" : "fast_wearing_component"
+	},
+	{
+		"id" : 9,
+		"name" : "Major Component",
+		"parent_part_type_id" : null,
+		"import_pk" : null,
+		"magento_attribute_set" : "Part",
+		"value" : "major_component"
+	},
+	{
+		"id" : 10,
+		"name" : "Minor Component",
+		"parent_part_type_id" : null,
+		"import_pk" : null,
+		"magento_attribute_set" : "Part",
+		"value" : "minor_component"
+	},
+	{
+		"id" : 11,
+		"name" : "Compressor Wheel",
+		"parent_part_type_id" : 9,
+		"import_pk" : 11,
+		"magento_attribute_set" : "Compressor Wheel",
+		"value" : "compressor_wheel"
+	},
+	{
+		"id" : 12,
+		"name" : "Turbine Wheel",
+		"parent_part_type_id" : 9,
+		"import_pk" : 12,
+		"magento_attribute_set" : "Turbine Wheel",
+		"value" : "turbine_wheel"
+	},
+	{
+		"id" : 13,
+		"name" : "Bearing Housing",
+		"parent_part_type_id" : 9,
+		"import_pk" : 13,
+		"magento_attribute_set" : "Bearing Housing",
+		"value" : "bearing_housing"
+	},
+	{
+		"id" : 14,
+		"name" : "Backplate / Sealplate",
+		"parent_part_type_id" : 9,
+		"import_pk" : 14,
+		"magento_attribute_set" : "Backplate",
+		"value" : "backplate_sealplate"
+	},
+	{
+		"id" : 15,
+		"name" : "Heatshield / Shroud",
+		"parent_part_type_id" : 9,
+		"import_pk" : 15,
+		"magento_attribute_set" : "Heatshield",
+		"value" : "heatshield_shroud"
+	},
+	{
+		"id" : 16,
+		"name" : "Nozzle Ring",
+		"parent_part_type_id" : 9,
+		"import_pk" : 16,
+		"magento_attribute_set" : "Nozzle Ring",
+		"value" : "nozzle_ring"
+	},
+	{
+		"id" : 17,
+		"name" : "O Ring",
+		"parent_part_type_id" : 10,
+		"import_pk" : 50,
+		"magento_attribute_set" : "Part",
+		"value" : "o_ring"
+	},
+	{
+		"id" : 18,
+		"name" : "Oil Deflector",
+		"parent_part_type_id" : 10,
+		"import_pk" : 51,
+		"magento_attribute_set" : "Part",
+		"value" : "oil_deflector"
+	},
+	{
+		"id" : 19,
+		"name" : "Clamp",
+		"parent_part_type_id" : 10,
+		"import_pk" : 52,
+		"magento_attribute_set" : "Part",
+		"value" : "clamp"
+	},
+	{
+		"id" : 20,
+		"name" : "Thrust Parts",
+		"parent_part_type_id" : 10,
+		"import_pk" : 53,
+		"magento_attribute_set" : "Part",
+		"value" : "thrust_parts"
+	},
+	{
+		"id" : 21,
+		"name" : "Miscellaneous Minor Components",
+		"parent_part_type_id" : 10,
+		"import_pk" : 54,
+		"magento_attribute_set" : "Part",
+		"value" : "misc_minor_components"
+	}
+]}

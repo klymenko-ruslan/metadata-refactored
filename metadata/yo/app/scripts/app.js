@@ -6,7 +6,10 @@ angular.module("ngMetaCrudApp", ["ngRoute", "ngTable", "ui.bootstrap",
   .constant("METADATA_BASE", "/metadata/")
   .constant("VALID_IP_ADDRESS_REGEX", /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/)
   .constant("VALID_HOSTNAME_REGEX", /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$/)
-  .config(function($locationProvider, $httpProvider, $routeProvider, RestangularProvider, METADATA_BASE) {
+  .constant("DATE_FORMAT", "yyyy-MM-dd")
+  .config(["$locationProvider", "$httpProvider", "$routeProvider", "RestangularProvider", "METADATA_BASE",
+    function($locationProvider, $httpProvider, $routeProvider, RestangularProvider, METADATA_BASE) {
+
     $httpProvider.interceptors.push("loginRequiredInterceptor");
 
     RestangularProvider.setBaseUrl(METADATA_BASE);
@@ -27,32 +30,80 @@ angular.module("ngMetaCrudApp", ["ngRoute", "ngTable", "ui.bootstrap",
     // Parts
     $routeProvider.when("/part/list", {
       templateUrl: "views/part/PartList.html",
-      controller: "PartListCtrl"
+      controller: "PartListCtrl",
+      resolve: {
+        partTypes: ["restService", function(restService) {
+          return restService.listPartTypes();
+        }],
+        critDimsByPartTypes: ["restService", function(restService) {
+          return restService.getCritDimsByPartTypes("ID");
+        }],
+        critDimEnumVals: ["restService", function(restService) {
+          return restService.getAllCritDimEnumVals();
+        }]
+      }
     });
     $routeProvider.when("/part/createByPartTypeId/:typeId", {
       templateUrl: "views/part/PartForm.html",
       controller: "PartFormCtrl",
       resolve: {
-        partTypes: ["PartTypes", function(PartTypes) {
-          return PartTypes.getPromise();
+        part: function () {
+          return null;
+        },
+        partType: ["$log", "$route", "restService", function($log, $route, restService) {
+          var typeId = $route.current.pathParams.typeId;
+          return restService.findPartType(typeId)
         }]
       }
     });
     $routeProvider.when("/part/:id/form", {
       templateUrl: "views/part/PartForm.html",
-      controller: "PartFormCtrl"
+      controller: "PartFormCtrl",
+      resolve: {
+        part: ["$route", "restService", function ($route, restService) {
+          var partId = $route.current.pathParams.id;
+          return restService.findPart(partId);
+        }],
+        partType: function () {
+          return null;
+        }
+      }
     });
     $routeProvider.when("/part/:id/interchange/search", {
       templateUrl: "views/part/interchange/PartInterchangeSearch.html",
-      controller: "PartInterchangeSearchCtrl"
+      controller: "PartInterchangeSearchCtrl",
+      resolve: {
+        partTypes: ["restService", function(restService) {
+          return restService.listPartTypes();
+        }],
+        critDimsByPartTypes: ["restService", function(restService) {
+          return restService.getCritDimsByPartTypes("ID");
+        }],
+        critDimEnumVals: ["restService", function(restService) {
+          return restService.getAllCritDimEnumVals();
+        }]
+      }
     });
     $routeProvider.when("/part/Kit/:id/component/search", {
       templateUrl: "../views/part/KitComponentSearch.html",
-      controller: "KitComponentSearchCtrl"
+      controller: "KitComponentSearchCtrl",
+      resolve: {
+        partTypes: ["restService", function(restService) {
+          return restService.listPartTypes();
+        }]
+      }
     });
     $routeProvider.when("/part/:id/bom/search", {
       templateUrl: "views/part/bom/PartBomSearch.html",
-      controller: "PartBomSearchCtrl"
+      controller: "PartBomSearchCtrl",
+      resolve: {
+        part: ["$route", "restService", function($route, restService) {
+          return restService.findPart($route.current.pathParams.id);
+        }],
+        partTypes: ["restService", function(restService) {
+          return restService.listPartTypes();
+        }]
+      }
     });
     $routeProvider.when("/part/:id/application/search", {
       templateUrl: "views/part/application/PartApplicationSearch.html",
@@ -60,7 +111,12 @@ angular.module("ngMetaCrudApp", ["ngRoute", "ngTable", "ui.bootstrap",
     });
     $routeProvider.when("/part/:id/bom/:bomId/search", {
       templateUrl: "views/part/bom/BomAlternateSearch.html",
-      controller: "BomAlternateSearchCtrl"
+      controller: "BomAlternateSearchCtrl",
+      resolve: {
+        partTypes: ["restService", function(restService) {
+          return restService.listPartTypes();
+        }]
+      }
     });
     $routeProvider.when("/part/:id/ancestors", {
       templateUrl: "views/part/PartAncestors.html",
@@ -72,6 +128,29 @@ angular.module("ngMetaCrudApp", ["ngRoute", "ngTable", "ui.bootstrap",
       resolve: {
         part: ["$route", "restService", function($route, restService) {
           return restService.findPart($route.current.pathParams.id);
+        }],
+        criticalDimensions: ["$route", "restService", function($route, restService) {
+          return restService.findCriticalDimensionsForThePart($route.current.pathParams.id);
+        }]
+      }
+    });
+
+    // Part Types
+    $routeProvider.when("/parttype/list", {
+      templateUrl: "views/parttype/list.html",
+      controller: "PartTypeListCtrl",
+      resolve: {
+        partTypes: ["restService", function(restService) {
+          return restService.listPartTypes();
+        }]
+      }
+    });
+    $routeProvider.when("/parttype/:id", {
+      templateUrl: "views/parttype/edit.html",
+      controller: "PartTypeEditCtrl",
+      resolve: {
+        partType: ["$route", "restService", function($route, restService) {
+          return restService.findPartType($route.current.pathParams.id);
         }]
       }
     });
@@ -113,7 +192,10 @@ angular.module("ngMetaCrudApp", ["ngRoute", "ngTable", "ui.bootstrap",
         }],
         salesNote: ["$route", "restService", function($route, restService) {
           return restService.findSalesNote($route.current.pathParams.salesNoteId);
-        }]
+        }],
+        partTypes: ["restService", function(restService) {
+          return restService.listPartTypes();
+        }],
       }
     });
 
@@ -187,13 +269,34 @@ angular.module("ngMetaCrudApp", ["ngRoute", "ngTable", "ui.bootstrap",
     });
 
     // MAS90
-
     $routeProvider.when("/mas90/sync/status", {
       templateUrl: "views/mas90/sync/status.html",
       controller: "Mas90SyncCtrl",
       resolve: {
         status: ["restService", function(restService) {
           return restService.statusMas90Sync();
+        }]
+      }
+    });
+
+    // Indexing.
+    $routeProvider.when("/search/indexing/status", {
+      templateUrl: "views/indexing/status.html",
+      controller: "IndexingCtrl as ctrl",
+      resolve: {
+        status: ["restService", function(restService) {
+          return restService.getIndexingStatus();
+        }]
+      }
+    });
+
+    // Critical dimensions
+    $routeProvider.when("/criticaldimension/enums", {
+      templateUrl: "views/criticaldimension/enums.html",
+      controller: "CriticalDimensionEnumsCtrl",
+      resolve: {
+        critDimEnums: ["restService", function(restService) {
+          return restService.getAllCritDimEnums()
         }]
       }
     });
@@ -212,7 +315,7 @@ angular.module("ngMetaCrudApp", ["ngRoute", "ngTable", "ui.bootstrap",
       templateUrl: "views/security/users.html",
       controller: "UsersCtrl",
       resolve: {
-        users: ["restService", function(restService) { return restService.getAllUsers()}]
+        users: ["restService", function(restService) { return restService.findActiveUsers()}]
       }
     });
     $routeProvider.when("/security/user/:id", {
@@ -221,6 +324,16 @@ angular.module("ngMetaCrudApp", ["ngRoute", "ngTable", "ui.bootstrap",
       resolve: {
         authProviders: ["restService", function(restService) {
           return restService.getAllAuthProviders("id", "asc", 0, 1000);
+        }]
+      }
+    });
+    // Chagelog.
+    $routeProvider.when("/changelog/list", {
+      templateUrl: "views/changelog/list.html",
+      controller: "ChangelogListCtrl",
+      resolve: {
+        users: ["restService", function(restService) {
+          return restService.findAllUsers();
         }]
       }
     });
@@ -254,4 +367,4 @@ angular.module("ngMetaCrudApp", ["ngRoute", "ngTable", "ui.bootstrap",
     $routeProvider.otherwise({
       redirectTo: "/"
     });
-  });
+  }]);

@@ -1,0 +1,8253 @@
+{
+"enum_item": [
+	{
+		"id" : 19719,
+		"enum_id" : 741,
+		"enum_item_value" : "_999",
+		"enum_item_text" : "-99"
+	},
+	{
+		"id" : 19720,
+		"enum_id" : 741,
+		"enum_item_value" : "single",
+		"enum_item_text" : "SINGLE"
+	},
+	{
+		"id" : 19721,
+		"enum_id" : 741,
+		"enum_item_value" : "dual",
+		"enum_item_text" : "DUAL"
+	},
+	{
+		"id" : 19722,
+		"enum_id" : 741,
+		"enum_item_value" : "other",
+		"enum_item_text" : "OTHER"
+	},
+	{
+		"id" : 19723,
+		"enum_id" : 742,
+		"enum_item_value" : "_999",
+		"enum_item_text" : "-99"
+	},
+	{
+		"id" : 19724,
+		"enum_id" : 742,
+		"enum_item_value" : "1215_stl",
+		"enum_item_text" : "1215 STL"
+	},
+	{
+		"id" : 19725,
+		"enum_id" : 742,
+		"enum_item_value" : "2024_t6_al",
+		"enum_item_text" : "2024-T6 AL"
+	},
+	{
+		"id" : 19726,
+		"enum_id" : 742,
+		"enum_item_value" : "6061_t6_al",
+		"enum_item_text" : "6061-T6 AL"
+	},
+	{
+		"id" : 19727,
+		"enum_id" : 742,
+		"enum_item_value" : "8620_stl",
+		"enum_item_text" : "8620 STL"
+	},
+	{
+		"id" : 19728,
+		"enum_id" : 742,
+		"enum_item_value" : "a356_al",
+		"enum_item_text" : "A356 AL"
+	},
+	{
+		"id" : 19729,
+		"enum_id" : 742,
+		"enum_item_value" : "a380_al",
+		"enum_item_text" : "A380 AL"
+	},
+	{
+		"id" : 19730,
+		"enum_id" : 742,
+		"enum_item_value" : "a383_al",
+		"enum_item_text" : "A383 AL"
+	},
+	{
+		"id" : 19731,
+		"enum_id" : 742,
+		"enum_item_value" : "aluminum",
+		"enum_item_text" : "ALUMINUM"
+	},
+	{
+		"id" : 19732,
+		"enum_id" : 742,
+		"enum_item_value" : "cast_iron",
+		"enum_item_text" : "CAST IRON"
+	},
+	{
+		"id" : 19733,
+		"enum_id" : 742,
+		"enum_item_value" : "ductile_iron",
+		"enum_item_text" : "DUCTILE IRON"
+	},
+	{
+		"id" : 19734,
+		"enum_id" : 742,
+		"enum_item_value" : "various",
+		"enum_item_text" : "VARIOUS"
+	},
+	{
+		"id" : 19735,
+		"enum_id" : 742,
+		"enum_item_value" : "other",
+		"enum_item_text" : "OTHER"
+	},
+	{
+		"id" : 19736,
+		"enum_id" : 743,
+		"enum_item_value" : "_999",
+		"enum_item_text" : "-99"
+	},
+	{
+		"id" : 19737,
+		"enum_id" : 743,
+		"enum_item_value" : "1010_1018",
+		"enum_item_text" : "1010-1018"
+	},
+	{
+		"id" : 19738,
+		"enum_id" : 743,
+		"enum_item_value" : "1016_1020",
+		"enum_item_text" : "1016-1020"
+	},
+	{
+		"id" : 19739,
+		"enum_id" : 743,
+		"enum_item_value" : "1018_1020",
+		"enum_item_text" : "1018-1020"
+	},
+	{
+		"id" : 19740,
+		"enum_id" : 743,
+		"enum_item_value" : "a620_cr_stl",
+		"enum_item_text" : "A620 Cr STL"
+	},
+	{
+		"id" : 19741,
+		"enum_id" : 743,
+		"enum_item_value" : "al",
+		"enum_item_text" : "AL"
+	},
+	{
+		"id" : 19742,
+		"enum_id" : 743,
+		"enum_item_value" : "astm_a_1008_03_cs_type_a",
+		"enum_item_text" : "ASTM-A-1008-03-CS-TYPE A"
+	},
+	{
+		"id" : 19743,
+		"enum_id" : 743,
+		"enum_item_value" : "steel",
+		"enum_item_text" : "STEEL"
+	},
+	{
+		"id" : 19744,
+		"enum_id" : 743,
+		"enum_item_value" : "other",
+		"enum_item_text" : "OTHER"
+	},
+	{
+		"id" : 19745,
+		"enum_id" : 744,
+		"enum_item_value" : "te",
+		"enum_item_text" : "T/E"
+	},
+	{
+		"id" : 19746,
+		"enum_id" : 744,
+		"enum_item_value" : "bh",
+		"enum_item_text" : "BH"
+	},
+	{
+		"id" : 19747,
+		"enum_id" : 744,
+		"enum_item_value" : "ce",
+		"enum_item_text" : "C/E"
+	},
+	{
+		"id" : 19748,
+		"enum_id" : 745,
+		"enum_item_value" : "_999",
+		"enum_item_text" : "-99"
+	},
+	{
+		"id" : 19749,
+		"enum_id" : 745,
+		"enum_item_value" : "1005",
+		"enum_item_text" : "1005"
+	},
+	{
+		"id" : 19750,
+		"enum_id" : 745,
+		"enum_item_value" : "1215",
+		"enum_item_text" : "1215"
+	},
+	{
+		"id" : 19751,
+		"enum_id" : 745,
+		"enum_item_value" : "1074_sprg_stl",
+		"enum_item_text" : "1074 SPRG STL"
+	},
+	{
+		"id" : 19752,
+		"enum_id" : 745,
+		"enum_item_value" : "sst",
+		"enum_item_text" : "SST"
+	},
+	{
+		"id" : 19753,
+		"enum_id" : 745,
+		"enum_item_value" : "steel",
+		"enum_item_text" : "STEEL"
+	},
+	{
+		"id" : 19754,
+		"enum_id" : 745,
+		"enum_item_value" : "other",
+		"enum_item_text" : "OTHER"
+	},
+	{
+		"id" : 19755,
+		"enum_id" : 746,
+		"enum_item_value" : "_999",
+		"enum_item_text" : "-99"
+	},
+	{
+		"id" : 19756,
+		"enum_id" : 746,
+		"enum_item_value" : "25mm",
+		"enum_item_text" : "2.5mm"
+	},
+	{
+		"id" : 19757,
+		"enum_id" : 746,
+		"enum_item_value" : "3mm",
+		"enum_item_text" : "3mm"
+	},
+	{
+		"id" : 19758,
+		"enum_id" : 746,
+		"enum_item_value" : "4mm",
+		"enum_item_text" : "4mm"
+	},
+	{
+		"id" : 19759,
+		"enum_id" : 746,
+		"enum_item_value" : "5mm",
+		"enum_item_text" : "5mm"
+	},
+	{
+		"id" : 19760,
+		"enum_id" : 746,
+		"enum_item_value" : "t10",
+		"enum_item_text" : "T10"
+	},
+	{
+		"id" : 19761,
+		"enum_id" : 746,
+		"enum_item_value" : "t15",
+		"enum_item_text" : "T15"
+	},
+	{
+		"id" : 19762,
+		"enum_id" : 746,
+		"enum_item_value" : "t20",
+		"enum_item_text" : "T20"
+	},
+	{
+		"id" : 19763,
+		"enum_id" : 746,
+		"enum_item_value" : "t25",
+		"enum_item_text" : "T25"
+	},
+	{
+		"id" : 19764,
+		"enum_id" : 746,
+		"enum_item_value" : "t27",
+		"enum_item_text" : "T27"
+	},
+	{
+		"id" : 19765,
+		"enum_id" : 747,
+		"enum_item_value" : "_999",
+		"enum_item_text" : "-99"
+	},
+	{
+		"id" : 19766,
+		"enum_id" : 747,
+		"enum_item_value" : "phillips",
+		"enum_item_text" : "PHILLIPS"
+	},
+	{
+		"id" : 19767,
+		"enum_id" : 747,
+		"enum_item_value" : "slotted",
+		"enum_item_text" : "SLOTTED"
+	},
+	{
+		"id" : 19768,
+		"enum_id" : 747,
+		"enum_item_value" : "torx",
+		"enum_item_text" : "TORX"
+	},
+	{
+		"id" : 19769,
+		"enum_id" : 747,
+		"enum_item_value" : "int_hex",
+		"enum_item_text" : "INT HEX"
+	},
+	{
+		"id" : 19770,
+		"enum_id" : 747,
+		"enum_item_value" : "other",
+		"enum_item_text" : "OTHER"
+	},
+	{
+		"id" : 19771,
+		"enum_id" : 748,
+		"enum_item_value" : "_999",
+		"enum_item_text" : "-99"
+	},
+	{
+		"id" : 19772,
+		"enum_id" : 748,
+		"enum_item_value" : "dynamic",
+		"enum_item_text" : "DYNAMIC"
+	},
+	{
+		"id" : 19773,
+		"enum_id" : 748,
+		"enum_item_value" : "carbon_seal",
+		"enum_item_text" : "CARBON SEAL"
+	},
+	{
+		"id" : 19774,
+		"enum_id" : 748,
+		"enum_item_value" : "other",
+		"enum_item_text" : "OTHER"
+	},
+	{
+		"id" : 19775,
+		"enum_id" : 749,
+		"enum_item_value" : "_999",
+		"enum_item_text" : "-99"
+	},
+	{
+		"id" : 19776,
+		"enum_id" : 749,
+		"enum_item_value" : "301_ss",
+		"enum_item_text" : "301 SS"
+	},
+	{
+		"id" : 19777,
+		"enum_id" : 749,
+		"enum_item_value" : "303_ss",
+		"enum_item_text" : "303 SS"
+	},
+	{
+		"id" : 19778,
+		"enum_id" : 749,
+		"enum_item_value" : "304_ss",
+		"enum_item_text" : "304 SS"
+	},
+	{
+		"id" : 19779,
+		"enum_id" : 749,
+		"enum_item_value" : "beaded_304_stainless_steel",
+		"enum_item_text" : "BEADED 304 STAINLESS STEEL"
+	},
+	{
+		"id" : 19780,
+		"enum_id" : 749,
+		"enum_item_value" : "c_4401",
+		"enum_item_text" : "C-4401"
+	},
+	{
+		"id" : 19781,
+		"enum_id" : 749,
+		"enum_item_value" : "composite",
+		"enum_item_text" : "COMPOSITE"
+	},
+	{
+		"id" : 19782,
+		"enum_id" : 749,
+		"enum_item_value" : "fiber",
+		"enum_item_text" : "FIBER"
+	},
+	{
+		"id" : 19783,
+		"enum_id" : 749,
+		"enum_item_value" : "ni_2085",
+		"enum_item_text" : "NI-2085"
+	},
+	{
+		"id" : 19784,
+		"enum_id" : 749,
+		"enum_item_value" : "red_rigid_fiber",
+		"enum_item_text" : "RED RIGID FIBER"
+	},
+	{
+		"id" : 19785,
+		"enum_id" : 749,
+		"enum_item_value" : "rubberized_fiber",
+		"enum_item_text" : "RUBBERIZED FIBER"
+	},
+	{
+		"id" : 19786,
+		"enum_id" : 749,
+		"enum_item_value" : "steel",
+		"enum_item_text" : "STEEL"
+	},
+	{
+		"id" : 19787,
+		"enum_id" : 749,
+		"enum_item_value" : "teflon",
+		"enum_item_text" : "TEFLON"
+	},
+	{
+		"id" : 19788,
+		"enum_id" : 749,
+		"enum_item_value" : "tn_9004",
+		"enum_item_text" : "TN-9004"
+	},
+	{
+		"id" : 19789,
+		"enum_id" : 749,
+		"enum_item_value" : "ts_9003_as2",
+		"enum_item_text" : "TS 9003 AS2"
+	},
+	{
+		"id" : 19790,
+		"enum_id" : 749,
+		"enum_item_value" : "ts_9013",
+		"enum_item_text" : "TS 9013"
+	},
+	{
+		"id" : 19791,
+		"enum_id" : 749,
+		"enum_item_value" : "veg_fiber",
+		"enum_item_text" : "VEG FIBER"
+	},
+	{
+		"id" : 19792,
+		"enum_id" : 749,
+		"enum_item_value" : "other",
+		"enum_item_text" : "OTHER"
+	},
+	{
+		"id" : 19793,
+		"enum_id" : 750,
+		"enum_item_value" : "_999",
+		"enum_item_text" : "-99"
+	},
+	{
+		"id" : 19794,
+		"enum_id" : 750,
+		"enum_item_value" : "single",
+		"enum_item_text" : "SINGLE"
+	},
+	{
+		"id" : 19795,
+		"enum_id" : 750,
+		"enum_item_value" : "split",
+		"enum_item_text" : "SPLIT"
+	},
+	{
+		"id" : 19796,
+		"enum_id" : 750,
+		"enum_item_value" : "other",
+		"enum_item_text" : "OTHER"
+	},
+	{
+		"id" : 19797,
+		"enum_id" : 751,
+		"enum_item_value" : "_999",
+		"enum_item_text" : "-99"
+	},
+	{
+		"id" : 19798,
+		"enum_id" : 751,
+		"enum_item_value" : "oil_drain",
+		"enum_item_text" : "OIL DRAIN"
+	},
+	{
+		"id" : 19799,
+		"enum_id" : 751,
+		"enum_item_value" : "oil_inlet",
+		"enum_item_text" : "OIL INLET"
+	},
+	{
+		"id" : 19800,
+		"enum_id" : 751,
+		"enum_item_value" : "compressor_outlet",
+		"enum_item_text" : "COMPRESSOR OUTLET"
+	},
+	{
+		"id" : 19801,
+		"enum_id" : 751,
+		"enum_item_value" : "turbine_inlet",
+		"enum_item_text" : "TURBINE INLET"
+	},
+	{
+		"id" : 19802,
+		"enum_id" : 751,
+		"enum_item_value" : "turbine_outlet",
+		"enum_item_text" : "TURBINE OUTLET"
+	},
+	{
+		"id" : 19803,
+		"enum_id" : 751,
+		"enum_item_value" : "exhaust_manifold",
+		"enum_item_text" : "EXHAUST MANIFOLD"
+	},
+	{
+		"id" : 19804,
+		"enum_id" : 751,
+		"enum_item_value" : "other",
+		"enum_item_text" : "OTHER"
+	},
+	{
+		"id" : 19805,
+		"enum_id" : 752,
+		"enum_item_value" : "_999",
+		"enum_item_text" : "-99"
+	},
+	{
+		"id" : 19806,
+		"enum_id" : 752,
+		"enum_item_value" : "grade_2",
+		"enum_item_text" : "GRADE 2"
+	},
+	{
+		"id" : 19807,
+		"enum_id" : 752,
+		"enum_item_value" : "grade_5",
+		"enum_item_text" : "GRADE 5"
+	},
+	{
+		"id" : 19808,
+		"enum_id" : 752,
+		"enum_item_value" : "grade_8",
+		"enum_item_text" : "GRADE 8"
+	},
+	{
+		"id" : 19809,
+		"enum_id" : 752,
+		"enum_item_value" : "pc48",
+		"enum_item_text" : "P.C.4.8"
+	},
+	{
+		"id" : 19810,
+		"enum_id" : 752,
+		"enum_item_value" : "pc88",
+		"enum_item_text" : "P.C.8.8"
+	},
+	{
+		"id" : 19811,
+		"enum_id" : 752,
+		"enum_item_value" : "pc109",
+		"enum_item_text" : "P.C.10.9"
+	},
+	{
+		"id" : 19812,
+		"enum_id" : 752,
+		"enum_item_value" : "pc129",
+		"enum_item_text" : "P.C.12.9"
+	},
+	{
+		"id" : 19813,
+		"enum_id" : 752,
+		"enum_item_value" : "a286_ss",
+		"enum_item_text" : "A286 SS"
+	},
+	{
+		"id" : 19814,
+		"enum_id" : 752,
+		"enum_item_value" : "304_ss",
+		"enum_item_text" : "304 SS"
+	},
+	{
+		"id" : 19815,
+		"enum_id" : 752,
+		"enum_item_value" : "316_ss",
+		"enum_item_text" : "316 SS"
+	},
+	{
+		"id" : 19816,
+		"enum_id" : 752,
+		"enum_item_value" : "18_8_ss",
+		"enum_item_text" : "18-8 SS"
+	},
+	{
+		"id" : 19817,
+		"enum_id" : 752,
+		"enum_item_value" : "other",
+		"enum_item_text" : "OTHER"
+	},
+	{
+		"id" : 19818,
+		"enum_id" : 753,
+		"enum_item_value" : "_999",
+		"enum_item_text" : "-99"
+	},
+	{
+		"id" : 19819,
+		"enum_id" : 753,
+		"enum_item_value" : "hex",
+		"enum_item_text" : "HEX"
+	},
+	{
+		"id" : 19820,
+		"enum_id" : 753,
+		"enum_item_value" : "hex_flange",
+		"enum_item_text" : "HEX FLANGE"
+	},
+	{
+		"id" : 19821,
+		"enum_id" : 753,
+		"enum_item_value" : "countersunk",
+		"enum_item_text" : "COUNTERSUNK"
+	},
+	{
+		"id" : 19822,
+		"enum_id" : 753,
+		"enum_item_value" : "fillister",
+		"enum_item_text" : "FILLISTER"
+	},
+	{
+		"id" : 19823,
+		"enum_id" : 753,
+		"enum_item_value" : "round",
+		"enum_item_text" : "ROUND"
+	},
+	{
+		"id" : 19824,
+		"enum_id" : 753,
+		"enum_item_value" : "button",
+		"enum_item_text" : "BUTTON"
+	},
+	{
+		"id" : 19825,
+		"enum_id" : 753,
+		"enum_item_value" : "cheese",
+		"enum_item_text" : "CHEESE"
+	},
+	{
+		"id" : 19826,
+		"enum_id" : 753,
+		"enum_item_value" : "pan",
+		"enum_item_text" : "PAN"
+	},
+	{
+		"id" : 19827,
+		"enum_id" : 753,
+		"enum_item_value" : "setscrew",
+		"enum_item_text" : "SETSCREW"
+	},
+	{
+		"id" : 19828,
+		"enum_id" : 753,
+		"enum_item_value" : "other",
+		"enum_item_text" : "OTHER"
+	},
+	{
+		"id" : 19829,
+		"enum_id" : 754,
+		"enum_item_value" : "_999",
+		"enum_item_text" : "-99"
+	},
+	{
+		"id" : 19830,
+		"enum_id" : 754,
+		"enum_item_value" : "304_ss",
+		"enum_item_text" : "304 SS"
+	},
+	{
+		"id" : 19831,
+		"enum_id" : 754,
+		"enum_item_value" : "309_ss",
+		"enum_item_text" : "309 SS"
+	},
+	{
+		"id" : 19832,
+		"enum_id" : 754,
+		"enum_item_value" : "310_ss",
+		"enum_item_text" : "310 SS"
+	},
+	{
+		"id" : 19833,
+		"enum_id" : 754,
+		"enum_item_value" : "ductile_iron_65_45_12",
+		"enum_item_text" : "DUCTILE IRON 65-45-12"
+	},
+	{
+		"id" : 19834,
+		"enum_id" : 754,
+		"enum_item_value" : "in718_solution_annealed_precipitation_hardened_hrc_30_40",
+		"enum_item_text" : "IN718 SOLUTION ANNEALED / PRECIPITATION HARDENED, HRC 30-40"
+	},
+	{
+		"id" : 19835,
+		"enum_id" : 754,
+		"enum_item_value" : "other",
+		"enum_item_text" : "OTHER"
+	},
+	{
+		"id" : 19836,
+		"enum_id" : 755,
+		"enum_item_value" : "_999",
+		"enum_item_text" : "-99"
+	},
+	{
+		"id" : 19837,
+		"enum_id" : 755,
+		"enum_item_value" : "grooved",
+		"enum_item_text" : "GROOVED"
+	},
+	{
+		"id" : 19838,
+		"enum_id" : 755,
+		"enum_item_value" : "helix",
+		"enum_item_text" : "HELIX"
+	},
+	{
+		"id" : 19839,
+		"enum_id" : 755,
+		"enum_item_value" : "smooth",
+		"enum_item_text" : "SMOOTH"
+	},
+	{
+		"id" : 19840,
+		"enum_id" : 755,
+		"enum_item_value" : "other",
+		"enum_item_text" : "OTHER"
+	},
+	{
+		"id" : 19841,
+		"enum_id" : 756,
+		"enum_item_value" : "_999",
+		"enum_item_text" : "-99"
+	},
+	{
+		"id" : 19842,
+		"enum_id" : 756,
+		"enum_item_value" : "grooved",
+		"enum_item_text" : "GROOVED"
+	},
+	{
+		"id" : 19843,
+		"enum_id" : 756,
+		"enum_item_value" : "holes",
+		"enum_item_text" : "HOLES"
+	},
+	{
+		"id" : 19844,
+		"enum_id" : 756,
+		"enum_item_value" : "ramps",
+		"enum_item_text" : "RAMPS"
+	},
+	{
+		"id" : 19845,
+		"enum_id" : 756,
+		"enum_item_value" : "smooth",
+		"enum_item_text" : "SMOOTH"
+	},
+	{
+		"id" : 19846,
+		"enum_id" : 756,
+		"enum_item_value" : "other",
+		"enum_item_text" : "OTHER"
+	},
+	{
+		"id" : 19847,
+		"enum_id" : 757,
+		"enum_item_value" : "_999",
+		"enum_item_text" : "-99"
+	},
+	{
+		"id" : 19848,
+		"enum_id" : 757,
+		"enum_item_value" : "free",
+		"enum_item_text" : "FREE"
+	},
+	{
+		"id" : 19849,
+		"enum_id" : 757,
+		"enum_item_value" : "pinned",
+		"enum_item_text" : "PINNED"
+	},
+	{
+		"id" : 19850,
+		"enum_id" : 757,
+		"enum_item_value" : "other",
+		"enum_item_text" : "OTHER"
+	},
+	{
+		"id" : 19851,
+		"enum_id" : 758,
+		"enum_item_value" : "_999",
+		"enum_item_text" : "-99"
+	},
+	{
+		"id" : 19852,
+		"enum_id" : 758,
+		"enum_item_value" : "c932",
+		"enum_item_text" : "C932"
+	},
+	{
+		"id" : 19853,
+		"enum_id" : 758,
+		"enum_item_value" : "6061_t6_al",
+		"enum_item_text" : "6061-T6 AL"
+	},
+	{
+		"id" : 19854,
+		"enum_id" : 758,
+		"enum_item_value" : "other",
+		"enum_item_text" : "OTHER"
+	},
+	{
+		"id" : 19855,
+		"enum_id" : 759,
+		"enum_item_value" : "_999",
+		"enum_item_text" : "-99"
+	},
+	{
+		"id" : 19856,
+		"enum_id" : 759,
+		"enum_item_value" : "stdstd",
+		"enum_item_text" : "STD/STD"
+	},
+	{
+		"id" : 19857,
+		"enum_id" : 759,
+		"enum_item_value" : "std_5",
+		"enum_item_text" : "STD/-5"
+	},
+	{
+		"id" : 19858,
+		"enum_id" : 759,
+		"enum_item_value" : "std_10",
+		"enum_item_text" : "STD/-10"
+	},
+	{
+		"id" : 19859,
+		"enum_id" : 759,
+		"enum_item_value" : "std_15",
+		"enum_item_text" : "STD/-15"
+	},
+	{
+		"id" : 19860,
+		"enum_id" : 759,
+		"enum_item_value" : "std_20",
+		"enum_item_text" : "STD/-20"
+	},
+	{
+		"id" : 19861,
+		"enum_id" : 759,
+		"enum_item_value" : "5std",
+		"enum_item_text" : "+5/STD"
+	},
+	{
+		"id" : 19862,
+		"enum_id" : 759,
+		"enum_item_value" : "5_5",
+		"enum_item_text" : "+5/-5"
+	},
+	{
+		"id" : 19863,
+		"enum_id" : 759,
+		"enum_item_value" : "5_10",
+		"enum_item_text" : "+5/-10"
+	},
+	{
+		"id" : 19864,
+		"enum_id" : 759,
+		"enum_item_value" : "5_15",
+		"enum_item_text" : "+5/-15"
+	},
+	{
+		"id" : 19865,
+		"enum_id" : 759,
+		"enum_item_value" : "5_20",
+		"enum_item_text" : "+5/-20"
+	},
+	{
+		"id" : 19866,
+		"enum_id" : 759,
+		"enum_item_value" : "10std",
+		"enum_item_text" : "+10/STD"
+	},
+	{
+		"id" : 19867,
+		"enum_id" : 759,
+		"enum_item_value" : "10_5",
+		"enum_item_text" : "+10/-5"
+	},
+	{
+		"id" : 19868,
+		"enum_id" : 759,
+		"enum_item_value" : "10_10",
+		"enum_item_text" : "+10/-10"
+	},
+	{
+		"id" : 19869,
+		"enum_id" : 759,
+		"enum_item_value" : "10_15",
+		"enum_item_text" : "+10/-15"
+	},
+	{
+		"id" : 19870,
+		"enum_id" : 759,
+		"enum_item_value" : "10_20",
+		"enum_item_text" : "+10/-20"
+	},
+	{
+		"id" : 19871,
+		"enum_id" : 759,
+		"enum_item_value" : "15std",
+		"enum_item_text" : "+15/STD"
+	},
+	{
+		"id" : 19872,
+		"enum_id" : 759,
+		"enum_item_value" : "15_5",
+		"enum_item_text" : "+15/-5"
+	},
+	{
+		"id" : 19873,
+		"enum_id" : 759,
+		"enum_item_value" : "15_10",
+		"enum_item_text" : "+15/-10"
+	},
+	{
+		"id" : 19874,
+		"enum_id" : 759,
+		"enum_item_value" : "15_15",
+		"enum_item_text" : "+15/-15"
+	},
+	{
+		"id" : 19875,
+		"enum_id" : 759,
+		"enum_item_value" : "15_20",
+		"enum_item_text" : "+15/-20"
+	},
+	{
+		"id" : 19876,
+		"enum_id" : 759,
+		"enum_item_value" : "20std",
+		"enum_item_text" : "+20/STD"
+	},
+	{
+		"id" : 19877,
+		"enum_id" : 759,
+		"enum_item_value" : "20_5",
+		"enum_item_text" : "+20/-5"
+	},
+	{
+		"id" : 19878,
+		"enum_id" : 759,
+		"enum_item_value" : "20_10",
+		"enum_item_text" : "+20/-10"
+	},
+	{
+		"id" : 19879,
+		"enum_id" : 759,
+		"enum_item_value" : "20_15",
+		"enum_item_text" : "+20/-15"
+	},
+	{
+		"id" : 19880,
+		"enum_id" : 759,
+		"enum_item_value" : "20_20",
+		"enum_item_text" : "+20/-20"
+	},
+	{
+		"id" : 19881,
+		"enum_id" : 759,
+		"enum_item_value" : "other",
+		"enum_item_text" : "OTHER"
+	},
+	{
+		"id" : 19882,
+		"enum_id" : 760,
+		"enum_item_value" : "_999",
+		"enum_item_text" : "-99"
+	},
+	{
+		"id" : 19883,
+		"enum_id" : 760,
+		"enum_item_value" : "hex",
+		"enum_item_text" : "HEX"
+	},
+	{
+		"id" : 19884,
+		"enum_id" : 760,
+		"enum_item_value" : "round",
+		"enum_item_text" : "ROUND"
+	},
+	{
+		"id" : 19885,
+		"enum_id" : 760,
+		"enum_item_value" : "other",
+		"enum_item_text" : "OTHER"
+	},
+	{
+		"id" : 19886,
+		"enum_id" : 761,
+		"enum_item_value" : "_999",
+		"enum_item_text" : "-99"
+	},
+	{
+		"id" : 19887,
+		"enum_id" : 761,
+		"enum_item_value" : "floating",
+		"enum_item_text" : "FLOATING"
+	},
+	{
+		"id" : 19888,
+		"enum_id" : 761,
+		"enum_item_value" : "pressed",
+		"enum_item_text" : "PRESSED"
+	},
+	{
+		"id" : 19889,
+		"enum_id" : 761,
+		"enum_item_value" : "other",
+		"enum_item_text" : "OTHER"
+	},
+	{
+		"id" : 19890,
+		"enum_id" : 762,
+		"enum_item_value" : "_999",
+		"enum_item_text" : "-99"
+	},
+	{
+		"id" : 19891,
+		"enum_id" : 762,
+		"enum_item_value" : "slender",
+		"enum_item_text" : "SLENDER"
+	},
+	{
+		"id" : 19892,
+		"enum_id" : 762,
+		"enum_item_value" : "straight",
+		"enum_item_text" : "STRAIGHT"
+	},
+	{
+		"id" : 19893,
+		"enum_id" : 762,
+		"enum_item_value" : "other",
+		"enum_item_text" : "OTHER"
+	},
+	{
+		"id" : 19894,
+		"enum_id" : 763,
+		"enum_item_value" : "_999",
+		"enum_item_text" : "-99"
+	},
+	{
+		"id" : 19895,
+		"enum_id" : 763,
+		"enum_item_value" : "6_pt",
+		"enum_item_text" : "6 PT"
+	},
+	{
+		"id" : 19896,
+		"enum_id" : 763,
+		"enum_item_value" : "12_pt",
+		"enum_item_text" : "12 PT"
+	},
+	{
+		"id" : 19897,
+		"enum_id" : 763,
+		"enum_item_value" : "other",
+		"enum_item_text" : "OTHER"
+	},
+	{
+		"id" : 19898,
+		"enum_id" : 764,
+		"enum_item_value" : "_999",
+		"enum_item_text" : "-99"
+	},
+	{
+		"id" : 19899,
+		"enum_id" : 764,
+		"enum_item_value" : "binx",
+		"enum_item_text" : "BINX"
+	},
+	{
+		"id" : 19900,
+		"enum_id" : 764,
+		"enum_item_value" : "deformed_thread",
+		"enum_item_text" : "DEFORMED THREAD"
+	},
+	{
+		"id" : 19901,
+		"enum_id" : 764,
+		"enum_item_value" : "flex_lock",
+		"enum_item_text" : "FLEX LOCK"
+	},
+	{
+		"id" : 19902,
+		"enum_id" : 764,
+		"enum_item_value" : "k_lock",
+		"enum_item_text" : "K-LOCK"
+	},
+	{
+		"id" : 19903,
+		"enum_id" : 764,
+		"enum_item_value" : "nyloc",
+		"enum_item_text" : "NYLOC"
+	},
+	{
+		"id" : 19904,
+		"enum_id" : 764,
+		"enum_item_value" : "steel_insert",
+		"enum_item_text" : "STEEL INSERT"
+	},
+	{
+		"id" : 19905,
+		"enum_id" : 764,
+		"enum_item_value" : "tri_lobed",
+		"enum_item_text" : "TRI-LOBED"
+	},
+	{
+		"id" : 19906,
+		"enum_id" : 764,
+		"enum_item_value" : "other",
+		"enum_item_text" : "OTHER"
+	},
+	{
+		"id" : 19907,
+		"enum_id" : 765,
+		"enum_item_value" : "_999",
+		"enum_item_text" : "-99"
+	},
+	{
+		"id" : 19908,
+		"enum_id" : 765,
+		"enum_item_value" : "acorn",
+		"enum_item_text" : "ACORN"
+	},
+	{
+		"id" : 19909,
+		"enum_id" : 765,
+		"enum_item_value" : "castle",
+		"enum_item_text" : "CASTLE"
+	},
+	{
+		"id" : 19910,
+		"enum_id" : 765,
+		"enum_item_value" : "hex",
+		"enum_item_text" : "HEX"
+	},
+	{
+		"id" : 19911,
+		"enum_id" : 765,
+		"enum_item_value" : "hex_flange",
+		"enum_item_text" : "HEX FLANGE"
+	},
+	{
+		"id" : 19912,
+		"enum_id" : 765,
+		"enum_item_value" : "jam",
+		"enum_item_text" : "JAM"
+	},
+	{
+		"id" : 19913,
+		"enum_id" : 765,
+		"enum_item_value" : "weld",
+		"enum_item_text" : "WELD"
+	},
+	{
+		"id" : 19914,
+		"enum_id" : 765,
+		"enum_item_value" : "wing",
+		"enum_item_text" : "WING"
+	},
+	{
+		"id" : 19915,
+		"enum_id" : 765,
+		"enum_item_value" : "other",
+		"enum_item_text" : "OTHER"
+	},
+	{
+		"id" : 19916,
+		"enum_id" : 766,
+		"enum_item_value" : "_999",
+		"enum_item_text" : "-99"
+	},
+	{
+		"id" : 19917,
+		"enum_id" : 766,
+		"enum_item_value" : "_001",
+		"enum_item_text" : "-001"
+	},
+	{
+		"id" : 19918,
+		"enum_id" : 766,
+		"enum_item_value" : "_002",
+		"enum_item_text" : "-002"
+	},
+	{
+		"id" : 19919,
+		"enum_id" : 766,
+		"enum_item_value" : "_003",
+		"enum_item_text" : "-003"
+	},
+	{
+		"id" : 19920,
+		"enum_id" : 766,
+		"enum_item_value" : "_004",
+		"enum_item_text" : "-004"
+	},
+	{
+		"id" : 19921,
+		"enum_id" : 766,
+		"enum_item_value" : "_005",
+		"enum_item_text" : "-005"
+	},
+	{
+		"id" : 19922,
+		"enum_id" : 766,
+		"enum_item_value" : "_006",
+		"enum_item_text" : "-006"
+	},
+	{
+		"id" : 19923,
+		"enum_id" : 766,
+		"enum_item_value" : "_007",
+		"enum_item_text" : "-007"
+	},
+	{
+		"id" : 19924,
+		"enum_id" : 766,
+		"enum_item_value" : "_008",
+		"enum_item_text" : "-008"
+	},
+	{
+		"id" : 19925,
+		"enum_id" : 766,
+		"enum_item_value" : "_009",
+		"enum_item_text" : "-009"
+	},
+	{
+		"id" : 19926,
+		"enum_id" : 766,
+		"enum_item_value" : "_010",
+		"enum_item_text" : "-010"
+	},
+	{
+		"id" : 19927,
+		"enum_id" : 766,
+		"enum_item_value" : "_011",
+		"enum_item_text" : "-011"
+	},
+	{
+		"id" : 19928,
+		"enum_id" : 766,
+		"enum_item_value" : "_012",
+		"enum_item_text" : "-012"
+	},
+	{
+		"id" : 19929,
+		"enum_id" : 766,
+		"enum_item_value" : "_013",
+		"enum_item_text" : "-013"
+	},
+	{
+		"id" : 19930,
+		"enum_id" : 766,
+		"enum_item_value" : "_014",
+		"enum_item_text" : "-014"
+	},
+	{
+		"id" : 19931,
+		"enum_id" : 766,
+		"enum_item_value" : "_015",
+		"enum_item_text" : "-015"
+	},
+	{
+		"id" : 19932,
+		"enum_id" : 766,
+		"enum_item_value" : "_016",
+		"enum_item_text" : "-016"
+	},
+	{
+		"id" : 19933,
+		"enum_id" : 766,
+		"enum_item_value" : "_017",
+		"enum_item_text" : "-017"
+	},
+	{
+		"id" : 19934,
+		"enum_id" : 766,
+		"enum_item_value" : "_018",
+		"enum_item_text" : "-018"
+	},
+	{
+		"id" : 19935,
+		"enum_id" : 766,
+		"enum_item_value" : "_019",
+		"enum_item_text" : "-019"
+	},
+	{
+		"id" : 19936,
+		"enum_id" : 766,
+		"enum_item_value" : "_020",
+		"enum_item_text" : "-020"
+	},
+	{
+		"id" : 19937,
+		"enum_id" : 766,
+		"enum_item_value" : "_021",
+		"enum_item_text" : "-021"
+	},
+	{
+		"id" : 19938,
+		"enum_id" : 766,
+		"enum_item_value" : "_022",
+		"enum_item_text" : "-022"
+	},
+	{
+		"id" : 19939,
+		"enum_id" : 766,
+		"enum_item_value" : "_023",
+		"enum_item_text" : "-023"
+	},
+	{
+		"id" : 19940,
+		"enum_id" : 766,
+		"enum_item_value" : "_024",
+		"enum_item_text" : "-024"
+	},
+	{
+		"id" : 19941,
+		"enum_id" : 766,
+		"enum_item_value" : "_025",
+		"enum_item_text" : "-025"
+	},
+	{
+		"id" : 19942,
+		"enum_id" : 766,
+		"enum_item_value" : "_026",
+		"enum_item_text" : "-026"
+	},
+	{
+		"id" : 19943,
+		"enum_id" : 766,
+		"enum_item_value" : "_027",
+		"enum_item_text" : "-027"
+	},
+	{
+		"id" : 19944,
+		"enum_id" : 766,
+		"enum_item_value" : "_028",
+		"enum_item_text" : "-028"
+	},
+	{
+		"id" : 19945,
+		"enum_id" : 766,
+		"enum_item_value" : "_029",
+		"enum_item_text" : "-029"
+	},
+	{
+		"id" : 19946,
+		"enum_id" : 766,
+		"enum_item_value" : "_030",
+		"enum_item_text" : "-030"
+	},
+	{
+		"id" : 19947,
+		"enum_id" : 766,
+		"enum_item_value" : "_031",
+		"enum_item_text" : "-031"
+	},
+	{
+		"id" : 19948,
+		"enum_id" : 766,
+		"enum_item_value" : "_032",
+		"enum_item_text" : "-032"
+	},
+	{
+		"id" : 19949,
+		"enum_id" : 766,
+		"enum_item_value" : "_033",
+		"enum_item_text" : "-033"
+	},
+	{
+		"id" : 19950,
+		"enum_id" : 766,
+		"enum_item_value" : "_034",
+		"enum_item_text" : "-034"
+	},
+	{
+		"id" : 19951,
+		"enum_id" : 766,
+		"enum_item_value" : "_035",
+		"enum_item_text" : "-035"
+	},
+	{
+		"id" : 19952,
+		"enum_id" : 766,
+		"enum_item_value" : "_036",
+		"enum_item_text" : "-036"
+	},
+	{
+		"id" : 19953,
+		"enum_id" : 766,
+		"enum_item_value" : "_037",
+		"enum_item_text" : "-037"
+	},
+	{
+		"id" : 19954,
+		"enum_id" : 766,
+		"enum_item_value" : "_038",
+		"enum_item_text" : "-038"
+	},
+	{
+		"id" : 19955,
+		"enum_id" : 766,
+		"enum_item_value" : "_039",
+		"enum_item_text" : "-039"
+	},
+	{
+		"id" : 19956,
+		"enum_id" : 766,
+		"enum_item_value" : "_040",
+		"enum_item_text" : "-040"
+	},
+	{
+		"id" : 19957,
+		"enum_id" : 766,
+		"enum_item_value" : "_041",
+		"enum_item_text" : "-041"
+	},
+	{
+		"id" : 19958,
+		"enum_id" : 766,
+		"enum_item_value" : "_042",
+		"enum_item_text" : "-042"
+	},
+	{
+		"id" : 19959,
+		"enum_id" : 766,
+		"enum_item_value" : "_043",
+		"enum_item_text" : "-043"
+	},
+	{
+		"id" : 19960,
+		"enum_id" : 766,
+		"enum_item_value" : "_044",
+		"enum_item_text" : "-044"
+	},
+	{
+		"id" : 19961,
+		"enum_id" : 766,
+		"enum_item_value" : "_045",
+		"enum_item_text" : "-045"
+	},
+	{
+		"id" : 19962,
+		"enum_id" : 766,
+		"enum_item_value" : "_046",
+		"enum_item_text" : "-046"
+	},
+	{
+		"id" : 19963,
+		"enum_id" : 766,
+		"enum_item_value" : "_047",
+		"enum_item_text" : "-047"
+	},
+	{
+		"id" : 19964,
+		"enum_id" : 766,
+		"enum_item_value" : "_048",
+		"enum_item_text" : "-048"
+	},
+	{
+		"id" : 19965,
+		"enum_id" : 766,
+		"enum_item_value" : "_049",
+		"enum_item_text" : "-049"
+	},
+	{
+		"id" : 19966,
+		"enum_id" : 766,
+		"enum_item_value" : "_050",
+		"enum_item_text" : "-050"
+	},
+	{
+		"id" : 19967,
+		"enum_id" : 766,
+		"enum_item_value" : "_102",
+		"enum_item_text" : "-102"
+	},
+	{
+		"id" : 19968,
+		"enum_id" : 766,
+		"enum_item_value" : "_103",
+		"enum_item_text" : "-103"
+	},
+	{
+		"id" : 19969,
+		"enum_id" : 766,
+		"enum_item_value" : "_104",
+		"enum_item_text" : "-104"
+	},
+	{
+		"id" : 19970,
+		"enum_id" : 766,
+		"enum_item_value" : "_105",
+		"enum_item_text" : "-105"
+	},
+	{
+		"id" : 19971,
+		"enum_id" : 766,
+		"enum_item_value" : "_106",
+		"enum_item_text" : "-106"
+	},
+	{
+		"id" : 19972,
+		"enum_id" : 766,
+		"enum_item_value" : "_107",
+		"enum_item_text" : "-107"
+	},
+	{
+		"id" : 19973,
+		"enum_id" : 766,
+		"enum_item_value" : "_108",
+		"enum_item_text" : "-108"
+	},
+	{
+		"id" : 19974,
+		"enum_id" : 766,
+		"enum_item_value" : "_109",
+		"enum_item_text" : "-109"
+	},
+	{
+		"id" : 19975,
+		"enum_id" : 766,
+		"enum_item_value" : "_110",
+		"enum_item_text" : "-110"
+	},
+	{
+		"id" : 19976,
+		"enum_id" : 766,
+		"enum_item_value" : "_111",
+		"enum_item_text" : "-111"
+	},
+	{
+		"id" : 19977,
+		"enum_id" : 766,
+		"enum_item_value" : "_112",
+		"enum_item_text" : "-112"
+	},
+	{
+		"id" : 19978,
+		"enum_id" : 766,
+		"enum_item_value" : "_113",
+		"enum_item_text" : "-113"
+	},
+	{
+		"id" : 19979,
+		"enum_id" : 766,
+		"enum_item_value" : "_114",
+		"enum_item_text" : "-114"
+	},
+	{
+		"id" : 19980,
+		"enum_id" : 766,
+		"enum_item_value" : "_115",
+		"enum_item_text" : "-115"
+	},
+	{
+		"id" : 19981,
+		"enum_id" : 766,
+		"enum_item_value" : "_116",
+		"enum_item_text" : "-116"
+	},
+	{
+		"id" : 19982,
+		"enum_id" : 766,
+		"enum_item_value" : "_117",
+		"enum_item_text" : "-117"
+	},
+	{
+		"id" : 19983,
+		"enum_id" : 766,
+		"enum_item_value" : "_118",
+		"enum_item_text" : "-118"
+	},
+	{
+		"id" : 19984,
+		"enum_id" : 766,
+		"enum_item_value" : "_119",
+		"enum_item_text" : "-119"
+	},
+	{
+		"id" : 19985,
+		"enum_id" : 766,
+		"enum_item_value" : "_120",
+		"enum_item_text" : "-120"
+	},
+	{
+		"id" : 19986,
+		"enum_id" : 766,
+		"enum_item_value" : "_121",
+		"enum_item_text" : "-121"
+	},
+	{
+		"id" : 19987,
+		"enum_id" : 766,
+		"enum_item_value" : "_122",
+		"enum_item_text" : "-122"
+	},
+	{
+		"id" : 19988,
+		"enum_id" : 766,
+		"enum_item_value" : "_123",
+		"enum_item_text" : "-123"
+	},
+	{
+		"id" : 19989,
+		"enum_id" : 766,
+		"enum_item_value" : "_124",
+		"enum_item_text" : "-124"
+	},
+	{
+		"id" : 19990,
+		"enum_id" : 766,
+		"enum_item_value" : "_125",
+		"enum_item_text" : "-125"
+	},
+	{
+		"id" : 19991,
+		"enum_id" : 766,
+		"enum_item_value" : "_126",
+		"enum_item_text" : "-126"
+	},
+	{
+		"id" : 19992,
+		"enum_id" : 766,
+		"enum_item_value" : "_127",
+		"enum_item_text" : "-127"
+	},
+	{
+		"id" : 19993,
+		"enum_id" : 766,
+		"enum_item_value" : "_128",
+		"enum_item_text" : "-128"
+	},
+	{
+		"id" : 19994,
+		"enum_id" : 766,
+		"enum_item_value" : "_129",
+		"enum_item_text" : "-129"
+	},
+	{
+		"id" : 19995,
+		"enum_id" : 766,
+		"enum_item_value" : "_130",
+		"enum_item_text" : "-130"
+	},
+	{
+		"id" : 19996,
+		"enum_id" : 766,
+		"enum_item_value" : "_131",
+		"enum_item_text" : "-131"
+	},
+	{
+		"id" : 19997,
+		"enum_id" : 766,
+		"enum_item_value" : "_132",
+		"enum_item_text" : "-132"
+	},
+	{
+		"id" : 19998,
+		"enum_id" : 766,
+		"enum_item_value" : "_133",
+		"enum_item_text" : "-133"
+	},
+	{
+		"id" : 19999,
+		"enum_id" : 766,
+		"enum_item_value" : "_134",
+		"enum_item_text" : "-134"
+	},
+	{
+		"id" : 20000,
+		"enum_id" : 766,
+		"enum_item_value" : "_135",
+		"enum_item_text" : "-135"
+	},
+	{
+		"id" : 20001,
+		"enum_id" : 766,
+		"enum_item_value" : "_136",
+		"enum_item_text" : "-136"
+	},
+	{
+		"id" : 20002,
+		"enum_id" : 766,
+		"enum_item_value" : "_137",
+		"enum_item_text" : "-137"
+	},
+	{
+		"id" : 20003,
+		"enum_id" : 766,
+		"enum_item_value" : "_138",
+		"enum_item_text" : "-138"
+	},
+	{
+		"id" : 20004,
+		"enum_id" : 766,
+		"enum_item_value" : "_139",
+		"enum_item_text" : "-139"
+	},
+	{
+		"id" : 20005,
+		"enum_id" : 766,
+		"enum_item_value" : "_140",
+		"enum_item_text" : "-140"
+	},
+	{
+		"id" : 20006,
+		"enum_id" : 766,
+		"enum_item_value" : "_141",
+		"enum_item_text" : "-141"
+	},
+	{
+		"id" : 20007,
+		"enum_id" : 766,
+		"enum_item_value" : "_142",
+		"enum_item_text" : "-142"
+	},
+	{
+		"id" : 20008,
+		"enum_id" : 766,
+		"enum_item_value" : "_143",
+		"enum_item_text" : "-143"
+	},
+	{
+		"id" : 20009,
+		"enum_id" : 766,
+		"enum_item_value" : "_144",
+		"enum_item_text" : "-144"
+	},
+	{
+		"id" : 20010,
+		"enum_id" : 766,
+		"enum_item_value" : "_145",
+		"enum_item_text" : "-145"
+	},
+	{
+		"id" : 20011,
+		"enum_id" : 766,
+		"enum_item_value" : "_146",
+		"enum_item_text" : "-146"
+	},
+	{
+		"id" : 20012,
+		"enum_id" : 766,
+		"enum_item_value" : "_147",
+		"enum_item_text" : "-147"
+	},
+	{
+		"id" : 20013,
+		"enum_id" : 766,
+		"enum_item_value" : "_148",
+		"enum_item_text" : "-148"
+	},
+	{
+		"id" : 20014,
+		"enum_id" : 766,
+		"enum_item_value" : "_149",
+		"enum_item_text" : "-149"
+	},
+	{
+		"id" : 20015,
+		"enum_id" : 766,
+		"enum_item_value" : "_150",
+		"enum_item_text" : "-150"
+	},
+	{
+		"id" : 20016,
+		"enum_id" : 766,
+		"enum_item_value" : "_151",
+		"enum_item_text" : "-151"
+	},
+	{
+		"id" : 20017,
+		"enum_id" : 766,
+		"enum_item_value" : "_152",
+		"enum_item_text" : "-152"
+	},
+	{
+		"id" : 20018,
+		"enum_id" : 766,
+		"enum_item_value" : "_153",
+		"enum_item_text" : "-153"
+	},
+	{
+		"id" : 20019,
+		"enum_id" : 766,
+		"enum_item_value" : "_154",
+		"enum_item_text" : "-154"
+	},
+	{
+		"id" : 20020,
+		"enum_id" : 766,
+		"enum_item_value" : "_155",
+		"enum_item_text" : "-155"
+	},
+	{
+		"id" : 20021,
+		"enum_id" : 766,
+		"enum_item_value" : "_156",
+		"enum_item_text" : "-156"
+	},
+	{
+		"id" : 20022,
+		"enum_id" : 766,
+		"enum_item_value" : "_157",
+		"enum_item_text" : "-157"
+	},
+	{
+		"id" : 20023,
+		"enum_id" : 766,
+		"enum_item_value" : "_158",
+		"enum_item_text" : "-158"
+	},
+	{
+		"id" : 20024,
+		"enum_id" : 766,
+		"enum_item_value" : "_159",
+		"enum_item_text" : "-159"
+	},
+	{
+		"id" : 20025,
+		"enum_id" : 766,
+		"enum_item_value" : "_160",
+		"enum_item_text" : "-160"
+	},
+	{
+		"id" : 20026,
+		"enum_id" : 766,
+		"enum_item_value" : "_161",
+		"enum_item_text" : "-161"
+	},
+	{
+		"id" : 20027,
+		"enum_id" : 766,
+		"enum_item_value" : "_162",
+		"enum_item_text" : "-162"
+	},
+	{
+		"id" : 20028,
+		"enum_id" : 766,
+		"enum_item_value" : "_163",
+		"enum_item_text" : "-163"
+	},
+	{
+		"id" : 20029,
+		"enum_id" : 766,
+		"enum_item_value" : "_164",
+		"enum_item_text" : "-164"
+	},
+	{
+		"id" : 20030,
+		"enum_id" : 766,
+		"enum_item_value" : "_165",
+		"enum_item_text" : "-165"
+	},
+	{
+		"id" : 20031,
+		"enum_id" : 766,
+		"enum_item_value" : "_166",
+		"enum_item_text" : "-166"
+	},
+	{
+		"id" : 20032,
+		"enum_id" : 766,
+		"enum_item_value" : "_167",
+		"enum_item_text" : "-167"
+	},
+	{
+		"id" : 20033,
+		"enum_id" : 766,
+		"enum_item_value" : "_168",
+		"enum_item_text" : "-168"
+	},
+	{
+		"id" : 20034,
+		"enum_id" : 766,
+		"enum_item_value" : "_169",
+		"enum_item_text" : "-169"
+	},
+	{
+		"id" : 20035,
+		"enum_id" : 766,
+		"enum_item_value" : "_170",
+		"enum_item_text" : "-170"
+	},
+	{
+		"id" : 20036,
+		"enum_id" : 766,
+		"enum_item_value" : "_171",
+		"enum_item_text" : "-171"
+	},
+	{
+		"id" : 20037,
+		"enum_id" : 766,
+		"enum_item_value" : "_172",
+		"enum_item_text" : "-172"
+	},
+	{
+		"id" : 20038,
+		"enum_id" : 766,
+		"enum_item_value" : "_173",
+		"enum_item_text" : "-173"
+	},
+	{
+		"id" : 20039,
+		"enum_id" : 766,
+		"enum_item_value" : "_174",
+		"enum_item_text" : "-174"
+	},
+	{
+		"id" : 20040,
+		"enum_id" : 766,
+		"enum_item_value" : "_175",
+		"enum_item_text" : "-175"
+	},
+	{
+		"id" : 20041,
+		"enum_id" : 766,
+		"enum_item_value" : "_176",
+		"enum_item_text" : "-176"
+	},
+	{
+		"id" : 20042,
+		"enum_id" : 766,
+		"enum_item_value" : "_177",
+		"enum_item_text" : "-177"
+	},
+	{
+		"id" : 20043,
+		"enum_id" : 766,
+		"enum_item_value" : "_178",
+		"enum_item_text" : "-178"
+	},
+	{
+		"id" : 20044,
+		"enum_id" : 766,
+		"enum_item_value" : "_201",
+		"enum_item_text" : "-201"
+	},
+	{
+		"id" : 20045,
+		"enum_id" : 766,
+		"enum_item_value" : "_202",
+		"enum_item_text" : "-202"
+	},
+	{
+		"id" : 20046,
+		"enum_id" : 766,
+		"enum_item_value" : "_203",
+		"enum_item_text" : "-203"
+	},
+	{
+		"id" : 20047,
+		"enum_id" : 766,
+		"enum_item_value" : "_204",
+		"enum_item_text" : "-204"
+	},
+	{
+		"id" : 20048,
+		"enum_id" : 766,
+		"enum_item_value" : "_205",
+		"enum_item_text" : "-205"
+	},
+	{
+		"id" : 20049,
+		"enum_id" : 766,
+		"enum_item_value" : "_206",
+		"enum_item_text" : "-206"
+	},
+	{
+		"id" : 20050,
+		"enum_id" : 766,
+		"enum_item_value" : "_207",
+		"enum_item_text" : "-207"
+	},
+	{
+		"id" : 20051,
+		"enum_id" : 766,
+		"enum_item_value" : "_208",
+		"enum_item_text" : "-208"
+	},
+	{
+		"id" : 20052,
+		"enum_id" : 766,
+		"enum_item_value" : "_209",
+		"enum_item_text" : "-209"
+	},
+	{
+		"id" : 20053,
+		"enum_id" : 766,
+		"enum_item_value" : "_210",
+		"enum_item_text" : "-210"
+	},
+	{
+		"id" : 20054,
+		"enum_id" : 766,
+		"enum_item_value" : "_211",
+		"enum_item_text" : "-211"
+	},
+	{
+		"id" : 20055,
+		"enum_id" : 766,
+		"enum_item_value" : "_212",
+		"enum_item_text" : "-212"
+	},
+	{
+		"id" : 20056,
+		"enum_id" : 766,
+		"enum_item_value" : "_213",
+		"enum_item_text" : "-213"
+	},
+	{
+		"id" : 20057,
+		"enum_id" : 766,
+		"enum_item_value" : "_214",
+		"enum_item_text" : "-214"
+	},
+	{
+		"id" : 20058,
+		"enum_id" : 766,
+		"enum_item_value" : "_215",
+		"enum_item_text" : "-215"
+	},
+	{
+		"id" : 20059,
+		"enum_id" : 766,
+		"enum_item_value" : "_216",
+		"enum_item_text" : "-216"
+	},
+	{
+		"id" : 20060,
+		"enum_id" : 766,
+		"enum_item_value" : "_217",
+		"enum_item_text" : "-217"
+	},
+	{
+		"id" : 20061,
+		"enum_id" : 766,
+		"enum_item_value" : "_218",
+		"enum_item_text" : "-218"
+	},
+	{
+		"id" : 20062,
+		"enum_id" : 766,
+		"enum_item_value" : "_219",
+		"enum_item_text" : "-219"
+	},
+	{
+		"id" : 20063,
+		"enum_id" : 766,
+		"enum_item_value" : "_220",
+		"enum_item_text" : "-220"
+	},
+	{
+		"id" : 20064,
+		"enum_id" : 766,
+		"enum_item_value" : "_221",
+		"enum_item_text" : "-221"
+	},
+	{
+		"id" : 20065,
+		"enum_id" : 766,
+		"enum_item_value" : "_222",
+		"enum_item_text" : "-222"
+	},
+	{
+		"id" : 20066,
+		"enum_id" : 766,
+		"enum_item_value" : "_223",
+		"enum_item_text" : "-223"
+	},
+	{
+		"id" : 20067,
+		"enum_id" : 766,
+		"enum_item_value" : "_224",
+		"enum_item_text" : "-224"
+	},
+	{
+		"id" : 20068,
+		"enum_id" : 766,
+		"enum_item_value" : "_225",
+		"enum_item_text" : "-225"
+	},
+	{
+		"id" : 20069,
+		"enum_id" : 766,
+		"enum_item_value" : "_226",
+		"enum_item_text" : "-226"
+	},
+	{
+		"id" : 20070,
+		"enum_id" : 766,
+		"enum_item_value" : "_227",
+		"enum_item_text" : "-227"
+	},
+	{
+		"id" : 20071,
+		"enum_id" : 766,
+		"enum_item_value" : "_228",
+		"enum_item_text" : "-228"
+	},
+	{
+		"id" : 20072,
+		"enum_id" : 766,
+		"enum_item_value" : "_229",
+		"enum_item_text" : "-229"
+	},
+	{
+		"id" : 20073,
+		"enum_id" : 766,
+		"enum_item_value" : "_230",
+		"enum_item_text" : "-230"
+	},
+	{
+		"id" : 20074,
+		"enum_id" : 766,
+		"enum_item_value" : "_231",
+		"enum_item_text" : "-231"
+	},
+	{
+		"id" : 20075,
+		"enum_id" : 766,
+		"enum_item_value" : "_232",
+		"enum_item_text" : "-232"
+	},
+	{
+		"id" : 20076,
+		"enum_id" : 766,
+		"enum_item_value" : "_233",
+		"enum_item_text" : "-233"
+	},
+	{
+		"id" : 20077,
+		"enum_id" : 766,
+		"enum_item_value" : "_234",
+		"enum_item_text" : "-234"
+	},
+	{
+		"id" : 20078,
+		"enum_id" : 766,
+		"enum_item_value" : "_235",
+		"enum_item_text" : "-235"
+	},
+	{
+		"id" : 20079,
+		"enum_id" : 766,
+		"enum_item_value" : "_236",
+		"enum_item_text" : "-236"
+	},
+	{
+		"id" : 20080,
+		"enum_id" : 766,
+		"enum_item_value" : "_237",
+		"enum_item_text" : "-237"
+	},
+	{
+		"id" : 20081,
+		"enum_id" : 766,
+		"enum_item_value" : "_238",
+		"enum_item_text" : "-238"
+	},
+	{
+		"id" : 20082,
+		"enum_id" : 766,
+		"enum_item_value" : "_239",
+		"enum_item_text" : "-239"
+	},
+	{
+		"id" : 20083,
+		"enum_id" : 766,
+		"enum_item_value" : "_240",
+		"enum_item_text" : "-240"
+	},
+	{
+		"id" : 20084,
+		"enum_id" : 766,
+		"enum_item_value" : "_241",
+		"enum_item_text" : "-241"
+	},
+	{
+		"id" : 20085,
+		"enum_id" : 766,
+		"enum_item_value" : "_242",
+		"enum_item_text" : "-242"
+	},
+	{
+		"id" : 20086,
+		"enum_id" : 766,
+		"enum_item_value" : "_243",
+		"enum_item_text" : "-243"
+	},
+	{
+		"id" : 20087,
+		"enum_id" : 766,
+		"enum_item_value" : "_244",
+		"enum_item_text" : "-244"
+	},
+	{
+		"id" : 20088,
+		"enum_id" : 766,
+		"enum_item_value" : "_245",
+		"enum_item_text" : "-245"
+	},
+	{
+		"id" : 20089,
+		"enum_id" : 766,
+		"enum_item_value" : "_246",
+		"enum_item_text" : "-246"
+	},
+	{
+		"id" : 20090,
+		"enum_id" : 766,
+		"enum_item_value" : "_247",
+		"enum_item_text" : "-247"
+	},
+	{
+		"id" : 20091,
+		"enum_id" : 766,
+		"enum_item_value" : "_248",
+		"enum_item_text" : "-248"
+	},
+	{
+		"id" : 20092,
+		"enum_id" : 766,
+		"enum_item_value" : "_249",
+		"enum_item_text" : "-249"
+	},
+	{
+		"id" : 20093,
+		"enum_id" : 766,
+		"enum_item_value" : "_250",
+		"enum_item_text" : "-250"
+	},
+	{
+		"id" : 20094,
+		"enum_id" : 766,
+		"enum_item_value" : "_251",
+		"enum_item_text" : "-251"
+	},
+	{
+		"id" : 20095,
+		"enum_id" : 766,
+		"enum_item_value" : "_252",
+		"enum_item_text" : "-252"
+	},
+	{
+		"id" : 20096,
+		"enum_id" : 766,
+		"enum_item_value" : "_253",
+		"enum_item_text" : "-253"
+	},
+	{
+		"id" : 20097,
+		"enum_id" : 766,
+		"enum_item_value" : "_254",
+		"enum_item_text" : "-254"
+	},
+	{
+		"id" : 20098,
+		"enum_id" : 766,
+		"enum_item_value" : "_255",
+		"enum_item_text" : "-255"
+	},
+	{
+		"id" : 20099,
+		"enum_id" : 766,
+		"enum_item_value" : "_256",
+		"enum_item_text" : "-256"
+	},
+	{
+		"id" : 20100,
+		"enum_id" : 766,
+		"enum_item_value" : "_257",
+		"enum_item_text" : "-257"
+	},
+	{
+		"id" : 20101,
+		"enum_id" : 766,
+		"enum_item_value" : "_258",
+		"enum_item_text" : "-258"
+	},
+	{
+		"id" : 20102,
+		"enum_id" : 766,
+		"enum_item_value" : "_259",
+		"enum_item_text" : "-259"
+	},
+	{
+		"id" : 20103,
+		"enum_id" : 766,
+		"enum_item_value" : "_260",
+		"enum_item_text" : "-260"
+	},
+	{
+		"id" : 20104,
+		"enum_id" : 766,
+		"enum_item_value" : "_261",
+		"enum_item_text" : "-261"
+	},
+	{
+		"id" : 20105,
+		"enum_id" : 766,
+		"enum_item_value" : "_262",
+		"enum_item_text" : "-262"
+	},
+	{
+		"id" : 20106,
+		"enum_id" : 766,
+		"enum_item_value" : "_263",
+		"enum_item_text" : "-263"
+	},
+	{
+		"id" : 20107,
+		"enum_id" : 766,
+		"enum_item_value" : "_264",
+		"enum_item_text" : "-264"
+	},
+	{
+		"id" : 20108,
+		"enum_id" : 766,
+		"enum_item_value" : "_265",
+		"enum_item_text" : "-265"
+	},
+	{
+		"id" : 20109,
+		"enum_id" : 766,
+		"enum_item_value" : "_266",
+		"enum_item_text" : "-266"
+	},
+	{
+		"id" : 20110,
+		"enum_id" : 766,
+		"enum_item_value" : "_267",
+		"enum_item_text" : "-267"
+	},
+	{
+		"id" : 20111,
+		"enum_id" : 766,
+		"enum_item_value" : "_268",
+		"enum_item_text" : "-268"
+	},
+	{
+		"id" : 20112,
+		"enum_id" : 766,
+		"enum_item_value" : "_269",
+		"enum_item_text" : "-269"
+	},
+	{
+		"id" : 20113,
+		"enum_id" : 766,
+		"enum_item_value" : "_270",
+		"enum_item_text" : "-270"
+	},
+	{
+		"id" : 20114,
+		"enum_id" : 766,
+		"enum_item_value" : "_271",
+		"enum_item_text" : "-271"
+	},
+	{
+		"id" : 20115,
+		"enum_id" : 766,
+		"enum_item_value" : "_272",
+		"enum_item_text" : "-272"
+	},
+	{
+		"id" : 20116,
+		"enum_id" : 766,
+		"enum_item_value" : "_273",
+		"enum_item_text" : "-273"
+	},
+	{
+		"id" : 20117,
+		"enum_id" : 766,
+		"enum_item_value" : "_274",
+		"enum_item_text" : "-274"
+	},
+	{
+		"id" : 20118,
+		"enum_id" : 766,
+		"enum_item_value" : "_275",
+		"enum_item_text" : "-275"
+	},
+	{
+		"id" : 20119,
+		"enum_id" : 766,
+		"enum_item_value" : "_276",
+		"enum_item_text" : "-276"
+	},
+	{
+		"id" : 20120,
+		"enum_id" : 766,
+		"enum_item_value" : "_277",
+		"enum_item_text" : "-277"
+	},
+	{
+		"id" : 20121,
+		"enum_id" : 766,
+		"enum_item_value" : "_278",
+		"enum_item_text" : "-278"
+	},
+	{
+		"id" : 20122,
+		"enum_id" : 766,
+		"enum_item_value" : "_279",
+		"enum_item_text" : "-279"
+	},
+	{
+		"id" : 20123,
+		"enum_id" : 766,
+		"enum_item_value" : "_280",
+		"enum_item_text" : "-280"
+	},
+	{
+		"id" : 20124,
+		"enum_id" : 766,
+		"enum_item_value" : "_281",
+		"enum_item_text" : "-281"
+	},
+	{
+		"id" : 20125,
+		"enum_id" : 766,
+		"enum_item_value" : "_282",
+		"enum_item_text" : "-282"
+	},
+	{
+		"id" : 20126,
+		"enum_id" : 766,
+		"enum_item_value" : "_283",
+		"enum_item_text" : "-283"
+	},
+	{
+		"id" : 20127,
+		"enum_id" : 766,
+		"enum_item_value" : "_284",
+		"enum_item_text" : "-284"
+	},
+	{
+		"id" : 20128,
+		"enum_id" : 766,
+		"enum_item_value" : "_309",
+		"enum_item_text" : "-309"
+	},
+	{
+		"id" : 20129,
+		"enum_id" : 766,
+		"enum_item_value" : "_310",
+		"enum_item_text" : "-310"
+	},
+	{
+		"id" : 20130,
+		"enum_id" : 766,
+		"enum_item_value" : "_311",
+		"enum_item_text" : "-311"
+	},
+	{
+		"id" : 20131,
+		"enum_id" : 766,
+		"enum_item_value" : "_312",
+		"enum_item_text" : "-312"
+	},
+	{
+		"id" : 20132,
+		"enum_id" : 766,
+		"enum_item_value" : "_313",
+		"enum_item_text" : "-313"
+	},
+	{
+		"id" : 20133,
+		"enum_id" : 766,
+		"enum_item_value" : "_314",
+		"enum_item_text" : "-314"
+	},
+	{
+		"id" : 20134,
+		"enum_id" : 766,
+		"enum_item_value" : "_315",
+		"enum_item_text" : "-315"
+	},
+	{
+		"id" : 20135,
+		"enum_id" : 766,
+		"enum_item_value" : "_316",
+		"enum_item_text" : "-316"
+	},
+	{
+		"id" : 20136,
+		"enum_id" : 766,
+		"enum_item_value" : "_317",
+		"enum_item_text" : "-317"
+	},
+	{
+		"id" : 20137,
+		"enum_id" : 766,
+		"enum_item_value" : "_318",
+		"enum_item_text" : "-318"
+	},
+	{
+		"id" : 20138,
+		"enum_id" : 766,
+		"enum_item_value" : "_319",
+		"enum_item_text" : "-319"
+	},
+	{
+		"id" : 20139,
+		"enum_id" : 766,
+		"enum_item_value" : "_320",
+		"enum_item_text" : "-320"
+	},
+	{
+		"id" : 20140,
+		"enum_id" : 766,
+		"enum_item_value" : "_321",
+		"enum_item_text" : "-321"
+	},
+	{
+		"id" : 20141,
+		"enum_id" : 766,
+		"enum_item_value" : "_322",
+		"enum_item_text" : "-322"
+	},
+	{
+		"id" : 20142,
+		"enum_id" : 766,
+		"enum_item_value" : "_323",
+		"enum_item_text" : "-323"
+	},
+	{
+		"id" : 20143,
+		"enum_id" : 766,
+		"enum_item_value" : "_324",
+		"enum_item_text" : "-324"
+	},
+	{
+		"id" : 20144,
+		"enum_id" : 766,
+		"enum_item_value" : "_325",
+		"enum_item_text" : "-325"
+	},
+	{
+		"id" : 20145,
+		"enum_id" : 766,
+		"enum_item_value" : "_326",
+		"enum_item_text" : "-326"
+	},
+	{
+		"id" : 20146,
+		"enum_id" : 766,
+		"enum_item_value" : "_327",
+		"enum_item_text" : "-327"
+	},
+	{
+		"id" : 20147,
+		"enum_id" : 766,
+		"enum_item_value" : "_328",
+		"enum_item_text" : "-328"
+	},
+	{
+		"id" : 20148,
+		"enum_id" : 766,
+		"enum_item_value" : "_329",
+		"enum_item_text" : "-329"
+	},
+	{
+		"id" : 20149,
+		"enum_id" : 766,
+		"enum_item_value" : "_330",
+		"enum_item_text" : "-330"
+	},
+	{
+		"id" : 20150,
+		"enum_id" : 766,
+		"enum_item_value" : "_331",
+		"enum_item_text" : "-331"
+	},
+	{
+		"id" : 20151,
+		"enum_id" : 766,
+		"enum_item_value" : "_332",
+		"enum_item_text" : "-332"
+	},
+	{
+		"id" : 20152,
+		"enum_id" : 766,
+		"enum_item_value" : "_333",
+		"enum_item_text" : "-333"
+	},
+	{
+		"id" : 20153,
+		"enum_id" : 766,
+		"enum_item_value" : "_334",
+		"enum_item_text" : "-334"
+	},
+	{
+		"id" : 20154,
+		"enum_id" : 766,
+		"enum_item_value" : "_335",
+		"enum_item_text" : "-335"
+	},
+	{
+		"id" : 20155,
+		"enum_id" : 766,
+		"enum_item_value" : "_336",
+		"enum_item_text" : "-336"
+	},
+	{
+		"id" : 20156,
+		"enum_id" : 766,
+		"enum_item_value" : "_337",
+		"enum_item_text" : "-337"
+	},
+	{
+		"id" : 20157,
+		"enum_id" : 766,
+		"enum_item_value" : "_338",
+		"enum_item_text" : "-338"
+	},
+	{
+		"id" : 20158,
+		"enum_id" : 766,
+		"enum_item_value" : "_339",
+		"enum_item_text" : "-339"
+	},
+	{
+		"id" : 20159,
+		"enum_id" : 766,
+		"enum_item_value" : "_340",
+		"enum_item_text" : "-340"
+	},
+	{
+		"id" : 20160,
+		"enum_id" : 766,
+		"enum_item_value" : "_341",
+		"enum_item_text" : "-341"
+	},
+	{
+		"id" : 20161,
+		"enum_id" : 766,
+		"enum_item_value" : "_342",
+		"enum_item_text" : "-342"
+	},
+	{
+		"id" : 20162,
+		"enum_id" : 766,
+		"enum_item_value" : "_343",
+		"enum_item_text" : "-343"
+	},
+	{
+		"id" : 20163,
+		"enum_id" : 766,
+		"enum_item_value" : "_344",
+		"enum_item_text" : "-344"
+	},
+	{
+		"id" : 20164,
+		"enum_id" : 766,
+		"enum_item_value" : "_345",
+		"enum_item_text" : "-345"
+	},
+	{
+		"id" : 20165,
+		"enum_id" : 766,
+		"enum_item_value" : "_346",
+		"enum_item_text" : "-346"
+	},
+	{
+		"id" : 20166,
+		"enum_id" : 766,
+		"enum_item_value" : "_347",
+		"enum_item_text" : "-347"
+	},
+	{
+		"id" : 20167,
+		"enum_id" : 766,
+		"enum_item_value" : "_348",
+		"enum_item_text" : "-348"
+	},
+	{
+		"id" : 20168,
+		"enum_id" : 766,
+		"enum_item_value" : "_349",
+		"enum_item_text" : "-349"
+	},
+	{
+		"id" : 20169,
+		"enum_id" : 766,
+		"enum_item_value" : "_350",
+		"enum_item_text" : "-350"
+	},
+	{
+		"id" : 20170,
+		"enum_id" : 766,
+		"enum_item_value" : "_351",
+		"enum_item_text" : "-351"
+	},
+	{
+		"id" : 20171,
+		"enum_id" : 766,
+		"enum_item_value" : "_352",
+		"enum_item_text" : "-352"
+	},
+	{
+		"id" : 20172,
+		"enum_id" : 766,
+		"enum_item_value" : "_353",
+		"enum_item_text" : "-353"
+	},
+	{
+		"id" : 20173,
+		"enum_id" : 766,
+		"enum_item_value" : "_354",
+		"enum_item_text" : "-354"
+	},
+	{
+		"id" : 20174,
+		"enum_id" : 766,
+		"enum_item_value" : "_355",
+		"enum_item_text" : "-355"
+	},
+	{
+		"id" : 20175,
+		"enum_id" : 766,
+		"enum_item_value" : "_356",
+		"enum_item_text" : "-356"
+	},
+	{
+		"id" : 20176,
+		"enum_id" : 766,
+		"enum_item_value" : "_357",
+		"enum_item_text" : "-357"
+	},
+	{
+		"id" : 20177,
+		"enum_id" : 766,
+		"enum_item_value" : "_358",
+		"enum_item_text" : "-358"
+	},
+	{
+		"id" : 20178,
+		"enum_id" : 766,
+		"enum_item_value" : "_359",
+		"enum_item_text" : "-359"
+	},
+	{
+		"id" : 20179,
+		"enum_id" : 766,
+		"enum_item_value" : "_360",
+		"enum_item_text" : "-360"
+	},
+	{
+		"id" : 20180,
+		"enum_id" : 766,
+		"enum_item_value" : "_361",
+		"enum_item_text" : "-361"
+	},
+	{
+		"id" : 20181,
+		"enum_id" : 766,
+		"enum_item_value" : "_362",
+		"enum_item_text" : "-362"
+	},
+	{
+		"id" : 20182,
+		"enum_id" : 766,
+		"enum_item_value" : "_363",
+		"enum_item_text" : "-363"
+	},
+	{
+		"id" : 20183,
+		"enum_id" : 766,
+		"enum_item_value" : "_364",
+		"enum_item_text" : "-364"
+	},
+	{
+		"id" : 20184,
+		"enum_id" : 766,
+		"enum_item_value" : "_365",
+		"enum_item_text" : "-365"
+	},
+	{
+		"id" : 20185,
+		"enum_id" : 766,
+		"enum_item_value" : "_366",
+		"enum_item_text" : "-366"
+	},
+	{
+		"id" : 20186,
+		"enum_id" : 766,
+		"enum_item_value" : "_367",
+		"enum_item_text" : "-367"
+	},
+	{
+		"id" : 20187,
+		"enum_id" : 766,
+		"enum_item_value" : "_368",
+		"enum_item_text" : "-368"
+	},
+	{
+		"id" : 20188,
+		"enum_id" : 766,
+		"enum_item_value" : "_369",
+		"enum_item_text" : "-369"
+	},
+	{
+		"id" : 20189,
+		"enum_id" : 766,
+		"enum_item_value" : "_370",
+		"enum_item_text" : "-370"
+	},
+	{
+		"id" : 20190,
+		"enum_id" : 766,
+		"enum_item_value" : "_371",
+		"enum_item_text" : "-371"
+	},
+	{
+		"id" : 20191,
+		"enum_id" : 766,
+		"enum_item_value" : "_372",
+		"enum_item_text" : "-372"
+	},
+	{
+		"id" : 20192,
+		"enum_id" : 766,
+		"enum_item_value" : "_373",
+		"enum_item_text" : "-373"
+	},
+	{
+		"id" : 20193,
+		"enum_id" : 766,
+		"enum_item_value" : "_374",
+		"enum_item_text" : "-374"
+	},
+	{
+		"id" : 20194,
+		"enum_id" : 766,
+		"enum_item_value" : "_375",
+		"enum_item_text" : "-375"
+	},
+	{
+		"id" : 20195,
+		"enum_id" : 766,
+		"enum_item_value" : "_376",
+		"enum_item_text" : "-376"
+	},
+	{
+		"id" : 20196,
+		"enum_id" : 766,
+		"enum_item_value" : "_377",
+		"enum_item_text" : "-377"
+	},
+	{
+		"id" : 20197,
+		"enum_id" : 766,
+		"enum_item_value" : "_378",
+		"enum_item_text" : "-378"
+	},
+	{
+		"id" : 20198,
+		"enum_id" : 766,
+		"enum_item_value" : "_379",
+		"enum_item_text" : "-379"
+	},
+	{
+		"id" : 20199,
+		"enum_id" : 766,
+		"enum_item_value" : "_380",
+		"enum_item_text" : "-380"
+	},
+	{
+		"id" : 20200,
+		"enum_id" : 766,
+		"enum_item_value" : "_381",
+		"enum_item_text" : "-381"
+	},
+	{
+		"id" : 20201,
+		"enum_id" : 766,
+		"enum_item_value" : "_382",
+		"enum_item_text" : "-382"
+	},
+	{
+		"id" : 20202,
+		"enum_id" : 766,
+		"enum_item_value" : "_383",
+		"enum_item_text" : "-383"
+	},
+	{
+		"id" : 20203,
+		"enum_id" : 766,
+		"enum_item_value" : "_384",
+		"enum_item_text" : "-384"
+	},
+	{
+		"id" : 20204,
+		"enum_id" : 766,
+		"enum_item_value" : "_385",
+		"enum_item_text" : "-385"
+	},
+	{
+		"id" : 20205,
+		"enum_id" : 766,
+		"enum_item_value" : "_386",
+		"enum_item_text" : "-386"
+	},
+	{
+		"id" : 20206,
+		"enum_id" : 766,
+		"enum_item_value" : "_387",
+		"enum_item_text" : "-387"
+	},
+	{
+		"id" : 20207,
+		"enum_id" : 766,
+		"enum_item_value" : "_388",
+		"enum_item_text" : "-388"
+	},
+	{
+		"id" : 20208,
+		"enum_id" : 766,
+		"enum_item_value" : "_389",
+		"enum_item_text" : "-389"
+	},
+	{
+		"id" : 20209,
+		"enum_id" : 766,
+		"enum_item_value" : "_390",
+		"enum_item_text" : "-390"
+	},
+	{
+		"id" : 20210,
+		"enum_id" : 766,
+		"enum_item_value" : "_425",
+		"enum_item_text" : "-425"
+	},
+	{
+		"id" : 20211,
+		"enum_id" : 766,
+		"enum_item_value" : "_426",
+		"enum_item_text" : "-426"
+	},
+	{
+		"id" : 20212,
+		"enum_id" : 766,
+		"enum_item_value" : "_427",
+		"enum_item_text" : "-427"
+	},
+	{
+		"id" : 20213,
+		"enum_id" : 766,
+		"enum_item_value" : "_428",
+		"enum_item_text" : "-428"
+	},
+	{
+		"id" : 20214,
+		"enum_id" : 766,
+		"enum_item_value" : "_429",
+		"enum_item_text" : "-429"
+	},
+	{
+		"id" : 20215,
+		"enum_id" : 766,
+		"enum_item_value" : "_430",
+		"enum_item_text" : "-430"
+	},
+	{
+		"id" : 20216,
+		"enum_id" : 766,
+		"enum_item_value" : "_431",
+		"enum_item_text" : "-431"
+	},
+	{
+		"id" : 20217,
+		"enum_id" : 766,
+		"enum_item_value" : "_432",
+		"enum_item_text" : "-432"
+	},
+	{
+		"id" : 20218,
+		"enum_id" : 766,
+		"enum_item_value" : "_433",
+		"enum_item_text" : "-433"
+	},
+	{
+		"id" : 20219,
+		"enum_id" : 766,
+		"enum_item_value" : "_434",
+		"enum_item_text" : "-434"
+	},
+	{
+		"id" : 20220,
+		"enum_id" : 766,
+		"enum_item_value" : "_435",
+		"enum_item_text" : "-435"
+	},
+	{
+		"id" : 20221,
+		"enum_id" : 766,
+		"enum_item_value" : "_436",
+		"enum_item_text" : "-436"
+	},
+	{
+		"id" : 20222,
+		"enum_id" : 766,
+		"enum_item_value" : "_437",
+		"enum_item_text" : "-437"
+	},
+	{
+		"id" : 20223,
+		"enum_id" : 766,
+		"enum_item_value" : "_438",
+		"enum_item_text" : "-438"
+	},
+	{
+		"id" : 20224,
+		"enum_id" : 766,
+		"enum_item_value" : "_439",
+		"enum_item_text" : "-439"
+	},
+	{
+		"id" : 20225,
+		"enum_id" : 766,
+		"enum_item_value" : "_440",
+		"enum_item_text" : "-440"
+	},
+	{
+		"id" : 20226,
+		"enum_id" : 766,
+		"enum_item_value" : "_441",
+		"enum_item_text" : "-441"
+	},
+	{
+		"id" : 20227,
+		"enum_id" : 766,
+		"enum_item_value" : "_442",
+		"enum_item_text" : "-442"
+	},
+	{
+		"id" : 20228,
+		"enum_id" : 766,
+		"enum_item_value" : "_443",
+		"enum_item_text" : "-443"
+	},
+	{
+		"id" : 20229,
+		"enum_id" : 766,
+		"enum_item_value" : "_444",
+		"enum_item_text" : "-444"
+	},
+	{
+		"id" : 20230,
+		"enum_id" : 766,
+		"enum_item_value" : "_445",
+		"enum_item_text" : "-445"
+	},
+	{
+		"id" : 20231,
+		"enum_id" : 766,
+		"enum_item_value" : "_446",
+		"enum_item_text" : "-446"
+	},
+	{
+		"id" : 20232,
+		"enum_id" : 766,
+		"enum_item_value" : "_447",
+		"enum_item_text" : "-447"
+	},
+	{
+		"id" : 20233,
+		"enum_id" : 766,
+		"enum_item_value" : "_448",
+		"enum_item_text" : "-448"
+	},
+	{
+		"id" : 20234,
+		"enum_id" : 766,
+		"enum_item_value" : "_449",
+		"enum_item_text" : "-449"
+	},
+	{
+		"id" : 20235,
+		"enum_id" : 766,
+		"enum_item_value" : "_450",
+		"enum_item_text" : "-450"
+	},
+	{
+		"id" : 20236,
+		"enum_id" : 766,
+		"enum_item_value" : "_451",
+		"enum_item_text" : "-451"
+	},
+	{
+		"id" : 20237,
+		"enum_id" : 766,
+		"enum_item_value" : "_452",
+		"enum_item_text" : "-452"
+	},
+	{
+		"id" : 20238,
+		"enum_id" : 766,
+		"enum_item_value" : "_453",
+		"enum_item_text" : "-453"
+	},
+	{
+		"id" : 20239,
+		"enum_id" : 766,
+		"enum_item_value" : "_454",
+		"enum_item_text" : "-454"
+	},
+	{
+		"id" : 20240,
+		"enum_id" : 766,
+		"enum_item_value" : "_455",
+		"enum_item_text" : "-455"
+	},
+	{
+		"id" : 20241,
+		"enum_id" : 766,
+		"enum_item_value" : "_456",
+		"enum_item_text" : "-456"
+	},
+	{
+		"id" : 20242,
+		"enum_id" : 766,
+		"enum_item_value" : "_457",
+		"enum_item_text" : "-457"
+	},
+	{
+		"id" : 20243,
+		"enum_id" : 766,
+		"enum_item_value" : "_458",
+		"enum_item_text" : "-458"
+	},
+	{
+		"id" : 20244,
+		"enum_id" : 766,
+		"enum_item_value" : "_459",
+		"enum_item_text" : "-459"
+	},
+	{
+		"id" : 20245,
+		"enum_id" : 766,
+		"enum_item_value" : "_460",
+		"enum_item_text" : "-460"
+	},
+	{
+		"id" : 20246,
+		"enum_id" : 766,
+		"enum_item_value" : "_461",
+		"enum_item_text" : "-461"
+	},
+	{
+		"id" : 20247,
+		"enum_id" : 766,
+		"enum_item_value" : "_462",
+		"enum_item_text" : "-462"
+	},
+	{
+		"id" : 20248,
+		"enum_id" : 766,
+		"enum_item_value" : "_463",
+		"enum_item_text" : "-463"
+	},
+	{
+		"id" : 20249,
+		"enum_id" : 766,
+		"enum_item_value" : "_464",
+		"enum_item_text" : "-464"
+	},
+	{
+		"id" : 20250,
+		"enum_id" : 766,
+		"enum_item_value" : "_465",
+		"enum_item_text" : "-465"
+	},
+	{
+		"id" : 20251,
+		"enum_id" : 766,
+		"enum_item_value" : "_466",
+		"enum_item_text" : "-466"
+	},
+	{
+		"id" : 20252,
+		"enum_id" : 766,
+		"enum_item_value" : "_467",
+		"enum_item_text" : "-467"
+	},
+	{
+		"id" : 20253,
+		"enum_id" : 766,
+		"enum_item_value" : "_901",
+		"enum_item_text" : "-901"
+	},
+	{
+		"id" : 20254,
+		"enum_id" : 766,
+		"enum_item_value" : "_902",
+		"enum_item_text" : "-902"
+	},
+	{
+		"id" : 20255,
+		"enum_id" : 766,
+		"enum_item_value" : "_903",
+		"enum_item_text" : "-903"
+	},
+	{
+		"id" : 20256,
+		"enum_id" : 766,
+		"enum_item_value" : "_904",
+		"enum_item_text" : "-904"
+	},
+	{
+		"id" : 20257,
+		"enum_id" : 766,
+		"enum_item_value" : "_905",
+		"enum_item_text" : "-905"
+	},
+	{
+		"id" : 20258,
+		"enum_id" : 766,
+		"enum_item_value" : "_906",
+		"enum_item_text" : "-906"
+	},
+	{
+		"id" : 20259,
+		"enum_id" : 766,
+		"enum_item_value" : "_907",
+		"enum_item_text" : "-907"
+	},
+	{
+		"id" : 20260,
+		"enum_id" : 766,
+		"enum_item_value" : "_908",
+		"enum_item_text" : "-908"
+	},
+	{
+		"id" : 20261,
+		"enum_id" : 766,
+		"enum_item_value" : "_909",
+		"enum_item_text" : "-909"
+	},
+	{
+		"id" : 20262,
+		"enum_id" : 766,
+		"enum_item_value" : "_910",
+		"enum_item_text" : "-910"
+	},
+	{
+		"id" : 20263,
+		"enum_id" : 766,
+		"enum_item_value" : "_911",
+		"enum_item_text" : "-911"
+	},
+	{
+		"id" : 20264,
+		"enum_id" : 766,
+		"enum_item_value" : "_912",
+		"enum_item_text" : "-912"
+	},
+	{
+		"id" : 20265,
+		"enum_id" : 766,
+		"enum_item_value" : "_913",
+		"enum_item_text" : "-913"
+	},
+	{
+		"id" : 20266,
+		"enum_id" : 766,
+		"enum_item_value" : "_914",
+		"enum_item_text" : "-914"
+	},
+	{
+		"id" : 20267,
+		"enum_id" : 766,
+		"enum_item_value" : "_915",
+		"enum_item_text" : "-915"
+	},
+	{
+		"id" : 20268,
+		"enum_id" : 766,
+		"enum_item_value" : "_916",
+		"enum_item_text" : "-916"
+	},
+	{
+		"id" : 20269,
+		"enum_id" : 766,
+		"enum_item_value" : "_917",
+		"enum_item_text" : "-917"
+	},
+	{
+		"id" : 20270,
+		"enum_id" : 766,
+		"enum_item_value" : "_918",
+		"enum_item_text" : "-918"
+	},
+	{
+		"id" : 20271,
+		"enum_id" : 766,
+		"enum_item_value" : "_919",
+		"enum_item_text" : "-919"
+	},
+	{
+		"id" : 20272,
+		"enum_id" : 766,
+		"enum_item_value" : "_920",
+		"enum_item_text" : "-920"
+	},
+	{
+		"id" : 20273,
+		"enum_id" : 766,
+		"enum_item_value" : "_921",
+		"enum_item_text" : "-921"
+	},
+	{
+		"id" : 20274,
+		"enum_id" : 766,
+		"enum_item_value" : "_922",
+		"enum_item_text" : "-922"
+	},
+	{
+		"id" : 20275,
+		"enum_id" : 766,
+		"enum_item_value" : "_923",
+		"enum_item_text" : "-923"
+	},
+	{
+		"id" : 20276,
+		"enum_id" : 766,
+		"enum_item_value" : "_924",
+		"enum_item_text" : "-924"
+	},
+	{
+		"id" : 20277,
+		"enum_id" : 766,
+		"enum_item_value" : "_925",
+		"enum_item_text" : "-925"
+	},
+	{
+		"id" : 20278,
+		"enum_id" : 766,
+		"enum_item_value" : "_926",
+		"enum_item_text" : "-926"
+	},
+	{
+		"id" : 20279,
+		"enum_id" : 766,
+		"enum_item_value" : "_927",
+		"enum_item_text" : "-927"
+	},
+	{
+		"id" : 20280,
+		"enum_id" : 766,
+		"enum_item_value" : "_928",
+		"enum_item_text" : "-928"
+	},
+	{
+		"id" : 20281,
+		"enum_id" : 766,
+		"enum_item_value" : "_929",
+		"enum_item_text" : "-929"
+	},
+	{
+		"id" : 20282,
+		"enum_id" : 766,
+		"enum_item_value" : "_930",
+		"enum_item_text" : "-930"
+	},
+	{
+		"id" : 20283,
+		"enum_id" : 766,
+		"enum_item_value" : "_931",
+		"enum_item_text" : "-931"
+	},
+	{
+		"id" : 20284,
+		"enum_id" : 766,
+		"enum_item_value" : "_932",
+		"enum_item_text" : "-932"
+	},
+	{
+		"id" : 20285,
+		"enum_id" : 766,
+		"enum_item_value" : "other",
+		"enum_item_text" : "OTHER"
+	},
+	{
+		"id" : 20286,
+		"enum_id" : 767,
+		"enum_item_value" : "_999",
+		"enum_item_text" : "-99"
+	},
+	{
+		"id" : 20287,
+		"enum_id" : 767,
+		"enum_item_value" : "buna_n",
+		"enum_item_text" : "BUNA-N"
+	},
+	{
+		"id" : 20288,
+		"enum_id" : 767,
+		"enum_item_value" : "epdm",
+		"enum_item_text" : "EPDM"
+	},
+	{
+		"id" : 20289,
+		"enum_id" : 767,
+		"enum_item_value" : "nitrile",
+		"enum_item_text" : "NITRILE"
+	},
+	{
+		"id" : 20290,
+		"enum_id" : 767,
+		"enum_item_value" : "poly_p642_70",
+		"enum_item_text" : "POLY P642-70"
+	},
+	{
+		"id" : 20291,
+		"enum_id" : 767,
+		"enum_item_value" : "silicone",
+		"enum_item_text" : "SILICONE"
+	},
+	{
+		"id" : 20292,
+		"enum_id" : 767,
+		"enum_item_value" : "viton",
+		"enum_item_text" : "VITON"
+	},
+	{
+		"id" : 20293,
+		"enum_id" : 767,
+		"enum_item_value" : "other",
+		"enum_item_text" : "OTHER"
+	},
+	{
+		"id" : 20294,
+		"enum_id" : 768,
+		"enum_item_value" : "_999",
+		"enum_item_text" : "-99"
+	},
+	{
+		"id" : 20295,
+		"enum_id" : 768,
+		"enum_item_value" : "round",
+		"enum_item_text" : "ROUND"
+	},
+	{
+		"id" : 20296,
+		"enum_id" : 768,
+		"enum_item_value" : "square",
+		"enum_item_text" : "SQUARE"
+	},
+	{
+		"id" : 20297,
+		"enum_id" : 768,
+		"enum_item_value" : "other",
+		"enum_item_text" : "OTHER"
+	},
+	{
+		"id" : 20298,
+		"enum_id" : 769,
+		"enum_item_value" : "_999",
+		"enum_item_text" : "-99"
+	},
+	{
+		"id" : 20299,
+		"enum_id" : 769,
+		"enum_item_value" : "actuator_arm",
+		"enum_item_text" : "ACTUATOR ARM"
+	},
+	{
+		"id" : 20300,
+		"enum_id" : 769,
+		"enum_item_value" : "actuator_rod",
+		"enum_item_text" : "ACTUATOR ROD"
+	},
+	{
+		"id" : 20301,
+		"enum_id" : 769,
+		"enum_item_value" : "brg_hsg_te",
+		"enum_item_text" : "BRG HSG T/E"
+	},
+	{
+		"id" : 20302,
+		"enum_id" : 769,
+		"enum_item_value" : "jnl_brg",
+		"enum_item_text" : "JNL BRG"
+	},
+	{
+		"id" : 20303,
+		"enum_id" : 769,
+		"enum_item_value" : "thrust_brg",
+		"enum_item_text" : "THRUST BRG"
+	},
+	{
+		"id" : 20304,
+		"enum_id" : 769,
+		"enum_item_value" : "other",
+		"enum_item_text" : "OTHER"
+	},
+	{
+		"id" : 20305,
+		"enum_id" : 770,
+		"enum_item_value" : "_999",
+		"enum_item_text" : "-99"
+	},
+	{
+		"id" : 20306,
+		"enum_id" : 770,
+		"enum_item_value" : "1010",
+		"enum_item_text" : "1010"
+	},
+	{
+		"id" : 20307,
+		"enum_id" : 770,
+		"enum_item_value" : "1020",
+		"enum_item_text" : "1020"
+	},
+	{
+		"id" : 20308,
+		"enum_id" : 770,
+		"enum_item_value" : "1215",
+		"enum_item_text" : "1215"
+	},
+	{
+		"id" : 20309,
+		"enum_id" : 770,
+		"enum_item_value" : "4140",
+		"enum_item_text" : "4140"
+	},
+	{
+		"id" : 20310,
+		"enum_id" : 770,
+		"enum_item_value" : "other",
+		"enum_item_text" : "OTHER"
+	},
+	{
+		"id" : 20311,
+		"enum_id" : 771,
+		"enum_item_value" : "_999",
+		"enum_item_text" : "-99"
+	},
+	{
+		"id" : 20312,
+		"enum_id" : 771,
+		"enum_item_value" : "cadmium",
+		"enum_item_text" : "CADMIUM"
+	},
+	{
+		"id" : 20313,
+		"enum_id" : 771,
+		"enum_item_value" : "black_nitride",
+		"enum_item_text" : "BLACK NITRIDE"
+	},
+	{
+		"id" : 20314,
+		"enum_id" : 771,
+		"enum_item_value" : "black_oxide",
+		"enum_item_text" : "BLACK OXIDE"
+	},
+	{
+		"id" : 20315,
+		"enum_id" : 771,
+		"enum_item_value" : "black_phosphate",
+		"enum_item_text" : "BLACK PHOSPHATE"
+	},
+	{
+		"id" : 20316,
+		"enum_id" : 771,
+		"enum_item_value" : "black_powder_coat",
+		"enum_item_text" : "BLACK POWDER COAT"
+	},
+	{
+		"id" : 20317,
+		"enum_id" : 771,
+		"enum_item_value" : "black_zinc_phosphate_wax",
+		"enum_item_text" : "BLACK ZINC PHOSPHATE & WAX"
+	},
+	{
+		"id" : 20318,
+		"enum_id" : 771,
+		"enum_item_value" : "blue_clear_class_2fezn12",
+		"enum_item_text" : "BLUE-CLEAR CLASS 2FE/ZN12"
+	},
+	{
+		"id" : 20319,
+		"enum_id" : 771,
+		"enum_item_value" : "blue_clear_class_2fezn25",
+		"enum_item_text" : "BLUE-CLEAR CLASS 2FE/ZN25"
+	},
+	{
+		"id" : 20320,
+		"enum_id" : 771,
+		"enum_item_value" : "gray_zinc",
+		"enum_item_text" : "GRAY ZINC"
+	},
+	{
+		"id" : 20321,
+		"enum_id" : 771,
+		"enum_item_value" : "gray_zinc_phosphate_oil",
+		"enum_item_text" : "GRAY ZINC PHOSPHATE & OIL"
+	},
+	{
+		"id" : 20322,
+		"enum_id" : 771,
+		"enum_item_value" : "yellow_zinc",
+		"enum_item_text" : "YELLOW ZINC"
+	},
+	{
+		"id" : 20323,
+		"enum_id" : 771,
+		"enum_item_value" : "yellow_zinc_class_1fezn25",
+		"enum_item_text" : "YELLOW ZINC CLASS 1FE/ZN25"
+	},
+	{
+		"id" : 20324,
+		"enum_id" : 771,
+		"enum_item_value" : "yellow_zinc_dichromate",
+		"enum_item_text" : "YELLOW ZINC DICHROMATE"
+	},
+	{
+		"id" : 20325,
+		"enum_id" : 771,
+		"enum_item_value" : "zinc",
+		"enum_item_text" : "ZINC"
+	},
+	{
+		"id" : 20326,
+		"enum_id" : 771,
+		"enum_item_value" : "other",
+		"enum_item_text" : "OTHER"
+	},
+	{
+		"id" : 20327,
+		"enum_id" : 772,
+		"enum_item_value" : "_999",
+		"enum_item_text" : "-99"
+	},
+	{
+		"id" : 20328,
+		"enum_id" : 772,
+		"enum_item_value" : "m2",
+		"enum_item_text" : "M2"
+	},
+	{
+		"id" : 20329,
+		"enum_id" : 772,
+		"enum_item_value" : "s45",
+		"enum_item_text" : "S45"
+	},
+	{
+		"id" : 20330,
+		"enum_id" : 772,
+		"enum_item_value" : "other",
+		"enum_item_text" : "OTHER"
+	},
+	{
+		"id" : 20331,
+		"enum_id" : 773,
+		"enum_item_value" : "_999",
+		"enum_item_text" : "-99"
+	},
+	{
+		"id" : 20332,
+		"enum_id" : 773,
+		"enum_item_value" : "butt",
+		"enum_item_text" : "BUTT"
+	},
+	{
+		"id" : 20333,
+		"enum_id" : 773,
+		"enum_item_value" : "step_gap",
+		"enum_item_text" : "STEP GAP"
+	},
+	{
+		"id" : 20334,
+		"enum_id" : 773,
+		"enum_item_value" : "other",
+		"enum_item_text" : "OTHER"
+	},
+	{
+		"id" : 20335,
+		"enum_id" : 774,
+		"enum_item_value" : "_999",
+		"enum_item_text" : "-99"
+	},
+	{
+		"id" : 20336,
+		"enum_id" : 774,
+		"enum_item_value" : "std",
+		"enum_item_text" : "STD"
+	},
+	{
+		"id" : 20337,
+		"enum_id" : 774,
+		"enum_item_value" : "rev",
+		"enum_item_text" : "REV"
+	},
+	{
+		"id" : 20338,
+		"enum_id" : 774,
+		"enum_item_value" : "other",
+		"enum_item_text" : "OTHER"
+	},
+	{
+		"id" : 20339,
+		"enum_id" : 775,
+		"enum_item_value" : "_999",
+		"enum_item_text" : "-99"
+	},
+	{
+		"id" : 20340,
+		"enum_id" : 775,
+		"enum_item_value" : "carbon_spring_steel",
+		"enum_item_text" : "CARBON SPRING STEEL"
+	},
+	{
+		"id" : 20341,
+		"enum_id" : 775,
+		"enum_item_value" : "sst",
+		"enum_item_text" : "SST"
+	},
+	{
+		"id" : 20342,
+		"enum_id" : 775,
+		"enum_item_value" : "steel",
+		"enum_item_text" : "STEEL"
+	},
+	{
+		"id" : 20343,
+		"enum_id" : 775,
+		"enum_item_value" : "1074_1075_stl",
+		"enum_item_text" : "1074-1075 STL"
+	},
+	{
+		"id" : 20344,
+		"enum_id" : 775,
+		"enum_item_value" : "other",
+		"enum_item_text" : "OTHER"
+	},
+	{
+		"id" : 20345,
+		"enum_id" : 776,
+		"enum_item_value" : "_999",
+		"enum_item_text" : "-99"
+	},
+	{
+		"id" : 20346,
+		"enum_id" : 776,
+		"enum_item_value" : "constant",
+		"enum_item_text" : "CONSTANT"
+	},
+	{
+		"id" : 20347,
+		"enum_id" : 776,
+		"enum_item_value" : "tapered",
+		"enum_item_text" : "TAPERED"
+	},
+	{
+		"id" : 20348,
+		"enum_id" : 776,
+		"enum_item_value" : "other",
+		"enum_item_text" : "OTHER"
+	},
+	{
+		"id" : 20349,
+		"enum_id" : 777,
+		"enum_item_value" : "_999",
+		"enum_item_text" : "-99"
+	},
+	{
+		"id" : 20350,
+		"enum_id" : 777,
+		"enum_item_value" : "internal",
+		"enum_item_text" : "INTERNAL"
+	},
+	{
+		"id" : 20351,
+		"enum_id" : 777,
+		"enum_item_value" : "external",
+		"enum_item_text" : "EXTERNAL"
+	},
+	{
+		"id" : 20352,
+		"enum_id" : 777,
+		"enum_item_value" : "other",
+		"enum_item_text" : "OTHER"
+	},
+	{
+		"id" : 20353,
+		"enum_id" : 778,
+		"enum_item_value" : "_999",
+		"enum_item_text" : "-99"
+	},
+	{
+		"id" : 20354,
+		"enum_id" : 778,
+		"enum_item_value" : "axial",
+		"enum_item_text" : "AXIAL"
+	},
+	{
+		"id" : 20355,
+		"enum_id" : 778,
+		"enum_item_value" : "radial",
+		"enum_item_text" : "RADIAL"
+	},
+	{
+		"id" : 20356,
+		"enum_id" : 778,
+		"enum_item_value" : "other",
+		"enum_item_text" : "OTHER"
+	},
+	{
+		"id" : 20357,
+		"enum_id" : 779,
+		"enum_item_value" : "_999",
+		"enum_item_text" : "-99"
+	},
+	{
+		"id" : 20358,
+		"enum_id" : 779,
+		"enum_item_value" : "circlip",
+		"enum_item_text" : "CIRCLIP"
+	},
+	{
+		"id" : 20359,
+		"enum_id" : 779,
+		"enum_item_value" : "e_type",
+		"enum_item_text" : "\"E\"-TYPE"
+	},
+	{
+		"id" : 20360,
+		"enum_id" : 779,
+		"enum_item_value" : "internal_",
+		"enum_item_text" : "INTERNAL "
+	},
+	{
+		"id" : 20361,
+		"enum_id" : 779,
+		"enum_item_value" : "internal_inverted",
+		"enum_item_text" : "INTERNAL INVERTED"
+	},
+	{
+		"id" : 20362,
+		"enum_id" : 779,
+		"enum_item_value" : "poodle",
+		"enum_item_text" : "POODLE"
+	},
+	{
+		"id" : 20363,
+		"enum_id" : 779,
+		"enum_item_value" : "push_in",
+		"enum_item_text" : "PUSH-IN"
+	},
+	{
+		"id" : 20364,
+		"enum_id" : 779,
+		"enum_item_value" : "special",
+		"enum_item_text" : "SPECIAL"
+	},
+	{
+		"id" : 20365,
+		"enum_id" : 779,
+		"enum_item_value" : "spiral",
+		"enum_item_text" : "SPIRAL"
+	},
+	{
+		"id" : 20366,
+		"enum_id" : 779,
+		"enum_item_value" : "other",
+		"enum_item_text" : "OTHER"
+	},
+	{
+		"id" : 20367,
+		"enum_id" : 780,
+		"enum_item_value" : "_999",
+		"enum_item_text" : "-99"
+	},
+	{
+		"id" : 20368,
+		"enum_id" : 780,
+		"enum_item_value" : "superback",
+		"enum_item_text" : "SUPERBACK"
+	},
+	{
+		"id" : 20369,
+		"enum_id" : 780,
+		"enum_item_value" : "flatback",
+		"enum_item_text" : "FLATBACK"
+	},
+	{
+		"id" : 20370,
+		"enum_id" : 780,
+		"enum_item_value" : "flatback_with_extended_hub",
+		"enum_item_text" : "FLATBACK WITH EXTENDED HUB"
+	},
+	{
+		"id" : 20371,
+		"enum_id" : 780,
+		"enum_item_value" : "flatback_with_recessed_hub",
+		"enum_item_text" : "FLATBACK WITH RECESSED HUB"
+	},
+	{
+		"id" : 20372,
+		"enum_id" : 780,
+		"enum_item_value" : "special",
+		"enum_item_text" : "SPECIAL"
+	},
+	{
+		"id" : 20373,
+		"enum_id" : 780,
+		"enum_item_value" : "other",
+		"enum_item_text" : "OTHER"
+	},
+	{
+		"id" : 20374,
+		"enum_id" : 781,
+		"enum_item_value" : "_999",
+		"enum_item_text" : "-99"
+	},
+	{
+		"id" : 20375,
+		"enum_id" : 781,
+		"enum_item_value" : "full",
+		"enum_item_text" : "FULL"
+	},
+	{
+		"id" : 20376,
+		"enum_id" : 781,
+		"enum_item_value" : "partial",
+		"enum_item_text" : "PARTIAL"
+	},
+	{
+		"id" : 20377,
+		"enum_id" : 781,
+		"enum_item_value" : "other",
+		"enum_item_text" : "OTHER"
+	},
+	{
+		"id" : 20378,
+		"enum_id" : 782,
+		"enum_item_value" : "_999",
+		"enum_item_text" : "-99"
+	},
+	{
+		"id" : 20379,
+		"enum_id" : 782,
+		"enum_item_value" : "coil",
+		"enum_item_text" : "COIL"
+	},
+	{
+		"id" : 20380,
+		"enum_id" : 782,
+		"enum_item_value" : "flat",
+		"enum_item_text" : "FLAT"
+	},
+	{
+		"id" : 20381,
+		"enum_id" : 782,
+		"enum_item_value" : "wave",
+		"enum_item_text" : "WAVE"
+	},
+	{
+		"id" : 20382,
+		"enum_id" : 782,
+		"enum_item_value" : "other",
+		"enum_item_text" : "OTHER"
+	},
+	{
+		"id" : 20383,
+		"enum_id" : 783,
+		"enum_item_value" : "_999",
+		"enum_item_text" : "-99"
+	},
+	{
+		"id" : 20384,
+		"enum_id" : 783,
+		"enum_item_value" : "alloy_260_12_hard_brass",
+		"enum_item_text" : "ALLOY 260 1/2-HARD BRASS"
+	},
+	{
+		"id" : 20385,
+		"enum_id" : 783,
+		"enum_item_value" : "bronze_clad_steel",
+		"enum_item_text" : "BRONZE CLAD STEEL"
+	},
+	{
+		"id" : 20386,
+		"enum_id" : 783,
+		"enum_item_value" : "c270",
+		"enum_item_text" : "C270"
+	},
+	{
+		"id" : 20387,
+		"enum_id" : 783,
+		"enum_item_value" : "c280",
+		"enum_item_text" : "C280"
+	},
+	{
+		"id" : 20388,
+		"enum_id" : 783,
+		"enum_item_value" : "c380",
+		"enum_item_text" : "C380"
+	},
+	{
+		"id" : 20389,
+		"enum_id" : 783,
+		"enum_item_value" : "c857",
+		"enum_item_text" : "C857"
+	},
+	{
+		"id" : 20390,
+		"enum_id" : 783,
+		"enum_item_value" : "c932",
+		"enum_item_text" : "C932"
+	},
+	{
+		"id" : 20391,
+		"enum_id" : 783,
+		"enum_item_value" : "c937",
+		"enum_item_text" : "C937"
+	},
+	{
+		"id" : 20392,
+		"enum_id" : 783,
+		"enum_item_value" : "6061_t6_al",
+		"enum_item_text" : "6061-T6 AL"
+	},
+	{
+		"id" : 20393,
+		"enum_id" : 783,
+		"enum_item_value" : "sintered_iron",
+		"enum_item_text" : "SINTERED IRON"
+	},
+	{
+		"id" : 20394,
+		"enum_id" : 783,
+		"enum_item_value" : "4140_stl",
+		"enum_item_text" : "4140 STL"
+	},
+	{
+		"id" : 20395,
+		"enum_id" : 783,
+		"enum_item_value" : "steel",
+		"enum_item_text" : "STEEL"
+	},
+	{
+		"id" : 20396,
+		"enum_id" : 783,
+		"enum_item_value" : "other",
+		"enum_item_text" : "OTHER"
+	},
+	{
+		"id" : 20397,
+		"enum_id" : 784,
+		"enum_item_value" : "_999",
+		"enum_item_text" : "-99"
+	},
+	{
+		"id" : 20398,
+		"enum_id" : 784,
+		"enum_item_value" : "4140_stl",
+		"enum_item_text" : "4140 STL"
+	},
+	{
+		"id" : 20399,
+		"enum_id" : 784,
+		"enum_item_value" : "8620_stl",
+		"enum_item_text" : "8620 STL"
+	},
+	{
+		"id" : 20400,
+		"enum_id" : 784,
+		"enum_item_value" : "other",
+		"enum_item_text" : "OTHER"
+	},
+	{
+		"id" : 20401,
+		"enum_id" : 785,
+		"enum_item_value" : "_999",
+		"enum_item_text" : "-99"
+	},
+	{
+		"id" : 20402,
+		"enum_id" : 785,
+		"enum_item_value" : "rh",
+		"enum_item_text" : "RH"
+	},
+	{
+		"id" : 20403,
+		"enum_id" : 785,
+		"enum_item_value" : "lh",
+		"enum_item_text" : "LH"
+	},
+	{
+		"id" : 20404,
+		"enum_id" : 785,
+		"enum_item_value" : "other",
+		"enum_item_text" : "OTHER"
+	},
+	{
+		"id" : 20405,
+		"enum_id" : 786,
+		"enum_item_value" : "_999",
+		"enum_item_text" : "-99"
+	},
+	{
+		"id" : 20406,
+		"enum_id" : 786,
+		"enum_item_value" : "1193_s_orange_microspheres",
+		"enum_item_text" : "1193-S ORANGE MICROSPHERES"
+	},
+	{
+		"id" : 20407,
+		"enum_id" : 786,
+		"enum_item_value" : "1193_s_blue_microshpheres",
+		"enum_item_text" : "1193-S BLUE MICROSHPHERES"
+	},
+	{
+		"id" : 20408,
+		"enum_id" : 786,
+		"enum_item_value" : "loctite_248",
+		"enum_item_text" : "LOCTITE 248"
+	},
+	{
+		"id" : 20409,
+		"enum_id" : 786,
+		"enum_item_value" : "red_loctite",
+		"enum_item_text" : "RED LOCTITE"
+	},
+	{
+		"id" : 20410,
+		"enum_id" : 786,
+		"enum_item_value" : "other",
+		"enum_item_text" : "OTHER"
+	},
+	{
+		"id" : 20411,
+		"enum_id" : 787,
+		"enum_item_value" : "_999",
+		"enum_item_text" : "-99"
+	},
+	{
+		"id" : 20412,
+		"enum_id" : 787,
+		"enum_item_value" : "0_80_unf_2a_ext",
+		"enum_item_text" : "#0-80 UNF-2A (ext.)"
+	},
+	{
+		"id" : 20413,
+		"enum_id" : 787,
+		"enum_item_value" : "0_80_unf_2b_int",
+		"enum_item_text" : "#0-80 UNF-2B (int.)"
+	},
+	{
+		"id" : 20414,
+		"enum_id" : 787,
+		"enum_item_value" : "0_80_unf_3a_ext",
+		"enum_item_text" : "#0-80 UNF-3A (ext.)"
+	},
+	{
+		"id" : 20415,
+		"enum_id" : 787,
+		"enum_item_value" : "0_80_unf_3b_int",
+		"enum_item_text" : "#0-80 UNF-3B (int.)"
+	},
+	{
+		"id" : 20416,
+		"enum_id" : 787,
+		"enum_item_value" : "10_24_unc_2a_ext",
+		"enum_item_text" : "#10-24 UNC-2A (ext.)"
+	},
+	{
+		"id" : 20417,
+		"enum_id" : 787,
+		"enum_item_value" : "10_24_unc_2b_int",
+		"enum_item_text" : "#10-24 UNC-2B (int.)"
+	},
+	{
+		"id" : 20418,
+		"enum_id" : 787,
+		"enum_item_value" : "10_24_unc_3a_ext",
+		"enum_item_text" : "#10-24 UNC-3A (ext.)"
+	},
+	{
+		"id" : 20419,
+		"enum_id" : 787,
+		"enum_item_value" : "10_24_unc_3b_int",
+		"enum_item_text" : "#10-24 UNC-3B (int.)"
+	},
+	{
+		"id" : 20420,
+		"enum_id" : 787,
+		"enum_item_value" : "10_28_uns_2a_ext",
+		"enum_item_text" : "#10-28 UNS-2A (ext.)"
+	},
+	{
+		"id" : 20421,
+		"enum_id" : 787,
+		"enum_item_value" : "10_28_uns_2b_int",
+		"enum_item_text" : "#10-28 UNS-2B (int.)"
+	},
+	{
+		"id" : 20422,
+		"enum_id" : 787,
+		"enum_item_value" : "10_32_unf_2a_ext",
+		"enum_item_text" : "#10-32 UNF-2A (ext.)"
+	},
+	{
+		"id" : 20423,
+		"enum_id" : 787,
+		"enum_item_value" : "10_32_unf_2b_int",
+		"enum_item_text" : "#10-32 UNF-2B (int.)"
+	},
+	{
+		"id" : 20424,
+		"enum_id" : 787,
+		"enum_item_value" : "10_32_unf_3a_ext",
+		"enum_item_text" : "#10-32 UNF-3A (ext.)"
+	},
+	{
+		"id" : 20425,
+		"enum_id" : 787,
+		"enum_item_value" : "10_32_unf_3b_int",
+		"enum_item_text" : "#10-32 UNF-3B (int.)"
+	},
+	{
+		"id" : 20426,
+		"enum_id" : 787,
+		"enum_item_value" : "10_36_uns_2a_ext",
+		"enum_item_text" : "#10-36 UNS-2A (ext.)"
+	},
+	{
+		"id" : 20427,
+		"enum_id" : 787,
+		"enum_item_value" : "10_36_uns_2b_int",
+		"enum_item_text" : "#10-36 UNS-2B (int.)"
+	},
+	{
+		"id" : 20428,
+		"enum_id" : 787,
+		"enum_item_value" : "10_40_uns_2a_ext",
+		"enum_item_text" : "#10-40 UNS-2A (ext.)"
+	},
+	{
+		"id" : 20429,
+		"enum_id" : 787,
+		"enum_item_value" : "10_40_uns_2b_int",
+		"enum_item_text" : "#10-40 UNS-2B (int.)"
+	},
+	{
+		"id" : 20430,
+		"enum_id" : 787,
+		"enum_item_value" : "10_48_uns_2a_ext",
+		"enum_item_text" : "#10-48 UNS-2A (ext.)"
+	},
+	{
+		"id" : 20431,
+		"enum_id" : 787,
+		"enum_item_value" : "10_48_uns_2b_int",
+		"enum_item_text" : "#10-48 UNS-2B (int.)"
+	},
+	{
+		"id" : 20432,
+		"enum_id" : 787,
+		"enum_item_value" : "10_56_uns_2a_ext",
+		"enum_item_text" : "#10-56 UNS-2A (ext.)"
+	},
+	{
+		"id" : 20433,
+		"enum_id" : 787,
+		"enum_item_value" : "10_56_uns_2b_int",
+		"enum_item_text" : "#10-56 UNS-2B (int.)"
+	},
+	{
+		"id" : 20434,
+		"enum_id" : 787,
+		"enum_item_value" : "12_24_unc_2a_ext",
+		"enum_item_text" : "#12-24 UNC-2A (ext.)"
+	},
+	{
+		"id" : 20435,
+		"enum_id" : 787,
+		"enum_item_value" : "12_24_unc_2b_int",
+		"enum_item_text" : "#12-24 UNC-2B (int.)"
+	},
+	{
+		"id" : 20436,
+		"enum_id" : 787,
+		"enum_item_value" : "12_24_unc_3a_ext",
+		"enum_item_text" : "#12-24 UNC-3A (ext.)"
+	},
+	{
+		"id" : 20437,
+		"enum_id" : 787,
+		"enum_item_value" : "12_24_unc_3b_int",
+		"enum_item_text" : "#12-24 UNC-3B (int.)"
+	},
+	{
+		"id" : 20438,
+		"enum_id" : 787,
+		"enum_item_value" : "12_28_unf_2a_ext",
+		"enum_item_text" : "#12-28 UNF-2A (ext.)"
+	},
+	{
+		"id" : 20439,
+		"enum_id" : 787,
+		"enum_item_value" : "12_28_unf_2b_int",
+		"enum_item_text" : "#12-28 UNF-2B (int.)"
+	},
+	{
+		"id" : 20440,
+		"enum_id" : 787,
+		"enum_item_value" : "12_28_unf_3a_ext",
+		"enum_item_text" : "#12-28 UNF-3A (ext.)"
+	},
+	{
+		"id" : 20441,
+		"enum_id" : 787,
+		"enum_item_value" : "12_28_unf_3b_int",
+		"enum_item_text" : "#12-28 UNF-3B (int.)"
+	},
+	{
+		"id" : 20442,
+		"enum_id" : 787,
+		"enum_item_value" : "12_32_unef_2a_ext",
+		"enum_item_text" : "#12-32 UNEF-2A (ext.)"
+	},
+	{
+		"id" : 20443,
+		"enum_id" : 787,
+		"enum_item_value" : "12_32_unef_2b_int",
+		"enum_item_text" : "#12-32 UNEF-2B (int.)"
+	},
+	{
+		"id" : 20444,
+		"enum_id" : 787,
+		"enum_item_value" : "12_32_unef_3a_ext",
+		"enum_item_text" : "#12-32 UNEF-3A (ext.)"
+	},
+	{
+		"id" : 20445,
+		"enum_id" : 787,
+		"enum_item_value" : "12_32_unef_3b_int",
+		"enum_item_text" : "#12-32 UNEF-3B (int.)"
+	},
+	{
+		"id" : 20446,
+		"enum_id" : 787,
+		"enum_item_value" : "12_36_uns_2a_ext",
+		"enum_item_text" : "#12-36 UNS-2A (ext.)"
+	},
+	{
+		"id" : 20447,
+		"enum_id" : 787,
+		"enum_item_value" : "12_36_uns_2b_int",
+		"enum_item_text" : "#12-36 UNS-2B (int.)"
+	},
+	{
+		"id" : 20448,
+		"enum_id" : 787,
+		"enum_item_value" : "12_40_uns_2a_ext",
+		"enum_item_text" : "#12-40 UNS-2A (ext.)"
+	},
+	{
+		"id" : 20449,
+		"enum_id" : 787,
+		"enum_item_value" : "12_40_uns_2b_int",
+		"enum_item_text" : "#12-40 UNS-2B (int.)"
+	},
+	{
+		"id" : 20450,
+		"enum_id" : 787,
+		"enum_item_value" : "12_48_uns_2a_ext",
+		"enum_item_text" : "#12-48 UNS-2A (ext.)"
+	},
+	{
+		"id" : 20451,
+		"enum_id" : 787,
+		"enum_item_value" : "12_48_uns_2b_int",
+		"enum_item_text" : "#12-48 UNS-2B (int.)"
+	},
+	{
+		"id" : 20452,
+		"enum_id" : 787,
+		"enum_item_value" : "12_56_uns_2a_ext",
+		"enum_item_text" : "#12-56 UNS-2A (ext.)"
+	},
+	{
+		"id" : 20453,
+		"enum_id" : 787,
+		"enum_item_value" : "12_56_uns_2b_int",
+		"enum_item_text" : "#12-56 UNS-2B (int.)"
+	},
+	{
+		"id" : 20454,
+		"enum_id" : 787,
+		"enum_item_value" : "1_64_unc_2a_ext",
+		"enum_item_text" : "#1-64 UNC-2A (ext.)"
+	},
+	{
+		"id" : 20455,
+		"enum_id" : 787,
+		"enum_item_value" : "1_64_unc_2b_int",
+		"enum_item_text" : "#1-64 UNC-2B (int.)"
+	},
+	{
+		"id" : 20456,
+		"enum_id" : 787,
+		"enum_item_value" : "1_64_unc_3a_ext",
+		"enum_item_text" : "#1-64 UNC-3A (ext.)"
+	},
+	{
+		"id" : 20457,
+		"enum_id" : 787,
+		"enum_item_value" : "1_64_unc_3b_int",
+		"enum_item_text" : "#1-64 UNC-3B (int.)"
+	},
+	{
+		"id" : 20458,
+		"enum_id" : 787,
+		"enum_item_value" : "1_72_unf_2a_ext",
+		"enum_item_text" : "#1-72 UNF-2A (ext.)"
+	},
+	{
+		"id" : 20459,
+		"enum_id" : 787,
+		"enum_item_value" : "1_72_unf_2b_int",
+		"enum_item_text" : "#1-72 UNF-2B (int.)"
+	},
+	{
+		"id" : 20460,
+		"enum_id" : 787,
+		"enum_item_value" : "1_72_unf_3a_ext",
+		"enum_item_text" : "#1-72 UNF-3A (ext.)"
+	},
+	{
+		"id" : 20461,
+		"enum_id" : 787,
+		"enum_item_value" : "1_72_unf_3b_int",
+		"enum_item_text" : "#1-72 UNF-3B (int.)"
+	},
+	{
+		"id" : 20462,
+		"enum_id" : 787,
+		"enum_item_value" : "2_56_unc_2a_ext",
+		"enum_item_text" : "#2-56 UNC-2A (ext.)"
+	},
+	{
+		"id" : 20463,
+		"enum_id" : 787,
+		"enum_item_value" : "2_56_unc_2b_int",
+		"enum_item_text" : "#2-56 UNC-2B (int.)"
+	},
+	{
+		"id" : 20464,
+		"enum_id" : 787,
+		"enum_item_value" : "2_56_unc_3a_ext",
+		"enum_item_text" : "#2-56 UNC-3A (ext.)"
+	},
+	{
+		"id" : 20465,
+		"enum_id" : 787,
+		"enum_item_value" : "2_56_unc_3b_int",
+		"enum_item_text" : "#2-56 UNC-3B (int.)"
+	},
+	{
+		"id" : 20466,
+		"enum_id" : 787,
+		"enum_item_value" : "2_64_unf_2a_ext",
+		"enum_item_text" : "#2-64 UNF-2A (ext.)"
+	},
+	{
+		"id" : 20467,
+		"enum_id" : 787,
+		"enum_item_value" : "2_64_unf_2b_int",
+		"enum_item_text" : "#2-64 UNF-2B (int.)"
+	},
+	{
+		"id" : 20468,
+		"enum_id" : 787,
+		"enum_item_value" : "2_64_unf_3a_ext",
+		"enum_item_text" : "#2-64 UNF-3A (ext.)"
+	},
+	{
+		"id" : 20469,
+		"enum_id" : 787,
+		"enum_item_value" : "2_64_unf_3b_int",
+		"enum_item_text" : "#2-64 UNF-3B (int.)"
+	},
+	{
+		"id" : 20470,
+		"enum_id" : 787,
+		"enum_item_value" : "3_48_unc_2a_ext",
+		"enum_item_text" : "#3-48 UNC-2A (ext.)"
+	},
+	{
+		"id" : 20471,
+		"enum_id" : 787,
+		"enum_item_value" : "3_48_unc_2b_int",
+		"enum_item_text" : "#3-48 UNC-2B (int.)"
+	},
+	{
+		"id" : 20472,
+		"enum_id" : 787,
+		"enum_item_value" : "3_48_unc_3a_ext",
+		"enum_item_text" : "#3-48 UNC-3A (ext.)"
+	},
+	{
+		"id" : 20473,
+		"enum_id" : 787,
+		"enum_item_value" : "3_48_unc_3b_int",
+		"enum_item_text" : "#3-48 UNC-3B (int.)"
+	},
+	{
+		"id" : 20474,
+		"enum_id" : 787,
+		"enum_item_value" : "3_56_unf_2a_ext",
+		"enum_item_text" : "#3-56 UNF-2A (ext.)"
+	},
+	{
+		"id" : 20475,
+		"enum_id" : 787,
+		"enum_item_value" : "3_56_unf_2b_int",
+		"enum_item_text" : "#3-56 UNF-2B (int.)"
+	},
+	{
+		"id" : 20476,
+		"enum_id" : 787,
+		"enum_item_value" : "3_56_unf_3a_ext",
+		"enum_item_text" : "#3-56 UNF-3A (ext.)"
+	},
+	{
+		"id" : 20477,
+		"enum_id" : 787,
+		"enum_item_value" : "3_56_unf_3b_int",
+		"enum_item_text" : "#3-56 UNF-3B (int.)"
+	},
+	{
+		"id" : 20478,
+		"enum_id" : 787,
+		"enum_item_value" : "4_40_unc_2a_ext",
+		"enum_item_text" : "#4-40 UNC-2A (ext.)"
+	},
+	{
+		"id" : 20479,
+		"enum_id" : 787,
+		"enum_item_value" : "4_40_unc_2b_int",
+		"enum_item_text" : "#4-40 UNC-2B (int.)"
+	},
+	{
+		"id" : 20480,
+		"enum_id" : 787,
+		"enum_item_value" : "4_40_unc_3a_ext",
+		"enum_item_text" : "#4-40 UNC-3A (ext.)"
+	},
+	{
+		"id" : 20481,
+		"enum_id" : 787,
+		"enum_item_value" : "4_40_unc_3b_int",
+		"enum_item_text" : "#4-40 UNC-3B (int.)"
+	},
+	{
+		"id" : 20482,
+		"enum_id" : 787,
+		"enum_item_value" : "4_48_unf_2a_ext",
+		"enum_item_text" : "#4-48 UNF-2A (ext.)"
+	},
+	{
+		"id" : 20483,
+		"enum_id" : 787,
+		"enum_item_value" : "4_48_unf_2b_int",
+		"enum_item_text" : "#4-48 UNF-2B (int.)"
+	},
+	{
+		"id" : 20484,
+		"enum_id" : 787,
+		"enum_item_value" : "4_48_unf_3a_ext",
+		"enum_item_text" : "#4-48 UNF-3A (ext.)"
+	},
+	{
+		"id" : 20485,
+		"enum_id" : 787,
+		"enum_item_value" : "4_48_unf_3b_int",
+		"enum_item_text" : "#4-48 UNF-3B (int.)"
+	},
+	{
+		"id" : 20486,
+		"enum_id" : 787,
+		"enum_item_value" : "5_40_unc_2a_ext",
+		"enum_item_text" : "#5-40 UNC-2A (ext.)"
+	},
+	{
+		"id" : 20487,
+		"enum_id" : 787,
+		"enum_item_value" : "5_40_unc_2b_int",
+		"enum_item_text" : "#5-40 UNC-2B (int.)"
+	},
+	{
+		"id" : 20488,
+		"enum_id" : 787,
+		"enum_item_value" : "5_40_unc_3a_ext",
+		"enum_item_text" : "#5-40 UNC-3A (ext.)"
+	},
+	{
+		"id" : 20489,
+		"enum_id" : 787,
+		"enum_item_value" : "5_40_unc_3b_int",
+		"enum_item_text" : "#5-40 UNC-3B (int.)"
+	},
+	{
+		"id" : 20490,
+		"enum_id" : 787,
+		"enum_item_value" : "5_44_unf_2a_ext",
+		"enum_item_text" : "#5-44 UNF-2A (ext.)"
+	},
+	{
+		"id" : 20491,
+		"enum_id" : 787,
+		"enum_item_value" : "5_44_unf_2b_int",
+		"enum_item_text" : "#5-44 UNF-2B (int.)"
+	},
+	{
+		"id" : 20492,
+		"enum_id" : 787,
+		"enum_item_value" : "5_44_unf_3a_ext",
+		"enum_item_text" : "#5-44 UNF-3A (ext.)"
+	},
+	{
+		"id" : 20493,
+		"enum_id" : 787,
+		"enum_item_value" : "5_44_unf_3b_int",
+		"enum_item_text" : "#5-44 UNF-3B (int.)"
+	},
+	{
+		"id" : 20494,
+		"enum_id" : 787,
+		"enum_item_value" : "6_32_unc_2a_ext",
+		"enum_item_text" : "#6-32 UNC-2A (ext.)"
+	},
+	{
+		"id" : 20495,
+		"enum_id" : 787,
+		"enum_item_value" : "6_32_unc_2b_int",
+		"enum_item_text" : "#6-32 UNC-2B (int.)"
+	},
+	{
+		"id" : 20496,
+		"enum_id" : 787,
+		"enum_item_value" : "6_32_unc_3a_ext",
+		"enum_item_text" : "#6-32 UNC-3A (ext.)"
+	},
+	{
+		"id" : 20497,
+		"enum_id" : 787,
+		"enum_item_value" : "6_32_unc_3b_int",
+		"enum_item_text" : "#6-32 UNC-3B (int.)"
+	},
+	{
+		"id" : 20498,
+		"enum_id" : 787,
+		"enum_item_value" : "6_40_unf_2a_ext",
+		"enum_item_text" : "#6-40 UNF-2A (ext.)"
+	},
+	{
+		"id" : 20499,
+		"enum_id" : 787,
+		"enum_item_value" : "6_40_unf_2b_int",
+		"enum_item_text" : "#6-40 UNF-2B (int.)"
+	},
+	{
+		"id" : 20500,
+		"enum_id" : 787,
+		"enum_item_value" : "6_40_unf_3a_ext",
+		"enum_item_text" : "#6-40 UNF-3A (ext.)"
+	},
+	{
+		"id" : 20501,
+		"enum_id" : 787,
+		"enum_item_value" : "6_40_unf_3b_int",
+		"enum_item_text" : "#6-40 UNF-3B (int.)"
+	},
+	{
+		"id" : 20502,
+		"enum_id" : 787,
+		"enum_item_value" : "8_32_unc_2a_ext",
+		"enum_item_text" : "#8-32 UNC-2A (ext.)"
+	},
+	{
+		"id" : 20503,
+		"enum_id" : 787,
+		"enum_item_value" : "8_32_unc_2b_int",
+		"enum_item_text" : "#8-32 UNC-2B (int.)"
+	},
+	{
+		"id" : 20504,
+		"enum_id" : 787,
+		"enum_item_value" : "8_32_unc_3a_ext",
+		"enum_item_text" : "#8-32 UNC-3A (ext.)"
+	},
+	{
+		"id" : 20505,
+		"enum_id" : 787,
+		"enum_item_value" : "8_32_unc_3b_int",
+		"enum_item_text" : "#8-32 UNC-3B (int.)"
+	},
+	{
+		"id" : 20506,
+		"enum_id" : 787,
+		"enum_item_value" : "8_36_unf_2a_ext",
+		"enum_item_text" : "#8-36 UNF-2A (ext.)"
+	},
+	{
+		"id" : 20507,
+		"enum_id" : 787,
+		"enum_item_value" : "8_36_unf_2b_int",
+		"enum_item_text" : "#8-36 UNF-2B (int.)"
+	},
+	{
+		"id" : 20508,
+		"enum_id" : 787,
+		"enum_item_value" : "8_36_unf_3a_ext",
+		"enum_item_text" : "#8-36 UNF-3A (ext.)"
+	},
+	{
+		"id" : 20509,
+		"enum_id" : 787,
+		"enum_item_value" : "8_36_unf_3b_int",
+		"enum_item_text" : "#8-36 UNF-3B (int.)"
+	},
+	{
+		"id" : 20510,
+		"enum_id" : 787,
+		"enum_item_value" : "14_20_unc_2a_ext",
+		"enum_item_text" : "1/4-20 UNC-2A (ext.)"
+	},
+	{
+		"id" : 20511,
+		"enum_id" : 787,
+		"enum_item_value" : "14_20_unc_2b_int",
+		"enum_item_text" : "1/4-20 UNC-2B (int.)"
+	},
+	{
+		"id" : 20512,
+		"enum_id" : 787,
+		"enum_item_value" : "14_20_unc_3a_ext",
+		"enum_item_text" : "1/4-20 UNC-3A (ext.)"
+	},
+	{
+		"id" : 20513,
+		"enum_id" : 787,
+		"enum_item_value" : "14_20_unc_3b_int",
+		"enum_item_text" : "1/4-20 UNC-3B (int.)"
+	},
+	{
+		"id" : 20514,
+		"enum_id" : 787,
+		"enum_item_value" : "14_24_uns_2a_ext",
+		"enum_item_text" : "1/4-24 UNS-2A (ext.)"
+	},
+	{
+		"id" : 20515,
+		"enum_id" : 787,
+		"enum_item_value" : "14_24_uns_2b_int",
+		"enum_item_text" : "1/4-24 UNS-2B (int.)"
+	},
+	{
+		"id" : 20516,
+		"enum_id" : 787,
+		"enum_item_value" : "14_27_uns_2a_ext",
+		"enum_item_text" : "1/4-27 UNS-2A (ext.)"
+	},
+	{
+		"id" : 20517,
+		"enum_id" : 787,
+		"enum_item_value" : "14_27_uns_2b_int",
+		"enum_item_text" : "1/4-27 UNS-2B (int.)"
+	},
+	{
+		"id" : 20518,
+		"enum_id" : 787,
+		"enum_item_value" : "14_28_unf_2a_ext",
+		"enum_item_text" : "1/4-28 UNF-2A (ext.)"
+	},
+	{
+		"id" : 20519,
+		"enum_id" : 787,
+		"enum_item_value" : "14_28_unf_2b_int",
+		"enum_item_text" : "1/4-28 UNF-2B (int.)"
+	},
+	{
+		"id" : 20520,
+		"enum_id" : 787,
+		"enum_item_value" : "14_28_unf_3a_ext",
+		"enum_item_text" : "1/4-28 UNF-3A (ext.)"
+	},
+	{
+		"id" : 20521,
+		"enum_id" : 787,
+		"enum_item_value" : "14_28_unf_3b_int",
+		"enum_item_text" : "1/4-28 UNF-3B (int.)"
+	},
+	{
+		"id" : 20522,
+		"enum_id" : 787,
+		"enum_item_value" : "14_32_unef_2a_ext",
+		"enum_item_text" : "1/4-32 UNEF-2A (ext.)"
+	},
+	{
+		"id" : 20523,
+		"enum_id" : 787,
+		"enum_item_value" : "14_32_unef_2b_int",
+		"enum_item_text" : "1/4-32 UNEF-2B (int.)"
+	},
+	{
+		"id" : 20524,
+		"enum_id" : 787,
+		"enum_item_value" : "14_32_unef_3a_ext",
+		"enum_item_text" : "1/4-32 UNEF-3A (ext.)"
+	},
+	{
+		"id" : 20525,
+		"enum_id" : 787,
+		"enum_item_value" : "14_32_unef_3b_int",
+		"enum_item_text" : "1/4-32 UNEF-3B (int.)"
+	},
+	{
+		"id" : 20526,
+		"enum_id" : 787,
+		"enum_item_value" : "14_36_uns_2a_ext",
+		"enum_item_text" : "1/4-36 UNS-2A (ext.)"
+	},
+	{
+		"id" : 20527,
+		"enum_id" : 787,
+		"enum_item_value" : "14_36_uns_2b_int",
+		"enum_item_text" : "1/4-36 UNS-2B (int.)"
+	},
+	{
+		"id" : 20528,
+		"enum_id" : 787,
+		"enum_item_value" : "14_48_uns_2a_ext",
+		"enum_item_text" : "1/4-48 UNS-2A (ext.)"
+	},
+	{
+		"id" : 20529,
+		"enum_id" : 787,
+		"enum_item_value" : "14_48_uns_2b_int",
+		"enum_item_text" : "1/4-48 UNS-2B (int.)"
+	},
+	{
+		"id" : 20530,
+		"enum_id" : 787,
+		"enum_item_value" : "14_56_uns_2a_ext",
+		"enum_item_text" : "1/4-56 UNS-2A (ext.)"
+	},
+	{
+		"id" : 20531,
+		"enum_id" : 787,
+		"enum_item_value" : "14_56_uns_2b_int",
+		"enum_item_text" : "1/4-56 UNS-2B (int.)"
+	},
+	{
+		"id" : 20532,
+		"enum_id" : 787,
+		"enum_item_value" : "516_18_unc_2a_ext",
+		"enum_item_text" : "5/16-18 UNC-2A (ext.)"
+	},
+	{
+		"id" : 20533,
+		"enum_id" : 787,
+		"enum_item_value" : "516_18_unc_2b_int",
+		"enum_item_text" : "5/16-18 UNC-2B (int.)"
+	},
+	{
+		"id" : 20534,
+		"enum_id" : 787,
+		"enum_item_value" : "516_18_unc_3a_ext",
+		"enum_item_text" : "5/16-18 UNC-3A (ext.)"
+	},
+	{
+		"id" : 20535,
+		"enum_id" : 787,
+		"enum_item_value" : "516_18_unc_3b_int",
+		"enum_item_text" : "5/16-18 UNC-3B (int.)"
+	},
+	{
+		"id" : 20536,
+		"enum_id" : 787,
+		"enum_item_value" : "516_20_un_2a_ext",
+		"enum_item_text" : "5/16-20 UN-2A (ext.)"
+	},
+	{
+		"id" : 20537,
+		"enum_id" : 787,
+		"enum_item_value" : "516_20_un_2b_int",
+		"enum_item_text" : "5/16-20 UN-2B (int.)"
+	},
+	{
+		"id" : 20538,
+		"enum_id" : 787,
+		"enum_item_value" : "516_20_un_3a_ext",
+		"enum_item_text" : "5/16-20 UN-3A (ext.)"
+	},
+	{
+		"id" : 20539,
+		"enum_id" : 787,
+		"enum_item_value" : "516_20_un_3b_int",
+		"enum_item_text" : "5/16-20 UN-3B (int.)"
+	},
+	{
+		"id" : 20540,
+		"enum_id" : 787,
+		"enum_item_value" : "516_24_unf_2a_ext",
+		"enum_item_text" : "5/16-24 UNF-2A (ext.)"
+	},
+	{
+		"id" : 20541,
+		"enum_id" : 787,
+		"enum_item_value" : "516_24_unf_2b_int",
+		"enum_item_text" : "5/16-24 UNF-2B (int.)"
+	},
+	{
+		"id" : 20542,
+		"enum_id" : 787,
+		"enum_item_value" : "516_24_unf_3a_ext",
+		"enum_item_text" : "5/16-24 UNF-3A (ext.)"
+	},
+	{
+		"id" : 20543,
+		"enum_id" : 787,
+		"enum_item_value" : "516_24_unf_3b_int",
+		"enum_item_text" : "5/16-24 UNF-3B (int.)"
+	},
+	{
+		"id" : 20544,
+		"enum_id" : 787,
+		"enum_item_value" : "516_27_uns_2a_ext",
+		"enum_item_text" : "5/16-27 UNS-2A (ext.)"
+	},
+	{
+		"id" : 20545,
+		"enum_id" : 787,
+		"enum_item_value" : "516_27_uns_2b_int",
+		"enum_item_text" : "5/16-27 UNS-2B (int.)"
+	},
+	{
+		"id" : 20546,
+		"enum_id" : 787,
+		"enum_item_value" : "516_28_un_2a_ext",
+		"enum_item_text" : "5/16-28 UN-2A (ext.)"
+	},
+	{
+		"id" : 20547,
+		"enum_id" : 787,
+		"enum_item_value" : "516_28_un_2b_int",
+		"enum_item_text" : "5/16-28 UN-2B (int.)"
+	},
+	{
+		"id" : 20548,
+		"enum_id" : 787,
+		"enum_item_value" : "516_28_un_3a_ext",
+		"enum_item_text" : "5/16-28 UN-3A (ext.)"
+	},
+	{
+		"id" : 20549,
+		"enum_id" : 787,
+		"enum_item_value" : "516_28_un_3b_int",
+		"enum_item_text" : "5/16-28 UN-3B (int.)"
+	},
+	{
+		"id" : 20550,
+		"enum_id" : 787,
+		"enum_item_value" : "516_32_unef_2a_ext",
+		"enum_item_text" : "5/16-32 UNEF-2A (ext.)"
+	},
+	{
+		"id" : 20551,
+		"enum_id" : 787,
+		"enum_item_value" : "516_32_unef_2b_int",
+		"enum_item_text" : "5/16-32 UNEF-2B (int.)"
+	},
+	{
+		"id" : 20552,
+		"enum_id" : 787,
+		"enum_item_value" : "516_32_unef_3a_ext",
+		"enum_item_text" : "5/16-32 UNEF-3A (ext.)"
+	},
+	{
+		"id" : 20553,
+		"enum_id" : 787,
+		"enum_item_value" : "516_32_unef_3b_int",
+		"enum_item_text" : "5/16-32 UNEF-3B (int.)"
+	},
+	{
+		"id" : 20554,
+		"enum_id" : 787,
+		"enum_item_value" : "516_36_uns_2a_ext",
+		"enum_item_text" : "5/16-36 UNS-2A (ext.)"
+	},
+	{
+		"id" : 20555,
+		"enum_id" : 787,
+		"enum_item_value" : "516_36_uns_2b_int",
+		"enum_item_text" : "5/16-36 UNS-2B (int.)"
+	},
+	{
+		"id" : 20556,
+		"enum_id" : 787,
+		"enum_item_value" : "516_40_uns_2a_ext",
+		"enum_item_text" : "5/16-40 UNS-2A (ext.)"
+	},
+	{
+		"id" : 20557,
+		"enum_id" : 787,
+		"enum_item_value" : "516_40_uns_2b_int",
+		"enum_item_text" : "5/16-40 UNS-2B (int.)"
+	},
+	{
+		"id" : 20558,
+		"enum_id" : 787,
+		"enum_item_value" : "516_48_uns_2a_ext",
+		"enum_item_text" : "5/16-48 UNS-2A (ext.)"
+	},
+	{
+		"id" : 20559,
+		"enum_id" : 787,
+		"enum_item_value" : "516_48_uns_2b_int",
+		"enum_item_text" : "5/16-48 UNS-2B (int.)"
+	},
+	{
+		"id" : 20560,
+		"enum_id" : 787,
+		"enum_item_value" : "38_16_unc_2a_ext",
+		"enum_item_text" : "3/8-16 UNC-2A (ext.)"
+	},
+	{
+		"id" : 20561,
+		"enum_id" : 787,
+		"enum_item_value" : "38_16_unc_2b_int",
+		"enum_item_text" : "3/8-16 UNC-2B (int.)"
+	},
+	{
+		"id" : 20562,
+		"enum_id" : 787,
+		"enum_item_value" : "38_16_unc_3a_ext",
+		"enum_item_text" : "3/8-16 UNC-3A (ext.)"
+	},
+	{
+		"id" : 20563,
+		"enum_id" : 787,
+		"enum_item_value" : "38_16_unc_3b_int",
+		"enum_item_text" : "3/8-16 UNC-3B (int.)"
+	},
+	{
+		"id" : 20564,
+		"enum_id" : 787,
+		"enum_item_value" : "38_18_uns_2a_ext",
+		"enum_item_text" : "3/8-18 UNS-2A (ext.)"
+	},
+	{
+		"id" : 20565,
+		"enum_id" : 787,
+		"enum_item_value" : "38_18_uns_2b_int",
+		"enum_item_text" : "3/8-18 UNS-2B (int.)"
+	},
+	{
+		"id" : 20566,
+		"enum_id" : 787,
+		"enum_item_value" : "38_20_un_2a_ext",
+		"enum_item_text" : "3/8-20 UN-2A (ext.)"
+	},
+	{
+		"id" : 20567,
+		"enum_id" : 787,
+		"enum_item_value" : "38_20_un_2b_int",
+		"enum_item_text" : "3/8-20 UN-2B (int.)"
+	},
+	{
+		"id" : 20568,
+		"enum_id" : 787,
+		"enum_item_value" : "38_20_un_3a_ext",
+		"enum_item_text" : "3/8-20 UN-3A (ext.)"
+	},
+	{
+		"id" : 20569,
+		"enum_id" : 787,
+		"enum_item_value" : "38_20_un_3b_int",
+		"enum_item_text" : "3/8-20 UN-3B (int.)"
+	},
+	{
+		"id" : 20570,
+		"enum_id" : 787,
+		"enum_item_value" : "38_24_unf_2a_ext",
+		"enum_item_text" : "3/8-24 UNF-2A (ext.)"
+	},
+	{
+		"id" : 20571,
+		"enum_id" : 787,
+		"enum_item_value" : "38_24_unf_2b_int",
+		"enum_item_text" : "3/8-24 UNF-2B (int.)"
+	},
+	{
+		"id" : 20572,
+		"enum_id" : 787,
+		"enum_item_value" : "38_24_unf_3a_ext",
+		"enum_item_text" : "3/8-24 UNF-3A (ext.)"
+	},
+	{
+		"id" : 20573,
+		"enum_id" : 787,
+		"enum_item_value" : "38_24_unf_3b_int",
+		"enum_item_text" : "3/8-24 UNF-3B (int.)"
+	},
+	{
+		"id" : 20574,
+		"enum_id" : 787,
+		"enum_item_value" : "38_27_uns_2a_ext",
+		"enum_item_text" : "3/8-27 UNS-2A (ext.)"
+	},
+	{
+		"id" : 20575,
+		"enum_id" : 787,
+		"enum_item_value" : "38_27_uns_2b_int",
+		"enum_item_text" : "3/8-27 UNS-2B (int.)"
+	},
+	{
+		"id" : 20576,
+		"enum_id" : 787,
+		"enum_item_value" : "38_28_un_2a_ext",
+		"enum_item_text" : "3/8-28 UN-2A (ext.)"
+	},
+	{
+		"id" : 20577,
+		"enum_id" : 787,
+		"enum_item_value" : "38_28_un_2b_int",
+		"enum_item_text" : "3/8-28 UN-2B (int.)"
+	},
+	{
+		"id" : 20578,
+		"enum_id" : 787,
+		"enum_item_value" : "38_28_un_3a_ext",
+		"enum_item_text" : "3/8-28 UN-3A (ext.)"
+	},
+	{
+		"id" : 20579,
+		"enum_id" : 787,
+		"enum_item_value" : "38_28_un_3b_int",
+		"enum_item_text" : "3/8-28 UN-3B (int.)"
+	},
+	{
+		"id" : 20580,
+		"enum_id" : 787,
+		"enum_item_value" : "38_32_unef_2a_ext",
+		"enum_item_text" : "3/8-32 UNEF-2A (ext.)"
+	},
+	{
+		"id" : 20581,
+		"enum_id" : 787,
+		"enum_item_value" : "38_32_unef_2b_int",
+		"enum_item_text" : "3/8-32 UNEF-2B (int.)"
+	},
+	{
+		"id" : 20582,
+		"enum_id" : 787,
+		"enum_item_value" : "38_32_unef_3a_ext",
+		"enum_item_text" : "3/8-32 UNEF-3A (ext.)"
+	},
+	{
+		"id" : 20583,
+		"enum_id" : 787,
+		"enum_item_value" : "38_32_unef_3b_int",
+		"enum_item_text" : "3/8-32 UNEF-3B (int.)"
+	},
+	{
+		"id" : 20584,
+		"enum_id" : 787,
+		"enum_item_value" : "38_36_uns_2a_ext",
+		"enum_item_text" : "3/8-36 UNS-2A (ext.)"
+	},
+	{
+		"id" : 20585,
+		"enum_id" : 787,
+		"enum_item_value" : "38_36_uns_2b_int",
+		"enum_item_text" : "3/8-36 UNS-2B (int.)"
+	},
+	{
+		"id" : 20586,
+		"enum_id" : 787,
+		"enum_item_value" : "38_40_uns_2a_ext",
+		"enum_item_text" : "3/8-40 UNS-2A (ext.)"
+	},
+	{
+		"id" : 20587,
+		"enum_id" : 787,
+		"enum_item_value" : "38_40_uns_2b_int",
+		"enum_item_text" : "3/8-40 UNS-2B (int.)"
+	},
+	{
+		"id" : 20588,
+		"enum_id" : 787,
+		"enum_item_value" : "716_14_unc_2a_ext",
+		"enum_item_text" : "7/16-14 UNC-2A (ext.)"
+	},
+	{
+		"id" : 20589,
+		"enum_id" : 787,
+		"enum_item_value" : "716_14_unc_2b_int",
+		"enum_item_text" : "7/16-14 UNC-2B (int.)"
+	},
+	{
+		"id" : 20590,
+		"enum_id" : 787,
+		"enum_item_value" : "716_14_unc_3a_ext",
+		"enum_item_text" : "7/16-14 UNC-3A (ext.)"
+	},
+	{
+		"id" : 20591,
+		"enum_id" : 787,
+		"enum_item_value" : "716_14_unc_3b_int",
+		"enum_item_text" : "7/16-14 UNC-3B (int.)"
+	},
+	{
+		"id" : 20592,
+		"enum_id" : 787,
+		"enum_item_value" : "716_16_un_2a_ext",
+		"enum_item_text" : "7/16-16 UN-2A (ext.)"
+	},
+	{
+		"id" : 20593,
+		"enum_id" : 787,
+		"enum_item_value" : "716_16_un_2b_int",
+		"enum_item_text" : "7/16-16 UN-2B (int.)"
+	},
+	{
+		"id" : 20594,
+		"enum_id" : 787,
+		"enum_item_value" : "716_16_un_3a_ext",
+		"enum_item_text" : "7/16-16 UN-3A (ext.)"
+	},
+	{
+		"id" : 20595,
+		"enum_id" : 787,
+		"enum_item_value" : "716_16_un_3b_int",
+		"enum_item_text" : "7/16-16 UN-3B (int.)"
+	},
+	{
+		"id" : 20596,
+		"enum_id" : 787,
+		"enum_item_value" : "716_18_uns_2a_ext",
+		"enum_item_text" : "7/16-18 UNS-2A (ext.)"
+	},
+	{
+		"id" : 20597,
+		"enum_id" : 787,
+		"enum_item_value" : "716_18_uns_2b_int",
+		"enum_item_text" : "7/16-18 UNS-2B (int.)"
+	},
+	{
+		"id" : 20598,
+		"enum_id" : 787,
+		"enum_item_value" : "716_20_unf_2a_ext",
+		"enum_item_text" : "7/16-20 UNF-2A (ext.)"
+	},
+	{
+		"id" : 20599,
+		"enum_id" : 787,
+		"enum_item_value" : "716_20_unf_2b_int",
+		"enum_item_text" : "7/16-20 UNF-2B (int.)"
+	},
+	{
+		"id" : 20600,
+		"enum_id" : 787,
+		"enum_item_value" : "716_20_unf_3a_ext",
+		"enum_item_text" : "7/16-20 UNF-3A (ext.)"
+	},
+	{
+		"id" : 20601,
+		"enum_id" : 787,
+		"enum_item_value" : "716_20_unf_3b_int",
+		"enum_item_text" : "7/16-20 UNF-3B (int.)"
+	},
+	{
+		"id" : 20602,
+		"enum_id" : 787,
+		"enum_item_value" : "716_24_uns_2a_ext",
+		"enum_item_text" : "7/16-24 UNS-2A (ext.)"
+	},
+	{
+		"id" : 20603,
+		"enum_id" : 787,
+		"enum_item_value" : "716_24_uns_2b_int",
+		"enum_item_text" : "7/16-24 UNS-2B (int.)"
+	},
+	{
+		"id" : 20604,
+		"enum_id" : 787,
+		"enum_item_value" : "716_27_uns_2a_ext",
+		"enum_item_text" : "7/16-27 UNS-2A (ext.)"
+	},
+	{
+		"id" : 20605,
+		"enum_id" : 787,
+		"enum_item_value" : "716_27_uns_2b_int",
+		"enum_item_text" : "7/16-27 UNS-2B (int.)"
+	},
+	{
+		"id" : 20606,
+		"enum_id" : 787,
+		"enum_item_value" : "716_28_unef_2a_ext",
+		"enum_item_text" : "7/16-28 UNEF-2A (ext.)"
+	},
+	{
+		"id" : 20607,
+		"enum_id" : 787,
+		"enum_item_value" : "716_28_unef_2b_int",
+		"enum_item_text" : "7/16-28 UNEF-2B (int.)"
+	},
+	{
+		"id" : 20608,
+		"enum_id" : 787,
+		"enum_item_value" : "716_28_unef_3a_ext",
+		"enum_item_text" : "7/16-28 UNEF-3A (ext.)"
+	},
+	{
+		"id" : 20609,
+		"enum_id" : 787,
+		"enum_item_value" : "716_28_unef_3b_int",
+		"enum_item_text" : "7/16-28 UNEF-3B (int.)"
+	},
+	{
+		"id" : 20610,
+		"enum_id" : 787,
+		"enum_item_value" : "716_32_un_2a_ext",
+		"enum_item_text" : "7/16-32 UN-2A (ext.)"
+	},
+	{
+		"id" : 20611,
+		"enum_id" : 787,
+		"enum_item_value" : "716_32_un_2b_int",
+		"enum_item_text" : "7/16-32 UN-2B (int.)"
+	},
+	{
+		"id" : 20612,
+		"enum_id" : 787,
+		"enum_item_value" : "716_32_un_3a_ext",
+		"enum_item_text" : "7/16-32 UN-3A (ext.)"
+	},
+	{
+		"id" : 20613,
+		"enum_id" : 787,
+		"enum_item_value" : "716_32_un_3b_int",
+		"enum_item_text" : "7/16-32 UN-3B (int.)"
+	},
+	{
+		"id" : 20614,
+		"enum_id" : 787,
+		"enum_item_value" : "12_12_uns_2a_ext",
+		"enum_item_text" : "1/2-12 UNS-2A (ext.)"
+	},
+	{
+		"id" : 20615,
+		"enum_id" : 787,
+		"enum_item_value" : "12_12_uns_2b_int",
+		"enum_item_text" : "1/2-12 UNS-2B (int.)"
+	},
+	{
+		"id" : 20616,
+		"enum_id" : 787,
+		"enum_item_value" : "12_13_unc_2a_ext",
+		"enum_item_text" : "1/2-13 UNC-2A (ext.)"
+	},
+	{
+		"id" : 20617,
+		"enum_id" : 787,
+		"enum_item_value" : "12_13_unc_2b_int",
+		"enum_item_text" : "1/2-13 UNC-2B (int.)"
+	},
+	{
+		"id" : 20618,
+		"enum_id" : 787,
+		"enum_item_value" : "12_13_unc_3a_ext",
+		"enum_item_text" : "1/2-13 UNC-3A (ext.)"
+	},
+	{
+		"id" : 20619,
+		"enum_id" : 787,
+		"enum_item_value" : "12_13_unc_3b_int",
+		"enum_item_text" : "1/2-13 UNC-3B (int.)"
+	},
+	{
+		"id" : 20620,
+		"enum_id" : 787,
+		"enum_item_value" : "12_14_uns_2a_ext",
+		"enum_item_text" : "1/2-14 UNS-2A (ext.)"
+	},
+	{
+		"id" : 20621,
+		"enum_id" : 787,
+		"enum_item_value" : "12_14_uns_2b_int",
+		"enum_item_text" : "1/2-14 UNS-2B (int.)"
+	},
+	{
+		"id" : 20622,
+		"enum_id" : 787,
+		"enum_item_value" : "12_16_un_2a_ext",
+		"enum_item_text" : "1/2-16 UN-2A (ext.)"
+	},
+	{
+		"id" : 20623,
+		"enum_id" : 787,
+		"enum_item_value" : "12_16_un_2b_int",
+		"enum_item_text" : "1/2-16 UN-2B (int.)"
+	},
+	{
+		"id" : 20624,
+		"enum_id" : 787,
+		"enum_item_value" : "12_16_un_3a_ext",
+		"enum_item_text" : "1/2-16 UN-3A (ext.)"
+	},
+	{
+		"id" : 20625,
+		"enum_id" : 787,
+		"enum_item_value" : "12_16_un_3b_int",
+		"enum_item_text" : "1/2-16 UN-3B (int.)"
+	},
+	{
+		"id" : 20626,
+		"enum_id" : 787,
+		"enum_item_value" : "12_18_uns_2a_ext",
+		"enum_item_text" : "1/2-18 UNS-2A (ext.)"
+	},
+	{
+		"id" : 20627,
+		"enum_id" : 787,
+		"enum_item_value" : "12_18_uns_2b_int",
+		"enum_item_text" : "1/2-18 UNS-2B (int.)"
+	},
+	{
+		"id" : 20628,
+		"enum_id" : 787,
+		"enum_item_value" : "12_20_unf_2a_ext",
+		"enum_item_text" : "1/2-20 UNF-2A (ext.)"
+	},
+	{
+		"id" : 20629,
+		"enum_id" : 787,
+		"enum_item_value" : "12_20_unf_2b_int",
+		"enum_item_text" : "1/2-20 UNF-2B (int.)"
+	},
+	{
+		"id" : 20630,
+		"enum_id" : 787,
+		"enum_item_value" : "12_20_unf_3a_ext",
+		"enum_item_text" : "1/2-20 UNF-3A (ext.)"
+	},
+	{
+		"id" : 20631,
+		"enum_id" : 787,
+		"enum_item_value" : "12_20_unf_3b_int",
+		"enum_item_text" : "1/2-20 UNF-3B (int.)"
+	},
+	{
+		"id" : 20632,
+		"enum_id" : 787,
+		"enum_item_value" : "12_24_uns_2a_ext",
+		"enum_item_text" : "1/2-24 UNS-2A (ext.)"
+	},
+	{
+		"id" : 20633,
+		"enum_id" : 787,
+		"enum_item_value" : "12_24_uns_2b_int",
+		"enum_item_text" : "1/2-24 UNS-2B (int.)"
+	},
+	{
+		"id" : 20634,
+		"enum_id" : 787,
+		"enum_item_value" : "12_27_uns_2a_ext",
+		"enum_item_text" : "1/2-27 UNS-2A (ext.)"
+	},
+	{
+		"id" : 20635,
+		"enum_id" : 787,
+		"enum_item_value" : "12_27_uns_2b_int",
+		"enum_item_text" : "1/2-27 UNS-2B (int.)"
+	},
+	{
+		"id" : 20636,
+		"enum_id" : 787,
+		"enum_item_value" : "12_28_unef_2a_ext",
+		"enum_item_text" : "1/2-28 UNEF-2A (ext.)"
+	},
+	{
+		"id" : 20637,
+		"enum_id" : 787,
+		"enum_item_value" : "12_28_unef_2b_int",
+		"enum_item_text" : "1/2-28 UNEF-2B (int.)"
+	},
+	{
+		"id" : 20638,
+		"enum_id" : 787,
+		"enum_item_value" : "12_28_unef_3a_ext",
+		"enum_item_text" : "1/2-28 UNEF-3A (ext.)"
+	},
+	{
+		"id" : 20639,
+		"enum_id" : 787,
+		"enum_item_value" : "12_28_unef_3b_int",
+		"enum_item_text" : "1/2-28 UNEF-3B (int.)"
+	},
+	{
+		"id" : 20640,
+		"enum_id" : 787,
+		"enum_item_value" : "12_32_un_2a_ext",
+		"enum_item_text" : "1/2-32 UN-2A (ext.)"
+	},
+	{
+		"id" : 20641,
+		"enum_id" : 787,
+		"enum_item_value" : "12_32_un_2b_int",
+		"enum_item_text" : "1/2-32 UN-2B (int.)"
+	},
+	{
+		"id" : 20642,
+		"enum_id" : 787,
+		"enum_item_value" : "12_32_un_3a_ext",
+		"enum_item_text" : "1/2-32 UN-3A (ext.)"
+	},
+	{
+		"id" : 20643,
+		"enum_id" : 787,
+		"enum_item_value" : "12_32_un_3b_int",
+		"enum_item_text" : "1/2-32 UN-3B (int.)"
+	},
+	{
+		"id" : 20644,
+		"enum_id" : 787,
+		"enum_item_value" : "916_12_unc_2a_ext",
+		"enum_item_text" : "9/16-12 UNC-2A (ext.)"
+	},
+	{
+		"id" : 20645,
+		"enum_id" : 787,
+		"enum_item_value" : "916_12_unc_2b_int",
+		"enum_item_text" : "9/16-12 UNC-2B (int.)"
+	},
+	{
+		"id" : 20646,
+		"enum_id" : 787,
+		"enum_item_value" : "916_12_unc_3a_ext",
+		"enum_item_text" : "9/16-12 UNC-3A (ext.)"
+	},
+	{
+		"id" : 20647,
+		"enum_id" : 787,
+		"enum_item_value" : "916_12_unc_3b_int",
+		"enum_item_text" : "9/16-12 UNC-3B (int.)"
+	},
+	{
+		"id" : 20648,
+		"enum_id" : 787,
+		"enum_item_value" : "916_14_uns_2a_ext",
+		"enum_item_text" : "9/16-14 UNS-2A (ext.)"
+	},
+	{
+		"id" : 20649,
+		"enum_id" : 787,
+		"enum_item_value" : "916_14_uns_2b_int",
+		"enum_item_text" : "9/16-14 UNS-2B (int.)"
+	},
+	{
+		"id" : 20650,
+		"enum_id" : 787,
+		"enum_item_value" : "916_16_un_2a_ext",
+		"enum_item_text" : "9/16-16 UN-2A (ext.)"
+	},
+	{
+		"id" : 20651,
+		"enum_id" : 787,
+		"enum_item_value" : "916_16_un_2b_int",
+		"enum_item_text" : "9/16-16 UN-2B (int.)"
+	},
+	{
+		"id" : 20652,
+		"enum_id" : 787,
+		"enum_item_value" : "916_16_un_3a_ext",
+		"enum_item_text" : "9/16-16 UN-3A (ext.)"
+	},
+	{
+		"id" : 20653,
+		"enum_id" : 787,
+		"enum_item_value" : "916_16_un_3b_int",
+		"enum_item_text" : "9/16-16 UN-3B (int.)"
+	},
+	{
+		"id" : 20654,
+		"enum_id" : 787,
+		"enum_item_value" : "916_18_unf_2a_ext",
+		"enum_item_text" : "9/16-18 UNF-2A (ext.)"
+	},
+	{
+		"id" : 20655,
+		"enum_id" : 787,
+		"enum_item_value" : "916_18_unf_2b_int",
+		"enum_item_text" : "9/16-18 UNF-2B (int.)"
+	},
+	{
+		"id" : 20656,
+		"enum_id" : 787,
+		"enum_item_value" : "916_18_unf_3a_ext",
+		"enum_item_text" : "9/16-18 UNF-3A (ext.)"
+	},
+	{
+		"id" : 20657,
+		"enum_id" : 787,
+		"enum_item_value" : "916_18_unf_3b_int",
+		"enum_item_text" : "9/16-18 UNF-3B (int.)"
+	},
+	{
+		"id" : 20658,
+		"enum_id" : 787,
+		"enum_item_value" : "916_20_un_2a_ext",
+		"enum_item_text" : "9/16-20 UN-2A (ext.)"
+	},
+	{
+		"id" : 20659,
+		"enum_id" : 787,
+		"enum_item_value" : "916_20_un_2b_int",
+		"enum_item_text" : "9/16-20 UN-2B (int.)"
+	},
+	{
+		"id" : 20660,
+		"enum_id" : 787,
+		"enum_item_value" : "916_20_un_3a_ext",
+		"enum_item_text" : "9/16-20 UN-3A (ext.)"
+	},
+	{
+		"id" : 20661,
+		"enum_id" : 787,
+		"enum_item_value" : "916_20_un_3b_int",
+		"enum_item_text" : "9/16-20 UN-3B (int.)"
+	},
+	{
+		"id" : 20662,
+		"enum_id" : 787,
+		"enum_item_value" : "916_24_unef_2a_ext",
+		"enum_item_text" : "9/16-24 UNEF-2A (ext.)"
+	},
+	{
+		"id" : 20663,
+		"enum_id" : 787,
+		"enum_item_value" : "916_24_unef_2b_int",
+		"enum_item_text" : "9/16-24 UNEF-2B (int.)"
+	},
+	{
+		"id" : 20664,
+		"enum_id" : 787,
+		"enum_item_value" : "916_24_unef_3a_ext",
+		"enum_item_text" : "9/16-24 UNEF-3A (ext.)"
+	},
+	{
+		"id" : 20665,
+		"enum_id" : 787,
+		"enum_item_value" : "916_24_unef_3b_int",
+		"enum_item_text" : "9/16-24 UNEF-3B (int.)"
+	},
+	{
+		"id" : 20666,
+		"enum_id" : 787,
+		"enum_item_value" : "916_27_uns_2a_ext",
+		"enum_item_text" : "9/16-27 UNS-2A (ext.)"
+	},
+	{
+		"id" : 20667,
+		"enum_id" : 787,
+		"enum_item_value" : "916_27_uns_2b_int",
+		"enum_item_text" : "9/16-27 UNS-2B (int.)"
+	},
+	{
+		"id" : 20668,
+		"enum_id" : 787,
+		"enum_item_value" : "916_28_un_2a_ext",
+		"enum_item_text" : "9/16-28 UN-2A (ext.)"
+	},
+	{
+		"id" : 20669,
+		"enum_id" : 787,
+		"enum_item_value" : "916_28_un_2b_int",
+		"enum_item_text" : "9/16-28 UN-2B (int.)"
+	},
+	{
+		"id" : 20670,
+		"enum_id" : 787,
+		"enum_item_value" : "916_28_un_3a_ext",
+		"enum_item_text" : "9/16-28 UN-3A (ext.)"
+	},
+	{
+		"id" : 20671,
+		"enum_id" : 787,
+		"enum_item_value" : "916_28_un_3b_int",
+		"enum_item_text" : "9/16-28 UN-3B (int.)"
+	},
+	{
+		"id" : 20672,
+		"enum_id" : 787,
+		"enum_item_value" : "916_32_un_2a_ext",
+		"enum_item_text" : "9/16-32 UN-2A (ext.)"
+	},
+	{
+		"id" : 20673,
+		"enum_id" : 787,
+		"enum_item_value" : "916_32_un_2b_int",
+		"enum_item_text" : "9/16-32 UN-2B (int.)"
+	},
+	{
+		"id" : 20674,
+		"enum_id" : 787,
+		"enum_item_value" : "916_32_un_3a_ext",
+		"enum_item_text" : "9/16-32 UN-3A (ext.)"
+	},
+	{
+		"id" : 20675,
+		"enum_id" : 787,
+		"enum_item_value" : "916_32_un_3b_int",
+		"enum_item_text" : "9/16-32 UN-3B (int.)"
+	},
+	{
+		"id" : 20676,
+		"enum_id" : 787,
+		"enum_item_value" : "58_11_unc_2a_ext",
+		"enum_item_text" : "5/8-11 UNC-2A (ext.)"
+	},
+	{
+		"id" : 20677,
+		"enum_id" : 787,
+		"enum_item_value" : "58_11_unc_2b_int",
+		"enum_item_text" : "5/8-11 UNC-2B (int.)"
+	},
+	{
+		"id" : 20678,
+		"enum_id" : 787,
+		"enum_item_value" : "58_11_unc_3a_ext",
+		"enum_item_text" : "5/8-11 UNC-3A (ext.)"
+	},
+	{
+		"id" : 20679,
+		"enum_id" : 787,
+		"enum_item_value" : "58_11_unc_3b_int",
+		"enum_item_text" : "5/8-11 UNC-3B (int.)"
+	},
+	{
+		"id" : 20680,
+		"enum_id" : 787,
+		"enum_item_value" : "58_12_un_2a_ext",
+		"enum_item_text" : "5/8-12 UN-2A (ext.)"
+	},
+	{
+		"id" : 20681,
+		"enum_id" : 787,
+		"enum_item_value" : "58_12_un_2b_int",
+		"enum_item_text" : "5/8-12 UN-2B (int.)"
+	},
+	{
+		"id" : 20682,
+		"enum_id" : 787,
+		"enum_item_value" : "58_12_un_3a_ext",
+		"enum_item_text" : "5/8-12 UN-3A (ext.)"
+	},
+	{
+		"id" : 20683,
+		"enum_id" : 787,
+		"enum_item_value" : "58_12_un_3b_int",
+		"enum_item_text" : "5/8-12 UN-3B (int.)"
+	},
+	{
+		"id" : 20684,
+		"enum_id" : 787,
+		"enum_item_value" : "58_14_uns_2a_ext",
+		"enum_item_text" : "5/8-14 UNS-2A (ext.)"
+	},
+	{
+		"id" : 20685,
+		"enum_id" : 787,
+		"enum_item_value" : "58_14_uns_2b_int",
+		"enum_item_text" : "5/8-14 UNS-2B (int.)"
+	},
+	{
+		"id" : 20686,
+		"enum_id" : 787,
+		"enum_item_value" : "58_16_un_2a_ext",
+		"enum_item_text" : "5/8-16 UN-2A (ext.)"
+	},
+	{
+		"id" : 20687,
+		"enum_id" : 787,
+		"enum_item_value" : "58_16_un_2b_int",
+		"enum_item_text" : "5/8-16 UN-2B (int.)"
+	},
+	{
+		"id" : 20688,
+		"enum_id" : 787,
+		"enum_item_value" : "58_16_un_3a_ext",
+		"enum_item_text" : "5/8-16 UN-3A (ext.)"
+	},
+	{
+		"id" : 20689,
+		"enum_id" : 787,
+		"enum_item_value" : "58_16_un_3b_int",
+		"enum_item_text" : "5/8-16 UN-3B (int.)"
+	},
+	{
+		"id" : 20690,
+		"enum_id" : 787,
+		"enum_item_value" : "58_18_unf_2a_ext",
+		"enum_item_text" : "5/8-18 UNF-2A (ext.)"
+	},
+	{
+		"id" : 20691,
+		"enum_id" : 787,
+		"enum_item_value" : "58_18_unf_2b_int",
+		"enum_item_text" : "5/8-18 UNF-2B (int.)"
+	},
+	{
+		"id" : 20692,
+		"enum_id" : 787,
+		"enum_item_value" : "58_18_unf_3a_ext",
+		"enum_item_text" : "5/8-18 UNF-3A (ext.)"
+	},
+	{
+		"id" : 20693,
+		"enum_id" : 787,
+		"enum_item_value" : "58_18_unf_3b_int",
+		"enum_item_text" : "5/8-18 UNF-3B (int.)"
+	},
+	{
+		"id" : 20694,
+		"enum_id" : 787,
+		"enum_item_value" : "58_20_un_2a_ext",
+		"enum_item_text" : "5/8-20 UN-2A (ext.)"
+	},
+	{
+		"id" : 20695,
+		"enum_id" : 787,
+		"enum_item_value" : "58_20_un_2b_int",
+		"enum_item_text" : "5/8-20 UN-2B (int.)"
+	},
+	{
+		"id" : 20696,
+		"enum_id" : 787,
+		"enum_item_value" : "58_20_un_3a_ext",
+		"enum_item_text" : "5/8-20 UN-3A (ext.)"
+	},
+	{
+		"id" : 20697,
+		"enum_id" : 787,
+		"enum_item_value" : "58_20_un_3b_int",
+		"enum_item_text" : "5/8-20 UN-3B (int.)"
+	},
+	{
+		"id" : 20698,
+		"enum_id" : 787,
+		"enum_item_value" : "58_24_unef_2a_ext",
+		"enum_item_text" : "5/8-24 UNEF-2A (ext.)"
+	},
+	{
+		"id" : 20699,
+		"enum_id" : 787,
+		"enum_item_value" : "58_24_unef_2b_int",
+		"enum_item_text" : "5/8-24 UNEF-2B (int.)"
+	},
+	{
+		"id" : 20700,
+		"enum_id" : 787,
+		"enum_item_value" : "58_24_unef_3a_ext",
+		"enum_item_text" : "5/8-24 UNEF-3A (ext.)"
+	},
+	{
+		"id" : 20701,
+		"enum_id" : 787,
+		"enum_item_value" : "58_24_unef_3b_int",
+		"enum_item_text" : "5/8-24 UNEF-3B (int.)"
+	},
+	{
+		"id" : 20702,
+		"enum_id" : 787,
+		"enum_item_value" : "58_27_uns_2a_ext",
+		"enum_item_text" : "5/8-27 UNS-2A (ext.)"
+	},
+	{
+		"id" : 20703,
+		"enum_id" : 787,
+		"enum_item_value" : "58_27_uns_2b_int",
+		"enum_item_text" : "5/8-27 UNS-2B (int.)"
+	},
+	{
+		"id" : 20704,
+		"enum_id" : 787,
+		"enum_item_value" : "58_28_un_2a_ext",
+		"enum_item_text" : "5/8-28 UN-2A (ext.)"
+	},
+	{
+		"id" : 20705,
+		"enum_id" : 787,
+		"enum_item_value" : "58_28_un_2b_int",
+		"enum_item_text" : "5/8-28 UN-2B (int.)"
+	},
+	{
+		"id" : 20706,
+		"enum_id" : 787,
+		"enum_item_value" : "58_28_un_3a_ext",
+		"enum_item_text" : "5/8-28 UN-3A (ext.)"
+	},
+	{
+		"id" : 20707,
+		"enum_id" : 787,
+		"enum_item_value" : "58_28_un_3b_int",
+		"enum_item_text" : "5/8-28 UN-3B (int.)"
+	},
+	{
+		"id" : 20708,
+		"enum_id" : 787,
+		"enum_item_value" : "58_32_un_2a_ext",
+		"enum_item_text" : "5/8-32 UN-2A (ext.)"
+	},
+	{
+		"id" : 20709,
+		"enum_id" : 787,
+		"enum_item_value" : "58_32_un_2b_int",
+		"enum_item_text" : "5/8-32 UN-2B (int.)"
+	},
+	{
+		"id" : 20710,
+		"enum_id" : 787,
+		"enum_item_value" : "58_32_un_3a_ext",
+		"enum_item_text" : "5/8-32 UN-3A (ext.)"
+	},
+	{
+		"id" : 20711,
+		"enum_id" : 787,
+		"enum_item_value" : "58_32_un_3b_int",
+		"enum_item_text" : "5/8-32 UN-3B (int.)"
+	},
+	{
+		"id" : 20712,
+		"enum_id" : 787,
+		"enum_item_value" : "1116_12_un_2a_ext",
+		"enum_item_text" : "11/16-12 UN-2A (ext.)"
+	},
+	{
+		"id" : 20713,
+		"enum_id" : 787,
+		"enum_item_value" : "1116_12_un_2b_int",
+		"enum_item_text" : "11/16-12 UN-2B (int.)"
+	},
+	{
+		"id" : 20714,
+		"enum_id" : 787,
+		"enum_item_value" : "1116_12_un_3a_ext",
+		"enum_item_text" : "11/16-12 UN-3A (ext.)"
+	},
+	{
+		"id" : 20715,
+		"enum_id" : 787,
+		"enum_item_value" : "1116_12_un_3b_int",
+		"enum_item_text" : "11/16-12 UN-3B (int.)"
+	},
+	{
+		"id" : 20716,
+		"enum_id" : 787,
+		"enum_item_value" : "1116_16_un_2a_ext",
+		"enum_item_text" : "11/16-16 UN-2A (ext.)"
+	},
+	{
+		"id" : 20717,
+		"enum_id" : 787,
+		"enum_item_value" : "1116_16_un_2b_int",
+		"enum_item_text" : "11/16-16 UN-2B (int.)"
+	},
+	{
+		"id" : 20718,
+		"enum_id" : 787,
+		"enum_item_value" : "1116_16_un_3a_ext",
+		"enum_item_text" : "11/16-16 UN-3A (ext.)"
+	},
+	{
+		"id" : 20719,
+		"enum_id" : 787,
+		"enum_item_value" : "1116_16_un_3b_int",
+		"enum_item_text" : "11/16-16 UN-3B (int.)"
+	},
+	{
+		"id" : 20720,
+		"enum_id" : 787,
+		"enum_item_value" : "1116_20_un_2a_ext",
+		"enum_item_text" : "11/16-20 UN-2A (ext.)"
+	},
+	{
+		"id" : 20721,
+		"enum_id" : 787,
+		"enum_item_value" : "1116_20_un_2b_int",
+		"enum_item_text" : "11/16-20 UN-2B (int.)"
+	},
+	{
+		"id" : 20722,
+		"enum_id" : 787,
+		"enum_item_value" : "1116_20_un_3a_ext",
+		"enum_item_text" : "11/16-20 UN-3A (ext.)"
+	},
+	{
+		"id" : 20723,
+		"enum_id" : 787,
+		"enum_item_value" : "1116_20_un_3b_int",
+		"enum_item_text" : "11/16-20 UN-3B (int.)"
+	},
+	{
+		"id" : 20724,
+		"enum_id" : 787,
+		"enum_item_value" : "1116_24_unef_2a_ext",
+		"enum_item_text" : "11/16-24 UNEF-2A (ext.)"
+	},
+	{
+		"id" : 20725,
+		"enum_id" : 787,
+		"enum_item_value" : "1116_24_unef_2b_int",
+		"enum_item_text" : "11/16-24 UNEF-2B (int.)"
+	},
+	{
+		"id" : 20726,
+		"enum_id" : 787,
+		"enum_item_value" : "1116_24_unef_3a_ext",
+		"enum_item_text" : "11/16-24 UNEF-3A (ext.)"
+	},
+	{
+		"id" : 20727,
+		"enum_id" : 787,
+		"enum_item_value" : "1116_24_unef_3b_int",
+		"enum_item_text" : "11/16-24 UNEF-3B (int.)"
+	},
+	{
+		"id" : 20728,
+		"enum_id" : 787,
+		"enum_item_value" : "1116_28_un_2a_ext",
+		"enum_item_text" : "11/16-28 UN-2A (ext.)"
+	},
+	{
+		"id" : 20729,
+		"enum_id" : 787,
+		"enum_item_value" : "1116_28_un_2b_int",
+		"enum_item_text" : "11/16-28 UN-2B (int.)"
+	},
+	{
+		"id" : 20730,
+		"enum_id" : 787,
+		"enum_item_value" : "1116_28_un_3a_ext",
+		"enum_item_text" : "11/16-28 UN-3A (ext.)"
+	},
+	{
+		"id" : 20731,
+		"enum_id" : 787,
+		"enum_item_value" : "1116_28_un_3b_int",
+		"enum_item_text" : "11/16-28 UN-3B (int.)"
+	},
+	{
+		"id" : 20732,
+		"enum_id" : 787,
+		"enum_item_value" : "1116_32_un_2a_ext",
+		"enum_item_text" : "11/16-32 UN-2A (ext.)"
+	},
+	{
+		"id" : 20733,
+		"enum_id" : 787,
+		"enum_item_value" : "1116_32_un_2b_int",
+		"enum_item_text" : "11/16-32 UN-2B (int.)"
+	},
+	{
+		"id" : 20734,
+		"enum_id" : 787,
+		"enum_item_value" : "1116_32_un_3a_ext",
+		"enum_item_text" : "11/16-32 UN-3A (ext.)"
+	},
+	{
+		"id" : 20735,
+		"enum_id" : 787,
+		"enum_item_value" : "1116_32_un_3b_int",
+		"enum_item_text" : "11/16-32 UN-3B (int.)"
+	},
+	{
+		"id" : 20736,
+		"enum_id" : 787,
+		"enum_item_value" : "34_10_unc_2a_ext",
+		"enum_item_text" : "3/4-10 UNC-2A (ext.)"
+	},
+	{
+		"id" : 20737,
+		"enum_id" : 787,
+		"enum_item_value" : "34_10_unc_2b_int",
+		"enum_item_text" : "3/4-10 UNC-2B (int.)"
+	},
+	{
+		"id" : 20738,
+		"enum_id" : 787,
+		"enum_item_value" : "34_10_unc_3a_ext",
+		"enum_item_text" : "3/4-10 UNC-3A (ext.)"
+	},
+	{
+		"id" : 20739,
+		"enum_id" : 787,
+		"enum_item_value" : "34_10_unc_3b_int",
+		"enum_item_text" : "3/4-10 UNC-3B (int.)"
+	},
+	{
+		"id" : 20740,
+		"enum_id" : 787,
+		"enum_item_value" : "34_12_un_2a_ext",
+		"enum_item_text" : "3/4-12 UN-2A (ext.)"
+	},
+	{
+		"id" : 20741,
+		"enum_id" : 787,
+		"enum_item_value" : "34_12_un_2b_int",
+		"enum_item_text" : "3/4-12 UN-2B (int.)"
+	},
+	{
+		"id" : 20742,
+		"enum_id" : 787,
+		"enum_item_value" : "34_12_un_3a_ext",
+		"enum_item_text" : "3/4-12 UN-3A (ext.)"
+	},
+	{
+		"id" : 20743,
+		"enum_id" : 787,
+		"enum_item_value" : "34_12_un_3b_int",
+		"enum_item_text" : "3/4-12 UN-3B (int.)"
+	},
+	{
+		"id" : 20744,
+		"enum_id" : 787,
+		"enum_item_value" : "34_14_uns_2a_ext",
+		"enum_item_text" : "3/4-14 UNS-2A (ext.)"
+	},
+	{
+		"id" : 20745,
+		"enum_id" : 787,
+		"enum_item_value" : "34_14_uns_2b_int",
+		"enum_item_text" : "3/4-14 UNS-2B (int.)"
+	},
+	{
+		"id" : 20746,
+		"enum_id" : 787,
+		"enum_item_value" : "34_16_unf_2a_ext",
+		"enum_item_text" : "3/4-16 UNF-2A (ext.)"
+	},
+	{
+		"id" : 20747,
+		"enum_id" : 787,
+		"enum_item_value" : "34_16_unf_2b_int",
+		"enum_item_text" : "3/4-16 UNF-2B (int.)"
+	},
+	{
+		"id" : 20748,
+		"enum_id" : 787,
+		"enum_item_value" : "34_16_unf_3a_ext",
+		"enum_item_text" : "3/4-16 UNF-3A (ext.)"
+	},
+	{
+		"id" : 20749,
+		"enum_id" : 787,
+		"enum_item_value" : "34_16_unf_3b_int",
+		"enum_item_text" : "3/4-16 UNF-3B (int.)"
+	},
+	{
+		"id" : 20750,
+		"enum_id" : 787,
+		"enum_item_value" : "34_18_uns_2a_ext",
+		"enum_item_text" : "3/4-18 UNS-2A (ext.)"
+	},
+	{
+		"id" : 20751,
+		"enum_id" : 787,
+		"enum_item_value" : "34_18_uns_2b_int",
+		"enum_item_text" : "3/4-18 UNS-2B (int.)"
+	},
+	{
+		"id" : 20752,
+		"enum_id" : 787,
+		"enum_item_value" : "34_20_unef_2a_ext",
+		"enum_item_text" : "3/4-20 UNEF-2A (ext.)"
+	},
+	{
+		"id" : 20753,
+		"enum_id" : 787,
+		"enum_item_value" : "34_20_unef_2b_int",
+		"enum_item_text" : "3/4-20 UNEF-2B (int.)"
+	},
+	{
+		"id" : 20754,
+		"enum_id" : 787,
+		"enum_item_value" : "34_20_unef_3a_ext",
+		"enum_item_text" : "3/4-20 UNEF-3A (ext.)"
+	},
+	{
+		"id" : 20755,
+		"enum_id" : 787,
+		"enum_item_value" : "34_20_unef_3b_int",
+		"enum_item_text" : "3/4-20 UNEF-3B (int.)"
+	},
+	{
+		"id" : 20756,
+		"enum_id" : 787,
+		"enum_item_value" : "34_24_uns_2a_ext",
+		"enum_item_text" : "3/4-24 UNS-2A (ext.)"
+	},
+	{
+		"id" : 20757,
+		"enum_id" : 787,
+		"enum_item_value" : "34_24_uns_2b_int",
+		"enum_item_text" : "3/4-24 UNS-2B (int.)"
+	},
+	{
+		"id" : 20758,
+		"enum_id" : 787,
+		"enum_item_value" : "34_27_uns_2a_ext",
+		"enum_item_text" : "3/4-27 UNS-2A (ext.)"
+	},
+	{
+		"id" : 20759,
+		"enum_id" : 787,
+		"enum_item_value" : "34_27_uns_2b_int",
+		"enum_item_text" : "3/4-27 UNS-2B (int.)"
+	},
+	{
+		"id" : 20760,
+		"enum_id" : 787,
+		"enum_item_value" : "34_28_un_2a_ext",
+		"enum_item_text" : "3/4-28 UN-2A (ext.)"
+	},
+	{
+		"id" : 20761,
+		"enum_id" : 787,
+		"enum_item_value" : "34_28_un_2b_int",
+		"enum_item_text" : "3/4-28 UN-2B (int.)"
+	},
+	{
+		"id" : 20762,
+		"enum_id" : 787,
+		"enum_item_value" : "34_28_un_3a_ext",
+		"enum_item_text" : "3/4-28 UN-3A (ext.)"
+	},
+	{
+		"id" : 20763,
+		"enum_id" : 787,
+		"enum_item_value" : "34_28_un_3b_int",
+		"enum_item_text" : "3/4-28 UN-3B (int.)"
+	},
+	{
+		"id" : 20764,
+		"enum_id" : 787,
+		"enum_item_value" : "34_32_un_2a_ext",
+		"enum_item_text" : "3/4-32 UN-2A (ext.)"
+	},
+	{
+		"id" : 20765,
+		"enum_id" : 787,
+		"enum_item_value" : "34_32_un_2b_int",
+		"enum_item_text" : "3/4-32 UN-2B (int.)"
+	},
+	{
+		"id" : 20766,
+		"enum_id" : 787,
+		"enum_item_value" : "34_32_un_3a_ext",
+		"enum_item_text" : "3/4-32 UN-3A (ext.)"
+	},
+	{
+		"id" : 20767,
+		"enum_id" : 787,
+		"enum_item_value" : "34_32_un_3b_int",
+		"enum_item_text" : "3/4-32 UN-3B (int.)"
+	},
+	{
+		"id" : 20768,
+		"enum_id" : 787,
+		"enum_item_value" : "1316_12_un_2a_ext",
+		"enum_item_text" : "13/16-12 UN-2A (ext.)"
+	},
+	{
+		"id" : 20769,
+		"enum_id" : 787,
+		"enum_item_value" : "1316_12_un_2b_int",
+		"enum_item_text" : "13/16-12 UN-2B (int.)"
+	},
+	{
+		"id" : 20770,
+		"enum_id" : 787,
+		"enum_item_value" : "1316_12_un_3a_ext",
+		"enum_item_text" : "13/16-12 UN-3A (ext.)"
+	},
+	{
+		"id" : 20771,
+		"enum_id" : 787,
+		"enum_item_value" : "1316_12_un_3b_int",
+		"enum_item_text" : "13/16-12 UN-3B (int.)"
+	},
+	{
+		"id" : 20772,
+		"enum_id" : 787,
+		"enum_item_value" : "1316_16_un_2a_ext",
+		"enum_item_text" : "13/16-16 UN-2A (ext.)"
+	},
+	{
+		"id" : 20773,
+		"enum_id" : 787,
+		"enum_item_value" : "1316_16_un_2b_int",
+		"enum_item_text" : "13/16-16 UN-2B (int.)"
+	},
+	{
+		"id" : 20774,
+		"enum_id" : 787,
+		"enum_item_value" : "1316_16_un_3a_ext",
+		"enum_item_text" : "13/16-16 UN-3A (ext.)"
+	},
+	{
+		"id" : 20775,
+		"enum_id" : 787,
+		"enum_item_value" : "1316_16_un_3b_int",
+		"enum_item_text" : "13/16-16 UN-3B (int.)"
+	},
+	{
+		"id" : 20776,
+		"enum_id" : 787,
+		"enum_item_value" : "1316_20_unef_2a_ext",
+		"enum_item_text" : "13/16-20 UNEF-2A (ext.)"
+	},
+	{
+		"id" : 20777,
+		"enum_id" : 787,
+		"enum_item_value" : "1316_20_unef_2b_int",
+		"enum_item_text" : "13/16-20 UNEF-2B (int.)"
+	},
+	{
+		"id" : 20778,
+		"enum_id" : 787,
+		"enum_item_value" : "1316_20_unef_3a_ext",
+		"enum_item_text" : "13/16-20 UNEF-3A (ext.)"
+	},
+	{
+		"id" : 20779,
+		"enum_id" : 787,
+		"enum_item_value" : "1316_20_unef_3b_int",
+		"enum_item_text" : "13/16-20 UNEF-3B (int.)"
+	},
+	{
+		"id" : 20780,
+		"enum_id" : 787,
+		"enum_item_value" : "1316_28_un_2a_ext",
+		"enum_item_text" : "13/16-28 UN-2A (ext.)"
+	},
+	{
+		"id" : 20781,
+		"enum_id" : 787,
+		"enum_item_value" : "1316_28_un_2b_int",
+		"enum_item_text" : "13/16-28 UN-2B (int.)"
+	},
+	{
+		"id" : 20782,
+		"enum_id" : 787,
+		"enum_item_value" : "1316_28_un_3a_ext",
+		"enum_item_text" : "13/16-28 UN-3A (ext.)"
+	},
+	{
+		"id" : 20783,
+		"enum_id" : 787,
+		"enum_item_value" : "1316_28_un_3b_int",
+		"enum_item_text" : "13/16-28 UN-3B (int.)"
+	},
+	{
+		"id" : 20784,
+		"enum_id" : 787,
+		"enum_item_value" : "1316_32_un_2a_ext",
+		"enum_item_text" : "13/16-32 UN-2A (ext.)"
+	},
+	{
+		"id" : 20785,
+		"enum_id" : 787,
+		"enum_item_value" : "1316_32_un_2b_int",
+		"enum_item_text" : "13/16-32 UN-2B (int.)"
+	},
+	{
+		"id" : 20786,
+		"enum_id" : 787,
+		"enum_item_value" : "1316_32_un_3a_ext",
+		"enum_item_text" : "13/16-32 UN-3A (ext.)"
+	},
+	{
+		"id" : 20787,
+		"enum_id" : 787,
+		"enum_item_value" : "1316_32_un_3b_int",
+		"enum_item_text" : "13/16-32 UN-3B (int.)"
+	},
+	{
+		"id" : 20788,
+		"enum_id" : 787,
+		"enum_item_value" : "78_10_uns_2a_ext",
+		"enum_item_text" : "7/8-10 UNS-2A (ext.)"
+	},
+	{
+		"id" : 20789,
+		"enum_id" : 787,
+		"enum_item_value" : "78_10_uns_2b_int",
+		"enum_item_text" : "7/8-10 UNS-2B (int.)"
+	},
+	{
+		"id" : 20790,
+		"enum_id" : 787,
+		"enum_item_value" : "78_12_un_2a_ext",
+		"enum_item_text" : "7/8-12 UN-2A (ext.)"
+	},
+	{
+		"id" : 20791,
+		"enum_id" : 787,
+		"enum_item_value" : "78_12_un_2b_int",
+		"enum_item_text" : "7/8-12 UN-2B (int.)"
+	},
+	{
+		"id" : 20792,
+		"enum_id" : 787,
+		"enum_item_value" : "78_12_un_3a_ext",
+		"enum_item_text" : "7/8-12 UN-3A (ext.)"
+	},
+	{
+		"id" : 20793,
+		"enum_id" : 787,
+		"enum_item_value" : "78_12_un_3b_int",
+		"enum_item_text" : "7/8-12 UN-3B (int.)"
+	},
+	{
+		"id" : 20794,
+		"enum_id" : 787,
+		"enum_item_value" : "78_14_unf_2a_ext",
+		"enum_item_text" : "7/8-14 UNF-2A (ext.)"
+	},
+	{
+		"id" : 20795,
+		"enum_id" : 787,
+		"enum_item_value" : "78_14_unf_2b_int",
+		"enum_item_text" : "7/8-14 UNF-2B (int.)"
+	},
+	{
+		"id" : 20796,
+		"enum_id" : 787,
+		"enum_item_value" : "78_14_unf_3a_ext",
+		"enum_item_text" : "7/8-14 UNF-3A (ext.)"
+	},
+	{
+		"id" : 20797,
+		"enum_id" : 787,
+		"enum_item_value" : "78_14_unf_3b_int",
+		"enum_item_text" : "7/8-14 UNF-3B (int.)"
+	},
+	{
+		"id" : 20798,
+		"enum_id" : 787,
+		"enum_item_value" : "78_16_un_2a_ext",
+		"enum_item_text" : "7/8-16 UN-2A (ext.)"
+	},
+	{
+		"id" : 20799,
+		"enum_id" : 787,
+		"enum_item_value" : "78_16_un_2b_int",
+		"enum_item_text" : "7/8-16 UN-2B (int.)"
+	},
+	{
+		"id" : 20800,
+		"enum_id" : 787,
+		"enum_item_value" : "78_16_un_3a_ext",
+		"enum_item_text" : "7/8-16 UN-3A (ext.)"
+	},
+	{
+		"id" : 20801,
+		"enum_id" : 787,
+		"enum_item_value" : "78_16_un_3b_int",
+		"enum_item_text" : "7/8-16 UN-3B (int.)"
+	},
+	{
+		"id" : 20802,
+		"enum_id" : 787,
+		"enum_item_value" : "78_18_uns_2a_ext",
+		"enum_item_text" : "7/8-18 UNS-2A (ext.)"
+	},
+	{
+		"id" : 20803,
+		"enum_id" : 787,
+		"enum_item_value" : "78_18_uns_2b_int",
+		"enum_item_text" : "7/8-18 UNS-2B (int.)"
+	},
+	{
+		"id" : 20804,
+		"enum_id" : 787,
+		"enum_item_value" : "78_20_unef_2a_ext",
+		"enum_item_text" : "7/8-20 UNEF-2A (ext.)"
+	},
+	{
+		"id" : 20805,
+		"enum_id" : 787,
+		"enum_item_value" : "78_20_unef_2b_int",
+		"enum_item_text" : "7/8-20 UNEF-2B (int.)"
+	},
+	{
+		"id" : 20806,
+		"enum_id" : 787,
+		"enum_item_value" : "78_20_unef_3a_ext",
+		"enum_item_text" : "7/8-20 UNEF-3A (ext.)"
+	},
+	{
+		"id" : 20807,
+		"enum_id" : 787,
+		"enum_item_value" : "78_20_unef_3b_int",
+		"enum_item_text" : "7/8-20 UNEF-3B (int.)"
+	},
+	{
+		"id" : 20808,
+		"enum_id" : 787,
+		"enum_item_value" : "78_24_uns_2a_ext",
+		"enum_item_text" : "7/8-24 UNS-2A (ext.)"
+	},
+	{
+		"id" : 20809,
+		"enum_id" : 787,
+		"enum_item_value" : "78_24_uns_2b_int",
+		"enum_item_text" : "7/8-24 UNS-2B (int.)"
+	},
+	{
+		"id" : 20810,
+		"enum_id" : 787,
+		"enum_item_value" : "78_27_uns_2a_ext",
+		"enum_item_text" : "7/8-27 UNS-2A (ext.)"
+	},
+	{
+		"id" : 20811,
+		"enum_id" : 787,
+		"enum_item_value" : "78_27_uns_2b_int",
+		"enum_item_text" : "7/8-27 UNS-2B (int.)"
+	},
+	{
+		"id" : 20812,
+		"enum_id" : 787,
+		"enum_item_value" : "78_28_un_2a_ext",
+		"enum_item_text" : "7/8-28 UN-2A (ext.)"
+	},
+	{
+		"id" : 20813,
+		"enum_id" : 787,
+		"enum_item_value" : "78_28_un_2b_int",
+		"enum_item_text" : "7/8-28 UN-2B (int.)"
+	},
+	{
+		"id" : 20814,
+		"enum_id" : 787,
+		"enum_item_value" : "78_28_un_3a_ext",
+		"enum_item_text" : "7/8-28 UN-3A (ext.)"
+	},
+	{
+		"id" : 20815,
+		"enum_id" : 787,
+		"enum_item_value" : "78_28_un_3b_int",
+		"enum_item_text" : "7/8-28 UN-3B (int.)"
+	},
+	{
+		"id" : 20816,
+		"enum_id" : 787,
+		"enum_item_value" : "78_32_un_2a_ext",
+		"enum_item_text" : "7/8-32 UN-2A (ext.)"
+	},
+	{
+		"id" : 20817,
+		"enum_id" : 787,
+		"enum_item_value" : "78_32_un_2b_int",
+		"enum_item_text" : "7/8-32 UN-2B (int.)"
+	},
+	{
+		"id" : 20818,
+		"enum_id" : 787,
+		"enum_item_value" : "78_32_un_3a_ext",
+		"enum_item_text" : "7/8-32 UN-3A (ext.)"
+	},
+	{
+		"id" : 20819,
+		"enum_id" : 787,
+		"enum_item_value" : "78_32_un_3b_int",
+		"enum_item_text" : "7/8-32 UN-3B (int.)"
+	},
+	{
+		"id" : 20820,
+		"enum_id" : 787,
+		"enum_item_value" : "78_9_unc_2a_ext",
+		"enum_item_text" : "7/8-9 UNC-2A (ext.)"
+	},
+	{
+		"id" : 20821,
+		"enum_id" : 787,
+		"enum_item_value" : "78_9_unc_2b_int",
+		"enum_item_text" : "7/8-9 UNC-2B (int.)"
+	},
+	{
+		"id" : 20822,
+		"enum_id" : 787,
+		"enum_item_value" : "78_9_unc_3a_ext",
+		"enum_item_text" : "7/8-9 UNC-3A (ext.)"
+	},
+	{
+		"id" : 20823,
+		"enum_id" : 787,
+		"enum_item_value" : "78_9_unc_3b_int",
+		"enum_item_text" : "7/8-9 UNC-3B (int.)"
+	},
+	{
+		"id" : 20824,
+		"enum_id" : 787,
+		"enum_item_value" : "1516_12_un_2a_ext",
+		"enum_item_text" : "15/16-12 UN-2A (ext.)"
+	},
+	{
+		"id" : 20825,
+		"enum_id" : 787,
+		"enum_item_value" : "1516_12_un_2b_int",
+		"enum_item_text" : "15/16-12 UN-2B (int.)"
+	},
+	{
+		"id" : 20826,
+		"enum_id" : 787,
+		"enum_item_value" : "1516_12_un_3a_ext",
+		"enum_item_text" : "15/16-12 UN-3A (ext.)"
+	},
+	{
+		"id" : 20827,
+		"enum_id" : 787,
+		"enum_item_value" : "1516_12_un_3b_int",
+		"enum_item_text" : "15/16-12 UN-3B (int.)"
+	},
+	{
+		"id" : 20828,
+		"enum_id" : 787,
+		"enum_item_value" : "1516_16_un_2a_ext",
+		"enum_item_text" : "15/16-16 UN-2A (ext.)"
+	},
+	{
+		"id" : 20829,
+		"enum_id" : 787,
+		"enum_item_value" : "1516_16_un_2b_int",
+		"enum_item_text" : "15/16-16 UN-2B (int.)"
+	},
+	{
+		"id" : 20830,
+		"enum_id" : 787,
+		"enum_item_value" : "1516_16_un_3a_ext",
+		"enum_item_text" : "15/16-16 UN-3A (ext.)"
+	},
+	{
+		"id" : 20831,
+		"enum_id" : 787,
+		"enum_item_value" : "1516_16_un_3b_int",
+		"enum_item_text" : "15/16-16 UN-3B (int.)"
+	},
+	{
+		"id" : 20832,
+		"enum_id" : 787,
+		"enum_item_value" : "1516_20_unef_2a_ext",
+		"enum_item_text" : "15/16-20 UNEF-2A (ext.)"
+	},
+	{
+		"id" : 20833,
+		"enum_id" : 787,
+		"enum_item_value" : "1516_20_unef_2b_int",
+		"enum_item_text" : "15/16-20 UNEF-2B (int.)"
+	},
+	{
+		"id" : 20834,
+		"enum_id" : 787,
+		"enum_item_value" : "1516_20_unef_3a_ext",
+		"enum_item_text" : "15/16-20 UNEF-3A (ext.)"
+	},
+	{
+		"id" : 20835,
+		"enum_id" : 787,
+		"enum_item_value" : "1516_20_unef_3b_int",
+		"enum_item_text" : "15/16-20 UNEF-3B (int.)"
+	},
+	{
+		"id" : 20836,
+		"enum_id" : 787,
+		"enum_item_value" : "1516_28_un_2a_ext",
+		"enum_item_text" : "15/16-28 UN-2A (ext.)"
+	},
+	{
+		"id" : 20837,
+		"enum_id" : 787,
+		"enum_item_value" : "1516_28_un_2b_int",
+		"enum_item_text" : "15/16-28 UN-2B (int.)"
+	},
+	{
+		"id" : 20838,
+		"enum_id" : 787,
+		"enum_item_value" : "1516_28_un_3a_ext",
+		"enum_item_text" : "15/16-28 UN-3A (ext.)"
+	},
+	{
+		"id" : 20839,
+		"enum_id" : 787,
+		"enum_item_value" : "1516_28_un_3b_int",
+		"enum_item_text" : "15/16-28 UN-3B (int.)"
+	},
+	{
+		"id" : 20840,
+		"enum_id" : 787,
+		"enum_item_value" : "1516_32_un_2a_ext",
+		"enum_item_text" : "15/16-32 UN-2A (ext.)"
+	},
+	{
+		"id" : 20841,
+		"enum_id" : 787,
+		"enum_item_value" : "1516_32_un_2b_int",
+		"enum_item_text" : "15/16-32 UN-2B (int.)"
+	},
+	{
+		"id" : 20842,
+		"enum_id" : 787,
+		"enum_item_value" : "1516_32_un_3a_ext",
+		"enum_item_text" : "15/16-32 UN-3A (ext.)"
+	},
+	{
+		"id" : 20843,
+		"enum_id" : 787,
+		"enum_item_value" : "1516_32_un_3b_int",
+		"enum_item_text" : "15/16-32 UN-3B (int.)"
+	},
+	{
+		"id" : 20844,
+		"enum_id" : 787,
+		"enum_item_value" : "1_8_unc_2a_ext",
+		"enum_item_text" : "1-8 UNC-2A (ext.)"
+	},
+	{
+		"id" : 20845,
+		"enum_id" : 787,
+		"enum_item_value" : "1_8_unc_2b_int",
+		"enum_item_text" : "1-8 UNC-2B (int.)"
+	},
+	{
+		"id" : 20846,
+		"enum_id" : 787,
+		"enum_item_value" : "1_8_unc_3a_ext",
+		"enum_item_text" : "1-8 UNC-3A (ext.)"
+	},
+	{
+		"id" : 20847,
+		"enum_id" : 787,
+		"enum_item_value" : "1_8_unc_3b_int",
+		"enum_item_text" : "1-8 UNC-3B (int.)"
+	},
+	{
+		"id" : 20848,
+		"enum_id" : 787,
+		"enum_item_value" : "1_10_uns_2a_ext",
+		"enum_item_text" : "1-10 UNS-2A (ext.)"
+	},
+	{
+		"id" : 20849,
+		"enum_id" : 787,
+		"enum_item_value" : "1_10_uns_2b_int",
+		"enum_item_text" : "1-10 UNS-2B (int.)"
+	},
+	{
+		"id" : 20850,
+		"enum_id" : 787,
+		"enum_item_value" : "1_12_unf_2a_ext",
+		"enum_item_text" : "1-12 UNF-2A (ext.)"
+	},
+	{
+		"id" : 20851,
+		"enum_id" : 787,
+		"enum_item_value" : "1_12_unf_2b_int",
+		"enum_item_text" : "1-12 UNF-2B (int.)"
+	},
+	{
+		"id" : 20852,
+		"enum_id" : 787,
+		"enum_item_value" : "1_12_unf_3a_ext",
+		"enum_item_text" : "1-12 UNF-3A (ext.)"
+	},
+	{
+		"id" : 20853,
+		"enum_id" : 787,
+		"enum_item_value" : "1_12_unf_3b_int",
+		"enum_item_text" : "1-12 UNF-3B (int.)"
+	},
+	{
+		"id" : 20854,
+		"enum_id" : 787,
+		"enum_item_value" : "1_14_uns_2a_ext",
+		"enum_item_text" : "1-14 UNS-2A (ext.)"
+	},
+	{
+		"id" : 20855,
+		"enum_id" : 787,
+		"enum_item_value" : "1_14_uns_2b_int",
+		"enum_item_text" : "1-14 UNS-2B (int.)"
+	},
+	{
+		"id" : 20856,
+		"enum_id" : 787,
+		"enum_item_value" : "1_16_un_2a_ext",
+		"enum_item_text" : "1-16 UN-2A (ext.)"
+	},
+	{
+		"id" : 20857,
+		"enum_id" : 787,
+		"enum_item_value" : "1_16_un_2b_int",
+		"enum_item_text" : "1-16 UN-2B (int.)"
+	},
+	{
+		"id" : 20858,
+		"enum_id" : 787,
+		"enum_item_value" : "1_16_un_3a_ext",
+		"enum_item_text" : "1-16 UN-3A (ext.)"
+	},
+	{
+		"id" : 20859,
+		"enum_id" : 787,
+		"enum_item_value" : "1_16_un_3b_int",
+		"enum_item_text" : "1-16 UN-3B (int.)"
+	},
+	{
+		"id" : 20860,
+		"enum_id" : 787,
+		"enum_item_value" : "1_18_uns_2a_ext",
+		"enum_item_text" : "1-18 UNS-2A (ext.)"
+	},
+	{
+		"id" : 20861,
+		"enum_id" : 787,
+		"enum_item_value" : "1_18_uns_2b_int",
+		"enum_item_text" : "1-18 UNS-2B (int.)"
+	},
+	{
+		"id" : 20862,
+		"enum_id" : 787,
+		"enum_item_value" : "1_20_unef_2a_ext",
+		"enum_item_text" : "1-20 UNEF-2A (ext.)"
+	},
+	{
+		"id" : 20863,
+		"enum_id" : 787,
+		"enum_item_value" : "1_20_unef_2b_int",
+		"enum_item_text" : "1-20 UNEF-2B (int.)"
+	},
+	{
+		"id" : 20864,
+		"enum_id" : 787,
+		"enum_item_value" : "1_20_unef_3a_ext",
+		"enum_item_text" : "1-20 UNEF-3A (ext.)"
+	},
+	{
+		"id" : 20865,
+		"enum_id" : 787,
+		"enum_item_value" : "1_20_unef_3b_int",
+		"enum_item_text" : "1-20 UNEF-3B (int.)"
+	},
+	{
+		"id" : 20866,
+		"enum_id" : 787,
+		"enum_item_value" : "1_24_uns_2a_ext",
+		"enum_item_text" : "1-24 UNS-2A (ext.)"
+	},
+	{
+		"id" : 20867,
+		"enum_id" : 787,
+		"enum_item_value" : "1_24_uns_2b_int",
+		"enum_item_text" : "1-24 UNS-2B (int.)"
+	},
+	{
+		"id" : 20868,
+		"enum_id" : 787,
+		"enum_item_value" : "1_27_uns_2a_ext",
+		"enum_item_text" : "1-27 UNS-2A (ext.)"
+	},
+	{
+		"id" : 20869,
+		"enum_id" : 787,
+		"enum_item_value" : "1_27_uns_2b_int",
+		"enum_item_text" : "1-27 UNS-2B (int.)"
+	},
+	{
+		"id" : 20870,
+		"enum_id" : 787,
+		"enum_item_value" : "1_28_un_2a_ext",
+		"enum_item_text" : "1-28 UN-2A (ext.)"
+	},
+	{
+		"id" : 20871,
+		"enum_id" : 787,
+		"enum_item_value" : "1_28_un_2b_int",
+		"enum_item_text" : "1-28 UN-2B (int.)"
+	},
+	{
+		"id" : 20872,
+		"enum_id" : 787,
+		"enum_item_value" : "1_28_un_3a_ext",
+		"enum_item_text" : "1-28 UN-3A (ext.)"
+	},
+	{
+		"id" : 20873,
+		"enum_id" : 787,
+		"enum_item_value" : "1_28_un_3b_int",
+		"enum_item_text" : "1-28 UN-3B (int.)"
+	},
+	{
+		"id" : 20874,
+		"enum_id" : 787,
+		"enum_item_value" : "1_32_un_2a_ext",
+		"enum_item_text" : "1-32 UN-2A (ext.)"
+	},
+	{
+		"id" : 20875,
+		"enum_id" : 787,
+		"enum_item_value" : "1_32_un_2b_int",
+		"enum_item_text" : "1-32 UN-2B (int.)"
+	},
+	{
+		"id" : 20876,
+		"enum_id" : 787,
+		"enum_item_value" : "1_32_un_3a_ext",
+		"enum_item_text" : "1-32 UN-3A (ext.)"
+	},
+	{
+		"id" : 20877,
+		"enum_id" : 787,
+		"enum_item_value" : "1_32_un_3b_int",
+		"enum_item_text" : "1-32 UN-3B (int.)"
+	},
+	{
+		"id" : 20878,
+		"enum_id" : 787,
+		"enum_item_value" : "m3x035_6g_ext",
+		"enum_item_text" : "M3x0.35-6g (ext.)"
+	},
+	{
+		"id" : 20879,
+		"enum_id" : 787,
+		"enum_item_value" : "m3x035_6h_int",
+		"enum_item_text" : "M3x0.35-6H (int.)"
+	},
+	{
+		"id" : 20880,
+		"enum_id" : 787,
+		"enum_item_value" : "m3x05_6g_ext",
+		"enum_item_text" : "M3x0.5-6g (ext.)"
+	},
+	{
+		"id" : 20881,
+		"enum_id" : 787,
+		"enum_item_value" : "m3x05_6h_int",
+		"enum_item_text" : "M3x0.5-6H (int.)"
+	},
+	{
+		"id" : 20882,
+		"enum_id" : 787,
+		"enum_item_value" : "m35x035_6g_ext",
+		"enum_item_text" : "M3.5x0.35-6g (ext.)"
+	},
+	{
+		"id" : 20883,
+		"enum_id" : 787,
+		"enum_item_value" : "m35x035_6h_int",
+		"enum_item_text" : "M3.5x0.35-6H (int.)"
+	},
+	{
+		"id" : 20884,
+		"enum_id" : 787,
+		"enum_item_value" : "m35x06_6g_ext",
+		"enum_item_text" : "M3.5x0.6-6g (ext.)"
+	},
+	{
+		"id" : 20885,
+		"enum_id" : 787,
+		"enum_item_value" : "m35x06_6h_int",
+		"enum_item_text" : "M3.5x0.6-6H (int.)"
+	},
+	{
+		"id" : 20886,
+		"enum_id" : 787,
+		"enum_item_value" : "m4x05_6g_ext",
+		"enum_item_text" : "M4x0.5-6g (ext.)"
+	},
+	{
+		"id" : 20887,
+		"enum_id" : 787,
+		"enum_item_value" : "m4x05_6h_int",
+		"enum_item_text" : "M4x0.5-6H (int.)"
+	},
+	{
+		"id" : 20888,
+		"enum_id" : 787,
+		"enum_item_value" : "m4x07_6g_ext",
+		"enum_item_text" : "M4x0.7-6g (ext.)"
+	},
+	{
+		"id" : 20889,
+		"enum_id" : 787,
+		"enum_item_value" : "m4x07_6h_int",
+		"enum_item_text" : "M4x0.7-6H (int.)"
+	},
+	{
+		"id" : 20890,
+		"enum_id" : 787,
+		"enum_item_value" : "m45x05_6g_ext",
+		"enum_item_text" : "M4.5x0.5-6g (ext.)"
+	},
+	{
+		"id" : 20891,
+		"enum_id" : 787,
+		"enum_item_value" : "m45x05_6h_int",
+		"enum_item_text" : "M4.5x0.5-6H (int.)"
+	},
+	{
+		"id" : 20892,
+		"enum_id" : 787,
+		"enum_item_value" : "m45x075_6g_ext",
+		"enum_item_text" : "M4.5x0.75-6g (ext.)"
+	},
+	{
+		"id" : 20893,
+		"enum_id" : 787,
+		"enum_item_value" : "m45x075_6h_int",
+		"enum_item_text" : "M4.5x0.75-6H (int.)"
+	},
+	{
+		"id" : 20894,
+		"enum_id" : 787,
+		"enum_item_value" : "m5x05_6g_ext",
+		"enum_item_text" : "M5x0.5-6g (ext.)"
+	},
+	{
+		"id" : 20895,
+		"enum_id" : 787,
+		"enum_item_value" : "m5x05_6h_int",
+		"enum_item_text" : "M5x0.5-6H (int.)"
+	},
+	{
+		"id" : 20896,
+		"enum_id" : 787,
+		"enum_item_value" : "m5x08_6g_ext",
+		"enum_item_text" : "M5x0.8-6g (ext.)"
+	},
+	{
+		"id" : 20897,
+		"enum_id" : 787,
+		"enum_item_value" : "m5x08_6h_int",
+		"enum_item_text" : "M5x0.8-6H (int.)"
+	},
+	{
+		"id" : 20898,
+		"enum_id" : 787,
+		"enum_item_value" : "m55x05_6g_ext",
+		"enum_item_text" : "M5.5x0.5-6g (ext.)"
+	},
+	{
+		"id" : 20899,
+		"enum_id" : 787,
+		"enum_item_value" : "m55x05_6h_int",
+		"enum_item_text" : "M5.5x0.5-6H (int.)"
+	},
+	{
+		"id" : 20900,
+		"enum_id" : 787,
+		"enum_item_value" : "m6x05_6g_ext",
+		"enum_item_text" : "M6x0.5-6g (ext.)"
+	},
+	{
+		"id" : 20901,
+		"enum_id" : 787,
+		"enum_item_value" : "m6x05_6h_int",
+		"enum_item_text" : "M6x0.5-6H (int.)"
+	},
+	{
+		"id" : 20902,
+		"enum_id" : 787,
+		"enum_item_value" : "m6x07_6g_ext",
+		"enum_item_text" : "M6x0.7-6g (ext.)"
+	},
+	{
+		"id" : 20903,
+		"enum_id" : 787,
+		"enum_item_value" : "m6x07_6h_int",
+		"enum_item_text" : "M6x0.7-6H (int.)"
+	},
+	{
+		"id" : 20904,
+		"enum_id" : 787,
+		"enum_item_value" : "m6x075_6g_ext",
+		"enum_item_text" : "M6x0.75-6g (ext.)"
+	},
+	{
+		"id" : 20905,
+		"enum_id" : 787,
+		"enum_item_value" : "m6x075_6h_int",
+		"enum_item_text" : "M6x0.75-6H (int.)"
+	},
+	{
+		"id" : 20906,
+		"enum_id" : 787,
+		"enum_item_value" : "m6x08_6g_ext",
+		"enum_item_text" : "M6x0.8-6g (ext.)"
+	},
+	{
+		"id" : 20907,
+		"enum_id" : 787,
+		"enum_item_value" : "m6x08_6h_int",
+		"enum_item_text" : "M6x0.8-6H (int.)"
+	},
+	{
+		"id" : 20908,
+		"enum_id" : 787,
+		"enum_item_value" : "m6x1_6g_ext",
+		"enum_item_text" : "M6x1-6g (ext.)"
+	},
+	{
+		"id" : 20909,
+		"enum_id" : 787,
+		"enum_item_value" : "m6x1_6h_int",
+		"enum_item_text" : "M6x1-6H (int.)"
+	},
+	{
+		"id" : 20910,
+		"enum_id" : 787,
+		"enum_item_value" : "m7x05_6g_ext",
+		"enum_item_text" : "M7x0.5-6g (ext.)"
+	},
+	{
+		"id" : 20911,
+		"enum_id" : 787,
+		"enum_item_value" : "m7x05_6h_int",
+		"enum_item_text" : "M7x0.5-6H (int.)"
+	},
+	{
+		"id" : 20912,
+		"enum_id" : 787,
+		"enum_item_value" : "m7x075_6g_ext",
+		"enum_item_text" : "M7x0.75-6g (ext.)"
+	},
+	{
+		"id" : 20913,
+		"enum_id" : 787,
+		"enum_item_value" : "m7x075_6h_int",
+		"enum_item_text" : "M7x0.75-6H (int.)"
+	},
+	{
+		"id" : 20914,
+		"enum_id" : 787,
+		"enum_item_value" : "m7x1_6g_ext",
+		"enum_item_text" : "M7x1-6g (ext.)"
+	},
+	{
+		"id" : 20915,
+		"enum_id" : 787,
+		"enum_item_value" : "m7x1_6h_int",
+		"enum_item_text" : "M7x1-6H (int.)"
+	},
+	{
+		"id" : 20916,
+		"enum_id" : 787,
+		"enum_item_value" : "m8x05_6g_ext",
+		"enum_item_text" : "M8x0.5-6g (ext.)"
+	},
+	{
+		"id" : 20917,
+		"enum_id" : 787,
+		"enum_item_value" : "m8x05_6h_int",
+		"enum_item_text" : "M8x0.5-6H (int.)"
+	},
+	{
+		"id" : 20918,
+		"enum_id" : 787,
+		"enum_item_value" : "m8x075_6g_ext",
+		"enum_item_text" : "M8x0.75-6g (ext.)"
+	},
+	{
+		"id" : 20919,
+		"enum_id" : 787,
+		"enum_item_value" : "m8x075_6h_int",
+		"enum_item_text" : "M8x0.75-6H (int.)"
+	},
+	{
+		"id" : 20920,
+		"enum_id" : 787,
+		"enum_item_value" : "m8x08_6g_ext",
+		"enum_item_text" : "M8x0.8-6g (ext.)"
+	},
+	{
+		"id" : 20921,
+		"enum_id" : 787,
+		"enum_item_value" : "m8x08_6h_int",
+		"enum_item_text" : "M8x0.8-6H (int.)"
+	},
+	{
+		"id" : 20922,
+		"enum_id" : 787,
+		"enum_item_value" : "m8x1_6g_ext",
+		"enum_item_text" : "M8x1-6g (ext.)"
+	},
+	{
+		"id" : 20923,
+		"enum_id" : 787,
+		"enum_item_value" : "m8x1_6h_int",
+		"enum_item_text" : "M8x1-6H (int.)"
+	},
+	{
+		"id" : 20924,
+		"enum_id" : 787,
+		"enum_item_value" : "m8x125_6g_ext",
+		"enum_item_text" : "M8x1.25-6g (ext.)"
+	},
+	{
+		"id" : 20925,
+		"enum_id" : 787,
+		"enum_item_value" : "m8x125_6h_int",
+		"enum_item_text" : "M8x1.25-6H (int.)"
+	},
+	{
+		"id" : 20926,
+		"enum_id" : 787,
+		"enum_item_value" : "m9x05_6g_ext",
+		"enum_item_text" : "M9x0.5-6g (ext.)"
+	},
+	{
+		"id" : 20927,
+		"enum_id" : 787,
+		"enum_item_value" : "m9x05_6h_int",
+		"enum_item_text" : "M9x0.5-6H (int.)"
+	},
+	{
+		"id" : 20928,
+		"enum_id" : 787,
+		"enum_item_value" : "m9x075_6g_ext",
+		"enum_item_text" : "M9x0.75-6g (ext.)"
+	},
+	{
+		"id" : 20929,
+		"enum_id" : 787,
+		"enum_item_value" : "m9x075_6h_int",
+		"enum_item_text" : "M9x0.75-6H (int.)"
+	},
+	{
+		"id" : 20930,
+		"enum_id" : 787,
+		"enum_item_value" : "m9x1_6g_ext",
+		"enum_item_text" : "M9x1-6g (ext.)"
+	},
+	{
+		"id" : 20931,
+		"enum_id" : 787,
+		"enum_item_value" : "m9x1_6h_int",
+		"enum_item_text" : "M9x1-6H (int.)"
+	},
+	{
+		"id" : 20932,
+		"enum_id" : 787,
+		"enum_item_value" : "m9x125_6g_ext",
+		"enum_item_text" : "M9x1.25-6g (ext.)"
+	},
+	{
+		"id" : 20933,
+		"enum_id" : 787,
+		"enum_item_value" : "m9x125_6h_int",
+		"enum_item_text" : "M9x1.25-6H (int.)"
+	},
+	{
+		"id" : 20934,
+		"enum_id" : 787,
+		"enum_item_value" : "m10x05_6g_ext",
+		"enum_item_text" : "M10x0.5-6g (ext.)"
+	},
+	{
+		"id" : 20935,
+		"enum_id" : 787,
+		"enum_item_value" : "m10x05_6h_int",
+		"enum_item_text" : "M10x0.5-6H (int.)"
+	},
+	{
+		"id" : 20936,
+		"enum_id" : 787,
+		"enum_item_value" : "m10x075_6g_ext",
+		"enum_item_text" : "M10x0.75-6g (ext.)"
+	},
+	{
+		"id" : 20937,
+		"enum_id" : 787,
+		"enum_item_value" : "m10x075_6h_int",
+		"enum_item_text" : "M10x0.75-6H (int.)"
+	},
+	{
+		"id" : 20938,
+		"enum_id" : 787,
+		"enum_item_value" : "m10x1_6g_ext",
+		"enum_item_text" : "M10x1-6g (ext.)"
+	},
+	{
+		"id" : 20939,
+		"enum_id" : 787,
+		"enum_item_value" : "m10x1_6h_int",
+		"enum_item_text" : "M10x1-6H (int.)"
+	},
+	{
+		"id" : 20940,
+		"enum_id" : 787,
+		"enum_item_value" : "m10x112_6g_ext",
+		"enum_item_text" : "M10x1.12-6g (ext.)"
+	},
+	{
+		"id" : 20941,
+		"enum_id" : 787,
+		"enum_item_value" : "m10x112_6h_int",
+		"enum_item_text" : "M10x1.12-6H (int.)"
+	},
+	{
+		"id" : 20942,
+		"enum_id" : 787,
+		"enum_item_value" : "m10x125_6g_ext",
+		"enum_item_text" : "M10x1.25-6g (ext.)"
+	},
+	{
+		"id" : 20943,
+		"enum_id" : 787,
+		"enum_item_value" : "m10x125_6h_int",
+		"enum_item_text" : "M10x1.25-6H (int.)"
+	},
+	{
+		"id" : 20944,
+		"enum_id" : 787,
+		"enum_item_value" : "m10x15_6g_ext",
+		"enum_item_text" : "M10x1.5-6g (ext.)"
+	},
+	{
+		"id" : 20945,
+		"enum_id" : 787,
+		"enum_item_value" : "m10x15_6h_int",
+		"enum_item_text" : "M10x1.5-6H (int.)"
+	},
+	{
+		"id" : 20946,
+		"enum_id" : 787,
+		"enum_item_value" : "m11x05_6g_ext",
+		"enum_item_text" : "M11x0.5-6g (ext.)"
+	},
+	{
+		"id" : 20947,
+		"enum_id" : 787,
+		"enum_item_value" : "m11x05_6h_int",
+		"enum_item_text" : "M11x0.5-6H (int.)"
+	},
+	{
+		"id" : 20948,
+		"enum_id" : 787,
+		"enum_item_value" : "m11x075_6g_ext",
+		"enum_item_text" : "M11x0.75-6g (ext.)"
+	},
+	{
+		"id" : 20949,
+		"enum_id" : 787,
+		"enum_item_value" : "m11x075_6h_int",
+		"enum_item_text" : "M11x0.75-6H (int.)"
+	},
+	{
+		"id" : 20950,
+		"enum_id" : 787,
+		"enum_item_value" : "m11x1_6g_ext",
+		"enum_item_text" : "M11x1-6g (ext.)"
+	},
+	{
+		"id" : 20951,
+		"enum_id" : 787,
+		"enum_item_value" : "m11x1_6h_int",
+		"enum_item_text" : "M11x1-6H (int.)"
+	},
+	{
+		"id" : 20952,
+		"enum_id" : 787,
+		"enum_item_value" : "m11x15_6g_ext",
+		"enum_item_text" : "M11x1.5-6g (ext.)"
+	},
+	{
+		"id" : 20953,
+		"enum_id" : 787,
+		"enum_item_value" : "m11x15_6h_int",
+		"enum_item_text" : "M11x1.5-6H (int.)"
+	},
+	{
+		"id" : 20954,
+		"enum_id" : 787,
+		"enum_item_value" : "m12x05_6g_ext",
+		"enum_item_text" : "M12x0.5-6g (ext.)"
+	},
+	{
+		"id" : 20955,
+		"enum_id" : 787,
+		"enum_item_value" : "m12x05_6h_int",
+		"enum_item_text" : "M12x0.5-6H (int.)"
+	},
+	{
+		"id" : 20956,
+		"enum_id" : 787,
+		"enum_item_value" : "m12x075_6g_ext",
+		"enum_item_text" : "M12x0.75-6g (ext.)"
+	},
+	{
+		"id" : 20957,
+		"enum_id" : 787,
+		"enum_item_value" : "m12x075_6h_int",
+		"enum_item_text" : "M12x0.75-6H (int.)"
+	},
+	{
+		"id" : 20958,
+		"enum_id" : 787,
+		"enum_item_value" : "m12x1_6g_ext",
+		"enum_item_text" : "M12x1-6g (ext.)"
+	},
+	{
+		"id" : 20959,
+		"enum_id" : 787,
+		"enum_item_value" : "m12x1_6h_int",
+		"enum_item_text" : "M12x1-6H (int.)"
+	},
+	{
+		"id" : 20960,
+		"enum_id" : 787,
+		"enum_item_value" : "m12x125_6g_ext",
+		"enum_item_text" : "M12x1.25-6g (ext.)"
+	},
+	{
+		"id" : 20961,
+		"enum_id" : 787,
+		"enum_item_value" : "m12x125_6h_int",
+		"enum_item_text" : "M12x1.25-6H (int.)"
+	},
+	{
+		"id" : 20962,
+		"enum_id" : 787,
+		"enum_item_value" : "m12x15_6g_ext",
+		"enum_item_text" : "M12x1.5-6g (ext.)"
+	},
+	{
+		"id" : 20963,
+		"enum_id" : 787,
+		"enum_item_value" : "m12x15_6h_int",
+		"enum_item_text" : "M12x1.5-6H (int.)"
+	},
+	{
+		"id" : 20964,
+		"enum_id" : 787,
+		"enum_item_value" : "m12x175_6g_ext",
+		"enum_item_text" : "M12x1.75-6g (ext.)"
+	},
+	{
+		"id" : 20965,
+		"enum_id" : 787,
+		"enum_item_value" : "m12x175_6h_int",
+		"enum_item_text" : "M12x1.75-6H (int.)"
+	},
+	{
+		"id" : 20966,
+		"enum_id" : 787,
+		"enum_item_value" : "m14x05_6g_ext",
+		"enum_item_text" : "M14x0.5-6g (ext.)"
+	},
+	{
+		"id" : 20967,
+		"enum_id" : 787,
+		"enum_item_value" : "m14x05_6h_int",
+		"enum_item_text" : "M14x0.5-6H (int.)"
+	},
+	{
+		"id" : 20968,
+		"enum_id" : 787,
+		"enum_item_value" : "m14x075_6g_ext",
+		"enum_item_text" : "M14x0.75-6g (ext.)"
+	},
+	{
+		"id" : 20969,
+		"enum_id" : 787,
+		"enum_item_value" : "m14x075_6h_int",
+		"enum_item_text" : "M14x0.75-6H (int.)"
+	},
+	{
+		"id" : 20970,
+		"enum_id" : 787,
+		"enum_item_value" : "m14x1_6g_ext",
+		"enum_item_text" : "M14x1-6g (ext.)"
+	},
+	{
+		"id" : 20971,
+		"enum_id" : 787,
+		"enum_item_value" : "m14x1_6h_int",
+		"enum_item_text" : "M14x1-6H (int.)"
+	},
+	{
+		"id" : 20972,
+		"enum_id" : 787,
+		"enum_item_value" : "m14x125_6g_ext",
+		"enum_item_text" : "M14x1.25-6g (ext.)"
+	},
+	{
+		"id" : 20973,
+		"enum_id" : 787,
+		"enum_item_value" : "m14x125_6h_int",
+		"enum_item_text" : "M14x1.25-6H (int.)"
+	},
+	{
+		"id" : 20974,
+		"enum_id" : 787,
+		"enum_item_value" : "m14x15_6g_ext",
+		"enum_item_text" : "M14x1.5-6g (ext.)"
+	},
+	{
+		"id" : 20975,
+		"enum_id" : 787,
+		"enum_item_value" : "m14x15_6h_int",
+		"enum_item_text" : "M14x1.5-6H (int.)"
+	},
+	{
+		"id" : 20976,
+		"enum_id" : 787,
+		"enum_item_value" : "m14x2_6g_ext",
+		"enum_item_text" : "M14x2-6g (ext.)"
+	},
+	{
+		"id" : 20977,
+		"enum_id" : 787,
+		"enum_item_value" : "m14x2_6h_int",
+		"enum_item_text" : "M14x2-6H (int.)"
+	},
+	{
+		"id" : 20978,
+		"enum_id" : 787,
+		"enum_item_value" : "m15x1_6g_ext",
+		"enum_item_text" : "M15x1-6g (ext.)"
+	},
+	{
+		"id" : 20979,
+		"enum_id" : 787,
+		"enum_item_value" : "m15x1_6h_int",
+		"enum_item_text" : "M15x1-6H (int.)"
+	},
+	{
+		"id" : 20980,
+		"enum_id" : 787,
+		"enum_item_value" : "m15x15_6g_ext",
+		"enum_item_text" : "M15x1.5-6g (ext.)"
+	},
+	{
+		"id" : 20981,
+		"enum_id" : 787,
+		"enum_item_value" : "m15x15_6h_int",
+		"enum_item_text" : "M15x1.5-6H (int.)"
+	},
+	{
+		"id" : 20982,
+		"enum_id" : 787,
+		"enum_item_value" : "m16x05_6g_ext",
+		"enum_item_text" : "M16x0.5-6g (ext.)"
+	},
+	{
+		"id" : 20983,
+		"enum_id" : 787,
+		"enum_item_value" : "m16x05_6h_int",
+		"enum_item_text" : "M16x0.5-6H (int.)"
+	},
+	{
+		"id" : 20984,
+		"enum_id" : 787,
+		"enum_item_value" : "m16x075_6g_ext",
+		"enum_item_text" : "M16x0.75-6g (ext.)"
+	},
+	{
+		"id" : 20985,
+		"enum_id" : 787,
+		"enum_item_value" : "m16x075_6h_int",
+		"enum_item_text" : "M16x0.75-6H (int.)"
+	},
+	{
+		"id" : 20986,
+		"enum_id" : 787,
+		"enum_item_value" : "m16x1_6g_ext",
+		"enum_item_text" : "M16x1-6g (ext.)"
+	},
+	{
+		"id" : 20987,
+		"enum_id" : 787,
+		"enum_item_value" : "m16x1_6h_int",
+		"enum_item_text" : "M16x1-6H (int.)"
+	},
+	{
+		"id" : 20988,
+		"enum_id" : 787,
+		"enum_item_value" : "m16x125_6g_ext",
+		"enum_item_text" : "M16x1.25-6g (ext.)"
+	},
+	{
+		"id" : 20989,
+		"enum_id" : 787,
+		"enum_item_value" : "m16x125_6h_int",
+		"enum_item_text" : "M16x1.25-6H (int.)"
+	},
+	{
+		"id" : 20990,
+		"enum_id" : 787,
+		"enum_item_value" : "m16x15_6g_ext",
+		"enum_item_text" : "M16x1.5-6g (ext.)"
+	},
+	{
+		"id" : 20991,
+		"enum_id" : 787,
+		"enum_item_value" : "m16x15_6h_int",
+		"enum_item_text" : "M16x1.5-6H (int.)"
+	},
+	{
+		"id" : 20992,
+		"enum_id" : 787,
+		"enum_item_value" : "m16x16_6g_ext",
+		"enum_item_text" : "M16x1.6-6g (ext.)"
+	},
+	{
+		"id" : 20993,
+		"enum_id" : 787,
+		"enum_item_value" : "m16x16_6h_int",
+		"enum_item_text" : "M16x1.6-6H (int.)"
+	},
+	{
+		"id" : 20994,
+		"enum_id" : 787,
+		"enum_item_value" : "m16x2_6g_ext",
+		"enum_item_text" : "M16x2-6g (ext.)"
+	},
+	{
+		"id" : 20995,
+		"enum_id" : 787,
+		"enum_item_value" : "m16x2_6h_int",
+		"enum_item_text" : "M16x2-6H (int.)"
+	},
+	{
+		"id" : 20996,
+		"enum_id" : 787,
+		"enum_item_value" : "m17x1_6g_ext",
+		"enum_item_text" : "M17x1-6g (ext.)"
+	},
+	{
+		"id" : 20997,
+		"enum_id" : 787,
+		"enum_item_value" : "m17x1_6h_int",
+		"enum_item_text" : "M17x1-6H (int.)"
+	},
+	{
+		"id" : 20998,
+		"enum_id" : 787,
+		"enum_item_value" : "m17x15_6g_ext",
+		"enum_item_text" : "M17x1.5-6g (ext.)"
+	},
+	{
+		"id" : 20999,
+		"enum_id" : 787,
+		"enum_item_value" : "m17x15_6h_int",
+		"enum_item_text" : "M17x1.5-6H (int.)"
+	},
+	{
+		"id" : 21000,
+		"enum_id" : 787,
+		"enum_item_value" : "m18x05_6g_ext",
+		"enum_item_text" : "M18x0.5-6g (ext.)"
+	},
+	{
+		"id" : 21001,
+		"enum_id" : 787,
+		"enum_item_value" : "m18x05_6h_int",
+		"enum_item_text" : "M18x0.5-6H (int.)"
+	},
+	{
+		"id" : 21002,
+		"enum_id" : 787,
+		"enum_item_value" : "m18x075_6g_ext",
+		"enum_item_text" : "M18x0.75-6g (ext.)"
+	},
+	{
+		"id" : 21003,
+		"enum_id" : 787,
+		"enum_item_value" : "m18x075_6h_int",
+		"enum_item_text" : "M18x0.75-6H (int.)"
+	},
+	{
+		"id" : 21004,
+		"enum_id" : 787,
+		"enum_item_value" : "m18x1_6g_ext",
+		"enum_item_text" : "M18x1-6g (ext.)"
+	},
+	{
+		"id" : 21005,
+		"enum_id" : 787,
+		"enum_item_value" : "m18x1_6h_int",
+		"enum_item_text" : "M18x1-6H (int.)"
+	},
+	{
+		"id" : 21006,
+		"enum_id" : 787,
+		"enum_item_value" : "m18x125_6g_ext",
+		"enum_item_text" : "M18x1.25-6g (ext.)"
+	},
+	{
+		"id" : 21007,
+		"enum_id" : 787,
+		"enum_item_value" : "m18x125_6h_int",
+		"enum_item_text" : "M18x1.25-6H (int.)"
+	},
+	{
+		"id" : 21008,
+		"enum_id" : 787,
+		"enum_item_value" : "m18x15_6g_ext",
+		"enum_item_text" : "M18x1.5-6g (ext.)"
+	},
+	{
+		"id" : 21009,
+		"enum_id" : 787,
+		"enum_item_value" : "m18x15_6h_int",
+		"enum_item_text" : "M18x1.5-6H (int.)"
+	},
+	{
+		"id" : 21010,
+		"enum_id" : 787,
+		"enum_item_value" : "m18x2_6g_ext",
+		"enum_item_text" : "M18x2-6g (ext.)"
+	},
+	{
+		"id" : 21011,
+		"enum_id" : 787,
+		"enum_item_value" : "m18x2_6h_int",
+		"enum_item_text" : "M18x2-6H (int.)"
+	},
+	{
+		"id" : 21012,
+		"enum_id" : 787,
+		"enum_item_value" : "m18x25_6g_ext",
+		"enum_item_text" : "M18x2.5-6g (ext.)"
+	},
+	{
+		"id" : 21013,
+		"enum_id" : 787,
+		"enum_item_value" : "m18x25_6h_int",
+		"enum_item_text" : "M18x2.5-6H (int.)"
+	},
+	{
+		"id" : 21014,
+		"enum_id" : 787,
+		"enum_item_value" : "m20x05_6g_ext",
+		"enum_item_text" : "M20x0.5-6g (ext.)"
+	},
+	{
+		"id" : 21015,
+		"enum_id" : 787,
+		"enum_item_value" : "m20x05_6h_int",
+		"enum_item_text" : "M20x0.5-6H (int.)"
+	},
+	{
+		"id" : 21016,
+		"enum_id" : 787,
+		"enum_item_value" : "m20x075_6g_ext",
+		"enum_item_text" : "M20x0.75-6g (ext.)"
+	},
+	{
+		"id" : 21017,
+		"enum_id" : 787,
+		"enum_item_value" : "m20x075_6h_int",
+		"enum_item_text" : "M20x0.75-6H (int.)"
+	},
+	{
+		"id" : 21018,
+		"enum_id" : 787,
+		"enum_item_value" : "m20x1_6g_ext",
+		"enum_item_text" : "M20x1-6g (ext.)"
+	},
+	{
+		"id" : 21019,
+		"enum_id" : 787,
+		"enum_item_value" : "m20x1_6h_int",
+		"enum_item_text" : "M20x1-6H (int.)"
+	},
+	{
+		"id" : 21020,
+		"enum_id" : 787,
+		"enum_item_value" : "m20x15_6g_ext",
+		"enum_item_text" : "M20x1.5-6g (ext.)"
+	},
+	{
+		"id" : 21021,
+		"enum_id" : 787,
+		"enum_item_value" : "m20x15_6h_int",
+		"enum_item_text" : "M20x1.5-6H (int.)"
+	},
+	{
+		"id" : 21022,
+		"enum_id" : 787,
+		"enum_item_value" : "m20x2_6g_ext",
+		"enum_item_text" : "M20x2-6g (ext.)"
+	},
+	{
+		"id" : 21023,
+		"enum_id" : 787,
+		"enum_item_value" : "m20x2_6h_int",
+		"enum_item_text" : "M20x2-6H (int.)"
+	},
+	{
+		"id" : 21024,
+		"enum_id" : 787,
+		"enum_item_value" : "m20x25_6g_ext",
+		"enum_item_text" : "M20x2.5-6g (ext.)"
+	},
+	{
+		"id" : 21025,
+		"enum_id" : 787,
+		"enum_item_value" : "m20x25_6h_int",
+		"enum_item_text" : "M20x2.5-6H (int.)"
+	},
+	{
+		"id" : 21026,
+		"enum_id" : 787,
+		"enum_item_value" : "m22x05_6g_ext",
+		"enum_item_text" : "M22x0.5-6g (ext.)"
+	},
+	{
+		"id" : 21027,
+		"enum_id" : 787,
+		"enum_item_value" : "m22x05_6h_int",
+		"enum_item_text" : "M22x0.5-6H (int.)"
+	},
+	{
+		"id" : 21028,
+		"enum_id" : 787,
+		"enum_item_value" : "m22x075_6g_ext",
+		"enum_item_text" : "M22x0.75-6g (ext.)"
+	},
+	{
+		"id" : 21029,
+		"enum_id" : 787,
+		"enum_item_value" : "m22x075_6h_int",
+		"enum_item_text" : "M22x0.75-6H (int.)"
+	},
+	{
+		"id" : 21030,
+		"enum_id" : 787,
+		"enum_item_value" : "m22x1_6g_ext",
+		"enum_item_text" : "M22x1-6g (ext.)"
+	},
+	{
+		"id" : 21031,
+		"enum_id" : 787,
+		"enum_item_value" : "m22x1_6h_int",
+		"enum_item_text" : "M22x1-6H (int.)"
+	},
+	{
+		"id" : 21032,
+		"enum_id" : 787,
+		"enum_item_value" : "m22x15_6g_ext",
+		"enum_item_text" : "M22x1.5-6g (ext.)"
+	},
+	{
+		"id" : 21033,
+		"enum_id" : 787,
+		"enum_item_value" : "m22x15_6h_int",
+		"enum_item_text" : "M22x1.5-6H (int.)"
+	},
+	{
+		"id" : 21034,
+		"enum_id" : 787,
+		"enum_item_value" : "m22x2_6g_ext",
+		"enum_item_text" : "M22x2-6g (ext.)"
+	},
+	{
+		"id" : 21035,
+		"enum_id" : 787,
+		"enum_item_value" : "m22x2_6h_int",
+		"enum_item_text" : "M22x2-6H (int.)"
+	},
+	{
+		"id" : 21036,
+		"enum_id" : 787,
+		"enum_item_value" : "m22x25_6g_ext",
+		"enum_item_text" : "M22x2.5-6g (ext.)"
+	},
+	{
+		"id" : 21037,
+		"enum_id" : 787,
+		"enum_item_value" : "m22x25_6h_int",
+		"enum_item_text" : "M22x2.5-6H (int.)"
+	},
+	{
+		"id" : 21038,
+		"enum_id" : 787,
+		"enum_item_value" : "m22x3_6g_ext",
+		"enum_item_text" : "M22x3-6g (ext.)"
+	},
+	{
+		"id" : 21039,
+		"enum_id" : 787,
+		"enum_item_value" : "m22x3_6h_int",
+		"enum_item_text" : "M22x3-6H (int.)"
+	},
+	{
+		"id" : 21040,
+		"enum_id" : 787,
+		"enum_item_value" : "m24x075_6g_ext",
+		"enum_item_text" : "M24x0.75-6g (ext.)"
+	},
+	{
+		"id" : 21041,
+		"enum_id" : 787,
+		"enum_item_value" : "m24x075_6h_int",
+		"enum_item_text" : "M24x0.75-6H (int.)"
+	},
+	{
+		"id" : 21042,
+		"enum_id" : 787,
+		"enum_item_value" : "m24x1_6g_ext",
+		"enum_item_text" : "M24x1-6g (ext.)"
+	},
+	{
+		"id" : 21043,
+		"enum_id" : 787,
+		"enum_item_value" : "m24x1_6h_int",
+		"enum_item_text" : "M24x1-6H (int.)"
+	},
+	{
+		"id" : 21044,
+		"enum_id" : 787,
+		"enum_item_value" : "m24x15_6g_ext",
+		"enum_item_text" : "M24x1.5-6g (ext.)"
+	},
+	{
+		"id" : 21045,
+		"enum_id" : 787,
+		"enum_item_value" : "m24x15_6h_int",
+		"enum_item_text" : "M24x1.5-6H (int.)"
+	},
+	{
+		"id" : 21046,
+		"enum_id" : 787,
+		"enum_item_value" : "m24x2_6g_ext",
+		"enum_item_text" : "M24x2-6g (ext.)"
+	},
+	{
+		"id" : 21047,
+		"enum_id" : 787,
+		"enum_item_value" : "m24x2_6h_int",
+		"enum_item_text" : "M24x2-6H (int.)"
+	},
+	{
+		"id" : 21048,
+		"enum_id" : 787,
+		"enum_item_value" : "m24x25_6g_ext",
+		"enum_item_text" : "M24x2.5-6g (ext.)"
+	},
+	{
+		"id" : 21049,
+		"enum_id" : 787,
+		"enum_item_value" : "m24x25_6h_int",
+		"enum_item_text" : "M24x2.5-6H (int.)"
+	},
+	{
+		"id" : 21050,
+		"enum_id" : 787,
+		"enum_item_value" : "m24x3_6g_ext",
+		"enum_item_text" : "M24x3-6g (ext.)"
+	},
+	{
+		"id" : 21051,
+		"enum_id" : 787,
+		"enum_item_value" : "m24x3_6h_int",
+		"enum_item_text" : "M24x3-6H (int.)"
+	},
+	{
+		"id" : 21052,
+		"enum_id" : 787,
+		"enum_item_value" : "116_27_npt",
+		"enum_item_text" : "1/16-27 NPT"
+	},
+	{
+		"id" : 21053,
+		"enum_id" : 787,
+		"enum_item_value" : "18_27_npt",
+		"enum_item_text" : "1/8-27 NPT"
+	},
+	{
+		"id" : 21054,
+		"enum_id" : 787,
+		"enum_item_value" : "14_18_npt",
+		"enum_item_text" : "1/4-18 NPT"
+	},
+	{
+		"id" : 21055,
+		"enum_id" : 787,
+		"enum_item_value" : "3_8_npt",
+		"enum_item_text" : "3-8 NPT"
+	},
+	{
+		"id" : 21056,
+		"enum_id" : 787,
+		"enum_item_value" : "38_18_npt",
+		"enum_item_text" : "3/8-18 NPT"
+	},
+	{
+		"id" : 21057,
+		"enum_id" : 787,
+		"enum_item_value" : "12_14_npt",
+		"enum_item_text" : "1/2-14 NPT"
+	},
+	{
+		"id" : 21058,
+		"enum_id" : 787,
+		"enum_item_value" : "34_14_npt",
+		"enum_item_text" : "3/4-14 NPT"
+	},
+	{
+		"id" : 21059,
+		"enum_id" : 787,
+		"enum_item_value" : "1_115_npt",
+		"enum_item_text" : "1-11.5 NPT"
+	},
+	{
+		"id" : 21060,
+		"enum_id" : 787,
+		"enum_item_value" : "1_14_115_npt",
+		"enum_item_text" : "1 1/4-11.5 NPT"
+	},
+	{
+		"id" : 21061,
+		"enum_id" : 787,
+		"enum_item_value" : "1_12_115_npt",
+		"enum_item_text" : "1 1/2-11.5 NPT"
+	},
+	{
+		"id" : 21062,
+		"enum_id" : 787,
+		"enum_item_value" : "2_115_npt",
+		"enum_item_text" : "2-11.5 NPT"
+	},
+	{
+		"id" : 21063,
+		"enum_id" : 787,
+		"enum_item_value" : "2_12_8_npt",
+		"enum_item_text" : "2 1/2-8 NPT"
+	},
+	{
+		"id" : 21064,
+		"enum_id" : 787,
+		"enum_item_value" : "none",
+		"enum_item_text" : "None"
+	},
+	{
+		"id" : 21065,
+		"enum_id" : 788,
+		"enum_item_value" : "_999",
+		"enum_item_text" : "-99"
+	},
+	{
+		"id" : 21066,
+		"enum_id" : 788,
+		"enum_item_value" : "i",
+		"enum_item_text" : "I"
+	},
+	{
+		"id" : 21067,
+		"enum_id" : 788,
+		"enum_item_value" : "ii",
+		"enum_item_text" : "II"
+	},
+	{
+		"id" : 21068,
+		"enum_id" : 788,
+		"enum_item_value" : "iii",
+		"enum_item_text" : "III"
+	},
+	{
+		"id" : 21069,
+		"enum_id" : 788,
+		"enum_item_value" : "iv",
+		"enum_item_text" : "IV"
+	},
+	{
+		"id" : 21070,
+		"enum_id" : 788,
+		"enum_item_value" : "other",
+		"enum_item_text" : "OTHER"
+	},
+	{
+		"id" : 21071,
+		"enum_id" : 789,
+		"enum_item_value" : "_999",
+		"enum_item_text" : "-99"
+	},
+	{
+		"id" : 21072,
+		"enum_id" : 789,
+		"enum_item_value" : "1000_al",
+		"enum_item_text" : "1000 AL"
+	},
+	{
+		"id" : 21073,
+		"enum_id" : 789,
+		"enum_item_value" : "c11000",
+		"enum_item_text" : "C11000"
+	},
+	{
+		"id" : 21074,
+		"enum_id" : 789,
+		"enum_item_value" : "carbon_stl_nbr_70",
+		"enum_item_text" : "CARBON STL / NBR 70"
+	},
+	{
+		"id" : 21075,
+		"enum_id" : 789,
+		"enum_item_value" : "copper",
+		"enum_item_text" : "COPPER"
+	},
+	{
+		"id" : 21076,
+		"enum_id" : 789,
+		"enum_item_value" : "spring_steel",
+		"enum_item_text" : "SPRING STEEL"
+	},
+	{
+		"id" : 21077,
+		"enum_id" : 789,
+		"enum_item_value" : "301_ss",
+		"enum_item_text" : "301 SS"
+	},
+	{
+		"id" : 21078,
+		"enum_id" : 789,
+		"enum_item_value" : "304_ss",
+		"enum_item_text" : "304 SS"
+	},
+	{
+		"id" : 21079,
+		"enum_id" : 789,
+		"enum_item_value" : "sst",
+		"enum_item_text" : "SST"
+	},
+	{
+		"id" : 21080,
+		"enum_id" : 789,
+		"enum_item_value" : "steel",
+		"enum_item_text" : "STEEL"
+	},
+	{
+		"id" : 21081,
+		"enum_id" : 789,
+		"enum_item_value" : "other",
+		"enum_item_text" : "OTHER"
+	},
+	{
+		"id" : 21082,
+		"enum_id" : 790,
+		"enum_item_value" : "_999",
+		"enum_item_text" : "-99"
+	},
+	{
+		"id" : 21083,
+		"enum_id" : 790,
+		"enum_item_value" : "belleville",
+		"enum_item_text" : "BELLEVILLE"
+	},
+	{
+		"id" : 21084,
+		"enum_id" : 790,
+		"enum_item_value" : "copper_sealing",
+		"enum_item_text" : "COPPER SEALING"
+	},
+	{
+		"id" : 21085,
+		"enum_id" : 790,
+		"enum_item_value" : "flat",
+		"enum_item_text" : "FLAT"
+	},
+	{
+		"id" : 21086,
+		"enum_id" : 790,
+		"enum_item_value" : "lock",
+		"enum_item_text" : "LOCK"
+	},
+	{
+		"id" : 21087,
+		"enum_id" : 790,
+		"enum_item_value" : "rubber_sealing",
+		"enum_item_text" : "RUBBER SEALING"
+	},
+	{
+		"id" : 21088,
+		"enum_id" : 790,
+		"enum_item_value" : "spring",
+		"enum_item_text" : "SPRING"
+	},
+	{
+		"id" : 21089,
+		"enum_id" : 790,
+		"enum_item_value" : "star",
+		"enum_item_text" : "STAR"
+	},
+	{
+		"id" : 21090,
+		"enum_id" : 790,
+		"enum_item_value" : "wear",
+		"enum_item_text" : "WEAR"
+	},
+	{
+		"id" : 21091,
+		"enum_id" : 790,
+		"enum_item_value" : "other",
+		"enum_item_text" : "OTHER"
+	},
+	{
+		"id" : 21092,
+		"enum_id" : 790,
+		"enum_item_value" : "split_lock",
+		"enum_item_text" : "SPLIT LOCK"
+	},
+	{
+		"id" : 21093,
+		"enum_id" : 790,
+		"enum_item_value" : "internal_tooth_lock",
+		"enum_item_text" : "INTERNAL TOOTH LOCK"
+	}
+]}

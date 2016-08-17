@@ -1,0 +1,228 @@
+{
+  "todo": {
+  },
+  "part_type_mapping": {
+    "actuator": {
+      "table": "actuator",
+      "class": "Actuator",
+      "exists": false
+    },
+    "bearing_housing": {
+      "table": "bearing_housing",
+      "class": "BearingHousing",
+      "exists": true
+    },
+    "cartridge": {
+      "table": "cartridge",
+      "class": "Cartridge",
+      "exists": true
+    },
+    "compressor_cover": {
+      "table": "compressor_cover",
+      "class": "CompressorCover",
+      "exists": false
+    },
+    "compressor_wheel": {
+      "table": "compressor_wheel",
+      "class": "CompressorWheel",
+      "exists": true
+    },
+    "gasket": {
+      "table": "gasket",
+      "class": "Gasket",
+      "exists": true
+    },
+    "heatshield_shroud": {
+      "table": "heatshield",
+      "class": "HeatshieldShroud",
+      "exists": true
+    },
+    "journal_bearing": {
+      "table": "journal_bearing",
+      "class": "JournalBearing",
+      "exists": true
+    },
+    "nozzle_ring": {
+      "table": "nozzle_ring",
+      "class": "NozzleRing",
+      "exists": true
+    },
+    "piston_ring": {
+      "table": "piston_ring",
+      "class": "PistonRing",
+      "exists": true
+    },
+    "plug": {
+      "table": "plug",
+      "class": "Plug",
+      "exists": false
+    },
+    "turbine_housing": {
+      "table": "turbine_housing",
+      "class": "TurbineHousing",
+      "exists": false
+    },
+    "turbine_wheel": {
+      "table": "turbine_wheel",
+      "class": "TurbineWheel",
+      "exists": true
+    },
+    "turbo": {
+      "table": "turbo",
+      "class": "Turbo",
+      "exists": true,
+      "code_snippet_members": "    @JsonView(View.Detail.class)\n    @OneToOne(fetch = FetchType.LAZY)\n    @JoinColumn(name=\"turbo_model_id\")\n    private TurboModel turboModel;",
+      "code_snippet_getterssetters": "    public TurboModel getTurboModel() {\n        return turboModel;\n    }\n\n    public void setTurboModel(TurboModel turboModel) {\n        this.turboModel = turboModel;\n    }"
+    },
+    "backplate": {
+      "table": "backplate",
+      "class": "Backplate",
+      "exists": false
+    },
+    "journal_bearing_spacer": {
+      "table": "journal_bearing_spacer",
+      "class": "JournalBearingSpacer",
+      "exists": false
+    },
+    "bolt_screw": {
+      "table": "bolt_screw",
+      "class": "BoltScrew",
+      "exists": false
+    },
+    "clamp": {
+      "table": "clamp",
+      "class": "Clamp",
+      "exists": false
+    },
+    "fitting": {
+      "table": "fitting",
+      "class": "Fitting",
+      "exists": false
+    },
+    "nut": {
+      "table": "nut",
+      "class": "Nut",
+      "exists": false
+    },
+    "oil_deflector": {
+      "table": "oil_deflector",
+      "class": "OilDeflector",
+      "exists": false
+    },
+    "o_ring": {
+      "table": "o_ring",
+      "class": "ORing",
+      "exists": false
+    },
+    "pin": {
+      "table": "pin",
+      "class": "Pin",
+      "exists": false
+    },
+    "retaining_ring": {
+      "table": "retaining_ring",
+      "class": "RetainingRing",
+      "exists": false
+    },
+    "seal_plate": {
+      "table": "seal_plate",
+      "class": "SealPlate",
+      "exists": false
+    },
+    "spring": {
+      "table": "spring",
+      "class": "Spring",
+      "exists": false
+    },
+    "thrust_bearing": {
+      "table": "thrust_bearing",
+      "class": "ThrustBearing",
+      "exists": false
+    },
+    "thrust_collar": {
+      "table": "thrust_collar",
+      "class": "ThrustCollar",
+      "exists": false
+    },
+    "thrust_spacer": {
+      "table": "thrust_spacer",
+      "class": "ThrustSpacer",
+      "exists": false
+    },
+    "thrust_washer": {
+      "table": "thrust_washer",
+      "class": "ThrustWasher",
+      "exists": false
+    },
+    "washer": {
+      "table": "washer",
+      "class": "Washer",
+      "exists": false
+    },
+    "carbon_seal": {
+      "table": "carbon_seal",
+      "class": "CarbonSeal",
+      "exists": false
+    },
+    "kit": {
+      "table": "kit",
+      "class": "Kit",
+      "exists": true
+    },
+    "bearing_spacer": {
+      "table": "bearing_spacer",
+      "class": "BearingSpacer",
+      "exists": true
+    },
+    "fast_wearing_component": {
+      "table": "fast_wearing_component",
+      "class": "FastWearingComponent",
+      "exists": false
+    },
+    "major_component": {
+      "table": "major_component",
+      "class": "MajorComponent",
+      "exists": false
+    },
+    "minor_component": {
+      "table": "minor_component",
+      "class": "MinorComponent",
+      "exists": false
+    },
+    "backplate_sealplate": {
+      "table": "backplate_sealplate",
+      "class": "BackplateSealplate",
+      "exists": true
+    },
+    "thrust_parts": {
+      "table": "thrust_part",
+      "class": "ThrustPart",
+      "exists": false
+    },
+    "misc_minor_components": {
+      "table": "misc_minor_component",
+      "class": "MiscMinorComponent",
+      "exists": false
+    },
+    "gasket_kit": {
+      "table": "gasket_kit",
+      "class": "GasketKit",
+      "exists": false
+    },
+    "misc": {
+      "table": "misc",
+      "class": "Misc",
+      "exists": false
+    },
+    "p": {
+      "table": "p",
+      "class": "P",
+      "exists": false
+    },
+    "shroud": {
+      "table": "shroud",
+      "class": "Shroud",
+      "exists": false
+    }
+  }
+}

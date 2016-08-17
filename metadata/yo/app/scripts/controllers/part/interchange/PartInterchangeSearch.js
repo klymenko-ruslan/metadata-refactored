@@ -20,8 +20,12 @@ angular.module("ngMetaCrudApp")
   }])
 
   .controller("PartInterchangeSearchCtrl", ["$log", "$scope", "$location", "$routeParams", "restService",
-      "Restangular", "gToast", "dialogs", "MERGE_OPTIONS", function($log, $scope, $location, $routeParams,
-        restService, Restangular, gToast, dialogs, MERGE_OPTIONS) {
+      "Restangular", "gToast", "dialogs", "MERGE_OPTIONS", "partTypes", "critDimsByPartTypes", "critDimEnumVals",
+      function($log, $scope, $location, $routeParams,
+        restService, Restangular, gToast, dialogs, MERGE_OPTIONS, partTypes, critDimsByPartTypes, critDimEnumVals) {
+    $scope.partTypes = partTypes;
+    $scope.critDimsByPartTypes = critDimsByPartTypes;
+    $scope.critDimEnumVals = critDimEnumVals;
     $scope.partId = $routeParams.id;
     // The part whose interchange we're editing
     $scope.promise = restService.findPart($scope.partId).then(function(part) {

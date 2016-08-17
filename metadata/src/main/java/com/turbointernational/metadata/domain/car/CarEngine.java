@@ -2,6 +2,7 @@ package com.turbointernational.metadata.domain.car;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.domain.SearchableEntity;
+import com.turbointernational.metadata.domain.criticaldimension.CriticalDimension;
 import com.turbointernational.metadata.services.SearchService;
 import com.turbointernational.metadata.web.View;
 import flexjson.JSONDeserializer;
@@ -17,7 +18,7 @@ import java.util.List;
 
 @Cacheable
 @Entity
-@Table(name="car_engine", uniqueConstraints=@UniqueConstraint(columnNames={"engineSize", "car_fuel_type_id"}))
+@Table(name="car_engine", uniqueConstraints=@UniqueConstraint(columnNames={"engine_size", "car_fuel_type_id"}))
 @NamedQueries({
         @NamedQuery(name="findAllCarEngineOrderedByName", query = "FROM CarEngine ORDER BY engineSize")
 })
@@ -31,7 +32,7 @@ public class CarEngine implements Serializable, SearchableEntity {
     @JsonView(View.Summary.class)
     private Long id;
     
-    @Column(nullable=false)
+    @Column(name="engine_size", nullable=false)
     @JsonView(View.Summary.class)
     private String engineSize;
     
@@ -88,7 +89,7 @@ public class CarEngine implements Serializable, SearchableEntity {
     }
 
     @Override
-    public String toSearchJson() {
+    public String toSearchJson(List<CriticalDimension> criticalDimensions) {
         return getSearchSerializer().exclude("*").serialize(this);
     }
 

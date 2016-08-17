@@ -1,99 +1,175 @@
 package com.turbointernational.metadata.domain.part.types;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.domain.criticaldimension.CriticalDimensionEnumVal;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.web.View;
-import java.util.Map;
+
 import javax.persistence.*;
 
-import org.apache.commons.lang.ObjectUtils;
+import static javax.persistence.FetchType.LAZY;
 
+
+/**
+ * Created by dmytro.trunykov@zorallabs.com on 2016-08-01 17:06:08.760016.
+ */
 @Entity
-@Table(name="piston_ring")
+@Table(name = "piston_ring")
 @PrimaryKeyJoinColumn(name = "part_id")
 public class PistonRing extends Part {
-    
-    @JsonView(View.Detail.class)
-    @Column(name="outside_dim_min")
-    private Float outsideDiameterMin;
 
-    @JsonView(View.Detail.class)
-    @Column(name="outside_dim_max")
-    private Float outsideDiameterMax;
+    //<editor-fold defaultstate="collapsed" desc="Properties: critical dimensions">
 
-    @JsonView(View.Detail.class)
-    @Column(name="width_min")
-    private Float widthMin;
+    @JsonView(View.Summary.class)
+    @JsonProperty("installedDiameterA")
+    @Column(name = "installedDiameterA")
+    private Double installedDiameterA;
 
-    @JsonView(View.Detail.class)
-    @Column(name="width_max")
-    private Float widthMax;
+    @JsonView(View.Summary.class)
+    @JsonProperty("gapBInstalledDiameter")
+    @Column(name = "gapBInstalledDiameter")
+    private Double gapBInstalledDiameter;
 
-    @JsonView(View.Detail.class)
-    @Column(name="i_gap_min")
-    private Float installedGapMin;
+    @JsonView(View.Summary.class)
+    @JsonProperty("thicknessC")
+    @Column(name = "thicknessC")
+    private Double thicknessC;
 
-    @JsonView(View.Detail.class)
-    @Column(name="i_gap_max")
-    private Float installedGapMax;
+    @JsonView(View.Summary.class)
+    @JsonProperty("thicknessCTol")
+    @Column(name = "thicknessCTol")
+    private Double thicknessCTol;
 
-    public Float getOutsideDiameterMin() {
-        return outsideDiameterMin;
+    @JsonView(View.Summary.class)
+    @JsonProperty("widthD")
+    @Column(name = "widthD")
+    private Double widthD;
+
+    @JsonView(View.Summary.class)
+    @JsonProperty("widthDUpperTol")
+    @Column(name = "widthDUpperTol")
+    private Double widthDUpperTol;
+
+    @JsonView(View.Summary.class)
+    @JsonProperty("widthDLowerTol")
+    @Column(name = "widthDLowerTol")
+    private Double widthDLowerTol;
+
+    @JsonView(View.Summary.class)
+    @JsonProperty("material")
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "material")
+    private CriticalDimensionEnumVal material;
+
+    @JsonView(View.Summary.class)
+    @JsonProperty("type")
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "type")
+    private CriticalDimensionEnumVal type;
+
+    @JsonView(View.Summary.class)
+    @JsonProperty("weight")
+    @Column(name = "weight")
+    private Double weight;
+
+    @JsonView(View.Summary.class)
+    @JsonProperty("diagram")
+    @Column(name = "diagram")
+    private Integer diagram;
+
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="Getters and setters: critical dimensions">
+
+    public Double getInstalledDiameterA() {
+        return installedDiameterA;
     }
 
-    public void setOutsideDiameterMin(Float outsideDiameterMin) {
-        this.outsideDiameterMin = outsideDiameterMin;
+    public void setInstalledDiameterA(Double installedDiameterA) {
+        this.installedDiameterA = installedDiameterA;
     }
 
-    public Float getOutsideDiameterMax() {
-        return outsideDiameterMax;
+    public Double getGapBInstalledDiameter() {
+        return gapBInstalledDiameter;
     }
 
-    public void setOutsideDiameterMax(Float outsideDiameterMax) {
-        this.outsideDiameterMax = outsideDiameterMax;
+    public void setGapBInstalledDiameter(Double gapBInstalledDiameter) {
+        this.gapBInstalledDiameter = gapBInstalledDiameter;
     }
 
-    public Float getWidthMin() {
-        return widthMin;
+    public Double getThicknessC() {
+        return thicknessC;
     }
 
-    public void setWidthMin(Float widthMin) {
-        this.widthMin = widthMin;
+    public void setThicknessC(Double thicknessC) {
+        this.thicknessC = thicknessC;
     }
 
-    public Float getWidthMax() {
-        return widthMax;
+    public Double getThicknessCTol() {
+        return thicknessCTol;
     }
 
-    public void setWidthMax(Float widthMax) {
-        this.widthMax = widthMax;
+    public void setThicknessCTol(Double thicknessCTol) {
+        this.thicknessCTol = thicknessCTol;
     }
 
-    public Float getInstalledGapMin() {
-        return installedGapMin;
+    public Double getWidthD() {
+        return widthD;
     }
 
-    public void setInstalledGapMin(Float installedGapMin) {
-        this.installedGapMin = installedGapMin;
+    public void setWidthD(Double widthD) {
+        this.widthD = widthD;
     }
 
-    public Float getInstalledGapMax() {
-        return installedGapMax;
+    public Double getWidthDUpperTol() {
+        return widthDUpperTol;
     }
 
-    public void setInstalledGapMax(Float installedGapMax) {
-        this.installedGapMax = installedGapMax;
+    public void setWidthDUpperTol(Double widthDUpperTol) {
+        this.widthDUpperTol = widthDUpperTol;
     }
-    
-    @Override
-    public void csvColumns(Map<String, String> columns) {
-        super.csvColumns(columns);
-        
-        columns.put("outside_dim_min", ObjectUtils.toString(getOutsideDiameterMin()));
-        columns.put("outside_dim_max", ObjectUtils.toString(getOutsideDiameterMax()));
-        columns.put("width_min", ObjectUtils.toString(getWidthMin()));
-        columns.put("width_max", ObjectUtils.toString(getWidthMax()));
-        columns.put("i_gap_min", ObjectUtils.toString(getInstalledGapMin()));
-        columns.put("i_gap_max", ObjectUtils.toString(getInstalledGapMax()));
+
+    public Double getWidthDLowerTol() {
+        return widthDLowerTol;
     }
+
+    public void setWidthDLowerTol(Double widthDLowerTol) {
+        this.widthDLowerTol = widthDLowerTol;
+    }
+
+    public CriticalDimensionEnumVal getMaterial() {
+        return material;
+    }
+
+    public void setMaterial(CriticalDimensionEnumVal material) {
+        this.material = material;
+    }
+
+    public CriticalDimensionEnumVal getType() {
+        return type;
+    }
+
+    public void setType(CriticalDimensionEnumVal type) {
+        this.type = type;
+    }
+
+    public Double getWeight() {
+        return weight;
+    }
+
+    public void setWeight(Double weight) {
+        this.weight = weight;
+    }
+
+    public Integer getDiagram() {
+        return diagram;
+    }
+
+    public void setDiagram(Integer diagram) {
+        this.diagram = diagram;
+    }
+
+    //</editor-fold>
+
 }

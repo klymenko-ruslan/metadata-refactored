@@ -1,0 +1,89 @@
+<metanav>
+</metanav>
+
+<h1 class="padding-top">[{{partType.id}}] {{partType.name}}</h1>
+
+<div class="row">
+  <div class="col-xs-12 col-md-3">
+    <dl class="dl-horizontal">
+      <dt>ID</dt>
+      <dd>{{partType.id}}</dd>
+      <dt>Name</dt>
+      <dd>{{partType.name}}</dd>
+      <dt>Value</dt>
+      <dd>{{partType.value}}</dd>
+      <dt>Magento attribute set</dt>
+      <dd>{{partType.magentoAttributeSet}}</dd>
+    </dl>
+ </div>
+ <div class="col-xs-12 col-md-9">
+   <div class="row" style="padding-bottom: 10px;">
+     <div class="col-xs-12">
+       <button  authorize="ROLE_PART_IMAGES" class="btn btn-primary pull-right" data-toggle="modal" data-target="#dlgUploadLegend">
+         <i class="fa fa-plus"></i>
+         Add/Replace Image...
+       </button>
+     </div>
+   </div>
+   <div class="row">
+     <div data-ng-class="['col-xs-12', {'clicked-row': partType.legendImgFilename}]">
+       <img src="{{::METADATA_BASE}}image/{{::partType.id}}/ptlegend/{{partType.legendImgFilename}}" class="center-block" data-ng-show="partType.legendImgFilename" data-ng-click="showDeleteLegendDlg()" />
+       <div class="no-image" data-ng-hide="partType.legendImgFilename"></div>
+     </div>
+   </div>
+ </div>
+</div>
+
+<div id="dlgFileNotSelected" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Warning</h4>
+      </div>
+      <div class="modal-body">
+        <p>There is no any selected file for download.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="dlgDeleteLegend" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Delete this image with legend?</h4>
+      </div>
+      <div class="modal-body">
+        <p>Do you want to remove this image from these critical dimensions?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-ng-click="deleteLegend()">Yes</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal">No</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="dlgUploadLegend" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Upload JPG Image</h3>
+      </div>
+      <div class="modal-body">
+        <form>
+          <input type="file" name="file" onchange="angular.element(this).scope().onSelectLegendImage(this.files)"/>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" data-ng-click="uploadLegend()">Upload</button>
+      </div>
+    </div>
+  </div>
+</div>

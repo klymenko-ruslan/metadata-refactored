@@ -15,7 +15,7 @@ import java.io.Serializable;
 import java.util.*;
 
 @Entity
-@Table(name="bom", uniqueConstraints=@UniqueConstraint(columnNames={"parent_part_id", "child_part_id"}))
+@Table(name = "bom", uniqueConstraints = @UniqueConstraint(columnNames = {"parent_part_id", "child_part_id"}))
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "class", include = JsonTypeInfo.As.PROPERTY, defaultImpl = BOMItem.class)
 public class BOMItem implements Comparable<BOMItem>, Serializable {
 
@@ -24,78 +24,78 @@ public class BOMItem implements Comparable<BOMItem>, Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonView({View.Summary.class})
     private Long id;
-    
+
     @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.REFRESH})
-    @JoinColumn(name="parent_part_id", nullable = false)
+    @JoinColumn(name = "parent_part_id", nullable = false)
     private Part parent;
-    
+
     @OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.REFRESH})
-    @JoinColumn(name="child_part_id", nullable = false)
+    @JoinColumn(name = "child_part_id", nullable = false)
     @JsonView({View.SummaryWithBOMDetail.class})
     private Part child;
-    
-    @Column(nullable=false)
+
+    @Column(name = "quantity", nullable = false)
     @JsonView({View.Summary.class})
     private Integer quantity;
-    
-    @OneToMany(mappedBy="bomItem", fetch = FetchType.LAZY, orphanRemoval = true)
+
+    @OneToMany(mappedBy = "bomItem", fetch = FetchType.LAZY, orphanRemoval = true)
     @OrderBy("id")
     @JsonView({View.SummaryWithBOMDetail.class})
     private Set<BOMAlternative> alternatives = new TreeSet<>();
-    
+
     public Long getId() {
         return id;
     }
-    
+
     public void setId(Long id) {
         this.id = id;
     }
-    
+
     public Part getParent() {
         return parent;
     }
-    
+
     public void setParent(Part parent) {
         this.parent = parent;
     }
-    
+
     public Part getChild() {
         return child;
     }
-    
+
     public void setChild(Part child) {
         this.child = child;
     }
-    
+
     public Integer getQuantity() {
         return quantity;
     }
-    
+
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
     }
-    
+
     public Set<BOMAlternative> getAlternatives() {
         return alternatives;
     }
-    
+
     public void setAlternatives(Set<BOMAlternative> alternatives) {
         this.alternatives.clear();
         this.alternatives.addAll(alternatives);
     }
-    
+
     public List<Part> getTIAlternates() {
         List<Part> tiAlts = new ArrayList<Part>();
-        
+
         for (BOMAlternative alt : alternatives) {
             if (Manufacturer.TI_ID.equals(alt.getPart().getManufacturer().getId())) {
                 tiAlts.add(alt.getPart());
             }
         }
-        
+
         return tiAlts;
     }
-    
+
     @PrePersist
     @PreUpdate
     public void validate() {
@@ -104,7 +104,7 @@ public class BOMItem implements Comparable<BOMItem>, Serializable {
         }
     }
     //</editor-fold>
-    
+
     //<editor-fold defaultstate="collapsed" desc="json">
     public String toJson() {
         return new JSONSerializer().transform(
@@ -126,19 +126,19 @@ public class BOMItem implements Comparable<BOMItem>, Serializable {
     public String toJson(String[] fields) {
         return new JSONSerializer().include(fields).exclude("*.class").serialize(this);
     }
-    
+
     public static BOMItem fromJsonToBOMItem(String json) {
         return new JSONDeserializer<BOMItem>().use(null, BOMItem.class).deserialize(json);
     }
-    
+
     public static String toJsonArray(Collection<BOMItem> collection) {
         return new JSONSerializer().exclude("*.class").serialize(collection);
     }
-    
+
     public static String toJsonArray(Collection<BOMItem> collection, String[] fields) {
         return new JSONSerializer().include(fields).exclude("*.class").serialize(collection);
     }
-    
+
     public static Collection<BOMItem> fromJsonArrayToBOMItems(String json) {
         return new JSONDeserializer<List<BOMItem>>().use(null, ArrayList.class).use("values", BOMItem.class).deserialize(json);
     }
@@ -148,5 +148,5 @@ public class BOMItem implements Comparable<BOMItem>, Serializable {
     public int compareTo(BOMItem o) {
         return ObjectUtils.compare(this.id, o.id);
     }
-    
+
 }

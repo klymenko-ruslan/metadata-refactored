@@ -3,23 +3,24 @@ package com.turbointernational.metadata.domain.part;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.domain.SearchableEntity;
+import com.turbointernational.metadata.domain.criticaldimension.CriticalDimension;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.other.TurboType;
 import com.turbointernational.metadata.domain.part.bom.BOMItem;
 import com.turbointernational.metadata.domain.part.salesnote.SalesNotePart;
 import com.turbointernational.metadata.domain.part.types.*;
 import com.turbointernational.metadata.domain.type.PartType;
+import com.turbointernational.metadata.services.CriticalDimensionService;
 import com.turbointernational.metadata.services.SearchService;
 import com.turbointernational.metadata.web.View;
 import flexjson.JSONSerializer;
 import flexjson.transformer.HibernateTransformer;
+import flexjson.transformer.Transformer;
 import org.apache.commons.lang3.ObjectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -27,27 +28,64 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.*;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
+import static com.fasterxml.jackson.annotation.JsonTypeInfo.As.PROPERTY;
+import static com.fasterxml.jackson.annotation.JsonTypeInfo.Id.CLASS;
+import static javax.persistence.GenerationType.IDENTITY;
+import static javax.persistence.InheritanceType.JOINED;
+import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_PROTOTYPE;
+
 @Cacheable
 @Entity
-@Table(name = "PART")
-@Inheritance(strategy = InheritanceType.JOINED)
+@Table(name = "part")
+@Inheritance(strategy = JOINED)
 @Component
-@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "class", include = As.PROPERTY, defaultImpl = Part.class)
+@Scope(SCOPE_PROTOTYPE)
+@JsonTypeInfo(use = CLASS, property = "class", include = PROPERTY, defaultImpl = Part.class)
 @JsonSubTypes({
+        @JsonSubTypes.Type(Actuator.class),
         @JsonSubTypes.Type(Backplate.class),
+        @JsonSubTypes.Type(BackplateSealplate.class),
         @JsonSubTypes.Type(BearingHousing.class),
-        @JsonSubTypes.Type(BearingSpacer.class),
+        @JsonSubTypes.Type(BoltScrew.class),
+        @JsonSubTypes.Type(CarbonSeal.class),
         @JsonSubTypes.Type(Cartridge.class),
+        @JsonSubTypes.Type(Clamp.class),
+        @JsonSubTypes.Type(CompressorCover.class),
         @JsonSubTypes.Type(CompressorWheel.class),
+        @JsonSubTypes.Type(FastWearingComponent.class),
+        @JsonSubTypes.Type(Fitting.class),
         @JsonSubTypes.Type(Gasket.class),
-        @JsonSubTypes.Type(Heatshield.class),
+        @JsonSubTypes.Type(GasketKit.class),
+        @JsonSubTypes.Type(HeatshieldShroud.class),
         @JsonSubTypes.Type(JournalBearing.class),
+        @JsonSubTypes.Type(JournalBearingSpacer.class),
         @JsonSubTypes.Type(Kit.class),
+        @JsonSubTypes.Type(MajorComponent.class),
+        @JsonSubTypes.Type(MinorComponent.class),
+        @JsonSubTypes.Type(Misc.class),
+        @JsonSubTypes.Type(MiscMinorComponent.class),
         @JsonSubTypes.Type(NozzleRing.class),
+        @JsonSubTypes.Type(Nut.class),
+        @JsonSubTypes.Type(OilDeflector.class),
+        @JsonSubTypes.Type(ORing.class),
+        @JsonSubTypes.Type(P.class),
+        @JsonSubTypes.Type(Pin.class),
         @JsonSubTypes.Type(PistonRing.class),
+        @JsonSubTypes.Type(Plug.class),
+        @JsonSubTypes.Type(RetainingRing.class),
+        @JsonSubTypes.Type(SealPlate.class),
+        @JsonSubTypes.Type(Shroud.class),
+        @JsonSubTypes.Type(Spring.class),
+        @JsonSubTypes.Type(ThrustBearing.class),
+        @JsonSubTypes.Type(ThrustCollar.class),
+        @JsonSubTypes.Type(ThrustPart.class),
+        @JsonSubTypes.Type(ThrustSpacer.class),
+        @JsonSubTypes.Type(ThrustWasher.class),
+        @JsonSubTypes.Type(TurbineHousing.class),
         @JsonSubTypes.Type(TurbineWheel.class),
         @JsonSubTypes.Type(Turbo.class),
+        @JsonSubTypes.Type(Washer.class),
 })
 @NamedQueries({
         @NamedQuery(
@@ -67,14 +105,14 @@ import java.util.*;
                 query = "FROM Part p ORDER BY p.id"
         )
 })
-//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id", scope = Part.class)
+@JsonInclude(ALWAYS)
 public class Part implements Comparable<Part>, Serializable, SearchableEntity {
 
     private static final Logger log = LoggerFactory.getLogger(Part.class);
 
     //<editor-fold defaultstate="collapsed" desc="Properties">
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = IDENTITY)
     @JsonView({View.Summary.class})
     private Long id;
 
@@ -100,7 +138,7 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
     @JsonView({View.Summary.class})
     private PartType partType;
 
-    @Column(nullable = false, columnDefinition = "BIT", length = 1)
+    @Column(name = "inactive", nullable = false, columnDefinition = "BIT", length = 1)
     @JsonView({View.Detail.class})
     private Boolean inactive = false;
 
@@ -136,9 +174,13 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
 
     @Version
     @Column(name = "version")
-    @JsonView({View.Summary.class})
-    @JsonInclude(JsonInclude.Include.ALWAYS)
+    @JsonView(View.Summary.class)
+    @JsonInclude(ALWAYS)
     private int version;
+
+    @Column(name = "legend_img_filename")
+    @JsonView(View.Summary.class)
+    private String legendImgFilename;
 
     public Long getId() {
         return id;
@@ -244,13 +286,23 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
     public void setVersion(int version) {
         this.version = version;
     }
-    //</editor-fold>
+
+    public String getLegendImgFilename() {
+        return legendImgFilename;
+    }
+
+    public void setLegendImgFilename(String legendImgFilename) {
+        this.legendImgFilename = legendImgFilename;
+    }
+
+//</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Lifecycle">
     @PostRemove
     @Override
     public void removeSearchIndex() throws Exception {
-        log.info("Updating search index.");
+        log.info("Updating search index: delete [{}] {} {}", id,
+                partType == null ? "" : partType.getName(), manufacturerPartNumber);
         SearchService.instance().deletePart(this);
     }
 
@@ -258,15 +310,16 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
     @PostPersist
     @Override
     public void updateSearchIndex() throws Exception {
-        log.info("Updating search index.");
+        log.info("Updating search index: update [{}] {} {}", id,
+                partType == null ? "" : partType.getName(), manufacturerPartNumber);
         SearchService.instance().indexPart(this);
     }
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Serialization">
 
-    protected JSONSerializer buildJSONSerializer() {
-        return new JSONSerializer()
+    protected JSONSerializer buildJSONSerializer(List<CriticalDimension> criticalDimensions) {
+        JSONSerializer jsonSerializer = new JSONSerializer()
                 .transform(new HibernateTransformer(), this.getClass())
                 .include("turboTypes.id")
                 .include("turboTypes.name")
@@ -318,20 +371,25 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
                 .include("productImages.id")
                 .include("productImages.filename")
                 .exclude("productImages.*");
+        // Add critical dimensions.
+        addCriticalDimensionsToSerialization(criticalDimensions, jsonSerializer, false);
+        return jsonSerializer;
     }
 
-    public String toJson() {
-        return buildJSONSerializer()
+    public String toJson(List<CriticalDimension> criticalDimensions) {
+        return buildJSONSerializer(criticalDimensions)
                 .exclude("*.class")
                 .serialize(this);
     }
 
-    protected JSONSerializer getSearchSerializer() {
-        return new JSONSerializer()
+    @Override
+    public final String toSearchJson(List<CriticalDimension> criticalDimensions) {
+        JSONSerializer jsonSerializer = new JSONSerializer()
                 .include("id")
                 .include("name")
                 .include("manufacturerPartNumber")
                 .include("description")
+                .include("inactive")
                 .include("partType.id")
                 .include("partType.name")
                 .exclude("partType.*")
@@ -344,11 +402,45 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
                 .exclude("turbos")
                 .exclude("productImages")
                 .exclude("*.class");
+        // Ticket #733.
+        // The code below is looked clumsy. Class Turbo is more suitable place for it.
+        // But the class Turbo is automatically generated. So it is easier place it here
+        // for the sake of a maintainability.
+        // TODO: move this to Turbo after migration
+        if (this instanceof Turbo) {
+            jsonSerializer.include("turboModel.id");
+            jsonSerializer.include("turboModel.name");
+            jsonSerializer.include("turboModel.turboType.id");
+            jsonSerializer.include("turboModel.turboType.name");
+        }
+        // Add critical dimensions.
+        addCriticalDimensionsToSerialization(criticalDimensions, jsonSerializer, true);
+        String json = jsonSerializer.exclude("*").serialize(this);
+        return json;
     }
 
-    @Override
-    public String toSearchJson() {
-        return getSearchSerializer().exclude("*").serialize(this);
+    /**
+     * Add critical dimensions to a serialized part.
+     *
+     * @param criticalDimensions
+     * @param jsonSerializer
+     * @param searchSerialization true if a part is serialized to a search engine.
+     * @see com.turbointernational.metadata.services.CriticalDimensionService#JsonIdxNameTransformer
+     */
+    private void addCriticalDimensionsToSerialization(List<CriticalDimension> criticalDimensions,
+                                                      JSONSerializer jsonSerializer, boolean searchSerialization) {
+        if (criticalDimensions != null) {
+            for(CriticalDimension cd : criticalDimensions) {
+                String jsonName = cd.getJsonName();
+                jsonSerializer.include(jsonName);
+                if (searchSerialization) {
+                    Transformer t = cd.getJsonIdxNameTransformer();
+                    if (t != null) {
+                        jsonSerializer.transform(t, jsonName);
+                    }
+                }
+            }
+        }
     }
 
     @Override
@@ -356,23 +448,7 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
         return getId().toString();
     }
 
-    public static String toJsonArray(Collection<Part> collection) {
-        return new JSONSerializer()
-                .transform(new HibernateTransformer(), Part.class)
-//                .include("bom")
-                .exclude("*.class")
-                .serialize(collection);
-    }
-
-    public static String toJsonArray(Collection<Part> collection, String[] fields) {
-        return new JSONSerializer()
-                .transform(new HibernateTransformer(), Part.class)
-                .include(fields)
-                .exclude("*")
-                .serialize(collection);
-    }
-
-    public void csvColumns(Map<String, String> columns) {
+    public void csvColumns(Map<String, String> columns, List<CriticalDimension> criticalDimensions) {
         // part_type
         columns.put("part_type", getPartType().getName());
 
@@ -405,6 +481,30 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
 
         // part_number
         columns.put("part_number_short", ObjectUtils.toString(getManufacturerPartNumber()).replaceAll("\\W", ""));
+
+        if (criticalDimensions != null) {
+            for(CriticalDimension cd : criticalDimensions) {
+                String fieldName = cd.getJsonName();
+                CriticalDimensionService.extractValue(this, cd, new CriticalDimensionService.ValueExtractorCallback() {
+
+                    @Override
+                    public void processValue(Object value) {
+                        columns.put(fieldName, ObjectUtils.toString(value));
+
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+                        String message = "Internal error. Extraction of a value of the field '" + fieldName
+                            + "' failed for the part with ID="
+                            + getId() + ". Does JPA entity declares this field? Details: " + e.getMessage();
+                        log.warn(message);
+                    }
+                });
+
+            }
+        }
+
     }
     //</editor-fold>
 

@@ -1,12 +1,9 @@
 package com.turbointernational.metadata.domain.part.salesnote;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import com.turbointernational.metadata.domain.SearchableEntity;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.security.User;
-import com.turbointernational.metadata.services.SearchService;
 import com.turbointernational.metadata.web.View;
-import flexjson.JSONSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,11 +48,13 @@ public class SalesNote implements Serializable {
     @JsonView({View.Summary.class, View.Detail.class})
     private User updater;
 
+    @Column(name = "state")
     @Enumerated(EnumType.STRING)
     @JsonView({View.Summary.class, View.Detail.class})
     private SalesNoteState state;
 
     @Lob
+    @Column(name = "comment")
     @JsonView({View.Summary.class, View.Detail.class})
     private String comment;
 

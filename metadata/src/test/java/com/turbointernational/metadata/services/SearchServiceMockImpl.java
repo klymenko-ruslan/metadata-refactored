@@ -4,11 +4,14 @@ import com.turbointernational.metadata.domain.car.*;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.part.salesnote.SalesNotePart;
 import com.turbointernational.metadata.domain.part.salesnote.SalesNoteState;
+import com.turbointernational.metadata.domain.security.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
+import java.util.Observer;
 import java.util.Set;
 
 /**
@@ -23,6 +26,24 @@ public class SearchServiceMockImpl implements SearchService {
     private final static Logger log = LoggerFactory.getLogger(SearchServiceMockImpl.class);
 
     @Override
+    public void createIndex() {
+        log.debug("Indexing: createIndex.");
+    }
+
+    @Override
+    public IndexingStatus startIndexing(User user, boolean indexParts, boolean indexApplications,
+                                        boolean indexSalesNotes, boolean recreateIndex) throws Exception {
+        log.debug("Indexing: Started indexing.");
+        return null;
+    }
+
+    @Override
+    public IndexingStatus getIndexingStatus() throws Exception {
+        log.debug("Indexing: Get indexing status.");
+        return null;
+    }
+
+    @Override
     public void indexPart(long id) {
         log.debug("Indexing: indexPart(long id)");
     }
@@ -35,11 +56,6 @@ public class SearchServiceMockImpl implements SearchService {
     @Override
     public void deletePart(Part part) throws Exception {
         log.debug("Indexing: deletePart(Part part)");
-    }
-
-    @Override
-    public void indexAllParts() throws Exception {
-        log.debug("Indexing: indexAllParts()");
     }
 
     @Override
@@ -102,12 +118,6 @@ public class SearchServiceMockImpl implements SearchService {
     }
 
     @Override
-    public void indexAllApplications() throws Exception {
-        log.debug("Indexing: indexAllApplications()");
-
-    }
-
-    @Override
     public void indexSalesNotePart(SalesNotePart salesNotePart) {
         log.debug("Indexing: indexSalesNotePart(SalesNotePart salesNotePart)");
 
@@ -120,13 +130,12 @@ public class SearchServiceMockImpl implements SearchService {
     }
 
     @Override
-    public void indexAllSalesNotes() throws Exception {
-        log.debug("Indexing: indexAllSalesNotes()");
-
-    }
-
-    @Override
-    public String filterParts(String partNumber, String partTypeName, String manufacturerName, String kitType, String gasketType, String sealType, String coolType, String turboType, String turboModel, String sortProperty, String sortOrder, Integer offset, Integer limit) {
+    public String filterParts(String partNumber, Long partTypeId, String manufacturerName,
+                              String name, String description, Boolean inactive,
+                              String turboTypeName, String turboModelName,
+                              Map<String, String[]> queriedCriticalDimensions,
+                              String sortProperty, String sortOrder,
+                              Integer offset, Integer limit) {
         return null;
     }
 

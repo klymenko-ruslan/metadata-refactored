@@ -12,13 +12,17 @@ import javax.persistence.*;
 import java.util.Set;
 import java.util.TreeSet;
 
+import static javax.persistence.FetchType.EAGER;
+
 @Entity
-@Table(name="USER")
+@Table(name="user")
 @NamedQueries({
     @NamedQuery(name = "findUserByEmail", query = "SELECT u FROM User u WHERE u.email = :email"),
     @NamedQuery(name = "findUserByUsername", query = "SELECT u FROM User u WHERE u.username = :username")
 })
 public class User implements Comparable<User>, UserDetails {
+
+    public final static Long SYNC_AGENT_USER_ID = 10000L;
 
     //<editor-fold defaultstate="collapsed" desc="Properties">
     @Id
@@ -27,35 +31,38 @@ public class User implements Comparable<User>, UserDetails {
     private Long id;
     
     @JsonView({View.Detail.class, View.Summary.class})
-    @Column(unique = true)
+    @Column(name = "name", unique = true)
     private String name;
 
     @JsonView({View.Detail.class, View.Summary.class})
-    @Column(unique = true)
+    @Column(name = "email", unique = true)
     private String email;
 
     /**
      * This field is used for authentication.
      */
     @JsonView({View.Detail.class, View.Summary.class})
-    @Column(unique = true)
+    @Column(name = "username", unique = true)
     private String username;
 
+    @Column(name = "password")
     private String password;
     
     @JsonIgnore
+    @Column(name = "password_reset_token")
     private String passwordResetToken;
     
     @JsonView(View.Detail.class)
-    @Column(columnDefinition = "BIT")
+    @Column(name = "enabled", columnDefinition = "BIT")
     private Boolean enabled;
 
     @JsonView(View.Summary.class)
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = EAGER)
+    @JoinColumn(name = "auth_provider_id")
     private AuthProvider authProvider;
     
     @JsonView({View.SummaryWithGroups.class, View.DetailWithGroups.class})
-    @ManyToMany(mappedBy="users", fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy="users", fetch = EAGER)
     private Set<Group> groups = new TreeSet<>();
     
     // For UserDetails

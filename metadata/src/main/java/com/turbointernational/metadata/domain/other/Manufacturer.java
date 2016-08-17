@@ -23,7 +23,7 @@ import javax.persistence.UniqueConstraint;
 
 @Cacheable
 @Entity
-@Table(name="MANFR", uniqueConstraints=@UniqueConstraint(columnNames={"name"}))
+@Table(name="manfr", uniqueConstraints=@UniqueConstraint(columnNames={"name"}))
 public class Manufacturer implements Serializable {
     
     public static final Long TI_ID = 11L;

@@ -63,21 +63,7 @@
 
 <hr/>
 
-
 <part-search class="well well-lg">
-
-  <a authorize="ROLE_READ"
-     ng-href="/part/{{partId}}"
-     class="btn btn-primary btn-xs">
-    <i class="fa fa-eye"></i>
-    View
-  </a>
-
-  <a authorize="ROLE_INTERCHANGE"
-     ng-click="pick(partId)"
-     class="btn btn-success btn-xs">
-    <i class="fa fa-bullseye"></i>
-    Pick
-  </a>
-
+  <a authorize="ROLE_READ" href="/part/{{$part._source.id}}" class="btn btn-primary btn-xs"><i class="fa fa-eye"></i> View</a>
+  <a authorize="ROLE_INTERCHANGE" data-ng-click="pick($part._source.id)" class="btn btn-success btn-xs"><i class="fa fa-bullseye"></i> Pick</a>
 </part-search>

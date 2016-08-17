@@ -1,40 +1,51 @@
 package com.turbointernational.metadata.web;
 
 import au.com.bytecode.opencsv.CSVWriter;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.other.ManufacturerDao;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.part.PartDao;
-import com.turbointernational.metadata.domain.type.*;
+import com.turbointernational.metadata.domain.type.ManufacturerTypeDao;
+import com.turbointernational.metadata.domain.type.PartTypeDao;
+import com.turbointernational.metadata.exceptions.PartNotFound;
 import com.turbointernational.metadata.magmi.MagmiDataFinder;
 import com.turbointernational.metadata.magmi.dto.MagmiProduct;
-import com.turbointernational.metadata.services.Mas90ServiceFactory;
+import com.turbointernational.metadata.services.PriceService;
 import com.turbointernational.metadata.services.mas90.Mas90;
+import com.turbointernational.metadata.services.mas90.MsSqlImpl;
 import com.turbointernational.metadata.services.mas90.pricing.CalculatedPrice;
 import com.turbointernational.metadata.services.mas90.pricing.ItemPricing;
+import com.turbointernational.metadata.services.mas90.pricing.ProductPrices;
 import com.turbointernational.metadata.services.mas90.pricing.UnknownDiscountCodeException;
+import com.turbointernational.metadata.web.dto.ProductPricesDto;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.*;
 import java.util.Map.Entry;
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
  *
@@ -69,19 +80,7 @@ public class MagmiController {
     
     @Autowired
     PartTypeDao partTypeDao;
-    
-    @Autowired
-    CoolTypeDao coolTypeDao;
-    
-    @Autowired
-    GasketTypeDao gasketTypeDao;
-    
-    @Autowired
-    KitTypeDao kitTypeDao;
-    
-    @Autowired
-    SealTypeDao sealTypeDao;
-    
+
     @Autowired
     PartDao partDao;
     
@@ -89,7 +88,56 @@ public class MagmiController {
     JdbcTemplate db;
 
     @Autowired
-    Mas90ServiceFactory mas90ServiceFactory;
+    private PriceService priceService;
+
+    @Qualifier("dataSourceMas90")
+    @Autowired
+    private DataSource dataSourceMas90;
+
+    @RequestMapping(value = "/prices", method = GET)
+    @ResponseBody
+    @Transactional(noRollbackFor = PartNotFound.class)
+    @PreAuthorize("hasRole('ROLE_MAGMI_EXPORT') or hasIpAddress('127.0.0.1/32')")
+    public ProductPricesDto[] getProductPricesAsGet(@RequestParam(name = "id") Long[] partIds) throws IOException {
+        int n = partIds.length;
+        ProductPricesDto[] retVal = new ProductPricesDto[n];
+        for(int i = 0; i < n; i++) {
+            Long partId = partIds[i];
+            retVal[i] = loadPrices(partId);
+        }
+        return retVal;
+    }
+
+    @RequestMapping(value = "/prices", method = POST)
+    @ResponseBody
+    @Transactional(noRollbackFor = PartNotFound.class)
+    @PreAuthorize("hasRole('ROLE_MAGMI_EXPORT') or hasIpAddress('127.0.0.1/32')")
+    public ProductPricesDto[] getProductPricesAsPost(@RequestBody String strJson) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonFactory factory = mapper.getFactory();
+        JsonParser jp = factory.createParser(strJson);
+        JsonNode json = mapper.readTree(jp);
+        int n = json.size();
+        ProductPricesDto[] retVal = new ProductPricesDto[n];
+        int i = 0;
+        for(Iterator<JsonNode> iter = json.iterator(); iter.hasNext();) {
+            JsonNode jn = iter.next();
+            Long partId = jn.asLong();
+            retVal[i++] = loadPrices(partId);
+        }
+        return retVal;
+    }
+
+    private ProductPricesDto loadPrices(Long partId) {
+        ProductPricesDto retVal;
+        try {
+            ProductPrices pp = priceService.getProductPrices(partId);
+            retVal = new ProductPricesDto(pp);
+        } catch(PartNotFound e) {
+            retVal = new ProductPricesDto(partId, e.getMessage());
+        }
+        return retVal;
+    }
 
     public String[] getCsvHeaders(SortedSet<String> priceLevels) {
 
@@ -219,8 +267,6 @@ public class MagmiController {
     @Transactional
     @PreAuthorize("hasRole('ROLE_MAGMI_EXPORT') or hasIpAddress('127.0.0.1/32')")
     public void products(HttpServletResponse response, OutputStream out,
-                         @RequestParam(name = "impl", required = false, defaultValue = "MS_SQL")
-                         Mas90ServiceFactory.Implementation implementation,
                          @RequestParam(defaultValue="30", required=false) int days) throws Exception {
         logger.info("Magmi export started.");
         
@@ -229,7 +275,7 @@ public class MagmiController {
         
         long startTime = System.currentTimeMillis();
         
-        Mas90 mas90 = mas90ServiceFactory.getService(implementation);
+        Mas90 mas90 = new MsSqlImpl(dataSourceMas90);;
         logger.info("Mas90 implementation: {}", mas90.toString());
         CSVWriter writer = new CSVWriter(new OutputStreamWriter(out), ',', '\'', '\\');
         
@@ -243,18 +289,14 @@ public class MagmiController {
         List<Part> parts = Collections.emptyList();
         do {
             try {
-                
+
                 // Clear Hibernate
                 entityManager.clear();
-                
+
                 // Pre-cache our frequently-used entities
                 manufacturerTypeDao.findAll();
                 manufacturerDao.findAll();
                 partTypeDao.findAll();
-                coolTypeDao.findAll();
-                gasketTypeDao.findAll();
-                kitTypeDao.findAll();
-                sealTypeDao.findAll();
 
                 // Get the next batch of part IDs
                 parts = partDao.findAllOrderedById(position, magmiBatchSize);
@@ -305,14 +347,13 @@ public class MagmiController {
     @ResponseBody
     @Transactional
     @PreAuthorize("hasRole('ROLE_MAGMI_EXPORT') or hasIpAddress('127.0.0.1/32')")
-    public void product(HttpServletResponse response, OutputStream out, @PathVariable Long partId,
-                         @RequestParam(name = "impl", required = false, defaultValue = "MS_SQL")
-                         Mas90ServiceFactory.Implementation implementation) throws Exception {
+    public void product(HttpServletResponse response, OutputStream out, @PathVariable Long partId)
+            throws Exception {
         
         response.setHeader("Content-Type", "text/csv");
         response.setHeader("Content-Disposition: attachment; filename=products.csv", null);
 
-        Mas90 mas90 = mas90ServiceFactory.getService(implementation);
+        Mas90 mas90 = new MsSqlImpl(dataSourceMas90);;
         logger.info("Mas90 implementation: {}", mas90.toString());
         CSVWriter writer = new CSVWriter(new OutputStreamWriter(out), ',', '\'', '\\');
         
@@ -321,7 +362,7 @@ public class MagmiController {
         writer.writeNext(csvHeaders);
         
         Part part = partDao.findOne(partId);
-        List<Part> parts = new ArrayList<Part>();
+        List<Part> parts = new ArrayList();
         parts.add(part);
         
         Iterator<MagmiProduct> it = magmiDataFinder.findMagmiProducts(parts).values().iterator();
@@ -380,7 +421,7 @@ public class MagmiController {
             
             columns.put("price", itemPricing.getStandardPrice().toString());
 
-            addErpCustomerPrices(mas90, itemPricing, columns);
+            addErpCustomerPrices(itemPricing, columns);
             addErpGroupPrices(mas90, itemPricing, columns);
         } catch (UnknownDiscountCodeException e) {
                 logger.warn("Unknown discount code {} for product {}", e.getCode(), product.getPartNumber());
@@ -392,7 +433,7 @@ public class MagmiController {
     }
     
     // bob@example.com;0:$1.00;10:$0.95;20:$0.90|jim@example.com....
-    private void addErpCustomerPrices(Mas90 mas90, ItemPricing itemPricing, Map<String, String> columns) throws IOException {
+    private void addErpCustomerPrices(ItemPricing itemPricing, Map<String, String> columns) throws IOException {
         
         // Build the customer price string
         StringBuilder priceString = new StringBuilder();

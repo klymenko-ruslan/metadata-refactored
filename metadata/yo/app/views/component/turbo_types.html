@@ -1,9 +1,13 @@
+<a authorize="ROLE_ALTER_PART" class="btn btn-primary pull-right" ng-click="addTurboType()" style="margin-bottom:10px;">
+  <i class="fa fa-plus"></i>
+  Add Type
+</a>
 <table data-ng-table="turboTypesTableParams" class="table table-bordered table-striped table-hover table-responsive">
   <tbody>
     <tr ng-repeat="turboType in $data">
       <td title="'Manufacturer'" data-sortable="'manufacturer.name'">{{turboType.manufacturer.name}}</td>
       <td title="'Type'" data-sortable="'name'">{{turboType.name}}</td>
-      <td title="'Actions'">
+      <td title="'Actions'" class="actions">
         <a ng-click="removeTurboType(turboType)"
            class="btn btn-xs btn-danger">
           <i class="fa fa-trash-o"></i>

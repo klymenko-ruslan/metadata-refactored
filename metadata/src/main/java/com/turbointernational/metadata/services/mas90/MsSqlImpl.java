@@ -1,53 +1,48 @@
 package com.turbointernational.metadata.services.mas90;
 
-import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowCallbackHandler;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import javax.sql.DataSource;
 import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 /**
- * Created by dmytro.trunykov on 12/30/15.
+ * Created by dmytro.trunykov@zorallabs.com on 12/30/15.
  */
 public class MsSqlImpl extends AbstractMas90 {
 
-    private JdbcTemplate mssqldb;
+    private final JdbcTemplate mssqldb;
 
     public MsSqlImpl(DataSource dataSourceMas90) throws IOException {
         this.mssqldb = new JdbcTemplate(dataSourceMas90, true);
         super.init();
     }
 
+
     @Override
     protected void loadMas90Data() throws IOException {
 
         // Load customer data
-        mssqldb.query("SELECT CUSTOMERNO, EMAILADDRESS FROM AR_CUSTOMER", rs -> {
+        mssqldb.query("select customerno, emailaddress from ar_customer", rs -> {
             String customerNo = StringUtils.trim(rs.getString(1));
             String emailAddress = rs.getString(2);
-            h2db.update("INSERT INTO customer (id, email) VALUES(?, ?)", customerNo, emailAddress);
+            h2db.update("insert into customer (id, email) values(?, ?)", customerNo, emailAddress);
         });
 
         // Load product data
-        mssqldb.query("SELECT ITEMCODE, STANDARDUNITPRICE FROM CI_ITEM", rs -> {
+        mssqldb.query("select itemcode, standardunitprice from ci_item", rs -> {
             String itemCode = StringUtils.trim( rs.getString(1));
             String stdPrice = rs.getString(2);
-            h2db.update("MERGE INTO product (id, price) VALUES(?, ?)", itemCode, stdPrice);
+            h2db.update("merge into product (id, price) values(?, ?)", itemCode, stdPrice);
         });
 
         // Load pricing data
         mssqldb.query(
-                "SELECT " +
-                "   PRICECODERECORD, CUSTOMERPRICELEVEL, PRICINGMETHOD, BREAKQUANTITY1, BREAKQUANTITY2, " +
-                "   BREAKQUANTITY3, BREAKQUANTITY4, BREAKQUANTITY5, DISCOUNTMARKUP1, DISCOUNTMARKUP2, " +
-                "   DISCOUNTMARKUP3, DISCOUNTMARKUP4, DISCOUNTMARKUP5, ITEMCODE, CUSTOMERNO " +
-                "FROM IM_PRICECODE", rs -> {
+                "select " +
+                "   pricecoderecord, customerpricelevel, pricingmethod, breakquantity1, breakquantity2, " +
+                "   breakquantity3, breakquantity4, breakquantity5, discountmarkup1, discountmarkup2, " +
+                "   discountmarkup3, discountmarkup4, discountmarkup5, itemcode, customerno " +
+                "from im_pricecode", rs -> {
                     String priceCode = rs.getString(1);
                     String customerPriceLevel = rs.getString(2);
                     String pricingMethod = rs.getString(3);

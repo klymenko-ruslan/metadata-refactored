@@ -1,7 +1,10 @@
 "use strict";
 
 angular.module("ngMetaCrudApp")
-  .service("restService", function RestService($log, Restangular, dialogs, $q, $rootScope) {
+  .service("restService", ["$log", "$http", "Restangular", "dialogs", "$q", "$rootScope", "$filter",
+      "METADATA_BASE", "DATE_FORMAT",
+      function RestService($log, $http, Restangular, dialogs, $q, $rootScope, $filter, METADATA_BASE, DATE_FORMAT) {
+
     return new function() { // jshint ignore:line
       var RestService = this;
       var refreshPromise = null;
@@ -51,17 +54,26 @@ angular.module("ngMetaCrudApp")
 
         return deferred.promise;
       };
+
       this.error = function(title, response) {
         // NOOP on access denied, loginRequiredInterceptor will handle the redirect
         if (response.status === 401 || response.status === 403) {
           return;
         }
         $log.log(title, response);
-        dialogs.error(title, 'Server said: <pre>' + response.data.message + '</pre>');
+        dialogs.error(title, 'Server said: <pre>' + angular.toJson(response.data, 2) + '</pre>');
       };
 
-      this.getAllUsers = function() {
+      this.getCurrentUser = function() {
+        return Restangular.one('security/user/me').get();
+      };
+
+      this.findActiveUsers = function() {
         return Restangular.all("security/user").getList();
+      };
+
+      this.findAllUsers = function() {
+        return Restangular.all("security/user/list").getList();
       };
 
       this.findPart = function(id, params) {
@@ -79,50 +91,143 @@ angular.module("ngMetaCrudApp")
         // Specify class depending on part type.
         var clazz = "com.turbointernational.metadata.domain.part.types.";
         switch (part.partType.id) {
-          case 1:
-            clazz += "Turbo";
-            break;
-          case 2:
-            clazz += "Cartridge";
-            break;
-          case 3:
-            clazz += "Kit";
-            break;
-          case 4:
-            clazz += "PistonRing";
-            break;
-          case 5:
-            clazz += "JournalBearing";
-            break;
-          case 6:
-            clazz += "Gasket";
-            break;
-          case 7:
-            clazz += "BearingSpacer";
-            break;
-          case 11:
-            clazz += "CompressorWheel";
-            break;
-          case 12:
-            clazz += "TurbineWheel";
-            break;
-          case 13:
-            clazz += "BearingHousing";
-            break;
-          case 14:
-            clazz += "Backplate";
-            break;
-          case 15:
-            clazz += "Heatshield";
-            break;
-          case 16:
-            clazz += "NozzleRing";
-            break;
-          default:
-            clazz = "com.turbointernational.metadata.domain.part.Part";
+        case 30:
+          clazz += "Actuator";
+          break;
+        case 31:
+          clazz += "CompressorCover";
+          break;
+        case 2:
+          clazz += "Cartridge";
+          break;
+        case 32:
+          clazz += "Plug";
+          break;
+        case 33:
+          clazz += "TurbineHousing";
+          break;
+        case 1:
+          clazz += "Turbo";
+          break;
+        case 34:
+          clazz += "Backplate";
+          break;
+        case 13:
+          clazz += "BearingHousing";
+          break;
+        case 35:
+          clazz += "BoltScrew";
+          break;
+        case 19:
+          clazz += "Clamp";
+          break;
+        case 11:
+          clazz += "CompressorWheel";
+          break;
+        case 36:
+          clazz += "Fitting";
+          break;
+        case 6:
+          clazz += "Gasket";
+          break;
+        case 15:
+          clazz += "HeatshieldShroud";
+          break;
+        case 5:
+          clazz += "JournalBearing";
+          break;
+        case 37:
+          clazz += "JournalBearingSpacer";
+          break;
+        case 16:
+          clazz += "NozzleRing";
+          break;
+        case 38:
+          clazz += "Nut";
+          break;
+        case 18:
+          clazz += "OilDeflector";
+          break;
+        case 17:
+          clazz += "ORing";
+          break;
+        case 39:
+          clazz += "Pin";
+          break;
+        case 4:
+          clazz += "PistonRing";
+          break;
+        case 40:
+          clazz += "RetainingRing";
+          break;
+        case 41:
+          clazz += "SealPlate";
+          break;
+        case 12:
+          clazz += "TurbineWheel";
+          break;
+        case 42:
+          clazz += "Spring";
+          break;
+        case 43:
+          clazz += "ThrustBearing";
+          break;
+        case 44:
+          clazz += "ThrustCollar";
+          break;
+        case 45:
+          clazz += "ThrustSpacer";
+          break;
+        case 46:
+          clazz += "ThrustWasher";
+          break;
+        case 47:
+          clazz += "Washer";
+          break;
+        case 48:
+          clazz += "CarbonSeal";
+          break;
+        case 49:
+          clazz += "GasketKit";
+          break;
+        case 50:
+          clazz += "Misc";
+          break;
+        case 51:
+          clazz += "P";
+          break;
+        case 52:
+          clazz += "Shroud";
+          break;
+        case 3:
+          clazz += "Kit";
+          break;
+        case 7:
+          clazz += "BearingSpacer";
+          break;
+        case 8:
+          clazz += "FastWearingComponent";
+          break;
+        case 9:
+          clazz += "MajorComponent";
+          break;
+        case 10:
+          clazz += "MinorComponent";
+          break;
+        case 14:
+          clazz += "BackplateSealplate";
+          break;
+        case 20:
+          clazz += "ThrustPart";
+          break;
+        case 21:
+          clazz += "MiscMinorComponent";
+          break;
+        default:
+          clazz = "com.turbointernational.metadata.domain.part.Part";
         }
         part.class = clazz;
-        return Restangular.all('part').post(part);
+        return Restangular.all("part").post(part);
       };
 
       this.updatePart = function(part) {
@@ -131,6 +236,33 @@ angular.module("ngMetaCrudApp")
 
       this.deletePart = function(part) {
         return Restangular.remove(part);
+      };
+
+      this._upload = function(url, bytes) {
+        var fd = new FormData();
+        fd.append("file", bytes);
+        return $http.post(url, fd, {
+          transformRequest: angular.identity,
+          headers: {"Content-Type": undefined}
+        });
+      };
+
+      this.uploadPartCritDimsLegend = function(partId, imgBytes) {
+        var url = METADATA_BASE + "part/" + partId + "/cdlegend/image";
+        return this._upload(url, imgBytes);
+      };
+
+      this.deletePartCritdimsLegend = function(partId) {
+        return Restangular.one("/image/" + partId + "/cdlegend.jpg").remove();
+      };
+
+      this.uploadPartTypeLegend = function(partTypeId, imgBytes) {
+        var url = METADATA_BASE + "parttype/" + partTypeId + "/ptlegend/image";
+        return this._upload(url, imgBytes);
+      };
+
+      this.deletePartTypeLegend = function(partTypeId) {
+        return Restangular.one("/image/" + partTypeId + "/ptlegend.jpg").remove();
       };
 
       this.findCarmodelengineyear = function(cmey_id) {
@@ -165,19 +297,20 @@ angular.module("ngMetaCrudApp")
         return Restangular.one("part/" + part_id + "/application/" + application_id).remove();
       };
 
-      this.listManufacturers = function(first, count) {
-        return Restangular.all("other/manufacturer", {
-          first: first,
-          count: count
-        }).getList();
-      };
-
-      this.listPartTypes = function() {
-        return Restangular.all("type/part").getList();
+      this.listManufacturers = function() {
+        return Restangular.all("other/manufacturer/list").getList();
       };
 
       this.findManufacturer = function(id) {
         return Restangular.one("manufacturer", id).get();
+      };
+
+      this.findPartType = function(id) {
+        return Restangular.one("parttype/json", id).get();
+      };
+
+      this.listPartTypes = function() {
+        return Restangular.all("parttype/json/list").getList();
       };
 
       this.listTurboTypesForManufacturerId = function(manufacturerId) {
@@ -190,6 +323,11 @@ angular.module("ngMetaCrudApp")
         return Restangular.all("other/turboModel").getList({
           "turboTypeId": turboTypeId
         });
+      };
+
+      this.removeTurboType = function(partId, turboTypeId) {
+        Restangular.setParentless(false);
+        return Restangular.one("part", partId).one("turboType", turboTypeId).remove();
       };
 
       this.findInterchange = function(id) {
@@ -324,23 +462,38 @@ angular.module("ngMetaCrudApp")
         return Restangular.one("mas90sync/status").get();
       };
 
-      this.filterParts = function(partNumber, partTypeName, manufacturerName, kitType, gasketType, sealType, coolType,
-      turboType, turboModel, sortProperty, sortOrder, offset, limit) {
-        return Restangular.one("search/parts").get({
-          "partNumber": partNumber,
-          "partTypeName": partTypeName,
-          "manufacturerName": manufacturerName,
-          "kitType": kitType,
-          "gasketType": gasketType,
-          "sealType": sealType,
-          "coolType": coolType,
-          "turboType": turboType,
-          "turboModel": turboModel,
-          "sortProperty": sortProperty,
-          "sortOrder": sortOrder,
-          "offset": offset,
-          "limit": limit
+      this.startIndexing = function(toIndex) {
+        return Restangular.one("search/indexing").post("start", toIndex);
+      };
+
+      this.getIndexingStatus = function() {
+        return Restangular.one("search/indexing/status").get();
+      };
+
+      this.filterParts = function(searchPartTypeId, searchManufacturerName, searchName, searchPartNumber,
+          searchInactive, searchTurboModelName, searchTurboTypeName, searchCritDims,
+          sortProperty, sortOrder, offset, limit) {
+        var params = {
+          partNumber: searchPartNumber,
+          inactive: searchInactive,
+          partTypeId: searchPartTypeId,
+          manufacturerName: searchManufacturerName,
+          turboModelName: searchTurboModelName,
+          turboTypeName: searchTurboTypeName,
+          name: searchName,
+          pgSortProperty: sortProperty,
+          pgSortOrder: sortOrder,
+          pgOffset: offset,
+          pgLimit: limit
+        };
+        _.each(searchCritDims, function(val, key) {
+          // Normalize enumerations.
+          if (_.isObject(val)) {
+            val = val.id;
+          }
+          params[key] = val;
         });
+        return Restangular.one("search/parts").get(params);
       };
 
       this.filterCarModelEngineYears = function(cmey, year, make, model, engine, fuel, sortProperty, sortOrder,
@@ -417,6 +570,26 @@ angular.module("ngMetaCrudApp")
         });
       };
 
+      this.filterChangelog = function(startDate, finishDate, userId, description,
+        sortProperty, sortOrder, offset, limit) {
+        if (startDate) {
+          startDate = $filter("date")(startDate, DATE_FORMAT);
+        }
+        if (finishDate) {
+          finishDate = $filter("date")(finishDate, DATE_FORMAT);
+        }
+        return Restangular.one("changelog/list").get({
+          "startDate": startDate,
+          "finishDate": finishDate,
+          "userId": userId,
+          "description": description,
+          "sortProperty": sortProperty,
+          "sortOrder": sortOrder,
+          "offset": offset,
+          "limit": limit
+        });
+      };
+
       this.findPrimaryPartIdForThePart = function(id) {
         return Restangular.one("other/salesNote/primarypartidforthepart").get({
           "partId": id
@@ -460,5 +633,65 @@ angular.module("ngMetaCrudApp")
         return Restangular.one("other/salesNote", id).remove();
       };
 
+      this.findCriticalDimensionsForThePart = function(id) {
+        return Restangular.one("/criticaldimension/part", id).get();
+      };
+
+      this.getCritDimsByPartTypes = function(indexBy) {
+        if (!indexBy) {
+          indexBy = "ID";
+        }
+        if (indexBy != "ID" && indexBy != "NAME") {
+          throw "Unexpected value of 'indexBy': " + angular.toJson(indexBy);
+        }
+        return Restangular.one("/criticaldimension/byparttypes").get({
+          "indexBy": indexBy
+        });
+      };
+
+      this.getAllCritDimEnums = function() {
+        return Restangular.all("/criticaldimension/enum/list").getList();
+      };
+
+      this.getAllCritDimEnumVals = function() {
+        return Restangular.all("/criticaldimension/enums/vals").getList();
+      };
+
+      this.getCritDimEnumVals = function(id) {
+        return Restangular.one("/criticaldimension/enum", id).getList("list");
+      };
+
+      this.addCritDimEnum = function(newEnum) {
+        return Restangular.one("/criticaldimension").post("enum", newEnum);
+      };
+
+      this.addCritDimEnumItm = function(enumId, newEnumItm) {
+        return Restangular.one("/criticaldimension/enum", enumId).post("item", newEnumItm);
+      };
+
+      this.removeCritDimEnum = function(id) {
+        return Restangular.one("/criticaldimension/enum", id).remove();
+      };
+
+      this.removeCritDimEnumItm = function(id) {
+        return Restangular.one("/criticaldimension/enum/item", id).remove();
+      };
+
+      this.updateCritDimEnum = function(cde) {
+        return Restangular.one("/criticaldimension/enum", cde.id).customPUT(cde);
+      };
+
+      this.updateCritDimEnumItm = function(cdev) {
+        return Restangular.one("/criticaldimension/enum/item", cdev.id).customPUT(cdev);
+      };
+
+      this.findCritDimEnumByName = function(name) {
+        return Restangular.one("/criticaldimension/enum").get({"name": name});
+      };
+
+      this.findCritDimEnumItmByName = function(enumId, name) {
+        return Restangular.one("/criticaldimension/enum/" + enumId + "/items").get({"name": name});
+      };
+
     };
-  });
+  }]);
