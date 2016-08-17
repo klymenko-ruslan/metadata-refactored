@@ -70,8 +70,8 @@
       </form>
       <div style="background-color:white;">
         <table data-ng-table-dynamic="partTableParams with columns" class="table table-condensed table-bordered table-striped" style="background-color:white;">
-          <tr data-ng-repeat="part in $data">
-            <td data-ng-repeat="col in $columns" data-title="col.title" data-sortable="col.sortable" data-ng-class="col.cssClass" data-ng-bind-html="col.getter(part)"></td>
+          <tr data-ng-repeat="$part in $data">
+            <td data-ng-repeat="col in $columns" data-title="col.title" data-sortable="col.sortable" data-ng-class="col.cssClass" data-ng-html-compile="col.getter($part)"></td>
           </tr>
           <tr data-ng-hide="$data.length"><td colspan="{{$columns.length}}">No data to display.</td></tr>
         </table>

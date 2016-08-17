@@ -62,14 +62,16 @@ angular.module("mockApp")
     controller: ["$parse", "$sce", "$log", "$q", "$scope", "NgTableParams",
       "$transclude",
     function($parse, $sce, $log, $q, $scope, NgTableParams, $transclude) {
-      var transcludedHtml = $transclude();
-      /*
-      var transcludedHtml = null;
+      //var transcludedHtml = $transclude();
+      var transcludedHtml = "";
       $transclude(function(clone) {
-        transcludedHtml = clone[0].outerHTML;
+        clone.each(function(idx, node) {
+          if (node.outerHTML) {
+            transcludedHtml += node.outerHTML;
+          }
+        });
+        //transcludedHtml = clone[0].outerHTML;
       });
-      */
-      $log.log("transcludedHtml: " + transcludedHtml);
       $scope.tableDataSet = [
         {name: "John Rambo", action: "None"},
         {name: "Forrest Gump", action: "None"},
@@ -88,7 +90,6 @@ angular.module("mockApp")
             //var dataSet = $scope.tableDataSet;
             var dataSet = angular.copy($scope.tableDataSet);
             _.each(dataSet, function(rec) {
-              //rec.action = $sce.trustAsHtml(transcludedHtml);
               rec.action = transcludedHtml;
             });
             $defer.resolve(dataSet);

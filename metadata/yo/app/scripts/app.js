@@ -86,11 +86,24 @@ angular.module("ngMetaCrudApp", ["ngRoute", "ngTable", "ui.bootstrap",
     });
     $routeProvider.when("/part/Kit/:id/component/search", {
       templateUrl: "../views/part/KitComponentSearch.html",
-      controller: "KitComponentSearchCtrl"
+      controller: "KitComponentSearchCtrl",
+      resolve: {
+        partTypes: ["restService", function(restService) {
+          return restService.listPartTypes();
+        }]
+      }
     });
     $routeProvider.when("/part/:id/bom/search", {
       templateUrl: "views/part/bom/PartBomSearch.html",
-      controller: "PartBomSearchCtrl"
+      controller: "PartBomSearchCtrl",
+      resolve: {
+        part: ["$route", "restService", function($route, restService) {
+          return restService.findPart($route.current.pathParams.id);
+        }],
+        partTypes: ["restService", function(restService) {
+          return restService.listPartTypes();
+        }]
+      }
     });
     $routeProvider.when("/part/:id/application/search", {
       templateUrl: "views/part/application/PartApplicationSearch.html",
@@ -98,7 +111,12 @@ angular.module("ngMetaCrudApp", ["ngRoute", "ngTable", "ui.bootstrap",
     });
     $routeProvider.when("/part/:id/bom/:bomId/search", {
       templateUrl: "views/part/bom/BomAlternateSearch.html",
-      controller: "BomAlternateSearchCtrl"
+      controller: "BomAlternateSearchCtrl",
+      resolve: {
+        partTypes: ["restService", function(restService) {
+          return restService.listPartTypes();
+        }]
+      }
     });
     $routeProvider.when("/part/:id/ancestors", {
       templateUrl: "views/part/PartAncestors.html",
@@ -174,7 +192,10 @@ angular.module("ngMetaCrudApp", ["ngRoute", "ngTable", "ui.bootstrap",
         }],
         salesNote: ["$route", "restService", function($route, restService) {
           return restService.findSalesNote($route.current.pathParams.salesNoteId);
-        }]
+        }],
+        partTypes: ["restService", function(restService) {
+          return restService.listPartTypes();
+        }],
       }
     });
 

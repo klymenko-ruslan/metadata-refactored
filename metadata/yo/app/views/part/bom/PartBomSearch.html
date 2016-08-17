@@ -43,25 +43,21 @@
       Pick a part to add to the bill of materials.
     </div>
   </div>
+
 </div>
 
 <hr/>
 
 <part-search class="well well-lg">
-
-  <a authorize="ROLE_READ"
-     ng-href="/part/{{partId}}"
-     class="btn btn-primary btn-xs">
-    <i class="fa fa-eye"></i>
-    View
+  <a authorize="ROLE_READ" data-ng-href="/part/{{$part._source.id}}" class="btn btn-primary btn-xs">
+    <i class="fa fa-eye"></i> View
   </a>
-
-  <a authorize="ROLE_BOM"
-     ng-click="pickBomItemPart(partId, $parent.part.manufacturer.id == part._source.manufacturer.id)"
-     ng-disabled="$parent.part.manufacturer.id != part._source.manufacturer.id || $parent.part.id == part._source.id || part._source.id == pickedPart.id"
+  <button type="button" authorize="ROLE_BOM"
+     data-ng-click="pickBomItemPart($part._source.id, part.manufacturer.id == $part._source.manufacturer.id)"
+     data-ng-disabled="part.manufacturer.id != $part._source.manufacturer.id || part.id == $part._source.id || $part._source.id == pickedPart.id"
      class="btn btn-success btn-xs">
-      <i class="fa fa-bullseye"></i>
-    Pick
-  </a>
-
+    <i class="fa fa-bullseye"></i> Pick
+  </button>
 </part-search>
+
+

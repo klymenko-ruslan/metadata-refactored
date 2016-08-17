@@ -12,10 +12,6 @@
 </div>
 
 <part-search>
-  <p>John Rambo</p>
+  <a authorize="ROLE_READ" href="/part/{{$part._source.id}}" class="btn btn-primary btn-xs"><i class="fa fa-eye"></i> View</a>
+  <a authorize="ROLE_ALTER_PART" href="/part/{{$part._source.id}}/form" class="btn btn-primary btn-xs"><i class="fa fa-cog"></i> Edit</a>
 </part-search>
-
-<!--
-  <a authorize="ROLE_READ" href="/part/{{part._source.id}}" class="btn btn-primary btn-xs"><i class="fa fa-eye"></i> View</a>
-  <a authorize="ROLE_ALTER_PART" href="/part/{{part._source.id}}/form" class="btn btn-primary btn-xs"><i class="fa fa-cog"></i> Edit</a>
--->
