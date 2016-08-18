@@ -295,7 +295,155 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
         this.legendImgFilename = legendImgFilename;
     }
 
-//</editor-fold>
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="Utilities">
+
+    /**
+     * Create an instance of a Part descendant with specified part type.
+     *
+     * @param partTypeId part type ID
+     * @return
+     */
+    public static <T extends Part> T newInstance(int partTypeId) {
+        Part retVal;
+        switch (partTypeId) {
+            case 1:
+                retVal = new Turbo();
+                break;
+            case 2:
+                retVal = new Cartridge();
+                break;
+            case 3:
+                retVal = new Kit();
+                break;
+            case 4:
+                retVal = new PistonRing();
+                break;
+            case 5:
+                retVal = new JournalBearing();
+                break;
+            case 6:
+                retVal = new Gasket();
+                break;
+            case 8:
+                retVal = new FastWearingComponent();
+                break;
+            case 9:
+                retVal =  new MajorComponent();
+                break;
+            case 10:
+                retVal = new MinorComponent();
+                break;
+            case 11:
+                retVal = new CompressorWheel();
+                break;
+            case 12:
+                retVal = new TurbineWheel();
+                break;
+            case 13:
+                retVal = new BearingHousing();
+                break;
+            case 14:
+                retVal = new BackplateSealplate();
+                break;
+            case 15:
+                retVal = new HeatshieldShroud();
+                break;
+            case 16:
+                retVal = new NozzleRing();
+                break;
+            case 17:
+                retVal = new ORing();
+                break;
+            case 18:
+                retVal = new OilDeflector();
+                break;
+            case 19:
+                retVal = new Clamp();
+                break;
+            case 20:
+                retVal = new ThrustPart();
+                break;
+            case 21:
+                retVal = new MiscMinorComponent();
+                break;
+            case 30:
+                retVal = new Actuator();
+                break;
+            case 31:
+                retVal = new CompressorWheel();
+                break;
+            case 32:
+                retVal = new Plug();
+                break;
+            case 33:
+                retVal = new TurbineWheel();
+                break;
+            case 34:
+                retVal = new Backplate();
+                break;
+            case 35:
+                retVal = new BoltScrew();
+                break;
+            case 36:
+                retVal = new Fitting();
+                break;
+            case 37:
+                retVal = new JournalBearingSpacer();
+                break;
+            case 38:
+                retVal = new Nut();
+                break;
+            case 39:
+                retVal = new Pin();
+                break;
+            case 40:
+                retVal = new RetainingRing();
+                break;
+            case 41:
+                retVal = new SealPlate();
+                break;
+            case 42:
+                retVal = new Spring();
+                break;
+            case 43:
+                retVal = new ThrustBearing();
+                break;
+            case 44:
+                retVal = new ThrustCollar();
+                break;
+            case 45:
+                retVal = new ThrustSpacer();
+                break;
+            case 46:
+                retVal = new ThrustWasher();
+                break;
+            case 47:
+                retVal = new Washer();
+                break;
+            case 48:
+                retVal = new CarbonSeal();
+                break;
+            case 49:
+                retVal = new GasketKit();
+                break;
+            case 50:
+                retVal = new Misc();
+                break;
+            case 51:
+                retVal = new P();
+                break;
+            case 52:
+                retVal = new Shroud();
+                break;
+            default:
+                throw new AssertionError("Unsupported part type: " + partTypeId);
+        }
+        return (T) retVal;
+    }
+
+    //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Lifecycle">
     @PostRemove

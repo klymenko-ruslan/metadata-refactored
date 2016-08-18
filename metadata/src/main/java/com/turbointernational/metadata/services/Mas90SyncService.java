@@ -317,7 +317,8 @@ public class Mas90SyncService {
             synchronized (syncProcessStatus) {
                 syncProcessStatus.setPartsUpdateTotalSteps(numItems + 1); // +1 to load part_types
             }
-            Map<String, Long> mas90toLocal = loadPartTypesMap(); // part type value => part type ID
+            List<String> warnings = new ArrayList<>(10);
+            Map<String, PartType> mas90toLocal = loadPartTypesMap(); // part type value => PartType
             synchronized (syncProcessStatus) {
                 syncProcessStatus.incPartsUpdateCurrentStep();
             }
@@ -325,14 +326,15 @@ public class Mas90SyncService {
                 Set<Part> toBeReprocessed = new HashSet<>();
                 String itemsQuery = mas90Database.getItemsQuery();
                 mas90db.query(itemsQuery, rs -> {   // we may skip transaction as we use MAS90 DB to query only
-                    String itemcode = rs.getString(1);
-                    String itemcodedesc = rs.getString(2);
-                    String productline = rs.getString(3);
-                    String producttype = rs.getString(4);
+                    String itemcode = rs.getString(1);      // e.g. 6-A-0291
+                    String itemcodedesc = rs.getString(2);  // e.g. HEAT SHIELD, T3/4, WHEEL
+                    String productline = rs.getString(3);   // e.g. HS
+                    String producttype = rs.getString(4);   // e.g. F
                     Part processedPart = null;
                     try {
-                        Long partTypeId = mas90toLocal.get(productline);
-                        if (partTypeId != null) {
+                        PartType pt = mas90toLocal.get(productline);
+                        if (pt != null) {
+                            Long partTypeId = pt.getId();
                             processedPart = processPart(itemcode, itemcodedesc, producttype, partTypeId); // separate transaction
                             if (processedPart != null) { // null -- failure
                                 Boolean updated = processBOM(processedPart, toBeReprocessed, true); // separate transaction
@@ -343,11 +345,11 @@ public class Mas90SyncService {
                                 }
                             }
                         } else {
-                            // Actually this should never happen because we joined ci_item
-                            // with productLine_to_parttype_value.
-                            throw new AssertionError(String.format("Can't convert productline ('{}') " +
-                                            "to product_type_id. Item with code '{}'.",
-                                    productline, itemcode));
+                            synchronized (syncProcessStatus) {
+                                syncProcessStatus.addError(String.format("Part '%1$s' in MAS90 has " +
+                                                "unknown part type (product line): '%2$s'.",
+                                        itemcode, productline));
+                            }
                         }
                         synchronized (syncProcessStatus) {
                             syncProcessStatus.incPartsUpdateCurrentStep();
@@ -355,9 +357,9 @@ public class Mas90SyncService {
                     } catch (Throwable th) {
                         String errMsg;
                         if (processedPart == null) {
-                            errMsg = String.format("Failed processing at the part: '%s'", itemcode);
+                            errMsg = String.format("Failed processing at the part: '%1$s'", itemcode);
                         } else {
-                            errMsg = String.format("Failed processing at the part: [%d] {%s}",
+                            errMsg = String.format("Failed processing at the part: [%1$d] %2$s",
                                     processedPart.getId(), processedPart.getManufacturerPartNumber());
                         }
                         synchronized (syncProcessStatus) {
@@ -423,24 +425,28 @@ public class Mas90SyncService {
 
         /**
          * MAS90 use different part type codes than in the local database -- 'metadata'.
-         * <p>
+         *
          * This method makes mapping between product type codes in MAS90 and 'metadata'.
          *
-         * @return map ProductLineCode => part_type_id
+         * @return map ProductLineCode => PartType
          */
-        private Map<String, Long> loadPartTypesMap() {
-            Map<String, Long> retVal = new HashMap<>(30);
+        private Map<String, PartType> loadPartTypesMap() {
+            Map<String, PartType> retVal = new HashMap<>(50);
             mas90db.query("select ProductLineCode, part_type_value from productLine_to_parttype_value", rs -> {
                 String productLineCode = rs.getString(1);
                 String partTypeValue = rs.getString(2);
                 PartType pt = partTypeDao.findPartTypeByValue(partTypeValue);
                 if (pt != null) {
-                    retVal.put(productLineCode, pt.getId());
+                    retVal.put(productLineCode, pt);
                     log.debug("Mapping: {} => {}", productLineCode, pt.getId());
                 } else {
-                    log.warn("Part type not found for productLineCode: {}", productLineCode);
+                    String msg = String.format("Part type not found for productLineCode: '%1$s'.",
+                            productLineCode);
+                    log.warn(msg);
+                    synchronized (syncProcessStatus) {
+                        syncProcessStatus.addError(msg);
+                    }
                 }
-
             });
             return retVal;
         }
@@ -514,35 +520,7 @@ public class Mas90SyncService {
         }
 
         private Part insertPart(String itemcode, String itemcodedesc, Long partTypeId, Boolean inactive) {
-            Part p;
-            if (partTypeId == 1L) {
-                p = new Turbo();
-            } else if (partTypeId == 2L) {
-                p = new Cartridge();
-            } else if (partTypeId == 3L) {
-                p = new Kit();
-            } else if (partTypeId == 4L) {
-                p = new PistonRing();
-            } else if (partTypeId == 5L) {
-                p = new JournalBearing();
-            } else if (partTypeId == 6L) {
-                p = new Gasket();
-            } else if (partTypeId == 11L) {
-                p = new CompressorWheel();
-            } else if (partTypeId == 12L) {
-                p = new TurbineWheel();
-            } else if (partTypeId == 13L) {
-                p = new BearingHousing();
-            } else if (partTypeId == 14L) {
-                p = new Backplate();
-            } else if (partTypeId == 15L) {
-                p = new HeatshieldShroud();
-            } else if (partTypeId == 16L) {
-                p = new NozzleRing();
-            } else {
-                //p = new Part();
-                throw new AssertionError("Unsupported part type: " + partTypeId);
-            }
+            Part p = Part.newInstance(partTypeId.intValue());
             PartType partType = entityManager.getReference(PartType.class, partTypeId);
             p.setManufacturerPartNumber(itemcode);
             Manufacturer manufacturer = entityManager.getReference(Manufacturer.class, TURBO_INTERNATIONAL_MANUFACTURER_ID);
@@ -649,7 +627,6 @@ public class Mas90SyncService {
                             entityManager.remove(bom);
                             rmIter.remove();
                             dirty = true;
-                        } else {
                             if (bom.getQuantity() != mas90Bom.quantity) {
                                 modification = String.format("Part [%d] %s modified. BOM [%d] (child: [%d] %s) " +
                                                 "updated. Quantity: %d => %d", partId, manufacturerPartNumber, bom.getId(),
