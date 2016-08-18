@@ -35,6 +35,7 @@
     </div>
     <div class="form-group">
       <label for="fltrTurboModel" data-ng-disabled="searchPartType.id !== 1">Turbo Model</label>
+      <!-- input id="fltrTurboModel" data-ng-disabled="searchPartType.id !== 1" name="fltrTurboModel" class="form-control input-sm" data-ng-model="searchTurboModel" / -->
       <select id="fltrTurboModel" data-ng-disabled="searchPartType.id !== 1" name="fltrTurboModel" class="form-control input-sm" data-ng-options="itm.key as itm.key + ' (' + itm.doc_count + ')' for itm in searchResults.aggregations['Turbo Model'].buckets | orderBy: 'key'" data-ng-model="searchTurboModel">
         <option></option>
       </select>
