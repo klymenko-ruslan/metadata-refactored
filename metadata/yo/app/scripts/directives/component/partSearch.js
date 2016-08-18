@@ -21,6 +21,8 @@ angular.module("ngMetaCrudApp")
         $scope.searchPartNumber = null;
         $scope.searchCritDims = {};
 
+        $scope.stateItems = [];
+
         $scope.actions = utils.transclude2html($transclude);
         $scope.showCriticalDimensions = false;
 
@@ -125,11 +127,29 @@ angular.module("ngMetaCrudApp")
               turboModelName = $scope.searchTurboModel;
               turboTypeName = $scope.searchTurboType;
             }
+            var searchInactiveVal = $scope.searchInactive === null ? null : $scope.searchInactive.val;
             restService.filterParts(searchPartTypeId, $scope.searchManufacturer, $scope.searchName,
-              $scope.searchPartNumber, $scope.searchInactive, turboModelName, turboTypeName,
+              $scope.searchPartNumber, searchInactiveVal, turboModelName, turboTypeName,
               $scope.searchCritDims, sortProperty, sortOrder, offset, limit).then(
               function(filtered) { // The 'filtered' is a JSON returned by ElasticSearch.
                 $scope.searchResults = filtered;
+                // Update values for UI combobox -- "State".
+                $scope.stateItems = [];
+                _.each(filtered.aggregations.State.buckets, function(b) {
+                  if (b.key === 0) {
+                    $scope.stateItems.push({
+                      name: "Active",
+                      val: "false",
+                      count: b.doc_count
+                    });
+                  } else if (b.key == 1) {
+                    $scope.stateItems.push({
+                      name: "Inactive",
+                      val: "true",
+                      count: b.doc_count
+                    });
+                  }
+                });
                 // Update the total and slice the result
                 $defer.resolve($scope.searchResults.hits.hits);
                 params.total($scope.searchResults.hits.total);

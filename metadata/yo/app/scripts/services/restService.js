@@ -473,6 +473,7 @@ angular.module("ngMetaCrudApp")
       this.filterParts = function(searchPartTypeId, searchManufacturerName, searchName, searchPartNumber,
           searchInactive, searchTurboModelName, searchTurboTypeName, searchCritDims,
           sortProperty, sortOrder, offset, limit) {
+$log.log("searchInactive: " + searchInactive);
         var params = {
           partNumber: searchPartNumber,
           inactive: searchInactive,
