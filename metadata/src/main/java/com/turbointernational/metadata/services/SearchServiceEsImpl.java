@@ -649,11 +649,13 @@ public class SearchServiceEsImpl implements SearchService {
             sterms.add(newBooleanSearchTerm("inactive", inactive));
         }
 
-        if (turboTypeName != null) {
-            sterms.add(newTextSearchTerm("turboModel.turboType.name.full", turboTypeName));
+        if (isNotBlank(turboTypeName)) {
+            String normalizedTurboTypeName = str2shotfield.apply(turboTypeName);
+            sterms.add(newTextSearchTerm("turboModel.turboType.name.short", normalizedTurboTypeName));
         }
-        if (turboModelName != null) {
-            sterms.add(newTextSearchTerm("turboModel.name.full", turboModelName));
+        if (isNotBlank(turboModelName)) {
+            String normalizedTurboModelName = str2shotfield.apply(turboModelName);
+            sterms.add(newTextSearchTerm("turboModel.name.short", normalizedTurboModelName));
         }
         if (partTypeId != null) {
             List<CriticalDimension> criticalDimensions = criticalDimensionService.getCriticalDimensionForPartType(partTypeId);

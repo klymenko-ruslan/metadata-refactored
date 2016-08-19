@@ -12310,3 +12310,8 @@ form.table-top-form {
 div.tolerance {
   display: inline-block;
 }
+
+/* Autocomplete */
+.highlight {
+  color: #ff0000;
+}

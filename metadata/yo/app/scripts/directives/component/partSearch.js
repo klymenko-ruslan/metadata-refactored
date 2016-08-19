@@ -96,6 +96,33 @@ angular.module("ngMetaCrudApp")
           $scope.initColumns();
         });
 
+        $scope.onTurboModelChanged = function(val) {
+$log.log("inputChanged[selectedTurboModel]: " + $scope.selectedTurboModel);
+$log.log("inputChanged[$item]: " + angular.toJson(val));
+$log.log("inputChanged[typeof $item]: " + typeof(val));
+          if (val !== $scope.searchTurboModel) {
+$log.log("inputChanged: update");
+            $scope.searchTurboModel = val;
+            $scope.partTableParams.reload();
+          }
+        };
+
+        $scope.onTurboModelSelected = function($item) {
+$log.log("selectedTurboModel[$item]: " + angular.toJson($item));
+          $scope.onTurboModelChanged($item.title);
+        };
+
+        $scope.onTurboTypeChanged = function(val) {
+          if (val !== $scope.searchTurboType) {
+            $scope.searchTurboType = val;
+            $scope.partTableParams.reload();
+          }
+        };
+
+        $scope.onTurboTypeSelected = function($item) {
+          $scope.onTurboTypeChanged($item.title);
+        };
+
         // Latest Results
         $scope.searchResults = {
           hits: {
@@ -127,6 +154,7 @@ angular.module("ngMetaCrudApp")
               turboModelName = $scope.searchTurboModel;
               turboTypeName = $scope.searchTurboType;
             }
+
             restService.filterParts(searchPartTypeId, $scope.searchManufacturer, $scope.searchName,
               $scope.searchPartNumber, $scope.searchInactive, turboModelName, turboTypeName,
               $scope.searchCritDims, sortProperty, sortOrder, offset, limit).then(
@@ -167,8 +195,8 @@ angular.module("ngMetaCrudApp")
           $scope.searchPartType = null;
           $scope.searchManufacturer = null;
           $scope.searchName = null;
-          $scope.searchTurboModel = null;
-          $scope.searchTurboType = null;
+          $scope.$broadcast("angucomplete-alt:clearInput", "fltrTurboModel");
+          $scope.$broadcast("angucomplete-alt:clearInput", "fltrTurboType");
         };
 
         $scope.clearFilter();
@@ -177,7 +205,7 @@ angular.module("ngMetaCrudApp")
         $scope.critDims = null;
 
         $scope.$watch("[searchPartNumber, searchInactive, searchManufacturer, searchName, searchCritDims, " +
-          "searchTurboModel, searchTurboType]", function(newVal, oldVal)
+          "searchTurboType]", function(newVal, oldVal)
         {
           // Debounce
           if (angular.equals(newVal, oldVal, true)) {
