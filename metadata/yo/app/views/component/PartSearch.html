@@ -11,7 +11,7 @@
     </div>
     <div class="form-group">
       <label for="fltrState">State</label>
-      <select id="fltrState" name="fltrState" class="form-control input-sm" data-ng-options="itm.name + ' (' + itm.count + ')' for itm in stateItems | orderBy: 'name'" data-ng-model="searchInactive">
+      <select id="fltrState" name="fltrState" class="form-control input-sm" data-ng-options="itm.val as itm.name + ' (' + itm.count + ')' for itm in stateItems | orderBy: 'name'" data-ng-model="searchInactive">
         <option></option>
       </select>
     </div>

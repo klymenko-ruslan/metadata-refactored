@@ -127,9 +127,8 @@ angular.module("ngMetaCrudApp")
               turboModelName = $scope.searchTurboModel;
               turboTypeName = $scope.searchTurboType;
             }
-            var searchInactiveVal = $scope.searchInactive === null ? null : $scope.searchInactive.val;
             restService.filterParts(searchPartTypeId, $scope.searchManufacturer, $scope.searchName,
-              $scope.searchPartNumber, searchInactiveVal, turboModelName, turboTypeName,
+              $scope.searchPartNumber, $scope.searchInactive, turboModelName, turboTypeName,
               $scope.searchCritDims, sortProperty, sortOrder, offset, limit).then(
               function(filtered) { // The 'filtered' is a JSON returned by ElasticSearch.
                 $scope.searchResults = filtered;
@@ -139,13 +138,13 @@ angular.module("ngMetaCrudApp")
                   if (b.key === 0) {
                     $scope.stateItems.push({
                       name: "Active",
-                      val: "false",
+                      val: false,
                       count: b.doc_count
                     });
                   } else if (b.key == 1) {
                     $scope.stateItems.push({
                       name: "Inactive",
-                      val: "true",
+                      val: true,
                       count: b.doc_count
                     });
                   }
