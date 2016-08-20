@@ -11,15 +11,17 @@ angular.module("ngMetaCrudApp")
       },
       restrict: "E",
       templateUrl: "views/component/Picker.html",
-      controller: ["$scope", "$parse", "restService", function($scope, $parse,
-        restService) {
+      controller: ["$scope", "$parse", "restService", function($scope, $parse, restService) {
         var getter = $parse($scope.ngModel);
         var setter = getter.assign;
         // Fetch the items if we got a path
-        // $log.log("itemType: " + $scope.itemType);
         var rest = null;
         if ($scope.itemType == "type/part") {
           rest = restService.listPartTypes;
+        } else if ($scope.itemType == "type/kittype") {
+          rest = restService.listKitTypes;
+        } else if ($scope.itemType == "type/cooltype") {
+          rest = restService.listCoolTypes;
         } else if ($scope.itemType == "other/manufacturer") {
           rest = restService.listManufacturers;
         }
@@ -27,9 +29,10 @@ angular.module("ngMetaCrudApp")
           rest().then(function(items) {
             $scope.items = items;
           }, function(response) {
-            console.error("Failed to load items from " + $scope.itemType);
+            $log.log("Failed to load items from " + $scope.itemType);
           });
         }
+
         /**
          * Current selection
          * @type {{}}
@@ -40,6 +43,7 @@ angular.module("ngMetaCrudApp")
         if (angular.isObject(initialValue)) {
           $scope.selection.id = initialValue.id;
         }
+
         /**
          * Watches for external changes.
          */
@@ -56,6 +60,7 @@ angular.module("ngMetaCrudApp")
             }
           }
         );
+
         /**
          * Watches for and propagates selection changes.
          */

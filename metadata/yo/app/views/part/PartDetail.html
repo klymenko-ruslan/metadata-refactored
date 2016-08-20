@@ -92,7 +92,12 @@
           <dt>Turbo Model</dt>
           <dd>{{part.turboModel.name}}</dd>
         </dl>
-     </div>
+        <dl class="dl-horizontal" data-ng-if="part.partType.id === 3">
+          <!-- Kit -->
+          <dt>Kit Type</dt>
+          <dd>{{part.kitType.name}}</dd>
+        </dl>
+      </div>
       <div class="col-xs-6">
         <div>
           <a  authorize="ROLE_PART_IMAGES" ng-click="addImage()" class="btn btn-primary pull-right">

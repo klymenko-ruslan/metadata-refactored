@@ -62,7 +62,32 @@
         <span ng-show="partForm.manufacturerPartNumber.$error.nonUniquePartNumber">Not unique!</span>
       </span>
 
+      <!-- Type-specific fields -->
+      <div ng-switch="part.partType.magentoAttributeSet">
+
+        <!-- Kit -->
+        <div ng-switch-when="Kit">
+
+          <label for="picker_kittype">Kit Type</label>
+          <picker id="picker_kittype" item-type="type/kittype" data-ng-model="part.kitType"></picker>
+
+        </div>
+
+        <!-- Turbo -->
+        <div ng-switch-when="Turbo">
+
+          <label>Coolant</label>
+          <picker item-type="type/cooltype" data-ng-model="part.coolType"></picker>
+
+          <h3>Turbo Model</h3>
+          <div ng-include="'/views/part/form/TurboModel.html'"></div>
+
+        </div>
+
+      </div>
+
     </div>
+
   </div>
 
 </form>

@@ -1,15 +1,12 @@
 package com.turbointernational.metadata.domain.part.types;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
-import com.turbointernational.metadata.domain.criticaldimension.CriticalDimensionEnumVal;
+import com.turbointernational.metadata.domain.other.CoolType;
 import com.turbointernational.metadata.domain.other.TurboModel;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.web.View;
 
 import javax.persistence.*;
-
-import static javax.persistence.FetchType.LAZY;
 
 
 /**
@@ -27,6 +24,11 @@ public class Turbo extends Part {
     @JoinColumn(name="turbo_model_id")
     private TurboModel turboModel;
 
+    @JsonView(View.Detail.class)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="cool_type_id")
+    private CoolType coolType;
+
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Properties: critical dimensions">
@@ -41,6 +43,14 @@ public class Turbo extends Part {
 
     public void setTurboModel(TurboModel turboModel) {
         this.turboModel = turboModel;
+    }
+
+    public CoolType getCoolType() {
+        return coolType;
+    }
+
+    public void setCoolType(CoolType coolType) {
+        this.coolType = coolType;
     }
 
     //</editor-fold>
