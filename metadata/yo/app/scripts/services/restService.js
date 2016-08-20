@@ -313,6 +313,14 @@ angular.module("ngMetaCrudApp")
         return Restangular.all("parttype/json/list").getList();
       };
 
+      this.listCoolTypes = function() {
+        return Restangular.all("cooltype/list").getList();
+      };
+
+      this.listKitTypes = function() {
+        return Restangular.all("kittype/list").getList();
+      };
+
       this.listTurboTypesForManufacturerId = function(manufacturerId) {
         return Restangular.all("other/turboType").getList({
           "manufacturerId": manufacturerId
