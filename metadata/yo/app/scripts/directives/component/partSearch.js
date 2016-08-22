@@ -97,18 +97,13 @@ angular.module("ngMetaCrudApp")
         });
 
         $scope.onTurboModelChanged = function(val) {
-$log.log("inputChanged[selectedTurboModel]: " + $scope.selectedTurboModel);
-$log.log("inputChanged[$item]: " + angular.toJson(val));
-$log.log("inputChanged[typeof $item]: " + typeof(val));
           if (val !== $scope.searchTurboModel) {
-$log.log("inputChanged: update");
             $scope.searchTurboModel = val;
             $scope.partTableParams.reload();
           }
         };
 
         $scope.onTurboModelSelected = function($item) {
-$log.log("selectedTurboModel[$item]: " + angular.toJson($item));
           $scope.onTurboModelChanged($item.title);
         };
 
