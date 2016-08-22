@@ -3,11 +3,11 @@
     <!-- Search by input or facet select options -->
     <div class="col-xs-12 col-sm-3">
         <form class="" role="form">
-          <button class="btn btn-default" ng-click="clear()">Clear</button>
+          <button class="btn btn-default" data-ng-click="clear()">Clear</button>
 
           <div class="form-group">
             <label for="carmake" class="sr-only control-label">Name</label>
-            <input class="form-control" id="carmake" type="text" ng-model="search.carmake" placeholder="Car Make..."/>
+            <input class="form-control" id="carmake" type="text" data-ng-model="search.carmake" placeholder="Car Make..."/>
           </div>
 
         </form>
@@ -18,14 +18,14 @@
         <table data-ng-table="carmakeTableParams" class="table table-bordered table-striped table-hover table-responsive">
             <tr data-ng-repeat="rec in $data">
               <td title="'Name'" sortable="'name.lower_case_sort'">
-                <span ng-hide="isModifying(rec._source)">{{rec._source.name}}</span>
-                <form name="carmakeForm" novalidate authorize="ROLE_APPLICATION_CRUD" ng-show="isModifying(rec._source)">
-                  <input name="carmake_name" ng-model="modifyValues[rec._source.id]" type="text" ng-model-options="{ debounce: 500 }" required maxlength="50" unique-carmake-name>
-                  <span ng-show="carmakeForm.carmake_name.$dirty && carmakeForm.carmake_name.$invalid" class="alert alert-danger" role="alert">
+                <span data-ng-hide="isModifying(rec._source)">{{rec._source.name}}</span>
+                <form name="carmakeForm" novalidate authorize="ROLE_APPLICATION_CRUD" data-ng-show="isModifying(rec._source)">
+                  <input name="carmake_name" data-ng-model="modifyValues[rec._source.id]" type="text" data-ng-model-options="{ debounce: 500 }" required maxlength="50" unique-carmake-name>
+                  <span data-ng-show="carmakeForm.carmake_name.$dirty && carmakeForm.carmake_name.$invalid" class="alert alert-danger" role="alert">
                     <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                    <span ng-show="carmakeForm.carmake_name.$error.required">Required!</span>
-                    <span ng-show="carmakeForm.carmake_name.$error.maxlenth">Too long name (max 50 chars)!</span>
-                    <span ng-show="carmakeForm.carmake_name.$error.nonUniqueName">Not unique!</span>
+                    <span data-ng-show="carmakeForm.carmake_name.$error.required">Required!</span>
+                    <span data-ng-show="carmakeForm.carmake_name.$error.maxlenth">Too long name (max 50 chars)!</span>
+                    <span data-ng-show="carmakeForm.carmake_name.$error.nonUniqueName">Not unique!</span>
                   </span>
                 </form>
               </td>
@@ -33,8 +33,4 @@
             </tr>
         </table>
     </div>
-    <!--
-    <label>modifyValues:</label>
-    <pre>{{modifyValues | json}}</pre>
-    -->
 </div>

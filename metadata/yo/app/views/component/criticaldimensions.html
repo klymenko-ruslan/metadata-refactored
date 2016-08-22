@@ -108,10 +108,10 @@
         <button data-ng-click="modifyStartAll()" data-ng-hide="isEditing()" authorize="ROLE_ALTER_PART" class="btn btn-primary">
           <i class="fa fa-cog"></i> Modify All
         </button>
-        <button data-ng-click="modifySaveAll()" data-ng-show="isEditing()" authorize="ROLE_ALTER_PART" class="btn btn-success ng-hide" data-ng-disabled="cdForm.$pristine || cdForm.$invalid || cdForm.$pending">
+        <button data-ng-click="modifySaveAll()" data-ng-show="isEditing()" authorize="ROLE_ALTER_PART" class="btn btn-success data-ng-hide" data-ng-disabled="cdForm.$pristine || cdForm.$invalid || cdForm.$pending">
           <i class="fa fa-save"></i> Save All
         </button>
-        <button data-ng-click="modifyUndoAll()" data-ng-show="isEditing()" data-ng-disabled="cdForm.$pristine || cdForm.$pending" class="btn btn-warning ng-hide">
+        <button data-ng-click="modifyUndoAll()" data-ng-show="isEditing()" data-ng-disabled="cdForm.$pristine || cdForm.$pending" class="btn btn-warning data-ng-hide">
           <i class="fa fa-undo"></i> Undo All
         </button>
         <button data-ng-click="modifyCancelAll()" data-ng-show="isEditing()" class="btn btn-warning">
@@ -129,7 +129,7 @@
           <td data-ng-class="{'bg-danger': d.invalidDisplayValue}">
             <span data-ng-hide="isModifying(d)">{{d.displayValue}}</span>
             <div data-ng-show="isModifying(d)" data-ng-if="::!d.invalidDisplayValue">
-              <select name="{{::d.jsonName}}" data-ng-if="d.selectOptions" ng-options="item.val for item in d.selectOptions track by item.id" data-ng-model="editedPart[d.jsonName]">
+              <select name="{{::d.jsonName}}" data-ng-if="d.selectOptions" data-ng-options="item.val for item in d.selectOptions track by item.id" data-ng-model="editedPart[d.jsonName]">
                 <option value="" data-ng-if="::d.valueDescriptor.nullAllowed">{{::d.valueDescriptor.nullDisplay}}</option>
               </select>
               <input
@@ -186,7 +186,7 @@
             <button tabindex="-1" data-ng-click="modifyStart(d)" authorize="ROLE_ALTER_PART" data-ng-hide="isModifying(d)" data-ng-disabled="{{::d.invalidDisplayValue}}" class="btn btn-primary btn-xs">
               <i class="fa fa-cog"></i> Modify
             </button>
-            <button tabindex="-1" data-ng-click="modifyUndo(d)" data-ng-show="isModifying(d)" data-ng-disabled="cdForm.$pristine || cdForm.$pending" class="btn btn-warning btn-xs ng-hide">
+            <button tabindex="-1" data-ng-click="modifyUndo(d)" data-ng-show="isModifying(d)" data-ng-disabled="cdForm.$pristine || cdForm.$pending" class="btn btn-warning btn-xs data-ng-hide">
               <i class="fa fa-undo"></i> Undo
             </button>
             <button tabindex="-1" data-ng-click="modifyCancel(d)" data-ng-show="isModifying(d)" class="btn btn-warning btn-xs">
@@ -194,7 +194,7 @@
             </button>
           </td>
         </tr>
-        <tr ng-hide="toDisplay.length > 0">
+        <tr data-ng-hide="toDisplay.length > 0">
           <td colspan="3">No rows to display.</td>
         </tr>
       </table>

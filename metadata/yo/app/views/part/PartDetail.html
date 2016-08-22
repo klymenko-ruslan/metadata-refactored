@@ -1,6 +1,6 @@
 <metanav>
   <li authorize="ROLE_ALTER_PART">
-    <a ng-href="/part/{{ partId }}/form"
+    <a data-ng-href="/part/{{ partId }}/form"
        class="btn btn-primary">
       <i class="fa fa-cog"></i>
       Edit Part
@@ -8,7 +8,7 @@
   </li>
 
   <li authorize="ROLE_READ">
-    <a ng-href="/part/{{ partId }}/ancestors"
+    <a data-ng-href="/part/{{ partId }}/ancestors"
        class="btn btn-info">
       <i class="fa fa-sitemap"></i>
       Where used &hellip;
@@ -16,7 +16,7 @@
   </li>
 
   <li authorize="ROLE_INTERCHANGE">
-    <a ng-href="/part/{{ partId }}/interchange/search"
+    <a data-ng-href="/part/{{ partId }}/interchange/search"
        class="btn btn-info">
       <i class="fa fa-random"></i>
       Interchanges &hellip;
@@ -24,7 +24,7 @@
   </li>
 
   <li authorize="ROLE_SALES_NOTE_READ">
-    <a ng-href="/part/{{partId}}/sales_notes"
+    <a data-ng-href="/part/{{partId}}/sales_notes"
        class="btn btn-info">
       <i class="fa fa-book"></i>
       Sales Notes &hellip;
@@ -59,7 +59,7 @@
       Turbo Types
     </a>
   </li>
-  <li role="presentation" ng-show="part.partType.value == 'turbo'">
+  <li role="presentation" data-ng-show="part.partType.value == 'turbo'">
     <a href="#applications" aria-controls="applications" role="tab" data-toggle="tab">
       <i class="fa fa-book"></i>
       Applications
@@ -100,15 +100,15 @@
       </div>
       <div class="col-xs-6">
         <div>
-          <a  authorize="ROLE_PART_IMAGES" ng-click="addImage()" class="btn btn-primary pull-right">
+          <a  authorize="ROLE_PART_IMAGES" data-ng-click="addImage()" class="btn btn-primary pull-right">
             <i class="fa fa-plus"></i> Add Image
           </a>
         </div>
         <ul class="list-unstyled list-inline">
-          <li data-ng-repeat="image in part.productImages" ng-click="deleteImage(image)">
-            <img ng-src="/metadata/image/135/{{image.id}}.jpg" style="max-height: 135px; max-width: 135px" />
+          <li data-ng-repeat="image in part.productImages" data-ng-click="deleteImage(image)">
+            <img data-ng-src="/metadata/image/135/{{image.id}}.jpg" style="max-height: 135px; max-width: 135px" />
           </li>
-          <li ng-show="part.productImages === undefined">
+          <li data-ng-show="part.productImages === undefined">
             <div class="no-image" />
           </li>
         </ul>
@@ -132,7 +132,7 @@
     <turbo-types part="part"></turbo-types>
   </div>
   <div role="tabpanel" class="tab-pane fade tab-part-detail" id="applications">
-    <a authorize="ROLE_APPLICATION_CRUD" class="btn btn-primary pull-right" style="margin-bottom:10px;" ng-href="/part/{{partId}}/application/search">
+    <a authorize="ROLE_APPLICATION_CRUD" class="btn btn-primary pull-right" style="margin-bottom:10px;" data-ng-href="/part/{{partId}}/application/search">
       <i class="fa fa-plus"></i>
       Add Application
     </a>

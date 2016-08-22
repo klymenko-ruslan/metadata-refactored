@@ -6,14 +6,14 @@
   <div class="row">
     <label class="col-xs-3">Manufacturer</label>
     <picker class="col-push-1 col-xs-8"
-            ng-model="selection.manufacturer"
+            data-ng-model="selection.manufacturer"
             item-type="other/manufacturer"></picker>
   </div>
 
   <div class="row">
-    <div ng-disabled="!turboTypes" class="form-group">
+    <div data-ng-disabled="!turboTypes" class="form-group">
       <label class="col-xs-3 control-label">Turbo Type</label>
-      <input ng-model="filter" class="form-control input-sm" placeholder="Turbo type filter..."/>
+      <input data-ng-model="filter" class="form-control input-sm" placeholder="Turbo type filter..."/>
       <br/>
       <select data-ng-model="selection.turboType"
               data-ng-options="turboType as turboType.name for turboType in turboTypes | filter:{name:filter}"
@@ -25,6 +25,6 @@
 </div>
 
 <div class="modal-footer">
-  <button class="btn btn-default" ng-click="cancel()">Cancel</button>
-  <button class="btn btn-primary" ng-click="add()" ng-disabled="!selection.turboType">Add Type</button>
+  <button class="btn btn-default" data-ng-click="cancel()">Cancel</button>
+  <button class="btn btn-primary" data-ng-click="add()" data-ng-disabled="!selection.turboType">Add Type</button>
 </div>

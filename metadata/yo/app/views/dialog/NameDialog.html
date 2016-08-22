@@ -9,7 +9,7 @@
             <label class="col-xs-3">Name</label>
             <div class="col-xs-8">
                 <input class="form-control input-small"
-                       ng-model="name"
+                       data-ng-model="name"
                        required/>
             </div>
         </div>
@@ -17,6 +17,6 @@
 </div>
 
 <div class="modal-footer">
-    <button class="btn btn-default" ng-click="cancel()">Cancel</button>
-    <button class="btn btn-primary" ng-click="respond(name)">{{data.respondButton}}</button>
+    <button class="btn btn-default" data-ng-click="cancel()">Cancel</button>
+    <button class="btn btn-primary" data-ng-click="respond(name)">{{data.respondButton}}</button>
 </div>

@@ -1,36 +1,36 @@
 <metanav>
   <li authorize="ROLE_READ">
-    <a ng-href="/part/{{::part.id}}"
+    <a data-ng-href="/part/{{::part.id}}"
        class="btn btn-primary">
       <i class="fa fa-eye"></i> View Part
     </a>
   </li>
   <li authorize="ROLE_SALES_NOTE_READ">
-    <a ng-href="/part/{{::part.id}}/sales_notes"
+    <a data-ng-href="/part/{{::part.id}}/sales_notes"
        class="btn btn-info">
       <i class="fa fa-book"></i> Sales Notes &hellip;
     </a>
   </li>
   <li>
-    <a ng-click="edit()" ng-if="!isEditing()"
+    <a data-ng-click="edit()" data-ng-if="!isEditing()"
        class="btn btn-success">
       <i class="fa fa-pencil"></i> Edit Note
     </a>
   </li>
-  <li ng-if="isEditing()">
-    <a ng-click="cancel()"
+  <li data-ng-if="isEditing()">
+    <a data-ng-click="cancel()"
        class="btn btn-warning">
       <i class="fa fa-undo"></i> Cancel
     </a>
   </li>
-  <li ng-if="isEditing()">
-    <a ng-click="save()"
+  <li data-ng-if="isEditing()">
+    <a data-ng-click="save()"
        class="btn btn-success">
       <i class="fa fa-save"></i> Save
     </a>
   </li>
   <li>
-    <a ng-click="remove()"
+    <a data-ng-click="remove()"
        class="btn btn-danger">
       <i class="fa fa-trash-o"></i> Remove
     </a>
@@ -40,32 +40,32 @@
       {{salesNote.state}}
     </a>
   </li>
-  <li class="pull-right" authorize="ROLE_SALES_NOTE_SUBMIT" ng-if="SalesNotes.canSubmit(salesNote)">
-    <a ng-click="SalesNotes.submit(salesNote)" ng-disabled="isEditing()"
+  <li class="pull-right" authorize="ROLE_SALES_NOTE_SUBMIT" data-ng-if="SalesNotes.canSubmit(salesNote)">
+    <a data-ng-click="SalesNotes.submit(salesNote)" data-ng-disabled="isEditing()"
        class="btn btn-info">
       <span class="fa fa-check-square"></span> Submit
     </a>
   </li>
-  <li class="pull-right" authorize="ROLE_SALES_NOTE_PUBLISH" ng-if="SalesNotes.canPublish(salesNote)">
-    <a ng-click="SalesNotes.publish(salesNote)" ng-disabled="isEditing()"
+  <li class="pull-right" authorize="ROLE_SALES_NOTE_PUBLISH" data-ng-if="SalesNotes.canPublish(salesNote)">
+    <a data-ng-click="SalesNotes.publish(salesNote)" data-ng-disabled="isEditing()"
        class="btn btn-primary">
       <span class="fa fa-cloud-upload"></span> Publish
     </a>
   </li>
-  <li class="pull-right" authorize="ROLE_SALES_NOTE_APPROVE" ng-if="SalesNotes.canApprove(salesNote)">
-    <a ng-click="SalesNotes.approve(salesNote)" ng-disabled="isEditing()"
+  <li class="pull-right" authorize="ROLE_SALES_NOTE_APPROVE" data-ng-if="SalesNotes.canApprove(salesNote)">
+    <a data-ng-click="SalesNotes.approve(salesNote)" data-ng-disabled="isEditing()"
        class="btn btn-success">
       <span class="fa fa-thumbs-up"></span> Approve
     </a>
   </li>
-  <li class="pull-right" authorize="ROLE_SALES_NOTE_REJECT" ng-if="SalesNotes.canReject(salesNote)">
-    <a ng-click="SalesNotes.reject(salesNote)" ng-disabled="isEditing()"
+  <li class="pull-right" authorize="ROLE_SALES_NOTE_REJECT" data-ng-if="SalesNotes.canReject(salesNote)">
+    <a data-ng-click="SalesNotes.reject(salesNote)" data-ng-disabled="isEditing()"
        class="btn btn-danger">
       <span class="fa fa-thumbs-down"></span> Reject
     </a>
   </li>
-  <li class="pull-right" authorize="ROLE_SALES_NOTE_RETRACT" ng-if="SalesNotes.canRetract(salesNote)">
-    <a ng-click="SalesNotes.retract(salesNote)"
+  <li class="pull-right" authorize="ROLE_SALES_NOTE_RETRACT" data-ng-if="SalesNotes.canRetract(salesNote)">
+    <a data-ng-click="SalesNotes.retract(salesNote)"
        class="btn btn-warning">
       <span class="fa fa-cloud-download"></span> Retract
     </a>
@@ -75,26 +75,16 @@
 <h1 class="padding-top" part-name="part" part-name-suffix="Sales Note {{salesNoteId}}"></h1>
 <hr>
 
-<!--<div class="col-xs-8 pull-right">
-  <h5>Status</h5>
-  <button type="submit" class="btn btn-info text-center">Draft</button>
-  <button type="submit" class="btn btn-success text-center">Published</button>
-  <hr>
-
-  <h5>4 of 25</h5>
-  <button type="submit" class="btn btn-info text-center">Prev</button>
-  <button type="submit" class="btn btn-info text-center">Next</button>
-</div>-->
-<div ng-if="!isEditing()">
+<div data-ng-if="!isEditing()">
   {{salesNote.comment}}
 </div>
-<textarea ng-if="isEditing()" cols="70" rows="5" ng-model="editedSalesNote.comment"></textarea>
+<textarea data-ng-if="isEditing()" cols="70" rows="5" data-ng-model="editedSalesNote.comment"></textarea>
 <hr>
 
 <div class="col-xs-6">
   <h3>Attachments
       <a class="btn btn-primary pull-right"
-         ng-click="addAttachment()" ng-disabled="isEditing()">
+         data-ng-click="addAttachment()" data-ng-disabled="isEditing()">
         <i class="fa fa-plus"></i>
         Add Attachment
       </a>
@@ -112,9 +102,9 @@
           </td>
           <td title="'Actions'" class="actions text-center">
             <button type="submit" class="btn btn-primary text-center btn-xs"
-                    ng-disabled="isEditing()">Download</button>
+                    data-ng-disabled="isEditing()">Download</button>
             <button type="submit" class="btn btn-danger text-center btn-xs"
-                    ng-disabled="isEditing()">Remove</button>
+                    data-ng-disabled="isEditing()">Remove</button>
           </td>
       </tr>
   </table>
@@ -123,7 +113,7 @@
 <div class="col-xs-6">
   <h3>Related Parts
       <a class="btn btn-primary pull-right"
-         ng-href="/part/{{salesNote.primaryPartId}}/sales_note/{{salesNote.id}}/related_part/search" ng-disabled="isEditing()">
+         data-ng-href="/part/{{salesNote.primaryPartId}}/sales_note/{{salesNote.id}}/related_part/search" data-ng-disabled="isEditing()">
         <i class="fa fa-plus"></i>
         Add Related Part
       </a>
@@ -140,14 +130,14 @@
               {{relatedPart.part.manufacturer.name}}
           </td>
           <td title="'Actions'" class="actions text-center">
-            <a ng-class="['btn', 'btn-xs', {'btn-primary': !isPrimaryRelatedPart(relatedPart), 'btn-success': isPrimaryRelatedPart(relatedPart)}]"
-               ng-href="/part/{{ relatedPart.part.id }}">
+            <a data-ng-class="['btn', 'btn-xs', {'btn-primary': !isPrimaryRelatedPart(relatedPart), 'btn-success': isPrimaryRelatedPart(relatedPart)}]"
+               data-ng-href="/part/{{ relatedPart.part.id }}">
               <i class="fa fa-eye"></i> View {{isPrimaryRelatedPart(relatedPart) ? "Primary" : "Related"}}
             </a>
             <a class="btn btn-danger btn-xs"
-               ng-click="SalesNotes.removeRelatedPart(salesNote, relatedPart.part.id, relatedPartTableParams)"
-               ng-if="salesNote.primaryPartId !== relatedPart.part.id"
-               ng-disabled="isEditing()">
+               data-ng-click="SalesNotes.removeRelatedPart(salesNote, relatedPart.part.id, relatedPartTableParams)"
+               data-ng-if="salesNote.primaryPartId !== relatedPart.part.id"
+               data-ng-disabled="isEditing()">
               <i class="fa fa-trash-o"></i> Remove
             </a>
           </td>

@@ -1,19 +1,19 @@
 <metanav>
   <li authorize="ROLE_READ">
-    <a ng-href="/part/{{partId}}"
+    <a data-ng-href="/part/{{partId}}"
        class="btn btn-primary">
       <i class="fa fa-eye"></i> View Part
     </a>
   </li>
   <li authorize="ROLE_SALES_NOTE_READ">
-    <a ng-href="/part/{{salesNote.primaryPartId}}/sales_note/{{salesNote.id}}"
+    <a data-ng-href="/part/{{salesNote.primaryPartId}}/sales_note/{{salesNote.id}}"
        class="btn btn-primary">
       <i class="fa fa-eye"></i> View Sales Note
     </a>
   </li>
 
   <li>
-    <a ng-click="save()" ng-disabled="!canSave()"
+    <a data-ng-click="save()" data-ng-disabled="!canSave()"
        class="btn btn-success">
       <i class="fa fa-save"></i>
       Add Related Part
@@ -34,9 +34,9 @@
   <!-- Picked BOM Item -->
   <div class="col-xs-6">
     <h3>Picked Part</h3>
-    <part-summary part="pickedPart" ng-show="pickedPart"></part-summary>
+    <part-summary part="pickedPart" data-ng-show="pickedPart"></part-summary>
 
-    <div ng-hide="pickedPart" class="well well-sm">
+    <div data-ng-hide="pickedPart" class="well well-sm">
       Pick a part to add to the sales note.
     </div>
   </div>
@@ -59,8 +59,8 @@
                 {{relatedPart.part.manufacturer.name}}
             </td>
             <td title="'Actions'" class="actions text-center">
-              <a ng-class="['btn', 'btn-xs', {'btn-primary': salesNote.primaryPartId != relatedPart.part.id, 'btn-success': salesNote.primaryPartId === relatedPart.part.id}]"
-                 ng-href="/part/{{ relatedPart.part.id }}">
+              <a data-ng-class="['btn', 'btn-xs', {'btn-primary': salesNote.primaryPartId != relatedPart.part.id, 'btn-success': salesNote.primaryPartId === relatedPart.part.id}]"
+                 data-ng-href="/part/{{ relatedPart.part.id }}">
                 <i class="fa fa-eye"></i> View {{salesNote.primaryPartId === relatedPart.part.id ? "Primary" : "Related"}}
               </a>
             </td>

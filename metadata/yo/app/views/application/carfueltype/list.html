@@ -3,7 +3,7 @@
 <subnav authorize="ROLE_APPLICATION_CRUD" item="fueltype">
 
   <li>
-    <a class="btn btn-success" ng-href="/application/carfueltype/form">
+    <a class="btn btn-success" data-ng-href="/application/carfueltype/form">
       <i class="fa fa-wrench"></i>
       Create Fuel Type
     </a>
@@ -16,16 +16,16 @@
 
 <carfueltype-search class="well well-lg">
 
-  <button ng-click="modifyStart(rec._source, carfueltypeForm)" authorize="ROLE_APPLICATION_CRUD" class="btn btn-warning btn-xs" ng-hide="isModifying(rec._source)">
+  <button data-ng-click="modifyStart(rec._source, carfueltypeForm)" authorize="ROLE_APPLICATION_CRUD" class="btn btn-warning btn-xs" data-ng-hide="isModifying(rec._source)">
     <i class="fa fa-cog"></i> Modify
   </button>
-  <button ng-click="remove(rec._source.id, rec._source.name)" authorize="ROLE_APPLICATION_CRUD" class="btn btn-danger btn-xs" ng-hide="isModifying(rec._source)">
+  <button data-ng-click="remove(rec._source.id, rec._source.name)" authorize="ROLE_APPLICATION_CRUD" class="btn btn-danger btn-xs" data-ng-hide="isModifying(rec._source)">
     <i class="fa fa-trash-o"></i> Remove
   </button>
-  <button ng-click="modifySave(rec._source, carfueltypeForm)" authorize="ROLE_APPLICATION_CRUD" class="btn btn-success btn-xs ng-hide" ng-show="isModifying(rec._source)"  ng-disabled="carfueltypeForm.$pristine || carfueltypeForm.$invalid || carfueltypeForm.$pending">
+  <button data-ng-click="modifySave(rec._source, carfueltypeForm)" authorize="ROLE_APPLICATION_CRUD" class="btn btn-success btn-xs data-ng-hide" data-ng-show="isModifying(rec._source)"  data-ng-disabled="carfueltypeForm.$pristine || carfueltypeForm.$invalid || carfueltypeForm.$pending">
     <i class="fa fa-save"></i> Save
   </button>
-  <button ng-click="modifyCancel(rec._source, carfueltypeForm)" class="btn btn-warning btn-xs ng-hide" ng-show="isModifying(rec._source)">
+  <button data-ng-click="modifyCancel(rec._source, carfueltypeForm)" class="btn btn-warning btn-xs data-ng-hide" data-ng-show="isModifying(rec._source)">
     <i class="fa fa-minus-circle"></i> Cancel
   </button>
 

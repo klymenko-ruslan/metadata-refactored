@@ -1,16 +1,16 @@
 <table data-ng-table="interchangeablePartsTableParams" class="table table-bordered table-striped table-hover table-responsive">
   <tbody>
-    <tr ng-repeat="item in $data">
+    <tr data-ng-repeat="item in $data">
       <td title="'Part Type'" data-sortable="'partType.name'">{{item.partType.name}}</td>
       <td title="'Manufacturer'" data-sortable="'manufacturer.name'">{{item.manufacturer.name}}</td>
       <td title="'Part #'" class="text-nowrap" data-sortable="'manufacturerPartNumber'">{{item.manufacturerPartNumber}}</td>
       <td title="'Actions'">
-        <a authorize="ROLE_READ" ng-href="/part/{{item.id}}" class="btn btn-primary btn-xs">
+        <a authorize="ROLE_READ" data-ng-href="/part/{{item.id}}" class="btn btn-primary btn-xs">
           <i class="fa fa-eye"></i> View
         </a>
       </td>
     </tr>
-    <tr ng-hide="$data.length > 0">
+    <tr data-ng-hide="$data.length > 0">
       <td colspan="4">No parts to display.</td>
     </tr>
   </tbody>

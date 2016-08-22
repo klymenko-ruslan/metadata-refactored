@@ -73,7 +73,7 @@
                           Indexed: <span>{{partsIndexed | number:0}}</span>
                         </div>
                         <div class="col-xs-9">
-                          Failures: <span ng-class="{'text-danger': partsIndexingFailures}">{{partsIndexingFailures | number:0}}</span>
+                          Failures: <span data-ng-class="{'text-danger': partsIndexingFailures}">{{partsIndexingFailures | number:0}}</span>
                         </div>
                       </div>
                       <div class="row">
@@ -94,7 +94,7 @@
                           Indexed: <span>{{applicationsIndexed | number:0}}</span>
                         </div>
                         <div class="col-xs-9">
-                          Failures: <span ng-class="{'text-danger': applicationsIndexingFailures}">{{applicationsIndexingFailures | number:0}}</span>
+                          Failures: <span data-ng-class="{'text-danger': applicationsIndexingFailures}">{{applicationsIndexingFailures | number:0}}</span>
                         </div>
                       </div>
                       <div class="row">
@@ -115,7 +115,7 @@
                           Indexed: <span>{{salesNotesIndexed | number:0}}</span>
                         </div>
                         <div class="col-xs-9">
-                          Failures: <span ng-class="{'text-danger': salesNotesIndexingFailures}">{{salesNotesIndexingFailures | number:0}}</span>
+                          Failures: <span data-ng-class="{'text-danger': salesNotesIndexingFailures}">{{salesNotesIndexingFailures | number:0}}</span>
                         </div>
                       </div>
                       <div class="row">
@@ -139,11 +139,11 @@
             </div>
             <div class="modal-footer">
               <ul class="list-unstyled pull-left">
-                <li class="text-muted text-left">The process started on  {{startedOn | date : "yyyy-MM-dd HH:mm.ss"}} by <a ng-href="security/user/{{userId}}">{{userName}}</a>.</li>
+                <li class="text-muted text-left">The process started on  {{startedOn | date : "yyyy-MM-dd HH:mm.ss"}} by <a data-ng-href="security/user/{{userId}}">{{userName}}</a>.</li>
                 <li class="text-muted text-left" data-ng-show="finishedOn">The process finished on {{finishedOn | date : "yyyy-MM-dd HH:mm.ss"}}.</li>
               </ul>
               <div class="pull-right">
-                <button type="button" class="btn btn-default" data-dismiss="modal" data-ng-disabled="phase != 3" ng-click="ctrl.onCloseStatus()">Close</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal" data-ng-disabled="phase != 3" data-ng-click="ctrl.onCloseStatus()">Close</button>
               </div>
             </div>
           </div>

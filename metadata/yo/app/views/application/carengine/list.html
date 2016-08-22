@@ -3,7 +3,7 @@
 <subnav authorize="ROLE_APPLICATION_CRUD" item="engine">
 
   <li>
-    <a class="btn btn-success" ng-href="/application/carengine/form">
+    <a class="btn btn-success" data-ng-href="/application/carengine/form">
       <i class="fa fa-wrench"></i>
       Create Engine
     </a>
@@ -16,11 +16,11 @@
 <carengine-search class="well well-lg">
 
   <a class="btn btn-primary btn-xs"
-     ng-href="/application/carengine/{{rec._source.id}}/form">
+     data-ng-href="/application/carengine/{{rec._source.id}}/form">
     <i class="fa fa-eye"></i>
     Edit
   </a>
-  <button ng-click="remove(rec._source.id, rec._source.name)" authorize="ROLE_APPLICATION_CRUD" class="btn btn-danger btn-xs">
+  <button data-ng-click="remove(rec._source.id, rec._source.name)" authorize="ROLE_APPLICATION_CRUD" class="btn btn-danger btn-xs">
     <i class="fa fa-trash-o"></i>
     Remove
   </button>

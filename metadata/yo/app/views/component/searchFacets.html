@@ -1,7 +1,7 @@
 <div>
-  <div ng-repeat="facet in Facets" ng-show="results.aggregations[facet.name].buckets">
+  <div data-ng-repeat="facet in Facets" data-ng-show="results.aggregations[facet.name].buckets">
     <h2>{{facet.name}}</h2>
-    <select ng-model="search.aggregations[facet.name]" ng-options="t.key as t.key + ' (' + t.doc_count + ')' for t in results.aggregations[facet.name].buckets | orderBy: 'key'">
+    <select data-ng-model="search.aggregations[facet.name]" data-ng-options="t.key as t.key + ' (' + t.doc_count + ')' for t in results.aggregations[facet.name].buckets | orderBy: 'key'">
       <option value=""></option>
     </select>
   </div>

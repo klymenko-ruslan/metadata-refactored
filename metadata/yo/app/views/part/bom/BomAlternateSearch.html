@@ -1,6 +1,6 @@
 <metanav>
   <li>
-    <a ng-href="/part/{{ partId }}"
+    <a data-ng-href="/part/{{ partId }}"
        class="btn btn-primary">
       <i class="fa fa-eye"></i>
       View Part
@@ -8,8 +8,8 @@
   </li>
 
   <li>
-    <a ng-click="save()"
-       ng-disabled="pickedPart == null || restService.status.bomRebuilding"
+    <a data-ng-click="save()"
+       data-ng-disabled="pickedPart == null || restService.status.bomRebuilding"
        class="btn btn-success">
       <i class="fa fa-save"></i>
       Add Alternate
@@ -45,10 +45,10 @@
   <!-- Picked Alternate -->
   <div class="col-xs-6">
     <h3>Picked Part</h3>
-    <part-summary part="pickedPart" ng-show="pickedPart"></part-summary>
-    <div ng-show="pickedPart" class="input-group">
+    <part-summary part="pickedPart" data-ng-show="pickedPart"></part-summary>
+    <div data-ng-show="pickedPart" class="input-group">
     </div>
-    <div ng-hide="pickedPart" class="well well-sm">
+    <div data-ng-hide="pickedPart" class="well well-sm">
       Pick an alternate part to add.
     </div>
   </div>
@@ -59,14 +59,14 @@
 <part-search class="well well-lg">
 
   <a authorize="ROLE_READ"
-     ng-href="/part/{{partId}}"
+     data-ng-href="/part/{{partId}}"
      class="btn btn-primary btn-xs">
     <i class="fa fa-eye"></i>
     View
   </a>
 
   <a authorize="ROLE_BOM"
-     ng-click="pickPart(partId)"
+     data-ng-click="pickPart(partId)"
      class="btn btn-success btn-xs">
     <i class="fa fa-bullseye"></i>
     Pick
