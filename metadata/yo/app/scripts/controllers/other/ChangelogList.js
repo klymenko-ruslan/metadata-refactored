@@ -91,6 +91,9 @@ angular.module("ngMetaCrudApp")
   }])
   .controller("ChangelogViewDlgCtrl", ["$scope", "$log", "$uibModalInstance", "changelogRecord",
     function($scope, $log, $uibModalInstance,  changelogRecord) {
+      $scope.date = changelogRecord.changeDate;
+      $scope.user = changelogRecord.user;
+      $scope.description = changelogRecord.description;
       $scope.changes = null;
       if (changelogRecord && changelogRecord.data !== undefined && changelogRecord.data !== null) {
         var data = changelogRecord.data;
