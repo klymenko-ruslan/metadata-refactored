@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <!--
+    .npmrc: prefix=${HOME}/.npm-packages
+    mkdir "${HOME}/.npm-packages"
+    npm install -g grunt bower grunt-contrib-compass
+
+    The project is depended on the MS SQL server JDBC dirver.
+    The driver is not available in the public Apache Maven repositories.
+    It can be installed in a local Apache Maven cache by following command (it assumes that current working dir is
+    the top level project's directory - TurboInternational):
+
+    $ mvn install:install-file -Dfile=bits/libs/sqljdbc_4.2/enu/sqljdbc42.jar -DgroupId=com.microsoft.sqlserver -DartifactId=sqljdbc4 -Dversion=4.2 -Dpackaging=jar
+
+    -->
+
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.turbointernational</groupId>
     <artifactId>metadata</artifactId>
