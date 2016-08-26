@@ -58,10 +58,13 @@ public class SearchTermFactoryTest {
     @Test
     public void testParseRange() {
         Object[][] cases = new Object[][]{
-                new Object[]{null, null},
+                //new Object[]{null, null},
+                new Object[]{"-.5..0.5", new Range(new Limit(GTE, new Double(-0.5)), new Limit(LTE, new Double(0.5)))},
+                new Object[]{".5..0.6", new Range(new Limit(GTE, new Double(0.5)), new Limit(LTE, new Double(0.6)))},
+                new Object[]{".5 .. .6", new Range(new Limit(GTE, new Double(0.5)), new Limit(LTE, new Double(0.6)))},
                 new Object[]{"-1.5..5.8", new Range(new Limit(GTE, new Double(-1.5)), new Limit(LTE, new Double(5.8)))},
                 new Object[]{"-1.5...5.8", new Range(new Limit(GTE, new Double(-1.5)), new Limit(LTE, new Double(5.8)))},
-                new Object[]{"-1.5....5.8", new Range(new Limit(GTE, new Double(-1.5)), new Limit(LTE, new Double(5.8)))},
+                new Object[]{"-1.5....5.8", new Range(new Limit(GTE, new Double(-1.5)), new Limit(LTE, new Double(5.8)))}
         };
         for (Object[] c : cases) {
             String s = (String) c[0];
