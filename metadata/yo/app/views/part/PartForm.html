@@ -2,27 +2,27 @@
 
   <metanav>
     <li authorize="ROLE_READ">
-      <a ng-href="/part/{{ partId }}"
+      <a data-ng-href="/part/{{ partId }}"
          class="btn btn-primary" data-ng-hide="oldPart == null">
         <i class="fa fa-eye"></i>
         View Part
       </a>
     </li>
     <li authorize="ROLE_ALTER_PART">
-      <a ng-disabled="partForm.$pristine || partForm.$invalid || partForm.$pending"
-         ng-click="save()" class="btn btn-success">
+      <button type="button" data-ng-disabled="partForm.$pristine || partForm.$invalid || partForm.$pending"
+         data-ng-click="save()" class="btn btn-success">
         <i class="fa fa-save"></i>
         Save
-      </a>
+      </button>
     </li>
     <li>
-      <a ng-click="revert()"
-         ng-disabled="partForm.$pristine"
+      <button type="button" data-ng-click="revert()"
+         data-ng-disabled="partForm.$pristine"
          class="btn btn-warning"
          data-ng-hide="oldPart == null">
         <i class="fa fa-undo"></i>
         Revert
-      </a>
+      </button>
     </li>
   </metanav>
 
@@ -31,42 +31,42 @@
 
       <div class="pull-right padding-top">
         <label>Status</label>
-        <button ng-model="part.inactive" class="btn btn-sm btn-info" btn-checkbox>
-          <span ng-show="part.inactive"><i class="fa fa-warning"></i> Inactive</span>
-          <span ng-hide="part.inactive"><i class="fa fa-info-circle"></i> Active</span>
+        <button data-ng-model="part.inactive" class="btn btn-sm btn-info" btn-checkbox>
+          <span data-ng-show="part.inactive"><i class="fa fa-warning"></i> Inactive</span>
+          <span data-ng-hide="part.inactive"><i class="fa fa-info-circle"></i> Active</span>
         </button>
       </div>
 
       <h2>
-        <span ng-hide="partId">Create </span>
-        <span ng-show="partId">Edit </span>
+        <span data-ng-hide="partId">Create </span>
+        <span data-ng-show="partId">Edit </span>
         {{ part.partType.name }}
-        <span ng-show="partId">#{{ partId }} </span>
+        <span data-ng-show="partId">#{{ partId }} </span>
       </h2>
 
       <label for="name">Name</label>
-      <input id="name" class="form-control" type="text" ng-model="part.name"/>
+      <input id="name" class="form-control" type="text" data-ng-model="part.name"/>
 
       <label for="description">Description</label>
-      <textarea id="description" class="form-control" rows="4" ng-model="part.description"></textarea>
+      <textarea id="description" class="form-control" rows="4" data-ng-model="part.description"></textarea>
 
       <label>Manufacturer</label>
-      <picker ng-model="part.manufacturer" item-type="other/manufacturer"></picker>
+      <picker data-ng-model="part.manufacturer" item-type="other/manufacturer"></picker>
 
       <label for="manufacturerPartNumber">Manufacturer P/N</label>
-      <input id="manufacturerPartNumber" name="manufacturerPartNumber" class="form-control" type="text" ng-model="part.manufacturerPartNumber" ng-model-options="{ debounce: 500 }" required maxlength="255" unique-part-number />
-      <span ng-show="partForm.manufacturerPartNumber.$dirty && partForm.manufacturerPartNumber.$invalid" class="alert alert-danger" role="alert">
+      <input id="manufacturerPartNumber" name="manufacturerPartNumber" class="form-control" type="text" data-ng-model="part.manufacturerPartNumber" data-ng-model-options="{ debounce: 500 }" required maxlength="255" unique-part-number />
+      <span data-ng-show="partForm.manufacturerPartNumber.$dirty && partForm.manufacturerPartNumber.$invalid" class="alert alert-danger" role="alert">
         <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-        <span ng-show="partForm.manufacturerPartNumber.$error.required">Required!</span>
-        <span ng-show="partForm.manufacturerPartNumber.$error.maxlenth">Too long manufacturer part number (max 255 chars)!</span>
-        <span ng-show="partForm.manufacturerPartNumber.$error.nonUniquePartNumber">Not unique!</span>
+        <span data-ng-show="partForm.manufacturerPartNumber.$error.required">Required!</span>
+        <span data-ng-show="partForm.manufacturerPartNumber.$error.maxlenth">Too long manufacturer part number (max 255 chars)!</span>
+        <span data-ng-show="partForm.manufacturerPartNumber.$error.nonUniquePartNumber">Not unique!</span>
       </span>
 
       <!-- Type-specific fields -->
-      <div ng-switch="part.partType.magentoAttributeSet">
+      <div data-ng-switch="part.partType.magentoAttributeSet">
 
         <!-- Kit -->
-        <div ng-switch-when="Kit">
+        <div data-ng-switch-when="Kit">
 
           <label for="picker_kittype">Kit Type</label>
           <picker id="picker_kittype" item-type="type/kittype" data-ng-model="part.kitType"></picker>
@@ -74,13 +74,13 @@
         </div>
 
         <!-- Turbo -->
-        <div ng-switch-when="Turbo">
+        <div data-ng-switch-when="Turbo">
 
           <label>Coolant</label>
           <picker item-type="type/cooltype" data-ng-model="part.coolType"></picker>
 
           <h3>Turbo Model</h3>
-          <div ng-include="'/views/part/form/TurboModel.html'"></div>
+          <div data-ng-include="'/views/part/form/TurboModel.html'"></div>
 
         </div>
 

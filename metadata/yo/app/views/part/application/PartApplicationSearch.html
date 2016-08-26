@@ -1,14 +1,14 @@
 <metanav>
   <li>
-    <a ng-href="/part/{{partId}}" class="btn btn-primary">
+    <a data-ng-href="/part/{{partId}}" class="btn btn-primary">
       <i class="fa fa-eye"></i>
       View Part
     </a>
   </li>
 
   <li>
-    <a ng-click="save()"
-       ng-disabled="pickedApplications.length == 0"
+    <a data-ng-click="save()"
+       data-ng-disabled="pickedApplications.length == 0"
        class="btn btn-success">
       <i class="fa fa-save"></i>
       Save Application(s)
@@ -39,20 +39,20 @@
     </tr>
     </thead>
     <tbody>
-    <tr ng-repeat="item in pickedApplications">
+    <tr data-ng-repeat="item in pickedApplications">
       <td>{{item.year.name}}</td>
       <td>{{item.model.make.name}}</td>
       <td>{{item.model.name}}</td>
       <td>{{item.engine.engineSize}}</td>
       <td>{{item.engine.fuelType.name}}</td>
       <td>
-        <a class="btn btn-danger btn-xs" ng-click="unpickApplication($index)">
+        <a class="btn btn-danger btn-xs" data-ng-click="unpickApplication($index)">
           <i class="fa fa-times"></i>
           Unpick
         </a>
       </td>
     </tr>
-    <tr ng-hide="pickedApplications.length">
+    <tr data-ng-hide="pickedApplications.length">
       <td colspan="6">Pick an application to associate to part.</td>
     </tr>
     </tbody>
@@ -66,13 +66,13 @@
 <cmey-search class="well well-lg">
 
   <a class="btn btn-primary btn-xs"
-     ng-href="/application/carmodelengineyear/{{rec._source.id}}">
+     data-ng-href="/application/carmodelengineyear/{{rec._source.id}}">
     <i class="fa fa-eye"></i>
     View
   </a>
 
   <a class="btn btn-success btn-xs"
-    ng-click="pickApplication(rec._source)">
+    data-ng-click="pickApplication(rec._source)">
       <i class="fa fa-bullseye"></i>
     Pick
   </a>

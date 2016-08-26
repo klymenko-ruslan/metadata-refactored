@@ -1,6 +1,6 @@
 <metanav>
   <li authorize="ROLE_READ">
-    <button ng-click="go('/part/' + partId)"
+    <button data-ng-click="go('/part/' + partId)"
        class="btn btn-primary">
       <i class="fa fa-eye"></i>
       View Part
@@ -8,8 +8,8 @@
   </li>
 
   <li authorize="ROLE_INTERCHANGE">
-    <button ng-click="removeInterchange()"
-       ng-disabled="!canClear() || restService.status.bomRebuilding"
+    <button data-ng-click="removeInterchange()"
+       data-ng-disabled="!canClear() || restService.status.bomRebuilding"
        class="btn btn-danger">
       <i class="fa fa-trash-o"></i>
       Remove Interchange
@@ -17,8 +17,8 @@
   </li>
 
   <li authorize="ROLE_INTERCHANGE">
-    <button ng-click="save(partId)"
-       ng-disabled="!canSave() || restService.status.bomRebuilding"
+    <button data-ng-click="save(partId)"
+       data-ng-disabled="!canSave() || restService.status.bomRebuilding"
        class="btn btn-success">
       <i class="fa fa-save"></i>
       Save
@@ -39,22 +39,22 @@
   <!-- Picked Part -->
   <div class="col-xs-6">
     <h3>Picked Part</h3>
-    <part-summary part="pickedPart" ng-show="pickedPart"></part-summary>
-    <div class="alert alert-success" ng-hide="pickedPart">
+    <part-summary part="pickedPart" data-ng-show="pickedPart"></part-summary>
+    <div class="alert alert-success" data-ng-hide="pickedPart">
       Pick an interchangeable part.
     </div>
 
-    <div class="alert alert-warning" ng-show="part.interchange && part.interchange.id === pickedPart.interchange.id">
+    <div class="alert alert-warning" data-ng-show="part.interchange && part.interchange.id === pickedPart.interchange.id">
       Picked part is already interchangeable with this one.
     </div>
 
-    <div class="alert alert-danger" ng-show="part.id === pickedPart.id">
+    <div class="alert alert-danger" data-ng-show="part.id === pickedPart.id">
       Can't pick the same part.
     </div>
   </div>
 
   <!-- Picked Part Interchanges -->
-  <div class="col-xs-12 col-md-6" ng-show="pickedPart">
+  <div class="col-xs-12 col-md-6" data-ng-show="pickedPart">
     <h3>Picked Part Interchanges</h3>
     <interchangeable-parts part="pickedPart"></interchangeable-parts>
   </div>

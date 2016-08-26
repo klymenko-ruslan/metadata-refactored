@@ -1,7 +1,7 @@
 <ng-form name="form">
     <metanav>
         <li>
-            <a ng-href="/security/groups/"
+            <a data-ng-href="/security/groups/"
                class="btn-info">
                 <i class="fa fa-angle-double-left"></i>
                 Groups List
@@ -9,8 +9,8 @@
         </li>
 
         <li>
-            <a ng-click="save()"
-               ng-disabled="form.$pristine"
+            <a data-ng-click="save()"
+               data-ng-disabled="form.$pristine"
                class="btn btn-success">
                 <i class="fa fa-save"></i>
                 Save
@@ -18,9 +18,9 @@
         </li>
 
         <li>
-            <a ng-click="undo()"
-               ng-disabled="form.$pristine"
-               ng-hide="isNewGroup()"
+            <a data-ng-click="undo()"
+               data-ng-disabled="form.$pristine"
+               data-ng-hide="isNewGroup()"
                class="btn btn-warning">
                 <i class="fa fa-undo"></i>
                 Undo
@@ -28,8 +28,8 @@
         </li>
 
         <li>
-            <a ng-click="delete()"
-               ng-hide="isNewGroup()"
+            <a data-ng-click="delete()"
+               data-ng-hide="isNewGroup()"
                class="btn btn-danger">
                 <i class="fa fa-trash-o"></i>
                 Delete
@@ -39,16 +39,15 @@
 
     <div class="row">
         <div class="col-sm-6">
-            <h1 ng-show="isNewGroup()">Create Group</h1>
-
-            <h1 ng-hide="isNewGroup()">Group: {{group.name}}</h1>
+            <h1 data-ng-show="isNewGroup()">Create Group</h1>
+            <h1 data-ng-hide="isNewGroup()">Group: {{group.name}}</h1>
         </div>
     </div>
     <div class="row">
         <div class="col-sm-6">
           <div class="input-group form-inline">
             <span class="input-group-addon">Group Name</span>
-            <input type="text" class="form-control" ng-model="newName" id="group-name-input" placeholder="Group Name"/>
+            <input type="text" class="form-control" data-ng-model="newName" id="group-name-input" placeholder="Group Name"/>
           </div>
         </div>
     </div>
@@ -57,17 +56,17 @@
         <div class="col-sm-6">
             <h2>Roles</h2>
             <ul class="list-group">
-                <li ng-repeat="role in roles" class="list-group-item">
-                    <input type="checkbox" ng-model="roleSelections[role.id]" name="roleSelection"/> {{role.display}}
+                <li data-ng-repeat="role in roles" class="list-group-item">
+                    <input type="checkbox" data-ng-model="roleSelections[role.id]" name="roleSelection"/> {{role.display}}
                 </li>
             </ul>
         </div>
-        <div class="col-sm-6" ng-if="!isNewGroup()">
+        <div class="col-sm-6" data-ng-if="!isNewGroup()">
             <h2>Users</h2>
             <ul class="list-group">
-                <li ng-repeat="user in users" class="list-group-item">
+                <li data-ng-repeat="user in users" class="list-group-item">
                   <label>
-                    <input type="checkbox" ng-model="userSelections[user.id]" name="userSelection"/>
+                    <input type="checkbox" data-ng-model="userSelections[user.id]" name="userSelection"/>
                     {{user.name}}
                   </label>
                   <a href="/security/user/{{user.id}}"

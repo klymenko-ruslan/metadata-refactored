@@ -1,6 +1,6 @@
 <metanav>
   <li>
-    <a ng-href="/security/auth_providers/create"
+    <a data-ng-href="/security/auth_providers/create"
        class="btn-success">
       <i class="fa fa-plus"></i>
       Create
@@ -17,55 +17,55 @@
       <table data-ng-table="authProvidersTableParams" class="table table-bordered table-striped table-hover table-responsive">
         <tr data-ng-repeat="rec in $data.recs">
           <td title="'Name'" sortable="'name'" class="text-left">
-            <span ng-hide="isModifying(rec.id)">{{rec.name}}</span>
-            <div ng-show="isModifying(rec.id)">
-              <input name="authp_name" ng-model="modifyingRow.name" class="form-control" type="text" ng-model-options="{ debounce: 500 }" maxlength="64" unique-auth-ldap-name required />
-              <span ng-show="authProviderForm.authp_name.$invalid" class="alert alert-danger" role="alert">
+            <span data-ng-hide="isModifying(rec.id)">{{rec.name}}</span>
+            <div data-ng-show="isModifying(rec.id)">
+              <input name="authp_name" data-ng-model="modifyingRow.name" class="form-control" type="text" data-ng-model-options="{ debounce: 500 }" maxlength="64" unique-auth-ldap-name required />
+              <span data-ng-show="authProviderForm.authp_name.$invalid" class="alert alert-danger" role="alert">
                 <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                <span ng-show="authProviderForm.authp_name.$error.required">Required!</span>
-                <span ng-show="authProviderForm.authp_name.$error.maxlenth">Max 64 chars!</span>
-                <span ng-show="authProviderForm.authp_name.$error.uniqueAuthLdapName">Not unique name!</span>
+                <span data-ng-show="authProviderForm.authp_name.$error.required">Required!</span>
+                <span data-ng-show="authProviderForm.authp_name.$error.maxlenth">Max 64 chars!</span>
+                <span data-ng-show="authProviderForm.authp_name.$error.uniqueAuthLdapName">Not unique name!</span>
               </span>
             </div>
           </td>
           <td title="'Host'" sortable="'host'" class="text-left">
-            <span ng-hide="isModifying(rec.id)">{{rec.host}}</span>
-            <div ng-show="isModifying(rec.id)">
-              <input id="authp_host" name="authp_host" class="form-control" type="text" ng-model="modifyingRow.host" maxlength="255" host-name required />
-              <span ng-show="authProviderForm.authp_host.$invalid" class="alert alert-danger" role="alert">
+            <span data-ng-hide="isModifying(rec.id)">{{rec.host}}</span>
+            <div data-ng-show="isModifying(rec.id)">
+              <input id="authp_host" name="authp_host" class="form-control" type="text" data-ng-model="modifyingRow.host" maxlength="255" host-name required />
+              <span data-ng-show="authProviderForm.authp_host.$invalid" class="alert alert-danger" role="alert">
                 <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                <span ng-show="authProviderForm.authp_host.$error.required">Required!</span>
-                <span ng-show="authProviderForm.authp_host.$error.hostName">Invalid host address!</span>
-                <span ng-show="authProviderForm.authp_host.$error.maxlenth">Too long name (max 255 chars)!</span>
+                <span data-ng-show="authProviderForm.authp_host.$error.required">Required!</span>
+                <span data-ng-show="authProviderForm.authp_host.$error.hostName">Invalid host address!</span>
+                <span data-ng-show="authProviderForm.authp_host.$error.maxlenth">Too long name (max 255 chars)!</span>
               </span>
             </div>
           </td>
           <td title="'Port'" sortable="'port'" class="text-right">
-            <span ng-hide="isModifying(rec.id)">{{rec.port}}</span>
-            <div ng-show="isModifying(rec.id)">
-              <input id="authp_port" name="authp_port" class="form-control" type="number" ng-model="modifyingRow.port" maxlength="5" min="0" max="65535"  required/>
-              <span ng-show="authProviderForm.authp_port.$invalid" class="alert alert-danger" role="alert">
+            <span data-ng-hide="isModifying(rec.id)">{{rec.port}}</span>
+            <div data-ng-show="isModifying(rec.id)">
+              <input id="authp_port" name="authp_port" class="form-control" type="number" data-ng-model="modifyingRow.port" maxlength="5" min="0" max="65535"  required/>
+              <span data-ng-show="authProviderForm.authp_port.$invalid" class="alert alert-danger" role="alert">
                 <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                <span ng-show="authProviderForm.authp_port.$error.required">Required!</span>
-                <span ng-show="authProviderForm.authp_port.$error.invalidPortNumber">Invalid!</span>
-                <span ng-show="authProviderForm.authp_port.$error.maxlenth">Maximum 5 digits!</span>
-                <span ng-show="authProviderForm.authp_port.$error.min || authProviderForm.authp_port.$error.max">Invalid port number!</span>
+                <span data-ng-show="authProviderForm.authp_port.$error.required">Required!</span>
+                <span data-ng-show="authProviderForm.authp_port.$error.invalidPortNumber">Invalid!</span>
+                <span data-ng-show="authProviderForm.authp_port.$error.maxlenth">Maximum 5 digits!</span>
+                <span data-ng-show="authProviderForm.authp_port.$error.min || authProviderForm.authp_port.$error.max">Invalid port number!</span>
               </span>
             </div>
           </td>
           <td title="'Domain'" sortable="'domain'" class="text-right">
-            <span ng-hide="isModifying(rec.id)">{{rec.domain}}</span>
-            <div ng-show="isModifying(rec.id)">
-              <input id="authp_domain" name="authp_domain" class="form-control" type="text" ng-model="modifyingRow.domain" domain-name />
-              <span ng-show="authProviderForm.authp_domain.$invalid" class="alert alert-danger" role="alert">
-                <span ng-show="authProviderForm.authp_domain.$error.domainName">Invalid domain name!</span>
+            <span data-ng-hide="isModifying(rec.id)">{{rec.domain}}</span>
+            <div data-ng-show="isModifying(rec.id)">
+              <input id="authp_domain" name="authp_domain" class="form-control" type="text" data-ng-model="modifyingRow.domain" domain-name />
+              <span data-ng-show="authProviderForm.authp_domain.$invalid" class="alert alert-danger" role="alert">
+                <span data-ng-show="authProviderForm.authp_domain.$error.domainName">Invalid domain name!</span>
               </span>
             </div>
           </td>
           <td title="'Protocol'" sortable="'protocol'" class="text-left">
-            <span ng-hide="isModifying(rec.id)">{{rec.protocol}}</span>
-            <div ng-show="isModifying(rec.id)">
-              <select name="authp_protocol" class="form-control" ng-model="modifyingRow.protocol" required>
+            <span data-ng-hide="isModifying(rec.id)">{{rec.protocol}}</span>
+            <div data-ng-show="isModifying(rec.id)">
+              <select name="authp_protocol" class="form-control" data-ng-model="modifyingRow.protocol" required>
                 <option value="LDAP">LDAP</option>
                 <option value="LDAPS">LDAPS</option>
                 <option value="LDAPS_SOFT">LDAPS (SOFT)</option>
@@ -73,29 +73,29 @@
             </div>
           </td>
           <td class="actions" title="'Actions'">
-            <button ng-click="modifyStart(rec, authProviderForm)" class="btn btn-primary btn-xs" authorize="ROLE_ADMIN" ng-hide="isModifying(rec.id)">
+            <button data-ng-click="modifyStart(rec, authProviderForm)" class="btn btn-primary btn-xs" authorize="ROLE_ADMIN" data-ng-hide="isModifying(rec.id)">
               <i class="fa fa-cog"></i>
               Modify
             </button>
-            <button ng-click="remove(rec, authProviderForm)" class="btn btn-danger btn-xs" authorize="ROLE_ADMIN" ng-hide="isModifying(rec.id)">
+            <button data-ng-click="remove(rec, authProviderForm)" class="btn btn-danger btn-xs" authorize="ROLE_ADMIN" data-ng-hide="isModifying(rec.id)">
               <i class="fa fa-trash-o"></i>
               Remove
             </button>
-            <button ng-click="modifySave(authProviderForm)" authorize="ROLE_ADMIN" class="btn btn-success btn-xs ng-hide" ng-show="isModifying(rec.id)"  ng-disabled="authProviderForm.$pristine || authProviderForm.$invalid || authProviderForm.$pending">
+            <button data-ng-click="modifySave(authProviderForm)" authorize="ROLE_ADMIN" class="btn btn-success btn-xs ng-hide" data-ng-show="isModifying(rec.id)"  data-ng-disabled="authProviderForm.$pristine || authProviderForm.$invalid || authProviderForm.$pending">
               <i class="fa fa-save"></i>
               Save
             </button>
-            <button ng-click="undo(authProviderForm)" ng-show="isModifying(rec.id)" ng-disabled="form.$pristine" class="btn btn-warning btn-xs ng-hide">
+            <button data-ng-click="undo(authProviderForm)" data-ng-show="isModifying(rec.id)" data-ng-disabled="form.$pristine" class="btn btn-warning btn-xs ng-hide">
               <i class="fa fa-undo"></i>
               Undo
             </button>
-            <button ng-click="modifyCancel(rec, authProviderForm)" class="btn btn-warning btn-xs ng-hide" ng-show="isModifying(rec.id)">
+            <button data-ng-click="modifyCancel(rec, authProviderForm)" class="btn btn-warning btn-xs ng-hide" data-ng-show="isModifying(rec.id)">
               <i class="fa fa-minus-circle"></i>
               Cancel
             </button>
           </td>
         </tr>
-        <tr ng-hide="$data.total > 0">
+        <tr data-ng-hide="$data.total > 0">
           <td colspan="5">No providers to display.</td>
         </tr>
       </table>

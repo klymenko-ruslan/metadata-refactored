@@ -5,8 +5,8 @@
   <subnav>
 
     <li>
-      <button ng-disabled="carmakeForm.$pristine || carmakeForm.$invalid || carmakeForm.$pending"
-         ng-click="save()" class="btn btn-success">
+      <button data-ng-disabled="carmakeForm.$pristine || carmakeForm.$invalid || carmakeForm.$pending"
+         data-ng-click="save()" class="btn btn-success">
         <i class="fa fa-save"></i>
         Save
       </button>
@@ -22,12 +22,12 @@
     <div class="col-xs-12 col-sm-6">
 
       <label for="carmake_name">Name</label>
-      <input id="carmake_name" name="carmake_name" class="form-control" type="text" ng-model="carmake.name" ng-model-options="{ debounce: 500 }" required maxlength="50" unique-carmake-name />
-      <span ng-show="carmakeForm.carmake_name.$dirty && carmakeForm.carmake_name.$invalid" class="alert alert-danger" role="alert">
+      <input id="carmake_name" name="carmake_name" class="form-control" type="text" data-ng-model="carmake.name" data-ng-model-options="{ debounce: 500 }" required maxlength="50" unique-carmake-name />
+      <span data-ng-show="carmakeForm.carmake_name.$dirty && carmakeForm.carmake_name.$invalid" class="alert alert-danger" role="alert">
         <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-        <span ng-show="carmakeForm.carmake_name.$error.required">Required!</span>
-        <span ng-show="carmakeForm.carmake_name.$error.maxlenth">Too long name (max 50 chars)!</span>
-        <span ng-show="carmakeForm.carmake_name.$error.nonUniqueName">Not unique!</span>
+        <span data-ng-show="carmakeForm.carmake_name.$error.required">Required!</span>
+        <span data-ng-show="carmakeForm.carmake_name.$error.maxlenth">Too long name (max 50 chars)!</span>
+        <span data-ng-show="carmakeForm.carmake_name.$error.nonUniqueName">Not unique!</span>
       </span>
 
     </div>

@@ -7,14 +7,12 @@
     </button>
     <div class="form-group">
       <label for="fltrPartNumber" class="sr-only control-label">Part Number</label>
-      <input class="form-control input-sm" id="fltrPartNumber" name="fltrPartNumber" type="text" data-ng-model="searchPartNumber" data-ng-model-options="{debounce: 200}" data-ng-keyup="$event.keyCode === 13 && onPressedEnter()" placeholder="Part number..." />
+      <input class="form-control input-sm" id="fltrPartNumber" name="fltrPartNumber" type="text" data-ng-model="searchPartNumber" data-ng-model-options="{debounce: 200}" data-ng-keyup="$event.keyCode === 13 && onPressedEnter()" placeholder="Search part numbers" />
     </div>
     <div class="form-group">
-      <label for="">State</label>
-      <select id="fltrState" name="fltrState" class="form-control input-sm" data-ng-model="searchInactive">
+      <label for="fltrState">State</label>
+      <select id="fltrState" name="fltrState" class="form-control input-sm" data-ng-options="itm.val as itm.name + ' (' + itm.count + ')' for itm in stateItems | orderBy: 'name'" data-ng-model="searchInactive">
         <option></option>
-        <option value="false">Active</option>
-        <option value="true">Inactive</option>
       </select>
     </div>
     <div class="form-group">
@@ -35,15 +33,41 @@
     </div>
     <div class="form-group">
       <label for="fltrTurboModel" data-ng-disabled="searchPartType.id !== 1">Turbo Model</label>
-      <select id="fltrTurboModel" data-ng-disabled="searchPartType.id !== 1" name="fltrTurboModel" class="form-control input-sm" data-ng-options="itm.key as itm.key + ' (' + itm.doc_count + ')' for itm in searchResults.aggregations['Turbo Model'].buckets | orderBy: 'key'" data-ng-model="searchTurboModel">
+      <div angucomplete-alt id="fltrTurboModel"
+           placeholder="Search turbo models"
+           disable-input="searchPartType.id !== 1"
+           minlength="0" maxlength="64" pause="300"
+           search-fields="key"
+           title-field="key"
+           description-field="doc_count"
+           input-class="form-control"
+           match-class="highlight"
+           text-no-results="Not found"
+           input-changed="onTurboModelChanged"
+           selected-object="onTurboModelSelected"
+           local-data="searchResults.aggregations['Turbo Model'].buckets"></div>
+      <!-- select id="fltrTurboModel" data-ng-disabled="searchPartType.id !== 1" name="fltrTurboModel" class="form-control input-sm" data-ng-options="itm.key as itm.key + ' (' + itm.doc_count + ')' for itm in searchResults.aggregations['Turbo Model'].buckets | orderBy: 'key'" data-ng-model="searchTurboModel">
         <option></option>
-      </select>
+      </select -->
     </div>
     <div class="form-group">
       <label for="fltrTurboType" data-ng-disabled="searchPartType.id !== 1">Turbo Type</label>
-      <select id="fltrTurboType" data-ng-disabled="searchPartType.id !== 1" name="fltrTurboType" class="form-control input-sm" data-ng-options="itm.key as itm.key + ' (' + itm.doc_count + ')' for itm in searchResults.aggregations['Turbo Type'].buckets | orderBy: 'key'" data-ng-model="searchTurboType">
+      <div angucomplete-alt id="fltrTurboType"
+           placeholder="Search turbo types"
+           disable-input="searchPartType.id !== 1"
+           minlength="0" maxlength="64" pause="300"
+           search-fields="key"
+           title-field="key"
+           description-field="doc_count"
+           input-class="form-control"
+           match-class="highlight"
+           text-no-results="Not found"
+           input-changed="onTurboTypeChanged"
+           selected-object="onTurboTypeSelected"
+           local-data="searchResults.aggregations['Turbo Type'].buckets"></div>
+      <!-- select id="fltrTurboType" data-ng-disabled="searchPartType.id !== 1" name="fltrTurboType" class="form-control input-sm" data-ng-options="itm.key as itm.key + ' (' + itm.doc_count + ')' for itm in searchResults.aggregations['Turbo Type'].buckets | orderBy: 'key'" data-ng-model="searchTurboType">
         <option></option>
-      </select>
+      </select -->
     </div>
 
     <hr/>

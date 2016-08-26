@@ -21,6 +21,7 @@
     <link rel="stylesheet" href="css/ng-table.css">
     <link rel="stylesheet" href="css/gToast.css">
     <link rel="stylesheet" href="css/dialogs.css">
+    <link rel="stylesheet" href="css/angucomplete-alt.css">
     <!-- endbuild -->
 </head>
 <body data-ng-app="mockApp">
@@ -46,23 +47,53 @@
 
   <button type="button" class="btn btn-primary" data-ng-click="onOpenChangelogDetails()">Open changelog dialog</button>
 
+  <hr/>
+  <div class="padded-row">
+    <div angucomplete-alt id="ex1" placeholder="Search countries" maxlength="50" pause="100" selected-object="selectedCountry" local-data="countries" search-fields="name" title-field="name" minlength="1" input-class="form-control form-control-small" match-class="highlight">
+    </div>
+  </div>
+
+  <form class="form-inline">
+    <!-- div class="form-group">
+      <label for="actors">Actors</label>
+        <div angucomplete-alt id="actors" placeholder="Actor" maxlength="50"
+          pause="100" selected-object="selectedActor" local-data="actors"
+          search-fields="name" title-field="name" minlength="1"
+          input-class="form-control form-control-small"
+          match-class="highlight"></div>
+      </label>
+    </div -->
+    <!-- div class="form-group">
+      <label for="tt">Turbo types</label>
+        <div angucomplete-alt id="tt" placeholder="Turbo Types" maxlength="50"
+          pause="100" selected-object="selectedTurboTypes" local-data="filteredParts.aggregations['Turbo Type']"
+          search-fields="key" title-field="key" minlength="1"
+          input-class="form-control form-control-small"
+          match-class="highlight"></div>
+      </label>
+    </div -->
+  </form>
+
 </div>
 
-<script src="js/jquery-2.2.0.js"></script>
-<script src="js/angular.js"></script>
+    <script src="js/jquery-2.2.0.js"></script>
+    <script src="js/angular.js"></script>
 
-<script src="js/dialogs.js"></script>
-<script src="js/angular-route.js"></script>
-<script src="js/angular-sanitize.js"></script>
-<script src="js/ui-bootstrap.js"></script>
-<script src="js/ui-bootstrap-tpls.js"></script>
-<script src="js/bootstrap.js"></script>
-<script src="js/gToast.js"></script>
-<script src="js/ng-table.js"></script>
-<script src="js/underscore.js"></script>
-<script src="js/restangular.js"></script>
+    <script src="js/angucomplete-alt.js"></script>
+    <script src="js/dialogs.js"></script>
+    <script src="js/angular-route.js"></script>
+    <script src="js/angular-sanitize.js"></script>
+    <script src="js/ui-bootstrap.js"></script>
+    <script src="js/ui-bootstrap-tpls.js"></script>
+    <script src="js/bootstrap.js"></script>
+    <script src="js/gToast.js"></script>
+    <script src="js/ng-table.js"></script>
+    <script src="js/underscore.js"></script>
+    <script src="js/restangular.js"></script>
 
-<script src="js/script.js"></script>
+    <script src="js/script.js"></script>
+    <script src="js/data.js"></script>
+
 
 </body>
 </html>

@@ -3,11 +3,11 @@
     <!-- Search by input or facet select options -->
     <div class="col-xs-12 col-sm-3">
         <form class="" role="form">
-          <button class="btn btn-default" ng-click="clear()">Clear</button>
+          <button class="btn btn-default" data-ng-click="clear()">Clear</button>
 
           <div class="form-group">
             <label for="carmodel" class="sr-only control-label">Name</label>
-            <input class="form-control" id="carmodel" type="text" ng-model="search.carmodel" placeholder="Car Model..."/>
+            <input class="form-control" id="carmodel" type="text" data-ng-model="search.carmodel" placeholder="Car Model..."/>
           </div>
 
           <carmodel-search-facets search="search" results="searchResults"/>

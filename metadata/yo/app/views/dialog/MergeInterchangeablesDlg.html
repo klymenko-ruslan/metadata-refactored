@@ -6,13 +6,13 @@
       <p>Picked part can't be added automatically to this part. There are several possible solutions.</p>
       <p>Please chose one of the following:</p>
       <ul class="list-unstyled" style="margin-left:1em;">
-        <li><input id="merge_choice_1" type="radio" ng-model="mergeChoice" ng-value="::mergeOptions.PICKED_ALONE_TO_PART">&nbsp;<span>Add picked part to interchange group of this part and remove picked part from its existing interchange</span></li>
-        <li><input id="merge_choice_2" type="radio" ng-model="mergeChoice" ng-value="::mergeOptions.PART_ALONE_TO_PICKED">&nbsp;<span>Add this part to interchange group of the picked part and remove this part from its existing interchange</span></li>
-        <li><input id="merge_choice_3" type="radio" ng-model="mergeChoice" ng-value="::mergeOptions.PICKED_ALL_TO_PART">&nbsp;<span >Add the picked part and all its existing interchange parts to interchange group of this part</span></li>
+        <li><input id="merge_choice_1" type="radio" data-ng-model="mergeChoice" data-ng-value="::mergeOptions.PICKED_ALONE_TO_PART">&nbsp;<span>Add picked part to interchange group of this part and remove picked part from its existing interchange</span></li>
+        <li><input id="merge_choice_2" type="radio" data-ng-model="mergeChoice" data-ng-value="::mergeOptions.PART_ALONE_TO_PICKED">&nbsp;<span>Add this part to interchange group of the picked part and remove this part from its existing interchange</span></li>
+        <li><input id="merge_choice_3" type="radio" data-ng-model="mergeChoice" data-ng-value="::mergeOptions.PICKED_ALL_TO_PART">&nbsp;<span >Add the picked part and all its existing interchange parts to interchange group of this part</span></li>
       </ul>
   </ng-form>
 </div>
 <div class="modal-footer">
-  <button type="button" class="btn btn-default" ng-click="cancel()">Cancel</button>
-  <button type="button" class="btn btn-primary" ng-click="doIt()">Do it!</button>
+  <button type="button" class="btn btn-default" data-ng-click="cancel()">Cancel</button>
+  <button type="button" class="btn btn-primary" data-ng-click="doIt()">Do it!</button>
 </div>

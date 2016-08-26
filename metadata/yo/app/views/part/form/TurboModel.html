@@ -1,8 +1,8 @@
 <div data-ng-controller="TurboModelPickerCtrl" class="row">
 
-    <div ng-disabled="turboTypes.length == 0" class="col-xs-6 form-group">
+    <div data-ng-disabled="turboTypes.length == 0" class="col-xs-6 form-group">
         <label class="control-label">Turbo Type</label>
-        <input ng-model="turboTypeFilter" ng-init="turboTypeFilter = ''" class="form-control input-sm" placeholder="Turbo type filter..."/>
+        <input data-ng-model="turboTypeFilter" data-ng-init="turboTypeFilter = ''" class="form-control input-sm" placeholder="Turbo type filter..."/>
         <br/>
         <select data-ng-model="turboTypeId"
                 data-ng-options="turboType.id as turboType.name for turboType in turboTypes | filter:{name:turboTypeFilter}"
@@ -13,7 +13,7 @@
 
     <div class="col-xs-6">
         <label class="control-label">Turbo Model</label>
-        <input ng-model="turboModelFilter" ng-init="turboModelFilter = ''" class="form-control input-sm" placeholder="Turbo model filter..."/>
+        <input data-ng-model="turboModelFilter" data-ng-init="turboModelFilter = ''" class="form-control input-sm" placeholder="Turbo model filter..."/>
         <br/>
         <select required
                 data-ng-model="turboModelId"

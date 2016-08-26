@@ -3,11 +3,11 @@
     <!-- Search by input or facet select options -->
     <div class="col-xs-12 col-sm-3">
         <form class="" role="form" id="part-application-facet-pickers">
-          <button class="btn btn-default" ng-click="clear()">Clear</button>
+          <button class="btn btn-default" data-ng-click="clear()">Clear</button>
 
           <div class="form-group">
             <label for="partApplication" class="sr-only control-label">Application</label>
-            <input class="form-control" id="partApplication" type="text" ng-model="search.cmey" placeholder="Application..."/>
+            <input class="form-control" id="partApplication" type="text" data-ng-model="search.cmey" placeholder="Application..."/>
           </div>
 
           <cmey-search-facets search="search" results="searchResults"/>

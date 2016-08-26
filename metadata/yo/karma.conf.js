@@ -22,6 +22,8 @@ module.exports = function(config) {
       'app/bower_components/ng-table/ng-table.js',
       'app/bower_components/restangular/src/restangular.js',
       'app/bower_components/underscore/underscore.js',
+      'app/bower_components/angucomplete-alt/dist/angucomplete-alt.min.js',
+      'app/bower_components/angucomplete-alt/angucomplete-alt.css',
       'app/scripts/*.js',
       'app/scripts/**/*.js',
       'test/mock/**/*.js',

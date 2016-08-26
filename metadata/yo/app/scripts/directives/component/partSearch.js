@@ -21,6 +21,8 @@ angular.module("ngMetaCrudApp")
         $scope.searchPartNumber = null;
         $scope.searchCritDims = {};
 
+        $scope.stateItems = [];
+
         $scope.actions = utils.transclude2html($transclude);
         $scope.showCriticalDimensions = false;
 
@@ -94,6 +96,28 @@ angular.module("ngMetaCrudApp")
           $scope.initColumns();
         });
 
+        $scope.onTurboModelChanged = function(val) {
+          if (val !== $scope.searchTurboModel) {
+            $scope.searchTurboModel = val;
+            $scope.partTableParams.reload();
+          }
+        };
+
+        $scope.onTurboModelSelected = function($item) {
+          $scope.onTurboModelChanged($item.title);
+        };
+
+        $scope.onTurboTypeChanged = function(val) {
+          if (val !== $scope.searchTurboType) {
+            $scope.searchTurboType = val;
+            $scope.partTableParams.reload();
+          }
+        };
+
+        $scope.onTurboTypeSelected = function($item) {
+          $scope.onTurboTypeChanged($item.title);
+        };
+
         // Latest Results
         $scope.searchResults = {
           hits: {
@@ -125,11 +149,29 @@ angular.module("ngMetaCrudApp")
               turboModelName = $scope.searchTurboModel;
               turboTypeName = $scope.searchTurboType;
             }
+
             restService.filterParts(searchPartTypeId, $scope.searchManufacturer, $scope.searchName,
               $scope.searchPartNumber, $scope.searchInactive, turboModelName, turboTypeName,
               $scope.searchCritDims, sortProperty, sortOrder, offset, limit).then(
               function(filtered) { // The 'filtered' is a JSON returned by ElasticSearch.
                 $scope.searchResults = filtered;
+                // Update values for UI combobox -- "State".
+                $scope.stateItems = [];
+                _.each(filtered.aggregations.State.buckets, function(b) {
+                  if (b.key === 0) {
+                    $scope.stateItems.push({
+                      name: "Active",
+                      val: false,
+                      count: b.doc_count
+                    });
+                  } else if (b.key == 1) {
+                    $scope.stateItems.push({
+                      name: "Inactive",
+                      val: true,
+                      count: b.doc_count
+                    });
+                  }
+                });
                 // Update the total and slice the result
                 $defer.resolve($scope.searchResults.hits.hits);
                 params.total($scope.searchResults.hits.total);
@@ -148,8 +190,8 @@ angular.module("ngMetaCrudApp")
           $scope.searchPartType = null;
           $scope.searchManufacturer = null;
           $scope.searchName = null;
-          $scope.searchTurboModel = null;
-          $scope.searchTurboType = null;
+          $scope.$broadcast("angucomplete-alt:clearInput", "fltrTurboModel");
+          $scope.$broadcast("angucomplete-alt:clearInput", "fltrTurboType");
         };
 
         $scope.clearFilter();
@@ -158,7 +200,7 @@ angular.module("ngMetaCrudApp")
         $scope.critDims = null;
 
         $scope.$watch("[searchPartNumber, searchInactive, searchManufacturer, searchName, searchCritDims, " +
-          "searchTurboModel, searchTurboType]", function(newVal, oldVal)
+          "searchTurboType]", function(newVal, oldVal)
         {
           // Debounce
           if (angular.equals(newVal, oldVal, true)) {

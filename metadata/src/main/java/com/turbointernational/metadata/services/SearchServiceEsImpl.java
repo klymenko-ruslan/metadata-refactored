@@ -146,17 +146,6 @@ public class SearchServiceEsImpl implements SearchService {
 
     private final static int DEF_AGGR_RESULT_SIZE = 300;
 
-    private final static AggregationBuilder[] PART_AGGREGATIONS = new AggregationBuilder[]{
-            AggregationBuilders.terms("Part Type").field("partType.name.full").size(DEF_AGGR_RESULT_SIZE),
-            AggregationBuilders.terms("Manufacturer").field("manufacturer.name.full").size(DEF_AGGR_RESULT_SIZE),
-//            AggregationBuilders.terms("Kit Type").field("kitType.name.full").size(DEF_AGGR_RESULT_SIZE),
-//            AggregationBuilders.terms("Gasket Type").field("gasketType.name.full").size(DEF_AGGR_RESULT_SIZE),
-//            AggregationBuilders.terms("Seal Type").field("sealType.name.full").size(DEF_AGGR_RESULT_SIZE),
-//            AggregationBuilders.terms("Coolant Type").field("coolType.name.full").size(DEF_AGGR_RESULT_SIZE),
-            AggregationBuilders.terms("Turbo Type").field("turboModel.turboType.name.full").size(DEF_AGGR_RESULT_SIZE),
-            AggregationBuilders.terms("Turbo Model").field("turboModel.name.full").size(DEF_AGGR_RESULT_SIZE)
-    };
-
     private final static AggregationBuilder[] CMEY_AGGREGATIONS = new AggregationBuilder[]{
             AggregationBuilders.terms("Year").field("year.name.full").size(DEF_AGGR_RESULT_SIZE),
             AggregationBuilders.terms("Make").field("model.make.name.full").size(DEF_AGGR_RESULT_SIZE),
@@ -660,11 +649,13 @@ public class SearchServiceEsImpl implements SearchService {
             sterms.add(newBooleanSearchTerm("inactive", inactive));
         }
 
-        if (turboTypeName != null) {
-            sterms.add(newTextSearchTerm("turboModel.turboType.name.full", turboTypeName));
+        if (isNotBlank(turboTypeName)) {
+            String normalizedTurboTypeName = str2shotfield.apply(turboTypeName);
+            sterms.add(newTextSearchTerm("turboModel.turboType.name.short", normalizedTurboTypeName));
         }
-        if (turboModelName != null) {
-            sterms.add(newTextSearchTerm("turboModel.name.full", turboModelName));
+        if (isNotBlank(turboModelName)) {
+            String normalizedTurboModelName = str2shotfield.apply(turboModelName);
+            sterms.add(newTextSearchTerm("turboModel.name.short", normalizedTurboModelName));
         }
         if (partTypeId != null) {
             List<CriticalDimension> criticalDimensions = criticalDimensionService.getCriticalDimensionForPartType(partTypeId);
@@ -778,9 +769,11 @@ public class SearchServiceEsImpl implements SearchService {
                     .missing("_last");
             srb.addSort(sort);
         }
-        for (AggregationBuilder agg : PART_AGGREGATIONS) {
-            srb.addAggregation(agg);
-        }
+        srb.addAggregation(AggregationBuilders.terms("Part Type").field("partType.name.full").size(DEF_AGGR_RESULT_SIZE));
+        srb.addAggregation(AggregationBuilders.terms("Manufacturer").field("manufacturer.name.full").size(DEF_AGGR_RESULT_SIZE));
+        srb.addAggregation(AggregationBuilders.terms("Turbo Type").field("turboModel.turboType.name.full").size(DEF_AGGR_RESULT_SIZE));
+        srb.addAggregation(AggregationBuilders.terms("Turbo Model").field("turboModel.name.full").size(DEF_AGGR_RESULT_SIZE));
+        srb.addAggregation(AggregationBuilders.terms("State").field("inactive").size(DEF_AGGR_RESULT_SIZE));
         if (offset != null) {
             srb.setFrom(offset);
         }

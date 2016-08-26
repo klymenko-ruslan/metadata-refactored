@@ -1,6 +1,6 @@
   <a authorize="ROLE_BOM"
      class="btn btn-primary pull-right" style="margin-bottom:10px;"
-     ng-href="/part/{{parentPartId}}/bom/search">
+     data-ng-href="/part/{{parentPartId}}/bom/search">
     <i class="fa fa-plus"></i> Add Child
   </a>
   <table data-ng-table="bomTableParams" class="table table-bordered table-striped table-hover table-responsive">
@@ -18,63 +18,63 @@
         {{bomItem.child.manufacturerPartNumber}}
       </td>
       <td title="'Qty'" class="text-right" data-sortable="'quantity'">
-        <span ng-hide="isModifying($index, bomItem)">{{bomItem.quantity}}</span>
-        <input ng-model="modifyValues[bomItem.id]" type="text" ng-show="isModifying($index, bomItem)"/>
+        <span data-ng-hide="isModifying($index, bomItem)">{{bomItem.quantity}}</span>
+        <input data-ng-model="modifyValues[bomItem.id]" type="text" data-ng-show="isModifying($index, bomItem)"/>
       </td>
       <td title="'Actions'">
 
-        <button ng-click="modifyStart($index, bomItem)"
+        <button data-ng-click="modifyStart($index, bomItem)"
                 authorize="ROLE_BOM" class="btn btn-warning btn-xs"
-                ng-hide="isModifying($index, bomItem)">
+                data-ng-hide="isModifying($index, bomItem)">
           <i class="fa fa-cog"></i> Modify
         </button>
 
-        <button ng-click="modifySave($index, bomItem)"
-                ng-disabled="restService.status.bomRebuilding"
+        <button data-ng-click="modifySave($index, bomItem)"
+                data-ng-disabled="restService.status.bomRebuilding"
                 authorize="ROLE_BOM" class="btn btn-success btn-xs"
-                ng-show="isModifying($index, bomItem)">
+                data-ng-show="isModifying($index, bomItem)">
           <i class="fa fa-save"></i> Save
         </button>
 
-        <button ng-click="modifyCancel($index, bomItem)"
+        <button data-ng-click="modifyCancel($index, bomItem)"
                 authorize="ROLE_BOM" class="btn btn-warning btn-xs"
-                ng-show="isModifying($index, bomItem)">
+                data-ng-show="isModifying($index, bomItem)">
           <i class="fa fa-minus-circle"></i> Cancel
         </button>
 
-        <a ng-href="/part/{{bomItem.child.id}}"
+        <a data-ng-href="/part/{{bomItem.child.id}}"
            authorize="ROLE_READ" class="btn btn-primary btn-xs"
-           ng-hide="isModifying($index, bomItem)">
+           data-ng-hide="isModifying($index, bomItem)">
           <i class="fa fa-eye"></i> View Part
         </a>
 
-        <a ng-click="showAlternates(bomItem)"
+        <a data-ng-click="showAlternates(bomItem)"
            authorize="ROLE_READ" class="btn btn-info btn-xs"
-           ng-hide="isModifying($index, bomItem)">
+           data-ng-hide="isModifying($index, bomItem)">
           <i class="fa fa-random"></i> Alternates
         </a>
 
-        <button ng-click="remove($index, bomItem)"
-                ng-disabled="restService.status.bomRebuilding"
+        <button data-ng-click="remove($index, bomItem)"
+                data-ng-disabled="restService.status.bomRebuilding"
                 authorize="ROLE_BOM" class="btn btn-danger btn-xs"
-                ng-hide="isModifying($index, bomItem)">
+                data-ng-hide="isModifying($index, bomItem)">
           <i class="fa fa-trash-o"></i> Remove
         </button>
 
       </td>
     </tr>
 
-    <tr ng-hide="$data.length > 0">
+    <tr data-ng-hide="$data.length > 0">
       <td colspan="6">No parts to display.</td>
     </tr>
   </table>
 
-  <div ng-show="altBomItem">
+  <div data-ng-show="altBomItem">
       <h4 part-name="altBomItem.child" part-name-suffix="Alternates"></h4>
 
       <a authorize="ROLE_BOM"
          class="btn btn-info pull-right" style="vertical-align: middle;"
-         ng-href="/part/{{parentPartId}}/bom/{{altBomItem.id}}/search">
+         data-ng-href="/part/{{parentPartId}}/bom/{{altBomItem.id}}/search">
         <i class="fa fa-cogs"></i> Add Alternate
       </a>
 
@@ -82,8 +82,8 @@
       <part-table parts="altBomItem.alternatives" key="part"
                   extra-columns="{&quot;Alt Group #&quot;: &quot;item.header.id&quot;}">
 
-        <button ng-click="removeAlternate(index, item)"
-                ng-disabled="restService.status.bomRebuilding"
+        <button data-ng-click="removeAlternate(index, item)"
+                data-ng-disabled="restService.status.bomRebuilding"
            authorize="ROLE_BOM_ALT" class="btn btn-danger btn-xs">
           <i class="fa fa-trash-o"></i> Remove
         </button>

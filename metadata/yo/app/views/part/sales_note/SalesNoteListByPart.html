@@ -1,11 +1,11 @@
 <metanav>
   <li authorize="ROLE_READ">
-    <a ng-href="/part/{{ partId }}" class="btn btn-primary">
+    <a data-ng-href="/part/{{ partId }}" class="btn btn-primary">
       <i class="fa fa-eye"></i> View Part
     </a>
   </li>
   <li authorize="ROLE_SALES_NOTE_SUBMIT">
-    <a ng-href="/part/{{ partId }}/sales_note/create" class="btn btn-primary text-center">
+    <a data-ng-href="/part/{{ partId }}/sales_note/create" class="btn btn-primary text-center">
       <i class="fa fa-plus"></i> Add Sales Note
     </a>
   </li>
@@ -13,20 +13,20 @@
 
 <h1 class="padding-top" part-name="part" part-name-suffix="Sales Notes"></h1>
 
-<form ng-submit="notesTableParams.reload()" class="form-inline" style="left-padding:0;">
+<form data-ng-submit="notesTableParams.reload()" class="form-inline" style="left-padding:0;">
 
   <div class="btn-group" style="padding-right:3em;">
-    <label ng-repeat="state in SalesNotes.states" class="btn btn-default" btn-checkbox ng-model="states.current[state]">{{state}}</label>
+    <label data-ng-repeat="state in SalesNotes.states" class="btn btn-default" btn-checkbox data-ng-model="states.current[state]">{{state}}</label>
   </div>
 
   <div class="btn-group">
-    <label class="btn btn-default" btn-checkbox ng-model="search.includePrimary">Primary</label>
-    <label class="btn btn-default" btn-checkbox ng-model="search.includeRelated">Related</label>
+    <label class="btn btn-default" btn-checkbox data-ng-model="search.includePrimary">Primary</label>
+    <label class="btn btn-default" btn-checkbox data-ng-model="search.includeRelated">Related</label>
   </div>
 
   <div class="form-group pull-right">
-    <input id="part-number" class="form-control" size="15" type="text" placeholder="Primary Part" ng-model="search.partNumber" ng-model-options="{debounce:300}">
-    <input id="comment" class="form-control" size="25" type="text" placeholder="Comment" ng-model="search.comment" ng-model-options="{debounce:300}">
+    <input id="part-number" class="form-control" size="15" type="text" placeholder="Primary Part" data-ng-model="search.partNumber" data-ng-model-options="{debounce:300}">
+    <input id="comment" class="form-control" size="25" type="text" placeholder="Comment" data-ng-model="search.comment" data-ng-model-options="{debounce:300}">
   </div>
 
 </form>
@@ -47,38 +47,38 @@
         <td title="'State'" data-sortable="'pk.salesNote.state'">
           {{row._source.pk.salesNote.state}}
         </td>
-        <td title="'Relation'" ng-class="{info:row._source.primary}" data-sortable="'primary'">
+        <td title="'Relation'" data-ng-class="{info:row._source.primary}" data-sortable="'primary'">
           {{row._source.primary ? "Primary" : "Related"}}
         </td>
         <td class="text-nowrap" title="'Actions'">
 
-          <a ng-href="/part/{{row._source.primaryPartId}}/sales_note/{{row._source.pk.salesNote.id}}" authorize="ROLE_SALES_NOTE_READ" class="btn btn-primary btn-xs">
+          <a data-ng-href="/part/{{row._source.primaryPartId}}/sales_note/{{row._source.pk.salesNote.id}}" authorize="ROLE_SALES_NOTE_READ" class="btn btn-primary btn-xs">
             <span class="fa fa-file-text-o"></span> View Note
           </a>
 
-          <button ng-click="SalesNotes.submit(row._source.pk.salesNote)" authorize="ROLE_SALES_NOTE_SUBMIT" ng-if="SalesNotes.canSubmit(row._source.pk.salesNote)" class="btn btn-info btn-xs">
+          <button data-ng-click="SalesNotes.submit(row._source.pk.salesNote)" authorize="ROLE_SALES_NOTE_SUBMIT" data-ng-if="SalesNotes.canSubmit(row._source.pk.salesNote)" class="btn btn-info btn-xs">
             <span class="fa fa-check-square"></span> Submit
           </button>
 
-          <button ng-click="SalesNotes.publish(row._source.pk.salesNote)" authorize="ROLE_SALES_NOTE_PUBLISH" ng-if="SalesNotes.canPublish(row._source.pk.salesNote)" class="btn btn-primary btn-xs">
+          <button data-ng-click="SalesNotes.publish(row._source.pk.salesNote)" authorize="ROLE_SALES_NOTE_PUBLISH" data-ng-if="SalesNotes.canPublish(row._source.pk.salesNote)" class="btn btn-primary btn-xs">
             <span class="fa fa-cloud-upload"></span> Publish
           </button>
 
-          <button ng-click="SalesNotes.approve(row._source.pk.salesNote)" authorize="ROLE_SALES_NOTE_APPROVE" ng-if="SalesNotes.canApprove(row._source.pk.salesNote)" class="btn btn-success btn-xs">
+          <button data-ng-click="SalesNotes.approve(row._source.pk.salesNote)" authorize="ROLE_SALES_NOTE_APPROVE" data-ng-if="SalesNotes.canApprove(row._source.pk.salesNote)" class="btn btn-success btn-xs">
             <span class="fa fa-thumbs-up"></span> Approve
           </button>
 
-          <button ng-click="SalesNotes.reject(row._source.pk.salesNote)" authorize="ROLE_SALES_NOTE_REJECT" ng-if="SalesNotes.canReject(row._source.pk.salesNote)" class="btn btn-danger btn-xs">
+          <button data-ng-click="SalesNotes.reject(row._source.pk.salesNote)" authorize="ROLE_SALES_NOTE_REJECT" data-ng-if="SalesNotes.canReject(row._source.pk.salesNote)" class="btn btn-danger btn-xs">
             <span class="fa fa-thumbs-down"></span> Reject
           </button>
 
-          <button ng-click="SalesNotes.retract(row._source.pk.salesNote)" authorize="ROLE_SALES_NOTE_RETRACT" ng-if="SalesNotes.canRetract(row._source.pk.salesNote)" class="btn btn-warning btn-xs">
+          <button data-ng-click="SalesNotes.retract(row._source.pk.salesNote)" authorize="ROLE_SALES_NOTE_RETRACT" data-ng-if="SalesNotes.canRetract(row._source.pk.salesNote)" class="btn btn-warning btn-xs">
             <span class="fa fa-cloud-download"></span> Retract
           </button>
 
         </td>
       </tr>
-      <tr ng-hide="$data.length > 0">
+      <tr data-ng-hide="$data.length > 0">
         <td colspan="6">Sales notes for this part (and filter) not found.</td>
       </tr>
     </table>

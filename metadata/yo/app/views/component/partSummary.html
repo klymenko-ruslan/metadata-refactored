@@ -2,7 +2,7 @@
   <dt>Manufacturer</dt>
   <dd>
     {{part.manufacturer.name}}
-    <span ng-show="part.manufacturer.name == null || part.manufacturer.name == ''">[blank]</span>
+    <span data-ng-show="part.manufacturer.name == null || part.manufacturer.name == ''">[blank]</span>
   </dd>
 
   <dt>Part Type</dt>
@@ -13,12 +13,12 @@
   <dt>Part Number</dt>
   <dd>
     {{part.manufacturerPartNumber}}
-    <span ng-show="part.manufacturerPartNumber == null || part.manufacturerPartNumber == ''">[blank]</span>
+    <span data-ng-show="part.manufacturerPartNumber == null || part.manufacturerPartNumber == ''">[blank]</span>
   </dd>
 
   <dt>Name</dt>
   <dd>
     {{part.name}}
-    <span ng-show="part.name == null || part.name == ''">[blank]</span>
+    <span data-ng-show="part.name == null || part.name == ''">[blank]</span>
   </dd>
 </dl>

@@ -2,29 +2,19 @@
   <h1 class="">Login</h1>
 </div>
 
-<form class="form-horizontal" role="form" ng-submit="login()">
+<form class="form-horizontal" role="form" data-ng-submit="login()">
   <div class="form-group">
     <label for="username" class="col-sm-2 control-label">Username</label>
     <div class="col-col-6 col-sm-10">
-      <input type="text" class="form-control" id="username" placeholder="Username" ng-required="true" ng-model="username">
+      <input type="text" class="form-control" id="username" placeholder="Username" data-ng-required="true" data-ng-model="username">
     </div>
   </div>
   <div class="form-group">
     <label for="password" class="col-sm-2 control-label">Password</label>
     <div class="col-6 col-sm-10">
-      <input type="password" class="form-control" id="password" placeholder="Password" ng-required="true" ng-model="password">
+      <input type="password" class="form-control" id="password" placeholder="Password" data-ng-required="true" data-ng-model="password">
     </div>
   </div>
-
-  <!--<div class="form-group">-->
-    <!--<div class="col-sm-offset-2 col-sm-10">-->
-      <!--<div class="checkbox">-->
-        <!--<label>-->
-          <!--<input type="checkbox"> Remember me-->
-        <!--</label>-->
-      <!--</div>-->
-    <!--</div>-->
-  <!--</div>-->
 
   <div class="form-group">
     <div class="col-sm-offset-2 col-sm-10">
@@ -32,7 +22,7 @@
         <i class="fa fa-sign-in"></i>
         Login
       </button>
-      <button type="button" class="btn btn-default" ng-click="resetRequest()">
+      <button type="button" class="btn btn-default" data-ng-click="resetRequest()">
         <i class="fa fa-unlock"></i>
         Password Reset
       </button>

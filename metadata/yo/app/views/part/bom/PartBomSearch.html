@@ -1,6 +1,6 @@
 <metanav>
   <li>
-    <a ng-href="/part/{{ partId }}"
+    <a data-ng-href="/part/{{ partId }}"
        class="btn btn-primary">
       <i class="fa fa-eye"></i>
       View Part
@@ -8,8 +8,8 @@
   </li>
 
   <li>
-    <a ng-click="save()"
-       ng-disabled="pickedPart == null || restService.status.bomRebuilding"
+    <a data-ng-click="save()"
+       data-ng-disabled="pickedPart == null || restService.status.bomRebuilding"
        class="btn btn-success">
       <i class="fa fa-save"></i>
       Add BOM Item
@@ -30,16 +30,16 @@
   <!-- Picked BOM Item -->
   <div class="col-xs-6">
     <h3>Picked Part</h3>
-    <part-summary part="pickedPart" ng-show="pickedPart"></part-summary>
+    <part-summary part="pickedPart" data-ng-show="pickedPart"></part-summary>
 
-    <div class="form-group" ng-show="pickedPart">
+    <div class="form-group" data-ng-show="pickedPart">
       <label for="quantity-input" class="col-sm-2 control-label">Qty</label>
 
       <div>
-        <input type="text" ng-model="bomItem.quantity" class="form-control" id="quantity-input" placeholder="Quantity">
+        <input type="text" data-ng-model="bomItem.quantity" class="form-control" id="quantity-input" placeholder="Quantity">
       </div>
     </div>
-    <div ng-hide="pickedPart" class="well well-sm">
+    <div data-ng-hide="pickedPart" class="well well-sm">
       Pick a part to add to the bill of materials.
     </div>
   </div>

@@ -2,12 +2,12 @@
 
   <li>
     <button
-       ng-click="back()" class="btn btn-info">
+       data-ng-click="back()" class="btn btn-info">
       <i class="fa fa-angle-double-left"></i>
       Providers List
     </button>
-     <button ng-disabled="authProviderForm.$pristine || authProviderForm.$invalid || authProviderForm.$pending"
-       ng-click="save()" class="btn btn-success">
+     <button data-ng-disabled="authProviderForm.$pristine || authProviderForm.$invalid || authProviderForm.$pending"
+       data-ng-click="save()" class="btn btn-success">
       <i class="fa fa-save"></i>
       Save
     </button>
@@ -22,60 +22,60 @@
 <form name="authProviderForm" novalidate>
   <fieldset class="form-group">
     <label for="authp_name">Name</label>
-    <input id="authp_name" name="authp_name" class="form-control" type="text" ng-model="authp.name" ng-model-options="{ debounce: 500 }" required maxlength="64" unique-auth-ldap-name />
-    <span ng-show="authProviderForm.authp_name.$dirty && authProviderForm.authp_name.$invalid" class="alert alert-danger" role="alert">
+    <input id="authp_name" name="authp_name" class="form-control" type="text" data-ng-model="authp.name" data-ng-model-options="{ debounce: 500 }" required maxlength="64" unique-auth-ldap-name />
+    <span data-ng-show="authProviderForm.authp_name.$dirty && authProviderForm.authp_name.$invalid" class="alert alert-danger" role="alert">
       <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-      <span ng-show="authProviderForm.authp_name.$error.required">Required!</span>
-      <span ng-show="authProviderForm.authp_name.$error.maxlenth">Too long name (max 64 chars)!</span>
-      <span ng-show="authProviderForm.authp_name.$error.uniqueAuthLdapName">Not unique!</span>
+      <span data-ng-show="authProviderForm.authp_name.$error.required">Required!</span>
+      <span data-ng-show="authProviderForm.authp_name.$error.maxlenth">Too long name (max 64 chars)!</span>
+      <span data-ng-show="authProviderForm.authp_name.$error.uniqueAuthLdapName">Not unique!</span>
     </span>
   </fieldset>
   <fieldset class="form-group">
     <label for="authp_host">Host</label>
-    <input id="authp_host" name="authp_host" class="form-control" type="text" ng-model="authp.host" required maxlength="255" host-name />
-    <span ng-show="authProviderForm.authp_host.$dirty && authProviderForm.authp_host.$invalid" class="alert alert-danger" role="alert">
+    <input id="authp_host" name="authp_host" class="form-control" type="text" data-ng-model="authp.host" required maxlength="255" host-name />
+    <span data-ng-show="authProviderForm.authp_host.$dirty && authProviderForm.authp_host.$invalid" class="alert alert-danger" role="alert">
       <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-      <span ng-show="authProviderForm.authp_host.$error.required">Required!</span>
-      <span ng-show="authProviderForm.authp_host.$error.hostName">Invalid host name or IP address!</span>
-      <span ng-show="authProviderForm.authp_host.$error.maxlenth">Too long name (max 255 chars)!</span>
+      <span data-ng-show="authProviderForm.authp_host.$error.required">Required!</span>
+      <span data-ng-show="authProviderForm.authp_host.$error.hostName">Invalid host name or IP address!</span>
+      <span data-ng-show="authProviderForm.authp_host.$error.maxlenth">Too long name (max 255 chars)!</span>
     </span>
   </fieldset>
   <fieldset class="form-group">
     <label for="authp_port">Port</label>
-    <input id="authp_port" name="authp_port" class="form-control" type="number" ng-model="authp.port" required maxlength="5" min="0" max="65535" />
-    <span ng-show="authProviderForm.authp_port.$dirty && authProviderForm.authp_port.$invalid" class="alert alert-danger" role="alert">
+    <input id="authp_port" name="authp_port" class="form-control" type="number" data-ng-model="authp.port" required maxlength="5" min="0" max="65535" />
+    <span data-ng-show="authProviderForm.authp_port.$dirty && authProviderForm.authp_port.$invalid" class="alert alert-danger" role="alert">
       <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-      <span ng-show="authProviderForm.authp_port.$error.required">Required!</span>
-      <span ng-show="authProviderForm.authp_port.$error.invalidPortNumber">Invalid portnumber!</span>
-      <span ng-show="authProviderForm.authp_port.$error.maxlenth">Too long port number (max 5 digits)!</span>
-      <span ng-show="authProviderForm.authp_port.$error.min || authProviderForm.authp_port.$error.max">Port number must be in range 0..65535!</span>
+      <span data-ng-show="authProviderForm.authp_port.$error.required">Required!</span>
+      <span data-ng-show="authProviderForm.authp_port.$error.invalidPortNumber">Invalid portnumber!</span>
+      <span data-ng-show="authProviderForm.authp_port.$error.maxlenth">Too long port number (max 5 digits)!</span>
+      <span data-ng-show="authProviderForm.authp_port.$error.min || authProviderForm.authp_port.$error.max">Port number must be in range 0..65535!</span>
     </span>
   </fieldset>
   <fieldset class="form-group">
     <label for="authp_domain">Domain</label>
-    <input id="authp_domain" name="authp_domain" class="form-control" type="text" ng-model="authp.domain" domain-name />
-    <span ng-show="authProviderForm.authp_domain.$dirty && authProviderForm.authp_domain.$invalid" class="alert alert-danger" role="alert">
-      <span ng-show="authProviderForm.authp_domain.$error.domainName">Invalid domain name!</span>
+    <input id="authp_domain" name="authp_domain" class="form-control" type="text" data-ng-model="authp.domain" domain-name />
+    <span data-ng-show="authProviderForm.authp_domain.$dirty && authProviderForm.authp_domain.$invalid" class="alert alert-danger" role="alert">
+      <span data-ng-show="authProviderForm.authp_domain.$error.domainName">Invalid domain name!</span>
     </span>
   </fieldset>
   <fieldset class="form-group">
     <label>Protocol</label>
     <div class="radio">
       <label>
-        <input type="radio" name="protocol" value="LDAP" ng-model="authp.protocol">
+        <input type="radio" name="protocol" value="LDAP" data-ng-model="authp.protocol">
         LDAP &mdash; plain, unsecured connection
       </label>
     </div>
     <div class="radio">
       <label>
-        <input type="radio" name="protocol" value="LDAPS" ng-model="authp.protocol">
+        <input type="radio" name="protocol" value="LDAPS" data-ng-model="authp.protocol">
         LDAPS &mdash; protected connection over SSL. LDAP server must have valid trusted certificate
         or the server's certificate should be imported to JVM's trust store.
       </label>
     </div>
     <div class="radio">
       <label>
-        <input type="radio" name="protocol" value="LDAPS_SOFT" ng-model="authp.protocol">
+        <input type="radio" name="protocol" value="LDAPS_SOFT" data-ng-model="authp.protocol">
         LDAPS (SOFT) &mdash; LDAP over SSL without validation of a server's certificate.
       </label>
     </div>
