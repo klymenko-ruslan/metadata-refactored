@@ -21,6 +21,13 @@ public class RegExpUtils {
 
     public final static Pattern PTRN_DOUBLE_LIMIT = Pattern.compile("^\\s*((<|<=|=|>=|>)\\s*)?([-+]?[0-9]{1,13}(\\.[0-9]*)?)\\s*$");
 
+     /**
+     * This method unlike Integer.parse() parses only integers in plain format '+-?*.
+      *
+     * @param s
+     * @return
+     * @throws NumberFormatException
+     */
     public static Integer parseInt(String s) throws NumberFormatException {
         if (s == null) {
             return null;
@@ -34,6 +41,13 @@ public class RegExpUtils {
         }
     }
 
+    /**
+     * This method unlike Double.parse() parses only doubles in plain format '+-?[?][.[?*]].
+     *
+     * @param s
+     * @return
+     * @throws NumberFormatException
+     */
     public static Double parseDouble(String s) throws NumberFormatException {
         if (s == null) {
             return null;

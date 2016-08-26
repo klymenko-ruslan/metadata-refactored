@@ -12,7 +12,6 @@ import static org.junit.Assert.*;
  */
 public class SearchTermFactoryTest {
 
-
     @Test
     public void testParseLimit() throws Exception {
         Object[][] cases = new Object[][]{
@@ -61,6 +60,8 @@ public class SearchTermFactoryTest {
         Object[][] cases = new Object[][]{
                 new Object[]{null, null},
                 new Object[]{"-1.5..5.8", new Range(new Limit(GTE, new Double(-1.5)), new Limit(LTE, new Double(5.8)))},
+                new Object[]{"-1.5...5.8", new Range(new Limit(GTE, new Double(-1.5)), new Limit(LTE, new Double(5.8)))},
+                new Object[]{"-1.5....5.8", new Range(new Limit(GTE, new Double(-1.5)), new Limit(LTE, new Double(5.8)))},
         };
         for (Object[] c : cases) {
             String s = (String) c[0];

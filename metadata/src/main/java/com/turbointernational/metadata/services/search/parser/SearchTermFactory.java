@@ -90,11 +90,17 @@ public class SearchTermFactory {
         if (p0 < 1) {
             throw new IllegalArgumentException("Invalid range: " + s);
         }
+        // Check presence of the low limit.
         if (s.length() - 2 == p0) {
             throw new IllegalArgumentException("Invalid range: " + s);
         }
+        int p1 = p0 + 2;
+        while(s.charAt(p1) == '.') {
+            p1++;
+        }
+        // Find the high limit.
         String s0 = s.substring(0, p0);
-        String s1 = s.substring(p0 + 2);
+        String s1 = s.substring(p1);
         Double r0 = RegExpUtils.parseDouble(s0);
         Double r1 = RegExpUtils.parseDouble(s1);
         Limit limit0 = new Limit(GTE, r0);
