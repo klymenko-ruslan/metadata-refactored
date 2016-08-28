@@ -1,7 +1,7 @@
 "use strict";
 
 angular.module("ngMetaCrudApp", ["ngRoute", "ngTable", "ui.bootstrap",
-    "restangular", "dialogs.main", "gToast", "angucomplete-alt"
+    "restangular", "dialogs.main", "gToast", "angucomplete-alt", "jsonFormatter",
   ])
   .constant("METADATA_BASE", "/metadata/")
   .constant("VALID_IP_ADDRESS_REGEX", /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/)
