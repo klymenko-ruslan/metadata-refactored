@@ -20,7 +20,8 @@ public class ChangelogService {
     @Autowired
     private ChangelogDao changelogDao;
 
-    public Page<Changelog> filter(Long userId, Calendar startDate, Calendar finishDate, String description,
+    public Page<Changelog> filter(Long userId, Calendar startDate, Calendar finishDate,
+                                  String description, String data,
                                   String sortProperty, String sortOrder,
                                   Integer offset, Integer limit) {
         // Normalizaton of the time range.
@@ -31,7 +32,7 @@ public class ChangelogService {
         }
         Date d0 = null;
         Date d1 = null;
-        // Set start of a day for the startDate and enf of a day fro endDate.
+        // Set start of a day for the startDate and enf of a day for endDate.
         if (startDate != null) {
             startDate.clear(HOUR_OF_DAY);
             startDate.clear(MINUTE);
@@ -46,7 +47,7 @@ public class ChangelogService {
             finishDate.set(MILLISECOND, 999);
             d1 = finishDate.getTime();
         }
-        return changelogDao.filter(userId, d0, d1, description, sortProperty, sortOrder, offset, limit);
+        return changelogDao.filter(userId, d0, d1, description, data, sortProperty, sortOrder, offset, limit);
     }
 
 }

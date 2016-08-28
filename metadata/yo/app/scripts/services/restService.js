@@ -578,7 +578,7 @@ angular.module("ngMetaCrudApp")
         });
       };
 
-      this.filterChangelog = function(startDate, finishDate, userId, description,
+      this.filterChangelog = function(startDate, finishDate, userId, description, data,
         sortProperty, sortOrder, offset, limit) {
         if (startDate) {
           startDate = $filter("date")(startDate, DATE_FORMAT);
@@ -591,6 +591,7 @@ angular.module("ngMetaCrudApp")
           "finishDate": finishDate,
           "userId": userId,
           "description": description,
+          "data": data,
           "sortProperty": sortProperty,
           "sortOrder": sortOrder,
           "offset": offset,

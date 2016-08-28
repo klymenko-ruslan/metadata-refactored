@@ -35,12 +35,13 @@ public class ChangelogController {
                                            @RequestParam(name = "finishDate", required = false)
                                            @DateTimeFormat(pattern = "yyyy-MM-dd") Calendar finishDate,
                                            @RequestParam(name = "description", required = false) String description,
+                                           @RequestParam(name = "data", required = false) String data,
                                            @RequestParam(name = "sortProperty", required = false) String sortProperty,
                                            @RequestParam(name = "sortOrder", required = false) String sortOrder,
                                            @RequestParam(name = "offset", required = false) Integer offset,
                                            @RequestParam(name = "limit", required = false) Integer limit) {
-        return changelogService.filter(userId, startDate, finishDate, description, sortProperty, sortOrder,
-                offset, limit);
+        return changelogService.filter(userId, startDate, finishDate, description, data,
+                sortProperty, sortOrder, offset, limit);
     }
 
 }

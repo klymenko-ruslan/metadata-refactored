@@ -86,7 +86,8 @@ public class ChangelogDao extends AbstractDao<Changelog> {
     }
 
 
-    public Page<Changelog> filter(Long userId, Date startDate, Date finishDate, String description,
+    public Page<Changelog> filter(Long userId, Date startDate, Date finishDate,
+                                  String description, String data,
                                   String sortProperty, String sortOrder,
                                   Integer offset, Integer limit) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -95,7 +96,7 @@ public class ChangelogDao extends AbstractDao<Changelog> {
         Join<Object, Object> userJoin = root.join("user");
         ecq.select(root);
         int numPredicates = 0;
-        List<Predicate> lstPredicates = new ArrayList<>(4);
+        List<Predicate> lstPredicates = new ArrayList<>(5);
         if (userId != null) {
             lstPredicates.add(cb.equal(userJoin.get("id"), userId));
             numPredicates++;
@@ -110,6 +111,11 @@ public class ChangelogDao extends AbstractDao<Changelog> {
         }
         if (description != null) {
             lstPredicates.add(cb.like(root.get("description"), "%" + description + "%"));
+            numPredicates++;
+        }
+        if (data != null) {
+            lstPredicates.add(cb.like(root.get("data"), "%" + data + "%"));
+            numPredicates++;
         }
         Predicate[] arrPredicates = lstPredicates.toArray(new Predicate[numPredicates]);
         ecq.where(arrPredicates);
