@@ -670,6 +670,7 @@ public class SearchServiceEsImpl implements SearchService {
                         }
                         if (isNotBlank(val)) {
                             AbstractSearchTerm asterm = newSearchTerm(cd, val);
+                            log.debug("Critical dimension [{}]  search: {}", idxName, asterm);
                             sterms.add(asterm);
                         }
                     } catch (IllegalArgumentException e) {

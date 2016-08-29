@@ -16,4 +16,11 @@ abstract class AbstractNumberSearchTerm extends AbstractSearchTerm {
         return cmpOperator;
     }
 
+    @Override
+    public String toString() {
+        return "AbstractNumberSearchTerm{" +
+                "cmpOperator=" + cmpOperator +
+                "} " + super.toString();
+    }
+
 }

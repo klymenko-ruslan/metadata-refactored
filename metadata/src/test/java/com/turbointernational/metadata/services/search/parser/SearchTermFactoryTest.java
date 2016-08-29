@@ -15,8 +15,10 @@ public class SearchTermFactoryTest {
     @Test
     public void testParseLimit() throws Exception {
         Object[][] cases = new Object[][]{
-                new Object[]{null, null},
+                //new Object[]{null, null},
 
+                new Object[]{">.003", new Limit(LT, new Double(0.3))},
+/*
                 new Object[]{"<5.1", new Limit(LT, new Double(5.1))},
                 new Object[]{" < 5.1 ", new Limit(LT, new Double(5.1))},
                 new Object[]{" < +5.1 ", new Limit(LT, new Double(5.1))},
@@ -45,7 +47,7 @@ public class SearchTermFactoryTest {
                 new Object[]{">5.1", new Limit(GT, new Double(5.1))},
                 new Object[]{" > 5.1", new Limit(GT, new Double(5.1))},
                 new Object[]{" > -5.1", new Limit(GT, new Double(-5.1))},
-                new Object[]{" > +5.1", new Limit(GT, new Double(5.1))},
+                new Object[]{" > +5.1", new Limit(GT, new Double(5.1))}, */
         };
         for (Object[] c : cases) {
             String s = (String) c[0];

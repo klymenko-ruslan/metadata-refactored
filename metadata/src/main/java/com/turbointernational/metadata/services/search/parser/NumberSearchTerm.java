@@ -16,4 +16,10 @@ public class NumberSearchTerm extends AbstractNumberSearchTerm {
         return term;
     }
 
+    @Override
+    public String toString() {
+        return "NumberSearchTerm{" +
+                "term=" + term +
+                "} " + super.toString();
+    }
 }

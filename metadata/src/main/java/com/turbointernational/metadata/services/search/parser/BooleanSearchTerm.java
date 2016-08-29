@@ -18,4 +18,11 @@ public class BooleanSearchTerm extends AbstractSearchTerm {
         return term;
     }
 
+    @Override
+    public String toString() {
+        return "BooleanSearchTerm{" +
+                "term=" + term +
+                "} " + super.toString();
+    }
+
 }

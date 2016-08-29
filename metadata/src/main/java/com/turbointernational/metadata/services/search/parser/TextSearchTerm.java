@@ -18,4 +18,11 @@ public class TextSearchTerm extends AbstractSearchTerm {
         return term;
     }
 
+    @Override
+    public String toString() {
+        return "TextSearchTerm{" +
+                "term='" + term + '\'' +
+                "} " + super.toString();
+    }
+
 }

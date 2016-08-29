@@ -22,4 +22,12 @@ public abstract class AbstractSearchTerm {
         return fieldName;
     }
 
+    @Override
+    public String toString() {
+        return "AbstractSearchTerm{" +
+                "type=" + type +
+                ", fieldName='" + fieldName + '\'' +
+                '}';
+    }
+
 }

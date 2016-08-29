@@ -24,4 +24,12 @@ public class RangeSearchTerm extends AbstractSearchTerm  {
         return to;
     }
 
+    @Override
+    public String toString() {
+        return "RangeSearchTerm{" +
+                "from=" + from +
+                ", to=" + to +
+                "} " + super.toString();
+    }
+
 }

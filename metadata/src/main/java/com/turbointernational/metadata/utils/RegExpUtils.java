@@ -19,7 +19,7 @@ public class RegExpUtils {
     public final static Pattern PTRN_INTEGER = Pattern.compile("^\\s*([-+]?\\d+)\\s*$");
     public final static Pattern PTRN_DOUBLE = Pattern.compile("^\\s*([-+]?[0-9]{0,13}(\\.[0-9]*)?)\\s*$");
 
-    public final static Pattern PTRN_DOUBLE_LIMIT = Pattern.compile("^\\s*((<|<=|=|>=|>)\\s*)?([-+]?[0-9]{1,13}(\\.[0-9]*)?)\\s*$");
+    public final static Pattern PTRN_DOUBLE_LIMIT = Pattern.compile("^\\s*((<|<=|=|>=|>)\\s*)?([-+]?[0-9]{0,13}(\\.[0-9]*)?)\\s*$");
 
      /**
      * This method unlike Integer.parse() parses only integers in plain format '+-?*.
