@@ -627,6 +627,7 @@ public class Mas90SyncService {
                             entityManager.remove(bom);
                             rmIter.remove();
                             dirty = true;
+                        } else {
                             if (bom.getQuantity() != mas90Bom.quantity) {
                                 modification = String.format("Part [%d] %s modified. BOM [%d] (child: [%d] %s) " +
                                                 "updated. Quantity: %d => %d", partId, manufacturerPartNumber, bom.getId(),
