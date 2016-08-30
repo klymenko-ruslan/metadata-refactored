@@ -7,7 +7,7 @@
   <div class="form-group">
     <label for="username" class="col-sm-2 control-label">Username</label>
     <div class="col-col-6 col-sm-10">
-      <input type="text" class="form-control" id="username" placeholder="Username" data-ng-required="true" data-ng-model="username">
+      <input type="text" class="form-control" id="username" placeholder="Username" data-ng-required="true" data-ng-model="username" autofocus="autofocus">
     </div>
   </div>
   <div class="form-group">
@@ -31,3 +31,5 @@
   </div>
 
 </form>
+
+<script>$(function(){$("#username").focus();});</script>
