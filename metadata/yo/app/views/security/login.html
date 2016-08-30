@@ -3,6 +3,7 @@
 </div>
 
 <form class="form-horizontal" role="form" data-ng-submit="login()">
+
   <div class="form-group">
     <label for="username" class="col-sm-2 control-label">Username</label>
     <div class="col-col-6 col-sm-10">
@@ -18,14 +19,15 @@
 
   <div class="form-group">
     <div class="col-sm-offset-2 col-sm-10">
-      <button type="submit" class="btn btn-default">
+      <button type="submit" class="btn btn-primary btn-lg">
         <i class="fa fa-sign-in"></i>
         Login
       </button>
-      <button type="button" class="btn btn-default" data-ng-click="resetRequest()">
+      <button type="button" class="btn btn-danger" data-ng-click="onOpenPasswordResetConfirmDlg()">
         <i class="fa fa-unlock"></i>
         Password Reset
       </button>
     </div>
   </div>
+
 </form>

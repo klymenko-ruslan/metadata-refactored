@@ -1,7 +1,8 @@
-'use strict';
+"use strict";
 
-angular.module('ngMetaCrudApp')
-  .controller('LoginCtrl', function ($location, $scope, $routeParams, gToast, Restangular, User) {
+angular.module("ngMetaCrudApp")
+  .controller("LoginCtrl", ["$location", "$scope", "$routeParams", "gToast", "Restangular", "User", "$uibModal",
+    function ($location, $scope, $routeParams, gToast, Restangular, User, $uibModal) {
 
     $scope.login = function() {
       Restangular.all('security/login').post(
@@ -23,21 +24,21 @@ angular.module('ngMetaCrudApp')
           gToast.open("Login failed.");
         }
       );
-    }
+    };
 
-    $scope.resetRequest = function() {
-      Restangular.all('security/password/reset/request').post(
-        jQuery.param({username: $scope.username}),
-        {},
-        {'Content-Type': 'application/x-www-form-urlencoded'}).then(
-        function() {
-          gToast.open("Password reset link sent.");
-        },
-        function() {
-          gToast.open("Is your username correct?");
+    $scope.onOpenPasswordResetConfirmDlg = function() {
+      $uibModal.open({
+        templateUrl: "/views/dialog/PasswordResetConfirmDlg.html",
+        animation: false,
+        size: "lg",
+        controller: "PasswordResetConfirmDlgCtrl",
+        resolve: {
+          username: function() {
+            return $scope.username;
+          }
         }
-      );
-    }
+      });
+    };
 
     $scope.resetToken = function() {
       Restangular.all('security/password/reset/token/' + $routeParams.token).post(
@@ -51,5 +52,30 @@ angular.module('ngMetaCrudApp')
           gToast.open("Could not reset password.");
         }
       );
-    }
-  });
+    };
+
+  }])
+  .controller("PasswordResetConfirmDlgCtrl",["$scope", "$uibModalInstance", "Restangular", "gToast", "username",
+    function($scope, $uibModalInstance, Restangular, gToast, username) {
+    $scope.username = username;
+    $scope.onConfirmPasswordResetConfirmDlg = function() {
+      Restangular.all('security/password/reset/request')
+        .post(jQuery.param({username: username}), {}, {'Content-Type': 'application/x-www-form-urlencoded'})
+        .then(
+          function success() {
+            gToast.open("Password reset link sent.");
+          },
+          function failure() {
+            gToast.open("Is your username correct?");
+          }
+        )
+        .finally(function always() {
+          $uibModalInstance.close();
+        });
+    };
+
+    $scope.onClosePasswordResetConfirmDlg = function() {
+      $uibModalInstance.close();
+    };
+
+  }]);
