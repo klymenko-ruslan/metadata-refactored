@@ -1,12 +1,14 @@
 <subnav>
 
   <li authorize="ROLE_READ" data-ng-hide="cmeyId == null">
-    <a data-ng-href="application/carmodelengineyear/{{ cmeyId }}"
+    <button type="button" data-ng-click="onClickViewCmey()"
        class="btn btn-primary">
       <i class="fa fa-eye"></i>
       View Model Engine Year
-    </a>
+    </button>
   </li>
+
+  <li style="padding-left:2em;">&nbsp;</li>
 
   <li>
     <button type="button" data-ng-disabled="cmeyForm.$pristine || cmeyForm.$invalid || cmeyForm.$pending"
@@ -108,7 +110,12 @@
   <div class="row">
     <div class="col-xs-12">
       <div class="form-group">
-        <label class="control-label" for="car_year">Car Year</label>
+        <label class="control-label" for="car_year">
+          Car Year
+          <button data-ng-click="onClearYear(cmeyForm)" data-ng-disabled="cmey.year.name == null" class="btn btn-link btn-sm">
+            <i class="fa fa-times"></i>
+          </button>
+        </label>
         <input id="car_year" name="car_year" class="form-control input-sm" data-ng-model="cmey.year.name" data-ng-model-options="{ debounce: 500 }" data-ng-change="onChangeYear()" maxlength="255">
         <span data-ng-show="cmeyForm.car_year.$dirty && !cmeyForm.car_year.$invalid && !carYearExists" class="alert alert-warning" role="alert">
           <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>

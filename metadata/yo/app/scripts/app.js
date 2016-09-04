@@ -247,7 +247,6 @@ angular.module("ngMetaCrudApp", ["ngRoute", "ngTable", "ui.bootstrap",
       templateUrl: "views/application/carmodelengineyear/entity.html",
       controller: "CarModelEngineYearFormCtrl",
       resolve: {
-        // TODO
         carEngines: ["restService", function(restService) {
           return restService.findAllCarEnginesOrderedByName();
         }],

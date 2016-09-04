@@ -11,6 +11,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
+
 @RequestMapping("/metadata/application")
 @Controller
 public class ApplicationController {
@@ -30,7 +33,7 @@ public class ApplicationController {
     private CarModelDao carModelDao;
 
     @Transactional
-    @RequestMapping(value = "/carmodelengineyear/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/carmodelengineyear/{id}", method = GET)
     @ResponseBody
     @Secured("ROLE_READ")
     public ResponseEntity<String> getCarmodelengineyear(@PathVariable("id") long id) {
@@ -41,11 +44,11 @@ public class ApplicationController {
         if (application != null) {
             json = application.toJson();
         }
-        return new ResponseEntity<String>(json, headers, HttpStatus.OK);
+        return new ResponseEntity<String>(json, headers, OK);
     }
 
     @Transactional
-    @RequestMapping(value = "/carmodelengineyear", method = RequestMethod.POST)
+    @RequestMapping(value = "/carmodelengineyear", method = POST)
     @ResponseBody
     @Secured("ROLE_APPLICATION_CRUD")
     public long create(@RequestBody CarModelEngineYear cmey) {
@@ -55,7 +58,7 @@ public class ApplicationController {
     }
 
     @Transactional
-    @RequestMapping(value = "/carmodelengineyear/{id}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/carmodelengineyear/{id}", method = PUT)
     @ResponseBody
     @Secured("ROLE_APPLICATION_CRUD")
     public void update(@RequestBody CarModelEngineYear cmey) {
@@ -64,7 +67,7 @@ public class ApplicationController {
     }
 
     @Transactional
-    @RequestMapping(value = "/carmodelengineyear/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/carmodelengineyear/{id}", method = DELETE)
     @ResponseBody
     @Secured("ROLE_APPLICATION_CRUD")
     public void remove(@PathVariable("id") long id) {

@@ -14,10 +14,12 @@ angular.module("ngMetaCrudApp")
       controller: ["restService", "$q", "$scope", "$location", "$parse", "$log", "$routeParams", "gToast",
         function(restService, $q, $scope, $location, $parse, $log, $routeParams, gToast) {
 
+          $scope.$location = $location;
+
           var makeIdGetter = $parse("cmey.model.make.id");
 
           $scope.onChangeMake = function() {
-            $scope.carmodels = null;
+            //$scope.carmodels = [];
             var makeId = makeIdGetter($scope);
             if (makeId === undefined || makeId === null) {
               return;
@@ -33,6 +35,7 @@ angular.module("ngMetaCrudApp")
           };
 
           $scope.carYearExists = null;
+          $scope.cmey = {}; // Caveat. Don't use null to init because binding will not work.
           $scope.origCmey = null;
 
           $scope.carengines = Array();
@@ -49,7 +52,7 @@ angular.module("ngMetaCrudApp")
           });
 
           $scope.carmakes = $scope.carMakes;
-          $scope.carmodels = null;
+          $scope.carmodels = [];
           $scope.cmeyId = $routeParams.id;
 
           if ($scope.cmeyId === undefined) { // create
@@ -86,7 +89,7 @@ angular.module("ngMetaCrudApp")
 
           $scope._merge = function() {
             var cmey2 = {};
-            if (angular.isObject($scope.cmeyId)) {
+            if ($scope.cmeyId !== null && $scope.cmeyId !== undefined) {
               cmey2.id = $scope.cmeyId;
             }
             if (angular.isObject($scope.cmey.model) && $scope.cmey.model.id) {
@@ -130,7 +133,7 @@ angular.module("ngMetaCrudApp")
             } else {
               restService.updateCarmodelengineyear(cmey2).then(
                 function(newCmeyId) {
-                  $log.log("Updated 'car_model_engine_year': " + $scope.cmeyId);
+                  //$log.log("Updated 'car_model_engine_year': " + $scope.cmeyId);
                   gToast.open("The Model Engine Year has been successfully updated.");
                   $location.path('/application/carmodelengineyear/list');
                 },
@@ -139,6 +142,10 @@ angular.module("ngMetaCrudApp")
                 }
               );
             }
+          };
+
+          $scope.onClickViewCmey = function() {
+            $location.path("application/carmodelengineyear/" + $scope.cmeyId);
           };
 
           $scope.onClearMake = function(form) {
@@ -154,6 +161,11 @@ angular.module("ngMetaCrudApp")
           $scope.onClearEngine = function(form) {
             $scope.cmey.engine.id = null;
             form.$setDirty();
+          };
+
+          $scope.onClearYear = function(form) {
+            $scope.cmey.year.id = null;
+            $scope.cmey.year.name = null;
           };
 
           $scope.onChangeYear = function() {
