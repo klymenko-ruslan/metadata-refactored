@@ -12,7 +12,8 @@ angular.module("ngMetaCrudApp")
       replace: false,
       templateUrl: "/views/application/carmodelengineyear/form.html",
       controller: ["restService", "$q", "$scope", "$location", "$parse", "$log", "$routeParams", "gToast",
-        function(restService, $q, $scope, $location, $parse, $log, $routeParams, gToast) {
+        "$uibModal",
+        function(restService, $q, $scope, $location, $parse, $log, $routeParams, gToast, $uibModal) {
 
           $scope.$location = $location;
 
@@ -184,7 +185,17 @@ angular.module("ngMetaCrudApp")
           };
 
           $scope.quickCreateCarMake = function() {
-            alert("TODO: quickCreateCarMake");
+            $uibModal.open({
+              templateUrl: "/views/application/carmodelengineyear/createCarMakeDlg.html",
+              animation: false,
+              size: "lg" /*,
+              controller: "ChangelogViewDlgCtrl",
+              resolve: {
+                changelogRecord: function() {
+                  return changelogRecord;
+                }
+              } */
+            });
           };
 
           $scope.quickCreateCarModel = function() {
