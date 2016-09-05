@@ -9,11 +9,11 @@
         <div>
           <label for="carmakeFilter">
             Car Make
-            <button type="button" data-ng-click="onClearMake(cmeyForm)" data-ng-disabled="cmey.model.make.id == null" class="btn btn-link btn-sm">
+            <button type="button" data-ng-click="onClearMM(cmeyForm)" data-ng-disabled="cmey.model.make.id == null" class="btn btn-link btn-sm">
               <i class="fa fa-times"></i>
             </button>
           </label>
-          <button type="button" class="btn btn-success btn-sm pull-right" data-ng-click="quickCreateCarMake()">
+          <button type="button" class="btn btn-success btn-sm pull-right" data-ng-click="quickCreateCarMake()" data-ng-disabled="!cmey.model.id">
             <i class="fa fa-wrench"></i>
             Quick Create
           </button>
@@ -32,7 +32,7 @@
         <div>
           <label for="carmodelFilter">
             Car Model
-            <button type="button" data-ng-click="onClearModel(cmeyForm)" data-ng-disabled="cmey.model.id == null" class="btn btn-link btn-sm">
+            <button type="button" data-ng-click="onClearMM(cmeyForm)" data-ng-disabled="cmey.model.id == null" class="btn btn-link btn-sm">
               <i class="fa fa-times"></i>
             </button>
           </label>

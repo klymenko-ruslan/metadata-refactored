@@ -11,6 +11,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.PUT;
+
 /**
  * Created by trunikov on 14.12.15.
  */
@@ -40,16 +44,16 @@ public class CarMakeController {
     }
 
     @Transactional
-    @RequestMapping(value = "/carmake", method = RequestMethod.POST)
+    @RequestMapping(value = "/carmake", method = POST)
     @ResponseBody
     @Secured("ROLE_APPLICATION_CRUD")
-    public long create(@RequestBody CarMake carMake) {
+    public CarMake create(@RequestBody CarMake carMake) {
         carMakeDao.persist(carMake);
-        return carMake.getId();
+        return carMake;
     }
 
     @Transactional
-    @RequestMapping(value = "/carmake/{id}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/carmake/{id}", method = PUT)
     @ResponseBody
     @Secured("ROLE_APPLICATION_CRUD")
     public void update(@RequestBody CarMake carMake) {
@@ -57,10 +61,11 @@ public class CarMakeController {
     }
 
     @Transactional
-    @RequestMapping(value = "/carmake/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/carmake/{id}", method = DELETE)
     @ResponseBody
     @Secured("ROLE_APPLICATION_CRUD")
     public void remove(@PathVariable("id") long id) {
         carMakeDao.delete(id);
     }
+
 }

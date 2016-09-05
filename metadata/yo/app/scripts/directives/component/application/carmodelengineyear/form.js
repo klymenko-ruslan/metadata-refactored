@@ -134,12 +134,8 @@ angular.module("ngMetaCrudApp")
             $scope._revert();
           });
 
-          $scope.onClearMake = function(form) {
-            $scope.onClearModel(form); // set dirty
+          $scope.onClearMM = function(form) {
             $scope.cmey.model.make.id = null;
-          };
-
-          $scope.onClearModel = function(form) {
             $scope.cmey.model.id = null;
             form.$setDirty();
           };
@@ -174,7 +170,19 @@ angular.module("ngMetaCrudApp")
               templateUrl: "/views/application/carmodelengineyear/createCarMakeDlg.html",
               animation: false,
               size: "lg" ,
-              controller: "createCarMakeDlgCtrl"
+              controller: "createCarMakeDlgCtrl",
+              resolve: {
+                addCarMakeCallback: function() {
+                  return function(newCarMake) {
+                    if (_.isArray($scope.carmakes)) {
+                      var pos = _.sortedIndex($scope.carmakes, newCarMake, "name");
+$log.log("pos: " + pos);
+                      $scope.carmakes.splice(pos, 0, newCarMake);
+                      $scope.cmey.model.make = newCarMake;
+                    }
+                  }
+                }
+              }
             });
           };
 
@@ -192,8 +200,8 @@ angular.module("ngMetaCrudApp")
 
     };
   })
-  .controller("createCarMakeDlgCtrl",["$scope", "$log", "gToast", "$uibModalInstance",
-    function($scope, $log, gToast, $uibModalInstance) {
+  .controller("createCarMakeDlgCtrl",["$scope", "$log", "gToast", "$uibModalInstance", "addCarMakeCallback",
+    function($scope, $log, gToast, $uibModalInstance, addCarMakeCallback) {
 
     $scope.$on("form:created", function(event, data) {
       if (data.name === "carmakeForm") {
@@ -204,9 +212,10 @@ angular.module("ngMetaCrudApp")
     $scope.save = function() {
       $scope.$broadcast("carmakeform:save", function(promise) {
         promise.then(
-          function(carmakeId) {
-            $log.log("Carmake has been successfully created: " + carmakeId);
-            gToast.open("Carmake [" + carmakeId + "] has been successfully created.");
+          function(carMake) {
+            $log.log("Carmake has been successfully created: " + carMake.id);
+            gToast.open("Carmake [" + carMake.id + "] has been successfully created.");
+            addCarMakeCallback(carMake);
             $scope.close ();
           },
           function (errorResponse) {

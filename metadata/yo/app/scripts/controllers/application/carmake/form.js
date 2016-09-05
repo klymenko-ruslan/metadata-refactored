@@ -13,9 +13,9 @@ angular.module("ngMetaCrudApp").controller("CarMakeFormCtrl", [
     $scope.save = function() {
       $scope.$broadcast("carmakeform:save", function(promise) {
         promise.then(
-          function(carmakeId) {
-            $log.log("Carmake has been successfully created: " + carmakeId);
-            gToast.open("Carmake [" + carmakeId + "] has been successfully created.");
+          function(carMake) {
+            $log.log("Carmake has been successfully created: " + carMake.id);
+            gToast.open("Carmake [" + carMake.id + "] has been successfully created.");
             $location.path('/application/carmake/list');
           },
           function (errorResponse) {
