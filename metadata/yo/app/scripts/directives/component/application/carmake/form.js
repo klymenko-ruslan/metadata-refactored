@@ -9,18 +9,10 @@ angular.module("ngMetaCrudApp")
       controller: ["restService", "$q", "$scope", "$location", "$log", "$routeParams", "gToast",
         function(restService, $q, $scope, $location, $log, $routeParams, gToast) {
           $scope.carmake = {};
-          $scope.save = function() {
-            restService.createCarmake($scope.carmake).then(
-              function(carmakeId) {
-                $log.log("Carmake has been successfully created: " + carmakeId);
-                gToast.open("Carmake '" + $scope.carmake.name + "' has been successfully created.");
-                $location.path('/application/carmake/list');
-              },
-              function (errorResponse) {
-                restService.error("Could not create carmake.", response);
-              }
-            );
-          };
+          $scope.$on("carmakeform:save", function(event, callback) {
+            var promise = restService.createCarmake($scope.carmake);
+            callback(promise);
+          });
         }
       ]
     }

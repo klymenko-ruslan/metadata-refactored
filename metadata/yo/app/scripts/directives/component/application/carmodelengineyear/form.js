@@ -173,13 +173,8 @@ angular.module("ngMetaCrudApp")
             $uibModal.open({
               templateUrl: "/views/application/carmodelengineyear/createCarMakeDlg.html",
               animation: false,
-              size: "lg" /*,
-              controller: "ChangelogViewDlgCtrl",
-              resolve: {
-                changelogRecord: function() {
-                  return changelogRecord;
-                }
-              } */
+              size: "lg" ,
+              controller: "createCarMakeDlgCtrl"
             });
           };
 
@@ -196,4 +191,34 @@ angular.module("ngMetaCrudApp")
       ]
 
     };
-  });
+  })
+  .controller("createCarMakeDlgCtrl",["$scope", "$log", "gToast", "$uibModalInstance",
+    function($scope, $log, gToast, $uibModalInstance) {
+
+    $scope.$on("form:created", function(event, data) {
+      if (data.name === "carmakeForm") {
+        $scope.carmakeForm = data.controller;
+      }
+    });
+
+    $scope.save = function() {
+      $scope.$broadcast("carmakeform:save", function(promise) {
+        promise.then(
+          function(carmakeId) {
+            $log.log("Carmake has been successfully created: " + carmakeId);
+            gToast.open("Carmake [" + carmakeId + "] has been successfully created.");
+            $scope.close ();
+          },
+          function (errorResponse) {
+            $scope.close ();
+            restService.error("Could not create carmake.", response);
+          }
+        );
+      });
+    };
+
+    $scope.close = function() {
+      $uibModalInstance.close();
+    };
+
+  }]);

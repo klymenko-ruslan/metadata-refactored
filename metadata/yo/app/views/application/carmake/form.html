@@ -1,16 +1,4 @@
-<subnav>
-
-  <li>
-    <button data-ng-disabled="carmakeForm.$pristine || carmakeForm.$invalid || carmakeForm.$pending"
-       data-ng-click="save()" class="btn btn-success">
-      <i class="fa fa-save"></i>
-      Save
-    </button>
-  </li>
-
-</subnav>
-
-<form name="carmakeForm" novalidate authorize="ROLE_APPLICATION_CRUD">
+<form name="carmakeForm" data-reference-form-controller novalidate authorize="ROLE_APPLICATION_CRUD">
 
   <h2>Create Make</h2>
 

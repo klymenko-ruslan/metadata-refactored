@@ -4,4 +4,11 @@
 <div class="modal-body">
   <cmake-form />
 </div>
-<div class="modal-footer"></div>
+<div class="modal-footer">
+  <button data-ng-disabled="carmakeForm.$pristine || carmakeForm.$invalid || carmakeForm.$pending"
+    data-ng-click="save()" class="btn btn-success">
+    <i class="fa fa-save"></i>
+    Save
+  </button>
+  <button type="button" class="btn btn-default" ng-click="close()">Close</button>
+</div>

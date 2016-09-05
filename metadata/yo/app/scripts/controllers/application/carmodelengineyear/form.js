@@ -4,12 +4,6 @@ angular.module("ngMetaCrudApp").controller("CarModelEngineYearFormCtrl",
   ["$scope", "$log", "$location", "gToast", "restService",  "carEngines", "carMakes", "carModelEngineYear",
   function($scope, $log, $location, gToast, restService, carEngines, carMakes, carModelEngineYear) {
 
-$log.log("Controller, cmeyForm: " + angular.toJson($scope.cmeyForm));
-
-    $scope.setCmeyForm = function(cmeyFormScope) {
-      $log.log("Controller: cmeyFormScope=" + angular.toJson(cmeyFormScope, 2));
-    }
-
     $scope.carEngines = carEngines;
     $scope.carMakes = carMakes;
     $scope.carModelEngineYear = carModelEngineYear;
