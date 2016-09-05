@@ -176,7 +176,6 @@ angular.module("ngMetaCrudApp")
                   return function(newCarMake) {
                     if (_.isArray($scope.carmakes)) {
                       var pos = _.sortedIndex($scope.carmakes, newCarMake, "name");
-$log.log("pos: " + pos);
                       $scope.carmakes.splice(pos, 0, newCarMake);
                       $scope.cmey.model.make = newCarMake;
                     }
