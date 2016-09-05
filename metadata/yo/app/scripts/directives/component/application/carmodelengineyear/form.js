@@ -15,8 +15,6 @@ angular.module("ngMetaCrudApp")
         "$uibModal",
         function(restService, $q, $scope, $location, $parse, $log, $routeParams, gToast, $uibModal) {
 
-          $scope.$location = $location;
-
           var makeIdGetter = $parse("cmey.model.make.id");
 
           $scope.onChangeMake = function() {
@@ -81,7 +79,7 @@ angular.module("ngMetaCrudApp")
             $scope.carYearExists = true;
           }
 
-          $scope.revert = function() {
+          $scope._revert = function() {
             if (angular.isObject($scope.origCmey)) {
               angular.copy($scope.origCmey, $scope.cmey);
               $scope.onChangeMake();
@@ -111,7 +109,7 @@ angular.module("ngMetaCrudApp")
             return cmey2;
           };
 
-          $scope.save = function() {
+          $scope._save = function() {
             //$log.log("To save (raw): " + angular.toJson($scope.cmey));
             var cmey2 = $scope._merge();
             if (_.isEmpty(cmey2)) {
@@ -121,33 +119,20 @@ angular.module("ngMetaCrudApp")
             }
             $log.log("To save (normalized): " + angular.toJson(cmey2));
             if ($scope.cmeyId === undefined) {
-              restService.createCarmodelengineyear(cmey2).then(
-                function(newCmeyId) {
-                  //$log.log("Created 'car_model_engine_year': " + newCmeyId);
-                  gToast.open("A new Model Engine Year has been successfully created.");
-                  $location.path('/application/carmodelengineyear/list');
-                },
-                function(errorResponse) {
-                  restService.error("Could not create 'car_model_engine_year'.", errorResponse);
-                }
-              );
+              return restService.createCarmodelengineyear(cmey2);
             } else {
-              restService.updateCarmodelengineyear(cmey2).then(
-                function(newCmeyId) {
-                  //$log.log("Updated 'car_model_engine_year': " + $scope.cmeyId);
-                  gToast.open("The Model Engine Year has been successfully updated.");
-                  $location.path('/application/carmodelengineyear/list');
-                },
-                function(errorResponse) {
-                  restService.error("Could not update 'car_model_engine_year': " + $scope.cmeyId, errorResponse);
-                }
-              );
+              return restService.updateCarmodelengineyear(cmey2);
             }
           };
 
-          $scope.onClickViewCmey = function() {
-            $location.path("application/carmodelengineyear/" + $scope.cmeyId);
-          };
+          $scope.$on("cmeyform:save", function(event, callback) {
+            var promise = $scope._save();
+            callback(promise);
+          });
+
+          $scope.$on("cmeyform:revert", function() {
+            $scope._revert();
+          });
 
           $scope.onClearMake = function(form) {
             $scope.onClearModel(form); // set dirty

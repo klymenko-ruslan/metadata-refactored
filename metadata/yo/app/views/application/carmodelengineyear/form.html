@@ -1,35 +1,4 @@
-<subnav>
-
-  <li authorize="ROLE_READ" data-ng-hide="cmeyId == null">
-    <button type="button" data-ng-click="onClickViewCmey()"
-       class="btn btn-primary">
-      <i class="fa fa-eye"></i>
-      View Model Engine Year
-    </button>
-  </li>
-
-  <li style="padding-left:2em;">&nbsp;</li>
-
-  <li>
-    <button type="button" data-ng-disabled="cmeyForm.$pristine || cmeyForm.$invalid || cmeyForm.$pending"
-       data-ng-click="save()" class="btn btn-success">
-      <i class="fa fa-save"></i>
-      Save
-    </button>
-  </li>
-
-  <li data-ng-hide="cmeyId == null">
-    <button type="button" data-ng-click="revert()"
-       data-ng-disabled="cmeyForm.$pristine"
-       class="btn btn-warning">
-      <i class="fa fa-undo"></i>
-      Revert
-    </button>
-  </li>
-
-</subnav>
-
-<form name="cmeyForm" novalidate authorize="ROLE_APPLICATION_CRUD">
+<form name="cmeyForm" data-reference-form-controller novalidate authorize="ROLE_APPLICATION_CRUD">
 
   <h2>{{::titleHead}} Car Model Engine Year<span data-ng-show="cmey.id">#{{cmey.id}}</span></h2>
 
