@@ -45,14 +45,11 @@ public class CarModelController {
     @RequestMapping(value = "/carmodel", method = RequestMethod.POST)
     @ResponseBody
     @Secured("ROLE_APPLICATION_CRUD")
-    public long create(@RequestBody CarModel carModel) {
+    public CarModel create(@RequestBody CarModel carModel) {
         if (!carModelDao.exists(carModel.getName(), carModel.getMake().getId())) { // TODO: replace by UI validation
             carModelDao.persist(carModel);
-            return carModel.getId();
-        } else {
-            return -1;
         }
-
+        return carModel;
     }
 
     @Transactional

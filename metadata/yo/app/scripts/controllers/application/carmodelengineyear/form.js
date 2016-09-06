@@ -37,7 +37,7 @@ angular.module("ngMetaCrudApp").controller("CarModelEngineYearFormCtrl",
           );
         } else {
           promise.then(
-            function(newCmeyId) {
+            function() {
               $log.log("Updated 'car_model_engine_year': " + $scope.cmeyId);
               gToast.open("The Model Engine Year has been successfully updated.");
               $location.path('/application/carmodelengineyear/list');

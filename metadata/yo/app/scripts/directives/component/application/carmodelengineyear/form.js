@@ -186,13 +186,33 @@ angular.module("ngMetaCrudApp")
           };
 
           $scope.quickCreateCarModel = function() {
-            alert("TODO: quickCreateCarModel");
+            $uibModal.open({
+              templateUrl: "/views/application/carmodelengineyear/createCarModelDlg.html",
+              animation: false,
+              size: "lg" ,
+              controller: "createCarModelDlgCtrl",
+              resolve: {
+                carMakes: ["restService", function (restService) {
+                  return restService.findAllCarMakesOrderedByName();
+                }],
+                addCarModelCallback: function() {
+                  return function(newCarModel) {
+$log.log("TODO: addCarModelCallback: " + angular.toJson(newCarModel));
+                    if (!_.isArray($scope.carmodels)) { // null or undefined
+                      $scope.carmodels = [];
+                    }
+                    var pos = _.sortedIndex($scope.carmodels, newCarModel, "name");
+                    $scope.carmodels.splice(pos, 0, newCarModel);
+                    $scope.cmey.model = newCarModel;
+                  }
+                }
+              }
+            });
           };
 
           $scope.quickCreateCarEngine = function() {
             alert("TODO: quickCreateCarEngine");
           };
-
 
         }
       ]
@@ -213,13 +233,46 @@ angular.module("ngMetaCrudApp")
         promise.then(
           function(carMake) {
             $log.log("Carmake has been successfully created: " + carMake.id);
-            gToast.open("Carmake [" + carMake.id + "] has been successfully created.");
+            gToast.open("Carmake [" + carMake.id + "] - '" + carMake.name + "' has been successfully created.");
             addCarMakeCallback(carMake);
             $scope.close ();
           },
           function (errorResponse) {
             $scope.close ();
             restService.error("Could not create carmake.", response);
+          }
+        );
+      });
+    };
+
+    $scope.close = function() {
+      $uibModalInstance.close();
+    };
+
+  }])
+  .controller("createCarModelDlgCtrl",["$scope", "$log", "gToast", "$uibModalInstance", "carMakes",
+      "addCarModelCallback",
+    function($scope, $log, gToast, $uibModalInstance, carMakes, addCarModelCallback) {
+
+    $scope.carMakes = carMakes;
+
+    $scope.$on("form:created", function(event, data) {
+      if (data.name === "carmodelForm") {
+        $scope.carmodelForm = data.controller;
+      }
+    });
+
+    $scope.save = function() {
+      $scope.$broadcast("carmodelform:save", function(promise) {
+        promise.then(
+          function(carModel) {
+            $log.log("Carmodel has been successfully created: " + carModel.id);
+            gToast.open("Car model [" + carModel.id + "] - '" + carModel.name + "' has been successfully created.");
+            addCarModelCallback(carModel);
+            $scope.close ();
+          },
+          function (errorResponse) {
+            restService.error("Could not create car model.", response);
           }
         );
       });

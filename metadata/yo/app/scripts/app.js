@@ -219,11 +219,27 @@ angular.module("ngMetaCrudApp", ["ngRoute", "ngTable", "ui.bootstrap",
     });
     $routeProvider.when("/application/carmodel/form", {
       templateUrl: "views/application/carmodel/entity.html",
-      controller: "CarModelFormCtrl"
+      controller: "CarModelFormCtrl",
+      resolve: {
+        carModel: function() {
+          return null;
+        },
+        carMakes: ["restService", function (restService) {
+          return restService.findAllCarMakesOrderedByName();
+        }]
+      }
     });
     $routeProvider.when("/application/carmodel/:id/form", {
       templateUrl: "views/application/carmodel/entity.html",
-      controller: "CarModelFormCtrl"
+      controller: "CarModelFormCtrl",
+      resolve: {
+        carModel: ["$route", "restService", function($route, restService) {
+          return restService.findCarmodel($route.current.pathParams.id);
+        }],
+        carMakes: ["restService", function (restService) {
+          return restService.findAllCarMakesOrderedByName();
+        }]
+      }
     });
     $routeProvider.when("/application/carmodelengineyear/list", {
       templateUrl: "views/application/carmodelengineyear/list.html",

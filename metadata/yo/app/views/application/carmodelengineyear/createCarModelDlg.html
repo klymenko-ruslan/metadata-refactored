@@ -1,11 +1,11 @@
 <div class="modal-header">
-  <h3 class="modal-title">Create Car Make</h3>
+  <h3 class="modal-title">Create Car Model</h3>
 </div>
 <div class="modal-body">
-  <cmake-form />
+  <cmodel-form car-model="null" car-makes="carMakes" />
 </div>
 <div class="modal-footer">
-  <button data-ng-disabled="carmakeForm.$pristine || carmakeForm.$invalid || carmakeForm.$pending"
+  <button data-ng-disabled="carmodelForm.$pristine || carmodelForm.$invalid || carmodelForm.$pending"
     data-ng-click="save()" class="btn btn-success">
     <i class="fa fa-save"></i>
     Save
