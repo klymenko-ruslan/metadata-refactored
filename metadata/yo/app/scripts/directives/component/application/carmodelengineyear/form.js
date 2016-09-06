@@ -38,16 +38,23 @@ angular.module("ngMetaCrudApp")
           $scope.origCmey = null;
 
           $scope.carengines = Array();
-          angular.forEach($scope.carEngines, function(ce) {
+
+          $scope._carengine2item = function(ce) {
             var name = ce.engineSize;
             var fuelType = ce.fuelType;
             if (angular.isObject(fuelType)) {
               name += (", " + fuelType.name);
             }
-            $scope.carengines.push({
+            var item = {
               "id": ce.id,
               "name": name
-            });
+            };
+            return item;
+          };
+
+          angular.forEach($scope.carEngines, function(ce) {
+            var item = $scope._carengine2item(ce);
+            $scope.carengines.push(item);
           });
 
           $scope.carmakes = $scope.carMakes;
@@ -197,7 +204,6 @@ angular.module("ngMetaCrudApp")
                 }],
                 addCarModelCallback: function() {
                   return function(newCarModel) {
-$log.log("TODO: addCarModelCallback: " + angular.toJson(newCarModel));
                     if (!_.isArray($scope.carmodels)) { // null or undefined
                       $scope.carmodels = [];
                     }
@@ -211,7 +217,32 @@ $log.log("TODO: addCarModelCallback: " + angular.toJson(newCarModel));
           };
 
           $scope.quickCreateCarEngine = function() {
-            alert("TODO: quickCreateCarEngine");
+            $uibModal.open({
+              templateUrl: "/views/application/carmodelengineyear/createCarEngineDlg.html",
+              animation: false,
+              size: "lg" ,
+              controller: "createCarEngineDlgCtrl",
+              resolve: {
+                carFuelTypes: ["restService", function(restService) {
+                  return restService.findAllCarFuelTypesOrderedByName();
+                }],
+                addCarEngineCallback: function() {
+                  return function(newCarEngine) {
+$log.log("newCarEngine: " + angular.toJson(newCarEngine));
+                    if (!_.isArray($scope.carengines)) { // null or undefined
+$log.log("new array");
+                      $scope.carengines = [];
+                    }
+                    var item = $scope._carengine2item(newCarEngine);
+$log.log("item: " + angular.toJson(item));
+                    var pos = _.sortedIndex($scope.carengines, item, "engineSize");
+$log.log("pos: " + pos);
+                    $scope.carengines.splice(pos, 0, item);
+                    $scope.cmey.engine = item;
+                  }
+                }
+              }
+            });
           };
 
         }
@@ -273,6 +304,39 @@ $log.log("TODO: addCarModelCallback: " + angular.toJson(newCarModel));
           },
           function (errorResponse) {
             restService.error("Could not create car model.", response);
+          }
+        );
+      });
+    };
+
+    $scope.close = function() {
+      $uibModalInstance.close();
+    };
+
+  }])
+  .controller("createCarEngineDlgCtrl",["$scope", "$log", "gToast", "$uibModalInstance", "carFuelTypes",
+      "addCarEngineCallback",
+    function($scope, $log, gToast, $uibModalInstance, carFuelTypes, addCarEngineCallback) {
+
+    $scope.carFuelTypes = carFuelTypes;
+
+    $scope.$on("form:created", function(event, data) {
+      if (data.name === "carengineForm") {
+        $scope.carengineForm = data.controller;
+      }
+    });
+
+    $scope.save = function() {
+      $scope.$broadcast("carengineform:save", function(promise) {
+        promise.then(
+          function(carEngine) {
+            $log.log("Carengine has been successfully created: " + carEngine.id);
+            gToast.open("Car model [" + carEngine.id + "] - '" + carEngine.engineSize + "' has been successfully created.");
+            addCarEngineCallback(carEngine);
+            $scope.close ();
+          },
+          function (errorResponse) {
+            restService.error("Could not create car engine.", response);
           }
         );
       });

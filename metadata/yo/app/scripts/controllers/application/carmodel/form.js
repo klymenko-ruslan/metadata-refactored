@@ -1,8 +1,8 @@
 "use strict";
 
 angular.module("ngMetaCrudApp").controller("CarModelFormCtrl", ["restService", "$scope", "$location", "$log",
-  "$routeParams", "gToast", "carModel", "carMakes",
-  function(restService, $scope, $location, $log, $routeParams, gToast, carModel, carMakes) {
+  "gToast", "carModel", "carMakes",
+  function(restService, $scope, $location, $log, gToast, carModel, carMakes) {
 
     $scope.carMakes = carMakes;
 

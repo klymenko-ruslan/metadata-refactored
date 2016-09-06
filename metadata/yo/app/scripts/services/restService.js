@@ -445,8 +445,8 @@ angular.module("ngMetaCrudApp")
         return Restangular.one("application/carengine", id).remove();
       };
 
-      this.findAllCarEnginesOrderedByName = function() {
-        return Restangular.one("application").getList("carengines");
+      this.findAllCarEnginesOrderedByName = function(detailed) {
+        return Restangular.one("application").getList("carengines", {detailed: false}); // TODO: detailed
       };
 
       this.findCarYearByName = function(name) {

@@ -1,8 +1,8 @@
 "use strict";
 
 angular.module("ngMetaCrudApp").controller("CarMakeFormCtrl", [
-  "restService", "$scope", "$location", "$log", "$routeParams", "gToast",
-  function(restService, $scope, $location, $log, $routeParams, gToast) {
+  "restService", "$scope", "$location", "$log", "gToast",
+  function(restService, $scope, $location, $log, gToast) {
 
     $scope.$on("form:created", function(event, data) {
       if (data.name === "carmakeForm") {

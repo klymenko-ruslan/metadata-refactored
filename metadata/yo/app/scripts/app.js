@@ -249,7 +249,7 @@ angular.module("ngMetaCrudApp", ["ngRoute", "ngTable", "ui.bootstrap",
       controller: "CarModelEngineYearFormCtrl",
       resolve: {
         carEngines: ["restService", function(restService) {
-          return restService.findAllCarEnginesOrderedByName();
+          return restService.findAllCarEnginesOrderedByName(true);
         }],
         carMakes: ["restService", function(restService) {
           return restService.findAllCarMakesOrderedByName();
@@ -264,7 +264,7 @@ angular.module("ngMetaCrudApp", ["ngRoute", "ngTable", "ui.bootstrap",
       controller: "CarModelEngineYearFormCtrl",
       resolve: {
         carEngines: ["restService", function(restService) {
-          return restService.findAllCarEnginesOrderedByName();
+          return restService.findAllCarEnginesOrderedByName(true);
         }],
         carMakes: ["restService", function(restService) {
           return restService.findAllCarMakesOrderedByName();
@@ -284,11 +284,27 @@ angular.module("ngMetaCrudApp", ["ngRoute", "ngTable", "ui.bootstrap",
     });
     $routeProvider.when("/application/carengine/form", {
       templateUrl: "views/application/carengine/entity.html",
-      controller: "CarEngineFormCtrl"
+      controller: "CarEngineFormCtrl",
+      resolve: {
+        carEngine: function() {
+          return null;
+        },
+        carFuelTypes: ["restService", function(restService) {
+          return restService.findAllCarFuelTypesOrderedByName();
+        }]
+      }
     });
     $routeProvider.when("/application/carengine/:id/form", {
       templateUrl: "views/application/carengine/entity.html",
-      controller: "CarEngineFormCtrl"
+      controller: "CarEngineFormCtrl",
+      resolve: {
+        carEngine: ["$route", "restService", function($route, restService) {
+          return restService.findCarengine($route.current.pathParams.id);
+        }],
+        carFuelTypes: ["restService", function(restService) {
+          return restService.findAllCarFuelTypesOrderedByName();
+        }]
+      }
     });
 
     // List All Sales Notes

@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
+
 /**
  * Created by trunikov on 12/15/15.
  */
@@ -22,7 +25,7 @@ public class CarEngineController {
     private CarEngineDao carEngineDao;
 
     @Transactional
-    @RequestMapping(value = "/carengine/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/carengine/{id}", method = GET, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     @JsonView(View.CarEngineDetailed.class)
     @Secured("ROLE_READ")
@@ -31,30 +34,45 @@ public class CarEngineController {
     }
 
     @Transactional
-    @RequestMapping(value = "/carengines", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/carengines", method = GET, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     @JsonView(View.Summary.class)
     @Secured("ROLE_READ")
-    public List<CarEngine> findAllOrderedByName() {
+    public List<CarEngine> findAllOrderedByName(@RequestParam(value = "detailed", required = false,
+            defaultValue = "false") Boolean detailed) {
+        return carEngineDao.findAllOrderedByName();
+        /*
+        if (detailed == null || !detailed) {
+            return findAllOrderedByNameSummary();
+        } else {
+            return findAllOrderedByNameDetailed();
+        }
+        */
+    }
+
+    @JsonView(View.Summary.class)
+    private List<CarEngine> findAllOrderedByNameSummary() {
+        return carEngineDao.findAllOrderedByName();
+    }
+
+    @JsonView(View.Detail.class)
+    private List<CarEngine> findAllOrderedByNameDetailed() {
         return carEngineDao.findAllOrderedByName();
     }
 
     @Transactional
-    @RequestMapping(value = "/carengine", method = RequestMethod.POST)
+    @RequestMapping(value = "/carengine", method = POST)
     @ResponseBody
     @Secured("ROLE_APPLICATION_CRUD")
-    public long create(@RequestBody CarEngine carEngine) {
+    public CarEngine create(@RequestBody CarEngine carEngine) {
         if (!carEngineDao.exists(carEngine.getEngineSize(), carEngine.getFuelType().getId())) { // TODO: replace by UI validation
             carEngineDao.persist(carEngine);
-            return carEngine.getId();
-        } else {
-            return -1;
         }
-
+        return carEngine;
     }
 
     @Transactional
-    @RequestMapping(value = "/carengine/{id}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/carengine/{id}", method = PUT)
     @ResponseBody
     @Secured("ROLE_APPLICATION_CRUD")
     public void update(@RequestBody CarEngine carEngine) {
@@ -64,7 +82,7 @@ public class CarEngineController {
     }
 
     @Transactional
-    @RequestMapping(value = "/carengine/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/carengine/{id}", method = DELETE)
     @ResponseBody
     @Secured("ROLE_APPLICATION_CRUD")
     public void remove(@PathVariable("id") long id) {

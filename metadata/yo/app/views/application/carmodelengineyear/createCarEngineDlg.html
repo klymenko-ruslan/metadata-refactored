@@ -1,0 +1,14 @@
+<div class="modal-header">
+  <h3 class="modal-title">Create Car Engine</h3>
+</div>
+<div class="modal-body">
+  <cengine-form car-engine="null" car-fuel-types="carFuelTypes" />
+</div>
+<div class="modal-footer">
+  <button data-ng-disabled="carengineForm.$pristine || carengineForm.$invalid || carengineForm.$pending"
+    data-ng-click="save()" class="btn btn-success">
+    <i class="fa fa-save"></i>
+    Save
+  </button>
+  <button type="button" class="btn btn-default" data-ng-click="close()">Close</button>
+</div>
