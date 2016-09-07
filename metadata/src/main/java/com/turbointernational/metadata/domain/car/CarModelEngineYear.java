@@ -15,6 +15,10 @@ import java.util.Collection;
 import java.util.List;
 import javax.persistence.*;
 
+import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.FetchType.LAZY;
+import static javax.persistence.GenerationType.IDENTITY;
+
 @Cacheable
 @Entity
 @Table(name="car_model_engine_year")
@@ -24,22 +28,22 @@ public class CarModelEngineYear implements Serializable, SearchableEntity {
 
     //<editor-fold defaultstate="collapsed" desc="Properties">
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
     
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name="car_model_id", nullable = true)
     private CarModel model;
     
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name="car_engine_id", nullable = true)
     private CarEngine engine;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name="car_year_id", nullable = true)
     private CarYear year;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "carModelEngineYear", cascade = CascadeType.ALL)
+    @OneToMany(fetch = LAZY, mappedBy = "carModelEngineYear", cascade = ALL)
     private List<TurboCarModelEngineYear> turboCarModelEngineYears;
 
     public Long getId() {

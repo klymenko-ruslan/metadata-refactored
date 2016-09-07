@@ -16,6 +16,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import static javax.persistence.FetchType.LAZY;
+import static javax.persistence.GenerationType.IDENTITY;
+
 @Cacheable
 @Entity
 @Table(name="car_engine", uniqueConstraints=@UniqueConstraint(columnNames={"engine_size", "car_fuel_type_id"}))
@@ -28,7 +31,7 @@ public class CarEngine implements Serializable, SearchableEntity {
     
     //<editor-fold defaultstate="collapsed" desc="Properties">
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = IDENTITY)
     @JsonView(View.Summary.class)
     private Long id;
     
@@ -36,12 +39,12 @@ public class CarEngine implements Serializable, SearchableEntity {
     @JsonView(View.Summary.class)
     private String engineSize;
     
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name="car_fuel_type_id")
     @JsonView(View.CarEngineDetailed.class)
     private CarFuelType fuelType;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "engine", cascade = CascadeType.ALL)
+    @OneToMany(fetch = LAZY, mappedBy = "engine", cascade = CascadeType.ALL)
     private List<CarModelEngineYear> carModelEngineYears;
 
     public Long getId() {

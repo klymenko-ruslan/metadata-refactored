@@ -150,7 +150,7 @@ public class SearchServiceEsImpl implements SearchService {
             AggregationBuilders.terms("Year").field("year.name.full").size(DEF_AGGR_RESULT_SIZE),
             AggregationBuilders.terms("Make").field("model.make.name.full").size(DEF_AGGR_RESULT_SIZE),
             AggregationBuilders.terms("Model").field("model.name.full").size(DEF_AGGR_RESULT_SIZE),
-            AggregationBuilders.terms("Engine").field("engine.engineSize").size(DEF_AGGR_RESULT_SIZE),
+            AggregationBuilders.terms("Engine").field("engine.engineSize.full").size(DEF_AGGR_RESULT_SIZE),
             AggregationBuilders.terms("Fuel Type").field("engine.fuelType.name.full").size(DEF_AGGR_RESULT_SIZE)
     };
 
@@ -806,7 +806,7 @@ public class SearchServiceEsImpl implements SearchService {
                 subBoolQuery.should(QueryBuilders.termQuery("model.name.short", normalizedCarModelEngineYear));
                 subBoolQuery.should(QueryBuilders.termQuery("model.make.name.short", normalizedCarModelEngineYear));
                 subBoolQuery.should(QueryBuilders.termQuery("engine.engineSize.short", normalizedCarModelEngineYear));
-                subBoolQuery.should(QueryBuilders.termQuery("engine.fueltype.name.short", normalizedCarModelEngineYear));
+                subBoolQuery.should(QueryBuilders.termQuery("engine.fuelType.name.short", normalizedCarModelEngineYear));
                 boolQuery.must(subBoolQuery);
             }
             if (year != null) {
@@ -819,7 +819,7 @@ public class SearchServiceEsImpl implements SearchService {
                 boolQuery.must(QueryBuilders.termQuery("model.name.full", model));
             }
             if (engine != null) {
-                boolQuery.must(QueryBuilders.termQuery("engine.engineSize", engine));
+                boolQuery.must(QueryBuilders.termQuery("engine.engineSize.full", engine));
             }
             if (fuel != null) {
                 boolQuery.must(QueryBuilders.termQuery("engine.fuelType.name.full", fuel));
