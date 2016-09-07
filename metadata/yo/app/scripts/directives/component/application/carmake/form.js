@@ -16,7 +16,8 @@ angular.module("ngMetaCrudApp")
         }
       ]
     }
-  }).directive("uniqueCarmakeName", ["$log", "$q", "restService", function($log, $q, restService) {
+  })
+  .directive("uniqueCarmakeName", ["$log", "$q", "restService", function($log, $q, restService) {
   // Validator for uniqueness of the carmake name.
   return {
     require: "ngModel",

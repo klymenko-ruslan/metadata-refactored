@@ -11,6 +11,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+
+import java.util.List;
+
+import static javax.servlet.http.HttpServletResponse.SC_FOUND;
+import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
@@ -45,6 +51,24 @@ public class ApplicationController {
             json = application.toJson();
         }
         return new ResponseEntity<String>(json, headers, OK);
+    }
+
+    @Transactional
+    @RequestMapping(value = "/carmodelengineyear/exists", method = GET)
+    @Secured("ROLE_APPLICATION_CRUD")
+    public void exists(HttpServletResponse response, @RequestParam("carModelId") Long carModelId,
+                       @RequestParam("carEngineId") Long carEngineId, @RequestParam("year") String year) {
+        CarYear carYear = carYearDao.findByName(year);
+        Long carYearId = null;
+        if (carYear != null) {
+            carYearId = carYear.getId();
+        }
+        List<CarModelEngineYear> apps = carModelEngineYearDao.find(carModelId, carEngineId, carYearId, 1);
+        if (apps.isEmpty()) {
+            response.setStatus(SC_NOT_FOUND);
+        } else {
+            response.setStatus(SC_FOUND);
+        }
     }
 
     @Transactional

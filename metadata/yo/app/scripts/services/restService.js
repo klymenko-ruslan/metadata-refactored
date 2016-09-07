@@ -269,6 +269,14 @@ angular.module("ngMetaCrudApp")
         return Restangular.one("application/carmodelengineyear", cmey_id).get();
       };
 
+      this.existsCarmodelengineyear = function(carModelId, carEngineId, year) {
+        return Restangular.one("application/carmodelengineyear/exists").get({
+          carModelId: carModelId,
+          carEngineId: carEngineId,
+          year: year
+        });
+      };
+
       this.createCarmodelengineyear = function(cmey) {
         return Restangular.one("application").post("carmodelengineyear", cmey);
       };

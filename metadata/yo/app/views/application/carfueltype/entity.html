@@ -1,22 +1,20 @@
+<metanav />
+
+<subnav>
+
+  <li>
+    <button data-ng-disabled="carfueltypeForm.$pristine || carfueltypeForm.$invalid || carfueltypeForm.$pending"
+       data-ng-click="save()" class="btn btn-success">
+      <i class="fa fa-save"></i>
+      Save
+    </button>
+  </li>
+
+</subnav>
+
 <form name="carfueltypeForm" novalidate authorize="ROLE_APPLICATION_CRUD">
 
-  <metanav />
-
-  <subnav>
-
-    <li>
-      <button data-ng-disabled="carfueltypeForm.$pristine || carfueltypeForm.$invalid || carfueltypeForm.$pending"
-         data-ng-click="save()" class="btn btn-success">
-        <i class="fa fa-save"></i>
-        Save
-      </button>
-    </li>
-
-  </subnav>
-
-  <div class="col-xs-12">
-    <h2>Create Fuel Type</h2>
-  </div>
+  <h2>Create Fuel Type</h2>
 
   <div class="row">
     <div class="col-xs-12 col-sm-6">
