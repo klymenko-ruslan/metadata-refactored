@@ -4,6 +4,7 @@ angular.module("ngMetaCrudApp")
   .directive("cmodelForm", function() {
     return {
       scope: {
+        carMakeId: "=",
         carModel: "=",
         carMakes: "="
       },
@@ -26,6 +27,13 @@ angular.module("ngMetaCrudApp")
           }
 
           $scope.carmakes = $scope.carMakes;
+
+          if ($scope.carMakeId !== null && $scope.carMakeId !== undefined && $scope.carMakes) {
+            var pos = _.findIndex($scope.carMakes, function(a){return a.id == $scope.carMakeId;});
+            if (pos > 0) {
+              $scope.carmodel.make = $scope.carMakes[pos];
+            }
+          }
 
           $scope._merge = function() {
             var carmakeId = $scope.carmodel.make.id;

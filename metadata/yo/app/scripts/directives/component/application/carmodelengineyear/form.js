@@ -15,6 +15,12 @@ angular.module("ngMetaCrudApp")
         "$uibModal",
         function(restService, $q, $scope, $location, $parse, $log, $routeParams, gToast, $uibModal) {
 
+          $scope.$on("form:created", function(event, data) {
+            if (data.name === "cmeyForm") {
+              $scope.cmeyForm = data.controller;
+            }
+          });
+
           var makeIdGetter = $parse("cmey.model.make.id");
 
           $scope.onChangeMake = function() {
@@ -117,14 +123,12 @@ angular.module("ngMetaCrudApp")
           };
 
           $scope._save = function() {
-            //$log.log("To save (raw): " + angular.toJson($scope.cmey));
             var cmey2 = $scope._merge();
             if (_.isEmpty(cmey2)) {
               // Ignore.
               gToast.open("Nothing to save. Ignored.");
-              return;
+              return null;
             }
-            $log.log("To save (normalized): " + angular.toJson(cmey2));
             if ($scope.cmeyId === undefined) {
               return restService.createCarmodelengineyear(cmey2);
             } else {
@@ -134,16 +138,25 @@ angular.module("ngMetaCrudApp")
 
           $scope.$on("cmeyform:save", function(event, callback) {
             var promise = $scope._save();
-            callback(promise);
+            if (promise !== null) {
+              callback(promise);
+            }
           });
 
           $scope.$on("cmeyform:revert", function() {
             $scope._revert();
           });
 
-          $scope.onClearMM = function(form) {
+          $scope.onClearMake = function(form) {
             $scope.cmey.model.make.id = null;
             $scope.cmey.model.id = null;
+            form.$setDirty();
+          };
+
+          $scope.onClearModel = function(form) {
+            $scope.cmey.model.make.id = null;
+            $scope.cmey.model.id = null;
+            $scope.carmodels = [];
             form.$setDirty();
           };
 
@@ -185,6 +198,7 @@ angular.module("ngMetaCrudApp")
                       var pos = _.sortedIndex($scope.carmakes, newCarMake, "name");
                       $scope.carmakes.splice(pos, 0, newCarMake);
                       $scope.cmey.model.make = newCarMake;
+                      $scope.cmeyForm.$setDirty();
                     }
                   }
                 }
@@ -193,12 +207,14 @@ angular.module("ngMetaCrudApp")
           };
 
           $scope.quickCreateCarModel = function() {
+            var makeId = makeIdGetter($scope);
             $uibModal.open({
               templateUrl: "/views/application/carmodelengineyear/createCarModelDlg.html",
               animation: false,
               size: "lg" ,
               controller: "createCarModelDlgCtrl",
               resolve: {
+                makeId: function() { return makeId; },
                 carMakes: ["restService", function (restService) {
                   return restService.findAllCarMakesOrderedByName();
                 }],
@@ -210,6 +226,7 @@ angular.module("ngMetaCrudApp")
                     var pos = _.sortedIndex($scope.carmodels, newCarModel, "name");
                     $scope.carmodels.splice(pos, 0, newCarModel);
                     $scope.cmey.model = newCarModel;
+                    $scope.cmeyForm.$setDirty();
                   }
                 }
               }
@@ -228,17 +245,14 @@ angular.module("ngMetaCrudApp")
                 }],
                 addCarEngineCallback: function() {
                   return function(newCarEngine) {
-$log.log("newCarEngine: " + angular.toJson(newCarEngine));
                     if (!_.isArray($scope.carengines)) { // null or undefined
-$log.log("new array");
                       $scope.carengines = [];
                     }
                     var item = $scope._carengine2item(newCarEngine);
-$log.log("item: " + angular.toJson(item));
                     var pos = _.sortedIndex($scope.carengines, item, "engineSize");
-$log.log("pos: " + pos);
                     $scope.carengines.splice(pos, 0, item);
                     $scope.cmey.engine = item;
+                    $scope.cmeyForm.$setDirty();
                   }
                 }
               }
@@ -281,10 +295,11 @@ $log.log("pos: " + pos);
     };
 
   }])
-  .controller("createCarModelDlgCtrl",["$scope", "$log", "gToast", "$uibModalInstance", "carMakes",
+  .controller("createCarModelDlgCtrl",["$scope", "$log", "gToast", "$uibModalInstance", "makeId", "carMakes",
       "addCarModelCallback",
-    function($scope, $log, gToast, $uibModalInstance, carMakes, addCarModelCallback) {
+    function($scope, $log, gToast, $uibModalInstance, makeId, carMakes, addCarModelCallback) {
 
+    $scope.makeId = makeId;
     $scope.carMakes = carMakes;
 
     $scope.$on("form:created", function(event, data) {

@@ -9,7 +9,7 @@
         <div>
           <label for="carmakeFilter">
             Car Make
-            <button type="button" data-ng-click="onClearMM(cmeyForm)" data-ng-disabled="cmey.model.make.id == null" class="btn btn-link btn-sm">
+            <button type="button" data-ng-click="onClearMake(cmeyForm)" data-ng-disabled="cmey.model.make.id == null" class="btn btn-link btn-sm">
               <i class="fa fa-times"></i>
             </button>
           </label>
@@ -32,7 +32,7 @@
         <div>
           <label for="carmodelFilter">
             Car Model
-            <button type="button" data-ng-click="onClearMM(cmeyForm)" class="btn btn-link btn-sm">
+            <button type="button" data-ng-click="onClearModel(cmeyForm)" class="btn btn-link btn-sm">
               <i class="fa fa-times"></i>
             </button>
           </label>
@@ -85,14 +85,20 @@
             <i class="fa fa-times"></i>
           </button>
         </label>
-        <input id="car_year" name="car_year" class="form-control input-sm" data-ng-model="cmey.year.name" data-ng-model-options="{ debounce: 500 }" data-ng-change="onChangeYear()" maxlength="255">
-        <span data-ng-show="cmeyForm.car_year.$dirty && !cmeyForm.car_year.$invalid && !carYearExists" class="alert alert-warning" role="alert">
+        <input id="car_year" type="number" name="car_year" class="form-control input-sm"
+               data-ng-model="cmey.year.name"
+               data-ng-model-options="{ debounce: 500 }"
+               data-ng-maxlength="4"
+               data-ng-min="1900"
+               data-ng-pattern="/^[0-9]*$/"
+               data-ng-change="onChangeYear()" maxlength="255">
+        <span data-ng-show="cmeyForm.car_year.$viewValue != '' && cmeyForm.car_year.$dirty && cmeyForm.car_year.$valid && !carYearExists" class="alert alert-warning" role="alert">
           <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>
           <span>This year is not existing and will be added automatically.</span>
         </span>
         <span data-ng-show="cmeyForm.car_year.$dirty && cmeyForm.car_year.$invalid" class="alert alert-danger" role="alert">
           <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-          <span data-ng-show="cmeyForm.car_year.$error.maxlenth">Too long name (max 255 chars)!</span>
+          <span data-ng-show="cmeyForm.car_year.$error.min || cmeyForm.car_year.$error.pattern || cmeyForm.car_year.$error.maxlength">Invalid year!</span>
         </span>
       </div>
     </div>
