@@ -185,6 +185,16 @@ angular.module("ngMetaCrudApp")
             );
           };
 
+// cmey.model.id, cmey.engine.id, cmey.year.name
+
+          $scope.validateForm = function() {
+            $log.log("validateForm: " + $scope.cmey.model.id + ", " + $scope.cmey.engine.id + ", " + $scope.cmey.year.name);
+          };
+
+          $scope.$watchCollection('cmey', function() {
+            $scope.validateForm();
+          }, true);
+
           $scope.quickCreateCarMake = function() {
             $uibModal.open({
               templateUrl: "/views/application/carmodelengineyear/createCarMakeDlg.html",

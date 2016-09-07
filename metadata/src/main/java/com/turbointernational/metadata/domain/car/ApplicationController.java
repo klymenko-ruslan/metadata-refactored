@@ -17,6 +17,7 @@ import java.util.List;
 
 import static javax.servlet.http.HttpServletResponse.SC_FOUND;
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
+import static javax.servlet.http.HttpServletResponse.SC_OK;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
@@ -67,7 +68,7 @@ public class ApplicationController {
         if (apps.isEmpty()) {
             response.setStatus(SC_NOT_FOUND);
         } else {
-            response.setStatus(SC_FOUND);
+            response.setStatus(SC_OK);
         }
     }
 
