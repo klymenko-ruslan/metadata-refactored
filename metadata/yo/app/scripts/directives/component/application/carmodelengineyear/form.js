@@ -232,6 +232,7 @@ angular.module("ngMetaCrudApp")
           }, true);
 
           $scope.pickedModels = [];
+          $scope.pickedModelIds = {};
 
           $scope.pickedModelsTableParams = new ngTableParams(
             {
@@ -245,22 +246,33 @@ angular.module("ngMetaCrudApp")
           );
 
           $scope.pickCarModel = function() {
-$log.log("pickCarModel: begin");
-            if ($scope.pickedModels.length < 10) {
-$log.log("pickCarModel: 1.: " + $scope.pickedModels.length);
-              var pickedModel = {};
-              angular.copy($scope.cmey.model, pickedModel);
-$log.log("pickCarModel: 2.: " + angular.toJson(pickedModel));
-              $scope.pickedModels.push(pickedModel);
-$log.log("pickCarModel: " + angular.toJson($scope.pickedModels, 2));
+            var carModel = {};
+            var modelId = $scope.cmey.model.id;
+            var pickedModel = _.find($scope.carmodels, function(cmd) {
+              return cmd.id == modelId;
+            });
+            if (pickedModel !== undefined) {
+              angular.copy(pickedModel, carModel);
+              var carMake = {};
+              var makeId = makeIdGetter($scope);
+              if (makeId) {
+                var pickedMake = _.find($scope.carmakes, function(cmk) {
+                  return cmk.id == makeId;
+                });
+                angular.copy(pickedMake, carMake);
+                carModel.make = carMake;
+              }
+              $scope.pickedModels.push(carModel);
+              $scope.pickedModelIds[modelId] = true;
               $scope.pickedModelsTableParams.reload();
-            } else {
-              $log.log("Ignored.");
             }
           };
 
           $scope.unpickCarModel = function(idx) {
+            var carModel = $scope.pickedModels[idx];
+            delete $scope.pickedModelIds[carModel.id];
             $scope.pickedModels.splice(idx, 1);
+            $scope.pickedModelsTableParams.reload();
           };
 
           $scope.pickedEngines = [];
@@ -279,6 +291,10 @@ $log.log("pickCarModel: " + angular.toJson($scope.pickedModels, 2));
             } else {
               $log.log("Ignored.");
             }
+          };
+
+          $scope.bulkGeneration = function() {
+            $log.log("bulkGeneration");
           };
 
           $scope.quickCreateCarMake = function() {

@@ -12,24 +12,36 @@
     </div>
   </div>
 
-  <div class="row">
-    <div class="col-xs-12 col-md-3">
+  <div class="row" data-ng-show="pickedModels.length > 0 || pickedEngines.length > 0 || pickedYears.length > 0" style="padding-bottom:0.8em;">
+    <div class="col-xs-12 col-md-4">
       <h4>Picked Make/Models</h4>
       <table data-ng-table="pickedModelsTableParams" class="table table-bordered table-striped table-hover table-responsive">
       <tr data-ng-repeat="rec in $data">
-        <td title="'Model'">{{rec.id}}</td>
-        <td title="'Make'">{{rec.make.id}}</td>
+        <td title="'Model'">{{rec.name}}</td>
+        <td title="'Make'">{{rec.make.name}}</td>
         <td class="actions text-center" title="'Actions'">
-          TODO
+          <button type="button" class="btn btn-danger btn-xs" data-ng-click="unpickCarModel($index)">
+            <i class="fa fa-times"></i>
+            Unpick
+          </button>
         </td>
+      </tr>
+      <tr data-ng-hide="$data.length > 0">
+        <td colspan="3">No data.</td>
       </tr>
       </table>
     </div>
     <div class="col-xs-12 col-md-3">
       <h4>Picked Engines</h4>
     </div>
-    <div class="col-xs-12 col-md-6">
+    <div class="col-xs-12 col-md-3">
       <h4>Picked Years</h4>
+    </div>
+    <div class="col-xs-12 col-md-2">
+      <button type="button" data-ng-click="bulkGeneration()" class="btn btn-primary btn-lg pull-right">
+        <i class="fa fa-wrench"></i>
+        Do it!
+      </button>
     </div>
   </div>
 
@@ -45,7 +57,7 @@
             </button>
           </label>
           <div class="pull-right">
-            <button type="button" class="btn btn-success btn-sm" data-ng-click="quickCreateCarMake()">
+            <button type="button" class="btn btn-success btn-sm" data-ng-disabled="cmey.model.make.id == null" data-ng-click="quickCreateCarMake()">
               <i class="fa fa-wrench"></i>
               Quick Create
             </button>
@@ -74,7 +86,7 @@
               <i class="fa fa-wrench"></i>
               Quick Create
             </button>
-            <button type="button" class="btn btn-success btn-sm" data-ng-click="pickCarModel()">
+            <button type="button"data-ng-disabled="pickedModelIds[cmey.model.id] || cmey.model.make.id == null" class="btn btn-success btn-sm" data-ng-click="pickCarModel()">
               <i class="fa fa-bullseye"></i>
               Pick
             </button>
