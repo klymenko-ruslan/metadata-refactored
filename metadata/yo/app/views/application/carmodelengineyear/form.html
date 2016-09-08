@@ -13,6 +13,27 @@
   </div>
 
   <div class="row">
+    <div class="col-xs-12 col-md-3">
+      <h4>Picked Make/Models</h4>
+      <table data-ng-table="pickedModelsTableParams" class="table table-bordered table-striped table-hover table-responsive">
+      <tr data-ng-repeat="rec in $data">
+        <td title="'Model'">{{rec.id}}</td>
+        <td title="'Make'">{{rec.make.id}}</td>
+        <td class="actions text-center" title="'Actions'">
+          TODO
+        </td>
+      </tr>
+      </table>
+    </div>
+    <div class="col-xs-12 col-md-3">
+      <h4>Picked Engines</h4>
+    </div>
+    <div class="col-xs-12 col-md-6">
+      <h4>Picked Years</h4>
+    </div>
+  </div>
+
+  <div class="row">
 
     <div class="col-xs-12 col-md-6">
       <div class="form-group">
@@ -23,10 +44,12 @@
               <i class="fa fa-times"></i>
             </button>
           </label>
-          <button type="button" class="btn btn-success btn-sm pull-right" data-ng-click="quickCreateCarMake()">
-            <i class="fa fa-wrench"></i>
-            Quick Create
-          </button>
+          <div class="pull-right">
+            <button type="button" class="btn btn-success btn-sm" data-ng-click="quickCreateCarMake()">
+              <i class="fa fa-wrench"></i>
+              Quick Create
+            </button>
+          </div>
         </div>
         <input id="carmakeFilter" data-ng-model="carmakeFilter" class="form-control" placeholder="Car make filter..."/>
         <select name = "car_make" data-ng-model="cmey.model.make.id" data-ng-change="onChangeMake()"
@@ -46,10 +69,16 @@
               <i class="fa fa-times"></i>
             </button>
           </label>
-          <button type="button" class="btn btn-success btn-sm pull-right" data-ng-click="quickCreateCarModel()">
-            <i class="fa fa-wrench"></i>
-            Quick Create
-          </button>
+          <div class="btn-toolbar pull-right">
+            <button type="button" class="btn btn-success btn-sm pull-right" data-ng-click="quickCreateCarModel()">
+              <i class="fa fa-wrench"></i>
+              Quick Create
+            </button>
+            <button type="button" class="btn btn-success btn-sm" data-ng-click="pickCarModel()">
+              <i class="fa fa-bullseye"></i>
+              Pick
+            </button>
+          </div>
         </div>
         <input id="carmodelFilter" data-ng-model="carmodelFilter" class="form-control" placeholder="Car model filter..."/>
         <select
@@ -73,10 +102,16 @@
               <i class="fa fa-times"></i>
             </button>
           </label>
-          <button type="button" class="btn btn-success btn-sm pull-right" data-ng-click="quickCreateCarEngine()">
-            <i class="fa fa-wrench"></i>
-            Quick Create
-          </button>
+          <div class="btn-toolbar pull-right">
+            <button type="button" class="btn btn-success btn-sm" data-ng-click="quickCreateCarEngine()">
+              <i class="fa fa-wrench"></i>
+              Quick Create
+            </button>
+            <button type="button" class="btn btn-success btn-sm" data-ng-click="pickCarEngine()">
+              <i class="fa fa-bullseye"></i>
+              Pick
+            </button>
+          </div>
         </div>
         <select id="car_engine" data-ng-model="cmey.engine.id" class="form-control"
                 data-ng-options="item.id as item.name for item in carengines | orderBy:'name'"
@@ -89,12 +124,20 @@
   <div class="row">
     <div class="col-xs-12">
       <div class="form-group">
-        <label class="control-label" for="car_year">
-          Car Year
-          <button data-ng-click="onClearYear(cmeyForm)" data-ng-disabled="cmey.year.name == null" class="btn btn-link btn-sm">
-            <i class="fa fa-times"></i>
-          </button>
-        </label>
+        <div>
+          <label class="control-label" for="car_year">
+            Car Year
+            <button data-ng-click="onClearYear(cmeyForm)" data-ng-disabled="cmey.year.name == null" class="btn btn-link btn-sm">
+              <i class="fa fa-times"></i>
+            </button>
+          </label>
+          <div class="btn-toolbar pull-right">
+            <button type="button" class="btn btn-success btn-sm" data-ng-click="pickCarYear()">
+              <i class="fa fa-bullseye"></i>
+              Pick
+            </button>
+          </div>
+        </div>
         <input id="car_year" type="number" name="car_year" class="form-control input-sm"
                data-ng-model="cmey.year.name"
                data-ng-model-options="{ debounce: 500 }"

@@ -12,8 +12,10 @@ angular.module("ngMetaCrudApp")
       replace: false,
       templateUrl: "/views/application/carmodelengineyear/form.html",
       controller: ["restService", "$q", "$scope", "$location", "$parse", "$log", "$routeParams", "gToast",
-        "$uibModal",
-        function(restService, $q, $scope, $location, $parse, $log, $routeParams, gToast, $uibModal) {
+        "$uibModal", "ngTableParams", "utils",
+        function(restService, $q, $scope, $location, $parse, $log, $routeParams, gToast, $uibModal,
+          ngTableParams, utils)
+        {
 
           $scope.$on("form:created", function(event, data) {
             if (data.name === "cmeyForm") {
@@ -228,6 +230,56 @@ angular.module("ngMetaCrudApp")
           $scope.$watch("cmey", function() {
             $scope.validateForm();
           }, true);
+
+          $scope.pickedModels = [];
+
+          $scope.pickedModelsTableParams = new ngTableParams(
+            {
+              page: 1,
+              count: 10,
+              sorting: {}
+            },
+            {
+              getData: utils.localPagination($scope.pickedModels)
+            }
+          );
+
+          $scope.pickCarModel = function() {
+$log.log("pickCarModel: begin");
+            if ($scope.pickedModels.length < 10) {
+$log.log("pickCarModel: 1.: " + $scope.pickedModels.length);
+              var pickedModel = {};
+              angular.copy($scope.cmey.model, pickedModel);
+$log.log("pickCarModel: 2.: " + angular.toJson(pickedModel));
+              $scope.pickedModels.push(pickedModel);
+$log.log("pickCarModel: " + angular.toJson($scope.pickedModels, 2));
+              $scope.pickedModelsTableParams.reload();
+            } else {
+              $log.log("Ignored.");
+            }
+          };
+
+          $scope.unpickCarModel = function(idx) {
+            $scope.pickedModels.splice(idx, 1);
+          };
+
+          $scope.pickedEngines = [];
+
+          $scope.pickCarEngine = function() {
+            if ($scope.pickedEngines.length < 10) {
+            } else {
+              $log.log("Ignored.");
+            }
+          };
+
+          $scope.pickedYears = [];
+
+          $scope.pickCarYear = function() {
+            if ($scope.pickedYears.length < 10) {
+            } else {
+              $log.log("Ignored.");
+            }
+          };
 
           $scope.quickCreateCarMake = function() {
             $uibModal.open({
