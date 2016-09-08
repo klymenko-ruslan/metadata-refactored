@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
@@ -41,23 +43,16 @@ public class CarEngineController {
     public List<CarEngine> findAllOrderedByName(@RequestParam(value = "detailed", required = false,
             defaultValue = "false") Boolean detailed) {
         return carEngineDao.findAllOrderedByName();
-        /*
-        if (detailed == null || !detailed) {
-            return findAllOrderedByNameSummary();
-        } else {
-            return findAllOrderedByNameDetailed();
-        }
-        */
     }
 
-    @JsonView(View.Summary.class)
-    private List<CarEngine> findAllOrderedByNameSummary() {
-        return carEngineDao.findAllOrderedByName();
-    }
-
-    @JsonView(View.Detail.class)
-    private List<CarEngine> findAllOrderedByNameDetailed() {
-        return carEngineDao.findAllOrderedByName();
+    @Transactional
+    @RequestMapping(value = "/carengine/exists", method = GET)
+    @ResponseBody
+    @Secured("ROLE_APPLICATION_CRUD")
+    public Boolean exists(@RequestParam(name = "engineSize", required = false) String engineSize,
+                          @RequestParam(name = "fuelTypeId", required = false) Long fuelTypeId) {
+        List<CarEngine> engines = carEngineDao.findByName(engineSize, fuelTypeId, 1);
+        return engines.isEmpty() ? FALSE : TRUE;
     }
 
     @Transactional

@@ -13,6 +13,12 @@ angular.module("ngMetaCrudApp")
       controller: ["restService", "$scope", "$log", "gToast",
         function(restService, $scope, $log, gToast) {
 
+          $scope.$on("form:created", function(event, data) {
+            if (data.name === "carengineForm") {
+              $scope.carengineForm = data.controller;
+            }
+          });
+
           $scope.carfueltypeFilter = "";
 
           if ($scope.carEngine !== null) { // edit
@@ -55,6 +61,58 @@ angular.module("ngMetaCrudApp")
             var promise = $scope._save();
             callback(promise);
           });
+
+
+          $scope.validateForm = function() {
+            var fuelTypeId = null;
+            if (angular.isObject($scope.carengine.fuelType)) {
+              fuelTypeId = $scope.carengine.fuelType.id;
+            }
+$log.log("engineSize: " + $scope.carengine.engineSize + ", fuelTypeId: " + fuelTypeId);
+            restService.existsCarengine($scope.carengine.engineSize, fuelTypeId).then(
+              function success(exists) {
+                if (exists) {
+                  $scope.carengineForm.$valid = false;
+                  $scope.carengineForm.$invalid = true;
+                  $scope.carengineForm.$error.nonUniqueCarEngine = true;
+                } else {
+                  delete $scope.carengineForm.$error.nonUniqueCarEngine;
+                  if (jQuery.isEmptyObject($scope.carengineForm.$error)) {
+                    $scope.carengineForm.$valid = true;
+                    $scope.carengineForm.$invalid = false;
+                  }
+                }
+              },
+              function failure(response) {
+                restService.error("Could not validate the car engine.", response);
+              }
+            );
+            /*
+            restService.existsCarEngine($scope.cmey.model.id, $scope.cmey.engine.id,
+              $scope.cmey.year.name).then(
+                function success(exists) {
+                  if (exists) {
+                    $scope.cmeyForm.$valid = false;
+                    $scope.cmeyForm.$invalid = true;
+                    $scope.cmeyForm.$error.nonUniqueApp = true;
+                  } else {
+                    delete $scope.cmeyForm.$error.nonUniqueApp;
+                    if (jQuery.isEmptyObject($scope.cmeyForm.$error)) {
+                      $scope.cmeyForm.$valid = false;
+                      $scope.cmeyForm.$invalid = true;
+                    }
+                  }
+                },
+                function failure(response) {
+                  restService.error("Could not validate application.", response);
+                }
+              );
+              */
+          };
+
+          $scope.$watch("carengine", function() {
+            $scope.validateForm();
+          }, true);
 
         }
       ]

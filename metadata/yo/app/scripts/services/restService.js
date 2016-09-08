@@ -457,6 +457,13 @@ angular.module("ngMetaCrudApp")
         return Restangular.one("application").getList("carengines", {detailed: false}); // TODO: detailed
       };
 
+      this.existsCarengine = function(engineSize, fuelTypeId) {
+        return Restangular.one("application/carengine/exists").get({
+          engineSize: engineSize,
+          fuelTypeId: fuelTypeId
+        });
+      };
+
       this.findCarYearByName = function(name) {
         return Restangular.one("application/caryear").get({
           "name": name

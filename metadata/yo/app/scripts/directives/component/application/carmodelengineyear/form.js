@@ -40,7 +40,25 @@ angular.module("ngMetaCrudApp")
           };
 
           $scope.carYearExists = null;
-          $scope.cmey = {}; // Caveat. Don't use null to init because binding will not work.
+
+          // Caveat.
+          // Don't use null for the initialization below
+          // because binding will not work.
+          $scope.cmey = {
+            "model": {
+              "id": null,
+              "make": {
+                "id": null
+              }
+            },
+            "engine": {
+              "id": null
+            },
+            "year": {
+              "name": null
+            }
+          };
+
           $scope.origCmey = null;
 
           $scope.carengines = Array();
@@ -185,13 +203,29 @@ angular.module("ngMetaCrudApp")
             );
           };
 
-// cmey.model.id, cmey.engine.id, cmey.year.name
-
           $scope.validateForm = function() {
-            $log.log("validateForm: " + $scope.cmey.model.id + ", " + $scope.cmey.engine.id + ", " + $scope.cmey.year.name);
+            restService.existsCarmodelengineyear($scope.cmey.model.id, $scope.cmey.engine.id,
+              $scope.cmey.year.name).then(
+                function success(exists) {
+                  if (exists) {
+                    $scope.cmeyForm.$valid = false;
+                    $scope.cmeyForm.$invalid = true;
+                    $scope.cmeyForm.$error.nonUniqueApp = true;
+                  } else {
+                    delete $scope.cmeyForm.$error.nonUniqueApp;
+                    if (jQuery.isEmptyObject($scope.cmeyForm.$error)) {
+                      $scope.cmeyForm.$valid = true;
+                      $scope.cmeyForm.$invalid = false;
+                    }
+                  }
+                },
+                function failure(response) {
+                  restService.error("Could not validate application.", response);
+                }
+              );
           };
 
-          $scope.$watchCollection('cmey', function() {
+          $scope.$watch("cmey", function() {
             $scope.validateForm();
           }, true);
 
