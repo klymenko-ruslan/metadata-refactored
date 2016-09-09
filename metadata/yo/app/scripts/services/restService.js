@@ -281,6 +281,14 @@ angular.module("ngMetaCrudApp")
         return Restangular.one("application").post("carmodelengineyear", cmey);
       };
 
+      this.carmodelengineyearBulkCreate = function(pickedModels, pickedEngines, pickedYears) {
+        return Restangular.one("application/carmodelengineyear").post("bulkcreate", {
+          models: pickedModels,
+          engines: pickedEngines,
+          years: pickedYears
+        });
+      };
+
       this.updateCarmodelengineyear = function(cmey) {
         return Restangular.one("application/carmodelengineyear", cmey.id).customPUT(cmey);
       };

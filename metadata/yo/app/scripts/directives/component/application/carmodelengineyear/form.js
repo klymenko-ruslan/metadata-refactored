@@ -167,16 +167,10 @@ angular.module("ngMetaCrudApp")
             $scope._revert();
           });
 
-          $scope.onClearMake = function(form) {
+          $scope.onClearMM = function(form) {
             $scope.cmey.model.make.id = null;
             $scope.cmey.model.id = null;
-            form.$setDirty();
-          };
-
-          $scope.onClearModel = function(form) {
-            $scope.cmey.model.make.id = null;
-            $scope.cmey.model.id = null;
-            $scope.carmodels = [];
+            $scope.carmodels.splice(0, $scope.carmodels.length);
             form.$setDirty();
           };
 
@@ -276,25 +270,98 @@ angular.module("ngMetaCrudApp")
           };
 
           $scope.pickedEngines = [];
+          $scope.pickedEngineIds = {};
 
-          $scope.pickCarEngine = function() {
-            if ($scope.pickedEngines.length < 10) {
-            } else {
-              $log.log("Ignored.");
+          $scope.pickedEnginesTableParams = new ngTableParams(
+            {
+              page: 1,
+              count: 10,
+              sorting: {}
+            },
+            {
+              getData: utils.localPagination($scope.pickedEngines)
             }
+          );
+          $scope.pickCarEngine = function() {
+            var carEngine = {};
+            var engineId = $scope.cmey.engine.id;
+            var pickedEngine = _.find($scope.carEngines, function(ce) {
+              return ce.id == engineId;
+            });
+            if (pickedEngine !== undefined) {
+              angular.copy(pickedEngine, carEngine);
+              // TODO: fuel type
+              $scope.pickedEngines.push(carEngine);
+              $scope.pickedEngineIds[engineId] = true;
+              $scope.pickedEnginesTableParams.reload();
+            }
+          };
+
+          $scope.unpickCarEngine = function(idx) {
+            var carEngine = $scope.pickedEngines[idx];
+            delete $scope.pickedEngineIds[carEngine.id];
+            $scope.pickedEngines.splice(idx, 1);
+            $scope.pickedEnginesTableParams.reload();
           };
 
           $scope.pickedYears = [];
+          $scope.pickedYearNames = {};
+
+          $scope.pickedYearsTableParams = new ngTableParams(
+            {
+              page: 1,
+              count: 10,
+              sorting: {}
+            },
+            {
+              getData: utils.localPagination($scope.pickedYears)
+            }
+          );
 
           $scope.pickCarYear = function() {
-            if ($scope.pickedYears.length < 10) {
-            } else {
-              $log.log("Ignored.");
-            }
+            var carYear = {};
+            var yearName = $scope.cmey.year.name;
+            angular.copy($scope.cmey.year, carYear);
+            $scope.pickedYears.push(carYear);
+            $scope.pickedYearNames[yearName] = true;
+            $scope.pickedYearsTableParams.reload();
+          };
+
+          $scope.unpickCarYear = function(idx) {
+            var carYear = $scope.pickedYears[idx];
+            delete $scope.pickedYearNames[carYear.name];
+            $scope.pickedYears.splice(idx, 1);
+            $scope.pickedYearsTableParams.reload();
           };
 
           $scope.bulkGeneration = function() {
-            $log.log("bulkGeneration");
+            restService.carmodelengineyearBulkCreate($scope.pickedModels, $scope.pickedEngines, $scope.pickedYears).then(
+              function success(result) {
+
+                _.each($scope.pickedModels, function(cm) {
+                  delete $scope.pickedModelIds[cm.id];
+                });
+                $scope.pickedModels.splice(0, $scope.pickedModels.length);
+                $scope.pickedModelsTableParams.reload();
+
+                _.each($scope.pickedEngines, function(ce) {
+                  delete $scope.pickedEngineIds[ce.id];
+                });
+                $scope.pickedEngines.splice(0, $scope.pickedEngines.length);
+                $scope.pickedEnginesTableParams.reload();
+
+                _.each($scope.pickedYears, function(cy) {
+                  delete $scope.pickedYearNames[cy.name];
+                });
+                $scope.pickedYears.splice(0, $scope.pickedYears.length);
+                $scope.pickedYearsTableParams.reload();
+
+                gToast.open("Created " + result.created + " applications. " + result.ignored + " ignored.");
+              },
+              function failure(errorResponse) {
+                restService.error("Bulk creation of application failed.", errorResponse);
+              }
+            );
           };
 
           $scope.quickCreateCarMake = function() {

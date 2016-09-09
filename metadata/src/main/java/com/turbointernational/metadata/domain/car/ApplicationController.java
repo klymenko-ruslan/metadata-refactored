@@ -1,5 +1,8 @@
 package com.turbointernational.metadata.domain.car;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.web.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,8 +13,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.EntityManager;
+import java.util.ArrayList;
 import java.util.List;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 import static org.springframework.http.HttpStatus.OK;
@@ -74,6 +80,149 @@ public class ApplicationController {
         normalize(cmey);
         carModelEngineYearDao.persist(cmey);
         return cmey.getId();
+    }
+
+    public static class BulkCreateRequest {
+
+        @JsonView({View.Summary.class})
+        private List<CarModel> models;
+
+        @JsonView({View.Summary.class})
+        private List<CarEngine> engines;
+
+        @JsonView({View.Summary.class})
+        private List<CarYear> years;
+
+        public List<CarModel> getModels() {
+            return models;
+        }
+
+        public void setModels(List<CarModel> models) {
+            this.models = models;
+        }
+
+        public List<CarEngine> getEngines() {
+            return engines;
+        }
+
+        public void setEngines(List<CarEngine> engines) {
+            this.engines = engines;
+        }
+
+        public List<CarYear> getYears() {
+            return years;
+        }
+
+        public void setYears(List<CarYear> years) {
+            this.years = years;
+        }
+
+    }
+
+    @JsonInclude(ALWAYS)
+    public static class BulkCreateResonse {
+
+        @JsonView({View.Summary.class})
+        private int created = 0;
+
+        @JsonView({View.Summary.class})
+        private int ignored = 0;
+
+        public BulkCreateResonse() {
+        }
+
+        public BulkCreateResonse(int created, int ignored) {
+            this.created = created;
+            this.ignored = ignored;
+        }
+
+        public int incCreated() {
+            return ++created;
+        }
+
+        public int incIngored() {
+            return ++ignored;
+        }
+
+        public int getCreated() {
+            return created;
+        }
+
+        public void setCreated(int created) {
+            this.created = created;
+        }
+
+        public int getIgnored() {
+            return ignored;
+        }
+
+        public void setIgnored(int ignored) {
+            this.ignored = ignored;
+        }
+
+    }
+
+    @Transactional
+    @RequestMapping(value = "/carmodelengineyear/bulkcreate", method = POST)
+    @ResponseBody
+    @Secured("ROLE_APPLICATION_CRUD")
+    public BulkCreateResonse bulkCreate(@RequestBody BulkCreateRequest bkr) {
+        BulkCreateResonse retVal = new BulkCreateResonse();
+        if (bkr.getModels().isEmpty() && bkr.getEngines().isEmpty() && bkr.getYears().isEmpty()) {
+            return retVal;
+        }
+        List<CarModel> models = new ArrayList<>(bkr.getModels().size() + 1);
+        List<CarEngine> engines = new ArrayList<>(bkr.getEngines().size() + 1);
+        List<CarYear> years = new ArrayList<>(bkr.getYears().size() + 1);
+
+        EntityManager em = carModelDao.getEntityManager();
+
+        bkr.getModels().forEach(cm -> models.add(em.getReference(CarModel.class, cm.getId())));
+        bkr.getEngines().forEach(ce -> engines.add(em.getReference(CarEngine.class, ce.getId())));
+        bkr.getYears().forEach(yr -> years.add(getOrCreateCarYear(yr)));
+
+        if (models.isEmpty()) {
+            models.add(null);
+        }
+        if (engines.isEmpty()) {
+            engines.add(null);
+        }
+        if (years.isEmpty()) {
+            years.add(null);
+        }
+
+        models.forEach(cm -> engines.forEach(ce -> years.forEach(cy -> {
+
+            Long carModelId = null;
+            if (cm != null) {
+                carModelId = cm.getId();
+            }
+
+            Long carEngineId = null;
+            if (ce != null) {
+                carEngineId = ce.getId();
+            }
+
+            Long carYearId = null;
+            if (cy != null) {
+                carYearId = cy.getId();
+            }
+
+            List<CarModelEngineYear> apps = carModelEngineYearDao.find(carModelId, carEngineId, carYearId, 1);
+            if (apps.isEmpty()) { // not found
+                CarModelEngineYear cmey = new CarModelEngineYear();
+                cmey.setModel(cm);
+                cmey.setEngine(ce);
+                cmey.setYear(cy);
+                carModelEngineYearDao.persist(cmey);
+                retVal.incCreated();
+            } else {
+                retVal.incIngored();
+            }
+
+        })));
+
+        return retVal;
     }
 
     @Transactional
