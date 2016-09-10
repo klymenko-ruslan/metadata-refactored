@@ -6,26 +6,26 @@ package com.turbointernational.metadata.web;
  */
 public class View {
 
-    public static interface Summary {};
+    public interface Summary {};
 
-    public static interface SummaryWithGroups extends Summary {};
+    public interface SummaryWithGroups extends Summary {};
 
-    public static interface SummaryWithInterchangeParts extends Summary {};
+    public interface SummaryWithInterchangeParts extends Summary {};
 
-    public static interface SummaryWithBOMDetail extends Summary {};
+    public interface SummaryWithBOMDetail extends Summary {};
     
-    public static interface Detail extends Summary {};
+    public interface Detail extends Summary {};
     
-    public static interface DetailWithGroups extends Detail {};
+    public interface DetailWithGroups extends Detail {};
 
-    public static interface DetailWithUsers extends Detail {};
+    public interface DetailWithUsers extends Detail {};
     
-    public static interface DetailWithPartsAndAttachments extends Detail {};
+    public interface DetailWithPartsAndAttachments extends Detail {};
 
-    public static interface DetailWithParts extends Detail {};
+    public interface DetailWithParts extends Detail {};
 
-    public static interface CarEngineDetailed extends Summary {};
+    public interface CarEngineDetailed extends Summary {};
 
-    public static interface CarModelDetailed extends Summary {};
+    public interface CarModelDetailed extends Summary {};
 
 }

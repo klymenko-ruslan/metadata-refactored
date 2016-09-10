@@ -1,5 +1,7 @@
 package com.turbointernational.metadata.domain.car;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.domain.SearchableEntity;
 import com.turbointernational.metadata.domain.criticaldimension.CriticalDimension;
@@ -17,6 +19,10 @@ import java.util.List;
 
 import javax.persistence.*;
 
+import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.FetchType.LAZY;
+import static javax.persistence.GenerationType.IDENTITY;
+
 @Cacheable
 @Entity
 @Table(name = "car_fuel_type", uniqueConstraints = @UniqueConstraint(columnNames = {"name"}))
@@ -30,7 +36,7 @@ public class CarFuelType implements Serializable, SearchableEntity {
 
     //<editor-fold defaultstate="collapsed" desc="Properties">
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = IDENTITY)
     @JsonView({View.Summary.class})
     private Long id;
 
@@ -38,7 +44,8 @@ public class CarFuelType implements Serializable, SearchableEntity {
     @JsonView({View.Summary.class})
     private String name;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "fuelType", cascade = CascadeType.ALL)
+    @JsonIgnore
+    @OneToMany(fetch = LAZY, mappedBy = "fuelType", cascade = ALL)
     private List<CarEngine> carEngines;
 
     public Long getId() {

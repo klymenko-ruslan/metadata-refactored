@@ -38,7 +38,7 @@ public class CarEngineController {
     @Transactional
     @RequestMapping(value = "/carengines", method = GET, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
-    @JsonView(View.Summary.class)
+    @JsonView(View.CarEngineDetailed.class)
     @Secured("ROLE_READ")
     public List<CarEngine> findAllOrderedByName(@RequestParam(value = "detailed", required = false,
             defaultValue = "false") Boolean detailed) {

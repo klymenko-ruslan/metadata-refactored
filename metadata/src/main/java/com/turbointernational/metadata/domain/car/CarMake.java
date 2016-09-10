@@ -1,5 +1,6 @@
 package com.turbointernational.metadata.domain.car;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.domain.SearchableEntity;
 import com.turbointernational.metadata.domain.criticaldimension.CriticalDimension;
@@ -16,6 +17,10 @@ import java.util.Collection;
 import java.util.List;
 import javax.persistence.*;
 
+import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.FetchType.LAZY;
+import static javax.persistence.GenerationType.IDENTITY;
+
 @Cacheable
 @Entity
 @Table(name = "car_make", uniqueConstraints = @UniqueConstraint(columnNames = {"name"}))
@@ -29,7 +34,7 @@ public class CarMake implements Serializable, SearchableEntity {
 
     //<editor-fold defaultstate="collapsed" desc="Properties">
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = IDENTITY)
     @JsonView(View.Summary.class)
     private Long id;
 
@@ -37,7 +42,8 @@ public class CarMake implements Serializable, SearchableEntity {
     @JsonView(View.Summary.class)
     private String name;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "make", cascade = CascadeType.ALL)
+    @OneToMany(fetch = LAZY, mappedBy = "make", cascade = ALL)
+    @JsonIgnore
     private List<CarModel> carModels;
 
     public Long getId() {
