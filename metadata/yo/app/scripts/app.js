@@ -105,6 +105,22 @@ angular.module("ngMetaCrudApp", ["ngRoute", "ngTable", "ui.bootstrap",
         }]
       }
     });
+    $routeProvider.when("/part/:id/parentbom/search", {
+      templateUrl: "views/part/bom/ParentBomSearch.html",
+      controller: "ParentBomSearchCtrl",
+      resolve: {
+        part: ["$route", "restService", function($route, restService) {
+          return restService.findPart($route.current.pathParams.id);
+        }],
+        partTypes: ["restService", function(restService) {
+          return restService.listPartTypes();
+        }],
+        boms:["$route", "BOM", function ($route, BOM) {
+          var parentPartId = $route.current.pathParams.id;
+          return BOM.listByParentPartId(parentPartId);
+        }]
+      }
+    });
     $routeProvider.when("/part/:id/application/search", {
       templateUrl: "views/part/application/PartApplicationSearch.html",
       controller: "PartApplicationSearchCtrl"

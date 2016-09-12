@@ -104,7 +104,9 @@ angular.module("ngMetaCrudApp")
         };
 
         $scope.onTurboModelSelected = function($item) {
-          $scope.onTurboModelChanged($item.title);
+          if ($item !== undefined) {
+            $scope.onTurboModelChanged($item.title);
+          }
         };
 
         $scope.onTurboTypeChanged = function(val) {
@@ -115,7 +117,9 @@ angular.module("ngMetaCrudApp")
         };
 
         $scope.onTurboTypeSelected = function($item) {
-          $scope.onTurboTypeChanged($item.title);
+          if ($item !== undefined) {
+            $scope.onTurboTypeChanged($item.title);
+          }
         };
 
         // Latest Results
