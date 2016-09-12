@@ -5,7 +5,7 @@
       <h2>{{::titleHead}} Car Model Engine Year <span data-ng-show="cmey.id">#{{cmey.id}}</span></h2>
     </div>
     <div class="col-xs-6 vcenter">
-      <div class="alert alert-danger" data-ng-show="cmeyForm.$error.nonUniqueApp">
+      <div class="alert alert-danger" data-ng-show="cmeyForm.$dirty && cmeyForm.$error.nonUniqueApp">
         <i class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></i>
         Application with these attributes already exists.
       </div>
