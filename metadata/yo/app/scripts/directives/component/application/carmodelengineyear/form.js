@@ -290,7 +290,6 @@ angular.module("ngMetaCrudApp")
             });
             if (pickedEngine !== undefined) {
               angular.copy(pickedEngine, carEngine);
-              // TODO: fuel type
               $scope.pickedEngines.push(carEngine);
               $scope.pickedEngineIds[engineId] = true;
               $scope.pickedEnginesTableParams.reload();

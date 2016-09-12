@@ -71,8 +71,18 @@ public class BOMService {
     }
 
     @Transactional
-    public List<BOMItem> getByParentId(Long id) throws Exception {
-        return bomItemDao.findByParentId(id);
+    public List<BOMItem> getByParentId(Long partId) throws Exception {
+        return bomItemDao.findByParentId(partId);
+    }
+
+    @Transactional
+    public List<BOMItem> getParentsForBom(Long partId) throws Exception {
+        return bomItemDao.findParentsForBom(partId);
+    }
+
+    @Transactional
+    public List<BOMItem> getByParentAndTypeIds(Long partId, Long partTypeId) throws Exception {
+        return bomItemDao.findByParentAndTypeIds(partId, partTypeId);
     }
 
     @Transactional

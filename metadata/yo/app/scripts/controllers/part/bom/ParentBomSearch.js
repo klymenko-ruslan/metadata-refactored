@@ -1,11 +1,12 @@
 "use strict";
 
 angular.module("ngMetaCrudApp").controller("ParentBomSearchCtrl", [
-  "$log", "$scope", "ngTableParams", "dialogs", "restService", "utils", "part", "partTypes", "boms",
-  function ($log, $scope, ngTableParams, dialogs, restService, utils, part, partTypes, boms) {
+  "$log", "$scope", "ngTableParams", "dialogs", "restService", "BOM", "utils", "part", "partTypes", "parents",
+  function ($log, $scope, ngTableParams, dialogs, restService, BOM, utils, part, partTypes, parents) {
 
     $scope.part = part;
     $scope.partTypes = partTypes;
+    $scope.restService = restService;
 
     var pickedParts = [];
     var pickedPartIds = {
@@ -15,7 +16,7 @@ angular.module("ngMetaCrudApp").controller("ParentBomSearchCtrl", [
       page: 1,
       count: 10
     }, {
-      getData: utils.localPagination(boms, "child.manufacturerPartNumber")
+      getData: utils.localPagination(parents, "child.manufacturerPartNumber")
     });
 
     $scope.pickedPartsTableParams = new ngTableParams(
@@ -60,18 +61,18 @@ angular.module("ngMetaCrudApp").controller("ParentBomSearchCtrl", [
       $scope.pickedPartsTableParams.reload();
     };
 
-    $scope.removeBom = function(idx) {
-      var bomItem = boms[idx];
+    $scope.removeBOM = function(idx) {
+      var bomItem = parents[idx];
       dialogs.confirm(
         "Remove BOM Item?",
-        "Remove child part from this bill of materials?").result.then(
+        "Remove this child part from the bill of materials of the parent part?").result.then(
         function() {
           // Yes
-          Restangular.one("bom", bomItem.id).remove().then(
+          BOM.removeBOM(bomItem.id).then(
             function() {
-              boms.splice(idx, 1);
+              parents.splice(idx, 1);
               $scope.bomTableParams.reload();
-              gToast.open("Child part removed from BOM.");
+              gToast.open("The BOM has been successfully removed.");
             },
             restService.error
           );

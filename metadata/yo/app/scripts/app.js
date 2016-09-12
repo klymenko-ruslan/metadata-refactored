@@ -115,9 +115,9 @@ angular.module("ngMetaCrudApp", ["ngRoute", "ngTable", "ui.bootstrap",
         partTypes: ["restService", function(restService) {
           return restService.listPartTypes();
         }],
-        boms:["$route", "BOM", function ($route, BOM) {
-          var parentPartId = $route.current.pathParams.id;
-          return BOM.listByParentPartId(parentPartId);
+        parents:["$route", "BOM", function ($route, BOM) {
+          var partId = $route.current.pathParams.id;
+          return BOM.listParentsOfPartBom(partId);
         }]
       }
     });

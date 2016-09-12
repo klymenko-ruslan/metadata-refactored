@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,9 +16,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.turbointernational.metadata.web.BOMController.BOMErrorStatus.ASSERTION_ERROR;
-import static com.turbointernational.metadata.web.BOMController.BOMErrorStatus.FOUND_BOM_RECURSION;
-import static com.turbointernational.metadata.web.BOMController.BOMErrorStatus.OK;
+import static com.turbointernational.metadata.web.BOMController.BOMErrorStatus.*;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 @RequestMapping("/metadata/bom")
 @Controller
@@ -66,9 +65,9 @@ public class BOMController {
     @ResponseBody
     @Transactional
     @Secured("ROLE_BOM")
-    @RequestMapping(method = RequestMethod.POST,
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(method = POST,
+            consumes = APPLICATION_JSON_VALUE,
+            produces = APPLICATION_JSON_VALUE)
     @JsonView(View.Summary.class)
     public BOMResult create(@RequestBody CreateBomItemRequest request) {
         Long parentPartId = request.getParentPartId();
@@ -84,19 +83,38 @@ public class BOMController {
         }
     }
 
-    @RequestMapping(value = "/byParentPart/{id}", method = RequestMethod.GET,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/byParentPart/{id}", method = GET,
+            produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     @Secured("ROLE_READ")
     @JsonView(View.SummaryWithBOMDetail.class)
-    public List<BOMItem> getByParentId(@PathVariable("id") Long id) throws Exception {
+    public List<BOMItem> getPartBOMs(@PathVariable("id") Long id) throws Exception {
         return bomService.getByParentId(id);
     }
 
+    @RequestMapping(value = "/byParentPart/{partId}/type/{typeId}", method = GET,
+            produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
+    @Secured("ROLE_READ")
+    @JsonView(View.SummaryWithBOMDetail.class)
+    public List<BOMItem> getByParentAndTypeIds(@PathVariable("partId") Long partId,
+                                               @PathVariable("typeId") Long typeId) throws Exception {
+        return bomService.getByParentAndTypeIds(partId, typeId);
+    }
+
+    @RequestMapping(value = "/part/{id}/parents", method = GET,
+            produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
+    @Secured("ROLE_READ")
+    @JsonView(View.SummaryWithBOMDetail.class)
+    public List<BOMItem> getParentsForBom(@PathVariable("id") Long id) throws Exception {
+        return bomService.getParentsForBom(id);
+    }
+
     @Transactional
-    @RequestMapping(value = "/{id}", method = RequestMethod.POST,
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/{id}", method = POST,
+            consumes = APPLICATION_JSON_VALUE,
+            produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     @Secured("ROLE_BOM")
     public void update(@PathVariable("id") Long id, @RequestParam(required = true) Integer quantity) throws Exception {
@@ -106,7 +124,7 @@ public class BOMController {
     }
 
     @Transactional
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{id}", method = DELETE)
     @ResponseBody
     @Secured("ROLE_BOM")
     public void delete(@PathVariable("id") Long id) throws Exception {

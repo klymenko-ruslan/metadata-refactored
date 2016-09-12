@@ -78,7 +78,7 @@ angular.module("ngMetaCrudApp")
               "Remove child part from this bill of materials?").result.then(
               function() {
                 // Yes
-                Restangular.one("bom", bomItem.id).remove().then(
+                BOM.removeBOM(bomItem.id).then(
                   function() {
                     // Success
 

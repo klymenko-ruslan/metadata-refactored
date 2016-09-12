@@ -10,15 +10,29 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public class BOMItemDao extends AbstractDao<BOMItem> {
-    
+
     public BOMItemDao() {
         super(BOMItem.class);
     }
 
-    public List<BOMItem> findByParentId(long id) {
-        return getEntityManager()
-                .createQuery("SELECT i FROM BOMItem i JOIN i.child c WHERE i.parent.id = :parentPartId", BOMItem.class)
-                .setParameter("parentPartId", id)
+    public List<BOMItem> findByParentId(Long partId) {
+        return em.createNamedQuery("findBomsOfPart", BOMItem.class)
+                .setParameter("parentPartId", partId)
                 .getResultList();
     }
+
+    public List<BOMItem> findByParentAndTypeIds(Long partId, Long partTypeId) {
+        return em.createNamedQuery("findBomsOfPartWithType", BOMItem.class)
+                .setParameter("parentPartId", partId)
+                .setParameter("partTypeId", partTypeId)
+                .getResultList();
+    }
+
+    public List<BOMItem> findParentsForBom(Long partId) {
+        return em.createNamedQuery("findBomParents", BOMItem.class)
+                .setParameter("partId", partId)
+                .getResultList();
+
+    }
+
 }

@@ -14,22 +14,43 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.*;
 
+import static javax.persistence.CascadeType.DETACH;
+import static javax.persistence.CascadeType.REFRESH;
+import static javax.persistence.FetchType.EAGER;
+import static javax.persistence.FetchType.LAZY;
+import static javax.persistence.GenerationType.IDENTITY;
+
 @Entity
 @Table(name = "bom", uniqueConstraints = @UniqueConstraint(columnNames = {"parent_part_id", "child_part_id"}))
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "class", include = JsonTypeInfo.As.PROPERTY, defaultImpl = BOMItem.class)
+@NamedQueries({
+        @NamedQuery(
+                name="findBomsOfPart",
+                query = "SELECT i FROM BOMItem i JOIN i.child c WHERE i.parent.id = :parentPartId"
+        ),
+        @NamedQuery(
+                name="findBomParents",
+                query="SELECT i FROM BOMItem i JOIN i.parent p WHERE i.child.id = :partId"
+        ),
+        @NamedQuery(
+                name="findBomsOfPartWithType",
+                query = "SELECT i FROM BOMItem i JOIN i.child c " +
+                        "WHERE i.parent.id = :parentPartId " +
+                        "AND i.child.partType.id = :partTypeId"
+        )})
 public class BOMItem implements Comparable<BOMItem>, Serializable {
 
     //<editor-fold defaultstate="collapsed" desc="properties">
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = IDENTITY)
     @JsonView({View.Summary.class})
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.REFRESH})
+    @OneToOne(fetch = LAZY, cascade = {DETACH, REFRESH})
     @JoinColumn(name = "parent_part_id", nullable = false)
     private Part parent;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.REFRESH})
+    @OneToOne(fetch = EAGER, cascade = {DETACH, REFRESH})
     @JoinColumn(name = "child_part_id", nullable = false)
     @JsonView({View.SummaryWithBOMDetail.class})
     private Part child;
@@ -38,7 +59,7 @@ public class BOMItem implements Comparable<BOMItem>, Serializable {
     @JsonView({View.Summary.class})
     private Integer quantity;
 
-    @OneToMany(mappedBy = "bomItem", fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(mappedBy = "bomItem", fetch = LAZY, orphanRemoval = true)
     @OrderBy("id")
     @JsonView({View.SummaryWithBOMDetail.class})
     private Set<BOMAlternative> alternatives = new TreeSet<>();

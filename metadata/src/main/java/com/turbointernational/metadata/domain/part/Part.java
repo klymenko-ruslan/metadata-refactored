@@ -31,6 +31,8 @@ import java.util.*;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
 import static com.fasterxml.jackson.annotation.JsonTypeInfo.As.PROPERTY;
 import static com.fasterxml.jackson.annotation.JsonTypeInfo.Id.CLASS;
+import static javax.persistence.CascadeType.REFRESH;
+import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
 import static javax.persistence.InheritanceType.JOINED;
 import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_PROTOTYPE;
@@ -116,7 +118,7 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
     @JsonView({View.Summary.class})
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = LAZY)
     @JsonView({View.Summary.class})
     @JoinColumn(name = "manfr_id", nullable = false)
     private Manufacturer manufacturer;
@@ -133,7 +135,7 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
     @JsonView({View.Detail.class})
     private String description;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = LAZY)
     @JoinColumn(name = "part_type_id")
     @JsonView({View.Summary.class})
     private PartType partType;
@@ -142,30 +144,30 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
     @JsonView({View.Detail.class})
     private Boolean inactive = false;
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = LAZY)
     @JoinTable(name = "part_turbo_type",
             joinColumns = @JoinColumn(name = "part_id"),
             inverseJoinColumns = @JoinColumn(name = "turbo_type_id"))
     @JsonView({View.Detail.class})
     private Set<TurboType> turboTypes = new TreeSet<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = LAZY)
     @JoinTable(name = "interchange_item",
             joinColumns = @JoinColumn(name = "part_id"),
             inverseJoinColumns = @JoinColumn(name = "interchange_header_id"))
     @JsonView({View.Detail.class})
     private Interchange interchange;
 
-    @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(mappedBy = "parent", fetch = LAZY, orphanRemoval = true)
     @OrderBy("id")
     private Set<BOMItem> bom = new TreeSet<>();
 
-    @OneToMany(cascade = CascadeType.REFRESH, mappedBy = "part", fetch = FetchType.LAZY)
+    @OneToMany(cascade = REFRESH, mappedBy = "part", fetch = LAZY)
     @JsonView({View.Detail.class})
     @OrderBy("id")
     private Set<ProductImage> productImages = new TreeSet<>();
 
-    @OneToMany(cascade = CascadeType.REFRESH, mappedBy = "pk.part", fetch = FetchType.LAZY)
+    @OneToMany(cascade = REFRESH, mappedBy = "pk.part", fetch = LAZY)
     @OrderBy("pk.salesNote.id")
     private List<SalesNotePart> salesNoteParts = new ArrayList<>();
 
