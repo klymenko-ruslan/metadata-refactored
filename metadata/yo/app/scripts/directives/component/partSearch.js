@@ -62,10 +62,14 @@ angular.module("ngMetaCrudApp")
 
         $scope.columns = null;
 
+        $scope.critDimsAvailable = function() {
+          return angular.isObject($scope.critDimsByPartTypes) && !jQuery.isEmptyObject($scope.critDimsByPartTypes);
+        };
+
         $scope.initColumns = function() {
           if ($scope.showCriticalDimensions) {
             var critDimCols = [];
-            if ($scope.critDims) {
+            if ($scope.critDimsAvailable()) {
               _.each($scope.critDims, function (d) {
                 var gttr = null;
                 var srtbl = null;
