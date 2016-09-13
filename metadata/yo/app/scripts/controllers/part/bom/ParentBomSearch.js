@@ -1,8 +1,8 @@
 "use strict";
 
 angular.module("ngMetaCrudApp").controller("ParentBomSearchCtrl", [
-  "$log", "$scope", "ngTableParams", "dialogs", "restService", "BOM", "utils", "part", "partTypes", "parents",
-  function ($log, $scope, ngTableParams, dialogs, restService, BOM, utils, part, partTypes, parents) {
+  "$log", "$scope", "ngTableParams", "dialogs", "gToast", "restService", "BOM", "utils", "part", "partTypes", "parents",
+  function ($log, $scope, ngTableParams, dialogs, gToast, restService, BOM, utils, part, partTypes, parents) {
 
     $scope.part = part;
     $scope.partTypes = partTypes;
@@ -40,13 +40,38 @@ angular.module("ngMetaCrudApp").controller("ParentBomSearchCtrl", [
     };
 
     $scope.save = function() {
-      $log.log("TODO: save");
+      var rows = _.map(pickedParts, function(p) {
+        return {
+          partId: p.id,
+          quontity: p.extra.qty,
+          resolution: p.extra.resolution
+        };
+      });
+      BOM.addToParentsBOMs($scope.part.id, { rows: rows }).then(
+        function success(response) {
+          parents.splice(0, parents.length);
+          _.each(response.parents, function(b) {
+            parents.push(b);
+          });
+          $scope.bomTableParams.reload();
+          _.each(pickedParts, function(p) {
+            delete pickedPartIds[p.id];
+          });
+          pickedParts.splice(0, pickedParts.length);
+          $scope.pickedPartsTableParams.reload();
+          gToast.open("The part has been successfully added to " + response.added +
+            " parents to their BOM lists. Failures: " + response.failed);
+        },
+        function failure(error) {
+          restService.error("Can't add the part to parent BOM's.", error);
+        }
+      );
     };
 
     $scope.pick = function(part) {
       part.extra = {
         qty: 1,
-        resolution: "REPLACE"
+        resolution: "ADD"
       };
       pickedParts.push(part);
       pickedPartIds[part.id] = true;

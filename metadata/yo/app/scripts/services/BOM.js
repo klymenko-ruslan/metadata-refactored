@@ -29,5 +29,9 @@ angular.module("ngMetaCrudApp")
       return Restangular.one("bom", bomId).remove();
     };
 
+    this.addToParentsBOMs = function(partId, request) {
+      return Restangular.one("bom/part", partId).post("parents", request);
+    };
+
     return this;
   });

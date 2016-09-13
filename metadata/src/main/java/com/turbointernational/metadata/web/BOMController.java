@@ -1,5 +1,6 @@
 package com.turbointernational.metadata.web;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.domain.part.bom.BOMItem;
 import com.turbointernational.metadata.domain.part.bom.dto.CreateBomItemRequest;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
 import static com.turbointernational.metadata.web.BOMController.BOMErrorStatus.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
@@ -74,7 +76,7 @@ public class BOMController {
         Long childPartId = request.getChildPartId();
         Integer quantity = request.getQuantity();
         try {
-            bomService.create(parentPartId, childPartId, quantity);
+            bomService.create(parentPartId, childPartId, quantity, true);
             return new BOMResult(); // OK
         } catch (FoundBomRecursionException e) {
             return new BOMResult(e);
@@ -109,6 +111,19 @@ public class BOMController {
     @JsonView(View.SummaryWithBOMDetail.class)
     public List<BOMItem> getParentsForBom(@PathVariable("id") Long id) throws Exception {
         return bomService.getParentsForBom(id);
+    }
+
+    @Transactional
+    @RequestMapping(value = "/part/{id}/parents", method = POST,
+            consumes = APPLICATION_JSON_VALUE,
+            produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
+    @JsonView(View.SummaryWithBOMDetail.class)
+    @Secured("ROLE_BOM")
+    public BOMService.AddToParentBOMsResponse addToParentsBOMs(
+            @PathVariable("id") Long partId,
+            @RequestBody BOMService.AddToParentBOMsRequest request) throws Exception {
+        return bomService.addToParentsBOMs(partId, request);
     }
 
     @Transactional

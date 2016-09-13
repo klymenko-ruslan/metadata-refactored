@@ -1,16 +1,22 @@
 package com.turbointernational.metadata.services;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.domain.changelog.ChangelogDao;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.part.PartDao;
 import com.turbointernational.metadata.domain.part.bom.BOMItem;
 import com.turbointernational.metadata.domain.part.bom.BOMItemDao;
+import com.turbointernational.metadata.web.View;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
 import static java.util.Collections.binarySearch;
 
 /**
@@ -18,6 +24,8 @@ import static java.util.Collections.binarySearch;
  */
 @Service
 public class BOMService {
+
+    private final static Logger log = LoggerFactory.getLogger(BOMService.class);
 
     @Autowired
     private PartDao partDao;
@@ -27,6 +35,106 @@ public class BOMService {
 
     @Autowired
     private ChangelogDao changelogDao;
+
+    public static class AddToParentBOMsRequest {
+
+        enum ResolutionEnum {
+            ADD, REPLACE
+        };
+
+        public static class Row {
+
+            @JsonView({View.Summary.class})
+            private Long partId;
+
+            @JsonView({View.Summary.class})
+            private ResolutionEnum resolution;
+
+            @JsonView({View.Summary.class})
+            private Integer quontity;
+
+            public Long getPartId() {
+                return partId;
+            }
+
+            public void setPartId(Long partId) {
+                this.partId = partId;
+            }
+
+            public ResolutionEnum getResolution() {
+                return resolution;
+            }
+
+            public void setResolution(ResolutionEnum resolution) {
+                this.resolution = resolution;
+            }
+
+            public Integer getQuontity() {
+                return quontity;
+            }
+
+            public void setQuontity(Integer quontity) {
+                this.quontity = quontity;
+            }
+
+        }
+
+        @JsonView({View.Summary.class})
+        private List<Row> rows;
+
+        public List<Row> getRows() {
+            return rows;
+        }
+
+        public void setRows(List<Row> rows) {
+            this.rows = rows;
+        }
+
+    }
+
+    @JsonInclude(ALWAYS)
+    public static class AddToParentBOMsResponse {
+
+        @JsonView(View.Summary.class)
+        private int added;
+
+        @JsonView(View.Summary.class)
+        private int failed;
+
+        @JsonView(View.Summary.class)
+        private List<BOMItem> parents;
+
+        public AddToParentBOMsResponse(int added, int failed, List<BOMItem> parents) {
+            this.added = added;
+            this.parents = parents;
+            this.failed = failed;
+        }
+
+        public int getAdded() {
+            return added;
+        }
+
+        public void setAdded(int added) {
+            this.added = added;
+        }
+
+        public List<BOMItem> getParents() {
+            return parents;
+        }
+
+        public void setParents(List<BOMItem> parents) {
+            this.parents = parents;
+        }
+
+        public int getFailed() {
+            return failed;
+        }
+
+        public void setFailed(int failed) {
+            this.failed = failed;
+        }
+
+    }
 
     /**
      * Signals that a BOMs tree has a circular recursion.
@@ -49,7 +157,7 @@ public class BOMService {
     }
 
     @Transactional(noRollbackFor = {FoundBomRecursionException.class, AssertionError.class})
-    public BOMItem create(Long parentPartId, Long childPartId, Integer quantity) throws FoundBomRecursionException {
+    public BOMItem create(Long parentPartId, Long childPartId, Integer quantity, boolean rebuildBom) throws FoundBomRecursionException {
         // Create a new BOM item
         Part parent = partDao.findOne(parentPartId);
         Part child = partDao.findOne(childPartId);
@@ -66,7 +174,9 @@ public class BOMService {
         // Update the changelog
         changelogDao.log("Added bom item.", item.toJson());
         // TODO: Only change what we need to rather than rebuilding everything
-        partDao.rebuildBomDescendancy();
+        if (rebuildBom) {
+            partDao.rebuildBomDescendancy();
+        }
         return item;
     }
 
@@ -83,6 +193,43 @@ public class BOMService {
     @Transactional
     public List<BOMItem> getByParentAndTypeIds(Long partId, Long partTypeId) throws Exception {
         return bomItemDao.findByParentAndTypeIds(partId, partTypeId);
+    }
+
+    @Transactional
+    public AddToParentBOMsResponse addToParentsBOMs(Long partId, AddToParentBOMsRequest request) throws Exception {
+        int added = 0;
+        int failed = 0;
+        List<BOMService.AddToParentBOMsRequest.Row> rows = request.getRows();
+        for (AddToParentBOMsRequest.Row r : rows) {
+            Long parentId = r.getPartId();
+            if (r.getResolution() == AddToParentBOMsRequest.ResolutionEnum.REPLACE) {
+                List<BOMItem> parentsBoms = getByParentId(parentId);
+                for (BOMItem pb : parentsBoms) {
+                    bomItemDao.remove(pb);
+                    bomItemDao.getEntityManager().flush();
+                    /*
+                    Part parent = pb.getParent();
+                    String strJsonBom = pb.toJson();
+                    changelogDao.log("Deleted BOM item.", strJsonBom);
+                    // Remove the BOM Item from the parent
+                    parent.getBom().remove(pb);
+                    partDao.merge(parent);
+                    // Delete it
+                    bomItemDao.remove(pb);
+                    */
+                }
+            }
+            try {
+                create(parentId, partId, r.getQuontity(), false);
+                added++;
+            } catch(FoundBomRecursionException e) {
+                log.warn("Adding of the part [" + partId + "] to list of BOM for part [" + parentId + "] failed.", e);
+                failed++;
+            }
+        }
+        List<BOMItem> parents = getParentsForBom(partId);
+        partDao.rebuildBomDescendancy();
+        return new BOMService.AddToParentBOMsResponse(added, failed, parents);
     }
 
     @Transactional

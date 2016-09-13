@@ -8,7 +8,7 @@
   </li>
   <li>
     <a data-ng-click="save()"
-       data-ng-disabled="bttnSaveDisabled"
+       data-ng-disabled="bttnSaveDisabled()"
        class="btn btn-success">
       <i class="fa fa-save"></i>
       Add to Parent BOMs
@@ -70,7 +70,7 @@
         </td>
         <td title="'Existing BOM'" class="text-nowrap">TODO</td>
         <td title="'Resolution'">
-          <select data-ng-value="rec.extra.resolution">
+          <select data-ng-model="rec.extra.resolution">
             <option value="REPLACE">Replace Existing</option>
             <option value="ADD">Add to Existing</option>
           </select>
@@ -92,16 +92,19 @@
 
 <hr/>
 
-<part-search class="well well-lg">
-  <a authorize="ROLE_READ" data-ng-href="/part/{{$part._source.id}}" class="btn btn-primary btn-xs">
-    <i class="fa fa-eye"></i> View
-  </a>
-  <button type="button" authorize="ROLE_BOM"
-     data-ng-click="pick($part._source)"
-     data-ng-disabled="bttnPickDisabled($part._source)"
-     class="btn btn-success btn-xs">
-    <i class="fa fa-bullseye"></i> Pick
-  </button>
-</part-search>
-
+<div class="row">
+  <div class="col-xs-12">
+    <part-search>
+      <a authorize="ROLE_READ" data-ng-href="/part/{{$part._source.id}}" class="btn btn-primary btn-xs">
+        <i class="fa fa-eye"></i> View
+      </a>
+      <button type="button" authorize="ROLE_BOM"
+              data-ng-click="pick($part._source)"
+              data-ng-disabled="bttnPickDisabled($part._source)"
+              class="btn btn-success btn-xs">
+        <i class="fa fa-bullseye"></i> Pick
+      </button>
+    </part-search>
+  </div>
+</div>
 
