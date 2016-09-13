@@ -32,7 +32,6 @@ public class BOMItemDao extends AbstractDao<BOMItem> {
         return em.createNamedQuery("findBomParents", BOMItem.class)
                 .setParameter("partId", partId)
                 .getResultList();
-
     }
 
 }
