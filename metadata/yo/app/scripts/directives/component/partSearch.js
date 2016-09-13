@@ -62,14 +62,14 @@ angular.module("ngMetaCrudApp")
 
         $scope.columns = null;
 
-        $scope.critDimsAvailable = function() {
+        $scope.isCritDimsAvailable = function() {
           return angular.isObject($scope.critDimsByPartTypes) && !jQuery.isEmptyObject($scope.critDimsByPartTypes);
         };
 
         $scope.initColumns = function() {
           if ($scope.showCriticalDimensions) {
             var critDimCols = [];
-            if ($scope.critDimsAvailable()) {
+            if ($scope.isCritDimsAvailable()) {
               _.each($scope.critDims, function (d) {
                 var gttr = null;
                 var srtbl = null;
@@ -225,14 +225,16 @@ angular.module("ngMetaCrudApp")
           if (angular.equals(newVal, oldVal, true)) {
             return;
           }
-          var pt = newVal[0];
-          if (angular.isObject(pt)) {
-            $scope.critDims = $scope.critDimsByPartTypes[pt.id];
-          } else {
-            $scope.critDims = null;
+          if ($scope.isCritDimsAvailable()) {
+            var pt = newVal[0];
+            if (angular.isObject(pt)) {
+              $scope.critDims = $scope.critDimsByPartTypes[pt.id];
+            } else {
+              $scope.critDims = null;
+            }
+            $scope.showCriticalDimensions = false;
+            $scope.searchCritDims = {}; // re-init
           }
-          $scope.showCriticalDimensions = false;
-          $scope.searchCritDims = {}; // re-init
           $scope.partTableParams.reload();
         }, true);
 

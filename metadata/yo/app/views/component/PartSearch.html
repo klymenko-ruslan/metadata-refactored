@@ -67,9 +67,9 @@
            local-data="searchResults.aggregations['Turbo Type'].buckets"></div>
     </div>
 
-    <hr data-ng-show="::critDimsAvailable()" />
+    <hr data-ng-show="::isCritDimsAvailable()" />
 
-    <div class="form-group" data-ng-repeat="cd in critDims" data-ng-show="::critDimsAvailable()">
+    <div class="form-group" data-ng-repeat="cd in critDims" data-ng-show="::isCritDimsAvailable()">
       <input type="text" placeholder="{{cd.name}}" class="form-control input-sm" data-ng-if="cd.dataType !== 'ENUMERATION'" data-ng-model="searchCritDims[cd.idxName]" data-ng-model-options="{debounce: 500}" />
       <label data-ng-if="cd.dataType == 'ENUMERATION'">{{cd.name}}</label>
       <select class="form-control input-sm" data-ng-options="itm.val for itm in critDimEnumValsMap[cd.enumeration.id].values track by itm.id"  data-ng-model="searchCritDims[cd.idxName]"  data-ng-if="cd.dataType == 'ENUMERATION'">
@@ -81,7 +81,7 @@
   <!-- Tabular search results -->
   <div class="col-xs-12 col-sm-9">
     <div class="bg-info">
-      <form class="form-inline table-top-form" data-ng-show="::critDimsAvailable()">
+      <form class="form-inline table-top-form" data-ng-show="::isCritDimsAvailable()">
         <div data-ng-class="['checkbox', {'disabled': !searchPartType}]">
           <label data-ng-class="{'text-muted': !searchPartType}">
             <input type="checkbox" tabindex="-1" data-ng-model="showCriticalDimensions" value="true" data-ng-disabled="!searchPartType"/>
