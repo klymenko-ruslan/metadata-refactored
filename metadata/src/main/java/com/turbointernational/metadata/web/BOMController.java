@@ -94,13 +94,13 @@ public class BOMController {
         return bomService.getByParentId(id);
     }
 
-    @RequestMapping(value = "/byParentPart/{partId}/type/{typeId}", method = GET,
+    @RequestMapping(value = "/byParentPart/{partId}/type", method = GET,
             produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     @Secured("ROLE_READ")
     @JsonView(View.SummaryWithBOMDetail.class)
     public List<BOMItem> getByParentAndTypeIds(@PathVariable("partId") Long partId,
-                                               @PathVariable("typeId") Long typeId) throws Exception {
+                                               @RequestParam("typeId") Long typeId) throws Exception {
         return bomService.getByParentAndTypeIds(partId, typeId);
     }
 

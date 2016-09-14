@@ -66,9 +66,12 @@
         <td title="'Part Type'" class="text-nowrap">{{rec.partType.name}}</td>
         <td title="'Part #'" class="text-nowrap">{{rec.manufacturerPartNumber}}</td>
         <td title="'Qty'">
-          <input type="number" data-ng-model="rec.extra.qty" data-ng-min="0" required="Required positive integer." size="3" />
+          <input type="number" data-ng-model="rec.extra.qty" data-ng-min="0" required="Required positive integer." />
         </td>
-        <td title="'Existing BOM'" class="text-nowrap">TODO</td>
+        <td title="'Existing BOM'">
+          <span class="text-nowrap">{{rec.extra.existingBoms[0].child.manufacturerPartNumber}}<span data-ng-show="rec.extra.existingBoms.length > 1">,</span></span>
+          &nbsp;<a href="#" title="See more..." data-ng-show="rec.extra.existingBoms.length > 1" data-ng-click="displayExistingBOMs(rec)">...</a>
+        </td>
         <td title="'Resolution'">
           <select data-ng-model="rec.extra.resolution">
             <option value="REPLACE">Replace Existing</option>

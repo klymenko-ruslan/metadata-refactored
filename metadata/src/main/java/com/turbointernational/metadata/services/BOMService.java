@@ -200,6 +200,8 @@ public class BOMService {
     public AddToParentBOMsResponse addToParentsBOMs(Long primaryPartId, AddToParentBOMsRequest request) throws Exception {
         int added = 0;
         int failed = 0;
+        Part primaryPart = partDao.findOne(primaryPartId);
+        Long primaryPartTypeId = primaryPart.getPartType().getId();
         List<BOMService.AddToParentBOMsRequest.Row> rows = request.getRows();
         for (AddToParentBOMsRequest.Row r : rows) {
             Long pickedPartId = r.getPartId();
@@ -208,10 +210,13 @@ public class BOMService {
                 Part pickedPart = partDao.findOne(pickedPartId);
                 for(Iterator<BOMItem> iterBoms = pickedPart.getBom().iterator(); iterBoms.hasNext();) {
                     BOMItem bomItem = iterBoms.next();
-                    String strJsonBom = bomItem.toJson();
-                    changelogDao.log("Deleted BOM item.", strJsonBom);
-                    iterBoms.remove();
-                    bomItemDao.remove(bomItem);
+                    Long childPartTypeId = bomItem.getChild().getPartType().getId();
+                    if (childPartTypeId == primaryPartTypeId) {
+                        String strJsonBom = bomItem.toJson();
+                        changelogDao.log("Deleted BOM item.", strJsonBom);
+                        iterBoms.remove();
+                        bomItemDao.remove(bomItem);
+                    }
                 }
             }
             // Add the primary part to the list of BOMs of the picked part.

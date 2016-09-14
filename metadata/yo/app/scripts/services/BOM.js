@@ -1,7 +1,6 @@
 "use strict";
 
-angular.module("ngMetaCrudApp")
-  .service("BOM", function BOM(Restangular) {
+angular.module("ngMetaCrudApp").service("BOM", ["$log", "Restangular", function BOM($log, Restangular) {
 
     /**
      * BOMs for the part.
@@ -14,7 +13,7 @@ angular.module("ngMetaCrudApp")
      * BOMs of specified types for the part.
      */
     this.listByParentPartAndTypeIds = function(parentPartId, typeId) {
-      return Restangular.one("bom/byParentPart", parentPartId).getList("type", typeId);
+      return Restangular.one("bom/byParentPart", parentPartId).getList("type", {typeId: typeId});
     };
 
     this.listParentsOfPartBom = function(partId) {
@@ -34,4 +33,4 @@ angular.module("ngMetaCrudApp")
     };
 
     return this;
-  });
+  }]);

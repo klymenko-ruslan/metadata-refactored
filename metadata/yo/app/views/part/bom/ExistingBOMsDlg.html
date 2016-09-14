@@ -1,0 +1,39 @@
+<div class="modal-header">
+  <h3 class="modal-title">Existing BOMs</h3>
+</div>
+<div class="modal-body">
+  <div class="row">
+    <div class="col-xs-12">
+      <table data-ng-table="bomTableParams" class="table table-bordered table-striped table-hover table-responsive">
+        <tr data-ng-repeat="bomItem in $data">
+          <td title="'Type'" data-sortable="'child.partType.name'">
+            {{bomItem.child.partType.name}}
+          </td>
+          <td title="'Manufacturer'" data-sortable="'child.manufacturer.name'">
+            {{bomItem.child.manufacturer.name}}
+          </td>
+          <td title="'Part #'" class="text-center text-nowrap" data-sortable="'child.manufacturerPartNumber'">
+            {{bomItem.child.manufacturerPartNumber}}
+          </td>
+          <td title="'Qty'" class="text-right" data-sortable="'quantity'">
+            {{bomItem.quantity}}
+          </td>
+          <td title="'Actions'" class="actions text-center">
+            <button data-ng-click="showPart(bomItem.child.id)"
+                    authorize="ROLE_READ" class="btn btn-primary btn-xs">
+              <i class="fa fa-eye"></i> View
+            </button>
+          </td>
+        </tr>
+
+        <tr data-ng-hide="$data.length > 0">
+          <td colspan="5">No parts to display.</td>
+        </tr>
+
+      </table>
+    </div>
+  </div>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-default" ng-click="onClose()">Close</button>
+</div>
