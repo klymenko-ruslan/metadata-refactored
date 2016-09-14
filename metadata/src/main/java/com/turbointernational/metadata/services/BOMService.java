@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
+import static com.turbointernational.metadata.services.BOMService.AddToParentBOMsRequest.ResolutionEnum.REPLACE;
 import static java.util.Collections.binarySearch;
 
 /**
@@ -196,38 +197,34 @@ public class BOMService {
     }
 
     @Transactional
-    public AddToParentBOMsResponse addToParentsBOMs(Long partId, AddToParentBOMsRequest request) throws Exception {
+    public AddToParentBOMsResponse addToParentsBOMs(Long primaryPartId, AddToParentBOMsRequest request) throws Exception {
         int added = 0;
         int failed = 0;
         List<BOMService.AddToParentBOMsRequest.Row> rows = request.getRows();
         for (AddToParentBOMsRequest.Row r : rows) {
-            Long parentId = r.getPartId();
-            if (r.getResolution() == AddToParentBOMsRequest.ResolutionEnum.REPLACE) {
-                List<BOMItem> parentsBoms = getByParentId(parentId);
-                for (BOMItem pb : parentsBoms) {
-                    bomItemDao.remove(pb);
-                    bomItemDao.getEntityManager().flush();
-                    /*
-                    Part parent = pb.getParent();
-                    String strJsonBom = pb.toJson();
+            Long pickedPartId = r.getPartId();
+            if (r.getResolution() == REPLACE) {
+                // Remove existing BOMs in the picked part.
+                Part pickedPart = partDao.findOne(pickedPartId);
+                for(Iterator<BOMItem> iterBoms = pickedPart.getBom().iterator(); iterBoms.hasNext();) {
+                    BOMItem bomItem = iterBoms.next();
+                    String strJsonBom = bomItem.toJson();
                     changelogDao.log("Deleted BOM item.", strJsonBom);
-                    // Remove the BOM Item from the parent
-                    parent.getBom().remove(pb);
-                    partDao.merge(parent);
-                    // Delete it
-                    bomItemDao.remove(pb);
-                    */
+                    iterBoms.remove();
+                    bomItemDao.remove(bomItem);
                 }
             }
+            // Add the primary part to the list of BOMs of the picked part.
             try {
-                create(parentId, partId, r.getQuontity(), false);
+                create(pickedPartId, primaryPartId, r.getQuontity(), false);
                 added++;
             } catch(FoundBomRecursionException e) {
-                log.warn("Adding of the part [" + partId + "] to list of BOM for part [" + parentId + "] failed.", e);
+                log.warn("Adding of the part [" + primaryPartId + "] to list of BOM for part [" +
+                        pickedPartId + "] failed.", e);
                 failed++;
             }
         }
-        List<BOMItem> parents = getParentsForBom(partId);
+        List<BOMItem> parents = getParentsForBom(primaryPartId);
         partDao.rebuildBomDescendancy();
         return new BOMService.AddToParentBOMsResponse(added, failed, parents);
     }
