@@ -8,7 +8,7 @@
   </li>
   <li>
     <a data-ng-click="save()"
-       data-ng-disabled="bttnSaveDisabled()"
+       data-ng-disabled="isBttnSaveDisabled()"
        class="btn btn-success">
       <i class="fa fa-save"></i>
       Add to Parent BOMs
@@ -100,7 +100,7 @@
       </a>
       <button type="button" authorize="ROLE_BOM"
               data-ng-click="pick($part._source)"
-              data-ng-disabled="bttnPickDisabled($part._source)"
+              data-ng-disabled="isBttnPickDisabled($part._source)"
               class="btn btn-success btn-xs">
         <i class="fa fa-bullseye"></i> Pick
       </button>
