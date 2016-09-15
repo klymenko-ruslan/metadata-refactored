@@ -2,10 +2,14 @@
 
 angular.module("ngMetaCrudApp")
   .controller("ParentBomSearchCtrl", [
-    "$log", "$scope", "ngTableParams", "$uibModal", "dialogs", "gToast", "restService", "BOM", "utils", "part", "parents",
-    function ($log, $scope, ngTableParams, $uibModal, dialogs, gToast, restService, BOM, utils, part, parents) {
+    "$log", "$scope", "ngTableParams", "$uibModal", "dialogs", "gToast", "restService", "BOM", "utils", "part",
+    "partTypes", "parents",
+    function ($log, $scope, ngTableParams, $uibModal, dialogs, gToast, restService, BOM, utils, part, partTypes,
+              parents)
+    {
 
       $scope.part = part; // primary part
+      $scope.partTypes = partTypes;
       $scope.restService = restService;
 
       var pickedParts = [];
@@ -156,7 +160,6 @@ angular.module("ngMetaCrudApp")
       };
 
       $scope.showPart = function(partId) {
-$log.log("partId: " + partId);
         $scope.onClose();
         $location.path("/part/" + partId);
       }
