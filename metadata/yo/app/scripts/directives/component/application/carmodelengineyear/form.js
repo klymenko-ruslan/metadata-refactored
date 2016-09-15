@@ -262,7 +262,10 @@ angular.module("ngMetaCrudApp")
             }
           };
 
-          $scope.unpickCarModel = function(idx) {
+          $scope.unpickCarModel = function(carModelId) {
+            var idx = _.findIndex($scope.pickedModels, function(cm) {
+              return cm.id === carModelId;
+            });
             var carModel = $scope.pickedModels[idx];
             delete $scope.pickedModelIds[carModel.id];
             $scope.pickedModels.splice(idx, 1);
@@ -296,7 +299,10 @@ angular.module("ngMetaCrudApp")
             }
           };
 
-          $scope.unpickCarEngine = function(idx) {
+          $scope.unpickCarEngine = function(carEngineId) {
+            var idx = _.findIndex($scope.pickedEngines, function(ce) {
+              return ce.id === carEngineId;
+            });
             var carEngine = $scope.pickedEngines[idx];
             delete $scope.pickedEngineIds[carEngine.id];
             $scope.pickedEngines.splice(idx, 1);
@@ -326,7 +332,10 @@ angular.module("ngMetaCrudApp")
             $scope.pickedYearsTableParams.reload();
           };
 
-          $scope.unpickCarYear = function(idx) {
+          $scope.unpickCarYear = function(carYearName) {
+            var idx = _.findIndex($scope.pickedYears, function(cy) {
+              return cy.name === carYearName;
+            });
             var carYear = $scope.pickedYears[idx];
             delete $scope.pickedYearNames[carYear.name];
             $scope.pickedYears.splice(idx, 1);

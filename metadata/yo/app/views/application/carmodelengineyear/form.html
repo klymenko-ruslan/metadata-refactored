@@ -20,7 +20,7 @@
         <td title="'Make'">{{rec.make.name}}</td>
         <td title="'Model'">{{rec.name}}</td>
         <td class="actions text-center" title="'Actions'">
-          <button type="button" class="btn btn-danger btn-xs" data-ng-click="unpickCarModel($index)">
+          <button type="button" class="btn btn-danger btn-xs" data-ng-click="unpickCarModel(rec.id)">
             <i class="fa fa-times"></i>
             Unpick
           </button>
@@ -38,7 +38,7 @@
         <td title="'Engine'">{{rec.engineSize}}</td>
         <td title="'Fuel Type'">{{rec.fuelType.name}}</td>
         <td class="actions text-center" title="'Actions'">
-          <button type="button" class="btn btn-danger btn-xs" data-ng-click="unpickCarEngine($index)">
+          <button type="button" class="btn btn-danger btn-xs" data-ng-click="unpickCarEngine(rec.id)">
             <i class="fa fa-times"></i>
             Unpick
           </button>
@@ -55,7 +55,7 @@
       <tr data-ng-repeat="rec in $data">
         <td title="'Year'">{{rec.name}}</td>
         <td class="actions text-center" title="'Actions'">
-          <button type="button" class="btn btn-danger btn-xs" data-ng-click="unpickCarYear($index)">
+          <button type="button" class="btn btn-danger btn-xs" data-ng-click="unpickCarYear(rec.name)">
             <i class="fa fa-times"></i>
             Unpick
           </button>
