@@ -2,10 +2,10 @@
 
 angular.module("ngMetaCrudApp")
   .controller("ParentBomSearchCtrl", [
-    "$log", "$scope", "ngTableParams", "$uibModal", "dialogs", "gToast", "restService", "BOM", "utils", "part",
-    "partTypes", "parents",
-    function ($log, $scope, ngTableParams, $uibModal, dialogs, gToast, restService, BOM, utils, part, partTypes,
-              parents)
+    "$log", "$scope", "$location", "ngTableParams", "$uibModal", "dialogs", "gToast", "restService",
+    "BOM", "utils", "part", "partTypes", "parents",
+    function ($log, $scope, $location, ngTableParams, $uibModal, dialogs, gToast, restService,
+              BOM, utils, part, partTypes, parents)
     {
 
       $scope.part = part; // primary part
@@ -24,6 +24,10 @@ angular.module("ngMetaCrudApp")
       };
 
       updateParentPartsIds();
+
+      $scope.showPart = function(partId) {
+        $location.path("/part/" + partId);
+      }
 
       $scope.bomTableParams = new ngTableParams({
         page: 1,
@@ -86,9 +90,13 @@ angular.module("ngMetaCrudApp")
       $scope.pick = function(pickedPart) {
         BOM.listByParentPartAndTypeIds(pickedPart.id, $scope.part.partType.id).then(
           function success(boms) {
+            var resolution = null;
+            if (boms.length === 0) {
+              resolution = "ADD";
+            }
             pickedPart.extra = {
               qty: 1,
-              resolution: "ADD",
+              resolution: resolution,
               existingBoms: boms
             };
             pickedParts.push(pickedPart);
