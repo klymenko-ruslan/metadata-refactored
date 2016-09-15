@@ -78,8 +78,25 @@ angular.module("ngMetaCrudApp")
             });
             pickedParts.splice(0, pickedParts.length);
             $scope.pickedPartsTableParams.reload();
-            gToast.open("The part has been successfully added to " + response.added +
-              " parents to their BOM lists. Failures: " + response.failed);
+            if (response.failures.length > 0) {
+              $uibModal.open({
+                templateUrl: "/views/part/bom/FailedBOMsDlg.html",
+                animation: false,
+                size: "lg",
+                controller: "FailedBOMsDlgCtrl",
+                resolve: {
+                  primaryPart: function() {
+                    return $scope.part;
+                  },
+                  failures: function() {
+                    return response.failures;
+                  }
+                }
+              });
+            } else {
+              gToast.open("The part has been successfully added to " + response.added +
+                " parents to their BOM lists.");
+            }
           },
           function failure(error) {
             restService.error("Can't add the part to parent BOM's.", error);
@@ -109,22 +126,28 @@ angular.module("ngMetaCrudApp")
         );
       };
 
-      $scope.unpick = function(idx) {
+      $scope.unpick = function(partId) {
+        var idx = _.findIndex(pickedParts, function(p) {
+          return p.id === partId;
+        });
         var p = pickedParts[idx];
         delete p.extra;
         pickedParts.splice(idx, 1);
-        delete pickedPartIds[p.id];
+        delete pickedPartIds[partId];
         $scope.pickedPartsTableParams.reload();
       };
 
-      $scope.removeBOM = function(idx) {
+      $scope.removeBOM = function(bomId) {
+        var idx = _.findIndex(parents, function(b) {
+          return b.id === bomId;
+        });
         var bomItem = parents[idx];
         dialogs.confirm(
           "Remove BOM Item?",
           "Remove this child part from the bill of materials of the parent part?").result.then(
           function() {
             // Yes
-            BOM.removeBOM(bomItem.id).then(
+            BOM.removeBOM(bomId).then(
               function() {
                 parents.splice(idx, 1);
                 $scope.bomTableParams.reload();
@@ -161,6 +184,28 @@ angular.module("ngMetaCrudApp")
         count: 10
       }, {
         getData: utils.localPagination(existingBoms, "child.manufacturerPartNumber")
+      });
+
+      $scope.onClose = function() {
+        $uibModalInstance.close();
+      };
+
+      $scope.showPart = function(partId) {
+        $scope.onClose();
+        $location.path("/part/" + partId);
+      }
+
+  }]).controller("FailedBOMsDlgCtrl", ["$scope", "$log", "$location", "$uibModalInstance", "ngTableParams",
+      "utils", "primaryPart", "failures",
+    function($scope, $log, $location, $uibModalInstance, ngTableParams, utils, primaryPart, failures) {
+
+      $scope.primaryPart = primaryPart;
+
+      $scope.failuresTableParams = new ngTableParams({
+        page: 1,
+        count: 10
+      }, {
+        getData: utils.localPagination(failures, "manufacturerPartNumber")
       });
 
       $scope.onClose = function() {

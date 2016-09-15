@@ -96,19 +96,89 @@ public class BOMService {
     @JsonInclude(ALWAYS)
     public static class AddToParentBOMsResponse {
 
+        @JsonInclude(ALWAYS)
+        public static class Failure {
+
+            @JsonView(View.Summary.class)
+            private Long partId;
+
+            @JsonView(View.Summary.class)
+            private String type;
+
+            @JsonView(View.Summary.class)
+            private String manufacturerPartNumber;
+
+            @JsonView(View.Summary.class)
+            private Integer quantity;
+
+            @JsonView(View.Summary.class)
+            private String errorMessage;
+
+            public Failure() {
+            }
+
+            public Failure(Long partId, String type, String manufacturerPartNumber, Integer quantity, String errorMessage) {
+                this.partId = partId;
+                this.type = type;
+                this.manufacturerPartNumber = manufacturerPartNumber;
+                this.quantity = quantity;
+                this.errorMessage = errorMessage;
+            }
+
+            public Long getPartId() {
+                return partId;
+            }
+
+            public void setPartId(Long partId) {
+                this.partId = partId;
+            }
+
+            public String getType() {
+                return type;
+            }
+
+            public void setType(String type) {
+                this.type = type;
+            }
+
+            public String getManufacturerPartNumber() {
+                return manufacturerPartNumber;
+            }
+
+            public void setManufacturerPartNumber(String manufacturerPartNumber) {
+                this.manufacturerPartNumber = manufacturerPartNumber;
+            }
+
+            public Integer getQuantity() {
+                return quantity;
+            }
+
+            public void setQuantity(Integer quantity) {
+                this.quantity = quantity;
+            }
+
+            public String getErrorMessage() {
+                return errorMessage;
+            }
+
+            public void setErrorMessage(String errorMessage) {
+                this.errorMessage = errorMessage;
+            }
+        }
+
         @JsonView(View.Summary.class)
         private int added;
 
         @JsonView(View.Summary.class)
-        private int failed;
+        private List<Failure> failures;
 
         @JsonView(View.Summary.class)
         private List<BOMItem> parents;
 
-        public AddToParentBOMsResponse(int added, int failed, List<BOMItem> parents) {
+        public AddToParentBOMsResponse(int added, List<Failure> failures, List<BOMItem> parents) {
             this.added = added;
+            this.failures = failures;
             this.parents = parents;
-            this.failed = failed;
         }
 
         public int getAdded() {
@@ -119,20 +189,20 @@ public class BOMService {
             this.added = added;
         }
 
+        public List<Failure> getFailures() {
+            return failures;
+        }
+
+        public void setFailures(List<Failure> failures) {
+            this.failures = failures;
+        }
+
         public List<BOMItem> getParents() {
             return parents;
         }
 
         public void setParents(List<BOMItem> parents) {
             this.parents = parents;
-        }
-
-        public int getFailed() {
-            return failed;
-        }
-
-        public void setFailed(int failed) {
-            this.failed = failed;
         }
 
     }
@@ -153,6 +223,11 @@ public class BOMService {
 
         public Long getFailedId() {
             return failedId;
+        }
+
+        @Override
+        public String getMessage() {
+            return failedId.toString();
         }
 
     }
@@ -196,42 +271,59 @@ public class BOMService {
         return bomItemDao.findByParentAndTypeIds(partId, partTypeId);
     }
 
-    @Transactional
+    @Transactional(noRollbackFor = {FoundBomRecursionException.class, AssertionError.class})
     public AddToParentBOMsResponse addToParentsBOMs(Long primaryPartId, AddToParentBOMsRequest request) throws Exception {
         int added = 0;
-        int failed = 0;
         Part primaryPart = partDao.findOne(primaryPartId);
         Long primaryPartTypeId = primaryPart.getPartType().getId();
+        Long primaryPartManufacturerId = primaryPart.getManufacturer().getId();
         List<BOMService.AddToParentBOMsRequest.Row> rows = request.getRows();
+        List<AddToParentBOMsResponse.Failure> failures = new ArrayList<>(10);
         for (AddToParentBOMsRequest.Row r : rows) {
             Long pickedPartId = r.getPartId();
-            if (r.getResolution() == REPLACE) {
-                // Remove existing BOMs in the picked part.
-                Part pickedPart = partDao.findOne(pickedPartId);
-                for(Iterator<BOMItem> iterBoms = pickedPart.getBom().iterator(); iterBoms.hasNext();) {
-                    BOMItem bomItem = iterBoms.next();
-                    Long childPartTypeId = bomItem.getChild().getPartType().getId();
-                    if (childPartTypeId == primaryPartTypeId) {
-                        String strJsonBom = bomItem.toJson();
-                        changelogDao.log("Deleted BOM item.", strJsonBom);
-                        iterBoms.remove();
-                        bomItemDao.remove(bomItem);
+            Part pickedPart = partDao.findOne(pickedPartId);
+            try {
+                Long pickedPartManufacturerId = pickedPart.getManufacturer().getId();
+                if (primaryPartManufacturerId != pickedPartManufacturerId) {
+                    throw new AssertionError(String.format("Part type '%1$s' of the part [%2$d] - {%3$s} " +
+                                    "does not match with part type '{%4$s}' of the part [{%5$d}] - {%6$s}.",
+                            primaryPart.getPartType().getName(),
+                            primaryPartId, primaryPart.getManufacturerPartNumber(),
+                            pickedPart.getPartType().getName(),
+                            pickedPartId, pickedPart.getManufacturerPartNumber()
+                    ));
+                }
+                if (r.getResolution() == REPLACE) {
+                    // Remove existing BOMs in the picked part.
+                    for(Iterator<BOMItem> iterBoms = pickedPart.getBom().iterator(); iterBoms.hasNext();) {
+                        BOMItem bomItem = iterBoms.next();
+                        Long childPartTypeId = bomItem.getChild().getPartType().getId();
+                        if (childPartTypeId == primaryPartTypeId) {
+                            String strJsonBom = bomItem.toJson();
+                            changelogDao.log("Deleted BOM item.", strJsonBom);
+                            iterBoms.remove();
+                            bomItemDao.remove(bomItem);
+                        }
                     }
                 }
-            }
-            // Add the primary part to the list of BOMs of the picked part.
-            try {
+                // Add the primary part to the list of BOMs of the picked part.
                 create(pickedPartId, primaryPartId, r.getQuontity(), false);
                 added++;
             } catch(FoundBomRecursionException e) {
-                log.warn("Adding of the part [" + primaryPartId + "] to list of BOM for part [" +
+                log.debug("Adding of the part [" + primaryPartId + "] to list of BOM for part [" +
                         pickedPartId + "] failed.", e);
-                failed++;
+                failures.add(new AddToParentBOMsResponse.Failure(pickedPartId, pickedPart.getPartType().getName(),
+                        pickedPart.getManufacturerPartNumber(), r.getQuontity(), "Recursion check failed."));
+            } catch (AssertionError e) {
+                log.debug("Adding of the part [" + primaryPartId + "] to list of BOM for part [" +
+                        pickedPartId + "] failed.", e);
+                failures.add(new AddToParentBOMsResponse.Failure(pickedPartId, pickedPart.getPartType().getName(),
+                        pickedPart.getManufacturerPartNumber(), r.getQuontity(), e.getMessage()));
             }
         }
         List<BOMItem> parents = getParentsForBom(primaryPartId);
         partDao.rebuildBomDescendancy();
-        return new BOMService.AddToParentBOMsResponse(added, failed, parents);
+        return new BOMService.AddToParentBOMsResponse(added, failures, parents);
     }
 
     @Transactional

@@ -42,7 +42,7 @@
              authorize="ROLE_READ" class="btn btn-primary btn-xs">
             <i class="fa fa-eye"></i> View
           </a>
-          <button data-ng-click="removeBOM($index)"
+          <button data-ng-click="removeBOM(bomItem.id)"
                   data-ng-disabled="restService.status.bomRebuilding"
                   authorize="ROLE_BOM" class="btn btn-danger btn-xs">
             <i class="fa fa-trash-o"></i> Remove
@@ -81,7 +81,7 @@
             </select>
           </td>
           <td class="actions text-center" title="'Actions'">
-            <button type="button" class="btn btn-danger btn-xs" data-ng-click="unpick($index)">
+            <button type="button" class="btn btn-danger btn-xs" data-ng-click="unpick(rec.id)">
               <i class="fa fa-times"></i>
               Unpick
             </button>
@@ -105,8 +105,8 @@
         <i class="fa fa-eye"></i> View
       </a>
       <button type="button" authorize="ROLE_BOM"
-              data-ng-click="pick($part._source)"
               data-ng-disabled="isBttnPickDisabled($part._source)"
+              data-ng-click="pick($part._source)"
               class="btn btn-success btn-xs">
         <i class="fa fa-bullseye"></i> Pick
       </button>

@@ -1,0 +1,43 @@
+<div class="modal-header">
+  <h3 class="modal-title">Failed parts</h3>
+</div>
+<div class="modal-body">
+  <div class="row">
+    <div class="col-xs-12">
+      <p>
+        The primary part [{{primaryPart.id}}] - {{primaryPart.manufacturerPartNumber}} was failed
+        while adding to BOMs of the following parts:
+      </p>
+      <table data-ng-table="failuresTableParams" class="table table-bordered table-striped table-hover table-responsive">
+        <tr data-ng-repeat="failure in $data">
+          <td title="'Type'">
+            {{failure.type}}
+          </td>
+          <td title="'Part #'" class="text-center text-nowrap">
+            {{failure.manufacturerPartNumber}}
+          </td>
+          <td title="'Qty'" class="text-right">
+            {{failure.quantity}}
+          </td>
+          <td title="'Error Message'">
+            {{failure.errorMessage}}
+          </td>
+          <td title="'Actions'" class="actions text-center">
+            <button data-ng-click="showPart(failure.partId)"
+                    authorize="ROLE_READ" class="btn btn-primary btn-xs">
+              <i class="fa fa-eye"></i> View
+            </button>
+          </td>
+        </tr>
+
+        <tr data-ng-hide="$data.length > 0">
+          <td colspan="5">No parts to display.</td>
+        </tr>
+
+      </table>
+    </div>
+  </div>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-default" ng-click="onClose()">Close</button>
+</div>
