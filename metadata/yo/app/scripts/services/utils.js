@@ -6,6 +6,11 @@ angular.module("ngMetaCrudApp")
 
       /**
        * Handy function for use together with ngTable.
+       *
+       * The ngTableParams allows use plain arrays as datasource with help of property 'data'.
+       * But it works incorrect when the array is modified.
+       * This function handles modification of an underlying array correctly.
+       *
        * Parameters:
        *    data - array with rows. The array should contain all rows (not only displayed on the current page).
        *    defSortProperty - string, name of a property in a row from 'data' that should be used for sort when

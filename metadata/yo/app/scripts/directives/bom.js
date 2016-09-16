@@ -19,7 +19,7 @@ angular.module("ngMetaCrudApp")
             page: 1,
             count: 10
           }, {
-            dataset: []
+            data: []
           });
 
           $scope.$watch("parentPartId", function(parentPartId) {
