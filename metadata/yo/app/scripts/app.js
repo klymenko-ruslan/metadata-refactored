@@ -53,6 +53,9 @@ angular.module("ngMetaCrudApp", ["ngRoute", "ngTable", "ui.bootstrap",
         partType: ["$log", "$route", "restService", function($log, $route, restService) {
           var typeId = $route.current.pathParams.typeId;
           return restService.findPartType(typeId)
+        }],
+        manufacturers: ["restService", function(restService) {
+          return restService.listManufacturers();
         }]
       }
     });
@@ -66,7 +69,10 @@ angular.module("ngMetaCrudApp", ["ngRoute", "ngTable", "ui.bootstrap",
         }],
         partType: function () {
           return null;
-        }
+        },
+        manufacturers: ["restService", function(restService) {
+          return restService.listManufacturers();
+        }]
       }
     });
     $routeProvider.when("/part/:id/interchange/search", {

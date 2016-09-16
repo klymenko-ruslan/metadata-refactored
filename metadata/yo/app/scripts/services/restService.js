@@ -87,7 +87,7 @@ angular.module("ngMetaCrudApp")
         });
       };
 
-      this.createPart = function(part) {
+      this.createPart = function(part, mpns) {
         // Specify class depending on part type.
         var clazz = "com.turbointernational.metadata.domain.part.types.";
         switch (part.partType.id) {
@@ -227,7 +227,11 @@ angular.module("ngMetaCrudApp")
           clazz = "com.turbointernational.metadata.domain.part.Part";
         }
         part.class = clazz;
-        return Restangular.all("part").post(part);
+        var request = {
+          "origin": part,
+          "partNumbers": mpns
+        };
+        return Restangular.all("part").post(request);
       };
 
       this.updatePart = function(part) {

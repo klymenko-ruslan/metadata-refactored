@@ -1,7 +1,9 @@
 package com.turbointernational.metadata.web;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.domain.changelog.ChangelogDao;
+import com.turbointernational.metadata.domain.criticaldimension.CriticalDimension;
 import com.turbointernational.metadata.domain.other.TurboType;
 import com.turbointernational.metadata.domain.other.TurboTypeDao;
 import com.turbointernational.metadata.domain.part.*;
@@ -33,9 +35,9 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
 import static com.turbointernational.metadata.services.ImageService.PART_CRIT_DIM_LEGEND_HEIGHT;
 import static com.turbointernational.metadata.services.ImageService.PART_CRIT_DIM_LEGEND_WIDTH;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -144,16 +146,139 @@ public class PartController {
         
         return new ResponseEntity<>(json, headers, HttpStatus.OK);
     }
+
+    static class PartCreateRequest {
+
+        @JsonView({View.Summary.class})
+        private Part origin;
+
+        @JsonView({View.Summary.class})
+        private List<String> partNumbers;
+
+
+        public Part getOrigin() {
+            return origin;
+        }
+
+        public void setOrigin(Part origin) {
+            this.origin = origin;
+        }
+
+        public List<String> getPartNumbers() {
+            return partNumbers;
+        }
+
+        public void setPartNumbers(List<String> partNumbers) {
+            this.partNumbers = partNumbers;
+        }
+
+    }
+
+    @JsonInclude(ALWAYS)
+    static class PartCreateResponse {
+
+        @JsonInclude(ALWAYS)
+        static class Row {
+
+            @JsonView({View.Summary.class})
+            private final Long partId;
+
+            @JsonView({View.Summary.class})
+            private final String manufacturerPartNumber;
+
+            @JsonView({View.Summary.class})
+            private final boolean success;
+
+            @JsonView({View.Summary.class})
+            private final String errorMessage;
+
+            Row(Long partId, String manufacturerPartNumber, boolean success, String errorMessage) {
+                this.partId = partId;
+                this.manufacturerPartNumber = manufacturerPartNumber;
+                this.success = success;
+                this.errorMessage = errorMessage;
+            }
+
+            public Long getPartId() {
+                return partId;
+            }
+
+            public String getManufacturerPartNumber() {
+                return manufacturerPartNumber;
+            }
+
+            public boolean isSuccess() {
+                return success;
+            }
+
+            public String getErrorMessage() {
+                return errorMessage;
+            }
+
+        }
+
+        PartCreateResponse(List<Row> results) {
+            this.results = results;
+        }
+
+        @JsonView({View.Summary.class})
+        private List<Row> results;
+
+
+        public List<Row> getResults() {
+            return results;
+        }
+
+        public void setResults(List<Row> results) {
+            this.results = results;
+        }
+
+    }
     
     @Transactional
     @Secured("ROLE_CREATE_PART")
     @JsonView(View.Detail.class)
+    @ResponseBody
     @RequestMapping(value = "/part", method = POST)
-    public long createPart(@RequestBody Part part) throws Exception {
-        partDao.persist(part);
-        // Update the changelog
-        changelogDao.log("Created part", part.toJson(criticalDimensionService.getCriticalDimensionForPartType(part.getPartType().getId())));
-        return part.getId();
+    public PartCreateResponse createPart(@RequestBody PartCreateRequest request) throws Exception {
+        JSONSerializer jsonSerializer = new JSONSerializer()
+                .include("id")
+                .include("name")
+                .include("manufacturerPartNumber")
+                .include("description")
+                .include("inactive")
+                .include("partType.id")
+                .include("partType.name")
+                .exclude("partType.*")
+                .include("manufacturer.id")
+                .include("manufacturer.name")
+                .exclude("manufacturer.*")
+                .exclude("bomParentParts")
+                .exclude("bom")
+                .exclude("interchange")
+                .exclude("turbos")
+                .exclude("productImages")
+                .exclude("*.class");
+        Part origin = request.getOrigin();
+        List<String> partNumbers = request.getPartNumbers();
+        Set<String> added = new HashSet<>(partNumbers.size());
+        List<PartCreateResponse.Row> results = new ArrayList<>(partNumbers.size());
+        for(Iterator<String> iter = partNumbers.iterator(); iter.hasNext();) {
+            String mpn = iter.next();
+            if (added.contains(mpn)) {
+                continue; // skip duplicate
+            }
+            partDao.getEntityManager().detach(origin);
+            origin.setId(null);
+            origin.setManufacturerPartNumber(mpn);
+            partDao.persist(origin);
+            // Update the changelog.
+            String json = jsonSerializer.serialize(origin);
+            changelogDao.log("Created part", json);
+            results.add(new PartCreateResponse.Row(origin.getId(), mpn, true, null));
+            added.add(mpn);
+        }
+        return new PartCreateResponse(results);
     }
 
     @Transactional
