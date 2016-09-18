@@ -23,6 +23,12 @@ angular.module("ngMetaCrudApp")
             }
           });
 
+          $scope.filters = {
+            carMake: "",
+            carModel: "",
+            carEngine: ""
+          };
+
           var makeIdGetter = $parse("cmey.model.make.id");
 
           $scope.onChangeMake = function() {
@@ -167,21 +173,31 @@ angular.module("ngMetaCrudApp")
             $scope._revert();
           });
 
-          $scope.onClearMM = function(form) {
+          $scope.onClearMM = function() {
+            $scope.filters.carMake = "";
+            $scope.filters.carModel = "";
             $scope.cmey.model.make.id = null;
             $scope.cmey.model.id = null;
             $scope.carmodels.splice(0, $scope.carmodels.length);
-            form.$setDirty();
+            $scope.cmeyForm.$setDirty();
           };
 
-          $scope.onClearEngine = function(form) {
+          $scope.onClearEngine = function() {
+            $scope.filters.carEngine = "";
             $scope.cmey.engine.id = null;
-            form.$setDirty();
+            $scope.cmeyForm.$setDirty();
           };
 
-          $scope.onClearYear = function(form) {
+          $scope.onClearYear = function() {
             $scope.cmey.year.id = null;
             $scope.cmey.year.name = null;
+            $scope.cmeyForm.$setDirty();
+          };
+
+          function clearAllInputs() {
+            $scope.onClearMM();
+            $scope.onClearEngine();
+            $scope.onClearYear();
           };
 
           $scope.onChangeYear = function() {
@@ -242,6 +258,9 @@ angular.module("ngMetaCrudApp")
           $scope.pickCarModel = function() {
             var carModel = {};
             var modelId = $scope.cmey.model.id;
+            if (modelId === null || $scope.pickedModelIds[modelId]) {
+              return;
+            }
             var pickedModel = _.find($scope.carmodels, function(cmd) {
               return cmd.id == modelId;
             });
@@ -272,6 +291,14 @@ angular.module("ngMetaCrudApp")
             $scope.pickedModelsTableParams.reload();
           };
 
+          $scope.unpickAllCarModels = function() {
+            _.each($scope.pickedModels, function(carModel) {
+              delete $scope.pickedModelIds[carModel.id];
+            });
+            $scope.pickedModels.splice(0, $scope.pickedModels.length);
+            $scope.pickedModelsTableParams.reload();
+          };
+
           $scope.pickedEngines = [];
           $scope.pickedEngineIds = {};
 
@@ -285,9 +312,13 @@ angular.module("ngMetaCrudApp")
               getData: utils.localPagination($scope.pickedEngines)
             }
           );
+
           $scope.pickCarEngine = function() {
             var carEngine = {};
             var engineId = $scope.cmey.engine.id;
+            if (engineId === null || $scope.pickedEngineIds[engineId]) {
+              return;
+            }
             var pickedEngine = _.find($scope.carEngines, function(ce) {
               return ce.id == engineId;
             });
@@ -306,6 +337,14 @@ angular.module("ngMetaCrudApp")
             var carEngine = $scope.pickedEngines[idx];
             delete $scope.pickedEngineIds[carEngine.id];
             $scope.pickedEngines.splice(idx, 1);
+            $scope.pickedEnginesTableParams.reload();
+          };
+
+          $scope.unpickAllCarEngines = function() {
+            _.each($scope.pickedEngines, function(carEngine) {
+              delete $scope.pickedEngineIds[carEngine.id];
+            });
+            $scope.pickedEngines.splice(0, $scope.pickedEngines.length);
             $scope.pickedEnginesTableParams.reload();
           };
 
@@ -342,10 +381,22 @@ angular.module("ngMetaCrudApp")
             $scope.pickedYearsTableParams.reload();
           };
 
+          $scope.unpickAllCarYears = function() {
+            _.each($scope.pickedYears, function(carYear) {
+              delete $scope.pickedYearNames[carYear.name];
+            });
+            $scope.pickedYears.splice(0, $scope.pickedYears.length);
+            $scope.pickedYearsTableParams.reload();
+          };
+
           $scope.bulkGeneration = function() {
             restService.carmodelengineyearBulkCreate($scope.pickedModels, $scope.pickedEngines, $scope.pickedYears).then(
               function success(result) {
 
+                // Clear input filter and selections.
+                clearAllInputs();
+
+                // Clear picked items.
                 _.each($scope.pickedModels, function(cm) {
                   delete $scope.pickedModelIds[cm.id];
                 });
