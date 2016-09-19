@@ -1,0 +1,4 @@
+1. Add to parent BOMs
+(https://metadata.turbointernational.com/part/41/parentbom/search).
+    * Preselection Manufacturer/Part type.
+    * Add button "Unpick All" to the "Picked Parts" table.

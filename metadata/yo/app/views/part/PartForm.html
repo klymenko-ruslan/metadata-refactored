@@ -13,7 +13,7 @@
       Save
     </button>
   </li>
-  <li>
+  <!-- li>
     <button type="button" data-ng-click="revert()"
             data-ng-disabled="partForm.$pristine"
             class="btn btn-warning"
@@ -21,11 +21,11 @@
       <i class="fa fa-undo"></i>
       Revert
     </button>
-  </li>
+  </li -->
 </metanav>
 
 <div class="row">
-  <div class="col-xs-4">
+  <div class="col-xs-5">
     <h2>
       <span data-ng-hide="partId">Create </span>
       <span data-ng-show="partId">Edit </span>
@@ -33,7 +33,7 @@
       <span data-ng-show="partId">#{{ partId }} </span>
     </h2>
   </div>
-  <div class="col-xs-2">
+  <div class="col-xs-5">
     <div class="pull-right" style="margin-top:20px;margin-bottom:10px;">
       <label>Status</label>
       <button data-ng-model="part.inactive" class="btn btn-sm btn-info" btn-checkbox>
@@ -50,8 +50,10 @@
 </div>
 
 <form name="partForm">
+
   <div class="row">
-    <div class="col-xs-6">
+
+    <div class="col-xs-10">
 
       <div class="form-group">
         <label for="name">Name</label>
@@ -65,7 +67,11 @@
 
       <div class="form-group">
         <label for="manufacturer">Manufacturer</label>
-        <select id="manufacturer" class="form-control" data-ng-model="part.manufacturer" data-ng-options="mn as mn.name for mn in manufacturers track by mn.id" required>
+        <select id="manufacturer" class="form-control"
+                data-ng-model="part.manufacturer"
+                data-ng-options="mn as mn.name for mn in manufacturers track by mn.id"
+                data-ng-change="onChangeManufacturer()"
+                required>
         </select>
         <div data-ng-show="partForm.manufacturer.$invalid" class="alert alert-danger" role="alert">
           <span data-ng-show="partForm.manufacturer.$error.required">Required!</span>
@@ -113,9 +119,46 @@
           <label>Coolant</label>
           <picker item-type="type/cooltype" data-ng-model="part.coolType"></picker>
         </div>
-        <div data-ng-switch-when="Turbo">
-          <h3>Turbo Model</h3>
-          <div data-ng-include="'/views/part/form/TurboModel.html'"></div>
+
+        <div data-ng-switch-when="Turbo" class="row">
+          <div data-ng-disabled="turboTypes.length == 0" class="col-xs-6 form-group">
+            <div>
+              <label class="control-label">Turbo Type</label>
+              <div class="pull-right">
+                <button type="button" data-ng-click="createTurboType()" class="btn btn-success btn-xs" data-ng-disabled="!selection.manufacturer.id">
+                  <i class="fa fa-wrench"></i>
+                  Create Type
+                </button>
+              </div>
+            </div>
+            <input data-ng-model="filters.turboType" data-ng-init="turboTypeFilter = ''" class="form-control" placeholder="Turbo type filter..."/>
+            <select data-ng-model="part.turboModel.turboType"
+                    data-ng-options="tt as tt.name for tt in turboTypes | filter:{name:filters.turboType} track by tt.id"
+                    data-ng-disabled="turboTypes.length == 0"
+                    data-ng-change="onChangeTurboType()"
+                    size="6" class="select-large required form-control">
+            </select>
+          </div>
+
+          <div class="col-xs-6">
+            <div>
+              <label class="control-label">Turbo Model</label>
+              <div class="pull-right">
+                <button data-ng-click="createTurboModel()" class="btn btn-success btn-xs" data-ng-disabled="!selection.turboType">
+                  <i class="fa fa-wrench"></i>
+                  Create Model
+                </button>
+              </div>
+            </div>
+            <input data-ng-model="filters.turboModel" data-ng-init="turboModelFilter = ''" class="form-control" placeholder="Turbo model filter..."/>
+            <select required
+                    data-ng-model="part.turboModel"
+                    data-ng-options="tm as tm.name for tm in turboModels | filter:{name:filters.turboModel} track by tm.id"
+                    data-ng-disabled="turboModels.length == 0"
+                    size="6" class="select-large required form-control">
+            </select>
+          </div>
+
         </div>
 
       </div>

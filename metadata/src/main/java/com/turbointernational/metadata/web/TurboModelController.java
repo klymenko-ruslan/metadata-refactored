@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
+
 @Controller
 @RequestMapping("/metadata/other/turboModel")
 public class TurboModelController {
@@ -23,9 +26,9 @@ public class TurboModelController {
     @Autowired
     TurboModelDao turboModelDao;
     
-    @RequestMapping(method = RequestMethod.POST,
-                    consumes = MediaType.APPLICATION_JSON_VALUE,
-                    produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(method = POST,
+                    consumes = APPLICATION_JSON_VALUE,
+                    produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     @Secured("ROLE_TURBO_MODEL_CRUD")
     @Transactional
@@ -38,9 +41,9 @@ public class TurboModelController {
         return turboModel;
     }
     
-    @RequestMapping(method = RequestMethod.PUT,
-                    consumes = MediaType.APPLICATION_JSON_VALUE,
-                    produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(method = PUT,
+                    consumes = APPLICATION_JSON_VALUE,
+                    produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     @Secured("ROLE_TURBO_MODEL_CRUD")
     @Transactional
@@ -53,8 +56,8 @@ public class TurboModelController {
         return turboModel;
     }
     
-    @RequestMapping(value="/{turboModelId}", method = RequestMethod.DELETE,
-                    produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value="/{turboModelId}", method = DELETE,
+                    produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     @Secured("ROLE_TURBO_MODEL_CRUD")
     @Transactional
@@ -64,11 +67,11 @@ public class TurboModelController {
         changelogDao.log("Removed turbo model", turboModel.toJson());
     }
     
-    @RequestMapping(method = RequestMethod.GET,
-                    produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(method = GET,
+                    produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     @Secured("ROLE_READ")
-    public List<TurboModel> listByTurboTypeIdJson(@RequestParam Long turboTypeId) {
+    protected List<TurboModel> listByTurboTypeIdJson(@RequestParam Long turboTypeId) {
         return turboModelDao.findTurboModelsByTurboTypeId(turboTypeId);
     }
 }

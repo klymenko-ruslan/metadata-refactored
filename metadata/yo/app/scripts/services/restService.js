@@ -342,20 +342,54 @@ angular.module("ngMetaCrudApp")
       };
 
       this.listTurboTypesForManufacturerId = function(manufacturerId) {
-        return Restangular.all("other/turboType").getList({
-          "manufacturerId": manufacturerId
-        });
+        return Restangular.one("other").getList("turboType", {"manufacturerId": manufacturerId});
       };
 
       this.listTurboModelsForTurboTypeId = function(turboTypeId) {
-        return Restangular.all("other/turboModel").getList({
-          "turboTypeId": turboTypeId
-        });
+        return Restangular.one("other").getList("turboModel", {"turboTypeId": turboTypeId});
+      };
+
+      this.createTurboType = function(manufacturerId, name) {
+        var turboType = {
+          name: name,
+          manufacturer: {
+            id: manufacturerId
+          }
+        };
+        return Restangular.all('other/turboType').post(turboType);
+      };
+
+      this.renameTurboType = function(turboType) {
+        return Restangular.all('other/turboType').customPUT(turboType);
+      };
+
+      this.deleteTurboType = function(ttId) {
+        Restangular.setParentless(false);
+        return Restangular.one('other/turboType', ttId).remove();
       };
 
       this.removeTurboType = function(partId, turboTypeId) {
         Restangular.setParentless(false);
         return Restangular.one("part", partId).one("turboType", turboTypeId).remove();
+      };
+
+      this.createTurboModel = function(ttId, name) {
+        var turboModel = {
+          name: name,
+          turboType: {
+            id: ttId
+          }
+        };
+        return Restangular.all('other/turboModel').post(turboModel);
+      };
+
+      this.renameTurboModel = function(turboModel) {
+        return Restangular.all('other/turboModel').customPUT(turboModel);
+      };
+
+      this.deleteTurboModel = function(tmId) {
+        Restangular.setParentless(false);
+        return Restangular.one('other/turboModel', tmId).remove();
       };
 
       this.findInterchange = function(id) {
