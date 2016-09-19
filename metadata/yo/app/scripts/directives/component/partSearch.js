@@ -4,6 +4,11 @@ angular.module("ngMetaCrudApp")
   .directive("partSearch", ["$log", "restService", function($log, restService) {
     return {
       restrict: "E",
+      scope: {
+        partTypes: "=",
+        searchPartType: "="
+        //selectedPartType: "="
+      },
       replace: true,
       templateUrl: "/views/component/PartSearch.html",
       transclude: true,
@@ -12,7 +17,12 @@ angular.module("ngMetaCrudApp")
         function($transclude, $parse, $sce, $log, $q, $location, $scope, ngTableParams, utils) {
         $scope.critDimEnumValsMap = _.indexBy($scope.critDimEnumVals, "id");
         // Filter
+        /*
         $scope.searchPartType = null;
+        if (angular.isObject($scope.selectedPartType)) {
+          $scope.searchPartType = selectedPartType;
+        }
+        */
         $scope.searchInactive = null;
         $scope.searchManufacturer = null;
         $scope.searchTurboModel = null;

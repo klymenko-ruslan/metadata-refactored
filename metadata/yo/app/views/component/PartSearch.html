@@ -46,9 +46,6 @@
            input-changed="onTurboModelChanged"
            selected-object="onTurboModelSelected"
            local-data="searchResults.aggregations['Turbo Model'].buckets"></div>
-      <!-- select id="fltrTurboModel" data-ng-disabled="searchPartType.id !== 1" name="fltrTurboModel" class="form-control input-sm" data-ng-options="itm.key as itm.key + ' (' + itm.doc_count + ')' for itm in searchResults.aggregations['Turbo Model'].buckets | orderBy: 'key'" data-ng-model="searchTurboModel">
-        <option></option>
-      </select -->
     </div>
     <div class="form-group">
       <label for="fltrTurboType" data-ng-disabled="searchPartType.id !== 1">Turbo Type</label>

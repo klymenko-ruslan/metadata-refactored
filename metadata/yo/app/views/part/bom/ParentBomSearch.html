@@ -100,7 +100,7 @@
 
 <div class="row">
   <div class="col-xs-12">
-    <part-search>
+    <part-search part-types="partTypes" search-part-type="part.partType">
       <a authorize="ROLE_READ" data-ng-href="/part/{{$part._source.id}}" class="btn btn-primary btn-xs">
         <i class="fa fa-eye"></i> View
       </a>

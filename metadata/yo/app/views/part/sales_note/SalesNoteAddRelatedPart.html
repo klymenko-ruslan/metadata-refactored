@@ -71,7 +71,7 @@
 
 <hr/>
 
-<part-search class="well well-lg">
+<part-search part-types="partTypes" class="well well-lg">
   <a authorize="ROLE_READ" data-ng-href="/part/{{$part._source.id}}" class="btn btn-primary btn-xs"><i class="fa fa-eye"></i> View</a>
   <a authorize="ROLE_BOM" data-ng-click="pickPart($part._source.id)" class="btn btn-success btn-xs"><i class="fa fa-bullseye"></i> Pick</a>
 </part-search>

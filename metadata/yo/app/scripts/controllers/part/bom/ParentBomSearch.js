@@ -12,6 +12,8 @@ angular.module("ngMetaCrudApp")
       $scope.partTypes = partTypes;
       $scope.restService = restService;
 
+      $scope.searchPartType = part.partType.id;
+
       var pickedParts = [];
       var pickedPartIds = {};
       var parentPartsIds = null;
