@@ -4,25 +4,28 @@ angular.module("ngMetaCrudApp")
   .directive("partSearch", ["$log", "restService", function($log, restService) {
     return {
       restrict: "E",
-      scope: {
-        partTypes: "=",
-        searchPartType: "="
-        //selectedPartType: "="
-      },
       replace: true,
       templateUrl: "/views/component/PartSearch.html",
       transclude: true,
+      link: function(scope, element, attrs) {
+        var searchPartType = scope.$eval(attrs.searchPartType);
+        if (angular.isObject(searchPartType)) {
+          scope.searchPartType = searchPartType;
+        }
+        /*
+        var searchManufacturer = scope.$eval(attrs.searchManufacturer);
+        if (angular.isObject(searchManufacturer)) {
+          scope.searchManufacturer = searchManufacturer;
+        }
+        */
+      },
       controller: ["$transclude", "$parse", "$sce", "$log", "$q", "$location",
                    "$scope", "ngTableParams", "utils",
         function($transclude, $parse, $sce, $log, $q, $location, $scope, ngTableParams, utils) {
         $scope.critDimEnumValsMap = _.indexBy($scope.critDimEnumVals, "id");
+
         // Filter
-        /*
         $scope.searchPartType = null;
-        if (angular.isObject($scope.selectedPartType)) {
-          $scope.searchPartType = selectedPartType;
-        }
-        */
         $scope.searchInactive = null;
         $scope.searchManufacturer = null;
         $scope.searchTurboModel = null;
