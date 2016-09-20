@@ -341,8 +341,12 @@ angular.module("ngMetaCrudApp")
         return Restangular.all("kittype/list").getList();
       };
 
+      this.findTurboTypeByManufacturerAndName = function(manufacturerId, name) {
+        return Restangular.one("other/turboType").get({"manufacturerId": manufacturerId, "name": name});
+      };
+
       this.listTurboTypesForManufacturerId = function(manufacturerId) {
-        return Restangular.one("other").getList("turboType", {"manufacturerId": manufacturerId});
+        return Restangular.one("other/turboType").getList("list", {"manufacturerId": manufacturerId});
       };
 
       this.listTurboModelsForTurboTypeId = function(turboTypeId) {

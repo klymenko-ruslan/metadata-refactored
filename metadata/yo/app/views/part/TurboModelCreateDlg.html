@@ -1,0 +1,27 @@
+<div class="modal-header">
+  <h3 class="modal-title">Create Turbo Model</h3>
+</div>
+<div class="modal-body">
+  <form name="tmForm" novalidate>
+    <div class="form-group">
+      <label for="manufacturer">Turbo Type</label>
+      <p id="manufacturer">{{part.turboModel.turboType.name}}</p>
+    </div>
+    <div class="form-group">
+      <label for="name">Name</label>
+      <input id="name" name="name" type="text" data-ng-model="name" maxlength="255" class="form-control" required>
+      <div data-ng-show="tmForm.name.$dirty && tmForm.name.$invalid" class="alert alert-danger" role="alert">
+        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+        <span data-ng-show="tmForm.name.$error.required">Required!</span>
+        <span data-ng-show="tmForm.name.$error.maxlenth">Too long name (max 255 chars)!</span>
+      </div>
+    </div>
+  </form>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-success" data-ng-disabled="tmForm.$invalid" data-ng-click="onCreate()">
+    <i class="fa fa-wrench"></i>
+    Create
+  </button>
+  <button type="button" class="btn btn-default" data-ng-click="onClose()">Close</button>
+</div>

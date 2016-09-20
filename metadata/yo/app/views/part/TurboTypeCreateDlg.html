@@ -1,0 +1,28 @@
+<div class="modal-header">
+  <h3 class="modal-title">Create Turbo Type</h3>
+</div>
+<div class="modal-body">
+  <form name="ttForm" novalidate>
+    <div class="form-group">
+      <label for="manufacturer">Manufacturer</label>
+      <p id="manufacturer">{{part.manufacturer.name}}</p>
+    </div>
+    <div class="form-group">
+      <label for="name">Name</label>
+      <input id="name" name="name" type="text" data-ng-model="name" maxlength="255" class="form-control" unique-turbotype-name required>
+      <div data-ng-show="ttForm.name.$dirty && ttForm.name.$invalid" class="alert alert-danger" role="alert">
+        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+        <span data-ng-show="ttForm.name.$error.required">Required!</span>
+        <span data-ng-show="ttForm.name.$error.maxlenth">Too long name (max 255 chars)!</span>
+        <span data-ng-show="ttForm.name.$error.uniqueTurbotypeName">Pair (Manufacturer, Turbo Type name) is not unique!</span>
+      </div>
+    </div>
+  </form>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-success" data-ng-disabled="ttForm.$invalid" data-ng-click="onCreate()">
+    <i class="fa fa-wrench"></i>
+    Create
+  </button>
+  <button type="button" class="btn btn-default" data-ng-click="onClose()">Close</button>
+</div>

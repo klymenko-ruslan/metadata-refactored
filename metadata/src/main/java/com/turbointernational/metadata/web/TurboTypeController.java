@@ -60,10 +60,18 @@ public class TurboTypeController {
         turboTypeDao.remove(turboType);
     }
     
-    @RequestMapping(method = GET, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value="/list", method = GET, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     @Secured("ROLE_READ")
     public List<TurboType> listJson(@RequestParam("manufacturerId") Long manufacturerId) {
         return turboTypeDao.findTurboTypesByManufacturerId(manufacturerId);
     }
+
+    @RequestMapping(method = GET, produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
+    @Secured("ROLE_READ")
+    public TurboType find(@RequestParam("manufacturerId") Long manufacturerId, @RequestParam("name") String name) {
+        return turboTypeDao.findTurboType(manufacturerId, name);
+    }
+
 }

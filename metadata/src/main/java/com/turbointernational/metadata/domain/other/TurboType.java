@@ -9,18 +9,22 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "turbo_type", uniqueConstraints = @UniqueConstraint(columnNames = {"name"}))
+@NamedQueries({
+        @NamedQuery(
+                name = "findTurboTypesByManufacturerId",
+                query = "SELECT o FROM TurboType o JOIN o.manufacturer " +
+                        "WHERE o.manufacturer.id = :manufacturerId ORDER BY o.name"
+        ),
+        @NamedQuery(
+                name="findTurboTypesByManufacturerIdAndName",
+                query = "SELECT o FROM TurboType o JOIN o.manufacturer " +
+                        "WHERE o.manufacturer.id = :manufacturerId AND o.name = :name"
+        )
+})
 public class TurboType implements Comparable<TurboType>, Serializable {
 
     //<editor-fold defaultstate="collapsed" desc="Properties">

@@ -1,10 +1,9 @@
 <metanav>
   <li authorize="ROLE_READ">
-    <a data-ng-href="/part/{{ partId }}"
-       class="btn btn-primary" data-ng-hide="oldPart == null">
+    <button type="button" data-ng-click="onViewPart()" class="btn btn-primary" data-ng-hide="oldPart == null">
       <i class="fa fa-eye"></i>
       View Part
-    </a>
+    </button>
   </li>
   <li authorize="ROLE_ALTER_PART">
     <button type="button" data-ng-disabled="partForm.$pristine || partForm.$invalid || partForm.$pending"
@@ -46,10 +45,9 @@
       </button>
     </div>
   </div>
-  <div class="col-xs-6"></div>
 </div>
 
-<form name="partForm">
+<form name="partForm" novalidate>
 
   <div class="row">
 
@@ -125,38 +123,63 @@
             <div>
               <label class="control-label">Turbo Type</label>
               <div class="pull-right">
-                <button type="button" data-ng-click="createTurboType()" class="btn btn-success btn-xs" data-ng-disabled="!selection.manufacturer.id">
+                <button type="button" data-ng-click="createTurboType()" class="btn btn-success btn-xs" data-ng-disabled="!part.manufacturer.id">
                   <i class="fa fa-wrench"></i>
-                  Create Type
+                  Create
+                </button>
+                <button type="button" data-ng-click="renameTurboType()" class="btn btn-warning btn-xs" data-ng-disabled="!part.turboModel.turboType.id">
+                  <i class="fa fa-pencil"></i>
+                  Rename
+                </button>
+                <button type="button" data-ng-click="deleteTurboType()" class="btn btn-danger btn-xs" data-ng-disabled="part.id && !part.turboModel.turboType.id && part.turboModel.turboType.id == oldPart.turboModel.turboType.id">
+                  <i class="fa fa-trash-o"></i>
+                  Delete
                 </button>
               </div>
             </div>
             <input data-ng-model="filters.turboType" data-ng-init="turboTypeFilter = ''" class="form-control" placeholder="Turbo type filter..."/>
-            <select data-ng-model="part.turboModel.turboType"
+            <select name="turboType" required
+                    data-ng-model="part.turboModel.turboType"
                     data-ng-options="tt as tt.name for tt in turboTypes | filter:{name:filters.turboType} track by tt.id"
                     data-ng-disabled="turboTypes.length == 0"
                     data-ng-change="onChangeTurboType()"
                     size="6" class="select-large required form-control">
             </select>
+            <div data-ng-show="partForm.$dirty && partForm.turboType.$invalid" class="alert alert-danger" role="alert">
+              <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+              <span data-ng-show="partForm.turboType.$error.required">Required!</span>
+            </div>
           </div>
 
           <div class="col-xs-6">
             <div>
               <label class="control-label">Turbo Model</label>
               <div class="pull-right">
-                <button data-ng-click="createTurboModel()" class="btn btn-success btn-xs" data-ng-disabled="!selection.turboType">
+                <button type="button" data-ng-click="createTurboModel()" class="btn btn-success btn-xs" data-ng-disabled="!part.turboModel.turboType.id">
                   <i class="fa fa-wrench"></i>
-                  Create Model
+                  Create
+                </button>
+                <button type="button" data-ng-click="renameTurboModel()" class="btn btn-warning btn-xs" data-ng-disabled="!part.turboModel.id">
+                  <i class="fa fa-pencil"></i>
+                  Rename
+                </button>
+                <button type="button" data-ng-click="deleteTurboModel()" class="btn btn-danger btn-xs" data-ng-disabled="(part.id && !part.turboModel.id && part.turboModel.id != oldPart.turboModel.id) || (!part.id && !part.turboModel.id)">
+                  <i class="fa fa-trash-o"></i>
+                  Delete
                 </button>
               </div>
             </div>
             <input data-ng-model="filters.turboModel" data-ng-init="turboModelFilter = ''" class="form-control" placeholder="Turbo model filter..."/>
-            <select required
+            <select name="turboModel" required
                     data-ng-model="part.turboModel"
                     data-ng-options="tm as tm.name for tm in turboModels | filter:{name:filters.turboModel} track by tm.id"
                     data-ng-disabled="turboModels.length == 0"
-                    size="6" class="select-large required form-control">
+                    size="6" class="select-large form-control">
             </select>
+            <div data-ng-show="partForm.$dirty && partForm.turboModel.$invalid" class="alert alert-danger" role="alert">
+              <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+              <span data-ng-show="partForm.turboModel.$error.required">Required!</span>
+            </div>
           </div>
 
         </div>

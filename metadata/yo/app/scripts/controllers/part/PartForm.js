@@ -1,8 +1,11 @@
 "use strict";
 
 angular.module("ngMetaCrudApp").controller("PartFormCtrl",
-  ["$scope", "$location", "$log", "restService", "Restangular", "part", "partType", "manufacturers",
-  function($scope, $location, $log, restService, Restangular, part, partType, manufacturers) {
+  ["$scope", "$location", "$log", "$uibModal", "dialogs", "gToast", "restService", "Restangular",
+   "part", "partType", "manufacturers",
+  function($scope, $location, $log, $uibModal, dialogs, gToast, restService, Restangular,
+    part, partType, manufacturers)
+  {
 
     $scope.manufacturers = manufacturers;
     $scope.turboTypes = [];
@@ -20,7 +23,11 @@ angular.module("ngMetaCrudApp").controller("PartFormCtrl",
         id: "pn" + idx,
         val: val
       };
-    }
+    };
+
+    $scope.onViewPart = function() {
+      $location.path("/part/" + $scope.partId);
+    };
 
     $scope.onChangeManufacturer = function() {
       if ($scope.part.partType.magentoAttributeSet == "Turbo") {
@@ -41,19 +48,21 @@ angular.module("ngMetaCrudApp").controller("PartFormCtrl",
     };
 
     $scope.onChangeTurboType = function() {
-      var ttId = $scope.part.turboModel.turboType.id;
-      restService.listTurboModelsForTurboTypeId(ttId).then(
-        function success(turboModels) {
-          $scope.turboModels.splice(0, $scope.turboModels.length);
-          _.each(turboModels, function(tm) {
-            $scope.turboModels.push(tm);
-          });
-        },
-        function failure(response) {
-          restService.error("Loading of turbo models for the turbo type [" + ttId + "] - " +
-                            $scope.part.turboModel.turboType.name + " failed.", response);
-        }
-      );
+      var ttId = $scope.$eval("part.turboModel.turboType.id");
+      if (ttId !== undefined) {
+        restService.listTurboModelsForTurboTypeId(ttId).then(
+          function success(turboModels) {
+            $scope.turboModels.splice(0, $scope.turboModels.length);
+            _.each(turboModels, function(tm) {
+              $scope.turboModels.push(tm);
+            });
+          },
+          function failure(response) {
+            restService.error("Loading of turbo models for the turbo type [" + ttId + "] - " +
+                              $scope.part.turboModel.turboType.name + " failed.", response);
+          }
+        );
+      }
     };
 
     // Setup the create/update workflow
@@ -67,7 +76,12 @@ angular.module("ngMetaCrudApp").controller("PartFormCtrl",
       $scope.onChangeTurboType();
     } else {
       $scope.partId = null;
-      $scope.part = {};
+      $scope.part = {
+        turboModel: {
+          turboType: {
+          }
+        }
+      };
       $scope.oldPart = null;
       $scope.mpns.push(newPn(0, null));
     }
@@ -132,15 +146,195 @@ angular.module("ngMetaCrudApp").controller("PartFormCtrl",
     };
 
     $scope.createTurboType = function() {
-      $log.log("createTurboType");
+      $uibModal.open({
+        templateUrl: "/views/part/TurboTypeCreateDlg.html",
+        animation: false,
+        size: "lg",
+        controller: "CreateTurboTypeDlgCtrl",
+        resolve: {
+          part: function() {
+            return $scope.part;
+          },
+          turboTypes: function() {
+            return $scope.turboTypes;
+          }
+        }
+      });
+    };
+
+    $scope.renameTurboType = function() {
+    };
+
+    $scope.deleteTurboType = function() {
+      var ttId = $scope.part.turboModel.turboType.id;
+      dialogs.confirm(
+        "Delete Turbo Type?",
+        "Do you want to delete this turbo type?").result.then(
+        function() {
+          // Yes
+          restService.deleteTurboType(ttId).then(
+            function() {
+              // Success
+              gToast.open("Turbo type deleted.");
+              $scope.part.turboModel.turboType = {};
+              var idx = _.findIndex($scope.turboTypes, function(tt) {
+                return tt.id === ttId;
+              });
+              if (idx !== -1) {
+                $scope.turboTypes.splice(idx, 1);
+              }
+            },
+            function() {
+              // Error
+              dialogs.error(
+                "Could not delete turbo type.",
+                "Turbo type must not be used for any parts or turbo models. Check server log for details.");
+            });
+        },
+        function() {
+          // No
+        }
+      );
     };
 
     $scope.createTurboModel = function() {
-      $log.log("createTurboModel");
+      $uibModal.open({
+        templateUrl: "/views/part/TurboModelCreateDlg.html",
+        animation: false,
+        size: "lg",
+        controller: "CreateTurboModelDlgCtrl",
+        resolve: {
+          part: function() {
+            return $scope.part;
+          },
+          turboModels: function() {
+            return $scope.turboModels;
+          }
+        }
+      });
+    };
+
+    $scope.renameTurboModel = function() {
+    };
+
+    $scope.deleteTurboModel = function() {
+      var tmId = $scope.part.turboModel.id;
+      dialogs.confirm(
+        "Delete Turbo Model?",
+        "Do you want to delete this turbo model?").result.then(
+        function() {
+          // Yes
+          restService.deleteTurboModel(tmId).then(
+            function() {
+              // Success
+              gToast.open("Turbo model deleted.");
+              $scope.part.turboModel = null;
+              var idx = _.findIndex($scope.turboModels, function(tm) {
+                return tm.id === tmId;
+              });
+              if (idx !== -1) {
+                $scope.turboModels.splice(idx, 1);
+              }
+            },
+            function(response) {
+              // Error
+              dialogs.error(
+                "Could not delete turbo model.",
+                "Turbo model must not be used for any parts. Check server log for details.");
+            });
+        },
+        function() {
+          // No
+        }
+      );
     };
 
   }
-]).directive("uniquePartNumber", ["$log", "$q", "restService", function($log, $q, restService) {
+])
+.controller("CreateTurboTypeDlgCtrl", ["$scope", "$log", "$uibModalInstance", "restService", "part", "turboTypes",
+  function($scope, $log, $uibModalInstance, restService, part, turboTypes) {
+
+    $scope.part = part;
+    $scope.name = "";
+
+    $scope.onCreate = function() {
+      restService.createTurboType($scope.part.manufacturer.id, $scope.name).then(
+        function success(newTurboType) {
+          part.turboModel.turboType = newTurboType;
+          var idx = _.sortedIndex(turboTypes, newTurboType, "name");
+          turboTypes.splice(idx, 0, newTurboType);
+          $uibModalInstance.close();
+        },
+        function failure(response) {
+          $uibModalInstance.close();
+          restService.error("Creatation of a new turbo model failed: " + $scope.name, response);
+        }
+      );
+    };
+
+    $scope.onClose = function() {
+      $uibModalInstance.close();
+    };
+
+}])
+.directive("uniqueTurbotypeName", ["$log", "$q", "restService", function($log, $q, restService) {
+  return {
+    require: "ngModel",
+    link: function($scope, elm, attr, ctrl) {
+      ctrl.$asyncValidators.uniqueTurbotypeName = function(modelValue, viewValue) {
+        var def = $q.defer();
+        if (ctrl.$isEmpty(modelValue)) {
+          return $q.when();
+        }
+        if ($scope.part.manufacturer === undefined) {
+          def.resolve();
+        } else {
+          restService.findTurboTypeByManufacturerAndName($scope.part.manufacturer.id, viewValue).then(
+            function(foundTurboType) {
+              if (!angular.isObject(foundTurboType)) {
+                def.resolve();
+              } else {
+                def.reject();
+              }
+            },
+            function(errorResponse) {
+              $log.log("Couldn't validate name of the turbo type: " + viewValue);
+              def.reject();
+            }
+          );
+        }
+        return def.promise;
+      };
+    }
+  };
+}])
+.controller("CreateTurboModelDlgCtrl", ["$scope", "$log", "$uibModalInstance", "restService", "part", "turboModels",
+  function($scope, $log, $uibModalInstance, restService, part, turboModels) {
+
+    $scope.part = part;
+    $scope.name = "";
+
+    $scope.onCreate = function() {
+      restService.createTurboModel($scope.part.turboModel.turboType.id, $scope.name).then(
+        function success(newTurboModel) {
+          part.turboModel = newTurboModel;
+          var idx = _.sortedIndex(turboModels, newTurboModel, "name");
+          turboModels.splice(idx, 0, newTurboModel);
+          $uibModalInstance.close();
+        },
+        function failure(response) {
+          $uibModalInstance.close();
+          restService.error("Creatation of a new turbo model failed: " + $scope.name, response);
+        }
+      );
+    };
+
+    $scope.onClose = function() {
+      $uibModalInstance.close();
+    };
+
+}])
+.directive("uniquePartNumber", ["$log", "$q", "restService", function($log, $q, restService) {
   // Validator for uniqueness of the part number.
   return {
     require: "ngModel",
@@ -172,108 +366,3 @@ angular.module("ngMetaCrudApp").controller("PartFormCtrl",
     }
   };
 }]);
-
-//     .controller('TurboModelPickerCtrl', function ($log, $scope, restService, ngTableParams, Restangular) {
-//
-//         // List of turbo types and models (set in $watch)
-//         $scope.turboTypes = null;
-//         $scope.turboModels = null;
-//
-//         /**
-//          * Keep the turbo types updated with the part's manufacturer
-//          */
-//         var turboTypesPromise = null;
-//         $scope.$watch('part.manufacturer.id', function (newMfrId, oldMfrId) {
-// //        $log.log("TurboModelPicker.$watch part.manufacturer.id", newMfrId, oldMfrId);
-//
-//             if (!angular.isObject($scope.part)) return;    // NOP if the part is null
-//             if ($scope.manufacturerId == newMfrId) return; // NOP if we're already displaying this manufacturer's turbo types
-//
-//             // Update the manufacturer ID for the turbo types list
-//             $scope.manufacturerId = newMfrId;
-//
-//             // TODO: Cancel any previous fetch we were doing
-//
-//             $log.log("Fetching new turbo types for manufacturer", $scope.manufacturerId);
-//
-//             // Fetch the new types
-//             $scope.turboTypes = null;
-//             $scope.turboModels = null;
-//
-//             // Use the turbo type and model from the part if the manufacturer is the same
-//             var partTurboTypeMfrId = $scope.$eval('part.turboModel.turboType.manufacturer.id');
-//             if ($scope.manufacturerId == partTurboTypeMfrId) {
-//                 $scope.turboTypeId = $scope.$eval('part.turboModel.turboType.id');
-//                 $scope.turboModelId = $scope.$eval('part.turboModel.id');
-// //          $log.log("TurboModelPicker using part values type/model", $scope.turboTypeId, $scope.turboModelId);
-//             } else {
-//                 $scope.turboTypeId = null;
-//                 $scope.turboModelId = null;
-//             }
-// //        $log.log("TurboModelPicker.turboTypeId", $scope.turboTypeId);
-//
-//             // Clear and fetch the turbo types
-//             $scope.turboTypes = null;
-//
-//             Restangular.setParentless(false);
-//             turboTypesPromise = Restangular.all("other/turboType").one('manufacturer', $scope.manufacturerId)
-//                 .getList()
-//                 .then(function (response) {
-//
-//                     $scope.turboTypes = response;
-//                 }, function (errorResponse) {
-//
-//                     restService.error("Could not fetch turbo types", errorResponse);
-//                 });
-//         });
-//
-//         // Fetch the new turbo models when the turbo type changes
-//         var turboModelsPromise = null;
-//         $scope.$watch('turboTypeId', function (newTurboTypeId, oldTurboTypeId) {
-// //        $log.log("TurboModelPicker.$watch turboTypeId", newTurboTypeId, oldTurboTypeId);
-//
-//             // Clear and fetch the turbo models
-//             $scope.turboModels = null;
-//
-//             // Fetch the turbo models if we have a type
-//             if ($scope.turboTypeId != null) {
-//                 turboModelsPromise = Restangular.all("other/turboModel")
-//                     .getList({"turboTypeId": $scope.turboTypeId})
-//                     .then(function (response) {
-//
-//                         $scope.turboModels = response;
-//                     }, function (errorResponse) {
-//
-//                         restService.error("Could not fetch turbo models", errorResponse);
-//                     });
-//             }
-//         });
-//
-//         // Watch for changes in the part's model/type (i.e. reverting) and propagate them to the picker
-//         $scope.$watch('{modelId:part.turboModel.id, typeId: part.turboModel.turboType.id}', function (newValue, oldValue) {
-// //        $log.log("TurboModelPicker.$watch (part.turboModel.id, part.turboModel.turboType.id}", newValue);
-//             $scope.turboModelId = newValue.modelId;
-//             $scope.turboTypeId = newValue.typeId;
-//         }, true);
-//
-//
-//         // Reset the turbo TYPE filter when the list changes
-//         $scope.$watch('turboTypes', function () {
-//             $scope.turboTypeFilter = "";
-//         });
-//
-//         // Reset the turbo MODEL filter when the list changes
-//         $scope.$watch('turboModels', function () {
-//             $scope.turboModelFilter = "";
-//         });
-//
-//
-//         $scope.setPartTurboModel = function () {
-//             var turboModel = _.find($scope.turboModels, function (turboModel) {
-//                 return $scope.turboModelId == turboModel.id;
-//             });
-//
-//             $scope.part.turboModel = Restangular.copy(turboModel)
-// //        $log.log('setPartTurboModel', $scope.part.turboModel);
-//         };
-//     });

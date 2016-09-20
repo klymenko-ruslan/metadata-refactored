@@ -2,7 +2,11 @@ package com.turbointernational.metadata.domain.other;
 
 import com.turbointernational.metadata.domain.AbstractDao;
 import java.util.List;
+
+import com.turbointernational.metadata.domain.part.types.Turbo;
 import org.springframework.stereotype.Repository;
+
+import javax.persistence.NoResultException;
 
 /**
  *
@@ -16,14 +20,20 @@ public class TurboTypeDao extends AbstractDao<TurboType> {
     }
     
     public List<TurboType> findTurboTypesByManufacturerId(Long manufacturerId) {
-        return em.createQuery(
-                "SELECT o\n"
-                + "FROM\n"
-                + "  TurboType o\n"
-                + "  JOIN o.manufacturer\n"
-                + "WHERE o.manufacturer.id = :manufacturerId\n"
-                + "ORDER BY o.name", TurboType.class
-        ).setParameter("manufacturerId", manufacturerId).getResultList();
+        return em.createNamedQuery("findTurboTypesByManufacturerId", TurboType.class)
+                .setParameter("manufacturerId", manufacturerId)
+                .getResultList();
+    }
+
+    public TurboType findTurboType(Long manufacturerId, String name) {
+        try {
+            return em.createNamedQuery("findTurboTypesByManufacturerIdAndName", TurboType.class)
+                    .setParameter("manufacturerId", manufacturerId)
+                    .setParameter("name", name)
+                    .getSingleResult();
+        } catch(NoResultException e) {
+            return null;
+        }
     }
 
 }
