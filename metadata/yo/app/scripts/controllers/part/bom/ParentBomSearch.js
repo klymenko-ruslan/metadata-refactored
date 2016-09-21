@@ -59,6 +59,10 @@ angular.module("ngMetaCrudApp")
           restService.status.bomRebuilding;
       };
 
+      $scope.isBttnUnpickAllDisabled = function() {
+        return pickedParts.length === 0;
+      };
+
       $scope.save = function() {
         var rows = _.map(pickedParts, function(p) {
           return {
@@ -136,6 +140,14 @@ angular.module("ngMetaCrudApp")
         delete p.extra;
         pickedParts.splice(idx, 1);
         delete pickedPartIds[partId];
+        $scope.pickedPartsTableParams.reload();
+      };
+
+      $scope.unpickAll = function() {
+        _.each(pickedParts, function(pp) {
+          delete pickedPartIds[pp.id];
+        });
+        pickedParts.splice(0, pickedParts.length);
         $scope.pickedPartsTableParams.reload();
       };
 
