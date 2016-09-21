@@ -11,6 +11,11 @@ angular.module("ngMetaCrudApp").controller("PartFormCtrl",
     $scope.turboTypes = [];
     $scope.turboModels = [];
 
+    $scope.turbo ={
+      tm: {},
+      tt: {}
+    }
+
     $scope.mpns = []; // manufacturer parts numbers
 
     $scope.filters = {
@@ -48,7 +53,7 @@ angular.module("ngMetaCrudApp").controller("PartFormCtrl",
     };
 
     $scope.onChangeTurboType = function() {
-      var ttId = $scope.$eval("part.turboModel.turboType.id");
+      var ttId = $scope.turbo.tt.id;
       if (ttId !== undefined) {
         restService.listTurboModelsForTurboTypeId(ttId).then(
           function success(turboModels) {
@@ -69,6 +74,8 @@ angular.module("ngMetaCrudApp").controller("PartFormCtrl",
     if (part !== null) {
       $scope.partId = part.id;
       $scope.part = part;
+      $scope.turbo.tm = part.turboModel;
+      $scope.turbo.tt = part.turboModel.turboType;
       $scope.mpns.push(newPn(0, part.manufacturerPartNumber));
       part.manufacturerPartNumber = null;
       $scope.oldPart = Restangular.copy(part);
@@ -119,6 +126,10 @@ angular.module("ngMetaCrudApp").controller("PartFormCtrl",
     $scope.save = function() {
       var url = "part";
       var partNumbers = _.map($scope.mpns, function(o) { return o.val; });
+
+      $scope.part.turboModel = $scope.turbo.tm;
+      $scope.part.turboModel.turboType = $scope.turbo.tt;
+
       if (!angular.isObject($scope.oldPart)) {
         restService.createPart($scope.part, partNumbers).then(
           function(response) {
@@ -152,6 +163,12 @@ angular.module("ngMetaCrudApp").controller("PartFormCtrl",
         size: "lg",
         controller: "CreateTurboTypeDlgCtrl",
         resolve: {
+          create: function() {
+            return true;
+          },
+          turbo: function() {
+            return $scope.turbo;
+          },
           part: function() {
             return $scope.part;
           },
@@ -163,10 +180,30 @@ angular.module("ngMetaCrudApp").controller("PartFormCtrl",
     };
 
     $scope.renameTurboType = function() {
+      $uibModal.open({
+        templateUrl: "/views/part/TurboTypeCreateDlg.html",
+        animation: false,
+        size: "lg",
+        controller: "CreateTurboTypeDlgCtrl",
+        resolve: {
+          create: function() {
+            return false;
+          },
+          turbo: function() {
+            return $scope.turbo;
+          },
+          part: function() {
+            return $scope.part;
+          },
+          turboTypes: function() {
+            return $scope.turboTypes;
+          }
+        }
+      });
     };
 
     $scope.deleteTurboType = function() {
-      var ttId = $scope.part.turboModel.turboType.id;
+      var ttId = $scope.turbo.tt.id;
       dialogs.confirm(
         "Delete Turbo Type?",
         "Do you want to delete this turbo type?").result.then(
@@ -176,7 +213,7 @@ angular.module("ngMetaCrudApp").controller("PartFormCtrl",
             function() {
               // Success
               gToast.open("Turbo type deleted.");
-              $scope.part.turboModel.turboType = {};
+              $scope.turbo.tt = {};
               var idx = _.findIndex($scope.turboTypes, function(tt) {
                 return tt.id === ttId;
               });
@@ -204,6 +241,12 @@ angular.module("ngMetaCrudApp").controller("PartFormCtrl",
         size: "lg",
         controller: "CreateTurboModelDlgCtrl",
         resolve: {
+          create: function() {
+            return true;
+          },
+          turbo: function() {
+            return $scope.turbo;
+          },
           part: function() {
             return $scope.part;
           },
@@ -215,10 +258,30 @@ angular.module("ngMetaCrudApp").controller("PartFormCtrl",
     };
 
     $scope.renameTurboModel = function() {
+      $uibModal.open({
+        templateUrl: "/views/part/TurboModelCreateDlg.html",
+        animation: false,
+        size: "lg",
+        controller: "CreateTurboModelDlgCtrl",
+        resolve: {
+          create: function() {
+            return false;
+          },
+          turbo: function() {
+            return $scope.turbo;
+          },
+          part: function() {
+            return $scope.part;
+          },
+          turboModels: function() {
+            return $scope.turboModels;
+          }
+        }
+      });
     };
 
     $scope.deleteTurboModel = function() {
-      var tmId = $scope.part.turboModel.id;
+      var tmId = $scope.turbo.tm.id;
       dialogs.confirm(
         "Delete Turbo Model?",
         "Do you want to delete this turbo model?").result.then(
@@ -228,7 +291,7 @@ angular.module("ngMetaCrudApp").controller("PartFormCtrl",
             function() {
               // Success
               gToast.open("Turbo model deleted.");
-              $scope.part.turboModel = null;
+              $scope.turbo.tm = {};
               var idx = _.findIndex($scope.turboModels, function(tm) {
                 return tm.id === tmId;
               });
@@ -251,16 +314,20 @@ angular.module("ngMetaCrudApp").controller("PartFormCtrl",
 
   }
 ])
-.controller("CreateTurboTypeDlgCtrl", ["$scope", "$log", "$uibModalInstance", "restService", "part", "turboTypes",
-  function($scope, $log, $uibModalInstance, restService, part, turboTypes) {
-
+.controller("CreateTurboTypeDlgCtrl", ["$scope", "$log", "$uibModalInstance", "restService",
+  "create", "turbo", "part", "turboTypes",
+  function($scope, $log, $uibModalInstance, restService, create, turbo, part, turboTypes) {
+    $scope.create = create;
     $scope.part = part;
     $scope.name = "";
+    if (!create) {
+      $scope.name = turbo.tt.name;
+    }
 
     $scope.onCreate = function() {
       restService.createTurboType($scope.part.manufacturer.id, $scope.name).then(
         function success(newTurboType) {
-          part.turboModel.turboType = newTurboType;
+          turbo.tt = newTurboType;
           var idx = _.sortedIndex(turboTypes, newTurboType, "name");
           turboTypes.splice(idx, 0, newTurboType);
           $uibModalInstance.close();
@@ -268,6 +335,24 @@ angular.module("ngMetaCrudApp").controller("PartFormCtrl",
         function failure(response) {
           $uibModalInstance.close();
           restService.error("Creatation of a new turbo model failed: " + $scope.name, response);
+        }
+      );
+    };
+
+    $scope.onRename = function() {
+      turbo.tt.name = $scope.name;
+      _.each(turboTypes, function(tt) {
+        if (tt.id === turbo.tt.id) {
+          tt.name = $scope.name;
+        };
+      });
+      restService.renameTurboType(turbo.tt).then(
+        function success(updatedTt) {
+          $uibModalInstance.close();
+        },
+        function failure(response) {
+          $uibModalInstance.close();
+          restService.error("Rename of the turbo model failed.", response);
         }
       );
     };
@@ -308,16 +393,20 @@ angular.module("ngMetaCrudApp").controller("PartFormCtrl",
     }
   };
 }])
-.controller("CreateTurboModelDlgCtrl", ["$scope", "$log", "$uibModalInstance", "restService", "part", "turboModels",
-  function($scope, $log, $uibModalInstance, restService, part, turboModels) {
-
+.controller("CreateTurboModelDlgCtrl", ["$scope", "$log", "$uibModalInstance", "restService",
+  "create", "turbo", "part", "turboModels",
+  function($scope, $log, $uibModalInstance, restService, create, turbo, part, turboModels) {
+    $scope.create = create;
     $scope.part = part;
     $scope.name = "";
+    if (!create) {
+      $scope.name = turbo.tm.name;
+    }
 
     $scope.onCreate = function() {
-      restService.createTurboModel($scope.part.turboModel.turboType.id, $scope.name).then(
+      restService.createTurboModel(turbo.tt.id, $scope.name).then(
         function success(newTurboModel) {
-          part.turboModel = newTurboModel;
+          turbo.tm = newTurboModel;
           var idx = _.sortedIndex(turboModels, newTurboModel, "name");
           turboModels.splice(idx, 0, newTurboModel);
           $uibModalInstance.close();
@@ -328,6 +417,24 @@ angular.module("ngMetaCrudApp").controller("PartFormCtrl",
         }
       );
     };
+
+    $scope.onRename = function() {
+      turbo.tm.name = $scope.name;
+      restService.renameTurboModel(turbo.tm).then(
+        function success(updatedTm) {
+          _.each(turboModels, function(tm) {
+            if (tm.id === turbo.tm.id) {
+              tm.name = $scope.name;
+            };
+          });
+          $uibModalInstance.close();
+        },
+        function failure(response) {
+          $uibModalInstance.close();
+          restService.error("Rename of the turbo model failed.", response);
+        }
+      );
+    }
 
     $scope.onClose = function() {
       $uibModalInstance.close();

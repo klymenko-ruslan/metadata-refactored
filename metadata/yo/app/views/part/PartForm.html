@@ -127,11 +127,11 @@
                   <i class="fa fa-wrench"></i>
                   Create
                 </button>
-                <button type="button" data-ng-click="renameTurboType()" class="btn btn-warning btn-xs" data-ng-disabled="!part.turboModel.turboType.id">
+                <button type="button" data-ng-click="renameTurboType()" class="btn btn-warning btn-xs" data-ng-disabled="!turbo.tt.id">
                   <i class="fa fa-pencil"></i>
                   Rename
                 </button>
-                <button type="button" data-ng-click="deleteTurboType()" class="btn btn-danger btn-xs" data-ng-disabled="part.id && !part.turboModel.turboType.id && part.turboModel.turboType.id == oldPart.turboModel.turboType.id">
+                <button type="button" data-ng-click="deleteTurboType()" class="btn btn-danger btn-xs" data-ng-disabled="(part.id && !turbo.tt.id && turbo.tt.id == oldPart.turboModel.turboType.id) || (!part.id && !turbo.tt.id)">
                   <i class="fa fa-trash-o"></i>
                   Delete
                 </button>
@@ -139,7 +139,7 @@
             </div>
             <input data-ng-model="filters.turboType" data-ng-init="turboTypeFilter = ''" class="form-control" placeholder="Turbo type filter..."/>
             <select name="turboType" required
-                    data-ng-model="part.turboModel.turboType"
+                    data-ng-model="turbo.tt"
                     data-ng-options="tt as tt.name for tt in turboTypes | filter:{name:filters.turboType} track by tt.id"
                     data-ng-disabled="turboTypes.length == 0"
                     data-ng-change="onChangeTurboType()"
@@ -155,15 +155,15 @@
             <div>
               <label class="control-label">Turbo Model</label>
               <div class="pull-right">
-                <button type="button" data-ng-click="createTurboModel()" class="btn btn-success btn-xs" data-ng-disabled="!part.turboModel.turboType.id">
+                <button type="button" data-ng-click="createTurboModel()" class="btn btn-success btn-xs" data-ng-disabled="!turbo.tt.id">
                   <i class="fa fa-wrench"></i>
                   Create
                 </button>
-                <button type="button" data-ng-click="renameTurboModel()" class="btn btn-warning btn-xs" data-ng-disabled="!part.turboModel.id">
+                <button type="button" data-ng-click="renameTurboModel()" class="btn btn-warning btn-xs" data-ng-disabled="!turbo.tm.id">
                   <i class="fa fa-pencil"></i>
                   Rename
                 </button>
-                <button type="button" data-ng-click="deleteTurboModel()" class="btn btn-danger btn-xs" data-ng-disabled="(part.id && !part.turboModel.id && part.turboModel.id != oldPart.turboModel.id) || (!part.id && !part.turboModel.id)">
+                <button type="button" data-ng-click="deleteTurboModel()" class="btn btn-danger btn-xs" data-ng-disabled="(part.id && !turbo.tm.id && turbo.tm.id != oldPart.turboModel.id) || (!part.id && !turbo.tm.id)">
                   <i class="fa fa-trash-o"></i>
                   Delete
                 </button>
@@ -171,7 +171,7 @@
             </div>
             <input data-ng-model="filters.turboModel" data-ng-init="turboModelFilter = ''" class="form-control" placeholder="Turbo model filter..."/>
             <select name="turboModel" required
-                    data-ng-model="part.turboModel"
+                    data-ng-model="turbo.tm"
                     data-ng-options="tm as tm.name for tm in turboModels | filter:{name:filters.turboModel} track by tm.id"
                     data-ng-disabled="turboModels.length == 0"
                     size="6" class="select-large form-control">
