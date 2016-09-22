@@ -14,7 +14,7 @@ angular.module('ngMetaCrudApp')
             function(user) {
                 $log.log("User Retrieved", user);
               User.user = user;
-              
+
               var roles = _.chain(user.groups)
                       .map(function(group) {
                           return group.roles;
@@ -24,17 +24,17 @@ angular.module('ngMetaCrudApp')
                           return role.name;
                         })
                       .value();
-              
-              $log.log("Set Roles", roles);
-              User.roles = roles;
+
+              User.roles = _.sortBy(roles);
+              $log.log("Set Roles", User.roles);
             },
             function() {
 //              alert("Could not fetch your account info.");
         });
       };
-      
+
       User.hasRole = function(role) {
-          return _.contains(User.roles, role);
+          return _.indexOf(User.roles, role, true) !== -1;
       }
 
       User.logout = function() {

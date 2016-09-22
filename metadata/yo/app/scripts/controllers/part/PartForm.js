@@ -1,9 +1,9 @@
 "use strict";
 
 angular.module("ngMetaCrudApp").controller("PartFormCtrl",
-  ["$scope", "$location", "$log", "$uibModal", "dialogs", "gToast", "restService", "Restangular",
+  ["$scope", "$location", "$log", "$uibModal", "dialogs", "gToast", "restService", "Restangular", "User",
    "part", "partType", "manufacturers",
-  function($scope, $location, $log, $uibModal, dialogs, gToast, restService, Restangular,
+  function($scope, $location, $log, $uibModal, dialogs, gToast, restService, Restangular, User,
     part, partType, manufacturers)
   {
 
@@ -122,6 +122,14 @@ angular.module("ngMetaCrudApp").controller("PartFormCtrl",
         }
       });
     });
+
+    $scope.isManufacturerEnabled = function() {
+      return User.hasRole("ROLE_ALTER_PART_MANUFACTURER");
+    };
+
+    $scope.isPnEnabled= function() {
+      return User.hasRole("ROLE_ALTER_PART_NUMBER");
+    };
 
     $scope.save = function() {
       var url = "part";
