@@ -53,6 +53,9 @@ angular.module("ngMetaCrudApp").controller("PartFormCtrl",
     };
 
     $scope.onChangeTurboType = function() {
+      if ($scope.part.partType.magentoAttributeSet !== "Turbo") {
+        return;
+      }
       var ttId = $scope.turbo.tt.id;
       if (ttId !== undefined) {
         restService.listTurboModelsForTurboTypeId(ttId).then(
@@ -74,8 +77,10 @@ angular.module("ngMetaCrudApp").controller("PartFormCtrl",
     if (part !== null) {
       $scope.partId = part.id;
       $scope.part = part;
-      $scope.turbo.tm = part.turboModel;
-      $scope.turbo.tt = part.turboModel.turboType;
+      if ($scope.part.partType.magentoAttributeSet === "Turbo") {
+        $scope.turbo.tm = part.turboModel;
+        $scope.turbo.tt = part.turboModel.turboType;
+      }
       $scope.mpns.push(newPn(0, part.manufacturerPartNumber));
       part.manufacturerPartNumber = null;
       $scope.oldPart = Restangular.copy(part);
@@ -135,8 +140,10 @@ angular.module("ngMetaCrudApp").controller("PartFormCtrl",
       var url = "part";
       var partNumbers = _.map($scope.mpns, function(o) { return o.val; });
 
-      $scope.part.turboModel = $scope.turbo.tm;
-      $scope.part.turboModel.turboType = $scope.turbo.tt;
+      if ($scope.part.partType.magentoAttributeSet === "Turbo") {
+        $scope.part.turboModel = $scope.turbo.tm;
+        $scope.part.turboModel.turboType = $scope.turbo.tt;
+      }
 
       if (!angular.isObject($scope.oldPart)) {
         restService.createPart($scope.part, partNumbers).then(
