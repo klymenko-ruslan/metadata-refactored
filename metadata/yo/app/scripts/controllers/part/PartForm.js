@@ -12,8 +12,8 @@ angular.module("ngMetaCrudApp").controller("PartFormCtrl",
     $scope.turboModels = [];
 
     $scope.turbo ={
-      tm: {},
-      tt: {}
+      tm: null,
+      tt: null
     }
 
     $scope.mpns = []; // manufacturer parts numbers
@@ -291,7 +291,7 @@ angular.module("ngMetaCrudApp").controller("PartFormCtrl",
             function() {
               // Success
               gToast.open("Turbo model deleted.");
-              $scope.turbo.tm = {};
+              $scope.turbo.tm = null;
               var idx = _.findIndex($scope.turboModels, function(tm) {
                 return tm.id === tmId;
               });
@@ -334,7 +334,7 @@ angular.module("ngMetaCrudApp").controller("PartFormCtrl",
         },
         function failure(response) {
           $uibModalInstance.close();
-          restService.error("Creatation of a new turbo model failed: " + $scope.name, response);
+          restService.error("Creation of a new turbo model failed: " + $scope.name, response);
         }
       );
     };

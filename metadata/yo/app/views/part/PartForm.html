@@ -65,13 +65,13 @@
 
       <div class="form-group">
         <label for="manufacturer">Manufacturer</label>
-        <select id="manufacturer" class="form-control"
+        <select id="manufacturer" name="manufacturer" class="form-control"
                 data-ng-model="part.manufacturer"
                 data-ng-options="mn as mn.name for mn in manufacturers track by mn.id"
                 data-ng-change="onChangeManufacturer()"
                 required>
         </select>
-        <div data-ng-show="partForm.manufacturer.$invalid" class="alert alert-danger" role="alert">
+        <div data-ng-show="partForm.manufacturer.$dirty && partForm.manufacturer.$invalid" class="alert alert-danger" role="alert">
           <span data-ng-show="partForm.manufacturer.$error.required">Required!</span>
           <span data-ng-show="partForm.manufacturer.$error.nonUniquePartNumber">Pair (Manufacturer, P/N) is not unique!</span>
         </div>
@@ -118,8 +118,9 @@
           <picker item-type="type/cooltype" data-ng-model="part.coolType"></picker>
         </div>
 
-        <div data-ng-switch-when="Turbo" class="row">
-          <div data-ng-disabled="turboTypes.length == 0" class="col-xs-6 form-group">
+        <div class="row">
+
+          <div class="col-xs-6 form-group">
             <div>
               <label class="control-label">Turbo Type</label>
               <div class="pull-right">
@@ -138,17 +139,18 @@
               </div>
             </div>
             <input data-ng-model="filters.turboType" data-ng-init="turboTypeFilter = ''" class="form-control" placeholder="Turbo type filter..."/>
-            <select name="turboType" required
+            <select id="turboType" name="turboType" class="form-control"
                     data-ng-model="turbo.tt"
                     data-ng-options="tt as tt.name for tt in turboTypes | filter:{name:filters.turboType} track by tt.id"
-                    data-ng-disabled="turboTypes.length == 0"
                     data-ng-change="onChangeTurboType()"
-                    size="6" class="select-large required form-control">
+                    size="6"
+                    required>
             </select>
-            <div data-ng-show="partForm.$dirty && partForm.turboType.$invalid" class="alert alert-danger" role="alert">
+            <div data-ng-show="partForm.turboType.$dirty && partForm.turboType.$invalid" class="alert alert-danger" role="alert">
               <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
               <span data-ng-show="partForm.turboType.$error.required">Required!</span>
             </div>
+
           </div>
 
           <div class="col-xs-6">
@@ -170,13 +172,13 @@
               </div>
             </div>
             <input data-ng-model="filters.turboModel" data-ng-init="turboModelFilter = ''" class="form-control" placeholder="Turbo model filter..."/>
-            <select name="turboModel" required
+            <select name="turboModel"
                     data-ng-model="turbo.tm"
                     data-ng-options="tm as tm.name for tm in turboModels | filter:{name:filters.turboModel} track by tm.id"
-                    data-ng-disabled="turboModels.length == 0"
-                    size="6" class="select-large form-control">
+                    size="6" class="select-large form-control"
+                    required>
             </select>
-            <div data-ng-show="partForm.$dirty && partForm.turboModel.$invalid" class="alert alert-danger" role="alert">
+            <div data-ng-show="partForm.turboModel.$dirty && partForm.turboModel.$invalid" class="alert alert-danger" role="alert">
               <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
               <span data-ng-show="partForm.turboModel.$error.required">Required!</span>
             </div>
