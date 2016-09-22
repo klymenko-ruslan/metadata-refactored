@@ -397,6 +397,7 @@ angular.module("ngMetaCrudApp").controller("PartFormCtrl",
   "create", "turbo", "part", "turboModels",
   function($scope, $log, $uibModalInstance, restService, create, turbo, part, turboModels) {
     $scope.create = create;
+    $scope.turbo = turbo;
     $scope.part = part;
     $scope.name = "";
     if (!create) {
