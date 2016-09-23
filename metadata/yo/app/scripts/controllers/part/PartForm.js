@@ -30,6 +30,10 @@ angular.module("ngMetaCrudApp").controller("PartFormCtrl",
       };
     };
 
+    $scope.isEditMode = function() {
+      return part !== null;
+    };
+
     $scope.onViewPart = function() {
       $location.path("/part/" + $scope.partId);
     };
@@ -74,7 +78,7 @@ angular.module("ngMetaCrudApp").controller("PartFormCtrl",
     };
 
     // Setup the create/update workflow
-    if (part !== null) {
+    if ($scope.isEditMode()) {
       $scope.partId = part.id;
       $scope.part = part;
       if ($scope.part.partType.magentoAttributeSet === "Turbo") {
@@ -129,11 +133,11 @@ angular.module("ngMetaCrudApp").controller("PartFormCtrl",
     });
 
     $scope.isManufacturerEnabled = function() {
-      return User.hasRole("ROLE_ALTER_PART_MANUFACTURER");
+      return !$scope.isEditMode() || User.hasRole("ROLE_ALTER_PART_MANUFACTURER");
     };
 
-    $scope.isPnEnabled= function() {
-      return User.hasRole("ROLE_ALTER_PART_NUMBER");
+    $scope.isPnEnabled = function() {
+      return !$scope.isEditMode() || User.hasRole("ROLE_ALTER_PART_NUMBER");
     };
 
     $scope.save = function() {

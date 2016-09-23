@@ -3,7 +3,6 @@ package com.turbointernational.metadata.web;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.domain.changelog.ChangelogDao;
-import com.turbointernational.metadata.domain.criticaldimension.CriticalDimension;
 import com.turbointernational.metadata.domain.other.TurboType;
 import com.turbointernational.metadata.domain.other.TurboTypeDao;
 import com.turbointernational.metadata.domain.part.*;
@@ -30,6 +29,7 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -40,8 +40,10 @@ import java.util.*;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
 import static com.turbointernational.metadata.services.ImageService.PART_CRIT_DIM_LEGEND_HEIGHT;
 import static com.turbointernational.metadata.services.ImageService.PART_CRIT_DIM_LEGEND_WIDTH;
+import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
+import static javax.servlet.http.HttpServletResponse.SC_FORBIDDEN;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 @RequestMapping(value = "/metadata")
 @RestController
@@ -78,29 +80,23 @@ public class PartController {
 
     @Secured("ROLE_READ")
     @JsonView(View.Detail.class)
-    @RequestMapping(value = "/part/{id}", method = RequestMethod.GET,
+    @RequestMapping(value = "/part/{id}", method = GET,
             produces = APPLICATION_JSON_VALUE)
     public Part getPart(@PathVariable("id") Long id) {
         Part part = partRepository.findOne(id);
-//        Interchange interchange = part.getInterchange();
-//        if (interchange == null) {
-//            System.out.println("Interchange is null.");
-//        } else {
-//            System.out.println("Interchange ID: " + interchange.getId());
-//        }
         return part;
     }
 
     @Secured("ROLE_READ")
     @JsonView(View.Detail.class)
-    @RequestMapping(value = "/part/numbers", method = RequestMethod.GET,
+    @RequestMapping(value = "/part/numbers", method = GET,
             produces = APPLICATION_JSON_VALUE)
     public Part findByPartNumber(@RequestParam(name = "mid") Long manufacturerId,
                                  @RequestParam(name = "pn") String partNumber) {
         return partDao.findByPartNumberAndManufacturer(manufacturerId, partNumber);
     }
 
-    @RequestMapping(value="/part/{id}/ancestors", method = RequestMethod.GET)
+    @RequestMapping(value="/part/{id}/ancestors", method = GET)
     @Secured("ROLE_READ")
     public ResponseEntity<String> ancestors(@PathVariable("id") long partId) throws Exception {
         
@@ -284,17 +280,29 @@ public class PartController {
     @Transactional
     @Secured("ROLE_ALTER_PART")
     @JsonView(View.Detail.class)
-    @RequestMapping(value = "/part/{id}", method = RequestMethod.PUT,
+    @RequestMapping(value = "/part/{id}", method = PUT,
             produces = APPLICATION_JSON_VALUE,
             consumes = APPLICATION_JSON_VALUE)
-    public Part updatePart(HttpServletResponse response, @RequestBody Part part, @PathVariable("id") Long id) throws IOException {
+    public Part updatePart(HttpServletRequest request, HttpServletResponse response,
+                           @RequestBody Part part, @PathVariable("id") Long id) throws IOException {
         Errors errors = criticalDimensionService.validateCriticalDimensions(part);
         if (errors.hasErrors()) {
             log.error("Validation critical dimensions for the part (ID: {}) failed. Details: {}", part.getId(), errors);
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, errors.toString());
+            response.sendError(SC_BAD_REQUEST, errors.toString());
             return null;
         }
-        String originalPartJson = partDao.findOne(id).toJson(criticalDimensionService.getCriticalDimensionForPartType(part.getPartType().getId()));
+        Part originPart = partDao.findOne(id);
+        if (originPart.getManufacturer().getId() != part.getManufacturer().getId() &&
+                !request.isUserInRole("ROLE_ALTER_PART_MANUFACTURER")) {
+            response.sendError(SC_FORBIDDEN, "You have no permission to modify a manufacturer.");
+            return null;
+        }
+        if (!originPart.getManufacturerPartNumber().equals(part.getManufacturerPartNumber()) &&
+                !request.isUserInRole("ROLE_ALTER_PART_NUMBER")) {
+            response.sendError(SC_FORBIDDEN, "You have no permission to modify a manufacturer.");
+            return null;
+        }
+        String originalPartJson = originPart.toJson(criticalDimensionService.getCriticalDimensionForPartType(part.getPartType().getId()));
         Part retVal = partDao.merge(part);
         // Update the changelog
         changelogDao.log("Updated part", "{original: " + originalPartJson + ",updated: " + part.toJson(criticalDimensionService.getCriticalDimensionForPartType(part.getPartType().getId())) + "}");
@@ -302,7 +310,7 @@ public class PartController {
     }
 
     @Transactional
-    @RequestMapping(value = "/part/{id}", method = RequestMethod.DELETE,
+    @RequestMapping(value = "/part/{id}", method = DELETE,
             produces = APPLICATION_JSON_VALUE)
     @Secured("ROLE_DELETE_PART")
     public void deletePart(@PathVariable("id") Long id) {
@@ -384,7 +392,7 @@ public class PartController {
     }
     
     @Transactional
-    @RequestMapping(value="/part/{partId}/turboType/{turboTypeId}", method=RequestMethod.DELETE)
+    @RequestMapping(value="/part/{partId}/turboType/{turboTypeId}", method= DELETE)
     @Secured("ROLE_ALTER_PART")
     public void deleteTurboType(@PathVariable("partId") long partId, @PathVariable("turboTypeId") long turboTypeId) {
         Part part = partDao.findOne(partId);
