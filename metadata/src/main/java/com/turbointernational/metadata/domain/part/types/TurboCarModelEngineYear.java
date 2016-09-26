@@ -5,6 +5,8 @@ import com.turbointernational.metadata.domain.car.CarModelEngineYear;
 import javax.persistence.*;
 import java.io.Serializable;
 
+import static javax.persistence.FetchType.LAZY;
+
 @Cacheable
 @Entity
 @Table(name="turbo_car_model_engine_year")
@@ -25,12 +27,12 @@ public class TurboCarModelEngineYear implements Serializable {
     @Id
 //    @OneToOne(fetch = FetchType.LAZY)
 //    @JoinColumn(name="part_id", nullable = false)
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name="part_id", nullable = false)
     private Turbo turbo;
 
     @Id
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name="car_model_engine_year_id", nullable = false)
     private CarModelEngineYear carModelEngineYear;
 

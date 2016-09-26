@@ -1,0 +1,125 @@
+<metanav />
+
+<button type="button" data-ng-disabled="pickedParts.length === 0 || pickedApps.length === 0"
+    data-ng-click="doIt()" class="btn btn-success" authorize="ROLE_APPLICATION_CRUD">
+   <i class="fa fa-wrench"></i>
+   Do it!
+</button>
+
+<h2>Associate Turbos and Applications</h2>
+
+<div class="row" data-ng-show="pickedParts.length > 0 || pickedApps.length > 0" style="min-height:15em;">
+  <div class="col-xs-12 col-md-6">
+    <div>
+      <button type="button" title="Unpick all" class="btn btn-link btn-sm btn-h4" data-ng-click="unpickAllParts()" data-ng-show="pickedParts.length">
+        <i class="fa fa-times"></i>
+      </button>
+      <h4 class="text-nowrap pull-left">Picked Turbos</h4>
+    </div>
+    <table data-ng-table="pickedPartsTableParams" class="table table-bordered table-striped table-hover table-responsive">
+    <tr data-ng-repeat="rec in $data">
+      <td title="'Part Type'">{{rec.partType.name}}</td>
+      <td title="'Manufacturer'">{{rec.manufacturer.name}}</td>
+      <td title="'Part #'">{{rec.manufacturerPartNumber}}</td>
+      <td class="actions text-center" title="'Actions'">
+        <button type="button" class="btn btn-danger btn-xs" data-ng-click="unpickPart(rec.id)">
+          <i class="fa fa-times"></i>
+          Unpick
+        </button>
+      </td>
+    </tr>
+    <tr data-ng-hide="$data.length > 0">
+      <td colspan="4">No data.</td>
+    </tr>
+    </table>
+  </div>
+  <div class="col-xs-12 col-md-6">
+    <div>
+      <button type="button" title="Unpick all" class="btn btn-link btn-sm btn-h4" data-ng-click="unpickAllApps()" data-ng-show="pickedApps.length">
+        <i class="fa fa-times"></i>
+      </button>
+      <h4 class="text-nowrap pull-left">Picked Applications</h4>
+    </div>
+    <table data-ng-table="pickedAppsTableParams" class="table table-bordered table-striped table-hover table-responsive">
+    <tr data-ng-repeat="rec in $data">
+      <td title="'Year'">{{rec.year.name}}</td>
+      <td title="'Make'">{{rec.model.make.name}}</td>
+      <td title="'Model'">{{rec.model.name}}</td>
+      <td title="'Engine'">{{rec.engine.engineSize}}</td>
+      <td title="'Fuel Type'">{{rec.engine.fuelType.name}}</td>
+      <td class="actions text-center" title="'Actions'">
+        <button type="button" class="btn btn-danger btn-xs" data-ng-click="unpickApp(rec.id)">
+          <i class="fa fa-times"></i>
+          Unpick
+        </button>
+      </td>
+    </tr>
+    <tr data-ng-hide="$data.length > 0">
+      <td colspan="6">No data.</td>
+    </tr>
+    </table>
+  </div>
+</div>
+
+<hr data-ng-show="pickedParts.length > 0 || pickedApps.length > 0" style="padding-bottom:1em;" />
+
+<div class="row">
+
+  <div class="col-xs-12">
+    <ul id="atTabs" class="nav nav-tabs" role="tablist">
+      <li role="presentation">
+        <a href="#parts" aria-controls="parts" role="tab" data-toggle="tab">
+          <i class="fa fa-bars"></i>
+          Turbo Finder
+        </a>
+      </li>
+      <li role="presentation">
+        <a href="#apps" aria-controls="apps" role="tab" data-toggle="tab">
+          <i class="fa fa-cubes"></i>
+          Application Finder
+        </a>
+      </li>
+    </ul>
+
+    <div class="tab-content">
+      <div id="parts" role="tabpanel" class="tab-pane fade tab-part-detail">
+        <div class="row">
+          <div class="col-xs-12">
+            <part-search>
+              <a authorize="ROLE_READ" href="/part/{{$part._source.id}}" class="btn btn-primary btn-xs">
+                <i class="fa fa-eye"></i> View
+              </a>
+              <button class="btn btn-success btn-xs" data-ng-click="pickPart($part._source)" data-ng-disabled="pickedPartsIds[$part._source.id]">
+                <i class="fa fa-bullseye"></i> Pick
+              </button>
+            </part-search>
+          </div>
+        </div>
+      </div>
+      <div id="apps" role="tabpanel" class="tab-pane fade tab-part-detail">
+        <div class="row">
+          <div class="col-xs-12">
+            <cmey-search>
+              <a class="btn btn-primary btn-xs" data-ng-href="/application/carmodelengineyear/{{rec._source.id}}">
+                <i class="fa fa-eye"></i> View
+              </a>
+              <button class="btn btn-success btn-xs" data-ng-click="pickApp(rec._source)" data-ng-disabled="pickedAppsIds[rec._source.id]">
+                <i class="fa fa-bullseye"></i> Pick
+              </button>
+            </cmey-search>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+  $('#atTabs a').click(function (e) {
+    e.preventDefault();
+    $(this).tab('show');
+  });
+  $('#atTabs a:first').tab('show');
+</script>

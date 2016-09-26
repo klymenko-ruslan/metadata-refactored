@@ -135,6 +135,40 @@ h1:first-of-type {
   border-bottom-color: transparent;
 }
 
+#atTabs > li {
+  float: left;
+  margin-bottom: -1px;
+  background-color: transparent;
+}
+
+#atTabs > li > a {
+  margin-right: 2px;
+  line-height: 1.42857143;
+  border: 1px solid transparent;
+  border-radius: 4px 4px 0 0;
+  background-color: #859994; /*#555E7B;*/
+  color: #fff;
+  font-size: 16px;
+  font-weight: normal;
+}
+
+#atTabs > li > a:hover {
+  text-decoration: underline;
+  background-color: #000;
+  color: #fff;
+}
+
+#atTabs > li.active > a,
+#atTabs > li.active > a:hover,
+#atTabs > li.active > a:focus {
+  text-decoration: underline;
+  color: #333;
+  cursor: default;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-bottom-color: transparent;
+}
+
 .tab-part-detail {
   padding: 20px 10px;
   background-color: #FFF;

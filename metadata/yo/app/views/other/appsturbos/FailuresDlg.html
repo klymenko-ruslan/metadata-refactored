@@ -1,0 +1,64 @@
+<div class="modal-header">
+  <h3 class="modal-title">Result of generation of associations</h3>
+</div>
+<div class="modal-body">
+  <div class="row">
+    <div class="col-xs-12">
+      <p>
+        Successfully generated {{response.generated | number}} associations.
+      </p>
+      <p>
+        But Following errors were encountered while processing:
+      </p>
+      <table data-ng-table="failuresTableParams" class="table table-bordered table-striped table-hover table-responsive">
+        <tr data-ng-repeat="failure in $data">
+          <td title="'Part Type'">
+            {{failure.partType}}
+          </td>
+          <td title="'Manufacturer'">
+            {{failure.manufacturer}}
+          </td>
+          <td title="'Part #'" class="text-center text-nowrap">
+            {{failure.manufacturerPartNumber}}
+          </td>
+          <td title="'Year'">
+            {{failure.year}}
+          </td>
+          <td title="'Make'">
+            {{failure.make}}
+          </td>
+          <td title="'Model'">
+            {{failure.model}}
+          </td>
+          <td title="'Engine'">
+            {{failure.engine}}
+          </td>
+          <td title="'Fuel Type'">
+            {{failure.fuelType}}
+          </td>
+          <td title="'Error Message'">
+            {{failure.errorMessage}}
+          </td>
+          <td title="'Actions'" class="actions text-center">
+            <button data-ng-click="showPart(failure.partId)"
+                    authorize="ROLE_READ" class="btn btn-primary btn-xs">
+              <i class="fa fa-eye"></i> View Part
+            </button>
+            <button data-ng-click="showApp(failure.appId)"
+                    authorize="ROLE_READ" class="btn btn-primary btn-xs">
+              <i class="fa fa-eye"></i> View Application
+            </button>
+          </td>
+        </tr>
+
+        <tr data-ng-hide="$data.length > 0">
+          <td colspan="10">No errors to display.</td>
+        </tr>
+
+      </table>
+    </div>
+  </div>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-default" ng-click="onClose()">Close</button>
+</div>

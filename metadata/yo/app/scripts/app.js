@@ -344,6 +344,17 @@ angular.module("ngMetaCrudApp", ["ngRoute", "ngTable", "ui.bootstrap",
       controller: "TurboModelsCtrl"
     });
 
+    // Applications and Turbos
+    $routeProvider.when("/other/appsturbos", {
+      templateUrl: "views/other/appsturbos/main.html",
+      controller: "AppsTurbosCtrl",
+      resolve: {
+        partTypes: ["restService", function(restService) {
+          return restService.listPartTypes();
+        }]
+      }
+    });
+
     // MAS90
     $routeProvider.when("/mas90/sync/status", {
       templateUrl: "views/mas90/sync/status.html",

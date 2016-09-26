@@ -229,6 +229,6 @@ angular.module("ngMetaCrudApp")
       $scope.showPart = function(partId) {
         $scope.onClose();
         $location.path("/part/" + partId);
-      }
+      };
 
   }]);
