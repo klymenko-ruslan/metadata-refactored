@@ -7,47 +7,43 @@
 
           <div class="form-group">
             <label for="partApplication" class="sr-only control-label">Application</label>
-            <input class="form-control" id="partApplication" type="text" data-ng-model="search.cmey" placeholder="Application..."/>
+            <input id="partApplication" type="text" placeholder="Application..." data-ng-model="fltrCmey.cmey" class="form-control"/>
           </div>
 
-          <cmey-search-facets search="search" results="searchResults" />
-
-<!--
           <div class="form-group">
             <label for="fltrCmeyYear">Year</label>
-            <select id="fltrCmeyYear" name="fltrCmey.year" class="form-control input-sm" data-ng-options="itm.val as itm.name + ' (' + itm.count + ')' for itm in stateItems | orderBy: 'name'" data-ng-model="searchInactive">
+            <select id="fltrCmeyYear" data-ng-model="fltrCmey.year" class="form-control input-sm" data-ng-options="itm.key as itm.key + ' (' + itm.doc_count + ')' for itm in cmeySearchResults.aggregations['Year'].buckets | orderBy: 'key'">
               <option></option>
             </select>
           </div>
 
           <div class="form-group">
             <label for="fltrCmeyMake">Make</label>
-            <select id="fltrCmeyMake" name="fltrCmey.make" class="form-control input-sm" data-ng-options="itm.val as itm.name + ' (' + itm.count + ')' for itm in stateItems | orderBy: 'name'" data-ng-model="searchInactive">
+            <select id="fltrCmeyMake" data-ng-model="fltrCmey.make" class="form-control input-sm" data-ng-options="itm.key as itm.key + ' (' + itm.doc_count + ')' for itm in cmeySearchResults.aggregations['Make'].buckets | orderBy: 'key'">
               <option></option>
             </select>
           </div>
 
           <div class="form-group">
             <label for="fltrCmeyModel">Model</label>
-            <select id="fltrCmeyModel" name="fltrCmey.model" class="form-control input-sm" data-ng-options="itm.val as itm.name + ' (' + itm.count + ')' for itm in stateItems | orderBy: 'name'" data-ng-model="searchInactive">
+            <select id="fltrCmeyModel" data-ng-model="fltrCmey.model" class="form-control input-sm" data-ng-options="itm.key as itm.key + ' (' + itm.doc_count + ')' for itm in cmeySearchResults.aggregations['Model'].buckets | orderBy: 'key'">
               <option></option>
             </select>
           </div>
 
           <div class="form-group">
             <label for="fltrCmeyEngine">Engine</label>
-            <select id="fltrCmeyEngine" name="fltrCmey.engine" class="form-control input-sm" data-ng-options="itm.val as itm.name + ' (' + itm.count + ')' for itm in stateItems | orderBy: 'name'" data-ng-model="searchInactive">
+            <select id="fltrCmeyEngine" data-ng-model="fltrCmey.engine" class="form-control input-sm" data-ng-options="itm.key as itm.key + ' (' + itm.doc_count + ')' for itm in cmeySearchResults.aggregations['Engine'].buckets | orderBy: 'key'">
               <option></option>
             </select>
           </div>
 
           <div class="form-group">
             <label for="fltrCmeyFueltype">Fuel Type</label>
-            <select id="fltrCmeyFueltype" name="fltrCmey.fueltype" class="form-control input-sm" data-ng-options="itm.val as itm.name + ' (' + itm.count + ')' for itm in stateItems | orderBy: 'name'" data-ng-model="searchInactive">
+            <select id="fltrCmeyFueltype" data-ng-model="fltrCmey.fueltype" class="form-control input-sm" data-ng-options="itm.key as itm.key + ' (' + itm.doc_count + ')' for itm in cmeySearchResults.aggregations['Fuel Type'].buckets | orderBy: 'key'">
               <option></option>
             </select>
           </div>
--->
 
         </form>
     </div>

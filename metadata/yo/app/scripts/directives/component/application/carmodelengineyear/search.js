@@ -13,6 +13,7 @@ angular.module("ngMetaCrudApp").directive("cmeySearch", ["$log", "restService", 
                     function ($log, $q, dialogs, gToast, $scope, ngTableParams) {
 
         $scope.fltrCmey = {
+          cmey: null,
           year: null,
           make: null,
           model: null,
@@ -20,7 +21,7 @@ angular.module("ngMetaCrudApp").directive("cmeySearch", ["$log", "restService", 
           fueltype: null
         };
         // Latest Results
-        $scope.searchResults = null;
+        $scope.cmeySearchResults = null;
         // Applications Table
         $scope.cmeyTableParams = new ngTableParams(
           {
@@ -31,32 +32,23 @@ angular.module("ngMetaCrudApp").directive("cmeySearch", ["$log", "restService", 
           {
             getData: function ($defer, params) {
               // Update the pagination info
-              $scope.search.count = params.count();
-              $scope.search.page = params.page();
-              $scope.search.sorting = params.sorting();
               var offset = params.count() * (params.page() - 1);
               var limit = params.count();
-              for (var sortProperty in $scope.search.sorting) break;
+              var sortProperty, sortOrder;
+              for (sortProperty in params.sorting()) break;
               if (sortProperty) {
-                var sortOrder = $scope.search.sorting[sortProperty];
+                sortOrder = params.sorting()[sortProperty];
               }
-              /*
-              restService.filterCarModelEngineYears($scope.search.cmey,
-                  $scope.search.aggregations["Year"], $scope.search.aggregations["Make"],
-                  $scope.search.aggregations["Model"], $scope.search.aggregations["Engine"],
-                  $scope.search.aggregations["Fuel Type"],
-                  sortProperty, sortOrder, offset, limit).then(
-              */
-              restService.filterCarModelEngineYears($scope.search.cmey,
-                  $scope.search.aggregations["Year"], $scope.search.aggregations["Make"],
-                  $scope.search.aggregations["Model"], $scope.search.aggregations["Engine"],
-                  $scope.search.aggregations["Fuel Type"],
+              restService.filterCarModelEngineYears($scope.fltrCmey.cmey,
+                  $scope.fltrCmey.year, $scope.fltrCmey.make,
+                  $scope.fltrCmey.model, $scope.fltrCmey.engine,
+                  $scope.fltrCmey.fueltype,
                   sortProperty, sortOrder, offset, limit).then(
                 function (filtered) {
-                  $scope.searchResults = filtered;
+                  $scope.cmeySearchResults = filtered;
                   // Update the total and slice the result
-                  $defer.resolve($scope.searchResults.hits.hits);
-                  params.total($scope.searchResults.hits.total);
+                  $defer.resolve($scope.cmeySearchResults.hits.hits);
+                  params.total($scope.cmeySearchResults.hits.total);
                 },
                 function (errorResponse) {
                   $log.log("Couldn't search for 'carmodelengineyear'.");
@@ -66,21 +58,18 @@ angular.module("ngMetaCrudApp").directive("cmeySearch", ["$log", "restService", 
             }
           }
         );
-        // Query Parameters
-        $scope.search = {
-          cmey: "",
-          aggregations: {},
-          sort: {}
-        };
+
         $scope.clear = function() {
-          $scope.search = {
-            cmey: "",
-            aggregations: {},
-            sort: {}
-          };
+          $scope.fltrCmey.cmey = null;
+          $scope.fltrCmey.year = null;
+          $scope.fltrCmey.make = null;
+          $scope.fltrCmey.model = null;
+          $scope.fltrCmey.engine = null;
+          $scope.fltrCmey.fueltype = null;
         };
+
         // Handle updating search results
-        $scope.$watch("[search.cmey, search.aggregations]",
+        $scope.$watch("[fltrCmey]",
           function (newVal, oldVal) {
             // Debounce
             if (angular.equals(newVal, oldVal, true)) {
