@@ -10,7 +10,44 @@
             <input class="form-control" id="partApplication" type="text" data-ng-model="search.cmey" placeholder="Application..."/>
           </div>
 
-          <cmey-search-facets search="search" results="searchResults"/>
+          <cmey-search-facets search="search" results="searchResults" />
+
+<!--
+          <div class="form-group">
+            <label for="fltrCmeyYear">Year</label>
+            <select id="fltrCmeyYear" name="fltrCmey.year" class="form-control input-sm" data-ng-options="itm.val as itm.name + ' (' + itm.count + ')' for itm in stateItems | orderBy: 'name'" data-ng-model="searchInactive">
+              <option></option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="fltrCmeyMake">Make</label>
+            <select id="fltrCmeyMake" name="fltrCmey.make" class="form-control input-sm" data-ng-options="itm.val as itm.name + ' (' + itm.count + ')' for itm in stateItems | orderBy: 'name'" data-ng-model="searchInactive">
+              <option></option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="fltrCmeyModel">Model</label>
+            <select id="fltrCmeyModel" name="fltrCmey.model" class="form-control input-sm" data-ng-options="itm.val as itm.name + ' (' + itm.count + ')' for itm in stateItems | orderBy: 'name'" data-ng-model="searchInactive">
+              <option></option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="fltrCmeyEngine">Engine</label>
+            <select id="fltrCmeyEngine" name="fltrCmey.engine" class="form-control input-sm" data-ng-options="itm.val as itm.name + ' (' + itm.count + ')' for itm in stateItems | orderBy: 'name'" data-ng-model="searchInactive">
+              <option></option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="fltrCmeyFueltype">Fuel Type</label>
+            <select id="fltrCmeyFueltype" name="fltrCmey.fueltype" class="form-control input-sm" data-ng-options="itm.val as itm.name + ' (' + itm.count + ')' for itm in stateItems | orderBy: 'name'" data-ng-model="searchInactive">
+              <option></option>
+            </select>
+          </div>
+-->
 
         </form>
     </div>

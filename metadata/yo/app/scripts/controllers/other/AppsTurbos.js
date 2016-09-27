@@ -117,7 +117,7 @@ angular.module("ngMetaCrudApp")
 
   }
 ])
-.controller("FailesDlgCtrl", ["$scope", "$log", "$location", "$uibModalInstance", "ngTableParams",
+.controller("FailuresDlgCtrl", ["$scope", "$log", "$location", "$uibModalInstance", "ngTableParams",
     "utils", "response",
   function($scope, $log, $location, $uibModalInstance, ngTableParams, utils, response) {
 

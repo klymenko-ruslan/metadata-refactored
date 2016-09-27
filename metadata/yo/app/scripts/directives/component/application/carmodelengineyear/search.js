@@ -11,6 +11,14 @@ angular.module("ngMetaCrudApp").directive("cmeySearch", ["$log", "restService", 
       },
       controller: ["$log", "$q", "dialogs", "gToast", "$scope", "ngTableParams",
                     function ($log, $q, dialogs, gToast, $scope, ngTableParams) {
+
+        $scope.fltrCmey = {
+          year: null,
+          make: null,
+          model: null,
+          engine: null,
+          fueltype: null
+        };
         // Latest Results
         $scope.searchResults = null;
         // Applications Table
@@ -32,6 +40,13 @@ angular.module("ngMetaCrudApp").directive("cmeySearch", ["$log", "restService", 
               if (sortProperty) {
                 var sortOrder = $scope.search.sorting[sortProperty];
               }
+              /*
+              restService.filterCarModelEngineYears($scope.search.cmey,
+                  $scope.search.aggregations["Year"], $scope.search.aggregations["Make"],
+                  $scope.search.aggregations["Model"], $scope.search.aggregations["Engine"],
+                  $scope.search.aggregations["Fuel Type"],
+                  sortProperty, sortOrder, offset, limit).then(
+              */
               restService.filterCarModelEngineYears($scope.search.cmey,
                   $scope.search.aggregations["Year"], $scope.search.aggregations["Make"],
                   $scope.search.aggregations["Model"], $scope.search.aggregations["Engine"],

@@ -1,5 +1,5 @@
 <div class="modal-header">
-  <h3 class="modal-title">Result of generation of associations</h3>
+  <h3 class="modal-title">Result of generation of the associations</h3>
 </div>
 <div class="modal-body">
   <div class="row">
@@ -8,7 +8,7 @@
         Successfully generated {{response.generated | number}} associations.
       </p>
       <p>
-        But Following errors were encountered while processing:
+        But following errors were encountered while processing:
       </p>
       <table data-ng-table="failuresTableParams" class="table table-bordered table-striped table-hover table-responsive">
         <tr data-ng-repeat="failure in $data">
@@ -39,13 +39,13 @@
           <td title="'Error Message'">
             {{failure.errorMessage}}
           </td>
-          <td title="'Actions'" class="actions text-center">
+          <td title="'Actions'" class="text-center">
             <button data-ng-click="showPart(failure.partId)"
-                    authorize="ROLE_READ" class="btn btn-primary btn-xs">
+                    authorize="ROLE_READ" class="btn btn-primary btn-xs" style="margin: 1px auto;">
               <i class="fa fa-eye"></i> View Part
             </button>
             <button data-ng-click="showApp(failure.appId)"
-                    authorize="ROLE_READ" class="btn btn-primary btn-xs">
+                    authorize="ROLE_READ" class="btn btn-primary btn-xs" style="margin: 1px auto;">
               <i class="fa fa-eye"></i> View Application
             </button>
           </td>

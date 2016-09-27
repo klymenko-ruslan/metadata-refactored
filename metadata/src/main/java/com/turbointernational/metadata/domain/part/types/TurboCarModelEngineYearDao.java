@@ -2,6 +2,7 @@ package com.turbointernational.metadata.domain.part.types;
 
 import com.turbointernational.metadata.domain.AbstractDao;
 import com.turbointernational.metadata.domain.car.CarModelEngineYear;
+import com.turbointernational.metadata.domain.part.Part;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -27,6 +28,15 @@ public class TurboCarModelEngineYearDao extends AbstractDao<TurboCarModelEngineY
                 getResultList();
     }
 
+    public TurboCarModelEngineYear find(Long partId, Long applicationId) {
+        Turbo turbo = em.getReference(Turbo.class, partId);
+        CarModelEngineYear application = em.getReference(CarModelEngineYear.class, applicationId);
+        TurboCarModelEngineYear partApplication = new TurboCarModelEngineYear();
+        partApplication.setCarModelEngineYear(application);
+        partApplication.setTurbo(turbo);
+        return em.find(TurboCarModelEngineYear.class, partApplication);
+    }
+
     public void add(Long partId, Long applicationId) {
         Turbo turbo = em.getReference(Turbo.class, partId);
         CarModelEngineYear application = em.getReference(CarModelEngineYear.class, applicationId);
@@ -43,4 +53,5 @@ public class TurboCarModelEngineYearDao extends AbstractDao<TurboCarModelEngineY
         int deleted = delQuery.executeUpdate();
         return deleted;
     }
+
 }
