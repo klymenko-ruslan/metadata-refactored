@@ -158,6 +158,10 @@ public class SearchServiceEsImpl implements SearchService {
             AggregationBuilders.terms("Make").field("make.name.full").size(DEF_AGGR_RESULT_SIZE)
     };
 
+    private final static AggregationBuilder[] CARENGINE_AGGREGATIONS = new AggregationBuilder[]{
+            AggregationBuilders.terms("Fuel Type").field("fuelType.name.full").size(DEF_AGGR_RESULT_SIZE)
+    };
+
     private final IndexingStatus indexingStatus = new IndexingStatus();
 
     @PostConstruct
@@ -950,7 +954,7 @@ public class SearchServiceEsImpl implements SearchService {
                     .missing("_last");
             srb.addSort(sort);
         }
-        for (AggregationBuilder agg : CARMODEL_AGGREGATIONS) {
+        for (AggregationBuilder agg : CARENGINE_AGGREGATIONS) {
             srb.addAggregation(agg);
         }
         if (offset != null) {

@@ -11,8 +11,12 @@ angular.module("ngMetaCrudApp").directive("carmodelSearch", ["$log", "restServic
       },
       "controller": ["$log", "$q", "$scope", "gToast", "dialogs", "ngTableParams",
                     function ($log, $q, $scope, gToast, dialogs, ngTableParams) {
+        $scope.fltrCarmodel = {
+          carmodel: null,
+          make: null
+        };
         // Latest Results
-        $scope.searchResults = null;
+        $scope.carmodelSearchResults = null;
 
         $scope.remove = function(id, name) {
           dialogs.confirm("Delete car model '" + name + "'.", "Are you sure?").result.then(
@@ -40,22 +44,20 @@ angular.module("ngMetaCrudApp").directive("carmodelSearch", ["$log", "restServic
           },
           {
             "getData": function ($defer, params) {
-              // Update the pagination info
-              $scope.search.count = params.count();
-              $scope.search.page = params.page();
-              $scope.search.sorting = params.sorting();
               var offset = params.count() * (params.page() - 1);
               var limit = params.count();
-              for (var sortProperty in $scope.search.sorting) break;
+              var sortProperty, sortOrder;
+              for (sortProperty in params.sorting()) break;
               if (sortProperty) {
-                var sortOrder = $scope.search.sorting[sortProperty];
+                sortOrder = params.sorting()[sortProperty];
               }
-              restService.filterCarModels($scope.search.carmodel, $scope.search.aggregations["Make"], sortProperty, sortOrder, offset, limit).then(
+              restService.filterCarModels($scope.fltrCarmodel.carmodel, $scope.fltrCarmodel.make,
+                  sortProperty, sortOrder, offset, limit).then(
                 function (filtered) {
-                  $scope.searchResults = filtered;
+                  $scope.carmodelSearchResults = filtered;
                   // Update the total and slice the result
-                  $defer.resolve($scope.searchResults.hits.hits);
-                  params.total($scope.searchResults.hits.total);
+                  $defer.resolve($scope.carmodelSearchResults.hits.hits);
+                  params.total($scope.carmodelSearchResults.hits.total);
                 },
                 function (errorResponse) {
                   $log.log("Couldn't search for 'carmodel'.");
@@ -65,21 +67,12 @@ angular.module("ngMetaCrudApp").directive("carmodelSearch", ["$log", "restServic
             }
           }
         );
-        // Query Parameters
-        $scope.search = {
-          "carmodel": "",
-          "aggregations": {},
-          "sort": {}
-        };
         $scope.clear = function() {
-          $scope.search = {
-            "carmodel": "",
-            "aggregations": {},
-            "sort": {}
-          };
+          $scope.fltrCarmodel.carmodel = null;
+          $scope.fltrCarmodel.make = null;
         };
         // Handle updating search results
-        $scope.$watch("[search.carmodel, search.aggregations]",
+        $scope.$watch("[fltrCarmodel]",
           function (newVal, oldVal) {
             // Debounce
             if (angular.equals(newVal, oldVal, true)) {

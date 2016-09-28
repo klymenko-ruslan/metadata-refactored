@@ -7,10 +7,15 @@
 
           <div class="form-group">
             <label for="carmodel" class="sr-only control-label">Name</label>
-            <input class="form-control" id="carmodel" type="text" data-ng-model="search.carmodel" placeholder="Car Model..."/>
+            <input class="form-control" id="carmodel" type="text" data-ng-model="fltrCarmodel.carmodel" placeholder="Car Model..."/>
           </div>
 
-          <carmodel-search-facets search="search" results="searchResults"/>
+          <div class="form-group">
+            <label for="fltrCarmodelMake">Make</label>
+            <select id="fltrCarmodelMake" data-ng-model="fltrCarmodel.make" class="form-control input-sm" data-ng-options="itm.key as itm.key + ' (' + itm.doc_count + ')' for itm in carmodelSearchResults.aggregations['Make'].buckets | orderBy: 'key'">
+              <option></option>
+            </select>
+          </div>
 
         </form>
     </div>
@@ -29,4 +34,5 @@
             </tr>
         </table>
     </div>
+
 </div>

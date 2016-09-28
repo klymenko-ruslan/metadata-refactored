@@ -11,8 +11,13 @@ angular.module("ngMetaCrudApp").directive("carengineSearch", ["$log", "restServi
       },
       controller: ["$log", "$q", "$scope", "gToast", "dialogs", "ngTableParams",
                     function ($log, $q, $scope, gToast, dialogs, ngTableParams) {
+
+        $scope.fltrCarengine = {
+          carengine: null,
+          fueltype: null
+        };
         // Latest Results
-        $scope.searchResults = null;
+        $scope.carengineSearchResults = null;
 
         $scope.remove = function(id, engineSize) {
           dialogs.confirm("Delete car engine '" + engineSize + "'.", "Are you sure?").result.then(
@@ -39,22 +44,20 @@ angular.module("ngMetaCrudApp").directive("carengineSearch", ["$log", "restServi
           },
           {
             getData: function ($defer, params) {
-              // Update the pagination info
-              $scope.search.count = params.count();
-              $scope.search.page = params.page();
-              $scope.search.sorting = params.sorting();
               var offset = params.count() * (params.page() - 1);
               var limit = params.count();
-              for (var sortProperty in $scope.search.sorting) break;
+              var sortProperty, sortOrder;
+              for (sortProperty in params.sorting()) break;
               if (sortProperty) {
-                var sortOrder = $scope.search.sorting[sortProperty];
+                sortOrder = params.sorting()[sortProperty];
               }
-              restService.filterCarEngines($scope.search.carengine, $scope.search.aggregations["Fuel Type"], sortProperty, sortOrder, offset, limit).then(
+              restService.filterCarEngines($scope.fltrCarengine.carengine, $scope.fltrCarengine.fueltype,
+                  sortProperty, sortOrder, offset, limit).then(
                 function (filtered) {
-                  $scope.searchResults = filtered;
+                  $scope.carengineSearchResults = filtered;
                   // Update the total and slice the result
-                  $defer.resolve($scope.searchResults.hits.hits);
-                  params.total($scope.searchResults.hits.total);
+                  $defer.resolve($scope.carengineSearchResults.hits.hits);
+                  params.total($scope.carengineSearchResults.hits.total);
                 },
                 function (errorResponse) {
                   $log.log("Couldn't search for 'carengine'.");
@@ -64,21 +67,14 @@ angular.module("ngMetaCrudApp").directive("carengineSearch", ["$log", "restServi
             }
           }
         );
-        // Query Parameters
-        $scope.search = {
-          carengine: "",
-          aggregations: {},
-          sort: {}
-        };
+
         $scope.clear = function() {
-          $scope.search = {
-            carengine: "",
-            aggregations: {},
-            sort: {}
-          };
+          $scope.fltrCarengine.carengine = null;
+          $scope.fltrCarengine.fueltype = null;
         };
+
         // Handle updating search results
-        $scope.$watch("[search.carengine, search.aggregations]",
+        $scope.$watch("[fltrCarengine]",
           function (newVal, oldVal) {
             // Debounce
             if (angular.equals(newVal, oldVal, true)) {
