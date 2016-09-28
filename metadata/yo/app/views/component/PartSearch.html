@@ -2,86 +2,105 @@
 
   <!-- Search by input or facet select options -->
   <div class="col-xs-12 col-sm-3">
+
     <button class="btn btn-default input-sm" data-ng-click="clearFilter()">
       <i class="fa fa-eraser" aria-hidden="true"></i> Clear
     </button>
     <div class="form-group">
       <label for="fltrPartNumber" class="sr-only control-label">Part Number</label>
-      <input class="form-control input-sm" id="fltrPartNumber" name="fltrPartNumber" type="text" data-ng-model="searchPartNumber" data-ng-model-options="{debounce: 200}" data-ng-keyup="$event.keyCode === 13 && onPressedEnter()" placeholder="Search part numbers" />
-    </div>
-    <div class="form-group">
-      <label for="fltrState">State</label>
-      <select id="fltrState" name="fltrState" class="form-control input-sm" data-ng-options="itm.val as itm.name + ' (' + itm.count + ')' for itm in stateItems | orderBy: 'name'" data-ng-model="searchInactive">
-        <option></option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label for="fltrManufacturer">Manufacturer</label>
-      <select id="fltrManufacturer" name="fltrManufacturer" class="form-control input-sm" data-ng-options="itm.key as itm.key + ' (' + itm.doc_count + ')' for itm in searchResults.aggregations['Manufacturer'].buckets | orderBy: 'key'" data-ng-model="searchManufacturer">
-        <option></option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label for="fltrName">Name</label>
-      <input id="fltrName" name="fltrName" class="form-control input-sm" type="text" data-ng-model="searchName" placeholder="Name..." data-ng-model-options="{debounce: 500}" />
-    </div>
-    <div class="form-group">
-      <label for="fltrPartType">Part Type</label>
-      <select id="fltrPartType" name="fltrPartType" class="form-control input-sm" data-ng-options="pt.name for pt in partTypes track by pt.id" data-ng-model="searchPartType">
-         <option></option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label for="fltrTurboModel" data-ng-disabled="searchPartType.id !== 1">Turbo Model</label>
-      <div angucomplete-alt id="fltrTurboModel"
-           placeholder="Search turbo models"
-           disable-input="searchPartType.id !== 1"
-           minlength="0" maxlength="64" pause="300"
-           search-fields="key"
-           title-field="key"
-           description-field="doc_count"
-           input-class="form-control"
-           match-class="highlight"
-           text-no-results="Not found"
-           input-changed="onTurboModelChanged"
-           selected-object="onTurboModelSelected"
-           local-data="searchResults.aggregations['Turbo Model'].buckets"></div>
-    </div>
-    <div class="form-group">
-      <label for="fltrTurboType" data-ng-disabled="searchPartType.id !== 1">Turbo Type</label>
-      <div angucomplete-alt id="fltrTurboType"
-           placeholder="Search turbo types"
-           disable-input="searchPartType.id !== 1"
-           minlength="0" maxlength="64" pause="300"
-           search-fields="key"
-           title-field="key"
-           description-field="doc_count"
-           input-class="form-control"
-           match-class="highlight"
-           text-no-results="Not found"
-           input-changed="onTurboTypeChanged"
-           selected-object="onTurboTypeSelected"
-           local-data="searchResults.aggregations['Turbo Type'].buckets"></div>
+      <input class="form-control input-sm" id="fltrPartNumber" name="fltrPartNumber" type="text" data-ng-model="fltrPart.partNumber" data-ng-model-options="{debounce: 200}" data-ng-keyup="$event.keyCode === 13 && onPressedEnter()" placeholder="Search part numbers" />
     </div>
 
-    <hr data-ng-show="::isCritDimsAvailable()" />
+    <uib-accordion close-others="false">
 
-    <div class="form-group" data-ng-repeat="cd in critDims" data-ng-show="::isCritDimsAvailable()">
-      <input type="text" placeholder="{{cd.name}}" class="form-control input-sm" data-ng-if="cd.dataType !== 'ENUMERATION'" data-ng-model="searchCritDims[cd.idxName]" data-ng-model-options="{debounce: 500}" />
-      <label data-ng-if="cd.dataType == 'ENUMERATION'">{{cd.name}}</label>
-      <select class="form-control input-sm" data-ng-options="itm.val for itm in critDimEnumValsMap[cd.enumeration.id].values track by itm.id"  data-ng-model="searchCritDims[cd.idxName]"  data-ng-if="cd.dataType == 'ENUMERATION'">
-        <option></option>
-      </select>
-    </div>
+      <uib-accordion-group heading="Basic attributes" is-open="true" class="panel-default">
+
+        <div class="form-group">
+          <label for="fltrState">State</label>
+          <select id="fltrState" name="fltrState" class="form-control input-sm" data-ng-options="itm.val as itm.name + ' (' + itm.count + ')' for itm in stateItems | orderBy: 'name'" data-ng-model="fltrPart.inactive">
+            <option></option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="fltrManufacturer">Manufacturer</label>
+          <select id="fltrManufacturer" name="fltrManufacturer" class="form-control input-sm" data-ng-options="itm.key as itm.key + ' (' + itm.doc_count + ')' for itm in searchResults.aggregations['Manufacturer'].buckets | orderBy: 'key'" data-ng-model="fltrPart.manufacturer">
+            <option></option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="fltrName">Name</label>
+          <input id="fltrName" name="fltrName" class="form-control input-sm" type="text" data-ng-model="fltrPart.name" placeholder="Name..." data-ng-model-options="{debounce: 500}" />
+        </div>
+        <div class="form-group">
+          <label for="fltrPartType">Part Type</label>
+          <select id="fltrPartType" name="fltrPartType" class="form-control input-sm" data-ng-options="pt.name for pt in partTypes track by pt.id" data-ng-model="fltrPart.partType">
+             <option></option>
+          </select>
+        </div>
+
+      </uib-accordion-group>
+
+      <uib-accordion-group heading="Attributes for Turbo" is-open="false" is-disabled="fltrPart.partType.id !== 1" class="panel-default">
+
+        <div class="form-group">
+          <label for="fltrTurboModel">Turbo Model</label>
+          <div angucomplete-alt id="fltrTurboModel"
+               placeholder="Search turbo models"
+               disable-input="fltrPart.partType.id !== 1"
+               minlength="0" maxlength="64" pause="300"
+               search-fields="key"
+               title-field="key"
+               description-field="doc_count"
+               input-class="form-control"
+               match-class="highlight"
+               text-no-results="Not found"
+               input-changed="onTurboModelChanged"
+               selected-object="onTurboModelSelected"
+               local-data="searchResults.aggregations['Turbo Model'].buckets"></div>
+        </div>
+        <div class="form-group">
+          <label for="fltrTurboType">Turbo Type</label>
+          <div angucomplete-alt id="fltrTurboType"
+               placeholder="Search turbo types"
+               disable-input="fltrPart.partType.id !== 1"
+               minlength="0" maxlength="64" pause="300"
+               search-fields="key"
+               title-field="key"
+               description-field="doc_count"
+               input-class="form-control"
+               match-class="highlight"
+               text-no-results="Not found"
+               input-changed="onTurboTypeChanged"
+               selected-object="onTurboTypeSelected"
+               local-data="searchResults.aggregations['Turbo Type'].buckets"></div>
+        </div>
+
+      </uib-accordion-group>
+
+
+      <uib-accordion-group heading="Critical dimensions" is-open="false" is-disabled="::!isCritDimsAvailable()" class="panel-default">
+
+        <div class="form-group" data-ng-repeat="cd in critDims">
+          <input type="text" placeholder="{{cd.name}}" class="form-control input-sm" data-ng-if="cd.dataType !== 'ENUMERATION'" data-ng-model="fltrPart.critDims[cd.idxName]" data-ng-model-options="{debounce: 500}" />
+          <label data-ng-if="cd.dataType == 'ENUMERATION'">{{cd.name}}</label>
+          <select class="form-control input-sm" data-ng-options="itm.val for itm in critDimEnumValsMap[cd.enumeration.id].values track by itm.id"  data-ng-model="fltrPart.critDims[cd.idxName]"  data-ng-if="cd.dataType == 'ENUMERATION'">
+            <option></option>
+          </select>
+        </div>
+
+      </uib-accordion-group>
+
+    </uib-accordion>
+
   </div>
 
   <!-- Tabular search results -->
   <div class="col-xs-12 col-sm-9">
     <div class="bg-info">
       <form class="form-inline table-top-form" data-ng-show="::isCritDimsAvailable()">
-        <div data-ng-class="['checkbox', {'disabled': !searchPartType}]">
-          <label data-ng-class="{'text-muted': !searchPartType}">
-            <input type="checkbox" tabindex="-1" data-ng-model="showCriticalDimensions" value="true" data-ng-disabled="!searchPartType"/>
+        <div data-ng-class="['checkbox', {'disabled': !fltrPart.partType}]">
+          <label data-ng-class="{'text-muted': !fltrPart.partType}">
+            <input type="checkbox" tabindex="-1" data-ng-model="showCriticalDimensions" value="true" data-ng-disabled="!fltrPart.partType"/>
             Show critical dimensions
           </label>
         </div>

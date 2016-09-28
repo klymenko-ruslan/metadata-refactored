@@ -10,14 +10,8 @@ angular.module("ngMetaCrudApp")
       link: function(scope, element, attrs) {
         var searchPartType = scope.$eval(attrs.searchPartType);
         if (angular.isObject(searchPartType)) {
-          scope.searchPartType = searchPartType;
+          scope.fltrPart.partType = searchPartType;
         }
-        /*
-        var searchManufacturer = scope.$eval(attrs.searchManufacturer);
-        if (angular.isObject(searchManufacturer)) {
-          scope.searchManufacturer = searchManufacturer;
-        }
-        */
       },
       controller: ["$transclude", "$parse", "$sce", "$log", "$q", "$location",
                    "$scope", "ngTableParams", "utils",
@@ -25,6 +19,18 @@ angular.module("ngMetaCrudApp")
         $scope.critDimEnumValsMap = _.indexBy($scope.critDimEnumVals, "id");
 
         // Filter
+        $scope.fltrPart = {
+          partType: null,
+          inactive: null,
+          manufacturer: null,
+          turboModel: null,
+          turboType: null,
+          name: null,
+          partNumber: null,
+          critDims: null
+        };
+
+/*
         $scope.searchPartType = null;
         $scope.searchInactive = null;
         $scope.searchManufacturer = null;
@@ -33,6 +39,7 @@ angular.module("ngMetaCrudApp")
         $scope.searchName = null;
         $scope.searchPartNumber = null;
         $scope.searchCritDims = {};
+*/
 
         $scope.stateItems = [];
 
@@ -114,8 +121,8 @@ angular.module("ngMetaCrudApp")
         });
 
         $scope.onTurboModelChanged = function(val) {
-          if (val !== $scope.searchTurboModel) {
-            $scope.searchTurboModel = val;
+          if (val !== $scope.fltrPart.turboModel) {
+            $scope.fltrPart.turboModel = val;
             $scope.partTableParams.reload();
           }
         };
@@ -127,8 +134,8 @@ angular.module("ngMetaCrudApp")
         };
 
         $scope.onTurboTypeChanged = function(val) {
-          if (val !== $scope.searchTurboType) {
-            $scope.searchTurboType = val;
+          if (val !== $scope.fltrPart.turboType) {
+            $scope.fltrPart.turboType = val;
             $scope.partTableParams.reload();
           }
         };
@@ -165,15 +172,15 @@ angular.module("ngMetaCrudApp")
             // have sens only when current part type is 'Turbo'.
             var turboModelName = null;
             var turboTypeName = null;
-            var searchPartTypeId = $scope.searchPartType ? $scope.searchPartType.id : null;
+            var searchPartTypeId = $scope.fltrPart.partType ? $scope.fltrPart.partType.id : null;
             if (searchPartTypeId === 1) { // 1 is ID of Turbo
-              turboModelName = $scope.searchTurboModel;
-              turboTypeName = $scope.searchTurboType;
+              turboModelName = $scope.fltrPart.turboModel;
+              turboTypeName = $scope.fltrPart.turboType;
             }
 
-            restService.filterParts(searchPartTypeId, $scope.searchManufacturer, $scope.searchName,
-              $scope.searchPartNumber, $scope.searchInactive, turboModelName, turboTypeName,
-              $scope.searchCritDims, sortProperty, sortOrder, offset, limit).then(
+            restService.filterParts(searchPartTypeId, $scope.fltrPart.manufacturer, $scope.fltrPart.name,
+              $scope.fltrPart.partNumber, $scope.fltrPart.inactive, turboModelName, turboTypeName,
+              $scope.fltrPart.critDims, sortProperty, sortOrder, offset, limit).then(
               function(filtered) { // The 'filtered' is a JSON returned by ElasticSearch.
                 $scope.searchResults = filtered;
                 // Update values for UI combobox -- "State".
@@ -206,22 +213,25 @@ angular.module("ngMetaCrudApp")
         });
 
         $scope.clearFilter = function() {
-          $scope.searchPartNumber = null;
-          $scope.searchInactive = null;
-          $scope.searchPartType = null;
-          $scope.searchManufacturer = null;
-          $scope.searchName = null;
+          $scope.fltrPart.partType = null;
+          $scope.fltrPart.inactive = null;
+          $scope.fltrPart.manufacturer = null;
+          $scope.fltrPart.turboModel = null;
+          $scope.fltrPart.turboType = null;
+          $scope.fltrPart.name = null;
+          $scope.fltrPart.partNumber = null;
+          $scope.fltrPart.critDims = null;
           $scope.$broadcast("angucomplete-alt:clearInput", "fltrTurboModel");
           $scope.$broadcast("angucomplete-alt:clearInput", "fltrTurboType");
         };
 
         $scope.clearFilter();
 
-        // Critical dimensions for the current choose $scope.searchPartType.
+        // Critical dimensions for the current choose $scope.fltrPart.partType.
         $scope.critDims = null;
 
-        $scope.$watch("[searchPartNumber, searchInactive, searchManufacturer, searchName, searchCritDims, " +
-          "searchTurboType]", function(newVal, oldVal)
+        $scope.$watch("[fltrPart.partNumber, fltrPart.inactive, fltrPart.manufacturer, " +
+          "fltrPart.name, fltrPart.critDims, fltrPart.turboType]", function(newVal, oldVal)
         {
           // Debounce
           if (angular.equals(newVal, oldVal, true)) {
@@ -230,10 +240,10 @@ angular.module("ngMetaCrudApp")
           $scope.partTableParams.reload();
         }, true);
 
-        // Watch a change of $scope.searchPartType
+        // Watch a change of $scope.fltrPart.partType
         // and initialize $scope.critDims by critical dimensions which are
         // corresponding the part type.
-        $scope.$watch("[searchPartType]", function(newVal, oldVal) {
+        $scope.$watch("[fltrPart.partType]", function(newVal, oldVal) {
           // Debounce
           if (angular.equals(newVal, oldVal, true)) {
             return;
@@ -246,7 +256,7 @@ angular.module("ngMetaCrudApp")
               $scope.critDims = null;
             }
             $scope.showCriticalDimensions = false;
-            $scope.searchCritDims = {}; // re-init
+            $scope.fltrPart.critDims = {}; // re-init
           }
           $scope.partTableParams.reload();
         }, true);
