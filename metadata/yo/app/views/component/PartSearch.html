@@ -78,7 +78,7 @@
       </uib-accordion-group>
 
 
-      <uib-accordion-group heading="Critical dimensions" is-open="false" is-disabled="::!isCritDimsAvailable()" class="panel-default">
+      <uib-accordion-group heading="Critical dimensions" is-open="false" is-disabled="!isCritDimsForCurrentPartTypeAvailable()" class="panel-default">
 
         <div class="form-group" data-ng-repeat="cd in critDims">
           <input type="text" placeholder="{{cd.name}}" class="form-control input-sm" data-ng-if="cd.dataType !== 'ENUMERATION'" data-ng-model="fltrPart.critDims[cd.idxName]" data-ng-model-options="{debounce: 500}" />
@@ -97,10 +97,10 @@
   <!-- Tabular search results -->
   <div class="col-xs-12 col-sm-9">
     <div class="bg-info">
-      <form class="form-inline table-top-form" data-ng-show="::isCritDimsAvailable()">
-        <div data-ng-class="['checkbox', {'disabled': !fltrPart.partType}]">
-          <label data-ng-class="{'text-muted': !fltrPart.partType}">
-            <input type="checkbox" tabindex="-1" data-ng-model="showCriticalDimensions" value="true" data-ng-disabled="!fltrPart.partType"/>
+      <form class="form-inline table-top-form" data-ng-show="isCritDimsAvailable()">
+        <div data-ng-class="['checkbox', {'disabled': !isCritDimsForCurrentPartTypeAvailable()}]">
+          <label data-ng-class="{'text-muted': !isCritDimsForCurrentPartTypeAvailable()}">
+            <input type="checkbox" tabindex="-1" data-ng-model="showCriticalDimensions" value="true" data-ng-disabled="!isCritDimsForCurrentPartTypeAvailable()"/>
             Show critical dimensions
           </label>
         </div>

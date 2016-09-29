@@ -30,17 +30,6 @@ angular.module("ngMetaCrudApp")
           critDims: null
         };
 
-/*
-        $scope.searchPartType = null;
-        $scope.searchInactive = null;
-        $scope.searchManufacturer = null;
-        $scope.searchTurboModel = null;
-        $scope.searchTurboType = null;
-        $scope.searchName = null;
-        $scope.searchPartNumber = null;
-        $scope.searchCritDims = {};
-*/
-
         $scope.stateItems = [];
 
         $scope.actions = utils.transclude2html($transclude);
@@ -84,6 +73,10 @@ angular.module("ngMetaCrudApp")
 
         $scope.isCritDimsAvailable = function() {
           return angular.isObject($scope.critDimsByPartTypes) && !jQuery.isEmptyObject($scope.critDimsByPartTypes);
+        };
+
+        $scope.isCritDimsForCurrentPartTypeAvailable = function() {
+          return angular.isObject($scope.fltrPart.partType) && $scope.critDims != null && $scope.critDims.length;
         };
 
         $scope.initColumns = function() {
@@ -231,7 +224,7 @@ angular.module("ngMetaCrudApp")
         $scope.critDims = null;
 
         $scope.$watch("[fltrPart.partNumber, fltrPart.inactive, fltrPart.manufacturer, " +
-          "fltrPart.name, fltrPart.critDims, fltrPart.turboType]", function(newVal, oldVal)
+          "fltrPart.name, fltrPart.critDims]", function(newVal, oldVal)
         {
           // Debounce
           if (angular.equals(newVal, oldVal, true)) {
