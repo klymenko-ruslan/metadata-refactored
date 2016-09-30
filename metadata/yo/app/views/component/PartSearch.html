@@ -13,7 +13,7 @@
 
     <uib-accordion close-others="false">
 
-      <uib-accordion-group heading="Basic attributes" is-open="true" class="panel-default">
+      <uib-accordion-group heading="Basic attributes" is-open="fltrGroupState.basicAttrsOpened" class="panel-default">
 
         <div class="form-group">
           <label for="fltrState">State</label>
@@ -40,10 +40,73 @@
 
       </uib-accordion-group>
 
-      <uib-accordion-group heading="Attributes for Turbo" is-open="false" is-disabled="fltrPart.partType.id !== 1" class="panel-default">
+      <uib-accordion-group heading="Attributes for Application" is-open="fltrGroupState.appAttrsOpened" class="panel-default">
 
         <div class="form-group">
-          <label for="fltrTurboModel">Turbo Model</label>
+          <div angucomplete-alt id="fltrYear"
+               placeholder="Search Year"
+               minlength="0" maxlength="64" pause="300"
+               search-fields="key"
+               title-field="key"
+               description-field="doc_count"
+               input-class="form-control"
+               match-class="highlight"
+               text-no-results="Not found"></div>
+        </div>
+
+        <div class="form-group">
+          <div angucomplete-alt id="fltrMake"
+               placeholder="Search Make"
+               minlength="0" maxlength="64" pause="300"
+               search-fields="key"
+               title-field="key"
+               description-field="doc_count"
+               input-class="form-control"
+               match-class="highlight"
+               text-no-results="Not found"></div>
+        </div>
+
+        <div class="form-group">
+          <div angucomplete-alt id="fltrModel"
+               placeholder="Search Model"
+               minlength="0" maxlength="64" pause="300"
+               search-fields="key"
+               title-field="key"
+               description-field="doc_count"
+               input-class="form-control"
+               match-class="highlight"
+               text-no-results="Not found"></div>
+        </div>
+
+        <div class="form-group">
+          <div angucomplete-alt id="fltrEngine"
+               placeholder="Search Engine"
+               minlength="0" maxlength="64" pause="300"
+               search-fields="key"
+               title-field="key"
+               description-field="doc_count"
+               input-class="form-control"
+               match-class="highlight"
+               text-no-results="Not found"></div>
+        </div>
+
+        <div class="form-group">
+          <div angucomplete-alt id="fltrFuelType"
+               placeholder="Search Engine"
+               minlength="0" maxlength="64" pause="300"
+               search-fields="key"
+               title-field="key"
+               description-field="doc_count"
+               input-class="form-control"
+               match-class="highlight"
+               text-no-results="Not found"></div>
+        </div>
+
+      </uib-accordion-group>
+
+      <uib-accordion-group heading="Attributes for Turbo" is-open="fltrGroupState.turboAttrsOpened" is-disabled="fltrPart.partType.id !== 1" class="panel-default">
+
+        <div class="form-group">
           <div angucomplete-alt id="fltrTurboModel"
                placeholder="Search turbo models"
                disable-input="fltrPart.partType.id !== 1"
@@ -58,8 +121,8 @@
                selected-object="onTurboModelSelected"
                local-data="searchResults.aggregations['Turbo Model'].buckets"></div>
         </div>
+
         <div class="form-group">
-          <label for="fltrTurboType">Turbo Type</label>
           <div angucomplete-alt id="fltrTurboType"
                placeholder="Search turbo types"
                disable-input="fltrPart.partType.id !== 1"
@@ -77,8 +140,7 @@
 
       </uib-accordion-group>
 
-
-      <uib-accordion-group heading="Critical dimensions" is-open="false" is-disabled="!isCritDimsForCurrentPartTypeAvailable()" class="panel-default">
+      <uib-accordion-group heading="Critical dimensions" is-open="fltrGroupState.critDimsOpened" is-disabled="!isCritDimsForCurrentPartTypeAvailable()" class="panel-default">
 
         <div class="form-group" data-ng-repeat="cd in critDims">
           <input type="text" placeholder="{{cd.name}}" class="form-control input-sm" data-ng-if="cd.dataType !== 'ENUMERATION'" data-ng-model="fltrPart.critDims[cd.idxName]" data-ng-model-options="{debounce: 500}" />

@@ -16,6 +16,7 @@ angular.module("ngMetaCrudApp")
       controller: ["$transclude", "$parse", "$sce", "$log", "$q", "$location",
                    "$scope", "ngTableParams", "utils",
         function($transclude, $parse, $sce, $log, $q, $location, $scope, ngTableParams, utils) {
+
         $scope.critDimEnumValsMap = _.indexBy($scope.critDimEnumVals, "id");
 
         // Filter
@@ -27,13 +28,33 @@ angular.module("ngMetaCrudApp")
           turboType: null,
           name: null,
           partNumber: null,
+
+          year: null,
+          make: null,
+          model: null,
+          engine: null,
+          fuelType: null,
+
           critDims: null
         };
 
+        $scope.fltrGroupState = {
+          basicAttrsOpened: true,
+          turboAttrsOpened: false,
+          appAttrsOpened: false,
+          critDimsOpened: false
+        };
+
+        $scope.columns = null;
+
         $scope.stateItems = [];
 
-        $scope.actions = utils.transclude2html($transclude);
+        // Critical dimensions for the current choose $scope.fltrPart.partType.
+        $scope.critDims = null;
+
         $scope.showCriticalDimensions = false;
+
+        $scope.actions = utils.transclude2html($transclude);
 
         $scope.fixedCols = [
           {
@@ -48,7 +69,7 @@ angular.module("ngMetaCrudApp")
           },
           {
             title: "Mfr Part #",
-            cssClass: ['text-nowrap'],
+            cssClass: ["text-nowrap"],
             getter: $parse("_source.manufacturerPartNumber"),
             sortable: "manufacturerPartNumber.lower_case_sort"
           },
@@ -62,14 +83,12 @@ angular.module("ngMetaCrudApp")
         $scope.actionsCol = [
           {
             title: "Action",
-            cssClass: ['actions', 'text-center'],
+            cssClass: ["actions", "text-center"],
             getter: function(part) {
               return $scope.actions;
             }
           }
         ];
-
-        $scope.columns = null;
 
         $scope.isCritDimsAvailable = function() {
           return angular.isObject($scope.critDimsByPartTypes) && !jQuery.isEmptyObject($scope.critDimsByPartTypes);
@@ -86,7 +105,7 @@ angular.module("ngMetaCrudApp")
               _.each($scope.critDims, function (d) {
                 var gttr = null;
                 var srtbl = null;
-                if (d.dataType == 'ENUMERATION') {
+                if (d.dataType == "ENUMERATION") {
                   gttr = $parse("_source." + d.idxName + "Label");
                   srtbl = d.idxName + "Label.lower_case_sort";
                 } else {
@@ -173,6 +192,8 @@ angular.module("ngMetaCrudApp")
 
             restService.filterParts(searchPartTypeId, $scope.fltrPart.manufacturer, $scope.fltrPart.name,
               $scope.fltrPart.partNumber, $scope.fltrPart.inactive, turboModelName, turboTypeName,
+              $scope.fltrPart.year, $scope.fltrPart.make, $scope.fltrPart.model,
+              $scope.fltrPart.engine, $scope.fltrPart.fuelType,
               $scope.fltrPart.critDims, sortProperty, sortOrder, offset, limit).then(
               function(filtered) { // The 'filtered' is a JSON returned by ElasticSearch.
                 $scope.searchResults = filtered;
@@ -206,6 +227,7 @@ angular.module("ngMetaCrudApp")
         });
 
         $scope.clearFilter = function() {
+
           $scope.fltrPart.partType = null;
           $scope.fltrPart.inactive = null;
           $scope.fltrPart.manufacturer = null;
@@ -214,14 +236,17 @@ angular.module("ngMetaCrudApp")
           $scope.fltrPart.name = null;
           $scope.fltrPart.partNumber = null;
           $scope.fltrPart.critDims = null;
+
+          $scope.fltrGroupState.turboAttrsOpened = false;
+          $scope.fltrGroupState.appAttrsOpened = false;
+          $scope.fltrGroupState.critDimsOpened = false;
+
           $scope.$broadcast("angucomplete-alt:clearInput", "fltrTurboModel");
           $scope.$broadcast("angucomplete-alt:clearInput", "fltrTurboType");
+
         };
 
         $scope.clearFilter();
-
-        // Critical dimensions for the current choose $scope.fltrPart.partType.
-        $scope.critDims = null;
 
         $scope.$watch("[fltrPart.partNumber, fltrPart.inactive, fltrPart.manufacturer, " +
           "fltrPart.name, fltrPart.critDims]", function(newVal, oldVal)
@@ -237,21 +262,38 @@ angular.module("ngMetaCrudApp")
         // and initialize $scope.critDims by critical dimensions which are
         // corresponding the part type.
         $scope.$watch("[fltrPart.partType]", function(newVal, oldVal) {
+
           // Debounce
           if (angular.equals(newVal, oldVal, true)) {
             return;
           }
+
           if ($scope.isCritDimsAvailable()) {
+
             var pt = newVal[0];
+
             if (angular.isObject(pt)) {
               $scope.critDims = $scope.critDimsByPartTypes[pt.id];
+              if (pt.id !== 1) {  // Not a Turbo
+                $scope.fltrPart.turboModel = null;
+                $scope.fltrPart.turboType = null;
+                $scope.fltrGroupState.turboAttrsOpened = false;
+              } else { // Turbo
+                $scope.fltrGroupState.turboAttrsOpened = true;
+              }
             } else {
               $scope.critDims = null;
             }
+
             $scope.showCriticalDimensions = false;
-            $scope.fltrPart.critDims = {}; // re-init
+            $scope.fltrPart.critDims = null; // re-init
+
+            $scope.fltrGroupState.critDimsOpened = angular.isObject($scope.critDims) && $scope.critDims.length > 0;
+
           }
+
           $scope.partTableParams.reload();
+
         }, true);
 
         $scope.onPressedEnter = function() {

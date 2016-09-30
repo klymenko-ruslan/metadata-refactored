@@ -626,6 +626,7 @@ public class SearchServiceEsImpl implements SearchService {
     public String filterParts(String partNumber, Long partTypeId, String manufacturerName,
                               String name, String description, Boolean inactive,
                               String turboTypeName, String turboModelName,
+                              String year, String make, String model, String engine, String fuelType,
                               Map<String, String[]> queriedCriticalDimensions,
                               String sortProperty, String sortOrder,
                               Integer offset, Integer limit) {

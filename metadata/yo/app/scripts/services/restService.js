@@ -551,7 +551,8 @@ angular.module("ngMetaCrudApp")
       };
 
       this.filterParts = function(searchPartTypeId, searchManufacturerName, searchName, searchPartNumber,
-          searchInactive, searchTurboModelName, searchTurboTypeName, searchCritDims,
+          searchInactive, searchTurboModelName, searchTurboTypeName,
+          year, make, model, engine, fuelType, searchCritDims,
           sortProperty, sortOrder, offset, limit) {
         var params = {
           partNumber: searchPartNumber,
@@ -561,6 +562,11 @@ angular.module("ngMetaCrudApp")
           turboModelName: searchTurboModelName,
           turboTypeName: searchTurboTypeName,
           name: searchName,
+          year: year,
+          make: make,
+          model: model,
+          engine: engine,
+          fuelType: fuelType,
           pgSortProperty: sortProperty,
           pgSortOrder: sortOrder,
           pgOffset: offset,

@@ -47,6 +47,11 @@ public class SearchController {
                                               @RequestParam(name = "inactive", required = false) Boolean inactive,
                                               @RequestParam(name = "turboTypeName", required = false) String turboTypeName,
                                               @RequestParam(name = "turboModelName", required = false) String turboModelName,
+                                              @RequestParam(name = "year", required = false) String year,
+                                              @RequestParam(name = "make", required = false) String make,
+                                              @RequestParam(name = "model", required = false) String model,
+                                              @RequestParam(name = "engine", required = false) String engine,
+                                              @RequestParam(name = "fuelType", required = false) String fuelType,
                                               WebRequest webRequest,
                                               @RequestParam(name = "pgSortProperty", required = false) String sortProperty,
                                               @RequestParam(name = "pgSortOrder", required = false) String sortOrder,
@@ -55,7 +60,8 @@ public class SearchController {
 
         Map<String, String[]> queriedCriticalDimensions = webRequest.getParameterMap();
         String json = searchService.filterParts(partNumber, partTypeId, manufacturerName, name, description, inactive,
-                turboTypeName, turboModelName, queriedCriticalDimensions, sortProperty, sortOrder, offset, limit);
+                turboTypeName, turboModelName, year, make, model, engine, fuelType, queriedCriticalDimensions,
+                sortProperty, sortOrder, offset, limit);
         return new ResponseEntity<>(json, OK);
     }
 
