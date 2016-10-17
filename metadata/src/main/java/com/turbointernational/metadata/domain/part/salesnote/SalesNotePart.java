@@ -5,6 +5,7 @@ import com.turbointernational.metadata.domain.SearchableEntity;
 import com.turbointernational.metadata.domain.criticaldimension.CriticalDimension;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.Part;
+import com.turbointernational.metadata.domain.part.types.TurboCarModelEngineYearDao;
 import com.turbointernational.metadata.domain.security.User;
 import com.turbointernational.metadata.services.SearchService;
 import com.turbointernational.metadata.web.View;
@@ -211,7 +212,7 @@ public class SalesNotePart implements Serializable, SearchableEntity {
     }
 
     @Override
-    public String toSearchJson(List<CriticalDimension> criticalDimensions) {
+    public String toSearchJson(List<CriticalDimension> criticalDimensions, TurboCarModelEngineYearDao tcmeyDao) {
         return getSearchSerializer().exclude("*").serialize(this);
     }
 

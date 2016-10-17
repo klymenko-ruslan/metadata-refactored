@@ -8,6 +8,7 @@ import com.turbointernational.metadata.domain.part.PartDao;
 import com.turbointernational.metadata.domain.part.salesnote.SalesNotePart;
 import com.turbointernational.metadata.domain.part.salesnote.SalesNotePartDao;
 import com.turbointernational.metadata.domain.part.salesnote.SalesNoteState;
+import com.turbointernational.metadata.domain.part.types.TurboCarModelEngineYearDao;
 import com.turbointernational.metadata.domain.security.User;
 import com.turbointernational.metadata.services.search.index.IndexBuilder;
 import com.turbointernational.metadata.services.search.parser.*;
@@ -133,6 +134,9 @@ public class SearchServiceEsImpl implements SearchService {
 
     @Autowired
     private SalesNotePartDao salesNotePartDao;
+
+    @Autowired
+    private TurboCarModelEngineYearDao tcmeyDao;
 
     @Autowired
     private CriticalDimensionService criticalDimensionService;
@@ -1071,60 +1075,70 @@ public class SearchServiceEsImpl implements SearchService {
     }
 
     private void indexDoc(SearchableEntity doc, String elasticSearchType) {
-        String searchId = doc.getSearchId();
-        List<CriticalDimension> criticalDimensions = getCriticalDimensions(doc);
-        String asJson = doc.toSearchJson(criticalDimensions);
-        log.debug("elasticSearchIndex: {}, elasticSearchType: {}, searchId: {}, asJson: {}",
-                elasticSearchIndex, elasticSearchType, searchId, asJson);
-        IndexRequest index = new IndexRequest(elasticSearchIndex, elasticSearchType, searchId);
-        index.source(asJson);
-        elasticSearch.index(index).actionGet(timeout);
+        TransactionTemplate tt = new TransactionTemplate(txManager);
+        tt.setPropagationBehavior(PROPAGATION_REQUIRES_NEW); // new transaction
+        tt.execute((TransactionCallback<Void>) ts -> {
+            String searchId = doc.getSearchId();
+            List<CriticalDimension> criticalDimensions = getCriticalDimensions(doc);
+            String asJson = doc.toSearchJson(criticalDimensions, tcmeyDao);
+            log.debug("elasticSearchIndex: {}, elasticSearchType: {}, searchId: {}, asJson: {}",
+                    elasticSearchIndex, elasticSearchType, searchId, asJson);
+            IndexRequest index = new IndexRequest(elasticSearchIndex, elasticSearchType, searchId);
+            index.source(asJson);
+            elasticSearch.index(index).actionGet(timeout);
+            return null;
+        });
     }
 
     private void indexAllDocs(ScrollableResults scrollableResults, int batchSize,
                                            String elasticSearchType, Observer observer) throws Exception {
-        try {
-            BulkRequest bulk = null;
-            while (true) {
-                String searchId;
-                IndexRequest index;
-                String asJson;
-                // The synchronization below is needed because scrollable results share the same
-                // EntityManager that is not multithreaded.
-                synchronized (this) {
-                    if (!scrollableResults.next()) {
-                        break; // stop cycle
+        TransactionTemplate tt = new TransactionTemplate(txManager);
+        tt.setPropagationBehavior(PROPAGATION_REQUIRES_NEW); // new transaction
+        tt.execute((TransactionCallback<Void>) ts -> {
+            try {
+                BulkRequest bulk = null;
+                while (true) {
+                    String searchId;
+                    IndexRequest index;
+                    String asJson;
+                    // The synchronization below is needed because scrollable results share the same
+                    // EntityManager that is not multithreaded.
+                    synchronized (this) {
+                        if (!scrollableResults.next()) {
+                            break; // stop cycle
+                        }
+                        Object entity = scrollableResults.get(0);
+                        SearchableEntity doc = (SearchableEntity) entity;
+                        searchId = doc.getSearchId();
+                        index = new IndexRequest(elasticSearchIndex, elasticSearchType, searchId);
+                        List<CriticalDimension> criticalDimensions = getCriticalDimensions(doc);
+                        asJson = doc.toSearchJson(criticalDimensions, tcmeyDao);
                     }
-                    Object entity = scrollableResults.get(0);
-                    SearchableEntity doc = (SearchableEntity) entity;
-                    searchId = doc.getSearchId();
-                    index = new IndexRequest(elasticSearchIndex, elasticSearchType, searchId);
-                    List<CriticalDimension> criticalDimensions = getCriticalDimensions(doc);
-                    asJson = doc.toSearchJson(criticalDimensions);
+                    Thread.yield();
+                    log.debug("elasticSearchIndex: {}, elasticSearchType: {}, searchId: {}, asJson: {}",
+                            elasticSearchIndex, elasticSearchType, searchId, asJson);
+                    index.source(asJson);
+                    if (bulk == null) {
+                        bulk = new BulkRequest();
+                    }
+                    bulk.add(index);
+                    boolean flush = bulk.numberOfActions() == batchSize;
+                    if (flush) {
+                        batchIndex(bulk, elasticSearchType, observer);
+                        bulk = null;
+                    }
                 }
-                Thread.yield();
-                log.debug("elasticSearchIndex: {}, elasticSearchType: {}, searchId: {}, asJson: {}",
-                        elasticSearchIndex, elasticSearchType, searchId, asJson);
-                index.source(asJson);
-                if (bulk == null) {
-                    bulk = new BulkRequest();
-                }
-                bulk.add(index);
-                boolean flush = bulk.numberOfActions() == batchSize;
-                if (flush) {
+                if (bulk != null && bulk.numberOfActions() > 0) {
                     batchIndex(bulk, elasticSearchType, observer);
-                    bulk = null;
                 }
+            } catch (Exception e) {
+                log.error("Reindexing of '" + elasticSearchType + "' failed.", e);
+                throw e;
+            } finally {
+                scrollableResults.close();
             }
-            if (bulk != null && bulk.numberOfActions() > 0) {
-                batchIndex(bulk, elasticSearchType, observer);
-            }
-        } catch (Exception e) {
-            log.error("Reindexing of '" + elasticSearchType + "' failed.", e);
-            throw e;
-        } finally {
-            scrollableResults.close();
-        }
+            return null;
+        });
     }
 
     private int batchIndex(BulkRequest bulk, String elasticSearchType, Observer observer) {

@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.domain.SearchableEntity;
+import com.turbointernational.metadata.domain.car.CarModelEngineYear;
+import com.turbointernational.metadata.domain.car.CarYear;
 import com.turbointernational.metadata.domain.criticaldimension.CriticalDimension;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.other.TurboType;
@@ -532,39 +534,34 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
                 .serialize(this);
     }
 
-    @Override
-    public final String toSearchJson(List<CriticalDimension> criticalDimensions) {
+    protected JSONSerializer buildJsonSerializerSearch(List<CriticalDimension> criticalDimensions,
+                                                       TurboCarModelEngineYearDao tcmeyDao) {
         JSONSerializer jsonSerializer = new JSONSerializer()
-                .include("id")
-                .include("name")
-                .include("manufacturerPartNumber")
-                .include("description")
-                .include("inactive")
-                .include("partType.id")
-                .include("partType.name")
-                .exclude("partType.*")
-                .include("manufacturer.id")
-                .include("manufacturer.name")
-                .exclude("manufacturer.*")
-                .exclude("bomParentParts")
-                .exclude("bom")
-                .exclude("interchange")
-                .exclude("turbos")
-                .exclude("productImages")
-                .exclude("*.class");
-        // Ticket #733.
-        // The code below is looked clumsy. Class Turbo is more suitable place for it.
-        // But the class Turbo is automatically generated. So it is easier place it here
-        // for the sake of a maintainability.
-        // TODO: move this to Turbo after migration
-        if (this instanceof Turbo) {
-            jsonSerializer.include("turboModel.id");
-            jsonSerializer.include("turboModel.name");
-            jsonSerializer.include("turboModel.turboType.id");
-            jsonSerializer.include("turboModel.turboType.name");
-        }
+            .include("id")
+            .include("name")
+            .include("manufacturerPartNumber")
+            .include("description")
+            .include("inactive")
+            .include("partType.id")
+            .include("partType.name")
+            .exclude("partType.*")
+            .include("manufacturer.id")
+            .include("manufacturer.name")
+            .exclude("manufacturer.*")
+            .exclude("bomParentParts")
+            .exclude("bom")
+            .exclude("interchange")
+            .exclude("turbos")
+            .exclude("productImages")
+            .exclude("*.class");
         // Add critical dimensions.
         addCriticalDimensionsToSerialization(criticalDimensions, jsonSerializer, true);
+        return jsonSerializer;
+    }
+
+    @Override
+    public final String toSearchJson(List<CriticalDimension> criticalDimensions, TurboCarModelEngineYearDao tcmeyDao) {
+        JSONSerializer jsonSerializer = buildJsonSerializerSearch(criticalDimensions, tcmeyDao);
         String json = jsonSerializer.exclude("*").serialize(this);
         return json;
     }

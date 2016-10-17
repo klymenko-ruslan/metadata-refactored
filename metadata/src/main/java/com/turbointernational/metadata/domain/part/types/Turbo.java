@@ -1,12 +1,18 @@
 package com.turbointernational.metadata.domain.part.types;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.domain.car.CarModelEngineYear;
+import com.turbointernational.metadata.domain.car.CarYear;
+import com.turbointernational.metadata.domain.criticaldimension.CriticalDimension;
 import com.turbointernational.metadata.domain.other.CoolType;
 import com.turbointernational.metadata.domain.other.TurboModel;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.web.View;
+import flexjson.JSONSerializer;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -29,9 +35,9 @@ public class Turbo extends Part {
     @JoinColumn(name="cool_type_id")
     private CoolType coolType;
 
-    //</editor-fold>
-
-    //<editor-fold defaultstate="collapsed" desc="Properties: critical dimensions">
+    @Transient
+    @JsonView(View.Summary.class)
+    private List<String> cmeyYear = new ArrayList<>();
 
     //</editor-fold>
 
@@ -53,10 +59,41 @@ public class Turbo extends Part {
         this.coolType = coolType;
     }
 
+    public List<String> getCmeyYear() {
+        return cmeyYear;
+    }
+
+    public void setCmeyYear(List<String> cmeyYear) {
+        this.cmeyYear = cmeyYear;
+    }
+
     //</editor-fold>
 
+    //<editor-fold defaultstate="collapsed" desc="Serialization: members">
 
-    //<editor-fold defaultstate="collapsed" desc="Getters and setters: critical dimensions">
+    @Override
+    protected JSONSerializer buildJsonSerializerSearch(List<CriticalDimension> criticalDimensions,
+                                                       TurboCarModelEngineYearDao tcmeyDao) {
+        JSONSerializer jsonSerializer = super.buildJsonSerializerSearch(criticalDimensions, tcmeyDao);
+            jsonSerializer.include("turboModel.id");
+            jsonSerializer.include("turboModel.name");
+            jsonSerializer.include("turboModel.turboType.id");
+            jsonSerializer.include("turboModel.turboType.name");
+        Long partId = getId();
+        for (TurboCarModelEngineYear tcmey : tcmeyDao.getPartLinkedApplications(partId)) {
+            CarModelEngineYear cmey = tcmey.getCarModelEngineYear();
+            if (cmey == null) continue;
+            CarYear cyear = cmey.getYear();
+            if (cyear != null) {
+                String yearName = cyear.getName();
+                if (yearName != null) {
+                    cmeyYear.add(yearName);
+                }
+            }
+        }
+        jsonSerializer.include("cmeyYear");
+        return jsonSerializer;
+    }
 
     //</editor-fold>
 
