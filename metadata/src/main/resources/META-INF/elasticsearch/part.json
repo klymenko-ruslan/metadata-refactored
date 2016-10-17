@@ -54,8 +54,7 @@
       "properties": {
         "id": {
           "type": "long",
-          "store": "yes",
-          "analyzer": "keyword"
+          "store": "yes"
         },
         "name": {
           "type": "multi_field",
@@ -82,8 +81,7 @@
           "properties": {
             "id": {
               "type": "long",
-              "store": "yes",
-              "analyzer": "keyword"
+              "store": "yes"
             },
             "name": {
               "type": "multi_field",
@@ -135,8 +133,7 @@
       "properties": {
         "id": {
           "type": "long",
-          "store": "yes",
-          "analyzer": "keyword"
+          "store": "yes"
         },
         "name": {
           "type": "multi_field",
@@ -165,8 +162,7 @@
       "properties": {
         "id": {
           "type": "long",
-          "store": "yes",
-          "analyzer": "keyword"
+          "store": "yes"
         },
         "name": {
           "type": "multi_field",
