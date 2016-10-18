@@ -630,7 +630,8 @@ public class SearchServiceEsImpl implements SearchService {
     public String filterParts(String partNumber, Long partTypeId, String manufacturerName,
                               String name, String description, Boolean inactive,
                               String turboTypeName, String turboModelName,
-                              String year, String make, String model, String engine, String fuelType,
+                              String cmeyYear, String cmeyMake, String cmeyModel,
+                              String cmeyEngine, String cmeyFuelType,
                               Map<String, String[]> queriedCriticalDimensions,
                               String sortProperty, String sortOrder,
                               Integer offset, Integer limit) {
@@ -656,6 +657,27 @@ public class SearchServiceEsImpl implements SearchService {
         }
         if (inactive != null) {
             sterms.add(newBooleanSearchTerm("inactive", inactive));
+        }
+
+        if (isNotBlank(cmeyYear)) {
+            String normalizedCmeyYear = str2shotfield.apply(cmeyYear);
+            sterms.add(newTextSearchTerm("cmeyYear.short", normalizedCmeyYear));
+        }
+        if (isNotBlank(cmeyMake)) {
+            String normalizedCmeyMake = str2shotfield.apply(cmeyMake);
+            sterms.add(newTextSearchTerm("cmeyMake.short", normalizedCmeyMake));
+        }
+        if (isNotBlank(cmeyModel)) {
+            String normalizedCmeyModel = str2shotfield.apply(cmeyModel);
+            sterms.add(newTextSearchTerm("cmeyModel.short", normalizedCmeyModel));
+        }
+        if (isNotBlank(cmeyEngine)) {
+            String normalizedCmeyEngine = str2shotfield.apply(cmeyEngine);
+            sterms.add(newTextSearchTerm("cmeyEngine.short", normalizedCmeyEngine));
+        }
+        if (isNotBlank(cmeyFuelType)) {
+            String normalizedCmeyFuelType = str2shotfield.apply(cmeyFuelType);
+            sterms.add(newTextSearchTerm("cmeyFuelType.short", normalizedCmeyFuelType));
         }
 
         if (isNotBlank(turboTypeName)) {
@@ -779,11 +801,19 @@ public class SearchServiceEsImpl implements SearchService {
                     .missing("_last");
             srb.addSort(sort);
         }
+
         srb.addAggregation(AggregationBuilders.terms("Part Type").field("partType.name.full").size(DEF_AGGR_RESULT_SIZE));
         srb.addAggregation(AggregationBuilders.terms("Manufacturer").field("manufacturer.name.full").size(DEF_AGGR_RESULT_SIZE));
         srb.addAggregation(AggregationBuilders.terms("Turbo Type").field("turboModel.turboType.name.full").size(DEF_AGGR_RESULT_SIZE));
         srb.addAggregation(AggregationBuilders.terms("Turbo Model").field("turboModel.name.full").size(DEF_AGGR_RESULT_SIZE));
         srb.addAggregation(AggregationBuilders.terms("State").field("inactive").size(DEF_AGGR_RESULT_SIZE));
+
+        srb.addAggregation(AggregationBuilders.terms("Car Year").field("cmeyYear.full").size(DEF_AGGR_RESULT_SIZE));
+        srb.addAggregation(AggregationBuilders.terms("Car Make").field("cmeyMake.full").size(DEF_AGGR_RESULT_SIZE));
+        srb.addAggregation(AggregationBuilders.terms("Car Model").field("cmeyModel.full").size(DEF_AGGR_RESULT_SIZE));
+        srb.addAggregation(AggregationBuilders.terms("Car Engine").field("cmeyEngine.full").size(DEF_AGGR_RESULT_SIZE));
+        srb.addAggregation(AggregationBuilders.terms("Car Fuel Type").field("cmeyFuelType.full").size(DEF_AGGR_RESULT_SIZE));
+
         if (offset != null) {
             srb.setFrom(offset);
         }

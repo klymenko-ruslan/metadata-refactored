@@ -1,14 +1,14 @@
 package com.turbointernational.metadata.domain.part.types;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import com.turbointernational.metadata.domain.car.CarModelEngineYear;
-import com.turbointernational.metadata.domain.car.CarYear;
+import com.turbointernational.metadata.domain.car.*;
 import com.turbointernational.metadata.domain.criticaldimension.CriticalDimension;
 import com.turbointernational.metadata.domain.other.CoolType;
 import com.turbointernational.metadata.domain.other.TurboModel;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.web.View;
 import flexjson.JSONSerializer;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -39,6 +39,23 @@ public class Turbo extends Part {
     @JsonView(View.Summary.class)
     private List<String> cmeyYear = new ArrayList<>();
 
+    @Transient
+    @JsonView(View.Summary.class)
+    private List<String> cmeyMake = new ArrayList<>();
+
+    @Transient
+    @JsonView(View.Summary.class)
+    private List<String> cmeyModel = new ArrayList<>();
+
+
+    @Transient
+    @JsonView(View.Summary.class)
+    private List<String> cmeyEngine = new ArrayList<>();
+
+    @Transient
+    @JsonView(View.Summary.class)
+    private List<String> cmeyFuelType = new ArrayList<>();
+
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Getters and setters: members">
@@ -67,6 +84,38 @@ public class Turbo extends Part {
         this.cmeyYear = cmeyYear;
     }
 
+    public List<String> getCmeyMake() {
+        return cmeyMake;
+    }
+
+    public void setCmeyMake(List<String> cmeyMake) {
+        this.cmeyMake = cmeyMake;
+    }
+
+    public List<String> getCmeyModel() {
+        return cmeyModel;
+    }
+
+    public void setCmeyModel(List<String> cmeyModel) {
+        this.cmeyModel = cmeyModel;
+    }
+
+    public List<String> getCmeyEngine() {
+        return cmeyEngine;
+    }
+
+    public void setCmeyEngine(List<String> cmeyEngine) {
+        this.cmeyEngine = cmeyEngine;
+    }
+
+    public List<String> getCmeyFuelType() {
+        return cmeyFuelType;
+    }
+
+    public void setCmeyFuelType(List<String> cmeyFuelType) {
+        this.cmeyFuelType = cmeyFuelType;
+    }
+
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Serialization: members">
@@ -86,12 +135,44 @@ public class Turbo extends Part {
             CarYear cyear = cmey.getYear();
             if (cyear != null) {
                 String yearName = cyear.getName();
-                if (yearName != null) {
+                if (StringUtils.isNotBlank(yearName)) {
                     cmeyYear.add(yearName);
+                }
+            }
+            CarModel cmodel = cmey.getModel();
+            if (cmodel != null) {
+                String modelName = cmodel.getName();
+                if (StringUtils.isNotBlank(modelName)) {
+                    cmeyModel.add(modelName);
+                }
+                CarMake cmake = cmodel.getMake();
+                if (cmake != null) {
+                    String makeName = cmake.getName();
+                    if (StringUtils.isNotBlank(makeName)) {
+                        cmeyMake.add(makeName);
+                    }
+                }
+            }
+            CarEngine cengine = cmey.getEngine();
+            if (cengine != null) {
+                String engineName = cengine.getEngineSize();
+                if (StringUtils.isNotBlank(engineName)) {
+                    cmeyEngine.add(engineName);
+                }
+                CarFuelType cfueltype = cengine.getFuelType();
+                if (cfueltype != null) {
+                    String fuelTypeName = cfueltype.getName();
+                    if (StringUtils.isNotBlank(fuelTypeName)) {
+                        cmeyFuelType.add(fuelTypeName);
+                    }
                 }
             }
         }
         jsonSerializer.include("cmeyYear");
+        jsonSerializer.include("cmeyMake");
+        jsonSerializer.include("cmeyModel");
+        jsonSerializer.include("cmeyEngine");
+        jsonSerializer.include("cmeyFuelType");
         return jsonSerializer;
     }
 

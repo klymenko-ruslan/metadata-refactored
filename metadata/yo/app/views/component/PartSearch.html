@@ -51,7 +51,10 @@
                description-field="doc_count"
                input-class="form-control"
                match-class="highlight"
-               text-no-results="Not found"></div>
+               text-no-results="Not found"
+               input-changed="onCmeyYearChanged"
+               selected-object="onCmeyYearSelected"
+               local-data="searchResults.aggregations['Car Year'].buckets"></div>
         </div>
 
         <div class="form-group">
@@ -63,7 +66,10 @@
                description-field="doc_count"
                input-class="form-control"
                match-class="highlight"
-               text-no-results="Not found"></div>
+               text-no-results="Not found"
+               input-changed="onCmeyMakeChanged"
+               selected-object="onCmeyMakeSelected"
+               local-data="searchResults.aggregations['Car Make'].buckets"></div>
         </div>
 
         <div class="form-group">
@@ -75,7 +81,10 @@
                description-field="doc_count"
                input-class="form-control"
                match-class="highlight"
-               text-no-results="Not found"></div>
+               text-no-results="Not found"
+               input-changed="onCmeyModelChanged"
+               selected-object="onCmeyModelSelected"
+               local-data="searchResults.aggregations['Car Model'].buckets"></div>
         </div>
 
         <div class="form-group">
@@ -87,19 +96,25 @@
                description-field="doc_count"
                input-class="form-control"
                match-class="highlight"
-               text-no-results="Not found"></div>
+               text-no-results="Not found"
+               input-changed="onCmeyEngineChanged"
+               selected-object="onCmeyEngineSelected"
+               local-data="searchResults.aggregations['Car Engine'].buckets"></div>
         </div>
 
         <div class="form-group">
           <div angucomplete-alt id="fltrFuelType"
-               placeholder="Search Engine"
+               placeholder="Search Fuel Type"
                minlength="0" maxlength="64" pause="300"
                search-fields="key"
                title-field="key"
                description-field="doc_count"
                input-class="form-control"
                match-class="highlight"
-               text-no-results="Not found"></div>
+               text-no-results="Not found"
+               input-changed="onCmeyFuelTypeChanged"
+               selected-object="onCmeyFuelTypeSelected"
+               local-data="searchResults.aggregations['Car Fuel Type'].buckets"></div>
         </div>
 
       </uib-accordion-group>

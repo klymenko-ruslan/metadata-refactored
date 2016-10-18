@@ -132,6 +132,71 @@ angular.module("ngMetaCrudApp")
           $scope.initColumns();
         });
 
+        $scope.onCmeyYearChanged = function(val) {
+          if (val !== $scope.fltrPart.year) {
+            $scope.fltrPart.year = val;
+            $scope.partTableParams.reload();
+          }
+        };
+
+        $scope.onCmeyYearSelected = function($item) {
+          if ($item !== undefined) {
+            $scope.onCmeyYearChanged($item.title);
+          }
+        };
+
+        $scope.onCmeyMakeChanged = function(val) {
+          if (val !== $scope.fltrPart.make) {
+            $scope.fltrPart.make = val;
+            $scope.partTableParams.reload();
+          }
+        };
+
+        $scope.onCmeyMakeSelected = function($item) {
+          if ($item !== undefined) {
+            $scope.onCmeyMakeChanged($item.title);
+          }
+        };
+
+        $scope.onCmeyModelChanged = function(val) {
+          if (val !== $scope.fltrPart.model) {
+            $scope.fltrPart.model = val;
+            $scope.partTableParams.reload();
+          }
+        };
+
+        $scope.onCmeyModelSelected = function($item) {
+          if ($item !== undefined) {
+            $scope.onCmeyModelChanged($item.title);
+          }
+        };
+
+        $scope.onCmeyEngineChanged = function(val) {
+          if (val !== $scope.fltrPart.engine) {
+            $scope.fltrPart.engine = val;
+            $scope.partTableParams.reload();
+          }
+        };
+
+        $scope.onCmeyEngineSelected = function($item) {
+          if ($item !== undefined) {
+            $scope.onCmeyEngineChanged($item.title);
+          }
+        };
+
+        $scope.onCmeyFuelTypeChanged = function(val) {
+          if (val !== $scope.fltrPart.fuelType) {
+            $scope.fltrPart.fuelType = val;
+            $scope.partTableParams.reload();
+          }
+        };
+
+        $scope.onCmeyFuelTypeSelected = function($item) {
+          if ($item !== undefined) {
+            $scope.onCmeyFuelTypeChanged($item.title);
+          }
+        };
+
         $scope.onTurboModelChanged = function(val) {
           if (val !== $scope.fltrPart.turboModel) {
             $scope.fltrPart.turboModel = val;
@@ -236,6 +301,12 @@ angular.module("ngMetaCrudApp")
           $scope.fltrPart.name = null;
           $scope.fltrPart.partNumber = null;
           $scope.fltrPart.critDims = null;
+
+          $scope.fltrPart.year = null;
+          $scope.fltrPart.make = null;
+          $scope.fltrPart.model = null;
+          $scope.fltrPart.engine = null;
+          $scope.fltrPart.fuelType = null;
 
           $scope.fltrGroupState.turboAttrsOpened = false;
           $scope.fltrGroupState.appAttrsOpened = false;

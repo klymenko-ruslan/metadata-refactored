@@ -38,7 +38,7 @@
             },
             "short": {
               "type": "string",
-              "analyzer": "normalized_short",
+              "analyzer": "simple",
               "store": "yes"
             },
             "lower_case_sort": {
