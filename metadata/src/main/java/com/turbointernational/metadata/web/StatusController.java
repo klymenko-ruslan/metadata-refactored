@@ -4,12 +4,13 @@ package com.turbointernational.metadata.web;
 import com.turbointernational.metadata.domain.part.PartDao;
 import com.turbointernational.metadata.web.dto.Status;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import static org.springframework.http.HttpStatus.OK;
 
 /**
  *
@@ -32,6 +33,6 @@ public class StatusController {
             status.setBomRebuilding(true);
         }
         
-        return new ResponseEntity<String>(status.toJson(), headers, HttpStatus.OK);
+        return new ResponseEntity<>(status.toJson(), headers, OK);
     }
 }

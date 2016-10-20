@@ -17,6 +17,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import static org.springframework.transaction.annotation.Propagation.REQUIRES_NEW;
+
 /**
  *
  * @author jrodriguez
@@ -57,7 +59,7 @@ public class PartDao extends AbstractDao<Part> {
     }
 
     @Async("bomRebuildExecutor")
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional(propagation = REQUIRES_NEW)
     public void rebuildBomDescendancy() {
         try {
             bomRebuildStart = new Date();
