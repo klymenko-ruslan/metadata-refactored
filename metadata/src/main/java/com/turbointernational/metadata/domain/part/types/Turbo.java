@@ -6,13 +6,19 @@ import com.turbointernational.metadata.domain.criticaldimension.CriticalDimensio
 import com.turbointernational.metadata.domain.other.CoolType;
 import com.turbointernational.metadata.domain.other.TurboModel;
 import com.turbointernational.metadata.domain.part.Part;
+import com.turbointernational.metadata.domain.part.bom.BOMItem;
+import com.turbointernational.metadata.domain.part.bom.BOMItemDao;
 import com.turbointernational.metadata.web.View;
 import flexjson.JSONSerializer;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 
 /**
@@ -37,24 +43,24 @@ public class Turbo extends Part {
 
     @Transient
     @JsonView(View.Summary.class)
-    private List<String> cmeyYear = new ArrayList<>();
+    private Set<String> cmeyYear = new HashSet<>();
 
     @Transient
     @JsonView(View.Summary.class)
-    private List<String> cmeyMake = new ArrayList<>();
+    private Set<String> cmeyMake = new HashSet<>();
 
     @Transient
     @JsonView(View.Summary.class)
-    private List<String> cmeyModel = new ArrayList<>();
+    private Set<String> cmeyModel = new HashSet<>();
 
 
     @Transient
     @JsonView(View.Summary.class)
-    private List<String> cmeyEngine = new ArrayList<>();
+    private Set<String> cmeyEngine = new HashSet<>();
 
     @Transient
     @JsonView(View.Summary.class)
-    private List<String> cmeyFuelType = new ArrayList<>();
+    private Set<String> cmeyFuelType = new HashSet<>();
 
     //</editor-fold>
 
@@ -76,43 +82,43 @@ public class Turbo extends Part {
         this.coolType = coolType;
     }
 
-    public List<String> getCmeyYear() {
+    public Set<String> getCmeyYear() {
         return cmeyYear;
     }
 
-    public void setCmeyYear(List<String> cmeyYear) {
+    public void setCmeyYear(Set<String> cmeyYear) {
         this.cmeyYear = cmeyYear;
     }
 
-    public List<String> getCmeyMake() {
+    public Set<String> getCmeyMake() {
         return cmeyMake;
     }
 
-    public void setCmeyMake(List<String> cmeyMake) {
+    public void setCmeyMake(Set<String> cmeyMake) {
         this.cmeyMake = cmeyMake;
     }
 
-    public List<String> getCmeyModel() {
+    public Set<String> getCmeyModel() {
         return cmeyModel;
     }
 
-    public void setCmeyModel(List<String> cmeyModel) {
+    public void setCmeyModel(Set<String> cmeyModel) {
         this.cmeyModel = cmeyModel;
     }
 
-    public List<String> getCmeyEngine() {
+    public Set<String> getCmeyEngine() {
         return cmeyEngine;
     }
 
-    public void setCmeyEngine(List<String> cmeyEngine) {
+    public void setCmeyEngine(Set<String> cmeyEngine) {
         this.cmeyEngine = cmeyEngine;
     }
 
-    public List<String> getCmeyFuelType() {
+    public Set<String> getCmeyFuelType() {
         return cmeyFuelType;
     }
 
-    public void setCmeyFuelType(List<String> cmeyFuelType) {
+    public void setCmeyFuelType(Set<String> cmeyFuelType) {
         this.cmeyFuelType = cmeyFuelType;
     }
 
@@ -120,35 +126,27 @@ public class Turbo extends Part {
 
     //<editor-fold defaultstate="collapsed" desc="Serialization: members">
 
-    @Override
-    protected JSONSerializer buildJsonSerializerSearch(List<CriticalDimension> criticalDimensions,
-                                                       TurboCarModelEngineYearDao tcmeyDao) {
-        JSONSerializer jsonSerializer = super.buildJsonSerializerSearch(criticalDimensions, tcmeyDao);
-            jsonSerializer.include("turboModel.id");
-            jsonSerializer.include("turboModel.name");
-            jsonSerializer.include("turboModel.turboType.id");
-            jsonSerializer.include("turboModel.turboType.name");
-        Long partId = getId();
+    private void addCmeyOfPart(TurboCarModelEngineYearDao tcmeyDao, Long partId) {
         for (TurboCarModelEngineYear tcmey : tcmeyDao.getPartLinkedApplications(partId)) {
             CarModelEngineYear cmey = tcmey.getCarModelEngineYear();
             if (cmey == null) continue;
             CarYear cyear = cmey.getYear();
             if (cyear != null) {
                 String yearName = cyear.getName();
-                if (StringUtils.isNotBlank(yearName)) {
+                if (isNotBlank(yearName)) {
                     cmeyYear.add(yearName);
                 }
             }
             CarModel cmodel = cmey.getModel();
             if (cmodel != null) {
                 String modelName = cmodel.getName();
-                if (StringUtils.isNotBlank(modelName)) {
+                if (isNotBlank(modelName)) {
                     cmeyModel.add(modelName);
                 }
                 CarMake cmake = cmodel.getMake();
                 if (cmake != null) {
                     String makeName = cmake.getName();
-                    if (StringUtils.isNotBlank(makeName)) {
+                    if (isNotBlank(makeName)) {
                         cmeyMake.add(makeName);
                     }
                 }
@@ -156,17 +154,34 @@ public class Turbo extends Part {
             CarEngine cengine = cmey.getEngine();
             if (cengine != null) {
                 String engineName = cengine.getEngineSize();
-                if (StringUtils.isNotBlank(engineName)) {
+                if (isNotBlank(engineName)) {
                     cmeyEngine.add(engineName);
                 }
                 CarFuelType cfueltype = cengine.getFuelType();
                 if (cfueltype != null) {
                     String fuelTypeName = cfueltype.getName();
-                    if (StringUtils.isNotBlank(fuelTypeName)) {
+                    if (isNotBlank(fuelTypeName)) {
                         cmeyFuelType.add(fuelTypeName);
                     }
                 }
             }
+        }
+    }
+
+    @Override
+    protected JSONSerializer buildJsonSerializerSearch(List<CriticalDimension> criticalDimensions,
+                                                       TurboCarModelEngineYearDao tcmeyDao, BOMItemDao bomItemDao) {
+        JSONSerializer jsonSerializer = super.buildJsonSerializerSearch(criticalDimensions, tcmeyDao, bomItemDao);
+            jsonSerializer.include("turboModel.id");
+            jsonSerializer.include("turboModel.name");
+            jsonSerializer.include("turboModel.turboType.id");
+            jsonSerializer.include("turboModel.turboType.name");
+        Long partId = getId();
+        // Ticket #807.
+        addCmeyOfPart(tcmeyDao, partId);
+        List<Long> partIds = bomItemDao.bomChildren(partId);
+        for(Long childId : partIds) {
+            addCmeyOfPart(tcmeyDao, childId);
         }
         jsonSerializer.include("cmeyYear");
         jsonSerializer.include("cmeyMake");

@@ -19,8 +19,8 @@ public class IndexBuilder {
 
     public static void build(CriticalDimensionService criticalDimensionService, ResourceService resourceService,
                              CreateIndexRequestBuilder indexRequestBuilder) throws IOException {
-        for (String indexType : new String[]{"carengine", "carfueltype", "carmake", "carmodel", "carmodelengineyear",
-                "salesnotepart"}) {
+        for (String indexType : new String[]{"carengine", "carfueltype", "caryear", "carmake",
+                "carmodel", "carmodelengineyear", "salesnotepart"}) {
             String resourceName = "elasticsearch/" + indexType + ".json";
             String typeDef = resourceService.loadFromMeta(resourceName);
             indexRequestBuilder.addMapping(indexType, typeDef);

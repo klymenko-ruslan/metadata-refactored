@@ -6,8 +6,32 @@ from
     join bom_descendant as bd on b.id = bd.part_bom_id
 group by p.part_type_id
 order by p.part_type_id asc;
+
+
+select tcmey.*
+from  turbo_car_model_engine_year as tcmey
+where part_id in(
+    select
+        b.child_part_id
+    from
+        bom as b on tcmey.part_id = b.parent_part_id
+        join bom_descendant as bd on b.id = bd.part_bom_id
+    where tcmey.part_id=6678
+);
+
+select distinct
+    b.child_part_id
+from
+    turbo_car_model_engine_year as tcmey
+    join bom as b on tcmey.part_id = b.parent_part_id
+    join bom_descendant as bd on b.id = bd.part_bom_id
+where b.parent_part_id=68085;
+
 */
 
+
+delete from bom_descendant;
+call RebuildBomDescendancyForPart(10980, 0);
 -------------------------------------------------------------------------------
 
 DELIMITER ;;
@@ -56,14 +80,15 @@ BEGIN
 
             inner join bom as bc on coalesce(ii2.part_id, b.child_part_id) = bc.parent_part_id
 
-        WHERE bd.distance = @distance - 1 AND b.parent_part_id = part_id;
+        WHERE bd.distance = @distance - 1;
+        -- WHERE bd.distance = @distance - 1 AND b.parent_part_id = part_id;
 
     UNTIL ROW_COUNT() = 0 END REPEAT;
 
 END ;;
 
-DROP PROCEDURE IF EXISTS RebuildBomDescendancy;
-CREATE PROCEDURE `RebuildBomDescendancy`()
+DROP PROCEDURE IF EXISTS RebuildBomDescendancyAll;
+CREATE PROCEDURE `RebuildBomDescendancyAll`()
     SQL SECURITY INVOKER
 BEGIN
     DECLARE done BOOLEAN DEFAULT FALSE;
@@ -87,8 +112,8 @@ BEGIN
 
 END ;;
 
-DROP PROCEDURE IF EXISTS RebuildBomDescendancyOld;
-CREATE PROCEDURE `RebuildBomDescendancyOld`()
+DROP PROCEDURE IF EXISTS RebuildBomDescendancy;
+CREATE PROCEDURE `RebuildBomDescendancy`()
     SQL SECURITY INVOKER
 BEGIN
 
@@ -98,7 +123,6 @@ BEGIN
         part_bom_id, descendant_bom_id, distance, type, qty
     ) SELECT b.id, b.id, 1, 'direct', b.quantity FROM bom b;
 
-/*
     SET @distance = 1;
     REPEAT
         SET @distance = @distance + 1;
@@ -127,7 +151,7 @@ BEGIN
         WHERE bd.distance = @distance - 1;
 
     UNTIL ROW_COUNT() = 0 END REPEAT;
-*/
+
 END ;;
 
 

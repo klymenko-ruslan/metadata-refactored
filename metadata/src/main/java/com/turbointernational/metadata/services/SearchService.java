@@ -409,6 +409,10 @@ public interface SearchService {
 
     void deleteCarFuelType(CarFuelType carFuelType) throws Exception;
 
+    void indexCarYear(CarYear carYear);
+
+    void deleteCarYear(CarYear carYear) throws Exception;
+
     void indexCarMake(CarMake carMake);
 
     void deleteCarMake(CarMake carMake) throws Exception;

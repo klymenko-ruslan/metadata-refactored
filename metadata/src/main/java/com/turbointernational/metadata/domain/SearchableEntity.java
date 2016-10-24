@@ -1,6 +1,7 @@
 package com.turbointernational.metadata.domain;
 
 import com.turbointernational.metadata.domain.criticaldimension.CriticalDimension;
+import com.turbointernational.metadata.domain.part.bom.BOMItemDao;
 import com.turbointernational.metadata.domain.part.types.TurboCarModelEngineYearDao;
 import com.turbointernational.metadata.services.SearchServiceEsImpl;
 
@@ -20,7 +21,8 @@ public interface SearchableEntity {
     //@PostPersist
     void updateSearchIndex() throws Exception;
 
-    String toSearchJson(List<CriticalDimension> criticalDimensions, TurboCarModelEngineYearDao tcmeyDao);
+    String toSearchJson(List<CriticalDimension> criticalDimensions, TurboCarModelEngineYearDao tcmeyDao,
+                        BOMItemDao bomItemDao);
 
     /**
      * Get ID for a document in an ElasticSearch index.

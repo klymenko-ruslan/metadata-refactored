@@ -82,6 +82,16 @@ public class SearchServiceMockImpl implements SearchService {
     }
 
     @Override
+    public void indexCarYear(CarYear carYear) {
+        log.debug("Indexing: indexCarYear(CarYear carYear)");
+    }
+
+    @Override
+    public void deleteCarYear(CarYear carYear) throws Exception {
+        log.debug("Indexing: deleteCarYear(CarYear carYear)");
+    }
+
+    @Override
     public void indexCarMake(CarMake carMake) {
         log.debug("Indexing: indexCarMake(CarMake carMake)");
 

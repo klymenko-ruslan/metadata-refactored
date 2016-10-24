@@ -5,8 +5,6 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.domain.SearchableEntity;
-import com.turbointernational.metadata.domain.car.CarModelEngineYear;
-import com.turbointernational.metadata.domain.car.CarYear;
 import com.turbointernational.metadata.domain.criticaldimension.CriticalDimension;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.other.TurboType;
@@ -14,6 +12,7 @@ import com.turbointernational.metadata.domain.part.bom.BOMItem;
 import com.turbointernational.metadata.domain.part.salesnote.SalesNotePart;
 import com.turbointernational.metadata.domain.part.types.*;
 import com.turbointernational.metadata.domain.type.PartType;
+import com.turbointernational.metadata.domain.part.bom.BOMItemDao;
 import com.turbointernational.metadata.services.CriticalDimensionService;
 import com.turbointernational.metadata.services.SearchService;
 import com.turbointernational.metadata.web.View;
@@ -535,7 +534,7 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
     }
 
     protected JSONSerializer buildJsonSerializerSearch(List<CriticalDimension> criticalDimensions,
-                                                       TurboCarModelEngineYearDao tcmeyDao) {
+                                                       TurboCarModelEngineYearDao tcmeyDao, BOMItemDao bomItemDao) {
         JSONSerializer jsonSerializer = new JSONSerializer()
             .include("id")
             .include("name")
@@ -560,8 +559,9 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
     }
 
     @Override
-    public final String toSearchJson(List<CriticalDimension> criticalDimensions, TurboCarModelEngineYearDao tcmeyDao) {
-        JSONSerializer jsonSerializer = buildJsonSerializerSearch(criticalDimensions, tcmeyDao);
+    public final String toSearchJson(List<CriticalDimension> criticalDimensions, TurboCarModelEngineYearDao tcmeyDao,
+                                     BOMItemDao bomItemDao) {
+        JSONSerializer jsonSerializer = buildJsonSerializerSearch(criticalDimensions, tcmeyDao, bomItemDao);
         String json = jsonSerializer.exclude("*").serialize(this);
         return json;
     }

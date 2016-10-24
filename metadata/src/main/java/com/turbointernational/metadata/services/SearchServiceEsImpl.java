@@ -5,6 +5,7 @@ import com.turbointernational.metadata.domain.car.*;
 import com.turbointernational.metadata.domain.criticaldimension.CriticalDimension;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.part.PartDao;
+import com.turbointernational.metadata.domain.part.bom.BOMItemDao;
 import com.turbointernational.metadata.domain.part.salesnote.SalesNotePart;
 import com.turbointernational.metadata.domain.part.salesnote.SalesNotePartDao;
 import com.turbointernational.metadata.domain.part.salesnote.SalesNoteState;
@@ -78,6 +79,9 @@ public class SearchServiceEsImpl implements SearchService {
     @Autowired
     private PlatformTransactionManager txManager; // JPA
 
+    @Autowired
+    private BOMItemDao bomItemDao;
+
     @Value("${elasticsearch.index}")
     protected String elasticSearchIndex = "metadata";
 
@@ -116,6 +120,10 @@ public class SearchServiceEsImpl implements SearchService {
 
     @Autowired
     private CarFuelTypeDao carFuelTypeDao;
+
+    @Value("${elasticsearch.type.caryear}")
+    private String elasticSearchTypeCarYear = "caryear";
+
 
     @Value("${elasticsearch.type.carmake}")
     private String elasticSearchTypeCarMake = "carmake";
@@ -576,6 +584,18 @@ public class SearchServiceEsImpl implements SearchService {
     @Transactional(readOnly = true)
     public void deleteCarFuelType(CarFuelType carFuelType) throws Exception {
         deleteDoc(elasticSearchTypeCarFuelType, carFuelType.getSearchId());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public void indexCarYear(CarYear carYear) {
+        indexDoc(carYear, elasticSearchTypeCarYear);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public void deleteCarYear(CarYear carYear) throws Exception {
+        deleteDoc(elasticSearchTypeCarYear, carYear.getSearchId());
     }
 
     @Override
@@ -1110,7 +1130,7 @@ public class SearchServiceEsImpl implements SearchService {
         tt.execute((TransactionCallback<Void>) ts -> {
             String searchId = doc.getSearchId();
             List<CriticalDimension> criticalDimensions = getCriticalDimensions(doc);
-            String asJson = doc.toSearchJson(criticalDimensions, tcmeyDao);
+            String asJson = doc.toSearchJson(criticalDimensions, tcmeyDao, bomItemDao);
             log.debug("elasticSearchIndex: {}, elasticSearchType: {}, searchId: {}, asJson: {}",
                     elasticSearchIndex, elasticSearchType, searchId, asJson);
             IndexRequest index = new IndexRequest(elasticSearchIndex, elasticSearchType, searchId);
@@ -1142,7 +1162,7 @@ public class SearchServiceEsImpl implements SearchService {
                         searchId = doc.getSearchId();
                         index = new IndexRequest(elasticSearchIndex, elasticSearchType, searchId);
                         List<CriticalDimension> criticalDimensions = getCriticalDimensions(doc);
-                        asJson = doc.toSearchJson(criticalDimensions, tcmeyDao);
+                        asJson = doc.toSearchJson(criticalDimensions, tcmeyDao, bomItemDao);
                     }
                     Thread.yield();
                     log.debug("elasticSearchIndex: {}, elasticSearchType: {}, searchId: {}, asJson: {}",

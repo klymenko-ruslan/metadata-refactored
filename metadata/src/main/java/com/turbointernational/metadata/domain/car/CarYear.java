@@ -1,9 +1,16 @@
 package com.turbointernational.metadata.domain.car;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.domain.SearchableEntity;
+import com.turbointernational.metadata.domain.criticaldimension.CriticalDimension;
+import com.turbointernational.metadata.domain.part.bom.BOMItemDao;
+import com.turbointernational.metadata.domain.part.types.TurboCarModelEngineYearDao;
+import com.turbointernational.metadata.services.SearchService;
 import com.turbointernational.metadata.web.View;
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -17,7 +24,9 @@ import javax.persistence.*;
 @NamedQueries({
         @NamedQuery(name = "findCarYearByName", query = "FROM CarYear WHERE name=:name")
 })
-public class CarYear implements Serializable {
+public class CarYear implements Serializable, SearchableEntity {
+
+    private final static Logger log = LoggerFactory.getLogger(CarYear.class);
 
     //<editor-fold defaultstate="collapsed" desc="Properties">
     @Id
@@ -37,6 +46,40 @@ public class CarYear implements Serializable {
 
     public CarYear(String year) {
         setName(year);
+    }
+
+    protected JSONSerializer getSearchSerializer() {
+        return new JSONSerializer()
+                .include("id")
+                .include("name")
+                .exclude("*.class");
+    }
+
+    @Override
+    public String toSearchJson(List<CriticalDimension> criticalDimensions, TurboCarModelEngineYearDao tcmeyDao,
+                               BOMItemDao bomItemDao) {
+        return getSearchSerializer().exclude("*").serialize(this);
+    }
+
+    @Override
+    public String getSearchId() {
+        return getId().toString();
+    }
+
+    //<editor-fold defaultstate="collapsed" desc="Lifecycle">
+    @PostRemove
+    @Override
+    public void removeSearchIndex() throws Exception {
+        log.info("Removing from search index.");
+        SearchService.instance().deleteCarYear(this);
+    }
+
+    @PostUpdate
+    @PostPersist
+    @Override
+    public void updateSearchIndex() throws Exception {
+        log.info("Updating search index.");
+        SearchService.instance().indexCarYear(this);
     }
 
     public Long getId() {
@@ -89,5 +132,6 @@ public class CarYear implements Serializable {
         return new JSONDeserializer<List<CarYear>>().use(null, ArrayList.class).use("values", CarYear.class).deserialize(json);
     }
     //</editor-fold>
+
 
 }
