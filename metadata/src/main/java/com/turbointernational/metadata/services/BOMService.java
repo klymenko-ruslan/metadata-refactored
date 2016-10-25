@@ -7,18 +7,25 @@ import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.part.PartDao;
 import com.turbointernational.metadata.domain.part.bom.BOMItem;
 import com.turbointernational.metadata.domain.part.bom.BOMItemDao;
+import com.turbointernational.metadata.domain.part.types.TurboCarModelEngineYear;
+import com.turbointernational.metadata.domain.part.types.TurboCarModelEngineYearDao;
 import com.turbointernational.metadata.web.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import java.util.*;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
 import static com.turbointernational.metadata.services.BOMService.AddToParentBOMsRequest.ResolutionEnum.REPLACE;
 import static java.util.Collections.binarySearch;
+import static org.springframework.transaction.annotation.Propagation.REQUIRES_NEW;
 
 /**
  * Created by dmytro.trunykov@zorallabs.com on 18.02.16.
@@ -28,6 +35,9 @@ public class BOMService {
 
     private final static Logger log = LoggerFactory.getLogger(BOMService.class);
 
+    @PersistenceContext
+    protected EntityManager em;
+
     @Autowired
     private PartDao partDao;
 
@@ -36,6 +46,21 @@ public class BOMService {
 
     @Autowired
     private ChangelogDao changelogDao;
+
+    @Autowired
+    private SearchService searchService;
+
+    /**
+     * Contains the date when we started the BOM rebuild, or null if not currently rebuilding.
+     */
+    public static volatile Date bomRebuildStart = null;
+
+    @Autowired
+    public TurboCarModelEngineYearDao tcmeyDao;
+
+    public static final Date getBomRebuildStart() {
+        return bomRebuildStart;
+    }
 
     public static class AddToParentBOMsRequest {
 
@@ -232,6 +257,57 @@ public class BOMService {
 
     }
 
+    @Async("bomRebuildExecutor")
+    @Transactional(propagation = REQUIRES_NEW)
+    public void rebuildBomDescendancy() {
+        try {
+            bomRebuildStart = new Date();
+            log.info("Rebuilding BOM descendancy.");
+            em.createNativeQuery("CALL RebuildBomDescendancy()").executeUpdate();
+            em.clear();
+            // Ticket #807.
+            List<TurboCarModelEngineYear> tcmeys = tcmeyDao.findAll();
+            int i = 0;
+            for (TurboCarModelEngineYear tcmey : tcmeys) {
+                Long partId = tcmey.getTurbo().getId();
+                i++;
+                if (log.isDebugEnabled()) {
+                    String msg = String.format("TCMEY indexing: [%d/%d] - %d", i, tcmeys.size(), partId);
+                    log.debug(msg);
+                }
+                searchService.indexPart(partId);
+            }
+            log.info("BOM descendancy rebuild completed.");
+        } finally {
+            bomRebuildStart = null;
+        }
+    }
+
+    @Transactional(propagation = REQUIRES_NEW)
+    public void rebuildBomDescendancyForPart(Long partId, boolean clean) {
+        Query call = em.createNativeQuery("CALL RebuildBomDescendancyForPart(:partId, :clean)");
+        call.setParameter("partId", partId);
+        call.setParameter("clean",  clean ? 1 : 0);
+        call.executeUpdate();
+        em.clear();
+        searchService.indexPart(partId);
+    }
+
+    @Transactional(propagation = REQUIRES_NEW)
+    public void rebuildBomDescendancyForParts(List<Long> partIds, boolean clean) {
+        for(Long partId : partIds) {
+            rebuildBomDescendancyForPart(partId, clean);
+        }
+    }
+
+    @Transactional(propagation = REQUIRES_NEW)
+    public void rebuildBomDescendancyForParts(Iterator<Part> parts, boolean clean) {
+        while (parts.hasNext()) {
+            Part part = parts.next();
+            rebuildBomDescendancyForPart(part.getId(), clean);
+        }
+    }
+
     @Transactional(noRollbackFor = {FoundBomRecursionException.class, AssertionError.class})
     public BOMItem create(Long parentPartId, Long childPartId, Integer quantity, boolean rebuildBom) throws FoundBomRecursionException {
         // Create a new BOM item
@@ -249,9 +325,8 @@ public class BOMService {
         bomItemDao.persist(item);
         // Update the changelog
         changelogDao.log("Added bom item.", item.toJson());
-        // TODO: Only change what we need to rather than rebuilding everything
         if (rebuildBom) {
-            partDao.rebuildBomDescendancy();
+            rebuildBomDescendancyForPart(parentPartId, true); // TODO: is clean=true required?
         }
         return item;
     }
@@ -322,7 +397,8 @@ public class BOMService {
             }
         }
         List<BOMItem> parents = getParentsForBom(primaryPartId);
-        partDao.rebuildBomDescendancy();
+        // rebuildBomDescendancy();
+        rebuildBomDescendancyForPart(primaryPartId, true);
         return new BOMService.AddToParentBOMsResponse(added, failures, parents);
     }
 
@@ -350,8 +426,7 @@ public class BOMService {
         partDao.merge(parent);
         // Delete it
         bomItemDao.remove(item);
-        // TODO: Only change what we need to rather than rebuilding everything
-        partDao.rebuildBomDescendancy();
+        rebuildBomDescendancyForPart(parent.getId(), true);
     }
 
     /**

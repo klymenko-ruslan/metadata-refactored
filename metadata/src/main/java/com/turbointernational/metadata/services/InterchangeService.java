@@ -13,15 +13,16 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by trunikov on 2/11/16.
  */
 @Service
 public class InterchangeService {
+
+    @Autowired
+    private BOMService bomService;
 
     @Autowired
     private PartDao partDao;
@@ -55,10 +56,12 @@ public class InterchangeService {
     @Transactional
     public void create(Interchange interchange) {
         // Link it with the Hibernate parts
+        List<Long> partIds = new ArrayList<>(interchange.getParts().size());
         Set<Part> canonicalParts = new HashSet<>();
         // Map the incoming part IDs to their canonical part
         for(Iterator<Part> it = interchange.getParts().iterator(); it.hasNext();) {
             Part interchangePart = it.next();
+            partIds.add(interchangePart.getId());
             Part canonicalPart = partDao.findOne(interchangePart.getId());
             if (canonicalPart.getInterchange() != null) {
                 throw new IllegalArgumentException("Part " + interchangePart.getId() + " already has interchangeable parts.");
@@ -76,8 +79,7 @@ public class InterchangeService {
         interchangeDao.flush();
         // Update the changelog
         changelogDao.log("Created interchange: ", interchange.toJson());
-        // TODO: Only change what we need to rather than rebuilding everything
-        partDao.rebuildBomDescendancy();
+        bomService.rebuildBomDescendancyForParts(partIds, true);
     }
 
     /**
@@ -108,8 +110,8 @@ public class InterchangeService {
         interchangeDao.merge(newInterchange);
         // Update the changelog
         changelogDao.log("Deleted " + partId + " from interchange " + newInterchange.getId());
-        // TODO: Only change what we need to rather than rebuilding everything
-        partDao.rebuildBomDescendancy();
+        bomService.rebuildBomDescendancyForPart(partId, true);
+        bomService.rebuildBomDescendancyForParts(interchange.getParts().iterator(), true);
     }
 
     /**
@@ -126,8 +128,8 @@ public class InterchangeService {
         normalizePartInterchange(pickedPart);
         movePartToOtherInterchangeGroup(pickedPart, part);
         changelogDao.log("Added picked part " + pickedPart.getId() + " as interchange to the part " + part.getId());
-        // TODO: Only change what we need to rather than rebuilding everything
-        partDao.rebuildBomDescendancy();
+        bomService.rebuildBomDescendancyForPart(partId, true);
+        bomService.rebuildBomDescendancyForPart(pickedPartId, true);
      }
 
     /**
@@ -144,8 +146,8 @@ public class InterchangeService {
         normalizePartInterchange(pickedPart);
         movePartToOtherInterchangeGroup(part, pickedPart);
         changelogDao.log("Added part " + part.getId() + " as interchange to the picked part " + pickedPart.getId());
-        // TODO: Only change what we need to rather than rebuilding everything
-        partDao.rebuildBomDescendancy();
+        bomService.rebuildBomDescendancyForPart(partId, true);
+        bomService.rebuildBomDescendancyForPart(pickedPartId, true);
      }
 
     /**
@@ -162,8 +164,8 @@ public class InterchangeService {
         normalizePartInterchange(pickedPart);
         moveInterchangeableGroupToOtherGroup(pickedPart, part);
         changelogDao.log("Added picked part " + pickedPart.getId() + " and all its interchanges to the part " + part.getId());
-        // TODO: Only change what we need to rather than rebuilding everything
-        partDao.rebuildBomDescendancy();
+        bomService.rebuildBomDescendancyForPart(partId, true);
+        bomService.rebuildBomDescendancyForPart(pickedPartId, true);
      }
 
     /**

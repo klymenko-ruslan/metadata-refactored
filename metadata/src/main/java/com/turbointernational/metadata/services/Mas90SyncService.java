@@ -62,6 +62,9 @@ public class Mas90SyncService {
     private EntityManager entityManager;
 
     @Autowired
+    private BOMService bomService;
+
+    @Autowired
     private PartDao partDao;
 
     @Autowired
@@ -417,7 +420,8 @@ public class Mas90SyncService {
                 record.setInserted(inserted);
                 record.setSkipped(skipped);
                 mas90SyncDao.merge(record);
-                partDao.rebuildBomDescendancy(); // Ticket #592.
+                // Logic commented out below is replaced by the ticket #807 and migrated to the method processBOM().
+                //bomService.rebuildBomDescendancy(); // Ticket #592.
                 return null;
             });
             log.info("Synchronization with MAS90 finished.");
@@ -700,6 +704,7 @@ public class Mas90SyncService {
                 }
                 return dirty;
             });
+            bomService.rebuildBomDescendancyForPart(partId, true); // Ticket #807.
             return updated;
         }
 

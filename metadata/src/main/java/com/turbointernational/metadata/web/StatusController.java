@@ -1,8 +1,9 @@
 
 package com.turbointernational.metadata.web;
 
-import com.turbointernational.metadata.domain.part.PartDao;
+import com.turbointernational.metadata.services.BOMService;
 import com.turbointernational.metadata.web.dto.Status;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -19,6 +20,9 @@ import static org.springframework.http.HttpStatus.OK;
 @Controller
 @RequestMapping("/metadata/status/")
 public class StatusController {
+
+    @Autowired
+    private BOMService bomService;
     
     @Transactional
     @RequestMapping(value="/all")
@@ -29,7 +33,7 @@ public class StatusController {
         
         Status status = new Status();
         
-        if (PartDao.getBomRebuildStart() != null) {
+        if (bomService.getBomRebuildStart() != null) {
             status.setBomRebuilding(true);
         }
         

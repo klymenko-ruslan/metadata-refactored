@@ -1,27 +1,13 @@
 package com.turbointernational.metadata.domain.part;
 
 import com.turbointernational.metadata.domain.AbstractDao;
-import com.turbointernational.metadata.domain.part.types.TurboCarModelEngineYear;
-import com.turbointernational.metadata.domain.part.types.TurboCarModelEngineYearDao;
-import com.turbointernational.metadata.services.SearchService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.persistence.NoResultException;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
-
-import static org.springframework.transaction.annotation.Propagation.REQUIRES_NEW;
 
 /**
  *
@@ -31,21 +17,6 @@ import static org.springframework.transaction.annotation.Propagation.REQUIRES_NE
 public class PartDao extends AbstractDao<Part> {
     
     private static final Logger log = LoggerFactory.getLogger(PartDao.class);
-
-    @Autowired
-    private SearchService searchService;
-
-    /**
-     * Contains the date when we started the BOM rebuild, or null if not currently rebuilding.
-     */
-    public static volatile Date bomRebuildStart = null;
-
-    @Autowired
-    public TurboCarModelEngineYearDao tcmeyDao;
-
-    public static final Date getBomRebuildStart() {
-        return bomRebuildStart;
-    }
 
     public PartDao() {
         super(Part.class);
@@ -66,25 +37,6 @@ public class PartDao extends AbstractDao<Part> {
                 .setFirstResult(firstResult)
                 .setMaxResults(maxResults)
                 .getResultList();
-    }
-
-    @Async("bomRebuildExecutor")
-    @Transactional(propagation = REQUIRES_NEW)
-    public void rebuildBomDescendancy() {
-        try {
-            bomRebuildStart = new Date();
-            log.info("Rebuilding BOM descendancy.");
-            em.createNativeQuery("CALL RebuildBomDescendancy()").executeUpdate();
-            em.clear();
-            // Ticket #807.
-            for (TurboCarModelEngineYear tcmey : tcmeyDao.findAll()) {
-                Long partId = tcmey.getTurbo().getId();
-                searchService.indexPart(partId);
-            }
-            log.info("BOM descendancy rebuild completed.");
-        } finally {
-            bomRebuildStart = null;
-        }
     }
 
     public List<ProductImage> findProductImages(Collection<Long> productIds) {

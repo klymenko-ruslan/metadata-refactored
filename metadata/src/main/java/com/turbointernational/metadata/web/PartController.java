@@ -7,6 +7,7 @@ import com.turbointernational.metadata.domain.other.TurboType;
 import com.turbointernational.metadata.domain.other.TurboTypeDao;
 import com.turbointernational.metadata.domain.part.*;
 import com.turbointernational.metadata.domain.part.bom.BOMAncestor;
+import com.turbointernational.metadata.services.BOMService;
 import com.turbointernational.metadata.services.CriticalDimensionService;
 import com.turbointernational.metadata.services.ImageService;
 import flexjson.JSONSerializer;
@@ -50,6 +51,9 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 public class PartController {
 
     private final static Logger log = LoggerFactory.getLogger(PartController.class);
+
+    @Autowired
+    private BOMService bomService;
 
     @Autowired
     private ChangelogDao changelogDao;
@@ -327,7 +331,7 @@ public class PartController {
     @RequestMapping(value="/part/all/rebuildBom")
     @Secured("ROLE_ADMIN")
     public void rebuildAllBom() throws Exception {
-        partDao.rebuildBomDescendancy();
+        bomService.rebuildBomDescendancy();
     }
 
     @Transactional
