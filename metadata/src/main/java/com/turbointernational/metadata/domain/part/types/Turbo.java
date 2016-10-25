@@ -179,9 +179,9 @@ public class Turbo extends Part {
         Long partId = getId();
         // Ticket #807.
         addCmeyOfPart(tcmeyDao, partId);
-        List<Long> partIds = bomItemDao.bomChildren(partId);
-        for(Long childId : partIds) {
-            addCmeyOfPart(tcmeyDao, childId);
+        List<Number> partIds = bomItemDao.bomChildren(partId);
+        for(Number childId : partIds) {
+            addCmeyOfPart(tcmeyDao, childId.longValue());
         }
         jsonSerializer.include("cmeyYear");
         jsonSerializer.include("cmeyMake");
