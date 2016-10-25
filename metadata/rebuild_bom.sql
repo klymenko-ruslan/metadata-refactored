@@ -12,11 +12,12 @@ select tcmey.*
 from  turbo_car_model_engine_year as tcmey
 where part_id in(
     select
-        b.child_part_id
+        b2.child_part_id
     from
-        bom as b on tcmey.part_id = b.parent_part_id
+        bom as b
         join bom_descendant as bd on b.id = bd.part_bom_id
-    where tcmey.part_id=6678
+        join bom as b2 on bd.descendant_bom_id = b2.id
+    where b.parent_part_id=68085
 );
 
 select distinct
