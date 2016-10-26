@@ -2,20 +2,18 @@ package com.turbointernational.metadata.domain.car;
 
 import com.turbointernational.metadata.domain.SearchableEntity;
 import com.turbointernational.metadata.domain.criticaldimension.CriticalDimension;
-import com.turbointernational.metadata.domain.part.bom.BOMItemDao;
 import com.turbointernational.metadata.domain.part.types.TurboCarModelEngineYear;
-import com.turbointernational.metadata.domain.part.types.TurboCarModelEngineYearDao;
 import com.turbointernational.metadata.services.SearchService;
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import javax.persistence.*;
 
 import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.FetchType.LAZY;
@@ -98,8 +96,7 @@ public class CarModelEngineYear implements Serializable, SearchableEntity {
     }
 
     @Override
-    public String toSearchJson(List<CriticalDimension> criticalDimensions, TurboCarModelEngineYearDao tcmeyDao,
-                               BOMItemDao bomItemDao) {
+    public String toSearchJson(List<CriticalDimension> criticalDimensions) {
         return getSearchSerializer().exclude("*").serialize(this);
     }
 
@@ -157,6 +154,11 @@ public class CarModelEngineYear implements Serializable, SearchableEntity {
     public void updateSearchIndex() throws Exception {
         log.info("Updating search index.");
         SearchService.instance().indexCarModelEngineYear(this);
+    }
+
+    @Override
+    public void beforeIndexing() {
+        // Nothing.
     }
 
     //</editor-fold>

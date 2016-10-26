@@ -5,8 +5,6 @@ import com.turbointernational.metadata.domain.SearchableEntity;
 import com.turbointernational.metadata.domain.criticaldimension.CriticalDimension;
 import com.turbointernational.metadata.domain.other.Manufacturer;
 import com.turbointernational.metadata.domain.part.Part;
-import com.turbointernational.metadata.domain.part.bom.BOMItemDao;
-import com.turbointernational.metadata.domain.part.types.TurboCarModelEngineYearDao;
 import com.turbointernational.metadata.domain.security.User;
 import com.turbointernational.metadata.services.SearchService;
 import com.turbointernational.metadata.web.View;
@@ -196,6 +194,12 @@ public class SalesNotePart implements Serializable, SearchableEntity {
         log.info("Updating search index.");
         SearchService.instance().indexSalesNotePart(this);
     }
+
+    @Override
+    public void beforeIndexing() {
+        // Nothing.
+    }
+
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Serialization">
@@ -213,8 +217,7 @@ public class SalesNotePart implements Serializable, SearchableEntity {
     }
 
     @Override
-    public String toSearchJson(List<CriticalDimension> criticalDimensions, TurboCarModelEngineYearDao tcmeyDao,
-                               BOMItemDao bomItemDao) {
+    public String toSearchJson(List<CriticalDimension> criticalDimensions) {
         return getSearchSerializer().exclude("*").serialize(this);
     }
 

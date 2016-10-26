@@ -465,6 +465,11 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
                 partType == null ? "" : partType.getName(), manufacturerPartNumber);
         SearchService.instance().indexPart(this);
     }
+
+    @Override
+    public void beforeIndexing() {
+        // Nothing.
+    }
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Serialization">
@@ -533,8 +538,7 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
                 .serialize(this);
     }
 
-    protected JSONSerializer buildJsonSerializerSearch(List<CriticalDimension> criticalDimensions,
-                                                       TurboCarModelEngineYearDao tcmeyDao, BOMItemDao bomItemDao) {
+    protected JSONSerializer buildJsonSerializerSearch(List<CriticalDimension> criticalDimensions) {
         JSONSerializer jsonSerializer = new JSONSerializer()
             .include("id")
             .include("name")
@@ -559,9 +563,8 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
     }
 
     @Override
-    public final String toSearchJson(List<CriticalDimension> criticalDimensions, TurboCarModelEngineYearDao tcmeyDao,
-                                     BOMItemDao bomItemDao) {
-        JSONSerializer jsonSerializer = buildJsonSerializerSearch(criticalDimensions, tcmeyDao, bomItemDao);
+    public final String toSearchJson(List<CriticalDimension> criticalDimensions) {
+        JSONSerializer jsonSerializer = buildJsonSerializerSearch(criticalDimensions);
         String json = jsonSerializer.exclude("*").serialize(this);
         return json;
     }

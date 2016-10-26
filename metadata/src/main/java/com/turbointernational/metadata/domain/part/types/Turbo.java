@@ -1,6 +1,7 @@
 package com.turbointernational.metadata.domain.part.types;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.Application;
 import com.turbointernational.metadata.domain.car.*;
 import com.turbointernational.metadata.domain.criticaldimension.CriticalDimension;
 import com.turbointernational.metadata.domain.other.CoolType;
@@ -126,8 +127,20 @@ public class Turbo extends Part {
 
     //<editor-fold defaultstate="collapsed" desc="Serialization: members">
 
+    /**
+     * The entity <code>Turbo</code> contains transient fields
+     * <code>cmeyYear</code>, <code>cmeyModel</code>, <code>cmeyMake</code> and <code>cmeyEngine</code>.
+     * These fields contain arrays of part IDs which are obtained from the table <code>bom_descendant</code>.
+     *
+     * This method initialize these fields in order to be indexed in the ElasticSearch index.
+     * See more details in a ticket #807.
+     *
+     * @param tcmeyDao
+     * @param partId
+     */
     private void addCmeyOfPart(TurboCarModelEngineYearDao tcmeyDao, Long partId) {
-        for (TurboCarModelEngineYear tcmey : tcmeyDao.getPartLinkedApplications(partId)) {
+        List<TurboCarModelEngineYear> tcmeys = tcmeyDao.getPartLinkedApplications(partId);
+        for (TurboCarModelEngineYear tcmey : tcmeys) {
             CarModelEngineYear cmey = tcmey.getCarModelEngineYear();
             if (cmey == null) continue;
             CarYear cyear = cmey.getYear();
@@ -169,25 +182,25 @@ public class Turbo extends Part {
     }
 
     @Override
-    protected JSONSerializer buildJsonSerializerSearch(List<CriticalDimension> criticalDimensions,
-                                                       TurboCarModelEngineYearDao tcmeyDao, BOMItemDao bomItemDao) {
-        JSONSerializer jsonSerializer = super.buildJsonSerializerSearch(criticalDimensions, tcmeyDao, bomItemDao);
-            jsonSerializer.include("turboModel.id");
-            jsonSerializer.include("turboModel.name");
-            jsonSerializer.include("turboModel.turboType.id");
-            jsonSerializer.include("turboModel.turboType.name");
-        Long partId = getId();
+    public void beforeIndexing() {
+        super.beforeIndexing();
+        TurboCarModelEngineYearDao tcmeyDao = Application.getContext().getBean(TurboCarModelEngineYearDao.class);
+        BOMItemDao bomItemDao = Application.getContext().getBean(BOMItemDao.class);
         // Ticket #807.
+        Long partId = getId();
         addCmeyOfPart(tcmeyDao, partId);
         List<Number> partIds = bomItemDao.bomChildren(partId);
         for(Number childId : partIds) {
             addCmeyOfPart(tcmeyDao, childId.longValue());
         }
-        jsonSerializer.include("cmeyYear");
-        jsonSerializer.include("cmeyMake");
-        jsonSerializer.include("cmeyModel");
-        jsonSerializer.include("cmeyEngine");
-        jsonSerializer.include("cmeyFuelType");
+    }
+
+    @Override
+    protected JSONSerializer buildJsonSerializerSearch(List<CriticalDimension> criticalDimensions) {
+        JSONSerializer jsonSerializer = super.buildJsonSerializerSearch(criticalDimensions);
+        jsonSerializer.include("turboModel.id", "turboModel.name",
+                "turboModel.turboType.id", "turboModel.turboType.name",
+                "cmeyYear", "cmeyMake", "cmeyModel", "cmeyEngine", "cmeyFuelType");
         return jsonSerializer;
     }
 

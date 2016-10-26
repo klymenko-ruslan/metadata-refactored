@@ -21,8 +21,14 @@ public interface SearchableEntity {
     //@PostPersist
     void updateSearchIndex() throws Exception;
 
-    String toSearchJson(List<CriticalDimension> criticalDimensions, TurboCarModelEngineYearDao tcmeyDao,
-                        BOMItemDao bomItemDao);
+    /**
+     * Callback method that is called before call to {@link #toSearchJson(List)}.
+     *
+     * This method is useful to initialize transient attributes of a entity before indexing.
+     */
+    void beforeIndexing();
+
+    String toSearchJson(List<CriticalDimension> criticalDimensions);
 
     /**
      * Get ID for a document in an ElasticSearch index.
