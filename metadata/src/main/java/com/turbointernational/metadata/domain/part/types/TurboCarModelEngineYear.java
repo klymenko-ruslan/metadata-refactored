@@ -22,6 +22,28 @@ import static javax.persistence.FetchType.LAZY;
                         "AND tcmey.carModelEngineYear.id=:applicationId"
         )
 })
+@NamedNativeQueries({
+        @NamedNativeQuery(
+                name = "partLinkedApplicationsRecursion",
+                query = "SELECT DISTINCT " +
+                        "   cy.name AS year, cmd.name AS model, cmk.name AS make, " +
+                        "   ce.engine_size AS engine, cft.name AS fuel " +
+                        "FROM " +
+                        "   turbo_car_model_engine_year AS tcmey" +
+                        "   JOIN car_model_engine_year AS cmey ON tcmey.car_model_engine_year_id = cmey.id " +
+                        "   RIGHT JOIN car_year AS cy ON cmey.car_year_id = cy.id " +
+                        "   RIGHT JOIN car_model AS cmd ON cmd.id = cmey.car_model_id " +
+                        "       JOIN car_make AS cmk ON cmd.car_make_id = cmk.id " +
+                        "   RIGHT JOIN car_engine AS ce ON ce.id = cmey.car_engine_id " +
+                        "       JOIN car_fuel_type AS cft ON ce.car_fuel_type_id = cft.id " +
+                        "WHERE tcmey.part_id = :partId OR tcmey.part_id IN( " +
+                        "   SELECT DISTINCT b2.child_part_id " +
+                        "   FROM bom as b " +
+                        "       JOIN bom_descendant AS bd ON b.id = bd.part_bom_id " +
+                        "       JOIN bom AS b2 ON bd.descendant_bom_id = b2.id " +
+                        "   WHERE b.parent_part_id=:partId"
+        )
+})
 public class TurboCarModelEngineYear implements Serializable {
 
     @Id

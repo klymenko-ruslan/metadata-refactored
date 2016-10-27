@@ -13,6 +13,7 @@ import com.turbointernational.metadata.web.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +21,10 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.sql.DataSource;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
 import static com.turbointernational.metadata.services.BOMService.AddToParentBOMsRequest.ResolutionEnum.REPLACE;
@@ -34,6 +38,9 @@ import static org.springframework.transaction.annotation.Propagation.REQUIRES_NE
 public class BOMService {
 
     private final static Logger log = LoggerFactory.getLogger(BOMService.class);
+
+    @Autowired
+    private DataSource dataSource;
 
     @PersistenceContext
     protected EntityManager em;
@@ -263,21 +270,28 @@ public class BOMService {
         try {
             bomRebuildStart = new Date();
             log.info("Rebuilding BOM descendancy.");
+            long t0 = System.currentTimeMillis();
             em.createNativeQuery("CALL RebuildBomDescendancy()").executeUpdate();
             em.clear();
+            AtomicLong t1 = new AtomicLong(System.currentTimeMillis());
+            log.info("CALL RebuildBomDescendancy(): {} milliseconds.", t1.get() - t0);
             // Ticket #807.
-            List<TurboCarModelEngineYear> tcmeys = tcmeyDao.findAll();
-            int i = 0;
-            for (TurboCarModelEngineYear tcmey : tcmeys) {
-                Long partId = tcmey.getTurbo().getId();
-                i++;
-                if (log.isDebugEnabled()) {
-                    String msg = String.format("TCMEY indexing: [%d/%d] - %d", i, tcmeys.size(), partId);
-                    log.debug(msg);
+            AtomicInteger i = new AtomicInteger(0);
+            JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+            jdbcTemplate.query("select car_model_engine_year_id " +
+                    "from turbo_car_model_engine_year as tcmey join part as p on tcmey.part_id = p.id " +
+                    "where p.part_type_id = 1", rs -> {
+                long turboId = rs.getLong(1);
+                searchService.indexPart(turboId);
+                int i1 = i.incrementAndGet();
+                if (i1 % 100 == 0) {
+                    long t = System.currentTimeMillis();
+                    log.info("100 turbos indexed in {} millis.", t - t1.get());
+                    t1.set(t);
                 }
-                searchService.indexPart(partId);
-            }
-            log.info("BOM descendancy rebuild completed.");
+            });
+            long t3 = System.currentTimeMillis();
+            log.info("BOM descendancy rebuild completed: {} rows, {} milliseconds.", i.get(), t3 - t0);
         } finally {
             bomRebuildStart = null;
         }

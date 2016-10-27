@@ -12,6 +12,8 @@ import com.turbointernational.metadata.domain.part.bom.BOMItemDao;
 import com.turbointernational.metadata.web.View;
 import flexjson.JSONSerializer;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -29,6 +31,8 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 @Table(name = "turbo")
 @PrimaryKeyJoinColumn(name = "part_id")
 public class Turbo extends Part {
+
+    private final static Logger log = LoggerFactory.getLogger(Turbo.class);
 
     //<editor-fold defaultstate="collapsed" desc="Properties: members">
 
@@ -134,64 +138,36 @@ public class Turbo extends Part {
      *
      * This method initialize these fields in order to be indexed in the ElasticSearch index.
      * See more details in a ticket #807.
-     *
-     * @param tcmeyDao
-     * @param partId
      */
-    private void addCmeyOfPart(TurboCarModelEngineYearDao tcmeyDao, Long partId) {
-        List<TurboCarModelEngineYear> tcmeys = tcmeyDao.getPartLinkedApplications(partId);
-        for (TurboCarModelEngineYear tcmey : tcmeys) {
-            CarModelEngineYear cmey = tcmey.getCarModelEngineYear();
-            if (cmey == null) continue;
-            CarYear cyear = cmey.getYear();
-            if (cyear != null) {
-                String yearName = cyear.getName();
-                if (isNotBlank(yearName)) {
-                    cmeyYear.add(yearName);
-                }
-            }
-            CarModel cmodel = cmey.getModel();
-            if (cmodel != null) {
-                String modelName = cmodel.getName();
-                if (isNotBlank(modelName)) {
-                    cmeyModel.add(modelName);
-                }
-                CarMake cmake = cmodel.getMake();
-                if (cmake != null) {
-                    String makeName = cmake.getName();
-                    if (isNotBlank(makeName)) {
-                        cmeyMake.add(makeName);
-                    }
-                }
-            }
-            CarEngine cengine = cmey.getEngine();
-            if (cengine != null) {
-                String engineName = cengine.getEngineSize();
-                if (isNotBlank(engineName)) {
-                    cmeyEngine.add(engineName);
-                }
-                CarFuelType cfueltype = cengine.getFuelType();
-                if (cfueltype != null) {
-                    String fuelTypeName = cfueltype.getName();
-                    if (isNotBlank(fuelTypeName)) {
-                        cmeyFuelType.add(fuelTypeName);
-                    }
-                }
-            }
-        }
-    }
-
     @Override
     public void beforeIndexing() {
         super.beforeIndexing();
         TurboCarModelEngineYearDao tcmeyDao = Application.getContext().getBean(TurboCarModelEngineYearDao.class);
-        BOMItemDao bomItemDao = Application.getContext().getBean(BOMItemDao.class);
-        // Ticket #807.
-        Long partId = getId();
-        addCmeyOfPart(tcmeyDao, partId);
-        List<Number> partIds = bomItemDao.bomChildren(partId);
-        for(Number childId : partIds) {
-            addCmeyOfPart(tcmeyDao, childId.longValue());
+long t0 = System.currentTimeMillis();
+        List<TurboCarModelEngineYearDao.PLARrec> recs = tcmeyDao.getPartLinkedApplicationsRecursion(getId());
+long t1 = System.currentTimeMillis();
+log.info("recs: {} / {}", recs.size(), t1 - t0);
+        for(TurboCarModelEngineYearDao.PLARrec r : recs) {
+            String engine = r.getEngine();
+            if (isNotBlank(engine)) {
+                cmeyEngine.add(engine);
+            }
+            String fuel = r.getFuel();
+            if (isNotBlank(fuel)) {
+                cmeyFuelType.add(fuel);
+            }
+            String make = r.getMake();
+            if (isNotBlank(make)) {
+                cmeyMake.add(make);
+            }
+            String model = r.getModel();
+            if (isNotBlank(model)) {
+                cmeyModel.add(model);
+            }
+            String year = r.getYear();
+            if (isNotBlank(year)) {
+                cmeyYear.add(year);
+            }
         }
     }
 
