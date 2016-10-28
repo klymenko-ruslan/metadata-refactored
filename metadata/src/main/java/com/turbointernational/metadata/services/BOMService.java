@@ -9,6 +9,7 @@ import com.turbointernational.metadata.domain.part.bom.BOMItem;
 import com.turbointernational.metadata.domain.part.bom.BOMItemDao;
 import com.turbointernational.metadata.domain.part.types.TurboCarModelEngineYear;
 import com.turbointernational.metadata.domain.part.types.TurboCarModelEngineYearDao;
+import com.turbointernational.metadata.domain.type.PartType;
 import com.turbointernational.metadata.web.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -278,15 +279,15 @@ public class BOMService {
             // Ticket #807.
             AtomicInteger i = new AtomicInteger(0);
             JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-            jdbcTemplate.query("select car_model_engine_year_id " +
+            jdbcTemplate.query("select distinct tcmey.part_id " +
                     "from turbo_car_model_engine_year as tcmey join part as p on tcmey.part_id = p.id " +
-                    "where p.part_type_id = 1", rs -> {
+                    "where p.part_type_id = " + PartType.PTID_TURBO, rs -> {
                 long turboId = rs.getLong(1);
                 searchService.indexPart(turboId);
                 int i1 = i.incrementAndGet();
                 if (i1 % 100 == 0) {
                     long t = System.currentTimeMillis();
-                    log.info("100 turbos indexed in {} millis.", t - t1.get());
+                    log.info("100 turbos indexed for {} millis.", t - t1.get());
                     t1.set(t);
                 }
             });

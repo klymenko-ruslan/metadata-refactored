@@ -9,6 +9,7 @@ import com.turbointernational.metadata.domain.other.TurboModel;
 import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.part.bom.BOMItem;
 import com.turbointernational.metadata.domain.part.bom.BOMItemDao;
+import com.turbointernational.metadata.domain.part.types.TurboCarModelEngineYearDao.PLARrec;
 import com.turbointernational.metadata.web.View;
 import flexjson.JSONSerializer;
 import org.apache.commons.lang3.StringUtils;
@@ -143,11 +144,15 @@ public class Turbo extends Part {
     public void beforeIndexing() {
         super.beforeIndexing();
         TurboCarModelEngineYearDao tcmeyDao = Application.getContext().getBean(TurboCarModelEngineYearDao.class);
-long t0 = System.currentTimeMillis();
-        List<TurboCarModelEngineYearDao.PLARrec> recs = tcmeyDao.getPartLinkedApplicationsRecursion(getId());
-long t1 = System.currentTimeMillis();
-log.info("recs: {} / {}", recs.size(), t1 - t0);
-        for(TurboCarModelEngineYearDao.PLARrec r : recs) {
+        long t0 = System.currentTimeMillis();
+        Long id = getId();
+        List<PLARrec> recs = tcmeyDao.getPartLinkedApplicationsRecursion(id);
+        long t1 = System.currentTimeMillis();
+        //log.info("Prepare Turbo [{}] for indexing: {} records for {} millis.", id, recs.size(), t1 - t0);
+        if (log.isDebugEnabled()) {
+            log.debug("Prepare Turbo [{}] for indexing: {} records for {} millis.", id, recs.size(), t1 - t0);
+        }
+        for(PLARrec r : recs) {
             String engine = r.getEngine();
             if (isNotBlank(engine)) {
                 cmeyEngine.add(engine);

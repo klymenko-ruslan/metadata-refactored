@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import javax.annotation.PostConstruct;
 import javax.persistence.Query;
 import javax.sql.DataSource;
 import java.util.List;
@@ -66,6 +67,13 @@ public class TurboCarModelEngineYearDao extends AbstractDao<TurboCarModelEngineY
     @Autowired
     private DataSource dataSource = null;
 
+    private JdbcTemplate jdbcTemplate;
+
+    @PostConstruct
+    public void init() {
+        this.jdbcTemplate = new JdbcTemplate(dataSource);
+    }
+
     public TurboCarModelEngineYearDao() {
         super(TurboCarModelEngineYear.class);
     }
@@ -77,7 +85,6 @@ public class TurboCarModelEngineYearDao extends AbstractDao<TurboCarModelEngineY
     }
 
     public List<PLARrec> getPartLinkedApplicationsRecursion(Long partId) {
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
         List<PLARrec> retVal = jdbcTemplate.query(
             "SELECT DISTINCT " +
             "   cy.name AS year, cmd.name AS model, cmk.name AS make, " +
@@ -85,11 +92,11 @@ public class TurboCarModelEngineYearDao extends AbstractDao<TurboCarModelEngineY
             "FROM " +
             "   turbo_car_model_engine_year AS tcmey" +
             "   JOIN car_model_engine_year AS cmey ON tcmey.car_model_engine_year_id = cmey.id " +
-            "   RIGHT JOIN car_year AS cy ON cmey.car_year_id = cy.id " +
-            "   RIGHT JOIN car_model AS cmd ON cmd.id = cmey.car_model_id " +
-            "       JOIN car_make AS cmk ON cmd.car_make_id = cmk.id " +
-            "   RIGHT JOIN car_engine AS ce ON ce.id = cmey.car_engine_id " +
-            "       JOIN car_fuel_type AS cft ON ce.car_fuel_type_id = cft.id " +
+            "   LEFT JOIN car_year AS cy ON cmey.car_year_id = cy.id " +
+            "   LEFT JOIN car_model AS cmd ON cmd.id = cmey.car_model_id " +
+            "       LEFT JOIN car_make AS cmk ON cmd.car_make_id = cmk.id " +
+            "   LEFT JOIN car_engine AS ce ON ce.id = cmey.car_engine_id " +
+            "       LEFT JOIN car_fuel_type AS cft ON ce.car_fuel_type_id = cft.id " +
             "WHERE tcmey.part_id = ? OR tcmey.part_id IN( " +
             "   SELECT DISTINCT b2.child_part_id " +
             "   FROM bom as b " +
