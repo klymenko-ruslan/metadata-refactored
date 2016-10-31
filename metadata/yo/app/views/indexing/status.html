@@ -13,23 +13,23 @@
           <h4>Update index for</h4>
           <div class="checkbox">
             <label>
-              <input type="checkbox" data-ng-model="toIndex.parts" data-ng-disabled="!hasRole('ROLE_ADMIN') || toIndex.recreateIndex" /> Parts
+              <input type="checkbox" data-ng-model="toIndex.parts" data-ng-disabled="!hasRole('ROLE_ADMIN') || toIndex.skipIndexing" /> Parts
             </label>
           </div>
           <div class="checkbox">
             <label>
-              <input type="checkbox" data-ng-model="toIndex.applications" data-ng-disabled="!hasRole('ROLE_ADMIN') || toIndex.recreateIndex" /> Applications
+              <input type="checkbox" data-ng-model="toIndex.applications" data-ng-disabled="!hasRole('ROLE_ADMIN') || toIndex.skipIndexing" /> Applications
             </label>
           </div>
           <div class="checkbox">
             <label>
-              <input type="checkbox" data-ng-model="toIndex.salesNotes" data-ng-disabled="!hasRole('ROLE_ADMIN') || toIndex.recreateIndex" /> Sales Notes
+              <input type="checkbox" data-ng-model="toIndex.salesNotes" data-ng-disabled="!hasRole('ROLE_ADMIN') || toIndex.skipIndexing" /> Sales Notes
             </label>
           </div>
           <h4>Options</h4>
           <div class="checkbox">
             <label>
-              <input type="checkbox" data-ng-model="toIndex.recreateIndex" data-ng-disabled="::!hasRole('ROLE_ADMIN')" /> (Re)Create the index before update
+              <input type="checkbox" data-ng-model="toIndex.skipIndexing" data-ng-disabled="::!hasRole('ROLE_ADMIN')" /> (Re)Create the index before update
             </label>
           </div>
         </div>
@@ -70,16 +70,16 @@
                       <h4>Indexing of Parts</h4>
                       <div class="row">
                         <div class="col-xs-3">
-                          Indexed: <span>{{partsIndexed | number:0}}</span>
+                          Indexed: <span>{{bomsIndexed | number:0}}</span>
                         </div>
                         <div class="col-xs-9">
-                          Failures: <span data-ng-class="{'text-danger': partsIndexingFailures}">{{partsIndexingFailures | number:0}}</span>
+                          Failures: <span data-ng-class="{'text-danger': bomsIndexingFailures}">{{bomsIndexingFailures | number:0}}</span>
                         </div>
                       </div>
                       <div class="row">
                         <div class="col-xs-12">
-                          <uib-progressbar max="partsIndexingTotalSteps" value="partsIndexingCurrentStep" data-ng-class="{'progress-striped active': !errorMessage && partsIndexingCurrentStep < partsIndexingTotalSteps, 'progress-bar-danger': errorMessage}">
-                            <span style="color:white; white-space:nowrap;">{{partsIndexingCurrentStep}} / {{partsIndexingTotalSteps}}</span>
+                          <uib-progressbar max="bomsIndexingTotalSteps" value="bomsIndexingCurrentStep" data-ng-class="{'progress-striped active': !errorMessage && bomsIndexingCurrentStep < bomsIndexingTotalSteps, 'progress-bar-danger': errorMessage}">
+                            <span style="color:white; white-space:nowrap;">{{bomsIndexingCurrentStep}} / {{bomsIndexingTotalSteps}}</span>
                           </uib-progressbar>
                         </div>
                       </div>

@@ -7,18 +7,23 @@ import com.turbointernational.metadata.domain.part.Part;
 import com.turbointernational.metadata.domain.part.PartDao;
 import com.turbointernational.metadata.domain.part.bom.BOMItem;
 import com.turbointernational.metadata.domain.part.bom.BOMItemDao;
-import com.turbointernational.metadata.domain.part.types.TurboCarModelEngineYear;
 import com.turbointernational.metadata.domain.part.types.TurboCarModelEngineYearDao;
+import com.turbointernational.metadata.domain.security.User;
 import com.turbointernational.metadata.domain.type.PartType;
 import com.turbointernational.metadata.web.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
 
+import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -28,8 +33,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
+import static com.turbointernational.metadata.domain.type.PartType.PTID_TURBO;
 import static com.turbointernational.metadata.services.BOMService.AddToParentBOMsRequest.ResolutionEnum.REPLACE;
+import static com.turbointernational.metadata.services.BOMService.IndexingStatus.PHASE_ESTIMATION;
+import static com.turbointernational.metadata.services.BOMService.IndexingStatus.PHASE_FINISHED;
+import static com.turbointernational.metadata.services.BOMService.IndexingStatus.PHASE_INDEXING;
 import static java.util.Collections.binarySearch;
+import static org.springframework.transaction.TransactionDefinition.PROPAGATION_REQUIRES_NEW;
 import static org.springframework.transaction.annotation.Propagation.REQUIRES_NEW;
 
 /**
@@ -40,8 +50,14 @@ public class BOMService {
 
     private final static Logger log = LoggerFactory.getLogger(BOMService.class);
 
+    @Qualifier("transactionManager")
+    @Autowired
+    private PlatformTransactionManager txManager; // JPA
+
     @Autowired
     private DataSource dataSource;
+
+    private JdbcTemplate jdbcTemplate;
 
     @PersistenceContext
     protected EntityManager em;
@@ -64,7 +80,312 @@ public class BOMService {
     public static volatile Date bomRebuildStart = null;
 
     @Autowired
-    public TurboCarModelEngineYearDao tcmeyDao;
+    private TurboCarModelEngineYearDao tcmeyDao;
+
+    private final IndexingStatus indexingStatus = new IndexingStatus();
+
+    @PostConstruct
+    public void init() {
+        this.jdbcTemplate = new JdbcTemplate(dataSource);
+    }
+
+    public class IndexingStatus implements Cloneable {
+
+        public final static int PHASE_NONE = 0;
+        public final static int PHASE_ESTIMATION = 1;
+        public final static int PHASE_INDEXING = 2;
+        public final static int PHASE_FINISHED = 3;
+
+        @JsonView({View.Summary.class})
+        @JsonInclude(ALWAYS)
+        private int phase;
+
+        @JsonView({View.Summary.class})
+        @JsonInclude(ALWAYS)
+        private String errorMessage;
+
+        @JsonView({View.Summary.class})
+        @JsonInclude(ALWAYS)
+        private int bomsIndexed;
+
+        @JsonView({View.Summary.class})
+        @JsonInclude(ALWAYS)
+        private int bomsIndexingFailures;
+
+        @JsonView({View.Summary.class})
+        @JsonInclude(ALWAYS)
+        private int bomsIndexingTotalSteps;
+
+        @JsonView({View.Summary.class})
+        @JsonInclude(ALWAYS)
+        private int bomsIndexingCurrentStep;
+
+        @JsonView({View.Summary.class})
+        @JsonInclude(ALWAYS)
+        private boolean indexBoms;
+
+        @JsonView({View.Summary.class})
+        @JsonInclude(ALWAYS)
+        private Long startedOn;
+
+        @JsonView({View.Summary.class})
+        @JsonInclude(ALWAYS)
+        private Long finishedOn;
+
+        @JsonView({View.Summary.class})
+        @JsonInclude(ALWAYS)
+        private Long userId;
+
+        @JsonView({View.Summary.class})
+        @JsonInclude(ALWAYS)
+        private String userName;
+
+        public IndexingStatus() {
+            reset();
+        }
+
+        public void reset() {
+            this.phase = PHASE_NONE;
+            this.errorMessage = null;
+            this.bomsIndexed = 0;
+            this.bomsIndexingFailures = 0;
+            this.bomsIndexingTotalSteps = 0;
+            this.bomsIndexingCurrentStep = 0;
+            this.indexBoms = true;
+            this.startedOn = null;
+            this.finishedOn = null;
+            this.userId = null;
+            this.userName = null;
+        }
+
+        public int getPhase() {
+            return phase;
+        }
+
+        public void setPhase(int phase) {
+            this.phase = phase;
+        }
+
+        public String getErrorMessage() {
+            return errorMessage;
+        }
+
+        public void setErrorMessage(String errorMessage) {
+            this.errorMessage = errorMessage;
+        }
+
+        public int getBomsIndexed() {
+            return bomsIndexed;
+        }
+
+        public void setBomsIndexed(int bomsIndexed) {
+            this.bomsIndexed = bomsIndexed;
+        }
+
+        public int getBomsIndexingFailures() {
+            return bomsIndexingFailures;
+        }
+
+        public void setBomsIndexingFailures(int bomsIndexingFailures) {
+            this.bomsIndexingFailures = bomsIndexingFailures;
+        }
+
+        public int getBomsIndexingTotalSteps() {
+            return bomsIndexingTotalSteps;
+        }
+
+        public void setBomsIndexingTotalSteps(int bomsIndexingTotalSteps) {
+            this.bomsIndexingTotalSteps = bomsIndexingTotalSteps;
+        }
+
+        public int getBomsIndexingCurrentStep() {
+            return bomsIndexingCurrentStep;
+        }
+
+        public void setBomsIndexingCurrentStep(int bomsIndexingCurrentStep) {
+            this.bomsIndexingCurrentStep = bomsIndexingCurrentStep;
+        }
+
+        public Long getStartedOn() {
+            return startedOn;
+        }
+
+        public void setStartedOn(Long startedOn) {
+            this.startedOn = startedOn;
+        }
+
+        public Long getFinishedOn() {
+            return finishedOn;
+        }
+
+        public void setFinishedOn(Long finishedOn) {
+            this.finishedOn = finishedOn;
+        }
+
+        public Long getUserId() {
+            return userId;
+        }
+
+        public void setUserId(Long userId) {
+            this.userId = userId;
+        }
+
+        public String getUserName() {
+            return userName;
+        }
+
+        public void setUserName(String userName) {
+            this.userName = userName;
+        }
+
+        @Override
+        public Object clone() throws CloneNotSupportedException {
+            IndexingStatus retVal = new IndexingStatus();
+            retVal.phase = phase;
+            retVal.errorMessage = errorMessage;
+            retVal.bomsIndexed = bomsIndexed;
+            retVal.bomsIndexingFailures = bomsIndexingFailures;
+            retVal.bomsIndexingTotalSteps = bomsIndexingTotalSteps;
+            retVal.bomsIndexingCurrentStep = bomsIndexingCurrentStep;
+            retVal.indexBoms = indexBoms;
+            retVal.startedOn = startedOn;
+            retVal.finishedOn = finishedOn;
+            retVal.userName = userName;
+            return retVal;
+        }
+
+        @Override
+        public String toString() {
+            return "IndexingStatus{" +
+                    "phase=" + phase +
+                    ", errorMessage='" + errorMessage + '\'' +
+                    ", bomsIndexed=" + bomsIndexed +
+                    ", bomsIndexingFailures=" + bomsIndexingFailures +
+                    ", bomsIndexingTotalSteps=" + bomsIndexingTotalSteps +
+                    ", bomsIndexingCurrentStep=" + bomsIndexingCurrentStep +
+                    ", indexBoms =" + indexBoms +
+                    ", startedOn=" + startedOn +
+                    ", finishedOn=" + finishedOn +
+                    ", userId=" + userId +
+                    ", userName='" + userName + '\'' +
+                    '}';
+        }
+
+        public boolean isIndexBoms() {
+            return indexBoms;
+        }
+
+        public void setIndexBoms(boolean indexBoms) {
+            this.indexBoms = indexBoms;
+        }
+    }
+
+    private class IndexingJob extends Thread {
+
+        private final boolean indexBoms;
+
+        class BomsIndexer extends Thread implements Observer {
+
+
+            @Override
+            public void run() {
+                super.run();
+                try {
+                    rebuildBomDescendancy(this, indexBoms);
+                } catch (Exception e) {
+                    synchronized (indexingStatus) {
+                        if (indexingStatus.getErrorMessage() != null) {
+                            indexingStatus.setErrorMessage(e.getMessage());
+                            indexingStatus.setBomsIndexingFailures(1);
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void update(Observable observable, Object o) {
+                Integer indexed = (Integer) o;
+                synchronized (indexingStatus) {
+                    int current = indexingStatus.getBomsIndexingCurrentStep();
+                    int sum = current + indexed;
+                    indexingStatus.setBomsIndexed(sum);
+                    indexingStatus.setBomsIndexingCurrentStep(sum);
+                }
+            }
+        }
+
+        IndexingJob(boolean indexBoms) {
+            super();
+            this.indexBoms = indexBoms;
+        }
+
+        @Override
+        public void run() {
+            super.run();
+            TransactionTemplate tt = new TransactionTemplate(txManager);
+            tt.setPropagationBehavior(PROPAGATION_REQUIRES_NEW); // new transaction
+            tt.execute((TransactionCallback<Void>) ts -> {
+                try {
+                    int bomsTotal = 0;
+                    if (indexBoms) {
+                        Number n = jdbcTemplate.queryForObject("select count(distinct tcmey.part_id) " +
+                            "from turbo_car_model_engine_year as tcmey join part as p on tcmey.part_id = p.id " +
+                            "where p.part_type_id = " + PTID_TURBO, Number.class);
+                        bomsTotal = n.intValue();
+                    }
+                    bomsTotal++; // call to the storage procedure RebuildBomDescendancy()
+                    Thread bomsIndexer = null;
+                    bomsIndexer = new BomsIndexer();
+                    synchronized (indexingStatus) {
+                        indexingStatus.setBomsIndexingTotalSteps(bomsTotal);
+                        indexingStatus.setPhase(PHASE_INDEXING);
+                    }
+                    bomsIndexer.start();
+                } catch (Exception e) {
+                    log.error("BOMs indexing job failed.", e);
+                    synchronized (indexingStatus) {
+                        if (indexingStatus.getErrorMessage() == null) {
+                            indexingStatus.setErrorMessage(e.getMessage());
+                        }
+                    }
+                } finally {
+                    synchronized (indexingStatus) {
+                        indexingStatus.setPhase(PHASE_FINISHED);
+                        indexingStatus.setFinishedOn(System.currentTimeMillis());
+                    }
+                }
+                return null;
+            });
+        }
+
+    }
+
+    public IndexingStatus startRebuild(User user, boolean indexBoms) throws Exception {
+        IndexingStatus retVal;
+        long now = System.currentTimeMillis();
+        synchronized (indexingStatus) {
+            int phase = indexingStatus.getPhase();
+            if (phase == PHASE_ESTIMATION || phase == PHASE_INDEXING) {
+                throw new IllegalStateException("BOMs indexing is already in progress.");
+            }
+            indexingStatus.reset();
+            indexingStatus.setPhase(PHASE_ESTIMATION);
+            indexingStatus.setStartedOn(now);
+            indexingStatus.setUserId(user.getId());
+            indexingStatus.setUserName(user.getUsername());
+            indexingStatus.setIndexBoms(indexBoms);
+            retVal = getRebuildStatus();
+        }
+        Thread job = new IndexingJob(indexBoms);
+        job.start();
+        return retVal;
+    }
+
+    public IndexingStatus getRebuildStatus() throws Exception {
+        synchronized (indexingStatus) {
+            return (IndexingStatus) indexingStatus.clone();
+        }
+    }
 
     public static final Date getBomRebuildStart() {
         return bomRebuildStart;
@@ -267,7 +588,7 @@ public class BOMService {
 
     @Async("bomRebuildExecutor")
     @Transactional(propagation = REQUIRES_NEW)
-    public void rebuildBomDescendancy() {
+    public void rebuildBomDescendancy(Observer observer, boolean indexBoms) {
         try {
             bomRebuildStart = new Date();
             log.info("Rebuilding BOM descendancy.");
@@ -278,19 +599,24 @@ public class BOMService {
             log.info("CALL RebuildBomDescendancy(): {} milliseconds.", t1.get() - t0);
             // Ticket #807.
             AtomicInteger i = new AtomicInteger(0);
-            JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-            jdbcTemplate.query("select distinct tcmey.part_id " +
-                    "from turbo_car_model_engine_year as tcmey join part as p on tcmey.part_id = p.id " +
-                    "where p.part_type_id = " + PartType.PTID_TURBO, rs -> {
-                long turboId = rs.getLong(1);
-                searchService.indexPart(turboId);
-                int i1 = i.incrementAndGet();
-                if (i1 % 100 == 0) {
-                    long t = System.currentTimeMillis();
-                    log.info("100 turbos indexed for {} millis.", t - t1.get());
-                    t1.set(t);
-                }
-            });
+            if (indexBoms) {
+                JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+                jdbcTemplate.query("select distinct tcmey.part_id " +
+                        "from turbo_car_model_engine_year as tcmey join part as p on tcmey.part_id = p.id " +
+                        "where p.part_type_id = " + PTID_TURBO, rs -> {
+                    long turboId = rs.getLong(1);
+                    searchService.indexPart(turboId);
+                    int i1 = i.incrementAndGet();
+                    if (i1 % 100 == 0) {
+                        long t = System.currentTimeMillis();
+                        log.info("100 turbos indexed for {} millis.", t - t1.get());
+                        t1.set(t);
+                    }
+                    if (observer != null) {
+                        observer.update(null, new Integer(i1));
+                    }
+                });
+            }
             long t3 = System.currentTimeMillis();
             log.info("BOM descendancy rebuild completed: {} rows, {} milliseconds.", i.get(), t3 - t0);
         } finally {
@@ -302,7 +628,7 @@ public class BOMService {
     public void rebuildBomDescendancyForPart(Long partId, boolean clean) {
         Query call = em.createNativeQuery("CALL RebuildBomDescendancyForPart(:partId, :clean)");
         call.setParameter("partId", partId);
-        call.setParameter("clean",  clean ? 1 : 0);
+        call.setParameter("clean", clean ? 1 : 0);
         call.executeUpdate();
         em.clear();
         searchService.indexPart(partId);

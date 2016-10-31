@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.domain.part.bom.BOMItem;
 import com.turbointernational.metadata.domain.part.bom.dto.CreateBomItemRequest;
+import com.turbointernational.metadata.domain.security.User;
 import com.turbointernational.metadata.services.BOMService;
 import com.turbointernational.metadata.services.BOMService.FoundBomRecursionException;
 import org.slf4j.Logger;
@@ -11,11 +12,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
 import static com.turbointernational.metadata.web.BOMController.BOMErrorStatus.*;
@@ -62,6 +65,20 @@ public class BOMController {
             this.message = e.getMessage();
         }
 
+    }
+
+    @RequestMapping(value="rebuild/start", method = POST,
+            consumes = APPLICATION_JSON_VALUE,
+            produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
+    @JsonView(View.Summary.class)
+    @Secured("ROLE_ADMIN")
+    public BOMService.IndexingStatus startRebuild(Authentication authentication,
+                                                  @RequestBody Map<String, Boolean> options) throws Exception {
+        User user = (User) authentication.getPrincipal();
+        boolean indexBoms = options.get("indexBoms");
+        BOMService.IndexingStatus status = bomService.startRebuild(user, indexBoms);
+        return status;
     }
 
     @ResponseBody

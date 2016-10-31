@@ -328,13 +328,6 @@ public class PartController {
     }
 
     @Transactional
-    @RequestMapping(value="/part/all/rebuildBom")
-    @Secured("ROLE_ADMIN")
-    public void rebuildAllBom() throws Exception {
-        bomService.rebuildBomDescendancy();
-    }
-
-    @Transactional
     @RequestMapping(value="/part/{id}/image", method = POST)
     @Secured("ROLE_PART_IMAGES")
     public ResponseEntity<String> addProductImage(@PathVariable Long id, @RequestBody byte[] imageData) throws Exception {

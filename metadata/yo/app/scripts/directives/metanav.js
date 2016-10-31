@@ -14,20 +14,20 @@ angular.module('ngMetaCrudApp')
         var timer = $interval(function() {
           restService.refreshStatus();
         }, 1000);
-        $scope.$on('$destroy', function() {
+        $scope.$on("$destroy", function() {
           $interval.cancel(timer);
         });
 
         $scope.rebuildBom = function() {
           dialogs.confirm(
-            'Rebuild BOM for all parts?',
-            'You need to run this if changes have been made directly to the database. Proceed?').result.then(
+            "Rebuild BOM for all parts?",
+            "You need to run this if changes have been made directly to the database. Proceed?").result.then(
             function() {
               // Yes
-              Restangular.all('part/all').customGET('rebuildBom').then(
+              Restangular.one("bom/rebuild").post("start", {"indexBoms": true}).then(
                 function() {
                   // Success
-                  gToast.open('Rebuilding BOM.');
+                  gToast.open("Rebuilding BOM.");
                 },
                 function(response) {
                   // Error
