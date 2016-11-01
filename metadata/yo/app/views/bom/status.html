@@ -1,0 +1,102 @@
+<metanav />
+
+<div class="row" style="margin-top: 2em;">
+  <div class="col-xs-12">
+
+    <h3>BOM rebuild.</h3>
+
+    <form role="form" data-ng-show="phase == 0">
+
+      <div class="row">
+        <div class="col-xs-12">
+          <p>
+            Rebuild BOM for all parts?
+          </p>
+          <p>
+            You need to run this if changes have been made directly to the database.
+          </p>
+          <h4>Options</h4>
+          <div class="checkbox">
+            <label>
+              <input type="checkbox" data-ng-model="toIndex.indexBoms" data-ng-disabled="::!hasRole('ROLE_ADMIN')" /> (Re)index turbos/applications
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-xs-12 col-sm-10 col-sm-push-2 text-info">
+          <small data-ng-hide="::hasRole('ROLE_ADMIN')">(You have no enough permissions to start the process.)</small>
+        </div>
+        <div class="col-xs-12 col-sm-2 col-sm-pull-10">
+          <button data-ng-click="ctrl.startRebuild()" role="button" class="btn btn-primary btn-lg active">
+            <i class="fa fa-flag"></i> Start
+          </button>
+        </div>
+      </div>
+
+    </form>
+
+    <div class="row" data-ng-show="phase == 1 || phase == 2 || phase == 3">
+      <div class="col-xs-12">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h3 class="modal-title">Progress of the rebuilding</h3>
+            </div>
+            <div class="modal-body">
+              <div class="row">
+                <div class="col-xs-12">
+
+                  <div class="row" data-ng-show="phase == 1">
+                    <div class="col-xs-12">
+                      Job size estimating. Please wait...&nbsp;<i class="fa fa-circle-o-notch fa-spin"></i>
+                    </div>
+                  </div>
+
+                  <div class="row" data-ng-show="(phase == 2 || phase == 3) && toIndex.parts">
+                    <div class="col-xs-12">
+                      <h4>Indexing of Parts</h4>
+                      <div class="row">
+                        <div class="col-xs-3">
+                          Indexed: <span>{{bomsIndexed | number:0}}</span>
+                        </div>
+                        <div class="col-xs-9">
+                          Failures: <span data-ng-class="{'text-danger': bomsIndexingFailures}">{{bomsIndexingFailures | number:0}}</span>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-xs-12">
+                          <uib-progressbar max="bomsIndexingTotalSteps" value="bomsIndexingCurrentStep" data-ng-class="{'progress-striped active': !errorMessage && bomsIndexingCurrentStep < bomsIndexingTotalSteps, 'progress-bar-danger': errorMessage}">
+                            <span style="color:white; white-space:nowrap;">{{bomsIndexingCurrentStep}} / {{bomsIndexingTotalSteps}}</span>
+                          </uib-progressbar>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row" data-ng-show="(phase == 2 || phase == 3) && errorMessage">
+                    <div class="col-xs-12">
+                      <span class="text-danger">Failure:</span>&nbsp;<span class="bg-danger" style="padding: 2px 4px;">{{errorMessage}}</span>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <ul class="list-unstyled pull-left">
+                <li class="text-muted text-left">The process started on  {{startedOn | date : "yyyy-MM-dd HH:mm.ss"}} by <a data-ng-href="security/user/{{userId}}">{{userName}}</a>.</li>
+                <li class="text-muted text-left" data-ng-show="finishedOn">The process finished on {{finishedOn | date : "yyyy-MM-dd HH:mm.ss"}}.</li>
+              </ul>
+              <div class="pull-right">
+                <button type="button" class="btn btn-default" data-dismiss="modal" data-ng-disabled="phase != 3" data-ng-click="ctrl.onCloseStatus()">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

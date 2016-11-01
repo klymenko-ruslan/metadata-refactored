@@ -30,6 +30,14 @@ angular.module("ngMetaCrudApp")
         }
       };
 
+      this.startBomRebuilding = function(options) {
+        return Restangular.one("bom/rebuild").post("start", options);
+      };
+
+      this.getBomRebuildingStatus = function() {
+        return Restangular.one("bom/rebuild/status").get();
+      };
+
       // Wraps the BOM status logic, resolving when the BOM is not rebuilding.
       this.getBomRebuildingCompletePromise = function() {
         var deferred = $q.defer();

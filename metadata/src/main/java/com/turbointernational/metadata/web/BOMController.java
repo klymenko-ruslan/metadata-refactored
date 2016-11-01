@@ -67,17 +67,26 @@ public class BOMController {
 
     }
 
-    @RequestMapping(value="rebuild/start", method = POST,
-            consumes = APPLICATION_JSON_VALUE,
-            produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value="rebuild/start", method = POST)
     @ResponseBody
     @JsonView(View.Summary.class)
     @Secured("ROLE_ADMIN")
     public BOMService.IndexingStatus startRebuild(Authentication authentication,
                                                   @RequestBody Map<String, Boolean> options) throws Exception {
+        if (BOMService.getBomRebuildStart() != null) {
+            throw new AssertionError("BOM rebuild is already in progress.");
+        }
         User user = (User) authentication.getPrincipal();
-        boolean indexBoms = options.get("indexBoms");
+        boolean indexBoms = options.getOrDefault("indexBoms", false);
         BOMService.IndexingStatus status = bomService.startRebuild(user, indexBoms);
+        return status;
+    }
+
+    @RequestMapping(value="rebuild/status", method = GET)
+    @ResponseBody
+    @JsonView(View.Summary.class)
+    public BOMService.IndexingStatus getRebuildStatus() throws Exception {
+        BOMService.IndexingStatus status = bomService.getRebuildStatus();
         return status;
     }
 
