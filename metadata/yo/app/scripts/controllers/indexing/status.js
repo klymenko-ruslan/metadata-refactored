@@ -51,7 +51,6 @@ angular.module("ngMetaCrudApp")
         $scope.toIndex.parts = status.indexParts;
         $scope.toIndex.applications = status.indexApplications;
         $scope.toIndex.salesNotes = status.indexSalesNotes;
-        $scope.toIndex.recreateIndex = status.recreateIndex;
       }
 
       $scope.errorMessage = status.errorMessage;
@@ -126,7 +125,7 @@ angular.module("ngMetaCrudApp")
             response);
         }
       );
-    }, 1000);
+    }, 2000);
 
     $scope.$on("$destroy", function() {
       $interval.cancel($scope.refreshTask);

@@ -9,7 +9,6 @@ import com.turbointernational.metadata.domain.part.bom.BOMItem;
 import com.turbointernational.metadata.domain.part.bom.BOMItemDao;
 import com.turbointernational.metadata.domain.part.types.TurboCarModelEngineYearDao;
 import com.turbointernational.metadata.domain.security.User;
-import com.turbointernational.metadata.domain.type.PartType;
 import com.turbointernational.metadata.web.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,9 +34,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
 import static com.turbointernational.metadata.domain.type.PartType.PTID_TURBO;
 import static com.turbointernational.metadata.services.BOMService.AddToParentBOMsRequest.ResolutionEnum.REPLACE;
-import static com.turbointernational.metadata.services.BOMService.IndexingStatus.PHASE_ESTIMATION;
-import static com.turbointernational.metadata.services.BOMService.IndexingStatus.PHASE_FINISHED;
-import static com.turbointernational.metadata.services.BOMService.IndexingStatus.PHASE_INDEXING;
+import static com.turbointernational.metadata.services.BOMService.IndexingStatus.*;
 import static java.util.Collections.binarySearch;
 import static org.springframework.transaction.TransactionDefinition.PROPAGATION_REQUIRES_NEW;
 import static org.springframework.transaction.annotation.Propagation.REQUIRES_NEW;
@@ -290,16 +287,21 @@ public class BOMService {
             @Override
             public void run() {
                 super.run();
-                try {
-                    rebuildBomDescendancy(this, indexBoms);
-                } catch (Exception e) {
-                    synchronized (indexingStatus) {
-                        if (indexingStatus.getErrorMessage() != null) {
-                            indexingStatus.setErrorMessage(e.getMessage());
-                            indexingStatus.setBomsIndexingFailures(1);
+                TransactionTemplate tt = new TransactionTemplate(txManager);
+                tt.setPropagationBehavior(PROPAGATION_REQUIRES_NEW); // new transaction
+                tt.execute((TransactionCallback<Void>) ts -> {
+                    try {
+                        rebuildBomDescendancy(this, indexBoms);
+                    } catch (Exception e) {
+                        synchronized (indexingStatus) {
+                            if (indexingStatus.getErrorMessage() != null) {
+                                indexingStatus.setErrorMessage(e.getMessage());
+                                indexingStatus.setBomsIndexingFailures(1);
+                            }
                         }
                     }
-                }
+                    return null;
+                });
             }
 
             @Override
@@ -361,6 +363,8 @@ public class BOMService {
     }
 
     public IndexingStatus startRebuild(User user, boolean indexBoms) throws Exception {
+        //rebuildBomDescendancy(null, indexBoms);
+        //return null;
         IndexingStatus retVal;
         long now = System.currentTimeMillis();
         synchronized (indexingStatus) {
@@ -589,9 +593,9 @@ public class BOMService {
     @Async("bomRebuildExecutor")
     @Transactional(propagation = REQUIRES_NEW)
     public void rebuildBomDescendancy(Observer observer, boolean indexBoms) {
+        log.info("Rebuilding BOM descendancy started.");
         try {
             bomRebuildStart = new Date();
-            log.info("Rebuilding BOM descendancy.");
             long t0 = System.currentTimeMillis();
             em.createNativeQuery("CALL RebuildBomDescendancy()").executeUpdate();
             em.clear();
@@ -600,6 +604,7 @@ public class BOMService {
             // Ticket #807.
             AtomicInteger i = new AtomicInteger(0);
             if (indexBoms) {
+                log.info("BOM indexing started.");
                 JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
                 jdbcTemplate.query("select distinct tcmey.part_id " +
                         "from turbo_car_model_engine_year as tcmey join part as p on tcmey.part_id = p.id " +
@@ -616,11 +621,15 @@ public class BOMService {
                         observer.update(null, new Integer(i1));
                     }
                 });
+                log.info("BOM indexing finished.");
             }
             long t3 = System.currentTimeMillis();
             log.info("BOM descendancy rebuild completed: {} rows, {} milliseconds.", i.get(), t3 - t0);
+        } catch(Throwable th) {
+            log.error("Unexpected exception thrown during BOM rebuild.", th);
         } finally {
             bomRebuildStart = null;
+            log.info("Rebuilding BOM descendancy finished.");
         }
     }
 

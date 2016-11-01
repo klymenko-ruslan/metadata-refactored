@@ -24,7 +24,7 @@ angular.module('ngMetaCrudApp')
             "You need to run this if changes have been made directly to the database. Proceed?").result.then(
             function() {
               // Yes
-              Restangular.one("bom/rebuild").post("start", {"indexBoms": true}).then(
+              restService.rebuildBom({"indexBoms": true}).then(
                 function() {
                   // Success
                   gToast.open("Rebuilding BOM.");

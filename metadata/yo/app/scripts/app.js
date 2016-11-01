@@ -377,6 +377,17 @@ angular.module("ngMetaCrudApp", ["ngRoute", "ngTable", "ui.bootstrap",
       }
     });
 
+    // BOM rebuild and indexing.
+    $routeProvider.when("/bom/rebuild/status", {
+      templateUrl: "views/bom/status.html",
+      controller: "BomRebuildCtrl as ctrl",
+      resolve: {
+        status: ["restService", function(restService) {
+          return restService.getIndexingStatus();
+        }]
+      }
+    });
+
     // Critical dimensions
     $routeProvider.when("/criticaldimension/enums", {
       templateUrl: "views/criticaldimension/enums.html",
