@@ -634,7 +634,7 @@ public class BOMService {
                     int i1 = i.incrementAndGet();
                     if (i1 % 100 == 0) {
                         long t = System.currentTimeMillis();
-                        log.info("100 turbos indexed for {} millis.", t - t1.get());
+                        log.debug("100 turbos indexed for {} millis.", t - t1.get());
                         t1.set(t);
                     }
                     if (observerProgressIndexing != null) {
