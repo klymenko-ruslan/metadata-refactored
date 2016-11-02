@@ -35,6 +35,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
 import static com.turbointernational.metadata.domain.type.PartType.PTID_TURBO;
 import static com.turbointernational.metadata.services.BOMService.AddToParentBOMsRequest.ResolutionEnum.REPLACE;
 import static com.turbointernational.metadata.services.BOMService.IndexingStatus.*;
+import static java.lang.Boolean.TRUE;
 import static java.util.Collections.binarySearch;
 import static org.springframework.transaction.TransactionDefinition.PROPAGATION_REQUIRES_NEW;
 import static org.springframework.transaction.annotation.Propagation.REQUIRES_NEW;
@@ -103,6 +104,10 @@ public class BOMService {
 
         @JsonView({View.Summary.class})
         @JsonInclude(ALWAYS)
+        private boolean bomDescendantRebuildFinished;
+
+        @JsonView({View.Summary.class})
+        @JsonInclude(ALWAYS)
         private int bomsIndexed;
 
         @JsonView({View.Summary.class})
@@ -144,6 +149,7 @@ public class BOMService {
         public void reset() {
             this.phase = PHASE_NONE;
             this.errorMessage = null;
+            this.bomDescendantRebuildFinished = false;
             this.bomsIndexed = 0;
             this.bomsIndexingFailures = 0;
             this.bomsIndexingTotalSteps = 0;
@@ -240,6 +246,7 @@ public class BOMService {
             IndexingStatus retVal = new IndexingStatus();
             retVal.phase = phase;
             retVal.errorMessage = errorMessage;
+            retVal.bomDescendantRebuildFinished = bomDescendantRebuildFinished;
             retVal.bomsIndexed = bomsIndexed;
             retVal.bomsIndexingFailures = bomsIndexingFailures;
             retVal.bomsIndexingTotalSteps = bomsIndexingTotalSteps;
@@ -247,6 +254,7 @@ public class BOMService {
             retVal.indexBoms = indexBoms;
             retVal.startedOn = startedOn;
             retVal.finishedOn = finishedOn;
+            retVal.userId = userId;
             retVal.userName = userName;
             return retVal;
         }
@@ -256,6 +264,7 @@ public class BOMService {
             return "IndexingStatus{" +
                     "phase=" + phase +
                     ", errorMessage='" + errorMessage + '\'' +
+                    ", bomDescendantRebuildFinished=" + bomDescendantRebuildFinished +
                     ", bomsIndexed=" + bomsIndexed +
                     ", bomsIndexingFailures=" + bomsIndexingFailures +
                     ", bomsIndexingTotalSteps=" + bomsIndexingTotalSteps +
@@ -275,13 +284,21 @@ public class BOMService {
         public void setIndexBoms(boolean indexBoms) {
             this.indexBoms = indexBoms;
         }
+
+        public boolean isBomDescendantRebuildFinished() {
+            return bomDescendantRebuildFinished;
+        }
+
+        public void setBomDescendantRebuildFinished(boolean bomDescendantRebuildFinished) {
+            this.bomDescendantRebuildFinished = bomDescendantRebuildFinished;
+        }
     }
 
-    private class IndexingJob extends Thread {
+    private class RebuildingJob extends Thread {
 
         private final boolean indexBoms;
 
-        class BomsIndexer extends Thread implements Observer {
+        class BomsRebuilder extends Thread {
 
 
             @Override
@@ -291,7 +308,18 @@ public class BOMService {
                 tt.setPropagationBehavior(PROPAGATION_REQUIRES_NEW); // new transaction
                 tt.execute((TransactionCallback<Void>) ts -> {
                     try {
-                        rebuildBomDescendancy(this, indexBoms);
+                        rebuildBomDescendancy(
+                                (observable, o) -> {
+                                    synchronized (indexingStatus) {
+                                        indexingStatus.setBomDescendantRebuildFinished((Boolean) o);
+                                    }
+                                },
+                                (observable, o) -> {
+                                    Integer indexed = (Integer) o;
+                                    synchronized (indexingStatus) {
+                                        indexingStatus.setBomsIndexingCurrentStep(indexed);
+                                    }},
+                                indexBoms);
                     } catch (Exception e) {
                         synchronized (indexingStatus) {
                             if (indexingStatus.getErrorMessage() != null) {
@@ -304,19 +332,9 @@ public class BOMService {
                 });
             }
 
-            @Override
-            public void update(Observable observable, Object o) {
-                Integer indexed = (Integer) o;
-                synchronized (indexingStatus) {
-                    int current = indexingStatus.getBomsIndexingCurrentStep();
-                    int sum = current + indexed;
-                    indexingStatus.setBomsIndexed(sum);
-                    indexingStatus.setBomsIndexingCurrentStep(sum);
-                }
-            }
         }
 
-        IndexingJob(boolean indexBoms) {
+        RebuildingJob(boolean indexBoms) {
             super();
             this.indexBoms = indexBoms;
         }
@@ -335,16 +353,16 @@ public class BOMService {
                             "where p.part_type_id = " + PTID_TURBO, Number.class);
                         bomsTotal = n.intValue();
                     }
-                    bomsTotal++; // call to the storage procedure RebuildBomDescendancy()
                     Thread bomsIndexer = null;
-                    bomsIndexer = new BomsIndexer();
+                    bomsIndexer = new BomsRebuilder();
                     synchronized (indexingStatus) {
                         indexingStatus.setBomsIndexingTotalSteps(bomsTotal);
                         indexingStatus.setPhase(PHASE_INDEXING);
                     }
                     bomsIndexer.start();
+                    bomsIndexer.join();
                 } catch (Exception e) {
-                    log.error("BOMs indexing job failed.", e);
+                    log.error("BOMs rebuilding job failed.", e);
                     synchronized (indexingStatus) {
                         if (indexingStatus.getErrorMessage() == null) {
                             indexingStatus.setErrorMessage(e.getMessage());
@@ -380,7 +398,7 @@ public class BOMService {
             indexingStatus.setIndexBoms(indexBoms);
             retVal = getRebuildStatus();
         }
-        Thread job = new IndexingJob(indexBoms);
+        Thread job = new RebuildingJob(indexBoms);
         job.start();
         return retVal;
     }
@@ -592,7 +610,8 @@ public class BOMService {
 
     @Async("bomRebuildExecutor")
     @Transactional(propagation = REQUIRES_NEW)
-    public void rebuildBomDescendancy(Observer observer, boolean indexBoms) {
+    public void rebuildBomDescendancy(Observer observerProgressBomRebuild, Observer observerProgressIndexing,
+                                      boolean indexBoms) {
         log.info("Rebuilding BOM descendancy started.");
         try {
             bomRebuildStart = new Date();
@@ -601,6 +620,7 @@ public class BOMService {
             em.clear();
             AtomicLong t1 = new AtomicLong(System.currentTimeMillis());
             log.info("CALL RebuildBomDescendancy(): {} milliseconds.", t1.get() - t0);
+            observerProgressBomRebuild.update(null, TRUE);
             // Ticket #807.
             AtomicInteger i = new AtomicInteger(0);
             if (indexBoms) {
@@ -617,8 +637,8 @@ public class BOMService {
                         log.info("100 turbos indexed for {} millis.", t - t1.get());
                         t1.set(t);
                     }
-                    if (observer != null) {
-                        observer.update(null, new Integer(i1));
+                    if (observerProgressIndexing != null) {
+                        observerProgressIndexing.update(null, new Integer(i1));
                     }
                 });
                 log.info("BOM indexing finished.");

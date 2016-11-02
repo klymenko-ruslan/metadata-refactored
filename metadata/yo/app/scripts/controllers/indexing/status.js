@@ -125,7 +125,7 @@ angular.module("ngMetaCrudApp")
             response);
         }
       );
-    }, 2000);
+    }, 1000);
 
     $scope.$on("$destroy", function() {
       $interval.cancel($scope.refreshTask);

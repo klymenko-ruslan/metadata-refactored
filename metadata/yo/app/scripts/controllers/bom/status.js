@@ -14,18 +14,10 @@ angular.module("ngMetaCrudApp")
      *  2 - show progress dialog with indexing in progress
      *  3 - the indexing finished
      */
-    $scope.phase = 0;
-    $scope.errorMessage = null;
+    $scope.status = {
+      phase: 0
+    };
 
-    $scope.bomsIndexed = null;
-    $scope.bomsIndexingFailures = null;
-    $scope.bomsIndexingTotalSteps = null;
-    $scope.bomsIndexingCurrentStep = null;
-
-    $scope.userId = null;
-    $scope.userName = null;
-    $scope.startedOn = null;
-    $scope.finishedOn = null;
     $scope.closed = false;
 
     $scope._updateStatus = function(status) {
@@ -35,24 +27,11 @@ angular.module("ngMetaCrudApp")
         return;
       }
 
-      $scope.phase = status.phase;
+      $scope.status = status;
 
-      if ($scope.phase != 0) {
+      if ($scope.status.phase != 0) {
         $scope.options.indexBoms = status.indexBoms;
       }
-
-      $scope.errorMessage = status.errorMessage;
-
-      $scope.bomsIndexed = status.bomsIndexed;
-      $scope.bomsIndexingFailures = status.bomsIndexingFailures;
-      $scope.bomsIndexingTotalSteps = status.bomsIndexingTotalSteps;
-      $scope.bomsIndexingCurrentStep = status.bomsIndexingCurrentStep;
-
-      $scope.userId = status.userId;
-      $scope.userName = status.userName;
-
-      $scope.startedOn = status.startedOn;
-      $scope.finishedOn = status.finishedOn;
 
     };
 
@@ -76,7 +55,7 @@ angular.module("ngMetaCrudApp")
     this.onCloseStatus = function() {
       this._resetOptions();
       $scope.closed = true;
-      $scope.phase = 0;
+      $scope.status.phase = 0;
     };
 
     this._resetOptions();
@@ -92,7 +71,7 @@ angular.module("ngMetaCrudApp")
             response);
         }
       );
-    }, 2000);
+    }, 1000);
 
     $scope.$on("$destroy", function() {
       $interval.cancel($scope.refreshTask);
