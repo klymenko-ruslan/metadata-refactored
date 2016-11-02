@@ -87,6 +87,12 @@ public class BOMService {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
+    public interface IndexingStatusCallback {
+        void setProgressBomRebuild(boolean finished);
+        void setProgressIndexing(int indexed);
+        void registerFailure(Exception e);
+    }
+
     public class IndexingStatus implements Cloneable {
 
         public final static int PHASE_NONE = 0;
@@ -300,7 +306,6 @@ public class BOMService {
 
         class BomsRebuilder extends Thread {
 
-
             @Override
             public void run() {
                 super.run();
@@ -309,16 +314,32 @@ public class BOMService {
                 tt.execute((TransactionCallback<Void>) ts -> {
                     try {
                         rebuildBomDescendancy(
-                                (observable, o) -> {
-                                    synchronized (indexingStatus) {
-                                        indexingStatus.setBomDescendantRebuildFinished((Boolean) o);
+                                new IndexingStatusCallback() {
+
+                                    @Override
+                                    public void setProgressBomRebuild(boolean finished) {
+                                        synchronized (indexingStatus) {
+                                            indexingStatus.setBomDescendantRebuildFinished(finished);
+                                        }
                                     }
+
+                                    @Override
+                                    public void setProgressIndexing(int indexed) {
+                                        synchronized (indexingStatus) {
+                                            indexingStatus.setBomsIndexingCurrentStep(indexed);
+                                        }
+                                    }
+
+                                    @Override
+                                    public void registerFailure(Exception e) {
+                                        synchronized (indexingStatus) {
+                                            int failures = indexingStatus.getBomsIndexingFailures();
+                                            indexingStatus.setBomsIndexingFailures(failures + 1);
+                                            indexingStatus.setErrorMessage(e.getMessage());
+                                        }
+                                    }
+
                                 },
-                                (observable, o) -> {
-                                    Integer indexed = (Integer) o;
-                                    synchronized (indexingStatus) {
-                                        indexingStatus.setBomsIndexingCurrentStep(indexed);
-                                    }},
                                 indexBoms);
                     } catch (Exception e) {
                         synchronized (indexingStatus) {
@@ -610,8 +631,7 @@ public class BOMService {
 
     @Async("bomRebuildExecutor")
     @Transactional(propagation = REQUIRES_NEW)
-    public void rebuildBomDescendancy(Observer observerProgressBomRebuild, Observer observerProgressIndexing,
-                                      boolean indexBoms) {
+    public void rebuildBomDescendancy(IndexingStatusCallback callback, boolean indexBoms) {
         log.info("Rebuilding BOM descendancy started.");
         try {
             bomRebuildStart = new Date();
@@ -620,7 +640,9 @@ public class BOMService {
             em.clear();
             AtomicLong t1 = new AtomicLong(System.currentTimeMillis());
             log.info("CALL RebuildBomDescendancy(): {} milliseconds.", t1.get() - t0);
-            observerProgressBomRebuild.update(null, TRUE);
+            if (callback != null) {
+                callback.setProgressBomRebuild(true);
+            }
             // Ticket #807.
             AtomicInteger i = new AtomicInteger(0);
             if (indexBoms) {
@@ -630,15 +652,23 @@ public class BOMService {
                         "from turbo_car_model_engine_year as tcmey join part as p on tcmey.part_id = p.id " +
                         "where p.part_type_id = " + PTID_TURBO, rs -> {
                     long turboId = rs.getLong(1);
-                    searchService.indexPart(turboId);
-                    int i1 = i.incrementAndGet();
-                    if (i1 % 100 == 0) {
-                        long t = System.currentTimeMillis();
-                        log.debug("100 turbos indexed for {} millis.", t - t1.get());
-                        t1.set(t);
-                    }
-                    if (observerProgressIndexing != null) {
-                        observerProgressIndexing.update(null, new Integer(i1));
+                    try {
+                        searchService.indexPart(turboId);
+                        int i1 = i.incrementAndGet();
+                        if (i1 % 100 == 0) {
+                            long t = System.currentTimeMillis();
+                            log.debug("100 turbos indexed for {} millis.", t - t1.get());
+                            t1.set(t);
+                        }
+                        if (callback != null) {
+                            callback.setProgressIndexing(i1);
+                        }
+                    } catch (Exception e) {
+                        if (callback != null) {
+                            callback.registerFailure(e);
+                        } else {
+                            log.error("Indexing of a part [" + turboId + "] failed.", e);
+                        }
                     }
                 });
                 log.info("BOM indexing finished.");

@@ -71,6 +71,11 @@
                       <h4>Indexing of Turbos/Applications</h4>
                       <div class="row">
                         <div class="col-xs-12">
+                          Failures: <span data-ng-class="{'text-danger': status.bomsIndexingFailures}">{{status.bomsIndexingFailures | number:0}}</span>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-xs-12">
                           <uib-progressbar max="status.bomsIndexingTotalSteps" value="status.bomsIndexingCurrentStep" data-ng-class="{'progress-striped active': !status.errorMessage && status.bomsIndexingCurrentStep < status.bomsIndexingTotalSteps, 'progress-bar-danger': status.errorMessage}">
                             <span style="color:white; white-space:nowrap;">{{status.bomsIndexingCurrentStep}} / {{status.bomsIndexingTotalSteps}}</span>
                           </uib-progressbar>
@@ -79,7 +84,7 @@
                     </div>
                   </div>
 
-                  <div class="row" data-ng-show="(status.phase == 2 || status.phase == 3) && errorMessage">
+                  <div class="row" data-ng-show="(status.phase == 2 || status.phase == 3) && status.errorMessage">
                     <div class="col-xs-12">
                       <span class="text-danger">Failure:</span>&nbsp;<span class="bg-danger" style="padding: 2px 4px;">{{status.errorMessage}}</span>
                     </div>
