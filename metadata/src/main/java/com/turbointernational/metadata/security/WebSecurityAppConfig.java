@@ -1,6 +1,6 @@
 package com.turbointernational.metadata.security;
 
-import com.turbointernational.metadata.services.LoginService;
+import com.turbointernational.metadata.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

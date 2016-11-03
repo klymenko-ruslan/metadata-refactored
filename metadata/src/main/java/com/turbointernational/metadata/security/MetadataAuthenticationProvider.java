@@ -1,8 +1,8 @@
 package com.turbointernational.metadata.security;
 
-import com.turbointernational.metadata.domain.security.AuthProvider;
-import com.turbointernational.metadata.domain.security.AuthProviderLdap;
-import com.turbointernational.metadata.domain.security.User;
+import com.turbointernational.metadata.entity.AuthProvider;
+import com.turbointernational.metadata.entity.AuthProviderLdap;
+import com.turbointernational.metadata.entity.User;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

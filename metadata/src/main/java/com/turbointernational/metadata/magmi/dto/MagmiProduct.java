@@ -1,9 +1,9 @@
 package com.turbointernational.metadata.magmi.dto;
 
-import com.turbointernational.metadata.domain.criticaldimension.CriticalDimension;
-import com.turbointernational.metadata.domain.other.Manufacturer;
-import com.turbointernational.metadata.domain.part.Part;
-import com.turbointernational.metadata.domain.part.types.Turbo;
+import com.turbointernational.metadata.entity.CriticalDimension;
+import com.turbointernational.metadata.entity.Manufacturer;
+import com.turbointernational.metadata.entity.part.Part;
+import com.turbointernational.metadata.entity.part.types.Turbo;
 import net.sf.jsog.JSOG;
 import org.apache.commons.lang.StringUtils;
 

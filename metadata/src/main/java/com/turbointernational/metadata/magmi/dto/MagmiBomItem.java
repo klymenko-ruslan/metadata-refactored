@@ -2,7 +2,7 @@
 package com.turbointernational.metadata.magmi.dto;
 
 import com.google.common.collect.Sets;
-import com.turbointernational.metadata.domain.type.PartType;
+import com.turbointernational.metadata.entity.PartType;
 import flexjson.JSON;
 import flexjson.JSONSerializer;
 

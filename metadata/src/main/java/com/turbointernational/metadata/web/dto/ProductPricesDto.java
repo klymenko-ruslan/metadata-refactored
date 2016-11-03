@@ -2,13 +2,8 @@ package com.turbointernational.metadata.web.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
-import com.turbointernational.metadata.services.mas90.pricing.CalculatedPrice;
-import com.turbointernational.metadata.services.mas90.pricing.ProductPrices;
-import com.turbointernational.metadata.web.View;
-
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
+import com.turbointernational.metadata.service.mas90.pricing.ProductPrices;
+import com.turbointernational.metadata.util.View;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 

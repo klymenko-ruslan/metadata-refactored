@@ -3,7 +3,7 @@ package com.turbointernational.metadata;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
-import com.turbointernational.metadata.web.CORSFilter;
+import com.turbointernational.metadata.web.filter.CORSFilter;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -48,7 +48,7 @@ import java.util.concurrent.TimeUnit;
 @SpringBootApplication
 @Configuration
 @EnableAutoConfiguration
-@EnableJpaRepositories(basePackages = {"com.turbointernational.metadata.domain"})
+@EnableJpaRepositories(basePackages = {"com.turbointernational.metadata.entity"})
 @EnableTransactionManagement//(mode = AdviceMode.PROXY, proxyTargetClass = true)
 @EnableScheduling
 @EnableAsync

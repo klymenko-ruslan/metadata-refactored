@@ -761,18 +761,18 @@ def generate_jpa_classes(input_data, ptid2columns_meta):
                     "    }}\n\n" \
                     .format(mem_type=mem_type, mem_name=mem_name,
                             method_suff=method_suff)
-            print("package com.turbointernational.metadata.domain."
+            print("package com.turbointernational.metadata.entity."
                   "part.types;\n", file=snippet_file)
             print("import com.fasterxml.jackson.annotation.JsonProperty;",
                   file=snippet_file)
             print("import com.fasterxml.jackson.annotation.JsonView;",
                   file=snippet_file)
-            print("import com.turbointernational.metadata.domain."
+            print("import com.turbointernational.metadata.entity."
                   "criticaldimension.CriticalDimensionEnumVal;",
                   file=snippet_file)
-            print("import com.turbointernational.metadata.domain.part.Part;",
+            print("import com.turbointernational.metadata.entity.part.Part;",
                   file=snippet_file)
-            print("import com.turbointernational.metadata.web.View;\n",
+            print("import com.turbointernational.metadata.util.View;\n",
                   file=snippet_file)
             print("import javax.persistence.*;\n", file=snippet_file)
             print("import static javax.persistence.FetchType.LAZY;\n\n",
@@ -823,7 +823,7 @@ def generate_js_snippents(input_data):
         print("// Snippet for restService.js", file=fjs)
         print("      this.createPart = function(part) {", file=fjs)
         print("      // Specify class depending on part type.", file=fjs)
-        print("      var clazz = \"com.turbointernational.metadata.domain."
+        print("      var clazz = \"com.turbointernational.metadata.entity."
               "part.types.\";", file=fjs)
         print("      switch (part.partType.id) {", file=fjs)
 
@@ -836,7 +836,7 @@ def generate_js_snippents(input_data):
             print("        break;", file=fjs)
 
         print("      default:", file=fjs)
-        print("          clazz = \"com.turbointernational.metadata.domain."
+        print("          clazz = \"com.turbointernational.metadata.entity."
               "part.Part\";", file=fjs)
         print("      }", file=fjs)
         print("      part.class = clazz;", file=fjs)
