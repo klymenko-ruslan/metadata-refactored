@@ -10,6 +10,7 @@ import com.turbointernational.metadata.entity.CarEngine;
 import com.turbointernational.metadata.entity.CarModel;
 import com.turbointernational.metadata.entity.CarModelEngineYear;
 import com.turbointernational.metadata.entity.CarYear;
+import com.turbointernational.metadata.service.ChangelogService;
 import com.turbointernational.metadata.util.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityManager;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +38,9 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 public class ApplicationController {
 
     private static final Logger log = LoggerFactory.getLogger(ApplicationController.class);
+
+    @Autowired
+    private ChangelogService changelogService;
 
     @Autowired
     private CarModelEngineYearDao carModelEngineYearDao;
@@ -87,10 +92,11 @@ public class ApplicationController {
     public long create(@RequestBody CarModelEngineYear cmey) {
         normalize(cmey);
         carModelEngineYearDao.persist(cmey);
+        changelogService.log("Created application [" +cmey.getId() + "].");
         return cmey.getId();
     }
 
-    public static class BulkCreateRequest {
+    public static class BulkCreateRequest implements Serializable {
 
         @JsonView({View.Summary.class})
         private List<CarModel> models;
@@ -128,7 +134,7 @@ public class ApplicationController {
     }
 
     @JsonInclude(ALWAYS)
-    public static class BulkCreateResonse {
+    public static class BulkCreateResonse implements Serializable {
 
         @JsonView({View.Summary.class})
         private int created = 0;
@@ -230,6 +236,8 @@ public class ApplicationController {
 
         })));
 
+        changelogService.log("Created applications.", retVal);
+
         return retVal;
     }
 
@@ -240,6 +248,7 @@ public class ApplicationController {
     public void update(@RequestBody CarModelEngineYear cmey) {
         normalize(cmey);
         carModelEngineYearDao.merge(cmey);
+        changelogService.log("The application [" + cmey.getId() + "] has been updated.");
     }
 
     @Transactional
@@ -248,6 +257,7 @@ public class ApplicationController {
     @Secured("ROLE_APPLICATION_CRUD")
     public void remove(@PathVariable("id") long id) {
         carModelEngineYearDao.delete(id);
+        changelogService.log("Removed application [" + id + "].");
     }
 
     private CarYear getOrCreateCarYear(CarYear carYear) {
@@ -258,6 +268,7 @@ public class ApplicationController {
             if (retVal == null) {
                 retVal = new CarYear(year);
                 carYearDao.persist(retVal);
+                changelogService.log("Created CarYear: ", retVal);
             }
         }
         return retVal;

@@ -5,6 +5,7 @@ import com.turbointernational.metadata.entity.BOMAlternative;
 import com.turbointernational.metadata.entity.BOMAlternativeHeader;
 import com.turbointernational.metadata.entity.BOMItem;
 import com.turbointernational.metadata.entity.part.*;
+import com.turbointernational.metadata.service.ChangelogService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 public class BOMAlternativeController {
     
     @Autowired
-    ChangelogDao changelogDao;
+    ChangelogService changelogService;
 
     @Autowired
     PartDao partDao;
@@ -73,7 +74,7 @@ public class BOMAlternativeController {
         bomAltDao.persist(bomAlt);
         
         // Update the changelog
-        changelogDao.log("Added bom alternative.", bomAlt.toJson());
+        changelogService.log("Added bom alternative.", bomAlt.toJson());
     }
     
     @Transactional
@@ -89,7 +90,7 @@ public class BOMAlternativeController {
         BOMAlternative alt = bomAltDao.findOne(altId);
         
         // Update the changelog
-        changelogDao.log("Deleted BOM alternative.", alt.toJson());
+        changelogService.log("Deleted BOM alternative.", alt.toJson());
         
         // Remove the alternate item
         item.getAlternatives().remove(alt);

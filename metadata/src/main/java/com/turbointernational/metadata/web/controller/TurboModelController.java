@@ -1,9 +1,9 @@
 package com.turbointernational.metadata.web.controller;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import com.turbointernational.metadata.dao.ChangelogDao;
-import com.turbointernational.metadata.entity.TurboModel;
 import com.turbointernational.metadata.dao.TurboModelDao;
+import com.turbointernational.metadata.entity.TurboModel;
+import com.turbointernational.metadata.service.ChangelogService;
 import com.turbointernational.metadata.util.View;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
@@ -21,7 +21,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 public class TurboModelController {
     
     @Autowired
-    ChangelogDao changelogDao;
+    ChangelogService changelogService;
     
     @Autowired
     TurboModelDao turboModelDao;
@@ -36,7 +36,7 @@ public class TurboModelController {
     public TurboModel createJson(@RequestBody TurboModel turboModel) {
         turboModelDao.persist(turboModel);
         
-        changelogDao.log("Created turbo model", turboModel.toJson());
+        changelogService.log("Created turbo model", turboModel.toJson());
         
         return turboModel;
     }
@@ -51,7 +51,7 @@ public class TurboModelController {
     public TurboModel updateJson(@RequestBody TurboModel turboModel) {
         turboModelDao.merge(turboModel);
         
-        changelogDao.log("Updated turbo model", turboModel.toJson());
+        changelogService.log("Updated turbo model", turboModel.toJson());
         
         return turboModel;
     }
@@ -64,7 +64,7 @@ public class TurboModelController {
     public void deleteJson(@PathVariable Long turboModelId) {
         TurboModel turboModel = turboModelDao.findOne(turboModelId);
         turboModelDao.remove(turboModel);
-        changelogDao.log("Removed turbo model", turboModel.toJson());
+        changelogService.log("Removed turbo model", turboModel.toJson());
     }
     
     @RequestMapping(method = GET,

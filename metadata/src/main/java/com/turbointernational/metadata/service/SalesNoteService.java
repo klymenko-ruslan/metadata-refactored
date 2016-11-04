@@ -1,12 +1,11 @@
 package com.turbointernational.metadata.service;
 
 import com.google.common.collect.Iterables;
-import com.turbointernational.metadata.dao.ChangelogDao;
+import com.turbointernational.metadata.dao.PartDao;
 import com.turbointernational.metadata.dao.SalesNoteDao;
 import com.turbointernational.metadata.dao.SalesNotePartDao;
 import com.turbointernational.metadata.entity.*;
 import com.turbointernational.metadata.entity.part.Part;
-import com.turbointernational.metadata.dao.PartDao;
 import com.turbointernational.metadata.exception.RemovePrimaryPartException;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +30,7 @@ public class SalesNoteService {
     private SalesNotePartDao salesNotePartDao;
 
     @Autowired
-    private ChangelogDao changelogDao;
+    private ChangelogService changelogService;
 
     @Autowired
     private PartDao partDao;
@@ -69,7 +68,7 @@ public class SalesNoteService {
         // Create the primary part association
         SalesNotePart snp = new SalesNotePart(salesNote, part, false, user);
         partDao.getEntityManager().persist(snp);
-        changelogDao.log("Added related part to sales note " + salesNoteId, partId);
+        changelogService.log("Added related part to sales note " + salesNoteId, partId);
     }
 
     @Transactional
@@ -87,7 +86,7 @@ public class SalesNoteService {
         salesNote.getParts().add(new SalesNotePart(salesNote, primaryPart, true, user));
         // Save
         salesNotes.save(salesNote);
-        changelogDao.log("Created sales note " + salesNote.getId());
+        changelogService.log("Created sales note " + salesNote.getId());
         // Initialize a few properties before sending the response
         primaryPart.getManufacturer().getName();
         primaryPart.getPartType().getName();
@@ -106,7 +105,7 @@ public class SalesNoteService {
         salesNote.setComment(comment);
         // Save
         salesNotes.save(salesNote);
-        changelogDao.log("Changed sales note comment from " + salesNote.getComment(), noteId);
+        changelogService.log("Changed sales note comment from " + salesNote.getComment(), noteId);
     }
 
     @Transactional
@@ -136,7 +135,7 @@ public class SalesNoteService {
         // Save
         salesNotes.save(salesNote);
         */
-        changelogDao.log("Deleted related part from sales note " + salesNoteId, partId);
+        changelogService.log("Deleted related part from sales note " + salesNoteId, partId);
     }
 
     public static class AttachmentDto {
@@ -193,7 +192,7 @@ public class SalesNoteService {
         // Save
         salesNote.getAttachments().add(attachment);
         salesNotes.save(salesNote);
-        changelogDao.log("Added attachment to sales note " + salesNoteId, attachment);
+        changelogService.log("Added attachment to sales note " + salesNoteId, attachment);
         return salesNote;
     }
 
@@ -210,7 +209,7 @@ public class SalesNoteService {
         salesNote.getAttachments().remove(salesNoteAttachment);
         // Save
         salesNotes.save(salesNote);
-        changelogDao.log("Deleted attachment from sales note " + salesNoteId, salesNoteAttachment);
+        changelogService.log("Deleted attachment from sales note " + salesNoteId, salesNoteAttachment);
     }
 
     @Transactional
@@ -280,7 +279,7 @@ public class SalesNoteService {
         // @see SalesNotePart#updateSearchIndex().
         salesNote.getParts().forEach(snp -> snp.setUpdateDate(now));
         salesNotes.save(salesNote);
-        changelogDao.log("Sales note " + salesNote.getId()
+        changelogService.log("Sales note " + salesNote.getId()
                 + " state changed from " + currentState
                 + " to " + salesNote.getState(), null);
     }

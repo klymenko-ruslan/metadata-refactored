@@ -2,14 +2,16 @@ package com.turbointernational.metadata.web.controller;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
-import com.turbointernational.metadata.dao.ChangelogDao;
 import com.turbointernational.metadata.dao.PartDao;
 import com.turbointernational.metadata.dao.ProductImageDao;
-import com.turbointernational.metadata.entity.TurboType;
 import com.turbointernational.metadata.dao.TurboTypeDao;
-import com.turbointernational.metadata.entity.part.*;
 import com.turbointernational.metadata.entity.BOMAncestor;
+import com.turbointernational.metadata.entity.TurboType;
+import com.turbointernational.metadata.entity.part.Part;
+import com.turbointernational.metadata.entity.part.PartRepository;
+import com.turbointernational.metadata.entity.part.ProductImage;
 import com.turbointernational.metadata.service.BOMService;
+import com.turbointernational.metadata.service.ChangelogService;
 import com.turbointernational.metadata.service.CriticalDimensionService;
 import com.turbointernational.metadata.service.ImageService;
 import com.turbointernational.metadata.util.View;
@@ -59,7 +61,7 @@ public class PartController {
     private BOMService bomService;
 
     @Autowired
-    private ChangelogDao changelogDao;
+    private ChangelogService changelogService;
     
     @Autowired
     private TurboTypeDao turboTypeDao;
@@ -277,7 +279,7 @@ public class PartController {
             partDao.persist(origin);
             // Update the changelog.
             String json = jsonSerializer.serialize(origin);
-            changelogDao.log("Created part", json);
+            changelogService.log("Created part", json);
             results.add(new PartCreateResponse.Row(origin.getId(), mpn, true, null));
             added.add(mpn);
         }
@@ -312,7 +314,7 @@ public class PartController {
         String originalPartJson = originPart.toJson(criticalDimensionService.getCriticalDimensionForPartType(part.getPartType().getId()));
         Part retVal = partDao.merge(part);
         // Update the changelog
-        changelogDao.log("Updated part", "{original: " + originalPartJson + ",updated: " + part.toJson(criticalDimensionService.getCriticalDimensionForPartType(part.getPartType().getId())) + "}");
+        changelogService.log("Updated part", "{original: " + originalPartJson + ",updated: " + part.toJson(criticalDimensionService.getCriticalDimensionForPartType(part.getPartType().getId())) + "}");
         return retVal;
     }
 
@@ -324,7 +326,7 @@ public class PartController {
         Part part = partDao.findOne(id);
         partDao.merge(part);
         // Update the changelog
-        changelogDao.log("Deleted part", part.toJson(criticalDimensionService.getCriticalDimensionForPartType(part.getPartType().getId())));
+        changelogService.log("Deleted part", part.toJson(criticalDimensionService.getCriticalDimensionForPartType(part.getPartType().getId())));
         // Delete the part
         db.update("INSERT INTO `deleted_parts` (id) VALUES(?)", part.getId());
         partDao.remove(part);

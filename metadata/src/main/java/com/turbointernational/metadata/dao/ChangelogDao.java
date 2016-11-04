@@ -24,28 +24,11 @@ import javax.persistence.criteria.*;
 @Repository
 public class ChangelogDao extends AbstractDao<Changelog> {
     
-    @Autowired(required=true)
-    ObjectMapper json;
+    @Autowired
+    private ObjectMapper json;
     
     public ChangelogDao() {
         super(Changelog.class);
-    }
-
-    @Transactional
-    public Changelog log(String description) {
-        User user = User.getCurrentUser();
-        return log(user, description, "");
-    }
-
-    @Transactional
-    public Changelog log(User user, String description) {
-        return log(user, description, "");
-    }
-
-    @Transactional
-    public Changelog log(String description, String data) {
-        User user = User.getCurrentUser();
-        return log(user, description, data);
     }
 
     @Transactional
@@ -57,12 +40,6 @@ public class ChangelogDao extends AbstractDao<Changelog> {
         changelog.setUser(user);
         persist(changelog);
         return changelog;
-    }
-
-    @Transactional
-    public Changelog log(String description, Serializable data) {
-        User user = User.getCurrentUser();
-        return log(user, description, data);
     }
 
     @Transactional

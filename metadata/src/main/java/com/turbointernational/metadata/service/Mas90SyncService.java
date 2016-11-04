@@ -2,18 +2,13 @@ package com.turbointernational.metadata.service;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
-import com.turbointernational.metadata.dao.ChangelogDao;
-import com.turbointernational.metadata.entity.Manufacturer;
-import com.turbointernational.metadata.entity.Mas90Sync;
 import com.turbointernational.metadata.dao.Mas90SyncDao;
-import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.dao.PartDao;
-import com.turbointernational.metadata.entity.BOMItem;
-import com.turbointernational.metadata.entity.User;
-import com.turbointernational.metadata.entity.PartType;
 import com.turbointernational.metadata.dao.PartTypeDao;
-import com.turbointernational.metadata.web.dto.Page;
+import com.turbointernational.metadata.entity.*;
+import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.util.View;
+import com.turbointernational.metadata.web.dto.Page;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -70,7 +65,7 @@ public class Mas90SyncService {
     private PartTypeDao partTypeDao;
 
     @Autowired
-    private ChangelogDao changelogDao;
+    private ChangelogService changelogService;
 
     @Autowired
     private Mas90SyncDao mas90SyncDao;      // local storage
@@ -481,7 +476,7 @@ public class Mas90SyncService {
                         partId = part.getId();
                         String logMsg = String.format("Inserted a new part: [%d] %s", part.getId(), part.getManufacturerPartNumber());
                         log.info(logMsg);
-                        changelogDao.log(user, logMsg);
+                        changelogService.log(user, logMsg);
                         synchronized (syncProcessStatus) {
                             syncProcessStatus.incPartsUpdateInserts();
                             syncProcessStatus.addModifications(logMsg);
@@ -558,7 +553,7 @@ public class Mas90SyncService {
                 String s = String.format("Updated the part: [%d] %s ", p.getId(), p.getManufacturerPartNumber()) +
                         modified.toString();
                 log.info(s);
-                changelogDao.log(user, s);
+                changelogService.log(user, s);
                 synchronized (syncProcessStatus) {
                     syncProcessStatus.addModifications(s);
                 }
@@ -642,7 +637,7 @@ public class Mas90SyncService {
                         }
                         if (modification != null) {
                             log.info(modification);
-                            changelogDao.log(user, modification);
+                            changelogService.log(user, modification);
                             synchronized (syncProcessStatus) {
                                 syncProcessStatus.addModifications(modification);
                             }
@@ -681,7 +676,7 @@ public class Mas90SyncService {
                                     newBom.getId(), child.getId(), child.getManufacturerPartNumber(),
                                     newBom.getQuantity());
                             log.info(modification);
-                            changelogDao.log(user, modification);
+                            changelogService.log(user, modification);
                             synchronized (syncProcessStatus) {
                                 syncProcessStatus.addModifications(modification);
                             }

@@ -1,10 +1,10 @@
 package com.turbointernational.metadata.web.controller;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import com.turbointernational.metadata.dao.ChangelogDao;
 import com.turbointernational.metadata.dao.KitComponentDao;
 import com.turbointernational.metadata.dao.PartDao;
 import com.turbointernational.metadata.entity.part.types.kit.KitComponent;
+import com.turbointernational.metadata.service.ChangelogService;
 import com.turbointernational.metadata.util.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +24,7 @@ public class KitComponentController {
     private static final Logger log = LoggerFactory.getLogger(KitComponentController.class);
     
     @Autowired
-    ChangelogDao changelogDao;
+    ChangelogService changelogService;
     
     @Autowired
     PartDao partDao;
@@ -43,7 +43,7 @@ public class KitComponentController {
         kitComponentDao.persist(component);
 
         // Update the changelog
-        changelogDao.log("Added kit common component to kit" + component.getKit().getId(), component.getPart().getId());
+        changelogService.log("Added kit common component to kit" + component.getKit().getId(), component.getPart().getId());
         
         return component;
     }
@@ -68,7 +68,7 @@ public class KitComponentController {
         KitComponent component = kitComponentDao.findOne(id);
         
         // Update the changelog
-        changelogDao.log("Changed kit component mapping exclude to " + exclude, component.toJson());
+        changelogService.log("Changed kit component mapping exclude to " + exclude, component.toJson());
         
         // Update
         component.setExclude(exclude);
@@ -90,7 +90,7 @@ public class KitComponentController {
         kitComponentDao.remove(component);
         
         // Update the changelog
-        changelogDao.log("Deleted kit common component mapping.", component.toJson());
+        changelogService.log("Deleted kit common component mapping.", component.toJson());
     }
     
     

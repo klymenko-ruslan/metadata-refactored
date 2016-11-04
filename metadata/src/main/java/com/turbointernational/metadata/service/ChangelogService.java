@@ -2,10 +2,12 @@ package com.turbointernational.metadata.service;
 
 import com.turbointernational.metadata.entity.Changelog;
 import com.turbointernational.metadata.dao.ChangelogDao;
+import com.turbointernational.metadata.entity.User;
 import com.turbointernational.metadata.web.dto.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -19,6 +21,33 @@ public class ChangelogService {
 
     @Autowired
     private ChangelogDao changelogDao;
+
+    public Changelog log(String description) {
+        User user = User.getCurrentUser();
+        return log(user, description, "");
+    }
+
+    public Changelog log(User user, String description) {
+        return log(user, description, "");
+    }
+
+    public Changelog log(String description, String data) {
+        User user = User.getCurrentUser();
+        return log(user, description, data);
+    }
+
+    public Changelog log(User user, String description, String data) {
+        return changelogDao.log(user, description, data);
+    }
+
+    public Changelog log(String description, Serializable data) {
+        User user = User.getCurrentUser();
+        return log(user, description, data);
+    }
+
+    public Changelog log(User user, String description, Serializable data) {
+        return changelogDao.log(user, description, data);
+    }
 
     public Page<Changelog> filter(Long userId, Calendar startDate, Calendar finishDate,
                                   String description, String data,
