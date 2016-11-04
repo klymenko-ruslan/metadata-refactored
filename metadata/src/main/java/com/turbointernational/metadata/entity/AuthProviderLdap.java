@@ -5,6 +5,9 @@ import com.turbointernational.metadata.util.View;
 
 import javax.persistence.*;
 
+import static com.turbointernational.metadata.entity.AuthProvider.AuthProviderTypeEnum.LDAP;
+import static javax.persistence.EnumType.STRING;
+
 /**
  * Created by dmytro.trunykov@zorallabs.com on 18.03.16.
  */
@@ -32,11 +35,11 @@ public class AuthProviderLdap extends AuthProvider {
     private int port;
 
     @Column(name = "protocol", nullable = false)
-    @Enumerated(EnumType.STRING)
+    @Enumerated(STRING)
     @JsonView({View.Summary.class})
     private ProtocolEnum protocol;
 
-    @Column(name = "entity")
+    @Column(name = "domain")
     @JsonView({View.Summary.class})
     private String domain;
 
@@ -52,7 +55,7 @@ public class AuthProviderLdap extends AuthProvider {
         this.host = host;
         this.port = port;
         this.domain = domain;
-        setTyp(AuthProviderTypeEnum.LDAP);
+        setTyp(LDAP);
     }
 
     public String getName() {
