@@ -97,7 +97,7 @@ angular.module("ngMetaCrudApp")
 
       this.createPart = function(part, mpns) {
         // Specify class depending on part type.
-        var clazz = "com.turbointernational.metadata.domain.part.types.";
+        var clazz = "com.turbointernational.metadata.entity.part.types.";
         switch (part.partType.id) {
         case 30:
           clazz += "Actuator";
@@ -232,7 +232,7 @@ angular.module("ngMetaCrudApp")
           clazz += "MiscMinorComponent";
           break;
         default:
-          clazz = "com.turbointernational.metadata.domain.part.Part";
+          clazz = "com.turbointernational.metadata.entity.part.Part";
         }
         part.class = clazz;
         var request = {

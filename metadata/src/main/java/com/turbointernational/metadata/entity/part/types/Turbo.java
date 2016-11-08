@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static javax.persistence.FetchType.LAZY;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 
@@ -34,12 +35,12 @@ public class Turbo extends Part {
     //<editor-fold defaultstate="collapsed" desc="Properties: members">
 
     @JsonView(View.Detail.class)
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = LAZY)
     @JoinColumn(name="turbo_model_id")
     private TurboModel turboModel;
 
     @JsonView(View.Detail.class)
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = LAZY)
     @JoinColumn(name="cool_type_id")
     private CoolType coolType;
 
