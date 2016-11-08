@@ -31,7 +31,9 @@ import javax.sql.DataSource;
 import java.sql.Timestamp;
 import java.util.*;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
 import static com.turbointernational.metadata.util.RegExpUtils.PTRN_MANUFACTURER_NUMBER;
+import static java.lang.Boolean.TRUE;
 
 /**
  * Synchronization service between Mas90 and 'metadata' database.
@@ -99,50 +101,50 @@ public class Mas90SyncService {
         private final static long DEF_PARTSUPDATE_SKIPPED = 0L;
         // By default we assume that finished == true.
         // It is important (see JS logic).
-        private final static boolean DEF_PARTSUPDATE_FINISHED = Boolean.TRUE;
+        private final static boolean DEF_PARTSUPDATE_FINISHED = TRUE;
 
         @JsonView({View.Summary.class})
-        @JsonInclude(JsonInclude.Include.ALWAYS)
+        @JsonInclude(ALWAYS)
         private Long startedOn;
 
         @JsonView({View.Summary.class})
-        @JsonInclude(JsonInclude.Include.ALWAYS)
+        @JsonInclude(ALWAYS)
         private Long userId;
 
         @JsonView({View.Summary.class})
-        @JsonInclude(JsonInclude.Include.ALWAYS)
+        @JsonInclude(ALWAYS)
         private String userName;
 
         @JsonView({View.Summary.class})
-        @JsonInclude(JsonInclude.Include.ALWAYS)
+        @JsonInclude(ALWAYS)
         private long partsUpdateTotalSteps;
 
         @JsonView({View.Summary.class})
-        @JsonInclude(JsonInclude.Include.ALWAYS)
+        @JsonInclude(ALWAYS)
         private long partsUpdateCurrentStep;
 
         @JsonView({View.Summary.class})
-        @JsonInclude(JsonInclude.Include.ALWAYS)
+        @JsonInclude(ALWAYS)
         private long partsUpdateInserts;
 
         @JsonView({View.Summary.class})
-        @JsonInclude(JsonInclude.Include.ALWAYS)
+        @JsonInclude(ALWAYS)
         private long partsUpdateUpdates;
 
         @JsonView({View.Summary.class})
-        @JsonInclude(JsonInclude.Include.ALWAYS)
+        @JsonInclude(ALWAYS)
         private long partsUpdateSkipped;
 
         @JsonView({View.Summary.class})
-        @JsonInclude(JsonInclude.Include.ALWAYS)
+        @JsonInclude(ALWAYS)
         private boolean finished;
 
         @JsonView({View.Summary.class})
-        @JsonInclude(JsonInclude.Include.ALWAYS)
+        @JsonInclude(ALWAYS)
         private final List<String> errors = new ArrayList<>();
 
         @JsonView({View.Summary.class})
-        @JsonInclude(JsonInclude.Include.ALWAYS)
+        @JsonInclude(ALWAYS)
         private final List<String> modifications = new ArrayList<>();
 
         SyncProcessStatus() {
@@ -319,6 +321,7 @@ public class Mas90SyncService {
             synchronized (syncProcessStatus) {
                 syncProcessStatus.incPartsUpdateCurrentStep();
             }
+            List<Long> modifiedPartIds = new ArrayList<>(1000);
             try {
                 Set<Part> toBeReprocessed = new HashSet<>();
                 String itemsQuery = mas90Database.getItemsQuery();
@@ -335,10 +338,11 @@ public class Mas90SyncService {
                             processedPart = processPart(itemcode, itemcodedesc, producttype, partTypeId); // separate transaction
                             if (processedPart != null) { // null -- failure
                                 Boolean updated = processBOM(processedPart, toBeReprocessed, true); // separate transaction
-                                if (updated == Boolean.TRUE) {
+                                if (updated == TRUE) {
                                     synchronized (syncProcessStatus) {
                                         syncProcessStatus.incPartsUpdateUpdates();
                                     }
+                                    modifiedPartIds.add(partTypeId);
                                 }
                             }
                         } else {
@@ -414,8 +418,12 @@ public class Mas90SyncService {
                 record.setInserted(inserted);
                 record.setSkipped(skipped);
                 mas90SyncDao.merge(record);
-                // Logic commented out below is replaced by the ticket #807 and migrated to the method processBOM().
-                //bomService.rebuildBomDescendancy(); // Ticket #592.
+                try {
+                    bomService.startRebuild(user, modifiedPartIds, true);
+                } catch (Exception e) {
+                    syncProcessStatus.addError("Critical error, processing stopped. Cause: " + getRootErrorMessage(e));
+                    syncProcessStatus.setFinished(true);
+                }
                 return null;
             });
             log.info("Synchronization with MAS90 finished.");
@@ -698,7 +706,7 @@ public class Mas90SyncService {
                 }
                 return dirty;
             });
-            bomService.rebuildBomDescendancyForPart(partId, true); // Ticket #807.
+            //bomService.rebuildBomDescendancyForPart(partId, true); // Ticket #807.
             return updated;
         }
 

@@ -77,7 +77,7 @@ public class BOMController {
         }
         User user = (User) authentication.getPrincipal();
         boolean indexBoms = options.getOrDefault("indexBoms", false);
-        BOMService.IndexingStatus status = bomService.startRebuild(user, indexBoms);
+        BOMService.IndexingStatus status = bomService.startRebuild(user, null, indexBoms);
         return status;
     }
 

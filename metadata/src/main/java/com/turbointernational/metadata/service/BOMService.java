@@ -302,6 +302,8 @@ public class BOMService {
 
         private final boolean indexBoms;
 
+        private final List<Long> turboIds; // turbos for indexing
+
         class BomsRebuilder extends Thread {
 
             @Override
@@ -338,6 +340,7 @@ public class BOMService {
                                     }
 
                                 },
+                                turboIds,
                                 indexBoms);
                     } catch (Exception e) {
                         synchronized (indexingStatus) {
@@ -353,8 +356,9 @@ public class BOMService {
 
         }
 
-        RebuildingJob(boolean indexBoms) {
+        RebuildingJob(List<Long> turboIds, boolean indexBoms) {
             super();
+            this.turboIds = turboIds;
             this.indexBoms = indexBoms;
         }
 
@@ -399,9 +403,7 @@ public class BOMService {
 
     }
 
-    public IndexingStatus startRebuild(User user, boolean indexBoms) throws Exception {
-        //rebuildBomDescendancy(null, indexBoms);
-        //return null;
+    public IndexingStatus startRebuild(User user, List<Long> turboIds, boolean indexBoms) throws Exception {
         IndexingStatus retVal;
         long now = System.currentTimeMillis();
         synchronized (indexingStatus) {
@@ -417,7 +419,7 @@ public class BOMService {
             indexingStatus.setIndexBoms(indexBoms);
             retVal = getRebuildStatus();
         }
-        Thread job = new RebuildingJob(indexBoms);
+        Thread job = new RebuildingJob(turboIds, indexBoms);
         job.start();
         return retVal;
     }
@@ -627,9 +629,30 @@ public class BOMService {
 
     }
 
+    private void indexBom(AtomicInteger i, AtomicLong t1, IndexingStatusCallback callback, long turboId) {
+        try {
+            searchService.indexPart(turboId);
+            int i1 = i.incrementAndGet();
+            if (i1 % 100 == 0) {
+                long t = System.currentTimeMillis();
+                log.debug("100 turbos indexed for {} millis.", t - t1.get());
+                t1.set(t);
+            }
+            if (callback != null) {
+                callback.setProgressIndexing(i1);
+            }
+        } catch (Exception e) {
+            if (callback != null) {
+                callback.registerFailure(e);
+            } else {
+                log.error("Indexing of a part [" + turboId + "] failed.", e);
+            }
+        }
+    }
+
     @Async("bomRebuildExecutor")
     @Transactional(propagation = REQUIRES_NEW)
-    public void rebuildBomDescendancy(IndexingStatusCallback callback, boolean indexBoms) {
+    public void rebuildBomDescendancy(IndexingStatusCallback callback, List<Long> turboIds, boolean indexBoms) {
         log.info("Rebuilding BOM descendancy started.");
         try {
             bomRebuildStart = new Date();
@@ -645,30 +668,19 @@ public class BOMService {
             AtomicInteger i = new AtomicInteger(0);
             if (indexBoms) {
                 log.info("BOM indexing started.");
-                JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-                jdbcTemplate.query("select distinct tcmey.part_id " +
-                        "from turbo_car_model_engine_year as tcmey join part as p on tcmey.part_id = p.id " +
-                        "where p.part_type_id = " + PTID_TURBO, rs -> {
-                    long turboId = rs.getLong(1);
-                    try {
-                        searchService.indexPart(turboId);
-                        int i1 = i.incrementAndGet();
-                        if (i1 % 100 == 0) {
-                            long t = System.currentTimeMillis();
-                            log.debug("100 turbos indexed for {} millis.", t - t1.get());
-                            t1.set(t);
-                        }
-                        if (callback != null) {
-                            callback.setProgressIndexing(i1);
-                        }
-                    } catch (Exception e) {
-                        if (callback != null) {
-                            callback.registerFailure(e);
-                        } else {
-                            log.error("Indexing of a part [" + turboId + "] failed.", e);
-                        }
+                if (turboIds == null || turboIds.isEmpty()) {
+                    JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+                    jdbcTemplate.query("select distinct tcmey.part_id " +
+                            "from turbo_car_model_engine_year as tcmey join part as p on tcmey.part_id = p.id " +
+                            "where p.part_type_id = " + PTID_TURBO, rs -> {
+                        long turboId = rs.getLong(1);
+                        indexBom(i, t1, callback, turboId);
+                    });
+                } else {
+                    for (Long turboId: turboIds) {
+                        indexBom(i, t1, callback, turboId);
                     }
-                });
+                }
                 log.info("BOM indexing finished.");
             }
             long t3 = System.currentTimeMillis();
