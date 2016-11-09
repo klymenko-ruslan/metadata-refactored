@@ -1,8 +1,8 @@
 "use strict";
 
 angular.module("ngMetaCrudApp").controller("Mas90SyncCtrl", ["$scope", "$interval", "$log", "gToast", "ngTableParams",
-    "restService", "status",
-  function($scope, $interval, $log, gToast, ngTableParams, restService, status) {
+    "$uibModal" ,"restService", "status",
+  function($scope, $interval, $log, gToast, ngTableParams, $uibModal, restService, status) {
 
     $scope.errors = "";
     $scope.modifications = "";
@@ -105,5 +105,28 @@ angular.module("ngMetaCrudApp").controller("Mas90SyncCtrl", ["$scope", "$interva
       );
     }, 1000);
 
+    $scope.onView = function(id) {
+      $uibModal.open({
+        templateUrl: "/views/mas90/sync/ViewResultDlg.html",
+        animation: false,
+        size: "lg",
+        controller: "Mas90ViewResultDlgCtrl",
+        resolve: {
+          result: ["restService", function(restService) {
+            return restService.mas90SyncResult(id);
+          }]
+        }
+      });
+    };
+
   }
-]);
+]).controller("Mas90ViewResultDlgCtrl", ["$scope", "$log", "$uibModalInstance", "result",
+    function($scope, $log, $uibModalInstance, result) {
+
+      $scope.result = result;
+
+      $scope.onClose = function() {
+        $uibModalInstance.close();
+      };
+
+  }]);

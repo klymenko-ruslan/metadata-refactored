@@ -6,6 +6,12 @@ import com.turbointernational.metadata.util.View;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
+
+import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.EnumType.STRING;
+import static javax.persistence.FetchType.LAZY;
 
 /**
  * Created by dmytro.trunykov@zorallabs.com on 1/12/16.
@@ -79,10 +85,19 @@ public class Mas90Sync implements Serializable {
     /**
      * Status of the sync.process.
      */
-    @Enumerated(EnumType.STRING)
+    @Enumerated(STRING)
     @JsonView({View.Summary.class})
     @Column(name = "status")
     private Status status;
+
+    @JsonView({View.Detail.class})
+    @OneToMany(fetch = LAZY, mappedBy = "mas90Sync", cascade = ALL)
+    private List<Mas90SyncFailure> failures = new ArrayList<>();
+
+    @JsonView({View.Detail.class})
+    @OneToMany(fetch = LAZY, mappedBy = "mas90Sync", cascade = ALL)
+    private List<Mas90SyncSuccess> successes = new ArrayList<>();
+
     //</editor-fold>
 
     public Long getId() {
@@ -156,6 +171,22 @@ public class Mas90Sync implements Serializable {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public List<Mas90SyncFailure> getFailures() {
+        return failures;
+    }
+
+    public void setFailures(List<Mas90SyncFailure> failures) {
+        this.failures = failures;
+    }
+
+    public List<Mas90SyncSuccess> getSuccesses() {
+        return successes;
+    }
+
+    public void setSuccesses(List<Mas90SyncSuccess> successes) {
+        this.successes = successes;
     }
 
 }

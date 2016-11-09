@@ -82,6 +82,20 @@ public class Mas90SyncService {
 
     SyncProcessStatus syncProcessStatus;
 
+    private final List<String> allErrors = new ArrayList<>(100);
+
+    private final List<String> allModifications = new ArrayList<>(100);
+
+    void registerError(String msg) {
+        allErrors.add(msg);
+        syncProcessStatus.addError(msg);
+    }
+
+    void registerModification(String msg) {
+        allModifications.add(msg);
+        syncProcessStatus.addModification(msg);
+    }
+
     @PostConstruct
     public void init() {
         mas90db = new JdbcTemplate(dataSourceMas90);
@@ -235,7 +249,7 @@ public class Mas90SyncService {
             return modifications;
         }
 
-        public void addModifications(String s) {
+        public void addModification(String s) {
             modifications.add(s);
         }
 
@@ -347,7 +361,7 @@ public class Mas90SyncService {
                             }
                         } else {
                             synchronized (syncProcessStatus) {
-                                syncProcessStatus.addError(String.format("Part '%1$s' in MAS90 has " +
+                                registerError(String.format("Part '%1$s' in MAS90 has " +
                                                 "unknown part type (product line): '%2$s'.",
                                         itemcode, productline));
                             }
@@ -364,7 +378,7 @@ public class Mas90SyncService {
                                     processedPart.getId(), processedPart.getManufacturerPartNumber());
                         }
                         synchronized (syncProcessStatus) {
-                            syncProcessStatus.addError(errMsg);
+                            registerError(errMsg);
                         }
                         log.error(errMsg);
                         throw th;
@@ -392,7 +406,7 @@ public class Mas90SyncService {
                 status = Mas90Sync.Status.FINISHED;
             } catch (Throwable e) {
                 synchronized (syncProcessStatus) {
-                    syncProcessStatus.addError("Critical error, processing stopped. Cause: " + getRootErrorMessage(e));
+                    registerError("Critical error, processing stopped. Cause: " + getRootErrorMessage(e));
                     syncProcessStatus.setFinished(true);
                 }
                 log.error("Synchronization with MAS90 failed.", e);
@@ -404,6 +418,7 @@ public class Mas90SyncService {
             transaction2.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW); // new transaction
             transaction2.execute((TransactionCallback<Void>) transactionStatus -> {
                 long total, updated, inserted, skipped;
+                List<String> errors, modifications;
                 synchronized (syncProcessStatus) {
                     total = syncProcessStatus.getPartsUpdateTotalSteps();
                     updated = syncProcessStatus.getPartsUpdateUpdates();
@@ -417,11 +432,25 @@ public class Mas90SyncService {
                 record.setUpdated(updated);
                 record.setInserted(inserted);
                 record.setSkipped(skipped);
+                for(String error : allErrors) {
+                    Mas90SyncFailure m90sf = new Mas90SyncFailure();
+                    m90sf.setLog(error);
+                    m90sf.setMas90Sync(record);
+                    record.getFailures().add(m90sf);
+                }
+                allErrors.clear();
+                for (String m : allModifications) {
+                    Mas90SyncSuccess m90ss = new Mas90SyncSuccess();
+                    m90ss.setLog(m);
+                    m90ss.setMas90Sync(record);
+                    record.getSuccesses().add(m90ss);
+                }
+                allModifications.clear();
                 mas90SyncDao.merge(record);
                 try {
                     bomService.startRebuild(user, modifiedPartIds, true);
                 } catch (Exception e) {
-                    syncProcessStatus.addError("Critical error, processing stopped. Cause: " + getRootErrorMessage(e));
+                    registerError("Critical error, processing stopped. Cause: " + getRootErrorMessage(e));
                     syncProcessStatus.setFinished(true);
                 }
                 return null;
@@ -450,7 +479,7 @@ public class Mas90SyncService {
                             productLineCode);
                     log.warn(msg);
                     synchronized (syncProcessStatus) {
-                        syncProcessStatus.addError(msg);
+                        registerError(msg);
                     }
                 }
             });
@@ -487,7 +516,7 @@ public class Mas90SyncService {
                         changelogService.log(user, logMsg);
                         synchronized (syncProcessStatus) {
                             syncProcessStatus.incPartsUpdateInserts();
-                            syncProcessStatus.addModifications(logMsg);
+                            registerModification(logMsg);
                         }
                     } else {
                         if (part.getPartType().getId() == partTypeId) {
@@ -513,7 +542,7 @@ public class Mas90SyncService {
                         err = String.format("Creation of a new part '%s' failed. Cause: %s", itemcode, cause);
                     }
                     synchronized (syncProcessStatus) {
-                        syncProcessStatus.addError(err);
+                        registerError(err);
                         syncProcessStatus.incPartsUpdateSkipped();
                     }
                     log.error(err/*, e*/);
@@ -563,7 +592,7 @@ public class Mas90SyncService {
                 log.info(s);
                 changelogService.log(user, s);
                 synchronized (syncProcessStatus) {
-                    syncProcessStatus.addModifications(s);
+                    registerModification(s);
                 }
             }
             return dirty;
@@ -636,8 +665,8 @@ public class Mas90SyncService {
                         } else {
                             if (bom.getQuantity() != mas90Bom.quantity) {
                                 modification = String.format("Part [%d] %s modified. BOM [%d] (child: [%d] %s) " +
-                                                "updated. Quantity: %d => %d", partId, manufacturerPartNumber, bom.getId(),
-                                        child.getId(), chMnPrtNum, bom.getQuantity(), mas90Bom.quantity);
+                                                "updated. Quantity: %d => %d", partId, manufacturerPartNumber,
+                                        bom.getId(), child.getId(), chMnPrtNum, bom.getQuantity(), mas90Bom.quantity);
                                 bom.setQuantity(mas90Bom.quantity);
                                 entityManager.merge(bom);
                                 dirty = true;
@@ -647,7 +676,7 @@ public class Mas90SyncService {
                             log.info(modification);
                             changelogService.log(user, modification);
                             synchronized (syncProcessStatus) {
-                                syncProcessStatus.addModifications(modification);
+                                registerModification(modification);
                             }
                         }
                     } else {
@@ -686,7 +715,7 @@ public class Mas90SyncService {
                             log.info(modification);
                             changelogService.log(user, modification);
                             synchronized (syncProcessStatus) {
-                                syncProcessStatus.addModifications(modification);
+                                registerModification(modification);
                             }
                         } else {
                             log.info("BOM's child not found (manufacture code: {}) for the part (ID: {}). " +
@@ -761,6 +790,8 @@ public class Mas90SyncService {
             record.setStatus(Mas90Sync.Status.IN_PROGRESS);
             mas90SyncDao.persist(record);
             syncProcessStatus.reset();
+            allErrors.clear();
+            allModifications.clear();
             syncProcessStatus.setStartedOn(now);
             if (user == null) {
                 syncProcessStatus.setUserId(null);
@@ -784,5 +815,9 @@ public class Mas90SyncService {
         return status();
     }
 
+    public Mas90Sync result(Long id) {
+        Mas90Sync m90s = mas90SyncDao.findOne(id);
+        return m90s;
+    }
 
 }

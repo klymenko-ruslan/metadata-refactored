@@ -86,9 +86,14 @@
         <td title="'Failures'" class="text-right">{{rec.skipped | number:0}}</td>
         <td title="'Started By'"><a data-ng-href="security/user/{{rec.user.id}}">{{rec.user.name}}</a></td>
         <td title="'Status'" data-ng-class="['text-center', {'active': rec.status=='IN_PROGRESS', 'warning': rec.status=='CANCELLED', 'sussess': rec.status=='FINISHED', 'danger': rec.status=='FAILED'}]">{{rec.status}}</td>
+        <td title="'Action'">
+          <button authorize="ROLE_MAS90_SYNC" class="btn btn-primary btn-xs" data-ng-click="onView(rec.id)">
+            <i class="fa fa-eye"></i> View
+          </button>
+        </td>
       </tr>
       <tr data-ng-hide="$data.length > 0">
-        <td colspan="8">No records to display.</td>
+        <td colspan="9">No records to display.</td>
       </tr>
     </table>
   </div>

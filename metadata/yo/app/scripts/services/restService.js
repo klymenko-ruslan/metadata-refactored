@@ -542,6 +542,10 @@ angular.module("ngMetaCrudApp")
         });
       };
 
+      this.mas90SyncResult = function(id) {
+        return Restangular.one("mas90sync/result", id).get();
+      };
+
       this.startMas90Sync = function() {
         return Restangular.one("mas90sync/start").post();
       };
