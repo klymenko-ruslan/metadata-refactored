@@ -1,10 +1,40 @@
 <div class="modal-header">
-  <h3 class="modal-title">MAS90 synchronization result</h3>
+  <h3 class="modal-title">MAS90 synchronization result [{{result.id | number}}]</h3>
 </div>
 <div class="modal-body">
   <div class="row">
     <div class="col-xs-12">
-      <pre>{{result | json:2}}</pre>
+      <div>
+        <span>The process started on {{result.started | date : "yyyy-MM-dd HH:mm.ss"}} by <a data-ng-href="security/user/{{result.user.id}}">{{result.user.name}}</a> and finished on {{result.finished | date : "yyyy-MM-dd HH:mm.ss"}}.</span>
+      </div>
+      <div>
+
+        <dl class="dl-horizontal">
+
+          <dt>Processed</dt>
+          <dd>{{result.toProcess | number:0}}</dd>
+
+          <dt>Skipped</dt>
+          <dd>{{result.skipped | number:0}}</dd>
+
+          <dt>Status</dt>
+          <dd><span data-ng-class="['text-center', {'active': result.status=='IN_PROGRESS', 'warning': result.status=='CANCELLED', 'sussess': result.status=='FINISHED', 'danger': result.status=='FAILED'}]">{{result.status}}</span></dd>
+
+        </dl>
+
+      </div>
+      <div>
+        <div>
+          <label for="log">Modifications:</label>
+          <textarea id="log" class="col-xs-12 bg-success text-primary" rows="5" readonly="readonly">{{logtext.successes}}</textarea>
+        </div>
+        <div>
+          <div>&nbsp;</div>
+          <label for="failures">Failures:</label>
+          <textarea id="failures" data-ng-class="['col-xs-12', {'bg-danger': logtext.failures}]" rows="5" readonly="readonly">{{logtext.failures}}</textarea>
+        </div>
+      </div>
+      <div>&nbsp;</div>
     </div>
   </div>
 </div>

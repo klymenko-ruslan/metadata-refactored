@@ -1,5 +1,6 @@
 package com.turbointernational.metadata.entity;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.util.View;
 
@@ -9,6 +10,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
 import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.EnumType.STRING;
 import static javax.persistence.FetchType.LAZY;
@@ -91,10 +93,12 @@ public class Mas90Sync implements Serializable {
     private Status status;
 
     @JsonView({View.Detail.class})
+    @JsonInclude(ALWAYS)
     @OneToMany(fetch = LAZY, mappedBy = "mas90Sync", cascade = ALL)
     private List<Mas90SyncFailure> failures = new ArrayList<>();
 
     @JsonView({View.Detail.class})
+    @JsonInclude(ALWAYS)
     @OneToMany(fetch = LAZY, mappedBy = "mas90Sync", cascade = ALL)
     private List<Mas90SyncSuccess> successes = new ArrayList<>();
 

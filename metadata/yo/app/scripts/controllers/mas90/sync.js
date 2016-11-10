@@ -121,12 +121,30 @@ angular.module("ngMetaCrudApp").controller("Mas90SyncCtrl", ["$scope", "$interva
 
   }
 ]).controller("Mas90ViewResultDlgCtrl", ["$scope", "$log", "$uibModalInstance", "result",
-    function($scope, $log, $uibModalInstance, result) {
+  function($scope, $log, $uibModalInstance, result) {
 
-      $scope.result = result;
+    $scope.result = result;
+    $scope.logtext = {};
 
-      $scope.onClose = function() {
-        $uibModalInstance.close();
-      };
+    if (result.successes.length > 0 ) {
+      var s = "";
+      _.each(result.successes, function(e) { s += (e.log + "\n")});
+      if (s !== "") {
+        $scope.logtext.successes = s;
+      }
+    }
 
-  }]);
+    if (result.failures.length > 0) {
+      var s = "";
+      _.each(result.failures, function(e) { s += (e.log + "\n")});
+       if (s !== "") {
+        $scope.logtext.failures = s;
+      }
+    }
+
+    $scope.onClose = function() {
+      $uibModalInstance.close();
+    };
+
+  }
+]);
