@@ -10,6 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.APPLICATIONS;
+
 /**
  * Created by dmytro.trunykov@zorallabs.com on 11/4/16.
  */
@@ -45,7 +47,7 @@ public class TurboCarModelEngineYearService {
         if (cmeyIds != null) {
             for (Long cmeyId : cmeyIds) {
                 turboCarModelEngineYearDao.add(partId, cmeyId);
-                changelogService.log("Part [" + partId + "] has been associated with the application ["
+                changelogService.log(APPLICATIONS, "Part [" + partId + "] has been associated with the application ["
                         + cmeyId + "].");
             }
         }
@@ -54,7 +56,7 @@ public class TurboCarModelEngineYearService {
     @Transactional
     public void delete(Long partId, Long applicationId) throws Exception {
         turboCarModelEngineYearDao.delete(partId, applicationId);
-        changelogService.log("Deleted association between part [" + partId + "] and an application ["
+        changelogService.log(APPLICATIONS, "Deleted association between part [" + partId + "] and an application ["
                 + applicationId + "].");
     }
 

@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.KIT;
+
 @RequestMapping("/metadata/kit/{kitId}/component")
 @Controller
 public class KitComponentController {
@@ -43,7 +45,7 @@ public class KitComponentController {
         kitComponentDao.persist(component);
 
         // Update the changelog
-        changelogService.log("Added kit common component to kit" + component.getKit().getId(), component.getPart().getId());
+        changelogService.log(KIT, "Added kit common component to kit" + component.getKit().getId(), component.getPart().getId());
         
         return component;
     }
@@ -68,7 +70,7 @@ public class KitComponentController {
         KitComponent component = kitComponentDao.findOne(id);
         
         // Update the changelog
-        changelogService.log("Changed kit component mapping exclude to " + exclude, component.toJson());
+        changelogService.log(KIT, "Changed kit component mapping exclude to " + exclude, component.toJson());
         
         // Update
         component.setExclude(exclude);
@@ -90,7 +92,7 @@ public class KitComponentController {
         kitComponentDao.remove(component);
         
         // Update the changelog
-        changelogService.log("Deleted kit common component mapping.", component.toJson());
+        changelogService.log(KIT, "Deleted kit common component mapping.", component.toJson());
     }
     
     

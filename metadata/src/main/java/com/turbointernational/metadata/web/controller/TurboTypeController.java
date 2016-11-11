@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.TURBOTYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
@@ -33,7 +34,7 @@ public class TurboTypeController {
     @JsonView(View.Detail.class)
     public TurboType createJson(@RequestBody TurboType type) {
         turboTypeDao.persist(type);
-        changelogService.log("Created turbo type", type.toJson());
+        changelogService.log(TURBOTYPE, "Created turbo type", type.toJson());
         return type;
     }
     
@@ -44,7 +45,7 @@ public class TurboTypeController {
     @JsonView(View.Detail.class)
     public TurboType updateJson(@RequestBody TurboType turboType) {
         turboTypeDao.merge(turboType);
-        changelogService.log("Updated turbo type", turboType.toJson());
+        changelogService.log(TURBOTYPE, "Updated turbo type", turboType.toJson());
         return turboType;
     }
     
@@ -54,7 +55,7 @@ public class TurboTypeController {
     @Transactional
     public void deleteJson(@PathVariable Long turboTypeId) {
         TurboType turboType = turboTypeDao.findOne(turboTypeId);
-        changelogService.log("Removed turbo type", turboType.toJson());
+        changelogService.log(TURBOTYPE, "Removed turbo type", turboType.toJson());
         turboTypeDao.remove(turboType);
     }
     

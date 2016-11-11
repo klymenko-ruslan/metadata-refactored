@@ -48,7 +48,7 @@ angular.module("ngMetaCrudApp")
           userId = $scope.search.user.id;
         }
         restService.filterChangelog($scope.search.startDate, $scope.search.finishDate,
-          userId, $scope.search.description, $scope.search.data,
+          $scope.search.service, userId, $scope.search.description, $scope.search.data,
           sortProperty, sortOrder, offset, limit).then(
           function(result) {
             // Update the total and slice the result
@@ -66,6 +66,7 @@ angular.module("ngMetaCrudApp")
     $scope.search = {
       "startDate": null,
       "finishDate": null,
+      "service": null,
       "user": null,
       "description": null,
       "data": null

@@ -3,6 +3,7 @@ package com.turbointernational.metadata.dao;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.turbointernational.metadata.entity.Changelog;
+import com.turbointernational.metadata.entity.Changelog.ServiceEnum;
 import com.turbointernational.metadata.entity.User;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -32,35 +33,26 @@ public class ChangelogDao extends AbstractDao<Changelog> {
     }
 
     @Transactional
-    public Changelog log(User user, String description, String data) {
+    public Changelog log(ServiceEnum service, User user, String description, Serializable data) {
+        String dataJson;
+        try {
+            dataJson = json.writeValueAsString(data);
+        } catch (JsonProcessingException e) {
+            dataJson = "Could not serialize data: " + e.getMessage();
+        }
         Changelog changelog = new Changelog();
+        changelog.setService(service);
         changelog.setDescription(description);
         changelog.setChangeDate(new Date());
-        changelog.setData(data);
+        changelog.setData(dataJson);
         changelog.setUser(user);
+
         persist(changelog);
+
         return changelog;
     }
 
-    @Transactional
-    public Changelog log(User user, String description, Serializable data) {
-        try {
-            Changelog changelog = new Changelog();
-            changelog.setDescription(description);
-            changelog.setChangeDate(new Date());
-            changelog.setData(json.writeValueAsString(data));
-            changelog.setUser(user);
-
-            persist(changelog);
-
-            return changelog;
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("Could not serialize data.", e);
-        }
-    }
-
-
-    public Page<Changelog> filter(Long userId, Date startDate, Date finishDate,
+    public Page<Changelog> filter(ServiceEnum service, Long userId, Date startDate, Date finishDate,
                                   String description, String data,
                                   String sortProperty, String sortOrder,
                                   Integer offset, Integer limit) {
@@ -71,6 +63,10 @@ public class ChangelogDao extends AbstractDao<Changelog> {
         ecq.select(root);
         int numPredicates = 0;
         List<Predicate> lstPredicates = new ArrayList<>(5);
+        if (service != null) {
+            lstPredicates.add(cb.greaterThanOrEqualTo(root.get("service"), service));
+            numPredicates++;
+        }
         if (userId != null) {
             lstPredicates.add(cb.equal(userJoin.get("id"), userId));
             numPredicates++;

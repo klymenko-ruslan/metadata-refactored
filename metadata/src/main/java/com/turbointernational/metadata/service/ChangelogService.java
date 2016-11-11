@@ -2,6 +2,7 @@ package com.turbointernational.metadata.service;
 
 import com.turbointernational.metadata.entity.Changelog;
 import com.turbointernational.metadata.dao.ChangelogDao;
+import com.turbointernational.metadata.entity.Changelog.ServiceEnum;
 import com.turbointernational.metadata.entity.User;
 import com.turbointernational.metadata.web.dto.Page;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,34 +23,25 @@ public class ChangelogService {
     @Autowired
     private ChangelogDao changelogDao;
 
-    public Changelog log(String description) {
+    public Changelog log(ServiceEnum service, String description) {
         User user = User.getCurrentUser();
-        return log(user, description, "");
+        return log(service, user, description, "");
     }
 
-    public Changelog log(User user, String description) {
-        return log(user, description, "");
+    public Changelog log(ServiceEnum service, User user, String description) {
+        return log(service, user, description, "");
     }
 
-    public Changelog log(String description, String data) {
+    public Changelog log(ServiceEnum service, String description, Serializable data) {
         User user = User.getCurrentUser();
-        return log(user, description, data);
+        return log(service, user, description, data);
     }
 
-    public Changelog log(User user, String description, String data) {
-        return changelogDao.log(user, description, data);
+    public Changelog log(ServiceEnum service, User user, String description, Serializable data) {
+        return changelogDao.log(service, user, description, data);
     }
 
-    public Changelog log(String description, Serializable data) {
-        User user = User.getCurrentUser();
-        return log(user, description, data);
-    }
-
-    public Changelog log(User user, String description, Serializable data) {
-        return changelogDao.log(user, description, data);
-    }
-
-    public Page<Changelog> filter(Long userId, Calendar startDate, Calendar finishDate,
+    public Page<Changelog> filter(ServiceEnum service, Long userId, Calendar startDate, Calendar finishDate,
                                   String description, String data,
                                   String sortProperty, String sortOrder,
                                   Integer offset, Integer limit) {
@@ -76,7 +68,7 @@ public class ChangelogService {
             finishDate.set(MILLISECOND, 999);
             d1 = finishDate.getTime();
         }
-        return changelogDao.filter(userId, d0, d1, description, data, sortProperty, sortOrder, offset, limit);
+        return changelogDao.filter(service, userId, d0, d1, description, data, sortProperty, sortOrder, offset, limit);
     }
 
 }

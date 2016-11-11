@@ -6,10 +6,7 @@ import com.turbointernational.metadata.dao.CarEngineDao;
 import com.turbointernational.metadata.dao.CarModelDao;
 import com.turbointernational.metadata.dao.CarModelEngineYearDao;
 import com.turbointernational.metadata.dao.CarYearDao;
-import com.turbointernational.metadata.entity.CarEngine;
-import com.turbointernational.metadata.entity.CarModel;
-import com.turbointernational.metadata.entity.CarModelEngineYear;
-import com.turbointernational.metadata.entity.CarYear;
+import com.turbointernational.metadata.entity.*;
 import com.turbointernational.metadata.service.ChangelogService;
 import com.turbointernational.metadata.util.View;
 import org.slf4j.Logger;
@@ -28,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
+import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.APPLICATIONS;
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 import static org.springframework.http.HttpStatus.OK;
@@ -92,7 +90,7 @@ public class ApplicationController {
     public long create(@RequestBody CarModelEngineYear cmey) {
         normalize(cmey);
         carModelEngineYearDao.persist(cmey);
-        changelogService.log("Created application [" +cmey.getId() + "].");
+        changelogService.log(APPLICATIONS, "Created application [" +cmey.getId() + "].");
         return cmey.getId();
     }
 
@@ -236,7 +234,7 @@ public class ApplicationController {
 
         })));
 
-        changelogService.log("Created applications.", retVal);
+        changelogService.log(APPLICATIONS, "Created applications.", retVal);
 
         return retVal;
     }
@@ -248,7 +246,7 @@ public class ApplicationController {
     public void update(@RequestBody CarModelEngineYear cmey) {
         normalize(cmey);
         carModelEngineYearDao.merge(cmey);
-        changelogService.log("The application [" + cmey.getId() + "] has been updated.");
+        changelogService.log(APPLICATIONS, "The application [" + cmey.getId() + "] has been updated.");
     }
 
     @Transactional
@@ -257,7 +255,7 @@ public class ApplicationController {
     @Secured("ROLE_APPLICATION_CRUD")
     public void remove(@PathVariable("id") long id) {
         carModelEngineYearDao.delete(id);
-        changelogService.log("Removed application [" + id + "].");
+        changelogService.log(APPLICATIONS, "Removed application [" + id + "].");
     }
 
     private CarYear getOrCreateCarYear(CarYear carYear) {
@@ -268,7 +266,7 @@ public class ApplicationController {
             if (retVal == null) {
                 retVal = new CarYear(year);
                 carYearDao.persist(retVal);
-                changelogService.log("Created CarYear: ", retVal);
+                changelogService.log(APPLICATIONS, "Created CarYear: ", retVal);
             }
         }
         return retVal;

@@ -2,6 +2,7 @@ package com.turbointernational.metadata.web.controller;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.dao.TurboModelDao;
+import com.turbointernational.metadata.entity.Changelog;
 import com.turbointernational.metadata.entity.TurboModel;
 import com.turbointernational.metadata.service.ChangelogService;
 import com.turbointernational.metadata.util.View;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.TURBOMODEL;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
@@ -36,7 +38,7 @@ public class TurboModelController {
     public TurboModel createJson(@RequestBody TurboModel turboModel) {
         turboModelDao.persist(turboModel);
         
-        changelogService.log("Created turbo model", turboModel.toJson());
+        changelogService.log(TURBOMODEL, "Created turbo model", turboModel.toJson());
         
         return turboModel;
     }
@@ -51,7 +53,7 @@ public class TurboModelController {
     public TurboModel updateJson(@RequestBody TurboModel turboModel) {
         turboModelDao.merge(turboModel);
         
-        changelogService.log("Updated turbo model", turboModel.toJson());
+        changelogService.log(TURBOMODEL, "Updated turbo model", turboModel.toJson());
         
         return turboModel;
     }
@@ -64,7 +66,7 @@ public class TurboModelController {
     public void deleteJson(@PathVariable Long turboModelId) {
         TurboModel turboModel = turboModelDao.findOne(turboModelId);
         turboModelDao.remove(turboModel);
-        changelogService.log("Removed turbo model", turboModel.toJson());
+        changelogService.log(TURBOMODEL, "Removed turbo model", turboModel.toJson());
     }
     
     @RequestMapping(method = GET,

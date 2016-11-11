@@ -2,6 +2,7 @@ package com.turbointernational.metadata.web.controller;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.entity.Changelog;
+import com.turbointernational.metadata.entity.Changelog.ServiceEnum;
 import com.turbointernational.metadata.service.ChangelogService;
 import com.turbointernational.metadata.web.dto.Page;
 import com.turbointernational.metadata.util.View;
@@ -31,7 +32,8 @@ public class ChangelogController {
     @ResponseBody
     @JsonView(View.Summary.class)
     @Secured("ROLE_ADMIN")
-    public Page<Changelog> filterChangelog(@RequestParam(name = "userId", required = false) Long userId,
+    public Page<Changelog> filterChangelog(@RequestParam(name = "service", required = false) ServiceEnum service,
+                                           @RequestParam(name = "userId", required = false) Long userId,
                                            @RequestParam(name = "startDate", required = false)
                                            @DateTimeFormat(pattern = "yyyy-MM-dd") Calendar startDate,
                                            @RequestParam(name = "finishDate", required = false)
@@ -42,7 +44,7 @@ public class ChangelogController {
                                            @RequestParam(name = "sortOrder", required = false) String sortOrder,
                                            @RequestParam(name = "offset", required = false) Integer offset,
                                            @RequestParam(name = "limit", required = false) Integer limit) {
-        return changelogService.filter(userId, startDate, finishDate, description, data,
+        return changelogService.filter(service, userId, startDate, finishDate, description, data,
                 sortProperty, sortOrder, offset, limit);
     }
 

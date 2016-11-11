@@ -32,6 +32,7 @@ import java.sql.Timestamp;
 import java.util.*;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
+import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.MAS90SYNC;
 import static com.turbointernational.metadata.util.RegExpUtils.PTRN_MANUFACTURER_NUMBER;
 import static java.lang.Boolean.TRUE;
 
@@ -513,7 +514,7 @@ public class Mas90SyncService {
                         partId = part.getId();
                         String logMsg = String.format("Inserted a new part: [%d] %s", part.getId(), part.getManufacturerPartNumber());
                         log.info(logMsg);
-                        changelogService.log(user, logMsg);
+                        changelogService.log(MAS90SYNC, user, logMsg);
                         synchronized (syncProcessStatus) {
                             syncProcessStatus.incPartsUpdateInserts();
                             registerModification(logMsg);
@@ -590,7 +591,7 @@ public class Mas90SyncService {
                 String s = String.format("Updated the part: [%d] %s ", p.getId(), p.getManufacturerPartNumber()) +
                         modified.toString();
                 log.info(s);
-                changelogService.log(user, s);
+                changelogService.log(MAS90SYNC, user, s);
                 synchronized (syncProcessStatus) {
                     registerModification(s);
                 }
@@ -674,7 +675,7 @@ public class Mas90SyncService {
                         }
                         if (modification != null) {
                             log.info(modification);
-                            changelogService.log(user, modification);
+                            changelogService.log(MAS90SYNC, user, modification);
                             synchronized (syncProcessStatus) {
                                 registerModification(modification);
                             }
@@ -713,7 +714,7 @@ public class Mas90SyncService {
                                     newBom.getId(), child.getId(), child.getManufacturerPartNumber(),
                                     newBom.getQuantity());
                             log.info(modification);
-                            changelogService.log(user, modification);
+                            changelogService.log(MAS90SYNC, user, modification);
                             synchronized (syncProcessStatus) {
                                 registerModification(modification);
                             }

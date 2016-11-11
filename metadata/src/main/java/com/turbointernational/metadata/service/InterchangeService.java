@@ -2,6 +2,7 @@ package com.turbointernational.metadata.service;
 
 import com.turbointernational.metadata.dao.InterchangeDao;
 import com.turbointernational.metadata.dao.PartDao;
+import com.turbointernational.metadata.entity.Changelog;
 import com.turbointernational.metadata.entity.part.Interchange;
 import com.turbointernational.metadata.entity.part.Part;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.*;
+
+import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.INTERCHANGE;
 
 /**
  * Created by trunikov on 2/11/16.
@@ -77,7 +80,7 @@ public class InterchangeService {
         }
         interchangeDao.flush();
         // Update the changelog
-        changelogService.log("Created interchange: ", interchange.toJson());
+        changelogService.log(INTERCHANGE, "Created interchange: ", interchange.toJson());
         bomService.rebuildBomDescendancyForParts(partIds, true);
     }
 
@@ -108,7 +111,7 @@ public class InterchangeService {
         newInterchange.getParts().add(part);
         interchangeDao.merge(newInterchange);
         // Update the changelog
-        changelogService.log("Deleted " + partId + " from interchange " + newInterchange.getId());
+        changelogService.log(INTERCHANGE, "Deleted " + partId + " from interchange " + newInterchange.getId());
         bomService.rebuildBomDescendancyForPart(partId, true);
         bomService.rebuildBomDescendancyForParts(interchange.getParts().iterator(), true);
     }
@@ -126,7 +129,7 @@ public class InterchangeService {
         Part pickedPart = partDao.findOne(pickedPartId);
         normalizePartInterchange(pickedPart);
         movePartToOtherInterchangeGroup(pickedPart, part);
-        changelogService.log("Added picked part " + pickedPart.getId() + " as interchange to the part " + part.getId());
+        changelogService.log(INTERCHANGE, "Added picked part " + pickedPart.getId() + " as interchange to the part " + part.getId());
         bomService.rebuildBomDescendancyForPart(partId, true);
         bomService.rebuildBomDescendancyForPart(pickedPartId, true);
      }
@@ -144,7 +147,7 @@ public class InterchangeService {
         Part pickedPart = partDao.findOne(pickedPartId);
         normalizePartInterchange(pickedPart);
         movePartToOtherInterchangeGroup(part, pickedPart);
-        changelogService.log("Added part " + part.getId() + " as interchange to the picked part " + pickedPart.getId());
+        changelogService.log(INTERCHANGE, "Added part " + part.getId() + " as interchange to the picked part " + pickedPart.getId());
         bomService.rebuildBomDescendancyForPart(partId, true);
         bomService.rebuildBomDescendancyForPart(pickedPartId, true);
      }
@@ -162,7 +165,7 @@ public class InterchangeService {
         Part pickedPart = partDao.findOne(pickedPartId);
         normalizePartInterchange(pickedPart);
         moveInterchangeableGroupToOtherGroup(pickedPart, part);
-        changelogService.log("Added picked part " + pickedPart.getId() + " and all its interchanges to the part " + part.getId());
+        changelogService.log(INTERCHANGE, "Added picked part " + pickedPart.getId() + " and all its interchanges to the part " + part.getId());
         bomService.rebuildBomDescendancyForPart(partId, true);
         bomService.rebuildBomDescendancyForPart(pickedPartId, true);
      }

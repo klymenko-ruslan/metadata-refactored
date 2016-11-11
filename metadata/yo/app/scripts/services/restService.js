@@ -668,7 +668,7 @@ angular.module("ngMetaCrudApp")
         });
       };
 
-      this.filterChangelog = function(startDate, finishDate, userId, description, data,
+      this.filterChangelog = function(startDate, finishDate, service, userId, description, data,
         sortProperty, sortOrder, offset, limit) {
         if (startDate) {
           startDate = $filter("date")(startDate, DATE_FORMAT);
@@ -679,6 +679,7 @@ angular.module("ngMetaCrudApp")
         return Restangular.one("changelog/list").get({
           "startDate": startDate,
           "finishDate": finishDate,
+          "service": service,
           "userId": userId,
           "description": description,
           "data": data,

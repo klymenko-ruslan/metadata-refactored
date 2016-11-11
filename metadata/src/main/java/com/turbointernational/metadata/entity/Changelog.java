@@ -7,21 +7,38 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
+import static javax.persistence.EnumType.STRING;
+import static javax.persistence.GenerationType.AUTO;
+import static javax.persistence.TemporalType.TIMESTAMP;
+
 /**
  * @author jrodriguez
+ *
+ * alter table changelog add column service enum('BOM', 'INTERCHANGE', 'MAS90SYNC', 'SALESNOTES', 'APPLICATIONS');
+ * create index ix_chlog_srv on changelog(service);
  */
 @Entity
 @Table(name = "changelog")
 public class Changelog implements Serializable {
 
-    //<editor-fold defaultstate="collapsed" desc="properties">
+    public enum ServiceEnum {
+        BOM, INTERCHANGE, MAS90SYNC, SALESNOTES, APPLICATIONS, KIT, PART, TURBOMODEL, TURBOTYPE
+    }
+
+    //<editor-fold defaultstate="collapsed" desc="Properties">
+
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = AUTO)
     @Column(name = "id")
     @JsonView(View.Summary.class)
     private Long id;
 
-    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "service")
+    @Enumerated(STRING)
+    @JsonView(View.Summary.class)
+    private ServiceEnum service;
+
+    @Temporal(TIMESTAMP)
     @Column(name = "change_date", nullable = false)
     @JsonView(View.Summary.class)
     private Date changeDate;
@@ -40,6 +57,10 @@ public class Changelog implements Serializable {
     @JsonView(View.Summary.class)
     private String data;
 
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="Getters/Setters">
+
     public Long getId() {
         return this.id;
     }
@@ -47,7 +68,14 @@ public class Changelog implements Serializable {
     public void setId(Long id) {
         this.id = id;
     }
-    //</editor-fold>
+
+    public ServiceEnum getService() {
+        return service;
+    }
+
+    public void setService(ServiceEnum service) {
+        this.service = service;
+    }
 
     /**
      * @return the changeDate
@@ -104,4 +132,7 @@ public class Changelog implements Serializable {
     public void setData(String data) {
         this.data = data;
     }
+
+    //</editor-fold>
+
 }

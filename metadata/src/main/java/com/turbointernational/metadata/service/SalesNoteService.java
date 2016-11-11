@@ -20,6 +20,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 
+import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.SALESNOTES;
+
 /**
  * Created by dmytro.trunykov@zorallabs.com on 2/28/16.
  */
@@ -68,7 +70,7 @@ public class SalesNoteService {
         // Create the primary part association
         SalesNotePart snp = new SalesNotePart(salesNote, part, false, user);
         partDao.getEntityManager().persist(snp);
-        changelogService.log("Added related part to sales note " + salesNoteId, partId);
+        changelogService.log(SALESNOTES, "Added related part to sales note " + salesNoteId, partId);
     }
 
     @Transactional
@@ -86,7 +88,7 @@ public class SalesNoteService {
         salesNote.getParts().add(new SalesNotePart(salesNote, primaryPart, true, user));
         // Save
         salesNotes.save(salesNote);
-        changelogService.log("Created sales note " + salesNote.getId());
+        changelogService.log(SALESNOTES, "Created sales note " + salesNote.getId());
         // Initialize a few properties before sending the response
         primaryPart.getManufacturer().getName();
         primaryPart.getPartType().getName();
@@ -105,7 +107,7 @@ public class SalesNoteService {
         salesNote.setComment(comment);
         // Save
         salesNotes.save(salesNote);
-        changelogService.log("Changed sales note comment from " + salesNote.getComment(), noteId);
+        changelogService.log(SALESNOTES, "Changed sales note comment from " + salesNote.getComment(), noteId);
     }
 
     @Transactional
@@ -135,7 +137,7 @@ public class SalesNoteService {
         // Save
         salesNotes.save(salesNote);
         */
-        changelogService.log("Deleted related part from sales note " + salesNoteId, partId);
+        changelogService.log(SALESNOTES, "Deleted related part from sales note " + salesNoteId, partId);
     }
 
     public static class AttachmentDto {
@@ -192,7 +194,7 @@ public class SalesNoteService {
         // Save
         salesNote.getAttachments().add(attachment);
         salesNotes.save(salesNote);
-        changelogService.log("Added attachment to sales note " + salesNoteId, attachment);
+        changelogService.log(SALESNOTES, "Added attachment to sales note " + salesNoteId, attachment);
         return salesNote;
     }
 
@@ -209,7 +211,7 @@ public class SalesNoteService {
         salesNote.getAttachments().remove(salesNoteAttachment);
         // Save
         salesNotes.save(salesNote);
-        changelogService.log("Deleted attachment from sales note " + salesNoteId, salesNoteAttachment);
+        changelogService.log(SALESNOTES, "Deleted attachment from sales note " + salesNoteId, salesNoteAttachment);
     }
 
     @Transactional
@@ -279,7 +281,7 @@ public class SalesNoteService {
         // @see SalesNotePart#updateSearchIndex().
         salesNote.getParts().forEach(snp -> snp.setUpdateDate(now));
         salesNotes.save(salesNote);
-        changelogService.log("Sales note " + salesNote.getId()
+        changelogService.log(SALESNOTES, "Sales note " + salesNote.getId()
                 + " state changed from " + currentState
                 + " to " + salesNote.getState(), null);
     }
