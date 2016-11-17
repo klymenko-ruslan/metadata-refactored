@@ -691,7 +691,7 @@ public class Mas90SyncService {
                     Mas90Bom mb = addIter.next();
                     if (!idxBoms.containsKey(mb.childManufacturerCode)) {
                         if (!PTRN_MANUFACTURER_NUMBER.matcher(mb.childManufacturerCode).matches()) {
-                            log.debug("Skip this part to add as child BOM because of unsuitable " +
+                            log.info("Skip this part to add as child BOM because of unsuitable " +
                                             "manufacturer number: {}",
                                     mb.childManufacturerCode);
                             continue;
