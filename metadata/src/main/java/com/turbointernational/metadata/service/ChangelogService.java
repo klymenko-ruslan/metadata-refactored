@@ -1,5 +1,7 @@
 package com.turbointernational.metadata.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.turbointernational.metadata.entity.Changelog;
 import com.turbointernational.metadata.dao.ChangelogDao;
 import com.turbointernational.metadata.entity.Changelog.ServiceEnum;
@@ -23,6 +25,9 @@ public class ChangelogService {
     @Autowired
     private ChangelogDao changelogDao;
 
+    @Autowired
+    private ObjectMapper json;
+
     public Changelog log(ServiceEnum service, String description) {
         User user = User.getCurrentUser();
         return log(service, user, description, "");
@@ -38,7 +43,19 @@ public class ChangelogService {
     }
 
     public Changelog log(ServiceEnum service, User user, String description, Serializable data) {
-        return changelogDao.log(service, user, description, data);
+        String dataNormalized;
+        if (data == null) {
+            dataNormalized = null;
+        } else if (data instanceof String) {
+            dataNormalized = (String) data;
+        } else {
+            try {
+                dataNormalized = json.writeValueAsString(data);
+            } catch (JsonProcessingException e) {
+                dataNormalized = "Could not serialize data: " + e.getMessage();
+            }
+        }
+        return changelogDao.log(service, user, description, dataNormalized);
     }
 
     public Page<Changelog> filter(ServiceEnum service, Long userId, Calendar startDate, Calendar finishDate,

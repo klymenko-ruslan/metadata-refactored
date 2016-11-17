@@ -9,6 +9,7 @@ import com.turbointernational.metadata.entity.BOMItem;
 import com.turbointernational.metadata.entity.Changelog;
 import com.turbointernational.metadata.entity.User;
 import com.turbointernational.metadata.entity.part.Part;
+import com.turbointernational.metadata.util.FormatUtils;
 import com.turbointernational.metadata.util.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +37,7 @@ import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.BOM;
 import static com.turbointernational.metadata.entity.PartType.PTID_TURBO;
 import static com.turbointernational.metadata.service.BOMService.AddToParentBOMsRequest.ResolutionEnum.REPLACE;
 import static com.turbointernational.metadata.service.BOMService.IndexingStatus.*;
+import static com.turbointernational.metadata.util.FormatUtils.formatBOMItem;
 import static java.util.Collections.binarySearch;
 import static org.springframework.transaction.TransactionDefinition.PROPAGATION_REQUIRES_NEW;
 import static org.springframework.transaction.annotation.Propagation.REQUIRES_NEW;
@@ -736,7 +738,7 @@ public class BOMService {
         parent.getBom().add(item);
         bomItemDao.persist(item);
         // Update the changelog
-        changelogService.log(BOM, "Added bom item.", item.toJson());
+        changelogService.log(BOM, "Added bom item: " + formatBOMItem(item), item.toJson());
         if (rebuildBom) {
             rebuildBomDescendancyForPart(parentPartId, true); // TODO: is clean=true required?
         }
@@ -787,7 +789,7 @@ public class BOMService {
                         Long childPartTypeId = bomItem.getChild().getPartType().getId();
                         if (childPartTypeId == primaryPartTypeId) {
                             String strJsonBom = bomItem.toJson();
-                            changelogService.log(BOM, "Deleted BOM item.", strJsonBom);
+                            changelogService.log(BOM, "Deleted BOM item: " + formatBOMItem(bomItem), strJsonBom);
                             iterBoms.remove();
                             bomItemDao.remove(bomItem);
                         }
@@ -819,7 +821,7 @@ public class BOMService {
         // Get the item
         BOMItem item = bomItemDao.findOne(id);
         // Update the changelog
-        changelogService.log(BOM, "Changed BOM item quantity to " + quantity, item.toJson());
+        changelogService.log(BOM, "Changed BOM " + formatBOMItem(item) + " quantity to " + quantity, item.toJson());
         // Update
         item.setQuantity(quantity);
         bomItemDao.merge(item);
@@ -832,7 +834,7 @@ public class BOMService {
         Part parent = item.getParent();
         // Update the changelog
         String strJsonBom = item.toJson();
-        changelogService.log(BOM, "Deleted BOM item.", strJsonBom);
+        changelogService.log(BOM, "Deleted BOM item: " + formatBOMItem(item), strJsonBom);
         // Remove the BOM Item from the parent
         parent.getBom().remove(item);
         partDao.merge(parent);

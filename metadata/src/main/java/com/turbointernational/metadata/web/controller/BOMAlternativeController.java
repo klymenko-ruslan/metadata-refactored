@@ -7,6 +7,7 @@ import com.turbointernational.metadata.entity.BOMItem;
 import com.turbointernational.metadata.entity.Changelog;
 import com.turbointernational.metadata.entity.part.*;
 import com.turbointernational.metadata.service.ChangelogService;
+import com.turbointernational.metadata.util.FormatUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.BOM;
+import static com.turbointernational.metadata.util.FormatUtils.formatBOMAlternative;
 
 @RequestMapping("/metadata/bom/{bomId}/alt")
 @Controller
@@ -77,7 +79,7 @@ public class BOMAlternativeController {
         bomAltDao.persist(bomAlt);
         
         // Update the changelog
-        changelogService.log(BOM, "Added bom alternative.", bomAlt.toJson());
+        changelogService.log(BOM, "Added bom alternative " + formatBOMAlternative(bomAlt) + ".", bomAlt);
     }
     
     @Transactional
@@ -93,7 +95,7 @@ public class BOMAlternativeController {
         BOMAlternative alt = bomAltDao.findOne(altId);
         
         // Update the changelog
-        changelogService.log(BOM, "Deleted BOM alternative.", alt.toJson());
+        changelogService.log(BOM, "Deleted BOM alternative " + formatBOMAlternative(alt) + ".", alt);
         
         // Remove the alternate item
         item.getAlternatives().remove(alt);

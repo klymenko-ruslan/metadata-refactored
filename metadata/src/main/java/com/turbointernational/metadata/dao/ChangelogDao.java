@@ -1,22 +1,17 @@
 package com.turbointernational.metadata.dao;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.turbointernational.metadata.entity.Changelog;
 import com.turbointernational.metadata.entity.Changelog.ServiceEnum;
 import com.turbointernational.metadata.entity.User;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import com.turbointernational.metadata.web.dto.Page;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -24,27 +19,19 @@ import javax.persistence.criteria.*;
  */
 @Repository
 public class ChangelogDao extends AbstractDao<Changelog> {
-    
-    @Autowired
-    private ObjectMapper json;
-    
+
     public ChangelogDao() {
         super(Changelog.class);
     }
 
     @Transactional
-    public Changelog log(ServiceEnum service, User user, String description, Serializable data) {
-        String dataJson;
-        try {
-            dataJson = json.writeValueAsString(data);
-        } catch (JsonProcessingException e) {
-            dataJson = "Could not serialize data: " + e.getMessage();
-        }
+    public Changelog log(ServiceEnum service, User user, String description, String data) {
+
         Changelog changelog = new Changelog();
         changelog.setService(service);
         changelog.setDescription(description);
         changelog.setChangeDate(new Date());
-        changelog.setData(dataJson);
+        changelog.setData(data);
         changelog.setUser(user);
 
         persist(changelog);

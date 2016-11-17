@@ -14,7 +14,7 @@ import static javax.persistence.TemporalType.TIMESTAMP;
 /**
  * @author jrodriguez
  *
- * alter table changelog add column service enum('BOM', 'INTERCHANGE', 'MAS90SYNC', 'SALESNOTES', 'APPLICATIONS');
+ * alter table changelog add column service enum('BOM', 'INTERCHANGE', 'MAS90SYNC', 'SALESNOTES', 'APPLICATIONS', 'KIT', 'PART', 'TURBOMODEL', 'TURBOTYPE');
  * create index ix_chlog_srv on changelog(service);
  */
 @Entity

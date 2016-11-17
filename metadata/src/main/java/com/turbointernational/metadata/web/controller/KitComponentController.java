@@ -9,7 +9,6 @@ import com.turbointernational.metadata.util.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.KIT;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 @RequestMapping("/metadata/kit/{kitId}/component")
 @Controller
@@ -35,9 +36,9 @@ public class KitComponentController {
     KitComponentDao kitComponentDao;
     
     @Transactional
-    @RequestMapping(method = RequestMethod.POST,
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(method = POST,
+            consumes = APPLICATION_JSON_VALUE,
+            produces = APPLICATION_JSON_VALUE)
     @Secured("ROLE_ALTER_PART")
     @ResponseBody
     @JsonView(View.Detail.class)
@@ -45,14 +46,14 @@ public class KitComponentController {
         kitComponentDao.persist(component);
 
         // Update the changelog
-        changelogService.log(KIT, "Added kit common component to kit" + component.getKit().getId(), component.getPart().getId());
+        changelogService.log(KIT, "Created kit common component [" + component.getKit().getId() + "].", component);
         
         return component;
     }
     
     @Transactional
-    @RequestMapping(method = RequestMethod.GET,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(method = GET,
+            produces = APPLICATION_JSON_VALUE)
     @Secured("ROLE_ALTER_PART")
     @ResponseBody
     @JsonView(View.Detail.class)
@@ -61,10 +62,10 @@ public class KitComponentController {
     }
     
     @Transactional
-    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/{id}", method = PUT)
     @ResponseBody
     @Secured("ROLE_ALTER_PART")
-    public void update(@PathVariable("id") Long id, @RequestParam(required=true) Boolean exclude) throws Exception {
+    public void update(@PathVariable("id") Long id, @RequestParam Boolean exclude) throws Exception {
         
         // Get the item
         KitComponent component = kitComponentDao.findOne(id);
@@ -78,7 +79,7 @@ public class KitComponentController {
     }
     
     @Transactional
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{id}", method = DELETE)
     @ResponseBody
     @Secured("ROLE_ALTER_PART")
     public void delete(@PathVariable("id") Long id) throws Exception {
@@ -92,7 +93,7 @@ public class KitComponentController {
         kitComponentDao.remove(component);
         
         // Update the changelog
-        changelogService.log(KIT, "Deleted kit common component mapping.", component.toJson());
+        changelogService.log(KIT, "Deleted kit component [" + id + "].", component);
     }
     
     

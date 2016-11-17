@@ -47,6 +47,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
 import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.PART;
 import static com.turbointernational.metadata.service.ImageService.PART_CRIT_DIM_LEGEND_HEIGHT;
 import static com.turbointernational.metadata.service.ImageService.PART_CRIT_DIM_LEGEND_WIDTH;
+import static com.turbointernational.metadata.util.FormatUtils.formatPart;
 import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 import static javax.servlet.http.HttpServletResponse.SC_FORBIDDEN;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -280,7 +281,7 @@ public class PartController {
             partDao.persist(origin);
             // Update the changelog.
             String json = jsonSerializer.serialize(origin);
-            changelogService.log(PART, "Created part", json);
+            changelogService.log(PART, "Created part " + formatPart(origin) + ".", json);
             results.add(new PartCreateResponse.Row(origin.getId(), mpn, true, null));
             added.add(mpn);
         }
@@ -312,10 +313,14 @@ public class PartController {
             response.sendError(SC_FORBIDDEN, "You have no permission to modify a manufacturer.");
             return null;
         }
-        String originalPartJson = originPart.toJson(criticalDimensionService.getCriticalDimensionForPartType(part.getPartType().getId()));
+        String originalPartJson = originPart.toJson(criticalDimensionService.getCriticalDimensionForPartType(
+                part.getPartType().getId()));
         Part retVal = partDao.merge(part);
         // Update the changelog
-        changelogService.log(PART, "Updated part", "{original: " + originalPartJson + ",updated: " + part.toJson(criticalDimensionService.getCriticalDimensionForPartType(part.getPartType().getId())) + "}");
+        changelogService.log(PART, "Updated part " + formatPart(part) + ".", "{original: " +
+                originalPartJson + ",updated: " +
+                part.toJson(criticalDimensionService.getCriticalDimensionForPartType(part.getPartType().getId())) +
+                "}");
         return retVal;
     }
 
@@ -327,7 +332,8 @@ public class PartController {
         Part part = partDao.findOne(id);
         partDao.merge(part);
         // Update the changelog
-        changelogService.log(PART, "Deleted part", part.toJson(criticalDimensionService.getCriticalDimensionForPartType(part.getPartType().getId())));
+        changelogService.log(PART, "Deleted part " + formatPart(part) + ".",
+                part.toJson(criticalDimensionService.getCriticalDimensionForPartType(part.getPartType().getId())));
         // Delete the part
         db.update("INSERT INTO `deleted_parts` (id) VALUES(?)", part.getId());
         partDao.remove(part);
