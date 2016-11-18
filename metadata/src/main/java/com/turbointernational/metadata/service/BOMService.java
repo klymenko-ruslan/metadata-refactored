@@ -832,15 +832,13 @@ public class BOMService {
         // Get the object
         BOMItem item = bomItemDao.findOne(id);
         Part parent = item.getParent();
+        Long parentPartId = parent.getId();
         // Update the changelog
-        String strJsonBom = item.toJson();
-        changelogService.log(BOM, "Deleted BOM item: " + formatBOMItem(item), strJsonBom);
-        // Remove the BOM Item from the parent
-        parent.getBom().remove(item);
-        partDao.merge(parent);
-        // Delete it
-        bomItemDao.remove(item);
-        rebuildBomDescendancyForPart(parent.getId(), true);
+        changelogService.log(BOM, "Deleted BOM item: " + formatBOMItem(item));
+        // Delete it.
+        jdbcTemplate.update("delete from bom where id=?", id);
+        bomItemDao.flush();
+        rebuildBomDescendancyForPart(parentPartId, true);
     }
 
     /**
