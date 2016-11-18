@@ -22,9 +22,6 @@ package com.turbointernational.metadata.service;
  */
 public interface Mas90Database {
 
-    String MANUFACTURER_NUMBER_STR_REGEX_0 = "[0-9]-[a-z|A-Z]-[0-6][0-9][0-9][0-9]";
-    String MANUFACTURER_NUMBER_STR_REGEX_1 = "[0-9][0-9]-[a-z|A-Z]-[0-6][0-9][0-9][0-9]";
-
     // @formatter:off
     String BOMS_QUERY =
             "select bd.componentitemcode, bd.quantityperbill " +

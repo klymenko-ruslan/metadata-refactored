@@ -3,6 +3,8 @@ package com.turbointernational.metadata.service;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
+import static com.turbointernational.metadata.util.RegExpUtils.*;
+
 /**
  * Implementation of the interface {@link Mas90Database} with the HSQL database as backend.
  * This implementation is used in integration tests only.
@@ -21,7 +23,9 @@ public class Mas90DatabaseHsqldb implements Mas90Database {
                 "   on im.productline = t2.productLineCode " +
                 "where " +
                 "   im.itemcode like '" + MANUFACTURER_NUMBER_STR_REGEX_0 + "' or " +
-                "   im.itemcode like '" + MANUFACTURER_NUMBER_STR_REGEX_1 + "'";
+                "   im.itemcode like '" + MANUFACTURER_NUMBER_STR_REGEX_1 + "' or " +
+                "   im.itemcode like '" + MANUFACTURER_NUMBER_STR_REGEX_2 + "' or " +
+                "   im.itemcode like '" + MANUFACTURER_NUMBER_STR_REGEX_3 + "'";
         // @formatter:on
     }
 
@@ -32,7 +36,9 @@ public class Mas90DatabaseHsqldb implements Mas90Database {
                "   on im.productline = t2.productLineCode " +
                "where " +
                "   regexp_matches(itemcode, '" + MANUFACTURER_NUMBER_STR_REGEX_0 + "') or " +
-               "   regexp_matches(itemcode, '" + MANUFACTURER_NUMBER_STR_REGEX_1 + "')";
+               "   regexp_matches(itemcode, '" + MANUFACTURER_NUMBER_STR_REGEX_1 + "') or " +
+               "   regexp_matches(itemcode, '" + MANUFACTURER_NUMBER_STR_REGEX_2 + "') or " +
+               "   regexp_matches(itemcode, '" + MANUFACTURER_NUMBER_STR_REGEX_3 + "')";
     }
 
     @Override
