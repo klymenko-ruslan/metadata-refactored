@@ -15,7 +15,11 @@ angular.module("ngMetaCrudApp")
           return refreshPromise;
         } else {
 
-          refreshPromise = Restangular.one("status/all").get();
+          var url = METADATA_BASE + "status/all";
+
+          refreshPromise = $http.get(url, {
+            ignoreLoadingBar: true
+          });
 
           refreshPromise.then(function(status) {
             RestService.status = status;
@@ -25,6 +29,19 @@ angular.module("ngMetaCrudApp")
           refreshPromise.finally(function() {
             refreshPromise = null;
           });
+
+/*
+          refreshPromise = Restangular.one("status/all").get({"ignoreLoadingBar": true});
+
+          refreshPromise.then(function(status) {
+            RestService.status = status;
+            return status;
+          });
+
+          refreshPromise.finally(function() {
+            refreshPromise = null;
+          });
+*/
 
           return refreshPromise;
         }
