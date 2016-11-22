@@ -6,10 +6,8 @@ import com.turbointernational.metadata.dao.BOMItemDao;
 import com.turbointernational.metadata.dao.PartDao;
 import com.turbointernational.metadata.dao.TurboCarModelEngineYearDao;
 import com.turbointernational.metadata.entity.BOMItem;
-import com.turbointernational.metadata.entity.Changelog;
 import com.turbointernational.metadata.entity.User;
 import com.turbointernational.metadata.entity.part.Part;
-import com.turbointernational.metadata.util.FormatUtils;
 import com.turbointernational.metadata.util.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,11 +71,6 @@ public class BOMService {
 
     @Autowired
     private SearchService searchService;
-
-    /**
-     * Contains the date when we started the BOM rebuild, or null if not currently rebuilding.
-     */
-    public static volatile Date bomRebuildStart = null;
 
     @Autowired
     private TurboCarModelEngineYearDao tcmeyDao;
@@ -167,6 +160,10 @@ public class BOMService {
             this.finishedOn = null;
             this.userId = null;
             this.userName = null;
+        }
+
+        public boolean isRebuilding() {
+            return phase == PHASE_ESTIMATION || phase == PHASE_INDEXING;
         }
 
         public int getPhase() {
@@ -410,6 +407,9 @@ public class BOMService {
     public IndexingStatus startRebuild(User user, List<Long> turboIds, boolean indexBoms) throws Exception {
         IndexingStatus retVal;
         long now = System.currentTimeMillis();
+        if (getRebuildStatus().isRebuilding()) {
+            throw new AssertionError("BOM rebuild is already in progress.");
+        }
         synchronized (indexingStatus) {
             int phase = indexingStatus.getPhase();
             if (phase == PHASE_ESTIMATION || phase == PHASE_INDEXING) {
@@ -428,14 +428,14 @@ public class BOMService {
         return retVal;
     }
 
-    public IndexingStatus getRebuildStatus() throws Exception {
+    public IndexingStatus getRebuildStatus() {
         synchronized (indexingStatus) {
-            return (IndexingStatus) indexingStatus.clone();
+            try {
+                return (IndexingStatus) indexingStatus.clone();
+            } catch(CloneNotSupportedException e) {
+                throw new AssertionError("Internal error. This exception should not be thrown.", e);
+            }
         }
-    }
-
-    public static final Date getBomRebuildStart() {
-        return bomRebuildStart;
     }
 
     public static class AddToParentBOMsRequest {
@@ -659,7 +659,6 @@ public class BOMService {
     public void rebuildBomDescendancy(IndexingStatusCallback callback, List<Long> turboIds, boolean indexBoms) {
         log.info("Rebuilding BOM descendancy started.");
         try {
-            bomRebuildStart = new Date();
             long t0 = System.currentTimeMillis();
             em.createNativeQuery("CALL RebuildBomDescendancy()").executeUpdate();
             em.clear();
@@ -692,19 +691,30 @@ public class BOMService {
         } catch(Throwable th) {
             log.error("Unexpected exception thrown during BOM rebuild.", th);
         } finally {
-            bomRebuildStart = null;
             log.info("Rebuilding BOM descendancy finished.");
         }
     }
 
     @Transactional(propagation = REQUIRES_NEW)
     public void rebuildBomDescendancyForPart(Long partId, boolean clean) {
-        Query call = em.createNativeQuery("CALL RebuildBomDescendancyForPart(:partId, :clean)");
-        call.setParameter("partId", partId);
-        call.setParameter("clean", clean ? 1 : 0);
-        call.executeUpdate();
-        em.clear();
-        searchService.indexPart(partId);
+        if (getRebuildStatus().isRebuilding()) {
+            throw new AssertionError("BOM rebuild is already in progress.");
+        }
+        try {
+            synchronized (indexingStatus) {
+                indexingStatus.setPhase(PHASE_INDEXING);
+            }
+            Query call = em.createNativeQuery("CALL RebuildBomDescendancyForPart(:partId, :clean)");
+            call.setParameter("partId", partId);
+            call.setParameter("clean", clean ? 1 : 0);
+            call.executeUpdate();
+            em.clear();
+            searchService.indexPart(partId);
+        } finally {
+            synchronized (indexingStatus) {
+                indexingStatus.setPhase(PHASE_FINISHED);
+            }
+        }
     }
 
     @Transactional(propagation = REQUIRES_NEW)

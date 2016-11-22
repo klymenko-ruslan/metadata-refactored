@@ -388,7 +388,7 @@ angular.module("ngMetaCrudApp", ["ngRoute", "ngTable", "ui.bootstrap",
       controller: "BomRebuildCtrl as ctrl",
       resolve: {
         status: ["restService", function(restService) {
-          return restService.getIndexingStatus();
+          return restService.getBomRebuildingStatus();
         }]
       }
     });

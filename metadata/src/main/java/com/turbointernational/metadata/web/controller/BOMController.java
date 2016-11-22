@@ -72,9 +72,7 @@ public class BOMController {
     @Secured("ROLE_ADMIN")
     public BOMService.IndexingStatus startRebuild(Authentication authentication,
                                                   @RequestBody Map<String, Boolean> options) throws Exception {
-        if (BOMService.getBomRebuildStart() != null) {
-            throw new AssertionError("BOM rebuild is already in progress.");
-        }
+
         User user = (User) authentication.getPrincipal();
         boolean indexBoms = options.getOrDefault("indexBoms", false);
         BOMService.IndexingStatus status = bomService.startRebuild(user, null, indexBoms);

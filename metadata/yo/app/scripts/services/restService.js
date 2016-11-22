@@ -17,31 +17,18 @@ angular.module("ngMetaCrudApp")
 
           var url = METADATA_BASE + "status/all";
 
+          // We use $http service instead of Restangular because
+          // we should hide indication on UI of this call by 'angular-loading-bar' service.
+          // That service relies on $http only and know nothing about Restangular.
+
           refreshPromise = $http.get(url, {
             ignoreLoadingBar: true
-          });
-
-          refreshPromise.then(function(status) {
-            RestService.status = status;
+          }).then(function(status) {
+            RestService.status = status.data;
             return status;
-          });
-
-          refreshPromise.finally(function() {
+          }).finally(function() {
             refreshPromise = null;
           });
-
-/*
-          refreshPromise = Restangular.one("status/all").get({"ignoreLoadingBar": true});
-
-          refreshPromise.then(function(status) {
-            RestService.status = status;
-            return status;
-          });
-
-          refreshPromise.finally(function() {
-            refreshPromise = null;
-          });
-*/
 
           return refreshPromise;
         }

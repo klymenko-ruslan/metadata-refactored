@@ -3,7 +3,7 @@
 angular.module('ngMetaCrudApp')
     .directive('bomStatus', function(restService) {
       return {
-        restrict: 'EA',
+        restrict: "EA",
         transclude: true,
         template: '<div class="alert alert-warning"> \
                      <i class="fa fa-cog fa-spin"></i> \
@@ -13,7 +13,7 @@ angular.module('ngMetaCrudApp')
         link: function postLink(scope, element, attrs) {
 
           // Hidden by default
-          angular.element(element).addClass('hidden');
+          angular.element(element).addClass("hidden");
 
           restService.refreshStatus().finally(function() {
             scope.$watch(
@@ -22,9 +22,9 @@ angular.module('ngMetaCrudApp')
                 },
                 function(status) {
                   if (angular.isObject(status) && status.bomRebuilding === true) {
-                    angular.element(element).removeClass('hidden');
+                    angular.element(element).removeClass("hidden");
                   } else {
-                    angular.element(element).addClass('hidden');
+                    angular.element(element).addClass("hidden");
                   }
                 }, true);
           });
