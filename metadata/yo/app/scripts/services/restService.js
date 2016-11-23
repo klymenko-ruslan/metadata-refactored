@@ -73,11 +73,11 @@ angular.module("ngMetaCrudApp")
           return;
         }
         $log.log(title, response);
-        dialogs.error(title, 'Server said: <pre>' + angular.toJson(response.data, 2) + '</pre>');
+        dialogs.error(title, "Server said: <pre>" + angular.toJson(response.data, 2) + "</pre>");
       };
 
       this.getCurrentUser = function() {
-        return Restangular.one('security/user/me').get();
+        return Restangular.one("security/user/me").get();
       };
 
       this.findActiveUsers = function() {
@@ -89,11 +89,11 @@ angular.module("ngMetaCrudApp")
       };
 
       this.findPart = function(id, params) {
-        return Restangular.one('part', id).get(params);
+        return Restangular.one("part", id).get(params);
       };
 
       this.findPartByNumber = function(manufacturerId, pn) {
-        return Restangular.one('part/numbers').get({
+        return Restangular.one("part/numbers").get({
           "mid": manufacturerId,
           "pn": pn
         });
@@ -250,6 +250,11 @@ angular.module("ngMetaCrudApp")
         return Restangular.one("part", part.id).customPUT(part);
       };
 
+      this.addTurboTypeToPart = function(partId, turboTypeId) {
+        Restangular.setParentless(false);
+        return Restangular.one("part", partId).one("turboType", turboTypeId).post();
+      };
+
       this.deletePart = function(part) {
         return Restangular.remove(part);
       };
@@ -379,16 +384,16 @@ angular.module("ngMetaCrudApp")
             id: manufacturerId
           }
         };
-        return Restangular.all('other/turboType').post(turboType);
+        return Restangular.all("other/turboType").post(turboType);
       };
 
       this.renameTurboType = function(turboType) {
-        return Restangular.all('other/turboType').customPUT(turboType);
+        return Restangular.all("other/turboType").customPUT(turboType);
       };
 
       this.deleteTurboType = function(ttId) {
         Restangular.setParentless(false);
-        return Restangular.one('other/turboType', ttId).remove();
+        return Restangular.one("other/turboType", ttId).remove();
       };
 
       this.removeTurboType = function(partId, turboTypeId) {
@@ -403,16 +408,16 @@ angular.module("ngMetaCrudApp")
             id: ttId
           }
         };
-        return Restangular.all('other/turboModel').post(turboModel);
+        return Restangular.all("other/turboModel").post(turboModel);
       };
 
       this.renameTurboModel = function(turboModel) {
-        return Restangular.all('other/turboModel').customPUT(turboModel);
+        return Restangular.all("other/turboModel").customPUT(turboModel);
       };
 
       this.deleteTurboModel = function(tmId) {
         Restangular.setParentless(false);
-        return Restangular.one('other/turboModel', tmId).remove();
+        return Restangular.one("other/turboModel", tmId).remove();
       };
 
       this.findInterchange = function(id) {
@@ -485,7 +490,7 @@ angular.module("ngMetaCrudApp")
       };
 
       this.findCarmodel = function(id) {
-        return Restangular.one('application/carmodel', id).get();
+        return Restangular.one("application/carmodel", id).get();
       };
 
       this.createCarmodel = function(carmodel) {
