@@ -70,35 +70,53 @@
   <div role="tabpanel" class="tab-pane fade tab-part-detail" id="details">
     <div class="row">
       <div class="col-xs-6">
-        <dl class="dl-horizontal">
-          <dt>Name</dt>
-          <dd>{{part.name}}</dd>
-          <dt>Manufacturer</dt>
-          <dd>{{part.manufacturer.name}}</dd>
-          <dt>Manufacturer P/N</dt>
-          <dd>{{part.manufacturerPartNumber}}</dd>
-          <dt>State</dt>
-          <dd>
-            <span data-ng-show="part.inactive === false" class="bg-primary part-state">Active</span>
-            <span data-ng-show="part.inactive === true" class="bg-warning text-muted part-state">Inactive</span>
-          </dd>
-          <dt>Description</dt>
-          <dd>{{part.description}}</dd>
-        </dl>
-        <dl class="dl-horizontal" data-ng-if="part.partType.id === 1">
-          <!-- Turbo -->
-          <dt>Coolant</dt>
-          <dd>{{part.coolType.name}}</dd>
-          <dt>Turbo Model</dt>
-          <dd>{{part.turboModel.name}}</dd>
-          <dt>Turbo Type</dt>
-          <dd>{{part.turboModel.turboType.name}}</dd>
-        </dl>
-        <dl class="dl-horizontal" data-ng-if="part.partType.id === 3">
-          <!-- Kit -->
-          <dt>Kit Type</dt>
-          <dd>{{part.kitType.name}}</dd>
-        </dl>
+        <div data-ng-show="formMode == 'view'">
+          <dl class="dl-horizontal">
+            <dt>Name</dt>
+            <dd>{{part.name}}</dd>
+            <dt>Manufacturer</dt>
+            <dd>{{part.manufacturer.name}}</dd>
+            <dt>Manufacturer P/N</dt>
+            <dd>{{part.manufacturerPartNumber}}</dd>
+            <dt>State</dt>
+            <dd>
+              <span data-ng-show="part.inactive === false" class="bg-primary part-state">Active</span>
+              <span data-ng-show="part.inactive === true" class="bg-warning text-muted part-state">Inactive</span>
+            </dd>
+            <dt>Description</dt>
+            <dd>{{part.description}}</dd>
+          </dl>
+          <dl class="dl-horizontal" data-ng-if="part.partType.id === 1">
+            <!-- Turbo -->
+            <dt>Coolant</dt>
+            <dd>{{part.coolType.name}}</dd>
+            <dt>Turbo Model</dt>
+            <dd>{{part.turboModel.name}}</dd>
+            <dt>Turbo Type</dt>
+            <dd>{{part.turboModel.turboType.name}}</dd>
+          </dl>
+          <dl class="dl-horizontal" data-ng-if="part.partType.id === 3">
+            <!-- Kit -->
+            <dt>Kit Type</dt>
+            <dd>{{part.kitType.name}}</dd>
+          </dl>
+        </div>
+        <form name="partForm" data-ng-show="formMode == 'edit'">
+          <p>FORM</p>
+          <button class="btn btn-success btn-xs" type="button" data-ng-click="onEditSave()" data-ng-disabled="partForm.$pristine || partForm.$invalid || partForm.$pending">
+            <i class="fa fa-save"></i>
+            Save
+          </button>
+          <button class="btn btn-warning btn-xs" type="button" data-ng-click="onEditCancel()">
+            Cancel
+          </button>
+        </form>
+        <div style="padding-left:160px;">
+          <button class="btn btn-primary btn-xs" authorize="ROLE_ALTER_PART" data-ng-click="onEditStart()" data-ng-show="formMode == 'view'">
+            <i class="fa fa-cog"></i>
+            Edit
+          </button>
+        </div>
       </div>
       <div class="col-xs-6">
         <div>

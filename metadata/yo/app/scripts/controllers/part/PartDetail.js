@@ -4,6 +4,7 @@ angular.module('ngMetaCrudApp')
     .controller('PartDetailCtrl', function ($scope, $log, $q, $location, $routeParams, Kits, ngTableParams, restService, Restangular, dialogs, gToast, part, criticalDimensions) {
         $scope.partId = part.id;
         $scope.part = part;
+        $scope.formMode = "view";
         $scope.criticalDimensions = criticalDimensions;
         // Make sure we're using the correct part type
         $scope.partType = part.partType.name;
@@ -19,6 +20,18 @@ angular.module('ngMetaCrudApp')
           );
         }
 
+        $scope.onEditStart = function() {
+          $scope.formMode = "edit";
+        };
+
+        $scope.onEditCancel = function() {
+          // TODO
+          $scope.onEditCancel();
+        };
+
+        $scope.onEditCancel = function() {
+          $scope.formMode = "view";
+        };
 
         $scope.removeComponent = function(componentToRemove) {
 
