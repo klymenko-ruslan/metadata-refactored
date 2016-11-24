@@ -158,6 +158,9 @@ angular.module("ngMetaCrudApp", ["ngRoute", "ngTable", "ui.bootstrap",
         }],
         criticalDimensions: ["$route", "restService", function($route, restService) {
           return restService.findCriticalDimensionsForThePart($route.current.pathParams.id);
+        }],
+        manufacturers: ["restService", function(restService) {
+          return restService.listManufacturers();
         }]
       }
     });
