@@ -5,21 +5,21 @@
       "store": "yes"
     },
     "name": {
-      "type": "multi_field",
+      "type": "keyword",
       "fields": {
         "full": {
-          "type": "string",
+          "type": "keyword",
           "tokenizer": "lowercase",
           "analyzer": "keyword",
           "store": "yes"
         },
         "short": {
-          "type": "string",
+          "type": "keyword",
           "analyzer": "normalized_short",
           "store": "yes"
         },
         "lower_case_sort": {
-          "type": "string",
+          "type": "keyword",
           "analyzer": "case_insensitive_sort",
           "store": "yes"
         }

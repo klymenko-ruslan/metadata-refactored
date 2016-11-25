@@ -34,7 +34,7 @@ public class IndexBuilder {
         partDef = partDef.substring(0, n) + "," + critDimsDef + partDef.substring(n);
         indexRequestBuilder.addMapping("part", partDef);
         String settingsDefinition = resourceService.loadFromMeta("elasticsearch/settings.json");
-        Map<String, String> settings = (new JsonSettingsLoader()).load(settingsDefinition);
+        Map<String, String> settings = (new JsonSettingsLoader(true)).load(settingsDefinition);
         indexRequestBuilder.setSettings(settings);
     }
 

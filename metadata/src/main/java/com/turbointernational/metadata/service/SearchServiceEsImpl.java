@@ -35,6 +35,7 @@ import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.sort.SortBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
+import org.elasticsearch.transport.client.PreBuiltTransportClient;
 import org.hibernate.ScrollableResults;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -173,8 +174,8 @@ public class SearchServiceEsImpl implements SearchService {
         // Establish connection to ElasticSearch cluster.
         InetAddress inetAddrElasticSearchHost = InetAddress.getByName(elasticSearchHost);
         TransportAddress taddr = new InetSocketTransportAddress(inetAddrElasticSearchHost, elasticSearchPort);
-        Settings settings = Settings.settingsBuilder().put("cluster.name", clusterName).build();
-        this.elasticSearch = TransportClient.builder().settings(settings).build().addTransportAddress(taddr);
+        Settings settings = Settings.builder().put("cluster.name", clusterName).build();
+        this.elasticSearch = new PreBuiltTransportClient(settings).addTransportAddress(taddr);
     }
 
     /**
