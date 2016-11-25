@@ -120,6 +120,7 @@
               Edit
             </button>
           </div>
+
         </div>
 
         <form name="partForm" novalidate data-ng-switch-when="edit">
@@ -150,29 +151,14 @@
           </div>
 
           <div class="form-group">
-            <label>Manufacturer P/N</label>
-            <ul class="list-unstyled">
-              <li data-ng-repeat="mpn in mpns">
-                <div class="input-group" style="margin-bottom:4px;">
-                  <input id="{{mpn.id}}" name="{{mpn.id}}" class="form-control" type="text" data-ng-model="mpn.val" data-ng-model-options="{ debounce: 500 }" required maxlength="255" data-ng-disabled="::!isPnEnabled()" unique-part-number />
-                  <span class="input-group-btn">
-                    <button type="button" class="btn btn-danger" data-ng-disabled="$first" data-ng-click="delPn($index)" title="Delete row">
-                      <i class="fa fa-minus" aria-hidden="true"></i>
-                    </button>
-                  </span>
-                </div>
-                <div data-ng-show="partForm[mpn.id].$dirty && partForm[mpn.id].$invalid" class="alert alert-danger" role="alert">
-                  <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                  <span data-ng-show="partForm[mpn.id].$error.required">Required!</span>
-                  <span data-ng-show="partForm[mpn.id].$error.maxlenth">Too long manufacturer part number (max 255 chars)!</span>
-                  <span data-ng-show="partForm[mpn.id].$error.nonUniquePartNumber">Pair (Manufacturer, P/N) is not unique!</span>
-                </div>
-              </li>
-            </ul>
-            <button type="button" class="btn btn-primary btn-xs pull-right" data-ng-click="addPn()" data-ng-disabled="partForm.manufacturer.$invalid || !isPnEnabled()" data-ng-hide="part.id">
-              <i class="fa fa-plus" aria-hidden="true"></i>
-              Add P/N
-            </button>
+            <label for="manufacturerPartNumber">Manufacturer P/N</label>
+            <input id="manufacturerPartNumber" name="manufacturerPartNumber" class="form-control" type="text" data-ng-model="part.manufacturerPartNumber" data-ng-model-options="{ debounce: 500 }" required maxlength="255" data-ng-disabled="::!isPnEnabled()" unique-part-number />
+            <div data-ng-show="part.manufacturerPartNumber.$dirty && part.manufacturerPartNumber.$invalid" class="alert alert-danger" role="alert">
+              <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+              <span data-ng-show="part.manufacturerPartNumber.$error.required">Required!</span>
+              <span data-ng-show="part.manufacturerPartNumber.$error.maxlenth">Too long manufacturer part number (max 255 chars)!</span>
+              <span data-ng-show="part.manufacturerPartNumber.$error.nonUniquePartNumber">Pair (Manufacturer, P/N) is not unique!</span>
+            </div>
           </div>
 
           <!-- Type-specific fields -->

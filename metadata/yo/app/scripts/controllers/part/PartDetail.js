@@ -2,9 +2,9 @@
 
 angular.module("ngMetaCrudApp")
 .controller("PartDetailCtrl", ["$scope", "$log", "$q", "$location", "$routeParams", "Kits", "ngTableParams",
-    "restService", "Restangular", "User", "dialogs", "gToast", "part", "criticalDimensions", "manufacturers",
+    "restService", "Restangular", "User", "$uibModal", "dialogs", "gToast", "part", "criticalDimensions", "manufacturers",
     function ($scope, $log, $q, $location, $routeParams, Kits, ngTableParams,
-    restService, Restangular, User, dialogs, gToast, part, criticalDimensions, manufacturers) {
+    restService, Restangular, User, $uibModal, dialogs, gToast, part, criticalDimensions, manufacturers) {
   $scope.partId = part.id;
   $scope.part = part;
   $scope.formMode = "view";
@@ -39,18 +39,11 @@ angular.module("ngMetaCrudApp")
     turboModel: ""
   };
 
-  function newPn(idx, val) {
-    return {
-      id: "pn" + idx,
-      val: val
-    };
-  };
-
   if ($scope.part.partType.magentoAttributeSet === "Turbo") {
     $scope.turbo.tm = part.turboModel;
     $scope.turbo.tt = part.turboModel.turboType;
   }
-  // part.manufacturerPartNumber = null;
+
   $scope.oldPart = Restangular.copy(part);
 
   $scope.onViewPart = function() {
@@ -105,18 +98,6 @@ angular.module("ngMetaCrudApp")
     $scope.$broadcast("revert");
   };
 
-/*
-  $scope.$watch("part.manufacturer", function(newVal, oldVal) {
-    // Fire validation in 'Manufacturer P/N' fields.
-    _.each($scope.mpns, function(o) {
-      var element = $scope.partForm[o.id];
-      if (angular.isObject(element)) {
-        element.$validate();
-      }
-    });
-  });
-*/
-
   $scope.isManufacturerEnabled = function() {
     return User.hasRole("ROLE_ALTER_PART_MANUFACTURER");
   };
@@ -128,17 +109,16 @@ angular.module("ngMetaCrudApp")
   $scope.onEditSave = function() {
 
     var url = "part";
-//    var partNumbers = _.map($scope.mpns, function(o) { return o.val; });
 
     if ($scope.part.partType.magentoAttributeSet === "Turbo") {
       $scope.part.turboModel = $scope.turbo.tm;
       $scope.part.turboModel.turboType = $scope.turbo.tt;
     }
 
-//    part.manufacturerPartNumber = $scope.mpns[0].val;
     restService.updatePart($scope.part).then(
       function(part) {
-        $location.path("/part/" + $scope.part.id);
+        $scope.part = part;
+        $scope.onEditCancel(); // close form
       },
       function(response) {
         restService.error("Could not update part", response);

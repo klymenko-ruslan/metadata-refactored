@@ -14,6 +14,11 @@
 
     $ mvn install:install-file -Dfile=bits/libs/sqljdbc_4.2/enu/sqljdbc42.jar -DgroupId=com.microsoft.sqlserver -DartifactId=sqljdbc4 -Dversion=4.2 -Dpackaging=jar
 
+    To run:
+    $ mvn clean package spring-boot:run -DskipTests -Dyo.test.skip=true -DbuildNumber=dev \
+        -Dimages.originals=file:/var2/turbointernationa/metadata/product_images/originals/ \
+        -Dimages.resized=file:/var2/turbointerantional/metadata/product_images/resized/
+
     -->
 
     <modelVersion>4.0.0</modelVersion>
