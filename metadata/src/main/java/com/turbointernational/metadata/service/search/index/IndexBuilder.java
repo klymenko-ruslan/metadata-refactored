@@ -106,11 +106,12 @@ public class IndexBuilder {
         // rename in those files too.
         String idxNameLabel = idxName + "Label";
         xcb.startObject(idxNameLabel)
-                .field("type", "multi_field")
+                //.field("type", "multi_field")
+                .field("type", "text")
                 .startObject("fields")
                 .startObject("text")
                 .field("type", "string")
-                .field("tokenizer", "lowercase")
+                //.field("tokenizer", "lowercase")
                 .field("analyzer", "keyword")
                 .field("store", "yes")
                 .endObject()

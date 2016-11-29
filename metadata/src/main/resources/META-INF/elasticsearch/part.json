@@ -5,42 +5,48 @@
       "store": "yes"
     },
     "name": {
-      "type": "keyword",
+      "type": "text",
+      "fielddata": true,
       "fields": {
         "full": {
-          "type": "keyword",
-          "tokenizer": "lowercase",
+          "type": "text",
+          "fielddata": true,
           "analyzer": "keyword",
           "store": "yes"
         },
         "short": {
-          "type": "keyword",
+          "type": "text",
+          "fielddata": true,
           "analyzer": "normalized_short",
           "store": "yes"
         },
         "lower_case_sort": {
-          "type": "keyword",
+          "type": "text",
+          "fielddata": true,
           "analyzer": "case_insensitive_sort",
           "store": "yes"
         }
       }
     },
     "description": {
-      "type": "keyword",
+      "type": "text",
+      "fielddata": true,
       "fields": {
         "full": {
-          "type": "keyword",
-          "tokenizer": "lowercase",
+          "type": "text",
+          "fielddata": true,
           "analyzer": "keyword",
           "store": "yes"
         },
         "short": {
-          "type": "keyword",
+          "type": "text",
+          "fielddata": true,
           "analyzer": "normalized_short",
           "store": "yes"
         },
         "lower_case_sort": {
-          "type": "keyword",
+          "type": "text",
+          "fielddata": true,
           "analyzer": "case_insensitive_sort",
           "store": "yes"
         }
@@ -57,21 +63,24 @@
           "store": "yes"
         },
         "name": {
-          "type": "keyword",
+          "type": "text",
+          "fielddata": true,
           "fields": {
             "full": {
-              "type": "keyword",
-              "tokenizer": "lowercase",
+              "type": "text",
+              "fielddata": true,
               "analyzer": "keyword",
               "store": "yes"
             },
             "short": {
-              "type": "keyword",
+              "type": "text",
+              "fielddata": true,
               "analyzer": "normalized_short",
               "store": "yes"
             },
             "lower_case_sort": {
-              "type": "keyword",
+              "type": "text",
+              "fielddata": true,
               "analyzer": "case_insensitive_sort",
               "store": "yes"
             }
@@ -84,21 +93,24 @@
               "store": "yes"
             },
             "name": {
-              "type": "keyword",
+              "type": "text",
+              "fielddata": true,
               "fields": {
                 "full": {
-                  "type": "keyword",
-                  "tokenizer": "lowercase",
+                  "type": "text",
+                  "fielddata": true,
                   "analyzer": "keyword",
                   "store": "yes"
                 },
                 "short": {
-                  "type": "keyword",
+                  "type": "text",
+                  "fielddata": true,
                   "analyzer": "normalized_short",
                   "store": "yes"
                 },
                 "lower_case_sort": {
-                  "type": "keyword",
+                  "type": "text",
+                  "fielddata": true,
                   "analyzer": "case_insensitive_sort",
                   "store": "yes"
                 }
@@ -109,21 +121,24 @@
       }
     },
     "manufacturerPartNumber": {
-      "type": "keyword",
+      "type": "text",
+      "fielddata": true,
       "fields": {
         "full": {
-          "type": "keyword",
-          "tokenizer": "lowercase",
+          "type": "text",
+          "fielddata": true,
           "analyzer": "keyword",
           "store": "yes"
         },
         "short": {
-          "type": "keyword",
+          "type": "text",
+          "fielddata": true,
           "analyzer": "normalized_short",
           "store": "yes"
         },
         "lower_case_sort": {
-          "type": "keyword",
+          "type": "text",
+          "fielddata": true,
           "analyzer": "case_insensitive_sort",
           "store": "yes"
         }
@@ -136,21 +151,24 @@
           "store": "yes"
         },
         "name": {
-          "type": "keyword",
+          "type": "text",
+          "fielddata": true,
           "fields": {
             "full": {
-              "type": "keyword",
-              "tokenizer": "lowercase",
+              "type": "text",
+              "fielddata": true,
               "analyzer": "keyword",
               "store": "yes"
             },
             "short": {
-              "type": "keyword",
+              "type": "text",
+              "fielddata": true,
               "analyzer": "normalized_short",
               "store": "yes"
             },
             "lower_case_sort": {
-              "type": "keyword",
+              "type": "text",
+              "fielddata": true,
               "analyzer": "case_insensitive_sort",
               "store": "yes"
             }
@@ -165,21 +183,24 @@
           "store": "yes"
         },
         "name": {
-          "type": "keyword",
+          "type": "text",
+          "fielddata": true,
           "fields": {
             "full": {
-              "type": "keyword",
-              "tokenizer": "lowercase",
+              "type": "text",
+              "fielddata": true,
               "analyzer": "keyword",
               "store": "yes"
             },
             "short": {
-              "type": "keyword",
+              "type": "text",
+              "fielddata": true,
               "analyzer": "normalized_short",
               "store": "yes"
             },
             "lower_case_sort": {
-              "type": "keyword",
+              "type": "text",
+              "fielddata": true,
               "analyzer": "case_insensitive_sort",
               "store": "yes"
             }
@@ -188,105 +209,120 @@
       }
     },
     "cmeyYear": {
-      "type": "keyword",
+      "type": "text",
+      "fielddata": true,
       "fields": {
         "full": {
-          "type": "keyword",
-          "tokenizer": "lowercase",
+          "type": "text",
+          "fielddata": true,
           "analyzer": "keyword",
           "store": "yes"
         },
         "short": {
-          "type": "keyword",
+          "type": "text",
+          "fielddata": true,
           "analyzer": "normalized_short",
           "store": "yes"
         },
         "lower_case_sort": {
-          "type": "keyword",
+          "type": "text",
+          "fielddata": true,
           "analyzer": "case_insensitive_sort",
           "store": "yes"
         }
       }
     },
     "cmeyMake": {
-      "type": "keyword",
+      "type": "text",
+      "fielddata": true,
       "fields": {
         "full": {
-          "type": "keyword",
-          "tokenizer": "lowercase",
+          "type": "text",
+          "fielddata": true,
           "analyzer": "keyword",
           "store": "yes"
         },
         "short": {
-          "type": "keyword",
+          "type": "text",
+          "fielddata": true,
           "analyzer": "normalized_short",
           "store": "yes"
         },
         "lower_case_sort": {
-          "type": "keyword",
+          "type": "text",
+          "fielddata": true,
           "analyzer": "case_insensitive_sort",
           "store": "yes"
         }
       }
     },
     "cmeyModel": {
-      "type": "keyword",
+      "type": "text",
+      "fielddata": true,
       "fields": {
         "full": {
-          "type": "keyword",
-          "tokenizer": "lowercase",
+          "type": "text",
+          "fielddata": true,
           "analyzer": "keyword",
           "store": "yes"
         },
         "short": {
-          "type": "keyword",
+          "type": "text",
+          "fielddata": true,
           "analyzer": "normalized_short",
           "store": "yes"
         },
         "lower_case_sort": {
-          "type": "keyword",
+          "type": "text",
+          "fielddata": true,
           "analyzer": "case_insensitive_sort",
           "store": "yes"
         }
       }
     },
     "cmeyEngine": {
-      "type": "keyword",
+      "type": "text",
+      "fielddata": true,
       "fields": {
         "full": {
-          "type": "keyword",
-          "tokenizer": "lowercase",
+          "type": "text",
+          "fielddata": true,
           "analyzer": "keyword",
           "store": "yes"
         },
         "short": {
-          "type": "keyword",
+          "type": "text",
+          "fielddata": true,
           "analyzer": "normalized_short",
           "store": "yes"
         },
         "lower_case_sort": {
-          "type": "keyword",
+          "type": "text",
+          "fielddata": true,
           "analyzer": "case_insensitive_sort",
           "store": "yes"
         }
       }
     },
     "cmeyFuelType": {
-      "type": "keyword",
+      "type": "text",
+      "fielddata": true,
       "fields": {
         "full": {
-          "type": "keyword",
-          "tokenizer": "lowercase",
+          "type": "text",
+          "fielddata": true,
           "analyzer": "keyword",
           "store": "yes"
         },
         "short": {
-          "type": "keyword",
+          "type": "text",
+          "fielddata": true,
           "analyzer": "keyword",
           "store": "yes"
         },
         "lower_case_sort": {
-          "type": "keyword",
+          "type": "text",
+          "fielddata": true,
           "analyzer": "case_insensitive_sort",
           "store": "yes"
         }
