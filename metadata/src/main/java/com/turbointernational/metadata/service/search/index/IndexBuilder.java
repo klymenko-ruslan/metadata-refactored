@@ -34,7 +34,7 @@ public class IndexBuilder {
         partDef = partDef.substring(0, n) + "," + critDimsDef + partDef.substring(n);
         indexRequestBuilder.addMapping("part", partDef);
         String settingsDefinition = resourceService.loadFromMeta("elasticsearch/settings.json");
-        Map<String, String> settings = (new JsonSettingsLoader()).load(settingsDefinition);
+        Map<String, String> settings = (new JsonSettingsLoader(true)).load(settingsDefinition);
         indexRequestBuilder.setSettings(settings);
     }
 
@@ -106,11 +106,12 @@ public class IndexBuilder {
         // rename in those files too.
         String idxNameLabel = idxName + "Label";
         xcb.startObject(idxNameLabel)
-                .field("type", "multi_field")
+                //.field("type", "multi_field")
+                .field("type", "text")
                 .startObject("fields")
                 .startObject("text")
                 .field("type", "string")
-                .field("tokenizer", "lowercase")
+                //.field("tokenizer", "lowercase")
                 .field("analyzer", "keyword")
                 .field("store", "yes")
                 .endObject()

@@ -69,36 +69,195 @@
 <div class="tab-content">
   <div role="tabpanel" class="tab-pane fade tab-part-detail" id="details">
     <div class="row">
-      <div class="col-xs-6">
-        <dl class="dl-horizontal">
-          <dt>Name</dt>
-          <dd>{{part.name}}</dd>
-          <dt>Manufacturer</dt>
-          <dd>{{part.manufacturer.name}}</dd>
-          <dt>Manufacturer P/N</dt>
-          <dd>{{part.manufacturerPartNumber}}</dd>
-          <dt>State</dt>
-          <dd>
-            <span data-ng-show="part.inactive === false" class="bg-primary part-state">Active</span>
-            <span data-ng-show="part.inactive === true" class="bg-warning text-muted part-state">Inactive</span>
-          </dd>
-          <dt>Description</dt>
-          <dd>{{part.description}}</dd>
-        </dl>
-        <dl class="dl-horizontal" data-ng-if="part.partType.id === 1">
-          <!-- Turbo -->
-          <dt>Coolant</dt>
-          <dd>{{part.coolType.name}}</dd>
-          <dt>Turbo Model</dt>
-          <dd>{{part.turboModel.name}}</dd>
-          <dt>Turbo Type</dt>
-          <dd>{{part.turboModel.turboType.name}}</dd>
-        </dl>
-        <dl class="dl-horizontal" data-ng-if="part.partType.id === 3">
-          <!-- Kit -->
-          <dt>Kit Type</dt>
-          <dd>{{part.kitType.name}}</dd>
-        </dl>
+      <div class="col-xs-6" data-ng-switch="formMode">
+
+        <div data-ng-switch-when="view">
+          <table class="info-form">
+            <tr class="odd">
+              <td class="label">Name</td>
+              <td class="val">{{part.name}}</td>
+            </tr>
+            <tr class="even">
+              <td class="label">Manufacturer</td>
+              <td class="val">{{part.manufacturer.name}}</td>
+            </tr>
+            <tr class="odd">
+              <td class="label">Manufacturer P/N</td>
+              <td class="val">{{part.manufacturerPartNumber}}</td>
+            </tr>
+            <tr class="even">
+              <td class="label">State</td>
+              <td class="val">
+                <span data-ng-show="part.inactive === false" class="bg-primary part-state">Active</span>
+                <span data-ng-show="part.inactive === true" class="bg-warning text-muted part-state">Inactive</span>
+              </td>
+            </tr>
+            <tr class="odd">
+              <td class="label">Description</td>
+              <td class="val">{{part.description}}</td>
+            </tr>
+            <tr class="even" data-ng-if="part.partType.id === 1">
+              <td class="label">Coolant</td>
+              <td class="val">{{part.coolType.name}}</td>
+            </tr>
+            <tr class="odd" data-ng-if="part.partType.id === 1">
+              <td class="label">Turbo Model</td>
+              <td class="val">{{part.turboModel.name}}</td>
+            </tr>
+            <tr class="even" data-ng-if="part.partType.id === 1">
+              <td class="label">Turbo Type</td>
+              <td class="val">{{part.turboModel.turboType.name}}</td>
+            </tr>
+            <tr class="even" data-ng-if="part.partType.id === 3">
+              <td class="label">Kit Type</td>
+              <td class="val">{{part.kitType.name}}</td>
+            </tr>
+          </table>
+
+          <div>
+            <button class="btn btn-primary btn-sm center-block" authorize="ROLE_ALTER_PART" data-ng-click="onEditStart()">
+              <i class="fa fa-cog"></i>
+              Edit
+            </button>
+          </div>
+
+        </div>
+
+        <form name="partForm" novalidate data-ng-switch-when="edit">
+
+          <div class="form-group">
+            <label for="name">Name</label>
+            <input id="name" class="form-control" type="text" data-ng-model="part.name"/>
+          </div>
+
+          <div class="form-group">
+            <label for="description">Description</label>
+            <textarea id="description" class="form-control" rows="4" data-ng-model="part.description"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="manufacturer">Manufacturer</label>
+            <select id="manufacturer" name="manufacturer" class="form-control"
+                    data-ng-model="part.manufacturer"
+                    data-ng-options="mn as mn.name for mn in manufacturers track by mn.id"
+                    data-ng-change="onChangeManufacturer()"
+                    data-ng-disabled="::!isManufacturerEnabled()"
+                    required>
+            </select>
+            <div data-ng-show="partForm.manufacturer.$dirty && partForm.manufacturer.$invalid" class="alert alert-danger" role="alert">
+              <span data-ng-show="partForm.manufacturer.$error.required">Required!</span>
+              <span data-ng-show="partForm.manufacturer.$error.nonUniquePartNumber">Pair (Manufacturer, P/N) is not unique!</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="manufacturerPartNumber">Manufacturer P/N</label>
+            <input id="manufacturerPartNumber" name="manufacturerPartNumber" class="form-control" type="text" data-ng-model="part.manufacturerPartNumber" data-ng-model-options="{ debounce: 500 }" required maxlength="255" data-ng-disabled="::!isPnEnabled()" unique-part-number />
+            <div data-ng-show="part.manufacturerPartNumber.$dirty && part.manufacturerPartNumber.$invalid" class="alert alert-danger" role="alert">
+              <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+              <span data-ng-show="part.manufacturerPartNumber.$error.required">Required!</span>
+              <span data-ng-show="part.manufacturerPartNumber.$error.maxlenth">Too long manufacturer part number (max 255 chars)!</span>
+              <span data-ng-show="part.manufacturerPartNumber.$error.nonUniquePartNumber">Pair (Manufacturer, P/N) is not unique!</span>
+            </div>
+          </div>
+
+          <!-- Type-specific fields -->
+          <div data-ng-switch="part.partType.magentoAttributeSet">
+
+            <!-- Kit -->
+            <div data-ng-switch-when="Kit" class="form-group">
+              <label>Kit Type</label>
+              <picker id="picker_kittype" item-type="type/kittype" data-ng-model="part.kitType"></picker>
+            </div>
+
+            <!-- Turbo -->
+            <div data-ng-switch-when="Turbo" class="form-group">
+              <label>Coolant</label>
+              <picker item-type="type/cooltype" data-ng-model="part.coolType"></picker>
+            </div>
+
+            <div data-ng-switch-when="Turbo" class="row">
+
+              <div class="col-xs-6 form-group">
+                <div>
+                  <label class="control-label">Turbo Type</label>
+                  <div class="pull-right">
+                    <button type="button" data-ng-click="createTurboType()" class="btn btn-success btn-xs" data-ng-disabled="!part.manufacturer.id">
+                      <i class="fa fa-wrench"></i>
+                      Create
+                    </button>
+                    <button type="button" data-ng-click="renameTurboType()" class="btn btn-warning btn-xs" data-ng-disabled="!turbo.tt.id">
+                      <i class="fa fa-pencil"></i>
+                      Rename
+                    </button>
+                    <button type="button" data-ng-click="deleteTurboType()" class="btn btn-danger btn-xs" data-ng-disabled="(part.id && !turbo.tt.id && turbo.tt.id == oldPart.turboModel.turboType.id) || (!part.id && !turbo.tt.id)">
+                      <i class="fa fa-trash-o"></i>
+                      Delete
+                    </button>
+                  </div>
+                </div>
+                <input data-ng-model="filters.turboType" data-ng-init="turboTypeFilter = ''" class="form-control" placeholder="Turbo type filter..."/>
+                <select id="turboType" name="turboType" class="form-control"
+                        data-ng-model="turbo.tt"
+                        data-ng-options="tt as tt.name for tt in turboTypes | filter:{name:filters.turboType} track by tt.id"
+                        data-ng-change="onChangeTurboType()"
+                        size="6"
+                        required>
+                </select>
+                <div data-ng-show="partForm.turboType.$dirty && partForm.turboType.$invalid" class="alert alert-danger" role="alert">
+                  <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                  <span data-ng-show="partForm.turboType.$error.required">Required!</span>
+                </div>
+
+              </div>
+
+              <div class="col-xs-6">
+                <div>
+                  <label class="control-label">Turbo Model</label>
+                  <div class="pull-right">
+                    <button type="button" data-ng-click="createTurboModel()" class="btn btn-success btn-xs" data-ng-disabled="!turbo.tt.id">
+                      <i class="fa fa-wrench"></i>
+                      Create
+                    </button>
+                    <button type="button" data-ng-click="renameTurboModel()" class="btn btn-warning btn-xs" data-ng-disabled="!turbo.tm.id">
+                      <i class="fa fa-pencil"></i>
+                      Rename
+                    </button>
+                    <button type="button" data-ng-click="deleteTurboModel()" class="btn btn-danger btn-xs" data-ng-disabled="(part.id && !turbo.tm.id && turbo.tm.id != oldPart.turboModel.id) || (!part.id && !turbo.tm.id)">
+                      <i class="fa fa-trash-o"></i>
+                      Delete
+                    </button>
+                  </div>
+                </div>
+                <input data-ng-model="filters.turboModel" data-ng-init="turboModelFilter = ''" class="form-control" placeholder="Turbo model filter..."/>
+                <select name="turboModel"
+                        data-ng-model="turbo.tm"
+                        data-ng-options="tm as tm.name for tm in turboModels | filter:{name:filters.turboModel} track by tm.id"
+                    size="6" class="select-large form-control"
+                    required>
+                </select>
+                <div data-ng-show="partForm.turboModel.$dirty && partForm.turboModel.$invalid" class="alert alert-danger" role="alert">
+                  <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                  <span data-ng-show="partForm.turboModel.$error.required">Required!</span>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <div>
+            <button class="btn btn-success btn-sm" type="button" data-ng-click="onEditSave()" data-ng-disabled="partForm.$pristine || partForm.$invalid || partForm.$pending">
+              <i class="fa fa-save"></i>
+              Save
+            </button>
+            <button class="btn btn-warning btn-sm" type="button" data-ng-click="onEditCancel()">
+              Cancel
+            </button>
+          </div>
+        </form>
+
       </div>
       <div class="col-xs-6">
         <div>

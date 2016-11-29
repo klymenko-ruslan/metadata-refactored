@@ -71,7 +71,7 @@ angular.module("ngMetaCrudApp")
             response);
         }
       );
-    }, 5000);
+    }, 1000);
 
     $scope.$on("$destroy", function() {
       $interval.cancel($scope.refreshTask);
