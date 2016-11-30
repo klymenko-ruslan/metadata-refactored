@@ -18,7 +18,8 @@ import java.util.Map;
 public class IndexBuilder {
 
     public static void build(CriticalDimensionService criticalDimensionService, ResourceService resourceService,
-                             CreateIndexRequestBuilder indexRequestBuilder) throws IOException {
+                             CreateIndexRequestBuilder indexRequestBuilder,
+                             int numberOfShards, int numberOfReplicas, int maxResultWindow) throws IOException {
         for (String indexType : new String[]{"carengine", "carfueltype", "caryear", "carmake",
                 "carmodel", "carmodelengineyear", "salesnotepart"}) {
             String resourceName = "elasticsearch/" + indexType + ".json";
@@ -34,7 +35,11 @@ public class IndexBuilder {
         partDef = partDef.substring(0, n) + "," + critDimsDef + partDef.substring(n);
         indexRequestBuilder.addMapping("part", partDef);
         String settingsDefinition = resourceService.loadFromMeta("elasticsearch/settings.json");
+
         Map<String, String> settings = (new JsonSettingsLoader(true)).load(settingsDefinition);
+        settings.put("index.number_of_shards", Integer.toString(numberOfShards));
+        settings.put("index.number_of_replicas", Integer.toString(numberOfReplicas));
+        settings.put("index.max_result_window", Integer.toString(maxResultWindow));
         indexRequestBuilder.setSettings(settings);
     }
 
@@ -55,7 +60,7 @@ public class IndexBuilder {
                             critDimsIndexDefPlainType(xcb, idxName, "long");
                             break;
                         case TEXT:
-                            critDimsIndexDefPlainType(xcb, idxName, "string");
+                            critDimsIndexDefPlainType(xcb, idxName, "text");
                             break;
                         case ENUMERATION:
                             critDimsIndexDefEnumType(xcb, idxName);
@@ -110,13 +115,14 @@ public class IndexBuilder {
                 .field("type", "text")
                 .startObject("fields")
                 .startObject("text")
-                .field("type", "string")
-                //.field("tokenizer", "lowercase")
+                .field("type", "text")
+                .field("fielddata", true)
                 .field("analyzer", "keyword")
                 .field("store", "yes")
                 .endObject()
                 .startObject("lower_case_sort")
-                .field("type", "string")
+                .field("type", "text")
+                .field("fielddata", true)
                 .field("analyzer", "case_insensitive_sort")
                 .field("store", "yes")
                 .endObject()

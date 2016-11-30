@@ -145,6 +145,15 @@ public class SearchServiceEsImpl implements SearchService {
     @Autowired
     private ResourceService resourceService;
 
+    @Value("${elasticsearch.index.number_of_shards}")
+    private int numberOfShards = 1;
+
+    @Value("${elasticsearch.index.number_of_replicas}")
+    private int numberOfReplicas = 0;
+
+    @Value("${elasticsearch.index.max_result_window}")
+    private int maxResultWindow = 100000;
+
     private Client elasticSearch; // connection with ElasticSearch
 
     private final static Pattern REGEX_TOSHORTFIELD = Pattern.compile("\\W");
@@ -528,7 +537,9 @@ public class SearchServiceEsImpl implements SearchService {
             }
         }
         CreateIndexRequestBuilder indexRequestBuilder = indices.prepareCreate(elasticSearchIndex);
-        IndexBuilder.build(criticalDimensionService, resourceService, indexRequestBuilder);
+
+        IndexBuilder.build(criticalDimensionService, resourceService, indexRequestBuilder, numberOfShards,
+                numberOfReplicas, maxResultWindow);
         CreateIndexResponse createIndexResponse = indexRequestBuilder.get();
         if (!createIndexResponse.isAcknowledged()) {
             throw new AssertionError("Creation of the ElasticSearch index '%1$s' failed.".
