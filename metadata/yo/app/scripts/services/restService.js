@@ -568,7 +568,9 @@ angular.module("ngMetaCrudApp")
       };
 
       this.getIndexingStatus = function() {
-        return Restangular.one("search/indexing/status").get();
+        // return Restangular.one("search/indexing/status").get();
+        var url = METADATA_BASE + "search/indexing/status";
+        return $http.get(url, { ignoreLoadingBar: true });
       };
 
       this.filterParts = function(searchPartTypeId, searchManufacturerName, searchName, searchPartNumber,

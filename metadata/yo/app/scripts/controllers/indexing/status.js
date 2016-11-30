@@ -118,7 +118,7 @@ angular.module("ngMetaCrudApp")
     $scope.refreshTask = $interval(function() {
       restService.getIndexingStatus().then(
         function success(newStatus) {
-          $scope._updateStatus(newStatus);
+          $scope._updateStatus(newStatus.data);
         },
         function failure(response) {
           restService.error("Update of a status of the indexing process failed.",
