@@ -27,6 +27,8 @@ angular.module("ngMetaCrudApp")
         return;
       }
 
+      status = status.data; // $http
+
       $scope.status = status;
 
       if ($scope.status.phase != 0) {
@@ -46,7 +48,7 @@ angular.module("ngMetaCrudApp")
           $scope._updateStatus(newStatus);
         },
         function failure(response) {
-          restService.error("Starting of the BOM rebuilding process failed.",
+          restService.httpServiceError("Starting of the BOM rebuilding process failed.",
             response);
         }
       );
@@ -67,7 +69,7 @@ angular.module("ngMetaCrudApp")
           $scope._updateStatus(newStatus);
         },
         function failure(response) {
-          restService.error("Update of a status of the BOM rebuilding process failed.",
+          restService.httpServiceError("Update of a status of the BOM rebuilding process failed.",
             response);
         }
       );
