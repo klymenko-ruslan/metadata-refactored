@@ -17,8 +17,8 @@ public class SearchTermFactoryTest {
         Object[][] cases = new Object[][]{
                 //new Object[]{null, null},
 
-                new Object[]{">.003", new Limit(LT, new Double(0.3))},
-/*
+                new Object[]{">.003", new Limit(GT, new Double(0.003))},
+
                 new Object[]{"<5.1", new Limit(LT, new Double(5.1))},
                 new Object[]{" < 5.1 ", new Limit(LT, new Double(5.1))},
                 new Object[]{" < +5.1 ", new Limit(LT, new Double(5.1))},
@@ -47,7 +47,7 @@ public class SearchTermFactoryTest {
                 new Object[]{">5.1", new Limit(GT, new Double(5.1))},
                 new Object[]{" > 5.1", new Limit(GT, new Double(5.1))},
                 new Object[]{" > -5.1", new Limit(GT, new Double(-5.1))},
-                new Object[]{" > +5.1", new Limit(GT, new Double(5.1))}, */
+                new Object[]{" > +5.1", new Limit(GT, new Double(5.1))},
         };
         for (Object[] c : cases) {
             String s = (String) c[0];
@@ -74,6 +74,21 @@ public class SearchTermFactoryTest {
             Range range = SearchTermFactory.parseRange(s);
             assertEquals(expectation, range);
         }
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testParseRange_Error_0() {
+        SearchTermFactory.parseRange("1..");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testParseRange_Error_1() {
+        SearchTermFactory.parseRange("1...");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testParseRange_Error_2() {
+        SearchTermFactory.parseRange("1... .. .");
     }
 
     @Test

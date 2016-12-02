@@ -92,11 +92,11 @@ public class SearchTermFactory {
         }
         // Check presence of the low limit.
         int n = s.length();
-        if (n - 2 == p0) {
+        if (n - 3 == p0) {
             throw new IllegalArgumentException("Invalid range: " + s);
         }
         int p1 = p0 + 2;
-        while(s.charAt(p1) == '.' && p1 < n) {
+        while(p1 < n && s.charAt(p1) == '.') {
             p1++;
         }
         // Find the high limit.
