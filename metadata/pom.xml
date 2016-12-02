@@ -12,7 +12,7 @@
     It can be installed in a local Apache Maven cache by following command (it assumes that current working dir is
     the top level project's directory - TurboInternational):
 
-    $ mvn install:install-file -Dfile=bits/libs/sqljdbc_4.2/enu/sqljdbc42.jar -DgroupId=com.microsoft.sqlserver -DartifactId=sqljdbc4 -Dversion=4.2 -Dpackaging=jar
+    $ mvn install:install-file -Dfile=../bits/libs/sqljdbc_4.2/enu/sqljdbc42.jar -DgroupId=com.microsoft.sqlserver -DartifactId=sqljdbc4 -Dversion=4.2 -Dpackaging=jar
 
     To run:
     $ mvn clean package spring-boot:run -DskipTests -Dyo.test.skip=true -DbuildNumber=dev \
