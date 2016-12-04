@@ -6,6 +6,12 @@
     .npmrc: prefix=${HOME}/.npm-packages
     mkdir "${HOME}/.npm-packages"
     npm install -g grunt bower grunt-contrib-compass
+    Add to PATH: ${HOME}/.npm-packages/bin
+
+    Install compass:
+
+        # gem update <minus><minus>system
+        # gem install compass
 
     The project is depended on the MS SQL server JDBC dirver.
     The driver is not available in the public Apache Maven repositories.
