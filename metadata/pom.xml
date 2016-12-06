@@ -45,7 +45,7 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <sqlserver.version>4.2</sqlserver.version>
         <!-- es.version>2.1.1</es.version -->
-        <es.version>5.0.1</es.version>
+        <es.version>5.0.2</es.version>
     </properties>
     
     <repositories>
@@ -83,18 +83,18 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
-            <exclusions>
+            <!-- exclusions>
                 <exclusion>
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-starter-logging</artifactId>
                 </exclusion>
-            </exclusions>
+            </exclusions -->
         </dependency>
 
-        <dependency>
+        <!-- dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-log4j2</artifactId>
-        </dependency>
+            <artifactI-d>spring-boot-starter-log4j2</artifactI-d>
+        </dependency -->
 
         <dependency>
             <groupId>com.microsoft.sqlserver</groupId>
@@ -276,7 +276,6 @@
             <version>${es.version}</version>
         </dependency>
 
-        <!--
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
@@ -287,7 +286,11 @@
             <artifactId>log4j-core</artifactId>
             <version>2.7</version>
         </dependency>
-        -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <version>2.7</version>
+        </dependency>
 
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
@@ -422,6 +425,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
+                    <executable>true</executable>
                     <jvmArguments>
                         -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005
                     </jvmArguments>
