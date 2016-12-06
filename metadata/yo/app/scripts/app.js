@@ -10,7 +10,7 @@ angular.module("ngMetaCrudApp", ["ngRoute", "ngTable", "ui.bootstrap",
   .constant("DATE_FORMAT", "yyyy-MM-dd")
   .config(['cfpLoadingBarProvider', function(cfpLoadingBarProvider) {
     // cfpLoadingBarProvider.spinnerTemplate = '<div><span class="fa fa-spinner">Loading...</div>';
-    cfpLoadingBarProvider.latencyThreshold = 700;
+    cfpLoadingBarProvider.latencyThreshold = 5;
   }])
   .config(["$locationProvider", "$httpProvider", "$routeProvider", "RestangularProvider", "METADATA_BASE",
     function($locationProvider, $httpProvider, $routeProvider, RestangularProvider, METADATA_BASE) {

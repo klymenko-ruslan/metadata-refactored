@@ -45,6 +45,8 @@ angular.module("ngMetaCrudApp")
         return;
       }
 
+      status = status.data; // $http
+
       $scope.phase = status.phase;
 
       if ($scope.phase != 0) {
@@ -92,7 +94,7 @@ angular.module("ngMetaCrudApp")
           $scope._updateStatus(newStatus);
         },
         function failure(response) {
-          restService.error("Starting of the indexing process failed.",
+          restService.httpServiceError("Starting of the indexing process failed.",
             response);
         }
       );
@@ -121,7 +123,7 @@ angular.module("ngMetaCrudApp")
           $scope._updateStatus(newStatus);
         },
         function failure(response) {
-          restService.error("Update of a status of the indexing process failed.",
+          restService.httpServiceError("Update of a status of the indexing process failed.",
             response);
         }
       );

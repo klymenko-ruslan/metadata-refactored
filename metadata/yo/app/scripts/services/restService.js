@@ -35,11 +35,15 @@ angular.module("ngMetaCrudApp")
       };
 
       this.startBomRebuilding = function(options) {
-        return Restangular.one("bom/rebuild").post("start", options);
+        // return Restangular.one("bom/rebuild").post("start", options);
+        var url = METADATA_BASE + "bom/rebuild/start";
+        return $http.post(url, options);
       };
 
       this.getBomRebuildingStatus = function() {
-        return Restangular.one("bom/rebuild/status").get();
+        // return Restangular.one("bom/rebuild/status").get();
+        var url = METADATA_BASE + "bom/rebuild/status";
+        return $http.get(url, { ignoreLoadingBar: true });
       };
 
       // Wraps the BOM status logic, resolving when the BOM is not rebuilding.
@@ -67,13 +71,22 @@ angular.module("ngMetaCrudApp")
         return deferred.promise;
       };
 
+      this.httpServiceError = function(title, response) {
+        if (response.status == -1) {
+          dialogs.error(title, "Server not responding.");
+        } else if (response.status === 401 || response.status === 403) {
+          return;
+        } else {
+          dialogs.error(title, "Server said: <pre>" + angular.toJson(response, 2) + "</pre>");
+        }
+      }
+
       this.error = function(title, response) {
         // NOOP on access denied, loginRequiredInterceptor will handle the redirect
         if (response.status === 401 || response.status === 403) {
           return;
         }
-        $log.log(title, response);
-        dialogs.error(title, "Server said: <pre>" + angular.toJson(response.data, 2) + "</pre>");
+        dialogs.error(title, "Server said: <pre>" + angular.toJson(response, 2) + "</pre>");
       };
 
       this.getCurrentUser = function() {
@@ -564,11 +577,15 @@ angular.module("ngMetaCrudApp")
       };
 
       this.startIndexing = function(toIndex) {
-        return Restangular.one("search/indexing").post("start", toIndex);
+        // return Restangular.one("search/indexing").post("start", toIndex);
+        var url = METADATA_BASE + "search/indexing/start";
+        return $http.post(url, toIndex);
       };
 
       this.getIndexingStatus = function() {
-        return Restangular.one("search/indexing/status").get();
+        // return Restangular.one("search/indexing/status").get();
+        var url = METADATA_BASE + "search/indexing/status";
+        return $http.get(url, { ignoreLoadingBar: true });
       };
 
       this.filterParts = function(searchPartTypeId, searchManufacturerName, searchName, searchPartNumber,

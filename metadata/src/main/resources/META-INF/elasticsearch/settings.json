@@ -1,6 +1,5 @@
 {
   "index": {
-
     "analysis": {
       "char_filter": {
         "nonword": {
