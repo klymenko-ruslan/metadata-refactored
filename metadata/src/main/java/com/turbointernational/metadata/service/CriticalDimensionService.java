@@ -1,12 +1,12 @@
 package com.turbointernational.metadata.service;
 
-import com.turbointernational.metadata.entity.CriticalDimension;
 import com.turbointernational.metadata.dao.CriticalDimensionDao;
+import com.turbointernational.metadata.dao.PartDao;
+import com.turbointernational.metadata.entity.CriticalDimension;
 import com.turbointernational.metadata.entity.CriticalDimensionEnum;
 import com.turbointernational.metadata.entity.CriticalDimensionEnumVal;
-import com.turbointernational.metadata.entity.part.Part;
-import com.turbointernational.metadata.dao.PartDao;
 import com.turbointernational.metadata.entity.PartType;
+import com.turbointernational.metadata.entity.part.Part;
 import flexjson.JSONContext;
 import flexjson.TransformerUtil;
 import flexjson.TypeContext;
@@ -16,9 +16,9 @@ import flexjson.transformer.TypeTransformerMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.rest.core.ValidationErrors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
@@ -251,7 +251,8 @@ public class CriticalDimensionService {
 
     public Errors validateCriticalDimensions(Part part) {
         PartType partType = part.getPartType();
-        Errors errors = new ValidationErrors(partType.getName(), part, null);
+        // Errors errors = new ValidationErrors(partType.getName(), part, null);
+        Errors errors = new DirectFieldBindingResult(part, partType.getName(), false);
         Long partTypeId = partType.getId();
         List<CriticalDimension> criticalDimensions = criticalDimensionDao.findForPartType(partTypeId);
         if (criticalDimensions.isEmpty()) {
