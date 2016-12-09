@@ -285,6 +285,33 @@ angular.module("ngMetaCrudApp")
 
   // =============
 
+  $scope.onSetGasketKit = function() {
+    $location.path("/part/" + $scope.partId + "/gasketkit/search");
+  };
+
+  $scope.onClearGasketKit = function() {
+    dialogs.confirm(
+      "Unlink the Gasket Kit?",
+      "Do you want to unlink the Gasket Kit [" + $scope.part.gasketKit.id + "] - " +
+        $scope.part.gasketKit.manufacturerPartNumber + " from this part [" +  $scope.part.id + "] - " +
+        $scope.part.manufacturerPartNumber + "?"
+    ).result.then(
+      function () {
+        restService.clearGasketKitInPart($scope.partId).then(
+          function success(updatedPart) {
+            $scope.part = updatedPart;
+            gToast.open("The gasket kit unlinked.");
+          },
+          function failure(result) {
+            restService.error("Can't unlink the gasket kit.", response);
+          }
+        );
+      },
+      function () {
+        // No
+      }
+    );
+  };
 
   $scope.onEditStart = function() {
     $scope.formMode = "edit";

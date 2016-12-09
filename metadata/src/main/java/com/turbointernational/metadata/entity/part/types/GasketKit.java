@@ -1,10 +1,16 @@
 package com.turbointernational.metadata.entity.part.types;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.entity.part.Part;
+import com.turbointernational.metadata.util.View;
 
-import javax.persistence.Entity;
-import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.Table;
+import javax.persistence.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static javax.persistence.CascadeType.REFRESH;
+import static javax.persistence.FetchType.LAZY;
 
 
 /**
@@ -15,7 +21,27 @@ import javax.persistence.Table;
 @PrimaryKeyJoinColumn(name = "part_id")
 public class GasketKit extends Part {
 
+    //<editor-fold defaultstate="collapsed" desc="Properties: members">
+
+    @OneToMany(cascade = REFRESH, mappedBy = "gasketKit", fetch = LAZY)
+    @JsonView({View.Detail.class})
+    private List<Turbo> turbos = new ArrayList<>();
+
+    //</editor-fold>
+
     //<editor-fold defaultstate="collapsed" desc="Properties: critical dimensions">
+
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="Getters and setters: members">
+
+    public List<Turbo> getTurbos() {
+        return turbos;
+    }
+
+    public void setTurbos(List<Turbo> turbos) {
+        this.turbos = turbos;
+    }
 
     //</editor-fold>
 

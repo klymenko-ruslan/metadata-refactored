@@ -6,14 +6,18 @@ import com.turbointernational.metadata.dao.PartDao;
 import com.turbointernational.metadata.dao.ProductImageDao;
 import com.turbointernational.metadata.dao.TurboTypeDao;
 import com.turbointernational.metadata.entity.BOMAncestor;
+import com.turbointernational.metadata.entity.PartType;
 import com.turbointernational.metadata.entity.TurboType;
 import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.entity.part.PartRepository;
 import com.turbointernational.metadata.entity.part.ProductImage;
+import com.turbointernational.metadata.entity.part.types.GasketKit;
+import com.turbointernational.metadata.entity.part.types.Turbo;
 import com.turbointernational.metadata.service.BOMService;
 import com.turbointernational.metadata.service.ChangelogService;
 import com.turbointernational.metadata.service.CriticalDimensionService;
 import com.turbointernational.metadata.service.ImageService;
+import com.turbointernational.metadata.util.FormatUtils;
 import com.turbointernational.metadata.util.View;
 import flexjson.JSONSerializer;
 import flexjson.transformer.HibernateTransformer;
@@ -45,9 +49,13 @@ import java.util.*;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
 import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.PART;
+import static com.turbointernational.metadata.entity.PartType.PTID_GASKET_KIT;
+import static com.turbointernational.metadata.entity.PartType.PTID_TURBO;
 import static com.turbointernational.metadata.service.ImageService.PART_CRIT_DIM_LEGEND_HEIGHT;
 import static com.turbointernational.metadata.service.ImageService.PART_CRIT_DIM_LEGEND_WIDTH;
 import static com.turbointernational.metadata.util.FormatUtils.formatPart;
+import static com.turbointernational.metadata.web.controller.PartController.GasketKitResultStatus.ASSERTION_ERROR;
+import static com.turbointernational.metadata.web.controller.PartController.GasketKitResultStatus.OK;
 import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 import static javax.servlet.http.HttpServletResponse.SC_FORBIDDEN;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -399,7 +407,7 @@ public class PartController {
         part.getTurboTypes().add(turboType);
         partDao.merge(part);
     }
-    
+
     @Transactional
     @RequestMapping(value="/part/{partId}/turboType/{turboTypeId}", method= DELETE)
     @Secured("ROLE_ALTER_PART")
@@ -417,5 +425,94 @@ public class PartController {
         
         partDao.merge(part);
     }
+
+    enum GasketKitResultStatus { OK, ASSERTION_ERROR }
+
+    static class GasketKitResult {
+
+        @JsonView(View.Summary.class)
+        private final GasketKitResultStatus status;
+
+        @JsonView(View.Summary.class)
+        private final String message;
+
+        GasketKitResult() {
+            this.status = OK;
+            this.message = null;
+        }
+
+        GasketKitResult(AssertionError e) {
+            this.status = ASSERTION_ERROR;
+            this.message = e.getMessage();
+        }
+
+    }
+
+    @Transactional
+    @RequestMapping(value="/part/{partId}/gasketkit/{gasketkitId}", method = PUT,
+            consumes = APPLICATION_JSON_VALUE,
+            produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
+    @JsonView(View.Summary.class)
+    @Secured("ROLE_ALTER_PART")
+    public GasketKitResult setGasketKitForPart(
+            @PathVariable("partId") long partId,
+            @PathVariable("gasketkitId") long gasketkitId)
+    {
+        Part part = partDao.findOne(partId);
+        try {
+            Long partTypeId = part.getPartType().getId();
+            if (partTypeId.longValue() != PTID_TURBO) {
+                throw new AssertionError(String.format("Part %s has unexpected part type: %d. Expected a Turbo.",
+                        FormatUtils.formatPart(part), partTypeId));
+            }
+            // TODO: more validation
+
+            Turbo turbo = (Turbo) part;
+            GasketKit gasketKit = turbo.getGasketKit();
+            if (gasketKit != null) {
+                boolean removed = gasketKit.getTurbos().remove(turbo);
+                if (!removed) {
+                    log.warn(String.format("Turbo %s not found in turbos of the gasket kit %s.",
+                            FormatUtils.formatPart(turbo), FormatUtils.formatPart(gasketKit)));
+                }
+            }
+            Part p2 = partDao.findOne(gasketkitId);
+            partTypeId = p2.getPartType().getId();
+            if (partTypeId.longValue() != PTID_GASKET_KIT) {
+                throw new AssertionError(String.format("Part %s has unexpected part type: %d. Expected a Gasket Kit.",
+                        FormatUtils.formatPart(p2), partTypeId));
+            }
+            gasketKit = (GasketKit) p2;
+            gasketKit.getTurbos().add(turbo);
+            turbo.setGasketKit((GasketKit) p2);
+            partDao.merge(part);
+            return new GasketKitResult();
+        } catch(AssertionError e) {
+            return new GasketKitResult(e);
+        }
+    }
+
+    @Transactional
+    @RequestMapping(value="/part/{partId}/gasketkit", method = DELETE,
+            consumes = APPLICATION_JSON_VALUE,
+            produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
+    @JsonView(View.Summary.class)
+    @Secured("ROLE_ALTER_PART")
+    public Turbo clearGasketKitInPart(@PathVariable("partId") long partId) {
+        Turbo turbo = (Turbo) partDao.findOne(partId);
+        GasketKit gasketKit = turbo.getGasketKit();
+        if (gasketKit != null) {
+            boolean removed = gasketKit.getTurbos().remove(turbo);
+            if (!removed) {
+                log.warn(String.format("Turbo %s not found in turbos of the gasket kit %s.",
+                        FormatUtils.formatPart(turbo), FormatUtils.formatPart(gasketKit)));
+            }
+        }
+        turbo.setGasketKit(null);
+        return turbo;
+    }
+
 
 }

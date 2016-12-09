@@ -272,6 +272,16 @@ angular.module("ngMetaCrudApp")
         return Restangular.remove(part);
       };
 
+      this.setGasketKitForPart = function(partId, gasketkitId) {
+        Restangular.setParentless(false);
+        return Restangular.one("part", partId).one("gasketkit", gasketkitId).put();
+      };
+
+      this.clearGasketKitInPart = function(partId) {
+        Restangular.setParentless(false);
+        return Restangular.one("part", partId).one("gasketkit").remove();
+      };
+
       this._upload = function(url, bytes) {
         var fd = new FormData();
         fd.append("file", bytes);
@@ -456,7 +466,8 @@ angular.module("ngMetaCrudApp")
       this.deletePartInterchange = function(partId, interchangeId) {
         Restangular.setParentless(false);
         return Restangular.one("interchange", interchangeId).one("part", partId).remove();
-      }
+      };
+
 
       this.findCarmakeByName = function(name) {
         return Restangular.one("application/carmake").get({

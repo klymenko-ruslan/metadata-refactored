@@ -1,0 +1,54 @@
+<metanav>
+  <li>
+    <a data-ng-href="/part/{{ partId }}"
+       class="btn btn-primary">
+      <i class="fa fa-eye"></i>
+      View Part
+    </a>
+  </li>
+
+  <li>
+    <a data-ng-click="save()"
+       data-ng-disabled="pickedPart == null"
+       class="btn btn-success">
+      <i class="fa fa-save"></i>
+      Set Gasket Type
+    </a>
+  </li>
+</metanav>
+
+<h1 class="padding-top" part-name="part" part-name-suffix="Set Gasket Type"></h1>
+
+<div class="row">
+
+  <div class="col-xs-6">
+    <h3>Current Gasket Kit</h3>
+    <part-summary part="part.gasketKit" data-ng-show="part.gasketKit"></part-summary>
+  </div>
+
+  <div class="col-xs-6">
+    <h3>Picked Gasket Kit</h3>
+    <part-summary part="pickedPart" data-ng-show="pickedPart"></part-summary>
+
+    <div data-ng-hide="pickedPart" class="well well-sm">
+      Pick a Gasket Kit to link to this part.
+    </div>
+
+  </div>
+
+</div>
+
+<hr/>
+
+<part-search class="well well-lg">
+  <a authorize="ROLE_READ" data-ng-href="/part/{{$part._source.id}}" class="btn btn-primary btn-xs">
+    <i class="fa fa-eye"></i> View
+  </a>
+  <button type="button" authorize="ROLE_ALTER_PART"
+     data-ng-click="pickPart($part._source.id)"
+     data-ng-disabled="part.manufacturer.id != $part._source.manufacturer.id || part.id == $part._source.id || $part._source.id == pickedPart.id || $part._source.manufacturer.id != part.manufacturer.id"
+     class="btn btn-success btn-xs">
+    <i class="fa fa-bullseye"></i> Pick
+  </button>
+</part-search>
+

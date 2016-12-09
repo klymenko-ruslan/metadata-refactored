@@ -65,6 +65,12 @@
       Applications
     </a>
   </li>
+  <li role="presentation" data-ng-show="part.partType.value == 'gasket_kit'">
+    <a href="#turbos" aria-controls="turbos" role="tab" data-toggle="tab">
+      <i class="fa fa-book"></i>
+      Turbos
+    </a>
+  </li>
 </ul>
 <div class="tab-content">
   <div role="tabpanel" class="tab-pane fade tab-part-detail" id="details">
@@ -96,19 +102,35 @@
               <td class="label">Description</td>
               <td class="val">{{part.description}}</td>
             </tr>
-            <tr class="even" data-ng-if="part.partType.id === 1">
+            <tr class="even" data-ng-if="part.partType.value == 'turbo'">
               <td class="label">Coolant</td>
               <td class="val">{{part.coolType.name}}</td>
             </tr>
-            <tr class="odd" data-ng-if="part.partType.id === 1">
+            <tr class="odd" data-ng-if="part.partType.value == 'turbo'">
               <td class="label">Turbo Model</td>
               <td class="val">{{part.turboModel.name}}</td>
             </tr>
-            <tr class="even" data-ng-if="part.partType.id === 1">
+            <tr class="even" data-ng-if="part.partType.value == 'turbo'">
               <td class="label">Turbo Type</td>
               <td class="val">{{part.turboModel.turboType.name}}</td>
             </tr>
-            <tr class="even" data-ng-if="part.partType.id === 3">
+            <tr class="odd" data-ng-if="part.partType.value == 'turbo'">
+              <td class="label">Gasket Kit</td>
+              <td class="val">
+                <a data-ng-href="/part/{{ partId }}">{{part.gasketKit.manufacturerPartNumber}}</a>
+                <div style="display:inline-block;margin-left:10px;">
+                  <button authorize="ROLE_ALTER_PART" data-ng-click="onSetGasketKit()" class="btn btn-xs btn-primary">
+                    <i class="fa fa-link" aria-hidden="true"></i>
+                    Set
+                  </button>
+                  <button authorize="ROLE_ALTER_PART" data-ng-show="part.gasketKet != null" data-ng-click="onClearGasketKit()" class="btn btn-xs btn-danger">
+                    <i class="fa fa-chain-broken" aria-hidden="true"></i>
+                    Clear
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <tr class="even" data-ng-if="part.partType.value == 'kit'">
               <td class="label">Kit Type</td>
               <td class="val">{{part.kitType.name}}</td>
             </tr>
@@ -162,21 +184,21 @@
           </div>
 
           <!-- Type-specific fields -->
-          <div data-ng-switch="part.partType.magentoAttributeSet">
+          <div data-ng-switch="part.partType.value">
 
             <!-- Kit -->
-            <div data-ng-switch-when="Kit" class="form-group">
+            <div data-ng-switch-when="kit" class="form-group">
               <label>Kit Type</label>
               <picker id="picker_kittype" item-type="type/kittype" data-ng-model="part.kitType"></picker>
             </div>
 
             <!-- Turbo -->
-            <div data-ng-switch-when="Turbo" class="form-group">
+            <div data-ng-switch-when="turbo" class="form-group">
               <label>Coolant</label>
               <picker item-type="type/cooltype" data-ng-model="part.coolType"></picker>
             </div>
 
-            <div data-ng-switch-when="Turbo" class="row">
+            <div data-ng-switch-when="turbo" class="row">
 
               <div class="col-xs-6 form-group">
                 <div>
@@ -298,6 +320,13 @@
       Add Application
     </a>
     <part-application-table />
+  </div>
+  <div role="tabpanel" class="tab-pane fade tab-part-detail" id="turbos">
+    <a class="btn btn-primary pull-right" style="margin-bottom:10px;" data-ng-href="/part/{{partId}}/application/search">
+      <i class="fa fa-plus"></i>
+      Add Turbo
+    </a>
+    <p>TODO: turbos</p>
   </div>
 </div>
 <script>

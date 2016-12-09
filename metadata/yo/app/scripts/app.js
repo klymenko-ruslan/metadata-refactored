@@ -145,6 +145,18 @@ angular.module("ngMetaCrudApp", ["ngRoute", "ngTable", "ui.bootstrap",
         }]
       }
     });
+    $routeProvider.when("/part/:id/gasketkit/search", {
+      templateUrl: "views/part/gasketkit/PartGasketKitSearch.html",
+      controller: "PartGasketKitSearchCtrl",
+      resolve: {
+        part: ["$route", "restService", function($route, restService) {
+          return restService.findPart($route.current.pathParams.id);
+        }],
+        partTypes: ["restService", function(restService) {
+          return restService.listPartTypes();
+        }]
+      }
+    });
     $routeProvider.when("/part/:id/ancestors", {
       templateUrl: "views/part/PartAncestors.html",
       controller: "PartAncestorsCtrl"

@@ -1,5 +1,6 @@
 package com.turbointernational.metadata.entity.part.types;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.Application;
 import com.turbointernational.metadata.dao.TurboCarModelEngineYearDao;
@@ -30,6 +31,8 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 @PrimaryKeyJoinColumn(name = "part_id")
 public class Turbo extends Part {
 
+    // TODO: alter table turbo add column gasket_kit_id bigint(20) references gasket_kit(part_id);
+
     private final static Logger log = LoggerFactory.getLogger(Turbo.class);
 
     //<editor-fold defaultstate="collapsed" desc="Properties: members">
@@ -43,6 +46,12 @@ public class Turbo extends Part {
     @OneToOne(fetch = LAZY)
     @JoinColumn(name="cool_type_id")
     private CoolType coolType;
+
+    @JsonView(View.Detail.class)
+    @OneToOne(fetch = LAZY)
+    @JsonBackReference
+    @JoinColumn(name="gasket_kit_id")
+    private GasketKit gasketKit;
 
     @Transient
     @JsonView(View.Summary.class)
@@ -123,6 +132,14 @@ public class Turbo extends Part {
 
     public void setCmeyFuelType(Set<String> cmeyFuelType) {
         this.cmeyFuelType = cmeyFuelType;
+    }
+
+    public GasketKit getGasketKit() {
+        return gasketKit;
+    }
+
+    public void setGasketKit(GasketKit gasketKit) {
+        this.gasketKit = gasketKit;
     }
 
     //</editor-fold>
