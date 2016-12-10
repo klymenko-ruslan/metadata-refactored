@@ -1,5 +1,7 @@
 package com.turbointernational.metadata.entity.part.types;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.util.View;
@@ -25,6 +27,7 @@ public class GasketKit extends Part {
 
     @OneToMany(cascade = REFRESH, mappedBy = "gasketKit", fetch = LAZY)
     @JsonView({View.Detail.class})
+    @JsonBackReference
     private List<Turbo> turbos = new ArrayList<>();
 
     //</editor-fold>

@@ -1,6 +1,7 @@
 package com.turbointernational.metadata.entity.part.types;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.Application;
 import com.turbointernational.metadata.dao.TurboCarModelEngineYearDao;
@@ -48,8 +49,8 @@ public class Turbo extends Part {
     private CoolType coolType;
 
     @JsonView(View.Detail.class)
+    @JsonManagedReference
     @OneToOne(fetch = LAZY)
-    @JsonBackReference
     @JoinColumn(name="gasket_kit_id")
     private GasketKit gasketKit;
 
