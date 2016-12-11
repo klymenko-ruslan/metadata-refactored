@@ -494,9 +494,7 @@ public class PartController {
     }
 
     @Transactional
-    @RequestMapping(value="/part/{partId}/gasketkit", method = DELETE,
-            consumes = APPLICATION_JSON_VALUE,
-            produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value="/part/{partId}/gasketkit", method = DELETE, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     @JsonView(View.Detail.class)
     @Secured("ROLE_ALTER_PART")
@@ -524,6 +522,20 @@ public class PartController {
         if (retVal == null) {
             retVal = new ArrayList<>();
         }
+        return retVal;
+    }
+
+    @Transactional
+    @RequestMapping(value="/part/{partId}/gasketkit2", method = DELETE, produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
+    @JsonView(View.Detail.class)
+    @Secured("ROLE_ALTER_PART")
+    public List<Turbo> unlinkTurboInGasketKit(@PathVariable("partId") long partId) {
+        Turbo turbo = (Turbo) partDao.findOne(partId);
+        GasketKit gasketKit = turbo.getGasketKit();
+        gasketKit.getTurbos().remove(turbo);
+        turbo.setGasketKit(null);
+        List<Turbo> retVal = partDao.listTurbosLinkedToGasketKit(gasketKit.getId());
         return retVal;
     }
 

@@ -13,15 +13,23 @@ angular.module("ngMetaCrudApp")
   $scope.criticalDimensions = criticalDimensions;
   // Make sure we're using the correct part type
   $scope.partType = part.partType.name;
-  $scope.turbosTableParams = new ngTableParams({
-    "page": 1,
-    "count": 10,
-    "sorting": {
-      "id": "asc"
-    }
-  }, {
-    "getData": utils.localPagination(turbos, "id")
-  });
+
+  $scope.turbosTableParams = null;
+
+  function _initTurbosTableParams(turbos) {
+    $scope.turbosTableParams = new ngTableParams({
+      "page": 1,
+      "count": 10,
+      "sorting": {
+        "id": "asc"
+      }
+      }, {
+        "getData": utils.localPagination(turbos, "id")
+      });
+  };
+
+  _initTurbosTableParams(turbos);
+
   // TODO: Find a better way. Directive?
   if (part.partType.magentoAttributeSet == "Kit") {
     $scope.kitComponents = Kits.listComponents($scope.partId).then(
@@ -33,8 +41,6 @@ angular.module("ngMetaCrudApp")
       }
     );
   }
-
-  // =============
 
   $scope.manufacturers = manufacturers;
   $scope.turboTypes = [];
@@ -294,8 +300,6 @@ angular.module("ngMetaCrudApp")
     );
   };
 
-  // =============
-
   $scope.onSetGasketKit = function() {
     $location.path("/part/" + $scope.partId + "/gasketkit/search");
   };
@@ -331,13 +335,13 @@ angular.module("ngMetaCrudApp")
         $scope.part.manufacturerPartNumber + " from the turbo [" +  turboId + "] - " + partNumber + "?"
     ).result.then(
       function () {
-        restService.clearGasketKitInPart($scope.partId).then(
-          function success(updatedPart) {
-            $scope.part = updatedPart;
-            gToast.open("The gasket kit unlinked.");
+        restService.unlinkTurboInGasketKit(turboId).then(
+          function success(turbos) {
+            gToast.open("The Gasket Kit and Turbo unlinked.");
+            _initTurbosTableParams(turbos);
           },
           function failure(result) {
-            restService.error("Can't unlink the gasket kit.", response);
+            restService.error("Can't unlink the Gasket Kit and Turbo.", response);
           }
         );
       },

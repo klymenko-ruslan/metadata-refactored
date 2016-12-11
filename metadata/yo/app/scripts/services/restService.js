@@ -282,6 +282,11 @@ angular.module("ngMetaCrudApp")
         return Restangular.one("part", partId).one("gasketkit").remove();
       };
 
+      this.unlinkTurboInGasketKit = function(turboId) {
+        Restangular.setParentless(false);
+        return Restangular.one("part", turboId).one("gasketkit2").remove();
+      };
+
       this._upload = function(url, bytes) {
         var fd = new FormData();
         fd.append("file", bytes);
