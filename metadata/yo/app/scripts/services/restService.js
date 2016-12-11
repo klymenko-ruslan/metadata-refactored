@@ -361,6 +361,10 @@ angular.module("ngMetaCrudApp")
         return Restangular.all("other/manufacturer/list").getList();
       };
 
+      this.listTurbosLinkedToGasketKit = function(gasketkit_id) {
+        return Restangular.one("part/" + gasketkit_id + "/gasketkit").getList("turbos");
+      };
+
       this.findManufacturer = function(id) {
         return Restangular.one("manufacturer", id).get();
       };

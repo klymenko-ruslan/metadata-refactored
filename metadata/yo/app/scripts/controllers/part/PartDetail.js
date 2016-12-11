@@ -1,16 +1,27 @@
 "use strict";
 
 angular.module("ngMetaCrudApp")
-.controller("PartDetailCtrl", ["$scope", "$log", "$q", "$location", "$routeParams", "Kits", "ngTableParams",
-    "restService", "Restangular", "User", "$uibModal", "dialogs", "gToast", "part", "criticalDimensions", "manufacturers",
-    function ($scope, $log, $q, $location, $routeParams, Kits, ngTableParams,
-    restService, Restangular, User, $uibModal, dialogs, gToast, part, criticalDimensions, manufacturers) {
+.controller("PartDetailCtrl", ["$scope", "$log", "$q", "$location", "$routeParams", "Kits", "ngTableParams", "utils",
+    "restService", "Restangular", "User", "$uibModal", "dialogs", "gToast", "part", "criticalDimensions",
+    "manufacturers", "turbos",
+    function ($scope, $log, $q, $location, $routeParams, Kits, ngTableParams, utils,
+    restService, Restangular, User, $uibModal, dialogs, gToast, part, criticalDimensions, manufacturers,
+    turbos) {
   $scope.partId = part.id;
   $scope.part = part;
   $scope.formMode = "view";
   $scope.criticalDimensions = criticalDimensions;
   // Make sure we're using the correct part type
   $scope.partType = part.partType.name;
+  $scope.turbosTableParams = new ngTableParams({
+    "page": 1,
+    "count": 10,
+    "sorting": {
+      "id": "asc"
+    }
+  }, {
+    "getData": utils.localPagination(turbos, "id")
+  });
   // TODO: Find a better way. Directive?
   if (part.partType.magentoAttributeSet == "Kit") {
     $scope.kitComponents = Kits.listComponents($scope.partId).then(
@@ -295,6 +306,29 @@ angular.module("ngMetaCrudApp")
       "Do you want to unlink the Gasket Kit [" + $scope.part.gasketKit.id + "] - " +
         $scope.part.gasketKit.manufacturerPartNumber + " from this part [" +  $scope.part.id + "] - " +
         $scope.part.manufacturerPartNumber + "?"
+    ).result.then(
+      function () {
+        restService.clearGasketKitInPart($scope.partId).then(
+          function success(updatedPart) {
+            $scope.part = updatedPart;
+            gToast.open("The gasket kit unlinked.");
+          },
+          function failure(result) {
+            restService.error("Can't unlink the gasket kit.", response);
+          }
+        );
+      },
+      function () {
+        // No
+      }
+    );
+  };
+
+  $scope.onClearTurbo = function(turboId, partNumber) {
+    dialogs.confirm(
+      "Unlink the Turbo?",
+      "Do you want to unlink this Gasket Kit [" + $scope.part.id + "] - " +
+        $scope.part.manufacturerPartNumber + " from the turbo [" +  turboId + "] - " + partNumber + "?"
     ).result.then(
       function () {
         restService.clearGasketKitInPart($scope.partId).then(

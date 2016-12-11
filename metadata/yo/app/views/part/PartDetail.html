@@ -117,15 +117,15 @@
             <tr class="odd" data-ng-if="part.partType.value == 'turbo'">
               <td class="label">Gasket Kit</td>
               <td class="val">
-                <a data-ng-href="/part/{{ partId }}">{{part.gasketKit.manufacturerPartNumber}}</a>
-                <div style="display:inline-block;margin-left:10px;">
+                <a data-ng-href="/part/{{part.gasketKit.id}}" data-ng-show="part.gasketKit.id" style="display:inline-block;margin-right:10px;">[{{part.gasketKit.id}}] - {{part.gasketKit.manufacturerPartNumber}}</a>
+                <div>
                   <button authorize="ROLE_ALTER_PART" data-ng-click="onSetGasketKit()" class="btn btn-xs btn-primary">
                     <i class="fa fa-link" aria-hidden="true"></i>
-                    Set
+                    Link
                   </button>
-                  <button authorize="ROLE_ALTER_PART" data-ng-show="part.gasketKet != null" data-ng-click="onClearGasketKit()" class="btn btn-xs btn-danger">
+                  <button authorize="ROLE_ALTER_PART" data-ng-show="part.gasketKit.id" data-ng-click="onClearGasketKit()" class="btn btn-xs btn-danger">
                     <i class="fa fa-chain-broken" aria-hidden="true"></i>
-                    Clear
+                    Unlink
                   </button>
                 </div>
               </td>
@@ -268,7 +268,6 @@
 
           </div>
 
-
           <div>
             <button class="btn btn-success btn-sm" type="button" data-ng-click="onEditSave()" data-ng-disabled="partForm.$pristine || partForm.$invalid || partForm.$pending">
               <i class="fa fa-save"></i>
@@ -322,11 +321,23 @@
     <part-application-table />
   </div>
   <div role="tabpanel" class="tab-pane fade tab-part-detail" id="turbos">
-    <a class="btn btn-primary pull-right" style="margin-bottom:10px;" data-ng-href="/part/{{partId}}/application/search">
+    <a class="btn btn-primary" style="margin-bottom:10px;" data-ng-href="/part/{{partId}}/turbos/search">
       <i class="fa fa-plus"></i>
       Add Turbo
     </a>
-    <p>TODO: turbos</p>
+    <table data-ng-table="turbosTableParams" class="table table-bordered table-striped table-hover table-responsive">
+    <tr data-ng-repeat="t in $data">
+      <td title="'Turbo'" class="text-left">
+        <a data-ng-href="/part/{{t.id}}">[{{t.id}}] - {{t.manufacturerPartNumber}}</a>
+      </td>
+      <td class="actions" title="'Actions'">
+        <button authorize="ROLE_ALTER_PART" data-ng-show="t.id" data-ng-click="onClearTurbo(t.id, t.manufacturerPartNumber)" class="btn btn-xs btn-danger">
+          <i class="fa fa-chain-broken" aria-hidden="true"></i>
+          Unlink
+        </button>
+      </td>
+    </tr>
+    </table>
   </div>
 </div>
 <script>

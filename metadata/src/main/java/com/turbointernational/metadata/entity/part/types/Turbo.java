@@ -1,15 +1,14 @@
 package com.turbointernational.metadata.entity.part.types;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.Application;
 import com.turbointernational.metadata.dao.TurboCarModelEngineYearDao;
-import com.turbointernational.metadata.entity.CriticalDimension;
+import com.turbointernational.metadata.dao.TurboCarModelEngineYearDao.PLARrec;
 import com.turbointernational.metadata.entity.CoolType;
+import com.turbointernational.metadata.entity.CriticalDimension;
 import com.turbointernational.metadata.entity.TurboModel;
 import com.turbointernational.metadata.entity.part.Part;
-import com.turbointernational.metadata.dao.TurboCarModelEngineYearDao.PLARrec;
 import com.turbointernational.metadata.util.View;
 import flexjson.JSONSerializer;
 import org.slf4j.Logger;
@@ -20,6 +19,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
 import static javax.persistence.FetchType.LAZY;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
@@ -30,6 +30,7 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 @Entity
 @Table(name = "turbo")
 @PrimaryKeyJoinColumn(name = "part_id")
+@JsonInclude(ALWAYS)
 public class Turbo extends Part {
 
     // TODO: alter table turbo add column gasket_kit_id bigint(20) references gasket_kit(part_id);
@@ -49,7 +50,6 @@ public class Turbo extends Part {
     private CoolType coolType;
 
     @JsonView(View.Detail.class)
-    @JsonManagedReference
     @OneToOne(fetch = LAZY)
     @JoinColumn(name="gasket_kit_id")
     private GasketKit gasketKit;

@@ -173,6 +173,9 @@ angular.module("ngMetaCrudApp", ["ngRoute", "ngTable", "ui.bootstrap",
         }],
         manufacturers: ["restService", function(restService) {
           return restService.listManufacturers();
+        }],
+        turbos: ["$route", "restService", function($route, restService) {
+          return restService.listTurbosLinkedToGasketKit($route.current.pathParams.id);
         }]
       }
     });

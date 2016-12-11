@@ -1,13 +1,13 @@
 package com.turbointernational.metadata.entity.part.types;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.util.View;
 
-import javax.persistence.*;
-
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,8 +26,7 @@ public class GasketKit extends Part {
     //<editor-fold defaultstate="collapsed" desc="Properties: members">
 
     @OneToMany(cascade = REFRESH, mappedBy = "gasketKit", fetch = LAZY)
-    @JsonView({View.Detail.class})
-    @JsonBackReference
+    @JsonView({View.SummaryWithTurbos.class})
     private List<Turbo> turbos = new ArrayList<>();
 
     //</editor-fold>
