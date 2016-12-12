@@ -6,7 +6,6 @@ import com.turbointernational.metadata.dao.PartDao;
 import com.turbointernational.metadata.dao.ProductImageDao;
 import com.turbointernational.metadata.dao.TurboTypeDao;
 import com.turbointernational.metadata.entity.BOMAncestor;
-import com.turbointernational.metadata.entity.PartType;
 import com.turbointernational.metadata.entity.TurboType;
 import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.entity.part.PartRepository;
@@ -459,38 +458,43 @@ public class PartController {
             @PathVariable("partId") long partId,
             @PathVariable("gasketkitId") long gasketkitId)
     {
-        Part part = partDao.findOne(partId);
         try {
-            Long partTypeId = part.getPartType().getId();
-            if (partTypeId.longValue() != PTID_TURBO) {
-                throw new AssertionError(String.format("Part %s has unexpected part type: %d. Expected a Turbo.",
-                        FormatUtils.formatPart(part), partTypeId));
-            }
-            // TODO: more validation
-
-            Turbo turbo = (Turbo) part;
-            GasketKit gasketKit = turbo.getGasketKit();
-            if (gasketKit != null) {
-                boolean removed = gasketKit.getTurbos().remove(turbo);
-                if (!removed) {
-                    log.warn(String.format("Turbo %s not found in turbos of the gasket kit %s.",
-                            FormatUtils.formatPart(turbo), FormatUtils.formatPart(gasketKit)));
-                }
-            }
-            Part p2 = partDao.findOne(gasketkitId);
-            partTypeId = p2.getPartType().getId();
-            if (partTypeId.longValue() != PTID_GASKET_KIT) {
-                throw new AssertionError(String.format("Part %s has unexpected part type: %d. Expected a Gasket Kit.",
-                        FormatUtils.formatPart(p2), partTypeId));
-            }
-            gasketKit = (GasketKit) p2;
-            gasketKit.getTurbos().add(turbo);
-            turbo.setGasketKit((GasketKit) p2);
-            partDao.merge(part);
+            linkGasketKitToTurbo(gasketkitId, partId);
             return new GasketKitResult();
         } catch(AssertionError e) {
             return new GasketKitResult(e);
         }
+    }
+
+    private void linkGasketKitToTurbo(Long gasketkitId, Long partId) throws AssertionError {
+        Part part = partDao.findOne(partId);
+        Long partTypeId = part.getPartType().getId();
+        if (partTypeId.longValue() != PTID_TURBO) {
+            throw new AssertionError(String.format("Part %s has unexpected part type: %d. Expected a Turbo.",
+                    FormatUtils.formatPart(part), partTypeId));
+        }
+
+        // TODO: more validation
+
+        Turbo turbo = (Turbo) part;
+        GasketKit gasketKit = turbo.getGasketKit();
+        if (gasketKit != null) {
+            boolean removed = gasketKit.getTurbos().remove(turbo);
+            if (!removed) {
+                log.warn(String.format("Turbo %s not found in turbos of the gasket kit %s.",
+                        FormatUtils.formatPart(turbo), FormatUtils.formatPart(gasketKit)));
+            }
+        }
+        Part p2 = partDao.findOne(gasketkitId);
+        partTypeId = p2.getPartType().getId();
+        if (partTypeId.longValue() != PTID_GASKET_KIT) {
+            throw new AssertionError(String.format("Part %s has unexpected part type: %d. Expected a Gasket Kit.",
+                    FormatUtils.formatPart(p2), partTypeId));
+        }
+        gasketKit = (GasketKit) p2;
+        gasketKit.getTurbos().add(turbo);
+        turbo.setGasketKit((GasketKit) p2);
+        partDao.merge(part);
     }
 
     @Transactional
@@ -537,6 +541,128 @@ public class PartController {
         turbo.setGasketKit(null);
         List<Turbo> retVal = partDao.listTurbosLinkedToGasketKit(gasketKit.getId());
         return retVal;
+    }
+
+    static class LinkTurboRequest {
+
+        @JsonView({View.Summary.class})
+        private Long gasketKitId;
+
+        @JsonView({View.Summary.class})
+        private List<Long> pickedTurbos;
+
+        public Long getGasketKitId() {
+            return gasketKitId;
+        }
+
+        public void setGasketKitId(Long gasketKitId) {
+            this.gasketKitId = gasketKitId;
+        }
+
+        public List<Long> getPickedTurbos() {
+            return pickedTurbos;
+        }
+
+        public void setPickedTurbos(List<Long> pickedTurbos) {
+            this.pickedTurbos = pickedTurbos;
+        }
+    }
+
+    @JsonInclude(ALWAYS)
+    static class LinkTurboResponse {
+
+        @JsonInclude(ALWAYS)
+        static class Row {
+
+            @JsonView({View.Summary.class})
+            private final Long partId; // actually the partId is ID of a turbo
+
+            @JsonView({View.Summary.class})
+            private final String manufacturerPartNumber;
+
+            @JsonView({View.Summary.class})
+            private final boolean success;
+
+            @JsonView({View.Summary.class})
+            private final String errorMessage;
+
+            Row(Long partId, String manufacturerPartNumber, boolean success, String errorMessage) {
+                this.partId = partId;
+                this.manufacturerPartNumber = manufacturerPartNumber;
+                this.success = success;
+                this.errorMessage = errorMessage;
+            }
+
+            public Long getPartId() {
+                return partId;
+            }
+
+            public String getManufacturerPartNumber() {
+                return manufacturerPartNumber;
+            }
+
+            public boolean isSuccess() {
+                return success;
+            }
+
+            public String getErrorMessage() {
+                return errorMessage;
+            }
+
+        }
+
+        @JsonView({View.Summary.class})
+        private List<Row> rows;
+
+        @JsonView({View.Summary.class})
+        private List<Turbo> turbos;
+
+        LinkTurboResponse(List<Row> rows, List<Turbo> turbos) {
+            this.rows = rows;
+            this.turbos = turbos;
+        }
+
+        public List<Row> getRows() {
+            return rows;
+        }
+
+        public void setRows(List<Row> rows) {
+            this.rows = rows;
+        }
+
+        public List<Turbo> getTurbos() {
+            return turbos;
+        }
+
+        public void setTurbos(List<Turbo> turbos) {
+            this.turbos = turbos;
+        }
+
+    }
+
+    @Transactional(noRollbackFor = AssertionError.class)
+    @Secured("ROLE_ALTER_PART")
+    @JsonView(View.Detail.class)
+    @ResponseBody
+    @RequestMapping(value="/part/{partId}/gasketkits", method = PUT,
+            consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    public LinkTurboResponse linkTurbosToGasketKit(@RequestBody LinkTurboRequest request) {
+        List<LinkTurboResponse.Row> rows = new ArrayList<>();
+        Long gasketKitId = request.getGasketKitId();
+        for(Long turboId : request.getPickedTurbos()) {
+            boolean success = true;
+            String errMsg = null;
+            try {
+                linkGasketKitToTurbo(gasketKitId, turboId);
+            } catch(AssertionError e) {
+                success = true;
+                errMsg = e.getMessage();
+            }
+            Part part = partDao.findOne(turboId);
+            rows.add(new LinkTurboResponse.Row(turboId, part.getManufacturerPartNumber(), success, errMsg));
+        }
+        List<Turbo> turbos = partDao.listTurbosLinkedToGasketKit(gasketKitId);
+        return new LinkTurboResponse(rows, turbos);
     }
 
 }

@@ -1,0 +1,86 @@
+<metanav>
+  <li>
+    <button data-ng-click="showPart(part.id)"
+       class="btn btn-primary">
+      <i class="fa fa-eye"></i>
+      View Part
+    </button>
+  </li>
+  <li>
+    <button data-ng-click="save()"
+       data-ng-disabled="isBttnSaveDisabled() || ptForm.$invalid"
+       class="btn btn-success">
+      <i class="fa fa-save"></i>
+      Link
+    </button>
+  </li>
+</metanav>
+
+<h1 class="padding-top" part-name="part" part-name-suffix="Link Turbo(s) to this Gasket Kit"></h1>
+
+<div class="row">
+
+  <div class="col-xs-12 col-md-5">
+
+    <h3>Linked Turbos</h3>
+
+    <table data-ng-table="linkedTurbosTableParams" class="table table-bordered table-striped table-hover table-responsive">
+    <tr data-ng-repeat="t in $data">
+      <td title="'Turbo'" class="text-nowrap text-left">
+        <a data-ng-href="/part/{{t.id}}">[{{t.id}}] - {{t.manufacturerPartNumber}}</a>
+      </td>
+    </tr>
+    <tr data-ng-hide="$data.length > 0">
+      <td>No turbos to display.</td>
+    </tr>
+    </table>
+
+  </div>
+
+  <div class="col-xs-12 col-md-7">
+    <h3>
+      Picked Turbos
+      <button type="button" title="Unpick All" data-ng-click="unpickAll()" data-ng-disabled="isBttnUnpickAllDisabled()" class="btn btn-link btn-sm" style="padding:0;">
+        <i class="fa fa-times"></i>
+      </button>
+    </h3>
+    <form name="ptForm">
+      <table data-ng-table="pickedPartsTableParams" class="table table-bordered table-striped table-hover table-responsive">
+        <tr data-ng-repeat="rec in $data">
+          <td title="'Turbo'" class="text-nowrap text-left">
+            <a data-ng-href="/part/{{rec.id}}">[{{rec.id}}] - {{rec.manufacturerPartNumber}}</a>
+          </td>
+          <td class="actions text-center" title="'Actions'">
+            <button type="button" class="btn btn-danger btn-xs" data-ng-click="unpick(rec.id)">
+              <i class="fa fa-times"></i>
+              Unpick
+            </button>
+          </td>
+        </tr>
+        <tr data-ng-hide="$data.length > 0">
+          <td colspan="2">No picked trubos.</td>
+        </tr>
+      </table>
+    </form>
+  </div>
+
+</div>
+
+<hr/>
+
+<div class="row">
+  <div class="col-xs-12">
+    <part-search>
+      <a authorize="ROLE_READ" data-ng-href="/part/{{$part._source.id}}" class="btn btn-primary btn-xs">
+        <i class="fa fa-eye"></i> View
+      </a>
+      <button type="button" authorize="ROLE_READ"
+              data-ng-disabled="isBttnPickDisabled($part._source)"
+              data-ng-click="pick($part._source)"
+              class="btn btn-success btn-xs">
+        <i class="fa fa-bullseye"></i> Pick
+      </button>
+    </part-search>
+  </div>
+</div>
+

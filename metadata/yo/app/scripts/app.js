@@ -132,6 +132,21 @@ angular.module("ngMetaCrudApp", ["ngRoute", "ngTable", "ui.bootstrap",
         }]
       }
     });
+    $routeProvider.when("/part/:id/turbo/search", {
+      templateUrl: "views/part/turbo/TurboSearch.html",
+      controller: "TurboSearchCtrl",
+      resolve: {
+        part: ["$route", "restService", function($route, restService) {
+          return restService.findPart($route.current.pathParams.id);
+        }],
+        partTypes: ["restService", function(restService) {
+          return restService.listPartTypes();
+        }],
+        turbos: ["$route", "restService", function($route, restService) {
+          return restService.listTurbosLinkedToGasketKit($route.current.pathParams.id);
+        }]
+      }
+    });
     $routeProvider.when("/part/:id/application/search", {
       templateUrl: "views/part/application/PartApplicationSearch.html",
       controller: "PartApplicationSearchCtrl"
