@@ -51,7 +51,7 @@ angular.module("ngMetaCrudApp")
 
       $scope.isBttnPickDisabled = function(p) {
         return p === undefined || $scope.part.manufacturer.id != p.manufacturer.id ||
-          $scope.part.id == p.id || pickedPartIds[p.id];
+          p.partType.id != 1 || $scope.part.id == p.id || pickedPartIds[p.id];
       };
 
       $scope.isBttnUnpickAllDisabled = function() {

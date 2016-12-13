@@ -46,7 +46,7 @@
   </a>
   <button type="button" authorize="ROLE_ALTER_PART"
      data-ng-click="pickPart($part._source.id)"
-     data-ng-disabled="part.manufacturer.id != $part._source.manufacturer.id || part.id == $part._source.id || $part._source.id == pickedPart.id || $part._source.manufacturer.id != part.manufacturer.id"
+     data-ng-disabled="part.manufacturer.id != $part._source.manufacturer.id || part.id == $part._source.id || $part._source.id == pickedPart.id || $part._source.partType.id != 49"
      class="btn btn-success btn-xs">
     <i class="fa fa-bullseye"></i> Pick
   </button>

@@ -16,7 +16,6 @@ import com.turbointernational.metadata.service.BOMService;
 import com.turbointernational.metadata.service.ChangelogService;
 import com.turbointernational.metadata.service.CriticalDimensionService;
 import com.turbointernational.metadata.service.ImageService;
-import com.turbointernational.metadata.util.FormatUtils;
 import com.turbointernational.metadata.util.View;
 import flexjson.JSONSerializer;
 import flexjson.transformer.HibernateTransformer;
@@ -55,6 +54,7 @@ import static com.turbointernational.metadata.service.ImageService.PART_CRIT_DIM
 import static com.turbointernational.metadata.util.FormatUtils.formatPart;
 import static com.turbointernational.metadata.web.controller.PartController.GasketKitResultStatus.ASSERTION_ERROR;
 import static com.turbointernational.metadata.web.controller.PartController.GasketKitResultStatus.OK;
+import static java.util.stream.Collectors.toSet;
 import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 import static javax.servlet.http.HttpServletResponse.SC_FORBIDDEN;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -466,34 +466,51 @@ public class PartController {
         }
     }
 
-    private void linkGasketKitToTurbo(Long gasketkitId, Long partId) throws AssertionError {
-        Part part = partDao.findOne(partId);
+    private void linkGasketKitToTurbo(Long gasketKitId, Long turboId) throws AssertionError {
+        Part part = partDao.findOne(turboId);
         Long partTypeId = part.getPartType().getId();
+        // Validation: Check part type of the "Turbo" part.
         if (partTypeId.longValue() != PTID_TURBO) {
             throw new AssertionError(String.format("Part %s has unexpected part type: %d. Expected a Turbo.",
-                    FormatUtils.formatPart(part), partTypeId));
+                    formatPart(part), partTypeId));
         }
-
-        // TODO: more validation
-
+        // Validation: Check that Turbo and Gasket Kit art already not linked.
         Turbo turbo = (Turbo) part;
-        GasketKit gasketKit = turbo.getGasketKit();
-        if (gasketKit != null) {
-            boolean removed = gasketKit.getTurbos().remove(turbo);
-            if (!removed) {
-                log.warn(String.format("Turbo %s not found in turbos of the gasket kit %s.",
-                        FormatUtils.formatPart(turbo), FormatUtils.formatPart(gasketKit)));
+        GasketKit oldGasketKit = turbo.getGasketKit();
+        if (oldGasketKit != null) {
+            if (oldGasketKit.getId().equals(gasketKitId)) {
+                throw new AssertionError(String.format("Gasket Kit %s already linked with the Turbo %s.",
+                        formatPart(oldGasketKit), formatPart(turbo)));
             }
         }
-        Part p2 = partDao.findOne(gasketkitId);
-        partTypeId = p2.getPartType().getId();
+        // Validation: Check part type of the "Gasket Kit" part.
+        Part part2 = partDao.findOne(gasketKitId);
+        partTypeId = part2.getPartType().getId();
         if (partTypeId.longValue() != PTID_GASKET_KIT) {
             throw new AssertionError(String.format("Part %s has unexpected part type: %d. Expected a Gasket Kit.",
-                    FormatUtils.formatPart(p2), partTypeId));
+                    formatPart(part2), partTypeId));
         }
-        gasketKit = (GasketKit) p2;
-        gasketKit.getTurbos().add(turbo);
-        turbo.setGasketKit((GasketKit) p2);
+        // Validation: gasket kits and associated turbos must have the same manfr_id
+        GasketKit newGasketKit = (GasketKit) part2;
+        if (!turbo.getManufacturer().getId().equals(newGasketKit.getManufacturer().getId())) {
+            throw new AssertionError("The Turbo and Gasket Kit have different manufacturers.");
+        }
+        // Validation: that all parts in bom of Gasket Kit exist in the BOM of the associated turbo
+        Set<Long> turboBomIds = turbo.getBom().stream().map(bi -> bi.getId()).collect(toSet());
+        Set<Long> newGasketKitBomIds = newGasketKit.getBom().stream().map(bi -> bi.getId()).collect(toSet());
+        if (!turboBomIds.containsAll(newGasketKitBomIds)) {
+            throw new AssertionError("Not all parts in BOM of the Gasket Kit exist in the BOM of associated Turbo.");
+        }
+        // Linkage.
+        if (oldGasketKit != null) {
+            boolean removed = oldGasketKit.getTurbos().remove(turbo);
+            if (!removed) {
+                log.warn(String.format("Turbo %s not found in turbos of the Gasket Kit %s.",
+                        formatPart(turbo), formatPart(oldGasketKit)));
+            }
+        }
+        newGasketKit.getTurbos().add(turbo);
+        turbo.setGasketKit(newGasketKit);
         partDao.merge(part);
     }
 
@@ -509,7 +526,7 @@ public class PartController {
             boolean removed = gasketKit.getTurbos().remove(turbo);
             if (!removed) {
                 log.warn(String.format("Turbo %s not found in turbos of the gasket kit %s.",
-                        FormatUtils.formatPart(turbo), FormatUtils.formatPart(gasketKit)));
+                        formatPart(turbo), formatPart(gasketKit)));
             }
         }
         turbo.setGasketKit(null);
@@ -655,7 +672,7 @@ public class PartController {
             try {
                 linkGasketKitToTurbo(gasketKitId, turboId);
             } catch(AssertionError e) {
-                success = true;
+                success = false;
                 errMsg = e.getMessage();
             }
             Part part = partDao.findOne(turboId);
