@@ -31,6 +31,11 @@ public class ProductImage implements Comparable<ProductImage>, Serializable {
     @JsonView({View.Summary.class})
     private Long id;
 
+    // alter table product_image add column publish tinyint(1) not null default 1;
+    @Column(name = "publish", nullable = false)
+    @JsonView({View.Summary.class})
+    private Boolean publish;
+
     @ManyToOne
     @JoinColumn(name = "part_id")
     private Part part;
@@ -45,6 +50,14 @@ public class ProductImage implements Comparable<ProductImage>, Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Boolean getPublish() {
+        return publish;
+    }
+
+    public void setPublish(Boolean publish) {
+        this.publish = publish;
     }
 
     public Part getPart() {
@@ -73,6 +86,7 @@ public class ProductImage implements Comparable<ProductImage>, Serializable {
                 .transform(new HibernateTransformer(), this.getClass())
                 .include("id")
                 .include("filename")
+                .include("publish")
                 .exclude("*")
                 .serialize(this);
     }

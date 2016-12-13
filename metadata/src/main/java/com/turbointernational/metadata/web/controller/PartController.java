@@ -349,7 +349,8 @@ public class PartController {
     @Transactional
     @RequestMapping(value="/part/{id}/image", method = POST)
     @Secured("ROLE_PART_IMAGES")
-    public ResponseEntity<String> addProductImage(@PathVariable Long id, @RequestBody byte[] imageData) throws Exception {
+    public ResponseEntity<String> addProductImage(@PathVariable Long id, @RequestParam Boolean publish,
+                                                  @RequestBody byte[] imageData) throws Exception {
         Part part = partDao.findOne(id);
         // Save the file into the originals directory
         String filename = part.getId().toString() + "_" + System.currentTimeMillis() + ".jpg"; // Good enough
@@ -357,6 +358,7 @@ public class PartController {
         FileUtils.writeByteArrayToFile(originalFile, imageData);
         // Create the product image
         ProductImage productImage = new ProductImage();
+        productImage.setPublish(publish);
         productImage.setFilename(filename);
         productImage.setPart(part);
         productImageDao.persist(productImage);

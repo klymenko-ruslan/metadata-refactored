@@ -395,7 +395,7 @@ angular.module("ngMetaCrudApp")
             "Do you want to remove this image from the part?").result.then(
         function() {
           // Yes
-          Restangular.one('image', image.id).remove().then(
+          Restangular.one("image", image.id).remove().then(
               function() {
                 // Success
                 gToast.open("Image removed.");
@@ -416,8 +416,8 @@ angular.module("ngMetaCrudApp")
 
   $scope.addImage = function() {
     dialogs.create(
-      '/views/part/dialog/AddImage.html',
-      'AddPartImageCtrl',
+      "/views/part/dialog/AddImage.html",
+      "AddPartImageCtrl",
       {part: $scope.part}
     ).result.then(function(image) {
       $scope.part.productImages.push(image);

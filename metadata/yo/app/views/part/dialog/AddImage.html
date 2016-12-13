@@ -1,13 +1,19 @@
-<form>
-  <div class="modal-header">
-    <h3 class="modal-title">Upload JPG Image</h3>
-  </div>
-  <div class="modal-body">
+<div class="modal-header">
+  <h3 class="modal-title">Upload JPG Image</h3>
+</div>
+<div class="modal-body">
+  <form class="form-inline">
+    <div class="form-group">
       <input type="file" name="file" onchange="angular.element(this).scope().changed(this.files)"/>
-  </div>
+    </div>
+    <div class="btn-group">
+      <label class="btn btn-primary" data-ng-model="publishImage" uib-btn-radio="true">Publish</label>
+      <label class="btn btn-primary" data-ng-model="publishImage" uib-btn-radio="false">Unpublish</label>
+    </div>
+  </form>
+</div>
 
-  <div class="modal-footer">
-    <button class="btn btn-default" data-ng-click="cancel()">Cancel</button>
-    <button class="btn btn-primary" data-ng-click="upload()">Upload</button>
-  </div>
-</form>
+<div class="modal-footer">
+  <button class="btn btn-default" data-ng-click="cancel()">Cancel</button>
+  <button class="btn btn-primary" data-ng-click="upload()">Upload</button>
+</div>
