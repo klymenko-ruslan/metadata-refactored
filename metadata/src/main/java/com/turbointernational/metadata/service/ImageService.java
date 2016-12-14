@@ -1,16 +1,21 @@
 package com.turbointernational.metadata.service;
 
+import com.turbointernational.metadata.dao.PartDao;
+import com.turbointernational.metadata.dao.ProductImageDao;
+import com.turbointernational.metadata.entity.part.ProductImage;
 import org.apache.commons.io.FileUtils;
 import org.im4java.core.ConvertCmd;
 import org.im4java.core.IM4JavaException;
 import org.im4java.core.IMOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.Transient;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -33,6 +38,9 @@ public class ImageService {
 
     public final static int PART_CRIT_DIM_LEGEND_WIDTH = 640;
     public final static int PART_CRIT_DIM_LEGEND_HEIGHT = 480;
+
+    @Autowired
+    private ProductImageDao productImageDao;
 
     @Value("${images.originals}")
     private File originalsDir;
@@ -80,6 +88,12 @@ public class ImageService {
     private void delImage(File dir, String filename) {
         File original = new File(dir, filename);
         FileUtils.deleteQuietly(original);
+    }
+
+    @Transient
+    public void publish(Long imageId, Boolean publish) {
+        ProductImage pi = productImageDao.findOne(imageId);
+        pi.setPublish(publish);
     }
 
     private ResponseEntity<byte[]> getImage(File dir, String filename) throws IOException {

@@ -15,12 +15,14 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import static com.turbointernational.metadata.service.ImageService.SIZES;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 @RequestMapping("/metadata/image")
 @RestController
@@ -88,6 +90,15 @@ public class ImageController {
         for (int size : SIZES) {
             imageService.delResizedImage(image.getFilename(size));
         }
+        return new ResponseEntity<>((Void) null, OK);
+    }
+
+    @Transactional
+    @RequestMapping(value="/{id}", method = PUT)
+    @Secured("ROLE_PART_IMAGES")
+    public ResponseEntity<Void> publishPartImage(@PathVariable(name = "id") Long imageId,
+                                                 @RequestParam(name = "publish") Boolean publish) throws Exception {
+        imageService.publish(imageId, publish);
         return new ResponseEntity<>((Void) null, OK);
     }
 

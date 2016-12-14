@@ -395,7 +395,7 @@ angular.module("ngMetaCrudApp")
             "Do you want to remove this image from the part?").result.then(
         function() {
           // Yes
-          Restangular.one("image", image.id).remove().then(
+          restService.deleteProductImage(image.id).then(
               function() {
                 // Success
                 gToast.open("Image removed.");
@@ -412,6 +412,19 @@ angular.module("ngMetaCrudApp")
           // No
         });
 
+  };
+
+  $scope.onChangePublishImage = function(image) {
+    restService.publishProductImage(image.id, image.publish).then(
+      function success() {
+        var verb = image.publish ? "published" : "unpublished";
+        gToast.open("The image has been " + verb + ".");
+      },
+      function failure(result) {
+        restService.error("(Un)Publish the image failed.", response);
+        image.publish = !image.publish; // return previous state
+      }
+    );
   };
 
   $scope.addImage = function() {

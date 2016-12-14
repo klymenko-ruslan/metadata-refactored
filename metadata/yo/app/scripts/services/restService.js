@@ -263,6 +263,14 @@ angular.module("ngMetaCrudApp")
         return Restangular.one("part", part.id).customPUT(part);
       };
 
+      this.deleteProductImage = function(imageId) {
+        return Restangular.one("image", imageId).remove();
+      };
+
+      this.publishProductImage = function(imageId, publish) {
+        return Restangular.one("image", imageId).put({"publish": publish});
+      };
+
       this.addTurboTypeToPart = function(partId, turboTypeId) {
         Restangular.setParentless(false);
         return Restangular.one("part", partId).one("turboType", turboTypeId).post();
