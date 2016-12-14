@@ -478,7 +478,7 @@ public class PartController {
         }
         // Validation: Check that Turbo and Gasket Kit art already not linked.
         Turbo turbo = (Turbo) part;
-        GasketKit oldGasketKit = turbo.getGasketKit();
+        GasketKit oldGasketKit = (GasketKit) turbo.getGasketKit();
         if (oldGasketKit != null) {
             if (oldGasketKit.getId().equals(gasketKitId)) {
                 throw new AssertionError(String.format("Gasket Kit %s already linked with the Turbo %s.",
@@ -523,7 +523,7 @@ public class PartController {
     @Secured("ROLE_ALTER_PART")
     public Turbo clearGasketKitInPart(@PathVariable("partId") long partId) {
         Turbo turbo = (Turbo) partDao.findOne(partId);
-        GasketKit gasketKit = turbo.getGasketKit();
+        GasketKit gasketKit = (GasketKit) turbo.getGasketKit();
         if (gasketKit != null) {
             boolean removed = gasketKit.getTurbos().remove(turbo);
             if (!removed) {
@@ -555,7 +555,7 @@ public class PartController {
     @Secured("ROLE_ALTER_PART")
     public List<Turbo> unlinkTurboInGasketKit(@PathVariable("partId") long partId) {
         Turbo turbo = (Turbo) partDao.findOne(partId);
-        GasketKit gasketKit = turbo.getGasketKit();
+        GasketKit gasketKit = (GasketKit) turbo.getGasketKit();
         gasketKit.getTurbos().remove(turbo);
         turbo.setGasketKit(null);
         List<Turbo> retVal = partDao.listTurbosLinkedToGasketKit(gasketKit.getId());

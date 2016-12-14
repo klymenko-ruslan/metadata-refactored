@@ -1,6 +1,7 @@
 package com.turbointernational.metadata.entity.part.types;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.Application;
 import com.turbointernational.metadata.dao.TurboCarModelEngineYearDao;
@@ -49,10 +50,16 @@ public class Turbo extends Part {
     @JoinColumn(name="cool_type_id")
     private CoolType coolType;
 
+    /**
+     * A Gasket Kit linked with this Turbo.
+     *
+     * This field is declared as type of Part (not GasketKit) for workaround of an issue
+     * described in the ticket #878.
+     */
     @JsonView(View.Detail.class)
     @OneToOne(fetch = LAZY)
     @JoinColumn(name="gasket_kit_id")
-    private GasketKit gasketKit;
+    private Part gasketKit;
 
     @Transient
     @JsonView(View.Summary.class)
@@ -135,11 +142,11 @@ public class Turbo extends Part {
         this.cmeyFuelType = cmeyFuelType;
     }
 
-    public GasketKit getGasketKit() {
+    public Part getGasketKit() {
         return gasketKit;
     }
 
-    public void setGasketKit(GasketKit gasketKit) {
+    public void setGasketKit(Part gasketKit) {
         this.gasketKit = gasketKit;
     }
 
