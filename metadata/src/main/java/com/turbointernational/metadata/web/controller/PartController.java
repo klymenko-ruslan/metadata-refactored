@@ -402,8 +402,8 @@ public class PartController {
             throw new AssertionError("The Turbo and Gasket Kit have different manufacturers.");
         }
         // Validation: that all parts in bom of Gasket Kit exist in the BOM of the associated turbo
-        Set<Long> turboBomIds = turbo.getBom().stream().map(bi -> bi.getId()).collect(toSet());
-        Set<Long> newGasketKitBomIds = newGasketKit.getBom().stream().map(bi -> bi.getId()).collect(toSet());
+        Set<Long> turboBomIds = turbo.getBom().stream().map(bi -> bi.getChild().getId()).collect(toSet());
+        Set<Long> newGasketKitBomIds = newGasketKit.getBom().stream().map(bi -> bi.getChild().getId()).collect(toSet());
         if (!turboBomIds.containsAll(newGasketKitBomIds)) {
             throw new AssertionError("Not all parts in BOM of the Gasket Kit exist in the BOM of associated Turbo.");
         }
