@@ -52,6 +52,18 @@
         }
       }
     },
+    "dimLength": {
+      "type": "double",
+      "store": "yes"
+    },
+    "dimWidth": {
+      "type": "double",
+      "store": "yes"
+    },
+    "dimHeight": {
+      "type": "double",
+      "store": "yes"
+    },
     "inactive": {
       "type": "boolean",
       "store": "yes"

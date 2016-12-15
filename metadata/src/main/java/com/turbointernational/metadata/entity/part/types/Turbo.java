@@ -34,8 +34,6 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 @JsonInclude(ALWAYS)
 public class Turbo extends Part {
 
-    // TODO: alter table turbo add column gasket_kit_id bigint(20) references gasket_kit(part_id);
-
     private final static Logger log = LoggerFactory.getLogger(Turbo.class);
 
     //<editor-fold defaultstate="collapsed" desc="Properties: members">

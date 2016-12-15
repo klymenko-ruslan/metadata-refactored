@@ -12,6 +12,14 @@ angular.module("ngMetaCrudApp", ["ngRoute", "ngTable", "ui.bootstrap",
     // cfpLoadingBarProvider.spinnerTemplate = '<div><span class="fa fa-spinner">Loading...</div>';
     cfpLoadingBarProvider.latencyThreshold = 5;
   }])
+  .filter("ifEmpty", function() {
+    return function(input, defaultValue) {
+      if (angular.isUndefined(input) || input === null || input === "") {
+        return defaultValue;
+      }
+      return input;
+    }
+  })
   .config(["$locationProvider", "$httpProvider", "$routeProvider", "RestangularProvider", "METADATA_BASE",
     function($locationProvider, $httpProvider, $routeProvider, RestangularProvider, METADATA_BASE) {
 

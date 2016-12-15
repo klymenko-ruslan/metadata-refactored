@@ -135,6 +135,18 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
     @JsonView({View.Detail.class})
     private String description;
 
+    @Column(name = "dim_length")
+    @JsonView({View.Summary.class})
+    private Double dimLength;
+
+    @Column(name = "dim_width")
+    @JsonView({View.Summary.class})
+    private Double dimWidth;
+
+    @Column(name = "dim_height")
+    @JsonView({View.Summary.class})
+    private Double dimHeight;
+
     @OneToOne(fetch = LAZY)
     @JoinColumn(name = "part_type_id")
     @JsonView({View.Summary.class})
@@ -222,6 +234,30 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Double getDimLength() {
+        return dimLength;
+    }
+
+    public void setDimLength(Double dimLength) {
+        this.dimLength = dimLength;
+    }
+
+    public Double getDimWidth() {
+        return dimWidth;
+    }
+
+    public void setDimWidth(Double dimWidth) {
+        this.dimWidth = dimWidth;
+    }
+
+    public Double getDimHeight() {
+        return dimHeight;
+    }
+
+    public void setDimHeight(Double dimHeight) {
+        this.dimHeight = dimHeight;
     }
 
     public PartType getPartType() {
@@ -476,6 +512,12 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
     protected JSONSerializer buildJSONSerializer(List<CriticalDimension> criticalDimensions) {
         JSONSerializer jsonSerializer = new JSONSerializer()
                 .transform(new HibernateTransformer(), this.getClass())
+                .include("name")
+                .include("description")
+                .include("active")
+                .include("dimLength")
+                .include("dimWidth")
+                .include("dimHeight")
                 .include("turboTypes.id")
                 .include("turboTypes.name")
                 .include("partType.id")
@@ -543,6 +585,9 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
             .include("name")
             .include("manufacturerPartNumber")
             .include("description")
+            .include("dimLength")
+            .include("dimWidth")
+            .include("dimHeight")
             .include("inactive")
             .include("partType.id")
             .include("partType.name")

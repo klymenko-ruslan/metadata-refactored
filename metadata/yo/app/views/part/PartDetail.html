@@ -102,19 +102,25 @@
               <td class="label">Description</td>
               <td class="val">{{part.description}}</td>
             </tr>
-            <tr class="even" data-ng-if="part.partType.value == 'turbo'">
+            <tr class="even">
+              <td class="label">Dimension (L x W x H)</td>
+              <td class="val">
+                {{part.dimLength | ifEmpty:'?'}} X {{part.dimWidth | ifEmpty:'?'}} X {{part.dimHeight | ifEmpty:'?'}}
+              </td>
+            </tr>
+            <tr class="odd" data-ng-if="part.partType.value == 'turbo'">
               <td class="label">Coolant</td>
               <td class="val">{{part.coolType.name}}</td>
             </tr>
-            <tr class="odd" data-ng-if="part.partType.value == 'turbo'">
+            <tr class="even" data-ng-if="part.partType.value == 'turbo'">
               <td class="label">Turbo Model</td>
               <td class="val">{{part.turboModel.name}}</td>
             </tr>
-            <tr class="even" data-ng-if="part.partType.value == 'turbo'">
+            <tr class="odd" data-ng-if="part.partType.value == 'turbo'">
               <td class="label">Turbo Type</td>
               <td class="val">{{part.turboModel.turboType.name}}</td>
             </tr>
-            <tr class="odd" data-ng-if="part.partType.value == 'turbo'">
+            <tr class="even" data-ng-if="part.partType.value == 'turbo'">
               <td class="label">Gasket Kit</td>
               <td class="val">
                 <a data-ng-href="/part/{{part.gasketKit.id}}" data-ng-show="part.gasketKit.id" style="display:inline-block;margin-right:10px;">[{{part.gasketKit.id}}] - {{part.gasketKit.manufacturerPartNumber}}</a>
@@ -130,7 +136,7 @@
                 </div>
               </td>
             </tr>
-            <tr class="even" data-ng-if="part.partType.value == 'kit'">
+            <tr class="odd" data-ng-if="part.partType.value == 'kit'">
               <td class="label">Kit Type</td>
               <td class="val">{{part.kitType.name}}</td>
             </tr>
@@ -155,6 +161,24 @@
           <div class="form-group">
             <label for="description">Description</label>
             <textarea id="description" class="form-control" rows="4" data-ng-model="part.description"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="dimensions">Dimensions (L x W x H)</label>
+            <div class="row">
+                <div class="form-group col-xs-3">
+                  <input id="dimensions" class="form-control" type="number" min="0" data-ng-model="part.dimLength"/>
+                </div>
+                <div class="form-group col-xs-1">X</div>
+                <div class="form-group col-xs-3">
+                  <input class="form-control" type="number" min="0" data-ng-model="part.dimWidth"/>
+                </div>
+                <div class="form-group col-xs-1">X</div>
+                <div class="form-group col-xs-3">
+                  <input class="form-control" type="number" min="0" data-ng-model="part.dimHeight"/>
+                </div>
+                <div class="form-group col-xs-1">&nbsp;</div>
+            </div>
           </div>
 
           <div class="form-group">
@@ -292,7 +316,10 @@
 
         <div class="row">
           <div class="col-xs-12">
-            <ul class="list-unstyled list-inline">
+
+            <div data-ng-show="!part.productImages || part.productImages.length == 0" class="no-image"></div>
+
+            <ul data-ng-hide="!part.productImages || part.productImages.length == 0" class="list-unstyled list-inline">
 
               <li data-ng-repeat="image in part.productImages" class="ng-scope bg-info" style="padding: 6px; margin: 4px;">
                 <form class="form-inline">
@@ -313,11 +340,8 @@
                 <img data-ng-src="/metadata/image/135/{{image.id}}.jpg" style="max-height: 135px; max-width: 135px; margin-top: 5px;" />
               </li>
 
-              <li data-ng-show="!part.productImages || part.productImages.length == 0">
-                <div class="no-image" />
-              </li>
-
             </ul>
+
           </div>
         </div>
       </div>
