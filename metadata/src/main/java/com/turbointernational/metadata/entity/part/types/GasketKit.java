@@ -25,9 +25,15 @@ public class GasketKit extends Part {
 
     //<editor-fold defaultstate="collapsed" desc="Properties: members">
 
-    @OneToMany(cascade = REFRESH, mappedBy = "gasketKit", fetch = LAZY)
+    /**
+     * A list of turbos linked to this Gasket Kit.
+     *
+     * This field is declared as type of List<Part> (not List<GasketKit>) for workaround of an issue
+     * described in the ticket #878.
+     */
+    @OneToMany(cascade = REFRESH, mappedBy = "gasketKit", targetEntity = Turbo.class, fetch = LAZY)
     @JsonView({View.SummaryWithTurbos.class})
-    private List<Turbo> turbos = new ArrayList<>();
+    private List<Part> turbos = new ArrayList<>();
 
     //</editor-fold>
 
@@ -37,11 +43,11 @@ public class GasketKit extends Part {
 
     //<editor-fold defaultstate="collapsed" desc="Getters and setters: members">
 
-    public List<Turbo> getTurbos() {
+    public List<Part> getTurbos() {
         return turbos;
     }
 
-    public void setTurbos(List<Turbo> turbos) {
+    public void setTurbos(List<Part> turbos) {
         this.turbos = turbos;
     }
 
