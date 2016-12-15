@@ -12,10 +12,7 @@ import com.turbointernational.metadata.entity.part.PartRepository;
 import com.turbointernational.metadata.entity.part.ProductImage;
 import com.turbointernational.metadata.entity.part.types.GasketKit;
 import com.turbointernational.metadata.entity.part.types.Turbo;
-import com.turbointernational.metadata.service.BOMService;
-import com.turbointernational.metadata.service.ChangelogService;
-import com.turbointernational.metadata.service.CriticalDimensionService;
-import com.turbointernational.metadata.service.ImageService;
+import com.turbointernational.metadata.service.*;
 import com.turbointernational.metadata.util.View;
 import flexjson.JSONSerializer;
 import flexjson.transformer.HibernateTransformer;
@@ -65,6 +62,9 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 public class PartController {
 
     private final static Logger log = LoggerFactory.getLogger(PartController.class);
+
+    @Autowired
+    private PartService partService;
 
     @Autowired
     private BOMService bomService;
@@ -188,111 +188,15 @@ public class PartController {
 
     }
 
-    @JsonInclude(ALWAYS)
-    static class PartCreateResponse {
-
-        @JsonInclude(ALWAYS)
-        static class Row {
-
-            @JsonView({View.Summary.class})
-            private final Long partId;
-
-            @JsonView({View.Summary.class})
-            private final String manufacturerPartNumber;
-
-            @JsonView({View.Summary.class})
-            private final boolean success;
-
-            @JsonView({View.Summary.class})
-            private final String errorMessage;
-
-            Row(Long partId, String manufacturerPartNumber, boolean success, String errorMessage) {
-                this.partId = partId;
-                this.manufacturerPartNumber = manufacturerPartNumber;
-                this.success = success;
-                this.errorMessage = errorMessage;
-            }
-
-            public Long getPartId() {
-                return partId;
-            }
-
-            public String getManufacturerPartNumber() {
-                return manufacturerPartNumber;
-            }
-
-            public boolean isSuccess() {
-                return success;
-            }
-
-            public String getErrorMessage() {
-                return errorMessage;
-            }
-
-        }
-
-        PartCreateResponse(List<Row> results) {
-            this.results = results;
-        }
-
-        @JsonView({View.Summary.class})
-        private List<Row> results;
-
-
-        public List<Row> getResults() {
-            return results;
-        }
-
-        public void setResults(List<Row> results) {
-            this.results = results;
-        }
-
-    }
-    
     @Transactional
     @Secured("ROLE_CREATE_PART")
     @JsonView(View.Detail.class)
     @ResponseBody
     @RequestMapping(value = "/part", method = POST)
-    public PartCreateResponse createPart(@RequestBody PartCreateRequest request) throws Exception {
-        JSONSerializer jsonSerializer = new JSONSerializer()
-                .include("id")
-                .include("name")
-                .include("manufacturerPartNumber")
-                .include("description")
-                .include("inactive")
-                .include("partType.id")
-                .include("partType.name")
-                .exclude("partType.*")
-                .include("manufacturer.id")
-                .include("manufacturer.name")
-                .exclude("manufacturer.*")
-                .exclude("bomParentParts")
-                .exclude("bom")
-                .exclude("interchange")
-                .exclude("turbos")
-                .exclude("productImages")
-                .exclude("*.class");
+    public PartService.PartCreateResponse createPart(@RequestBody PartCreateRequest request) throws Exception {
         Part origin = request.getOrigin();
         List<String> partNumbers = request.getPartNumbers();
-        Set<String> added = new HashSet<>(partNumbers.size());
-        List<PartCreateResponse.Row> results = new ArrayList<>(partNumbers.size());
-        for(Iterator<String> iter = partNumbers.iterator(); iter.hasNext();) {
-            String mpn = iter.next();
-            if (added.contains(mpn)) {
-                continue; // skip duplicate
-            }
-            partDao.getEntityManager().detach(origin);
-            origin.setId(null);
-            origin.setManufacturerPartNumber(mpn);
-            partDao.persist(origin);
-            // Update the changelog.
-            String json = jsonSerializer.serialize(origin);
-            changelogService.log(PART, "Created part " + formatPart(origin) + ".", json);
-            results.add(new PartCreateResponse.Row(origin.getId(), mpn, true, null));
-            added.add(mpn);
-        }
-        return new PartCreateResponse(results);
+        return partService.createPart(origin, partNumbers);
     }
 
     @Transactional
