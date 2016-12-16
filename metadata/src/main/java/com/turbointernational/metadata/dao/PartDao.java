@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.NoResultException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -75,7 +76,7 @@ public class PartDao extends AbstractDao<Part> {
             return em.createQuery("FROM Turbo AS t WHERE t.partType.id=" + PTID_TURBO +
                     " AND t.gasketKit.id=:gasketKitId").setParameter("gasketKitId", id).getResultList();
         } catch(NoResultException e) {
-            return null;
+            return new ArrayList<>();
         }
     }
 
