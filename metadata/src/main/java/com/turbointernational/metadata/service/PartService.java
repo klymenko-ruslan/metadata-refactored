@@ -1,5 +1,6 @@
 package com.turbointernational.metadata.service;
 
+import com.turbointernational.metadata.dao.GasketKitDao;
 import com.turbointernational.metadata.dao.PartDao;
 import com.turbointernational.metadata.dao.ProductImageDao;
 import com.turbointernational.metadata.entity.BOMAncestor;
@@ -44,6 +45,9 @@ public class PartService {
 
     @Autowired
     private PartDao partDao;
+
+    @Autowired
+    private GasketKitDao gasketKitCrudDao;
 
     @Autowired
     private JdbcTemplate db;
@@ -236,10 +240,12 @@ public class PartService {
             throw new AssertionError(String.format("Part %s has unexpected part type: %d. Expected a Turbo.",
                     formatPart(part), partTypeId));
         }
-        // Validation: Check that Turbo and Gasket Kit art already not linked.
+        // Validation: Check that Turbo and Gasket Kit already not linked.
         Turbo turbo = (Turbo) part;
-        GasketKit oldGasketKit = (GasketKit) turbo.getGasketKit();
-        if (oldGasketKit != null) {
+        Part partOldGasketKit = turbo.getGasketKit();
+        GasketKit oldGasketKit = null;
+        if (partOldGasketKit != null) {
+            oldGasketKit = gasketKitCrudDao.findOne(partOldGasketKit.getId());
             if (oldGasketKit.getId().equals(gasketKitId)) {
                 throw new AssertionError(String.format("Gasket Kit %s already linked with the Turbo %s.",
                         formatPart(oldGasketKit), formatPart(turbo)));
@@ -293,7 +299,8 @@ public class PartService {
     @Transactional
     public List<Turbo> unlinkTurboInGasketKit(Long partId) {
         Turbo turbo = (Turbo) partDao.findOne(partId);
-        GasketKit gasketKit = (GasketKit) turbo.getGasketKit();
+        Part partGasketKit = turbo.getGasketKit();
+        GasketKit gasketKit = gasketKitCrudDao.findOne(partGasketKit.getId());
         gasketKit.getTurbos().remove(turbo);
         turbo.setGasketKit(null);
         List<Turbo> retVal = partDao.listTurbosLinkedToGasketKit(gasketKit.getId());
