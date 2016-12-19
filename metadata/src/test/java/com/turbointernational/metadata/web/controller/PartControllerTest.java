@@ -91,7 +91,6 @@ public class PartControllerTest {
             scripts = "classpath:integration_tests/clear_dictionaries.sql"
     )
     @WithUserDetails("Admin")
-    @Ignore
     public void testCreatePart() throws Exception {
         String requestBody = "{" +
                 "   \"origin\":{" +
