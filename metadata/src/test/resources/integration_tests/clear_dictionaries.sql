@@ -5,6 +5,5 @@ delete from manfr_type;
 delete from user_group;
 delete from group_role;
 delete from groups;
-delete from mas90sync;
 delete from user;
 delete from role;

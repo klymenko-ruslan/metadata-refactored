@@ -12,11 +12,13 @@ import com.turbointernational.metadata.web.dto.SalesNoteSearchRequest;
 import com.turbointernational.metadata.dao.UserDao;
 import com.turbointernational.metadata.dao.PartTypeDao;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.context.ApplicationContext;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -37,6 +39,7 @@ import static org.junit.Assert.*;
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
 @SpringApplicationConfiguration(classes = Application.class)
+@ActiveProfiles("integration")
 @DbUnitConfiguration
 //@TestExecutionListeners({
 //    DependencyInjectionTestExecutionListener.class,
@@ -45,6 +48,7 @@ import static org.junit.Assert.*;
 //    DbUnitTestExecutionListener.class
 //})
 @Transactional
+@Ignore
 @TransactionConfiguration(defaultRollback = true)
 public class SalesNoteRepositoryImplTest {
     
@@ -85,9 +89,11 @@ public class SalesNoteRepositoryImplTest {
         // Delete the test part if it exists
         try {
             Part testPart = partDao.findByPartNumber(testPartNumber);
-            interchangeDao.delete(testPart.getInterchange().getId());
-            partDao.delete(testPart.getId());
-            partDao.flush();
+            if (testPart != null) {
+                interchangeDao.delete(testPart.getInterchange().getId());
+                partDao.delete(testPart.getId());
+                partDao.flush();
+            }
         } catch (NoResultException e) {}
         
         // Preload some dummy entities

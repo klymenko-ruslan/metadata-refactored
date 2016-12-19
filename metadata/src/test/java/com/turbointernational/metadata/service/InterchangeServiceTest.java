@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.boot.test.WebIntegrationTest;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
@@ -223,6 +224,7 @@ public class InterchangeServiceTest {
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_dictionaries.sql"
     )
+
     @WithUserDetails("mock@gmail.com")
     public void testMergePickedAloneToPart() {
         // Check prerequisites before testing.
