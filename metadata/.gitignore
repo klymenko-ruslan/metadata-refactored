@@ -4,3 +4,6 @@ critdims-alter/in/current_state.tsv
 critdims-alter/out/
 bower_components
 *.log
+.classpath
+.project
+.settings
