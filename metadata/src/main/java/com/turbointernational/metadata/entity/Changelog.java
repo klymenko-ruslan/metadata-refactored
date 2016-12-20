@@ -50,7 +50,7 @@ public class Changelog implements Serializable {
     private String description;
 
     @Lob
-    @Column(name = "data")
+    @Column(name = "data", length = 4096)
     @JsonView(View.Summary.class)
     private String data;
 
