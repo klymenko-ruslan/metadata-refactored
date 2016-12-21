@@ -1,18 +1,17 @@
 package com.turbointernational.metadata.security;
 
-import com.turbointernational.metadata.Application;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.boot.test.WebIntegrationTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,10 +19,13 @@ import org.springframework.transaction.annotation.Transactional;
  * Created by dmytro.trunykov on 3/20/16.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = Application.class)
-@WebIntegrationTest
+@SpringBootTest
 @ActiveProfiles("integration")
 @Transactional
+@SqlConfig(
+        dataSource = "dataSource",
+        transactionManager = "transactionManagerMetadata"
+)
 public class MetadataAuthenticationProviderTest {
 
     private final static String DB_USER = "dbtest";
