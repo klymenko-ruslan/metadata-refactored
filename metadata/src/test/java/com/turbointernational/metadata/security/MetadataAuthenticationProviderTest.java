@@ -1,9 +1,13 @@
 package com.turbointernational.metadata.security;
 
+import com.turbointernational.metadata.Application;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.WebIntegrationTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -18,6 +22,16 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * Created by dmytro.trunykov on 3/20/16.
  */
+/*
+@RunWith(SpringJUnit4ClassRunner.class)
+@SpringApplicationConfiguration(classes = Application.class)
+@WebIntegrationTest
+@ActiveProfiles("integration")
+@Transactional
+*/
+
+@Ignore
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
 @ActiveProfiles("integration")

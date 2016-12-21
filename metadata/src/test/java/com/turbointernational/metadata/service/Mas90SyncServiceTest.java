@@ -1,19 +1,17 @@
 package com.turbointernational.metadata.service;
 
-import com.turbointernational.metadata.Application;
-import com.turbointernational.metadata.entity.Mas90Sync;
-import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.dao.PartDao;
-import com.turbointernational.metadata.entity.User;
 import com.turbointernational.metadata.dao.UserDao;
+import com.turbointernational.metadata.entity.Mas90Sync;
+import com.turbointernational.metadata.entity.User;
+import com.turbointernational.metadata.entity.part.Part;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.boot.test.WebIntegrationTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
@@ -32,8 +30,7 @@ import static org.springframework.transaction.TransactionDefinition.PROPAGATION_
  * Created by dmytro.trunykov on 3/6/16.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = Application.class)
-@WebIntegrationTest
+@SpringBootTest
 @ActiveProfiles("integration")
 @Transactional
 @SqlConfig(

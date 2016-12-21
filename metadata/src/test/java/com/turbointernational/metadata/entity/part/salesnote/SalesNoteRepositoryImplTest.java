@@ -2,26 +2,20 @@ package com.turbointernational.metadata.entity.part.salesnote;
 
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 import com.google.common.collect.Iterables;
-import com.turbointernational.metadata.Application;
-import com.turbointernational.metadata.dao.ManufacturerDao;
-import com.turbointernational.metadata.dao.InterchangeDao;
+import com.turbointernational.metadata.dao.*;
 import com.turbointernational.metadata.entity.*;
 import com.turbointernational.metadata.entity.part.Part;
-import com.turbointernational.metadata.dao.PartDao;
 import com.turbointernational.metadata.web.dto.SalesNoteSearchRequest;
-import com.turbointernational.metadata.dao.UserDao;
-import com.turbointernational.metadata.dao.PartTypeDao;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.springframework.test.context.web.WebAppConfiguration;
 
 import javax.persistence.NoResultException;
 import javax.transaction.Transactional;
@@ -36,9 +30,9 @@ import static org.junit.Assert.*;
  *
  * @author jrodriguez
  */
+@Ignore
 @RunWith(SpringJUnit4ClassRunner.class)
-@WebAppConfiguration
-@SpringApplicationConfiguration(classes = Application.class)
+@SpringBootTest
 @ActiveProfiles("integration")
 @DbUnitConfiguration
 //@TestExecutionListeners({
@@ -48,8 +42,10 @@ import static org.junit.Assert.*;
 //    DbUnitTestExecutionListener.class
 //})
 @Transactional
-@Ignore
-@TransactionConfiguration(defaultRollback = true)
+@SqlConfig(
+        dataSource = "dataSource",
+        transactionManager = "transactionManagerMetadata"
+)
 public class SalesNoteRepositoryImplTest {
     
     @Autowired(required=true)

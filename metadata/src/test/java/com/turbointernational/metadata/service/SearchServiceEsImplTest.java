@@ -1,13 +1,14 @@
 package com.turbointernational.metadata.service;
 
-import com.turbointernational.metadata.Application;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.boot.test.WebIntegrationTest;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,8 +21,13 @@ import java.util.Map;
  * Created by dmytro.trunykov@zorallabs.com on 11.05.16.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = Application.class)
-@WebIntegrationTest
+@SpringBootTest
+@ActiveProfiles("integration")
+@Transactional
+@SqlConfig(
+        dataSource = "dataSource",
+        transactionManager = "transactionManagerMetadata"
+)
 public class SearchServiceEsImplTest {
 
     @Autowired

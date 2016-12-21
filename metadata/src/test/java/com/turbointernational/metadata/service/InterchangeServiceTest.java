@@ -1,20 +1,17 @@
 package com.turbointernational.metadata.service;
 
-import com.turbointernational.metadata.Application;
-import com.turbointernational.metadata.entity.part.Interchange;
 import com.turbointernational.metadata.dao.InterchangeDao;
-import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.dao.PartDao;
+import com.turbointernational.metadata.entity.part.Interchange;
+import com.turbointernational.metadata.entity.part.Part;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.boot.test.WebIntegrationTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
@@ -32,8 +29,7 @@ import java.util.Set;
  * Created by dmytro.trunykov@zorallabs.com on 2/10/16.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = Application.class)
-@WebIntegrationTest
+@SpringBootTest
 @ActiveProfiles("integration")
 @Transactional
 @SqlConfig(
