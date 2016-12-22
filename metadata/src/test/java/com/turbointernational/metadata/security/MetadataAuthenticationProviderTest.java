@@ -31,7 +31,6 @@ import org.springframework.transaction.annotation.Transactional;
 */
 
 @Ignore
-
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
 @ActiveProfiles("integration")
@@ -101,6 +100,7 @@ public class MetadataAuthenticationProviderTest {
     @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:integration_tests/auth_provider/db_user.sql")
     @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:integration_tests/clear_tables.sql")
     @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:integration_tests/clear_dictionaries.sql")
+    //@Transactional(noRollbackFor = BadCredentialsException.class, transactionManager = "transactionManagerMetadata")
     public void testAuthenticateLocalDBFailure() throws Exception {
         Authentication authentication = new UsernamePasswordAuthenticationToken(DB_USER, DB_PASSWORD + "1"); // invalid password
         metadataAuthenticationProvider.authenticate(authentication);
@@ -187,6 +187,7 @@ public class MetadataAuthenticationProviderTest {
     @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:integration_tests/clear_dictionaries.sql")
     public void testAuthenticateLDAPS_SOFT() throws Exception {
         Authentication authentication = new UsernamePasswordAuthenticationToken(LDAP_USER, LDAP_PASSWORD);
+        // Authentication authentication = new UsernamePasswordAuthenticationToken("creddick", "greenlink99!");
         Authentication authenticate = metadataAuthenticationProvider.authenticate(authentication);
         Assert.assertTrue("LDAPS_SOFT authentication failed.", authenticate.isAuthenticated());
     }
