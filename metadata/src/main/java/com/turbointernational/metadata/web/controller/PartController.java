@@ -394,7 +394,7 @@ public class PartController {
 
     }
 
-    @Transactional
+    @Transactional(noRollbackFor = AssertionError.class)
     @RequestMapping(value="/part/{partId}/gasketkit/{gasketkitId}", method = PUT,
             consumes = APPLICATION_JSON_VALUE,
             produces = APPLICATION_JSON_VALUE)

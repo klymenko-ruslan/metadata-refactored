@@ -67,7 +67,7 @@ public class ApplicationController {
         if (application != null) {
             json = application.toJson();
         }
-        return new ResponseEntity<String>(json, headers, OK);
+        return new ResponseEntity<>(json, headers, OK);
     }
 
     @Transactional

@@ -48,16 +48,10 @@ public class Turbo extends Part {
     @JoinColumn(name="cool_type_id")
     private CoolType coolType;
 
-    /**
-     * A Gasket Kit linked with this Turbo.
-     *
-     * This field is declared as type of Part (not GasketKit) for workaround of an issue
-     * described in the ticket #878.
-     */
     @JsonView(View.Detail.class)
     @OneToOne(fetch = LAZY)
     @JoinColumn(name="gasket_kit_id")
-    private Part gasketKit;
+    private GasketKit gasketKit;
 
     @Transient
     @JsonView(View.Summary.class)
@@ -140,11 +134,11 @@ public class Turbo extends Part {
         this.cmeyFuelType = cmeyFuelType;
     }
 
-    public Part getGasketKit() {
+    public GasketKit getGasketKit() {
         return gasketKit;
     }
 
-    public void setGasketKit(Part gasketKit) {
+    public void setGasketKit(GasketKit gasketKit) {
         this.gasketKit = gasketKit;
     }
 

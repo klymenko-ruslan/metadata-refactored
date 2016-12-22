@@ -1,6 +1,5 @@
 package com.turbointernational.metadata.service;
 
-import com.turbointernational.metadata.dao.GasketKitDao;
 import com.turbointernational.metadata.dao.PartDao;
 import com.turbointernational.metadata.dao.ProductImageDao;
 import com.turbointernational.metadata.entity.BOMAncestor;
@@ -45,9 +44,6 @@ public class PartService {
 
     @Autowired
     private PartDao partDao;
-
-    @Autowired
-    private GasketKitDao gasketKitCrudDao;
 
     @Autowired
     private JdbcTemplate db;
@@ -231,7 +227,7 @@ public class PartService {
         return ancestors;
     }
 
-    @Transactional
+    @Transactional(noRollbackFor = AssertionError.class)
     public void linkGasketKitToTurbo(Long gasketKitId, Long turboId) throws AssertionError {
         Part part = partDao.findOne(turboId);
         Long partTypeId = part.getPartType().getId();
@@ -242,10 +238,8 @@ public class PartService {
         }
         // Validation: Check that Turbo and Gasket Kit already not linked.
         Turbo turbo = (Turbo) part;
-        Part partOldGasketKit = turbo.getGasketKit();
-        GasketKit oldGasketKit = null;
-        if (partOldGasketKit != null) {
-            oldGasketKit = gasketKitCrudDao.findOne(partOldGasketKit.getId());
+        GasketKit oldGasketKit = turbo.getGasketKit();
+        if (oldGasketKit != null) {
             if (oldGasketKit.getId().equals(gasketKitId)) {
                 throw new AssertionError(String.format("Gasket Kit %s already linked with the Turbo %s.",
                         formatPart(oldGasketKit), formatPart(turbo)));
@@ -284,7 +278,7 @@ public class PartService {
     @Transactional
     public Turbo clearGasketKitInPart(Long partId) {
         Turbo turbo = (Turbo) partDao.findOne(partId);
-        GasketKit gasketKit = (GasketKit) turbo.getGasketKit();
+        GasketKit gasketKit = turbo.getGasketKit();
         if (gasketKit != null) {
             boolean removed = gasketKit.getTurbos().remove(turbo);
             if (!removed) {
@@ -299,8 +293,7 @@ public class PartService {
     @Transactional
     public List<Turbo> unlinkTurboInGasketKit(Long partId) {
         Turbo turbo = (Turbo) partDao.findOne(partId);
-        Part partGasketKit = turbo.getGasketKit();
-        GasketKit gasketKit = gasketKitCrudDao.findOne(partGasketKit.getId());
+        GasketKit gasketKit = turbo.getGasketKit();
         gasketKit.getTurbos().remove(turbo);
         turbo.setGasketKit(null);
         List<Turbo> retVal = partDao.listTurbosLinkedToGasketKit(gasketKit.getId());
