@@ -64,6 +64,10 @@
       "type": "double",
       "store": "yes"
     },
+    "weight": {
+      "type": "double",
+      "store": "yes"
+    },
     "inactive": {
       "type": "boolean",
       "store": "yes"

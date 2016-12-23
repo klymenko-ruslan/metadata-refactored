@@ -1,11 +1,4 @@
 <metanav>
-  <li authorize="ROLE_ALTER_PART">
-    <a data-ng-href="/part/{{ partId }}/form"
-       class="btn btn-primary">
-      <i class="fa fa-cog"></i>
-      Edit Part
-    </a>
-  </li>
 
   <li authorize="ROLE_READ">
     <a data-ng-href="/part/{{ partId }}/ancestors"
@@ -108,19 +101,23 @@
                 {{part.dimLength | ifEmpty:'?'}} X {{part.dimWidth | ifEmpty:'?'}} X {{part.dimHeight | ifEmpty:'?'}}
               </td>
             </tr>
-            <tr class="odd" data-ng-if="part.partType.value == 'turbo'">
+            <tr class="odd">
+              <td class="label">Weight</td>
+              <td class="val">{{part.weight}}</td>
+            </tr>
+            <tr class="even" data-ng-if="part.partType.value == 'turbo'">
               <td class="label">Coolant</td>
               <td class="val">{{part.coolType.name}}</td>
             </tr>
-            <tr class="even" data-ng-if="part.partType.value == 'turbo'">
+            <tr class="odd" data-ng-if="part.partType.value == 'turbo'">
               <td class="label">Turbo Model</td>
               <td class="val">{{part.turboModel.name}}</td>
             </tr>
-            <tr class="odd" data-ng-if="part.partType.value == 'turbo'">
+            <tr class="even" data-ng-if="part.partType.value == 'turbo'">
               <td class="label">Turbo Type</td>
               <td class="val">{{part.turboModel.turboType.name}}</td>
             </tr>
-            <tr class="even" data-ng-if="part.partType.value == 'turbo'">
+            <tr class="odd" data-ng-if="part.partType.value == 'turbo'">
               <td class="label">Gasket Kit</td>
               <td class="val">
                 <a data-ng-href="/part/{{part.gasketKit.id}}" data-ng-show="part.gasketKit.id" style="display:inline-block;margin-right:10px;">[{{part.gasketKit.id}}] - {{part.gasketKit.manufacturerPartNumber}}</a>
@@ -136,7 +133,7 @@
                 </div>
               </td>
             </tr>
-            <tr class="odd" data-ng-if="part.partType.value == 'kit'">
+            <tr class="even" data-ng-if="part.partType.value == 'kit'">
               <td class="label">Kit Type</td>
               <td class="val">{{part.kitType.name}}</td>
             </tr>
@@ -179,6 +176,11 @@
                 </div>
                 <div class="form-group col-xs-1">&nbsp;</div>
             </div>
+          </div>
+
+          <div class="form-group">
+            <label for="weight">Weight</label>
+            <input id="weight" class="form-control" type="number" min="0" data-ng-model="part.weight"/>
           </div>
 
           <div class="form-group">

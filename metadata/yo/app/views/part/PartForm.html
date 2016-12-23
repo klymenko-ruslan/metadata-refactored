@@ -104,6 +104,29 @@
         </button>
       </div>
 
+      <div class="form-group">
+        <label for="dimensions">Dimensions (L x W x H)</label>
+        <div class="row">
+            <div class="form-group col-xs-3">
+              <input id="dimensions" class="form-control" type="number" min="0" data-ng-model="part.dimLength"/>
+            </div>
+            <div class="form-group col-xs-1">X</div>
+            <div class="form-group col-xs-3">
+              <input class="form-control" type="number" min="0" data-ng-model="part.dimWidth"/>
+            </div>
+            <div class="form-group col-xs-1">X</div>
+            <div class="form-group col-xs-3">
+              <input class="form-control" type="number" min="0" data-ng-model="part.dimHeight"/>
+            </div>
+            <div class="form-group col-xs-1">&nbsp;</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="weight">Weight</label>
+        <input id="weight" class="form-control" type="number" min="0" data-ng-model="part.weight"/>
+      </div>
+
       <!-- Type-specific fields -->
       <div data-ng-switch="part.partType.magentoAttributeSet">
 

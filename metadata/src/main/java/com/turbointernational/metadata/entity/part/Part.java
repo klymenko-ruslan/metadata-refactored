@@ -147,6 +147,10 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
     @JsonView({View.Summary.class})
     private Double dimHeight;
 
+    @Column(name = "weight")
+    @JsonView({View.Summary.class})
+    private Double weight;
+
     @OneToOne(fetch = LAZY)
     @JoinColumn(name = "part_type_id")
     @JsonView({View.Summary.class})
@@ -258,6 +262,14 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
 
     public void setDimHeight(Double dimHeight) {
         this.dimHeight = dimHeight;
+    }
+
+    public Double getWeight() {
+        return weight;
+    }
+
+    public void setWeight(Double weight) {
+        this.weight = weight;
     }
 
     public PartType getPartType() {
@@ -518,6 +530,7 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
                 .include("dimLength")
                 .include("dimWidth")
                 .include("dimHeight")
+                .include("weight")
                 .include("turboTypes.id")
                 .include("turboTypes.name")
                 .include("partType.id")
@@ -588,6 +601,7 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
             .include("dimLength")
             .include("dimWidth")
             .include("dimHeight")
+            .include("weight")
             .include("inactive")
             .include("partType.id")
             .include("partType.name")
