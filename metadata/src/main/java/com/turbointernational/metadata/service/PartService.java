@@ -236,6 +236,13 @@ public class PartService {
             throw new AssertionError(String.format("Part %s has unexpected part type: %d. Expected a Turbo.",
                     formatPart(part), partTypeId));
         }
+        // Validation: Check part type of the "Gasket Kit" part.
+        Part part2 = partDao.findOne(gasketKitId);
+        partTypeId = part2.getPartType().getId();
+        if (partTypeId.longValue() != PTID_GASKET_KIT) {
+            throw new AssertionError(String.format("Part %s has unexpected part type: %d. Expected a Gasket Kit.",
+                    formatPart(part2), partTypeId));
+        }
         // Validation: Check that Turbo and Gasket Kit already not linked.
         Turbo turbo = (Turbo) part;
         GasketKit oldGasketKit = turbo.getGasketKit();
@@ -244,13 +251,6 @@ public class PartService {
                 throw new AssertionError(String.format("Gasket Kit %s already linked with the Turbo %s.",
                         formatPart(oldGasketKit), formatPart(turbo)));
             }
-        }
-        // Validation: Check part type of the "Gasket Kit" part.
-        Part part2 = partDao.findOne(gasketKitId);
-        partTypeId = part2.getPartType().getId();
-        if (partTypeId.longValue() != PTID_GASKET_KIT) {
-            throw new AssertionError(String.format("Part %s has unexpected part type: %d. Expected a Gasket Kit.",
-                    formatPart(part2), partTypeId));
         }
         // Validation: gasket kits and associated turbos must have the same manfr_id
         GasketKit newGasketKit = (GasketKit) part2;
@@ -275,6 +275,7 @@ public class PartService {
         turbo.setGasketKit(newGasketKit);
         partDao.merge(part);
     }
+
     @Transactional
     public Turbo clearGasketKitInPart(Long partId) {
         Turbo turbo = (Turbo) partDao.findOne(partId);

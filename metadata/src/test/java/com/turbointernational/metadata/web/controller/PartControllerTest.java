@@ -29,7 +29,11 @@ import java.util.Arrays;
 
 import static org.junit.Assert.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
+import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
@@ -84,15 +88,15 @@ public class PartControllerTest {
 
     @Test
     @Sql(
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            executionPhase = BEFORE_TEST_METHOD,
             scripts = "classpath:integration_tests/feed_dictionaries.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_tables.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_dictionaries.sql"
     )
     @WithUserDetails("Admin")
@@ -158,15 +162,15 @@ public class PartControllerTest {
 
     @Test
     @Sql(
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            executionPhase = BEFORE_TEST_METHOD,
             scripts = "classpath:integration_tests/feed_dictionaries.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_tables.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_dictionaries.sql"
     )
     @WithUserDetails("Admin")
@@ -195,15 +199,15 @@ public class PartControllerTest {
 
     @Test
     @Sql(
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            executionPhase = BEFORE_TEST_METHOD,
             scripts = "classpath:integration_tests/feed_dictionaries.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_tables.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_dictionaries.sql"
     )
     @WithUserDetails("Admin")
@@ -232,15 +236,15 @@ public class PartControllerTest {
 
     @Test
     @Sql(
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            executionPhase = BEFORE_TEST_METHOD,
             scripts = "classpath:integration_tests/feed_dictionaries.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_tables.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_dictionaries.sql"
     )
     @WithUserDetails("Admin")
@@ -269,15 +273,15 @@ public class PartControllerTest {
 
     @Test
     @Sql(
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            executionPhase = BEFORE_TEST_METHOD,
             scripts = "classpath:integration_tests/feed_dictionaries.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_tables.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_dictionaries.sql"
     )
     @WithUserDetails("Admin")
@@ -306,15 +310,15 @@ public class PartControllerTest {
 
     @Test
     @Sql(
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            executionPhase = BEFORE_TEST_METHOD,
             scripts = "classpath:integration_tests/feed_dictionaries.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_tables.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_dictionaries.sql"
     )
     @WithUserDetails("Admin")
@@ -343,15 +347,15 @@ public class PartControllerTest {
 
     @Test
     @Sql(
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            executionPhase = BEFORE_TEST_METHOD,
             scripts = "classpath:integration_tests/feed_dictionaries.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_tables.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_dictionaries.sql"
     )
     @WithUserDetails("Admin")
@@ -380,15 +384,15 @@ public class PartControllerTest {
 
     @Test
     @Sql(
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            executionPhase = BEFORE_TEST_METHOD,
             scripts = "classpath:integration_tests/feed_dictionaries.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_tables.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_dictionaries.sql"
     )
     @WithUserDetails("Admin")
@@ -417,15 +421,15 @@ public class PartControllerTest {
 
     @Test
     @Sql(
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            executionPhase = BEFORE_TEST_METHOD,
             scripts = "classpath:integration_tests/feed_dictionaries.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_tables.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_dictionaries.sql"
     )
     @WithUserDetails("Admin")
@@ -454,15 +458,15 @@ public class PartControllerTest {
 
     @Test
     @Sql(
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            executionPhase = BEFORE_TEST_METHOD,
             scripts = "classpath:integration_tests/feed_dictionaries.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_tables.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_dictionaries.sql"
     )
     @WithUserDetails("Admin")
@@ -491,15 +495,15 @@ public class PartControllerTest {
 
     @Test
     @Sql(
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            executionPhase = BEFORE_TEST_METHOD,
             scripts = "classpath:integration_tests/feed_dictionaries.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_tables.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_dictionaries.sql"
     )
     @WithUserDetails("Admin")
@@ -528,15 +532,15 @@ public class PartControllerTest {
 
     @Test
     @Sql(
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            executionPhase = BEFORE_TEST_METHOD,
             scripts = "classpath:integration_tests/feed_dictionaries.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_tables.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_dictionaries.sql"
     )
     @WithUserDetails("Admin")
@@ -565,15 +569,15 @@ public class PartControllerTest {
 
     @Test
     @Sql(
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            executionPhase = BEFORE_TEST_METHOD,
             scripts = "classpath:integration_tests/feed_dictionaries.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_tables.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_dictionaries.sql"
     )
     @WithUserDetails("Admin")
@@ -602,15 +606,15 @@ public class PartControllerTest {
 
     @Test
     @Sql(
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            executionPhase = BEFORE_TEST_METHOD,
             scripts = "classpath:integration_tests/feed_dictionaries.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_tables.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_dictionaries.sql"
     )
     @WithUserDetails("Admin")
@@ -639,15 +643,15 @@ public class PartControllerTest {
 
     @Test
     @Sql(
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            executionPhase = BEFORE_TEST_METHOD,
             scripts = "classpath:integration_tests/feed_dictionaries.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_tables.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_dictionaries.sql"
     )
     @WithUserDetails("Admin")
@@ -676,15 +680,15 @@ public class PartControllerTest {
 
     @Test
     @Sql(
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            executionPhase = BEFORE_TEST_METHOD,
             scripts = "classpath:integration_tests/feed_dictionaries.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_tables.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_dictionaries.sql"
     )
     @WithUserDetails("Admin")
@@ -713,15 +717,15 @@ public class PartControllerTest {
 
     @Test
     @Sql(
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            executionPhase = BEFORE_TEST_METHOD,
             scripts = "classpath:integration_tests/feed_dictionaries.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_tables.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_dictionaries.sql"
     )
     @WithUserDetails("Admin")
@@ -750,15 +754,15 @@ public class PartControllerTest {
 
     @Test
     @Sql(
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            executionPhase = BEFORE_TEST_METHOD,
             scripts = "classpath:integration_tests/feed_dictionaries.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_tables.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_dictionaries.sql"
     )
     @WithUserDetails("Admin")
@@ -787,15 +791,15 @@ public class PartControllerTest {
 
     @Test
     @Sql(
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            executionPhase = BEFORE_TEST_METHOD,
             scripts = "classpath:integration_tests/feed_dictionaries.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_tables.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_dictionaries.sql"
     )
     @WithUserDetails("Admin")
@@ -824,15 +828,15 @@ public class PartControllerTest {
 
     @Test
     @Sql(
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            executionPhase = BEFORE_TEST_METHOD,
             scripts = "classpath:integration_tests/feed_dictionaries.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_tables.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_dictionaries.sql"
     )
     @WithUserDetails("Admin")
@@ -861,15 +865,15 @@ public class PartControllerTest {
 
     @Test
     @Sql(
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            executionPhase = BEFORE_TEST_METHOD,
             scripts = "classpath:integration_tests/feed_dictionaries.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_tables.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_dictionaries.sql"
     )
     @WithUserDetails("Admin")
@@ -898,15 +902,15 @@ public class PartControllerTest {
 
     @Test
     @Sql(
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            executionPhase = BEFORE_TEST_METHOD,
             scripts = "classpath:integration_tests/feed_dictionaries.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_tables.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_dictionaries.sql"
     )
     @WithUserDetails("Admin")
@@ -935,15 +939,15 @@ public class PartControllerTest {
 
     @Test
     @Sql(
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            executionPhase = BEFORE_TEST_METHOD,
             scripts = "classpath:integration_tests/feed_dictionaries.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_tables.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_dictionaries.sql"
     )
     @WithUserDetails("Admin")
@@ -972,15 +976,15 @@ public class PartControllerTest {
 
     @Test
     @Sql(
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            executionPhase = BEFORE_TEST_METHOD,
             scripts = "classpath:integration_tests/feed_dictionaries.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_tables.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_dictionaries.sql"
     )
     @WithUserDetails("Admin")
@@ -1009,15 +1013,15 @@ public class PartControllerTest {
 
     @Test
     @Sql(
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            executionPhase = BEFORE_TEST_METHOD,
             scripts = "classpath:integration_tests/feed_dictionaries.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_tables.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_dictionaries.sql"
     )
     @WithUserDetails("Admin")
@@ -1046,15 +1050,15 @@ public class PartControllerTest {
 
     @Test
     @Sql(
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            executionPhase = BEFORE_TEST_METHOD,
             scripts = "classpath:integration_tests/feed_dictionaries.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_tables.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_dictionaries.sql"
     )
     @WithUserDetails("Admin")
@@ -1083,15 +1087,15 @@ public class PartControllerTest {
 
     @Test
     @Sql(
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            executionPhase = BEFORE_TEST_METHOD,
             scripts = "classpath:integration_tests/feed_dictionaries.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_tables.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_dictionaries.sql"
     )
     @WithUserDetails("Admin")
@@ -1120,15 +1124,15 @@ public class PartControllerTest {
 
     @Test
     @Sql(
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            executionPhase = BEFORE_TEST_METHOD,
             scripts = "classpath:integration_tests/feed_dictionaries.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_tables.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_dictionaries.sql"
     )
     @WithUserDetails("Admin")
@@ -1157,15 +1161,15 @@ public class PartControllerTest {
 
     @Test
     @Sql(
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            executionPhase = BEFORE_TEST_METHOD,
             scripts = "classpath:integration_tests/feed_dictionaries.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_tables.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_dictionaries.sql"
     )
     @WithUserDetails("Admin")
@@ -1194,15 +1198,15 @@ public class PartControllerTest {
 
     @Test
     @Sql(
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            executionPhase = BEFORE_TEST_METHOD,
             scripts = "classpath:integration_tests/feed_dictionaries.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_tables.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_dictionaries.sql"
     )
     @WithUserDetails("Admin")
@@ -1231,15 +1235,15 @@ public class PartControllerTest {
 
     @Test
     @Sql(
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            executionPhase = BEFORE_TEST_METHOD,
             scripts = "classpath:integration_tests/feed_dictionaries.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_tables.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_dictionaries.sql"
     )
     @WithUserDetails("Admin")
@@ -1268,15 +1272,15 @@ public class PartControllerTest {
 
     @Test
     @Sql(
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            executionPhase = BEFORE_TEST_METHOD,
             scripts = "classpath:integration_tests/feed_dictionaries.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_tables.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_dictionaries.sql"
     )
     @WithUserDetails("Admin")
@@ -1305,15 +1309,15 @@ public class PartControllerTest {
 
     @Test
     @Sql(
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            executionPhase = BEFORE_TEST_METHOD,
             scripts = "classpath:integration_tests/feed_dictionaries.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_tables.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_dictionaries.sql"
     )
     @WithUserDetails("Admin")
@@ -1342,15 +1346,15 @@ public class PartControllerTest {
 
     @Test
     @Sql(
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            executionPhase = BEFORE_TEST_METHOD,
             scripts = "classpath:integration_tests/feed_dictionaries.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_tables.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_dictionaries.sql"
     )
     @WithUserDetails("Admin")
@@ -1379,15 +1383,15 @@ public class PartControllerTest {
 
     @Test
     @Sql(
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            executionPhase = BEFORE_TEST_METHOD,
             scripts = "classpath:integration_tests/feed_dictionaries.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_tables.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_dictionaries.sql"
     )
     @WithUserDetails("Admin")
@@ -1416,15 +1420,15 @@ public class PartControllerTest {
 
     @Test
     @Sql(
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            executionPhase = BEFORE_TEST_METHOD,
             scripts = "classpath:integration_tests/feed_dictionaries.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_tables.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_dictionaries.sql"
     )
     @WithUserDetails("Admin")
@@ -1453,15 +1457,15 @@ public class PartControllerTest {
 
     @Test
     @Sql(
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            executionPhase = BEFORE_TEST_METHOD,
             scripts = "classpath:integration_tests/feed_dictionaries.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_tables.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_dictionaries.sql"
     )
     @WithUserDetails("Admin")
@@ -1490,15 +1494,15 @@ public class PartControllerTest {
 
     @Test
     @Sql(
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            executionPhase = BEFORE_TEST_METHOD,
             scripts = "classpath:integration_tests/feed_dictionaries.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_tables.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_dictionaries.sql"
     )
     @WithUserDetails("Admin")
@@ -1527,15 +1531,15 @@ public class PartControllerTest {
 
     @Test
     @Sql(
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            executionPhase = BEFORE_TEST_METHOD,
             scripts = "classpath:integration_tests/feed_dictionaries.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_tables.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_dictionaries.sql"
     )
     @WithUserDetails("Admin")
@@ -1564,15 +1568,15 @@ public class PartControllerTest {
 
     @Test
     @Sql(
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            executionPhase = BEFORE_TEST_METHOD,
             scripts = "classpath:integration_tests/feed_dictionaries.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_tables.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_dictionaries.sql"
     )
     @WithUserDetails("Admin")
@@ -1601,15 +1605,15 @@ public class PartControllerTest {
 
     @Test
     @Sql(
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            executionPhase = BEFORE_TEST_METHOD,
             scripts = "classpath:integration_tests/feed_dictionaries.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_tables.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_dictionaries.sql"
     )
     @WithUserDetails("Admin")
@@ -1638,27 +1642,27 @@ public class PartControllerTest {
 
     @Test
     @Sql(
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            executionPhase = BEFORE_TEST_METHOD,
             scripts = "classpath:integration_tests/feed_dictionaries.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            executionPhase = BEFORE_TEST_METHOD,
             statements =
                     "insert into turbo_type(id, name, manfr_id) values(952, 'K03', 11);" +
                     "insert into turbo_model(id, name, turbo_type_id) values(7974, 'K03-1870EXA4.82CAXK', 952);"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             statements =
                     "delete from turbo_type where id=7974;" +
                     "delete from turbo_model where id=952;"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_tables.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_dictionaries.sql"
     )
     @WithUserDetails("Admin")
@@ -1691,15 +1695,15 @@ public class PartControllerTest {
 
     @Test
     @Sql(
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            executionPhase = BEFORE_TEST_METHOD,
             scripts = "classpath:integration_tests/feed_dictionaries.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_tables.sql"
     )
     @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            executionPhase = AFTER_TEST_METHOD,
             scripts = "classpath:integration_tests/clear_dictionaries.sql"
     )
     @WithUserDetails("Admin")
@@ -1724,6 +1728,229 @@ public class PartControllerTest {
         assertEquals(47L, partType.getId().longValue());
         long chlgcnt = changelogDao.count();
         assertEquals(1, chlgcnt);
+    }
+
+    /**
+     * Test link a Gasket Kit with a Turbo when all constraints are correct.
+     */
+    @Test
+    @Sql(
+            executionPhase = BEFORE_TEST_METHOD,
+            scripts = "classpath:integration_tests/feed_dictionaries.sql"
+    )
+    @Sql(
+            executionPhase = BEFORE_TEST_METHOD,
+            scripts = "classpath:integration_tests/part_controller/setgasketkitforpart_success.sql"
+    )
+    @Sql(
+            executionPhase = AFTER_TEST_METHOD,
+            scripts = "classpath:integration_tests/clear_tables.sql"
+    )
+    @Sql(
+            executionPhase = AFTER_TEST_METHOD,
+            scripts = "classpath:integration_tests/clear_dictionaries.sql"
+    )
+    @WithUserDetails("Admin")
+    public void testSetGasketKitForPartSuccess() throws Exception {
+        String requestBody = "{\"id\":69079}";
+        String responseBody = "{\"status\":\"OK\"}";
+        mockMvc.perform(put("/metadata/part/25861/gasketkit/69079")
+                .content(requestBody).contentType(contentType))
+                .andExpect(status().isOk())
+                .andExpect(content().json(responseBody));
+        Part part = partDao.findOne(25861L);
+        assertNotNull(part);
+        assertTrue(part instanceof Turbo);
+        Turbo turbo = (Turbo) part;
+        GasketKit gasketKit = turbo.getGasketKit();
+        assertNotNull(gasketKit);
+        assertEquals(69079L, gasketKit.getId().longValue());
+     }
+
+    /**
+     * Test link a Gasket Kit with a Turbo when they are already linked.
+     */
+    @Test
+    @Sql(
+            executionPhase = BEFORE_TEST_METHOD,
+            scripts = "classpath:integration_tests/feed_dictionaries.sql"
+    )
+    @Sql(
+            executionPhase = BEFORE_TEST_METHOD,
+            scripts = "classpath:integration_tests/part_controller/setgasketkitforpart_alreadylinked.sql"
+    )
+    @Sql(
+            executionPhase = AFTER_TEST_METHOD,
+            scripts = "classpath:integration_tests/clear_tables.sql"
+    )
+    @Sql(
+            executionPhase = AFTER_TEST_METHOD,
+            scripts = "classpath:integration_tests/clear_dictionaries.sql"
+    )
+    @WithUserDetails("Admin")
+    public void testSetGasketKitForPartFailureAlreadyLinked() throws Exception {
+        String requestBody = "{\"id\":69079}";
+        String responseBody = "{\"status\":\"ASSERTION_ERROR\", \"message\": \"Gasket Kit [69079] - pending285 already linked with the Turbo [25861] - 17201-0L020.\"}";
+        mockMvc.perform(put("/metadata/part/25861/gasketkit/69079")
+                .content(requestBody).contentType(contentType))
+                .andExpect(status().isOk())
+                .andExpect(content().json(responseBody));
+    }
+
+    /**
+     * Test link a Gasket Kit with a Turbo when 'Turbo' has wrong a part type.
+     */
+    @Test
+    @Sql(
+            executionPhase = BEFORE_TEST_METHOD,
+            scripts = "classpath:integration_tests/feed_dictionaries.sql"
+    )
+    @Sql(
+            executionPhase = BEFORE_TEST_METHOD,
+            scripts = "classpath:integration_tests/part_controller/setgasketkitforpart_failure_notturbo.sql"
+    )
+    @Sql(
+            executionPhase = AFTER_TEST_METHOD,
+            scripts = "classpath:integration_tests/clear_tables.sql"
+    )
+    @Sql(
+            executionPhase = AFTER_TEST_METHOD,
+            scripts = "classpath:integration_tests/clear_dictionaries.sql"
+    )
+    @WithUserDetails("Admin")
+    public void testSetGasketKitForPartFailureNotTurbo() throws Exception {
+        String requestBody = "{\"id\":69079}";
+        String responseBody = "{\"status\":\"ASSERTION_ERROR\", \"message\": \"Part [25861] - 17201-0L020 has unexpected part type: 2. Expected a Turbo.\"}";
+        mockMvc.perform(put("/metadata/part/25861/gasketkit/69079")
+                .content(requestBody).contentType(contentType))
+                .andExpect(status().isOk())
+                .andExpect(content().json(responseBody));
+    }
+
+    /**
+     * Test link a Gasket Kit with a Turbo when 'Gasket Kit' has wrong a part type.
+     */
+    @Test
+    @Sql(
+            executionPhase = BEFORE_TEST_METHOD,
+            scripts = "classpath:integration_tests/feed_dictionaries.sql"
+    )
+    @Sql(
+            executionPhase = BEFORE_TEST_METHOD,
+            scripts = "classpath:integration_tests/part_controller/setgasketkitforpart_failure_notgasketkit.sql"
+    )
+    @Sql(
+            executionPhase = AFTER_TEST_METHOD,
+            scripts = "classpath:integration_tests/clear_tables.sql"
+    )
+    @Sql(
+            executionPhase = AFTER_TEST_METHOD,
+            scripts = "classpath:integration_tests/clear_dictionaries.sql"
+    )
+    @WithUserDetails("Admin")
+    public void testSetGasketKitForPartFailureNotGasketKit() throws Exception {
+        String requestBody = "{\"id\":69079}";
+        String responseBody = "{\"status\":\"ASSERTION_ERROR\", \"message\": \"Part [69079] - pending285 has unexpected part type: 2. Expected a Gasket Kit.\"}";
+        mockMvc.perform(put("/metadata/part/25861/gasketkit/69079")
+                .content(requestBody).contentType(contentType))
+                .andExpect(status().isOk())
+                .andExpect(content().json(responseBody));
+    }
+
+    /**
+     * Test link a Gasket Kit with a Turbo when they have different manufacturers.
+     */
+    @Test
+    @Sql(
+            executionPhase = BEFORE_TEST_METHOD,
+            scripts = "classpath:integration_tests/feed_dictionaries.sql"
+    )
+    @Sql(
+            executionPhase = BEFORE_TEST_METHOD,
+            scripts = "classpath:integration_tests/part_controller/setgasketkitforpart_failure_manufacturer.sql"
+    )
+    @Sql(
+            executionPhase = AFTER_TEST_METHOD,
+            scripts = "classpath:integration_tests/clear_tables.sql"
+    )
+    @Sql(
+            executionPhase = AFTER_TEST_METHOD,
+            scripts = "classpath:integration_tests/clear_dictionaries.sql"
+    )
+    @WithUserDetails("Admin")
+    public void testSetGasketKitForPartFailureManufacturer() throws Exception {
+        String requestBody = "{\"id\":69079}";
+        String responseBody = "{\"status\":\"ASSERTION_ERROR\", \"message\": \"The Turbo and Gasket Kit have different manufacturers.\"}";
+        mockMvc.perform(put("/metadata/part/25861/gasketkit/69079")
+                .content(requestBody).contentType(contentType))
+                .andExpect(status().isOk())
+                .andExpect(content().json(responseBody));
+    }
+
+    /**
+     * Test link a Gasket Kit with a Turbo when they incompatible BOMs sets.
+     */
+    @Test
+    @Sql(
+            executionPhase = BEFORE_TEST_METHOD,
+            scripts = "classpath:integration_tests/feed_dictionaries.sql"
+    )
+    @Sql(
+            executionPhase = BEFORE_TEST_METHOD,
+            scripts = "classpath:integration_tests/part_controller/setgasketkitforpart_failure_boms.sql"
+    )
+    @Sql(
+            executionPhase = AFTER_TEST_METHOD,
+            scripts = "classpath:integration_tests/clear_tables.sql"
+    )
+    @Sql(
+            executionPhase = AFTER_TEST_METHOD,
+            scripts = "classpath:integration_tests/clear_dictionaries.sql"
+    )
+    @WithUserDetails("Admin")
+    public void testSetGasketKitForPartFailureBOMs() throws Exception {
+        String requestBody = "{\"id\":69079}";
+        String responseBody = "{\"status\":\"ASSERTION_ERROR\", \"message\": \"Not all parts in BOM of the Gasket Kit exist in the BOM of associated Turbo.\"}";
+        mockMvc.perform(put("/metadata/part/25861/gasketkit/69079")
+                .content(requestBody).contentType(contentType))
+                .andExpect(status().isOk())
+                .andExpect(content().json(responseBody));
+    }
+
+    /**
+     * Test unlink a Gasket Kit with a Turbo.
+     */
+    @Test
+    @Sql(
+            executionPhase = BEFORE_TEST_METHOD,
+            scripts = "classpath:integration_tests/feed_dictionaries.sql"
+    )
+    @Sql(
+            executionPhase = BEFORE_TEST_METHOD,
+            scripts = "classpath:integration_tests/part_controller/setgasketkitforpart_alreadylinked.sql"
+    )
+    @Sql(
+            executionPhase = AFTER_TEST_METHOD,
+            scripts = "classpath:integration_tests/clear_tables.sql"
+    )
+    @Sql(
+            executionPhase = AFTER_TEST_METHOD,
+            scripts = "classpath:integration_tests/clear_dictionaries.sql"
+    )
+    @WithUserDetails("Admin")
+    public void testClearGasketKitInPart() throws Exception {
+        Turbo turbo = (Turbo) partDao.findOne(25861L);
+        assertNotNull(turbo);
+        assertNotNull(turbo.getGasketKit());
+        assertEquals(69079L, turbo.getGasketKit().getId().longValue());
+        String responseBody = "{\"class\":\"com.turbointernational.metadata.entity.part.types.Turbo\",\"id\":25861,\"manufacturer\":{\"id\":4,\"name\":\"Toyota\",\"type\":{\"id\":1,\"name\":\"turbo\"}},\"manufacturerPartNumber\":\"17201-0L020\",\"name\":null,\"description\":null,\"dimLength\":null,\"dimWidth\":null,\"dimHeight\":null,\"weight\":null,\"partType\":{\"id\":1,\"name\":\"Turbo\",\"value\":\"turbo\",\"magentoAttributeSet\":\"Turbo\"},\"inactive\":false,\"turboTypes\":[],\"productImages\":[],\"version\":1,\"legendImgFilename\":null,\"turboModel\":{\"id\":4013,\"name\":\"CT\",\"turboType\":{\"id\":138,\"manufacturer\":{\"id\":4,\"name\":\"Toyota\",\"type\":{\"id\":1,\"name\":\"turbo\"}},\"name\":\"CT\"}},\"coolType\":null,\"gasketKit\":null}";
+        mockMvc.perform(delete("/metadata/part/25861/gasketkit")
+                .content("{}").contentType(contentType))
+                .andExpect(status().isOk())
+                .andExpect(content().json(responseBody));
+        turbo = (Turbo) partDao.findOne(25861L);
+        assertNotNull(turbo);
+        assertNull(turbo.getGasketKit());
     }
 
 }

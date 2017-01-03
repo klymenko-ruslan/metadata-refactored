@@ -25,7 +25,6 @@ delete from compressor_wheel;
 delete from fast_wearing_component;
 delete from fitting;
 delete from gasket;
-delete from gasket_kit;
 delete from heatshield;
 delete from journal_bearing;
 delete from journal_bearing_spacer;
@@ -55,6 +54,7 @@ delete from turbine_housing;
 delete from turbine_wheel;
 
 delete from turbo;
+delete from gasket_kit;
 delete from turbo_model;
 delete from turbo_type;
 
