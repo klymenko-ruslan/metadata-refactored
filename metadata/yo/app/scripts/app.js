@@ -1,6 +1,6 @@
 "use strict";
 
-angular.module("ngMetaCrudApp", ["ngRoute", "ngTable", "ui.bootstrap",
+angular.module("ngMetaCrudApp", ["ngCookies", "ngRoute", "ngTable", "ui.bootstrap",
     "restangular", "dialogs.main", "gToast", "angucomplete-alt", "jsonFormatter",
     "angular-loading-bar"
   ])

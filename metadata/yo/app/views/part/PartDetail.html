@@ -308,13 +308,21 @@
       </div>
       <div class="col-xs-6">
 
-        <div class="row">
-          <div class="col-xs-12">
-            <button authorize="ROLE_PART_IMAGES" data-ng-click="addImage()" class="btn btn-primary pull-right" style="margin-bottom:8px;">
-              <i class="fa fa-plus"></i> Add Image
-            </button>
+        <form class="form-inline" novalidate>
+          <button authorize="ROLE_PART_IMAGES" data-ng-click="addImage()" class="btn btn-primary pull-right" style="margin-bottom:8px;">
+            <i class="fa fa-plus"></i> Add Image
+          </button>
+          <div class="form-group pull-left" data-ng-hide = "!part.productImages || part.productImages.length == 0">
+            <label for="img-pg-sz">Display on the page</label>
+            <select id="img-pg-sz" data-ng-model="imgPgSz" data-ng-change="onChangeImgPgSz()">
+              <option value="one">1 image</option>
+              <option value="two">2 images</option>
+              <option value="three">3 images</option>
+              <option value="four">4 images</option>
+              <option value="all">all images</option>
+            </select>
           </div>
-        </div>
+        </form>
 
         <div class="row">
           <div class="col-xs-12">
@@ -339,8 +347,10 @@
                     </div>
                   </div>
                 </form>
-                <img data-ng-src="/metadata/image/135/{{image.id}}.jpg" style="max-height: 135px; max-width: 135px; margin-top: 5px;" />
+                <img data-ng-src="/metadata/image/135/{{image.id}}.jpg" class="product-icon" data-ng-click="onShowProductImage(image.id)" />
               </li>
+
+              <ul uib-pager items-per-page="imgPgSzVal" total-items="part.productImages.length" data-ng-model="partImagesPageNum"></ul>
 
             </ul>
 

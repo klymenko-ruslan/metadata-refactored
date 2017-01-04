@@ -1,19 +1,39 @@
 "use strict";
 
 angular.module("ngMetaCrudApp")
-.controller("PartDetailCtrl", ["$scope", "$log", "$q", "$location", "$routeParams", "Kits", "ngTableParams", "utils",
-    "restService", "Restangular", "User", "$uibModal", "dialogs", "gToast", "part", "criticalDimensions",
-    "manufacturers", "turbos",
-    function ($scope, $log, $q, $location, $routeParams, Kits, ngTableParams, utils,
+.controller("PartDetailCtrl", ["$scope", "$log", "$q", "$location", "$cookies", "$routeParams", "Kits",
+    "ngTableParams", "utils", "restService", "Restangular", "User", "$uibModal", "dialogs", "gToast",
+    "part", "criticalDimensions", "manufacturers", "turbos",
+    function ($scope, $log, $q, $location, $cookies, $routeParams, Kits, ngTableParams, utils,
     restService, Restangular, User, $uibModal, dialogs, gToast, part, criticalDimensions, manufacturers,
     turbos) {
   $scope.partId = part.id;
   $scope.part = part;
   $scope.formMode = "view";
+  $scope.partImagesPageNum = 1;
   $scope.criticalDimensions = criticalDimensions;
   // Make sure we're using the correct part type
   $scope.partType = part.partType.name;
+  $scope.imgPgSz = $cookies.get("pagedatails.imgpgsz");
+  if (!$scope.imgPgSz) {
+    $scope.imgPgSz = "two";
+  }
 
+  function _imgPgSz2Val(txt) {
+    var retval = $scope.part.productImages.length; // all
+    if (txt === "one") {
+      retval = 1;
+    } else if (txt === "two") {
+      retval = 2;
+    } else if (txt === "three") {
+      retval = 3;
+    } else if (txt === "four") {
+      retval = 4;
+    }
+    return retval;
+  }
+
+  $scope.imgPgSzVal = _imgPgSz2Val($scope.imgPgSz);
   $scope.turbosTableParams = null;
 
   function _initTurbosTableParams(turbos) {
@@ -436,5 +456,35 @@ angular.module("ngMetaCrudApp")
       $scope.part.productImages.push(image);
     });
   };
+
+  $scope.onChangeImgPgSz = function() {
+    $cookies.put("pagedatails.imgpgsz", $scope.imgPgSz);
+    $scope.imgPgSzVal = _imgPgSz2Val($scope.imgPgSz);
+  };
+
+  $scope.onShowProductImage = function(img_id) {
+    $uibModal.open({
+      templateUrl: "/views/part/dialog/DisplayPartImages.html",
+      animation: false,
+      windowClass: "product-img-modal-window",
+      controller: "DisplayPartImagesDlgCtrl",
+      resolve: {
+        img_id: function() {
+          return img_id;
+        }
+      }
+    });
+  };
+
+}])
+.controller("DisplayPartImagesDlgCtrl", ["$scope", "$log", "$uibModalInstance", "img_id",
+  function($scope, $log, $uibModalInstance, img_id) {
+
+    $scope.imgId = img_id;
+    $scope.imgSize = "1000";
+
+    $scope.onClose = function() {
+      $uibModalInstance.close();
+    };
 
 }]);

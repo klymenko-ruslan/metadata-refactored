@@ -460,3 +460,14 @@ div.tolerance {
   0%   { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+img.product-icon {
+  max-height: 135px;
+  max-width: 135px;
+  margin-top: 5px;
+  cursor: pointer;
+}
+
+.product-img-modal-window .modal-dialog {
+  width: 1035px;
+}
