@@ -331,7 +331,7 @@
 
             <ul data-ng-hide="!part.productImages || part.productImages.length == 0" class="list-unstyled list-inline">
 
-              <li data-ng-repeat="image in part.productImages" class="ng-scope bg-info" style="padding: 6px; margin: 4px;">
+              <li data-ng-repeat="image in part.productImages" class="ng-scope bg-info" style="padding: 6px; margin: 4px;" data-ng-show="($index >= (partImagesPageNum - 1) * imgPgSzVal) && ($index < (partImagesPageNum - 1) * imgPgSzVal + imgPgSzVal)">
                 <form class="form-inline">
                   <div class="form-group pull-right">
                     <button class="btn btn-xs btn-danger" data-ng-click="deleteImage(image)">
