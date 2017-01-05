@@ -331,7 +331,7 @@
 
             <ul data-ng-hide="!part.productImages || part.productImages.length == 0" class="list-unstyled list-inline">
 
-              <li data-ng-repeat="image in part.productImages" class="ng-scope bg-info" style="padding: 6px; margin: 4px;" data-ng-show="($index >= (partImagesPageNum - 1) * imgPgSzVal) && ($index < (partImagesPageNum - 1) * imgPgSzVal + imgPgSzVal)">
+              <li data-ng-repeat="image in part.productImages" class="ng-scope bg-info part-icon" data-ng-show="($index >= (partImagesPageNum - 1) * imgPgSzVal) && ($index < (partImagesPageNum - 1) * imgPgSzVal + imgPgSzVal)">
                 <form class="form-inline">
                   <div class="form-group pull-right">
                     <button class="btn btn-xs btn-danger" data-ng-click="deleteImage(image)">
@@ -347,12 +347,12 @@
                     </div>
                   </div>
                 </form>
-                <img data-ng-src="/metadata/image/135/{{image.id}}.jpg" class="product-icon" data-ng-click="onShowProductImage(image.id)" />
+                <img data-ng-src="/metadata/image/135/{{image.id}}.jpg" class="part-icon" data-ng-click="onShowProductImage(image.id)" />
               </li>
 
-              <ul uib-pager items-per-page="imgPgSzVal" total-items="part.productImages.length" data-ng-model="partImagesPageNum"></ul>
-
             </ul>
+
+            <uib-pagination items-per-page="imgPgSzVal" total-items="part.productImages.length" data-ng-model="partImagesPageNum" />
 
           </div>
         </div>

@@ -461,13 +461,19 @@ div.tolerance {
   100% { transform: rotate(360deg); }
 }
 
-img.product-icon {
+li.part-icon {
+  padding: 6px;
+  margin: 4px;
+}
+
+img.part-icon {
   max-height: 135px;
   max-width: 135px;
   margin-top: 5px;
   cursor: pointer;
 }
 
-.product-img-modal-window .modal-dialog {
+.part-img-modal-window .modal-dialog {
   width: 1035px;
 }
+

@@ -466,7 +466,7 @@ angular.module("ngMetaCrudApp")
     $uibModal.open({
       templateUrl: "/views/part/dialog/DisplayPartImages.html",
       animation: false,
-      windowClass: "product-img-modal-window",
+      windowClass: "part-img-modal-window",
       controller: "DisplayPartImagesDlgCtrl",
       resolve: {
         img_id: function() {
