@@ -471,17 +471,21 @@ angular.module("ngMetaCrudApp")
       resolve: {
         img_id: function() {
           return img_id;
+        },
+        part: function() {
+          return $scope.part;
         }
       }
     });
   };
 
 }])
-.controller("DisplayPartImagesDlgCtrl", ["$scope", "$log", "$uibModalInstance", "img_id",
-  function($scope, $log, $uibModalInstance, img_id) {
+.controller("DisplayPartImagesDlgCtrl", ["$scope", "$log", "$uibModalInstance", "img_id", "part",
+  function($scope, $log, $uibModalInstance, img_id, part) {
 
     $scope.imgId = img_id;
     $scope.imgSize = "1000";
+    $scope.part = part;
 
     $scope.onClose = function() {
       $uibModalInstance.close();

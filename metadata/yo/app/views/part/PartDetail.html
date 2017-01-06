@@ -70,7 +70,9 @@
     <div class="row">
       <div class="col-xs-6" data-ng-switch="formMode">
 
-        <div data-ng-switch-when="view">
+        <div class="part-panel">
+
+          <div data-ng-switch-when="view">
           <table class="info-form">
             <tr class="odd">
               <td class="label">Name</td>
@@ -148,7 +150,7 @@
 
         </div>
 
-        <form name="partForm" novalidate data-ng-switch-when="edit">
+          <form name="partForm" novalidate data-ng-switch-when="edit">
 
           <div class="form-group">
             <label for="name">Name</label>
@@ -305,15 +307,19 @@
           </div>
         </form>
 
+        </div>
+
       </div>
       <div class="col-xs-6">
 
-        <form class="form-inline" novalidate>
+        <div class="part-panel">
+
+          <form class="form-inline" novalidate>
           <button authorize="ROLE_PART_IMAGES" data-ng-click="addImage()" class="btn btn-primary pull-right" style="margin-bottom:8px;">
             <i class="fa fa-plus"></i> Add Image
           </button>
           <div class="form-group pull-left" data-ng-hide = "!part.productImages || part.productImages.length == 0">
-            <label for="img-pg-sz">Display on the page</label>
+            <label for="img-pg-sz">Display per page</label>
             <select id="img-pg-sz" data-ng-model="imgPgSz" data-ng-change="onChangeImgPgSz()">
               <option value="one">1 image</option>
               <option value="two">2 images</option>
@@ -324,8 +330,8 @@
           </div>
         </form>
 
-        <div class="row">
-          <div class="col-xs-12">
+          <div class="row">
+            <div class="col-xs-12">
 
             <div data-ng-show="!part.productImages || part.productImages.length == 0" class="no-image"></div>
 
@@ -352,20 +358,27 @@
 
             </ul>
 
-            <uib-pagination items-per-page="imgPgSzVal" total-items="part.productImages.length" data-ng-model="partImagesPageNum" />
+            <uib-pagination items-per-page="imgPgSzVal" total-items="part.productImages.length" data-ng-model="partImagesPageNum" data-ng-hide="part.productImages.length == 0 || part.productImages.length == imgPgSzVal" />
 
           </div>
+          </div>
+
         </div>
+
       </div>
     </div>
     <div class="row">
       <div class="col-xs-12">
         <hr/>
-        <h4><u>Interchangeable Parts</u></h4>
-        <interchangeable-parts part="part"></interchangeable-parts>
+        <div>
+          <h4><u>Interchangeable Parts</u></h4>
+          <interchangeable-parts part="part"></interchangeable-parts>
+        </div>
         <hr/>
-        <h4><u>Bill of Materials</u></h4>
-        <bom parent-part-id="partId"></bom>
+        <div>
+          <h4><u>Bill of Materials</u></h4>
+          <bom parent-part-id="partId"></bom>
+        </div>
       </div>
     </div>
   </div>
