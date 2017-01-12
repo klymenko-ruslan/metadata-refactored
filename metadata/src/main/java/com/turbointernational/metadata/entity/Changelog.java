@@ -1,13 +1,16 @@
 package com.turbointernational.metadata.entity;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.entity.chlogsrc.Source;
 import com.turbointernational.metadata.util.View;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import static javax.persistence.EnumType.STRING;
+import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.AUTO;
 import static javax.persistence.TemporalType.TIMESTAMP;
 
@@ -53,6 +56,13 @@ public class Changelog implements Serializable {
     @Column(name = "data", length = 4096)
     @JsonView(View.Summary.class)
     private String data;
+
+    @ManyToMany(fetch = LAZY)
+    @JoinTable(name="changelog_source",
+            joinColumns=@JoinColumn(name="changelog_id"),
+            inverseJoinColumns=@JoinColumn(name="source_id"))
+    @JsonView({View.Detail.class})
+    private List<Source> sources;
 
     //</editor-fold>
 
