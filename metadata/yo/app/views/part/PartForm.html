@@ -59,11 +59,6 @@
       </div>
 
       <div class="form-group">
-        <label for="description">Description</label>
-        <textarea id="description" class="form-control" rows="4" data-ng-model="part.description"></textarea>
-      </div>
-
-      <div class="form-group">
         <label for="manufacturer">Manufacturer</label>
         <select id="manufacturer" name="manufacturer" class="form-control"
                 data-ng-model="part.manufacturer"
@@ -105,7 +100,12 @@
       </div>
 
       <div class="form-group">
-        <label for="dimensions">Dimensions (L x W x H)</label>
+        <label for="description">Description</label>
+        <textarea id="description" class="form-control" rows="4" data-ng-model="part.description"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="dimensions">Dimensions L x W x H (in)</label>
         <div class="row">
             <div class="form-group col-xs-3">
               <input id="dimensions" class="form-control" type="number" min="0" data-ng-model="part.dimLength"/>
@@ -123,7 +123,7 @@
       </div>
 
       <div class="form-group">
-        <label for="weight">Weight</label>
+        <label for="weight">Weight (grams)</label>
         <input id="weight" class="form-control" type="number" min="0" data-ng-model="part.weight"/>
       </div>
 
@@ -215,5 +215,7 @@
     </div>
 
   </div>
+
+  <pre>{{part | json:2}}</pre>
 
 </form>
