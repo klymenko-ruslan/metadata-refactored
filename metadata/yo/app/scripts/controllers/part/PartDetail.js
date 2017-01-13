@@ -131,7 +131,7 @@ angular.module("ngMetaCrudApp")
 
   $scope.revert = function() {
     $scope.part = Restangular.copy($scope.oldPart);
-    $scope.partForm.$setPristine(true);
+    // $scope.partForm.$setPristine(true);
     $scope.$broadcast("revert");
   };
 
@@ -155,7 +155,8 @@ angular.module("ngMetaCrudApp")
     restService.updatePart($scope.part).then(
       function(part) {
         $scope.part = part;
-        $scope.onEditCancel(); // close form
+        $scope.oldPart = Restangular.copy(part);
+        _closeForm();
       },
       function(response) {
         restService.error("Could not update part", response);
@@ -376,6 +377,11 @@ angular.module("ngMetaCrudApp")
   };
 
   $scope.onEditCancel = function() {
+    $scope.revert();
+    _closeForm();
+  };
+
+  function _closeForm() {
     $scope.formMode = "view";
   };
 

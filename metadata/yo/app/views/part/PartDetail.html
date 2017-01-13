@@ -98,13 +98,13 @@
               <td class="val">{{part.description}}</td>
             </tr>
             <tr class="even">
-              <td class="label">Dimension (L x W x H)</td>
+              <td class="label">Dimension L x W x H (in)</td>
               <td class="val">
                 {{part.dimLength | ifEmpty:'?'}} X {{part.dimWidth | ifEmpty:'?'}} X {{part.dimHeight | ifEmpty:'?'}}
               </td>
             </tr>
             <tr class="odd">
-              <td class="label">Weight</td>
+              <td class="label">Weight (grams)</td>
               <td class="val">{{part.weight}}</td>
             </tr>
             <tr class="even" data-ng-if="part.partType.value == 'turbo'">
@@ -150,39 +150,11 @@
 
         </div>
 
-          <form name="partForm" novalidate data-ng-switch-when="edit">
+        <form name="partForm" novalidate data-ng-switch-when="edit">
 
           <div class="form-group">
             <label for="name">Name</label>
             <input id="name" class="form-control" type="text" data-ng-model="part.name"/>
-          </div>
-
-          <div class="form-group">
-            <label for="description">Description</label>
-            <textarea id="description" class="form-control" rows="4" data-ng-model="part.description"></textarea>
-          </div>
-
-          <div class="form-group">
-            <label for="dimensions">Dimensions (L x W x H)</label>
-            <div class="row">
-                <div class="form-group col-xs-3">
-                  <input id="dimensions" class="form-control" type="number" min="0" data-ng-model="part.dimLength"/>
-                </div>
-                <div class="form-group col-xs-1">X</div>
-                <div class="form-group col-xs-3">
-                  <input class="form-control" type="number" min="0" data-ng-model="part.dimWidth"/>
-                </div>
-                <div class="form-group col-xs-1">X</div>
-                <div class="form-group col-xs-3">
-                  <input class="form-control" type="number" min="0" data-ng-model="part.dimHeight"/>
-                </div>
-                <div class="form-group col-xs-1">&nbsp;</div>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="weight">Weight</label>
-            <input id="weight" class="form-control" type="number" min="0" data-ng-model="part.weight"/>
           </div>
 
           <div class="form-group">
@@ -209,6 +181,39 @@
               <span data-ng-show="part.manufacturerPartNumber.$error.maxlenth">Too long manufacturer part number (max 255 chars)!</span>
               <span data-ng-show="part.manufacturerPartNumber.$error.nonUniquePartNumber">Pair (Manufacturer, P/N) is not unique!</span>
             </div>
+          </div>
+
+          <div class="form-group">
+            <label for="active">Active</label>
+            <input id="active" type="checkbox" data-ng-model="part.inactive" data-ng-true-value="false" data-ng-false-value="true" />
+          </div>
+
+          <div class="form-group">
+            <label for="description">Description</label>
+            <textarea id="description" class="form-control" rows="4" data-ng-model="part.description"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="dimensions">Dimensions L x W x H (in)</label>
+            <div class="row">
+                <div class="form-group col-xs-3">
+                  <input id="dimensions" class="form-control" type="number" min="0" data-ng-model="part.dimLength"/>
+                </div>
+                <div class="form-group col-xs-1">X</div>
+                <div class="form-group col-xs-3">
+                  <input class="form-control" type="number" min="0" data-ng-model="part.dimWidth"/>
+                </div>
+                <div class="form-group col-xs-1">X</div>
+                <div class="form-group col-xs-3">
+                  <input class="form-control" type="number" min="0" data-ng-model="part.dimHeight"/>
+                </div>
+                <div class="form-group col-xs-1">&nbsp;</div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="weight">Weight (grams)</label>
+            <input id="weight" class="form-control" type="number" min="0" data-ng-model="part.weight"/>
           </div>
 
           <!-- Type-specific fields -->
