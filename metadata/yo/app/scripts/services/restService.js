@@ -34,6 +34,10 @@ angular.module("ngMetaCrudApp")
         }
       };
 
+      this.createBom = function(bomItem) {
+        return Restangular.all("bom").post(bomItem);
+      };
+
       this.startBomRebuilding = function(options) {
         // return Restangular.one("bom/rebuild").post("start", options);
         var url = METADATA_BASE + "bom/rebuild/start";

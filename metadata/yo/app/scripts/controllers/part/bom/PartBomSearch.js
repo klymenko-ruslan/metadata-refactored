@@ -43,6 +43,12 @@ angular.module("ngMetaCrudApp")
         size: "lg",
         controller: "ChlogSrcLinkDlgCtrl",
         resolve: {
+          "partId": function () {
+            return $scope.partId;
+          },
+          "bomItem": function () {
+            return $scope.bomItem;
+          }
         }
       });
 
@@ -66,12 +72,12 @@ angular.module("ngMetaCrudApp")
     };
 
   }
-]).controller("ChlogSrcLinkDlgCtrl", ["$scope", "$log", "$uibModalInstance",
+]).controller("ChlogSrcLinkDlgCtrl", ["$scope", "$log", "dialogs", "$uibModalInstance", "restService",
     "BOM_RESULT_STATUS", "partId", "bomItem",
-  function($scope, $log, $uibModalInstance, BOM_RESULT_STATUS, partId, bomItem) {
+  function($scope, $log, dialogs, $uibModalInstance, restService, BOM_RESULT_STATUS, partId, bomItem) {
 
     function _save() {
-      Restangular.all("bom").post($scope.bomItem).then(
+      restService.createBom(bomItem).then(
         function(bomResult) {
           if (bomResult.status == BOM_RESULT_STATUS.OK) {
             // Success
