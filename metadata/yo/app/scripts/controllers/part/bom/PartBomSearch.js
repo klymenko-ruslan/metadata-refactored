@@ -51,9 +51,6 @@ angular.module("ngMetaCrudApp")
           "bomItem": function () {
             return $scope.bomItem;
           },
-          "changelogSourceForm": function() {
-            return $scope.changelogSourceForm;
-          },
           "sourcesNames": restService.getAllChangelogSourceNames()
         }
       });
@@ -80,13 +77,14 @@ angular.module("ngMetaCrudApp")
   }
 ]).controller("ChlogSrcLinkDlgCtrl", ["$scope", "$log", "$location", "dialogs", "gToast",
   "$uibModalInstance", "restService", "BOM_RESULT_STATUS", "partId", "bomItem",
-  "changelogSourceForm", "sourcesNames",
+  "sourcesNames",
   function($scope, $log, $location, dialogs, gToast, $uibModalInstance, restService, BOM_RESULT_STATUS,
-    partId, bomItem, changelogSourceForm, sourcesNames) {
+    partId, bomItem, sourcesNames) {
 
     $scope.partId = partId;
-    $scope.changelogSourceForm = changelogSourceForm;
     $scope.sourcesNames = sourcesNames;
+    $scope.forms = {
+    };
 
     $scope.data = {
       confirmCancelView: {
@@ -151,10 +149,8 @@ angular.module("ngMetaCrudApp")
       var retval = true;
       if ($scope.data.currVw.id === "confirm_cancel") {
         retval = false;
-      } else if ($scope.data.currVw.id === "create_new_source") {
-        // TODO: uncomment a line below
-        //retval = $scope.changelogSourceForm.$invalid;
-        retval = false;
+      } else if ($scope.data.currVw.id === "create_new_source" && $scope.forms.changelogSourceForm) {
+        retval = $scope.forms.changelogSourceForm.$invalid;
       }
       return retval;
     };

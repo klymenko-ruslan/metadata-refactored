@@ -1,28 +1,64 @@
-<form name="changelogSourceForm" novalidate>
-  <div class="form-group">
-    <label for="name">Name</label>
-    <input id="name" type="text" class="form-control" data-ng-model="data.crud.source.name" unique-changelog-source-name required>
-     <span data-ng-show="changelogSourceForm.name.$dirty && changelogSourceForm.name.$invalid" class="alert alert-danger" role="alert">
-      <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-      <span data-ng-show="changelogSourceForm.name.$error.required">Required!</span>
-      <span data-ng-show="changelogSourceForm.name.$error.maxlenth">Too long name (max 255 chars)!</span>
-      <span data-ng-show="changelogSourceForm.name.$error.nonUniqueName">Not unique!</span>
-    </span>
+<ul id="tabsSource" class="nav nav-tabs" role="tablist">
+  <li role="presentation">
+    <a href="#source" aria-controls="source" role="tab" data-toggle="tab">
+      <i class="fa fa-bars"></i>
+      Source
+    </a>
+  </li>
+  <li role="presentation">
+    <a href="#attaches" aria-controls="attaches" role="tab" data-toggle="tab">
+      <i class="fa fa-paperclip"></i>
+      Attaches
+    </a>
+  </li>
+</ul>
+<div class="tab-content">
+  <div role="tabpanel" class="tab-pane fade" id="source">
+    <div class="row">
+      <div class="col-xs-12">
+        <form name="forms.changelogSourceForm" style="padding-left:1em;" novalidate>
+          <div class="form-group">
+            <label for="name">Name</label>
+            <input id="name" type="text" class="form-control" data-ng-model="data.crud.source.name" unique-changelog-source-name required>
+            <span data-ng-show="changelogSourceForm.name.$dirty && changelogSourceForm.name.$invalid" class="alert alert-danger" role="alert">
+              <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+              <span data-ng-show="changelogSourceForm.name.$error.required">Required!</span>
+              <span data-ng-show="changelogSourceForm.name.$error.maxlenth">Too long name (max 255 chars)!</span>
+              <span data-ng-show="changelogSourceForm.name.$error.nonUniqueName">Not unique!</span>
+            </span>
+          </div>
+          <div class="form-group">
+            <label for="source_name">Source name</label>
+            <select id="source_name" class="form-control"
+                    data-ng-model="data.crud.source.sourceName"
+                    data-ng-options="sn as sn.name for sn in sourcesNames track by sn.id"
+                    required>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="desc">Description</label>
+            <textarea id="desc" class="form-control" rows="3">{{data.crud.source.description}}</textarea>
+          </div>
+          <div class="form-group">
+            <label for="url">URL</label>
+            <input id="url" type="url" class="form-control" data-ng-model="data.crud.source.url">
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
-  <div class="form-group">
-    <label for="source_name">Source name</label>
-    <select id="source_name" class="form-control"
-                data-ng-model="data.crud.source.sourceName"
-                data-ng-options="sn as sn.name for sn in sourcesNames track by sn.id"
-                required>
-    </select>
+  <div role="tabpanel" class="tab-pane fade" id="attaches">
+    <div class="row">
+      <div class="col-xs-12">
+        <p>TODO</p>
+      </div>
+    </div>
   </div>
-  <div class="form-group">
-    <label for="desc">Description</label>
-    <textarea id="desc" class="form-control" rows="3">{{data.crud.source.description}}</textarea>
-  </div>
-  <div class="form-group">
-    <label for="url">URL</label>
-    <input id="url" type="url" class="form-control" data-ng-model="data.crud.source.url">
-  </div>
-</form>
+</div>
+<script>
+  $('#tabsSource a').click(function (e) {
+    e.preventDefault();
+    $(this).tab('show');
+  });
+  $('#tabsSource a:first').tab('show');
+</script>
