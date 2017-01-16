@@ -1,23 +1,23 @@
 "use strict";
 
 angular.module("ngMetaCrudApp")
-  .directive("cmakeForm", function() {
-    return {
-      restrict: "E",
-      replace: false,
-      templateUrl: "/views/application/carmake/form.html",
-      controller: ["restService", "$q", "$scope", "$location", "$log", "$routeParams", "gToast",
-        function(restService, $q, $scope, $location, $log, $routeParams, gToast) {
-          $scope.carmake = {};
-          $scope.$on("carmakeform:save", function(event, callback) {
-            var promise = restService.createCarmake($scope.carmake);
-            callback(promise);
-          });
-        }
-      ]
-    }
-  })
-  .directive("uniqueCarmakeName", ["$log", "$q", "restService", function($log, $q, restService) {
+.directive("cmakeForm", function() {
+  return {
+    restrict: "E",
+    replace: false,
+    templateUrl: "/views/application/carmake/form.html",
+    controller: ["restService", "$q", "$scope", "$location", "$log", "$routeParams", "gToast",
+      function(restService, $q, $scope, $location, $log, $routeParams, gToast) {
+        $scope.carmake = {};
+        $scope.$on("carmakeform:save", function(event, callback) {
+          var promise = restService.createCarmake($scope.carmake);
+          callback(promise);
+        });
+      }
+    ]
+  }
+})
+.directive("uniqueCarmakeName", ["$log", "$q", "restService", function($log, $q, restService) {
   // Validator for uniqueness of the carmake name.
   return {
     require: "ngModel",

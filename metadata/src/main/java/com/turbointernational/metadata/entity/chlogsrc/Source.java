@@ -15,6 +15,9 @@ import static javax.persistence.GenerationType.IDENTITY;
  */
 @Entity
 @Table(name = "source")
+@NamedQueries(
+    @NamedQuery(name = "findChangelogSourceByName", query = "from Source s where s.name=:name")
+)
 public class Source implements Serializable {
 
     //<editor-fold defaultstate="collapsed" desc="properties">
@@ -24,11 +27,13 @@ public class Source implements Serializable {
     @JsonView(View.Summary.class)
     private Long id;
 
+    @ManyToOne
+    @JsonView(View.Summary.class)
     @JoinColumn(name = "source_name_id", nullable = false)
     private SourceName sourceName;
 
     @JsonView(View.Summary.class)
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", nullable = false, unique = true)
     private String name;
 
     @JsonView(View.Summary.class)
@@ -48,10 +53,12 @@ public class Source implements Serializable {
     private Date updated;
 
     @JsonView(View.Detail.class)
+    @ManyToOne
     @JoinColumn(name = "create_user_id")
     private User createUser;
 
     @JsonView(View.Detail.class)
+    @ManyToOne
     @JoinColumn(name = "update_user_id")
     private User updateUser;
 

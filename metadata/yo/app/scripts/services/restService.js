@@ -757,6 +757,18 @@ angular.module("ngMetaCrudApp")
         });
       };
 
+      this.getAllChangelogSourceNames = function() {
+        return Restangular.all("changelog/source/sourcename/list").getList();
+      };
+
+      this.findChangelogSourceByName = function(name) {
+        return Restangular.one("changelog/source").get({"name": name});
+      };
+
+      this.createChanlelogSource = function(source) {
+        return Restangular.one("changelog").post("source", source);
+      };
+
       this.findPrimaryPartIdForThePart = function(id) {
         return Restangular.one("other/salesNote/primarypartidforthepart").get({
           "partId": id

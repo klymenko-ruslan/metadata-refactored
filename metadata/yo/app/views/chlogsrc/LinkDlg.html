@@ -1,12 +1,20 @@
 <div class="modal-header">
-    <h3>{{data.title}}</h3>
+    <h3>{{data.currVw.title}}</h3>
 </div>
 
-<div class="modal-body">
-
+<div class="modal-body" data-ng-switch on="data.currVw.id">
+  <div data-ng-switch-when="sources_list">
+    <data-ng-include src="'/views/chlogsrc/SourcesListView.html'"></data-ng-include>
+  </div>
+  <div data-ng-switch-when="create_new_source">
+    <data-ng-include src="'/views/chlogsrc/CreateSourceView.html'"></data-ng-include>
+  </div>
+  <div data-ng-switch-when="confirm_cancel">
+    <data-ng-include src="'/views/chlogsrc/ConfirmCancelView.html'"></data-ng-include>
+  </div>
 </div>
 
 <div class="modal-footer">
     <button class="btn btn-default" data-ng-click="cancel()">Cancel</button>
-    <button class="btn btn-primary" data-ng-click="action()">{{data.actionBttnTitle}}</button>
+    <button class="btn btn-primary" data-ng-click="action()" data-ng-disabled="actionBttnDisabled()">{{data.currVw.actionBttnTitle}}</button>
 </div>

@@ -13,6 +13,9 @@ import static javax.persistence.GenerationType.IDENTITY;
  */
 @Entity
 @Table(name = "source_name")
+@NamedQueries(
+    @NamedQuery(name="findAllChangelogSourceNames", query = "from SourceName sn order by sn.name")
+)
 public class SourceName implements Serializable {
 
     //<editor-fold defaultstate="collapsed" desc="properties">
