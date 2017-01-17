@@ -75,11 +75,11 @@ angular.module("ngMetaCrudApp")
     };
 
   }
-]).controller("ChlogSrcLinkDlgCtrl", ["$scope", "$log", "$location", "dialogs", "gToast",
+]).controller("ChlogSrcLinkDlgCtrl", ["$scope", "$log", "$location", "dialogs", "gToast", "ngTableParams",
   "$uibModalInstance", "restService", "BOM_RESULT_STATUS", "partId", "bomItem",
   "sourcesNames",
-  function($scope, $log, $location, dialogs, gToast, $uibModalInstance, restService, BOM_RESULT_STATUS,
-    partId, bomItem, sourcesNames) {
+  function($scope, $log, $location, dialogs, gToast, ngTableParams, $uibModalInstance, restService,
+    BOM_RESULT_STATUS, partId, bomItem, sourcesNames) {
 
     $scope.partId = partId;
     $scope.sourcesNames = sourcesNames;
@@ -105,6 +105,46 @@ angular.module("ngMetaCrudApp")
         }
       }
     };
+
+    $scope.sourceTableParams = new ngTableParams(
+      {
+        page: 1,
+        count: 10,
+        sorting: {}
+      },
+      {
+        getData: function ($defer, params) {
+          // Update the pagination info
+          var offset = params.count() * (params.page() - 1);
+          var limit = params.count();
+          var sortProperty, sortOrder;
+          for (sortProperty in params.sorting()) break;
+          if (sortProperty) {
+            sortOrder = params.sorting()[sortProperty];
+          }
+          // TODO
+          /*
+          restService.filterCarModelEngineYears($scope.fltrCmey.cmey,
+              $scope.fltrCmey.year, $scope.fltrCmey.make,
+              $scope.fltrCmey.model, $scope.fltrCmey.engine,
+              $scope.fltrCmey.fueltype,
+              sortProperty, sortOrder, offset, limit).then(
+            function (filtered) {
+              $scope.cmeySearchResults = filtered;
+              // Update the total and slice the result
+              $defer.resolve($scope.cmeySearchResults.hits.hits);
+              params.total($scope.cmeySearchResults.hits.total);
+            },
+            function (errorResponse) {
+              $log.log("Couldn't search for 'carmodelengineyear'.");
+              $defer.reject();
+            }
+          );
+          */
+        }
+      }
+    );
+
 
     function _save() {
       restService.createBom(bomItem).then(
@@ -145,6 +185,18 @@ angular.module("ngMetaCrudApp")
       };
     };
 
+    function _createSource(name, description, url, sourceNameId) {
+      restService.createChanlelogSource(name, description, url, sourceNameId).then(
+        function success() {
+          _chvw("sources_list");
+        },
+        function failure(errorResponse) {
+          $uibModalInstance.close();
+          restService.error("Could not create a new changelog source.", errorResponse);
+        }
+      );
+    };
+
     $scope.actionBttnDisabled = function () {
       var retval = true;
       if ($scope.data.currVw.id === "confirm_cancel") {
@@ -153,6 +205,18 @@ angular.module("ngMetaCrudApp")
         retval = $scope.forms.changelogSourceForm.$invalid;
       }
       return retval;
+    };
+
+    $scope.isBttnPickDisabled = function(_src) {
+      return false; // TODO
+    };
+
+    $scope.pick = function(_src) {
+      // TODO
+    };
+
+    $scope.clear = function() {
+      // TODO
     };
 
     $scope.onCreateNewSource = function() {
@@ -179,15 +243,8 @@ angular.module("ngMetaCrudApp")
         $uibModalInstance.close();
         _save();
       } else if (cv === "create_new_source") {
-        restService.createChanlelogSource($scope.data.crud.source).then(
-          function success() {
-            _chvw("sources_list");
-          },
-          function failure(errorResponse) {
-            $uibModalInstance.close();
-            restService.error("Could not create a new changelog source.", errorResponse);
-          }
-        );
+        var s = $scope.data.crud.source;
+        _createSource(s.name, s.description, s.url, s.sourceName.id);
       } else if (cv === "confirm_cancel") {
         var result = $scope.data.confirmCancelView.result;
         $uibModalInstance.close();

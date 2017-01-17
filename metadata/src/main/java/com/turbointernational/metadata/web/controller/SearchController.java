@@ -152,6 +152,24 @@ public class SearchController {
                 includeRelated, sortProperty, sortOrder, offset, limit);
     }
 
+    @ResponseBody
+    @Secured("ROLE_SALES_NOTE_READ")
+    @JsonView(View.DetailWithParts.class)
+    @RequestMapping(value = "changelog/sources", method = GET, produces = APPLICATION_JSON_VALUE)
+    public String filterChangelogSources(@RequestParam(name = "name", required = false) String name,
+                                  @RequestParam(name = "description", required = false) String descripiton,
+                                  @RequestParam(name = "url", required = false) String url,
+                                  @RequestParam(name = "sourceNameId", required = false) Long sourceNameId,
+                                  @RequestParam("sortProperty") String sortProperty,
+                                  @RequestParam("sortOrder") String sortOrder,
+                                  @RequestParam("offset") int offset,
+                                  @RequestParam("limit") int limit) {
+        log.debug("name: {}, description: {}, url: {}, sourceNameId: {}", name, descripiton, url, sourceNameId,
+                sortProperty, sortOrder, offset, limit);
+        return searchService.filterChanglelogSources(name, descripiton, url, sourceNameId,
+                sortProperty, sortOrder, offset, limit);
+    }
+
     @RequestMapping(value = "/index/{partId}")
     @ResponseBody
     @Secured("ROLE_ADMIN")
@@ -174,14 +192,16 @@ public class SearchController {
         boolean indexParts = toIndex.getOrDefault("parts", false);
         boolean indexApplications = toIndex.getOrDefault("applications", false);
         boolean indexSalesNotes = toIndex.getOrDefault("salesNotes", false);
+        boolean indexChangelogSources = toIndex.getOrDefault("changelogSources", false);
         boolean recreateIndex = toIndex.getOrDefault("recreateIndex", false);
-        log.debug("startIndexing: parts={}, applications={}, salesNotes={}, recreateIndex={}", indexParts, indexApplications,
-                indexSalesNotes, recreateIndex);
+        log.debug("startIndexing: parts={}, applications={}, salesNotes={}, indexChangelogSources={}, recreateIndex={}",
+                indexParts, indexApplications, indexSalesNotes, indexChangelogSources, recreateIndex);
         User user = null;
         if (authentication != null) {
             user = (User) authentication.getPrincipal();
         }
-        return searchService.startIndexing(user, indexParts, indexApplications, indexSalesNotes, recreateIndex);
+        return searchService.startIndexing(user, indexParts, indexApplications, indexSalesNotes,
+                indexChangelogSources, recreateIndex);
     }
 
     @Secured("ROLE_READ")

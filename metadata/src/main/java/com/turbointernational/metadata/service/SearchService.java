@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.Application;
 import com.turbointernational.metadata.entity.*;
+import com.turbointernational.metadata.entity.chlogsrc.Source;
 import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.entity.SalesNotePart;
 import com.turbointernational.metadata.entity.SalesNoteState;
@@ -93,6 +94,21 @@ public interface SearchService {
         @JsonInclude(ALWAYS)
         private int salesNotesIndexingCurrentStep;
 
+        @JsonInclude(ALWAYS)
+        private int changelogSourcesIndexed;
+
+        @JsonView({View.Summary.class})
+        @JsonInclude(ALWAYS)
+        private int changelogSourcesIndexingFailures;
+
+        @JsonView({View.Summary.class})
+        @JsonInclude(ALWAYS)
+        private int changelogSourcesIndexingTotalSteps;
+
+        @JsonView({View.Summary.class})
+        @JsonInclude(ALWAYS)
+        private int changelogSourcesIndexingCurrentStep;
+
         @JsonView({View.Summary.class})
         @JsonInclude(ALWAYS)
         private boolean indexParts;
@@ -104,6 +120,10 @@ public interface SearchService {
         @JsonView({View.Summary.class})
         @JsonInclude(ALWAYS)
         private boolean indexSalesNotes;
+
+        @JsonView({View.Summary.class})
+        @JsonInclude(ALWAYS)
+        private boolean indexChangelogSources;
 
         @JsonView({View.Summary.class})
         @JsonInclude(ALWAYS)
@@ -144,9 +164,14 @@ public interface SearchService {
             this.salesNotesIndexingFailures = 0;
             this.salesNotesIndexingTotalSteps = 0;
             this.salesNotesIndexingCurrentStep = 0;
+            this.changelogSourcesIndexed = 0;
+            this.changelogSourcesIndexingFailures = 0;
+            this.changelogSourcesIndexingTotalSteps = 0;
+            this.changelogSourcesIndexingCurrentStep = 0;
             this.indexParts = true;
             this.indexApplications = true;
             this.indexSalesNotes = true;
+            this.indexChangelogSources = true;
             this.recreateIndex = true;
             this.startedOn = null;
             this.finishedOn = null;
@@ -290,6 +315,46 @@ public interface SearchService {
             this.indexSalesNotes = indexSalesNotes;
         }
 
+        public boolean isIndexChangelogSources() {
+            return indexChangelogSources;
+        }
+
+        public void setIndexChangelogSources(boolean indexChangelogSources) {
+            this.indexChangelogSources = indexChangelogSources;
+        }
+
+        public int getChangelogSourcesIndexed() {
+            return changelogSourcesIndexed;
+        }
+
+        public void setChangelogSourcesIndexed(int changelogSourcesIndexed) {
+            this.changelogSourcesIndexed = changelogSourcesIndexed;
+        }
+
+        public int getChangelogSourcesIndexingFailures() {
+            return changelogSourcesIndexingFailures;
+        }
+
+        public void setChangelogSourcesIndexingFailures(int changelogSourcesIndexingFailures) {
+            this.changelogSourcesIndexingFailures = changelogSourcesIndexingFailures;
+        }
+
+        public int getChangelogSourcesIndexingTotalSteps() {
+            return changelogSourcesIndexingTotalSteps;
+        }
+
+        public void setChangelogSourcesIndexingTotalSteps(int changelogSourcesIndexingTotalSteps) {
+            this.changelogSourcesIndexingTotalSteps = changelogSourcesIndexingTotalSteps;
+        }
+
+        public int getChangelogSourcesIndexingCurrentStep() {
+            return changelogSourcesIndexingCurrentStep;
+        }
+
+        public void setChangelogSourcesIndexingCurrentStep(int changelogSourcesIndexingCurrentStep) {
+            this.changelogSourcesIndexingCurrentStep = changelogSourcesIndexingCurrentStep;
+        }
+
         public Long getStartedOn() {
             return startedOn;
         }
@@ -322,6 +387,14 @@ public interface SearchService {
             this.userName = userName;
         }
 
+        public boolean isRecreateIndex() {
+            return recreateIndex;
+        }
+
+        public void setRecreateIndex(boolean recreateIndex) {
+            this.recreateIndex = recreateIndex;
+        }
+
         @Override
         public Object clone() throws CloneNotSupportedException {
             IndexingStatus retVal = new IndexingStatus();
@@ -339,10 +412,15 @@ public interface SearchService {
             retVal.salesNotesIndexingFailures = salesNotesIndexingFailures;
             retVal.salesNotesIndexingTotalSteps = salesNotesIndexingTotalSteps;
             retVal.salesNotesIndexingCurrentStep = salesNotesIndexingCurrentStep;
+            retVal.changelogSourcesIndexed = changelogSourcesIndexed;
+            retVal.changelogSourcesIndexingFailures = changelogSourcesIndexingFailures;
+            retVal.changelogSourcesIndexingTotalSteps = changelogSourcesIndexingTotalSteps;
+            retVal.changelogSourcesIndexingCurrentStep = changelogSourcesIndexingCurrentStep;
             retVal.indexParts = indexParts;
             retVal.recreateIndex = recreateIndex;
             retVal.indexApplications = indexApplications;
             retVal.indexSalesNotes = indexSalesNotes;
+            retVal.indexChangelogSources = indexChangelogSources;
             retVal.startedOn = startedOn;
             retVal.finishedOn = finishedOn;
             retVal.userName = userName;
@@ -366,9 +444,14 @@ public interface SearchService {
                     ", salesNotesIndexingFailures=" + salesNotesIndexingFailures +
                     ", salesNotesIndexingTotalSteps=" + salesNotesIndexingTotalSteps +
                     ", salesNotesIndexingCurrentStep=" + salesNotesIndexingCurrentStep +
+                    ", changelogSourcesIndexed=" + changelogSourcesIndexed +
+                    ", changelogSourcesIndexingFailures=" + changelogSourcesIndexingFailures +
+                    ", changelogSourcesIndexingTotalSteps =" + changelogSourcesIndexingTotalSteps +
+                    ", changelogSourcesIndexingCurrentStep=" + changelogSourcesIndexingCurrentStep +
                     ", indexParts=" + indexParts +
                     ", indexApplications=" + indexApplications +
                     ", indexSalesNotes=" + indexSalesNotes +
+                    ", indexChangelogSources=" + indexChangelogSources +
                     ", recreateIndex=" + recreateIndex +
                     ", startedOn=" + startedOn +
                     ", finishedOn=" + finishedOn +
@@ -377,18 +460,12 @@ public interface SearchService {
                     '}';
         }
 
-        public boolean isRecreateIndex() {
-            return recreateIndex;
-        }
-
-        public void setRecreateIndex(boolean recreateIndex) {
-            this.recreateIndex = recreateIndex;
-        }
     }
 
 
     SearchService.IndexingStatus startIndexing(User user, boolean indexParts, boolean indexApplications,
-                                               boolean indexSalesNotes, boolean recreateIndex) throws Exception;
+                                               boolean indexSalesNotes, boolean indexChangelogSources,
+                                               boolean recreateIndex) throws Exception;
 
     SearchService.IndexingStatus getIndexingStatus() throws Exception;
 
@@ -428,6 +505,10 @@ public interface SearchService {
 
     void deleteSalesNotePart(SalesNotePart salesNotePart) throws Exception;
 
+    void indexChangelogSource(Source source);
+
+    void deleteChangelogSource(Source source) throws Exception;
+
     String filterParts(String partNumber, Long partTypeId, String manufacturerName,
                        String name, String description, Boolean inactive,
                        String turboTypeName, String turboModelName,
@@ -454,4 +535,7 @@ public interface SearchService {
     String filterSalesNotes(String partNumber, String comment, Long primaryPartId, Set<SalesNoteState> states,
                             boolean includePrimary, boolean includeRelated,
                             String sortProperty, String sortOrder, Integer offset, Integer limit);
+
+    String filterChanglelogSources(String name, String descritpion, String url, Long sourceNameId, String sortProperty,
+                                   String sortOrder, Integer offset, Integer limit);
 }

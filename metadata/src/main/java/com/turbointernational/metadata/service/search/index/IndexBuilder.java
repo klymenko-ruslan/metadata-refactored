@@ -21,7 +21,7 @@ public class IndexBuilder {
                              CreateIndexRequestBuilder indexRequestBuilder,
                              int numberOfShards, int numberOfReplicas, int maxResultWindow) throws IOException {
         for (String indexType : new String[]{"carengine", "carfueltype", "caryear", "carmake",
-                "carmodel", "carmodelengineyear", "salesnotepart"}) {
+                "carmodel", "carmodelengineyear", "salesnotepart", "changelogsource"}) {
             String resourceName = "elasticsearch/" + indexType + ".json";
             String typeDef = resourceService.loadFromMeta(resourceName);
             indexRequestBuilder.addMapping(indexType, typeDef);

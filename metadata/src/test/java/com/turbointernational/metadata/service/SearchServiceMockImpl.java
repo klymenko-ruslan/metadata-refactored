@@ -1,6 +1,7 @@
 package com.turbointernational.metadata.service;
 
 import com.turbointernational.metadata.entity.*;
+import com.turbointernational.metadata.entity.chlogsrc.Source;
 import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.entity.SalesNotePart;
 import com.turbointernational.metadata.entity.SalesNoteState;
@@ -31,7 +32,8 @@ public class SearchServiceMockImpl implements SearchService {
 
     @Override
     public IndexingStatus startIndexing(User user, boolean indexParts, boolean indexApplications,
-                                        boolean indexSalesNotes, boolean recreateIndex) throws Exception {
+                                        boolean indexSalesNotes, boolean indexChangelogSources,
+                                        boolean recreateIndex) throws Exception {
         log.debug("Indexing: Started indexing.");
         return null;
     }
@@ -139,6 +141,16 @@ public class SearchServiceMockImpl implements SearchService {
     }
 
     @Override
+    public void indexChangelogSource(Source source) {
+        log.debug("Indexing: indexChangelogSource(Source source)");
+    }
+
+    @Override
+    public void deleteChangelogSource(Source source) throws Exception {
+        log.debug("Indexing: deleteChangelogSource(Source source)");
+    }
+
+    @Override
     public String filterParts(String partNumber, Long partTypeId, String manufacturerName,
                               String name, String description, Boolean inactive,
                               String turboTypeName, String turboModelName,
@@ -178,4 +190,12 @@ public class SearchServiceMockImpl implements SearchService {
     public String filterSalesNotes(String partNumber, String comment, Long primaryPartId, Set<SalesNoteState> states, boolean includePrimary, boolean includeRelated, String sortProperty, String sortOrder, Integer offset, Integer limit) {
         return null;
     }
+
+
+    @Override
+    public String filterChanglelogSources(String name, String descritpion, String url, Long sourceNameId,
+                                          String sortProperty, String sortOrder, Integer offset, Integer limit) {
+        return null;
+    }
+
 }

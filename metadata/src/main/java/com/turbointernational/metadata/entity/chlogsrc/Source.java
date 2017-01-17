@@ -1,12 +1,19 @@
 package com.turbointernational.metadata.entity.chlogsrc;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.entity.CriticalDimension;
 import com.turbointernational.metadata.entity.User;
+import com.turbointernational.metadata.service.SearchService;
+import com.turbointernational.metadata.service.SearchableEntity;
 import com.turbointernational.metadata.util.View;
+import flexjson.JSONSerializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -18,7 +25,9 @@ import static javax.persistence.GenerationType.IDENTITY;
 @NamedQueries(
     @NamedQuery(name = "findChangelogSourceByName", query = "from Source s where s.name=:name")
 )
-public class Source implements Serializable {
+public class Source implements SearchableEntity, Serializable {
+
+    private final static Logger log = LoggerFactory.getLogger(Source.class);
 
     //<editor-fold defaultstate="collapsed" desc="properties">
 
@@ -135,6 +144,45 @@ public class Source implements Serializable {
 
     public void setUpdateUser(User updateUser) {
         this.updateUser = updateUser;
+    }
+
+    protected JSONSerializer getSearchSerializer() {
+        return new JSONSerializer()
+                .include("id")
+                .include("name")
+                .include("description")
+                .include("url")
+                .include("serviceNameId")
+                .exclude("*.class");
+    }
+
+    @PostRemove
+    @Override
+    public void removeSearchIndex() throws Exception {
+        log.info("Removing from search index.");
+        SearchService.instance().deleteChangelogSource(this);
+    }
+
+    @PostUpdate
+    @Override
+    public void updateSearchIndex() throws Exception {
+        log.info("Updating search index.");
+        SearchService.instance().indexChangelogSource(this);
+    }
+
+    @Override
+    public void beforeIndexing() {
+        // Nothing.
+    }
+
+    @Override
+    public String toSearchJson(List<CriticalDimension> criticalDimensions) {
+        return getSearchSerializer().exclude("*").serialize(this);
+    }
+
+    @Override
+    public String getSearchId() {
+        return id.toString();
     }
 
     //</editor-fold>

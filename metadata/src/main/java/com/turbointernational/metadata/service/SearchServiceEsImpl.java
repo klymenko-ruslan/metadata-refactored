@@ -3,6 +3,7 @@ package com.turbointernational.metadata.service;
 import com.turbointernational.metadata.dao.*;
 import com.turbointernational.metadata.entity.*;
 import com.turbointernational.metadata.entity.CriticalDimension;
+import com.turbointernational.metadata.entity.chlogsrc.Source;
 import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.dao.PartDao;
 import com.turbointernational.metadata.entity.SalesNotePart;
@@ -61,6 +62,7 @@ import static com.turbointernational.metadata.service.SearchService.IndexingStat
 import static com.turbointernational.metadata.service.search.parser.SearchTermCmpOperatorEnum.EQ;
 import static com.turbointernational.metadata.service.search.parser.SearchTermFactory.*;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.elasticsearch.action.search.SearchType.DFS_QUERY_THEN_FETCH;
 import static org.springframework.transaction.TransactionDefinition.PROPAGATION_REQUIRES_NEW;
 
 /**
@@ -139,6 +141,12 @@ public class SearchServiceEsImpl implements SearchService {
     @Autowired
     private SalesNotePartDao salesNotePartDao;
 
+    @Value("${elasticsearch.type.changelogsource}")
+    private String elasticSearchTypeChangelogSource = "changelogsource";
+
+    @Autowired
+    private ChangelogSourceDao changelogSourceDao;
+
     @Autowired
     private CriticalDimensionService criticalDimensionService;
 
@@ -214,6 +222,7 @@ public class SearchServiceEsImpl implements SearchService {
         private final boolean indexParts;
         private final boolean indexApplications;
         private final boolean indexSalesNotes;
+        private final boolean indexChangelogSources;
         private final boolean recreateIndex;
         private final int fetchSize;
 
@@ -342,12 +351,49 @@ public class SearchServiceEsImpl implements SearchService {
 
         }
 
-        IndexingJob(boolean indexParts, boolean indexApplications, boolean indexSalesNotes, boolean recreateIndex,
-                    int fetchSize) {
+        class ChangelogSourcesIndexer extends Thread implements Observer {
+
+            private final ScrollableResults scrollableChangelogSources;
+
+            private ChangelogSourcesIndexer(ScrollableResults scrollableChangelogSources) {
+                this.scrollableChangelogSources = scrollableChangelogSources;
+            }
+
+            @Override
+            public void run() {
+                super.run();
+                try {
+                    indexAllDocs(scrollableChangelogSources, fetchSize, elasticSearchTypeChangelogSource, this);
+                } catch (Exception e) {
+                    synchronized (indexingStatus) {
+                        if (indexingStatus.getErrorMessage() != null) {
+                            indexingStatus.setErrorMessage(e.getMessage());
+                            indexingStatus.setChangelogSourcesIndexingFailures(1);
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void update(Observable o, Object arg) {
+                Integer indexed = (Integer) arg;
+                synchronized (indexingStatus) {
+                    int current = indexingStatus.getChangelogSourcesIndexingCurrentStep();
+                    int sum = current + indexed;
+                    indexingStatus.setChangelogSourcesIndexed(sum);
+                    indexingStatus.setChangelogSourcesIndexingCurrentStep(sum);
+                }
+            }
+
+        }
+
+        IndexingJob(boolean indexParts, boolean indexApplications, boolean indexSalesNotes,
+                    boolean indexChangelogSources, boolean recreateIndex, int fetchSize) {
             super();
             this.indexParts = indexParts;
             this.indexApplications = indexApplications;
             this.indexSalesNotes = indexSalesNotes;
+            this.indexChangelogSources = indexChangelogSources;
             this.recreateIndex = recreateIndex;
             this.fetchSize = fetchSize;
         }
@@ -366,6 +412,8 @@ public class SearchServiceEsImpl implements SearchService {
                     int carMakeTotal = 0;
                     int carModelTotal = 0;
                     int salesNotesTotal = 0;
+                    int changelogSourcesTotal = 0;
+
                     if (indexParts) {
                         partsTotal = partDao.getTotal();
                     }
@@ -382,6 +430,10 @@ public class SearchServiceEsImpl implements SearchService {
                         salesNotesTotal = salesNotePartDao.getTotal();
                     }
 
+                    if (indexChangelogSources) {
+                        changelogSourcesTotal = changelogSourceDao.getTotal();
+                    }
+
                     Thread partsIndexer = null;
                     ScrollableResults scrollableParts = null;
 
@@ -394,6 +446,9 @@ public class SearchServiceEsImpl implements SearchService {
 
                     Thread salesNotesIndexer = null;
                     ScrollableResults scrollableSalesNotes = null;
+
+                    Thread changelogSourcesIndexer = null;
+                    ScrollableResults scrollableChangelogSources = null;
 
                     try {
                         if (recreateIndex) {
@@ -421,10 +476,15 @@ public class SearchServiceEsImpl implements SearchService {
                             scrollableSalesNotes = salesNotePartDao.getScrollableResults(fetchSize, true, "pk.salesNote.id");
                             salesNotesIndexer = new SalesNotesIndexer(scrollableSalesNotes);
                         }
+                        if (indexChangelogSources) {
+                            scrollableChangelogSources = changelogSourceDao.getScrollableResults(fetchSize, true, "id");
+                            changelogSourcesIndexer = new ChangelogSourcesIndexer(scrollableChangelogSources);
+                        }
                         synchronized (indexingStatus) {
                             indexingStatus.setPartsIndexingTotalSteps(partsTotal);
                             indexingStatus.setApplicationsIndexingTotalSteps(applicationsTotal);
                             indexingStatus.setSalesNotesIndexingTotalSteps(salesNotesTotal);
+                            indexingStatus.setChangelogSourcesIndexingTotalSteps(changelogSourcesTotal);
                             indexingStatus.setPhase(PHASE_INDEXING);
                         }
 
@@ -437,6 +497,9 @@ public class SearchServiceEsImpl implements SearchService {
                         if (salesNotesIndexer != null) {
                             salesNotesIndexer.start();
                         }
+                        if (changelogSourcesIndexer != null) {
+                            changelogSourcesIndexer.start();
+                        }
 
                         if (partsIndexer != null) {
                             partsIndexer.join();
@@ -446,6 +509,9 @@ public class SearchServiceEsImpl implements SearchService {
                         }
                         if (salesNotesIndexer != null) {
                             salesNotesIndexer.join();
+                        }
+                        if (changelogSourcesIndexer != null) {
+                            changelogSourcesIndexer.join();
                         }
 
                     } finally {
@@ -470,6 +536,9 @@ public class SearchServiceEsImpl implements SearchService {
                         if (scrollableSalesNotes != null) {
                             scrollableSalesNotes.close();
                         }
+                        if (scrollableChangelogSources != null) {
+                            scrollableChangelogSources.close();
+                        }
                     }
                 } catch (Exception e) {
                     log.error("Indexing job failed.", e);
@@ -492,7 +561,8 @@ public class SearchServiceEsImpl implements SearchService {
 
     @Override
     public IndexingStatus startIndexing(User user, boolean indexParts, boolean indexApplications,
-                                        boolean indexSalesNotes, boolean recreateIndex) throws Exception {
+                                        boolean indexSalesNotes, boolean indexChangelogSources,
+                                        boolean recreateIndex) throws Exception {
         IndexingStatus retVal;
         long now = System.currentTimeMillis();
         synchronized (indexingStatus) {
@@ -511,7 +581,8 @@ public class SearchServiceEsImpl implements SearchService {
             indexingStatus.setRecreateIndex(recreateIndex);
             retVal = getIndexingStatus();
         }
-        Thread job = new IndexingJob(indexParts, indexApplications, indexSalesNotes, recreateIndex, 250);
+        Thread job = new IndexingJob(indexParts, indexApplications, indexSalesNotes, indexChangelogSources,
+                recreateIndex, 250);
         job.start();
         return retVal;
     }
@@ -650,6 +721,19 @@ public class SearchServiceEsImpl implements SearchService {
         deleteDoc(elasticSearchTypeSalesNotePart, salesNotePart.getSearchId());
     }
 
+
+    @Override
+    @Transactional(readOnly = true)
+    public void indexChangelogSource(Source source) {
+        indexDoc(source, elasticSearchTypeChangelogSource);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public void deleteChangelogSource(Source source) throws Exception {
+        deleteDoc(elasticSearchTypeChangelogSource, source.getSearchId());
+    }
+
     @Override
     public String filterParts(String partNumber, Long partTypeId, String manufacturerName,
                               String name, String description, Boolean inactive,
@@ -735,7 +819,7 @@ public class SearchServiceEsImpl implements SearchService {
             }
         }
         SearchRequestBuilder srb = elasticSearch.prepareSearch(elasticSearchIndex).setTypes(elasticSearchTypePart)
-                .setSearchType(SearchType.DFS_QUERY_THEN_FETCH);
+                .setSearchType(DFS_QUERY_THEN_FETCH);
         QueryBuilder query;
         if (sterms.isEmpty()) {
             query = QueryBuilders.matchAllQuery();
@@ -855,7 +939,7 @@ public class SearchServiceEsImpl implements SearchService {
         carModelEngineYear = StringUtils.defaultIfEmpty(carModelEngineYear, null);
         SearchRequestBuilder srb = elasticSearch.prepareSearch(elasticSearchIndex)
                 .setTypes(elasticSearchTypeCarModelEngineYear)
-                .setSearchType(SearchType.DFS_QUERY_THEN_FETCH);
+                .setSearchType(DFS_QUERY_THEN_FETCH);
         QueryBuilder query;
         if (carModelEngineYear == null && year == null && make == null && model == null
                 && engine == null && fuel == null) {
@@ -915,7 +999,7 @@ public class SearchServiceEsImpl implements SearchService {
         carMake = StringUtils.defaultIfEmpty(carMake, null);
         SearchRequestBuilder srb = elasticSearch.prepareSearch(elasticSearchIndex)
                 .setTypes(elasticSearchTypeCarMake)
-                .setSearchType(SearchType.DFS_QUERY_THEN_FETCH);
+                .setSearchType(DFS_QUERY_THEN_FETCH);
         QueryBuilder query;
         if (carMake == null) {
             query = QueryBuilders.matchAllQuery();
@@ -950,7 +1034,7 @@ public class SearchServiceEsImpl implements SearchService {
         carModel = StringUtils.defaultIfEmpty(carModel, null);
         SearchRequestBuilder srb = elasticSearch.prepareSearch(elasticSearchIndex)
                 .setTypes(elasticSearchTypeCarModel)
-                .setSearchType(SearchType.DFS_QUERY_THEN_FETCH);
+                .setSearchType(DFS_QUERY_THEN_FETCH);
         QueryBuilder query;
         if (carModel == null && make == null) {
             query = QueryBuilders.matchAllQuery();
@@ -991,7 +1075,7 @@ public class SearchServiceEsImpl implements SearchService {
         carEngine = StringUtils.defaultIfEmpty(carEngine, null);
         SearchRequestBuilder srb = elasticSearch.prepareSearch(elasticSearchIndex)
                 .setTypes(elasticSearchTypeCarEngine)
-                .setSearchType(SearchType.DFS_QUERY_THEN_FETCH);
+                .setSearchType(DFS_QUERY_THEN_FETCH);
         QueryBuilder query;
         if (carEngine == null && fuelType == null) {
             query = QueryBuilders.matchAllQuery();
@@ -1032,7 +1116,7 @@ public class SearchServiceEsImpl implements SearchService {
         fuelType = StringUtils.defaultIfEmpty(fuelType, null);
         SearchRequestBuilder srb = elasticSearch.prepareSearch(elasticSearchIndex)
                 .setTypes(elasticSearchTypeCarFuelType)
-                .setSearchType(SearchType.DFS_QUERY_THEN_FETCH);
+                .setSearchType(DFS_QUERY_THEN_FETCH);
         QueryBuilder query;
         if (fuelType == null) {
             query = QueryBuilders.matchAllQuery();
@@ -1066,7 +1150,7 @@ public class SearchServiceEsImpl implements SearchService {
                                    boolean includePrimary, boolean includeRelated,
                                    String sortProperty, String sortOrder, Integer offset, Integer limit) {
         SearchRequestBuilder srb = elasticSearch.prepareSearch(elasticSearchIndex)
-                .setTypes(elasticSearchTypeSalesNotePart).setSearchType(SearchType.DFS_QUERY_THEN_FETCH);
+                .setTypes(elasticSearchTypeSalesNotePart).setSearchType(DFS_QUERY_THEN_FETCH);
         QueryBuilder query;
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
         if (isNotBlank(partNumber)) {
@@ -1110,6 +1194,46 @@ public class SearchServiceEsImpl implements SearchService {
             srb.setSize(limit);
         }
         log.debug("Search request (sales notes) to search engine:\n{}", srb);
+        return srb.execute().actionGet(timeout).toString();
+    }
+
+    @Override
+    public String filterChanglelogSources(String name, String descritpion, String url, Long sourceNameId,
+                                          String sortProperty, String sortOrder, Integer offset, Integer limit) {
+        SearchRequestBuilder srb = elasticSearch.prepareSearch(elasticSearchIndex)
+                .setTypes(elasticSearchTypeChangelogSource).setSearchType(DFS_QUERY_THEN_FETCH);
+        QueryBuilder query;
+        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
+        if (isNotBlank(name)) {
+            String normalizedName = str2shotfield.apply(name);
+            boolQuery.must(QueryBuilders.termQuery("name.short", normalizedName));
+        }
+        if (isNotBlank(descritpion)) {
+            String normalizedDescription = str2shotfield.apply(descritpion);
+            boolQuery.must(QueryBuilders.termQuery("description.short", normalizedDescription));
+        }
+        if (isNotBlank(url)) {
+            String normalizedUrl = str2shotfield.apply(url);
+            boolQuery.must(QueryBuilders.termQuery("url.short", normalizedUrl));
+        }
+        if (sourceNameId != null) {
+            boolQuery.must(QueryBuilders.termQuery("sourceNameId", sourceNameId));
+        }
+        query = boolQuery;
+        srb.setQuery(query);
+        if (sortProperty != null) {
+            SortBuilder sort = SortBuilders.fieldSort(sortProperty)
+                    .order(convertSortOrder.apply(sortOrder))
+                    .missing("_last");
+            srb.addSort(sort);
+        }
+        if (offset != null) {
+            srb.setFrom(offset);
+        }
+        if (limit != null) {
+            srb.setSize(limit);
+        }
+        log.debug("Search request (changlelog sources) to search engine:\n{}", srb);
         return srb.execute().actionGet(timeout).toString();
     }
 

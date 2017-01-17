@@ -32,6 +32,11 @@ angular.module("ngMetaCrudApp")
     $scope.salesNotesIndexingTotalSteps = null;
     $scope.salesNotesIndexingCurrentStep = null;
 
+    $scope.changelogSourcesIndexed = null;
+    $scope.changelogSourcesIndexingFailures = null;
+    $scope.changelogSourcesIndexingTotalSteps = null;
+    $scope.changelogSourcesIndexingCurrentStep = null;
+
     $scope.userId = null;
     $scope.userName = null;
     $scope.startedOn = null;
@@ -72,6 +77,11 @@ angular.module("ngMetaCrudApp")
       $scope.salesNotesIndexingTotalSteps = status.salesNotesIndexingTotalSteps;
       $scope.salesNotesIndexingCurrentStep = status.salesNotesIndexingCurrentStep;
 
+      $scope.changelogSourcesIndexed = status.changelogSourcesIndexed;
+      $scope.changelogSourcesIndexingFailures = status.changelogSourcesIndexingFailures;
+      $scope.changelogSourcesIndexingTotalSteps = status.changelogSourcesIndexingTotalSteps;
+      $scope.changelogSourcesIndexingCurrentStep = status.changelogSourcesIndexingCurrentStep;
+
       $scope.userId = status.userId;
       $scope.userName = status.userName;
 
@@ -84,6 +94,7 @@ angular.module("ngMetaCrudApp")
       $scope.toIndex.parts = true;
       $scope.toIndex.applications = true;
       $scope.toIndex.salesNotes = true;
+      $scope.toIndex.changelogSources = true;
       $scope.toIndex.recreateIndex = true;
     };
 
@@ -114,6 +125,7 @@ angular.module("ngMetaCrudApp")
         $scope.toIndex.parts = true;
         $scope.toIndex.applications = true;
         $scope.toIndex.salesNotes = true;
+        $scope.toIndex.changelogSources = true;
       }
     });
 

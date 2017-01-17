@@ -618,7 +618,6 @@ angular.module("ngMetaCrudApp")
       };
 
       this.startIndexing = function(toIndex) {
-        // return Restangular.one("search/indexing").post("start", toIndex);
         var url = METADATA_BASE + "search/indexing/start";
         return $http.post(url, toIndex);
       };
@@ -765,8 +764,27 @@ angular.module("ngMetaCrudApp")
         return Restangular.one("changelog/source").get({"name": name});
       };
 
-      this.createChanlelogSource = function(source) {
-        return Restangular.one("changelog").post("source", source);
+      this.filterChangelogSource = function(name, description, url, sourceNameId,
+          sortProperty, sortOrder, offset, limit) {
+        return Restangular.one("search/changelog/sources").get({
+          "name": name,
+          "description": description,
+          "url": url,
+          "sourceNameId": sourceNameId,
+          "sortProperty": sortProperty,
+          "sortOrder": sortOrder,
+          "offset": offset,
+          "limit": limit
+        });
+      };
+
+      this.createChanlelogSource = function(name, description, url, sourceNameId) {
+        return Restangular.one("changelog").post("source", {
+          "name": name,
+          "description": description,
+          "url": url,
+          "sourceNameId": sourceNameId
+        });
       };
 
       this.findPrimaryPartIdForThePart = function(id) {

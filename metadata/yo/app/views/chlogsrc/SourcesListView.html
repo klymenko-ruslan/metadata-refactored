@@ -1,8 +1,82 @@
-<div>
-  <button data-ng-click="onCreateNewSource()" class="btn btn-success">
-    <i class="fa fa-wrench"></i>
-    Create
-  </button>
-  <p>TODO: List of sources</p>
+<metanav>
+  <li>
+    <button data-ng-click="onCreateNewSource()" class="btn btn-success">
+      <i class="fa fa-wrench"></i>
+      Create
+    </button>
+  </li>
+</metanav>
+
+<h1 class="padding-top">Link Changelog Sources</h1>
+
+<div class="row">
+
+  <div class="col-xs-6">
+    <h3>Linked Changelog Sources</h3>
+    <p>TODO</p>
+  </div>
+
+  <div class="col-xs-6">
+    <h3>Picked Sources</h3>
+    <p>TODO</p>
+  </div>
+
 </div>
 
+<hr/>
+
+<div class="row">
+  <!-- Search by input or facet select options -->
+  <div class="col-xs-12 col-sm-3">
+
+    <button class="btn btn-default input-sm" data-ng-click="clearFilter()">
+      <i class="fa fa-eraser" aria-hidden="true"></i> Clear
+    </button>
+    <div class="form-group">
+      <label for="fltrName">Name</label>
+      <input id="fltrName" name="fltrName" class="form-control input-sm" type="text" data-ng-model="fltrSource.name" placeholder="Name..." data-ng-model-options="{debounce: 500}" />
+    </div>
+    <div class="form-group">
+      <label for="fltrDescription">Description</label>
+      <input id="fltrDescription" name="fltrDescription" class="form-control input-sm" type="text" data-ng-model="fltrSource.description" placeholder="Description..." data-ng-model-options="{debounce: 500}" />
+    </div>
+    <div class="form-group">
+      <label for="fltrUrl">URL</label>
+      <input id="fltrUrl" name="fltrUrl" class="form-control input-sm" type="text" data-ng-model="fltrSource.url" placeholder="URL..." data-ng-model-options="{debounce: 500}" />
+    </div>
+    <div class="form-group">
+      <label for="fltrSourceName">Source Name</label>
+      <select id="fltrSourceName" name="fltrSourceName" class="form-control input-sm" data-ng-options="sn.name for sn in sourceNames track by sn.id" data-ng-model="fltrSource.sourceName">
+        <option></option>
+      </select>
+    </div>
+
+  </div>
+
+  <!-- Tabular search results -->
+  <div class="col-xs-12 col-sm-9">
+    <div class="bg-info">
+      <div style="background-color:white;">
+        <table data-ng-table="sourceTableParams" class="table table-bordered table-striped table-hover table-responsive">
+            <tr data-ng-repeat="rec in $data">
+              <td title="'Name'" sortable="'name.lower_case_sort'">
+                {{rec._source.name}}
+              </td>
+              <td title="'Description'" sortable="'description.lower_case_sort'">
+                {{rec._source.description}}
+              </td>
+              <td title="'URL'" sortable="'url.lower_case_sort'">
+                {{rec._source.url}}
+              </td>
+              <td class="actions text-center" title="'Actions'">
+                <button type="button" data-ng-disabled="isBttnPickDisabled($part._source)" data-ng-click="pick($part._source)" class="btn btn-success btn-xs ng-scope">
+                  <i class="fa fa-bullseye"></i> Pick
+                </button>
+              </td>
+            </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
