@@ -37,7 +37,7 @@ angular.module("ngMetaCrudApp")
     };
 
     $scope.save = function() {
-        $uibModal.open({
+      $uibModal.open({
         templateUrl: "/views/chlogsrc/LinkDlg.html",
         animation: false,
         size: "lg",
@@ -76,14 +76,24 @@ angular.module("ngMetaCrudApp")
 
   }
 ]).controller("ChlogSrcLinkDlgCtrl", ["$scope", "$log", "$location", "dialogs", "gToast", "ngTableParams",
-  "$uibModalInstance", "restService", "BOM_RESULT_STATUS", "partId", "bomItem",
+  "$uibModalInstance", "utils", "restService", "BOM_RESULT_STATUS", "partId", "bomItem",
   "sourcesNames",
-  function($scope, $log, $location, dialogs, gToast, ngTableParams, $uibModalInstance, restService,
-    BOM_RESULT_STATUS, partId, bomItem, sourcesNames) {
+  function($scope, $log, $location, dialogs, gToast, ngTableParams, $uibModalInstance, utils,
+    restService, BOM_RESULT_STATUS, partId, bomItem, sourcesNames) {
 
     $scope.partId = partId;
     $scope.sourcesNames = sourcesNames;
     $scope.forms = {
+    };
+
+    var pickedSources = [];
+    var pickedSourceIds = {};
+
+    $scope.fltrSource = {
+      name: null,
+      description: null,
+      url: null,
+      sourceName: null
     };
 
     $scope.data = {
@@ -106,11 +116,24 @@ angular.module("ngMetaCrudApp")
       }
     };
 
-    $scope.sourceTableParams = new ngTableParams(
+    $scope.pickedSourcesTableParams = new ngTableParams(
       {
         page: 1,
         count: 10,
         sorting: {}
+      },
+      {
+        getData: utils.localPagination(pickedSources)
+      }
+    );
+
+    $scope.sourceTableParams = new ngTableParams(
+      {
+        page: 1,
+        count: 10,
+        sorting: {
+          "name.lower_case_sort": "asc"
+        }
       },
       {
         getData: function ($defer, params) {
@@ -122,31 +145,33 @@ angular.module("ngMetaCrudApp")
           if (sortProperty) {
             sortOrder = params.sorting()[sortProperty];
           }
-          // TODO
-          /*
-          restService.filterCarModelEngineYears($scope.fltrCmey.cmey,
-              $scope.fltrCmey.year, $scope.fltrCmey.make,
-              $scope.fltrCmey.model, $scope.fltrCmey.engine,
-              $scope.fltrCmey.fueltype,
-              sortProperty, sortOrder, offset, limit).then(
+          var snid = null;
+          if ($scope.fltrSource.sourceName) {
+            snid = $scope.fltrSource.sourceName.id;
+          }
+          restService.filterChangelogSource($scope.fltrSource.name, $scope.fltrSource.description,
+            $scope.fltrSource.url, snid, sortProperty, sortOrder, offset, limit)
+          .then(
             function (filtered) {
-              $scope.cmeySearchResults = filtered;
               // Update the total and slice the result
-              $defer.resolve($scope.cmeySearchResults.hits.hits);
-              params.total($scope.cmeySearchResults.hits.total);
+              $defer.resolve(filtered.hits.hits);
+              params.total(filtered.hits.total);
             },
             function (errorResponse) {
-              $log.log("Couldn't search for 'carmodelengineyear'.");
+              $log.log("Couldn't search for 'changelog source'.");
               $defer.reject();
             }
           );
-          */
         }
       }
     );
 
 
     function _save() {
+      var srcIds = _.map(pickedSources, function(ps) {
+        return ps.id;
+      });
+$log.log("srcIds: " + angular.toJson(srcIds, 2));
       restService.createBom(bomItem).then(
         function(bomResult) {
           if (bomResult.status == BOM_RESULT_STATUS.OK) {
@@ -189,6 +214,7 @@ angular.module("ngMetaCrudApp")
       restService.createChanlelogSource(name, description, url, sourceNameId).then(
         function success() {
           _chvw("sources_list");
+          $scope.sourceTableParams.reload();
         },
         function failure(errorResponse) {
           $uibModalInstance.close();
@@ -197,9 +223,11 @@ angular.module("ngMetaCrudApp")
       );
     };
 
-    $scope.actionBttnDisabled = function () {
+    $scope.isActionBttnDisabled = function () {
       var retval = true;
-      if ($scope.data.currVw.id === "confirm_cancel") {
+      if ($scope.data.currVw.id === "sources_list") {
+        retval = !pickedSources || pickedSources.length === 0;
+      } else if ($scope.data.currVw.id === "confirm_cancel") {
         retval = false;
       } else if ($scope.data.currVw.id === "create_new_source" && $scope.forms.changelogSourceForm) {
         retval = $scope.forms.changelogSourceForm.$invalid;
@@ -207,16 +235,42 @@ angular.module("ngMetaCrudApp")
       return retval;
     };
 
-    $scope.isBttnPickDisabled = function(_src) {
-      return false; // TODO
+    $scope.isBttnPickDisabled = function(s) {
+      return s === undefined || pickedSourceIds[s.id];
     };
 
-    $scope.pick = function(_src) {
-      // TODO
+    $scope.isBttnUnpickAllDisabled = function() {
+        return pickedSources.length === 0;
     };
 
-    $scope.clear = function() {
-      // TODO
+    $scope.pick = function(pickedSrc) {
+      pickedSources.push(pickedSrc);
+      pickedSourceIds[pickedSrc.id] = true;
+      $scope.pickedSourcesTableParams.reload();
+    };
+
+    $scope.unpick = function(srcId) {
+      var idx = _.findIndex(pickedSources, function(s) {
+        return s.id === srcId;
+      });
+      pickedSources.splice(idx, 1);
+      delete pickedSourceIds[srcId];
+      $scope.pickedSourcesTableParams.reload();
+    };
+
+    $scope.unpickAll = function(pickedSrcId) {
+      _.each(pickedSources, function(ps) {
+        delete pickedSourceIds[ps.id];
+      });
+      pickedSources.splice(0, pickedSources.length);
+      $scope.pickedSourcesTableParams.reload();
+    };
+
+    $scope.clearFilter = function() {
+      $scope.fltrSource.name = null;
+      $scope.fltrSource.description = null;
+      $scope.fltrSource.url = null;
+      $scope.fltrSource.sourceName = null;
     };
 
     $scope.onCreateNewSource = function() {
@@ -259,6 +313,18 @@ angular.module("ngMetaCrudApp")
         throw "Unknown current view [2]: " + angular.toJson(cv);
       }
     };
+
+    // Handle updating search results
+    $scope.$watch("[fltrSource]",
+      function (newVal, oldVal) {
+        // Debounce
+        if (angular.equals(newVal, oldVal, true)) {
+          return;
+        }
+        $scope.sourceTableParams.reload();
+      },
+      true
+    );
 
     // *** Initialization ***
     _chvw("sources_list");

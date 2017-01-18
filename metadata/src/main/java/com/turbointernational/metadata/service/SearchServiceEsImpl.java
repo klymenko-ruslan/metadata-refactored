@@ -1217,7 +1217,7 @@ public class SearchServiceEsImpl implements SearchService {
             boolQuery.must(QueryBuilders.termQuery("url.short", normalizedUrl));
         }
         if (sourceNameId != null) {
-            boolQuery.must(QueryBuilders.termQuery("sourceNameId", sourceNameId));
+            boolQuery.must(QueryBuilders.termQuery("sourceName.id", sourceNameId));
         }
         query = boolQuery;
         srb.setQuery(query);

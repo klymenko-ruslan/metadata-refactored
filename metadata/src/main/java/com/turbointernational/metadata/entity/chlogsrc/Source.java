@@ -152,7 +152,11 @@ public class Source implements SearchableEntity, Serializable {
                 .include("name")
                 .include("description")
                 .include("url")
-                .include("serviceNameId")
+                .include("sourceName.*")
+                .include("created")
+                .include("createdUser.*")
+                .include("updated")
+                .include("updatedUser.*")
                 .exclude("*.class");
     }
 
@@ -163,6 +167,7 @@ public class Source implements SearchableEntity, Serializable {
         SearchService.instance().deleteChangelogSource(this);
     }
 
+    @PostPersist
     @PostUpdate
     @Override
     public void updateSearchIndex() throws Exception {
