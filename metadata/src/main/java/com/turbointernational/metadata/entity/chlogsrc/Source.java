@@ -12,9 +12,12 @@ import org.slf4j.LoggerFactory;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
 
 /**
@@ -70,6 +73,10 @@ public class Source implements SearchableEntity, Serializable {
     @ManyToOne
     @JoinColumn(name = "update_user_id")
     private User updateUser;
+
+    @JsonView({View.Detail.class})
+    @OneToMany(mappedBy = "pk.source", fetch = LAZY, cascade = ALL)
+    private List<ChangelogSource> changelogSources = new ArrayList<>();
 
     public Source() {
     }
@@ -144,6 +151,14 @@ public class Source implements SearchableEntity, Serializable {
 
     public void setUpdateUser(User updateUser) {
         this.updateUser = updateUser;
+    }
+
+    public List<ChangelogSource> getChangelogSources() {
+        return changelogSources;
+    }
+
+    public void setChangelogSources(List<ChangelogSource> changelogSources) {
+        this.changelogSources = changelogSources;
     }
 
     protected JSONSerializer getSearchSerializer() {

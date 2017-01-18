@@ -18,6 +18,12 @@ public class ChangelogSource implements Serializable {
     @EmbeddedId
     private ChangelogSourceId pk;
 
+    @Column(name = "description")
+    private String description;
+
+    @Column(name = "raiting")
+    private Integer raiting;
+
     public ChangelogSource() {
 
     }
@@ -32,6 +38,22 @@ public class ChangelogSource implements Serializable {
 
     public void setPk(ChangelogSourceId pk) {
         this.pk = pk;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Integer getRaiting() {
+        return raiting;
+    }
+
+    public void setRaiting(Integer raiting) {
+        this.raiting = raiting;
     }
 
 }

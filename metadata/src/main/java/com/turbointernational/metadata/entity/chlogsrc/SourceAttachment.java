@@ -5,6 +5,8 @@ import com.turbointernational.metadata.util.View;
 
 import javax.persistence.*;
 
+import java.io.Serializable;
+
 import static javax.persistence.GenerationType.IDENTITY;
 
 /**
@@ -12,7 +14,7 @@ import static javax.persistence.GenerationType.IDENTITY;
  */
 @Entity
 @Table(name = "source_attachment")
-public class SourceAttachment {
+public class SourceAttachment implements Serializable {
 
     //<editor-fold defaultstate="collapsed" desc="properties">
 

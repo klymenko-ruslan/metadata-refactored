@@ -758,9 +758,12 @@ public class BOMService {
         if (sourceIds != null && sourceIds.length > 0) {
             EntityManager em = bomItemDao.getEntityManager();
             for(int i = 0; i < sourceIds.length; i++) {
-                Source s = em.getReference(Source.class, sourceIds[i]);
+                //Source s = em.getReference(Source.class, sourceIds[i]);
+                Source s = em.find(Source.class, sourceIds[i]);
                 ChangelogSourceId chlogsrcid = new ChangelogSourceId(chlog, s);
                 ChangelogSource chlgsrc = new ChangelogSource(chlogsrcid);
+                s.getChangelogSources().add(chlgsrc);
+                chlog.getChangelogSources().add(chlgsrc);
                 em.persist(chlgsrc);
             }
         }
