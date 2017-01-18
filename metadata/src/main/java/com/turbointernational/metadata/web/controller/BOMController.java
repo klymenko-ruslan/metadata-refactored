@@ -3,7 +3,6 @@ package com.turbointernational.metadata.web.controller;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.entity.BOMItem;
 import com.turbointernational.metadata.util.View;
-import com.turbointernational.metadata.web.dto.CreateBomItemRequest;
 import com.turbointernational.metadata.entity.User;
 import com.turbointernational.metadata.service.BOMService;
 import com.turbointernational.metadata.service.BOMService.FoundBomRecursionException;
@@ -34,6 +33,58 @@ public class BOMController {
     private static final Logger log = LoggerFactory.getLogger(BOMController.class);
 
     enum BOMErrorStatus { OK, ASSERTION_ERROR, FOUND_BOM_RECURSION }
+
+    public static class CreateBomItemRequest {
+
+        @JsonView(View.Summary.class)
+        private Long childPartId;
+
+        @JsonView(View.Summary.class)
+        private Long parentPartId;
+
+        @JsonView(View.Summary.class)
+        private Integer quantity;
+
+        /**
+         * Changelog source IDs which should be linked to the changelog.
+         * See ticket #891 for details.
+         */
+        @JsonView(View.Summary.class)
+        private Long[] sourceIds;
+
+        public Long getChildPartId() {
+            return childPartId;
+        }
+
+        public void setChildPartId(Long childPartId) {
+            this.childPartId = childPartId;
+        }
+
+        public Long getParentPartId() {
+            return parentPartId;
+        }
+
+        public void setParentPartId(Long parentPartId) {
+            this.parentPartId = parentPartId;
+        }
+
+        public Integer getQuantity() {
+            return quantity;
+        }
+
+        public void setQuantity(Integer quantity) {
+            this.quantity = quantity;
+        }
+
+        public Long[] getSourceIds() {
+            return sourceIds;
+        }
+
+        public void setSourceIds(Long[] sourceIds) {
+            this.sourceIds = sourceIds;
+        }
+
+    }
 
     static class BOMResult {
 
@@ -98,8 +149,9 @@ public class BOMController {
         Long parentPartId = request.getParentPartId();
         Long childPartId = request.getChildPartId();
         Integer quantity = request.getQuantity();
+        Long[] sourceIds = request.getSourceIds();
         try {
-            bomService.create(parentPartId, childPartId, quantity, true);
+            bomService.create(parentPartId, childPartId, quantity, sourceIds, true);
             return new BOMResult(); // OK
         } catch (FoundBomRecursionException e) {
             return new BOMResult(e);

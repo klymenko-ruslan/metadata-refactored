@@ -6,7 +6,11 @@ import com.turbointernational.metadata.dao.BOMItemDao;
 import com.turbointernational.metadata.dao.PartDao;
 import com.turbointernational.metadata.dao.TurboCarModelEngineYearDao;
 import com.turbointernational.metadata.entity.BOMItem;
+import com.turbointernational.metadata.entity.Changelog;
 import com.turbointernational.metadata.entity.User;
+import com.turbointernational.metadata.entity.chlogsrc.ChangelogSource;
+import com.turbointernational.metadata.entity.chlogsrc.ChangelogSourceId;
+import com.turbointernational.metadata.entity.chlogsrc.Source;
 import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.util.View;
 import org.slf4j.Logger;
@@ -733,7 +737,8 @@ public class BOMService {
     }
 
     @Transactional(noRollbackFor = {FoundBomRecursionException.class, AssertionError.class})
-    public BOMItem create(Long parentPartId, Long childPartId, Integer quantity, boolean rebuildBom) throws FoundBomRecursionException {
+    public BOMItem create(Long parentPartId, Long childPartId, Integer quantity, Long[] sourceIds,
+                          boolean rebuildBom) throws FoundBomRecursionException {
         // Create a new BOM item
         Part parent = partDao.findOne(parentPartId);
         Part child = partDao.findOne(childPartId);
@@ -748,7 +753,17 @@ public class BOMService {
         parent.getBom().add(item);
         bomItemDao.persist(item);
         // Update the changelog
-        changelogService.log(BOM, "Added bom item: " + formatBOMItem(item), item.toJson());
+        Changelog chlog = changelogService.log(BOM,
+                "Added bom item: " + formatBOMItem(item), item.toJson());
+        if (sourceIds != null && sourceIds.length > 0) {
+            EntityManager em = bomItemDao.getEntityManager();
+            for(int i = 0; i < sourceIds.length; i++) {
+                Source s = em.getReference(Source.class, sourceIds[i]);
+                ChangelogSourceId chlogsrcid = new ChangelogSourceId(chlog, s);
+                ChangelogSource chlgsrc = new ChangelogSource(chlogsrcid);
+                em.persist(chlgsrc);
+            }
+        }
         if (rebuildBom) {
             rebuildBomDescendancyForPart(parentPartId, true); // TODO: is clean=true required?
         }
@@ -806,7 +821,7 @@ public class BOMService {
                     }
                 }
                 // Add the primary part to the list of BOMs of the picked part.
-                create(pickedPartId, primaryPartId, r.getQuontity(), false);
+                create(pickedPartId, primaryPartId, r.getQuontity(), null,false);
                 added++;
             } catch(FoundBomRecursionException e) {
                 log.debug("Adding of the part [" + primaryPartId + "] to list of BOM for part [" +
