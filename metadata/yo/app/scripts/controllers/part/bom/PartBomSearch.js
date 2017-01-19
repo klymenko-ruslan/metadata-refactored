@@ -51,7 +51,10 @@ angular.module("ngMetaCrudApp")
           "bomItem": function () {
             return $scope.bomItem;
           },
-          "sourcesNames": restService.getAllChangelogSourceNames()
+          "sourcesNames": restService.getAllChangelogSourceNames(),
+          "begin": function() {
+            return restService.chanlelogSourceBeginEdit(); // needs to clear session attribute on the server side
+          }
         }
       });
 
@@ -77,44 +80,68 @@ angular.module("ngMetaCrudApp")
   }
 ]).controller("ChlogSrcLinkDlgCtrl", ["$scope", "$log", "$location", "dialogs", "gToast", "ngTableParams",
   "$uibModalInstance", "utils", "restService", "BOM_RESULT_STATUS", "partId", "bomItem",
-  "sourcesNames",
+  "sourcesNames", "begin",
   function($scope, $log, $location, dialogs, gToast, ngTableParams, $uibModalInstance, utils,
-    restService, BOM_RESULT_STATUS, partId, bomItem, sourcesNames) {
+    restService, BOM_RESULT_STATUS, partId, bomItem, sourcesNames, begin) {
 
     $scope.partId = partId;
     $scope.sourcesNames = sourcesNames;
-    $scope.forms = {
-    };
 
-    var pickedSources = [];
-    var pickedSourceIds = {};
+    var pickedSources = null;
+    var pickedSourceIds = null;
 
-    $scope.fltrSource = {
-      name: null,
-      description: null,
-      url: null,
-      sourceName: null
-    };
+    var attachments = null;
 
-    $scope.data = {
-      confirmCancelView: {
-        result: null
-      },
-      currVw: {
-        id: null,
-        title: null,
-        actionBttnTitle: null
-      },
-      prevVw: {
-        id: null,
-        title: null,
-        actionBttnTitle: null
-      },
-      crud: {
-        source: {
+    var file = null;
+
+    // Data to be uploaded
+    var formData = null;
+
+    $scope.model = null;
+
+    function _reset() {
+      pickedSources = [];
+      pickedSourceIds = {};
+      attachments = [];
+
+      $scope.model = {
+        attachDescr: null
+      };
+
+      formData = new FormData();
+
+      $scope.forms = {
+      };
+
+      $scope.fltrSource = {
+        name: null,
+        description: null,
+        url: null,
+        sourceName: null
+      };
+
+      $scope.data = {
+        confirmCancelView: {
+          result: null
+        },
+        currVw: {
+          id: null,
+          title: null,
+          actionBttnTitle: null
+        },
+        prevVw: {
+          id: null,
+          title: null,
+          actionBttnTitle: null
+        },
+        crud: {
+          source: {
+          }
         }
-      }
+      };
     };
+
+    _reset();
 
     $scope.pickedSourcesTableParams = new ngTableParams(
       {
@@ -166,6 +193,16 @@ angular.module("ngMetaCrudApp")
       }
     );
 
+    $scope.attachmentsTableParams = new ngTableParams(
+      {
+        page: 1,
+        count: 10,
+        sorting: {}
+      },
+      {
+        getData: utils.localPagination(attachments)
+      }
+    );
 
     function _save() {
       var srcIds = _.map(pickedSources, function(ps) {
@@ -274,6 +311,45 @@ angular.module("ngMetaCrudApp")
 
     $scope.onCreateNewSource = function() {
       _chvw("create_new_source");
+    };
+
+    $scope.changedAttachment = function(files) {
+      file = files[0];
+      formData.append("file", files[0]);
+    };
+
+    function _updateAttachmentsTable(updatedAttachments) {
+      attachments.splice(0, attachments.length);
+      _.each(updatedAttachments, function (e) {
+        attachments.push(e);
+      });
+      $scope.attachmentsTableParams.reload();
+      formData = new FormData();
+    };
+
+    $scope.uploadAttachment = function() {
+      restService.changelogSourceUploadAttachmentTmp(file, file.name, $scope.model.attachDescr).then(
+        function(updatedAttachmentsResponse) {
+          // Success
+        _updateAttachmentsTable(updatedAttachmentsResponse.rows);
+          gToast.open("File uploaded.");
+        },
+        function(response) {
+          // Error
+          restService.error("Could not upload the attachment.", response);
+        }
+      );
+    };
+
+    $scope.removeAttachment = function (idx) {
+      restService.changelogSourceRemoveAttachmentTmp(idx).then(
+        function(updatedAttachmentsResponse) {
+          _updateAttachmentsTable(updatedAttachmentsResponse.rows);
+        },
+        function(errorResponse) {
+          restService.error("Could not remove attachment.", errorResponse);
+        }
+      );
     };
 
     $scope.cancel = function() {

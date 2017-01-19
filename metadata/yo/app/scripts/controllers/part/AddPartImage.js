@@ -21,8 +21,6 @@ angular.module("ngMetaCrudApp").controller("AddPartImageCtrl", [
     };
 
     $scope.upload = function() {
-$log.log("typeof(publishImage)=" + typeof($scope.publishImage));
-$log.log("publishImage=" + $scope.publishImage);
       Restangular.setParentless(false);
       Restangular.one("part", data.part.id).all("image")
         .post(file, { "publish": $scope.publishImage }, {"Content-Type": "application/octet-stream"}).then(

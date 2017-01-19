@@ -758,6 +758,12 @@ public class BOMService {
         if (sourceIds != null && sourceIds.length > 0) {
             EntityManager em = bomItemDao.getEntityManager();
             for(int i = 0; i < sourceIds.length; i++) {
+                em.createNativeQuery("insert into changelog_source(changelog_id, source_id) " +
+                        "values(:changelog_id, :source_id)")
+                        .setParameter("changelog_id", chlog.getId())
+                        .setParameter("source_id", sourceIds[i])
+                        .executeUpdate();
+                /*
                 //Source s = em.getReference(Source.class, sourceIds[i]);
                 Source s = em.find(Source.class, sourceIds[i]);
                 ChangelogSourceId chlogsrcid = new ChangelogSourceId(chlog, s);
@@ -765,6 +771,7 @@ public class BOMService {
                 s.getChangelogSources().add(chlgsrc);
                 chlog.getChangelogSources().add(chlgsrc);
                 em.persist(chlgsrc);
+                */
             }
         }
         if (rebuildBom) {

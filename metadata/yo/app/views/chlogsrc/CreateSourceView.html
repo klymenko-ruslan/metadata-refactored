@@ -50,7 +50,44 @@
   <div role="tabpanel" class="tab-pane fade" id="attaches">
     <div class="row">
       <div class="col-xs-12">
-        <p>TODO</p>
+
+        <form class="form-inline" style="padding-top:8px;padding-bottom:8px;">
+          <div class="form-group">
+            <input type="file" name="file" onchange="angular.element(this).scope().changedAttachment(this.files)"/>
+          </div>
+          <div class="form-group">
+            <label for="attach-descr">Description</label>
+            <input id="attach-descr" type="text" data-ng-model="model.attachDescr" data-ng-maxlength="255" />
+          </div>
+          <div class="form-group">
+            <button data-ng-click="uploadAttachment()" class="btn btn-sm btn-primary">
+              <i class="fa fa-upload"></i> Upload
+            </button>
+          </div>
+        </form>
+
+
+        <table data-ng-table="attachmentsTableParams" class="table table-bordered table-striped table-hover table-responsive">
+        <tr data-ng-repeat="rec in $data">
+          <td title="'Name'">
+            {{rec.name}}
+          </td>
+          <td title="'Description'">
+            {{rec.description}}
+          </td>
+          <td class="actions text-center" title="'Actions'">
+            <button type="button" data-ng-click="removeAttachment($index)" class="btn btn-danger btn-xs">
+              <i class="fa fa-trash-o"></i> Remove
+            </button>
+          </td>
+        </tr>
+
+        <tr data-ng-hide="$data.length > 0">
+          <td colspan="3">The are no attaches.</td>
+        </tr>
+
+        </table>
+
       </div>
     </div>
   </div>

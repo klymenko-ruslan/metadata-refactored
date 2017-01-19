@@ -38,7 +38,6 @@ angular.module("ngMetaCrudApp")
         var req = {};
         angular.copy(bomItem, req);
         req.sourceIds = srcIds;
-$log.log("req: " + angular.toJson(req));
         return Restangular.all("bom").post(req);
       };
 
@@ -782,6 +781,11 @@ $log.log("req: " + angular.toJson(req));
         });
       };
 
+      this.chanlelogSourceBeginEdit = function() {
+        return Restangular.one("changelog/source").post("begin");
+
+      };
+
       this.createChanlelogSource = function(name, description, url, sourceNameId) {
         return Restangular.one("changelog").post("source", {
           "name": name,
@@ -789,6 +793,21 @@ $log.log("req: " + angular.toJson(req));
           "url": url,
           "sourceNameId": sourceNameId
         });
+      };
+
+      this.changelogSourceUploadAttachmentTmp = function(file, name, description) {
+        Restangular.setParentless(false);
+        return Restangular.all("changelog/source/attachment/tmp")
+          .post(file, {
+            "name": name,
+            "description": description
+          }, {
+            "Content-Type": "application/octet-stream"
+          });
+      };
+
+      this.changelogSourceRemoveAttachmentTmp = function(idx) {
+        return Restangular.one("changelog/source/attachment/tmp", idx).remove();
       };
 
       this.findPrimaryPartIdForThePart = function(id) {
