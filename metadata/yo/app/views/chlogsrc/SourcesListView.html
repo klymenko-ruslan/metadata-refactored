@@ -1,19 +1,28 @@
-<button data-ng-click="onCreateNewSource()" class="btn btn-success">
-  <i class="fa fa-wrench"></i>
-  Create
-</button>
-
-<h1 class="padding-top">Link Changelog Sources</h1>
+<div class="form-group">
+  <label for="description">Description</label>
+  <textarea id="description" rows="3" class="form-control" data-ng-value="data.description"></textarea>
+</div>
 
 <div class="row">
 
   <div class="col-xs-12">
-    <h3>
-      Picked
-      <button type="button" title="Unpick All" data-ng-click="unpickAll()" data-ng-disabled="isBttnUnpickAllDisabled()" class="btn btn-link btn-sm" style="padding:0;">
-        <i class="fa fa-times"></i>
-      </button>
-    </h3>
+    <div class="row">
+      <div class="col-xs-6">
+        <h4>
+          Picked
+          <button type="button" title="Unpick All" data-ng-click="unpickAll()" data-ng-disabled="isBttnUnpickAllDisabled()" class="btn btn-link btn-sm" style="padding:0;">
+            <i class="fa fa-times"></i>
+          </button>
+        </h4>
+      </div>
+      <div class="col-xs-6">
+        <button data-ng-click="onCreateNewSource()" class="btn btn-success pull-right">
+          <i class="fa fa-wrench"></i>
+          Create Source
+        </button>
+      </div>
+    </div>
+
     <table data-ng-table="pickedSourcesTableParams" class="table table-bordered table-striped table-hover table-responsive">
     <tr data-ng-repeat="rec in $data">
       <td title="'Name'">
@@ -25,6 +34,12 @@
       <td title="'Source Name'">
         {{rec.sourceName.name}}
       </td>
+      <td title="'Raiting'" class="text-center">
+        <span uib-rating max="5" read-only="false" data-ng-model="pickedSourcesRaitings[$index]"></span>
+      </td>
+      <td title="'Created'" class="text-center">
+        {{rec.created | date : "yyyy-MM-dd HH:mm.ss"}}
+      </td>
       <td class="actions text-center" title="'Actions'">
         <button type="button" data-ng-click="unpick(rec.id)" class="btn btn-danger btn-xs">
           <i class="fa fa-times"></i> Unpick
@@ -33,7 +48,7 @@
     </tr>
 
     <tr data-ng-hide="$data.length > 0">
-      <td colspan="4">No picked sources.</td>
+      <td colspan="6">No picked sources.</td>
     </tr>
 
     </table>
@@ -41,63 +56,102 @@
 
 </div>
 
-<hr/>
+<h4>Search Sources</h4>
 
-<div class="row">
-  <!-- Search by input or facet select options -->
-  <div class="col-xs-12 col-sm-3">
+<ul id="tabsSearchSources" class="nav nav-tabs" role="tablist">
+  <li role="presentation">
+    <a href="#tab_all" aria-controls="all" role="tab" data-toggle="tab">
+      <i class="fa fa-bars"></i>
+      All
+    </a>
+  </li>
+  <li role="presentation">
+    <a href="#tab_lastpicked" aria-controls="last picked" role="tab" data-toggle="tab">
+      <i class="fa fa-bars"></i>
+      Last picked
+    </a>
+  </li>
+</ul>
+<div class="tab-content">
+  <div role="tabpanel" class="tab-pane fade" id="tab_all">
+    <div class="row" style="padding-top:8px;">
+      <!-- Search by input or facet select options -->
+      <div class="col-xs-12 col-sm-3">
 
-    <button class="btn btn-default input-sm" data-ng-click="clearFilter()">
-      <i class="fa fa-eraser" aria-hidden="true"></i> Clear
-    </button>
-    <div class="form-group">
-      <input id="fltrName" name="fltrName" class="form-control input-sm" type="text" data-ng-model="fltrSource.name" placeholder="Name..." data-ng-model-options="{debounce: 500}" />
-    </div>
-    <div class="form-group">
-      <label for="fltrDescription">Description</label>
-      <input id="fltrDescription" name="fltrDescription" class="form-control input-sm" type="text" data-ng-model="fltrSource.description" placeholder="Description..." data-ng-model-options="{debounce: 500}" />
-    </div>
-    <div class="form-group">
-      <label for="fltrUrl">URL</label>
-      <input id="fltrUrl" name="fltrUrl" class="form-control input-sm" type="text" data-ng-model="fltrSource.url" placeholder="URL..." data-ng-model-options="{debounce: 500}" />
-    </div>
-    <div class="form-group">
-      <label for="fltrSourceName">Source Name</label>
-      <select id="fltrSourceName" name="fltrSourceName" class="form-control input-sm" data-ng-options="sn.name for sn in sourcesNames track by sn.id" data-ng-model="fltrSource.sourceName">
-        <option></option>
-      </select>
-    </div>
-
-  </div>
-
-  <!-- Tabular search results -->
-  <div class="col-xs-12 col-sm-9">
-    <table data-ng-table="sourceTableParams" class="table table-bordered table-striped table-hover table-responsive">
-    <tr data-ng-repeat="rec in $data">
-      <td title="'Name'" sortable="'name.lower_case_sort'">
-        {{rec._source.name}}
-      </td>
-      <td title="'Description'" sortable="'description.lower_case_sort'">
-        {{rec._source.description}}
-      </td>
-      <td title="'Source Name'" sortable="'sourceName.name.lower_case_sort'">
-        {{rec._source.sourceName.name}}
-      </td>
-      <td title="'URL'" sortable="'url.lower_case_sort'">
-        {{rec._source.url}}
-      </td>
-      <td class="actions text-center" title="'Actions'">
-        <button type="button" data-ng-disabled="isBttnPickDisabled(rec._source)" data-ng-click="pick(rec._source)" class="btn btn-success btn-xs ng-scope">
-          <i class="fa fa-bullseye"></i> Pick
+        <button class="btn btn-default input-sm" data-ng-click="clearFilter()">
+          <i class="fa fa-eraser" aria-hidden="true"></i> Clear
         </button>
-      </td>
-    </tr>
+        <div class="form-group">
+          <input id="fltrName" name="fltrName" class="form-control input-sm" type="text" data-ng-model="fltrSource.name" placeholder="Name..." data-ng-model-options="{debounce: 500}" />
+        </div>
+        <div class="form-group">
+          <label for="fltrDescription">Description</label>
+          <input id="fltrDescription" name="fltrDescription" class="form-control input-sm" type="text" data-ng-model="fltrSource.description" placeholder="Description..." data-ng-model-options="{debounce: 500}" />
+        </div>
+        <div class="form-group">
+          <label for="fltrUrl">URL</label>
+          <input id="fltrUrl" name="fltrUrl" class="form-control input-sm" type="text" data-ng-model="fltrSource.url" placeholder="URL..." data-ng-model-options="{debounce: 500}" />
+        </div>
+        <div class="form-group">
+          <label for="fltrSourceName">Source Name</label>
+          <select id="fltrSourceName" name="fltrSourceName" class="form-control input-sm" data-ng-options="sn.name for sn in sourcesNames track by sn.id" data-ng-model="fltrSource.sourceName">
+            <option></option>
+          </select>
+        </div>
 
-    <tr data-ng-hide="$data.length > 0">
-      <td colspan="5">No sources to display.</td>
-    </tr>
+      </div>
 
-    </table>
+      <!-- Tabular search results -->
+      <div class="col-xs-12 col-sm-9">
+        <table data-ng-table="sourceTableParams" class="table table-bordered table-striped table-hover table-responsive">
+        <tr data-ng-repeat="rec in $data">
+          <td title="'Name'" sortable="'name.lower_case_sort'">
+            {{rec._source.name}}
+          </td>
+          <td title="'Description'" sortable="'description.lower_case_sort'">
+            {{rec._source.description}}
+          </td>
+          <td title="'Source Name'" sortable="'sourceName.name.lower_case_sort'">
+            {{rec._source.sourceName.name}}
+          </td>
+          <td title="'URL'" sortable="'url.lower_case_sort'">
+            {{rec._source.url}}
+          </td>
+          <td class="actions text-center" title="'Actions'">
+            <button type="button" data-ng-disabled="isBttnPickDisabled(rec._source)" data-ng-click="pick(rec._source)" class="btn btn-success btn-xs ng-scope">
+              <i class="fa fa-bullseye"></i> Pick
+            </button>
+          </td>
+        </tr>
+
+        <tr data-ng-hide="$data.length > 0">
+          <td colspan="5">No sources to display.</td>
+        </tr>
+
+        </table>
+      </div>
+
+    </div>
+
+  </div>
+
+  <div role="tabpanel" class="tab-pane fade" id="tab_lastpicked">
+    <div class="row" style="padding-top:8px;">
+      <!-- Search by input or facet select options -->
+      <div class="col-xs-12">
+        TODO
+      </div>
+    </div>
   </div>
 
 </div>
+
+<script>
+  $('#tabsSearchSources a').click(function (e) {
+    e.preventDefault();
+    $(this).tab('show');
+  });
+  $('#tabsSearchSources a:first').tab('show');
+</script>
+
+

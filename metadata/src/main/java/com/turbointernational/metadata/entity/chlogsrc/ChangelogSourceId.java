@@ -13,6 +13,9 @@ import java.io.Serializable;
 public class ChangelogSourceId implements Serializable {
 
     @ManyToOne
+    private ChangelogSourceLink link;
+
+    @ManyToOne
     private Changelog changelog;
 
     @ManyToOne
@@ -21,9 +24,18 @@ public class ChangelogSourceId implements Serializable {
     public ChangelogSourceId() {
     }
 
-    public ChangelogSourceId(Changelog changelog, Source source) {
+    public ChangelogSourceId(ChangelogSourceLink link, Changelog changelog, Source source) {
+        this.link = link;
         this.changelog = changelog;
         this.source = source;
+    }
+
+    public ChangelogSourceLink getLink() {
+        return link;
+    }
+
+    public void setLink(ChangelogSourceLink link) {
+        this.link = link;
     }
 
     public Changelog getChangelog() {
@@ -49,13 +61,15 @@ public class ChangelogSourceId implements Serializable {
 
         ChangelogSourceId that = (ChangelogSourceId) o;
 
+        if (!link.equals(that.link)) return false;
         if (!changelog.equals(that.changelog)) return false;
         return source.equals(that.source);
     }
 
     @Override
     public int hashCode() {
-        int result = changelog.hashCode();
+        int result = link.hashCode();
+        result = 31 * result + changelog.hashCode();
         result = 31 * result + source.hashCode();
         return result;
     }

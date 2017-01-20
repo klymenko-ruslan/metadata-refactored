@@ -1,4 +1,4 @@
-<ul id="tabsSource" class="nav nav-tabs" role="tablist">
+<ul id="tabsNewSource" class="nav nav-tabs" role="tablist">
   <li role="presentation">
     <a href="#source" aria-controls="source" role="tab" data-toggle="tab">
       <i class="fa fa-bars"></i>
@@ -6,9 +6,9 @@
     </a>
   </li>
   <li role="presentation">
-    <a href="#attaches" aria-controls="attaches" role="tab" data-toggle="tab">
+    <a href="#attachments" aria-controls="attachments" role="tab" data-toggle="tab">
       <i class="fa fa-paperclip"></i>
-      Attaches
+      Attachments
     </a>
   </li>
 </ul>
@@ -16,7 +16,7 @@
   <div role="tabpanel" class="tab-pane fade" id="source">
     <div class="row">
       <div class="col-xs-12">
-        <form name="forms.changelogSourceForm" style="padding-left:1em;" novalidate>
+        <form name="forms.changelogSourceForm" novalidate>
           <div class="form-group">
             <label for="name">Name</label>
             <input id="name" type="text" class="form-control" data-ng-model="data.crud.source.name" unique-changelog-source-name required>
@@ -47,7 +47,7 @@
       </div>
     </div>
   </div>
-  <div role="tabpanel" class="tab-pane fade" id="attaches">
+  <div role="tabpanel" class="tab-pane fade" id="attachments">
     <div class="row">
       <div class="col-xs-12">
 
@@ -83,7 +83,7 @@
         </tr>
 
         <tr data-ng-hide="$data.length > 0">
-          <td colspan="3">The are no attaches.</td>
+          <td colspan="3">The are no attachments.</td>
         </tr>
 
         </table>
@@ -93,9 +93,9 @@
   </div>
 </div>
 <script>
-  $('#tabsSource a').click(function (e) {
+  $('#tabsNewSource a').click(function (e) {
     e.preventDefault();
     $(this).tab('show');
   });
-  $('#tabsSource a:first').tab('show');
+  $('#tabsNewSource a:first').tab('show');
 </script>
