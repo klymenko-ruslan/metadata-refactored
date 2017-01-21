@@ -136,7 +136,7 @@ angular.module("ngMetaCrudApp")
       var srcIds = _.map(pickedSources, function(ps) {
         return ps.id;
       });
-      restService.createBom(bomItem, srcIds).then(
+      restService.createBom(bomItem, srcIds, $scope.pickedSourcesRaitings, $scope.model.description).then(
         function(bomResult) {
           if (bomResult.status == BOM_RESULT_STATUS.OK) {
             // Success

@@ -737,7 +737,8 @@ public class BOMService {
     }
 
     @Transactional(noRollbackFor = {FoundBomRecursionException.class, AssertionError.class})
-    public BOMItem create(Long parentPartId, Long childPartId, Integer quantity, Long[] sourceIds,
+    public BOMItem create(Long parentPartId, Long childPartId, Integer quantity,
+                          Long[] sourceIds, Integer[] chlogSrcRaiting, String chlogSrcLnkDescription,
                           boolean rebuildBom) throws FoundBomRecursionException {
         // Create a new BOM item
         Part parent = partDao.findOne(parentPartId);
@@ -757,23 +758,23 @@ public class BOMService {
                 "Added bom item: " + formatBOMItem(item), item.toJson());
         if (sourceIds != null && sourceIds.length > 0) {
             EntityManager em = bomItemDao.getEntityManager();
-            for(int i = 0; i < sourceIds.length; i++) {
-                em.createNativeQuery("insert into changelog_source(changelog_id, source_id) " +
-                        "values(:changelog_id, :source_id)")
-                        .setParameter("changelog_id", chlog.getId())
-                        .setParameter("source_id", sourceIds[i])
-                        .executeUpdate();
-                /*
-                //Source s = em.getReference(Source.class, sourceIds[i]);
-                Source s = em.find(Source.class, sourceIds[i]);
-                ChangelogSourceId chlogsrcid = new ChangelogSourceId(chlog, s);
-                ChangelogSource chlgsrc = new ChangelogSource(chlogsrcid);
-                s.getChangelogSources().add(chlgsrc);
-                chlog.getChangelogSources().add(chlgsrc);
-                em.persist(chlgsrc);
-                */
-            }
-        }
+//            for(int i = 0; i < sourceIds.length; i++) {
+//                em.createNativeQuery("insert into changelog_source(changelog_id, source_id) " +
+//                        "values(:changelog_id, :source_id)")
+//                        .setParameter("changelog_id", chlog.getId())
+//                        .setParameter("source_id", sourceIds[i])
+//                        .executeUpdate();
+//                /*
+//                //Source s = em.getReference(Source.class, sourceIds[i]);
+//                Source s = em.find(Source.class, sourceIds[i]);
+//                ChangelogSourceId chlogsrcid = new ChangelogSourceId(chlog, s);
+//                ChangelogSource chlgsrc = new ChangelogSource(chlogsrcid);
+//                s.getChangelogSources().add(chlgsrc);
+//                chlog.getChangelogSources().add(chlgsrc);
+//                em.persist(chlgsrc);
+//                */
+//            }
+//        }
         if (rebuildBom) {
             rebuildBomDescendancyForPart(parentPartId, true); // TODO: is clean=true required?
         }
@@ -831,7 +832,7 @@ public class BOMService {
                     }
                 }
                 // Add the primary part to the list of BOMs of the picked part.
-                create(pickedPartId, primaryPartId, r.getQuontity(), null,false);
+                create(pickedPartId, primaryPartId, r.getQuontity(), null, null, null, false);
                 added++;
             } catch(FoundBomRecursionException e) {
                 log.debug("Adding of the part [" + primaryPartId + "] to list of BOM for part [" +

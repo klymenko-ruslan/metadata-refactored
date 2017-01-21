@@ -34,10 +34,13 @@ angular.module("ngMetaCrudApp")
         }
       };
 
-      this.createBom = function(bomItem, srcIds) {
+      this.createBom = function(bomItem, srcIds, chlogSrcRaiting, chlogSrcLnkDescription) {
         var req = {};
         angular.copy(bomItem, req);
         req.sourceIds = srcIds;
+        req.chlogSrcRaiting = chlogSrcRaiting;
+        req.chlogSrcLnkDescription = chlogSrcLnkDescription;
+$log.log("req: " + angular.toJson(req)));
         return Restangular.all("bom").post(req);
       };
 

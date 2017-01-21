@@ -52,6 +52,12 @@ public class BOMController {
         @JsonView(View.Summary.class)
         private Long[] sourceIds;
 
+        @JsonView(View.Summary.class)
+        private Integer[] chlogSrcRaiting;
+
+        @JsonView(View.Summary.class)
+        private String chlogSrcLnkDescription;
+
         public Long getChildPartId() {
             return childPartId;
         }
@@ -84,6 +90,21 @@ public class BOMController {
             this.sourceIds = sourceIds;
         }
 
+        public Integer[] getChlogSrcRaiting() {
+            return chlogSrcRaiting;
+        }
+
+        public void setChlogSrcRaiting(Integer[] chlogSrcRaiting) {
+            this.chlogSrcRaiting = chlogSrcRaiting;
+        }
+
+        public String getChlogSrcLnkDescription() {
+            return chlogSrcLnkDescription;
+        }
+
+        public void setChlogSrcLnkDescription(String chlogSrcLnkDescription) {
+            this.chlogSrcLnkDescription = chlogSrcLnkDescription;
+        }
     }
 
     static class BOMResult {
@@ -150,8 +171,11 @@ public class BOMController {
         Long childPartId = request.getChildPartId();
         Integer quantity = request.getQuantity();
         Long[] sourceIds = request.getSourceIds();
+        Integer[] chlogSrcRaiting = request.getChlogSrcRaiting();
+        String chlogSrcLnkDescription = request.getChlogSrcLnkDescription();
         try {
-            bomService.create(parentPartId, childPartId, quantity, sourceIds, true);
+            bomService.create(parentPartId, childPartId, quantity,
+                    sourceIds, chlogSrcRaiting, chlogSrcLnkDescription, true);
             return new BOMResult(); // OK
         } catch (FoundBomRecursionException e) {
             return new BOMResult(e);
