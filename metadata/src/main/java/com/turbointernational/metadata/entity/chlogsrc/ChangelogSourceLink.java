@@ -27,6 +27,10 @@ public class ChangelogSourceLink {
     public ChangelogSourceLink() {
     }
 
+    public ChangelogSourceLink(String description) {
+        this.description = description;
+    }
+
     public Long getId() {
         return id;
     }

@@ -153,3 +153,8 @@ insert into group_role(group_id, role_id) values
 
 insert into user_group(user_id, group_id) values(1, 3);
 
+insert into source_name(id, name) values
+(1, 'website'),
+(2, 'email'),
+(3, 'spreadsheet'),
+(4, 'PDF');

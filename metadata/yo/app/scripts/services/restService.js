@@ -40,7 +40,7 @@ angular.module("ngMetaCrudApp")
         req.sourceIds = srcIds;
         req.chlogSrcRaiting = chlogSrcRaiting;
         req.chlogSrcLnkDescription = chlogSrcLnkDescription;
-$log.log("req: " + angular.toJson(req)));
+$log.log("req: " + angular.toJson(req));
         return Restangular.all("bom").post(req);
       };
 

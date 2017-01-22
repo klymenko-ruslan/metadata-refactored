@@ -10,6 +10,7 @@ import com.turbointernational.metadata.entity.Changelog;
 import com.turbointernational.metadata.entity.User;
 import com.turbointernational.metadata.entity.chlogsrc.ChangelogSource;
 import com.turbointernational.metadata.entity.chlogsrc.ChangelogSourceId;
+import com.turbointernational.metadata.entity.chlogsrc.ChangelogSourceLink;
 import com.turbointernational.metadata.entity.chlogsrc.Source;
 import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.util.View;
@@ -754,10 +755,20 @@ public class BOMService {
         parent.getBom().add(item);
         bomItemDao.persist(item);
         // Update the changelog
-        Changelog chlog = changelogService.log(BOM,
+        Changelog changelog = changelogService.log(BOM,
                 "Added bom item: " + formatBOMItem(item), item.toJson());
         if (sourceIds != null && sourceIds.length > 0) {
             EntityManager em = bomItemDao.getEntityManager();
+            ChangelogSourceLink link = new ChangelogSourceLink(chlogSrcLnkDescription);
+            em.persist(link);
+            for (int i = 0; i < sourceIds.length; i++) {
+                Long srcId = sourceIds[i];
+                Integer raiting = chlogSrcRaiting[i];
+                Source source = em.getReference(Source.class, srcId);
+                ChangelogSourceId chlgsrcid = new ChangelogSourceId(link, changelog, source);
+                ChangelogSource chlgsrc = new ChangelogSource(chlgsrcid, raiting);
+                em.persist(chlgsrc);
+            }
 //            for(int i = 0; i < sourceIds.length; i++) {
 //                em.createNativeQuery("insert into changelog_source(changelog_id, source_id) " +
 //                        "values(:changelog_id, :source_id)")
@@ -774,7 +785,7 @@ public class BOMService {
 //                em.persist(chlgsrc);
 //                */
 //            }
-//        }
+        }
         if (rebuildBom) {
             rebuildBomDescendancyForPart(parentPartId, true); // TODO: is clean=true required?
         }

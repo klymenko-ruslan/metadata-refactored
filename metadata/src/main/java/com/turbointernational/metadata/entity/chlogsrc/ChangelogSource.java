@@ -22,7 +22,11 @@ public class ChangelogSource implements Serializable {
     private Integer raiting;
 
     public ChangelogSource() {
+    }
 
+    public ChangelogSource(ChangelogSourceId pk, Integer raiting) {
+        this.pk = pk;
+        this.raiting = raiting;
     }
 
     public ChangelogSource(ChangelogSourceId pk) {
