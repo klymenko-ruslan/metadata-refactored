@@ -25,6 +25,7 @@ import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
 
+import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -65,7 +66,7 @@ public class BOMControllerTest {
     @Autowired
     void setConverters(HttpMessageConverter<?>[] converters) {
 
-        this.mappingJackson2HttpMessageConverter = Arrays.asList(converters).stream()
+        this.mappingJackson2HttpMessageConverter = asList(converters).stream()
                 .filter(hmc -> hmc instanceof MappingJackson2HttpMessageConverter)
                 .findAny()
                 .orElse(null);

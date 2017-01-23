@@ -19,73 +19,84 @@
   </li>
 </metanav>
 
-<h1>Changelog Source</h1>
+<h1>Changelog Source [{{source.id}}] - {{source.name}}</h1>
 
-<form class="form-horizontal">
+<div class="row">
 
-  <div class="form-group">
-    <label class="col-sm-2 control-label">Name</label>
-    <div class="col-sm-10">
-      <p class="form-control-static">{{source.name}}</p>
-    </div>
+  <div class="col-md-6 col-xs-12">
+
+     <h3>Source Properties</h3>
+
+     <form class="form-horizontal">
+
+      <div class="form-group">
+        <label class="col-sm-2 control-label">Name</label>
+        <div class="col-sm-10">
+          <p class="form-control-static">{{source.name}}</p>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="col-sm-2 control-label">Source Name</label>
+        <div class="col-sm-10">
+          <p class="form-control-static">{{source.sourceName.name}}</p>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="col-sm-2 control-label">Description</label>
+        <div class="col-sm-10">
+          <p class="form-control-static">{{source.description}}</p>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="col-sm-2 control-label">URL</label>
+        <div class="col-sm-10">
+          <p class="form-control-static">{{source.url}}</p>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="col-sm-2 control-label">Created</label>
+        <div class="col-sm-10">
+          <p class="form-control-static" data-ng-show="source.created">
+            {{source.created | date : "yyyy-MM-dd HH:mm.ss"}} by <a data-ng-href="security/user/{{source.createUser.id}}">{{source.createUser.name}}</a>
+          </p>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="col-sm-2 control-label">Updated</label>
+        <div class="col-sm-10">
+          <p class="form-control-static" data-ng-show="source.updated">
+            {{source.updated | date : "yyyy-MM-dd HH:mm.ss"}} by <a data-ng-href="security/user/{{source.updateUser.id}}">{{source.updateUser.name}}</a>
+          </p>
+        </div>
+      </div>
+
+    </form>
+
+  </div>
+  <div class="col-md-6 col-xs-12">
+
+    <h3>Attachments</h3>
+
+    <table data-ng-table="attachmentsTableParams" class="table table-bordered table-striped table-hover table-responsive">
+    <tr data-ng-repeat="rec in $data">
+      <td title="'Name'">{{rec.name}}</td>
+      <td title="'Description'">{{rec.description}}</td>
+    </tr>
+
+    <tr data-ng-hide="$data.length > 0">
+      <td colspan="2">No attachments to display.</td>
+    </tr>
+
+    </table>
+
   </div>
 
-  <div class="form-group">
-    <label class="col-sm-2 control-label">Source Name</label>
-    <div class="col-sm-10">
-      <p class="form-control-static">{{source.sourceName.name}}</p>
-    </div>
-  </div>
+</div>
 
-  <div class="form-group">
-    <label class="col-sm-2 control-label">Description</label>
-    <div class="col-sm-10">
-      <p class="form-control-static">{{source.description}}</p>
-    </div>
-  </div>
 
-  <div class="form-group">
-    <label class="col-sm-2 control-label">URL</label>
-    <div class="col-sm-10">
-      <p class="form-control-static">{{source.url}}</p>
-    </div>
-  </div>
 
-  <div class="form-group">
-    <label class="col-sm-2 control-label">Created</label>
-    <div class="col-sm-10">
-      <p class="form-control-static" data-ng-show="source.created">
-        {{source.created | date : "yyyy-MM-dd HH:mm.ss"}}, <a data-ng-href="security/user/{{source.createUser.id}}">{{rec.createUser.name}}</a>
-      </p>
-    </div>
-  </div>
-
-  <div class="form-group">
-    <label class="col-sm-2 control-label">Updated</label>
-    <div class="col-sm-10">
-      <p class="form-control-static" data-ng-show="source.updated">
-        {{source.updated | date : "yyyy-MM-dd HH:mm.ss"}}, <a data-ng-href="security/user/{{source.updateUser.id}}">{{rec.updateUser.name}}</a>
-      </p>
-    </div>
-  </div>
-
-</form>
-
-<hr />
-
-<h3>Attachments</h3>
-
-<table>
-  <thead>
-  <th>Name</th>
-  <th>Description</th>
-  </thead>
-  <tbody>
-  <tr data-ng-repeat="rec in source.attachments track by rec.id">
-    <td width="10%" nowrap="nowrap">{{rec.name}}</td>
-    <td>{{rec.description}}</td>
-  </tr>
-  </tbody>
-</table>
-
-<pre>{{source | json:2}}</pre>

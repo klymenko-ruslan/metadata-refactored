@@ -225,7 +225,7 @@ angular.module("ngMetaCrudApp")
       $scope.pickedSourcesTableParams.reload();
     };
 
-    $scope.unpickAll = function(pickedSrcId) {
+    $scope.unpickAll = function() {
       _.each(pickedSources, function(ps) {
         delete pickedSourceIds[ps.id];
       });
