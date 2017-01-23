@@ -401,6 +401,21 @@ angular.module("ngMetaCrudApp", ["ngCookies", "ngRoute", "ngTable", "ui.bootstra
       }
     });
 
+    // Changelog sources
+    $routeProvider.when("/changelog/source/list", {
+      templateUrl: "views/chlogsrc/list.html",
+      controller: "ChangelogSourcesListCtrl"
+    });
+    $routeProvider.when("/changelog/source/:id", {
+      templateUrl: "views/chlogsrc/view.html",
+      controller: "ChangelogSourcesViewCtrl",
+      resolve: {
+        source: ["$route", "restService", function($route, restService) {
+          return restService.findChangelogSourceById($route.current.pathParams.id);
+        }]
+      }
+     });
+
     // MAS90
     $routeProvider.when("/mas90/sync/status", {
       templateUrl: "views/mas90/sync/status.html",

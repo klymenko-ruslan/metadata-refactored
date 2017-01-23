@@ -6,7 +6,7 @@ angular.module("ngMetaCrudApp")
   "$uibModalInstance", "utils", "restService", "BOM_RESULT_STATUS", "partId", "bomItem",
   "sourcesNames", "begin",
   function($scope, $log, $location, dialogs, gToast, ngTableParams, $uibModalInstance, utils,
-    restService, BOM_RESULT_STATUS, partId, bomItem, sourcesNames, begin) {
+    restService, BOM_RESULT_STATUS, partId, bomItem, sourcesNames, begin) { // injection "begin" is important
 
     $scope.partId = partId;
     $scope.sourcesNames = sourcesNames;
@@ -23,6 +23,7 @@ angular.module("ngMetaCrudApp")
     var formData = null;
 
     $scope.model = null;
+    $scope.fltrSource = null;
 
     function _reset() {
       pickedSources = [];

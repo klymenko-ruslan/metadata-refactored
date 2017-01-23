@@ -1,0 +1,30 @@
+<metanav>
+  <li>
+    <button type="button" data-ng-click="onView()" class="btn btn-primary">
+      <i class="fa fa-eye"></i>
+      Changelog Sources
+    </button>
+  </li>
+  <li>
+    <button type="button" data-ng-disabled="forms.changelogSourceForm.$pristine || forms.changelogSourceForm.$invalid || forms.changelogSourceForm.$pending"
+            data-ng-click="save()" class="btn btn-success">
+      <i class="fa fa-save"></i>
+      Save
+    </button>
+  </li>
+  <li>
+    <button type="button" data-ng-click="revert()"
+            data-ng-disabled="forms.changelogSourceForm.$pristine"
+            class="btn btn-warning">
+      <i class="fa fa-undo"></i>
+      Revert
+    </button>
+  </li>
+</metanav>
+
+<div class="modal-header">
+    <h3>Changelog Source Edit</h3>
+</div>
+
+<data-ng-include src="'/views/chlogsrc/CreateSourceView.html'"></data-ng-include>
+

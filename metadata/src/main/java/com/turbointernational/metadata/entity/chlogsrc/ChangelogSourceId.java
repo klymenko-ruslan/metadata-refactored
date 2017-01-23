@@ -3,6 +3,7 @@ package com.turbointernational.metadata.entity.chlogsrc;
 import com.turbointernational.metadata.entity.Changelog;
 
 import javax.persistence.Embeddable;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import java.io.Serializable;
 
@@ -13,12 +14,15 @@ import java.io.Serializable;
 public class ChangelogSourceId implements Serializable {
 
     @ManyToOne
+    @JoinColumn(name = "lnk_id", nullable = false)
     private ChangelogSourceLink link;
 
     @ManyToOne
+    @JoinColumn(name = "changelog_id", nullable = false)
     private Changelog changelog;
 
     @ManyToOne
+    @JoinColumn(name = "source_id", nullable = false)
     private Source source;
 
     public ChangelogSourceId() {

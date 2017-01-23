@@ -31,6 +31,10 @@ public class ChangelogSourceService {
         return changelogSourceDao.getAllSourceNames();
     }
 
+    public Source findChangelogSourceById(Long id) {
+        return changelogSourceDao.findOne(id);
+    }
+
     public Source findChangelogSourceByName(String name) {
         return changelogSourceDao.findChangelogSourceByName(name);
     }

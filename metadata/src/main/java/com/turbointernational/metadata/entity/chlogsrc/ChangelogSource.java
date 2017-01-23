@@ -8,11 +8,6 @@ import java.io.Serializable;
  */
 @Entity
 @Table(name = "changelog_source")
-@AssociationOverrides({
-        @AssociationOverride(name = "pk.changelog",
-                joinColumns = @JoinColumn(name = "chnagelog_id")),
-        @AssociationOverride(name = "pk.source",
-                joinColumns = @JoinColumn(name = "source_id"))})
 public class ChangelogSource implements Serializable {
 
     @EmbeddedId

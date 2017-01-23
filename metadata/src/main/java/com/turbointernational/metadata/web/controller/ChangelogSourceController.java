@@ -218,6 +218,15 @@ public class ChangelogSourceController {
         return attachments;
     }
 
+    @RequestMapping(path = "/{id}", method = GET, produces = APPLICATION_JSON_VALUE)
+    @Transactional
+    @ResponseBody
+    @JsonView(View.Detail.class)
+    // TODO: security!
+    public Source get(@PathVariable("id") Long id) throws IOException {
+        return changelogSourceService.findChangelogSourceById(id);
+    }
+
     @RequestMapping(method = POST)
     @Transactional
     @ResponseBody

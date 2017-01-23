@@ -1,5 +1,6 @@
 package com.turbointernational.metadata.entity.chlogsrc;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.entity.CriticalDimension;
 import com.turbointernational.metadata.entity.User;
@@ -16,9 +17,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static javax.persistence.CascadeType.ALL;
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
 import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
+import static javax.persistence.TemporalType.TIMESTAMP;
 
 /**
  * Created by dmytro.trunykov@zorallabs.com on 1/12/17.
@@ -28,6 +30,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 @NamedQueries(
     @NamedQuery(name = "findChangelogSourceByName", query = "from Source s where s.name=:name")
 )
+@JsonInclude(ALWAYS)
 public class Source implements SearchableEntity, Serializable {
 
     private final static Logger log = LoggerFactory.getLogger(Source.class);
@@ -58,10 +61,12 @@ public class Source implements SearchableEntity, Serializable {
 
     @JsonView(View.Summary.class)
     @Column(name = "created")
+    @Temporal(TIMESTAMP)
     private Date created;
 
     @JsonView(View.Summary.class)
     @Column(name = "updated")
+    @Temporal(TIMESTAMP)
     private Date updated;
 
     @JsonView(View.Detail.class)
@@ -74,9 +79,9 @@ public class Source implements SearchableEntity, Serializable {
     @JoinColumn(name = "update_user_id")
     private User updateUser;
 
-    @JsonView({View.Detail.class})
-    @OneToMany(mappedBy = "pk.source", fetch = LAZY, cascade = ALL)
-    private List<ChangelogSource> changelogSources = new ArrayList<>();
+    @JsonView(View.Detail.class)
+    @OneToMany(mappedBy = "source", fetch = LAZY)
+    private List<SourceAttachment> attachments = new ArrayList<>();
 
     public Source() {
     }
@@ -153,12 +158,12 @@ public class Source implements SearchableEntity, Serializable {
         this.updateUser = updateUser;
     }
 
-    public List<ChangelogSource> getChangelogSources() {
-        return changelogSources;
+    public List<SourceAttachment> getAttachments() {
+        return attachments;
     }
 
-    public void setChangelogSources(List<ChangelogSource> changelogSources) {
-        this.changelogSources = changelogSources;
+    public void setAttachments(List<SourceAttachment> attachments) {
+        this.attachments = attachments;
     }
 
     protected JSONSerializer getSearchSerializer() {

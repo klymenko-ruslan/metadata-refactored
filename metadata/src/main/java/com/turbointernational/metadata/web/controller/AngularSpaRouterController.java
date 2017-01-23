@@ -18,6 +18,7 @@ public class AngularSpaRouterController {
         "/password/**",
         "/application/**",
         "/bom/**",
+        "/changelog/**",
 //        "/",
 //        "/part/\\d+",
 //        "/part/\\d+/component/search",

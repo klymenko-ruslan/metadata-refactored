@@ -768,23 +768,10 @@ public class BOMService {
                 ChangelogSourceId chlgsrcid = new ChangelogSourceId(link, changelog, source);
                 ChangelogSource chlgsrc = new ChangelogSource(chlgsrcid, raiting);
                 em.persist(chlgsrc);
+                // I have no idea why... but without flush below the record is not saved
+                // to the changelog_source.
+                em.flush();
             }
-//            for(int i = 0; i < sourceIds.length; i++) {
-//                em.createNativeQuery("insert into changelog_source(changelog_id, source_id) " +
-//                        "values(:changelog_id, :source_id)")
-//                        .setParameter("changelog_id", chlog.getId())
-//                        .setParameter("source_id", sourceIds[i])
-//                        .executeUpdate();
-//                /*
-//                //Source s = em.getReference(Source.class, sourceIds[i]);
-//                Source s = em.find(Source.class, sourceIds[i]);
-//                ChangelogSourceId chlogsrcid = new ChangelogSourceId(chlog, s);
-//                ChangelogSource chlgsrc = new ChangelogSource(chlogsrcid);
-//                s.getChangelogSources().add(chlgsrc);
-//                chlog.getChangelogSources().add(chlgsrc);
-//                em.persist(chlgsrc);
-//                */
-//            }
         }
         if (rebuildBom) {
             rebuildBomDescendancyForPart(parentPartId, true); // TODO: is clean=true required?

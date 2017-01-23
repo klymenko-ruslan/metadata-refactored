@@ -1,6 +1,7 @@
 package com.turbointernational.metadata.web.controller;
 import com.turbointernational.metadata.entity.chlogsrc.ChangelogSource;
 import com.turbointernational.metadata.entity.chlogsrc.ChangelogSourceLink;
+import com.turbointernational.metadata.entity.chlogsrc.Source;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,6 +23,7 @@ import org.springframework.web.context.WebApplicationContext;
 import javax.persistence.EntityManager;
 import java.nio.charset.Charset;
 import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -102,11 +104,20 @@ public class BOMControllerTest {
                 .content(requestBody).contentType(contentType))
                 .andExpect(status().isOk())
                 .andExpect(content().json(responseBody));
+        // Check that description for the link exists.
         ChangelogSourceLink link = em.find(ChangelogSourceLink.class, 1L);
         assertNotNull(link);
         assertEquals("Hello world!", link.getDescription());
-        ChangelogSource source = em.find(ChangelogSource.class, 1L);
+        // Check that 'source(s)' exist (actually it is created by *.sql script before the test).
+        Source source = em.find(Source.class, 1L);
         assertNotNull(source);
+        source = em.find(Source.class, 2L);
+        assertNotNull(source);
+        // Check that two links between two sources and a record in the changelog have been created.
+        List<ChangelogSource> chlgSrcs = em.createQuery("from ChangelogSource", ChangelogSource.class)
+                .getResultList();
+        assertNotNull(chlgSrcs);
+        assertEquals(2, chlgSrcs.size());
     }
 
 }

@@ -770,6 +770,10 @@ $log.log("req: " + angular.toJson(req));
         return Restangular.one("changelog/source").get({"name": name});
       };
 
+      this.findChangelogSourceById = function(srcId) {
+        return Restangular.one("changelog/source", srcId).get();
+      };
+
       this.filterChangelogSource = function(name, description, url, sourceNameId,
           sortProperty, sortOrder, offset, limit) {
         return Restangular.one("search/changelog/sources").get({
