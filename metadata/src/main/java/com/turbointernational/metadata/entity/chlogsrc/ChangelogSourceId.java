@@ -16,15 +16,15 @@ import static javax.persistence.CascadeType.ALL;
 @Embeddable
 public class ChangelogSourceId implements Serializable {
 
-    @ManyToOne(cascade = ALL)
+    @ManyToOne
     @JoinColumn(name = "lnk_id", nullable = false)
     private ChangelogSourceLink link;
 
-    @ManyToOne(cascade = ALL)
+    @ManyToOne
     @JoinColumn(name = "changelog_id", nullable = false)
     private Changelog changelog;
 
-    @ManyToOne(cascade = ALL)
+    @ManyToOne
     @JoinColumn(name = "source_id", nullable = false)
     private Source source;
 

@@ -38,6 +38,9 @@ public class ChangelogSourceController {
 
     private final static String SESSION_ATTR_UPLOADS = "uploads_4ec503be252d765ea37621a629afdaa6";
 
+    @Autowired
+    private ChangelogSourceService changelogSourceService;
+
     @JsonInclude(ALWAYS)
     public static class SourceRequest {
 
@@ -186,9 +189,6 @@ public class ChangelogSourceController {
         attachments.clear();
     }
 
-    @Autowired
-    private ChangelogSourceService changelogSourceService;
-
     @RequestMapping(value = "/sourcename/list", method = GET)
     @ResponseBody
     @JsonView(View.Summary.class)
@@ -238,6 +238,13 @@ public class ChangelogSourceController {
                 sr.getUrl(), sr.getSourceNameId(), attachments);
         attachments.clear();
         return retVal;
+    }
+
+    @RequestMapping(path = "/{id}/links/count", method = GET)
+    @ResponseBody
+    @Transactional
+    public Long getLinksCount(@PathVariable("id") Long id) {
+        return changelogSourceService.getNumLinks(id);
     }
 
     @RequestMapping(path = "/{id}", method = DELETE)

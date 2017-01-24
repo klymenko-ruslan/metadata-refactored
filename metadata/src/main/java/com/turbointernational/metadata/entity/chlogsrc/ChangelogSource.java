@@ -8,6 +8,11 @@ import java.io.Serializable;
  */
 @Entity
 @Table(name = "changelog_source")
+@NamedQueries(
+        @NamedQuery(
+                name = "getChangelogSourceCountForSource",
+                query = "select count(*) from ChangelogSource chs where chs.pk.source.id=:srcId")
+)
 public class ChangelogSource implements Serializable {
 
     @EmbeddedId

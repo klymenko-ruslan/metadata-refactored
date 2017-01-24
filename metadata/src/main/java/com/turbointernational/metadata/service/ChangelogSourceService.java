@@ -63,8 +63,12 @@ public class ChangelogSourceService {
 
     public void delete(Long id) {
         Source source = sourceDao.getEntityManager().getReference(Source.class, id);
-        //source.getChangelogSources().forEach(chlgsrc -> em.remove(chlgsrc.getPk().getLink()));
         sourceDao.remove(source);
+    }
+
+    public Long getNumLinks(Long srcId) {
+        return em.createNamedQuery("getChangelogSourceCountForSource", Long.class)
+                .setParameter("srcId", srcId).getSingleResult();
     }
 
 }

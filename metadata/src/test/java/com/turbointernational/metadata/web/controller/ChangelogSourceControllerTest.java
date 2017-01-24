@@ -3,7 +3,6 @@ package com.turbointernational.metadata.web.controller;
 import com.turbointernational.metadata.entity.Changelog;
 import com.turbointernational.metadata.entity.chlogsrc.*;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +30,8 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
@@ -195,6 +196,31 @@ public class ChangelogSourceControllerTest {
         assertEquals(0, links.size());
         List<Changelog> changelogs = em.createQuery("from Changelog", Changelog.class).getResultList();
         assertEquals(1, changelogs.size()); // a changelog still exists
+    }
+
+    @Test
+    @Sql(
+            executionPhase = BEFORE_TEST_METHOD,
+            scripts = "classpath:integration_tests/feed_dictionaries.sql"
+    )
+    @Sql(
+            executionPhase = BEFORE_TEST_METHOD,
+            scripts = "classpath:integration_tests/changelogsource_controller/get_links_count.sql"
+    )
+    @Sql(
+            executionPhase = AFTER_TEST_METHOD,
+            scripts = "classpath:integration_tests/clear_tables.sql"
+    )
+    @Sql(
+            executionPhase = AFTER_TEST_METHOD,
+            scripts = "classpath:integration_tests/clear_dictionaries.sql"
+    )
+    @WithUserDetails("Admin")
+    public void testGetLinksCount() throws Exception {
+        mockMvc.perform(get("/metadata/changelog/source/2/links/count")
+                .contentType(contentType))
+                .andExpect(status().isOk())
+                .andExpect(content().json("3"));
     }
 
 }
