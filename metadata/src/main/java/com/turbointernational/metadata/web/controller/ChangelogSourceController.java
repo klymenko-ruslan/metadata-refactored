@@ -240,6 +240,12 @@ public class ChangelogSourceController {
         return retVal;
     }
 
+    @RequestMapping(path = "/{id}", method = DELETE)
+    @Transactional
+    public void delete(@PathVariable("id") Long id) {
+        changelogSourceService.delete(id);
+    }
+
     @RequestMapping(value = "attachment/tmp", method = POST, produces = APPLICATION_JSON_VALUE)
     @Transactional
     @ResponseBody

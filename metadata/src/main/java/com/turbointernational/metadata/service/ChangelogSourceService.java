@@ -1,6 +1,6 @@
 package com.turbointernational.metadata.service;
 
-import com.turbointernational.metadata.dao.ChangelogSourceDao;
+import com.turbointernational.metadata.dao.SourceDao;
 import com.turbointernational.metadata.entity.User;
 import com.turbointernational.metadata.entity.chlogsrc.Source;
 import com.turbointernational.metadata.entity.chlogsrc.SourceName;
@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -22,27 +23,30 @@ import java.util.List;
 public class ChangelogSourceService {
 
     @Autowired
-    private ChangelogSourceDao changelogSourceDao;
+    private SourceDao sourceDao;
+
+    @Autowired
+    private EntityManager em;
 
     @Value("${changelog.sources.dir}")
     private File changelogSourcesDir;
 
     public List<SourceName> getAllChangelogSourceNames() {
-        return changelogSourceDao.getAllSourceNames();
+        return sourceDao.getAllSourceNames();
     }
 
     public Source findChangelogSourceById(Long id) {
-        return changelogSourceDao.findOne(id);
+        return sourceDao.findOne(id);
     }
 
     public Source findChangelogSourceByName(String name) {
-        return changelogSourceDao.findChangelogSourceByName(name);
+        return sourceDao.findChangelogSourceByName(name);
     }
 
     public Source createChangelogSource(String name, String desctiption, String url, Long sourceNameId,
                                         ChangelogSourceController.AttachmentsResponse attachments) throws IOException {
         User user = User.getCurrentUser();
-        Source source = changelogSourceDao.create(name, desctiption, url, sourceNameId, user);
+        Source source = sourceDao.create(name, desctiption, url, sourceNameId, user);
         if (attachments != null) {
             Long srcId = source.getId();
             File destDir = new File(changelogSourcesDir, srcId.toString());
@@ -55,6 +59,12 @@ public class ChangelogSourceService {
             }
         }
         return source;
+    }
+
+    public void delete(Long id) {
+        Source source = sourceDao.getEntityManager().getReference(Source.class, id);
+        //source.getChangelogSources().forEach(chlgsrc -> em.remove(chlgsrc.getPk().getLink()));
+        sourceDao.remove(source);
     }
 
 }

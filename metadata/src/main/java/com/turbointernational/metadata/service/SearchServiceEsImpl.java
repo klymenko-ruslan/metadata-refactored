@@ -20,10 +20,8 @@ import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchRequestBuilder;
-import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.IndicesAdminClient;
-import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.common.transport.TransportAddress;
@@ -145,7 +143,7 @@ public class SearchServiceEsImpl implements SearchService {
     private String elasticSearchTypeChangelogSource = "changelogsource";
 
     @Autowired
-    private ChangelogSourceDao changelogSourceDao;
+    private SourceDao sourceDao;
 
     @Autowired
     private CriticalDimensionService criticalDimensionService;
@@ -431,7 +429,7 @@ public class SearchServiceEsImpl implements SearchService {
                     }
 
                     if (indexChangelogSources) {
-                        changelogSourcesTotal = changelogSourceDao.getTotal();
+                        changelogSourcesTotal = sourceDao.getTotal();
                     }
 
                     Thread partsIndexer = null;
@@ -477,7 +475,7 @@ public class SearchServiceEsImpl implements SearchService {
                             salesNotesIndexer = new SalesNotesIndexer(scrollableSalesNotes);
                         }
                         if (indexChangelogSources) {
-                            scrollableChangelogSources = changelogSourceDao.getScrollableResults(fetchSize, true, "id");
+                            scrollableChangelogSources = sourceDao.getScrollableResults(fetchSize, true, "id");
                             changelogSourcesIndexer = new ChangelogSourcesIndexer(scrollableChangelogSources);
                         }
                         synchronized (indexingStatus) {

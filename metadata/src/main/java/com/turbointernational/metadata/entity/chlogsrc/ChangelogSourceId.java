@@ -2,10 +2,13 @@ package com.turbointernational.metadata.entity.chlogsrc;
 
 import com.turbointernational.metadata.entity.Changelog;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import java.io.Serializable;
+
+import static javax.persistence.CascadeType.ALL;
 
 /**
  * Created by dmytro.trunykov@zorallabs.com on 1/18/17.
@@ -13,15 +16,15 @@ import java.io.Serializable;
 @Embeddable
 public class ChangelogSourceId implements Serializable {
 
-    @ManyToOne
+    @ManyToOne(cascade = ALL)
     @JoinColumn(name = "lnk_id", nullable = false)
     private ChangelogSourceLink link;
 
-    @ManyToOne
+    @ManyToOne(cascade = ALL)
     @JoinColumn(name = "changelog_id", nullable = false)
     private Changelog changelog;
 
-    @ManyToOne
+    @ManyToOne(cascade = ALL)
     @JoinColumn(name = "source_id", nullable = false)
     private Source source;
 

@@ -13,9 +13,9 @@ import java.util.List;
  * Created by dmytro.trunykov@zorallabs.com on 1/16/17.
  */
 @Repository
-public class ChangelogSourceDao extends AbstractDao<Source> {
+public class SourceDao extends AbstractDao<Source> {
 
-    public ChangelogSourceDao() {
+    public SourceDao() {
         super(Source.class);
     }
 

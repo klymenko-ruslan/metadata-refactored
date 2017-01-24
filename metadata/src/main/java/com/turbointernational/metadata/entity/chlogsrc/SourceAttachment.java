@@ -7,6 +7,7 @@ import javax.persistence.*;
 
 import java.io.Serializable;
 
+import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -24,7 +25,7 @@ public class SourceAttachment implements Serializable {
     @JsonView(View.Summary.class)
     private Long id;
 
-    @ManyToOne(fetch = LAZY)
+    @ManyToOne(fetch = LAZY, cascade = ALL)
     @JoinColumn(name = "source_id", nullable = false)
     private Source source;
 

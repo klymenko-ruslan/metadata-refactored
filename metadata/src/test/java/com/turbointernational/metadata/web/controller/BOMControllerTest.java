@@ -1,8 +1,8 @@
 package com.turbointernational.metadata.web.controller;
+
 import com.turbointernational.metadata.entity.chlogsrc.ChangelogSource;
 import com.turbointernational.metadata.entity.chlogsrc.ChangelogSourceLink;
 import com.turbointernational.metadata.entity.chlogsrc.Source;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,7 +22,6 @@ import org.springframework.web.context.WebApplicationContext;
 
 import javax.persistence.EntityManager;
 import java.nio.charset.Charset;
-import java.util.Arrays;
 import java.util.List;
 
 import static java.util.Arrays.asList;

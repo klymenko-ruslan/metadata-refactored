@@ -18,6 +18,7 @@ import java.util.Date;
 import java.util.List;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
+import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
 import static javax.persistence.TemporalType.TIMESTAMP;
@@ -80,8 +81,19 @@ public class Source implements SearchableEntity, Serializable {
     private User updateUser;
 
     @JsonView(View.Detail.class)
-    @OneToMany(mappedBy = "source", fetch = LAZY)
+    @OneToMany(mappedBy = "source", fetch = LAZY, orphanRemoval = true)
     private List<SourceAttachment> attachments = new ArrayList<>();
+
+    @JsonView(View.Detail.class)
+    @OneToMany(mappedBy = "pk.source", fetch = LAZY, orphanRemoval = true)
+    private List<ChangelogSource> changelogSources = new ArrayList<>();
+
+    @ManyToMany(cascade = ALL, fetch = LAZY)
+    @JoinTable(name="changelog_source",
+            joinColumns=@JoinColumn(name="source_id"),
+            inverseJoinColumns=@JoinColumn(name="lnk_id")
+    )
+    private List<ChangelogSourceLink> changelogSourceLinks = new ArrayList<>();
 
     public Source() {
     }
@@ -166,6 +178,14 @@ public class Source implements SearchableEntity, Serializable {
         this.attachments = attachments;
     }
 
+    public List<ChangelogSource> getChangelogSources() {
+        return changelogSources;
+    }
+
+    public void setChangelogSources(List<ChangelogSource> changelogSources) {
+        this.changelogSources = changelogSources;
+    }
+
     protected JSONSerializer getSearchSerializer() {
         return new JSONSerializer()
                 .include("id")
@@ -208,6 +228,14 @@ public class Source implements SearchableEntity, Serializable {
     @Override
     public String getSearchId() {
         return id.toString();
+    }
+
+    public List<ChangelogSourceLink> getChangelogSourceLinks() {
+        return changelogSourceLinks;
+    }
+
+    public void setChangelogSourceLinks(List<ChangelogSourceLink> changelogSourceLinks) {
+        this.changelogSourceLinks = changelogSourceLinks;
     }
 
     //</editor-fold>
