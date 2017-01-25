@@ -759,7 +759,9 @@ public class BOMService {
                 "Added bom item: " + formatBOMItem(item), item.toJson());
         if (sourceIds != null && sourceIds.length > 0) {
             EntityManager em = bomItemDao.getEntityManager();
-            ChangelogSourceLink link = new ChangelogSourceLink(chlogSrcLnkDescription);
+            User user = User.getCurrentUser();
+            Date now  = new Date();
+            ChangelogSourceLink link = new ChangelogSourceLink(user, now, chlogSrcLnkDescription);
             em.persist(link);
             for (int i = 0; i < sourceIds.length; i++) {
                 Long srcId = sourceIds[i];

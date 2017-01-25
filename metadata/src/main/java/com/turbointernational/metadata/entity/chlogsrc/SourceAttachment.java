@@ -40,6 +40,13 @@ public class SourceAttachment implements Serializable {
     public SourceAttachment() {
     }
 
+    public SourceAttachment(Long id, Source source, String name, String description) {
+        this.id = id;
+        this.source = source;
+        this.name = name;
+        this.description = description;
+    }
+
     public Long getId() {
         return id;
     }

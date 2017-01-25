@@ -16,6 +16,7 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -221,6 +222,33 @@ public class ChangelogSourceControllerTest {
                 .contentType(contentType))
                 .andExpect(status().isOk())
                 .andExpect(content().json("3"));
+    }
+
+    @Test
+    @Sql(
+            executionPhase = BEFORE_TEST_METHOD,
+            scripts = "classpath:integration_tests/feed_dictionaries.sql"
+    )
+    @Sql(
+            executionPhase = BEFORE_TEST_METHOD,
+            scripts = "classpath:integration_tests/changelogsource_controller/get_links_count.sql"
+    )
+    @Sql(
+            executionPhase = AFTER_TEST_METHOD,
+            scripts = "classpath:integration_tests/clear_tables.sql"
+    )
+    @Sql(
+            executionPhase = AFTER_TEST_METHOD,
+            scripts = "classpath:integration_tests/clear_dictionaries.sql"
+    )
+    @WithUserDetails("Admin")
+    public void testGetLastPicked() throws Exception {
+        String responseBody = "[{\"id\":1,\"sourceName\":{\"id\":2,\"name\":\"email\"},\"name\":\"name-0\",\"description\":\"name-0 email\",\"url\":null,\"created\":1485085344000,\"updated\":1485085344000},{\"id\":2,\"sourceName\":{\"id\":2,\"name\":\"email\"},\"name\":\"name-1\",\"description\":\"name-1 email\",\"url\":null,\"created\":1485085344000,\"updated\":1485085344000}]";
+        mockMvc.perform(get("/metadata/changelog/source/lastpicked")
+                .contentType(contentType))
+                .andExpect(status().isOk())
+//                .andDo(MockMvcResultHandlers.print());
+                .andExpect(content().json(responseBody));
     }
 
 }

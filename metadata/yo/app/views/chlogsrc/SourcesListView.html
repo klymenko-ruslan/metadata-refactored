@@ -1,6 +1,6 @@
 <div class="form-group">
   <label for="description">Description</label>
-  <textarea id="description" rows="3" class="form-control" data-ng-value="data.description"></textarea>
+  <textarea id="description" rows="3" class="form-control" data-ng-model="data.description"></textarea>
 </div>
 
 <div class="row">
@@ -115,7 +115,7 @@
             {{rec._source.sourceName.name}}
           </td>
           <td title="'URL'" sortable="'url.lower_case_sort'">
-            {{rec._source.url}}
+            <a target="_blank" href="{{rec._source.url}}" data-ng-show="rec._source.url">{{rec._source.url}}</a>
           </td>
           <td class="actions text-center" title="'Actions'">
             <button type="button" data-ng-disabled="isBttnPickDisabled(rec._source)" data-ng-click="pick(rec._source)" class="btn btn-success btn-xs">
@@ -139,7 +139,32 @@
     <div class="row" style="padding-top:8px;">
       <!-- Search by input or facet select options -->
       <div class="col-xs-12">
-        TODO
+        <table data-ng-table="lastPickedTableParams" class="table table-bordered table-striped table-hover table-responsive">
+        <tr data-ng-repeat="rec in $data">
+          <td title="'Name'">
+            {{rec.name}}
+          </td>
+          <td title="'Description'">
+            {{rec.description}}
+          </td>
+          <td title="'Source Name'">
+            {{rec.sourceName.name}}
+          </td>
+          <td title="'URL'">
+            <a target="_blank" href="{{rec.url}}" data-ng-show="rec.url">{{rec.url}}</a>
+          </td>
+          <td class="actions text-center" title="'Actions'">
+            <button type="button" data-ng-disabled="isBttnPickDisabled(rec)" data-ng-click="pick(rec)" class="btn btn-success btn-xs">
+              <i class="fa fa-bullseye"></i> Pick
+            </button>
+          </td>
+        </tr>
+
+        <tr data-ng-hide="$data.length > 0">
+          <td colspan="5">No sources to display.</td>
+        </tr>
+
+        </table>
       </div>
     </div>
   </div>
@@ -153,5 +178,4 @@
   });
   $('#tabsSearchSources a:first').tab('show');
 </script>
-
 

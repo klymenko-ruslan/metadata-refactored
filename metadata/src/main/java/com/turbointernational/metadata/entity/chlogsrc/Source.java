@@ -26,13 +26,20 @@ import static javax.persistence.GenerationType.IDENTITY;
 import static javax.persistence.TemporalType.TIMESTAMP;
 
 /**
- * Created by dmytro.trunykov@zorallabs.com on 1/12/17.
+ * Created by dmytro.trunykov@zorallabs.com on 2017-01-12.
  */
 @Entity
 @Table(name = "source")
-@NamedQueries(
-    @NamedQuery(name = "findChangelogSourceByName", query = "from Source s where s.name=:name")
-)
+@NamedQueries({
+        @NamedQuery(name = "findChangelogSourceByName", query = "from Source s where s.name=:name"),
+        @NamedQuery(
+                name = "findLastPickedChangelogSources",
+                query = "select distinct s from Source s where s.id in(" +
+                        "   select s2.id " +
+                        "   from Source s2 join s2.changelogSourceLinks lnk " +
+                        "   where lnk.createUser.id = :userId " +
+                        "   order by lnk.created desc)")
+})
 @JsonInclude(ALWAYS)
 public class Source implements SearchableEntity, Serializable {
 
@@ -67,15 +74,15 @@ public class Source implements SearchableEntity, Serializable {
     @Temporal(TIMESTAMP)
     private Date created;
 
-    @JsonView(View.Summary.class)
-    @Column(name = "updated")
-    @Temporal(TIMESTAMP)
-    private Date updated;
-
     @JsonView(View.Detail.class)
     @ManyToOne
     @JoinColumn(name = "create_user_id")
     private User createUser;
+
+    @JsonView(View.Summary.class)
+    @Column(name = "updated")
+    @Temporal(TIMESTAMP)
+    private Date updated;
 
     @JsonView(View.Detail.class)
     @ManyToOne

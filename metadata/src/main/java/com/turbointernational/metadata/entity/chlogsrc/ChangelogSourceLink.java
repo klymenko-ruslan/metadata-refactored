@@ -1,16 +1,19 @@
 package com.turbointernational.metadata.entity.chlogsrc;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.entity.User;
 import com.turbointernational.metadata.util.View;
 
 import javax.persistence.*;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
+import static javax.persistence.TemporalType.TIMESTAMP;
 
 /**
  * Created by dmytro.trunykov@zorallabs.com on 1/20/17.
@@ -23,6 +26,16 @@ public class ChangelogSourceLink {
     @GeneratedValue(strategy = IDENTITY)
     @JsonView(View.Summary.class)
     private Long id;
+
+    @Temporal(TIMESTAMP)
+    @Column(name = "created", nullable = false)
+    @JsonView(View.Summary.class)
+    private Date created;
+
+    @JsonView(View.Detail.class)
+    @ManyToOne
+    @JoinColumn(name = "create_user_id", nullable = false)
+    private User createUser;
 
     @Column(name = "description")
     @JsonView(View.Summary.class)
@@ -38,7 +51,9 @@ public class ChangelogSourceLink {
     public ChangelogSourceLink() {
     }
 
-    public ChangelogSourceLink(String description) {
+    public ChangelogSourceLink(User createUser, Date created, String description) {
+        this.createUser = createUser;
+        this.created = created;
         this.description = description;
     }
 
@@ -65,4 +80,13 @@ public class ChangelogSourceLink {
     public void setSources(List<Source> sources) {
         this.sources = sources;
     }
+
+    public Date getCreated() {
+        return created;
+    }
+
+    public void setCreated(Date created) {
+        this.created = created;
+    }
+
 }

@@ -3,6 +3,7 @@ package com.turbointernational.metadata.service;
 import com.turbointernational.metadata.dao.SourceDao;
 import com.turbointernational.metadata.entity.User;
 import com.turbointernational.metadata.entity.chlogsrc.Source;
+import com.turbointernational.metadata.entity.chlogsrc.SourceAttachment;
 import com.turbointernational.metadata.entity.chlogsrc.SourceName;
 import com.turbointernational.metadata.web.controller.ChangelogSourceController;
 import org.apache.commons.io.FileUtils;
@@ -15,6 +16,9 @@ import javax.persistence.EntityManager;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+
+import static org.apache.commons.io.FileUtils.moveFile;
+import static org.apache.commons.io.FileUtils.moveFileToDirectory;
 
 /**
  * Created by dmytro.trunykov@zorallabs.com on 1/16/17.
@@ -51,11 +55,15 @@ public class ChangelogSourceService {
             Long srcId = source.getId();
             File destDir = new File(changelogSourcesDir, srcId.toString());
             for(ChangelogSourceController.AttachmentsResponse.Row row : attachments.getRows()) {
-                FileUtils.moveFileToDirectory(row.getTmpFile(), destDir, true);
-                String origName = row.getName();
-                if (StringUtils.isNotBlank(origName)) {
-                    FileUtils.moveFile(new File(destDir, row.getTmpFile().getName()), new File(destDir, origName));
+                moveFileToDirectory(row.getTmpFile(), destDir, true);
+                String fileName = row.getName();
+                if (StringUtils.isNotBlank(fileName)) {
+                    moveFile(new File(destDir, row.getTmpFile().getName()), new File(destDir, fileName));
+                } else {
+                    fileName = row.getTmpFile().getName();
                 }
+                SourceAttachment attachment = new SourceAttachment(null, source, fileName, row.getDescription());
+                em.persist(attachment);
             }
         }
         return source;
@@ -69,6 +77,15 @@ public class ChangelogSourceService {
     public Long getNumLinks(Long srcId) {
         return em.createNamedQuery("getChangelogSourceCountForSource", Long.class)
                 .setParameter("srcId", srcId).getSingleResult();
+    }
+
+    public List<Source> getLastPicked(int limit) {
+        User user = User.getCurrentUser();
+        List<Source> sources = em.createNamedQuery("findLastPickedChangelogSources", Source.class)
+                .setParameter("userId", user.getId())
+                .setMaxResults(limit)
+                .getResultList();
+        return sources;
     }
 
 }

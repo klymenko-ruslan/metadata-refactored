@@ -3,8 +3,10 @@
 angular.module("ngMetaCrudApp")
 
 .controller("ChangelogSourcesListCtrl",
-  ["$scope", "$log", "$location", "dialogs", "gToast", "ngTableParams", "utils", "restService",
-  function($scope, $log, $location, dialogs, gToast, ngTableParams, utils, restService) {
+  ["$scope", "$log", "$location", "dialogs", "gToast", "ngTableParams", "utils", "restService", "sourcesNames",
+  function($scope, $log, $location, dialogs, gToast, ngTableParams, utils, restService, sourcesNames) {
+
+    $scope.sourcesNames = sourcesNames;
 
     $scope.fltrSource = {
       name: null,
@@ -34,15 +36,11 @@ angular.module("ngMetaCrudApp")
 
     $scope.onCreateNewSource = function() {
       // TODO
+      alert("TODO");
     };
 
     $scope.onView = function(srcId) {
       $location.path("/changelog/source/" + srcId);
-    };
-
-    $scope.onRemove = function(srcId) {
-      // TODO
-      $scope.sourceTableParams.reload();
     };
 
     $scope.sourceTableParams = new ngTableParams(

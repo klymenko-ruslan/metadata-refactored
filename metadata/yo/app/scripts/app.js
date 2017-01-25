@@ -404,7 +404,12 @@ angular.module("ngMetaCrudApp", ["ngCookies", "ngRoute", "ngTable", "ui.bootstra
     // Changelog sources
     $routeProvider.when("/changelog/source/list", {
       templateUrl: "views/chlogsrc/list.html",
-      controller: "ChangelogSourcesListCtrl"
+      controller: "ChangelogSourcesListCtrl",
+      resolve: {
+        "sourcesNames": ["restService", function(restService) {
+          return restService.getAllChangelogSourceNames();
+        }],
+      }
     });
     $routeProvider.when("/changelog/source/:id", {
       templateUrl: "views/chlogsrc/view.html",

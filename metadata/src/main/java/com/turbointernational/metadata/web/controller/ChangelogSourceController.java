@@ -184,9 +184,10 @@ public class ChangelogSourceController {
         }
     }
 
-    private void cleanAttachments(HttpSession session) {
+    private AttachmentsResponse cleanAttachments(HttpSession session) {
         AttachmentsResponse attachments = getAttachments(session);
         attachments.clear();
+        return attachments;
     }
 
     @RequestMapping(value = "/sourcename/list", method = GET)
@@ -213,9 +214,7 @@ public class ChangelogSourceController {
     @JsonView(View.Summary.class)
     // TODO: security!
     public AttachmentsResponse beginEdit(HttpSession session) {
-        AttachmentsResponse attachments = getAttachments(session);
-        attachments.clear();
-        return attachments;
+        return cleanAttachments(session);
     }
 
     @RequestMapping(path = "/{id}", method = GET, produces = APPLICATION_JSON_VALUE)
@@ -236,7 +235,7 @@ public class ChangelogSourceController {
         AttachmentsResponse attachments = getAttachments(session);
         Source retVal = changelogSourceService.createChangelogSource(sr.getName(), sr.getDescription(),
                 sr.getUrl(), sr.getSourceNameId(), attachments);
-        attachments.clear();
+        cleanAttachments(session);
         return retVal;
     }
 
@@ -248,9 +247,12 @@ public class ChangelogSourceController {
     }
 
     @RequestMapping(path = "/{id}", method = DELETE)
+    @ResponseBody
     @Transactional
-    public void delete(@PathVariable("id") Long id) {
+    // TODO: security!
+    public boolean delete(@PathVariable("id") Long id) {
         changelogSourceService.delete(id);
+        return true;
     }
 
     @RequestMapping(value = "attachment/tmp", method = POST, produces = APPLICATION_JSON_VALUE)
@@ -275,13 +277,20 @@ public class ChangelogSourceController {
     @ResponseBody
     @JsonView(View.Summary.class)
     // TODO: security!
-    public AttachmentsResponse removeAttachmentTmp(
-            HttpSession session, @PathVariable int idx) {
+    public AttachmentsResponse removeAttachmentTmp(HttpSession session, @PathVariable int idx) {
         AttachmentsResponse attachments = getAttachments(session);
         AttachmentsResponse.Row toDel = attachments.getRows().get(idx);
         toDel.getTmpFile().delete();
         attachments.getRows().remove(idx);
         return attachments;
+    }
+
+    @RequestMapping(value = "lastpicked", method = GET)
+    @Transactional
+    @ResponseBody
+    @JsonView(View.Summary.class)
+    public List<Source> getLastPicked() {
+        return changelogSourceService.getLastPicked(5);
     }
 
 }

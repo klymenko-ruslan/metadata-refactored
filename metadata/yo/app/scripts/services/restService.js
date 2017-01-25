@@ -40,7 +40,6 @@ angular.module("ngMetaCrudApp")
         req.sourceIds = srcIds;
         req.chlogSrcRaiting = chlogSrcRaiting;
         req.chlogSrcLnkDescription = chlogSrcLnkDescription;
-$log.log("req: " + angular.toJson(req));
         return Restangular.all("bom").post(req);
       };
 
@@ -762,6 +761,14 @@ $log.log("req: " + angular.toJson(req));
         });
       };
 
+      this.getNumLinksForChangelogSource = function(srcId) {
+        return Restangular.one("changelog/source/" + srcId + "/links/count").get();
+      };
+
+      this.getLastPickedChangelogSources = function() {
+        return Restangular.all("changelog/source/lastpicked").getList();
+      };
+
       this.getAllChangelogSourceNames = function() {
         return Restangular.all("changelog/source/sourcename/list").getList();
       };
@@ -772,6 +779,11 @@ $log.log("req: " + angular.toJson(req));
 
       this.findChangelogSourceById = function(srcId) {
         return Restangular.one("changelog/source", srcId).get();
+      };
+
+      this.removeChangelogSource = function(srcId) {
+        return Restangular.one("changelog/source", srcId).remove();
+
       };
 
       this.filterChangelogSource = function(name, description, url, sourceNameId,
