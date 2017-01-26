@@ -68,6 +68,7 @@ delete from part;
 alter table part alter column id restart with 1;
 alter table source alter column id restart with 1;
 alter table source_attachment alter column id restart with 1;
+alter table changelog_source_link alter column id restart with 1;
 
 -- turbo_car_model_engine_year
 
