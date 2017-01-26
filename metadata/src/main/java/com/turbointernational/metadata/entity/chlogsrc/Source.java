@@ -107,6 +107,9 @@ public class Source implements SearchableEntity, Serializable {
     )
     private List<Changelog> changelogs = new ArrayList<>();
 
+    @Transient
+    private Date lastLinked;
+
     public Source() {
     }
 
@@ -204,6 +207,15 @@ public class Source implements SearchableEntity, Serializable {
 
     public void setChangelogs(List<Changelog> changelogs) {
         this.changelogs = changelogs;
+    }
+
+    @JsonView(View.Summary.class)
+    public Date getLastLinked() {
+        return lastLinked;
+    }
+
+    public void setLastLinked(Date lastLinked) {
+        this.lastLinked = lastLinked;
     }
 
     protected JSONSerializer getSearchSerializer() {

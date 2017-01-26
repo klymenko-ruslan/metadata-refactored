@@ -34,8 +34,8 @@
       <td title="'Source Name'">
         {{rec.sourceName.name}}
       </td>
-      <td title="'Raiting'" class="text-center">
-        <span uib-rating max="5" read-only="false" data-ng-model="pickedSourcesRaitings[$index]"></span>
+      <td title="'Rating'" class="text-center">
+        <span uib-rating max="5" read-only="false" data-ng-model="pickedSourcesRatings[$index]"></span>
       </td>
       <td title="'Created'" class="text-center">
         {{rec.created | date : "yyyy-MM-dd HH:mm.ss"}}
@@ -81,6 +81,9 @@
         <button class="btn btn-default input-sm" data-ng-click="clearFilter()">
           <i class="fa fa-eraser" aria-hidden="true"></i> Clear
         </button>
+        <button class="btn btn-default input-sm" data-ng-click="refreshList()">
+          <i class="fa fa-refresh" aria-hidden="true"></i> Refresh
+        </button>
         <div class="form-group">
           <input id="fltrName" name="fltrName" class="form-control input-sm" type="text" data-ng-model="fltrSource.name" placeholder="Name..." data-ng-model-options="{debounce: 500}" />
         </div>
@@ -117,6 +120,9 @@
           <td title="'URL'" sortable="'url.lower_case_sort'">
             <a target="_blank" href="{{rec._source.url}}" data-ng-show="rec._source.url">{{rec._source.url}}</a>
           </td>
+          <td title="'Created'" sortable="'created'">
+            {{rec._source.created | date : "yyyy-MM-dd HH:mm.ss"}}
+          </td>
           <td class="actions text-center" title="'Actions'">
             <button type="button" data-ng-disabled="isBttnPickDisabled(rec._source)" data-ng-click="pick(rec._source)" class="btn btn-success btn-xs">
               <i class="fa fa-bullseye"></i> Pick
@@ -125,7 +131,7 @@
         </tr>
 
         <tr data-ng-hide="$data.length > 0">
-          <td colspan="5">No sources to display.</td>
+          <td colspan="6">No sources to display.</td>
         </tr>
 
         </table>
@@ -153,6 +159,12 @@
           <td title="'URL'">
             <a target="_blank" href="{{rec.url}}" data-ng-show="rec.url">{{rec.url}}</a>
           </td>
+          <td title="'Created'">
+            {{rec.created | date : "yyyy-MM-dd HH:mm.ss"}}
+          </td>
+          <td title="'Picked'">
+            {{rec.lastLinked | date : "yyyy-MM-dd HH:mm.ss"}}
+          </td>
           <td class="actions text-center" title="'Actions'">
             <button type="button" data-ng-disabled="isBttnPickDisabled(rec)" data-ng-click="pick(rec)" class="btn btn-success btn-xs">
               <i class="fa fa-bullseye"></i> Pick
@@ -161,7 +173,7 @@
         </tr>
 
         <tr data-ng-hide="$data.length > 0">
-          <td colspan="5">No sources to display.</td>
+          <td colspan="7">No sources to display.</td>
         </tr>
 
         </table>

@@ -243,11 +243,11 @@ public class ChangelogSourceControllerTest {
     )
     @WithUserDetails("Admin")
     public void testGetLastPicked() throws Exception {
-        String responseBody = "[{\"id\":1,\"sourceName\":{\"id\":2,\"name\":\"email\"},\"name\":\"name-0\",\"description\":\"name-0 email\",\"url\":null,\"created\":1485085344000,\"updated\":1485085344000},{\"id\":2,\"sourceName\":{\"id\":2,\"name\":\"email\"},\"name\":\"name-1\",\"description\":\"name-1 email\",\"url\":null,\"created\":1485085344000,\"updated\":1485085344000}]";
+        String responseBody = "[{\"id\":1,\"sourceName\":{\"id\":2,\"name\":\"email\"},\"name\":\"name-0\",\"description\":\"name-0 email\",\"url\":null,\"created\":1485085344000,\"updated\":1485085344000,\"lastLinked\":1485087882000},{\"id\":2,\"sourceName\":{\"id\":2,\"name\":\"email\"},\"name\":\"name-1\",\"description\":\"name-1 email\",\"url\":null,\"created\":1485085344000,\"updated\":1485085344000,\"lastLinked\":1485087451000}]";
         mockMvc.perform(get("/metadata/changelog/source/lastpicked")
                 .contentType(contentType))
                 .andExpect(status().isOk())
-//                .andDo(MockMvcResultHandlers.print());
+ //               .andDo(MockMvcResultHandlers.print());
                 .andExpect(content().json(responseBody));
     }
 

@@ -1,5 +1,6 @@
 package com.turbointernational.metadata.entity.chlogsrc;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.entity.User;
 import com.turbointernational.metadata.util.View;
@@ -10,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
 import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
@@ -20,6 +22,15 @@ import static javax.persistence.TemporalType.TIMESTAMP;
  */
 @Entity
 @Table(name = "changelog_source_link")
+@NamedQueries(
+        @NamedQuery(
+                name = "findLastChangelogSourceLinkForSource",
+                query = "select max(l.created) " +
+                        "from ChangelogSourceLink l join l.sources s " +
+                        "where s.id=:sourceId"
+        )
+)
+@JsonInclude(ALWAYS)
 public class ChangelogSourceLink {
 
     @Id
@@ -46,6 +57,7 @@ public class ChangelogSourceLink {
             joinColumns=@JoinColumn(name="lnk_id"),
             inverseJoinColumns=@JoinColumn(name="source_id")
     )
+
     private List<Source> sources = new ArrayList<>();
 
     public ChangelogSourceLink() {

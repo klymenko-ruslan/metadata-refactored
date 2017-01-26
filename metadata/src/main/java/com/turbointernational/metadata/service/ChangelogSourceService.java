@@ -13,8 +13,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 import static org.apache.commons.io.FileUtils.moveFile;
@@ -85,6 +88,11 @@ public class ChangelogSourceService {
                 .setParameter("userId", user.getId())
                 .setMaxResults(limit)
                 .getResultList();
+        TypedQuery<Date> q = em.createNamedQuery("findLastChangelogSourceLinkForSource", Date.class);
+        for(Source s : sources) {
+            Date d = q.setParameter("sourceId", s.getId()).getSingleResult();
+            s.setLastLinked(d);
+        }
         return sources;
     }
 

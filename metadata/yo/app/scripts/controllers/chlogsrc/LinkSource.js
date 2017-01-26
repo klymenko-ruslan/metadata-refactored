@@ -13,7 +13,7 @@ angular.module("ngMetaCrudApp")
 
     var pickedSources = null;
     var pickedSourceIds = null;
-    $scope.pickedSourcesRaitings = null;
+    $scope.pickedSourcesRatings = null;
 
     var attachments = null;
 
@@ -28,7 +28,7 @@ angular.module("ngMetaCrudApp")
 
     function _reset() {
       pickedSources = [];
-      $scope.pickedSourcesRaitings = [];
+      $scope.pickedSourcesRatings = [];
       pickedSourceIds = {};
       attachments = [];
 
@@ -145,7 +145,7 @@ angular.module("ngMetaCrudApp")
         return ps.id;
       });
 
-      restService.createBom(bomItem, srcIds, $scope.pickedSourcesRaitings, $scope.data.description).then(
+      restService.createBom(bomItem, srcIds, $scope.pickedSourcesRatings, $scope.data.description).then(
         function(bomResult) {
           if (bomResult.status == BOM_RESULT_STATUS.OK) {
             // Success
@@ -195,7 +195,7 @@ angular.module("ngMetaCrudApp")
     $scope.isActionBttnDisabled = function () {
       var retval = true;
       if ($scope.data.currVw.id === "sources_list") {
-        retval = !pickedSources || pickedSources.length === 0;
+        retval = false;
       } else if ($scope.data.currVw.id === "create_new_source" && $scope.forms.changelogSourceForm) {
         retval = $scope.forms.changelogSourceForm.$invalid;
       }
@@ -212,7 +212,7 @@ angular.module("ngMetaCrudApp")
 
     $scope.pick = function(pickedSrc) {
       pickedSources.push(pickedSrc);
-      $scope.pickedSourcesRaitings.push(0);
+      $scope.pickedSourcesRatings.push(0);
       pickedSourceIds[pickedSrc.id] = true;
       $scope.pickedSourcesTableParams.reload();
     };
@@ -222,7 +222,7 @@ angular.module("ngMetaCrudApp")
         return s.id === srcId;
       });
       pickedSources.splice(idx, 1);
-      $scope.pickedSourcesRaitings.splice(idx, 1);
+      $scope.pickedSourcesRatings.splice(idx, 1);
       delete pickedSourceIds[srcId];
       $scope.pickedSourcesTableParams.reload();
     };
@@ -232,7 +232,7 @@ angular.module("ngMetaCrudApp")
         delete pickedSourceIds[ps.id];
       });
       pickedSources.splice(0, pickedSources.length);
-      $scope.pickedSourcesRaitings.splice(0, $scope.pickedSourcesRaitings.length);
+      $scope.pickedSourcesRatings.splice(0, $scope.pickedSourcesRatings.length);
       $scope.pickedSourcesTableParams.reload();
     };
 
@@ -241,6 +241,10 @@ angular.module("ngMetaCrudApp")
       $scope.fltrSource.description = null;
       $scope.fltrSource.url = null;
       $scope.fltrSource.sourceName = null;
+    };
+
+    $scope.refreshList = function() {
+      $scope.sourceTableParams.reload();
     };
 
     $scope.onCreateNewSource = function() {
