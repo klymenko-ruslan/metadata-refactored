@@ -19,6 +19,7 @@ public class AngularSpaRouterController {
         "/application/**",
         "/bom/**",
         "/changelog/**",
+        "/changelog/source/**",
 //        "/",
 //        "/part/\\d+",
 //        "/part/\\d+/component/search",

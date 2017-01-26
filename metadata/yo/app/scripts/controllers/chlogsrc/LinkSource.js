@@ -344,7 +344,12 @@ angular.module("ngMetaCrudApp")
             if (changelogSource === undefined) {
               def.resolve();
             } else {
-              def.reject();
+              var id = $scope.$eval("source.id");
+              if (changelogSource.id === id) {
+                def.resolve();
+              } else {
+                def.reject();
+              }
             }
           },
           function (errorResponse) {

@@ -68,7 +68,6 @@ angular.module("ngMetaCrudApp")
             if (angular.isObject($scope.carengine.fuelType)) {
               fuelTypeId = $scope.carengine.fuelType.id;
             }
-$log.log("engineSize: " + $scope.carengine.engineSize + ", fuelTypeId: " + fuelTypeId);
             restService.existsCarengine($scope.carengine.engineSize, fuelTypeId).then(
               function success(exists) {
                 if (exists) {

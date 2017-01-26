@@ -408,7 +408,37 @@ angular.module("ngMetaCrudApp", ["ngCookies", "ngRoute", "ngTable", "ui.bootstra
       resolve: {
         "sourcesNames": ["restService", function(restService) {
           return restService.getAllChangelogSourceNames();
+        }]
+      }
+    });
+    $routeProvider.when("/changelog/source/create", {
+      templateUrl: "views/chlogsrc/form.html",
+      controller: "ChangelogSourcesFormCtrl",
+      resolve: {
+        begin: ["restService", function(restService) {
+          return restService.chanlelogSourceBeginEdit(); // needs to clear session attribute on the server side
         }],
+        "sourcesNames": ["restService", function(restService) {
+          return restService.getAllChangelogSourceNames();
+        }],
+        source: [function() {
+          return null;
+        }]
+      }
+    });
+    $routeProvider.when("/changelog/source/:id/form", {
+      templateUrl: "views/chlogsrc/form.html",
+      controller: "ChangelogSourcesFormCtrl",
+      resolve: {
+        begin: ["restService", function(restService) {
+          return restService.chanlelogSourceBeginEdit(); // needs to clear session attribute on the server side
+        }],
+        "sourcesNames": ["restService", function(restService) {
+          return restService.getAllChangelogSourceNames();
+        }],
+        source: ["$route", "restService", function($route, restService) {
+          return restService.findChangelogSourceById($route.current.pathParams.id);
+        }]
       }
     });
     $routeProvider.when("/changelog/source/:id", {

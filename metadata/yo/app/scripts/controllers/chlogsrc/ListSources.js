@@ -22,6 +22,10 @@ angular.module("ngMetaCrudApp")
       $scope.fltrSource.sourceName = null;
     };
 
+    $scope.refreshList = function() {
+      $scope.sourceTableParams.reload();
+    };
+
     // Handle updating search results
     $scope.$watch("[fltrSource]",
       function (newVal, oldVal) {
@@ -35,8 +39,7 @@ angular.module("ngMetaCrudApp")
     );
 
     $scope.onCreateNewSource = function() {
-      // TODO
-      alert("TODO");
+      $location.path("/changelog/source/create");
     };
 
     $scope.onView = function(srcId) {

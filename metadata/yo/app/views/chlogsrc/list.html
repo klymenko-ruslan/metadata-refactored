@@ -1,9 +1,9 @@
 <metanav>
   <li>
-    <a data-ng-click="onCreateNewSource()" class="btn btn-success" data-ng-disabled="true">
+    <button data-ng-click="onCreateNewSource()" class="btn btn-success">
       <i class="fa fa-wrench"></i>
       Create Source
-    </a>
+    </button>
   </li>
 </metanav>
 
@@ -17,6 +17,9 @@
 
     <button class="btn btn-default input-sm" data-ng-click="clearFilter()">
       <i class="fa fa-eraser" aria-hidden="true"></i> Clear
+    </button>
+    <button class="btn btn-default input-sm" data-ng-click="refreshList()">
+      <i class="fa fa-refresh" aria-hidden="true"></i> Refresh
     </button>
     <div class="form-group">
       <input id="fltrName" name="fltrName" class="form-control input-sm" type="text" data-ng-model="fltrSource.name" placeholder="Name..." data-ng-model-options="{debounce: 500}" />
@@ -52,7 +55,7 @@
         {{rec._source.sourceName.name}}
       </td>
       <td title="'URL'" sortable="'url.lower_case_sort'">
-        {{rec._source.url}}
+        <a target="_blank" href="{{rec._source.url}}">{{rec._source.url}}</a>
       </td>
       <td class="actions text-center" title="'Actions'">
         <button type="button" data-ng-click="onView(rec._source.id)" class="btn btn-primary btn-xs">
