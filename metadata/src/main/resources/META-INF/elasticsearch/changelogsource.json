@@ -28,7 +28,7 @@
         }
       }
     },
-    "descritpion": {
+    "description": {
       "type": "text",
       "fielddata": true,
       "fields": {

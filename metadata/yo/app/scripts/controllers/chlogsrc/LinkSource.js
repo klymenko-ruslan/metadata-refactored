@@ -180,7 +180,7 @@ angular.module("ngMetaCrudApp")
     };
 
     function _createSource(name, description, url, sourceNameId) {
-      restService.createChanlelogSource(name, description, url, sourceNameId).then(
+      restService.createChangelogSource(name, description, url, sourceNameId).then(
         function success() {
           _chvw("sources_list");
           $scope.sourceTableParams.reload();
@@ -333,7 +333,7 @@ angular.module("ngMetaCrudApp")
     _chvw("sources_list");
 
   }
-]).directive("uniqueChangelogSourceName", ["$log", "$q", "restService", function($log, $q, restService) {
+]).directive("uniqueChangelogSourceByName", ["$log", "$q", "restService", function($log, $q, restService) {
   // Validator for uniqueness of the changelog source name.
   return {
     require: "ngModel",
@@ -357,7 +357,7 @@ angular.module("ngMetaCrudApp")
             }
           },
           function (errorResponse) {
-            $log.log("Couldn't validate name of the changelog source name: " + viewValue);
+            $log.log("Couldn't validate name of the changelog source: " + viewValue);
             def.reject();
           }
         );

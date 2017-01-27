@@ -3,9 +3,9 @@
 angular.module("ngMetaCrudApp")
 
 .controller("ChangelogSourcesFormCtrl", [
-    "$scope", "$log", "$location", "gToast", "ngTableParams", "Restangular", "restService", "utils", "begin",
+    "$scope", "$log", "$location", "gToast", "dialogs", "ngTableParams", "Restangular", "restService", "utils", "begin",
     "sourcesNames", "source",
-  function($scope, $log, $location, gToast, ngTableParams, Restangular, restService, utils, begin,
+  function($scope, $log, $location, gToast, dialogs, ngTableParams, Restangular, restService, utils, begin,
     sourcesNames, source) {
 
     $scope.source = source;
@@ -65,11 +65,19 @@ angular.module("ngMetaCrudApp")
     };
 
     $scope.onSave = function() {
-      if($scope.source) { // edit
-        alert("TODO: save changes");
+      var s = $scope.data.crud.source;
+      if($scope.source) { // update
+        restService.updateChangelogSource($scope.source.id, s.name, s.description, s.url, s.sourceName.id).then(
+          function success() {
+            gToast.open("The changelog source has been successfully updated.");
+            $location.path("/changelog/source/list");
+          },
+          function failure(errorResponse) {
+            restService.error("Could not update the changelog source.", errorResponse);
+          }
+        );
       } else { // create
-        var s = $scope.data.crud.source;
-        restService.createChanlelogSource(s.name, s.description, s.url, s.sourceName.id).then(
+        restService.createChangelogSource(s.name, s.description, s.url, s.sourceName.id).then(
           function success() {
             gToast.open("The changelog source has been successfully created.");
             $location.path("/changelog/source/list");
@@ -93,6 +101,7 @@ angular.module("ngMetaCrudApp")
       });
       $scope.attachmentsTableParams.reload();
       formData = new FormData();
+      $scope.forms.changelogSourceForm.$setDirty();
     };
 
     $scope.uploadAttachment = function() {
@@ -109,15 +118,22 @@ angular.module("ngMetaCrudApp")
       );
     };
 
-    $scope.removeAttachment = function (idx) {
-      restService.changelogSourceRemoveAttachmentTmp(idx).then(
-        function(updatedAttachmentsResponse) {
-          _updateAttachmentsTable(updatedAttachmentsResponse.rows);
-        },
-        function(errorResponse) {
-          restService.error("Could not remove attachment.", errorResponse);
-        }
-      );
+    $scope.removeAttachment = function (attachId) {
+      dialogs.confirm("Confirmation",
+        "Are you sure?\nDo you want to remove this attachment?").result.then(
+          function yes() {
+            restService.changelogSourceRemoveAttachmentTmp(attachId).then(
+              function(updatedAttachmentsResponse) {
+                _updateAttachmentsTable(updatedAttachmentsResponse.rows);
+              },
+              function(errorResponse) {
+                restService.error("Could not remove attachment.", errorResponse);
+              }
+            );
+          },
+          function no() {
+          }
+        );
     };
 
   }

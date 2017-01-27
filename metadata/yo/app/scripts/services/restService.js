@@ -770,11 +770,24 @@ angular.module("ngMetaCrudApp")
       };
 
       this.getAllChangelogSourceNames = function() {
-        return Restangular.all("changelog/source/sourcename/list").getList();
+        return Restangular.all("changelog/source/name/list").getList();
+      };
+
+      this.filterChangelogSourceNames = function(sortProperty, sortOrder, offset, limit) {
+        return Restangular.one("changelog/source/name/filter").get({
+          "sortProperty": sortProperty,
+          "sortOrder": sortOrder,
+          "offset": offset,
+          "limit": limit
+        });
       };
 
       this.findChangelogSourceByName = function(name) {
         return Restangular.one("changelog/source").get({"name": name});
+      };
+
+      this.findChangelogSourceNameByName = function(name) {
+        return Restangular.one("changelog/source/name").get({"name": name});
       };
 
       this.findChangelogSourceById = function(srcId) {
@@ -800,13 +813,37 @@ angular.module("ngMetaCrudApp")
         });
       };
 
-      this.chanlelogSourceBeginEdit = function() {
-        return Restangular.one("changelog/source").post("begin");
+      this.changelogSourceBeginEdit = function(srcId) {
+        if (!srcId) {
+          srcId = -1; // create
+        }
+        return Restangular.one("changelog/source/begin", srcId).post();
 
       };
 
-      this.createChanlelogSource = function(name, description, url, sourceNameId) {
+      this.createChangeSourceName = function(newName) {
+        return Restangular.one("changelog/source").post("name", {
+          "name": newName
+        });
+      };
+
+      this.updateChangeSourceName = function(id, newName) {
+        return Restangular.one("changelog/source/name", id).customPUT({
+          "name": newName
+        });
+      };
+
+      this.createChangelogSource = function(name, description, url, sourceNameId) {
         return Restangular.one("changelog").post("source", {
+          "name": name,
+          "description": description,
+          "url": url,
+          "sourceNameId": sourceNameId
+        });
+      };
+
+      this.updateChangelogSource = function(id, name, description, url, sourceNameId) {
+        return Restangular.one("changelog/source", id).customPUT({
           "name": name,
           "description": description,
           "url": url,
@@ -816,7 +853,7 @@ angular.module("ngMetaCrudApp")
 
       this.changelogSourceUploadAttachmentTmp = function(file, name, description) {
         Restangular.setParentless(false);
-        return Restangular.all("changelog/source/attachment/tmp")
+        return Restangular.all("changelog/source/attachment")
           .post(file, {
             "name": name,
             "description": description
@@ -825,8 +862,8 @@ angular.module("ngMetaCrudApp")
           });
       };
 
-      this.changelogSourceRemoveAttachmentTmp = function(idx) {
-        return Restangular.one("changelog/source/attachment/tmp", idx).remove();
+      this.changelogSourceRemoveAttachmentTmp = function(id) {
+        return Restangular.one("changelog/source/attachment", id).remove();
       };
 
       this.findPrimaryPartIdForThePart = function(id) {

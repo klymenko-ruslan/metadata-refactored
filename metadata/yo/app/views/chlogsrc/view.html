@@ -88,10 +88,15 @@
     <tr data-ng-repeat="rec in $data">
       <td title="'Name'">{{rec.name}}</td>
       <td title="'Description'">{{rec.description}}</td>
+      <td title="'Actions'">
+        <a href="changelog/source/attachment/{{rec.id}}" target="_self" class="btn btn-info btn-xs">
+          <i class="fa fa-download" aria-hidden="true"></i> Download
+        </a>
+      </td>
     </tr>
 
     <tr data-ng-hide="$data.length > 0">
-      <td colspan="2">No attachments to display.</td>
+      <td colspan="3">No attachments to display.</td>
     </tr>
 
     </table>

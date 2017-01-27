@@ -1,0 +1,30 @@
+<metanav>
+</metanav>
+
+<h1>Sources Names List</h1>
+
+<div class="row">
+  <div class="col-xs-4 col-xs-offset-4">
+    <form name="forms.create" class="form-inline" style="margin-bottom:8px;">
+      <div class="form-group">
+        <input id="new-name" type="text" class="form-control" placeholder="New source name" data-ng-model="data.newName" required data-ng-maxlength="255" unique-changelog-source-name>
+      </div>
+      <button class="btn btn-success btn-sm" data-ng-model="data.newName" data-ng-click="onCreate()" data-ng-disabled="forms.create.$invalid">
+        <i class="fa fa-plus"></i> Add
+      </button>
+    </form>
+    <table data-ng-table="sourcesNamesTableParams" class="table table-bordered table-striped table-hover table-responsive">
+    <tr data-ng-repeat="rec in $data">
+      <td title="'Name'" sortable="'name'" class="text-left">{{rec.name}}</td>
+      <td class="actions" title="'Actions'">
+        <button class="btn btn-success btn-xs" data-ng-click="onEdit(rec)" data-ng-disabled="true">
+          <i class="fa fa-pencil"></i> Edit
+        </button>
+        <button data-ng-click="onRemove(rec)" class="btn btn-danger btn-xs" data-ng-disabled="true">
+          <i class="fa fa-trash-o"></i> Remove
+        </button>
+      </td>
+    </tr>
+    </table>
+  </div>
+</div>

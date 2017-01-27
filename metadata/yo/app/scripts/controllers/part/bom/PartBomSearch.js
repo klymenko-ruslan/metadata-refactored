@@ -54,7 +54,7 @@ angular.module("ngMetaCrudApp")
           "sourcesNames": restService.getAllChangelogSourceNames(),
           "lastPicked": restService.getLastPickedChangelogSources,
           "begin": function() {
-            return restService.chanlelogSourceBeginEdit(); // needs to clear session attribute on the server side
+            return restService.changelogSourceBeginEdit(); // needs to clear session attribute on the server side
           }
         }
       });

@@ -5,21 +5,27 @@ import com.turbointernational.metadata.entity.User;
 import com.turbointernational.metadata.entity.chlogsrc.Source;
 import com.turbointernational.metadata.entity.chlogsrc.SourceAttachment;
 import com.turbointernational.metadata.entity.chlogsrc.SourceName;
-import com.turbointernational.metadata.web.controller.ChangelogSourceController;
+import com.turbointernational.metadata.web.controller.ChangelogSourceController.AttachmentsResponse;
+import com.turbointernational.metadata.web.dto.Page;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
+import java.net.URLConnection;
 import java.util.Date;
 import java.util.List;
 
+import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 import static org.apache.commons.io.FileUtils.moveFile;
 import static org.apache.commons.io.FileUtils.moveFileToDirectory;
 
@@ -28,6 +34,8 @@ import static org.apache.commons.io.FileUtils.moveFileToDirectory;
  */
 @Service
 public class ChangelogSourceService {
+
+    private final static Logger log = LoggerFactory.getLogger(ChangelogSourceService.class);
 
     @Autowired
     private SourceDao sourceDao;
@@ -38,10 +46,6 @@ public class ChangelogSourceService {
     @Value("${changelog.sources.dir}")
     private File changelogSourcesDir;
 
-    public List<SourceName> getAllChangelogSourceNames() {
-        return sourceDao.getAllSourceNames();
-    }
-
     public Source findChangelogSourceById(Long id) {
         return sourceDao.findOne(id);
     }
@@ -50,25 +54,19 @@ public class ChangelogSourceService {
         return sourceDao.findChangelogSourceByName(name);
     }
 
-    public Source createChangelogSource(String name, String desctiption, String url, Long sourceNameId,
-                                        ChangelogSourceController.AttachmentsResponse attachments) throws IOException {
+    public Source create(String name, String desctiption, String url, Long sourceNameId,
+                         AttachmentsResponse attachments) throws IOException {
         User user = User.getCurrentUser();
         Source source = sourceDao.create(name, desctiption, url, sourceNameId, user);
-        if (attachments != null) {
-            Long srcId = source.getId();
-            File destDir = new File(changelogSourcesDir, srcId.toString());
-            for(ChangelogSourceController.AttachmentsResponse.Row row : attachments.getRows()) {
-                moveFileToDirectory(row.getTmpFile(), destDir, true);
-                String fileName = row.getName();
-                if (StringUtils.isNotBlank(fileName)) {
-                    moveFile(new File(destDir, row.getTmpFile().getName()), new File(destDir, fileName));
-                } else {
-                    fileName = row.getTmpFile().getName();
-                }
-                SourceAttachment attachment = new SourceAttachment(null, source, fileName, row.getDescription());
-                em.persist(attachment);
-            }
-        }
+        saveAttachments(source, attachments);
+        return source;
+    }
+
+    public Source update(Long id, String name, String desctiption, String url, Long sourceNameId,
+                         AttachmentsResponse attachments) throws IOException {
+        User user = User.getCurrentUser();
+        Source source = sourceDao.update(id, name, desctiption, url, sourceNameId, user);
+        saveAttachments(source, attachments);
         return source;
     }
 
@@ -94,6 +92,109 @@ public class ChangelogSourceService {
             s.setLastLinked(d);
         }
         return sources;
+    }
+
+    public AttachmentsResponse uploadAttachment(String name, String description,
+                                                AttachmentsResponse attachments, byte[] binData)
+            throws IOException {
+        File tmpfile = File.createTempFile("metadata", ".chlgupload");
+        FileUtils.writeByteArrayToFile(tmpfile, binData);
+        Long id = -(System.currentTimeMillis()); // negative value
+        AttachmentsResponse.Row row = new AttachmentsResponse.Row(id, name, description, tmpfile);
+        attachments.getRows().add(row);
+        return attachments;
+    }
+
+    public AttachmentsResponse removeAttachment(Long id, AttachmentsResponse attachments) {
+        List<AttachmentsResponse.Row> rows = attachments.getRows();
+        int idx = -1;
+        for(int i = 0; i < rows.size(); i++) {
+            AttachmentsResponse.Row row = rows.get(i);
+            if (row.getId().equals(id)) {
+                idx = i;
+                if (id > 0) {
+                    // Delete persistent file and record in the table.
+                    SourceAttachment attachment = em.find(SourceAttachment.class, id);
+                    Long srcId = attachment.getSource().getId();
+                    File destDir = getAttachmendDir(srcId);
+                    String fileName = getAttachmentFilename(id);
+                    File attachmentFile = new File(destDir, fileName);
+                    if (attachmentFile.exists()) {
+                        attachmentFile.delete();
+                    }
+                    em.remove(attachment);
+                } else {
+                    // Delete only temporary file.
+                    row.getTmpFile().delete();
+                }
+                break;
+            }
+        }
+        if (idx > -1) {
+            rows.remove(idx);
+        }
+        return attachments;
+    }
+
+    public void downloadAttachment(Long attachmentId, HttpServletResponse response) throws IOException {
+        SourceAttachment attachment = em.find(SourceAttachment.class, attachmentId);
+        Long srcId = attachment.getSource().getId();
+        File attachmentFile = getAttachmentFile(srcId, attachmentId);
+        if (!attachmentFile.exists()) {
+            log.warn("Changelog source attachment [{}] not found.", attachmentId);
+            response.setStatus(SC_NOT_FOUND);
+            return;
+        }
+        ServletOutputStream out = response.getOutputStream();
+        String downloadName = attachment.getName();
+        if (StringUtils.isBlank(downloadName)) {
+            downloadName = attachmentId.toString();
+        }
+        String mimeType = URLConnection.guessContentTypeFromName(downloadName);
+        if (mimeType == null) {
+            mimeType = "application/octet-stream";
+        }
+        response.setContentType(mimeType);
+        response.setHeader("Content-Disposition", String.format("attachment; filename=\"%s\"", downloadName));
+        response.setContentLength((int) attachmentFile.length());
+        FileUtils.copyFile(attachmentFile, out);
+    }
+
+    private void saveAttachments(Source source, AttachmentsResponse attachments) throws IOException {
+        if (attachments != null) {
+            SourceAttachment attachment;
+            for(AttachmentsResponse.Row row : attachments.getRows()) {
+                if (row.getId() > 0) {
+                    // Update meta information only.
+                    attachment = em.find(SourceAttachment.class, row.getId());
+                    attachment.setName(row.getName());
+                    attachment.setDescription(row.getDescription());
+                    em.merge(attachment);
+                } else {
+                    // Save metainformation to the database and move uploaded file
+                    // from temporary place to a persistent file storage.
+                    Long srcId = source.getId();
+                    File destDir = getAttachmendDir(srcId);
+                    moveFileToDirectory(row.getTmpFile(), destDir, true);
+                    attachment = new SourceAttachment(null, source, row.getName(), row.getDescription());
+                    em.persist(attachment);
+                    String fileName = getAttachmentFilename(attachment.getId());
+                    moveFile(new File(destDir, row.getTmpFile().getName()), new File(destDir, fileName));
+                }
+            }
+        }
+    }
+
+    private File getAttachmendDir(Long srcId) {
+        return new File(changelogSourcesDir, srcId.toString());
+    }
+
+    private String getAttachmentFilename(Long attachmentId) {
+        return attachmentId.toString();
+    }
+
+    private File getAttachmentFile(Long srcId, Long attachmentId) {
+        return new File(getAttachmendDir(srcId), getAttachmentFilename(attachmentId));
     }
 
 }
