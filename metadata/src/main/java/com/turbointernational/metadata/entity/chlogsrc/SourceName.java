@@ -13,9 +13,10 @@ import static javax.persistence.GenerationType.IDENTITY;
  */
 @Entity
 @Table(name = "source_name")
-@NamedQueries(
-    @NamedQuery(name="findAllChangelogSourceNames", query = "from SourceName sn order by sn.name")
-)
+@NamedQueries({
+        @NamedQuery(name = "findChangelogSourceNameByName", query = "from SourceName sn where sn.name=:name"),
+        @NamedQuery(name = "findAllChangelogSourceNames", query = "from SourceName sn order by sn.name")
+})
 public class SourceName implements Serializable {
 
     //<editor-fold defaultstate="collapsed" desc="properties">
@@ -26,7 +27,7 @@ public class SourceName implements Serializable {
     private Long id;
 
     @JsonView(View.Summary.class)
-    @Column(name = "name")
+    @Column(name = "name", nullable = false, unique = true)
     private String name;
 
     public SourceName() {

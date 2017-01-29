@@ -29,10 +29,8 @@
   </li>
 </metanav>
 
-<div class="modal-header">
-  <h3 data-ng-if="::!source">Create New Source</h3>
-  <h3 data-ng-if="::source">Source Edit</h3>
-</div>
+<h3 data-ng-if="::!source">Create New Source</h3>
+<h3 data-ng-if="::source">Source Edit</h3>
 
 <ul id="tabsSources" class="nav nav-tabs" role="tablist">
   <li role="presentation">
@@ -102,7 +100,6 @@
           </div>
         </form>
 
-
         <table data-ng-table="attachmentsTableParams" class="table table-bordered table-striped table-hover table-responsive">
         <tr data-ng-repeat="rec in $data">
           <td title="'Name'">
@@ -112,7 +109,7 @@
             {{rec.description}}
           </td>
           <td class="actions text-center" title="'Actions'">
-            <button type="button" data-ng-click="removeAttachment($index)" class="btn btn-danger btn-xs">
+            <button type="button" data-ng-click="removeAttachment(rec.id)" class="btn btn-danger btn-xs">
               <i class="fa fa-trash-o"></i> Remove
             </button>
           </td>

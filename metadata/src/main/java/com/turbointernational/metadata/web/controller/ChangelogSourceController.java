@@ -7,7 +7,7 @@ import com.turbointernational.metadata.entity.chlogsrc.Source;
 import com.turbointernational.metadata.entity.chlogsrc.SourceName;
 import com.turbointernational.metadata.service.ChangelogSourceService;
 import com.turbointernational.metadata.util.View;
-import org.apache.commons.io.FileUtils;
+import com.turbointernational.metadata.web.dto.Page;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.IOException;
@@ -23,9 +24,7 @@ import java.util.List;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
 import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 /**
  * Created by dmytro.trunykov@zorallabs.com on 1/16/17.
@@ -99,6 +98,15 @@ public class ChangelogSourceController {
         @JsonInclude(ALWAYS)
         public static class Row {
 
+            /**
+             * Attachment ID.
+             *
+             * For temporary attachments (loaded for a changelog source instance but not saved)
+             * a value is negative. A positive value is ID in a table source_attachment.
+             */
+            @JsonView(View.Summary.class)
+            private Long id;
+
             @JsonView(View.Summary.class)
             private String name;
 
@@ -111,10 +119,19 @@ public class ChangelogSourceController {
             public Row() {
             }
 
-            public Row(String name, String description, File tmpFile) {
+            public Row(Long id, String name, String description, File tmpFile) {
+                this.id = id;
                 this.name = name;
                 this.description = description;
                 this.tmpFile= tmpFile;
+            }
+
+            public Long getId() {
+                return id;
+            }
+
+            public void setId(Long id) {
+                this.id = id;
             }
 
             public String getName() {
@@ -164,7 +181,9 @@ public class ChangelogSourceController {
 
         void clear() {
             this.rows.forEach(r -> {
-                if (r.getTmpFile().exists()) {
+                // tmpFile below can be null when attach is persistent.
+                File tmpFile = r.getTmpFile();
+                if (tmpFile != null && tmpFile.exists()) {
                     r.getTmpFile().delete();
                 }
             });
@@ -190,15 +209,6 @@ public class ChangelogSourceController {
         return attachments;
     }
 
-    @RequestMapping(value = "/sourcename/list", method = GET)
-    @ResponseBody
-    @JsonView(View.Summary.class)
-    // TODO: security!
-    public List<SourceName> getAllChangelogSourceNames() {
-        List<SourceName> retVal = changelogSourceService.getAllChangelogSourceNames();
-        return retVal;
-    }
-
     @RequestMapping(method = GET)
     @ResponseBody
     @JsonView(View.Summary.class)
@@ -208,13 +218,22 @@ public class ChangelogSourceController {
         return retVal;
     }
 
-    @RequestMapping(value = "begin", method = POST)
+    @RequestMapping(value = "begin/{id}", method = POST)
     @Transactional
     @ResponseBody
     @JsonView(View.Summary.class)
     // TODO: security!
-    public AttachmentsResponse beginEdit(HttpSession session) {
-        return cleanAttachments(session);
+    public AttachmentsResponse beginEdit(HttpSession session, @PathVariable("id") Long sourceId) {
+        AttachmentsResponse retVal = cleanAttachments(session);
+        if (sourceId > 0) {
+            Source source = changelogSourceService.findChangelogSourceById(sourceId);
+            source.getAttachments().forEach(
+                    a -> retVal.getRows().add(
+                            new AttachmentsResponse.Row(a.getId(), a.getName(), a.getDescription(), null)
+                    )
+            );
+        }
+        return retVal;
     }
 
     @RequestMapping(path = "/{id}", method = GET, produces = APPLICATION_JSON_VALUE)
@@ -233,7 +252,20 @@ public class ChangelogSourceController {
     // TODO: security!
     public Source create(HttpSession session, @RequestBody SourceRequest sr) throws IOException {
         AttachmentsResponse attachments = getAttachments(session);
-        Source retVal = changelogSourceService.createChangelogSource(sr.getName(), sr.getDescription(),
+        Source retVal = changelogSourceService.create(sr.getName(), sr.getDescription(),
+                sr.getUrl(), sr.getSourceNameId(), attachments);
+        cleanAttachments(session);
+        return retVal;
+    }
+
+    @RequestMapping(path = "/{id}", method = PUT)
+    @Transactional
+    @ResponseBody
+    @JsonView(View.Summary.class)
+    // TODO: security!
+    public Source update(HttpSession session, @PathVariable("id") Long sourceId, @RequestBody SourceRequest sr) throws IOException {
+        AttachmentsResponse attachments = getAttachments(session);
+        Source retVal = changelogSourceService.update(sourceId, sr.getName(), sr.getDescription(),
                 sr.getUrl(), sr.getSourceNameId(), attachments);
         cleanAttachments(session);
         return retVal;
@@ -252,37 +284,39 @@ public class ChangelogSourceController {
     // TODO: security!
     public boolean delete(@PathVariable("id") Long id) {
         changelogSourceService.delete(id);
+        // TODO: delete attachments
         return true;
     }
 
-    @RequestMapping(value = "attachment/tmp", method = POST, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "attachment", method = POST, produces = APPLICATION_JSON_VALUE)
     @Transactional
     @ResponseBody
     @JsonView(View.Summary.class)
     // TODO: security!
-    public AttachmentsResponse uploadAttachmentTmp(
+    public AttachmentsResponse uploadAttachment(
             HttpSession session, @RequestBody byte[] binData,
             @RequestParam(value = "name", required = false) String name,
             @RequestParam(value = "description", required = false) String description) throws IOException {
         AttachmentsResponse attachments = getAttachments(session);
-        File tmpfile = File.createTempFile("metadata", ".chlgupload");
-        FileUtils.writeByteArrayToFile(tmpfile, binData);
-        AttachmentsResponse.Row row = new AttachmentsResponse.Row(name, description, tmpfile);
-        attachments.getRows().add(row);
-        return attachments;
+        return changelogSourceService.uploadAttachment(name, description, attachments, binData);
     }
 
-    @RequestMapping(value = "attachment/tmp/{idx}", method = DELETE)
+    @RequestMapping(value = "attachment/{id}", method = DELETE)
     @Transactional
     @ResponseBody
     @JsonView(View.Summary.class)
     // TODO: security!
-    public AttachmentsResponse removeAttachmentTmp(HttpSession session, @PathVariable int idx) {
+    public AttachmentsResponse removeAttachment(HttpSession session, @PathVariable Long id) {
         AttachmentsResponse attachments = getAttachments(session);
-        AttachmentsResponse.Row toDel = attachments.getRows().get(idx);
-        toDel.getTmpFile().delete();
-        attachments.getRows().remove(idx);
-        return attachments;
+        return changelogSourceService.removeAttachment(id, attachments);
+    }
+
+    @RequestMapping(value = "attachment/{id}", method = GET)
+    @Transactional
+    @ResponseBody
+    // TODO: security!
+    public void downloadAttachment(@PathVariable("id") Long attachmentId, HttpServletResponse response) throws IOException {
+        changelogSourceService.downloadAttachment(attachmentId, response);
     }
 
     @RequestMapping(value = "lastpicked", method = GET)

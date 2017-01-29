@@ -19,7 +19,7 @@
         <form name="forms.changelogSourceForm" novalidate>
           <div class="form-group">
             <label for="name">Name</label>
-            <input id="name" type="text" class="form-control" data-ng-model="data.crud.source.name" unique-changelog-source-name required>
+            <input id="name" type="text" class="form-control" data-ng-model="data.crud.source.name" unique-changelog-source-by-name required>
             <span data-ng-show="forms.changelogSourceForm.name.$dirty && forms.changelogSourceForm.name.$invalid" class="alert alert-danger" role="alert">
               <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
               <span data-ng-show="forms.changelogSourceForm.name.$error.required">Required!</span>

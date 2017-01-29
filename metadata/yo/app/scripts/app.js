@@ -401,6 +401,12 @@ angular.module("ngMetaCrudApp", ["ngCookies", "ngRoute", "ngTable", "ui.bootstra
       }
     });
 
+    // Changelog Sources Names
+    $routeProvider.when("/changelog/source/name/list", {
+      templateUrl: "views/chlogsrc/name/list.html",
+      controller: "ChangelogSourcesNamesListCtrl"
+    });
+
     // Changelog sources
     $routeProvider.when("/changelog/source/list", {
       templateUrl: "views/chlogsrc/list.html",
@@ -416,7 +422,7 @@ angular.module("ngMetaCrudApp", ["ngCookies", "ngRoute", "ngTable", "ui.bootstra
       controller: "ChangelogSourcesFormCtrl",
       resolve: {
         begin: ["restService", function(restService) {
-          return restService.chanlelogSourceBeginEdit(); // needs to clear session attribute on the server side
+          return restService.changelogSourceBeginEdit(); // needs to clear session attribute on the server side
         }],
         "sourcesNames": ["restService", function(restService) {
           return restService.getAllChangelogSourceNames();
@@ -430,8 +436,8 @@ angular.module("ngMetaCrudApp", ["ngCookies", "ngRoute", "ngTable", "ui.bootstra
       templateUrl: "views/chlogsrc/form.html",
       controller: "ChangelogSourcesFormCtrl",
       resolve: {
-        begin: ["restService", function(restService) {
-          return restService.chanlelogSourceBeginEdit(); // needs to clear session attribute on the server side
+        begin: ["$route", "restService", function($route, restService) {
+          return restService.changelogSourceBeginEdit($route.current.pathParams.id); // needs to clear session attribute on the server side
         }],
         "sourcesNames": ["restService", function(restService) {
           return restService.getAllChangelogSourceNames();

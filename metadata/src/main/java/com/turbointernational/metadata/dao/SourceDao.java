@@ -7,7 +7,6 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.NoResultException;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Created by dmytro.trunykov@zorallabs.com on 1/16/17.
@@ -27,10 +26,6 @@ public class SourceDao extends AbstractDao<Source> {
         }
     }
 
-    public List<SourceName> getAllSourceNames() {
-        return em.createNamedQuery("findAllChangelogSourceNames", SourceName.class).getResultList();
-    }
-
     public Source create(String name, String desctiption, String url, Long sourceNameId, User user) {
         Date now = new Date();
         SourceName sourceName = em.getReference(SourceName.class, sourceNameId);
@@ -44,6 +39,20 @@ public class SourceDao extends AbstractDao<Source> {
         source.setUpdated(now);
         source.setUpdateUser(user);
         em.persist(source);
+        return source;
+    }
+
+    public Source update(Long id, String name, String desctiption, String url, Long sourceNameId, User user) {
+        Source source = findOne(id);
+        Date now = new Date();
+        SourceName sourceName = em.getReference(SourceName.class, sourceNameId);
+        source.setName(name);
+        source.setDescription(desctiption);
+        source.setUrl(url);
+        source.setSourceName(sourceName);
+        source.setUpdated(now);
+        source.setUpdateUser(user);
+        merge(source);
         return source;
     }
 
