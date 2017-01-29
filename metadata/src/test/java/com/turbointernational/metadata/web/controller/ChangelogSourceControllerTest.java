@@ -32,6 +32,7 @@ import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TES
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
@@ -249,6 +250,38 @@ public class ChangelogSourceControllerTest {
                 .andExpect(status().isOk())
  //               .andDo(MockMvcResultHandlers.print());
                 .andExpect(content().json(responseBody));
+    }
+
+
+    @Test
+    @Sql(
+            executionPhase = BEFORE_TEST_METHOD,
+            scripts = "classpath:integration_tests/feed_dictionaries.sql"
+    )
+    @Sql(
+            executionPhase = BEFORE_TEST_METHOD,
+            scripts = "classpath:integration_tests/changelogsource_controller/delete_attachment.sql"
+    )
+    @Sql(
+            executionPhase = AFTER_TEST_METHOD,
+            scripts = "classpath:integration_tests/clear_tables.sql"
+    )
+    @Sql(
+            executionPhase = AFTER_TEST_METHOD,
+            scripts = "classpath:integration_tests/clear_dictionaries.sql"
+    )
+    @WithUserDetails("Admin")
+    public void testRemoveAttachment() throws Exception {
+        String responseBody = "{\"rows\":[{\"id\":1,\"name\":\"test-1\",\"description\":null},{\"id\":3,\"name\":\"test-3\",\"description\":null}]}";
+        mockMvc.perform(delete("/metadata/changelog/source/attachment/2?begin=true")
+                .contentType(contentType))
+                .andExpect(status().isOk())
+//                .andDo(MockMvcResultHandlers.print());
+                .andExpect(content().json(responseBody));
+        List<SourceAttachment> attachments = em.createQuery("from SourceAttachment a order by a.id", SourceAttachment.class).getResultList();
+        assertEquals(2, attachments.size());
+        assertEquals(1L, attachments.get(0).getId().longValue());
+        assertEquals(3L, attachments.get(1).getId().longValue());
     }
 
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.entity.chlogsrc.Source;
+import com.turbointernational.metadata.entity.chlogsrc.SourceAttachment;
 import com.turbointernational.metadata.entity.chlogsrc.SourceName;
 import com.turbointernational.metadata.service.ChangelogSourceService;
 import com.turbointernational.metadata.util.View;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.File;
@@ -39,6 +41,9 @@ public class ChangelogSourceController {
 
     @Autowired
     private ChangelogSourceService changelogSourceService;
+
+    @Autowired
+    private EntityManager entityManager;
 
     @JsonInclude(ALWAYS)
     public static class SourceRequest {
@@ -306,7 +311,16 @@ public class ChangelogSourceController {
     @ResponseBody
     @JsonView(View.Summary.class)
     // TODO: security!
-    public AttachmentsResponse removeAttachment(HttpSession session, @PathVariable Long id) {
+    public AttachmentsResponse removeAttachment(HttpSession session, @PathVariable Long id,
+                                                @RequestParam(value = "begin", required = false, defaultValue = "true") Boolean begin) {
+        if (begin) { // parameter 'begin' is used in functional tests only
+            // MvcMock has no support for sessions between several http request (it creates a new one on each request).
+            // So we use this workaround to emulate call of 'beginEdit()' before call of this method.
+            SourceAttachment attachment = entityManager.createQuery("from SourceAttachment where id=:id", SourceAttachment.class)
+                    .setParameter("id", id).getSingleResult();
+            Long sourceId = attachment.getSource().getId();
+            beginEdit(session, sourceId);
+        }
         AttachmentsResponse attachments = getAttachments(session);
         return changelogSourceService.removeAttachment(id, attachments);
     }
