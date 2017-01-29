@@ -26,46 +26,46 @@
       {{bomItem.child.manufacturerPartNumber}}
     </td>
     <td title="'Qty'" class="text-right" data-sortable="'quantity'">
-      <span data-ng-hide="isModifying($index, bomItem)">{{bomItem.quantity}}</span>
-      <input data-ng-model="modifyValues[bomItem.id]" type="text" data-ng-show="isModifying($index, bomItem)"/>
+      <span data-ng-hide="isModifying(bomItem)">{{bomItem.quantity}}</span>
+      <input data-ng-model="modifyValues[bomItem.id]" type="text" data-ng-show="isModifying(bomItem)"/>
     </td>
     <td title="'Actions'">
 
-      <button data-ng-click="modifyStart($index, bomItem)"
+      <button data-ng-click="modifyStart(bomItem)"
               authorize="ROLE_BOM" class="btn btn-warning btn-xs"
-              data-ng-hide="isModifying($index, bomItem)">
+              data-ng-hide="isModifying(bomItem)">
         <i class="fa fa-cog"></i> Modify
       </button>
 
-      <button data-ng-click="modifySave($index, bomItem)"
+      <button data-ng-click="modifySave(bomItem)"
               data-ng-disabled="restService.status.bomRebuilding"
               authorize="ROLE_BOM" class="btn btn-success btn-xs"
-              data-ng-show="isModifying($index, bomItem)">
+              data-ng-show="isModifying(bomItem)">
         <i class="fa fa-save"></i> Save
       </button>
 
-      <button data-ng-click="modifyCancel($index, bomItem)"
+      <button data-ng-click="modifyCancel(bomItem)"
               authorize="ROLE_BOM" class="btn btn-warning btn-xs"
-              data-ng-show="isModifying($index, bomItem)">
+              data-ng-show="isModifying(bomItem)">
         <i class="fa fa-minus-circle"></i> Cancel
       </button>
 
       <a data-ng-href="/part/{{bomItem.child.id}}"
          authorize="ROLE_READ" class="btn btn-primary btn-xs"
-         data-ng-hide="isModifying($index, bomItem)">
+         data-ng-hide="isModifying(bomItem)">
         <i class="fa fa-eye"></i> View Part
       </a>
 
       <a data-ng-click="showAlternates(bomItem)"
          authorize="ROLE_READ" class="btn btn-info btn-xs"
-         data-ng-hide="isModifying($index, bomItem)">
+         data-ng-hide="isModifying(bomItem)">
         <i class="fa fa-random"></i> Alternates
       </a>
 
-      <button data-ng-click="remove($index, bomItem)"
+      <button data-ng-click="remove(bomItem)"
               data-ng-disabled="restService.status.bomRebuilding"
               authorize="ROLE_BOM" class="btn btn-danger btn-xs"
-              data-ng-hide="isModifying($index, bomItem)">
+              data-ng-hide="isModifying(bomItem)">
         <i class="fa fa-trash-o"></i> Remove
       </button>
 

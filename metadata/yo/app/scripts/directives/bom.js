@@ -26,7 +26,6 @@ angular.module("ngMetaCrudApp")
             if (parentPartId === undefined) {
               return;
             }
-            $log.log("Loading BOM for parent part", parentPartId);
             BOM.listByParentPartId(parentPartId).then(
               function success(bom) {
                 $scope.bom = bom;
@@ -45,19 +44,19 @@ angular.module("ngMetaCrudApp")
           // Temp storage for quantities
           $scope.modifyValues = {};
 
-          $scope.isModifying = function(index, bomItem) {
+          $scope.isModifying = function(bomItem) {
             return angular.isDefined($scope.modifyValues[bomItem.id]);
           };
 
-          $scope.modifyStart = function(index, bomItem) {
+          $scope.modifyStart = function(bomItem) {
             $scope.modifyValues[bomItem.id] = bomItem.quantity;
           };
 
-          $scope.modifyCancel = function(index, bomItem) {
+          $scope.modifyCancel = function(bomItem) {
             delete $scope.modifyValues[bomItem.id];
           };
 
-          $scope.modifySave = function(index, bomItem) {
+          $scope.modifySave = function(bomItem) {
             var quantity = $scope.modifyValues[bomItem.id];
             Restangular.one("bom").post(bomItem.id, null, {
               quantity: quantity
@@ -70,9 +69,7 @@ angular.module("ngMetaCrudApp")
             );
           };
 
-          $scope.remove = function(index, bomItem) {
-            $log.log("Remove bom item, part: ", $scope.parentPart);
-
+          $scope.remove = function(bomItem) {
             dialogs.confirm(
               "Remove BOM Item?",
               "Remove child part from this bill of materials?").result.then(
@@ -81,14 +78,14 @@ angular.module("ngMetaCrudApp")
                 BOM.removeBOM(bomItem.id).then(
                   function() {
                     // Success
-
                     // Remove the BOM item from the local part and reload the table
-                    $scope.bom.splice(index, 1);
+                    var idxToRemove = _.findIndex($scope.bom, function(e) {
+                      return e.id === bomItem.id;
+                    });
+                    $scope.bom.splice(idxToRemove, 1);
                     $scope.bomTableParams.reload();
-
                     // Clear the alt bom item
                     $scope.altBomItem = null;
-
                     gToast.open("Child part removed from BOM.");
                   },
                   restService.error);

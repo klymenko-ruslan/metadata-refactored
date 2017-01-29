@@ -34,7 +34,7 @@ angular.module("ngMetaCrudApp")
           } else {
             sortProperty = defSortProperty; // asc. see above.
           }
-          var sortedAsc = _.sortBy(data, function(b) {
+          var sortedAsc = data.sort(function(b) {
             var s = $parse(sortProperty)(b);
             if (s && _.isString(s)) {
               s = s.toLowerCase();
