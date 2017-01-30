@@ -260,7 +260,6 @@ angular.module("ngMetaCrudApp")
       _chvw("create_new_source");
     };
 
-
     $scope.isUploadBttnDisabled = function () {
       return !formData.has("file");
     };

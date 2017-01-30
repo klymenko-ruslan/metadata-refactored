@@ -1,0 +1,1 @@
+alter table source modify column name varchar(255) not null unique;

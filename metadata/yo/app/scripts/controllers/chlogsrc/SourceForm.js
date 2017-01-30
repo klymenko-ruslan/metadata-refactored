@@ -49,6 +49,10 @@ angular.module("ngMetaCrudApp")
       }
     );
 
+    $scope.isUploadBttnDisabled = function () {
+      return !formData.has("file");
+    };
+
     $scope.onViewList = function() {
       $location.path("/changelog/source/list");
     };
@@ -110,6 +114,9 @@ angular.module("ngMetaCrudApp")
           // Success
         _updateAttachmentsTable(updatedAttachmentsResponse.rows);
           gToast.open("File uploaded.");
+          $scope.data.attachDescr = null;
+          formData.delete("file");
+          // TODO: reset upload form
         },
         function(response) {
           // Error
