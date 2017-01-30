@@ -1,10 +1,11 @@
 package com.turbointernational.metadata.service;
 
+import com.turbointernational.metadata.dao.ChangelogSourceDao;
 import com.turbointernational.metadata.dao.SourceDao;
 import com.turbointernational.metadata.entity.User;
+import com.turbointernational.metadata.entity.chlogsrc.ChangelogSource;
 import com.turbointernational.metadata.entity.chlogsrc.Source;
 import com.turbointernational.metadata.entity.chlogsrc.SourceAttachment;
-import com.turbointernational.metadata.entity.chlogsrc.SourceName;
 import com.turbointernational.metadata.web.controller.ChangelogSourceController.AttachmentsResponse;
 import com.turbointernational.metadata.web.dto.Page;
 import org.apache.commons.io.FileUtils;
@@ -41,6 +42,9 @@ public class ChangelogSourceService {
     private SourceDao sourceDao;
 
     @Autowired
+    private ChangelogSourceDao changelogSourceDao;
+
+    @Autowired
     private EntityManager em;
 
     @Value("${changelog.sources.dir}")
@@ -52,6 +56,11 @@ public class ChangelogSourceService {
 
     public Source findChangelogSourceByName(String name) {
         return sourceDao.findChangelogSourceByName(name);
+    }
+
+    public Page<ChangelogSource> filterChangelogSources(Long sourceId, String sortProperty, String sortOrder,
+                                                        Integer offset, Integer limit) {
+        return changelogSourceDao.filter(sourceId, sortProperty, sortOrder, offset, limit);
     }
 
     public Source create(String name, String desctiption, String url, Long sourceNameId,

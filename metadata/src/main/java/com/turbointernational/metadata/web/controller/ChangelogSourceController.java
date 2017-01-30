@@ -3,6 +3,7 @@ package com.turbointernational.metadata.web.controller;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.entity.chlogsrc.ChangelogSource;
 import com.turbointernational.metadata.entity.chlogsrc.Source;
 import com.turbointernational.metadata.entity.chlogsrc.SourceAttachment;
 import com.turbointernational.metadata.entity.chlogsrc.SourceName;
@@ -274,6 +275,18 @@ public class ChangelogSourceController {
                 sr.getUrl(), sr.getSourceNameId(), attachments);
         cleanAttachments(session);
         return retVal;
+    }
+
+    @RequestMapping(path = "{id}/links", method = GET)
+    @ResponseBody
+    @JsonView(View.Summary.class)
+    // TODO: security!
+    public Page<ChangelogSource> filterChangelogSources(@PathVariable("id") Long sourceId,
+                                                        @RequestParam(name = "sortProperty", required = false) String sortProperty,
+                                                        @RequestParam(name = "sortOrder", required = false) String sortOrder,
+                                                        @RequestParam(name = "offset", required = false) Integer offset,
+                                                        @RequestParam(name = "limit", required = false) Integer limit) {
+        return changelogSourceService.filterChangelogSources(sourceId, sortProperty, sortOrder, offset, limit);
     }
 
     @RequestMapping(path = "/{id}/links/count", method = GET)

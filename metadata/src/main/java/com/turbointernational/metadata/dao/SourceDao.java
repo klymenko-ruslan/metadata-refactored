@@ -20,7 +20,9 @@ public class SourceDao extends AbstractDao<Source> {
 
     public Source findChangelogSourceByName(String name) {
         try {
-            return em.createNamedQuery("findChangelogSourceByName", Source.class).setParameter("name", name).getSingleResult();
+            return em.createNamedQuery("findChangelogSourceByName", Source.class)
+                    .setParameter("name", name)
+                    .getSingleResult();
         } catch (NoResultException e) {
             return null;
         }

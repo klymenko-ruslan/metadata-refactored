@@ -1,6 +1,8 @@
 package com.turbointernational.metadata.entity.chlogsrc;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.entity.Changelog;
+import com.turbointernational.metadata.util.View;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
@@ -17,14 +19,17 @@ import static javax.persistence.CascadeType.ALL;
 public class ChangelogSourceId implements Serializable {
 
     @ManyToOne
+    @JsonView(View.Summary.class)
     @JoinColumn(name = "lnk_id", nullable = false)
     private ChangelogSourceLink link;
 
     @ManyToOne
+    @JsonView(View.Summary.class)
     @JoinColumn(name = "changelog_id", nullable = false)
     private Changelog changelog;
 
     @ManyToOne
+    @JsonView(View.Summary.class)
     @JoinColumn(name = "source_id", nullable = false)
     private Source source;
 

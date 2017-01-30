@@ -3,6 +3,7 @@ package com.turbointernational.metadata.web.controller;
 import com.turbointernational.metadata.entity.Changelog;
 import com.turbointernational.metadata.entity.chlogsrc.*;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -232,7 +233,7 @@ public class ChangelogSourceControllerTest {
     )
     @Sql(
             executionPhase = BEFORE_TEST_METHOD,
-            scripts = "classpath:integration_tests/changelogsource_controller/get_links_count.sql"
+            scripts = "classpath:integration_tests/changelogsource_controller/get_last_picked.sql"
     )
     @Sql(
             executionPhase = AFTER_TEST_METHOD,
@@ -251,7 +252,6 @@ public class ChangelogSourceControllerTest {
  //               .andDo(MockMvcResultHandlers.print());
                 .andExpect(content().json(responseBody));
     }
-
 
     @Test
     @Sql(
@@ -282,6 +282,32 @@ public class ChangelogSourceControllerTest {
         assertEquals(2, attachments.size());
         assertEquals(1L, attachments.get(0).getId().longValue());
         assertEquals(3L, attachments.get(1).getId().longValue());
+    }
+
+    @Test
+    @Sql(
+            executionPhase = BEFORE_TEST_METHOD,
+            scripts = "classpath:integration_tests/feed_dictionaries.sql"
+    )
+    @Sql(
+            executionPhase = BEFORE_TEST_METHOD,
+            scripts = "classpath:integration_tests/changelogsource_controller/filter_changelogsource.sql"
+    )
+    @Sql(
+            executionPhase = AFTER_TEST_METHOD,
+            scripts = "classpath:integration_tests/clear_tables.sql"
+    )
+    @Sql(
+            executionPhase = AFTER_TEST_METHOD,
+            scripts = "classpath:integration_tests/clear_dictionaries.sql"
+    )
+    @WithUserDetails("Admin")
+    @Ignore
+    public void testFilterChangelogSources() throws Exception {
+        mockMvc.perform(get("/metadata/changelog/source/1/links")
+                .contentType(contentType))
+                .andExpect(status().isOk())
+                .andDo(MockMvcResultHandlers.print());
     }
 
 }
