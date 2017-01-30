@@ -6,6 +6,7 @@ import com.turbointernational.metadata.web.dto.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
 import java.util.List;
 
 /**
@@ -16,6 +17,9 @@ public class ChangelogSourceNameService {
 
     @Autowired
     private SourceNameDao sourceNameDao;
+
+    @Autowired
+    private EntityManager em;
 
     public SourceName findChangelogSourceNameByName(String name) {
         return sourceNameDao.findChangelogSourceNameByName(name);
@@ -35,6 +39,18 @@ public class ChangelogSourceNameService {
 
     public SourceName update(Long id, String name) {
         return sourceNameDao.update(id, name);
+    }
+
+    public boolean remove(Long id) {
+        Long numRefs = em.createNamedQuery("getNumChangelogSourcesForSourceName", Long.class)
+                .setParameter("sourceNameId", id)
+                .getSingleResult();
+        if (numRefs == 0) {
+            sourceNameDao.delete(id);
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }

@@ -38,7 +38,10 @@ import static javax.persistence.TemporalType.TIMESTAMP;
                         "   select s2.id " +
                         "   from Source s2 join s2.changelogSourceLinks lnk " +
                         "   where lnk.createUser.id = :userId " +
-                        "   order by lnk.created desc)")
+                        "   order by lnk.created desc)"),
+        @NamedQuery(
+                name = "getNumChangelogSourcesForSourceName",
+                query = "select count(*) from Source s where s.sourceName.id=:sourceNameId")
 })
 @JsonInclude(ALWAYS)
 public class Source implements SearchableEntity, Serializable {

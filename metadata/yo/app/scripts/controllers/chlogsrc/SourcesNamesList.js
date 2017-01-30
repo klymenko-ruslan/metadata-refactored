@@ -3,8 +3,8 @@
 angular.module("ngMetaCrudApp")
 
 .controller("ChangelogSourcesNamesListCtrl",
-  ["$scope", "$log", "gToast", "ngTableParams", "restService",
-  function($scope, $log, gToast, ngTableParams, restService) {
+  ["$scope", "$log", "gToast", "dialogs", "ngTableParams", "restService",
+  function($scope, $log, gToast, dialogs, ngTableParams, restService) {
 
     $scope.forms = {
       create: null
@@ -64,7 +64,29 @@ angular.module("ngMetaCrudApp")
     $scope.onEdit = function(entity) {
     };
 
-    $scope.onDelete = function(entity) {
+    $scope.onRemove = function(entity) {
+      dialogs.confirm("Confirmation",
+        "Are you sure? Do you want to remove this Source Name?").result.then(
+          function yes() {
+            restService.removeChangelogSourceName(entity.id).then(
+              function(removed) {
+                if (!removed) {
+                  dialogs.error("Failure", "This Source Name [" + entity.id + "] - " + entity.name +
+                    " can't be deleted because it is referenced by some Source(s).");
+                } else {
+                  $scope.sourcesNamesTableParams.reload();
+                  gToast.open("The Source Name [" + entity.id + "] - " + entity.name +
+                    " has successfully been removed.");
+                }
+              },
+              function(errorResponse) {
+                restService.error("Could not remove the Source Name.", errorResponse);
+              }
+            );
+          },
+          function no() {
+          }
+        );
     };
 
   }

@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.List;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
+import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
@@ -55,6 +56,15 @@ public class ChangelogSourceNameController {
     // TODO: security!
     public SourceName findChangelogSourceNameByName(@RequestParam("name") String name) {
         return changelogSourceNameService.findChangelogSourceNameByName(name);
+    }
+
+    @RequestMapping(value = "/{id}", method = DELETE)
+    @Transactional
+    @ResponseBody
+    @JsonView(View.Summary.class)
+    // TODO: security!
+    public boolean remove(@PathVariable Long id) {
+        return changelogSourceNameService.remove(id);
     }
 
     @RequestMapping(value = "/list", method = GET)

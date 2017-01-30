@@ -796,7 +796,10 @@ angular.module("ngMetaCrudApp")
 
       this.removeChangelogSource = function(srcId) {
         return Restangular.one("changelog/source", srcId).remove();
+      };
 
+      this.removeChangelogSourceName = function(id) {
+        return Restangular.one("changelog/source/name", id).remove();
       };
 
       this.filterChangelogSource = function(name, description, url, sourceNameId,
