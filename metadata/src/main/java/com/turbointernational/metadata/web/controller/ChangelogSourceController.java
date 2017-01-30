@@ -312,7 +312,7 @@ public class ChangelogSourceController {
     @JsonView(View.Summary.class)
     // TODO: security!
     public AttachmentsResponse removeAttachment(HttpSession session, @PathVariable Long id,
-                                                @RequestParam(value = "begin", required = false, defaultValue = "true") Boolean begin) {
+                                                @RequestParam(value = "begin", required = false, defaultValue = "false") Boolean begin) {
         if (begin) { // parameter 'begin' is used in functional tests only
             // MvcMock has no support for sessions between several http request (it creates a new one on each request).
             // So we use this workaround to emulate call of 'beginEdit()' before call of this method.

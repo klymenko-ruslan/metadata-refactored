@@ -179,10 +179,18 @@ angular.module("ngMetaCrudApp")
       };
     };
 
+    function _cleanCreateSourceForm() {
+      $scope.data.crud.source = {}; // clean form
+      attachments.splice(0, attachments.length);
+      $scope.data.attachDescr = null;
+      formData.delete("file");
+    };
+
     function _createSource(name, description, url, sourceNameId) {
       restService.createChangelogSource(name, description, url, sourceNameId).then(
-        function success() {
+        function success(newSource) {
           _chvw("sources_list");
+          $scope.pick(newSource);
           $scope.sourceTableParams.reload();
         },
         function failure(errorResponse) {
@@ -248,7 +256,13 @@ angular.module("ngMetaCrudApp")
     };
 
     $scope.onCreateNewSource = function() {
+      _cleanCreateSourceForm();
       _chvw("create_new_source");
+    };
+
+
+    $scope.isUploadBttnDisabled = function () {
+      return !formData.has("file");
     };
 
     $scope.changedAttachment = function(files) {
@@ -262,7 +276,6 @@ angular.module("ngMetaCrudApp")
         attachments.push(e);
       });
       $scope.attachmentsTableParams.reload();
-      formData = new FormData();
     };
 
     $scope.uploadAttachment = function() {
@@ -271,10 +284,14 @@ angular.module("ngMetaCrudApp")
           // Success
         _updateAttachmentsTable(updatedAttachmentsResponse.rows);
           gToast.open("File uploaded.");
+          $scope.data.attachDescr = null;
+          formData.delete("file");
+          // TODO: reset upload form
         },
         function(response) {
           // Error
-          restService.error("Could not upload the attachment.", response);
+          alert("Could not upload the attachment.");
+          $log.log("Could not upload the attachment.", response);
         }
       );
     };
