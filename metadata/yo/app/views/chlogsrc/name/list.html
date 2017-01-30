@@ -13,18 +13,33 @@
         <i class="fa fa-plus"></i> Add
       </button>
     </form>
-    <table data-ng-table="sourcesNamesTableParams" class="table table-bordered table-striped table-hover table-responsive">
-    <tr data-ng-repeat="rec in $data">
-      <td title="'Name'" sortable="'name'" class="text-left">{{rec.name}}</td>
-      <td class="actions" title="'Actions'">
-        <button class="btn btn-success btn-xs" data-ng-click="onEdit(rec)" data-ng-disabled="true">
-          <i class="fa fa-pencil"></i> Edit
-        </button>
-        <button data-ng-click="onRemove(rec)" class="btn btn-danger btn-xs">
-          <i class="fa fa-trash-o"></i> Remove
-        </button>
-      </td>
-    </tr>
-    </table>
+    <form name="forms.edit" novalidate>
+      <table data-ng-table="sourcesNamesTableParams" class="table table-bordered table-striped table-hover table-responsive">
+      <tr data-ng-repeat="rec in $data">
+        <td title="'Name'" sortable="'name'" class="text-left">
+          <span data-ng-if="rec.id !== sourceName.id">{{rec.name}}</span>
+          <input data-ng-if="mode==='edit' && rec.id === sourceName.id" type="text" data-ng-model="sourceName.name" data-ng-maxlength="255" required unique-changelog-source-name>
+        </td>
+        <td class="actions" title="'Actions'">
+          <button type="button" data-ng-click="onEdit(rec)" class="btn btn-warning btn-xs" data-ng-hide="mode==='edit' && rec.id === sourceName.id" data-ng-disabled="mode==='edit' && rec.id !== sourceName.id">
+            <i class="fa fa-cog"></i> Modify
+          </button>
+          <button type="button" data-ng-click="onRemove(rec)" class="btn btn-danger btn-xs" data-ng-hide="mode==='edit' && rec.id === sourceName.id" data-ng-disabled="mode==='edit' && rec.id !== sourceName.id">
+            <i class="fa fa-trash-o"></i> Remove
+          </button>
+          <button type="button" data-ng-click="onSave()" class="btn btn-success btn-xs" data-ng-show="mode==='edit' && rec.id===sourceName.id" data-ng-disabled="forms.edit.$pristine || forms.edit.$invalid || forms.edit.$pending" >
+            <i class="fa fa-save"></i> Save
+          </button>
+          <button type="button" data-ng-click="onRevert()" class="btn btn-warning btn-xs" data-ng-show="mode==='edit' && rec.id===sourceName.id" data-ng-disabled="forms.edit.$pristine">
+            <i class="fa fa-undo"></i>
+            Revert
+          </button>
+          <button type="button" data-ng-click="onCancel()" class="btn btn-warning btn-xs" data-ng-show="mode==='edit' && rec.id===sourceName.id">
+            <i class="fa fa-minus-circle"></i> Cancel
+          </button>
+        </td>
+      </tr>
+      </table>
+    </form>
   </div>
 </div>

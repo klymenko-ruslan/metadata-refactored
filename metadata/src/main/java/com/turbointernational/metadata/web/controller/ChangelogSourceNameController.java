@@ -102,7 +102,7 @@ public class ChangelogSourceNameController {
     @ResponseBody
     @JsonView(View.Summary.class)
     // TODO: security!
-    public SourceName create(@PathVariable("id") Long id, @RequestBody SourceNameRequest snr) throws IOException {
+    public SourceName update(@PathVariable("id") Long id, @RequestBody SourceNameRequest snr) throws IOException {
         return changelogSourceNameService.update(id, snr.getName());
     }
 

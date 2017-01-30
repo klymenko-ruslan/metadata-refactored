@@ -3,11 +3,17 @@
 angular.module("ngMetaCrudApp")
 
 .controller("ChangelogSourcesNamesListCtrl",
-  ["$scope", "$log", "gToast", "dialogs", "ngTableParams", "restService",
-  function($scope, $log, gToast, dialogs, ngTableParams, restService) {
+  ["$scope", "$log", "gToast", "dialogs", "ngTableParams", "Restangular", "restService",
+  function($scope, $log, gToast, dialogs, ngTableParams, Restangular, restService) {
+
+    $scope.mode = "view";
+
+    $scope.sourceName = null;
+    $scope.sourceNameOrig = null;
 
     $scope.forms = {
-      create: null
+      create: null,
+      edit: null
     };
 
     $scope.data = {
@@ -62,6 +68,9 @@ angular.module("ngMetaCrudApp")
     };
 
     $scope.onEdit = function(entity) {
+      $scope.sourceName = entity; // make ref to an edit record in the list
+      $scope.sourceNameOrig = Restangular.copy(entity); // make copy for undo
+      $scope.mode = "edit";
     };
 
     $scope.onRemove = function(entity) {
@@ -89,6 +98,32 @@ angular.module("ngMetaCrudApp")
         );
     };
 
+    $scope.onCancel = function() {
+      $scope.onRevert();
+      $scope.sourceName = null;
+      $scope.sourceNameOrig = null;
+      $scope.mode = "view";
+
+    };
+
+    $scope.onRevert = function() {
+      $scope.sourceName.name = $scope.sourceNameOrig.name;
+    };
+
+    $scope.onSave = function() {
+      restService.updateChangeSourceName($scope.sourceName.id, $scope.sourceName.name).then(
+        function success(updated) {
+          $scope.sourceName = null;
+          $scope.sourceNameOrig = null;
+          $scope.mode = "view";
+          gToast.open("The Source Name has successfully been updated.");
+        },
+        function failure(errorResponse) {
+          restService.error("Could not update the Source Name.", errorResponse);
+        }
+      );
+    };
+
   }
 ]).directive("uniqueChangelogSourceName", ["$log", "$q", "restService", function($log, $q, restService) {
   // Validator for uniqueness of the changelog source name.
@@ -101,19 +136,16 @@ angular.module("ngMetaCrudApp")
           return $q.when();
         }
         restService.findChangelogSourceNameByName(viewValue).then(
-          function(changelogSource) {
-            if (changelogSource === undefined) {
+          function(changelogSourceName) {
+            if (changelogSourceName === undefined) {
               def.resolve();
             } else {
-              def.reject();
-              /*
-              var id = $scope.$eval("source.id");
-              if (changelogSource.id === id) {
+              var id = $scope.$eval("sourceName.id");
+              if (changelogSourceName.id === id) {
                 def.resolve();
               } else {
                 def.reject();
               }
-              */
             }
           },
           function (errorResponse) {
