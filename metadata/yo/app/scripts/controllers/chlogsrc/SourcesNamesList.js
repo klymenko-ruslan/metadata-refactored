@@ -103,7 +103,6 @@ angular.module("ngMetaCrudApp")
       $scope.sourceName = null;
       $scope.sourceNameOrig = null;
       $scope.mode = "view";
-
     };
 
     $scope.onRevert = function() {

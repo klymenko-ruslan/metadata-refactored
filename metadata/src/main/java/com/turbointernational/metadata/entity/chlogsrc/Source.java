@@ -102,14 +102,14 @@ public class Source implements SearchableEntity, Serializable {
             inverseJoinColumns=@JoinColumn(name="lnk_id")
     )
     private List<ChangelogSourceLink> changelogSourceLinks = new ArrayList<>();
-
+/*
     @ManyToMany(cascade = DETACH, fetch = LAZY)
     @JoinTable(name="changelog_source",
             joinColumns=@JoinColumn(name="source_id"),
             inverseJoinColumns=@JoinColumn(name="changelog_id")
     )
     private List<Changelog> changelogs = new ArrayList<>();
-
+*/
     @Transient
     private Date lastLinked;
 
@@ -203,7 +203,7 @@ public class Source implements SearchableEntity, Serializable {
     public void setChangelogSourceLinks(List<ChangelogSourceLink> changelogSourceLinks) {
         this.changelogSourceLinks = changelogSourceLinks;
     }
-
+/*
     public List<Changelog> getChangelogs() {
         return changelogs;
     }
@@ -211,7 +211,7 @@ public class Source implements SearchableEntity, Serializable {
     public void setChangelogs(List<Changelog> changelogs) {
         this.changelogs = changelogs;
     }
-
+*/
     @JsonView(View.Summary.class)
     public Date getLastLinked() {
         return lastLinked;

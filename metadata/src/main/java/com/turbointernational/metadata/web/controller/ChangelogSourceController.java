@@ -277,16 +277,18 @@ public class ChangelogSourceController {
         return retVal;
     }
 
-    @RequestMapping(path = "{id}/links", method = GET)
+    @RequestMapping(path = "links", method = GET)
     @ResponseBody
     @JsonView(View.Summary.class)
     // TODO: security!
-    public Page<ChangelogSource> filterChangelogSources(@PathVariable("id") Long sourceId,
+    public Page<ChangelogSource> filterChangelogSources(@RequestParam(name = "sourceId", required = false) Long sourceId,
+                                                        @RequestParam(name = "changelogId", required = false) Long changelogId,
                                                         @RequestParam(name = "sortProperty", required = false) String sortProperty,
                                                         @RequestParam(name = "sortOrder", required = false) String sortOrder,
                                                         @RequestParam(name = "offset", required = false) Integer offset,
                                                         @RequestParam(name = "limit", required = false) Integer limit) {
-        return changelogSourceService.filterChangelogSources(sourceId, sortProperty, sortOrder, offset, limit);
+        return changelogSourceService.filterChangelogSources(sourceId, changelogId, sortProperty, sortOrder,
+                offset, limit);
     }
 
     @RequestMapping(path = "/{id}/links/count", method = GET)

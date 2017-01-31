@@ -25,20 +25,14 @@ public class ChangelogSourceId implements Serializable {
 
     @ManyToOne
     @JsonView(View.Summary.class)
-    @JoinColumn(name = "changelog_id", nullable = false)
-    private Changelog changelog;
-
-    @ManyToOne
-    @JsonView(View.Summary.class)
     @JoinColumn(name = "source_id", nullable = false)
     private Source source;
 
     public ChangelogSourceId() {
     }
 
-    public ChangelogSourceId(ChangelogSourceLink link, Changelog changelog, Source source) {
+    public ChangelogSourceId(ChangelogSourceLink link, Source source) {
         this.link = link;
-        this.changelog = changelog;
         this.source = source;
     }
 
@@ -48,14 +42,6 @@ public class ChangelogSourceId implements Serializable {
 
     public void setLink(ChangelogSourceLink link) {
         this.link = link;
-    }
-
-    public Changelog getChangelog() {
-        return changelog;
-    }
-
-    public void setChangelog(Changelog changelog) {
-        this.changelog = changelog;
     }
 
     public Source getSource() {
@@ -74,14 +60,12 @@ public class ChangelogSourceId implements Serializable {
         ChangelogSourceId that = (ChangelogSourceId) o;
 
         if (!link.equals(that.link)) return false;
-        if (!changelog.equals(that.changelog)) return false;
         return source.equals(that.source);
     }
 
     @Override
     public int hashCode() {
         int result = link.hashCode();
-        result = 31 * result + changelog.hashCode();
         result = 31 * result + source.hashCode();
         return result;
     }

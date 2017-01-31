@@ -19,8 +19,8 @@ public class ChangelogSourceDao extends AbstractDao<ChangelogSource> {
         super(ChangelogSource.class);
     }
 
-    public Page<ChangelogSource> filter(Long sourceId, String sortProperty, String sortOrder, Integer offset,
-                                        Integer limit) {
+    public Page<ChangelogSource> filter(Long sourceId, Long changelogId, String sortProperty, String sortOrder,
+                                        Integer offset, Integer limit) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<ChangelogSource> ecq = cb.createQuery(ChangelogSource.class);
         Root<ChangelogSource> root = ecq.from(ChangelogSource.class);
@@ -28,6 +28,9 @@ public class ChangelogSourceDao extends AbstractDao<ChangelogSource> {
         List<Predicate> lstPredicates = new ArrayList<>(5);
         if (sourceId != null) {
             lstPredicates.add(cb.equal(root.get("pk").get("source").get("id"), sourceId));
+        }
+        if (changelogId != null) {
+            lstPredicates.add(cb.equal(root.get("pk").get("changelog").get("id"), changelogId));
         }
         Predicate[] arrPredicates = lstPredicates.toArray(new Predicate[lstPredicates.size()]);
         ecq.where(arrPredicates);

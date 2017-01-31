@@ -1,33 +1,71 @@
 <div class="modal-header">
-  <h3 class="modal-title">Details</h3>
+  <h3 class="modal-title">View</h3>
 </div>
 <div class="modal-body">
-  <div class="row">
-    <div class="col-xs-12">
-      <label for="log_date" style="width: 10em;">Date</label>
-      <span id="log_date">{{date | date : "yyyy-MM-dd HH:mm.ss"}}</span>
+
+  <ul id="tabsCmdlog" class="nav nav-tabs" role="tablist">
+    <li role="presentation">
+      <a href="#details" aria-controls="details" role="tab" data-toggle="tab">
+        <i class="fa fa-bars"></i>
+        Details
+      </a>
+    </li>
+    <li role="presentation">
+      <a href="#sources" aria-controls="sources" role="tab" data-toggle="tab">
+        <i class="fa fa-paperclip"></i>
+        Sources
+      </a>
+    </li>
+  </ul>
+
+  <div class="tab-content">
+
+    <div id="details" role="tabpanel" class="tab-pane fade" style="padding-top:8px;">
+
+      <div class="row">
+        <div class="col-xs-12">
+          <label for="log_date" style="width: 10em;">Date</label>
+          <span id="log_date">{{date | date : "yyyy-MM-dd HH:mm.ss"}}</span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12">
+          <label for="log_user" style="width: 10em;">User</label>
+          <span id="log_user">{{user.name}}</span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12">
+          <label for="log_description">Description</label>
+          <pre id="log_description" style="max-height: 10em;">{{description}}</pre>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12">
+          <label for="log_data">Data</label>
+          <pre id="log_data" style="max-height: 15em;">{{changes | json : 2}}</pre>
+        </div>
+      </div>
+
     </div>
-  </div>
-  <div class="row">
-    <div class="col-xs-12">
-      <label for="log_user" style="width: 10em;">User</label>
-      <span id="log_user">{{user.name}}</span>
+
+    <div id="sources" role="tabpanel" class="tab-pane fade" style="padding-top:8px;">
+      TODO
     </div>
+
   </div>
-  <div class="row">
-    <div class="col-xs-12">
-      <label for="log_description">Description</label>
-      <p id="log_description">{{description}}</p>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-xs-12">
-      <label for="log_data">Data</label>
-      <pre id="log_data" style="max-height: 45em;">{{changes | json : 2}}</pre>
-    </div>
-  </div>
+
 </div>
+
+
 <div class="modal-footer">
   <button type="button" class="btn btn-default" data-ng-click="onCloseViewDlg()">Close</button>
 </div>
 
+<script>
+  $('#tabsCmdlog a').click(function (e) {
+    e.preventDefault();
+    $(this).tab('show');
+  });
+  $('#tabsCmdlog a:first').tab('show');
+</script>

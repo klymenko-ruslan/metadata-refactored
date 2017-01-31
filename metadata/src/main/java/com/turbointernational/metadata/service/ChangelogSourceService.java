@@ -58,9 +58,10 @@ public class ChangelogSourceService {
         return sourceDao.findChangelogSourceByName(name);
     }
 
-    public Page<ChangelogSource> filterChangelogSources(Long sourceId, String sortProperty, String sortOrder,
+    public Page<ChangelogSource> filterChangelogSources(Long sourceId, Long changelogId,
+                                                        String sortProperty, String sortOrder,
                                                         Integer offset, Integer limit) {
-        return changelogSourceDao.filter(sourceId, sortProperty, sortOrder, offset, limit);
+        return changelogSourceDao.filter(sourceId, changelogId, sortProperty, sortOrder, offset, limit);
     }
 
     public Source create(String name, String desctiption, String url, Long sourceNameId,

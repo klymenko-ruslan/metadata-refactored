@@ -2,6 +2,7 @@ package com.turbointernational.metadata.entity.chlogsrc;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.entity.Changelog;
 import com.turbointernational.metadata.entity.User;
 import com.turbointernational.metadata.util.View;
 
@@ -38,6 +39,11 @@ public class ChangelogSourceLink {
     @JsonView(View.Summary.class)
     private Long id;
 
+    @ManyToOne
+    @JsonView(View.Summary.class)
+    @JoinColumn(name = "changelog_id", nullable = false)
+    private Changelog changelog;
+
     @Temporal(TIMESTAMP)
     @Column(name = "created", nullable = false)
     @JsonView(View.Summary.class)
@@ -63,7 +69,8 @@ public class ChangelogSourceLink {
     public ChangelogSourceLink() {
     }
 
-    public ChangelogSourceLink(User createUser, Date created, String description) {
+    public ChangelogSourceLink(Changelog changelog, User createUser, Date created, String description) {
+        this.changelog = changelog;
         this.createUser = createUser;
         this.created = created;
         this.description = description;
@@ -75,6 +82,14 @@ public class ChangelogSourceLink {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Changelog getChangelog() {
+        return changelog;
+    }
+
+    public void setChangelog(Changelog changelog) {
+        this.changelog = changelog;
     }
 
     public String getDescription() {

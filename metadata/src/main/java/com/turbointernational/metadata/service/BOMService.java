@@ -761,13 +761,13 @@ public class BOMService {
             EntityManager em = bomItemDao.getEntityManager();
             User user = User.getCurrentUser();
             Date now  = new Date();
-            ChangelogSourceLink link = new ChangelogSourceLink(user, now, chlogSrcLnkDescription);
+            ChangelogSourceLink link = new ChangelogSourceLink(changelog, user, now, chlogSrcLnkDescription);
             em.persist(link);
             for (int i = 0; i < sourceIds.length; i++) {
                 Long srcId = sourceIds[i];
                 Integer raiting = chlogSrcRaiting[i];
                 Source source = em.getReference(Source.class, srcId);
-                ChangelogSourceId chlgsrcid = new ChangelogSourceId(link, changelog, source);
+                ChangelogSourceId chlgsrcid = new ChangelogSourceId(link, source);
                 ChangelogSource chlgsrc = new ChangelogSource(chlgsrcid, raiting);
                 em.persist(chlgsrc);
                 // I have no idea why... but without flush below the record is not saved

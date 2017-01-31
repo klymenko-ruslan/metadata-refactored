@@ -185,7 +185,7 @@ public class ChangelogSourceControllerTest {
         Changelog changelog = em.find(Changelog.class, 1L); // it throws exception when not found
         // Check that changelog and source are linked before test.
         ChangelogSourceLink link = em.find(ChangelogSourceLink.class, 1L); // it throws exception when not found
-        em.find(ChangelogSource.class, new ChangelogSourceId(link, changelog, source)); // it throws exception when not found
+        em.find(ChangelogSource.class, new ChangelogSourceId(link, source)); // it throws exception when not found
         mockMvc.perform(delete("/metadata/changelog/source/1")
                 .contentType(contentType))
                 .andExpect(status().isOk());
@@ -223,6 +223,7 @@ public class ChangelogSourceControllerTest {
         mockMvc.perform(get("/metadata/changelog/source/2/links/count")
                 .contentType(contentType))
                 .andExpect(status().isOk())
+  //              .andDo(MockMvcResultHandlers.print());
                 .andExpect(content().json("3"));
     }
 
