@@ -275,6 +275,10 @@
           }
         }
       }
+    },
+    "partIds": {
+      "type": "long",
+      "store": "yes"
     }
   }
 }

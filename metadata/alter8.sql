@@ -1,0 +1,1 @@
+alter table changelog_source_link add column part_id bigint(20) default null references part(id);

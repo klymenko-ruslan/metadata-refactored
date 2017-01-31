@@ -61,6 +61,10 @@ public class ChangelogSourceLink {
     @JsonView(View.Summary.class)
     private String description;
 
+    @Column(name = "part_id")
+    @JsonView(View.Summary.class)
+    private Long partId;
+
     @JsonView(View.ChangelogSourceDetailed.class)
     @OneToMany(mappedBy = "pk.link")
     private List<ChangelogSource> changelogSources = new ArrayList<>();
@@ -128,5 +132,13 @@ public class ChangelogSourceLink {
 
     public void setChangelogSources(List<ChangelogSource> changelogSources) {
         this.changelogSources = changelogSources;
+    }
+
+    public Long getPartId() {
+        return partId;
+    }
+
+    public void setPartId(Long partId) {
+        this.partId = partId;
     }
 }
