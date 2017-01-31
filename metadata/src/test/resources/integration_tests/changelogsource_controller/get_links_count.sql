@@ -10,8 +10,8 @@ insert into changelog(id, change_date, user_id, description) values
 insert into changelog_source_link(id, changelog_id, created, create_user_id) values
 (1, 1, '2017-01-22 14:24:42', 1),
 (2, 2, '2017-01-22 14:17:32', 1),
-(3, 2, '2017-01-22 14:17:33', 1),
-(4, 2, '2017-01-22 14:17:34', 1);
+(3, 3, '2017-01-22 14:17:32', 1),
+(4, 4, '2017-01-22 14:17:32', 1);
 insert into changelog_source(source_id, lnk_id) values
 (1, 1),
 (2, 2),

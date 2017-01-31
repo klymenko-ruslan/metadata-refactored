@@ -41,7 +41,7 @@ public class ChangelogSourceLink {
 
     @ManyToOne
     @JsonView(View.Summary.class)
-    @JoinColumn(name = "changelog_id", nullable = false)
+    @JoinColumn(name = "changelog_id", nullable = false, unique = true)
     private Changelog changelog;
 
     @Temporal(TIMESTAMP)
