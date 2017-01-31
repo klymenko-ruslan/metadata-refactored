@@ -23,14 +23,18 @@ import static javax.persistence.TemporalType.TIMESTAMP;
  */
 @Entity
 @Table(name = "changelog_source_link")
-@NamedQueries(
+@NamedQueries({
         @NamedQuery(
                 name = "findLastChangelogSourceLinkForSource",
                 query = "select max(l.created) " +
                         "from ChangelogSourceLink l join l.sources s " +
                         "where s.id=:sourceId"
-        )
-)
+        ),
+        @NamedQuery(
+                name = "getChangelogSourceLinkForChangelog",
+                query = "select chs.pk.link from ChangelogSource chs " +
+                        "where chs.pk.link.changelog.id=:changelogId")
+})
 @JsonInclude(ALWAYS)
 public class ChangelogSourceLink {
 
@@ -40,7 +44,6 @@ public class ChangelogSourceLink {
     private Long id;
 
     @ManyToOne
-    @JsonView(View.Summary.class)
     @JoinColumn(name = "changelog_id", nullable = false, unique = true)
     private Changelog changelog;
 
@@ -49,7 +52,7 @@ public class ChangelogSourceLink {
     @JsonView(View.Summary.class)
     private Date created;
 
-    @JsonView(View.Detail.class)
+    @JsonView(View.ChangelogSourceDetailed.class)
     @ManyToOne
     @JoinColumn(name = "create_user_id", nullable = false)
     private User createUser;
@@ -58,12 +61,15 @@ public class ChangelogSourceLink {
     @JsonView(View.Summary.class)
     private String description;
 
+    @JsonView(View.ChangelogSourceDetailed.class)
+    @OneToMany(mappedBy = "pk.link")
+    private List<ChangelogSource> changelogSources = new ArrayList<>();
+
     @ManyToMany(cascade = ALL, fetch = LAZY)
     @JoinTable(name="changelog_source",
             joinColumns=@JoinColumn(name="lnk_id"),
             inverseJoinColumns=@JoinColumn(name="source_id")
     )
-
     private List<Source> sources = new ArrayList<>();
 
     public ChangelogSourceLink() {
@@ -116,4 +122,11 @@ public class ChangelogSourceLink {
         this.created = created;
     }
 
+    public List<ChangelogSource> getChangelogSources() {
+        return changelogSources;
+    }
+
+    public void setChangelogSources(List<ChangelogSource> changelogSources) {
+        this.changelogSources = changelogSources;
+    }
 }

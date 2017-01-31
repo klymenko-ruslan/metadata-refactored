@@ -30,4 +30,6 @@ public class View {
 
     public interface CarModelDetailed extends Summary {}
 
+    public interface ChangelogSourceDetailed extends Summary {}
+
 }

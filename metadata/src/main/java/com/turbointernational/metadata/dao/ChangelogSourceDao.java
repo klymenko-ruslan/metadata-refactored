@@ -1,9 +1,11 @@
 package com.turbointernational.metadata.dao;
 
 import com.turbointernational.metadata.entity.chlogsrc.ChangelogSource;
+import com.turbointernational.metadata.entity.chlogsrc.ChangelogSourceLink;
 import com.turbointernational.metadata.web.dto.Page;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 import java.util.ArrayList;
@@ -17,6 +19,16 @@ public class ChangelogSourceDao extends AbstractDao<ChangelogSource> {
 
     public ChangelogSourceDao() {
         super(ChangelogSource.class);
+    }
+
+    public ChangelogSourceLink findByChangelogId(Long changelogId) {
+        try {
+            return em.createNamedQuery("getChangelogSourceLinkForChangelog", ChangelogSourceLink.class)
+                    .setParameter("changelogId", changelogId)
+                    .getSingleResult();
+        } catch(NoResultException e) {
+            return null;
+        }
     }
 
     public Page<ChangelogSource> filter(Long sourceId, Long changelogId, String sortProperty, String sortOrder,

@@ -53,7 +53,7 @@ public class BOMController {
         private Long[] sourceIds;
 
         @JsonView(View.Summary.class)
-        private Integer[] chlogSrcRaiting;
+        private Integer[] chlogSrcRating;
 
         @JsonView(View.Summary.class)
         private String chlogSrcLnkDescription;
@@ -90,12 +90,12 @@ public class BOMController {
             this.sourceIds = sourceIds;
         }
 
-        public Integer[] getChlogSrcRaiting() {
-            return chlogSrcRaiting;
+        public Integer[] getChlogSrcRating() {
+            return chlogSrcRating;
         }
 
-        public void setChlogSrcRaiting(Integer[] chlogSrcRaiting) {
-            this.chlogSrcRaiting = chlogSrcRaiting;
+        public void setChlogSrcRating(Integer[] chlogSrcRating) {
+            this.chlogSrcRating = chlogSrcRating;
         }
 
         public String getChlogSrcLnkDescription() {
@@ -171,7 +171,7 @@ public class BOMController {
         Long childPartId = request.getChildPartId();
         Integer quantity = request.getQuantity();
         Long[] sourceIds = request.getSourceIds();
-        Integer[] chlogSrcRaiting = request.getChlogSrcRaiting();
+        Integer[] chlogSrcRaiting = request.getChlogSrcRating();
         String chlogSrcLnkDescription = request.getChlogSrcLnkDescription();
         try {
             bomService.create(parentPartId, childPartId, quantity,

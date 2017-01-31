@@ -34,11 +34,11 @@ angular.module("ngMetaCrudApp")
         }
       };
 
-      this.createBom = function(bomItem, srcIds, chlogSrcRaiting, chlogSrcLnkDescription) {
+      this.createBom = function(bomItem, srcIds, chlogSrcRating, chlogSrcLnkDescription) {
         var req = {};
         angular.copy(bomItem, req);
         req.sourceIds = srcIds;
-        req.chlogSrcRaiting = chlogSrcRaiting;
+        req.chlogSrcRating = chlogSrcRating;
         req.chlogSrcLnkDescription = chlogSrcLnkDescription;
         return Restangular.all("bom").post(req);
       };
@@ -816,12 +816,15 @@ angular.module("ngMetaCrudApp")
         });
       };
 
+      this.findChangelogSourceLinkByChangelogId = function(changelogId) {
+        return Restangular.one("changelog/source/link/changelog", changelogId).get();
+      };
+
       this.changelogSourceBeginEdit = function(srcId) {
         if (!srcId) {
           srcId = -1; // create
         }
         return Restangular.one("changelog/source/begin", srcId).post();
-
       };
 
       this.createChangeSourceName = function(newName) {

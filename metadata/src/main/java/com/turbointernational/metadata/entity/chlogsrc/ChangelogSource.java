@@ -14,11 +14,11 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
  */
 @Entity
 @Table(name = "changelog_source")
-@NamedQueries(
+@NamedQueries({
         @NamedQuery(
                 name = "getChangelogSourceCountForSource",
                 query = "select count(*) from ChangelogSource chs where chs.pk.source.id=:srcId")
-)
+})
 @JsonInclude(ALWAYS)
 public class ChangelogSource implements Serializable {
 
@@ -27,15 +27,15 @@ public class ChangelogSource implements Serializable {
     private ChangelogSourceId pk;
 
     @JsonView(View.Summary.class)
-    @Column(name = "raiting")
-    private Integer raiting;
+    @Column(name = "rating")
+    private Integer rating;
 
     public ChangelogSource() {
     }
 
-    public ChangelogSource(ChangelogSourceId pk, Integer raiting) {
+    public ChangelogSource(ChangelogSourceId pk, Integer rating) {
         this.pk = pk;
-        this.raiting = raiting;
+        this.rating = rating;
     }
 
     public ChangelogSource(ChangelogSourceId pk) {
@@ -50,12 +50,12 @@ public class ChangelogSource implements Serializable {
         this.pk = pk;
     }
 
-    public Integer getRaiting() {
-        return raiting;
+    public Integer getRating() {
+        return rating;
     }
 
-    public void setRaiting(Integer raiting) {
-        this.raiting = raiting;
+    public void setRaiting(Integer rating) {
+        this.rating = rating;
     }
 
 }

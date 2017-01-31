@@ -3,10 +3,7 @@ package com.turbointernational.metadata.web.controller;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
-import com.turbointernational.metadata.entity.chlogsrc.ChangelogSource;
-import com.turbointernational.metadata.entity.chlogsrc.Source;
-import com.turbointernational.metadata.entity.chlogsrc.SourceAttachment;
-import com.turbointernational.metadata.entity.chlogsrc.SourceName;
+import com.turbointernational.metadata.entity.chlogsrc.*;
 import com.turbointernational.metadata.service.ChangelogSourceService;
 import com.turbointernational.metadata.util.View;
 import com.turbointernational.metadata.web.dto.Page;
@@ -275,6 +272,13 @@ public class ChangelogSourceController {
                 sr.getUrl(), sr.getSourceNameId(), attachments);
         cleanAttachments(session);
         return retVal;
+    }
+
+    @RequestMapping(path = "link/changelog/{id}", method = GET)
+    @ResponseBody
+    @JsonView(View.ChangelogSourceDetailed.class)
+    public ChangelogSourceLink findByChangelogId(@PathVariable("id") Long changelogId) {
+        return changelogSourceService.findByChangelogId(changelogId);
     }
 
     @RequestMapping(path = "links", method = GET)

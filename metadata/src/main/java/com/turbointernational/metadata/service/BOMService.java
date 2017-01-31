@@ -739,7 +739,7 @@ public class BOMService {
 
     @Transactional(noRollbackFor = {FoundBomRecursionException.class, AssertionError.class})
     public BOMItem create(Long parentPartId, Long childPartId, Integer quantity,
-                          Long[] sourceIds, Integer[] chlogSrcRaiting, String chlogSrcLnkDescription,
+                          Long[] sourceIds, Integer[] chlogSrcRating, String chlogSrcLnkDescription,
                           boolean rebuildBom) throws FoundBomRecursionException {
         // Create a new BOM item
         Part parent = partDao.findOne(parentPartId);
@@ -765,10 +765,10 @@ public class BOMService {
             em.persist(link);
             for (int i = 0; i < sourceIds.length; i++) {
                 Long srcId = sourceIds[i];
-                Integer raiting = chlogSrcRaiting[i];
+                Integer rating = chlogSrcRating[i];
                 Source source = em.getReference(Source.class, srcId);
                 ChangelogSourceId chlgsrcid = new ChangelogSourceId(link, source);
-                ChangelogSource chlgsrc = new ChangelogSource(chlgsrcid, raiting);
+                ChangelogSource chlgsrc = new ChangelogSource(chlgsrcid, rating);
                 em.persist(chlgsrc);
                 // I have no idea why... but without flush below the record is not saved
                 // to the changelog_source.

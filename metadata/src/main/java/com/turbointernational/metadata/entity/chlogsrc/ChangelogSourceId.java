@@ -19,12 +19,11 @@ import static javax.persistence.CascadeType.ALL;
 public class ChangelogSourceId implements Serializable {
 
     @ManyToOne
-    @JsonView(View.Summary.class)
     @JoinColumn(name = "lnk_id", nullable = false)
     private ChangelogSourceLink link;
 
     @ManyToOne
-    @JsonView(View.Summary.class)
+    @JsonView(View.ChangelogSourceDetailed.class)
     @JoinColumn(name = "source_id", nullable = false)
     private Source source;
 

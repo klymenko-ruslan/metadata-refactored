@@ -85,18 +85,40 @@ angular.module("ngMetaCrudApp")
         resolve: {
           changelogRecord: function() {
             return changelogRecord;
-          }
+          },
+          changelogSourceLink: ["restService", function(restService) {
+            return restService.findChangelogSourceLinkByChangelogId(changelogRecord.id);
+          }]
         }
       });
     };
 
   }])
-  .controller("ChangelogViewDlgCtrl", ["$scope", "$log", "$uibModalInstance", "changelogRecord",
-    function($scope, $log, $uibModalInstance,  changelogRecord) {
+  .controller("ChangelogViewDlgCtrl", ["$scope", "$log", "ngTableParams", "utils", "$uibModalInstance", "changelogRecord", "changelogSourceLink",
+    function($scope, $log, ngTableParams, utils, $uibModalInstance,  changelogRecord, changelogSourceLink) {
+      $scope.readonly = true;
       $scope.date = changelogRecord.changeDate;
       $scope.user = changelogRecord.user;
       $scope.description = changelogRecord.description;
       $scope.changes = null;
+      $scope.changelogSourceLink = changelogSourceLink;
+      if (changelogSourceLink && changelogSourceLink.changelogSources) {
+        $scope.changelogSources = changelogSourceLink.changelogSources;
+      } else {
+        $scope.changelogSources = [];
+      }
+
+      $scope.changelogSourcesTableParams = new ngTableParams(
+        {
+          page: 1,
+          count: 10,
+          sorting: {}
+        },
+        {
+          getData: utils.localPagination($scope.changelogSources)
+        }
+      );
+
       if (changelogRecord && changelogRecord.data !== undefined && changelogRecord.data !== null) {
         var data = changelogRecord.data;
         try {

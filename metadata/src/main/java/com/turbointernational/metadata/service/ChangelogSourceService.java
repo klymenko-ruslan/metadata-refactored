@@ -4,6 +4,7 @@ import com.turbointernational.metadata.dao.ChangelogSourceDao;
 import com.turbointernational.metadata.dao.SourceDao;
 import com.turbointernational.metadata.entity.User;
 import com.turbointernational.metadata.entity.chlogsrc.ChangelogSource;
+import com.turbointernational.metadata.entity.chlogsrc.ChangelogSourceLink;
 import com.turbointernational.metadata.entity.chlogsrc.Source;
 import com.turbointernational.metadata.entity.chlogsrc.SourceAttachment;
 import com.turbointernational.metadata.web.controller.ChangelogSourceController.AttachmentsResponse;
@@ -102,6 +103,10 @@ public class ChangelogSourceService {
             s.setLastLinked(d);
         }
         return sources;
+    }
+
+    public ChangelogSourceLink findByChangelogId(Long changelogId) {
+        return changelogSourceDao.findByChangelogId(changelogId);
     }
 
     public AttachmentsResponse uploadAttachment(String name, String description,
