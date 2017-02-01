@@ -4,12 +4,14 @@ angular.module("ngMetaCrudApp")
 
 .controller("ChlogSrcLinkDlgCtrl", ["$scope", "$log", "$location", "dialogs", "gToast", "ngTableParams",
   "$uibModalInstance", "utils", "restService", "BOM_RESULT_STATUS", "partId", "bomItem",
-  "sourcesNames", "lastPicked", "begin",
+  "sourcesNames", "lastPicked", "User", "begin",
   function($scope, $log, $location, dialogs, gToast, ngTableParams, $uibModalInstance, utils,
-    restService, BOM_RESULT_STATUS, partId, bomItem, sourcesNames, lastPicked, begin) { // injection "begin" is important
+    restService, BOM_RESULT_STATUS, partId, bomItem, sourcesNames, lastPicked, User, begin) { // injection "begin" is important
 
     $scope.partId = partId;
     $scope.sourcesNames = sourcesNames;
+
+    var userMustLink = !User.hasRole("ROLE_CHLOGSRC_SKIP");
 
     var pickedSources = null;
     var pickedSourceIds = null;
@@ -203,7 +205,7 @@ angular.module("ngMetaCrudApp")
     $scope.isActionBttnDisabled = function () {
       var retval = true;
       if ($scope.data.currVw.id === "sources_list") {
-        retval = false;
+        retval = userMustLink && pickedSources.length === 0;
       } else if ($scope.data.currVw.id === "create_new_source" && $scope.forms.changelogSourceForm) {
         retval = $scope.forms.changelogSourceForm.$invalid;
       }
