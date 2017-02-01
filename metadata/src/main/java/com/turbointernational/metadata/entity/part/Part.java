@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.entity.chlogsrc.ChangelogSourceLink;
 import com.turbointernational.metadata.service.SearchableEntity;
 import com.turbointernational.metadata.entity.CriticalDimension;
 import com.turbointernational.metadata.entity.Manufacturer;
@@ -187,6 +188,11 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
     @OrderBy("pk.salesNote.id")
     private List<SalesNotePart> salesNoteParts = new ArrayList<>();
 
+    @JsonView({View.Detail.class})
+    @OneToMany(cascade = REFRESH, mappedBy = "partId", fetch = LAZY)
+    @OrderBy("id")
+    private List<ChangelogSourceLink> links = new ArrayList<>();
+
     @Column(name = "import_pk")
     private Long importPk;
 
@@ -345,6 +351,13 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
         this.legendImgFilename = legendImgFilename;
     }
 
+    public List<ChangelogSourceLink> getLinks() {
+        return links;
+    }
+
+    public void setLinks(List<ChangelogSourceLink> links) {
+        this.links = links;
+    }
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Utilities">

@@ -64,6 +64,12 @@
       Turbos
     </a>
   </li>
+  <li role="presentation">
+    <a href="#linked_sources" aria-controls="linked sources" role="tab" data-toggle="tab">
+      <i class="fa fa-book"></i>
+      Linked Sources
+    </a>
+  </li>
 </ul>
 <div class="tab-content">
   <div role="tabpanel" class="tab-pane fade tab-part-detail" id="details">
@@ -419,6 +425,25 @@
     </tr>
     <tr data-ng-hide="$data.length > 0">
       <td colspan="2">No turbos to display.</td>
+    </tr>
+    </table>
+  </div>
+  <div role="tabpanel" class="tab-pane fade tab-part-detail" id="linked_sources">
+    <table data-ng-table="linksTableParams" class="table table-bordered table-striped table-hover table-responsive">
+    <tr data-ng-repeat="lnk in $data">
+      <td title="'Description'" class="text-left">
+        {{lnk.description}}
+      </td>
+      <td title="'Created'" class="text-center">
+        {{lnk.created | date : "yyyy-MM-dd HH:mm.ss"}}
+      </td>
+      <td title="'Created By'" class="text-nowrap"><a data-ng-href="security/user/{{lnk.createUser.id}}">{{lnk.createUser.name}}</a></td>
+      <td class="actions" title="'Actions'">
+        <button class="btn btn-primary btn-xs" data-ng-click="onViewChangelogSourceLink(lnk.id)"><i class="fa fa-eye"></i> View </button>
+      </td>
+    </tr>
+    <tr data-ng-hide="$data.length > 0">
+      <td colspan="4">No linked sources to display.</td>
     </tr>
     </table>
   </div>

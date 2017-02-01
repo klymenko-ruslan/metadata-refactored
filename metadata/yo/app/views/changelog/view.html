@@ -94,10 +94,15 @@
           <td title="'Created'" class="text-center">
             {{rec.pk.source.created | date : "yyyy-MM-dd HH:mm.ss"}}
           </td>
+          <td class="actions text-center" title="'Actions'">
+            <button data-ng-click="onSourceView(rec.pk.source.id)" class="btn btn-primary btn-xs">
+              <i class="fa fa-eye"></i> View
+            </button>
+          </td>
         </tr>
 
         <tr data-ng-hide="$data.length > 0">
-          <td colspan="5">No linked sources.</td>
+          <td colspan="6">No linked sources.</td>
         </tr>
 
         </table>

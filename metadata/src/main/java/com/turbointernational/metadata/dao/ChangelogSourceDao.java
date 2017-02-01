@@ -21,16 +21,6 @@ public class ChangelogSourceDao extends AbstractDao<ChangelogSource> {
         super(ChangelogSource.class);
     }
 
-    public ChangelogSourceLink findByChangelogId(Long changelogId) {
-        try {
-            return em.createNamedQuery("getChangelogSourceLinkForChangelog", ChangelogSourceLink.class)
-                    .setParameter("changelogId", changelogId)
-                    .getSingleResult();
-        } catch(NoResultException e) {
-            return null;
-        }
-    }
-
     public Page<ChangelogSource> filter(Long sourceId, Long changelogId, String sortProperty, String sortOrder,
                                         Integer offset, Integer limit) {
         CriteriaBuilder cb = em.getCriteriaBuilder();

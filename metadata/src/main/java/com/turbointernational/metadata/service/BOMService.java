@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.auditing.AuditingHandler;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -761,7 +762,8 @@ public class BOMService {
             EntityManager em = bomItemDao.getEntityManager();
             User user = User.getCurrentUser();
             Date now  = new Date();
-            ChangelogSourceLink link = new ChangelogSourceLink(changelog, user, now, chlogSrcLnkDescription);
+            ChangelogSourceLink link = new ChangelogSourceLink(changelog, user, now, chlogSrcLnkDescription,
+                    parentPartId);
             em.persist(link);
             for (int i = 0; i < sourceIds.length; i++) {
                 Long srcId = sourceIds[i];
@@ -770,6 +772,7 @@ public class BOMService {
                 ChangelogSourceId chlgsrcid = new ChangelogSourceId(link, source);
                 ChangelogSource chlgsrc = new ChangelogSource(chlgsrcid, rating);
                 em.persist(chlgsrc);
+                searchService.indexChangelogSource(source); // update partIds in the index
                 // I have no idea why... but without flush below the record is not saved
                 // to the changelog_source.
                 em.flush();

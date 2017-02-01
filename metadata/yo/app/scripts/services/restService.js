@@ -820,6 +820,10 @@ angular.module("ngMetaCrudApp")
         return Restangular.one("changelog/source/link/changelog", changelogId).get();
       };
 
+      this.findChangelogSourceLinkById = function(id) {
+        return Restangular.one("changelog/source/link", id).get();
+      };
+
       this.changelogSourceBeginEdit = function(srcId) {
         if (!srcId) {
           srcId = -1; // create

@@ -19,6 +19,16 @@ angular.module("ngMetaCrudApp")
     $scope.imgPgSz = "two";
   }
 
+  $scope.linksTableParams = new ngTableParams({
+      "page": 1,
+      "count": 10,
+      "sorting": {
+        "id": "asc"
+      }
+    }, {
+      "getData": utils.localPagination(part.links, "id")
+    });
+
   function _imgPgSz2Val(txt) {
     var retval = $scope.part.productImages.length; // all
     if (txt === "one") {
@@ -485,6 +495,21 @@ angular.module("ngMetaCrudApp")
     });
   };
 
+  $scope.onViewChangelogSourceLink = function(lnkId) {
+     $uibModal.open({
+      templateUrl: "/views/part/dialog/DisplayChangelogSourceLink.html",
+      animation: false,
+      windowClass: "part-img-modal-window",
+      controller: "DisplayChangelogSourceLinkCtrl",
+      resolve: {
+        changelogSourceLink: ["restService", function(restService) {
+          return restService.findChangelogSourceLinkById(lnkId);
+        }],
+
+      }
+    });
+  };
+
 }])
 .controller("DisplayPartImagesDlgCtrl", ["$scope", "$log", "$uibModalInstance", "img_id", "part",
   function($scope, $log, $uibModalInstance, img_id, part) {
@@ -492,6 +517,36 @@ angular.module("ngMetaCrudApp")
     $scope.imgId = img_id;
     $scope.imgSize = "1000";
     $scope.part = part;
+
+    $scope.onClose = function() {
+      $uibModalInstance.close();
+    };
+
+}])
+.controller("DisplayChangelogSourceLinkCtrl", ["$scope", "$log", "$location", "$uibModalInstance",
+  "ngTableParams", "utils", "changelogSourceLink",
+  function($scope, $log, $location, $uibModalInstance, ngTableParams, utils, changelogSourceLink) {
+    $scope.changelogSourceLink = changelogSourceLink;
+    if (changelogSourceLink && changelogSourceLink.changelogSources) {
+      $scope.changelogSources = changelogSourceLink.changelogSources;
+    } else {
+      $scope.changelogSources = [];
+    }
+    $scope.changelogSourcesTableParams = new ngTableParams(
+      {
+        page: 1,
+        count: 10,
+        sorting: {}
+      },
+      {
+        getData: utils.localPagination($scope.changelogSources)
+      }
+    );
+
+    $scope.onSourceView = function(srcId) {
+      $uibModalInstance.close();
+      $location.path("/changelog/source/" + srcId);
+    };
 
     $scope.onClose = function() {
       $uibModalInstance.close();

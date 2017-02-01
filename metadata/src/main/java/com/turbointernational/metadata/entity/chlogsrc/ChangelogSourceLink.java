@@ -8,6 +8,7 @@ import com.turbointernational.metadata.util.View;
 
 import javax.persistence.*;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -36,7 +37,7 @@ import static javax.persistence.TemporalType.TIMESTAMP;
                         "where chs.pk.link.changelog.id=:changelogId")
 })
 @JsonInclude(ALWAYS)
-public class ChangelogSourceLink {
+public class ChangelogSourceLink implements Serializable {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -52,7 +53,7 @@ public class ChangelogSourceLink {
     @JsonView(View.Summary.class)
     private Date created;
 
-    @JsonView(View.ChangelogSourceDetailed.class)
+    @JsonView({View.ChangelogSourceDetailed.class, View.Detail.class})
     @ManyToOne
     @JoinColumn(name = "create_user_id", nullable = false)
     private User createUser;
@@ -79,11 +80,12 @@ public class ChangelogSourceLink {
     public ChangelogSourceLink() {
     }
 
-    public ChangelogSourceLink(Changelog changelog, User createUser, Date created, String description) {
+    public ChangelogSourceLink(Changelog changelog, User createUser, Date created, String description, Long partId) {
         this.changelog = changelog;
         this.createUser = createUser;
         this.created = created;
         this.description = description;
+        this.partId = partId;
     }
 
     public Long getId() {

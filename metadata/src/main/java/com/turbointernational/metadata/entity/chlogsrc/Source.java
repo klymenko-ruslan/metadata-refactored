@@ -103,8 +103,6 @@ public class Source implements SearchableEntity, Serializable {
     )
     private List<ChangelogSourceLink> changelogSourceLinks = new ArrayList<>();
 
-    @Transient
-    private List<Long> partIds = null;
 /*
     @ManyToMany(cascade = DETACH, fetch = LAZY)
     @JoinTable(name="changelog_source",
@@ -256,10 +254,6 @@ public class Source implements SearchableEntity, Serializable {
 
     @Override
     public void beforeIndexing() {
-        partIds = new ArrayList<>(changelogSourceLinks.size());
-        changelogSourceLinks.stream()
-                .filter(csl -> csl.getPartId() != null)
-                .forEach(csl -> partIds.add(csl.getPartId()));
     }
 
     @Override
@@ -270,14 +264,6 @@ public class Source implements SearchableEntity, Serializable {
     @Override
     public String getSearchId() {
         return id.toString();
-    }
-
-    public List<Long> getPartIds() {
-        return partIds;
-    }
-
-    public void setPartIds(List<Long> partIds) {
-        this.partIds = partIds;
     }
 
     //</editor-fold>

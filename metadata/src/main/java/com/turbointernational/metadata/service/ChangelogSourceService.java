@@ -1,6 +1,7 @@
 package com.turbointernational.metadata.service;
 
 import com.turbointernational.metadata.dao.ChangelogSourceDao;
+import com.turbointernational.metadata.dao.ChangelogSourceLinkDao;
 import com.turbointernational.metadata.dao.SourceDao;
 import com.turbointernational.metadata.entity.User;
 import com.turbointernational.metadata.entity.chlogsrc.ChangelogSource;
@@ -44,6 +45,9 @@ public class ChangelogSourceService {
 
     @Autowired
     private ChangelogSourceDao changelogSourceDao;
+
+    @Autowired
+    private ChangelogSourceLinkDao changelogSourceLinkDao;
 
     @Autowired
     private EntityManager em;
@@ -105,8 +109,12 @@ public class ChangelogSourceService {
         return sources;
     }
 
-    public ChangelogSourceLink findByChangelogId(Long changelogId) {
-        return changelogSourceDao.findByChangelogId(changelogId);
+    public ChangelogSourceLink findLinkByChangelogId(Long changelogId) {
+        return changelogSourceLinkDao.findByChangelogId(changelogId);
+    }
+
+    public ChangelogSourceLink findLinkById(Long id) {
+        return changelogSourceLinkDao.findOne(id);
     }
 
     public AttachmentsResponse uploadAttachment(String name, String description,

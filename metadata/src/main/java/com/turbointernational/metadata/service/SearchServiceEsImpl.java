@@ -139,8 +139,8 @@ public class SearchServiceEsImpl implements SearchService {
     @Autowired
     private SalesNotePartDao salesNotePartDao;
 
-    @Value("${elasticsearch.type.changelogsource}")
-    private String elasticSearchTypeChangelogSource = "changelogsource";
+    @Value("${elasticsearch.type.source}")
+    private String elasticSearchTypeSource = "source";
 
     @Autowired
     private SourceDao sourceDao;
@@ -361,7 +361,7 @@ public class SearchServiceEsImpl implements SearchService {
             public void run() {
                 super.run();
                 try {
-                    indexAllDocs(scrollableChangelogSources, fetchSize, elasticSearchTypeChangelogSource, this);
+                    indexAllDocs(scrollableChangelogSources, fetchSize, elasticSearchTypeSource, this);
                 } catch (Exception e) {
                     synchronized (indexingStatus) {
                         if (indexingStatus.getErrorMessage() != null) {
@@ -723,13 +723,13 @@ public class SearchServiceEsImpl implements SearchService {
     @Override
     @Transactional(readOnly = true)
     public void indexChangelogSource(Source source) {
-        indexDoc(source, elasticSearchTypeChangelogSource);
+        indexDoc(source, elasticSearchTypeSource);
     }
 
     @Override
     @Transactional(readOnly = true)
     public void deleteChangelogSource(Source source) throws Exception {
-        deleteDoc(elasticSearchTypeChangelogSource, source.getSearchId());
+        deleteDoc(elasticSearchTypeSource, source.getSearchId());
     }
 
     @Override
@@ -1199,7 +1199,7 @@ public class SearchServiceEsImpl implements SearchService {
     public String filterChanglelogSources(String name, String descritpion, String url, Long sourceNameId,
                                           String sortProperty, String sortOrder, Integer offset, Integer limit) {
         SearchRequestBuilder srb = elasticSearch.prepareSearch(elasticSearchIndex)
-                .setTypes(elasticSearchTypeChangelogSource).setSearchType(DFS_QUERY_THEN_FETCH);
+                .setTypes(elasticSearchTypeSource).setSearchType(DFS_QUERY_THEN_FETCH);
         QueryBuilder query;
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
         if (isNotBlank(name)) {

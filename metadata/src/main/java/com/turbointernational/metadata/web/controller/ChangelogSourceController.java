@@ -41,7 +41,7 @@ public class ChangelogSourceController {
     private ChangelogSourceService changelogSourceService;
 
     @Autowired
-    private EntityManager entityManager;
+    private EntityManager em;
 
     @JsonInclude(ALWAYS)
     public static class SourceRequest {
@@ -277,8 +277,15 @@ public class ChangelogSourceController {
     @RequestMapping(path = "link/changelog/{id}", method = GET)
     @ResponseBody
     @JsonView(View.ChangelogSourceDetailed.class)
-    public ChangelogSourceLink findByChangelogId(@PathVariable("id") Long changelogId) {
-        return changelogSourceService.findByChangelogId(changelogId);
+    public ChangelogSourceLink findLinkByChangelogId(@PathVariable("id") Long changelogId) {
+        return changelogSourceService.findLinkByChangelogId(changelogId);
+    }
+
+    @RequestMapping(path = "link/{id}", method = GET)
+    @ResponseBody
+    @JsonView(View.ChangelogSourceDetailed.class)
+    public ChangelogSourceLink findLinkById(@PathVariable("id") Long id) {
+        return changelogSourceService.findLinkById(id);
     }
 
     @RequestMapping(path = "links", method = GET)
@@ -335,7 +342,7 @@ public class ChangelogSourceController {
         if (begin) { // parameter 'begin' is used in functional tests only
             // MvcMock has no support for sessions between several http request (it creates a new one on each request).
             // So we use this workaround to emulate call of 'beginEdit()' before call of this method.
-            SourceAttachment attachment = entityManager.createQuery("from SourceAttachment where id=:id", SourceAttachment.class)
+            SourceAttachment attachment = em.createQuery("from SourceAttachment where id=:id", SourceAttachment.class)
                     .setParameter("id", id).getSingleResult();
             Long sourceId = attachment.getSource().getId();
             beginEdit(session, sourceId);
