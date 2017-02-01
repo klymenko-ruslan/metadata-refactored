@@ -7,6 +7,7 @@ import com.turbointernational.metadata.dao.PartDao;
 import com.turbointernational.metadata.dao.TurboCarModelEngineYearDao;
 import com.turbointernational.metadata.entity.BOMItem;
 import com.turbointernational.metadata.entity.Changelog;
+import com.turbointernational.metadata.entity.Role;
 import com.turbointernational.metadata.entity.User;
 import com.turbointernational.metadata.entity.chlogsrc.ChangelogSource;
 import com.turbointernational.metadata.entity.chlogsrc.ChangelogSourceId;
@@ -21,6 +22,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.auditing.AuditingHandler;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestWrapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +33,7 @@ import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.servlet.http.HttpServletRequest;
 import javax.sql.DataSource;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -739,7 +742,7 @@ public class BOMService {
     }
 
     @Transactional(noRollbackFor = {FoundBomRecursionException.class, AssertionError.class})
-    public BOMItem create(Long parentPartId, Long childPartId, Integer quantity,
+    public BOMItem create(HttpServletRequest request, Long parentPartId, Long childPartId, Integer quantity,
                           Long[] sourceIds, Integer[] chlogSrcRating, String chlogSrcLnkDescription,
                           boolean rebuildBom) throws FoundBomRecursionException {
         // Create a new BOM item
@@ -759,8 +762,8 @@ public class BOMService {
         Changelog changelog = changelogService.log(BOM,
                 "Added bom item: " + formatBOMItem(item), item.toJson());
         if (sourceIds != null && sourceIds.length > 0) {
-            EntityManager em = bomItemDao.getEntityManager();
             User user = User.getCurrentUser();
+            EntityManager em = bomItemDao.getEntityManager();
             Date now  = new Date();
             ChangelogSourceLink link = new ChangelogSourceLink(changelog, user, now, chlogSrcLnkDescription,
                     parentPartId);
@@ -777,6 +780,8 @@ public class BOMService {
                 // to the changelog_source.
                 em.flush();
             }
+        } else if (request != null && !request.isUserInRole(Role.ROLE_CHLOGSRC_SKIP)) {
+            throw new AssertionError("User must provide changelog source.");
         }
         if (rebuildBom) {
             rebuildBomDescendancyForPart(parentPartId, true); // TODO: is clean=true required?
@@ -835,7 +840,7 @@ public class BOMService {
                     }
                 }
                 // Add the primary part to the list of BOMs of the picked part.
-                create(pickedPartId, primaryPartId, r.getQuontity(), null, null, null, false);
+                create(null, pickedPartId, primaryPartId, r.getQuontity(), null, null, null, false);
                 added++;
             } catch(FoundBomRecursionException e) {
                 log.debug("Adding of the part [" + primaryPartId + "] to list of BOM for part [" +

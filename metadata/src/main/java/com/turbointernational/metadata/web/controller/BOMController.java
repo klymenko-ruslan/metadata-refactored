@@ -16,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 
@@ -144,7 +145,6 @@ public class BOMController {
     @Secured("ROLE_ADMIN")
     public BOMService.IndexingStatus startRebuild(Authentication authentication,
                                                   @RequestBody Map<String, Boolean> options) throws Exception {
-
         User user = (User) authentication.getPrincipal();
         boolean indexBoms = options.getOrDefault("indexBoms", false);
         BOMService.IndexingStatus status = bomService.startRebuild(user, null, indexBoms);
@@ -166,7 +166,7 @@ public class BOMController {
             consumes = APPLICATION_JSON_VALUE,
             produces = APPLICATION_JSON_VALUE)
     @JsonView(View.Summary.class)
-    public BOMResult create(@RequestBody CreateBomItemRequest request) {
+    public BOMResult create(HttpServletRequest httpRequest, @RequestBody CreateBomItemRequest request) {
         Long parentPartId = request.getParentPartId();
         Long childPartId = request.getChildPartId();
         Integer quantity = request.getQuantity();
@@ -174,7 +174,7 @@ public class BOMController {
         Integer[] chlogSrcRaiting = request.getChlogSrcRating();
         String chlogSrcLnkDescription = request.getChlogSrcLnkDescription();
         try {
-            bomService.create(parentPartId, childPartId, quantity,
+            bomService.create(httpRequest, parentPartId, childPartId, quantity,
                     sourceIds, chlogSrcRaiting, chlogSrcLnkDescription, true);
             return new BOMResult(); // OK
         } catch (FoundBomRecursionException e) {

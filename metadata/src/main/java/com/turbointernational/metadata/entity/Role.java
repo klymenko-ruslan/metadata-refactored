@@ -9,6 +9,8 @@ import javax.persistence.*;
 @Table(name = "role")
 public class Role implements Comparable<Role>, Serializable {
     public static final long serialVersionUID = 1L;
+
+    public static final String ROLE_CHLOGSRC_SKIP = "ROLE_CHLOGSRC_SKIP";
     
     //<editor-fold defaultstate="collapsed" desc="properties">
     @Id

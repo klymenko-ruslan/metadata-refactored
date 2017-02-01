@@ -9,9 +9,9 @@ angular.module("ngMetaCrudApp")
 })
 
 .controller("PartBomSearchCtrl", ["$log", "$scope", "$location", "$routeParams", "$uibModal",
-  "BOM", "restService", "Restangular", "dialogs", "gToast", "partTypes", "part",
+  "BOM", "restService", "Restangular", "dialogs", "gToast", "User", "partTypes", "part",
   function($log, $scope, $location, $routeParams, $uibModal, BOM, restService,
-    Restangular, dialogs, gToast, partTypes, part) {
+    Restangular, dialogs, gToast, User, partTypes, part) {
     $scope.partTypes = partTypes;
     $scope.restService = restService;
     $scope.partId = $routeParams.id;
@@ -37,28 +37,48 @@ angular.module("ngMetaCrudApp")
     };
 
     $scope.save = function() {
-      $uibModal.open({
-        templateUrl: "/views/chlogsrc/LinkDlg.html",
-        animation: false,
-        size: "lg",
-        controller: "ChlogSrcLinkDlgCtrl",
-        backdrop: 'static',
-        keyboard: false,
-        resolve: {
-          "partId": function () {
-            return $scope.partId;
+      if (User.hasRole("ROLE_CHLOGSRC_SKIP")) {
+        restService.createBom($scope.bomItem, null, null, null).then(
+          function(bomResult) {
+            if (bomResult.status == BOM_RESULT_STATUS.OK) {
+              // Success
+              gToast.open("BOM item added.");
+              $location.path("/part/" + $scope.partId);
+            } else if (bomResult.status == BOM_RESULT_STATUS.ASSERTION_ERROR) {
+              dialogs.error("Validation error", bomResult.message);
+            } else if (bomResult.status == BOM_RESULT_STATUS.FOUND_BOM_RECURSION) {
+              dialogs.error("Validation error", bomResult.message);
+            } else {
+              dialogs.error("Internal error", "Server returned unknown status of the operation: " + bomResult.status);
+            }
           },
-          "bomItem": function () {
-            return $scope.bomItem;
-          },
-          "sourcesNames": restService.getAllChangelogSourceNames(),
-          "lastPicked": restService.getLastPickedChangelogSources,
-          "begin": function() {
-            return restService.changelogSourceBeginEdit(); // needs to clear session attribute on the server side
+          function(response) {
+            dialogs.error("Could not add BOM Item", "Server said: <pre>" + JSON.stringify(response.data) + "</pre>");
           }
-        }
-      });
-
+        );
+      } else {
+        $uibModal.open({
+          templateUrl: "/views/chlogsrc/LinkDlg.html",
+          animation: false,
+          size: "lg",
+          controller: "ChlogSrcLinkDlgCtrl",
+          backdrop: 'static',
+          keyboard: false,
+          resolve: {
+            "partId": function () {
+              return $scope.partId;
+            },
+            "bomItem": function () {
+              return $scope.bomItem;
+            },
+            "sourcesNames": restService.getAllChangelogSourceNames(),
+            "lastPicked": restService.getLastPickedChangelogSources,
+            "begin": function() {
+              return restService.changelogSourceBeginEdit(); // needs to clear session attribute on the server side
+            }
+          }
+        });
+      }
     };
 
     $scope.pickBomItemPart = function(bomItemPartId, allowed) {
