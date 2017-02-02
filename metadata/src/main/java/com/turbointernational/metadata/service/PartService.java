@@ -206,7 +206,8 @@ public class PartService {
             + "  ba.part_id,\n"
             + "  ba.ancestor_part_id,\n"
             + "  ba.distance,\n"
-            + "  ba.type\n"
+            + "  ba.type,\n"
+            + "  ap.manfr_part_num\n" // this field is needed because it is in the 'order by' clause
             + "FROM\n"
             + "  vbom_ancestor ba\n"
             + "  JOIN part ap ON ap.id = ba.ancestor_part_id\n"
