@@ -1,10 +1,10 @@
 "use strict";
 
 angular.module("ngMetaCrudApp")
-.controller("PartDetailCtrl", ["$scope", "$log", "$q", "$location", "$cookies", "$routeParams", "Kits",
+.controller("PartDetailCtrl", ["$scope", "$log", "$q", "$location", "$cookies", "$route", "$routeParams", "Kits",
     "ngTableParams", "utils", "restService", "Restangular", "User", "$uibModal", "dialogs", "gToast",
     "part", "criticalDimensions", "manufacturers", "turbos",
-    function ($scope, $log, $q, $location, $cookies, $routeParams, Kits, ngTableParams, utils,
+    function ($scope, $log, $q, $location, $cookies, $route, $routeParams, Kits, ngTableParams, utils,
     restService, Restangular, User, $uibModal, dialogs, gToast, part, criticalDimensions, manufacturers,
     turbos) {
   $scope.partId = part.id;
@@ -18,6 +18,10 @@ angular.module("ngMetaCrudApp")
   if (!$scope.imgPgSz) {
     $scope.imgPgSz = "two";
   }
+
+  $scope.reload = function() {
+    $route.reload();
+  };
 
   $scope.linksTableParams = new ngTableParams({
       "page": 1,
