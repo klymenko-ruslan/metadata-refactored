@@ -54,6 +54,7 @@ angular.module("ngMetaCrudApp")
     );
 
     $scope.onCreate = function() {
+
       restService.createChangeSourceName($scope.data.newName).then(
         function success() {
           gToast.open("The source name has successfully been created.");

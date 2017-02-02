@@ -15,6 +15,7 @@ angular.module("ngMetaCrudApp")
 
     var pickedSources = null;
     var pickedSourceIds = null;
+
     $scope.pickedSourcesRatings = null;
 
     var attachments = null;
@@ -62,7 +63,8 @@ angular.module("ngMetaCrudApp")
           }
         },
         description: null,
-        attachDescr: null
+        attachDescr: null,
+        newSourceName: null
       };
     };
 
@@ -182,6 +184,9 @@ angular.module("ngMetaCrudApp")
       } else if (newViewId === "create_new_source") {
         $scope.data.currVw.title = "Link source >> Create New Source";
         $scope.data.currVw.actionBttnTitle = "Create";
+      } else if (newViewId === "create_source_name") {
+        $scope.data.currVw.title = "Link source >> Create New Source >> Create New Source Name";
+        $scope.data.currVw.actionBttnTitle = "Create";
       } else {
         throw "Unknown view id: " + angular.toJson(newViewId);
       };
@@ -194,8 +199,9 @@ angular.module("ngMetaCrudApp")
       formData.delete("file");
     };
 
-    function _createSource(name, description, url, sourceNameId) {
-      restService.createChangelogSource(name, description, url, sourceNameId).then(
+    function _createSource() {
+      var s = $scope.data.crud.source;
+      restService.createChangelogSource(s.name, s.description, s.url, s.sourceName.id).then(
         function success(newSource) {
           _chvw("sources_list");
           $scope.pick(newSource);
@@ -208,12 +214,38 @@ angular.module("ngMetaCrudApp")
       );
     };
 
+    function _createSourceName() {
+
+      restService.createChangeSourceName($scope.data.newSourceName).then(
+        function success(newSourceName) {
+          gToast.open("The source name has successfully been created.");
+          $scope.data.newSourceName = null;
+
+          $scope.sourcesNames.push(newSourceName);
+          $scope.sourcesNames.sort(function(a, b) {
+            var name_a = a.name.toLowerCase();
+            var name_b = b.name.toLowerCase();
+            return (name_a < name_b ? -1 :(name_a > name_b ? 1 : 0));
+          });
+          $scope.data.crud.source.sourceName = newSourceName;
+
+          _chvw("create_new_source");
+        },
+        function (errorResponse) {
+          restService.error("Could not create a new source name: " + $scope.data.newName, errorResponse);
+        }
+      );
+
+    };
+
     $scope.isActionBttnDisabled = function () {
       var retval = true;
       if ($scope.data.currVw.id === "sources_list") {
         retval = pickedSources.length === 0;
       } else if ($scope.data.currVw.id === "create_new_source" && $scope.forms.changelogSourceForm) {
         retval = $scope.forms.changelogSourceForm.$invalid;
+      } else if ($scope.data.currVw.id === "create_source_name" && $scope.forms.newSourceName) {
+        retval = $scope.forms.newSourceName.$invalid;
       }
       return retval;
     };
@@ -281,6 +313,11 @@ angular.module("ngMetaCrudApp")
       _chvw("create_new_source");
     };
 
+    $scope.onCreateSourceName = function() {
+       $scope.data.newSourceName = null;
+      _chvw("create_source_name");
+    };
+
     $scope.isUploadBttnDisabled = function () {
       return !formData.has("file");
     };
@@ -334,6 +371,9 @@ angular.module("ngMetaCrudApp")
         $location.path("/part/" + $scope.partId);
       } else if (cv === "create_new_source") {
         _chvw("sources_list");
+      } else if (cv === "create_source_name") {
+        $scope.data.newSourceName = null;
+        _chvw("create_new_source");
       } else if (cv === "confirm_cancel") {
         _chvw($scope.data.prevVw.id); // return to a previous view
       } else {
@@ -347,8 +387,9 @@ angular.module("ngMetaCrudApp")
         $uibModalInstance.close();
         _save(false);
       } else if (cv === "create_new_source") {
-        var s = $scope.data.crud.source;
-        _createSource(s.name, s.description, s.url, s.sourceName.id);
+        _createSource();
+      } else if (cv === "create_source_name") {
+        _createSourceName();
       } else {
         throw "Unknown current view [2]: " + angular.toJson(cv);
       }

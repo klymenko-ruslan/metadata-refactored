@@ -28,7 +28,16 @@
             </span>
           </div>
           <div class="form-group">
-            <label for="source_name">Source name</label>
+            <div class="row">
+              <div class="col-xs-9">
+                <label for="source_name">Source name</label>
+              </div>
+              <div class="col-xs-3">
+                <button type="button" class="btn btn-success btn-xs pull-right" data-ng-click="onCreateSourceName()">
+                  <i class="fa fa-wrench" aria-hidden="true"></i> Create Source Name
+                </button>
+              </div>
+            </div>
             <select id="source_name" class="form-control"
                     data-ng-model="data.crud.source.sourceName"
                     data-ng-options="sn as sn.name for sn in sourcesNames track by sn.id"
