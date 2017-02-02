@@ -42,7 +42,9 @@ angular.module('ngMetaCrudApp')
           function() {
             User.user = null;
             User.roles = [];
-            $location.path("/login")
+            // Don't use code $location.path("/"); below as it could
+            // lead to recursion in loading.
+            window.location.href = "/";
           }
         );
       }

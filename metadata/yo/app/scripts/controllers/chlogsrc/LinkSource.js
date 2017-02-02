@@ -142,12 +142,18 @@ angular.module("ngMetaCrudApp")
       }
     );
 
-    function _save() {
-      var srcIds = _.map(pickedSources, function(ps) {
-        return ps.id;
-      });
+    function _save(woSource) {
 
-      restService.createBom(bomItem, srcIds, $scope.pickedSourcesRatings, $scope.data.description).then(
+      var srcIds, ratings;
+      if(woSource) {
+        srcIds = null;
+        ratings = null;
+      } else {
+        srcIds = _.map(pickedSources, function(ps) { return ps.id; });
+        ratings = $scope.pickedSourcesRatings;
+      }
+
+      restService.createBom(bomItem, srcIds, ratings, $scope.data.description).then(
         function(bomResult) {
           if (bomResult.status == BOM_RESULT_STATUS.OK) {
             // Success
@@ -205,7 +211,7 @@ angular.module("ngMetaCrudApp")
     $scope.isActionBttnDisabled = function () {
       var retval = true;
       if ($scope.data.currVw.id === "sources_list") {
-        retval = userMustLink && pickedSources.length === 0;
+        retval = pickedSources.length === 0;
       } else if ($scope.data.currVw.id === "create_new_source" && $scope.forms.changelogSourceForm) {
         retval = $scope.forms.changelogSourceForm.$invalid;
       }
@@ -217,7 +223,20 @@ angular.module("ngMetaCrudApp")
     };
 
     $scope.isBttnUnpickAllDisabled = function() {
-        return pickedSources.length === 0;
+      return pickedSources.length === 0;
+    };
+
+    $scope.isBttnSaveWoSourceVisible = function() {
+      return $scope.data.currVw.id === "sources_list";
+    };
+
+    $scope.isBttnSaveWoSourceDisabled = function() {
+      return userMustLink;
+    };
+
+    $scope.saveWoSource = function() {
+      $uibModalInstance.close();
+      _save(true);
     };
 
     $scope.pick = function(pickedSrc) {
@@ -326,7 +345,7 @@ angular.module("ngMetaCrudApp")
       var cv = $scope.data.currVw.id;
       if (cv === "sources_list") {
         $uibModalInstance.close();
-        _save();
+        _save(false);
       } else if (cv === "create_new_source") {
         var s = $scope.data.crud.source;
         _createSource(s.name, s.description, s.url, s.sourceName.id);

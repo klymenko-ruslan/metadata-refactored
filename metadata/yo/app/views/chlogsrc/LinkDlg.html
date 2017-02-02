@@ -13,4 +13,5 @@
 <div class="modal-footer">
     <button class="btn btn-default" data-ng-click="cancel()">Cancel</button>
     <button class="btn btn-primary" data-ng-click="action()" data-ng-disabled="isActionBttnDisabled()">{{data.currVw.actionBttnTitle}}</button>
+    <button class="btn btn-primary" data-ng-click="saveWoSource()" data-ng-show="isBttnSaveWoSourceVisible()" data-ng-disabled="isBttnSaveWoSourceDisabled()">Save w/o Source</button>
 </div>
