@@ -4,15 +4,10 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.entity.*;
 import com.turbointernational.metadata.entity.chlogsrc.ChangelogSourceLink;
 import com.turbointernational.metadata.service.SearchableEntity;
-import com.turbointernational.metadata.entity.CriticalDimension;
-import com.turbointernational.metadata.entity.Manufacturer;
-import com.turbointernational.metadata.entity.TurboType;
-import com.turbointernational.metadata.entity.BOMItem;
-import com.turbointernational.metadata.entity.SalesNotePart;
 import com.turbointernational.metadata.entity.part.types.*;
-import com.turbointernational.metadata.entity.PartType;
 import com.turbointernational.metadata.service.CriticalDimensionService;
 import com.turbointernational.metadata.service.SearchService;
 import com.turbointernational.metadata.util.View;
@@ -193,6 +188,14 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
     @OrderBy("id")
     private List<ChangelogSourceLink> links = new ArrayList<>();
 
+    @JsonView({View.Detail.class})
+    @ManyToMany(cascade = REFRESH, fetch = LAZY)
+    @JoinTable(name="changelog_source_link",
+            joinColumns=@JoinColumn(name="part_id"),
+            inverseJoinColumns=@JoinColumn(name="changelog_id")
+    )
+    private List<Changelog> changelogSources = new ArrayList<>();
+
     @Column(name = "import_pk")
     private Long importPk;
 
@@ -358,6 +361,15 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
     public void setLinks(List<ChangelogSourceLink> links) {
         this.links = links;
     }
+
+    public List<Changelog> getChangelogSources() {
+        return changelogSources;
+    }
+
+    public void setChangelogSources(List<Changelog> changelogSources) {
+        this.changelogSources = changelogSources;
+    }
+
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Utilities">

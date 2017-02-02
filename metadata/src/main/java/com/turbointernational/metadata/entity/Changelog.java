@@ -16,6 +16,11 @@ import static javax.persistence.TemporalType.TIMESTAMP;
  */
 @Entity
 @Table(name = "changelog")
+/*
+@NamedQueries({
+    @NamedQuery(name = "findChangelogsForAttachedToPartSources", query = "selct c from Changelog c ")
+})
+*/
 public class Changelog implements Serializable {
 
     public enum ServiceEnum {
