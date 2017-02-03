@@ -19,7 +19,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 })
 public class SourceName implements Serializable {
 
-    //<editor-fold defaultstate="collapsed" desc="properties">
+    //<editor-fold defaultstate="collapsed" desc="Properties">
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -30,8 +30,16 @@ public class SourceName implements Serializable {
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="Constructors">
+
     public SourceName() {
     }
+
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="Getters and Setters">
 
     public Long getId() {
         return id;
@@ -49,6 +57,6 @@ public class SourceName implements Serializable {
         this.name = name;
     }
 
-    //</editor-fold>
 
+    //</editor-fold>
 }

@@ -12,6 +12,7 @@ delete from changelog_source_link;
 delete from source_attachment;
 delete from source;
 delete from source_name;
+delete from changelog_part;
 delete from changelog;
 delete from mas90sync_failure;
 delete from mas90sync_success;

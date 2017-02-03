@@ -39,6 +39,8 @@ import static javax.persistence.TemporalType.TIMESTAMP;
 @JsonInclude(ALWAYS)
 public class ChangelogSourceLink implements Serializable {
 
+    //<editor-fold defaultstate="collapsed" desc="Properties">
+
     @Id
     @GeneratedValue(strategy = IDENTITY)
     @JsonView(View.Summary.class)
@@ -62,10 +64,6 @@ public class ChangelogSourceLink implements Serializable {
     @JsonView(View.Summary.class)
     private String description;
 
-    @Column(name = "part_id")
-    @JsonView(View.Summary.class)
-    private Long partId;
-
     @JsonView(View.ChangelogSourceDetailed.class)
     @OneToMany(mappedBy = "pk.link")
     private List<ChangelogSource> changelogSources = new ArrayList<>();
@@ -77,16 +75,23 @@ public class ChangelogSourceLink implements Serializable {
     )
     private List<Source> sources = new ArrayList<>();
 
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="Constructors">
+
     public ChangelogSourceLink() {
     }
 
-    public ChangelogSourceLink(Changelog changelog, User createUser, Date created, String description, Long partId) {
+    public ChangelogSourceLink(Changelog changelog, User createUser, Date created, String description) {
         this.changelog = changelog;
         this.createUser = createUser;
         this.created = created;
         this.description = description;
-        this.partId = partId;
     }
+
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="Getters and Setters">
 
     public Long getId() {
         return id;
@@ -136,11 +141,7 @@ public class ChangelogSourceLink implements Serializable {
         this.changelogSources = changelogSources;
     }
 
-    public Long getPartId() {
-        return partId;
-    }
 
-    public void setPartId(Long partId) {
-        this.partId = partId;
-    }
+    //</editor-fold>
+
 }

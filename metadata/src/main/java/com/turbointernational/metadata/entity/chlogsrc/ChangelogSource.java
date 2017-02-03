@@ -22,6 +22,8 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
 @JsonInclude(ALWAYS)
 public class ChangelogSource implements Serializable {
 
+    //<editor-fold defaultstate="collapsed" desc="Properties">
+
     @EmbeddedId
     @JsonView(View.Summary.class)
     private ChangelogSourceId pk;
@@ -29,6 +31,10 @@ public class ChangelogSource implements Serializable {
     @JsonView(View.Summary.class)
     @Column(name = "rating")
     private Integer rating;
+
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="Constructors">
 
     public ChangelogSource() {
     }
@@ -41,6 +47,10 @@ public class ChangelogSource implements Serializable {
     public ChangelogSource(ChangelogSourceId pk) {
         this.pk = pk;
     }
+
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="Getters and Setters">
 
     public ChangelogSourceId getPk() {
         return pk;
@@ -57,5 +67,7 @@ public class ChangelogSource implements Serializable {
     public void setRaiting(Integer rating) {
         this.rating = rating;
     }
+
+    //</editor-fold>
 
 }

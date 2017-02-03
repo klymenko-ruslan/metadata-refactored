@@ -112,4 +112,9 @@ public class ChangelogDao extends AbstractDao<Changelog> {
         return new Page(total, recs);
     }
 
+    public List<Changelog> findChangelogsForAttachedToPartSources(Long partId) {
+        return em.createNamedQuery("findChangelogsForAttachedToPartSources", Changelog.class)
+                .setParameter("partId", partId)
+                .getResultList();
+    }
 }

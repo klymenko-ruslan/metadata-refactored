@@ -10,11 +10,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.Calendar;
+import java.util.List;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
@@ -46,6 +48,15 @@ public class ChangelogController {
                                            @RequestParam(name = "limit", required = false) Integer limit) {
         return changelogService.filter(service, userId, startDate, finishDate, description, data,
                 sortProperty, sortOrder, offset, limit);
+    }
+
+
+    @RequestMapping(value = "/part/{id}", method = GET)
+    @ResponseBody
+    @JsonView(View.Summary.class)
+    // TODO: security
+    public List<Changelog> findChangelogsForAttachedToPartSources(@PathVariable("id") Long partId) {
+        return changelogService.findChangelogsForAttachedToPartSources(partId);
     }
 
 }

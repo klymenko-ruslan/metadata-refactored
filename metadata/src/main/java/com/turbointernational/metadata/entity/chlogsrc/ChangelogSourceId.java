@@ -18,6 +18,8 @@ import static javax.persistence.CascadeType.ALL;
 @Embeddable
 public class ChangelogSourceId implements Serializable {
 
+    //<editor-fold defaultstate="collapsed" desc="Properties">
+
     @ManyToOne
     @JoinColumn(name = "lnk_id", nullable = false)
     private ChangelogSourceLink link;
@@ -27,6 +29,10 @@ public class ChangelogSourceId implements Serializable {
     @JoinColumn(name = "source_id", nullable = false)
     private Source source;
 
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="Constructors">
+
     public ChangelogSourceId() {
     }
 
@@ -34,6 +40,10 @@ public class ChangelogSourceId implements Serializable {
         this.link = link;
         this.source = source;
     }
+
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="Getters and Setters">
 
     public ChangelogSourceLink getLink() {
         return link;
@@ -50,6 +60,10 @@ public class ChangelogSourceId implements Serializable {
     public void setSource(Source source) {
         this.source = source;
     }
+
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="equals() and hashCode()">
 
     @Override
     public boolean equals(Object o) {
@@ -68,5 +82,7 @@ public class ChangelogSourceId implements Serializable {
         result = 31 * result + source.hashCode();
         return result;
     }
+
+    //</editor-fold>
 
 }

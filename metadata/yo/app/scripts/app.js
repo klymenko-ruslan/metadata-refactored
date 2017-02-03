@@ -199,6 +199,9 @@ angular.module("ngMetaCrudApp", ["ngCookies", "ngRoute", "ngTable", "ui.bootstra
         }],
         turbos: ["$route", "restService", function($route, restService) {
           return restService.listTurbosLinkedToGasketKit($route.current.pathParams.id);
+        }],
+        auditLog: ["$route", "restService", function($route, restService) {
+          return restService.findChangelogsForAttachedToPartSources($route.current.pathParams.id)
         }]
       }
     });

@@ -55,6 +55,9 @@ angular.module("ngMetaCrudApp")
           "lastPicked": restService.getLastPickedChangelogSources,
           "begin": function() {
             return restService.changelogSourceBeginEdit(); // needs to clear session attribute on the server side
+          },
+          "cancelUrl": function() {
+            return "/part/" + $scope.partId + "/bom/search";
           }
         }
       });

@@ -48,7 +48,7 @@ public class Source implements SearchableEntity, Serializable {
 
     private final static Logger log = LoggerFactory.getLogger(Source.class);
 
-    //<editor-fold defaultstate="collapsed" desc="properties">
+    //<editor-fold defaultstate="collapsed" desc="Properties">
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -114,8 +114,17 @@ public class Source implements SearchableEntity, Serializable {
     @Transient
     private Date lastLinked;
 
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="Constructors">
+
     public Source() {
+
     }
+
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="Getters and Setters">
 
     public Long getId() {
         return id;

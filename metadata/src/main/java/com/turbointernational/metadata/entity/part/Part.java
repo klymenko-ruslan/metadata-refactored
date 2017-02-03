@@ -183,19 +183,6 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
     @OrderBy("pk.salesNote.id")
     private List<SalesNotePart> salesNoteParts = new ArrayList<>();
 
-    @JsonView({View.Detail.class})
-    @OneToMany(cascade = REFRESH, mappedBy = "partId", fetch = LAZY)
-    @OrderBy("id")
-    private List<ChangelogSourceLink> links = new ArrayList<>();
-
-    @JsonView({View.Detail.class})
-    @ManyToMany(cascade = REFRESH, fetch = LAZY)
-    @JoinTable(name="changelog_source_link",
-            joinColumns=@JoinColumn(name="part_id"),
-            inverseJoinColumns=@JoinColumn(name="changelog_id")
-    )
-    private List<Changelog> changelogSources = new ArrayList<>();
-
     @Column(name = "import_pk")
     private Long importPk;
 
@@ -352,22 +339,6 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
 
     public void setLegendImgFilename(String legendImgFilename) {
         this.legendImgFilename = legendImgFilename;
-    }
-
-    public List<ChangelogSourceLink> getLinks() {
-        return links;
-    }
-
-    public void setLinks(List<ChangelogSourceLink> links) {
-        this.links = links;
-    }
-
-    public List<Changelog> getChangelogSources() {
-        return changelogSources;
-    }
-
-    public void setChangelogSources(List<Changelog> changelogSources) {
-        this.changelogSources = changelogSources;
     }
 
     //</editor-fold>

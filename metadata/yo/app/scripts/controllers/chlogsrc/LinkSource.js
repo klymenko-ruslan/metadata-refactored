@@ -4,9 +4,9 @@ angular.module("ngMetaCrudApp")
 
 .controller("ChlogSrcLinkDlgCtrl", ["$scope", "$log", "$location", "dialogs", "gToast", "ngTableParams",
   "$uibModalInstance", "utils", "restService", "BOM_RESULT_STATUS", "partId", "bomItem",
-  "sourcesNames", "lastPicked", "User", "begin",
+  "sourcesNames", "lastPicked", "User", "cancelUrl", "begin",
   function($scope, $log, $location, dialogs, gToast, ngTableParams, $uibModalInstance, utils,
-    restService, BOM_RESULT_STATUS, partId, bomItem, sourcesNames, lastPicked, User, begin) { // injection "begin" is important
+    restService, BOM_RESULT_STATUS, partId, bomItem, sourcesNames, lastPicked, User, cancelUrl, begin) { // injection "begin" is important
 
     $scope.partId = partId;
     $scope.sourcesNames = sourcesNames;
@@ -368,7 +368,8 @@ angular.module("ngMetaCrudApp")
       var cv = $scope.data.currVw.id;
       if (cv === "sources_list") {
         $uibModalInstance.close();
-        $location.path("/part/" + $scope.partId);
+        //$location.path("/part/" + $scope.partId);
+        $location.path(cancelUrl);
       } else if (cv === "create_new_source") {
         _chvw("sources_list");
       } else if (cv === "create_source_name") {

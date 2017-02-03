@@ -12,13 +12,13 @@ import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
 
 /**
- * Created by dmytro.trunykov@zorallabs.com on 1/12/17.
+ * Created by dmytro.trunykov@zorallabs.com on 2017-01-12.
  */
 @Entity
 @Table(name = "source_attachment")
 public class SourceAttachment implements Serializable {
 
-    //<editor-fold defaultstate="collapsed" desc="properties">
+    //<editor-fold defaultstate="collapsed" desc="Properties">
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -37,6 +37,10 @@ public class SourceAttachment implements Serializable {
     @Column(name = "description")
     private String description;
 
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="Constructors">
+
     public SourceAttachment() {
     }
 
@@ -46,6 +50,10 @@ public class SourceAttachment implements Serializable {
         this.name = name;
         this.description = description;
     }
+
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="Getters and Setters">
 
     public Long getId() {
         return id;

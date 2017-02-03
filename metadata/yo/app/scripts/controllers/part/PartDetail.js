@@ -3,10 +3,10 @@
 angular.module("ngMetaCrudApp")
 .controller("PartDetailCtrl", ["$scope", "$log", "$q", "$location", "$cookies", "$route", "$routeParams", "Kits",
     "ngTableParams", "utils", "restService", "Restangular", "User", "$uibModal", "dialogs", "gToast",
-    "part", "criticalDimensions", "manufacturers", "turbos",
+    "part", "criticalDimensions", "manufacturers", "turbos", "auditLog",
     function ($scope, $log, $q, $location, $cookies, $route, $routeParams, Kits, ngTableParams, utils,
     restService, Restangular, User, $uibModal, dialogs, gToast, part, criticalDimensions, manufacturers,
-    turbos) {
+    turbos, auditLog) {
   $scope.partId = part.id;
   $scope.part = part;
   $scope.formMode = "view";
@@ -30,7 +30,7 @@ angular.module("ngMetaCrudApp")
         "id": "asc"
       }
     }, {
-      "getData": utils.localPagination(part.changelogSources, "id")
+      "getData": utils.localPagination(auditLog, "id")
     });
 
   function _imgPgSz2Val(txt) {

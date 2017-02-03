@@ -5,9 +5,12 @@ import com.turbointernational.metadata.util.View;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import static javax.persistence.EnumType.STRING;
+import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.AUTO;
 import static javax.persistence.TemporalType.TIMESTAMP;
 
@@ -16,11 +19,15 @@ import static javax.persistence.TemporalType.TIMESTAMP;
  */
 @Entity
 @Table(name = "changelog")
-/*
 @NamedQueries({
-    @NamedQuery(name = "findChangelogsForAttachedToPartSources", query = "selct c from Changelog c ")
+    @NamedQuery(
+            name = "findChangelogsForAttachedToPartSources",
+            query = "select c " +
+                    "from Changelog c " +
+                    "join c.changelogParts p " +
+                    "where p.part.id=:partId " +
+                    "order by c.id asc")
 })
-*/
 public class Changelog implements Serializable {
 
     public enum ServiceEnum {
@@ -58,6 +65,10 @@ public class Changelog implements Serializable {
     @Column(name = "data", length = 4096)
     @JsonView(View.Summary.class)
     private String data;
+
+    @OneToMany(mappedBy = "changelog", fetch = LAZY)
+    @JsonView(View.Detail.class)
+    private List<ChangelogPart> changelogParts = new ArrayList<>();
 
     //</editor-fold>
 
@@ -133,6 +144,14 @@ public class Changelog implements Serializable {
      */
     public void setData(String data) {
         this.data = data;
+    }
+
+    public List<ChangelogPart> getChangelogParts() {
+        return changelogParts;
+    }
+
+    public void setChangelogParts(List<ChangelogPart> changelogParts) {
+        this.changelogParts = changelogParts;
     }
 
     //</editor-fold>

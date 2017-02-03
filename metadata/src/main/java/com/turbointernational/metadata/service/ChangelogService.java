@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import static java.util.Calendar.*;
 
@@ -86,6 +87,10 @@ public class ChangelogService {
             d1 = finishDate.getTime();
         }
         return changelogDao.filter(service, userId, d0, d1, description, data, sortProperty, sortOrder, offset, limit);
+    }
+
+    public List<Changelog> findChangelogsForAttachedToPartSources(Long partId) {
+        return changelogDao.findChangelogsForAttachedToPartSources(partId);
     }
 
 }
