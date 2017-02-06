@@ -622,6 +622,10 @@ angular.module("ngMetaCrudApp")
         return Restangular.one("mas90sync/status").get();
       };
 
+      this.indexPartSync = function(id) {
+        return Restangular.one("search/part/" + id + "/index").put();
+      };
+
       this.startIndexing = function(toIndex) {
         var url = METADATA_BASE + "search/indexing/start";
         return $http.post(url, toIndex);

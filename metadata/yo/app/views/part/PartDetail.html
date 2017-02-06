@@ -32,13 +32,18 @@
 </metanav>
 
 <div class="row">
-  <div class="col-xs-10">
+  <div class="col-xs-8">
     <h1 class="padding-top" part-name="part"></h1>
   </div>
-  <div class="col-xs-2">
-    <button type="button" class="btn btn-success btn-lg pull-right" data-ng-click="reload()">
-      <i class="fa fa-refresh" aria-hidden="true"></i> Reload
-    </button>
+  <div class="col-xs-4">
+    <div class="pull-right">
+      <button type="button" class="btn btn-primary" data-ng-click="reindex()" authorize="ROLE_READ">
+        <i class="fa fa-sort-alpha-asc" aria-hidden="true"></i> Reindex
+      </button>
+      <button type="button" class="btn btn-success" data-ng-click="reload()" authorize="ROLE_READ">
+        <i class="fa fa-refresh" aria-hidden="true"></i> Reload
+      </button>
+    </div>
   </div>
 </div>
 

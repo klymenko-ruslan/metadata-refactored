@@ -23,6 +23,7 @@ import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 /**
  * @author jrodriguez
@@ -170,9 +171,10 @@ public class SearchController {
                 sortProperty, sortOrder, offset, limit);
     }
 
+    // TODO: is this method used by anyone?
     @RequestMapping(value = "/index/{partId}")
     @ResponseBody
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_READ")
     public void indexPart(@PathVariable("partId") Long partId) throws Exception {
         new Thread(() -> {
             try {
@@ -181,6 +183,13 @@ public class SearchController {
                 log.error("Indexing of the part (ID: {}) failed.", partId);
             }
         }).start();
+    }
+
+    @RequestMapping(value = "/part/{partId}/index", method = PUT)
+    @ResponseBody
+    @Secured("ROLE_READ")
+    public void indexPartSync(@PathVariable("partId") Long partId) throws Exception {
+        searchService.indexPart(partId);
     }
 
 

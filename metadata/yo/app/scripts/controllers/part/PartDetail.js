@@ -23,6 +23,17 @@ angular.module("ngMetaCrudApp")
     $route.reload();
   };
 
+  $scope.reindex = function() {
+    restService.indexPartSync($scope.partId).then(
+      function success() {
+        gToast.open("The part has been successfully (re)indexed.");
+      },
+      function failure(error) {
+        restService.error("The index request failed.", error);
+      }
+    );
+  };
+
   $scope.changelogSourcesTableParams = new ngTableParams({
       "page": 1,
       "count": 10,
