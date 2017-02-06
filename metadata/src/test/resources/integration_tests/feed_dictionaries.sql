@@ -127,7 +127,16 @@ insert into role(id, name, display) values
 (17, 'ROLE_APPLICATION_CRUD', 'CRUD operations on applications.'),
 (18, 'ROLE_MAS90_SYNC', 'Start MAS90 synchronization process.'),
 (19, 'ROLE_ALTER_PART_MANUFACTURER', 'Edit Part Manufacturer'),
-(20, 'ROLE_ALTER_PART_NUMBER', 'Edit Part Number');
+(20, 'ROLE_ALTER_PART_NUMBER', 'Edit Part Number'),
+(21, 'ROLE_CHLOGSRC_CREATE', 'Create a changelog source.'),
+(22, 'ROLE_CHLOGSRC_READ', 'Read a changelog source.'),
+(23, 'ROLE_CHLOGSRC_UPDATE', 'Update a changelog source.'),
+(24, 'ROLE_CHLOGSRC_DELETE', 'Delete a changelog source.'),
+(25, 'ROLE_CHLOGSRC_SKIP', 'User may skip to enter a source for all eligible changelogs objects.'),
+(26, 'ROLE_CHLOGSRCNAME_CREATE', 'Create a changelog source name.'),
+(27, 'ROLE_CHLOGSRCNAME_READ', 'Read a changelog source name.'),
+(28, 'ROLE_CHLOGSRCNAME_UPDATE', 'Update a changelog source name.'),
+(29, 'ROLE_CHLOGSRCNAME_DELETE', 'Delete a changelog source name.');
 
 insert into group_role(group_id, role_id) values
 (3, 1),
@@ -149,7 +158,16 @@ insert into group_role(group_id, role_id) values
 (3, 17),
 (3, 18),
 (3, 19),
-(3, 20);
+(3, 20),
+(3, 21),
+(3, 22),
+(3, 23),
+(3, 24),
+(3, 25),
+(3, 26),
+(3, 27),
+(3, 28),
+(3, 29);
 
 insert into user_group(user_id, group_id) values(1, 3);
 

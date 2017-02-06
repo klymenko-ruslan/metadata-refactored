@@ -98,7 +98,7 @@ public class BOMControllerTest {
     )
     @WithUserDetails("Admin")
     public void testCreateChangelogSource() throws Exception {
-        String requestBody = "{\"parentPartId\":\"14510\",\"childPartId\":17754,\"quantity\":1,\"sourceIds\":[1,2],\"chlogSrcRaiting\":[2,0],\"chlogSrcLnkDescription\":\"Hello world!\"}";
+        String requestBody = "{\"parentPartId\":\"14510\",\"childPartId\":17754,\"quantity\":1,\"sourceIds\":[1,2],\"chlogSrcRating\":[2,0],\"chlogSrcLnkDescription\":\"Hello world!\"}";
         String responseBody = "{\"status\":\"OK\"}";
         mockMvc.perform(post("/metadata/bom")
                 .content(requestBody).contentType(contentType))
