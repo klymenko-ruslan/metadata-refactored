@@ -323,4 +323,14 @@ public class CriticalDimension implements Serializable {
 
 //</editor-fold>
 
+    @Override
+    public String toString() {
+        return "CriticalDimension{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", jsonName='" + jsonName + '\'' +
+                ", idxName='" + idxName + '\'' +
+                '}';
+    }
+
 }

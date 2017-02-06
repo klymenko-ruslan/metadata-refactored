@@ -123,19 +123,19 @@ public class ORing extends Part {
         this.crossSectionType = crossSectionType;
     }
 
-    public Double getXSecDiaB() {
+    public Double getxSecDiaB() {
         return xSecDiaB;
     }
 
-    public void setXSecDiaB(Double xSecDiaB) {
+    public void setxSecDiaB(Double xSecDiaB) {
         this.xSecDiaB = xSecDiaB;
     }
 
-    public Double getXSecDiaBTol() {
+    public Double getxSecDiaBTol() {
         return xSecDiaBTol;
     }
 
-    public void setXSecDiaBTol(Double xSecDiaBTol) {
+    public void setxSecDiaBTol(Double xSecDiaBTol) {
         this.xSecDiaBTol = xSecDiaBTol;
     }
 
