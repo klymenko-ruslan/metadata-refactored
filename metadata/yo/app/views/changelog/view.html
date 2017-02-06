@@ -10,7 +10,7 @@
         Details
       </a>
     </li>
-    <li role="presentation">
+    <li role="presentation" authorize="ROLE_CHLOGSRC_READ">
       <a href="#sources" aria-controls="sources" role="tab" data-toggle="tab">
         <i class="fa fa-paperclip"></i>
         Linked Sources
@@ -49,7 +49,7 @@
 
     </div>
 
-    <div id="sources" role="tabpanel" class="tab-pane fade" style="padding-top:8px;">
+    <div id="sources" role="tabpanel" class="tab-pane fade" style="padding-top:8px;" authorize="ROLE_CHLOGSRC_READ">
       <div data-ng-show="!changelogSourceLink">
         There are no any linked sources.
       </div>

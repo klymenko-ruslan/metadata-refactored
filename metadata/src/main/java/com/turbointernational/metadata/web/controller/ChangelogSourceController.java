@@ -10,6 +10,7 @@ import com.turbointernational.metadata.web.dto.Page;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -215,7 +216,7 @@ public class ChangelogSourceController {
     @RequestMapping(method = GET)
     @ResponseBody
     @JsonView(View.Summary.class)
-    // TODO: security!
+    @Secured("ROLE_CHLOGSRC_READ")
     public Source findChangelogSourceByName(@RequestParam("name") String name) {
         Source retVal = changelogSourceService.findChangelogSourceByName(name);
         return retVal;
@@ -225,7 +226,7 @@ public class ChangelogSourceController {
     @Transactional
     @ResponseBody
     @JsonView(View.Summary.class)
-    // TODO: security!
+    @Secured("ROLE_CHLOGSRC_READ")
     public AttachmentsResponse beginEdit(HttpSession session, @PathVariable("id") Long sourceId) {
         AttachmentsResponse retVal = cleanAttachments(session);
         if (sourceId > 0) {
@@ -243,7 +244,7 @@ public class ChangelogSourceController {
     @Transactional
     @ResponseBody
     @JsonView(View.Detail.class)
-    // TODO: security!
+    @Secured("ROLE_CHLOGSRC_READ")
     public Source get(@PathVariable("id") Long id) throws IOException {
         return changelogSourceService.findChangelogSourceById(id);
     }
@@ -252,7 +253,7 @@ public class ChangelogSourceController {
     @Transactional
     @ResponseBody
     @JsonView(View.Summary.class)
-    // TODO: security!
+    @Secured("ROLE_CHLOGSRC_CREATE")
     public Source create(HttpSession session, @RequestBody SourceRequest sr) throws IOException {
         AttachmentsResponse attachments = getAttachments(session);
         Source retVal = changelogSourceService.create(sr.getName(), sr.getDescription(),
@@ -265,7 +266,7 @@ public class ChangelogSourceController {
     @Transactional
     @ResponseBody
     @JsonView(View.Summary.class)
-    // TODO: security!
+    @Secured("ROLE_CHLOGSRC_UPDATE")
     public Source update(HttpSession session, @PathVariable("id") Long sourceId, @RequestBody SourceRequest sr) throws IOException {
         AttachmentsResponse attachments = getAttachments(session);
         Source retVal = changelogSourceService.update(sourceId, sr.getName(), sr.getDescription(),
@@ -277,6 +278,7 @@ public class ChangelogSourceController {
     @RequestMapping(path = "link/changelog/{id}", method = GET)
     @ResponseBody
     @JsonView(View.ChangelogSourceDetailed.class)
+    @Secured("ROLE_CHLOGSRC_READ")
     public ChangelogSourceLink findLinkByChangelogId(@PathVariable("id") Long changelogId) {
         return changelogSourceService.findLinkByChangelogId(changelogId);
     }
@@ -284,6 +286,7 @@ public class ChangelogSourceController {
     @RequestMapping(path = "link/{id}", method = GET)
     @ResponseBody
     @JsonView(View.ChangelogSourceDetailed.class)
+    @Secured("ROLE_CHLOGSRC_READ")
     public ChangelogSourceLink findLinkById(@PathVariable("id") Long id) {
         return changelogSourceService.findLinkById(id);
     }
@@ -291,7 +294,7 @@ public class ChangelogSourceController {
     @RequestMapping(path = "links", method = GET)
     @ResponseBody
     @JsonView(View.Summary.class)
-    // TODO: security!
+    @Secured("ROLE_CHLOGSRC_READ")
     public Page<ChangelogSource> filterChangelogSources(@RequestParam(name = "sourceId", required = false) Long sourceId,
                                                         @RequestParam(name = "changelogId", required = false) Long changelogId,
                                                         @RequestParam(name = "sortProperty", required = false) String sortProperty,
@@ -305,6 +308,7 @@ public class ChangelogSourceController {
     @RequestMapping(path = "/{id}/links/count", method = GET)
     @ResponseBody
     @Transactional
+    @Secured("ROLE_CHLOGSRC_READ")
     public Long getLinksCount(@PathVariable("id") Long id) {
         return changelogSourceService.getNumLinks(id);
     }
@@ -312,7 +316,7 @@ public class ChangelogSourceController {
     @RequestMapping(path = "/{id}", method = DELETE)
     @ResponseBody
     @Transactional
-    // TODO: security!
+    @Secured("ROLE_CHLOGSRC_DELETE")
     public boolean delete(@PathVariable("id") Long id) {
         changelogSourceService.delete(id);
         // TODO: delete attachments
@@ -323,7 +327,7 @@ public class ChangelogSourceController {
     @Transactional
     @ResponseBody
     @JsonView(View.Summary.class)
-    // TODO: security!
+    @Secured("ROLE_CHLOGSRC_UPDATE")
     public AttachmentsResponse uploadAttachment(
             HttpSession session, @RequestBody byte[] binData,
             @RequestParam(value = "name", required = false) String name,
@@ -336,7 +340,7 @@ public class ChangelogSourceController {
     @Transactional
     @ResponseBody
     @JsonView(View.Summary.class)
-    // TODO: security!
+    @Secured("ROLE_CHLOGSRC_DELETE")
     public AttachmentsResponse removeAttachment(HttpSession session, @PathVariable Long id,
                                                 @RequestParam(value = "begin", required = false, defaultValue = "false") Boolean begin) {
         if (begin) { // parameter 'begin' is used in functional tests only
@@ -354,7 +358,7 @@ public class ChangelogSourceController {
     @RequestMapping(value = "attachment/{id}", method = GET)
     @Transactional
     @ResponseBody
-    // TODO: security!
+    @Secured("ROLE_CHLOGSRC_READ")
     public void downloadAttachment(@PathVariable("id") Long attachmentId, HttpServletResponse response) throws IOException {
         changelogSourceService.downloadAttachment(attachmentId, response);
     }
@@ -363,6 +367,7 @@ public class ChangelogSourceController {
     @Transactional
     @ResponseBody
     @JsonView(View.Summary.class)
+    @Secured("ROLE_CHLOGSRC_READ")
     public List<Source> getLastPicked() {
         return changelogSourceService.getLastPicked(5);
     }

@@ -5,7 +5,7 @@
 
 <div class="row">
   <div class="col-xs-4 col-xs-offset-4">
-    <form name="forms.create" class="form-inline" style="margin-bottom:8px;">
+    <form name="forms.create" class="form-inline" style="margin-bottom:8px;" authorize="ROLE_CHLOGSRCNAME_CREATE">
       <div class="form-group">
         <input id="new-name" type="text" class="form-control" placeholder="New source name" data-ng-model="data.newName" required data-ng-maxlength="255" unique-changelog-source-name>
       </div>
@@ -21,13 +21,13 @@
           <input data-ng-if="mode==='edit' && rec.id === sourceName.id" type="text" data-ng-model="sourceName.name" data-ng-maxlength="255" required unique-changelog-source-name>
         </td>
         <td class="actions" title="'Actions'">
-          <button type="button" data-ng-click="onEdit(rec)" class="btn btn-warning btn-xs" data-ng-hide="mode==='edit' && rec.id === sourceName.id" data-ng-disabled="mode==='edit' && rec.id !== sourceName.id">
+          <button type="button" data-ng-click="onEdit(rec)" class="btn btn-warning btn-xs" data-ng-hide="mode==='edit' && rec.id === sourceName.id" data-ng-disabled="mode==='edit' && rec.id !== sourceName.id" authorize="ROLE_CHLOGSRCNAME_UPDATE">
             <i class="fa fa-cog"></i> Modify
           </button>
-          <button type="button" data-ng-click="onRemove(rec)" class="btn btn-danger btn-xs" data-ng-hide="mode==='edit' && rec.id === sourceName.id" data-ng-disabled="mode==='edit' && rec.id !== sourceName.id">
+          <button type="button" data-ng-click="onRemove(rec)" class="btn btn-danger btn-xs" data-ng-hide="mode==='edit' && rec.id === sourceName.id" data-ng-disabled="mode==='edit' && rec.id !== sourceName.id" authorize="ROLE_CHLOGSRCNAME_DELETE">
             <i class="fa fa-trash-o"></i> Remove
           </button>
-          <button type="button" data-ng-click="onSave()" class="btn btn-success btn-xs" data-ng-show="mode==='edit' && rec.id===sourceName.id" data-ng-disabled="forms.edit.$pristine || forms.edit.$invalid || forms.edit.$pending" >
+          <button type="button" data-ng-click="onSave()" class="btn btn-success btn-xs" data-ng-show="mode==='edit' && rec.id===sourceName.id" data-ng-disabled="forms.edit.$pristine || forms.edit.$invalid || forms.edit.$pending" authorize="ROLE_CHLOGSRCNAME_UPDATE">
             <i class="fa fa-save"></i> Save
           </button>
           <button type="button" data-ng-click="onRevert()" class="btn btn-warning btn-xs" data-ng-show="mode==='edit' && rec.id===sourceName.id" data-ng-disabled="forms.edit.$pristine">

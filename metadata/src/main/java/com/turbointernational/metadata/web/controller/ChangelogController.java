@@ -54,7 +54,7 @@ public class ChangelogController {
     @RequestMapping(value = "/part/{id}", method = GET)
     @ResponseBody
     @JsonView(View.Summary.class)
-    // TODO: security
+    @Secured("ROLE_CHLOGSRC_READ")
     public List<Changelog> findChangelogsForAttachedToPartSources(@PathVariable("id") Long partId) {
         return changelogService.findChangelogsForAttachedToPartSources(partId);
     }

@@ -58,7 +58,7 @@
         <a target="_blank" href="{{rec._source.url}}">{{rec._source.url}}</a>
       </td>
       <td class="actions text-center" title="'Actions'">
-        <button type="button" data-ng-click="onView(rec._source.id)" class="btn btn-primary btn-xs">
+        <button type="button" data-ng-click="onView(rec._source.id)" class="btn btn-primary btn-xs" authorize="ROLE_CHLOGSRC_READ">
           <i class="fa fa-eye"></i> View
         </button>
       </td>

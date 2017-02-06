@@ -12,6 +12,8 @@ angular.module("ngMetaCrudApp")
     $scope.sourcesNames = sourcesNames;
 
     var userMustLink = !User.hasRole("ROLE_CHLOGSRC_SKIP");
+    var canCreateSource = User.hasRole("ROLE_CHLOGSRC_CREATE");
+    var canCreateSourceName = User.hasRole("ROLE_CHLOGSRCNAME_CREATE");
 
     var pickedSources = null;
     var pickedSourceIds = null;
@@ -241,11 +243,11 @@ angular.module("ngMetaCrudApp")
     $scope.isActionBttnDisabled = function () {
       var retval = true;
       if ($scope.data.currVw.id === "sources_list") {
-        retval = pickedSources.length === 0;
+        retval = pickedSources.length === 0 || !canCreateSource;
       } else if ($scope.data.currVw.id === "create_new_source" && $scope.forms.changelogSourceForm) {
-        retval = $scope.forms.changelogSourceForm.$invalid;
+        retval = $scope.forms.changelogSourceForm.$invalid || !canCreateSource;
       } else if ($scope.data.currVw.id === "create_source_name" && $scope.forms.newSourceName) {
-        retval = $scope.forms.newSourceName.$invalid;
+        retval = $scope.forms.newSourceName.$invalid || !canCreateSourceName;
       }
       return retval;
     };

@@ -9,8 +9,8 @@ angular.module("ngMetaCrudApp")
 })
 
 .controller("PartBomSearchCtrl", ["$log", "$scope", "$location", "$routeParams", "$uibModal",
-  "BOM", "restService", "Restangular", "dialogs", "gToast", "partTypes", "part",
-  function($log, $scope, $location, $routeParams, $uibModal, BOM, restService,
+  "BOM", "User", "restService", "Restangular", "dialogs", "gToast", "partTypes", "part",
+  function($log, $scope, $location, $routeParams, $uibModal, BOM, User, restService,
     Restangular, dialogs, gToast, partTypes, part) {
     $scope.partTypes = partTypes;
     $scope.restService = restService;
@@ -37,30 +37,36 @@ angular.module("ngMetaCrudApp")
     };
 
     $scope.save = function() {
-      $uibModal.open({
-        templateUrl: "/views/chlogsrc/LinkDlg.html",
-        animation: false,
-        size: "lg",
-        controller: "ChlogSrcLinkDlgCtrl",
-        backdrop: 'static',
-        keyboard: false,
-        resolve: {
-          "partId": function () {
-            return $scope.partId;
-          },
-          "bomItem": function () {
-            return $scope.bomItem;
-          },
-          "sourcesNames": restService.getAllChangelogSourceNames(),
-          "lastPicked": restService.getLastPickedChangelogSources,
-          "begin": function() {
-            return restService.changelogSourceBeginEdit(); // needs to clear session attribute on the server side
-          },
-          "cancelUrl": function() {
-            return "/part/" + $scope.partId + "/bom/search";
+      var authorized = User.hasRole("ROLE_CHLOGSRC_READ") && User.hasRole("ROLE_CHLOGSRCNAME_READ");
+      if (authorized) {
+        $uibModal.open({
+          templateUrl: "/views/chlogsrc/LinkDlg.html",
+          animation: false,
+          size: "lg",
+          controller: "ChlogSrcLinkDlgCtrl",
+          backdrop: 'static',
+          keyboard: false,
+          resolve: {
+            "partId": function () {
+              return $scope.partId;
+            },
+            "bomItem": function () {
+              return $scope.bomItem;
+            },
+            "sourcesNames": restService.getAllChangelogSourceNames(),
+            "lastPicked": restService.getLastPickedChangelogSources,
+            "begin": function() {
+              return restService.changelogSourceBeginEdit(); // needs to clear session attribute on the server side
+            },
+            "cancelUrl": function() {
+              return "/part/" + $scope.partId + "/bom/search";
+            }
           }
-        }
-      });
+        });
+      } else {
+        dialogs.error("Not authorized", "To complete this operation you must have at least following roles: " +
+          "ROLE_CHLOGSRC_READ, ROLE_CHLOGSRCNAME_READ.");
+      }
     };
 
     $scope.pickBomItemPart = function(bomItemPartId, allowed) {
