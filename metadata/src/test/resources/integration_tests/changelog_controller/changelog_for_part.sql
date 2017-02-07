@@ -17,7 +17,7 @@ insert into changelog(id, change_date, user_id, description, service) values
 (6, '2017-01-22 14:24:47', 1, 'test', 'BOM'),
 (7, '2017-01-22 14:24:48', 1, 'test', 'BOM');
 
-insert into changelog_part(id, changelog_id, part_id, typ) values
+insert into changelog_part(id, changelog_id, part_id, role) values
 (1, 1, 69079, 'BOM_PARENT'),
 (2, 2, 69079, 'BOM_PARENT'),
 (3, 2, 25861, 'BOM_CHILD'),

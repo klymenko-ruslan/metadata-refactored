@@ -81,7 +81,7 @@ public class ChangelogControllerTest {
     )
     @Sql(
             executionPhase = BEFORE_TEST_METHOD,
-            scripts = "classpath:integration_tests/changelog_controller/changelog_parts.sql"
+            scripts = "classpath:integration_tests/changelog_controller/changelog_for_part.sql"
     )
     @Sql(
             executionPhase = AFTER_TEST_METHOD,
@@ -92,7 +92,7 @@ public class ChangelogControllerTest {
             scripts = "classpath:integration_tests/clear_dictionaries.sql"
     )
     @WithUserDetails("Admin")
-    public void findChangelogsForAttachedToPartSources() throws Exception {
+    public void findChangelogsForPart() throws Exception {
         mockMvc.perform(get("/metadata/changelog/part/25861")
                 .contentType(contentType))
                 .andExpect(status().isOk())
