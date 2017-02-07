@@ -8,6 +8,7 @@ import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.entity.part.ProductImage;
 import com.turbointernational.metadata.entity.part.types.GasketKit;
 import com.turbointernational.metadata.entity.part.types.Turbo;
+import com.turbointernational.metadata.service.ChangelogService.RelatedPart;
 import com.turbointernational.metadata.web.controller.PartController;
 import flexjson.JSONSerializer;
 import org.apache.commons.io.FileUtils;
@@ -27,6 +28,7 @@ import java.io.File;
 import java.util.*;
 
 import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.PART;
+import static com.turbointernational.metadata.entity.ChangelogPart.Role.PART0;
 import static com.turbointernational.metadata.entity.PartType.PTID_GASKET_KIT;
 import static com.turbointernational.metadata.entity.PartType.PTID_TURBO;
 import static com.turbointernational.metadata.service.ImageService.PART_CRIT_DIM_LEGEND_HEIGHT;
@@ -96,7 +98,9 @@ public class PartService {
             partDao.persist(origin);
             // Update the changelog.
             String json = jsonSerializer.serialize(origin);
-            changelogService.log(PART, "Created part " + formatPart(origin) + ".", json);
+            List<RelatedPart> relatedParts = new ArrayList<>(1);
+            relatedParts.add(new RelatedPart(origin.getId(), PART0));
+            changelogService.log(PART, "Created part " + formatPart(origin) + ".", json, relatedParts);
             results.add(new PartController.PartCreateResponse.Row(origin.getId(), mpn, true, null));
             added.add(mpn);
         }
@@ -122,10 +126,12 @@ public class PartService {
                 part.getPartType().getId()));
         Part retVal = partDao.merge(part);
         // Update the changelog
+        List<RelatedPart> relatedParts = new ArrayList<>(1);
+        relatedParts.add(new RelatedPart(part.getId(), PART0));
         changelogService.log(PART, "Updated part " + formatPart(part) + ".", "{original: " +
                 originalPartJson + ",updated: " +
                 part.toJson(criticalDimensionService.getCriticalDimensionForPartType(part.getPartType().getId())) +
-                "}");
+                "}", relatedParts);
         return retVal;
     }
 
@@ -134,8 +140,11 @@ public class PartService {
         Part part = partDao.findOne(id);
         partDao.merge(part);
         // Update the changelog
+        List<RelatedPart> relatedParts = new ArrayList<>(1);
+        relatedParts.add(new RelatedPart(part.getId(), PART0));
         changelogService.log(PART, "Deleted part " + formatPart(part) + ".",
-                part.toJson(criticalDimensionService.getCriticalDimensionForPartType(part.getPartType().getId())));
+                part.toJson(criticalDimensionService.getCriticalDimensionForPartType(part.getPartType().getId())),
+                relatedParts);
         // Delete the part
         db.update("INSERT INTO `deleted_parts` (id) VALUES(?)", part.getId());
         partDao.remove(part);

@@ -8,7 +8,6 @@ import com.turbointernational.metadata.dao.CarModelEngineYearDao;
 import com.turbointernational.metadata.dao.CarYearDao;
 import com.turbointernational.metadata.entity.*;
 import com.turbointernational.metadata.service.ChangelogService;
-import com.turbointernational.metadata.util.FormatUtils;
 import com.turbointernational.metadata.util.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,7 +92,8 @@ public class ApplicationController {
     public long create(@RequestBody CarModelEngineYear cmey) {
         normalize(cmey);
         carModelEngineYearDao.persist(cmey);
-        changelogService.log(APPLICATIONS, "Created application " + formatApplication(cmey) + ".");
+        changelogService.log(APPLICATIONS, "Created application " + formatApplication(cmey) + ".",
+                null);
         return cmey.getId();
     }
 
@@ -230,7 +230,8 @@ public class ApplicationController {
                 cmey.setEngine(ce);
                 cmey.setYear(cy);
                 carModelEngineYearDao.persist(cmey);
-                changelogService.log(APPLICATIONS, "Created application: " + formatApplication(cmey) + ".");
+                changelogService.log(APPLICATIONS, "Created application: "
+                        + formatApplication(cmey) + ".", null);
                 retVal.incCreated();
             } else {
                 retVal.incIngored();
@@ -249,7 +250,7 @@ public class ApplicationController {
     public void update(@RequestBody CarModelEngineYear cmey) {
         normalize(cmey);
         carModelEngineYearDao.merge(cmey);
-        changelogService.log(APPLICATIONS, "The application " + formatApplication(cmey) + " has been updated.");
+        changelogService.log(APPLICATIONS, "The application " + formatApplication(cmey) + " has been updated.", null);
     }
 
     @Transactional
@@ -258,7 +259,7 @@ public class ApplicationController {
     @Secured("ROLE_APPLICATION_CRUD")
     public void remove(@PathVariable("id") long id) {
         carModelEngineYearDao.delete(id);
-        changelogService.log(APPLICATIONS, "Removed application " + formatApplication(id) + ".");
+        changelogService.log(APPLICATIONS, "Removed application " + formatApplication(id) + ".", null);
     }
 
     private CarYear getOrCreateCarYear(CarYear carYear) {
@@ -269,7 +270,7 @@ public class ApplicationController {
             if (retVal == null) {
                 retVal = new CarYear(year);
                 carYearDao.persist(retVal);
-                changelogService.log(APPLICATIONS, "Created CarYear " + formatCarYear(retVal) + ".");
+                changelogService.log(APPLICATIONS, "Created CarYear " + formatCarYear(retVal) + ".", null);
             }
         }
         return retVal;

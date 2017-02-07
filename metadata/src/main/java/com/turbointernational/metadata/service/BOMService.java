@@ -2,12 +2,11 @@ package com.turbointernational.metadata.service;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
-import com.turbointernational.metadata.dao.BOMItemDao;
-import com.turbointernational.metadata.dao.PartDao;
-import com.turbointernational.metadata.dao.TurboCarModelEngineYearDao;
+import com.turbointernational.metadata.dao.*;
 import com.turbointernational.metadata.entity.*;
 import com.turbointernational.metadata.entity.chlogsrc.*;
 import com.turbointernational.metadata.entity.part.Part;
+import com.turbointernational.metadata.service.ChangelogService.RelatedPart;
 import com.turbointernational.metadata.util.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,8 +33,8 @@ import java.util.concurrent.atomic.AtomicLong;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
 import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.BOM;
 import static com.turbointernational.metadata.entity.PartType.PTID_TURBO;
-import static com.turbointernational.metadata.entity.ChangelogPart.Type.BOM_CHILD;
-import static com.turbointernational.metadata.entity.ChangelogPart.Type.BOM_PARENT;
+import static com.turbointernational.metadata.entity.ChangelogPart.Role.BOM_CHILD;
+import static com.turbointernational.metadata.entity.ChangelogPart.Role.BOM_PARENT;
 import static com.turbointernational.metadata.service.BOMService.AddToParentBOMsRequest.ResolutionEnum.REPLACE;
 import static com.turbointernational.metadata.service.BOMService.IndexingStatus.*;
 import static com.turbointernational.metadata.util.FormatUtils.formatBOMItem;
@@ -68,6 +67,15 @@ public class BOMService {
 
     @Autowired
     private BOMItemDao bomItemDao;
+
+    @Autowired
+    private SourceDao sourceDao;
+
+    @Autowired
+    private ChangelogSourceDao changelogSourceDao;
+
+    @Autowired
+    private ChangelogSourceLinkDao changelogSourceLinkDao;
 
     @Autowired
     private ChangelogService changelogService;
@@ -753,23 +761,23 @@ public class BOMService {
         parent.getBom().add(item);
         bomItemDao.persist(item);
         // Update the changelog
+        List<RelatedPart> relatedParts = new ArrayList<>(2);
+        relatedParts.add(new RelatedPart(parent.getId(), BOM_PARENT));
+        relatedParts.add(new RelatedPart(child.getId(), BOM_CHILD));
         Changelog changelog = changelogService.log(BOM,
-                "Added bom item: " + formatBOMItem(item), item.toJson());
+                "Added bom item: " + formatBOMItem(item), item.toJson(), relatedParts);
         if (sourceIds != null && sourceIds.length > 0) {
             User user = User.getCurrentUser();
-            EntityManager em = bomItemDao.getEntityManager();
             Date now  = new Date();
             ChangelogSourceLink link = new ChangelogSourceLink(changelog, user, now, chlogSrcLnkDescription);
-            em.persist(link);
-            em.persist(new ChangelogPart(changelog, parent, BOM_PARENT));
-            em.persist(new ChangelogPart(changelog, child, BOM_CHILD));
+            changelogSourceLinkDao.persist(link);
             for (int i = 0; i < sourceIds.length; i++) {
                 Long srcId = sourceIds[i];
                 Integer rating = chlogSrcRating[i];
-                Source source = em.getReference(Source.class, srcId);
+                Source source = sourceDao.getReference(srcId);
                 ChangelogSourceId chlgsrcid = new ChangelogSourceId(link, source);
                 ChangelogSource chlgsrc = new ChangelogSource(chlgsrcid, rating);
-                em.persist(chlgsrc);
+                changelogSourceDao.persist(chlgsrc);
                 searchService.indexChangelogSource(source); // update partIds in the index
                 // I have no idea why... but without flush below the record is not saved
                 // to the changelog_source.
@@ -826,9 +834,13 @@ public class BOMService {
                     for(Iterator<BOMItem> iterBoms = pickedPart.getBom().iterator(); iterBoms.hasNext();) {
                         BOMItem bomItem = iterBoms.next();
                         Long childPartTypeId = bomItem.getChild().getPartType().getId();
-                        if (childPartTypeId == primaryPartTypeId) {
+                        if (childPartTypeId.longValue() == primaryPartTypeId.longValue()) {
                             String strJsonBom = bomItem.toJson();
-                            changelogService.log(BOM, "Deleted BOM item: " + formatBOMItem(bomItem), strJsonBom);
+                            List<RelatedPart> relatedParts = new ArrayList<>(2);
+                            relatedParts.add(new RelatedPart(primaryPartId, BOM_PARENT));
+                            relatedParts.add(new RelatedPart(bomItem.getChild().getId(), BOM_CHILD));
+                            changelogService.log(BOM, "Deleted BOM item: " + formatBOMItem(bomItem),
+                                    strJsonBom, relatedParts);
                             iterBoms.remove();
                             bomItemDao.remove(bomItem);
                         }
@@ -860,7 +872,11 @@ public class BOMService {
         // Get the item
         BOMItem item = bomItemDao.findOne(id);
         // Update the changelog
-        changelogService.log(BOM, "Changed BOM " + formatBOMItem(item) + " quantity to " + quantity, item.toJson());
+        List<RelatedPart> relatedParts = new ArrayList<>(2);
+        relatedParts.add(new RelatedPart(item.getParent().getId(), BOM_PARENT));
+        relatedParts.add(new RelatedPart(item.getChild().getId(), BOM_CHILD));
+        changelogService.log(BOM, "Changed BOM " + formatBOMItem(item) + " quantity to " + quantity,
+                item.toJson(), relatedParts);
         // Update
         item.setQuantity(quantity);
         bomItemDao.merge(item);
@@ -873,7 +889,10 @@ public class BOMService {
         Part parent = item.getParent();
         Long parentPartId = parent.getId();
         // Update the changelog
-        changelogService.log(BOM, "Deleted BOM item: " + formatBOMItem(item));
+        List<RelatedPart> relatedParts = new ArrayList<>(2);
+        relatedParts.add(new RelatedPart(parentPartId, BOM_PARENT));
+        relatedParts.add(new RelatedPart(item.getChild().getId(), BOM_CHILD));
+        changelogService.log(BOM, "Deleted BOM item: " + formatBOMItem(item), relatedParts);
         // Delete it.
         jdbcTemplate.update("delete from bom where id=?", id);
         bomItemDao.flush();

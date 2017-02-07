@@ -7,6 +7,7 @@ import com.turbointernational.metadata.dao.PartDao;
 import com.turbointernational.metadata.dao.PartTypeDao;
 import com.turbointernational.metadata.entity.*;
 import com.turbointernational.metadata.entity.part.Part;
+import com.turbointernational.metadata.service.ChangelogService.RelatedPart;
 import com.turbointernational.metadata.util.View;
 import com.turbointernational.metadata.web.dto.Page;
 import org.apache.commons.lang3.ClassUtils;
@@ -33,6 +34,9 @@ import java.util.*;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
 import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.MAS90SYNC;
+import static com.turbointernational.metadata.entity.ChangelogPart.Role.BOM_CHILD;
+import static com.turbointernational.metadata.entity.ChangelogPart.Role.BOM_PARENT;
+import static com.turbointernational.metadata.entity.ChangelogPart.Role.PART0;
 import static com.turbointernational.metadata.util.RegExpUtils.PTRN_MANUFACTURER_NUMBER;
 import static java.lang.Boolean.TRUE;
 
@@ -514,7 +518,9 @@ public class Mas90SyncService {
                         partId = part.getId();
                         String logMsg = String.format("Inserted a new part: [%d] %s", part.getId(), part.getManufacturerPartNumber());
                         log.info(logMsg);
-                        changelogService.log(MAS90SYNC, user, logMsg);
+                        List<RelatedPart> relatedParts = new ArrayList<>(1);
+                        relatedParts.add(new RelatedPart(partId, PART0));
+                        changelogService.log(MAS90SYNC, user, logMsg, relatedParts);
                         synchronized (syncProcessStatus) {
                             syncProcessStatus.incPartsUpdateInserts();
                             registerModification(logMsg);
@@ -591,7 +597,9 @@ public class Mas90SyncService {
                 String s = String.format("Updated the part: [%d] %s ", p.getId(), p.getManufacturerPartNumber()) +
                         modified.toString();
                 log.info(s);
-                changelogService.log(MAS90SYNC, user, s);
+                List<RelatedPart> relatedParts = new ArrayList<>(1);
+                relatedParts.add(new RelatedPart(p.getId(), PART0));
+                changelogService.log(MAS90SYNC, user, s, relatedParts);
                 synchronized (syncProcessStatus) {
                     registerModification(s);
                 }
@@ -675,7 +683,10 @@ public class Mas90SyncService {
                         }
                         if (modification != null) {
                             log.info(modification);
-                            changelogService.log(MAS90SYNC, user, modification);
+                            List<RelatedPart> relatedParts = new ArrayList<>(2);
+                            relatedParts.add(new RelatedPart(bom.getParent().getId(), BOM_PARENT));
+                            relatedParts.add(new RelatedPart(bom.getChild().getId(), BOM_CHILD));
+                            changelogService.log(MAS90SYNC, user, modification, relatedParts);
                             synchronized (syncProcessStatus) {
                                 registerModification(modification);
                             }
@@ -714,7 +725,10 @@ public class Mas90SyncService {
                                     newBom.getId(), child.getId(), child.getManufacturerPartNumber(),
                                     newBom.getQuantity());
                             log.info(modification);
-                            changelogService.log(MAS90SYNC, user, modification);
+                            List<RelatedPart> relatedParts = new ArrayList<>(2);
+                            relatedParts.add(new RelatedPart(newBom.getParent().getId(), BOM_PARENT));
+                            relatedParts.add(new RelatedPart(newBom.getChild().getId(), BOM_CHILD));
+                            changelogService.log(MAS90SYNC, user, modification, relatedParts);
                             synchronized (syncProcessStatus) {
                                 registerModification(modification);
                             }

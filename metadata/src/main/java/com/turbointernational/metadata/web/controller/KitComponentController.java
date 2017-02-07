@@ -46,7 +46,8 @@ public class KitComponentController {
         kitComponentDao.persist(component);
 
         // Update the changelog
-        changelogService.log(KIT, "Created kit common component [" + component.getKit().getId() + "].", component);
+        changelogService.log(KIT, "Created kit common component [" + component.getKit().getId() + "].",
+                component, null);
         
         return component;
     }
@@ -71,7 +72,8 @@ public class KitComponentController {
         KitComponent component = kitComponentDao.findOne(id);
         
         // Update the changelog
-        changelogService.log(KIT, "Changed kit component mapping exclude to " + exclude, component.toJson());
+        changelogService.log(KIT, "Changed kit component mapping exclude to " + exclude, component.toJson(),
+                null);
         
         // Update
         component.setExclude(exclude);
@@ -93,7 +95,7 @@ public class KitComponentController {
         kitComponentDao.remove(component);
         
         // Update the changelog
-        changelogService.log(KIT, "Deleted kit component [" + id + "].", component);
+        changelogService.log(KIT, "Deleted kit component [" + id + "].", component, null);
     }
     
     

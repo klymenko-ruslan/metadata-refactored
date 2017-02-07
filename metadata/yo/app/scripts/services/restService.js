@@ -765,7 +765,7 @@ angular.module("ngMetaCrudApp")
         });
       };
 
-      this.findChangelogsForAttachedToPartSources = function(partId) {
+      this.findChangelogsForPart = function(partId) {
         return Restangular.one("changelog/part", partId).get();
       };
 

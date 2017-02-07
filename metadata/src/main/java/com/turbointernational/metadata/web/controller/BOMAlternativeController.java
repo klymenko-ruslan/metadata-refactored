@@ -1,24 +1,30 @@
 package com.turbointernational.metadata.web.controller;
 
-import com.turbointernational.metadata.dao.*;
+import com.turbointernational.metadata.dao.BOMAlternativeDao;
+import com.turbointernational.metadata.dao.BOMAlternativeHeaderDao;
+import com.turbointernational.metadata.dao.BOMItemDao;
+import com.turbointernational.metadata.dao.PartDao;
 import com.turbointernational.metadata.entity.BOMAlternative;
 import com.turbointernational.metadata.entity.BOMAlternativeHeader;
 import com.turbointernational.metadata.entity.BOMItem;
-import com.turbointernational.metadata.entity.Changelog;
-import com.turbointernational.metadata.entity.part.*;
+import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.service.ChangelogService;
-import com.turbointernational.metadata.util.FormatUtils;
+import com.turbointernational.metadata.service.ChangelogService.RelatedPart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.BOM;
+import static com.turbointernational.metadata.entity.ChangelogPart.Role.*;
 import static com.turbointernational.metadata.util.FormatUtils.formatBOMAlternative;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RequestMapping("/metadata/bom/{bomId}/alt")
 @Controller
@@ -45,8 +51,8 @@ public class BOMAlternativeController {
     @Secured("ROLE_BOM_ALT")
     @ResponseBody
     @RequestMapping(value="{altPartId}", method = RequestMethod.POST,
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+            consumes = APPLICATION_JSON_VALUE,
+            produces = APPLICATION_JSON_VALUE)
     public void create(
             @PathVariable("bomId") long bomId,
             @PathVariable("altPartId") long altPartId,
@@ -79,28 +85,34 @@ public class BOMAlternativeController {
         bomAltDao.persist(bomAlt);
         
         // Update the changelog
-        changelogService.log(BOM, "Added bom alternative " + formatBOMAlternative(bomAlt) + ".", bomAlt);
+        List<RelatedPart> relatedParts = new ArrayList<>(3);
+        relatedParts.add(new RelatedPart(altPartId, PART0));
+        relatedParts.add(new RelatedPart(bomItem.getParent().getId(), BOM_PARENT));
+        relatedParts.add(new RelatedPart(bomItem.getChild().getId(), BOM_CHILD));
+        changelogService.log(BOM, "Added bom alternative " + formatBOMAlternative(bomAlt) + ".",
+                bomAlt, relatedParts);
     }
     
     @Transactional
     @RequestMapping(value = "/{altItemId}", method = RequestMethod.DELETE,
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+            consumes = APPLICATION_JSON_VALUE,
+            produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     @Secured("ROLE_BOM_ALT")
     public void delete(@PathVariable("bomId") Long bomId, @PathVariable("altItemId") Long altId) throws Exception {
-        
         // Get the BOM item and alternate
         BOMItem item = bomItemDao.findOne(bomId);
         BOMAlternative alt = bomAltDao.findOne(altId);
-        
         // Update the changelog
-        changelogService.log(BOM, "Deleted BOM alternative " + formatBOMAlternative(alt) + ".", alt);
-        
+        List<RelatedPart> relatedParts = new ArrayList<>(3);
+        relatedParts.add(new RelatedPart(altId, PART0));
+        relatedParts.add(new RelatedPart(item.getParent().getId(), BOM_PARENT));
+        relatedParts.add(new RelatedPart(item.getChild().getId(), BOM_CHILD));
+        changelogService.log(BOM, "Deleted BOM alternative " + formatBOMAlternative(alt) + ".",
+                alt, relatedParts);
         // Remove the alternate item
         item.getAlternatives().remove(alt);
         partDao.merge(item.getParent());
-        
         // Delete it
         bomAltDao.remove(alt);
     }

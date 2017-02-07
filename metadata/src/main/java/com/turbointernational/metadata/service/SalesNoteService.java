@@ -7,7 +7,7 @@ import com.turbointernational.metadata.dao.SalesNotePartDao;
 import com.turbointernational.metadata.entity.*;
 import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.exception.RemovePrimaryPartException;
-import com.turbointernational.metadata.util.FormatUtils;
+import com.turbointernational.metadata.service.ChangelogService.RelatedPart;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,9 +19,12 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.SALESNOTES;
+import static com.turbointernational.metadata.entity.ChangelogPart.Role.PART0;
 import static com.turbointernational.metadata.util.FormatUtils.formatPart;
 import static com.turbointernational.metadata.util.FormatUtils.formatSalesNote;
 
@@ -65,7 +68,7 @@ public class SalesNoteService {
     }
 
     @Transactional
-    public void addRelatedPart(HttpServletRequest request, User user, long salesNoteId, long partId) {
+    public void addRelatedPart(HttpServletRequest request, User user, Long salesNoteId, Long partId) {
         // Find the entities
         SalesNote salesNote = salesNotes.findOne(salesNoteId);
         hasEditAccess(request, salesNote);
@@ -73,8 +76,10 @@ public class SalesNoteService {
         // Create the primary part association
         SalesNotePart snp = new SalesNotePart(salesNote, part, false, user);
         partDao.getEntityManager().persist(snp);
+        List<RelatedPart> relatedParts = new ArrayList<>(1);
+        relatedParts.add(new RelatedPart(partId, PART0));
         changelogService.log(SALESNOTES, "Added related part " + formatPart(part) + " to sales note " +
-                formatSalesNote(salesNoteId));
+                formatSalesNote(salesNoteId), relatedParts);
     }
 
     @Transactional
@@ -92,7 +97,10 @@ public class SalesNoteService {
         salesNote.getParts().add(new SalesNotePart(salesNote, primaryPart, true, user));
         // Save
         salesNotes.save(salesNote);
-        changelogService.log(SALESNOTES, "Created sales note " + formatSalesNote(salesNote) + ".");
+        List<RelatedPart> relatedParts = new ArrayList<>(1);
+        relatedParts.add(new RelatedPart(primaryPartId, PART0));
+        changelogService.log(SALESNOTES, "Created sales note " + formatSalesNote(salesNote) + ".",
+                relatedParts);
         // Initialize a few properties before sending the response
         primaryPart.getManufacturer().getName();
         primaryPart.getPartType().getName();
@@ -111,8 +119,9 @@ public class SalesNoteService {
         salesNote.setComment(comment);
         // Save
         salesNotes.save(salesNote);
-        changelogService.log(SALESNOTES, "Changed sales note (" + formatSalesNote(salesNote) + ") comment: \"" +
-                salesNote.getComment() + "\" -> \"" + comment + "\".");
+        changelogService.log(SALESNOTES, "Changed sales note (" +
+                formatSalesNote(salesNote) + ") comment: \"" +
+                salesNote.getComment() + "\" -> \"" + comment + "\".", null);
     }
 
     @Transactional
@@ -142,7 +151,10 @@ public class SalesNoteService {
         // Save
         salesNotes.save(salesNote);
         */
-        changelogService.log(SALESNOTES, "Deleted related part " + formatPart(partId, null)+ " from sales note " + formatSalesNote(salesNoteId));
+        List<RelatedPart> relatedParts = new ArrayList<>(1);
+        relatedParts.add(new RelatedPart(partId, PART0));
+        changelogService.log(SALESNOTES, "Deleted related part " + formatPart(partId, null)
+                + " from sales note " + formatSalesNote(salesNoteId), relatedParts);
     }
 
     public static class AttachmentDto {
@@ -177,7 +189,8 @@ public class SalesNoteService {
     }
 
     @Transactional
-    public SalesNote addAttachment(HttpServletRequest request, User user, Long salesNoteId, MultipartFile upload) throws IOException {
+    public SalesNote addAttachment(HttpServletRequest request, User user, Long salesNoteId, MultipartFile upload)
+            throws IOException {
         // Find the entities
         SalesNote salesNote = salesNotes.findOne(salesNoteId);
         hasEditAccess(request, salesNote);
@@ -200,7 +213,7 @@ public class SalesNoteService {
         salesNote.getAttachments().add(attachment);
         salesNotes.save(salesNote);
         changelogService.log(SALESNOTES, "Added attachment to sales note: " + formatSalesNote(salesNote) + ".",
-                attachment);
+                attachment, null);
         return salesNote;
     }
 
@@ -218,7 +231,7 @@ public class SalesNoteService {
         // Save
         salesNotes.save(salesNote);
         changelogService.log(SALESNOTES, "Deleted attachment from sales note " + formatSalesNote(salesNote),
-                salesNoteAttachment);
+                salesNoteAttachment, null);
     }
 
     @Transactional
@@ -289,7 +302,7 @@ public class SalesNoteService {
         salesNote.getParts().forEach(snp -> snp.setUpdateDate(now));
         salesNotes.save(salesNote);
         changelogService.log(SALESNOTES, "Changed state in the sales note " + formatSalesNote(salesNote)
-                + ": " + currentState + " -> " + salesNote.getState());
+                + ": " + currentState + " -> " + salesNote.getState(), null);
     }
 
 }

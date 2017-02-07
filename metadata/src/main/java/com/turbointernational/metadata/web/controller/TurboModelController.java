@@ -2,7 +2,6 @@ package com.turbointernational.metadata.web.controller;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.dao.TurboModelDao;
-import com.turbointernational.metadata.entity.Changelog;
 import com.turbointernational.metadata.entity.TurboModel;
 import com.turbointernational.metadata.service.ChangelogService;
 import com.turbointernational.metadata.util.View;
@@ -38,7 +37,7 @@ public class TurboModelController {
     public TurboModel createJson(@RequestBody TurboModel turboModel) {
         turboModelDao.persist(turboModel);
         
-        changelogService.log(TURBOMODEL, "Created turbo model", turboModel.toJson());
+        changelogService.log(TURBOMODEL, "Created turbo model", turboModel.toJson(), null);
         
         return turboModel;
     }
@@ -53,7 +52,7 @@ public class TurboModelController {
     public TurboModel updateJson(@RequestBody TurboModel turboModel) {
         turboModelDao.merge(turboModel);
         
-        changelogService.log(TURBOMODEL, "Updated turbo model", turboModel.toJson());
+        changelogService.log(TURBOMODEL, "Updated turbo model", turboModel.toJson(), null);
         
         return turboModel;
     }
@@ -66,7 +65,7 @@ public class TurboModelController {
     public void deleteJson(@PathVariable Long turboModelId) {
         TurboModel turboModel = turboModelDao.findOne(turboModelId);
         turboModelDao.remove(turboModel);
-        changelogService.log(TURBOMODEL, "Removed turbo model", turboModel.toJson());
+        changelogService.log(TURBOMODEL, "Removed turbo model", turboModel.toJson(), null);
     }
     
     @RequestMapping(method = GET,

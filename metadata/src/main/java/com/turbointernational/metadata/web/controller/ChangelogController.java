@@ -55,8 +55,8 @@ public class ChangelogController {
     @ResponseBody
     @JsonView(View.Summary.class)
     @Secured("ROLE_CHLOGSRC_READ")
-    public List<Changelog> findChangelogsForAttachedToPartSources(@PathVariable("id") Long partId) {
-        return changelogService.findChangelogsForAttachedToPartSources(partId);
+    public List<Changelog> findChangelogsForPart(@PathVariable("id") Long partId) {
+        return changelogService.findChangelogsForPart(partId);
     }
 
 }

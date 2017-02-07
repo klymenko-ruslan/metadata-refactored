@@ -21,7 +21,7 @@ import static javax.persistence.TemporalType.TIMESTAMP;
 @Table(name = "changelog")
 @NamedQueries({
     @NamedQuery(
-            name = "findChangelogsForAttachedToPartSources",
+            name = "findChangelogsForPart",
             query = "select c " +
                     "from Changelog c " +
                     "join c.changelogParts p " +

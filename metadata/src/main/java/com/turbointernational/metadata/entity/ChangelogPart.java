@@ -20,7 +20,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 @JsonInclude(ALWAYS)
 public class ChangelogPart implements Serializable {
 
-    public enum Type { BOM_PARENT, BOM_CHILD }
+    public enum Role { BOM_PARENT, BOM_CHILD, PART0, PART1 }
 
     //<editor-fold defaultstate="collapsed" desc="Properties">
 
@@ -39,10 +39,10 @@ public class ChangelogPart implements Serializable {
     @JsonView(View.Summary.class)
     private Part part;
 
-    @Column(name = "typ", nullable = false)
+    @Column(name = "role", nullable = false)
     @Enumerated(STRING)
     @JsonView(View.Summary.class)
-    private Type type;
+    private Role role;
 
     //</editor-fold>
 
@@ -51,15 +51,15 @@ public class ChangelogPart implements Serializable {
     public ChangelogPart() {
     }
 
-    public ChangelogPart(Long id, Changelog changelog, Part part, Type type) {
-        this(changelog, part, type);
+    public ChangelogPart(Long id, Changelog changelog, Part part, Role role) {
+        this(changelog, part, role);
         this.id = id;
     }
 
-    public ChangelogPart(Changelog changelog, Part part, Type type) {
+    public ChangelogPart(Changelog changelog, Part part, Role role) {
         this.changelog = changelog;
         this.part = part;
-        this.type = type;
+        this.role = role;
     }
 
     //</editor-fold>
@@ -82,12 +82,12 @@ public class ChangelogPart implements Serializable {
         this.part = part;
     }
 
-    public Type getType() {
-        return type;
+    public Role getRole() {
+        return role;
     }
 
-    public void setType(Type type) {
-        this.type = type;
+    public void setRole(Role role) {
+        this.role = role;
     }
 
     //</editor-fold>

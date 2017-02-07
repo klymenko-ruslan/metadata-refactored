@@ -2,16 +2,21 @@ package com.turbointernational.metadata.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.turbointernational.metadata.dao.ChangelogPartDao;
+import com.turbointernational.metadata.dao.PartDao;
 import com.turbointernational.metadata.entity.Changelog;
 import com.turbointernational.metadata.dao.ChangelogDao;
 import com.turbointernational.metadata.entity.Changelog.ServiceEnum;
+import com.turbointernational.metadata.entity.ChangelogPart;
 import com.turbointernational.metadata.entity.User;
+import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.web.dto.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -23,27 +28,69 @@ import static java.util.Calendar.*;
 @Service
 public class ChangelogService {
 
+    /**
+     * A part that participates in an operation that is being registered as a record in the changelog.
+     *
+     * On the Web UI you can see those records on the 'Part Details' view in the tab 'Audit log'.
+     */
+    public static class RelatedPart {
+
+        private Long partId;
+
+        private ChangelogPart.Role role;
+
+        public RelatedPart(Long partId, ChangelogPart.Role role) {
+            this.partId = partId;
+            this.role = role;
+        }
+
+        public Long getPartId() {
+            return partId;
+        }
+
+        public void setPartId(Long partId) {
+            this.partId = partId;
+        }
+
+        public ChangelogPart.Role getRole() {
+            return role;
+        }
+
+        public void setRole(ChangelogPart.Role role) {
+            this.role = role;
+        }
+
+    }
+
     @Autowired
     private ChangelogDao changelogDao;
 
     @Autowired
+    private ChangelogPartDao changelogPartDao;
+
+    @Autowired
+    private PartDao partDao;
+
+    @Autowired
     private ObjectMapper json;
 
-    public Changelog log(ServiceEnum service, String description) {
+    public Changelog log(ServiceEnum service, String description, Collection<RelatedPart> relatedParts) {
         User user = User.getCurrentUser();
-        return log(service, user, description, "");
+        return log(service, user, description, "", relatedParts);
     }
 
-    public Changelog log(ServiceEnum service, User user, String description) {
-        return log(service, user, description, "");
+    public Changelog log(ServiceEnum service, User user, String description, Collection<RelatedPart> relatedParts) {
+        return log(service, user, description, "", relatedParts);
     }
 
-    public Changelog log(ServiceEnum service, String description, Serializable data) {
+    public Changelog log(ServiceEnum service, String description, Serializable data,
+                         Collection<RelatedPart> relatedParts) {
         User user = User.getCurrentUser();
-        return log(service, user, description, data);
+        return log(service, user, description, data, relatedParts);
     }
 
-    public Changelog log(ServiceEnum service, User user, String description, Serializable data) {
+    public Changelog log(ServiceEnum service, User user, String description, Serializable data,
+                         Collection<RelatedPart> relatedParts) {
         String dataNormalized;
         if (data == null) {
             dataNormalized = null;
@@ -56,7 +103,15 @@ public class ChangelogService {
                 dataNormalized = "Could not serialize data: " + e.getMessage();
             }
         }
-        return changelogDao.log(service, user, description, dataNormalized);
+        Changelog log = changelogDao.log(service, user, description, dataNormalized);
+        if (relatedParts != null && !relatedParts.isEmpty()) {
+            for (RelatedPart rp : relatedParts) {
+                Part part = partDao.getReference(rp.getPartId());
+                ChangelogPart chlgprt = new ChangelogPart(log, part, rp.getRole());
+                changelogPartDao.persist(chlgprt);
+            }
+        }
+        return log;
     }
 
     public Page<Changelog> filter(ServiceEnum service, Long userId, Calendar startDate, Calendar finishDate,
@@ -89,8 +144,8 @@ public class ChangelogService {
         return changelogDao.filter(service, userId, d0, d1, description, data, sortProperty, sortOrder, offset, limit);
     }
 
-    public List<Changelog> findChangelogsForAttachedToPartSources(Long partId) {
-        return changelogDao.findChangelogsForAttachedToPartSources(partId);
+    public List<Changelog> findChangelogsForPart(Long partId) {
+        return changelogDao.findChangelogsForPart(partId);
     }
 
 }

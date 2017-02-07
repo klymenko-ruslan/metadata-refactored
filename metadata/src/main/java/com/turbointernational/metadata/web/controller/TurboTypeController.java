@@ -34,7 +34,7 @@ public class TurboTypeController {
     @JsonView(View.Detail.class)
     public TurboType createJson(@RequestBody TurboType type) {
         turboTypeDao.persist(type);
-        changelogService.log(TURBOTYPE, "Created turbo type", type.toJson());
+        changelogService.log(TURBOTYPE, "Created turbo type", type.toJson(), null);
         return type;
     }
     
@@ -45,7 +45,7 @@ public class TurboTypeController {
     @JsonView(View.Detail.class)
     public TurboType updateJson(@RequestBody TurboType turboType) {
         turboTypeDao.merge(turboType);
-        changelogService.log(TURBOTYPE, "Updated turbo type", turboType.toJson());
+        changelogService.log(TURBOTYPE, "Updated turbo type", turboType.toJson(), null);
         return turboType;
     }
     
@@ -55,7 +55,7 @@ public class TurboTypeController {
     @Transactional
     public void deleteJson(@PathVariable Long turboTypeId) {
         TurboType turboType = turboTypeDao.findOne(turboTypeId);
-        changelogService.log(TURBOTYPE, "Removed turbo type", turboType.toJson());
+        changelogService.log(TURBOTYPE, "Removed turbo type", turboType.toJson(), null);
         turboTypeDao.remove(turboType);
     }
     

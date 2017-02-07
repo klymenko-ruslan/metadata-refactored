@@ -8,7 +8,7 @@ import static org.junit.Assert.assertEquals;
  *
  * @author jrodriguez
  */
-public class DiscountTypeTest {
+public class DiscountRoleTest {
 
     @Test
     public void testGetDiscountType_Override() throws Exception {
