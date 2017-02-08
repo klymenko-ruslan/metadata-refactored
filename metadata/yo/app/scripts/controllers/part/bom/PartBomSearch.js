@@ -8,32 +8,68 @@ angular.module("ngMetaCrudApp")
   FOUND_BOM_RECURSION: "FOUND_BOM_RECURSION"
 })
 
-.controller("PartBomSearchCtrl", ["$log", "$scope", "$location", "$routeParams", "$uibModal",
-  "BOM", "User", "restService", "Restangular", "dialogs", "gToast", "partTypes", "part",
-  function($log, $scope, $location, $routeParams, $uibModal, BOM, User, restService,
-    Restangular, dialogs, gToast, partTypes, part) {
+.controller("PartBomSearchCtrl", ["$log", "$scope", "$location", "ngTableParams", "$routeParams", "$uibModal",
+  "User", "restService", "Restangular", "dialogs", "gToast", "utils", "partTypes", "part", "boms",
+  function($log, $scope, $location, ngTableParams, $routeParams, $uibModal, User, restService,
+    Restangular, dialogs, gToast, utils, partTypes, part, boms) {
+
     $scope.partTypes = partTypes;
     $scope.restService = restService;
     $scope.partId = $routeParams.id;
 
-    $scope.pickedPart = null;
-    $scope.showPickedPart = false;
+    var pickedParts = [];
+    var pickedPartIds = {};
 
     // The part whose bom we're editing
     $scope.part = part;
 
-    // Load the part's BOM
-    $scope.bom = BOM.listByParentPartId($scope.partId).then(
-      function(bom) {
-        $scope.bom = bom;
+    $scope.boms = boms; // boms of the current part
+
+    $scope.pickedPartsTableParams = new ngTableParams(
+      {
+        page: 1,
+        count: 10,
+        sorting: {}
       },
-      restService.error
+      {
+        getData: utils.localPagination(pickedParts)
+      }
     );
 
-    $scope.bomItem = {
-      parentPartId: $scope.partId,
-      childPartId: null,
-      quantity: 1
+    $scope.pick = function(pickedPart) {
+      pickedParts.push(pickedPart);
+      pickedPartIds[pickedPart.id] = true;
+      $scope.pickedPartsTableParams.reload();
+    };
+
+    $scope.unpick = function(partId) {
+      var idx = _.findIndex(pickedParts, function(p) {
+        return p.id === partId;
+      });
+      var p = pickedParts[idx];
+      delete p.extra;
+      pickedParts.splice(idx, 1);
+      delete pickedPartIds[partId];
+      $scope.pickedPartsTableParams.reload();
+    };
+
+    $scope.unpickAll = function() {
+      _.each(pickedParts, function(pp) {
+        delete pickedPartIds[pp.id];
+      });
+      pickedParts.splice(0, pickedParts.length);
+      $scope.pickedPartsTableParams.reload();
+    };
+
+    $scope.isBttnUnpickAllDisabled = function() {
+      return pickedParts.length === 0;
+    };
+//part.manufacturer.id != $part._source.manufacturer.id || part.id == $part._source.id || $part._source.id == pickedPart.id
+    $scope.isBttnPickDisabled = function(p) {
+      return false; // TODO
+      return p === undefined || $scope.part.manufacturer.id != p.manufacturer.id ||
+        $scope.part.id == p.id || pickedPartIds[p.id] || parentPartsIds[p.id] ||
+        restService.status.bomRebuilding;
     };
 
     $scope.save = function() {
@@ -66,23 +102,6 @@ angular.module("ngMetaCrudApp")
       } else {
         dialogs.error("Not authorized", "To complete this operation you must have at least following roles: " +
           "ROLE_CHLOGSRC_READ, ROLE_CHLOGSRCNAME_READ.");
-      }
-    };
-
-    $scope.pickBomItemPart = function(bomItemPartId, allowed) {
-      if (allowed) {
-        $scope.pickedPart = restService.findPart(bomItemPartId).then(
-          function(pickedPart) {
-            $scope.pickedPart = pickedPart;
-            $scope.bomItem.childPartId = $scope.pickedPart.id;
-          },
-          function(errorResponse) {
-            restService.error("Could not pick part.", errorResponse);
-            $log.log("Could not pick part", errorResponse);
-          }
-        );
-      } else {
-        dialogs.error("Validation error", "Child part must have the same manufacturer as the Parent part.");
       }
     };
 

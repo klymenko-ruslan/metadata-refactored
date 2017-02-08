@@ -12,7 +12,7 @@
        data-ng-disabled="pickedPart == null || restService.status.bomRebuilding"
        class="btn btn-success">
       <i class="fa fa-save"></i>
-      Add BOM Item
+      Add BOM Items
     </a>
   </li>
 </metanav>
@@ -24,24 +24,39 @@
   <!-- Bill of Materials -->
   <div class="col-xs-6">
     <h3>Part BOM</h3>
-    <part-table parts="bom" key="child" extra-columns="{&quot;Qty&quot;:&quot;item.quantity&quot;}"></part-table>
+    <part-table parts="boms" key="child" extra-columns="{&quot;Qty&quot;:&quot;item.quantity&quot;}"></part-table>
   </div>
 
   <!-- Picked BOM Item -->
   <div class="col-xs-6">
-    <h3>Picked Part</h3>
-    <part-summary part="pickedPart" data-ng-show="pickedPart"></part-summary>
 
-    <div class="form-group" data-ng-show="pickedPart">
-      <label for="quantity-input" class="col-sm-2 control-label">Qty</label>
+    <h3>
+      Picked Parts
+      <button type="button" title="Unpick All" data-ng-click="unpickAll()" data-ng-disabled="isBttnUnpickAllDisabled()" class="btn btn-link btn-sm" style="padding:0;">
+        <i class="fa fa-times"></i>
+      </button>
+    </h3>
+    <form name="ppForm">
+      <table data-ng-table="pickedPartsTableParams" class="table table-bordered table-striped table-hover table-responsive">
+        <tr data-ng-repeat="rec in $data">
+          <td title="'Part Type'" class="text-nowrap">{{rec.partType.name}}</td>
+          <td title="'Part #'" class="text-nowrap">{{rec.manufacturerPartNumber}}</td>
+          <td title="'Qty'">
+            <input type="number" data-ng-model="rec.extra.qty" data-ng-min="0" style="width:5em;" required />
+          </td>
+          <td class="actions text-center" title="'Actions'">
+            <button type="button" class="btn btn-danger btn-xs" data-ng-click="unpick(rec.id)">
+              <i class="fa fa-times"></i>
+              Unpick
+            </button>
+          </td>
+        </tr>
+        <tr data-ng-hide="$data.length > 0">
+          <td colspan="4">No picked parts.</td>
+        </tr>
+      </table>
+    </form>
 
-      <div>
-        <input type="text" data-ng-model="bomItem.quantity" class="form-control" id="quantity-input" placeholder="Quantity">
-      </div>
-    </div>
-    <div data-ng-hide="pickedPart" class="well well-sm">
-      Pick a part to add to the bill of materials.
-    </div>
   </div>
 
 </div>
@@ -53,8 +68,8 @@
     <i class="fa fa-eye"></i> View
   </a>
   <button type="button" authorize="ROLE_BOM"
-     data-ng-click="pickBomItemPart($part._source.id, part.manufacturer.id == $part._source.manufacturer.id)"
-     data-ng-disabled="part.manufacturer.id != $part._source.manufacturer.id || part.id == $part._source.id || $part._source.id == pickedPart.id"
+     data-ng-click="pickBomItemPart($part._source)"
+     data-ng-disabled="isBttnPickDisabled($part._source)"
      class="btn btn-success btn-xs">
     <i class="fa fa-bullseye"></i> Pick
   </button>

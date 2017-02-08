@@ -121,6 +121,9 @@ angular.module("ngMetaCrudApp", ["ngCookies", "ngRoute", "ngTable", "ui.bootstra
         }],
         partTypes: ["restService", function(restService) {
           return restService.listPartTypes();
+        }],
+        boms: ["$log", "$route", "BOM", function($log, $route, BOM) {
+          return BOM.listByParentPartId($route.current.pathParams.id);
         }]
       }
     });
