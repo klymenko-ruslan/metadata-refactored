@@ -1,7 +1,7 @@
 "use strict";
 
 angular.module("ngMetaCrudApp")
-  .directive("bom", ["$log", "Restangular", function($log, Restangular) {
+  .directive("bom", ["$log", "$q", "Restangular", function($log, $q, Restangular) {
     return {
       scope: {
         parentPartId: "="
@@ -26,9 +26,10 @@ angular.module("ngMetaCrudApp")
             if (parentPartId === undefined) {
               return;
             }
-            BOM.listByParentPartId(parentPartId).then(
-              function success(bom) {
-                $scope.bom = bom;
+            $q.all([restService.getInterchangesOfThePartBoms(parentPartId), BOM.listByParentPartId(parentPartId)]).then(
+              function success(retVals) {
+                $scope.interchangesOfThePartBoms = retVals[0];
+                $scope.bom = retVals[1];
                 $scope.bomTableParams = new ngTableParams({
                   page: 1,
                   count: 10
@@ -36,7 +37,9 @@ angular.module("ngMetaCrudApp")
                   getData: utils.localPagination($scope.bom, "child.manufacturerPartNumber")
                 });
               },
-              restService.error
+              function failure(response) {
+                restService.error("Loading of BOMs failed.", response);
+              }
             );
           });
 
@@ -76,7 +79,7 @@ angular.module("ngMetaCrudApp")
               function() {
                 // Yes
                 BOM.removeBOM(bomItem.id).then(
-                  function() {
+                  function success() {
                     // Success
                     // Remove the BOM item from the local part and reload the table
                     var idxToRemove = _.findIndex($scope.bom, function(e) {
@@ -88,8 +91,12 @@ angular.module("ngMetaCrudApp")
                     $scope.altBomItem = null;
                     gToast.open("Child part removed from BOM.");
                   },
-                  restService.error);
-              });
+                  function failure(response) {
+                    restService.error("Removing of the BOM failed.", response);
+                  }
+                );
+              }
+            );
           };
 
           $scope.removeAlternate = function(index, altItem) {
@@ -99,11 +106,13 @@ angular.module("ngMetaCrudApp")
               function() {
                 Restangular.setParentless(false);
                 Restangular.one("bom", $scope.altBomItem.id).one("alt", altItem.id).remove().then(
-                  function() {
+                  function success() {
                     $scope.altBomItem.alternatives.splice(index, 1);
                     gToast.open("BOM alternate removed.");
                   },
-                  restService.error
+                  function failure(response) {
+                    restService.error("Removing of the Alternate failed.", response);
+                  }
                 );
               });
           };

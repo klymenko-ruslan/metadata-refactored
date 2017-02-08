@@ -88,19 +88,19 @@ import static org.springframework.beans.factory.config.ConfigurableBeanFactory.S
 @NamedQueries({
         @NamedQuery(
                 name = "findOnePart",
-                query = "SELECT DISTINCT p FROM Part p LEFT JOIN p.interchange i WHERE p.id = :id"
+                query = "select distinct p from Part p left join p.interchange i where p.id = :id"
         ),
         @NamedQuery(
                 name = "findByPartNumber",
-                query = "FROM Part p WHERE p.manufacturerPartNumber = :partNumber"
+                query = "from Part p where p.manufacturerPartNumber = :partNumber"
         ),
         @NamedQuery(
                 name = "findByPartNumberAndManufacturer",
-                query = "FROM Part p WHERE p.manufacturer.id=:manufacturerId AND p.manufacturerPartNumber = :partNumber"
+                query = "from Part p where p.manufacturer.id=:manufacturerId and p.manufacturerPartNumber = :partNumber"
         ),
         @NamedQuery(
                 name = "findAllPartsOrderedById",
-                query = "FROM Part p ORDER BY p.id"
+                query = "from Part p order by p.id"
         )
 })
 @JsonInclude(ALWAYS)
