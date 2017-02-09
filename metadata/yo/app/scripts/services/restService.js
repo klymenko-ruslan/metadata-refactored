@@ -34,12 +34,19 @@ angular.module("ngMetaCrudApp")
         }
       };
 
-      this.createBom = function(bomItem, srcIds, chlogSrcRating, chlogSrcLnkDescription) {
-        var req = {};
-        angular.copy(bomItem, req);
-        req.sourceIds = srcIds;
-        req.chlogSrcRating = chlogSrcRating;
-        req.chlogSrcLnkDescription = chlogSrcLnkDescription;
+      this.createBom = function(parentPartId, items, srcIds, ratings, description) {
+        var req = {
+          parentPartId: parentPartId,
+          srcIds: srcIds,
+          chlogSrcRatings: ratings,
+          chlogSrcLnkDescription: description,
+          rows: _.map(items, function(i) {
+            return {
+              childPartId: i.id,
+              quantity: i.extra.qty
+            };
+          })
+        };
         return Restangular.all("bom").post(req);
       };
 

@@ -1,16 +1,13 @@
 <metanav>
   <li>
-    <a data-ng-href="/part/{{ partId }}"
-       class="btn btn-primary">
+    <a data-ng-href="/part/{{ partId }}" class="btn btn-primary">
       <i class="fa fa-eye"></i>
       View Part
     </a>
   </li>
 
   <li>
-    <a data-ng-click="save()"
-       data-ng-disabled="pickedPart == null || restService.status.bomRebuilding"
-       class="btn btn-success">
+    <a data-ng-click="save()" data-ng-disabled="isBttnSaveDisabled() || bpForm.$invalid" class="btn btn-success">
       <i class="fa fa-save"></i>
       Add BOM Items
     </a>
@@ -23,8 +20,39 @@
 
   <!-- Bill of Materials -->
   <div class="col-xs-6">
-    <h3>Part BOM</h3>
-    <part-table parts="boms" key="child" extra-columns="{&quot;Qty&quot;:&quot;item.quantity&quot;}"></part-table>
+    <h3>Existing BOMs</h3>
+    <table data-ng-table="bomTableParams" class="table table-bordered table-striped table-hover table-responsive">
+      <tr data-ng-repeat="bomItem in $data">
+        <td title="'Part Type'" data-sortable="'child.partType.name'">
+          {{bomItem.child.partType.name}}
+        </td>
+        <td title="'Manufacturer'" data-sortable="'child.manufacturer.name'">
+          {{bomItem.child.manufacturer.name}}
+        </td>
+        <td title="'Part #'" class="text-center text-nowrap" data-sortable="'child.manufacturerPartNumber'">
+          {{bomItem.child.manufacturerPartNumber}}
+        </td>
+        <td title="'Qty'" class="text-right" data-sortable="'quantity'">
+          {{bomItem.quantity}}
+        </td>
+        <td title="'Actions'" class="actions text-center">
+          <a data-ng-href="/part/{{bomItem.parent.id}}"
+             authorize="ROLE_READ" class="btn btn-primary btn-xs">
+            <i class="fa fa-eye"></i> View
+          </a>
+          <button data-ng-click="removeBOM(bomItem.id)"
+                  data-ng-disabled="restService.status.bomRebuilding"
+                  authorize="ROLE_BOM" class="btn btn-danger btn-xs">
+            <i class="fa fa-trash-o"></i> Remove
+          </button>
+        </td>
+      </tr>
+
+      <tr data-ng-hide="$data.length > 0">
+        <td colspan="5">No parts to display.</td>
+      </tr>
+
+    </table>
   </div>
 
   <!-- Picked BOM Item -->
@@ -36,7 +64,7 @@
         <i class="fa fa-times"></i>
       </button>
     </h3>
-    <form name="ppForm">
+    <form name="bpForm">
       <table data-ng-table="pickedPartsTableParams" class="table table-bordered table-striped table-hover table-responsive">
         <tr data-ng-repeat="rec in $data">
           <td title="'Part Type'" class="text-nowrap">{{rec.partType.name}}</td>
@@ -68,7 +96,7 @@
     <i class="fa fa-eye"></i> View
   </a>
   <button type="button" authorize="ROLE_BOM"
-     data-ng-click="pickBomItemPart($part._source)"
+     data-ng-click="pick($part._source)"
      data-ng-disabled="isBttnPickDisabled($part._source)"
      class="btn btn-success btn-xs">
     <i class="fa fa-bullseye"></i> Pick

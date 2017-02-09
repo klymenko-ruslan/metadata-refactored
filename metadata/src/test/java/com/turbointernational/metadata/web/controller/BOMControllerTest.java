@@ -17,6 +17,7 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -98,12 +99,13 @@ public class BOMControllerTest {
     )
     @WithUserDetails("Admin")
     public void testCreateChangelogSource() throws Exception {
-        String requestBody = "{\"parentPartId\":\"14510\",\"childPartId\":17754,\"quantity\":1,\"sourceIds\":[1,2],\"chlogSrcRating\":[2,0],\"chlogSrcLnkDescription\":\"Hello world!\"}";
-        String responseBody = "{\"status\":\"OK\"}";
+        String requestBody = "{\"parentPartId\":\"14510\",\"rows\":[{\"childPartId\":17754,\"quantity\":1}],\"sourceIds\":[1,2],\"chlogSrcRatings\":[2,0],\"chlogSrcLnkDescription\":\"Hello world!\"}";
+        String responseBody = "{\"failures\":[],\"boms\":[{\"class\":\"com.turbointernational.metadata.entity.BOMItem\",\"id\":1,\"parent\":{\"class\":\"com.turbointernational.metadata.entity.part.types.Turbo\",\"id\":14510,\"manufacturer\":{\"id\":2,\"name\":\"Holset\"},\"manufacturerPartNumber\":\"3534378\",\"name\":null,\"dimLength\":null,\"dimWidth\":null,\"dimHeight\":null,\"weight\":null,\"partType\":{\"id\":1,\"name\":\"Turbo\",\"value\":\"turbo\",\"magentoAttributeSet\":\"Turbo\"},\"version\":1,\"legendImgFilename\":null},\"child\":{\"class\":\"com.turbointernational.metadata.entity.part.types.Turbo\",\"id\":17754,\"manufacturer\":{\"id\":2,\"name\":\"Holset\"},\"manufacturerPartNumber\":\"3768655\",\"name\":null,\"dimLength\":null,\"dimWidth\":null,\"dimHeight\":null,\"weight\":null,\"partType\":{\"id\":1,\"name\":\"Turbo\",\"value\":\"turbo\",\"magentoAttributeSet\":\"Turbo\"},\"version\":1,\"legendImgFilename\":null},\"quantity\":1}]}";
         mockMvc.perform(post("/metadata/bom")
                 .content(requestBody).contentType(contentType))
                 .andExpect(status().isOk())
-                .andExpect(content().json(responseBody));
+//                .andDo(MockMvcResultHandlers.print())
+                .andExpect(content().json(responseBody));;
         // Check that description for the link exists.
         ChangelogSourceLink link = em.find(ChangelogSourceLink.class, 1L);
         assertNotNull(link);

@@ -30,7 +30,7 @@
       {{bomItem.child.manufacturer.name}}
     </td>
     <td title="'Interchange'">
-      <ul class="list-unstyled list-inline">
+      <ul class="list-unstyled list-inline" style="margin-bottom:0">
       <li data-ng-repeat="p in interchangesOfThePartBoms[bomItem.id]">
         <a data-ng-href="/part/{{p.id}}">{{p.manufacturerPartNumber}}</a><span data-ng-if="!$last">,</span>
       </li>

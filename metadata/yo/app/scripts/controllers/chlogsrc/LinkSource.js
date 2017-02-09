@@ -3,10 +3,10 @@
 angular.module("ngMetaCrudApp")
 
 .controller("ChlogSrcLinkDlgCtrl", ["$scope", "$log", "$location", "dialogs", "gToast", "ngTableParams",
-  "$uibModalInstance", "utils", "restService", "BOM_RESULT_STATUS", "partId", "bomItem",
+  "$uibModalInstance", "utils", "restService", "partId", "cbSave",
   "sourcesNames", "lastPicked", "User", "cancelUrl", "begin",
   function($scope, $log, $location, dialogs, gToast, ngTableParams, $uibModalInstance, utils,
-    restService, BOM_RESULT_STATUS, partId, bomItem, sourcesNames, lastPicked, User, cancelUrl, begin) { // injection "begin" is important
+    restService, partId, cbSave, sourcesNames, lastPicked, User, cancelUrl, begin) { // injection "begin" is important
 
     $scope.partId = partId;
     $scope.sourcesNames = sourcesNames;
@@ -157,23 +157,7 @@ angular.module("ngMetaCrudApp")
         ratings = $scope.pickedSourcesRatings;
       }
 
-      restService.createBom(bomItem, srcIds, ratings, $scope.data.description).then(
-        function(bomResult) {
-          if (bomResult.status == BOM_RESULT_STATUS.OK) {
-            // Success
-            gToast.open("BOM item added.");
-            $location.path("/part/" + $scope.partId);
-          } else if (bomResult.status == BOM_RESULT_STATUS.ASSERTION_ERROR) {
-            dialogs.error("Validation error", bomResult.message);
-          } else if (bomResult.status == BOM_RESULT_STATUS.FOUND_BOM_RECURSION) {
-            dialogs.error("Validation error", bomResult.message);
-          } else {
-            dialogs.error("Internal error", "Server returned unknown status of the operation: " + bomResult.status);
-          }
-        },
-        function(response) {
-          dialogs.error("Could not add BOM Item", "Server said: <pre>" + JSON.stringify(response.data) + "</pre>");
-        });
+      cbSave(srcIds, ratings, $scope.data.description);
 
     };
 

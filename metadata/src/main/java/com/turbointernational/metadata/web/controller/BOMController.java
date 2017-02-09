@@ -2,6 +2,8 @@ package com.turbointernational.metadata.web.controller;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.entity.BOMItem;
+import com.turbointernational.metadata.service.BOMService.CreateBOMsResponse;
+import com.turbointernational.metadata.service.BOMService.CreateBOMsRequest;
 import com.turbointernational.metadata.util.View;
 import com.turbointernational.metadata.entity.User;
 import com.turbointernational.metadata.service.BOMService;
@@ -20,7 +22,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 
-import static com.turbointernational.metadata.web.controller.BOMController.BOMErrorStatus.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
@@ -32,112 +33,6 @@ public class BOMController {
     private BOMService bomService;
 
     private static final Logger log = LoggerFactory.getLogger(BOMController.class);
-
-    enum BOMErrorStatus { OK, ASSERTION_ERROR, FOUND_BOM_RECURSION }
-
-    public static class CreateBomItemRequest {
-
-        @JsonView(View.Summary.class)
-        private Long childPartId;
-
-        @JsonView(View.Summary.class)
-        private Long parentPartId;
-
-        @JsonView(View.Summary.class)
-        private Integer quantity;
-
-        /**
-         * Changelog source IDs which should be linked to the changelog.
-         * See ticket #891 for details.
-         */
-        @JsonView(View.Summary.class)
-        private Long[] sourceIds;
-
-        @JsonView(View.Summary.class)
-        private Integer[] chlogSrcRating;
-
-        @JsonView(View.Summary.class)
-        private String chlogSrcLnkDescription;
-
-        public Long getChildPartId() {
-            return childPartId;
-        }
-
-        public void setChildPartId(Long childPartId) {
-            this.childPartId = childPartId;
-        }
-
-        public Long getParentPartId() {
-            return parentPartId;
-        }
-
-        public void setParentPartId(Long parentPartId) {
-            this.parentPartId = parentPartId;
-        }
-
-        public Integer getQuantity() {
-            return quantity;
-        }
-
-        public void setQuantity(Integer quantity) {
-            this.quantity = quantity;
-        }
-
-        public Long[] getSourceIds() {
-            return sourceIds;
-        }
-
-        public void setSourceIds(Long[] sourceIds) {
-            this.sourceIds = sourceIds;
-        }
-
-        public Integer[] getChlogSrcRating() {
-            return chlogSrcRating;
-        }
-
-        public void setChlogSrcRating(Integer[] chlogSrcRating) {
-            this.chlogSrcRating = chlogSrcRating;
-        }
-
-        public String getChlogSrcLnkDescription() {
-            return chlogSrcLnkDescription;
-        }
-
-        public void setChlogSrcLnkDescription(String chlogSrcLnkDescription) {
-            this.chlogSrcLnkDescription = chlogSrcLnkDescription;
-        }
-    }
-
-    static class BOMResult {
-
-        @JsonView(View.Summary.class)
-        private final BOMErrorStatus status;
-
-        @JsonView(View.Summary.class)
-        private final Long failedId;
-
-        @JsonView(View.Summary.class)
-        private final String message;
-
-        BOMResult() {
-            this.status = OK;
-            this.failedId = null;
-            this.message = null;
-        }
-
-        BOMResult(FoundBomRecursionException e) {
-            this.status = FOUND_BOM_RECURSION;
-            this.failedId = e.getFailedId();
-            this.message = "Found BOM recursion. Failed part ID: " + this.failedId;
-        }
-
-        BOMResult(AssertionError e) {
-            this.status = ASSERTION_ERROR;
-            this.failedId = null;
-            this.message = e.getMessage();
-        }
-
-    }
 
     @RequestMapping(value="rebuild/start", method = POST)
     @ResponseBody
@@ -165,23 +60,10 @@ public class BOMController {
     @RequestMapping(method = POST,
             consumes = APPLICATION_JSON_VALUE,
             produces = APPLICATION_JSON_VALUE)
-    @JsonView(View.Summary.class)
-    public BOMResult create(HttpServletRequest httpRequest, @RequestBody CreateBomItemRequest request) {
-        Long parentPartId = request.getParentPartId();
-        Long childPartId = request.getChildPartId();
-        Integer quantity = request.getQuantity();
-        Long[] sourceIds = request.getSourceIds();
-        Integer[] chlogSrcRaiting = request.getChlogSrcRating();
-        String chlogSrcLnkDescription = request.getChlogSrcLnkDescription();
-        try {
-            bomService.create(httpRequest, parentPartId, childPartId, quantity,
-                    sourceIds, chlogSrcRaiting, chlogSrcLnkDescription, true);
-            return new BOMResult(); // OK
-        } catch (FoundBomRecursionException e) {
-            return new BOMResult(e);
-        } catch (AssertionError e) {
-            return new BOMResult(e);
-        }
+    @JsonView(View.SummaryWithBOMDetail.class)
+    public CreateBOMsResponse create(HttpServletRequest httpRequest, @RequestBody CreateBOMsRequest request)
+            throws Exception {
+        return bomService.createBOMs(httpRequest, request);
     }
 
     @RequestMapping(value = "/byParentPart/{id}", method = GET,

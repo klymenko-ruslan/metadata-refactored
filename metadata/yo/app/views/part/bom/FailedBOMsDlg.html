@@ -4,10 +4,7 @@
 <div class="modal-body">
   <div class="row">
     <div class="col-xs-12">
-      <p>
-        The primary part [{{primaryPart.id}}] - {{primaryPart.manufacturerPartNumber}} was failed
-        while adding to BOMs of the following parts:
-      </p>
+      <p>{{message}}</p>
       <table data-ng-table="failuresTableParams" class="table table-bordered table-striped table-hover table-responsive">
         <tr data-ng-repeat="failure in $data">
           <td title="'Type'">

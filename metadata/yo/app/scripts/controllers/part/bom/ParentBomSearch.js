@@ -41,10 +41,11 @@ angular.module("ngMetaCrudApp")
       $scope.pickedPartsTableParams = new ngTableParams(
         {
           page: 1,
-          count: 10,
+          count: 5,
           sorting: {}
         },
         {
+          counts: [5, 10, 15],
           getData: utils.localPagination(pickedParts)
         }
       );
@@ -67,7 +68,7 @@ angular.module("ngMetaCrudApp")
         var rows = _.map(pickedParts, function(p) {
           return {
             partId: p.id,
-            quontity: p.extra.qty,
+            quantity: p.extra.qty,
             resolution: p.extra.resolution
           };
         });
@@ -91,8 +92,9 @@ angular.module("ngMetaCrudApp")
                 size: "lg",
                 controller: "FailedBOMsDlgCtrl",
                 resolve: {
-                  primaryPart: function() {
-                    return $scope.part;
+                  message: function() {
+                    return "The primary part [" + $scope.part.id + "] - " + $scope.part.manufacturerPartNumber +
+                      " was failed while adding to BOMs of the following parts:";
                   },
                   failures: function() {
                     return response.failures;
@@ -165,6 +167,7 @@ angular.module("ngMetaCrudApp")
               function() {
                 parents.splice(idx, 1);
                 $scope.bomTableParams.reload();
+                updateParentPartsIds();
                 gToast.open("The BOM has been successfully removed.");
               },
               restService.error
@@ -210,10 +213,10 @@ angular.module("ngMetaCrudApp")
       }
 
   }]).controller("FailedBOMsDlgCtrl", ["$scope", "$log", "$location", "$uibModalInstance", "ngTableParams",
-      "utils", "primaryPart", "failures",
-    function($scope, $log, $location, $uibModalInstance, ngTableParams, utils, primaryPart, failures) {
+      "utils", "message", "failures",
+    function($scope, $log, $location, $uibModalInstance, ngTableParams, utils, message, failures) {
 
-      $scope.primaryPart = primaryPart;
+      $scope.message = message;
 
       $scope.failuresTableParams = new ngTableParams({
         page: 1,

@@ -25,7 +25,7 @@
     <h3>Existing Parent BOMs</h3>
     <table data-ng-table="bomTableParams" class="table table-bordered table-striped table-hover table-responsive">
       <tr data-ng-repeat="bomItem in $data">
-        <td title="'Type'" data-sortable="'parent.partType.name'">
+        <td title="'Part Type'" data-sortable="'parent.partType.name'">
           {{bomItem.parent.partType.name}}
         </td>
         <td title="'Manufacturer'" data-sortable="'parent.manufacturer.name'">
