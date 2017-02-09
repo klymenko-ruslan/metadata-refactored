@@ -26,9 +26,6 @@
     <td title="'Name'" data-sortable="'child.name'">
       {{bomItem.child.name}}
     </td>
-    <td title="'Manufacturer'" data-sortable="'child.manufacturer.name'">
-      {{bomItem.child.manufacturer.name}}
-    </td>
     <td title="'Interchange'">
       <ul class="list-unstyled list-inline" style="margin-bottom:0">
       <li data-ng-repeat="p in interchangesOfThePartBoms[bomItem.id]">
@@ -74,7 +71,7 @@
   </tr>
 
   <tr data-ng-hide="$data.length > 0">
-    <td colspan="7">No parts to display.</td>
+    <td colspan="6">No parts to display.</td>
   </tr>
 </table>
 
