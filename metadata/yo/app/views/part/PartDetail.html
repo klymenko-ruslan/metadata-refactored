@@ -358,34 +358,34 @@
           <div class="row">
             <div class="col-xs-12">
 
-            <div data-ng-show="!part.productImages || part.productImages.length == 0" class="no-image"></div>
+              <div data-ng-show="!part.productImages || part.productImages.length == 0" class="no-image"></div>
 
-            <ul data-ng-hide="!part.productImages || part.productImages.length == 0" class="list-unstyled list-inline">
+              <ul data-ng-hide="!part.productImages || part.productImages.length == 0" class="list-unstyled list-inline">
 
-              <li data-ng-repeat="image in part.productImages" class="ng-scope bg-info part-icon" data-ng-show="($index >= (partImagesPageNum - 1) * imgPgSzVal) && ($index < (partImagesPageNum - 1) * imgPgSzVal + imgPgSzVal)">
-                <form class="form-inline">
-                  <div class="form-group pull-right">
-                    <button class="btn btn-xs btn-danger" data-ng-click="deleteImage(image)">
-                      <i class="fa fa-trash-o" aria-hidden="true"></i>
-                      Delete
-                    </button>
-                  </div>
-                  <div class="form-group pull-left">
-                    <div class="checkbox">
-                      <label style="padding-right: 10px;">
-                        <input type="checkbox" data-ng-model="image.publish" data-ng-change="onChangePublishImage(image)"> Publish
-                      </label>
+                <li data-ng-repeat="image in part.productImages" class="ng-scope bg-info part-icon" data-ng-show="($index >= (partImagesPageNum - 1) * imgPgSzVal) && ($index < (partImagesPageNum - 1) * imgPgSzVal + imgPgSzVal)">
+                  <form class="form-inline">
+                    <div class="form-group pull-right">
+                      <button class="btn btn-xs btn-danger" data-ng-click="deleteImage(image)">
+                        <i class="fa fa-trash-o" aria-hidden="true"></i>
+                        Delete
+                      </button>
                     </div>
-                  </div>
-                </form>
-                <img data-ng-src="/metadata/image/135/{{image.id}}.jpg" class="part-icon" data-ng-click="onShowProductImage(image.id)" />
-              </li>
+                    <div class="form-group pull-left">
+                      <div class="checkbox">
+                        <label style="padding-right: 10px;">
+                          <input type="checkbox" data-ng-model="image.publish" data-ng-change="onChangePublishImage(image)"> Publish
+                        </label>
+                      </div>
+                    </div>
+                  </form>
+                  <img data-ng-src="/metadata/image/135/{{image.id}}.jpg" class="part-icon" data-ng-click="onShowProductImage(image.id)" />
+                </li>
 
-            </ul>
+              </ul>
 
-            <uib-pagination items-per-page="imgPgSzVal" total-items="part.productImages.length" data-ng-model="partImagesPageNum" data-ng-hide="part.productImages.length == 0 || part.productImages.length == imgPgSzVal" />
+              <uib-pagination items-per-page="imgPgSzVal" total-items="part.productImages.length" data-ng-model="partImagesPageNum" data-ng-hide="part.productImages.length == 0 || part.productImages.length == imgPgSzVal" />
 
-          </div>
+            </div>
           </div>
 
         </div>
@@ -443,7 +443,7 @@
     </table>
   </div>
   <div role="tabpanel" class="tab-pane fade tab-part-detail" id="linked_sources">
-    <table data-ng-table="changelogSourcesTableParams" class="table table-bordered table-striped table-hover table-expand">
+    <table data-ng-table="changelogTableParams" class="table table-bordered table-striped table-hover table-expand">
       <tr data-ng-repeat="rec in $data">
         <td title="'Date'" data-sortable="'changeDate'" width="5%" class="text-center text-nowrap">{{rec.changeDate | date : "yyyy-MM-dd HH:mm.ss"}}</td>
         <td title="'Service'" data-sortable="'service'" width="5%" class="text-nowrap">{{rec.service}}</td>

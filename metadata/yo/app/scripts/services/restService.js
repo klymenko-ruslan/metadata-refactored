@@ -34,10 +34,10 @@ angular.module("ngMetaCrudApp")
         }
       };
 
-      this.createBom = function(parentPartId, items, srcIds, ratings, description) {
+      this.createBom = function(parentPartId, items, sourcesIds, ratings, description) {
         var req = {
           parentPartId: parentPartId,
-          srcIds: srcIds,
+          sourcesIds: sourcesIds,
           chlogSrcRatings: ratings,
           chlogSrcLnkDescription: description,
           rows: _.map(items, function(i) {
@@ -754,7 +754,7 @@ angular.module("ngMetaCrudApp")
         });
       };
 
-      this.filterChangelog = function(startDate, finishDate, service, userId, description, data,
+      this.filterChangelog = function(startDate, finishDate, service, userId, description, data, partId,
         sortProperty, sortOrder, offset, limit) {
         if (startDate) {
           startDate = $filter("date")(startDate, DATE_FORMAT);
@@ -769,15 +769,12 @@ angular.module("ngMetaCrudApp")
           "userId": userId,
           "description": description,
           "data": data,
+          "partId": partId,
           "sortProperty": sortProperty,
           "sortOrder": sortOrder,
           "offset": offset,
           "limit": limit
         });
-      };
-
-      this.findChangelogsForPart = function(partId) {
-        return Restangular.one("changelog/part", partId).get();
       };
 
       this.getNumLinksForChangelogSource = function(srcId) {

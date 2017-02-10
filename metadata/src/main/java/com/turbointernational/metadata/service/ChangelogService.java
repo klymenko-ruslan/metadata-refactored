@@ -115,7 +115,7 @@ public class ChangelogService {
     }
 
     public Page<Changelog> filter(ServiceEnum service, Long userId, Calendar startDate, Calendar finishDate,
-                                  String description, String data,
+                                  String description, String data, Long partId,
                                   String sortProperty, String sortOrder,
                                   Integer offset, Integer limit) {
         // Normalizaton of the time range.
@@ -141,11 +141,8 @@ public class ChangelogService {
             finishDate.set(MILLISECOND, 999);
             d1 = finishDate.getTime();
         }
-        return changelogDao.filter(service, userId, d0, d1, description, data, sortProperty, sortOrder, offset, limit);
-    }
-
-    public List<Changelog> findChangelogsForPart(Long partId) {
-        return changelogDao.findChangelogsForPart(partId);
+        return changelogDao.filter(service, userId, d0, d1, description, data, partId,
+                sortProperty, sortOrder, offset, limit);
     }
 
 }

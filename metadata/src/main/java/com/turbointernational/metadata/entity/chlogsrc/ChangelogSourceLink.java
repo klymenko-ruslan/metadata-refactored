@@ -15,6 +15,7 @@ import java.util.List;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
 import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.CascadeType.DETACH;
 import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
 import static javax.persistence.TemporalType.TIMESTAMP;
@@ -46,8 +47,8 @@ public class ChangelogSourceLink implements Serializable {
     @JsonView(View.Summary.class)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "changelog_id", nullable = false, unique = true)
+    @ManyToOne(optional = false, cascade = DETACH)
+    @JoinColumn(name = "changelog_id", nullable = false, unique = true, referencedColumnName = "id")
     private Changelog changelog;
 
     @Temporal(TIMESTAMP)
@@ -65,10 +66,10 @@ public class ChangelogSourceLink implements Serializable {
     private String description;
 
     @JsonView(View.ChangelogSourceDetailed.class)
-    @OneToMany(mappedBy = "pk.link")
+    @OneToMany(mappedBy = "pk.link", fetch = LAZY)
     private List<ChangelogSource> changelogSources = new ArrayList<>();
 
-    @ManyToMany(cascade = ALL, fetch = LAZY)
+    @ManyToMany(cascade = DETACH, fetch = LAZY)
     @JoinTable(name="changelog_source",
             joinColumns=@JoinColumn(name="lnk_id"),
             inverseJoinColumns=@JoinColumn(name="source_id")

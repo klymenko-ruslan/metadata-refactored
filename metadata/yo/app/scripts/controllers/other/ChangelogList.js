@@ -26,7 +26,6 @@ angular.module("ngMetaCrudApp")
       startingDay: 1
     };
 
-    // Notes Table
     $scope.changelogTableParams = new ngTableParams({
       page: 1,
       count: 25,
@@ -48,7 +47,7 @@ angular.module("ngMetaCrudApp")
           userId = $scope.search.user.id;
         }
         restService.filterChangelog($scope.search.startDate, $scope.search.finishDate,
-          $scope.search.service, userId, $scope.search.description, $scope.search.data,
+          $scope.search.service, userId, $scope.search.description, $scope.search.data, null,
           sortProperty, sortOrder, offset, limit).then(
           function(result) {
             // Update the total and slice the result

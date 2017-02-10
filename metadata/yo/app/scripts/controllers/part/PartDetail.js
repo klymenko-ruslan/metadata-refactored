@@ -3,10 +3,9 @@
 angular.module("ngMetaCrudApp")
 .controller("PartDetailCtrl", ["$scope", "$log", "$q", "$location", "$cookies", "$route", "$routeParams", "Kits",
     "ngTableParams", "utils", "restService", "Restangular", "User", "$uibModal", "dialogs", "gToast",
-    "part", "criticalDimensions", "manufacturers", "turbos", "auditLog",
+    "part", "criticalDimensions", "manufacturers", "turbos",
     function ($scope, $log, $q, $location, $cookies, $route, $routeParams, Kits, ngTableParams, utils,
-    restService, Restangular, User, $uibModal, dialogs, gToast, part, criticalDimensions, manufacturers,
-    turbos, auditLog) {
+    restService, Restangular, User, $uibModal, dialogs, gToast, part, criticalDimensions, manufacturers, turbos) {
   $scope.partId = part.id;
   $scope.part = part;
   $scope.formMode = "view";
@@ -34,15 +33,38 @@ angular.module("ngMetaCrudApp")
     );
   };
 
-  $scope.changelogSourcesTableParams = new ngTableParams({
-      "page": 1,
-      "count": 10,
-      "sorting": {
-        "id": "asc"
+  $scope.changelogTableParams = new ngTableParams({
+    page: 1,
+    count: 10,
+    sorting: {
+      changeDate: "desc"
+    }
+  }, {
+    getData: function($defer, params) {
+      var sortOrder;
+      var sorting = params.sorting();
+      for (var sortProperty in sorting) break;
+      if (sortProperty) {
+        sortOrder = sorting[sortProperty];
       }
-    }, {
-      "getData": utils.localPagination(auditLog, "id")
-    });
+      var offset = params.count() * (params.page() - 1);
+      var limit = params.count();
+      var userId = null;
+      restService.filterChangelog(null, null, null, null, null, null, $scope.partId,
+        sortProperty, sortOrder, offset, limit).then(
+          function(result) {
+            // Update the total and slice the result
+            $defer.resolve(result.recs);
+            params.total(result.total);
+          },
+          function(errorResponse) {
+            restService.error("Search in the changelog failed.", errorResponse);
+            $defer.reject();
+          }
+      );
+    }
+  });
+
 
   function _imgPgSz2Val(txt) {
     var retval = $scope.part.productImages.length; // all

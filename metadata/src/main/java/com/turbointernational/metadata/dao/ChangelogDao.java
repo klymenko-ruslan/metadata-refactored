@@ -2,6 +2,7 @@ package com.turbointernational.metadata.dao;
 
 import com.turbointernational.metadata.entity.Changelog;
 import com.turbointernational.metadata.entity.Changelog.ServiceEnum;
+import com.turbointernational.metadata.entity.ChangelogPart;
 import com.turbointernational.metadata.entity.User;
 import com.turbointernational.metadata.web.dto.Page;
 import org.springframework.stereotype.Repository;
@@ -40,13 +41,14 @@ public class ChangelogDao extends AbstractDao<Changelog> {
     }
 
     public Page<Changelog> filter(ServiceEnum service, Long userId, Date startDate, Date finishDate,
-                                  String description, String data,
+                                  String description, String data, Long partId,
                                   String sortProperty, String sortOrder,
                                   Integer offset, Integer limit) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Changelog> ecq = cb.createQuery(Changelog.class);
         Root<Changelog> root = ecq.from(Changelog.class);
-        Join<Object, Object> userJoin = root.join("user");
+        Join<Changelog, User> userJoin = null;
+        Join<Changelog, ChangelogPart> changelogPartJoin = null;
         ecq.select(root);
         int numPredicates = 0;
         List<Predicate> lstPredicates = new ArrayList<>(5);
@@ -55,6 +57,7 @@ public class ChangelogDao extends AbstractDao<Changelog> {
             numPredicates++;
         }
         if (userId != null) {
+            userJoin = root.join("user");
             lstPredicates.add(cb.equal(userJoin.get("id"), userId));
             numPredicates++;
         }
@@ -74,6 +77,11 @@ public class ChangelogDao extends AbstractDao<Changelog> {
             lstPredicates.add(cb.like(root.get("data"), "%" + data + "%"));
             numPredicates++;
         }
+        if (partId != null) {
+            changelogPartJoin = root.join("changelogParts");
+            lstPredicates.add(cb.equal(changelogPartJoin.get("part").get("id"), partId));
+            numPredicates++;
+        }
         Predicate[] arrPredicates = lstPredicates.toArray(new Predicate[numPredicates]);
         ecq.where(arrPredicates);
         if (sortOrder != null) {
@@ -82,6 +90,9 @@ public class ChangelogDao extends AbstractDao<Changelog> {
             }
             From f;
             if (sortProperty.equals("user.name")) {
+                if (userJoin == null) {
+                    userJoin = root.join("user");
+                }
                 f = userJoin;
                 sortProperty = "name";
             } else {
@@ -105,16 +116,16 @@ public class ChangelogDao extends AbstractDao<Changelog> {
         List<Changelog> recs = q.getResultList();
         CriteriaQuery<Long> ccq = cb.createQuery(Long.class);
         Root<Changelog> changelogCountRoot = ccq.from(Changelog.class);
-        changelogCountRoot.join("user");
+        if (userId != null) {
+            changelogCountRoot.join("user");
+        }
+        if (partId != null) {
+            changelogCountRoot.join("changelogParts");
+        }
         ccq.select(cb.count(changelogCountRoot));
         ccq.where(arrPredicates);
         long total = em.createQuery(ccq).getSingleResult();
         return new Page(total, recs);
     }
 
-    public List<Changelog> findChangelogsForPart(Long partId) {
-        return em.createNamedQuery("findChangelogsForPart", Changelog.class)
-                .setParameter("partId", partId)
-                .getResultList();
-    }
 }

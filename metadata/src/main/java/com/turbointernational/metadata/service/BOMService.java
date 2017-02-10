@@ -487,7 +487,7 @@ public class BOMService {
          * See ticket #891 for details.
          */
         @JsonView(View.Summary.class)
-        private Long[] sourceIds;
+        private Long[] sourcesIds;
 
         @JsonView(View.Summary.class)
         private Integer[] chlogSrcRatings;
@@ -514,12 +514,12 @@ public class BOMService {
             this.parentPartId = parentPartId;
         }
 
-        public Long[] getSourceIds() {
-            return sourceIds;
+        public Long[] getSourcesIds() {
+            return sourcesIds;
         }
 
-        public void setSourceIds(Long[] sourceIds) {
-            this.sourceIds = sourceIds;
+        public void setSourcesIds(Long[] sourcesIds) {
+            this.sourcesIds = sourcesIds;
         }
 
         public Integer[] getChlogSrcRatings() {
@@ -1002,12 +1002,13 @@ public class BOMService {
                 throw new AssertionError("Child part must have the same manufacturer as the Parent part.");
             }
             try {
-                Long[] sourceIds = request.getSourceIds();
+                Long[] sourceIds = request.getSourcesIds();
                 CreateBOMItemResult cbir = _create(parentPartId, childId, row.getQuantity());
                 if (sourceIds != null && sourceIds.length > 0) {
                     Date now  = new Date();
-                    ChangelogSourceLink link = new ChangelogSourceLink(cbir.getChangelog(), user, now,
-                            request.getChlogSrcLnkDescription());
+                    Changelog changelog = cbir.getChangelog();
+                    String descritpion = request.getChlogSrcLnkDescription();
+                    ChangelogSourceLink link = new ChangelogSourceLink(changelog, user, now, descritpion);
                     changelogSourceLinkDao.persist(link);
                     Integer[] ratings = request.getChlogSrcRatings();
                     for (int i = 0; i < sourceIds.length; i++) {

@@ -14,6 +14,7 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -93,11 +94,11 @@ public class ChangelogControllerTest {
     )
     @WithUserDetails("Admin")
     public void findChangelogsForPart() throws Exception {
-        mockMvc.perform(get("/metadata/changelog/part/25861")
+        mockMvc.perform(get("/metadata/changelog/list?partId=25861&sortProperty=id&sortOrder=asc")
                 .contentType(contentType))
                 .andExpect(status().isOk())
 //                .andDo(MockMvcResultHandlers.print());
-                .andExpect(content().json("[{\"id\":2,\"service\":\"BOM\",\"changeDate\":1485087883000,\"user\":{\"id\":1,\"name\":\"Admin\",\"email\":\"admin@gmail.com\",\"username\":\"Admin\"},\"description\":\"test\"},{\"id\":3,\"service\":\"BOM\",\"changeDate\":1485087884000,\"user\":{\"id\":1,\"name\":\"Admin\",\"email\":\"admin@gmail.com\",\"username\":\"Admin\"},\"description\":\"test\"},{\"id\":4,\"service\":\"BOM\",\"changeDate\":1485087885000,\"user\":{\"id\":1,\"name\":\"Admin\",\"email\":\"admin@gmail.com\",\"username\":\"Admin\"},\"description\":\"test\"}]"));
+                .andExpect(content().json("{\"total\":3,\"recs\":[{\"id\":2,\"service\":\"BOM\",\"changeDate\":1485087883000,\"user\":{\"id\":1,\"name\":\"Admin\",\"email\":\"admin@gmail.com\",\"username\":\"Admin\"},\"description\":\"test\"},{\"id\":3,\"service\":\"BOM\",\"changeDate\":1485087884000,\"user\":{\"id\":1,\"name\":\"Admin\",\"email\":\"admin@gmail.com\",\"username\":\"Admin\"},\"description\":\"test\"},{\"id\":4,\"service\":\"BOM\",\"changeDate\":1485087885000,\"user\":{\"id\":1,\"name\":\"Admin\",\"email\":\"admin@gmail.com\",\"username\":\"Admin\"},\"description\":\"test\"}]}"));
     }
 
 }

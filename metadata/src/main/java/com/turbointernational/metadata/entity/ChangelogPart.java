@@ -92,4 +92,18 @@ public class ChangelogPart implements Serializable {
 
     //</editor-fold>
 
+    //<editor-fold defaultstate="collapsed" desc="Object methods">
+
+    @Override
+    public String toString() {
+        return "ChangelogPart{" +
+                "id=" + id +
+                ", changelog=" + changelog +
+                ", part=" + part +
+                ", role=" + role +
+                '}';
+    }
+
+    //</editor-fold>
+
 }

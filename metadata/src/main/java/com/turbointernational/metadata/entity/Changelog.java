@@ -1,6 +1,7 @@
 package com.turbointernational.metadata.entity;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.entity.chlogsrc.ChangelogSourceLink;
 import com.turbointernational.metadata.util.View;
 
 import javax.persistence.*;
@@ -9,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static javax.persistence.CascadeType.DETACH;
 import static javax.persistence.EnumType.STRING;
 import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.AUTO;
@@ -19,15 +21,6 @@ import static javax.persistence.TemporalType.TIMESTAMP;
  */
 @Entity
 @Table(name = "changelog")
-@NamedQueries({
-    @NamedQuery(
-            name = "findChangelogsForPart",
-            query = "select c " +
-                    "from Changelog c " +
-                    "join c.changelogParts p " +
-                    "where p.part.id=:partId " +
-                    "order by c.id asc")
-})
 public class Changelog implements Serializable {
 
     public enum ServiceEnum {

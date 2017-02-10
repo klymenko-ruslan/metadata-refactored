@@ -42,21 +42,13 @@ public class ChangelogController {
                                            @DateTimeFormat(pattern = "yyyy-MM-dd") Calendar finishDate,
                                            @RequestParam(name = "description", required = false) String description,
                                            @RequestParam(name = "data", required = false) String data,
+                                           @RequestParam(name = "partId", required = false) Long partId,
                                            @RequestParam(name = "sortProperty", required = false) String sortProperty,
                                            @RequestParam(name = "sortOrder", required = false) String sortOrder,
                                            @RequestParam(name = "offset", required = false) Integer offset,
                                            @RequestParam(name = "limit", required = false) Integer limit) {
-        return changelogService.filter(service, userId, startDate, finishDate, description, data,
+        return changelogService.filter(service, userId, startDate, finishDate, description, data, partId,
                 sortProperty, sortOrder, offset, limit);
-    }
-
-
-    @RequestMapping(value = "/part/{id}", method = GET)
-    @ResponseBody
-    @JsonView(View.Summary.class)
-    @Secured("ROLE_CHLOGSRC_READ")
-    public List<Changelog> findChangelogsForPart(@PathVariable("id") Long partId) {
-        return changelogService.findChangelogsForPart(partId);
     }
 
 }

@@ -1,5 +1,6 @@
 package com.turbointernational.metadata.web.controller;
 
+import com.turbointernational.metadata.entity.ChangelogPart;
 import com.turbointernational.metadata.entity.chlogsrc.ChangelogSource;
 import com.turbointernational.metadata.entity.chlogsrc.ChangelogSourceLink;
 import com.turbointernational.metadata.entity.chlogsrc.Source;
@@ -23,8 +24,12 @@ import org.springframework.web.context.WebApplicationContext;
 
 import javax.persistence.EntityManager;
 import java.nio.charset.Charset;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import static com.turbointernational.metadata.entity.ChangelogPart.Role.BOM_CHILD;
+import static com.turbointernational.metadata.entity.ChangelogPart.Role.BOM_PARENT;
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -99,7 +104,7 @@ public class BOMControllerTest {
     )
     @WithUserDetails("Admin")
     public void testCreateChangelogSource() throws Exception {
-        String requestBody = "{\"parentPartId\":\"14510\",\"rows\":[{\"childPartId\":17754,\"quantity\":1}],\"sourceIds\":[1,2],\"chlogSrcRatings\":[2,0],\"chlogSrcLnkDescription\":\"Hello world!\"}";
+        String requestBody = "{\"parentPartId\":\"14510\",\"rows\":[{\"childPartId\":17754,\"quantity\":1}],\"sourcesIds\":[1,2],\"chlogSrcRatings\":[2,0],\"chlogSrcLnkDescription\":\"Hello world!\"}";
         String responseBody = "{\"failures\":[],\"boms\":[{\"class\":\"com.turbointernational.metadata.entity.BOMItem\",\"id\":1,\"parent\":{\"class\":\"com.turbointernational.metadata.entity.part.types.Turbo\",\"id\":14510,\"manufacturer\":{\"id\":2,\"name\":\"Holset\"},\"manufacturerPartNumber\":\"3534378\",\"name\":null,\"dimLength\":null,\"dimWidth\":null,\"dimHeight\":null,\"weight\":null,\"partType\":{\"id\":1,\"name\":\"Turbo\",\"value\":\"turbo\",\"magentoAttributeSet\":\"Turbo\"},\"version\":1,\"legendImgFilename\":null},\"child\":{\"class\":\"com.turbointernational.metadata.entity.part.types.Turbo\",\"id\":17754,\"manufacturer\":{\"id\":2,\"name\":\"Holset\"},\"manufacturerPartNumber\":\"3768655\",\"name\":null,\"dimLength\":null,\"dimWidth\":null,\"dimHeight\":null,\"weight\":null,\"partType\":{\"id\":1,\"name\":\"Turbo\",\"value\":\"turbo\",\"magentoAttributeSet\":\"Turbo\"},\"version\":1,\"legendImgFilename\":null},\"quantity\":1}]}";
         mockMvc.perform(post("/metadata/bom")
                 .content(requestBody).contentType(contentType))
@@ -118,8 +123,18 @@ public class BOMControllerTest {
         // Check that two links between two sources and a record in the changelog have been created.
         List<ChangelogSource> chlgSrcs = em.createQuery("from ChangelogSource", ChangelogSource.class)
                 .getResultList();
-        assertNotNull(chlgSrcs);
         assertEquals(2, chlgSrcs.size());
+        // Check that parts ids for this operation are saved (ticket #906).
+        List<ChangelogPart> chlgPrts = em.createQuery("from ChangelogPart").getResultList();
+        assertEquals(2, chlgPrts.size());
+        Map<Long, ChangelogPart> mcp = new HashMap<>(2); // part id => ChangelogPart
+        chlgPrts.stream().forEach(cp -> mcp.put(cp.getPart().getId(), cp));
+        ChangelogPart cpForParent = mcp.get(new Long(14510));
+        assertNotNull(cpForParent);
+        assertEquals(BOM_PARENT, cpForParent.getRole());
+        ChangelogPart cpForChild = mcp.get(new Long(17754));
+        assertNotNull(cpForChild);
+        assertEquals(BOM_CHILD, cpForChild.getRole());
     }
 
 }
