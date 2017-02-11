@@ -13,7 +13,7 @@
 
 <table data-ng-table="bomTableParams" class="table table-bordered table-striped table-hover table-responsive">
   <tr data-ng-repeat="bomItem in $data">
-    <td title="'Part #'" class="text-center" data-sortable="'child.manufacturerPartNumber'">
+    <td title="'Part #'" class="text-center text-nowrap" data-sortable="'child.manufacturerPartNumber'">
       <a data-ng-href="/part/{{bomItem.child.id}}">{{bomItem.child.manufacturerPartNumber}}</a>
     </td>
     <td title="'Qty'" class="text-right" data-sortable="'quantity'">
@@ -33,7 +33,7 @@
       </li>
       </ul>
     </td>
-    <td title="'Actions'">
+    <td title="'Actions'" class="actions">
 
       <button data-ng-click="modifyStart(bomItem)"
               authorize="ROLE_BOM" class="btn btn-warning btn-xs"
