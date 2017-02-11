@@ -1,5 +1,6 @@
 package com.turbointernational.metadata.web.controller;
 
+import com.turbointernational.metadata.AbstractFunctionalWebTest;
 import com.turbointernational.metadata.dao.ChangelogDao;
 import com.turbointernational.metadata.dao.PartDao;
 import com.turbointernational.metadata.entity.Manufacturer;
@@ -7,84 +8,29 @@ import com.turbointernational.metadata.entity.PartType;
 import com.turbointernational.metadata.entity.TurboModel;
 import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.entity.part.types.*;
-import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.security.test.context.support.WithUserDetails;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.jdbc.SqlConfig;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.context.WebApplicationContext;
-
-import java.nio.charset.Charset;
-import java.util.Arrays;
 
 import static org.junit.Assert.*;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 
 /**
  * Created by dmytro.trunykov@zorallabs.com on 12/19/16.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest
-@ActiveProfiles("integration")
-@Transactional
-@SqlConfig(
-        dataSource = "dataSource",
-        transactionManager = "transactionManagerMetadata"
-)
-public class PartControllerTest {
-
-    @Autowired
-    private WebApplicationContext webApplicationContext;
+public class PartControllerTest extends AbstractFunctionalWebTest {
 
     @Autowired
     private PartDao partDao;
 
     @Autowired
     private ChangelogDao changelogDao;
-
-    private MockMvc mockMvc;
-
-    private HttpMessageConverter mappingJackson2HttpMessageConverter;
-
-    private MediaType contentType = new MediaType(APPLICATION_JSON.getType(),
-            APPLICATION_JSON.getSubtype(),
-            Charset.forName("utf8"));
-
-    @Autowired
-    void setConverters(HttpMessageConverter<?>[] converters) {
-
-        this.mappingJackson2HttpMessageConverter = Arrays.asList(converters).stream()
-                .filter(hmc -> hmc instanceof MappingJackson2HttpMessageConverter)
-                .findAny()
-                .orElse(null);
-
-        assertNotNull("the JSON message converter must not be null",
-                this.mappingJackson2HttpMessageConverter);
-    }
-
-    @Before
-    public void setup() throws Exception {
-        this.mockMvc = webAppContextSetup(webApplicationContext).build();
-    }
 
     @Test
     @Sql(

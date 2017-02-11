@@ -6,7 +6,7 @@ import static com.turbointernational.metadata.service.search.parser.SearchTermCm
 import static org.junit.Assert.*;
 
 /**
- * Created by dmytro.trunykov@zorallabs.com on 11.05.16.
+ * Created by dmytro.trunykov@zorallabs.com on 2016-05-11.
  */
 public class SearchTermCmpOperatorEnumTest {
 

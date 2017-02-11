@@ -1,5 +1,6 @@
 package com.turbointernational.metadata.service;
 
+import com.turbointernational.metadata.AbstractFunctionalTest;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,17 +19,9 @@ import java.util.Map;
  * It is rather code snippets for testing implemented functionality.
  * These tests are launched manually.
  *
- * Created by dmytro.trunykov@zorallabs.com on 11.05.16.
+ * Created by dmytro.trunykov@zorallabs.com on 2016-11-05.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest
-@ActiveProfiles("integration")
-@Transactional
-@SqlConfig(
-        dataSource = "dataSource",
-        transactionManager = "transactionManagerMetadata"
-)
-public class SearchServiceEsImplTest {
+public class SearchServiceEsImplTest extends AbstractFunctionalTest {
 
     @Autowired
     private SearchService searchService;

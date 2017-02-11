@@ -1,82 +1,33 @@
 package com.turbointernational.metadata.web.controller;
 
+import com.turbointernational.metadata.AbstractFunctionalWebTest;
 import com.turbointernational.metadata.dao.CarModelEngineYearDao;
 import com.turbointernational.metadata.entity.CarEngine;
 import com.turbointernational.metadata.entity.CarModel;
 import com.turbointernational.metadata.entity.CarModelEngineYear;
 import com.turbointernational.metadata.entity.CarYear;
-import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.security.test.context.support.WithUserDetails;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.jdbc.SqlConfig;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
-
-import java.nio.charset.Charset;
-import java.util.Arrays;
-
-import static org.junit.Assert.*;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 /**
- * Created by dmytro.trunykov@zorallabs.com on 12/22/16.
+ * Created by dmytro.trunykov@zorallabs.com on 2016-12-22.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest
-@ActiveProfiles("integration")
-@Transactional
-@SqlConfig(
-        dataSource = "dataSource",
-        transactionManager = "transactionManagerMetadata"
-)
-public class ApplicationControllerTest {
+public class ApplicationControllerTest extends AbstractFunctionalWebTest {
 
     @Autowired
     private CarModelEngineYearDao carModelEngineYearDao;
 
     @Autowired
     private WebApplicationContext webApplicationContext;
-
-    private MockMvc mockMvc;
-
-    private HttpMessageConverter mappingJackson2HttpMessageConverter;
-
-    private MediaType contentType = new MediaType(APPLICATION_JSON.getType(),
-            APPLICATION_JSON.getSubtype(),
-            Charset.forName("utf8"));
-
-    @Autowired
-    void setConverters(HttpMessageConverter<?>[] converters) {
-
-        this.mappingJackson2HttpMessageConverter = Arrays.asList(converters).stream()
-                .filter(hmc -> hmc instanceof MappingJackson2HttpMessageConverter)
-                .findAny()
-                .orElse(null);
-
-        assertNotNull("the JSON message converter must not be null",
-                this.mappingJackson2HttpMessageConverter);
-    }
-
-    @Before
-    public void setup() throws Exception {
-        this.mockMvc = webAppContextSetup(webApplicationContext).build();
-    }
 
     @Test
     @Sql(

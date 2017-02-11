@@ -1,34 +1,21 @@
 package com.turbointernational.metadata.service;
 
+import com.turbointernational.metadata.AbstractFunctionalTest;
 import com.turbointernational.metadata.dao.PartDao;
 import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.service.BOMService.FoundBomRecursionException;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.jdbc.SqlConfig;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
 
 /**
- * Created by dmytro.trunykov@zorallabs.com on 18.02.16.
+ * Created by dmytro.trunykov@zorallabs.com on 2016-02-18.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest
-@ActiveProfiles("integration")
-@Transactional
-@SqlConfig(
-        dataSource = "dataSource",
-        transactionManager = "transactionManagerMetadata"
-)
-public class BOMServiceTest {
+public class BOMServiceTest extends AbstractFunctionalTest {
 
     @Autowired
     private PartDao partDao;

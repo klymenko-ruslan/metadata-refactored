@@ -1,48 +1,25 @@
 package com.turbointernational.metadata.service;
 
+import com.turbointernational.metadata.AbstractFunctionalTest;
 import com.turbointernational.metadata.dao.InterchangeDao;
 import com.turbointernational.metadata.dao.PartDao;
 import com.turbointernational.metadata.entity.part.Interchange;
 import com.turbointernational.metadata.entity.part.Part;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.test.context.support.WithUserDetails;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.jdbc.SqlConfig;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.jdbc.JdbcTestUtils;
-import org.springframework.transaction.annotation.Transactional;
 
-import javax.sql.DataSource;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Created by dmytro.trunykov@zorallabs.com on 2/10/16.
+ * Created by dmytro.trunykov@zorallabs.com on 2016-02-10.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest
-@ActiveProfiles("integration")
-@Transactional
-@SqlConfig(
-        dataSource = "dataSource",
-        transactionManager = "transactionManagerMetadata"
-)
-public class InterchangeServiceTest {
-
-    @Qualifier("dataSource")
-    @Autowired
-    private DataSource dataSource;
-
-    private JdbcTemplate jdbcTemplate;
+public class InterchangeServiceTest extends AbstractFunctionalTest {
 
     @Autowired
     private InterchangeService interchangeService;
@@ -52,12 +29,6 @@ public class InterchangeServiceTest {
 
     @Autowired
     private InterchangeDao interchangeDao;
-
-    @Before
-    public void beforeTest() {
-        this.jdbcTemplate = new JdbcTemplate(dataSource);
-    }
-
 
     //@formatter:off
     /**

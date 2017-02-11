@@ -8,7 +8,7 @@ import static com.turbointernational.metadata.service.search.parser.SearchTermCm
 import static org.junit.Assert.*;
 
 /**
- * Created by dmytry.trunykov@zorallabs.com on 10.05.16.
+ * Created by dmytro.trunykov@zorallabs.com on 2016-05-10.
  */
 public class SearchTermFactoryTest {
 

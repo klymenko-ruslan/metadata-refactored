@@ -7,14 +7,14 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
 
 /**
  * Created by dmytro.trunykov@zorallabs.com on 2017-02-10.
  */
-public class ChangelogTest extends AbstractFunctionalTest {
+public class ChangelogWebTest extends AbstractFunctionalTest {
 
     @Autowired
     private ChangelogDao changelogDao;

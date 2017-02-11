@@ -1,5 +1,6 @@
 package com.turbointernational.metadata.service;
 
+import com.turbointernational.metadata.AbstractFunctionalTest;
 import com.turbointernational.metadata.dao.PartDao;
 import com.turbointernational.metadata.dao.UserDao;
 import com.turbointernational.metadata.entity.Mas90Sync;
@@ -8,18 +9,12 @@ import com.turbointernational.metadata.entity.part.Part;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.jdbc.JdbcTestUtils;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.sql.DataSource;
@@ -27,29 +22,13 @@ import javax.sql.DataSource;
 import static org.springframework.transaction.TransactionDefinition.PROPAGATION_REQUIRES_NEW;
 
 /**
- * Created by dmytro.trunykov on 3/6/16.
+ * Created by dmytro.trunykov@zorallabs.com on 2016-03-06.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest
-@ActiveProfiles("integration")
-@Transactional
-@SqlConfig(
-        dataSource = "dataSource",
-        transactionManager = "transactionManagerMetadata"
-)
-public class Mas90SyncServiceTest {
-
-    @Autowired
-    @Qualifier("dataSource")
-    private DataSource dataSource;
+public class Mas90SyncServiceTest extends AbstractFunctionalTest {
 
     @Autowired
     @Qualifier("dataSourceMas90")
     private DataSource dataSourceMas90;
-
-    @Qualifier("transactionManager")
-    @Autowired
-    private PlatformTransactionManager txManager; // JPA
 
     @Autowired
     private Mas90SyncService mas90SyncService;
@@ -59,8 +38,6 @@ public class Mas90SyncServiceTest {
 
     @Autowired
     private UserDao userDao;
-
-    private JdbcTemplate jdbcTemplateMetadata;
 
     private JdbcTemplate jdbcTemplateMas90;
 
@@ -72,7 +49,6 @@ public class Mas90SyncServiceTest {
 
     @Before
     public void setUp() {
-        this.jdbcTemplateMetadata = new JdbcTemplate(dataSource);
         this.jdbcTemplateMas90 = new JdbcTemplate(dataSourceMas90);
         this.user = userDao.findOne(1L); // admin
         // We have to reset sync.process status in case when prev run test failed.
@@ -143,14 +119,14 @@ public class Mas90SyncServiceTest {
             scripts = "classpath:integration_tests/clear_dictionaries.sql"
     )
     public void testInsertNewPart_0() {
-        int numMas90Sync = JdbcTestUtils.countRowsInTable(jdbcTemplateMetadata, "mas90sync");
+        int numMas90Sync = JdbcTestUtils.countRowsInTable(jdbcTemplate, "mas90sync");
         Assert.assertEquals("Table 'mas90sync' is empty.", 1, numMas90Sync);
-        int numPartsBefore = JdbcTestUtils.countRowsInTable(jdbcTemplateMetadata, "part");
+        int numPartsBefore = JdbcTestUtils.countRowsInTable(jdbcTemplate, "part");
         Assert.assertEquals("Table 'part' is not empty before test.", 0, numPartsBefore);
         int numCiItemBefore = JdbcTestUtils.countRowsInTable(jdbcTemplateMas90, "ci_item");
         Assert.assertEquals("Table 'ci_item' has unexpected number of records.", 1, numCiItemBefore);
         mas90Synchronizer.run();
-        int numPartsAfter = JdbcTestUtils.countRowsInTable(jdbcTemplateMetadata, "part");
+        int numPartsAfter = JdbcTestUtils.countRowsInTable(jdbcTemplate, "part");
         // Check record with result.
         Assert.assertEquals("Some part(s) were inserted.", 0, numPartsAfter);
         Assert.assertNotNull("The 'mas90sync' record was not persistent.", record.getId());
@@ -220,16 +196,16 @@ public class Mas90SyncServiceTest {
             scripts = "classpath:integration_tests/clear_dictionaries.sql"
     )
     public void testInsertNewPart_1() {
-        int numPartsBefore = JdbcTestUtils.countRowsInTable(jdbcTemplateMetadata, "part");
+        int numPartsBefore = JdbcTestUtils.countRowsInTable(jdbcTemplate, "part");
         Assert.assertEquals("Table 'part' is not empty before test.", 0, numPartsBefore);
         int numCiItemBefore = JdbcTestUtils.countRowsInTable(jdbcTemplateMas90, "ci_item");
         Assert.assertEquals("Table 'ci_item' has unexpected number of records.", 1, numCiItemBefore);
         mas90Synchronizer.run();
-        int numPartsAfter = JdbcTestUtils.countRowsInTable(jdbcTemplateMetadata, "part");
+        int numPartsAfter = JdbcTestUtils.countRowsInTable(jdbcTemplate, "part");
         Assert.assertEquals("A new part has not been inserted.", 1, numPartsAfter);
         Assert.assertEquals("A new part (cartridge) has been created partially. " +
                         "Table 'cartridge' has no corresponding record.", 1,
-                JdbcTestUtils.countRowsInTable(jdbcTemplateMetadata, "cartridge"));
+                JdbcTestUtils.countRowsInTable(jdbcTemplate, "cartridge"));
         Part part = partDao.findByPartNumber("1-A-1047");
         Assert.assertNotNull("Part (1-A-1047) not found.", part);
         Assert.assertNotNull(part.getManufacturer());
@@ -239,7 +215,7 @@ public class Mas90SyncServiceTest {
         Assert.assertEquals("Wrong description.", "*NLA - USE 1-A-1046* CARTRIDGE", part.getDescription());
         Assert.assertTrue("Wrong 'inactive'.", part.getInactive());
         Assert.assertEquals("Table BOM must be empty.", 0,
-                JdbcTestUtils.countRowsInTable(jdbcTemplateMetadata, "bom"));
+                JdbcTestUtils.countRowsInTable(jdbcTemplate, "bom"));
         // Check record with result.
         Assert.assertNotNull("The 'mas90sync' record was not persistent.", record.getId());
         Assert.assertNotNull("Field 'started' was not initialized.", record.getStarted());
@@ -314,7 +290,7 @@ public class Mas90SyncServiceTest {
             scripts = "classpath:integration_tests/clear_dictionaries.sql"
     )
     public void testInsertNewPart_2() {
-        int numPartsBefore = JdbcTestUtils.countRowsInTable(jdbcTemplateMetadata, "part");
+        int numPartsBefore = JdbcTestUtils.countRowsInTable(jdbcTemplate, "part");
         Assert.assertEquals("Unexpected number of rows in the table 'part'.", 2, numPartsBefore);
         int numCiItemBefore = JdbcTestUtils.countRowsInTable(jdbcTemplateMas90, "ci_item");
         Assert.assertEquals("Table 'ci_item' has unexpected number of records.", 1, numCiItemBefore);
@@ -323,11 +299,11 @@ public class Mas90SyncServiceTest {
         int numBmBillheader = JdbcTestUtils.countRowsInTable(jdbcTemplateMas90, "bm_billheader");
         Assert.assertEquals("Table 'bm_billheader' has unexpected number of records.", 1, numBmBillheader);
         mas90Synchronizer.run();
-        int numPartsAfter = JdbcTestUtils.countRowsInTable(jdbcTemplateMetadata, "part");
+        int numPartsAfter = JdbcTestUtils.countRowsInTable(jdbcTemplate, "part");
         Assert.assertEquals("A new part has not been inserted.", 3, numPartsAfter); // 3 = 2 in the begin + 1 new
         Assert.assertEquals("A new part (kit) has been created partially. " +
                         "Table 'kit' has no corresponding record.", 2,
-                JdbcTestUtils.countRowsInTable(jdbcTemplateMetadata, "kit"));
+                JdbcTestUtils.countRowsInTable(jdbcTemplate, "kit"));
         Part part = partDao.findByPartNumber("14-A-5383");
         Assert.assertNotNull("Part (14-A-5383) not found.", part);
         Assert.assertNotNull(part.getManufacturer());
@@ -337,7 +313,7 @@ public class Mas90SyncServiceTest {
         Assert.assertEquals("Wrong description.", "CHRA & Nozzle Ring assy, GT174", part.getDescription());
         Assert.assertFalse("Wrong 'inactive'.", part.getInactive());
         Assert.assertEquals("Unexpected number of BOMs.", 2,
-                JdbcTestUtils.countRowsInTable(jdbcTemplateMetadata, "bom"));
+                JdbcTestUtils.countRowsInTable(jdbcTemplate, "bom"));
         // Check record with result.
         Assert.assertNotNull("The 'mas90sync' record was not persistent.", record.getId());
         Assert.assertNotNull("Field 'started' was not initialized.", record.getStarted());

@@ -17,7 +17,7 @@ import java.util.Set;
 /**
  * Mocked implementation of the {@link SearchService} interface for integration testing.
  *
- * Created by dmytro.trunykov@zorallabs.com on 3/8/16.
+ * Created by dmytro.trunykov@zorallabs.com on 2016-03-08.
  */
 @Service
 @Profile("integration")

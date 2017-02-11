@@ -3,27 +3,20 @@ package com.turbointernational.metadata;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.context.WebApplicationContext;
 
 import javax.persistence.EntityManager;
-import java.nio.charset.Charset;
-
-import static java.util.Arrays.asList;
-import static org.junit.Assert.assertNotNull;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
+import javax.sql.DataSource;
 
 /**
- * Created by trunikov on 2/10/17.
+ * Created by dmytro.trunykov@zorallabs.com on 11-02-2017.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
@@ -33,37 +26,24 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
         dataSource = "dataSource",
         transactionManager = "transactionManagerMetadata"
 )
-public abstract class AbstractFunctionalTest {
+public class AbstractFunctionalTest {
 
+    @Qualifier("dataSource")
     @Autowired
-    private WebApplicationContext webApplicationContext;
+    private DataSource dataSource;
+
+    @Qualifier("transactionManager")
+    @Autowired
+    protected PlatformTransactionManager txManager; // JPA
 
     @Autowired
     protected EntityManager em;
 
-    protected MockMvc mockMvc;
-
-    private HttpMessageConverter mappingJackson2HttpMessageConverter;
-
-    private MediaType contentType = new MediaType(APPLICATION_JSON.getType(),
-            APPLICATION_JSON.getSubtype(),
-            Charset.forName("utf8"));
-
-    @Autowired
-    void setConverters(HttpMessageConverter<?>[] converters) {
-
-        this.mappingJackson2HttpMessageConverter = asList(converters).stream()
-                .filter(hmc -> hmc instanceof MappingJackson2HttpMessageConverter)
-                .findAny()
-                .orElse(null);
-
-        assertNotNull("the JSON message converter must not be null",
-                this.mappingJackson2HttpMessageConverter);
-    }
+    protected JdbcTemplate jdbcTemplate;
 
     @Before
-    public void setup() throws Exception {
-        this.mockMvc = webAppContextSetup(webApplicationContext).build();
+    public void beforeTest() {
+        this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
 }

@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by dmytro.trunykov@gmail.com on 5/6/16.
+ * Created by dmytro.trunykov@gmail.com on 2016-05-06.
  */
 public class JsonIdxNameTransformerTest {
 

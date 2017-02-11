@@ -1,5 +1,6 @@
 package com.turbointernational.metadata.web.controller;
 
+import com.turbointernational.metadata.AbstractFunctionalWebTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,46 +35,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 /**
  * Created by dmytro.trunykov@zorallabs.com on 2017-02-03.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest
-@ActiveProfiles("integration")
-@Transactional
-@SqlConfig(
-        dataSource = "dataSource",
-        transactionManager = "transactionManagerMetadata"
-)
-public class ChangelogControllerTest {
-
-    @Autowired
-    private EntityManager em;
-
-    @Autowired
-    private WebApplicationContext webApplicationContext;
-
-    private MockMvc mockMvc;
-
-    private HttpMessageConverter mappingJackson2HttpMessageConverter;
-
-    private MediaType contentType = new MediaType(APPLICATION_JSON.getType(),
-            APPLICATION_JSON.getSubtype(),
-            Charset.forName("utf8"));
-
-    @Autowired
-    void setConverters(HttpMessageConverter<?>[] converters) {
-
-        this.mappingJackson2HttpMessageConverter = asList(converters).stream()
-                .filter(hmc -> hmc instanceof MappingJackson2HttpMessageConverter)
-                .findAny()
-                .orElse(null);
-
-        assertNotNull("the JSON message converter must not be null",
-                this.mappingJackson2HttpMessageConverter);
-    }
-
-    @Before
-    public void setup() throws Exception {
-        this.mockMvc = webAppContextSetup(webApplicationContext).build();
-    }
+public class ChangelogControllerTest extends AbstractFunctionalWebTest {
 
     @Test
     @Sql(
