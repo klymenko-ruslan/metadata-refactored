@@ -3,11 +3,14 @@
 angular.module("ngMetaCrudApp")
 .controller("PartDetailCtrl", ["$scope", "$log", "$q", "$location", "$cookies", "$route", "$routeParams", "Kits",
     "ngTableParams", "utils", "restService", "Restangular", "User", "$uibModal", "dialogs", "gToast",
-    "part", "criticalDimensions", "manufacturers", "turbos",
+    "part", "criticalDimensions", "manufacturers", "turbos", "oversizeParts", "standardParts",
     function ($scope, $log, $q, $location, $cookies, $route, $routeParams, Kits, ngTableParams, utils,
-    restService, Restangular, User, $uibModal, dialogs, gToast, part, criticalDimensions, manufacturers, turbos) {
+    restService, Restangular, User, $uibModal, dialogs, gToast, part, criticalDimensions, manufacturers, turbos,
+    oversizeParts, standardParts) {
   $scope.partId = part.id;
   $scope.part = part;
+  $scope.oversizeParts = oversizeParts;
+  $scope.standardParts = standardParts;
   $scope.formMode = "view";
   $scope.partImagesPageNum = 1;
   $scope.criticalDimensions = criticalDimensions;
@@ -547,6 +550,81 @@ angular.module("ngMetaCrudApp")
         }]
       }
     });
+  };
+
+  $scope.oversizePartsTableParams = new ngTableParams({
+    "page": 1,
+    "count": 10,
+    "sorting": {
+      "manufacturerPartNumber": "asc"
+    }
+  }, {
+    "getData": utils.localPagination($scope.oversizeParts, "manufacturerPartNumber")
+  });
+
+  $scope.standardPartsTableParams = new ngTableParams({
+    "page": 1,
+    "count": 10,
+    "sorting": {
+      "manufacturerPartNumber": "asc"
+    }
+  }, {
+    "getData": utils.localPagination($scope.standardParts, "manufacturerPartNumber")
+  });
+
+  $scope.onDeleteOversizePart = function(oversizePart) {
+    dialogs.confirm(
+      "Delete Oversize Part?",
+      "Do you want to delete this oversize part?").result.then(
+      function() {
+        // Yes
+        restService.deleteStandardOversizePart($scope.partId, oversizePart.id).then(
+          function() {
+            // Success
+            gToast.open("The oversize part has been deleted.");
+            var idx = _.findIndex($scope.oversizeParts, function(op) {
+              return op.id === oversizePart.id;
+            });
+            $scope.oversizeParts.splice(idx, 1);
+            $scope.oversizePartsTableParams.reload();
+          },
+          function() {
+            // Error
+            restService.error("Could not delete the oversize part.", error);
+          }
+        );
+      },
+      function() {
+        // No
+      }
+    );
+  };
+
+  $scope.onDeleteStandardPart = function(standardPart) {
+    dialogs.confirm(
+      "Delete Standard Part?",
+      "Do you want to delete this standard part?").result.then(
+      function() {
+        // Yes
+        restService.deleteStandardOversizePart(standardPart.id, $scope.partId).then(
+          function() {
+            // Success
+            gToast.open("The standard part has been deleted.");
+            var idx = _.findIndex($scope.oversizeParts, function(op) {
+              return op.id === standardPartPart.id;
+            });
+            $scope.standardParts.splice(idx, 1);
+            $scope.standardPartsTableParams.reload();
+          },
+          function() {
+            // Error
+            restService.error("Could not delete the standard part.", error);
+          });
+      },
+      function() {
+        // No
+      }
+    );
   };
 
 }])

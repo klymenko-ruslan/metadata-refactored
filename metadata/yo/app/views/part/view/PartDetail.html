@@ -1,0 +1,127 @@
+<metanav>
+
+  <li authorize="ROLE_READ">
+    <a data-ng-href="/part/{{ partId }}/ancestors"
+       class="btn btn-info">
+      <i class="fa fa-sitemap"></i>
+      Where used &hellip;
+    </a>
+  </li>
+
+  <li authorize="ROLE_INTERCHANGE">
+    <a data-ng-href="/part/{{ partId }}/interchange/search"
+       class="btn btn-info">
+      <i class="fa fa-random"></i>
+      Interchanges &hellip;
+    </a>
+  </li>
+
+  <li authorize="ROLE_SALES_NOTE_READ">
+    <a data-ng-href="/part/{{partId}}/sales_notes"
+       class="btn btn-info">
+      <i class="fa fa-book"></i>
+      Sales Notes &hellip;
+    </a>
+  </li>
+  <li class="pull-right col-xs-2">
+    <a class="btn btn-default" disabled="disabled">
+      <strong data-ng-show="part.inactive === false">Active</strong>
+      <strong data-ng-show="part.inactive === true">Inactive</strong>
+    </a>
+  </li>
+</metanav>
+
+<div class="row">
+  <div class="col-xs-8">
+    <h1 class="padding-top" part-name="part"></h1>
+  </div>
+  <div class="col-xs-4">
+    <div class="pull-right">
+      <button type="button" class="btn btn-primary" data-ng-click="reindex()" authorize="ROLE_READ">
+        <i class="fa fa-sort-alpha-asc" aria-hidden="true"></i> Reindex
+      </button>
+      <button type="button" class="btn btn-success" data-ng-click="reload()" authorize="ROLE_READ">
+        <i class="fa fa-refresh" aria-hidden="true"></i> Reload
+      </button>
+    </div>
+  </div>
+</div>
+
+<ul id="partTabs" class="nav nav-tabs" role="tablist">
+  <li role="presentation">
+    <a href="#details" aria-controls="details" role="tab" data-toggle="tab">
+      <i class="fa fa-bars"></i>
+      Part Details
+    </a>
+  </li>
+  <li role="presentation">
+    <a href="#critical_dimensions" aria-controls="critical_dimensions" role="tab" data-toggle="tab">
+      <i class="fa fa-arrows"></i>
+      Critical Dimensions
+    </a>
+  </li>
+  <li role="presentation">
+    <a href="#turbo_types" aria-controls="turbo_types" role="tab" data-toggle="tab">
+      <i class="fa fa-cog"></i>
+      Turbo Types
+    </a>
+  </li>
+  <li role="presentation" data-ng-show="part.partType.value == 'turbo'">
+    <a href="#applications" aria-controls="applications" role="tab" data-toggle="tab">
+      <i class="fa fa-book"></i>
+      Applications
+    </a>
+  </li>
+  <li role="presentation" data-ng-show="part.partType.value == 'gasket_kit'">
+    <a href="#turbos" aria-controls="turbos" role="tab" data-toggle="tab">
+      <i class="fa fa-book"></i>
+      Turbos
+    </a>
+  </li>
+  <li role="presentation" data-ng-show="part.partType.value == 'journal_bearing' || part.partType.value == 'journal_bearing_spacer' || part.partType.value == 'piston_ring'">
+    <a href="#nonstandard" aria-controls="non standard" role="tab" data-toggle="tab">
+      <i class="fa fa-book"></i>
+      Non Standard
+    </a>
+  </li>
+  <li role="presentation">
+    <a href="#linked_sources" aria-controls="linked sources" role="tab" data-toggle="tab">
+      <i class="fa fa-book"></i>
+      Audit Log
+    </a>
+  </li>
+</ul>
+<div class="tab-content">
+  <div role="tabpanel" class="tab-pane fade tab-part-detail" id="details">
+    <data-ng-include src="'/views/part/view/TabDetails.html'"></data-ng-include>
+  </div>
+  <div role="tabpanel" class="tab-pane fade tab-part-detail" id="critical_dimensions">
+    <critical-dimensions part="part" descriptors="criticalDimensions"></critical-dimensions>
+  </div>
+  <div role="tabpanel" class="tab-pane fade tab-part-detail" id="turbo_types">
+    <turbo-types part="part"></turbo-types>
+  </div>
+  <div role="tabpanel" class="tab-pane fade tab-part-detail" id="applications">
+    <a authorize="ROLE_APPLICATION_CRUD" class="btn btn-primary pull-right" style="margin-bottom:10px;" data-ng-href="/part/{{partId}}/application/search">
+      <i class="fa fa-plus"></i>
+      Add Application
+    </a>
+    <part-application-table />
+  </div>
+  <div role="tabpanel" class="tab-pane fade tab-part-detail" id="turbos">
+    <data-ng-include src="'/views/part/view/TabTurbos.html'"></data-ng-include>
+  </div>
+  <div role="tabpanel" class="tab-pane fade tab-part-detail" id="nonstandard">
+    <data-ng-include src="'/views/part/view/TabNonstandard.html'"></data-ng-include>
+  </div>
+  <div role="tabpanel" class="tab-pane fade tab-part-detail" id="linked_sources">
+    <data-ng-include src="'/views/part/view/TabLinkedSources.html'"></data-ng-include>
+  </div>
+</div>
+<script>
+  $('#partTabs a').click(function (e) {
+    e.preventDefault();
+    $(this).tab('show');
+  });
+  $('#partTabs a:first').tab('show');
+</script>

@@ -15,6 +15,7 @@ import com.turbointernational.metadata.entity.part.types.Turbo;
 import com.turbointernational.metadata.service.BOMService;
 import com.turbointernational.metadata.service.ChangelogService;
 import com.turbointernational.metadata.service.PartService;
+import com.turbointernational.metadata.service.StandardOversizePartService;
 import com.turbointernational.metadata.util.View;
 import flexjson.JSONSerializer;
 import flexjson.transformer.HibernateTransformer;
@@ -63,6 +64,9 @@ public class PartController {
 
     @Autowired
     private ChangelogService changelogService;
+
+    @Autowired
+    private StandardOversizePartService standardOversizePartService;
     
     @Autowired
     private TurboTypeDao turboTypeDao;
@@ -263,11 +267,33 @@ public class PartController {
 
     @Secured("ROLE_READ")
     @JsonView(View.Detail.class)
-    @RequestMapping(value = "/part/{id}", method = GET,
-            produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/part/{id}", method = GET, produces = APPLICATION_JSON_VALUE)
     public @ResponseBody Part getPart(@PathVariable("id") Long id) {
         Part part = partRepository.findOne(id);
         return part;
+    }
+
+    @JsonView(View.Summary.class)
+    @ResponseBody
+    @RequestMapping(value = "/part/{id}/oversize/list", method = GET, produces = APPLICATION_JSON_VALUE)
+    public List<Part> findOversizeParts(@PathVariable("id") Long partId) {
+        return standardOversizePartService.findOversizeParts(partId);
+    }
+
+    @JsonView(View.Summary.class)
+    @ResponseBody
+    @RequestMapping(value = "/part/{id}/standard/list", method = GET,
+            produces = APPLICATION_JSON_VALUE)
+    public List<Part> findStandardParts(@PathVariable("id") Long partId) {
+        return standardOversizePartService.findStandardParts(partId);
+    }
+
+    @Transactional
+    @ResponseBody
+    @RequestMapping(value = "/part/standardoversize/{standardPartId}/{oversizePartId}", method = DELETE)
+    public void deleteStandardOversizePart(@PathVariable("standardPartId") Long standardPartId,
+                                           @PathVariable("oversizePartId") Long oversizePartId) {
+        standardOversizePartService.delete(standardPartId, oversizePartId);
     }
 
     @Secured("ROLE_READ")
