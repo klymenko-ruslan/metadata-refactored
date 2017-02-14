@@ -29,4 +29,19 @@ public class StandardOversizePart implements Serializable {
     @JsonView(View.Summary.class)
     private StandardOversizePartId pk;
 
+    public StandardOversizePart() {
+
+    }
+
+    public StandardOversizePart(StandardOversizePartId pk) {
+        this.pk = pk;
+    }
+
+    public StandardOversizePartId getPk() {
+        return pk;
+    }
+
+    public void setPk(StandardOversizePartId pk) {
+        this.pk = pk;
+    }
 }

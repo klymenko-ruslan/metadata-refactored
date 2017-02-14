@@ -49,48 +49,49 @@
 
 <ul id="partTabs" class="nav nav-tabs" role="tablist">
   <li role="presentation">
-    <a href="#details" aria-controls="details" role="tab" data-toggle="tab">
+    <a id="tab-details" href="#details" aria-controls="details" role="tab" data-toggle="tab">
       <i class="fa fa-bars"></i>
       Part Details
     </a>
   </li>
   <li role="presentation">
-    <a href="#critical_dimensions" aria-controls="critical_dimensions" role="tab" data-toggle="tab">
+    <a id="tab-critical-dimensions" href="#critical_dimensions" aria-controls="critical_dimensions" role="tab" data-toggle="tab">
       <i class="fa fa-arrows"></i>
       Critical Dimensions
     </a>
   </li>
   <li role="presentation">
-    <a href="#turbo_types" aria-controls="turbo_types" role="tab" data-toggle="tab">
+    <a id="tab-turbo-types" href="#turbo_types" aria-controls="turbo_types" role="tab" data-toggle="tab">
       <i class="fa fa-cog"></i>
       Turbo Types
     </a>
   </li>
   <li role="presentation" data-ng-show="part.partType.value == 'turbo'">
-    <a href="#applications" aria-controls="applications" role="tab" data-toggle="tab">
+    <a id="tab-applications" href="#applications" aria-controls="applications" role="tab" data-toggle="tab">
       <i class="fa fa-book"></i>
       Applications
     </a>
   </li>
   <li role="presentation" data-ng-show="part.partType.value == 'gasket_kit'">
-    <a href="#turbos" aria-controls="turbos" role="tab" data-toggle="tab">
+    <a id="tab-turbos" href="#turbos" aria-controls="turbos" role="tab" data-toggle="tab">
       <i class="fa fa-book"></i>
       Turbos
     </a>
   </li>
   <li role="presentation" data-ng-show="part.partType.value == 'journal_bearing' || part.partType.value == 'journal_bearing_spacer' || part.partType.value == 'piston_ring'">
-    <a href="#nonstandard" aria-controls="non standard" role="tab" data-toggle="tab">
+    <a id="tab-nonstandard" href="#nonstandard" aria-controls="non standard" role="tab" data-toggle="tab">
       <i class="fa fa-book"></i>
       Non Standard
     </a>
   </li>
   <li role="presentation">
-    <a href="#linked_sources" aria-controls="linked sources" role="tab" data-toggle="tab">
+    <a id="tab-linked-sources" href="#linked_sources" aria-controls="linked sources" role="tab" data-toggle="tab">
       <i class="fa fa-book"></i>
       Audit Log
     </a>
   </li>
 </ul>
+
 <div class="tab-content">
   <div role="tabpanel" class="tab-pane fade tab-part-detail" id="details">
     <data-ng-include src="'/views/part/view/TabDetails.html'"></data-ng-include>
@@ -123,5 +124,22 @@
     e.preventDefault();
     $(this).tab('show');
   });
-  $('#partTabs a:first').tab('show');
+  var h = window.location.hash;
+  if (h === '#details') {
+    $('#tab-details').tab('show');
+  } else if (h === '#critical_dimensions') {
+    $('#tab-critical-dimensions').tab('show');
+  } else if (h === '#turbo_types') {
+    $('tab-turbo-types').tab('show');
+  } else if (h === '#applications') {
+    $('#tab-applications').tab('show');
+  } else if (h === '#turbos') {
+    $('#tab-turbos').tab('show');
+  } else if (h === '#nonstandard') {
+    $('#tab-nonstandard').tab('show');
+  } else if (h === '#linked_sources') {
+    $('#tab-linked-sources').tab('show');
+  } else {
+    $('#partTabs a:first').tab('show');
+  }
 </script>

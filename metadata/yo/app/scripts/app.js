@@ -212,6 +212,44 @@ angular.module("ngMetaCrudApp", ["ngCookies", "ngRoute", "ngTable", "ui.bootstra
       }
     });
 
+    // Link standard/oversize parts.
+    $routeProvider.when("/part/:id/oversize/add", {
+      templateUrl: "views/part/AddStandardOversize.html",
+      controller: "AddStandardOversizeCtrl",
+      resolve: {
+        type: function() {
+          return "oversize";
+        },
+        part: ["$route", "restService", function($route, restService) {
+          return restService.findPart($route.current.pathParams.id);
+        }],
+        existing: ["$route", "restService", function($route, restService) {
+          return restService.findOversizeParts($route.current.pathParams.id);
+        }],
+        partTypes: ["restService", function(restService) {
+          return restService.listPartTypes();
+        }]
+      }
+    });
+    $routeProvider.when("/part/:id/standard/add", {
+      templateUrl: "views/part/AddStandardOversize.html",
+      controller: "AddStandardOversizeCtrl",
+      resolve: {
+        type: function() {
+          return "standard";
+        },
+        part: ["$route", "restService", function($route, restService) {
+          return restService.findPart($route.current.pathParams.id);
+        }],
+        existing: ["$route", "restService", function($route, restService) {
+          return restService.findStandardParts($route.current.pathParams.id);
+        }],
+        partTypes: ["restService", function(restService) {
+          return restService.listPartTypes();
+        }]
+      }
+    });
+
     // Part Types
     $routeProvider.when("/parttype/list", {
       templateUrl: "views/parttype/list.html",

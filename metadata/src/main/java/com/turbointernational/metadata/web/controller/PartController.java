@@ -6,6 +6,7 @@ import com.turbointernational.metadata.dao.PartDao;
 import com.turbointernational.metadata.dao.TurboTypeDao;
 import com.turbointernational.metadata.entity.BOMAncestor;
 import com.turbointernational.metadata.entity.BOMItem;
+import com.turbointernational.metadata.entity.StandardOversizePart;
 import com.turbointernational.metadata.entity.TurboType;
 import com.turbointernational.metadata.entity.part.Interchange;
 import com.turbointernational.metadata.entity.part.Part;
@@ -16,6 +17,8 @@ import com.turbointernational.metadata.service.BOMService;
 import com.turbointernational.metadata.service.ChangelogService;
 import com.turbointernational.metadata.service.PartService;
 import com.turbointernational.metadata.service.StandardOversizePartService;
+import com.turbointernational.metadata.service.StandardOversizePartService.CreateStandardOversizePartRequest;
+import com.turbointernational.metadata.service.StandardOversizePartService.CreateStandardOversizePartResponse;
 import com.turbointernational.metadata.util.View;
 import flexjson.JSONSerializer;
 import flexjson.transformer.HibernateTransformer;
@@ -286,6 +289,16 @@ public class PartController {
             produces = APPLICATION_JSON_VALUE)
     public List<Part> findStandardParts(@PathVariable("id") Long partId) {
         return standardOversizePartService.findStandardParts(partId);
+    }
+
+    @Transactional
+    @Secured("ROLE_ALTER_PART")
+    @ResponseBody
+    @JsonView(View.Summary.class)
+    @RequestMapping(value = "/part/standardoversize", method = POST)
+    public CreateStandardOversizePartResponse createPart(@RequestBody CreateStandardOversizePartRequest request)
+            throws Exception {
+        return standardOversizePartService.create(request);
     }
 
     @Transactional

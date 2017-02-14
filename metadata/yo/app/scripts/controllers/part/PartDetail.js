@@ -588,7 +588,7 @@ angular.module("ngMetaCrudApp")
             $scope.oversizeParts.splice(idx, 1);
             $scope.oversizePartsTableParams.reload();
           },
-          function() {
+          function(error) {
             // Error
             restService.error("Could not delete the oversize part.", error);
           }
@@ -610,8 +610,8 @@ angular.module("ngMetaCrudApp")
           function() {
             // Success
             gToast.open("The standard part has been deleted.");
-            var idx = _.findIndex($scope.oversizeParts, function(op) {
-              return op.id === standardPartPart.id;
+            var idx = _.findIndex($scope.standardParts, function(op) {
+              return op.id === standardPart.id;
             });
             $scope.standardParts.splice(idx, 1);
             $scope.standardPartsTableParams.reload();

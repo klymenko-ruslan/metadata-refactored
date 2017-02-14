@@ -1,0 +1,103 @@
+<metanav>
+  <li>
+    <a data-ng-href="/part/{{ partId }}#nonstandard" class="btn btn-primary">
+      <i class="fa fa-eye"></i>
+      View Part
+    </a>
+  </li>
+
+  <li>
+    <a data-ng-click="save()" data-ng-disabled="isBttnSaveDisabled()" class="btn btn-success">
+      <i class="fa fa-save"></i>
+      <ng-show data-ng-show="type === 'oversize'">Add Oversize Parts</ng-show>
+      <ng-show data-ng-show="type === 'standard'">Add Standard Parts</ng-show>
+    </a>
+  </li>
+</metanav>
+
+<h1 class="padding-top" part-name="part" part-name-suffix=""></h1>
+
+<div class="row">
+
+  <!-- Existing parts -->
+
+  <div class="col-xs-6">
+
+    <h3 data-ng-show="type === 'oversize'">Existing Oversize Parts</h3>
+    <h3 data-ng-show="type === 'standard'">Existing Standard Parts</h3>
+    <table data-ng-table="existingTableParams" class="table table-bordered table-striped table-hover table-responsive">
+      <tr data-ng-repeat="p in $data">
+        <td title="'Part #'" class="text-center text-nowrap" data-sortable="'manufacturerPartNumber'">
+          {{p.manufacturerPartNumber}}
+        </td>
+        <td title="'Name'" data-sortable="'name'">
+          {{p.name}}
+        </td>
+        <td title="'Actions'" class="actions text-center">
+          <a data-ng-href="/part/{{p.id}}"
+             authorize="ROLE_READ" class="btn btn-primary btn-xs">
+            <i class="fa fa-eye"></i> View
+          </a>
+          <button data-ng-click="remove(p.id)"
+                  data-ng-disabled="restService.status.bomRebuilding"
+                  authorize="ROLE_ALTER_PART" class="btn btn-danger btn-xs">
+            <i class="fa fa-trash-o"></i> Remove
+          </button>
+        </td>
+      </tr>
+
+      <tr data-ng-hide="$data.length > 0">
+        <td colspan="3">No parts to display.</td>
+      </tr>
+
+    </table>
+
+  </div>
+
+  <!-- Picked parts -->
+
+  <div class="col-xs-6">
+
+    <h3>
+      Picked Parts
+      <button type="button" title="Unpick All" data-ng-click="unpickAll()" data-ng-disabled="isBttnUnpickAllDisabled()" class="btn btn-link btn-sm" style="padding:0;">
+        <i class="fa fa-times"></i>
+      </button>
+    </h3>
+    <table data-ng-table="pickedPartsTableParams" class="table table-bordered table-striped table-hover table-responsive">
+      <tr data-ng-repeat="p in $data">
+        <td title="'Part #'" class="text-center text-nowrap" data-sortable="'manufacturerPartNumber'">
+          {{p.manufacturerPartNumber}}
+        </td>
+        <td title="'Name'" data-sortable="'name'">
+          {{p.name}}
+        </td>
+        <td class="actions text-center" title="'Actions'">
+          <button type="button" class="btn btn-danger btn-xs" data-ng-click="unpick(p.id)">
+            <i class="fa fa-times"></i>
+            Unpick
+          </button>
+        </td>
+      </tr>
+      <tr data-ng-hide="$data.length > 0">
+        <td colspan="3">No picked parts.</td>
+      </tr>
+    </table>
+
+  </div>
+
+</div>
+
+<hr/>
+
+<part-search class="well well-lg" search-part-type-id="part.partType.id" search-manufacturer-name="part.manufacturer.name">
+  <a authorize="ROLE_READ" data-ng-href="/part/{{$part._source.id}}" class="btn btn-primary btn-xs">
+    <i class="fa fa-eye"></i> View
+  </a>
+  <button type="button" authorize="ROLE_BOM"
+     data-ng-click="pick($part._source)"
+     data-ng-disabled="isBttnPickDisabled($part._source)"
+     class="btn btn-success btn-xs">
+    <i class="fa fa-bullseye"></i> Pick
+  </button>
+</part-search>

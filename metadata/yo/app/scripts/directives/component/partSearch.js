@@ -8,9 +8,11 @@ angular.module("ngMetaCrudApp")
       templateUrl: "/views/component/PartSearch.html",
       transclude: true,
       link: function(scope, element, attrs) {
-        var searchPartType = scope.$eval(attrs.searchPartType);
-        if (angular.isObject(searchPartType)) {
-          scope.fltrPart.partType = searchPartType;
+        scope.defManufacturerName = scope.$eval(attrs.searchManufacturerName);
+        var partTypeId = scope.$eval(attrs.searchPartTypeId);
+        var pt = _.find(scope.partTypes, function(pt) { return pt.id == partTypeId; });
+        if (angular.isObject(pt)) {
+          scope.fltrPart.partType = pt;
         }
       },
       controller: ["$transclude", "$parse", "$sce", "$log", "$q", "$location",
@@ -279,6 +281,17 @@ angular.module("ngMetaCrudApp")
                     });
                   }
                 });
+
+                if ($scope.defManufacturerName) {
+                  var manufacturerBucket = _.find($scope.searchResults.aggregations['Manufacturer'].buckets,
+                    function(r) { return r.key == $scope.defManufacturerName; }
+                  );
+                  if (angular.isObject(manufacturerBucket)) {
+                    $scope.fltrPart.manufacturer = manufacturerBucket.key;
+                  }
+                  $scope.defManufacturerName = null;
+                }
+
                 // Update the total and slice the result
                 $defer.resolve($scope.searchResults.hits.hits);
                 params.total($scope.searchResults.hits.total);
