@@ -29,7 +29,7 @@
           <li data-ng-disabled="{{::!hasRole('ROLE_ADMIN')}}"><a href="#" data-ng-href="/security/auth_providers/"><i class="fa fa-unlock-alt" aria-hidden="true"></i> Authentication providers</a></li>
 
           <li class="divider"></li>
-          <li data-ng-disabled="{{::!hasRole('ROLE_ADMIN')}}"><a href="#" data-ng-href="/changelog/list"><i class="fa fa-list-ol" aria-hidden="true"></i> Audit</a></li>
+          <li data-ng-disabled="{{::!hasRole('ROLE_READ')}}"><a href="#" data-ng-href="/changelog/list"><i class="fa fa-list-ol" aria-hidden="true"></i> Audit</a></li>
 
           <li class="divider"></li>
 

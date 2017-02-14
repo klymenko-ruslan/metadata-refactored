@@ -33,7 +33,7 @@ public class ChangelogController {
     @RequestMapping(value = "/list", method = GET)
     @ResponseBody
     @JsonView(View.Summary.class)
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_READ")
     public Page<Changelog> filterChangelog(@RequestParam(name = "service", required = false) ServiceEnum service,
                                            @RequestParam(name = "userId", required = false) Long userId,
                                            @RequestParam(name = "startDate", required = false)
