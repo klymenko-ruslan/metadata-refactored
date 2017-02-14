@@ -30,18 +30,6 @@ public class PriceService {
 
     private final static Logger log = LoggerFactory.getLogger(PriceService.class);
 
-    private final static String PRICING_COLS = "p.pricingmethod as discount_type, "
-        + "p.breakquantity1 as BreakQty1, "
-        + "p.breakquantity2 as BreakQty2, "
-        + "p.breakquantity3 as BreakQty3, "
-        + "p.breakquantity4 as BreakQty4, "
-        + "p.breakquantity5 as BreakQty5, "
-        + "p.discountmarkup1 as DiscountMarkupPriceRate1, "
-        + "p.discountmarkup2 as DiscountMarkupPriceRate2, "
-        + "p.discountmarkup3 as DiscountMarkupPriceRate3, "
-        + "p.discountmarkup4 as DiscountMarkupPriceRate4, "
-        + "p.discountmarkup5 as DiscountMarkupPriceRate5";
-
     @Autowired
     private PartDao partDao;
 
@@ -75,8 +63,17 @@ public class PriceService {
         }
 
         Map<String, BigDecimal> prices = new HashMap(50);
-        mssqldb.query("select p.customerpricelevel as price_level, " + PRICING_COLS + " from im_pricecode as p " +
-                "where p.pricecoderecord in ('', ' ', '0')",
+        mssqldb.query("select p.customerpricelevel as price_level, " +
+                        "p.pricingmethod as discount_type, p.breakquantity1 as BreakQty1, " +
+                        "p.breakquantity2 as BreakQty2, p.breakquantity3 as BreakQty3, " +
+                        "p.breakquantity4 as BreakQty4, p.breakquantity5 as BreakQty5, " +
+                        "p.discountmarkup1 as DiscountMarkupPriceRate1, " +
+                        "p.discountmarkup2 as DiscountMarkupPriceRate2, " +
+                        "p.discountmarkup3 as DiscountMarkupPriceRate3, " +
+                        "p.discountmarkup4 as DiscountMarkupPriceRate4, " +
+                        "p.discountmarkup5 as DiscountMarkupPriceRate5 " +
+                        "from im_pricecode as p " +
+                        "where p.pricecoderecord in ('', ' ', '0')",
                 rs -> {
                     String priceLevel = rs.getString("price_level");
                     // Mas90 bug handling: https://github.com/pthiry/TurboInternational/issues/5#issuecomment-29331951
@@ -84,6 +81,7 @@ public class PriceService {
                         priceLevel = "2";
                     }
                     Pricing pricing = Pricing.fromResultSet(rs);
+
                     List<CalculatedPrice> calculatedPrices = pricing.calculate(standardPrice);
                     for(CalculatedPrice cp: calculatedPrices) {
                         prices.put(priceLevel, cp.getPrice());
@@ -93,5 +91,7 @@ public class PriceService {
         ProductPrices retVal = new ProductPrices(partId, standardPrice, prices);
         return retVal;
     }
+
+
 
 }
