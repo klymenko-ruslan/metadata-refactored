@@ -6,6 +6,7 @@ import com.turbointernational.metadata.dao.PartDao;
 import com.turbointernational.metadata.dao.TurboTypeDao;
 import com.turbointernational.metadata.entity.BOMAncestor;
 import com.turbointernational.metadata.entity.BOMItem;
+import com.turbointernational.metadata.entity.StandardOversizePart;
 import com.turbointernational.metadata.entity.TurboType;
 import com.turbointernational.metadata.entity.part.Interchange;
 import com.turbointernational.metadata.entity.part.Part;
@@ -15,6 +16,9 @@ import com.turbointernational.metadata.entity.part.types.Turbo;
 import com.turbointernational.metadata.service.BOMService;
 import com.turbointernational.metadata.service.ChangelogService;
 import com.turbointernational.metadata.service.PartService;
+import com.turbointernational.metadata.service.StandardOversizePartService;
+import com.turbointernational.metadata.service.StandardOversizePartService.CreateStandardOversizePartRequest;
+import com.turbointernational.metadata.service.StandardOversizePartService.CreateStandardOversizePartResponse;
 import com.turbointernational.metadata.util.View;
 import flexjson.JSONSerializer;
 import flexjson.transformer.HibernateTransformer;
@@ -63,6 +67,9 @@ public class PartController {
 
     @Autowired
     private ChangelogService changelogService;
+
+    @Autowired
+    private StandardOversizePartService standardOversizePartService;
     
     @Autowired
     private TurboTypeDao turboTypeDao;
@@ -263,11 +270,43 @@ public class PartController {
 
     @Secured("ROLE_READ")
     @JsonView(View.Detail.class)
-    @RequestMapping(value = "/part/{id}", method = GET,
-            produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/part/{id}", method = GET, produces = APPLICATION_JSON_VALUE)
     public @ResponseBody Part getPart(@PathVariable("id") Long id) {
         Part part = partRepository.findOne(id);
         return part;
+    }
+
+    @JsonView(View.Summary.class)
+    @ResponseBody
+    @RequestMapping(value = "/part/{id}/oversize/list", method = GET, produces = APPLICATION_JSON_VALUE)
+    public List<Part> findOversizeParts(@PathVariable("id") Long partId) {
+        return standardOversizePartService.findOversizeParts(partId);
+    }
+
+    @JsonView(View.Summary.class)
+    @ResponseBody
+    @RequestMapping(value = "/part/{id}/standard/list", method = GET,
+            produces = APPLICATION_JSON_VALUE)
+    public List<Part> findStandardParts(@PathVariable("id") Long partId) {
+        return standardOversizePartService.findStandardParts(partId);
+    }
+
+    @Transactional
+    @Secured("ROLE_ALTER_PART")
+    @ResponseBody
+    @JsonView(View.Summary.class)
+    @RequestMapping(value = "/part/standardoversize", method = POST)
+    public CreateStandardOversizePartResponse createPart(@RequestBody CreateStandardOversizePartRequest request)
+            throws Exception {
+        return standardOversizePartService.create(request);
+    }
+
+    @Transactional
+    @ResponseBody
+    @RequestMapping(value = "/part/standardoversize/{standardPartId}/{oversizePartId}", method = DELETE)
+    public void deleteStandardOversizePart(@PathVariable("standardPartId") Long standardPartId,
+                                           @PathVariable("oversizePartId") Long oversizePartId) {
+        standardOversizePartService.delete(standardPartId, oversizePartId);
     }
 
     @Secured("ROLE_READ")

@@ -1,0 +1,319 @@
+<div class="row">
+  <div class="col-xs-6" data-ng-switch="formMode">
+
+    <div class="part-panel">
+
+      <div data-ng-switch-when="view">
+      <table class="info-form">
+        <tr class="odd">
+          <td class="label">Name</td>
+          <td class="val">{{part.name}}</td>
+        </tr>
+        <tr class="even">
+          <td class="label">Manufacturer</td>
+          <td class="val">{{part.manufacturer.name}}</td>
+        </tr>
+        <tr class="odd">
+          <td class="label">Manufacturer P/N</td>
+          <td class="val">{{part.manufacturerPartNumber}}</td>
+        </tr>
+        <tr class="even">
+          <td class="label">State</td>
+          <td class="val">
+            <span data-ng-show="part.inactive === false" class="bg-primary part-state">Active</span>
+            <span data-ng-show="part.inactive === true" class="bg-warning text-muted part-state">Inactive</span>
+          </td>
+        </tr>
+        <tr class="odd">
+          <td class="label">Description</td>
+          <td class="val">{{part.description}}</td>
+        </tr>
+        <tr class="even">
+          <td class="label">Dimension L x W x H (in)</td>
+          <td class="val">
+            {{part.dimLength | ifEmpty:'?'}} X {{part.dimWidth | ifEmpty:'?'}} X {{part.dimHeight | ifEmpty:'?'}}
+          </td>
+        </tr>
+        <tr class="odd">
+          <td class="label">Weight (grams)</td>
+          <td class="val">{{part.weight}}</td>
+        </tr>
+        <tr class="even" data-ng-if="part.partType.value == 'turbo'">
+          <td class="label">Coolant</td>
+          <td class="val">{{part.coolType.name}}</td>
+        </tr>
+        <tr class="odd" data-ng-if="part.partType.value == 'turbo'">
+          <td class="label">Turbo Model</td>
+          <td class="val">{{part.turboModel.name}}</td>
+        </tr>
+        <tr class="even" data-ng-if="part.partType.value == 'turbo'">
+          <td class="label">Turbo Type</td>
+          <td class="val">{{part.turboModel.turboType.name}}</td>
+        </tr>
+        <tr class="odd" data-ng-if="part.partType.value == 'turbo'">
+          <td class="label">Gasket Kit</td>
+          <td class="val">
+            <a data-ng-href="/part/{{part.gasketKit.id}}" data-ng-show="part.gasketKit.id" style="display:inline-block;margin-right:10px;">[{{part.gasketKit.id}}] - {{part.gasketKit.manufacturerPartNumber}}</a>
+            <div>
+              <button authorize="ROLE_ALTER_PART" data-ng-click="onSetGasketKit()" class="btn btn-xs btn-primary">
+                <i class="fa fa-link" aria-hidden="true"></i>
+                Link
+              </button>
+              <button authorize="ROLE_ALTER_PART" data-ng-show="part.gasketKit.id" data-ng-click="onClearGasketKit()" class="btn btn-xs btn-danger">
+                <i class="fa fa-chain-broken" aria-hidden="true"></i>
+                Unlink
+              </button>
+            </div>
+          </td>
+        </tr>
+        <tr class="even" data-ng-if="part.partType.value == 'kit'">
+          <td class="label">Kit Type</td>
+          <td class="val">{{part.kitType.name}}</td>
+        </tr>
+      </table>
+
+      <div>
+        <button class="btn btn-primary btn-sm center-block" authorize="ROLE_ALTER_PART" data-ng-click="onEditStart()">
+          <i class="fa fa-cog"></i>
+          Edit
+        </button>
+      </div>
+
+    </div>
+
+    <form name="partForm" novalidate data-ng-switch-when="edit">
+
+      <div class="form-group">
+        <label for="name">Name</label>
+        <input id="name" class="form-control" type="text" data-ng-model="part.name"/>
+      </div>
+
+      <div class="form-group">
+        <label for="manufacturer">Manufacturer</label>
+        <select id="manufacturer" name="manufacturer" class="form-control"
+                data-ng-model="part.manufacturer"
+                data-ng-options="mn as mn.name for mn in manufacturers track by mn.id"
+                data-ng-change="onChangeManufacturer()"
+                data-ng-disabled="::!isManufacturerEnabled()"
+                required>
+        </select>
+        <div data-ng-show="partForm.manufacturer.$dirty && partForm.manufacturer.$invalid" class="alert alert-danger" role="alert">
+          <span data-ng-show="partForm.manufacturer.$error.required">Required!</span>
+          <span data-ng-show="partForm.manufacturer.$error.nonUniquePartNumber">Pair (Manufacturer, P/N) is not unique!</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="manufacturerPartNumber">Manufacturer P/N</label>
+        <input id="manufacturerPartNumber" name="manufacturerPartNumber" class="form-control" type="text" data-ng-model="part.manufacturerPartNumber" data-ng-model-options="{ debounce: 500 }" required maxlength="255" data-ng-disabled="::!isPnEnabled()" unique-part-number />
+        <div data-ng-show="part.manufacturerPartNumber.$dirty && part.manufacturerPartNumber.$invalid" class="alert alert-danger" role="alert">
+          <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+          <span data-ng-show="part.manufacturerPartNumber.$error.required">Required!</span>
+          <span data-ng-show="part.manufacturerPartNumber.$error.maxlenth">Too long manufacturer part number (max 255 chars)!</span>
+          <span data-ng-show="part.manufacturerPartNumber.$error.nonUniquePartNumber">Pair (Manufacturer, P/N) is not unique!</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="active">Active</label>
+        <input id="active" type="checkbox" data-ng-model="part.inactive" data-ng-true-value="false" data-ng-false-value="true" />
+      </div>
+
+      <div class="form-group">
+        <label for="description">Description</label>
+        <textarea id="description" class="form-control" rows="4" data-ng-model="part.description"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="dimensions">Dimensions L x W x H (in)</label>
+        <div class="row">
+            <div class="form-group col-xs-3">
+              <input id="dimensions" class="form-control" type="number" min="0" data-ng-model="part.dimLength"/>
+            </div>
+            <div class="form-group col-xs-1">X</div>
+            <div class="form-group col-xs-3">
+              <input class="form-control" type="number" min="0" data-ng-model="part.dimWidth"/>
+            </div>
+            <div class="form-group col-xs-1">X</div>
+            <div class="form-group col-xs-3">
+              <input class="form-control" type="number" min="0" data-ng-model="part.dimHeight"/>
+            </div>
+            <div class="form-group col-xs-1">&nbsp;</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="weight">Weight (grams)</label>
+        <input id="weight" class="form-control" type="number" min="0" data-ng-model="part.weight"/>
+      </div>
+
+      <!-- Type-specific fields -->
+      <div data-ng-switch="part.partType.value">
+
+        <!-- Kit -->
+        <div data-ng-switch-when="kit" class="form-group">
+          <label>Kit Type</label>
+          <picker id="picker_kittype" item-type="type/kittype" data-ng-model="part.kitType"></picker>
+        </div>
+
+        <!-- Turbo -->
+        <div data-ng-switch-when="turbo" class="form-group">
+          <label>Coolant</label>
+          <picker item-type="type/cooltype" data-ng-model="part.coolType"></picker>
+        </div>
+
+        <div data-ng-switch-when="turbo" class="row">
+
+          <div class="col-xs-6 form-group">
+            <div>
+              <label class="control-label">Turbo Type</label>
+              <div class="pull-right">
+                <button type="button" data-ng-click="createTurboType()" class="btn btn-success btn-xs" data-ng-disabled="!part.manufacturer.id">
+                  <i class="fa fa-wrench"></i>
+                  Create
+                </button>
+                <button type="button" data-ng-click="renameTurboType()" class="btn btn-warning btn-xs" data-ng-disabled="!turbo.tt.id">
+                  <i class="fa fa-pencil"></i>
+                  Rename
+                </button>
+                <button type="button" data-ng-click="deleteTurboType()" class="btn btn-danger btn-xs" data-ng-disabled="(part.id && !turbo.tt.id && turbo.tt.id == oldPart.turboModel.turboType.id) || (!part.id && !turbo.tt.id)">
+                  <i class="fa fa-trash-o"></i>
+                  Delete
+                </button>
+              </div>
+            </div>
+            <input data-ng-model="filters.turboType" data-ng-init="turboTypeFilter = ''" class="form-control" placeholder="Turbo type filter..."/>
+            <select id="turboType" name="turboType" class="form-control"
+                    data-ng-model="turbo.tt"
+                    data-ng-options="tt as tt.name for tt in turboTypes | filter:{name:filters.turboType} track by tt.id"
+                    data-ng-change="onChangeTurboType()"
+                    size="6"
+                    required>
+            </select>
+            <div data-ng-show="partForm.turboType.$dirty && partForm.turboType.$invalid" class="alert alert-danger" role="alert">
+              <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+              <span data-ng-show="partForm.turboType.$error.required">Required!</span>
+            </div>
+
+          </div>
+
+          <div class="col-xs-6">
+            <div>
+              <label class="control-label">Turbo Model</label>
+              <div class="pull-right">
+                <button type="button" data-ng-click="createTurboModel()" class="btn btn-success btn-xs" data-ng-disabled="!turbo.tt.id">
+                  <i class="fa fa-wrench"></i>
+                  Create
+                </button>
+                <button type="button" data-ng-click="renameTurboModel()" class="btn btn-warning btn-xs" data-ng-disabled="!turbo.tm.id">
+                  <i class="fa fa-pencil"></i>
+                  Rename
+                </button>
+                <button type="button" data-ng-click="deleteTurboModel()" class="btn btn-danger btn-xs" data-ng-disabled="(part.id && !turbo.tm.id && turbo.tm.id != oldPart.turboModel.id) || (!part.id && !turbo.tm.id)">
+                  <i class="fa fa-trash-o"></i>
+                  Delete
+                </button>
+              </div>
+            </div>
+            <input data-ng-model="filters.turboModel" data-ng-init="turboModelFilter = ''" class="form-control" placeholder="Turbo model filter..."/>
+            <select name="turboModel"
+                    data-ng-model="turbo.tm"
+                    data-ng-options="tm as tm.name for tm in turboModels | filter:{name:filters.turboModel} track by tm.id"
+                size="6" class="select-large form-control"
+                required>
+            </select>
+            <div data-ng-show="partForm.turboModel.$dirty && partForm.turboModel.$invalid" class="alert alert-danger" role="alert">
+              <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+              <span data-ng-show="partForm.turboModel.$error.required">Required!</span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <div>
+        <button class="btn btn-success btn-sm" type="button" data-ng-click="onEditSave()" data-ng-disabled="partForm.$pristine || partForm.$invalid || partForm.$pending">
+          <i class="fa fa-save"></i>
+          Save
+        </button>
+        <button class="btn btn-warning btn-sm" type="button" data-ng-click="onEditCancel()">
+          Cancel
+        </button>
+      </div>
+    </form>
+
+    </div>
+
+  </div>
+  <div class="col-xs-6">
+
+    <div class="part-panel">
+
+      <form class="form-inline" novalidate>
+      <button authorize="ROLE_PART_IMAGES" data-ng-click="addImage()" class="btn btn-primary pull-right" style="margin-bottom:8px;">
+        <i class="fa fa-plus"></i> Add Image
+      </button>
+      <div class="form-group pull-left" data-ng-hide = "!part.productImages || part.productImages.length == 0">
+        <label for="img-pg-sz">Display per page</label>
+        <select id="img-pg-sz" data-ng-model="imgPgSz" data-ng-change="onChangeImgPgSz()">
+          <option value="one">1 image</option>
+          <option value="two">2 images</option>
+          <option value="three">3 images</option>
+          <option value="four">4 images</option>
+          <option value="all">all images</option>
+        </select>
+      </div>
+    </form>
+
+      <div class="row">
+        <div class="col-xs-12">
+
+          <div data-ng-show="!part.productImages || part.productImages.length == 0" class="no-image"></div>
+
+          <ul data-ng-hide="!part.productImages || part.productImages.length == 0" class="list-unstyled list-inline">
+
+            <li data-ng-repeat="image in part.productImages" class="ng-scope bg-info part-icon" data-ng-show="($index >= (partImagesPageNum - 1) * imgPgSzVal) && ($index < (partImagesPageNum - 1) * imgPgSzVal + imgPgSzVal)">
+              <form class="form-inline">
+                <div class="form-group pull-right">
+                  <button class="btn btn-xs btn-danger" data-ng-click="deleteImage(image)">
+                    <i class="fa fa-trash-o" aria-hidden="true"></i>
+                    Delete
+                  </button>
+                </div>
+                <div class="form-group pull-left">
+                  <div class="checkbox">
+                    <label style="padding-right: 10px;">
+                      <input type="checkbox" data-ng-model="image.publish" data-ng-change="onChangePublishImage(image)"> Publish
+                    </label>
+                  </div>
+                </div>
+              </form>
+              <img data-ng-src="/metadata/image/135/{{image.id}}.jpg" class="part-icon" data-ng-click="onShowProductImage(image.id)" />
+            </li>
+
+          </ul>
+
+          <uib-pagination items-per-page="imgPgSzVal" total-items="part.productImages.length" data-ng-model="partImagesPageNum" data-ng-hide="part.productImages.length == 0 || part.productImages.length == imgPgSzVal" />
+
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+<div class="row">
+  <div class="col-xs-12">
+    <hr/>
+    <div>
+      <h4><u>Interchangeable Parts</u></h4>
+      <interchangeable-parts part="part"></interchangeable-parts>
+    </div>
+    <hr/>
+    <div>
+      <h4><u>Bill of Materials</u></h4>
+      <bom parent-part-id="partId"></bom>
+    </div>
+  </div>
+</div>

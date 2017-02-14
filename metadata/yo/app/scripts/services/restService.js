@@ -121,6 +121,27 @@ angular.module("ngMetaCrudApp")
         return Restangular.one("part", id).get(params);
       };
 
+      this.findOversizeParts = function(part_id) {
+        return Restangular.one("part", part_id).getList("oversize/list");
+      };
+
+      this.findStandardParts = function(part_id) {
+        return Restangular.one("part", part_id).getList("standard/list");
+      };
+
+      this.createStandardOversizePart = function(type, mainPartId, partIds) {
+        var req = {
+          type: type.toUpperCase(),
+          mainPartId: mainPartId,
+          partIds: partIds
+        };
+        return Restangular.all("part/standardoversize").post(req);
+      };
+
+      this.deleteStandardOversizePart = function(standard_part_id, oversize_part_id) {
+        return Restangular.one("part/standardoversize/" + standard_part_id + "/" + oversize_part_id).remove();
+      };
+
       this.findPartByNumber = function(manufacturerId, pn) {
         return Restangular.one("part/numbers").get({
           "mid": manufacturerId,

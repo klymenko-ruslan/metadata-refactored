@@ -188,7 +188,7 @@ angular.module("ngMetaCrudApp", ["ngCookies", "ngRoute", "ngTable", "ui.bootstra
       controller: "PartAncestorsCtrl"
     });
     $routeProvider.when("/part/:id", {
-      templateUrl: "views/part/PartDetail.html",
+      templateUrl: "views/part/view/PartDetail.html",
       controller: "PartDetailCtrl",
       resolve: {
         part: ["$route", "restService", function($route, restService) {
@@ -202,6 +202,50 @@ angular.module("ngMetaCrudApp", ["ngCookies", "ngRoute", "ngTable", "ui.bootstra
         }],
         turbos: ["$route", "restService", function($route, restService) {
           return restService.listTurbosLinkedToGasketKit($route.current.pathParams.id);
+        }],
+        oversizeParts: ["$route", "restService", function($route, restService) {
+          return restService.findOversizeParts($route.current.pathParams.id);
+        }],
+        standardParts: ["$route", "restService", function($route, restService) {
+          return restService.findStandardParts($route.current.pathParams.id);
+        }]
+      }
+    });
+
+    // Link standard/oversize parts.
+    $routeProvider.when("/part/:id/oversize/add", {
+      templateUrl: "views/part/AddStandardOversize.html",
+      controller: "AddStandardOversizeCtrl",
+      resolve: {
+        type: function() {
+          return "oversize";
+        },
+        part: ["$route", "restService", function($route, restService) {
+          return restService.findPart($route.current.pathParams.id);
+        }],
+        existing: ["$route", "restService", function($route, restService) {
+          return restService.findOversizeParts($route.current.pathParams.id);
+        }],
+        partTypes: ["restService", function(restService) {
+          return restService.listPartTypes();
+        }]
+      }
+    });
+    $routeProvider.when("/part/:id/standard/add", {
+      templateUrl: "views/part/AddStandardOversize.html",
+      controller: "AddStandardOversizeCtrl",
+      resolve: {
+        type: function() {
+          return "standard";
+        },
+        part: ["$route", "restService", function($route, restService) {
+          return restService.findPart($route.current.pathParams.id);
+        }],
+        existing: ["$route", "restService", function($route, restService) {
+          return restService.findStandardParts($route.current.pathParams.id);
+        }],
+        partTypes: ["restService", function(restService) {
+          return restService.listPartTypes();
         }]
       }
     });

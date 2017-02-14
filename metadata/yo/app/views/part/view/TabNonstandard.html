@@ -1,0 +1,53 @@
+<div class="row">
+  <div class="col-xs-12">
+    <h4><u>Non Standard Parts</u></h4>
+    <a class="btn btn-primary pull-right" style="margin-bottom:10px;" data-ng-href="/part/{{partId}}/oversize/add">
+      <i class="fa fa-plus"></i>
+      Add Non Standard Part
+    </a>
+    <table data-ng-table="oversizePartsTableParams" class="table table-bordered table-striped table-hover table-responsive">
+    <tr data-ng-repeat="r in $data">
+      <td title="'Part #'" class="text-left text-nowrap">
+        <a data-ng-href="/part/{{r.id}}">{{r.manufacturerPartNumber}}</a>
+      </td>
+      <td title="'Name'" class="text-left">{{r.name}}</td>
+      <td class="actions" title="'Actions'">
+        <button authorize="ROLE_ALTER_PART" data-ng-click="onDeleteOversizePart(r)" class="btn btn-xs btn-danger">
+          <i class="fa fa-trash-o" aria-hidden="true"></i>
+          Remove
+        </button>
+      </td>
+    </tr>
+    <tr data-ng-hide="$data.length > 0">
+      <td colspan="3">No parts to display.</td>
+    </tr>
+    </table>
+    <hr/>
+  </div>
+</div>
+<div class="row">
+  <div class="col-xs-12">
+    <h4><u>Standard Parts</u></h4>
+    <a class="btn btn-primary pull-right" style="margin-bottom:10px;" data-ng-href="/part/{{partId}}/standard/add">
+      <i class="fa fa-plus"></i>
+      Add Standard Part
+    </a>
+    <table data-ng-table="standardPartsTableParams" class="table table-bordered table-striped table-hover table-responsive">
+    <tr data-ng-repeat="r in $data">
+      <td title="'Part #'" class="text-left text-nowrap">
+        <a data-ng-href="/part/{{r.id}}">{{r.manufacturerPartNumber}}</a>
+      </td>
+      <td title="'Name'" class="text-left">{{r.name}}</td>
+      <td class="actions" title="'Actions'">
+        <button authorize="ROLE_ALTER_PART" data-ng-click="onDeleteStandardPart(r)" class="btn btn-xs btn-danger">
+          <i class="fa fa-trash-o" aria-hidden="true"></i>
+          Remove
+        </button>
+      </td>
+    </tr>
+    <tr data-ng-hide="$data.length > 0">
+      <td colspan="3">No parts to display.</td>
+    </tr>
+    </table>
+  </div>
+</div>
