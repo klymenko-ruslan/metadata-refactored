@@ -1,0 +1,20 @@
+<metanav />
+
+<h2>Services</h2>
+
+<div class="row">
+  <div class="col-xs-12">
+    <table data-ng-table="serviceTableParams" class="table table-bordered table-striped table-hover table-expand">
+      <tr data-ng-repeat="srv in $data">
+        <td title="'Name'" data-sortable="'name'" class="text-left text-nowrap">{{srv.name}}</td>
+        <td title="'Description'" data-sortable="'description'" class="text-left">{{srv.description}}</td>
+        <td title="'Required Source'" data-sortable="'requiredSource'" class="text-center">
+          <input type="checkbox" data-ng-disabled="srv.id != 1" data-ng-model="requiredSource[srv.name]" data-ng-change="onChangeRequiredSource(srv)" data-ng-true-value="true" data-ng-false-value="false">
+        </td>
+      </tr>
+      <tr data-ng-hide="$data.length > 0">
+        <td colspan="3">No records to display.</td>
+      </tr>
+    </table>
+  </div>
+</div>

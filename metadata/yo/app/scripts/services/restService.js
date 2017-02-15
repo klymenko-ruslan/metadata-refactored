@@ -1,4 +1,4 @@
-"use strict";
+";use strict";
 
 angular.module("ngMetaCrudApp")
   .service("restService", ["$log", "$http", "Restangular", "dialogs", "$q", "$rootScope", "$filter",
@@ -1014,6 +1014,24 @@ angular.module("ngMetaCrudApp")
 
       this.findCritDimEnumItmByName = function(enumId, name) {
         return Restangular.one("/criticaldimension/enum/" + enumId + "/items").get({"name": name});
+      };
+
+      this.getAllServices = function() {
+        return Restangular.all("service/getall").getList();
+      };
+
+      this.filterServices = function(sortProperty, sortOrder, offset, limit) {
+        return Restangular.one("service/list").get({
+          "sortProperty": sortProperty,
+          "sortOrder": sortOrder,
+          "offset": offset,
+          "limit": limit
+        });
+      };
+
+      this.setChangelogSourceRequiredForService = function(serviceId, required) {
+        Restangular.setParentless(false);
+        return Restangular.one("service", serviceId).put({required: required});
       };
 
     };

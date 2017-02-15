@@ -124,6 +124,9 @@ angular.module("ngMetaCrudApp", ["ngCookies", "ngRoute", "ngTable", "ui.bootstra
         }],
         boms: ["$log", "$route", "BOM", function($log, $route, BOM) {
           return BOM.listByParentPartId($route.current.pathParams.id);
+        }],
+        services: ["restService", function(restService) {
+          return restService.getAllServices();
         }]
       }
     });
@@ -584,6 +587,13 @@ angular.module("ngMetaCrudApp", ["ngCookies", "ngRoute", "ngTable", "ui.bootstra
         }]
       }
     });
+
+    // Services.
+    $routeProvider.when("/service/list", {
+      templateUrl: "views/service/list.html",
+      controller: "ServiceListCtrl"
+    });
+
     // Authentication providers.
     $routeProvider.when("/security/auth_providers", {
       templateUrl: "views/security/auth_providers.html",

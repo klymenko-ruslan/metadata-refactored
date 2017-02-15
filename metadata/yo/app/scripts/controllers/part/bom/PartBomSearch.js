@@ -3,9 +3,9 @@
 angular.module("ngMetaCrudApp")
 
 .controller("PartBomSearchCtrl", ["$log", "$scope", "$location", "ngTableParams", "$routeParams", "$uibModal",
-  "User", "BOM", "restService", "Restangular", "dialogs", "gToast", "utils", "partTypes", "part", "boms",
+  "User", "BOM", "restService", "Restangular", "dialogs", "gToast", "utils", "partTypes", "part", "boms", "services",
   function($log, $scope, $location, ngTableParams, $routeParams, $uibModal, User, BOM, restService,
-    Restangular, dialogs, gToast, utils, partTypes, part, boms) {
+    Restangular, dialogs, gToast, utils, partTypes, part, boms, services) {
 
     $scope.partTypes = partTypes;
     $scope.restService = restService;
@@ -15,6 +15,8 @@ angular.module("ngMetaCrudApp")
     var pickedParts = [];
     var pickedPartIds = {};
     var existingBomPartIds = null;
+
+    $scope.requiredSource = _.find(services, function(s) { return s.name === "BOM"; }).requiredSource;
 
     function updateExistingBomPartIds() {
       existingBomPartIds = {};
@@ -127,35 +129,39 @@ angular.module("ngMetaCrudApp")
     };
 
     $scope.save = function() {
-      var authorized = User.hasRole("ROLE_CHLOGSRC_READ") && User.hasRole("ROLE_CHLOGSRCNAME_READ");
-      if (authorized) {
-        $uibModal.open({
-          templateUrl: "/views/chlogsrc/LinkDlg.html",
-          animation: false,
-          size: "lg",
-          controller: "ChlogSrcLinkDlgCtrl",
-          backdrop: 'static',
-          keyboard: false,
-          resolve: {
-            "partId": function () {
-              return $scope.partId;
-            },
-            "cbSave": function () {
-              return cbSave;
-            },
-            "sourcesNames": restService.getAllChangelogSourceNames(),
-            "lastPicked": restService.getLastPickedChangelogSources,
-            "begin": function() {
-              return restService.changelogSourceBeginEdit(); // needs to clear session attribute on the server side
-            },
-            "cancelUrl": function() {
-              return "/part/" + $scope.partId + "/bom/search";
+      if ($scope.requiredSource) {
+        var authorized = User.hasRole("ROLE_CHLOGSRC_READ") && User.hasRole("ROLE_CHLOGSRCNAME_READ");
+        if (authorized) {
+          $uibModal.open({
+            templateUrl: "/views/chlogsrc/LinkDlg.html",
+            animation: false,
+            size: "lg",
+            controller: "ChlogSrcLinkDlgCtrl",
+            backdrop: 'static',
+            keyboard: false,
+            resolve: {
+              "partId": function () {
+                return $scope.partId;
+              },
+              "cbSave": function () {
+                return cbSave;
+              },
+              "sourcesNames": restService.getAllChangelogSourceNames(),
+              "lastPicked": restService.getLastPickedChangelogSources,
+              "begin": function() {
+                return restService.changelogSourceBeginEdit(); // needs to clear session attribute on the server side
+              },
+              "cancelUrl": function() {
+                return "/part/" + $scope.partId + "/bom/search";
+              }
             }
-          }
-        });
+          });
+        } else {
+          dialogs.error("Not authorized", "To complete this operation you must have at least following roles: " +
+            "ROLE_CHLOGSRC_READ, ROLE_CHLOGSRCNAME_READ.");
+        }
       } else {
-        dialogs.error("Not authorized", "To complete this operation you must have at least following roles: " +
-          "ROLE_CHLOGSRC_READ, ROLE_CHLOGSRCNAME_READ.");
+        cbSave(null, null, null);
       }
     };
 

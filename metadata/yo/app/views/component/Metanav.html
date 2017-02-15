@@ -45,6 +45,10 @@
 
           <li class="divider"></li>
 
+          <li data-ng-disabled="{{::!hasRole('ROLE_SERVICE')}}"><a href="#" data-ng-href="/service/list"><i class="fa fa-steam-square" aria-hidden="true"></i> Services</a></li>
+
+          <li class="divider"></li>
+
           <li data-ng-disabled="{{::!hasRole('ROLE_ADMIN')}}"><a href="#" data-ng-click="clearHibernate()"><i class="fa fa-trash-o" aria-hidden="true"></i> Clear Hibernate Cache</a></li>
         </ul>
       </li>
