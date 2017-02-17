@@ -10,6 +10,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "actuator")
+@DiscriminatorValue("30")
 @PrimaryKeyJoinColumn(name = "part_id")
 public class Actuator extends Part {
 

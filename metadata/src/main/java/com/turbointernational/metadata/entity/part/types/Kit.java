@@ -13,6 +13,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "kit")
+@DiscriminatorValue("3")
 @PrimaryKeyJoinColumn(name = "part_id")
 public class Kit extends Part {
 

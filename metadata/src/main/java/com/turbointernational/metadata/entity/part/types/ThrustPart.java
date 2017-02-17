@@ -10,6 +10,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "thrust_part")
+@DiscriminatorValue("20")
 @PrimaryKeyJoinColumn(name = "part_id")
 public class ThrustPart extends Part {
 

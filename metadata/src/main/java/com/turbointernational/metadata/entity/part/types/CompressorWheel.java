@@ -16,6 +16,7 @@ import static javax.persistence.FetchType.LAZY;
  */
 @Entity
 @Table(name = "compressor_wheel")
+@DiscriminatorValue("11")
 @PrimaryKeyJoinColumn(name = "part_id")
 public class CompressorWheel extends Part {
 

@@ -10,6 +10,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "major_component")
+@DiscriminatorValue("9")
 @PrimaryKeyJoinColumn(name = "part_id")
 public class MajorComponent extends Part {
 

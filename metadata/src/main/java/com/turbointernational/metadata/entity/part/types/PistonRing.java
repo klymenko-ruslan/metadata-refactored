@@ -16,6 +16,7 @@ import static javax.persistence.FetchType.LAZY;
  */
 @Entity
 @Table(name = "piston_ring")
+@DiscriminatorValue("4")
 @PrimaryKeyJoinColumn(name = "part_id")
 public class PistonRing extends Part {
 

@@ -10,6 +10,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "plug")
+@DiscriminatorValue("32")
 @PrimaryKeyJoinColumn(name = "part_id")
 public class Plug extends Part {
 

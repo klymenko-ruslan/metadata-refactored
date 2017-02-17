@@ -19,7 +19,7 @@ import java.io.Serializable;
         ),
         @NamedQuery(
                 name = "findStandardParts",
-                query = "select s.pk.standard from StandardOversizePart s " +"" +
+                query = "select s.pk.standard from StandardOversizePart s " +
                         "where s.pk.oversize.id=:partId order by s.pk.standard.id"
         )
 })

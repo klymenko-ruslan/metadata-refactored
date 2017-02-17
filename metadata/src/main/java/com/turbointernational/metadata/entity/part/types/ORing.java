@@ -16,6 +16,7 @@ import static javax.persistence.FetchType.LAZY;
  */
 @Entity
 @Table(name = "o_ring")
+@DiscriminatorValue("17")
 @PrimaryKeyJoinColumn(name = "part_id")
 public class ORing extends Part {
 

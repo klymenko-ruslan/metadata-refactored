@@ -16,6 +16,7 @@ import static javax.persistence.FetchType.LAZY;
  */
 @Entity
 @Table(name = "thrust_washer")
+@DiscriminatorValue("46")
 @PrimaryKeyJoinColumn(name = "part_id")
 public class ThrustWasher extends Part {
 

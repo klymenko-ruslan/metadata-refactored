@@ -1,6 +1,7 @@
-package com.turbointernational.metadata.entity.part.types;
+package com.turbointernational.metadata.entity.part;
 
 import com.turbointernational.metadata.entity.CarModelEngineYear;
+import com.turbointernational.metadata.entity.part.types.Turbo;
 
 import javax.persistence.*;
 import java.io.Serializable;

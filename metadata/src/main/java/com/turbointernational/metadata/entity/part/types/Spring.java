@@ -16,6 +16,7 @@ import static javax.persistence.FetchType.LAZY;
  */
 @Entity
 @Table(name = "spring")
+@DiscriminatorValue("42")
 @PrimaryKeyJoinColumn(name = "part_id")
 public class Spring extends Part {
 

@@ -30,6 +30,7 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
  */
 @Entity
 @Table(name = "turbo")
+@DiscriminatorValue("1")
 @PrimaryKeyJoinColumn(name = "part_id")
 @JsonInclude(ALWAYS)
 public class Turbo extends Part {

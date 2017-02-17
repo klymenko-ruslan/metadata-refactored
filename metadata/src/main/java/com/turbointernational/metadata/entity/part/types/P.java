@@ -2,6 +2,7 @@ package com.turbointernational.metadata.entity.part.types;
 
 import com.turbointernational.metadata.entity.part.Part;
 
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
@@ -12,6 +13,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "p")
+@DiscriminatorValue("51")
 @PrimaryKeyJoinColumn(name = "part_id")
 public class P extends Part {
 

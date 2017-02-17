@@ -1,7 +1,7 @@
 package com.turbointernational.metadata.entity;
 
 import com.turbointernational.metadata.service.SearchableEntity;
-import com.turbointernational.metadata.entity.part.types.TurboCarModelEngineYear;
+import com.turbointernational.metadata.entity.part.TurboCarModelEngineYear;
 import com.turbointernational.metadata.service.SearchService;
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;

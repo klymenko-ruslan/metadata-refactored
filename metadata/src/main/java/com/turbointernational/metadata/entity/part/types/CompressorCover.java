@@ -10,6 +10,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "compressor_cover")
+@DiscriminatorValue("31")
 @PrimaryKeyJoinColumn(name = "part_id")
 public class CompressorCover extends Part {
 

@@ -27,15 +27,16 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
 import static com.fasterxml.jackson.annotation.JsonTypeInfo.As.PROPERTY;
 import static com.fasterxml.jackson.annotation.JsonTypeInfo.Id.CLASS;
 import static javax.persistence.CascadeType.REFRESH;
+import static javax.persistence.DiscriminatorType.INTEGER;
 import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
 import static javax.persistence.InheritanceType.JOINED;
 import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_PROTOTYPE;
 
-@Cacheable
 @Entity
 @Table(name = "part")
 @Inheritance(strategy = JOINED)
+//@DiscriminatorColumn(name="part_type_id", discriminatorType= INTEGER )
 @Component
 @Scope(SCOPE_PROTOTYPE)
 @JsonTypeInfo(use = CLASS, property = "class", include = PROPERTY, defaultImpl = Part.class)
@@ -103,7 +104,7 @@ import static org.springframework.beans.factory.config.ConfigurableBeanFactory.S
         )
 })
 @JsonInclude(ALWAYS)
-public class Part implements Comparable<Part>, Serializable, SearchableEntity {
+public abstract class Part implements Comparable<Part>, Serializable, SearchableEntity {
 
     private static final Logger log = LoggerFactory.getLogger(Part.class);
 
@@ -350,9 +351,9 @@ public class Part implements Comparable<Part>, Serializable, SearchableEntity {
      * @param partTypeId part type ID
      * @return
      */
-    public static <T extends Part> T newInstance(int partTypeId) {
+    public static <T extends Part> T newInstance(Long partTypeId) {
         Part retVal;
-        switch (partTypeId) {
+        switch (partTypeId.intValue()) {
             case 1:
                 retVal = new Turbo();
                 break;

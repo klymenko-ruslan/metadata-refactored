@@ -10,6 +10,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "backplate_sealplate")
+@DiscriminatorValue("14")
 @PrimaryKeyJoinColumn(name = "part_id")
 public class BackplateSealplate extends Part {
 

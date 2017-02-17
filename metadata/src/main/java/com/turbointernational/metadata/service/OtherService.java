@@ -7,7 +7,7 @@ import com.turbointernational.metadata.entity.*;
 import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.dao.PartDao;
 import com.turbointernational.metadata.entity.part.types.Turbo;
-import com.turbointernational.metadata.entity.part.types.TurboCarModelEngineYear;
+import com.turbointernational.metadata.entity.part.TurboCarModelEngineYear;
 import com.turbointernational.metadata.dao.TurboCarModelEngineYearDao;
 import com.turbointernational.metadata.service.OtherService.GenerateApplicationsResponse.Failure;
 import com.turbointernational.metadata.util.View;

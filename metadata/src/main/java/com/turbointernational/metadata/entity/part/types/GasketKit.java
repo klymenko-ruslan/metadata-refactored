@@ -4,10 +4,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.util.View;
 
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
-import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +17,7 @@ import static javax.persistence.FetchType.LAZY;
  */
 @Entity
 @Table(name = "gasket_kit")
+@DiscriminatorValue("49")
 @PrimaryKeyJoinColumn(name = "part_id")
 public class GasketKit extends Part {
 

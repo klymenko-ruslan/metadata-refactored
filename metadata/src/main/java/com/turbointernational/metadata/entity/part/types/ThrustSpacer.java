@@ -16,6 +16,7 @@ import static javax.persistence.FetchType.LAZY;
  */
 @Entity
 @Table(name = "thrust_spacer")
+@DiscriminatorValue("45")
 @PrimaryKeyJoinColumn(name = "part_id")
 public class ThrustSpacer extends Part {
 

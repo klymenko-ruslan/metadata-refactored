@@ -10,6 +10,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "fast_wearing_component")
+@DiscriminatorValue("8")
 @PrimaryKeyJoinColumn(name = "part_id")
 public class FastWearingComponent extends Part {
 

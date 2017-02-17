@@ -2,7 +2,7 @@ package com.turbointernational.metadata.dao;
 
 import com.turbointernational.metadata.entity.CarModelEngineYear;
 import com.turbointernational.metadata.entity.part.types.Turbo;
-import com.turbointernational.metadata.entity.part.types.TurboCarModelEngineYear;
+import com.turbointernational.metadata.entity.part.TurboCarModelEngineYear;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

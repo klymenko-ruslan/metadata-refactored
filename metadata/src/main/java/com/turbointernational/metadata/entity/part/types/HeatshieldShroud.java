@@ -16,6 +16,7 @@ import static javax.persistence.FetchType.LAZY;
  */
 @Entity
 @Table(name = "heatshield")
+@DiscriminatorValue("15")
 @PrimaryKeyJoinColumn(name = "part_id")
 public class HeatshieldShroud extends Part {
 

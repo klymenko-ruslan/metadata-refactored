@@ -280,7 +280,8 @@ public class PartController {
     @ResponseBody
     @RequestMapping(value = "/part/{id}/oversize/list", method = GET, produces = APPLICATION_JSON_VALUE)
     public List<Part> findOversizeParts(@PathVariable("id") Long partId) {
-        return standardOversizePartService.findOversizeParts(partId);
+        List<Part> retVal = standardOversizePartService.findOversizeParts(partId);
+        return retVal;
     }
 
     @JsonView(View.Summary.class)
@@ -288,7 +289,8 @@ public class PartController {
     @RequestMapping(value = "/part/{id}/standard/list", method = GET,
             produces = APPLICATION_JSON_VALUE)
     public List<Part> findStandardParts(@PathVariable("id") Long partId) {
-        return standardOversizePartService.findStandardParts(partId);
+        List<Part> retVal = standardOversizePartService.findStandardParts(partId);
+        return retVal;
     }
 
     @Transactional

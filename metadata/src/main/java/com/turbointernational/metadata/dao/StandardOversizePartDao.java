@@ -53,10 +53,8 @@ public class StandardOversizePartDao extends AbstractDao<StandardOversizePart> {
     }
 
     public void delete(Long standardPartId, Long oversizePartId) {
-        Part standard = new Part();
-        standard.setId(standardPartId);
-        Part oversize = new Part();
-        oversize.setId(oversizePartId);
+        Part standard = em.getReference(Part.class, standardPartId);
+        Part oversize = em.getReference(Part.class, oversizePartId);
         StandardOversizePart sop = em.getReference(StandardOversizePart.class, new StandardOversizePartId(standard, oversize));
         em.remove(sop);
     }

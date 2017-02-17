@@ -16,6 +16,7 @@ import static javax.persistence.FetchType.LAZY;
  */
 @Entity
 @Table(name = "backplate")
+@DiscriminatorValue("34")
 @PrimaryKeyJoinColumn(name = "part_id")
 public class Backplate extends Part {
 

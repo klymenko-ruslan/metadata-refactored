@@ -562,7 +562,7 @@ public class Mas90SyncService {
         }
 
         private Part insertPart(String itemcode, String itemcodedesc, Long partTypeId, Boolean inactive) {
-            Part p = Part.newInstance(partTypeId.intValue());
+            Part p = Part.newInstance(partTypeId);
             PartType partType = entityManager.getReference(PartType.class, partTypeId);
             p.setManufacturerPartNumber(itemcode);
             Manufacturer manufacturer = entityManager.getReference(Manufacturer.class, TURBO_INTERNATIONAL_MANUFACTURER_ID);

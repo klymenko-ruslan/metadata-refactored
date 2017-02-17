@@ -10,6 +10,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "cartridge")
+@DiscriminatorValue("2")
 @PrimaryKeyJoinColumn(name = "part_id")
 public class Cartridge extends Part {
 

@@ -1,7 +1,7 @@
 package com.turbointernational.metadata.service;
 
 import com.turbointernational.metadata.dao.TurboCarModelEngineYearDao;
-import com.turbointernational.metadata.entity.part.types.TurboCarModelEngineYear;
+import com.turbointernational.metadata.entity.part.TurboCarModelEngineYear;
 import com.turbointernational.metadata.service.ChangelogService.RelatedPart;
 import flexjson.JSONSerializer;
 import flexjson.transformer.HibernateTransformer;

@@ -16,6 +16,7 @@ import static javax.persistence.FetchType.LAZY;
  */
 @Entity
 @Table(name = "oil_deflector")
+@DiscriminatorValue("18")
 @PrimaryKeyJoinColumn(name = "part_id")
 public class OilDeflector extends Part {
 

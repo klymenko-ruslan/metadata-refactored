@@ -16,6 +16,7 @@ import static javax.persistence.FetchType.LAZY;
  */
 @Entity
 @Table(name = "bearing_housing")
+@DiscriminatorValue("13")
 @PrimaryKeyJoinColumn(name = "part_id")
 public class BearingHousing extends Part {
 
