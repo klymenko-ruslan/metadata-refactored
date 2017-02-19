@@ -1115,8 +1115,8 @@ public class BOMService {
             }
         }
         List<BOMItem> parents = getParentsForBom(primaryPartId);
-        rebuildBomDescendancyForPart(primaryPartId, true);
 /*
+        rebuildBomDescendancyForPart(primaryPartId, true);
             Query call = em.createNativeQuery("CALL RebuildBomDescendancyForPart(:partId, :clean)");
             call.setParameter("partId", primaryPartId);
             call.setParameter("clean", 1);
