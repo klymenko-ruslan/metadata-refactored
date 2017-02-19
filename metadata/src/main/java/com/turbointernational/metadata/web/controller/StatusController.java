@@ -23,13 +23,14 @@ public class StatusController {
     @Autowired
     private BOMService bomService;
     
-    @Transactional
+    //@Transactional
     @RequestMapping(value="/all")
     @JsonView(View.Summary.class)
     @ResponseBody
     @Secured("ROLE_READ")
     public Status status() throws Exception {
         Status status = new Status();
+//status.setBomRebuilding(false);
         BOMService.IndexingStatus rebuildStatus = bomService.getRebuildStatus();
         status.setBomRebuilding(rebuildStatus.isRebuilding());
         return status;

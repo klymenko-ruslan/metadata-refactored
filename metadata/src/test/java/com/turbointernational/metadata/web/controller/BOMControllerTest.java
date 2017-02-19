@@ -8,6 +8,7 @@ import com.turbointernational.metadata.entity.chlogsrc.Source;
 import org.junit.Test;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
 import java.util.HashMap;
 import java.util.List;
@@ -53,7 +54,7 @@ public class BOMControllerTest extends AbstractFunctionalWebTest {
                 .content(requestBody).contentType(contentType))
                 .andExpect(status().isOk())
 //                .andDo(MockMvcResultHandlers.print())
-                .andExpect(content().json(responseBody));;
+                .andExpect(content().json(responseBody));
         // Check that description for the link exists.
         ChangelogSourceLink link = em.find(ChangelogSourceLink.class, 1L);
         assertNotNull(link);

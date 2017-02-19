@@ -42,6 +42,7 @@ import static com.turbointernational.metadata.service.BOMService.IndexingStatus.
 import static com.turbointernational.metadata.util.FormatUtils.formatBOMItem;
 import static java.util.Collections.binarySearch;
 import static org.springframework.transaction.TransactionDefinition.PROPAGATION_REQUIRES_NEW;
+import static org.springframework.transaction.annotation.Propagation.REQUIRED;
 import static org.springframework.transaction.annotation.Propagation.REQUIRES_NEW;
 
 /**
@@ -1054,12 +1055,12 @@ public class BOMService {
         return bomItemDao.findParentsForBom(partId);
     }
 
-    @Transactional
+    @Transactional(propagation = REQUIRED)
     public List<BOMItem> getByParentAndTypeIds(Long partId, Long partTypeId) throws Exception {
         return bomItemDao.findByParentAndTypeIds(partId, partTypeId);
     }
 
-    @Transactional(noRollbackFor = {FoundBomRecursionException.class, AssertionError.class})
+    @Transactional(noRollbackFor = {FoundBomRecursionException.class, AssertionError.class}, propagation = REQUIRED)
     public AddToParentBOMsResponse addToParentsBOMs(Long primaryPartId, AddToParentBOMsRequest request) throws Exception {
         int added = 0;
         Part primaryPart = partDao.findOne(primaryPartId);
@@ -1114,8 +1115,14 @@ public class BOMService {
             }
         }
         List<BOMItem> parents = getParentsForBom(primaryPartId);
-        // rebuildBomDescendancy();
         rebuildBomDescendancyForPart(primaryPartId, true);
+/*
+            Query call = em.createNativeQuery("CALL RebuildBomDescendancyForPart(:partId, :clean)");
+            call.setParameter("partId", primaryPartId);
+            call.setParameter("clean", 1);
+            call.executeUpdate();
+            em.clear();
+*/
         return new BOMService.AddToParentBOMsResponse(added, failures, parents);
     }
 

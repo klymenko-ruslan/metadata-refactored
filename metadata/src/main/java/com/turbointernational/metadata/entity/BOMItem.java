@@ -30,11 +30,11 @@ import static javax.persistence.GenerationType.IDENTITY;
 @NamedQueries({
         @NamedQuery(
                 name="findBomsOfPart",
-                query = "SELECT i FROM BOMItem i JOIN i.child c WHERE i.parent.id = :parentPartId"
+                query = "SELECT DISTINCT i FROM BOMItem i JOIN i.child c WHERE i.parent.id = :parentPartId"
         ),
         @NamedQuery(
                 name="findBomParents",
-                query="SELECT i FROM BOMItem i JOIN i.parent p WHERE i.child.id = :partId"
+                query="SELECT DISTINCT i FROM BOMItem i JOIN i.parent p WHERE i.child.id = :partId"
         ),
         @NamedQuery(
                 name="findBomsOfPartWithType",
