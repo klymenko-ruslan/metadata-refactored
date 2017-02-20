@@ -117,7 +117,10 @@ public class ChangelogSourceService {
               em.flush();
           }
       } else if (/*httpRequest != null &&*/ !httpRequest.isUserInRole(Role.ROLE_CHLOGSRC_SKIP)) {
-          throw new AssertionError("User must provide changelog source.");
+          boolean required = serviceService.isChangelogSourceRequired(service);
+          if (required) {
+              throw new AssertionError("User must provide changelog source.");
+          }
       }
     }
 
