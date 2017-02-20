@@ -101,6 +101,10 @@ import static org.springframework.beans.factory.config.ConfigurableBeanFactory.S
         @NamedQuery(
                 name = "findAllPartsOrderedById",
                 query = "from Part p order by p.id"
+        ),
+        @NamedQuery(
+                name = "findPartsByIds",
+                query = "select distinct p from Part p where p.id in :ids order by p.manufacturerPartNumber"
         )
 })
 @JsonInclude(ALWAYS)

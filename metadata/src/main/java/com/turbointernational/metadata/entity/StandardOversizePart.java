@@ -11,18 +11,6 @@ import java.io.Serializable;
  */
 @Entity
 @Table(name = "standard_oversize_part")
-@NamedQueries({
-        @NamedQuery(
-                name = "findOversizeParts",
-                query = "select distinct s.pk.oversize from StandardOversizePart s " +
-                        "where s.pk.standard.id=:partId order by s.pk.oversize.id"
-        ),
-        @NamedQuery(
-                name = "findStandardParts",
-                query = "select distinct s.pk.standard from StandardOversizePart s " +
-                        "where s.pk.oversize.id=:partId order by s.pk.standard.id"
-        )
-})
 public class StandardOversizePart implements Serializable {
 
     @EmbeddedId

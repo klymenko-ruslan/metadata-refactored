@@ -4,8 +4,12 @@ import com.turbointernational.metadata.entity.StandardOversizePart;
 import com.turbointernational.metadata.entity.StandardOversizePartId;
 import com.turbointernational.metadata.entity.part.Part;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import javax.annotation.PostConstruct;
+import javax.sql.DataSource;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,18 +21,46 @@ public class StandardOversizePartDao extends AbstractDao<StandardOversizePart> {
     @Autowired
     private PartDao partDao;
 
+    @Autowired
+    private DataSource dataSource = null;
+
+    private JdbcTemplate jdbcTemplate;
+
     public StandardOversizePartDao() {
         super(StandardOversizePart.class);
     }
 
+    @PostConstruct
+    public void init() {
+        this.jdbcTemplate = new JdbcTemplate(dataSource);
+    }
+
     public List<Part> findOversizeParts(Long partId) {
-        return em.createNamedQuery("findOversizeParts", Part.class)
-                .setParameter("partId", partId).getResultList();
+        List<Part>  retVal;
+        List<Long> ids = jdbcTemplate.query(
+                "select oversize_part_id from standard_oversize_part where standard_part_id = ?",
+                (rm, rowNum) -> rm.getLong(1), partId);
+        if (ids.isEmpty()) {
+            retVal = new ArrayList<>(0);
+        } else {
+            retVal = em.createNamedQuery("findPartsByIds", Part.class)
+                    .setParameter("ids", ids).getResultList();
+        }
+        return retVal;
     }
 
     public List<Part> findStandardParts(Long partId) {
-        return em.createNamedQuery("findStandardParts", Part.class)
-                .setParameter("partId", partId).getResultList();
+        List<Part>  retVal;
+        List<Long> ids = jdbcTemplate.query(
+                "select standard_part_id from standard_oversize_part where oversize_part_id = ?",
+                (rm, rowNum) -> rm.getLong(1), partId);
+        if (ids.isEmpty()) {
+            retVal = new ArrayList<>(0);
+        } else {
+            retVal = em.createNamedQuery("findPartsByIds", Part.class)
+                    .setParameter("ids", ids).getResultList();
+        }
+        return retVal;
     }
 
     public StandardOversizePart create(Long standardPartId, Long oversizePartId) {
