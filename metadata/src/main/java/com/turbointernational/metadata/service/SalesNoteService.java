@@ -41,6 +41,9 @@ public class SalesNoteService {
     private ChangelogService changelogService;
 
     @Autowired
+    private ChangelogSourceService changelogSourceService;
+
+    @Autowired
     private PartDao partDao;
 
     @Autowired
@@ -83,7 +86,8 @@ public class SalesNoteService {
     }
 
     @Transactional
-    public SalesNote createSalesNote(User user, Long primaryPartId, String comment) {
+    public SalesNote createSalesNote(HttpServletRequest httpRequest, User user, Long primaryPartId, String comment,
+                                     Long[] sourcesIds, Integer[] ratings, String description) {
         // Create the sales note from the request
         SalesNote salesNote = new SalesNote();
         salesNote.setCreator(user);
@@ -99,8 +103,9 @@ public class SalesNoteService {
         salesNotes.save(salesNote);
         List<RelatedPart> relatedParts = new ArrayList<>(1);
         relatedParts.add(new RelatedPart(primaryPartId, PART0));
-        changelogService.log(SALESNOTES, "Created sales note " + formatSalesNote(salesNote) + ".",
-                relatedParts);
+        Changelog changelog = changelogService.log(SALESNOTES, "Created sales note " +
+                        formatSalesNote(salesNote) + ".", relatedParts);
+        changelogSourceService.link(httpRequest, SALESNOTES, changelog, sourcesIds, ratings, description);
         // Initialize a few properties before sending the response
         primaryPart.getManufacturer().getName();
         primaryPart.getPartType().getName();

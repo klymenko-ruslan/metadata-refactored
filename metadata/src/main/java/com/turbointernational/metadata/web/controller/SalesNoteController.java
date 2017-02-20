@@ -58,10 +58,12 @@ public class SalesNoteController {
     @JsonView(View.DetailWithPartsAndAttachments.class)
     public
     @ResponseBody
-    SalesNote createSalesNote(
+    SalesNote createSalesNote(HttpServletRequest httpRequest,
             @AuthenticationPrincipal(errorOnInvalidType = true) User user,
             @RequestBody CreateSalesNoteRequest request) {
-        SalesNote salesNote = salesNoteService.createSalesNote(user, request.getPrimaryPartId(), request.getComment());
+        SalesNote salesNote = salesNoteService.createSalesNote(httpRequest, user, request.getPrimaryPartId(),
+                request.getComment(), request.getSourcesIds(), request.getChlogSrcRatings(),
+                request.getChlogSrcLnkDescription());
         return salesNote;
     }
 

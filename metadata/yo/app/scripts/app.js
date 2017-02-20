@@ -143,6 +143,9 @@ angular.module("ngMetaCrudApp", ["ngCookies", "ngRoute", "ngTable", "ui.bootstra
         parents:["$route", "BOM", function ($route, BOM) {
           var partId = $route.current.pathParams.id;
           return BOM.listParentsOfPartBom(partId);
+        }],
+        services: ["restService", function(restService) {
+          return restService.getAllServices();
         }]
       }
     });
@@ -285,7 +288,12 @@ angular.module("ngMetaCrudApp", ["ngCookies", "ngRoute", "ngTable", "ui.bootstra
     });
     $routeProvider.when("/part/:id/sales_note/create", {
       templateUrl: "views/part/sales_note/SalesNoteCreate.html",
-      controller: "SalesNoteCreateCtrl"
+      controller: "SalesNoteCreateCtrl",
+      resolve: {
+        services: ["restService", function(restService) {
+          return restService.getAllServices();
+        }]
+      }
     });
 
     $routeProvider.when("/part/:partId/sales_note/:salesNoteId", {

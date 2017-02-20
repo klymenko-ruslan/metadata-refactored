@@ -3,9 +3,9 @@
 angular.module("ngMetaCrudApp")
   .controller("ParentBomSearchCtrl", [
     "$log", "$scope", "$location", "ngTableParams", "$uibModal", "dialogs", "gToast", "restService",
-    "BOM", "utils", "part", "partTypes", "parents",
+    "BOM", "utils", "part", "partTypes", "parents", "services", "LinkSource",
     function ($log, $scope, $location, ngTableParams, $uibModal, dialogs, gToast, restService,
-              BOM, utils, part, partTypes, parents)
+              BOM, utils, part, partTypes, parents, services, LinkSource)
     {
 
       $scope.part = part; // primary part
@@ -13,6 +13,8 @@ angular.module("ngMetaCrudApp")
       $scope.restService = restService;
 
       $scope.searchPartType = part.partType.id;
+
+      $scope.requiredSource = LinkSource.isSourceRequiredForBOM(services);
 
       var pickedParts = [];
       var pickedPartIds = {};
@@ -64,7 +66,7 @@ angular.module("ngMetaCrudApp")
         return pickedParts.length === 0;
       };
 
-      $scope.save = function() {
+      function cbSave(srcIds, ratings, description) {
         var rows = _.map(pickedParts, function(p) {
           return {
             partId: p.id,
@@ -72,7 +74,7 @@ angular.module("ngMetaCrudApp")
             resolution: p.extra.resolution
           };
         });
-        BOM.addToParentsBOMs($scope.part.id, { rows: rows }).then(
+        BOM.addToParentsBOMs($scope.part.id, srcIds, ratings, description, rows).then(
           function success(response) {
             parents.splice(0, parents.length);
             _.each(response.parents, function(b) {
@@ -110,6 +112,10 @@ angular.module("ngMetaCrudApp")
             restService.error("Can't add the part to parent BOM's.", error);
           }
         );
+      };
+
+      $scope.save = function() {
+        LinkSource.link($scope.part.id, cbSave, $scope.requiredSource, "/part/" + $scope.part.id + "/parentbom/search");
       };
 
       $scope.pick = function(pickedPart) {

@@ -9,7 +9,7 @@
         <td title="'Name'" data-sortable="'name'" class="text-left text-nowrap">{{srv.name}}</td>
         <td title="'Description'" data-sortable="'description'" class="text-left">{{srv.description}}</td>
         <td title="'Required Source'" data-sortable="'requiredSource'" class="text-center">
-          <input type="checkbox" data-ng-disabled="srv.id != 1" data-ng-model="requiredSource[srv.name]" data-ng-change="onChangeRequiredSource(srv)" data-ng-true-value="true" data-ng-false-value="false">
+          <input type="checkbox" data-ng-disabled="srv.id==6 || srv.id == 3" data-ng-model="requiredSource[srv.name]" data-ng-change="onChangeRequiredSource(srv)" data-ng-true-value="true" data-ng-false-value="false">
         </td>
       </tr>
       <tr data-ng-hide="$data.length > 0">

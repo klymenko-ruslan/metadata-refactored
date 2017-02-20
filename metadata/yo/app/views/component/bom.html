@@ -76,25 +76,24 @@
 </table>
 
 <div data-ng-show="altBomItem">
-    <h4 part-name="altBomItem.child" part-name-suffix="Alternates"></h4>
+  <h4 part-name="altBomItem.child" part-name-suffix="Alternates"></h4>
 
-    <a authorize="ROLE_BOM"
-       class="btn btn-info pull-right" style="vertical-align: middle;"
+  <div class="pull-right" style="margin-bottom: 5px;">
+    <a authorize="ROLE_BOM" class="btn btn-info pull-right"
        data-ng-href="/part/{{parentPartId}}/bom/{{altBomItem.id}}/search">
       <i class="fa fa-cogs"></i> Add Alternate
     </a>
-
-  <div class="row">
-    <part-table parts="altBomItem.alternatives" key="part"
-                extra-columns="{&quot;Alt Group #&quot;: &quot;item.header.id&quot;}">
-
-      <button data-ng-click="removeAlternate(index, item)"
-              data-ng-disabled="restService.status.bomRebuilding"
-         authorize="ROLE_BOM_ALT" class="btn btn-danger btn-xs">
-        <i class="fa fa-trash-o"></i> Remove
-      </button>
-
-    </part-table>
-
   </div>
+
+  <part-table parts="altBomItem.alternatives" key="part"
+              extra-columns="{&quot;Alt Group #&quot;: &quot;item.header.id&quot;}">
+
+    <button data-ng-click="removeAlternate(index, item)"
+            data-ng-disabled="restService.status.bomRebuilding"
+       authorize="ROLE_BOM_ALT" class="btn btn-danger btn-xs">
+      <i class="fa fa-trash-o"></i> Remove
+    </button>
+
+  </part-table>
+
 </div>

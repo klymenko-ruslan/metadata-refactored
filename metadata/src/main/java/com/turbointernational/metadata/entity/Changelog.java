@@ -24,6 +24,12 @@ import static javax.persistence.TemporalType.TIMESTAMP;
 @Table(name = "changelog")
 public class Changelog implements Serializable {
 
+    /**
+     * Services in this webapp.
+     *
+     * Order of the elements is important because ordinal order is used
+     * to load record by ID from the 'service' table.
+     */
     public enum ServiceEnum {
         BOM, INTERCHANGE, MAS90SYNC, SALESNOTES, APPLICATIONS, KIT, PART, TURBOMODEL, TURBOTYPE
     }

@@ -5,7 +5,7 @@ angular.module('ngMetaCrudApp')
         $scope.restService = restService;
         $scope.partId = $routeParams.id;
         $scope.bomItemId = $routeParams.bomId;
-        
+
 
         $scope.pickedPart = null;
         $scope.showPickedPart = false;
@@ -15,11 +15,10 @@ angular.module('ngMetaCrudApp')
             function (parentPart) {
                 $scope.part = parentPart;
             }, restService.error);
-            
+
         BOM.listByParentPartId($scope.partId)
             .then(function(bom) {
                 $scope.bom = bom;
-
                 $scope.bomItem = _.find(bom, function(bomItem) {
                     return bomItem.id === $scope.bomItemId;
                 });

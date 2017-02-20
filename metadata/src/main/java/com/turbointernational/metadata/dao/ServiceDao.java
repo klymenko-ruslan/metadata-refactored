@@ -16,6 +16,16 @@ import java.util.List;
 @Repository
 public class ServiceDao extends AbstractDao<Service> {
 
+    public static final long SERVICEID_BOM = 1;
+    public static final long SERVICEID_INTERCHANGE = 2;
+    public static final long SERVICEID_MAS90SYNC = 3;
+    public static final long SERVICEID_SALESNOTES = 4;
+    public static final long SERVICEID_APPLICATIONS = 5;
+    public static final long SERVICEID_KIT = 6;
+    public static final long SERVICEID_PART = 7;
+    public static final long SERVICEID_TURBOMODEL = 8;
+    public static final long SERVICEID_TURBOTYPE = 9;
+
     public ServiceDao() {
         super(Service.class);
     }
@@ -56,6 +66,10 @@ public class ServiceDao extends AbstractDao<Service> {
         Service service = findOne(serviceId);
         service.setRequiredSource(required);
         merge(service);
+    }
+
+    public boolean isChangelogSourceRequired(long serviceId) {
+        return findOne(serviceId).isRequiredSource();
     }
 
 }

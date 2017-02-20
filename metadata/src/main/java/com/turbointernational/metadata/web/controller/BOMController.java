@@ -101,10 +101,10 @@ public class BOMController {
     @ResponseBody
     @JsonView(View.SummaryWithBOMDetail.class)
     @Secured("ROLE_BOM")
-    public BOMService.AddToParentBOMsResponse addToParentsBOMs(
+    public BOMService.AddToParentBOMsResponse addToParentsBOMs(HttpServletRequest httpRequest,
             @PathVariable("id") Long partId,
             @RequestBody BOMService.AddToParentBOMsRequest request) throws Exception {
-        return bomService.addToParentsBOMs(partId, request);
+        return bomService.addToParentsBOMs(httpRequest, partId, request);
     }
 
     @Transactional

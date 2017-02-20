@@ -1,6 +1,7 @@
 package com.turbointernational.metadata.service;
 
 import com.turbointernational.metadata.dao.ServiceDao;
+import com.turbointernational.metadata.entity.Changelog.ServiceEnum;
 import com.turbointernational.metadata.web.dto.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
@@ -23,7 +24,14 @@ public class ServiceService {
     }
 
     @Secured("ROLE_READ")
-    public Page<com.turbointernational.metadata.entity.Service> filter(String sortProperty, String sortOrder, Integer offset, Integer limit) {
+    public boolean isChangelogSourceRequired(ServiceEnum service) {
+        long serviceId = service.ordinal();
+        return serviceDao.isChangelogSourceRequired(serviceId);
+    }
+
+    @Secured("ROLE_READ")
+    public Page<com.turbointernational.metadata.entity.Service> filter(String sortProperty, String sortOrder,
+                                                                       Integer offset, Integer limit) {
         return serviceDao.filter(sortProperty, sortOrder, offset, limit);
     }
 

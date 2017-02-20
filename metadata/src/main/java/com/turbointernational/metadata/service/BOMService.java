@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.dao.*;
 import com.turbointernational.metadata.entity.*;
-import com.turbointernational.metadata.entity.chlogsrc.*;
 import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.service.BOMService.CreateBOMsRequest.Row;
 import com.turbointernational.metadata.service.BOMService.CreateBOMsResponse.Failure;
@@ -75,7 +74,7 @@ public class BOMService {
     private SourceDao sourceDao;
 
     @Autowired
-    private ChangelogSourceDao changelogSourceDao;
+    private ChangelogSourceService changelogSourceService;
 
     @Autowired
     private ChangelogSourceLinkDao changelogSourceLinkDao;
@@ -685,8 +684,45 @@ public class BOMService {
 
         }
 
+        /**
+         * Changelog source IDs which should be linked to the changelog.
+         * See ticket #891 for details.
+         */
+        @JsonView(View.Summary.class)
+        private Long[] sourcesIds;
+
+        @JsonView(View.Summary.class)
+        private Integer[] chlogSrcRatings;
+
+        @JsonView(View.Summary.class)
+        private String chlogSrcLnkDescription;
+
         @JsonView({View.Summary.class})
         private List<Row> rows;
+
+        public Long[] getSourcesIds() {
+            return sourcesIds;
+        }
+
+        public void setSourcesIds(Long[] sourcesIds) {
+            this.sourcesIds = sourcesIds;
+        }
+
+        public Integer[] getChlogSrcRatings() {
+            return chlogSrcRatings;
+        }
+
+        public void setChlogSrcRatings(Integer[] chlogSrcRatings) {
+            this.chlogSrcRatings = chlogSrcRatings;
+        }
+
+        public String getChlogSrcLnkDescription() {
+            return chlogSrcLnkDescription;
+        }
+
+        public void setChlogSrcLnkDescription(String chlogSrcLnkDescription) {
+            this.chlogSrcLnkDescription = chlogSrcLnkDescription;
+        }
 
         public List<Row> getRows() {
             return rows;
@@ -965,7 +1001,9 @@ public class BOMService {
 
     }
 
-    private CreateBOMItemResult _create(Long parentPartId, Long childPartId, Integer quantity)
+    private CreateBOMItemResult _create(HttpServletRequest httpRequest, Changelog.ServiceEnum service,
+                                        Long parentPartId, Long childPartId, Integer quantity, Long[] sourcesIds,
+                                        Integer[] ratings, String description)
             throws FoundBomRecursionException {
         // Create a new BOM item
         Part parent = partDao.findOne(parentPartId);
@@ -986,13 +1024,13 @@ public class BOMService {
         relatedParts.add(new RelatedPart(child.getId(), BOM_CHILD));
         Changelog changelog = changelogService.log(BOM,
                 "Added bom item: " + formatBOMItem(bom), bom.toJson(), relatedParts);
+        changelogSourceService.link(httpRequest, service, changelog, sourcesIds, ratings, description);
         return new CreateBOMItemResult(bom, changelog);
     }
 
     @Transactional(noRollbackFor = {FoundBomRecursionException.class, AssertionError.class})
     public CreateBOMsResponse createBOMs(HttpServletRequest httpRequest, CreateBOMsRequest request) throws Exception {
         Long parentPartId = request.getParentPartId();
-        User user = User.getCurrentUser();
         List<Failure> failures = new ArrayList<>();
         for(Row row : request.getRows()) {
             // Create a new BOM item
@@ -1003,30 +1041,8 @@ public class BOMService {
                 throw new AssertionError("Child part must have the same manufacturer as the Parent part.");
             }
             try {
-                Long[] sourceIds = request.getSourcesIds();
-                CreateBOMItemResult cbir = _create(parentPartId, childId, row.getQuantity());
-                if (sourceIds != null && sourceIds.length > 0) {
-                    Date now  = new Date();
-                    Changelog changelog = cbir.getChangelog();
-                    String descritpion = request.getChlogSrcLnkDescription();
-                    ChangelogSourceLink link = new ChangelogSourceLink(changelog, user, now, descritpion);
-                    changelogSourceLinkDao.persist(link);
-                    Integer[] ratings = request.getChlogSrcRatings();
-                    for (int i = 0; i < sourceIds.length; i++) {
-                        Long srcId = sourceIds[i];
-                        Integer rating = ratings[i];
-                        Source source = sourceDao.getReference(srcId);
-                        ChangelogSourceId chlgsrcid = new ChangelogSourceId(link, source);
-                        ChangelogSource chlgsrc = new ChangelogSource(chlgsrcid, rating);
-                        changelogSourceDao.persist(chlgsrc);
-                        searchService.indexChangelogSource(source); // update partIds in the index
-                        // I have no idea why... but without flush below the record is not saved
-                        // to the changelog_source.
-                        em.flush();
-                    }
-                } else if (httpRequest != null && !httpRequest.isUserInRole(Role.ROLE_CHLOGSRC_SKIP)) {
-                    throw new AssertionError("User must provide changelog source.");
-                }
+                _create(httpRequest, BOM, parentPartId, childId, row.getQuantity(),
+                        request.getSourcesIds(), request.getChlogSrcRatings(), request.getChlogSrcLnkDescription());
             } catch (FoundBomRecursionException e) {
                 log.debug("Adding of the part [" + childId + "] to list of BOM for part [" +
                         parentPartId + "] failed.", e);
@@ -1061,7 +1077,8 @@ public class BOMService {
     }
 
     @Transactional(noRollbackFor = {FoundBomRecursionException.class, AssertionError.class}, propagation = REQUIRED)
-    public AddToParentBOMsResponse addToParentsBOMs(Long primaryPartId, AddToParentBOMsRequest request) throws Exception {
+    public AddToParentBOMsResponse addToParentsBOMs(HttpServletRequest httpRequest, Long primaryPartId,
+                                                    AddToParentBOMsRequest request) throws Exception {
         int added = 0;
         Part primaryPart = partDao.findOne(primaryPartId);
         Long primaryPartTypeId = primaryPart.getPartType().getId();
@@ -1100,7 +1117,8 @@ public class BOMService {
                     }
                 }
                 // Add the primary part to the list of BOMs of the picked part.
-                _create(pickedPartId, primaryPartId, r.getQuantity());
+                _create(httpRequest, BOM, pickedPartId, primaryPartId, r.getQuantity(), request.getSourcesIds(),
+                        request.getChlogSrcRatings(), request.getChlogSrcLnkDescription());
                 added++;
             } catch(FoundBomRecursionException e) {
                 log.debug("Adding of the part [" + primaryPartId + "] to list of BOM for part [" +

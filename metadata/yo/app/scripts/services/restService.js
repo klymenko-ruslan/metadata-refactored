@@ -923,8 +923,23 @@ angular.module("ngMetaCrudApp")
         return Restangular.one("other/salesNote", id).get();
       };
 
+      this.createSalesNote = function(primaryPartId, comment, sourcesIds, ratings, description) {
+        var req = {
+          primaryPartId: primaryPartId,
+          comment: comment,
+          sourcesIds: sourcesIds,
+          chlogSrcRatings: ratings,
+          chlogSrcLnkDescription: description,
+        };
+        return Restangular.all("other/salesNote").post(req);
+      };
+
       this.updateSalesNote = function(id, comment) {
         return Restangular.one("other/salesNote").post(id, { "comment": comment });
+      };
+
+      this.removeSalesNote = function(id) {
+        return Restangular.one("other/salesNote", id).remove();
       };
 
       this.getAllAuthProviders = function(sortProperty, sortOrder, offset, limit) {
@@ -950,10 +965,6 @@ angular.module("ngMetaCrudApp")
 
       this.findAuthProviderLdapByName = function(name) {
         return Restangular.one("authprovider/findbyname").get({"name": name});
-      };
-
-      this.removeSalesNote = function(id) {
-        return Restangular.one("other/salesNote", id).remove();
       };
 
       this.findCriticalDimensionsForThePart = function(id) {

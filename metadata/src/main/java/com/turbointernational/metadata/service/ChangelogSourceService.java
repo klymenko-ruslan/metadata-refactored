@@ -3,11 +3,11 @@ package com.turbointernational.metadata.service;
 import com.turbointernational.metadata.dao.ChangelogSourceDao;
 import com.turbointernational.metadata.dao.ChangelogSourceLinkDao;
 import com.turbointernational.metadata.dao.SourceDao;
+import com.turbointernational.metadata.entity.Changelog;
+import com.turbointernational.metadata.entity.Changelog.ServiceEnum;
+import com.turbointernational.metadata.entity.Role;
 import com.turbointernational.metadata.entity.User;
-import com.turbointernational.metadata.entity.chlogsrc.ChangelogSource;
-import com.turbointernational.metadata.entity.chlogsrc.ChangelogSourceLink;
-import com.turbointernational.metadata.entity.chlogsrc.Source;
-import com.turbointernational.metadata.entity.chlogsrc.SourceAttachment;
+import com.turbointernational.metadata.entity.chlogsrc.*;
 import com.turbointernational.metadata.web.controller.ChangelogSourceController.AttachmentsResponse;
 import com.turbointernational.metadata.web.dto.Page;
 import org.apache.commons.io.FileUtils;
@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
@@ -48,6 +49,12 @@ public class ChangelogSourceService {
 
     @Autowired
     private ChangelogSourceLinkDao changelogSourceLinkDao;
+
+    @Autowired
+    private ServiceService serviceService;
+
+    @Autowired
+    private SearchService searchService;
 
     @Autowired
     private EntityManager em;
@@ -88,6 +95,30 @@ public class ChangelogSourceService {
     public void delete(Long id) {
         Source source = sourceDao.getEntityManager().getReference(Source.class, id);
         sourceDao.remove(source);
+    }
+
+    public void link(HttpServletRequest httpRequest, ServiceEnum service, Changelog changelog,
+                     Long[] sourcesIds, Integer[] ratings, String description) throws AssertionError {
+      if (sourcesIds != null && sourcesIds.length > 0) {
+          User user = User.getCurrentUser();
+          Date now  = new Date();
+          ChangelogSourceLink link = new ChangelogSourceLink(changelog, user, now, description);
+          changelogSourceLinkDao.persist(link);
+          for (int i = 0; i < sourcesIds.length; i++) {
+              Long srcId = sourcesIds[i];
+              Integer rating = ratings[i];
+              Source source = sourceDao.getReference(srcId);
+              ChangelogSourceId chlgsrcid = new ChangelogSourceId(link, source);
+              ChangelogSource chlgsrc = new ChangelogSource(chlgsrcid, rating);
+              changelogSourceDao.persist(chlgsrc);
+              searchService.indexChangelogSource(source); // update partIds in the index
+              // I have no idea why... but without flush below the record is not saved
+              // to the changelog_source.
+              em.flush();
+          }
+      } else if (httpRequest != null && !httpRequest.isUserInRole(Role.ROLE_CHLOGSRC_SKIP)) {
+          throw new AssertionError("User must provide changelog source.");
+      }
     }
 
     public Long getNumLinks(Long srcId) {

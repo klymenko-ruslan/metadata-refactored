@@ -2,6 +2,65 @@
 
 angular.module("ngMetaCrudApp")
 
+.service("LinkSource", ["$log", "dialogs", "$uibModal", "restService", "User",
+  function BOM($log, dialogs, $uibModal, restService, User) {
+
+    this.link = function(partId, cbSave, requiredSource, cancelUrl) {
+      if (requiredSource) {
+        var authorized = User.hasRole("ROLE_CHLOGSRC_READ") && User.hasRole("ROLE_CHLOGSRCNAME_READ");
+        if (authorized) {
+          $uibModal.open({
+            templateUrl: "/views/chlogsrc/LinkDlg.html",
+            animation: false,
+            size: "lg",
+            controller: "ChlogSrcLinkDlgCtrl",
+            backdrop: 'static',
+            keyboard: false,
+            resolve: {
+              "partId": function () {
+                return partId;
+              },
+              "cbSave": function () {
+                return cbSave;
+              },
+              "sourcesNames": restService.getAllChangelogSourceNames(),
+              "lastPicked": restService.getLastPickedChangelogSources,
+              "begin": function() {
+                return restService.changelogSourceBeginEdit(); // needs to clear session attribute on the server side
+              },
+              "cancelUrl": function() {
+                return cancelUrl;
+              }
+            }
+          });
+        } else {
+          dialogs.error("Not authorized", "To complete this operation you must have at least following roles: " +
+            "ROLE_CHLOGSRC_READ, ROLE_CHLOGSRCNAME_READ.");
+        }
+      } else {
+        cbSave(null, null, null);
+      }
+    };
+
+    function _isSourceRequired(services, serviceName) {
+      var srv = _.find(services, function(s) { return s.name === serviceName; });
+      if (!srv) {
+        throw "Service '" + serviceName + "' not found.";
+      }
+      return srv.requiredSource;
+    }
+
+    this.isSourceRequiredForBOM = function(services) {
+      return _isSourceRequired(services, "BOM");
+    };
+
+    this.isSourceRequiredForSalesNote = function(services) {
+      return _isSourceRequired(services, "SALESNOTES");
+    };
+
+  return this;
+
+}])
 .controller("ChlogSrcLinkDlgCtrl", ["$scope", "$log", "$location", "dialogs", "gToast", "ngTableParams",
   "$uibModalInstance", "utils", "restService", "partId", "cbSave",
   "sourcesNames", "lastPicked", "User", "cancelUrl", "begin",
@@ -354,7 +413,6 @@ angular.module("ngMetaCrudApp")
       var cv = $scope.data.currVw.id;
       if (cv === "sources_list") {
         $uibModalInstance.close();
-        //$location.path("/part/" + $scope.partId);
         $location.path(cancelUrl);
       } else if (cv === "create_new_source") {
         _chvw("sources_list");
