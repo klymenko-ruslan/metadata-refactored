@@ -2,14 +2,16 @@
 
 angular.module("ngMetaCrudApp").controller("PartFormCtrl",
   ["$scope", "$location", "$log", "$uibModal", "dialogs", "gToast", "restService", "Restangular", "User",
-   "part", "partType", "manufacturers",
+   "part", "partType", "manufacturers", "LinkSource", "services",
   function($scope, $location, $log, $uibModal, dialogs, gToast, restService, Restangular, User,
-    part, partType, manufacturers)
+    part, partType, manufacturers, LinkSource, services)
   {
 
     $scope.manufacturers = manufacturers;
     $scope.turboTypes = [];
     $scope.turboModels = [];
+
+    $scope.requiredSource = LinkSource.isSourceRequiredForPart(services);
 
     $scope.turbo ={
       tm: null,
@@ -140,31 +142,33 @@ angular.module("ngMetaCrudApp").controller("PartFormCtrl",
       return !$scope.isEditMode() || User.hasRole("ROLE_ALTER_PART_NUMBER");
     };
 
+    function cbCreate(srcIds, ratings, description) {
+      var partNumbers = _.map($scope.mpns, function(o) { return o.val; });
+      restService.createPart($scope.part, partNumbers, srcIds, ratings, description).then(
+        function(response) {
+          if (response.results.length === 1) {
+            var id = response.results[0].partId;
+            $location.path("/part/" + id);
+          } else {
+            $location.path("/part/list");
+          }
+        },
+        function(response) {
+          restService.error("Could not save part(s).", response);
+        });
+    };
+
     $scope.save = function() {
       var url = "part";
-      var partNumbers = _.map($scope.mpns, function(o) { return o.val; });
 
       if ($scope.part.partType.magentoAttributeSet === "Turbo") {
         $scope.part.turboModel = $scope.turbo.tm;
         $scope.part.turboModel.turboType = $scope.turbo.tt;
       }
 
-      if (!angular.isObject($scope.oldPart)) {
-        restService.createPart($scope.part, partNumbers).then(
-          function(response) {
-            if (response.results.length === 1) {
-              var id = response.results[0].partId;
-              $location.path("/part/" + id);
-            } else {
-              $location.path("/part/list");
-            }
-          },
-          function(response) {
-            restService.error("Could not save part(s).", response);
-          });
-      } else {
+      if (angular.isObject($scope.oldPart)) {
         part.manufacturerPartNumber = $scope.mpns[0].val;
-        restService.updatePart($scope.part).then(
+        restService.updatePart($scope.part, srcIds, ratings, description).then(
           function(part) {
             $location.path("/part/" + $scope.part.id);
           },
@@ -172,6 +176,8 @@ angular.module("ngMetaCrudApp").controller("PartFormCtrl",
             restService.error("Could not update part", response);
           }
         );
+      } else {
+        LinkSource.link(cbCreate, $scope.requiredSource, null);
       }
     };
 

@@ -21,8 +21,10 @@ angular.module("ngMetaCrudApp")
 
   .controller("PartInterchangeSearchCtrl", ["$log", "$scope", "$location", "$routeParams", "restService",
       "Restangular", "gToast", "dialogs", "MERGE_OPTIONS", "partTypes", "critDimsByPartTypes", "critDimEnumVals",
+      "services", "LinkSource",
       function($log, $scope, $location, $routeParams,
-        restService, Restangular, gToast, dialogs, MERGE_OPTIONS, partTypes, critDimsByPartTypes, critDimEnumVals) {
+        restService, Restangular, gToast, dialogs, MERGE_OPTIONS, partTypes, critDimsByPartTypes, critDimEnumVals,
+        services, LinkSource) {
     $scope.partTypes = partTypes;
     $scope.critDimsByPartTypes = critDimsByPartTypes;
     $scope.critDimEnumVals = critDimEnumVals;
@@ -31,6 +33,8 @@ angular.module("ngMetaCrudApp")
     $scope.promise = restService.findPart($scope.partId).then(function(part) {
       $scope.part = part;
     });
+
+    $scope.requiredSource = LinkSource.isSourceRequiredForInterchange(services);
 
     $scope.go = function(path) {
       $location.path(path);
@@ -60,64 +64,89 @@ angular.module("ngMetaCrudApp")
         });
     };
 
+    function cbAddPartToThisInterchangeGroup(srcIds, ratings, description) {
+      // Add part to this interchange group
+      restService.updatePartInterchange($scope.partId, $scope.pickedPart.id, MERGE_OPTIONS.PICKED_ALONE_TO_PART,
+          srcIds, ratings, description).then(
+        function success() {
+          gToast.open("Added picked part to interchange.");
+          $location.path("/part/" + $scope.partId);
+        },
+        function failure(response) {
+          restService.error("Adding to the interchange failed.", response);
+        }
+      );
+    };
+
+    function cbAskMergeOpt(srcIds, ratings, description) {
+      // In this case there are several possibilities how interchangeables can be merged.
+      // See ticket #484.
+      var mergeDialog = dialogs.create("/views/dialog/MergeInterchangeablesDlg.html", "mergeInterchangeablesCtrl",
+        {
+          "mergeChoice": MERGE_OPTIONS.PICKED_ALL_TO_PART
+        }, {
+          "size": "lg",
+          "keyboard": true,
+          "backdrop": false
+        }
+      );
+      mergeDialog.result.then(
+        function(mergeChoice) {
+          restService.updatePartInterchange($scope.partId, $scope.pickedPart.id, mergeChoice,
+              srcIds, ratings, description).then(
+            function() {
+              gToast.open("Interchangeable part group changed.");
+              $location.path("/part/" + $scope.partId);
+            },
+            function(response) {
+              dialogs.error("Could not change interchangeable part group.", "Server said: <pre>" + JSON.stringify(response.data) + "</pre>");
+            }
+          );
+        },
+        function() {
+          $log.log("Cancelled.");
+        }
+      );
+    };
+
+    function cbMergeAloneToPicked(srcIds, ratings, description) {
+      // Add this part to the picked part's interchange
+      restService.updatePartInterchange($scope.partId, $scope.pickedPart.id, MERGE_OPTIONS.PART_ALONE_TO_PICKED,
+          srcIds, ratings, description).then(
+        function success() {
+          gToast.open("Added part to picked part's interchanges.");
+          $location.path("/part/" + $scope.partId);
+        },
+        function failure(response) {
+          restService.error("Adding to the interchange failed.", response);
+        }
+      );
+    };
+
+    function cbCreate(srcIds, ratings, description) {
+      // Create
+      restService.createPartInterchange($scope.part.id, $scope.pickedPart.id, srcIds, ratings, description).then(
+        function() {
+          gToast.open("Interchangeable part group changed added.");
+          $location.path("/part/" + $scope.partId);
+        },
+        function(response) {
+          dialogs.error("Could not add interchangeable part.", "Server said: <pre>" + JSON.stringify(response.data) + "</pre>");
+        }
+      );
+    };
+
     $scope.save = function() {
       if ($scope.part.interchange) {
         if (!$scope.pickedPart.interchange || $scope.pickedPart.interchange.alone) {
-          // Add part to this interchange group
-          restService.updatePartInterchange($scope.partId, $scope.pickedPart.id, MERGE_OPTIONS.PICKED_ALONE_TO_PART).then(
-            function() {
-              gToast.open("Added picked part to interchange.");
-              $location.path("/part/" + $scope.partId);
-            },
-            restService.error);
+          LinkSource.link(cbAddPartToThisInterchangeGroup, $scope.requiredSource, null);
         } else {
-          // In this case there are several possibilities how interchangeables can be merged.
-          // See ticket #484.
-          var mergeDialog = dialogs.create("/views/dialog/MergeInterchangeablesDlg.html", "mergeInterchangeablesCtrl",
-            {
-              "mergeChoice": MERGE_OPTIONS.PICKED_ALL_TO_PART
-            }, {
-              "size": "lg",
-              "keyboard": true,
-              "backdrop": false
-            }
-          );
-          mergeDialog.result.then(
-            function(mergeChoice) {
-              restService.updatePartInterchange($scope.partId, $scope.pickedPart.id, mergeChoice).then(
-                function() {
-                  gToast.open("Interchangeable part group changed.");
-                  $location.path("/part/" + $scope.partId);
-                },
-                function(response) {
-                  dialogs.error("Could not change interchangeable part group.", "Server said: <pre>" + JSON.stringify(response.data) + "</pre>");
-                }
-              );
-            },
-            function() {
-              $log.log("Cancelled.");
-            }
-          );
+          LinkSource.link(cbAskMergeOpt, $scope.requiredSource, null);
         }
       } else if ($scope.pickedPart.interchange) {
-        // Add this part to the picked part's interchange
-        restService.updatePartInterchange($scope.partId, $scope.pickedPart.id, MERGE_OPTIONS.PART_ALONE_TO_PICKED).then(
-          function() {
-            gToast.open("Added part to picked part's interchanges.");
-            $location.path("/part/" + $scope.partId);
-          },
-          restService.error);
+          LinkSource.link(cbMergeAloneToPicked, $scope.requiredSource, null);
       } else {
-        // Create
-        restService.createPartInterchange($scope.part.id, $scope.pickedPart.id).then(
-          function() {
-            gToast.open("Interchangeable part group changed added.");
-            $location.path("/part/" + $scope.partId);
-          },
-          function(response) {
-            dialogs.error("Could not add interchangeable part.", "Server said: <pre>" + JSON.stringify(response.data) + "</pre>");
-          }
-        );
+          LinkSource.link(cbCreate, $scope.requiredSource, null);
       }
     };
 

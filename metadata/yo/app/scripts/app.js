@@ -69,6 +69,9 @@ angular.module("ngMetaCrudApp", ["ngCookies", "ngRoute", "ngTable", "ui.bootstra
         }],
         manufacturers: ["restService", function(restService) {
           return restService.listManufacturers();
+        }],
+        services: ["restService", function(restService) {
+          return restService.getAllServices();
         }]
       }
     });
@@ -85,6 +88,9 @@ angular.module("ngMetaCrudApp", ["ngCookies", "ngRoute", "ngTable", "ui.bootstra
         },
         manufacturers: ["restService", function(restService) {
           return restService.listManufacturers();
+        }],
+        services: ["restService", function(restService) {
+          return restService.getAllServices();
         }]
       }
     });
@@ -100,6 +106,9 @@ angular.module("ngMetaCrudApp", ["ngCookies", "ngRoute", "ngTable", "ui.bootstra
         }],
         critDimEnumVals: ["restService", function(restService) {
           return restService.getAllCritDimEnumVals();
+        }],
+        services: ["restService", function(restService) {
+          return restService.getAllServices();
         }]
       }
     });
@@ -166,7 +175,12 @@ angular.module("ngMetaCrudApp", ["ngCookies", "ngRoute", "ngTable", "ui.bootstra
     });
     $routeProvider.when("/part/:id/application/search", {
       templateUrl: "views/part/application/PartApplicationSearch.html",
-      controller: "PartApplicationSearchCtrl"
+      controller: "PartApplicationSearchCtrl",
+      resolve: {
+        services: ["restService", function(restService) {
+          return restService.getAllServices();
+        }]
+      }
     });
     $routeProvider.when("/part/:id/bom/:bomId/search", {
       templateUrl: "views/part/bom/BomAlternateSearch.html",

@@ -23,6 +23,8 @@ public class StandardOversizePartService {
 
     public static class CreateStandardOversizePartRequest {
 
+        public enum TypeEnum { STANDARD, OVERSIZE }
+
         @JsonView(View.Summary.class)
         private TypeEnum type;
 
@@ -55,8 +57,6 @@ public class StandardOversizePartService {
         public void setPartIds(List<Long> partIds) {
             this.partIds = partIds;
         }
-
-        public enum TypeEnum { STANDARD, OVERSIZE }
 
     }
 

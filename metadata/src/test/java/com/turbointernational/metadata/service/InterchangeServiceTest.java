@@ -203,7 +203,7 @@ public class InterchangeServiceTest extends AbstractFunctionalTest {
         Assert.assertEquals("Unexpected number of rows in the table 'interchange_item'.", 5, iicount);
         // The test.
         long pickedPartId = 40393L, partId = 41405L;
-        interchangeService.mergePickedAloneToPart(partId, pickedPartId);
+        interchangeService.mergePickedAloneToPart(null, partId, pickedPartId, null, null, null);
         partDao.getEntityManager().flush(); // Important: propagate changes to the database
         ihcount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "interchange_header");
         Assert.assertEquals("Unexpected number of rows in the table 'interchange_header'.", 2, ihcount);
@@ -262,7 +262,7 @@ public class InterchangeServiceTest extends AbstractFunctionalTest {
         Assert.assertEquals("Unexpected number of rows in the table 'interchange_item'.", 5, iicount);
         // The test.
         long pickedPartId = 40393L, partId = 41405L;
-        interchangeService.mergePartAloneToPicked(partId, pickedPartId);
+        interchangeService.mergePartAloneToPicked(null, partId, pickedPartId, null, null, null);
         partDao.getEntityManager().flush(); // Important: propagate changes to the database
         ihcount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "interchange_header");
         Assert.assertEquals("Unexpected number of rows in the table 'interchange_header'.", 2, ihcount);
@@ -341,7 +341,7 @@ public class InterchangeServiceTest extends AbstractFunctionalTest {
         Assert.assertEquals("Unexpected number of rows in the table 'interchange_item'.", 5, iicount);
         // The test.
         long pickedPartId = 40393L, partId = 41405L;
-        interchangeService.mergePickedAllToPart(partId, pickedPartId);
+        interchangeService.mergePickedAllToPart(null, partId, pickedPartId, null, null, null);
         partDao.getEntityManager().flush(); // Important: propagate changes to the database
         ihcount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "interchange_header");
         Assert.assertEquals("Unexpected number of rows in the table 'interchange_header'.", 1, ihcount);

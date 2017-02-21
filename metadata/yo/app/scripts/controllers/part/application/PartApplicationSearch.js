@@ -2,10 +2,13 @@
 
 angular.module("ngMetaCrudApp")
   .controller("PartApplicationSearchCtrl", ["$scope", "$log", "$location", "$routeParams", "restService", "dialogs",
-    "gToast",
-    function($scope, $log, $location, $routeParams, restService, dialogs,
-      gToast) {
+    "gToast", "LinkSource", "services",
+    function($scope, $log, $location, $routeParams, restService, dialogs, gToast, LinkSource, services) {
+
       $scope.partId = $routeParams.id;
+
+      $scope.requiredSource = LinkSource.isSourceRequiredForApplication(services);
+
       // The part whose applications we're editing
       $scope.part = restService.findPart($scope.partId)
         .then(function(part) {
@@ -22,19 +25,23 @@ angular.module("ngMetaCrudApp")
 
       $scope.pickedApplications = [];
 
+      function cbSave(srcIds, ratings, description) {
+        restService.addPartApplications($scope.partId, $scope.pickedApplications, srcIds, ratings, description).then(
+          function() {
+            // Success
+            gToast.open("Application(s) added to part.");
+            $location.path("/part/" + $scope.partId);
+          },
+          function(response) {
+            dialogs.error("Could not add Applications to part.",
+              "Server said: <pre>" + JSON.stringify(response.data) + "</pre>");
+          }
+        );
+      };
+
       $scope.save = function() {
         if ($scope.pickedApplications.length) {
-          restService.addPartApplications($scope.partId, $scope.pickedApplications).then(
-            function() {
-              // Success
-              gToast.open("Application(s) added to part.");
-              $location.path("/part/" + $scope.partId);
-            },
-            function(response) {
-              dialogs.error("Could not add Applications to part.",
-                "Server said: <pre>" + JSON.stringify(response.data) + "</pre>");
-            }
-          );
+          LinkSource.link(cbSave, $scope.requiredSource, null);
         }
       };
 

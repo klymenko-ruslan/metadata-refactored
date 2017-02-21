@@ -130,7 +130,7 @@ angular.module("ngMetaCrudApp")
     };
 
     $scope.save = function() {
-      LinkSource.link($scope.partId, cbSave, $scope.requiredSource, "/part/" + $scope.partId + "/bom/search");
+      LinkSource.link(cbSave, $scope.requiredSource, "/part/" + $scope.partId + "/bom/search");
     };
 
     $scope.removeBOM = function(bomId) {

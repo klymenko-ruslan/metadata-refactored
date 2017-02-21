@@ -3,6 +3,7 @@ package com.turbointernational.metadata.service;
 import com.turbointernational.metadata.dao.PartDao;
 import com.turbointernational.metadata.dao.ProductImageDao;
 import com.turbointernational.metadata.entity.BOMAncestor;
+import com.turbointernational.metadata.entity.Changelog;
 import com.turbointernational.metadata.entity.TurboType;
 import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.entity.part.ProductImage;
@@ -54,6 +55,9 @@ public class PartService {
     private ChangelogService changelogService;
 
     @Autowired
+    private ChangelogSourceService changelogSourceService;
+
+    @Autowired
     private CriticalDimensionService criticalDimensionService;
 
     @Autowired
@@ -66,7 +70,10 @@ public class PartService {
     private ImageService imageService;
 
     @Transactional
-    public List<PartController.PartCreateResponse.Row> createPart(Part origin, List<String> partNumbers) throws Exception {
+    public List<PartController.PartCreateResponse.Row> createPart(HttpServletRequest httpRequest, Part origin,
+                                                                  List<String> partNumbers,
+                                                                  Long[] sourcesIds, Integer[] ratings,
+                                                                  String description) throws Exception {
         JSONSerializer jsonSerializer = new JSONSerializer()
                 .include("id")
                 .include("name")
@@ -100,7 +107,9 @@ public class PartService {
             String json = jsonSerializer.serialize(origin);
             List<RelatedPart> relatedParts = new ArrayList<>(1);
             relatedParts.add(new RelatedPart(origin.getId(), PART0));
-            changelogService.log(PART, "Created part " + formatPart(origin) + ".", json, relatedParts);
+            Changelog chlog = changelogService.log(PART, "Created part " + formatPart(origin)
+                    + ".", json, relatedParts);
+            changelogSourceService.link(httpRequest, chlog, sourcesIds, ratings, description);
             results.add(new PartController.PartCreateResponse.Row(origin.getId(), mpn, true, null));
             added.add(mpn);
         }

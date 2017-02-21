@@ -1001,7 +1001,7 @@ public class BOMService {
 
     }
 
-    private CreateBOMItemResult _create(HttpServletRequest httpRequest, Changelog.ServiceEnum service,
+    private CreateBOMItemResult _create(HttpServletRequest httpRequest,
                                         Long parentPartId, Long childPartId, Integer quantity, Long[] sourcesIds,
                                         Integer[] ratings, String description)
             throws FoundBomRecursionException {
@@ -1024,7 +1024,7 @@ public class BOMService {
         relatedParts.add(new RelatedPart(child.getId(), BOM_CHILD));
         Changelog changelog = changelogService.log(BOM,
                 "Added bom item: " + formatBOMItem(bom), bom.toJson(), relatedParts);
-        changelogSourceService.link(httpRequest, service, changelog, sourcesIds, ratings, description);
+        changelogSourceService.link(httpRequest, changelog, sourcesIds, ratings, description);
         return new CreateBOMItemResult(bom, changelog);
     }
 
@@ -1041,7 +1041,7 @@ public class BOMService {
                 throw new AssertionError("Child part must have the same manufacturer as the Parent part.");
             }
             try {
-                _create(httpRequest, BOM, parentPartId, childId, row.getQuantity(),
+                _create(httpRequest, parentPartId, childId, row.getQuantity(),
                         request.getSourcesIds(), request.getChlogSrcRatings(), request.getChlogSrcLnkDescription());
             } catch (FoundBomRecursionException e) {
                 log.debug("Adding of the part [" + childId + "] to list of BOM for part [" +
@@ -1117,7 +1117,7 @@ public class BOMService {
                     }
                 }
                 // Add the primary part to the list of BOMs of the picked part.
-                _create(httpRequest, BOM, pickedPartId, primaryPartId, r.getQuantity(), request.getSourcesIds(),
+                _create(httpRequest, pickedPartId, primaryPartId, r.getQuantity(), request.getSourcesIds(),
                         request.getChlogSrcRatings(), request.getChlogSrcLnkDescription());
                 added++;
             } catch(FoundBomRecursionException e) {

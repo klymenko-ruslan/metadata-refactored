@@ -25,7 +25,7 @@ public class ServiceService {
 
     @Secured("ROLE_READ")
     public boolean isChangelogSourceRequired(ServiceEnum service) {
-        long serviceId = service.ordinal();
+        long serviceId = service.ordinal() + 1; // ordinal is zero-based but ids started from 1
         return serviceDao.isChangelogSourceRequired(serviceId);
     }
 

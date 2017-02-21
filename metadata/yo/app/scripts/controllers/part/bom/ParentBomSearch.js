@@ -115,7 +115,7 @@ angular.module("ngMetaCrudApp")
       };
 
       $scope.save = function() {
-        LinkSource.link($scope.part.id, cbSave, $scope.requiredSource, "/part/" + $scope.part.id + "/parentbom/search");
+        LinkSource.link(cbSave, $scope.requiredSource, "/part/" + $scope.part.id + "/parentbom/search");
       };
 
       $scope.pick = function(pickedPart) {

@@ -149,7 +149,7 @@ angular.module("ngMetaCrudApp")
         });
       };
 
-      this.createPart = function(part, mpns) {
+      this.createPart = function(part, mpns, sourcesIds, ratings, description) {
         // Specify class depending on part type.
         var clazz = "com.turbointernational.metadata.entity.part.types.";
         switch (part.partType.id) {
@@ -289,19 +289,22 @@ angular.module("ngMetaCrudApp")
           clazz = "com.turbointernational.metadata.entity.part.Part";
         }
         part.class = clazz;
-        var request = {
+        var req = {
           "origin": part,
-          "partNumbers": mpns
+          "partNumbers": mpns,
+          "sourcesIds": sourcesIds,
+          "chlogSrcRatings": ratings,
+          "chlogSrcLnkDescription": description
         };
-        return Restangular.all("part").post(request);
-      };
-
-      this.getInterchangesOfThePartBoms = function(partId) {
-        return Restangular.one("part/" + partId + "/boms/interchanges").get();
+        return Restangular.all("part").post(req);
       };
 
       this.updatePart = function(part) {
         return Restangular.one("part", part.id).customPUT(part);
+      };
+
+      this.getInterchangesOfThePartBoms = function(partId) {
+        return Restangular.one("part/" + partId + "/boms/interchanges").get();
       };
 
       this.deleteProductImage = function(imageId) {
@@ -408,12 +411,18 @@ angular.module("ngMetaCrudApp")
         return Restangular.one("part", part_id).getList("application");
       };
 
-      this.addPartApplications = function(part_id, applications) {
+      this.addPartApplications = function(part_id, applications, sourcesIds, ratings, description) {
         var ids = [];
         angular.forEach(applications, function(val) {
           ids.push(val.id);
         });
-        return Restangular.one("part", part_id).post("application", ids);
+        var req = {
+          cmeyIds: ids,
+          sourcesIds: sourcesIds,
+          chlogSrcRatings: ratings,
+          chlogSrcLnkDescription: description
+        };
+        return Restangular.one("part", part_id).post("application", req);
       };
 
       this.removePartApplication = function(part_id, application_id) {
@@ -514,20 +523,26 @@ angular.module("ngMetaCrudApp")
         return Restangular.one("interchange", id).get();
       };
 
-      this.createPartInterchange = function(partId, pickedPartId) {
-        var interchange = {
-          parts: [{
-            id: partId
-          }, {
-            id: pickedPartId
-          }]
+      this.createPartInterchange = function(partId, pickedPartId, sourcesIds, ratings, description) {
+        var req = {
+          partId:  partId,
+          pickedPartId: pickedPartId,
+          sourcesIds: sourcesIds,
+          chlogSrcRatings: ratings,
+          chlogSrcLnkDescription: description
         };
-        return Restangular.all("interchange").post(interchange);
+        return Restangular.all("interchange").post(req);
       };
 
-      this.updatePartInterchange = function(partId, pickedPartId, mergeChoice) {
+      this.updatePartInterchange = function(partId, pickedPartId, mergeChoice, sourcesIds, ratings, description) {
         Restangular.setParentless(false);
-        return Restangular.one("interchange", partId).one("part", pickedPartId).put({mergeChoice: mergeChoice});
+        var req = {
+          mergeChoice: mergeChoice,
+          sourcesIds: sourcesIds,
+          chlogSrcRatings: ratings,
+          chlogSrcLnkDescription: description
+        };
+        return Restangular.one("interchange", partId).one("part", pickedPartId).customPUT(req);
       };
 
       this.deletePartInterchange = function(partId, interchangeId) {
@@ -929,7 +944,7 @@ angular.module("ngMetaCrudApp")
           comment: comment,
           sourcesIds: sourcesIds,
           chlogSrcRatings: ratings,
-          chlogSrcLnkDescription: description,
+          chlogSrcLnkDescription: description
         };
         return Restangular.all("other/salesNote").post(req);
       };

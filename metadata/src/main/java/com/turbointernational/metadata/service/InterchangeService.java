@@ -2,6 +2,7 @@ package com.turbointernational.metadata.service;
 
 import com.turbointernational.metadata.dao.InterchangeDao;
 import com.turbointernational.metadata.dao.PartDao;
+import com.turbointernational.metadata.entity.Changelog;
 import com.turbointernational.metadata.entity.part.Interchange;
 import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.service.ChangelogService.RelatedPart;
@@ -14,6 +15,7 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.INTERCHANGE;
@@ -38,6 +40,9 @@ public class InterchangeService {
     @Autowired
     private ChangelogService changelogService;
 
+    @Autowired
+    private ChangelogSourceService changelogSourceService;
+
     @Qualifier("transactionManagerMetadata")
     @Autowired
     private PlatformTransactionManager txManagerMetadata;
@@ -55,26 +60,21 @@ public class InterchangeService {
 
     /**
      * Persists interchangeable in a storage.
-     *
-     * @param interchange
      */
     @Transactional
-    public void create(Interchange interchange) {
+    public void create(HttpServletRequest httpRequest, List<Long> partIds,
+                       Long[] sourcesIds, Integer[] ratings, String description) {
         // Link it with the Hibernate parts
-        List<Long> partIds = new ArrayList<>(interchange.getParts().size());
         Set<Part> canonicalParts = new HashSet<>();
         // Map the incoming part IDs to their canonical part
-        for(Iterator<Part> it = interchange.getParts().iterator(); it.hasNext();) {
-            Part interchangePart = it.next();
-            partIds.add(interchangePart.getId());
-            Part canonicalPart = partDao.findOne(interchangePart.getId());
+        for(Long partId : partIds) {
+            Part canonicalPart = partDao.findOne(partId);
             if (canonicalPart.getInterchange() != null) {
-                throw new IllegalArgumentException("Part " + interchangePart.getId() + " already has interchangeable parts.");
+                throw new IllegalArgumentException("Part " + partId + " already has interchangeable parts.");
             }
-            it.remove();
             canonicalParts.add(canonicalPart);
         }
-        interchange.getParts().clear();
+        Interchange interchange = new Interchange();
         interchange.getParts().addAll(canonicalParts);
         interchangeDao.persist(interchange);
         List<RelatedPart> relatedParts = new ArrayList<>(canonicalParts.size());
@@ -85,8 +85,9 @@ public class InterchangeService {
         }
         interchangeDao.flush();
         // Update the changelog
-        changelogService.log(INTERCHANGE, "Created interchange: " + FormatUtils.formatInterchange(interchange) + ".",
-                interchange.toJson(), relatedParts);
+        Changelog changelog = changelogService.log(INTERCHANGE, "Created interchange: "
+                + FormatUtils.formatInterchange(interchange) + ".", interchange.toJson(), relatedParts);
+        changelogSourceService.link(httpRequest, changelog, sourcesIds, ratings, description);
         bomService.rebuildBomDescendancyForParts(partIds, true);
     }
 
@@ -133,7 +134,8 @@ public class InterchangeService {
      * @param pickedPartId
      */
     @Transactional
-    public void mergePickedAloneToPart(long partId, long pickedPartId) {
+    public void mergePickedAloneToPart(HttpServletRequest httpRequest, long partId, long pickedPartId,
+                                       Long[] sourcesIds, Integer[] ratings, String description) {
         Part part = partDao.findOne(partId);
         normalizePartInterchange(part);
         Part pickedPart = partDao.findOne(pickedPartId);
@@ -142,8 +144,10 @@ public class InterchangeService {
         List<RelatedPart> relatedParts = new ArrayList<>(2);
         relatedParts.add(new RelatedPart(partId, PART0));
         relatedParts.add(new RelatedPart(pickedPartId, PART1));
-        changelogService.log(INTERCHANGE, "Part " + FormatUtils.formatPart(pickedPart) + " added to the part " +
+        Changelog changelog = changelogService.log(INTERCHANGE, "Part " + FormatUtils.formatPart(pickedPart)
+                + " added to the part " +
                 FormatUtils.formatPart(part) + " as interchange.", relatedParts);
+        changelogSourceService.link(httpRequest, changelog, sourcesIds, ratings, description);
         bomService.rebuildBomDescendancyForPart(partId, true);
         bomService.rebuildBomDescendancyForPart(pickedPartId, true);
      }
@@ -155,7 +159,8 @@ public class InterchangeService {
      * @param pickedPartId
      */
     @Transactional
-    public void mergePartAloneToPicked(long partId, long pickedPartId) {
+    public void mergePartAloneToPicked(HttpServletRequest httpRequest, long partId, long pickedPartId,
+                                       Long[] sourcesIds, Integer[] ratings, String description) {
         Part part = partDao.findOne(partId);
         normalizePartInterchange(part);
         Part pickedPart = partDao.findOne(pickedPartId);
@@ -164,8 +169,10 @@ public class InterchangeService {
         List<RelatedPart> relatedParts = new ArrayList<>(2);
         relatedParts.add(new RelatedPart(partId, PART0));
         relatedParts.add(new RelatedPart(pickedPartId, PART1));
-        changelogService.log(INTERCHANGE, "Part " + FormatUtils.formatPart(part) + " added to the part " +
+        Changelog changelog = changelogService.log(INTERCHANGE, "Part " + FormatUtils.formatPart(part)
+                + " added to the part " +
                 FormatUtils.formatPart(pickedPart) + " as interchange.", relatedParts);
+        changelogSourceService.link(httpRequest, changelog, sourcesIds, ratings, description);
         bomService.rebuildBomDescendancyForPart(partId, true);
         bomService.rebuildBomDescendancyForPart(pickedPartId, true);
      }
@@ -177,7 +184,8 @@ public class InterchangeService {
      * @param pickedPartId
      */
     @Transactional
-    public void mergePickedAllToPart(long partId, long pickedPartId) {
+    public void mergePickedAllToPart(HttpServletRequest httpRequest, long partId, long pickedPartId,
+                                     Long[] sourcesIds, Integer[] ratings, String description) {
         Part part = partDao.findOne(partId);
         normalizePartInterchange(part);
         Part pickedPart = partDao.findOne(pickedPartId);
@@ -186,9 +194,10 @@ public class InterchangeService {
         List<RelatedPart> relatedParts = new ArrayList<>(2);
         relatedParts.add(new RelatedPart(partId, PART0));
         relatedParts.add(new RelatedPart(pickedPartId, PART1));
-        changelogService.log(INTERCHANGE, "Part " + FormatUtils.formatPart(pickedPart) +
+        Changelog changelog = changelogService.log(INTERCHANGE, "Part " + FormatUtils.formatPart(pickedPart) +
                 " and all its interchanges added to the part " + FormatUtils.formatPart(part) + " as interchanges.",
                 relatedParts);
+        changelogSourceService.link(httpRequest, changelog, sourcesIds, ratings, description);
         bomService.rebuildBomDescendancyForPart(partId, true);
         bomService.rebuildBomDescendancyForPart(pickedPartId, true);
      }

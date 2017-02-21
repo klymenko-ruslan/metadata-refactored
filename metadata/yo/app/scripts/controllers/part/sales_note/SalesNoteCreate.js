@@ -40,7 +40,7 @@ angular.module("ngMetaCrudApp")
     };
 
     $scope.saveAndEdit = function() {
-      LinkSource.link($scope.partId, cbSave, $scope.requiredSource, "/part/" + $scope.partId + "/sales_note/create");
+      LinkSource.link(cbSave, $scope.requiredSource, "/part/" + $scope.partId + "/sales_note/create");
     };
 
   }]);

@@ -97,7 +97,7 @@ public class ChangelogSourceService {
         sourceDao.remove(source);
     }
 
-    public void link(HttpServletRequest httpRequest, ServiceEnum service, Changelog changelog,
+    public void link(HttpServletRequest httpRequest, Changelog changelog,
                      Long[] sourcesIds, Integer[] ratings, String description) throws AssertionError {
       if (sourcesIds != null && sourcesIds.length > 0) {
           User user = User.getCurrentUser();
@@ -116,7 +116,9 @@ public class ChangelogSourceService {
               // to the changelog_source.
               em.flush();
           }
-      } else if (/*httpRequest != null &&*/ !httpRequest.isUserInRole(Role.ROLE_CHLOGSRC_SKIP)) {
+      } else if (httpRequest != null && !httpRequest.isUserInRole(Role.ROLE_CHLOGSRC_SKIP)) {
+          // httpRequest above can be null in integration tests
+          ServiceEnum service = changelog.getService();
           boolean required = serviceService.isChangelogSourceRequired(service);
           if (required) {
               throw new AssertionError("User must provide changelog source.");

@@ -105,7 +105,7 @@ public class SalesNoteService {
         relatedParts.add(new RelatedPart(primaryPartId, PART0));
         Changelog changelog = changelogService.log(SALESNOTES, "Created sales note " +
                         formatSalesNote(salesNote) + ".", relatedParts);
-        changelogSourceService.link(httpRequest, SALESNOTES, changelog, sourcesIds, ratings, description);
+        changelogSourceService.link(httpRequest, changelog, sourcesIds, ratings, description);
         // Initialize a few properties before sending the response
         primaryPart.getManufacturer().getName();
         primaryPart.getPartType().getName();

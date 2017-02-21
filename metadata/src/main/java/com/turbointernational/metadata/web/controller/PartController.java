@@ -6,7 +6,6 @@ import com.turbointernational.metadata.dao.PartDao;
 import com.turbointernational.metadata.dao.TurboTypeDao;
 import com.turbointernational.metadata.entity.BOMAncestor;
 import com.turbointernational.metadata.entity.BOMItem;
-import com.turbointernational.metadata.entity.StandardOversizePart;
 import com.turbointernational.metadata.entity.TurboType;
 import com.turbointernational.metadata.entity.part.Interchange;
 import com.turbointernational.metadata.entity.part.Part;
@@ -91,6 +90,18 @@ public class PartController {
         @JsonView({View.Summary.class})
         private List<String> partNumbers;
 
+        /**
+         * Changelog source IDs which should be linked to the changelog.
+         * See ticket #891 for details.
+         */
+        @JsonView(View.Summary.class)
+        private Long[] sourcesIds;
+
+        @JsonView(View.Summary.class)
+        private Integer[] chlogSrcRatings;
+
+        @JsonView(View.Summary.class)
+        private String chlogSrcLnkDescription;
 
         public Part getOrigin() {
             return origin;
@@ -108,6 +119,29 @@ public class PartController {
             this.partNumbers = partNumbers;
         }
 
+        public Long[] getSourcesIds() {
+            return sourcesIds;
+        }
+
+        public void setSourcesIds(Long[] sourcesIds) {
+            this.sourcesIds = sourcesIds;
+        }
+
+        public Integer[] getChlogSrcRatings() {
+            return chlogSrcRatings;
+        }
+
+        public void setChlogSrcRatings(Integer[] chlogSrcRatings) {
+            this.chlogSrcRatings = chlogSrcRatings;
+        }
+
+        public String getChlogSrcLnkDescription() {
+            return chlogSrcLnkDescription;
+        }
+
+        public void setChlogSrcLnkDescription(String chlogSrcLnkDescription) {
+            this.chlogSrcLnkDescription = chlogSrcLnkDescription;
+        }
     }
 
     @JsonInclude(ALWAYS)
@@ -298,7 +332,7 @@ public class PartController {
     @ResponseBody
     @JsonView(View.Summary.class)
     @RequestMapping(value = "/part/standardoversize", method = POST)
-    public CreateStandardOversizePartResponse createPart(@RequestBody CreateStandardOversizePartRequest request)
+    public CreateStandardOversizePartResponse createStandardOversizePart(@RequestBody CreateStandardOversizePartRequest request)
             throws Exception {
         return standardOversizePartService.create(request);
     }
@@ -345,10 +379,15 @@ public class PartController {
     @Secured("ROLE_CREATE_PART")
     @JsonView(View.Detail.class)
     @RequestMapping(value = "/part", method = POST)
-    public @ResponseBody PartCreateResponse createPart(@RequestBody PartCreateRequest request) throws Exception {
+    public @ResponseBody PartCreateResponse createPart(HttpServletRequest httpRequest,
+                                                       @RequestBody PartCreateRequest request) throws Exception {
         Part origin = request.getOrigin();
         List<String> partNumbers = request.getPartNumbers();
-        List<PartCreateResponse.Row> responseRows = partService.createPart(origin, partNumbers);
+        Long[] sourcesIds = request.getSourcesIds();
+        Integer[] ratings = request.getChlogSrcRatings();
+        String description = request.getChlogSrcLnkDescription();
+        List<PartCreateResponse.Row> responseRows = partService.createPart(httpRequest, origin, partNumbers,
+               sourcesIds , ratings, description);
         return new PartCreateResponse(responseRows);
     }
 

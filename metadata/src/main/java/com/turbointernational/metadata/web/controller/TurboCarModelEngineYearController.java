@@ -1,6 +1,7 @@
 package com.turbointernational.metadata.web.controller;
 
 import com.turbointernational.metadata.service.TurboCarModelEngineYearService;
+import com.turbointernational.metadata.service.TurboCarModelEngineYearService.AddRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +11,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
 
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
@@ -33,8 +36,9 @@ public class TurboCarModelEngineYearController {
     @Transactional
     @RequestMapping(value = "/{partId}/application", method = POST)
     @Secured("ROLE_APPLICATION_CRUD")
-    public ResponseEntity<String> add(@PathVariable("partId") Long partId, @RequestBody Long[] cmeyIds) throws Exception {
-        paService.add(partId, cmeyIds);
+    public ResponseEntity<String> add(HttpServletRequest httpRequest, @PathVariable("partId") Long partId,
+                                      @RequestBody AddRequest request) throws Exception {
+        paService.add(httpRequest, partId, request);
         return new ResponseEntity<>("", OK);
     }
 

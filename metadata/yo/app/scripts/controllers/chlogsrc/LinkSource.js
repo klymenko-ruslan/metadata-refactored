@@ -5,7 +5,7 @@ angular.module("ngMetaCrudApp")
 .service("LinkSource", ["$log", "dialogs", "$uibModal", "restService", "User",
   function BOM($log, dialogs, $uibModal, restService, User) {
 
-    this.link = function(partId, cbSave, requiredSource, cancelUrl) {
+    this.link = function(cbSave, requiredSource, cancelUrl) {
       if (requiredSource) {
         var authorized = User.hasRole("ROLE_CHLOGSRC_READ") && User.hasRole("ROLE_CHLOGSRCNAME_READ");
         if (authorized) {
@@ -14,12 +14,9 @@ angular.module("ngMetaCrudApp")
             animation: false,
             size: "lg",
             controller: "ChlogSrcLinkDlgCtrl",
-            backdrop: 'static',
+            backdrop: "static",
             keyboard: false,
             resolve: {
-              "partId": function () {
-                return partId;
-              },
               "cbSave": function () {
                 return cbSave;
               },
@@ -50,8 +47,20 @@ angular.module("ngMetaCrudApp")
       return srv.requiredSource;
     }
 
+    this.isSourceRequiredForApplication = function(services) {
+      return _isSourceRequired(services, "APPLICATIONS");
+    };
+
     this.isSourceRequiredForBOM = function(services) {
       return _isSourceRequired(services, "BOM");
+    };
+
+    this.isSourceRequiredForInterchange = function(services) {
+      return _isSourceRequired(services, "INTERCHANGE");
+    };
+
+    this.isSourceRequiredForPart = function(services) {
+      return _isSourceRequired(services, "PART");
     };
 
     this.isSourceRequiredForSalesNote = function(services) {
@@ -62,12 +71,11 @@ angular.module("ngMetaCrudApp")
 
 }])
 .controller("ChlogSrcLinkDlgCtrl", ["$scope", "$log", "$location", "dialogs", "gToast", "ngTableParams",
-  "$uibModalInstance", "utils", "restService", "partId", "cbSave",
+  "$uibModalInstance", "utils", "restService", "cbSave",
   "sourcesNames", "lastPicked", "User", "cancelUrl", "begin",
   function($scope, $log, $location, dialogs, gToast, ngTableParams, $uibModalInstance, utils,
-    restService, partId, cbSave, sourcesNames, lastPicked, User, cancelUrl, begin) { // injection "begin" is important
+    restService, cbSave, sourcesNames, lastPicked, User, cancelUrl, begin) { // injection "begin" is important
 
-    $scope.partId = partId;
     $scope.sourcesNames = sourcesNames;
 
     var userMustLink = !User.hasRole("ROLE_CHLOGSRC_SKIP");
@@ -413,7 +421,9 @@ angular.module("ngMetaCrudApp")
       var cv = $scope.data.currVw.id;
       if (cv === "sources_list") {
         $uibModalInstance.close();
-        $location.path(cancelUrl);
+        if (cancelUrl) {
+          $location.path(cancelUrl);
+        }
       } else if (cv === "create_new_source") {
         _chvw("sources_list");
       } else if (cv === "create_source_name") {
