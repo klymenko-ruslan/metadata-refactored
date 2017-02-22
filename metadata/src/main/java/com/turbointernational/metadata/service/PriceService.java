@@ -105,7 +105,13 @@ public class PriceService {
 
     private ProductPrices getProductPrices(Long partId, List<PriceRow> pricesRows) throws PartNotFound {
         String partNumber = jdbcTemplate.query("select manfr_part_num from part where id=?",
-                new Object[] { partId }, rs -> { return rs.getString(1);});
+                new Object[] { partId }, rs -> {
+                    if (rs.next()) {
+                        return rs.getString(1);
+                    } else {
+                        return null;
+                    }
+                });
         if (partNumber == null) {
             throw new PartNotFound(partId);
         }
@@ -131,7 +137,5 @@ public class PriceService {
         ProductPrices retVal = new ProductPrices(partId, standardPrice, prices);
         return retVal;
     }
-
-
 
 }
