@@ -98,13 +98,8 @@ public class MagmiController {
     @ResponseBody
     @Transactional(noRollbackFor = PartNotFound.class)
     @PreAuthorize("hasRole('ROLE_MAGMI_EXPORT') or hasIpAddress('127.0.0.1/32')")
-    public ProductPricesDto[] getProductPricesAsGet(@RequestParam(name = "id") Long[] partIds) throws IOException {
-        int n = partIds.length;
-        ProductPricesDto[] retVal = new ProductPricesDto[n];
-        for(int i = 0; i < n; i++) {
-            Long partId = partIds[i];
-            retVal[i] = loadPrices(partId);
-        }
+    public List<ProductPricesDto> getProductPricesAsGet(@RequestParam(name = "id") List<Long> partIds) throws IOException {
+        List<ProductPricesDto> retVal = priceService.getProductsPrices(partIds);
         return retVal;
     }
 
@@ -112,30 +107,18 @@ public class MagmiController {
     @ResponseBody
     @Transactional(noRollbackFor = PartNotFound.class)
     @PreAuthorize("hasRole('ROLE_MAGMI_EXPORT') or hasIpAddress('127.0.0.1/32')")
-    public ProductPricesDto[] getProductPricesAsPost(@RequestBody String strJson) throws IOException {
+    public List<ProductPricesDto> getProductPricesAsPost(@RequestBody String strJson) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         JsonFactory factory = mapper.getFactory();
         JsonParser jp = factory.createParser(strJson);
         JsonNode json = mapper.readTree(jp);
-        int n = json.size();
-        ProductPricesDto[] retVal = new ProductPricesDto[n];
-        int i = 0;
+        List<Long> partIds = new ArrayList<>(json.size());
         for(Iterator<JsonNode> iter = json.iterator(); iter.hasNext();) {
             JsonNode jn = iter.next();
             Long partId = jn.asLong();
-            retVal[i++] = loadPrices(partId);
+            partIds.add(partId);
         }
-        return retVal;
-    }
-
-    private ProductPricesDto loadPrices(Long partId) {
-        ProductPricesDto retVal;
-        try {
-            ProductPrices pp = priceService.getProductPrices(partId);
-            retVal = new ProductPricesDto(pp);
-        } catch(PartNotFound e) {
-            retVal = new ProductPricesDto(partId, e.getMessage());
-        }
+        List<ProductPricesDto> retVal = priceService.getProductsPrices(partIds);
         return retVal;
     }
 
