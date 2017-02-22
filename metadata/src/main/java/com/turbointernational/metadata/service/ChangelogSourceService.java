@@ -16,6 +16,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
@@ -23,9 +26,13 @@ import javax.persistence.TypedQuery;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 import java.io.File;
 import java.io.IOException;
 import java.net.URLConnection;
+import java.sql.PreparedStatement;
+import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -61,6 +68,13 @@ public class ChangelogSourceService {
 
     @Value("${changelog.sources.dir}")
     private File changelogSourcesDir;
+
+    private JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    public void setDataSource(DataSource dataSource) {
+        this.jdbcTemplate = new JdbcTemplate(dataSource);
+    }
 
     public Source findChangelogSourceById(Long id) {
         return sourceDao.findOne(id);
@@ -101,8 +115,31 @@ public class ChangelogSourceService {
                      Long[] sourcesIds, Integer[] ratings, String description) throws AssertionError {
       if (sourcesIds != null && sourcesIds.length > 0) {
           User user = User.getCurrentUser();
-          Date now  = new Date();
-          ChangelogSourceLink link = new ChangelogSourceLink(changelog, user, now, description);
+          KeyHolder keyHolder = new GeneratedKeyHolder();
+          jdbcTemplate.update(connection -> {
+              PreparedStatement ps = connection.prepareStatement(
+                      "insert into changelog_source_link(created, create_user_id, changelog_id) " +
+                      "values(?, ?, ?)", new String[] {"id"});
+            ps.setTimestamp(1, new Timestamp(System.currentTimeMillis()));
+            ps.setLong(2, user.getId());
+            ps.setLong(3, changelog.getId());
+            return ps;
+          }, keyHolder);
+          long chlgsrclnkid = keyHolder.getKey().longValue();
+          for (int i = 0; i < sourcesIds.length; i++) {
+              Long srcId = sourcesIds[i];
+              Integer rating = ratings[i];
+              jdbcTemplate.update(connection -> {
+                  PreparedStatement ps = connection.prepareStatement(
+                    "insert into changelog_source(lnk_id, source_id, rating) values(?, ?, ?)");
+                  ps.setLong(1, chlgsrclnkid);
+                  ps.setLong(2, srcId);
+                  ps.setInt(3, rating);
+                  return ps;
+              });
+          }
+          /*
+          ChangelogSourceLink link = new ChangelogSourceLink(changelog, user, new Date(), description);
           changelogSourceLinkDao.persist(link);
           for (int i = 0; i < sourcesIds.length; i++) {
               Long srcId = sourcesIds[i];
@@ -110,12 +147,14 @@ public class ChangelogSourceService {
               Source source = sourceDao.getReference(srcId);
               ChangelogSourceId chlgsrcid = new ChangelogSourceId(link, source);
               ChangelogSource chlgsrc = new ChangelogSource(chlgsrcid, rating);
+              link.getChangelogSources().add(chlgsrc);
               changelogSourceDao.persist(chlgsrc);
               searchService.indexChangelogSource(source); // update partIds in the index
               // I have no idea why... but without flush below the record is not saved
               // to the changelog_source.
               em.flush();
           }
+          */
       } else if (httpRequest != null && !httpRequest.isUserInRole(Role.ROLE_CHLOGSRC_SKIP)) {
           // httpRequest above can be null in integration tests
           ServiceEnum service = changelog.getService();

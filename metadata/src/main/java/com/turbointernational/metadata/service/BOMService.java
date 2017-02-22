@@ -1120,7 +1120,7 @@ public class BOMService {
                 _create(httpRequest, pickedPartId, primaryPartId, r.getQuantity(), request.getSourcesIds(),
                         request.getChlogSrcRatings(), request.getChlogSrcLnkDescription());
                 added++;
-            } catch(FoundBomRecursionException e) {
+            } catch (FoundBomRecursionException e) {
                 log.debug("Adding of the part [" + primaryPartId + "] to list of BOM for part [" +
                         pickedPartId + "] failed.", e);
                 failures.add(new AddToParentBOMsResponse.Failure(pickedPartId, pickedPart.getPartType().getName(),
@@ -1133,14 +1133,7 @@ public class BOMService {
             }
         }
         List<BOMItem> parents = getParentsForBom(primaryPartId);
-/*
         rebuildBomDescendancyForPart(primaryPartId, true);
-            Query call = em.createNativeQuery("CALL RebuildBomDescendancyForPart(:partId, :clean)");
-            call.setParameter("partId", primaryPartId);
-            call.setParameter("clean", 1);
-            call.executeUpdate();
-            em.clear();
-*/
         return new BOMService.AddToParentBOMsResponse(added, failures, parents);
     }
 
