@@ -1,3 +1,4 @@
+delete from service;
 delete from part_type;
 delete from manfr;
 delete from kit_type;
