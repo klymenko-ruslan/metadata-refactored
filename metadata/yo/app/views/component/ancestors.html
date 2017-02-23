@@ -11,13 +11,13 @@
   </thead>
   <tbody>
     <tr data-ng-repeat="item in $data">
-      <td>{{item.ancestor.partType.name}}</td>
-      <td>{{item.ancestor.manufacturer.name}}</td>
-      <td style="white-space: nowrap;">{{item.ancestor.manufacturerPartNumber}}</td>
-      <td>{{item.type}}</td>
+      <td>{{item.partTypeName}}</td>
+      <td>{{item.manufacturerName}}</td>
+      <td style="white-space: nowrap;">{{item.partNumber}}</td>
+      <td>{{item.relationType}}</td>
       <td>{{item.distance}}</td>
       <td>
-        <a authorize="ROLE_READ" data-ng-href="/part/{{item.id}}" class="btn btn-primary btn-xs">
+        <a authorize="ROLE_READ" data-ng-href="/part/{{item.partId}}" class="btn btn-primary btn-xs">
           <i class="fa fa-eye"></i> View
         </a>
       </td>

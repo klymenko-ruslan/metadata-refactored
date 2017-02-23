@@ -1,58 +1,66 @@
 package com.turbointernational.metadata.entity;
 
-import com.turbointernational.metadata.entity.part.Part;
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.util.View;
 
 import java.io.Serializable;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
+
+@JsonInclude(ALWAYS)
 public class BOMAncestor implements Serializable {
-    
-    //<editor-fold defaultstate="collapsed" desc="Properties">
-    private Part part;
-    
-    private Part ancestor;
-    
-    private Integer distance;
-    
-    private String type;
 
-    public Part getPart() {
-        return part;
-    }
+    @JsonView(View.Summary.class)
+    private final long partId;
 
-    public void setPart(Part part) {
-        this.part = part;
-    }
+    @JsonView(View.Summary.class)
+    private final String partTypeName;
 
-    public Part getAncestor() {
-        return ancestor;
-    }
+    @JsonView(View.Summary.class)
+    private final String manufacturerName;
 
-    public void setAncestor(Part ancestor) {
-        this.ancestor = ancestor;
-    }
+    @JsonView(View.Summary.class)
+    private final String partNumber;
 
-    public Integer getDistance() {
-        return distance;
-    }
+    @JsonView(View.Summary.class)
+    private final String relationType;
 
-    public void setDistance(Integer distance) {
+    @JsonView(View.Summary.class)
+    private int distance;
+
+    public BOMAncestor(long partId, String partTypeName, String manufacturerName, String partNumber, String relationType,
+                       int distance) {
+        this.partId = partId;
+        this.partTypeName = partTypeName;
+        this.manufacturerName = manufacturerName;
+        this.partNumber = partNumber;
+        this.relationType = relationType;
         this.distance = distance;
     }
 
-    public String getType() {
-        return type;
+    public long getPartId() {
+        return partId;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public String getPartTypeName() {
+        return partTypeName;
     }
-    //</editor-fold>turn ObjectUtils.compare(this.id, o.id);
 
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+    public String getManufacturerName() {
+        return manufacturerName;
     }
-    
+
+    public String getPartNumber() {
+        return partNumber;
+    }
+
+    public String getRelationType() {
+        return relationType;
+    }
+
+    public int getDistance() {
+        return distance;
+    }
+
 }

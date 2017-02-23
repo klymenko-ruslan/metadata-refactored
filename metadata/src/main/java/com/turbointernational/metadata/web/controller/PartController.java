@@ -355,24 +355,11 @@ public class PartController {
     }
 
     @RequestMapping(value="/part/{id}/ancestors", method = GET)
+    @ResponseBody
+    @JsonView(View.Summary.class)
     @Secured("ROLE_READ")
-    public ResponseEntity<String> ancestors(@PathVariable("id") Long partId) throws Exception {
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/json");
-        List<BOMAncestor> ancestors = partService.ancestors(partId);
-        String json = new JSONSerializer()
-                .transform(new HibernateTransformer(), BOMAncestor.class)
-                .include("distance")
-                .include("type")
-                .include("ancestor.id")
-                .include("ancestor.name")
-                .include("ancestor.manufacturerPartNumber")
-                .include("ancestor.description")
-                .include("ancestor.partType.name")
-                .include("ancestor.manufacturer.name")
-                .exclude("*")
-                .serialize(ancestors);
-        return new ResponseEntity<>(json, headers, HttpStatus.OK);
+    public List<BOMAncestor> ancestors(@PathVariable("id") Long partId) throws Exception {
+        return partService.ancestors(partId);
     }
 
     @Transactional
