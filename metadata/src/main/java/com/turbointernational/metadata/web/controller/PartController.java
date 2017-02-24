@@ -19,6 +19,7 @@ import com.turbointernational.metadata.service.StandardOversizePartService;
 import com.turbointernational.metadata.service.StandardOversizePartService.CreateStandardOversizePartRequest;
 import com.turbointernational.metadata.service.StandardOversizePartService.CreateStandardOversizePartResponse;
 import com.turbointernational.metadata.util.View;
+import com.turbointernational.metadata.web.dto.Page;
 import flexjson.JSONSerializer;
 import flexjson.transformer.HibernateTransformer;
 import org.hibernate.validator.constraints.NotBlank;
@@ -358,8 +359,9 @@ public class PartController {
     @ResponseBody
     @JsonView(View.Summary.class)
     @Secured("ROLE_READ")
-    public List<BOMAncestor> ancestors(@PathVariable("id") Long partId) throws Exception {
-        return partService.ancestors(partId);
+    public Page<BOMAncestor> ancestors(@PathVariable("id") Long partId, @RequestParam(name = "offset") int offset,
+                                       @RequestParam(name = "limit") int limit) throws Exception {
+        return partService.ancestors(partId, offset, limit);
     }
 
     @Transactional

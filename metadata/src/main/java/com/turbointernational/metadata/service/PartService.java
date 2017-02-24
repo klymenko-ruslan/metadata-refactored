@@ -11,6 +11,7 @@ import com.turbointernational.metadata.entity.part.types.GasketKit;
 import com.turbointernational.metadata.entity.part.types.Turbo;
 import com.turbointernational.metadata.service.ChangelogService.RelatedPart;
 import com.turbointernational.metadata.web.controller.PartController;
+import com.turbointernational.metadata.web.dto.Page;
 import flexjson.JSONSerializer;
 import org.apache.commons.io.FileUtils;
 import org.im4java.core.CommandException;
@@ -19,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
@@ -218,30 +220,9 @@ public class PartService {
         return part;
     }
 
-    public List<BOMAncestor> ancestors(Long partId) throws Exception {
-        List<BOMAncestor> ancestors = db.query(
-                "select p.id, p.manfr_part_num, pt.name, m.name, ba.distance, ba.type " +
-                        "from part as p " +
-                        "join manfr m on m.id = p.manfr_id " +
-                        "join part_type pt on pt.id = p.part_type_id " +
-                        "join (" +
-                        "    select distinct part_id, ancestor_part_id, distance, type " +
-                        "    from vbom_ancestor " +
-                        "    where part_id=? and distance > 0 " +
-                        ") as ba on ba.ancestor_part_id = p.id " +
-                        "order by ba.distance, ba.type, p.manfr_part_num",
-                (rs, rowNum) -> {
-                    long ancestorPartId = rs.getLong(1);
-                    String ancestorManufacturerPartNumber = rs.getString(2);
-                    String manufacturerName = rs.getString(3);
-                    String ancestorPartType = rs.getString(4);
-                    int distance = rs.getInt(5);
-                    String relationType = rs.getString(6);
-                    BOMAncestor ancestor = new BOMAncestor(ancestorPartId, ancestorPartType, manufacturerName,
-                            ancestorManufacturerPartNumber, relationType,distance);
-                    return ancestor;
-                }, partId);
-        return ancestors;
+    @Secured("ROLE_READ")
+    public Page<BOMAncestor> ancestors(Long partId, int offset, int limit) throws Exception {
+        return partDao.ancestors(partId, offset, limit);
     }
 
     @Transactional(noRollbackFor = AssertionError.class)
