@@ -16,13 +16,13 @@ public class ProductPricesDto extends ProductPrices {
     @JsonInclude(NON_NULL)
     private final String error;
 
-    public ProductPricesDto(Long partId, String error) {
-        super(partId, null, null);
+    public ProductPricesDto(Long partId, String partNum, String error) {
+        super(partId, partNum, null);
         this.error = error;
     }
 
     public ProductPricesDto(ProductPrices pp) {
-        super(pp.getPartId(), pp.getStandardPrice(), pp.getPrices(), pp.getWarning());
+        super(pp.getPartId(), pp.getPartNum(), pp.getStandardPrice(), pp.getPrices(), pp.getWarning());
         this.error = null;
     }
 

@@ -19,6 +19,9 @@ public class ProductPrices {
     private final Long partId;
 
     @JsonView(View.Summary.class)
+    private final String partNum;
+
+    @JsonView(View.Summary.class)
     @JsonInclude(ALWAYS)
     private final BigDecimal standardPrice;
 
@@ -30,24 +33,29 @@ public class ProductPrices {
     @JsonInclude(NON_NULL)
     private final String warning;
 
-    public ProductPrices(Long partId, String warning) {
-        this(partId, null, null, warning);
+    public ProductPrices(Long partId, String partNum, String warning) {
+        this(partId, partNum,null, null, warning);
     }
 
-    public ProductPrices(Long partId, BigDecimal standardPrice,
+    public ProductPrices(Long partId, String partNum, BigDecimal standardPrice,
                          Map<String, BigDecimal> prices) {
-        this(partId, standardPrice, prices, null);
+        this(partId, partNum, standardPrice, prices, null);
     }
 
-    public ProductPrices(Long partId, BigDecimal standardPrice,
+    public ProductPrices(Long partId, String partNum, BigDecimal standardPrice,
                          Map<String, BigDecimal> prices, String warning) {
         this.partId = partId;
+        this.partNum = partNum;
         this.standardPrice = standardPrice;
         this.prices = prices;
         this.warning = warning;
     }
     public Long getPartId() {
         return partId;
+    }
+
+    public String getPartNum() {
+        return partNum;
     }
 
     public BigDecimal getStandardPrice() {

@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -36,6 +37,18 @@ public class PriceService {
     @Autowired
     @Qualifier("dataSourceMas90")
     private DataSource mssqlDataSource;
+
+    /**
+     * The value specifies in millis a time-to-live in a cache an entry for the list of prices rows.
+     *
+     * @see #getPricesRows()
+     */
+    @Value("${prices.cache.ttl}")
+    private long cacheTtl = 5 * 60000; // default 5 minutes
+
+    private List<PriceRow> cachedPricesRows = null;
+
+    private long pricesRowsInitedAt = 0L;
 
     private JdbcTemplate mssqldb;
 
@@ -66,8 +79,36 @@ public class PriceService {
 
     }
 
-    public List<ProductPricesDto> getProductsPrices(List<Long> partIds) {
-        List<PriceRow> pricesRows = mssqldb.query(
+    public List<ProductPricesDto> getProductsPricesByIds(List<Long> partIds) {
+        List<PriceRow> prows = getPricesRows();
+        List<ProductPricesDto> retVal = new ArrayList<>(partIds.size());
+        for(Iterator<Long> iter = partIds.iterator(); iter.hasNext();) {
+            Long partId = iter.next();
+            try {
+                ProductPrices pp = getProductPrices(partId, prows);
+                retVal.add(new ProductPricesDto(pp));
+            } catch (PartNotFound e) {
+                retVal.add(new ProductPricesDto(partId, null, e.getMessage()));
+            }
+        }
+        return retVal;
+    }
+
+    public List<ProductPricesDto> getProductsPricesByNums(List<String> manfrPartNums) {
+        List<PriceRow> prows = getPricesRows();
+        List<ProductPricesDto> retVal = new ArrayList<>(manfrPartNums.size());
+        for(Iterator<String> iter = manfrPartNums.iterator(); iter.hasNext();) {
+            String partNum = iter.next();
+            ProductPrices pp = getProductPrices(null, partNum, prows);
+            retVal.add(new ProductPricesDto(pp));
+        }
+        return retVal;
+    }
+
+    private synchronized List<PriceRow> getPricesRows() {
+        long now = System.currentTimeMillis();
+        if (cachedPricesRows == null || now - pricesRowsInitedAt > cacheTtl) {
+            cachedPricesRows = mssqldb.query(
                 "select p.customerpricelevel as price_level, " +
                     "p.pricingmethod as discount_type, p.breakquantity1 as BreakQty1, " +
                     "p.breakquantity2 as BreakQty2, p.breakquantity3 as BreakQty3, " +
@@ -88,44 +129,35 @@ public class PriceService {
                     Pricing pricing = Pricing.fromResultSet(rs);
                     return new PriceRow(priceLevel, pricing);
                 }
-        );
-
-        List<ProductPricesDto> retVal = new ArrayList<>(partIds.size());
-        for(Iterator<Long> iter = partIds.iterator(); iter.hasNext();) {
-            Long partId = iter.next();
-            try {
-                ProductPrices pp = getProductPrices(partId, pricesRows);
-                retVal.add(new ProductPricesDto(pp));
-            } catch (PartNotFound e) {
-                retVal.add(new ProductPricesDto(partId, e.getMessage()));
-            }
+            );
+            pricesRowsInitedAt = now;
         }
-        return retVal;
+        return cachedPricesRows;
     }
 
     private ProductPrices getProductPrices(Long partId, List<PriceRow> pricesRows) throws PartNotFound {
-        String partNumber = jdbcTemplate.query("select manfr_part_num from part where id=?",
-                new Object[] { partId }, rs -> {
-                    if (rs.next()) {
-                        return rs.getString(1);
-                    } else {
-                        return null;
-                    }
-                });
+        // Resolve partId to a manufacturer part number.
+        String partNumber = jdbcTemplate.queryForObject("select manfr_part_num from part where id=?", String.class,
+                partId);
         if (partNumber == null) {
             throw new PartNotFound(partId);
         }
+        return getProductPrices(partId, pricesRows);
+
+    }
+
+    private ProductPrices getProductPrices(Long partId, String partNumber, List<PriceRow> pricesRows) {
         BigDecimal standardPrice;
         try {
             standardPrice = mssqldb.queryForObject("select standardunitprice from ci_item where itemcode=?",
                     BigDecimal.class, partNumber);
         } catch(EmptyResultDataAccessException e) {
-            log.warn("Standard unit price for the part [{}] not found.", partId);
-            return new ProductPrices(partId, "Standard unit price not found.");
+            log.warn("Standard unit price for the part {} not found.", partNumber);
+            return new ProductPrices(null, partNumber,"Standard unit price not found.");
         } catch(DataAccessException e) {
             log.warn("Calculation of a standard unit price for the part [{}] failed: {}",
                     partId, e.getMessage());
-            return new ProductPrices(partId, String.format("Calculation of a standard " +
+            return new ProductPrices(partId, partNumber, String.format("Calculation of a standard " +
                     "unit price failed: {%s}", e.getMessage()));
         }
 
@@ -134,7 +166,7 @@ public class PriceService {
             List<CalculatedPrice> calculatedPrices = pr.getPricing().calculate(standardPrice);
             calculatedPrices.forEach(cp -> prices.put(pr.getPriceLevel(), cp.getPrice()));
         });
-        ProductPrices retVal = new ProductPrices(partId, standardPrice, prices);
+        ProductPrices retVal = new ProductPrices(partId, partNumber, standardPrice, prices);
         return retVal;
     }
 
