@@ -71,22 +71,13 @@ public class BOMService {
     private BOMItemDao bomItemDao;
 
     @Autowired
-    private SourceDao sourceDao;
-
-    @Autowired
     private ChangelogSourceService changelogSourceService;
-
-    @Autowired
-    private ChangelogSourceLinkDao changelogSourceLinkDao;
 
     @Autowired
     private ChangelogService changelogService;
 
     @Autowired
     private SearchService searchService;
-
-    @Autowired
-    private TurboCarModelEngineYearDao tcmeyDao;
 
     private final IndexingStatus indexingStatus = new IndexingStatus();
 
@@ -853,7 +844,9 @@ public class BOMService {
      */
     public static class FoundBomRecursionException extends Exception {
 
-        /**
+		private static final long serialVersionUID = 7962266317894202552L;
+		
+		/**
          * An ID of a part which makes the circular recursion.
          */
         private Long failedId;
