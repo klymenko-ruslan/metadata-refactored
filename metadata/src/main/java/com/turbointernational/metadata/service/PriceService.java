@@ -1,11 +1,17 @@
 package com.turbointernational.metadata.service;
 
-import com.turbointernational.metadata.exception.PartNotFound;
-import com.turbointernational.metadata.service.mas90.pricing.CalculatedPrice;
-import com.turbointernational.metadata.service.mas90.pricing.Pricing;
-import com.turbointernational.metadata.service.mas90.pricing.ProductPrices;
-import com.turbointernational.metadata.web.dto.ProductPricesDto;
-import org.apache.commons.lang3.StringUtils;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.PostConstruct;
+import javax.sql.DataSource;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +22,11 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
-import javax.sql.DataSource;
-import java.math.BigDecimal;
-import java.util.*;
+import com.turbointernational.metadata.exception.PartNotFound;
+import com.turbointernational.metadata.service.mas90.pricing.CalculatedPrice;
+import com.turbointernational.metadata.service.mas90.pricing.Pricing;
+import com.turbointernational.metadata.service.mas90.pricing.ProductPrices;
+import com.turbointernational.metadata.web.dto.ProductPricesDto;
 
 /**
  * Created by dmytro.trunykov@zorallabs.com on 23.06.16.
@@ -79,21 +86,6 @@ public class PriceService {
 
     }
 
-    public List<ProductPricesDto> getProductsPricesByIds(List<Long> partIds) {
-        List<PriceRow> prows = getPricesRows();
-        List<ProductPricesDto> retVal = new ArrayList<>(partIds.size());
-        for(Iterator<Long> iter = partIds.iterator(); iter.hasNext();) {
-            Long partId = iter.next();
-            try {
-                ProductPrices pp = getProductPrices(partId, prows);
-                retVal.add(new ProductPricesDto(pp));
-            } catch (PartNotFound e) {
-                retVal.add(new ProductPricesDto(partId, null, e.getMessage()));
-            }
-        }
-        return retVal;
-    }
-
     public List<ProductPricesDto> getProductsPricesByNums(List<String> manfrPartNums) {
         List<PriceRow> prows = getPricesRows();
         List<ProductPricesDto> retVal = new ArrayList<>(manfrPartNums.size());
@@ -101,6 +93,27 @@ public class PriceService {
             String partNum = iter.next();
             ProductPrices pp = getProductPrices(null, partNum, prows);
             retVal.add(new ProductPricesDto(pp));
+        }
+        return retVal;
+    }
+
+    public List<ProductPricesDto> getProductsPricesByIds(List<Long> partIds) {
+        List<PriceRow> prows = getPricesRows();
+        List<ProductPricesDto> retVal = new ArrayList<>(partIds.size());
+        for (Iterator<Long> iter = partIds.iterator(); iter.hasNext();) {
+            Long partId = iter.next();
+            try {
+                // Resolve partId to a manufacturer part number.
+                String partNumber = jdbcTemplate.queryForObject("select manfr_part_num from part where id=?",
+                        String.class, partId);
+                if (partNumber == null) {
+                    throw new PartNotFound(partId);
+                }
+                ProductPrices pp = getProductPrices(partId, partNumber, prows);
+                retVal.add(new ProductPricesDto(pp));
+            } catch (PartNotFound e) {
+                retVal.add(new ProductPricesDto(partId, null, e.getMessage()));
+            }
         }
         return retVal;
     }
@@ -123,7 +136,7 @@ public class PriceService {
                 (rs, rowNum) -> {
                     String priceLevel = rs.getString("price_level");
                     // Mas90 bug handling: https://github.com/pthiry/TurboInternational/issues/5#issuecomment-29331951
-                    if (StringUtils.isBlank(priceLevel)) {
+                    if (isBlank(priceLevel)) {
                         priceLevel = "2";
                     }
                     Pricing pricing = Pricing.fromResultSet(rs);
@@ -135,33 +148,21 @@ public class PriceService {
         return cachedPricesRows;
     }
 
-    private ProductPrices getProductPrices(Long partId, List<PriceRow> pricesRows) throws PartNotFound {
-        // Resolve partId to a manufacturer part number.
-        String partNumber = jdbcTemplate.queryForObject("select manfr_part_num from part where id=?", String.class,
-                partId);
-        if (partNumber == null) {
-            throw new PartNotFound(partId);
-        }
-        return getProductPrices(partId, pricesRows);
-
-    }
-
     private ProductPrices getProductPrices(Long partId, String partNumber, List<PriceRow> pricesRows) {
         BigDecimal standardPrice;
         try {
             standardPrice = mssqldb.queryForObject("select standardunitprice from ci_item where itemcode=?",
                     BigDecimal.class, partNumber);
         } catch(EmptyResultDataAccessException e) {
-            log.warn("Standard unit price for the part {} not found.", partNumber);
+            log.warn("Standard unit price for the part (p/n '{}') not found.", partNumber);
             return new ProductPrices(null, partNumber,"Standard unit price not found.");
         } catch(DataAccessException e) {
-            log.warn("Calculation of a standard unit price for the part [{}] failed: {}",
-                    partId, e.getMessage());
+            log.warn("Calculation of a standard unit price for the part (p/n '{}') failed: {}",
+                    partNumber, e.getMessage());
             return new ProductPrices(partId, partNumber, String.format("Calculation of a standard " +
                     "unit price failed: {%s}", e.getMessage()));
         }
-
-        Map<String, BigDecimal> prices = new HashMap(50);
+        Map<String, BigDecimal> prices = new HashMap<>(50);
         pricesRows.forEach(pr -> {
             List<CalculatedPrice> calculatedPrices = pr.getPricing().calculate(standardPrice);
             calculatedPrices.forEach(cp -> prices.put(pr.getPriceLevel(), cp.getPrice()));
