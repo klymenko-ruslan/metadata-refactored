@@ -144,7 +144,7 @@ public class PriceService {
                     + "p.discountmarkup2 as DiscountMarkupPriceRate2, "
                     + "p.discountmarkup3 as DiscountMarkupPriceRate3, "
                     + "p.discountmarkup4 as DiscountMarkupPriceRate4, "
-                    + "p.discountmarkup5 as DiscountMarkupPriceRate5 " + "from im_pricecode as p "
+                    + "p.discountmarkup5 as DiscountMarkupPriceRate5 from im_pricecode as p "
                     + "where p.pricecoderecord in ('', ' ', '0')", (rs, rowNum) -> {
                         String priceLevel = rs.getString("price_level");
                         // Mas90 bug handling:

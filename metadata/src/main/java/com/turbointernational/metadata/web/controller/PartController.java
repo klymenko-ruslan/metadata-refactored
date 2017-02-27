@@ -324,11 +324,14 @@ public class PartController {
         return part;
     }
 
-    @Secured("ROLE_READ")
     @JsonView(View.Summary.class)
     @RequestMapping(value = "/part/{id}/prices", method = GET, produces = APPLICATION_JSON_VALUE)
-    public @ResponseBody ProductPricesDto getPrices(@PathVariable("id") Long id) {
-        return priceService.getProductPricesById(id);
+    public @ResponseBody ProductPricesDto getPrices(HttpServletRequest httpRequest, @PathVariable("id") Long id) {
+        if (httpRequest.isUserInRole("ROLE_PRICE_READ")) {
+            return priceService.getProductPricesById(id);
+        } else {
+            return null;
+        }
     }
 
     @JsonView(View.Summary.class)

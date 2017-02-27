@@ -229,12 +229,8 @@ angular.module("ngMetaCrudApp", ["ngCookies", "ngRoute", "ngTable", "ui.bootstra
         standardParts: ["$route", "restService", function($route, restService) {
           return restService.findStandardParts($route.current.pathParams.id);
         }],
-        prices: ["$route", "restService", "User", function($route, restService, User) {
-          if (User.hasRole("ROLE_READ")) {
-            return restService.getPartPrices($route.current.pathParams.id);
-          } else {
-            return null;
-          }
+        prices: ["$route", "restService", function($route, restService) {
+          return restService.getPartPrices($route.current.pathParams.id);
         }]
       }
     });
