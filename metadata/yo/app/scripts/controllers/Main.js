@@ -15,7 +15,8 @@ angular.module("ngMetaCrudApp")
       );
 
       $scope.hasRole = function(role) {
-        return _.contains(User.roles, role);
+        return User.hasRole(role);
       };
+
     }
   ]);

@@ -1,4 +1,4 @@
-";use strict";
+"use strict";
 
 angular.module("ngMetaCrudApp")
   .service("restService", ["$log", "$http", "Restangular", "dialogs", "$q", "$rootScope", "$filter",
@@ -119,6 +119,11 @@ angular.module("ngMetaCrudApp")
 
       this.findPart = function(id, params) {
         return Restangular.one("part", id).get(params);
+      };
+
+      this.getPartPrices = function(id) {
+        Restangular.setParentless(false);
+        return Restangular.one("part", id).one("prices").get();
       };
 
       this.loadAncestors = function(partId, offset, limit) {

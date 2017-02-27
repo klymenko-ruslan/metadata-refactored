@@ -1,5 +1,45 @@
 package com.turbointernational.metadata.web.controller;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
+import static com.turbointernational.metadata.web.controller.PartController.GasketKitResultStatus.ASSERTION_ERROR;
+import static com.turbointernational.metadata.web.controller.PartController.GasketKitResultStatus.OK;
+import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
+import static javax.servlet.http.HttpServletResponse.SC_FORBIDDEN;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.PUT;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.NotBlank;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.dao.PartDao;
@@ -15,43 +55,13 @@ import com.turbointernational.metadata.entity.part.types.Turbo;
 import com.turbointernational.metadata.service.BOMService;
 import com.turbointernational.metadata.service.ChangelogService;
 import com.turbointernational.metadata.service.PartService;
+import com.turbointernational.metadata.service.PriceService;
 import com.turbointernational.metadata.service.StandardOversizePartService;
 import com.turbointernational.metadata.service.StandardOversizePartService.CreateStandardOversizePartRequest;
 import com.turbointernational.metadata.service.StandardOversizePartService.CreateStandardOversizePartResponse;
 import com.turbointernational.metadata.util.View;
 import com.turbointernational.metadata.web.dto.Page;
-import flexjson.JSONSerializer;
-import flexjson.transformer.HibernateTransformer;
-import org.hibernate.validator.constraints.NotBlank;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.security.access.annotation.Secured;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
-import static com.turbointernational.metadata.web.controller.PartController.GasketKitResultStatus.ASSERTION_ERROR;
-import static com.turbointernational.metadata.web.controller.PartController.GasketKitResultStatus.OK;
-import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
-import static javax.servlet.http.HttpServletResponse.SC_FORBIDDEN;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.*;
+import com.turbointernational.metadata.web.dto.ProductPricesDto;
 
 @RequestMapping(value = "/metadata")
 @RestController
@@ -67,6 +77,9 @@ public class PartController {
 
     @Autowired
     private ChangelogService changelogService;
+    
+    @Autowired
+    private PriceService priceService;
 
     @Autowired
     private StandardOversizePartService standardOversizePartService;
@@ -309,6 +322,13 @@ public class PartController {
     public @ResponseBody Part getPart(@PathVariable("id") Long id) {
         Part part = partRepository.findOne(id);
         return part;
+    }
+
+    @Secured("ROLE_READ")
+    @JsonView(View.Summary.class)
+    @RequestMapping(value = "/part/{id}/prices", method = GET, produces = APPLICATION_JSON_VALUE)
+    public @ResponseBody ProductPricesDto getPrices(@PathVariable("id") Long id) {
+        return priceService.getProductPricesById(id);
     }
 
     @JsonView(View.Summary.class)

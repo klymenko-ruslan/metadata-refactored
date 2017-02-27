@@ -2,7 +2,7 @@
 
 angular.module("ngMetaCrudApp", ["ngCookies", "ngRoute", "ngTable", "ui.bootstrap",
     "restangular", "dialogs.main", "gToast", "angucomplete-alt", "jsonFormatter",
-    "angular-loading-bar"
+    "angular-loading-bar",
   ])
   .constant("METADATA_BASE", "/metadata/")
   .constant("VALID_IP_ADDRESS_REGEX", /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/)
@@ -228,6 +228,13 @@ angular.module("ngMetaCrudApp", ["ngCookies", "ngRoute", "ngTable", "ui.bootstra
         }],
         standardParts: ["$route", "restService", function($route, restService) {
           return restService.findStandardParts($route.current.pathParams.id);
+        }],
+        prices: ["$route", "restService", "User", function($route, restService, User) {
+          if (User.hasRole("ROLE_READ")) {
+            return restService.getPartPrices($route.current.pathParams.id);
+          } else {
+            return null;
+          }
         }]
       }
     });

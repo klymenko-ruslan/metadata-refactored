@@ -90,6 +90,12 @@
       Audit Log
     </a>
   </li>
+  <li role="presentation" authorize="ROLE_PRICE_READ">
+    <a id="tab-prices" href="#prices" aria-controls="prices" role="tab" data-toggle="tab">
+      <i class="fa fa-book"></i>
+      Prices
+    </a>
+  </li>
 </ul>
 
 <div class="tab-content">
@@ -118,6 +124,9 @@
   <div role="tabpanel" class="tab-pane fade tab-part-detail" id="linked_sources">
     <data-ng-include src="'/views/part/view/TabLinkedSources.html'"></data-ng-include>
   </div>
+  <div role="tabpanel" class="tab-pane fade tab-part-detail" id="prices">
+    <data-ng-include src="'/views/part/view/TabPrices.html'"></data-ng-include>
+  </div>
 </div>
 <script>
   $('#partTabs a').click(function (e) {
@@ -139,6 +148,8 @@
     $('#tab-nonstandard').tab('show');
   } else if (h === '#linked_sources') {
     $('#tab-linked-sources').tab('show');
+  } else if (h === '#prices') {
+    $('#tab-prices').tab('show');
   } else {
     $('#partTabs a:first').tab('show');
   }

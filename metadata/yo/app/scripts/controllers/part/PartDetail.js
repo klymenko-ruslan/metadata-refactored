@@ -3,14 +3,15 @@
 angular.module("ngMetaCrudApp")
 .controller("PartDetailCtrl", ["$scope", "$log", "$q", "$location", "$cookies", "$route", "$routeParams", "Kits",
     "ngTableParams", "utils", "restService", "Restangular", "User", "$uibModal", "dialogs", "gToast",
-    "part", "criticalDimensions", "manufacturers", "turbos", "oversizeParts", "standardParts",
+    "part", "criticalDimensions", "manufacturers", "turbos", "oversizeParts", "standardParts", "prices",
     function ($scope, $log, $q, $location, $cookies, $route, $routeParams, Kits, ngTableParams, utils,
     restService, Restangular, User, $uibModal, dialogs, gToast, part, criticalDimensions, manufacturers, turbos,
-    oversizeParts, standardParts) {
+    oversizeParts, standardParts, prices) {
   $scope.partId = part.id;
   $scope.part = part;
   $scope.oversizeParts = oversizeParts;
   $scope.standardParts = standardParts;
+  $scope.prices = prices;
   $scope.formMode = "view";
   $scope.partImagesPageNum = 1;
   $scope.criticalDimensions = criticalDimensions;
