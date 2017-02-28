@@ -327,6 +327,11 @@ public class PartController {
     @JsonView(View.Summary.class)
     @RequestMapping(value = "/part/{id}/prices", method = GET, produces = APPLICATION_JSON_VALUE)
     public @ResponseBody ProductPricesDto getPrices(HttpServletRequest httpRequest, @PathVariable("id") Long id) {
+        // Prices for a part is loading during initialization of the Angular's controller for a part view.
+        // But at that initialization we have no reliable way in a JavaScript code to check if an user has permission
+        // to read prices or not. Loading prices without the permission will lead to login page instead of
+        // the part view. So, to avoid this issue  we make permission check on the server side and just return null
+        // when user has no the required permission.
         if (httpRequest.isUserInRole("ROLE_PRICE_READ")) {
             return priceService.getProductPricesById(id);
         } else {

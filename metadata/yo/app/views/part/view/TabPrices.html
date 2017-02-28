@@ -1,15 +1,7 @@
 <p data-ng-show="prices.standardPrice == null">The part has no prices.</p>
-<div data-ng-hide="prices.standardPrice == null">
-  <form class="form-horizontal">
-    <div class="form-group">
-      <label class="col-xs-2 control-label">Standard Price</label>
-      <div class="col-xs-10">
-        <p class="form-control-static">{{prices.standardPrice | number}}</p>
-      </div>
-    </div>
-  </form>
-  <dl class="dl-horizontal">
-    <dt data-ng-repeat-start="(n, v) in prices.prices">{{n}}</dt>
-    <dd data-ng-repeat-end>{{v | number}}</dd>
-  </dl>
-</div>
+<dl class="dl-horizontal" data-ng-hide="prices.standardPrice == null">
+  <dt>Standard</dt>
+  <dd>{{prices.standardPrice | number:3}}</dd>
+  <dt data-ng-repeat-start="(n, v) in prices.prices">{{n}}</dt>
+  <dd data-ng-repeat-end>{{v | number:3}}</dd>
+</dl>

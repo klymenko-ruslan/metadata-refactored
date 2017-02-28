@@ -1047,7 +1047,6 @@ public class BOMService {
                 failures.add(new Failure(childId, child.getPartType().getName(), child.getManufacturerPartNumber(),
                         row.getQuantity(), e.getMessage()));
             }
-
         }
         rebuildBomDescendancyForPart(parentPartId, true); // TODO: is clean=true required?
         List<BOMItem> boms = getByParentId(parentPartId);

@@ -81,7 +81,7 @@ public class PartDao extends AbstractDao<Part> {
     public List<Turbo> listTurbosLinkedToGasketKit(Long id) {
         try {
             return em.createQuery("FROM Turbo AS t WHERE t.partType.id=" + PTID_TURBO +
-                    " AND t.gasketKit.id=:gasketKitId").setParameter("gasketKitId", id).getResultList();
+                    " AND t.gasketKit.id=:gasketKitId", Turbo.class).setParameter("gasketKitId", id).getResultList();
         } catch(NoResultException e) {
             return new ArrayList<>();
         }
