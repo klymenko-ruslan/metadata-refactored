@@ -13,15 +13,33 @@ angular.module("ngMetaCrudApp")
   $scope.standardParts = standardParts;
   $scope.prices = prices;
   $scope.formMode = "view";
-  $scope.partImagesPageNum = 1;
   $scope.criticalDimensions = criticalDimensions;
   $scope.restService = restService;
   // Make sure we're using the correct part type
   $scope.partType = part.partType.name;
-  $scope.imgPgSz = $cookies.get("pagedatails.imgpgsz");
-  if (!$scope.imgPgSz) {
-    $scope.imgPgSz = "two";
+
+  $scope.images = {
+    pgNum: 1,
+    pgSzTxt: "two",
+    pgSzVal: 2,
   }
+  $scope.images.pgSzTxt = $cookies.get("pagedatails.imgpgsz");
+  
+  function _imgPgSzTxt2Val(txt) {
+    var retval = $scope.part.productImages.length; // all
+    if (txt === "one") {
+      retval = 1;
+    } else if (txt === "two") {
+      retval = 2;
+    } else if (txt === "three") {
+      retval = 3;
+    } else if (txt === "four") {
+      retval = 4;
+    }
+    return retval;
+  }
+
+  $scope.images.pgSzVal = _imgPgSzTxt2Val($scope.images.pgSzTxt);
 
   $scope.onReload = function() {
     $route.reload();
@@ -82,22 +100,6 @@ angular.module("ngMetaCrudApp")
     }
   });
 
-
-  function _imgPgSz2Val(txt) {
-    var retval = $scope.part.productImages.length; // all
-    if (txt === "one") {
-      retval = 1;
-    } else if (txt === "two") {
-      retval = 2;
-    } else if (txt === "three") {
-      retval = 3;
-    } else if (txt === "four") {
-      retval = 4;
-    }
-    return retval;
-  }
-
-  $scope.imgPgSzVal = _imgPgSz2Val($scope.imgPgSz);
   $scope.turbosTableParams = null;
 
   function _initTurbosTableParams(turbos) {
@@ -527,9 +529,10 @@ angular.module("ngMetaCrudApp")
     });
   };
 
-  $scope.onChangeImgPgSz = function() {
-    $cookies.put("pagedatails.imgpgsz", $scope.imgPgSz);
-    $scope.imgPgSzVal = _imgPgSz2Val($scope.imgPgSz);
+  $scope.onChangeImgPgSzTxt = function() {
+$log.log("onChangeImgPgSz: " + $scope.images.pgSzTxt);
+    $cookies.put("pagedatails.imgpgsz", $scope.images.pgSzTxt);
+    $scope.images.pgSzVal = _imgPgSzTxt2Val($scope.images.pgSzTxt);
   };
 
   $scope.onShowProductImage = function(img_id) {
