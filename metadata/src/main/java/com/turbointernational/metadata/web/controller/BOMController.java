@@ -37,7 +37,7 @@ public class BOMController {
     @RequestMapping(value="rebuild/start", method = POST)
     @ResponseBody
     @JsonView(View.Summary.class)
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_BOM")
     public BOMService.IndexingStatus startRebuild(Authentication authentication,
                                                   @RequestBody Map<String, Boolean> options) throws Exception {
         User user = (User) authentication.getPrincipal();

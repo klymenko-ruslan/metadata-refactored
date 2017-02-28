@@ -313,6 +313,11 @@ angular.module("ngMetaCrudApp")
         return Restangular.one("part", part.id).customPUT(part);
       };
 
+      this.rebuildPartBom = function(partId) {
+        Restangular.setParentless(false);
+        return Restangular.one("part", partId).one("bom/rebuild").post();
+      };
+
       this.getInterchangesOfThePartBoms = function(partId) {
         return Restangular.one("part/" + partId + "/boms/interchanges").get();
       };

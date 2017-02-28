@@ -15,6 +15,7 @@ angular.module("ngMetaCrudApp")
   $scope.formMode = "view";
   $scope.partImagesPageNum = 1;
   $scope.criticalDimensions = criticalDimensions;
+  $scope.restService = restService;
   // Make sure we're using the correct part type
   $scope.partType = part.partType.name;
   $scope.imgPgSz = $cookies.get("pagedatails.imgpgsz");
@@ -22,19 +23,31 @@ angular.module("ngMetaCrudApp")
     $scope.imgPgSz = "two";
   }
 
-  $scope.reload = function() {
+  $scope.onReload = function() {
     $route.reload();
   };
 
-  $scope.reindex = function() {
+  $scope.onReindex = function() {
     restService.indexPartSync($scope.partId).then(
       function success() {
         gToast.open("The part has been successfully (re)indexed.");
       },
       function failure(error) {
-        restService.error("The index request failed.", error);
+        restService.error("The request to reindex the part failed.", error);
       }
     );
+  };
+
+  $scope.onRebuildBom = function() {
+      restService.rebuildPartBom($scope.partId).then(
+        function success() {
+          $route.reload();
+          gToast.open("BOMs for the part have been successfully rebuilt.");
+        },
+        function failure(error) {
+          restService.error("The rebuild BOM request failed.", error);
+        }
+      );
   };
 
   $scope.changelogTableParams = new ngTableParams({

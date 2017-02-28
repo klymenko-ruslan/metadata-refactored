@@ -428,6 +428,14 @@ public class PartController {
     }
 
     @Transactional
+    @Secured("ROLE_BOM")
+    @JsonView(View.Detail.class)
+    @RequestMapping(value = "/part/{id}/bom/rebuild", method = POST)
+    public @ResponseBody void rebuildBom(@PathVariable("id") Long partId) throws IOException {
+        bomService.rebuildBomDescendancyForPart(partId, true);
+    }
+
+    @Transactional
     @RequestMapping(value = "/part/{id}", method = DELETE, produces = APPLICATION_JSON_VALUE)
     @Secured("ROLE_DELETE_PART")
     public void deletePart(@PathVariable("id") Long id) {

@@ -37,10 +37,13 @@
   </div>
   <div class="col-xs-4">
     <div class="pull-right">
-      <button type="button" class="btn btn-primary" data-ng-click="reindex()" authorize="ROLE_READ">
+      <button type="button" class="btn btn-success" data-ng-click="onReindex()" authorize="ROLE_READ">
         <i class="fa fa-sort-alpha-asc" aria-hidden="true"></i> Reindex
       </button>
-      <button type="button" class="btn btn-success" data-ng-click="reload()" authorize="ROLE_READ">
+      <button type="button" class="btn btn-success" data-ng-click="onRebuildBom()" authorize="ROLE_BOM" data-ng-disabled="restService.status.bomRebuilding">
+        <i class="fa fa-sort-amount-desc" aria-hidden="true"></i> Rebuild BOM
+      </button>
+      <button type="button" class="btn btn-success" data-ng-click="onReload()" authorize="ROLE_READ">
         <i class="fa fa-refresh" aria-hidden="true"></i> Reload
       </button>
     </div>
