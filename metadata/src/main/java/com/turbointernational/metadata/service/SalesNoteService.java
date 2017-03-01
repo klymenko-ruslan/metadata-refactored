@@ -1,13 +1,18 @@
 package com.turbointernational.metadata.service;
 
-import com.google.common.collect.Iterables;
-import com.turbointernational.metadata.dao.PartDao;
-import com.turbointernational.metadata.dao.SalesNoteDao;
-import com.turbointernational.metadata.dao.SalesNotePartDao;
-import com.turbointernational.metadata.entity.*;
-import com.turbointernational.metadata.entity.part.Part;
-import com.turbointernational.metadata.exception.RemovePrimaryPartException;
-import com.turbointernational.metadata.service.ChangelogService.RelatedPart;
+import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.SALESNOTES;
+import static com.turbointernational.metadata.entity.ChangelogPart.Role.PART0;
+import static com.turbointernational.metadata.util.FormatUtils.formatPart;
+import static com.turbointernational.metadata.util.FormatUtils.formatSalesNote;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,17 +21,21 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.SALESNOTES;
-import static com.turbointernational.metadata.entity.ChangelogPart.Role.PART0;
-import static com.turbointernational.metadata.util.FormatUtils.formatPart;
-import static com.turbointernational.metadata.util.FormatUtils.formatSalesNote;
+import com.google.common.collect.Iterables;
+import com.turbointernational.metadata.dao.PartDao;
+import com.turbointernational.metadata.dao.SalesNoteDao;
+import com.turbointernational.metadata.dao.SalesNotePartDao;
+import com.turbointernational.metadata.entity.Changelog;
+import com.turbointernational.metadata.entity.SalesNote;
+import com.turbointernational.metadata.entity.SalesNoteAttachment;
+import com.turbointernational.metadata.entity.SalesNoteAttachmentRepository;
+import com.turbointernational.metadata.entity.SalesNotePart;
+import com.turbointernational.metadata.entity.SalesNoteRepository;
+import com.turbointernational.metadata.entity.SalesNoteState;
+import com.turbointernational.metadata.entity.User;
+import com.turbointernational.metadata.entity.part.Part;
+import com.turbointernational.metadata.exception.RemovePrimaryPartException;
+import com.turbointernational.metadata.service.ChangelogService.RelatedPart;
 
 /**
  * Created by dmytro.trunykov@zorallabs.com on 2/28/16.
@@ -51,9 +60,6 @@ public class SalesNoteService {
 
     @Autowired
     private SalesNoteRepository salesNotes;
-
-    @Autowired
-    private SalesNotePartRepository salesNoteParts;
 
     @Autowired
     private SalesNoteAttachmentRepository attachments;
@@ -81,13 +87,14 @@ public class SalesNoteService {
         partDao.getEntityManager().persist(snp);
         List<RelatedPart> relatedParts = new ArrayList<>(1);
         relatedParts.add(new RelatedPart(partId, PART0));
-        changelogService.log(SALESNOTES, "Added related part " + formatPart(part) + " to sales note " +
-                formatSalesNote(salesNoteId), relatedParts);
+        changelogService.log(SALESNOTES,
+                "Added related part " + formatPart(part) + " to sales note " + formatSalesNote(salesNoteId),
+                relatedParts);
     }
 
     @Transactional
     public SalesNote createSalesNote(HttpServletRequest httpRequest, User user, Long primaryPartId, String comment,
-                                     Long[] sourcesIds, Integer[] ratings, String description) {
+            Long[] sourcesIds, Integer[] ratings, String description) {
         // Create the sales note from the request
         SalesNote salesNote = new SalesNote();
         salesNote.setCreator(user);
@@ -103,8 +110,8 @@ public class SalesNoteService {
         salesNotes.save(salesNote);
         List<RelatedPart> relatedParts = new ArrayList<>(1);
         relatedParts.add(new RelatedPart(primaryPartId, PART0));
-        Changelog changelog = changelogService.log(SALESNOTES, "Created sales note " +
-                        formatSalesNote(salesNote) + ".", relatedParts);
+        Changelog changelog = changelogService.log(SALESNOTES, "Created sales note " + formatSalesNote(salesNote) + ".",
+                relatedParts);
         changelogSourceService.link(httpRequest, changelog, sourcesIds, ratings, description);
         // Initialize a few properties before sending the response
         primaryPart.getManufacturer().getName();
@@ -124,14 +131,13 @@ public class SalesNoteService {
         salesNote.setComment(comment);
         // Save
         salesNotes.save(salesNote);
-        changelogService.log(SALESNOTES, "Changed sales note (" +
-                formatSalesNote(salesNote) + ") comment: \"" +
-                salesNote.getComment() + "\" -> \"" + comment + "\".", null);
+        changelogService.log(SALESNOTES, "Changed sales note (" + formatSalesNote(salesNote) + ") comment: \""
+                + salesNote.getComment() + "\" -> \"" + comment + "\".", null);
     }
 
     @Transactional
-    public void deleteRelatedPart(HttpServletRequest request, Long salesNoteId,
-                                  final Long partId) throws RemovePrimaryPartException {
+    public void deleteRelatedPart(HttpServletRequest request, Long salesNoteId, final Long partId)
+            throws RemovePrimaryPartException {
         SalesNotePart salesNotePart = salesNotePartDao.findOne(salesNoteId, partId);
         // Can't delete primary part
         if (salesNotePart.isPrimary()) {
@@ -139,27 +145,21 @@ public class SalesNoteService {
         }
         salesNotePartDao.delete(salesNotePart);
         /*
-        // Find the entities
-        SalesNote salesNote = salesNotes.findOne(salesNoteId);
-        hasEditAccess(request, salesNote);
-        // Find the SNP
-        SalesNotePart salesNotePart = Iterables.find(
-                salesNote.getParts(),
-                snp -> snp.getPart().getId() == partId);
-        // Can't delete primary part
-        if (salesNotePart.isPrimary()) {
-            throw new RemovePrimaryPartException("Can't delete the primary part for a sales note.");
-        }
-        // Delete the SNP
-        salesNote.getParts().remove(salesNotePart);
-        salesNoteParts.delete(salesNotePart);
-        // Save
-        salesNotes.save(salesNote);
-        */
+         * // Find the entities SalesNote salesNote =
+         * salesNotes.findOne(salesNoteId); hasEditAccess(request, salesNote);
+         * // Find the SNP SalesNotePart salesNotePart = Iterables.find(
+         * salesNote.getParts(), snp -> snp.getPart().getId() == partId); //
+         * Can't delete primary part if (salesNotePart.isPrimary()) { throw new
+         * RemovePrimaryPartException("Can't delete the primary part for a sales note."
+         * ); } // Delete the SNP salesNote.getParts().remove(salesNotePart);
+         * salesNoteParts.delete(salesNotePart); // Save
+         * salesNotes.save(salesNote);
+         */
         List<RelatedPart> relatedParts = new ArrayList<>(1);
         relatedParts.add(new RelatedPart(partId, PART0));
-        changelogService.log(SALESNOTES, "Deleted related part " + formatPart(partId, null)
-                + " from sales note " + formatSalesNote(salesNoteId), relatedParts);
+        changelogService.log(SALESNOTES,
+                "Deleted related part " + formatPart(partId, null) + " from sales note " + formatSalesNote(salesNoteId),
+                relatedParts);
     }
 
     public static class AttachmentDto {
@@ -228,8 +228,7 @@ public class SalesNoteService {
         SalesNote salesNote = salesNotes.findOne(salesNoteId);
         hasEditAccess(request, salesNote);
         // Find the attachment
-        SalesNoteAttachment salesNoteAttachment = Iterables.find(
-                salesNote.getAttachments(),
+        SalesNoteAttachment salesNoteAttachment = Iterables.find(salesNote.getAttachments(),
                 attachment -> attachment.getId() == attachmentId);
         // Delete the attachment
         salesNote.getAttachments().remove(salesNoteAttachment);
@@ -275,8 +274,7 @@ public class SalesNoteService {
     }
 
     private void hasEditAccess(HttpServletRequest request, SalesNote salesNote) {
-        if (salesNote.getState() == SalesNoteState.published
-                && request.isUserInRole("SALES_NOTE_PUBLISH")) {
+        if (salesNote.getState() == SalesNoteState.published && request.isUserInRole("SALES_NOTE_PUBLISH")) {
             return;
         }
 
@@ -290,7 +288,8 @@ public class SalesNoteService {
             return;
         }
 
-        throw new AccessDeniedException("You are not allowed to update sales notes with the " + salesNote.getState() + " state.");
+        throw new AccessDeniedException(
+                "You are not allowed to update sales notes with the " + salesNote.getState() + " state.");
     }
 
     private void updateState(User user, SalesNote salesNote, SalesNoteState newState, SalesNoteState... allowedStates) {
@@ -302,12 +301,13 @@ public class SalesNoteService {
         salesNote.setUpdater(user);
         // Mark as dirty the associated SaleNotePart(s) in order
         // to trigger entities' lifecycle method @PostUpdate.
-        // That method will update entities in an ElastcSearch index to reflect changed state.
+        // That method will update entities in an ElastcSearch index to reflect
+        // changed state.
         // @see SalesNotePart#updateSearchIndex().
         salesNote.getParts().forEach(snp -> snp.setUpdateDate(now));
         salesNotes.save(salesNote);
-        changelogService.log(SALESNOTES, "Changed state in the sales note " + formatSalesNote(salesNote)
-                + ": " + currentState + " -> " + salesNote.getState(), null);
+        changelogService.log(SALESNOTES, "Changed state in the sales note " + formatSalesNote(salesNote) + ": "
+                + currentState + " -> " + salesNote.getState(), null);
     }
 
 }

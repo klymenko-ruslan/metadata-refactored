@@ -1,17 +1,32 @@
 package com.turbointernational.metadata.service;
 
-import com.turbointernational.metadata.dao.*;
-import com.turbointernational.metadata.entity.*;
-import com.turbointernational.metadata.entity.CriticalDimension;
-import com.turbointernational.metadata.entity.chlogsrc.Source;
-import com.turbointernational.metadata.entity.part.Part;
-import com.turbointernational.metadata.dao.PartDao;
-import com.turbointernational.metadata.entity.SalesNotePart;
-import com.turbointernational.metadata.dao.SalesNotePartDao;
-import com.turbointernational.metadata.entity.SalesNoteState;
-import com.turbointernational.metadata.entity.User;
-import com.turbointernational.metadata.service.search.index.IndexBuilder;
-import com.turbointernational.metadata.service.search.parser.*;
+import static com.turbointernational.metadata.service.SearchService.IndexingStatus.PHASE_ESTIMATION;
+import static com.turbointernational.metadata.service.SearchService.IndexingStatus.PHASE_FINISHED;
+import static com.turbointernational.metadata.service.SearchService.IndexingStatus.PHASE_INDEXING;
+import static com.turbointernational.metadata.service.search.parser.SearchTermCmpOperatorEnum.EQ;
+import static com.turbointernational.metadata.service.search.parser.SearchTermFactory.newBooleanSearchTerm;
+import static com.turbointernational.metadata.service.search.parser.SearchTermFactory.newIntegerSearchTerm;
+import static com.turbointernational.metadata.service.search.parser.SearchTermFactory.newSearchTerm;
+import static com.turbointernational.metadata.service.search.parser.SearchTermFactory.newTextSearchTerm;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.elasticsearch.action.search.SearchType.DFS_QUERY_THEN_FETCH;
+import static org.springframework.transaction.TransactionDefinition.PROPAGATION_REQUIRES_NEW;
+
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.regex.Pattern;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder;
 import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
@@ -48,20 +63,33 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import javax.annotation.PostConstruct;
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.*;
-import java.util.function.Function;
-import java.util.regex.Pattern;
-
-import static com.turbointernational.metadata.service.SearchService.IndexingStatus.*;
-import static com.turbointernational.metadata.service.search.parser.SearchTermCmpOperatorEnum.EQ;
-import static com.turbointernational.metadata.service.search.parser.SearchTermFactory.*;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.elasticsearch.action.search.SearchType.DFS_QUERY_THEN_FETCH;
-import static org.springframework.transaction.TransactionDefinition.PROPAGATION_REQUIRES_NEW;
+import com.turbointernational.metadata.dao.CarEngineDao;
+import com.turbointernational.metadata.dao.CarFuelTypeDao;
+import com.turbointernational.metadata.dao.CarMakeDao;
+import com.turbointernational.metadata.dao.CarModelDao;
+import com.turbointernational.metadata.dao.CarModelEngineYearDao;
+import com.turbointernational.metadata.dao.PartDao;
+import com.turbointernational.metadata.dao.SalesNotePartDao;
+import com.turbointernational.metadata.dao.SourceDao;
+import com.turbointernational.metadata.entity.CarEngine;
+import com.turbointernational.metadata.entity.CarFuelType;
+import com.turbointernational.metadata.entity.CarMake;
+import com.turbointernational.metadata.entity.CarModel;
+import com.turbointernational.metadata.entity.CarModelEngineYear;
+import com.turbointernational.metadata.entity.CarYear;
+import com.turbointernational.metadata.entity.CriticalDimension;
+import com.turbointernational.metadata.entity.SalesNotePart;
+import com.turbointernational.metadata.entity.SalesNoteState;
+import com.turbointernational.metadata.entity.User;
+import com.turbointernational.metadata.entity.chlogsrc.Source;
+import com.turbointernational.metadata.entity.part.Part;
+import com.turbointernational.metadata.service.search.index.IndexBuilder;
+import com.turbointernational.metadata.service.search.parser.AbstractSearchTerm;
+import com.turbointernational.metadata.service.search.parser.BooleanSearchTerm;
+import com.turbointernational.metadata.service.search.parser.NumberSearchTerm;
+import com.turbointernational.metadata.service.search.parser.RangeSearchTerm;
+import com.turbointernational.metadata.service.search.parser.SearchTermEnum;
+import com.turbointernational.metadata.service.search.parser.TextSearchTerm;
 
 /**
  * Implementation of the {@link SearchService} based on the ElasticSearch.
@@ -120,7 +148,6 @@ public class SearchServiceEsImpl implements SearchService {
     @Value("${elasticsearch.type.caryear}")
     private String elasticSearchTypeCarYear = "caryear";
 
-
     @Value("${elasticsearch.type.carmake}")
     private String elasticSearchTypeCarMake = "carmake";
 
@@ -166,24 +193,22 @@ public class SearchServiceEsImpl implements SearchService {
 
     private final static int DEF_AGGR_RESULT_SIZE = 300;
 
-    private final static AggregationBuilder[] CMEY_AGGREGATIONS = new AggregationBuilder[]{
+    private final static AggregationBuilder[] CMEY_AGGREGATIONS = new AggregationBuilder[] {
             AggregationBuilders.terms("Year").field("year.name.full").size(DEF_AGGR_RESULT_SIZE),
             AggregationBuilders.terms("Make").field("model.make.name.full").size(DEF_AGGR_RESULT_SIZE),
             AggregationBuilders.terms("Model").field("model.name.full").size(DEF_AGGR_RESULT_SIZE),
             AggregationBuilders.terms("Engine").field("engine.engineSize.full").size(DEF_AGGR_RESULT_SIZE),
-            AggregationBuilders.terms("Fuel Type").field("engine.fuelType.name.full").size(DEF_AGGR_RESULT_SIZE)
-    };
+            AggregationBuilders.terms("Fuel Type").field("engine.fuelType.name.full").size(DEF_AGGR_RESULT_SIZE) };
 
-    private final static AggregationBuilder[] CARMODEL_AGGREGATIONS = new AggregationBuilder[]{
-            AggregationBuilders.terms("Make").field("make.name.full").size(DEF_AGGR_RESULT_SIZE)
-    };
+    private final static AggregationBuilder[] CARMODEL_AGGREGATIONS = new AggregationBuilder[] {
+            AggregationBuilders.terms("Make").field("make.name.full").size(DEF_AGGR_RESULT_SIZE) };
 
-    private final static AggregationBuilder[] CARENGINE_AGGREGATIONS = new AggregationBuilder[]{
-            AggregationBuilders.terms("Fuel Type").field("fuelType.name.full").size(DEF_AGGR_RESULT_SIZE)
-    };
+    private final static AggregationBuilder[] CARENGINE_AGGREGATIONS = new AggregationBuilder[] {
+            AggregationBuilders.terms("Fuel Type").field("fuelType.name.full").size(DEF_AGGR_RESULT_SIZE) };
 
     private final IndexingStatus indexingStatus = new IndexingStatus();
 
+    @SuppressWarnings("resource")
     @PostConstruct
     private void init() throws UnknownHostException {
         // Establish connection to ElasticSearch cluster.
@@ -193,27 +218,37 @@ public class SearchServiceEsImpl implements SearchService {
         this.elasticSearch = new PreBuiltTransportClient(settings).addTransportAddress(taddr);
     }
 
+    @PreDestroy
+    private void done() {
+        if (this.elasticSearch != null) {
+            this.elasticSearch.close();
+        }
+    }
+
     /**
      * Transform a string to a string for search in the "name.short" field.
      * <p>
-     * Some types in the ElasticSearch index has property "name" that is mapped on two versions:
+     * Some types in the ElasticSearch index has property "name" that is mapped
+     * on two versions:
      * <dd>
      * <dt>full</dt>
      * <dd>the field indexed as is</dd>
      * <dt>short</dt>
-     * <dd>the field transformed to a lower-case string and removed all non-word characters</dd>
-     * </dd>
+     * <dd>the field transformed to a lower-case string and removed all non-word
+     * characters</dd></dd>
      *
-     * @param s string to transform. null not allowed.
+     * @param s
+     *            string to transform. null not allowed.
      * @return transformed string
      */
-    private final static Function<String, String> str2shotfield = s -> REGEX_TOSHORTFIELD.matcher(s).replaceAll("").toLowerCase();
+    private final static Function<String, String> str2shotfield = s -> REGEX_TOSHORTFIELD.matcher(s).replaceAll("")
+            .toLowerCase();
 
     /**
      * Convert string to SortOrder.
      */
-    private final static Function<String, SortOrder> convertSortOrder = sortOrder -> SortOrder.valueOf(sortOrder.toUpperCase());
-
+    private final static Function<String, SortOrder> convertSortOrder = sortOrder -> SortOrder
+            .valueOf(sortOrder.toUpperCase());
 
     private class IndexingJob extends Thread {
 
@@ -269,10 +304,8 @@ public class SearchServiceEsImpl implements SearchService {
             private final ScrollableResults scrollableCarModels;
 
             private ApplicationsIndexer(ScrollableResults scrollableCarModelEngineYears,
-                                        ScrollableResults scrollableCarEngines,
-                                        ScrollableResults scrollableCarFuelTypes,
-                                        ScrollableResults scrollableCarMakes,
-                                        ScrollableResults scrollableCarModels) {
+                    ScrollableResults scrollableCarEngines, ScrollableResults scrollableCarFuelTypes,
+                    ScrollableResults scrollableCarMakes, ScrollableResults scrollableCarModels) {
                 this.scrollableCarModelEngineYears = scrollableCarModelEngineYears;
                 this.scrollableCarEngines = scrollableCarEngines;
                 this.scrollableCarFuelTypes = scrollableCarFuelTypes;
@@ -284,8 +317,7 @@ public class SearchServiceEsImpl implements SearchService {
             public void run() {
                 super.run();
                 try {
-                    indexAllDocs(scrollableCarModelEngineYears, fetchSize,
-                            elasticSearchTypeCarModelEngineYear, this);
+                    indexAllDocs(scrollableCarModelEngineYears, fetchSize, elasticSearchTypeCarModelEngineYear, this);
                     indexAllDocs(scrollableCarEngines, fetchSize, elasticSearchTypeCarEngine, this);
                     indexAllDocs(scrollableCarFuelTypes, fetchSize, elasticSearchTypeCarFuelType, this);
                     indexAllDocs(scrollableCarMakes, fetchSize, elasticSearchTypeCarMake, this);
@@ -386,7 +418,7 @@ public class SearchServiceEsImpl implements SearchService {
         }
 
         IndexingJob(boolean indexParts, boolean indexApplications, boolean indexSalesNotes,
-                    boolean indexChangelogSources, boolean recreateIndex, int fetchSize) {
+                boolean indexChangelogSources, boolean recreateIndex, int fetchSize) {
             super();
             this.indexParts = indexParts;
             this.indexApplications = indexApplications;
@@ -400,7 +432,8 @@ public class SearchServiceEsImpl implements SearchService {
         public void run() {
             super.run();
             TransactionTemplate tt = new TransactionTemplate(txManager);
-            tt.setPropagationBehavior(PROPAGATION_REQUIRES_NEW); // new transaction
+            tt.setPropagationBehavior(PROPAGATION_REQUIRES_NEW); // new
+                                                                 // transaction
             tt.execute((TransactionCallback<Void>) ts -> {
                 try {
                     int partsTotal = 0;
@@ -422,8 +455,8 @@ public class SearchServiceEsImpl implements SearchService {
                         carMakeTotal = carMakeDao.getTotal();
                         carModelTotal = carModelDao.getTotal();
                     }
-                    int applicationsTotal = carModelEngineYearTotal + carEngineTotal +
-                            carFuelTypeTotal + carMakeTotal + carModelTotal;
+                    int applicationsTotal = carModelEngineYearTotal + carEngineTotal + carFuelTypeTotal + carMakeTotal
+                            + carModelTotal;
                     if (indexSalesNotes) {
                         salesNotesTotal = salesNotePartDao.getTotal();
                     }
@@ -457,21 +490,20 @@ public class SearchServiceEsImpl implements SearchService {
                             partsIndexer = new PartsIndexer(scrollableParts);
                         }
                         if (indexApplications) {
-                            scrollableCarModelEngineYears = carModelEngineYearDao.getScrollableResults(fetchSize, true, "id");
+                            scrollableCarModelEngineYears = carModelEngineYearDao.getScrollableResults(fetchSize, true,
+                                    "id");
                             scrollableCarEngines = carEngineDao.getScrollableResults(fetchSize, true, "id");
                             scrollableCarFuelTypes = carFuelTypeDao.getScrollableResults(fetchSize, true, "id");
                             scrollableCarMakes = carMakeDao.getScrollableResults(fetchSize, true, "id");
                             scrollableCarModels = carModelDao.getScrollableResults(fetchSize, true, "id");
 
-                            applicationsIndexer = new ApplicationsIndexer(
-                                    scrollableCarModelEngineYears,
-                                    scrollableCarEngines,
-                                    scrollableCarFuelTypes,
-                                    scrollableCarMakes,
+                            applicationsIndexer = new ApplicationsIndexer(scrollableCarModelEngineYears,
+                                    scrollableCarEngines, scrollableCarFuelTypes, scrollableCarMakes,
                                     scrollableCarModels);
                         }
                         if (indexSalesNotes) {
-                            scrollableSalesNotes = salesNotePartDao.getScrollableResults(fetchSize, true, "pk.salesNote.id");
+                            scrollableSalesNotes = salesNotePartDao.getScrollableResults(fetchSize, true,
+                                    "pk.salesNote.id");
                             salesNotesIndexer = new SalesNotesIndexer(scrollableSalesNotes);
                         }
                         if (indexChangelogSources) {
@@ -559,8 +591,7 @@ public class SearchServiceEsImpl implements SearchService {
 
     @Override
     public IndexingStatus startIndexing(User user, boolean indexParts, boolean indexApplications,
-                                        boolean indexSalesNotes, boolean indexChangelogSources,
-                                        boolean recreateIndex) throws Exception {
+            boolean indexSalesNotes, boolean indexChangelogSources, boolean recreateIndex) throws Exception {
         IndexingStatus retVal;
         long now = System.currentTimeMillis();
         synchronized (indexingStatus) {
@@ -598,11 +629,11 @@ public class SearchServiceEsImpl implements SearchService {
         // Delete index.
         boolean indexExists = indices.prepareExists(elasticSearchIndex).execute().actionGet().isExists();
         if (indexExists) {
-            String s = indices.prepareDelete(elasticSearchIndex).toString();
+            indices.prepareDelete(elasticSearchIndex).toString();
             DeleteIndexResponse delIdxResponse = indices.prepareDelete(elasticSearchIndex).get();
             if (!delIdxResponse.isAcknowledged()) {
-                throw new AssertionError("Deletion of the ElasticSearch index '%1$s' failed.".
-                        format(elasticSearchIndex));
+                throw new AssertionError(
+                        String.format("Deletion of the ElasticSearch index '%1$s' failed.", elasticSearchIndex));
             }
         }
         CreateIndexRequestBuilder indexRequestBuilder = indices.prepareCreate(elasticSearchIndex);
@@ -611,8 +642,8 @@ public class SearchServiceEsImpl implements SearchService {
                 numberOfReplicas, maxResultWindow);
         CreateIndexResponse createIndexResponse = indexRequestBuilder.get();
         if (!createIndexResponse.isAcknowledged()) {
-            throw new AssertionError("Creation of the ElasticSearch index '%1$s' failed.".
-                    format(elasticSearchIndex));
+            throw new AssertionError(
+                    String.format("Creation of the ElasticSearch index '%1$s' failed.", elasticSearchIndex));
         }
     }
 
@@ -719,7 +750,6 @@ public class SearchServiceEsImpl implements SearchService {
         deleteDoc(elasticSearchTypeSalesNotePart, salesNotePart.getSearchId());
     }
 
-
     @Override
     @Transactional(readOnly = true)
     public void indexChangelogSource(Source source) {
@@ -733,14 +763,11 @@ public class SearchServiceEsImpl implements SearchService {
     }
 
     @Override
-    public String filterParts(String partNumber, Long partTypeId, String manufacturerName,
-                              String name, String description, Boolean inactive,
-                              String turboTypeName, String turboModelName,
-                              String cmeyYear, String cmeyMake, String cmeyModel,
-                              String cmeyEngine, String cmeyFuelType,
-                              Map<String, String[]> queriedCriticalDimensions,
-                              String sortProperty, String sortOrder,
-                              Integer offset, Integer limit) {
+    public String filterParts(String partNumber, Long partTypeId, String manufacturerName, String name,
+            String description, Boolean inactive, String turboTypeName, String turboModelName, String cmeyYear,
+            String cmeyMake, String cmeyModel, String cmeyEngine, String cmeyFuelType,
+            Map<String, String[]> queriedCriticalDimensions, String sortProperty, String sortOrder, Integer offset,
+            Integer limit) {
         List<AbstractSearchTerm> sterms = new ArrayList<>(64);
         partNumber = StringUtils.defaultIfEmpty(partNumber, null);
         if (isNotBlank(partNumber)) {
@@ -795,7 +822,8 @@ public class SearchServiceEsImpl implements SearchService {
             sterms.add(newTextSearchTerm("turboModel.name.short", normalizedTurboModelName));
         }
         if (partTypeId != null) {
-            List<CriticalDimension> criticalDimensions = criticalDimensionService.getCriticalDimensionForPartType(partTypeId);
+            List<CriticalDimension> criticalDimensions = criticalDimensionService
+                    .getCriticalDimensionForPartType(partTypeId);
             if (criticalDimensions != null && !criticalDimensions.isEmpty()) {
                 for (CriticalDimension cd : criticalDimensions) {
                     try {
@@ -826,99 +854,103 @@ public class SearchServiceEsImpl implements SearchService {
             for (AbstractSearchTerm ast : sterms) {
                 SearchTermEnum astType = ast.getType();
                 switch (astType) {
-                    case BOOLEAN:
-                        BooleanSearchTerm bst = (BooleanSearchTerm) ast;
-                        boolQuery.must(QueryBuilders.termQuery(bst.getFieldName(), bst.getTerm()));
+                case BOOLEAN:
+                    BooleanSearchTerm bst = (BooleanSearchTerm) ast;
+                    boolQuery.must(QueryBuilders.termQuery(bst.getFieldName(), bst.getTerm()));
+                    break;
+                case DECIMAL:
+                    NumberSearchTerm dst = (NumberSearchTerm) ast;
+                    QueryBuilder dqb;
+                    switch (dst.getCmpOperator()) {
+                    case EQ:
+                        dqb = QueryBuilders.termQuery(dst.getFieldName(), dst.getTerm());
                         break;
-                    case DECIMAL:
-                        NumberSearchTerm dst = (NumberSearchTerm) ast;
-                        QueryBuilder dqb;
-                        switch (dst.getCmpOperator()) {
-                            case EQ:
-                                dqb = QueryBuilders.termQuery(dst.getFieldName(), dst.getTerm());
-                                break;
-                            case LT:
-                                dqb = QueryBuilders.rangeQuery(dst.getFieldName()).lt(dst.getTerm());
-                                break;
-                            case LTE:
-                                dqb = QueryBuilders.rangeQuery(dst.getFieldName()).lte(dst.getTerm());
-                                break;
-                            case GTE:
-                                dqb = QueryBuilders.rangeQuery(dst.getFieldName()).gte(dst.getTerm());
-                                break;
-                            case GT:
-                                dqb = QueryBuilders.rangeQuery(dst.getFieldName()).gt(dst.getTerm());
-                                break;
-                            default:
-                                throw new IllegalArgumentException("Unsupported compare operator: " + dst.getCmpOperator());
-                        }
-                        boolQuery.must(dqb);
+                    case LT:
+                        dqb = QueryBuilders.rangeQuery(dst.getFieldName()).lt(dst.getTerm());
                         break;
-                    case INTEGER:
-                        NumberSearchTerm ist = (NumberSearchTerm) ast;
-                        QueryBuilder iqb;
-                        switch (ist.getCmpOperator()) {
-                            case EQ:
-                                iqb = QueryBuilders.termQuery(ist.getFieldName(), ist.getTerm());
-                                break;
-                            case LT:
-                                iqb = QueryBuilders.rangeQuery(ist.getFieldName()).lt(ist.getTerm());
-                                break;
-                            case LTE:
-                                iqb = QueryBuilders.rangeQuery(ist.getFieldName()).lte(ist.getTerm());
-                                break;
-                            case GTE:
-                                iqb = QueryBuilders.rangeQuery(ist.getFieldName()).gte(ist.getTerm());
-                                break;
-                            case GT:
-                                iqb = QueryBuilders.rangeQuery(ist.getFieldName()).gt(ist.getTerm());
-                                break;
-                            default:
-                                throw new IllegalArgumentException("Unsupported compare operator: " + ist.getCmpOperator());
-                        }
-                        boolQuery.must(iqb);
+                    case LTE:
+                        dqb = QueryBuilders.rangeQuery(dst.getFieldName()).lte(dst.getTerm());
                         break;
-                    case TEXT:
-                        TextSearchTerm tst = (TextSearchTerm) ast;
-                        boolQuery.must(QueryBuilders.termQuery(tst.getFieldName(), tst.getTerm()));
+                    case GTE:
+                        dqb = QueryBuilders.rangeQuery(dst.getFieldName()).gte(dst.getTerm());
                         break;
-                    case DECIMAL_RANGE:
-                        RangeSearchTerm drst = (RangeSearchTerm) ast;
-                        RangeQueryBuilder drqb = QueryBuilders.rangeQuery(drst.getFieldName());
-                        drqb.gte(drst.getFrom().doubleValue()).lte(drst.getTo().doubleValue());
-                        boolQuery.must(drqb);
-                        break;
-                    case INTEGER_RANGE:
-                        RangeSearchTerm irst = (RangeSearchTerm) ast;
-                        RangeQueryBuilder irqb = QueryBuilders.rangeQuery(irst.getFieldName());
-                        irqb.gte(irst.getFrom().longValue()).lte(irst.getTo().longValue());
-                        boolQuery.must(irqb);
+                    case GT:
+                        dqb = QueryBuilders.rangeQuery(dst.getFieldName()).gt(dst.getTerm());
                         break;
                     default:
-                        throw new IllegalArgumentException("Unsupported search term type: " + astType);
+                        throw new IllegalArgumentException("Unsupported compare operator: " + dst.getCmpOperator());
+                    }
+                    boolQuery.must(dqb);
+                    break;
+                case INTEGER:
+                    NumberSearchTerm ist = (NumberSearchTerm) ast;
+                    QueryBuilder iqb;
+                    switch (ist.getCmpOperator()) {
+                    case EQ:
+                        iqb = QueryBuilders.termQuery(ist.getFieldName(), ist.getTerm());
+                        break;
+                    case LT:
+                        iqb = QueryBuilders.rangeQuery(ist.getFieldName()).lt(ist.getTerm());
+                        break;
+                    case LTE:
+                        iqb = QueryBuilders.rangeQuery(ist.getFieldName()).lte(ist.getTerm());
+                        break;
+                    case GTE:
+                        iqb = QueryBuilders.rangeQuery(ist.getFieldName()).gte(ist.getTerm());
+                        break;
+                    case GT:
+                        iqb = QueryBuilders.rangeQuery(ist.getFieldName()).gt(ist.getTerm());
+                        break;
+                    default:
+                        throw new IllegalArgumentException("Unsupported compare operator: " + ist.getCmpOperator());
+                    }
+                    boolQuery.must(iqb);
+                    break;
+                case TEXT:
+                    TextSearchTerm tst = (TextSearchTerm) ast;
+                    boolQuery.must(QueryBuilders.termQuery(tst.getFieldName(), tst.getTerm()));
+                    break;
+                case DECIMAL_RANGE:
+                    RangeSearchTerm drst = (RangeSearchTerm) ast;
+                    RangeQueryBuilder drqb = QueryBuilders.rangeQuery(drst.getFieldName());
+                    drqb.gte(drst.getFrom().doubleValue()).lte(drst.getTo().doubleValue());
+                    boolQuery.must(drqb);
+                    break;
+                case INTEGER_RANGE:
+                    RangeSearchTerm irst = (RangeSearchTerm) ast;
+                    RangeQueryBuilder irqb = QueryBuilders.rangeQuery(irst.getFieldName());
+                    irqb.gte(irst.getFrom().longValue()).lte(irst.getTo().longValue());
+                    boolQuery.must(irqb);
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unsupported search term type: " + astType);
                 }
             }
             query = boolQuery;
         }
         srb.setQuery(query);
         if (sortProperty != null) {
-            SortBuilder sort = SortBuilders.fieldSort(sortProperty)
-                    .order(convertSortOrder.apply(sortOrder))
+            SortBuilder<?> sort = SortBuilders.fieldSort(sortProperty).order(convertSortOrder.apply(sortOrder))
                     .missing("_last");
             srb.addSort(sort);
         }
 
-        srb.addAggregation(AggregationBuilders.terms("Part Type").field("partType.name.full").size(DEF_AGGR_RESULT_SIZE));
-        srb.addAggregation(AggregationBuilders.terms("Manufacturer").field("manufacturer.name.full").size(DEF_AGGR_RESULT_SIZE));
-        srb.addAggregation(AggregationBuilders.terms("Turbo Type").field("turboModel.turboType.name.full").size(DEF_AGGR_RESULT_SIZE));
-        srb.addAggregation(AggregationBuilders.terms("Turbo Model").field("turboModel.name.full").size(DEF_AGGR_RESULT_SIZE));
+        srb.addAggregation(
+                AggregationBuilders.terms("Part Type").field("partType.name.full").size(DEF_AGGR_RESULT_SIZE));
+        srb.addAggregation(
+                AggregationBuilders.terms("Manufacturer").field("manufacturer.name.full").size(DEF_AGGR_RESULT_SIZE));
+        srb.addAggregation(AggregationBuilders.terms("Turbo Type").field("turboModel.turboType.name.full")
+                .size(DEF_AGGR_RESULT_SIZE));
+        srb.addAggregation(
+                AggregationBuilders.terms("Turbo Model").field("turboModel.name.full").size(DEF_AGGR_RESULT_SIZE));
         srb.addAggregation(AggregationBuilders.terms("State").field("inactive").size(DEF_AGGR_RESULT_SIZE));
 
         srb.addAggregation(AggregationBuilders.terms("Car Year").field("cmeyYear.full").size(DEF_AGGR_RESULT_SIZE));
         srb.addAggregation(AggregationBuilders.terms("Car Make").field("cmeyMake.full").size(DEF_AGGR_RESULT_SIZE));
         srb.addAggregation(AggregationBuilders.terms("Car Model").field("cmeyModel.full").size(DEF_AGGR_RESULT_SIZE));
         srb.addAggregation(AggregationBuilders.terms("Car Engine").field("cmeyEngine.full").size(DEF_AGGR_RESULT_SIZE));
-        srb.addAggregation(AggregationBuilders.terms("Car Fuel Type").field("cmeyFuelType.full").size(DEF_AGGR_RESULT_SIZE));
+        srb.addAggregation(
+                AggregationBuilders.terms("Car Fuel Type").field("cmeyFuelType.full").size(DEF_AGGR_RESULT_SIZE));
 
         if (offset != null) {
             srb.setFrom(offset);
@@ -932,15 +964,13 @@ public class SearchServiceEsImpl implements SearchService {
 
     @Override
     public String filterCarModelEngineYears(String carModelEngineYear, String year, String make, String model,
-                                            String engine, String fuel, String sortProperty, String sortOrder,
-                                            Integer offset, Integer limit) {
+            String engine, String fuel, String sortProperty, String sortOrder, Integer offset, Integer limit) {
         carModelEngineYear = StringUtils.defaultIfEmpty(carModelEngineYear, null);
         SearchRequestBuilder srb = elasticSearch.prepareSearch(elasticSearchIndex)
-                .setTypes(elasticSearchTypeCarModelEngineYear)
-                .setSearchType(DFS_QUERY_THEN_FETCH);
+                .setTypes(elasticSearchTypeCarModelEngineYear).setSearchType(DFS_QUERY_THEN_FETCH);
         QueryBuilder query;
-        if (carModelEngineYear == null && year == null && make == null && model == null
-                && engine == null && fuel == null) {
+        if (carModelEngineYear == null && year == null && make == null && model == null && engine == null
+                && fuel == null) {
             query = QueryBuilders.matchAllQuery();
         } else {
             BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
@@ -951,7 +981,8 @@ public class SearchServiceEsImpl implements SearchService {
                 subBoolQuery.should(QueryBuilders.termQuery("model.name.short", normalizedCarModelEngineYear));
                 subBoolQuery.should(QueryBuilders.termQuery("model.make.name.short", normalizedCarModelEngineYear));
                 subBoolQuery.should(QueryBuilders.termQuery("engine.engineSize.short", normalizedCarModelEngineYear));
-                subBoolQuery.should(QueryBuilders.termQuery("engine.fuelType.name.short", normalizedCarModelEngineYear));
+                subBoolQuery
+                        .should(QueryBuilders.termQuery("engine.fuelType.name.short", normalizedCarModelEngineYear));
                 boolQuery.must(subBoolQuery);
             }
             if (year != null) {
@@ -973,8 +1004,7 @@ public class SearchServiceEsImpl implements SearchService {
         }
         srb.setQuery(query);
         if (sortProperty != null) {
-            SortBuilder sort = SortBuilders.fieldSort(sortProperty)
-                    .order(convertSortOrder.apply(sortOrder))
+            SortBuilder<?> sort = SortBuilders.fieldSort(sortProperty).order(convertSortOrder.apply(sortOrder))
                     .missing("_last");
             srb.addSort(sort);
         }
@@ -992,11 +1022,9 @@ public class SearchServiceEsImpl implements SearchService {
     }
 
     @Override
-    public String filterCarMakes(String carMake, String sortProperty, String sortOrder,
-                                 Integer offset, Integer limit) {
+    public String filterCarMakes(String carMake, String sortProperty, String sortOrder, Integer offset, Integer limit) {
         carMake = StringUtils.defaultIfEmpty(carMake, null);
-        SearchRequestBuilder srb = elasticSearch.prepareSearch(elasticSearchIndex)
-                .setTypes(elasticSearchTypeCarMake)
+        SearchRequestBuilder srb = elasticSearch.prepareSearch(elasticSearchIndex).setTypes(elasticSearchTypeCarMake)
                 .setSearchType(DFS_QUERY_THEN_FETCH);
         QueryBuilder query;
         if (carMake == null) {
@@ -1011,8 +1039,7 @@ public class SearchServiceEsImpl implements SearchService {
         }
         srb.setQuery(query);
         if (sortProperty != null) {
-            SortBuilder sort = SortBuilders.fieldSort(sortProperty)
-                    .order(convertSortOrder.apply(sortOrder))
+            SortBuilder<?> sort = SortBuilders.fieldSort(sortProperty).order(convertSortOrder.apply(sortOrder))
                     .missing("_last");
             srb.addSort(sort);
         }
@@ -1027,11 +1054,10 @@ public class SearchServiceEsImpl implements SearchService {
     }
 
     @Override
-    public String filterCarModels(String carModel, String make, String sortProperty, String sortOrder,
-                                  Integer offset, Integer limit) {
+    public String filterCarModels(String carModel, String make, String sortProperty, String sortOrder, Integer offset,
+            Integer limit) {
         carModel = StringUtils.defaultIfEmpty(carModel, null);
-        SearchRequestBuilder srb = elasticSearch.prepareSearch(elasticSearchIndex)
-                .setTypes(elasticSearchTypeCarModel)
+        SearchRequestBuilder srb = elasticSearch.prepareSearch(elasticSearchIndex).setTypes(elasticSearchTypeCarModel)
                 .setSearchType(DFS_QUERY_THEN_FETCH);
         QueryBuilder query;
         if (carModel == null && make == null) {
@@ -1049,8 +1075,7 @@ public class SearchServiceEsImpl implements SearchService {
         }
         srb.setQuery(query);
         if (sortProperty != null) {
-            SortBuilder sort = SortBuilders.fieldSort(sortProperty)
-                    .order(convertSortOrder.apply(sortOrder))
+            SortBuilder<?> sort = SortBuilders.fieldSort(sortProperty).order(convertSortOrder.apply(sortOrder))
                     .missing("_last");
             srb.addSort(sort);
         }
@@ -1069,10 +1094,9 @@ public class SearchServiceEsImpl implements SearchService {
 
     @Override
     public String filterCarEngines(String carEngine, String fuelType, String sortProperty, String sortOrder,
-                                   Integer offset, Integer limit) {
+            Integer offset, Integer limit) {
         carEngine = StringUtils.defaultIfEmpty(carEngine, null);
-        SearchRequestBuilder srb = elasticSearch.prepareSearch(elasticSearchIndex)
-                .setTypes(elasticSearchTypeCarEngine)
+        SearchRequestBuilder srb = elasticSearch.prepareSearch(elasticSearchIndex).setTypes(elasticSearchTypeCarEngine)
                 .setSearchType(DFS_QUERY_THEN_FETCH);
         QueryBuilder query;
         if (carEngine == null && fuelType == null) {
@@ -1090,8 +1114,7 @@ public class SearchServiceEsImpl implements SearchService {
         }
         srb.setQuery(query);
         if (sortProperty != null) {
-            SortBuilder sort = SortBuilders.fieldSort(sortProperty)
-                    .order(convertSortOrder.apply(sortOrder))
+            SortBuilder<?> sort = SortBuilders.fieldSort(sortProperty).order(convertSortOrder.apply(sortOrder))
                     .missing("_last");
             srb.addSort(sort);
         }
@@ -1109,12 +1132,11 @@ public class SearchServiceEsImpl implements SearchService {
     }
 
     @Override
-    public String filterCarFuelTypes(String fuelType, String sortProperty, String sortOrder,
-                                     Integer offset, Integer limit) {
+    public String filterCarFuelTypes(String fuelType, String sortProperty, String sortOrder, Integer offset,
+            Integer limit) {
         fuelType = StringUtils.defaultIfEmpty(fuelType, null);
         SearchRequestBuilder srb = elasticSearch.prepareSearch(elasticSearchIndex)
-                .setTypes(elasticSearchTypeCarFuelType)
-                .setSearchType(DFS_QUERY_THEN_FETCH);
+                .setTypes(elasticSearchTypeCarFuelType).setSearchType(DFS_QUERY_THEN_FETCH);
         QueryBuilder query;
         if (fuelType == null) {
             query = QueryBuilders.matchAllQuery();
@@ -1128,8 +1150,7 @@ public class SearchServiceEsImpl implements SearchService {
         }
         srb.setQuery(query);
         if (sortProperty != null) {
-            SortBuilder sort = SortBuilders.fieldSort(sortProperty)
-                    .order(convertSortOrder.apply(sortOrder))
+            SortBuilder<?> sort = SortBuilders.fieldSort(sortProperty).order(convertSortOrder.apply(sortOrder))
                     .missing("_last");
             srb.addSort(sort);
         }
@@ -1145,8 +1166,8 @@ public class SearchServiceEsImpl implements SearchService {
 
     @Override
     public String filterSalesNotes(String partNumber, String comment, Long primaryPartId, Set<SalesNoteState> states,
-                                   boolean includePrimary, boolean includeRelated,
-                                   String sortProperty, String sortOrder, Integer offset, Integer limit) {
+            boolean includePrimary, boolean includeRelated, String sortProperty, String sortOrder, Integer offset,
+            Integer limit) {
         SearchRequestBuilder srb = elasticSearch.prepareSearch(elasticSearchIndex)
                 .setTypes(elasticSearchTypeSalesNotePart).setSearchType(DFS_QUERY_THEN_FETCH);
         QueryBuilder query;
@@ -1180,8 +1201,7 @@ public class SearchServiceEsImpl implements SearchService {
         query = boolQuery;
         srb.setQuery(query);
         if (sortProperty != null) {
-            SortBuilder sort = SortBuilders.fieldSort(sortProperty)
-                    .order(convertSortOrder.apply(sortOrder))
+            SortBuilder<?> sort = SortBuilders.fieldSort(sortProperty).order(convertSortOrder.apply(sortOrder))
                     .missing("_last");
             srb.addSort(sort);
         }
@@ -1197,9 +1217,9 @@ public class SearchServiceEsImpl implements SearchService {
 
     @Override
     public String filterChanglelogSources(String name, String descritpion, String url, Long sourceNameId,
-                                          String sortProperty, String sortOrder, Integer offset, Integer limit) {
-        SearchRequestBuilder srb = elasticSearch.prepareSearch(elasticSearchIndex)
-                .setTypes(elasticSearchTypeSource).setSearchType(DFS_QUERY_THEN_FETCH);
+            String sortProperty, String sortOrder, Integer offset, Integer limit) {
+        SearchRequestBuilder srb = elasticSearch.prepareSearch(elasticSearchIndex).setTypes(elasticSearchTypeSource)
+                .setSearchType(DFS_QUERY_THEN_FETCH);
         QueryBuilder query;
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
         if (isNotBlank(name)) {
@@ -1220,8 +1240,7 @@ public class SearchServiceEsImpl implements SearchService {
         query = boolQuery;
         srb.setQuery(query);
         if (sortProperty != null) {
-            SortBuilder sort = SortBuilders.fieldSort(sortProperty)
-                    .order(convertSortOrder.apply(sortOrder))
+            SortBuilder<?> sort = SortBuilders.fieldSort(sortProperty).order(convertSortOrder.apply(sortOrder))
                     .missing("_last");
             srb.addSort(sort);
         }
@@ -1258,8 +1277,8 @@ public class SearchServiceEsImpl implements SearchService {
             doc.beforeIndexing();
             List<CriticalDimension> criticalDimensions = getCriticalDimensions(doc);
             String asJson = doc.toSearchJson(criticalDimensions);
-            log.debug("elasticSearchIndex: {}, elasticSearchType: {}, searchId: {}, asJson: {}",
-                    elasticSearchIndex, elasticSearchType, searchId, asJson);
+            log.debug("elasticSearchIndex: {}, elasticSearchType: {}, searchId: {}, asJson: {}", elasticSearchIndex,
+                    elasticSearchType, searchId, asJson);
             IndexRequest index = new IndexRequest(elasticSearchIndex, elasticSearchType, searchId);
             index.source(asJson);
             elasticSearch.index(index).actionGet(timeout);
@@ -1267,8 +1286,8 @@ public class SearchServiceEsImpl implements SearchService {
         });
     }
 
-    private void indexAllDocs(ScrollableResults scrollableResults, int batchSize,
-                                           String elasticSearchType, Observer observer) throws Exception {
+    private void indexAllDocs(ScrollableResults scrollableResults, int batchSize, String elasticSearchType,
+            Observer observer) throws Exception {
         TransactionTemplate tt = new TransactionTemplate(txManager);
         tt.setPropagationBehavior(PROPAGATION_REQUIRES_NEW); // new transaction
         tt.execute((TransactionCallback<Void>) ts -> {
@@ -1278,7 +1297,8 @@ public class SearchServiceEsImpl implements SearchService {
                     String searchId;
                     IndexRequest index;
                     String asJson;
-                    // The synchronization below is needed because scrollable results share the same
+                    // The synchronization below is needed because scrollable
+                    // results share the same
                     // EntityManager that is not multithreaded.
                     synchronized (this) {
                         if (!scrollableResults.next()) {

@@ -1,11 +1,13 @@
 package com.turbointernational.metadata.dao;
 
-import com.turbointernational.metadata.entity.CarFuelType;
-import org.springframework.stereotype.Repository;
+import java.util.List;
 
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
-import java.util.List;
+
+import org.springframework.stereotype.Repository;
+
+import com.turbointernational.metadata.entity.CarFuelType;
 
 /**
  * Created by trunikov on 12/9/15.
@@ -26,8 +28,9 @@ public class CarFuelTypeDao extends AbstractDao<CarFuelType> {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public List<CarFuelType> findAllOrderedByName() {
-        Query query = em.createNamedQuery("findAllCarFuelTypeOrderedByName");
+        Query query = em.createNamedQuery("findAllCarFuelTypeOrderedByName", CarFuelType.class);
         return query.getResultList();
     }
 }

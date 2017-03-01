@@ -1,26 +1,29 @@
 package com.turbointernational.metadata.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.turbointernational.metadata.dao.ChangelogPartDao;
-import com.turbointernational.metadata.dao.PartDao;
-import com.turbointernational.metadata.entity.Changelog;
-import com.turbointernational.metadata.dao.ChangelogDao;
-import com.turbointernational.metadata.entity.Changelog.ServiceEnum;
-import com.turbointernational.metadata.entity.ChangelogPart;
-import com.turbointernational.metadata.entity.User;
-import com.turbointernational.metadata.entity.part.Part;
-import com.turbointernational.metadata.web.dto.Page;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import static java.util.Calendar.HOUR_OF_DAY;
+import static java.util.Calendar.MILLISECOND;
+import static java.util.Calendar.MINUTE;
+import static java.util.Calendar.SECOND;
 
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 
-import static java.util.Calendar.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.turbointernational.metadata.dao.ChangelogDao;
+import com.turbointernational.metadata.dao.ChangelogPartDao;
+import com.turbointernational.metadata.dao.PartDao;
+import com.turbointernational.metadata.entity.Changelog;
+import com.turbointernational.metadata.entity.Changelog.ServiceEnum;
+import com.turbointernational.metadata.entity.ChangelogPart;
+import com.turbointernational.metadata.entity.User;
+import com.turbointernational.metadata.entity.part.Part;
+import com.turbointernational.metadata.web.dto.Page;
 
 /**
  * Created by dmytro.trunykov@zorallabs.com on 09.08.16.
@@ -29,9 +32,11 @@ import static java.util.Calendar.*;
 public class ChangelogService {
 
     /**
-     * A part that participates in an operation that is being registered as a record in the changelog.
+     * A part that participates in an operation that is being registered as a
+     * record in the changelog.
      *
-     * On the Web UI you can see those records on the 'Part Details' view in the tab 'Audit log'.
+     * On the Web UI you can see those records on the 'Part Details' view in the
+     * tab 'Audit log'.
      */
     public static class RelatedPart {
 
@@ -84,13 +89,13 @@ public class ChangelogService {
     }
 
     public Changelog log(ServiceEnum service, String description, Serializable data,
-                         Collection<RelatedPart> relatedParts) {
+            Collection<RelatedPart> relatedParts) {
         User user = User.getCurrentUser();
         return log(service, user, description, data, relatedParts);
     }
 
     public Changelog log(ServiceEnum service, User user, String description, Serializable data,
-                         Collection<RelatedPart> relatedParts) {
+            Collection<RelatedPart> relatedParts) {
         String dataNormalized;
         if (data == null) {
             dataNormalized = null;
@@ -115,9 +120,8 @@ public class ChangelogService {
     }
 
     public Page<Changelog> filter(ServiceEnum service, Long userId, Calendar startDate, Calendar finishDate,
-                                  String description, String data, Long partId,
-                                  String sortProperty, String sortOrder,
-                                  Integer offset, Integer limit) {
+            String description, String data, Long partId, String sortProperty, String sortOrder, Integer offset,
+            Integer limit) {
         // Normalizaton of the time range.
         if (startDate != null && finishDate != null && startDate.compareTo(finishDate) > 0) {
             Calendar swap = finishDate;
@@ -141,8 +145,8 @@ public class ChangelogService {
             finishDate.set(MILLISECOND, 999);
             d1 = finishDate.getTime();
         }
-        return changelogDao.filter(service, userId, d0, d1, description, data, partId,
-                sortProperty, sortOrder, offset, limit);
+        return changelogDao.filter(service, userId, d0, d1, description, data, partId, sortProperty, sortOrder, offset,
+                limit);
     }
 
 }

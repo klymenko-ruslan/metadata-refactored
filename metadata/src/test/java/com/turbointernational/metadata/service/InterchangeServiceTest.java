@@ -1,10 +1,9 @@
 package com.turbointernational.metadata.service;
 
-import com.turbointernational.metadata.AbstractFunctionalTest;
-import com.turbointernational.metadata.dao.InterchangeDao;
-import com.turbointernational.metadata.dao.PartDao;
-import com.turbointernational.metadata.entity.part.Interchange;
-import com.turbointernational.metadata.entity.part.Part;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,9 +11,10 @@ import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.jdbc.JdbcTestUtils;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import com.turbointernational.metadata.AbstractFunctionalTest;
+import com.turbointernational.metadata.dao.PartDao;
+import com.turbointernational.metadata.entity.part.Interchange;
+import com.turbointernational.metadata.entity.part.Part;
 
 /**
  * Created by dmytro.trunykov@zorallabs.com on 2016-02-10.
@@ -26,9 +26,6 @@ public class InterchangeServiceTest extends AbstractFunctionalTest {
 
     @Autowired
     private PartDao partDao;
-
-    @Autowired
-    private InterchangeDao interchangeDao;
 
     //@formatter:off
     /**
@@ -50,29 +47,18 @@ public class InterchangeServiceTest extends AbstractFunctionalTest {
      */
     //@formatter:on
     @Test
-    @Sql(
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
-            scripts = "classpath:integration_tests/feed_dictionaries.sql"
-    )
-    @Sql(
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
-            scripts = "classpath:integration_tests/interchange_service/leave_interchangeable_group_0_before.sql"
-    )
-    @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
-            scripts = "classpath:integration_tests/clear_tables.sql"
-    )
-    @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
-            scripts = "classpath:integration_tests/clear_dictionaries.sql"
-    )
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:integration_tests/feed_dictionaries.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:integration_tests/interchange_service/leave_interchangeable_group_0_before.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:integration_tests/clear_tables.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:integration_tests/clear_dictionaries.sql")
     public void testLeaveInterchangeableGroup_0() {
         // Check prerequisites before testing.
         int chlogCount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "changelog");
         Assert.assertEquals("Table 'changelog' contains unexpected data.", 0, chlogCount);
         long partId = 42077L;
         interchangeService.leaveInterchangeableGroup(partId);
-        partDao.getEntityManager().flush(); // Important: propagate changes to the database
+        partDao.getEntityManager().flush(); // Important: propagate changes to
+                                            // the database
         int ihcount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "interchange_header");
         Assert.assertEquals("Unexpected number of rows in the table 'interchange_header'.", 1, ihcount);
         int iicount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "interchange_item");
@@ -85,7 +71,6 @@ public class InterchangeServiceTest extends AbstractFunctionalTest {
         chlogCount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "changelog");
         Assert.assertEquals("Added record(s) to the table 'changelog'.", 0, chlogCount);
     }
-
 
     //@formatter:off
     /**
@@ -108,22 +93,10 @@ public class InterchangeServiceTest extends AbstractFunctionalTest {
      */
     //@formatter:on
     @Test
-    @Sql(
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
-            scripts = "classpath:integration_tests/feed_dictionaries.sql"
-    )
-    @Sql(
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
-            scripts = "classpath:integration_tests/interchange_service/leave_interchangeable_group_1_before.sql"
-    )
-    @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
-            scripts = "classpath:integration_tests/clear_tables.sql"
-    )
-    @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
-            scripts = "classpath:integration_tests/clear_dictionaries.sql"
-    )
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:integration_tests/feed_dictionaries.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:integration_tests/interchange_service/leave_interchangeable_group_1_before.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:integration_tests/clear_tables.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:integration_tests/clear_dictionaries.sql")
     @WithUserDetails("mock@gmail.com")
     public void testLeaveInterchangeableGroup_1() {
         // Check prerequisites before testing.
@@ -132,7 +105,8 @@ public class InterchangeServiceTest extends AbstractFunctionalTest {
         // The test.
         long partId0 = 42077L, partId1 = 41405;
         interchangeService.leaveInterchangeableGroup(partId0);
-        partDao.getEntityManager().flush(); // Important: propagate changes to the database
+        partDao.getEntityManager().flush(); // Important: propagate changes to
+                                            // the database
         int ihcount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "interchange_header");
         Assert.assertEquals("Unexpected number of rows in the table 'interchange_header'.", 2, ihcount);
         int iicount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "interchange_item");
@@ -151,7 +125,6 @@ public class InterchangeServiceTest extends AbstractFunctionalTest {
         chlogCount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "changelog");
         Assert.assertEquals("Table 'changelog' has no record about last changes.", 1, chlogCount);
     }
-
 
     //@formatter:off
     /**
@@ -175,22 +148,10 @@ public class InterchangeServiceTest extends AbstractFunctionalTest {
      */
     //@formatter:on
     @Test
-    @Sql(
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
-            scripts = "classpath:integration_tests/feed_dictionaries.sql"
-    )
-    @Sql(
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
-            scripts = "classpath:integration_tests/interchange_service/merge_interchangeables.sql"
-    )
-    @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
-            scripts = "classpath:integration_tests/clear_tables.sql"
-    )
-    @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
-            scripts = "classpath:integration_tests/clear_dictionaries.sql"
-    )
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:integration_tests/feed_dictionaries.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:integration_tests/interchange_service/merge_interchangeables.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:integration_tests/clear_tables.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:integration_tests/clear_dictionaries.sql")
 
     @WithUserDetails("mock@gmail.com")
     public void testMergePickedAloneToPart() {
@@ -204,53 +165,40 @@ public class InterchangeServiceTest extends AbstractFunctionalTest {
         // The test.
         long pickedPartId = 40393L, partId = 41405L;
         interchangeService.mergePickedAloneToPart(null, partId, pickedPartId, null, null, null);
-        partDao.getEntityManager().flush(); // Important: propagate changes to the database
+        partDao.getEntityManager().flush(); // Important: propagate changes to
+                                            // the database
         ihcount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "interchange_header");
         Assert.assertEquals("Unexpected number of rows in the table 'interchange_header'.", 2, ihcount);
         iicount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "interchange_item");
         Assert.assertEquals("Unexpected number of rows in the table 'interchange_item'.", 5, iicount);
         Part part = partDao.findOne(partId);
         Part pickedPart = partDao.findOne(pickedPartId);
-        Assert.assertEquals("Part and picked part belongs to different groups.",
-                pickedPart.getInterchange(), part.getInterchange());
+        Assert.assertEquals("Part and picked part belongs to different groups.", pickedPart.getInterchange(),
+                part.getInterchange());
         Assert.assertTrue("Targeted group has unexpected size.", pickedPart.getInterchange().getParts().size() == 3);
         // Check that targeted group has expected members.
         Set<Long> expectedDstGroup = new HashSet<>(Arrays.asList(42077L, 41405L, 40393L));
-        pickedPart.getInterchange().getParts().forEach(
-                p -> Assert.assertTrue("Found unexpected part in the target group.", expectedDstGroup.contains(p.getId()))
-        );
+        pickedPart.getInterchange().getParts().forEach(p -> Assert
+                .assertTrue("Found unexpected part in the target group.", expectedDstGroup.contains(p.getId())));
         // Check that source group has expected members.
         Set<Long> expectedSrcGroup = new HashSet<>(Arrays.asList(40392L, 41587L));
         Part partFromSrcGrp = partDao.findOne(40392L);
-        partFromSrcGrp.getInterchange().getParts().forEach(
-                p -> Assert.assertTrue("Found unexpected part in the source group.", expectedSrcGroup.contains(p.getId()))
-        );
+        partFromSrcGrp.getInterchange().getParts().forEach(p -> Assert
+                .assertTrue("Found unexpected part in the source group.", expectedSrcGroup.contains(p.getId())));
         // Check that record to the 'changelog' was inserted.
         chlogCount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "changelog");
         Assert.assertEquals("Table 'changelog' has no record about last changes.", 1, chlogCount);
     }
 
-
     /**
-     * The same test as described in {@link #testMergePickedAloneToPart()} but in reverse order.
+     * The same test as described in {@link #testMergePickedAloneToPart()} but
+     * in reverse order.
      */
     @Test
-    @Sql(
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
-            scripts = "classpath:integration_tests/feed_dictionaries.sql"
-    )
-    @Sql(
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
-            scripts = "classpath:integration_tests/interchange_service/merge_interchangeables.sql"
-    )
-    @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
-            scripts = "classpath:integration_tests/clear_tables.sql"
-    )
-    @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
-            scripts = "classpath:integration_tests/clear_dictionaries.sql"
-    )
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:integration_tests/feed_dictionaries.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:integration_tests/interchange_service/merge_interchangeables.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:integration_tests/clear_tables.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:integration_tests/clear_dictionaries.sql")
     @WithUserDetails("mock@gmail.com")
     public void testMergePartAloneToPicked() {
         // Check prerequisites before testing.
@@ -263,32 +211,30 @@ public class InterchangeServiceTest extends AbstractFunctionalTest {
         // The test.
         long pickedPartId = 40393L, partId = 41405L;
         interchangeService.mergePartAloneToPicked(null, partId, pickedPartId, null, null, null);
-        partDao.getEntityManager().flush(); // Important: propagate changes to the database
+        partDao.getEntityManager().flush(); // Important: propagate changes to
+                                            // the database
         ihcount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "interchange_header");
         Assert.assertEquals("Unexpected number of rows in the table 'interchange_header'.", 2, ihcount);
         iicount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "interchange_item");
         Assert.assertEquals("Unexpected number of rows in the table 'interchange_item'.", 5, iicount);
         Part part = partDao.findOne(partId);
         Part pickedPart = partDao.findOne(pickedPartId);
-        Assert.assertEquals("Part and picked part belongs to different groups.",
-                pickedPart.getInterchange(), part.getInterchange());
+        Assert.assertEquals("Part and picked part belongs to different groups.", pickedPart.getInterchange(),
+                part.getInterchange());
         Assert.assertTrue("Targeted group has unexpected size.", pickedPart.getInterchange().getParts().size() == 4);
         // Check that targeted group has expected members.
         Set<Long> expectedDstGroup = new HashSet<>(Arrays.asList(40392L, 40393L, 41587L, 41405L));
-        pickedPart.getInterchange().getParts().forEach(
-                p -> Assert.assertTrue("Found unexpected part in the target group.", expectedDstGroup.contains(p.getId()))
-        );
+        pickedPart.getInterchange().getParts().forEach(p -> Assert
+                .assertTrue("Found unexpected part in the target group.", expectedDstGroup.contains(p.getId())));
         // Check that source group has expected members.
         Set<Long> expectedSrcGroup = new HashSet<>(Arrays.asList(42077L));
         Part partFromSrcGrp = partDao.findOne(42077L);
-        partFromSrcGrp.getInterchange().getParts().forEach(
-                p -> Assert.assertTrue("Found unexpected part in the source group.", expectedSrcGroup.contains(p.getId()))
-        );
+        partFromSrcGrp.getInterchange().getParts().forEach(p -> Assert
+                .assertTrue("Found unexpected part in the source group.", expectedSrcGroup.contains(p.getId())));
         // Check that record to the 'changelog' was inserted.
         chlogCount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "changelog");
         Assert.assertEquals("Table 'changelog' has no record about last changes.", 1, chlogCount);
     }
-
 
     //@formatter:off
     /**
@@ -314,22 +260,10 @@ public class InterchangeServiceTest extends AbstractFunctionalTest {
      */
     //@formatter:on
     @Test
-    @Sql(
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
-            scripts = "classpath:integration_tests/feed_dictionaries.sql"
-    )
-    @Sql(
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
-            scripts = "classpath:integration_tests/interchange_service/merge_interchangeables.sql"
-    )
-    @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
-            scripts = "classpath:integration_tests/clear_tables.sql"
-    )
-    @Sql(
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
-            scripts = "classpath:integration_tests/clear_dictionaries.sql"
-    )
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:integration_tests/feed_dictionaries.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:integration_tests/interchange_service/merge_interchangeables.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:integration_tests/clear_tables.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:integration_tests/clear_dictionaries.sql")
     @WithUserDetails("mock@gmail.com")
     public void testMergePickedAllToPart() {
         // Check prerequisites before testing.
@@ -342,25 +276,24 @@ public class InterchangeServiceTest extends AbstractFunctionalTest {
         // The test.
         long pickedPartId = 40393L, partId = 41405L;
         interchangeService.mergePickedAllToPart(null, partId, pickedPartId, null, null, null);
-        partDao.getEntityManager().flush(); // Important: propagate changes to the database
+        partDao.getEntityManager().flush(); // Important: propagate changes to
+                                            // the database
         ihcount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "interchange_header");
         Assert.assertEquals("Unexpected number of rows in the table 'interchange_header'.", 1, ihcount);
         iicount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "interchange_item");
         Assert.assertEquals("Unexpected number of rows in the table 'interchange_item'.", 5, iicount);
         Part part = partDao.findOne(partId);
         Part pickedPart = partDao.findOne(pickedPartId);
-        Assert.assertEquals("Part and picked part belongs to different groups.",
-                pickedPart.getInterchange(), part.getInterchange());
+        Assert.assertEquals("Part and picked part belongs to different groups.", pickedPart.getInterchange(),
+                part.getInterchange());
         Assert.assertTrue("Targeted group has unexpected size.", pickedPart.getInterchange().getParts().size() == 5);
         // Check that targeted group has expected members.
         Set<Long> expectedDstGroup = new HashSet<>(Arrays.asList(42077L, 41405L, 40392L, 40393L, 41587L));
-        pickedPart.getInterchange().getParts().forEach(
-                p -> Assert.assertTrue("Found unexpected part in the target group.", expectedDstGroup.contains(p.getId()))
-        );
+        pickedPart.getInterchange().getParts().forEach(p -> Assert
+                .assertTrue("Found unexpected part in the target group.", expectedDstGroup.contains(p.getId())));
         // Check that record to the 'changelog' was inserted.
         chlogCount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "changelog");
         Assert.assertEquals("Table 'changelog' has no record about last changes.", 1, chlogCount);
     }
-
 
 }

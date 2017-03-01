@@ -1,14 +1,10 @@
 package com.turbointernational.metadata.entity;
 
-import com.fasterxml.jackson.annotation.JsonView;
-import com.turbointernational.metadata.util.View;
-import flexjson.JSONDeserializer;
-import flexjson.JSONSerializer;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -21,12 +17,20 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.util.View;
+
+import flexjson.JSONDeserializer;
+import flexjson.JSONSerializer;
+
 @Cacheable
 @Entity
 @Table(name = "turbo_model")
 public class TurboModel implements Serializable {
 
     //<editor-fold defaultstate="collapsed" desc="Properties">
+
+    private static final long serialVersionUID = 5354494538542055708L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,22 +1,21 @@
 package com.turbointernational.metadata.entity.chlogsrc;
 
-import com.fasterxml.jackson.annotation.JsonView;
-import com.turbointernational.metadata.entity.Changelog;
-import com.turbointernational.metadata.util.View;
+import java.io.Serializable;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import java.io.Serializable;
 
-import static javax.persistence.CascadeType.ALL;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.util.View;
 
 /**
  * Created by dmytro.trunykov@zorallabs.com on 1/18/17.
  */
 @Embeddable
 public class ChangelogSourceId implements Serializable {
+
+    private static final long serialVersionUID = 3545383446829790270L;
 
     //<editor-fold defaultstate="collapsed" desc="Properties">
 

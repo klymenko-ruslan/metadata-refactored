@@ -1,10 +1,13 @@
 package com.turbointernational.metadata.entity;
 
+import java.io.Serializable;
+
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.util.View;
-
-import javax.persistence.*;
-import java.io.Serializable;
 
 /**
  * Created by dmytro.trunykov@zorallabs.com on 2017-02-13.
@@ -12,6 +15,8 @@ import java.io.Serializable;
 @Entity
 @Table(name = "standard_oversize_part")
 public class StandardOversizePart implements Serializable {
+
+    private static final long serialVersionUID = 7476759365829879659L;
 
     @EmbeddedId
     @JsonView(View.Summary.class)

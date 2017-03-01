@@ -1,10 +1,17 @@
 package com.turbointernational.metadata.entity;
 
+import java.io.Serializable;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.util.View;
-
-import javax.persistence.*;
-import java.io.Serializable;
 
 /**
  * Created by dmytro.trunykov@zorallabs.com 2016-08-20.
@@ -12,6 +19,8 @@ import java.io.Serializable;
 @Entity
 @Table(name = "cool_type", uniqueConstraints = @UniqueConstraint(columnNames = {"name"}))
 public class CoolType implements Serializable {
+
+    private static final long serialVersionUID = 1452574536480452986L;
 
     //<editor-fold defaultstate="collapsed" desc="Properties">
     @Id

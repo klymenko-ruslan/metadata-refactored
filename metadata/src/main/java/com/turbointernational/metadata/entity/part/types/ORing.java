@@ -1,15 +1,20 @@
 package com.turbointernational.metadata.entity.part.types;
 
+import static javax.persistence.FetchType.LAZY;
+
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.Table;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.entity.CriticalDimensionEnumVal;
 import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.util.View;
-
-import javax.persistence.*;
-
-import static javax.persistence.FetchType.LAZY;
-
 
 /**
  * Created by dmytro.trunykov@zorallabs.com on 2016-08-01 17:06:08.759693.
@@ -20,7 +25,10 @@ import static javax.persistence.FetchType.LAZY;
 @PrimaryKeyJoinColumn(name = "part_id")
 public class ORing extends Part {
 
-    //<editor-fold defaultstate="collapsed" desc="Properties: critical dimensions">
+    private static final long serialVersionUID = 1914308856515684442L;
+
+    // <editor-fold defaultstate="collapsed" desc="Properties: critical
+    // dimensions">
 
     @JsonView(View.Summary.class)
     @JsonProperty("innerDiaA")
@@ -96,9 +104,10 @@ public class ORing extends Part {
     @Column(name = "weight")
     private Double weight;
 
-    //</editor-fold>
+    // </editor-fold>
 
-    //<editor-fold defaultstate="collapsed" desc="Getters and setters: critical dimensions">
+    // <editor-fold defaultstate="collapsed" desc="Getters and setters: critical
+    // dimensions">
 
     public Double getInnerDiaA() {
         return innerDiaA;
@@ -204,14 +213,16 @@ public class ORing extends Part {
         this.showSpecialFeatures = showSpecialFeatures;
     }
 
+    @Override
     public Double getWeight() {
         return weight;
     }
 
+    @Override
     public void setWeight(Double weight) {
         this.weight = weight;
     }
 
-    //</editor-fold>
+    // </editor-fold>
 
 }

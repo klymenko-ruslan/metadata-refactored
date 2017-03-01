@@ -1,39 +1,47 @@
 package com.turbointernational.metadata.web.controller;
 
-import com.fasterxml.jackson.annotation.JsonView;
-import com.turbointernational.metadata.entity.SalesNote;
-import com.turbointernational.metadata.util.View;
-import com.turbointernational.metadata.web.dto.CreateSalesNoteRequest;
-import com.turbointernational.metadata.web.dto.UpdateSalesNoteRequest;
-import com.turbointernational.metadata.exception.RemovePrimaryPartException;
-import com.turbointernational.metadata.entity.User;
-import com.turbointernational.metadata.service.SalesNoteService;
+import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
+import java.io.File;
+import java.io.IOException;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.web.bind.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.File;
-import java.io.IOException;
-
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.entity.SalesNote;
+import com.turbointernational.metadata.entity.User;
+import com.turbointernational.metadata.exception.RemovePrimaryPartException;
+import com.turbointernational.metadata.service.SalesNoteService;
+import com.turbointernational.metadata.util.View;
+import com.turbointernational.metadata.web.dto.CreateSalesNoteRequest;
+import com.turbointernational.metadata.web.dto.UpdateSalesNoteRequest;
 
 @Controller
 @RequestMapping("/metadata/other/salesNote")
+@SuppressWarnings("deprecation")
 public class SalesNoteController {
 
     private static final Logger log = LoggerFactory.getLogger(SalesNoteController.class);
@@ -51,14 +59,12 @@ public class SalesNoteController {
         return salesNoteService.findPrimaryPartIdForThePart(partId);
     }
 
-    //<editor-fold defaultstate="collapsed" desc="CRUDS">
+    // <editor-fold defaultstate="collapsed" desc="CRUDS">
     @RequestMapping(method = POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     @Secured("ROLE_SALES_NOTE_SUBMIT")
     @Transactional
     @JsonView(View.DetailWithPartsAndAttachments.class)
-    public
-    @ResponseBody
-    SalesNote createSalesNote(HttpServletRequest httpRequest,
+    public @ResponseBody SalesNote createSalesNote(HttpServletRequest httpRequest,
             @AuthenticationPrincipal(errorOnInvalidType = true) User user,
             @RequestBody CreateSalesNoteRequest request) {
         SalesNote salesNote = salesNoteService.createSalesNote(httpRequest, user, request.getPrimaryPartId(),
@@ -79,10 +85,9 @@ public class SalesNoteController {
     @ResponseBody
     @Secured("ROLE_SALES_NOTE_SUBMIT")
     @Transactional
-    @RequestMapping(value = "{noteId}", method = POST, produces = APPLICATION_JSON_VALUE,
-            consumes = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "{noteId}", method = POST, produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
     public void updateSalesNote(HttpServletRequest request, @PathVariable("noteId") Long noteId,
-                                @RequestBody UpdateSalesNoteRequest updateRequest) {
+            @RequestBody UpdateSalesNoteRequest updateRequest) {
         salesNoteService.updateSalesNote(request, noteId, updateRequest.getComment());
     }
 
@@ -94,58 +99,49 @@ public class SalesNoteController {
         salesNoteService.removeSalesNote(noteId);
     }
 
-    //</editor-fold>
+    // </editor-fold>
 
-    //<editor-fold defaultstate="collapsed" desc="Related Parts">
+    // <editor-fold defaultstate="collapsed" desc="Related Parts">
     @ResponseBody
     @Transactional
-    @RequestMapping(value = "{salesNoteId}/part/{partId}", method = POST, consumes = APPLICATION_JSON_VALUE,
-            produces = APPLICATION_JSON_VALUE)
-    public void addRelatedPart(
-            HttpServletRequest request,
+    @RequestMapping(value = "{salesNoteId}/part/{partId}", method = POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    public void addRelatedPart(HttpServletRequest request,
             @AuthenticationPrincipal(errorOnInvalidType = true) User user,
-            @PathVariable("salesNoteId") long salesNoteId,
-            @PathVariable("partId") long partId) {
+            @PathVariable("salesNoteId") long salesNoteId, @PathVariable("partId") long partId) {
         salesNoteService.addRelatedPart(request, user, salesNoteId, partId);
     }
 
     @ResponseBody
     @Transactional
-    @RequestMapping(value = "{salesNoteId}/part/{partId}", method = RequestMethod.DELETE,
-            consumes = APPLICATION_JSON_VALUE,
-            produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "{salesNoteId}/part/{partId}", method = RequestMethod.DELETE, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public void deleteRelatedPart(HttpServletRequest request, @PathVariable("salesNoteId") Long salesNoteId,
-                                  @PathVariable("partId") Long partId) throws RemovePrimaryPartException {
+            @PathVariable("partId") Long partId) throws RemovePrimaryPartException {
         salesNoteService.deleteRelatedPart(request, salesNoteId, partId);
     }
-    //</editor-fold>
+    // </editor-fold>
 
-    //<editor-fold defaultstate="collapsed" desc="Attachments">
+    // <editor-fold defaultstate="collapsed" desc="Attachments">
     @RequestMapping(value = "attachment/{id}", method = GET)
     @Secured("ROLE_SALES_NOTE_READ")
-    public
-    @ResponseBody
-    ResponseEntity<byte[]> getAttachment(@PathVariable Long id) throws Exception {
+    public @ResponseBody ResponseEntity<byte[]> getAttachment(@PathVariable Long id) throws Exception {
         try {
             SalesNoteService.AttachmentDto attachmentDto = salesNoteService.getAttachment(id);
             HttpHeaders headers = new HttpHeaders();
             headers.add("Content-Type", "application/octet-stream");
             headers.add("Content-Disposition", "attachment; filename=\"" + attachmentDto.getFileName() + "\"");
-            return new ResponseEntity(attachmentDto.getContent(), headers, HttpStatus.OK);
+            return new ResponseEntity<>(attachmentDto.getContent(), headers, OK);
         } catch (IOException e) {
             log.warn("Couldn't load attachment file.", e);
             throw e;
         }
     }
 
-    @RequestMapping(value = "{salesNoteId}/attachment", method = POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
-            produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "{salesNoteId}/attachment", method = POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
-    public SalesNote addAttachment(
-            HttpServletRequest request,
+    public SalesNote addAttachment(HttpServletRequest request,
             @AuthenticationPrincipal(errorOnInvalidType = true) User user,
-            @PathVariable("salesNoteId") long salesNoteId,
-            @RequestParam("file") MultipartFile upload) throws IOException {
+            @PathVariable("salesNoteId") long salesNoteId, @RequestParam("file") MultipartFile upload)
+            throws IOException {
         SalesNote salesNote = salesNoteService.addAttachment(request, user, salesNoteId, upload);
         return salesNote;
     }
@@ -153,18 +149,18 @@ public class SalesNoteController {
     @RequestMapping(value = "{salesNoteId}/attachment/{attachmentId}", method = RequestMethod.DELETE)
     @ResponseBody
     public void deleteAttachment(HttpServletRequest request, @PathVariable("salesNoteId") Long salesNoteId,
-                                 @PathVariable("attachmentId") Long attachmentId) {
+            @PathVariable("attachmentId") Long attachmentId) {
         salesNoteService.deleteAttachment(request, salesNoteId, attachmentId);
     }
-    //</editor-fold>
+    // </editor-fold>
 
-    //<editor-fold defaultstate="collapsed" desc="State changes">
+    // <editor-fold defaultstate="collapsed" desc="State changes">
     @RequestMapping(value = "{noteId}/submit", method = POST, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     @Secured("ROLE_SALES_NOTE_SUBMIT")
     @Transactional
     public void submit(@AuthenticationPrincipal(errorOnInvalidType = true) User user,
-                       @PathVariable("noteId") Long noteId) {
+            @PathVariable("noteId") Long noteId) {
         salesNoteService.submit(user, noteId);
     }
 
@@ -173,7 +169,7 @@ public class SalesNoteController {
     @Secured("ROLE_SALES_NOTE_APPROVE")
     @Transactional
     public void approve(@AuthenticationPrincipal(errorOnInvalidType = true) User user,
-                        @PathVariable("noteId") Long noteId) {
+            @PathVariable("noteId") Long noteId) {
         salesNoteService.approve(user, noteId);
     }
 
@@ -182,7 +178,7 @@ public class SalesNoteController {
     @Secured("ROLE_SALES_NOTE_REJECT")
     @Transactional
     public void reject(@AuthenticationPrincipal(errorOnInvalidType = true) User user,
-                       @PathVariable("noteId") Long noteId) {
+            @PathVariable("noteId") Long noteId) {
         salesNoteService.reject(user, noteId);
     }
 
@@ -191,7 +187,7 @@ public class SalesNoteController {
     @Secured("ROLE_SALES_NOTE_PUBLISH")
     @Transactional
     public void publish(@AuthenticationPrincipal(errorOnInvalidType = true) User user,
-                        @PathVariable("noteId") Long noteId) {
+            @PathVariable("noteId") Long noteId) {
         salesNoteService.publish(user, noteId);
     }
 
@@ -200,9 +196,9 @@ public class SalesNoteController {
     @Secured("ROLE_SALES_NOTE_RETRACT")
     @Transactional
     public void retract(@AuthenticationPrincipal(errorOnInvalidType = true) User user,
-                        @PathVariable("noteId") Long noteId) {
+            @PathVariable("noteId") Long noteId) {
         salesNoteService.retract(user, noteId);
     }
-    //</editor-fold>
+    // </editor-fold>
 
 }

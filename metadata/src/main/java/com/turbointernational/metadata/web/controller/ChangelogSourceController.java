@@ -1,40 +1,48 @@
 package com.turbointernational.metadata.web.controller;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonView;
-import com.turbointernational.metadata.entity.chlogsrc.*;
-import com.turbointernational.metadata.service.ChangelogSourceService;
-import com.turbointernational.metadata.util.View;
-import com.turbointernational.metadata.web.dto.Page;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.annotation.Secured;
-import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
+import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
-import javax.persistence.EntityManager;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
-import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.*;
+import javax.persistence.EntityManager;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.entity.chlogsrc.ChangelogSource;
+import com.turbointernational.metadata.entity.chlogsrc.ChangelogSourceLink;
+import com.turbointernational.metadata.entity.chlogsrc.Source;
+import com.turbointernational.metadata.entity.chlogsrc.SourceAttachment;
+import com.turbointernational.metadata.service.ChangelogSourceService;
+import com.turbointernational.metadata.util.View;
+import com.turbointernational.metadata.web.dto.Page;
 
 /**
  * Created by dmytro.trunykov@zorallabs.com on 1/16/17.
  */
 @Controller
-@RequestMapping(value = {"/changelog/source", "/metadata/changelog/source"})
+@RequestMapping(value = { "/changelog/source", "/metadata/changelog/source" })
 public class ChangelogSourceController {
-
-    private final static Logger log = LoggerFactory.getLogger(ChangelogSourceController.class);
 
     private final static String SESSION_ATTR_UPLOADS = "uploads_4ec503be252d765ea37621a629afdaa6";
 
@@ -105,8 +113,9 @@ public class ChangelogSourceController {
             /**
              * Attachment ID.
              *
-             * For temporary attachments (loaded for a changelog source instance but not saved)
-             * a value is negative. A positive value is ID in a table source_attachment.
+             * For temporary attachments (loaded for a changelog source instance
+             * but not saved) a value is negative. A positive value is ID in a
+             * table source_attachment.
              */
             @JsonView(View.Summary.class)
             private Long id;
@@ -127,7 +136,7 @@ public class ChangelogSourceController {
                 this.id = id;
                 this.name = name;
                 this.description = description;
-                this.tmpFile= tmpFile;
+                this.tmpFile = tmpFile;
             }
 
             public Long getId() {
@@ -231,11 +240,8 @@ public class ChangelogSourceController {
         AttachmentsResponse retVal = cleanAttachments(session);
         if (sourceId > 0) {
             Source source = changelogSourceService.findChangelogSourceById(sourceId);
-            source.getAttachments().forEach(
-                    a -> retVal.getRows().add(
-                            new AttachmentsResponse.Row(a.getId(), a.getName(), a.getDescription(), null)
-                    )
-            );
+            source.getAttachments().forEach(a -> retVal.getRows()
+                    .add(new AttachmentsResponse.Row(a.getId(), a.getName(), a.getDescription(), null)));
         }
         return retVal;
     }
@@ -256,8 +262,8 @@ public class ChangelogSourceController {
     @Secured("ROLE_CHLOGSRC_CREATE")
     public Source create(HttpSession session, @RequestBody SourceRequest sr) throws IOException {
         AttachmentsResponse attachments = getAttachments(session);
-        Source retVal = changelogSourceService.create(sr.getName(), sr.getDescription(),
-                sr.getUrl(), sr.getSourceNameId(), attachments);
+        Source retVal = changelogSourceService.create(sr.getName(), sr.getDescription(), sr.getUrl(),
+                sr.getSourceNameId(), attachments);
         cleanAttachments(session);
         return retVal;
     }
@@ -267,10 +273,11 @@ public class ChangelogSourceController {
     @ResponseBody
     @JsonView(View.Summary.class)
     @Secured("ROLE_CHLOGSRC_UPDATE")
-    public Source update(HttpSession session, @PathVariable("id") Long sourceId, @RequestBody SourceRequest sr) throws IOException {
+    public Source update(HttpSession session, @PathVariable("id") Long sourceId, @RequestBody SourceRequest sr)
+            throws IOException {
         AttachmentsResponse attachments = getAttachments(session);
-        Source retVal = changelogSourceService.update(sourceId, sr.getName(), sr.getDescription(),
-                sr.getUrl(), sr.getSourceNameId(), attachments);
+        Source retVal = changelogSourceService.update(sourceId, sr.getName(), sr.getDescription(), sr.getUrl(),
+                sr.getSourceNameId(), attachments);
         cleanAttachments(session);
         return retVal;
     }
@@ -295,14 +302,15 @@ public class ChangelogSourceController {
     @ResponseBody
     @JsonView(View.Summary.class)
     @Secured("ROLE_CHLOGSRC_READ")
-    public Page<ChangelogSource> filterChangelogSources(@RequestParam(name = "sourceId", required = false) Long sourceId,
-                                                        @RequestParam(name = "changelogId", required = false) Long changelogId,
-                                                        @RequestParam(name = "sortProperty", required = false) String sortProperty,
-                                                        @RequestParam(name = "sortOrder", required = false) String sortOrder,
-                                                        @RequestParam(name = "offset", required = false) Integer offset,
-                                                        @RequestParam(name = "limit", required = false) Integer limit) {
-        return changelogSourceService.filterChangelogSources(sourceId, changelogId, sortProperty, sortOrder,
-                offset, limit);
+    public Page<ChangelogSource> filterChangelogSources(
+            @RequestParam(name = "sourceId", required = false) Long sourceId,
+            @RequestParam(name = "changelogId", required = false) Long changelogId,
+            @RequestParam(name = "sortProperty", required = false) String sortProperty,
+            @RequestParam(name = "sortOrder", required = false) String sortOrder,
+            @RequestParam(name = "offset", required = false) Integer offset,
+            @RequestParam(name = "limit", required = false) Integer limit) {
+        return changelogSourceService.filterChangelogSources(sourceId, changelogId, sortProperty, sortOrder, offset,
+                limit);
     }
 
     @RequestMapping(path = "/{id}/links/count", method = GET)
@@ -328,8 +336,7 @@ public class ChangelogSourceController {
     @ResponseBody
     @JsonView(View.Summary.class)
     @Secured("ROLE_CHLOGSRC_UPDATE")
-    public AttachmentsResponse uploadAttachment(
-            HttpSession session, @RequestBody byte[] binData,
+    public AttachmentsResponse uploadAttachment(HttpSession session, @RequestBody byte[] binData,
             @RequestParam(value = "name", required = false) String name,
             @RequestParam(value = "description", required = false) String description) throws IOException {
         AttachmentsResponse attachments = getAttachments(session);
@@ -342,10 +349,12 @@ public class ChangelogSourceController {
     @JsonView(View.Summary.class)
     @Secured("ROLE_CHLOGSRC_DELETE")
     public AttachmentsResponse removeAttachment(HttpSession session, @PathVariable Long id,
-                                                @RequestParam(value = "begin", required = false, defaultValue = "false") Boolean begin) {
+            @RequestParam(value = "begin", required = false, defaultValue = "false") Boolean begin) {
         if (begin) { // parameter 'begin' is used in functional tests only
-            // MvcMock has no support for sessions between several http request (it creates a new one on each request).
-            // So we use this workaround to emulate call of 'beginEdit()' before call of this method.
+            // MvcMock has no support for sessions between several http request
+            // (it creates a new one on each request).
+            // So we use this workaround to emulate call of 'beginEdit()' before
+            // call of this method.
             SourceAttachment attachment = em.createQuery("from SourceAttachment where id=:id", SourceAttachment.class)
                     .setParameter("id", id).getSingleResult();
             Long sourceId = attachment.getSource().getId();
@@ -359,7 +368,8 @@ public class ChangelogSourceController {
     @Transactional
     @ResponseBody
     @Secured("ROLE_CHLOGSRC_READ")
-    public void downloadAttachment(@PathVariable("id") Long attachmentId, HttpServletResponse response) throws IOException {
+    public void downloadAttachment(@PathVariable("id") Long attachmentId, HttpServletResponse response)
+            throws IOException {
         changelogSourceService.downloadAttachment(attachmentId, response);
     }
 

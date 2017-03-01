@@ -3,6 +3,7 @@ package com.turbointernational.metadata.entity;
 import java.io.File;
 import java.io.Serializable;
 import java.util.Date;
+
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -25,6 +26,8 @@ import org.springframework.beans.factory.annotation.Value;
 @Entity
 @Table(name = "sales_note_attachment")
 public class SalesNoteAttachment implements Serializable {
+
+    private static final long serialVersionUID = -8697352209448012944L;
 
     @Id
     private Long id;

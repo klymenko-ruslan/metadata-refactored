@@ -1,10 +1,12 @@
 package com.turbointernational.metadata.dao;
 
-import com.turbointernational.metadata.entity.PartType;
-import org.springframework.stereotype.Repository;
+import java.util.List;
 
 import javax.persistence.NoResultException;
-import java.util.List;
+
+import org.springframework.stereotype.Repository;
+
+import com.turbointernational.metadata.entity.PartType;
 
 /**
  *
@@ -12,14 +14,14 @@ import java.util.List;
  */
 @Repository
 public class PartTypeDao extends AbstractDao<PartType> {
-    
+
     public PartTypeDao() {
         super(PartType.class);
     }
 
     @Override
     public List<PartType> findAll() {
-        return em.createNamedQuery("findAllPartTypes").getResultList();
+        return em.createNamedQuery("findAllPartTypes", PartType.class).getResultList();
     }
 
     public PartType findPartTypeByValue(String value) {

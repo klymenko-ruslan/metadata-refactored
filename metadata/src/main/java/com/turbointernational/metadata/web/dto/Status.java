@@ -1,12 +1,10 @@
 package com.turbointernational.metadata.web.dto;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.util.View;
-import flexjson.JSONSerializer;
-import flexjson.transformer.ObjectTransformer;
-
-import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
 
 /**
  *
@@ -26,13 +24,4 @@ public class Status {
         this.bomRebuilding = bomRebuilding;
     }
 
-    /*
-    public String toJson() {
-        return new JSONSerializer()
-            .transform(new ObjectTransformer(), this.getClass())
-            .exclude("class")
-            .serialize(this);
-    }
-    */
-    
 }

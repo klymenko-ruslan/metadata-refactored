@@ -1,21 +1,25 @@
 package com.turbointernational.metadata.dao;
 
-import org.apache.commons.lang3.StringUtils;
-import org.hibernate.*;
-import org.springframework.transaction.annotation.Transactional;
+import static org.hibernate.LockMode.NONE;
+import static org.hibernate.ScrollMode.FORWARD_ONLY;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.io.Serializable;
 import java.util.List;
 
-import static org.hibernate.LockMode.NONE;
-import static org.hibernate.ScrollMode.FORWARD_ONLY;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.apache.commons.lang3.StringUtils;
+import org.hibernate.Query;
+import org.hibernate.ScrollableResults;
+import org.hibernate.Session;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
  * @author jrodriguez
- * @param <T> The entity class to operate on
+ * @param <T>
+ *            The entity class to operate on
  */
 public abstract class AbstractDao<T extends Serializable> {
 
@@ -27,7 +31,7 @@ public abstract class AbstractDao<T extends Serializable> {
     public EntityManager getEntityManager() {
         return em;
     }
-    
+
     public AbstractDao(Class<T> clazz) {
         this.clazz = clazz;
     }
@@ -40,24 +44,22 @@ public abstract class AbstractDao<T extends Serializable> {
         return em.getReference(this.clazz, id);
     }
 
+    @SuppressWarnings("unchecked")
     public List<T> findAll() {
-        return em.createQuery("FROM " + clazz.getName())
-                .getResultList();
+        return em.createQuery("FROM " + clazz.getName()).getResultList();
     }
 
     public List<T> findAll(int firstResult, int maxResults) {
-        return em.createQuery("SELECT o FROM " + clazz.getName() + " o", clazz)
-                .setFirstResult(firstResult)
-                .setMaxResults(maxResults)
-                .getResultList();
+        return em.createQuery("SELECT o FROM " + clazz.getName() + " o", clazz).setFirstResult(firstResult)
+                .setMaxResults(maxResults).getResultList();
     }
 
     public ScrollableResults getScrollableResults(int fetchSize, boolean distinct, String orderProperty) {
         return getScrollableResults(em, clazz, fetchSize, distinct, orderProperty);
     }
 
-    public static ScrollableResults getScrollableResults(EntityManager entityManager, Class clazz,
-                                                  int fetchSize, boolean distinct, String orderProperty) {
+    public static ScrollableResults getScrollableResults(EntityManager entityManager, Class<?> clazz, int fetchSize,
+            boolean distinct, String orderProperty) {
         Session hibernateSession = (Session) entityManager.getDelegate();
         String sql = "SELECT ";
         if (distinct) {
@@ -79,9 +81,9 @@ public abstract class AbstractDao<T extends Serializable> {
         return getTotal(em, clazz);
     }
 
-    public static int getTotal(EntityManager entityManager, Class clazz) {
-        return ((Number) entityManager.createQuery("SELECT count(o) FROM " +
-                clazz.getName() + " o").getSingleResult()).intValue();
+    public static int getTotal(EntityManager entityManager, Class<?> clazz) {
+        return ((Number) entityManager.createQuery("SELECT count(o) FROM " + clazz.getName() + " o").getSingleResult())
+                .intValue();
     }
 
     public void persist(T entity) {
@@ -100,22 +102,21 @@ public abstract class AbstractDao<T extends Serializable> {
         T entity = findOne(entityId);
         AbstractDao.this.remove(entity);
     }
-    
+
     public long count() {
-        return em.createQuery("SELECT COUNT(o) FROM " + clazz.getName() + " o", Long.class)
-                .getSingleResult();
+        return em.createQuery("SELECT COUNT(o) FROM " + clazz.getName() + " o", Long.class).getSingleResult();
     }
-    
+
     @Transactional
     public void flush() {
         em.flush();
     }
-    
+
     @Transactional
     public void clear() {
         em.clear();
     }
-    
+
     public void refresh(T part) {
         em.refresh(part);
     }

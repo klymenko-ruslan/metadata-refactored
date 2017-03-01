@@ -1,16 +1,32 @@
 package com.turbointernational.metadata.entity;
 
-import com.fasterxml.jackson.annotation.JsonView;
-import com.turbointernational.metadata.entity.part.Part;
-import com.turbointernational.metadata.util.View;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import javax.persistence.Cacheable;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.entity.part.Part;
+import com.turbointernational.metadata.util.View;
 
 /**
  * @author jrodriguez
@@ -20,7 +36,7 @@ import java.util.List;
 @Table(name = "sales_note")
 public class SalesNote implements Serializable {
 
-    private final static Logger log = LoggerFactory.getLogger(SalesNote.class);
+    private static final long serialVersionUID = 6834742514879081614L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

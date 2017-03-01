@@ -1,30 +1,34 @@
 package com.turbointernational.metadata.service.mas90.pricing;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 /**
  *
  * @author jrodriguez
  */
 public class ItemPricing {
-    
+
     private final String itemNumber;
-    
+
     /**
      * Standard pricing
      */
     private final BigDecimal standardPrice;
-    
+
     /**
      * Customer-specific item pricing.
      */
-    private final TreeMap<String, Pricing> customerPricings = new TreeMap();
-    
+    private final TreeMap<String, Pricing> customerPricings = new TreeMap<>();
+
     /**
      * Price-level-specific item pricing.
      */
-    private final TreeMap<String, Pricing> priceLevelPricings = new TreeMap();
+    private final TreeMap<String, Pricing> priceLevelPricings = new TreeMap<>();
 
     public ItemPricing(String itemNumber, BigDecimal standardPrice) {
         this.itemNumber = itemNumber;
@@ -58,14 +62,14 @@ public class ItemPricing {
     public SortedMap<String, Pricing> getPriceLevelPricings() {
         return priceLevelPricings;
     }
-    
+
     public Map<String, List<CalculatedPrice>> calculateCustomerSpecificPrices() {
-        return  calculateCustomerSpecificPrices(standardPrice, customerPricings);
+        return calculateCustomerSpecificPrices(standardPrice, customerPricings);
     }
 
-    public static Map<String, List<CalculatedPrice>> calculateCustomerSpecificPrices(
-            BigDecimal standardPrice, Map<String, Pricing> customerPricings) {
-        Map<String, List<CalculatedPrice>> prices = new HashMap();
+    public static Map<String, List<CalculatedPrice>> calculateCustomerSpecificPrices(BigDecimal standardPrice,
+            Map<String, Pricing> customerPricings) {
+        Map<String, List<CalculatedPrice>> prices = new HashMap<>();
         // Calculate customer-specific prices
         for (Map.Entry<String, Pricing> pricing : customerPricings.entrySet()) {
             List<CalculatedPrice> customerPrices = pricing.getValue().calculate(standardPrice);

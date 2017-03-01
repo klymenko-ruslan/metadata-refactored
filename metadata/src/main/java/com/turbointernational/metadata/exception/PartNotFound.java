@@ -5,6 +5,8 @@ package com.turbointernational.metadata.exception;
  */
 public class PartNotFound extends Exception {
 
+    private static final long serialVersionUID = 6457886684640920966L;
+
     public PartNotFound() {
         super();
     }

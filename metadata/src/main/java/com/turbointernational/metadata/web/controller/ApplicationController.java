@@ -1,29 +1,5 @@
 package com.turbointernational.metadata.web.controller;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonView;
-import com.turbointernational.metadata.dao.CarEngineDao;
-import com.turbointernational.metadata.dao.CarModelDao;
-import com.turbointernational.metadata.dao.CarModelEngineYearDao;
-import com.turbointernational.metadata.dao.CarYearDao;
-import com.turbointernational.metadata.entity.*;
-import com.turbointernational.metadata.service.ChangelogService;
-import com.turbointernational.metadata.util.View;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
-import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
-
-import javax.persistence.EntityManager;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
 import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.APPLICATIONS;
 import static com.turbointernational.metadata.util.FormatUtils.formatApplication;
@@ -31,13 +7,45 @@ import static com.turbointernational.metadata.util.FormatUtils.formatCarYear;
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 import static org.springframework.http.HttpStatus.OK;
-import static org.springframework.web.bind.annotation.RequestMethod.*;
+import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.PUT;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.dao.CarEngineDao;
+import com.turbointernational.metadata.dao.CarModelDao;
+import com.turbointernational.metadata.dao.CarModelEngineYearDao;
+import com.turbointernational.metadata.dao.CarYearDao;
+import com.turbointernational.metadata.entity.CarEngine;
+import com.turbointernational.metadata.entity.CarModel;
+import com.turbointernational.metadata.entity.CarModelEngineYear;
+import com.turbointernational.metadata.entity.CarYear;
+import com.turbointernational.metadata.service.ChangelogService;
+import com.turbointernational.metadata.util.View;
 
 @RequestMapping("/metadata/application")
 @Controller
 public class ApplicationController {
-
-    private static final Logger log = LoggerFactory.getLogger(ApplicationController.class);
 
     @Autowired
     private ChangelogService changelogService;
@@ -74,8 +82,8 @@ public class ApplicationController {
     @ResponseBody
     @Secured("ROLE_APPLICATION_CRUD")
     public Boolean exists(@RequestParam(name = "carModelId", required = false) Long carModelId,
-                          @RequestParam(name = "carEngineId", required = false) Long carEngineId,
-                          @RequestParam(name = "year", required = false) String year) {
+            @RequestParam(name = "carEngineId", required = false) Long carEngineId,
+            @RequestParam(name = "year", required = false) String year) {
         CarYear carYear = carYearDao.findByName(year);
         Long carYearId = null;
         if (carYear != null) {
@@ -92,20 +100,21 @@ public class ApplicationController {
     public long create(@RequestBody CarModelEngineYear cmey) {
         normalize(cmey);
         carModelEngineYearDao.persist(cmey);
-        changelogService.log(APPLICATIONS, "Created application " + formatApplication(cmey) + ".",
-                null);
+        changelogService.log(APPLICATIONS, "Created application " + formatApplication(cmey) + ".", null);
         return cmey.getId();
     }
 
     public static class BulkCreateRequest implements Serializable {
 
-        @JsonView({View.Summary.class})
+        private static final long serialVersionUID = 4915665084245000432L;
+
+        @JsonView({ View.Summary.class })
         private List<CarModel> models;
 
-        @JsonView({View.Summary.class})
+        @JsonView({ View.Summary.class })
         private List<CarEngine> engines;
 
-        @JsonView({View.Summary.class})
+        @JsonView({ View.Summary.class })
         private List<CarYear> years;
 
         public List<CarModel> getModels() {
@@ -137,10 +146,12 @@ public class ApplicationController {
     @JsonInclude(ALWAYS)
     public static class BulkCreateResonse implements Serializable {
 
-        @JsonView({View.Summary.class})
+        private static final long serialVersionUID = 1690499549222328912L;
+
+        @JsonView({ View.Summary.class })
         private int created = 0;
 
-        @JsonView({View.Summary.class})
+        @JsonView({ View.Summary.class })
         private int ignored = 0;
 
         public BulkCreateResonse() {
@@ -230,15 +241,13 @@ public class ApplicationController {
                 cmey.setEngine(ce);
                 cmey.setYear(cy);
                 carModelEngineYearDao.persist(cmey);
-                changelogService.log(APPLICATIONS, "Created application: "
-                        + formatApplication(cmey) + ".", null);
+                changelogService.log(APPLICATIONS, "Created application: " + formatApplication(cmey) + ".", null);
                 retVal.incCreated();
             } else {
                 retVal.incIngored();
             }
 
         })));
-
 
         return retVal;
     }

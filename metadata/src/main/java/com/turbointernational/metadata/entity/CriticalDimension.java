@@ -1,18 +1,30 @@
 package com.turbointernational.metadata.entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonView;
-import com.turbointernational.metadata.util.View;
-import flexjson.transformer.Transformer;
-
-import javax.persistence.*;
-import java.io.Serializable;
-
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
 import static javax.persistence.EnumType.STRING;
 import static javax.persistence.FetchType.EAGER;
 import static javax.persistence.FetchType.LAZY;
+
+import java.io.Serializable;
+
+import javax.persistence.Cacheable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Enumerated;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.util.View;
+
+import flexjson.transformer.Transformer;
 
 /**
  * Created by dmytro.trunykov@zorallabs.com on 06.04.16.
@@ -28,6 +40,8 @@ import static javax.persistence.FetchType.LAZY;
 })
 @JsonInclude(ALWAYS)
 public class CriticalDimension implements Serializable {
+
+    private static final long serialVersionUID = -1844164866947901829L;
 
     //<editor-fold defaultstate="collapsed" desc="Enumerations">
     public enum DataTypeEnum { DECIMAL, ENUMERATION, INTEGER, TEXT }

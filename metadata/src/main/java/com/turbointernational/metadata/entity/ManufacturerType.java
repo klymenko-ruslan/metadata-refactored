@@ -1,14 +1,10 @@
 package com.turbointernational.metadata.entity;
 
-import com.fasterxml.jackson.annotation.JsonView;
-import com.turbointernational.metadata.util.View;
-import flexjson.JSONDeserializer;
-import flexjson.JSONSerializer;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -18,11 +14,19 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.util.View;
+
+import flexjson.JSONDeserializer;
+import flexjson.JSONSerializer;
+
 @Cacheable
 @Entity
 @Table(name = "manfr_type",
         uniqueConstraints = @UniqueConstraint(columnNames = {"name"}))
 public class ManufacturerType implements Serializable {
+
+    private static final long serialVersionUID = -1124175033958260950L;
 
     //<editor-fold defaultstate="collapsed" desc="properties">
     @Id

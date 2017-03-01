@@ -1,15 +1,20 @@
 package com.turbointernational.metadata.entity.part.types;
 
+import static javax.persistence.FetchType.LAZY;
+
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.Table;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.entity.CriticalDimensionEnumVal;
 import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.util.View;
-
-import javax.persistence.*;
-
-import static javax.persistence.FetchType.LAZY;
-
 
 /**
  * Created by dmytro.trunykov@zorallabs.com on 2016-08-01 17:06:08.762507.
@@ -20,7 +25,10 @@ import static javax.persistence.FetchType.LAZY;
 @PrimaryKeyJoinColumn(name = "part_id")
 public class CarbonSeal extends Part {
 
-    //<editor-fold defaultstate="collapsed" desc="Properties: critical dimensions">
+    private static final long serialVersionUID = -2313577844399703074L;
+
+    // <editor-fold defaultstate="collapsed" desc="Properties: critical
+    // dimensions">
 
     @JsonView(View.Summary.class)
     @JsonProperty("encapsulated")
@@ -88,9 +96,10 @@ public class CarbonSeal extends Part {
     @Column(name = "diameterD")
     private Double diameterD;
 
-    //</editor-fold>
+    // </editor-fold>
 
-    //<editor-fold defaultstate="collapsed" desc="Getters and setters: critical dimensions">
+    // <editor-fold defaultstate="collapsed" desc="Getters and setters: critical
+    // dimensions">
 
     public CriticalDimensionEnumVal getEncapsulated() {
         return encapsulated;
@@ -196,6 +205,6 @@ public class CarbonSeal extends Part {
         this.diameterD = diameterD;
     }
 
-    //</editor-fold>
+    // </editor-fold>
 
 }

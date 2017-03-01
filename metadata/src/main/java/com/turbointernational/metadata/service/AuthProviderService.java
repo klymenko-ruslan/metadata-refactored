@@ -1,11 +1,12 @@
 package com.turbointernational.metadata.service;
 
-import com.turbointernational.metadata.dao.AuthProviderDao;
-import com.turbointernational.metadata.entity.AuthProviderLdap;
-import com.turbointernational.metadata.web.dto.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.turbointernational.metadata.dao.AuthProviderDao;
+import com.turbointernational.metadata.entity.AuthProviderLdap;
+import com.turbointernational.metadata.web.dto.Page;
 
 /**
  * Created by dmytro.trunykov@zorallabs.com on 21.03.16.
@@ -17,7 +18,7 @@ public class AuthProviderService {
     private AuthProviderDao authProviderDao;
 
     @Transactional
-    public Page getAllAuthProviders(String sortProperty, String sortOrder, int offset, int limit) {
+    public Page<AuthProviderLdap> getAllAuthProviders(String sortProperty, String sortOrder, int offset, int limit) {
         return authProviderDao.getAllAuthProviders(sortProperty, sortOrder, offset, limit);
     }
 

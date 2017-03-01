@@ -1,16 +1,20 @@
 package com.turbointernational.metadata.entity.part.types;
 
-import com.fasterxml.jackson.annotation.JsonView;
-import com.turbointernational.metadata.entity.part.Part;
-import com.turbointernational.metadata.util.View;
-
-import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
-
 import static javax.persistence.CascadeType.REFRESH;
 import static javax.persistence.FetchType.LAZY;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.entity.part.Part;
+import com.turbointernational.metadata.util.View;
 
 /**
  * Created by dmytro.trunykov@zorallabs.com on 2016-08-01 17:06:08.762678.
@@ -21,19 +25,23 @@ import static javax.persistence.FetchType.LAZY;
 @PrimaryKeyJoinColumn(name = "part_id")
 public class GasketKit extends Part {
 
-    //<editor-fold defaultstate="collapsed" desc="Properties: members">
+    private static final long serialVersionUID = -4899795033876974285L;
+
+    // <editor-fold defaultstate="collapsed" desc="Properties: members">
 
     @OneToMany(cascade = REFRESH, mappedBy = "gasketKit", targetEntity = Turbo.class, fetch = LAZY)
-    @JsonView({View.SummaryWithTurbos.class})
+    @JsonView({ View.SummaryWithTurbos.class })
     private List<Turbo> turbos = new ArrayList<>();
 
-    //</editor-fold>
+    // </editor-fold>
 
-    //<editor-fold defaultstate="collapsed" desc="Properties: critical dimensions">
+    // <editor-fold defaultstate="collapsed" desc="Properties: critical
+    // dimensions">
 
-    //</editor-fold>
+    // </editor-fold>
 
-    //<editor-fold defaultstate="collapsed" desc="Getters and setters: members">
+    // <editor-fold defaultstate="collapsed" desc="Getters and setters:
+    // members">
 
     public List<Turbo> getTurbos() {
         return turbos;
@@ -43,10 +51,11 @@ public class GasketKit extends Part {
         this.turbos = turbos;
     }
 
-    //</editor-fold>
+    // </editor-fold>
 
-    //<editor-fold defaultstate="collapsed" desc="Getters and setters: critical dimensions">
+    // <editor-fold defaultstate="collapsed" desc="Getters and setters: critical
+    // dimensions">
 
-    //</editor-fold>
+    // </editor-fold>
 
 }

@@ -1,15 +1,20 @@
 package com.turbointernational.metadata.entity.part.types;
 
+import static javax.persistence.FetchType.LAZY;
+
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.Table;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.entity.CriticalDimensionEnumVal;
 import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.util.View;
-
-import javax.persistence.*;
-
-import static javax.persistence.FetchType.LAZY;
-
 
 /**
  * Created by dmytro.trunykov@zorallabs.com on 2016-08-01 17:06:08.759319.
@@ -20,7 +25,10 @@ import static javax.persistence.FetchType.LAZY;
 @PrimaryKeyJoinColumn(name = "part_id")
 public class Nut extends Part {
 
-    //<editor-fold defaultstate="collapsed" desc="Properties: critical dimensions">
+    private static final long serialVersionUID = -548875150322788550L;
+
+    // <editor-fold defaultstate="collapsed" desc="Properties: critical
+    // dimensions">
 
     @JsonView(View.Summary.class)
     @JsonProperty("shaftNut")
@@ -127,9 +135,10 @@ public class Nut extends Part {
     @Column(name = "acrossFlats")
     private Double acrossFlats;
 
-    //</editor-fold>
+    // </editor-fold>
 
-    //<editor-fold defaultstate="collapsed" desc="Getters and setters: critical dimensions">
+    // <editor-fold defaultstate="collapsed" desc="Getters and setters: critical
+    // dimensions">
 
     public CriticalDimensionEnumVal getShaftNut() {
         return shaftNut;
@@ -251,10 +260,12 @@ public class Nut extends Part {
         this.showSpecialFeatures = showSpecialFeatures;
     }
 
+    @Override
     public Double getWeight() {
         return weight;
     }
 
+    @Override
     public void setWeight(Double weight) {
         this.weight = weight;
     }
@@ -283,6 +294,6 @@ public class Nut extends Part {
         this.acrossFlats = acrossFlats;
     }
 
-    //</editor-fold>
+    // </editor-fold>
 
 }

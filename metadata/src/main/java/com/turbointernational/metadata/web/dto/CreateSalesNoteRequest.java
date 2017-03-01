@@ -1,28 +1,31 @@
 package com.turbointernational.metadata.web.dto;
 
+import java.io.Serializable;
+
+import javax.validation.constraints.NotNull;
+
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.util.View;
-
-import java.io.Serializable;
-import javax.validation.constraints.NotNull;
 
 /**
  *
  * @author jrodriguez
  */
 public class CreateSalesNoteRequest implements Serializable {
-    
+
+    private static final long serialVersionUID = -4604795204191095582L;
+
     @NotNull
     @JsonView(View.Summary.class)
     private Long primaryPartId;
-    
+
     @NotNull
     @JsonView(View.Summary.class)
     private String comment;
 
     /**
-     * Changelog source IDs which should be linked to the changelog.
-     * See ticket #891 for details.
+     * Changelog source IDs which should be linked to the changelog. See ticket
+     * #891 for details.
      */
     @JsonView(View.Summary.class)
     private Long[] sourcesIds;
@@ -48,7 +51,6 @@ public class CreateSalesNoteRequest implements Serializable {
     public void setComment(String comment) {
         this.comment = comment;
     }
-
 
     public Long[] getSourcesIds() {
         return sourcesIds;

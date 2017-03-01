@@ -1,14 +1,13 @@
 package com.turbointernational.metadata.web.controller;
 
-import com.fasterxml.jackson.annotation.JsonView;
-import com.turbointernational.metadata.entity.Mas90Sync;
-import com.turbointernational.metadata.entity.User;
-import com.turbointernational.metadata.dao.UserDao;
-import com.turbointernational.metadata.service.Mas90SyncService;
-import com.turbointernational.metadata.web.dto.Page;
-import com.turbointernational.metadata.util.View;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static com.turbointernational.metadata.entity.User.SYNC_AGENT_USER_ID;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
+import java.io.IOException;
+
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,22 +19,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletResponse;
-
-import java.io.IOException;
-
-import static com.turbointernational.metadata.entity.User.SYNC_AGENT_USER_ID;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.dao.UserDao;
+import com.turbointernational.metadata.entity.Mas90Sync;
+import com.turbointernational.metadata.entity.User;
+import com.turbointernational.metadata.service.Mas90SyncService;
+import com.turbointernational.metadata.util.View;
+import com.turbointernational.metadata.web.dto.Page;
 
 /**
  * Created by dmytro.trunykov@zorallabs.com on 13.01.16.
  */
 @Controller
-@RequestMapping(value = {"/mas90sync", "/metadata/mas90sync"})
+@RequestMapping(value = { "/mas90sync", "/metadata/mas90sync" })
 public class Mas90SyncController {
-
-    private static Logger log = LoggerFactory.getLogger(Mas90SyncController.class);
 
     @Autowired
     private UserDao userDao;
@@ -57,7 +54,8 @@ public class Mas90SyncController {
     @Transactional
     @JsonView(View.Summary.class)
     @Secured("ROLE_MAS90_SYNC")
-    public Page history(@RequestParam(name = "start") int startPosition, @RequestParam(name = "max") int maxResults) {
+    public Page<Mas90Sync> history(@RequestParam(name = "start") int startPosition,
+            @RequestParam(name = "max") int maxResults) {
         return mas90SyncService.history(startPosition, maxResults);
     }
 
@@ -78,9 +76,9 @@ public class Mas90SyncController {
     /**
      * Start synchronization process.
      *
-     * This method can be called by CURL or WGET from localhost to start the process.
-     * So expression below <code>hasIpAddress('127.0.0.1/32')</code> is mandatory.
-     * Don't remove it.
+     * This method can be called by CURL or WGET from localhost to start the
+     * process. So expression below <code>hasIpAddress('127.0.0.1/32')</code> is
+     * mandatory. Don't remove it.
      *
      * @return
      */
@@ -92,13 +90,12 @@ public class Mas90SyncController {
     public Mas90SyncService.SyncProcessStatus start(HttpServletResponse response) throws IOException {
         User syncAgent = userDao.findOne(SYNC_AGENT_USER_ID);
         if (syncAgent == null) {
-            response.sendError(HttpServletResponse.SC_FORBIDDEN, "User [" + SYNC_AGENT_USER_ID
-                    + "] not found.");
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "User [" + SYNC_AGENT_USER_ID + "] not found.");
             return null;
         }
         if (!syncAgent.isEnabled()) {
-            response.sendError(HttpServletResponse.SC_FORBIDDEN, "User account [" + SYNC_AGENT_USER_ID
-                    + "] is disabled.");
+            response.sendError(HttpServletResponse.SC_FORBIDDEN,
+                    "User account [" + SYNC_AGENT_USER_ID + "] is disabled.");
             return null;
         }
         Mas90SyncService.SyncProcessStatus status = mas90SyncService.start(syncAgent);

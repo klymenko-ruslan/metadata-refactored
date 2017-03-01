@@ -1,13 +1,19 @@
 package com.turbointernational.metadata.entity.chlogsrc;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
+
+import java.io.Serializable;
+
+import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.util.View;
-
-import javax.persistence.*;
-import java.io.Serializable;
-
-import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
 
 /**
  * Created by dmytro.trunykov@zorallabs.com on 1/18/17.
@@ -21,6 +27,8 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
 })
 @JsonInclude(ALWAYS)
 public class ChangelogSource implements Serializable {
+
+    private static final long serialVersionUID = 8496565317943617098L;
 
     //<editor-fold defaultstate="collapsed" desc="Properties">
 

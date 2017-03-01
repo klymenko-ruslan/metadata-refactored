@@ -1,14 +1,10 @@
 package com.turbointernational.metadata.entity;
 
-import com.fasterxml.jackson.annotation.JsonView;
-import com.turbointernational.metadata.util.View;
-import flexjson.JSONDeserializer;
-import flexjson.JSONSerializer;
-
-import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Set;
 import java.util.TreeSet;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -18,6 +14,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.util.View;
+
+import flexjson.JSONDeserializer;
+import flexjson.JSONSerializer;
 
 @Entity
 @Table(name="groups") // GROUP is a reserved word

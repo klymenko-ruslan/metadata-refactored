@@ -1,10 +1,12 @@
 package com.turbointernational.metadata.entity;
 
-import com.turbointernational.metadata.entity.part.Part;
 import java.io.Serializable;
+
 import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
+
+import com.turbointernational.metadata.entity.part.Part;
 
 /**
  *
@@ -12,6 +14,8 @@ import javax.persistence.ManyToOne;
  */
 @Embeddable
 public class SalesNotePartId implements Serializable {
+
+    private static final long serialVersionUID = 1281174981465341464L;
 
     @ManyToOne
     private SalesNote salesNote;
@@ -26,7 +30,7 @@ public class SalesNotePartId implements Serializable {
         this.salesNote = salesNote;
         this.part = part;
     }
-    
+
     public SalesNote getSalesNote() {
         return salesNote;
     }

@@ -1,14 +1,11 @@
 package com.turbointernational.metadata.web.controller;
 
-import com.turbointernational.metadata.entity.part.Part;
-import com.turbointernational.metadata.dao.PartDao;
-import com.turbointernational.metadata.entity.part.ProductImage;
-import com.turbointernational.metadata.dao.ProductImageDao;
-import com.turbointernational.metadata.entity.PartType;
-import com.turbointernational.metadata.dao.PartTypeDao;
-import com.turbointernational.metadata.service.ImageService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static com.turbointernational.metadata.service.ImageService.SIZES;
+import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.PUT;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -18,21 +15,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import static com.turbointernational.metadata.service.ImageService.SIZES;
-import static org.springframework.http.HttpStatus.OK;
-import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.PUT;
+import com.turbointernational.metadata.dao.PartDao;
+import com.turbointernational.metadata.dao.PartTypeDao;
+import com.turbointernational.metadata.dao.ProductImageDao;
+import com.turbointernational.metadata.entity.PartType;
+import com.turbointernational.metadata.entity.part.Part;
+import com.turbointernational.metadata.entity.part.ProductImage;
+import com.turbointernational.metadata.service.ImageService;
 
 @RequestMapping("/metadata/image")
 @RestController
 public class ImageController {
 
-    private static final Logger log = LoggerFactory.getLogger(ImageController.class);
-
     @Autowired
     private ImageService imageService;
-    
+
     @Autowired
     private PartDao partDao;
 
@@ -41,6 +38,7 @@ public class ImageController {
 
     @Autowired
     private ProductImageDao productImageDao;
+
     @RequestMapping(value = "/{id}.jpg", method = GET)
     @Secured("ROLE_READ")
     public ResponseEntity<byte[]> getPartImage(@PathVariable Long id) throws Exception {
@@ -74,7 +72,7 @@ public class ImageController {
     }
 
     @Transactional
-    @RequestMapping(value="/{id}", method = DELETE)
+    @RequestMapping(value = "/{id}", method = DELETE)
     @Secured("ROLE_PART_IMAGES")
     public ResponseEntity<Void> removePartImage(@PathVariable Long id) throws Exception {
         // Look up the image
@@ -94,16 +92,16 @@ public class ImageController {
     }
 
     @Transactional
-    @RequestMapping(value="/{id}", method = PUT)
+    @RequestMapping(value = "/{id}", method = PUT)
     @Secured("ROLE_PART_IMAGES")
     public ResponseEntity<Void> publishPartImage(@PathVariable(name = "id") Long imageId,
-                                                 @RequestParam(name = "publish") Boolean publish) throws Exception {
+            @RequestParam(name = "publish") Boolean publish) throws Exception {
         imageService.publish(imageId, publish);
         return new ResponseEntity<>((Void) null, OK);
     }
 
     @Transactional
-    @RequestMapping(value="/{id}/cdlegend.jpg", method = DELETE)
+    @RequestMapping(value = "/{id}/cdlegend.jpg", method = DELETE)
     @Secured("ROLE_PART_IMAGES")
     public ResponseEntity<Void> removePartCritDimsLegendImage(@PathVariable Long id) throws Exception {
         Part part = partDao.findOne(id);
@@ -113,7 +111,7 @@ public class ImageController {
     }
 
     @Transactional
-    @RequestMapping(value="/{id}/ptlegend.jpg", method = DELETE)
+    @RequestMapping(value = "/{id}/ptlegend.jpg", method = DELETE)
     @Secured("ROLE_PART_IMAGES")
     public ResponseEntity<Void> removePartTypeLegendImage(@PathVariable Long id) throws Exception {
         PartType partType = partTypeDao.findOne(id);

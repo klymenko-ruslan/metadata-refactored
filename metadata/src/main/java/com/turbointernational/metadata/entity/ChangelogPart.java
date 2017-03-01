@@ -1,16 +1,24 @@
 package com.turbointernational.metadata.entity;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
+import static javax.persistence.EnumType.STRING;
+import static javax.persistence.GenerationType.IDENTITY;
+
+import java.io.Serializable;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.util.View;
-
-import javax.persistence.*;
-import java.io.Serializable;
-
-import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
-import static javax.persistence.EnumType.STRING;
-import static javax.persistence.GenerationType.IDENTITY;
 
 /**
  * Created by dmytro.trunykov@zorallabs.com on 2017-02-03.
@@ -19,6 +27,8 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Table(name = "changelog_part")
 @JsonInclude(ALWAYS)
 public class ChangelogPart implements Serializable {
+
+    private static final long serialVersionUID = 3387467144076838401L;
 
     public enum Role { BOM_PARENT, BOM_CHILD, PART0, PART1 }
 

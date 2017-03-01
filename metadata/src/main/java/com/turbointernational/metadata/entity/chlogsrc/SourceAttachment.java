@@ -1,15 +1,21 @@
 package com.turbointernational.metadata.entity.chlogsrc;
 
-import com.fasterxml.jackson.annotation.JsonView;
-import com.turbointernational.metadata.util.View;
-
-import javax.persistence.*;
-
-import java.io.Serializable;
-
 import static javax.persistence.CascadeType.DETACH;
 import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
+
+import java.io.Serializable;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.util.View;
 
 /**
  * Created by dmytro.trunykov@zorallabs.com on 2017-01-12.
@@ -17,6 +23,8 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Entity
 @Table(name = "source_attachment")
 public class SourceAttachment implements Serializable {
+
+    private static final long serialVersionUID = -6187744856546584531L;
 
     //<editor-fold defaultstate="collapsed" desc="Properties">
 

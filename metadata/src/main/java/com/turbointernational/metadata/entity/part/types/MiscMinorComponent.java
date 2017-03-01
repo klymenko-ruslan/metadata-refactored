@@ -1,8 +1,11 @@
 package com.turbointernational.metadata.entity.part.types;
 
-import com.turbointernational.metadata.entity.part.Part;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.Table;
 
-import javax.persistence.*;
+import com.turbointernational.metadata.entity.part.Part;
 
 
 /**
@@ -13,6 +16,8 @@ import javax.persistence.*;
 @DiscriminatorValue("21")
 @PrimaryKeyJoinColumn(name = "part_id")
 public class MiscMinorComponent extends Part {
+
+    private static final long serialVersionUID = -6725898576176456107L;
 
     //<editor-fold defaultstate="collapsed" desc="Properties: critical dimensions">
 

@@ -1,24 +1,35 @@
 package com.turbointernational.metadata.entity.chlogsrc;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonView;
-import com.turbointernational.metadata.entity.Changelog;
-import com.turbointernational.metadata.entity.User;
-import com.turbointernational.metadata.util.View;
-
-import javax.persistence.*;
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
+import static javax.persistence.CascadeType.DETACH;
+import static javax.persistence.FetchType.LAZY;
+import static javax.persistence.GenerationType.IDENTITY;
+import static javax.persistence.TemporalType.TIMESTAMP;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
-import static javax.persistence.CascadeType.ALL;
-import static javax.persistence.CascadeType.DETACH;
-import static javax.persistence.FetchType.LAZY;
-import static javax.persistence.GenerationType.IDENTITY;
-import static javax.persistence.TemporalType.TIMESTAMP;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.entity.Changelog;
+import com.turbointernational.metadata.entity.User;
+import com.turbointernational.metadata.util.View;
 
 /**
  * Created by dmytro.trunykov@zorallabs.com on 1/20/17.
@@ -39,6 +50,8 @@ import static javax.persistence.TemporalType.TIMESTAMP;
 })
 @JsonInclude(ALWAYS)
 public class ChangelogSourceLink implements Serializable {
+
+    private static final long serialVersionUID = 1348077383114181089L;
 
     //<editor-fold defaultstate="collapsed" desc="Properties">
 

@@ -1,15 +1,27 @@
 package com.turbointernational.metadata.entity;
 
-import com.fasterxml.jackson.annotation.JsonView;
-import com.turbointernational.metadata.util.View;
-import flexjson.JSONDeserializer;
-import flexjson.JSONSerializer;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import javax.persistence.*;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+
+import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.util.View;
+
+import flexjson.JSONDeserializer;
+import flexjson.JSONSerializer;
 
 @Entity
 @Table(name = "turbo_type", uniqueConstraints = @UniqueConstraint(columnNames = {"name"}))
@@ -26,6 +38,8 @@ import javax.persistence.*;
         )
 })
 public class TurboType implements Comparable<TurboType>, Serializable {
+
+    private static final long serialVersionUID = 4173140550967854600L;
 
     //<editor-fold defaultstate="collapsed" desc="Properties">
     @Id

@@ -1,15 +1,17 @@
 package com.turbointernational.metadata.entity;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
+
+import java.io.Serializable;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.util.View;
 
-import java.io.Serializable;
-
-import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
-
 @JsonInclude(ALWAYS)
 public class BOMAncestor implements Serializable {
+
+    private static final long serialVersionUID = 3238846162909484849L;
 
     @JsonView(View.Summary.class)
     private final long partId;

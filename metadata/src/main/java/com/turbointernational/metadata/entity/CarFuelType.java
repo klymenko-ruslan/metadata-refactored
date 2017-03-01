@@ -1,24 +1,39 @@
 package com.turbointernational.metadata.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonView;
-import com.turbointernational.metadata.service.SearchableEntity;
-import com.turbointernational.metadata.service.SearchService;
-import com.turbointernational.metadata.util.View;
-import flexjson.JSONDeserializer;
-import flexjson.JSONSerializer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.FetchType.LAZY;
+import static javax.persistence.GenerationType.IDENTITY;
 
-import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import static javax.persistence.CascadeType.ALL;
-import static javax.persistence.FetchType.LAZY;
-import static javax.persistence.GenerationType.IDENTITY;
+import javax.persistence.Cacheable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.PostPersist;
+import javax.persistence.PostRemove;
+import javax.persistence.PostUpdate;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.service.SearchService;
+import com.turbointernational.metadata.service.SearchableEntity;
+import com.turbointernational.metadata.util.View;
+
+import flexjson.JSONDeserializer;
+import flexjson.JSONSerializer;
 
 @Cacheable
 @Entity
@@ -28,6 +43,8 @@ import static javax.persistence.GenerationType.IDENTITY;
         @NamedQuery(name = "findAllCarFuelTypeOrderedByName", query = "FROM CarFuelType ORDER BY name")
 })
 public class CarFuelType implements Serializable, SearchableEntity {
+
+    private static final long serialVersionUID = 3896990835195517839L;
 
     private final static Logger log = LoggerFactory.getLogger(CarFuelType.class);
 

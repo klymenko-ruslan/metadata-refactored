@@ -1,14 +1,16 @@
 package com.turbointernational.metadata.dao;
 
-import com.turbointernational.metadata.entity.Service;
-import com.turbointernational.metadata.web.dto.Page;
-import org.springframework.stereotype.Repository;
+import java.util.List;
 
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import java.util.List;
+
+import org.springframework.stereotype.Repository;
+
+import com.turbointernational.metadata.entity.Service;
+import com.turbointernational.metadata.web.dto.Page;
 
 /**
  * Created by dmytro.trunykov@zorallabs.com on 2017-02-15.
@@ -59,7 +61,7 @@ public class ServiceDao extends AbstractDao<Service> {
         Root<Service> countRoot = ccq.from(Service.class);
         ccq.select(cb.count(countRoot));
         long total = em.createQuery(ccq).getSingleResult();
-        return new Page(total, recs);
+        return new Page<>(total, recs);
     }
 
     public void setChangelogSourceRequired(Long serviceId, Boolean required) {

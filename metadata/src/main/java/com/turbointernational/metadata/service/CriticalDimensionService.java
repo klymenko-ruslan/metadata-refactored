@@ -1,18 +1,15 @@
 package com.turbointernational.metadata.service;
 
-import com.turbointernational.metadata.dao.CriticalDimensionDao;
-import com.turbointernational.metadata.dao.PartDao;
-import com.turbointernational.metadata.entity.CriticalDimension;
-import com.turbointernational.metadata.entity.CriticalDimensionEnum;
-import com.turbointernational.metadata.entity.CriticalDimensionEnumVal;
-import com.turbointernational.metadata.entity.PartType;
-import com.turbointernational.metadata.entity.part.Part;
-import flexjson.JSONContext;
-import flexjson.TransformerUtil;
-import flexjson.TypeContext;
-import flexjson.transformer.AbstractTransformer;
-import flexjson.transformer.Transformer;
-import flexjson.transformer.TypeTransformerMap;
+import static com.turbointernational.metadata.entity.CriticalDimension.DataTypeEnum.DECIMAL;
+import static com.turbointernational.metadata.entity.CriticalDimension.DataTypeEnum.TEXT;
+
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,11 +20,20 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
-import java.lang.reflect.Field;
-import java.util.*;
+import com.turbointernational.metadata.dao.CriticalDimensionDao;
+import com.turbointernational.metadata.dao.PartDao;
+import com.turbointernational.metadata.entity.CriticalDimension;
+import com.turbointernational.metadata.entity.CriticalDimensionEnum;
+import com.turbointernational.metadata.entity.CriticalDimensionEnumVal;
+import com.turbointernational.metadata.entity.PartType;
+import com.turbointernational.metadata.entity.part.Part;
 
-import static com.turbointernational.metadata.entity.CriticalDimension.DataTypeEnum.DECIMAL;
-import static com.turbointernational.metadata.entity.CriticalDimension.DataTypeEnum.TEXT;
+import flexjson.JSONContext;
+import flexjson.TransformerUtil;
+import flexjson.TypeContext;
+import flexjson.transformer.AbstractTransformer;
+import flexjson.transformer.Transformer;
+import flexjson.transformer.TypeTransformerMap;
 
 /**
  * Created by dmytro.trunykov@zorallabs.com on 06.04.16.
@@ -53,15 +59,19 @@ public class CriticalDimensionService {
     }
 
     /**
-     * Extract value of a critical dimension from a part instance and process it.
+     * Extract value of a critical dimension from a part instance and process
+     * it.
      *
-     * @param part              instance of a part
-     * @param cd                critical dimension descriptor
-     * @param extractorCallback callback to process value of the extracted critical dimensions
+     * @param part
+     *            instance of a part
+     * @param cd
+     *            critical dimension descriptor
+     * @param extractorCallback
+     *            callback to process value of the extracted critical dimensions
      */
     public static void extractValue(Part part, CriticalDimension cd, ValueExtractorCallback extractorCallback) {
         String fieldName = cd.getJsonName();
-        Class partClass = part.getClass();
+        Class<? extends Part> partClass = part.getClass();
         try {
             Field field = partClass.getDeclaredField(fieldName);
             boolean accessible = field.isAccessible();
@@ -163,8 +173,15 @@ public class CriticalDimensionService {
     }
 
     private synchronized void buildCriticalDimensionsCache() {
-        Map<Long, List<CriticalDimension>> cacheById = new HashMap<>(); // part type ID => List<CriticalDimension>
-        Map<String, List<CriticalDimension>> cacheByName = new HashMap<>(); // part type name => List<CriticalDimension>
+        Map<Long, List<CriticalDimension>> cacheById = new HashMap<>(); // part
+                                                                        // type
+                                                                        // ID =>
+                                                                        // List<CriticalDimension>
+        Map<String, List<CriticalDimension>> cacheByName = new HashMap<>(); // part
+                                                                            // type
+                                                                            // name
+                                                                            // =>
+                                                                            // List<CriticalDimension>
         // Load current values to the cache.
         for (CriticalDimension cd : criticalDimensionDao.findAll()) {
             criticalDimensionDao.getEntityManager().detach(cd);
@@ -294,14 +311,17 @@ class CriticalDimensionsValidator implements Validator {
                     // Check: not null.
                     if (!cd.isNullAllowed() && value == null) {
                         errors.rejectValue(fieldName, null, "The value is required.");
-                    } else if (value == null) { // Important: this check must be after check on null (if needed).
+                    } else if (value == null) { // Important: this check must be
+                                                // after check on null (if
+                                                // needed).
                         return;
                     } else if (cd.getDataType() == DECIMAL) {
                         Double decimal = (Double) value;
                         Double minVal = cd.getMinVal();
                         if (minVal != null && decimal < minVal) {
                             // We use range [-99.0..-100.0) as a NULL value.
-                            // So if the value is not in this range we assume it as invalid.
+                            // So if the value is not in this range we assume it
+                            // as invalid.
                             if (decimal > -99.0D || decimal <= -100.0D) {
                                 errors.rejectValue(fieldName, null, "The value lower than allowed: " + minVal);
                             }
@@ -314,8 +334,8 @@ class CriticalDimensionsValidator implements Validator {
                         String text = (String) value;
                         String regex = cd.getRegex();
                         if (text != null && regex != null && !text.matches(regex)) {
-                            errors.rejectValue(fieldName, null, "The string '" + text
-                                    + "' is not matched for regex '" + regex + "'.");
+                            errors.rejectValue(fieldName, null,
+                                    "The string '" + text + "' is not matched for regex '" + regex + "'.");
                         }
                     }
                 }
@@ -323,10 +343,10 @@ class CriticalDimensionsValidator implements Validator {
                 @Override
                 public void onError(Exception e) {
                     String message = "Internal error. Validation of the field '" + fieldName
-                            + "' failed for the part with ID="
-                            + part.getId() + ". Does JPA entity declares this field? Details: " + e.getMessage();
+                            + "' failed for the part with ID=" + part.getId()
+                            + ". Does JPA entity declares this field? Details: " + e.getMessage();
                     log.warn(message);
-                    //errors.rejectValue(fieldName, null, message);
+                    // errors.rejectValue(fieldName, null, message);
                 }
             });
         }

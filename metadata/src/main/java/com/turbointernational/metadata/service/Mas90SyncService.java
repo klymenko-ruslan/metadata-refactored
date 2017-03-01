@@ -1,15 +1,27 @@
 package com.turbointernational.metadata.service;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonView;
-import com.turbointernational.metadata.dao.Mas90SyncDao;
-import com.turbointernational.metadata.dao.PartDao;
-import com.turbointernational.metadata.dao.PartTypeDao;
-import com.turbointernational.metadata.entity.*;
-import com.turbointernational.metadata.entity.part.Part;
-import com.turbointernational.metadata.service.ChangelogService.RelatedPart;
-import com.turbointernational.metadata.util.View;
-import com.turbointernational.metadata.web.dto.Page;
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
+import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.MAS90SYNC;
+import static com.turbointernational.metadata.entity.ChangelogPart.Role.BOM_CHILD;
+import static com.turbointernational.metadata.entity.ChangelogPart.Role.BOM_PARENT;
+import static com.turbointernational.metadata.entity.ChangelogPart.Role.PART0;
+import static com.turbointernational.metadata.util.RegExpUtils.PTRN_MANUFACTURER_NUMBER;
+import static java.lang.Boolean.TRUE;
+
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.sql.DataSource;
+
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -25,20 +37,22 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import javax.annotation.PostConstruct;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.sql.DataSource;
-import java.sql.Timestamp;
-import java.util.*;
-
-import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
-import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.MAS90SYNC;
-import static com.turbointernational.metadata.entity.ChangelogPart.Role.BOM_CHILD;
-import static com.turbointernational.metadata.entity.ChangelogPart.Role.BOM_PARENT;
-import static com.turbointernational.metadata.entity.ChangelogPart.Role.PART0;
-import static com.turbointernational.metadata.util.RegExpUtils.PTRN_MANUFACTURER_NUMBER;
-import static java.lang.Boolean.TRUE;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.dao.Mas90SyncDao;
+import com.turbointernational.metadata.dao.PartDao;
+import com.turbointernational.metadata.dao.PartTypeDao;
+import com.turbointernational.metadata.entity.BOMItem;
+import com.turbointernational.metadata.entity.Manufacturer;
+import com.turbointernational.metadata.entity.Mas90Sync;
+import com.turbointernational.metadata.entity.Mas90SyncFailure;
+import com.turbointernational.metadata.entity.Mas90SyncSuccess;
+import com.turbointernational.metadata.entity.PartType;
+import com.turbointernational.metadata.entity.User;
+import com.turbointernational.metadata.entity.part.Part;
+import com.turbointernational.metadata.service.ChangelogService.RelatedPart;
+import com.turbointernational.metadata.util.View;
+import com.turbointernational.metadata.web.dto.Page;
 
 /**
  * Synchronization service between Mas90 and 'metadata' database.
@@ -75,11 +89,11 @@ public class Mas90SyncService {
     private ChangelogService changelogService;
 
     @Autowired
-    private Mas90SyncDao mas90SyncDao;      // local storage
+    private Mas90SyncDao mas90SyncDao; // local storage
 
     @Qualifier("dataSourceMas90")
     @Autowired
-    private DataSource dataSourceMas90;     // connections to MS-SQL (MAS90)
+    private DataSource dataSourceMas90; // connections to MS-SQL (MAS90)
 
     private JdbcTemplate mas90db;
 
@@ -122,47 +136,47 @@ public class Mas90SyncService {
         // It is important (see JS logic).
         private final static boolean DEF_PARTSUPDATE_FINISHED = TRUE;
 
-        @JsonView({View.Summary.class})
+        @JsonView({ View.Summary.class })
         @JsonInclude(ALWAYS)
         private Long startedOn;
 
-        @JsonView({View.Summary.class})
+        @JsonView({ View.Summary.class })
         @JsonInclude(ALWAYS)
         private Long userId;
 
-        @JsonView({View.Summary.class})
+        @JsonView({ View.Summary.class })
         @JsonInclude(ALWAYS)
         private String userName;
 
-        @JsonView({View.Summary.class})
+        @JsonView({ View.Summary.class })
         @JsonInclude(ALWAYS)
         private long partsUpdateTotalSteps;
 
-        @JsonView({View.Summary.class})
+        @JsonView({ View.Summary.class })
         @JsonInclude(ALWAYS)
         private long partsUpdateCurrentStep;
 
-        @JsonView({View.Summary.class})
+        @JsonView({ View.Summary.class })
         @JsonInclude(ALWAYS)
         private long partsUpdateInserts;
 
-        @JsonView({View.Summary.class})
+        @JsonView({ View.Summary.class })
         @JsonInclude(ALWAYS)
         private long partsUpdateUpdates;
 
-        @JsonView({View.Summary.class})
+        @JsonView({ View.Summary.class })
         @JsonInclude(ALWAYS)
         private long partsUpdateSkipped;
 
-        @JsonView({View.Summary.class})
+        @JsonView({ View.Summary.class })
         @JsonInclude(ALWAYS)
         private boolean finished;
 
-        @JsonView({View.Summary.class})
+        @JsonView({ View.Summary.class })
         @JsonInclude(ALWAYS)
         private final List<String> errors = new ArrayList<>();
 
-        @JsonView({View.Summary.class})
+        @JsonView({ View.Summary.class })
         @JsonInclude(ALWAYS)
         private final List<String> modifications = new ArrayList<>();
 
@@ -295,19 +309,11 @@ public class Mas90SyncService {
 
         @Override
         public String toString() {
-            return "SyncProcessStatus{" +
-                    "startedOn=" + startedOn +
-                    ", userId=" + userId +
-                    ", userName='" + userName + '\'' +
-                    ", partsUpdateTotalSteps=" + partsUpdateTotalSteps +
-                    ", partsUpdateCurrentStep=" + partsUpdateCurrentStep +
-                    ", partsUpdateInserts=" + partsUpdateInserts +
-                    ", partsUpdateUpdates=" + partsUpdateUpdates +
-                    ", partsUpdateSkipped=" + partsUpdateSkipped +
-                    ", finished=" + finished +
-                    ", modifications=" + modifications +
-                    ", errors=" + errors +
-                    '}';
+            return "SyncProcessStatus{" + "startedOn=" + startedOn + ", userId=" + userId + ", userName='" + userName
+                    + '\'' + ", partsUpdateTotalSteps=" + partsUpdateTotalSteps + ", partsUpdateCurrentStep="
+                    + partsUpdateCurrentStep + ", partsUpdateInserts=" + partsUpdateInserts + ", partsUpdateUpdates="
+                    + partsUpdateUpdates + ", partsUpdateSkipped=" + partsUpdateSkipped + ", finished=" + finished
+                    + ", modifications=" + modifications + ", errors=" + errors + '}';
         }
 
     }
@@ -319,7 +325,6 @@ public class Mas90SyncService {
         private final User user;
 
         private final Mas90Sync record;
-
 
         Mas90Synchronizer(User user, Mas90Sync record) {
             this.user = user;
@@ -333,10 +338,15 @@ public class Mas90SyncService {
             String countQuery = mas90Database.getCountQuery();
             long numItems = mas90db.queryForObject(countQuery, Long.class);
             synchronized (syncProcessStatus) {
-                syncProcessStatus.setPartsUpdateTotalSteps(numItems + 1); // +1 to load part_types
+                syncProcessStatus.setPartsUpdateTotalSteps(numItems + 1); // +1
+                                                                          // to
+                                                                          // load
+                                                                          // part_types
             }
-            List<String> warnings = new ArrayList<>(10);
-            Map<String, PartType> mas90toLocal = loadPartTypesMap(); // part type value => PartType
+            Map<String, PartType> mas90toLocal = loadPartTypesMap(); // part
+                                                                     // type
+                                                                     // value =>
+                                                                     // PartType
             synchronized (syncProcessStatus) {
                 syncProcessStatus.incPartsUpdateCurrentStep();
             }
@@ -344,19 +354,24 @@ public class Mas90SyncService {
             try {
                 Set<Part> toBeReprocessed = new HashSet<>();
                 String itemsQuery = mas90Database.getItemsQuery();
-                mas90db.query(itemsQuery, rs -> {   // we may skip transaction as we use MAS90 DB to query only
-                    String itemcode = rs.getString(1);      // e.g. 6-A-0291
-                    String itemcodedesc = rs.getString(2);  // e.g. HEAT SHIELD, T3/4, WHEEL
-                    String productline = rs.getString(3);   // e.g. HS
-                    String producttype = rs.getString(4);   // e.g. F
+                mas90db.query(itemsQuery, rs -> { // we may skip transaction as
+                                                  // we use MAS90 DB to query
+                                                  // only
+                    String itemcode = rs.getString(1); // e.g. 6-A-0291
+                    String itemcodedesc = rs.getString(2); // e.g. HEAT SHIELD,
+                                                           // T3/4, WHEEL
+                    String productline = rs.getString(3); // e.g. HS
+                    String producttype = rs.getString(4); // e.g. F
                     Part processedPart = null;
                     try {
                         PartType pt = mas90toLocal.get(productline);
                         if (pt != null) {
                             Long partTypeId = pt.getId();
-                            processedPart = processPart(itemcode, itemcodedesc, producttype, partTypeId); // separate transaction
+                            processedPart = processPart(itemcode, itemcodedesc, producttype, partTypeId); // separate
+                                                                                                          // transaction
                             if (processedPart != null) { // null -- failure
-                                Boolean updated = processBOM(processedPart, toBeReprocessed, true); // separate transaction
+                                Boolean updated = processBOM(processedPart, toBeReprocessed, true); // separate
+                                                                                                    // transaction
                                 if (updated == TRUE) {
                                     synchronized (syncProcessStatus) {
                                         syncProcessStatus.incPartsUpdateUpdates();
@@ -366,8 +381,8 @@ public class Mas90SyncService {
                             }
                         } else {
                             synchronized (syncProcessStatus) {
-                                registerError(String.format("Part '%1$s' in MAS90 has " +
-                                                "unknown part type (product line): '%2$s'.",
+                                registerError(String.format(
+                                        "Part '%1$s' in MAS90 has " + "unknown part type (product line): '%2$s'.",
                                         itemcode, productline));
                             }
                         }
@@ -379,8 +394,8 @@ public class Mas90SyncService {
                         if (processedPart == null) {
                             errMsg = String.format("Failed processing at the part: '%1$s'", itemcode);
                         } else {
-                            errMsg = String.format("Failed processing at the part: [%1$d] %2$s",
-                                    processedPart.getId(), processedPart.getManufacturerPartNumber());
+                            errMsg = String.format("Failed processing at the part: [%1$d] %2$s", processedPart.getId(),
+                                    processedPart.getManufacturerPartNumber());
                         }
                         synchronized (syncProcessStatus) {
                             registerError(errMsg);
@@ -400,9 +415,12 @@ public class Mas90SyncService {
                         }
                     });
                     if (!toBeReprocessed2.isEmpty()) {
-                        // Because MAS90 is external system, so data there can be changed
-                        // while this process is running. We can't fix this in any way,
-                        // so here we just write notification that this case happened.
+                        // Because MAS90 is external system, so data there can
+                        // be changed
+                        // while this process is running. We can't fix this in
+                        // any way,
+                        // so here we just write notification that this case
+                        // happened.
                         // This case is actually not critical.
                         log.warn("In the second iteration we still found absent parts.");
                         toBeReprocessed2.forEach(p -> log.info("Absent part: {}", p.getManufacturerPartNumber()));
@@ -418,12 +436,14 @@ public class Mas90SyncService {
                 status = Mas90Sync.Status.FAILED;
             }
             // Save to a history table a result of this synchronization.
-            final Mas90Sync.Status status2 = status; // helper final variable in order to be accessible from lambda below
+            final Mas90Sync.Status status2 = status; // helper final variable in
+                                                     // order to be accessible
+                                                     // from lambda below
             TransactionTemplate transaction2 = new TransactionTemplate(txManager);
-            transaction2.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW); // new transaction
+            transaction2.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW); // new
+                                                                                                 // transaction
             transaction2.execute((TransactionCallback<Void>) transactionStatus -> {
                 long total, updated, inserted, skipped;
-                List<String> errors, modifications;
                 synchronized (syncProcessStatus) {
                     total = syncProcessStatus.getPartsUpdateTotalSteps();
                     updated = syncProcessStatus.getPartsUpdateUpdates();
@@ -437,7 +457,7 @@ public class Mas90SyncService {
                 record.setUpdated(updated);
                 record.setInserted(inserted);
                 record.setSkipped(skipped);
-                for(String error : allErrors) {
+                for (String error : allErrors) {
                     Mas90SyncFailure m90sf = new Mas90SyncFailure();
                     m90sf.setLog(error);
                     m90sf.setMas90Sync(record);
@@ -464,9 +484,11 @@ public class Mas90SyncService {
         }
 
         /**
-         * MAS90 use different part type codes than in the local database -- 'metadata'.
+         * MAS90 use different part type codes than in the local database --
+         * 'metadata'.
          *
-         * This method makes mapping between product type codes in MAS90 and 'metadata'.
+         * This method makes mapping between product type codes in MAS90 and
+         * 'metadata'.
          *
          * @return map ProductLineCode => PartType
          */
@@ -480,8 +502,7 @@ public class Mas90SyncService {
                     retVal.put(productLineCode, pt);
                     log.debug("Mapping: {} => {}", productLineCode, pt.getId());
                 } else {
-                    String msg = String.format("Part type not found for productLineCode: '%1$s'.",
-                            productLineCode);
+                    String msg = String.format("Part type not found for productLineCode: '%1$s'.", productLineCode);
                     log.warn(msg);
                     synchronized (syncProcessStatus) {
                         registerError(msg);
@@ -494,10 +515,10 @@ public class Mas90SyncService {
         /**
          * Insert or update a part.
          * <p>
-         * This operation is made in a separate transaction.
-         * We need a separate transaction to update/insert the Part
-         * because different types of exception could arise during this operation
-         * and we don't wont to rollback a transaction with-in the main loop.
+         * This operation is made in a separate transaction. We need a separate
+         * transaction to update/insert the Part because different types of
+         * exception could arise during this operation and we don't wont to
+         * rollback a transaction with-in the main loop.
          *
          * @param itemcode
          * @param itemcodedesc
@@ -508,7 +529,8 @@ public class Mas90SyncService {
         private Part processPart(String itemcode, String itemcodedesc, String producttype, Long partTypeId) {
             Boolean inactive = "D".equals(producttype);
             TransactionTemplate modifyTransaction = new TransactionTemplate(txManager);
-            modifyTransaction.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW); // new transaction
+            modifyTransaction.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW); // new
+                                                                                                      // transaction
             Part processedPart = modifyTransaction.execute(ts -> {
                 Long partId = null;
                 Part part = partDao.findByPartNumberAndManufacturer(TURBO_INTERNATIONAL_MANUFACTURER_ID, itemcode);
@@ -516,7 +538,8 @@ public class Mas90SyncService {
                     if (part == null) {
                         part = insertPart(itemcode, itemcodedesc, partTypeId, inactive);
                         partId = part.getId();
-                        String logMsg = String.format("Inserted a new part: [%d] %s", part.getId(), part.getManufacturerPartNumber());
+                        String logMsg = String.format("Inserted a new part: [%d] %s", part.getId(),
+                                part.getManufacturerPartNumber());
                         log.info(logMsg);
                         List<RelatedPart> relatedParts = new ArrayList<>(1);
                         relatedParts.add(new RelatedPart(partId, PART0));
@@ -535,9 +558,8 @@ public class Mas90SyncService {
                                 }
                             }
                         } else {
-                            throw new IllegalArgumentException("Updated part has different part type " +
-                                    "in MAS90 (" + partTypeId + ") and in 'metadata' (" +
-                                    part.getPartType().getId() + ").");
+                            throw new IllegalArgumentException("Updated part has different part type " + "in MAS90 ("
+                                    + partTypeId + ") and in 'metadata' (" + part.getPartType().getId() + ").");
                         }
                     }
                 } catch (Exception e) {
@@ -552,7 +574,7 @@ public class Mas90SyncService {
                         registerError(err);
                         syncProcessStatus.incPartsUpdateSkipped();
                     }
-                    log.error(err/*, e*/);
+                    log.error(err/* , e */);
                     part = null;
                     ts.setRollbackOnly();
                 }
@@ -565,7 +587,8 @@ public class Mas90SyncService {
             Part p = Part.newInstance(partTypeId);
             PartType partType = entityManager.getReference(PartType.class, partTypeId);
             p.setManufacturerPartNumber(itemcode);
-            Manufacturer manufacturer = entityManager.getReference(Manufacturer.class, TURBO_INTERNATIONAL_MANUFACTURER_ID);
+            Manufacturer manufacturer = entityManager.getReference(Manufacturer.class,
+                    TURBO_INTERNATIONAL_MANUFACTURER_ID);
             p.setManufacturer(manufacturer);
             p.setDescription(itemcodedesc);
             p.setPartType(partType);
@@ -594,8 +617,8 @@ public class Mas90SyncService {
                 p.setInactive(inactive);
             }
             if (dirty) {
-                String s = String.format("Updated the part: [%d] %s ", p.getId(), p.getManufacturerPartNumber()) +
-                        modified.toString();
+                String s = String.format("Updated the part: [%d] %s ", p.getId(), p.getManufacturerPartNumber())
+                        + modified.toString();
                 log.info(s);
                 List<RelatedPart> relatedParts = new ArrayList<>(1);
                 relatedParts.add(new RelatedPart(p.getId(), PART0));
@@ -621,17 +644,16 @@ public class Mas90SyncService {
             }
 
             TransactionTemplate tt = new TransactionTemplate(txManager);
-            tt.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW); // new transaction
+            tt.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW); // new
+                                                                                       // transaction
             Boolean updated = tt.execute(ts -> {
                 String bomsQuery = mas90Database.getBomsQuery();
-                List<Mas90Bom> mas90boms = mas90db.query(bomsQuery,
-                        ps -> ps.setString(1, manufacturerPartNumber),
+                List<Mas90Bom> mas90boms = mas90db.query(bomsQuery, ps -> ps.setString(1, manufacturerPartNumber),
                         (rs, rowNum) -> {
                             String componentItemCode = rs.getString(1);
                             int quantityPerBill = rs.getInt(2);
                             return new Mas90Bom(componentItemCode, quantityPerBill);
-                        }
-                );
+                        });
                 // Load part in this transaction (EntityManager context).
                 Part part = entityManager.find(Part.class, partId);
                 if (part == null) {
@@ -640,8 +662,8 @@ public class Mas90SyncService {
                 Manufacturer manufacturer = part.getManufacturer();
                 Long manufacturerId = manufacturer.getId();
                 if (manufacturerId != TURBO_INTERNATIONAL_MANUFACTURER_ID) {
-                    throw new AssertionError(String.format("Part (id=%d) from unexpected manufacturer (id=%d).",
-                            partId, manufacturerId));
+                    throw new AssertionError(String.format("Part (id=%d) from unexpected manufacturer (id=%d).", partId,
+                            manufacturerId));
                 }
                 Set<BOMItem> boms = part.getBom();
 
@@ -650,10 +672,10 @@ public class Mas90SyncService {
 
                 // Preparation.
                 // Build index: itemcode -> Mas90Bom.
-                Map<String, Mas90Bom> idxMas90Boms = new HashMap();
+                Map<String, Mas90Bom> idxMas90Boms = new HashMap<>();
                 mas90boms.forEach(mb -> idxMas90Boms.put(mb.childManufacturerCode, mb));
                 // Build index: child.manufacturerPartNumber -> BomItem.
-                Map<String, BOMItem> idxBoms = new HashMap();
+                Map<String, BOMItem> idxBoms = new HashMap<>();
                 boms.forEach(b -> idxBoms.put(b.getChild().getManufacturerPartNumber(), b));
                 // Removal and update.
                 Iterator<BOMItem> rmIter = boms.iterator();
@@ -665,17 +687,19 @@ public class Mas90SyncService {
                         Mas90Bom mas90Bom = idxMas90Boms.get(chMnPrtNum);
                         String modification = null;
                         if (mas90Bom == null) {
-                            modification = String.format("Part [%d] %s modified. BOM [%d] (child: [%d] %s) " +
-                                            "is removed.", partId, manufacturerPartNumber, bom.getId(), child.getId(),
-                                    chMnPrtNum);
+                            modification = String.format(
+                                    "Part [%d] %s modified. BOM [%d] (child: [%d] %s) " + "is removed.", partId,
+                                    manufacturerPartNumber, bom.getId(), child.getId(), chMnPrtNum);
                             entityManager.remove(bom);
                             rmIter.remove();
                             dirty = true;
                         } else {
                             if (bom.getQuantity() != mas90Bom.quantity) {
-                                modification = String.format("Part [%d] %s modified. BOM [%d] (child: [%d] %s) " +
-                                                "updated. Quantity: %d => %d", partId, manufacturerPartNumber,
-                                        bom.getId(), child.getId(), chMnPrtNum, bom.getQuantity(), mas90Bom.quantity);
+                                modification = String.format(
+                                        "Part [%d] %s modified. BOM [%d] (child: [%d] %s) "
+                                                + "updated. Quantity: %d => %d",
+                                        partId, manufacturerPartNumber, bom.getId(), child.getId(), chMnPrtNum,
+                                        bom.getQuantity(), mas90Bom.quantity);
                                 bom.setQuantity(mas90Bom.quantity);
                                 entityManager.merge(bom);
                                 dirty = true;
@@ -692,8 +716,10 @@ public class Mas90SyncService {
                             }
                         }
                     } else {
-                        log.debug("Modification of the BOM (ID: {}) skipped as child part belongs " +
-                                "to foreign manufacturer (ID: {}).", bom.getId(), child.getManufacturer().getId());
+                        log.debug(
+                                "Modification of the BOM (ID: {}) skipped as child part belongs "
+                                        + "to foreign manufacturer (ID: {}).",
+                                bom.getId(), child.getManufacturer().getId());
                     }
                 }
                 // Insertion.
@@ -702,28 +728,30 @@ public class Mas90SyncService {
                     Mas90Bom mb = addIter.next();
                     if (!idxBoms.containsKey(mb.childManufacturerCode)) {
                         if (!PTRN_MANUFACTURER_NUMBER.matcher(mb.childManufacturerCode).matches()) {
-                            log.info("Skip this part to add as child BOM because of unsuitable " +
-                                            "manufacturer number: {}",
-                                    mb.childManufacturerCode);
+                            log.info("Skip this part to add as child BOM because of unsuitable "
+                                    + "manufacturer number: {}", mb.childManufacturerCode);
                             continue;
                         }
                         BOMItem newBom = new BOMItem();
                         newBom.setParent(part);
                         Part child = partDao.findByPartNumberAndManufacturer(TURBO_INTERNATIONAL_MANUFACTURER_ID,
                                 mb.childManufacturerCode);
-                        // In theory it is possible that child is not imported yet (because it will be processed
-                        // in the main loop later). In this case we add 'thePart' to a list 'toBeReprocessed'.
-                        // Parts in that list will be processed again when the main loop finished.
+                        // In theory it is possible that child is not imported
+                        // yet (because it will be processed
+                        // in the main loop later). In this case we add
+                        // 'thePart' to a list 'toBeReprocessed'.
+                        // Parts in that list will be processed again when the
+                        // main loop finished.
                         if (child != null) {
                             newBom.setChild(child);
                             newBom.setQuantity(mb.quantity);
                             boms.add(newBom);
                             entityManager.persist(newBom);
                             dirty = true;
-                            String modification = String.format("Part [%d] %s modified. Added BOM [%d] " +
-                                            "(child: [%d] %s), quantity=%d.", partId, manufacturerPartNumber,
-                                    newBom.getId(), child.getId(), child.getManufacturerPartNumber(),
-                                    newBom.getQuantity());
+                            String modification = String.format(
+                                    "Part [%d] %s modified. Added BOM [%d] " + "(child: [%d] %s), quantity=%d.", partId,
+                                    manufacturerPartNumber, newBom.getId(), child.getId(),
+                                    child.getManufacturerPartNumber(), newBom.getQuantity());
                             log.info(modification);
                             List<RelatedPart> relatedParts = new ArrayList<>(2);
                             relatedParts.add(new RelatedPart(newBom.getParent().getId(), BOM_PARENT));
@@ -733,8 +761,9 @@ public class Mas90SyncService {
                                 registerModification(modification);
                             }
                         } else {
-                            log.info("BOM's child not found (manufacture code: {}) for the part (ID: {}). " +
-                                            "Added to a list for reprocessing when all parts will be imported.",
+                            log.info(
+                                    "BOM's child not found (manufacture code: {}) for the part (ID: {}). "
+                                            + "Added to a list for reprocessing when all parts will be imported.",
                                     mb.childManufacturerCode, partId);
                             toBeReprocessed.add(thePart);
                             if (adjustCounter) {
@@ -750,7 +779,8 @@ public class Mas90SyncService {
                 }
                 return dirty;
             });
-            //bomService.rebuildBomDescendancyForPart(partId, true); // Ticket #807.
+            // bomService.rebuildBomDescendancyForPart(partId, true); // Ticket
+            // #807.
             return updated;
         }
 
@@ -767,7 +797,7 @@ public class Mas90SyncService {
 
     } // Mas90Synchronizer
 
-    public Page history(int startPosition, int maxResults) {
+    public Page<Mas90Sync> history(int startPosition, int maxResults) {
         return mas90SyncDao.findHistory(startPosition, maxResults);
     }
 
@@ -790,8 +820,8 @@ public class Mas90SyncService {
         Mas90Sync record = null;
         synchronized (syncProcessStatus) {
             if (!syncProcessStatus.isFinished()) {
-                throw new IllegalStateException("New synchronization process can't be started because " +
-                        "exists other process.");
+                throw new IllegalStateException(
+                        "New synchronization process can't be started because " + "exists other process.");
             }
             long now = System.currentTimeMillis();
             record = new Mas90Sync();

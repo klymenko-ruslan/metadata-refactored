@@ -1,15 +1,17 @@
 package com.turbointernational.metadata.dao;
 
-import com.turbointernational.metadata.entity.AuthProvider;
-import com.turbointernational.metadata.entity.AuthProviderLdap;
-import com.turbointernational.metadata.web.dto.Page;
-import org.springframework.stereotype.Repository;
+import java.util.List;
 
 import javax.persistence.PersistenceException;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import java.util.List;
+
+import org.springframework.stereotype.Repository;
+
+import com.turbointernational.metadata.entity.AuthProvider;
+import com.turbointernational.metadata.entity.AuthProviderLdap;
+import com.turbointernational.metadata.web.dto.Page;
 
 /**
  * Created by trunikov on 21.03.16.
@@ -21,7 +23,7 @@ public class AuthProviderDao extends AbstractDao<AuthProvider> {
         super(AuthProvider.class);
     }
 
-    public Page getAllAuthProviders(String sortProperty, String sortOrder, int offset, int limit) {
+    public Page<AuthProviderLdap> getAllAuthProviders(String sortProperty, String sortOrder, int offset, int limit) {
         CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
         // Page.
         CriteriaQuery<AuthProviderLdap> recsCriteriaQuery = criteriaBuilder.createQuery(AuthProviderLdap.class);
@@ -43,7 +45,7 @@ public class AuthProviderDao extends AbstractDao<AuthProvider> {
         Root<AuthProvider> countRoot = countCriteriaQuery.from(AuthProvider.class);
         countCriteriaQuery.select(criteriaBuilder.count(countRoot));
         long total = em.createQuery(countCriteriaQuery).getSingleResult();
-        return new Page(total, recs);
+        return new Page<>(total, recs);
     }
 
     public AuthProviderLdap findAuthProviderLdapByName(String name) {

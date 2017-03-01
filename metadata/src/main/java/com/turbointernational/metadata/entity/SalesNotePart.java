@@ -1,18 +1,34 @@
 package com.turbointernational.metadata.entity;
 
-import com.fasterxml.jackson.annotation.JsonView;
-import com.turbointernational.metadata.service.SearchableEntity;
-import com.turbointernational.metadata.entity.part.Part;
-import com.turbointernational.metadata.service.SearchService;
-import com.turbointernational.metadata.util.View;
-import flexjson.JSONSerializer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+
+import javax.persistence.AssociationOverride;
+import javax.persistence.AssociationOverrides;
+import javax.persistence.Cacheable;
+import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.persistence.PostPersist;
+import javax.persistence.PostRemove;
+import javax.persistence.PostUpdate;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.entity.part.Part;
+import com.turbointernational.metadata.service.SearchService;
+import com.turbointernational.metadata.service.SearchableEntity;
+import com.turbointernational.metadata.util.View;
+
+import flexjson.JSONSerializer;
 
 /**
  * @author jrodriguez
@@ -26,6 +42,8 @@ import java.util.List;
         @AssociationOverride(name = "pk.part",
                 joinColumns = @JoinColumn(name = "part_id"))})
 public class SalesNotePart implements Serializable, SearchableEntity {
+
+    private static final long serialVersionUID = 6019249750280384791L;
 
     private final static Logger log = LoggerFactory.getLogger(SalesNotePart.class);
 

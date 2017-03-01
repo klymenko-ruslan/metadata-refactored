@@ -1,8 +1,6 @@
 package com.turbointernational.metadata.dao;
 
-import com.turbointernational.metadata.entity.chlogsrc.SourceName;
-import com.turbointernational.metadata.web.dto.Page;
-import org.springframework.stereotype.Repository;
+import java.util.List;
 
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
@@ -10,7 +8,11 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.From;
 import javax.persistence.criteria.Root;
-import java.util.List;
+
+import org.springframework.stereotype.Repository;
+
+import com.turbointernational.metadata.entity.chlogsrc.SourceName;
+import com.turbointernational.metadata.web.dto.Page;
 
 /**
  * Created by dmytro.trunykov@zorallabs.com on 2017-01-27.
@@ -24,8 +26,7 @@ public class SourceNameDao extends AbstractDao<SourceName> {
 
     public SourceName findChangelogSourceNameByName(String name) {
         try {
-            return em.createNamedQuery("findChangelogSourceNameByName", SourceName.class)
-                    .setParameter("name", name)
+            return em.createNamedQuery("findChangelogSourceNameByName", SourceName.class).setParameter("name", name)
                     .getSingleResult();
         } catch (NoResultException e) {
             return null;
@@ -44,7 +45,7 @@ public class SourceNameDao extends AbstractDao<SourceName> {
             if (sortProperty == null) {
                 throw new NullPointerException("Parameter 'sortOrder' can't be null.");
             }
-            From f = root;
+            From<?, ?> f = root;
             if (sortOrder.equalsIgnoreCase("asc")) {
                 ecq.orderBy(cb.asc(f.get(sortProperty)));
             } else if (sortOrder.equalsIgnoreCase("desc")) {
@@ -65,7 +66,7 @@ public class SourceNameDao extends AbstractDao<SourceName> {
         Root<SourceName> sourcenameCountRoot = ccq.from(SourceName.class);
         ccq.select(cb.count(sourcenameCountRoot));
         long total = em.createQuery(ccq).getSingleResult();
-        return new Page(total, recs);
+        return new Page<>(total, recs);
     }
 
     public SourceName create(String name) {

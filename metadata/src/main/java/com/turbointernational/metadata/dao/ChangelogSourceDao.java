@@ -1,15 +1,18 @@
 package com.turbointernational.metadata.dao;
 
-import com.turbointernational.metadata.entity.chlogsrc.ChangelogSource;
-import com.turbointernational.metadata.entity.chlogsrc.ChangelogSourceLink;
-import com.turbointernational.metadata.web.dto.Page;
-import org.springframework.stereotype.Repository;
-
-import javax.persistence.NoResultException;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
+import org.springframework.stereotype.Repository;
+
+import com.turbointernational.metadata.entity.chlogsrc.ChangelogSource;
+import com.turbointernational.metadata.web.dto.Page;
 
 /**
  * Created by dimytro.trunykov@zorallabs.com on 2017-01-30.
@@ -62,7 +65,7 @@ public class ChangelogSourceDao extends AbstractDao<ChangelogSource> {
         ccq.select(cb.count(countRoot));
         ccq.where(arrPredicates);
         long total = em.createQuery(ccq).getSingleResult();
-        return new Page(total, recs);
+        return new Page<>(total, recs);
     }
 
 }

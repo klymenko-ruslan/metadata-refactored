@@ -1,27 +1,42 @@
 package com.turbointernational.metadata.entity;
 
-import com.turbointernational.metadata.service.SearchableEntity;
-import com.turbointernational.metadata.entity.part.TurboCarModelEngineYear;
-import com.turbointernational.metadata.service.SearchService;
-import flexjson.JSONDeserializer;
-import flexjson.JSONSerializer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.FetchType.LAZY;
+import static javax.persistence.GenerationType.IDENTITY;
 
-import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import static javax.persistence.CascadeType.ALL;
-import static javax.persistence.FetchType.LAZY;
-import static javax.persistence.GenerationType.IDENTITY;
+import javax.persistence.Cacheable;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.PostPersist;
+import javax.persistence.PostRemove;
+import javax.persistence.PostUpdate;
+import javax.persistence.Table;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.turbointernational.metadata.entity.part.TurboCarModelEngineYear;
+import com.turbointernational.metadata.service.SearchService;
+import com.turbointernational.metadata.service.SearchableEntity;
+
+import flexjson.JSONDeserializer;
+import flexjson.JSONSerializer;
 
 @Cacheable
 @Entity
 @Table(name="car_model_engine_year")
 public class CarModelEngineYear implements Serializable, SearchableEntity {
+
+    private static final long serialVersionUID = -874058198646973364L;
 
     private final static Logger log = LoggerFactory.getLogger(CarModelEngineYear.class);
 

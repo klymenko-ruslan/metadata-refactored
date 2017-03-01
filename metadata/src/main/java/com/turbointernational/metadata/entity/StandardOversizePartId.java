@@ -1,13 +1,14 @@
 package com.turbointernational.metadata.entity;
 
-import com.fasterxml.jackson.annotation.JsonView;
-import com.turbointernational.metadata.entity.part.Part;
-import com.turbointernational.metadata.util.View;
+import java.io.Serializable;
 
 import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import java.io.Serializable;
+
+import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.entity.part.Part;
+import com.turbointernational.metadata.util.View;
 
 /**
  * Created by dmytro.trunykov@zorallabs.com on 2017-02-13.
@@ -16,6 +17,8 @@ import java.io.Serializable;
 public class StandardOversizePartId implements Serializable {
 
     //<editor-fold defaultstate="collapsed" desc="Properties">
+
+    private static final long serialVersionUID = 3905359509087475623L;
 
     @ManyToOne
     @JoinColumn(name = "standard_part_id", nullable = false)

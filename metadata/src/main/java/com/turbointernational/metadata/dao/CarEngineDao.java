@@ -1,13 +1,19 @@
 package com.turbointernational.metadata.dao;
 
-import com.turbointernational.metadata.entity.CarEngine;
-import org.springframework.stereotype.Repository;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.*;
-import java.util.List;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
+import org.springframework.stereotype.Repository;
+
+import com.turbointernational.metadata.entity.CarEngine;
 
 /**
  * Created by trunikov on 12/9/15.
@@ -20,16 +26,17 @@ public class CarEngineDao extends AbstractDao<CarEngine> {
 
     public boolean exists(String engineSize, long carMakeId) {
         EntityManager em = getEntityManager();
-        Query q = em.createQuery("FROM CarEngine WHERE engineSize =:engineSize AND fuelType.id=:id");
+        Query q = em.createQuery("FROM CarEngine WHERE engineSize =:engineSize AND fuelType.id=:id", CarEngine.class);
         q.setParameter("engineSize", engineSize);
         q.setParameter("id", carMakeId);
         q.setMaxResults(1);
-        List r = q.getResultList();
+        List<?> r = q.getResultList();
         return !r.isEmpty();
     }
 
+    @SuppressWarnings("unchecked")
     public List<CarEngine> findAllOrderedByName() {
-        Query query = em.createNamedQuery("findAllCarEngineOrderedByName");
+        Query query = em.createNamedQuery("findAllCarEngineOrderedByName", CarEngine.class);
         return query.getResultList();
     }
 
@@ -60,4 +67,3 @@ public class CarEngineDao extends AbstractDao<CarEngine> {
     }
 
 }
-

@@ -1,15 +1,20 @@
 package com.turbointernational.metadata.entity.part.types;
 
+import static javax.persistence.FetchType.LAZY;
+
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.Table;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.entity.CriticalDimensionEnumVal;
 import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.util.View;
-
-import javax.persistence.*;
-
-import static javax.persistence.FetchType.LAZY;
-
 
 /**
  * Created by dmytro.trunykov@zorallabs.com on 2016-08-01 17:06:08.756806.
@@ -20,7 +25,10 @@ import static javax.persistence.FetchType.LAZY;
 @PrimaryKeyJoinColumn(name = "part_id")
 public class Backplate extends Part {
 
-    //<editor-fold defaultstate="collapsed" desc="Properties: critical dimensions">
+    private static final long serialVersionUID = 3513632776450780354L;
+
+    // <editor-fold defaultstate="collapsed" desc="Properties: critical
+    // dimensions">
 
     @JsonView(View.Summary.class)
     @JsonProperty("dynCs")
@@ -166,9 +174,10 @@ public class Backplate extends Part {
     @Column(name = "diagram")
     private Integer diagram;
 
-    //</editor-fold>
+    // </editor-fold>
 
-    //<editor-fold defaultstate="collapsed" desc="Getters and setters: critical dimensions">
+    // <editor-fold defaultstate="collapsed" desc="Getters and setters: critical
+    // dimensions">
 
     public CriticalDimensionEnumVal getDynCs() {
         return dynCs;
@@ -378,10 +387,12 @@ public class Backplate extends Part {
         this.matL = matL;
     }
 
+    @Override
     public Double getWeight() {
         return weight;
     }
 
+    @Override
     public void setWeight(Double weight) {
         this.weight = weight;
     }
@@ -394,6 +405,6 @@ public class Backplate extends Part {
         this.diagram = diagram;
     }
 
-    //</editor-fold>
+    // </editor-fold>
 
 }

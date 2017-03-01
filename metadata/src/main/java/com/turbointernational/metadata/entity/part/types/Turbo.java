@@ -1,7 +1,25 @@
 package com.turbointernational.metadata.entity.part.types;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
+import static javax.persistence.FetchType.LAZY;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.Application;
 import com.turbointernational.metadata.dao.TurboCarModelEngineYearDao;
@@ -11,19 +29,8 @@ import com.turbointernational.metadata.entity.CriticalDimension;
 import com.turbointernational.metadata.entity.TurboModel;
 import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.util.View;
+
 import flexjson.JSONSerializer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.persistence.*;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
-import static javax.persistence.FetchType.LAZY;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-
 
 /**
  * Created by dmytro.trunykov@zorallabs.com on 2016-08-01 17:06:08.756706.
@@ -35,23 +42,25 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 @JsonInclude(ALWAYS)
 public class Turbo extends Part {
 
+    private static final long serialVersionUID = -3307256396863250119L;
+
     private final static Logger log = LoggerFactory.getLogger(Turbo.class);
 
-    //<editor-fold defaultstate="collapsed" desc="Properties: members">
+    // <editor-fold defaultstate="collapsed" desc="Properties: members">
 
     @JsonView(View.Detail.class)
     @OneToOne(fetch = LAZY)
-    @JoinColumn(name="turbo_model_id")
+    @JoinColumn(name = "turbo_model_id")
     private TurboModel turboModel;
 
     @JsonView(View.Detail.class)
     @OneToOne(fetch = LAZY)
-    @JoinColumn(name="cool_type_id")
+    @JoinColumn(name = "cool_type_id")
     private CoolType coolType;
 
     @JsonView(View.Detail.class)
     @OneToOne(fetch = LAZY)
-    @JoinColumn(name="gasket_kit_id")
+    @JoinColumn(name = "gasket_kit_id")
     private GasketKit gasketKit;
 
     @Transient
@@ -66,7 +75,6 @@ public class Turbo extends Part {
     @JsonView(View.Summary.class)
     private Set<String> cmeyModel = new HashSet<>();
 
-
     @Transient
     @JsonView(View.Summary.class)
     private Set<String> cmeyEngine = new HashSet<>();
@@ -75,9 +83,10 @@ public class Turbo extends Part {
     @JsonView(View.Summary.class)
     private Set<String> cmeyFuelType = new HashSet<>();
 
-    //</editor-fold>
+    // </editor-fold>
 
-    //<editor-fold defaultstate="collapsed" desc="Getters and setters: members">
+    // <editor-fold defaultstate="collapsed" desc="Getters and setters:
+    // members">
 
     public TurboModel getTurboModel() {
         return turboModel;
@@ -143,17 +152,18 @@ public class Turbo extends Part {
         this.gasketKit = gasketKit;
     }
 
-    //</editor-fold>
+    // </editor-fold>
 
-    //<editor-fold defaultstate="collapsed" desc="Serialization: members">
+    // <editor-fold defaultstate="collapsed" desc="Serialization: members">
 
     /**
      * The entity <code>Turbo</code> contains transient fields
-     * <code>cmeyYear</code>, <code>cmeyModel</code>, <code>cmeyMake</code> and <code>cmeyEngine</code>.
-     * These fields contain arrays of part IDs which are obtained from the table <code>bom_descendant</code>.
+     * <code>cmeyYear</code>, <code>cmeyModel</code>, <code>cmeyMake</code> and
+     * <code>cmeyEngine</code>. These fields contain arrays of part IDs which
+     * are obtained from the table <code>bom_descendant</code>.
      *
-     * This method initialize these fields in order to be indexed in the ElasticSearch index.
-     * See more details in a ticket #807.
+     * This method initialize these fields in order to be indexed in the
+     * ElasticSearch index. See more details in a ticket #807.
      */
     @Override
     public void beforeIndexing() {
@@ -163,11 +173,12 @@ public class Turbo extends Part {
         Long id = getId();
         List<PLARrec> recs = tcmeyDao.getPartLinkedApplicationsRecursion(id);
         long t1 = System.currentTimeMillis();
-        //log.info("Prepare Turbo [{}] for indexing: {} records for {} millis.", id, recs.size(), t1 - t0);
+        // log.info("Prepare Turbo [{}] for indexing: {} records for {}
+        // millis.", id, recs.size(), t1 - t0);
         if (log.isDebugEnabled()) {
             log.debug("Prepare Turbo [{}] for indexing: {} records for {} millis.", id, recs.size(), t1 - t0);
         }
-        for(PLARrec r : recs) {
+        for (PLARrec r : recs) {
             String engine = r.getEngine();
             if (isNotBlank(engine)) {
                 cmeyEngine.add(engine);
@@ -194,12 +205,11 @@ public class Turbo extends Part {
     @Override
     protected JSONSerializer buildJsonSerializerSearch(List<CriticalDimension> criticalDimensions) {
         JSONSerializer jsonSerializer = super.buildJsonSerializerSearch(criticalDimensions);
-        jsonSerializer.include("turboModel.id", "turboModel.name",
-                "turboModel.turboType.id", "turboModel.turboType.name",
-                "cmeyYear", "cmeyMake", "cmeyModel", "cmeyEngine", "cmeyFuelType");
+        jsonSerializer.include("turboModel.id", "turboModel.name", "turboModel.turboType.id",
+                "turboModel.turboType.name", "cmeyYear", "cmeyMake", "cmeyModel", "cmeyEngine", "cmeyFuelType");
         return jsonSerializer;
     }
 
-    //</editor-fold>
+    // </editor-fold>
 
 }

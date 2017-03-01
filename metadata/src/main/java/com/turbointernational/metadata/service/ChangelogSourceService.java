@@ -1,15 +1,24 @@
 package com.turbointernational.metadata.service;
 
-import com.turbointernational.metadata.dao.ChangelogSourceDao;
-import com.turbointernational.metadata.dao.ChangelogSourceLinkDao;
-import com.turbointernational.metadata.dao.SourceDao;
-import com.turbointernational.metadata.entity.Changelog;
-import com.turbointernational.metadata.entity.Changelog.ServiceEnum;
-import com.turbointernational.metadata.entity.Role;
-import com.turbointernational.metadata.entity.User;
-import com.turbointernational.metadata.entity.chlogsrc.*;
-import com.turbointernational.metadata.web.controller.ChangelogSourceController.AttachmentsResponse;
-import com.turbointernational.metadata.web.dto.Page;
+import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
+import static org.apache.commons.io.FileUtils.moveFile;
+import static org.apache.commons.io.FileUtils.moveFileToDirectory;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URLConnection;
+import java.sql.PreparedStatement;
+import java.sql.Timestamp;
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -21,24 +30,19 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.sql.DataSource;
-import java.io.File;
-import java.io.IOException;
-import java.net.URLConnection;
-import java.sql.PreparedStatement;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
-import static org.apache.commons.io.FileUtils.moveFile;
-import static org.apache.commons.io.FileUtils.moveFileToDirectory;
+import com.turbointernational.metadata.dao.ChangelogSourceDao;
+import com.turbointernational.metadata.dao.ChangelogSourceLinkDao;
+import com.turbointernational.metadata.dao.SourceDao;
+import com.turbointernational.metadata.entity.Changelog;
+import com.turbointernational.metadata.entity.Changelog.ServiceEnum;
+import com.turbointernational.metadata.entity.Role;
+import com.turbointernational.metadata.entity.User;
+import com.turbointernational.metadata.entity.chlogsrc.ChangelogSource;
+import com.turbointernational.metadata.entity.chlogsrc.ChangelogSourceLink;
+import com.turbointernational.metadata.entity.chlogsrc.Source;
+import com.turbointernational.metadata.entity.chlogsrc.SourceAttachment;
+import com.turbointernational.metadata.web.controller.ChangelogSourceController.AttachmentsResponse;
+import com.turbointernational.metadata.web.dto.Page;
 
 /**
  * Created by dmytro.trunykov@zorallabs.com on 1/16/17.
@@ -61,9 +65,6 @@ public class ChangelogSourceService {
     private ServiceService serviceService;
 
     @Autowired
-    private SearchService searchService;
-
-    @Autowired
     private EntityManager em;
 
     @Value("${changelog.sources.dir}")
@@ -84,14 +85,13 @@ public class ChangelogSourceService {
         return sourceDao.findChangelogSourceByName(name);
     }
 
-    public Page<ChangelogSource> filterChangelogSources(Long sourceId, Long changelogId,
-                                                        String sortProperty, String sortOrder,
-                                                        Integer offset, Integer limit) {
+    public Page<ChangelogSource> filterChangelogSources(Long sourceId, Long changelogId, String sortProperty,
+            String sortOrder, Integer offset, Integer limit) {
         return changelogSourceDao.filter(sourceId, changelogId, sortProperty, sortOrder, offset, limit);
     }
 
     public Source create(String name, String desctiption, String url, Long sourceNameId,
-                         AttachmentsResponse attachments) throws IOException {
+            AttachmentsResponse attachments) throws IOException {
         User user = User.getCurrentUser();
         Source source = sourceDao.create(name, desctiption, url, sourceNameId, user);
         saveAttachments(source, attachments);
@@ -99,7 +99,7 @@ public class ChangelogSourceService {
     }
 
     public Source update(Long id, String name, String desctiption, String url, Long sourceNameId,
-                         AttachmentsResponse attachments) throws IOException {
+            AttachmentsResponse attachments) throws IOException {
         User user = User.getCurrentUser();
         Source source = sourceDao.update(id, name, desctiption, url, sourceNameId, user);
         saveAttachments(source, attachments);
@@ -111,73 +111,69 @@ public class ChangelogSourceService {
         sourceDao.remove(source);
     }
 
-    public void link(HttpServletRequest httpRequest, Changelog changelog,
-                     Long[] sourcesIds, Integer[] ratings, String description) throws AssertionError {
-      if (sourcesIds != null && sourcesIds.length > 0) {
-          User user = User.getCurrentUser();
-          KeyHolder keyHolder = new GeneratedKeyHolder();
-          jdbcTemplate.update(connection -> {
-              PreparedStatement ps = connection.prepareStatement(
-                      "insert into changelog_source_link(created, create_user_id, changelog_id) " +
-                      "values(?, ?, ?)", new String[] {"id"});
-            ps.setTimestamp(1, new Timestamp(System.currentTimeMillis()));
-            ps.setLong(2, user.getId());
-            ps.setLong(3, changelog.getId());
-            return ps;
-          }, keyHolder);
-          long chlgsrclnkid = keyHolder.getKey().longValue();
-          for (int i = 0; i < sourcesIds.length; i++) {
-              Long srcId = sourcesIds[i];
-              Integer rating = ratings[i];
-              jdbcTemplate.update(connection -> {
-                  PreparedStatement ps = connection.prepareStatement(
-                    "insert into changelog_source(lnk_id, source_id, rating) values(?, ?, ?)");
-                  ps.setLong(1, chlgsrclnkid);
-                  ps.setLong(2, srcId);
-                  ps.setInt(3, rating);
-                  return ps;
-              });
-          }
-          /*
-          ChangelogSourceLink link = new ChangelogSourceLink(changelog, user, new Date(), description);
-          changelogSourceLinkDao.persist(link);
-          for (int i = 0; i < sourcesIds.length; i++) {
-              Long srcId = sourcesIds[i];
-              Integer rating = ratings[i];
-              Source source = sourceDao.getReference(srcId);
-              ChangelogSourceId chlgsrcid = new ChangelogSourceId(link, source);
-              ChangelogSource chlgsrc = new ChangelogSource(chlgsrcid, rating);
-              link.getChangelogSources().add(chlgsrc);
-              changelogSourceDao.persist(chlgsrc);
-              searchService.indexChangelogSource(source); // update partIds in the index
-              // I have no idea why... but without flush below the record is not saved
-              // to the changelog_source.
-              em.flush();
-          }
-          */
-      } else if (httpRequest != null && !httpRequest.isUserInRole(Role.ROLE_CHLOGSRC_SKIP)) {
-          // httpRequest above can be null in integration tests
-          ServiceEnum service = changelog.getService();
-          boolean required = serviceService.isChangelogSourceRequired(service);
-          if (required) {
-              throw new AssertionError("User must provide changelog source.");
-          }
-      }
+    public void link(HttpServletRequest httpRequest, Changelog changelog, Long[] sourcesIds, Integer[] ratings,
+            String description) throws AssertionError {
+        if (sourcesIds != null && sourcesIds.length > 0) {
+            User user = User.getCurrentUser();
+            KeyHolder keyHolder = new GeneratedKeyHolder();
+            jdbcTemplate.update(connection -> {
+                PreparedStatement ps = connection.prepareStatement(
+                        "insert into changelog_source_link(created, create_user_id, changelog_id) " + "values(?, ?, ?)",
+                        new String[] { "id" });
+                ps.setTimestamp(1, new Timestamp(System.currentTimeMillis()));
+                ps.setLong(2, user.getId());
+                ps.setLong(3, changelog.getId());
+                return ps;
+            }, keyHolder);
+            long chlgsrclnkid = keyHolder.getKey().longValue();
+            for (int i = 0; i < sourcesIds.length; i++) {
+                Long srcId = sourcesIds[i];
+                Integer rating = ratings[i];
+                jdbcTemplate.update(connection -> {
+                    PreparedStatement ps = connection.prepareStatement(
+                            "insert into changelog_source(lnk_id, source_id, rating) values(?, ?, ?)");
+                    ps.setLong(1, chlgsrclnkid);
+                    ps.setLong(2, srcId);
+                    ps.setInt(3, rating);
+                    return ps;
+                });
+            }
+            /*
+             * ChangelogSourceLink link = new ChangelogSourceLink(changelog,
+             * user, new Date(), description);
+             * changelogSourceLinkDao.persist(link); for (int i = 0; i <
+             * sourcesIds.length; i++) { Long srcId = sourcesIds[i]; Integer
+             * rating = ratings[i]; Source source =
+             * sourceDao.getReference(srcId); ChangelogSourceId chlgsrcid = new
+             * ChangelogSourceId(link, source); ChangelogSource chlgsrc = new
+             * ChangelogSource(chlgsrcid, rating);
+             * link.getChangelogSources().add(chlgsrc);
+             * changelogSourceDao.persist(chlgsrc);
+             * searchService.indexChangelogSource(source); // update partIds in
+             * the index // I have no idea why... but without flush below the
+             * record is not saved // to the changelog_source. em.flush(); }
+             */
+        } else if (httpRequest != null && !httpRequest.isUserInRole(Role.ROLE_CHLOGSRC_SKIP)) {
+            // httpRequest above can be null in integration tests
+            ServiceEnum service = changelog.getService();
+            boolean required = serviceService.isChangelogSourceRequired(service);
+            if (required) {
+                throw new AssertionError("User must provide changelog source.");
+            }
+        }
     }
 
     public Long getNumLinks(Long srcId) {
-        return em.createNamedQuery("getChangelogSourceCountForSource", Long.class)
-                .setParameter("srcId", srcId).getSingleResult();
+        return em.createNamedQuery("getChangelogSourceCountForSource", Long.class).setParameter("srcId", srcId)
+                .getSingleResult();
     }
 
     public List<Source> getLastPicked(int limit) {
         User user = User.getCurrentUser();
         List<Source> sources = em.createNamedQuery("findLastPickedChangelogSources", Source.class)
-                .setParameter("userId", user.getId())
-                .setMaxResults(limit)
-                .getResultList();
+                .setParameter("userId", user.getId()).setMaxResults(limit).getResultList();
         TypedQuery<Date> q = em.createNamedQuery("findLastChangelogSourceLinkForSource", Date.class);
-        for(Source s : sources) {
+        for (Source s : sources) {
             Date d = q.setParameter("sourceId", s.getId()).getSingleResult();
             s.setLastLinked(d);
         }
@@ -192,9 +188,8 @@ public class ChangelogSourceService {
         return changelogSourceLinkDao.findOne(id);
     }
 
-    public AttachmentsResponse uploadAttachment(String name, String description,
-                                                AttachmentsResponse attachments, byte[] binData)
-            throws IOException {
+    public AttachmentsResponse uploadAttachment(String name, String description, AttachmentsResponse attachments,
+            byte[] binData) throws IOException {
         File tmpfile = File.createTempFile("metadata", ".chlgupload");
         FileUtils.writeByteArrayToFile(tmpfile, binData);
         Long id = -(System.currentTimeMillis()); // negative value
@@ -206,7 +201,7 @@ public class ChangelogSourceService {
     public AttachmentsResponse removeAttachment(Long id, AttachmentsResponse attachments) {
         List<AttachmentsResponse.Row> rows = attachments.getRows();
         int idx = -1;
-        for(int i = 0; i < rows.size(); i++) {
+        for (int i = 0; i < rows.size(); i++) {
             AttachmentsResponse.Row row = rows.get(i);
             if (row.getId().equals(id)) {
                 idx = i;
@@ -261,7 +256,7 @@ public class ChangelogSourceService {
     private void saveAttachments(Source source, AttachmentsResponse attachments) throws IOException {
         if (attachments != null) {
             SourceAttachment attachment;
-            for(AttachmentsResponse.Row row : attachments.getRows()) {
+            for (AttachmentsResponse.Row row : attachments.getRows()) {
                 if (row.getId() > 0) {
                     // Update meta information only.
                     attachment = em.find(SourceAttachment.class, row.getId());
@@ -269,7 +264,8 @@ public class ChangelogSourceService {
                     attachment.setDescription(row.getDescription());
                     em.merge(attachment);
                 } else {
-                    // Save metainformation to the database and move uploaded file
+                    // Save metainformation to the database and move uploaded
+                    // file
                     // from temporary place to a persistent file storage.
                     Long srcId = source.getId();
                     File destDir = getAttachmendDir(srcId);

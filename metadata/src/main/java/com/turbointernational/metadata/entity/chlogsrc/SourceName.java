@@ -1,12 +1,19 @@
 package com.turbointernational.metadata.entity.chlogsrc;
 
-import com.fasterxml.jackson.annotation.JsonView;
-import com.turbointernational.metadata.util.View;
+import static javax.persistence.GenerationType.IDENTITY;
 
-import javax.persistence.*;
 import java.io.Serializable;
 
-import static javax.persistence.GenerationType.IDENTITY;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.util.View;
 
 /**
  * Created by dmytro.trunykov@zorallabs.com on 1/12/17.
@@ -18,6 +25,8 @@ import static javax.persistence.GenerationType.IDENTITY;
         @NamedQuery(name = "findAllChangelogSourceNames", query = "from SourceName sn order by sn.name")
 })
 public class SourceName implements Serializable {
+
+    private static final long serialVersionUID = -8202277534967335041L;
 
     //<editor-fold defaultstate="collapsed" desc="Properties">
 

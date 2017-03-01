@@ -1,37 +1,107 @@
 package com.turbointernational.metadata.entity.part;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.annotation.JsonView;
-import com.turbointernational.metadata.entity.*;
-import com.turbointernational.metadata.entity.part.types.*;
-import com.turbointernational.metadata.service.CriticalDimensionService;
-import com.turbointernational.metadata.service.SearchService;
-import com.turbointernational.metadata.service.SearchableEntity;
-import com.turbointernational.metadata.util.View;
-import flexjson.JSONSerializer;
-import flexjson.transformer.HibernateTransformer;
-import flexjson.transformer.Transformer;
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
+import static com.fasterxml.jackson.annotation.JsonTypeInfo.As.PROPERTY;
+import static com.fasterxml.jackson.annotation.JsonTypeInfo.Id.CLASS;
+import static javax.persistence.CascadeType.REFRESH;
+import static javax.persistence.FetchType.LAZY;
+import static javax.persistence.GenerationType.IDENTITY;
+import static javax.persistence.InheritanceType.JOINED;
+import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_PROTOTYPE;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
+import javax.persistence.PostPersist;
+import javax.persistence.PostRemove;
+import javax.persistence.PostUpdate;
+import javax.persistence.Table;
+import javax.persistence.Version;
+
 import org.apache.commons.lang3.ObjectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import javax.persistence.*;
-import java.io.Serializable;
-import java.util.*;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.entity.BOMItem;
+import com.turbointernational.metadata.entity.CriticalDimension;
+import com.turbointernational.metadata.entity.Manufacturer;
+import com.turbointernational.metadata.entity.PartType;
+import com.turbointernational.metadata.entity.SalesNotePart;
+import com.turbointernational.metadata.entity.TurboType;
+import com.turbointernational.metadata.entity.part.types.Actuator;
+import com.turbointernational.metadata.entity.part.types.Backplate;
+import com.turbointernational.metadata.entity.part.types.BackplateSealplate;
+import com.turbointernational.metadata.entity.part.types.BearingHousing;
+import com.turbointernational.metadata.entity.part.types.BoltScrew;
+import com.turbointernational.metadata.entity.part.types.CarbonSeal;
+import com.turbointernational.metadata.entity.part.types.Cartridge;
+import com.turbointernational.metadata.entity.part.types.Clamp;
+import com.turbointernational.metadata.entity.part.types.CompressorCover;
+import com.turbointernational.metadata.entity.part.types.CompressorWheel;
+import com.turbointernational.metadata.entity.part.types.FastWearingComponent;
+import com.turbointernational.metadata.entity.part.types.Fitting;
+import com.turbointernational.metadata.entity.part.types.Gasket;
+import com.turbointernational.metadata.entity.part.types.GasketKit;
+import com.turbointernational.metadata.entity.part.types.HeatshieldShroud;
+import com.turbointernational.metadata.entity.part.types.JournalBearing;
+import com.turbointernational.metadata.entity.part.types.JournalBearingSpacer;
+import com.turbointernational.metadata.entity.part.types.Kit;
+import com.turbointernational.metadata.entity.part.types.MajorComponent;
+import com.turbointernational.metadata.entity.part.types.MinorComponent;
+import com.turbointernational.metadata.entity.part.types.Misc;
+import com.turbointernational.metadata.entity.part.types.MiscMinorComponent;
+import com.turbointernational.metadata.entity.part.types.NozzleRing;
+import com.turbointernational.metadata.entity.part.types.Nut;
+import com.turbointernational.metadata.entity.part.types.ORing;
+import com.turbointernational.metadata.entity.part.types.OilDeflector;
+import com.turbointernational.metadata.entity.part.types.P;
+import com.turbointernational.metadata.entity.part.types.Pin;
+import com.turbointernational.metadata.entity.part.types.PistonRing;
+import com.turbointernational.metadata.entity.part.types.Plug;
+import com.turbointernational.metadata.entity.part.types.RetainingRing;
+import com.turbointernational.metadata.entity.part.types.SealPlate;
+import com.turbointernational.metadata.entity.part.types.Shroud;
+import com.turbointernational.metadata.entity.part.types.Spring;
+import com.turbointernational.metadata.entity.part.types.ThrustBearing;
+import com.turbointernational.metadata.entity.part.types.ThrustCollar;
+import com.turbointernational.metadata.entity.part.types.ThrustPart;
+import com.turbointernational.metadata.entity.part.types.ThrustSpacer;
+import com.turbointernational.metadata.entity.part.types.ThrustWasher;
+import com.turbointernational.metadata.entity.part.types.TurbineHousing;
+import com.turbointernational.metadata.entity.part.types.TurbineWheel;
+import com.turbointernational.metadata.entity.part.types.Turbo;
+import com.turbointernational.metadata.entity.part.types.Washer;
+import com.turbointernational.metadata.service.CriticalDimensionService;
+import com.turbointernational.metadata.service.SearchService;
+import com.turbointernational.metadata.service.SearchableEntity;
+import com.turbointernational.metadata.util.View;
 
-import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
-import static com.fasterxml.jackson.annotation.JsonTypeInfo.As.PROPERTY;
-import static com.fasterxml.jackson.annotation.JsonTypeInfo.Id.CLASS;
-import static javax.persistence.CascadeType.REFRESH;
-import static javax.persistence.DiscriminatorType.INTEGER;
-import static javax.persistence.FetchType.LAZY;
-import static javax.persistence.GenerationType.IDENTITY;
-import static javax.persistence.InheritanceType.JOINED;
-import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_PROTOTYPE;
+import flexjson.JSONSerializer;
+import flexjson.transformer.HibernateTransformer;
+import flexjson.transformer.Transformer;
 
 @Entity
 @Table(name = "part")
@@ -109,6 +179,8 @@ import static org.springframework.beans.factory.config.ConfigurableBeanFactory.S
 })
 @JsonInclude(ALWAYS)
 public abstract class Part implements Comparable<Part>, Serializable, SearchableEntity {
+
+    private static final long serialVersionUID = 5769786866644880614L;
 
     private static final Logger log = LoggerFactory.getLogger(Part.class);
 
@@ -355,7 +427,7 @@ public abstract class Part implements Comparable<Part>, Serializable, Searchable
      * @param partTypeId part type ID
      * @return
      */
-    public static <T extends Part> T newInstance(Long partTypeId) {
+    public static Part newInstance(Long partTypeId) {
         Part retVal;
         switch (partTypeId.intValue()) {
             case 1:
@@ -490,7 +562,7 @@ public abstract class Part implements Comparable<Part>, Serializable, Searchable
             default:
                 throw new AssertionError("Unsupported part type: " + partTypeId);
         }
-        return (T) retVal;
+        return retVal;
     }
 
     //</editor-fold>

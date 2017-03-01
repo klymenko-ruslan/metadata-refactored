@@ -1,10 +1,20 @@
 package com.turbointernational.metadata.entity;
 
+import java.io.Serializable;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.Table;
+
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.util.View;
-
-import javax.persistence.*;
-import java.io.Serializable;
 
 /**
  * Created by dmytro.trunykov@zorallabs.com on 18.03.16.
@@ -13,6 +23,8 @@ import java.io.Serializable;
 @Table(name = "auth_provider")
 @Inheritance(strategy = InheritanceType.JOINED)
 public class AuthProvider implements Serializable {
+
+    private static final long serialVersionUID = -1177278382277025727L;
 
     public enum AuthProviderTypeEnum {LDAP}
 

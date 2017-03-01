@@ -1,13 +1,14 @@
 package com.turbointernational.metadata.entity;
 
-import com.fasterxml.jackson.annotation.JsonView;
-import com.turbointernational.metadata.util.View;
+import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.io.Serializable;
+
+import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.util.View;
 
 /**
  * Created by dmitro.trunykov@zorallabs.com on 2017-02-15.
@@ -15,6 +16,8 @@ import java.io.Serializable;
 @Entity
 @Table(name = "service")
 public class Service implements Serializable {
+
+    private static final long serialVersionUID = 4701291220626576887L;
 
     @Id
     @Column(name = "id")

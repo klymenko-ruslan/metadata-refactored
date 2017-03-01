@@ -1,29 +1,46 @@
 package com.turbointernational.metadata.entity.chlogsrc;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonView;
-import com.turbointernational.metadata.entity.Changelog;
-import com.turbointernational.metadata.entity.CriticalDimension;
-import com.turbointernational.metadata.entity.User;
-import com.turbointernational.metadata.service.SearchService;
-import com.turbointernational.metadata.service.SearchableEntity;
-import com.turbointernational.metadata.util.View;
-import flexjson.JSONSerializer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
+import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.FetchType.LAZY;
+import static javax.persistence.GenerationType.IDENTITY;
+import static javax.persistence.TemporalType.TIMESTAMP;
 
-import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
-import static javax.persistence.CascadeType.ALL;
-import static javax.persistence.CascadeType.DETACH;
-import static javax.persistence.FetchType.LAZY;
-import static javax.persistence.GenerationType.IDENTITY;
-import static javax.persistence.TemporalType.TIMESTAMP;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.PostPersist;
+import javax.persistence.PostRemove;
+import javax.persistence.PostUpdate;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.Transient;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.entity.CriticalDimension;
+import com.turbointernational.metadata.entity.User;
+import com.turbointernational.metadata.service.SearchService;
+import com.turbointernational.metadata.service.SearchableEntity;
+import com.turbointernational.metadata.util.View;
+
+import flexjson.JSONSerializer;
 
 /**
  * Created by dmytro.trunykov@zorallabs.com on 2017-01-12.
@@ -45,6 +62,8 @@ import static javax.persistence.TemporalType.TIMESTAMP;
 })
 @JsonInclude(ALWAYS)
 public class Source implements SearchableEntity, Serializable {
+
+    private static final long serialVersionUID = 6370818935171487716L;
 
     private final static Logger log = LoggerFactory.getLogger(Source.class);
 

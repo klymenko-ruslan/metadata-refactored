@@ -1,18 +1,25 @@
 package com.turbointernational.metadata.dao;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.From;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.turbointernational.metadata.entity.Changelog;
 import com.turbointernational.metadata.entity.Changelog.ServiceEnum;
 import com.turbointernational.metadata.entity.ChangelogPart;
 import com.turbointernational.metadata.entity.User;
 import com.turbointernational.metadata.web.dto.Page;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.*;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 /**
  *
@@ -40,10 +47,8 @@ public class ChangelogDao extends AbstractDao<Changelog> {
         return changelog;
     }
 
-    public Page<Changelog> filter(ServiceEnum service, Long userId, Date startDate, Date finishDate,
-                                  String description, String data, Long partId,
-                                  String sortProperty, String sortOrder,
-                                  Integer offset, Integer limit) {
+    public Page<Changelog> filter(ServiceEnum service, Long userId, Date startDate, Date finishDate, String description,
+            String data, Long partId, String sortProperty, String sortOrder, Integer offset, Integer limit) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Changelog> ecq = cb.createQuery(Changelog.class);
         Root<Changelog> root = ecq.from(Changelog.class);
@@ -88,7 +93,7 @@ public class ChangelogDao extends AbstractDao<Changelog> {
             if (sortProperty == null) {
                 throw new NullPointerException("Parameter 'sortOrder' can't be null.");
             }
-            From f;
+            From<?, ?> f;
             if (sortProperty.equals("user.name")) {
                 if (userJoin == null) {
                     userJoin = root.join("user");
@@ -125,7 +130,7 @@ public class ChangelogDao extends AbstractDao<Changelog> {
         ccq.select(cb.count(changelogCountRoot));
         ccq.where(arrPredicates);
         long total = em.createQuery(ccq).getSingleResult();
-        return new Page(total, recs);
+        return new Page<>(total, recs);
     }
 
 }

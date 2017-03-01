@@ -1,14 +1,13 @@
 package com.turbointernational.metadata.web.controller;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.turbointernational.metadata.exception.PartNotFound;
-import com.turbointernational.metadata.service.PriceService;
-import com.turbointernational.metadata.web.dto.ProductPricesDto;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -18,25 +17,25 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.turbointernational.metadata.exception.PartNotFound;
+import com.turbointernational.metadata.service.PriceService;
+import com.turbointernational.metadata.web.dto.ProductPricesDto;
 
 /**
  *
  * @author jrodriguez
  */
 @Controller
-@RequestMapping(value={"/magmi", "/metadata/magmi"})
+@RequestMapping(value = { "/magmi", "/metadata/magmi" })
 public class MagmiController {
 
-    private static final Logger logger = LoggerFactory.getLogger(MagmiController.class);
-
-    private enum InputTypeEnum {id, pn}
+    private enum InputTypeEnum {
+        id, pn
+    }
 
     @Autowired
     private PriceService priceService;
@@ -45,7 +44,8 @@ public class MagmiController {
     @ResponseBody
     @Transactional(noRollbackFor = PartNotFound.class)
     @PreAuthorize("hasRole('ROLE_MAGMI_EXPORT') or hasIpAddress('127.0.0.1/32')")
-    public List<ProductPricesDto> getProductPricesByIdsAsGet(@RequestParam(name = "id") List<Long> partIds) throws IOException {
+    public List<ProductPricesDto> getProductPricesByIdsAsGet(@RequestParam(name = "id") List<Long> partIds)
+            throws IOException {
         List<ProductPricesDto> retVal = priceService.getProductsPricesByIds(partIds);
         return retVal;
     }
@@ -54,7 +54,8 @@ public class MagmiController {
     @ResponseBody
     @Transactional(noRollbackFor = PartNotFound.class)
     @PreAuthorize("hasRole('ROLE_MAGMI_EXPORT') or hasIpAddress('127.0.0.1/32')")
-    public List<ProductPricesDto> getProductPricesByNumsAsGet(@RequestParam(name = "id") List<String> partNums) throws IOException {
+    public List<ProductPricesDto> getProductPricesByNumsAsGet(@RequestParam(name = "id") List<String> partNums)
+            throws IOException {
         List<ProductPricesDto> retVal = priceService.getProductsPricesByNums(partNums);
         return retVal;
     }
@@ -63,30 +64,30 @@ public class MagmiController {
     @ResponseBody
     @Transactional(noRollbackFor = PartNotFound.class)
     @PreAuthorize("hasRole('ROLE_MAGMI_EXPORT') or hasIpAddress('127.0.0.1/32')")
-    public List<ProductPricesDto> getProductPricesByIdsAsPost(@RequestParam(name = "inputtype", defaultValue = "id")
-                                                                          InputTypeEnum inputType,
-                                                              @RequestBody String strJson) throws IOException {
+    public List<ProductPricesDto> getProductPricesByIdsAsPost(
+            @RequestParam(name = "inputtype", defaultValue = "id") InputTypeEnum inputType, @RequestBody String strJson)
+            throws IOException {
         List<ProductPricesDto> retVal;
         ObjectMapper mapper = new ObjectMapper();
         JsonFactory factory = mapper.getFactory();
         JsonParser jp = factory.createParser(strJson);
         JsonNode json = mapper.readTree(jp);
-        switch(inputType) {
-            case id:
-                retVal = getPricesForPartIds(json);
-                break;
-            case pn:
-                retVal = getPricesForPartNums(json);
-                break;
-            default:
-                throw new AssertionError("Unsupported value for parameter 'inputtype': " + inputType);
+        switch (inputType) {
+        case id:
+            retVal = getPricesForPartIds(json);
+            break;
+        case pn:
+            retVal = getPricesForPartNums(json);
+            break;
+        default:
+            throw new AssertionError("Unsupported value for parameter 'inputtype': " + inputType);
         }
         return retVal;
     }
 
-    private List<ProductPricesDto>  getPricesForPartIds(JsonNode json) {
+    private List<ProductPricesDto> getPricesForPartIds(JsonNode json) {
         List<Long> partIds = new ArrayList<>(json.size());
-        for(Iterator<JsonNode> iter = json.iterator(); iter.hasNext();) {
+        for (Iterator<JsonNode> iter = json.iterator(); iter.hasNext();) {
             JsonNode jn = iter.next();
             Long partId = jn.asLong();
             partIds.add(partId);
@@ -95,9 +96,9 @@ public class MagmiController {
         return retVal;
     }
 
-    private List<ProductPricesDto>  getPricesForPartNums(JsonNode json) {
+    private List<ProductPricesDto> getPricesForPartNums(JsonNode json) {
         List<String> partNums = new ArrayList<>(json.size());
-        for(Iterator<JsonNode> iter = json.iterator(); iter.hasNext();) {
+        for (Iterator<JsonNode> iter = json.iterator(); iter.hasNext();) {
             JsonNode jn = iter.next();
             String pn = jn.asText();
             partNums.add(pn);

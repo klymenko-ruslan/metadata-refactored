@@ -1,15 +1,21 @@
 package com.turbointernational.metadata.web.controller;
 
-import com.fasterxml.jackson.annotation.JsonView;
-import com.turbointernational.metadata.entity.AuthProviderLdap;
-import com.turbointernational.metadata.service.AuthProviderService;
-import com.turbointernational.metadata.web.dto.Page;
-import com.turbointernational.metadata.util.View;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.entity.AuthProviderLdap;
+import com.turbointernational.metadata.service.AuthProviderService;
+import com.turbointernational.metadata.util.View;
+import com.turbointernational.metadata.web.dto.Page;
 
 /**
  * Created by dmytro.trunykov@zorallabs.com on 21.03.16.
@@ -26,10 +32,9 @@ public class AuthProviderController {
     @Transactional
     @JsonView(View.Summary.class)
     @Secured("ROLE_ADMIN")
-    public Page getAllAuthProviders(@RequestParam("sortProperty") String sortProperty,
-                                    @RequestParam("sortOrder") String sortOrder,
-                                    @RequestParam("offset") int offset,
-                                    @RequestParam("limit") int limit) {
+    public Page<AuthProviderLdap> getAllAuthProviders(@RequestParam("sortProperty") String sortProperty,
+            @RequestParam("sortOrder") String sortOrder, @RequestParam("offset") int offset,
+            @RequestParam("limit") int limit) {
         return authProviderService.getAllAuthProviders(sortProperty, sortOrder, offset, limit);
     }
 

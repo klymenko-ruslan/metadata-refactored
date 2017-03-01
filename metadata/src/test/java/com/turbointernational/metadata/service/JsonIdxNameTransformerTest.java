@@ -1,18 +1,21 @@
 package com.turbointernational.metadata.service;
 
-import com.turbointernational.metadata.entity.CriticalDimensionEnumVal;
-import flexjson.JSONSerializer;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.turbointernational.metadata.entity.CriticalDimensionEnumVal;
+
+import flexjson.JSONSerializer;
 
 /**
  * Created by dmytro.trunykov@gmail.com on 2016-05-06.
  */
 public class JsonIdxNameTransformerTest {
 
+    @SuppressWarnings("unused")
     private static class FooBean {
 
         private String memA;
@@ -21,7 +24,8 @@ public class JsonIdxNameTransformerTest {
         private Map<String, String> memD;
         private CriticalDimensionEnumVal memEnum;
 
-        private FooBean(String memA, int memB, double memC, Map<String, String> memD, CriticalDimensionEnumVal memEnum) {
+        private FooBean(String memA, int memB, double memC, Map<String, String> memD,
+                CriticalDimensionEnumVal memEnum) {
             this.memA = memA;
             this.memB = memB;
             this.memC = memC;
@@ -75,50 +79,68 @@ public class JsonIdxNameTransformerTest {
         CriticalDimensionEnumVal memEnum = new CriticalDimensionEnumVal();
         memEnum.setId(5);
         memEnum.setVal("Foo");
-        FooBean fooBean = new FooBean("hello", 12, 3.14, new HashMap<String, String>() {{
-            put("k0", "ddd");
-            put("k1", "FFdddww");
-        }}, memEnum);
+        FooBean fooBean = new FooBean("hello", 12, 3.14, new HashMap<String, String>() {
+
+            private static final long serialVersionUID = -2072316578866664509L;
+
+            {
+                put("k0", "ddd");
+                put("k1", "FFdddww");
+            }
+        }, memEnum);
         JSONSerializer jsonSerializer = new JSONSerializer();
         jsonSerializer.include("memA", "memB", "memC", "memD").exclude("*.class");
-        jsonSerializer.transform(new CriticalDimensionService.JsonIdxNameTransformer("memA_transformed", false), "memA");
-        jsonSerializer.transform(new CriticalDimensionService.JsonIdxNameTransformer("memB_transformed", false), "memB");
-        jsonSerializer.transform(new CriticalDimensionService.JsonIdxNameTransformer("memC_transformed", false), "memC");
-        jsonSerializer.transform(new CriticalDimensionService.JsonIdxNameTransformer("memD_transformed", false), "memD");
+        jsonSerializer.transform(new CriticalDimensionService.JsonIdxNameTransformer("memA_transformed", false),
+                "memA");
+        jsonSerializer.transform(new CriticalDimensionService.JsonIdxNameTransformer("memB_transformed", false),
+                "memB");
+        jsonSerializer.transform(new CriticalDimensionService.JsonIdxNameTransformer("memC_transformed", false),
+                "memC");
+        jsonSerializer.transform(new CriticalDimensionService.JsonIdxNameTransformer("memD_transformed", false),
+                "memD");
         jsonSerializer.transform(new CriticalDimensionService.JsonIdxNameTransformer("memEnum", true), "memEnum");
         String json = jsonSerializer.serialize(fooBean);
-//        System.out.println(json);
-        Assert.assertEquals("Serialization to JSON failed.", "{\"memA_transformed\":\"hello\"," +
-                "\"memB_transformed\":12,\"memC_transformed\":3.14," +
-                "\"memD_transformed\":{\"k0\":\"ddd\",\"k1\":\"FFdddww\"},\"memEnum\":5,\"memEnumLabel\":\"Foo\"}",
+        // System.out.println(json);
+        Assert.assertEquals("Serialization to JSON failed.",
+                "{\"memA_transformed\":\"hello\"," + "\"memB_transformed\":12,\"memC_transformed\":3.14,"
+                        + "\"memD_transformed\":{\"k0\":\"ddd\",\"k1\":\"FFdddww\"},\"memEnum\":5,\"memEnumLabel\":\"Foo\"}",
                 json);
     }
 
     /**
-     * Check that field of type CriticalDimensionEnumVal is serialized even
-     * if it is null.
+     * Check that field of type CriticalDimensionEnumVal is serialized even if
+     * it is null.
      *
      * @throws Exception
      */
     @Test
     public void testTransform2() throws Exception {
         CriticalDimensionEnumVal memEnum = null;
-        FooBean fooBean = new FooBean("hello", 12, 3.14, new HashMap<String, String>() {{
-            put("k0", "ddd");
-            put("k1", "FFdddww");
-        }}, memEnum);
+        FooBean fooBean = new FooBean("hello", 12, 3.14, new HashMap<String, String>() {
+
+ private static final long serialVersionUID = -6373636034166737869L;
+
+            {
+                put("k0", "ddd");
+                put("k1", "FFdddww");
+            }
+        }, memEnum);
         JSONSerializer jsonSerializer = new JSONSerializer();
         jsonSerializer.include("memA", "memB", "memC", "memD").exclude("*.class");
-        jsonSerializer.transform(new CriticalDimensionService.JsonIdxNameTransformer("memA_transformed", false), "memA");
-        jsonSerializer.transform(new CriticalDimensionService.JsonIdxNameTransformer("memB_transformed", false), "memB");
-        jsonSerializer.transform(new CriticalDimensionService.JsonIdxNameTransformer("memC_transformed", false), "memC");
-        jsonSerializer.transform(new CriticalDimensionService.JsonIdxNameTransformer("memD_transformed", false), "memD");
+        jsonSerializer.transform(new CriticalDimensionService.JsonIdxNameTransformer("memA_transformed", false),
+                "memA");
+        jsonSerializer.transform(new CriticalDimensionService.JsonIdxNameTransformer("memB_transformed", false),
+                "memB");
+        jsonSerializer.transform(new CriticalDimensionService.JsonIdxNameTransformer("memC_transformed", false),
+                "memC");
+        jsonSerializer.transform(new CriticalDimensionService.JsonIdxNameTransformer("memD_transformed", false),
+                "memD");
         jsonSerializer.transform(new CriticalDimensionService.JsonIdxNameTransformer("memEnum", true), "memEnum");
         String json = jsonSerializer.serialize(fooBean);
-//        System.out.println(json);
-        Assert.assertEquals("Serialization to JSON failed.", "{\"memA_transformed\":\"hello\"," +
-                "\"memB_transformed\":12,\"memC_transformed\":3.14," +
-                "\"memD_transformed\":{\"k0\":\"ddd\",\"k1\":\"FFdddww\"},\"memEnum\":null,\"memEnumLabel\":null}",
+        // System.out.println(json);
+        Assert.assertEquals("Serialization to JSON failed.",
+                "{\"memA_transformed\":\"hello\"," + "\"memB_transformed\":12,\"memC_transformed\":3.14,"
+                        + "\"memD_transformed\":{\"k0\":\"ddd\",\"k1\":\"FFdddww\"},\"memEnum\":null,\"memEnumLabel\":null}",
                 json);
     }
 

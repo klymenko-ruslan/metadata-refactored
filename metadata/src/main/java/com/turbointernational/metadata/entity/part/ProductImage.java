@@ -1,13 +1,25 @@
 package com.turbointernational.metadata.entity.part;
 
+import java.io.Serializable;
+
+import javax.persistence.Cacheable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.dao.ProductImageDao;
 import com.turbointernational.metadata.util.View;
+
 import flexjson.JSONSerializer;
 import flexjson.transformer.HibernateTransformer;
-
-import javax.persistence.*;
-import java.io.Serializable;
 
 /**
  * @author jrodriguez
@@ -24,6 +36,7 @@ import java.io.Serializable;
 )
 public class ProductImage implements Comparable<ProductImage>, Serializable {
 
+    private static final long serialVersionUID = -6456333513214491899L;
 
     //<editor-fold defaultstate="collapsed" desc="Properties">
     @Id

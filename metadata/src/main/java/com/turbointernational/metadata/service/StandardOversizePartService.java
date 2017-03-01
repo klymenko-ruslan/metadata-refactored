@@ -1,19 +1,19 @@
 package com.turbointernational.metadata.service;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonView;
-import com.turbointernational.metadata.dao.StandardOversizePartDao;
-import com.turbointernational.metadata.entity.StandardOversizePart;
-import com.turbointernational.metadata.entity.part.Part;
-import com.turbointernational.metadata.util.View;
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
-import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.dao.StandardOversizePartDao;
+import com.turbointernational.metadata.entity.part.Part;
+import com.turbointernational.metadata.util.View;
 
 /**
  * Created by dmytro.trunykov@zorallabs.com on 2017-02-13.
@@ -23,7 +23,9 @@ public class StandardOversizePartService {
 
     public static class CreateStandardOversizePartRequest {
 
-        public enum TypeEnum { STANDARD, OVERSIZE }
+        public enum TypeEnum {
+            STANDARD, OVERSIZE
+        }
 
         @JsonView(View.Summary.class)
         private TypeEnum type;
@@ -70,7 +72,6 @@ public class StandardOversizePartService {
             this.parts = parts;
         }
 
-
         public List<Part> getParts() {
             return parts;
         }
@@ -97,33 +98,33 @@ public class StandardOversizePartService {
     @Transactional
     @Secured("ROLE_ALTER_PART")
     public CreateStandardOversizePartResponse create(CreateStandardOversizePartRequest request) {
-        CreateStandardOversizePartResponse  retVal;
-        for(Long partId : request.getPartIds()) {
+        CreateStandardOversizePartResponse retVal;
+        for (Long partId : request.getPartIds()) {
             Long standardPartId, oversizePartId;
             switch (request.getType()) {
-                case OVERSIZE:
-                    standardPartId = request.getMainPartId();
-                    oversizePartId = partId;
-                    break;
-                case STANDARD:
-                    standardPartId = partId;
-                    oversizePartId = request.getMainPartId();
-                    break;
-                default:
-                    throw new AssertionError("Unknown mode: " + request.getType());
-            }
-            StandardOversizePart sop = standardOversizePartDao.create(standardPartId, oversizePartId);
-        }
-        List<Part> parts;
-        switch (request.getType()) {
             case OVERSIZE:
-                parts = standardOversizePartDao.findOversizeParts(request.getMainPartId());
+                standardPartId = request.getMainPartId();
+                oversizePartId = partId;
                 break;
             case STANDARD:
-                parts = standardOversizePartDao.findStandardParts(request.getMainPartId());
+                standardPartId = partId;
+                oversizePartId = request.getMainPartId();
                 break;
             default:
                 throw new AssertionError("Unknown mode: " + request.getType());
+            }
+            standardOversizePartDao.create(standardPartId, oversizePartId);
+        }
+        List<Part> parts;
+        switch (request.getType()) {
+        case OVERSIZE:
+            parts = standardOversizePartDao.findOversizeParts(request.getMainPartId());
+            break;
+        case STANDARD:
+            parts = standardOversizePartDao.findStandardParts(request.getMainPartId());
+            break;
+        default:
+            throw new AssertionError("Unknown mode: " + request.getType());
         }
         retVal = new CreateStandardOversizePartResponse(parts);
         return retVal;

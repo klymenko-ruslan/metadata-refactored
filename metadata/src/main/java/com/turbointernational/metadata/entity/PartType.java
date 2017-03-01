@@ -1,17 +1,29 @@
 package com.turbointernational.metadata.entity;
 
-import com.fasterxml.jackson.annotation.JsonView;
-import com.turbointernational.metadata.util.View;
-import flexjson.JSONDeserializer;
-import flexjson.JSONSerializer;
+import static javax.persistence.FetchType.EAGER;
+import static javax.persistence.GenerationType.IDENTITY;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import javax.persistence.*;
 
-import static javax.persistence.GenerationType.IDENTITY;
+import javax.persistence.Cacheable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.util.View;
+
+import flexjson.JSONDeserializer;
+import flexjson.JSONSerializer;
 
 @Cacheable
 @Entity
@@ -22,9 +34,10 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Table(name = "part_type")
 public class PartType implements Serializable {
 
+    private static final long serialVersionUID = 8084028725671309821L;
+
     // PTID_XXXX constants are IDs of part types as they defined in the table 'part_type'.
     // These constants can be used where parts ids needed, e.g. in SQL queries.
-
     public final static int PTID_TURBO = 1;
     public final static int PTID_CARTRIDGE = 2;
     public final static int PTID_KIT = 3;
@@ -98,7 +111,7 @@ public class PartType implements Serializable {
     private String magentoAttributeSet;
 
     // TODO: Is this a duplicate of parentTypes?
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = EAGER)
     @JoinColumn(name = "parent_part_type_id")
     @JsonView({View.Detail.class})
     private PartType parent;

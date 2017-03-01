@@ -1,39 +1,31 @@
 package com.turbointernational.metadata.web.dto;
 
-import com.google.common.collect.Sets;
-import com.turbointernational.metadata.entity.SalesNoteState;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Set;
+
 import org.apache.commons.lang3.StringUtils;
+
+import com.google.common.collect.Sets;
+import com.turbointernational.metadata.entity.SalesNoteState;
 
 /**
  *
  * @author jrodriguez
  */
 
-/*
-SELECT sn
-FROM SalesNote sn
-JOIN sn.salesNoteParts snp
-WHERE
-  sn.state IN :states
-  AND (:primaryPartId IS NULL
-       OR snp)
-  AND (snp.id = :partId OR snp.id = :query)
-  AND sn.
-
-*/
 public class SalesNoteSearchRequest implements Serializable {
-    
+
+    private static final long serialVersionUID = -3668345033591679100L;
+
     private Long primaryPartId;
     private String query;
     private int page = 0;
     private int pageSize = 20;
-    
+
     private boolean includePrimary = true;
     private boolean includeRelated = true;
-    
+
     private Set<SalesNoteState> states = Sets.newHashSet();
 
     public SalesNoteSearchRequest() {
@@ -60,7 +52,7 @@ public class SalesNoteSearchRequest implements Serializable {
     public void setPageSize(int pageSize) {
         this.pageSize = pageSize;
     }
-    
+
     public Long getPrimaryPartId() {
         return primaryPartId;
     }
@@ -105,7 +97,7 @@ public class SalesNoteSearchRequest implements Serializable {
         if (StringUtils.isBlank(query)) {
             return null;
         }
-        
+
         return "%" + query.toLowerCase() + "%";
     }
 }

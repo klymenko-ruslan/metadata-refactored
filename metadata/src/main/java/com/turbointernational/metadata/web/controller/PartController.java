@@ -23,12 +23,9 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotBlank;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -53,7 +50,6 @@ import com.turbointernational.metadata.entity.part.PartRepository;
 import com.turbointernational.metadata.entity.part.ProductImage;
 import com.turbointernational.metadata.entity.part.types.Turbo;
 import com.turbointernational.metadata.service.BOMService;
-import com.turbointernational.metadata.service.ChangelogService;
 import com.turbointernational.metadata.service.PartService;
 import com.turbointernational.metadata.service.PriceService;
 import com.turbointernational.metadata.service.StandardOversizePartService;
@@ -67,8 +63,6 @@ import com.turbointernational.metadata.web.dto.ProductPricesDto;
 @RestController
 public class PartController {
 
-    private final static Logger log = LoggerFactory.getLogger(PartController.class);
-
     @Autowired
     private PartService partService;
 
@@ -76,37 +70,31 @@ public class PartController {
     private BOMService bomService;
 
     @Autowired
-    private ChangelogService changelogService;
-    
-    @Autowired
     private PriceService priceService;
 
     @Autowired
     private StandardOversizePartService standardOversizePartService;
-    
+
     @Autowired
     private TurboTypeDao turboTypeDao;
-    
+
     @Autowired
     private PartDao partDao;
 
     @Autowired
     private PartRepository partRepository;
 
-    @Autowired
-    private JdbcTemplate db;
-
     static class PartCreateRequest {
 
-        @JsonView({View.Summary.class})
+        @JsonView({ View.Summary.class })
         private Part origin;
 
-        @JsonView({View.Summary.class})
+        @JsonView({ View.Summary.class })
         private List<String> partNumbers;
 
         /**
-         * Changelog source IDs which should be linked to the changelog.
-         * See ticket #891 for details.
+         * Changelog source IDs which should be linked to the changelog. See
+         * ticket #891 for details.
          */
         @JsonView(View.Summary.class)
         private Long[] sourcesIds;
@@ -164,16 +152,16 @@ public class PartController {
         @JsonInclude(ALWAYS)
         public static class Row {
 
-            @JsonView({View.Summary.class})
+            @JsonView({ View.Summary.class })
             private final Long partId;
 
-            @JsonView({View.Summary.class})
+            @JsonView({ View.Summary.class })
             private final String manufacturerPartNumber;
 
-            @JsonView({View.Summary.class})
+            @JsonView({ View.Summary.class })
             private final boolean success;
 
-            @JsonView({View.Summary.class})
+            @JsonView({ View.Summary.class })
             private final String errorMessage;
 
             public Row(Long partId, String manufacturerPartNumber, boolean success, String errorMessage) {
@@ -205,9 +193,8 @@ public class PartController {
             this.results = results;
         }
 
-        @JsonView({View.Summary.class})
+        @JsonView({ View.Summary.class })
         private List<Row> results;
-
 
         public List<Row> getResults() {
             return results;
@@ -221,10 +208,10 @@ public class PartController {
 
     static class LinkTurboRequest {
 
-        @JsonView({View.Summary.class})
+        @JsonView({ View.Summary.class })
         private Long gasketKitId;
 
-        @JsonView({View.Summary.class})
+        @JsonView({ View.Summary.class })
         private List<Long> pickedTurbos;
 
         public Long getGasketKitId() {
@@ -250,16 +237,16 @@ public class PartController {
         @JsonInclude(ALWAYS)
         public static class Row {
 
-            @JsonView({View.Summary.class})
+            @JsonView({ View.Summary.class })
             private final Long partId; // actually the partId is ID of a turbo
 
-            @JsonView({View.Summary.class})
+            @JsonView({ View.Summary.class })
             private final String manufacturerPartNumber;
 
-            @JsonView({View.Summary.class})
+            @JsonView({ View.Summary.class })
             private final boolean success;
 
-            @JsonView({View.Summary.class})
+            @JsonView({ View.Summary.class })
             private final String errorMessage;
 
             public Row(Long partId, String manufacturerPartNumber, boolean success, String errorMessage) {
@@ -287,10 +274,10 @@ public class PartController {
 
         }
 
-        @JsonView({View.Summary.class})
+        @JsonView({ View.Summary.class })
         private List<Row> rows;
 
-        @JsonView({View.Summary.class})
+        @JsonView({ View.Summary.class })
         private List<Turbo> turbos;
 
         LinkTurboResponse(List<Row> rows, List<Turbo> turbos) {
@@ -327,10 +314,14 @@ public class PartController {
     @JsonView(View.Summary.class)
     @RequestMapping(value = "/part/{id}/prices", method = GET, produces = APPLICATION_JSON_VALUE)
     public @ResponseBody ProductPricesDto getPrices(HttpServletRequest httpRequest, @PathVariable("id") Long id) {
-        // Prices for a part is loading during initialization of the Angular's controller for a part view.
-        // But at that initialization we have no reliable way in a JavaScript code to check if an user has permission
-        // to read prices or not. Loading prices without the permission will lead to login page instead of
-        // the part view. So, to avoid this issue  we make permission check on the server side and just return null
+        // Prices for a part is loading during initialization of the Angular's
+        // controller for a part view.
+        // But at that initialization we have no reliable way in a JavaScript
+        // code to check if an user has permission
+        // to read prices or not. Loading prices without the permission will
+        // lead to login page instead of
+        // the part view. So, to avoid this issue we make permission check on
+        // the server side and just return null
         // when user has no the required permission.
         if (httpRequest.isUserInRole("ROLE_PRICE_READ")) {
             return priceService.getProductPricesById(id);
@@ -349,8 +340,7 @@ public class PartController {
 
     @JsonView(View.Summary.class)
     @ResponseBody
-    @RequestMapping(value = "/part/{id}/standard/list", method = GET,
-            produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/part/{id}/standard/list", method = GET, produces = APPLICATION_JSON_VALUE)
     public List<Part> findStandardParts(@PathVariable("id") Long partId) {
         List<Part> retVal = standardOversizePartService.findStandardParts(partId);
         return retVal;
@@ -361,8 +351,8 @@ public class PartController {
     @ResponseBody
     @JsonView(View.Summary.class)
     @RequestMapping(value = "/part/standardoversize", method = POST)
-    public CreateStandardOversizePartResponse createStandardOversizePart(@RequestBody CreateStandardOversizePartRequest request)
-            throws Exception {
+    public CreateStandardOversizePartResponse createStandardOversizePart(
+            @RequestBody CreateStandardOversizePartRequest request) throws Exception {
         return standardOversizePartService.create(request);
     }
 
@@ -370,25 +360,24 @@ public class PartController {
     @ResponseBody
     @RequestMapping(value = "/part/standardoversize/{standardPartId}/{oversizePartId}", method = DELETE)
     public void deleteStandardOversizePart(@PathVariable("standardPartId") Long standardPartId,
-                                           @PathVariable("oversizePartId") Long oversizePartId) {
+            @PathVariable("oversizePartId") Long oversizePartId) {
         standardOversizePartService.delete(standardPartId, oversizePartId);
     }
 
     @Secured("ROLE_READ")
     @JsonView(View.Detail.class)
-    @RequestMapping(value = "/part/numbers", method = GET,
-            produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/part/numbers", method = GET, produces = APPLICATION_JSON_VALUE)
     public @ResponseBody Part findByPartNumber(@RequestParam(name = "mid") Long manufacturerId,
-                                 @RequestParam(name = "pn") String partNumber) {
+            @RequestParam(name = "pn") String partNumber) {
         return partDao.findByPartNumberAndManufacturer(manufacturerId, partNumber);
     }
 
-    @RequestMapping(value="/part/{id}/ancestors", method = GET)
+    @RequestMapping(value = "/part/{id}/ancestors", method = GET)
     @ResponseBody
     @JsonView(View.Summary.class)
     @Secured("ROLE_READ")
     public Page<BOMAncestor> ancestors(@PathVariable("id") Long partId, @RequestParam(name = "offset") int offset,
-                                       @RequestParam(name = "limit") int limit) throws Exception {
+            @RequestParam(name = "limit") int limit) throws Exception {
         return partService.ancestors(partId, offset, limit);
     }
 
@@ -397,31 +386,29 @@ public class PartController {
     @JsonView(View.Detail.class)
     @RequestMapping(value = "/part", method = POST)
     public @ResponseBody PartCreateResponse createPart(HttpServletRequest httpRequest,
-                                                       @RequestBody PartCreateRequest request) throws Exception {
+            @RequestBody PartCreateRequest request) throws Exception {
         Part origin = request.getOrigin();
         List<String> partNumbers = request.getPartNumbers();
         Long[] sourcesIds = request.getSourcesIds();
         Integer[] ratings = request.getChlogSrcRatings();
         String description = request.getChlogSrcLnkDescription();
-        List<PartCreateResponse.Row> responseRows = partService.createPart(httpRequest, origin, partNumbers,
-               sourcesIds , ratings, description);
+        List<PartCreateResponse.Row> responseRows = partService.createPart(httpRequest, origin, partNumbers, sourcesIds,
+                ratings, description);
         return new PartCreateResponse(responseRows);
     }
 
     @Transactional
     @Secured("ROLE_ALTER_PART")
     @JsonView(View.Detail.class)
-    @RequestMapping(value = "/part/{id}", method = PUT,
-            produces = APPLICATION_JSON_VALUE,
-            consumes = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/part/{id}", method = PUT, produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
     public @ResponseBody Part updatePart(HttpServletRequest request, HttpServletResponse response,
-                           @RequestBody Part part, @PathVariable("id") Long id) throws IOException {
+            @RequestBody Part part, @PathVariable("id") Long id) throws IOException {
         try {
             return partService.updatePart(request, id, part);
-        } catch(AssertionError e) {
+        } catch (AssertionError e) {
             response.sendError(SC_BAD_REQUEST, e.toString());
             return null;
-        } catch(SecurityException e) {
+        } catch (SecurityException e) {
             response.sendError(SC_FORBIDDEN, e.toString());
             return null;
         }
@@ -443,28 +430,27 @@ public class PartController {
     }
 
     @Transactional
-    @RequestMapping(value="/part/{id}/image", method = POST)
+    @RequestMapping(value = "/part/{id}/image", method = POST)
     @Secured("ROLE_PART_IMAGES")
     public ResponseEntity<String> addProductImage(@PathVariable Long id, @RequestParam Boolean publish,
-                                                  @RequestBody byte[] imageData) throws Exception {
+            @RequestBody byte[] imageData) throws Exception {
         ProductImage productImage = partService.addProductImage(id, publish, imageData);
         return new ResponseEntity<>(productImage.toJson(), HttpStatus.OK);
     }
 
     @Transactional
-    @RequestMapping(value="/part/{id}/cdlegend/image", method = POST, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/part/{id}/cdlegend/image", method = POST, produces = APPLICATION_JSON_VALUE)
     @JsonView(View.Summary.class)
     @Secured("ROLE_PART_IMAGES")
     public @ResponseBody Part addCriticalDimensionLegendImage(@PathVariable Long id,
-                                                  @RequestPart("file") @Valid @NotNull @NotBlank
-                                                          MultipartFile mpf) throws Exception {
+            @RequestPart("file") @Valid @NotNull @NotBlank MultipartFile mpf) throws Exception {
         byte[] imageData = mpf.getBytes();
         Part part = partService.addCriticalDimensionLegendImage(id, imageData);
         return part;
     }
 
     @Transactional
-    @RequestMapping(value="/part/{partId}/turboType/{turboTypeId}", method= POST)
+    @RequestMapping(value = "/part/{partId}/turboType/{turboTypeId}", method = POST)
     @Secured("ROLE_ALTER_PART")
     public void addTurboType(@PathVariable("partId") Long partId, @PathVariable("turboTypeId") Long turboTypeId) {
         Part part = partDao.findOne(partId);
@@ -474,14 +460,15 @@ public class PartController {
     }
 
     @Transactional
-    @RequestMapping(value="/part/{partId}/turboType/{turboTypeId}", method= DELETE)
+    @RequestMapping(value = "/part/{partId}/turboType/{turboTypeId}", method = DELETE)
     @Secured("ROLE_ALTER_PART")
-    public void deleteTurboType(@PathVariable("partId") Long partId,
-                                @PathVariable("turboTypeId") Long turboTypeId) {
+    public void deleteTurboType(@PathVariable("partId") Long partId, @PathVariable("turboTypeId") Long turboTypeId) {
         partService.deleteTurboType(partId, turboTypeId);
     }
 
-    enum GasketKitResultStatus { OK, ASSERTION_ERROR }
+    enum GasketKitResultStatus {
+        OK, ASSERTION_ERROR
+    }
 
     static class GasketKitResult {
 
@@ -504,26 +491,22 @@ public class PartController {
     }
 
     @Transactional(noRollbackFor = AssertionError.class)
-    @RequestMapping(value="/part/{partId}/gasketkit/{gasketkitId}", method = PUT,
-            consumes = APPLICATION_JSON_VALUE,
-            produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/part/{partId}/gasketkit/{gasketkitId}", method = PUT, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     @JsonView(View.Summary.class)
     @Secured("ROLE_ALTER_PART")
-    public GasketKitResult setGasketKitForPart(
-            @PathVariable("partId") Long partId,
-            @PathVariable("gasketkitId") Long gasketkitId)
-    {
+    public GasketKitResult setGasketKitForPart(@PathVariable("partId") Long partId,
+            @PathVariable("gasketkitId") Long gasketkitId) {
         try {
             partService.linkGasketKitToTurbo(gasketkitId, partId);
             return new GasketKitResult();
-        } catch(AssertionError e) {
+        } catch (AssertionError e) {
             return new GasketKitResult(e);
         }
     }
 
     @Transactional
-    @RequestMapping(value="/part/{partId}/gasketkit", method = DELETE, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/part/{partId}/gasketkit", method = DELETE, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     @JsonView(View.Detail.class)
     @Secured("ROLE_ALTER_PART")
@@ -532,8 +515,7 @@ public class PartController {
     }
 
     @Transactional
-    @RequestMapping(value="/part/{gasketKitId}/gasketkit/turbos", method = GET,
-            produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/part/{gasketKitId}/gasketkit/turbos", method = GET, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     @Secured("ROLE_READ")
     @JsonView(View.Summary.class)
@@ -542,7 +524,7 @@ public class PartController {
     }
 
     @Transactional
-    @RequestMapping(value="/part/{partId}/gasketkit2", method = DELETE, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/part/{partId}/gasketkit2", method = DELETE, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     @JsonView(View.Detail.class)
     @Secured("ROLE_ALTER_PART")
@@ -554,8 +536,7 @@ public class PartController {
     @Secured("ROLE_ALTER_PART")
     @JsonView(View.Detail.class)
     @ResponseBody
-    @RequestMapping(value="/part/{partId}/gasketkits", method = PUT,
-            consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/part/{partId}/gasketkits", method = PUT, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public LinkTurboResponse linkTurbosToGasketKit(@RequestBody LinkTurboRequest request) {
         Long gasketKitId = request.getGasketKitId();
         List<LinkTurboResponse.Row> rows = partService.linkTurbosToGasketKit(gasketKitId, request.getPickedTurbos());
@@ -563,22 +544,23 @@ public class PartController {
         return new LinkTurboResponse(rows, turbos);
     }
 
-    @RequestMapping(value = "/part/{partId}/boms/interchanges", method = GET,
-            produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/part/{partId}/boms/interchanges", method = GET, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     @Secured("ROLE_READ")
     @JsonView(View.Summary.class)
     // see ticket #907
     public Map<Long, List<Part>> getPartBomsInterchanges(@PathVariable("partId") Long partId) throws Exception {
         List<BOMItem> boms = bomService.getByParentId(partId);
-        Map<Long, List<Part>> retVal = new HashMap<>(boms.size());  // BOMItem.id => [Part0, Part1, ...]
-        for(BOMItem bi : boms) {
+        Map<Long, List<Part>> retVal = new HashMap<>(boms.size()); // BOMItem.id
+                                                                   // => [Part0,
+                                                                   // Part1,
+                                                                   // ...]
+        for (BOMItem bi : boms) {
             Long bomId = bi.getId();
             Interchange interchange = bi.getChild().getInterchange();
             if (interchange != null && interchange.getParts().size() > 0) {
                 List<Part> parts = new ArrayList<>(interchange.getParts().size());
-                interchange.getParts().stream()
-                        .filter(p -> p.getId() != bi.getChild().getId())
+                interchange.getParts().stream().filter(p -> p.getId() != bi.getChild().getId())
                         .forEach(p -> parts.add(p));
                 if (!parts.isEmpty()) {
                     retVal.put(bomId, parts);

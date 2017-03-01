@@ -1,17 +1,20 @@
 package com.turbointernational.metadata.entity;
 
-import com.turbointernational.metadata.web.dto.SalesNoteSearchRequest;
 import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
+
 import org.springframework.beans.factory.annotation.Autowired;
+
+import com.turbointernational.metadata.web.dto.SalesNoteSearchRequest;
 
 /**
  *
  * @author jrodriguez
  */
 public class SalesNoteRepositoryImpl implements SalesNoteRepositoryCustom {
-    
+
     @Autowired(required=true)
     EntityManager entityManager;
 
@@ -19,20 +22,20 @@ public class SalesNoteRepositoryImpl implements SalesNoteRepositoryCustom {
     public SalesNoteSearchResponse search(SalesNoteSearchRequest request) {
         long total = buildSearchQuery("SELECT COUNT(sn)", Number.class, request)
                 .getSingleResult().longValue();
-            
+
         List<SalesNote> results = buildSearchQuery("SELECT sn", SalesNote.class, request)
                 .setFirstResult(request.getPage() * request.getPageSize())
                 .setMaxResults(request.getPageSize())
                 .getResultList();
-        
+
         return new SalesNoteSearchResponse(total, request.getPageSize(), request.getPage(), results);
     }
-    
+
     private <T> TypedQuery<T> buildSearchQuery(String selectClause, Class<T> resultClass, SalesNoteSearchRequest request) {
         if (request.getStates().isEmpty()) {
             throw new IllegalArgumentException("A SalesNoteState is required.");
         }
-        
+
         return entityManager.createQuery(
             selectClause + "\n" +
             "FROM SalesNote sn\n" +
