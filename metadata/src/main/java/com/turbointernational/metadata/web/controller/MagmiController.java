@@ -24,6 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.turbointernational.metadata.exception.PartNotFound;
 import com.turbointernational.metadata.service.PriceService;
 import com.turbointernational.metadata.web.dto.ProductPricesDto;
+import com.turbointernational.metadata.web.dto.mas90.ArInvoiceHistoryDetailDto;
 
 /**
  *
@@ -83,6 +84,13 @@ public class MagmiController {
             throw new AssertionError("Unsupported value for parameter 'inputtype': " + inputType);
         }
         return retVal;
+    }
+
+    @RequestMapping(value = "/invoice/history/detail", method = GET)
+    @ResponseBody
+    @PreAuthorize("hasRole('ROLE_MAGMI_EXPORT') or hasIpAddress('127.0.0.1/32')")
+    public List<ArInvoiceHistoryDetailDto> getInvoiceHistoryDetail() {
+        return null;
     }
 
     private List<ProductPricesDto> getPricesForPartIds(JsonNode json) {
