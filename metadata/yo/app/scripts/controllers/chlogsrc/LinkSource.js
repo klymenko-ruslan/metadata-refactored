@@ -294,7 +294,7 @@ angular.module("ngMetaCrudApp")
     $scope.isActionBttnDisabled = function () {
       var retval = true;
       if ($scope.data.currVw.id === "sources_list") {
-        retval = pickedSources.length === 0 || !canCreateSource;
+        retval = pickedSources.length === 0;
       } else if ($scope.data.currVw.id === "create_new_source" && $scope.forms.changelogSourceForm) {
         retval = $scope.forms.changelogSourceForm.$invalid || !canCreateSource;
       } else if ($scope.data.currVw.id === "create_source_name" && $scope.forms.newSourceName) {
