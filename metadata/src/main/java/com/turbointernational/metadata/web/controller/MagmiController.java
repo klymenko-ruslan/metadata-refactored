@@ -17,14 +17,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.turbointernational.metadata.exception.PartNotFound;
+import com.turbointernational.metadata.service.MagmiService;
 import com.turbointernational.metadata.service.PriceService;
+import com.turbointernational.metadata.util.View;
 import com.turbointernational.metadata.web.dto.ProductPricesDto;
 import com.turbointernational.metadata.web.dto.mas90.ArInvoiceHistoryDetailDto;
+import com.turbointernational.metadata.web.dto.mas90.ArInvoiceHistoryHeaderDto;
 
 /**
  *
@@ -40,6 +44,9 @@ public class MagmiController {
 
     @Autowired
     private PriceService priceService;
+
+    @Autowired
+    private MagmiService magmiService;
 
     @RequestMapping(value = "/prices", method = GET)
     @ResponseBody
@@ -86,11 +93,20 @@ public class MagmiController {
         return retVal;
     }
 
-    @RequestMapping(value = "/invoice/history/detail", method = GET)
+    @RequestMapping(value = "/invoice/history/header", method = POST)
     @ResponseBody
     @PreAuthorize("hasRole('ROLE_MAGMI_EXPORT') or hasIpAddress('127.0.0.1/32')")
-    public List<ArInvoiceHistoryDetailDto> getInvoiceHistoryDetail() {
-        return null;
+    @JsonView(View.Summary.class)
+    public List<ArInvoiceHistoryHeaderDto> getInvoiceHistoryHeader(List<ArInvoiceHistoryHeaderDto.Key> request) {
+        return magmiService.getInvoiceHistoryHeader(request);
+    }
+
+    @RequestMapping(value = "/invoice/history/detail", method = POST)
+    @ResponseBody
+    @PreAuthorize("hasRole('ROLE_MAGMI_EXPORT') or hasIpAddress('127.0.0.1/32')")
+    @JsonView(View.Summary.class)
+    public List<ArInvoiceHistoryDetailDto> getInvoiceHistoryDetail(List<ArInvoiceHistoryDetailDto.Key> request) {
+        return magmiService.getInvoiceHistoryDetail(request);
     }
 
     private List<ProductPricesDto> getPricesForPartIds(JsonNode json) {
