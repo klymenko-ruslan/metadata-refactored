@@ -97,16 +97,20 @@ public class MagmiController {
     @ResponseBody
     @PreAuthorize("hasRole('ROLE_MAGMI_EXPORT') or hasIpAddress('127.0.0.1/32')")
     @JsonView(View.Summary.class)
-    public List<ArInvoiceHistoryHeaderDto> getInvoiceHistoryHeader(List<ArInvoiceHistoryHeaderDto.Key> request) {
-        return magmiService.getInvoiceHistoryHeader(request);
+    public List<ArInvoiceHistoryHeaderDto> getInvoiceHistoryHeader(
+            @RequestBody List<ArInvoiceHistoryHeaderDto.Key> request) {
+        List<ArInvoiceHistoryHeaderDto> retVal = magmiService.getInvoiceHistoryHeader(request);
+        return retVal;
     }
 
     @RequestMapping(value = "/invoice/history/detail", method = POST)
     @ResponseBody
     @PreAuthorize("hasRole('ROLE_MAGMI_EXPORT') or hasIpAddress('127.0.0.1/32')")
     @JsonView(View.Summary.class)
-    public List<ArInvoiceHistoryDetailDto> getInvoiceHistoryDetail(List<ArInvoiceHistoryDetailDto.Key> request) {
-        return magmiService.getInvoiceHistoryDetail(request);
+    public List<ArInvoiceHistoryDetailDto> getInvoiceHistoryDetail(
+            @RequestBody List<ArInvoiceHistoryDetailDto.Key> request) {
+        List<ArInvoiceHistoryDetailDto> retVal = magmiService.getInvoiceHistoryDetail(request);
+        return retVal;
     }
 
     private List<ProductPricesDto> getPricesForPartIds(JsonNode json) {
