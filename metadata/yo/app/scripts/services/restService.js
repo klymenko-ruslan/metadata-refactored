@@ -117,6 +117,20 @@ angular.module("ngMetaCrudApp")
         return Restangular.all("security/user/list").getList();
       };
 
+      this.filterUsers = function(displayName, userName, email, authProviderId,
+        sortProperty, sortOrder, offset, limit) {
+        return Restangular.one("security/user/filter").get({
+          "displayName": displayName,
+          "userName": userName,
+          "email": email,
+          "authProviderId": authProviderId,
+          "sortProperty": sortProperty,
+          "sortOrder": sortOrder,
+          "offset": offset,
+          "limit": limit
+        });
+      };
+
       this.findPart = function(id, params) {
         return Restangular.one("part", id).get(params);
       };

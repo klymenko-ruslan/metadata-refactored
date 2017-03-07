@@ -1,5 +1,8 @@
 package com.turbointernational.metadata.entity;
 
+import static javax.persistence.GenerationType.IDENTITY;
+import static javax.persistence.InheritanceType.JOINED;
+
 import java.io.Serializable;
 
 import javax.persistence.Column;
@@ -7,10 +10,8 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonView;
@@ -21,7 +22,7 @@ import com.turbointernational.metadata.util.View;
  */
 @Entity
 @Table(name = "auth_provider")
-@Inheritance(strategy = InheritanceType.JOINED)
+@Inheritance(strategy = JOINED)
 public class AuthProvider implements Serializable {
 
     private static final long serialVersionUID = -1177278382277025727L;
@@ -30,7 +31,7 @@ public class AuthProvider implements Serializable {
 
     //<editor-fold defaultstate="collapsed" desc="properties">
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = IDENTITY)
     @JsonView({View.Summary.class})
     private Long id;
 

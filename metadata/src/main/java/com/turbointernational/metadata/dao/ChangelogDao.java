@@ -58,7 +58,7 @@ public class ChangelogDao extends AbstractDao<Changelog> {
         int numPredicates = 0;
         List<Predicate> lstPredicates = new ArrayList<>(5);
         if (service != null) {
-            lstPredicates.add(cb.greaterThanOrEqualTo(root.get("service"), service));
+            lstPredicates.add(cb.equal(root.get("service"), service));
             numPredicates++;
         }
         if (userId != null) {

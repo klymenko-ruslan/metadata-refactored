@@ -14,27 +14,32 @@
 
 <div class="row">
   <div class="col-xs-12">
-    <table data-ng-table="usersTableParams" class="table table-bordered table-striped table-hover table-responsive">
+    <table data-ng-table="usersTableParams" show-filter="true" class="table table-bordered table-striped table-hover table-responsive">
       <tr data-ng-repeat="user in $data">
-        <td title="'Display Name'" data-sortable="'name'" class="text-left">
+        <td data-title="'Display Name'" data-sortable="'name'" filter="{displayName: 'text'}" class="text-left">
           {{user.name}}
         </td>
-        <td title="'Username'" data-sortable="'username'" class="text-left">
+        <td data-title="'Username'" data-sortable="'username'" filter="{userName: 'text'}" class="text-left">
           {{user.username}}
         </td>
-        <td title="'Email'" data-sortable="'email'" class="text-left">
+        <td data-title="'Email'" data-sortable="'email'" filter="{email: 'text'}" class="text-left">
           {{user.email}}
         </td>
-        <td title="'Auth Provider'" data-sortable="'authProvider.name'" class="text-left">
-          {{user.authProvider.name}}
+        <td data-title="'Auth Provider'" filter="{authProviderId: 'select'}" filter-data="authProviders" class="text-left">
+          {{user.authProvider.name || 'Local DB'}}
         </td>
-        <td title="'Actions'" class="actions">
+        <td data-title="'Actions'" class="actions">
           <a href="/security/user/{{user.id}}" class="btn btn-primary btn-xs">
             <i class="fa fa-cog"></i>
             Edit
           </a>
         </td>
       </tr>
+
+      <tr data-ng-hide="$data.length > 0">
+        <td colspan="5">No users to display.</td>
+      </tr>
+
     </table>
   </div>
 </div>

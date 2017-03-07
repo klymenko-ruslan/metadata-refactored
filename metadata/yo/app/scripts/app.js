@@ -590,7 +590,9 @@ angular.module("ngMetaCrudApp", ["ngCookies", "ngRoute", "ngTable", "ui.bootstra
       templateUrl: "views/security/users.html",
       controller: "UsersCtrl",
       resolve: {
-        users: ["restService", function(restService) { return restService.findActiveUsers()}]
+        authProviders: ["restService", function(restService) {
+          return restService.getAllAuthProviders("id", "asc", 0, 1000);
+        }]
       }
     });
     $routeProvider.when("/security/user/:id", {
