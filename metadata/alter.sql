@@ -1,1 +1,0 @@
-alter table product_image add main tinyint(1) not null default 0;
