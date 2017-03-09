@@ -526,7 +526,6 @@ angular.module("ngMetaCrudApp")
         _.each($scope.part.productImages, function (img) {
           img.main = (img.id == image.id);
         });
-$log.log("productImages: " + angular.toJson($scope.part.productImages));
       },
       function failure(result) {
         restService.error("Set image as primary failed.", response);

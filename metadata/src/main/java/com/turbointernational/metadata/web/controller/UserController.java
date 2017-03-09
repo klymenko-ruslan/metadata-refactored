@@ -117,12 +117,13 @@ public class UserController {
             @RequestParam(name = "userName", required = false) String userName,
             @RequestParam(name = "email", required = false) String email,
             @RequestParam(name = "authProviderId", required = false) Long authProviderId,
+            @RequestParam(name = "enabled", required = false) Boolean enabled,
             @RequestParam(name = "sortProperty", required = false) String sortProperty,
             @RequestParam(name = "sortOrder", required = false) String sortOrder,
             @RequestParam(name = "offset", required = false) Integer offset,
             @RequestParam(name = "limit", required = false) Integer limit) {
-        return userDao.filterUsers(displayName, userName, email, authProviderId, sortProperty, sortOrder, offset,
-                limit);
+        return userDao.filterUsers(displayName, userName, email, authProviderId, enabled,
+                sortProperty, sortOrder, offset, limit);
     }
 
     @JsonView(View.DetailWithGroups.class)

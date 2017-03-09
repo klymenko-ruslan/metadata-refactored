@@ -25,10 +25,14 @@
         <td data-title="'Email'" data-sortable="'email'" filter="{email: 'text'}" class="text-left">
           {{user.email}}
         </td>
+        <td data-title="'Enabled'" data-sortable="'enabled'" filter="{enabled: 'select'}" filter-data="enabledOpts" class="text-center">
+          <i data-ng-show="user.enabled === true" class="fa fa-circle" title="yes"></i>
+          <i data-ng-show="user.enabled === false" class="fa fa-circle-o text-muted" title="no"></i>
+        </td>
         <td data-title="'Auth Provider'" filter="{authProviderId: 'select'}" filter-data="authProviders" class="text-left">
           {{user.authProvider.name || 'Local DB'}}
         </td>
-        <td data-title="'Actions'" class="actions">
+        <td data-title="'Actions'" class="actions text-center">
           <a href="/security/user/{{user.id}}" class="btn btn-primary btn-xs">
             <i class="fa fa-cog"></i>
             Edit
@@ -37,7 +41,7 @@
       </tr>
 
       <tr data-ng-hide="$data.length > 0">
-        <td colspan="5">No users to display.</td>
+        <td colspan="6">No users to display.</td>
       </tr>
 
     </table>

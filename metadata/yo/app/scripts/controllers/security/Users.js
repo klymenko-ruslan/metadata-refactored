@@ -7,6 +7,11 @@ angular.module("ngMetaCrudApp").controller("UsersCtrl", ["$log", "$scope", "ngTa
     });
     $scope.authProviders.unshift({ id: null, title: "Local DB" });
     $scope.authProviders.unshift({ id: -1, title: "" });
+    $scope.enabledOpts = [
+      {id: null, title: ""},
+      {id: true, title: "yes"},
+      {id: false, title: "no"}
+    ];
     $scope.usersTableParams = new ngTableParams({
       page: 1,
       count: 25,
@@ -17,6 +22,7 @@ angular.module("ngMetaCrudApp").controller("UsersCtrl", ["$log", "$scope", "ngTa
         displayName: null,
         userName: null,
         email: null,
+        enabled: null,
         authProvider: null
       }
     }, {
@@ -30,9 +36,8 @@ angular.module("ngMetaCrudApp").controller("UsersCtrl", ["$log", "$scope", "ngTa
         var offset = params.count() * (params.page() - 1);
         var limit = params.count();
         var filter = params.filter();
-$log.log("filter: " + angular.toJson(filter, 2));
         restService.filterUsers(filter.displayName, filter.userName, filter.email,
-            filter.authProviderId, sortProperty, sortOrder, offset, limit).then(
+            filter.authProviderId, filter.enabled, sortProperty, sortOrder, offset, limit).then(
           function(result) {
             // Update the total and slice the result
             $defer.resolve(result.recs);

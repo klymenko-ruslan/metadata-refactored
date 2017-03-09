@@ -53,7 +53,7 @@ public class UserDao extends AbstractDao<User> {
     }
 
     public Page<User> filterUsers(String displayName, String userName, String email, Long authProviderId,
-            String sortProperty, String sortOrder, Integer offset, Integer limit) {
+            Boolean enabled, String sortProperty, String sortOrder, Integer offset, Integer limit) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<User> ecq = cb.createQuery(User.class);
         EntityType<User> et = em.getMetamodel().entity(User.class);
@@ -82,6 +82,9 @@ public class UserDao extends AbstractDao<User> {
         } else if (authProviderId > 0) {
             lstPredicates.add(cb.equal(root.get("authProvider").get("id"), authProviderId));
             numPredicates++;
+        }
+        if (enabled != null) {
+            lstPredicates.add(cb.equal(root.get(et.getDeclaredSingularAttribute("enabled", Boolean.class)), enabled));
         }
         Predicate[] arrPredicates = lstPredicates.toArray(new Predicate[numPredicates]);
         ecq.where(arrPredicates);

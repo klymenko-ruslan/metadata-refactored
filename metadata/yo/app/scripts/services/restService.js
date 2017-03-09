@@ -117,13 +117,14 @@ angular.module("ngMetaCrudApp")
         return Restangular.all("security/user/list").getList();
       };
 
-      this.filterUsers = function(displayName, userName, email, authProviderId,
+      this.filterUsers = function(displayName, userName, email, authProviderId, enabled,
         sortProperty, sortOrder, offset, limit) {
         return Restangular.one("security/user/filter").get({
           "displayName": displayName,
           "userName": userName,
           "email": email,
           "authProviderId": authProviderId,
+          "enabled": enabled,
           "sortProperty": sortProperty,
           "sortOrder": sortOrder,
           "offset": offset,
