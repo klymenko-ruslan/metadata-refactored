@@ -273,7 +273,7 @@
 
           <ul data-ng-hide="!part.productImages || part.productImages.length == 0" class="list-unstyled list-inline">
 
-            <li data-ng-repeat="image in part.productImages" class="ng-scope bg-info part-icon" data-ng-show="($index >= (images.pgNum - 1) * images.pgSzVal) && ($index < (images.pgNum - 1) * images.pgSzVal + images.pgSzVal)">
+            <li data-ng-repeat="image in part.productImages" class="ng-scope bg-info part-icon text-center" data-ng-show="($index >= (images.pgNum - 1) * images.pgSzVal) && ($index < (images.pgNum - 1) * images.pgSzVal + images.pgSzVal)">
               <form class="form-inline">
                 <div class="form-group pull-right">
                   <button class="btn btn-xs btn-danger" data-ng-click="deleteImage(image)">
@@ -282,9 +282,14 @@
                   </button>
                 </div>
                 <div class="form-group pull-left">
+                  <div class="radio">
+                    <label title="Primary">
+                      <input type="radio" name="primaryImage" data-ng-model="image.main" data-ng-change="onSetImageAsPrimary(image)" data-ng-value="true"> Prim.
+                    </label>
+                  </div>
                   <div class="checkbox">
-                    <label style="padding-right: 10px;">
-                      <input type="checkbox" data-ng-model="image.publish" data-ng-change="onChangePublishImage(image)"> Publish
+                    <label title="Publish" style="padding-right: 10px;">
+                      <input type="checkbox" data-ng-model="image.publish" data-ng-change="onChangePublishImage(image)"> Pub.
                     </label>
                   </div>
                 </div>

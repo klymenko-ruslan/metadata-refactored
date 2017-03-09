@@ -1,7 +1,8 @@
 package com.turbointernational.metadata.dao;
 
-import com.turbointernational.metadata.entity.part.ProductImage;
 import org.springframework.stereotype.Repository;
+
+import com.turbointernational.metadata.entity.part.ProductImage;
 
 /**
  *
@@ -17,4 +18,5 @@ public class ProductImageDao extends AbstractDao<ProductImage> {
     public ProductImageDao() {
         super(ProductImage.class);
     }
+
 }

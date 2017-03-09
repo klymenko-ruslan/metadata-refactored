@@ -44,10 +44,13 @@ public class ProductImage implements Comparable<ProductImage>, Serializable {
     @JsonView({View.Summary.class})
     private Long id;
 
-    // alter table product_image add column publish tinyint(1) not null default 1;
     @Column(name = "publish", nullable = false)
     @JsonView({View.Summary.class})
     private Boolean publish;
+
+    @Column(name = "main", nullable = false)
+    @JsonView({View.Summary.class})
+    private Boolean main;
 
     @ManyToOne
     @JoinColumn(name = "part_id")
@@ -92,6 +95,15 @@ public class ProductImage implements Comparable<ProductImage>, Serializable {
     public void setFilename(String filename) {
         this.filename = filename;
     }
+
+    public Boolean getMain() {
+        return main;
+    }
+
+    public void setMain(Boolean main) {
+        this.main = main;
+    }
+
     //</editor-fold>
 
     public String toJson() {
@@ -100,6 +112,7 @@ public class ProductImage implements Comparable<ProductImage>, Serializable {
                 .include("id")
                 .include("filename")
                 .include("publish")
+                .include("main")
                 .exclude("*")
                 .serialize(this);
     }

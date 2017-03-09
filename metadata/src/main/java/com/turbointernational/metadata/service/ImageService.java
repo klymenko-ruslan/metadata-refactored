@@ -6,8 +6,8 @@ import static org.springframework.http.HttpStatus.OK;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
-import javax.persistence.Transient;
+import java.util.Arrays;
+import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.im4java.core.ConvertCmd;
@@ -20,7 +20,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.turbointernational.metadata.dao.PartDao;
 import com.turbointernational.metadata.dao.ProductImageDao;
 import com.turbointernational.metadata.entity.part.ProductImage;
 
@@ -39,6 +41,9 @@ public class ImageService {
 
     public final static int PART_CRIT_DIM_LEGEND_WIDTH = 640;
     public final static int PART_CRIT_DIM_LEGEND_HEIGHT = 480;
+
+    @Autowired
+    private PartDao partDao;
 
     @Autowired
     private ProductImageDao productImageDao;
@@ -93,10 +98,17 @@ public class ImageService {
         FileUtils.deleteQuietly(original);
     }
 
-    @Transient
     public void publish(Long imageId, Boolean publish) {
         ProductImage pi = productImageDao.findOne(imageId);
         pi.setPublish(publish);
+    }
+
+    @Transactional
+    public void setPrimary(Long imageId, Boolean primary) {
+        ProductImage pi = productImageDao.findOne(imageId);
+        Long partId = pi.getPart().getId();
+        List<ProductImage> images = partDao.findProductImages(Arrays.asList(partId));
+        images.forEach(img -> img.setMain(img.getId().equals(imageId)));
     }
 
     private ResponseEntity<byte[]> getImage(File dir, String filename) throws IOException {

@@ -94,9 +94,15 @@ public class ImageController {
     @Transactional
     @RequestMapping(value = "/{id}", method = PUT)
     @Secured("ROLE_PART_IMAGES")
-    public ResponseEntity<Void> publishPartImage(@PathVariable(name = "id") Long imageId,
-            @RequestParam(name = "publish") Boolean publish) throws Exception {
-        imageService.publish(imageId, publish);
+    public ResponseEntity<Void> updateImageMeta(@PathVariable(name = "id") Long imageId,
+            @RequestParam(name = "publish", required = false) Boolean publish,
+            @RequestParam(name = "primary", required = false) Boolean primary) throws Exception {
+        if (publish != null) {
+            imageService.publish(imageId, publish);
+        }
+        if (primary != null) {
+            imageService.setPrimary(imageId, primary);
+        }
         return new ResponseEntity<>((Void) null, OK);
     }
 

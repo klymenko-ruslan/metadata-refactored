@@ -344,6 +344,10 @@ angular.module("ngMetaCrudApp")
         return Restangular.one("image", imageId).put({"publish": publish});
       };
 
+      this.setProductImageAsPrimary = function(imageId) {
+        return Restangular.one("image", imageId).put({"primary": true});
+      };
+
       this.addTurboTypeToPart = function(partId, turboTypeId) {
         Restangular.setParentless(false);
         return Restangular.one("part", partId).one("turboType", turboTypeId).post();

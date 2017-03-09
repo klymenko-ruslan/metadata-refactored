@@ -519,6 +519,22 @@ angular.module("ngMetaCrudApp")
     );
   };
 
+  $scope.onSetImageAsPrimary = function(image) {
+    restService.setProductImageAsPrimary(image.id).then(
+      function success() {
+        gToast.open("The image has been set as primary.");
+        _.each($scope.part.productImages, function (img) {
+          img.main = (img.id == image.id);
+        });
+$log.log("productImages: " + angular.toJson($scope.part.productImages));
+      },
+      function failure(result) {
+        restService.error("Set image as primary failed.", response);
+        image.main = !image.publish; // return previous state
+      }
+    );
+  };
+
   $scope.addImage = function() {
     dialogs.create(
       "/views/part/dialog/AddImage.html",
@@ -530,7 +546,6 @@ angular.module("ngMetaCrudApp")
   };
 
   $scope.onChangeImgPgSzTxt = function() {
-$log.log("onChangeImgPgSz: " + $scope.images.pgSzTxt);
     $cookies.put("pagedatails.imgpgsz", $scope.images.pgSzTxt);
     $scope.images.pgSzVal = _imgPgSzTxt2Val($scope.images.pgSzTxt);
   };
