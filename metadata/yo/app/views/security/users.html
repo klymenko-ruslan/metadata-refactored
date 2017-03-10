@@ -8,6 +8,12 @@
   </li>
 </metanav>
 
+<script type="text/ng-template" id="filters/clearbutton.html">
+  <button class="btn btn-default input-sm" data-ng-click="clearFilter()">
+    <i class="fa fa-eraser" aria-hidden="true"></i> Clear
+  </button>
+</script>
+
 <div class="row">
   <h1 class="col-xs-12">Users</h1>
 </div>
@@ -32,7 +38,7 @@
         <td data-title="'Auth Provider'" data-sortable="'authProvider'" filter="{authProviderId: 'select'}" filter-data="authProviders" class="text-left">
           {{user.authProvider.name || 'Local DB'}}
         </td>
-        <td data-title="'Actions'" class="actions text-center">
+        <td data-title="'Actions'" filter="{clearbutton: 'clearbutton'}" class="actions text-center">
           <a href="/security/user/{{user.id}}" class="btn btn-primary btn-xs">
             <i class="fa fa-cog"></i>
             Edit

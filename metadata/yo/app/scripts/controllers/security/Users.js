@@ -1,7 +1,15 @@
 "use strict";
 
-angular.module("ngMetaCrudApp").controller("UsersCtrl", ["$log", "$scope", "ngTableParams", "restService",
-  "authProviders", function($log, $scope, ngTableParams, restService, authProviders) {
+angular.module("ngMetaCrudApp")
+.config(["ngTableFilterConfigProvider", function(ngTableFilterConfigProvider) {
+    ngTableFilterConfigProvider.setConfig({
+        aliasUrls: {
+          'clearbttn': 'filters/clearbutton.html'
+        }
+    });
+}])
+.controller("UsersCtrl", ["$log", "$scope", "ngTableParams", "restService", "authProviders",
+  function($log, $scope, ngTableParams, restService, authProviders) {
     $scope.authProviders = _.map(authProviders.recs || [], function (ap) {
       return {id: ap.id, title: ap.name};
     });
@@ -12,6 +20,7 @@ angular.module("ngMetaCrudApp").controller("UsersCtrl", ["$log", "$scope", "ngTa
       {id: true, title: "yes"},
       {id: false, title: "no"}
     ];
+
     $scope.usersTableParams = new ngTableParams({
       page: 1,
       count: 25,
@@ -49,5 +58,10 @@ angular.module("ngMetaCrudApp").controller("UsersCtrl", ["$log", "$scope", "ngTa
           });
       }
     });
+
+    $scope.clearFilter = function () {
+      $log.log('Clear button pressed.');
+    };
+
   }
 ]);
