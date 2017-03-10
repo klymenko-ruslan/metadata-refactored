@@ -23,7 +23,7 @@ angular.module("ngMetaCrudApp").controller("UsersCtrl", ["$log", "$scope", "ngTa
         userName: null,
         email: null,
         enabled: null,
-        authProvider: null
+        authProviderId: -1
       }
     }, {
       getData: function($defer, params) {
