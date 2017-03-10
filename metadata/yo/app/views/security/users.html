@@ -29,7 +29,7 @@
           <i data-ng-show="user.enabled === true" class="fa fa-circle" title="yes"></i>
           <i data-ng-show="user.enabled === false" class="fa fa-circle-o text-muted" title="no"></i>
         </td>
-        <td data-title="'Auth Provider'" filter="{authProviderId: 'select'}" filter-data="authProviders" class="text-left">
+        <td data-title="'Auth Provider'" data-sortable="'authProvider'" filter="{authProviderId: 'select'}" filter-data="authProviders" class="text-left">
           {{user.authProvider.name || 'Local DB'}}
         </td>
         <td data-title="'Actions'" class="actions text-center">
