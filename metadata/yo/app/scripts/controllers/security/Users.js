@@ -60,7 +60,12 @@ angular.module("ngMetaCrudApp")
     });
 
     $scope.clearFilter = function () {
-      $log.log('Clear button pressed.');
+      var filter = $scope.usersTableParams.filter();
+      filter.displayName = null;
+      filter.userName = null;
+      filter.email = null;
+      filter.enabled = null;
+      filter.authProviderId = -1;
     };
 
   }
