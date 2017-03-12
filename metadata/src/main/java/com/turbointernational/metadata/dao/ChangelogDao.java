@@ -9,6 +9,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.From;
 import javax.persistence.criteria.Join;
+import javax.persistence.criteria.ListJoin;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
@@ -18,7 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.turbointernational.metadata.entity.Changelog;
 import com.turbointernational.metadata.entity.Changelog.ServiceEnum;
 import com.turbointernational.metadata.entity.ChangelogPart;
+import com.turbointernational.metadata.entity.Changelog_;
 import com.turbointernational.metadata.entity.User;
+import com.turbointernational.metadata.entity.User_;
 import com.turbointernational.metadata.web.dto.Page;
 
 /**
@@ -53,37 +56,37 @@ public class ChangelogDao extends AbstractDao<Changelog> {
         CriteriaQuery<Changelog> ecq = cb.createQuery(Changelog.class);
         Root<Changelog> root = ecq.from(Changelog.class);
         Join<Changelog, User> userJoin = null;
-        Join<Changelog, ChangelogPart> changelogPartJoin = null;
+        ListJoin<Changelog, ChangelogPart> changelogPartJoin = null;
         ecq.select(root);
         int numPredicates = 0;
         List<Predicate> lstPredicates = new ArrayList<>(5);
         if (service != null) {
-            lstPredicates.add(cb.equal(root.get("service"), service));
+            lstPredicates.add(cb.equal(root.get(Changelog_.service), service));
             numPredicates++;
         }
         if (userId != null) {
             userJoin = root.join("user");
-            lstPredicates.add(cb.equal(userJoin.get("id"), userId));
+            lstPredicates.add(cb.equal(userJoin.get(User_.id), userId));
             numPredicates++;
         }
         if (startDate != null) {
-            lstPredicates.add(cb.greaterThanOrEqualTo(root.get("changeDate"), startDate));
+            lstPredicates.add(cb.greaterThanOrEqualTo(root.get(Changelog_.changeDate), startDate));
             numPredicates++;
         }
         if (finishDate != null) {
-            lstPredicates.add(cb.lessThanOrEqualTo(root.get("changeDate"), finishDate));
+            lstPredicates.add(cb.lessThanOrEqualTo(root.get(Changelog_.changeDate), finishDate));
             numPredicates++;
         }
         if (description != null) {
-            lstPredicates.add(cb.like(root.get("description"), "%" + description + "%"));
+            lstPredicates.add(cb.like(root.get(Changelog_.description), "%" + description + "%"));
             numPredicates++;
         }
         if (data != null) {
-            lstPredicates.add(cb.like(root.get("data"), "%" + data + "%"));
+            lstPredicates.add(cb.like(root.get(Changelog_.data), "%" + data + "%"));
             numPredicates++;
         }
         if (partId != null) {
-            changelogPartJoin = root.join("changelogParts");
+            changelogPartJoin = root.join(Changelog_.changelogParts);
             lstPredicates.add(cb.equal(changelogPartJoin.get("part").get("id"), partId));
             numPredicates++;
         }
@@ -96,7 +99,7 @@ public class ChangelogDao extends AbstractDao<Changelog> {
             From<?, ?> f;
             if (sortProperty.equals("user.name")) {
                 if (userJoin == null) {
-                    userJoin = root.join("user");
+                    userJoin = root.join(Changelog_.user);
                 }
                 f = userJoin;
                 sortProperty = "name";
@@ -122,10 +125,10 @@ public class ChangelogDao extends AbstractDao<Changelog> {
         CriteriaQuery<Long> ccq = cb.createQuery(Long.class);
         Root<Changelog> changelogCountRoot = ccq.from(Changelog.class);
         if (userId != null) {
-            changelogCountRoot.join("user");
+            changelogCountRoot.join(Changelog_.user);
         }
         if (partId != null) {
-            changelogCountRoot.join("changelogParts");
+            changelogCountRoot.join(Changelog_.changelogParts);
         }
         ccq.select(cb.count(changelogCountRoot));
         ccq.where(arrPredicates);

@@ -7,4 +7,5 @@ bower_components
 .classpath
 .project
 .settings
+.factorypath
 *.iml

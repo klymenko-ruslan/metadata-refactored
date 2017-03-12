@@ -47,8 +47,6 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
         <sqlserver.version>4.2</sqlserver.version>
         <es.version>5.0.2</es.version>
     </properties>
@@ -279,8 +277,6 @@
             <version>2.6.5</version>
         </dependency>
 
-
-
         <!-- ORM + JSON -->
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
@@ -348,18 +344,7 @@
             <artifactId>opencsv</artifactId>
             <version>2.3</version>
         </dependency>
-        
-        <!-- MAS90 Price DB -->
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.healthmarketscience.jackcess</groupId>
-            <artifactId>jackcess</artifactId>
-            <version>2.0.1</version>
-        </dependency>
-        
+
         <!-- Testing -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -390,10 +375,43 @@
             <scope>runtime</scope>
             <type>jar</type>
         </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-jpamodelgen</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <finalName>metadata-${buildNumber}</finalName>
         <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <compilerArgument>-proc:none</compilerArgument>
+                </configuration>
+            </plugin>
+            <!-- JPA metamodel generator -->
+            <plugin>
+                <groupId>org.bsc.maven</groupId>
+                <artifactId>maven-processor-plugin</artifactId>
+                <version>3.2.0</version>
+                <executions>
+                    <execution>
+                        <id>process</id>
+                        <goals>
+                            <goal>process</goal>
+                        </goals>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/generated-sources/apt</outputDirectory>
+                            <processors>
+                                <processor>org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor</processor>
+                            </processors>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
