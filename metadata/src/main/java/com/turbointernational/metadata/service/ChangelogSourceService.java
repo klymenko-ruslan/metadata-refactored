@@ -37,12 +37,10 @@ import com.turbointernational.metadata.entity.Changelog;
 import com.turbointernational.metadata.entity.Changelog.ServiceEnum;
 import com.turbointernational.metadata.entity.Role;
 import com.turbointernational.metadata.entity.User;
-import com.turbointernational.metadata.entity.chlogsrc.ChangelogSource;
 import com.turbointernational.metadata.entity.chlogsrc.ChangelogSourceLink;
 import com.turbointernational.metadata.entity.chlogsrc.Source;
 import com.turbointernational.metadata.entity.chlogsrc.SourceAttachment;
 import com.turbointernational.metadata.web.controller.ChangelogSourceController.AttachmentsResponse;
-import com.turbointernational.metadata.web.dto.Page;
 
 /**
  * Created by dmytro.trunykov@zorallabs.com on 1/16/17.
@@ -83,11 +81,6 @@ public class ChangelogSourceService {
 
     public Source findChangelogSourceByName(String name) {
         return sourceDao.findChangelogSourceByName(name);
-    }
-
-    public Page<ChangelogSource> filterChangelogSources(Long sourceId, Long changelogId, String sortProperty,
-            String sortOrder, Integer offset, Integer limit) {
-        return changelogSourceDao.filter(sourceId, changelogId, sortProperty, sortOrder, offset, limit);
     }
 
     public Source create(String name, String desctiption, String url, Long sourceNameId,

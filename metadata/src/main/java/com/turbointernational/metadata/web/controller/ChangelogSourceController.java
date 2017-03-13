@@ -29,13 +29,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
-import com.turbointernational.metadata.entity.chlogsrc.ChangelogSource;
 import com.turbointernational.metadata.entity.chlogsrc.ChangelogSourceLink;
 import com.turbointernational.metadata.entity.chlogsrc.Source;
 import com.turbointernational.metadata.entity.chlogsrc.SourceAttachment;
 import com.turbointernational.metadata.service.ChangelogSourceService;
 import com.turbointernational.metadata.util.View;
-import com.turbointernational.metadata.web.dto.Page;
 
 /**
  * Created by dmytro.trunykov@zorallabs.com on 1/16/17.
@@ -296,21 +294,6 @@ public class ChangelogSourceController {
     @Secured("ROLE_CHLOGSRC_READ")
     public ChangelogSourceLink findLinkById(@PathVariable("id") Long id) {
         return changelogSourceService.findLinkById(id);
-    }
-
-    @RequestMapping(path = "links", method = GET)
-    @ResponseBody
-    @JsonView(View.Summary.class)
-    @Secured("ROLE_CHLOGSRC_READ")
-    public Page<ChangelogSource> filterChangelogSources(
-            @RequestParam(name = "sourceId", required = false) Long sourceId,
-            @RequestParam(name = "changelogId", required = false) Long changelogId,
-            @RequestParam(name = "sortProperty", required = false) String sortProperty,
-            @RequestParam(name = "sortOrder", required = false) String sortOrder,
-            @RequestParam(name = "offset", required = false) Integer offset,
-            @RequestParam(name = "limit", required = false) Integer limit) {
-        return changelogSourceService.filterChangelogSources(sourceId, changelogId, sortProperty, sortOrder, offset,
-                limit);
     }
 
     @RequestMapping(path = "/{id}/links/count", method = GET)
