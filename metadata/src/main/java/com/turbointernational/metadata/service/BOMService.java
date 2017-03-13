@@ -948,7 +948,6 @@ public class BOMService {
             call.setParameter("partId", partId);
             call.setParameter("clean", clean ? 1 : 0);
             call.executeUpdate();
-            em.clear();
             searchService.indexPart(partId);
         } finally {
             synchronized (indexingStatus) {
