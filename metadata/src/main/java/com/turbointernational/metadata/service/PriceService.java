@@ -168,7 +168,7 @@ public class PriceService {
             standardPrice = mssqldb.queryForObject("select standardunitprice from ci_item where itemcode=?",
                     BigDecimal.class, partNumber);
         } catch (EmptyResultDataAccessException e) {
-            log.warn("Standard unit price for the part (p/n '{}') not found.", partNumber);
+            log.debug("Standard unit price for the part (p/n '{}') not found.", partNumber);
             return new ProductPrices(null, partNumber, "Standard unit price not found.");
         } catch (DataAccessException e) {
             log.warn("Calculation of a standard unit price for the part (p/n '{}') failed: {}", partNumber,
