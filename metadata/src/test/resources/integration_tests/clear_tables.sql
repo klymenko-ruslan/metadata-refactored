@@ -66,6 +66,7 @@ delete from turbo_type;
 
 delete from washer;
 delete from standard_oversize_part;
+delete from product_image;
 delete from part;
 alter table part alter column id restart with 1;
 alter table source alter column id restart with 1;

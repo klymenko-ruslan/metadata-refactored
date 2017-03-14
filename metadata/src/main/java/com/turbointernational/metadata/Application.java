@@ -1,9 +1,13 @@
 package com.turbointernational.metadata;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
-import com.turbointernational.metadata.web.filter.CORSFilter;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import javax.persistence.EntityManagerFactory;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.sql.DataSource;
+
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,12 +42,10 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
-import javax.persistence.EntityManagerFactory;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.sql.DataSource;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
+import com.turbointernational.metadata.web.filter.CORSFilter;
 
 @SpringBootApplication
 @Configuration
@@ -55,9 +57,16 @@ import java.util.concurrent.TimeUnit;
 @EnableSpringDataWebSupport
 @ComponentScan
 public class Application extends WebMvcConfigurerAdapter implements WebApplicationInitializer, ApplicationContextAware {
-    
+
+    /**
+     * Skip any disk I/O operations.
+     *
+     * This property can be used in integration tests to avoid (mock) unnecessary disk I/O operations.
+     */
+    public final static String TEST_SKIPFILEIO = "com.turbointernational.metadata.skipfileio";
+
     private static ApplicationContext springContext = null;
-    
+
     public static ApplicationContext getContext() {
         return springContext;
     }
@@ -65,16 +74,16 @@ public class Application extends WebMvcConfigurerAdapter implements WebApplicati
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }
-    
+
     @Autowired
     ObjectMapper objectMapper;
-    
+
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
         servletContext.addFilter("corsFilter", CORSFilter.class);
         servletContext.addFilter("openEntityManagerInViewFilter", OpenEntityManagerInViewFilter.class);
     }
-    
+
     @Bean
     public Jackson2ObjectMapperBuilder jackson2ObjectMapperBuilder() {
         return new Jackson2ObjectMapperBuilder()
@@ -148,7 +157,7 @@ public class Application extends WebMvcConfigurerAdapter implements WebApplicati
     public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
         converters.add(new MappingJackson2HttpMessageConverter(objectMapper));
     }
-    
+
     @Bean
     public EmbeddedServletContainerFactory servletContainer() {
         TomcatEmbeddedServletContainerFactory factory = new TomcatEmbeddedServletContainerFactory();

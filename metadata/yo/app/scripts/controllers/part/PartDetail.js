@@ -20,11 +20,11 @@ angular.module("ngMetaCrudApp")
 
   $scope.images = {
     pgNum: 1,
-    pgSzTxt: "two",
     pgSzVal: 2,
-  }
-  $scope.images.pgSzTxt = $cookies.get("pagedatails.imgpgsz");
-  
+  };
+
+  $scope.images.pgSzTxt = $cookies.get("pagedatails.imgpgsz") || "two";
+
   function _imgPgSzTxt2Val(txt) {
     var retval = $scope.part.productImages.length; // all
     if (txt === "one") {

@@ -1,18 +1,25 @@
 package com.turbointernational.metadata.service;
 
-import com.turbointernational.metadata.dao.PartDao;
-import com.turbointernational.metadata.dao.ProductImageDao;
-import com.turbointernational.metadata.entity.BOMAncestor;
-import com.turbointernational.metadata.entity.Changelog;
-import com.turbointernational.metadata.entity.TurboType;
-import com.turbointernational.metadata.entity.part.Part;
-import com.turbointernational.metadata.entity.part.ProductImage;
-import com.turbointernational.metadata.entity.part.types.GasketKit;
-import com.turbointernational.metadata.entity.part.types.Turbo;
-import com.turbointernational.metadata.service.ChangelogService.RelatedPart;
-import com.turbointernational.metadata.web.controller.PartController;
-import com.turbointernational.metadata.web.dto.Page;
-import flexjson.JSONSerializer;
+import static com.turbointernational.metadata.Application.TEST_SKIPFILEIO;
+import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.PART;
+import static com.turbointernational.metadata.entity.ChangelogPart.Role.PART0;
+import static com.turbointernational.metadata.entity.PartType.PTID_GASKET_KIT;
+import static com.turbointernational.metadata.entity.PartType.PTID_TURBO;
+import static com.turbointernational.metadata.service.ImageService.PART_CRIT_DIM_LEGEND_HEIGHT;
+import static com.turbointernational.metadata.service.ImageService.PART_CRIT_DIM_LEGEND_WIDTH;
+import static com.turbointernational.metadata.service.ImageService.SIZES;
+import static com.turbointernational.metadata.util.FormatUtils.formatPart;
+import static java.util.stream.Collectors.toSet;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.io.FileUtils;
 import org.im4java.core.CommandException;
 import org.slf4j.Logger;
@@ -26,18 +33,20 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.validation.Errors;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.File;
-import java.util.*;
+import com.turbointernational.metadata.dao.PartDao;
+import com.turbointernational.metadata.dao.ProductImageDao;
+import com.turbointernational.metadata.entity.BOMAncestor;
+import com.turbointernational.metadata.entity.Changelog;
+import com.turbointernational.metadata.entity.TurboType;
+import com.turbointernational.metadata.entity.part.Part;
+import com.turbointernational.metadata.entity.part.ProductImage;
+import com.turbointernational.metadata.entity.part.types.GasketKit;
+import com.turbointernational.metadata.entity.part.types.Turbo;
+import com.turbointernational.metadata.service.ChangelogService.RelatedPart;
+import com.turbointernational.metadata.web.controller.PartController;
+import com.turbointernational.metadata.web.dto.Page;
 
-import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.PART;
-import static com.turbointernational.metadata.entity.ChangelogPart.Role.PART0;
-import static com.turbointernational.metadata.entity.PartType.PTID_GASKET_KIT;
-import static com.turbointernational.metadata.entity.PartType.PTID_TURBO;
-import static com.turbointernational.metadata.service.ImageService.PART_CRIT_DIM_LEGEND_HEIGHT;
-import static com.turbointernational.metadata.service.ImageService.PART_CRIT_DIM_LEGEND_WIDTH;
-import static com.turbointernational.metadata.util.FormatUtils.formatPart;
-import static java.util.stream.Collectors.toSet;
+import flexjson.JSONSerializer;
 
 /**
  * Created by dmytro.trunykov@zorallabs.com on 12/15/16.
@@ -167,16 +176,19 @@ public class PartService {
         // Save the file into the originals directory
         String filename = part.getId().toString() + "_" + System.currentTimeMillis() + ".jpg"; // Good enough
         File originalFile = new File(originalImagesDir, filename);
-        FileUtils.writeByteArrayToFile(originalFile, imageData);
+        if (System.getProperty(TEST_SKIPFILEIO) == null) {
+            FileUtils.writeByteArrayToFile(originalFile, imageData);
+        }
         // Create the product image
         ProductImage productImage = new ProductImage();
         productImage.setPublish(publish);
+        productImage.setMain(false);
         productImage.setFilename(filename);
         productImage.setPart(part);
         productImageDao.persist(productImage);
         // Generate the resized images.
         try {
-            for (int size : ImageService.SIZES) {
+            for (int size : SIZES) {
                 imageService.generateResizedImage(filename, productImage.getFilename(size), size);
             }
         } catch(CommandException e) {
