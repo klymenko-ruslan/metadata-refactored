@@ -477,6 +477,21 @@ angular.module("ngMetaCrudApp")
       });
   };
 
+  $scope.onCreateXRef = function() {
+    $uibModal.open({
+      templateUrl: "/views/part/dialog/CreateXRef.html",
+      animation: false,
+      controller: "CreateXRefDlgCtrl",
+      resolve: {
+        origPart: function() {
+          return $scope.part;
+        },
+        manufacturers: function() {
+          return $scope.manufacturers;
+        }
+      }
+    });
+  };
 
   // Images
 
@@ -670,4 +685,69 @@ angular.module("ngMetaCrudApp")
       $uibModalInstance.close();
     };
 
-}]);
+  }
+])
+.controller("CreateXRefDlgCtrl", ["$scope", "$log", "$uibModalInstance", "restService", "origPart", "manufacturers",
+  function($scope, $log, $uibModalInstance, restService, origPart, manufacturers) {
+    $scope.origPart = origPart;
+    $scope.maufacturers = manufacturers;
+    $scope.turboTypes = null;
+    $scope.turboModels = null;
+
+    $scope.part = {
+      partType: origPart.partType
+    };
+
+    $scope.filters = {
+      turboType: null
+    };
+
+    $scope.onChangeManufacturer = function() {
+      if ($scope.part.partType.magentoAttributeSet == "Turbo") {
+        var mnfrId = $scope.part.manufacturer.id;
+        restService.listTurboTypesForManufacturerId(mnfrId).then(
+          function success(turboTypes) {
+            $scope.turboTypes.splice(0, $scope.turboTypes.length);
+            _.each(turboTypes, function(tt) {
+              $scope.turboTypes.push(tt);
+            });
+          },
+          function failure(response) {
+            restService.error("Loading of turbo types for the manufacturer [" + mnfrId + "] - " +
+                              $scope.part.manufacturer.name + " failed.", response);
+          }
+        );
+      }
+    };
+
+    $scope.onChangeTurboType = function() {
+      if ($scope.part.partType.magentoAttributeSet !== "Turbo") {
+        return;
+      }
+      var ttId = $scope.turbo.tt.id;
+      if (ttId !== undefined) {
+        restService.listTurboModelsForTurboTypeId(ttId).then(
+          function success(turboModels) {
+            $scope.turboModels.splice(0, $scope.turboModels.length);
+            _.each(turboModels, function(tm) {
+              $scope.turboModels.push(tm);
+            });
+          },
+          function failure(response) {
+            restService.error("Loading of turbo models for the turbo type [" + ttId + "] - " +
+                              $scope.part.turboModel.turboType.name + " failed.", response);
+          }
+        );
+      }
+    };
+
+    $scope.onCreate = function() {
+      $log.log("TODO: onCreate()");
+    };
+
+    $scope.onClose = function() {
+      $uibModalInstance.close();
+    };
+
+  }
+]);

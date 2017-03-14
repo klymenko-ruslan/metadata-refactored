@@ -1,5 +1,10 @@
 <metanav>
-
+  <li authorize="ROLE_CREATE_PART">
+    <button class="btn btn-success btn-lg" style="margin-right: 0.5em" data-ng-click="onCreateXRef()">
+      <i class="fa fa-wrench"></i>
+      Create X Ref
+    </button>
+  </li>
   <li authorize="ROLE_READ">
     <a data-ng-href="/part/{{ partId }}/ancestors"
        class="btn btn-info">

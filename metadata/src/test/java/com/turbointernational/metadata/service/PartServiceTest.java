@@ -13,6 +13,8 @@ import org.springframework.test.context.jdbc.Sql;
 import com.turbointernational.metadata.AbstractFunctionalTest;
 import com.turbointernational.metadata.entity.part.ProductImage;
 
+import org.junit.Assert;
+
 public class PartServiceTest extends AbstractFunctionalTest {
 
     @Autowired
