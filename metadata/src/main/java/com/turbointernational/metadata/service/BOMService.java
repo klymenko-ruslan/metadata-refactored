@@ -13,7 +13,6 @@ import static com.turbointernational.metadata.util.FormatUtils.formatBOMItem;
 import static java.util.Collections.binarySearch;
 import static org.springframework.transaction.TransactionDefinition.PROPAGATION_REQUIRES_NEW;
 import static org.springframework.transaction.annotation.Propagation.REQUIRED;
-import static org.springframework.transaction.annotation.Propagation.REQUIRES_NEW;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -895,7 +894,7 @@ public class BOMService {
     }
 
     @Async("bomRebuildExecutor")
-    @Transactional(propagation = REQUIRES_NEW)
+    @Transactional
     public void rebuildBomDescendancy(IndexingStatusCallback callback, List<Long> turboIds, boolean indexBoms) {
         log.info("Rebuilding BOM descendancy started.");
         try {
@@ -935,7 +934,7 @@ public class BOMService {
         }
     }
 
-    @Transactional(propagation = REQUIRES_NEW)
+    @Transactional
     public void rebuildBomDescendancyForPart(Long partId, boolean clean) {
         if (getRebuildStatus().isRebuilding()) {
             throw new AssertionError("BOM rebuild is already in progress.");
@@ -956,14 +955,14 @@ public class BOMService {
         }
     }
 
-    @Transactional(propagation = REQUIRES_NEW)
+    @Transactional
     public void rebuildBomDescendancyForParts(List<Long> partIds, boolean clean) {
         for (Long partId : partIds) {
             rebuildBomDescendancyForPart(partId, clean);
         }
     }
 
-    @Transactional(propagation = REQUIRES_NEW)
+    @Transactional
     public void rebuildBomDescendancyForParts(Iterator<Part> parts, boolean clean) {
         while (parts.hasNext()) {
             Part part = parts.next();
