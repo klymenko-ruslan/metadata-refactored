@@ -206,6 +206,32 @@ public class PartController {
 
     }
 
+    static class XRefPartCreateRequest {
+
+        @JsonView(View.Summary.class)
+        private Long originalPartId;
+
+        @JsonView(View.Summary.class)
+        private Part part;
+
+        public Long getOriginalPartId() {
+            return originalPartId;
+        }
+
+        public void setOriginalPartId(Long originalPartId) {
+            this.originalPartId = originalPartId;
+        }
+
+        public Part getPart() {
+            return part;
+        }
+
+        public void setPart(Part part) {
+            this.part = part;
+        }
+
+    }
+
     static class LinkTurboRequest {
 
         @JsonView({ View.Summary.class })
@@ -395,6 +421,15 @@ public class PartController {
         List<PartCreateResponse.Row> responseRows = partService.createPart(httpRequest, origin, partNumbers, sourcesIds,
                 ratings, description);
         return new PartCreateResponse(responseRows);
+    }
+
+    @Transactional
+    @Secured("ROLE_CREATE_PART")
+    @JsonView(View.Detail.class)
+    @RequestMapping(value = "/xrefpart", method = POST)
+    public @ResponseBody Part createXRefPart(@RequestBody XRefPartCreateRequest request) throws Exception {
+        Part retVal = partService.createXRefPart(request.getOriginalPartId(), request.getPart());
+        return retVal;
     }
 
     @Transactional

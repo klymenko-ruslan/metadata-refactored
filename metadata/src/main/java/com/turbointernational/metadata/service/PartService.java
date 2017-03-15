@@ -63,6 +63,9 @@ public class PartService {
     private JdbcTemplate db;
 
     @Autowired
+    private InterchangeService interchangeService;
+
+    @Autowired
     private ChangelogService changelogService;
 
     @Autowired
@@ -80,12 +83,7 @@ public class PartService {
     @Autowired
     private ImageService imageService;
 
-    @Transactional
-    public List<PartController.PartCreateResponse.Row> createPart(HttpServletRequest httpRequest, Part origin,
-                                                                  List<String> partNumbers,
-                                                                  Long[] sourcesIds, Integer[] ratings,
-                                                                  String description) throws Exception {
-        JSONSerializer jsonSerializer = new JSONSerializer()
+    private JSONSerializer partJsonSerializer = new JSONSerializer()
                 .include("id")
                 .include("name")
                 .include("manufacturerPartNumber")
@@ -103,6 +101,12 @@ public class PartService {
                 .exclude("turbos")
                 .exclude("productImages")
                 .exclude("*.class");
+
+    @Transactional
+    public List<PartController.PartCreateResponse.Row> createPart(HttpServletRequest httpRequest, Part origin,
+                                                                  List<String> partNumbers,
+                                                                  Long[] sourcesIds, Integer[] ratings,
+                                                                  String description) throws Exception {
         Set<String> added = new HashSet<>(partNumbers.size());
         List<PartController.PartCreateResponse.Row> results = new ArrayList<>(partNumbers.size());
         for(Iterator<String> iter = partNumbers.iterator(); iter.hasNext();) {
@@ -115,7 +119,7 @@ public class PartService {
             origin.setManufacturerPartNumber(mpn);
             partDao.persist(origin);
             // Update the changelog.
-            String json = jsonSerializer.serialize(origin);
+            String json = partJsonSerializer.serialize(origin);
             List<RelatedPart> relatedParts = new ArrayList<>(1);
             relatedParts.add(new RelatedPart(origin.getId(), PART0));
             Changelog chlog = changelogService.log(PART, "Created part " + formatPart(origin)
@@ -125,6 +129,16 @@ public class PartService {
             added.add(mpn);
         }
         return results;
+    }
+
+    public Part createXRefPart(Long originalPartId, Part toCreate) {
+        partDao.persist(toCreate);
+        String json = partJsonSerializer.serialize(toCreate);
+        changelogService.log(PART, "Created part (cross reference) " + formatPart(toCreate)
+                + ".", json, null);
+        Part asInterchange = partDao.findOne(originalPartId);
+        interchangeService.create(toCreate, asInterchange);
+        return toCreate;
     }
 
     public Part updatePart(HttpServletRequest request, Long id, Part part) throws AssertionError, SecurityException {

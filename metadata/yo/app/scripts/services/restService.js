@@ -174,10 +174,10 @@ angular.module("ngMetaCrudApp")
         });
       };
 
-      this.createPart = function(part, mpns, sourcesIds, ratings, description) {
-        // Specify class depending on part type.
+      // Specify class depending on part type.
+      this._partType2class = function(partTypeId) {
         var clazz = "com.turbointernational.metadata.entity.part.types.";
-        switch (part.partType.id) {
+        switch (partTypeId) {
         case 30:
           clazz += "Actuator";
           break;
@@ -312,8 +312,12 @@ angular.module("ngMetaCrudApp")
           break;
         default:
           clazz = "com.turbointernational.metadata.entity.part.Part";
-        }
-        part.class = clazz;
+        } 
+        return clazz;
+      };
+
+      this.createPart = function(part, mpns, sourcesIds, ratings, description) {
+        part.class = this._partType2class(part.partType.id);
         var req = {
           "origin": part,
           "partNumbers": mpns,
@@ -322,6 +326,15 @@ angular.module("ngMetaCrudApp")
           "chlogSrcLnkDescription": description
         };
         return Restangular.all("part").post(req);
+      };
+
+      this.createXRefPart = function(originalPartId, part) {
+        part.class = this._partType2class(part.partType.id);
+        var req = {
+          "originalPartId": originalPartId,
+          "part": part
+        };
+        return Restangular.all("xrefpart").post(req);
       };
 
       this.updatePart = function(part) {

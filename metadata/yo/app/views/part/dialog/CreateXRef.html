@@ -1,5 +1,5 @@
 <div class="modal-header">
-  <h3 class="modal-title">Create X Ref for <span part-name="part"></span></h3>
+  <h3 class="modal-title">Create X Ref for <span part-name="origPart"></span></h3>
 </div>
 
 <div class="modal-body">
@@ -8,7 +8,7 @@
 
     <div class="row">
 
-      <div class="col-xs-10">
+      <div class="col-xs-12">
 
         <div class="form-group">
           <label for="name">Name</label>
@@ -32,7 +32,7 @@
         <div class="form-group">
           <label>Manufacturer P/N</label>
           <input id="manufacturerPartNumber" name="manufacturerPartNumber" class="form-control" type="text" data-ng-model="part.manufacturerPartNumber" data-ng-model-options="{ debounce: 500 }" required maxlength="255" unique-part-number />
-          <div data-ng-show="partForm.manufacturerPartNumber.$dirty && partForm..$invalid" class="alert alert-danger" role="alert">
+          <div data-ng-show="partForm.manufacturerPartNumber.$dirty && partForm.manufacturerPartNumber.$invalid" class="alert alert-danger" role="alert">
             <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
             <span data-ng-show="partForm.manufacturerPartNumber.$error.required">Required!</span>
             <span data-ng-show="partForm.manufacturerPartNumber.$error.maxlenth">Too long manufacturer part number (max 255 chars)!</span>
@@ -99,27 +99,10 @@
                 <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
                 <span data-ng-show="partForm.turboType.$error.required">Required!</span>
               </div>
-
             </div>
 
             <div class="col-xs-6">
-              <div>
-                <label class="control-label">Turbo Model</label>
-                <div class="pull-right">
-                  <button type="button" data-ng-click="createTurboModel()" class="btn btn-success btn-xs" data-ng-disabled="!turbo.tt.id">
-                    <i class="fa fa-wrench"></i>
-                    Create
-                  </button>
-                  <button type="button" data-ng-click="renameTurboModel()" class="btn btn-warning btn-xs" data-ng-disabled="!turbo.tm.id">
-                    <i class="fa fa-pencil"></i>
-                    Rename
-                  </button>
-                  <button type="button" data-ng-click="deleteTurboModel()" class="btn btn-danger btn-xs" data-ng-disabled="(part.id && !turbo.tm.id && turbo.tm.id != oldPart.turboModel.id) || (!part.id && !turbo.tm.id)">
-                    <i class="fa fa-trash-o"></i>
-                    Delete
-                  </button>
-                </div>
-              </div>
+              <label class="control-label">Turbo Model</label>
               <input data-ng-model="filters.turboModel" data-ng-init="turboModelFilter = ''" class="form-control" placeholder="Turbo model filter..."/>
               <select name="turboModel"
                       data-ng-model="turbo.tm"
@@ -147,5 +130,5 @@
 
 <div class="modal-footer">
   <button type="button" class="btn btn-default" data-ng-click="onClose()">Close</button>
-  <button class="btn btn-primary" data-ng-click="onCreate()">Create</button>
+  <button class="btn btn-primary" data-ng-click="onCreate()" data-ng-disabled="partForm.$invalid">Create</button>
 </div>

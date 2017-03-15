@@ -687,36 +687,27 @@ angular.module("ngMetaCrudApp")
 
   }
 ])
-.controller("CreateXRefDlgCtrl", ["$scope", "$log", "$uibModalInstance", "restService", "origPart", "manufacturers",
-  function($scope, $log, $uibModalInstance, restService, origPart, manufacturers) {
-    $scope.origPart = origPart;
-    $scope.maufacturers = manufacturers;
-    $scope.turboTypes = null;
-    $scope.turboModels = null;
-
-    $scope.part = {
-      partType: origPart.partType
-    };
-
-    $scope.filters = {
-      turboType: null
-    };
+.controller("CreateXRefDlgCtrl", ["$scope", "$log", "$route", "$uibModalInstance", "gToast", "restService", "origPart",
+  "manufacturers",
+  function($scope, $log, $route, $uibModalInstance, gToast, restService, origPart, manufacturers) {
 
     $scope.onChangeManufacturer = function() {
       if ($scope.part.partType.magentoAttributeSet == "Turbo") {
-        var mnfrId = $scope.part.manufacturer.id;
-        restService.listTurboTypesForManufacturerId(mnfrId).then(
-          function success(turboTypes) {
-            $scope.turboTypes.splice(0, $scope.turboTypes.length);
-            _.each(turboTypes, function(tt) {
-              $scope.turboTypes.push(tt);
-            });
-          },
-          function failure(response) {
-            restService.error("Loading of turbo types for the manufacturer [" + mnfrId + "] - " +
-                              $scope.part.manufacturer.name + " failed.", response);
-          }
-        );
+        var mnfrId = $scope.$eval("part.manufacturer.id");
+        if (mnfrId) {
+          restService.listTurboTypesForManufacturerId(mnfrId).then(
+            function success(turboTypes) {
+              $scope.turboTypes.splice(0, $scope.turboTypes.length);
+              _.each(turboTypes, function(tt) {
+                $scope.turboTypes.push(tt);
+              });
+            },
+            function failure(response) {
+              restService.error("Loading of turbo types for the manufacturer [" + mnfrId + "] - " +
+                                $scope.part.manufacturer.name + " failed.", response);
+            }
+          );
+      	}
       }
     };
 
@@ -724,8 +715,8 @@ angular.module("ngMetaCrudApp")
       if ($scope.part.partType.magentoAttributeSet !== "Turbo") {
         return;
       }
-      var ttId = $scope.turbo.tt.id;
-      if (ttId !== undefined) {
+      var ttId = $scope.$eval("turbo.tt.id");
+      if (ttId) {
         restService.listTurboModelsForTurboTypeId(ttId).then(
           function success(turboModels) {
             $scope.turboModels.splice(0, $scope.turboModels.length);
@@ -742,12 +733,52 @@ angular.module("ngMetaCrudApp")
     };
 
     $scope.onCreate = function() {
-      $log.log("TODO: onCreate()");
+      if ($scope.part.partType.magentoAttributeSet == "Turbo") {
+        $scope.part.turboModel = $scope.turbo.tm;
+        $scope.part.turboType = $scope.turbo.tt;
+      }
+      restService.createXRefPart($scope.origPart.id, $scope.part).then(
+        function success(newPart) {
+          $uibModalInstance.close();
+          $route.reload();
+          gToast.open("A new cross reference [" + newPart.id + "] - " +
+                  newPart.manufacturerPartNumber + " has been successfully created.");
+        },
+        function failure(response) {
+          restService.error("Creating of X Ref part for [" + $scope.origPart.id + "] - " +
+                  $scope.origPart.manufacturerPartNumber + " failed.", response);
+        }
+      );
     };
 
     $scope.onClose = function() {
       $uibModalInstance.close();
     };
+
+    // Initialization.
+
+    $scope.origPart = origPart;
+    $scope.manufacturers = manufacturers;
+
+    $scope.turboTypes = [];
+    $scope.turboModels = [];
+
+    $scope.turbo ={
+      tm: null,
+      tt: null
+    };
+
+    $scope.part = {
+      partType: origPart.partType
+    };
+
+    $scope.filters = {
+      turboType: "",
+      turboModel: ""
+    };
+
+    $scope.onChangeManufacturer();
+    $scope.onChangeTurboType();
 
   }
 ]);
