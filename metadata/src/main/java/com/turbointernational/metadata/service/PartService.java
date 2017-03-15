@@ -3,6 +3,7 @@ package com.turbointernational.metadata.service;
 import static com.turbointernational.metadata.Application.TEST_SKIPFILEIO;
 import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.PART;
 import static com.turbointernational.metadata.entity.ChangelogPart.Role.PART0;
+import static com.turbointernational.metadata.entity.ChangelogPart.Role.PART1;
 import static com.turbointernational.metadata.entity.PartType.PTID_GASKET_KIT;
 import static com.turbointernational.metadata.entity.PartType.PTID_TURBO;
 import static com.turbointernational.metadata.service.ImageService.PART_CRIT_DIM_LEGEND_HEIGHT;
@@ -37,6 +38,7 @@ import com.turbointernational.metadata.dao.PartDao;
 import com.turbointernational.metadata.dao.ProductImageDao;
 import com.turbointernational.metadata.entity.BOMAncestor;
 import com.turbointernational.metadata.entity.Changelog;
+import com.turbointernational.metadata.entity.ChangelogPart.Role;
 import com.turbointernational.metadata.entity.TurboType;
 import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.entity.part.ProductImage;
@@ -83,33 +85,18 @@ public class PartService {
     @Autowired
     private ImageService imageService;
 
-    private JSONSerializer partJsonSerializer = new JSONSerializer()
-                .include("id")
-                .include("name")
-                .include("manufacturerPartNumber")
-                .include("description")
-                .include("inactive")
-                .include("partType.id")
-                .include("partType.name")
-                .exclude("partType.*")
-                .include("manufacturer.id")
-                .include("manufacturer.name")
-                .exclude("manufacturer.*")
-                .exclude("bomParentParts")
-                .exclude("bom")
-                .exclude("interchange")
-                .exclude("turbos")
-                .exclude("productImages")
-                .exclude("*.class");
+    private JSONSerializer partJsonSerializer = new JSONSerializer().include("id").include("name")
+            .include("manufacturerPartNumber").include("description").include("inactive").include("partType.id")
+            .include("partType.name").exclude("partType.*").include("manufacturer.id").include("manufacturer.name")
+            .exclude("manufacturer.*").exclude("bomParentParts").exclude("bom").exclude("interchange").exclude("turbos")
+            .exclude("productImages").exclude("*.class");
 
     @Transactional
     public List<PartController.PartCreateResponse.Row> createPart(HttpServletRequest httpRequest, Part origin,
-                                                                  List<String> partNumbers,
-                                                                  Long[] sourcesIds, Integer[] ratings,
-                                                                  String description) throws Exception {
+            List<String> partNumbers, Long[] sourcesIds, Integer[] ratings, String description) throws Exception {
         Set<String> added = new HashSet<>(partNumbers.size());
         List<PartController.PartCreateResponse.Row> results = new ArrayList<>(partNumbers.size());
-        for(Iterator<String> iter = partNumbers.iterator(); iter.hasNext();) {
+        for (Iterator<String> iter = partNumbers.iterator(); iter.hasNext();) {
             String mpn = iter.next();
             if (added.contains(mpn)) {
                 continue; // skip duplicate
@@ -122,8 +109,8 @@ public class PartService {
             String json = partJsonSerializer.serialize(origin);
             List<RelatedPart> relatedParts = new ArrayList<>(1);
             relatedParts.add(new RelatedPart(origin.getId(), PART0));
-            Changelog chlog = changelogService.log(PART, "Created part " + formatPart(origin)
-                    + ".", json, relatedParts);
+            Changelog chlog = changelogService.log(PART, "Created part " + formatPart(origin) + ".", json,
+                    relatedParts);
             changelogSourceService.link(httpRequest, chlog, sourcesIds, ratings, description);
             results.add(new PartController.PartCreateResponse.Row(origin.getId(), mpn, true, null));
             added.add(mpn);
@@ -134,8 +121,10 @@ public class PartService {
     public Part createXRefPart(Long originalPartId, Part toCreate) {
         partDao.persist(toCreate);
         String json = partJsonSerializer.serialize(toCreate);
-        changelogService.log(PART, "Created part (cross reference) " + formatPart(toCreate)
-                + ".", json, null);
+        List<RelatedPart> relatedParts = new ArrayList<>(1);
+        relatedParts.add(new RelatedPart(toCreate.getId(), PART0));
+        relatedParts.add(new RelatedPart(originalPartId, PART1));
+        changelogService.log(PART, "Created part (cross reference) " + formatPart(toCreate) + ".", json, relatedParts);
         Part asInterchange = partDao.findOne(originalPartId);
         interchangeService.create(toCreate, asInterchange);
         return toCreate;
@@ -143,12 +132,12 @@ public class PartService {
 
     public Part updatePart(HttpServletRequest request, Long id, Part part) throws AssertionError, SecurityException {
         Part originPart = partDao.findOne(id);
-        if (originPart.getManufacturer().getId() != part.getManufacturer().getId() &&
-                !request.isUserInRole("ROLE_ALTER_PART_MANUFACTURER")) {
+        if (originPart.getManufacturer().getId() != part.getManufacturer().getId()
+                && !request.isUserInRole("ROLE_ALTER_PART_MANUFACTURER")) {
             throw new SecurityException("You have no permission to modify a manufacturer.");
         }
-        if (!originPart.getManufacturerPartNumber().equals(part.getManufacturerPartNumber()) &&
-                !request.isUserInRole("ROLE_ALTER_PART_NUMBER")) {
+        if (!originPart.getManufacturerPartNumber().equals(part.getManufacturerPartNumber())
+                && !request.isUserInRole("ROLE_ALTER_PART_NUMBER")) {
             throw new SecurityException("You have no permission to modify a manufacturer.");
         }
         Errors errors = criticalDimensionService.validateCriticalDimensions(part);
@@ -156,16 +145,18 @@ public class PartService {
             log.error("Validation critical dimensions for the part (ID: {}) failed. Details: {}", part.getId(), errors);
             throw new AssertionError(errors.toString());
         }
-        String originalPartJson = originPart.toJson(criticalDimensionService.getCriticalDimensionForPartType(
-                part.getPartType().getId()));
+        String originalPartJson = originPart
+                .toJson(criticalDimensionService.getCriticalDimensionForPartType(part.getPartType().getId()));
         Part retVal = partDao.merge(part);
         // Update the changelog
         List<RelatedPart> relatedParts = new ArrayList<>(1);
         relatedParts.add(new RelatedPart(part.getId(), PART0));
-        changelogService.log(PART, "Updated part " + formatPart(part) + ".", "{original: " +
-                originalPartJson + ",updated: " +
-                part.toJson(criticalDimensionService.getCriticalDimensionForPartType(part.getPartType().getId())) +
-                "}", relatedParts);
+        changelogService.log(PART, "Updated part " + formatPart(part) + ".",
+                "{original: " + originalPartJson + ",updated: "
+                        + part.toJson(
+                                criticalDimensionService.getCriticalDimensionForPartType(part.getPartType().getId()))
+                        + "}",
+                relatedParts);
         return retVal;
     }
 
@@ -188,7 +179,8 @@ public class PartService {
     public ProductImage addProductImage(Long id, Boolean publish, byte[] imageData) throws Exception {
         Part part = partDao.findOne(id);
         // Save the file into the originals directory
-        String filename = part.getId().toString() + "_" + System.currentTimeMillis() + ".jpg"; // Good enough
+        String filename = part.getId().toString() + "_" + System.currentTimeMillis() + ".jpg"; // Good
+                                                                                               // enough
         File originalFile = new File(originalImagesDir, filename);
         if (System.getProperty(TEST_SKIPFILEIO) == null) {
             FileUtils.writeByteArrayToFile(originalFile, imageData);
@@ -205,7 +197,7 @@ public class PartService {
             for (int size : SIZES) {
                 imageService.generateResizedImage(filename, productImage.getFilename(size), size);
             }
-        } catch(CommandException e) {
+        } catch (CommandException e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             throw e;
         }
@@ -225,8 +217,8 @@ public class PartService {
         String filenameScaled = pidstr + "_cdlgnd_" + now + ".jpg";
         File originalFile = new File(originalImagesDir, filenameOriginal);
         FileUtils.writeByteArrayToFile(originalFile, imageData);
-        imageService.generateResizedImage(filenameOriginal, filenameScaled,
-                PART_CRIT_DIM_LEGEND_WIDTH, PART_CRIT_DIM_LEGEND_HEIGHT, true);
+        imageService.generateResizedImage(filenameOriginal, filenameScaled, PART_CRIT_DIM_LEGEND_WIDTH,
+                PART_CRIT_DIM_LEGEND_HEIGHT, true);
         part.setLegendImgFilename(filenameScaled);
         return part;
     }
@@ -276,12 +268,14 @@ public class PartService {
                         formatPart(oldGasketKit), formatPart(turbo)));
             }
         }
-        // Validation: gasket kits and associated turbos must have the same manfr_id
+        // Validation: gasket kits and associated turbos must have the same
+        // manfr_id
         GasketKit newGasketKit = (GasketKit) part2;
         if (!turbo.getManufacturer().getId().equals(newGasketKit.getManufacturer().getId())) {
             throw new AssertionError("The Turbo and Gasket Kit have different manufacturers.");
         }
-        // Validation: that all parts in bom of Gasket Kit exist in the BOM of the associated turbo
+        // Validation: that all parts in bom of Gasket Kit exist in the BOM of
+        // the associated turbo
         Set<Long> turboBomIds = turbo.getBom().stream().map(bi -> bi.getChild().getId()).collect(toSet());
         Set<Long> newGasketKitBomIds = newGasketKit.getBom().stream().map(bi -> bi.getChild().getId()).collect(toSet());
         if (!turboBomIds.containsAll(newGasketKitBomIds)) {
@@ -291,8 +285,8 @@ public class PartService {
         if (oldGasketKit != null) {
             boolean removed = oldGasketKit.getTurbos().remove(turbo);
             if (!removed) {
-                log.warn(String.format("Turbo %s not found in turbos of the Gasket Kit %s.",
-                        formatPart(turbo), formatPart(oldGasketKit)));
+                log.warn(String.format("Turbo %s not found in turbos of the Gasket Kit %s.", formatPart(turbo),
+                        formatPart(oldGasketKit)));
             }
         }
         newGasketKit.getTurbos().add(turbo);
@@ -307,8 +301,8 @@ public class PartService {
         if (gasketKit != null) {
             boolean removed = gasketKit.getTurbos().remove(turbo);
             if (!removed) {
-                log.warn(String.format("Turbo %s not found in turbos of the gasket kit %s.",
-                        formatPart(turbo), formatPart(gasketKit)));
+                log.warn(String.format("Turbo %s not found in turbos of the gasket kit %s.", formatPart(turbo),
+                        formatPart(gasketKit)));
             }
         }
         turbo.setGasketKit(null);
@@ -328,17 +322,18 @@ public class PartService {
     @Transactional(noRollbackFor = AssertionError.class)
     public List<PartController.LinkTurboResponse.Row> linkTurbosToGasketKit(Long gasketKitId, List<Long> turboIds) {
         List<PartController.LinkTurboResponse.Row> rows = new ArrayList<>();
-        for(Long turboId : turboIds) {
+        for (Long turboId : turboIds) {
             boolean success = true;
             String errMsg = null;
             try {
                 linkGasketKitToTurbo(gasketKitId, turboId);
-            } catch(AssertionError e) {
+            } catch (AssertionError e) {
                 success = false;
                 errMsg = e.getMessage();
             }
             Part part = partDao.findOne(turboId);
-            rows.add(new PartController.LinkTurboResponse.Row(turboId, part.getManufacturerPartNumber(), success, errMsg));
+            rows.add(new PartController.LinkTurboResponse.Row(turboId, part.getManufacturerPartNumber(), success,
+                    errMsg));
         }
         return rows;
     }

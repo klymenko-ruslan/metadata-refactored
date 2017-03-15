@@ -1899,4 +1899,31 @@ public class PartControllerTest extends AbstractFunctionalWebTest {
         assertNull(turbo.getGasketKit());
     }
 
+    @Test
+    @Sql(
+            executionPhase = BEFORE_TEST_METHOD,
+            scripts = "classpath:integration_tests/feed_dictionaries.sql"
+    )
+    @Sql(
+            executionPhase = BEFORE_TEST_METHOD,
+            scripts = "classpath:integration_tests/part_controller/createxrefpart_turbo.sql"
+    )
+    @Sql(
+            executionPhase = AFTER_TEST_METHOD,
+            scripts = "classpath:integration_tests/clear_tables.sql"
+    )
+    @Sql(
+            executionPhase = AFTER_TEST_METHOD,
+            scripts = "classpath:integration_tests/clear_dictionaries.sql"
+    )
+    @WithUserDetails("Admin")
+    public void testCreateXRefPart_Turbo() throws Exception {
+        String requestBody = "{\"originalPartId\":14510,\"part\":{\"partType\":{\"id\":1,\"name\":\"Turbo\",\"value\":\"turbo\",\"magentoAttributeSet\":\"Turbo\"},\"name\":\"nnn\",\"manufacturer\":{\"id\":2,\"name\":\"Holset\",\"route\":\"other/manufacturer/list\",\"reqParams\":null,\"restangularized\":true,\"fromServer\":true,\"parentResource\":null,\"restangularCollection\":false},\"manufacturerPartNumber\":\"3534378-test\",\"description\":\"ddd\",\"turboModel\":{\"id\":339,\"name\":\"H1E\",\"turboType\":{\"id\":260,\"manufacturer\":{\"id\":2,\"name\":\"Holset\",\"type\":{\"id\":1,\"name\":\"turbo\"},\"importPK\":3},\"name\":\"H1E\"},\"route\":\"turboModel\",\"reqParams\":null,\"restangularized\":true,\"fromServer\":true,\"parentResource\":{\"route\":\"other\",\"parentResource\":null},\"restangularCollection\":false},\"turboType\":{\"id\":260,\"manufacturer\":{\"id\":2,\"name\":\"Holset\",\"type\":{\"id\":1,\"name\":\"turbo\"},\"importPK\":3},\"name\":\"H1E\",\"route\":\"list\",\"reqParams\":null,\"restangularized\":true,\"fromServer\":true,\"parentResource\":{\"route\":\"other/turboType\",\"parentResource\":null},\"restangularCollection\":false},\"class\":\"com.turbointernational.metadata.entity.part.types.Turbo\"}}";
+        String responseBody = "{\"TODO\": true}";
+        mockMvc.perform(post("/metadata/xrefpart")
+                .content(requestBody).contentType(contentType))
+                .andExpect(status().isOk())
+                .andExpect(content().json(responseBody));
+    }
+
 }

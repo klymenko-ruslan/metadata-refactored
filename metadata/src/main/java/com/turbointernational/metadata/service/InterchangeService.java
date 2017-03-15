@@ -110,8 +110,11 @@ public class InterchangeService {
         interchangeDao.persist(interchange);
         part.setInterchange(interchange);
         partDao.merge(part);
+        List<RelatedPart> relatedParts = new ArrayList<>(1);
+        relatedParts.add(new RelatedPart(part.getId(), PART0));
+        relatedParts.add(new RelatedPart(asInterchange.getId(), PART1));
         changelogService.log(INTERCHANGE, "Created interchange: " + FormatUtils.formatInterchange(interchange) + ".",
-                interchange.toJson(), Arrays.asList(new RelatedPart(part.getId(), null)));
+                interchange.toJson(), relatedParts);
     }
 
     /**
