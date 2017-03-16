@@ -7,6 +7,7 @@ import static com.turbointernational.metadata.util.FormatUtils.formatInterchange
 import static com.turbointernational.metadata.util.FormatUtils.formatPart;
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
+import static java.util.Arrays.asList;
 import static org.springframework.transaction.TransactionDefinition.PROPAGATION_REQUIRES_NEW;
 
 import java.util.ArrayList;
@@ -121,7 +122,7 @@ public class InterchangeService {
         relatedParts.add(new RelatedPart(asInterchange.getId(), PART1));
         changelogService.log(INTERCHANGE, "Created interchange: " + formatInterchange(interchange) + ".",
                 interchange.toJson(), relatedParts);
-        bomService.rebuildBomDescendancyForParts(Arrays.asList(part.getId(), asInterchange.getId()), true);
+        bomService.rebuildBomDescendancyForParts(asList(part.getId(), asInterchange.getId()), true);
     }
 
     /**
