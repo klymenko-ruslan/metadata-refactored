@@ -1,25 +1,75 @@
 package com.turbointernational.metadata.web.controller;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
+import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.List;
+
+import org.junit.Ignore;
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.test.context.support.WithUserDetails;
+import org.springframework.test.context.jdbc.Sql;
+
 import com.turbointernational.metadata.AbstractFunctionalWebTest;
 import com.turbointernational.metadata.dao.ChangelogDao;
 import com.turbointernational.metadata.dao.PartDao;
 import com.turbointernational.metadata.entity.Manufacturer;
 import com.turbointernational.metadata.entity.PartType;
 import com.turbointernational.metadata.entity.TurboModel;
+import com.turbointernational.metadata.entity.part.Interchange;
 import com.turbointernational.metadata.entity.part.Part;
-import com.turbointernational.metadata.entity.part.types.*;
-import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.test.context.support.WithUserDetails;
-import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
-
-import static org.junit.Assert.*;
-import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
-import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import com.turbointernational.metadata.entity.part.types.Actuator;
+import com.turbointernational.metadata.entity.part.types.Backplate;
+import com.turbointernational.metadata.entity.part.types.BackplateSealplate;
+import com.turbointernational.metadata.entity.part.types.BearingHousing;
+import com.turbointernational.metadata.entity.part.types.BoltScrew;
+import com.turbointernational.metadata.entity.part.types.CarbonSeal;
+import com.turbointernational.metadata.entity.part.types.Cartridge;
+import com.turbointernational.metadata.entity.part.types.Clamp;
+import com.turbointernational.metadata.entity.part.types.CompressorCover;
+import com.turbointernational.metadata.entity.part.types.CompressorWheel;
+import com.turbointernational.metadata.entity.part.types.FastWearingComponent;
+import com.turbointernational.metadata.entity.part.types.Fitting;
+import com.turbointernational.metadata.entity.part.types.Gasket;
+import com.turbointernational.metadata.entity.part.types.GasketKit;
+import com.turbointernational.metadata.entity.part.types.HeatshieldShroud;
+import com.turbointernational.metadata.entity.part.types.JournalBearing;
+import com.turbointernational.metadata.entity.part.types.JournalBearingSpacer;
+import com.turbointernational.metadata.entity.part.types.Kit;
+import com.turbointernational.metadata.entity.part.types.MajorComponent;
+import com.turbointernational.metadata.entity.part.types.MinorComponent;
+import com.turbointernational.metadata.entity.part.types.Misc;
+import com.turbointernational.metadata.entity.part.types.MiscMinorComponent;
+import com.turbointernational.metadata.entity.part.types.NozzleRing;
+import com.turbointernational.metadata.entity.part.types.Nut;
+import com.turbointernational.metadata.entity.part.types.ORing;
+import com.turbointernational.metadata.entity.part.types.OilDeflector;
+import com.turbointernational.metadata.entity.part.types.Pin;
+import com.turbointernational.metadata.entity.part.types.PistonRing;
+import com.turbointernational.metadata.entity.part.types.Plug;
+import com.turbointernational.metadata.entity.part.types.RetainingRing;
+import com.turbointernational.metadata.entity.part.types.SealPlate;
+import com.turbointernational.metadata.entity.part.types.Shroud;
+import com.turbointernational.metadata.entity.part.types.Spring;
+import com.turbointernational.metadata.entity.part.types.ThrustBearing;
+import com.turbointernational.metadata.entity.part.types.ThrustCollar;
+import com.turbointernational.metadata.entity.part.types.ThrustPart;
+import com.turbointernational.metadata.entity.part.types.ThrustSpacer;
+import com.turbointernational.metadata.entity.part.types.ThrustWasher;
+import com.turbointernational.metadata.entity.part.types.TurbineHousing;
+import com.turbointernational.metadata.entity.part.types.TurbineWheel;
+import com.turbointernational.metadata.entity.part.types.Turbo;
+import com.turbointernational.metadata.entity.part.types.Washer;
 
 /**
  * Created by dmytro.trunykov@zorallabs.com on 12/19/16.
@@ -1305,6 +1355,7 @@ public class PartControllerTest extends AbstractFunctionalWebTest {
     @Sql(executionPhase = AFTER_TEST_METHOD, scripts = "classpath:integration_tests/clear_tables.sql")
     @Sql(executionPhase = AFTER_TEST_METHOD, scripts = "classpath:integration_tests/clear_dictionaries.sql")
     @WithUserDetails("Admin")
+    @Ignore("This test is not real because real database uses triggers which are absent in a test database.")
     public void testCreateXRefPart_Turbo() throws Exception {
         String requestBody = "{\"originalPartId\":14510,\"part\":{\"partType\":{\"id\":1,\"name\":\"Turbo\",\"value\":\"turbo\",\"magentoAttributeSet\":\"Turbo\"},\"name\":\"nnn\",\"manufacturer\":{\"id\":2,\"name\":\"Holset\",\"route\":\"other/manufacturer/list\",\"reqParams\":null,\"restangularized\":true,\"fromServer\":true,\"parentResource\":null,\"restangularCollection\":false},\"manufacturerPartNumber\":\"3534378-test\",\"description\":\"ddd\",\"turboModel\":{\"id\":339,\"name\":\"H1E\",\"turboType\":{\"id\":260,\"manufacturer\":{\"id\":2,\"name\":\"Holset\",\"type\":{\"id\":1,\"name\":\"turbo\"},\"importPK\":3},\"name\":\"H1E\"},\"route\":\"turboModel\",\"reqParams\":null,\"restangularized\":true,\"fromServer\":true,\"parentResource\":{\"route\":\"other\",\"parentResource\":null},\"restangularCollection\":false},\"turboType\":{\"id\":260,\"manufacturer\":{\"id\":2,\"name\":\"Holset\",\"type\":{\"id\":1,\"name\":\"turbo\"},\"importPK\":3},\"name\":\"H1E\",\"route\":\"list\",\"reqParams\":null,\"restangularized\":true,\"fromServer\":true,\"parentResource\":{\"route\":\"other/turboType\",\"parentResource\":null},\"restangularCollection\":false},\"class\":\"com.turbointernational.metadata.entity.part.types.Turbo\"}}";
         String responseBody = "{\"class\":\"com.turbointernational.metadata.entity.part.types.Turbo\",\"id\":14511,\"manufacturer\":{\"id\":2,\"name\":\"Holset\"},\"manufacturerPartNumber\":\"3534378-test\",\"name\":\"nnn\",\"description\":\"ddd\",\"dimLength\":null,\"dimWidth\":null,\"dimHeight\":null,\"weight\":null,\"partType\":{\"id\":1,\"name\":\"Turbo\",\"value\":\"turbo\",\"magentoAttributeSet\":\"Turbo\"},\"inactive\":false,\"turboTypes\":[],\"interchange\":{\"id\":1,\"alone\":true},\"productImages\":[],\"version\":0,\"legendImgFilename\":null,\"turboModel\":{\"id\":339,\"name\":\"H1E\",\"turboType\":{\"id\":260,\"manufacturer\":{\"id\":2,\"name\":\"Holset\",\"type\":{\"id\":1,\"name\":\"turbo\"}},\"name\":\"H1E\"}},\"coolType\":null,\"gasketKit\":null}";
@@ -1312,6 +1363,15 @@ public class PartControllerTest extends AbstractFunctionalWebTest {
                 .andExpect(status().isOk())
                 .andExpect(content().json(responseBody));
                 //.andDo(MockMvcResultHandlers.print());
+        List<Part> resultList = em.createQuery("from Part p where p.manufacturerPartNumber=?", Part.class).setParameter(1, "3534378").getResultList();
+        assertEquals(1, resultList.size());
+        Part p = resultList.get(0);
+        assertNotNull(p);
+        Interchange interchange = p.getInterchange();
+        assertNotNull("The interchange was not saved.", interchange);
+        Part originalPart = partDao.findOne(14510L);
+        boolean contains = interchange.getParts().contains(originalPart);
+        assertTrue("The part not found in the interchangeables.", contains);
     }
 
 }

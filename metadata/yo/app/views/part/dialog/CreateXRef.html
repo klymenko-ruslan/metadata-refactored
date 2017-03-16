@@ -130,5 +130,5 @@
 
 <div class="modal-footer">
   <button type="button" class="btn btn-default" data-ng-click="onClose()">Close</button>
-  <button class="btn btn-primary" data-ng-click="onCreate()" data-ng-disabled="partForm.$invalid">Create</button>
+  <button class="btn btn-primary" data-ng-click="onCreate()" data-ng-disabled="partForm.$invalid || partForm.$pending">Create</button>
 </div>

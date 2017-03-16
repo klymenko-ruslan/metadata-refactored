@@ -38,7 +38,6 @@ import com.turbointernational.metadata.dao.PartDao;
 import com.turbointernational.metadata.dao.ProductImageDao;
 import com.turbointernational.metadata.entity.BOMAncestor;
 import com.turbointernational.metadata.entity.Changelog;
-import com.turbointernational.metadata.entity.ChangelogPart.Role;
 import com.turbointernational.metadata.entity.TurboType;
 import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.entity.part.ProductImage;
@@ -120,6 +119,10 @@ public class PartService {
 
     public Part createXRefPart(Long originalPartId, Part toCreate) {
         partDao.persist(toCreate);
+        // The table 'part' has a trigger on insert that associate an interchangeable with the part.
+        // So we must refresh the Part entity instance just after insert to reflect changes made by the trigger.
+        partDao.flush();            // make sure that an insert done
+        partDao.refresh(toCreate);
         String json = partJsonSerializer.serialize(toCreate);
         List<RelatedPart> relatedParts = new ArrayList<>(1);
         relatedParts.add(new RelatedPart(toCreate.getId(), PART0));

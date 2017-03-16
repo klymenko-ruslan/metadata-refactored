@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
@@ -53,6 +54,9 @@ public class InterchangeService {
     @Qualifier("transactionManagerMetadata")
     @Autowired
     private PlatformTransactionManager txManagerMetadata;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     /**
      * Find an interchangeable by its ID.
@@ -101,20 +105,19 @@ public class InterchangeService {
     }
 
     public void create(Part part, Part asInterchange) {
-        if (part.getInterchange() != null) {
-            throw new IllegalArgumentException(
-                    "Part " + FormatUtils.formatPart(part) + " already has interchangeable parts.");
+        Interchange interchange = asInterchange.getInterchange();
+        if (interchange == null) {
+            interchange = part.getInterchange();
         }
-        Interchange interchange = new Interchange();
-        //interchange.getParts().add(asInterchange);
-        interchangeDao.persist(interchange);
+        interchange.getParts().add(asInterchange);
+        asInterchange.setInterchange(interchange);
         part.setInterchange(interchange);
-        //partDao.merge(part);
         List<RelatedPart> relatedParts = new ArrayList<>(1);
         relatedParts.add(new RelatedPart(part.getId(), PART0));
         relatedParts.add(new RelatedPart(asInterchange.getId(), PART1));
         changelogService.log(INTERCHANGE, "Created interchange: " + FormatUtils.formatInterchange(interchange) + ".",
                 interchange.toJson(), relatedParts);
+        bomService.rebuildBomDescendancyForParts(Arrays.asList(part.getId(), asInterchange.getId()), true);
     }
 
     /**
