@@ -3,6 +3,8 @@ package com.turbointernational.metadata.service;
 import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.INTERCHANGE;
 import static com.turbointernational.metadata.entity.ChangelogPart.Role.PART0;
 import static com.turbointernational.metadata.entity.ChangelogPart.Role.PART1;
+import static com.turbointernational.metadata.util.FormatUtils.formatInterchange;
+import static com.turbointernational.metadata.util.FormatUtils.formatPart;
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 import static org.springframework.transaction.TransactionDefinition.PROPAGATION_REQUIRES_NEW;
@@ -29,7 +31,6 @@ import com.turbointernational.metadata.entity.Changelog;
 import com.turbointernational.metadata.entity.part.Interchange;
 import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.service.ChangelogService.RelatedPart;
-import com.turbointernational.metadata.util.FormatUtils;
 
 /**
  * Created by trunikov on 2/11/16.
@@ -80,7 +81,7 @@ public class InterchangeService {
             Part canonicalPart = partDao.findOne(partId);
             if (canonicalPart.getInterchange() != null) {
                 throw new IllegalArgumentException(
-                        "Part " + FormatUtils.formatPart(canonicalPart) + " already has interchangeable parts.");
+                        "Part " + formatPart(canonicalPart) + " already has interchangeable parts.");
             }
             canonicalParts.add(canonicalPart);
         }
@@ -96,8 +97,7 @@ public class InterchangeService {
         interchangeDao.flush();
         // Update the changelog.
         Changelog changelog = changelogService.log(INTERCHANGE,
-                "Created interchange: " + FormatUtils.formatInterchange(interchange) + ".", interchange.toJson(),
-                relatedParts);
+                "Created interchange: " + formatInterchange(interchange) + ".", interchange.toJson(), relatedParts);
         changelogSourceService.link(httpRequest, changelog, sourcesIds, ratings, description);
         bomService.rebuildBomDescendancyForParts(partIds, true);
     }
@@ -105,9 +105,9 @@ public class InterchangeService {
     /**
      * Set 'asInterchange' as interchange for the 'part'.
      * 
-     * Group of interchanges for the 'part' is removed and
-     * 'part' is added to a group of the 'asInterchange' so
-     * 'asInterchange' becomes interchange for the 'part'.
+     * Group of interchanges for the 'part' is removed and 'part' is added to a
+     * group of the 'asInterchange' so 'asInterchange' becomes interchange for
+     * the 'part'.
      * 
      * @param part
      * @param asInterchange
@@ -119,7 +119,7 @@ public class InterchangeService {
         List<RelatedPart> relatedParts = new ArrayList<>(1);
         relatedParts.add(new RelatedPart(part.getId(), PART0));
         relatedParts.add(new RelatedPart(asInterchange.getId(), PART1));
-        changelogService.log(INTERCHANGE, "Created interchange: " + FormatUtils.formatInterchange(interchange) + ".",
+        changelogService.log(INTERCHANGE, "Created interchange: " + formatInterchange(interchange) + ".",
                 interchange.toJson(), relatedParts);
         bomService.rebuildBomDescendancyForParts(Arrays.asList(part.getId(), asInterchange.getId()), true);
     }
@@ -154,9 +154,8 @@ public class InterchangeService {
         // Update the changelog
         List<RelatedPart> relatedParts = new ArrayList<>(1);
         relatedParts.add(new RelatedPart(partId, PART0));
-        changelogService.log(INTERCHANGE, "The part " + FormatUtils.formatPart(part)
-                + " migrated from interchange group [" + interchange.getId() + "] to [" + newInterchange.getId() + "].",
-                relatedParts);
+        changelogService.log(INTERCHANGE, "The part " + formatPart(part) + " migrated from interchange group ["
+                + interchange.getId() + "] to [" + newInterchange.getId() + "].", relatedParts);
         bomService.rebuildBomDescendancyForPart(partId, true);
         bomService.rebuildBomDescendancyForParts(interchange.getParts().iterator(), true);
     }
@@ -179,8 +178,9 @@ public class InterchangeService {
         List<RelatedPart> relatedParts = new ArrayList<>(2);
         relatedParts.add(new RelatedPart(partId, PART0));
         relatedParts.add(new RelatedPart(pickedPartId, PART1));
-        Changelog changelog = changelogService.log(INTERCHANGE, "Part " + FormatUtils.formatPart(pickedPart)
-                + " added to the part " + FormatUtils.formatPart(part) + " as interchange.", relatedParts);
+        Changelog changelog = changelogService.log(INTERCHANGE,
+                "Part " + formatPart(pickedPart) + " added to the part " + formatPart(part) + " as interchange.",
+                relatedParts);
         changelogSourceService.link(httpRequest, changelog, sourcesIds, ratings, description);
         bomService.rebuildBomDescendancyForPart(partId, true);
         bomService.rebuildBomDescendancyForPart(pickedPartId, true);
@@ -204,8 +204,9 @@ public class InterchangeService {
         List<RelatedPart> relatedParts = new ArrayList<>(2);
         relatedParts.add(new RelatedPart(partId, PART0));
         relatedParts.add(new RelatedPart(pickedPartId, PART1));
-        Changelog changelog = changelogService.log(INTERCHANGE, "Part " + FormatUtils.formatPart(part)
-                + " added to the part " + FormatUtils.formatPart(pickedPart) + " as interchange.", relatedParts);
+        Changelog changelog = changelogService.log(INTERCHANGE,
+                "Part " + formatPart(part) + " added to the part " + formatPart(pickedPart) + " as interchange.",
+                relatedParts);
         changelogSourceService.link(httpRequest, changelog, sourcesIds, ratings, description);
         bomService.rebuildBomDescendancyForPart(partId, true);
         bomService.rebuildBomDescendancyForPart(pickedPartId, true);
@@ -229,8 +230,8 @@ public class InterchangeService {
         List<RelatedPart> relatedParts = new ArrayList<>(2);
         relatedParts.add(new RelatedPart(partId, PART0));
         relatedParts.add(new RelatedPart(pickedPartId, PART1));
-        Changelog changelog = changelogService.log(INTERCHANGE, "Part " + FormatUtils.formatPart(pickedPart)
-                + " and all its interchanges added to the part " + FormatUtils.formatPart(part) + " as interchanges.",
+        Changelog changelog = changelogService.log(INTERCHANGE, "Part " + formatPart(pickedPart)
+                + " and all its interchanges added to the part " + formatPart(part) + " as interchanges.",
                 relatedParts);
         changelogSourceService.link(httpRequest, changelog, sourcesIds, ratings, description);
         bomService.rebuildBomDescendancyForPart(partId, true);
