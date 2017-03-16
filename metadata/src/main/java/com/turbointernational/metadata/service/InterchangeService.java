@@ -106,10 +106,10 @@ public class InterchangeService {
                     "Part " + FormatUtils.formatPart(part) + " already has interchangeable parts.");
         }
         Interchange interchange = new Interchange();
-        interchange.getParts().add(asInterchange);
+        //interchange.getParts().add(asInterchange);
         interchangeDao.persist(interchange);
         part.setInterchange(interchange);
-        partDao.merge(part);
+        //partDao.merge(part);
         List<RelatedPart> relatedParts = new ArrayList<>(1);
         relatedParts.add(new RelatedPart(part.getId(), PART0));
         relatedParts.add(new RelatedPart(asInterchange.getId(), PART1));
