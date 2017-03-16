@@ -3,6 +3,9 @@ package com.turbointernational.metadata.service;
 import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.INTERCHANGE;
 import static com.turbointernational.metadata.entity.ChangelogPart.Role.PART0;
 import static com.turbointernational.metadata.entity.ChangelogPart.Role.PART1;
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
+import static org.springframework.transaction.TransactionDefinition.PROPAGATION_REQUIRES_NEW;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,10 +18,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -54,9 +55,6 @@ public class InterchangeService {
     @Qualifier("transactionManagerMetadata")
     @Autowired
     private PlatformTransactionManager txManagerMetadata;
-
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
 
     /**
      * Find an interchangeable by its ID.
@@ -104,14 +102,20 @@ public class InterchangeService {
         bomService.rebuildBomDescendancyForParts(partIds, true);
     }
 
+    /**
+     * Set 'asInterchange' as interchange for the 'part'.
+     * 
+     * Group of interchanges for the 'part' is removed and
+     * 'part' is added to a group of the 'asInterchange' so
+     * 'asInterchange' becomes interchange for the 'part'.
+     * 
+     * @param part
+     * @param asInterchange
+     */
     public void create(Part part, Part asInterchange) {
-        Interchange interchange = asInterchange.getInterchange();
-        if (interchange == null) {
-            interchange = part.getInterchange();
-        }
-        interchange.getParts().add(asInterchange);
-        asInterchange.setInterchange(interchange);
-        part.setInterchange(interchange);
+        normalizePartInterchange(part);
+        normalizePartInterchange(asInterchange);
+        Interchange interchange = moveInterchangeableGroupToOtherGroup(part, asInterchange);
         List<RelatedPart> relatedParts = new ArrayList<>(1);
         relatedParts.add(new RelatedPart(part.getId(), PART0));
         relatedParts.add(new RelatedPart(asInterchange.getId(), PART1));
@@ -270,7 +274,7 @@ public class InterchangeService {
      *            group.
      * @param dstPart
      */
-    private void moveInterchangeableGroupToOtherGroup(Part scrPart, Part dstPart) {
+    private Interchange moveInterchangeableGroupToOtherGroup(Part scrPart, Part dstPart) {
         Interchange srcInterchange = scrPart.getInterchange();
         Set<Part> srcGrp = srcInterchange.getParts();
         Interchange dstInterchange = dstPart.getInterchange();
@@ -283,16 +287,20 @@ public class InterchangeService {
         }
         interchangeDao.remove(srcInterchange); // Delete interchange group.
         interchangeDao.merge(dstInterchange);
+        return dstInterchange;
     }
 
     /**
      * Assign interchange to the part if it is absent.
-     * <p/>
+     * 
      * Every part should be assigned to an interchange record even if it is the
-     * only part in the interchange group.
-     * <p/>
+     * only part in the interchange group. In order to be compliant with this
+     * requirement a database has a trigger on the insert event that creates
+     * such record. But for some reason this constraint can be violated. This
+     * method fixes possible violates.
+     * 
      * This method is executed in a separate transaction.
-     * <p/>
+     * 
      * See also #482, #484.
      *
      * @param part
@@ -301,8 +309,8 @@ public class InterchangeService {
      */
     private Boolean normalizePartInterchange(Part part) {
         TransactionTemplate tt = new TransactionTemplate(txManagerMetadata);
-        tt.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW); // new
-                                                                                   // transaction
+        tt.setPropagationBehavior(PROPAGATION_REQUIRES_NEW); // new
+                                                             // transaction
         Boolean modified = tt.execute(ts -> {
             Interchange interchange = part.getInterchange();
             if (interchange == null) {
@@ -310,9 +318,9 @@ public class InterchangeService {
                 interchangeDao.persist(interchange);
                 part.setInterchange(interchange);
                 partDao.merge(part);
-                return Boolean.TRUE;
+                return TRUE;
             }
-            return Boolean.FALSE;
+            return FALSE;
         });
         return modified;
     }
