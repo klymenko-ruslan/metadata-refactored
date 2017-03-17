@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.turbointernational.metadata.web.dto;
 
@@ -8,9 +8,11 @@ package com.turbointernational.metadata.web.dto;
  */
 public class AlsoBought {
 
+    private Long partId;
+
     private String manufacturerPartNumber;
 
-    private String partType;
+    private String partTypeName;
 
     private String name;
 
@@ -23,15 +25,23 @@ public class AlsoBought {
     public AlsoBought() {
     }
 
-    public AlsoBought(String manufacturerPartNumber, String partType, String name, Integer qtyShipped,
+    public AlsoBought(Long partId, String manufacturerPartNumber, String partType, String name, Integer qtyShipped,
             Double saleAmount, Integer orders) {
-        super();
+        this.setPartId(partId);
         this.manufacturerPartNumber = manufacturerPartNumber;
-        this.partType = partType;
+        this.partTypeName = partType;
         this.name = name;
         this.qtyShipped = qtyShipped;
         this.saleAmount = saleAmount;
         this.orders = orders;
+    }
+
+    public Long getPartId() {
+        return partId;
+    }
+
+    public void setPartId(Long partId) {
+        this.partId = partId;
     }
 
     public String getManufacturerPartNumber() {
@@ -42,12 +52,12 @@ public class AlsoBought {
         this.manufacturerPartNumber = manufacturerPartNumber;
     }
 
-    public String getPartType() {
-        return partType;
+    public String getPartTypeName() {
+        return partTypeName;
     }
 
-    public void setPartType(String partType) {
-        this.partType = partType;
+    public void setPartTypeName(String partTypeName) {
+        this.partTypeName = partTypeName;
     }
 
     public String getName() {

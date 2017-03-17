@@ -17,8 +17,11 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.FileUtils;
@@ -38,6 +41,7 @@ import com.turbointernational.metadata.dao.PartDao;
 import com.turbointernational.metadata.dao.ProductImageDao;
 import com.turbointernational.metadata.entity.BOMAncestor;
 import com.turbointernational.metadata.entity.Changelog;
+import com.turbointernational.metadata.entity.Manufacturer;
 import com.turbointernational.metadata.entity.TurboType;
 import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.entity.part.ProductImage;
@@ -45,6 +49,7 @@ import com.turbointernational.metadata.entity.part.types.GasketKit;
 import com.turbointernational.metadata.entity.part.types.Turbo;
 import com.turbointernational.metadata.service.ChangelogService.RelatedPart;
 import com.turbointernational.metadata.web.controller.PartController;
+import com.turbointernational.metadata.web.dto.AlsoBought;
 import com.turbointernational.metadata.web.dto.Page;
 
 import flexjson.JSONSerializer;
@@ -84,6 +89,9 @@ public class PartService {
     @Autowired
     private ImageService imageService;
 
+    @Autowired
+    private EntityManager em;
+
     private JSONSerializer partJsonSerializer = new JSONSerializer().include("id").include("name")
             .include("manufacturerPartNumber").include("description").include("inactive").include("partType.id")
             .include("partType.name").exclude("partType.*").include("manufacturer.id").include("manufacturer.name")
@@ -119,9 +127,11 @@ public class PartService {
 
     public Part createXRefPart(Long originalPartId, Part toCreate) {
         partDao.persist(toCreate);
-        // The table 'part' has a trigger on insert that associate an interchangeable with the part.
-        // So we must refresh the Part entity instance just after insert to reflect changes made by the trigger.
-        partDao.flush();            // make sure that an insert done
+        // The table 'part' has a trigger on insert that associate an
+        // interchangeable with the part.
+        // So we must refresh the Part entity instance just after insert to
+        // reflect changes made by the trigger.
+        partDao.flush(); // make sure that an insert done
         partDao.refresh(toCreate);
         String json = partJsonSerializer.serialize(toCreate);
         List<RelatedPart> relatedParts = new ArrayList<>(1);
@@ -339,6 +349,38 @@ public class PartService {
                     errMsg));
         }
         return rows;
+    }
+
+    public Page<AlsoBought> filterAlsoBough(Long partId, String manufacturerPartNumber, Integer qtyShipped,
+            Double saleAmount, Integer orders, String sortProperty, String sortOrder, Integer offset, Integer limit) {
+        Page<AlsoBought> retVal = partDao.filterAlsoBough(partId, manufacturerPartNumber, qtyShipped, saleAmount,
+                orders, sortProperty, sortOrder, offset, limit);
+        // Add properties 'partType' and 'name' to the result DTOs.
+        List<AlsoBought> recs = retVal.getRecs();
+        List<String> mnfrNmbrs = recs.stream().map(ab -> ab.getManufacturerPartNumber())
+                .collect(Collectors.toList());
+        // Map 'manufacturer number' -> 'record'
+        // The record is an array of following items:
+        //  * (Long) part ID
+        //  * (String) manufacturer part number
+        //  * (string) part name
+        //  * (string) part type name
+        Map<String, Object[]> mnfrNmb2rec = em.createNamedQuery("findPartsByMnfrsAndNumbers", Object[].class)
+                .setParameter("mnfrId", Manufacturer.TI_ID).setParameter("mnfrPrtNmbrs", mnfrNmbrs).getResultList()
+                .stream().collect(Collectors.toMap(record -> (String) record[1], record -> record));
+        recs.forEach(ab -> {
+            String mnfrPrtNmb = ab.getManufacturerPartNumber();
+            Object[] record = mnfrNmb2rec.get(mnfrPrtNmb);
+            if (record != null) {
+                Long rPartId = (Long) record[0];
+                String rPartName = (String) record[2];
+                String rPartTypeName = (String) record[3];
+                ab.setPartId(rPartId);
+                ab.setPartTypeName(rPartTypeName);
+                ab.setName(rPartName);
+            }
+        });
+        return retVal;
     }
 
 }

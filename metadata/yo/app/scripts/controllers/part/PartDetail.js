@@ -100,6 +100,40 @@ angular.module("ngMetaCrudApp")
     }
   });
 
+  if ($scope.part.manufacturer.name == "Turbo International") {
+    $scope.alsoBoughtTableParams = new ngTableParams({
+      page: 1,
+      count: 10,
+      sorting: {
+        qtyShipped: "desc"
+      }
+    }, {
+      getData: function($defer, params) {
+        var sortOrder;
+        var sorting = params.sorting();
+        for (var sortProperty in sorting) break;
+        if (sortProperty) {
+          sortOrder = sorting[sortProperty];
+        }
+        var offset = params.count() * (params.page() - 1);
+        var limit = params.count();
+        var filter = params.filter();
+        restService.filterAlsoBought($scope.partId, filter.manufacturerPartNumber, filter.qtyShipped,
+            filter.saleAmount, filter.orders, sortProperty, sortOrder, offset, limit).then(
+          function(result) {
+            // Update the total and slice the result
+            $defer.resolve(result.recs);
+            params.total(result.total);
+          },
+          function(errorResponse) {
+            restService.error("Search in the changelog failed.", errorResponse);
+            $defer.reject();
+          }
+        );
+      }
+    });
+  };
+
   $scope.turbosTableParams = null;
 
   function _initTurbosTableParams(turbos) {

@@ -16,6 +16,7 @@ import com.turbointernational.metadata.entity.BOMAncestor;
 import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.entity.part.ProductImage;
 import com.turbointernational.metadata.entity.part.types.Turbo;
+import com.turbointernational.metadata.web.dto.AlsoBought;
 import com.turbointernational.metadata.web.dto.Page;
 
 /**
@@ -70,6 +71,11 @@ public class PartDao extends AbstractDao<Part> {
         } catch (NoResultException e) {
             return null;
         }
+    }
+
+    public Page<AlsoBought> filterAlsoBough(Long partId, String manufacturerPartNumber, Integer qtyShipped,
+            Double saleAmount, Integer orders, String sortProperty, String sortOrder, Integer offset, Integer limit) {
+        return null;
     }
 
     public List<Turbo> listTurbosLinkedToGasketKit(Long id) {
