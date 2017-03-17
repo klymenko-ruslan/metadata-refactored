@@ -732,12 +732,19 @@ angular.module("ngMetaCrudApp")
       }
     };
 
+    $scope.isCreating = false;
+
+    $scope.isBttnCreateDisabled = function(form) {
+      return form.$invalid || $scope.isCreating;
+    };
+
     $scope.onCreate = function() {
       if ($scope.part.partType.magentoAttributeSet == "Turbo") {
         $scope.part.turboModel = $scope.turbo.tm;
         $scope.part.turboType = $scope.turbo.tt;
       }
-      restService.createXRefPart($scope.origPart.id, $scope.part).then(
+      $scope.isCreating = true;
+      $scope.createPromise = restService.createXRefPart($scope.origPart.id, $scope.part).then(
         function success(newPart) {
           $uibModalInstance.close();
           $route.reload();
@@ -748,7 +755,9 @@ angular.module("ngMetaCrudApp")
           restService.error("Creating of X Ref part for [" + $scope.origPart.id + "] - " +
                   $scope.origPart.manufacturerPartNumber + " failed.", response);
         }
-      );
+      ).finally(function() {
+        $scope.isCreating = false;
+      });
     };
 
     $scope.onClose = function() {
