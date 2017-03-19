@@ -13,6 +13,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
 
 /**
@@ -36,7 +37,7 @@ public class AbstractFunctionalTest {
     @Autowired
     protected PlatformTransactionManager txManager; // JPA
 
-    @Autowired
+    @PersistenceContext(unitName = "metadata")
     protected EntityManager em;
 
     protected JdbcTemplate jdbcTemplate;

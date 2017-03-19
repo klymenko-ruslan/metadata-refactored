@@ -3,9 +3,8 @@ package com.turbointernational.metadata.entity;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
-
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.turbointernational.metadata.web.dto.SalesNoteSearchRequest;
 
@@ -15,7 +14,7 @@ import com.turbointernational.metadata.web.dto.SalesNoteSearchRequest;
  */
 public class SalesNoteRepositoryImpl implements SalesNoteRepositoryCustom {
 
-    @Autowired(required=true)
+    @PersistenceContext(unitName = "metadata")
     EntityManager entityManager;
 
     @Override

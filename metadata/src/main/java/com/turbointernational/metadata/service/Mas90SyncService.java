@@ -73,7 +73,7 @@ public class Mas90SyncService {
     @Autowired
     private PlatformTransactionManager txManager; // JPA
 
-    @PersistenceContext
+    @PersistenceContext(unitName = "metadata")
     private EntityManager entityManager;
 
     @Autowired

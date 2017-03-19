@@ -22,6 +22,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.FileUtils;
@@ -89,7 +90,7 @@ public class PartService {
     @Autowired
     private ImageService imageService;
 
-    @Autowired
+    @PersistenceContext(unitName = "metadata")
     private EntityManager em;
 
     private JSONSerializer partJsonSerializer = new JSONSerializer().include("id").include("name")
