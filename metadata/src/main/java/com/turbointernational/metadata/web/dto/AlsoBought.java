@@ -25,15 +25,11 @@ public class AlsoBought {
     public AlsoBought() {
     }
 
-    public AlsoBought(Long partId, String manufacturerPartNumber, String partType, String name, Integer qtyShipped,
-            Double saleAmount, Integer orders) {
-        this.setPartId(partId);
+    public AlsoBought(String manufacturerPartNumber, Integer qtyShipped, Integer orders, Double saleAmount) {
         this.manufacturerPartNumber = manufacturerPartNumber;
-        this.partTypeName = partType;
-        this.name = name;
         this.qtyShipped = qtyShipped;
-        this.saleAmount = saleAmount;
         this.orders = orders;
+        this.saleAmount = saleAmount;
     }
 
     public Long getPartId() {

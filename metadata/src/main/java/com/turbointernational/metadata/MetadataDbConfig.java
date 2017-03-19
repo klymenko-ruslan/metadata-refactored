@@ -46,6 +46,7 @@ public class MetadataDbConfig {
         return new JpaTransactionManager(emf);
     }
 
+    // TODO: it looks that this transaction manager is useless and can be replaced by 'transactionManager'
     @Bean(name = "transactionManagerMetadata")
     public PlatformTransactionManager transactionManagerMetadata() {
         return new DataSourceTransactionManager(dataSource());
