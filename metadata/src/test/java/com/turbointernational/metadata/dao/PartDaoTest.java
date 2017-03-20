@@ -1,6 +1,7 @@
 package com.turbointernational.metadata.dao;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -17,7 +18,7 @@ public class PartDaoTest extends AbstractFunctionalTest {
     private PartDao partDao;
 
     @Test
-    //@Ignore  // This test is used for development only.
+    @Ignore  // This test is used for development only.
     public void testFilterAlsoBough() {
         Page<AlsoBought> page = partDao.filterAlsoBough("8-F-0431", "4", "CHR", null, null, null, null);
         Assert.assertNotNull("Returned 'page' is null.", page);
