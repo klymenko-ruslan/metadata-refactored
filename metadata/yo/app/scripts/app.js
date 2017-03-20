@@ -217,6 +217,9 @@ angular.module("ngMetaCrudApp", ["ngCookies", "ngRoute", "ngTable", "ui.bootstra
         criticalDimensions: ["$route", "restService", function($route, restService) {
           return restService.findCriticalDimensionsForThePart($route.current.pathParams.id);
         }],
+        partTypes: ["restService", function(restService) {
+          return restService.listPartTypes();
+        }],
         manufacturers: ["restService", function(restService) {
           return restService.listManufacturers();
         }],

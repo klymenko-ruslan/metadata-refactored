@@ -3,12 +3,16 @@
 angular.module("ngMetaCrudApp")
 .controller("PartDetailCtrl", ["$scope", "$log", "$q", "$location", "$cookies", "$route", "$routeParams", "Kits",
     "ngTableParams", "utils", "restService", "Restangular", "User", "$uibModal", "dialogs", "gToast",
-    "part", "criticalDimensions", "manufacturers", "turbos", "oversizeParts", "standardParts", "prices",
+    "part", "criticalDimensions", "partTypes", "manufacturers", "turbos", "oversizeParts", "standardParts", "prices",
     function ($scope, $log, $q, $location, $cookies, $route, $routeParams, Kits, ngTableParams, utils,
-    restService, Restangular, User, $uibModal, dialogs, gToast, part, criticalDimensions, manufacturers, turbos,
-    oversizeParts, standardParts, prices) {
+    restService, Restangular, User, $uibModal, dialogs, gToast, part, criticalDimensions, partTypes, manufacturers,
+    turbos, oversizeParts, standardParts, prices) {
   $scope.partId = part.id;
   $scope.part = part;
+  $scope.partTypeOpts = _.map(partTypes, function (pt) {
+    return {"id": pt.value, "title": pt.name};
+  });
+  $scope.partTypeOpts.unshift({"id": null, "title": ""});
   $scope.oversizeParts = oversizeParts;
   $scope.standardParts = standardParts;
   $scope.prices = prices;
@@ -99,6 +103,40 @@ angular.module("ngMetaCrudApp")
       );
     }
   });
+
+  if ($scope.part.manufacturer.name == "Turbo International") {
+    $scope.alsoBoughtTableParams = new ngTableParams({
+      page: 1,
+      count: 25,
+      sorting: {
+        qtyShipped: "desc"
+      }
+    }, {
+      getData: function($defer, params) {
+        var sortOrder;
+        var sorting = params.sorting();
+        for (var sortProperty in sorting) break;
+        if (sortProperty) {
+          sortOrder = sorting[sortProperty];
+        }
+        var offset = params.count() * (params.page() - 1);
+        var limit = params.count();
+        var filter = params.filter();
+        restService.filterAlsoBought($scope.part.manufacturerPartNumber,
+                filter.manufacturerPartNumber, filter.partTypeValue, sortProperty, sortOrder, offset, limit).then(
+          function(result) {
+            // Update the total and slice the result
+            $defer.resolve(result.recs);
+            params.total(result.total);
+          },
+          function(errorResponse) {
+            restService.error("Search in the changelog failed.", errorResponse);
+            $defer.reject();
+          }
+        );
+      }
+    });
+  };
 
   $scope.turbosTableParams = null;
 

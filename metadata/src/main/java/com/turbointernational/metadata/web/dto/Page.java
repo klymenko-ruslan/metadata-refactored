@@ -1,15 +1,15 @@
 package com.turbointernational.metadata.web.dto;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
+
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.util.View;
 
-import java.util.List;
-
-import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
-
 /**
- * Created by dmytro.trunykov on 21.03.16.
+ * Created by dmytro.trunykov@zorallabs.com on 21.03.16.
  */
 @JsonInclude(ALWAYS)
 public class Page<T> {
@@ -23,6 +23,14 @@ public class Page<T> {
     public Page(long total, List<T> recs) {
         this.total = total;
         this.recs = recs;
+    }
+
+    public long getTotal() {
+        return total;
+    }
+
+    public List<T> getRecs() {
+        return recs;
     }
 
 }

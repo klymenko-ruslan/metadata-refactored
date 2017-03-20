@@ -1,0 +1,105 @@
+/**
+ *
+ */
+package com.turbointernational.metadata.web.dto;
+
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.util.View;
+
+/**
+ * @author dmytro.trunykov@zorallabs.com
+ */
+@JsonInclude(ALWAYS)
+public class AlsoBought {
+
+    @JsonView(View.Summary.class)
+    private Long partId;
+
+    @JsonView(View.Summary.class)
+    private String manufacturerPartNumber;
+
+    @JsonView(View.Summary.class)
+    private String partTypeName;
+
+    @JsonView(View.Summary.class)
+    private String name;
+
+    @JsonView(View.Summary.class)
+    private Integer qtyShipped;
+
+    @JsonView(View.Summary.class)
+    private Double saleAmount;
+
+    @JsonView(View.Summary.class)
+    private Integer orders;
+
+    public AlsoBought() {
+    }
+
+    public AlsoBought(String manufacturerPartNumber, Integer qtyShipped, Integer orders, Double saleAmount) {
+        this.manufacturerPartNumber = manufacturerPartNumber;
+        this.qtyShipped = qtyShipped;
+        this.orders = orders;
+        this.saleAmount = saleAmount;
+    }
+
+    public Long getPartId() {
+        return partId;
+    }
+
+    public void setPartId(Long partId) {
+        this.partId = partId;
+    }
+
+    public String getManufacturerPartNumber() {
+        return manufacturerPartNumber;
+    }
+
+    public void setManufacturerPartNumber(String manufacturerPartNumber) {
+        this.manufacturerPartNumber = manufacturerPartNumber;
+    }
+
+    public String getPartTypeName() {
+        return partTypeName;
+    }
+
+    public void setPartTypeName(String partTypeName) {
+        this.partTypeName = partTypeName;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Integer getQtyShipped() {
+        return qtyShipped;
+    }
+
+    public void setQtyShipped(Integer qtyShipped) {
+        this.qtyShipped = qtyShipped;
+    }
+
+    public Double getSaleAmount() {
+        return saleAmount;
+    }
+
+    public void setSaleAmount(Double saleAmount) {
+        this.saleAmount = saleAmount;
+    }
+
+    public Integer getOrders() {
+        return orders;
+    }
+
+    public void setOrders(Integer orders) {
+        this.orders = orders;
+    }
+
+}

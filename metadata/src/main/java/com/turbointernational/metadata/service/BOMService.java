@@ -72,7 +72,7 @@ public class BOMService {
 
     private JdbcTemplate jdbcTemplate;
 
-    @PersistenceContext
+    @PersistenceContext(unitName = "metadata")
     protected EntityManager em;
 
     @Autowired

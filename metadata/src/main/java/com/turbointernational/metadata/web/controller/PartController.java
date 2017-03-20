@@ -56,6 +56,7 @@ import com.turbointernational.metadata.service.StandardOversizePartService;
 import com.turbointernational.metadata.service.StandardOversizePartService.CreateStandardOversizePartRequest;
 import com.turbointernational.metadata.service.StandardOversizePartService.CreateStandardOversizePartResponse;
 import com.turbointernational.metadata.util.View;
+import com.turbointernational.metadata.web.dto.AlsoBought;
 import com.turbointernational.metadata.web.dto.Page;
 import com.turbointernational.metadata.web.dto.ProductPricesDto;
 
@@ -396,6 +397,18 @@ public class PartController {
     public @ResponseBody Part findByPartNumber(@RequestParam(name = "mid") Long manufacturerId,
             @RequestParam(name = "pn") String partNumber) {
         return partDao.findByPartNumberAndManufacturer(manufacturerId, partNumber);
+    }
+
+    @Secured("ROLE_PRICE_READ")
+    @JsonView(View.Summary.class)
+    @RequestMapping(value = "/part/alsobought", method = GET, produces = APPLICATION_JSON_VALUE)
+    public Page<AlsoBought> filterAlsoBough(@RequestParam String manufacturerPartNumber,
+            @RequestParam(required = false) String fltrManufacturerPartNumber,
+            @RequestParam(required = false) String fltrPartTypeValue,
+            @RequestParam(required = false) String sortProperty, @RequestParam(required = false) String sortOrder,
+            @RequestParam(defaultValue = "0") Integer offset, @RequestParam(defaultValue = "10") Integer limit) {
+        return partService.filterAlsoBough(manufacturerPartNumber, fltrManufacturerPartNumber, fltrPartTypeValue,
+                sortProperty, sortOrder, offset, limit);
     }
 
     @RequestMapping(value = "/part/{id}/ancestors", method = GET)

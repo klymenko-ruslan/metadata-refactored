@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import java.util.List;
 
 /**
@@ -18,7 +20,7 @@ public class ChangelogSourceNameService {
     @Autowired
     private SourceNameDao sourceNameDao;
 
-    @Autowired
+    @PersistenceContext(unitName = "metadata")
     private EntityManager em;
 
     public SourceName findChangelogSourceNameByName(String name) {

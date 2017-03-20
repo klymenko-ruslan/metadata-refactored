@@ -1,11 +1,14 @@
 package com.turbointernational.metadata.web.controller;
 
-import com.fasterxml.jackson.annotation.JsonView;
-import com.turbointernational.metadata.entity.SalesNoteState;
-import com.turbointernational.metadata.entity.User;
-import com.turbointernational.metadata.service.SearchService;
-import com.turbointernational.metadata.service.SearchService.IndexingStatus;
-import com.turbointernational.metadata.util.View;
+import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.PUT;
+
+import java.util.Map;
+import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,17 +16,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
 
-import java.util.Map;
-import java.util.Set;
-
-import static org.springframework.http.HttpStatus.OK;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
-import static org.springframework.web.bind.annotation.RequestMethod.PUT;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.entity.SalesNoteState;
+import com.turbointernational.metadata.entity.User;
+import com.turbointernational.metadata.service.SearchService;
+import com.turbointernational.metadata.service.SearchService.IndexingStatus;
+import com.turbointernational.metadata.util.View;
 
 /**
  * @author jrodriguez

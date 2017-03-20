@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
@@ -47,7 +48,7 @@ public class ChangelogSourceController {
     @Autowired
     private ChangelogSourceService changelogSourceService;
 
-    @Autowired
+    @PersistenceContext(unitName = "metadata")
     private EntityManager em;
 
     @JsonInclude(ALWAYS)

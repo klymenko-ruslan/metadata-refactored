@@ -763,6 +763,20 @@ angular.module("ngMetaCrudApp")
         return Restangular.one("search/parts").get(params);
       };
 
+      this.filterAlsoBought = function(manufacturerPartNumber, fltrManufacturerPartNumber, fltrPartTypeValue, 
+          sortProperty, sortOrder, offset, limit) {
+        var params = {
+          manufacturerPartNumber: manufacturerPartNumber,
+          fltrManufacturerPartNumber: fltrManufacturerPartNumber,
+          fltrPartTypeValue: fltrPartTypeValue,
+          sortProperty: sortProperty,
+          sortOrder: sortOrder,
+          offset: offset,
+          limit: limit
+        };
+        return Restangular.one("part/alsobought").get(params);
+      };
+
       this.filterCarModelEngineYears = function(cmey, year, make, model, engine, fuel, sortProperty, sortOrder,
         offset, limit) {
         return Restangular.one("search/carmodelengineyears").get({

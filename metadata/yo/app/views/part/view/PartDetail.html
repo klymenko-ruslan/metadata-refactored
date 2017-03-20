@@ -38,7 +38,7 @@
 
 <div class="row">
   <div class="col-xs-8">
-    <h1 class="padding-top" part-name="part"></h1>
+    <h2 class="padding-top" part-name="part"></h2>
   </div>
   <div class="col-xs-4">
     <div class="pull-right">
@@ -58,50 +58,56 @@
 <ul id="partTabs" class="nav nav-tabs" role="tablist">
   <li role="presentation">
     <a id="tab-details" href="#details" aria-controls="details" role="tab" data-toggle="tab">
-      <i class="fa fa-bars"></i>
+      <i class="fa fa-bars" aria-hidden="true"></i>
       Part Details
     </a>
   </li>
   <li role="presentation">
     <a id="tab-critical-dimensions" href="#critical_dimensions" aria-controls="critical_dimensions" role="tab" data-toggle="tab">
-      <i class="fa fa-arrows"></i>
+      <i class="fa fa-arrows" aria-hidden="true"></i>
       Critical Dimensions
     </a>
   </li>
   <li role="presentation">
     <a id="tab-turbo-types" href="#turbo_types" aria-controls="turbo_types" role="tab" data-toggle="tab">
-      <i class="fa fa-cog"></i>
+      <i class="fa fa-cog" aria-hidden="true"></i>
       Turbo Types
     </a>
   </li>
   <li role="presentation" data-ng-show="part.partType.value == 'turbo'">
     <a id="tab-applications" href="#applications" aria-controls="applications" role="tab" data-toggle="tab">
-      <i class="fa fa-book"></i>
+      <i class="fa fa-book" aria-hidden="true"></i>
       Applications
     </a>
   </li>
   <li role="presentation" data-ng-show="part.partType.value == 'gasket_kit'">
     <a id="tab-turbos" href="#turbos" aria-controls="turbos" role="tab" data-toggle="tab">
-      <i class="fa fa-book"></i>
+      <i class="fa fa-book" aria-hidden="true"></i>
       Turbos
     </a>
   </li>
   <li role="presentation" data-ng-show="part.partType.value == 'journal_bearing' || part.partType.value == 'journal_bearing_spacer' || part.partType.value == 'piston_ring'">
     <a id="tab-nonstandard" href="#nonstandard" aria-controls="non standard" role="tab" data-toggle="tab">
-      <i class="fa fa-slack"></i>
+      <i class="fa fa-slack" aria-hidden="true"></i>
       Non Standard
     </a>
   </li>
   <li role="presentation">
     <a id="tab-linked-sources" href="#linked_sources" aria-controls="linked sources" role="tab" data-toggle="tab">
-      <i class="fa fa-book"></i>
+      <i class="fa fa-book" aria-hidden="true"></i>
       Audit Log
     </a>
   </li>
-  <li role="presentation" authorize="ROLE_PRICE_READ">
+  <li role="presentation" authorize="ROLE_PRICE_READ" data-ng-show="part.manufacturer.name == 'Turbo International'">
     <a id="tab-prices" href="#prices" aria-controls="prices" role="tab" data-toggle="tab">
-      <i class="fa fa-usd"></i>
+      <i class="fa fa-usd" aria-hidden="true"></i>
       Prices
+    </a>
+  </li>
+  <li role="presentation" authorize="ROLE_PRICE_READ" data-ng-show="part.manufacturer.name == 'Turbo International'">
+    <a id="tab-alsobought" href="#alsobought" aria-controls="also bought" role="tab" data-toggle="tab">
+      <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+      Also Bought
     </a>
   </li>
 </ul>
@@ -134,6 +140,9 @@
   </div>
   <div role="tabpanel" class="tab-pane fade tab-part-detail" id="prices">
     <data-ng-include src="'/views/part/view/TabPrices.html'"></data-ng-include>
+  </div>
+  <div role="tabpanel" class="tab-pane fade tab-part-detail" id="alsobought">
+    <data-ng-include src="'/views/part/view/TabAlsoBought.html'"></data-ng-include>
   </div>
 </div>
 <script>

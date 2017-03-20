@@ -25,7 +25,7 @@ public abstract class AbstractDao<T extends Serializable> {
 
     protected final Class<T> clazz;
 
-    @PersistenceContext
+    @PersistenceContext(unitName = "metadata")
     protected EntityManager em;
 
     public EntityManager getEntityManager() {
