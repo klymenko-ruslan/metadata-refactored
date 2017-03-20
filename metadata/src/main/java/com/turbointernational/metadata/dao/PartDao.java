@@ -1,13 +1,13 @@
 package com.turbointernational.metadata.dao;
 
 import static com.turbointernational.metadata.entity.PartType.PTID_TURBO;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -21,7 +21,6 @@ import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import javax.persistence.criteria.Selection;
 import javax.persistence.criteria.Subquery;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +42,7 @@ import com.turbointernational.metadata.web.dto.Page;
  */
 @Repository
 public class PartDao extends AbstractDao<Part> {
-    
+
     private final static String COL_ALIAS_MANUFACTURERPARTNUMBER = "manufacturerPartNumber";
     private final static String COL_ALIAS_QTYSHIPPED = "qtyShipped";
     private final static String COL_ALIAS_ORDERS = "orders";
@@ -113,19 +112,31 @@ public class PartDao extends AbstractDao<Part> {
         }
     }
 
-    public Page<AlsoBought> filterAlsoBough(Long partId, String manufacturerPartNumber, Integer qtyShipped,
-            Double saleAmount, Integer orders, String sortProperty, String sortOrder, Integer offset, Integer limit) {
+    public Page<AlsoBought> filterAlsoBough(String manufacturerPartNumber, String fltrManufacturerPartNumber,
+            String fltrPartTypeValue, String sortProperty, String sortOrder, Integer offset, Integer limit) {
         /* @formatter:off
            select ITEMCODE, sum(QUANTITYSHIPPED) as qty_shipped, count(distinct id.invoiceno) as orders, sum(id.EXTENSIONAMT) as amt
            from AR_INVOICEHISTORYDETAIL as id
            where
-               id.INVOICENO in (select invoiceno from AR_INVOICEHISTORYDETAIL where ITEMCODE = '8-F-0431') 
+               id.INVOICENO in (select invoiceno from AR_INVOICEHISTORYDETAIL where ITEMCODE = '8-F-0431')
                and id.itemcode <> '8-F-0431'
            group by
                id.ITEMCODE
            order by
                sum(id.QUANTITYSHIPPED) desc;
            @formatter:on */
+
+        // Convert (if any) a part type value to a product line code.
+        String productLineCode = null;
+        if (fltrPartTypeValue != null) {
+            try {
+                productLineCode = emMas90.createNamedQuery("convertPartTypeValue2ProductLineCode", String.class)
+                        .setParameter(1, fltrPartTypeValue).getSingleResult();
+            } catch (NoResultException e) {
+                // ignore
+            }
+        }
+
         CriteriaBuilder cb = emMas90.getCriteriaBuilder();
         CriteriaQuery<Tuple> cqt = cb.createTupleQuery();
         Root<ArInvoiceHistoryDetail> root = cqt.from(ArInvoiceHistoryDetail.class);
@@ -149,13 +160,43 @@ public class PartDao extends AbstractDao<Part> {
         subqueryInvoices.select(rootSubquery.get(ArInvoiceHistoryDetail_.invoiceno));
         subqueryInvoices.where(cb.equal(rootSubquery.get(ArInvoiceHistoryDetail_.itemcode), manufacturerPartNumber));
 
-        List<Predicate> lstPredicates = new ArrayList<>(5);
-        lstPredicates.add(root.get(ArInvoiceHistoryDetail_.invoiceno).in(subqueryInvoices));
-        lstPredicates.add(cb.notEqual(root.get(ArInvoiceHistoryDetail_.itemcode), manufacturerPartNumber));
-        Predicate[] arrPredicates = lstPredicates.toArray(new Predicate[lstPredicates.size()]);
-        cqt.where(arrPredicates);
+        List<Predicate> lstWherePredicates = new ArrayList<>(5);
+        lstWherePredicates.add(root.get(ArInvoiceHistoryDetail_.invoiceno).in(subqueryInvoices));
+        lstWherePredicates.add(cb.notEqual(root.get(ArInvoiceHistoryDetail_.itemcode), manufacturerPartNumber));
+        if (isNotBlank(fltrManufacturerPartNumber)) {
+            lstWherePredicates.add(cb.like(cb.lower(root.get(ArInvoiceHistoryDetail_.itemcode)),
+                    "%" + fltrManufacturerPartNumber.toLowerCase() + "%"));
+        }
+        if (productLineCode != null) {
+            lstWherePredicates.add(cb.equal(root.get(ArInvoiceHistoryDetail_.productLine), productLineCode));
+        }
+        Predicate[] arrWherePredicates = lstWherePredicates.toArray(new Predicate[lstWherePredicates.size()]);
+        cqt.where(arrWherePredicates);
         cqt.groupBy(root.get(ArInvoiceHistoryDetail_.itemcode));
-        cqt.orderBy(cb.desc(colSumQuatityShipped));
+        Order order = null;
+        if (sortOrder != null) {
+            boolean asc = sortOrder.equalsIgnoreCase("asc");
+            if (!asc && !sortOrder.equalsIgnoreCase("desc")) {
+                throw new IllegalArgumentException("Invalid sort order: " + sortOrder);
+            }
+            if (sortProperty == null) {
+                throw new NullPointerException("Parameter 'sortOrder' can't be null.");
+            }
+            if (sortProperty.equals(COL_ALIAS_MANUFACTURERPARTNUMBER)) {
+                order = asc ? cb.asc(colManufacturerPartNumber) : cb.desc(colManufacturerPartNumber);
+            } else if (sortProperty.equals(COL_ALIAS_QTYSHIPPED)) {
+                order = asc ? cb.asc(colSumQuatityShipped) : cb.desc(colSumQuatityShipped);
+            } else if (sortProperty.equals(COL_ALIAS_SALEAMOUNT)) {
+                order = asc ? cb.asc(colSaleAmount) : cb.desc(colSaleAmount);
+            } else if (sortProperty.equals(COL_ALIAS_ORDERS)) {
+                order = asc ? cb.asc(colOrders) : cb.desc(colOrders);
+            } else {
+                throw new IllegalArgumentException("Invalid sort property: " + sortProperty);
+            }
+        }
+        if (order != null) {
+            cqt.orderBy(order);
+        }
         TypedQuery<Tuple> tq = emMas90.createQuery(cqt);
         if (offset != null) {
             tq.setFirstResult(offset);
@@ -170,9 +211,8 @@ public class PartDao extends AbstractDao<Part> {
         CriteriaQuery<Long> cq = cb.createQuery(Long.class);
         Root<ArInvoiceHistoryDetail> countRoot = cq.from(ArInvoiceHistoryDetail.class);
         cq.select(cb.countDistinct(countRoot.get(ArInvoiceHistoryDetail_.itemcode)));
-        cq.where(arrPredicates);
+        cq.where(arrWherePredicates);
         TypedQuery<Long> cntQuery = emMas90.createQuery(cq);
-        // String sql = cntQuery.unwrap(org.hibernate.Query.class).getQueryString();
         long total = cntQuery.getSingleResult();
         return new Page<>(total, recs);
     }

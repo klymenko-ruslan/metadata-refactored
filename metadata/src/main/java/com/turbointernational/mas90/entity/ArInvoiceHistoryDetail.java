@@ -37,6 +37,9 @@ public class ArInvoiceHistoryDetail implements Serializable {
     @Column(name = "EXTENSIONAMT", insertable = false, updatable = false, precision = 12, scale = 2)
     private Double extensionamt;
 
+    @Column(name = "PRODUCTLINE", insertable = false, updatable = false, length = 4)
+    private String productLine;
+
     public String getInvoiceno() {
         return invoiceno;
     }
@@ -75,6 +78,14 @@ public class ArInvoiceHistoryDetail implements Serializable {
 
     public void setExtensionamt(Double extensionamt) {
         this.extensionamt = extensionamt;
+    }
+
+    public String getProductLine() {
+        return productLine;
+    }
+
+    public void setProductLine(String productLine) {
+        this.productLine = productLine;
     }
 
 }

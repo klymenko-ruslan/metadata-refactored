@@ -763,14 +763,12 @@ angular.module("ngMetaCrudApp")
         return Restangular.one("search/parts").get(params);
       };
 
-      this.filterAlsoBought = function(partId, manufacturerPartNumber, qtyShipped, saleAmount, orders,
+      this.filterAlsoBought = function(manufacturerPartNumber, fltrManufacturerPartNumber, fltrPartTypeValue, 
           sortProperty, sortOrder, offset, limit) {
         var params = {
-          partId: partId,
           manufacturerPartNumber: manufacturerPartNumber,
-          qtyShipped: qtyShipped,
-          saleAmount: saleAmount,
-          orders: orders,
+          fltrManufacturerPartNumber: fltrManufacturerPartNumber,
+          fltrPartTypeValue: fltrPartTypeValue,
           sortProperty: sortProperty,
           sortOrder: sortOrder,
           offset: offset,

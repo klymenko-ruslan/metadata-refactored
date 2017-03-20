@@ -3,19 +3,19 @@
     <td data-title="'Mfr Part #'" data-sortable="'manufacturerPartNumber'" filter="{manufacturerPartNumber: 'text'}" class="text-left">
       <a data-ng-href="/part/{{r.partId}}">{{r.manufacturerPartNumber}}</a>
     </td>
-    <td data-title="'Part Type'" class="text-left">
+    <td data-title="'Part Type'" filter="{partTypeValue: 'select'}" filter-data="partTypeOpts" class="text-left">
       {{r.partTypeName}}
     </td>
     <td data-title="'Name'" class="text-left">
       {{r.name}}
     </td>
-    <td data-title="'Qty Shipped'" data-sortable="'qtyShipped'" filter="{qtyShipped: 'number'}" class="text-right">
+    <td data-title="'Qty Shipped'" data-sortable="'qtyShipped'" class="text-right">
       {{r.qtyShipped | number}}
     </td>
-    <td data-title="'Sale Amt'" data-sortable="'saleAmount'" filter="{saleAmount: 'number'}" class="text-right">
+    <td data-title="'Sale Amt'" data-sortable="'saleAmount'" class="text-right">
       {{r.saleAmount | number:2}}
     </td>
-    <td data-title="'Orders'" data-sortable="'orders'" filter="{orders: 'number'}" class="text-right">
+    <td data-title="'Orders'" data-sortable="'orders'" class="text-right">
       {{r.orders | number}}
     </td>
   </tr>

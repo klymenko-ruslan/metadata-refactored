@@ -3,23 +3,37 @@
  */
 package com.turbointernational.metadata.web.dto;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.util.View;
+
 /**
  * @author dmytro.trunykov@zorallabs.com
  */
+@JsonInclude(ALWAYS)
 public class AlsoBought {
 
+    @JsonView(View.Summary.class)
     private Long partId;
 
+    @JsonView(View.Summary.class)
     private String manufacturerPartNumber;
 
+    @JsonView(View.Summary.class)
     private String partTypeName;
 
+    @JsonView(View.Summary.class)
     private String name;
 
+    @JsonView(View.Summary.class)
     private Integer qtyShipped;
 
+    @JsonView(View.Summary.class)
     private Double saleAmount;
 
+    @JsonView(View.Summary.class)
     private Integer orders;
 
     public AlsoBought() {

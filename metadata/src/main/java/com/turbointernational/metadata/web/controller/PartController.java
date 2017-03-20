@@ -402,12 +402,13 @@ public class PartController {
     @Secured("ROLE_PRICE_READ")
     @JsonView(View.Summary.class)
     @RequestMapping(value = "/part/alsobought", method = GET, produces = APPLICATION_JSON_VALUE)
-    public Page<AlsoBought> filterAlsoBough(@RequestParam Long partId, @RequestParam String manufacturerPartNumber,
-            @RequestParam Integer qtyShipped, @RequestParam Double saleAmount, @RequestParam Integer orders,
+    public Page<AlsoBought> filterAlsoBough(@RequestParam String manufacturerPartNumber,
+            @RequestParam(required = false) String fltrManufacturerPartNumber,
+            @RequestParam(required = false) String fltrPartTypeValue,
             @RequestParam(required = false) String sortProperty, @RequestParam(required = false) String sortOrder,
             @RequestParam(defaultValue = "0") Integer offset, @RequestParam(defaultValue = "10") Integer limit) {
-        return partService.filterAlsoBough(partId, manufacturerPartNumber, qtyShipped, saleAmount, orders, sortProperty,
-                sortOrder, offset, limit);
+        return partService.filterAlsoBough(manufacturerPartNumber, fltrManufacturerPartNumber, fltrPartTypeValue,
+                sortProperty, sortOrder, offset, limit);
     }
 
     @RequestMapping(value = "/part/{id}/ancestors", method = GET)
