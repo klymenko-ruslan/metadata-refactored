@@ -1,11 +1,9 @@
 package com.turbointernational.metadata.web.controller;
 
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonView;
-import com.turbointernational.metadata.entity.Manufacturer;
-import com.turbointernational.metadata.dao.ManufacturerDao;
-import com.turbointernational.metadata.util.View;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -16,17 +14,20 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.dao.ManufacturerDao;
+import com.turbointernational.metadata.entity.Manufacturer;
+import com.turbointernational.metadata.util.View;
 
 /**
  *
  * @author jrodriguez
  */
 
-@RequestMapping(value = {"/metadata/other/manufacturer", "/other/manufacturer"})
+@RequestMapping(value = { "/metadata/other/manufacturer", "/other/manufacturer" })
 @Controller
 public class ManufacturerController {
-    
+
     @Autowired
     private ManufacturerDao manufacturerDao;
 
@@ -50,5 +51,5 @@ public class ManufacturerController {
         }
         return new ResponseEntity<String>(manufacturer.toJson(), headers, HttpStatus.OK);
     }
-    
+
 }

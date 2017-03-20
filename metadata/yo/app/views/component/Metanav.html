@@ -8,6 +8,7 @@
         </a>
         <ul class="dropdown-menu">
           <li data-ng-disabled="{{::!hasRole('ROLE_READ')}}"><a href="#" data-ng-href="/parttype/list"><i class="fa fa-gg" aria-hidden="true"></i> Part Types</a></li>
+          <li data-ng-disabled="{{::!hasRole('ROLE_MANUFACTURER_CRUD')}}"><a href="#" data-ng-href="/manufacturer/list"><i class="fa fa-university" aria-hidden="true"></i> Manufacturers</a></li>
           <li data-ng-disabled="{{::!hasRole('ROLE_TURBO_MODEL_CRUD')}}"><a href="#" data-ng-href="/other/salesNotes"><i class="fa fa-files-o" aria-hidden="true"></i> Sales Notes</a></li>
           <li data-ng-disabled="{{::!hasRole('ROLE_TURBO_MODEL_CRUD')}}"><a href="#" data-ng-href="/other/turboModels"><i class="fa fa-superscript" aria-hidden="true"></i> Turbo Models</a></li>
           <li data-ng-disabled="{{::!hasRole('ROLE_APPLICATION_CRUD')}}"><a href="#" data-ng-href="/application/carmodelengineyear/list"><i class="fa fa-cubes" aria-hidden="true"></i> Applications</a></li>
