@@ -484,10 +484,11 @@ angular.module("ngMetaCrudApp")
         return Restangular.all("other/manufacturertype/all").getList();
       };
 
-      this.filterManufacturers = function(fltrName, fltrTypeId, sortProperty, sortOrder, offset, limit) {
+      this.filterManufacturers = function(fltrName, fltrTypeId, fltrNotExternal, sortProperty, sortOrder, offset, limit) {
         var params = {
           fltrName: fltrName,
           fltrTypeId: fltrTypeId,
+          fltrNotExternal: fltrNotExternal,
           sortProperty: sortProperty,
           sortOrder: sortOrder,
           offset: offset,

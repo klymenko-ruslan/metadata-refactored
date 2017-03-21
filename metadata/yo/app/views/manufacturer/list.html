@@ -27,6 +27,10 @@
         <td data-title="'Type'" data-sortable="'typeName'" filter="{typeId: 'select'}" filter-data="manufacturerTypesOpts" class="text-left">
           {{m.type.name}}
         </td>
+        <td data-title="'Not External'" data-sortable="'notExternal'" filter="{notExternal: 'select'}" filter-data="notExternalOpts" class="text-center">
+          <i data-ng-show="m.notExternal === true" class="fa fa-circle" title="Yes"></i>
+          <i data-ng-show="m.notExternal === false" class="fa fa-circle-o text-muted" title="No"></i>
+        </td>
         <td data-title="'Actions'" filter="{resetFilter: 'manufacturersClearBttn'}" class="actions text-center">
           <button class="btn btn-primary btn-xs" authorize="ROLE_MANUFACTURER_CRUD" data-ng-click="onEdit(m)">
             <i class="fa fa-cog"></i> Edit
@@ -38,7 +42,7 @@
       </tr>
 
       <tr data-ng-hide="$data.length > 0">
-        <td colspan="3">No manufacturers to display.</td>
+        <td colspan="4">No manufacturers to display.</td>
       </tr>
 
     </table>

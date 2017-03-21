@@ -6,6 +6,7 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -49,19 +50,23 @@ public class ManufacturerDao extends AbstractDao<Manufacturer> {
         return findManufacturer(TI_ID);
     }
 
-    public Page<Manufacturer> filter(String fltrName, Long fltrManufacturerTypeId, String sortProperty,
-            String sortOrder, Integer offset, Integer limit) {
+    public Page<Manufacturer> filter(String fltrName, Long fltrManufacturerTypeId, Boolean notExternal,
+            String sortProperty, String sortOrder, Integer offset, Integer limit) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Manufacturer> mcq = cb.createQuery(Manufacturer.class);
         Root<Manufacturer> root = mcq.from(Manufacturer.class);
         List<Predicate> lstPredicates = new ArrayList<>(2);
         Path<String> colName = root.get(Manufacturer_.name);
         Path<Long> colType = root.get(Manufacturer_.type).get(ManufacturerType_.id);
+        Path<Boolean> colNotExternal = root.get(Manufacturer_.notExternal);
         if (isNotBlank(fltrName)) {
             lstPredicates.add(cb.like(cb.lower(colName), "%" + fltrName.toLowerCase() + "%"));
         }
         if (fltrManufacturerTypeId != null) {
             lstPredicates.add(cb.equal(colType, fltrManufacturerTypeId));
+        }
+        if (notExternal != null) {
+            lstPredicates.add(cb.equal(colNotExternal, notExternal));
         }
         Predicate[] arrPredicates = lstPredicates.toArray(new Predicate[lstPredicates.size()]);
         if (arrPredicates.length > 0) {
@@ -80,6 +85,8 @@ public class ManufacturerDao extends AbstractDao<Manufacturer> {
                 order = asc ? cb.asc(colName) : cb.desc(colName);
             } else if (sortProperty.equals("typeName")) {
                 order = asc ? cb.asc(colType) : cb.desc(colType);
+            } else if (sortProperty.equals("notExternal")) {
+                order = asc ? cb.asc(colNotExternal) : cb.desc(colNotExternal);
             } else {
                 throw new IllegalArgumentException("Invalid sort property: " + sortProperty);
             }
@@ -125,6 +132,15 @@ public class ManufacturerDao extends AbstractDao<Manufacturer> {
     public Long getRefCountFromTurboTypes(Long manufacturerId) {
         return em.createNamedQuery("numTurboTypesOfManufacturer", Long.class)
                 .setParameter("manufacturerId", manufacturerId).getSingleResult();
+    }
+
+    public Manufacturer findManufacurerByName(String name) {
+        try {
+            return em.createNamedQuery("findManufacurerByName", Manufacturer.class).setParameter("name", name)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
     }
 
 }

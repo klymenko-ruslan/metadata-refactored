@@ -10,7 +10,9 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.dao.ManufacturerDao;
+import com.turbointernational.metadata.dao.ManufacturerTypeDao;
 import com.turbointernational.metadata.entity.Manufacturer;
+import com.turbointernational.metadata.entity.ManufacturerType;
 import com.turbointernational.metadata.util.View;
 import com.turbointernational.metadata.web.dto.Page;
 
@@ -22,6 +24,9 @@ public class ManufacturerService {
 
     @Autowired
     private ManufacturerDao manufacturerDao;
+    
+    @Autowired
+    private ManufacturerTypeDao manufacturerTypeDao; 
 
     @JsonInclude(ALWAYS)
     public static class DeleteResponse {
@@ -82,9 +87,10 @@ public class ManufacturerService {
         return manufacturerDao.findManufacturer(id);
     }
 
-    public Page<Manufacturer> filter(String fltrName, Long fltrManufacturerTypeId, String sortProperty,
-            String sortOrder, Integer offset, Integer limit) {
-        return manufacturerDao.filter(fltrName, fltrManufacturerTypeId, sortProperty, sortOrder, offset, limit);
+    public Page<Manufacturer> filter(String fltrName, Long fltrManufacturerTypeId, Boolean notExternal,
+            String sortProperty, String sortOrder, Integer offset, Integer limit) {
+        return manufacturerDao.filter(fltrName, fltrManufacturerTypeId, notExternal, sortProperty, sortOrder, offset,
+                limit);
     }
 
     public DeleteResponse delete(Long manufacturerId) {
@@ -96,6 +102,29 @@ public class ManufacturerService {
         }
         manufacturerDao.delete(manufacturerId);
         return new DeleteResponse(true);
+    }
+    
+    public Manufacturer findManufacurerByName(String name) {
+        return manufacturerDao.findManufacurerByName(name);
+    }
+    
+    public Manufacturer create(String name, Long typeId, boolean notExternal) {
+        Manufacturer manufacturer = new Manufacturer();
+        manufacturer.setName(name);
+        manufacturer.setNotExternal(notExternal);
+        ManufacturerType manufacturerType = manufacturerTypeDao.getReference(typeId);
+        manufacturer.setType(manufacturerType);
+        manufacturerDao.persist(manufacturer);
+        return manufacturer;
+    }
+
+    public Manufacturer update(Long manufacturerId, String name, Long typeId, boolean notExternal) {
+        Manufacturer manufacturer = manufacturerDao.findOne(manufacturerId);
+        ManufacturerType manufacturerType = manufacturerTypeDao.getReference(typeId);
+        manufacturer.setName(name);
+        manufacturer.setNotExternal(notExternal);
+        manufacturer.setType(manufacturerType);
+        return manufacturer;
     }
 
 }

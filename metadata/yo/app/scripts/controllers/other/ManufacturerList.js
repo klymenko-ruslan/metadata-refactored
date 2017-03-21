@@ -14,8 +14,13 @@ angular.module("ngMetaCrudApp")
     $scope.manufacturerTypesOpts = _.map(manufacturerTypes, function (mt) {
       return { "id": mt.id, "title": mt.name };
     });
-
     $scope.manufacturerTypesOpts.unshift({ "id": null, "title": "" });
+
+    $scope.notExternalOpts = [
+      {id: null, title: ""},
+      {id: true, title: "yes"},
+      {id: false, title: "no"}
+    ];
 
     $scope.manufacturersTableParams = new ngTableParams({
       page: 1,
@@ -34,7 +39,7 @@ angular.module("ngMetaCrudApp")
         var offset = params.count() * (params.page() - 1);
         var limit = params.count();
         var filter = params.filter();
-        restService.filterManufacturers(filter.name, filter.typeId, sortProperty, sortOrder, offset, limit).then(
+        restService.filterManufacturers(filter.name, filter.typeId, filter.notExternal, sortProperty, sortOrder, offset, limit).then(
           function(result) {
             $defer.resolve(result.recs);
             params.total(result.total);
@@ -50,6 +55,7 @@ angular.module("ngMetaCrudApp")
       var filter = $scope.manufacturersTableParams.filter();
       filter.name = null;
       filter.typeId = null;
+      filter.notExternal = null;
     };
 
     $scope.onCreate = function() {
@@ -70,16 +76,16 @@ angular.module("ngMetaCrudApp")
                   var msg = "The manufacturer [" + m.id + "] - " + m.name +
                     " can't be deleted because it is referenced by ";
                   if (deleteResponse.refParts) {
-                    msg += (" " + deleteResponse.refParts + " parts");
+                    msg += (" " + deleteResponse.refParts + " part(s)");
                   }
                   if (deleteResponse.refTurboTypes) {
                     if (deleteResponse.refParts) {
                       msg += " and";
                     }
-                    msg += (" " + deleteResponse.refTurboTypes + " turbo types");
+                    msg += (" " + deleteResponse.refTurboTypes + " turbo type(s)");
                   }
                   msg += ".";
-                  dialogs.error("Rejected", msg);
+                  dialogs.error("Operation rejected", msg);
                 } else {
                   $scope.manufacturersTableParams.reload();
                   gToast.open("The manufacturer [" + m.id + "] - " + m.name +
