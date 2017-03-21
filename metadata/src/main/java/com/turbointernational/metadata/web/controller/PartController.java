@@ -399,16 +399,20 @@ public class PartController {
         return partDao.findByPartNumberAndManufacturer(manufacturerId, partNumber);
     }
 
-    @Secured("ROLE_PRICE_READ")
     @JsonView(View.Summary.class)
     @RequestMapping(value = "/part/alsobought", method = GET, produces = APPLICATION_JSON_VALUE)
-    public Page<AlsoBought> filterAlsoBough(@RequestParam String manufacturerPartNumber,
+    public Page<AlsoBought> filterAlsoBough(HttpServletRequest httpRequest, @RequestParam String manufacturerPartNumber,
             @RequestParam(required = false) String fltrManufacturerPartNumber,
             @RequestParam(required = false) String fltrPartTypeValue,
             @RequestParam(required = false) String sortProperty, @RequestParam(required = false) String sortOrder,
             @RequestParam(defaultValue = "0") Integer offset, @RequestParam(defaultValue = "10") Integer limit) {
-        return partService.filterAlsoBough(manufacturerPartNumber, fltrManufacturerPartNumber, fltrPartTypeValue,
-                sortProperty, sortOrder, offset, limit);
+        if (httpRequest.isUserInRole("ROLE_PRICE_READ")) {
+            // See comment in the method Price#getPrices() for the answer why permission is checked here.
+            return partService.filterAlsoBough(manufacturerPartNumber, fltrManufacturerPartNumber, fltrPartTypeValue,
+                    sortProperty, sortOrder, offset, limit);
+        } else {
+            return null;
+        }
     }
 
     @RequestMapping(value = "/part/{id}/ancestors", method = GET)

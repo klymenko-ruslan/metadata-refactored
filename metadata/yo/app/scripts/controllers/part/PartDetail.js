@@ -126,8 +126,13 @@ angular.module("ngMetaCrudApp")
                 filter.manufacturerPartNumber, filter.partTypeValue, sortProperty, sortOrder, offset, limit).then(
           function(result) {
             // Update the total and slice the result
-            $defer.resolve(result.recs);
-            params.total(result.total);
+            if (result) {
+              $defer.resolve(result.recs);
+              params.total(result.total);
+            } else {
+              $defer.resolve([]);
+              params.total(0);
+            }
           },
           function(errorResponse) {
             restService.error("Search in the changelog failed.", errorResponse);
