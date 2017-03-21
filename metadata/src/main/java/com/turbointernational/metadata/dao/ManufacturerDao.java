@@ -52,8 +52,8 @@ public class ManufacturerDao extends AbstractDao<Manufacturer> {
     public Page<Manufacturer> filter(String fltrName, Long fltrManufacturerTypeId, String sortProperty,
             String sortOrder, Integer offset, Integer limit) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<Manufacturer> cq = cb.createQuery(Manufacturer.class);
-        Root<Manufacturer> root = cq.from(Manufacturer.class);
+        CriteriaQuery<Manufacturer> mcq = cb.createQuery(Manufacturer.class);
+        Root<Manufacturer> root = mcq.from(Manufacturer.class);
         List<Predicate> lstPredicates = new ArrayList<>(2);
         Path<String> colName = root.get(Manufacturer_.name);
         Path<Long> colType = root.get(Manufacturer_.type).get(ManufacturerType_.id);
@@ -65,7 +65,7 @@ public class ManufacturerDao extends AbstractDao<Manufacturer> {
         }
         Predicate[] arrPredicates = lstPredicates.toArray(new Predicate[lstPredicates.size()]);
         if (arrPredicates.length > 0) {
-            cq.where(arrPredicates);
+            mcq.where(arrPredicates);
         }
         Order order = null;
         if (sortOrder != null) {
@@ -78,16 +78,16 @@ public class ManufacturerDao extends AbstractDao<Manufacturer> {
             }
             if (sortProperty.equals("name")) {
                 order = asc ? cb.asc(colName) : cb.desc(colName);
-            } else if (sortProperty.equals("type")) {
+            } else if (sortProperty.equals("typeName")) {
                 order = asc ? cb.asc(colType) : cb.desc(colType);
             } else {
                 throw new IllegalArgumentException("Invalid sort property: " + sortProperty);
             }
         }
         if (order != null) {
-            cq.orderBy(order);
+            mcq.orderBy(order);
         }
-        TypedQuery<Manufacturer> tq = em.createQuery(cq);
+        TypedQuery<Manufacturer> tq = em.createQuery(mcq);
         if (offset != null) {
             tq.setFirstResult(offset);
         }
@@ -95,7 +95,36 @@ public class ManufacturerDao extends AbstractDao<Manufacturer> {
             tq.setMaxResults(limit);
         }
         List<Manufacturer> recs = tq.getResultList();
-        return null; // TODO
+        // Calculate number of records.
+        CriteriaQuery<Long> cmcq = cb.createQuery(Long.class);
+        Root<Manufacturer> countRoot = cmcq.from(Manufacturer.class);
+        cmcq.select(cb.count(countRoot));
+        cmcq.where(arrPredicates);
+        TypedQuery<Long> cntQuery = em.createQuery(cmcq);
+        long total = cntQuery.getSingleResult();
+        return new Page<>(total, recs);
+    }
+
+    /**
+     * How many parts refer to a manufacturer with specified ID.
+     *
+     * @param manufacturerId
+     * @return
+     */
+    public Long getRefCountFromParts(Long manufacturerId) {
+        return em.createNamedQuery("numPartsOfManufacturer", Long.class).setParameter("manufacturerId", manufacturerId)
+                .getSingleResult();
+    }
+
+    /**
+     * How many turbo types refer to a manufacturer with specified ID.
+     *
+     * @param manufacturerId
+     * @return
+     */
+    public Long getRefCountFromTurboTypes(Long manufacturerId) {
+        return em.createNamedQuery("numTurboTypesOfManufacturer", Long.class)
+                .setParameter("manufacturerId", manufacturerId).getSingleResult();
     }
 
 }

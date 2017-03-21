@@ -1,0 +1,46 @@
+<metanav>
+  <li>
+    <button data-ng-click="onCreate()" class="btn btn-success" authorize="ROLE_MANUFACTURER_CRUD">
+      <i class="fa fa-wrench"></i>
+      Create Source
+    </button>
+  </li>
+</metanav>
+
+<script type="text/ng-template" id="filters/clearbutton.html">
+  <button class="btn btn-default input-sm" data-ng-click="clearFilter()">
+    <i class="fa fa-eraser" aria-hidden="true"></i> Clear
+  </button>
+</script>
+
+<div class="row">
+  <h1 class="col-xs-12">Manufacturers List</h1>
+</div>
+
+<div class="row">
+  <div class="col-xs-12">
+    <table data-ng-table="manufacturersTableParams" show-filter="true" class="table table-bordered table-striped table-hover table-responsive">
+      <tr data-ng-repeat="m in $data">
+        <td data-title="'Name'" data-sortable="'name'" filter="{name: 'text'}" class="text-left">
+          {{m.name}}
+        </td>
+        <td data-title="'Type'" data-sortable="'typeName'" filter="{typeId: 'select'}" filter-data="manufacturerTypesOpts" class="text-left">
+          {{m.type.name}}
+        </td>
+        <td data-title="'Actions'" filter="{resetFilter: 'manufacturersClearBttn'}" class="actions text-center">
+          <button class="btn btn-primary btn-xs" authorize="ROLE_MANUFACTURER_CRUD" data-ng-click="onEdit(m)">
+            <i class="fa fa-cog"></i> Edit
+          </button>
+          <button class="btn btn-danger btn-xs" authorize="ROLE_MANUFACTURER_CRUD" data-ng-click="onRemove(m)">
+            <i class="fa fa-trash-o"></i> Remove
+          </button>
+        </td>
+      </tr>
+
+      <tr data-ng-hide="$data.length > 0">
+        <td colspan="3">No manufacturers to display.</td>
+      </tr>
+
+    </table>
+  </div>
+</div>

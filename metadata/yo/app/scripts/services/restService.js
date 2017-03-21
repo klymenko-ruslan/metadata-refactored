@@ -477,10 +477,31 @@ angular.module("ngMetaCrudApp")
       };
 
       this.listManufacturers = function() {
-        return Restangular.all("other/manufacturer/list").getList();
+        return Restangular.all("other/manufacturer/all").getList();
       };
 
-      this.listTurbosLinkedToGasketKit = function(gasketkit_id) {
+      this.listManufacturerTypes = function() {
+        return Restangular.all("other/manufacturertype/all").getList();
+      };
+
+      this.filterManufacturers = function(fltrName, fltrTypeId, sortProperty, sortOrder, offset, limit) {
+        var params = {
+          fltrName: fltrName,
+          fltrTypeId: fltrTypeId,
+          sortProperty: sortProperty,
+          sortOrder: sortOrder,
+          offset: offset,
+          limit: limit
+        };
+        return Restangular.one("other/manufacturer/filter").get(params);
+      };
+ 
+      this.deleteManufacturer = function(manufacturerId) {
+        Restangular.setParentless(false);
+        return Restangular.one("other/manufacturer", manufacturerId).remove();
+      };
+ 
+     this.listTurbosLinkedToGasketKit = function(gasketkit_id) {
         return Restangular.one("part/" + gasketkit_id + "/gasketkit").getList("turbos");
       };
 
