@@ -1,7 +1,8 @@
 package com.turbointernational.metadata.dao;
 
-import com.turbointernational.metadata.entity.ManufacturerType;
 import org.springframework.stereotype.Repository;
+
+import com.turbointernational.metadata.entity.ManufacturerType;
 
 /**
  *
@@ -9,7 +10,9 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public class ManufacturerTypeDao extends AbstractDao<ManufacturerType> {
+
     public ManufacturerTypeDao() {
         super(ManufacturerType.class);
     }
+
 }

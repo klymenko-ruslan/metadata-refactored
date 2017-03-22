@@ -32,8 +32,8 @@
           {{user.email}}
         </td>
         <td data-title="'Enabled'" data-sortable="'enabled'" filter="{enabled: 'select'}" filter-data="enabledOpts" class="text-center">
-          <i data-ng-show="user.enabled === true" class="fa fa-circle" title="yes"></i>
-          <i data-ng-show="user.enabled === false" class="fa fa-circle-o text-muted" title="no"></i>
+          <i data-ng-show="user.enabled === true" class="fa fa-circle" title="Yes"></i>
+          <i data-ng-show="user.enabled === false" class="fa fa-circle-o text-muted" title="No"></i>
         </td>
         <td data-title="'Auth Provider'" data-sortable="'authProvider'" filter="{authProviderId: 'select'}" filter-data="authProviders" class="text-left">
           {{user.authProvider.name || 'Local DB'}}

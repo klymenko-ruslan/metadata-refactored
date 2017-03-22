@@ -35,6 +35,10 @@ import flexjson.JSONSerializer;
                 name="findTurboTypesByManufacturerIdAndName",
                 query = "SELECT o FROM TurboType o JOIN o.manufacturer " +
                         "WHERE o.manufacturer.id = :manufacturerId AND o.name = :name"
+        ),
+        @NamedQuery(
+                name = "numTurboTypesOfManufacturer",
+                query = "select count(tt) from TurboType tt where tt.manufacturer.id=:manufacturerId"
         )
 })
 public class TurboType implements Comparable<TurboType>, Serializable {

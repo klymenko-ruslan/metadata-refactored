@@ -39,7 +39,7 @@ angular.module("ngMetaCrudApp", ["ngCookies", "ngRoute", "ngTable", "ui.bootstra
     });
 
     $locationProvider.html5Mode(true);
-
+   
     // Parts
     $routeProvider.when("/part/list", {
       templateUrl: "views/part/PartList.html",
@@ -607,6 +607,7 @@ angular.module("ngMetaCrudApp", ["ngCookies", "ngRoute", "ngTable", "ui.bootstra
         }]
       }
     });
+    
     // Chagelog.
     $routeProvider.when("/changelog/list", {
       templateUrl: "views/changelog/list.html",
@@ -614,6 +615,17 @@ angular.module("ngMetaCrudApp", ["ngCookies", "ngRoute", "ngTable", "ui.bootstra
       resolve: {
         users: ["restService", function(restService) {
           return restService.findAllUsers();
+        }]
+      }
+    });
+
+    // Manufacturers.
+    $routeProvider.when("/manufacturer/list", {
+      templateUrl: "views/manufacturer/list.html",
+      controller: "ManufacturerListCtrl",
+      resolve: {
+        manufacturerTypes: ["restService", function(restService) {
+          return restService.listManufacturerTypes();
         }]
       }
     });

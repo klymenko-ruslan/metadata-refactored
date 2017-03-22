@@ -180,6 +180,10 @@ import flexjson.transformer.Transformer;
                 name = "findPartsByMnfrsAndNumbers",
                 query = "select p.id, p.manufacturerPartNumber, p.name, p.partType.name " +
                         "from Part p where p.manufacturer.id=:mnfrId and p.manufacturerPartNumber in(:mnfrPrtNmbrs)"
+        ),
+        @NamedQuery(
+                name = "numPartsOfManufacturer",
+                query = "select count(p) from Part p where p.manufacturer.id=:manufacturerId"
         )
 })
 @JsonInclude(ALWAYS)
