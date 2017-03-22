@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -24,9 +25,9 @@ public class ManufacturerService {
 
     @Autowired
     private ManufacturerDao manufacturerDao;
-    
+
     @Autowired
-    private ManufacturerTypeDao manufacturerTypeDao; 
+    private ManufacturerTypeDao manufacturerTypeDao;
 
     @JsonInclude(ALWAYS)
     public static class DeleteResponse {
@@ -93,6 +94,7 @@ public class ManufacturerService {
                 limit);
     }
 
+    @Transactional
     public DeleteResponse delete(Long manufacturerId) {
         Long refParts = manufacturerDao.getRefCountFromParts(manufacturerId);
         Long refTurboTypes = manufacturerDao.getRefCountFromTurboTypes(manufacturerId);
@@ -103,11 +105,12 @@ public class ManufacturerService {
         manufacturerDao.delete(manufacturerId);
         return new DeleteResponse(true);
     }
-    
+
     public Manufacturer findManufacurerByName(String name) {
         return manufacturerDao.findManufacurerByName(name);
     }
-    
+
+    @Transactional
     public Manufacturer create(String name, Long typeId, boolean notExternal) {
         Manufacturer manufacturer = new Manufacturer();
         manufacturer.setName(name);
@@ -118,6 +121,7 @@ public class ManufacturerService {
         return manufacturer;
     }
 
+    @Transactional
     public Manufacturer update(Long manufacturerId, String name, Long typeId, boolean notExternal) {
         Manufacturer manufacturer = manufacturerDao.findOne(manufacturerId);
         ManufacturerType manufacturerType = manufacturerTypeDao.getReference(typeId);

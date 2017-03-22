@@ -8,8 +8,9 @@ angular.module("ngMetaCrudApp")
         }
     });
 }])
-.controller("ManufacturerListCtrl", ["$scope", "$log", "ngTableParams", "$uibModal", "dialogs", "restService", "manufacturerTypes",
-  function($scope, $log, ngTableParams, $uibModal, dialogs, restService, manufacturerTypes) {
+.controller("ManufacturerListCtrl", ["$scope", "$log", "ngTableParams", "gToast", "$uibModal", "dialogs", "restService",
+  "manufacturerTypes",
+  function($scope, $log, ngTableParams, gToast, $uibModal, dialogs, restService, manufacturerTypes) {
 
     $scope.manufacturerTypesOpts = _.map(manufacturerTypes, function (mt) {
       return { "id": mt.id, "title": mt.name };
@@ -50,7 +51,7 @@ angular.module("ngMetaCrudApp")
           });
       }
     });
-    
+
     $scope.clearFilter = function() {
       var filter = $scope.manufacturersTableParams.filter();
       filter.name = null;
@@ -73,11 +74,11 @@ angular.module("ngMetaCrudApp")
         }
       });
     };
-    
+
     $scope.onEdit = function(m) {
       alert("TODO");
     };
-    
+
     $scope.onRemove = function(m) {
       dialogs.confirm("Confirmation", "Are you sure? Do you want to remove this manufacturer ([" + m.id + "] - " + 
         m.name + ")?").result.then(
@@ -124,10 +125,20 @@ angular.module("ngMetaCrudApp")
     };
 
     $scope.onCreate = function() {
-$log.log("manufacturer: " + angular.toJson($scope.manufacturer, 2));
       $scope.isCreating = true;
-      $scope.isCreating = false;  // finally
-      manufacturersTableParams.reload();
+      restService.createManufacturer($scope.manufacturer.name, $scope.manufacturer.type.id, $scope.manufacturer.notExternal).then(
+        function success(manufacturer) {
+          manufacturersTableParams.reload();
+          $uibModalInstance.close();
+          gToast.open("The manufacturer [" + manufacturer.id + "] - " + manufacturer.name +
+            " has successfully been created.");
+        },
+        function failure(errorResponse) {
+          restService.error("Creation of a manufacturer failed.", errorResponse);
+        }
+      ).finally(function() {
+        $scope.isCreating = false;  // finally
+      });
     };
 
     $scope.onClose = function() {
@@ -137,7 +148,7 @@ $log.log("manufacturer: " + angular.toJson($scope.manufacturer, 2));
     // Initialization.
 
     $scope.manufacturerTypes = manufacturerTypes;
-    
+
     $scope.isCreating = false;
 
     $scope.manufacturer = {
@@ -147,4 +158,36 @@ $log.log("manufacturer: " + angular.toJson($scope.manufacturer, 2));
     };
 
   }
-]);
+])
+.directive("uniqueManufacturerName", ["$log", "$q", "restService", function($log, $q, restService) {
+  // Validator for uniqueness of the part number.
+  return {
+    require: "ngModel",
+    link: function($scope, elm, attr, ctrl) {
+      ctrl.$asyncValidators.uniqueManufacturerName = function(modelValue, viewValue) {
+        var def = $q.defer();
+        if (ctrl.$isEmpty(modelValue)) {
+          return $q.when();
+        }
+        if ($scope.manufacturer.name === undefined) {
+          def.resolve();
+        } else {
+          restService.isManufacturerNameUniqe($scope.manufacturer.id, viewValue).then(
+            function(unique) {
+              if (unique) {
+                def.resolve();
+              } else {
+                def.reject();
+              }
+            },
+            function(errorResponse) {
+              $log.log("Couldn't validate manufacturer name: " + viewValue);
+              def.reject();
+            }
+          );
+        }
+        return def.promise;
+      };
+    }
+  };
+}]);

@@ -16,8 +16,8 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -39,6 +39,40 @@ public class ManufacturerController {
 
     @Autowired
     private ManufacturerService manufacturerService;
+
+    public static class ManufacturerRequest {
+
+        private String name;
+
+        private Long typeId;
+
+        private Boolean notExternal;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public Long getTypeId() {
+            return typeId;
+        }
+
+        public void setTypeId(Long typeId) {
+            this.typeId = typeId;
+        }
+
+        public Boolean getNotExternal() {
+            return notExternal;
+        }
+
+        public void setNotExternal(Boolean notExternal) {
+            this.notExternal = notExternal;
+        }
+
+    }
 
     @RequestMapping(value = "/all", method = GET, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -69,22 +103,31 @@ public class ManufacturerController {
         return manufacturerService.delete(manufacturerId);
     }
 
-    @RequestMapping(value = "/exists", method = GET, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/name/unique", method = GET, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     @JsonView(View.Detail.class)
     @Secured("ROLE_READ")
-    public boolean exists(String name) {
-        return manufacturerService.findManufacurerByName(name) != null;
+    public boolean isNameInique(@RequestParam(name = "manufacturerId", required = false) Long manufacturerId,
+            @RequestParam(name = "name") String name) {
+        Manufacturer manufacturer = manufacturerService.findManufacurerByName(name);
+        if (manufacturer == null) {
+            return true;
+        } else {
+            if (manufacturerId != null) {
+                return manufacturerId.equals(manufacturer.getId());
+            } else {
+                return false;
+            }
+        }
     }
 
-    @RequestMapping(value = "/", method = POST, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(method = POST)
     @ResponseBody
     @JsonView(View.Summary.class)
     @Secured("ROLE_MANUFACTURER_CRUD")
     @Transactional
-    public Manufacturer create(@RequestParam(name = "name") String name, @RequestParam(name = "typeId") Long typeId,
-            @RequestParam(name = "notExternal") boolean notExternal) {
-        return manufacturerService.create(name, typeId, notExternal);
+    public Manufacturer create(@RequestBody ManufacturerRequest request) {
+        return manufacturerService.create(request.getName(), request.getTypeId(), request.getNotExternal());
     }
 
     @RequestMapping(value = "/{id}", method = PUT, produces = APPLICATION_JSON_VALUE)

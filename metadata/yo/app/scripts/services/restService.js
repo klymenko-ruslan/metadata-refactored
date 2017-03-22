@@ -496,7 +496,23 @@ angular.module("ngMetaCrudApp")
         };
         return Restangular.one("other/manufacturer/filter").get(params);
       };
+
+      this.isManufacturerNameUniqe = function(manufacturerId, name) {
+        return Restangular.one("other/manufacturer/name/unique").get({
+          manufacturerId: manufacturerId,
+          name: name
+        });
+      }
  
+      this.createManufacturer = function(name, typeId, notExternal) {
+        var req = {
+          name: name,
+          typeId: typeId,
+          notExternal: notExternal
+        };
+        return Restangular.all("other/manufacturer").post(req);
+      };
+
       this.deleteManufacturer = function(manufacturerId) {
         Restangular.setParentless(false);
         return Restangular.one("other/manufacturer", manufacturerId).remove();
