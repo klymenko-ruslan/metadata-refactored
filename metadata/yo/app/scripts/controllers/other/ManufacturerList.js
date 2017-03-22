@@ -8,10 +8,11 @@ angular.module("ngMetaCrudApp")
         }
     });
 }])
-.controller("ManufacturerListCtrl", ["$scope", "$log", "ngTableParams", "gToast", "$uibModal", "dialogs", "restService",
-  "manufacturerTypes",
-  function($scope, $log, ngTableParams, gToast, $uibModal, dialogs, restService, manufacturerTypes) {
+.controller("ManufacturerListCtrl", ["$scope", "$log", "ngTableParams", "Restangular", "gToast", "$uibModal",
+  "dialogs", "restService", "manufacturerTypes",
+  function($scope, $log, ngTableParams, Restangular, gToast, $uibModal, dialogs, restService, manufacturerTypes) {
 
+    $scope.manufacturerTypes = manufacturerTypes;
     $scope.manufacturerTypesOpts = _.map(manufacturerTypes, function (mt) {
       return { "id": mt.id, "title": mt.name };
     });
@@ -76,7 +77,37 @@ angular.module("ngMetaCrudApp")
     };
 
     $scope.onEdit = function(m) {
-      alert("TODO");
+      $scope.manufacturer = m; // make ref to an edit record in the list
+      $scope.manufacturerOrig = Restangular.copy(m); // make copy for undo
+      $scope.mode = "edit";
+    };
+
+    $scope.onCancel = function() {
+      $scope.onRevert();
+      $scope.manufacturer = null;
+      $scope.manufacturerOrig = null;
+      $scope.mode = "view";
+    };
+
+    $scope.onRevert = function() {
+      $scope.manufacturer.name = $scope.manufacturerOrig.name;
+      $scope.manufacturer.type = $scope.manufacturerOrig.type;
+      $scope.manufacturer.notExternal = $scope.manufacturerOrig.notExternal;
+    };
+
+    $scope.onSave = function() {
+      restService.updateManufacturer($scope.manufacturer.id, $scope.manufacturer.name, $scope.manufacturer.type.id,
+        $scope.manufacturer.notExternal).then(
+        function success(updated) {
+          $scope.manufacturer = null;
+          $scope.manufacturerOrig = null;
+          $scope.mode = "view";
+          gToast.open("The manufacturer [" + updated.id + "] - " + updated.name + " has successfully been updated.");
+        },
+        function failure(errorResponse) {
+          restService.error("Could not update the manufacturer.", errorResponse);
+        }
+      );
     };
 
     $scope.onRemove = function(m) {
@@ -114,6 +145,11 @@ angular.module("ngMetaCrudApp")
           }
         );
     };
+
+    // Init.
+    $scope.manufacturer = null; // the name 'manufacturer' can't be renamed as it is referenced from uniqueManufacturerName
+    $scope.manufacturerOrig = null;
+    $scope.mode = "view";
 
   }])
 .controller("CreateManufacturerDlgCtrl", ["$scope", "$log", "$uibModalInstance", "gToast", "restService",

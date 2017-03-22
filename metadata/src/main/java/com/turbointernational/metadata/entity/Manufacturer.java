@@ -41,10 +41,10 @@ public class Manufacturer implements Serializable {
     @JsonView({ View.Summary.class })
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true, length = 255)
     @JsonView({ View.Summary.class })
     private String name;
-    
+
     @Column(name = "not_external", nullable = false)
     @JsonView({ View.Summary.class })
     private boolean notExternal;

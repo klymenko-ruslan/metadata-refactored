@@ -503,7 +503,7 @@ angular.module("ngMetaCrudApp")
           name: name
         });
       }
- 
+
       this.createManufacturer = function(name, typeId, notExternal) {
         var req = {
           name: name,
@@ -511,6 +511,15 @@ angular.module("ngMetaCrudApp")
           notExternal: notExternal
         };
         return Restangular.all("other/manufacturer").post(req);
+      };
+
+      this.updateManufacturer = function(id, name, typeId, notExternal) {
+        var req = {
+          name: name,
+          typeId: typeId,
+          notExternal: notExternal
+        };
+        return Restangular.one("other/manufacturer", id).customPUT(req);
       };
 
       this.deleteManufacturer = function(manufacturerId) {

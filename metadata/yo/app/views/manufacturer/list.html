@@ -19,25 +19,44 @@
 
 <div class="row">
   <div class="col-xs-12">
-    <table data-ng-table="manufacturersTableParams" show-filter="true" class="table table-bordered table-striped table-hover table-responsive">
-      <tr data-ng-repeat="m in $data">
-        <td data-title="'Name'" data-sortable="'name'" filter="{name: 'text'}" class="text-left">
-          {{m.name}}
-        </td>
-        <td data-title="'Type'" data-sortable="'typeName'" filter="{typeId: 'select'}" filter-data="manufacturerTypesOpts" class="text-left">
-          {{m.type.name}}
-        </td>
-        <td data-title="'Not External'" data-sortable="'notExternal'" filter="{notExternal: 'select'}" filter-data="notExternalOpts" class="text-center">
-          <i data-ng-show="m.notExternal === true" class="fa fa-circle" title="Yes"></i>
-          <i data-ng-show="m.notExternal === false" class="fa fa-circle-o text-muted" title="No"></i>
-        </td>
-        <td data-title="'Actions'" filter="{resetFilter: 'manufacturersClearBttn'}" class="actions text-center">
-          <button class="btn btn-primary btn-xs" authorize="ROLE_MANUFACTURER_CRUD" data-ng-click="onEdit(m)">
-            <i class="fa fa-cog"></i> Edit
-          </button>
-          <button class="btn btn-danger btn-xs" authorize="ROLE_MANUFACTURER_CRUD" data-ng-click="onRemove(m)">
-            <i class="fa fa-trash-o"></i> Remove
-          </button>
+    <form name="formManufacturer" novalidate>
+      <table data-ng-table="manufacturersTableParams" show-filter="true" class="table table-bordered table-striped table-hover table-responsive">
+        <tr data-ng-repeat="m in $data">
+          <td data-title="'Name'" data-sortable="'name'" filter="{name: 'text'}" class="text-left">
+            <span data-ng-if="m.id !== manufacturer.id">{{m.name}}</span>
+            <input data-ng-if="mode === 'edit' && m.id === manufacturer.id" type="text" data-ng-model="manufacturer.name" data-ng-maxlength="255" unique-manufacturer-name required>
+          </td>
+          <td data-title="'Type'" data-sortable="'typeName'" filter="{typeId: 'select'}" filter-data="manufacturerTypesOpts" class="text-left">
+            <span data-ng-if="m.id !== manufacturer.id">{{m.type.name}}</span>
+            <select name="type" class="form-control"
+                data-ng-if="mode === 'edit' && m.id === manufacturer.id"
+                data-ng-model="manufacturer.type"
+                data-ng-options="mt as mt.name for mt in manufacturerTypes track by mt.id"
+                required>
+            </select>
+          </td>
+          <td data-title="'Not External'" data-sortable="'notExternal'" filter="{notExternal: 'select'}" filter-data="notExternalOpts" class="text-center">
+            <i data-ng-show="m.notExternal === true && m.id !== manufacturer.id" class="fa fa-circle" title="Yes"></i>
+            <i data-ng-show="m.notExternal === false && m.id !== manufacturer.id" class="fa fa-circle-o text-muted" title="No"></i>
+            <input type="checkbox" data-ng-if="mode === 'edit' && m.id === manufacturer.id" data-ng-true-value="true" data-ng-false-value="false" data-ng-model="manufacturer.notExternal">
+          </td>
+          <td data-title="'Actions'" filter="{resetFilter: 'manufacturersClearBttn'}" class="actions text-center">
+            <button type="button" data-ng-click="onEdit(m)" class="btn btn-warning btn-xs" data-ng-hide="mode === 'edit' && m.id === manufacturer.id" data-ng-disabled="mode === 'edit' && m.id !== manufacturer.id" authorize="ROLE_MANUFACTURER_CRUD">
+              <i class="fa fa-cog"></i> Modify
+            </button>
+            <button type="button" data-ng-click="onRemove(m)" class="btn btn-danger btn-xs" data-ng-hide="mode === 'edit' && m.id === manufacturer.id" data-ng-disabled="mode==='edit' && m.id !== manufacturer.id" authorize="ROLE_MANUFACTURER_CRUD">
+              <i class="fa fa-trash-o"></i> Remove
+            </button>
+            <button type="button" data-ng-click="onSave()" class="btn btn-success btn-xs" data-ng-show="mode === 'edit' && m.id === manufacturer.id" data-ng-disabled="formManufacturer.$pristine || formManufacturer.$invalid || formManufacturer.$pending" authorize="ROLE_MANUFACTURER_CRUD">
+              <i class="fa fa-save"></i> Save
+            </button>
+            <button type="button" data-ng-click="onRevert()" class="btn btn-warning btn-xs" data-ng-show="mode === 'edit' && m.id === manufacturer.id" data-ng-disabled="formManufacturer.$pristine">
+              <i class="fa fa-undo"></i>
+              Revert
+            </button>
+            <button type="button" data-ng-click="onCancel()" class="btn btn-warning btn-xs" data-ng-show="mode === 'edit' && m.id === manufacturer.id">
+              <i class="fa fa-minus-circle"></i> Cancel
+            </button>
         </td>
       </tr>
 
@@ -46,5 +65,7 @@
       </tr>
 
     </table>
+    
+    </form>
   </div>
 </div>

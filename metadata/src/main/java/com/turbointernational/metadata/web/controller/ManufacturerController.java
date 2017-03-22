@@ -135,9 +135,9 @@ public class ManufacturerController {
     @JsonView(View.Summary.class)
     @Secured("ROLE_MANUFACTURER_CRUD")
     @Transactional
-    public Manufacturer update(@PathVariable("id") Long manufacturerId, @RequestParam(name = "name") String name,
-            @RequestParam(name = "typeId") Long typeId, @RequestParam(name = "notExternal") boolean notExternal) {
-        return manufacturerService.update(manufacturerId, name, typeId, notExternal);
+    public Manufacturer update(@PathVariable("id") Long manufacturerId, @RequestBody ManufacturerRequest request) {
+        return manufacturerService.update(manufacturerId, request.getName(), request.getTypeId(),
+                request.getNotExternal());
     }
 
     @RequestMapping(value = "/{id}", method = GET, headers = "Accept=application/json")
