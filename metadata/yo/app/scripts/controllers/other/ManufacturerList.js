@@ -8,8 +8,8 @@ angular.module("ngMetaCrudApp")
         }
     });
 }])
-.controller("ManufacturerListCtrl", ["$scope", "$log", "ngTableParams", "dialogs", "restService", "manufacturerTypes",
-  function($scope, $log, ngTableParams, dialogs, restService, manufacturerTypes) {
+.controller("ManufacturerListCtrl", ["$scope", "$log", "ngTableParams", "$uibModal", "dialogs", "restService", "manufacturerTypes",
+  function($scope, $log, ngTableParams, $uibModal, dialogs, restService, manufacturerTypes) {
 
     $scope.manufacturerTypesOpts = _.map(manufacturerTypes, function (mt) {
       return { "id": mt.id, "title": mt.name };
@@ -59,7 +59,19 @@ angular.module("ngMetaCrudApp")
     };
 
     $scope.onCreate = function() {
-      alert("TODO");
+      $uibModal.open({
+        templateUrl: "/views/manufacturer/create.html",
+        animation: false,
+        controller: "CreateManufacturerDlgCtrl",
+        resolve: {
+          manufacturerTypes: function() {
+            return manufacturerTypes;
+          },
+          manufacturersTableParams: function() {
+            return $scope.manufacturersTableParams;
+          }
+        }
+      });
     };
     
     $scope.onEdit = function(m) {
@@ -102,4 +114,37 @@ angular.module("ngMetaCrudApp")
         );
     };
 
-  }]);
+  }])
+.controller("CreateManufacturerDlgCtrl", ["$scope", "$log", "$uibModalInstance", "gToast", "restService",
+    "manufacturerTypes", "manufacturersTableParams",
+  function($scope, $log, $uibModalInstance, gToast, restService, manufacturerTypes, manufacturersTableParams) {
+
+    $scope.isBttnCreateDisabled = function(form) {
+      return form.$invalid || $scope.isCreating;
+    };
+
+    $scope.onCreate = function() {
+$log.log("manufacturer: " + angular.toJson($scope.manufacturer, 2));
+      $scope.isCreating = true;
+      $scope.isCreating = false;  // finally
+      manufacturersTableParams.reload();
+    };
+
+    $scope.onClose = function() {
+      $uibModalInstance.close();
+    };
+
+    // Initialization.
+
+    $scope.manufacturerTypes = manufacturerTypes;
+    
+    $scope.isCreating = false;
+
+    $scope.manufacturer = {
+      name: null,
+      notExternal: false,
+      type: manufacturerTypes[0]
+    };
+
+  }
+]);
