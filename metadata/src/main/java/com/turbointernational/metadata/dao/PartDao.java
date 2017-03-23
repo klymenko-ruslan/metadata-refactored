@@ -126,7 +126,6 @@ public class PartDao extends AbstractDao<Part> {
            order by
                sum(id.QUANTITYSHIPPED) desc;
            @formatter:on */
-
         // Convert (if any) a part type value to a product line code.
         String productLineCode = null;
         if (fltrPartTypeValue != null) {
