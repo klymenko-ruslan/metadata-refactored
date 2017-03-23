@@ -116,7 +116,7 @@ public class PartDao extends AbstractDao<Part> {
     public Page<AlsoBought> filterAlsoBough(String manufacturerPartNumber, String fltrManufacturerPartNumber,
             String fltrPartTypeValue, String sortProperty, String sortOrder, Integer offset, Integer limit) {
         /* @formatter:off
-           select ITEMCODE, sum(QUANTITYSHIPPED) as qty_shipped, count(distinct id.invoiceno) as orders, sum(round(id.extensionamt/isnull(id.armc_234_entryrate, 1), 2)) as amt
+           select ITEMCODE, sum(QUANTITYSHIPPED) as qty_shipped, count(distinct id.invoiceno) as orders, sum(round(id.extensionamt/coalesce(id.armc_234_entryrate, 1), 2)) as amt
            from AR_INVOICEHISTORYDETAIL as id
            where
                id.INVOICENO in (select invoiceno from AR_INVOICEHISTORYDETAIL where ITEMCODE = '8-F-0431')
