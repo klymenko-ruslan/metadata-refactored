@@ -9,6 +9,16 @@
     <td data-title="'Name'" class="text-left">
       {{r.name}}
     </td>
+    <td data-title="'Description'" class="text-left">
+      {{r.description}}
+    </td>
+    <td data-title="'Interchanges'" class="text-left">
+      <ul class="list-unstyled list-inline" style="margin-bottom:0">
+      <li data-ng-repeat="pd in r.interchanges">
+        <a data-ng-href="/part/{{pd.id}}">{{pd.manufacturerPartNumber}}</a><span data-ng-if="!$last">,</span>
+      </li>
+      </ul>
+    </td>
     <td data-title="'Qty Shipped'" data-sortable="'qtyShipped'" class="text-right">
       {{r.qtyShipped | number}}
     </td>
@@ -21,7 +31,7 @@
   </tr>
 
   <tr data-ng-hide="$data.length > 0">
-    <td colspan="6">No records to display.</td>
+    <td colspan="8">No records to display.</td>
   </tr>
 
 </table>

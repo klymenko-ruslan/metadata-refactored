@@ -31,7 +31,6 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Service;
 
-import com.turbointernational.metadata.dao.ChangelogSourceDao;
 import com.turbointernational.metadata.dao.ChangelogSourceLinkDao;
 import com.turbointernational.metadata.dao.SourceDao;
 import com.turbointernational.metadata.entity.Changelog;
@@ -53,9 +52,6 @@ public class ChangelogSourceService {
 
     @Autowired
     private SourceDao sourceDao;
-
-    @Autowired
-    private ChangelogSourceDao changelogSourceDao;
 
     @Autowired
     private ChangelogSourceLinkDao changelogSourceLinkDao;

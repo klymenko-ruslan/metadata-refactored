@@ -12,8 +12,6 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -42,9 +40,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.dao.PartDao;
 import com.turbointernational.metadata.dao.TurboTypeDao;
 import com.turbointernational.metadata.entity.BOMAncestor;
-import com.turbointernational.metadata.entity.BOMItem;
 import com.turbointernational.metadata.entity.TurboType;
-import com.turbointernational.metadata.entity.part.Interchange;
 import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.entity.part.PartRepository;
 import com.turbointernational.metadata.entity.part.ProductImage;
@@ -602,24 +598,7 @@ public class PartController {
     @JsonView(View.Summary.class)
     // see ticket #907
     public Map<Long, List<Part>> getPartBomsInterchanges(@PathVariable("partId") Long partId) throws Exception {
-        List<BOMItem> boms = bomService.getByParentId(partId);
-        Map<Long, List<Part>> retVal = new HashMap<>(boms.size()); // BOMItem.id
-                                                                   // => [Part0,
-                                                                   // Part1,
-                                                                   // ...]
-        for (BOMItem bi : boms) {
-            Long bomId = bi.getId();
-            Interchange interchange = bi.getChild().getInterchange();
-            if (interchange != null && interchange.getParts().size() > 0) {
-                List<Part> parts = new ArrayList<>(interchange.getParts().size());
-                interchange.getParts().stream().filter(p -> p.getId() != bi.getChild().getId())
-                        .forEach(p -> parts.add(p));
-                if (!parts.isEmpty()) {
-                    retVal.put(bomId, parts);
-                }
-            }
-        }
-        return retVal;
+        return partService.getPartBomsInterchanges(partId);
     }
 
 }

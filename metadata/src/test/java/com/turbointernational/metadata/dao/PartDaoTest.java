@@ -20,11 +20,13 @@ public class PartDaoTest extends AbstractFunctionalTest {
     @Test
     @Ignore  // This test is used for development only.
     public void testFilterAlsoBough() {
-        Page<AlsoBought> page = partDao.filterAlsoBough("8-F-0431", "4", "CHR", null, null, null, null);
+        Page<AlsoBought> page = partDao.filterAlsoBough("8-F-0431", null, null, null, null, null, null);    // 535 recs
+        // Page<AlsoBought> page = partDao.filterAlsoBough("8-F-0431", "4", "CHR", null, null, null, null); // 147 recs
         Assert.assertNotNull("Returned 'page' is null.", page);
         Assert.assertNotNull("Records in the 'page' was not initialized (null).", page.getRecs());
         Assert.assertEquals("Number records in the 'page' and member 'total' are different.", page.getRecs().size(),
                 page.getTotal());
+//System.out.println("TOTAL: " + page.getTotal());
     }
 
 }

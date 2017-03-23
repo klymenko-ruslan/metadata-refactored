@@ -4,6 +4,7 @@ import static com.turbointernational.metadata.Application.TEST_SKIPFILEIO;
 import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.PART;
 import static com.turbointernational.metadata.entity.ChangelogPart.Role.PART0;
 import static com.turbointernational.metadata.entity.ChangelogPart.Role.PART1;
+import static com.turbointernational.metadata.entity.Manufacturer.TI_ID;
 import static com.turbointernational.metadata.entity.PartType.PTID_GASKET_KIT;
 import static com.turbointernational.metadata.entity.PartType.PTID_TURBO;
 import static com.turbointernational.metadata.service.ImageService.PART_CRIT_DIM_LEGEND_HEIGHT;
@@ -14,10 +15,12 @@ import static java.util.stream.Collectors.toSet;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -41,9 +44,10 @@ import org.springframework.validation.Errors;
 import com.turbointernational.metadata.dao.PartDao;
 import com.turbointernational.metadata.dao.ProductImageDao;
 import com.turbointernational.metadata.entity.BOMAncestor;
+import com.turbointernational.metadata.entity.BOMItem;
 import com.turbointernational.metadata.entity.Changelog;
-import com.turbointernational.metadata.entity.Manufacturer;
 import com.turbointernational.metadata.entity.TurboType;
+import com.turbointernational.metadata.entity.part.Interchange;
 import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.entity.part.ProductImage;
 import com.turbointernational.metadata.entity.part.types.GasketKit;
@@ -52,6 +56,7 @@ import com.turbointernational.metadata.service.ChangelogService.RelatedPart;
 import com.turbointernational.metadata.web.controller.PartController;
 import com.turbointernational.metadata.web.dto.AlsoBought;
 import com.turbointernational.metadata.web.dto.Page;
+import com.turbointernational.metadata.web.dto.PartDesc;
 
 import flexjson.JSONSerializer;
 
@@ -80,6 +85,9 @@ public class PartService {
 
     @Autowired
     private CriticalDimensionService criticalDimensionService;
+
+    @Autowired
+    private BOMService bomService;
 
     @Autowired
     private ProductImageDao productImageDao;
@@ -361,27 +369,52 @@ public class PartService {
             List<AlsoBought> recs = retVal.getRecs();
             List<String> mnfrNmbrs = recs.stream().map(ab -> ab.getManufacturerPartNumber())
                     .collect(Collectors.toList());
-            // Map 'manufacturer number' -> 'record'
-            // The record is an array of following items:
-            // * (Long) part ID
-            // * (String) manufacturer part number
-            // * (string) part name
-            // * (string) part type name
-            Map<String, Object[]> mnfrNmb2rec = em.createNamedQuery("findPartsByMnfrsAndNumbers", Object[].class)
-                    .setParameter("mnfrId", Manufacturer.TI_ID).setParameter("mnfrPrtNmbrs", mnfrNmbrs).getResultList()
-                    .stream().collect(Collectors.toMap(record -> (String) record[1], record -> record));
+            // Map 'manufacturer number' -> 'part'
+            List<Part> parts = em.createNamedQuery("findPartsByMnfrsAndNumbers", Part.class)
+                    .setParameter("mnfrId", TI_ID).setParameter("mnfrPrtNmbrs", mnfrNmbrs).getResultList();
+            Map<String, Part> mnfrNmb2rec = parts.stream()
+                    // skip ref on yourself
+                    .filter(part -> !part.getManufacturerPartNumber().equals(manufacturerPartNumber))
+                    .collect(Collectors.toMap(part -> part.getManufacturerPartNumber(), part -> part));
             recs.forEach(ab -> {
                 String mnfrPrtNmb = ab.getManufacturerPartNumber();
-                Object[] record = mnfrNmb2rec.get(mnfrPrtNmb);
-                if (record != null) {
-                    Long rPartId = (Long) record[0];
-                    String rPartName = (String) record[2];
-                    String rPartTypeName = (String) record[3];
+                Optional.of(mnfrNmb2rec.get(mnfrPrtNmb)).ifPresent(p -> {
+                    Long rPartId = p.getId();
+                    String rPartName = p.getName();
+                    String rPartTypeName = p.getPartType().getName();
                     ab.setPartId(rPartId);
                     ab.setPartTypeName(rPartTypeName);
                     ab.setName(rPartName);
-                }
+                    List<PartDesc> interchanges = new ArrayList<>();
+                    Optional.of(p.getInterchange()).ifPresent(interchange -> {
+                        interchange.getParts().forEach(interchangePart -> {
+                            PartDesc pd = new PartDesc(interchangePart.getId(),
+                                    interchangePart.getManufacturerPartNumber());
+                            interchanges.add(pd);
+                        });
+                    });
+                    ab.setInterchanges(interchanges);
+                });
             });
+        }
+        return retVal;
+    }
+
+    public Map<Long, List<Part>> getPartBomsInterchanges(Long partId) throws Exception {
+        List<BOMItem> boms = bomService.getByParentId(partId);
+        // BOMItem.id => [Part0, Part1, ...]
+        Map<Long, List<Part>> retVal = new HashMap<>(boms.size());
+        for (BOMItem bi : boms) {
+            Long bomId = bi.getId();
+            Interchange interchange = bi.getChild().getInterchange();
+            if (interchange != null && interchange.getParts().size() > 0) {
+                List<Part> parts = new ArrayList<>(interchange.getParts().size());
+                interchange.getParts().stream().filter(p -> p.getId() != bi.getChild().getId())
+                        .forEach(p -> parts.add(p));
+                if (!parts.isEmpty()) {
+                    retVal.put(bomId, parts);
+                }
+            }
         }
         return retVal;
     }

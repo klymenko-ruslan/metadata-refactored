@@ -1,9 +1,9 @@
-/**
- *
- */
 package com.turbointernational.metadata.web.dto;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -28,18 +28,24 @@ public class AlsoBought {
     private String name;
 
     @JsonView(View.Summary.class)
+    private String description;
+
+    @JsonView(View.Summary.class)
     private Integer qtyShipped;
 
     @JsonView(View.Summary.class)
-    private Double saleAmount;
+    private BigDecimal saleAmount;
 
     @JsonView(View.Summary.class)
     private Integer orders;
 
+    @JsonView(View.Summary.class)
+    private List<PartDesc> interchanges;
+
     public AlsoBought() {
     }
 
-    public AlsoBought(String manufacturerPartNumber, Integer qtyShipped, Integer orders, Double saleAmount) {
+    public AlsoBought(String manufacturerPartNumber, Integer qtyShipped, Integer orders, BigDecimal saleAmount) {
         this.manufacturerPartNumber = manufacturerPartNumber;
         this.qtyShipped = qtyShipped;
         this.orders = orders;
@@ -86,11 +92,11 @@ public class AlsoBought {
         this.qtyShipped = qtyShipped;
     }
 
-    public Double getSaleAmount() {
+    public BigDecimal getSaleAmount() {
         return saleAmount;
     }
 
-    public void setSaleAmount(Double saleAmount) {
+    public void setSaleAmount(BigDecimal saleAmount) {
         this.saleAmount = saleAmount;
     }
 
@@ -100,6 +106,14 @@ public class AlsoBought {
 
     public void setOrders(Integer orders) {
         this.orders = orders;
+    }
+
+    public List<PartDesc> getInterchanges() {
+        return interchanges;
+    }
+
+    public void setInterchanges(List<PartDesc> interchanges) {
+        this.interchanges = interchanges;
     }
 
 }

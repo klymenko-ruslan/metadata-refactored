@@ -11,7 +11,6 @@ import static java.util.Arrays.asList;
 import static org.springframework.transaction.TransactionDefinition.PROPAGATION_REQUIRES_NEW;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -105,11 +104,11 @@ public class InterchangeService {
 
     /**
      * Set 'asInterchange' as interchange for the 'part'.
-     * 
+     *
      * Group of interchanges for the 'part' is removed and 'part' is added to a
      * group of the 'asInterchange' so 'asInterchange' becomes interchange for
      * the 'part'.
-     * 
+     *
      * @param part
      * @param asInterchange
      */
@@ -294,15 +293,15 @@ public class InterchangeService {
 
     /**
      * Assign interchange to the part if it is absent.
-     * 
+     *
      * Every part should be assigned to an interchange record even if it is the
      * only part in the interchange group. In order to be compliant with this
      * requirement a database has a trigger on the insert event that creates
      * such record. But for some reason this constraint can be violated. This
      * method fixes possible violates.
-     * 
+     *
      * This method is executed in a separate transaction.
-     * 
+     *
      * See also #482, #484.
      *
      * @param part

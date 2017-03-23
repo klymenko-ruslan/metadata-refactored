@@ -178,7 +178,7 @@ import flexjson.transformer.Transformer;
         ),
         @NamedQuery(
                 name = "findPartsByMnfrsAndNumbers",
-                query = "select p.id, p.manufacturerPartNumber, p.name, p.partType.name " +
+                query = "select distinct p " +
                         "from Part p where p.manufacturer.id=:mnfrId and p.manufacturerPartNumber in(:mnfrPrtNmbrs)"
         ),
         @NamedQuery(

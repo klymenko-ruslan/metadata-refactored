@@ -1,6 +1,7 @@
 package com.turbointernational.mas90.entity;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -32,10 +33,13 @@ public class ArInvoiceHistoryDetail implements Serializable {
     private String itemcode;
 
     @Column(name = "QUANTITYSHIPPED", insertable = false, updatable = false, precision = 16, scale = 6)
-    private Double quantityshipped;
+    private BigDecimal quantityshipped;
 
     @Column(name = "EXTENSIONAMT", insertable = false, updatable = false, precision = 12, scale = 2)
-    private Double extensionamt;
+    private BigDecimal extensionamt;
+
+    @Column(name = "ARMC_234_ENTRYRATE", insertable = false, updatable = false, precision = 17, scale = 8)
+    private BigDecimal armc234Entryrate;
 
     @Column(name = "PRODUCTLINE", insertable = false, updatable = false, length = 4)
     private String productLine;
@@ -64,20 +68,28 @@ public class ArInvoiceHistoryDetail implements Serializable {
         this.detailseqno = detailseqno;
     }
 
-    public Double getQuantityshipped() {
+    public BigDecimal getQuantityshipped() {
         return quantityshipped;
     }
 
-    public void setQuantityshipped(Double quantityshipped) {
+    public void setQuantityshipped(BigDecimal quantityshipped) {
         this.quantityshipped = quantityshipped;
     }
 
-    public Double getExtensionamt() {
+    public BigDecimal getExtensionamt() {
         return extensionamt;
     }
 
-    public void setExtensionamt(Double extensionamt) {
+    public void setExtensionamt(BigDecimal extensionamt) {
         this.extensionamt = extensionamt;
+    }
+
+    public BigDecimal getArmc234Entryrate() {
+        return armc234Entryrate;
+    }
+
+    public void setArmc234Entryrate(BigDecimal armc234Entryrate) {
+        this.armc234Entryrate = armc234Entryrate;
     }
 
     public String getProductLine() {

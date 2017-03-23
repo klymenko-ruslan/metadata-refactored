@@ -3,6 +3,7 @@ package com.turbointernational.metadata.dao;
 import static com.turbointernational.metadata.entity.PartType.PTID_TURBO;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -53,9 +54,9 @@ public class PartDao extends AbstractDao<Part> {
         @Override
         public AlsoBought apply(Tuple t) {
             String tupManufacturerPartNumber = t.get(COL_ALIAS_MANUFACTURERPARTNUMBER, String.class);
-            Double tupQtyShipped = t.get(COL_ALIAS_QTYSHIPPED, Double.class);
+            BigDecimal tupQtyShipped = t.get(COL_ALIAS_QTYSHIPPED, BigDecimal.class);
             Long tupOrders = t.get(COL_ALIAS_ORDERS, Long.class);
-            Double tupSaleAmount = t.get(COL_ALIAS_SALEAMOUNT, Double.class);
+            BigDecimal tupSaleAmount = t.get(COL_ALIAS_SALEAMOUNT, BigDecimal.class);
             return new AlsoBought(tupManufacturerPartNumber, tupQtyShipped.intValue(), tupOrders.intValue(),
                     tupSaleAmount);
         }
@@ -115,7 +116,7 @@ public class PartDao extends AbstractDao<Part> {
     public Page<AlsoBought> filterAlsoBough(String manufacturerPartNumber, String fltrManufacturerPartNumber,
             String fltrPartTypeValue, String sortProperty, String sortOrder, Integer offset, Integer limit) {
         /* @formatter:off
-           select ITEMCODE, sum(QUANTITYSHIPPED) as qty_shipped, count(distinct id.invoiceno) as orders, sum(id.EXTENSIONAMT) as amt
+           select ITEMCODE, sum(QUANTITYSHIPPED) as qty_shipped, count(distinct id.invoiceno) as orders, sum(round(id.extensionamt/isnull(id.armc_234_entryrate, 1), 2)) as amt
            from AR_INVOICEHISTORYDETAIL as id
            where
                id.INVOICENO in (select invoiceno from AR_INVOICEHISTORYDETAIL where ITEMCODE = '8-F-0431')
@@ -141,10 +142,17 @@ public class PartDao extends AbstractDao<Part> {
         CriteriaQuery<Tuple> cqt = cb.createTupleQuery();
         Root<ArInvoiceHistoryDetail> root = cqt.from(ArInvoiceHistoryDetail.class);
         Path<String> colManufacturerPartNumber = root.get(ArInvoiceHistoryDetail_.itemcode);
-        Expression<Double> colSumQuatityShipped = cb.sum(root.get(ArInvoiceHistoryDetail_.quantityshipped));
+        Expression<BigDecimal> colSumQuatityShipped = cb.sum(root.get(ArInvoiceHistoryDetail_.quantityshipped));
         Expression<Long> colOrders = cb.countDistinct(root.get(ArInvoiceHistoryDetail_.invoiceno));
-        Expression<Double> colSaleAmount = cb.sum(root.get(ArInvoiceHistoryDetail_.extensionamt));
         // @formatter:off
+        // below is expression: sum(ROUND(id.EXTENSIONAMT / ISNULL(ih.ARMC_234_ENTRYRATE, 1), 2)) as as amt
+        Expression<BigDecimal> colSaleAmount = cb.sum(
+                cb.function("round", BigDecimal.class,
+                        cb.quot(root.get(ArInvoiceHistoryDetail_.extensionamt),
+                                cb.coalesce(root.get(ArInvoiceHistoryDetail_.armc234Entryrate), 1)),
+                        cb.literal(2)
+                )
+        );
         cqt.select(
             cb.tuple(
                 colManufacturerPartNumber.alias(COL_ALIAS_MANUFACTURERPARTNUMBER),
