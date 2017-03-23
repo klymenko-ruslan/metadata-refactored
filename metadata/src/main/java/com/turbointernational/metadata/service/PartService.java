@@ -373,8 +373,6 @@ public class PartService {
             List<Part> parts = em.createNamedQuery("findPartsByMnfrsAndNumbers", Part.class)
                     .setParameter("mnfrId", TI_ID).setParameter("mnfrPrtNmbrs", mnfrNmbrs).getResultList();
             Map<String, Part> mnfrNmb2rec = parts.stream()
-                    // skip ref on yourself
-                    .filter(part -> !part.getManufacturerPartNumber().equals(manufacturerPartNumber))
                     .collect(Collectors.toMap(part -> part.getManufacturerPartNumber(), part -> part));
             recs.forEach(ab -> {
                 String mnfrPrtNmb = ab.getManufacturerPartNumber();
@@ -385,15 +383,13 @@ public class PartService {
                     ab.setPartId(rPartId);
                     ab.setPartTypeName(rPartTypeName);
                     ab.setName(rPartName);
-                    List<PartDesc> interchanges = new ArrayList<>();
                     Optional.of(p.getInterchange()).ifPresent(interchange -> {
-                        interchange.getParts().forEach(interchangePart -> {
-                            PartDesc pd = new PartDesc(interchangePart.getId(),
-                                    interchangePart.getManufacturerPartNumber());
-                            interchanges.add(pd);
-                        });
+                        List<PartDesc> interchanges = interchange.getParts().stream()
+                                .filter(ip -> !ip.getManufacturerPartNumber().equals(mnfrPrtNmb))
+                                .map(ip -> new PartDesc(ip.getId(), ip.getManufacturerPartNumber()))
+                                .collect(Collectors.toList());
+                        ab.setInterchanges(interchanges);
                     });
-                    ab.setInterchanges(interchanges);
                 });
             });
         }
