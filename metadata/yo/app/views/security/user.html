@@ -64,6 +64,11 @@
       <label for="email-input">Email</label>
       <input type="email" data-ng-model="user.email" class="form-control" id="email-input" placeholder="Email">
     </fieldset>
+    <fieldset class="checkbox">
+      <label>
+        <input type="checkbox" data-ng-model="user.enabled" data-ng-true-value="true" data-ng-false-value="false"> <b>Enabled</b>
+      </label>
+    </fieldset>
     <fieldset class="form-group">
       <label for="authProvider">Authentication provider</label>
       <select id="authProvider" data-ng-model="user.authProvider" data-ng-options="ap.name for ap in authProviders track by ap.id" class="form-control" style="width:auto;"></select>

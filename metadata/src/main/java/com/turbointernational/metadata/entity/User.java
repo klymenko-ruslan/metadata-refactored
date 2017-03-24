@@ -2,6 +2,7 @@ package com.turbointernational.metadata.entity;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
 import static javax.persistence.FetchType.EAGER;
+import static javax.persistence.GenerationType.IDENTITY;
 
 import java.util.Set;
 import java.util.TreeSet;
@@ -9,7 +10,6 @@ import java.util.TreeSet;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
@@ -41,7 +41,7 @@ public class User implements Comparable<User>, UserDetails {
 
     // <editor-fold defaultstate="collapsed" desc="Properties">
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = IDENTITY)
     @JsonView({ View.Detail.class, View.Summary.class })
     private Long id;
 

@@ -1,6 +1,9 @@
 package com.turbointernational.metadata.web.controller;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.security.crypto.bcrypt.BCrypt.gensalt;
+import static org.springframework.security.crypto.bcrypt.BCrypt.hashpw;
 import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
@@ -143,9 +146,12 @@ public class UserController {
         user.setName(jsonUser.getName());
         user.setUsername(jsonUser.getUsername());
         user.setEmail(jsonUser.getEmail());
+        user.setEnabled(jsonUser.isEnabled());
         // Password
-        if (StringUtils.isNotBlank(jsonUser.getPassword())) {
-            user.setPassword(BCrypt.hashpw(jsonUser.getPassword(), BCrypt.gensalt()));
+        String dcdPsw = jsonUser.getPassword();
+        if (isNotBlank(dcdPsw)) {
+            String encPsw = hashpw(dcdPsw, gensalt());
+            user.setPassword(encPsw);
         }
         if (jsonUser.getAuthProvider().getId() < 0) {
             user.setAuthProvider(null);
