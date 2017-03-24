@@ -1,7 +1,8 @@
 <table data-ng-table="alsoBoughtTableParams" show-filter="true" class="table table-bordered table-striped table-hover table-responsive">
   <tr data-ng-repeat="r in $data">
     <td data-title="'Mfr Part #'" data-sortable="'manufacturerPartNumber'" filter="{manufacturerPartNumber: 'text'}" class="text-left">
-      <a data-ng-href="/part/{{r.partId}}">{{r.manufacturerPartNumber}}</a>
+      <a data-ng-href="/part/{{r.partId}}" data-ng-if="r.partId">{{r.manufacturerPartNumber}}</a>
+      <span data-ng-if="!r.partId">{{r.manufacturerPartNumber}}</span>
     </td>
     <td data-title="'Part Type'" filter="{partTypeValue: 'select'}" filter-data="partTypeOpts" class="text-left">
       {{r.partTypeName}}
