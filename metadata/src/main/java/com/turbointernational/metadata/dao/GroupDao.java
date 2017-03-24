@@ -2,6 +2,7 @@ package com.turbointernational.metadata.dao;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -36,8 +37,9 @@ public class GroupDao extends AbstractDao<Group> {
      * @param limit
      * @return
      */
-    public Page<Group> filter(String fltrName, String fltrRole, String sortProperty, String sortOrder, Integer offset,
-            Integer limit) {
+    public Page<Group> filter(Optional<String> fltrName, Optional<String> fltrRole, Optional<Boolean> fltrIsMemeber,
+            Optional<String> sortProperty, Optional<String> sortOrder, Optional<Integer> offset,
+            Optional<Integer> limit) {
 
         // select /*distinct*/ g.id, g.name, ug.user_id is not null
         // from
@@ -50,37 +52,29 @@ public class GroupDao extends AbstractDao<Group> {
         CriteriaQuery<Group> cqg = cb.createQuery(Group.class);
         Root<Group> grpRoot = cqg.from(Group.class);
         Path<String> colName = grpRoot.get(Group_.name);
-        List<Predicate> lstWherePredicates = new ArrayList<>(2);
-        if (fltrName != null) {
-            cb.equal(cb.lower(colName), "%" + fltrName.toLowerCase() + "%");
-        }
+        List<Predicate> lstWherePredicates = new ArrayList<>(3);
+        fltrName.ifPresent(s -> cb.equal(cb.lower(colName), "%" + s.toLowerCase() + "%"));
         Predicate[] arrWherePredicates = lstWherePredicates.toArray(new Predicate[lstWherePredicates.size()]);
         cqg.where(arrWherePredicates);
-        Order order = null;
-        if (sortOrder != null) {
-            boolean asc = sortOrder.equalsIgnoreCase("asc");
-            if (!asc && !sortOrder.equalsIgnoreCase("desc")) {
+        sortOrder.ifPresent(so -> {
+            Optional<Order> order = Optional.empty();
+            boolean asc = so.equalsIgnoreCase("asc");
+            if (!asc && !so.equalsIgnoreCase("desc")) {
                 throw new IllegalArgumentException("Invalid sort order: " + sortOrder);
             }
             if (sortProperty == null) {
                 throw new NullPointerException("Parameter 'sortOrder' can't be null.");
             }
             if (sortProperty.equals("name")) {
-                order = asc ? cb.asc(colName) : cb.desc(colName);
+                order = Optional.of(asc ? cb.asc(colName) : cb.desc(colName));
             } else {
                 throw new IllegalArgumentException("Invalid sort property: " + sortProperty);
             }
-        }
-        if (order != null) {
-            cqg.orderBy(order);
-        }
+            order.ifPresent(ord -> cqg.orderBy(ord));
+        });
         TypedQuery<Group> tq = em.createQuery(cqg);
-        if (offset != null) {
-            tq.setFirstResult(offset);
-        }
-        if (limit != null) {
-            tq.setMaxResults(limit);
-        }
+        offset.ifPresent(off -> tq.setFirstResult(off));
+        limit.ifPresent(lmt -> tq.setMaxResults(lmt)); 
         List<Group> recs = tq.getResultList();
         CriteriaQuery<Long> cq = cb.createQuery(Long.class);
         cq.select(cb.count(grpRoot));
@@ -88,7 +82,6 @@ public class GroupDao extends AbstractDao<Group> {
         TypedQuery<Long> cntQuery = em.createQuery(cq);
         long total = cntQuery.getSingleResult();
         return new Page<>(total, recs);
-
     }
 
 }
