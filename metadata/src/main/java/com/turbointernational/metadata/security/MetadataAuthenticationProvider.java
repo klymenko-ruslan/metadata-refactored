@@ -1,8 +1,18 @@
 package com.turbointernational.metadata.security;
 
-import com.turbointernational.metadata.entity.AuthProvider;
-import com.turbointernational.metadata.entity.AuthProviderLdap;
-import com.turbointernational.metadata.entity.User;
+import java.security.GeneralSecurityException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+import java.util.Hashtable;
+import java.util.Set;
+
+import javax.naming.Context;
+import javax.naming.NamingException;
+import javax.naming.directory.InitialDirContext;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,17 +27,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.naming.Context;
-import javax.naming.NamingException;
-import javax.naming.directory.InitialDirContext;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
-import java.security.GeneralSecurityException;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
-import java.util.Hashtable;
-import java.util.Set;
+import com.turbointernational.metadata.entity.AuthProvider;
+import com.turbointernational.metadata.entity.AuthProviderLdap;
+import com.turbointernational.metadata.entity.User;
 
 /**
  * Specialized authentication provider.
@@ -94,12 +96,15 @@ class MetadataLdapAuthenticationProvider implements AuthenticationProvider {
     MetadataLdapAuthenticationProvider(User user) {
         this.user = user;
         this.x509TrustManager = new X509TrustManager() {
+            @Override
             public void checkClientTrusted(X509Certificate[] xcs, String string) throws CertificateException {
             }
 
+            @Override
             public void checkServerTrusted(X509Certificate[] xcs, String string) throws CertificateException {
             }
 
+            @Override
             public X509Certificate[] getAcceptedIssuers() {
                 return null;
             }
@@ -153,7 +158,15 @@ class MetadataLdapAuthenticationProvider implements AuthenticationProvider {
         String name = token.getName();
         String fullLogonName = getFullLogonName(name, userAuthProviderLdap);
         String providerUrl = getProviderUrl(userAuthProviderLdap);
-        String password = token.getCredentials().toString();
+        Object credentials = token.getCredentials();
+        if (credentials == null) {
+            return authentication;
+        }
+        String password = credentials.toString();
+        if (!user.isEnabled()) {
+            log.info("Authentication of an user '{}' failed because the account locked (not enabled).", fullLogonName);
+            return authentication;
+        }
         Hashtable<String, String> ldapEnv = prepareLdapEnv(providerUrl, fullLogonName, password);
         try {
             if (userAuthProviderLdap.getProtocol() == AuthProviderLdap.ProtocolEnum.LDAPS_SOFT) {
