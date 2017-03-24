@@ -376,21 +376,22 @@ public class PartService {
                     .collect(Collectors.toMap(part -> part.getManufacturerPartNumber(), part -> part));
             recs.forEach(ab -> {
                 String mnfrPrtNmb = ab.getManufacturerPartNumber();
-                Optional.of(mnfrNmb2rec.get(mnfrPrtNmb)).ifPresent(p -> {
+                Part p = mnfrNmb2rec.get(mnfrPrtNmb);
+                if (p != null) {
                     Long rPartId = p.getId();
                     String rPartName = p.getName();
                     String rPartTypeName = p.getPartType().getName();
                     ab.setPartId(rPartId);
                     ab.setPartTypeName(rPartTypeName);
                     ab.setName(rPartName);
-                    Optional.of(p.getInterchange()).ifPresent(interchange -> {
+                    Optional.ofNullable(p.getInterchange()).ifPresent(interchange -> {
                         List<PartDesc> interchanges = interchange.getParts().stream()
                                 .filter(ip -> !ip.getManufacturerPartNumber().equals(mnfrPrtNmb))
                                 .map(ip -> new PartDesc(ip.getId(), ip.getManufacturerPartNumber()))
                                 .collect(Collectors.toList());
                         ab.setInterchanges(interchanges);
                     });
-                });
+                }
             });
         }
         return retVal;
