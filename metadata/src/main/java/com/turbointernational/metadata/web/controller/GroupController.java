@@ -1,15 +1,7 @@
 package com.turbointernational.metadata.web.controller;
 
-import com.fasterxml.jackson.annotation.JsonView;
-import com.turbointernational.metadata.dao.GroupDao;
-import com.turbointernational.metadata.dao.RoleDao;
-import com.turbointernational.metadata.dao.UserDao;
-import com.turbointernational.metadata.entity.Group;
-import com.turbointernational.metadata.entity.Role;
-import com.turbointernational.metadata.entity.User;
-import com.turbointernational.metadata.util.View;
-import flexjson.JSONSerializer;
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -17,21 +9,40 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.dao.GroupDao;
+import com.turbointernational.metadata.dao.RoleDao;
+import com.turbointernational.metadata.dao.UserDao;
+import com.turbointernational.metadata.entity.Group;
+import com.turbointernational.metadata.entity.Role;
+import com.turbointernational.metadata.entity.User;
+import com.turbointernational.metadata.service.GroupService;
+import com.turbointernational.metadata.util.View;
+
+import flexjson.JSONSerializer;
 
 @RequestMapping("/metadata/security/group")
 @Controller
 public class GroupController {
-    
-    @Autowired(required=true)
+
+    @Autowired
+    private GroupService groupService;
+
+    @Autowired
     GroupDao groupDao;
-    
-    @Autowired(required=true)
+
+    @Autowired
     UserDao userDao;
-    
-    @Autowired(required=true)
+
+    @Autowired
     RoleDao roleDao;
-    
+
     @Transactional
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
@@ -41,7 +52,7 @@ public class GroupController {
         groupDao.persist(group);
         return group;
     }
-    
+
     @Transactional
     @RequestMapping(value = "/{id}", method = {RequestMethod.POST, RequestMethod.PUT})
     @ResponseBody
@@ -51,14 +62,14 @@ public class GroupController {
         Group resultGroup = groupDao.merge(group);
         return resultGroup;
     }
-    
+
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
     @Secured("ROLE_ADMIN")
     @JsonView(View.Summary.class)
     public ResponseEntity<String> list() {
         List<Group> groups = groupDao.findAll();
-        
+
         return new ResponseEntity<String>(
             new JSONSerializer()
                 .include("id")
@@ -69,14 +80,14 @@ public class GroupController {
                 .serialize(groups),
                 new HttpHeaders(), HttpStatus.OK);
     }
-    
+
     @RequestMapping(value = "/roles", method = RequestMethod.GET)
     @ResponseBody
     @Secured("ROLE_ADMIN")
     @JsonView(View.Summary.class)
     public ResponseEntity<String> listRoles() {
         List<Role> roles = roleDao.findAll();
-        
+
         return new ResponseEntity<String>(
             new JSONSerializer()
                 .include("id")
@@ -85,7 +96,7 @@ public class GroupController {
                 .serialize(roles),
                 new HttpHeaders(), HttpStatus.OK);
     }
-    
+
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ResponseBody
     @Secured("ROLE_ADMIN")
@@ -95,7 +106,7 @@ public class GroupController {
         group.getUsers().size();
         return new ResponseEntity<String>(group.toJson(), new HttpHeaders(), HttpStatus.OK);
     }
-    
+
     @Transactional
     @RequestMapping(value="/{id}/role/{roleId}", method = RequestMethod.POST)
     @ResponseBody
@@ -106,7 +117,7 @@ public class GroupController {
         group.getRoles().add(role);
         groupDao.merge(group);
     }
-    
+
     @Transactional
     @RequestMapping(value="/{id}/role/{roleId}", method = RequestMethod.DELETE)
     @ResponseBody
@@ -117,7 +128,7 @@ public class GroupController {
         group.getRoles().remove(role);
         groupDao.merge(group);
     }
-    
+
     @Transactional
     @RequestMapping(value="/{id}/user/{userId}", method = RequestMethod.POST)
     @ResponseBody
@@ -128,7 +139,7 @@ public class GroupController {
         group.getUsers().add(user);
         groupDao.merge(group);
     }
-    
+
     @Transactional
     @RequestMapping(value="/{id}/user/{roleId}", method = RequestMethod.DELETE)
     @ResponseBody
@@ -139,7 +150,7 @@ public class GroupController {
         group.getUsers().remove(user);
         groupDao.merge(group);
     }
-    
+
     @Transactional
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     @ResponseBody

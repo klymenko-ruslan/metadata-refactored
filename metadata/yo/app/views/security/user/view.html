@@ -1,0 +1,40 @@
+<metanav>
+  <li>
+    <button data-ng-click="back()" class="btn btn-info">
+      <i class="fa fa-angle-double-left"></i>
+      Users List
+    </button>
+  </li>
+</metanav>
+
+<ul id="userTabs" class="nav nav-tabs" role="tablist">
+  <li role="presentation">
+    <a id="tab-main" href="#main" aria-controls="main" role="tab" data-toggle="tab">
+      <i class="fa fa-bars" aria-hidden="true"></i>
+      Main
+    </a>
+  </li>
+  <li role="presentation">
+    <a id="tab-groups" href="#groups" aria-controls="groups" role="tab" data-toggle="tab">
+      <i class="fa fa-group" aria-hidden="true"></i>
+      Groups
+    </a>
+  </li>
+</ul>
+
+<div class="tab-content">
+  <div role="tabpanel" class="tab-pane fade tab-part-detail" id="main">
+    <data-ng-include src="'/views/security/user/TabMain.html'"></data-ng-include>
+  </div>
+  <div role="tabpanel" class="tab-pane fade tab-part-detail" id="groups">
+    <data-ng-include src="'/views/security/user/TabGroups.html'"></data-ng-include>
+  </div>
+</div>
+
+<script>
+  $('#userTabs a').click(function (e) {
+    e.preventDefault();
+    $(this).tab('show');
+  });
+  $('#userTabs a:first').tab('show');
+</script>

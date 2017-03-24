@@ -599,7 +599,7 @@ angular.module("ngMetaCrudApp", ["ngCookies", "ngRoute", "ngTable", "ui.bootstra
       }
     });
     $routeProvider.when("/security/user/:id", {
-      templateUrl: "views/security/user.html",
+      templateUrl: "views/security/user/view.html",
       controller: "UserCtrl",
       resolve: {
         authProviders: ["restService", function(restService) {
