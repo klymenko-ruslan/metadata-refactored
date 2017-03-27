@@ -1,5 +1,6 @@
 package com.turbointernational.metadata.dao;
 
+import static com.turbointernational.metadata.util.JpaUtils.broadLike;
 import static javax.persistence.criteria.JoinType.LEFT;
 
 import java.util.ArrayList;
@@ -8,6 +9,7 @@ import java.util.Optional;
 
 import javax.persistence.Tuple;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CompoundSelection;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Order;
@@ -38,8 +40,16 @@ public class GroupDao extends AbstractDao<Group> {
     }
 
     /**
+     * Filter groups for a user.
+     *
+     * The method returns a list of tuples. Each tuple consists of two members:
+     * [0, ALIAS_GROUP] - Group [1, ALIAS_MEMBER] - a boolean value is this user
+     * member of this group or not
+     *
+     * @param userId
      * @param fltrName
      * @param fltrRole
+     * @param fltrIsMemeber
      * @param sortProperty
      * @param sortOrder
      * @param offset
@@ -64,10 +74,22 @@ public class GroupDao extends AbstractDao<Group> {
         Root<Group> grpRoot = cqg.from(Group.class);
         SetJoin<Group, User> usrRoot = grpRoot.join(Group_.users, LEFT);
         usrRoot.on(cb.equal(usrRoot.get(User_.id), userId));
-        cqg.select(cb.tuple(grpRoot.alias(ALIAS_GROUP), cb.isNotNull(usrRoot).alias(ALIAS_MEMBER)));
+        Predicate colMember = cb.isNotNull(usrRoot.get(User_.id));
+        CompoundSelection<Tuple> tuple = cb.tuple(grpRoot.get(Group_.name).alias(ALIAS_GROUP),
+                colMember.alias(ALIAS_MEMBER));
+        cqg.select(tuple);
         Path<String> colName = grpRoot.get(Group_.name);
         List<Predicate> lstWherePredicates = new ArrayList<>(3);
-        fltrName.ifPresent(s -> cb.equal(cb.lower(colName), "%" + s.toLowerCase() + "%"));
+        fltrName.ifPresent(s -> lstWherePredicates.add(broadLike(cb, colName, s)));
+        fltrIsMemeber.ifPresent(m -> {
+            Predicate pmem;
+            if (m) {
+                pmem = cb.notEqual(usrRoot.get(User_.id), cb.literal(0));
+            } else {
+                pmem = cb.equal(usrRoot.get(User_.id), cb.literal(0));
+            }
+            lstWherePredicates.add(pmem);
+        });
         Predicate[] arrWherePredicates = lstWherePredicates.toArray(new Predicate[lstWherePredicates.size()]);
         cqg.where(arrWherePredicates);
         sortOrder.ifPresent(so -> {
@@ -79,7 +101,8 @@ public class GroupDao extends AbstractDao<Group> {
             if (sortProperty == null) {
                 throw new NullPointerException("Parameter 'sortOrder' can't be null.");
             }
-            if (sortProperty.equals("name")) {
+            String sp = sortProperty.get();
+            if (sp.equals("name")) {
                 order = Optional.of(asc ? cb.asc(colName) : cb.desc(colName));
             } else {
                 throw new IllegalArgumentException("Invalid sort property: " + sortProperty);
@@ -91,6 +114,8 @@ public class GroupDao extends AbstractDao<Group> {
         limit.ifPresent(lmt -> tq.setMaxResults(lmt));
         List<Tuple> recs = tq.getResultList();
         CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+        grpRoot = cq.from(Group.class);
+        grpRoot.join(Group_.users, LEFT);
         cq.select(cb.count(grpRoot));
         cq.where(arrWherePredicates);
         TypedQuery<Long> cntQuery = em.createQuery(cq);

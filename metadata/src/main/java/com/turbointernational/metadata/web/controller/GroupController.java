@@ -1,10 +1,15 @@
 package com.turbointernational.metadata.web.controller;
 
+import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.PUT;
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
@@ -12,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.annotation.JsonView;
@@ -24,6 +29,8 @@ import com.turbointernational.metadata.entity.Role;
 import com.turbointernational.metadata.entity.User;
 import com.turbointernational.metadata.service.GroupService;
 import com.turbointernational.metadata.util.View;
+import com.turbointernational.metadata.web.dto.GroupMemberDto;
+import com.turbointernational.metadata.web.dto.Page;
 
 import flexjson.JSONSerializer;
 
@@ -44,7 +51,7 @@ public class GroupController {
     RoleDao roleDao;
 
     @Transactional
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(method = POST)
     @ResponseBody
     @JsonView(View.Detail.class)
     @Secured("ROLE_ADMIN")
@@ -54,7 +61,7 @@ public class GroupController {
     }
 
     @Transactional
-    @RequestMapping(value = "/{id}", method = {RequestMethod.POST, RequestMethod.PUT})
+    @RequestMapping(value = "/{id}", method = { POST, PUT })
     @ResponseBody
     @JsonView(View.DetailWithUsers.class)
     @Secured("ROLE_ADMIN")
@@ -63,25 +70,33 @@ public class GroupController {
         return resultGroup;
     }
 
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(method = GET)
     @ResponseBody
     @Secured("ROLE_ADMIN")
     @JsonView(View.Summary.class)
     public ResponseEntity<String> list() {
         List<Group> groups = groupDao.findAll();
 
-        return new ResponseEntity<String>(
-            new JSONSerializer()
-                .include("id")
-                .include("name")
-                .include("roles.id")
-                .include("users.id")
-                .exclude("*")
-                .serialize(groups),
-                new HttpHeaders(), HttpStatus.OK);
+        return new ResponseEntity<String>(new JSONSerializer().include("id").include("name").include("roles.id")
+                .include("users.id").exclude("*").serialize(groups), new HttpHeaders(), OK);
     }
 
-    @RequestMapping(value = "/roles", method = RequestMethod.GET)
+    @RequestMapping(path = "/user/filter", method = GET)
+    @ResponseBody
+    @JsonView(View.Summary.class)
+    @Secured("ROLE_ADMIN")
+    public Page<GroupMemberDto> filter(@RequestParam(name = "userId", required = true) Long userId,
+            @RequestParam(name = "fltrName", required = false) String fltrName,
+            @RequestParam(name = "fltrRole", required = false) String fltrRole,
+            @RequestParam(name = "fltrIsMember", required = false) Boolean fltrIsMemeber,
+            @RequestParam(name = "sortProperty", required = false) String sortProperty,
+            @RequestParam(name = "sortorder", required = false) String sortOrder,
+            @RequestParam(name = "offset", required = false) Integer offset,
+            @RequestParam(name = "limit", required = false) Integer limit) {
+        return groupService.filter(userId, fltrName, fltrRole, fltrIsMemeber, sortProperty, sortOrder, offset, limit);
+    }
+
+    @RequestMapping(value = "/roles", method = GET)
     @ResponseBody
     @Secured("ROLE_ADMIN")
     @JsonView(View.Summary.class)
@@ -89,26 +104,22 @@ public class GroupController {
         List<Role> roles = roleDao.findAll();
 
         return new ResponseEntity<String>(
-            new JSONSerializer()
-                .include("id")
-                .include("display")
-                .exclude("*")
-                .serialize(roles),
-                new HttpHeaders(), HttpStatus.OK);
+                new JSONSerializer().include("id").include("display").exclude("*").serialize(roles), new HttpHeaders(),
+                OK);
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}", method = GET)
     @ResponseBody
     @Secured("ROLE_ADMIN")
     @JsonView(View.DetailWithUsers.class)
     public ResponseEntity<String> get(@PathVariable("id") Long id) {
         Group group = groupDao.findOne(id);
         group.getUsers().size();
-        return new ResponseEntity<String>(group.toJson(), new HttpHeaders(), HttpStatus.OK);
+        return new ResponseEntity<String>(group.toJson(), new HttpHeaders(), OK);
     }
 
     @Transactional
-    @RequestMapping(value="/{id}/role/{roleId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/{id}/role/{roleId}", method = POST)
     @ResponseBody
     @Secured("ROLE_ADMIN")
     public void addRole(@PathVariable("id") Long id, @PathVariable("roleId") Long roleId) throws Exception {
@@ -119,7 +130,7 @@ public class GroupController {
     }
 
     @Transactional
-    @RequestMapping(value="/{id}/role/{roleId}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{id}/role/{roleId}", method = DELETE)
     @ResponseBody
     @Secured("ROLE_ADMIN")
     public void removeRole(@PathVariable("id") Long id, @PathVariable("roleId") Long roleId) throws Exception {
@@ -130,7 +141,7 @@ public class GroupController {
     }
 
     @Transactional
-    @RequestMapping(value="/{id}/user/{userId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/{id}/user/{userId}", method = POST)
     @ResponseBody
     @Secured("ROLE_ADMIN")
     public void addUser(@PathVariable("id") Long id, @PathVariable("userId") Long userId) throws Exception {
@@ -141,7 +152,7 @@ public class GroupController {
     }
 
     @Transactional
-    @RequestMapping(value="/{id}/user/{roleId}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{id}/user/{roleId}", method = DELETE)
     @ResponseBody
     @Secured("ROLE_ADMIN")
     public void removeUser(@PathVariable("id") Long id, @PathVariable("userId") Long userId) throws Exception {
@@ -152,7 +163,7 @@ public class GroupController {
     }
 
     @Transactional
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{id}", method = DELETE)
     @ResponseBody
     @Secured("ROLE_ADMIN")
     public void delete(@PathVariable("id") Long id) throws Exception {

@@ -63,19 +63,19 @@ values
 
 insert into manfr_type(id, name) values(1, 'turbo');
 
-insert into manfr(id, name, manfr_type_id, parent_manfr_id)
+insert into manfr(id, name, manfr_type_id, parent_manfr_id, not_external)
 values
-(1, 'Garrett', 1, NULL),
-(2, 'Holset', 1, NULL),
-(3, 'I.H.I.', 1, NULL),
-(4, 'Toyota', 1, NULL),
-(5, 'Hitachi', 1, NULL),
-(6, 'KKK', 1, NULL),
-(7, 'Komatsu', 1, NULL),
-(8, 'Mitsubishi', 1, NULL),
-(9, 'Schwitzer', 1, NULL),
-(10, 'Rotomaster', 1, NULL),
-(11, 'Turbo International', 1, NULL);
+(1, 'Garrett', 1, NULL, 0),
+(2, 'Holset', 1, NULL, 0),
+(3, 'I.H.I.', 1, NULL, 0),
+(4, 'Toyota', 1, NULL, 0),
+(5, 'Hitachi', 1, NULL, 0),
+(6, 'KKK', 1, NULL, 0),
+(7, 'Komatsu', 1, NULL, 0),
+(8, 'Mitsubishi', 1, NULL, 0),
+(9, 'Schwitzer', 1, NULL, 0),
+(10, 'Rotomaster', 1, NULL, 0),
+(11, 'Turbo International', 1, NULL, 0);
 
 insert into kit_type(id, name)
 values
