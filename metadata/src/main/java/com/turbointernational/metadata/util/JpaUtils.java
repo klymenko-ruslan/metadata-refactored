@@ -18,7 +18,7 @@ public class JpaUtils {
      * @return
      */
     public static Predicate broadLike(CriteriaBuilder cb, Path<String> colName, String s) {
-        return cb.equal(cb.lower(colName), "%" + s.toLowerCase() + "%");
+        return cb.like(cb.lower(colName), "%" + s.toLowerCase() + "%");
     };
 
 }

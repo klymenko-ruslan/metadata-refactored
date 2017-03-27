@@ -44,13 +44,13 @@ public class JpaConfigProps {
             props.put("hibernate.id.new_generator_mappings", idNewGeneratorMapping);
         }
         if (showSql != null) {
-            props.put("show_sql", showSql);
+            props.put("hibernate.show_sql", showSql);
         }
         if (formatSql != null) {
-            props.put("format_sql", formatSql);
+            props.put("hibernate.format_sql", formatSql);
         }
         if (useSqlComments != null) {
-            props.put("use_sql_comments", useSqlComments);
+            props.put("hibernate.use_sql_comments", useSqlComments);
         }
         if (ddlAuto != null) {
             props.put("hibernate.hbm2ddl.auto", ddlAuto);

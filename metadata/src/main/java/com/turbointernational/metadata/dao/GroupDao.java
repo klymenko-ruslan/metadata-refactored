@@ -12,17 +12,22 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CompoundSelection;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.ListJoin;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.SetJoin;
+import javax.persistence.criteria.Subquery;
 
 import org.springframework.stereotype.Repository;
 
 import com.turbointernational.metadata.entity.Group;
 import com.turbointernational.metadata.entity.Group_;
-import com.turbointernational.metadata.entity.User;
+import com.turbointernational.metadata.entity.Role;
+import com.turbointernational.metadata.entity.Role_;
+import com.turbointernational.metadata.entity.UserGroup;
+import com.turbointernational.metadata.entity.UserGroup_;
 import com.turbointernational.metadata.entity.User_;
 import com.turbointernational.metadata.web.dto.Page;
 
@@ -72,21 +77,30 @@ public class GroupDao extends AbstractDao<Group> {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Tuple> cqg = cb.createTupleQuery();
         Root<Group> grpRoot = cqg.from(Group.class);
-        SetJoin<Group, User> usrRoot = grpRoot.join(Group_.users, LEFT);
-        usrRoot.on(cb.equal(usrRoot.get(User_.id), userId));
-        Predicate colMember = cb.isNotNull(usrRoot.get(User_.id));
+        ListJoin<Group, UserGroup> usrGrpRoot = grpRoot.join(Group_.userGroups, LEFT);
+        usrGrpRoot.on(cb.equal(usrGrpRoot.get(UserGroup_.user).get(User_.id), userId));
+        Predicate colMember = cb.isNotNull(usrGrpRoot);
         CompoundSelection<Tuple> tuple = cb.tuple(grpRoot.get(Group_.name).alias(ALIAS_GROUP),
                 colMember.alias(ALIAS_MEMBER));
         cqg.select(tuple);
         Path<String> colName = grpRoot.get(Group_.name);
         List<Predicate> lstWherePredicates = new ArrayList<>(3);
         fltrName.ifPresent(s -> lstWherePredicates.add(broadLike(cb, colName, s)));
+        fltrRole.ifPresent(r -> {
+            Subquery<Long> subqueryRoles = cqg.subquery(Long.class);
+            subqueryRoles.select(cb.literal(1L));
+            SetJoin<Group,Role> joinGrpRole = subqueryRoles
+                    .from(Group.class)
+                    .join(Group_.roles);
+            subqueryRoles.where(broadLike(cb, joinGrpRole.get(Role_.name), r));
+            lstWherePredicates.add(cb.exists(subqueryRoles));
+        });
         fltrIsMemeber.ifPresent(m -> {
             Predicate pmem;
             if (m) {
-                pmem = cb.notEqual(usrRoot.get(User_.id), cb.literal(0));
+                pmem = cb.isNotNull(usrGrpRoot);
             } else {
-                pmem = cb.equal(usrRoot.get(User_.id), cb.literal(0));
+                pmem = cb.isNull(usrGrpRoot);
             }
             lstWherePredicates.add(pmem);
         });
@@ -115,7 +129,8 @@ public class GroupDao extends AbstractDao<Group> {
         List<Tuple> recs = tq.getResultList();
         CriteriaQuery<Long> cq = cb.createQuery(Long.class);
         grpRoot = cq.from(Group.class);
-        grpRoot.join(Group_.users, LEFT);
+        ListJoin<Group, UserGroup> usrGrpRoot2 = grpRoot.join(Group_.userGroups, LEFT);
+        usrGrpRoot2.on(cb.equal(usrGrpRoot.get(UserGroup_.user).get(User_.id), userId));
         cq.select(cb.count(grpRoot));
         cq.where(arrWherePredicates);
         TypedQuery<Long> cntQuery = em.createQuery(cq);

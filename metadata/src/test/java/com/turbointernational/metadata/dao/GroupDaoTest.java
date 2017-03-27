@@ -23,8 +23,8 @@ public class GroupDaoTest extends AbstractFunctionalTest {
     @Sql(executionPhase = BEFORE_TEST_METHOD, scripts = "classpath:integration_tests/group_dao/filter.sql")
     @Sql(executionPhase = AFTER_TEST_METHOD, scripts = "classpath:integration_tests/clear_dictionaries.sql")
     public void testFilter() {
-        Page<Tuple> page = groupDao.filter(1L, Optional.empty(), Optional.empty(), Optional.of(Boolean.TRUE) /*Optional.empty()*/,
-                Optional.of("name"), Optional.of("asc"), Optional.of(0), Optional.of(5));
+        Page<Tuple> page = groupDao.filter(1L, Optional.empty(), Optional.of("re")/*Optional.empty()*/, /*Optional.of(Boolean.FALSE)*/ /*Optional.of(Boolean.TRUE)*/ Optional.empty(),
+                Optional.of("name"), Optional.of("asc"), Optional.of(0), Optional.of(50));
         System.out.println(page);
     }
 
