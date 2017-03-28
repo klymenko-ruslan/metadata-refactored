@@ -110,7 +110,9 @@ public class GroupDao extends AbstractDao<Group> {
             lstWherePredicates.add(pmem);
         });
         Predicate[] arrWherePredicates = lstWherePredicates.toArray(new Predicate[lstWherePredicates.size()]);
-        cqg.where(arrWherePredicates);
+        if (arrWherePredicates.length > 0) {
+            cqg.where(arrWherePredicates);
+        }
         sortOrder.ifPresent(so -> {
             Optional<Order> order = Optional.empty();
             boolean asc = so.equalsIgnoreCase("asc");
@@ -124,7 +126,9 @@ public class GroupDao extends AbstractDao<Group> {
             if (sp.equals("name")) {
                 order = Optional.of(asc ? cb.asc(colName) : cb.desc(colName));
             } else if (sp.equals("isMember")) {
-                order = Optional.of(asc ? cb.asc(colMember) : cb.desc(colMember));
+                // I don't find a better way how to order a query result by calculated column.
+                Expression<Integer> refOnColMember = cb.literal(2);
+                order = Optional.of(asc ? cb.asc(refOnColMember) : cb.desc(refOnColMember));
             } else {
                 throw new IllegalArgumentException("Invalid sort property: " + sortProperty);
             }
@@ -141,7 +145,9 @@ public class GroupDao extends AbstractDao<Group> {
             usrGrpRoot2.on(cb.equal(usrGrpRoot2.get(UserGroup_.user).get(User_.id), userId));
         }
         cq.select(cb.count(grpRoot));
-        cq.where(arrWherePredicates);
+        if (arrWherePredicates.length > 0) {
+            cq.where(arrWherePredicates);
+        }
         TypedQuery<Long> cntQuery = em.createQuery(cq);
         long total = cntQuery.getSingleResult();
         return new Page<>(total, recs);
