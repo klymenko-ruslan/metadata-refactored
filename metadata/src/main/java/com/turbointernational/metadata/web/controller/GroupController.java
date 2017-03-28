@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.dao.GroupDao;
@@ -49,6 +50,40 @@ public class GroupController {
 
     @Autowired
     RoleDao roleDao;
+
+    public static class UpdateMembershipRequest {
+
+        private Long userId;
+
+        private Long groupId;
+
+        private Boolean isMember;
+
+        public Long getUserId() {
+            return userId;
+        }
+
+        public void setUserId(Long userId) {
+            this.userId = userId;
+        }
+
+        public Long getGroupId() {
+            return groupId;
+        }
+
+        public void setGroupId(Long groupId) {
+            this.groupId = groupId;
+        }
+
+        public Boolean getIsMember() {
+            return isMember;
+        }
+
+        public void setIsMember(Boolean isMember) {
+            this.isMember = isMember;
+        }
+
+    }
 
     @Transactional
     @RequestMapping(method = POST)
@@ -81,6 +116,15 @@ public class GroupController {
                 .include("users.id").exclude("*").serialize(groups), new HttpHeaders(), OK);
     }
 
+    @RequestMapping(path = "/user", method = PUT)
+    @JsonView(View.Summary.class)
+    @Transactional
+    @ResponseStatus(OK)
+    @Secured("ROLE_ADMIN")
+    public void updateMembership(@RequestBody UpdateMembershipRequest req) {
+        groupService.updateMembership(req.getUserId(), req.getGroupId(), req.getIsMember());
+    }
+
     @RequestMapping(path = "/user/filter", method = GET)
     @ResponseBody
     @JsonView(View.Summary.class)
@@ -90,7 +134,7 @@ public class GroupController {
             @RequestParam(name = "fltrRole", required = false) String fltrRole,
             @RequestParam(name = "fltrIsMember", required = false) Boolean fltrIsMemeber,
             @RequestParam(name = "sortProperty", required = false) String sortProperty,
-            @RequestParam(name = "sortorder", required = false) String sortOrder,
+            @RequestParam(name = "sortOrder", required = false) String sortOrder,
             @RequestParam(name = "offset", required = false) Integer offset,
             @RequestParam(name = "limit", required = false) Integer limit) {
         return groupService.filter(userId, fltrName, fltrRole, fltrIsMemeber, sortProperty, sortOrder, offset, limit);

@@ -1,7 +1,22 @@
-      <h2 style="margin-top:0;">Groups</h2>
-      <ul class="col-sm-9 list-group">
-        <li data-ng-repeat="group in user.groups" class="list-group-item">
-          <a data-ng-href="/security/group/{{group.id}}">{{group.name}}</a>
-        </li>
-        <li data-ng-hide="user.groups" class="list-group-item">No groups assigned</li>
+<table data-ng-table="userGroupsTableParams" show-filter="true" class="table table-bordered table-striped table-hover table-responsive">
+  <tr data-ng-repeat="r in $data">
+    <td data-title="'Group'" data-sortable="'name'" filter="{fltrName: 'text'}" class="text-left">
+      <a data-ng-href="/security/group/{{r.id}}">{{r.name}}</a>
+    </td>
+    <td data-title="'Roles'" filter="{fltrRole: 'text'}" class="text-left">
+      <ul class="list-unstyled list-inline" style="margin-bottom:0">
+      <li data-ng-repeat="role in r.roles">
+        {{role}}<span data-ng-if="!$last">,</span>
+      </li>
       </ul>
+    </td>
+    <td data-title="'Member'" data-sortable="'isMember'" filter="{fltrIsMember: 'select'}" filter-data="isMemberOpts" class="text-center">
+      <input type="checkbox" data-ng-model="isMember[r.id]" data-ng-true-value="true" data-ng-false-value="false" data-ng-change="onChangeIsMember(r)" />
+    </td>
+  </tr>
+
+  <tr data-ng-hide="$data.length > 0">
+    <td colspan="3">No records to display.</td>
+  </tr>
+
+</table>

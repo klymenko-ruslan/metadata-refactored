@@ -131,7 +131,7 @@ public class PartDao extends AbstractDao<Part> {
         if (fltrPartTypeValue != null) {
             try {
                 productLineCode = emMas90.createNamedQuery("convertPartTypeValue2ProductLineCode", String.class)
-                        .setParameter(1, fltrPartTypeValue).getSingleResult();
+                        .setParameter("partTypeValue", fltrPartTypeValue).getSingleResult();
             } catch (NoResultException e) {
                 // ignore
             }

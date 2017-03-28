@@ -12,6 +12,7 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CompoundSelection;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.ListJoin;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Path;
@@ -37,7 +38,7 @@ import com.turbointernational.metadata.web.dto.Page;
 @Repository
 public class GroupDao extends AbstractDao<Group> {
 
-    public final static String ALIAS_GROUP = "group";
+    public final static String ALIAS_GROUP_ID = "group_id";
     public final static String ALIAS_MEMBER = "member";
 
     public GroupDao() {
@@ -48,7 +49,8 @@ public class GroupDao extends AbstractDao<Group> {
      * Filter groups for a user.
      *
      * The method returns a list of tuples. Each tuple consists of two members:
-     * [0, ALIAS_GROUP] - Group [1, ALIAS_MEMBER] - a boolean value is this user
+     *  * [0, ALIAS_GROUP_ID] - Group ID
+     *  * [1, ALIAS_MEMBER] - a boolean value is this user
      * member of this group or not
      *
      * @param userId
@@ -65,7 +67,7 @@ public class GroupDao extends AbstractDao<Group> {
             Optional<Boolean> fltrIsMemeber, Optional<String> sortProperty, Optional<String> sortOrder,
             Optional<Integer> offset, Optional<Integer> limit) {
 
-        // select /*distinct*/ g.id, g.name, ug.user_id is not null
+        // select g.id, g.name, ug.user_id is not null
         // from
         // groups as g left outer join user_group as ug on g.id = ug.group_id
         // and ug.user_id = 4
@@ -77,10 +79,15 @@ public class GroupDao extends AbstractDao<Group> {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Tuple> cqg = cb.createTupleQuery();
         Root<Group> grpRoot = cqg.from(Group.class);
-        ListJoin<Group, UserGroup> usrGrpRoot = grpRoot.join(Group_.userGroups, LEFT);
-        usrGrpRoot.on(cb.equal(usrGrpRoot.get(UserGroup_.user).get(User_.id), userId));
-        Predicate colMember = cb.isNotNull(usrGrpRoot);
-        CompoundSelection<Tuple> tuple = cb.tuple(grpRoot.get(Group_.name).alias(ALIAS_GROUP),
+        Expression<Boolean> colMember;
+        if (userId == null) {
+            colMember = cb.literal(false);
+        } else {
+            ListJoin<Group, UserGroup> usrGrpRoot = grpRoot.join(Group_.userGroups, LEFT);
+            usrGrpRoot.on(cb.equal(usrGrpRoot.get(UserGroup_.user).get(User_.id), userId));
+            colMember = cb.isNotNull(usrGrpRoot);
+        }
+        CompoundSelection<Tuple> tuple = cb.tuple(grpRoot.get(Group_.id).alias(ALIAS_GROUP_ID),
                 colMember.alias(ALIAS_MEMBER));
         cqg.select(tuple);
         Path<String> colName = grpRoot.get(Group_.name);
@@ -89,18 +96,16 @@ public class GroupDao extends AbstractDao<Group> {
         fltrRole.ifPresent(r -> {
             Subquery<Long> subqueryRoles = cqg.subquery(Long.class);
             subqueryRoles.select(cb.literal(1L));
-            SetJoin<Group,Role> joinGrpRole = subqueryRoles
-                    .from(Group.class)
-                    .join(Group_.roles);
+            SetJoin<Group, Role> joinGrpRole = subqueryRoles.from(Group.class).join(Group_.roles);
             subqueryRoles.where(broadLike(cb, joinGrpRole.get(Role_.name), r));
             lstWherePredicates.add(cb.exists(subqueryRoles));
         });
         fltrIsMemeber.ifPresent(m -> {
             Predicate pmem;
             if (m) {
-                pmem = cb.isNotNull(usrGrpRoot);
+                pmem = cb.isTrue(colMember);
             } else {
-                pmem = cb.isNull(usrGrpRoot);
+                pmem = cb.isFalse(colMember);
             }
             lstWherePredicates.add(pmem);
         });
@@ -118,6 +123,8 @@ public class GroupDao extends AbstractDao<Group> {
             String sp = sortProperty.get();
             if (sp.equals("name")) {
                 order = Optional.of(asc ? cb.asc(colName) : cb.desc(colName));
+            } else if (sp.equals("isMember")) {
+                order = Optional.of(asc ? cb.asc(colMember) : cb.desc(colMember));
             } else {
                 throw new IllegalArgumentException("Invalid sort property: " + sortProperty);
             }
@@ -129,8 +136,10 @@ public class GroupDao extends AbstractDao<Group> {
         List<Tuple> recs = tq.getResultList();
         CriteriaQuery<Long> cq = cb.createQuery(Long.class);
         grpRoot = cq.from(Group.class);
-        ListJoin<Group, UserGroup> usrGrpRoot2 = grpRoot.join(Group_.userGroups, LEFT);
-        usrGrpRoot2.on(cb.equal(usrGrpRoot.get(UserGroup_.user).get(User_.id), userId));
+        if (userId != null) {
+            ListJoin<Group, UserGroup> usrGrpRoot2 = grpRoot.join(Group_.userGroups, LEFT);
+            usrGrpRoot2.on(cb.equal(usrGrpRoot2.get(UserGroup_.user).get(User_.id), userId));
+        }
         cq.select(cb.count(grpRoot));
         cq.where(arrWherePredicates);
         TypedQuery<Long> cntQuery = em.createQuery(cq);

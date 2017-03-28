@@ -100,4 +100,41 @@ public class ArInvoiceHistoryDetail implements Serializable {
         this.productLine = productLine;
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((detailseqno == null) ? 0 : detailseqno.hashCode());
+        result = prime * result + ((headerseqno == null) ? 0 : headerseqno.hashCode());
+        result = prime * result + ((invoiceno == null) ? 0 : invoiceno.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ArInvoiceHistoryDetail other = (ArInvoiceHistoryDetail) obj;
+        if (detailseqno == null) {
+            if (other.detailseqno != null)
+                return false;
+        } else if (!detailseqno.equals(other.detailseqno))
+            return false;
+        if (headerseqno == null) {
+            if (other.headerseqno != null)
+                return false;
+        } else if (!headerseqno.equals(other.headerseqno))
+            return false;
+        if (invoiceno == null) {
+            if (other.invoiceno != null)
+                return false;
+        } else if (!invoiceno.equals(other.invoiceno))
+            return false;
+        return true;
+    }
+
 }

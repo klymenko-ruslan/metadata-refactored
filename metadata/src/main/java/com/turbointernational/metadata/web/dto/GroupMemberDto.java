@@ -17,31 +17,54 @@ public class GroupMemberDto implements Serializable {
 
     private static final long serialVersionUID = 8825483248046659973L;
 
+    /**
+     * Group ID.
+     */
     @JsonView(View.Summary.class)
-    private String groupName;
+    private Long id;
 
+    /**
+     * Group name.
+     */
+    @JsonView(View.Summary.class)
+    private String name;
+
+    /**
+     * Roles of the group.
+     */
     @JsonView(View.Summary.class)
     private List<String> roles;
 
+    /**
+     * Is user member of the group or not.
+     */
     @JsonView(View.Summary.class)
     private Boolean isMember;
 
     public GroupMemberDto() {
-
     }
 
-    public GroupMemberDto(String groupName, List<String> roles, Boolean isMember) {
-        this.groupName = groupName;
+    public GroupMemberDto(Long id, String name, List<String> roles, Boolean isMember) {
+        this.id = id;
+        this.name = name;
         this.roles = roles;
         this.isMember = isMember;
     }
 
-    public String getGroupName() {
-        return groupName;
+    public Long getId() {
+        return id;
     }
 
-    public void setGroupName(String groupName) {
-        this.groupName = groupName;
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public List<String> getRoles() {
