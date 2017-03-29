@@ -2,6 +2,7 @@ package com.turbointernational.metadata.dao;
 
 import static com.turbointernational.metadata.dao.GroupDao.ALIAS_GROUP_ID;
 import static com.turbointernational.metadata.dao.GroupDao.ALIAS_MEMBER;
+import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
@@ -144,6 +145,46 @@ public class GroupDaoTest extends AbstractFunctionalTest {
         // First two elements must be members.
         assertTrue(page.getRecs().get(0).get(ALIAS_MEMBER, Boolean.class));
         assertTrue(page.getRecs().get(1).get(ALIAS_MEMBER, Boolean.class));
+    }
+
+    @Test
+    @Sql(executionPhase = BEFORE_TEST_METHOD, scripts = "classpath:integration_tests/group_dao/filter.sql")
+    @Sql(executionPhase = AFTER_TEST_METHOD, scripts = "classpath:integration_tests/clear_dictionaries.sql")
+    public void testFilterByIsMemberYes() {
+        Page<Tuple> page = groupDao.filter(1L, Optional.empty(), Optional.empty(), Optional.of(TRUE),
+                Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
+        assertNotNull(page);
+        assertNotNull(page.getRecs());
+        assertEquals(2, page.getRecs().size());
+        assertEquals(2L, page.getTotal());
+        long numMemebers = page.getRecs().stream().filter(t -> t.get(ALIAS_MEMBER, Boolean.class)).count();
+        assertEquals(2, numMemebers);
+    }
+
+    @Test
+    @Sql(executionPhase = BEFORE_TEST_METHOD, scripts = "classpath:integration_tests/group_dao/filter.sql")
+    @Sql(executionPhase = AFTER_TEST_METHOD, scripts = "classpath:integration_tests/clear_dictionaries.sql")
+    public void testFilterByIsMemberNo() {
+        Page<Tuple> page = groupDao.filter(1L, Optional.empty(), Optional.empty(), Optional.of(FALSE),
+                Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
+        assertNotNull(page);
+        assertNotNull(page.getRecs());
+        assertEquals(9, page.getRecs().size());
+        assertEquals(9L, page.getTotal());
+        long numNonMemebers = page.getRecs().stream().filter(t -> !t.get(ALIAS_MEMBER, Boolean.class)).count();
+        assertEquals(9, numNonMemebers);
+    }
+
+    @Test
+    @Sql(executionPhase = BEFORE_TEST_METHOD, scripts = "classpath:integration_tests/group_dao/filter.sql")
+    @Sql(executionPhase = AFTER_TEST_METHOD, scripts = "classpath:integration_tests/clear_dictionaries.sql")
+    public void testFilterRole() {
+        Page<Tuple> page = groupDao.filter(1L, Optional.empty(), Optional.of("mas90"), Optional.empty(),
+                Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
+        assertNotNull(page);
+        assertNotNull(page.getRecs());
+        assertEquals(2, page.getRecs().size());
+        assertEquals(2L, page.getTotal());
     }
 
     @Test

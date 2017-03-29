@@ -80,13 +80,9 @@ public class GroupDao extends AbstractDao<Group> {
         CriteriaQuery<Tuple> cqg = cb.createTupleQuery();
         Root<Group> grpRoot = cqg.from(Group.class);
         Expression<Boolean> colMember;
-        if (userId == null) {
-            colMember = cb.literal(false);
-        } else {
-            ListJoin<Group, UserGroup> usrGrpRoot = grpRoot.join(Group_.userGroups, LEFT);
-            usrGrpRoot.on(cb.equal(usrGrpRoot.get(UserGroup_.user).get(User_.id), userId));
-            colMember = cb.isNotNull(usrGrpRoot);
-        }
+        ListJoin<Group, UserGroup> usrGrpRoot = grpRoot.join(Group_.userGroups, LEFT);
+        usrGrpRoot.on(cb.equal(usrGrpRoot.get(UserGroup_.user).get(User_.id), userId));
+        colMember = cb.isNotNull(usrGrpRoot);
         CompoundSelection<Tuple> tuple = cb.tuple(grpRoot.get(Group_.id).alias(ALIAS_GROUP_ID),
                 colMember.alias(ALIAS_MEMBER));
         cqg.select(tuple);
@@ -96,16 +92,20 @@ public class GroupDao extends AbstractDao<Group> {
         fltrRole.ifPresent(r -> {
             Subquery<Long> subqueryRoles = cqg.subquery(Long.class);
             subqueryRoles.select(cb.literal(1L));
-            SetJoin<Group, Role> joinGrpRole = subqueryRoles.from(Group.class).join(Group_.roles);
-            subqueryRoles.where(broadLike(cb, joinGrpRole.get(Role_.name), r));
+            Root<Group> subqRoot = subqueryRoles.from(Group.class);
+            SetJoin<Group, Role> joinGrpRole = subqRoot.join(Group_.roles);
+            subqueryRoles.where(
+                    cb.equal(subqRoot.get(Group_.id), grpRoot.get(Group_.id)),
+                    broadLike(cb, joinGrpRole.get(Role_.name), r)
+            );
             lstWherePredicates.add(cb.exists(subqueryRoles));
         });
         fltrIsMemeber.ifPresent(m -> {
             Predicate pmem;
             if (m) {
-                pmem = cb.isTrue(colMember);
+                pmem = cb.isNotNull(usrGrpRoot);
             } else {
-                pmem = cb.isFalse(colMember);
+                pmem = cb.isNull(usrGrpRoot);
             }
             lstWherePredicates.add(pmem);
         });
@@ -139,12 +139,12 @@ public class GroupDao extends AbstractDao<Group> {
         limit.ifPresent(lmt -> tq.setMaxResults(lmt));
         List<Tuple> recs = tq.getResultList();
         CriteriaQuery<Long> cq = cb.createQuery(Long.class);
-        grpRoot = cq.from(Group.class);
+        Root<Group> grpRoot2 = cq.from(Group.class);
         if (userId != null) {
-            ListJoin<Group, UserGroup> usrGrpRoot2 = grpRoot.join(Group_.userGroups, LEFT);
+            ListJoin<Group, UserGroup> usrGrpRoot2 = grpRoot2.join(Group_.userGroups, LEFT);
             usrGrpRoot2.on(cb.equal(usrGrpRoot2.get(UserGroup_.user).get(User_.id), userId));
         }
-        cq.select(cb.count(grpRoot));
+        cq.select(cb.count(grpRoot2));
         if (arrWherePredicates.length > 0) {
             cq.where(arrWherePredicates);
         }
