@@ -36,6 +36,7 @@ import com.google.common.collect.Sets;
 import com.turbointernational.metadata.dao.GroupDao;
 import com.turbointernational.metadata.dao.UserDao;
 import com.turbointernational.metadata.entity.User;
+import com.turbointernational.metadata.service.UserService;
 import com.turbointernational.metadata.util.View;
 import com.turbointernational.metadata.web.dto.Page;
 
@@ -49,7 +50,28 @@ public class UserController {
     UserDao userDao;
 
     @Autowired
+    private UserService userService;
+
+    @Autowired
     GroupDao groupDao;
+
+    @RequestMapping(value = "/email/unique", method = GET, produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
+    @JsonView(View.Detail.class)
+    @Secured("ROLE_READ")
+    public boolean isEmailUnique(@RequestParam(name = "userId", required = false) Long userId,
+            @RequestParam(name = "email") String email) {
+        return userService.isEmailUnique(userId, email);
+    }
+
+    @RequestMapping(value = "/username/unique", method = GET, produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
+    @JsonView(View.Detail.class)
+    @Secured("ROLE_READ")
+    public boolean isUsernameUnique(@RequestParam(name = "userId", required = false) Long userId,
+            @RequestParam(name = "username") String username) {
+        return userService.isUsernameUnique(userId, username);
+    }
 
     @JsonView(View.DetailWithGroups.class)
     @RequestMapping(value = "/me", method = GET)
@@ -125,8 +147,8 @@ public class UserController {
             @RequestParam(name = "sortOrder", required = false) String sortOrder,
             @RequestParam(name = "offset", required = false) Integer offset,
             @RequestParam(name = "limit", required = false) Integer limit) {
-        return userDao.filterUsers(displayName, userName, email, authProviderId, enabled,
-                sortProperty, sortOrder, offset, limit);
+        return userDao.filterUsers(displayName, userName, email, authProviderId, enabled, sortProperty, sortOrder,
+                offset, limit);
     }
 
     @JsonView(View.DetailWithGroups.class)

@@ -30,8 +30,12 @@ import com.turbointernational.metadata.util.View;
 
 @Entity
 @Table(name = "user")
-@NamedQueries({ @NamedQuery(name = "findUserByEmail", query = "SELECT u FROM User u WHERE u.email = :email"),
-        @NamedQuery(name = "findUserByUsername", query = "SELECT u FROM User u WHERE u.username = :username") })
+// @formatter:off
+@NamedQueries({
+    @NamedQuery(name = "findUserByEmail", query = "SELECT u FROM User u WHERE u.email = :email"),
+    @NamedQuery(name = "findUserByUsername", query = "SELECT u FROM User u WHERE u.username = :username")
+})
+// @formatter:on
 @JsonInclude(ALWAYS)
 public class User implements Comparable<User>, UserDetails {
 

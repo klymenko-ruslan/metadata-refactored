@@ -100,7 +100,6 @@ public class ManufacturerService {
         Long refTurboTypes = manufacturerDao.getRefCountFromTurboTypes(manufacturerId);
         if (refParts > 0 || refTurboTypes > 0) {
             return new DeleteResponse(refParts, refTurboTypes);
-
         }
         manufacturerDao.delete(manufacturerId);
         return new DeleteResponse(true);

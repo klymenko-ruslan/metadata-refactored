@@ -132,6 +132,20 @@ angular.module("ngMetaCrudApp")
         });
       };
 
+      this.isUserUsernameUnique = function(userId, username) {
+        return Restangular.one("security/user/username/unique").get({
+          userId: userId,
+          username: username
+        });
+      };
+
+      this.isUserEmailUnique = function(userId, email) {
+        return Restangular.one("security/user/email/unique").get({
+          userId: userId,
+          email: email
+        });
+      };
+
       this.filterUserGroups = function(userId, fltrName, fltrRole, fltrIsMember, sortProperty, sortOrder, offset, limit) {
         return Restangular.one("security/group/user/filter").get({
           "userId": userId,
@@ -144,7 +158,7 @@ angular.module("ngMetaCrudApp")
           "limit": limit
         });
       };
-      
+
       this.setUserMembershit = function(userId, groupId, isMember) {
         return Restangular.one("security/group/user").customPUT({
           "userId": userId,

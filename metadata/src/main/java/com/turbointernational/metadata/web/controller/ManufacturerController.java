@@ -107,7 +107,7 @@ public class ManufacturerController {
     @ResponseBody
     @JsonView(View.Detail.class)
     @Secured("ROLE_READ")
-    public boolean isNameInique(@RequestParam(name = "manufacturerId", required = false) Long manufacturerId,
+    public boolean isNameUnique(@RequestParam(name = "manufacturerId", required = false) Long manufacturerId,
             @RequestParam(name = "name") String name) {
         Manufacturer manufacturer = manufacturerService.findManufacurerByName(name);
         if (manufacturer == null) {

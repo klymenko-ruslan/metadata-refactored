@@ -1,5 +1,7 @@
 package com.turbointernational.metadata.dao;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +15,6 @@ import javax.persistence.criteria.From;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
 
 import com.turbointernational.metadata.entity.AuthProvider_;
@@ -36,9 +37,21 @@ public class UserDao extends AbstractDao<User> {
     }
 
     public User findUserByUsername(String username) {
-        if (StringUtils.isNotBlank(username)) {
+        if (isNotBlank(username)) {
             try {
                 return em.createNamedQuery("findUserByUsername", User.class).setParameter("username", username)
+                        .getSingleResult();
+            } catch (NoResultException | NonUniqueResultException e) {
+                // Ignore, return null.
+            }
+        }
+        return null;
+    }
+
+    public User findUserByEmail(String email) {
+        if (isNotBlank(email)) {
+            try {
+                return em.createNamedQuery("findUserByEmail", User.class).setParameter("email", email)
                         .getSingleResult();
             } catch (NoResultException | NonUniqueResultException e) {
                 // Ignore, return null.
@@ -62,18 +75,15 @@ public class UserDao extends AbstractDao<User> {
         int numPredicates = 0;
         List<Predicate> lstPredicates = new ArrayList<>(4);
         if (displayName != null) {
-            lstPredicates.add(cb.like(cb.lower(root.get(User_.name)),
-                    "%" + displayName.toLowerCase() + "%"));
+            lstPredicates.add(cb.like(cb.lower(root.get(User_.name)), "%" + displayName.toLowerCase() + "%"));
             numPredicates++;
         }
         if (userName != null) {
-            lstPredicates.add(cb.like(cb.lower(root.get(User_.username)),
-                    "%" + userName.toLowerCase() + "%"));
+            lstPredicates.add(cb.like(cb.lower(root.get(User_.username)), "%" + userName.toLowerCase() + "%"));
             numPredicates++;
         }
         if (email != null) {
-            lstPredicates.add(cb.like(cb.lower(root.get(User_.email)),
-                    "%" + email.toLowerCase() + "%"));
+            lstPredicates.add(cb.like(cb.lower(root.get(User_.email)), "%" + email.toLowerCase() + "%"));
             numPredicates++;
         }
         if (authProviderId == null) {

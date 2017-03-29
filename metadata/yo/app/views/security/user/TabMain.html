@@ -1,15 +1,15 @@
   <form name="form" role="user information" novalidate>
     <fieldset class="form-group">
       <label for="name-input">Display Name</label>
-      <input type="text" data-ng-model="user.name" class="form-control" id="name-input" placeholder="First and last name">
+      <input type="text" data-ng-model="user.name" class="form-control" id="name-input" placeholder="First and last name" required>
     </fieldset>
     <fieldset class="form-group">
       <label for="username-input">Username</label>
-      <input type="text" data-ng-model="user.username" class="form-control" id="username-input" placeholder="Logon name">
+      <input type="text" data-ng-model="user.username" class="form-control" id="username-input" placeholder="Logon name" required unique-user-username>
     </fieldset>
     <fieldset class="form-group">
       <label for="email-input">Email</label>
-      <input type="email" data-ng-model="user.email" class="form-control" id="email-input" placeholder="Email">
+      <input type="email" data-ng-model="user.email" class="form-control" id="email-input" placeholder="Email" required unique-user-email>
     </fieldset>
     <fieldset class="checkbox">
       <label>
@@ -26,12 +26,12 @@
     </fieldset>
     
       <button data-ng-click="save()"
-         data-ng-disabled="form.$pristine"
+         data-ng-disabled="form.$pristine || form.$invalid"
          class="btn btn-success">
         <i class="fa fa-save"></i>
         Save
       </button>
-      <button data-ng-click="undo()"
+      <button data-ng-click="undo(form)"
          data-ng-disabled="form.$pristine"
          data-ng-show="user.id"
          class="btn btn-warning">
