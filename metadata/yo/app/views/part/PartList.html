@@ -11,6 +11,41 @@
   <h1 class="col-xs-12 col-sm-9">Part List</h1>
 </div>
 
+<div class="row">
+  <div class="col-xs-12">
+  <ul id="description-ctlr" class="nav nav-tabs" role="tablist">
+  <li role="presentation">
+    <a id="tab-description-write" href="#description-write" aria-controls="write descritpiton" role="tab" data-toggle="tab">
+      Write
+    </a>
+  </li>
+  <li role="presentation">
+    <a id="tab-description-preview" href="#description-preview" aria-controls="preview description" role="tab" data-toggle="tab">
+      Preview
+    </a>
+  </li>
+  </ul>
+
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane fade tab-part-detail" id="description-write">
+      <textarea style="width:100%" data-ng-model="descriptionEditor" name="descriptionEditor" markdown-editor="{'iconlibrary': 'fa', addExtraButtons: true, resize: 'vertical', autofocus: true, fullscreen: {enable: false}, hiddenButtons: 'Preview'}" rows="5"></textarea>
+    </div>
+    <div role="tabpanel" class="tab-pane fade tab-part-detail" id="description-preview">
+      <div marked="descriptionEditor" class="markdown" style="padding: 20px"></div>
+    </div>
+  </div>
+
+<script>
+  $('#description-ctlr a').click(function (e) {
+    e.preventDefault();
+    $(this).tab('show');
+  });
+  $('#description-ctlr a:first').tab('show');
+</script>
+
+  </div>
+</div>
+
 <part-search>
   <a authorize="ROLE_READ" href="/part/{{$part._source.id}}" class="btn btn-primary btn-xs"><i class="fa fa-eye"></i> View</a>
 </part-search>

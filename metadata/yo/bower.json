@@ -1,9 +1,9 @@
 {
-  "name": "TI_Metadata",
+  "name": "ti_metadata",
   "version": "0.0.0",
   "dependencies": {
     "json3": "3.2.4",
-    "jquery": "2.2.0",
+    "jquery": "2.2.4",
     "es5-shim": "2.0.8",
     "bootstrap-sass": "3.3.6",
     "fontawesome": "4.5.0",
@@ -18,7 +18,8 @@
     "gToast": "0.1.2",
     "angucomplete-alt": "2.4.1",
     "json-formatter": "~0.6.0",
-    "angular-loading-bar": "0.9.0"
+    "angular-loading-bar": "0.9.0",
+    "angular-markdown-editor-ghiscoding": "1.1.0"
   },
   "devDependencies": {
     "angular-mocks": "1.6.1",

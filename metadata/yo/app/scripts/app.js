@@ -2,7 +2,7 @@
 
 angular.module("ngMetaCrudApp", ["ngCookies", "ngRoute", "ngTable", "ui.bootstrap",
     "restangular", "dialogs.main", "gToast", "angucomplete-alt", "jsonFormatter",
-    "angular-loading-bar",
+    "angular-loading-bar", "hc.marked", "hljs", "angular-markdown-editor"
   ])
   .constant("METADATA_BASE", "/metadata/")
   .constant("VALID_IP_ADDRESS_REGEX", /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/)
@@ -11,6 +11,27 @@ angular.module("ngMetaCrudApp", ["ngCookies", "ngRoute", "ngTable", "ui.bootstra
   .config(['cfpLoadingBarProvider', function(cfpLoadingBarProvider) {
     // cfpLoadingBarProvider.spinnerTemplate = '<div><span class="fa fa-spinner">Loading...</div>';
     cfpLoadingBarProvider.latencyThreshold = 5;
+  }])
+  .config(["markedProvider", "hljsServiceProvider", function(markedProvider, hljsServiceProvider) {
+    // marked config
+    markedProvider.setOptions({
+      gfm: true,
+      tables: true,
+      sanitize: true,
+      highlight: function (code, lang) {
+        if (lang) {
+          return hljs.highlight(lang, code, true).value;
+        } else {
+          return hljs.highlightAuto(code).value;
+        }
+      }
+    });
+
+    // highlight config
+    hljsServiceProvider.setOptions({
+      // replace tab with 4 spaces
+      tabReplace: "    "
+    });
   }])
   .filter("ifEmpty", function() {
     return function(input, defaultValue) {
