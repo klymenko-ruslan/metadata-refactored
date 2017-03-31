@@ -115,9 +115,11 @@ td.label {
 }
 
 /* Fix for pagination in ngTable. */
+/*
 .ng-table-pagination {
   margin-top: 0;
 }
+*/
 
 .navbar-inverse .navbar-nav>li>a, .navbar-inverse .navbar-text {
     color: #ddd;
@@ -308,7 +310,7 @@ div.tolerance {
 }
 
 /* GTOAST */
-
+/*
 .gtoast {
   position: absolute;
   width: 100%;
@@ -350,6 +352,7 @@ div.tolerance {
   -moz-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   -box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
+*/
 
 /* SPINNER */
 

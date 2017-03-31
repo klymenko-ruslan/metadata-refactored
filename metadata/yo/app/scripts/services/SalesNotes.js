@@ -1,8 +1,8 @@
 "use strict";
 
 angular.module("ngMetaCrudApp")
-  .service("SalesNotes", ["$location", "$log", "Restangular", "User",
-    function SalesNotes($location, $log, Restangular, User) {
+  .service("SalesNotes", ["$location", "$log", "Restangular", "gToast", "$uibModalInstance", "User",
+    function SalesNotes($location, $log, Restangular, gToast, $uibModalInstance, User) {
       var SalesNotes = this;
 
       SalesNotes.states = ["draft", "submitted", "approved", "rejected", "published"];
@@ -14,7 +14,7 @@ angular.module("ngMetaCrudApp")
           function(response) {
             // Success
             gToast.open("Added image.");
-            $modalInstance.close(response);
+            $uibModalInstance.close(response);
           },
           function(response) {
             // Error
