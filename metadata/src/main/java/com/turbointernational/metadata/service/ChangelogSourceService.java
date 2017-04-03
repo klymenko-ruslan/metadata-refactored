@@ -108,11 +108,13 @@ public class ChangelogSourceService {
             KeyHolder keyHolder = new GeneratedKeyHolder();
             jdbcTemplate.update(connection -> {
                 PreparedStatement ps = connection.prepareStatement(
-                        "insert into changelog_source_link(created, create_user_id, changelog_id) " + "values(?, ?, ?)",
+                        "insert into changelog_source_link(created, create_user_id, changelog_id, description) " +
+                        "values(?, ?, ?, ?)",
                         new String[] { "id" });
                 ps.setTimestamp(1, new Timestamp(System.currentTimeMillis()));
                 ps.setLong(2, user.getId());
                 ps.setLong(3, changelog.getId());
+                ps.setString(4, description);
                 return ps;
             }, keyHolder);
             long chlgsrclnkid = keyHolder.getKey().longValue();

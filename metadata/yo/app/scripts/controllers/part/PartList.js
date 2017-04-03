@@ -2,8 +2,8 @@
 
 angular.module("ngMetaCrudApp")
 
-.controller("PartListCtrl", ["$scope", "$uibModal", "partTypes", "critDimsByPartTypes", "critDimEnumVals",
-  function ($scope, $uibModal, partTypes, critDimsByPartTypes, critDimEnumVals) {
+.controller("PartListCtrl", ["$scope", "$log", "$uibModal", "partTypes", "critDimsByPartTypes", "critDimEnumVals",
+  function ($scope, $log, $uibModal, partTypes, critDimsByPartTypes, critDimEnumVals) {
     $scope.createPart = function () {
       var modalInstance = $uibModal.open({
         "templateUrl": "/views/part/PartCreateModal.html",
@@ -13,6 +13,17 @@ angular.module("ngMetaCrudApp")
     $scope.partTypes = partTypes;
     $scope.critDimsByPartTypes = critDimsByPartTypes;
     $scope.critDimEnumVals = critDimEnumVals;
+
+    $scope.files = null;
+
+    $scope.$watch("files", function() {
+      $log.log("files files files: " + typeof($scope.files));
+    });
+
+    $scope.uploadFiles = function(files) {
+      alert("TODO: uploadFiles()");
+    };
+
   }
 ])
 .controller("PartCreateModalCtrl", ["$scope", "$uibModalInstance", "$log", "$location", "PartTypes",
@@ -23,15 +34,16 @@ angular.module("ngMetaCrudApp")
     $scope.create = function () {
       $uibModalInstance.close("cancel");
       $location.path("/part/createByPartTypeId/" + $scope.selection.partType.id);
-    }
+    };
 
     $scope.cancel = function () {
       $uibModalInstance.dismiss("cancel");
-    }
+    };
 
     $scope.refresh = function () {
       $scope.selection = {};
       PartTypes.refresh();
-    }
+    };
+
   }
 ]);

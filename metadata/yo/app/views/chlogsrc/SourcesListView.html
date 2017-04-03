@@ -1,7 +1,39 @@
 <div class="form-group">
-  <label for="description">Description</label>
-  <textarea id="description" rows="3" class="form-control" data-ng-model="data.description" name="descriptionEditor" markdown-editor="descriptionEditor"></textarea>
-  <div marked="descriptionEditor" class="markdown" style="padding: 20px"></div>
+  <label for="descriptionEditor">Description</label>
+
+  <ul id="description-ctlr" class="nav nav-tabs" role="tablist">
+  <li role="presentation">
+    <a id="tab-description-write" href="#description-write" aria-controls="write descritpiton" role="tab" data-toggle="tab">
+      Write
+    </a>
+  </li>
+  <li role="presentation">
+    <a id="tab-description-preview" href="#description-preview" aria-controls="preview description" role="tab" data-toggle="tab">
+      Preview
+    </a>
+  </li>
+  </ul>
+
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane fade tab-part-detail" id="description-write">
+      <textarea id="descriptionEditor" name="descriptionEditor" style="width:100%" data-ng-model="data.description"
+        markdown-editor="{'iconlibrary': 'fa', addExtraButtons: true, resize: 'vertical', fullscreen: {enable: false}, hiddenButtons: 'Preview'}"
+        rows="5">
+      </textarea>
+    </div>
+    <div role="tabpanel" class="tab-pane fade tab-part-detail" id="description-preview">
+      <div marked="data.description" class="markdown"></div>
+    </div>
+  </div>
+
+  <script>
+    $('#description-ctlr a').click(function (e) {
+      e.preventDefault();
+      $(this).tab('show');
+    });
+    $('#description-ctlr a:first').tab('show');
+  </script>
+
 </div>
 
 <div class="row">
