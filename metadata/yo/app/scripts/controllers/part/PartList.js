@@ -14,16 +14,6 @@ angular.module("ngMetaCrudApp")
     $scope.critDimsByPartTypes = critDimsByPartTypes;
     $scope.critDimEnumVals = critDimEnumVals;
 
-    $scope.files = null;
-
-    $scope.$watch("files", function() {
-      $log.log("files files files: " + typeof($scope.files));
-    });
-
-    $scope.uploadFiles = function(files) {
-      alert("TODO: uploadFiles()");
-    };
-
   }
 ])
 .controller("PartCreateModalCtrl", ["$scope", "$uibModalInstance", "$log", "$location", "PartTypes",
