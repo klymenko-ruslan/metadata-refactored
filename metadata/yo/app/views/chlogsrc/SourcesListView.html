@@ -17,13 +17,14 @@
   <div class="tab-content">
     <div role="tabpanel" class="tab-pane fade tab-part-detail" id="description-write">
       <textarea id="descriptionEditor" name="descriptionEditor" style="width:100%" data-ng-model="data.description"
-        markdown-editor="{'iconlibrary': 'fa', addExtraButtons: true, resize: 'vertical', fullscreen: {enable: false}, hiddenButtons: 'Preview'}"
+        markdown-editor="markdownEditorOpts"
         rows="5">
       </textarea>
     </div>
     <div role="tabpanel" class="tab-pane fade tab-part-detail" id="description-preview">
       <div marked="data.description" class="markdown"></div>
     </div>
+    <ul id="descriptionUploads" class="list-inline" style="margin-top:5px"></ul>
   </div>
 
   <script>

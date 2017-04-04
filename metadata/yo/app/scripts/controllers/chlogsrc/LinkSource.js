@@ -98,6 +98,32 @@ angular.module("ngMetaCrudApp")
 
     $scope.data = null;
 
+    $scope.markdownEditorOpts = {
+      iconlibrary: "fa",
+      addExtraButtons: true,
+      resize: "vertical",
+      fullscreen: {enable: false},
+      hiddenButtons: 'Preview',
+      dropZoneOptions: {
+        url: '/metadata/changelogsourcelink/description/attachment/upload',
+        maxFilesize:20,
+        createImageThumbnails: false,
+        maxFiles: 100,
+        parallelUploads: 1,
+        previewsContainer: "#descriptionUploads",
+        previewTemplate: "<li><div class='dz-preview'><div class='dz-details'><span class='dz-filename' data-dz-name></span>, <span class='dz-size' data-dz-size></span><button class='btn btn-danger btn-xs' style='margin-left:4px' data-dz-remove><i class='fa fa-trash-o'></i> Remove</button><span style='padding-left:4px;' data-dz-errormessage></span></div></div></li>",
+        autoProcessQueue: true,
+        init: function() {
+          this.on("addedfile", function(file) {
+            alert("Added file: " + file.name + ", " + file.size + ", " + file.type);
+          });
+          this.on("removedfile", function(file) {
+            alert("Removed file: " + file.name + ", " + file.size + ", " + file.type);
+          });
+        }
+      }
+    };
+
     function _reset() {
       pickedSources = [];
       $scope.pickedSourcesRatings = [];

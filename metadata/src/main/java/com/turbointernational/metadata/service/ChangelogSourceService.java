@@ -57,6 +57,9 @@ public class ChangelogSourceService {
     private ChangelogSourceLinkDao changelogSourceLinkDao;
 
     @Autowired
+    private ChangelogSourceLinkDescriptionAttachmentService changelogSourceLinkDescriptionAttachmentService;
+
+    @Autowired
     private ServiceService serviceService;
 
     @PersistenceContext(unitName = "metadata")
@@ -102,7 +105,7 @@ public class ChangelogSourceService {
     }
 
     public void link(HttpServletRequest httpRequest, Changelog changelog, Long[] sourcesIds, Integer[] ratings,
-            String description, Long[] attachIds) throws AssertionError {
+            String description, Long[] descriptionAttachmentIds) throws AssertionError {
         if (sourcesIds != null && sourcesIds.length > 0) {
             User user = User.getCurrentUser();
             KeyHolder keyHolder = new GeneratedKeyHolder();
@@ -117,7 +120,7 @@ public class ChangelogSourceService {
                 ps.setString(4, description);
                 return ps;
             }, keyHolder);
-            long chlgsrclnkid = keyHolder.getKey().longValue();
+            Long chlgsrclnkid = keyHolder.getKey().longValue();
             for (int i = 0; i < sourcesIds.length; i++) {
                 Long srcId = sourcesIds[i];
                 Integer rating = ratings[i];
@@ -129,6 +132,11 @@ public class ChangelogSourceService {
                     ps.setInt(3, rating);
                     return ps;
                 });
+            }
+            if (descriptionAttachmentIds != null) {
+                for(int i = 0; i < descriptionAttachmentIds.length; i++) {
+                    changelogSourceLinkDescriptionAttachmentService.linkSourceLinkDescription(chlgsrclnkid, descriptionAttachmentIds[i]);
+                }
             }
             /*
              * ChangelogSourceLink link = new ChangelogSourceLink(changelog,

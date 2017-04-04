@@ -89,6 +89,9 @@ public class ChangelogSourceLink implements Serializable {
     )
     private List<Source> sources = new ArrayList<>();
 
+    @OneToMany(mappedBy = "changelogSourceLink", fetch = LAZY, orphanRemoval = true)
+    private List<ChangelogSourceLinkDescriptionAttachment> descriptionAttachments = new ArrayList<>();
+
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Constructors">
@@ -155,6 +158,13 @@ public class ChangelogSourceLink implements Serializable {
         this.changelogSources = changelogSources;
     }
 
+    public List<ChangelogSourceLinkDescriptionAttachment> getDescriptionAttachments() {
+        return descriptionAttachments;
+    }
+
+    public void setDescriptionAttachments(List<ChangelogSourceLinkDescriptionAttachment> descriptionAttachments) {
+        this.descriptionAttachments = descriptionAttachments;
+    }
 
     //</editor-fold>
 

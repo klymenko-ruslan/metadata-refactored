@@ -19,7 +19,8 @@
     "angucomplete-alt": "3.0.0",
     "json-formatter": "~0.6.0",
     "angular-loading-bar": "0.9.0",
-    "angular-markdown-editor-ghiscoding": "1.1.0"
+    "angular-markdown-editor-ghiscoding": "1.1.0",
+    "dropzone": "https://github.com/enyo/dropzone.git#^4.3.0"
   },
   "devDependencies": {
     "angular-mocks": "1.6.4",

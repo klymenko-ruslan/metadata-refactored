@@ -13,6 +13,7 @@ angular.module("ngMetaCrudApp", ["ngCookies", "ngRoute", "ngTable", "ui.bootstra
     cfpLoadingBarProvider.latencyThreshold = 5;
   }])
   .config(["markedProvider", "hljsServiceProvider", function(markedProvider, hljsServiceProvider) {
+    Dropzone.autoDiscover = false;
     // marked config
     markedProvider.setOptions({
       gfm: true,
