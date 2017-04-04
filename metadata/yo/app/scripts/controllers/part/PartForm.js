@@ -142,9 +142,9 @@ angular.module("ngMetaCrudApp").controller("PartFormCtrl",
       return !$scope.isEditMode() || User.hasRole("ROLE_ALTER_PART_NUMBER");
     };
 
-    function cbCreate(srcIds, ratings, description) {
+    function cbCreate(srcIds, ratings, description, attachIds) {
       var partNumbers = _.map($scope.mpns, function(o) { return o.val; });
-      restService.createPart($scope.part, partNumbers, srcIds, ratings, description).then(
+      restService.createPart($scope.part, partNumbers, srcIds, ratings, description, attachIds).then(
         function(response) {
           if (response.results.length === 1) {
             var id = response.results[0].partId;

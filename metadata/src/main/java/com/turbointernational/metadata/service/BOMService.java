@@ -490,6 +490,13 @@ public class BOMService {
         @JsonView(View.Summary.class)
         private String chlogSrcLnkDescription;
 
+        /**
+         * IDs of uploaded files which should be attached to this changelog.
+         * See ticket #933 for details.
+         */
+        @JsonView(View.Summary.class)
+        private Long[] attachIds;
+
         @JsonView({ View.Summary.class })
         private List<Row> rows;
 
@@ -532,6 +539,15 @@ public class BOMService {
         public void setChlogSrcLnkDescription(String chlogSrcLnkDescription) {
             this.chlogSrcLnkDescription = chlogSrcLnkDescription;
         }
+
+        public Long[] getAttachIds() {
+            return attachIds;
+        }
+
+        public void setAttachIds(Long[] attachIds) {
+            this.attachIds = attachIds;
+        }
+
     }
 
     @JsonInclude(ALWAYS)
@@ -687,6 +703,13 @@ public class BOMService {
         @JsonView(View.Summary.class)
         private Long[] sourcesIds;
 
+        /**
+         * IDs of uploaded files which should be attached to this changelog.
+         * See ticket #933 for details.
+         */
+        @JsonView(View.Summary.class)
+        private Long[] attachIds;
+
         @JsonView(View.Summary.class)
         private Integer[] chlogSrcRatings;
 
@@ -726,6 +749,14 @@ public class BOMService {
 
         public void setRows(List<Row> rows) {
             this.rows = rows;
+        }
+
+        public Long[] getAttachIds() {
+            return attachIds;
+        }
+
+        public void setAttachIds(Long[] attachIds) {
+            this.attachIds = attachIds;
         }
 
     }
@@ -1001,7 +1032,7 @@ public class BOMService {
     }
 
     private CreateBOMItemResult _create(HttpServletRequest httpRequest, Long parentPartId, Long childPartId,
-            Integer quantity, Long[] sourcesIds, Integer[] ratings, String description)
+            Integer quantity, Long[] sourcesIds, Integer[] ratings, String description, Long[] attachIds)
             throws FoundBomRecursionException {
         // Create a new BOM item
         Part parent = partDao.findOne(parentPartId);
@@ -1022,7 +1053,7 @@ public class BOMService {
         relatedParts.add(new RelatedPart(child.getId(), BOM_CHILD));
         Changelog changelog = changelogService.log(BOM, "Added bom item: " + formatBOMItem(bom), bom.toJson(),
                 relatedParts);
-        changelogSourceService.link(httpRequest, changelog, sourcesIds, ratings, description);
+        changelogSourceService.link(httpRequest, changelog, sourcesIds, ratings, description, attachIds);
         return new CreateBOMItemResult(bom, changelog);
     }
 
@@ -1040,7 +1071,7 @@ public class BOMService {
             }
             try {
                 _create(httpRequest, parentPartId, childId, row.getQuantity(), request.getSourcesIds(),
-                        request.getChlogSrcRatings(), request.getChlogSrcLnkDescription());
+                        request.getChlogSrcRatings(), request.getChlogSrcLnkDescription(), request.getAttachIds());
             } catch (FoundBomRecursionException e) {
                 log.debug("Adding of the part [" + childId + "] to list of BOM for part [" + parentPartId + "] failed.",
                         e);
@@ -1053,8 +1084,7 @@ public class BOMService {
                         row.getQuantity(), e.getMessage()));
             }
         }
-        rebuildBomDescendancyForPart(parentPartId, true); // TODO: is clean=true
-                                                          // required?
+        rebuildBomDescendancyForPart(parentPartId, true); // TODO: is clean=true required?
         List<BOMItem> boms = getByParentId(parentPartId);
         return new CreateBOMsResponse(failures, boms);
     }
@@ -1114,7 +1144,7 @@ public class BOMService {
                 }
                 // Add the primary part to the list of BOMs of the picked part.
                 _create(httpRequest, pickedPartId, primaryPartId, r.getQuantity(), request.getSourcesIds(),
-                        request.getChlogSrcRatings(), request.getChlogSrcLnkDescription());
+                        request.getChlogSrcRatings(), request.getChlogSrcLnkDescription(), request.getAttachIds());
                 added++;
             } catch (FoundBomRecursionException e) {
                 log.debug("Adding of the part [" + primaryPartId + "] to list of BOM for part [" + pickedPartId

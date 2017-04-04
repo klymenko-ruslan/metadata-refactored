@@ -109,7 +109,8 @@ public class PartService {
 
     @Transactional
     public List<PartController.PartCreateResponse.Row> createPart(HttpServletRequest httpRequest, Part origin,
-            List<String> partNumbers, Long[] sourcesIds, Integer[] ratings, String description) throws Exception {
+            List<String> partNumbers, Long[] sourcesIds, Integer[] ratings, String description, Long[] attachIds)
+            throws Exception {
         Set<String> added = new HashSet<>(partNumbers.size());
         List<PartController.PartCreateResponse.Row> results = new ArrayList<>(partNumbers.size());
         for (Iterator<String> iter = partNumbers.iterator(); iter.hasNext();) {
@@ -127,7 +128,7 @@ public class PartService {
             relatedParts.add(new RelatedPart(origin.getId(), PART0));
             Changelog chlog = changelogService.log(PART, "Created part " + formatPart(origin) + ".", json,
                     relatedParts);
-            changelogSourceService.link(httpRequest, chlog, sourcesIds, ratings, description);
+            changelogSourceService.link(httpRequest, chlog, sourcesIds, ratings, description, attachIds);
             results.add(new PartController.PartCreateResponse.Row(origin.getId(), mpn, true, null));
             added.add(mpn);
         }

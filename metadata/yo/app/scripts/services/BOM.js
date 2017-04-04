@@ -28,9 +28,10 @@ angular.module("ngMetaCrudApp").service("BOM", ["$log", "Restangular", function 
       return Restangular.one("bom", bomId).remove();
     };
 
-    this.addToParentsBOMs = function(partId, sourcesIds, ratings, description, rows) {
+    this.addToParentsBOMs = function(partId, sourcesIds, ratings, description, rows, attachIds) {
       var request = {
         sourcesIds: sourcesIds,
+        attachIds: attachIds,
         chlogSrcRatings: ratings,
         chlogSrcLnkDescription: description,
         rows: rows

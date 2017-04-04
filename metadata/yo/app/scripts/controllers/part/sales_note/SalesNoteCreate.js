@@ -26,9 +26,9 @@ angular.module("ngMetaCrudApp")
       }
     );
 
-    function cbSave(srcIds, ratings, description) {
+    function cbSave(srcIds, ratings, description, attachIds) {
       $scope.savePromise = restService.createSalesNote($scope.salesNote.primaryPartId, $scope.salesNote.comment,
-        srcIds, ratings, description).then(
+        srcIds, ratings, description, attachIds).then(
           function (salesNoteResponse) {
             $location.path("/part/" + $scope.partId + "/sales_note/" + salesNoteResponse.id);
             return salesNoteResponse;

@@ -164,7 +164,7 @@ public class InterchangeServiceTest extends AbstractFunctionalTest {
         Assert.assertEquals("Unexpected number of rows in the table 'interchange_item'.", 5, iicount);
         // The test.
         long pickedPartId = 40393L, partId = 41405L;
-        interchangeService.mergePickedAloneToPart(null, partId, pickedPartId, null, null, null);
+        interchangeService.mergePickedAloneToPart(null, partId, pickedPartId, null, null, null, null);
         partDao.getEntityManager().flush(); // Important: propagate changes to
                                             // the database
         ihcount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "interchange_header");
@@ -210,7 +210,7 @@ public class InterchangeServiceTest extends AbstractFunctionalTest {
         Assert.assertEquals("Unexpected number of rows in the table 'interchange_item'.", 5, iicount);
         // The test.
         long pickedPartId = 40393L, partId = 41405L;
-        interchangeService.mergePartAloneToPicked(null, partId, pickedPartId, null, null, null);
+        interchangeService.mergePartAloneToPicked(null, partId, pickedPartId, null, null, null, null);
         partDao.getEntityManager().flush(); // Important: propagate changes to
                                             // the database
         ihcount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "interchange_header");
@@ -275,7 +275,7 @@ public class InterchangeServiceTest extends AbstractFunctionalTest {
         Assert.assertEquals("Unexpected number of rows in the table 'interchange_item'.", 5, iicount);
         // The test.
         long pickedPartId = 40393L, partId = 41405L;
-        interchangeService.mergePickedAllToPart(null, partId, pickedPartId, null, null, null);
+        interchangeService.mergePickedAllToPart(null, partId, pickedPartId, null, null, null, null);
         partDao.getEntityManager().flush(); // Important: propagate changes to
                                             // the database
         ihcount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "interchange_header");

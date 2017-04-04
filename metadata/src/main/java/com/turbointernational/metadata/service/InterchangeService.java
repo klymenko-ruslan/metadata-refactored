@@ -73,7 +73,7 @@ public class InterchangeService {
      */
     @Transactional
     public void create(HttpServletRequest httpRequest, List<Long> partIds, Long[] sourcesIds, Integer[] ratings,
-            String description) {
+            String description, Long[] attachIds) {
         // Link it with the Hibernate parts
         Set<Part> canonicalParts = new HashSet<>();
         // Map the incoming part IDs to their canonical part
@@ -98,7 +98,7 @@ public class InterchangeService {
         // Update the changelog.
         Changelog changelog = changelogService.log(INTERCHANGE,
                 "Created interchange: " + formatInterchange(interchange) + ".", interchange.toJson(), relatedParts);
-        changelogSourceService.link(httpRequest, changelog, sourcesIds, ratings, description);
+        changelogSourceService.link(httpRequest, changelog, sourcesIds, ratings, description, attachIds);
         bomService.rebuildBomDescendancyForParts(partIds, true);
     }
 
@@ -169,7 +169,7 @@ public class InterchangeService {
      */
     @Transactional
     public void mergePickedAloneToPart(HttpServletRequest httpRequest, long partId, long pickedPartId,
-            Long[] sourcesIds, Integer[] ratings, String description) {
+            Long[] sourcesIds, Integer[] ratings, String description, Long[] attachIds) {
         Part part = partDao.findOne(partId);
         normalizePartInterchange(part);
         Part pickedPart = partDao.findOne(pickedPartId);
@@ -181,7 +181,7 @@ public class InterchangeService {
         Changelog changelog = changelogService.log(INTERCHANGE,
                 "Part " + formatPart(pickedPart) + " added to the part " + formatPart(part) + " as interchange.",
                 relatedParts);
-        changelogSourceService.link(httpRequest, changelog, sourcesIds, ratings, description);
+        changelogSourceService.link(httpRequest, changelog, sourcesIds, ratings, description, attachIds);
         bomService.rebuildBomDescendancyForPart(partId, true);
         bomService.rebuildBomDescendancyForPart(pickedPartId, true);
     }
@@ -195,7 +195,7 @@ public class InterchangeService {
      */
     @Transactional
     public void mergePartAloneToPicked(HttpServletRequest httpRequest, long partId, long pickedPartId,
-            Long[] sourcesIds, Integer[] ratings, String description) {
+            Long[] sourcesIds, Integer[] ratings, String description, Long[] attachIds) {
         Part part = partDao.findOne(partId);
         normalizePartInterchange(part);
         Part pickedPart = partDao.findOne(pickedPartId);
@@ -207,7 +207,7 @@ public class InterchangeService {
         Changelog changelog = changelogService.log(INTERCHANGE,
                 "Part " + formatPart(part) + " added to the part " + formatPart(pickedPart) + " as interchange.",
                 relatedParts);
-        changelogSourceService.link(httpRequest, changelog, sourcesIds, ratings, description);
+        changelogSourceService.link(httpRequest, changelog, sourcesIds, ratings, description, attachIds);
         bomService.rebuildBomDescendancyForPart(partId, true);
         bomService.rebuildBomDescendancyForPart(pickedPartId, true);
     }
@@ -221,7 +221,7 @@ public class InterchangeService {
      */
     @Transactional
     public void mergePickedAllToPart(HttpServletRequest httpRequest, long partId, long pickedPartId, Long[] sourcesIds,
-            Integer[] ratings, String description) {
+            Integer[] ratings, String description, Long[] attachIds) {
         Part part = partDao.findOne(partId);
         normalizePartInterchange(part);
         Part pickedPart = partDao.findOne(pickedPartId);
@@ -233,7 +233,7 @@ public class InterchangeService {
         Changelog changelog = changelogService.log(INTERCHANGE, "Part " + formatPart(pickedPart)
                 + " and all its interchanges added to the part " + formatPart(part) + " as interchanges.",
                 relatedParts);
-        changelogSourceService.link(httpRequest, changelog, sourcesIds, ratings, description);
+        changelogSourceService.link(httpRequest, changelog, sourcesIds, ratings, description, attachIds);
         bomService.rebuildBomDescendancyForPart(partId, true);
         bomService.rebuildBomDescendancyForPart(pickedPartId, true);
     }

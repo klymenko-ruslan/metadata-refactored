@@ -69,7 +69,7 @@ public class SalesNoteController {
             @RequestBody CreateSalesNoteRequest request) {
         SalesNote salesNote = salesNoteService.createSalesNote(httpRequest, user, request.getPrimaryPartId(),
                 request.getComment(), request.getSourcesIds(), request.getChlogSrcRatings(),
-                request.getChlogSrcLnkDescription());
+                request.getChlogSrcLnkDescription(), request.getAttachIds());
         return salesNote;
     }
 

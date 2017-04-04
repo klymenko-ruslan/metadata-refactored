@@ -102,7 +102,7 @@ public class ChangelogSourceService {
     }
 
     public void link(HttpServletRequest httpRequest, Changelog changelog, Long[] sourcesIds, Integer[] ratings,
-            String description) throws AssertionError {
+            String description, Long[] attachIds) throws AssertionError {
         if (sourcesIds != null && sourcesIds.length > 0) {
             User user = User.getCurrentUser();
             KeyHolder keyHolder = new GeneratedKeyHolder();

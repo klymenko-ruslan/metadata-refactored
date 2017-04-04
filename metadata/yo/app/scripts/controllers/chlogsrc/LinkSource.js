@@ -35,7 +35,7 @@ angular.module("ngMetaCrudApp")
             "ROLE_CHLOGSRC_READ, ROLE_CHLOGSRCNAME_READ.");
         }
       } else {
-        cbSave(null, null, null);
+        cbSave(null, null, null, null);
       }
     };
 
@@ -87,7 +87,7 @@ angular.module("ngMetaCrudApp")
 
     $scope.pickedSourcesRatings = null;
 
-    var attachments = null;
+    var sourceAttachments = null;
 
     var file = null;
 
@@ -102,7 +102,7 @@ angular.module("ngMetaCrudApp")
       pickedSources = [];
       $scope.pickedSourcesRatings = [];
       pickedSourceIds = {};
-      attachments = [];
+      sourceAttachments = [];
 
       formData = new FormData();
 
@@ -202,14 +202,14 @@ angular.module("ngMetaCrudApp")
       }
     );
 
-    $scope.attachmentsTableParams = new ngTableParams(
+    $scope.sourceAttachmentsTableParams = new ngTableParams(
       {
         page: 1,
         count: 10,
         sorting: {}
       },
       {
-        getData: utils.localPagination(attachments)
+        getData: utils.localPagination(sourceAttachments)
       }
     );
 
@@ -223,8 +223,10 @@ angular.module("ngMetaCrudApp")
         srcIds = _.map(pickedSources, function(ps) { return ps.id; });
         ratings = $scope.pickedSourcesRatings;
       }
+      
+      var attachIds = null; // TODO: #933
 
-      cbSave(srcIds, ratings, $scope.data.description);
+      cbSave(srcIds, ratings, $scope.data.description, attachIds);
 
     };
 
@@ -247,7 +249,7 @@ angular.module("ngMetaCrudApp")
 
     function _cleanCreateSourceForm() {
       $scope.data.crud.source = {}; // clean form
-      attachments.splice(0, attachments.length);
+      sourceAttachments.splice(0, sourceAttachments.length);
       $scope.data.attachDescr = null;
       formData.delete("file");
     };
@@ -380,19 +382,19 @@ angular.module("ngMetaCrudApp")
       formData.append("file", files[0]);
     };
 
-    function _updateAttachmentsTable(updatedAttachments) {
-      attachments.splice(0, attachments.length);
-      _.each(updatedAttachments, function (e) {
-        attachments.push(e);
+    function _updateSourceAttachmentsTable(updatedSourceAttachments) {
+      sourceAttachments.splice(0, sourceAttachments.length);
+      _.each(updatedSourceAttachments, function (e) {
+        sourceAttachments.push(e);
       });
-      $scope.attachmentsTableParams.reload();
+      $scope.sourceAttachmentsTableParams.reload();
     };
 
-    $scope.uploadAttachment = function() {
+    $scope.uploadSourceAttachment = function() {
       restService.changelogSourceUploadAttachmentTmp(file, file.name, $scope.data.attachDescr).then(
         function(updatedAttachmentsResponse) {
           // Success
-        _updateAttachmentsTable(updatedAttachmentsResponse.rows);
+        _updateSourceAttachmentsTable(updatedAttachmentsResponse.rows);
           gToast.open("File uploaded.");
           $scope.data.attachDescr = null;
           formData.delete("file");
@@ -406,10 +408,10 @@ angular.module("ngMetaCrudApp")
       );
     };
 
-    $scope.removeAttachment = function (idx) {
+    $scope.removeSourceAttachment = function (idx) {
       restService.changelogSourceRemoveAttachmentTmp(idx).then(
         function(updatedAttachmentsResponse) {
-          _updateAttachmentsTable(updatedAttachmentsResponse.rows);
+          _updateSourceAttachmentsTable(updatedAttachmentsResponse.rows);
         },
         function(errorResponse) {
           restService.error("Could not remove attachment.", errorResponse);

@@ -94,7 +94,7 @@ public class SalesNoteService {
 
     @Transactional
     public SalesNote createSalesNote(HttpServletRequest httpRequest, User user, Long primaryPartId, String comment,
-            Long[] sourcesIds, Integer[] ratings, String description) {
+            Long[] sourcesIds, Integer[] ratings, String description, Long[] attachIds) {
         // Create the sales note from the request
         SalesNote salesNote = new SalesNote();
         salesNote.setCreator(user);
@@ -112,7 +112,7 @@ public class SalesNoteService {
         relatedParts.add(new RelatedPart(primaryPartId, PART0));
         Changelog changelog = changelogService.log(SALESNOTES, "Created sales note " + formatSalesNote(salesNote) + ".",
                 relatedParts);
-        changelogSourceService.link(httpRequest, changelog, sourcesIds, ratings, description);
+        changelogSourceService.link(httpRequest, changelog, sourcesIds, ratings, description, attachIds);
         // Initialize a few properties before sending the response
         primaryPart.getManufacturer().getName();
         primaryPart.getPartType().getName();

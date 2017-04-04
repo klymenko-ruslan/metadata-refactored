@@ -1,6 +1,9 @@
 package com.turbointernational.metadata.web.controller;
 
+import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,7 +16,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -72,6 +74,13 @@ public class InterchangeController {
         @JsonView(View.Summary.class)
         private Long[] sourcesIds;
 
+        /**
+         * IDs of uploaded files which should be attached to this changelog. See
+         * ticket #933 for details.
+         */
+        @JsonView(View.Summary.class)
+        private Long[] attachIds;
+
         @JsonView(View.Summary.class)
         private Integer[] chlogSrcRatings;
 
@@ -118,6 +127,14 @@ public class InterchangeController {
             this.chlogSrcLnkDescription = chlogSrcLnkDescription;
         }
 
+        public Long[] getAttachIds() {
+            return attachIds;
+        }
+
+        public void setAttachIds(Long[] attachIds) {
+            this.attachIds = attachIds;
+        }
+
     }
 
     public static class UpdateInterchangeRequest {
@@ -131,6 +148,13 @@ public class InterchangeController {
          */
         @JsonView(View.Summary.class)
         private Long[] sourcesIds;
+
+        /**
+         * IDs of uploaded files which should be attached to this changelog. See
+         * ticket #933 for details.
+         */
+        @JsonView(View.Summary.class)
+        private Long[] attachIds;
 
         @JsonView(View.Summary.class)
         private Integer[] chlogSrcRatings;
@@ -177,10 +201,18 @@ public class InterchangeController {
                     + ", chlogSrcLnkDescription='" + chlogSrcLnkDescription + '\'' + '}';
         }
 
+        public Long[] getAttachIds() {
+            return attachIds;
+        }
+
+        public void setAttachIds(Long[] attachIds) {
+            this.attachIds = attachIds;
+        }
+
     }
 
     @Transactional
-    @RequestMapping(method = RequestMethod.POST, consumes = APPLICATION_JSON_VALUE)
+    @RequestMapping(method = POST, consumes = APPLICATION_JSON_VALUE)
     @Secured("ROLE_INTERCHANGE")
     public ResponseEntity<String> create(HttpServletRequest httpRequest, CreateInterchangeRequest request)
             throws Exception {
@@ -190,12 +222,12 @@ public class InterchangeController {
         partIds.add(request.getPartId());
         partIds.add(request.getPickedPartId());
         interchangeService.create(httpRequest, partIds, request.getSourcesIds(), request.getChlogSrcRatings(),
-                request.getChlogSrcLnkDescription());
-        return new ResponseEntity<>("ok", headers, HttpStatus.OK);
+                request.getChlogSrcLnkDescription(), request.getAttachIds());
+        return new ResponseEntity<>("ok", headers, OK);
     }
 
     @Transactional
-    @RequestMapping(value = "/{partId}/part/{pickedPartId}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/{partId}/part/{pickedPartId}", method = PUT)
     @ResponseBody
     @Secured("ROLE_INTERCHANGE")
     public void update(HttpServletRequest httpRequest, HttpServletResponse response,
@@ -210,18 +242,19 @@ public class InterchangeController {
         Long[] sourcesIds = request.getSourcesIds();
         Integer[] ratings = request.getChlogSrcRatings();
         String description = request.getChlogSrcLnkDescription();
+        Long[] attachIds = request.getAttachIds();
         switch (mergeChoice) {
         case MERGE_OPT_PICKED_ALONE_TO_PART:
             interchangeService.mergePickedAloneToPart(httpRequest, partId, pickedPartId, sourcesIds, ratings,
-                    description);
+                    description, attachIds);
             break;
         case MERGE_OPT_PART_ALONE_TO_PICKED:
             interchangeService.mergePartAloneToPicked(httpRequest, partId, pickedPartId, sourcesIds, ratings,
-                    description);
+                    description, attachIds);
             break;
         case MERGE_OPT_PICKED_ALL_TO_PART:
-            interchangeService.mergePickedAllToPart(httpRequest, partId, pickedPartId, sourcesIds, ratings,
-                    description);
+            interchangeService.mergePickedAllToPart(httpRequest, partId, pickedPartId, sourcesIds, ratings, description,
+                    attachIds);
             break;
         default:
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);

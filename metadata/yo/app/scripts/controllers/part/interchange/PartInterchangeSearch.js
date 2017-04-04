@@ -64,10 +64,10 @@ angular.module("ngMetaCrudApp")
         });
     };
 
-    function cbAddPartToThisInterchangeGroup(srcIds, ratings, description) {
+    function cbAddPartToThisInterchangeGroup(srcIds, ratings, description, attachIds) {
       // Add part to this interchange group
       restService.updatePartInterchange($scope.partId, $scope.pickedPart.id, MERGE_OPTIONS.PICKED_ALONE_TO_PART,
-          srcIds, ratings, description).then(
+          srcIds, ratings, description, attachIds).then(
         function success() {
           gToast.open("Added picked part to interchange.");
           $location.path("/part/" + $scope.partId);
@@ -78,7 +78,7 @@ angular.module("ngMetaCrudApp")
       );
     };
 
-    function cbAskMergeOpt(srcIds, ratings, description) {
+    function cbAskMergeOpt(srcIds, ratings, description, attachIds) {
       // In this case there are several possibilities how interchangeables can be merged.
       // See ticket #484.
       var mergeDialog = dialogs.create("/views/dialog/MergeInterchangeablesDlg.html", "mergeInterchangeablesCtrl",
@@ -93,7 +93,7 @@ angular.module("ngMetaCrudApp")
       mergeDialog.result.then(
         function(mergeChoice) {
           restService.updatePartInterchange($scope.partId, $scope.pickedPart.id, mergeChoice,
-              srcIds, ratings, description).then(
+              srcIds, ratings, description, attachIds).then(
             function() {
               gToast.open("Interchangeable part group changed.");
               $location.path("/part/" + $scope.partId);
@@ -109,10 +109,10 @@ angular.module("ngMetaCrudApp")
       );
     };
 
-    function cbMergeAloneToPicked(srcIds, ratings, description) {
+    function cbMergeAloneToPicked(srcIds, ratings, description, attachIds) {
       // Add this part to the picked part's interchange
       restService.updatePartInterchange($scope.partId, $scope.pickedPart.id, MERGE_OPTIONS.PART_ALONE_TO_PICKED,
-          srcIds, ratings, description).then(
+          srcIds, ratings, description, attachIds).then(
         function success() {
           gToast.open("Added part to picked part's interchanges.");
           $location.path("/part/" + $scope.partId);
@@ -123,9 +123,9 @@ angular.module("ngMetaCrudApp")
       );
     };
 
-    function cbCreate(srcIds, ratings, description) {
+    function cbCreate(srcIds, ratings, description, attachIds) {
       // Create
-      restService.createPartInterchange($scope.part.id, $scope.pickedPart.id, srcIds, ratings, description).then(
+      restService.createPartInterchange($scope.part.id, $scope.pickedPart.id, srcIds, ratings, description, attachIds).then(
         function() {
           gToast.open("Interchangeable part group changed added.");
           $location.path("/part/" + $scope.partId);

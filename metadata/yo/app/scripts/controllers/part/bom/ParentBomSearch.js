@@ -66,7 +66,7 @@ angular.module("ngMetaCrudApp")
         return pickedParts.length === 0;
       };
 
-      function cbSave(srcIds, ratings, description) {
+      function cbSave(srcIds, ratings, description, attachIds) {
         var rows = _.map(pickedParts, function(p) {
           return {
             partId: p.id,
@@ -74,7 +74,7 @@ angular.module("ngMetaCrudApp")
             resolution: p.extra.resolution
           };
         });
-        BOM.addToParentsBOMs($scope.part.id, srcIds, ratings, description, rows).then(
+        BOM.addToParentsBOMs($scope.part.id, srcIds, ratings, description, rows, attachIds).then(
           function success(response) {
             parents.splice(0, parents.length);
             _.each(response.parents, function(b) {

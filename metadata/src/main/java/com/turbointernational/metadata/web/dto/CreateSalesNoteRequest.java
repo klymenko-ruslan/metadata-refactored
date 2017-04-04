@@ -30,6 +30,13 @@ public class CreateSalesNoteRequest implements Serializable {
     @JsonView(View.Summary.class)
     private Long[] sourcesIds;
 
+    /**
+     * IDs of uploaded files which should be attached to this changelog. See
+     * ticket #933 for details.
+     */
+    @JsonView(View.Summary.class)
+    private Long[] attachIds;
+
     @JsonView(View.Summary.class)
     private Integer[] chlogSrcRatings;
 
@@ -74,6 +81,14 @@ public class CreateSalesNoteRequest implements Serializable {
 
     public void setChlogSrcLnkDescription(String chlogSrcLnkDescription) {
         this.chlogSrcLnkDescription = chlogSrcLnkDescription;
+    }
+
+    public Long[] getAttachIds() {
+        return attachIds;
+    }
+
+    public void setAttachIds(Long[] attachIds) {
+        this.attachIds = attachIds;
     }
 
 }

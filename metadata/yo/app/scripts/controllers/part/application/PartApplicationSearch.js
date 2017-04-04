@@ -25,8 +25,8 @@ angular.module("ngMetaCrudApp")
 
       $scope.pickedApplications = [];
 
-      function cbSave(srcIds, ratings, description) {
-        restService.addPartApplications($scope.partId, $scope.pickedApplications, srcIds, ratings, description).then(
+      function cbSave(srcIds, ratings, description, attachIds) {
+        restService.addPartApplications($scope.partId, $scope.pickedApplications, srcIds, ratings, description, attachIds).then(
           function() {
             // Success
             gToast.open("Application(s) added to part.");

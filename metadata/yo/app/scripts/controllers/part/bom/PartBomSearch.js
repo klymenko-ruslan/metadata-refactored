@@ -90,8 +90,8 @@ angular.module("ngMetaCrudApp")
         restService.status.bomRebuilding;
     };
 
-    function cbSave(srcIds, ratings, description) {
-      restService.createBom($scope.partId, pickedParts, srcIds, ratings, description).then(
+    function cbSave(srcIds, ratings, description, attachIds) {
+      restService.createBom($scope.partId, pickedParts, srcIds, ratings, description, attachIds).then(
         function(response) {
           boms.splice(0, boms.length);
           _.each(response.boms, function(b) {

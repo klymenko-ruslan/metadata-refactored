@@ -96,6 +96,13 @@ public class PartController {
         @JsonView(View.Summary.class)
         private Long[] sourcesIds;
 
+        /**
+         * IDs of uploaded files which should be attached to this changelog. See
+         * ticket #933 for details.
+         */
+        @JsonView(View.Summary.class)
+        private Long[] attachIds;
+
         @JsonView(View.Summary.class)
         private Integer[] chlogSrcRatings;
 
@@ -140,6 +147,14 @@ public class PartController {
 
         public void setChlogSrcLnkDescription(String chlogSrcLnkDescription) {
             this.chlogSrcLnkDescription = chlogSrcLnkDescription;
+        }
+
+        public Long[] getAttachIds() {
+            return attachIds;
+        }
+
+        public void setAttachIds(Long[] attachIds) {
+            this.attachIds = attachIds;
         }
     }
 
@@ -403,7 +418,8 @@ public class PartController {
             @RequestParam(required = false) String sortProperty, @RequestParam(required = false) String sortOrder,
             @RequestParam(defaultValue = "0") Integer offset, @RequestParam(defaultValue = "10") Integer limit) {
         if (httpRequest.isUserInRole("ROLE_PRICE_READ")) {
-            // See comment in the method Price#getPrices() for the answer why permission is checked here.
+            // See comment in the method Price#getPrices() for the answer why
+            // permission is checked here.
             return partService.filterAlsoBough(manufacturerPartNumber, fltrManufacturerPartNumber, fltrPartTypeValue,
                     sortProperty, sortOrder, offset, limit);
         } else {
@@ -431,8 +447,9 @@ public class PartController {
         Long[] sourcesIds = request.getSourcesIds();
         Integer[] ratings = request.getChlogSrcRatings();
         String description = request.getChlogSrcLnkDescription();
+        Long[] attachIds = request.getAttachIds();
         List<PartCreateResponse.Row> responseRows = partService.createPart(httpRequest, origin, partNumbers, sourcesIds,
-                ratings, description);
+                ratings, description, attachIds);
         return new PartCreateResponse(responseRows);
     }
 
