@@ -23,7 +23,7 @@ angular.module("ngMetaCrudApp")
       fullscreen: {enable: false},
       hiddenButtons: "Preview",
       dropZoneOptions: {
-        //url: "http://localhost:8080/metadata/file/post",
+        url: "http://localhost:8080/metadata/file/post",
         maxFilesize:20,
         createImageThumbnails: false,
         maxFiles: 100,
