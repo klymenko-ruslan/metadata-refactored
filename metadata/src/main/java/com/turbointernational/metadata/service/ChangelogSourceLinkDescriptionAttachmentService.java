@@ -6,6 +6,8 @@ import java.util.Date;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -23,71 +25,106 @@ import com.turbointernational.metadata.entity.chlogsrc.ChangelogSourceLinkDescri
 @Service
 public class ChangelogSourceLinkDescriptionAttachmentService {
 
-    @Autowired
-    private ChangelogSourceLinkDao changelogSourceLinkDao;
+  private static final Logger log = LoggerFactory.getLogger(ChangelogSourceLinkDescriptionAttachmentService.class);
 
-    @Autowired
-    private ChangelogSourceLinkDescriptionAttachmentDao changelogSourceLinkDescriptionAttachmentDao;
+  @Autowired
+  private ChangelogSourceLinkDao changelogSourceLinkDao;
 
-    @Value("${changelog.source.link.description.attachments.dir}")
-    private File attachmentsDir;
+  @Autowired
+  private ChangelogSourceLinkDescriptionAttachmentDao changelogSourceLinkDescriptionAttachmentDao;
 
-    @Transactional
-    public ChangelogSourceLinkDescriptionAttachment uploadFile(String name, String originalName, String mime, Long size,
-            byte[] bin) throws IOException {
-        String mimeType = mime;
-        if (StringUtils.isBlank(mime)) {
-            mimeType = "application/octet-stream";
-        }
-        MimeTypeUtils.parseMimeType(mimeType); // validation
-        ChangelogSourceLinkDescriptionAttachment retVal = new ChangelogSourceLinkDescriptionAttachment();
-        retVal.setCreated(new Date()); // now
-        retVal.setName(name);
-        retVal.setOriginalName(originalName);
-        retVal.setMime(mimeType);
-        retVal.setSize(size);
-        changelogSourceLinkDescriptionAttachmentDao.persist(retVal);
-        String filename = retVal.getId().toString() + "_" + Long.toString(System.currentTimeMillis());
-        if (StringUtils.isNotBlank(name)) {
-            filename += ("_" + name);
-        }
-        retVal.setFilename(filename);
-        File file = new File(attachmentsDir, filename);
-        FileUtils.writeByteArrayToFile(file, bin);
-        return retVal;
+  @Value("${changelog.source.link.description.attachments.dir}")
+  private File attachmentsDir;
+
+  @Transactional
+  public ChangelogSourceLinkDescriptionAttachment uploadFile(String name, String originalName, String mime, Long size,
+      byte[] bin) throws IOException {
+    String mimeType = mime;
+    if (StringUtils.isBlank(mime)) {
+      mimeType = "application/octet-stream";
     }
-
-    public ChangelogSourceLinkDescriptionAttachment getDownload(Long id) {
-        return changelogSourceLinkDescriptionAttachmentDao.findOne(id);
+    MimeTypeUtils.parseMimeType(mimeType); // validation
+    ChangelogSourceLinkDescriptionAttachment retVal = new ChangelogSourceLinkDescriptionAttachment();
+    retVal.setCreated(new Date()); // now
+    retVal.setName(name);
+    retVal.setOriginalName(originalName);
+    retVal.setMime(mimeType);
+    retVal.setSize(size);
+    changelogSourceLinkDescriptionAttachmentDao.persist(retVal);
+    String filename = retVal.getId().toString() + "_" + Long.toString(System.currentTimeMillis());
+    if (StringUtils.isNotBlank(name)) {
+      filename += ("_" + name);
     }
+    retVal.setFilename(filename);
+    File file = new File(attachmentsDir, filename);
+    FileUtils.writeByteArrayToFile(file, bin);
+    return retVal;
+  }
 
-    public byte[] downloadFile(Long id) throws IOException {
-        ChangelogSourceLinkDescriptionAttachment rec = changelogSourceLinkDescriptionAttachmentDao.findOne(id);
-        if (rec == null) {
-            return null;
-        }
-        String filename = rec.getFilename();
-        if (filename == null) {
-            return null;
-        }
-        File file = new File(attachmentsDir, filename);
-        byte[] bin = FileUtils.readFileToByteArray(file);
-        return bin;
-    }
+  public ChangelogSourceLinkDescriptionAttachment getDownload(Long id) {
+    return changelogSourceLinkDescriptionAttachmentDao.findOne(id);
+  }
 
-    /**
-     * Link 'changelog source link' and 'changelog source link description
-     * attachment'.
-     *
-     * @param changelogSourceLinkId
-     * @param descriptionAttachmentId
-     */
-    @Transactional
-    public void linkSourceLinkDescription(Long changelogSourceLinkId, Long descriptionAttachmentId) {
-        ChangelogSourceLink sourceLink = changelogSourceLinkDao.getReference(changelogSourceLinkId);
-        ChangelogSourceLinkDescriptionAttachment descriptionAttachment = changelogSourceLinkDescriptionAttachmentDao
-                .findOne(descriptionAttachmentId);
-        descriptionAttachment.setChangelogSourceLink(sourceLink);
+  public byte[] downloadFile(Long id) throws IOException {
+    ChangelogSourceLinkDescriptionAttachment rec = changelogSourceLinkDescriptionAttachmentDao.findOne(id);
+    if (rec == null) {
+      log.warn("An attachment for a changelog source link description not found. Attachament ID: {}.", id);
+      return null;
     }
+    String filename = rec.getFilename();
+    if (filename == null) {
+      log.warn("An attachment for a changelog source link description has no initialized file name. "
+          + "Attachament ID: {}.", id);
+      return null;
+    }
+    File file = new File(attachmentsDir, filename);
+    if (!file.exists()) {
+      log.warn(
+          "An attachment for a changelog source link description has no file. " + "Attachament ID: {}. Filename: {}.",
+          id, filename);
+      return null;
+    }
+    byte[] bin = FileUtils.readFileToByteArray(file);
+    return bin;
+  }
+
+  @Transactional
+  public boolean deleteFile(Long id) {
+    ChangelogSourceLinkDescriptionAttachment entity = changelogSourceLinkDescriptionAttachmentDao.findOne(id);
+    if (entity == null) {
+      log.warn("Deletion of an attachment [{}] for a changelog source link description failed. Record not found.", id);
+      return false;
+    }
+    String filename = entity.getFilename();
+    if (filename == null) {
+      log.warn("Deletion of an attachment [{}] for a changelog source link description failed. "
+          + "A filename not initialized.", id);
+      return false;
+    }
+    changelogSourceLinkDescriptionAttachmentDao.getEntityManager().remove(entity);
+    File file = new File(attachmentsDir, filename);
+    if (file.exists()) {
+      file.delete();
+    } else {
+      log.warn("File was not found during deletion of an attachment [{}] "
+          + "for a changelog source link descriptio. Ignored.", id);
+    }
+    return true;
+  }
+
+  /**
+   * Link 'changelog source link' and 'changelog source link description
+   * attachment'.
+   *
+   * @param changelogSourceLinkId
+   * @param descriptionAttachmentId
+   */
+  @Transactional
+  public void linkSourceLinkDescription(Long changelogSourceLinkId, Long descriptionAttachmentId) {
+    ChangelogSourceLink sourceLink = changelogSourceLinkDao.getReference(changelogSourceLinkId);
+    ChangelogSourceLinkDescriptionAttachment descriptionAttachment = changelogSourceLinkDescriptionAttachmentDao
+        .findOne(descriptionAttachmentId);
+    descriptionAttachment.setChangelogSourceLink(sourceLink);
+  }
 
 }

@@ -100,19 +100,16 @@ angular.module("ngMetaCrudApp")
 
     var markdown;
 
+    var baseUrl = $location.protocol() + "://" + $location.host() + ":" + $location.port();
+
     function onClickLinkBttn(file) {
-$log.log("onClickLinkBttn [uploaded]: " + angular.toJson(uploaded, 2));
       if (!file || file.status != "success") {
         return;
       }
       var response = uploaded[file];
-$log.log("response: " + angular.toJson(response, 2));
       var e = markdown;
       var id = response.id;
-$log.log("1. id: " + id);
-      id = response["id"];
-$log.log("2. id: " + id);
-      var link = "/metadata/changelogsourcelink/description/attachment/download/" + response["id"];
+      var link = baseUrl + "/metadata/changelogsourcelink/description/attachment/download/" + response["id"];
 $log.log("link: " + link);
       var chunk, cursor, selected = e.getSelection(),
         content = e.getContent(),
@@ -156,9 +153,23 @@ $log.log("link: " + link);
               onClickLinkBttn(file);
             });
           });
+          this.on("removedfile", function(file) {
+            var response = uploaded[file];
+            if (response) {
+              delete uploaded[file];
+              if (file.status == "success") {
+                restService.removeChangelogSourceLinkDescriptionAttachment(response.id).then(
+                  function success() {
+                    // ignore
+                  },
+                  function failure(response) {
+                    $log.log("Deletion of the attachment [" + response.id + "] failed: " + angular.toJson(response, 2));
+                  }
+                );
+              }
+            }
+          });
           this.on("success", function(file, response) {
-            $log.log("success [file]: " + angular.toJson(file, 2));
-            $log.log("success [response]: " + angular.toJson(response, 2));
             uploaded[file] = response[0];
           });
           this.on("error", function(file, message, xhr) {

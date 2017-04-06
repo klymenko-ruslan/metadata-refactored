@@ -213,6 +213,7 @@ angular.module("ngMetaCrudApp")
       // Specify class depending on part type.
       this._partType2class = function(partTypeId) {
         var clazz = "com.turbointernational.metadata.entity.part.types.";
+        
         switch (partTypeId) {
         case 30:
           clazz += "Actuator";
@@ -1207,6 +1208,10 @@ angular.module("ngMetaCrudApp")
         Restangular.setParentless(false);
         return Restangular.one("service", serviceId).put({required: required});
       };
+      
+      this.removeChangelogSourceLinkDescriptionAttachment = function(id) {
+        return Restangular.one("/changelogsourcelink/description/attachment", id).remove();
+      }
 
     };
   }]);

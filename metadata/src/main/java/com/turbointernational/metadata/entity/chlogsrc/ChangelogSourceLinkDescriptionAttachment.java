@@ -54,7 +54,7 @@ public class ChangelogSourceLinkDescriptionAttachment implements Serializable {
     @JsonView(View.Summary.class)
     private String mime;
 
-    @Column(name = "filename", length = 1024, nullable = false)
+    @Column(name = "filename", length = 1024, nullable = true)
     @JsonView(View.Summary.class)
     private String filename;
 
