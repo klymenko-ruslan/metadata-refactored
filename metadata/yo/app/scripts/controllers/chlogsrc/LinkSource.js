@@ -98,27 +98,72 @@ angular.module("ngMetaCrudApp")
 
     $scope.data = null;
 
+    var markdown;
+
+    function onClickLinkBttn(file) {
+$log.log("onClickLinkBttn [uploaded]: " + angular.toJson(uploaded, 2));
+      if (!file || file.status != "success") {
+        return;
+      }
+      var response = uploaded[file];
+$log.log("response: " + angular.toJson(response, 2));
+      var e = markdown;
+      var id = response.id;
+$log.log("1. id: " + id);
+      id = response["id"];
+$log.log("2. id: " + id);
+      var link = "/metadata/changelogsourcelink/description/attachment/download/" + response["id"];
+$log.log("link: " + link);
+      var chunk, cursor, selected = e.getSelection(),
+        content = e.getContent(),
+        link;
+      if (selected.length === 0) {
+        chunk = file.name;
+      } else {
+        chunk = selected.text;
+      }
+      var sanitizedLink = $("<div>" + link + "</div>").text();
+      if ((/\.(gif|jpg|jpeg|tiff|png)$/i).test(file.name)) {
+        e.replaceSelection("![" + chunk + "](" + sanitizedLink + " \"" + chunk + "\")");
+      } else {
+        e.replaceSelection('[' + chunk + '](' + sanitizedLink + ')');
+      }
+      cursor = selected.start + 1;
+      e.setSelection(cursor, cursor + chunk.length);
+    }
+    
+    var uploaded = {};
+
     $scope.markdownEditorOpts = {
       iconlibrary: "fa",
       addExtraButtons: true,
       resize: "vertical",
       fullscreen: {enable: false},
-      hiddenButtons: 'Preview',
+      hiddenButtons: "Preview",
       dropZoneOptions: {
-        url: '/metadata/changelogsourcelink/description/attachment/upload',
+        url: "/metadata/changelogsourcelink/description/attachment/upload",
         maxFilesize:20,
         createImageThumbnails: false,
         maxFiles: 100,
         parallelUploads: 1,
         previewsContainer: "#descriptionUploads",
-        previewTemplate: "<li><div class='dz-preview'><div class='dz-details'><span class='dz-filename' data-dz-name></span>, <span class='dz-size' data-dz-size></span><button class='btn btn-danger btn-xs' style='margin-left:4px' data-dz-remove><i class='fa fa-trash-o'></i> Remove</button><span style='padding-left:4px;' data-dz-errormessage></span></div></div></li>",
+        previewTemplate: document.getElementById("upload-preview-template").innerHTML,
         autoProcessQueue: true,
         init: function() {
+          markdown = $("#descriptionEditor").data("markdown");
           this.on("addedfile", function(file) {
-            alert("Added file: " + file.name + ", " + file.size + ", " + file.type);
+            $(file.previewElement).find('.btn-info').first().click(function() {
+              onClickLinkBttn(file);
+            });
           });
-          this.on("removedfile", function(file) {
-            alert("Removed file: " + file.name + ", " + file.size + ", " + file.type);
+          this.on("success", function(file, response) {
+            $log.log("success [file]: " + angular.toJson(file, 2));
+            $log.log("success [response]: " + angular.toJson(response, 2));
+            uploaded[file] = response[0];
+          });
+          this.on("error", function(file, message, xhr) {
+            $log.log("An error caught. File: " + angular.toJson(file, 2) + "\nmessage: " + message);
+            //this.removeFile(file);
           });
         }
       }

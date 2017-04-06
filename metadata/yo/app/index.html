@@ -46,6 +46,25 @@
 <script type="text/javascript" src="bower_components/json3/lib/json3.min.js"></script>
 <![endif]-->
 
+<div id="upload-preview-template" style="display:none">
+  <li>
+    <div class="dz-preview upload-box">
+      <div class="dz-details">
+        <a class="dz-filename" style="cursor:pointer;text-decoration:underline;color:#23527c;" data-dz-name></a> (<span class="dz-size" data-dz-size></span>)
+        <div style="display:inline-block">
+          <button class="btn btn-info btn-xs" title="Print link">
+            <i class="fa fa-link" aria-hidden="true"></i>
+          </button>
+          <button class="btn btn-danger btn-xs" title="Remove" data-dz-remove>
+            <i class="fa fa-trash-o"></i>
+          </button>
+        </div>
+        <span data-dz-errormessage></span>
+      </div>
+    </div>
+  </li>
+</div>
+
 <!-- Add your site or application content here -->
 <bom-status class="pull-right"></bom-status>
 <div class="container" data-ng-view=""></div>

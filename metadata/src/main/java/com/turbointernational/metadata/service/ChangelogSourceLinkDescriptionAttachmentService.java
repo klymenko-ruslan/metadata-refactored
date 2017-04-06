@@ -1,9 +1,13 @@
 package com.turbointernational.metadata.service;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Date;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.MimeTypeUtils;
@@ -25,9 +29,12 @@ public class ChangelogSourceLinkDescriptionAttachmentService {
     @Autowired
     private ChangelogSourceLinkDescriptionAttachmentDao changelogSourceLinkDescriptionAttachmentDao;
 
+    @Value("${changelog.source.link.description.attachments.dir}")
+    private File attachmentsDir;
+
     @Transactional
     public ChangelogSourceLinkDescriptionAttachment uploadFile(String name, String originalName, String mime, Long size,
-            byte[] bin) {
+            byte[] bin) throws IOException {
         String mimeType = mime;
         if (StringUtils.isBlank(mime)) {
             mimeType = "application/octet-stream";
@@ -39,8 +46,14 @@ public class ChangelogSourceLinkDescriptionAttachmentService {
         retVal.setOriginalName(originalName);
         retVal.setMime(mimeType);
         retVal.setSize(size);
-        retVal.setFilename("TODO"); // TODO: save to file
         changelogSourceLinkDescriptionAttachmentDao.persist(retVal);
+        String filename = retVal.getId().toString() + "_" + Long.toString(System.currentTimeMillis());
+        if (StringUtils.isNotBlank(name)) {
+            filename += ("_" + name);
+        }
+        retVal.setFilename(filename);
+        File file = new File(attachmentsDir, filename);
+        FileUtils.writeByteArrayToFile(file, bin);
         return retVal;
     }
 
@@ -48,14 +61,18 @@ public class ChangelogSourceLinkDescriptionAttachmentService {
         return changelogSourceLinkDescriptionAttachmentDao.findOne(id);
     }
 
-    public byte[] downloadFile(Long id) {
-        // TODO
-        byte[] prefix = new byte[] { 'A', 'B', 'C', 'D', 'E', 'F' };
-        byte[] bytes = id.toString().getBytes();
-        byte[] retVal = new byte[prefix.length + bytes.length];
-        System.arraycopy(prefix, 0, retVal, 0, prefix.length);
-        System.arraycopy(bytes, 0, retVal, prefix.length, bytes.length);
-        return retVal;
+    public byte[] downloadFile(Long id) throws IOException {
+        ChangelogSourceLinkDescriptionAttachment rec = changelogSourceLinkDescriptionAttachmentDao.findOne(id);
+        if (rec == null) {
+            return null;
+        }
+        String filename = rec.getFilename();
+        if (filename == null) {
+            return null;
+        }
+        File file = new File(attachmentsDir, filename);
+        byte[] bin = FileUtils.readFileToByteArray(file);
+        return bin;
     }
 
     /**

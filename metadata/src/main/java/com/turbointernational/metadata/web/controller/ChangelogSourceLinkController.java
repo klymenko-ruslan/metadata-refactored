@@ -102,7 +102,7 @@ public class ChangelogSourceLinkController {
     }
 
     @RequestMapping(value = "/description/attachment/download/{id}", method = GET)
-    public ResponseEntity<byte[]> downloadAttachmentForDescription(@PathVariable("id") Long uploadId) {
+    public ResponseEntity<byte[]> downloadAttachmentForDescription(@PathVariable("id") Long uploadId) throws IOException {
         ChangelogSourceLinkDescriptionAttachment download = sourceLinkDescriptionAttachmentService
                 .getDownload(uploadId);
         if (download == null) {

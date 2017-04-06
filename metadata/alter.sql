@@ -1,4 +1,4 @@
-create table changelog_source_link_desciption_attachment(
+create table changelog_source_link_description_attachment(
     id bigint(20) not null auto_increment,
     created timestamp not null default now(),
     name varchar(255),
