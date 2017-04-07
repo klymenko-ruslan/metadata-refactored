@@ -26,6 +26,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.entity.Changelog;
 import com.turbointernational.metadata.entity.User;
@@ -89,6 +90,8 @@ public class ChangelogSourceLink implements Serializable {
     )
     private List<Source> sources = new ArrayList<>();
 
+    @JsonView(View.ChangelogSourceDetailed.class)
+    @JsonManagedReference
     @OneToMany(mappedBy = "changelogSourceLink", fetch = LAZY, orphanRemoval = true)
     private List<ChangelogSourceLinkDescriptionAttachment> descriptionAttachments = new ArrayList<>();
 

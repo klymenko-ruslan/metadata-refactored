@@ -52,8 +52,8 @@ public class ChangelogSourceLinkDescriptionAttachmentService {
     retVal.setSize(size);
     changelogSourceLinkDescriptionAttachmentDao.persist(retVal);
     String filename = retVal.getId().toString() + "_" + Long.toString(System.currentTimeMillis());
-    if (StringUtils.isNotBlank(name)) {
-      filename += ("_" + name);
+    if (StringUtils.isNotBlank(originalName)) {
+      filename += ("_" + originalName);
     }
     retVal.setFilename(filename);
     File file = new File(attachmentsDir, filename);

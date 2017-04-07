@@ -12,17 +12,18 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.MimeType;
 import org.springframework.util.MimeTypeUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -83,6 +84,7 @@ public class ChangelogSourceLinkController {
   @ResponseBody
   @Transactional
   @JsonView(View.Summary.class)
+  @Secured("ROLE_CHLOGSRC_UPDATE")
   public List<UploadAttachmentResponseRow> uploadAttachmentForDescription(MultipartHttpServletRequest request)
       throws IOException {
     List<UploadAttachmentResponseRow> retVal = new ArrayList<>();
@@ -98,19 +100,21 @@ public class ChangelogSourceLinkController {
       byte[] bin = file.getBytes();
       ChangelogSourceLinkDescriptionAttachment upload = sourceLinkDescriptionAttachmentService.uploadFile(name,
           originalFilename, mimeType, fileSize, bin);
-      retVal.add(new UploadAttachmentResponseRow(upload.getId(), name));
+      retVal.add(new UploadAttachmentResponseRow(upload.getId(), originalFilename));
     }
     return retVal;
   }
 
   @RequestMapping(value = "/description/attachment/{id}", method = DELETE)
   @Transactional
+  @Secured("ROLE_CHLOGSRC_DELETE")
   public ResponseEntity<Boolean> deleteAttachmentForDescription(@PathVariable("id") Long id) throws IOException {
     boolean deleted = sourceLinkDescriptionAttachmentService.deleteFile(id);
     return new ResponseEntity<>(deleted, deleted ? OK : NOT_FOUND);
   }
 
   @RequestMapping(value = "/description/attachment/download/{id}", method = GET)
+  @Secured("ROLE_CHLOGSRC_READ")
   public ResponseEntity<byte[]> downloadAttachmentForDescription(@PathVariable("id") Long uploadId) throws IOException {
     ChangelogSourceLinkDescriptionAttachment download = sourceLinkDescriptionAttachmentService.getDownload(uploadId);
     if (download == null) {
@@ -118,7 +122,14 @@ public class ChangelogSourceLinkController {
     }
     // Generate the http headers with the file properties
     HttpHeaders headers = new HttpHeaders();
-    headers.add("content-disposition", "attachment; filename=" + download.getName());
+    String name = download.getOriginalName();
+    if (StringUtils.isBlank(name)) {
+        name = download.getName();
+    }
+    if (StringUtils.isBlank(name)) {
+        name = download.getFilename();
+    }
+    headers.add("content-disposition", "attachment; filename=" + name);
     MimeType mimeType = MimeTypeUtils.parseMimeType(download.getMime());
     headers.setContentType(new MediaType(mimeType.getType(), mimeType.getSubtype()));
     byte[] bin = sourceLinkDescriptionAttachmentService.downloadFile(uploadId);

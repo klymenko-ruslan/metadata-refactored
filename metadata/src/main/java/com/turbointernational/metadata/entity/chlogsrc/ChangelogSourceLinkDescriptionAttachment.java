@@ -17,6 +17,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.util.View;
@@ -61,6 +62,7 @@ public class ChangelogSourceLinkDescriptionAttachment implements Serializable {
     @OneToOne(fetch = LAZY)
     @JoinColumn(name = "changelog_source_link_id", nullable = true)
     @JsonView({ View.Summary.class })
+    @JsonBackReference
     private ChangelogSourceLink changelogSourceLink;
 
     public ChangelogSourceLinkDescriptionAttachment() {

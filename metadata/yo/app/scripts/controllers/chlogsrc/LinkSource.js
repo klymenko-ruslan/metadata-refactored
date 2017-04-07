@@ -76,6 +76,8 @@ angular.module("ngMetaCrudApp")
   function($scope, $log, $location, dialogs, gToast, ngTableParams, $uibModalInstance, utils,
     restService, cbSave, sourcesNames, lastPicked, User, cancelUrl, begin) { // injection "begin" is important
 
+    var ATTR_UPLOAD_ID = "upload_id";
+
     $scope.sourcesNames = sourcesNames;
 
     var userMustLink = !User.hasRole("ROLE_CHLOGSRC_SKIP");
@@ -98,19 +100,15 @@ angular.module("ngMetaCrudApp")
 
     $scope.data = null;
 
-    var markdown;
-
+    var markdown, dropzone;
     var baseUrl = $location.protocol() + "://" + $location.host() + ":" + $location.port();
 
-    function onClickLinkBttn(file) {
-      if (!file || file.status != "success") {
+    function onClickLinkBttn(upload_id, file, link) {
+
+      if (!file || file.status != Dropzone.SUCCESS) {
         return;
       }
-      var response = uploaded[file];
       var e = markdown;
-      var id = response.id;
-      var link = baseUrl + "/metadata/changelogsourcelink/description/attachment/download/" + response["id"];
-$log.log("link: " + link);
       var chunk, cursor, selected = e.getSelection(),
         content = e.getContent(),
         link;
@@ -123,13 +121,12 @@ $log.log("link: " + link);
       if ((/\.(gif|jpg|jpeg|tiff|png)$/i).test(file.name)) {
         e.replaceSelection("![" + chunk + "](" + sanitizedLink + " \"" + chunk + "\")");
       } else {
-        e.replaceSelection('[' + chunk + '](' + sanitizedLink + ')');
+        e.replaceSelection("[" + chunk + "](" + sanitizedLink + ")");
       }
       cursor = selected.start + 1;
       e.setSelection(cursor, cursor + chunk.length);
+      markdown.change(markdown);
     }
-    
-    var uploaded = {};
 
     $scope.markdownEditorOpts = {
       iconlibrary: "fa",
@@ -147,18 +144,13 @@ $log.log("link: " + link);
         previewTemplate: document.getElementById("upload-preview-template").innerHTML,
         autoProcessQueue: true,
         init: function() {
+          dropzone = this;
           markdown = $("#descriptionEditor").data("markdown");
-          this.on("addedfile", function(file) {
-            $(file.previewElement).find('.btn-info').first().click(function() {
-              onClickLinkBttn(file);
-            });
-          });
           this.on("removedfile", function(file) {
-            var response = uploaded[file];
-            if (response) {
-              delete uploaded[file];
-              if (file.status == "success") {
-                restService.removeChangelogSourceLinkDescriptionAttachment(response.id).then(
+            var upload_id = $(file.previewElement).attr(ATTR_UPLOAD_ID);
+            if (upload_id) {
+              if (file.status == Dropzone.SUCCESS) {
+                restService.removeChangelogSourceLinkDescriptionAttachment(upload_id).then(
                   function success() {
                     // ignore
                   },
@@ -170,11 +162,16 @@ $log.log("link: " + link);
             }
           });
           this.on("success", function(file, response) {
-            uploaded[file] = response[0];
+            var upload_id = response[0].id;
+            var downloadLink = baseUrl + "/metadata/changelogsourcelink/description/attachment/download/" + upload_id;
+            $(file.previewElement).find(".dz-filename").first().attr("href", downloadLink);
+            $(file.previewElement).attr(ATTR_UPLOAD_ID, upload_id);
+            $(file.previewElement).find(".btn-info").first().click(function() {
+              onClickLinkBttn(upload_id, file, downloadLink);
+            });
           });
           this.on("error", function(file, message, xhr) {
             $log.log("An error caught. File: " + angular.toJson(file, 2) + "\nmessage: " + message);
-            //this.removeFile(file);
           });
         }
       }
@@ -305,8 +302,8 @@ $log.log("link: " + link);
         srcIds = _.map(pickedSources, function(ps) { return ps.id; });
         ratings = $scope.pickedSourcesRatings;
       }
-      
-      var attachIds = null; // TODO: #933
+
+      var attachIds = $("#descriptionUploads").find("li").map(function() {return $(this).attr(ATTR_UPLOAD_ID); }).get();
 
       cbSave(srcIds, ratings, $scope.data.description, attachIds);
 
@@ -378,7 +375,7 @@ $log.log("link: " + link);
     $scope.isActionBttnDisabled = function () {
       var retval = true;
       if ($scope.data.currVw.id === "sources_list") {
-        retval = pickedSources.length === 0;
+        retval = pickedSources.length === 0 || dropzone.getQueuedFiles().length;
       } else if ($scope.data.currVw.id === "create_new_source" && $scope.forms.changelogSourceForm) {
         retval = $scope.forms.changelogSourceForm.$invalid || !canCreateSource;
       } else if ($scope.data.currVw.id === "create_source_name" && $scope.forms.newSourceName) {
@@ -480,11 +477,9 @@ $log.log("link: " + link);
           gToast.open("File uploaded.");
           $scope.data.attachDescr = null;
           formData.delete("file");
-          // TODO: reset upload form
         },
         function(response) {
           // Error
-          alert("Could not upload the attachment.");
           $log.log("Could not upload the attachment.", response);
         }
       );
