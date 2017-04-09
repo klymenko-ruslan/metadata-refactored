@@ -142,6 +142,7 @@ angular.module("ngMetaCrudApp")
         parallelUploads: 1,
         previewsContainer: "#descriptionUploads",
         previewTemplate: document.getElementById("upload-preview-template").innerHTML,
+        clickable: document.getElementById("attach-bttn"),
         autoProcessQueue: true,
         init: function() {
           dropzone = this;

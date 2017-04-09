@@ -95,7 +95,13 @@ public class ChangelogSourceLinkDescriptionAttachmentService {
       log.warn("Deletion of an attachment [{}] for a changelog source link description failed. Record not found.", id);
       return false;
     }
-    String filename = entity.getFilename();
+    return deleteFile(entity);
+  }
+  
+  @Transactional
+  public boolean deleteFile(ChangelogSourceLinkDescriptionAttachment entity) {
+    Long id = entity.getId();
+     String filename = entity.getFilename();
     if (filename == null) {
       log.warn("Deletion of an attachment [{}] for a changelog source link description failed. "
           + "A filename not initialized.", id);
