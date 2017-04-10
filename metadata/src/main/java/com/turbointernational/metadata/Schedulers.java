@@ -31,7 +31,7 @@ public class Schedulers {
 
   /**
    * Periodically remove records (and files) of attachments for 'changelog source link description'.
-   * 
+   *
    * When a changelog source is linked to a changelod an user how a possibility (on UI) to add to
    * a field 'description' an attachments. These attachments are registered in the database and
    * stored on a filesystem. In case when user cancels the linking process these attachments
@@ -43,7 +43,7 @@ public class Schedulers {
   public void changelogSourceLinkDescriptionAttachmentsCleanup() {
     List<ChangelogSourceLinkDescriptionAttachment> orphanAttachments = em
         .createNamedQuery("findOrphanAttachments", ChangelogSourceLinkDescriptionAttachment.class)
-        .setParameter("period", /* one hour */ 3600 * 1000D).getResultList();
+        .setParameter("period", /* one hour */ 3600D).getResultList();
     long deleted = orphanAttachments.stream()
         .peek(orphan -> changelogSourceLinkDescriptionAttachmentService.deleteFile(orphan)).count();
     log.info("Cleanup of orphan attachments for 'changelog source link description' finished. "
