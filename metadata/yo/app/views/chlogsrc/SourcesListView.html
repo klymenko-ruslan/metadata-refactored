@@ -117,7 +117,7 @@
   <div role="tabpanel" class="tab-pane fade" id="tab_all">
     <div class="row" style="padding-top:8px;">
       <!-- Search by input or facet select options -->
-      <div class="col-xs-12 col-sm-3">
+      <div class="col-xs-12 col-sm-2">
 
         <button class="btn btn-default input-sm" data-ng-click="clearFilter()">
           <i class="fa fa-eraser" aria-hidden="true"></i> Clear
@@ -146,7 +146,7 @@
       </div>
 
       <!-- Tabular search results -->
-      <div class="col-xs-12 col-sm-9">
+      <div class="col-xs-12 col-sm-10">
         <table data-ng-table="sourceTableParams" class="table table-bordered table-striped table-hover table-responsive">
         <tr data-ng-repeat="rec in $data">
           <td title="'Name'" sortable="'name.lower_case_sort'">
@@ -159,7 +159,7 @@
             {{rec._source.sourceName.name}}
           </td>
           <td title="'URL'" sortable="'url.lower_case_sort'">
-            <a target="_blank" href="{{rec._source.url}}" data-ng-show="rec._source.url">{{rec._source.url}}</a>
+            <a target="_blank" href="{{rec._source.url}}" data-ng-show="rec._source.url" style="width:200px; word-wrap:break-word; display:inline-block;">{{rec._source.url}}</a>
           </td>
           <td title="'Created'" sortable="'created'">
             {{rec._source.created | date : "yyyy-MM-dd HH:mm.ss"}}
