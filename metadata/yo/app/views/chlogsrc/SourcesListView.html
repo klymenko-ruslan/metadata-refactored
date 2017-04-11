@@ -35,11 +35,13 @@
   </div>
 
   <script>
-    $('#description-ctlr a').click(function (e) {
-      e.preventDefault();
-      $(this).tab('show');
+    $(function() {
+      $("#description-ctlr a").click(function (e) {
+        e.preventDefault();
+        $(this).tab("show");
+      });
+      $("#description-ctlr a:first").tab("show");
     });
-    $('#description-ctlr a:first').tab('show');
   </script>
 
 </div>

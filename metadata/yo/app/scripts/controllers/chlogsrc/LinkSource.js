@@ -147,6 +147,15 @@ angular.module("ngMetaCrudApp")
         init: function() {
           dropzone = this;
           markdown = $("#descriptionEditor").data("markdown");
+          jQuery("body").fileClipboard({
+            accept: "image/*",
+            on: {
+              load: function(e, file) {
+                dropzone.addFile(file);
+              }
+            }
+          });
+
           this.on("removedfile", function(file) {
             var upload_id = $(file.previewElement).attr(ATTR_UPLOAD_ID);
             if (upload_id) {

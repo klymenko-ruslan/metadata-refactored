@@ -21,7 +21,8 @@
     "angular-loading-bar": "0.9.0",
     "angular-markdown-editor-ghiscoding": "1.1.0",
     "bootstrap-markdown": "#14a21c3837140144b27efc19c795d1a37fad70fb",
-    "dropzone": "4.3.0"
+    "dropzone": "4.3.0",
+    "filereader.js": "*"
   },
   "devDependencies": {
     "angular-mocks": "1.6.4",
