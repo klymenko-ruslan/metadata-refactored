@@ -2,9 +2,9 @@
 
 angular.module("ngMetaCrudApp")
   .controller("TurboSearchCtrl", [
-    "$log", "$scope", "$location", "ngTableParams", "$uibModal", "dialogs", "gToast", "restService",
+    "$log", "$scope", "$location", "ngTableParams", "$uibModal", "dialogs", "toastr", "restService",
     "BOM", "utils", "part", "partTypes", "turbos",
-    function ($log, $scope, $location, ngTableParams, $uibModal, dialogs, gToast, restService,
+    function ($log, $scope, $location, ngTableParams, $uibModal, dialogs, toastr, restService,
               BOM, utils, part, partTypes, turbos)
     {
 
@@ -79,7 +79,7 @@ angular.module("ngMetaCrudApp")
                 }
               });
             } else {
-              gToast.open("The Turbo(s) have been successfully linked to this GasketKit.");
+              toastr.success("The Turbo(s) have been successfully linked to this GasketKit.");
             }
             _updateLinkedTurbosTableParams(result.turbos);
             $scope.unpickAll();

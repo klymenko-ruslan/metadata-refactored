@@ -1,8 +1,8 @@
 "use strict";
 
 angular.module("ngMetaCrudApp").controller("CarModelFormCtrl", ["restService", "$scope", "$location", "$log",
-  "gToast", "carModel", "carMakes",
-  function(restService, $scope, $location, $log, gToast, carModel, carMakes) {
+  "toastr", "carModel", "carMakes",
+  function(restService, $scope, $location, $log, toastr, carModel, carMakes) {
 
     $scope.carMakes = carMakes;
 
@@ -24,7 +24,7 @@ angular.module("ngMetaCrudApp").controller("CarModelFormCtrl", ["restService", "
           promise.then(
             function(carModel) {
               $log.log("Carmodel has been successfully created: " + $scope.carmodelId);
-              gToast.open("Car model [" + carModel.id + "] - '" + carModel.name + "' has been successfully created.");
+              toastr.success("Car model [" + carModel.id + "] - '" + carModel.name + "' has been successfully created.");
               $location.path('/application/carmodel/list');
             },
             function (errorResponse) {
@@ -35,7 +35,7 @@ angular.module("ngMetaCrudApp").controller("CarModelFormCtrl", ["restService", "
           promise.then(
             function() {
               $log.log("Carmodel [" + $scope.carModel.id + "] - '" + $scope.carModel.name + "' has been successfully updated.");
-              gToast.open("Car model [" + $scope.carModel.id + "] '" + $scope.carModel.name + "' has been successfully updated.");
+              toastr.success("Car model [" + $scope.carModel.id + "] '" + $scope.carModel.name + "' has been successfully updated.");
               $location.path('/application/carmodel/list');
             },
             function (errorResponse) {

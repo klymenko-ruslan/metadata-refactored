@@ -20,10 +20,10 @@ angular.module("ngMetaCrudApp")
   }])
 
   .controller("PartInterchangeSearchCtrl", ["$log", "$scope", "$location", "$routeParams", "restService",
-      "Restangular", "gToast", "dialogs", "MERGE_OPTIONS", "partTypes", "critDimsByPartTypes", "critDimEnumVals",
+      "Restangular", "toastr", "dialogs", "MERGE_OPTIONS", "partTypes", "critDimsByPartTypes", "critDimEnumVals",
       "services", "LinkSource",
       function($log, $scope, $location, $routeParams,
-        restService, Restangular, gToast, dialogs, MERGE_OPTIONS, partTypes, critDimsByPartTypes, critDimEnumVals,
+        restService, Restangular, toastr, dialogs, MERGE_OPTIONS, partTypes, critDimsByPartTypes, critDimEnumVals,
         services, LinkSource) {
     $scope.partTypes = partTypes;
     $scope.critDimsByPartTypes = critDimsByPartTypes;
@@ -69,7 +69,7 @@ angular.module("ngMetaCrudApp")
       restService.updatePartInterchange($scope.partId, $scope.pickedPart.id, MERGE_OPTIONS.PICKED_ALONE_TO_PART,
           srcIds, ratings, description, attachIds).then(
         function success() {
-          gToast.open("Added picked part to interchange.");
+          toastr.success("Added picked part to interchange.");
           $location.path("/part/" + $scope.partId);
         },
         function failure(response) {
@@ -95,7 +95,7 @@ angular.module("ngMetaCrudApp")
           restService.updatePartInterchange($scope.partId, $scope.pickedPart.id, mergeChoice,
               srcIds, ratings, description, attachIds).then(
             function() {
-              gToast.open("Interchangeable part group changed.");
+              toastr.success("Interchangeable part group changed.");
               $location.path("/part/" + $scope.partId);
             },
             function(response) {
@@ -114,7 +114,7 @@ angular.module("ngMetaCrudApp")
       restService.updatePartInterchange($scope.partId, $scope.pickedPart.id, MERGE_OPTIONS.PART_ALONE_TO_PICKED,
           srcIds, ratings, description, attachIds).then(
         function success() {
-          gToast.open("Added part to picked part's interchanges.");
+          toastr.success("Added part to picked part's interchanges.");
           $location.path("/part/" + $scope.partId);
         },
         function failure(response) {
@@ -127,7 +127,7 @@ angular.module("ngMetaCrudApp")
       // Create
       restService.createPartInterchange($scope.part.id, $scope.pickedPart.id, srcIds, ratings, description, attachIds).then(
         function() {
-          gToast.open("Interchangeable part group changed added.");
+          toastr.success("Interchangeable part group changed added.");
           $location.path("/part/" + $scope.partId);
         },
         function(response) {
@@ -178,7 +178,7 @@ angular.module("ngMetaCrudApp")
             restService.deletePartInterchange($scope.partId, $scope.part.interchangeId).then(
               function() {
                 // Success
-                gToast.open("Part removed from interchange.");
+                toastr.success("Part removed from interchange.");
                 $location.path("/part/" + $scope.partId);
               },
               function(response) {

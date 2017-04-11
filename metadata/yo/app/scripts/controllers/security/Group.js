@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-  .controller('GroupCtrl', function (dialogs, $location, $log, $scope, $routeParams, gToast, restService, Restangular) {
+  .controller('GroupCtrl', function (dialogs, $location, $log, $scope, $routeParams, toastr, restService, Restangular) {
 
       $scope.newName,
       $scope.roleSelections,
@@ -80,7 +80,7 @@ angular.module('ngMetaCrudApp')
         if ($routeParams.id == 'create') {
           Restangular.all('security/group').post($scope.group).then(
               function() {
-                gToast.open("Group created.");
+                toastr.success("Group created.");
                 $location.path('/security/groups');
               },
               function(response) {
@@ -89,7 +89,7 @@ angular.module('ngMetaCrudApp')
         } else {
           $scope.group.put().then(
               function() {
-                gToast.open("Group updated.");
+                toastr.success("Group updated.");
                 $location.path('/security/groups');
               },
               function(response) {
@@ -107,7 +107,7 @@ angular.module('ngMetaCrudApp')
               Restangular.one("security/group", $routeParams.id).remove().then(
                   function() {
                     // Success
-                    gToast.open("Deleted group.");
+                    toastr.success("Deleted group.");
                     $location.path("/security/groups")
                   },
                   function(response) {

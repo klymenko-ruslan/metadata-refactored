@@ -1,6 +1,6 @@
 "use strict";
 
-angular.module("ngMetaCrudApp").directive("carmakeSearch", ["$log", "restService", "gToast", function ($log, restService, gToast) {
+angular.module("ngMetaCrudApp").directive("carmakeSearch", ["$log", "restService", "toastr", function ($log, restService, toastr) {
   return {
     "restrict": "E",
     "replace": true,
@@ -44,7 +44,7 @@ angular.module("ngMetaCrudApp").directive("carmakeSearch", ["$log", "restService
             // Success.
             delete $scope.modifyValues[carmake.id];
             $scope._resetForm(form);
-            gToast.open("The car make '" + name + "' has been successfully updated.");
+            toastr.success("The car make '" + name + "' has been successfully updated.");
           },
           function errorResponse(response) {
             restService.error("Car make (id:" + carmake.id + ") '" + name + "' update failed.", response);
@@ -59,7 +59,7 @@ angular.module("ngMetaCrudApp").directive("carmakeSearch", ["$log", "restService
             restService.removeCarmake(id).then(
               function () {
                 $scope.clear(); // reload table
-                gToast.open("Car make '" + name + "' has been successfully removed.");
+                toastr.success("Car make '" + name + "' has been successfully removed.");
               },
               function errorResponse(response) {
                 restService.error("Car make '" + name + "' remove failed.", response);

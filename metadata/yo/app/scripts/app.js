@@ -1,7 +1,7 @@
 "use strict";
 
 angular.module("ngMetaCrudApp", ["ngCookies", "ngRoute", "ngTable", "ui.bootstrap",
-    "restangular", "dialogs.main", "gToast", "angucomplete-alt", "jsonFormatter",
+    "restangular", "dialogs.main", "toastr", "angucomplete-alt", "jsonFormatter",
     "angular-loading-bar", "hc.marked", "hljs", "angular-markdown-editor"
   ])
   .constant("METADATA_BASE", "/metadata/")

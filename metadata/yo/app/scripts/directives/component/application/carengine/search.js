@@ -9,8 +9,8 @@ angular.module("ngMetaCrudApp").directive("carengineSearch", ["$log", "restServi
       link: function postLink(scope, iElement, iAttrs, controller, transcludeFn) {
         controller.transcludeActionsFn = transcludeFn;
       },
-      controller: ["$log", "$q", "$scope", "gToast", "dialogs", "ngTableParams",
-                    function ($log, $q, $scope, gToast, dialogs, ngTableParams) {
+      controller: ["$log", "$q", "$scope", "toastr", "dialogs", "ngTableParams",
+                    function ($log, $q, $scope, toastr, dialogs, ngTableParams) {
 
         $scope.fltrCarengine = {
           carengine: null,
@@ -26,7 +26,7 @@ angular.module("ngMetaCrudApp").directive("carengineSearch", ["$log", "restServi
               restService.removeCarengine(id).then(
                 function () {
                   $scope.clear(); // reload table
-                  gToast.open("Car engine '" + name + "' has been successfully removed.");
+                  toastr.success("Car engine '" + name + "' has been successfully removed.");
                 },
                 function errorResponse(response) {
                   restService.error("Car engine remove failed.", response);

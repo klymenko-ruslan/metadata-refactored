@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-    .controller('GroupsCtrl', function ($log, $scope, $routeParams, Restangular, dialogs, gToast) {
+    .controller('GroupsCtrl', function ($log, $scope, $routeParams, Restangular, dialogs) {
 
       // Load the groups
       Restangular.all('security/group').getList().then(

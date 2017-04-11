@@ -1,8 +1,8 @@
 "use strict";
 
 angular.module("ngMetaCrudApp")
-  .controller("LoginCtrl", ["$location", "$scope", "$routeParams", "gToast", "Restangular", "User", "$uibModal",
-    function ($location, $scope, $routeParams, gToast, Restangular, User, $uibModal) {
+  .controller("LoginCtrl", ["$location", "$scope", "$routeParams", "toastr", "Restangular", "User", "$uibModal",
+    function ($location, $scope, $routeParams, toastr, Restangular, User, $uibModal) {
 
     $scope.login = function() {
       Restangular.all('security/login').post(
@@ -21,7 +21,7 @@ angular.module("ngMetaCrudApp")
           );
         },
         function() {
-          gToast.open("Login failed.");
+          toastr.success("Login failed.");
         }
       );
     };
@@ -49,24 +49,24 @@ angular.module("ngMetaCrudApp")
           $location.path("/login")
         },
         function() {
-          gToast.open("Could not reset password.");
+          toastr.success("Could not reset password.");
         }
       );
     };
 
   }])
-  .controller("PasswordResetConfirmDlgCtrl",["$scope", "$uibModalInstance", "Restangular", "gToast", "username",
-    function($scope, $uibModalInstance, Restangular, gToast, username) {
+  .controller("PasswordResetConfirmDlgCtrl",["$scope", "$uibModalInstance", "Restangular", "toastr", "username",
+    function($scope, $uibModalInstance, Restangular, toastr, username) {
     $scope.username = username;
     $scope.onConfirmPasswordResetConfirmDlg = function() {
       Restangular.all('security/password/reset/request')
         .post(jQuery.param({username: username}), {}, {'Content-Type': 'application/x-www-form-urlencoded'})
         .then(
           function success() {
-            gToast.open("Password reset link sent.");
+            toastr.success("Password reset link sent.");
           },
           function failure() {
-            gToast.open("Is your username correct?");
+            toastr.error("Is your username correct?");
           }
         )
         .finally(function always() {

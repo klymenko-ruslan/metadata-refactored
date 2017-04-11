@@ -2,8 +2,8 @@
 
 angular.module("ngMetaCrudApp")
   .controller("SalesNoteDetailCtrl", ["$log", "$routeParams", "$parse", "dialogs", "$scope",
-    "ngTableParams", "$location", "SalesNotes", "utils", "restService", "part", "salesNote",
-    function($log, $routeParams, $parse, dialogs, $scope, ngTableParams, $location, SalesNotes,
+    "ngTableParams", "$location", "toastr", "SalesNotes", "utils", "restService", "part", "salesNote",
+    function($log, $routeParams, $parse, dialogs, $scope, ngTableParams, $location, toastr, SalesNotes,
         utils, restService, part, salesNote) {
       $scope.part = part;
       $scope.salesNote = salesNote;
@@ -66,7 +66,7 @@ angular.module("ngMetaCrudApp")
             restService.removeSalesNote($scope.salesNoteId).then(
               function() {
                 $location.path("/part/" + $scope.part.id + "/sales_notes");
-                gToast.open("Sales note [" + $scope.salesNoteId + "] has been successfully removed.");
+                toastr.success("Sales note [" + $scope.salesNoteId + "] has been successfully removed.");
               },
               function errorResponse(response) {
                 restService.error("Removal of the sales note [" + $scope.salesNoteId + "] failed.", response);

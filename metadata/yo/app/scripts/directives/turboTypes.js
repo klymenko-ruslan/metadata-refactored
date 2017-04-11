@@ -8,8 +8,8 @@ angular.module("ngMetaCrudApp")
         part: "="
       },
       templateUrl: "/views/component/turbo_types.html",
-      controller: ["$scope", "$parse", "dialogs", "gToast", "restService",
-        function($scope, $parse, dialogs, gToast, restService) {
+      controller: ["$scope", "$parse", "dialogs", "toastr", "restService",
+        function($scope, $parse, dialogs, toastr, restService) {
           $scope.turboTypesTableParams = new ngTableParams({
             page: 1,
             count: 10
@@ -37,7 +37,7 @@ angular.module("ngMetaCrudApp")
                   restService.removeTurboType($scope.part.id, turboTypeToRemove.id).then(
                     function() {
                       // Success
-                      gToast.open("Turbo type removed.");
+                      toastr.success("Turbo type removed.");
                       var idx = _.indexOf($scope.part.turboTypes, turboTypeToRemove);
                       $scope.part.turboTypes.splice(idx, 1);
                       $scope.turboTypesTableParams.reload();

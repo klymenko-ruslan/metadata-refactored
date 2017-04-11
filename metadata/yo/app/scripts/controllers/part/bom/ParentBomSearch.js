@@ -2,9 +2,9 @@
 
 angular.module("ngMetaCrudApp")
   .controller("ParentBomSearchCtrl", [
-    "$log", "$scope", "$location", "ngTableParams", "$uibModal", "dialogs", "gToast", "restService",
+    "$log", "$scope", "$location", "ngTableParams", "$uibModal", "dialogs", "toastr", "restService",
     "BOM", "utils", "part", "partTypes", "parents", "services", "LinkSource",
-    function ($log, $scope, $location, ngTableParams, $uibModal, dialogs, gToast, restService,
+    function ($log, $scope, $location, ngTableParams, $uibModal, dialogs, toastr, restService,
               BOM, utils, part, partTypes, parents, services, LinkSource)
     {
 
@@ -104,7 +104,7 @@ angular.module("ngMetaCrudApp")
                 }
               });
             } else {
-              gToast.open("The part has been successfully added to " + response.added +
+              toastr.success("The part has been successfully added to " + response.added +
                 " parents to their BOM lists.");
             }
           },
@@ -174,7 +174,7 @@ angular.module("ngMetaCrudApp")
                 parents.splice(idx, 1);
                 $scope.bomTableParams.reload();
                 updateParentPartsIds();
-                gToast.open("The BOM has been successfully removed.");
+                toastr.success("The BOM has been successfully removed.");
               },
               restService.error
             );

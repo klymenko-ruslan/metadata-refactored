@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-    .controller('BomAlternateSearchCtrl', function ($log, $scope, $location, $routeParams, BOM, restService, Restangular, dialogs, gToast) {
+    .controller('BomAlternateSearchCtrl', function ($log, $scope, $location, $routeParams, BOM, restService, Restangular, dialogs, toastr) {
         $scope.restService = restService;
         $scope.partId = $routeParams.id;
         $scope.bomItemId = $routeParams.bomId;
@@ -29,7 +29,7 @@ angular.module('ngMetaCrudApp')
                   .post($scope.pickedPart.id, {header: $scope.header})
                   .then(function () {
               // Success
-              gToast.open("BOM alternate added.");
+              toastr.success("BOM alternate added.");
               $location.path("/part/" + $scope.partId);
             }, function (response) {
                 dialogs.error("Could not add BOM alternate", "Server said: <pre>" + JSON.stringify(response.data) + "</pre>");

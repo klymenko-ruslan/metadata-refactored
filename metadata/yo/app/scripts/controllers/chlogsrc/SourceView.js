@@ -3,8 +3,8 @@
 angular.module("ngMetaCrudApp")
 
 .controller("ChangelogSourcesViewCtrl", [
-    "$scope", "$log", "$location", "gToast", "ngTableParams", "$uibModal", "utils", "restService", "source",
-  function($scope, $log, $location, gToast, ngTableParams, $uibModal, utils, restService, source) {
+    "$scope", "$log", "$location", "toastr", "ngTableParams", "$uibModal", "utils", "restService", "source",
+  function($scope, $log, $location, toastr, ngTableParams, $uibModal, utils, restService, source) {
 
     $scope.source = source;
 
@@ -48,8 +48,8 @@ angular.module("ngMetaCrudApp")
 
 ])
 .controller("ConfirmSourceDeleteDlgCtrl",
-  ["$scope", "$log", "$location", "gToast", "restService", "$uibModalInstance", "numExistedLinks", "source",
-  function($scope, $log, $location, gToast, restService, $uibModalInstance, numExistedLinks, source) {
+  ["$scope", "$log", "$location", "toastr", "restService", "$uibModalInstance", "numExistedLinks", "source",
+  function($scope, $log, $location, toastr, restService, $uibModalInstance, numExistedLinks, source) {
 
     $scope.data = {
       numExistedLinks: numExistedLinks
@@ -63,7 +63,7 @@ angular.module("ngMetaCrudApp")
         restService.removeChangelogSource(source.id).then(
           function success() {
             $uibModalInstance.close();
-            gToast.open("The changelog source has been successfully removed.");
+            toastr.success("The changelog source has been successfully removed.");
             $location.path("/changelog/source/list");
           },
           function failure(errorResponse) {

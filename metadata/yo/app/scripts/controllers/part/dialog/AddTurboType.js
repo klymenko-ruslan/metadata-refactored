@@ -2,7 +2,7 @@
 
 angular.module("ngMetaCrudApp")
 
-.controller("AddTurboTypeDialogCtrl", ["$scope", "$uibModalInstance", "$log", "$location", "data", "gToast", "Restangular", "restService", function ($scope, $uibModalInstance, $log, $location, data, gToast, Restangular, restService) {
+.controller("AddTurboTypeDialogCtrl", ["$scope", "$uibModalInstance", "$log", "$location", "data", "toastr", "Restangular", "restService", function ($scope, $uibModalInstance, $log, $location, data, toastr, Restangular, restService) {
 
   var partId = data.partId;
   $scope.filter = "";
@@ -15,7 +15,7 @@ angular.module("ngMetaCrudApp")
     turboType.manufacturer = $scope.selection.manufacturer;
     restService.addTurboTypeToPart(partId, turboType.id).then(
       function() {
-        gToast.open("Turbo type added.");
+        toastr.success("Turbo type added.");
         $uibModalInstance.close(turboType);
       },
       function(response) {

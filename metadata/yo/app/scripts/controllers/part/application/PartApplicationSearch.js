@@ -2,8 +2,8 @@
 
 angular.module("ngMetaCrudApp")
   .controller("PartApplicationSearchCtrl", ["$scope", "$log", "$location", "$routeParams", "restService", "dialogs",
-    "gToast", "LinkSource", "services",
-    function($scope, $log, $location, $routeParams, restService, dialogs, gToast, LinkSource, services) {
+    "toastr", "LinkSource", "services",
+    function($scope, $log, $location, $routeParams, restService, dialogs, toastr, LinkSource, services) {
 
       $scope.partId = $routeParams.id;
 
@@ -29,7 +29,7 @@ angular.module("ngMetaCrudApp")
         restService.addPartApplications($scope.partId, $scope.pickedApplications, srcIds, ratings, description, attachIds).then(
           function() {
             // Success
-            gToast.open("Application(s) added to part.");
+            toastr.success("Application(s) added to part.");
             $location.path("/part/" + $scope.partId);
           },
           function(response) {
@@ -50,7 +50,7 @@ angular.module("ngMetaCrudApp")
           for (var i = 0; i < $scope.applications.length; i++) {
             var val = $scope.applications[i];
             if (val.carModelEngineYear.id == app.id) {
-              gToast.open("The item already exists.");
+              toastr.info("The item already exists.");
               return;
             }
           }

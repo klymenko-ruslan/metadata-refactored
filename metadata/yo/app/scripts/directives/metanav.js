@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-  .directive('metanav', function(dialogs, $interval, gToast, User, restService, Restangular) {
+  .directive('metanav', function(dialogs, $interval, toastr, User, restService, Restangular) {
     return {
       transclude: true,
       templateUrl: '/views/component/Metanav.html',
@@ -27,7 +27,7 @@ angular.module('ngMetaCrudApp')
               restService.rebuildBom({"indexBoms": true}).then(
                 function() {
                   // Success
-                  gToast.open("Rebuilding BOM.");
+                  toastr.success("Rebuilding BOM.");
                 },
                 function(response) {
                   // Error
@@ -49,7 +49,7 @@ angular.module('ngMetaCrudApp')
               Restangular.all('search/part/indexAll').post().then(
                 function() {
                   // Success
-                  gToast.open('Indexing of parts started, check the server log for progress.');
+                  toastr.success('Indexing of parts started, check the server log for progress.');
                 },
                 function(response) {
                   // Error
@@ -73,7 +73,7 @@ angular.module('ngMetaCrudApp')
               Restangular.all('search/application/indexAll').post().then(
                 function() {
                   // Success
-                  gToast.open('Indexing of applications started, check the server log for progress.');
+                  toastr.success('Indexing of applications started, check the server log for progress.');
                 },
                 function(response) {
                   // Error
@@ -97,7 +97,7 @@ angular.module('ngMetaCrudApp')
               Restangular.all('search/salesnotesparts/indexAll').post().then(
                 function() {
                   // Success
-                  gToast.open('Indexing of sales notes started, check the server log for progress.');
+                  toastr.success('Indexing of sales notes started, check the server log for progress.');
                 },
                 function(response) {
                   // Error
@@ -121,7 +121,7 @@ angular.module('ngMetaCrudApp')
               Restangular.one('hibernate/clear').get().then(
                 function() {
                   // Success
-                  gToast.open('Hibernate cache cleared.');
+                  toastr.success('Hibernate cache cleared.');
                 },
                 function(response) {
                   // Error

@@ -6,8 +6,8 @@ angular.module("ngMetaCrudApp")
     restrict: "E",
     replace: false,
     templateUrl: "/views/application/carmake/form.html",
-    controller: ["restService", "$q", "$scope", "$location", "$log", "$routeParams", "gToast",
-      function(restService, $q, $scope, $location, $log, $routeParams, gToast) {
+    controller: ["restService", "$q", "$scope", "$location", "$log", "$routeParams",
+      function(restService, $q, $scope, $location, $log, $routeParams) {
         $scope.carmake = {};
         $scope.$on("carmakeform:save", function(event, callback) {
           var promise = restService.createCarmake($scope.carmake);

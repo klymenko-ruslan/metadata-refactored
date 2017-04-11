@@ -2,10 +2,10 @@
 
 angular.module("ngMetaCrudApp")
 .controller("PartDetailCtrl", ["$scope", "$log", "$q", "$location", "$cookies", "$route", "$routeParams", "Kits",
-    "ngTableParams", "utils", "restService", "Restangular", "User", "$uibModal", "dialogs", "gToast",
+    "ngTableParams", "utils", "restService", "Restangular", "User", "$uibModal", "dialogs", "toastr",
     "part", "criticalDimensions", "partTypes", "manufacturers", "turbos", "oversizeParts", "standardParts", "prices",
     function ($scope, $log, $q, $location, $cookies, $route, $routeParams, Kits, ngTableParams, utils,
-    restService, Restangular, User, $uibModal, dialogs, gToast, part, criticalDimensions, partTypes, manufacturers,
+    restService, Restangular, User, $uibModal, dialogs, toastr, part, criticalDimensions, partTypes, manufacturers,
     turbos, oversizeParts, standardParts, prices) {
   $scope.partId = part.id;
   $scope.part = part;
@@ -52,7 +52,7 @@ angular.module("ngMetaCrudApp")
   $scope.onReindex = function() {
     restService.indexPartSync($scope.partId).then(
       function success() {
-        gToast.open("The part has been successfully (re)indexed.");
+        toastr.success("The part has been successfully (re)indexed.");
       },
       function failure(error) {
         restService.error("The request to reindex the part failed.", error);
@@ -64,7 +64,7 @@ angular.module("ngMetaCrudApp")
       restService.rebuildPartBom($scope.partId).then(
         function success() {
           $route.reload();
-          gToast.open("BOMs for the part have been successfully rebuilt.");
+          toastr.success("BOMs for the part have been successfully rebuilt.");
         },
         function failure(error) {
           restService.error("The rebuild BOM request failed.", error);
@@ -330,7 +330,7 @@ angular.module("ngMetaCrudApp")
         restService.deleteTurboType(ttId).then(
           function() {
             // Success
-            gToast.open("Turbo type deleted.");
+            toastr.success("Turbo type deleted.");
             $scope.turbo.tt = {};
             var idx = _.findIndex($scope.turboTypes, function(tt) {
               return tt.id === ttId;
@@ -408,7 +408,7 @@ angular.module("ngMetaCrudApp")
         restService.deleteTurboModel(tmId).then(
           function() {
             // Success
-            gToast.open("Turbo model deleted.");
+            toastr.success("Turbo model deleted.");
             $scope.turbo.tm = null;
             var idx = _.findIndex($scope.turboModels, function(tm) {
               return tm.id === tmId;
@@ -445,7 +445,7 @@ angular.module("ngMetaCrudApp")
         restService.clearGasketKitInPart($scope.partId).then(
           function success(updatedPart) {
             $scope.part = updatedPart;
-            gToast.open("The gasket kit unlinked.");
+            toastr.success("The gasket kit unlinked.");
           },
           function failure(result) {
             restService.error("Can't unlink the gasket kit.", response);
@@ -467,7 +467,7 @@ angular.module("ngMetaCrudApp")
       function () {
         restService.unlinkTurboInGasketKit(turboId).then(
           function success(turbos) {
-            gToast.open("The Gasket Kit and Turbo unlinked.");
+            toastr.success("The Gasket Kit and Turbo unlinked.");
             _initTurbosTableParams(turbos);
           },
           function failure(result) {
@@ -505,7 +505,7 @@ angular.module("ngMetaCrudApp")
         Restangular.one('kit', $scope.partId).one('component', componentToRemove.id).remove().then(
           function() {
             // Success
-            gToast.open("Component removed.");
+            toastr.success("Component removed.");
 
             var idx = _.indexOf($scope.kitComponents, componentToRemove);
             $scope.kitComponents.splice(idx, 1);
@@ -548,7 +548,7 @@ angular.module("ngMetaCrudApp")
           restService.deleteProductImage(image.id).then(
               function() {
                 // Success
-                gToast.open("Image removed.");
+                toastr.success("Image removed.");
 
                 var idx = _.indexOf($scope.part.productImages, image);
                 $scope.part.productImages.splice(idx, 1);
@@ -568,7 +568,7 @@ angular.module("ngMetaCrudApp")
     restService.publishProductImage(image.id, image.publish).then(
       function success() {
         var verb = image.publish ? "published" : "unpublished";
-        gToast.open("The image has been " + verb + ".");
+        toastr.success("The image has been " + verb + ".");
       },
       function failure(result) {
         restService.error("(Un)Publish the image failed.", response);
@@ -580,7 +580,7 @@ angular.module("ngMetaCrudApp")
   $scope.onSetImageAsPrimary = function(image) {
     restService.setProductImageAsPrimary(image.id).then(
       function success() {
-        gToast.open("The image has been set as primary.");
+        toastr.success("The image has been set as primary.");
         _.each($scope.part.productImages, function (img) {
           img.main = (img.id == image.id);
         });
@@ -670,7 +670,7 @@ angular.module("ngMetaCrudApp")
         restService.deleteStandardOversizePart($scope.partId, oversizePart.id).then(
           function() {
             // Success
-            gToast.open("The oversize part has been deleted.");
+            toastr.success("The oversize part has been deleted.");
             var idx = _.findIndex($scope.oversizeParts, function(op) {
               return op.id === oversizePart.id;
             });
@@ -698,7 +698,7 @@ angular.module("ngMetaCrudApp")
         restService.deleteStandardOversizePart(standardPart.id, $scope.partId).then(
           function() {
             // Success
-            gToast.open("The standard part has been deleted.");
+            toastr.success("The standard part has been deleted.");
             var idx = _.findIndex($scope.standardParts, function(op) {
               return op.id === standardPart.id;
             });
@@ -730,9 +730,9 @@ angular.module("ngMetaCrudApp")
 
   }
 ])
-.controller("CreateXRefDlgCtrl", ["$scope", "$log", "$route", "$uibModalInstance", "gToast", "restService", "origPart",
+.controller("CreateXRefDlgCtrl", ["$scope", "$log", "$route", "$uibModalInstance", "toastr", "restService", "origPart",
   "manufacturers",
-  function($scope, $log, $route, $uibModalInstance, gToast, restService, origPart, manufacturers) {
+  function($scope, $log, $route, $uibModalInstance, toastr, restService, origPart, manufacturers) {
 
     $scope.onChangeManufacturer = function() {
       if ($scope.part.partType.magentoAttributeSet == "Turbo") {
@@ -791,7 +791,7 @@ angular.module("ngMetaCrudApp")
         function success(newPart) {
           $uibModalInstance.close();
           $route.reload();
-          gToast.open("A new cross reference [" + newPart.id + "] - " +
+          toastr.success("A new cross reference [" + newPart.id + "] - " +
                   newPart.manufacturerPartNumber + " has been successfully created.");
         },
         function failure(response) {

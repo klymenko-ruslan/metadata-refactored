@@ -10,8 +10,8 @@ angular.module("ngMetaCrudApp")
       restrict: "E",
       replace: false,
       templateUrl: "/views/application/carengine/form.html",
-      controller: ["restService", "$scope", "$log", "gToast",
-        function(restService, $scope, $log, gToast) {
+      controller: ["restService", "$scope", "$log",
+        function(restService, $scope, $log) {
 
           $scope.$on("form:created", function(event, data) {
             if (data.name === "carengineForm") {

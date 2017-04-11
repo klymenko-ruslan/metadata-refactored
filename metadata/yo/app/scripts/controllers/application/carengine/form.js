@@ -1,7 +1,7 @@
 "use strict";
 
-angular.module("ngMetaCrudApp").controller("CarEngineFormCtrl", ["restService", "$scope", "$location", "$log", "gToast",
-  "carEngine", "carFuelTypes", function(restService, $scope, $location, $log, gToast, carEngine, carFuelTypes) {
+angular.module("ngMetaCrudApp").controller("CarEngineFormCtrl", ["restService", "$scope", "$location", "$log", "toastr",
+  "carEngine", "carFuelTypes", function(restService, $scope, $location, $log, toastr, carEngine, carFuelTypes) {
 
     $scope.carFuelTypes = carFuelTypes;
 
@@ -23,7 +23,7 @@ angular.module("ngMetaCrudApp").controller("CarEngineFormCtrl", ["restService", 
           promise.then(
             function(carEngine) {
               $log.log("Carengine has been successfully created: " + carEngine.id);
-              gToast.open("Car engine [" + carEngine.id + "] - '" + carEngine.engineSize + "' has been successfully created.");
+              toastr.success("Car engine [" + carEngine.id + "] - '" + carEngine.engineSize + "' has been successfully created.");
               $location.path('/application/carengine/list');
             },
             function (errorResponse) {
@@ -34,7 +34,7 @@ angular.module("ngMetaCrudApp").controller("CarEngineFormCtrl", ["restService", 
           promise.then(
             function() {
               $log.log("Car engine [" + $scope.carEngine.id + "] - '" + $scope.carEngine.engineSize + "' has been successfully updated.");
-              gToast.open("Car engine [" + $scope.carEngine.id + "] - '" + $scope.carEngine.engineSize + "' has been successfully updated.");
+              toastr.success("Car engine [" + $scope.carEngine.id + "] - '" + $scope.carEngine.engineSize + "' has been successfully updated.");
               $location.path('/application/carengine/list');
             },
             function (errorResponse) {

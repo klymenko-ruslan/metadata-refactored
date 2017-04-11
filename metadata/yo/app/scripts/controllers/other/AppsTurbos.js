@@ -1,8 +1,8 @@
 "use strict";
 
 angular.module("ngMetaCrudApp")
-.controller("AppsTurbosCtrl", ["$scope", "$log", "ngTableParams", "$uibModal", "gToast", "utils", "restService", "partTypes",
-  function($scope, $log, ngTableParams, $uibModal, gToast, utils, restService, partTypes) {
+.controller("AppsTurbosCtrl", ["$scope", "$log", "ngTableParams", "$uibModal", "toastr", "utils", "restService", "partTypes",
+  function($scope, $log, ngTableParams, $uibModal, toastr, utils, restService, partTypes) {
 
     $scope.partTypes = partTypes;
 
@@ -106,7 +106,7 @@ angular.module("ngMetaCrudApp")
               }
             });
           } else {
-            gToast.open("Generated " + response.generated + " associations.");
+            toastr.info("Generated " + response.generated + " associations.");
           }
         },
         function failure(response) {

@@ -3,10 +3,10 @@
 angular.module("ngMetaCrudApp")
 
 .controller("PartBomSearchCtrl", ["$log", "$scope", "$location", "ngTableParams", "$routeParams", "$uibModal",
-  "User", "BOM", "restService", "Restangular", "dialogs", "gToast", "utils", "partTypes", "part", "boms",
+  "User", "BOM", "restService", "Restangular", "dialogs", "toastr", "utils", "partTypes", "part", "boms",
   "services", "LinkSource",
   function($log, $scope, $location, ngTableParams, $routeParams, $uibModal, User, BOM, restService,
-    Restangular, dialogs, gToast, utils, partTypes, part, boms, services, LinkSource) {
+    Restangular, dialogs, toastr, utils, partTypes, part, boms, services, LinkSource) {
 
     $scope.partTypes = partTypes;
     $scope.restService = restService;
@@ -121,7 +121,7 @@ angular.module("ngMetaCrudApp")
               }
             });
           } else {
-            gToast.open("The BOMs have been successfully added to the part.");
+            toastr.success("The BOMs have been successfully added to the part.");
           }
         },
         function(response) {
@@ -148,7 +148,7 @@ angular.module("ngMetaCrudApp")
               boms.splice(idx, 1);
               $scope.bomTableParams.reload();
               updateExistingBomPartIds();
-              gToast.open("The BOM has been successfully removed.");
+              toastr.success("The BOM has been successfully removed.");
             },
             restService.error
           );

@@ -8,9 +8,9 @@ angular.module("ngMetaCrudApp")
   })
 
   .controller("PartGasketKitSearchCtrl", ["$log", "$scope", "$location", "$routeParams", "restService",
-    "Restangular", "dialogs", "gToast", "GASKET_RESULT_STATUS", "partTypes", "part",
+    "Restangular", "dialogs", "toastr", "GASKET_RESULT_STATUS", "partTypes", "part",
     function($log, $scope, $location, $routeParams, restService,
-      Restangular, dialogs, gToast, GASKET_RESULT_STATUS, partTypes, part) {
+      Restangular, dialogs, toastr, GASKET_RESULT_STATUS, partTypes, part) {
       $scope.partTypes = partTypes;
       $scope.restService = restService;
       $scope.partId = $routeParams.id;
@@ -26,7 +26,7 @@ angular.module("ngMetaCrudApp")
           function(result) {
             if (result.status == GASKET_RESULT_STATUS.OK) {
               // Success
-              gToast.open("The gasket kit set to the turbo.");
+              toastr.success("The gasket kit set to the turbo.");
               $location.path("/part/" + $scope.partId);
             } else if (result.status == GASKET_RESULT_STATUS.ASSERTION_ERROR) {
               dialogs.error("Validation error", result.message);

@@ -9,8 +9,8 @@ angular.module("ngMetaCrudApp").directive("cmeySearch", ["$log", "restService", 
       link: function postLink(scope, iElement, iAttrs, controller, transcludeFn) {
         controller.transcludeActionsFn = transcludeFn;
       },
-      controller: ["$log", "$q", "dialogs", "gToast", "$scope", "ngTableParams",
-                    function ($log, $q, dialogs, gToast, $scope, ngTableParams) {
+      controller: ["$log", "$q", "dialogs", "toastr", "$scope", "ngTableParams",
+                    function ($log, $q, dialogs, toastr, $scope, ngTableParams) {
 
         $scope.fltrCmey = {
           cmey: null,
@@ -87,7 +87,7 @@ angular.module("ngMetaCrudApp").directive("cmeySearch", ["$log", "restService", 
               restService.removeCarmodelengineyear(id).then(
                 function () {
                   $scope.clear(); // reload table
-                  gToast.open("Car Model Engine Year has been successfully removed.");
+                  toastr.success("Car Model Engine Year has been successfully removed.");
                 },
                 function errorResponse(response) {
                   restService.error("Car Model Engine Year remove failed.", response);

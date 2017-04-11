@@ -3,8 +3,8 @@
 angular.module("ngMetaCrudApp")
 
 .controller("ChangelogSourcesNamesListCtrl",
-  ["$scope", "$log", "gToast", "dialogs", "ngTableParams", "Restangular", "restService",
-  function($scope, $log, gToast, dialogs, ngTableParams, Restangular, restService) {
+  ["$scope", "$log", "toastr", "dialogs", "ngTableParams", "Restangular", "restService",
+  function($scope, $log, toastr, dialogs, ngTableParams, Restangular, restService) {
 
     $scope.mode = "view";
 
@@ -57,7 +57,7 @@ angular.module("ngMetaCrudApp")
 
       restService.createChangeSourceName($scope.data.newName).then(
         function success() {
-          gToast.open("The source name has successfully been created.");
+          toastr.success("The source name has successfully been created.");
           $scope.data.newName = null;
           $scope.sourcesNamesTableParams.reload();
         },
@@ -85,7 +85,7 @@ angular.module("ngMetaCrudApp")
                     " can't be deleted because it is referenced by some Source(s).");
                 } else {
                   $scope.sourcesNamesTableParams.reload();
-                  gToast.open("The Source Name [" + entity.id + "] - " + entity.name +
+                  toastr.success("The Source Name [" + entity.id + "] - " + entity.name +
                     " has successfully been removed.");
                 }
               },
@@ -116,7 +116,7 @@ angular.module("ngMetaCrudApp")
           $scope.sourceName = null;
           $scope.sourceNameOrig = null;
           $scope.mode = "view";
-          gToast.open("The Source Name has successfully been updated.");
+          toastr.success("The Source Name has successfully been updated.");
         },
         function failure(errorResponse) {
           restService.error("Could not update the Source Name.", errorResponse);

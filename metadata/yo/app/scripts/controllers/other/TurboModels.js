@@ -1,8 +1,8 @@
 "use strict";
 
 angular.module("ngMetaCrudApp")
-  .controller("TurboModelsCtrl", ["$scope", "dialogs", "$log", "gToast", "restService",
-  function($scope, dialogs, $log, gToast, restService) {
+  .controller("TurboModelsCtrl", ["$scope", "dialogs", "$log", "toastr", "restService",
+  function($scope, dialogs, $log, toastr, restService) {
     $scope.selection = {
       manufacturer: null,
       turboType: null,
@@ -22,7 +22,7 @@ angular.module("ngMetaCrudApp")
       dialogs.create("/views/dialog/NameDialog.html", "NameDialogCtrl", data).result.then(function(name) {
         restService.createTurboType($scope.selection.manufacturer.id, name).then(
           function() {
-            gToast.open("Turbo type created.");
+            toastr.success("Turbo type created.");
             $scope.loadTurboTypes($scope.selection.manufacturer.id);
           },
           function(response) {
@@ -45,7 +45,7 @@ angular.module("ngMetaCrudApp")
         turboType.name = name;
         restService.renameTurboType(turboType).then(
           function() {
-            gToast.open("Turbo type renamed.");
+            toastr.success("Turbo type renamed.");
               $scope.selection.turboType = null;
             $scope.loadTurboTypes($scope.selection.manufacturer.id);
           },
@@ -64,7 +64,7 @@ angular.module("ngMetaCrudApp")
             restService.deleteTurboType(turboType.id).then(
               function() {
                 // Success
-                gToast.open("Turbo type deleted.");
+                toast.success("Turbo type deleted.");
                 $scope.selection.turboType = null;
                 $scope.loadTurboTypes($scope.selection.manufacturer.id);
               },
@@ -90,7 +90,7 @@ angular.module("ngMetaCrudApp")
       dialogs.create("/views/dialog/NameDialog.html", "NameDialogCtrl", data).result.then(function(name) {
         restService.createTurboModel($scope.selection.turboType.id, name).then(
           function() {
-            gToast.open("Turbo model created.");
+            toastr.success("Turbo model created.");
             $scope.loadTurboModels($scope.selection.turboType.id);
           },
           function(response) {
@@ -112,7 +112,7 @@ angular.module("ngMetaCrudApp")
         turboModel.name = name;
         restService.renameTurboModel(turboModel).then(
           function() {
-            gToast.open("Turbo model renamed.");
+            toastr.success("Turbo model renamed.");
             $scope.selection.turboModel = null;
             $scope.loadTurboModels($scope.selection.turboType.id);
           },
@@ -131,7 +131,7 @@ angular.module("ngMetaCrudApp")
             restService.deleteTurboModel(turboModel.id).then(
               function() {
                 // Success
-                gToast.open("Turbo model deleted.");
+                toastr.success("Turbo model deleted.");
                 $scope.selection.turboModel = null;
                 $scope.loadTurboModels($scope.selection.turboType.id);
               },

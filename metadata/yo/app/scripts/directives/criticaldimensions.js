@@ -201,9 +201,9 @@ angular.module("ngMetaCrudApp")
           part: "=",
           descriptors: "="
         },
-        controller: ["$scope", "$log", "Restangular", "gToast",
+        controller: ["$scope", "$log", "Restangular", "toastr",
           "restService", "METADATA_BASE",
-          function($scope, $log, Restangular, gToast,
+          function($scope, $log, Restangular, toastr,
             restService, METADATA_BASE) {
 
             $scope.METADATA_BASE = METADATA_BASE;
@@ -451,7 +451,7 @@ angular.module("ngMetaCrudApp")
             $scope.modifySaveAll = function() {
               restService.updatePart($scope.editedPart).then(
                 function success(updatedPart) {
-                  gToast.open("The part has been successfully updated.");
+                  toastr.success("The part has been successfully updated.");
                   $scope.part = updatedPart;
                   $scope.editedPart = Restangular.copy($scope.part);
                   $scope._modifyEndAll();

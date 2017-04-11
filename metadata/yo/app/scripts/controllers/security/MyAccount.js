@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-  .controller('MyAccountCtrl', function (dialogs, $log, $location, $scope, gToast, Restangular, restService) {
+  .controller('MyAccountCtrl', function (dialogs, $log, $location, $scope, toastr, Restangular, restService) {
       $scope.user;
 
       var userPromise = Restangular.one("security/user/me").get().then(
@@ -17,7 +17,7 @@ angular.module('ngMetaCrudApp')
       $scope.save = function() {
         var savePromise = Restangular.all('security/user/me').post($scope.user).then(
             function() {
-              gToast.open("Updated my account.");
+              toastr.success("Updated my account.");
               $location.path('/');
             },
             function(response) {

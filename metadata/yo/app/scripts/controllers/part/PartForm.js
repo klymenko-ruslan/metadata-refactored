@@ -1,9 +1,9 @@
 "use strict";
 
 angular.module("ngMetaCrudApp").controller("PartFormCtrl",
-  ["$scope", "$location", "$log", "$uibModal", "dialogs", "gToast", "restService", "Restangular", "User",
+  ["$scope", "$location", "$log", "$uibModal", "dialogs", "toastr", "restService", "Restangular", "User",
    "part", "partType", "manufacturers", "LinkSource", "services",
-  function($scope, $location, $log, $uibModal, dialogs, gToast, restService, Restangular, User,
+  function($scope, $location, $log, $uibModal, dialogs, toastr, restService, Restangular, User,
     part, partType, manufacturers, LinkSource, services)
   {
 
@@ -237,7 +237,7 @@ angular.module("ngMetaCrudApp").controller("PartFormCtrl",
           restService.deleteTurboType(ttId).then(
             function() {
               // Success
-              gToast.open("Turbo type deleted.");
+              toastr.success("Turbo type deleted.");
               $scope.turbo.tt = {};
               var idx = _.findIndex($scope.turboTypes, function(tt) {
                 return tt.id === ttId;
@@ -315,7 +315,7 @@ angular.module("ngMetaCrudApp").controller("PartFormCtrl",
           restService.deleteTurboModel(tmId).then(
             function() {
               // Success
-              gToast.open("Turbo model deleted.");
+              toastr.success("Turbo model deleted.");
               $scope.turbo.tm = null;
               var idx = _.findIndex($scope.turboModels, function(tm) {
                 return tm.id === tmId;

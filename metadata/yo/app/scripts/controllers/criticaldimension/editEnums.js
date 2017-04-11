@@ -2,8 +2,8 @@
 
 angular.module("ngMetaCrudApp")
     .controller("CriticalDimensionEnumsCtrl", [
-      "$scope", "$log", "Restangular", "gToast", "ngTableParams", "restService", "utils", "critDimEnums",
-      function($scope, $log, Restangular, gToast, ngTableParams, restService, utils, critDimEnums) {
+      "$scope", "$log", "Restangular", "ngTableParams", "restService", "utils", "critDimEnums",
+      function($scope, $log, Restangular, ngTableParams, restService, utils, critDimEnums) {
 
         $scope.selectedRow = null;
 

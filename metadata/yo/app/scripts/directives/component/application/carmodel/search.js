@@ -9,8 +9,8 @@ angular.module("ngMetaCrudApp").directive("carmodelSearch", ["$log", "restServic
       "link": function postLink(scope, iElement, iAttrs, controller, transcludeFn) {
         controller.transcludeActionsFn = transcludeFn;
       },
-      "controller": ["$log", "$q", "$scope", "gToast", "dialogs", "ngTableParams",
-                    function ($log, $q, $scope, gToast, dialogs, ngTableParams) {
+      "controller": ["$log", "$q", "$scope", "toastr", "dialogs", "ngTableParams",
+                    function ($log, $q, $scope, toastr, dialogs, ngTableParams) {
         $scope.fltrCarmodel = {
           carmodel: null,
           make: null
@@ -25,7 +25,7 @@ angular.module("ngMetaCrudApp").directive("carmodelSearch", ["$log", "restServic
               restService.removeCarmodel(id).then(
                 function () {
                   $scope.clear(); // reload table
-                  gToast.open("Car model '" + name + "' has been successfully removed.");
+                  toastr.success("Car model '" + name + "' has been successfully removed.");
                 },
                 function errorResponse(response) {
                   restService.error("Car model remove failed.", response);

@@ -1,8 +1,8 @@
 "use strict";
 
 angular.module("ngMetaCrudApp").controller("CarModelEngineYearFormCtrl",
-  ["$scope", "$log", "$location", "gToast", "restService",  "carEngines", "carMakes", "carModelEngineYear",
-  function($scope, $log, $location, gToast, restService, carEngines, carMakes, carModelEngineYear) {
+  ["$scope", "$log", "$location", "toastr", "restService",  "carEngines", "carMakes", "carModelEngineYear",
+  function($scope, $log, $location, toastr, restService, carEngines, carMakes, carModelEngineYear) {
 
     $scope.carEngines = carEngines;
     $scope.carMakes = carMakes;
@@ -28,7 +28,7 @@ angular.module("ngMetaCrudApp").controller("CarModelEngineYearFormCtrl",
           promise.then(
             function(newCmeyId) {
               $log.log("Created 'car_model_engine_year': " + newCmeyId);
-              gToast.open("A new Model Engine Year has been successfully created.");
+              toastr.success("A new Model Engine Year has been successfully created.");
               $location.path('/application/carmodelengineyear/list');
             },
             function(errorResponse) {
@@ -39,7 +39,7 @@ angular.module("ngMetaCrudApp").controller("CarModelEngineYearFormCtrl",
           promise.then(
             function() {
               $log.log("Updated 'car_model_engine_year': " + $scope.cmeyId);
-              gToast.open("The Model Engine Year has been successfully updated.");
+              toastr.success("The Model Engine Year has been successfully updated.");
               $location.path('/application/carmodelengineyear/list');
             },
             function(errorResponse) {

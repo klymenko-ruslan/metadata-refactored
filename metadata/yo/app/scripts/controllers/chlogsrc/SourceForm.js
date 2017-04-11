@@ -3,9 +3,9 @@
 angular.module("ngMetaCrudApp")
 
 .controller("ChangelogSourcesFormCtrl", [
-    "$scope", "$log", "$location", "gToast", "dialogs", "ngTableParams", "Restangular", "restService", "utils", "begin",
+    "$scope", "$log", "$location", "toastr", "dialogs", "ngTableParams", "Restangular", "restService", "utils", "begin",
     "sourcesNames", "source",
-  function($scope, $log, $location, gToast, dialogs, ngTableParams, Restangular, restService, utils, begin,
+  function($scope, $log, $location, toastr, dialogs, ngTableParams, Restangular, restService, utils, begin,
     sourcesNames, source) {
 
     $scope.source = source;
@@ -73,7 +73,7 @@ angular.module("ngMetaCrudApp")
       if($scope.source) { // update
         restService.updateChangelogSource($scope.source.id, s.name, s.description, s.url, s.sourceName.id).then(
           function success() {
-            gToast.open("The changelog source has been successfully updated.");
+            toastr.success("The changelog source has been successfully updated.");
             $location.path("/changelog/source/list");
           },
           function failure(errorResponse) {
@@ -83,7 +83,7 @@ angular.module("ngMetaCrudApp")
       } else { // create
         restService.createChangelogSource(s.name, s.description, s.url, s.sourceName.id).then(
           function success() {
-            gToast.open("The changelog source has been successfully created.");
+            toastr.success("The changelog source has been successfully created.");
             $location.path("/changelog/source/list");
           },
           function failure(errorResponse) {
@@ -113,7 +113,7 @@ angular.module("ngMetaCrudApp")
         function(updatedAttachmentsResponse) {
           // Success
         _updateAttachmentsTable(updatedAttachmentsResponse.rows);
-          gToast.open("File uploaded.");
+          toastr.info("File uploaded.");
           $scope.data.attachDescr = null;
           formData.delete("file");
           // TODO: reset upload form

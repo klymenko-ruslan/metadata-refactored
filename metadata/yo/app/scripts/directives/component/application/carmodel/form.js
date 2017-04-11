@@ -11,8 +11,8 @@ angular.module("ngMetaCrudApp")
       restrict: "E",
       replace: false,
       templateUrl: "/views/application/carmodel/form.html",
-      controller: ["restService", "$scope", "$location", "$log", "gToast",
-        function(restService, $scope, $location, $log, gToast) {
+      controller: ["restService", "$scope", "$location", "$log",
+        function(restService, $scope, $location, $log) {
 
           $scope.carmakeFilter = "";
 

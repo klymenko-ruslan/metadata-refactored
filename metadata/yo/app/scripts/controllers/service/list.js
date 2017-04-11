@@ -1,8 +1,8 @@
 "use strict";
 
 angular.module("ngMetaCrudApp")
-  .controller("ServiceListCtrl", ["$scope", "$log", "gToast", "ngTableParams", "restService",
-    function($scope, $log, gToast, ngTableParams, restService) {
+  .controller("ServiceListCtrl", ["$scope", "$log", "toastr", "ngTableParams", "restService",
+    function($scope, $log, toastr, ngTableParams, restService) {
 
     $scope.requiredSource = {};
 
@@ -44,7 +44,7 @@ angular.module("ngMetaCrudApp")
       var checked = $scope.requiredSource[srv.name];
       restService.setChangelogSourceRequiredForService(srv.id, checked).then(
         function success() {
-          gToast.open("The field has been successfully updated.");
+          toastr.success("The field has been successfully updated.");
         },
         function failure(errorResponse) {
           restService.error("The operation failed.", errorResponse);

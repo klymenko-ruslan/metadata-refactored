@@ -237,7 +237,7 @@ module.exports = function (grunt) {
         }]
       }
     },
-    cssmin: {
+    //cssmin: {
       // By default, your `index.html` <!-- Usemin Block --> will take care of
       // minification. This option is pre-configured if you do not wish to use
       // Usemin blocks.
@@ -249,7 +249,7 @@ module.exports = function (grunt) {
       //     ]
       //   }
       // }
-    },
+    //},
     htmlmin: {
       dist: {
         options: {

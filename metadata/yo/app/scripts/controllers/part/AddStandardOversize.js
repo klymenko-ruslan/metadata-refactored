@@ -3,9 +3,9 @@
 angular.module("ngMetaCrudApp")
 
 .controller("AddStandardOversizeCtrl", ["$log", "$scope", "$location", "ngTableParams",
-  "restService", "Restangular", "dialogs", "gToast", "utils", "partTypes", "part", "type", "existing",
+  "restService", "Restangular", "dialogs", "toastr", "utils", "partTypes", "part", "type", "existing",
   function($log, $scope, $location, ngTableParams, restService,
-    Restangular, dialogs, gToast, utils, partTypes, part, type, existing) {
+    Restangular, dialogs, toastr, utils, partTypes, part, type, existing) {
 
     $scope.partTypes = partTypes;
     $scope.restService = restService;
@@ -107,7 +107,7 @@ angular.module("ngMetaCrudApp")
           });
           pickedParts.splice(0, pickedParts.length);
           $scope.pickedPartsTableParams.reload();
-          gToast.open("The part(s) has been successfully added.");
+          toastr.success("The part(s) has been successfully added.");
         },
         function failure(error) {
           restService.error("Could not create the standard/oversize part.", error);
@@ -144,7 +144,7 @@ angular.module("ngMetaCrudApp")
               existing.splice(idx, 1);
               $scope.existingTableParams.reload();
               updateExistingPartIds();
-              gToast.open(toast);
+              toastr.success(toast);
             },
             restService.error
           );

@@ -1,7 +1,7 @@
 "use strict";
 
 angular.module("ngMetaCrudApp").controller("CarFuelTypeFormCtrl", ["restService", "$q", "$scope", "$location", "$log",
-  "$routeParams", "gToast", function(restService, $q, $scope, $location, $log, $routeParams, gToast) {
+  "$routeParams", "toastr", function(restService, $q, $scope, $location, $log, $routeParams, toastr) {
 
     $scope.carfueltype = {};
 
@@ -9,7 +9,7 @@ angular.module("ngMetaCrudApp").controller("CarFuelTypeFormCtrl", ["restService"
       restService.createCarfueltype($scope.carfueltype).then(
         function(carfueltypeId) {
           $log.log("Carfueltype has been successfully created: " + carfueltypeId);
-          gToast.open("Carfueltype '" + $scope.carfueltype.name + "' has been successfully created.");
+          toastr.success("Carfueltype '" + $scope.carfueltype.name + "' has been successfully created.");
           $location.path('/application/carfueltype/list');
         },
         function (errorResponse) {

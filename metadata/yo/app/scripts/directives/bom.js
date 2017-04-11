@@ -9,9 +9,9 @@ angular.module("ngMetaCrudApp")
       templateUrl: "/views/component/bom.html",
       restrict: "E",
       link: function postLink( /*$scope, element, attrs */ ) {},
-      controller: ["dialogs", "$scope", "$parse", "BOM", "ngTableParams", "gToast",
+      controller: ["dialogs", "$scope", "$parse", "BOM", "ngTableParams", "toastr",
         "Restangular", "utils", "restService",
-        function(dialogs, $scope, $parse, BOM, ngTableParams, gToast,
+        function(dialogs, $scope, $parse, BOM, ngTableParams, toastr,
           Restangular, utils, restService) {
           $scope.restService = restService;
 
@@ -89,7 +89,7 @@ angular.module("ngMetaCrudApp")
                     $scope.bomTableParams.reload();
                     // Clear the alt bom item
                     $scope.altBomItem = null;
-                    gToast.open("Child part removed from BOM.");
+                    toastr.success("Child part removed from BOM.");
                   },
                   function failure(response) {
                     restService.error("Removing of the BOM failed.", response);
@@ -108,7 +108,7 @@ angular.module("ngMetaCrudApp")
                 Restangular.one("bom", $scope.altBomItem.id).one("alt", altItem.id).remove().then(
                   function success() {
                     $scope.altBomItem.alternatives.splice(index, 1);
-                    gToast.open("BOM alternate removed.");
+                    toastr.success("BOM alternate removed.");
                   },
                   function failure(response) {
                     restService.error("Removing of the Alternate failed.", response);

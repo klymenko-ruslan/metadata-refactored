@@ -1,8 +1,8 @@
 "use strict";
 
 angular.module("ngMetaCrudApp").controller("AddPartImageCtrl", [
-  "$log", "$scope", "$uibModalInstance", "data", "gToast", "Restangular", "restService",
-  function ($log, $scope, $uibModalInstance, data, gToast, Restangular, restService) {
+  "$log", "$scope", "$uibModalInstance", "data", "toastr", "Restangular", "restService",
+  function ($log, $scope, $uibModalInstance, data, toastr, Restangular, restService) {
 
     var file;
 
@@ -26,7 +26,7 @@ angular.module("ngMetaCrudApp").controller("AddPartImageCtrl", [
         .post(file, { "publish": $scope.publishImage }, {"Content-Type": "application/octet-stream"}).then(
           function(response) {
             // Success
-            gToast.open("Added image.");
+            toastr.success("Added image.");
             $uibModalInstance.close(response);
           },
           function(response) {

@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-    .controller('KitComponentSearchCtrl', function ($log, $scope, $location, $routeParams, Kits, restService, Restangular, dialogs, gToast) {
+    .controller('KitComponentSearchCtrl', function ($log, $scope, $location, $routeParams, Kits, restService, Restangular, dialogs, toastr) {
         $scope.partId = $routeParams.id;
         $scope.partType = 'Kit';
 
@@ -34,7 +34,7 @@ angular.module('ngMetaCrudApp')
           Restangular.one('kit', $scope.partId).all('component').post($scope.mapping).then(
             function () {
               // Success
-              gToast.open("Common component mapping added.");
+              toastr.success("Common component mapping added.");
               $location.path("/part/" + $scope.partId);
             },
               function (response) {

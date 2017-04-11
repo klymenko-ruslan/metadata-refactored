@@ -1,8 +1,8 @@
 "use strict";
 
-angular.module("ngMetaCrudApp").controller("AuthProvidersCtrl", ["$scope", "$log", "restService", "dialogs", "gToast",
+angular.module("ngMetaCrudApp").controller("AuthProvidersCtrl", ["$scope", "$log", "restService", "dialogs", "toastr",
   "ngTableParams", "Restangular",
-  function($scope, $log, restService, dialogs, gToast, ngTableParams, Restangular) {
+  function($scope, $log, restService, dialogs, toasrt, ngTableParams, Restangular) {
 
     $scope.modifyingRow = null;
     $scope.refRow = null;
@@ -77,7 +77,7 @@ angular.module("ngMetaCrudApp").controller("AuthProvidersCtrl", ["$scope", "$log
           $scope.modifyingRow = null;
           $scope.refRow = null;
           $scope._resetForm(form);
-          gToast.open("The LDAP authenticationa provider '" + name + "' has been successfully updated.");
+          toastr.success("The LDAP authenticationa provider '" + name + "' has been successfully updated.");
         },
         function failure(errorResponse) {
           restService.error("Update of the LDAP authentication povider (id:" + $scope.modifyingRow.id + ") '"
@@ -92,7 +92,7 @@ angular.module("ngMetaCrudApp").controller("AuthProvidersCtrl", ["$scope", "$log
           restService.removeAuthenticationProvider(rec.id).then(
             function() {
               $scope.authProvidersTableParams.reload();
-              gToast.open("Authentication provider [" + rec.id + "] '" + name + "' has been successfully removed.");
+              toastr.success("Authentication provider [" + rec.id + "] '" + name + "' has been successfully removed.");
             },
             function errorResponse(response) {
               restService.error("Removal of the authentication provider [" + rec.id + "] '" + name + "' failed.", response);
@@ -103,9 +103,9 @@ angular.module("ngMetaCrudApp").controller("AuthProvidersCtrl", ["$scope", "$log
     };
 
   }
-]).controller("AuthProviderFormCtrl", ["$scope", "$log", "$location", "gToast",
+]).controller("AuthProviderFormCtrl", ["$scope", "$log", "$location", "toastr",
   "restService",
-  function($scope, $log, $location, gToast, restService) {
+  function($scope, $log, $location, toastr, restService) {
 
     $scope.authp = {
       name: null,
@@ -119,7 +119,7 @@ angular.module("ngMetaCrudApp").controller("AuthProvidersCtrl", ["$scope", "$log
     $scope.save = function() {
       restService.createAuthProviderLDAP($scope.authp).then(
         function(id) {
-          gToast.open("Authentication provider '" + $scope.authp.name + "' has been successfully created.");
+          toastr.success("Authentication provider '" + $scope.authp.name + "' has been successfully created.");
           $location.path('/security/auth_providers');
         },
         function(errorResponse) {

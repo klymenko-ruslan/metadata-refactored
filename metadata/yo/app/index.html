@@ -19,10 +19,12 @@
     <base href="/"/>
 
     <link rel="stylesheet" href="bower_components/dropzone/dist/dropzone.css">
+
     <!-- build:css(.tmp) styles/main.css -->
     <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/highlight.min.css">
     <link rel="stylesheet" href="bower_components/ng-table/dist/ng-table.min.css">
-    <link rel="stylesheet" href="bower_components/gToast/build/gToast.css">
+    <link rel="stylesheet" href="bower_components/angular-toastr/dist/angular-toastr.min.css">
     <link rel="stylesheet" href="bower_components/angular-dialog-service/dist/dialogs.css">
     <link rel="stylesheet" href="bower_components/angucomplete-alt/angucomplete-alt.css">
     <link rel="stylesheet" href="bower_components/json-formatter/dist/json-formatter.min.css">
@@ -30,12 +32,11 @@
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="bower_components/fontawesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="bower_components/bootstrap-markdown/css/bootstrap-markdown.min.css">
-    <link rel="stylesheet" href="styles/highlight.min.css">
     <link rel="stylesheet" href="bower_components/angular-markdown-editor-ghiscoding/styles/angular-markdown-editor.css">
     <!-- endbuild -->
 
 </head>
-<body data-ng-app="ngMetaCrudApp" ng-controller="MainCtrl">
+<body data-ng-app="ngMetaCrudApp" data-ng-controller="MainCtrl">
 <!--[if lt IE 7]>
 <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your
     browser</a> to improve your experience.</p>
@@ -46,7 +47,7 @@
 <script type="text/javascript" src="bower_components/json3/lib/json3.min.js"></script>
 <![endif]-->
 
-<div id="upload-preview-template" style="display:none">
+<ul id="upload-preview-template" style="display:none">
   <li>
     <div class="dz-preview upload-box">
       <div class="dz-details">
@@ -63,7 +64,7 @@
       </div>
     </div>
   </li>
-</div>
+</ul>
 
 <!-- Add your site or application content here -->
 <bom-status class="pull-right"></bom-status>
@@ -73,19 +74,19 @@
 <script type="text/javascript" src="bower_components/jquery/dist/jquery.js"></script>
 <script type="text/javascript" src="bower_components/dropzone/dist/dropzone.js"></script>
 <script type="text/javascript" src="bower_components/angular/angular.js"></script>
+<script type="text/javascript" src="bower_components/angular-cookies/angular-cookies.min.js"></script>
+<script type="text/javascript" src="bower_components/angular-toastr/dist/angular-toastr.tpls.min.js"></script>
 <script type="text/javascript" src="bower_components/angular-dialog-service/dist/dialogs.js"></script>
 <script type="text/javascript" src="bower_components/angular-route/angular-route.js"></script>
 <script type="text/javascript" src="bower_components/angular-sanitize/angular-sanitize.js"></script>
 <script type="text/javascript" src="bower_components/angular-bootstrap/ui-bootstrap.js"></script>
 <script type="text/javascript" src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
 <script type="text/javascript" src="bower_components/bootstrap-sass/assets/javascripts/bootstrap.js"></script>
-<script type="text/javascript" src="bower_components/gToast/build/gToast.js"></script>
 <script type="text/javascript" src="bower_components/ng-table/dist/ng-table.min.js"></script>
 <script type="text/javascript" src="bower_components/underscore/underscore.js"></script>
 <script type="text/javascript" src="bower_components/angucomplete-alt/dist/angucomplete-alt.min.js"></script>
 <script type="text/javascript" src="bower_components/json-formatter/dist/json-formatter.min.js"></script>
 <script type="text/javascript" src="bower_components/angular-loading-bar/build/loading-bar.min.js"></script>
-<script type="text/javascript" src="bower_components/angular-cookies/angular-cookies.min.js"></script>
 <script type="text/javascript" src="bower_components/marked/lib/marked.js"></script>
 <script type="text/javascript" src="bower_components/angular-marked/dist/angular-marked.min.js"></script>
 <script type="text/javascript" src="scripts/highlight.min.js"></script>

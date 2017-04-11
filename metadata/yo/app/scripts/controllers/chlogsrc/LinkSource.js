@@ -70,10 +70,10 @@ angular.module("ngMetaCrudApp")
   return this;
 
 }])
-.controller("ChlogSrcLinkDlgCtrl", ["$scope", "$log", "$location", "dialogs", "gToast", "ngTableParams",
+.controller("ChlogSrcLinkDlgCtrl", ["$scope", "$log", "$location", "dialogs", "toastr", "ngTableParams",
   "$uibModalInstance", "utils", "restService", "cbSave",
   "sourcesNames", "lastPicked", "User", "cancelUrl", "begin",
-  function($scope, $log, $location, dialogs, gToast, ngTableParams, $uibModalInstance, utils,
+  function($scope, $log, $location, dialogs, toastr, ngTableParams, $uibModalInstance, utils,
     restService, cbSave, sourcesNames, lastPicked, User, cancelUrl, begin) { // injection "begin" is important
 
     var ATTR_UPLOAD_ID = "upload_id";
@@ -362,7 +362,7 @@ angular.module("ngMetaCrudApp")
 
       restService.createChangeSourceName($scope.data.newSourceName).then(
         function success(newSourceName) {
-          gToast.open("The source name has successfully been created.");
+          toastr.success("The source name has successfully been created.");
           $scope.data.newSourceName = null;
 
           $scope.sourcesNames.push(newSourceName);
@@ -484,7 +484,7 @@ angular.module("ngMetaCrudApp")
         function(updatedAttachmentsResponse) {
           // Success
         _updateSourceAttachmentsTable(updatedAttachmentsResponse.rows);
-          gToast.open("File uploaded.");
+          toastr.info("File uploaded.");
           $scope.data.attachDescr = null;
           formData.delete("file");
         },

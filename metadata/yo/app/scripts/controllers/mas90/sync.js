@@ -1,8 +1,8 @@
 "use strict";
 
-angular.module("ngMetaCrudApp").controller("Mas90SyncCtrl", ["$scope", "$interval", "$log", "gToast", "ngTableParams",
+angular.module("ngMetaCrudApp").controller("Mas90SyncCtrl", ["$scope", "$interval", "$log", "ngTableParams",
     "$uibModal" ,"restService", "status",
-  function($scope, $interval, $log, gToast, ngTableParams, $uibModal, restService, status) {
+  function($scope, $interval, $log, ngTableParams, $uibModal, restService, status) {
 
     $scope.errors = "";
     $scope.modifications = "";

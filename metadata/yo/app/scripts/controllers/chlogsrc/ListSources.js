@@ -3,8 +3,8 @@
 angular.module("ngMetaCrudApp")
 
 .controller("ChangelogSourcesListCtrl",
-  ["$scope", "$log", "$location", "dialogs", "gToast", "ngTableParams", "utils", "restService", "sourcesNames",
-  function($scope, $log, $location, dialogs, gToast, ngTableParams, utils, restService, sourcesNames) {
+  ["$scope", "$log", "$location", "dialogs", "ngTableParams", "utils", "restService", "sourcesNames",
+  function($scope, $log, $location, dialogs, ngTableParams, utils, restService, sourcesNames) {
 
     $scope.sourcesNames = sourcesNames;
 

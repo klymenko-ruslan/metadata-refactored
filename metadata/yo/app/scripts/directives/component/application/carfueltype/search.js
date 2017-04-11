@@ -1,6 +1,6 @@
 "use strict";
 
-angular.module("ngMetaCrudApp").directive("carfueltypeSearch", ["$log", "restService", "gToast", function ($log, restService, gToast) {
+angular.module("ngMetaCrudApp").directive("carfueltypeSearch", ["$log", "restService", "toastr", function ($log, restService, toastr) {
   return {
     "restrict": "E",
     "replace": true,
@@ -44,7 +44,7 @@ angular.module("ngMetaCrudApp").directive("carfueltypeSearch", ["$log", "restSer
             // Success.
             delete $scope.modifyValues[carfueltype.id];
             $scope._resetForm(form);
-            gToast.open("The car fuel type '" + name + "' has been successfully updated.");
+            toastr.success("The car fuel type '" + name + "' has been successfully updated.");
           },
           function errorResponse(response) {
             restService.error("Car fuel type (id:" + carfueltype.id + ") '" + name + "' update failed.", response);
@@ -60,7 +60,7 @@ angular.module("ngMetaCrudApp").directive("carfueltypeSearch", ["$log", "restSer
               function () {
                 $scope.clear(); // reload table
                 $scope.carfueltypeTableParams.reload();
-                gToast.open("Car fuel type '" + name + "' has been successfully removed.");
+                toastr.success("Car fuel type '" + name + "' has been successfully removed.");
               },
               function errorResponse(response) {
                 restService.error("Car fuel type '" + name + "' remove failed.", response);

@@ -11,9 +11,9 @@ angular.module("ngMetaCrudApp")
       restrict: "E",
       replace: false,
       templateUrl: "/views/application/carmodelengineyear/form.html",
-      controller: ["restService", "$q", "$scope", "$location", "$parse", "$log", "$routeParams", "gToast",
+      controller: ["restService", "$q", "$scope", "$location", "$parse", "$log", "$routeParams", "toastr",
         "$uibModal", "ngTableParams", "utils",
-        function(restService, $q, $scope, $location, $parse, $log, $routeParams, gToast, $uibModal,
+        function(restService, $q, $scope, $location, $parse, $log, $routeParams, toastr, $uibModal,
           ngTableParams, utils)
         {
 
@@ -152,7 +152,7 @@ angular.module("ngMetaCrudApp")
             var cmey2 = $scope._merge();
             if (_.isEmpty(cmey2)) {
               // Ignore.
-              gToast.open("Nothing to save. Ignored.");
+              toastr.info("Nothing to save. Ignored.");
               return null;
             }
             if ($scope.cmeyId === undefined) {
@@ -415,7 +415,7 @@ angular.module("ngMetaCrudApp")
                 $scope.pickedYears.splice(0, $scope.pickedYears.length);
                 $scope.pickedYearsTableParams.reload();
 
-                gToast.open("Created " + result.created + " applications. " + result.ignored + " ignored.");
+                toastr.success("Created " + result.created + " applications. " + result.ignored + " ignored.");
               },
               function failure(errorResponse) {
                 restService.error("Bulk creation of application failed.", errorResponse);
@@ -502,8 +502,8 @@ angular.module("ngMetaCrudApp")
 
     };
   })
-  .controller("createCarMakeDlgCtrl",["$scope", "$log", "gToast", "$uibModalInstance", "addCarMakeCallback",
-    function($scope, $log, gToast, $uibModalInstance, addCarMakeCallback) {
+  .controller("createCarMakeDlgCtrl",["$scope", "$log", "toastr", "$uibModalInstance", "addCarMakeCallback",
+    function($scope, $log, toastr, $uibModalInstance, addCarMakeCallback) {
 
     $scope.$on("form:created", function(event, data) {
       if (data.name === "carmakeForm") {
@@ -516,7 +516,7 @@ angular.module("ngMetaCrudApp")
         promise.then(
           function(carMake) {
             $log.log("Carmake has been successfully created: " + carMake.id);
-            gToast.open("Carmake [" + carMake.id + "] - '" + carMake.name + "' has been successfully created.");
+            toastr.success("Carmake [" + carMake.id + "] - '" + carMake.name + "' has been successfully created.");
             addCarMakeCallback(carMake);
             $scope.close ();
           },
@@ -533,9 +533,9 @@ angular.module("ngMetaCrudApp")
     };
 
   }])
-  .controller("createCarModelDlgCtrl",["$scope", "$log", "gToast", "$uibModalInstance", "makeId", "carMakes",
+  .controller("createCarModelDlgCtrl",["$scope", "$log", "toastr", "$uibModalInstance", "makeId", "carMakes",
       "addCarModelCallback",
-    function($scope, $log, gToast, $uibModalInstance, makeId, carMakes, addCarModelCallback) {
+    function($scope, $log, toastr, $uibModalInstance, makeId, carMakes, addCarModelCallback) {
 
     $scope.makeId = makeId;
     $scope.carMakes = carMakes;
@@ -551,7 +551,7 @@ angular.module("ngMetaCrudApp")
         promise.then(
           function(carModel) {
             $log.log("Carmodel has been successfully created: " + carModel.id);
-            gToast.open("Car model [" + carModel.id + "] - '" + carModel.name + "' has been successfully created.");
+            toastr.success("Car model [" + carModel.id + "] - '" + carModel.name + "' has been successfully created.");
             addCarModelCallback(carModel);
             $scope.close ();
           },
@@ -567,9 +567,9 @@ angular.module("ngMetaCrudApp")
     };
 
   }])
-  .controller("createCarEngineDlgCtrl",["$scope", "$log", "gToast", "$uibModalInstance", "carFuelTypes",
+  .controller("createCarEngineDlgCtrl",["$scope", "$log", "toastr", "$uibModalInstance", "carFuelTypes",
       "addCarEngineCallback",
-    function($scope, $log, gToast, $uibModalInstance, carFuelTypes, addCarEngineCallback) {
+    function($scope, $log, toastr, $uibModalInstance, carFuelTypes, addCarEngineCallback) {
 
     $scope.carFuelTypes = carFuelTypes;
 
@@ -584,7 +584,7 @@ angular.module("ngMetaCrudApp")
         promise.then(
           function(carEngine) {
             $log.log("Carengine has been successfully created: " + carEngine.id);
-            gToast.open("Car model [" + carEngine.id + "] - '" + carEngine.engineSize + "' has been successfully created.");
+            toastr.success("Car model [" + carEngine.id + "] - '" + carEngine.engineSize + "' has been successfully created.");
             addCarEngineCallback(carEngine);
             $scope.close ();
           },

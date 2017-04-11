@@ -8,9 +8,9 @@ angular.module("ngMetaCrudApp")
         }
     });
 }])
-.controller("ManufacturerListCtrl", ["$scope", "$log", "ngTableParams", "Restangular", "gToast", "$uibModal",
+.controller("ManufacturerListCtrl", ["$scope", "$log", "ngTableParams", "Restangular", "toastr", "$uibModal",
   "dialogs", "restService", "manufacturerTypes",
-  function($scope, $log, ngTableParams, Restangular, gToast, $uibModal, dialogs, restService, manufacturerTypes) {
+  function($scope, $log, ngTableParams, Restangular, toastr, $uibModal, dialogs, restService, manufacturerTypes) {
 
     $scope.manufacturerTypes = manufacturerTypes;
     $scope.manufacturerTypesOpts = _.map(manufacturerTypes, function (mt) {
@@ -102,7 +102,7 @@ angular.module("ngMetaCrudApp")
           $scope.manufacturer = null;
           $scope.manufacturerOrig = null;
           $scope.mode = "view";
-          gToast.open("The manufacturer [" + updated.id + "] - " + updated.name + " has successfully been updated.");
+          toastr.success("The manufacturer [" + updated.id + "] - " + updated.name + " has successfully been updated.");
         },
         function failure(errorResponse) {
           restService.error("Could not update the manufacturer.", errorResponse);
@@ -132,7 +132,7 @@ angular.module("ngMetaCrudApp")
                   dialogs.error("Operation rejected", msg);
                 } else {
                   $scope.manufacturersTableParams.reload();
-                  gToast.open("The manufacturer [" + m.id + "] - " + m.name +
+                  toastr.success("The manufacturer [" + m.id + "] - " + m.name +
                     " has successfully been removed.");
                 }
               },
@@ -152,9 +152,9 @@ angular.module("ngMetaCrudApp")
     $scope.mode = "view";
 
   }])
-.controller("CreateManufacturerDlgCtrl", ["$scope", "$log", "$uibModalInstance", "gToast", "restService",
+.controller("CreateManufacturerDlgCtrl", ["$scope", "$log", "$uibModalInstance", "toastr", "restService",
     "manufacturerTypes", "manufacturersTableParams",
-  function($scope, $log, $uibModalInstance, gToast, restService, manufacturerTypes, manufacturersTableParams) {
+  function($scope, $log, $uibModalInstance, toastr, restService, manufacturerTypes, manufacturersTableParams) {
 
     $scope.isBttnCreateDisabled = function(form) {
       return form.$invalid || $scope.isCreating;
@@ -166,7 +166,7 @@ angular.module("ngMetaCrudApp")
         function success(manufacturer) {
           manufacturersTableParams.reload();
           $uibModalInstance.close();
-          gToast.open("The manufacturer [" + manufacturer.id + "] - " + manufacturer.name +
+          toastr.success("The manufacturer [" + manufacturer.id + "] - " + manufacturer.name +
             " has successfully been created.");
         },
         function failure(errorResponse) {

@@ -3,10 +3,10 @@
 angular.module("ngMetaCrudApp")
 
 .controller("UserCtrl", ["dialogs", "$location", "$log", "$scope",
-  "$routeParams", "ngTableParams", "gToast", "restService", "Restangular",
+  "$routeParams", "ngTableParams", "toastr", "restService", "Restangular",
   "authProviders",
   function(dialogs, $location, $log,
-    $scope, $routeParams, ngTableParams, gToast, restService, Restangular, authProviders) {
+    $scope, $routeParams, ngTableParams, toastr, restService, Restangular, authProviders) {
 
     $scope.mode = null;
 
@@ -23,7 +23,7 @@ angular.module("ngMetaCrudApp")
       var userId = $scope.originalUser.id;
       restService.setUserMembershit(userId, g.id, isMember).then(
         function success() {
-          gToast.open("The user membership has been updated.");
+          toastr.success("The user membership has been updated.");
         },
         function failure(response) {
           restService.error("The user membership update failed.", response);
@@ -108,7 +108,7 @@ angular.module("ngMetaCrudApp")
         // Create
         Restangular.all("security/user").post($scope.user).then(
           function(user) {
-            gToast.open("Created user.");
+            toastr.success("Created user.");
             $location.path("/security/user/" + user.id);
           },
           function(response) {
@@ -119,7 +119,7 @@ angular.module("ngMetaCrudApp")
         // Update
         $scope.user.put().then(
           function() {
-            gToast.open("Updated user.");
+            toastr.success("Updated user.");
           },
           function(response) {
             restService.error("Could not update user.", response);
@@ -137,7 +137,7 @@ angular.module("ngMetaCrudApp")
           Restangular.one("security/user", $routeParams.id).remove().then(
             function() {
               // Success
-              gToast.open("Deleted user.");
+              toastr.success("Deleted user.");
               $location.path('/security/users/');
             },
             function(response) {
