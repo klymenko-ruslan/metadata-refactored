@@ -21,7 +21,7 @@ angular.module("ngMetaCrudApp")
           );
         },
         function() {
-          toastr.success("Login failed.");
+          toastr.error("Login failed.");
         }
       );
     };

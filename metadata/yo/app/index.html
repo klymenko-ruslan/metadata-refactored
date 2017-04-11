@@ -75,7 +75,8 @@
 <bom-status class="pull-right"></bom-status>
 <div class="container" data-ng-view=""></div>
 
-<!-- build:js scripts/modules.js -->
+<!-- build:js(.) scripts/modules.js -->
+<!-- bower:js -->
 <script type="text/javascript" src="bower_components/jquery/dist/jquery.js"></script>
 <script type="text/javascript" src="bower_components/dropzone/dist/dropzone.js"></script>
 <script type="text/javascript" src="bower_components/angular/angular.js"></script>
@@ -99,6 +100,8 @@
 <script type="text/javascript" src="bower_components/angular-markdown-editor-ghiscoding/src/angular-markdown-editor.js"></script>
 <script type="text/javascript" src="bower_components/bootstrap-markdown/js/bootstrap-markdown.js"></script>
 <script type="text/javascript" src="bower_components/filereader.js/filereader.js"></script>
+<script type="text/javascript" src="bower_components/restangular/src/restangular.js"></script>
+<!-- endbower -->
 <!-- endbuild -->
 
 <!-- build:js({.tmp,app}) scripts/scripts.js -->
@@ -199,9 +202,6 @@
 <script type="text/javascript" src="scripts/services/BOM.js"></script>
 <script type="text/javascript" src="scripts/services/Kits.js"></script>
 <!-- endbuild -->
-
-<!-- additional bower components -->
-<script type="text/javascript" src="bower_components/restangular/src/restangular.js"></script>
 
 </body>
 </html>
