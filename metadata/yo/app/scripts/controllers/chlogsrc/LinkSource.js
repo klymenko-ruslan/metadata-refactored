@@ -484,7 +484,7 @@ angular.module("ngMetaCrudApp")
         function(updatedAttachmentsResponse) {
           // Success
         _updateSourceAttachmentsTable(updatedAttachmentsResponse.rows);
-          toastr.info("File uploaded.");
+          toastr.success("File uploaded.");
           $scope.data.attachDescr = null;
           formData.delete("file");
         },

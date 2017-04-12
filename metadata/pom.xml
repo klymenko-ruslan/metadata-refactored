@@ -455,14 +455,35 @@
                 </configuration>
             </plugin>
             <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-yeoman-dist</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/target/classes/public</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${basedir}/yo/dist</directory>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <artifactId>maven-clean-plugin</artifactId>
                 <configuration>
                     <filesets>
                         <fileset>
-                            <directory>src/main/resources/public</directory>
+                            <directory>${basedir}/yo/.tmp</directory>
                         </fileset>
                         <fileset>
-                            <directory>yo/.tmp</directory>
+                            <directory>${basedir}/yo/dist</directory>
                         </fileset>
                     </filesets>
                 </configuration>

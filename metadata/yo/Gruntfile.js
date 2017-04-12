@@ -22,7 +22,7 @@ module.exports = function (grunt) {
   // configurable paths
   var yeomanConfig = {
     app: 'app',
-    dist: '../src/main/resources/public'
+    dist: 'dist'
   };
 
   try {
@@ -283,7 +283,7 @@ module.exports = function (grunt) {
           src: [
             '*.{ico,png,txt}',
             '.htaccess',
-            'bower_components/**/*',
+            // 'bower_components/**/*',
             'images/{,*/}*.{gif,webp,png,jpg,jpeg}',
             'styles/fonts/*'
           ]
@@ -294,13 +294,32 @@ module.exports = function (grunt) {
           src: [
             'generated/*'
           ]
+        }, {
+          expand: true,
+          cwd: 'bower_components/bootstrap/dist',
+          src: 'fonts/*',
+          dest: '<%= yeoman.dist %>'
+        }, {
+          expand: true,
+          cwd: 'bower_components/fontawesome',
+          src: 'fonts/*',
+          dest: '<%= yeoman.dist %>'
         }]
       },
       fonts: {
-        expand: true,
-        cwd: '<%= yeoman.app %>/bower_components/bootstrap-sass/dist/fonts/',
-        dest: '.tmp/fonts/',
-        src: '{,*/}*.*'
+        files: [
+          {
+            expand: true,
+            cwd: 'bower_components/bootstrap/dist',
+            src: 'fonts/*',
+            dest: '<%= yeoman.dist %>'
+          }, {
+            expand: true,
+            cwd: 'bower_components/fontawesome',
+            src: 'fonts/*',
+            dest: '<%= yeoman.dist %>'
+          }
+        ]
       },
       styles: {
         expand: true,

@@ -12,6 +12,18 @@ angular.module("ngMetaCrudApp", ["ngCookies", "ngRoute", "ngTable", "ui.bootstra
     // cfpLoadingBarProvider.spinnerTemplate = '<div><span class="fa fa-spinner">Loading...</div>';
     cfpLoadingBarProvider.latencyThreshold = 5;
   }])
+  .config(["toastrConfig", function(toastrConfig) {
+    angular.extend(toastrConfig, {
+      autoDismiss: true,
+      containerId: "toast-container",
+      maxOpened: 3,
+      newestOnTop: true,
+      positionClass: "toast-top-left",
+      preventDuplicates: false,
+      preventOpenDuplicates: true,
+      target: "body"
+    });
+  }])
   .config(["markedProvider", "hljsServiceProvider", function(markedProvider, hljsServiceProvider) {
     Dropzone.autoDiscover = false;
     // marked config

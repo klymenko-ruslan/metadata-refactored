@@ -1,5 +1,5 @@
-$icon-font-path: "../bower_components/bootstrap-sass/assets/fonts/bootstrap/";
-$fa-font-path:   "../bower_components/fontawesome/fonts/";
+$icon-font-path: "../fonts/";
+$fa-font-path:   "../fonts/";
 $iconSpritePath: "../images/glyphicons-halflings.png";
 $iconWhiteSpritePath: "../images/glyphicons-halflings-white.png";
 
@@ -98,12 +98,6 @@ td.label {
 .padding-top {
   padding-top: 20px;
 }
-/* WHY: This makes modals invisible. Why is it here?
-.modal {
-  display: block;
-  height: 0; // Invisible modals
-  overflow: visible;
-}*/
 
 .picker {
   div[class*='col-'] {
@@ -269,6 +263,7 @@ div.tolerance {
   color: #ff0000;
 }
 
+/*
 .angucomplete-dropdown {
   border-color: #ececec;
   border-width: 1px;
@@ -279,9 +274,6 @@ div.tolerance {
   cursor: pointer;
   z-index: 9999;
   position: absolute;
-  /*top: 32px;
-  left: 0px;
-  */
   margin-top: -6px;
   background-color: #ffffff;
   overflow-y: auto;
@@ -292,6 +284,7 @@ div.tolerance {
   font-size: 10px;
   color: #777;
 }
+*/
 
 .vcenter {
   display: inline-block;

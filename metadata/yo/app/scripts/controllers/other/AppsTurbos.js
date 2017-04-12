@@ -106,7 +106,7 @@ angular.module("ngMetaCrudApp")
               }
             });
           } else {
-            toastr.info("Generated " + response.generated + " associations.");
+            toastr.success("Generated " + response.generated + " associations.");
           }
         },
         function failure(response) {
