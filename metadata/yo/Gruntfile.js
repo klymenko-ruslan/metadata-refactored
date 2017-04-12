@@ -198,11 +198,6 @@ module.exports = function (grunt) {
         }
       }
     },
-    // not used since Uglify task does concat,
-    // but still available if needed
-    /*concat: {
-      dist: {}
-    },*/
     rev: {
       dist: {
         files: {
@@ -239,17 +234,17 @@ module.exports = function (grunt) {
       }
     },
     //cssmin: {
-      // By default, your `index.html` <!-- Usemin Block --> will take care of
-      // minification. This option is pre-configured if you do not wish to use
-      // Usemin blocks.
-      // dist: {
-      //   files: {
-      //     '<%= yeoman.dist %>/styles/main.css': [
-      //       '.tmp/styles/{,*/}*.css',
-      //       '<%= yeoman.app %>/styles/{,*/}*.css'
-      //     ]
-      //   }
-      // }
+    // By default, your `index.html` <!-- Usemin Block --> will take care of
+    // minification. This option is pre-configured if you do not wish to use
+    // Usemin blocks.
+    // dist: {
+    //   files: {
+    //     '<%= yeoman.dist %>/styles/main.css': [
+    //       '.tmp/styles/{,*/}*.css',
+    //       '<%= yeoman.app %>/styles/{,*/}*.css'
+    //     ]
+    //   }
+    // }
     //},
     htmlmin: {
       dist: {
@@ -283,7 +278,6 @@ module.exports = function (grunt) {
           src: [
             '*.{ico,png,txt}',
             '.htaccess',
-            // 'bower_components/**/*',
             'images/{,*/}*.{gif,webp,png,jpg,jpeg}',
             'styles/fonts/*'
           ]
@@ -360,7 +354,7 @@ module.exports = function (grunt) {
       //  singleRun: true
       //}
     },
-    ngmin: {
+    ngAnnotate: {
       dist: {
         files: [{
           expand: true,
@@ -370,6 +364,7 @@ module.exports = function (grunt) {
         }]
       }
     },
+    /*
     uglify: {
       dist: {
         files: {
@@ -379,6 +374,7 @@ module.exports = function (grunt) {
         }
       }
     }
+    */
   });
 
   grunt.registerTask('server', function (target) {
@@ -410,7 +406,7 @@ module.exports = function (grunt) {
     'concurrent:dist',
     'autoprefixer',
     'concat',
-    'ngmin',
+    'ngAnnotate',
     'copy:dist',
     'cssmin',
     'uglify',
