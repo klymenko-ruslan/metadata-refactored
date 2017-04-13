@@ -21,7 +21,10 @@ angular.module("ngMetaCrudApp", ["ngCookies", "ngRoute", "ngTable", "ui.bootstra
       positionClass: "toast-top-left",
       preventDuplicates: false,
       preventOpenDuplicates: true,
-      target: "body"
+      target: "#toastr",
+      allowHtml: false,
+      closeButton: true,
+      timeOut: 5000
     });
   }])
   .config(["markedProvider", "hljsServiceProvider", function(markedProvider, hljsServiceProvider) {

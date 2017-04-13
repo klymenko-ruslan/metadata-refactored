@@ -1,5 +1,6 @@
 package com.turbointernational.metadata.service;
 
+import static com.fasterxml.jackson.databind.MapperFeature.DEFAULT_VIEW_INCLUSION;
 import static com.turbointernational.metadata.entity.CriticalDimension.DataTypeEnum.DECIMAL;
 import static com.turbointernational.metadata.entity.CriticalDimension.DataTypeEnum.TEXT;
 
@@ -20,6 +21,8 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.turbointernational.metadata.dao.CriticalDimensionDao;
 import com.turbointernational.metadata.dao.PartDao;
 import com.turbointernational.metadata.entity.CriticalDimension;
@@ -27,6 +30,7 @@ import com.turbointernational.metadata.entity.CriticalDimensionEnum;
 import com.turbointernational.metadata.entity.CriticalDimensionEnumVal;
 import com.turbointernational.metadata.entity.PartType;
 import com.turbointernational.metadata.entity.part.Part;
+import com.turbointernational.metadata.util.View;
 
 import flexjson.JSONContext;
 import flexjson.TransformerUtil;
@@ -41,6 +45,8 @@ import flexjson.transformer.TypeTransformerMap;
 @Service
 public class CriticalDimensionService {
 
+    private static final Logger log = LoggerFactory.getLogger(CriticalDimensionService.class);
+
     @Autowired
     private CriticalDimensionDao criticalDimensionDao;
 
@@ -48,7 +54,9 @@ public class CriticalDimensionService {
     private PartDao partDao;
 
     private Map<Long, List<CriticalDimension>> criticalDimensionsCacheById = null;
+    private String criticalDimensionsCacheByIdAsJson = null;
     private Map<String, List<CriticalDimension>> criticalDimensionsCacheByName = null;
+    private String criticalDimensionsCacheByNameAsJson = null;
 
     public interface ValueExtractorCallback {
 
@@ -147,13 +155,16 @@ public class CriticalDimensionService {
         return cache.get(partTypeId);
     }
 
-    public List<CriticalDimension> getCriticalDimensionForPartType(String partTypeName) {
+    public List<CriticalDimension> getCriticalDimensionForPartType(String partTypeName) throws JsonProcessingException {
         Map<String, List<CriticalDimension>> cache = getCriticalDimensionsCacheByName();
         return cache.get(partTypeName);
     }
 
     private synchronized void resetCriticalDimensionsCache() {
         this.criticalDimensionsCacheById = null;
+        this.criticalDimensionsCacheByIdAsJson = null;
+        this.criticalDimensionsCacheByName = null;
+        this.criticalDimensionsCacheByNameAsJson = null;
     }
 
     @Transactional // needed for lazy initializations
@@ -165,6 +176,14 @@ public class CriticalDimensionService {
     }
 
     @Transactional // needed for lazy initializations
+    public String getCriticalDimensionsCacheByIdAsJson() {
+        if (criticalDimensionsCacheByIdAsJson == null) {
+            buildCriticalDimensionsCache();
+        }
+        return criticalDimensionsCacheByIdAsJson;
+    }
+
+    @Transactional // needed for lazy initializations
     public Map<String, List<CriticalDimension>> getCriticalDimensionsCacheByName() {
         if (criticalDimensionsCacheByName == null) {
             buildCriticalDimensionsCache();
@@ -172,16 +191,20 @@ public class CriticalDimensionService {
         return criticalDimensionsCacheByName;
     }
 
-    private synchronized void buildCriticalDimensionsCache() {
-        Map<Long, List<CriticalDimension>> cacheById = new HashMap<>(); // part
-                                                                        // type
-                                                                        // ID =>
-                                                                        // List<CriticalDimension>
-        Map<String, List<CriticalDimension>> cacheByName = new HashMap<>(); // part
-                                                                            // type
-                                                                            // name
-                                                                            // =>
-                                                                            // List<CriticalDimension>
+    @Transactional // needed for lazy initializations
+    public String getCriticalDimensionsCacheByNameAsJson() {
+        if (criticalDimensionsCacheByNameAsJson == null) {
+            buildCriticalDimensionsCache();
+        }
+        return criticalDimensionsCacheByNameAsJson;
+    }
+
+    @Transactional
+    public synchronized void buildCriticalDimensionsCache() {
+        // part type ID => List<CriticalDimension>
+        Map<Long, List<CriticalDimension>> cacheById = new HashMap<>();
+        // part type name => List<CriticalDimension>
+        Map<String, List<CriticalDimension>> cacheByName = new HashMap<>();
         // Load current values to the cache.
         for (CriticalDimension cd : criticalDimensionDao.findAll()) {
             criticalDimensionDao.getEntityManager().detach(cd);
@@ -202,6 +225,16 @@ public class CriticalDimensionService {
             cdlst.add(cd);
         }
         this.criticalDimensionsCacheById = Collections.unmodifiableMap(cacheById);
+        ObjectMapper mapper = (new ObjectMapper()).disable(DEFAULT_VIEW_INCLUSION);
+        try {
+            this.criticalDimensionsCacheByIdAsJson = mapper.writerWithView(View.Summary.class)
+                    .writeValueAsString(cacheById);
+            this.criticalDimensionsCacheByNameAsJson = mapper.writerWithView(View.Summary.class)
+                    .writeValueAsString(cacheByName);
+        } catch (JsonProcessingException e) {
+            // Ignore.
+            log.error("Failed serialization of ctitical dimensions to JSON.", e);
+        }
         this.criticalDimensionsCacheByName = Collections.unmodifiableMap(cacheByName);
     }
 

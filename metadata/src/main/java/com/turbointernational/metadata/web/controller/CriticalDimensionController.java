@@ -1,27 +1,36 @@
 package com.turbointernational.metadata.web.controller;
 
+import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.PUT;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.entity.CriticalDimension;
 import com.turbointernational.metadata.entity.CriticalDimensionEnum;
 import com.turbointernational.metadata.entity.CriticalDimensionEnumVal;
 import com.turbointernational.metadata.service.CriticalDimensionService;
 import com.turbointernational.metadata.util.View;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.annotation.Secured;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Map;
-
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 /**
  * Created by dmytro.trunykov@zorallabs.com on 06.04.16.
  */
 @Controller
-@RequestMapping(value = {"/criticaldimension", "/metadata/criticaldimension"})
+@RequestMapping(value = { "/criticaldimension", "/metadata/criticaldimension" })
 public class CriticalDimensionController {
 
     enum PartTypesIndexByEnum {
@@ -35,18 +44,20 @@ public class CriticalDimensionController {
     @JsonView(View.Summary.class)
     @RequestMapping(value = "/byparttypes", method = GET, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
-    public Map<?, List<CriticalDimension>> getCriticalDimensionsByPartTypes(
-            @RequestParam("indexBy") PartTypesIndexByEnum indexBy)
-    {
-        switch(indexBy) {
-            case ID:
-                return criticalDimensionService.getCriticalDimensionsCacheById();
-            case NAME:
-                return criticalDimensionService.getCriticalDimensionsCacheByName();
-            default:
-                throw new AssertionError("Unsupported value of 'indexBy' parameter: " + indexBy);
+    public ResponseEntity<String> getCriticalDimensionsByPartTypes(
+            @RequestParam("indexBy") PartTypesIndexByEnum indexBy) {
+        String body;
+        switch (indexBy) {
+        case ID:
+            body = criticalDimensionService.getCriticalDimensionsCacheByIdAsJson();
+            break;
+        case NAME:
+            body = criticalDimensionService.getCriticalDimensionsCacheByNameAsJson();
+            break;
+        default:
+            throw new AssertionError("Unsupported value of 'indexBy' parameter: " + indexBy);
         }
-
+        return new ResponseEntity<>(body, OK);
     }
 
     @Secured("ROLE_READ")
@@ -94,7 +105,8 @@ public class CriticalDimensionController {
     @JsonView(View.Summary.class)
     @RequestMapping(value = "/enum/{enumId}/item", method = POST, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
-    public CriticalDimensionEnumVal addCritDimEnumVal(@PathVariable("enumId") Integer enumId, @RequestBody CriticalDimensionEnumVal cdev) {
+    public CriticalDimensionEnumVal addCritDimEnumVal(@PathVariable("enumId") Integer enumId,
+            @RequestBody CriticalDimensionEnumVal cdev) {
         cdev.setCriticalDimensionEnumId(enumId);
         return criticalDimensionService.addCritDimEnumVal(cdev);
     }
@@ -141,7 +153,8 @@ public class CriticalDimensionController {
     @JsonView(View.Summary.class)
     @RequestMapping(value = "/enum/{enumId}/items", method = GET, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
-    public CriticalDimensionEnumVal findCritDimEnumValByName(@PathVariable("enumId") Integer enumId, @RequestParam("name") String name) {
+    public CriticalDimensionEnumVal findCritDimEnumValByName(@PathVariable("enumId") Integer enumId,
+            @RequestParam("name") String name) {
         return criticalDimensionService.findCritDimEnumValByName(enumId, name);
     }
 
