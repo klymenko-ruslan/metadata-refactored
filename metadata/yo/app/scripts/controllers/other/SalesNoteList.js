@@ -68,6 +68,7 @@ angular.module("ngMetaCrudApp").controller("SalesNoteListCtrl", ["$scope", "$log
           function(errorResponse) {
             restService.error("Couldn't search for sales notes.", errorResponse);
           });
+        return $scope.notesPromise;
       }
     });
     // Query Parameters

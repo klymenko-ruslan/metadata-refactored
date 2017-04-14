@@ -84,7 +84,7 @@ angular.module("ngMetaCrudApp")
             }
             var userId = $scope.originalUser ? $scope.originalUser.id : null;
             var filter = params.filter();
-            restService.filterUserGroups(userId, filter.fltrName, filter.fltrRole, filter.fltrIsMember, sortProperty, sortOrder, offset, limit).then(
+            return restService.filterUserGroups(userId, filter.fltrName, filter.fltrRole, filter.fltrIsMember, sortProperty, sortOrder, offset, limit).then(
               function (result) {
                 $scope.isMember = {};
                 _.each(result.recs, function(g) {

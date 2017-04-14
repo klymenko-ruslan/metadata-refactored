@@ -51,7 +51,7 @@ angular.module("ngMetaCrudApp").directive("carmodelSearch", ["$log", "restServic
               if (sortProperty) {
                 sortOrder = params.sorting()[sortProperty];
               }
-              restService.filterCarModels($scope.fltrCarmodel.carmodel, $scope.fltrCarmodel.make,
+              return restService.filterCarModels($scope.fltrCarmodel.carmodel, $scope.fltrCarmodel.make,
                   sortProperty, sortOrder, offset, limit).then(
                 function (filtered) {
                   $scope.carmodelSearchResults = filtered;

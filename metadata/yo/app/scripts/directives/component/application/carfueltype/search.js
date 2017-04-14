@@ -89,7 +89,7 @@ angular.module("ngMetaCrudApp").directive("carfueltypeSearch", ["$log", "restSer
             if (sortProperty) {
               var sortOrder = $scope.search.sorting[sortProperty];
             }
-            restService.filterCarFuelTypes($scope.search.carfueltype, sortProperty, sortOrder, offset, limit).then(
+            return restService.filterCarFuelTypes($scope.search.carfueltype, sortProperty, sortOrder, offset, limit).then(
               function (filtered) {
                 $scope.searchResults = filtered;
                 // Update the total and slice the result

@@ -41,7 +41,7 @@ angular.module("ngMetaCrudApp")
         var offset = params.count() * (params.page() - 1);
         var limit = params.count();
         var filter = params.filter();
-        restService.filterManufacturers(filter.name, filter.typeId, filter.notExternal, sortProperty, sortOrder, offset, limit).then(
+        return restService.filterManufacturers(filter.name, filter.typeId, filter.notExternal, sortProperty, sortOrder, offset, limit).then(
           function(result) {
             params.total(result.total);
             return result.recs;

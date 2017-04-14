@@ -54,7 +54,7 @@ angular.module("ngMetaCrudApp").controller("Mas90SyncCtrl", ["$scope", "$interva
       count: 25
     }, {
       getData: function(params) {
-        restService.findMas90SyncHistory((params.page() - 1) * params.count(), params.count()).then(
+        return restService.findMas90SyncHistory((params.page() - 1) * params.count(), params.count()).then(
           function success(result) {
             params.total(result.total);
             return result.recs;

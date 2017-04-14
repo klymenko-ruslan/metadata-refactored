@@ -27,7 +27,7 @@ angular.module("ngMetaCrudApp")
         getData: function(params) {
           var offset = params.count() * (params.page() - 1);
           var limit = params.count();
-          restService.loadAncestors($scope.partId, offset, limit).then(
+          return restService.loadAncestors($scope.partId, offset, limit).then(
             function(result) {
               params.total(result.total);
               return result.recs;

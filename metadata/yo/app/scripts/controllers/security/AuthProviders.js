@@ -24,7 +24,7 @@ angular.module("ngMetaCrudApp").controller("AuthProvidersCtrl", ["$scope", "$log
         if (sortProperty) {
           sortOrder = params.sorting()[sortProperty];
         }
-        restService.getAllAuthProviders(sortProperty, sortOrder, offset, limit).then(
+        return restService.getAllAuthProviders(sortProperty, sortOrder, offset, limit).then(
           function(authProviders) {
             params.total(authProviders.length);
             $scope.modifyingRow = null;

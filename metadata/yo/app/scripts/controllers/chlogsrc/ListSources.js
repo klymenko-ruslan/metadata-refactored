@@ -68,7 +68,7 @@ angular.module("ngMetaCrudApp")
           if ($scope.fltrSource.sourceName) {
             snid = $scope.fltrSource.sourceName.id;
           }
-          restService.filterChangelogSource($scope.fltrSource.name, $scope.fltrSource.description,
+          return restService.filterChangelogSource($scope.fltrSource.name, $scope.fltrSource.description,
             $scope.fltrSource.url, snid, sortProperty, sortOrder, offset, limit)
           .then(
             function (filtered) {

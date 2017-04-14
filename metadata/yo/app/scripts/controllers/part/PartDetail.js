@@ -89,7 +89,7 @@ angular.module("ngMetaCrudApp")
       var offset = params.count() * (params.page() - 1);
       var limit = params.count();
       var userId = null;
-      restService.filterChangelog(null, null, null, null, null, null, $scope.partId,
+      return restService.filterChangelog(null, null, null, null, null, null, $scope.partId,
         sortProperty, sortOrder, offset, limit).then(
           function(result) {
             // Update the total and slice the result
@@ -121,7 +121,7 @@ angular.module("ngMetaCrudApp")
         var offset = params.count() * (params.page() - 1);
         var limit = params.count();
         var filter = params.filter();
-        restService.filterAlsoBought($scope.part.manufacturerPartNumber,
+        return restService.filterAlsoBought($scope.part.manufacturerPartNumber,
                 filter.manufacturerPartNumber, filter.partTypeValue, sortProperty, sortOrder, offset, limit).then(
           function(result) {
             // Update the total and slice the result

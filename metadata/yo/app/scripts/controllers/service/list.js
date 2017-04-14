@@ -23,7 +23,7 @@ angular.module("ngMetaCrudApp")
         var offset = params.count() * (params.page() - 1);
         var limit = params.count();
 
-        restService.filterServices(sortProperty, sortOrder, offset, limit).then(
+        return restService.filterServices(sortProperty, sortOrder, offset, limit).then(
           function(result) {
             // Update the total and slice the result
             $scope.requiredSource = {};

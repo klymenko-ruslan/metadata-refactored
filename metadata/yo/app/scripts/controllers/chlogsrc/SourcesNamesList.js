@@ -38,7 +38,7 @@ angular.module("ngMetaCrudApp")
           if (sortProperty) {
             sortOrder = params.sorting()[sortProperty];
           }
-          restService.filterChangelogSourceNames(sortProperty, sortOrder, offset, limit).then(
+          return restService.filterChangelogSourceNames(sortProperty, sortOrder, offset, limit).then(
             function (result) {
               // Update the total and slice the result
               params.total(result.total);

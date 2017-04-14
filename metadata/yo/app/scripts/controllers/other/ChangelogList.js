@@ -46,14 +46,12 @@ angular.module("ngMetaCrudApp")
         if (angular.isObject($scope.search.user)) {
           userId = $scope.search.user.id;
         }
-        restService.filterChangelog($scope.search.startDate, $scope.search.finishDate,
+        return restService.filterChangelog($scope.search.startDate, $scope.search.finishDate,
           $scope.search.service, userId, $scope.search.description, $scope.search.data, null,
           sortProperty, sortOrder, offset, limit).then(
           function(result) {
             // Update the total and slice the result
             params.total(result.total);
-$log.log("recs: " + angular.toJson(result.recs, 2));
-$log.log("total: " + angular.toJson(result.total, 2));
             return result.recs;
           },
           function(errorResponse) {

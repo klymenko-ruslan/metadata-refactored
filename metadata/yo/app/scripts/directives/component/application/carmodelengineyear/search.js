@@ -39,7 +39,7 @@ angular.module("ngMetaCrudApp").directive("cmeySearch", ["$log", "restService", 
               if (sortProperty) {
                 sortOrder = params.sorting()[sortProperty];
               }
-              restService.filterCarModelEngineYears($scope.fltrCmey.cmey,
+              return restService.filterCarModelEngineYears($scope.fltrCmey.cmey,
                   $scope.fltrCmey.year, $scope.fltrCmey.make,
                   $scope.fltrCmey.model, $scope.fltrCmey.engine,
                   $scope.fltrCmey.fueltype,
