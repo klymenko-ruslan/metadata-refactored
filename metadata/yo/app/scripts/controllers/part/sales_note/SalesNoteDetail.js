@@ -2,8 +2,8 @@
 
 angular.module("ngMetaCrudApp")
   .controller("SalesNoteDetailCtrl", ["$log", "$routeParams", "$parse", "dialogs", "$scope",
-    "ngTableParams", "$location", "toastr", "SalesNotes", "utils", "restService", "part", "salesNote",
-    function($log, $routeParams, $parse, dialogs, $scope, ngTableParams, $location, toastr, SalesNotes,
+    "NgTableParams", "$location", "toastr", "SalesNotes", "utils", "restService", "part", "salesNote",
+    function($log, $routeParams, $parse, dialogs, $scope, NgTableParams, $location, toastr, SalesNotes,
         utils, restService, part, salesNote) {
       $scope.part = part;
       $scope.salesNote = salesNote;
@@ -16,7 +16,7 @@ angular.module("ngMetaCrudApp")
       };
 
       // Attachment Table
-      $scope.attachmentTableParams = new ngTableParams({
+      $scope.attachmentTableParams = new NgTableParams({
         page: 1,
         count: 10,
         sorting: {}
@@ -25,7 +25,7 @@ angular.module("ngMetaCrudApp")
       });
 
       // Related Part Table
-      $scope.relatedPartTableParams = new ngTableParams({
+      $scope.relatedPartTableParams = new NgTableParams({
         page: 1,
         count: 10,
         sorting: {}

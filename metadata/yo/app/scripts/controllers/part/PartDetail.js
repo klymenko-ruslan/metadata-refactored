@@ -2,9 +2,9 @@
 
 angular.module("ngMetaCrudApp")
 .controller("PartDetailCtrl", ["$scope", "$log", "$q", "$location", "$cookies", "$route", "$routeParams", "Kits",
-    "ngTableParams", "utils", "restService", "Restangular", "User", "$uibModal", "dialogs", "toastr",
+    "NgTableParams", "utils", "restService", "Restangular", "User", "$uibModal", "dialogs", "toastr",
     "part", "criticalDimensions", "partTypes", "manufacturers", "turbos", "oversizeParts", "standardParts", "prices",
-    function ($scope, $log, $q, $location, $cookies, $route, $routeParams, Kits, ngTableParams, utils,
+    function ($scope, $log, $q, $location, $cookies, $route, $routeParams, Kits, NgTableParams, utils,
     restService, Restangular, User, $uibModal, dialogs, toastr, part, criticalDimensions, partTypes, manufacturers,
     turbos, oversizeParts, standardParts, prices) {
   $scope.partId = part.id;
@@ -72,14 +72,14 @@ angular.module("ngMetaCrudApp")
       );
   };
 
-  $scope.changelogTableParams = new ngTableParams({
+  $scope.changelogTableParams = new NgTableParams({
     page: 1,
     count: 10,
     sorting: {
       changeDate: "desc"
     }
   }, {
-    getData: function($defer, params) {
+    getData: function(params) {
       var sortOrder;
       var sorting = params.sorting();
       for (var sortProperty in sorting) break;
@@ -93,26 +93,25 @@ angular.module("ngMetaCrudApp")
         sortProperty, sortOrder, offset, limit).then(
           function(result) {
             // Update the total and slice the result
-            $defer.resolve(result.recs);
             params.total(result.total);
+            return result.recs;
           },
           function(errorResponse) {
             restService.error("Search in the changelog failed.", errorResponse);
-            $defer.reject();
           }
       );
     }
   });
 
   if ($scope.part.manufacturer.name == "Turbo International") {
-    $scope.alsoBoughtTableParams = new ngTableParams({
+    $scope.alsoBoughtTableParams = new NgTableParams({
       page: 1,
       count: 25,
       sorting: {
         qtyShipped: "desc"
       }
     }, {
-      getData: function($defer, params) {
+      getData: function(params) {
         var sortOrder;
         var sorting = params.sorting();
         for (var sortProperty in sorting) break;
@@ -127,16 +126,15 @@ angular.module("ngMetaCrudApp")
           function(result) {
             // Update the total and slice the result
             if (result) {
-              $defer.resolve(result.recs);
               params.total(result.total);
+              return result.recs;
             } else {
-              $defer.resolve([]);
               params.total(0);
+              return [];
             }
           },
           function(errorResponse) {
             restService.error("Search in the changelog failed.", errorResponse);
-            $defer.reject();
           }
         );
       }
@@ -146,7 +144,7 @@ angular.module("ngMetaCrudApp")
   $scope.turbosTableParams = null;
 
   function _initTurbosTableParams(turbos) {
-    $scope.turbosTableParams = new ngTableParams({
+    $scope.turbosTableParams = new NgTableParams({
       "page": 1,
       "count": 10,
       "sorting": {
@@ -641,7 +639,7 @@ angular.module("ngMetaCrudApp")
     });
   };
 
-  $scope.oversizePartsTableParams = new ngTableParams({
+  $scope.oversizePartsTableParams = new NgTableParams({
     "page": 1,
     "count": 10,
     "sorting": {
@@ -651,7 +649,7 @@ angular.module("ngMetaCrudApp")
     "getData": utils.localPagination($scope.oversizeParts, "manufacturerPartNumber")
   });
 
-  $scope.standardPartsTableParams = new ngTableParams({
+  $scope.standardPartsTableParams = new NgTableParams({
     "page": 1,
     "count": 10,
     "sorting": {

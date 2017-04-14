@@ -7,7 +7,7 @@ angular.module("ngMetaCrudApp")
       /**
        * Handy function for use together with ngTable.
        *
-       * The ngTableParams allows use plain arrays as datasource with help of property 'data'.
+       * The NgTableParams allows use plain arrays as datasource with help of property 'data'.
        * But it works incorrect when the array is modified.
        * This function handles modification of an underlying array correctly.
        *

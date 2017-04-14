@@ -1,8 +1,8 @@
 "use strict";
 
 angular.module("ngMetaCrudApp")
-  .directive("interchangeableParts", ["$log", "utils", "restService", "ngTableParams",
-    function($log, utils, restService, ngTableParams) {
+  .directive("interchangeableParts", ["$log", "utils", "restService", "NgTableParams",
+    function($log, utils, restService, NgTableParams) {
       return {
         restrict: 'E',
         scope: {
@@ -23,7 +23,7 @@ angular.module("ngMetaCrudApp")
                 if (idx > -1) {
                   interchange.parts.splice(idx, 1);
                 }
-                $scope.interchangeablePartsTableParams = new ngTableParams({
+                $scope.interchangeablePartsTableParams = new NgTableParams({
                   page: 1,
                   count: 10
                 }, {

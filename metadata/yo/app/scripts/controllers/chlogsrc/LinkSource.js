@@ -70,10 +70,10 @@ angular.module("ngMetaCrudApp")
   return this;
 
 }])
-.controller("ChlogSrcLinkDlgCtrl", ["$scope", "$log", "$location", "dialogs", "toastr", "ngTableParams",
+.controller("ChlogSrcLinkDlgCtrl", ["$scope", "$log", "$location", "dialogs", "toastr", "NgTableParams",
   "$uibModalInstance", "utils", "restService", "cbSave",
   "sourcesNames", "lastPicked", "User", "cancelUrl", "begin",
-  function($scope, $log, $location, dialogs, toastr, ngTableParams, $uibModalInstance, utils,
+  function($scope, $log, $location, dialogs, toastr, NgTableParams, $uibModalInstance, utils,
     restService, cbSave, sourcesNames, lastPicked, User, cancelUrl, begin) { // injection "begin" is important
 
     var ATTR_UPLOAD_ID = "upload_id";
@@ -228,7 +228,7 @@ angular.module("ngMetaCrudApp")
 
     _reset();
 
-    $scope.lastPickedTableParams = new ngTableParams(
+    $scope.lastPickedTableParams = new NgTableParams(
       {
         page: 1,
         count: 5,
@@ -240,7 +240,7 @@ angular.module("ngMetaCrudApp")
       }
     );
 
-    $scope.pickedSourcesTableParams = new ngTableParams(
+    $scope.pickedSourcesTableParams = new NgTableParams(
       {
         page: 1,
         count: 5,
@@ -252,7 +252,7 @@ angular.module("ngMetaCrudApp")
       }
     );
 
-    $scope.sourceTableParams = new ngTableParams(
+    $scope.sourceTableParams = new NgTableParams(
       {
         page: 1,
         count: 10,
@@ -261,7 +261,7 @@ angular.module("ngMetaCrudApp")
         }
       },
       {
-        getData: function ($defer, params) {
+        getData: function (params) {
           // Update the pagination info
           var offset = params.count() * (params.page() - 1);
           var limit = params.count();
@@ -279,19 +279,18 @@ angular.module("ngMetaCrudApp")
           .then(
             function (filtered) {
               // Update the total and slice the result
-              $defer.resolve(filtered.hits.hits);
               params.total(filtered.hits.total);
+              return filtered.hits.hits;
             },
             function (errorResponse) {
               $log.log("Couldn't search for 'changelog source'.");
-              $defer.reject();
             }
           );
         }
       }
     );
 
-    $scope.sourceAttachmentsTableParams = new ngTableParams(
+    $scope.sourceAttachmentsTableParams = new NgTableParams(
       {
         page: 1,
         count: 10,

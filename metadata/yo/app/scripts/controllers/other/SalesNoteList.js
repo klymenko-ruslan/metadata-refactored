@@ -1,10 +1,10 @@
 "use strict";
 
 // Argument primaryPartID is initialized during resolving before invocation of this controller (see app.js).
-angular.module("ngMetaCrudApp").controller("SalesNoteListCtrl", ["$scope", "$log", "$routeParams", "ngTableParams",
+angular.module("ngMetaCrudApp").controller("SalesNoteListCtrl", ["$scope", "$log", "$routeParams", "NgTableParams",
   "restService", "Restangular", "SalesNotes", "primaryPartId",
   function(
-    $scope, $log, $routeParams, ngTableParams, restService, Restangular, SalesNotes, primaryPartId) {
+    $scope, $log, $routeParams, NgTableParams, restService, Restangular, SalesNotes, primaryPartId) {
 
     $scope.states = {
       "current": {
@@ -38,17 +38,16 @@ angular.module("ngMetaCrudApp").controller("SalesNoteListCtrl", ["$scope", "$log
     }
 
     // Notes Table
-    $scope.notesTableParams = new ngTableParams({
+    $scope.notesTableParams = new NgTableParams({
       page: 1,
       count: 10,
       sorting: {
         createDate: "desc"
       }
     }, {
-      getData: function($defer, params) {
+      getData: function(params) {
         if (_.size($scope.search.states) < 1) {
-          $defer.resolve([]);
-          return;
+          return [];
         }
         var sortOrder;
         var sorting = params.sorting();
@@ -63,12 +62,11 @@ angular.module("ngMetaCrudApp").controller("SalesNoteListCtrl", ["$scope", "$log
           $scope.search.states, sortProperty, sortOrder, offset, limit).then(
           function(searchResults) {
             // Update the total and slice the result
-            $defer.resolve(searchResults.hits.hits);
             params.total(searchResults.hits.total);
+            return searchResults.hits.hits;
           },
           function(errorResponse) {
             restService.error("Couldn't search for sales notes.", errorResponse);
-            $defer.reject();
           });
       }
     });

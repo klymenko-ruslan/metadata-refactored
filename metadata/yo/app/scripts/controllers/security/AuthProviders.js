@@ -1,21 +1,21 @@
 "use strict";
 
 angular.module("ngMetaCrudApp").controller("AuthProvidersCtrl", ["$scope", "$log", "restService", "dialogs", "toastr",
-  "ngTableParams", "Restangular",
-  function($scope, $log, restService, dialogs, toasrt, ngTableParams, Restangular) {
+  "NgTableParams", "Restangular",
+  function($scope, $log, restService, dialogs, toasrt, NgTableParams, Restangular) {
 
     $scope.modifyingRow = null;
     $scope.refRow = null;
 
     // Authentication Providers Table
-    $scope.authProvidersTableParams = new ngTableParams({
+    $scope.authProvidersTableParams = new NgTableParams({
       "page": 1,
       "count": 10,
       "sorting": {
         "id": "asc"
       }
     }, {
-      "getData": function($defer, params) {
+      "getData": function(params) {
         // Update the pagination info
         var offset = params.count() * (params.page() - 1);
         var limit = params.count();
@@ -28,11 +28,10 @@ angular.module("ngMetaCrudApp").controller("AuthProvidersCtrl", ["$scope", "$log
           function(authProviders) {
             params.total(authProviders.length);
             $scope.modifyingRow = null;
-            $defer.resolve(authProviders);
+            return authProviders;
           },
           function(errorResponse) {
             $log.log("Couldn't load all authentication providers.");
-            $defer.reject();
           }
         );
       }

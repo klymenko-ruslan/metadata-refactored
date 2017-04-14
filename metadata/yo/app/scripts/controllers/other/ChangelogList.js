@@ -1,9 +1,9 @@
 "use strict";
 
 angular.module("ngMetaCrudApp")
-  .controller("ChangelogListCtrl", ["$scope", "$log", "ngTableParams", "$uibModal", "restService", "users",
+  .controller("ChangelogListCtrl", ["$scope", "$log", "NgTableParams", "$uibModal", "restService", "users",
     "DATE_FORMAT", function(
-    $scope, $log, ngTableParams, $uibModal, restService, users, DATE_FORMAT) {
+    $scope, $log, NgTableParams, $uibModal, restService, users, DATE_FORMAT) {
 
     $scope.dateFormat = DATE_FORMAT;
 
@@ -26,14 +26,14 @@ angular.module("ngMetaCrudApp")
       startingDay: 1
     };
 
-    $scope.changelogTableParams = new ngTableParams({
+    $scope.changelogTableParams = new NgTableParams({
       page: 1,
       count: 25,
       sorting: {
         changeDate: "desc"
       }
     }, {
-      getData: function($defer, params) {
+      getData: function(params) {
         var sortOrder;
         var sorting = params.sorting();
         for (var sortProperty in sorting) break;
@@ -51,12 +51,13 @@ angular.module("ngMetaCrudApp")
           sortProperty, sortOrder, offset, limit).then(
           function(result) {
             // Update the total and slice the result
-            $defer.resolve(result.recs);
             params.total(result.total);
+$log.log("recs: " + angular.toJson(result.recs, 2));
+$log.log("total: " + angular.toJson(result.total, 2));
+            return result.recs;
           },
           function(errorResponse) {
             restService.error("Search in the changelog failed.", errorResponse);
-            $defer.reject();
           });
       }
     });
@@ -93,8 +94,8 @@ angular.module("ngMetaCrudApp")
     };
 
   }])
-  .controller("ChangelogViewDlgCtrl", ["$scope", "$log", "$location", "ngTableParams", "utils", "$uibModalInstance", "changelogRecord", "changelogSourceLink",
-    function($scope, $log, $location, ngTableParams, utils, $uibModalInstance,  changelogRecord, changelogSourceLink) {
+  .controller("ChangelogViewDlgCtrl", ["$scope", "$log", "$location", "NgTableParams", "utils", "$uibModalInstance", "changelogRecord", "changelogSourceLink",
+    function($scope, $log, $location, NgTableParams, utils, $uibModalInstance,  changelogRecord, changelogSourceLink) {
       $scope.readonly = true;
       $scope.date = changelogRecord.changeDate;
       $scope.user = changelogRecord.user;
@@ -107,7 +108,7 @@ angular.module("ngMetaCrudApp")
         $scope.changelogSources = [];
       }
 
-      $scope.changelogSourcesTableParams = new ngTableParams(
+      $scope.changelogSourcesTableParams = new NgTableParams(
         {
           page: 1,
           count: 10,

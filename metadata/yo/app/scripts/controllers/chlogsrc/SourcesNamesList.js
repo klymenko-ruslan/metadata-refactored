@@ -3,8 +3,8 @@
 angular.module("ngMetaCrudApp")
 
 .controller("ChangelogSourcesNamesListCtrl",
-  ["$scope", "$log", "toastr", "dialogs", "ngTableParams", "Restangular", "restService",
-  function($scope, $log, toastr, dialogs, ngTableParams, Restangular, restService) {
+  ["$scope", "$log", "toastr", "dialogs", "NgTableParams", "Restangular", "restService",
+  function($scope, $log, toastr, dialogs, NgTableParams, Restangular, restService) {
 
     $scope.mode = "view";
 
@@ -20,7 +20,7 @@ angular.module("ngMetaCrudApp")
       newName: null
     };
 
-    $scope.sourcesNamesTableParams = new ngTableParams(
+    $scope.sourcesNamesTableParams = new NgTableParams(
       {
         page: 1,
         count: 25,
@@ -29,7 +29,7 @@ angular.module("ngMetaCrudApp")
         }
       },
       {
-        getData: function ($defer, params) {
+        getData: function (params) {
           // Update the pagination info
           var offset = params.count() * (params.page() - 1);
           var limit = params.count();
@@ -41,12 +41,11 @@ angular.module("ngMetaCrudApp")
           restService.filterChangelogSourceNames(sortProperty, sortOrder, offset, limit).then(
             function (result) {
               // Update the total and slice the result
-              $defer.resolve(result.recs);
               params.total(result.total);
+              return result.recs;
             },
             function (errorResponse) {
               $log.log("Couldn't load changelog sources names.");
-              $defer.reject();
             }
           );
         }

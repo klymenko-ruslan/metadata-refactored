@@ -1,19 +1,19 @@
 "use strict";
 
 angular.module("ngMetaCrudApp")
-  .controller("ServiceListCtrl", ["$scope", "$log", "toastr", "ngTableParams", "restService",
-    function($scope, $log, toastr, ngTableParams, restService) {
+  .controller("ServiceListCtrl", ["$scope", "$log", "toastr", "NgTableParams", "restService",
+    function($scope, $log, toastr, NgTableParams, restService) {
 
     $scope.requiredSource = {};
 
-    $scope.serviceTableParams = new ngTableParams({
+    $scope.serviceTableParams = new NgTableParams({
       page: 1,
       count: 25,
       sorting: {
         "name": "asc"
       }
     }, {
-      getData: function($defer, params) {
+      getData: function(params) {
         var sortOrder;
         var sorting = params.sorting();
         for (var sortProperty in sorting) break;
@@ -30,12 +30,11 @@ angular.module("ngMetaCrudApp")
             _.each(result.recs, function(srv) {
               $scope.requiredSource[srv.name] = srv.requiredSource;
             });
-            $defer.resolve(result.recs);
             params.total(result.total);
+            return result.recs;
           },
           function(errorResponse) {
             restService.error("Loading of list of services failed.", errorResponse);
-            $defer.reject();
           });
       }
     });

@@ -2,9 +2,9 @@
 
 angular.module("ngMetaCrudApp")
   .controller("TurboSearchCtrl", [
-    "$log", "$scope", "$location", "ngTableParams", "$uibModal", "dialogs", "toastr", "restService",
+    "$log", "$scope", "$location", "NgTableParams", "$uibModal", "dialogs", "toastr", "restService",
     "BOM", "utils", "part", "partTypes", "turbos",
-    function ($log, $scope, $location, ngTableParams, $uibModal, dialogs, toastr, restService,
+    function ($log, $scope, $location, NgTableParams, $uibModal, dialogs, toastr, restService,
               BOM, utils, part, partTypes, turbos)
     {
 
@@ -24,7 +24,7 @@ angular.module("ngMetaCrudApp")
       $scope.linkedTurbosTableParams = null;
 
       function _updateLinkedTurbosTableParams(turbos) {
-        $scope.linkedTurbosTableParams = new ngTableParams({
+        $scope.linkedTurbosTableParams = new NgTableParams({
           page: 1,
           count: 10
         }, {
@@ -34,7 +34,7 @@ angular.module("ngMetaCrudApp")
 
       _updateLinkedTurbosTableParams(turbos);
 
-      $scope.pickedPartsTableParams = new ngTableParams(
+      $scope.pickedPartsTableParams = new NgTableParams(
         {
           page: 1,
           count: 10,
@@ -117,13 +117,13 @@ angular.module("ngMetaCrudApp")
       };
 
     }
-  ]).controller("FailedTurbosDlgCtrl", ["$scope", "$log", "$location", "$uibModalInstance", "ngTableParams",
+  ]).controller("FailedTurbosDlgCtrl", ["$scope", "$log", "$location", "$uibModalInstance", "NgTableParams",
       "utils", "part", "failures",
-    function($scope, $log, $location, $uibModalInstance, ngTableParams, utils, part, failures) {
+    function($scope, $log, $location, $uibModalInstance, NgTableParams, utils, part, failures) {
 
       $scope.part = part;
 
-      $scope.failuresTableParams = new ngTableParams({
+      $scope.failuresTableParams = new NgTableParams({
         page: 1,
         count: 10
       }, {

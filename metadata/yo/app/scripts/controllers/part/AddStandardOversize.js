@@ -2,9 +2,9 @@
 
 angular.module("ngMetaCrudApp")
 
-.controller("AddStandardOversizeCtrl", ["$log", "$scope", "$location", "ngTableParams",
+.controller("AddStandardOversizeCtrl", ["$log", "$scope", "$location", "NgTableParams",
   "restService", "Restangular", "dialogs", "toastr", "utils", "partTypes", "part", "type", "existing",
-  function($log, $scope, $location, ngTableParams, restService,
+  function($log, $scope, $location, NgTableParams, restService,
     Restangular, dialogs, toastr, utils, partTypes, part, type, existing) {
 
     $scope.partTypes = partTypes;
@@ -26,7 +26,7 @@ angular.module("ngMetaCrudApp")
 
     updateExistingPartIds();
 
-    $scope.existingTableParams = new ngTableParams({
+    $scope.existingTableParams = new NgTableParams({
       page: 1,
       count: 5
     }, {
@@ -34,7 +34,7 @@ angular.module("ngMetaCrudApp")
       getData: utils.localPagination(existing, "manufacturerPartNumber")
     });
 
-    $scope.pickedPartsTableParams = new ngTableParams(
+    $scope.pickedPartsTableParams = new NgTableParams(
       {
         page: 1,
         count: 5,

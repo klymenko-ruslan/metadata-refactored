@@ -8,9 +8,9 @@ angular.module("ngMetaCrudApp")
         }
     });
 }])
-.controller("ManufacturerListCtrl", ["$scope", "$log", "ngTableParams", "Restangular", "toastr", "$uibModal",
+.controller("ManufacturerListCtrl", ["$scope", "$log", "NgTableParams", "Restangular", "toastr", "$uibModal",
   "dialogs", "restService", "manufacturerTypes",
-  function($scope, $log, ngTableParams, Restangular, toastr, $uibModal, dialogs, restService, manufacturerTypes) {
+  function($scope, $log, NgTableParams, Restangular, toastr, $uibModal, dialogs, restService, manufacturerTypes) {
 
     $scope.manufacturerTypes = manufacturerTypes;
     $scope.manufacturerTypesOpts = _.map(manufacturerTypes, function (mt) {
@@ -24,14 +24,14 @@ angular.module("ngMetaCrudApp")
       {id: false, title: "no"}
     ];
 
-    $scope.manufacturersTableParams = new ngTableParams({
+    $scope.manufacturersTableParams = new NgTableParams({
       page: 1,
       count: 25,
       sorting: {
         name: "asc"
       }
     }, {
-      getData: function($defer, params) {
+      getData: function(params) {
         var sortOrder;
         var sorting = params.sorting();
         for (var sortProperty in sorting) break;
@@ -43,12 +43,11 @@ angular.module("ngMetaCrudApp")
         var filter = params.filter();
         restService.filterManufacturers(filter.name, filter.typeId, filter.notExternal, sortProperty, sortOrder, offset, limit).then(
           function(result) {
-            $defer.resolve(result.recs);
             params.total(result.total);
+            return result.recs;
           },
           function(errorResponse) {
             restService.error("Filtering of the manufacturer list failed.", errorResponse);
-            $defer.reject();
           });
       }
     });

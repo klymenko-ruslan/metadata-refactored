@@ -9,8 +9,8 @@ angular.module("ngMetaCrudApp").directive("carmodelSearch", ["$log", "restServic
       "link": function postLink(scope, iElement, iAttrs, controller, transcludeFn) {
         controller.transcludeActionsFn = transcludeFn;
       },
-      "controller": ["$log", "$q", "$scope", "toastr", "dialogs", "ngTableParams",
-                    function ($log, $q, $scope, toastr, dialogs, ngTableParams) {
+      "controller": ["$log", "$q", "$scope", "toastr", "dialogs", "NgTableParams",
+                    function ($log, $q, $scope, toastr, dialogs, NgTableParams) {
         $scope.fltrCarmodel = {
           carmodel: null,
           make: null
@@ -36,14 +36,14 @@ angular.module("ngMetaCrudApp").directive("carmodelSearch", ["$log", "restServic
         };
 
         // Car Model Table
-        $scope.carmodelTableParams = new ngTableParams(
+        $scope.carmodelTableParams = new NgTableParams(
           {
             "page": 1,
             "count": 10,
             "sorting": {}
           },
           {
-            "getData": function ($defer, params) {
+            "getData": function (params) {
               var offset = params.count() * (params.page() - 1);
               var limit = params.count();
               var sortProperty, sortOrder;
@@ -56,12 +56,11 @@ angular.module("ngMetaCrudApp").directive("carmodelSearch", ["$log", "restServic
                 function (filtered) {
                   $scope.carmodelSearchResults = filtered;
                   // Update the total and slice the result
-                  $defer.resolve($scope.carmodelSearchResults.hits.hits);
                   params.total($scope.carmodelSearchResults.hits.total);
+                  return $scope.carmodelSearchResults.hits.hits;
                 },
                 function (errorResponse) {
                   $log.log("Couldn't search for 'carmodel'.");
-                  $defer.reject();
                 }
               );
             }

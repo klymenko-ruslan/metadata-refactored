@@ -1,7 +1,7 @@
 "use strict";
 
 angular.module("ngMetaCrudApp")
-  .directive("turboTypes", ["$log", "utils", "ngTableParams", function($log, utils, ngTableParams) {
+  .directive("turboTypes", ["$log", "utils", "NgTableParams", function($log, utils, NgTableParams) {
     return {
       restrict: 'E',
       scope: {
@@ -10,7 +10,7 @@ angular.module("ngMetaCrudApp")
       templateUrl: "/views/component/turbo_types.html",
       controller: ["$scope", "$parse", "dialogs", "toastr", "restService",
         function($scope, $parse, dialogs, toastr, restService) {
-          $scope.turboTypesTableParams = new ngTableParams({
+          $scope.turboTypesTableParams = new NgTableParams({
             page: 1,
             count: 10
           }, {

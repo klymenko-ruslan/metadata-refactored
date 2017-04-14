@@ -12,9 +12,9 @@ angular.module("ngMetaCrudApp")
       replace: false,
       templateUrl: "/views/application/carmodelengineyear/form.html",
       controller: ["restService", "$q", "$scope", "$location", "$parse", "$log", "$routeParams", "toastr",
-        "$uibModal", "ngTableParams", "utils",
+        "$uibModal", "NgTableParams", "utils",
         function(restService, $q, $scope, $location, $parse, $log, $routeParams, toastr, $uibModal,
-          ngTableParams, utils)
+          NgTableParams, utils)
         {
 
           $scope.$on("form:created", function(event, data) {
@@ -244,7 +244,7 @@ angular.module("ngMetaCrudApp")
           $scope.pickedModels = [];
           $scope.pickedModelIds = {};
 
-          $scope.pickedModelsTableParams = new ngTableParams(
+          $scope.pickedModelsTableParams = new NgTableParams(
             {
               page: 1,
               count: 10,
@@ -302,7 +302,7 @@ angular.module("ngMetaCrudApp")
           $scope.pickedEngines = [];
           $scope.pickedEngineIds = {};
 
-          $scope.pickedEnginesTableParams = new ngTableParams(
+          $scope.pickedEnginesTableParams = new NgTableParams(
             {
               page: 1,
               count: 10,
@@ -351,7 +351,7 @@ angular.module("ngMetaCrudApp")
           $scope.pickedYears = [];
           $scope.pickedYearNames = {};
 
-          $scope.pickedYearsTableParams = new ngTableParams(
+          $scope.pickedYearsTableParams = new NgTableParams(
             {
               page: 1,
               count: 10,

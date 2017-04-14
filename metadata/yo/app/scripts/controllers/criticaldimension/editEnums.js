@@ -2,8 +2,8 @@
 
 angular.module("ngMetaCrudApp")
     .controller("CriticalDimensionEnumsCtrl", [
-      "$scope", "$log", "Restangular", "ngTableParams", "restService", "utils", "critDimEnums",
-      function($scope, $log, Restangular, ngTableParams, restService, utils, critDimEnums) {
+      "$scope", "$log", "Restangular", "NgTableParams", "restService", "utils", "critDimEnums",
+      function($scope, $log, Restangular, NgTableParams, restService, utils, critDimEnums) {
 
         $scope.selectedRow = null;
 
@@ -24,7 +24,7 @@ angular.module("ngMetaCrudApp")
         $scope.cdevModifying = null; // Don't rename. The name is '$eval'ed in validators
         $scope.cdevModifyingRef = null;
 
-        $scope.critDimEnumsTableParams = new ngTableParams({
+        $scope.critDimEnumsTableParams = new NgTableParams({
           page: 1,
           count: 10
         }, {
@@ -52,7 +52,7 @@ angular.module("ngMetaCrudApp")
             .then(
               function success(enumVals) {
                 $scope.critDimEnumItms = enumVals;
-                $scope.critDimEnumValsTableParams = new ngTableParams({
+                $scope.critDimEnumValsTableParams = new NgTableParams({
                   page: 1,
                   count: 10
                 }, {
@@ -127,7 +127,7 @@ angular.module("ngMetaCrudApp")
                 if (id == $scope.selectedRow.id) {
                   var selected = $scope.selectFirstEnum();
                   if (!selected) {
-                    $scope.critDimEnumValsTableParams = new ngTableParams({
+                    $scope.critDimEnumValsTableParams = new NgTableParams({
                       page: 1,
                       count: 10
                     }, {
