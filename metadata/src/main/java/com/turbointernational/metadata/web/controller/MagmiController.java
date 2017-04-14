@@ -29,6 +29,7 @@ import com.turbointernational.metadata.util.View;
 import com.turbointernational.metadata.web.dto.ProductPricesDto;
 import com.turbointernational.metadata.web.dto.mas90.ArInvoiceHistoryDetailDto;
 import com.turbointernational.metadata.web.dto.mas90.ArInvoiceHistoryHeaderDto;
+import com.turbointernational.metadata.web.dto.mas90.InvoiceDto;
 
 /**
  *
@@ -110,6 +111,15 @@ public class MagmiController {
     public List<ArInvoiceHistoryDetailDto> getInvoiceHistoryDetail(
             @RequestBody List<ArInvoiceHistoryDetailDto.Key> request) {
         List<ArInvoiceHistoryDetailDto> retVal = magmiService.getInvoiceHistoryDetail(request);
+        return retVal;
+    }
+
+    @RequestMapping(value = "/invoice/history", method = GET)
+    @ResponseBody
+    @PreAuthorize("hasRole('ROLE_MAGMI_EXPORT') or hasIpAddress('127.0.0.1/32')")
+    @JsonView(View.Summary.class)
+    public List<InvoiceDto> getInvoiceHistory(@RequestParam(name = "startDate", required = false) Long startDate) {
+        List<InvoiceDto> retVal = new ArrayList<>(100);
         return retVal;
     }
 
