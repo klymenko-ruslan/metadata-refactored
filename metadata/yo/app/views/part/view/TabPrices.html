@@ -1,7 +1,17 @@
 <p data-ng-show="prices.standardPrice == null">The part has no prices.</p>
-<dl class="dl-horizontal" data-ng-hide="prices.standardPrice == null">
-  <dt>Standard</dt>
-  <dd>{{prices.standardPrice | number:3}}</dd>
-  <dt data-ng-repeat-start="(n, v) in prices.prices">{{n}}</dt>
-  <dd data-ng-repeat-end>{{v | number:3}}</dd>
-</dl>
+<div class="row" data-ng-hide="prices.standardPrice == null">
+  <div class="col-xs-offset-1 col-xs-3">
+    <table>
+    <tbody>
+    <tr class="row-white" style="border-bottom: 2px solid #000;">
+      <td class="text-right" style="padding:2px 0.5em;font-weight:bold;border-right: 1px solid #000;">Standard</td>
+      <td class="text-right" style="padding:2px 0.5em;">{{prices.standardPrice | number:3}}</td>
+    </tr>
+    <tr data-ng-repeat="(n, v) in prices.prices" data-ng-class-even="'row-white'" data-ng-class-odd="'row-gray'">
+      <td class="text-right" style="padding:2px 0.5em;font-weight:bold;border-right: 1px solid #000;">{{n}}</td>
+      <td class="text-right" style="padding:2px 0.5em;">{{v | number:3}}</td>
+    </tr>
+    </tbody>
+    </table>
+  </div>
+</div>
