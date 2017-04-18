@@ -1,5 +1,12 @@
 package com.turbointernational.metadata.service;
 
+import static java.sql.ResultSet.CONCUR_READ_ONLY;
+import static java.sql.ResultSet.TYPE_FORWARD_ONLY;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -14,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import com.turbointernational.metadata.web.dto.mas90.ArInvoiceHistoryDetailDto;
 import com.turbointernational.metadata.web.dto.mas90.ArInvoiceHistoryHeaderDto;
+import com.turbointernational.metadata.web.dto.mas90.InvoiceDto;
 
 /**
  * @author dmytro.trunykov@zorallabs.com
@@ -352,6 +360,63 @@ public class MagmiService {
                 return record;
             });
             retVal.add(new ArInvoiceHistoryDetailDto(key, records));
+        }
+        return retVal;
+    }
+
+    public List<InvoiceDto> getInvoiceHistory(Long startDate, int limitDays) throws SQLException {
+        java.sql.Date d = new java.sql.Date(startDate);
+        List<InvoiceDto> retVal = new ArrayList<>(limitDays * 2);
+        Connection con = dataSourceMas90.getConnection();
+        try {
+            PreparedStatement ps = con.prepareStatement(
+                    "select h.invoiceno, h.invoicedate, h.customerno, d.detailseqno, d.itemcode, d.itemtype, d.itemcodedesc "
+                            + "from  ar_invoicehistoryheader h join ar_invoicehistorydetail d on h.invoiceno = d.invoiceno and h.headerseqno = d.headerseqno "
+                            + "where h.invoicedate between ? and dateadd(dy, ?, ?) "
+                            + "order by h.invoicedate, h.invoiceno, d.detailseqno asc",
+                    TYPE_FORWARD_ONLY, CONCUR_READ_ONLY);
+            ps.setDate(1, d);
+            ps.setInt(2, limitDays);
+            ps.setDate(3, d);
+            ResultSet rs = ps.executeQuery();
+            try {
+                InvoiceDto dto = null;
+                String invoiceno = null;
+                Date invoicedate = null;
+                String customerno = null;
+                String itemcode = null;
+                String itemtype = null;
+                String itemcodedesc = null;
+                List<InvoiceDto.DetailsDto> details = null;
+                long partId = 0L;
+                long[] interchanges = null;
+                while (rs.next()) {
+                    invoiceno = rs.getString(1);
+                    invoicedate = rs.getDate(2);
+                    customerno = rs.getString(3);
+                    itemcode = rs.getString(5);
+                    itemtype = rs.getString(6);
+                    itemcodedesc = rs.getString(7);
+                    if (dto == null) {
+                        details = new ArrayList<>(10);
+                        dto = new InvoiceDto(invoiceno, invoicedate == null ? -1L : invoicedate.getTime(), customerno, details);
+                    }
+                    InvoiceDto.DetailsDto dd = new InvoiceDto.DetailsDto(partId, itemcode, interchanges, itemcodedesc);
+                    if (!dto.getNo().equals(invoiceno)) {
+                        retVal.add(dto);
+                        details = new ArrayList<>(10);
+                        dto = new InvoiceDto(invoiceno, invoicedate == null ? -1L : invoicedate.getTime(), customerno, details);
+                    }
+                    details.add(dd);
+                }
+                if (dto != null) {
+                    retVal.add(dto);
+                }
+            } finally {
+                rs.close();
+            }
+        } finally {
+            con.close();
         }
         return retVal;
     }

@@ -4,6 +4,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -94,6 +95,15 @@ public class MagmiController {
         return retVal;
     }
 
+    @RequestMapping(value = "/invoice/history", method = GET)
+    @ResponseBody
+    @PreAuthorize("hasRole('ROLE_MAGMI_EXPORT') or hasIpAddress('127.0.0.1/32')")
+    @JsonView(View.Summary.class)
+    public List<InvoiceDto> getInvoiceHistory(@RequestParam(name = "startDate", required = false) Long startDate,
+            @RequestParam(name = "limitDays", defaultValue = "100", required = false) int limitDays) throws SQLException {
+        return magmiService.getInvoiceHistory(startDate, limitDays);
+    }
+
     @RequestMapping(value = "/invoice/history/header", method = POST)
     @ResponseBody
     @PreAuthorize("hasRole('ROLE_MAGMI_EXPORT') or hasIpAddress('127.0.0.1/32')")
@@ -111,15 +121,6 @@ public class MagmiController {
     public List<ArInvoiceHistoryDetailDto> getInvoiceHistoryDetail(
             @RequestBody List<ArInvoiceHistoryDetailDto.Key> request) {
         List<ArInvoiceHistoryDetailDto> retVal = magmiService.getInvoiceHistoryDetail(request);
-        return retVal;
-    }
-
-    @RequestMapping(value = "/invoice/history", method = GET)
-    @ResponseBody
-    @PreAuthorize("hasRole('ROLE_MAGMI_EXPORT') or hasIpAddress('127.0.0.1/32')")
-    @JsonView(View.Summary.class)
-    public List<InvoiceDto> getInvoiceHistory(@RequestParam(name = "startDate", required = false) Long startDate) {
-        List<InvoiceDto> retVal = new ArrayList<>(100);
         return retVal;
     }
 
