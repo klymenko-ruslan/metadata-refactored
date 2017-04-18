@@ -3,9 +3,9 @@
 angular.module("ngMetaCrudApp")
 
 .controller("ChangelogSourcesFormCtrl", [
-    "$scope", "$log", "$location", "toastr", "dialogs", "ngTableParams", "Restangular", "restService", "utils", "begin",
+    "$scope", "$log", "$location", "toastr", "dialogs", "NgTableParams", "Restangular", "restService", "utils", "begin",
     "sourcesNames", "source",
-  function($scope, $log, $location, toastr, dialogs, ngTableParams, Restangular, restService, utils, begin,
+  function($scope, $log, $location, toastr, dialogs, NgTableParams, Restangular, restService, utils, begin,
     sourcesNames, source) {
 
     $scope.source = source;
@@ -38,7 +38,7 @@ angular.module("ngMetaCrudApp")
       attachments = [];
     }
 
-    $scope.attachmentsTableParams = new ngTableParams(
+    $scope.attachmentsTableParams = new NgTableParams(
       {
         page: 1,
         count: 10,

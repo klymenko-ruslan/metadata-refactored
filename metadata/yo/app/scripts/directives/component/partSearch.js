@@ -16,8 +16,8 @@ angular.module("ngMetaCrudApp")
         }
       },
       controller: ["$transclude", "$parse", "$sce", "$log", "$q", "$location",
-                   "$scope", "ngTableParams", "utils",
-        function($transclude, $parse, $sce, $log, $q, $location, $scope, ngTableParams, utils) {
+                   "$scope", "NgTableParams", "utils",
+        function($transclude, $parse, $sce, $log, $q, $location, $scope, NgTableParams, utils) {
 
         $scope.critDimEnumValsMap = _.indexBy($scope.critDimEnumVals, "id");
 
@@ -233,12 +233,12 @@ angular.module("ngMetaCrudApp")
           }
         };
         // Part Table
-        $scope.partTableParams = new ngTableParams({
+        $scope.partTableParams = new NgTableParams({
           page: 1,
           count: 10,
           sorting: {}
         }, {
-          getData: function($defer, params) {
+          getData: function(params) {
             // Update the pagination info
             var offset = params.count() * (params.page() - 1);
             var limit = params.count();
@@ -257,7 +257,7 @@ angular.module("ngMetaCrudApp")
               turboTypeName = $scope.fltrPart.turboType;
             }
 
-            restService.filterParts(searchPartTypeId, $scope.fltrPart.manufacturer, $scope.fltrPart.name,
+            return restService.filterParts(searchPartTypeId, $scope.fltrPart.manufacturer, $scope.fltrPart.name,
               $scope.fltrPart.partNumber, $scope.fltrPart.inactive, turboModelName, turboTypeName,
               $scope.fltrPart.year, $scope.fltrPart.make, $scope.fltrPart.model,
               $scope.fltrPart.engine, $scope.fltrPart.fuelType,
@@ -293,12 +293,11 @@ angular.module("ngMetaCrudApp")
                 }
 
                 // Update the total and slice the result
-                $defer.resolve($scope.searchResults.hits.hits);
                 params.total($scope.searchResults.hits.total);
+                return $scope.searchResults.hits.hits;
               },
               function(errorResponse) {
                 $log.log("Parts search failed: " + errorResponse);
-                $defer.reject();
               }
             );
           }

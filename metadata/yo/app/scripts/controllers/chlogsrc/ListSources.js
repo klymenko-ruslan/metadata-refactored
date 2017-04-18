@@ -3,8 +3,8 @@
 angular.module("ngMetaCrudApp")
 
 .controller("ChangelogSourcesListCtrl",
-  ["$scope", "$log", "$location", "dialogs", "ngTableParams", "utils", "restService", "sourcesNames",
-  function($scope, $log, $location, dialogs, ngTableParams, utils, restService, sourcesNames) {
+  ["$scope", "$log", "$location", "dialogs", "NgTableParams", "utils", "restService", "sourcesNames",
+  function($scope, $log, $location, dialogs, NgTableParams, utils, restService, sourcesNames) {
 
     $scope.sourcesNames = sourcesNames;
 
@@ -46,7 +46,7 @@ angular.module("ngMetaCrudApp")
       $location.path("/changelog/source/" + srcId);
     };
 
-    $scope.sourceTableParams = new ngTableParams(
+    $scope.sourceTableParams = new NgTableParams(
       {
         page: 1,
         count: 25,
@@ -55,7 +55,7 @@ angular.module("ngMetaCrudApp")
         }
       },
       {
-        getData: function ($defer, params) {
+        getData: function (params) {
           // Update the pagination info
           var offset = params.count() * (params.page() - 1);
           var limit = params.count();
@@ -68,17 +68,16 @@ angular.module("ngMetaCrudApp")
           if ($scope.fltrSource.sourceName) {
             snid = $scope.fltrSource.sourceName.id;
           }
-          restService.filterChangelogSource($scope.fltrSource.name, $scope.fltrSource.description,
+          return restService.filterChangelogSource($scope.fltrSource.name, $scope.fltrSource.description,
             $scope.fltrSource.url, snid, sortProperty, sortOrder, offset, limit)
           .then(
             function (filtered) {
               // Update the total and slice the result
-              $defer.resolve(filtered.hits.hits);
               params.total(filtered.hits.total);
+              return filtered.hits.hits;
             },
             function (errorResponse) {
               $log.log("Couldn't search for 'changelog source'.");
-              $defer.reject();
             }
           );
         }

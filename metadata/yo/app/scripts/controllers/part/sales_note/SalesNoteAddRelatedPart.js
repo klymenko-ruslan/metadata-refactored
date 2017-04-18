@@ -2,9 +2,9 @@
 
 angular.module("ngMetaCrudApp")
   .controller("SalesNoteAddRelatedPartCtrl", ["$location", "$log",
-    "$routeParams", "$scope", "ngTableParams", "SalesNotes",
+    "$routeParams", "$scope", "NgTableParams", "SalesNotes",
     "utils", "restService", "part", "salesNote",
-    function($location, $log, $routeParams, $scope, ngTableParams, SalesNotes,
+    function($location, $log, $routeParams, $scope, NgTableParams, SalesNotes,
       utils, restService, part, salesNote) {
       $scope.SalesNotes = SalesNotes;
       $scope.partId = $routeParams.partId;
@@ -13,7 +13,7 @@ angular.module("ngMetaCrudApp")
       $scope.salesNote = salesNote;
 
       // Related Part Table
-      $scope.relatedPartTableParams = new ngTableParams({
+      $scope.relatedPartTableParams = new NgTableParams({
         page: 1,
         count: 10,
         sorting: {}

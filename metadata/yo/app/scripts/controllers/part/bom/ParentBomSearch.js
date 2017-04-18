@@ -2,9 +2,9 @@
 
 angular.module("ngMetaCrudApp")
   .controller("ParentBomSearchCtrl", [
-    "$log", "$scope", "$location", "ngTableParams", "$uibModal", "dialogs", "toastr", "restService",
+    "$log", "$scope", "$location", "NgTableParams", "$uibModal", "dialogs", "toastr", "restService",
     "BOM", "utils", "part", "partTypes", "parents", "services", "LinkSource",
-    function ($log, $scope, $location, ngTableParams, $uibModal, dialogs, toastr, restService,
+    function ($log, $scope, $location, NgTableParams, $uibModal, dialogs, toastr, restService,
               BOM, utils, part, partTypes, parents, services, LinkSource)
     {
 
@@ -33,14 +33,14 @@ angular.module("ngMetaCrudApp")
         $location.path("/part/" + partId);
       }
 
-      $scope.bomTableParams = new ngTableParams({
+      $scope.bomTableParams = new NgTableParams({
         page: 1,
         count: 10
       }, {
         getData: utils.localPagination(parents, "child.manufacturerPartNumber")
       });
 
-      $scope.pickedPartsTableParams = new ngTableParams(
+      $scope.pickedPartsTableParams = new NgTableParams(
         {
           page: 1,
           count: 5,
@@ -198,11 +198,11 @@ angular.module("ngMetaCrudApp")
 
     }
   ])
-  .controller("ExistingBOMsDlgCtrl", ["$scope", "$log", "$location", "$uibModalInstance", "ngTableParams",
+  .controller("ExistingBOMsDlgCtrl", ["$scope", "$log", "$location", "$uibModalInstance", "NgTableParams",
       "utils", "existingBoms",
-    function($scope, $log, $location, $uibModalInstance, ngTableParams, utils, existingBoms) {
+    function($scope, $log, $location, $uibModalInstance, NgTableParams, utils, existingBoms) {
 
-      $scope.bomTableParams = new ngTableParams({
+      $scope.bomTableParams = new NgTableParams({
         page: 1,
         count: 10
       }, {
@@ -218,13 +218,13 @@ angular.module("ngMetaCrudApp")
         $location.path("/part/" + partId);
       }
 
-  }]).controller("FailedBOMsDlgCtrl", ["$scope", "$log", "$location", "$uibModalInstance", "ngTableParams",
+  }]).controller("FailedBOMsDlgCtrl", ["$scope", "$log", "$location", "$uibModalInstance", "NgTableParams",
       "utils", "message", "failures",
-    function($scope, $log, $location, $uibModalInstance, ngTableParams, utils, message, failures) {
+    function($scope, $log, $location, $uibModalInstance, NgTableParams, utils, message, failures) {
 
       $scope.message = message;
 
-      $scope.failuresTableParams = new ngTableParams({
+      $scope.failuresTableParams = new NgTableParams({
         page: 1,
         count: 10
       }, {

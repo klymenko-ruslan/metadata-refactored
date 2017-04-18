@@ -8,8 +8,8 @@ angular.module("ngMetaCrudApp")
         }
     });
 }])
-.controller("UsersCtrl", ["$log", "$scope", "ngTableParams", "restService", "authProviders",
-  function($log, $scope, ngTableParams, restService, authProviders) {
+.controller("UsersCtrl", ["$log", "$scope", "NgTableParams", "restService", "authProviders",
+  function($log, $scope, NgTableParams, restService, authProviders) {
     $scope.authProviders = _.map(authProviders.recs || [], function (ap) {
       return {id: ap.id, title: ap.name};
     });
@@ -21,7 +21,7 @@ angular.module("ngMetaCrudApp")
       {id: false, title: "no"}
     ];
 
-    $scope.usersTableParams = new ngTableParams({
+    $scope.usersTableParams = new NgTableParams({
       page: 1,
       count: 25,
       sorting: {
@@ -35,7 +35,7 @@ angular.module("ngMetaCrudApp")
         authProviderId: -1
       }
     }, {
-      getData: function($defer, params) {
+      getData: function(params) {
         var sortOrder;
         var sorting = params.sorting();
         for (var sortProperty in sorting) break;
@@ -45,16 +45,15 @@ angular.module("ngMetaCrudApp")
         var offset = params.count() * (params.page() - 1);
         var limit = params.count();
         var filter = params.filter();
-        restService.filterUsers(filter.displayName, filter.userName, filter.email,
+        return restService.filterUsers(filter.displayName, filter.userName, filter.email,
             filter.authProviderId, filter.enabled, sortProperty, sortOrder, offset, limit).then(
           function(result) {
             // Update the total and slice the result
-            $defer.resolve(result.recs);
             params.total(result.total);
+            return result.recs;
           },
           function(errorResponse) {
             restService.error("Search in the user list failed.", errorResponse);
-            $defer.reject();
           });
       }
     });

@@ -9,7 +9,7 @@ angular.module("ngMetaCrudApp").directive("carfueltypeSearch", ["$log", "restSer
     "link": function postLink(scope, iElement, iAttrs, controller, transcludeFn) {
       controller.transcludeActionsFn = transcludeFn;
     },
-    "controller": ["$log", "$q", "$scope", "dialogs", "ngTableParams", function ($log, $q, $scope, dialogs, ngTableParams) {
+    "controller": ["$log", "$q", "$scope", "dialogs", "NgTableParams", function ($log, $q, $scope, dialogs, NgTableParams) {
       // Latest Results
       $scope.searchResults = null;
 
@@ -71,14 +71,14 @@ angular.module("ngMetaCrudApp").directive("carfueltypeSearch", ["$log", "restSer
       };
 
       // CarFuelType Table
-      $scope.carfueltypeTableParams = new ngTableParams(
+      $scope.carfueltypeTableParams = new NgTableParams(
         {
           "page": 1,
           "count": 10,
           "sorting": {}
         },
         {
-          "getData": function ($defer, params) {
+          "getData": function (params) {
             // Update the pagination info
             $scope.search.count = params.count();
             $scope.search.page = params.page();
@@ -89,16 +89,15 @@ angular.module("ngMetaCrudApp").directive("carfueltypeSearch", ["$log", "restSer
             if (sortProperty) {
               var sortOrder = $scope.search.sorting[sortProperty];
             }
-            restService.filterCarFuelTypes($scope.search.carfueltype, sortProperty, sortOrder, offset, limit).then(
+            return restService.filterCarFuelTypes($scope.search.carfueltype, sortProperty, sortOrder, offset, limit).then(
               function (filtered) {
                 $scope.searchResults = filtered;
                 // Update the total and slice the result
-                $defer.resolve($scope.searchResults.hits.hits);
                 params.total($scope.searchResults.hits.total);
+                return $scope.searchResults.hits.hits;
               },
               function (errorResponse) {
                 $log.log("Couldn't search for 'carfueltype'.");
-                $defer.reject();
               }
             );
           }

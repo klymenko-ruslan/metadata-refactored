@@ -9,13 +9,13 @@ angular.module("ngMetaCrudApp")
       templateUrl: "/views/component/bom.html",
       restrict: "E",
       link: function postLink( /*$scope, element, attrs */ ) {},
-      controller: ["dialogs", "$scope", "$parse", "BOM", "ngTableParams", "toastr",
+      controller: ["dialogs", "$scope", "$parse", "BOM", "NgTableParams", "toastr",
         "Restangular", "utils", "restService",
-        function(dialogs, $scope, $parse, BOM, ngTableParams, toastr,
+        function(dialogs, $scope, $parse, BOM, NgTableParams, toastr,
           Restangular, utils, restService) {
           $scope.restService = restService;
 
-          $scope.bomTableParams = new ngTableParams({
+          $scope.bomTableParams = new NgTableParams({
             page: 1,
             count: 10
           }, {
@@ -30,7 +30,7 @@ angular.module("ngMetaCrudApp")
               function success(retVals) {
                 $scope.interchangesOfThePartBoms = retVals[0];
                 $scope.bom = retVals[1];
-                $scope.bomTableParams = new ngTableParams({
+                $scope.bomTableParams = new NgTableParams({
                   page: 1,
                   count: 10
                 }, {

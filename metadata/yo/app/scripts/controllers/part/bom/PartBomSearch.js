@@ -2,10 +2,10 @@
 
 angular.module("ngMetaCrudApp")
 
-.controller("PartBomSearchCtrl", ["$log", "$scope", "$location", "ngTableParams", "$routeParams", "$uibModal",
+.controller("PartBomSearchCtrl", ["$log", "$scope", "$location", "NgTableParams", "$routeParams", "$uibModal",
   "User", "BOM", "restService", "Restangular", "dialogs", "toastr", "utils", "partTypes", "part", "boms",
   "services", "LinkSource",
-  function($log, $scope, $location, ngTableParams, $routeParams, $uibModal, User, BOM, restService,
+  function($log, $scope, $location, NgTableParams, $routeParams, $uibModal, User, BOM, restService,
     Restangular, dialogs, toastr, utils, partTypes, part, boms, services, LinkSource) {
 
     $scope.partTypes = partTypes;
@@ -28,7 +28,7 @@ angular.module("ngMetaCrudApp")
 
     updateExistingBomPartIds();
 
-    $scope.bomTableParams = new ngTableParams({
+    $scope.bomTableParams = new NgTableParams({
       page: 1,
       count: 5
     }, {
@@ -36,7 +36,7 @@ angular.module("ngMetaCrudApp")
       getData: utils.localPagination(boms, "child.manufacturerPartNumber")
     });
 
-    $scope.pickedPartsTableParams = new ngTableParams(
+    $scope.pickedPartsTableParams = new NgTableParams(
       {
         page: 1,
         count: 5,

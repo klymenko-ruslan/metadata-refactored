@@ -9,8 +9,8 @@ angular.module("ngMetaCrudApp").directive("carengineSearch", ["$log", "restServi
       link: function postLink(scope, iElement, iAttrs, controller, transcludeFn) {
         controller.transcludeActionsFn = transcludeFn;
       },
-      controller: ["$log", "$q", "$scope", "toastr", "dialogs", "ngTableParams",
-                    function ($log, $q, $scope, toastr, dialogs, ngTableParams) {
+      controller: ["$log", "$q", "$scope", "toastr", "dialogs", "NgTableParams",
+                    function ($log, $q, $scope, toastr, dialogs, NgTableParams) {
 
         $scope.fltrCarengine = {
           carengine: null,
@@ -36,14 +36,14 @@ angular.module("ngMetaCrudApp").directive("carengineSearch", ["$log", "restServi
           );
         };
 
-        $scope.carengineTableParams = new ngTableParams(
+        $scope.carengineTableParams = new NgTableParams(
           {
             page: 1,
             count: 10,
             sorting: {}
           },
           {
-            getData: function ($defer, params) {
+            getData: function (params) {
               var offset = params.count() * (params.page() - 1);
               var limit = params.count();
               var sortProperty, sortOrder;
@@ -51,17 +51,16 @@ angular.module("ngMetaCrudApp").directive("carengineSearch", ["$log", "restServi
               if (sortProperty) {
                 sortOrder = params.sorting()[sortProperty];
               }
-              restService.filterCarEngines($scope.fltrCarengine.carengine, $scope.fltrCarengine.fueltype,
+              return restService.filterCarEngines($scope.fltrCarengine.carengine, $scope.fltrCarengine.fueltype,
                   sortProperty, sortOrder, offset, limit).then(
                 function (filtered) {
                   $scope.carengineSearchResults = filtered;
                   // Update the total and slice the result
-                  $defer.resolve($scope.carengineSearchResults.hits.hits);
                   params.total($scope.carengineSearchResults.hits.total);
+                  return $scope.carengineSearchResults.hits.hits;
                 },
                 function (errorResponse) {
                   $log.log("Couldn't search for 'carengine'.");
-                  $defer.reject();
                 }
               );
             }

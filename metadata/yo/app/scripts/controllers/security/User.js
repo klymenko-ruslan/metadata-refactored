@@ -3,10 +3,10 @@
 angular.module("ngMetaCrudApp")
 
 .controller("UserCtrl", ["dialogs", "$location", "$log", "$scope",
-  "$routeParams", "ngTableParams", "toastr", "restService", "Restangular",
+  "$routeParams", "NgTableParams", "toastr", "restService", "Restangular",
   "authProviders",
   function(dialogs, $location, $log,
-    $scope, $routeParams, ngTableParams, toastr, restService, Restangular, authProviders) {
+    $scope, $routeParams, NgTableParams, toastr, restService, Restangular, authProviders) {
 
     $scope.mode = null;
 
@@ -64,7 +64,7 @@ angular.module("ngMetaCrudApp")
     }
 
     if ($scope.mode == "edit") {
-      $scope.userGroupsTableParams = new ngTableParams(
+      $scope.userGroupsTableParams = new NgTableParams(
         {
           page: 1,
           count: 25,
@@ -73,7 +73,7 @@ angular.module("ngMetaCrudApp")
           }
         },
         {
-          getData: function ($defer, params) {
+          getData: function (params) {
             // Update the pagination info
             var offset = params.count() * (params.page() - 1);
             var limit = params.count();
@@ -84,18 +84,17 @@ angular.module("ngMetaCrudApp")
             }
             var userId = $scope.originalUser ? $scope.originalUser.id : null;
             var filter = params.filter();
-            restService.filterUserGroups(userId, filter.fltrName, filter.fltrRole, filter.fltrIsMember, sortProperty, sortOrder, offset, limit).then(
+            return restService.filterUserGroups(userId, filter.fltrName, filter.fltrRole, filter.fltrIsMember, sortProperty, sortOrder, offset, limit).then(
               function (result) {
                 $scope.isMember = {};
                 _.each(result.recs, function(g) {
                   $scope.isMember[g.id] = g.isMember;
                 });
-                $defer.resolve(result.recs);
                 params.total(result.total);
+                return result.recs;
               },
               function (errorResponse) {
                 $log.log("Couldn't load users groups.");
-                $defer.reject();
               }
             );
           }

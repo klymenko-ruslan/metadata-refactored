@@ -1,8 +1,9 @@
 "use strict";
 
 angular.module("ngMetaCrudApp")
-  .service("SalesNotes", ["$location", "$log", "Restangular", "toastr", "$uibModalInstance", "User",
-    function SalesNotes($location, $log, Restangular, toastr, $uibModalInstance, User) {
+  .service("SalesNotes", ["$location", "$log", "Restangular", "toastr", "User",
+    function SalesNotes($location, $log, Restangular, toastr, User) {
+
       var SalesNotes = this;
 
       SalesNotes.states = ["draft", "submitted", "approved", "rejected", "published"];
@@ -101,8 +102,8 @@ angular.module("ngMetaCrudApp")
       };
 
       SalesNotes.reject = function(salesNote) {
-        return Restangular.one("other/salesNote", salesNote.id).post("reject")
-          .then(function() {
+        return Restangular.one("other/salesNote", salesNote.id).post("reject").then(
+          function success() {
             salesNote.state = "rejected";
           });
       };

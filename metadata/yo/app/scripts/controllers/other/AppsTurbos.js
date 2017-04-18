@@ -1,8 +1,8 @@
 "use strict";
 
 angular.module("ngMetaCrudApp")
-.controller("AppsTurbosCtrl", ["$scope", "$log", "ngTableParams", "$uibModal", "toastr", "utils", "restService", "partTypes",
-  function($scope, $log, ngTableParams, $uibModal, toastr, utils, restService, partTypes) {
+.controller("AppsTurbosCtrl", ["$scope", "$log", "NgTableParams", "$uibModal", "toastr", "utils", "restService", "partTypes",
+  function($scope, $log, NgTableParams, $uibModal, toastr, utils, restService, partTypes) {
 
     $scope.partTypes = partTypes;
 
@@ -12,7 +12,7 @@ angular.module("ngMetaCrudApp")
     $scope.pickedApps = [];
     $scope.pickedAppsIds = {};
 
-    $scope.pickedPartsTableParams = new ngTableParams(
+    $scope.pickedPartsTableParams = new NgTableParams(
       {
         page: 1,
         count: 10,
@@ -23,7 +23,7 @@ angular.module("ngMetaCrudApp")
       }
     );
 
-    $scope.pickedAppsTableParams = new ngTableParams(
+    $scope.pickedAppsTableParams = new NgTableParams(
       {
         page: 1,
         count: 10,
@@ -117,13 +117,13 @@ angular.module("ngMetaCrudApp")
 
   }
 ])
-.controller("FailuresDlgCtrl", ["$scope", "$log", "$location", "$uibModalInstance", "ngTableParams",
+.controller("FailuresDlgCtrl", ["$scope", "$log", "$location", "$uibModalInstance", "NgTableParams",
     "utils", "response",
-  function($scope, $log, $location, $uibModalInstance, ngTableParams, utils, response) {
+  function($scope, $log, $location, $uibModalInstance, NgTableParams, utils, response) {
 
     $scope.response = response;
 
-    $scope.failuresTableParams = new ngTableParams({
+    $scope.failuresTableParams = new NgTableParams({
       page: 1,
       count: 10
     }, {

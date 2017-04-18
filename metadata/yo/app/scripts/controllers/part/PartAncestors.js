@@ -1,8 +1,8 @@
 "use strict";
 
 angular.module("ngMetaCrudApp")
-  .controller("PartAncestorsCtrl", ["$log", "$routeParams", "$scope", "restService", "Restangular", "ngTableParams",
-  function($log, $routeParams, $scope, restService, Restangular, ngTableParams) {
+  .controller("PartAncestorsCtrl", ["$log", "$routeParams", "$scope", "restService", "Restangular", "NgTableParams",
+  function($log, $routeParams, $scope, restService, Restangular, NgTableParams) {
 
     $scope.partId = $routeParams.id;
     $scope.part = null;
@@ -20,21 +20,20 @@ angular.module("ngMetaCrudApp")
       }
     );
 
-    $scope.ancestorsTableParams = new ngTableParams({
+    $scope.ancestorsTableParams = new NgTableParams({
         page: 1,
         count: 25
       }, {
-        getData: function($defer, params) {
+        getData: function(params) {
           var offset = params.count() * (params.page() - 1);
           var limit = params.count();
-          restService.loadAncestors($scope.partId, offset, limit).then(
+          return restService.loadAncestors($scope.partId, offset, limit).then(
             function(result) {
-              $defer.resolve(result.recs);
               params.total(result.total);
+              return result.recs;
             },
             function(errorResponse) {
               restService.error("Loading of ancestors failed.", errorResponse);
-              $defer.reject();
             });
         }
       }

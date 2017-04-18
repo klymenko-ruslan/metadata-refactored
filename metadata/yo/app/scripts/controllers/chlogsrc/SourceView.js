@@ -3,12 +3,12 @@
 angular.module("ngMetaCrudApp")
 
 .controller("ChangelogSourcesViewCtrl", [
-    "$scope", "$log", "$location", "toastr", "ngTableParams", "$uibModal", "utils", "restService", "source",
-  function($scope, $log, $location, toastr, ngTableParams, $uibModal, utils, restService, source) {
+    "$scope", "$log", "$location", "toastr", "NgTableParams", "$uibModal", "utils", "restService", "source",
+  function($scope, $log, $location, toastr, NgTableParams, $uibModal, utils, restService, source) {
 
     $scope.source = source;
 
-    $scope.attachmentsTableParams = new ngTableParams(
+    $scope.attachmentsTableParams = new NgTableParams(
       {
         page: 1,
         count: 10,

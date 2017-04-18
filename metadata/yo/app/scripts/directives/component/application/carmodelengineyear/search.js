@@ -9,8 +9,8 @@ angular.module("ngMetaCrudApp").directive("cmeySearch", ["$log", "restService", 
       link: function postLink(scope, iElement, iAttrs, controller, transcludeFn) {
         controller.transcludeActionsFn = transcludeFn;
       },
-      controller: ["$log", "$q", "dialogs", "toastr", "$scope", "ngTableParams",
-                    function ($log, $q, dialogs, toastr, $scope, ngTableParams) {
+      controller: ["$log", "$q", "dialogs", "toastr", "$scope", "NgTableParams",
+                    function ($log, $q, dialogs, toastr, $scope, NgTableParams) {
 
         $scope.fltrCmey = {
           cmey: null,
@@ -23,14 +23,14 @@ angular.module("ngMetaCrudApp").directive("cmeySearch", ["$log", "restService", 
         // Latest Results
         $scope.cmeySearchResults = null;
         // Applications Table
-        $scope.cmeyTableParams = new ngTableParams(
+        $scope.cmeyTableParams = new NgTableParams(
           {
             page: 1,
             count: 10,
             sorting: {}
           },
           {
-            getData: function ($defer, params) {
+            getData: function (params) {
               // Update the pagination info
               var offset = params.count() * (params.page() - 1);
               var limit = params.count();
@@ -39,7 +39,7 @@ angular.module("ngMetaCrudApp").directive("cmeySearch", ["$log", "restService", 
               if (sortProperty) {
                 sortOrder = params.sorting()[sortProperty];
               }
-              restService.filterCarModelEngineYears($scope.fltrCmey.cmey,
+              return restService.filterCarModelEngineYears($scope.fltrCmey.cmey,
                   $scope.fltrCmey.year, $scope.fltrCmey.make,
                   $scope.fltrCmey.model, $scope.fltrCmey.engine,
                   $scope.fltrCmey.fueltype,
@@ -47,12 +47,11 @@ angular.module("ngMetaCrudApp").directive("cmeySearch", ["$log", "restService", 
                 function (filtered) {
                   $scope.cmeySearchResults = filtered;
                   // Update the total and slice the result
-                  $defer.resolve($scope.cmeySearchResults.hits.hits);
                   params.total($scope.cmeySearchResults.hits.total);
+                  return $scope.cmeySearchResults.hits.hits;
                 },
                 function (errorResponse) {
                   $log.log("Couldn't search for 'carmodelengineyear'.");
-                  $defer.reject();
                 }
               );
             }
