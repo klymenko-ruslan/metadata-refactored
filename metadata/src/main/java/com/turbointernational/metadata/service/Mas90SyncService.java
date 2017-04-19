@@ -5,7 +5,7 @@ import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.MAS90
 import static com.turbointernational.metadata.entity.ChangelogPart.Role.BOM_CHILD;
 import static com.turbointernational.metadata.entity.ChangelogPart.Role.BOM_PARENT;
 import static com.turbointernational.metadata.entity.ChangelogPart.Role.PART0;
-import static com.turbointernational.metadata.util.RegExpUtils.PTRN_MANUFACTURER_NUMBER;
+import static com.turbointernational.metadata.service.Mas90Service.TURBO_INTERNATIONAL_MANUFACTURER_ID;
 import static java.lang.Boolean.TRUE;
 
 import java.sql.Timestamp;
@@ -62,8 +62,6 @@ import com.turbointernational.metadata.web.dto.Page;
 public class Mas90SyncService {
 
     private final Logger log = LoggerFactory.getLogger(Mas90SyncService.class);
-
-    final static long TURBO_INTERNATIONAL_MANUFACTURER_ID = 11L;
 
     @Autowired
     private Mas90Database mas90Database;
@@ -509,7 +507,7 @@ public class Mas90SyncService {
                                                                                                       // transaction
             Part processedPart = modifyTransaction.execute(ts -> {
                 Long partId = null;
-                Part part = partDao.findByPartNumberAndManufacturer(TURBO_INTERNATIONAL_MANUFACTURER_ID, itemcode);
+                Part part = mas90Service.findTurboInternationalPart(itemcode);
                 try {
                     if (part == null) {
                         part = insertPart(itemcode, itemcodedesc, partTypeId, inactive);
@@ -703,15 +701,14 @@ public class Mas90SyncService {
                 while (addIter.hasNext()) {
                     Mas90Bom mb = addIter.next();
                     if (!idxBoms.containsKey(mb.childManufacturerCode)) {
-                        if (!PTRN_MANUFACTURER_NUMBER.matcher(mb.childManufacturerCode).matches()) {
+                        if (!mas90Service.isManfrNum(mb.childManufacturerCode)) {
                             log.info("Skip this part to add as child BOM because of unsuitable "
                                     + "manufacturer number: {}", mb.childManufacturerCode);
                             continue;
                         }
                         BOMItem newBom = new BOMItem();
                         newBom.setParent(part);
-                        Part child = partDao.findByPartNumberAndManufacturer(TURBO_INTERNATIONAL_MANUFACTURER_ID,
-                                mb.childManufacturerCode);
+                        Part child = mas90Service.findTurboInternationalPart(mb.childManufacturerCode);
                         // In theory it is possible that child is not imported
                         // yet (because it will be processed
                         // in the main loop later). In this case we add

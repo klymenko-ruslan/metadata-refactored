@@ -13,7 +13,6 @@ angular.module("ngMetaCrudApp")
     $scope.originalUser = null;
 
     $scope.isMemberOpts = [
-      /*{id: null, title: ""},*/
       {id: true, title: "yes"},
       {id: false, title: "no"}
     ];

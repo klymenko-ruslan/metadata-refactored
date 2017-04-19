@@ -1,11 +1,10 @@
 package com.turbointernational.metadata.service;
 
-import com.turbointernational.metadata.AbstractFunctionalTest;
-import com.turbointernational.metadata.dao.PartDao;
-import com.turbointernational.metadata.dao.UserDao;
-import com.turbointernational.metadata.entity.Mas90Sync;
-import com.turbointernational.metadata.entity.User;
-import com.turbointernational.metadata.entity.part.Part;
+import static com.turbointernational.metadata.service.Mas90Service.TURBO_INTERNATIONAL_MANUFACTURER_ID;
+import static org.springframework.transaction.TransactionDefinition.PROPAGATION_REQUIRES_NEW;
+
+import javax.sql.DataSource;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,9 +16,12 @@ import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import javax.sql.DataSource;
-
-import static org.springframework.transaction.TransactionDefinition.PROPAGATION_REQUIRES_NEW;
+import com.turbointernational.metadata.AbstractFunctionalTest;
+import com.turbointernational.metadata.dao.PartDao;
+import com.turbointernational.metadata.dao.UserDao;
+import com.turbointernational.metadata.entity.Mas90Sync;
+import com.turbointernational.metadata.entity.User;
+import com.turbointernational.metadata.entity.part.Part;
 
 /**
  * Created by dmytro.trunykov@zorallabs.com on 2016-03-06.
@@ -210,7 +212,7 @@ public class Mas90SyncServiceTest extends AbstractFunctionalTest {
         Assert.assertNotNull("Part (1-A-1047) not found.", part);
         Assert.assertNotNull(part.getManufacturer());
         Assert.assertNotNull(part.getManufacturer().getId());
-        Assert.assertEquals("Wrong manufacturer.", Mas90SyncService.TURBO_INTERNATIONAL_MANUFACTURER_ID,
+        Assert.assertEquals("Wrong manufacturer.", TURBO_INTERNATIONAL_MANUFACTURER_ID,
                 (long) part.getManufacturer().getId());
         Assert.assertEquals("Wrong description.", "*NLA - USE 1-A-1046* CARTRIDGE", part.getDescription());
         Assert.assertTrue("Wrong 'inactive'.", part.getInactive());
@@ -308,7 +310,7 @@ public class Mas90SyncServiceTest extends AbstractFunctionalTest {
         Assert.assertNotNull("Part (14-A-5383) not found.", part);
         Assert.assertNotNull(part.getManufacturer());
         Assert.assertNotNull(part.getManufacturer().getId());
-        Assert.assertEquals("Wrong manufacturer.", Mas90SyncService.TURBO_INTERNATIONAL_MANUFACTURER_ID,
+        Assert.assertEquals("Wrong manufacturer.", TURBO_INTERNATIONAL_MANUFACTURER_ID,
                 (long) part.getManufacturer().getId());
         Assert.assertEquals("Wrong description.", "CHRA & Nozzle Ring assy, GT174", part.getDescription());
         Assert.assertFalse("Wrong 'inactive'.", part.getInactive());

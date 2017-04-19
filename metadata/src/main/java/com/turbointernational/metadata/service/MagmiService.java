@@ -19,6 +19,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
+import com.turbointernational.metadata.dao.InterchangeDao;
+import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.web.dto.mas90.ArInvoiceHistoryDetailDto;
 import com.turbointernational.metadata.web.dto.mas90.ArInvoiceHistoryHeaderDto;
 import com.turbointernational.metadata.web.dto.mas90.InvoiceDto;
@@ -73,6 +75,12 @@ public class MagmiService {
     private DataSource dataSourceMas90; // connections to MS-SQL (MAS90)
 
     private JdbcTemplate mas90db;
+
+    @Autowired
+    private Mas90Service mas90Service;
+
+    @Autowired
+    private InterchangeDao interchangeDao;
 
     @PostConstruct
     public void init() {
@@ -364,24 +372,39 @@ public class MagmiService {
         return retVal;
     }
 
-    public List<InvoiceDto> getInvoiceHistory(Long startDate, int limitDays) throws SQLException {
-        java.sql.Date d = new java.sql.Date(startDate);
-        List<InvoiceDto> retVal = new ArrayList<>(limitDays * 2);
+    public List<InvoiceDto> getInvoiceHistory(Long startDate, int limit) throws SQLException {
+        List<InvoiceDto> retVal = new ArrayList<>(limit * 3);
+        java.sql.Date sd;
+        if (startDate == null) {
+            sd = mas90db.queryForObject("select min(invoicedate) from ar_invoicehistoryheader", java.sql.Date.class);
+            if (sd == null) {
+                return retVal;
+            }
+        } else {
+            sd = new java.sql.Date(startDate);
+        }
         Connection con = dataSourceMas90.getConnection();
         try {
             // @formatter:off
             PreparedStatement ps = con.prepareStatement(
-                    "select h.invoiceno, h.invoicedate, h.customerno, d.detailseqno, d.itemcode, d.itemtype, " +
-                    "  d.itemcodedesc " +
-                    "from  ar_invoicehistoryheader h join ar_invoicehistorydetail d " +
-                    "  on h.invoiceno = d.invoiceno and h.headerseqno = d.headerseqno " +
-                    "where h.invoicedate between ? and dateadd(dy, ?, ?) " +
-                    "order by h.invoicedate, h.invoiceno, d.detailseqno asc",
-                    TYPE_FORWARD_ONLY, CONCUR_READ_ONLY);
+                "select h.invoiceno, h.headerseqno, h.invoicedate, h.customerno , d.detailseqno, d.itemcode, " +
+                "  d.itemtype, d.itemcodedesc " +
+                "from " +
+                "  ar_invoicehistoryheader h join ar_invoicehistorydetail d on h.invoiceno = d.invoiceno " +
+                "    and h.headerseqno = d.headerseqno " +
+                "where " +
+                "  h.invoiceno in( " +
+                "    select distinct invoiceno " +
+                "    from ar_invoicehistoryheader " +
+                "    where invoiceno > '' " +
+                "    order by dateupdated, timeupdated, invoiceno, headerseqno " +
+                "    offset 0 rows fetch next 100 rows only) " +
+                "order by h.invoiceno, h.headerseqno",
+                TYPE_FORWARD_ONLY, CONCUR_READ_ONLY);
             // @formatter:on
-            ps.setDate(1, d);
-            ps.setInt(2, limitDays);
-            ps.setDate(3, d);
+            ps.setDate(1, sd);
+            ps.setInt(2, limit);
+            ps.setDate(3, sd);
             ResultSet rs = ps.executeQuery();
             try {
                 InvoiceDto dto = null;
@@ -389,23 +412,36 @@ public class MagmiService {
                 Date invoicedate = null;
                 String customerno = null;
                 String itemcode = null;
-                String itemtype = null;
                 String itemcodedesc = null;
                 List<InvoiceDto.DetailsDto> details = null;
-                long partId = 0L;
-                long[] interchanges = null;
+                Long partId = null;
+                List<Long> interchanges = null;
                 while (rs.next()) {
                     invoiceno = rs.getString(1);
                     invoicedate = rs.getDate(2);
                     customerno = rs.getString(3);
                     itemcode = rs.getString(5);
-                    itemtype = rs.getString(6);
                     itemcodedesc = rs.getString(7);
+
+                    Part part;
+                    if (!mas90Service.isManfrNum(itemcode)) {
+                        // Skip unsuitable part numbers.
+                        continue;
+                    } else {
+                        part = mas90Service.findTurboInternationalPart(itemcode);
+                        if (part == null) {
+                            // Part not found.
+                            continue;
+                        }
+                    }
+
                     if (dto == null) {
                         details = new ArrayList<>(10);
                         dto = new InvoiceDto(invoiceno, invoicedate == null ? -1L : invoicedate.getTime(), customerno,
                                 details);
                     }
+                    partId = part.getId();
+                    interchanges = interchangeDao.getInterchanges(partId);
                     InvoiceDto.DetailsDto dd = new InvoiceDto.DetailsDto(partId, itemcode, interchanges, itemcodedesc);
                     if (!dto.getNo().equals(invoiceno)) {
                         retVal.add(dto);

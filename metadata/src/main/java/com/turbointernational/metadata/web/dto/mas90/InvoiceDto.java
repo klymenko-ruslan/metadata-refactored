@@ -19,13 +19,13 @@ public class InvoiceDto {
     public static class DetailsDto {
 
         @JsonView(View.Summary.class)
-        private long partId;
+        private Long partId;
 
         @JsonView(View.Summary.class)
         private String partNumber;
 
         @JsonView(View.Summary.class)
-        private long[] interchanges;
+        private List<Long> interchanges;
 
         @JsonView(View.Summary.class)
         private String description;
@@ -33,17 +33,17 @@ public class InvoiceDto {
         public DetailsDto() {
         }
 
-        public DetailsDto(long partId, String partNumber, long[] interchanges, String description) {
+        public DetailsDto(Long partId, String partNumber, List<Long> interchanges, String description) {
             this.partId = partId;
             this.interchanges = interchanges;
             this.description = description;
         }
 
-        public long getPartId() {
+        public Long getPartId() {
             return partId;
         }
 
-        public void setPartId(long partId) {
+        public void setPartId(Long partId) {
             this.partId = partId;
         }
 
@@ -55,11 +55,11 @@ public class InvoiceDto {
             this.partNumber = partNumber;
         }
 
-        public long[] getInterchanges() {
+        public List<Long> getInterchanges() {
             return interchanges;
         }
 
-        public void setInterchanges(long[] interchanges) {
+        public void setInterchanges(List<Long> interchanges) {
             this.interchanges = interchanges;
         }
 
