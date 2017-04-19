@@ -9,9 +9,11 @@ angular.module("ngMetaCrudApp")
     $scope, $routeParams, NgTableParams, toastr, restService, Restangular, authProviders) {
 
     $scope.mode = null;
+    $scope.userId = null;
+    $scope.originalUser = null;
 
     $scope.isMemberOpts = [
-      {id: null, title: ""},
+      /*{id: null, title: ""},*/
       {id: true, title: "yes"},
       {id: false, title: "no"}
     ];
@@ -20,8 +22,7 @@ angular.module("ngMetaCrudApp")
 
     $scope.onChangeIsMember = function(g) {
       var isMember = $scope.isMember[g.id];
-      var userId = $scope.originalUser.id;
-      restService.setUserMembershit(userId, g.id, isMember).then(
+      restService.setUserMembershit($scope.userId, g.id, isMember).then(
         function success() {
           toastr.success("The user membership has been updated.");
         },
@@ -50,7 +51,8 @@ angular.module("ngMetaCrudApp")
       };
     } else {
       $scope.mode = "edit";
-      Restangular.one("security/user", $routeParams.id).get().then(
+      $scope.userId = $routeParams.id;
+      Restangular.one("security/user", $scope.userId).get().then(
         function(user) {
           $scope.originalUser = user;
           if (!angular.isObject(user.authProvider)) { // null or undefined
@@ -82,9 +84,8 @@ angular.module("ngMetaCrudApp")
             if (sortProperty) {
               sortOrder = params.sorting()[sortProperty];
             }
-            var userId = $scope.originalUser ? $scope.originalUser.id : null;
             var filter = params.filter();
-            return restService.filterUserGroups(userId, filter.fltrName, filter.fltrRole, filter.fltrIsMember, sortProperty, sortOrder, offset, limit).then(
+            return restService.filterUserGroups($scope.userId, filter.fltrName, filter.fltrRole, filter.fltrIsMember, sortProperty, sortOrder, offset, limit).then(
               function (result) {
                 $scope.isMember = {};
                 _.each(result.recs, function(g) {
