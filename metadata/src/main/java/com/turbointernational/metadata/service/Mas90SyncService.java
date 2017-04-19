@@ -41,7 +41,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.dao.Mas90SyncDao;
 import com.turbointernational.metadata.dao.PartDao;
-import com.turbointernational.metadata.dao.PartTypeDao;
 import com.turbointernational.metadata.entity.BOMItem;
 import com.turbointernational.metadata.entity.Manufacturer;
 import com.turbointernational.metadata.entity.Mas90Sync;
@@ -83,9 +82,6 @@ public class Mas90SyncService {
     private PartDao partDao;
 
     @Autowired
-    private PartTypeDao partTypeDao;
-
-    @Autowired
     private ChangelogService changelogService;
 
     @Autowired
@@ -94,6 +90,9 @@ public class Mas90SyncService {
     @Qualifier("dataSourceMas90")
     @Autowired
     private DataSource dataSourceMas90; // connections to MS-SQL (MAS90)
+
+    @Autowired
+    private Mas90Service mas90Service;
 
     private JdbcTemplate mas90db;
 
@@ -338,15 +337,21 @@ public class Mas90SyncService {
             String countQuery = mas90Database.getCountQuery();
             long numItems = mas90db.queryForObject(countQuery, Long.class);
             synchronized (syncProcessStatus) {
-                syncProcessStatus.setPartsUpdateTotalSteps(numItems + 1); // +1
-                                                                          // to
-                                                                          // load
-                                                                          // part_types
+                // +1 to load part_types
+                syncProcessStatus.setPartsUpdateTotalSteps(numItems + 1);
             }
-            Map<String, PartType> mas90toLocal = loadPartTypesMap(); // part
-                                                                     // type
-                                                                     // value =>
-                                                                     // PartType
+            // part type value => PartType
+            Map<String, PartType> mas90toLocal;
+            try {
+                mas90toLocal = mas90Service.loadPartTypesMap();
+            } catch (Exception e) {
+                String msg = e.getMessage();
+                synchronized (syncProcessStatus) {
+                    registerError(msg);
+                }
+                log.warn(msg);
+                return;
+            }
             synchronized (syncProcessStatus) {
                 syncProcessStatus.incPartsUpdateCurrentStep();
             }
@@ -481,35 +486,6 @@ public class Mas90SyncService {
                 return null;
             });
             log.info("Synchronization with MAS90 finished.");
-        }
-
-        /**
-         * MAS90 use different part type codes than in the local database --
-         * 'metadata'.
-         *
-         * This method makes mapping between product type codes in MAS90 and
-         * 'metadata'.
-         *
-         * @return map ProductLineCode => PartType
-         */
-        private Map<String, PartType> loadPartTypesMap() {
-            Map<String, PartType> retVal = new HashMap<>(50);
-            mas90db.query("select ProductLineCode, part_type_value from productLine_to_parttype_value", rs -> {
-                String productLineCode = rs.getString(1);
-                String partTypeValue = rs.getString(2);
-                PartType pt = partTypeDao.findPartTypeByValue(partTypeValue);
-                if (pt != null) {
-                    retVal.put(productLineCode, pt);
-                    log.debug("Mapping: {} => {}", productLineCode, pt.getId());
-                } else {
-                    String msg = String.format("Part type not found for productLineCode: '%1$s'.", productLineCode);
-                    log.warn(msg);
-                    synchronized (syncProcessStatus) {
-                        registerError(msg);
-                    }
-                }
-            });
-            return retVal;
         }
 
         /**

@@ -369,12 +369,16 @@ public class MagmiService {
         List<InvoiceDto> retVal = new ArrayList<>(limitDays * 2);
         Connection con = dataSourceMas90.getConnection();
         try {
+            // @formatter:off
             PreparedStatement ps = con.prepareStatement(
-                    "select h.invoiceno, h.invoicedate, h.customerno, d.detailseqno, d.itemcode, d.itemtype, d.itemcodedesc "
-                            + "from  ar_invoicehistoryheader h join ar_invoicehistorydetail d on h.invoiceno = d.invoiceno and h.headerseqno = d.headerseqno "
-                            + "where h.invoicedate between ? and dateadd(dy, ?, ?) "
-                            + "order by h.invoicedate, h.invoiceno, d.detailseqno asc",
+                    "select h.invoiceno, h.invoicedate, h.customerno, d.detailseqno, d.itemcode, d.itemtype, " +
+                    "  d.itemcodedesc " +
+                    "from  ar_invoicehistoryheader h join ar_invoicehistorydetail d " +
+                    "  on h.invoiceno = d.invoiceno and h.headerseqno = d.headerseqno " +
+                    "where h.invoicedate between ? and dateadd(dy, ?, ?) " +
+                    "order by h.invoicedate, h.invoiceno, d.detailseqno asc",
                     TYPE_FORWARD_ONLY, CONCUR_READ_ONLY);
+            // @formatter:on
             ps.setDate(1, d);
             ps.setInt(2, limitDays);
             ps.setDate(3, d);
@@ -399,13 +403,15 @@ public class MagmiService {
                     itemcodedesc = rs.getString(7);
                     if (dto == null) {
                         details = new ArrayList<>(10);
-                        dto = new InvoiceDto(invoiceno, invoicedate == null ? -1L : invoicedate.getTime(), customerno, details);
+                        dto = new InvoiceDto(invoiceno, invoicedate == null ? -1L : invoicedate.getTime(), customerno,
+                                details);
                     }
                     InvoiceDto.DetailsDto dd = new InvoiceDto.DetailsDto(partId, itemcode, interchanges, itemcodedesc);
                     if (!dto.getNo().equals(invoiceno)) {
                         retVal.add(dto);
                         details = new ArrayList<>(10);
-                        dto = new InvoiceDto(invoiceno, invoicedate == null ? -1L : invoicedate.getTime(), customerno, details);
+                        dto = new InvoiceDto(invoiceno, invoicedate == null ? -1L : invoicedate.getTime(), customerno,
+                                details);
                     }
                     details.add(dd);
                 }
