@@ -25,6 +25,9 @@ public class InvoiceDto {
         private String partNumber;
 
         @JsonView(View.Summary.class)
+        private String partTypeName;
+
+        @JsonView(View.Summary.class)
         private List<Long> interchanges;
 
         @JsonView(View.Summary.class)
@@ -33,8 +36,10 @@ public class InvoiceDto {
         public DetailsDto() {
         }
 
-        public DetailsDto(Long partId, String partNumber, List<Long> interchanges, String description) {
+        public DetailsDto(Long partId, String partNumber, String partTypeName, List<Long> interchanges, String description) {
             this.partId = partId;
+            this.partNumber = partNumber;
+            this.partTypeName = partTypeName;
             this.interchanges = interchanges;
             this.description = description;
         }
@@ -53,6 +58,14 @@ public class InvoiceDto {
 
         public void setPartNumber(String partNumber) {
             this.partNumber = partNumber;
+        }
+
+        public String getPartTypeName() {
+            return partTypeName;
+        }
+
+        public void setPartTypeName(String partTypeName) {
+            this.partTypeName = partTypeName;
         }
 
         public List<Long> getInterchanges() {
@@ -77,7 +90,13 @@ public class InvoiceDto {
     private String no;
 
     @JsonView(View.Summary.class)
-    private long date;
+    private String headerSeqNo;
+
+    @JsonView(View.Summary.class)
+    private Long date;
+
+    @JsonView(View.Summary.class)
+    private Long updated;
 
     @JsonView(View.Summary.class)
     private String customerNo;
@@ -88,9 +107,11 @@ public class InvoiceDto {
     public InvoiceDto() {
     }
 
-    public InvoiceDto(String no, long date, String customerNo, List<DetailsDto> details) {
+    public InvoiceDto(String no, String headerSeqNo, Long date, Long updated, String customerNo, List<DetailsDto> details) {
         this.no = no;
+        this.headerSeqNo = headerSeqNo;
         this.date = date;
+        this.updated = updated;
         this.customerNo = customerNo;
         this.details = details;
     }
@@ -103,12 +124,28 @@ public class InvoiceDto {
         this.no = no;
     }
 
-    public long getDate() {
+    public String getHeaderSeqNo() {
+        return headerSeqNo;
+    }
+
+    public void setHeaderSeqNo(String headerSeqNo) {
+        this.headerSeqNo = headerSeqNo;
+    }
+
+    public Long getDate() {
         return date;
     }
 
-    public void setDate(long date) {
+    public void setDate(Long date) {
         this.date = date;
+    }
+
+    public Long getUpdated() {
+        return updated;
+    }
+
+    public void setUpdated(Long updated) {
+        this.updated = updated;
     }
 
     public String getCustomerNo() {

@@ -100,7 +100,7 @@ public class MagmiController {
     @PreAuthorize("hasRole('ROLE_MAGMI_EXPORT') or hasIpAddress('127.0.0.1/32')")
     @JsonView(View.Summary.class)
     public List<InvoiceDto> getInvoiceHistory(@RequestParam(name = "startDate", required = false) Long startDate,
-            @RequestParam(name = "limitDays", defaultValue = "100", required = false) int limitDays) throws SQLException {
+            @RequestParam(name = "limitDays", defaultValue = "10", required = false) int limitDays) throws SQLException {
         return magmiService.getInvoiceHistory(startDate, limitDays);
     }
 

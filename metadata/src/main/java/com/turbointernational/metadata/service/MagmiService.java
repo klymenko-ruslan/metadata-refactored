@@ -1,5 +1,6 @@
 package com.turbointernational.metadata.service;
 
+import static com.turbointernational.metadata.service.Mas90Service.TURBO_INTERNATIONAL_MANUFACTURER_ID;
 import static java.sql.ResultSet.CONCUR_READ_ONLY;
 import static java.sql.ResultSet.TYPE_FORWARD_ONLY;
 
@@ -14,13 +15,14 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import com.turbointernational.metadata.dao.InterchangeDao;
-import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.web.dto.mas90.ArInvoiceHistoryDetailDto;
 import com.turbointernational.metadata.web.dto.mas90.ArInvoiceHistoryHeaderDto;
 import com.turbointernational.metadata.web.dto.mas90.InvoiceDto;
@@ -30,6 +32,8 @@ import com.turbointernational.metadata.web.dto.mas90.InvoiceDto;
  */
 @Service
 public class MagmiService {
+
+    private final static Logger log = LoggerFactory.getLogger(MagmiService.class);
 
     private final static String QUERY_INVOICEHISTORYHEADER = "SELECT INVOICENO, HEADERSEQNO, MODULECODE, INVOICETYPE, "
             + "INVOICEDATE, TRANSACTIONDATE, ARDIVISIONNO, CUSTOMERNO, TERMSCODE, TAXSCHEDULE, TAXEXEMPTNO, "
@@ -70,9 +74,14 @@ public class MagmiService {
             + "TAXTYPEAPPLIED, NETGROSSINDICATOR, DEBITCREDITINDICATOR, TAXAMT, TAXRATE "
             + "FROM AR_INVOICEHISTORYDETAIL WHERE ";
 
+    @Autowired
+    private DataSource dataSource;
+
     @Qualifier("dataSourceMas90")
     @Autowired
     private DataSource dataSourceMas90; // connections to MS-SQL (MAS90)
+
+    private JdbcTemplate db;
 
     private JdbcTemplate mas90db;
 
@@ -84,6 +93,7 @@ public class MagmiService {
 
     @PostConstruct
     public void init() {
+        db = new JdbcTemplate(dataSource);
         mas90db = new JdbcTemplate(dataSourceMas90);
     }
 
@@ -372,44 +382,65 @@ public class MagmiService {
         return retVal;
     }
 
-    public List<InvoiceDto> getInvoiceHistory(Long startDate, int limit) throws SQLException {
-        List<InvoiceDto> retVal = new ArrayList<>(limit * 3);
-        java.sql.Date sd;
-        if (startDate == null) {
-            sd = mas90db.queryForObject("select min(invoicedate) from ar_invoicehistoryheader", java.sql.Date.class);
-            if (sd == null) {
+    public List<InvoiceDto> getInvoiceHistory(Long beginMillis, int limitDays) throws SQLException {
+        class PartDescriptor {
+
+            private final Long partId;
+
+            private final String partTypeName;
+
+            PartDescriptor(Long partId, String partTypeName) {
+                this.partId = partId;
+                this.partTypeName = partTypeName;
+            }
+
+            public Long getPartId() {
+                return partId;
+            }
+
+            public String getPartTypeName() {
+                return partTypeName;
+            }
+        }
+        ;
+        if (limitDays < 0) {
+            throw new IllegalArgumentException("Parameter 'limitDays' can't be negative: " + limitDays);
+        }
+        List<InvoiceDto> retVal = new ArrayList<>(300);
+        java.sql.Date startDate, finishDate;
+        if (beginMillis == null) {
+            startDate = mas90db.queryForObject("select min(dateupdated) from ar_invoicehistoryheader",
+                    java.sql.Date.class);
+            if (startDate == null) {
+                log.warn("Start date not found.");
                 return retVal;
             }
+            beginMillis = startDate.getTime();
         } else {
-            sd = new java.sql.Date(startDate);
+            startDate = new java.sql.Date(beginMillis);
         }
+        finishDate = new java.sql.Date(beginMillis + limitDays * 3600 * 24 * 1000);
         Connection con = dataSourceMas90.getConnection();
         try {
             // @formatter:off
             PreparedStatement ps = con.prepareStatement(
-                "select h.invoiceno, h.headerseqno, h.invoicedate, h.customerno , d.detailseqno, d.itemcode, " +
-                "  d.itemtype, d.itemcodedesc " +
-                "from " +
-                "  ar_invoicehistoryheader h join ar_invoicehistorydetail d on h.invoiceno = d.invoiceno " +
-                "    and h.headerseqno = d.headerseqno " +
-                "where " +
-                "  h.invoiceno in( " +
-                "    select distinct invoiceno " +
-                "    from ar_invoicehistoryheader " +
-                "    where invoiceno > '' " +
-                "    order by dateupdated, timeupdated, invoiceno, headerseqno " +
-                "    offset 0 rows fetch next 100 rows only) " +
-                "order by h.invoiceno, h.headerseqno",
+                "select h.invoiceno, h.headerseqno, h.invoicedate, h.dateupdated, h.customerno, d.itemcode, " +
+                "  d.itemcodedesc " +
+                "from ar_invoicehistoryheader h " +
+                "  join ar_invoicehistorydetail d on h.invoiceno = d.invoiceno and h.headerseqno = d.headerseqno " +
+                "where h.dateupdated between ? and ? " +
+                "order by h.dateupdated, h.invoiceno, h.headerseqno, d.detailseqno asc",
                 TYPE_FORWARD_ONLY, CONCUR_READ_ONLY);
             // @formatter:on
-            ps.setDate(1, sd);
-            ps.setInt(2, limit);
-            ps.setDate(3, sd);
+            ps.setDate(1, startDate);
+            ps.setDate(2, finishDate);
             ResultSet rs = ps.executeQuery();
             try {
                 InvoiceDto dto = null;
                 String invoiceno = null;
+                String headerseqno = null;
                 Date invoicedate = null;
+                Date dateupdated = null;
                 String customerno = null;
                 String itemcode = null;
                 String itemcodedesc = null;
@@ -418,36 +449,49 @@ public class MagmiService {
                 List<Long> interchanges = null;
                 while (rs.next()) {
                     invoiceno = rs.getString(1);
-                    invoicedate = rs.getDate(2);
-                    customerno = rs.getString(3);
-                    itemcode = rs.getString(5);
+                    headerseqno = rs.getString(2);
+                    invoicedate = rs.getDate(3);
+                    dateupdated = rs.getDate(4);
+                    customerno = rs.getString(5);
+                    itemcode = rs.getString(6);
                     itemcodedesc = rs.getString(7);
 
-                    Part part;
+                    PartDescriptor pd;
                     if (!mas90Service.isManfrNum(itemcode)) {
                         // Skip unsuitable part numbers.
                         continue;
                     } else {
-                        part = mas90Service.findTurboInternationalPart(itemcode);
-                        if (part == null) {
+                        // @formatter:off
+                        pd = db.query(
+                          con2 -> con2.prepareStatement(
+                            "select p.id, pt.name " +
+                            "from part p join part_type pt on p.part_type_id=pt.id " +
+                            "where p.manfr_id = " + TURBO_INTERNATIONAL_MANUFACTURER_ID + " and p.manfr_part_num = ?"),
+                          ps2 -> {
+                              ps2.setString(1, rs.getString(6) /* itemcode */);
+                          },
+                          rs2 -> {
+                            if (rs2.next()) {
+                                return new PartDescriptor(rs2.getLong(1), rs2.getString(2));
+                            } else {
+                                return null;
+                            }
+                        });
+                        // @formatter:on
+                        if (pd == null) {
                             // Part not found.
                             continue;
                         }
                     }
-
-                    if (dto == null) {
-                        details = new ArrayList<>(10);
-                        dto = new InvoiceDto(invoiceno, invoicedate == null ? -1L : invoicedate.getTime(), customerno,
-                                details);
-                    }
-                    partId = part.getId();
+                    partId = pd.getPartId();
                     interchanges = interchangeDao.getInterchanges(partId);
-                    InvoiceDto.DetailsDto dd = new InvoiceDto.DetailsDto(partId, itemcode, interchanges, itemcodedesc);
-                    if (!dto.getNo().equals(invoiceno)) {
+                    InvoiceDto.DetailsDto dd = new InvoiceDto.DetailsDto(partId, itemcode, pd.getPartTypeName(),
+                            interchanges, itemcodedesc);
+                    if (dto == null || !dto.getNo().equals(invoiceno) || !dto.getHeaderSeqNo().equals(headerseqno)) {
                         retVal.add(dto);
                         details = new ArrayList<>(10);
-                        dto = new InvoiceDto(invoiceno, invoicedate == null ? -1L : invoicedate.getTime(), customerno,
-                                details);
+                        dto = new InvoiceDto(invoiceno, headerseqno, invoicedate == null ? null : invoicedate.getTime(),
+                                dateupdated == null ? null : dateupdated.getTime(), customerno, details);
                     }
                     details.add(dd);
                 }
