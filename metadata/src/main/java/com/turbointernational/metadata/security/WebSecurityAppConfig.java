@@ -1,6 +1,13 @@
 package com.turbointernational.metadata.security;
 
-import com.turbointernational.metadata.service.LoginService;
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,10 +25,7 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import com.turbointernational.metadata.service.LoginService;
 
 /**
  *
@@ -31,8 +35,10 @@ import java.io.IOException;
 @EnableGlobalMethodSecurity(securedEnabled = true)
 public class WebSecurityAppConfig extends WebSecurityConfigurerAdapter {
 
+    private final static Logger log = LoggerFactory.getLogger(WebSecurityAppConfig.class);
+
     public WebSecurityAppConfig() {}
-    
+
     @Autowired
     private LoginService loginService;
 
@@ -58,7 +64,7 @@ public class WebSecurityAppConfig extends WebSecurityConfigurerAdapter {
 //            .and()
             .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
             .invalidSessionUrl("/");
-        
+
         http.authorizeRequests()
 //            .antMatchers("/metadata/security/unauthorized**").permitAll()  // Password reset endpoints open to anyone
 //            .antMatchers("/metadata/security/password**").permitAll()  // Password reset endpoints open to anyone
@@ -77,7 +83,7 @@ public class WebSecurityAppConfig extends WebSecurityConfigurerAdapter {
                 .logoutSuccessHandler(new NoopLogoutSuccessHandler())
             .and().exceptionHandling().accessDeniedHandler(new AccessDeniedHandlerImpl())
             .and().authenticationProvider(/*createDaoAuthenticationProvider()*/ createMetadataAuthenticationProvider());
-        
+
         http.csrf().disable();
         http.anonymous().disable();
     }
@@ -90,17 +96,19 @@ public class WebSecurityAppConfig extends WebSecurityConfigurerAdapter {
     private static class AccessDeniedHandlerImpl implements AccessDeniedHandler {
         @Override
         public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
+            log.warn("Access denied (does user have required permissions?): " + accessDeniedException.getMessage());
             response.sendError(HttpStatus.FORBIDDEN.value());
         }
     }
-    
+
     private static class AuthenticationFailureHandlerImpl implements AuthenticationFailureHandler {
         @Override
         public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
+            log.warn("Login failed: " + exception.getMessage());
             response.sendError(HttpStatus.UNAUTHORIZED.value());
         }
     }
-    
+
     private static class NoopLogoutSuccessHandler implements LogoutSuccessHandler {
 
         @Override
