@@ -30,7 +30,7 @@ import com.turbointernational.metadata.util.View;
 import com.turbointernational.metadata.web.dto.ProductPricesDto;
 import com.turbointernational.metadata.web.dto.mas90.ArInvoiceHistoryDetailDto;
 import com.turbointernational.metadata.web.dto.mas90.ArInvoiceHistoryHeaderDto;
-import com.turbointernational.metadata.web.dto.mas90.InvoiceDto;
+import com.turbointernational.metadata.web.dto.mas90.InvoicesChunk;
 
 /**
  *
@@ -99,8 +99,8 @@ public class MagmiController {
     @ResponseBody
     @PreAuthorize("hasRole('ROLE_MAGMI_EXPORT') or hasIpAddress('127.0.0.1/32')")
     @JsonView(View.Summary.class)
-    public List<InvoiceDto> getInvoiceHistory(@RequestParam(name = "startDate", required = false) Long startDate,
-            @RequestParam(name = "limitDays", defaultValue = "10", required = false) int limitDays) throws SQLException {
+    public InvoicesChunk getInvoiceHistory(@RequestParam(name = "startDate", required = false) Long startDate,
+            @RequestParam(name = "limitDays", defaultValue = "0", required = false) int limitDays) throws SQLException {
         return magmiService.getInvoiceHistory(startDate, limitDays);
     }
 

@@ -25,7 +25,7 @@ import org.springframework.stereotype.Service;
 import com.turbointernational.metadata.dao.InterchangeDao;
 import com.turbointernational.metadata.web.dto.mas90.ArInvoiceHistoryDetailDto;
 import com.turbointernational.metadata.web.dto.mas90.ArInvoiceHistoryHeaderDto;
-import com.turbointernational.metadata.web.dto.mas90.InvoiceDto;
+import com.turbointernational.metadata.web.dto.mas90.InvoicesChunk;
 
 /**
  * @author dmytro.trunykov@zorallabs.com
@@ -382,7 +382,7 @@ public class MagmiService {
         return retVal;
     }
 
-    public List<InvoiceDto> getInvoiceHistory(Long beginMillis, int limitDays) throws SQLException {
+    public InvoicesChunk getInvoiceHistory(Long beginMillis, int limitDays) throws SQLException {
         class PartDescriptor {
 
             private final Long partId;
@@ -402,11 +402,10 @@ public class MagmiService {
                 return partTypeName;
             }
         }
-        ;
+        InvoicesChunk retVal = new InvoicesChunk();
         if (limitDays < 0) {
             throw new IllegalArgumentException("Parameter 'limitDays' can't be negative: " + limitDays);
         }
-        List<InvoiceDto> retVal = new ArrayList<>(300);
         java.sql.Date startDate, finishDate;
         if (beginMillis == null) {
             startDate = mas90db.queryForObject("select min(dateupdated) from ar_invoicehistoryheader",
@@ -420,6 +419,7 @@ public class MagmiService {
             startDate = new java.sql.Date(beginMillis);
         }
         finishDate = new java.sql.Date(beginMillis + limitDays * 3600 * 24 * 1000);
+        List<InvoicesChunk.Invoice> invoices = new ArrayList<>(300);
         Connection con = dataSourceMas90.getConnection();
         try {
             // @formatter:off
@@ -437,7 +437,7 @@ public class MagmiService {
             ps.setDate(2, finishDate);
             ResultSet rs = ps.executeQuery();
             try {
-                InvoiceDto dto = null;
+                InvoicesChunk.Invoice dto = null;
                 String invoiceno = null;
                 String headerseqno = null;
                 Date invoicedate = null;
@@ -452,7 +452,7 @@ public class MagmiService {
                 Double extensionamt = null;
                 String armc234entrycurrency = null;
                 Double armc234entryrate = null;
-                List<InvoiceDto.DetailsDto> details = null;
+                List<InvoicesChunk.Invoice.Details> details = null;
                 Long partId = null;
                 List<Long> interchanges = null;
                 while (rs.next()) {
@@ -514,19 +514,21 @@ public class MagmiService {
                     }
                     partId = pd.getPartId();
                     interchanges = interchangeDao.getInterchanges(partId);
-                    InvoiceDto.DetailsDto dd = new InvoiceDto.DetailsDto(partId, itemcode, pd.getPartTypeName(),
+                    InvoicesChunk.Invoice.Details dd = new InvoicesChunk.Invoice.Details(partId, itemcode, pd.getPartTypeName(),
                             interchanges, itemcodedesc, detailseqno, quantityshipped, unitprice, unitcost,
                             extensionamt, armc234entrycurrency, armc234entryrate);
                     if (dto == null || !dto.getNo().equals(invoiceno) || !dto.getHeaderSeqNo().equals(headerseqno)) {
-                        retVal.add(dto);
+                        if (dto != null) {
+                            invoices.add(dto);
+                        }
                         details = new ArrayList<>(10);
-                        dto = new InvoiceDto(invoiceno, headerseqno, invoicedate == null ? null : invoicedate.getTime(),
+                        dto = new InvoicesChunk.Invoice(invoiceno, headerseqno, invoicedate == null ? null : invoicedate.getTime(),
                                 dateupdated == null ? null : dateupdated.getTime(), customerno, details);
                     }
                     details.add(dd);
                 }
                 if (dto != null) {
-                    retVal.add(dto);
+                    invoices.add(dto);
                 }
             } finally {
                 rs.close();
@@ -534,6 +536,24 @@ public class MagmiService {
         } finally {
             con.close();
         }
+        // @formatter:off
+        Date nextDate = mas90db.query(
+          con3 -> con3.prepareStatement(
+                    "select dateupdated from ar_invoicehistoryheader " +
+                    "where dateupdated > ? " +
+                    "order by dateupdated asc offset 0 rows fetch next 1 rows only"),
+          ps3 -> ps3.setDate(1, finishDate),
+          rs3 -> {
+              if (rs3.next()) {
+                  return rs3.getDate(1);
+              } else {
+                  return null;
+              }
+          }
+        );
+        retVal.setInvoices(invoices);
+        retVal.setNextDate(nextDate.getTime());
+        // @formatter:on
         return retVal;
     }
 
