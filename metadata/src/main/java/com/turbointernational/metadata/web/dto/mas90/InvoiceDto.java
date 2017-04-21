@@ -33,15 +33,45 @@ public class InvoiceDto {
         @JsonView(View.Summary.class)
         private String description;
 
+        @JsonView(View.Summary.class)
+        private String detailSeqNo;
+
+        @JsonView(View.Summary.class)
+        private Integer quantityShipped;
+
+        @JsonView(View.Summary.class)
+        private Double unitPrice;
+
+        @JsonView(View.Summary.class)
+        private Double unitCost;
+
+        @JsonView(View.Summary.class)
+        private Double extensionAmt;
+
+        @JsonView(View.Summary.class)
+        private String armc234EntryCurrency;
+
+        @JsonView(View.Summary.class)
+        private Double armc234EntryRate;
+
         public DetailsDto() {
         }
 
-        public DetailsDto(Long partId, String partNumber, String partTypeName, List<Long> interchanges, String description) {
+        public DetailsDto(Long partId, String partNumber, String partTypeName, List<Long> interchanges,
+                String description, String detailSeqNo, Integer quantityShipped, Double unitPrice,
+                Double unitCost, Double extensionAmt, String armc234EntryCurrency, Double armc234EntryRate) {
             this.partId = partId;
             this.partNumber = partNumber;
             this.partTypeName = partTypeName;
             this.interchanges = interchanges;
             this.description = description;
+            this.detailSeqNo = detailSeqNo;
+            this.quantityShipped = quantityShipped;
+            this.unitPrice = unitPrice;
+            this.unitCost = unitCost;
+            this.extensionAmt = extensionAmt;
+            this.armc234EntryCurrency = armc234EntryCurrency;
+            this.armc234EntryRate = armc234EntryRate;
         }
 
         public Long getPartId() {
@@ -84,6 +114,62 @@ public class InvoiceDto {
             this.description = descriptionMas90;
         }
 
+        public String getDetailSeqNo() {
+            return detailSeqNo;
+        }
+
+        public void setDetailSeqNo(String detailSeqNo) {
+            this.detailSeqNo = detailSeqNo;
+        }
+
+        public Integer getQuantityShipped() {
+            return quantityShipped;
+        }
+
+        public void setQuantityShipped(Integer quantityShipped) {
+            this.quantityShipped = quantityShipped;
+        }
+
+        public Double getUnitPrice() {
+            return unitPrice;
+        }
+
+        public void setUnitPrice(Double unitPrice) {
+            this.unitPrice = unitPrice;
+        }
+
+        public Double getUnitCost() {
+            return unitCost;
+        }
+
+        public void setUnitCost(Double unitCost) {
+            this.unitCost = unitCost;
+        }
+
+        public Double getExtensionAmt() {
+            return extensionAmt;
+        }
+
+        public void setExtensionAmt(Double extensionAmt) {
+            this.extensionAmt = extensionAmt;
+        }
+
+        public String getArmc234EntryCurrency() {
+            return armc234EntryCurrency;
+        }
+
+        public void setArmc234EntryCurrency(String armc234EntryCurrency) {
+            this.armc234EntryCurrency = armc234EntryCurrency;
+        }
+
+        public Double getArmc234EntryRate() {
+            return armc234EntryRate;
+        }
+
+        public void setArmc234EntryRate(Double armc234EntryRate) {
+            this.armc234EntryRate = armc234EntryRate;
+        }
+
     }
 
     @JsonView(View.Summary.class)
@@ -107,7 +193,8 @@ public class InvoiceDto {
     public InvoiceDto() {
     }
 
-    public InvoiceDto(String no, String headerSeqNo, Long date, Long updated, String customerNo, List<DetailsDto> details) {
+    public InvoiceDto(String no, String headerSeqNo, Long date, Long updated, String customerNo,
+            List<DetailsDto> details) {
         this.no = no;
         this.headerSeqNo = headerSeqNo;
         this.date = date;

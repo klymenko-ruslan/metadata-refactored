@@ -425,7 +425,8 @@ public class MagmiService {
             // @formatter:off
             PreparedStatement ps = con.prepareStatement(
                 "select h.invoiceno, h.headerseqno, h.invoicedate, h.dateupdated, h.customerno, d.itemcode, " +
-                "  d.itemcodedesc " +
+                "  d.itemcodedesc, d.detailseqno, d.quantityshipped, d.unitprice, d.unitcost, d.extensionamt, " +
+                "  d.armc_234_entrycurrency, d.armc_234_entryrate " +
                 "from ar_invoicehistoryheader h " +
                 "  join ar_invoicehistorydetail d on h.invoiceno = d.invoiceno and h.headerseqno = d.headerseqno " +
                 "where h.dateupdated between ? and ? " +
@@ -444,6 +445,13 @@ public class MagmiService {
                 String customerno = null;
                 String itemcode = null;
                 String itemcodedesc = null;
+                String detailseqno = null;
+                Integer quantityshipped = null;
+                Double unitprice = null;
+                Double unitcost = null;
+                Double extensionamt = null;
+                String armc234entrycurrency = null;
+                Double armc234entryrate = null;
                 List<InvoiceDto.DetailsDto> details = null;
                 Long partId = null;
                 List<Long> interchanges = null;
@@ -455,7 +463,28 @@ public class MagmiService {
                     customerno = rs.getString(5);
                     itemcode = rs.getString(6);
                     itemcodedesc = rs.getString(7);
-
+                    detailseqno = rs.getString(8);
+                    double d = rs.getDouble(9);
+                    if (!rs.wasNull()) {
+                        quantityshipped = Integer.valueOf((int) d);
+                    }
+                    d = rs.getDouble(10);
+                    if (!rs.wasNull()) {
+                        unitprice = d;
+                    }
+                    d = rs.getDouble(11);
+                    if (!rs.wasNull()) {
+                        unitcost = d;
+                    }
+                    d = rs.getDouble(12);
+                    if (!rs.wasNull()) {
+                        extensionamt = d;
+                    }
+                    armc234entrycurrency = rs.getString(13);
+                    d = rs.getDouble(14);
+                    if (!rs.wasNull()) {
+                        armc234entryrate = d;
+                    }
                     PartDescriptor pd;
                     if (!mas90Service.isManfrNum(itemcode)) {
                         // Skip unsuitable part numbers.
@@ -486,7 +515,8 @@ public class MagmiService {
                     partId = pd.getPartId();
                     interchanges = interchangeDao.getInterchanges(partId);
                     InvoiceDto.DetailsDto dd = new InvoiceDto.DetailsDto(partId, itemcode, pd.getPartTypeName(),
-                            interchanges, itemcodedesc);
+                            interchanges, itemcodedesc, detailseqno, quantityshipped, unitprice, unitcost,
+                            extensionamt, armc234entrycurrency, armc234entryrate);
                     if (dto == null || !dto.getNo().equals(invoiceno) || !dto.getHeaderSeqNo().equals(headerseqno)) {
                         retVal.add(dto);
                         details = new ArrayList<>(10);
