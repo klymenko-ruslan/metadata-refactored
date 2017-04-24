@@ -7,12 +7,13 @@
        <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} [%t] %-5p %c{1}:%L - %msg%n" />
      </Console>
 
-     <RollingFile name="RollingFile" filename="metadata.log" filepattern="${logPath}/%d{yyyyMMddHHmmss}-bak.log">
+     <RollingFile name="RollingFile" fileName="metadata.log" filePattern="metadata-%d{yyyyMMddHHmmss}-bak.log">
 
        <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} [%t] %-5p %c{1}:%L - %msg%n" />
 
        <Policies>
-         <SizeBasedTriggeringPolicy size="10 MB" />
+         <TimeBasedTriggeringPolicy interval="86400" modulate="true" /> 
+         <SizeBasedTriggeringPolicy size="50 MB" />
        </Policies>
 
        <DefaultRolloverStrategy max="10" />
