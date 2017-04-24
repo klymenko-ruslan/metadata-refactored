@@ -552,7 +552,7 @@ public class MagmiService {
           }
         );
         retVal.setInvoices(invoices);
-        retVal.setNextDate(nextDate.getTime());
+        retVal.setNextDate(nextDate == null ? null : nextDate.getTime());
         // @formatter:on
         return retVal;
     }
