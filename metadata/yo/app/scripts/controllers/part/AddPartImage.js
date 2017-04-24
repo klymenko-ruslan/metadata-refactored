@@ -1,8 +1,8 @@
 "use strict";
 
 angular.module("ngMetaCrudApp").controller("AddPartImageCtrl", [
-  "$log", "$scope", "$uibModalInstance", "data", "toastr", "Restangular", "restService",
-  function ($log, $scope, $uibModalInstance, data, toastr, Restangular, restService) {
+  "$log", "$scope", "$uibModalInstance", "data", "toastr", "restService",
+  function ($log, $scope, $uibModalInstance, data, toastr, restService) {
 
     var file;
 
@@ -21,18 +21,14 @@ angular.module("ngMetaCrudApp").controller("AddPartImageCtrl", [
     };
 
     $scope.upload = function() {
-      Restangular.setParentless(false);
-      Restangular.one("part", data.part.id).all("image")
-        .post(file, { "publish": $scope.publishImage }, {"Content-Type": "application/octet-stream"}).then(
-          function(response) {
-            // Success
-            toastr.success("Added image.");
-            $uibModalInstance.close(response);
-          },
-          function(response) {
-            // Error
-            restService.error("Could not upload image.", response);
-          }
+      restService.addProductImage(data.part.id, $scope.publishImage).then(
+        function success(response) {
+          toastr.success("Added image.");
+          $uibModalInstance.close(response);
+        },
+        function failure(response) {
+          restService.error("Could not upload image.", response);
+        }
       );
     }
   }

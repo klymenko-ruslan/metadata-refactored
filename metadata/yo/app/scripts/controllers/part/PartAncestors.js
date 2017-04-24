@@ -1,8 +1,8 @@
 "use strict";
 
 angular.module("ngMetaCrudApp")
-  .controller("PartAncestorsCtrl", ["$log", "$routeParams", "$scope", "restService", "Restangular", "NgTableParams",
-  function($log, $routeParams, $scope, restService, Restangular, NgTableParams) {
+  .controller("PartAncestorsCtrl", ["$log", "$routeParams", "$scope", "restService", "NgTableParams",
+  function($log, $routeParams, $scope, restService, NgTableParams) {
 
     $scope.partId = $routeParams.id;
     $scope.part = null;

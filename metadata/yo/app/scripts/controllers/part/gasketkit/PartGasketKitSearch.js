@@ -8,9 +8,9 @@ angular.module("ngMetaCrudApp")
   })
 
   .controller("PartGasketKitSearchCtrl", ["$log", "$scope", "$location", "$routeParams", "restService",
-    "Restangular", "dialogs", "toastr", "GASKET_RESULT_STATUS", "partTypes", "part",
+    "dialogs", "toastr", "GASKET_RESULT_STATUS", "partTypes", "part",
     function($log, $scope, $location, $routeParams, restService,
-      Restangular, dialogs, toastr, GASKET_RESULT_STATUS, partTypes, part) {
+      dialogs, toastr, GASKET_RESULT_STATUS, partTypes, part) {
       $scope.partTypes = partTypes;
       $scope.restService = restService;
       $scope.partId = $routeParams.id;

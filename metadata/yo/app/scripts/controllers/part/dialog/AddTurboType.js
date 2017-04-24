@@ -2,7 +2,7 @@
 
 angular.module("ngMetaCrudApp")
 
-.controller("AddTurboTypeDialogCtrl", ["$scope", "$uibModalInstance", "$log", "$location", "data", "toastr", "Restangular", "restService", function ($scope, $uibModalInstance, $log, $location, data, toastr, Restangular, restService) {
+.controller("AddTurboTypeDialogCtrl", ["$scope", "$uibModalInstance", "$log", "$location", "data", "toastr", "restService", function ($scope, $uibModalInstance, $log, $location, data, toastr, restService) {
 
   var partId = data.partId;
   $scope.filter = "";

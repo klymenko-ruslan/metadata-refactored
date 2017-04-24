@@ -499,12 +499,10 @@ angular.module("ngMetaCrudApp")
       "Do you want to remove this common component mapping from the kit?").result.then(
       function() {
         // Yes
-        Restangular.setParentless(false);
-        Restangular.one('kit', $scope.partId).one('component', componentToRemove.id).remove().then(
+        restService.removeCommonComponentMapping($scope.partId, componentToRemove.id).then(
           function() {
             // Success
             toastr.success("Component removed.");
-
             var idx = _.indexOf($scope.kitComponents, componentToRemove);
             $scope.kitComponents.splice(idx, 1);
           },

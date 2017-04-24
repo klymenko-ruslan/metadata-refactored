@@ -51,6 +51,11 @@ angular.module("ngMetaCrudApp")
         return Restangular.all("bom").post(req);
       };
 
+      this.createBomAlternative = function(bomItemId, picketPartId, hdr) {
+        return Restangular.one('bom/' + bomItemId + '/alt')
+                  .post(pickedPartId, {header: hdr});
+      };
+
       this.startBomRebuilding = function(options) {
         // return Restangular.one("bom/rebuild").post("start", options);
         var url = METADATA_BASE + "bom/rebuild/start";
@@ -386,6 +391,12 @@ angular.module("ngMetaCrudApp")
 
       this.getInterchangesOfThePartBoms = function(partId) {
         return Restangular.one("part/" + partId + "/boms/interchanges").get();
+      };
+
+      this.addProductImage = function(partId, publishImage) {
+        Restangular.setParentless(false);
+        return Restangular.one("part", partId).all("image")
+          .post(file, { "publish": publishImage }, {"Content-Type": "application/octet-stream"});
       };
 
       this.deleteProductImage = function(imageId) {
@@ -1208,9 +1219,70 @@ angular.module("ngMetaCrudApp")
         Restangular.setParentless(false);
         return Restangular.one("service", serviceId).put({required: required});
       };
-      
+
       this.removeChangelogSourceLinkDescriptionAttachment = function(id) {
         return Restangular.one("/changelogsourcelink/description/attachment", id).remove();
+      };
+
+      this.saveKit = function(partId, mapping) {
+        Restangular.setParentless(false);
+        return Restangular.one("kit", partId).all("component").post(mapping);
+      };
+
+      this.removeCommonComponentMapping = function(partId, componentToRemoveId) {
+        Restangular.setParentless(false);
+        return Restangular.one("kit", partId).one("component", componentToRemoveId).remove();
+      };
+
+      this.createGroup = function(group) {
+        return Restangular.all("security/group").post(group);
+      };
+
+      this.getRoles = function() {
+        return Restangular.all("security/group/roles").getList();
+      };
+
+      this.getUsers = function() {
+        return Restangular.all("security/user").getList();
+      };
+
+      this.getGroup = function(id) {
+        return Restangular.one("security/group", id).get();
+      };
+
+      this.getGroups = function() {
+        return Restangular.all("security/group").getList();
+      };
+
+      this.removeGroup = function(id) {
+        return Restangular.one("security/group", id).remove();
+      }
+
+      this.login = function(username, password) {
+        return Restangular.all("security/login").post(
+          jQuery.param({
+            "username": username,
+            "password": password
+          }),
+          {},
+          {"Content-Type": "application/x-www-form-urlencoded"}
+        );
+      };
+
+      this.resetToken = function(token) {
+        return Restangular.all("security/password/reset/token/" + token).post(
+          jQuery.param({
+            "password": $scope.password
+          }),
+          {},
+          {"Content-Type": "application/x-www-form-urlencoded"});
+      };
+
+      this.resetPassword = function(username) {
+        return Restangular.all("security/password/reset/request").post(
+          jQuery.param({"username": username}),
+          {},
+          {"Content-Type": "application/x-www-form-urlencoded"});
       }
 
     };

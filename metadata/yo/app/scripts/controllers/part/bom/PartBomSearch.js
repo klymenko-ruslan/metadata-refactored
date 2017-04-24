@@ -3,10 +3,10 @@
 angular.module("ngMetaCrudApp")
 
 .controller("PartBomSearchCtrl", ["$log", "$scope", "$location", "NgTableParams", "$routeParams", "$uibModal",
-  "User", "BOM", "restService", "Restangular", "dialogs", "toastr", "utils", "partTypes", "part", "boms",
+  "User", "BOM", "restService", "dialogs", "toastr", "utils", "partTypes", "part", "boms",
   "services", "LinkSource",
   function($log, $scope, $location, NgTableParams, $routeParams, $uibModal, User, BOM, restService,
-    Restangular, dialogs, toastr, utils, partTypes, part, boms, services, LinkSource) {
+    dialogs, toastr, utils, partTypes, part, boms, services, LinkSource) {
 
     $scope.partTypes = partTypes;
     $scope.restService = restService;

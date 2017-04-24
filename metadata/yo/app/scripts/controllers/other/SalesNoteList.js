@@ -2,9 +2,9 @@
 
 // Argument primaryPartID is initialized during resolving before invocation of this controller (see app.js).
 angular.module("ngMetaCrudApp").controller("SalesNoteListCtrl", ["$scope", "$log", "$routeParams", "NgTableParams",
-  "restService", "Restangular", "SalesNotes", "primaryPartId",
+  "restService", "SalesNotes", "primaryPartId",
   function(
-    $scope, $log, $routeParams, NgTableParams, restService, Restangular, SalesNotes, primaryPartId) {
+    $scope, $log, $routeParams, NgTableParams, restService, SalesNotes, primaryPartId) {
 
     $scope.states = {
       "current": {

@@ -3,9 +3,9 @@
 angular.module("ngMetaCrudApp")
 
 .controller("AddStandardOversizeCtrl", ["$log", "$scope", "$location", "NgTableParams",
-  "restService", "Restangular", "dialogs", "toastr", "utils", "partTypes", "part", "type", "existing",
+  "restService", "dialogs", "toastr", "utils", "partTypes", "part", "type", "existing",
   function($log, $scope, $location, NgTableParams, restService,
-    Restangular, dialogs, toastr, utils, partTypes, part, type, existing) {
+    dialogs, toastr, utils, partTypes, part, type, existing) {
 
     $scope.partTypes = partTypes;
     $scope.restService = restService;

@@ -20,10 +20,10 @@ angular.module("ngMetaCrudApp")
   }])
 
   .controller("PartInterchangeSearchCtrl", ["$log", "$scope", "$location", "$routeParams", "restService",
-      "Restangular", "toastr", "dialogs", "MERGE_OPTIONS", "partTypes", "critDimsByPartTypes", "critDimEnumVals",
+      "toastr", "dialogs", "MERGE_OPTIONS", "partTypes", "critDimsByPartTypes", "critDimEnumVals",
       "services", "LinkSource",
       function($log, $scope, $location, $routeParams,
-        restService, Restangular, toastr, dialogs, MERGE_OPTIONS, partTypes, critDimsByPartTypes, critDimEnumVals,
+        restService, toastr, dialogs, MERGE_OPTIONS, partTypes, critDimsByPartTypes, critDimEnumVals,
         services, LinkSource) {
     $scope.partTypes = partTypes;
     $scope.critDimsByPartTypes = critDimsByPartTypes;

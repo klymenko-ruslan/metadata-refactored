@@ -1,18 +1,11 @@
 "use strict";
 
 angular.module("ngMetaCrudApp")
-  .controller("LoginCtrl", ["$location", "$scope", "$routeParams", "toastr", "Restangular", "User", "$uibModal",
-    function ($location, $scope, $routeParams, toastr, Restangular, User, $uibModal) {
+  .controller("LoginCtrl", ["$location", "$scope", "$routeParams", "toastr", "restService", "User", "$uibModal",
+    function ($location, $scope, $routeParams, toastr, restService, User, $uibModal) {
 
     $scope.login = function() {
-      Restangular.all('security/login').post(
-        jQuery.param({
-          username: $scope.username,
-          password: $scope.password
-        }),
-        {},
-        {'Content-Type': 'application/x-www-form-urlencoded'}
-      ).then(
+      restService.login($scope.username, $scope.password).then(
         function(loginResponse) {
           User.init().then(
             function() {
@@ -41,10 +34,7 @@ angular.module("ngMetaCrudApp")
     };
 
     $scope.resetToken = function() {
-      Restangular.all('security/password/reset/token/' + $routeParams.token).post(
-        jQuery.param({password: $scope.password}),
-        {},
-        {'Content-Type': 'application/x-www-form-urlencoded'}).then(
+      restService.resetToken($routeParams.token).then(
         function() {
           $location.path("/login")
         },
@@ -59,9 +49,7 @@ angular.module("ngMetaCrudApp")
     function($scope, $uibModalInstance, Restangular, toastr, username) {
     $scope.username = username;
     $scope.onConfirmPasswordResetConfirmDlg = function() {
-      Restangular.all('security/password/reset/request')
-        .post(jQuery.param({username: username}), {}, {'Content-Type': 'application/x-www-form-urlencoded'})
-        .then(
+      restService.resetPassword(username).then(
           function success() {
             toastr.success("Password reset link sent.");
           },
