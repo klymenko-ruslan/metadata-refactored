@@ -1,15 +1,15 @@
-'use strict';
+"use strict";
 
-angular.module('ngMetaCrudApp')
-    .directive('bomStatus', function(restService) {
+angular.module("ngMetaCrudApp")
+    .directive("bomStatus", function(restService) {
       return {
         restrict: "EA",
         transclude: true,
-        template: '<div class="alert alert-warning"> \
-                     <i class="fa fa-cog fa-spin"></i> \
+        template: "<div class=\"alert alert-warning\"> \
+                     <i class=\"fa fa-cog fa-spin\"></i> \
                      <strong>Rebuilding BOM</strong>\
                      <div ng-transclude></div> \
-                   </div>',
+                   </div>",
         link: function postLink(scope, element, attrs) {
 
           // Hidden by default

@@ -31,12 +31,12 @@ angular.module("ngMetaCrudApp")
 
       $scope.showDeleteLegendDlg = function() {
         if ($scope.partType.legendImgFilename) {
-          $('#dlgDeleteLegend').modal("show");
+          $("#dlgDeleteLegend").modal("show");
         }
       };
 
       $scope.deleteLegend = function() {
-        $('#dlgDeleteLegend').modal("hide");
+        $("#dlgDeleteLegend").modal("hide");
         restService.deletePartTypeLegend($scope.partType.id).then(
           function success() {
             $scope.partType.legendImgFilename = null;

@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 
-angular.module('ngMetaCrudApp')
-    .controller('GroupsCtrl', function ($log, $scope, $routeParams, restService, dialogs) {
+angular.module("ngMetaCrudApp")
+    .controller("GroupsCtrl", function ($log, $scope, $routeParams, restService, dialogs) {
 
       // Load the groups
       restService.getGroups().then(

@@ -16,7 +16,7 @@ angular.module("ngMetaCrudApp").controller("CarMakeFormCtrl", [
           function(carMake) {
             $log.log("Carmake has been successfully created: " + carMake.id);
             toastr.success("Carmake [" + carMake.id + "] has been successfully created.");
-            $location.path('/application/carmake/list');
+            $location.path("/application/carmake/list");
           },
           function (errorResponse) {
             restService.error("Could not create carmake.", response);

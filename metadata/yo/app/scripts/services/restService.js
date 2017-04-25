@@ -51,9 +51,18 @@ angular.module("ngMetaCrudApp")
         return Restangular.all("bom").post(req);
       };
 
+      this.updateBom = function(bomItemId, quantity) {
+        return Restangular.one("bom").post(bomItemId, null, { quantity: quantity });
+      };
+
       this.createBomAlternative = function(bomItemId, picketPartId, hdr) {
-        return Restangular.one('bom/' + bomItemId + '/alt')
+        return Restangular.one("bom/" + bomItemId + "/alt")
                   .post(pickedPartId, {header: hdr});
+      };
+
+      this.removeBomAlternative = function(altBomItemId, altItemId) {
+        Restangular.setParentless(false);
+        return Restangular.one("bom", altBomItemId).one("alt", altItemId).remove();
       };
 
       this.startBomRebuilding = function(options) {
@@ -1242,6 +1251,18 @@ angular.module("ngMetaCrudApp")
         return Restangular.all("security/group/roles").getList();
       };
 
+      this.getUser = function(id) {
+        return Restangular.one("security/user", id).get();
+      };
+
+      this.updateUser = function(user) {
+       return Restangular.all("security/user").post(user); 
+      };
+
+      this.removeUser = function(id) {
+        return Restangular.one("security/user", id).remove();
+      };
+
       this.getUsers = function() {
         return Restangular.all("security/user").getList();
       };
@@ -1269,6 +1290,10 @@ angular.module("ngMetaCrudApp")
         );
       };
 
+      this.logout = function() {
+        return Restangular.all("security/logout").post();
+      };
+
       this.resetToken = function(token) {
         return Restangular.all("security/password/reset/token/" + token).post(
           jQuery.param({
@@ -1283,7 +1308,31 @@ angular.module("ngMetaCrudApp")
           jQuery.param({"username": username}),
           {},
           {"Content-Type": "application/x-www-form-urlencoded"});
-      }
+      };
+
+      this.getMe = function() {
+        return Restangular.one("security/user/me").get();
+      };
+
+      this.saveMe = function(user) {
+        return Restangular.all("security/user/me").post(user);
+      };
+
+      this.reindexAllParts = function() {
+        return Restangular.all("search/part/indexAll").post();
+      };
+
+      this.reindexAllApplications = function() {
+        return Restangular.all("search/application/indexAll").post(); 
+      };
+
+      this.reindexAllSalesNotes = function() {
+        return Restangular.all("search/salesnotesparts/indexAll").post();
+      };
+
+      this.clearHibernate = function() {
+        return Restangular.one("hibernate/clear").get();
+      };
 
     };
   }]);

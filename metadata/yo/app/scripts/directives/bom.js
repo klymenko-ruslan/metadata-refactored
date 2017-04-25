@@ -1,18 +1,16 @@
 "use strict";
 
 angular.module("ngMetaCrudApp")
-  .directive("bom", ["$log", "$q", "Restangular", function($log, $q, Restangular) {
+  .directive("bom", function() {
     return {
       scope: {
         parentPartId: "="
       },
       templateUrl: "/views/component/bom.html",
       restrict: "E",
-      link: function postLink( /*$scope, element, attrs */ ) {},
-      controller: ["dialogs", "$scope", "$parse", "BOM", "NgTableParams", "toastr",
-        "Restangular", "utils", "restService",
-        function(dialogs, $scope, $parse, BOM, NgTableParams, toastr,
-          Restangular, utils, restService) {
+      link: function postLink() {},
+      controller: ["dialogs", "$scope", "$q", "$parse", "BOM", "NgTableParams", "toastr", "utils", "restService",
+        function(dialogs, $scope, $q, $parse, BOM, NgTableParams, toastr, utils, restService) {
           $scope.restService = restService;
 
           $scope.bomTableParams = new NgTableParams({
@@ -61,9 +59,7 @@ angular.module("ngMetaCrudApp")
 
           $scope.modifySave = function(bomItem) {
             var quantity = $scope.modifyValues[bomItem.id];
-            Restangular.one("bom").post(bomItem.id, null, {
-              quantity: quantity
-            }).then(
+            restService.updateBom(bomItem.id, quantity).then(
               function() {
                 bomItem.quantity = quantity;
                 delete $scope.modifyValues[bomItem.id];
@@ -104,8 +100,7 @@ angular.module("ngMetaCrudApp")
               "Remove alternate item?",
               "This will remove the alternate part from this BOM item.").result.then(
               function() {
-                Restangular.setParentless(false);
-                Restangular.one("bom", $scope.altBomItem.id).one("alt", altItem.id).remove().then(
+                restService.removeBomAlternative($scope.altBomItem.id, altItem.id).then(
                   function success() {
                     $scope.altBomItem.alternatives.splice(index, 1);
                     toastr.success("BOM alternate removed.");
@@ -132,4 +127,4 @@ angular.module("ngMetaCrudApp")
         }
       ]
     };
-  }]);
+  });

@@ -1,16 +1,16 @@
-'use strict';
+"use strict";
 
-angular.module('ngMetaCrudApp')
-    .directive('partTable', function ($log) {
+angular.module("ngMetaCrudApp")
+    .directive("partTable", function ($log) {
       return {
         scope: {
-          parts: '=',
-          key: '@'
+          parts: "=",
+          key: "@"
         },
-        restrict: 'E',
+        restrict: "E",
         replace: false,
         transclude: true,
-        templateUrl: '/views/component/partTable.html',
+        templateUrl: "/views/component/partTable.html",
         compile: function compile(tElement, tAttrs) {
 
           // Setup any extra columns
@@ -18,11 +18,11 @@ angular.module('ngMetaCrudApp')
             var extraColumns = JSON.parse(tAttrs.extraColumns);
 
             angular.forEach(extraColumns, function(columnExpression, columnName) {
-              tElement.find('thead > tr > th:last').before('<th>' + columnName + '</th>');
-              tElement.find('tbody > tr:first > td:last:parent').before('<td>{{' + columnExpression + '}}</td>');
+              tElement.find("thead > tr > th:last").before("<th>" + columnName + "</th>");
+              tElement.find("tbody > tr:first > td:last:parent").before("<td>{{" + columnExpression + "}}</td>");
             });
 
-            tElement.find('tbody > tr:last > td').attr('colspan', 4 + _.size(extraColumns));
+            tElement.find("tbody > tr:last > td").attr("colspan", 4 + _.size(extraColumns));
           }
 
           return {
@@ -51,10 +51,10 @@ angular.module('ngMetaCrudApp')
         }
       };
     })
-    .directive('partTableActions', function($log) {
+    .directive("partTableActions", function($log) {
       return {
-        restrict: 'A',
-        require: '^partTable',
+        restrict: "A",
+        require: "^partTable",
         link: function postLink(scope, element, attrs, controller) {
 
           // Build the scope off partTable's parent

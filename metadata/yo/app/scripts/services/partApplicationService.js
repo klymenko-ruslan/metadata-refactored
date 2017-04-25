@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 
-angular.module('ngMetaCrudApp')
-  .factory('partApplicationService', ['$log', 'restService', function PartApplicationService($log, restService) {
+angular.module("ngMetaCrudApp")
+  .factory("partApplicationService", ["$log", "restService", function PartApplicationService($log, restService) {
     return {
       removeApplication: function(part_id, applications, idx) {
         var pa = applications[idx];

@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 
-angular.module('ngMetaCrudApp')
-  .controller('CarmodelengineyearViewCtrl', function ($scope, $routeParams, restService) {
+angular.module("ngMetaCrudApp")
+  .controller("CarmodelengineyearViewCtrl", function ($scope, $routeParams, restService) {
     $scope.cmeyId = $routeParams.id;
     restService.findCarmodelengineyear($scope.cmeyId)
       .then(function (carmodelengineyear) {

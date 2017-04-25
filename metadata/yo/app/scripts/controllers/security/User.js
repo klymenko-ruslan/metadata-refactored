@@ -43,7 +43,7 @@ angular.module("ngMetaCrudApp")
     if ($routeParams.id == "create") {
       $scope.mode = "create";
       $scope.user = {
-        name: '',
+        name: "",
         enabled: true,
         groups: [],
         authProvider: authProviderLocalDB
@@ -51,7 +51,7 @@ angular.module("ngMetaCrudApp")
     } else {
       $scope.mode = "edit";
       $scope.userId = $routeParams.id;
-      Restangular.one("security/user", $scope.userId).get().then(
+      restService.getUser($scope.userId).then(
         function(user) {
           $scope.originalUser = user;
           if (!angular.isObject(user.authProvider)) { // null or undefined
@@ -105,7 +105,7 @@ angular.module("ngMetaCrudApp")
     $scope.save = function() {
       if ($routeParams.id == "create") {
         // Create
-        Restangular.all("security/user").post($scope.user).then(
+        restService.updateUser($scope.user).then(
           function(user) {
             toastr.success("Created user.");
             $location.path("/security/user/" + user.id);
@@ -133,11 +133,11 @@ angular.module("ngMetaCrudApp")
         "Are you sure you want to delete the user for " + $scope.user.name + "?").result.then(
         function() {
           // Yes
-          Restangular.one("security/user", $routeParams.id).remove().then(
+          restService.removeUser($routeParams.id).then(
             function() {
               // Success
               toastr.success("Deleted user.");
-              $location.path('/security/users/');
+              $location.path("/security/users/");
             },
             function(response) {
               // Error

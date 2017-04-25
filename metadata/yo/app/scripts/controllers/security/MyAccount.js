@@ -1,10 +1,10 @@
-'use strict';
+"use strict";
 
-angular.module('ngMetaCrudApp')
-  .controller('MyAccountCtrl', function (dialogs, $log, $location, $scope, toastr, Restangular, restService) {
+angular.module("ngMetaCrudApp")
+  .controller("MyAccountCtrl", function (dialogs, $log, $location, $scope, toastr, restService) {
       $scope.user;
 
-      var userPromise = Restangular.one("security/user/me").get().then(
+      var userPromise = restService.getMe().then(
           function(user) {
             $scope.user = user;
           },
@@ -13,12 +13,11 @@ angular.module('ngMetaCrudApp')
           }
       );
 
-
       $scope.save = function() {
-        var savePromise = Restangular.all('security/user/me').post($scope.user).then(
+        var savePromise = restService.saveMe($scope.user).then(
             function() {
               toastr.success("Updated my account.");
-              $location.path('/');
+              $location.path("/");
             },
             function(response) {
               restService.error("Could not update my account.", response);

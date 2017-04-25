@@ -1,12 +1,12 @@
 "use strict";
 
 angular.module("ngMetaCrudApp")
-  .service("User", ["$location", "$log", "$q", "Restangular", function User($location, $log, $q, Restangular) {
+  .service("User", ["$location", "$log", "$q", "restService", function User($location, $log, $q, restService) {
       var User = this; // jshint ignore:line
       User.roles = [];
       // Fetch the user's roles
       User.init = function() {
-        User.promise = Restangular.one("security/user/me").get().then(
+        User.promise = restService.getMe().then(
             function(user) {
               User.user = user;
               var roles = _.chain(user.groups)
@@ -21,8 +21,9 @@ angular.module("ngMetaCrudApp")
               User.roles = _.sortBy(roles);
             },
             function() {
-//              alert("Could not fetch your account info.");
-        });
+              $log.log("Could not fetch your account info.");
+            }
+        );
         return User.promise;
       };
 
@@ -31,7 +32,7 @@ angular.module("ngMetaCrudApp")
       };
 
       User.logout = function() {
-        return Restangular.all("security/logout").post().then(
+        return restService.logout().then(
           function() {
             User.user = null;
             User.roles = [];

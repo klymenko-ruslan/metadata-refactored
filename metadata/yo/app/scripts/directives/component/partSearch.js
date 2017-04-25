@@ -283,7 +283,7 @@ angular.module("ngMetaCrudApp")
                 });
 
                 if ($scope.defManufacturerName) {
-                  var manufacturerBucket = _.find($scope.searchResults.aggregations['Manufacturer'].buckets,
+                  var manufacturerBucket = _.find($scope.searchResults.aggregations["Manufacturer"].buckets,
                     function(r) { return r.key == $scope.defManufacturerName; }
                   );
                   if (angular.isObject(manufacturerBucket)) {

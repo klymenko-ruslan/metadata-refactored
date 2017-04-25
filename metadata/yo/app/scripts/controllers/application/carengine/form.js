@@ -24,7 +24,7 @@ angular.module("ngMetaCrudApp").controller("CarEngineFormCtrl", ["restService", 
             function(carEngine) {
               $log.log("Carengine has been successfully created: " + carEngine.id);
               toastr.success("Car engine [" + carEngine.id + "] - '" + carEngine.engineSize + "' has been successfully created.");
-              $location.path('/application/carengine/list');
+              $location.path("/application/carengine/list");
             },
             function (errorResponse) {
               restService.error("Could not create car engine.", response);
@@ -35,7 +35,7 @@ angular.module("ngMetaCrudApp").controller("CarEngineFormCtrl", ["restService", 
             function() {
               $log.log("Car engine [" + $scope.carEngine.id + "] - '" + $scope.carEngine.engineSize + "' has been successfully updated.");
               toastr.success("Car engine [" + $scope.carEngine.id + "] - '" + $scope.carEngine.engineSize + "' has been successfully updated.");
-              $location.path('/application/carengine/list');
+              $location.path("/application/carengine/list");
             },
             function (errorResponse) {
               restService.error("Could not update car engine '" + $scope.carengine.engineSize + "'.", response);

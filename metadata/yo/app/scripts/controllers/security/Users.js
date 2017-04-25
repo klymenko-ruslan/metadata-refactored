@@ -4,7 +4,7 @@ angular.module("ngMetaCrudApp")
 .config(["ngTableFilterConfigProvider", function(ngTableFilterConfigProvider) {
     ngTableFilterConfigProvider.setConfig({
         aliasUrls: {
-          'clearbttn': 'filters/clearbutton.html'
+          "clearbttn": "filters/clearbutton.html"
         }
     });
 }])

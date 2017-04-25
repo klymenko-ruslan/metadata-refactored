@@ -526,12 +526,12 @@ angular.module("ngMetaCrudApp")
 
             $scope.showDeleteLegendDlg = function() {
               if ($scope.part.legendImgFilename) {
-                $('#dlgDeleteLegend').modal("show");
+                $("#dlgDeleteLegend").modal("show");
               }
             };
 
             $scope.deleteLegend = function() {
-              $('#dlgDeleteLegend').modal("hide");
+              $("#dlgDeleteLegend").modal("hide");
               restService.deletePartCritdimsLegend($scope.part.id).then(
                 function success() {
                   $scope.part.legendImgFilename = null;
@@ -548,7 +548,7 @@ angular.module("ngMetaCrudApp")
       };
     }
   ])
-  .directive('criticalDimensionValidator', ["$log", "$parse",
+  .directive("criticalDimensionValidator", ["$log", "$parse",
     function($log, $parse) {
       /**
        * Do validation of a critical dimension.

@@ -4,11 +4,11 @@ angular.module("ngMetaCrudApp")
   .directive("interchangeableParts", ["$log", "utils", "restService", "NgTableParams",
     function($log, utils, restService, NgTableParams) {
       return {
-        restrict: 'E',
+        restrict: "E",
         scope: {
           part: "="
         },
-        templateUrl: '/views/component/interchangeable_parts.html',
+        templateUrl: "/views/component/interchangeable_parts.html",
         controller: ["$scope", "$parse", function($scope, $parse) {
           $scope.$watch("part", function(newVal, oldVal) {
             if (!angular.isObject(newVal) && angular.equals(newVal, oldVal)) {

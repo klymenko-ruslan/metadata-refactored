@@ -10,7 +10,7 @@ angular.module("ngMetaCrudApp").controller("CarFuelTypeFormCtrl", ["restService"
         function(carfueltypeId) {
           $log.log("Carfueltype has been successfully created: " + carfueltypeId);
           toastr.success("Carfueltype '" + $scope.carfueltype.name + "' has been successfully created.");
-          $location.path('/application/carfueltype/list');
+          $location.path("/application/carfueltype/list");
         },
         function (errorResponse) {
           restService.error("Could not create carfueltype.", response);

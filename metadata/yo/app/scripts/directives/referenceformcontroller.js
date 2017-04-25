@@ -1,4 +1,4 @@
-angular.module("ngMetaCrudApp").directive('referenceFormController', ['$rootScope', function($rootScope) {
+angular.module("ngMetaCrudApp").directive("referenceFormController", ["$rootScope", function($rootScope) {
   /**
    * The directive was copy-pasted (and modified) from:
    *   * http://davidhavl.com/devnotes/2014/01/angularjs-access-form-controller-from-outside/

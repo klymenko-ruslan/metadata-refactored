@@ -3,7 +3,7 @@
 angular.module("ngMetaCrudApp")
   .directive("turboTypes", ["$log", "utils", "NgTableParams", function($log, utils, NgTableParams) {
     return {
-      restrict: 'E',
+      restrict: "E",
       scope: {
         part: "="
       },

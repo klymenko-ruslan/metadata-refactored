@@ -45,8 +45,8 @@ angular.module("ngMetaCrudApp")
     };
 
   }])
-  .controller("PasswordResetConfirmDlgCtrl",["$scope", "$uibModalInstance", "Restangular", "toastr", "username",
-    function($scope, $uibModalInstance, Restangular, toastr, username) {
+  .controller("PasswordResetConfirmDlgCtrl",["$scope", "$uibModalInstance", "toastr", "username",
+    function($scope, $uibModalInstance, toastr, username) {
     $scope.username = username;
     $scope.onConfirmPasswordResetConfirmDlg = function() {
       restService.resetPassword(username).then(

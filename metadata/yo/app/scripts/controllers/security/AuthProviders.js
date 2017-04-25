@@ -119,7 +119,7 @@ angular.module("ngMetaCrudApp").controller("AuthProvidersCtrl", ["$scope", "$log
       restService.createAuthProviderLDAP($scope.authp).then(
         function(id) {
           toastr.success("Authentication provider '" + $scope.authp.name + "' has been successfully created.");
-          $location.path('/security/auth_providers');
+          $location.path("/security/auth_providers");
         },
         function(errorResponse) {
           restService.error("Could not create authentication provider.", errorResponse);

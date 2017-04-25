@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 
-angular.module('ngMetaCrudApp')
-    .controller('BomAlternateSearchCtrl', function ($log, $scope, $location, $routeParams, BOM, restService, dialogs, toastr) {
+angular.module("ngMetaCrudApp")
+    .controller("BomAlternateSearchCtrl", function ($log, $scope, $location, $routeParams, BOM, restService, dialogs, toastr) {
         $scope.restService = restService;
         $scope.partId = $routeParams.id;
         $scope.bomItemId = $routeParams.bomId;
