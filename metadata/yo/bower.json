@@ -2,9 +2,9 @@
   "name": "ti_metadata",
   "version": "0.0.0",
   "dependencies": {
-    "json3": "3.2.4",
+    "json3": "3.3.2",
     "jquery": "2.2.4",
-    "es5-shim": "2.0.8",
+    "es5-shim": "4.5.9",
     "bootstrap-sass": "3.3.6",
     "fontawesome": "4.7.0",
     "underscore": "1.8.3",
@@ -29,7 +29,6 @@
     "angular-scenario": "1.6.4"
   },
   "resolutions": {
-    "angular": "1.6.4",
     "bootstrap-markdown": "14a21c3837140144b27efc19c795d1a37fad70fb"
   }
 }
