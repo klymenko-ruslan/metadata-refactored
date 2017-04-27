@@ -1,16 +1,8 @@
 <!doctype html>
-<!--[if lt IE 7]>
-<html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>
-<html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>
-<html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!-->
-<html class="no-js"> <!--<![endif]-->
+<html>
 <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>TI Metadata</title>
+    <title>Turbo International Metadata</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" type="image/png" href="favicon.png" />
@@ -20,37 +12,28 @@
 
     <!-- build:css(.) styles/vendor.css -->
     <!-- bower:css -->
-    <link rel="stylesheet" href="bower_components/dropzone/dist/dropzone.css">
-    <link rel="stylesheet" href="node_modules/ng-table/bundles/ng-table.min.css">
-    <link rel="stylesheet" href="bower_components/angular-toastr/dist/angular-toastr.min.css">
-    <link rel="stylesheet" href="bower_components/angular-dialog-service/dist/dialogs.css">
-    <link rel="stylesheet" href="bower_components/angucomplete-alt/angucomplete-alt.css">
-    <link rel="stylesheet" href="bower_components/json-formatter/dist/json-formatter.min.css">
-    <link rel="stylesheet" href="bower_components/angular-loading-bar/build/loading-bar.min.css" type="text/css" media="all" />
-    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="bower_components/fontawesome/css/font-awesome.min.css">
-    <link rel="stylesheet" href="bower_components/bootstrap-markdown/css/bootstrap-markdown.min.css">
-    <link rel="stylesheet" href="bower_components/angular-markdown-editor-ghiscoding/styles/angular-markdown-editor.css">
+    <link rel="stylesheet" href="bower_components/angular-dialog-service/dist/dialogs.css" />
+    <link rel="stylesheet" href="bower_components/angucomplete-alt/angucomplete-alt.css" />
+    <link rel="stylesheet" href="bower_components/json-formatter/dist/json-formatter.css" />
+    <link rel="stylesheet" href="bower_components/angular-loading-bar/build/loading-bar.css" />
+    <link rel="stylesheet" href="bower_components/bootstrap-markdown/css/bootstrap-markdown.min.css" />
+    <link rel="stylesheet" href="bower_components/angular-markdown-editor-ghiscoding/styles/angular-markdown-editor.css" />
+    <link rel="stylesheet" href="bower_components/dropzone/dist/min/dropzone.min.css" />
+    <link rel="stylesheet" href="bower_components/angular-toastr/dist/angular-toastr.css" />
     <!-- endbower -->
     <!-- endbuild -->
+    <!-- link rel="stylesheet" href="node_modules/ng-table/bundles/ng-table.min.css" -->
+    <link rel="stylesheet" href="styles/ng-table.min.css">
 
     <!-- build:css(.tmp) styles/main.css -->
     <link rel="stylesheet" href="styles/main.css">
-    <link rel="stylesheet" href="styles/highlight.min.css">
     <!-- endbuild -->
 
 </head>
 <body data-ng-app="ngMetaCrudApp" data-ng-controller="MainCtrl">
-<!--[if lt IE 7]>
-<p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your
-    browser</a> to improve your experience.</p>
+<!--[if lte IE 8]>
+  <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
 <![endif]-->
-
-<!--[if lt IE 9]>
-<script type="text/javascript" src="bower_components/es5-shim/es5-shim.js"></script>
-<script type="text/javascript" src="bower_components/json3/lib/json3.min.js"></script>
-<![endif]-->
-
 <ul id="upload-preview-template" style="display:none">
   <li>
     <div class="dz-preview upload-box">
@@ -75,34 +58,40 @@
 <div id="toastr"></div>
 <div class="container" data-ng-view=""></div>
 
-<!-- build:js(.) scripts/modules.js -->
+<!-- build:js(.) scripts/vendor.js -->
 <!-- bower:js -->
-<script type="text/javascript" src="bower_components/jquery/dist/jquery.js"></script>
-<script type="text/javascript" src="bower_components/filereader.js/filereader.js"></script>
-<script type="text/javascript" src="bower_components/dropzone/dist/dropzone.js"></script>
-<script type="text/javascript" src="bower_components/angular/angular.js"></script>
-<script type="text/javascript" src="bower_components/angular-cookies/angular-cookies.min.js"></script>
-<script type="text/javascript" src="bower_components/angular-toastr/dist/angular-toastr.tpls.min.js"></script>
-<script type="text/javascript" src="bower_components/angular-dialog-service/dist/dialogs.js"></script>
-<script type="text/javascript" src="bower_components/angular-route/angular-route.js"></script>
-<script type="text/javascript" src="bower_components/angular-sanitize/angular-sanitize.js"></script>
-<script type="text/javascript" src="bower_components/angular-bootstrap/ui-bootstrap.js"></script>
-<script type="text/javascript" src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
-<script type="text/javascript" src="bower_components/bootstrap-sass/assets/javascripts/bootstrap.js"></script>
-<script type="text/javascript" src="node_modules/ng-table/bundles/ng-table.min.js"></script>
-<script type="text/javascript" src="bower_components/underscore/underscore.js"></script>
-<script type="text/javascript" src="bower_components/angucomplete-alt/dist/angucomplete-alt.min.js"></script>
-<script type="text/javascript" src="bower_components/json-formatter/dist/json-formatter.min.js"></script>
-<script type="text/javascript" src="bower_components/angular-loading-bar/build/loading-bar.min.js"></script>
-<script type="text/javascript" src="bower_components/marked/lib/marked.js"></script>
-<script type="text/javascript" src="bower_components/angular-marked/dist/angular-marked.min.js"></script>
-<script type="text/javascript" src="scripts/highlight.min.js"></script>
-<script type="text/javascript" src="bower_components/angular-highlightjs/src/angular-highlightjs.js"></script>
-<script type="text/javascript" src="bower_components/angular-markdown-editor-ghiscoding/src/angular-markdown-editor.js"></script>
-<script type="text/javascript" src="bower_components/bootstrap-markdown/js/bootstrap-markdown.js"></script>
-<script type="text/javascript" src="bower_components/restangular/src/restangular.js"></script>
+<script src="bower_components/es5-shim/es5-shim.js"></script>
+<script src="bower_components/jquery/dist/jquery.js"></script>
+<script src="bower_components/json3/lib/json3.js"></script>
+<script src="bower_components/bootstrap-sass/assets/javascripts/bootstrap.js"></script>
+<script src="bower_components/underscore/underscore.js"></script>
+<script src="bower_components/angular/angular.js"></script>
+<script src="bower_components/angular-animate/angular-animate.js"></script>
+<script src="bower_components/angular-cookies/angular-cookies.js"></script>
+<script src="bower_components/angular-route/angular-route.js"></script>
+<script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+<script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+<script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
+<script src="bower_components/angular-translate/angular-translate.js"></script>
+<script src="bower_components/angular-dialog-service/dist/dialogs.js"></script>
+<script src="bower_components/angular-dialog-service/dist/dialogs-default-translations.js"></script>
+<script src="bower_components/lodash/lodash.js"></script>
+<script src="bower_components/restangular/dist/restangular.js"></script>
+<script src="bower_components/angucomplete-alt/angucomplete-alt.js"></script>
+<script src="bower_components/json-formatter/dist/json-formatter.js"></script>
+<script src="bower_components/angular-loading-bar/build/loading-bar.js"></script>
+<script src="bower_components/angular-highlightjs/build/angular-highlightjs.js"></script>
+<script src="bower_components/marked/lib/marked.js"></script>
+<script src="bower_components/angular-marked/dist/angular-marked.js"></script>
+<script src="bower_components/bootstrap-markdown/js/bootstrap-markdown.js"></script>
+<script src="bower_components/angular-markdown-editor-ghiscoding/src/angular-markdown-editor.js"></script>
+<script src="bower_components/dropzone/dist/min/dropzone.min.js"></script>
+<script src="bower_components/angular-toastr/dist/angular-toastr.tpls.js"></script>
 <!-- endbower -->
 <!-- endbuild -->
+
+<script type="text/javascript" src="scripts/ng-table.min.js"></script>
+<!-- script type="text/javascript" src="node_modules/ng-table/bundles/ng-table.min.js"></script -->
 
 <!-- build:js({.tmp,app}) scripts/scripts.js -->
 <script type="text/javascript" src="scripts/app.js"></script>
