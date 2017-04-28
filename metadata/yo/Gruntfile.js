@@ -89,6 +89,10 @@ module.exports = function (grunt) {
                 '/app/styles',
                 connect.static('./app/styles')
               ),
+              connect().use(
+                '/fonts/fontawesome',
+                connect.static('./bower_components/fontawesome/fonts')
+              ),
               connect.static(appConfig.app)
             ];
           }
@@ -379,6 +383,11 @@ module.exports = function (grunt) {
           cwd: '.',
           src: 'bower_components/bootstrap-sass-official/assets/fonts/bootstrap/*',
           dest: '<%= yeoman.dist %>'
+        }, {
+          expand: true,
+          cwd: 'bower_components/fontawesome/fonts',
+          src: '**',
+          dest: '<%= yeoman.dist %>/fonts/fontawesome'
         }]
       },
       styles: {
