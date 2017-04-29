@@ -402,7 +402,7 @@ angular.module("ngMetaCrudApp")
         return Restangular.one("part/" + partId + "/boms/interchanges").get();
       };
 
-      this.addProductImage = function(partId, publishImage) {
+      this.addProductImage = function(file, partId, publishImage) {
         Restangular.setParentless(false);
         return Restangular.one("part", partId).all("image")
           .post(file, { "publish": publishImage }, {"Content-Type": "application/octet-stream"});
