@@ -15,8 +15,8 @@ module.exports = function (grunt) {
   // Automatically load required Grunt tasks
   require('jit-grunt')(grunt, {
     useminPrepare: 'grunt-usemin',
-    ngtemplates: 'grunt-angular-templates',
-    cdnify: 'grunt-google-cdn'
+//    ngtemplates: 'grunt-angular-templates',
+//    cdnify: 'grunt-google-cdn'
   });
 
   // Configurable paths for the application
@@ -292,14 +292,15 @@ module.exports = function (grunt) {
 
     // Performs rewrites based on filerev and the useminPrepare configuration
     usemin: {
-      html: ['<%= yeoman.dist %>/{,*/}*.html'],
+      html: ['<%= yeoman.dist %>/{,**/}*.html'],
       css: ['<%= yeoman.dist %>/styles/{,*/}*.css'],
       js: ['<%= yeoman.dist %>/scripts/{,*/}*.js'],
       options: {
         assetsDirs: [
           '<%= yeoman.dist %>',
           '<%= yeoman.dist %>/images',
-          '<%= yeoman.dist %>/styles'
+          '<%= yeoman.dist %>/styles',
+          '<%= yeoman.dist %>/styles/fonts'
         ],
         patterns: {
           js: [[/(images\/[^''""]*\.(png|jpg|jpeg|gif|webp|svg))/g, 'Replacing references to images']]
@@ -339,13 +340,27 @@ module.exports = function (grunt) {
         },
         files: [{
           expand: true,
-          cwd: '<%= yeoman.app %>',
+          cwd: '<%= yeoman.dist %>',
           src: ['*.html', 'views/**/*.html'],
+          // src: ['*.html'],
           dest: '<%= yeoman.dist %>'
         }]
       }
     },
 
+//    ngtemplates: {
+//      dist: {
+//        options: {
+//          module: 'mainApp',
+//          htmlmin: '<%= htmlmin.dist.options %>',
+//          usemin: 'scripts/scripts.js'
+//        },
+//        cwd: '<%= yeoman.app %>',
+//        src: 'views/{,*/}*.html',
+//        dest: '.tmp/templateCache.js'
+//      }
+//    },
+    
     // ng-annotate tries to make the code safe for minification automatically
     // by using the Angular long form for dependency injection.
     ngAnnotate: {
@@ -359,7 +374,14 @@ module.exports = function (grunt) {
       }
     },
 
-    // Put files not handled in other tasks here
+//    // Replace Google CDN references
+//    cdnify: {
+//      dist: {
+//        html: ['<%= yeoman.dist %>/*.html']
+//      }
+//    },
+
+    // Copies remaining files to places other tasks can use
     copy: {
       dist: {
         files: [{
