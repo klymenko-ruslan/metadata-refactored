@@ -21,7 +21,7 @@ angular.module("ngMetaCrudApp").controller("AddPartImageCtrl", [
     };
 
     $scope.upload = function() {
-      restService.addProductImage(data.part.id, $scope.publishImage).then(
+      restService.addProductImage(file, data.part.id, $scope.publishImage).then(
         function success(response) {
           toastr.success("Added image.");
           $uibModalInstance.close(response);
