@@ -341,8 +341,7 @@ module.exports = function (grunt) {
         files: [{
           expand: true,
           cwd: '<%= yeoman.dist %>',
-          src: ['*.html', 'views/**/*.html'],
-          // src: ['*.html'],
+          src: ['*.html'],
           dest: '<%= yeoman.dist %>'
         }]
       }
@@ -392,9 +391,21 @@ module.exports = function (grunt) {
           src: [
             '*.{ico,png,txt}',
             '*.html',
+            'views/**/*.html',
             'images/{,*/}*.{webp}',
-            'styles/fonts/{,*/}*.*'
+            'styles/fonts/{,*/}*.*',
+            'styles/highlight.min.css'
           ]
+        }, {
+          expand: true,
+          cwd: 'node_modules/ng-table/bundles',
+          dest: '<%= yeoman.dist %>/styles',
+          src: ['ng-table.min.css']
+        }, {
+          expand: true,
+          cwd: 'node_modules/ng-table/bundles',
+          dest: '<%= yeoman.dist %>/scripts',
+          src: ['ng-table.min.js']
         }, {
           expand: true,
           cwd: '.tmp/images',
