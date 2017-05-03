@@ -90,7 +90,7 @@ module.exports = function (grunt) {
                 connect.static('./app/styles')
               ),
               connect().use(
-                '/fonts/fontawesome',
+                '/styles/fonts/',
                 connect.static('./bower_components/fontawesome/fonts')
               ),
               connect.static(appConfig.app)
@@ -387,7 +387,7 @@ module.exports = function (grunt) {
           expand: true,
           cwd: 'bower_components/fontawesome/fonts',
           src: '**',
-          dest: '<%= yeoman.dist %>/fonts/fontawesome'
+          dest: '<%= yeoman.dist %>/styles/fonts/'
         }]
       },
       styles: {
