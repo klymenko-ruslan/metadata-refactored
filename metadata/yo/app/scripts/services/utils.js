@@ -28,9 +28,11 @@ angular.module("ngMetaCrudApp")
           }
           var sorting = params.sorting();
           var sortAsc = true;
-          for (var sortProperty in sorting) break;
+          for (var sortProperty in sorting) {
+           break;
+          }
           if (sortProperty) {
-            sortAsc = sorting[sortProperty] == "asc";
+            sortAsc = sorting[sortProperty] === "asc";
           } else {
             sortProperty = defSortProperty; // asc. see above.
           }
@@ -56,7 +58,7 @@ angular.module("ngMetaCrudApp")
           if (end > data.length) {
             end = data.length;
           }
-          if (params.page() - 1 != currentPageIdx) {
+          if (params.page() - 1 !== currentPageIdx) {
             params.page(currentPageIdx);
           }
           var pageRows = sorted.slice(begin, end);

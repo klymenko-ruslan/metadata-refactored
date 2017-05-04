@@ -41,5 +41,5 @@ angular.module("ngMetaCrudApp")
             window.location.href = "/";
           }
         );
-      }
+      };
     }]);

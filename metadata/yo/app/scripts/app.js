@@ -55,7 +55,7 @@ angular.module("ngMetaCrudApp", ["ngCookies", "ngRoute", "ngTable", "ui.bootstra
         return defaultValue;
       }
       return input;
-    }
+    };
   })
   .config(["$locationProvider", "$httpProvider", "$routeProvider", "RestangularProvider", "METADATA_BASE",
     function($locationProvider, $httpProvider, $routeProvider, RestangularProvider, METADATA_BASE) {
@@ -102,7 +102,7 @@ angular.module("ngMetaCrudApp", ["ngCookies", "ngRoute", "ngTable", "ui.bootstra
         },
         partType: ["$log", "$route", "restService", function($log, $route, restService) {
           var typeId = $route.current.pathParams.typeId;
-          return restService.findPartType(typeId)
+          return restService.findPartType(typeId);
         }],
         manufacturers: ["restService", function(restService) {
           return restService.listManufacturers();
@@ -611,7 +611,7 @@ angular.module("ngMetaCrudApp", ["ngCookies", "ngRoute", "ngTable", "ui.bootstra
       controller: "CriticalDimensionEnumsCtrl",
       resolve: {
         critDimEnums: ["restService", function(restService) {
-          return restService.getAllCritDimEnums()
+          return restService.getAllCritDimEnums();
         }]
       }
     });

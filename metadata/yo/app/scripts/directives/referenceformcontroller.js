@@ -1,3 +1,5 @@
+"use strict";
+
 angular.module("ngMetaCrudApp").directive("referenceFormController", ["$rootScope", function($rootScope) {
   /**
    * The directive was copy-pasted (and modified) from:

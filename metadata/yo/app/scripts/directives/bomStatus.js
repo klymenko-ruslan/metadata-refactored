@@ -5,11 +5,11 @@ angular.module("ngMetaCrudApp")
       return {
         restrict: "EA",
         transclude: true,
-        template: "<div class=\"alert alert-warning\"> \
-                     <i class=\"fa fa-cog fa-spin\"></i> \
-                     <strong>Rebuilding BOM</strong>\
-                     <div ng-transclude></div> \
-                   </div>",
+        template: "<div class=\"alert alert-warning\"> " +
+                  "  <i class=\"fa fa-cog fa-spin\"></i> " +
+                  "  <strong>Rebuilding BOM</strong> " +
+                  "  <div ng-transclude></div> " +
+                  "</div>",
         link: function postLink(scope, element, attrs) {
 
           // Hidden by default

@@ -13,7 +13,7 @@ angular.module("ngMetaCrudApp")
           restService.error
         );
       }
-    }
+    };
   }]);
 
 

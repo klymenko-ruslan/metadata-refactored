@@ -55,7 +55,7 @@ angular.module("ngMetaCrudApp")
         return Restangular.one("bom").post(bomItemId, null, { quantity: quantity });
       };
 
-      this.createBomAlternative = function(bomItemId, picketPartId, hdr) {
+      this.createBomAlternative = function(bomItemId, pickedPartId, hdr) {
         return Restangular.one("bom/" + bomItemId + "/alt")
                   .post(pickedPartId, {header: hdr});
       };
@@ -103,14 +103,14 @@ angular.module("ngMetaCrudApp")
       };
 
       this.httpServiceError = function(title, response) {
-        if (response.status == -1) {
+        if (response.status === -1) {
           dialogs.error(title, "Server not responding.");
         } else if (response.status === 401 || response.status === 403) {
           return;
         } else {
           dialogs.error(title, "Server said: <pre>" + angular.toJson(response, 2) + "</pre>");
         }
-      }
+      };
 
       this.error = function(title, response) {
         // NOOP on access denied, loginRequiredInterceptor will handle the redirect
@@ -560,7 +560,7 @@ angular.module("ngMetaCrudApp")
           manufacturerId: manufacturerId,
           name: name
         });
-      }
+      };
 
       this.createManufacturer = function(name, typeId, notExternal) {
         var req = {
@@ -1159,7 +1159,7 @@ angular.module("ngMetaCrudApp")
         if (!indexBy) {
           indexBy = "ID";
         }
-        if (indexBy != "ID" && indexBy != "NAME") {
+        if (indexBy !== "ID" && indexBy !== "NAME") {
           throw "Unexpected value of 'indexBy': " + angular.toJson(indexBy);
         }
         return Restangular.one("/criticaldimension/byparttypes").get({
@@ -1277,7 +1277,7 @@ angular.module("ngMetaCrudApp")
 
       this.removeGroup = function(id) {
         return Restangular.one("security/group", id).remove();
-      }
+      };
 
       this.login = function(username, password) {
         return Restangular.all("security/login").post(
