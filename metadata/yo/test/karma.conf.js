@@ -35,7 +35,6 @@ module.exports = function(config) {
       'bower_components/angular-translate/angular-translate.js',
       'bower_components/angular-dialog-service/dist/dialogs.js',
       'bower_components/angular-dialog-service/dist/dialogs-default-translations.js',
-      'bower_components/lodash/lodash.js',
       'bower_components/restangular/dist/restangular.js',
       'bower_components/angucomplete-alt/angucomplete-alt.js',
       'bower_components/json-formatter/dist/json-formatter.js',
@@ -52,8 +51,9 @@ module.exports = function(config) {
       'bower_components/angular-scenario/angular-scenario.js',
       // endbower
       'app/scripts/**/*.js',
-      'test/mock/**/*.js',
-      'test/spec/**/*.js'
+      //'test/mock/**/*.js',
+      //'test/spec/**/*.js'
+      'test/spec/services/BOM.js'
     ],
 
     // list of files / patterns to exclude
