@@ -8,7 +8,7 @@ angular.module("ngMetaCrudApp")
       restrict: "E",
       controller: function($scope) {
         $scope.User = User;
-
+//$(".dropdown-toggle").dropdown();
         // Probably not the greatest place for this startup/teardown code,
         // but metanav is available everywhere when logged in
         var timer = $interval(function() {
