@@ -30,5 +30,11 @@
   },
   "resolutions": {
     "bootstrap-markdown": "14a21c3837140144b27efc19c795d1a37fad70fb"
+  },
+  "overrides": {
+    "filereader.js": {
+      "main": "filereader.js"
+    }
   }
+
 }
