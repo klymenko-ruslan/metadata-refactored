@@ -90,6 +90,14 @@ module.exports = function (grunt) {
                 connect.static('./app/styles')
               ),
               connect().use(
+                '/styles/ng-table.min.css',
+                connect.static('./node_modules/ng-table/bundles/ng-table.min.css')
+              ),
+              connect().use(
+                '/scripts/ng-table.min.js',
+                connect.static('./node_modules/ng-table/bundles/ng-table.min.js')
+              ),
+              connect().use(
                 '/styles/fonts/',
                 connect.static('./bower_components/fontawesome/fonts')
               ),
@@ -414,9 +422,9 @@ module.exports = function (grunt) {
           src: ['generated/*']
         }, {
           expand: true,
-          cwd: '.',
-          src: 'bower_components/bootstrap-sass-official/assets/fonts/bootstrap/*',
-          dest: '<%= yeoman.dist %>'
+          cwd: 'bower_components/bootstrap-sass/assets/fonts/bootstrap',
+          src: '**',
+          dest: '<%= yeoman.dist %>/styles/fonts/'
         }, {
           expand: true,
           cwd: 'bower_components/fontawesome/fonts',
@@ -455,7 +463,6 @@ module.exports = function (grunt) {
       }
     }
   });
-
 
   grunt.registerTask('serve', 'Compile then start a connect web server', function (target) {
     if (target === 'dist') {
