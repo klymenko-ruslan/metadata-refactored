@@ -1,7 +1,7 @@
-"use strict";
+'use strict';
 
-angular.module("ngMetaCrudApp")
-  .controller("PartTypeEditCtrl", ["$scope", "restService", "METADATA_BASE", "partType",
+angular.module('ngMetaCrudApp')
+  .controller('PartTypeEditCtrl', ['$scope', 'restService', 'METADATA_BASE', 'partType',
     function ($scope, restService, METADATA_BASE, partType) {
       $scope.partType = partType;
       $scope.METADATA_BASE = METADATA_BASE;
@@ -12,9 +12,9 @@ angular.module("ngMetaCrudApp")
       };
 
       $scope.uploadLegend = function() {
-        $("#dlgUploadLegend").modal("hide");
+        $('#dlgUploadLegend').modal('hide');
         if ($scope.legendImage === null || $scope.legendImage === undefined) {
-          $("#dlgFileNotSelected").modal("show");
+          $('#dlgFileNotSelected').modal('show');
           return;
         }
         restService.uploadPartTypeLegend($scope.partType.id, $scope.legendImage).then(
@@ -22,7 +22,7 @@ angular.module("ngMetaCrudApp")
             $scope.partType.legendImgFilename = httpResponse.data.legendImgFilename;
           },
           function failure(response) {
-            restService.error("Uploading of a part type legend failed.", response);
+            restService.error('Uploading of a part type legend failed.', response);
           }
         ).finally(function() {
           $scope.legendImage = null;
@@ -31,18 +31,18 @@ angular.module("ngMetaCrudApp")
 
       $scope.showDeleteLegendDlg = function() {
         if ($scope.partType.legendImgFilename) {
-          $("#dlgDeleteLegend").modal("show");
+          $('#dlgDeleteLegend').modal('show');
         }
       };
 
       $scope.deleteLegend = function() {
-        $("#dlgDeleteLegend").modal("hide");
+        $('#dlgDeleteLegend').modal('hide');
         restService.deletePartTypeLegend($scope.partType.id).then(
           function success() {
             $scope.partType.legendImgFilename = null;
           },
           function failure(response) {
-            restService.error("Deletion of a part type legend failed.", response);
+            restService.error('Deletion of a part type legend failed.', response);
           }
         );
       };

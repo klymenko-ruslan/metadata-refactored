@@ -1,15 +1,15 @@
-"use strict";
+'use strict';
 
-angular.module("ngMetaCrudApp")
-.directive("cmakeForm", function() {
+angular.module('ngMetaCrudApp')
+.directive('cmakeForm', function() {
   return {
-    restrict: "E",
+    restrict: 'E',
     replace: false,
-    templateUrl: "/views/application/carmake/form.html",
-    controller: ["restService", "$q", "$scope", "$location", "$log", "$routeParams",
+    templateUrl: '/views/application/carmake/form.html',
+    controller: ['restService', '$q', '$scope', '$location', '$log', '$routeParams',
       function(restService, $q, $scope, $location, $log, $routeParams) {
         $scope.carmake = {};
-        $scope.$on("carmakeform:save", function(event, callback) {
+        $scope.$on('carmakeform:save', function(event, callback) {
           var promise = restService.createCarmake($scope.carmake);
           callback(promise);
         });
@@ -17,10 +17,10 @@ angular.module("ngMetaCrudApp")
     ]
   }
 })
-.directive("uniqueCarmakeName", ["$log", "$q", "restService", function($log, $q, restService) {
+.directive('uniqueCarmakeName', ['$log', '$q', 'restService', function($log, $q, restService) {
   // Validator for uniqueness of the carmake name.
   return {
-    require: "ngModel",
+    require: 'ngModel',
     link: function($scope, elm, attr, ctrl) {
       ctrl.$asyncValidators.nonUniqueName = function(modelValue, viewValue) {
         var def = $q.defer();
@@ -36,7 +36,7 @@ angular.module("ngMetaCrudApp")
             }
           },
           function (errorResponse) {
-            $log.log("Couldn't validate name of the carmake: " + viewValue);
+            $log.log('Couldn\'t validate name of the carmake: ' + viewValue);
             def.reject();
           }
         );

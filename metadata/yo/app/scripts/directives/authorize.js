@@ -1,18 +1,18 @@
-"use strict";
+'use strict';
 
-angular.module("ngMetaCrudApp")
-  .directive("authorize", function ($log, User) {
+angular.module('ngMetaCrudApp')
+  .directive('authorize', function ($log, User) {
     return {
-      restrict: "A",
+      restrict: 'A',
       link: function postLink(scope, element, attrs) {
         var role = attrs.authorize;
 
         scope.$watch(function() {return User.roles;}, function() {
           if (_.contains(User.roles, role)) {
-            element.removeClass("hidden");
+            element.removeClass('hidden');
           } else {
 //            element.remove();
-            element.addClass("hidden");
+            element.addClass('hidden');
           }
         }, true);
       }

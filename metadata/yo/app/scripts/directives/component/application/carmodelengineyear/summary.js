@@ -1,13 +1,13 @@
-"use strict";
+'use strict';
 
-angular.module("ngMetaCrudApp")
-    .directive("cmeySummary", function () {
+angular.module('ngMetaCrudApp')
+    .directive('cmeySummary', function () {
       return {
         scope: {
-          item: "="
+          item: '='
         },
-        restrict: "E",
+        restrict: 'E',
         replace: false,
-        templateUrl: "/views/component/application/carmodelengineyear/summary.html"
+        templateUrl: '/views/component/application/carmodelengineyear/summary.html'
       };
     });

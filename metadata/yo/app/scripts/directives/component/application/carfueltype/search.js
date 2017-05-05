@@ -1,15 +1,15 @@
-"use strict";
+'use strict';
 
-angular.module("ngMetaCrudApp").directive("carfueltypeSearch", ["$log", "restService", "toastr", function ($log, restService, toastr) {
+angular.module('ngMetaCrudApp').directive('carfueltypeSearch', ['$log', 'restService', 'toastr', function ($log, restService, toastr) {
   return {
-    "restrict": "E",
-    "replace": true,
-    "templateUrl": "/views/component/application/carfueltype/search.html",
-    "transclude": true,
-    "link": function postLink(scope, iElement, iAttrs, controller, transcludeFn) {
+    'restrict': 'E',
+    'replace': true,
+    'templateUrl': '/views/component/application/carfueltype/search.html',
+    'transclude': true,
+    'link': function postLink(scope, iElement, iAttrs, controller, transcludeFn) {
       controller.transcludeActionsFn = transcludeFn;
     },
-    "controller": ["$log", "$q", "$scope", "dialogs", "NgTableParams", function ($log, $q, $scope, dialogs, NgTableParams) {
+    'controller': ['$log', '$q', '$scope', 'dialogs', 'NgTableParams', function ($log, $q, $scope, dialogs, NgTableParams) {
       // Latest Results
       $scope.searchResults = null;
 
@@ -44,26 +44,26 @@ angular.module("ngMetaCrudApp").directive("carfueltypeSearch", ["$log", "restSer
             // Success.
             delete $scope.modifyValues[carfueltype.id];
             $scope._resetForm(form);
-            toastr.success("The car fuel type '" + name + "' has been successfully updated.");
+            toastr.success('The car fuel type "' + name + '" has been successfully updated.');
           },
           function errorResponse(response) {
-            restService.error("Car fuel type (id:" + carfueltype.id + ") '" + name + "' update failed.", response);
+            restService.error('Car fuel type (id:' + carfueltype.id + ') "' + name + '" update failed.', response);
           }
         );
       };
 
       $scope.remove = function(id, name) {
-        dialogs.confirm("Delete car fuel type '" + name + "'.", "Are you sure?").result.then(
+        dialogs.confirm('Delete car fuel type "' + name + '".', 'Are you sure?').result.then(
           function() {
             // Yes
             restService.removeCarfueltype(id).then(
               function () {
                 $scope.clear(); // reload table
                 $scope.carfueltypeTableParams.reload();
-                toastr.success("Car fuel type '" + name + "' has been successfully removed.");
+                toastr.success('Car fuel type "' + name + '" has been successfully removed.');
               },
               function errorResponse(response) {
-                restService.error("Car fuel type '" + name + "' remove failed.", response);
+                restService.error('Car fuel type "' + name + '" remove failed.', response);
               }
             );
           }
@@ -73,12 +73,12 @@ angular.module("ngMetaCrudApp").directive("carfueltypeSearch", ["$log", "restSer
       // CarFuelType Table
       $scope.carfueltypeTableParams = new NgTableParams(
         {
-          "page": 1,
-          "count": 10,
-          "sorting": {}
+          'page': 1,
+          'count': 10,
+          'sorting': {}
         },
         {
-          "getData": function (params) {
+          'getData': function (params) {
             // Update the pagination info
             $scope.search.count = params.count();
             $scope.search.page = params.page();
@@ -97,7 +97,7 @@ angular.module("ngMetaCrudApp").directive("carfueltypeSearch", ["$log", "restSer
                 return $scope.searchResults.hits.hits;
               },
               function (errorResponse) {
-                $log.log("Couldn't search for 'carfueltype'.");
+                $log.log('Couldn\'t search for "carfueltype".');
               }
             );
           }
@@ -105,20 +105,20 @@ angular.module("ngMetaCrudApp").directive("carfueltypeSearch", ["$log", "restSer
       );
       // Query Parameters
       $scope.search = {
-        "carfueltype": "",
-        "aggregations": {},
-        "sort": {}
+        'carfueltype': '',
+        'aggregations': {},
+        'sort': {}
       };
       $scope.clear = function() {
         $scope.search = {
-          "carfueltype": "",
-          "aggregations": {},
-          "sort": {}
+          'carfueltype': '',
+          'aggregations': {},
+          'sort': {}
         };
       };
       // Handle updating search results
       $scope.$watch(
-        "[search.carfueltype, search.aggregations]",
+        '[search.carfueltype, search.aggregations]',
         function (newVal, oldVal) {
           // Debounce
           if (angular.equals(newVal, oldVal, true)) {
@@ -131,11 +131,11 @@ angular.module("ngMetaCrudApp").directive("carfueltypeSearch", ["$log", "restSer
     }]
   };
 }]
-).directive("carfueltypeSearchActions", ["$log", function($log) {
+).directive('carfueltypeSearchActions', ['$log', function($log) {
   return {
-    "restrict": "A",
-    "require": "^carfueltypeSearch",
-    "link": function postLink(scope, element, attrs, controller) {
+    'restrict': 'A',
+    'require': '^carfueltypeSearch',
+    'link': function postLink(scope, element, attrs, controller) {
       controller.transcludeActionsFn(scope, function(clone) {
         element.append(clone);
       });

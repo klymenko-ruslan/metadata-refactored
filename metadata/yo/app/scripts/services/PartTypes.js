@@ -1,7 +1,7 @@
-"use strict";
+'use strict';
 
-angular.module("ngMetaCrudApp")
-  .service("PartTypes", ["$log", "$rootScope", "restService",
+angular.module('ngMetaCrudApp')
+  .service('PartTypes', ['$log', '$rootScope', 'restService',
       function PartTypes($log, $rootScope, restService) {
     var PartTypes = this; // jshint ignore:line
     /**
@@ -15,7 +15,7 @@ angular.module("ngMetaCrudApp")
      */
     this.refreshPromise = null;
     this.refresh = function() {
-      $log.log("PartTypes.refresh()");
+      //$log.log('PartTypes.refresh()');
       // Out with the old
       this.list = null;
       // In with the new
@@ -24,7 +24,7 @@ angular.module("ngMetaCrudApp")
           PartTypes.list = newPartTypes;
         },
         function(status) {
-          $log.log("Could not get part types.", status);
+          $log.log('Could not get part types.', status);
         });
       return PartTypes.refreshPromise;
     };

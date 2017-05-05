@@ -1,31 +1,31 @@
-"use strict";
+'use strict';
 
-angular.module("ngMetaCrudApp").service("BOM", ["$log", "Restangular", function BOM($log, Restangular) {
+angular.module('ngMetaCrudApp').service('BOM', ['$log', 'Restangular', function BOM($log, Restangular) {
 
     /**
      * BOMs for the part.
      */
     this.listByParentPartId = function(parentPartId) {
-      return Restangular.one("bom/byParentPart", parentPartId).get();
+      return Restangular.one('bom/byParentPart', parentPartId).get();
     };
 
     /**
      * BOMs of specified types for the part.
      */
     this.listByParentPartAndTypeIds = function(parentPartId, typeId) {
-      return Restangular.one("bom/byParentPart", parentPartId).getList("type", {typeId: typeId});
+      return Restangular.one('bom/byParentPart', parentPartId).getList('type', {typeId: typeId});
     };
 
     this.listParentsOfPartBom = function(partId) {
-      return Restangular.one("bom/part", partId).getList("parents");
+      return Restangular.one('bom/part', partId).getList('parents');
     };
 
     this.getById = function(bomItemId) {
-      return Restangular.one("bom", bomItemId).get();
+      return Restangular.one('bom', bomItemId).get();
     };
 
     this.removeBOM = function(bomId) {
-      return Restangular.one("bom", bomId).remove();
+      return Restangular.one('bom', bomId).remove();
     };
 
     this.addToParentsBOMs = function(partId, sourcesIds, ratings, description, rows, attachIds) {
@@ -36,7 +36,7 @@ angular.module("ngMetaCrudApp").service("BOM", ["$log", "Restangular", function 
         chlogSrcLnkDescription: description,
         rows: rows
       };
-      return Restangular.one("bom/part", partId).post("parents", request);
+      return Restangular.one('bom/part', partId).post('parents', request);
     };
 
     return this;

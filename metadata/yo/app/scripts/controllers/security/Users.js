@@ -1,31 +1,31 @@
-"use strict";
+'use strict';
 
-angular.module("ngMetaCrudApp")
-.config(["ngTableFilterConfigProvider", function(ngTableFilterConfigProvider) {
+angular.module('ngMetaCrudApp')
+.config(['ngTableFilterConfigProvider', function(ngTableFilterConfigProvider) {
     ngTableFilterConfigProvider.setConfig({
         aliasUrls: {
-          "clearbttn": "filters/clearbutton.html"
+          'clearbttn': 'filters/clearbutton.html'
         }
     });
 }])
-.controller("UsersCtrl", ["$log", "$scope", "NgTableParams", "restService", "authProviders",
+.controller('UsersCtrl', ['$log', '$scope', 'NgTableParams', 'restService', 'authProviders',
   function($log, $scope, NgTableParams, restService, authProviders) {
     $scope.authProviders = _.map(authProviders.recs || [], function (ap) {
       return {id: ap.id, title: ap.name};
     });
-    $scope.authProviders.unshift({ id: null, title: "Local DB" });
-    $scope.authProviders.unshift({ id: -1, title: "" });
+    $scope.authProviders.unshift({ id: null, title: 'Local DB' });
+    $scope.authProviders.unshift({ id: -1, title: '' });
     $scope.enabledOpts = [
-      {id: null, title: ""},
-      {id: true, title: "yes"},
-      {id: false, title: "no"}
+      {id: null, title: ''},
+      {id: true, title: 'yes'},
+      {id: false, title: 'no'}
     ];
 
     $scope.usersTableParams = new NgTableParams({
       page: 1,
       count: 25,
       sorting: {
-        name: "asc"
+        name: 'asc'
       },
       filter: {
         displayName: null,
@@ -53,7 +53,7 @@ angular.module("ngMetaCrudApp")
             return result.recs;
           },
           function(errorResponse) {
-            restService.error("Search in the user list failed.", errorResponse);
+            restService.error('Search in the user list failed.', errorResponse);
           });
       }
     });

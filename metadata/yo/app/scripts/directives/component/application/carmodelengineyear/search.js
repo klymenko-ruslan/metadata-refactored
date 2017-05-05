@@ -1,15 +1,15 @@
-"use strict";
+'use strict';
 
-angular.module("ngMetaCrudApp").directive("cmeySearch", ["$log", "restService", function ($log, restService) {
+angular.module('ngMetaCrudApp').directive('cmeySearch', ['$log', 'restService', function ($log, restService) {
   return {
-    restrict: "E",
+    restrict: 'E',
     replace: true,
-    templateUrl: "/views/component/application/carmodelengineyear/search.html",
+    templateUrl: '/views/component/application/carmodelengineyear/search.html',
       transclude: true,
       link: function postLink(scope, iElement, iAttrs, controller, transcludeFn) {
         controller.transcludeActionsFn = transcludeFn;
       },
-      controller: ["$log", "$q", "dialogs", "toastr", "$scope", "NgTableParams",
+      controller: ['$log', '$q', 'dialogs', 'toastr', '$scope', 'NgTableParams',
                     function ($log, $q, dialogs, toastr, $scope, NgTableParams) {
 
         $scope.fltrCmey = {
@@ -51,7 +51,7 @@ angular.module("ngMetaCrudApp").directive("cmeySearch", ["$log", "restService", 
                   return $scope.cmeySearchResults.hits.hits;
                 },
                 function (errorResponse) {
-                  $log.log("Couldn't search for 'carmodelengineyear'.");
+                  $log.log('Couldn\'t search for "carmodelengineyear".');
                 }
               );
             }
@@ -68,7 +68,7 @@ angular.module("ngMetaCrudApp").directive("cmeySearch", ["$log", "restService", 
         };
 
         // Handle updating search results
-        $scope.$watch("[fltrCmey]",
+        $scope.$watch('[fltrCmey]',
           function (newVal, oldVal) {
             // Debounce
             if (angular.equals(newVal, oldVal, true)) {
@@ -80,16 +80,16 @@ angular.module("ngMetaCrudApp").directive("cmeySearch", ["$log", "restService", 
         );
 
         $scope.remove = function (id) {
-          dialogs.confirm("Delete Model Engine Year.", "Are you sure?").result.then(
+          dialogs.confirm('Delete Model Engine Year.', 'Are you sure?').result.then(
             function() {
               // Yes
               restService.removeCarmodelengineyear(id).then(
                 function () {
                   $scope.clear(); // reload table
-                  toastr.success("Car Model Engine Year has been successfully removed.");
+                  toastr.success('Car Model Engine Year has been successfully removed.');
                 },
                 function errorResponse(response) {
-                  restService.error("Car Model Engine Year remove failed.", response);
+                  restService.error('Car Model Engine Year remove failed.', response);
                 }
               );
             }
@@ -99,10 +99,10 @@ angular.module("ngMetaCrudApp").directive("cmeySearch", ["$log", "restService", 
       }]
     };
   }]
-).directive("cmeySearchActions", ["$log", function($log) {
+).directive('cmeySearchActions', ['$log', function($log) {
   return {
-    restrict: "A",
-    require: "^cmeySearch",
+    restrict: 'A',
+    require: '^cmeySearch',
     link: function postLink(scope, element, attrs, controller) {
       controller.transcludeActionsFn(scope, function(clone) {
         element.append(clone);

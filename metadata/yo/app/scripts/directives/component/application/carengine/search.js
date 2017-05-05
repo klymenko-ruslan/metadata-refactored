@@ -1,15 +1,15 @@
-"use strict";
+'use strict';
 
-angular.module("ngMetaCrudApp").directive("carengineSearch", ["$log", "restService", function ($log, restService) {
+angular.module('ngMetaCrudApp').directive('carengineSearch', ['$log', 'restService', function ($log, restService) {
   return {
-    restrict: "E",
+    restrict: 'E',
     replace: true,
-    templateUrl: "/views/component/application/carengine/search.html",
+    templateUrl: '/views/component/application/carengine/search.html',
       transclude: true,
       link: function postLink(scope, iElement, iAttrs, controller, transcludeFn) {
         controller.transcludeActionsFn = transcludeFn;
       },
-      controller: ["$log", "$q", "$scope", "toastr", "dialogs", "NgTableParams",
+      controller: ['$log', '$q', '$scope', 'toastr', 'dialogs', 'NgTableParams',
                     function ($log, $q, $scope, toastr, dialogs, NgTableParams) {
 
         $scope.fltrCarengine = {
@@ -20,16 +20,16 @@ angular.module("ngMetaCrudApp").directive("carengineSearch", ["$log", "restServi
         $scope.carengineSearchResults = null;
 
         $scope.remove = function(id, engineSize) {
-          dialogs.confirm("Delete car engine '" + engineSize + "'.", "Are you sure?").result.then(
+          dialogs.confirm('Delete car engine "' + engineSize + '".', 'Are you sure?').result.then(
             function() {
               // Yes
               restService.removeCarengine(id).then(
                 function () {
                   $scope.clear(); // reload table
-                  toastr.success("Car engine '" + name + "' has been successfully removed.");
+                  toastr.success('Car engine "' + name + '" has been successfully removed.');
                 },
                 function errorResponse(response) {
-                  restService.error("Car engine remove failed.", response);
+                  restService.error('Car engine remove failed.', response);
                 }
               );
             }
@@ -60,7 +60,7 @@ angular.module("ngMetaCrudApp").directive("carengineSearch", ["$log", "restServi
                   return $scope.carengineSearchResults.hits.hits;
                 },
                 function (errorResponse) {
-                  $log.log("Couldn't search for 'carengine'.");
+                  $log.log('Couldn\'t search for "carengine".');
                 }
               );
             }
@@ -73,7 +73,7 @@ angular.module("ngMetaCrudApp").directive("carengineSearch", ["$log", "restServi
         };
 
         // Handle updating search results
-        $scope.$watch("[fltrCarengine]",
+        $scope.$watch('[fltrCarengine]',
           function (newVal, oldVal) {
             // Debounce
             if (angular.equals(newVal, oldVal, true)) {
@@ -86,10 +86,10 @@ angular.module("ngMetaCrudApp").directive("carengineSearch", ["$log", "restServi
       }]
     };
   }]
-).directive("carengineSearchActions", ["$log", function($log) {
+).directive('carengineSearchActions', ['$log', function($log) {
   return {
-    restrict: "A",
-    require: "^carengineSearch",
+    restrict: 'A',
+    require: '^carengineSearch',
     link: function postLink(scope, element, attrs, controller) {
       controller.transcludeActionsFn(scope, function(clone) {
         element.append(clone);

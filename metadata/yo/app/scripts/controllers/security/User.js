@@ -1,10 +1,10 @@
-"use strict";
+'use strict';
 
-angular.module("ngMetaCrudApp")
+angular.module('ngMetaCrudApp')
 
-.controller("UserCtrl", ["dialogs", "$location", "$log", "$scope",
-  "$routeParams", "NgTableParams", "toastr", "restService", "Restangular",
-  "authProviders",
+.controller('UserCtrl', ['dialogs', '$location', '$log', '$scope',
+  '$routeParams', 'NgTableParams', 'toastr', 'restService', 'Restangular',
+  'authProviders',
   function(dialogs, $location, $log,
     $scope, $routeParams, NgTableParams, toastr, restService, Restangular, authProviders) {
 
@@ -13,8 +13,8 @@ angular.module("ngMetaCrudApp")
     $scope.originalUser = null;
 
     $scope.isMemberOpts = [
-      {id: true, title: "yes"},
-      {id: false, title: "no"}
+      {id: true, title: 'yes'},
+      {id: false, title: 'no'}
     ];
 
     $scope.isMember = {};
@@ -23,33 +23,33 @@ angular.module("ngMetaCrudApp")
       var isMember = $scope.isMember[g.id];
       restService.setUserMembershit($scope.userId, g.id, isMember).then(
         function success() {
-          toastr.success("The user membership has been updated.");
+          toastr.success('The user membership has been updated.');
         },
         function failure(response) {
-          restService.error("The user membership update failed.", response);
+          restService.error('The user membership update failed.', response);
         }
       );
     };
 
     var authProviderLocalDB = {
       id: -1,
-      name: "Local DB"
+      name: 'Local DB'
     };
     $scope.showResetPassword = false;
     $scope.authProviders = authProviders.recs || [];
     $scope.authProviders.unshift(authProviderLocalDB);
 
     // Setup the user object for create/edit
-    if ($routeParams.id == "create") {
-      $scope.mode = "create";
+    if ($routeParams.id == 'create') {
+      $scope.mode = 'create';
       $scope.user = {
-        name: "",
+        name: '',
         enabled: true,
         groups: [],
         authProvider: authProviderLocalDB
       };
     } else {
-      $scope.mode = "edit";
+      $scope.mode = 'edit';
       $scope.userId = $routeParams.id;
       restService.getUser($scope.userId).then(
         function(user) {
@@ -60,17 +60,17 @@ angular.module("ngMetaCrudApp")
           $scope.user = Restangular.copy(user);
         },
         function(response) {
-          restService.error("Could not get user.", response);
+          restService.error('Could not get user.', response);
         });
     }
 
-    if ($scope.mode == "edit") {
+    if ($scope.mode == 'edit') {
       $scope.userGroupsTableParams = new NgTableParams(
         {
           page: 1,
           count: 25,
           sorting: {
-            "name": "asc"
+            'name': 'asc'
           }
         },
         {
@@ -94,7 +94,7 @@ angular.module("ngMetaCrudApp")
                 return result.recs;
               },
               function (errorResponse) {
-                $log.log("Couldn't load users groups.");
+                $log.log('Couldn\'t load users groups.');
               }
             );
           }
@@ -103,25 +103,25 @@ angular.module("ngMetaCrudApp")
     }
 
     $scope.save = function() {
-      if ($routeParams.id == "create") {
+      if ($routeParams.id == 'create') {
         // Create
         restService.updateUser($scope.user).then(
           function(user) {
-            toastr.success("Created user.");
-            $location.path("/security/user/" + user.id);
+            toastr.success('Created user.');
+            $location.path('/security/user/' + user.id);
           },
           function(response) {
-            restService.error("Could not create user.", response);
+            restService.error('Could not create user.', response);
           }
         );
       } else {
         // Update
         $scope.user.put().then(
           function() {
-            toastr.success("Updated user.");
+            toastr.success('Updated user.');
           },
           function(response) {
-            restService.error("Could not update user.", response);
+            restService.error('Could not update user.', response);
           }
         );
       }
@@ -129,20 +129,20 @@ angular.module("ngMetaCrudApp")
 
     $scope.delete = function() {
       dialogs.confirm(
-        "Delete user?",
-        "Are you sure you want to delete the user for " + $scope.user.name + "?").result.then(
+        'Delete user?',
+        'Are you sure you want to delete the user for ' + $scope.user.name + '?').result.then(
         function() {
           // Yes
           restService.removeUser($routeParams.id).then(
             function() {
               // Success
-              toastr.success("Deleted user.");
-              $location.path("/security/users/");
+              toastr.success('Deleted user.');
+              $location.path('/security/users/');
             },
             function(response) {
               // Error
               dialogs.error(
-                "Could delete user.", "Server said: <pre>" + JSON.stringify(response.data) + "</pre>");
+                'Could delete user.', 'Server said: <pre>' + JSON.stringify(response.data) + '</pre>');
             });
         },
         function() {
@@ -161,15 +161,15 @@ angular.module("ngMetaCrudApp")
     };
 
     $scope.back = function() {
-      $location.path("/security/users");
+      $location.path('/security/users');
     }
 
   }
 ])
-.directive("uniqueUserUsername", ["$log", "$q", "restService", function($log, $q, restService) {
+.directive('uniqueUserUsername', ['$log', '$q', 'restService', function($log, $q, restService) {
   // A validator for uniqueness of the username.
   return {
-    require: "ngModel",
+    require: 'ngModel',
     link: function($scope, elm, attr, ctrl) {
       ctrl.$asyncValidators.uniqueUserUsername = function(modelValue, viewValue) {
         var def = $q.defer();
@@ -188,7 +188,7 @@ angular.module("ngMetaCrudApp")
               }
             },
             function(errorResponse) {
-              $log.log("Couldn't validate user's username: " + viewValue);
+              $log.log('Couldn\'t validate user\'s username: ' + viewValue);
               def.reject();
             }
           );
@@ -198,10 +198,10 @@ angular.module("ngMetaCrudApp")
     }
   };
 }])
-.directive("uniqueUserEmail", ["$log", "$q", "restService", function($log, $q, restService) {
+.directive('uniqueUserEmail', ['$log', '$q', 'restService', function($log, $q, restService) {
   // A validator for uniqueness of the username.
   return {
-    require: "ngModel",
+    require: 'ngModel',
     link: function($scope, elm, attr, ctrl) {
       ctrl.$asyncValidators.uniqueUserEmail = function(modelValue, viewValue) {
         var def = $q.defer();
@@ -220,7 +220,7 @@ angular.module("ngMetaCrudApp")
               }
             },
             function(errorResponse) {
-              $log.log("Couldn't validate user's username: " + viewValue);
+              $log.log('Couldn\'t validate user\'s username: ' + viewValue);
               def.reject();
             }
           );

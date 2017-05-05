@@ -1,14 +1,14 @@
-"use strict";
+'use strict';
 
-angular.module("ngMetaCrudApp")
-  .directive("subnav", function() {
+angular.module('ngMetaCrudApp')
+  .directive('subnav', function() {
     return {
-      restrict: "E",
+      restrict: 'E',
       transclude: true,
       replace: false,
-      templateUrl: "/views/component/Subnav.html",
+      templateUrl: '/views/component/Subnav.html',
       scope: {
-        item: "@"
+        item: '@'
       }
     }
   });

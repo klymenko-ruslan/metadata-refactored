@@ -1,7 +1,7 @@
-"use strict";
+'use strict';
 
-angular.module("ngMetaCrudApp")
-  .service("utils", ["$log", "$parse", function RestService($log, $parse) {
+angular.module('ngMetaCrudApp')
+  .service('utils', ['$log', '$parse', function RestService($log, $parse) {
     return new function() { // jshint ignore:line
 
       /**
@@ -32,7 +32,7 @@ angular.module("ngMetaCrudApp")
            break;
           }
           if (sortProperty) {
-            sortAsc = sorting[sortProperty] === "asc";
+            sortAsc = sorting[sortProperty] === 'asc';
           } else {
             sortProperty = defSortProperty; // asc. see above.
           }
@@ -75,11 +75,11 @@ angular.module("ngMetaCrudApp")
        *    A string with HTML.
        */
       this.transclude2html = function(transcludeFn) {
-        var retVal = "";
+        var retVal = '';
         transcludeFn(function(clone) {
           clone.each(function(idx, node) {
             if (node.outerHTML) {
-              retVal += (node.outerHTML + "\n");
+              retVal += (node.outerHTML + '\n');
             }
           });
         });

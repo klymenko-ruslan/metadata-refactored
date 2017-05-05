@@ -1,15 +1,15 @@
-"use strict";
+'use strict';
 
-angular.module("ngMetaCrudApp").directive("carmodelSearch", ["$log", "restService", function ($log, restService) {
+angular.module('ngMetaCrudApp').directive('carmodelSearch', ['$log', 'restService', function ($log, restService) {
   return {
-    "restrict": "E",
-    "replace": true,
-    "templateUrl": "/views/component/application/carmodel/search.html",
-      "transclude": true,
-      "link": function postLink(scope, iElement, iAttrs, controller, transcludeFn) {
+    'restrict': 'E',
+    'replace': true,
+    'templateUrl': '/views/component/application/carmodel/search.html',
+      'transclude': true,
+      'link': function postLink(scope, iElement, iAttrs, controller, transcludeFn) {
         controller.transcludeActionsFn = transcludeFn;
       },
-      "controller": ["$log", "$q", "$scope", "toastr", "dialogs", "NgTableParams",
+      'controller': ['$log', '$q', '$scope', 'toastr', 'dialogs', 'NgTableParams',
                     function ($log, $q, $scope, toastr, dialogs, NgTableParams) {
         $scope.fltrCarmodel = {
           carmodel: null,
@@ -19,16 +19,16 @@ angular.module("ngMetaCrudApp").directive("carmodelSearch", ["$log", "restServic
         $scope.carmodelSearchResults = null;
 
         $scope.remove = function(id, name) {
-          dialogs.confirm("Delete car model '" + name + "'.", "Are you sure?").result.then(
+          dialogs.confirm('Delete car model "' + name + '".', 'Are you sure?').result.then(
             function() {
               // Yes
               restService.removeCarmodel(id).then(
                 function () {
                   $scope.clear(); // reload table
-                  toastr.success("Car model '" + name + "' has been successfully removed.");
+                  toastr.success('Car model "' + name + '" has been successfully removed.');
                 },
                 function errorResponse(response) {
-                  restService.error("Car model remove failed.", response);
+                  restService.error('Car model remove failed.', response);
                 }
               );
             }
@@ -38,12 +38,12 @@ angular.module("ngMetaCrudApp").directive("carmodelSearch", ["$log", "restServic
         // Car Model Table
         $scope.carmodelTableParams = new NgTableParams(
           {
-            "page": 1,
-            "count": 10,
-            "sorting": {}
+            'page': 1,
+            'count': 10,
+            'sorting': {}
           },
           {
-            "getData": function (params) {
+            'getData': function (params) {
               var offset = params.count() * (params.page() - 1);
               var limit = params.count();
               var sortProperty, sortOrder;
@@ -60,7 +60,7 @@ angular.module("ngMetaCrudApp").directive("carmodelSearch", ["$log", "restServic
                   return $scope.carmodelSearchResults.hits.hits;
                 },
                 function (errorResponse) {
-                  $log.log("Couldn't search for 'carmodel'.");
+                  $log.log('Couldn\'t search for "carmodel".');
                 }
               );
             }
@@ -71,7 +71,7 @@ angular.module("ngMetaCrudApp").directive("carmodelSearch", ["$log", "restServic
           $scope.fltrCarmodel.make = null;
         };
         // Handle updating search results
-        $scope.$watch("[fltrCarmodel]",
+        $scope.$watch('[fltrCarmodel]',
           function (newVal, oldVal) {
             // Debounce
             if (angular.equals(newVal, oldVal, true)) {
@@ -84,11 +84,11 @@ angular.module("ngMetaCrudApp").directive("carmodelSearch", ["$log", "restServic
       }]
     };
   }]
-).directive("carmodelSearchActions", ["$log", function($log) {
+).directive('carmodelSearchActions', ['$log', function($log) {
   return {
-    "restrict": "A",
-    "require": "^carmodelSearch",
-    "link": function postLink(scope, element, attrs, controller) {
+    'restrict': 'A',
+    'require': '^carmodelSearch',
+    'link': function postLink(scope, element, attrs, controller) {
       controller.transcludeActionsFn(scope, function(clone) {
         element.append(clone);
       });

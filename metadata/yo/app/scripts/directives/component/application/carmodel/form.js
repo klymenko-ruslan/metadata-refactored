@@ -1,27 +1,27 @@
-"use strict";
+'use strict';
 
-angular.module("ngMetaCrudApp")
-  .directive("cmodelForm", function() {
+angular.module('ngMetaCrudApp')
+  .directive('cmodelForm', function() {
     return {
       scope: {
-        carMakeId: "=",
-        carModel: "=",
-        carMakes: "="
+        carMakeId: '=',
+        carModel: '=',
+        carMakes: '='
       },
-      restrict: "E",
+      restrict: 'E',
       replace: false,
-      templateUrl: "/views/application/carmodel/form.html",
-      controller: ["restService", "$scope", "$location", "$log",
+      templateUrl: '/views/application/carmodel/form.html',
+      controller: ['restService', '$scope', '$location', '$log',
         function(restService, $scope, $location, $log) {
 
-          $scope.carmakeFilter = "";
+          $scope.carmakeFilter = '';
 
           if ($scope.carModel === null) { // edit
-            $scope.titleHead = "Create";
+            $scope.titleHead = 'Create';
             $scope.carmodelId = null;
             $scope.carmodel = {};
           } else { // create
-            $scope.titleHead = "Edit";
+            $scope.titleHead = 'Edit';
             $scope.carmodel = $scope.carModel;
             $scope.carmodelId = $scope.carModel.id;
           }
@@ -59,7 +59,7 @@ angular.module("ngMetaCrudApp")
             }
           };
 
-          $scope.$on("carmodelform:save", function(event, callback) {
+          $scope.$on('carmodelform:save', function(event, callback) {
             var promise = $scope._save();
             callback(promise);
           });
@@ -68,10 +68,10 @@ angular.module("ngMetaCrudApp")
       ]
     }
   })
-  .directive("uniqueCarmodelRec", ["$log", "$q", "restService", function($log, $q, restService) {
+  .directive('uniqueCarmodelRec', ['$log', '$q', 'restService', function($log, $q, restService) {
     // Validator for uniqueness of the carmodel name.
     return {
-      require: "ngModel",
+      require: 'ngModel',
       link: function($scope, elm, attr, ctrl) {
         ctrl.$asyncValidators.nonUniqueName = function(modelValue, viewValue) {
           var def = $q.defer();
@@ -88,7 +88,7 @@ angular.module("ngMetaCrudApp")
               }
             },
             function (errorResponse) {
-              $log.log("Couldn't validate name of the car model: " + viewValue);
+              $log.log('Couldn\'t validate name of the car model: ' + viewValue);
               def.reject();
             }
           );*/

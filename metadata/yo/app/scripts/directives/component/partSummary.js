@@ -1,13 +1,13 @@
-"use strict";
+'use strict';
 
-angular.module("ngMetaCrudApp")
-    .directive("partSummary", function () {
+angular.module('ngMetaCrudApp')
+    .directive('partSummary', function () {
       return {
         scope: {
-          part: "="
+          part: '='
         },
-        restrict: "E",
+        restrict: 'E',
         replace: false,
-        templateUrl: "/views/component/partSummary.html"
+        templateUrl: '/views/component/partSummary.html'
       };
     });

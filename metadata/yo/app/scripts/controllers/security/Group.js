@@ -1,7 +1,7 @@
-"use strict";
+'use strict';
 
-angular.module("ngMetaCrudApp")
-  .controller("GroupCtrl", function (dialogs, $location, $log, $scope, $routeParams, toastr, restService) {
+angular.module('ngMetaCrudApp')
+  .controller('GroupCtrl', function (dialogs, $location, $log, $scope, $routeParams, toastr, restService) {
 
       $scope.newName,
       $scope.roleSelections,
@@ -26,25 +26,25 @@ angular.module("ngMetaCrudApp")
       // Fetch the roles
       var rolePromise = restService.getRoles().then(
           function(roles) {
-            $scope.roles = _.indexBy(roles, "id");
+            $scope.roles = _.indexBy(roles, 'id');
           },
           function(response) {
-            restService.error("Could not list roles.", response);
+            restService.error('Could not list roles.', response);
           });
 
       // Fetch the users
       var userPromise = restService.getUsers().then(
           function(users) {
-            $scope.users = _.indexBy(users, "id");
+            $scope.users = _.indexBy(users, 'id');
           },
           function(response) {
-            restService.error("Could not list users.", response);
+            restService.error('Could not list users.', response);
           });
 
       // Setup the group object for create/edit
-      if ($routeParams.id == "create") {
+      if ($routeParams.id == 'create') {
         $scope.group = {
-          name: "New Group",
+          name: 'New Group',
           roles: [],
           users: []
         }
@@ -59,7 +59,7 @@ angular.module("ngMetaCrudApp")
               setSelections();
             },
             function(response) {
-              restService.error("Could not load group.", response);
+              restService.error('Could not load group.', response);
             });
       }
 
@@ -77,43 +77,43 @@ angular.module("ngMetaCrudApp")
           }
         }).compact().value();
 
-        if ($routeParams.id == "create") {
+        if ($routeParams.id == 'create') {
           restService.createGroup($scope.group).then(
               function() {
-                toastr.success("Group created.");
-                $location.path("/security/groups");
+                toastr.success('Group created.');
+                $location.path('/security/groups');
               },
               function(response) {
-                restService.error("Could not create group.", response);
+                restService.error('Could not create group.', response);
               });
         } else {
           $scope.group.put().then(
               function() {
-                toastr.success("Group updated.");
-                $location.path("/security/groups");
+                toastr.success('Group updated.');
+                $location.path('/security/groups');
               },
               function(response) {
-                restService.error("Could not update group.", response);
+                restService.error('Could not update group.', response);
               });
         }
       };
 
       $scope.delete = function() {
         dialogs.confirm(
-                "Delete group?",
-                "Are you sure you want to delete the " + $scope.group.name + " group?").result.then(
+                'Delete group?',
+                'Are you sure you want to delete the ' + $scope.group.name + ' group?').result.then(
             function() {
               // Yes
               restService.removeGroup($routeParams.id).then(
                   function() {
                     // Success
-                    toastr.success("Deleted group.");
-                    $location.path("/security/groups")
+                    toastr.success('Deleted group.');
+                    $location.path('/security/groups')
                   },
                   function(response) {
                     // Error
                     dialogs.error(
-                        "Could delete group.", "Server said: <pre>" + JSON.stringify(response.data) + "</pre>");
+                        'Could delete group.', 'Server said: <pre>' + JSON.stringify(response.data) + '</pre>');
                   });
             },
             function() {
@@ -128,7 +128,7 @@ angular.module("ngMetaCrudApp")
       };
 
       $scope.isNewGroup = function() {
-        return $routeParams.id == "create";
-      }
+        return $routeParams.id == 'create';
+      };
 
     });
