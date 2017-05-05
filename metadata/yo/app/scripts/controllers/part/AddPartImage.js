@@ -1,7 +1,7 @@
-"use strict";
+'use strict';
 
-angular.module("ngMetaCrudApp").controller("AddPartImageCtrl", [
-  "$log", "$scope", "$uibModalInstance", "data", "toastr", "restService",
+angular.module('ngMetaCrudApp').controller('AddPartImageCtrl', [
+  '$log', '$scope', '$uibModalInstance', 'data', 'toastr', 'restService',
   function ($log, $scope, $uibModalInstance, data, toastr, restService) {
 
     var file;
@@ -12,22 +12,22 @@ angular.module("ngMetaCrudApp").controller("AddPartImageCtrl", [
     $scope.publishImage = true;
 
     $scope.cancel = function() {
-      $uibModalInstance.dismiss("cancelled");
+      $uibModalInstance.dismiss('cancelled');
     }
 
     $scope.changed = function(files) {
       file = files[0];
-      formData.append("file", files[0]);
+      formData.append('file', files[0]);
     };
 
     $scope.upload = function() {
       restService.addProductImage(file, data.part.id, $scope.publishImage).then(
         function success(response) {
-          toastr.success("Added image.");
+          toastr.success('Added image.');
           $uibModalInstance.close(response);
         },
         function failure(response) {
-          restService.error("Could not upload image.", response);
+          restService.error('Could not upload image.', response);
         }
       );
     }

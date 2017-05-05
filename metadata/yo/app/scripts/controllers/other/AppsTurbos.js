@@ -1,7 +1,7 @@
-"use strict";
+'use strict';
 
-angular.module("ngMetaCrudApp")
-.controller("AppsTurbosCtrl", ["$scope", "$log", "NgTableParams", "$uibModal", "toastr", "utils", "restService", "partTypes",
+angular.module('ngMetaCrudApp')
+.controller('AppsTurbosCtrl', ['$scope', '$log', 'NgTableParams', '$uibModal', 'toastr', 'utils', 'restService', 'partTypes',
   function($scope, $log, NgTableParams, $uibModal, toastr, utils, restService, partTypes) {
 
     $scope.partTypes = partTypes;
@@ -95,10 +95,10 @@ angular.module("ngMetaCrudApp")
           $scope.unpickAllApps();
           if (response.failures.length > 0) {
             $uibModal.open({
-              templateUrl: "/views/other/appsturbos/FailuresDlg.html",
+              templateUrl: '/views/other/appsturbos/FailuresDlg.html',
               animation: false,
-              size: "lg",
-              controller: "FailuresDlgCtrl",
+              size: 'lg',
+              controller: 'FailuresDlgCtrl',
               resolve: {
                 response: function() {
                   return response;
@@ -106,19 +106,19 @@ angular.module("ngMetaCrudApp")
               }
             });
           } else {
-            toastr.success("Generated " + response.generated + " associations.");
+            toastr.success('Generated ' + response.generated + ' associations.');
           }
         },
         function failure(response) {
-          restService.error("Association of the turbos and applications failed.", response);
+          restService.error('Association of the turbos and applications failed.', response);
         }
       );
     };
 
   }
 ])
-.controller("FailuresDlgCtrl", ["$scope", "$log", "$location", "$uibModalInstance", "NgTableParams",
-    "utils", "response",
+.controller('FailuresDlgCtrl', ['$scope', '$log', '$location', '$uibModalInstance', 'NgTableParams',
+    'utils', 'response',
   function($scope, $log, $location, $uibModalInstance, NgTableParams, utils, response) {
 
     $scope.response = response;
@@ -127,7 +127,7 @@ angular.module("ngMetaCrudApp")
       page: 1,
       count: 10
     }, {
-      getData: utils.localPagination(response.failures, "manufacturerPartNumber")
+      getData: utils.localPagination(response.failures, 'manufacturerPartNumber')
     });
 
     $scope.onClose = function() {
@@ -136,12 +136,12 @@ angular.module("ngMetaCrudApp")
 
     $scope.showPart = function(partId) {
       $scope.onClose();
-      $location.path("/part/" + partId);
+      $location.path('/part/' + partId);
     };
 
     $scope.showApp = function(appId) {
       $scope.onClose();
-      $location.path("/application/carmodelengineyear/" + appId);
+      $location.path('/application/carmodelengineyear/' + appId);
     };
 
 }]);

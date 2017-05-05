@@ -1,9 +1,9 @@
-"use strict";
+'use strict';
 
-angular.module("ngMetaCrudApp")
+angular.module('ngMetaCrudApp')
 
-.controller("ChangelogSourcesViewCtrl", [
-    "$scope", "$log", "$location", "toastr", "NgTableParams", "$uibModal", "utils", "restService", "source",
+.controller('ChangelogSourcesViewCtrl', [
+    '$scope', '$log', '$location', 'toastr', 'NgTableParams', '$uibModal', 'utils', 'restService', 'source',
   function($scope, $log, $location, toastr, NgTableParams, $uibModal, utils, restService, source) {
 
     $scope.source = source;
@@ -20,24 +20,24 @@ angular.module("ngMetaCrudApp")
     );
 
     $scope.onViewList = function() {
-      $location.path("/changelog/source/list");
+      $location.path('/changelog/source/list');
     };
 
     $scope.onEdit = function() {
-      $location.path("/changelog/source/" + $scope.source.id + "/form");
+      $location.path('/changelog/source/' + $scope.source.id + '/form');
     };
 
     $scope.onRemove = function() {
       $uibModal.open({
-        templateUrl: "/views/chlogsrc/ConfirmSourceDeleteDlg.html",
+        templateUrl: '/views/chlogsrc/ConfirmSourceDeleteDlg.html',
         animation: false,
-        size: "lg",
-        controller: "ConfirmSourceDeleteDlgCtrl",
+        size: 'lg',
+        controller: 'ConfirmSourceDeleteDlgCtrl',
         resolve: {
-          "source": function() {
+          'source': function() {
             return $scope.source;
           },
-          "numExistedLinks": function() {
+          'numExistedLinks': function() {
             return restService.getNumLinksForChangelogSource($scope.source.id);
           }
         }
@@ -47,8 +47,8 @@ angular.module("ngMetaCrudApp")
   }
 
 ])
-.controller("ConfirmSourceDeleteDlgCtrl",
-  ["$scope", "$log", "$location", "toastr", "restService", "$uibModalInstance", "numExistedLinks", "source",
+.controller('ConfirmSourceDeleteDlgCtrl',
+  ['$scope', '$log', '$location', 'toastr', 'restService', '$uibModalInstance', 'numExistedLinks', 'source',
   function($scope, $log, $location, toastr, restService, $uibModalInstance, numExistedLinks, source) {
 
     $scope.data = {
@@ -63,12 +63,12 @@ angular.module("ngMetaCrudApp")
         restService.removeChangelogSource(source.id).then(
           function success() {
             $uibModalInstance.close();
-            toastr.success("The changelog source has been successfully removed.");
-            $location.path("/changelog/source/list");
+            toastr.success('The changelog source has been successfully removed.');
+            $location.path('/changelog/source/list');
           },
           function failure(errorResponse) {
             $uibModalInstance.close();
-            restService.error("Could not remove source.", errorResponse);
+            restService.error('Could not remove source.', errorResponse);
           }
         );
     };

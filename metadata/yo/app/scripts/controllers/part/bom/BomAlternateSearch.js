@@ -1,7 +1,7 @@
-"use strict";
+'use strict';
 
-angular.module("ngMetaCrudApp")
-    .controller("BomAlternateSearchCtrl", function ($log, $scope, $location, $routeParams, BOM, restService, dialogs, toastr) {
+angular.module('ngMetaCrudApp')
+    .controller('BomAlternateSearchCtrl', function ($log, $scope, $location, $routeParams, BOM, restService, dialogs, toastr) {
         $scope.restService = restService;
         $scope.partId = $routeParams.id;
         $scope.bomItemId = $routeParams.bomId;
@@ -27,11 +27,11 @@ angular.module("ngMetaCrudApp")
         $scope.save = function () {
           restService.createBomAlternative($scope.bomItem.id, $scope.pickedPart.id, $scope.header).then(
             function success() {
-              toastr.success("BOM alternate added.");
-              $location.path("/part/" + $scope.partId);
+              toastr.success('BOM alternate added.');
+              $location.path('/part/' + $scope.partId);
             },
             function failure(response) {
-                dialogs.error("Could not add BOM alternate", "Server said: <pre>" + JSON.stringify(response.data) + "</pre>");
+                dialogs.error('Could not add BOM alternate', 'Server said: <pre>' + JSON.stringify(response.data) + '</pre>');
             });
         }
 
@@ -41,8 +41,8 @@ angular.module("ngMetaCrudApp")
                     $scope.pickedPart = pickedPart;
                 },
                 function (errorResponse) {
-                    $log.log("Could not pick part", errorResponse);
-                    restService.error("Could not pick part.", errorResponse);
+                    $log.log('Could not pick part', errorResponse);
+                    restService.error('Could not pick part.', errorResponse);
                 });
         }
     });

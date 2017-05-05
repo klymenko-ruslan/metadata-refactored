@@ -1,12 +1,12 @@
-"use strict";
+'use strict';
 
-angular.module("ngMetaCrudApp")
+angular.module('ngMetaCrudApp')
 
-.controller("ChangelogSourcesNamesListCtrl",
-  ["$scope", "$log", "toastr", "dialogs", "NgTableParams", "Restangular", "restService",
+.controller('ChangelogSourcesNamesListCtrl',
+  ['$scope', '$log', 'toastr', 'dialogs', 'NgTableParams', 'Restangular', 'restService',
   function($scope, $log, toastr, dialogs, NgTableParams, Restangular, restService) {
 
-    $scope.mode = "view";
+    $scope.mode = 'view';
 
     $scope.sourceName = null;
     $scope.sourceNameOrig = null;
@@ -25,7 +25,7 @@ angular.module("ngMetaCrudApp")
         page: 1,
         count: 25,
         sorting: {
-          "name": "asc"
+          'name': 'asc'
         }
       },
       {
@@ -45,7 +45,7 @@ angular.module("ngMetaCrudApp")
               return result.recs;
             },
             function (errorResponse) {
-              $log.log("Couldn't load changelog sources names.");
+              $log.log('Couldn\'t load changelog sources names.');
             }
           );
         }
@@ -56,12 +56,12 @@ angular.module("ngMetaCrudApp")
 
       restService.createChangeSourceName($scope.data.newName).then(
         function success() {
-          toastr.success("The source name has successfully been created.");
+          toastr.success('The source name has successfully been created.');
           $scope.data.newName = null;
           $scope.sourcesNamesTableParams.reload();
         },
         function (errorResponse) {
-          restService.error("Could not create a new source name: " + $scope.data.newName, errorResponse);
+          restService.error('Could not create a new source name: ' + $scope.data.newName, errorResponse);
         }
       );
 
@@ -70,26 +70,26 @@ angular.module("ngMetaCrudApp")
     $scope.onEdit = function(entity) {
       $scope.sourceName = entity; // make ref to an edit record in the list
       $scope.sourceNameOrig = Restangular.copy(entity); // make copy for undo
-      $scope.mode = "edit";
+      $scope.mode = 'edit';
     };
 
     $scope.onRemove = function(entity) {
-      dialogs.confirm("Confirmation",
-        "Are you sure? Do you want to remove this Source Name?").result.then(
+      dialogs.confirm('Confirmation',
+        'Are you sure? Do you want to remove this Source Name?').result.then(
           function yes() {
             restService.removeChangelogSourceName(entity.id).then(
               function(removed) {
                 if (!removed) {
-                  dialogs.error("Failure", "This Source Name [" + entity.id + "] - " + entity.name +
-                    " can't be deleted because it is referenced by some Source(s).");
+                  dialogs.error('Failure', 'This Source Name [' + entity.id + '] - ' + entity.name +
+                    ' can\'t be deleted because it is referenced by some Source(s).');
                 } else {
                   $scope.sourcesNamesTableParams.reload();
-                  toastr.success("The Source Name [" + entity.id + "] - " + entity.name +
-                    " has successfully been removed.");
+                  toastr.success('The Source Name [' + entity.id + '] - ' + entity.name +
+                    ' has successfully been removed.');
                 }
               },
               function(errorResponse) {
-                restService.error("Could not remove the Source Name.", errorResponse);
+                restService.error('Could not remove the Source Name.', errorResponse);
               }
             );
           },
@@ -102,7 +102,7 @@ angular.module("ngMetaCrudApp")
       $scope.onRevert();
       $scope.sourceName = null;
       $scope.sourceNameOrig = null;
-      $scope.mode = "view";
+      $scope.mode = 'view';
     };
 
     $scope.onRevert = function() {
@@ -114,20 +114,20 @@ angular.module("ngMetaCrudApp")
         function success(updated) {
           $scope.sourceName = null;
           $scope.sourceNameOrig = null;
-          $scope.mode = "view";
-          toastr.success("The Source Name has successfully been updated.");
+          $scope.mode = 'view';
+          toastr.success('The Source Name has successfully been updated.');
         },
         function failure(errorResponse) {
-          restService.error("Could not update the Source Name.", errorResponse);
+          restService.error('Could not update the Source Name.', errorResponse);
         }
       );
     };
 
   }
-]).directive("uniqueChangelogSourceName", ["$log", "$q", "restService", function($log, $q, restService) {
+]).directive('uniqueChangelogSourceName', ['$log', '$q', 'restService', function($log, $q, restService) {
   // Validator for uniqueness of the changelog source name.
   return {
-    require: "ngModel",
+    require: 'ngModel',
     link: function($scope, elm, attr, ctrl) {
       ctrl.$asyncValidators.nonUniqueName = function(modelValue, viewValue) {
         var def = $q.defer();
@@ -139,7 +139,7 @@ angular.module("ngMetaCrudApp")
             if (changelogSourceName === undefined) {
               def.resolve();
             } else {
-              var id = $scope.$eval("sourceName.id");
+              var id = $scope.$eval('sourceName.id');
               if (changelogSourceName.id === id) {
                 def.resolve();
               } else {
@@ -148,7 +148,7 @@ angular.module("ngMetaCrudApp")
             }
           },
           function (errorResponse) {
-            $log.log("Couldn't validate name of the changelog source name: " + viewValue);
+            $log.log('Couldn\'t validate name of the changelog source name: ' + viewValue);
             def.reject();
           }
         );

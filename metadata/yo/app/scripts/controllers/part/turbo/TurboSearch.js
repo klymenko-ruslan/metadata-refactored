@@ -1,9 +1,9 @@
-"use strict";
+'use strict';
 
-angular.module("ngMetaCrudApp")
-  .controller("TurboSearchCtrl", [
-    "$log", "$scope", "$location", "NgTableParams", "$uibModal", "dialogs", "toastr", "restService",
-    "BOM", "utils", "part", "partTypes", "turbos",
+angular.module('ngMetaCrudApp')
+  .controller('TurboSearchCtrl', [
+    '$log', '$scope', '$location', 'NgTableParams', '$uibModal', 'dialogs', 'toastr', 'restService',
+    'BOM', 'utils', 'part', 'partTypes', 'turbos',
     function ($log, $scope, $location, NgTableParams, $uibModal, dialogs, toastr, restService,
               BOM, utils, part, partTypes, turbos)
     {
@@ -18,7 +18,7 @@ angular.module("ngMetaCrudApp")
       var pickedPartIds = {};
 
       $scope.showPart = function(partId) {
-        $location.path("/part/" + partId);
+        $location.path('/part/' + partId);
       }
 
       $scope.linkedTurbosTableParams = null;
@@ -28,7 +28,7 @@ angular.module("ngMetaCrudApp")
           page: 1,
           count: 10
         }, {
-          getData: utils.localPagination(turbos, "id")
+          getData: utils.localPagination(turbos, 'id')
         });
       };
 
@@ -65,10 +65,10 @@ angular.module("ngMetaCrudApp")
             var failures = _.filter(result.rows, function(row) { return !row.success; });
             if (failures.length > 0) {
               $uibModal.open({
-                templateUrl: "/views/part/gasketkit/FailedTurbosDlg.html",
+                templateUrl: '/views/part/gasketkit/FailedTurbosDlg.html',
                 animation: false,
-                size: "lg",
-                controller: "FailedTurbosDlgCtrl",
+                size: 'lg',
+                controller: 'FailedTurbosDlgCtrl',
                 resolve: {
                   part: function() {
                     return $scope.part;
@@ -79,13 +79,13 @@ angular.module("ngMetaCrudApp")
                 }
               });
             } else {
-              toastr.success("The Turbo(s) have been successfully linked to this GasketKit.");
+              toastr.success('The Turbo(s) have been successfully linked to this GasketKit.');
             }
             _updateLinkedTurbosTableParams(result.turbos);
             $scope.unpickAll();
           },
           function failure(result) {
-            restService.error("Can't add the Turbo(s) to the Gasket Kit.", error);
+            restService.error('Can\'t add the Turbo(s) to the Gasket Kit.', error);
           }
         );
 
@@ -117,8 +117,8 @@ angular.module("ngMetaCrudApp")
       };
 
     }
-  ]).controller("FailedTurbosDlgCtrl", ["$scope", "$log", "$location", "$uibModalInstance", "NgTableParams",
-      "utils", "part", "failures",
+  ]).controller('FailedTurbosDlgCtrl', ['$scope', '$log', '$location', '$uibModalInstance', 'NgTableParams',
+      'utils', 'part', 'failures',
     function($scope, $log, $location, $uibModalInstance, NgTableParams, utils, part, failures) {
 
       $scope.part = part;
@@ -127,7 +127,7 @@ angular.module("ngMetaCrudApp")
         page: 1,
         count: 10
       }, {
-        getData: utils.localPagination(failures, "manufacturerPartNumber")
+        getData: utils.localPagination(failures, 'manufacturerPartNumber')
       });
 
       $scope.onClose = function() {
@@ -136,7 +136,7 @@ angular.module("ngMetaCrudApp")
 
       $scope.showPart = function(partId) {
         $scope.onClose();
-        $location.path("/part/" + partId);
+        $location.path('/part/' + partId);
       };
 
   }]);

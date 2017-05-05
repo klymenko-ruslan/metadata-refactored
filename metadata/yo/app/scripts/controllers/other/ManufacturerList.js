@@ -1,34 +1,34 @@
-"use strict";
+'use strict';
 
-angular.module("ngMetaCrudApp")
-.config(["ngTableFilterConfigProvider", function(ngTableFilterConfigProvider) {
+angular.module('ngMetaCrudApp')
+.config(['ngTableFilterConfigProvider', function(ngTableFilterConfigProvider) {
     ngTableFilterConfigProvider.setConfig({
         aliasUrls: {
-          "manufacturersClearBttn": "filters/clearbutton.html"
+          'manufacturersClearBttn': 'filters/clearbutton.html'
         }
     });
 }])
-.controller("ManufacturerListCtrl", ["$scope", "$log", "NgTableParams", "Restangular", "toastr", "$uibModal",
-  "dialogs", "restService", "manufacturerTypes",
+.controller('ManufacturerListCtrl', ['$scope', '$log', 'NgTableParams', 'Restangular', 'toastr', '$uibModal',
+  'dialogs', 'restService', 'manufacturerTypes',
   function($scope, $log, NgTableParams, Restangular, toastr, $uibModal, dialogs, restService, manufacturerTypes) {
 
     $scope.manufacturerTypes = manufacturerTypes;
     $scope.manufacturerTypesOpts = _.map(manufacturerTypes, function (mt) {
-      return { "id": mt.id, "title": mt.name };
+      return { 'id': mt.id, 'title': mt.name };
     });
-    $scope.manufacturerTypesOpts.unshift({ "id": null, "title": "" });
+    $scope.manufacturerTypesOpts.unshift({ 'id': null, 'title': '' });
 
     $scope.notExternalOpts = [
-      {id: null, title: ""},
-      {id: true, title: "yes"},
-      {id: false, title: "no"}
+      {id: null, title: ''},
+      {id: true, title: 'yes'},
+      {id: false, title: 'no'}
     ];
 
     $scope.manufacturersTableParams = new NgTableParams({
       page: 1,
       count: 25,
       sorting: {
-        name: "asc"
+        name: 'asc'
       }
     }, {
       getData: function(params) {
@@ -47,7 +47,7 @@ angular.module("ngMetaCrudApp")
             return result.recs;
           },
           function(errorResponse) {
-            restService.error("Filtering of the manufacturer list failed.", errorResponse);
+            restService.error('Filtering of the manufacturer list failed.', errorResponse);
           });
       }
     });
@@ -61,9 +61,9 @@ angular.module("ngMetaCrudApp")
 
     $scope.onCreate = function() {
       $uibModal.open({
-        templateUrl: "/views/manufacturer/create.html",
+        templateUrl: '/views/manufacturer/create.html',
         animation: false,
-        controller: "CreateManufacturerDlgCtrl",
+        controller: 'CreateManufacturerDlgCtrl',
         resolve: {
           manufacturerTypes: function() {
             return manufacturerTypes;
@@ -78,14 +78,14 @@ angular.module("ngMetaCrudApp")
     $scope.onEdit = function(m) {
       $scope.manufacturer = m; // make ref to an edit record in the list
       $scope.manufacturerOrig = Restangular.copy(m); // make copy for undo
-      $scope.mode = "edit";
+      $scope.mode = 'edit';
     };
 
     $scope.onCancel = function() {
       $scope.onRevert();
       $scope.manufacturer = null;
       $scope.manufacturerOrig = null;
-      $scope.mode = "view";
+      $scope.mode = 'view';
     };
 
     $scope.onRevert = function() {
@@ -100,43 +100,43 @@ angular.module("ngMetaCrudApp")
         function success(updated) {
           $scope.manufacturer = null;
           $scope.manufacturerOrig = null;
-          $scope.mode = "view";
-          toastr.success("The manufacturer [" + updated.id + "] - " + updated.name + " has successfully been updated.");
+          $scope.mode = 'view';
+          toastr.success('The manufacturer [' + updated.id + '] - ' + updated.name + ' has successfully been updated.');
         },
         function failure(errorResponse) {
-          restService.error("Could not update the manufacturer.", errorResponse);
+          restService.error('Could not update the manufacturer.', errorResponse);
         }
       );
     };
 
     $scope.onRemove = function(m) {
-      dialogs.confirm("Confirmation", "Are you sure? Do you want to remove this manufacturer ([" + m.id + "] - " + 
-        m.name + ")?").result.then(
+      dialogs.confirm('Confirmation', 'Are you sure? Do you want to remove this manufacturer ([' + m.id + '] - ' + 
+        m.name + ')?').result.then(
           function yes() {
             restService.deleteManufacturer(m.id).then(
               function(deleteResponse) {
                 if (!deleteResponse.removed) {
-                  var msg = "The manufacturer [" + m.id + "] - " + m.name +
-                    " can't be deleted because it is referenced by ";
+                  var msg = 'The manufacturer [' + m.id + '] - ' + m.name +
+                    ' can\'t be deleted because it is referenced by ';
                   if (deleteResponse.refParts) {
-                    msg += (" " + deleteResponse.refParts + " part(s)");
+                    msg += (' ' + deleteResponse.refParts + ' part(s)');
                   }
                   if (deleteResponse.refTurboTypes) {
                     if (deleteResponse.refParts) {
-                      msg += " and";
+                      msg += ' and';
                     }
-                    msg += (" " + deleteResponse.refTurboTypes + " turbo type(s)");
+                    msg += (' ' + deleteResponse.refTurboTypes + ' turbo type(s)');
                   }
-                  msg += ".";
-                  dialogs.error("Operation rejected", msg);
+                  msg += '.';
+                  dialogs.error('Operation rejected', msg);
                 } else {
                   $scope.manufacturersTableParams.reload();
-                  toastr.success("The manufacturer [" + m.id + "] - " + m.name +
-                    " has successfully been removed.");
+                  toastr.success('The manufacturer [' + m.id + '] - ' + m.name +
+                    ' has successfully been removed.');
                 }
               },
               function(errorResponse) {
-                restService.error("Could not remove the manufacturer.", errorResponse);
+                restService.error('Could not remove the manufacturer.', errorResponse);
               }
             );
           },
@@ -148,11 +148,11 @@ angular.module("ngMetaCrudApp")
     // Init.
     $scope.manufacturer = null; // the name 'manufacturer' can't be renamed as it is referenced from uniqueManufacturerName
     $scope.manufacturerOrig = null;
-    $scope.mode = "view";
+    $scope.mode = 'view';
 
   }])
-.controller("CreateManufacturerDlgCtrl", ["$scope", "$log", "$uibModalInstance", "toastr", "restService",
-    "manufacturerTypes", "manufacturersTableParams",
+.controller('CreateManufacturerDlgCtrl', ['$scope', '$log', '$uibModalInstance', 'toastr', 'restService',
+    'manufacturerTypes', 'manufacturersTableParams',
   function($scope, $log, $uibModalInstance, toastr, restService, manufacturerTypes, manufacturersTableParams) {
 
     $scope.isBttnCreateDisabled = function(form) {
@@ -165,11 +165,11 @@ angular.module("ngMetaCrudApp")
         function success(manufacturer) {
           manufacturersTableParams.reload();
           $uibModalInstance.close();
-          toastr.success("The manufacturer [" + manufacturer.id + "] - " + manufacturer.name +
-            " has successfully been created.");
+          toastr.success('The manufacturer [' + manufacturer.id + '] - ' + manufacturer.name +
+            ' has successfully been created.');
         },
         function failure(errorResponse) {
-          restService.error("Creation of a manufacturer failed.", errorResponse);
+          restService.error('Creation of a manufacturer failed.', errorResponse);
         }
       ).finally(function() {
         $scope.isCreating = false;  // finally
@@ -194,10 +194,10 @@ angular.module("ngMetaCrudApp")
 
   }
 ])
-.directive("uniqueManufacturerName", ["$log", "$q", "restService", function($log, $q, restService) {
+.directive('uniqueManufacturerName', ['$log', '$q', 'restService', function($log, $q, restService) {
   // Validator for uniqueness of the part number.
   return {
-    require: "ngModel",
+    require: 'ngModel',
     link: function($scope, elm, attr, ctrl) {
       ctrl.$asyncValidators.uniqueManufacturerName = function(modelValue, viewValue) {
         var def = $q.defer();
@@ -216,7 +216,7 @@ angular.module("ngMetaCrudApp")
               }
             },
             function(errorResponse) {
-              $log.log("Couldn't validate manufacturer name: " + viewValue);
+              $log.log('Couldn\'t validate manufacturer name: ' + viewValue);
               def.reject();
             }
           );

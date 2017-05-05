@@ -1,18 +1,18 @@
-"use strict";
+'use strict';
 
 // Argument primaryPartID is initialized during resolving before invocation of this controller (see app.js).
-angular.module("ngMetaCrudApp").controller("SalesNoteListCtrl", ["$scope", "$log", "$routeParams", "NgTableParams",
-  "restService", "SalesNotes", "primaryPartId",
+angular.module('ngMetaCrudApp').controller('SalesNoteListCtrl', ['$scope', '$log', '$routeParams', 'NgTableParams',
+  'restService', 'SalesNotes', 'primaryPartId',
   function(
     $scope, $log, $routeParams, NgTableParams, restService, SalesNotes, primaryPartId) {
 
     $scope.states = {
-      "current": {
-        "draft": true,
-        "submitted": true,
-        "approved": true,
-        "rejected": false,
-        "published": true
+      'current': {
+        'draft': true,
+        'submitted': true,
+        'approved': true,
+        'rejected': false,
+        'published': true
       }
     };
 
@@ -31,8 +31,8 @@ angular.module("ngMetaCrudApp").controller("SalesNoteListCtrl", ["$scope", "$log
             $scope.partType = part.partType.name;
         },
         function (errorResponse) {
-            $log.log("Could not get part details", errorResponse);
-            restService.error("Could not get part details", errorResponse);
+            $log.log('Could not get part details', errorResponse);
+            restService.error('Could not get part details', errorResponse);
         }
       );
     }
@@ -42,7 +42,7 @@ angular.module("ngMetaCrudApp").controller("SalesNoteListCtrl", ["$scope", "$log
       page: 1,
       count: 10,
       sorting: {
-        createDate: "desc"
+        createDate: 'desc'
       }
     }, {
       getData: function(params) {
@@ -66,22 +66,22 @@ angular.module("ngMetaCrudApp").controller("SalesNoteListCtrl", ["$scope", "$log
             return searchResults.hits.hits;
           },
           function(errorResponse) {
-            restService.error("Couldn't search for sales notes.", errorResponse);
+            restService.error('Couldn\'t search for sales notes.', errorResponse);
           });
         return $scope.notesPromise;
       }
     });
     // Query Parameters
     $scope.search = {
-      "partNumber": null,
-      "includePrimary": true,
-      "includeRelated": true,
-      "states": [],
-      "comment": null
+      'partNumber': null,
+      'includePrimary': true,
+      'includeRelated': true,
+      'states': [],
+      'comment': null
     };
 
     // Keep the states up-to-date
-    $scope.$watch("states.current", function(currentStates) {
+    $scope.$watch('states.current', function(currentStates) {
 
       // Get a list of active states, currentStates={stateName:boolean, ...}
       var newStates = _.chain(currentStates)
@@ -96,7 +96,7 @@ angular.module("ngMetaCrudApp").controller("SalesNoteListCtrl", ["$scope", "$log
     }, true);
 
     // Refresh the search when it changes
-    $scope.$watch("search", function(newVal, oldVal) {
+    $scope.$watch('search', function(newVal, oldVal) {
       // Debounce
       if (angular.equals(newVal, oldVal)) {
         return;

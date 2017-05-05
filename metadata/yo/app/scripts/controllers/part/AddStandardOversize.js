@@ -1,9 +1,9 @@
-"use strict";
+'use strict';
 
-angular.module("ngMetaCrudApp")
+angular.module('ngMetaCrudApp')
 
-.controller("AddStandardOversizeCtrl", ["$log", "$scope", "$location", "NgTableParams",
-  "restService", "dialogs", "toastr", "utils", "partTypes", "part", "type", "existing",
+.controller('AddStandardOversizeCtrl', ['$log', '$scope', '$location', 'NgTableParams',
+  'restService', 'dialogs', 'toastr', 'utils', 'partTypes', 'part', 'type', 'existing',
   function($log, $scope, $location, NgTableParams, restService,
     dialogs, toastr, utils, partTypes, part, type, existing) {
 
@@ -31,7 +31,7 @@ angular.module("ngMetaCrudApp")
       count: 5
     }, {
         counts: [5, 10, 15],
-      getData: utils.localPagination(existing, "manufacturerPartNumber")
+      getData: utils.localPagination(existing, 'manufacturerPartNumber')
     });
 
     $scope.pickedPartsTableParams = new NgTableParams(
@@ -107,10 +107,10 @@ angular.module("ngMetaCrudApp")
           });
           pickedParts.splice(0, pickedParts.length);
           $scope.pickedPartsTableParams.reload();
-          toastr.success("The part(s) has been successfully added.");
+          toastr.success('The part(s) has been successfully added.');
         },
         function failure(error) {
-          restService.error("Could not create the standard/oversize part.", error);
+          restService.error('Could not create the standard/oversize part.', error);
         }
       );
     };
@@ -121,20 +121,20 @@ angular.module("ngMetaCrudApp")
       });
       var p = existing[idx];
       var standardPartId, oversizePartId, title, message, toast;
-      if ($scope.type === "standard") {
+      if ($scope.type === 'standard') {
         standardPartId = partId;
         oversizePartId = $scope.partId;
-        title = "Delete Standard Part?";
-        message = "Do you want to delete this standard part?";
-        toast = "The standard part has been deleted.";
-      } else if ($scope.type === "oversize") {
+        title = 'Delete Standard Part?';
+        message = 'Do you want to delete this standard part?';
+        toast = 'The standard part has been deleted.';
+      } else if ($scope.type === 'oversize') {
         standardPartId = $scope.partId;
         oversizePartId = partId;
-        title = "Delete Oversize Part?";
-        message = "Do you want to delete this oversize part?";
-        toast = "The oversize part has been deleted.";
+        title = 'Delete Oversize Part?';
+        message = 'Do you want to delete this oversize part?';
+        toast = 'The oversize part has been deleted.';
       } else {
-        throw "Unknown type: " + $scope.type;
+        throw 'Unknown type: ' + $scope.type;
       }
       dialogs.confirm(title, message).result.then(
         function() {

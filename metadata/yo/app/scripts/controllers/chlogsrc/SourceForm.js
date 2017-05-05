@@ -1,10 +1,10 @@
-"use strict";
+'use strict';
 
-angular.module("ngMetaCrudApp")
+angular.module('ngMetaCrudApp')
 
-.controller("ChangelogSourcesFormCtrl", [
-    "$scope", "$log", "$location", "toastr", "dialogs", "NgTableParams", "Restangular", "restService", "utils", "begin",
-    "sourcesNames", "source",
+.controller('ChangelogSourcesFormCtrl', [
+    '$scope', '$log', '$location', 'toastr', 'dialogs', 'NgTableParams', 'Restangular', 'restService', 'utils', 'begin',
+    'sourcesNames', 'source',
   function($scope, $log, $location, toastr, dialogs, NgTableParams, Restangular, restService, utils, begin,
     sourcesNames, source) {
 
@@ -50,15 +50,15 @@ angular.module("ngMetaCrudApp")
     );
 
     $scope.isUploadBttnDisabled = function () {
-      return !formData.has("file");
+      return !formData.has('file');
     };
 
     $scope.onViewList = function() {
-      $location.path("/changelog/source/list");
+      $location.path('/changelog/source/list');
     };
 
     $scope.onView = function() {
-      $location.path("/changelog/source/" + $scope.source.id);
+      $location.path('/changelog/source/' + $scope.source.id);
     };
 
     $scope.onRevert = function() {
@@ -73,21 +73,21 @@ angular.module("ngMetaCrudApp")
       if($scope.source) { // update
         restService.updateChangelogSource($scope.source.id, s.name, s.description, s.url, s.sourceName.id).then(
           function success() {
-            toastr.success("The changelog source has been successfully updated.");
-            $location.path("/changelog/source/list");
+            toastr.success('The changelog source has been successfully updated.');
+            $location.path('/changelog/source/list');
           },
           function failure(errorResponse) {
-            restService.error("Could not update the changelog source.", errorResponse);
+            restService.error('Could not update the changelog source.', errorResponse);
           }
         );
       } else { // create
         restService.createChangelogSource(s.name, s.description, s.url, s.sourceName.id).then(
           function success() {
-            toastr.success("The changelog source has been successfully created.");
-            $location.path("/changelog/source/list");
+            toastr.success('The changelog source has been successfully created.');
+            $location.path('/changelog/source/list');
           },
           function failure(errorResponse) {
-            restService.error("Could not create a new changelog source.", errorResponse);
+            restService.error('Could not create a new changelog source.', errorResponse);
           }
         );
       }
@@ -95,7 +95,7 @@ angular.module("ngMetaCrudApp")
 
     $scope.changedAttachment = function(files) {
       file = files[0];
-      formData.append("file", files[0]);
+      formData.append('file', files[0]);
     };
 
     function _updateAttachmentsTable(updatedAttachments) {
@@ -113,28 +113,28 @@ angular.module("ngMetaCrudApp")
         function(updatedAttachmentsResponse) {
           // Success
         _updateAttachmentsTable(updatedAttachmentsResponse.rows);
-          toastr.success("File uploaded.");
+          toastr.success('File uploaded.');
           $scope.data.attachDescr = null;
-          formData.delete("file");
+          formData.delete('file');
           // TODO: reset upload form
         },
         function(response) {
           // Error
-          restService.error("Could not upload the attachment.", response);
+          restService.error('Could not upload the attachment.', response);
         }
       );
     };
 
     $scope.removeAttachment = function (attachId) {
-      dialogs.confirm("Confirmation",
-        "Are you sure?\nDo you want to remove this attachment?").result.then(
+      dialogs.confirm('Confirmation',
+        'Are you sure?\nDo you want to remove this attachment?').result.then(
           function yes() {
             restService.changelogSourceRemoveAttachmentTmp(attachId).then(
               function(updatedAttachmentsResponse) {
                 _updateAttachmentsTable(updatedAttachmentsResponse.rows);
               },
               function(errorResponse) {
-                restService.error("Could not remove attachment.", errorResponse);
+                restService.error('Could not remove attachment.', errorResponse);
               }
             );
           },
@@ -146,4 +146,3 @@ angular.module("ngMetaCrudApp")
   }
 
 ]);
-

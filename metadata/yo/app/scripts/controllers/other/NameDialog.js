@@ -1,8 +1,8 @@
-"use strict";
+'use strict';
 
-angular.module("ngMetaCrudApp")
+angular.module('ngMetaCrudApp')
 
-.controller("NameDialogCtrl", ["data", "$scope", "$uibModalInstance", function (data, $scope, $uibModalInstance) {
+.controller('NameDialogCtrl', ['data', '$scope', '$uibModalInstance', function (data, $scope, $uibModalInstance) {
 
   $scope.data = data;
   $scope.name = data.name;
@@ -12,7 +12,7 @@ angular.module("ngMetaCrudApp")
   };
 
   $scope.cancel = function () {
-    $uibModalInstance.dismiss("cancel");
+    $uibModalInstance.dismiss('cancel');
   };
 
 }]);

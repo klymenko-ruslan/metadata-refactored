@@ -1,7 +1,7 @@
-"use strict";
+'use strict';
 
-angular.module("ngMetaCrudApp")
-  .controller("PartAncestorsCtrl", ["$log", "$routeParams", "$scope", "restService", "NgTableParams",
+angular.module('ngMetaCrudApp')
+  .controller('PartAncestorsCtrl', ['$log', '$routeParams', '$scope', 'restService', 'NgTableParams',
   function($log, $routeParams, $scope, restService, NgTableParams) {
 
     $scope.partId = $routeParams.id;
@@ -15,8 +15,8 @@ angular.module("ngMetaCrudApp")
         $scope.partType = part.partType.name;
       },
       function (errorResponse) {
-        $log.log("Could not get part details", errorResponse);
-        restService.error("Could not get part details", errorResponse);
+        $log.log('Could not get part details', errorResponse);
+        restService.error('Could not get part details', errorResponse);
       }
     );
 
@@ -33,7 +33,7 @@ angular.module("ngMetaCrudApp")
               return result.recs;
             },
             function(errorResponse) {
-              restService.error("Loading of ancestors failed.", errorResponse);
+              restService.error('Loading of ancestors failed.', errorResponse);
             });
         }
       }

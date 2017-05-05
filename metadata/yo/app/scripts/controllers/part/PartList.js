@@ -1,13 +1,13 @@
-"use strict";
+'use strict';
 
-angular.module("ngMetaCrudApp")
+angular.module('ngMetaCrudApp')
 
-.controller("PartListCtrl", ["$scope", "$log", "$uibModal", "partTypes", "critDimsByPartTypes", "critDimEnumVals",
+.controller('PartListCtrl', ['$scope', '$log', '$uibModal', 'partTypes', 'critDimsByPartTypes', 'critDimEnumVals',
   function ($scope, $log, $uibModal, partTypes, critDimsByPartTypes, critDimEnumVals) {
     $scope.createPart = function () {
       var modalInstance = $uibModal.open({
-        "templateUrl": "/views/part/PartCreateModal.html",
-        "controller": "PartCreateModalCtrl"
+        'templateUrl': '/views/part/PartCreateModal.html',
+        'controller': 'PartCreateModalCtrl'
       });
     };
 
@@ -17,18 +17,18 @@ angular.module("ngMetaCrudApp")
 
   }
 ])
-.controller("PartCreateModalCtrl", ["$scope", "$uibModalInstance", "$log", "$location", "PartTypes",
+.controller('PartCreateModalCtrl', ['$scope', '$uibModalInstance', '$log', '$location', 'PartTypes',
   function ($scope, $uibModalInstance, $log, $location, PartTypes) {
     $scope.PartTypes = PartTypes;
     $scope.selection = {};
 
     $scope.create = function () {
-      $uibModalInstance.close("cancel");
-      $location.path("/part/createByPartTypeId/" + $scope.selection.partType.id);
+      $uibModalInstance.close('cancel');
+      $location.path('/part/createByPartTypeId/' + $scope.selection.partType.id);
     };
 
     $scope.cancel = function () {
-      $uibModalInstance.dismiss("cancel");
+      $uibModalInstance.dismiss('cancel');
     };
 
     $scope.refresh = function () {

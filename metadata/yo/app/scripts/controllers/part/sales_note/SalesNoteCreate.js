@@ -1,8 +1,8 @@
-"use strict";
+'use strict';
 
-angular.module("ngMetaCrudApp")
-  .controller("SalesNoteCreateCtrl", ["$location", "$scope", "$routeParams", "restService", "services",
-      "LinkSource",
+angular.module('ngMetaCrudApp')
+  .controller('SalesNoteCreateCtrl', ['$location', '$scope', '$routeParams', 'restService', 'services',
+      'LinkSource',
       function($location, $scope, $routeParams, restService, services, LinkSource) {
     $scope.partId = $routeParams.id;
 
@@ -10,7 +10,7 @@ angular.module("ngMetaCrudApp")
 
     $scope.salesNote = {
       primaryPartId: $scope.partId,
-      comment:       "Enter your notes here"
+      comment:       'Enter your notes here'
     };
 
     // Load the part
@@ -22,7 +22,7 @@ angular.module("ngMetaCrudApp")
         $scope.partType = part.partType.name;
       },
       function (errorResponse) {
-        restService.error("Could not get part details", errorResponse);
+        restService.error('Could not get part details', errorResponse);
       }
     );
 
@@ -30,17 +30,17 @@ angular.module("ngMetaCrudApp")
       $scope.savePromise = restService.createSalesNote($scope.salesNote.primaryPartId, $scope.salesNote.comment,
         srcIds, ratings, description, attachIds).then(
           function (salesNoteResponse) {
-            $location.path("/part/" + $scope.partId + "/sales_note/" + salesNoteResponse.id);
+            $location.path('/part/' + $scope.partId + '/sales_note/' + salesNoteResponse.id);
             return salesNoteResponse;
           },
           function (errorResponse) {
-            restService.error("Couldn't save for sales note.", errorResponse);
+            restService.error('Couldn\'t save for sales note.', errorResponse);
           }
       );
     };
 
     $scope.saveAndEdit = function() {
-      LinkSource.link(cbSave, $scope.requiredSource, "/part/" + $scope.partId + "/sales_note/create");
+      LinkSource.link(cbSave, $scope.requiredSource, '/part/' + $scope.partId + '/sales_note/create');
     };
 
   }]);

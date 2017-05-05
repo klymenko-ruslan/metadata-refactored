@@ -1,8 +1,8 @@
-"use strict";
+'use strict';
 
-angular.module("ngMetaCrudApp")
-.controller("BomRebuildCtrl", ["$log", "$scope", "$timeout", "$interval",
-  "restService", "status",
+angular.module('ngMetaCrudApp')
+.controller('BomRebuildCtrl', ['$log', '$scope', '$timeout', '$interval',
+  'restService', 'status',
   function($log, $scope, $timeout, $interval, restService, status) {
 
     $scope.options = {};
@@ -48,7 +48,7 @@ angular.module("ngMetaCrudApp")
           $scope._updateStatus(newStatus);
         },
         function failure(response) {
-          restService.httpServiceError("Starting of the BOM rebuilding process failed.",
+          restService.httpServiceError('Starting of the BOM rebuilding process failed.',
             response);
         }
       );
@@ -69,13 +69,13 @@ angular.module("ngMetaCrudApp")
           $scope._updateStatus(newStatus);
         },
         function failure(response) {
-          restService.httpServiceError("Update of a status of the BOM rebuilding process failed.",
+          restService.httpServiceError('Update of a status of the BOM rebuilding process failed.',
             response);
         }
       );
     }, 1000);
 
-    $scope.$on("$destroy", function() {
+    $scope.$on('$destroy', function() {
       $interval.cancel($scope.refreshTask);
     });
 

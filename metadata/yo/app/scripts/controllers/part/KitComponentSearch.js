@@ -1,9 +1,9 @@
-"use strict";
+'use strict';
 
-angular.module("ngMetaCrudApp")
-    .controller("KitComponentSearchCtrl", function ($log, $scope, $location, $routeParams, Kits, restService, dialogs, toastr) {
+angular.module('ngMetaCrudApp')
+    .controller('KitComponentSearchCtrl', function ($log, $scope, $location, $routeParams, Kits, restService, dialogs, toastr) {
         $scope.partId = $routeParams.id;
-        $scope.partType = "Kit";
+        $scope.partType = 'Kit';
 
         $scope.pickedPart = null;
         $scope.showPickedPart = false;
@@ -15,7 +15,7 @@ angular.module("ngMetaCrudApp")
                 $scope.mapping.kit = part;
 
             }, function (errorResponse) {
-              restService.error("Could not get part details", errorResponse);
+              restService.error('Could not get part details', errorResponse);
             });
 
         $scope.components = Kits.listComponents($scope.partId)
@@ -32,11 +32,11 @@ angular.module("ngMetaCrudApp")
         $scope.save = function () {
           restService.saveKit($scope.partId, $scope.mapping).then(
             function success() {
-              toastr.success("Common component mapping added.");
-              $location.path("/part/" + $scope.partId);
+              toastr.success('Common component mapping added.');
+              $location.path('/part/' + $scope.partId);
             },
             function failure(response) {
-                restService.error("Could not add kit mapping", response);
+                restService.error('Could not add kit mapping', response);
             });
         }
 
@@ -47,7 +47,7 @@ angular.module("ngMetaCrudApp")
                     $scope.mapping.part = pickedPart;
                 },
                 function (errorResponse) {
-                  restService.error("Could not pick part", errorResponse);
+                  restService.error('Could not pick part', errorResponse);
                 });
         }
     });
