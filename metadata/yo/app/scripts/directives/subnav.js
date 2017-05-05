@@ -10,5 +10,5 @@ angular.module('ngMetaCrudApp')
       scope: {
         item: '@'
       }
-    }
+    };
   });

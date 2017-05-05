@@ -27,7 +27,7 @@ angular.module('ngMetaCrudApp')
               $scope.part.turboTypes.push(turboType);
               $scope.turboTypesTableParams.reload();
             });
-          }
+          };
 
           $scope.removeTurboType = function(turboTypeToRemove) {
             dialogs.confirm('Remove Turbo Type?',
@@ -52,7 +52,7 @@ angular.module('ngMetaCrudApp')
                   // No
                 }
               );
-          }
+          };
 
         }
       ]

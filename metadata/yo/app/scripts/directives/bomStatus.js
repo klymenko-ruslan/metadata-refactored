@@ -10,7 +10,7 @@ angular.module('ngMetaCrudApp')
                   '  <strong>Rebuilding BOM</strong> ' +
                   '  <div ng-transclude></div> ' +
                   '</div>',
-        link: function postLink(scope, element, attrs) {
+        link: function postLink(scope, element) {
 
           // Hidden by default
           angular.element(element).addClass('hidden');

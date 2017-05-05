@@ -110,7 +110,7 @@ angular.module('ngMetaCrudApp')
               // No
             }
           );
-        }
+        };
 
         $scope.clearHibernate = function() {
           dialogs.confirm(

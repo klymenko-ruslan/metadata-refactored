@@ -18,7 +18,7 @@ angular.module('ngMetaCrudApp')
             // Returns: {'parent_id': [tolerance0, tolerance1], ...}
             return d.parent.id;
           })
-          .mapObject(function(descriptors_array, key) {
+          .mapObject(function(descriptors_array) {
             // Returns:
             // {
             //    'parent_id': {
@@ -51,7 +51,7 @@ angular.module('ngMetaCrudApp')
         var retVal = null;
         var dt = d.dataType;
         if (dt !== 'ENUMERATION') {
-          retVal = dt == 'DECIMAL' ? 'number' : 'text';
+          retVal = dt === 'DECIMAL' ? 'number' : 'text';
         }
         return retVal;
       };
@@ -71,7 +71,7 @@ angular.module('ngMetaCrudApp')
           return 'The value is lower than minimal allowed value!';
         } else if (errorId === 'max') {
           return 'The value is higher than maximal allowed value!';
-        } else if (errorId == 'criticalDimensionScaleValidator') {
+        } else if (errorId === 'criticalDimensionScaleValidator') {
           return 'Too many digits in the fraction!';
         } else {
           return 'Unknown error: ' + angular.toJson(errorId);
@@ -101,7 +101,7 @@ angular.module('ngMetaCrudApp')
           }
           if (valEnum !== undefined) {
             var selected = _.find(valEnum, function(ve) {
-              return ve.id == value.id;
+              return ve.id === value.id;
             });
             if (selected !== undefined) {
               retVal = selected.val; // 'val' is a text representation
@@ -225,7 +225,7 @@ angular.module('ngMetaCrudApp')
             };
 
             // Track changes on the options bar.
-            $scope.$watchCollection('opts', function(newOpts, oldOpts) {
+            $scope.$watchCollection('opts', function() {
               $scope._copyDescriptorsToDisplay();
             });
 
@@ -281,14 +281,10 @@ angular.module('ngMetaCrudApp')
             // the backend 'display objects'.
             _.each($scope.descriptors, function(d) {
               $scope.$watch('cdForm.' + d.jsonName + '.$valid',
-                function(valid, oldVal) {
-                  //$log.log('Watch::' + d.jsonName + ': ' + newVal +
-                  //  ', ' + oldVal);
+                function(valid) {
                   if (valid === true) {
-                    //$log.log('Clear error messaged in: ' + d.jsonName);
                     delete $scope.errors[d.jsonName];
                   } else if (valid === false) {
-                    //$log.log('Added error messaged in: ' + d.jsonName);
                     $scope.errors[d.jsonName] = $scope.getErrorFor(
                       d.jsonName);
                   }
@@ -352,7 +348,7 @@ angular.module('ngMetaCrudApp')
                   var both = tolerancesDescs.BOTH;
                   var lower = tolerancesDescs.LOWER;
                   var upper = tolerancesDescs.UPPER;
-                  if (both & (lower | upper)) {
+                  if (both && (lower || upper)) {
                     $log.log('both: ' + angular.toJson(both, 2));
                     $log.log('lower: ' + angular.toJson(lower, 2));
                     $log.log('upper: ' + angular.toJson(upper, 2));
@@ -568,11 +564,11 @@ angular.module('ngMetaCrudApp')
             descriptor.scale !== null) {
             ctrl.$validators.criticalDimensionScaleValidator =
               function(modelValue, viewValue) {
-                if (viewValue == null) { // null or undefined
+                if (viewValue === null || viewValue === undefined) { // null or undefined
                   return true;
                 }
                 var dp = viewValue.indexOf('.');
-                if (dp == -1) {
+                if (dp === -1) {
                   return true;
                 }
                 var scaleLength = viewValue.length - dp - 1;
@@ -583,7 +579,7 @@ angular.module('ngMetaCrudApp')
               };
             ctrl.$validators.criticalDimensionLengthValidator =
               function(modelValue, viewValue) {
-                if (viewValue == null) { // null or undefined
+                if (viewValue === null || viewValue === undefined) { // null or undefined
                   return true;
                 }
                 try {

@@ -10,13 +10,13 @@ angular.module('ngMetaCrudApp')
         },
         replace: false,
         restrict: 'A',
-        template: '{{partNamePrefix}}'
-                + ' [{{partName.id}}]'
-                + ' {{partName.manufacturer.name}}'
-                + ' {{partName.partType.name}}'
-                + '<span style="white-space: nowrap;">'
-                + '  {{partName.manufacturerPartNumber}}'
-                + '</span>'
-                + ' {{partNameSuffix}}'
-      }
+        template: '{{partNamePrefix}}' +
+                  ' [{{partName.id}}]' +
+                  ' {{partName.manufacturer.name}}' +
+                  ' {{partName.partType.name}}' +
+                  '<span style="white-space: nowrap;">' +
+                  '  {{partName.manufacturerPartNumber}}' +
+                  '</span>' +
+                  ' {{partNameSuffix}}'
+      };
     });

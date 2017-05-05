@@ -2,7 +2,7 @@
 
 angular.module('ngMetaCrudApp')
   .service('utils', ['$log', '$parse', function RestService($log, $parse) {
-    return new function() { // jshint ignore:line
+    function TheService() { // jshint ignore:line
 
       /**
        * Handy function for use together with ngTable.
@@ -86,5 +86,6 @@ angular.module('ngMetaCrudApp')
         return retVal;
       };
 
-    };
+    }
+    return new TheService();
   }]);

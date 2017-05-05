@@ -13,5 +13,5 @@ angular.module('ngMetaCrudApp').directive('referenceFormController', ['$rootScop
       // broadcast existence of new FormController
       $rootScope.$broadcast('form:created', {name: attrs.name, controller: ctrls});
     }
-  }
+  };
 }]);

@@ -34,7 +34,7 @@ angular.module('ngMetaCrudApp')
     };
 
     $scope.resetToken = function() {
-      restService.resetToken($routeParams.token).then(
+      restService.resetToken($routeParams.token, $scope.password).then(
         function() {
           $location.path('/login')
         },

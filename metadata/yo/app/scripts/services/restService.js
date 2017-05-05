@@ -5,7 +5,7 @@ angular.module('ngMetaCrudApp')
       'METADATA_BASE', 'DATE_FORMAT',
       function RestService($log, $http, Restangular, dialogs, $q, $rootScope, $filter, METADATA_BASE, DATE_FORMAT) {
 
-    return new function() { // jshint ignore:line
+    function TheService() { // jshint ignore:line
       var RestService = this;
       var refreshPromise = null;
       this.status = null;
@@ -1294,10 +1294,10 @@ angular.module('ngMetaCrudApp')
         return Restangular.all('security/logout').post();
       };
 
-      this.resetToken = function(token) {
+      this.resetToken = function(token, password) {
         return Restangular.all('security/password/reset/token/' + token).post(
           jQuery.param({
-            'password': $scope.password
+            'password': password
           }),
           {},
           {'Content-Type': 'application/x-www-form-urlencoded'});
@@ -1334,5 +1334,6 @@ angular.module('ngMetaCrudApp')
         return Restangular.one('hibernate/clear').get();
       };
 
-    };
+    }
+    return new TheService();
   }]);

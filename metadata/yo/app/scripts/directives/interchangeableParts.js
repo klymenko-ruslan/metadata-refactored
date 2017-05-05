@@ -9,7 +9,7 @@ angular.module('ngMetaCrudApp')
           part: '='
         },
         templateUrl: '/views/component/interchangeable_parts.html',
-        controller: ['$scope', '$parse', function($scope, $parse) {
+        controller: ['$scope', function($scope) {
           $scope.$watch('part', function(newVal, oldVal) {
             if (!angular.isObject(newVal) && angular.equals(newVal, oldVal)) {
               return;
@@ -18,7 +18,7 @@ angular.module('ngMetaCrudApp')
               function(interchange) {
                 // Remove the parent part.
                 var idx = _.findIndex(interchange.parts, function(part) {
-                  return part.id == $scope.part.id;
+                  return part.id === $scope.part.id;
                 });
                 if (idx > -1) {
                   interchange.parts.splice(idx, 1);
