@@ -18,7 +18,7 @@ angular.module('ngMetaCrudApp')
             // Returns: {'parent_id': [tolerance0, tolerance1], ...}
             return d.parent.id;
           })
-          .mapObject(function(descriptors_array) {
+          .mapObject(function(descriptorsArray) {
             // Returns:
             // {
             //    'parent_id': {
@@ -27,7 +27,7 @@ angular.module('ngMetaCrudApp')
             //      'LOWER': lover_tolerance
             //    }
             // }
-            return _.indexBy(descriptors_array, 'tolerance');
+            return _.indexBy(descriptorsArray, 'tolerance');
           })
           .value();
       };

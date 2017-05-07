@@ -196,12 +196,12 @@ angular.module('ngMetaCrudApp')
         return Restangular.one('part/' + partId + '/ancestors').get({'limit': limit, 'offset': offset});
       };
 
-      this.findOversizeParts = function(part_id) {
-        return Restangular.one('part', part_id).getList('oversize/list');
+      this.findOversizeParts = function(partId) {
+        return Restangular.one('part', partId).getList('oversize/list');
       };
 
-      this.findStandardParts = function(part_id) {
-        return Restangular.one('part', part_id).getList('standard/list');
+      this.findStandardParts = function(partId) {
+        return Restangular.one('part', partId).getList('standard/list');
       };
 
       this.createStandardOversizePart = function(type, mainPartId, partIds) {
@@ -213,8 +213,8 @@ angular.module('ngMetaCrudApp')
         return Restangular.all('part/standardoversize').post(req);
       };
 
-      this.deleteStandardOversizePart = function(standard_part_id, oversize_part_id) {
-        return Restangular.one('part/standardoversize/' + standard_part_id + '/' + oversize_part_id).remove();
+      this.deleteStandardOversizePart = function(standardPartId, oversizePartId) {
+        return Restangular.one('part/standardoversize/' + standardPartId + '/' + oversizePartId).remove();
       };
 
       this.findPartByNumber = function(manufacturerId, pn) {
@@ -480,8 +480,8 @@ angular.module('ngMetaCrudApp')
         return Restangular.one('/image/' + partTypeId + '/ptlegend.jpg').remove();
       };
 
-      this.findCarmodelengineyear = function(cmey_id) {
-        return Restangular.one('application/carmodelengineyear', cmey_id).get();
+      this.findCarmodelengineyear = function(cmeyId) {
+        return Restangular.one('application/carmodelengineyear', cmeyId).get();
       };
 
       this.existsCarmodelengineyear = function(carModelId, carEngineId, year) {
@@ -512,11 +512,11 @@ angular.module('ngMetaCrudApp')
         return Restangular.one('/application/carmodelengineyear/' + id).remove();
       };
 
-      this.findPartApplications = function(part_id) {
-        return Restangular.one('part', part_id).getList('application');
+      this.findPartApplications = function(partId) {
+        return Restangular.one('part', partId).getList('application');
       };
 
-      this.addPartApplications = function(part_id, applications, sourcesIds, ratings, description, attachIds) {
+      this.addPartApplications = function(partId, applications, sourcesIds, ratings, description, attachIds) {
         var ids = [];
         angular.forEach(applications, function(val) {
           ids.push(val.id);
@@ -528,11 +528,11 @@ angular.module('ngMetaCrudApp')
           chlogSrcLnkDescription: description,
           attachIds: attachIds
         };
-        return Restangular.one('part', part_id).post('application', req);
+        return Restangular.one('part', partId).post('application', req);
       };
 
-      this.removePartApplication = function(part_id, application_id) {
-        return Restangular.one('part/' + part_id + '/application/' + application_id).remove();
+      this.removePartApplication = function(partId, applicationId) {
+        return Restangular.one('part/' + partId + '/application/' + applicationId).remove();
       };
 
       this.listManufacturers = function() {
@@ -586,8 +586,8 @@ angular.module('ngMetaCrudApp')
         return Restangular.one('other/manufacturer', manufacturerId).remove();
       };
  
-     this.listTurbosLinkedToGasketKit = function(gasketkit_id) {
-        return Restangular.one('part/' + gasketkit_id + '/gasketkit').getList('turbos');
+     this.listTurbosLinkedToGasketKit = function(gasketkitId) {
+        return Restangular.one('part/' + gasketkitId + '/gasketkit').getList('turbos');
       };
 
       this.findManufacturer = function(id) {

@@ -17,37 +17,37 @@ describe('Service: loginRequiredInterceptor', function () {
     $httpBackend = _$httpBackend_;
     Restangular = _Restangular_;
     
-    $location.path("/foo");
+    $location.path('/foo');
   }));
 
   it('should redirect to / on a 401 status', function () {
-    $httpBackend.expectGET("/metadata/security/user/me").respond(401);
+    $httpBackend.expectGET('/metadata/security/user/me').respond(401);
     
-    Restangular.one("security/user/me").get();
+    Restangular.one('security/user/me').get();
     
     $httpBackend.flush();
     
-    expect($location.path()).toEqual("/");
+    expect($location.path()).toEqual('/');
   });
 
   it('should redirect to / on a 403 status', function () {
-    $httpBackend.expectGET("/metadata/security/user/me").respond(403);
+    $httpBackend.expectGET('/metadata/security/user/me').respond(403);
     
-    Restangular.one("security/user/me").get();
+    Restangular.one('security/user/me').get();
     
     $httpBackend.flush();
     
-    expect($location.path()).toEqual("/");
+    expect($location.path()).toEqual('/');
   });
 
   it('should allow do nothing otherwise', function () {
-    $httpBackend.expectGET("/metadata/security/user/me").respond(200);
+    $httpBackend.expectGET('/metadata/security/user/me').respond(200);
     
-    Restangular.one("security/user/me").get();
+    Restangular.one('security/user/me').get();
     
     $httpBackend.flush();
     
-    expect($location.path()).toEqual("/foo");
+    expect($location.path()).toEqual('/foo');
   });
 
 });
