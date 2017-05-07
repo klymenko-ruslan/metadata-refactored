@@ -432,7 +432,7 @@ angular.module('ngMetaCrudApp', ['ngCookies', 'ngRoute', 'ngTable', 'ui.bootstra
       controller: 'CarModelEngineYearFormCtrl',
       resolve: {
         carEngines: ['restService', function(restService) {
-          return restService.findAllCarEnginesOrderedByName(true);
+          return restService.findAllCarEnginesOrderedByName();
         }],
         carMakes: ['restService', function(restService) {
           return restService.findAllCarMakesOrderedByName();
@@ -447,7 +447,7 @@ angular.module('ngMetaCrudApp', ['ngCookies', 'ngRoute', 'ngTable', 'ui.bootstra
       controller: 'CarModelEngineYearFormCtrl',
       resolve: {
         carEngines: ['restService', function(restService) {
-          return restService.findAllCarEnginesOrderedByName(true);
+          return restService.findAllCarEnginesOrderedByName();
         }],
         carMakes: ['restService', function(restService) {
           return restService.findAllCarMakesOrderedByName();

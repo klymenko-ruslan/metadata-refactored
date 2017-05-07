@@ -525,7 +525,8 @@ angular.module('ngMetaCrudApp')
           cmeyIds: ids,
           sourcesIds: sourcesIds,
           chlogSrcRatings: ratings,
-          chlogSrcLnkDescription: description
+          chlogSrcLnkDescription: description,
+          attachIds: attachIds
         };
         return Restangular.one('part', part_id).post('application', req);
       };
@@ -787,8 +788,8 @@ angular.module('ngMetaCrudApp')
         return Restangular.one('application/carengine', id).remove();
       };
 
-      this.findAllCarEnginesOrderedByName = function(detailed) {
-        return Restangular.one('application').getList('carengines', {detailed: false}); // TODO: detailed
+      this.findAllCarEnginesOrderedByName = function() {
+        return Restangular.one('application').getList('carengines');
       };
 
       this.existsCarengine = function(engineSize, fuelTypeId) {
