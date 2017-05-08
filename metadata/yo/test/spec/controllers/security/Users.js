@@ -15,6 +15,7 @@ describe('Controller: UsersCtrl', function () {
   beforeEach(inject(function (_$controller_, $rootScope, _$httpBackend_) {
     $controller = _$controller_;
     $httpBackend = _$httpBackend_;
+console.log('XXX: ');
     scope = $rootScope.$new();
 
     userOne = {
@@ -39,6 +40,7 @@ describe('Controller: UsersCtrl', function () {
   });
 
   it('should attach a list of users to the scope', function () {
+console.log("scope.users.length: " + scope);
     expect(scope.users.length).toBe(1);
     expect(scope.users[0].id).toEqual(userOne.id);
     expect(scope.users[0].name).toEqual(userOne.name);

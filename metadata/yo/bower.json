@@ -25,8 +25,7 @@
     "angular-toastr": "2.1.1"
   },
   "devDependencies": {
-    "angular-mocks": "1.6.4",
-    "angular-scenario": "1.6.4"
+    "angular-mocks": "1.6.4"
   },
   "resolutions": {
     "bootstrap-markdown": "14a21c3837140144b27efc19c795d1a37fad70fb"

@@ -48,12 +48,12 @@ module.exports = function(config) {
       'bower_components/filereader.js/filereader.js',
       'bower_components/angular-toastr/dist/angular-toastr.tpls.js',
       'bower_components/angular-mocks/angular-mocks.js',
-      'bower_components/angular-scenario/angular-scenario.js',
       // endbower
       'app/scripts/**/*.js',
       //'test/mock/**/*.js',
       //'test/spec/**/*.js'
-      'test/spec/services/BOM.js'
+      //'test/spec/services/BOM.js'
+      'test/spec/controllers/security/Users.js'
     ],
 
     // list of files / patterns to exclude
