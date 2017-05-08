@@ -49,10 +49,10 @@ module.exports = function(config) {
       'bower_components/angular-toastr/dist/angular-toastr.tpls.js',
       'bower_components/angular-mocks/angular-mocks.js',
       // endbower
+      'node_modules/ng-table/bundles/ng-table.min.js',
       'app/scripts/**/*.js',
       //'test/mock/**/*.js',
       //'test/spec/**/*.js'
-      //'test/spec/services/BOM.js'
       'test/spec/controllers/security/Users.js'
     ],
 
