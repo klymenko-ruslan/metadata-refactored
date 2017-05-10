@@ -53,7 +53,8 @@ module.exports = function(config) {
       'app/scripts/**/*.js',
       //'test/mock/**/*.js',
       //'test/spec/**/*.js'
-      'test/spec/controllers/security/Users.js'
+      'test/spec/controllers/security/Users.js',
+      'test/spec/controllers/security/Groups.js'
     ],
 
     // list of files / patterns to exclude
