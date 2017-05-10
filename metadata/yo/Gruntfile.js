@@ -45,7 +45,7 @@ module.exports = function (grunt) {
         }
       },
       jsTest: {
-        files: ['test/spec/{,*/}*.js'],
+        files: ['test/spec/{,**/}*.js'],
         tasks: ['newer:jshint:test', 'newer:jscs:test', 'karma']
       },
       compass: {
@@ -459,11 +459,17 @@ module.exports = function (grunt) {
 
     // Test settings
     karma: {
-      unit: {
+      options: {
         configFile: 'test/karma.conf.js',
+      },
+      unit: {
         singleRun: true
+      },
+      'unit-dev': {
+        singleRun: false
       }
-    }
+    },
+
   });
 
   grunt.registerTask('serve', 'Compile then start a connect web server', function (target) {
@@ -492,7 +498,16 @@ module.exports = function (grunt) {
     'concurrent:test',
     'postcss',
     'connect:test',
-    'karma'
+    'karma:unit'
+  ]);
+
+  grunt.registerTask('test-dev', [
+    'clean:server',
+    'wiredep',
+    'concurrent:test',
+    'postcss',
+    'connect:test',
+    'karma:unit-dev'
   ]);
 
   grunt.registerTask('build', [

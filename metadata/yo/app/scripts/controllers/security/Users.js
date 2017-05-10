@@ -8,7 +8,8 @@ angular.module('ngMetaCrudApp')
         }
     });
 }])
-.controller('UsersCtrl', ['$log', '$scope', 'NgTableParams', 'restService', 'authProviders',
+.controller('UsersCtrl', ['$log', '$scope', 'NgTableParams', 'restService',
+    'authProviders',
   function($log, $scope, NgTableParams, restService, authProviders) {
     $scope.authProviders = _.map(authProviders.recs || [], function (ap) {
       return {id: ap.id, title: ap.name};
