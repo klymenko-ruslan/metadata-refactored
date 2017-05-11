@@ -7,16 +7,20 @@ describe('Controller: LoginCtrl', function () {
 
   var $httpBackend,
     $routeParams,
+    $rootScope,
     LoginCtrl,
+    $location,
     scope,
     toastr;
 
   // Initialize the controller and a mock scope
   beforeEach(inject(function ($controller, _$httpBackend_, _$routeParams_,
-    $rootScope, _toastr_) {
+    _$location_, _$rootScope_, _toastr_) {
 
     $httpBackend = _$httpBackend_;
     $routeParams = _$routeParams_;
+    $rootScope = _$rootScope_;
+    $location = _$location_;
     scope = $rootScope.$new();
     toastr = _toastr_;
     LoginCtrl = $controller('LoginCtrl', {
@@ -29,30 +33,39 @@ describe('Controller: LoginCtrl', function () {
     $httpBackend.verifyNoOutstandingRequest();
   });
 
-  xdescribe('login()', function() {
+  describe('login()', function() {
     it('should issue a POST request', function() {
-      scope.email = 'admin@turbointernational.com';
+      scope.username = 'admin@turbointernational.com';
       scope.password = 'adminpw';
-      $httpBackend.expectPOST('/metadata/security/login', 'j_username=admin%40turbointernational.com&j_password=adminpw').respond();
-      $httpBackend.expectGET('/metadata/security/user/myroles').respond([]);
-      $httpBackend.expectGET('/metadata/security/user/me').respond({id: 1, name: 'Admin', email: scope.email});
-      spyOn(toastr, 'success');
-      spyOn(toastr, 'error');
+      $httpBackend.expectPOST('/metadata/security/login', 'username=admin%40turbointernational.com&password=adminpw').respond();
       scope.login();
-
       $httpBackend.flush();
+      expect($location.path()).toBe('/part/list');
     });
   });
 
-  xdescribe('resetRequest()', function() {
-
+  describe('resetPassword()', function() {
     it('should issue a POST request', function() {
-      scope.email = 'admin@turbointernational.com';
-
-      $httpBackend.expectPOST('/metadata/security/password/reset/request', 'email=admin%40turbointernational.com').respond();
-
-      scope.resetRequest();
-
+      var $scope, $controller, $uibModalInstance, toastr, username,
+        restService, PasswordResetConfirmDlgCtrl;
+      inject(function(_$controller_, _restService_) {
+        $controller = _$controller_;
+        restService = _restService_;
+      });
+      $scope = $rootScope.$new();
+      $uibModalInstance = jasmine.createSpyObj('$uibModalInstance', ['close']);
+      toastr = jasmine.createSpyObj('toastr', ['success', 'error']);
+      PasswordResetConfirmDlgCtrl = 
+        $controller('PasswordResetConfirmDlgCtrl', {
+          $scope: $scope,
+          $uibModalInstance: $uibModalInstance,
+          toastr: toastr,
+          restService: restService,
+          username: 'admin@turbointernational.com'
+        });
+      $httpBackend.expectPOST('/metadata/security/password/reset/request',
+        'username=admin%40turbointernational.com').respond();
+      $scope.onConfirmPasswordResetConfirmDlg();
       $httpBackend.flush();
     });
   });
@@ -60,13 +73,9 @@ describe('Controller: LoginCtrl', function () {
   describe('resetToken()', function() {
     it('should issue a POST request', function() {
       scope.password = 'foopw';
-
       $routeParams.token = 'fooToken'
-
       $httpBackend.expectPOST('/metadata/security/password/reset/token/' + $routeParams.token, 'password=foopw').respond();
-
       scope.resetToken();
-
       $httpBackend.flush();
     });
   });

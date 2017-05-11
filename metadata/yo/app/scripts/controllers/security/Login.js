@@ -5,7 +5,7 @@ angular.module('ngMetaCrudApp')
     function ($location, $scope, $routeParams, toastr, restService, User, $uibModal) {
 
     $scope.login = function() {
-      restService.login($scope.username, $scope.password).then(
+      return restService.login($scope.username, $scope.password).then(
         function(loginResponse) {
           User.init().then(
             function() {
@@ -13,7 +13,7 @@ angular.module('ngMetaCrudApp')
             }
           );
         },
-        function() {
+        function(response) {
           toastr.error('Login failed.');
         }
       );
@@ -45,11 +45,13 @@ angular.module('ngMetaCrudApp')
     };
 
   }])
-  .controller('PasswordResetConfirmDlgCtrl',['$scope', '$uibModalInstance', 'toastr', 'username',
-    function($scope, $uibModalInstance, toastr, username) {
+  .controller('PasswordResetConfirmDlgCtrl',['$scope', '$uibModalInstance',
+    'toastr', 'restService', 'username',
+    function($scope, $uibModalInstance, toastr, restService,username) {
     $scope.username = username;
     $scope.onConfirmPasswordResetConfirmDlg = function() {
-      restService.resetPassword(username).then(
+      restService.resetPassword(username)
+        .then(
           function success() {
             toastr.success('Password reset link sent.');
           },
