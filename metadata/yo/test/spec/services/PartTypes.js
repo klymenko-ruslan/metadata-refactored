@@ -43,8 +43,7 @@ describe('Service: PartTypes', function () {
 
     beforeEach(function(){
       // Prepare for the call
-      $httpBackend.whenGET('/metadata/type/part').respond(partTypes);
-
+      $httpBackend.whenGET('/metadata/parttype/json/list').respond(partTypes);
       // Issue the call to the service
       $rootScope.$apply(function() {
         refreshPromise = PartTypes.refresh();
@@ -56,7 +55,6 @@ describe('Service: PartTypes', function () {
     });
 
     it('should not set PartTypes.refreshPromise to null when resolved', function() {
-      $httpBackend.flush();
       expect(PartTypes.refreshPromise).toBe(refreshPromise);
     });
 

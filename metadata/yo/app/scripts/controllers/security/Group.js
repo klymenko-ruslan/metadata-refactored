@@ -1,7 +1,8 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-  .controller('GroupCtrl', function (dialogs, $location, $log, $scope, $routeParams, toastr, restService) {
+  .controller('GroupCtrl', function (dialogs, $location, $log, $scope, 
+    $routeParams, toastr, restService) {
 
       $scope.newName,
       $scope.roleSelections,
@@ -118,6 +119,7 @@ angular.module('ngMetaCrudApp')
             },
             function() {
               // No
+console.log('Dialog closed by button No.');              
             });
       };
 

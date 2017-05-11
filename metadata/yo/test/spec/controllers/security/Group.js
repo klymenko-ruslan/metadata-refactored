@@ -8,27 +8,28 @@ describe('Controller: GroupCtrl', function () {
   var GroupCtrl,
       scope,
       $controller,
-      $dialogs,
+      dialogs,
       $httpBackend,
       $location,
       $routeParams,
       $q,
-      gToast,
+      toastr,
       users,
       roles,
       groupOne;
 
   // Initialize the controller and a mock scope
-  beforeEach(inject(function (_$controller_, _$dialogs_, _$q_, _$routeParams_, $rootScope, _$httpBackend_, _$location_, _gToast_) {
+  beforeEach(inject(function (_$controller_, _dialogs_, _$q_, _$routeParams_,
+    $rootScope, _$httpBackend_, _$location_, _toastr_) {
     $controller = _$controller_;
-    $dialogs = _$dialogs_;
+    dialogs = _dialogs_;
     $httpBackend = _$httpBackend_;
     $location    = _$location_;
     $q = _$q_;
     $routeParams = _$routeParams_;
     scope = $rootScope.$new();
-    gToast = _gToast_;
-    spyOn(gToast, 'open');
+    toastr = _toastr_;
+    spyOn(toastr, 'success');
 
     users = [{
       "id":1,
@@ -117,7 +118,7 @@ describe('Controller: GroupCtrl', function () {
         scope.save();
         $httpBackend.flush();
 
-        expect(gToast.open).toHaveBeenCalledWith('Group created.');
+        expect(toastr.success).toHaveBeenCalledWith('Group created.');
         expect($location.path()).toBe('/security/groups');
       });
     });
@@ -141,7 +142,6 @@ describe('Controller: GroupCtrl', function () {
         expect(scope.group.name).toEqual(groupOne.name);
         expect(scope.group.roles).toEqual(groupOne.roles);
         expect(scope.group.users).toEqual(groupOne.users);
-
       });
     });
 
@@ -157,7 +157,7 @@ describe('Controller: GroupCtrl', function () {
         scope.save();
         $httpBackend.flush();
 
-        expect(gToast.open).toHaveBeenCalledWith('Group updated.');
+        expect(toastr.success).toHaveBeenCalledWith('Group updated.');
         expect($location.path()).toBe('/security/groups');
       });
     });
@@ -168,7 +168,7 @@ describe('Controller: GroupCtrl', function () {
         // Dummy promise for the dialog
         var deferred = $q.defer();
         deferred.resolve();
-        spyOn($dialogs, 'confirm').andReturn({result: deferred.promise});
+        spyOn(dialogs, 'confirm').and.returnValue({result: deferred.promise});
 
         $httpBackend.expectDELETE('/metadata/security/group/' + groupOne.id).respond();
         scope.delete();

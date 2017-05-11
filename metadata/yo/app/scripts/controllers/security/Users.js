@@ -46,8 +46,9 @@ angular.module('ngMetaCrudApp')
         var offset = params.count() * (params.page() - 1);
         var limit = params.count();
         var filter = params.filter();
-        return restService.filterUsers(filter.displayName, filter.userName, filter.email,
-            filter.authProviderId, filter.enabled, sortProperty, sortOrder, offset, limit).then(
+        return restService.filterUsers(filter.displayName, filter.userName,
+          filter.email, filter.authProviderId, filter.enabled, sortProperty,
+          sortOrder, offset, limit).then(
           function(result) {
             // Update the total and slice the result
             params.total(result.total);

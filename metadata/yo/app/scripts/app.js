@@ -12,6 +12,11 @@ angular.module('ngMetaCrudApp', ['ngCookies', 'ngRoute', 'ngTable', 'ui.bootstra
     // cfpLoadingBarProvider.spinnerTemplate = '<div><span class='fa fa-spinner'>Loading...</div>';
     cfpLoadingBarProvider.latencyThreshold = 5;
   }])
+/*
+  .config(['$qProvider', function ($qProvider) {
+    $qProvider.errorOnUnhandledRejections(false);
+  }])
+*/
   .config(['toastrConfig', function(toastrConfig) {
     angular.extend(toastrConfig, {
       autoDismiss: true,
