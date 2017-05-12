@@ -10,7 +10,7 @@ angular.module('ngMetaCrudApp')
         Restangular.one('other/sales_note', salesNote.id).all('image').post(file, {}, {
           'Content-Type': 'application/octet-stream'
         }).then(
-          function(response) {
+          function() {
             // Success
             toastr.success('Added image.');
             //$uibModalInstance.close(response);
