@@ -76,7 +76,7 @@ angular.module('ngMetaCrudApp', ['ngCookies', 'ngRoute', 'ngTable', 'ui.bootstra
     });
 
     $locationProvider.html5Mode(true);
-   
+
     // Parts
     $routeProvider.when('/part/list', {
       templateUrl: 'views/part/PartList.html',
@@ -644,7 +644,7 @@ angular.module('ngMetaCrudApp', ['ngCookies', 'ngRoute', 'ngTable', 'ui.bootstra
         }]
       }
     });
-    
+
     // Chagelog.
     $routeProvider.when('/changelog/list', {
       templateUrl: 'views/changelog/list.html',

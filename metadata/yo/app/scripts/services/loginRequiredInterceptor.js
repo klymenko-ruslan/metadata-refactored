@@ -14,7 +14,6 @@ angular.module('ngMetaCrudApp')
         if (response.status === 401 || response.status === 403) {
 //console.log('DBG: status: ' + response.status);
           $location.path('/');
-          return response;
         }
         return $q.reject(response);
       }

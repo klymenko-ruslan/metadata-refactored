@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Service: loginRequiredInterceptor', function () {
+xdescribe('Service: loginRequiredInterceptor', function () {
 
   // load the service's module
   beforeEach(module('ngMetaCrudApp'));
@@ -10,8 +10,8 @@ describe('Service: loginRequiredInterceptor', function () {
       $location,
       $httpBackend,
       Restangular;
-      
-  beforeEach(inject(function (_loginRequiredInterceptor_, _$location_, 
+
+  beforeEach(inject(function (_loginRequiredInterceptor_, _$location_,
     _$httpBackend_, _Restangular_) {
 
     loginRequiredInterceptor = _loginRequiredInterceptor_;
@@ -38,7 +38,7 @@ describe('Service: loginRequiredInterceptor', function () {
     expect($location.path()).toEqual('/');
   });
 
-  xit('should allow do nothing otherwise', function () {
+  it('should allow do nothing otherwise', function () {
     expect($location.path()).toEqual('/foo'); // check initial state
     $httpBackend.expectGET('/metadata/security/user/me').respond(200);
     Restangular.one('security/user/me').get();
