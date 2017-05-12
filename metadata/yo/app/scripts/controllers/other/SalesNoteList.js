@@ -1,10 +1,15 @@
 'use strict';
 
-// Argument primaryPartID is initialized during resolving before invocation of this controller (see app.js).
-angular.module('ngMetaCrudApp').controller('SalesNoteListCtrl', ['$scope', '$log', '$routeParams', 'NgTableParams',
-  'restService', 'SalesNotes', 'primaryPartId',
-  function(
-    $scope, $log, $routeParams, NgTableParams, restService, SalesNotes, primaryPartId) {
+// Argument primaryPartID is initialized during resolving before
+// invocation of this controller (see app.js).
+angular.module('ngMetaCrudApp')
+
+.controller('SalesNoteListCtrl', ['$scope', '$log', '$routeParams',
+  'NgTableParams', 'restService', 'SalesNotes', 'primaryPartId',
+
+  function($scope, $log, $routeParams, NgTableParams, restService,
+    SalesNotes, primaryPartId)
+  {
 
     $scope.states = {
       'current': {
@@ -17,9 +22,7 @@ angular.module('ngMetaCrudApp').controller('SalesNoteListCtrl', ['$scope', '$log
     };
 
     $scope.SalesNotes = SalesNotes;
-
     $scope.partId = $routeParams.id;
-
     $scope.part = null;
 
     // Load the part if we know partID.
@@ -57,17 +60,22 @@ angular.module('ngMetaCrudApp').controller('SalesNoteListCtrl', ['$scope', '$log
         }
         var offset = params.count() * (params.page() - 1);
         var limit = params.count();
-        $scope.notesPromise = restService.filterSalesNotes($scope.search.partNumber, $scope.search.comment,
-          primaryPartId, $scope.search.includePrimary, $scope.search.includeRelated,
-          $scope.search.states, sortProperty, sortOrder, offset, limit).then(
-          function(searchResults) {
-            // Update the total and slice the result
-            params.total(searchResults.hits.total);
-            return searchResults.hits.hits;
-          },
-          function(errorResponse) {
-            restService.error('Couldn\'t search for sales notes.', errorResponse);
-          });
+        $scope.notesPromise = restService
+          .filterSalesNotes($scope.search.partNumber, $scope.search.comment,
+            primaryPartId, $scope.search.includePrimary,
+            $scope.search.includeRelated, $scope.search.states,
+            sortProperty, sortOrder, offset, limit)
+          .then(
+            function(searchResults) {
+              // Update the total and slice the result
+              params.total(searchResults.hits.total);
+              return searchResults.hits.hits;
+            },
+            function(errorResponse) {
+              restService.error('Couldn\'t search for sales notes.',
+                errorResponse);
+            }
+          );
         return $scope.notesPromise;
       }
     });

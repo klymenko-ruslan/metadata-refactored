@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-  .service('SalesNotes', ['$location', '$log', '$uibModalInstance', 'Restangular', 'restService', 'toastr', 'User',
-    function SalesNotes($location, $log, $uibModalInstance, Restangular, restService, toastr, User) {
+  .service('SalesNotes', ['$location', '$log', /*'$uibModalInstance',*/ 'Restangular', 'restService', 'toastr', 'User',
+    function SalesNotes($location, $log, /*$uibModalInstance,*/ Restangular, restService, toastr, User) {
 
       this.states = ['draft', 'submitted', 'approved', 'rejected', 'published'];
 
@@ -13,7 +13,7 @@ angular.module('ngMetaCrudApp')
           function(response) {
             // Success
             toastr.success('Added image.');
-            $uibModalInstance.close(response);
+            //$uibModalInstance.close(response);
           },
           function(response) {
             // Error
