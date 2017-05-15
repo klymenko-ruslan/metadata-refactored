@@ -44,7 +44,6 @@ describe('Controller: SalesNoteListCtrl', function () {
     var parameters = $scope.notesTableParams.parameters();
     expect(parameters.page).toBe(1);
     expect(parameters.count).toBe(10);
-    var filter = $scope.notesTableParams.filter();
     expect(true).toBe($scope.notesTableParams.isSortBy('createDate', 'desc'));
   });
 
