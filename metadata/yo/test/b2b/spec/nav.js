@@ -1,22 +1,10 @@
 'use strict';
 
-describe('navigation menu', function() {
+describe('Navigation menu:', function() {
 
-  var cntrlLogin, cntrlLogout;
-
-  beforeAll(function () {
-    cntrlLogout = element(by.id('lnk-logout'))
-    cntrlLogin = element(by.id('bttn-login'));
-    // Login.
-    browser.get('http://localhost:8080');
-    element(by.id('username')).sendKeys('pavlo.kurochka@zorallabs.com');
-    element(by.id('password')).sendKeys('zoraltemp');
-    cntrlLogin.click();
-  });
-
-  afterAll(function () {
-    // Logout.
-    cntrlLogout.click();
+  beforeAll(function() {
+    browser.getCurrentUrl();
+    browser.get('http://localhost:8080/part/list');
   });
 
   /**
@@ -26,6 +14,7 @@ describe('navigation menu', function() {
    * bootstrap upgrade.
    */
   it('should open menu', function() {
+    expect(browser.getCurrentUrl()).toEqual('http://localhost:8080/part/list');
     var cntrlEntities = element(by.id('nav-lnk-entities'));
     expect(cntrlEntities.isDisplayed()).toBeTruthy();
     var cntrlPartTypes = element(by.id('nav-lnk-parttypes'));

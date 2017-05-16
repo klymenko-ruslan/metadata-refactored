@@ -43,6 +43,7 @@
     "test": "karma start test/karma.conf.js"
   },
   "dependencies": {
-    "ng-table": "^4.0.0"
+    "ng-table": "^4.0.0",
+    "underscore": "^1.8.3"
   }
 }
