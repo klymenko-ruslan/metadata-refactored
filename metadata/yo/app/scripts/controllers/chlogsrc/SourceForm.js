@@ -112,8 +112,8 @@ angular.module('ngMetaCrudApp')
       restService.changelogSourceUploadAttachmentTmp(file, file.name, $scope.data.attachDescr).then(
         function(updatedAttachmentsResponse) {
           // Success
-        _updateAttachmentsTable(updatedAttachmentsResponse.rows);
-          toastr.success('File uploaded.');
+          _updateAttachmentsTable(updatedAttachmentsResponse.rows);
+          toastr.success("File uploaded.");
           $scope.data.attachDescr = null;
           formData.delete('file');
           // TODO: reset upload form

@@ -94,13 +94,13 @@
             <input id="attach-descr" type="text" data-ng-model="data.attachDescr" data-ng-maxlength="255" />
           </div>
           <div class="form-group">
-            <button data-ng-click="uploadSourceAttachment()" data-ng-disabled="isUploadBttnDisabled()" class="btn btn-sm btn-primary" authorize="ROLE_CHLOGSRC_UPDATE">
+            <button data-ng-click="uploadAttachment()" data-ng-disabled="isUploadBttnDisabled()" class="btn btn-sm btn-primary" authorize="ROLE_CHLOGSRC_UPDATE">
               <i class="fa fa-upload"></i> Upload
             </button>
           </div>
         </form>
 
-        <table data-ng-table="sourceAttachmentsTableParams" class="table table-bordered table-striped table-hover table-responsive">
+        <table data-ng-table="attachmentsTableParams" class="table table-bordered table-striped table-hover table-responsive">
         <tr data-ng-repeat="rec in $data">
           <td title="'Name'">
             {{rec.name}}

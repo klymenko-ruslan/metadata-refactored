@@ -7,7 +7,7 @@ angular.module('ngMetaCrudApp')
   function($scope, $log, $location, toastr, NgTableParams, $uibModal, utils, restService, source) {
 
     $scope.source = source;
-
+    
     $scope.attachmentsTableParams = new NgTableParams(
       {
         page: 1,
