@@ -82,13 +82,20 @@
 <hr>
 
 <div class="col-xs-6">
-  <h3>Attachments
-      <a class="btn btn-primary pull-right"
-         data-ng-click="addAttachment()" data-ng-disabled="isEditing()">
-        <i class="fa fa-plus"></i>
-        Add Attachment
-      </a>
-  </h3>
+
+  <form class="form-inline pull-right" authorize="ROLE_SALES_NOTE_SUBMIT">
+    <div class="form-group">
+      <input type="file" name="file" onchange="angular.element(this).scope().changedAttachment(this.files)"/>
+    </div>
+    <div class="form-group">
+      <button data-ng-click="uploadAttachment()" data-ng-disabled="isUploadBttnDisabled()" class="btn btn-sm btn-primary">
+        <i class="fa fa-upload"></i> Upload
+      </button>
+    </div>
+  </form>
+
+  <h3 style="margin-top:0" class="pull-left">Attachments</h3>
+
   <table data-ng-table="attachmentTableParams" class="table table-bordered table-striped table-hover table-responsive">
       <tr data-ng-repeat="attachment in $data">
           <td title="'File Name'" sortable="'filename'">
@@ -111,7 +118,7 @@
 </div>
 
 <div class="col-xs-6">
-  <h3>Related Parts
+  <h3 style="margin-top:0">Related Parts
       <a class="btn btn-primary pull-right"
          data-ng-href="/part/{{salesNote.primaryPartId}}/sales_note/{{salesNote.id}}/related_part/search" data-ng-disabled="isEditing()">
         <i class="fa fa-plus"></i>

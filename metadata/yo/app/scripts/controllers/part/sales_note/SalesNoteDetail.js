@@ -11,6 +11,45 @@ angular.module("ngMetaCrudApp")
       $scope.SalesNotes = SalesNotes;
       $scope.editedSalesNote = {};
 
+      var file = null;
+      var formData = new FormData();
+      var attachments = salesNote.attachments;
+
+      $scope.isUploadBttnDisabled = function () {
+        return !formData.has("file") || $scope.isEditing();
+      };
+
+      $scope.changedAttachment = function(files) {
+        file = files[0];
+        formData.append("file", files[0]);
+      };
+
+      function _updateAttachmentsTable(updatedAttachments) {
+        attachments.splice(0, attachments.length);
+        _.each(updatedAttachments, function (e) {
+          attachments.push(e);
+        });
+        $scope.attachmentsTableParams.reload();
+        formData = new FormData();
+      };
+
+      $scope.uploadAttachment = function() {
+        toastr.success("Uploaded.");
+        restService.uploadAttachmentForSalesNote($scope.salesNoteId, file).then(
+          function success(salesNote) {
+            this.salseNote = salesNote;
+            salesNote.attachments;
+            _updateAttachmentsTable(salesNote.attachments);
+            toastr.success("File uploaded.");
+            formData.delete("file");
+          },
+          function(response) {
+            // Error
+            restService.error("Could not upload the attachment.", response);
+          }
+        );
+      };
+
       $scope.isPrimaryRelatedPart = function(relatedPart) {
         return salesNote.primaryPartId === relatedPart.part.id;
       };
@@ -21,7 +60,7 @@ angular.module("ngMetaCrudApp")
         count: 10,
         sorting: {}
       }, {
-        getData: utils.localPagination(salesNote.attachments, "createDate")
+        getData: utils.localPagination(attachments, "createDate")
       });
 
       // Related Part Table

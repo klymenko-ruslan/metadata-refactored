@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.web.bind.annotation.AuthenticationPrincipal;
@@ -28,7 +27,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.entity.SalesNote;
@@ -136,13 +134,15 @@ public class SalesNoteController {
         }
     }
 
-    @RequestMapping(value = "{salesNoteId}/attachment", method = POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "{salesNoteId}/attachment", method = POST)
     @ResponseBody
+    @Secured("ROLE_SALES_NOTE_SUBMIT")
     public SalesNote addAttachment(HttpServletRequest request,
             @AuthenticationPrincipal(errorOnInvalidType = true) User user,
-            @PathVariable("salesNoteId") long salesNoteId, @RequestParam("file") MultipartFile upload)
-            throws IOException {
-        SalesNote salesNote = salesNoteService.addAttachment(request, user, salesNoteId, upload);
+            @PathVariable("salesNoteId") long salesNoteId,
+            @RequestParam(value = "name", required = false) String name,
+            @RequestBody byte[] file) throws IOException {
+        SalesNote salesNote = salesNoteService.addAttachment(request, user, salesNoteId, name, file);
         return salesNote;
     }
 

@@ -1126,6 +1126,12 @@ angular.module("ngMetaCrudApp")
         return Restangular.one("other/salesNote", id).remove();
       };
 
+      this.uploadAttachmentForSalesNote = function(id, attachment) {
+        Restangular.setParentless(false);
+        return Restangular.one('other/salesNote', id).all('attachment')
+        	.post(attachment, {}, {"Content-Type": "application/octet-stream"});
+      };
+
       this.getAllAuthProviders = function(sortProperty, sortOrder, offset, limit) {
         return Restangular.one("authprovider/list").get({
           "sortProperty": sortProperty,

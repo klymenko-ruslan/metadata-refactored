@@ -19,7 +19,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.google.common.collect.Iterables;
 import com.turbointernational.metadata.dao.PartDao;
@@ -194,8 +193,8 @@ public class SalesNoteService {
     }
 
     @Transactional
-    public SalesNote addAttachment(HttpServletRequest request, User user, Long salesNoteId, MultipartFile upload)
-            throws IOException {
+    public SalesNote addAttachment(HttpServletRequest request, User user, Long salesNoteId, String name,
+            byte[] bin) throws IOException {
         // Find the entities
         SalesNote salesNote = salesNotes.findOne(salesNoteId);
         hasEditAccess(request, salesNote);
@@ -205,7 +204,8 @@ public class SalesNoteService {
             salesNoteDir.mkdirs();
         }
         // Copy the file
-        upload.transferTo(new File(salesNoteDir, upload.getOriginalFilename()));
+        //upload.transferTo(new File(salesNoteDir, name));
+        FileUtils.writeByteArrayToFile(new File(salesNoteDir, name), bin);
         // Save the record
         SalesNoteAttachment attachment = new SalesNoteAttachment();
         attachment.setSalesNote(salesNote);
@@ -213,7 +213,7 @@ public class SalesNoteService {
         attachment.setCreator(user);
         attachment.setUpdateDate(new Date());
         attachment.setUpdater(user);
-        attachment.setFilename(upload.getOriginalFilename());
+        attachment.setFilename(name);
         // Save
         salesNote.getAttachments().add(attachment);
         salesNotes.save(salesNote);
