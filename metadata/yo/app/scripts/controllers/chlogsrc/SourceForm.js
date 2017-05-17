@@ -99,12 +99,10 @@ angular.module("ngMetaCrudApp")
     };
 
     function _updateAttachmentsTable(updatedAttachments) {
-$log.log('updatedAttachments: ' + angular.toJson(updatedAttachments, 2 ));
       attachments.splice(0, attachments.length);
       _.each(updatedAttachments, function (e) {
         attachments.push(e);
       });
-$log.log('attachments: ' + angular.toJson(attachments, 2));
       $scope.attachmentsTableParams.reload();
       formData = new FormData();
       $scope.forms.changelogSourceForm.$setDirty();
@@ -114,7 +112,6 @@ $log.log('attachments: ' + angular.toJson(attachments, 2));
       restService.changelogSourceUploadAttachmentTmp(file, file.name, $scope.data.attachDescr).then(
         function(updatedAttachmentsResponse) {
           // Success
-$log.log('updatedAttachmentsResponse.rows: ' + angular.toJson(updatedAttachmentsResponse.rows, 2));
           _updateAttachmentsTable(updatedAttachmentsResponse.rows);
           toastr.success("File uploaded.");
           $scope.data.attachDescr = null;
