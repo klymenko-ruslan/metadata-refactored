@@ -34,20 +34,36 @@ angular.module("ngMetaCrudApp")
       };
 
       $scope.uploadAttachment = function() {
-        toastr.success("Uploaded.");
-        restService.uploadAttachmentForSalesNote($scope.salesNoteId, file).then(
+        restService.uploadAttachmentForSalesNote($scope.salesNoteId, file.name, file).then(
           function success(salesNote) {
-            this.salseNote = salesNote;
-            salesNote.attachments;
+            $scope.salesNote = salesNote;
             _updateAttachmentsTable(salesNote.attachments);
             toastr.success("File uploaded.");
             formData.delete("file");
           },
-          function(response) {
-            // Error
-            restService.error("Could not upload the attachment.", response);
+          function failure(response) {
+            restService.error("Can not upload the attachment.", response);
           }
         );
+      };
+
+      $scope.removeAttachment = function(attachmentId) {
+        dialogs.confirm('Confirmation', 'Are you sure?\nDo you want to remove this attachment?')
+          .result.then(
+            function yes() {
+              restService.removeAttachmentForSalesNote($scope.salesNoteId, attachmentId).then(
+                function success(salesNote) {
+                  $scope.salesNote = salesNote;
+                  _updateAttachmentsTable(salesNote.attachments);
+                  toastr.success("The attachment has been successfully removed.");
+                },
+                function failure(response) {
+                  restService.error("Can not remove the attachment.", response);
+                }
+              );
+              toastr.success('The attachment has been successfully removed.');
+            }
+          );
       };
 
       $scope.isPrimaryRelatedPart = function(relatedPart) {
@@ -55,7 +71,7 @@ angular.module("ngMetaCrudApp")
       };
 
       // Attachment Table
-      $scope.attachmentTableParams = new NgTableParams({
+      $scope.attachmentsTableParams = new NgTableParams({
         page: 1,
         count: 10,
         sorting: {}

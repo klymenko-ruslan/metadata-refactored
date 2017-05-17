@@ -8,22 +8,6 @@ angular.module("ngMetaCrudApp")
 
       SalesNotes.states = ["draft", "submitted", "approved", "rejected", "published"];
 
-      SalesNotes.addAttachment = function(salesNote, name, file) {
-        Restangular.one("other/sales_note", salesNote.id).all("image").post(file, {}, {
-          "Content-Type": "application/octet-stream"
-        }).then(
-          function(response) {
-            // Success
-            toastr.success("Added image.");
-            $uibModalInstance.close(response);
-          },
-          function(response) {
-            // Error
-            restService.error("Could not upload image.", response);
-          }
-        );
-      };
-
       SalesNotes.addRelatedPart = function(salesNote, part) {
         return Restangular.one("other/salesNote/" + salesNote.id + "/part")
           .post(part.id, null)

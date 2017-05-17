@@ -223,7 +223,7 @@ public class SalesNoteService {
     }
 
     @Transactional
-    public void deleteAttachment(HttpServletRequest request, Long salesNoteId, Long attachmentId) {
+    public SalesNote deleteAttachment(HttpServletRequest request, Long salesNoteId, Long attachmentId) {
         // Find the entities
         SalesNote salesNote = salesNotes.findOne(salesNoteId);
         hasEditAccess(request, salesNote);
@@ -236,6 +236,7 @@ public class SalesNoteService {
         salesNotes.save(salesNote);
         changelogService.log(SALESNOTES, "Deleted attachment from sales note " + formatSalesNote(salesNote),
                 salesNoteAttachment, null);
+        return salesNote;
     }
 
     @Transactional

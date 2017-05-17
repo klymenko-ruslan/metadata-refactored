@@ -96,24 +96,24 @@
 
   <h3 style="margin-top:0" class="pull-left">Attachments</h3>
 
-  <table data-ng-table="attachmentTableParams" class="table table-bordered table-striped table-hover table-responsive">
-      <tr data-ng-repeat="attachment in $data">
-          <td title="'File Name'" sortable="'filename'">
-              {{part._source.partType.name}}
-          </td>
-          <td title="'User'" sortable="'creator.name'">
-              {{attachment.creator.name}}
-          </td>
-          <td title="'Created'" sortable="'createDate'">
-              {{attachment.createDate}}
-          </td>
-          <td title="'Actions'" class="actions text-center">
-            <button type="submit" class="btn btn-primary text-center btn-xs"
-                    data-ng-disabled="isEditing()">Download</button>
-            <button type="submit" class="btn btn-danger text-center btn-xs"
-                    data-ng-disabled="isEditing()">Remove</button>
-          </td>
-      </tr>
+  <table data-ng-table="attachmentsTableParams" class="table table-bordered table-striped table-hover table-responsive">
+  <tr data-ng-repeat="attachment in $data">
+    <td title="'File Name'">
+      <a data-ng-href="other/salesNote/attachment/{{attachment.id}}" title="Download">{{attachment.filename}}</a>
+    </td>
+    <td title="'User'">
+      <a data-ng-href="security/user/{{attachment.creator.id}}">{{attachment.creator.name}}</a>
+    </td>
+    <td title="'Created'">
+      {{attachment.createDate | date : "yyyy-MM-dd HH:mm.ss"}}
+    </td>
+    <td title="'Actions'" class="actions text-center">
+      <button type="submit" data-ng-click="removeAttachment(attachment.id)"
+        class="btn btn-danger text-center btn-xs" data-ng-disabled="isEditing()">
+        <i class="fa fa-trash-o"></i> Remove
+      </button>
+    </td>
+  </tr>
   </table>
 </div>
 

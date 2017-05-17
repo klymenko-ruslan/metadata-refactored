@@ -1,0 +1,1 @@
+alter table sales_note_attachment drop index sales_note_id_filename;

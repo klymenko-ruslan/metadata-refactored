@@ -120,7 +120,7 @@ public class SalesNoteController {
 
     // <editor-fold defaultstate="collapsed" desc="Attachments">
     @RequestMapping(value = "attachment/{id}", method = GET)
-    @Secured("ROLE_SALES_NOTE_READ")
+    //@Secured("ROLE_SALES_NOTE_READ")
     public @ResponseBody ResponseEntity<byte[]> getAttachment(@PathVariable Long id) throws Exception {
         try {
             SalesNoteService.AttachmentDto attachmentDto = salesNoteService.getAttachment(id);
@@ -136,21 +136,23 @@ public class SalesNoteController {
 
     @RequestMapping(value = "{salesNoteId}/attachment", method = POST)
     @ResponseBody
+    @JsonView(View.DetailWithPartsAndAttachments.class)
     @Secured("ROLE_SALES_NOTE_SUBMIT")
     public SalesNote addAttachment(HttpServletRequest request,
             @AuthenticationPrincipal(errorOnInvalidType = true) User user,
             @PathVariable("salesNoteId") long salesNoteId,
             @RequestParam(value = "name", required = false) String name,
             @RequestBody byte[] file) throws IOException {
-        SalesNote salesNote = salesNoteService.addAttachment(request, user, salesNoteId, name, file);
-        return salesNote;
+        return salesNoteService.addAttachment(request, user, salesNoteId, name, file);
     }
 
-    @RequestMapping(value = "{salesNoteId}/attachment/{attachmentId}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "{salesNoteId}/attachment/{attachmentId}", method = DELETE)
+    @JsonView(View.DetailWithPartsAndAttachments.class)
+    @Secured("ROLE_SALES_NOTE_SUBMIT")
     @ResponseBody
-    public void deleteAttachment(HttpServletRequest request, @PathVariable("salesNoteId") Long salesNoteId,
+    public SalesNote deleteAttachment(HttpServletRequest request, @PathVariable("salesNoteId") Long salesNoteId,
             @PathVariable("attachmentId") Long attachmentId) {
-        salesNoteService.deleteAttachment(request, salesNoteId, attachmentId);
+        return salesNoteService.deleteAttachment(request, salesNoteId, attachmentId);
     }
     // </editor-fold>
 
