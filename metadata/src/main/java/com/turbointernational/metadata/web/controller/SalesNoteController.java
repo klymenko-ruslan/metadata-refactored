@@ -1,6 +1,6 @@
 package com.turbointernational.metadata.web.controller;
 
-import static org.springframework.http.HttpStatus.OK;
+import static com.turbointernational.metadata.util.DownloadUtils.download;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
@@ -10,14 +10,12 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.web.bind.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -25,10 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.entity.SalesNote;
@@ -40,7 +36,7 @@ import com.turbointernational.metadata.web.dto.CreateSalesNoteRequest;
 import com.turbointernational.metadata.web.dto.UpdateSalesNoteRequest;
 
 @Controller
-@RequestMapping("/metadata/other/salesNote")
+@RequestMapping(value = { "/other/salesNote", "/metadata/other/salesNote" })
 @SuppressWarnings("deprecation")
 public class SalesNoteController {
 
@@ -113,7 +109,7 @@ public class SalesNoteController {
 
     @ResponseBody
     @Transactional
-    @RequestMapping(value = "{salesNoteId}/part/{partId}", method = RequestMethod.DELETE, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "{salesNoteId}/part/{partId}", method = DELETE, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public void deleteRelatedPart(HttpServletRequest request, @PathVariable("salesNoteId") Long salesNoteId,
             @PathVariable("partId") Long partId) throws RemovePrimaryPartException {
         salesNoteService.deleteRelatedPart(request, salesNoteId, partId);
@@ -121,36 +117,42 @@ public class SalesNoteController {
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Attachments">
-    @RequestMapping(value = "attachment/{id}", method = GET)
+    @Transactional
+    @RequestMapping(value = "{salesNoteId}/attachment/{attachmentId}", method = GET)
+    @ResponseBody
     @Secured("ROLE_SALES_NOTE_READ")
-    public @ResponseBody ResponseEntity<byte[]> getAttachment(@PathVariable Long id) throws Exception {
+    public void getAttachment(HttpServletResponse response,
+            @PathVariable("salesNoteId") Long salesNoteId,
+            @PathVariable("attachmentId") Long attachmentId) throws Exception {
         try {
-            SalesNoteService.AttachmentDto attachmentDto = salesNoteService.getAttachment(id);
-            HttpHeaders headers = new HttpHeaders();
-            headers.add("Content-Type", "application/octet-stream");
-            headers.add("Content-Disposition", "attachment; filename=\"" + attachmentDto.getFileName() + "\"");
-            return new ResponseEntity<>(attachmentDto.getContent(), headers, OK);
+            SalesNoteService.AttachmentDto attachment = salesNoteService.getAttachment(salesNoteId, attachmentId);
+            download(attachment.getFile(), attachment.getName(), response);
         } catch (IOException e) {
             log.warn("Couldn't load attachment file.", e);
             throw e;
         }
     }
 
-    @RequestMapping(value = "{salesNoteId}/attachment", method = POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "{salesNoteId}/attachment", method = POST)
     @ResponseBody
+    @JsonView(View.DetailWithPartsAndAttachments.class)
+    @Secured("ROLE_SALES_NOTE_SUBMIT")
     public SalesNote addAttachment(HttpServletRequest request,
             @AuthenticationPrincipal(errorOnInvalidType = true) User user,
-            @PathVariable("salesNoteId") long salesNoteId, @RequestParam("file") MultipartFile upload)
-            throws IOException {
-        SalesNote salesNote = salesNoteService.addAttachment(request, user, salesNoteId, upload);
-        return salesNote;
+            @PathVariable("salesNoteId") long salesNoteId,
+            @RequestParam(value = "name", required = false) String name,
+            @RequestBody byte[] file) throws IOException {
+        return salesNoteService.addAttachment(request, user, salesNoteId, name, file);
     }
 
-    @RequestMapping(value = "{salesNoteId}/attachment/{attachmentId}", method = RequestMethod.DELETE)
+    @Transactional
+    @RequestMapping(value = "{salesNoteId}/attachment/{attachmentId}", method = DELETE)
+    @JsonView(View.DetailWithPartsAndAttachments.class)
+    @Secured("ROLE_SALES_NOTE_SUBMIT")
     @ResponseBody
-    public void deleteAttachment(HttpServletRequest request, @PathVariable("salesNoteId") Long salesNoteId,
+    public SalesNote deleteAttachment(HttpServletRequest request, @PathVariable("salesNoteId") Long salesNoteId,
             @PathVariable("attachmentId") Long attachmentId) {
-        salesNoteService.deleteAttachment(request, salesNoteId, attachmentId);
+        return salesNoteService.deleteAttachment(request, salesNoteId, attachmentId);
     }
     // </editor-fold>
 

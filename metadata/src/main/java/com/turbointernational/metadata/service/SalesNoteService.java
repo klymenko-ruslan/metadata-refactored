@@ -4,6 +4,7 @@ import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.SALES
 import static com.turbointernational.metadata.entity.ChangelogPart.Role.PART0;
 import static com.turbointernational.metadata.util.FormatUtils.formatPart;
 import static com.turbointernational.metadata.util.FormatUtils.formatSalesNote;
+import static org.apache.commons.io.FileUtils.writeByteArrayToFile;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,16 +14,14 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
-import com.google.common.collect.Iterables;
 import com.turbointernational.metadata.dao.PartDao;
+import com.turbointernational.metadata.dao.SalesNoteAttachmentDao;
 import com.turbointernational.metadata.dao.SalesNoteDao;
 import com.turbointernational.metadata.dao.SalesNotePartDao;
 import com.turbointernational.metadata.entity.Changelog;
@@ -59,12 +58,15 @@ public class SalesNoteService {
     private SalesNoteDao salesNoteDao;
 
     @Autowired
+    private SalesNoteAttachmentDao salesNoteAttachmentDao;
+
+    @Autowired
     private SalesNoteRepository salesNotes;
 
     @Autowired
     private SalesNoteAttachmentRepository attachments;
 
-    @Value("attachments.salesNote")
+    @Value("${attachments.salesNote.dir}")
     private File attachmentDir;
 
     /**
@@ -164,38 +166,37 @@ public class SalesNoteService {
 
     public static class AttachmentDto {
 
-        private final String fileName;
+        private final String name;
 
-        private final byte[] content;
+        private final File file;
 
-        AttachmentDto(String fileName, byte[] content) {
-            this.fileName = fileName;
-            this.content = content;
+        AttachmentDto(String name, File file) {
+            this.name = name;
+            this.file = file;
         }
 
-        public String getFileName() {
-            return fileName;
+        public String getName() {
+            return name;
         }
 
-        public byte[] getContent() {
-            return content;
+        public File getFile() {
+            return file;
         }
 
     }
 
-    public AttachmentDto getAttachment(Long id) throws IOException {
+    public AttachmentDto getAttachment(Long salesNoteId, Long attachmentId) throws IOException {
         // Get the attachment
-        SalesNoteAttachment attachment = attachments.findOne(id);
-        // Load it from disk
-        String fileName = attachment.getFilename();
-        File attachmentFile = new File(attachmentDir, fileName);
-        byte[] content = FileUtils.readFileToByteArray(attachmentFile);
-        return new AttachmentDto(fileName, content);
+        SalesNoteAttachment attachment = attachments.findOne(attachmentId);
+        String name = attachment.getFilename();
+        File salesNoteDir = new File(attachmentDir, Long.toString(salesNoteId));
+        File file = new File(salesNoteDir, name);
+        return new AttachmentDto(name, file);
     }
 
     @Transactional
-    public SalesNote addAttachment(HttpServletRequest request, User user, Long salesNoteId, MultipartFile upload)
-            throws IOException {
+    public SalesNote addAttachment(HttpServletRequest request, User user, Long salesNoteId, String name,
+            byte[] bin) throws IOException {
         // Find the entities
         SalesNote salesNote = salesNotes.findOne(salesNoteId);
         hasEditAccess(request, salesNote);
@@ -205,7 +206,8 @@ public class SalesNoteService {
             salesNoteDir.mkdirs();
         }
         // Copy the file
-        upload.transferTo(new File(salesNoteDir, upload.getOriginalFilename()));
+        //upload.transferTo(new File(salesNoteDir, name));
+        writeByteArrayToFile(new File(salesNoteDir, name), bin);
         // Save the record
         SalesNoteAttachment attachment = new SalesNoteAttachment();
         attachment.setSalesNote(salesNote);
@@ -213,7 +215,7 @@ public class SalesNoteService {
         attachment.setCreator(user);
         attachment.setUpdateDate(new Date());
         attachment.setUpdater(user);
-        attachment.setFilename(upload.getOriginalFilename());
+        attachment.setFilename(name);
         // Save
         salesNote.getAttachments().add(attachment);
         salesNotes.save(salesNote);
@@ -223,19 +225,14 @@ public class SalesNoteService {
     }
 
     @Transactional
-    public void deleteAttachment(HttpServletRequest request, Long salesNoteId, Long attachmentId) {
-        // Find the entities
-        SalesNote salesNote = salesNotes.findOne(salesNoteId);
-        hasEditAccess(request, salesNote);
-        // Find the attachment
-        SalesNoteAttachment salesNoteAttachment = Iterables.find(salesNote.getAttachments(),
-                attachment -> attachment.getId() == attachmentId);
-        // Delete the attachment
-        salesNote.getAttachments().remove(salesNoteAttachment);
-        // Save
-        salesNotes.save(salesNote);
-        changelogService.log(SALESNOTES, "Deleted attachment from sales note " + formatSalesNote(salesNote),
-                salesNoteAttachment, null);
+    public SalesNote deleteAttachment(HttpServletRequest request, Long salesNoteId, Long attachmentId) {
+        SalesNoteAttachment attachment = salesNoteAttachmentDao.getReference(attachmentId);
+        salesNoteAttachmentDao.remove(attachment);
+        SalesNote note = salesNoteDao.findOne(salesNoteId);
+        // TODO: recursion during serialization
+        // changelogService.log(SALESNOTES, "Deleted attachment from sales note " + formatSalesNote(note), attachment,
+        //         null);
+        return note;
     }
 
     @Transactional

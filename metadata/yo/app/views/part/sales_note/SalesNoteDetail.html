@@ -82,36 +82,48 @@
 <hr>
 
 <div class="col-xs-6">
-  <h3>Attachments
-      <a class="btn btn-primary pull-right"
-         data-ng-click="addAttachment()" data-ng-disabled="isEditing()">
-        <i class="fa fa-plus"></i>
-        Add Attachment
-      </a>
-  </h3>
-  <table data-ng-table="attachmentTableParams" class="table table-bordered table-striped table-hover table-responsive">
-      <tr data-ng-repeat="attachment in $data">
-          <td title="'File Name'" sortable="'filename'">
-              {{part._source.partType.name}}
-          </td>
-          <td title="'User'" sortable="'creator.name'">
-              {{attachment.creator.name}}
-          </td>
-          <td title="'Created'" sortable="'createDate'">
-              {{attachment.createDate}}
-          </td>
-          <td title="'Actions'" class="actions text-center">
-            <button type="submit" class="btn btn-primary text-center btn-xs"
-                    data-ng-disabled="isEditing()">Download</button>
-            <button type="submit" class="btn btn-danger text-center btn-xs"
-                    data-ng-disabled="isEditing()">Remove</button>
-          </td>
-      </tr>
+
+  <form class="form-inline pull-right" authorize="ROLE_SALES_NOTE_SUBMIT">
+    <div class="form-group">
+      <input type="file" name="file" onchange="angular.element(this).scope().changedAttachment(this.files)"/>
+    </div>
+    <div class="form-group">
+      <button data-ng-click="uploadAttachment()" data-ng-disabled="isUploadBttnDisabled()" class="btn btn-sm btn-primary">
+        <i class="fa fa-upload"></i> Upload
+      </button>
+    </div>
+  </form>
+
+  <h3 style="margin-top:0" class="pull-left">Attachments</h3>
+
+  <table data-ng-table="attachmentsTableParams" class="table table-bordered table-striped table-hover table-responsive">
+  <tr data-ng-repeat="attachment in $data">
+    <td title="'File Name'">
+      <a href="other/salesNote/{{salesNoteId}}/attachment/{{attachment.id}}" title="Download" target="_self" download>{{attachment.filename}}</a>
+    </td>
+    <td title="'User'">
+      <a data-ng-href="security/user/{{attachment.creator.id}}">{{attachment.creator.name}}</a>
+    </td>
+    <td title="'Created'">
+      {{attachment.createDate | date : "yyyy-MM-dd HH:mm.ss"}}
+    </td>
+    <td title="'Actions'" class="actions text-center">
+      <button type="submit" data-ng-click="removeAttachment(attachment.id)"
+        class="btn btn-danger text-center btn-xs" data-ng-disabled="isEditing()">
+        <i class="fa fa-trash-o"></i> Remove
+      </button>
+    </td>
+  </tr>
+
+  <tr data-ng-hide="$data.length > 0">
+    <td colspan="4">No attachments to display.</td>
+  </tr>
+
   </table>
 </div>
 
 <div class="col-xs-6">
-  <h3>Related Parts
+  <h3 style="margin-top:0">Related Parts
       <a class="btn btn-primary pull-right"
          data-ng-href="/part/{{salesNote.primaryPartId}}/sales_note/{{salesNote.id}}/related_part/search" data-ng-disabled="isEditing()">
         <i class="fa fa-plus"></i>
@@ -119,28 +131,33 @@
       </a>
   </h3>
   <table data-ng-table="relatedPartTableParams" class="table table-bordered table-striped table-hover table-responsive">
-      <tr data-ng-repeat="relatedPart in $data">
-          <td title="'Part #'" sortable="'part.manufacturerPartNumber'">
-              {{relatedPart.part.manufacturerPartNumber}}
-          </td>
-          <td title="'Part Type'" sortable="'part.partType.name'">
-              {{relatedPart.part.partType.name}}
-          </td>
-          <td title="'Manufacturer'" sortable="'part.manufacturer.name'">
-              {{relatedPart.part.manufacturer.name}}
-          </td>
-          <td title="'Actions'" class="actions text-center">
-            <a data-ng-class="['btn', 'btn-xs', {'btn-primary': !isPrimaryRelatedPart(relatedPart), 'btn-success': isPrimaryRelatedPart(relatedPart)}]"
-               data-ng-href="/part/{{ relatedPart.part.id }}">
-              <i class="fa fa-eye"></i> View {{isPrimaryRelatedPart(relatedPart) ? "Primary" : "Related"}}
-            </a>
-            <a class="btn btn-danger btn-xs"
-               data-ng-click="SalesNotes.removeRelatedPart(salesNote, relatedPart.part.id, relatedPartTableParams)"
-               data-ng-if="salesNote.primaryPartId !== relatedPart.part.id"
-               data-ng-disabled="isEditing()">
-              <i class="fa fa-trash-o"></i> Remove
-            </a>
-          </td>
-      </tr>
+  <tr data-ng-repeat="relatedPart in $data">
+    <td title="'Part #'" sortable="'part.manufacturerPartNumber'">
+      {{relatedPart.part.manufacturerPartNumber}}
+    </td>
+    <td title="'Part Type'" sortable="'part.partType.name'">
+      {{relatedPart.part.partType.name}}
+    </td>
+    <td title="'Manufacturer'" sortable="'part.manufacturer.name'">
+      {{relatedPart.part.manufacturer.name}}
+    </td>
+    <td title="'Actions'" class="actions text-center">
+      <a data-ng-class="['btn', 'btn-xs', {'btn-primary': !isPrimaryRelatedPart(relatedPart), 'btn-success': isPrimaryRelatedPart(relatedPart)}]"
+        data-ng-href="/part/{{ relatedPart.part.id }}">
+        <i class="fa fa-eye"></i> View {{isPrimaryRelatedPart(relatedPart) ? "Primary" : "Related"}}
+      </a>
+      <a class="btn btn-danger btn-xs"
+        data-ng-click="SalesNotes.removeRelatedPart(salesNote, relatedPart.part.id, relatedPartTableParams)"
+        data-ng-if="salesNote.primaryPartId !== relatedPart.part.id"
+        data-ng-disabled="isEditing()">
+        <i class="fa fa-trash-o"></i> Remove
+      </a>
+    </td>
+  </tr>
+
+  <tr data-ng-hide="$data.length > 0">
+    <td colspan="4">No related parts to display.</td>
+  </tr>
+
   </table>
 </div>

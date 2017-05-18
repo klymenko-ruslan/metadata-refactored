@@ -1,5 +1,8 @@
 package com.turbointernational.metadata.entity;
 
+import static javax.persistence.GenerationType.IDENTITY;
+import static javax.persistence.TemporalType.TIMESTAMP;
+
 import java.io.File;
 import java.io.Serializable;
 import java.util.Date;
@@ -7,6 +10,7 @@ import java.util.Date;
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -14,10 +18,12 @@ import javax.persistence.OneToOne;
 import javax.persistence.PreRemove;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.springframework.beans.factory.annotation.Value;
+
+import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.util.View;
 
 /**
  * @author jrodriguez
@@ -30,21 +36,25 @@ public class SalesNoteAttachment implements Serializable {
     private static final long serialVersionUID = -8697352209448012944L;
 
     @Id
+    @GeneratedValue(strategy = IDENTITY)
+    @JsonView(View.Summary.class)
     private Long id;
 
     @ManyToOne
     @JoinColumn(name = "sales_note_id")
     private SalesNote salesNote;
 
-    @Temporal(TemporalType.TIMESTAMP)
+    @Temporal(TIMESTAMP)
     @Column(name = "create_date")
+    @JsonView(View.Summary.class)
     private Date createDate;
 
     @OneToOne
     @JoinColumn(name = "create_uid", nullable = false)
+    @JsonView(View.Summary.class)
     private User creator;
 
-    @Temporal(TemporalType.TIMESTAMP)
+    @Temporal(TIMESTAMP)
     @Column(name = "write_date")
     private Date updateDate;
 
@@ -53,6 +63,7 @@ public class SalesNoteAttachment implements Serializable {
     private User updater;
 
     @Column(name = "filename")
+    @JsonView(View.Summary.class)
     private String filename;
 
     public Long getId() {

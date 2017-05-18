@@ -11,17 +11,72 @@ angular.module('ngMetaCrudApp')
       $scope.SalesNotes = SalesNotes;
       $scope.editedSalesNote = {};
 
+      var file = null;
+      var formData = new FormData();
+      var attachments = salesNote.attachments || [];
+
+      $scope.isUploadBttnDisabled = function () {
+        return !formData.has("file") || $scope.isEditing();
+      };
+
+      $scope.changedAttachment = function(files) {
+        file = files[0];
+        formData.append("file", files[0]);
+      };
+
+      function _updateAttachmentsTable(updatedAttachments) {
+        attachments.splice(0, attachments.length);
+        _.each(updatedAttachments, function (e) {
+          attachments.push(e);
+        });
+        $scope.attachmentsTableParams.reload();
+        formData = new FormData();
+      };
+
+      $scope.uploadAttachment = function() {
+        restService.uploadAttachmentForSalesNote($scope.salesNoteId, file.name, file).then(
+          function success(salesNote) {
+            $scope.salesNote = salesNote;
+            _updateAttachmentsTable(salesNote.attachments);
+            toastr.success("File uploaded.");
+            formData.delete("file");
+          },
+          function failure(response) {
+            restService.error("Can not upload the attachment.", response);
+          }
+        );
+      };
+
+      $scope.removeAttachment = function(attachmentId) {
+        dialogs.confirm('Confirmation', 'Are you sure?\nDo you want to remove this attachment?')
+          .result.then(
+            function yes() {
+              restService.removeAttachmentForSalesNote($scope.salesNoteId, attachmentId).then(
+                function success(salesNote) {
+                  $scope.salesNote = salesNote;
+                  _updateAttachmentsTable(salesNote.attachments);
+                  toastr.success("The attachment has been successfully removed.");
+                },
+                function failure(response) {
+                  restService.error("Can not remove the attachment.", response);
+                }
+              );
+              toastr.success('The attachment has been successfully removed.');
+            }
+          );
+      };
+
       $scope.isPrimaryRelatedPart = function(relatedPart) {
         return salesNote.primaryPartId === relatedPart.part.id;
       };
 
       // Attachment Table
-      $scope.attachmentTableParams = new NgTableParams({
+      $scope.attachmentsTableParams = new NgTableParams({
         page: 1,
         count: 10,
         sorting: {}
       }, {
-        getData: utils.localPagination(salesNote.attachments, 'createDate')
+        getData: utils.localPagination(attachments, "createDate")
       });
 
       // Related Part Table
