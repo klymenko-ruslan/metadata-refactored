@@ -99,7 +99,7 @@
   <table data-ng-table="attachmentsTableParams" class="table table-bordered table-striped table-hover table-responsive">
   <tr data-ng-repeat="attachment in $data">
     <td title="'File Name'">
-      <a data-ng-href="other/salesNote/attachment/{{attachment.id}}" title="Download">{{attachment.filename}}</a>
+      <a href="other/salesNote/{{salesNoteId}}/attachment/{{attachment.id}}" title="Download" target="_self" download>{{attachment.filename}}</a>
     </td>
     <td title="'User'">
       <a data-ng-href="security/user/{{attachment.creator.id}}">{{attachment.creator.name}}</a>
@@ -114,6 +114,11 @@
       </button>
     </td>
   </tr>
+
+  <tr data-ng-hide="$data.length > 0">
+    <td colspan="4">No attachments to display.</td>
+  </tr>
+
   </table>
 </div>
 
@@ -126,28 +131,33 @@
       </a>
   </h3>
   <table data-ng-table="relatedPartTableParams" class="table table-bordered table-striped table-hover table-responsive">
-      <tr data-ng-repeat="relatedPart in $data">
-          <td title="'Part #'" sortable="'part.manufacturerPartNumber'">
-              {{relatedPart.part.manufacturerPartNumber}}
-          </td>
-          <td title="'Part Type'" sortable="'part.partType.name'">
-              {{relatedPart.part.partType.name}}
-          </td>
-          <td title="'Manufacturer'" sortable="'part.manufacturer.name'">
-              {{relatedPart.part.manufacturer.name}}
-          </td>
-          <td title="'Actions'" class="actions text-center">
-            <a data-ng-class="['btn', 'btn-xs', {'btn-primary': !isPrimaryRelatedPart(relatedPart), 'btn-success': isPrimaryRelatedPart(relatedPart)}]"
-               data-ng-href="/part/{{ relatedPart.part.id }}">
-              <i class="fa fa-eye"></i> View {{isPrimaryRelatedPart(relatedPart) ? "Primary" : "Related"}}
-            </a>
-            <a class="btn btn-danger btn-xs"
-               data-ng-click="SalesNotes.removeRelatedPart(salesNote, relatedPart.part.id, relatedPartTableParams)"
-               data-ng-if="salesNote.primaryPartId !== relatedPart.part.id"
-               data-ng-disabled="isEditing()">
-              <i class="fa fa-trash-o"></i> Remove
-            </a>
-          </td>
-      </tr>
+  <tr data-ng-repeat="relatedPart in $data">
+    <td title="'Part #'" sortable="'part.manufacturerPartNumber'">
+      {{relatedPart.part.manufacturerPartNumber}}
+    </td>
+    <td title="'Part Type'" sortable="'part.partType.name'">
+      {{relatedPart.part.partType.name}}
+    </td>
+    <td title="'Manufacturer'" sortable="'part.manufacturer.name'">
+      {{relatedPart.part.manufacturer.name}}
+    </td>
+    <td title="'Actions'" class="actions text-center">
+      <a data-ng-class="['btn', 'btn-xs', {'btn-primary': !isPrimaryRelatedPart(relatedPart), 'btn-success': isPrimaryRelatedPart(relatedPart)}]"
+        data-ng-href="/part/{{ relatedPart.part.id }}">
+        <i class="fa fa-eye"></i> View {{isPrimaryRelatedPart(relatedPart) ? "Primary" : "Related"}}
+      </a>
+      <a class="btn btn-danger btn-xs"
+        data-ng-click="SalesNotes.removeRelatedPart(salesNote, relatedPart.part.id, relatedPartTableParams)"
+        data-ng-if="salesNote.primaryPartId !== relatedPart.part.id"
+        data-ng-disabled="isEditing()">
+        <i class="fa fa-trash-o"></i> Remove
+      </a>
+    </td>
+  </tr>
+
+  <tr data-ng-hide="$data.length > 0">
+    <td colspan="4">No related parts to display.</td>
+  </tr>
+
   </table>
 </div>

@@ -13,7 +13,7 @@ angular.module("ngMetaCrudApp")
 
       var file = null;
       var formData = new FormData();
-      var attachments = salesNote.attachments;
+      var attachments = salesNote.attachments || [];
 
       $scope.isUploadBttnDisabled = function () {
         return !formData.has("file") || $scope.isEditing();

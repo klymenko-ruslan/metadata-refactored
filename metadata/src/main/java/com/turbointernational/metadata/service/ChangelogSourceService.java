@@ -1,12 +1,11 @@
 package com.turbointernational.metadata.service;
 
-import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
+import static com.turbointernational.metadata.util.DownloadUtils.download;
 import static org.apache.commons.io.FileUtils.moveFile;
 import static org.apache.commons.io.FileUtils.moveFileToDirectory;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URLConnection;
 import java.sql.PreparedStatement;
 import java.sql.Timestamp;
 import java.util.Date;
@@ -15,15 +14,11 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -47,8 +42,6 @@ import com.turbointernational.metadata.web.controller.ChangelogSourceController.
  */
 @Service
 public class ChangelogSourceService {
-
-    private final static Logger log = LoggerFactory.getLogger(ChangelogSourceService.class);
 
     @Autowired
     private SourceDao sourceDao;
@@ -233,24 +226,7 @@ public class ChangelogSourceService {
         SourceAttachment attachment = em.find(SourceAttachment.class, attachmentId);
         Long srcId = attachment.getSource().getId();
         File attachmentFile = getAttachmentFile(srcId, attachmentId);
-        if (!attachmentFile.exists()) {
-            log.warn("Changelog source attachment [{}] not found.", attachmentId);
-            response.setStatus(SC_NOT_FOUND);
-            return;
-        }
-        ServletOutputStream out = response.getOutputStream();
-        String downloadName = attachment.getName();
-        if (StringUtils.isBlank(downloadName)) {
-            downloadName = attachmentId.toString();
-        }
-        String mimeType = URLConnection.guessContentTypeFromName(downloadName);
-        if (mimeType == null) {
-            mimeType = "application/octet-stream";
-        }
-        response.setContentType(mimeType);
-        response.setHeader("Content-Disposition", String.format("attachment; filename=\"%s\"", downloadName));
-        response.setContentLength((int) attachmentFile.length());
-        FileUtils.copyFile(attachmentFile, out);
+        download(attachmentFile, attachment.getName(), response);
     }
 
     private void saveAttachments(Source source, AttachmentsResponse attachments) throws IOException {
