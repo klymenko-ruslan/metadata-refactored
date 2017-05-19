@@ -85,9 +85,12 @@ angular.module('ngMetaCrudApp').directive('carfueltypeSearch', ['$log', 'restSer
             $scope.search.sorting = params.sorting();
             var offset = params.count() * (params.page() - 1);
             var limit = params.count();
-            for (var sortProperty in $scope.search.sorting) break;
+            for (var sortProperty in $scope.search.sorting) {
+                break;
+            }
+            var sortOrder;
             if (sortProperty) {
-              var sortOrder = $scope.search.sorting[sortProperty];
+              sortOrder = $scope.search.sorting[sortProperty];
             }
             return restService.filterCarFuelTypes($scope.search.carfueltype, sortProperty, sortOrder, offset, limit).then(
               function (filtered) {
@@ -96,7 +99,7 @@ angular.module('ngMetaCrudApp').directive('carfueltypeSearch', ['$log', 'restSer
                 params.total($scope.searchResults.hits.total);
                 return $scope.searchResults.hits.hits;
               },
-              function (errorResponse) {
+              function (/*errorResponse*/) {
                 $log.log('Couldn\'t search for "carfueltype".');
               }
             );
@@ -131,7 +134,7 @@ angular.module('ngMetaCrudApp').directive('carfueltypeSearch', ['$log', 'restSer
     }]
   };
 }]
-).directive('carfueltypeSearchActions', ['$log', function($log) {
+).directive('carfueltypeSearchActions', function() {
   return {
     'restrict': 'A',
     'require': '^carfueltypeSearch',
@@ -141,4 +144,4 @@ angular.module('ngMetaCrudApp').directive('carfueltypeSearch', ['$log', 'restSer
       });
     }
   };
-}]);
+});

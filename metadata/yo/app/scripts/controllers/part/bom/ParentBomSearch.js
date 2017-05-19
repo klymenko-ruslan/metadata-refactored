@@ -25,13 +25,13 @@ angular.module('ngMetaCrudApp')
         _.each(parents, function(bi) {
           parentPartsIds[bi.parent.id] = true;
         });
-      };
+      }
 
       updateParentPartsIds();
 
       $scope.showPart = function(partId) {
         $location.path('/part/' + partId);
-      }
+      };
 
       $scope.bomTableParams = new NgTableParams({
         page: 1,
@@ -57,8 +57,8 @@ angular.module('ngMetaCrudApp')
       };
 
       $scope.isBttnPickDisabled = function(p) {
-        return p === undefined || $scope.part.manufacturer.id != p.manufacturer.id ||
-          $scope.part.id == p.id || pickedPartIds[p.id] || parentPartsIds[p.id] ||
+        return p === undefined || $scope.part.manufacturer.id !== p.manufacturer.id ||
+          $scope.part.id === p.id || pickedPartIds[p.id] || parentPartsIds[p.id] ||
           restService.status.bomRebuilding;
       };
 
@@ -112,7 +112,7 @@ angular.module('ngMetaCrudApp')
             restService.error('Can\'t add the part to parent BOM\'s.', error);
           }
         );
-      };
+      }
 
       $scope.save = function() {
         LinkSource.link(cbSave, $scope.requiredSource, '/part/' + $scope.part.id + '/parentbom/search');
@@ -163,7 +163,7 @@ angular.module('ngMetaCrudApp')
         var idx = _.findIndex(parents, function(b) {
           return b.id === bomId;
         });
-        var bomItem = parents[idx];
+        // var bomItem = parents[idx];
         dialogs.confirm(
           'Remove BOM Item?',
           'Remove this child part from the bill of materials of the parent part?').result.then(
@@ -216,7 +216,7 @@ angular.module('ngMetaCrudApp')
       $scope.showPart = function(partId) {
         $scope.onClose();
         $location.path('/part/' + partId);
-      }
+      };
 
   }]).controller('FailedBOMsDlgCtrl', ['$scope', '$log', '$location', '$uibModalInstance', 'NgTableParams',
       'utils', 'message', 'failures',

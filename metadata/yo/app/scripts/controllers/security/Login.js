@@ -6,14 +6,14 @@ angular.module('ngMetaCrudApp')
 
     $scope.login = function() {
       return restService.login($scope.username, $scope.password).then(
-        function(loginResponse) {
+        function(/*loginResponse*/) {
           User.init().then(
             function() {
               $location.path('/part/list');
             }
           );
         },
-        function(response) {
+        function(/*response*/) {
           toastr.error('Login failed.');
         }
       );
@@ -36,7 +36,7 @@ angular.module('ngMetaCrudApp')
     $scope.resetToken = function() {
       restService.resetToken($routeParams.token, $scope.password).then(
         function() {
-          $location.path('/login')
+          $location.path('/login');
         },
         function() {
           toastr.success('Could not reset password.');

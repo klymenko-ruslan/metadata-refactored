@@ -69,7 +69,7 @@ angular.module('ngMetaCrudApp')
 
           $scope.origCmey = null;
 
-          $scope.carengines = Array();
+          $scope.carengines = [];
 
           $scope._carengine2item = function(ce) {
             var name = ce.engineSize;
@@ -198,13 +198,17 @@ angular.module('ngMetaCrudApp')
             $scope.onClearMM();
             $scope.onClearEngine();
             $scope.onClearYear();
-          };
+          }
 
           $scope.onChangeYear = function() {
             var year = $scope.cmey.year;
-            if (!year) return;
+            if (!year) {
+                return;
+            }
             var year_name = year.name;
-            if (!year_name) return;
+            if (!year_name) {
+                return;
+            }
             restService.findCarYearByName(year_name).then(
               function(caryear) {
                 $scope.carYearExists = angular.isObject(caryear);
@@ -262,7 +266,7 @@ angular.module('ngMetaCrudApp')
               return;
             }
             var pickedModel = _.find($scope.carmodels, function(cmd) {
-              return cmd.id == modelId;
+              return cmd.id === modelId;
             });
             if (pickedModel !== undefined) {
               angular.copy(pickedModel, carModel);
@@ -270,7 +274,7 @@ angular.module('ngMetaCrudApp')
               var makeId = makeIdGetter($scope);
               if (makeId) {
                 var pickedMake = _.find($scope.carmakes, function(cmk) {
-                  return cmk.id == makeId;
+                  return cmk.id === makeId;
                 });
                 angular.copy(pickedMake, carMake);
                 carModel.make = carMake;
@@ -320,7 +324,7 @@ angular.module('ngMetaCrudApp')
               return;
             }
             var pickedEngine = _.find($scope.carEngines, function(ce) {
-              return ce.id == engineId;
+              return ce.id === engineId;
             });
             if (pickedEngine !== undefined) {
               angular.copy(pickedEngine, carEngine);
@@ -438,7 +442,7 @@ angular.module('ngMetaCrudApp')
                       $scope.cmey.model.make = newCarMake;
                       $scope.cmeyForm.$setDirty();
                     }
-                  }
+                  };
                 }
               }
             });
@@ -465,7 +469,7 @@ angular.module('ngMetaCrudApp')
                     $scope.carmodels.splice(pos, 0, newCarModel);
                     $scope.cmey.model = newCarModel;
                     $scope.cmeyForm.$setDirty();
-                  }
+                  };
                 }
               }
             });
@@ -491,7 +495,7 @@ angular.module('ngMetaCrudApp')
                     $scope.carengines.splice(pos, 0, item);
                     $scope.cmey.engine = item;
                     $scope.cmeyForm.$setDirty();
-                  }
+                  };
                 }
               }
             });
@@ -502,8 +506,10 @@ angular.module('ngMetaCrudApp')
 
     };
   })
-  .controller('createCarMakeDlgCtrl',['$scope', '$log', 'toastr', '$uibModalInstance', 'addCarMakeCallback',
-    function($scope, $log, toastr, $uibModalInstance, addCarMakeCallback) {
+  .controller('createCarMakeDlgCtrl',['$scope', '$log', 'toastr', '$uibModalInstance', 'addCarMakeCallback', 'restService',
+    function($scope, $log, toastr, $uibModalInstance, addCarMakeCallback,
+        restService)
+    {
 
     $scope.$on('form:created', function(event, data) {
       if (data.name === 'carmakeForm') {
@@ -520,7 +526,7 @@ angular.module('ngMetaCrudApp')
             addCarMakeCallback(carMake);
             $scope.close ();
           },
-          function (errorResponse) {
+          function (response) {
             $scope.close ();
             restService.error('Could not create carmake.', response);
           }
@@ -534,8 +540,8 @@ angular.module('ngMetaCrudApp')
 
   }])
   .controller('createCarModelDlgCtrl',['$scope', '$log', 'toastr', '$uibModalInstance', 'makeId', 'carMakes',
-      'addCarModelCallback',
-    function($scope, $log, toastr, $uibModalInstance, makeId, carMakes, addCarModelCallback) {
+      'addCarModelCallback', 'restService',
+    function($scope, $log, toastr, $uibModalInstance, makeId, carMakes, addCarModelCallback, restService) {
 
     $scope.makeId = makeId;
     $scope.carMakes = carMakes;
@@ -555,7 +561,7 @@ angular.module('ngMetaCrudApp')
             addCarModelCallback(carModel);
             $scope.close ();
           },
-          function (errorResponse) {
+          function (response) {
             restService.error('Could not create car model.', response);
           }
         );
@@ -568,8 +574,8 @@ angular.module('ngMetaCrudApp')
 
   }])
   .controller('createCarEngineDlgCtrl',['$scope', '$log', 'toastr', '$uibModalInstance', 'carFuelTypes',
-      'addCarEngineCallback',
-    function($scope, $log, toastr, $uibModalInstance, carFuelTypes, addCarEngineCallback) {
+      'addCarEngineCallback', 'restService',
+    function($scope, $log, toastr, $uibModalInstance, carFuelTypes, addCarEngineCallback, restService) {
 
     $scope.carFuelTypes = carFuelTypes;
 
@@ -588,7 +594,7 @@ angular.module('ngMetaCrudApp')
             addCarEngineCallback(carEngine);
             $scope.close ();
           },
-          function (errorResponse) {
+          function (response) {
             restService.error('Could not create car engine.', response);
           }
         );

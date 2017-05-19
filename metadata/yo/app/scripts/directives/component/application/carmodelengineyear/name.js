@@ -10,12 +10,12 @@ angular.module('ngMetaCrudApp')
         },
         replace: false,
         restrict: 'A',
-        template: '{{cmeyNamePrefix}}'
-                + ' [{{cmeyName.id}}]'
-                + ' {{cmeyName.model.name}}, '
-                + ' {{cmeyName.engine.engineSize}}'
-                + ' {{cmeyName.engine.fuelType.name}}'
-                + ' {{cmeyName.year.name}}'
-                + ' {{cmeyNameSuffix}}'
-      }
+        template: '{{cmeyNamePrefix}}' +
+          ' [{{cmeyName.id}}]' +
+          ' {{cmeyName.model.name}}, ' +
+          ' {{cmeyName.engine.engineSize}}' +
+          ' {{cmeyName.engine.fuelType.name}}' +
+          ' {{cmeyName.year.name}}' +
+          ' {{cmeyNameSuffix}}'
+      };
     });

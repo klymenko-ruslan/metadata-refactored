@@ -6,8 +6,8 @@ angular.module('ngMetaCrudApp')
     restrict: 'E',
     replace: false,
     templateUrl: '/views/application/carmake/form.html',
-    controller: ['restService', '$q', '$scope', '$location', '$log', '$routeParams',
-      function(restService, $q, $scope, $location, $log, $routeParams) {
+    controller: ['restService', '$q', '$scope',
+      function(restService, $q, $scope) {
         $scope.carmake = {};
         $scope.$on('carmakeform:save', function(event, callback) {
           var promise = restService.createCarmake($scope.carmake);
@@ -15,7 +15,7 @@ angular.module('ngMetaCrudApp')
         });
       }
     ]
-  }
+  };
 })
 .directive('uniqueCarmakeName', ['$log', '$q', 'restService', function($log, $q, restService) {
   // Validator for uniqueness of the carmake name.
@@ -35,7 +35,7 @@ angular.module('ngMetaCrudApp')
               def.reject();
             }
           },
-          function (errorResponse) {
+          function (/*errorResponse*/) {
             $log.log('Couldn\'t validate name of the carmake: ' + viewValue);
             def.reject();
           }

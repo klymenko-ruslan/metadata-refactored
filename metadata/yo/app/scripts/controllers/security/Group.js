@@ -1,14 +1,14 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-  .controller('GroupCtrl', function (dialogs, $location, $log, $scope, 
+  .controller('GroupCtrl', function (dialogs, $location, $log, $scope,
     $routeParams, toastr, restService) {
 
-      $scope.newName,
-      $scope.roleSelections,
-      $scope.userSelections,
-      $scope.group,
-      $scope.users,
+      $scope.newName = null;
+      $scope.roleSelections = null;
+      $scope.userSelections = null;
+      $scope.group = null;
+      $scope.users = null;
       $scope.roles = null;
 
       function setSelections() {
@@ -25,7 +25,7 @@ angular.module('ngMetaCrudApp')
       }
 
       // Fetch the roles
-      var rolePromise = restService.getRoles().then(
+      restService.getRoles().then(
           function(roles) {
             $scope.roles = _.indexBy(roles, 'id');
           },
@@ -34,7 +34,7 @@ angular.module('ngMetaCrudApp')
           });
 
       // Fetch the users
-      var userPromise = restService.getUsers().then(
+      restService.getUsers().then(
           function(users) {
             $scope.users = _.indexBy(users, 'id');
           },
@@ -43,17 +43,17 @@ angular.module('ngMetaCrudApp')
           });
 
       // Setup the group object for create/edit
-      if ($routeParams.id == 'create') {
+      if ($routeParams.id === 'create') {
         $scope.group = {
           name: 'New Group',
           roles: [],
           users: []
-        }
+        };
 
         // Setup the selection  models
         setSelections();
       } else {
-        var groupPromise = restService.getGroup($routeParams.id).then(
+        restService.getGroup($routeParams.id).then(
             function(group) {
               $scope.group = group;
               $scope.newName = group.name;
@@ -78,7 +78,7 @@ angular.module('ngMetaCrudApp')
           }
         }).compact().value();
 
-        if ($routeParams.id == 'create') {
+        if ($routeParams.id === 'create') {
           restService.createGroup($scope.group).then(
               function() {
                 toastr.success('Group created.');
@@ -109,7 +109,7 @@ angular.module('ngMetaCrudApp')
                   function() {
                     // Success
                     toastr.success('Deleted group.');
-                    $location.path('/security/groups')
+                    $location.path('/security/groups');
                   },
                   function(response) {
                     // Error
@@ -119,7 +119,7 @@ angular.module('ngMetaCrudApp')
             },
             function() {
               // No
-console.log('Dialog closed by button No.');              
+console.log('Dialog closed by button No.');
             });
       };
 
@@ -130,7 +130,7 @@ console.log('Dialog closed by button No.');
       };
 
       $scope.isNewGroup = function() {
-        return $routeParams.id == 'create';
+        return $routeParams.id === 'create';
       };
 
     });

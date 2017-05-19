@@ -11,8 +11,8 @@ angular.module('ngMetaCrudApp')
       restrict: 'E',
       replace: false,
       templateUrl: '/views/application/carmodel/form.html',
-      controller: ['restService', '$scope', '$location', '$log',
-        function(restService, $scope, $location, $log) {
+      controller: ['restService', '$scope',
+        function(restService, $scope) {
 
           $scope.carmakeFilter = '';
 
@@ -29,7 +29,7 @@ angular.module('ngMetaCrudApp')
           $scope.carmakes = $scope.carMakes;
 
           if ($scope.carMakeId !== null && $scope.carMakeId !== undefined && $scope.carMakes) {
-            var pos = _.findIndex($scope.carMakes, function(a){return a.id == $scope.carMakeId;});
+            var pos = _.findIndex($scope.carMakes, function(a){return a.id === $scope.carMakeId;});
             if (pos > 0) {
               $scope.carmodel.make = $scope.carMakes[pos];
             }
@@ -41,7 +41,7 @@ angular.module('ngMetaCrudApp')
             var n = carmakes.length;
             var makeName = null;
             for (var i = 0; i < n; i++) {
-              if (carmakes[i].id == carmakeId) {
+              if (carmakes[i].id === carmakeId) {
                 makeName = carmakes[i].name;
               }
             }
@@ -50,7 +50,7 @@ angular.module('ngMetaCrudApp')
 
           $scope._save = function() {
             $scope._merge();
-            if ($scope.carmodelId == null) {
+            if ($scope.carmodelId === null) {
               // create
               return restService.createCarmodel($scope.carmodel);
             } else {
@@ -66,14 +66,14 @@ angular.module('ngMetaCrudApp')
 
         }
       ]
-    }
+    };
   })
-  .directive('uniqueCarmodelRec', ['$log', '$q', 'restService', function($log, $q, restService) {
+  .directive('uniqueCarmodelRec', ['$log', '$q', function($log, $q) {
     // Validator for uniqueness of the carmodel name.
     return {
       require: 'ngModel',
       link: function($scope, elm, attr, ctrl) {
-        ctrl.$asyncValidators.nonUniqueName = function(modelValue, viewValue) {
+        ctrl.$asyncValidators.nonUniqueName = function(modelValue/*, viewValue*/) {
           var def = $q.defer();
           if (ctrl.$isEmpty(modelValue)) {
             return $q.when();
@@ -95,5 +95,5 @@ angular.module('ngMetaCrudApp')
           return def.promise;
         };
       }
-    }
+    };
   }]);

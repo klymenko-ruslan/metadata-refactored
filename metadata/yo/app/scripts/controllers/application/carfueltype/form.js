@@ -1,18 +1,22 @@
 'use strict';
 
-angular.module('ngMetaCrudApp').controller('CarFuelTypeFormCtrl', ['restService', '$q', '$scope', '$location', '$log',
-  '$routeParams', 'toastr', function(restService, $q, $scope, $location, $log, $routeParams, toastr) {
+angular.module('ngMetaCrudApp')
+.controller('CarFuelTypeFormCtrl', ['restService', '$q', '$scope', '$location',
+  '$log', 'toastr',
+  function(restService, $q, $scope, $location, $log, toastr) {
 
     $scope.carfueltype = {};
 
     $scope.save = function() {
       restService.createCarfueltype($scope.carfueltype).then(
         function(carfueltypeId) {
-          $log.log('Carfueltype has been successfully created: ' + carfueltypeId);
-          toastr.success('Carfueltype "' + $scope.carfueltype.name + '" has been successfully created.');
+          $log.log('Carfueltype has been successfully created: ' +
+            carfueltypeId);
+          toastr.success('Carfueltype "' + $scope.carfueltype.name +
+            '" has been successfully created.');
           $location.path('/application/carfueltype/list');
         },
-        function (errorResponse) {
+        function (response) {
           restService.error('Could not create carfueltype.', response);
         }
       );
@@ -37,8 +41,9 @@ angular.module('ngMetaCrudApp').controller('CarFuelTypeFormCtrl', ['restService'
               def.reject();
             }
           },
-          function (errorResponse) {
-            $log.log('Couldn\'t validate name of the carfueltype: ' + viewValue);
+          function (/*errorResponse*/) {
+            $log.log('Couldn\'t validate name of the carfueltype: ' +
+                viewValue);
             def.reject();
           }
         );

@@ -5,7 +5,7 @@ angular.module('ngMetaCrudApp')
 .controller('PartListCtrl', ['$scope', '$log', '$uibModal', 'partTypes', 'critDimsByPartTypes', 'critDimEnumVals',
   function ($scope, $log, $uibModal, partTypes, critDimsByPartTypes, critDimEnumVals) {
     $scope.createPart = function () {
-      var modalInstance = $uibModal.open({
+      $uibModal.open({
         'templateUrl': '/views/part/PartCreateModal.html',
         'controller': 'PartCreateModalCtrl'
       });

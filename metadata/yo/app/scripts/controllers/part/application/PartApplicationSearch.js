@@ -37,7 +37,7 @@ angular.module('ngMetaCrudApp')
               'Server said: <pre>' + JSON.stringify(response.data) + '</pre>');
           }
         );
-      };
+      }
 
       $scope.save = function() {
         if ($scope.pickedApplications.length) {
@@ -46,10 +46,10 @@ angular.module('ngMetaCrudApp')
       };
 
       $scope.pickApplication = function(app) {
-        if ($scope.pickedApplications.indexOf(app) == -1) {
+        if ($scope.pickedApplications.indexOf(app) === -1) {
           for (var i = 0; i < $scope.applications.length; i++) {
             var val = $scope.applications[i];
-            if (val.carModelEngineYear.id == app.id) {
+            if (val.carModelEngineYear.id === app.id) {
               toastr.info('The item already exists.');
               return;
             }

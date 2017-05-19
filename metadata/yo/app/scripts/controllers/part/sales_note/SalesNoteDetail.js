@@ -31,7 +31,7 @@ angular.module('ngMetaCrudApp')
         });
         $scope.attachmentsTableParams.reload();
         formData = new FormData();
-      };
+      }
 
       $scope.uploadAttachment = function() {
         restService.uploadAttachmentForSalesNote($scope.salesNoteId, file.name, file).then(

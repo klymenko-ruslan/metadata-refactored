@@ -38,7 +38,7 @@ angular.module('ngMetaCrudApp')
             function failure(response) {
                 restService.error('Could not add kit mapping', response);
             });
-        }
+        };
 
         $scope.pick = function (partId) {
             $scope.pickedPart = restService.findPart(partId).then(
@@ -49,5 +49,5 @@ angular.module('ngMetaCrudApp')
                 function (errorResponse) {
                   restService.error('Could not pick part', errorResponse);
                 });
-        }
+        };
     });

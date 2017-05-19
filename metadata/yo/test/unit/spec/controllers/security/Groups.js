@@ -12,7 +12,7 @@ describe('Controller: GroupsCtrl', function () {
     $scope = $rootScope.$new();
     restService = { getGroups: null };
     spyOn(restService, 'getGroups').and.returnValue(_$q_(
-      function (resolve, reject) {
+      function (resolve) {
         resolve([]);
       }
     ));

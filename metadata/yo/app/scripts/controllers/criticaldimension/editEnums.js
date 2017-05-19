@@ -124,7 +124,7 @@ angular.module('ngMetaCrudApp')
                   critDimEnums.splice(foundIdx, 1);
                   $scope.critDimEnumsTableParams.reload();
                 }
-                if (id == $scope.selectedRow.id) {
+                if (id === $scope.selectedRow.id) {
                   var selected = $scope.selectFirstEnum();
                   if (!selected) {
                     $scope.critDimEnumValsTableParams = new NgTableParams({
@@ -301,16 +301,16 @@ angular.module('ngMetaCrudApp')
                   defer.resolve();
                 } else {
                   var id = $scope.$eval('cdeModifying.id');
-                  if (foundCde.id == id) {
+                  if (foundCde.id === id) {
                     defer.resolve();
                   } else {
                     defer.reject();
                   }
                 }
               },
-              function failure(response) {
+              function failure(/*response*/) {
                 $log.log('Can\'t validate uniqueness of an enumeration name: ' + angular.toJson(viewVal));
-                def.reject();
+                defer.reject();
               }
             );
             return defer.promise;
@@ -334,16 +334,16 @@ angular.module('ngMetaCrudApp')
                   defer.resolve();
                 } else {
                   var id = $scope.$eval('cdevModifying.id');
-                  if (foundCdeItm.id == id) {
+                  if (foundCdeItm.id === id) {
                     defer.resolve();
                   } else {
                     defer.reject();
                   }
                 }
               },
-              function failure(response) {
+              function failure(/*response*/) {
                 $log.log('Can\'t validate uniqueness of an enumeration item name: ' + angular.toJson(viewVal));
-                def.reject();
+                defer.reject();
               }
             );
             return defer.promise;

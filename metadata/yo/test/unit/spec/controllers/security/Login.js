@@ -46,7 +46,7 @@ describe('Controller: LoginCtrl', function () {
 
   describe('resetPassword()', function() {
     it('should issue a POST request', function() {
-      var $scope, $controller, $uibModalInstance, toastr, username,
+      var $scope, $controller, $uibModalInstance, toastr,
         restService, PasswordResetConfirmDlgCtrl;
       inject(function(_$controller_, _restService_) {
         $controller = _$controller_;
@@ -55,7 +55,7 @@ describe('Controller: LoginCtrl', function () {
       $scope = $rootScope.$new();
       $uibModalInstance = jasmine.createSpyObj('$uibModalInstance', ['close']);
       toastr = jasmine.createSpyObj('toastr', ['success', 'error']);
-      PasswordResetConfirmDlgCtrl = 
+      PasswordResetConfirmDlgCtrl =
         $controller('PasswordResetConfirmDlgCtrl', {
           $scope: $scope,
           $uibModalInstance: $uibModalInstance,
@@ -73,8 +73,9 @@ describe('Controller: LoginCtrl', function () {
   describe('resetToken()', function() {
     it('should issue a POST request', function() {
       scope.password = 'foopw';
-      $routeParams.token = 'fooToken'
-      $httpBackend.expectPOST('/metadata/security/password/reset/token/' + $routeParams.token, 'password=foopw').respond();
+      $routeParams.token = 'fooToken';
+      $httpBackend.expectPOST('/metadata/security/password/reset/token/' +
+          $routeParams.token, 'password=foopw').respond();
       scope.resetToken();
       $httpBackend.flush();
     });

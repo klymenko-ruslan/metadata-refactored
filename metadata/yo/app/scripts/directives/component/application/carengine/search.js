@@ -47,7 +47,9 @@ angular.module('ngMetaCrudApp').directive('carengineSearch', ['$log', 'restServi
               var offset = params.count() * (params.page() - 1);
               var limit = params.count();
               var sortProperty, sortOrder;
-              for (sortProperty in params.sorting()) break;
+              for (sortProperty in params.sorting()) {
+                  break;
+              }
               if (sortProperty) {
                 sortOrder = params.sorting()[sortProperty];
               }
@@ -59,7 +61,7 @@ angular.module('ngMetaCrudApp').directive('carengineSearch', ['$log', 'restServi
                   params.total($scope.carengineSearchResults.hits.total);
                   return $scope.carengineSearchResults.hits.hits;
                 },
-                function (errorResponse) {
+                function (/*errorResponse*/) {
                   $log.log('Couldn\'t search for "carengine".');
                 }
               );
@@ -86,7 +88,8 @@ angular.module('ngMetaCrudApp').directive('carengineSearch', ['$log', 'restServi
       }]
     };
   }]
-).directive('carengineSearchActions', ['$log', function($log) {
+)
+.directive('carengineSearchActions', function() {
   return {
     restrict: 'A',
     require: '^carengineSearch',
@@ -96,4 +99,4 @@ angular.module('ngMetaCrudApp').directive('carengineSearch', ['$log', 'restServi
       });
     }
   };
-}]);
+});

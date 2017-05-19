@@ -35,7 +35,9 @@ angular.module('ngMetaCrudApp').directive('cmeySearch', ['$log', 'restService', 
               var offset = params.count() * (params.page() - 1);
               var limit = params.count();
               var sortProperty, sortOrder;
-              for (sortProperty in params.sorting()) break;
+              for (sortProperty in params.sorting()) {
+                  break;
+              }
               if (sortProperty) {
                 sortOrder = params.sorting()[sortProperty];
               }
@@ -50,7 +52,7 @@ angular.module('ngMetaCrudApp').directive('cmeySearch', ['$log', 'restService', 
                   params.total($scope.cmeySearchResults.hits.total);
                   return $scope.cmeySearchResults.hits.hits;
                 },
-                function (errorResponse) {
+                function (/*errorResponse*/) {
                   $log.log('Couldn\'t search for "carmodelengineyear".');
                 }
               );
@@ -99,7 +101,7 @@ angular.module('ngMetaCrudApp').directive('cmeySearch', ['$log', 'restService', 
       }]
     };
   }]
-).directive('cmeySearchActions', ['$log', function($log) {
+).directive('cmeySearchActions', function() {
   return {
     restrict: 'A',
     require: '^cmeySearch',
@@ -109,4 +111,4 @@ angular.module('ngMetaCrudApp').directive('cmeySearch', ['$log', 'restService', 
       });
     }
   };
-}]);
+});

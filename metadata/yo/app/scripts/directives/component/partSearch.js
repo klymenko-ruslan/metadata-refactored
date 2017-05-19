@@ -10,7 +10,7 @@ angular.module('ngMetaCrudApp')
       link: function(scope, element, attrs) {
         scope.defManufacturerName = scope.$eval(attrs.searchManufacturerName);
         var partTypeId = scope.$eval(attrs.searchPartTypeId);
-        var pt = _.find(scope.partTypes, function(pt) { return pt.id == partTypeId; });
+        var pt = _.find(scope.partTypes, function(pt) { return pt.id === partTypeId; });
         if (angular.isObject(pt)) {
           scope.fltrPart.partType = pt;
         }
@@ -86,7 +86,7 @@ angular.module('ngMetaCrudApp')
           {
             title: 'Action',
             cssClass: ['actions', 'text-center'],
-            getter: function(part) {
+            getter: function(/*part*/) {
               return $scope.actions;
             }
           }
@@ -97,7 +97,8 @@ angular.module('ngMetaCrudApp')
         };
 
         $scope.isCritDimsForCurrentPartTypeAvailable = function() {
-          return angular.isObject($scope.fltrPart.partType) && $scope.critDims != null && $scope.critDims.length;
+          return angular.isObject($scope.fltrPart.partType) &&
+                $scope.critDims !== null && $scope.critDims.length;
         };
 
         $scope.initColumns = function() {
@@ -107,7 +108,7 @@ angular.module('ngMetaCrudApp')
               _.each($scope.critDims, function (d) {
                 var gttr = null;
                 var srtbl = null;
-                if (d.dataType == 'ENUMERATION') {
+                if (d.dataType === 'ENUMERATION') {
                   gttr = $parse('_source.' + d.idxName + 'Label');
                   srtbl = d.idxName + 'Label.lower_case_sort';
                 } else {
@@ -130,7 +131,7 @@ angular.module('ngMetaCrudApp')
 
         $scope.initColumns();
 
-        $scope.$watch('[showCriticalDimensions]', function(newVal, oldVal) {
+        $scope.$watch('[showCriticalDimensions]', function(/*newVal, oldVal*/) {
           $scope.initColumns();
         });
 
@@ -243,7 +244,9 @@ angular.module('ngMetaCrudApp')
             var offset = params.count() * (params.page() - 1);
             var limit = params.count();
             var sortProperty, sortOrder;
-            for (sortProperty in params.sorting()) break;
+            for (sortProperty in params.sorting()) {
+                break;
+            }
             if (sortProperty) {
               sortOrder = params.sorting()[sortProperty];
             }
@@ -273,7 +276,7 @@ angular.module('ngMetaCrudApp')
                       val: false,
                       count: b.doc_count
                     });
-                  } else if (b.key == 1) {
+                  } else if (b.key === 1) {
                     $scope.stateItems.push({
                       name: 'Inactive',
                       val: true,
@@ -283,8 +286,8 @@ angular.module('ngMetaCrudApp')
                 });
 
                 if ($scope.defManufacturerName) {
-                  var manufacturerBucket = _.find($scope.searchResults.aggregations['Manufacturer'].buckets,
-                    function(r) { return r.key == $scope.defManufacturerName; }
+                  var manufacturerBucket = _.find($scope.searchResults.aggregations.Manufacturer.buckets,
+                    function(r) { return r.key === $scope.defManufacturerName; }
                   );
                   if (angular.isObject(manufacturerBucket)) {
                     $scope.fltrPart.manufacturer = manufacturerBucket.key;
@@ -384,7 +387,7 @@ angular.module('ngMetaCrudApp')
             var rec = $scope.searchResults.hits.hits[0]._source;
             var partId = rec.id;
             $location.path('/part/' + partId);
-          };
+          }
         };
 
       }]

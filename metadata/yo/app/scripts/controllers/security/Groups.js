@@ -8,7 +8,7 @@ restService.getGroups().then(
   function(groups) {
     $scope.groups = groups;
   },
-  function() {
+  function(response) {
     dialogs.error('Could not load group data', 'Server said: <pre>' + JSON.stringify(response.data) + '</pre>');
   });
 });

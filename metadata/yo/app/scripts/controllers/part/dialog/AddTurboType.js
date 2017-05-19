@@ -21,11 +21,11 @@ angular.module('ngMetaCrudApp')
       function(response) {
         restService.error('Could not add turbo type.', response);
       });
-  }
+  };
 
   $scope.cancel = function () {
     $uibModalInstance.dismiss('cancel');
-  }
+  };
 
   $scope.$watch('selection.manufacturer.id', function(manufacturerId) {
     if (manufacturerId) {

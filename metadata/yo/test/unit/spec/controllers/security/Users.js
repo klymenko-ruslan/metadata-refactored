@@ -8,11 +8,13 @@ describe('Controller: UsersCtrl', function () {
   var $scope, restService;
 
   // Initialize the controller and a mock scope
-  beforeEach(inject(function (_$rootScope_, _$controller_, _NgTableParams_, _$q_) {
+  beforeEach(inject(function (_$rootScope_, _$controller_, _NgTableParams_,
+      _$q_)
+  {
     $scope = _$rootScope_.$new();
     restService = { filterUsers: null };
     spyOn(restService, 'filterUsers').and.returnValue(_$q_(
-        function(resolve, reject) { resolve([]);}
+        function(resolve) { resolve([]);}
     ));
     _$controller_('UsersCtrl', {
       $log: jasmine.createSpyObj('$log', ['log']),
@@ -46,7 +48,9 @@ describe('Controller: UsersCtrl', function () {
     $scope.$apply(); // resolve promise(s)
   }));
 
-  it('should attach a list of authentication providers to the scope', function () {
+  it('should attach a list of authentication providers to the scope',
+      function ()
+  {
     expect($scope.authProviders).toBeTruthy();
     expect($scope.authProviders.length).toBe(4);
     expect($scope.authProviders).toContain({id : -1, title: ''});
@@ -70,12 +74,15 @@ describe('Controller: UsersCtrl', function () {
     expect(true).toBe($scope.usersTableParams.isSortBy('name', 'asc'));
   });
 
-  it('should call RESTful method with correct parameters to load users', function () {
+  it('should call RESTful method with correct parameters to load users',
+      function ()
+  {
     expect($scope.usersTableParams).toBeTruthy();
     $scope.usersTableParams.reload(); // fire event to load users
     expect(restService.filterUsers).toHaveBeenCalled();
     expect(restService.filterUsers.calls.count()).toBe(1);
-    expect(restService.filterUsers.calls.argsFor(0)).toEqual([null, null, null, -1, null, 'name', 'asc', 0, 25]);
+    expect(restService.filterUsers.calls.argsFor(0)).toEqual([null, null, null,
+        -1, null, 'name', 'asc', 0, 25]);
   });
 
   it('should initialize ng-table filter correctly', function () {

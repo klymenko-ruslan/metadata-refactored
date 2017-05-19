@@ -82,13 +82,15 @@ angular.module('ngMetaCrudApp')
     getData: function(params) {
       var sortOrder;
       var sorting = params.sorting();
-      for (var sortProperty in sorting) break;
+      for (var sortProperty in sorting) {
+          break;
+      }
       if (sortProperty) {
         sortOrder = sorting[sortProperty];
       }
       var offset = params.count() * (params.page() - 1);
       var limit = params.count();
-      var userId = null;
+      // var userId = null;
       return restService.filterChangelog(null, null, null, null, null, null, $scope.partId,
         sortProperty, sortOrder, offset, limit).then(
           function(result) {
@@ -103,7 +105,7 @@ angular.module('ngMetaCrudApp')
     }
   });
 
-  if ($scope.part.manufacturer.name == 'Turbo International') {
+  if ($scope.part.manufacturer.name === 'Turbo International') {
     $scope.alsoBoughtTableParams = new NgTableParams({
       page: 1,
       count: 25,
@@ -114,7 +116,9 @@ angular.module('ngMetaCrudApp')
       getData: function(params) {
         var sortOrder;
         var sorting = params.sorting();
-        for (var sortProperty in sorting) break;
+        for (var sortProperty in sorting) {
+            break;
+        }
         if (sortProperty) {
           sortOrder = sorting[sortProperty];
         }
@@ -139,7 +143,7 @@ angular.module('ngMetaCrudApp')
         );
       }
     });
-  };
+  }
 
   $scope.turbosTableParams = null;
 
@@ -153,12 +157,12 @@ angular.module('ngMetaCrudApp')
       }, {
         'getData': utils.localPagination(turbos, 'id')
       });
-  };
+  }
 
   _initTurbosTableParams(turbos);
 
   // TODO: Find a better way. Directive?
-  if (part.partType.magentoAttributeSet == 'Kit') {
+  if (part.partType.magentoAttributeSet === 'Kit') {
     $scope.kitComponents = Kits.listComponents($scope.partId).then(
       function(components) {
         $scope.kitComponents  = components;
@@ -195,7 +199,7 @@ angular.module('ngMetaCrudApp')
   };
 
   $scope.onChangeManufacturer = function() {
-    if ($scope.part.partType.magentoAttributeSet == 'Turbo') {
+    if ($scope.part.partType.magentoAttributeSet === 'Turbo') {
       var mnfrId = $scope.part.manufacturer.id;
       restService.listTurboTypesForManufacturerId(mnfrId).then(
         function success(turboTypes) {
@@ -252,7 +256,7 @@ angular.module('ngMetaCrudApp')
 
   $scope.onEditSave = function() {
 
-    var url = 'part';
+    //var url = 'part';
 
     if ($scope.part.partType.magentoAttributeSet === 'Turbo') {
       $scope.part.turboModel = $scope.turbo.tm;
@@ -415,7 +419,7 @@ angular.module('ngMetaCrudApp')
               $scope.turboModels.splice(idx, 1);
             }
           },
-          function(response) {
+          function(/*response*/) {
             // Error
             dialogs.error(
               'Could not delete turbo model.',
@@ -446,7 +450,7 @@ angular.module('ngMetaCrudApp')
             toastr.success('The gasket kit unlinked.');
           },
           function failure(result) {
-            restService.error('Can\'t unlink the gasket kit.', response);
+            restService.error('Can\'t unlink the gasket kit.', result);
           }
         );
       },
@@ -469,7 +473,7 @@ angular.module('ngMetaCrudApp')
             _initTurbosTableParams(turbos);
           },
           function failure(result) {
-            restService.error('Can\'t unlink the Gasket Kit and Turbo.', response);
+            restService.error('Can\'t unlink the Gasket Kit and Turbo.', result);
           }
         );
       },
@@ -490,7 +494,7 @@ angular.module('ngMetaCrudApp')
 
   function _closeForm() {
     $scope.formMode = 'view';
-  };
+  }
 
   $scope.removeComponent = function(componentToRemove) {
 
@@ -567,7 +571,7 @@ angular.module('ngMetaCrudApp')
         toastr.success('The image has been ' + verb + '.');
       },
       function failure(result) {
-        restService.error('(Un)Publish the image failed.', response);
+        restService.error('(Un)Publish the image failed.', result);
         image.publish = !image.publish; // return previous state
       }
     );
@@ -578,11 +582,11 @@ angular.module('ngMetaCrudApp')
       function success() {
         toastr.success('The image has been set as primary.');
         _.each($scope.part.productImages, function (img) {
-          img.main = (img.id == image.id);
+          img.main = (img.id === image.id);
         });
       },
       function failure(result) {
-        restService.error('Set image as primary failed.', response);
+        restService.error('Set image as primary failed.', result);
         image.main = !image.publish; // return previous state
       }
     );
@@ -692,7 +696,7 @@ angular.module('ngMetaCrudApp')
       function() {
         // Yes
         restService.deleteStandardOversizePart(standardPart.id, $scope.partId).then(
-          function() {
+          function success() {
             // Success
             toastr.success('The standard part has been deleted.');
             var idx = _.findIndex($scope.standardParts, function(op) {
@@ -701,9 +705,9 @@ angular.module('ngMetaCrudApp')
             $scope.standardParts.splice(idx, 1);
             $scope.standardPartsTableParams.reload();
           },
-          function() {
+          function failure(result) {
             // Error
-            restService.error('Could not delete the standard part.', error);
+            restService.error('Could not delete the standard part.', result);
           });
       },
       function() {
@@ -731,7 +735,7 @@ angular.module('ngMetaCrudApp')
   function($scope, $log, $route, $uibModalInstance, toastr, restService, origPart, manufacturers) {
 
     $scope.onChangeManufacturer = function() {
-      if ($scope.part.partType.magentoAttributeSet == 'Turbo') {
+      if ($scope.part.partType.magentoAttributeSet === 'Turbo') {
         var mnfrId = $scope.$eval('part.manufacturer.id');
         if (mnfrId) {
           restService.listTurboTypesForManufacturerId(mnfrId).then(
@@ -778,7 +782,7 @@ angular.module('ngMetaCrudApp')
     };
 
     $scope.onCreate = function() {
-      if ($scope.part.partType.magentoAttributeSet == 'Turbo') {
+      if ($scope.part.partType.magentoAttributeSet === 'Turbo') {
         $scope.part.turboModel = $scope.turbo.tm;
         $scope.part.turboType = $scope.turbo.tt;
       }

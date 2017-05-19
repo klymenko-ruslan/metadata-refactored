@@ -37,7 +37,7 @@ angular.module('ngMetaCrudApp')
             restService.error('Couldn\'t save for sales note.', errorResponse);
           }
       );
-    };
+    }
 
     $scope.saveAndEdit = function() {
       LinkSource.link(cbSave, $scope.requiredSource, '/part/' + $scope.partId + '/sales_note/create');

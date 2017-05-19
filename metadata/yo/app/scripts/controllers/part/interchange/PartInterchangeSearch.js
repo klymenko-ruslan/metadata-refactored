@@ -10,7 +10,7 @@ angular.module('ngMetaCrudApp')
 
   .controller('mergeInterchangeablesCtrl', ['$scope', '$uibModalInstance', 'data', 'MERGE_OPTIONS', function($scope, $uibModalInstance, data, MERGE_OPTIONS) {
     $scope.mergeOptions = MERGE_OPTIONS;
-    $scope.mergeChoice = data['mergeChoice'];
+    $scope.mergeChoice = data.mergeChoice;
     $scope.cancel = function() {
       $uibModalInstance.dismiss('Canceled');
     };
@@ -76,7 +76,7 @@ angular.module('ngMetaCrudApp')
           restService.error('Adding to the interchange failed.', response);
         }
       );
-    };
+    }
 
     function cbAskMergeOpt(srcIds, ratings, description, attachIds) {
       // In this case there are several possibilities how interchangeables can be merged.
@@ -107,7 +107,7 @@ angular.module('ngMetaCrudApp')
           $log.log('Cancelled.');
         }
       );
-    };
+    }
 
     function cbMergeAloneToPicked(srcIds, ratings, description, attachIds) {
       // Add this part to the picked part's interchange
@@ -121,7 +121,7 @@ angular.module('ngMetaCrudApp')
           restService.error('Adding to the interchange failed.', response);
         }
       );
-    };
+    }
 
     function cbCreate(srcIds, ratings, description, attachIds) {
       // Create
@@ -134,7 +134,7 @@ angular.module('ngMetaCrudApp')
           dialogs.error('Could not add interchangeable part.', 'Server said: <pre>' + JSON.stringify(response.data) + '</pre>');
         }
       );
-    };
+    }
 
     $scope.save = function() {
       if ($scope.part.interchange) {
@@ -152,7 +152,7 @@ angular.module('ngMetaCrudApp')
 
     $scope.canSave = function() {
       // No Picked Part
-      if ($scope.pickedPart == null) {
+      if ($scope.pickedPart === null) {
         return false;
       }
       if ($scope.part.id === $scope.pickedPart.id) {

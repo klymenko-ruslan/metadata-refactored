@@ -19,7 +19,7 @@ angular.module('ngMetaCrudApp')
 
       $scope.showPart = function(partId) {
         $location.path('/part/' + partId);
-      }
+      };
 
       $scope.linkedTurbosTableParams = null;
 
@@ -30,7 +30,7 @@ angular.module('ngMetaCrudApp')
         }, {
           getData: utils.localPagination(turbos, 'id')
         });
-      };
+      }
 
       _updateLinkedTurbosTableParams(turbos);
 
@@ -50,8 +50,8 @@ angular.module('ngMetaCrudApp')
       };
 
       $scope.isBttnPickDisabled = function(p) {
-        return p === undefined || $scope.part.manufacturer.id != p.manufacturer.id ||
-          p.partType.id != 1 || $scope.part.id == p.id || pickedPartIds[p.id];
+        return p === undefined || $scope.part.manufacturer.id !== p.manufacturer.id ||
+          p.partType.id !== 1 || $scope.part.id === p.id || pickedPartIds[p.id];
       };
 
       $scope.isBttnUnpickAllDisabled = function() {
@@ -85,7 +85,7 @@ angular.module('ngMetaCrudApp')
             $scope.unpickAll();
           },
           function failure(result) {
-            restService.error('Can\'t add the Turbo(s) to the Gasket Kit.', error);
+            restService.error('Can\'t add the Turbo(s) to the Gasket Kit.', result);
           }
         );
 

@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-    .directive('partTable', function ($log) {
+    .directive('partTable', function () {
       return {
         scope: {
           parts: '=',
@@ -26,18 +26,18 @@ angular.module('ngMetaCrudApp')
           }
 
           return {
-            pre: function preLink(scope, iElement, iAttrs, controller) {
+            pre: function preLink(/*scope, iElement, iAttrs, controller*/) {
             },
             post: function postLink(scope, iElement, iAttrs, controller, transcludeFn) {
               controller.transcludeActionsFn = transcludeFn;
             }
-          }
+          };
         },
         controller: function($scope) {
           $scope.hasParts = function() {
-            return _.isArray($scope.parts) && $scope.parts.length > 0;  
+            return _.isArray($scope.parts) && $scope.parts.length > 0;
           };
-          
+
           $scope.getPart = function(item) {
 
             // If we don't have a key, just return the parts list
@@ -47,11 +47,11 @@ angular.module('ngMetaCrudApp')
 
             // We do have a key, extract the part
             return item[$scope.key];
-          }
+          };
         }
       };
     })
-    .directive('partTableActions', function($log) {
+    .directive('partTableActions', function() {
       return {
         restrict: 'A',
         require: '^partTable',
@@ -70,6 +70,6 @@ angular.module('ngMetaCrudApp')
           });
         }
 
-      }
+      };
 
     });

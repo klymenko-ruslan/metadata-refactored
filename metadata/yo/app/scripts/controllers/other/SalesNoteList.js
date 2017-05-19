@@ -54,7 +54,9 @@ angular.module('ngMetaCrudApp')
         }
         var sortOrder;
         var sorting = params.sorting();
-        for (var sortProperty in sorting) break;
+        for (var sortProperty in sorting) {
+            break;
+        }
         if (sortProperty) {
           sortOrder = sorting[sortProperty];
         }

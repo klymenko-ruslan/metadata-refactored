@@ -16,7 +16,7 @@ angular.module('ngMetaCrudApp').controller('PartFormCtrl',
     $scope.turbo ={
       tm: null,
       tt: null
-    }
+    };
 
     $scope.mpns = []; // manufacturer parts numbers
 
@@ -30,7 +30,7 @@ angular.module('ngMetaCrudApp').controller('PartFormCtrl',
         id: 'pn' + idx,
         val: val
       };
-    };
+    }
 
     $scope.isEditMode = function() {
       return part !== null;
@@ -41,7 +41,7 @@ angular.module('ngMetaCrudApp').controller('PartFormCtrl',
     };
 
     $scope.onChangeManufacturer = function() {
-      if ($scope.part.partType.magentoAttributeSet == 'Turbo') {
+      if ($scope.part.partType.magentoAttributeSet === 'Turbo') {
         var mnfrId = $scope.part.manufacturer.id;
         restService.listTurboTypesForManufacturerId(mnfrId).then(
           function success(turboTypes) {
@@ -124,7 +124,7 @@ angular.module('ngMetaCrudApp').controller('PartFormCtrl',
       $scope.$broadcast('revert');
     };
 
-    $scope.$watch('part.manufacturer', function(newVal, oldVal) {
+    $scope.$watch('part.manufacturer', function(/*newVal, oldVal*/) {
       // Fire validation in 'Manufacturer P/N' fields.
       _.each($scope.mpns, function(o) {
         var element = $scope.partForm[o.id];
@@ -156,10 +156,10 @@ angular.module('ngMetaCrudApp').controller('PartFormCtrl',
         function(response) {
           restService.error('Could not save part(s).', response);
         });
-    };
+    }
 
     $scope.save = function() {
-      var url = 'part';
+      // var url = 'part';
 
       if ($scope.part.partType.magentoAttributeSet === 'Turbo') {
         $scope.part.turboModel = $scope.turbo.tm;
@@ -168,8 +168,8 @@ angular.module('ngMetaCrudApp').controller('PartFormCtrl',
 
       if (angular.isObject($scope.oldPart)) {
         part.manufacturerPartNumber = $scope.mpns[0].val;
-        restService.updatePart($scope.part, srcIds, ratings, description).then(
-          function(part) {
+        restService.updatePart($scope.part /*, srcIds, ratings, description*/).then(
+          function(/*part*/) {
             $location.path('/part/' + $scope.part.id);
           },
           function(response) {
@@ -324,7 +324,7 @@ angular.module('ngMetaCrudApp').controller('PartFormCtrl',
                 $scope.turboModels.splice(idx, 1);
               }
             },
-            function(response) {
+            function(/*response*/) {
               // Error
               dialogs.error(
                 'Could not delete turbo model.',
@@ -369,10 +369,10 @@ angular.module('ngMetaCrudApp').controller('PartFormCtrl',
       _.each(turboTypes, function(tt) {
         if (tt.id === turbo.tt.id) {
           tt.name = $scope.name;
-        };
+        }
       });
       restService.renameTurboType(turbo.tt).then(
-        function success(updatedTt) {
+        function success(/*updatedTt*/) {
           $uibModalInstance.close();
         },
         function failure(response) {
@@ -407,7 +407,7 @@ angular.module('ngMetaCrudApp').controller('PartFormCtrl',
                 def.reject();
               }
             },
-            function(errorResponse) {
+            function(/*errorResponse*/) {
               $log.log('Couldn\'t validate name of the turbo type: ' + viewValue);
               def.reject();
             }
@@ -447,11 +447,11 @@ angular.module('ngMetaCrudApp').controller('PartFormCtrl',
     $scope.onRename = function() {
       turbo.tm.name = $scope.name;
       restService.renameTurboModel(turbo.tm).then(
-        function success(updatedTm) {
+        function success(/*updatedTm*/) {
           _.each(turboModels, function(tm) {
             if (tm.id === turbo.tm.id) {
               tm.name = $scope.name;
-            };
+            }
           });
           $uibModalInstance.close();
         },
@@ -460,7 +460,7 @@ angular.module('ngMetaCrudApp').controller('PartFormCtrl',
           restService.error('Rename of the turbo model failed.', response);
         }
       );
-    }
+    };
 
     $scope.onClose = function() {
       $uibModalInstance.close();
@@ -482,13 +482,13 @@ angular.module('ngMetaCrudApp').controller('PartFormCtrl',
         } else {
           restService.findPartByNumber($scope.part.manufacturer.id, viewValue).then(
             function(foundPart) {
-              if (!angular.isObject(foundPart) || foundPart.id == $scope.partId) {
+              if (!angular.isObject(foundPart) || foundPart.id === $scope.partId) {
                 def.resolve();
               } else {
                 def.reject();
               }
             },
-            function(errorResponse) {
+            function(/*errorResponse*/) {
               $log.log('Couldn\'t validate part number: ' + viewValue);
               def.reject();
             }

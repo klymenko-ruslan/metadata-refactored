@@ -2,7 +2,7 @@
 
 angular.module('ngMetaCrudApp').controller('AuthProvidersCtrl', ['$scope', '$log', 'restService', 'dialogs', 'toastr',
   'NgTableParams', 'Restangular',
-  function($scope, $log, restService, dialogs, toasrt, NgTableParams, Restangular) {
+  function($scope, $log, restService, dialogs, toastr, NgTableParams, Restangular) {
 
     $scope.modifyingRow = null;
     $scope.refRow = null;
@@ -19,7 +19,9 @@ angular.module('ngMetaCrudApp').controller('AuthProvidersCtrl', ['$scope', '$log
         // Update the pagination info
         var offset = params.count() * (params.page() - 1);
         var limit = params.count();
-        for (var sortProperty in params.sorting()) break;
+        for (var sortProperty in params.sorting()) {
+            break;
+        }
         var sortOrder;
         if (sortProperty) {
           sortOrder = params.sorting()[sortProperty];
@@ -30,7 +32,7 @@ angular.module('ngMetaCrudApp').controller('AuthProvidersCtrl', ['$scope', '$log
             $scope.modifyingRow = null;
             return authProviders;
           },
-          function(errorResponse) {
+          function(/*errorResponse*/) {
             $log.log('Couldn\'t load all authentication providers.');
           }
         );
@@ -43,7 +45,7 @@ angular.module('ngMetaCrudApp').controller('AuthProvidersCtrl', ['$scope', '$log
     };
 
     $scope.isModifying = function(id) {
-      return angular.isObject($scope.modifyingRow) && (angular.isUndefined(id) || $scope.modifyingRow.id == id);
+      return angular.isObject($scope.modifyingRow) && (angular.isUndefined(id) || $scope.modifyingRow.id === id);
     };
 
     $scope.modifyStart = function(row, form) {
@@ -76,11 +78,13 @@ angular.module('ngMetaCrudApp').controller('AuthProvidersCtrl', ['$scope', '$log
           $scope.modifyingRow = null;
           $scope.refRow = null;
           $scope._resetForm(form);
-          toastr.success('The LDAP authenticationa provider "' + name + '" has been successfully updated.');
+          toastr.success('The LDAP authenticationa provider "' + name +
+              '" has been successfully updated.');
         },
         function failure(errorResponse) {
-          restService.error('Update of the LDAP authentication povider (id:' + $scope.modifyingRow.id + ') "'
-            + $scope.modifyingRow.name + '" failed.', errorResponse);
+          restService.error('Update of the LDAP authentication povider (id:' +
+              $scope.modifyingRow.id + ') "' +
+              $scope.modifyingRow.name + '" failed.', errorResponse);
         }
       );
     };
@@ -117,7 +121,7 @@ angular.module('ngMetaCrudApp').controller('AuthProvidersCtrl', ['$scope', '$log
 
     $scope.save = function() {
       restService.createAuthProviderLDAP($scope.authp).then(
-        function(id) {
+        function(/*id*/) {
           toastr.success('Authentication provider "' + $scope.authp.name + '" has been successfully created.');
           $location.path('/security/auth_providers');
         },
@@ -179,15 +183,16 @@ angular.module('ngMetaCrudApp').controller('AuthProvidersCtrl', ['$scope', '$log
               def.resolve();
             } else {
               var id = $scope.$eval('modifyingRow.id');
-              if (authProvider.id == id) {
+              if (authProvider.id === id) {
                 def.resolve();
               } else {
                 def.reject();
               }
             }
           },
-          function failure(errorResponse) {
-            $log.log('Couldn\'t validate name of the LDAP authentication provider: ' + viewValue);
+          function failure(/*errorResponse*/) {
+            $log.log('Couldn\'t validate name of the LDAP ' +
+                'authentication provider: ' + viewValue);
             def.reject();
           }
         );

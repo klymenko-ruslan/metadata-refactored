@@ -3,8 +3,11 @@
 angular.module('ngMetaCrudApp')
 
 .controller('ChangelogSourcesNamesListCtrl',
-  ['$scope', '$log', 'toastr', 'dialogs', 'NgTableParams', 'Restangular', 'restService',
-  function($scope, $log, toastr, dialogs, NgTableParams, Restangular, restService) {
+  ['$scope', '$log', 'toastr', 'dialogs', 'NgTableParams', 'Restangular',
+      'restService',
+  function($scope, $log, toastr, dialogs, NgTableParams, Restangular,
+      restService)
+  {
 
     $scope.mode = 'view';
 
@@ -34,7 +37,9 @@ angular.module('ngMetaCrudApp')
           var offset = params.count() * (params.page() - 1);
           var limit = params.count();
           var sortProperty, sortOrder;
-          for (sortProperty in params.sorting()) break;
+          for (sortProperty in params.sorting()) {
+              break;
+          }
           if (sortProperty) {
             sortOrder = params.sorting()[sortProperty];
           }
@@ -44,7 +49,7 @@ angular.module('ngMetaCrudApp')
               params.total(result.total);
               return result.recs;
             },
-            function (errorResponse) {
+            function () {
               $log.log('Couldn\'t load changelog sources names.');
             }
           );
@@ -111,7 +116,7 @@ angular.module('ngMetaCrudApp')
 
     $scope.onSave = function() {
       restService.updateChangeSourceName($scope.sourceName.id, $scope.sourceName.name).then(
-        function success(updated) {
+        function success(/*updated*/) {
           $scope.sourceName = null;
           $scope.sourceNameOrig = null;
           $scope.mode = 'view';
@@ -147,8 +152,9 @@ angular.module('ngMetaCrudApp')
               }
             }
           },
-          function (errorResponse) {
-            $log.log('Couldn\'t validate name of the changelog source name: ' + viewValue);
+          function (/*errorResponse*/) {
+            $log.log('Couldn\'t validate name of the changelog source name: ' +
+                viewValue);
             def.reject();
           }
         );

@@ -33,7 +33,7 @@ angular.module('ngMetaCrudApp')
             function failure(response) {
                 dialogs.error('Could not add BOM alternate', 'Server said: <pre>' + JSON.stringify(response.data) + '</pre>');
             });
-        }
+        };
 
         $scope.pickPart = function (partId) {
             $scope.pickedPart = restService.findPart(partId).then(
@@ -44,5 +44,5 @@ angular.module('ngMetaCrudApp')
                     $log.log('Could not pick part', errorResponse);
                     restService.error('Could not pick part.', errorResponse);
                 });
-        }
+        };
     });

@@ -63,7 +63,7 @@ angular.module('ngMetaCrudApp')
 
     $scope.onRevert = function() {
       $scope.data.crud.source = Restangular.copy($scope.source);
-      var form = forms.changelogSourceForm;
+      var form = $scope.forms.changelogSourceForm;
       // form.$rollbackViewValue();
       form.$setPristine();
     };
@@ -106,7 +106,7 @@ angular.module('ngMetaCrudApp')
       $scope.attachmentsTableParams.reload();
       formData = new FormData();
       $scope.forms.changelogSourceForm.$setDirty();
-    };
+    }
 
     $scope.uploadAttachment = function() {
       restService.changelogSourceUploadAttachmentTmp(file, file.name, $scope.data.attachDescr).then(

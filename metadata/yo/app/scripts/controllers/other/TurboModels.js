@@ -64,7 +64,7 @@ angular.module('ngMetaCrudApp')
             restService.deleteTurboType(turboType.id).then(
               function() {
                 // Success
-                toast.success('Turbo type deleted.');
+                toastr.success('Turbo type deleted.');
                 $scope.selection.turboType = null;
                 $scope.loadTurboTypes($scope.selection.manufacturer.id);
               },
@@ -135,7 +135,7 @@ angular.module('ngMetaCrudApp')
                 $scope.selection.turboModel = null;
                 $scope.loadTurboModels($scope.selection.turboType.id);
               },
-              function(response) {
+              function(/*response*/) {
                 // Error
                 dialogs.error(
                   'Could not delete turbo model.',

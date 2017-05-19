@@ -23,7 +23,7 @@ angular.module('ngMetaCrudApp').directive('partApplicationTable', function ($log
             partApplicationService.removeApplication($scope.partId, $scope.applications, idx);
           }
         );
-      }
+      };
     }
   };
 });

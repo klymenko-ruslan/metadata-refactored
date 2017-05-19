@@ -24,11 +24,11 @@ angular.module('ngMetaCrudApp')
       $scope.save = function() {
         restService.setGasketKitForPart($scope.partId, $scope.pickedPart.id).then(
           function(result) {
-            if (result.status == GASKET_RESULT_STATUS.OK) {
+            if (result.status === GASKET_RESULT_STATUS.OK) {
               // Success
               toastr.success('The gasket kit set to the turbo.');
               $location.path('/part/' + $scope.partId);
-            } else if (result.status == GASKET_RESULT_STATUS.ASSERTION_ERROR) {
+            } else if (result.status === GASKET_RESULT_STATUS.ASSERTION_ERROR) {
               dialogs.error('Validation error', result.message);
             } else {
               dialogs.error('Internal error', 'Server returned unknown status of the operation: ' + result.status);

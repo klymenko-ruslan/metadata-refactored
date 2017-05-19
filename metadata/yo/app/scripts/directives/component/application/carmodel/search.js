@@ -47,7 +47,9 @@ angular.module('ngMetaCrudApp').directive('carmodelSearch', ['$log', 'restServic
               var offset = params.count() * (params.page() - 1);
               var limit = params.count();
               var sortProperty, sortOrder;
-              for (sortProperty in params.sorting()) break;
+              for (sortProperty in params.sorting()) {
+                  break;
+              }
               if (sortProperty) {
                 sortOrder = params.sorting()[sortProperty];
               }
@@ -59,7 +61,7 @@ angular.module('ngMetaCrudApp').directive('carmodelSearch', ['$log', 'restServic
                   params.total($scope.carmodelSearchResults.hits.total);
                   return $scope.carmodelSearchResults.hits.hits;
                 },
-                function (errorResponse) {
+                function (/*errorResponse*/) {
                   $log.log('Couldn\'t search for "carmodel".');
                 }
               );
@@ -84,7 +86,7 @@ angular.module('ngMetaCrudApp').directive('carmodelSearch', ['$log', 'restServic
       }]
     };
   }]
-).directive('carmodelSearchActions', ['$log', function($log) {
+).directive('carmodelSearchActions', function() {
   return {
     'restrict': 'A',
     'require': '^carmodelSearch',
@@ -94,4 +96,4 @@ angular.module('ngMetaCrudApp').directive('carmodelSearch', ['$log', 'restServic
       });
     }
   };
-}]);
+});

@@ -13,7 +13,7 @@ angular.module('ngMetaCrudApp').controller('AddPartImageCtrl', [
 
     $scope.cancel = function() {
       $uibModalInstance.dismiss('cancelled');
-    }
+    };
 
     $scope.changed = function(files) {
       file = files[0];
@@ -30,6 +30,6 @@ angular.module('ngMetaCrudApp').controller('AddPartImageCtrl', [
           restService.error('Could not upload image.', response);
         }
       );
-    }
+    };
   }
 ]);

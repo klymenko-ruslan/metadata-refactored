@@ -54,7 +54,7 @@ angular.module('ngMetaCrudApp')
 
       $scope.phase = status.phase;
 
-      if ($scope.phase != 0) {
+      if ($scope.phase !== 0) {
         $scope.toIndex.parts = status.indexParts;
         $scope.toIndex.applications = status.indexApplications;
         $scope.toIndex.salesNotes = status.indexSalesNotes;
@@ -120,7 +120,7 @@ angular.module('ngMetaCrudApp')
     this._resetToIndex();
     $scope._updateStatus(status);
 
-    $scope.$watch('toIndex.recreateIndex', function(newVal, oldVal) {
+    $scope.$watch('toIndex.recreateIndex', function(newVal/*, oldVal*/) {
       if (newVal) {
         $scope.toIndex.parts = true;
         $scope.toIndex.applications = true;

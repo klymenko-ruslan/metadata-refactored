@@ -35,11 +35,11 @@ angular.module('ngMetaCrudApp').controller('Mas90SyncCtrl', ['$scope', '$interva
             $scope.modifications += ('\u2022 ' + s + '\n');
           });
         }
-        if ($scope.phase == null) {
+        if ($scope.phase === null) {
           $scope.phase = newStatus.finished ? 0 : 1;
-        } else if ($scope.phase == 0 && $scope.finished && !newStatus.finished) {
+        } else if ($scope.phase === 0 && $scope.finished && !newStatus.finished) {
           $scope.phase = 1;
-        } else if ($scope.phase == 1 && !$scope.finished && newStatus.finished) {
+        } else if ($scope.phase === 1 && !$scope.finished && newStatus.finished) {
           $scope.phase = 2;
           $scope.mas90syncHistoryTableParams.reload();
         }
@@ -127,18 +127,22 @@ angular.module('ngMetaCrudApp').controller('Mas90SyncCtrl', ['$scope', '$interva
     $scope.logtext = {};
 
     if (result.successes.length > 0 ) {
-      var s = '';
-      _.each(result.successes, function(e) { s += (e.log + '\n')});
-      if (s !== '') {
-        $scope.logtext.successes = s;
+      var s0 = '';
+      _.each(result.successes, function(e) {
+          s0 += (e.log + '\n');
+      });
+      if (s0 !== '') {
+        $scope.logtext.successes = s0;
       }
     }
 
     if (result.failures.length > 0) {
-      var s = '';
-      _.each(result.failures, function(e) { s += (e.log + '\n')});
-       if (s !== '') {
-        $scope.logtext.failures = s;
+      var s1 = '';
+      _.each(result.failures, function(e) {
+          s1 += (e.log + '\n');
+      });
+       if (s1 !== '') {
+        $scope.logtext.failures = s1;
       }
     }
 

@@ -24,7 +24,7 @@ angular.module('ngMetaCrudApp')
       _.each(boms, function(bi) {
         existingBomPartIds[bi.child.id] = true;
       });
-    };
+    }
 
     updateExistingBomPartIds();
 
@@ -85,8 +85,8 @@ angular.module('ngMetaCrudApp')
     };
 
     $scope.isBttnPickDisabled = function(p) {
-      return p === undefined || $scope.part.manufacturer.id != p.manufacturer.id ||
-        $scope.part.id == p.id || pickedPartIds[p.id] || existingBomPartIds[p.id] ||
+      return p === undefined || $scope.part.manufacturer.id !== p.manufacturer.id ||
+        $scope.part.id === p.id || pickedPartIds[p.id] || existingBomPartIds[p.id] ||
         restService.status.bomRebuilding;
     };
 
@@ -127,7 +127,7 @@ angular.module('ngMetaCrudApp')
         function(response) {
           dialogs.error('Could not add BOMs', 'Server said: <pre>' + JSON.stringify(response.data) + '</pre>');
         });
-    };
+    }
 
     $scope.save = function() {
       LinkSource.link(cbSave, $scope.requiredSource, '/part/' + $scope.partId + '/bom/search');
@@ -137,7 +137,7 @@ angular.module('ngMetaCrudApp')
       var idx = _.findIndex(boms, function(b) {
         return b.id === bomId;
       });
-      var bomItem = boms[idx];
+      // var bomItem = boms[idx];
       dialogs.confirm(
         'Remove BOM Item?',
         'Remove this child part from the bill of materials of the parent part?').result.then(

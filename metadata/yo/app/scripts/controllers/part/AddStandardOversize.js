@@ -22,7 +22,7 @@ angular.module('ngMetaCrudApp')
       _.each(existing, function(p) {
         existingPartIds[p.id] = true;
       });
-    };
+    }
 
     updateExistingPartIds();
 
@@ -83,9 +83,9 @@ angular.module('ngMetaCrudApp')
     };
 
     $scope.isBttnPickDisabled = function(p) {
-      return p === undefined || $scope.part.manufacturer.id != p.manufacturer.id ||
-        $scope.part.partType.id != p.partType.id ||
-        $scope.part.id == p.id || pickedPartIds[p.id] || existingPartIds[p.id] ||
+      return p === undefined || $scope.part.manufacturer.id !== p.manufacturer.id ||
+        $scope.part.partType.id !== p.partType.id ||
+        $scope.part.id === p.id || pickedPartIds[p.id] || existingPartIds[p.id] ||
         restService.status.bomRebuilding;
     };
 
@@ -119,7 +119,7 @@ angular.module('ngMetaCrudApp')
       var idx = _.findIndex(existing, function(p) {
         return p.id === partId;
       });
-      var p = existing[idx];
+      //var p = existing[idx];
       var standardPartId, oversizePartId, title, message, toast;
       if ($scope.type === 'standard') {
         standardPartId = partId;

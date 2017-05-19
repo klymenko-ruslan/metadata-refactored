@@ -34,7 +34,9 @@ angular.module('ngMetaCrudApp')
       getData: function(params) {
         var sortOrder;
         var sorting = params.sorting();
-        for (var sortProperty in sorting) break;
+        for (var sortProperty in sorting) {
+            break;
+        }
         if (sortProperty) {
           sortOrder = sorting[sortProperty];
         }
@@ -110,7 +112,7 @@ angular.module('ngMetaCrudApp')
     };
 
     $scope.onRemove = function(m) {
-      dialogs.confirm('Confirmation', 'Are you sure? Do you want to remove this manufacturer ([' + m.id + '] - ' + 
+      dialogs.confirm('Confirmation', 'Are you sure? Do you want to remove this manufacturer ([' + m.id + '] - ' +
         m.name + ')?').result.then(
           function yes() {
             restService.deleteManufacturer(m.id).then(
@@ -215,7 +217,7 @@ angular.module('ngMetaCrudApp')
                 def.reject();
               }
             },
-            function(errorResponse) {
+            function(/*errorResponse*/) {
               $log.log('Couldn\'t validate manufacturer name: ' + viewValue);
               def.reject();
             }

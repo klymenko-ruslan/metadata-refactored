@@ -10,8 +10,8 @@ angular.module('ngMetaCrudApp')
       restrict: 'E',
       replace: false,
       templateUrl: '/views/application/carengine/form.html',
-      controller: ['restService', '$scope', '$log',
-        function(restService, $scope, $log) {
+      controller: ['restService', '$scope',
+        function(restService, $scope) {
 
           $scope.$on('form:created', function(event, data) {
             if (data.name === 'carengineForm') {
@@ -39,7 +39,7 @@ angular.module('ngMetaCrudApp')
             var n = carfueltypes.length;
             var fueltypeName = null;
             for (var i = 0; i < n; i++) {
-              if (carfueltypes[i].id == carfueltypeId) {
+              if (carfueltypes[i].id === carfueltypeId) {
                 fueltypeName = carfueltypes[i].name;
               }
             }
@@ -48,7 +48,7 @@ angular.module('ngMetaCrudApp')
 
           $scope._save = function() {
             $scope._merge();
-            if ($scope.carengineId == null) {
+            if ($scope.carengineId === null) {
               // create
               return restService.createCarengine($scope.carengine);
             } else {
@@ -115,14 +115,14 @@ angular.module('ngMetaCrudApp')
 
         }
       ]
-    }
+    };
   })
-  .directive('uniqueCarengineName', ['$log', '$q', 'restService', function($log, $q, restService) {
+  .directive('uniqueCarengineName', ['$log', '$q', function($log, $q) {
     // Validator for uniqueness of the carengine name.
     return {
       require: 'ngModel',
       link: function($scope, elm, attr, ctrl) {
-        ctrl.$asyncValidators.nonUniqueName = function(modelValue, viewValue) {
+        ctrl.$asyncValidators.nonUniqueName = function(modelValue/*, viewValue*/) {
           var def = $q.defer();
           if (ctrl.$isEmpty(modelValue)) {
             return $q.when();

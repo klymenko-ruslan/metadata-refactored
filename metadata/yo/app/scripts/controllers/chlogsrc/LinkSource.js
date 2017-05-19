@@ -75,6 +75,8 @@ angular.module('ngMetaCrudApp')
   'sourcesNames', 'lastPicked', 'User', 'cancelUrl', 'begin',
   function($scope, $log, $location, dialogs, toastr, NgTableParams, $uibModalInstance, utils,
     restService, cbSave, sourcesNames, lastPicked, User, cancelUrl, begin) { // injection "begin" is important
+    begin = null; // dummy statement to avoid jshint
+                  // complain about unused var begin
 
     var ATTR_UPLOAD_ID = 'upload_id';
 
@@ -105,13 +107,11 @@ angular.module('ngMetaCrudApp')
 
     function onClickLinkBttn(upload_id, file, link) {
 
-      if (!file || file.status != Dropzone.SUCCESS) {
+      if (!file || file.status !== Dropzone.SUCCESS) {
         return;
       }
       var e = markdown;
-      var chunk, cursor, selected = e.getSelection(),
-        content = e.getContent(),
-        link;
+      var chunk, cursor, selected = e.getSelection();
       if (selected.length === 0) {
         chunk = file.name;
       } else {
@@ -159,7 +159,7 @@ angular.module('ngMetaCrudApp')
           this.on('removedfile', function(file) {
             var upload_id = $(file.previewElement).attr(ATTR_UPLOAD_ID);
             if (upload_id) {
-              if (file.status == Dropzone.SUCCESS) {
+              if (file.status === Dropzone.SUCCESS) {
                 restService.removeChangelogSourceLinkDescriptionAttachment(upload_id).then(
                   function success() {
                     // ignore
@@ -180,7 +180,7 @@ angular.module('ngMetaCrudApp')
               onClickLinkBttn(upload_id, file, downloadLink);
             });
           });
-          this.on('error', function(file, message, xhr) {
+          this.on('error', function(file, message) {
             $log.log('An error caught. File: ' + angular.toJson(file, 2) + '\nmessage: ' + message);
           });
         }
@@ -224,7 +224,7 @@ angular.module('ngMetaCrudApp')
         attachDescr: null,
         newSourceName: null
       };
-    };
+    }
 
     _reset();
 
@@ -266,7 +266,9 @@ angular.module('ngMetaCrudApp')
           var offset = params.count() * (params.page() - 1);
           var limit = params.count();
           var sortProperty, sortOrder;
-          for (sortProperty in params.sorting()) break;
+          for (sortProperty in params.sorting()) {
+              break;
+          }
           if (sortProperty) {
             sortOrder = params.sorting()[sortProperty];
           }
@@ -282,7 +284,7 @@ angular.module('ngMetaCrudApp')
               params.total(filtered.hits.total);
               return filtered.hits.hits;
             },
-            function (errorResponse) {
+            function () {
               $log.log('Couldn\'t search for "changelog source".');
             }
           );
@@ -316,7 +318,7 @@ angular.module('ngMetaCrudApp')
 
       cbSave(srcIds, ratings, $scope.data.description, attachIds);
 
-    };
+    }
 
     function _chvw(newViewId) {
       angular.copy($scope.data.currVw, $scope.data.prevVw);
@@ -332,15 +334,15 @@ angular.module('ngMetaCrudApp')
         $scope.data.currVw.actionBttnTitle = 'Create';
       } else {
         throw 'Unknown view id: ' + angular.toJson(newViewId);
-      };
-    };
+      }
+    }
 
     function _cleanCreateSourceForm() {
       $scope.data.crud.source = {}; // clean form
       sourceAttachments.splice(0, sourceAttachments.length);
       $scope.data.attachDescr = null;
       formData.delete('file');
-    };
+    }
 
     function _createSource() {
       var s = $scope.data.crud.source;
@@ -355,7 +357,7 @@ angular.module('ngMetaCrudApp')
           restService.error('Could not create a new changelog source.', errorResponse);
         }
       );
-    };
+    }
 
     function _createSourceName() {
 
@@ -379,7 +381,7 @@ angular.module('ngMetaCrudApp')
         }
       );
 
-    };
+    }
 
     $scope.isActionBttnDisabled = function () {
       var retval = true;
@@ -476,7 +478,7 @@ angular.module('ngMetaCrudApp')
         sourceAttachments.push(e);
       });
       $scope.sourceAttachmentsTableParams.reload();
-    };
+    }
 
     $scope.uploadSourceAttachment = function() {
       restService.changelogSourceUploadAttachmentTmp(file, file.name, $scope.data.attachDescr).then(
@@ -577,7 +579,7 @@ angular.module('ngMetaCrudApp')
               }
             }
           },
-          function (errorResponse) {
+          function () {
             $log.log('Couldn\'t validate name of the changelog source: ' + viewValue);
             def.reject();
           }

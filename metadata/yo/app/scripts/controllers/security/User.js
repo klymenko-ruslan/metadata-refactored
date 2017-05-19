@@ -40,7 +40,7 @@ angular.module('ngMetaCrudApp')
     $scope.authProviders.unshift(authProviderLocalDB);
 
     // Setup the user object for create/edit
-    if ($routeParams.id == 'create') {
+    if ($routeParams.id === 'create') {
       $scope.mode = 'create';
       $scope.user = {
         name: '',
@@ -64,7 +64,7 @@ angular.module('ngMetaCrudApp')
         });
     }
 
-    if ($scope.mode == 'edit') {
+    if ($scope.mode === 'edit') {
       $scope.userGroupsTableParams = new NgTableParams(
         {
           page: 1,
@@ -79,7 +79,9 @@ angular.module('ngMetaCrudApp')
             var offset = params.count() * (params.page() - 1);
             var limit = params.count();
             var sortProperty, sortOrder;
-            for (sortProperty in params.sorting()) break;
+            for (sortProperty in params.sorting()) {
+                break;
+            }
             if (sortProperty) {
               sortOrder = params.sorting()[sortProperty];
             }
@@ -93,7 +95,7 @@ angular.module('ngMetaCrudApp')
                 params.total(result.total);
                 return result.recs;
               },
-              function (errorResponse) {
+              function (/*errorResponse*/) {
                 $log.log('Couldn\'t load users groups.');
               }
             );
@@ -103,7 +105,7 @@ angular.module('ngMetaCrudApp')
     }
 
     $scope.save = function() {
-      if ($routeParams.id == 'create') {
+      if ($routeParams.id === 'create') {
         // Create
         restService.updateUser($scope.user).then(
           function(user) {
@@ -162,7 +164,7 @@ angular.module('ngMetaCrudApp')
 
     $scope.back = function() {
       $location.path('/security/users');
-    }
+    };
 
   }
 ])
@@ -187,7 +189,7 @@ angular.module('ngMetaCrudApp')
                 def.reject();
               }
             },
-            function(errorResponse) {
+            function(/*errorResponse*/) {
               $log.log('Couldn\'t validate user\'s username: ' + viewValue);
               def.reject();
             }
@@ -219,7 +221,7 @@ angular.module('ngMetaCrudApp')
                 def.reject();
               }
             },
-            function(errorResponse) {
+            function(/*errorResponse*/) {
               $log.log('Couldn\'t validate user\'s username: ' + viewValue);
               def.reject();
             }
