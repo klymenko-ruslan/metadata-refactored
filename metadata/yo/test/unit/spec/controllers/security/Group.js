@@ -1,5 +1,9 @@
 'use strict';
 
+/*global
+  _
+*/
+
 describe('Controller: GroupCtrl', function () {
 
   // load the controller's module
