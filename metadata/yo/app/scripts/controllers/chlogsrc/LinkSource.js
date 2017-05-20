@@ -7,7 +7,8 @@ angular.module('ngMetaCrudApp')
 
     this.link = function(cbSave, requiredSource, cancelUrl) {
       if (requiredSource) {
-        var authorized = User.hasRole('ROLE_CHLOGSRC_READ') && User.hasRole('ROLE_CHLOGSRCNAME_READ');
+        var authorized = User.hasRole('ROLE_CHLOGSRC_READ') &&
+              User.hasRole('ROLE_CHLOGSRCNAME_READ');
         if (authorized) {
           $uibModal.open({
             templateUrl: '/views/chlogsrc/LinkDlg.html',
@@ -23,7 +24,8 @@ angular.module('ngMetaCrudApp')
               'sourcesNames': restService.getAllChangelogSourceNames(),
               'lastPicked': restService.getLastPickedChangelogSources,
               'begin': function() {
-                return restService.changelogSourceBeginEdit(); // needs to clear session attribute on the server side
+                // needs to clear session attribute on the server side
+                return restService.changelogSourceBeginEdit();
               },
               'cancelUrl': function() {
                 return cancelUrl;
@@ -31,8 +33,9 @@ angular.module('ngMetaCrudApp')
             }
           });
         } else {
-          dialogs.error('Not authorized', 'To complete this operation you must have at least following roles: ' +
-            'ROLE_CHLOGSRC_READ, ROLE_CHLOGSRCNAME_READ.');
+          dialogs.error('Not authorized', 'To complete this operation you ' +
+              'must have at least following roles: ' +
+              'ROLE_CHLOGSRC_READ, ROLE_CHLOGSRCNAME_READ.');
         }
       } else {
         cbSave(null, null, null, null);
@@ -40,7 +43,9 @@ angular.module('ngMetaCrudApp')
     };
 
     function _isSourceRequired(services, serviceName) {
-      var srv = _.find(services, function(s) { return s.name === serviceName; });
+      var srv = _.find(services, function(s) {
+          return s.name === serviceName;
+      });
       if (!srv) {
         throw 'Service "' + serviceName + '" not found.';
       }
@@ -70,11 +75,13 @@ angular.module('ngMetaCrudApp')
   return this;
 
 }])
-.controller('ChlogSrcLinkDlgCtrl', ['$scope', '$log', '$location', 'dialogs', 'toastr', 'NgTableParams',
-  '$uibModalInstance', 'utils', 'restService', 'cbSave',
-  'sourcesNames', 'lastPicked', 'User', 'cancelUrl', 'begin',
-  function($scope, $log, $location, dialogs, toastr, NgTableParams, $uibModalInstance, utils,
-    restService, cbSave, sourcesNames, lastPicked, User, cancelUrl, begin) { // injection "begin" is important
+.controller('ChlogSrcLinkDlgCtrl', ['$scope', '$log', '$location', 'dialogs',
+  'toastr', 'NgTableParams', '$uibModalInstance', 'utils', 'restService',
+  'cbSave', 'sourcesNames', 'lastPicked', 'User', 'cancelUrl', 'begin',
+  function($scope, $log, $location, dialogs, toastr, NgTableParams,
+    $uibModalInstance, utils, restService, cbSave, sourcesNames, lastPicked,
+    User, cancelUrl, begin)
+  { // injection "begin" is important
     begin = null; // dummy statement to avoid jshint
                   // complain about unused var begin
 
@@ -103,7 +110,8 @@ angular.module('ngMetaCrudApp')
     $scope.data = null;
 
     var markdown, dropzone;
-    var baseUrl = $location.protocol() + '://' + $location.host() + ':' + $location.port();
+    var baseUrl = $location.protocol() + '://' + $location.host() + ':' +
+      $location.port();
 
     function onClickLinkBttn(upload_id, file, link) {
 
@@ -119,7 +127,8 @@ angular.module('ngMetaCrudApp')
       }
       var sanitizedLink = $('<div>' + link + '</div>').text();
       if ((/\.(gif|jpg|jpeg|tiff|png)$/i).test(file.name)) {
-        e.replaceSelection('![' + chunk + '](' + sanitizedLink + ' "' + chunk + '")');
+        e.replaceSelection('![' + chunk + '](' + sanitizedLink + ' "' +
+          chunk + '")');
       } else {
         e.replaceSelection('[' + chunk + '](' + sanitizedLink + ')');
       }
@@ -141,7 +150,8 @@ angular.module('ngMetaCrudApp')
         maxFiles: 100,
         parallelUploads: 1,
         previewsContainer: '#descriptionUploads',
-        previewTemplate: document.getElementById('upload-preview-template').innerHTML,
+        previewTemplate: document.getElementById('upload-preview-template')
+          .innerHTML,
         clickable: false,
         autoProcessQueue: true,
         init: function() {
@@ -160,12 +170,14 @@ angular.module('ngMetaCrudApp')
             var upload_id = $(file.previewElement).attr(ATTR_UPLOAD_ID);
             if (upload_id) {
               if (file.status === Dropzone.SUCCESS) {
-                restService.removeChangelogSourceLinkDescriptionAttachment(upload_id).then(
+                restService.removeChangelogSourceLinkDescriptionAttachment(
+                  upload_id).then(
                   function success() {
                     // ignore
                   },
                   function failure(response) {
-                    $log.log('Deletion of the attachment [' + response.id + '] failed: ' + angular.toJson(response, 2));
+                    $log.log('Deletion of the attachment [' + response.id +
+                      '] failed: ' + angular.toJson(response, 2));
                   }
                 );
               }
@@ -173,15 +185,18 @@ angular.module('ngMetaCrudApp')
           });
           this.on('success', function(file, response) {
             var upload_id = response[0].id;
-            var downloadLink = baseUrl + '/metadata/changelogsourcelink/description/attachment/download/' + upload_id;
-            $(file.previewElement).find('.dz-filename').first().attr('href', downloadLink);
+            var downloadLink = baseUrl + '/metadata/changelogsourcelink/' +
+              'description/attachment/download/' + upload_id;
+            $(file.previewElement).find('.dz-filename').first()
+              .attr('href', downloadLink);
             $(file.previewElement).attr(ATTR_UPLOAD_ID, upload_id);
             $(file.previewElement).find('.btn-info').first().click(function() {
               onClickLinkBttn(upload_id, file, downloadLink);
             });
           });
           this.on('error', function(file, message) {
-            $log.log('An error caught. File: ' + angular.toJson(file, 2) + '\nmessage: ' + message);
+            $log.log('An error caught. File: ' + angular.toJson(file, 2) +
+              '\nmessage: ' + message);
           });
         }
       }
@@ -276,8 +291,9 @@ angular.module('ngMetaCrudApp')
           if ($scope.fltrSource.sourceName) {
             snid = $scope.fltrSource.sourceName.id;
           }
-          return restService.filterChangelogSource($scope.fltrSource.name, $scope.fltrSource.description,
-            $scope.fltrSource.url, snid, sortProperty, sortOrder, offset, limit)
+          return restService.filterChangelogSource($scope.fltrSource.name,
+            $scope.fltrSource.description, $scope.fltrSource.url, snid,
+            sortProperty, sortOrder, offset, limit)
           .then(
             function (filtered) {
               // Update the total and slice the result
@@ -314,7 +330,8 @@ angular.module('ngMetaCrudApp')
         ratings = $scope.pickedSourcesRatings;
       }
 
-      var attachIds = $('#descriptionUploads').find('li').map(function() {return $(this).attr(ATTR_UPLOAD_ID); }).get();
+      var attachIds = $('#descriptionUploads').find('li')
+        .map(function() {return $(this).attr(ATTR_UPLOAD_ID); }).get();
 
       cbSave(srcIds, ratings, $scope.data.description, attachIds);
 
@@ -330,7 +347,8 @@ angular.module('ngMetaCrudApp')
         $scope.data.currVw.title = 'Link source >> Create New Source';
         $scope.data.currVw.actionBttnTitle = 'Create';
       } else if (newViewId === 'create_source_name') {
-        $scope.data.currVw.title = 'Link source >> Create New Source >> Create New Source Name';
+        $scope.data.currVw.title = 'Link source >> Create New Source >> ' +
+          'Create New Source Name';
         $scope.data.currVw.actionBttnTitle = 'Create';
       } else {
         throw 'Unknown view id: ' + angular.toJson(newViewId);
@@ -346,7 +364,8 @@ angular.module('ngMetaCrudApp')
 
     function _createSource() {
       var s = $scope.data.crud.source;
-      restService.createChangelogSource(s.name, s.description, s.url, s.sourceName.id).then(
+      restService.createChangelogSource(s.name, s.description, s.url,
+        s.sourceName.id).then(
         function success(newSource) {
           _chvw('sources_list');
           $scope.pick(newSource);
@@ -354,7 +373,8 @@ angular.module('ngMetaCrudApp')
         },
         function failure(errorResponse) {
           $uibModalInstance.close();
-          restService.error('Could not create a new changelog source.', errorResponse);
+          restService.error('Could not create a new changelog source.',
+            errorResponse);
         }
       );
     }
@@ -377,7 +397,8 @@ angular.module('ngMetaCrudApp')
           _chvw('create_new_source');
         },
         function (errorResponse) {
-          restService.error('Could not create a new source name: ' + $scope.data.newName, errorResponse);
+          restService.error('Could not create a new source name: ' +
+            $scope.data.newName, errorResponse);
         }
       );
 
@@ -386,10 +407,15 @@ angular.module('ngMetaCrudApp')
     $scope.isActionBttnDisabled = function () {
       var retval = true;
       if ($scope.data.currVw.id === 'sources_list') {
-        retval = pickedSources.length === 0 || dropzone.getQueuedFiles().length;
-      } else if ($scope.data.currVw.id === 'create_new_source' && $scope.forms.changelogSourceForm) {
+        retval = pickedSources.length === 0 || dropzone.getQueuedFiles()
+          .length;
+      } else if ($scope.data.currVw.id === 'create_new_source' &&
+        $scope.forms.changelogSourceForm)
+      {
         retval = $scope.forms.changelogSourceForm.$invalid || !canCreateSource;
-      } else if ($scope.data.currVw.id === 'create_source_name' && $scope.forms.newSourceName) {
+      } else if ($scope.data.currVw.id === 'create_source_name' &&
+        $scope.forms.newSourceName)
+      {
         retval = $scope.forms.newSourceName.$invalid || !canCreateSourceName;
       }
       return retval;
@@ -438,7 +464,8 @@ angular.module('ngMetaCrudApp')
         delete pickedSourceIds[ps.id];
       });
       pickedSources.splice(0, pickedSources.length);
-      $scope.pickedSourcesRatings.splice(0, $scope.pickedSourcesRatings.length);
+      $scope.pickedSourcesRatings.splice(0, $scope.pickedSourcesRatings
+        .length);
       $scope.pickedSourcesTableParams.reload();
     };
 
@@ -481,19 +508,21 @@ angular.module('ngMetaCrudApp')
     }
 
     $scope.uploadSourceAttachment = function() {
-      restService.changelogSourceUploadAttachmentTmp(file, file.name, $scope.data.attachDescr).then(
-        function(updatedAttachmentsResponse) {
-          // Success
-        _updateSourceAttachmentsTable(updatedAttachmentsResponse.rows);
-          toastr.success('File uploaded.');
-          $scope.data.attachDescr = null;
-          formData.delete('file');
-        },
-        function(response) {
-          // Error
-          $log.log('Could not upload the attachment.', response);
-        }
-      );
+      restService.changelogSourceUploadAttachmentTmp(file, file.name,
+        $scope.data.attachDescr)
+        .then(
+          function(updatedAttachmentsResponse) {
+            // Success
+           _updateSourceAttachmentsTable(updatedAttachmentsResponse.rows);
+            toastr.success('File uploaded.');
+            $scope.data.attachDescr = null;
+            formData.delete('file');
+          },
+          function(response) {
+            // Error
+            $log.log('Could not upload the attachment.', response);
+          }
+        );
     };
 
     $scope.removeSourceAttachment = function (idx) {
@@ -556,36 +585,39 @@ angular.module('ngMetaCrudApp')
     _chvw('sources_list');
 
   }
-]).directive('uniqueChangelogSourceByName', ['$log', '$q', 'restService', function($log, $q, restService) {
-  // Validator for uniqueness of the changelog source name.
-  return {
-    require: 'ngModel',
-    link: function($scope, elm, attr, ctrl) {
-      ctrl.$asyncValidators.nonUniqueName = function(modelValue, viewValue) {
-        var def = $q.defer();
-        if (ctrl.$isEmpty(modelValue)) {
-          return $q.when();
-        }
-        restService.findChangelogSourceByName(viewValue).then(
-          function(changelogSource) {
-            if (changelogSource === undefined) {
-              def.resolve();
-            } else {
-              var id = $scope.$eval('source.id');
-              if (changelogSource.id === id) {
+]).directive('uniqueChangelogSourceByName', ['$log', '$q', 'restService',
+  function($log, $q, restService) {
+    // Validator for uniqueness of the changelog source name.
+    return {
+      require: 'ngModel',
+      link: function($scope, elm, attr, ctrl) {
+        ctrl.$asyncValidators.nonUniqueName = function(modelValue, viewValue) {
+          var def = $q.defer();
+          if (ctrl.$isEmpty(modelValue)) {
+            return $q.when();
+          }
+          restService.findChangelogSourceByName(viewValue).then(
+            function(changelogSource) {
+              if (changelogSource === undefined) {
                 def.resolve();
               } else {
-                def.reject();
+                var id = $scope.$eval('source.id');
+                if (changelogSource.id === id) {
+                  def.resolve();
+                } else {
+                  def.reject();
+                }
               }
+            },
+            function () {
+              $log.log('Couldn\'t validate name of the changelog source: ' +
+                viewValue);
+              def.reject();
             }
-          },
-          function () {
-            $log.log('Couldn\'t validate name of the changelog source: ' + viewValue);
-            def.reject();
-          }
-        );
-        return def.promise;
-      };
-    }
-  };
-}]);
+          );
+          return def.promise;
+        };
+      }
+    };
+  }
+]);
