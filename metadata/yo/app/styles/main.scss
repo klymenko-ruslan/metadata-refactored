@@ -1,4 +1,7 @@
-$icon-font-path: "/styles/fonts";
+/* The last '/' in the var below is mandatory. */
+$icon-font-path: "/styles/fonts/";
+/* But in the var below it is redundant.
+   (I 'like' all these full of bugs hipster tools.) */
 $fa-font-path: "/styles/fonts";
 @import "../../bower_components/bootstrap-sass/assets/stylesheets/bootstrap";
 @import "../../bower_components/fontawesome/scss/font-awesome";
