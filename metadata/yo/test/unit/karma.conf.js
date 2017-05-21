@@ -52,8 +52,9 @@ module.exports = function(config) {
       'node_modules/ng-table/bundles/ng-table.min.js',
       'app/scripts/**/*.js',
       //'test/mock/**/*.js',
-      'test/unit/spec/**/*.js'
-      //'test/unit/spec/controllers/bom/*.js'
+      //'test/unit/spec/**/*.js'
+      //'test/unit/spec/controllers/application/carengine/*.js'
+      'test/unit/spec/controllers/chlogsrc/*.js'
     ],
 
     // list of files / patterns to exclude

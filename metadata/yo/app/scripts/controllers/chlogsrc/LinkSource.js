@@ -3,7 +3,7 @@
 angular.module('ngMetaCrudApp')
 
 .service('LinkSource', ['$log', 'dialogs', '$uibModal', 'restService', 'User',
-  function BOM($log, dialogs, $uibModal, restService, User) {
+  function($log, dialogs, $uibModal, restService, User) {
 
     this.link = function(cbSave, requiredSource, cancelUrl) {
       if (requiredSource) {
