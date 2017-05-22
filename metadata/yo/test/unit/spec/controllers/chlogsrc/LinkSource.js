@@ -2,7 +2,7 @@
 
 describe('ChlogSrcLinkDlgCtrl:', function() {
 
-  var $scope, $uibModalInstance, cbSave, doc;
+  var $scope, $uibModalInstance, cbSave;
   var sourcesNames = {}, lastPicked = {};
 
   beforeEach(module('ngMetaCrudApp'));
@@ -11,15 +11,26 @@ describe('ChlogSrcLinkDlgCtrl:', function() {
     $scope = $rootScope.$new();
     $uibModalInstance = {
       close: jasmine.createSpy('close')
-    }
+    };
     cbSave = jasmine.createSpy('cbSave');
-    var dummyElement = document.createElement('div');
-    console.log('dummyElement: ' + document.getElementById);
-    jasmine.createSpy(document, 'getElementById').and
+    var div = document.createElement('div', {
+      'id': 'upload-preview-template'
+    });
+    var body = document.createElement('body', {}, [div]);
+    var html = document.createElement('html', {}, [body]);
+    console.log('html: ' + html);
+    document.body.appendChild(html);
+    var uploadPreviewTemplate = document.getElementById('upload-preview-template');
+    console.log('uploadPreviewTemplate0: ' + uploadPreviewTemplate);
+
+//    jasmine.createSpy(document, 'getElementById').and
+//      .returnValue(dummyElement);
+    /*
       .callFake(function(id) {
-        console.log('ID: ' + id);
+console.log('ID: ' + id);
         return dummyElement;
       });
+    */
     $controller('ChlogSrcLinkDlgCtrl', {
       $scope: $scope,
       $uibModalInstance: $uibModalInstance,
