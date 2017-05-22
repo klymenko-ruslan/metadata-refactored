@@ -45,7 +45,7 @@ module.exports = function (grunt) {
         }
       },
       jsTest: {
-        files: ['test/unit/spec/**.js', 'test/b2b/spec/**.js'],
+        files: ['test/unit/spec/**.js', 'test/e2e/spec/**.js'],
         tasks: ['newer:jshint:test', 'newer:jscs:test', 'karma']
       },
       compass: {
@@ -147,7 +147,7 @@ module.exports = function (grunt) {
         options: {
           jshintrc: 'test/.jshintrc'
         },
-        // , 'test/b2b/spec/**/*.js'
+        // , 'test/e2e/spec/**/*.js'
         src: ['test/unit/spec/**/*.js']
       }
     },
@@ -166,7 +166,7 @@ module.exports = function (grunt) {
         ]
       },
       test: {
-        src: ['test/unit/spec/{**/*.js', 'test/b2b/spec/**/*.js']
+        src: ['test/unit/spec/{**/*.js', 'test/e2e/spec/**/*.js']
       }
     },
 

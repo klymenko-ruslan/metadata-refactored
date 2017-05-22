@@ -1,0 +1,3 @@
+mysqldump -R --skip-extended-insert -hlocalhost -uroot -proot metadata > metadata-orig.sql
+
+sed -e 's/\/\*!50017 DEFINER=.\+\*\///' -e 's/\/\*!50013 DEFINER=.\+ SQL SECURITY DEFINER \*\///' -e 's/\(CREATE \)DEFINER=.\+\(PROCEDURE\)/\1\2/' metadata-orig.sql > metadata-e2e.sql
