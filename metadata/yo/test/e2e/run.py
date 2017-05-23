@@ -3,7 +3,7 @@
 # vim: set fileencoding=utf-8 :
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4
 
-""" Prepare test environment for e2e testing.
+"""Prepare test environment for e2e testing.
 
 This script does following:
     * registers an user 'metaserver_e2e' in a MySql instance
@@ -31,7 +31,10 @@ parser.add_argument('--db-password', default='root',
                     help='Password for the user \'metaserver_e2e\'')
 parser.add_argument('--db-name', default='metadata_e2e',
                     help='Database name (\'metaserver_e2e\') for use during '
-                    'running of e2e test.')
+                    'running of e2e tests.')
+parser.add_argument('--dump-filename', default='prepare/metadata-e2e.sql',
+                    help='A filename of a dump to load in the database.'
+                    'running of e2e tests.')
 
 args = parser.parse_args()
 
@@ -46,7 +49,7 @@ def main(dbaCnx):
               'It will be deleted and registered again.'
               .format(args.db_username))
         print('Delete user \'{}\'.'.format(args.db_username))
-        dropDbUser(dbaCnx, args.db_username)
+        dropDbUser(dbaCnx, args.db_host, args.db_username)
     else:
         print('User \'{}\' is not registered in the database. '
               .format(args.db_username))
@@ -56,6 +59,25 @@ def main(dbaCnx):
     createDatabase(dbaCnx, args.db_name)
     print('Grant permission on the database to the user.')
     grantPermission(dbaCnx, args.db_host, args.db_username, args.db_name)
+    importDb(args.dump_filename, args.db_host, args.db_port, args.db_name,
+             args.dba_username, args.dba_password)
+
+
+def importDb(filename, dbhost, dbport, dbname, dbausername, dbapassword):
+    """Import a database dump."""
+    with open(filename) as f:
+        dump = f.read()
+    dbaCnx2 = mysql.connector.connect(host=args.db_host, port=args.db_port,
+                                      user=args.dba_username,
+                                      password=args.dba_password)
+    try:
+        cursor = dbaCnx2.cursor()
+        try:
+            cursor.execute(dump, multi=True)
+        finally:
+            cursor.close()
+    finally:
+        dbaCnx2.close()
 
 
 def grantPermission(dbaCnx, dbhost, dbusername, dbname):
@@ -99,16 +121,18 @@ def registerDbUser(dbaCnx, dbhost, username, password):
             'password': password,
             'dbhost': dbhost}
         )
+        cursor.execute('flush privileges')
     finally:
         cursor.close()
 
 
-def dropDbUser(dbaCnx, username):
+def dropDbUser(dbaCnx, dbhost, username):
     """Drop user in a database server."""
     cursor = dbaCnx.cursor()
     try:
-        query = 'drop user %(username)s'
-        cursor.execute(query, {'username': username})
+        query = 'drop user %(username)s@%(dbhost)s'
+        cursor.execute(query, {'dbhost': dbhost, 'username': username})
+        cursor.execute('flush privileges')
     finally:
         cursor.close()
 
