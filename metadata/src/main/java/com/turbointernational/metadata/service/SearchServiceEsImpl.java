@@ -124,6 +124,8 @@ public class SearchServiceEsImpl implements SearchService {
     @Value("${elasticsearch.type.part}")
     private String elasticSearchTypePart = "part";
 
+    private int DEF_FETCH_SIZE = 250;
+
     @Autowired
     private PartDao partDao;
 
@@ -611,7 +613,7 @@ public class SearchServiceEsImpl implements SearchService {
             retVal = getIndexingStatus();
         }
         Thread job = new IndexingJob(indexParts, indexApplications, indexSalesNotes, indexChangelogSources,
-                recreateIndex, 250);
+                recreateIndex, DEF_FETCH_SIZE);
         job.start();
         return retVal;
     }
@@ -1252,6 +1254,28 @@ public class SearchServiceEsImpl implements SearchService {
         }
         log.debug("Search request (changlelog sources) to search engine:\n{}", srb);
         return srb.execute().actionGet(timeout).toString();
+    }
+
+    @Override
+    public void indexAll() throws Exception {
+        ScrollableResults scrollableParts = partDao.getScrollableResults(DEF_FETCH_SIZE, true, "id");
+        indexAllDocs(scrollableParts, DEF_FETCH_SIZE, elasticSearchTypePart, null);
+        ScrollableResults scrollableCarModelEngineYears = carModelEngineYearDao.getScrollableResults(DEF_FETCH_SIZE,
+                true, "id");
+        indexAllDocs(scrollableCarModelEngineYears, DEF_FETCH_SIZE, elasticSearchTypeCarModelEngineYear, null);
+        ScrollableResults scrollableCarEngines = carEngineDao.getScrollableResults(DEF_FETCH_SIZE, true, "id");
+        indexAllDocs(scrollableCarEngines, DEF_FETCH_SIZE, elasticSearchTypeCarEngine, null);
+        ScrollableResults scrollableCarFuelTypes = carFuelTypeDao.getScrollableResults(DEF_FETCH_SIZE, true, "id");
+        indexAllDocs(scrollableCarFuelTypes, DEF_FETCH_SIZE, elasticSearchTypeCarFuelType, null);
+        ScrollableResults scrollableCarMakes = carMakeDao.getScrollableResults(DEF_FETCH_SIZE, true, "id");
+        indexAllDocs(scrollableCarMakes, DEF_FETCH_SIZE, elasticSearchTypeCarMake, null);
+        ScrollableResults scrollableCarModels = carModelDao.getScrollableResults(DEF_FETCH_SIZE, true, "id");
+        indexAllDocs(scrollableCarModels, DEF_FETCH_SIZE, elasticSearchTypeCarModel, null);
+        ScrollableResults scrollableSalesNotes = salesNotePartDao.getScrollableResults(DEF_FETCH_SIZE, true,
+                "pk.salesNote.id");
+        indexAllDocs(scrollableSalesNotes, DEF_FETCH_SIZE, elasticSearchTypeSalesNotePart, null);
+        ScrollableResults scrollableChangelogSources = sourceDao.getScrollableResults(DEF_FETCH_SIZE, true, "id");
+        indexAllDocs(scrollableChangelogSources, DEF_FETCH_SIZE, elasticSearchTypeSource, null);
     }
 
     private void deleteDoc(String elasticSearchType, String searchId) throws Exception {

@@ -1,18 +1,24 @@
 package com.turbointernational.metadata.service;
 
-import com.turbointernational.metadata.entity.*;
-import com.turbointernational.metadata.entity.chlogsrc.Source;
-import com.turbointernational.metadata.entity.part.Part;
-import com.turbointernational.metadata.entity.SalesNotePart;
-import com.turbointernational.metadata.entity.SalesNoteState;
-import com.turbointernational.metadata.entity.User;
+import java.util.Map;
+import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
-import java.util.Set;
+import com.turbointernational.metadata.entity.CarEngine;
+import com.turbointernational.metadata.entity.CarFuelType;
+import com.turbointernational.metadata.entity.CarMake;
+import com.turbointernational.metadata.entity.CarModel;
+import com.turbointernational.metadata.entity.CarModelEngineYear;
+import com.turbointernational.metadata.entity.CarYear;
+import com.turbointernational.metadata.entity.SalesNotePart;
+import com.turbointernational.metadata.entity.SalesNoteState;
+import com.turbointernational.metadata.entity.User;
+import com.turbointernational.metadata.entity.chlogsrc.Source;
+import com.turbointernational.metadata.entity.part.Part;
 
 /**
  * Mocked implementation of the {@link SearchService} interface for integration testing.
@@ -196,6 +202,11 @@ public class SearchServiceMockImpl implements SearchService {
     public String filterChanglelogSources(String name, String descritpion, String url, Long sourceNameId,
                                           String sortProperty, String sortOrder, Integer offset, Integer limit) {
         return null;
+    }
+
+    @Override
+    public void indexAll() throws Exception {
+        log.debug("Indexing: indexAll()");
     }
 
 }

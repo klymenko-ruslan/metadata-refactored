@@ -16,6 +16,8 @@ This script does following:
 
 import argparse
 import mysql.connector
+import subprocess
+import time
 
 parser = argparse.ArgumentParser(description='Preparing of'
                                  ' a test environment.')
@@ -27,7 +29,7 @@ parser.add_argument('--dba-username', default='root', help='DBA name.')
 parser.add_argument('--dba-password', default='root', help='DBA password.')
 parser.add_argument('--db-username', default='metaserver_e2e',
                     help='Username for the database \'metadata_e2e\'.')
-parser.add_argument('--db-password', default='root',
+parser.add_argument('--db-password', default='metaserver_e2e',
                     help='Password for the user \'metaserver_e2e\'')
 parser.add_argument('--db-name', default='metadata_e2e',
                     help='Database name (\'metaserver_e2e\') for use during '
@@ -58,36 +60,34 @@ def main(dbaCnx):
     print('A database \'{}\' is being creted.'.format(args.db_name))
     createDatabase(dbaCnx, args.db_name)
     print('Grant permission on the database to the user.')
-    grantPermission(dbaCnx, args.db_host, args.db_username, args.db_name)
+    grantPermission(dbaCnx, args.db_host, args.db_name,
+                    args.db_username, args.db_password)
+    print('Import a dump to the database.')
     importDb(args.dump_filename, args.db_host, args.db_port, args.db_name,
              args.dba_username, args.dba_password)
 
 
 def importDb(filename, dbhost, dbport, dbname, dbausername, dbapassword):
     """Import a database dump."""
-    with open(filename) as f:
-        dump = f.read()
-    dbaCnx2 = mysql.connector.connect(host=args.db_host, port=args.db_port,
-                                      user=args.dba_username,
-                                      password=args.dba_password)
-    try:
-        cursor = dbaCnx2.cursor()
-        try:
-            cursor.execute(dump, multi=True)
-        finally:
-            cursor.close()
-    finally:
-        dbaCnx2.close()
+    cmd = ('mysql -B -q -h{host} -P{port} -u{username} -p{password} {dbname} '
+           '--max-allowed-packet=256M < {dumpfile}').format(
+               host=dbhost, port=dbport, username=dbausername,
+               password=dbapassword, dbname=dbname, dumpfile=filename)
+    subprocess.call(cmd, shell=True)
 
 
-def grantPermission(dbaCnx, dbhost, dbusername, dbname):
+def grantPermission(dbaCnx, dbhost, dbname, username, password):
     """Grant permissions to a database to an user."""
     cursor = dbaCnx.cursor()
     try:
         query = ('grant all privileges on {dbname}.* '
-                 'to \'{dbusername}\'@\'{dbhost}\'').format(
-                     dbname=dbname, dbusername=dbusername, dbhost=dbhost)
+                 'to \'{username}\'@\'{dbhost}\' '
+                 'identified by \'{password}\'').format(
+                     dbhost=dbhost, dbname=dbname, username=username,
+                     password=password)
+        print('Query: {}'.format(query))
         cursor.execute(query)
+        cursor.execute('flush privileges')
     finally:
         cursor.close()
 
@@ -121,7 +121,6 @@ def registerDbUser(dbaCnx, dbhost, username, password):
             'password': password,
             'dbhost': dbhost}
         )
-        cursor.execute('flush privileges')
     finally:
         cursor.close()
 
@@ -162,6 +161,22 @@ dbaCnx = mysql.connector.connect(host=args.db_host, port=args.db_port,
                                  password=args.dba_password)
 
 try:
+    t0 = time.time()
     main(dbaCnx)
+    t1 = time.time()
+    print('The script has been finished in {} second(s).'.format(int(t1 - t0)))
+    print
+    print('The database is ready for tests. Now you have to do following:\n')
+    print('1. Start in a separate window a \'webdriver\':\n'
+          '\n\t$ webdriver-manager start\n')
+    print('2. Start in a separate window an \'elasticsearch\':\n'
+          '\n\t$ elasticsearch -v -Ecluster.name=es-metadata-e2e\n')
+    print('3. Start in a separate window the \'metadata\' webapp with '
+          'profile \'e2e\':')
+    print('\n\t$ cd [directory with the \'metadata\' project]')
+    print('\t$ mvn clean package -DskipTests -Dyo.test.skip=true '
+          '-DbuildNumber=e2e && java -jar target/metadata-e2e.jar '
+          '--spring.profiles.active=e2e\n')
+    print('4. Run in this window the e2e test suites:\n\n\t$ test_e2e.py\n')
 finally:
     dbaCnx.close()
