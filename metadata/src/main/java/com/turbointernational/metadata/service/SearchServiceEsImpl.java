@@ -1258,6 +1258,8 @@ public class SearchServiceEsImpl implements SearchService {
 
     @Override
     public void indexAll() throws Exception {
+        log.info("All documents are being indexed.");
+        createIndex();
         ScrollableResults scrollableParts = partDao.getScrollableResults(DEF_FETCH_SIZE, true, "id");
         indexAllDocs(scrollableParts, DEF_FETCH_SIZE, elasticSearchTypePart, null);
         ScrollableResults scrollableCarModelEngineYears = carModelEngineYearDao.getScrollableResults(DEF_FETCH_SIZE,
@@ -1276,6 +1278,7 @@ public class SearchServiceEsImpl implements SearchService {
         indexAllDocs(scrollableSalesNotes, DEF_FETCH_SIZE, elasticSearchTypeSalesNotePart, null);
         ScrollableResults scrollableChangelogSources = sourceDao.getScrollableResults(DEF_FETCH_SIZE, true, "id");
         indexAllDocs(scrollableChangelogSources, DEF_FETCH_SIZE, elasticSearchTypeSource, null);
+        log.info("The indexing has been finished.");
     }
 
     private void deleteDoc(String elasticSearchType, String searchId) throws Exception {
