@@ -12,6 +12,15 @@ import subprocess
 import sys
 import re
 
+
+parser = argparse.ArgumentParser(description='Build and runs the \'metadata\' '
+                                 'webapp for e2e testing.')
+parser.add_argument('--skip-indexing', action='store_true',
+                    help='Skip step to index documents. It is useful during '
+                    'test development.')
+args = parser.parse_args()
+
+
 print('Checking of prerequisites.')
 
 if shutil.which('protractor') is None:
@@ -37,19 +46,20 @@ if re.search(r'metadata-e2e.jar', jpsout) is None:
           'Please run \'metadata.py\'.', file=sys.stderr)
     sys.exit(1)
 
-print('Indexing of all documetns.')
+if not args.skip_indexing:
+  print('Indexing of all documetns.')
 
-try:
-    httpconn = http.client.HTTPConnection('localhost', 8080, timeout=60)
-    httpconn.request('POST', '/metadata/search/indexall')
-    response = httpconn.getresponse()
-except http.client.HTTPException as e:
-    print('Starting of the indexing job failed. Server response: {}'.format(e))
-    sys.exit(1)
+  try:
+      httpconn = http.client.HTTPConnection('localhost', 8080, timeout=60)
+      httpconn.request('POST', '/metadata/search/indexall')
+      response = httpconn.getresponse()
+  except http.client.HTTPException as e:
+      print('Starting of the indexing job failed. Server response: {}'.format(e))
+      sys.exit(1)
 
-if response.status != http.client.OK:
-    print('The indexing job failed: {}')
-    sys.exit(1)
-print('The indexing has been finished.')
+  if response.status != http.client.OK:
+      print('The indexing job failed: {}')
+      sys.exit(1)
+  print('The indexing has been finished.')
 
 subprocess.call('protractor ./protractor.conf.js', shell=True)

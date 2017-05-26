@@ -135,6 +135,19 @@ CREATE TABLE `backplate` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `backplate`
+--
+
+LOCK TABLES `backplate` WRITE;
+/*!40000 ALTER TABLE `backplate` DISABLE KEYS */;
+INSERT INTO `backplate` VALUES (44769,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO `backplate`(part_id) VALUES(45094);
+INSERT INTO `backplate` VALUES(49654,19772,20372,4,20411,7.660,0.010,7.000,0.001,6.880,0.010,3.122,0.001,4.360,0.010,0.6880,0.0005,0.281,0.875,0.005,NULL,NULL,0.313,0.010,45.0,0.020,NULL,NULL,NULL);
+/*!40000 ALTER TABLE `backplate` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
@@ -308,6 +321,14 @@ CREATE TABLE `bolt_screw` (
   CONSTRAINT `bolt_screw_ibfk_9` FOREIGN KEY (`platingCoating`) REFERENCES `crit_dim_enum_val` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+
+LOCK TABLES `bolt_screw` WRITE;
+/*!40000 ALTER TABLE `bolt_screw` DISABLE KEYS */;
+INSERT INTO `bolt_screw` VALUES(47934,20411,0.188,20401,0.225,0.037,-99.000,19824,19765,19755,0.120,-99.000,2,20405,20325,19817,NULL,NULL,0.1,NULL);
+/*!40000 ALTER TABLE `bolt_screw` ENABLE KEYS */;
+UNLOCK TABLES;
+
 
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -4974,6 +4995,13 @@ INSERT INTO `part` VALUES (14510,'3534378',2,1,NULL,NULL,0,31543,1,NULL,NULL,NUL
 INSERT INTO `part` VALUES (70095,'5303-101-5013',6,31,NULL,NULL,0,NULL,1,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO `part` VALUES (70097,'5304-101-5003',6,31,NULL,NULL,0,NULL,1,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO `part` VALUES (71781,'3532605',2,31,NULL,NULL,0,NULL,0,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO `part` VALUES (44769,'408487-0002',1,34,'Backplate (No longer available)',NULL,0,6522,1,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO `part` VALUES (45094,'5-A-3621',11,34,'Backplate (No longer available)','*NLA* B/PLT, ASSEMBLY, TV',1,6522,2,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO `part` VALUES (47836,'8-A-1206',11,43,'THRUST PLATE, T18','THRUST PLATE, T18',0,9117,2,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO `part` VALUES (47934,'8-A-3134',11,35,'DRIVE SCREW, TV, T/BRG','DRIVE SCREW, TV, T/BRG',0,9116,2,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO `part` VALUES (49654,'5-A-3163',11,34,NULL,'BACKPLATE SUB-ASSY, TV',0,NULL,2,NULL,NULL,NULL,NULL,NULL);
+
+
 /*!40000 ALTER TABLE `part` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -5096,6 +5124,7 @@ CREATE TABLE `part_turbo_type` (
   CONSTRAINT `part_turbo_type_ibfk_2` FOREIGN KEY (`turbo_type_id`) REFERENCES `turbo_type` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
 
 --
 -- Table structure for table `part_type`
@@ -6096,6 +6125,13 @@ CREATE TABLE `thrust_bearing` (
   CONSTRAINT `thrust_bearing_ibfk_3` FOREIGN KEY (`material`) REFERENCES `crit_dim_enum_val` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+LOCK TABLES `thrust_bearing` WRITE;
+/*!40000 ALTER TABLE `thrust_bearing` DISABLE KEYS */;
+INSERT INTO `thrust_bearing` VALUES(47836,0.0905,0.0895,1.491,0.005,0.793,0.005,NULL,0.005,1.368,0.005,0,3,-99.000,0.005,-99.000,0.005,20337,3,0.080,360,20393,NULL,NULL);
+
+/*!40000 ALTER TABLE `thrust_bearing` ENABLE KEYS */;
+UNLOCK TABLES;
 
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;

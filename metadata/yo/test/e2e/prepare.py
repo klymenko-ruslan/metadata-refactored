@@ -18,6 +18,7 @@ import argparse
 import mysql.connector
 import subprocess
 import time
+import sys
 
 parser = argparse.ArgumentParser(description='Preparing of'
                                  ' a test environment.')
@@ -73,7 +74,10 @@ def importDb(filename, dbhost, dbport, dbname, dbausername, dbapassword):
            '--max-allowed-packet=256M < {dumpfile}').format(
                host=dbhost, port=dbport, username=dbausername,
                password=dbapassword, dbname=dbname, dumpfile=filename)
-    subprocess.call(cmd, shell=True)
+    retval = subprocess.call(cmd, shell=True)
+    if retval != 0:
+        print('Import of a database dump failed.', file=sys.stderr)
+        sys.exit(1)
 
 
 def grantPermission(dbaCnx, dbhost, dbname, username, password):

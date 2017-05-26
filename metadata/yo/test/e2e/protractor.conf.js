@@ -27,6 +27,15 @@ exports.config = {
     element(by.id('username')).sendKeys('pavlo.kurochka@zorallabs.com');
     element(by.id('password')).sendKeys('zoraltemp');
     element(by.id('bttn-login')).click();
+    browser._selectDropdownbyNum = function (element, optionNum) {
+      /* A helper function to select in a dropdown control an option
+      * with specified number.
+      */
+      return element.all(by.tagName('option')).then(
+        function(options) {
+          options[optionNum].click();
+        });
+    };
   },
   onComplete: function() {
     // Logout.
