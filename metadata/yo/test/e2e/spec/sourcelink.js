@@ -16,7 +16,7 @@ describe('Navigation menu:', function() {
       .toEqual('http://localhost:8080/part/14510/bom/search');
     element(by.id('fltrManufacturer')).all(by.tagName('option'))
       .each(function(opt, idx) {
-        console.log(idx + ' - ' + opt.getId());
+        //console.log(idx + ' - ' + opt.getId());
       });
   });
 

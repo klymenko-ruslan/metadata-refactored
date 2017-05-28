@@ -1357,6 +1357,8 @@ INSERT INTO `car_model` VALUES (27,'B57',252,2349);
 INSERT INTO `car_model` VALUES (28,'B58',252,2340);
 INSERT INTO `car_model` VALUES (29,'B6',252,1715);
 INSERT INTO `car_model` VALUES (30,'B7',252,5411);
+INSERT INTO `car_model` VALUES (68,'L120E',252,6062);
+INSERT INTO `car_model` VALUES (930,'FRONTERA DTI',183,3342);
 /*!40000 ALTER TABLE `car_model` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1394,6 +1396,10 @@ INSERT INTO `car_model_engine_year` VALUES (12,NULL,339,NULL,1664);
 INSERT INTO `car_model_engine_year` VALUES (13,22,360,43,2351);
 INSERT INTO `car_model_engine_year` VALUES (116,27,NULL,19,5466);
 INSERT INTO `car_model_engine_year` VALUES (130,29,417,NULL,2354);
+INSERT INTO `car_model_engine_year` VALUES (1150,930,122,52,3342);
+INSERT INTO `car_model_engine_year` VALUES (1732,68,231,NULL,6062);
+INSERT INTO `car_model_engine_year` VALUES (2958,NULL,NULL,NULL,1861);
+
 /*!40000 ALTER TABLE `car_model_engine_year` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1834,6 +1840,13 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+
+LOCK TABLES `compressor_wheel` WRITE;
+/*!40000 ALTER TABLE `compressor_wheel` DISABLE KEYS */;
+INSERT INTO `compressor_wheel` VALUES (67932,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO `compressor_wheel` VALUES (67933,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+/*!40000 ALTER TABLE `compressor_wheel` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `cool_type`
@@ -4238,6 +4251,24 @@ CREATE TABLE `interchange_header` (
 ) ENGINE=InnoDB AUTO_INCREMENT=72394 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+LOCK TABLES `interchange_header` WRITE;
+/*!40000 ALTER TABLE `interchange_header` DISABLE KEYS */;
+INSERT INTO `interchange_header` VALUES (10191,NULL,NULL,NULL);
+INSERT INTO `interchange_header` VALUES (26436,NULL,NULL,14510);
+INSERT INTO `interchange_header` VALUES (19236,NULL,NULL,17885);
+INSERT INTO `interchange_header` VALUES (14007,NULL,NULL,NULL);
+INSERT INTO `interchange_header` VALUES (35631,NULL,NULL,17888);
+INSERT INTO `interchange_header` VALUES (67312,NULL,NULL,67932);
+INSERT INTO `interchange_header` VALUES (67313,NULL,NULL,67933);
+INSERT INTO `interchange_header` VALUES (71488,NULL,NULL,71781);
+INSERT INTO `interchange_header` VALUES (2476,NULL,NULL,NULL);
+INSERT INTO `interchange_header` VALUES (1097,NULL,NULL,NULL);
+INSERT INTO `interchange_header` VALUES (3887,NULL,NULL,NULL);
+INSERT INTO `interchange_header` VALUES (37370,NULL,NULL,49654);
+/*!40000 ALTER TABLE `interchange_header` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
 --
 -- Table structure for table `interchange_item`
 --
@@ -4254,6 +4285,26 @@ CREATE TABLE `interchange_item` (
   CONSTRAINT `interchange_item_ibfk_2` FOREIGN KEY (`part_id`) REFERENCES `part` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+LOCK TABLES `interchange_item` WRITE;
+/*!40000 ALTER TABLE `interchange_item` DISABLE KEYS */;
+INSERT INTO `interchange_item` VALUES (5801,10191);
+INSERT INTO `interchange_item` VALUES (14510,26436);
+INSERT INTO `interchange_item` VALUES (17885,19236);
+INSERT INTO `interchange_item` VALUES (17887,14007);
+INSERT INTO `interchange_item` VALUES (17888,35631);
+INSERT INTO `interchange_item` VALUES (70095,67312);
+INSERT INTO `interchange_item` VALUES (70097,67313);
+INSERT INTO `interchange_item` VALUES (71781,71488);
+INSERT INTO `interchange_item` VALUES (44769,2476);
+INSERT INTO `interchange_item` VALUES (45094,2476);
+INSERT INTO `interchange_item` VALUES (47836,1097);
+INSERT INTO `interchange_item` VALUES (47934,3887);
+INSERT INTO `interchange_item` VALUES (49654,37370);
+INSERT INTO `interchange_item` VALUES (67932,67312);
+INSERT INTO `interchange_item` VALUES (67933,67313);
+/*!40000 ALTER TABLE `interchange_item` ENABLE KEYS */;
+UNLOCK TABLES;
+
 
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -4992,6 +5043,9 @@ LOCK TABLES `part` WRITE;
 /*!40000 ALTER TABLE `part` DISABLE KEYS */;
 INSERT INTO `part` VALUES (5801,'3545744',2,2,NULL,NULL,0,31413,1,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO `part` VALUES (14510,'3534378',2,1,NULL,NULL,0,31543,1,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO `part` VALUES (17885,'705097-0001',1,1,NULL,NULL,0,10876,1,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO `part` VALUES (17887,'454004-0001',1,1,NULL,NULL,0,18540,1,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO `part` VALUES (17888,'1270-988-0016',9,1,NULL,NULL,0,22554,1,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO `part` VALUES (70095,'5303-101-5013',6,31,NULL,NULL,0,NULL,1,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO `part` VALUES (70097,'5304-101-5003',6,31,NULL,NULL,0,NULL,1,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO `part` VALUES (71781,'3532605',2,31,NULL,NULL,0,NULL,0,NULL,NULL,NULL,NULL,NULL);
@@ -5000,10 +5054,11 @@ INSERT INTO `part` VALUES (45094,'5-A-3621',11,34,'Backplate (No longer availabl
 INSERT INTO `part` VALUES (47836,'8-A-1206',11,43,'THRUST PLATE, T18','THRUST PLATE, T18',0,9117,2,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO `part` VALUES (47934,'8-A-3134',11,35,'DRIVE SCREW, TV, T/BRG','DRIVE SCREW, TV, T/BRG',0,9116,2,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO `part` VALUES (49654,'5-A-3163',11,34,NULL,'BACKPLATE SUB-ASSY, TV',0,NULL,2,NULL,NULL,NULL,NULL,NULL);
-
-
+INSERT INTO `part` VALUES (67933,'13-D-5990',11,31,NULL,'*ND* COMPRESSOR COVER, K03',0,NULL,0,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO `part` VALUES (67932,'13-D-5987',11,31,NULL,'*ND* COMPRESSOR COVER, K03',0,NULL,0,NULL,NULL,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `part` ENABLE KEYS */;
 UNLOCK TABLES;
+
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
@@ -6460,6 +6515,9 @@ CREATE TABLE `turbo` (
 LOCK TABLES `turbo` WRITE;
 /*!40000 ALTER TABLE `turbo` DISABLE KEYS */;
 INSERT INTO `turbo` VALUES (14510,339,NULL,NULL);
+INSERT INTO `turbo` VALUES (17885,425,NULL,NULL);
+INSERT INTO `turbo` VALUES (17887,1427,NULL,NULL);
+INSERT INTO `turbo` VALUES (17888,2035,NULL,NULL);
 /*!40000 ALTER TABLE `turbo` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -6480,6 +6538,13 @@ CREATE TABLE `turbo_car_model_engine_year` (
   CONSTRAINT `turbo_car_model_engine_year_ibfk_2` FOREIGN KEY (`part_id`) REFERENCES `turbo` (`part_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+LOCK TABLES `turbo_car_model_engine_year` WRITE;
+/*!40000 ALTER TABLE `turbo_car_model_engine_year` DISABLE KEYS */;
+INSERT INTO `turbo_car_model_engine_year` VALUES (17885,1150,NULL);
+INSERT INTO `turbo_car_model_engine_year` VALUES (17887,2958,NULL);
+INSERT INTO `turbo_car_model_engine_year` VALUES (17888,1732,NULL);
+UNLOCK TABLES;
 
 --
 -- Dumping data for table `turbo_car_model_engine_year`
@@ -18840,6 +18905,11 @@ INSERT INTO `turbo_model` VALUES (339,'H1E',260,585);
 INSERT INTO `turbo_model` VALUES (340,'HX35W',347,586);
 INSERT INTO `turbo_model` VALUES (341,'HX35',344,587);
 INSERT INTO `turbo_model` VALUES (342,'RHF4',458,589);
+INSERT INTO `turbo_model` VALUES (425,'GTA1849V',195,679);
+INSERT INTO `turbo_model` VALUES (1427,'TO4E26',756,1681);
+INSERT INTO `turbo_model` VALUES (2035,'S200G-3071NRAKB/0.76',487,2314);
+
+
 /*!40000 ALTER TABLE `turbo_model` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -18868,10 +18938,17 @@ CREATE TABLE `turbo_type` (
 
 LOCK TABLES `turbo_type` WRITE;
 /*!40000 ALTER TABLE `turbo_type` DISABLE KEYS */;
+INSERT INTO `turbo_type` VALUES (195,'GT18V',1,160);
+INSERT INTO `turbo_type` VALUES (258,'H1C',2,228);
 INSERT INTO `turbo_type` VALUES (260,'H1E',2,230);
 INSERT INTO `turbo_type` VALUES (261,'H2A',2,233);
 INSERT INTO `turbo_type` VALUES (262,'H2B',2,238);
 INSERT INTO `turbo_type` VALUES (263,'H2C',2,239);
+INSERT INTO `turbo_type` VALUES (344,'HX35',2,495);
+INSERT INTO `turbo_type` VALUES (347,'HX35W',2,235);
+INSERT INTO `turbo_type` VALUES (458,'RHF4',3,461);
+INSERT INTO `turbo_type` VALUES (487,'S200G',9,620);
+INSERT INTO `turbo_type` VALUES (756,'TO4E',1,87);
 /*!40000 ALTER TABLE `turbo_type` ENABLE KEYS */;
 UNLOCK TABLES;
 

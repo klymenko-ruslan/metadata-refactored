@@ -108,11 +108,11 @@ cmdmvn = ('{mvn} -f {pom} -DskipTests -Dyo.test.skip=true -DbuildNumber=e2e '
           'clean package'.format(mvn=mvnfname, pom=pomfilename))
 print('Building of the \'metadata\' webapp.\n')
 
-# retcode = subprocess.call(cmdmvn, shell=True)
-# if retcode != 0:
-#     print('Building of the \'metadata\' webapp failed with return code: {}'
-#           .format(retcode), file=sys.stderr)
-#     sys.exit(1)
+retcode = subprocess.call(cmdmvn, shell=True)
+if retcode != 0:
+    print('Building of the \'metadata\' webapp failed with return code: {}'
+          .format(retcode), file=sys.stderr)
+    sys.exit(1)
 print('Prepare environment to start the webapp.')
 # The variable 'vardir' below is a root for various file storages
 # in the webapp (images, attachments etc.).

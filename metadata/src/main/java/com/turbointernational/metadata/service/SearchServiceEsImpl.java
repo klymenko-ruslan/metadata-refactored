@@ -1318,10 +1318,10 @@ public class SearchServiceEsImpl implements SearchService {
         TransactionTemplate tt = new TransactionTemplate(txManager);
         tt.setPropagationBehavior(PROPAGATION_REQUIRES_NEW); // new transaction
         tt.execute((TransactionCallback<Void>) ts -> {
+            String searchId = null;
             try {
                 BulkRequest bulk = null;
                 while (true) {
-                    String searchId;
                     IndexRequest index;
                     String asJson;
                     // The synchronization below is needed because scrollable
@@ -1357,7 +1357,7 @@ public class SearchServiceEsImpl implements SearchService {
                     batchIndex(bulk, elasticSearchType, observer);
                 }
             } catch (Exception e) {
-                log.error("Reindexing of '" + elasticSearchType + "' failed.", e);
+                log.error("Reindexing of '" + elasticSearchType + "' failed. Search ID: {}", searchId, e);
                 throw e;
             } finally {
                 scrollableResults.close();

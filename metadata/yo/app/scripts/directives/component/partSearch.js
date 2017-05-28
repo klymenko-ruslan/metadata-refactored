@@ -98,7 +98,7 @@ angular.module('ngMetaCrudApp')
 
         $scope.isCritDimsForCurrentPartTypeAvailable = function() {
           return angular.isObject($scope.fltrPart.partType) &&
-                $scope.critDims !== null && $scope.critDims.length;
+                angular.isObject($scope.critDims) && $scope.critDims.length;
         };
 
         $scope.initColumns = function() {
