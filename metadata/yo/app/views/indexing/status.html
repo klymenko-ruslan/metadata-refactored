@@ -45,7 +45,7 @@
           <small data-ng-hide="::hasRole('ROLE_ADMIN')">(You have no enough permissions to start the process.)</small>
         </div>
         <div class="col-xs-12 col-sm-2 col-sm-pull-10">
-          <button data-ng-click="ctrl.startIndexing()" role="button" class="btn btn-primary btn-lg active" data-ng-disabled="!(toIndex.parts || toIndex.applications || toIndex.salesNotes) || toIndex.changelogSources) || !hasRole('ROLE_ADMIN')">
+          <button data-ng-click="ctrl.startIndexing()" role="button" class="btn btn-primary btn-lg active" data-ng-disabled="!(toIndex.parts || toIndex.applications || toIndex.salesNotes || toIndex.changelogSources) || !hasRole('ROLE_ADMIN')">
             <i class="fa fa-flag"></i> Start
           </button>
         </div>
