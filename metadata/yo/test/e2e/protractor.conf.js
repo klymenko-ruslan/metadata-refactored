@@ -1,8 +1,8 @@
 exports.config = {
   seleniumAddress: 'http://localhost:4444/wd/hub',
-  specs: ['spec/**/*.js'],
-  //specs: ['spec/sourcelink.js'/*, 'spec/nav.js'*/],
-  //specs: ['spec/partsearch.js'],
+  //specs: ['spec/**/*.js'],
+  //specs: ['spec/nav.js', 'spec/partsearch.js', 'spec/sourcelink.js'],
+  specs: ['spec/users.js'],
   capabilities: {
     browserName: 'chrome',
     chromeOptions: {
@@ -35,6 +35,9 @@ exports.config = {
         function(options) {
           options[optionNum].click();
         });
+    };
+    browser._selectReset = function (element) {
+      return browser._selectDropdownbyNum(element, 0);
     };
   },
   onComplete: function() {
