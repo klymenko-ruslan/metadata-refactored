@@ -399,6 +399,7 @@ angular.module('ngMetaCrudApp')
 
                 // Clear input filter and selections.
                 clearAllInputs();
+                $scope.cmeyForm.$setPristine();
 
                 // Clear picked items.
                 _.each($scope.pickedModels, function(cm) {
@@ -418,7 +419,6 @@ angular.module('ngMetaCrudApp')
                 });
                 $scope.pickedYears.splice(0, $scope.pickedYears.length);
                 $scope.pickedYearsTableParams.reload();
-
                 toastr.success('Created ' + result.created + ' applications. ' + result.ignored + ' ignored.');
               },
               function failure(errorResponse) {
