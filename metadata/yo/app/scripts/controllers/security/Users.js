@@ -14,10 +14,8 @@ angular.module('ngMetaCrudApp')
     $scope.authProviders = _.map(authProviders.recs || [], function (ap) {
       return {id: ap.id, title: ap.name};
     });
-    $scope.authProviders.unshift({ id: null, title: 'Local DB' });
-    $scope.authProviders.unshift({ id: -1, title: '' });
+    $scope.authProviders.unshift({ id: -2, title: 'Local DB' });
     $scope.enabledOpts = [
-      {id: null, title: ''},
       {id: true, title: 'yes'},
       {id: false, title: 'no'}
     ];
@@ -48,8 +46,16 @@ angular.module('ngMetaCrudApp')
         var offset = params.count() * (params.page() - 1);
         var limit = params.count();
         var filter = params.filter();
+        // normalize auth provider value
+        var fltrAuthProviderId = filter.authProviderId;
+        if (fltrAuthProviderId === '' || fltrAuthProviderId === null ||
+                fltrAuthProviderId === undefined) {
+            fltrAuthProviderId = -1;
+        } else if (fltrAuthProviderId === -2) {
+            fltrAuthProviderId = null;
+        }
         return restService.filterUsers(filter.displayName, filter.userName,
-          filter.email, filter.authProviderId, filter.enabled, sortProperty,
+          filter.email, fltrAuthProviderId, filter.enabled, sortProperty,
           sortOrder, offset, limit).then(
           function(result) {
             // Update the total and slice the result

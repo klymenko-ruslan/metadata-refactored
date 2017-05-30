@@ -32,7 +32,7 @@ describe('Users:', function() {
       fltrUsername.clear();
       fltrEmail.clear();
       browser._selectReset(fltrEnabled);
-      browser._selectDropdownbyNum(fltrAuthProvider, 2);
+      browser._selectReset(fltrAuthProvider);
     });
 
     it('should be displayed', function() {
@@ -84,6 +84,32 @@ describe('Users:', function() {
         expect(fltrName.isPresent()).toBeTruthy();
         fltrName.sendKeys('CK');
         expect(rows.count()).toBe(2);
+      });
+
+    });
+
+    describe('search by \'Username\':', function() {
+
+      it('exactly (case sensitive)', function() {
+        fltrUsername.sendKeys('creddick');
+        expect(rows.count()).toBe(1);
+      });
+
+      it('exactly (case insensitive)', function() {
+        fltrUsername.sendKeys('creDDick');
+        expect(rows.count()).toBe(1);
+      });
+
+      it('partly (case sensitive)', function() {
+        expect(fltrName.isPresent()).toBeTruthy();
+        fltrUsername.sendKeys('bb');
+        expect(rows.count()).toBe(1);
+      });
+
+      it('partly (case insensitive)', function() {
+        expect(fltrName.isPresent()).toBeTruthy();
+        fltrUsername.sendKeys('BB');
+        expect(rows.count()).toBe(1);
       });
 
     });

@@ -24,6 +24,9 @@ import sys
 
 parser = argparse.ArgumentParser(description='Build and runs the \'metadata\' '
                                  'webapp for e2e testing.')
+parser.add_argument('--skip-build', action='store_true',
+                    help='Skip building of the application. It is expected '
+                    'that application has already been built.')
 parser.add_argument('--java-extra-opts', default='',
                     help='Extra options to run \'java\'.')
 args = parser.parse_args()
@@ -93,26 +96,35 @@ def check_maven():
     return mvnfname
 
 
+def buildapp():
+    """
+    Biuld the 'metadata' webapp.
+
+    Before build the sobroutine do some checks of prerequisites and
+    exit (with error message) if they are not met.
+    """
+    mvnfname = check_maven()
+    pomfilename = os.path.join(scriptdir, '..', '..', '..', 'pom.xml')
+    if not os.path.exists(pomfilename):
+        print('Can\'t find a POM for the \'metadata\' webapp: {}'
+              .format(pomfilename), file=sys.stderr)
+        sys.exit(1)
+    cmdmvn = ('{mvn} -f {pom} -DskipTests -Dyo.test.skip=true -DbuildNumber=e2e '
+              'clean package'.format(mvn=mvnfname, pom=pomfilename))
+    print('Building of the \'metadata\' webapp.\n')
+    retcode = subprocess.call(cmdmvn, shell=True)
+    if retcode != 0:
+        print('Building of the \'metadata\' webapp failed with return code: {}'
+              .format(retcode), file=sys.stderr)
+        sys.exit(1)
+
 scriptdir = os.path.dirname(os.path.realpath(__file__))
+
+if not args.skip_build:
+    buildapp()
 
 print('Checking of prerequisites.')
 javafname = check_jdk()
-mvnfname = check_maven()
-
-pomfilename = os.path.join(scriptdir, '..', '..', '..', 'pom.xml')
-if not os.path.exists(pomfilename):
-    print('Can\'t find a POM for the \'metadata\' webapp: {}'
-          .format(pomfilename), file=sys.stderr)
-    sys.exit(1)
-cmdmvn = ('{mvn} -f {pom} -DskipTests -Dyo.test.skip=true -DbuildNumber=e2e '
-          'clean package'.format(mvn=mvnfname, pom=pomfilename))
-print('Building of the \'metadata\' webapp.\n')
-
-retcode = subprocess.call(cmdmvn, shell=True)
-if retcode != 0:
-    print('Building of the \'metadata\' webapp failed with return code: {}'
-          .format(retcode), file=sys.stderr)
-    sys.exit(1)
 print('Prepare environment to start the webapp.')
 # The variable 'vardir' below is a root for various file storages
 # in the webapp (images, attachments etc.).

@@ -169,7 +169,7 @@ public class PriceService {
                     BigDecimal.class, partNumber);
         } catch (EmptyResultDataAccessException e) {
             log.debug("Standard unit price for the part (p/n '{}') not found.", partNumber);
-            return new ProductPrices(null, partNumber, "Standard unit price not found.");
+            return new ProductPrices(partId, partNumber, "Standard unit price not found.");
         } catch (DataAccessException e) {
             log.warn("Calculation of a standard unit price for the part (p/n '{}') failed: {}", partNumber,
                     e.getMessage());

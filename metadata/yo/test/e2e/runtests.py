@@ -47,7 +47,7 @@ if re.search(r'metadata-e2e.jar', jpsout) is None:
     sys.exit(1)
 
 if not args.skip_indexing:
-  print('Indexing of all documetns.')
+  print('Indexing of all documents.')
 
   try:
       httpconn = http.client.HTTPConnection('localhost', 8080, timeout=60)
