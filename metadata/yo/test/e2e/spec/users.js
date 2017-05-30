@@ -13,7 +13,7 @@ describe('Users:', function() {
   describe('List:', function() {
 
     var rows, fltrName, fltrUsername, fltrEmail, fltrEnabled, fltrAuthProvider,
-      bttnClear;
+      bttnClear, bttnCreateUser;
 
     beforeAll(function() {
       rows = element.all(by.repeater('user in $data'));
@@ -25,6 +25,7 @@ describe('Users:', function() {
       fltrEnabled = ths.get(3).element(by.tagName('select'));
       fltrAuthProvider = ths.get(4).element(by.tagName('select'));
       bttnClear = ths.last().element(by.tagName('button'));
+      bttnCreateUser = element(by.css('btn-success'));
     });
 
     beforeEach(function() {
@@ -75,13 +76,11 @@ describe('Users:', function() {
       });
 
       it('partly (case sensitive)', function() {
-        expect(fltrName.isPresent()).toBeTruthy();
         fltrName.sendKeys('ck');
         expect(rows.count()).toBe(2);
       });
 
       it('partly (case insensitive)', function() {
-        expect(fltrName.isPresent()).toBeTruthy();
         fltrName.sendKeys('CK');
         expect(rows.count()).toBe(2);
       });
@@ -101,15 +100,88 @@ describe('Users:', function() {
       });
 
       it('partly (case sensitive)', function() {
-        expect(fltrName.isPresent()).toBeTruthy();
         fltrUsername.sendKeys('bb');
         expect(rows.count()).toBe(1);
       });
 
       it('partly (case insensitive)', function() {
-        expect(fltrName.isPresent()).toBeTruthy();
         fltrUsername.sendKeys('BB');
         expect(rows.count()).toBe(1);
+      });
+
+    });
+
+    describe('search by \'Email\':', function() {
+
+      it('exactly (case sensitive)', function() {
+        fltrEmail.sendKeys('jeff@jeffwesson.com');
+        expect(rows.count()).toBe(1);
+      });
+
+      it('exactly (case insensitive)', function() {
+        fltrEmail.sendKeys('JEFF@jeffwesson.com');
+        expect(rows.count()).toBe(1);
+      });
+
+      it('partly (case sensitive)', function() {
+        fltrEmail.sendKeys('wess');
+        expect(rows.count()).toBe(1);
+      });
+
+      it('partly (case insensitive)', function() {
+        fltrEmail.sendKeys('wESs');
+        expect(rows.count()).toBe(1);
+      });
+
+    });
+
+    describe('search by \'Enabled\':', function() {
+
+      it('any', function() {
+        browser._selectDropdownbyNum(fltrEnabled, 1);
+        expect(rows.count()).toBe(25);
+      });
+
+      it('yes', function() {
+        browser._selectDropdownbyNum(fltrEnabled, 2);
+        expect(rows.count()).toBe(25);
+      });
+
+      it('no', function() {
+        browser._selectDropdownbyNum(fltrEnabled, 3);
+        expect(rows.count()).toBe(5);
+      });
+
+    });
+
+    describe('search by \'Auth Provider\':', function() {
+
+      it('any', function() {
+        browser._selectDropdownbyNum(fltrAuthProvider, 1);
+        expect(rows.count()).toBe(25);
+      });
+
+      it('Local DB', function() {
+        browser._selectDropdownbyNum(fltrAuthProvider, 2);
+        expect(rows.count()).toBe(14);
+      });
+
+      it('TurboInternational AD (LDAP)', function() {
+        browser._selectDropdownbyNum(fltrAuthProvider, 3);
+        expect(rows.count()).toBe(3);
+      });
+
+      it('TurboInternational AD (LDAP SOFT)', function() {
+        browser._selectDropdownbyNum(fltrAuthProvider, 4);
+        expect(rows.count()).toBe(13);
+      });
+
+    });
+
+    fdescribe('Create User:', function() {
+
+      it('should have a button \'Create User\'', function () {
+        expect(bttnCreateUser.isPresent()).toBeTruthy();
       });
 
     });
