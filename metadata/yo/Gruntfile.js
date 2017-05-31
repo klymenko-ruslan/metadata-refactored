@@ -226,7 +226,10 @@ module.exports = function (grunt) {
       test: {
         devDependencies: true,
         src: '<%= karma.unit.configFile %>',
-        exclude: ['bower_components/lodash/lodash.js'],
+        exclude: [
+            'bower_components/lodash/lodash.js',
+            'bower_components/bootstrap-sass/assets/javascripts/bootstrap.js'
+        ],
         ignorePath:  /\.\.\//,
         fileTypes:{
           js: {
