@@ -4,9 +4,11 @@
 exports.config = {
   seleniumAddress: 'http://localhost:4444/wd/hub',
   //specs: ['spec/**/*.js'],
-  //specs: ['spec/nav.js', 'spec/partsearch.js', 'spec/sourcelink.js'],
+  //specs: ['spec/nav.js', 'spec/partsearch.js', 'spec/sourcelink.js',
+  //  'spec/users.js'],
   //specs: ['spec/partsearch.js'],
-  specs: ['spec/users.js'],
+  //specs: ['spec/users.js'],
+  specs: ['spec/parttype.js'],
   multiCapabilities: [/*{
     browserName: 'chrome',
     chromeOptions: {
@@ -36,6 +38,34 @@ exports.config = {
     }
   }],
   onPrepare: function() {
+    var disableNgAnimate = function() {
+      angular
+        .module('disableNgAnimate', [])
+        .run(['$animate', function($animate) {
+          $animate.enabled(false);
+        }]);
+    };
+
+    var disableCssAnimate = function() {
+      angular
+        .module('disableCssAnimate', [])
+        .run(function() {
+          var style = document.createElement('style');
+          style.type = 'text/css';
+          style.innerHTML = '* {' +
+            '-webkit-transition: none !important;' +
+            '-moz-transition: none !important' +
+            '-o-transition: none !important' +
+            '-ms-transition: none !important' +
+            'transition: none !important' +
+            '}';
+          document.getElementsByTagName('head')[0].appendChild(style);
+        });
+    };
+
+    browser.addMockModule('disableNgAnimate', disableNgAnimate);
+    browser.addMockModule('disableCssAnimate', disableCssAnimate);
+
     // Login.
     browser.get('http://localhost:8080');
     element(by.id('username')).sendKeys('pavlo.kurochka@zorallabs.com');

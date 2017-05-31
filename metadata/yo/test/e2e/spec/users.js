@@ -178,7 +178,7 @@ describe('Users:', function() {
 
     });
 
-    fdescribe('Create User:', function() {
+    xdescribe('Create User:', function() {
 
       it('should have a button \'Create User\'', function () {
         expect(bttnCreateUser.isPresent()).toBeTruthy();

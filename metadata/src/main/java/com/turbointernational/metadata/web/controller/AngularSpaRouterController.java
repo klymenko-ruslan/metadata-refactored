@@ -13,6 +13,7 @@ public class AngularSpaRouterController {
     @RequestMapping({
         "/",
         "/part/**",
+        "/parttype/**",
         "/other/**",
         "/security/**",
         "/password/**",
