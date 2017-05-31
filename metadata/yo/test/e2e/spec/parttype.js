@@ -31,20 +31,20 @@ describe('Part Types:', function() {
         .toBe('http://localhost:8080/parttype/list');
       bttnFirstView.click();
       var url = browser.getCurrentUrl();
-      expect(jasmine.stringMatching(/http:\/\/localhost:8080\/parttype\/{\d}+/))
-        .toBeTruthy();
+      expect(url).toMatch(/http:\/\/localhost:8080\/parttype\/\d+/);
     });
 
   });
 
-  fdescribe('View:', function() {
+  describe('View:', function() {
 
     var bttnAddReplaceImage;
 
     beforeAll(function() {
       browser.getCurrentUrl();
-      browser.get('http://localhost:8080/parttype/47');
-      bttnAddReplaceImage = element(by.partialButtonText('Add/Replace Image...'));
+      browser.get('http://localhost:8080/parttype/30'); // Actuator
+      bttnAddReplaceImage = element(by.partialButtonText(
+        'Add/Replace Image...'));
     });
 
     it('should have a button \'Add/Replace Image...\'', function() {
@@ -53,12 +53,6 @@ describe('Part Types:', function() {
 
     it('should upload an image', function() {
       var image2upload = path.resolve(__dirname, '../resources/washer.jpg');
-      var img = element(by.tagName('img'));
-      expect(img.isPresent()).toBeTruthy();
-      expect(img.isDisplayed()).toBeFalsy();
-      var imgNoImage = element(by.css('div.no-image'));
-      expect(imgNoImage.isPresent()).toBeTruthy();
-      expect(imgNoImage.isDisplayed()).toBeTruthy();
       var dlg = element(by.id('dlgUploadLegend'));
       expect(dlg.isPresent()).toBeTruthy();
       expect(dlg.isDisplayed()).toBeFalsy();
@@ -69,10 +63,6 @@ describe('Part Types:', function() {
       var bttnUpload = element(by.partialButtonText('Upload'));
       expect(bttnUpload.isPresent()).toBeTruthy();
       bttnUpload.click();
-      expect(img.isPresent()).toBeTruthy();
-      expect(img.isDisplayed()).toBeTruthy();
-      expect(imgNoImage.isPresent()).toBeTruthy();
-      expect(imgNoImage.isDisplayed()).toBeFalsy();
     });
 
   });

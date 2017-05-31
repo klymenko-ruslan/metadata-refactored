@@ -3,12 +3,12 @@
 
 exports.config = {
   seleniumAddress: 'http://localhost:4444/wd/hub',
-  //specs: ['spec/**/*.js'],
+  specs: ['spec/**/*.js'],
   //specs: ['spec/nav.js', 'spec/partsearch.js', 'spec/sourcelink.js',
   //  'spec/users.js'],
   //specs: ['spec/partsearch.js'],
   //specs: ['spec/users.js'],
-  specs: ['spec/parttype.js'],
+  //specs: ['spec/parttype.js'],
   multiCapabilities: [/*{
     browserName: 'chrome',
     chromeOptions: {
