@@ -4,6 +4,7 @@
 'use strict';
 
 var path = require('path');
+var EC = protractor.ExpectedConditions;
 
 describe('Part Types:', function() {
 
@@ -61,8 +62,13 @@ describe('Part Types:', function() {
       expect(bttnFile.isPresent()).toBeTruthy();
       bttnFile.sendKeys(image2upload);
       var bttnUpload = element(by.partialButtonText('Upload'));
+      browser.wait(EC.visibilityOf(dlg), 5000, 'A dialog to upload image ' +
+        'has not been displayed.');
       expect(bttnUpload.isPresent()).toBeTruthy();
+      expect(bttnUpload.isEnabled()).toBeTruthy();
       bttnUpload.click();
+      browser.wait(EC.invisibilityOf(dlg), 5000, 'A dialog to upload image ' +
+        'has not been closed.');
     });
 
   });

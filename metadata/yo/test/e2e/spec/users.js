@@ -5,17 +5,14 @@
 
 describe('Users:', function() {
 
-  beforeAll(function() {
-    browser.getCurrentUrl();
-    browser.get('http://localhost:8080/security/users');
-  });
-
   describe('List:', function() {
 
-    var rows, fltrName, fltrUsername, fltrEmail, fltrEnabled, fltrAuthProvider,
-      bttnClear, bttnCreateUser;
+    var rows, fltrName, fltrUsername, fltrEmail, fltrEnabled,
+      fltrAuthProvider, bttnClear, bttnCreateUser;
 
     beforeAll(function() {
+      browser.getCurrentUrl();
+      browser.get('http://localhost:8080/security/users');
       rows = element.all(by.repeater('user in $data'));
       var filterRow = element(by.className('ng-table-filters'));
       var ths = filterRow.all(by.tagName('th'));
@@ -25,15 +22,18 @@ describe('Users:', function() {
       fltrEnabled = ths.get(3).element(by.tagName('select'));
       fltrAuthProvider = ths.get(4).element(by.tagName('select'));
       bttnClear = ths.last().element(by.tagName('button'));
-      bttnCreateUser = element(by.css('btn-success'));
+      bttnCreateUser = element(by.css('.btn-success'));
     });
 
     beforeEach(function() {
+      browser.get('http://localhost:8080/security/users');
+      /*
       fltrName.clear();
       fltrUsername.clear();
       fltrEmail.clear();
       browser._selectReset(fltrEnabled);
       browser._selectReset(fltrAuthProvider);
+      */
     });
 
     it('should be displayed', function() {
@@ -41,6 +41,24 @@ describe('Users:', function() {
         .toBe('http://localhost:8080/security/users');
       expect(rows.isPresent()).toBeTruthy();
       expect(rows.count()).toBe(25);
+    });
+
+    it('should have a button \'Create User\'', function () {
+      expect(bttnCreateUser.isPresent()).toBeTruthy();
+    });
+
+    it('should open form on click on the \'Create User\' button',
+      function () {
+        bttnCreateUser.click();
+        expect(browser.getCurrentUrl())
+          .toBe('http://localhost:8080/security/user/create');
+      }
+    );
+
+    it('should open an user for edit', function () {
+      var bttnView = rows.first().all(by.tagName('td')).get(5)
+        .element(by.tiButton('View'));
+      expect(bttnView.isPresent());
     });
 
     it('should has a filter', function() {
@@ -144,7 +162,7 @@ describe('Users:', function() {
 
       it('yes', function() {
         browser._selectDropdownbyNum(fltrEnabled, 2);
-        expect(rows.count()).toBe(25);
+        expect(rows.count()).toBe(24);
       });
 
       it('no', function() {
@@ -163,7 +181,7 @@ describe('Users:', function() {
 
       it('Local DB', function() {
         browser._selectDropdownbyNum(fltrAuthProvider, 2);
-        expect(rows.count()).toBe(14);
+        expect(rows.count()).toBe(13);
       });
 
       it('TurboInternational AD (LDAP)', function() {
@@ -178,13 +196,41 @@ describe('Users:', function() {
 
     });
 
-    xdescribe('Create User:', function() {
+  });
 
-      it('should have a button \'Create User\'', function () {
-        expect(bttnCreateUser.isPresent()).toBeTruthy();
-      });
+  describe('Create:', function() {
 
+    var bttnUsersList;
+
+    beforeAll(function () {
+      bttnUsersList = element.all(by.tiButton('Users List'));
     });
+
+    beforeEach(function() {
+      browser.getCurrentUrl();
+      browser.get('http://localhost:8080/security/user/create');
+    });
+
+    it('should has a button \'Users List\'', function () {
+      expect(bttnUsersList.isPresent()).toBeTruthy();
+      expect(bttnUsersList.isDisplayed()).toBeTruthy();
+    });
+
+    it('should navigate to an users list on clicking ' +
+      'a button \'Users List\'',
+      function () {
+        bttnUsersList.click();
+        expect(browser.getCurrentUrl())
+          .toBe('http://localhost:8080/security/users');
+      }
+    );
+
+    // TODO: create user and try to login
+
+  });
+
+  xdescribe('Edit:', function () {
+
 
   });
 

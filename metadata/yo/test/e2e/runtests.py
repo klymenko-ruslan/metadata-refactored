@@ -18,6 +18,8 @@ parser = argparse.ArgumentParser(description='Build and runs the \'metadata\' '
 parser.add_argument('--skip-indexing', action='store_true',
                     help='Skip step to index documents. It is useful during '
                     'test development.')
+parser.add_argument('--protractor-opts', default='',
+                    help='Options to pass to Protractor')
 args = parser.parse_args()
 
 
@@ -47,19 +49,21 @@ if re.search(r'metadata-e2e.jar', jpsout) is None:
     sys.exit(1)
 
 if not args.skip_indexing:
-  print('Indexing of all documents.')
+    print('Indexing of all documents.')
+    try:
+        httpconn = http.client.HTTPConnection('localhost', 8080, timeout=60)
+        httpconn.request('POST', '/metadata/search/indexall')
+        response = httpconn.getresponse()
+    except http.client.HTTPException as e:
+        print('Starting of the indexing job failed. Server response: {}'
+              .format(e))
+        sys.exit(1)
+    if response.status != http.client.OK:
+        print('The indexing job failed: {}')
+        sys.exit(1)
+    print('The indexing has been finished.')
 
-  try:
-      httpconn = http.client.HTTPConnection('localhost', 8080, timeout=60)
-      httpconn.request('POST', '/metadata/search/indexall')
-      response = httpconn.getresponse()
-  except http.client.HTTPException as e:
-      print('Starting of the indexing job failed. Server response: {}'.format(e))
-      sys.exit(1)
-
-  if response.status != http.client.OK:
-      print('The indexing job failed: {}')
-      sys.exit(1)
-  print('The indexing has been finished.')
-
-subprocess.call('protractor ./protractor.conf.js', shell=True)
+cmd = 'protractor {opts} ./protractor.conf.js'.format(
+    opts=args.protractor_opts)
+print('Command line to run Protractor: {}'.format(cmd))
+subprocess.call(cmd, shell=True)
