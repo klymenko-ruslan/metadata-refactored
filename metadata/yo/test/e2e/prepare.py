@@ -177,7 +177,7 @@ try:
           '\n\t$ elasticsearch -v -Ecluster.name=es-metadata-e2e\n')
     print('3. Start in a separate window the \'metadata\' webapp with '
           'profile \'e2e\':')
-    print('\t$ ./prepare.py\n')
+    print('\t$ ./metadata.py\n')
     print('4. Run in this window the e2e test suites:\n\n\t$ runtests.py\n')
 finally:
     dbaCnx.close()

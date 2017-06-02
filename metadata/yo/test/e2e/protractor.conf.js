@@ -85,7 +85,9 @@ exports.config = {
       function(buttonText, parentElement, rootSelector) {
         var using = parentElement || document,
           buttons = using.querySelectorAll('button.btn');
-        var rgxp = new RegExp('\\s*' + buttonText + '\\s*');
+        var escapedBttnText = buttonText.replace(
+          /[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+        var rgxp = new RegExp('\\s*' + escapedBttnText + '\\s*');
         return Array.prototype.filter.call(buttons, function(button) {
           return rgxp.test(button.innerText);
         });

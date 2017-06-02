@@ -1,18 +1,23 @@
 package com.turbointernational.metadata.web.controller;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.TEXT_HTML_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMapping;;
 
 /**
- *
  * @author jrodriguez
  */
 @Controller
 public class AngularSpaRouterController {
 
-    @RequestMapping({
+    @RequestMapping(method = GET, produces = {TEXT_HTML_VALUE, "!" +APPLICATION_JSON_VALUE},
+        value = {
         "/",
         "/part/**",
+        "/service/list",
         "/parttype/**",
         "/other/**",
         "/security/**",
@@ -38,7 +43,8 @@ public class AngularSpaRouterController {
 //        "/security/users",
 //        "/security/users/\\d+",
 //        "/password/reset/.*"
-    })
+    }
+)
     public String index() {
         return "forward:/index.html";
     }
