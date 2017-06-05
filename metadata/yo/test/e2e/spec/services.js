@@ -17,6 +17,24 @@ describe('Services:', function() {
   beforeEach(function() {
     browser.getCurrentUrl();
     browser.get('http://localhost:8080/service/list');
+    // Specs below checks some checkboxes in the column 'Required Source'.
+    // This code resets all those checkboxes in expeced state -- all boxes
+    // are uncheced except for services BOM and INTERCHANGE.
+    checkboxes.map(function(elem) {
+      elem.isSelected().then(function(checked) {
+        elem.evaluate('srv.name').then(function(srvName) {
+          if (srvName === 'BOM' || srvName === 'INTERCHANGE') {
+            if (!checked) {
+              elem.click(); // check
+            }
+          } else {
+            if (checked) {
+              elem.click(); // uncheck
+            }
+          }
+        });
+      });
+    });
   });
 
   it('should have a list of services', function() {
@@ -43,7 +61,7 @@ describe('Services:', function() {
     }
   );
 
-  xdescribe('PART:', function() {
+  describe('PART:', function() {
 
     it('should display \'Link Source\' dialog when a new part is created',
       function() {
@@ -52,25 +70,31 @@ describe('Services:', function() {
             return srvName === 'PART';
           });
           return defer;
-        });
-        expect(partCheckbox.count()).toBe(1);
-        partCheckbox = partCheckbox.first();
+        }).first();
         //expect(partCheckbox.isPresent()).toBeTruthy();
         //expect(partCheckbox.isDisplayed()).toBeTruthy();
         //expect(partCheckbox.isSelected()).toBeFalsy();
         partCheckbox.click();
-        //expect(partCheckbox.isSelected()).toBeTruthy();
         browser.get('http://localhost:8080/part/list');
         var bttnCreatePart = element(by.partialLinkText('Create Part'));
         bttnCreatePart.click();
         var cntrlPartType = element(by.model('selection.id'));
-        expect(cntrlPartType.isPresent()).toBeTruthy();
-        var bttnCreate = element(by.partialButtonText('Create...'));
-        expect(bttnCreate.isPresent()).toBeTruthy();
-        browser._selectDropdownbyNum(cntrlPartType, 2);
-        bttnCreate.click();
+        //expect(cntrlPartType.isPresent()).toBeTruthy();
+        var bttnCreate = element(by.partialButtonText('Create'));
+        //expect(bttnCreate.isPresent()).toBeTruthy();
+        browser._selectDropdownbyNum(cntrlPartType, 1); // Actuator
+        bttnCreate.click(); // close popup and open a main form
+        browser._selectDropdownbyNum(
+          element(by.id('manufacturer')), 1); // Garret
+        element(by.id('pn0')).sendKeys('UNIQUE-PART-NUMBER');
+        var lnkSrcDlg = element(by.css('.modal-open'));
+        expect(lnkSrcDlg.isPresent()).toBeFalsy();
+        element(by.tiButton('Save')).click();
+        expect(lnkSrcDlg.isPresent()).toBeTruthy();
       }
     );
+
+    // TODO: other service types
 
   });
 

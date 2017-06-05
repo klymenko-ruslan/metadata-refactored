@@ -81,6 +81,10 @@ exports.config = {
       return browser._selectDropdownbyNum(element, 0);
     };
 
+    browser._pressEnter = function() {
+      browser.actions().sendKeys(protractor.Key.ENTER).perform();
+    };
+
     by.addLocator('tiButton',
       function(buttonText, parentElement, rootSelector) {
         var using = parentElement || document,
