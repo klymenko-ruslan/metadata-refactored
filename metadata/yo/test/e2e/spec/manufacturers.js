@@ -139,7 +139,7 @@ describe('Manufacturers:', function() {
         expect(cntrlNotExternal.isPresent()).toBeFalsy();
       });
 
-      it('undo', function() {
+      it('revert', function() {
         expect(cntrlName.evaluate('manufacturer.name')).toBe('Garrett');
         cntrlName.sendKeys('foo');
         expect(bttnSave.isEnabled()).toBeTruthy();

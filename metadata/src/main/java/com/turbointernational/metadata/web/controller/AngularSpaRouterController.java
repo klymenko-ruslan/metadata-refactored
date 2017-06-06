@@ -30,6 +30,7 @@ public class AngularSpaRouterController {
         "/search/indexing/status",
         "/mas90/sync/status",
         "/manufacturer/list",
+        "/changelog/source/name/list",
 //        "/",
 //        "/part/\\d+",
 //        "/part/\\d+/component/search",
