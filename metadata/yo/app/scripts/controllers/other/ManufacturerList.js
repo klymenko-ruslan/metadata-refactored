@@ -16,10 +16,10 @@ angular.module('ngMetaCrudApp')
     $scope.manufacturerTypesOpts = _.map(manufacturerTypes, function (mt) {
       return { 'id': mt.id, 'title': mt.name };
     });
-    $scope.manufacturerTypesOpts.unshift({ 'id': null, 'title': '' });
+    //$scope.manufacturerTypesOpts.unshift({ 'id': null, 'title': '' });
 
     $scope.notExternalOpts = [
-      {id: null, title: ''},
+      // {id: null, title: ''},
       {id: true, title: 'yes'},
       {id: false, title: 'no'}
     ];

@@ -89,7 +89,6 @@ def grantPermission(dbaCnx, dbhost, dbname, username, password):
                  'identified by \'{password}\'').format(
                      dbhost=dbhost, dbname=dbname, username=username,
                      password=password)
-        print('Query: {}'.format(query))
         cursor.execute(query)
         cursor.execute('flush privileges')
     finally:

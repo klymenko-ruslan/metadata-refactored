@@ -53,7 +53,7 @@ describe('Changelog:', function() {
 
   describe('Filter:', function() {
 
-    it('shoild have UI controls to filter', function() {
+    it('should have UI controls to filter', function() {
       expect(fltrStartDate.isPresent()).toBeTruthy();
       expect(fltrStartDate.isDisplayed()).toBeTruthy();
       expect(fltrFinishDate.isPresent()).toBeTruthy();
