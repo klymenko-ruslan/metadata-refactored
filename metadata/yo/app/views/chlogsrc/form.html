@@ -102,12 +102,8 @@
 
         <table data-ng-table="attachmentsTableParams" class="table table-bordered table-striped table-hover table-responsive">
         <tr data-ng-repeat="rec in $data">
-          <td title="'Name'">
-            {{rec.name}}
-          </td>
-          <td title="'Description'">
-            {{rec.description}}
-          </td>
+          <td title="'Name'">{{rec.name}}</td>
+          <td title="'Description'">{{rec.description}}</td>
           <td class="actions text-center" title="'Actions'">
             <button type="button" data-ng-click="removeSourceAttachment(rec.id)" class="btn btn-danger btn-xs" authorize="ROLE_CHLOGSRC_UPDATE">
               <i class="fa fa-trash-o"></i> Remove

@@ -125,7 +125,7 @@ angular.module('ngMetaCrudApp')
       );
     };
 
-    $scope.removeAttachment = function (attachId) {
+    $scope.removeSourceAttachment = function (attachId) {
       dialogs.confirm('Confirmation',
         'Are you sure?\nDo you want to remove this attachment?').result.then(
           function yes() {

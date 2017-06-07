@@ -72,9 +72,10 @@ angular.module('ngMetaCrudApp')
       return _isSourceRequired(services, 'SALESNOTES');
     };
 
-  return this;
+    return this;
 
-}])
+  }
+])
 .controller('ChlogSrcLinkDlgCtrl', ['$scope', '$log', '$location', 'dialogs',
   'toastr', 'NgTableParams', '$uibModalInstance', 'utils', 'restService',
   'cbSave', 'sourcesNames', 'lastPicked', 'User', 'cancelUrl', 'begin',
@@ -528,8 +529,8 @@ angular.module('ngMetaCrudApp')
         );
     };
 
-    $scope.removeSourceAttachment = function (idx) {
-      restService.changelogSourceRemoveAttachmentTmp(idx).then(
+    $scope.removeSourceAttachment = function (id) {
+      restService.changelogSourceRemoveAttachmentTmp(id).then(
         function(updatedAttachmentsResponse) {
           _updateSourceAttachmentsTable(updatedAttachmentsResponse.rows);
         },

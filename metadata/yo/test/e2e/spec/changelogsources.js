@@ -3,9 +3,12 @@
 
 'use strict';
 
-fdescribe('Changelog Sources:', function() {
+var path = require('path');
+var EC = protractor.ExpectedConditions;
 
-  var rows, firstRowTds, bttnView, bttnCreateSource, fltrName,
+describe('Changelog Sources:', function() {
+
+  var rows, firstRowTds, bttnView, bttnRemove, bttnCreateSource, fltrName,
     fltrDescription, fltrUrl, fltrSourceName, bttnClear, bttnRefresh, dlg;
 
   beforeAll(function() {
@@ -16,6 +19,7 @@ fdescribe('Changelog Sources:', function() {
     bttnView = tdActions.element(by.tiButton('View'));
     bttnClear = element(by.tiButton('Clear'));
     bttnRefresh = element(by.tiButton('Refresh'));
+    bttnRemove = element(by.tiButton('Remove'));
     fltrName = element(by.id('fltrName'));
     fltrDescription = element(by.id('fltrDescription'));
     fltrUrl = element(by.id('fltrUrl'));
@@ -153,12 +157,11 @@ fdescribe('Changelog Sources:', function() {
 
   describe('View:', function() {
 
-    var bttnChangelogSources, bttnEdit, bttnRemove;
+    var bttnChangelogSources, bttnEdit;
 
     beforeAll(function() {
       bttnChangelogSources = element(by.tiButton('Changelog Sources'));
       bttnEdit = element(by.tiButton('Edit'));
-      bttnRemove = element(by.tiButton('Remove'));
     });
 
     beforeEach(function() {
@@ -206,7 +209,7 @@ fdescribe('Changelog Sources:', function() {
 
   });
 
-  fdescribe('Edit:', function() {
+  describe('Edit:', function() {
 
     var bttnChangelogSources, bttnView,  bttnSave, bttnRevert,
       tabSource, tabAttachments, cntrlName, cntrlSourceName, cntrlDescription,
@@ -217,7 +220,7 @@ fdescribe('Changelog Sources:', function() {
       bttnView = element(by.tiButton('View'));
       bttnSave = element(by.tiButton('Save'));
       bttnRevert = element(by.tiButton('Revert'));
-      var tabs = element(by.id('tabSources')).all(by.tagName('a'));
+      var tabs = element(by.id('tabsSources')).all(by.tagName('a'));
       tabSource = tabs.first();
       tabAttachments = tabs.last();
       cntrlName = element(by.id('name'));
@@ -269,10 +272,166 @@ fdescribe('Changelog Sources:', function() {
         expect(cntrlFile.isDisplayed()).toBeFalsy();
         expect(cntrlFileDesc.isPresent()).toBeTruthy();
         expect(cntrlFileDesc.isDisplayed()).toBeFalsy();
-        expect(bttnUpload.isPresent()).toBeTrue();
+        expect(bttnUpload.isPresent()).toBeTruthy();
         expect(bttnUpload.isDisplayed()).toBeFalsy();
       }
     );
+
+    it('should open a view with list of sources when ' +
+      'button \'Changelog Sources\' is clicked',
+      function() {
+        bttnChangelogSources.click();
+        expect(browser.getCurrentUrl()).toBe(
+          'http://localhost:8080/changelog/source/list');
+      }
+    );
+
+    it('should open a view with details when button \'View\' is clicked',
+      function() {
+        bttnView.click();
+        expect(browser.getCurrentUrl()).toBe(
+          'http://localhost:8080/changelog/source/3');
+      }
+    );
+
+    it('should open tabs on clicks', function() {
+      expect(cntrlName.isDisplayed()).toBeTruthy();
+      expect(cntrlFileDesc.isDisplayed()).toBeFalsy();
+      tabAttachments.click();
+      browser.wait(EC.visibilityOf(cntrlFileDesc), 1000,
+        'A tab \'Attachments\' has not been displayed after a click');
+      expect(cntrlName.isDisplayed()).toBeFalsy();
+      expect(cntrlFileDesc.isDisplayed()).toBeTruthy();
+      tabSource.click();
+      browser.wait(EC.visibilityOf(cntrlName), 1000,
+        'A tab \'Source\' has not been displayed after a click');
+      expect(cntrlName.isDisplayed()).toBeTruthy();
+      expect(cntrlFileDesc.isDisplayed()).toBeFalsy();
+    });
+
+    describe('Buttons \'Save\' and \'Revert\' should be enabled when any ' +
+      'value is chaned:',
+      function() {
+
+        it('Name', function() {
+          expect(bttnSave.isEnabled()).toBeFalsy();
+          expect(bttnRevert.isEnabled()).toBeFalsy();
+          cntrlName.sendKeys('foo');
+          expect(bttnSave.isEnabled()).toBeTruthy();
+          expect(bttnRevert.isEnabled()).toBeTruthy();
+        });
+
+        it('Source name', function() {
+          expect(bttnSave.isEnabled()).toBeFalsy();
+          expect(bttnRevert.isEnabled()).toBeFalsy();
+          browser._selectDropdownbyNum(cntrlSourceName, 1);
+          expect(bttnSave.isEnabled()).toBeTruthy();
+          expect(bttnRevert.isEnabled()).toBeTruthy();
+        });
+
+        it('Description', function() {
+          expect(bttnSave.isEnabled()).toBeFalsy();
+          expect(bttnRevert.isEnabled()).toBeFalsy();
+          cntrlDescription.sendKeys('foo');
+          expect(bttnSave.isEnabled()).toBeTruthy();
+          expect(bttnRevert.isEnabled()).toBeTruthy();
+        });
+
+        it('URL', function() {
+          expect(bttnSave.isEnabled()).toBeFalsy();
+          expect(bttnRevert.isEnabled()).toBeFalsy();
+          cntrlUrl.sendKeys('foo');
+          expect(bttnSave.isEnabled()).toBeTruthy();
+          expect(bttnRevert.isEnabled()).toBeTruthy();
+        });
+
+      }
+    );
+
+    it('should undo all changes when button \'Revert\' is clicked',
+      function() {
+        // Check buttons state before modifications.
+        expect(bttnSave.isEnabled()).toBeFalsy();
+        expect(bttnRevert.isEnabled()).toBeFalsy();
+        // Do modifications.
+        cntrlName.sendKeys('foo');
+        browser._selectDropdownbyNum(cntrlSourceName, 1);
+        cntrlDescription.sendKeys('foo');
+        cntrlUrl.sendKeys('foo');
+        // Check buttons state after modifications.
+        expect(bttnSave.isEnabled()).toBeTruthy();
+        expect(bttnRevert.isEnabled()).toBeTruthy();
+        // Do undo.
+        bttnRevert.click();
+        // Make sure that undo reverts original values.
+        expect(cntrlName.evaluate('data.crud.source.name'))
+          .toBe('Invasion webpage');
+        expect(cntrlDescription.evaluate('data.crud.source.description'))
+          .toBeNull();
+        expect(cntrlSourceName.evaluate('data.crud.source.sourceName'))
+          .toEqual({ 'id': 6, 'name': 'Invasion' });
+        expect(cntrlUrl.evaluate('data.crud.source.url'))
+          .toBe('http://www.invasionautoproducts.com/20focogttu2.html');
+        // Make sure that buttons are in expected state.
+        expect(bttnSave.isEnabled()).toBeFalsy();
+        expect(bttnRevert.isEnabled()).toBeFalsy();
+      }
+    );
+
+    it('should upload attachment', function() {
+      tabAttachments.click();
+      browser.wait(EC.visibilityOf(cntrlFileDesc), 1000,
+        'A tab \'Attachments\' has not been displayed after a click');
+      expect(bttnSave.isEnabled()).toBeFalsy();
+      expect(rows.count()).toBe(0); // rows count of attachments
+      expect(bttnUpload.isEnabled()).toBeFalsy();
+      expect(bttnRemove.isPresent()).toBeFalsy();
+      // Upload an attachment but NOT save it.
+      var attachment = path.resolve(__dirname, '../resources/washer.jpg');
+      cntrlFile.sendKeys(attachment);
+      cntrlFileDesc.sendKeys('foo');
+      expect(bttnUpload.isEnabled()).toBeTruthy();
+      bttnUpload.click();
+      expect(bttnUpload.isEnabled()).toBeFalsy();
+      expect(bttnSave.isEnabled()).toBeTruthy();
+      expect(rows.count()).toBe(1);
+      var tds = rows.first().all(by.tagName('td'));
+      expect(tds.count()).toBe(3);
+      expect(tds.first().getText()).toBe('washer.jpg');
+      expect(tds.get(1).getText()).toBe('foo');
+      expect(bttnRemove.isPresent()).toBeTruthy();
+      expect(bttnRemove.isDisplayed()).toBeTruthy();
+      // Remove just added attachment.
+      bttnRemove.click();
+      expect(dlg.isDisplayed()); // confirmation dialog
+      var bttnOk = element(by.buttonText('Yes'));
+      expect(bttnOk.isDisplayed()).toBeTruthy();
+      bttnOk.click();
+      expect(rows.count()).toBe(0);
+      // Upload an attachment again and save it.
+      var attachment2 = path.resolve(__dirname, '../resources/washer2.jpg');
+      cntrlFile.sendKeys(attachment2);
+      cntrlFileDesc.sendKeys('foo2');
+      expect(bttnUpload.isEnabled()).toBeTruthy();
+      bttnUpload.click();
+      bttnSave.click();
+      expect(browser.getCurrentUrl()).toBe(
+        'http://localhost:8080/changelog/source/list');
+      // Check that in details the attachment is displayed.
+      browser.get('http://localhost:8080/changelog/source/3');
+      expect(rows.count()).toBe(1);
+      expect(tds.first().getText()).toBe('washer2.jpg');
+      expect(tds.get(1).getText()).toBe('foo2');
+      // Go to edit form and remove the attachment.
+      browser.get('http://localhost:8080/changelog/source/3/form');
+      tabAttachments.click();
+      browser.wait(EC.visibilityOf(cntrlFileDesc), 1000,
+        'A tab \'Attachments\' has not been displayed after a click');
+      bttnRemove.click();
+      expect(dlg.isDisplayed()); // confirmation dialog
+      bttnOk.click();
+      expect(rows.count()).toBe(0);
+    });
 
   });
 
